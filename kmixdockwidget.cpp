@@ -44,7 +44,7 @@
 KMixDockWidget::KMixDockWidget( Mixer *mixer,
 				QWidget *parent, const char *name )
     : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), 
-      m_mixerVisible(false), audioPlayer(0L)
+      audioPlayer(0L), m_mixerVisible(false)
 {
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
@@ -156,7 +156,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
             		    masterVol->move(x, y);
             		    masterVol->show();
         		} else {
-            		    masterVol->hide();   // fixme: this doesn't work?!
+            		    masterVol->hide();
         		}
                 m_mixerVisible = !m_mixerVisible;
         		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this
@@ -183,6 +183,7 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
         vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
 
+    audioPlayer->play();
     masterDevice->setVolume(vol);
     m_mixer->writeVolumeToHW(masterDevice->num(), vol);
     setVolumeTip(masterDevice->num(), vol);
