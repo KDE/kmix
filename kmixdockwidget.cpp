@@ -30,6 +30,7 @@
 KMixDockWidget::KMixDockWidget( QWidget *parent, const char *name )
    : KSystemTray( parent, name )
 {
+    setBackgroundMode(X11ParentRelative);
 }
 
 KMixDockWidget::~KMixDockWidget()
