@@ -10,10 +10,16 @@ CXXFLAGS= @CXXFLAGS@ @all_includes@ -DHAVE_CONFIG_H -I..
 # you need also @LIBSOCKET@, if you link with -lkfm
 LDFLAGS	= @LDFLAGS@ @all_libraries@ -lkdecore -lkdeui -lqt -lXext -lX11
 
+top_builddir = ..
+kde_libraries = @kde_libraries@
+qt_libraries = @qt_libraries@
+LIBTOOL = @LIBTOOL@
+KDE_RPATH = @KDE_RPATH@
+
 # both are clear, I think
 CXX     = @CXX@
 MOC   	= @MOC@
-MSGFMT  = msgfmt
+#MSGFMT  = msgfmt
 
 ############# INSTALL #################
 
@@ -60,7 +66,7 @@ version.h: VERSION
 	sed "s/0/#define APP_VERSION 0/" <VERSION >version.h
 
 $(TARGET): $(SRCMETA) $(OBJECTS)
-	$(LIBTOOL) $(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS) $(KDE_RPATH)
+	$(LIBTOOL) --mode=link $(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS) $(KDE_RPATH)
 #	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
 
 clean:
