@@ -96,37 +96,40 @@
 
 typedef Mixer *getMixerFunc( int device, int card );
 typedef Mixer *getMixerSetFunc( MixSet set, int device, int card );
+typedef QString getDriverNameFunc( );
 
 struct MixerFactory {
     getMixerFunc *getMixer;
     getMixerSetFunc *getMixerSet;
+    getDriverNameFunc *getDriverName;
 };
 
 MixerFactory g_mixerFactories[] = {
 
 #if defined(NAS_MIXER)
-    { NAS_getMixer, 0 },
+    { NAS_getMixer, 0 , 0 },
 #endif
 
 #if defined(SUN_MIXER)
-    { SUN_getMixer, SUN_getMixerSet },
+    { SUN_getMixer, SUN_getMixerSet , SUN_getDriverName },
 #endif
 
 #if defined(IRIX_MIXER)
-    { IRIX_getMixer, 0 },
+    { IRIX_getMixer, 0 , IRIX_getDriverName },
 #endif
 
 #if defined(ALSA_MIXER)
-    { ALSA_getMixer, ALSA_getMixerSet },
+    { ALSA_getMixer, ALSA_getMixerSet, ALSA_getDriverName },
 #endif
 
 #if defined(OSS_MIXER)
-    { OSS_getMixer, OSS_getMixerSet },
+    { OSS_getMixer, OSS_getMixerSet , OSS_getDriverName },
 #endif
 
 #if defined(HPUX_MIXER)
-    { HPUX_getMixer, 0 },
+    { HPUX_getMixer, 0, HPUX_getDriverName },
 #endif
 
-    { 0, 0 }
+    { 0, 0, 0 }
 };
+
