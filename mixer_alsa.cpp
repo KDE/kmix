@@ -64,7 +64,7 @@ int Mixer_ALSA::identify( int idx, const char* id )
   return MixDevice::UNKNOWN;
 }
 
-Mixer* Mixer::getMixer( int device, int card )
+Mixer* ALSA_getMixer( int device, int card )
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_ALSA( device, card );
@@ -72,7 +72,7 @@ Mixer* Mixer::getMixer( int device, int card )
   return l_mixer;
 }
 
-Mixer* Mixer::getMixer( MixSet set, int device, int card )
+Mixer* ALSA_getMixerSet( MixSet set, int device, int card )
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_ALSA( device, card );

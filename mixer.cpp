@@ -74,7 +74,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
    QString devgrp;
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
    config->setGroup( devgrp );
-   
+
    int vl = config->readNumEntry("volumeL", -1);
    if (vl!=-1) setVolume( Volume::LEFT, vl );
 
@@ -83,7 +83,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
 
    int mute = config->readNumEntry("is_muted", -1);
    if ( mute!=-1 ) setMuted( mute!=0 );
-   
+
    int recsrc = config->readNumEntry("is_recsrc", -1);
    if ( recsrc!=-1 ) setRecsrc( recsrc!=0 );
 }
@@ -129,10 +129,43 @@ void MixSet::write( KConfig *config, const QString& grp )
 
    MixDevice* md;
    for( md=first(); md!=0; md=next() )
-      md->write( config, grp );      
+      md->write( config, grp );
 }
 
 /********************** Mixer ***********************/
+
+int Mixer::getDriverNum()
+{
+    MixerFactory *factory = g_mixerFactories;
+    int num = 0;
+    while( factory->getMixer!=0 ) {
+        num++;
+        factory++;
+    }
+
+    return num;
+}
+
+
+Mixer* Mixer::getMixer( int driver, int device, int card )
+{
+    getMixerFunc *f = g_mixerFactories[driver].getMixer;
+    if( f!=0 )
+        return f( device, card );
+    else
+        return 0;
+}
+
+
+Mixer* Mixer::getMixer( int driver, MixSet set,int device, int card )
+{
+    getMixerSetFunc *f = g_mixerFactories[driver].getMixerSet;
+    if( f!=0 )
+        return f( set, device, card );
+    else
+        return 0;
+}
+
 
 Mixer::Mixer( int device, int card )
 {
@@ -148,7 +181,7 @@ Mixer::Mixer( int device, int card )
 };
 
 int Mixer::setupMixer( MixSet mset )
-{  
+{
    release();	// To be sure, release mixer before (re-)opening
 
    int ret = openMixer();
@@ -173,14 +206,14 @@ void Mixer::volumeSave( KConfig *config )
 void Mixer::volumeLoad( KConfig *config )
 {
    QString grp = QString("Mixer") + mixerName();
-   m_mixDevices.read( config, grp );  
-   
+   m_mixDevices.read( config, grp );
+
    // set new settings
    QListIterator<MixDevice> it( m_mixDevices );
    for(MixDevice *md=it.toFirst(); md!=0; md=++it )
    {
       setRecsrc( md->num(), md->isRecsrc() );
-      writeVolumeToHW( md->num(), md->getVolume() );    
+      writeVolumeToHW( md->num(), md->getVolume() );
    }
 }
 

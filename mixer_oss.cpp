@@ -71,7 +71,7 @@ const MixDevice::ChannelType MixerChannelTypes[32] = {
   MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,   MixDevice::UNKNOWN,
   MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
 
-Mixer* Mixer::getMixer( int device, int card )
+Mixer* OSS_getMixer( int device, int card )
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_OSS( device, card );
@@ -79,7 +79,7 @@ Mixer* Mixer::getMixer( int device, int card )
   return l_mixer;
 }
 
-Mixer* Mixer::getMixer( MixSet set, int device, int card )
+Mixer* OSS_getMixerSet( MixSet set, int device, int card )
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_OSS( device, card );

@@ -109,10 +109,10 @@ const uint_t MixerSunPortMasks[] =
 
 
 //======================================================================
-// FUNCTION    : Mixer::getMixer
+// FUNCTION    : SUN_getMixer
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
-Mixer* Mixer::getMixer( int devnum, int SetNum )
+Mixer* SUN_getMixer( int devnum, int SetNum )
 {
    Mixer *l_mixer;
    l_mixer = new Mixer_SUN( devnum, SetNum );
@@ -121,10 +121,10 @@ Mixer* Mixer::getMixer( int devnum, int SetNum )
 }
 
 //======================================================================
-// FUNCTION    : Mixer::getMixer
+// FUNCTION    : SUN_getMixerSet
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
-Mixer* Mixer::getMixer( MixSet set, int device, int card )
+Mixer* SUN_getMixerSet( MixSet set, int device, int card )
 {
    Mixer *l_mixer;
    l_mixer = new Mixer_SUN( device, card );

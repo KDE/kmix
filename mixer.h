@@ -96,7 +96,7 @@ class MixDevice
 
 class MixSet : public QList<MixDevice>
 {
-   public:      
+   public:
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
 
@@ -123,8 +123,9 @@ class Mixer : public QObject
 
       /// Static function. This function must be overloaded by any derived mixer class
       /// to create and return an instance of the derived class.
-      static Mixer* getMixer( int device = 0, int card = 0 );
-      static Mixer* getMixer( MixSet set,int device = 0, int card = 0 );
+      static int getDriverNum();
+      static Mixer* getMixer( int driver, int device = 0, int card = 0 );
+      static Mixer* getMixer( int driver, MixSet set,int device = 0, int card = 0 );
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
@@ -141,7 +142,7 @@ class Mixer : public QObject
       /// Prints out a translated error text for the given error number on stderr
       void errormsg(int mixer_error);
       /// Returns a translated error text for the given error number.
-      /// Derived classes can override this method to produce platform 
+      /// Derived classes can override this method to produce platform
       /// specific error descriptions.
       virtual QString errorText(int mixer_error);
       QString mixerName();
@@ -205,7 +206,7 @@ class Mixer : public QObject
 
       QList<MixSet> m_profiles;
 
-   private:      
+   public:
       int setupMixer() { return setupMixer( m_mixDevices ); };
       int setupMixer( MixSet set );
 };

@@ -33,7 +33,7 @@
 
 static const char *description =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
-	
+
 static KCmdLineOptions options[] =
 {
    { "s", 0, 0 },
@@ -52,33 +52,33 @@ int main(int argc, char *argv[])
 			 "(c) 2000 by Stefan Schimanski");
 
    aboutData.addAuthor("Stefan Schimanski", 0, "1Stein@gmx.de");
-   	
+
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();	
+   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    KApplication app;
 
    // get maximum values
    KConfig *config= new KConfig("kcmkmixrc", false);
-   config->setGroup("Misc"); 
+   config->setGroup("Misc");
    int maxCards = config->readNumEntry( "maxCards", 2 );
    int maxDevices = config->readNumEntry( "maxDevices", 2 );
    delete config;
 
    // create mixers
    QList<Mixer> mixers;
-   for ( int dev=0; dev<maxDevices; dev++ )
-   {
-      for ( int card=0; card<maxCards; card++ )
-      {
-	 Mixer *mixer = Mixer::getMixer( dev, card );
-	 int mixerError = mixer->grab();
-	 if ( mixerError!=0 )
-	    delete mixer;	
-	 else
-	    mixers.append( mixer );	 
-      }
-   }
+   int drvNum = Mixer::getDriverNum();
+   for( int drv=0; drv<drvNum && mixers.count()==0; drv++ )
+       for ( int dev=0; dev<maxDevices; dev++ )
+           for ( int card=0; card<maxCards; card++ ) {
+
+               Mixer *mixer = Mixer::getMixer( drv, dev, card );
+               int mixerError = mixer->grab();
+               if ( mixerError!=0 )
+                   delete mixer;
+               else
+                   mixers.append( mixer );
+           }
 
    // load volumes
    if ( args->isSet("restore") )
@@ -93,4 +93,4 @@ int main(int argc, char *argv[])
       for (Mixer *mixer=mixers.first(); mixer!=0; mixer=mixers.next())
 	 mixer->volumeSave( KGlobal::config() );
    }
-}  
+}

@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
    aboutData.addAuthor("Lennart Augustsson", I18N_NOOP("*BSD fixes"), "augustss@cs.chalmers.se");
    aboutData.addAuthor("Nick Lopez", I18N_NOOP("ALSA port"), "kimo_sabe@usa.net");
    aboutData.addAuthor("Helge Deller", I18N_NOOP("HP/UX port"), "deller@gmx.de");
+   aboutData.addAuthor("Jean Labrousse", I18N_NOOP("NAS port"), "jean.labrousse@alcatel.com" );
 
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.

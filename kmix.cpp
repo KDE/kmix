@@ -160,19 +160,21 @@ void KMixWindow::initMixer()
    delete config;
 
    // poll for mixers
-   for ( int dev=0; dev<maxDevices; dev++ )
-      for ( int card=0; card<maxCards; card++ ){
+   int drvNum = Mixer::getDriverNum();
+   for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
+       for( int dev=0; dev<maxDevices; dev++ )
+           for( int card=0; card<maxCards; card++ ){
 
-         Mixer *mixer = Mixer::getMixer( dev, card );
-         int mixerError = mixer->grab();
-         if ( mixerError!=0 )
-             delete mixer;
-         else {
-            connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-            m_mixers.append( mixer );
-         }
+               Mixer *mixer = Mixer::getMixer( drv, dev, card );
+               int mixerError = mixer->grab();
+               if ( mixerError!=0 )
+                   delete mixer;
+               else {
+                   connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
+                   m_mixers.append( mixer );
+               }
 
-      }
+           }
 }
 
 

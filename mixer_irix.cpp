@@ -22,7 +22,7 @@
 
 #include "mixer_irix.h"
 
-Mixer* Mixer::getMixer(int devnum, int SetNum)
+Mixer* IRIX_getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_IRIX( devnum, SetNum);
@@ -32,7 +32,7 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 
 
 
-Mixer_IRIX::Mixer_IRIX() : Mixer() 
+Mixer_IRIX::Mixer_IRIX() : Mixer()
 { }
 
 Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum)
@@ -59,7 +59,7 @@ int Mixer_IRIX::openMixer()
     recmask	= 128;
     i_recsrc    = 128;
     stereodevs	= 1+128+2048;
-    MaxVolume	= 255; 
+    MaxVolume	= 255;
 
     i_s_mixer_name = "HPUX Audio Mixer";
 
@@ -96,7 +96,7 @@ int Mixer_IRIX::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
   }
   ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4);
   *VolRight = in_buf[1]*100/255;
-  *VolLeft  = in_buf[3]*100/255; 
+  *VolLeft  = in_buf[3]*100/255;
 
   return 0;
 }

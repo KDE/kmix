@@ -95,17 +95,19 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
       // get mixer devices
       s_mixers->setAutoDelete( TRUE );
-      for ( int dev=0; dev<maxDevices; dev++ )
-         for ( int card=0; card<maxCards; card++ )
-         {
-            Mixer *mixer = Mixer::getMixer( dev, card );
-            int mixerError = mixer->grab();
-            if ( mixerError!=0 )
-               delete mixer;
-            else
-               s_mixers->append( mixer );
-            }
-         }
+      int drvNum = Mixer::getDriverNum();
+      for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
+          for ( int dev=0; dev<maxDevices; dev++ )
+              for ( int card=0; card<maxCards; card++ )
+              {
+                  Mixer *mixer = Mixer::getMixer( drv, dev, card );
+                  int mixerError = mixer->grab();
+                  if ( mixerError!=0 )
+                      delete mixer;
+                  else
+                      s_mixers->append( mixer );
+              }
+   }
 
    s_instCount++;
 

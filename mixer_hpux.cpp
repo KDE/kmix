@@ -61,7 +61,7 @@ const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   ,
 */
 
 
-Mixer* Mixer::getMixer(int devnum, int SetNum)
+Mixer* HPUX_getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_HPUX( devnum, SetNum);
@@ -70,20 +70,20 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 }
 
 
-Mixer_HPUX::Mixer_HPUX() : Mixer() 
-{ 
+Mixer_HPUX::Mixer_HPUX() : Mixer()
+{
     Mixer_HPUX(0,-1);
 }
 
-Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum) 
-{ 
+Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum)
+{
   char ServerName[10];
   ServerName[0] = 0;
   audio = AOpenAudio(ServerName,NULL);
 }
 
 Mixer_HPUX::~Mixer_HPUX()
-{ 
+{
   if (audio) {
       ACloseAudio(audio,0);
       audio = 0;
@@ -96,26 +96,26 @@ int Mixer_HPUX::openMixer()
   if (audio==0) {
     return Mixer::ERR_OPEN;
   }
-  else 
-  { 
+  else
+  {
     /* Mixer is open. Now define properties */
     stereodevs = devmask = (1<<ID_PCM); /* activate pcm */
     recmask = 0;
 
     /* check Input devices... */
     if (AInputSources(audio) & AMonoMicrophoneMask) {
-	    devmask	|= (1<<ID_IN_MICROPHONE); 
+	    devmask	|= (1<<ID_IN_MICROPHONE);
 	    recmask	|= (1<<ID_IN_MICROPHONE);
     }
     if (AInputSources(audio) & (ALeftAuxiliaryMask|ARightAuxiliaryMask)) {
-	    devmask	|= (1<<ID_IN_AUX); 
+	    devmask	|= (1<<ID_IN_AUX);
 	    recmask	|= (1<<ID_IN_AUX);
 	    stereodevs	|= (1<<ID_IN_AUX);
     }
 
     /* check Output devices... */
     if (AOutputDestinations(audio) & AMonoIntSpeakerMask) {
-	    devmask	|= (1<<ID_OUT_INT_SPEAKER); 
+	    devmask	|= (1<<ID_OUT_INT_SPEAKER);
 	    stereodevs	|= (1<<ID_OUT_INT_SPEAKER);
     }
 
@@ -169,7 +169,7 @@ void Mixer_HPUX::setRecsrc(unsigned int newRecsrc)
 {
     long error = (long) AENoError;
     int	 Source;
-    
+
     i_recsrc = newRecsrc;
 
     Source = 0;
@@ -241,7 +241,7 @@ int Mixer_HPUX::writeVolumeToHW( int devnum, Volume vol )
     long error = 0;
     int vl = vol.getVolume(Volume::LEFT);
     int vr = vol.getVolume(Volume::RIGHT);
-    
+
     switch (devnum) {
     case ID_OUT_INT_SPEAKER:	/* AODTMonoIntSpeaker */
 printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr);
@@ -276,7 +276,7 @@ QString Mixer_HPUX::errorText(int mixer_error)
   QString l_s_errmsg;
   if (mixer_error >= HPUX_ERROR_OFFSET) {
       char errorstr[200];
-      AGetErrorText(audio, (AError) (mixer_error-HPUX_ERROR_OFFSET), 
+      AGetErrorText(audio, (AError) (mixer_error-HPUX_ERROR_OFFSET),
                 	    errorstr, sizeof(errorstr));
       printf("kmix: %s: %s\n",mixerName().data(), errorstr);
       l_s_errmsg = errorstr;

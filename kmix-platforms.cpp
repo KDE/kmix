@@ -34,13 +34,12 @@
 #endif
 
 #ifdef __linux__
+
 #ifdef ALSA
-//#warning ALSA defined
 #define ALSA_MIXER
-#else
-#define OSS_MIXER
-//#warning OSS defined
 #endif
+
+#define OSS_MIXER
 #endif
 
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__bsdi__) || defined(_UNIXWARE)
@@ -56,20 +55,71 @@
 #endif // hpux
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
+#if defined(NAS_MIXER)
+#include "mixer_nas.cpp"
+#endif
 
 #if defined(SUN_MIXER)
 #include "mixer_sun.cpp"
-#elif defined(IRIX_MIXER)
+#endif
+
+#if defined(IRIX_MIXER)
 #include "mixer_irix.cpp"
-#elif defined(ALSA_MIXER)
+#endif
+
+#if defined(ALSA_MIXER)
 #include "mixer_alsa.cpp"
-#elif defined(OSS_MIXER)
+#endif
+
+#if defined(OSS_MIXER)
 #include "mixer_oss.cpp"
-#elif defined(HPUX_MIXER)
+#endif
+
+#if defined(HPUX_MIXER)
 #include "mixer_hpux.cpp"
+#endif
+
+/*
 #else
 // We cannot handle this! I install a dummy mixer instead.
 #define NO_MIXER
 #include "mixer_none.cpp"
 #endif
+*/
 
+typedef Mixer *getMixerFunc( int device, int card );
+typedef Mixer *getMixerSetFunc( MixSet set, int device, int card );
+
+struct MixerFactory {
+    getMixerFunc *getMixer;
+    getMixerSetFunc *getMixerSet;
+};
+
+MixerFactory g_mixerFactories[] = {
+
+#if defined(NAS_MIXER)
+    { NAS_getMixer, 0 },
+#endif
+
+#if defined(SUN_MIXER)
+    { SUN_getMixer, SUN_getMixerSet },
+#endif
+
+#if defined(IRIX_MIXER)
+    { IRIX_getMixer, 0 },
+#endif
+
+#if defined(ALSA_MIXER)
+    { ALSA_getMixer, ALSA_getMixerSet },
+#endif
+
+#if defined(OSS_MIXER)
+    { OSS_getMixer, OSS_getMixerSet },
+#endif
+
+#if defined(HPUX_MIXER)
+    { HPUX_getMixer, 0 },
+#endif
+
+    { 0, 0 }
+};
