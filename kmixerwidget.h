@@ -102,6 +102,7 @@ KMixerWidget : public QWidget
    void setLabels( bool on );
    void setIcons( bool on );
    void setColors( const Colors &color );
+   void hideShowDetail(bool on);
 
    void saveConfig( KConfig *config, const QString &grp ) const;
    void loadConfig( KConfig *config, const QString &grp );

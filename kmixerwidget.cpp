@@ -31,6 +31,7 @@
 #include <qtooltip.h>
 #include <qcheckbox.h>
 #include <qbuttongroup.h>
+#include <qpushbutton.h>
 #include <qwidgetstack.h>
 #include <qmap.h>
 #include <qsize.h>
@@ -84,6 +85,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int
    } 
    else 
    {
+   		// No mixer found
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
       if ( !mixerName.isEmpty() )
@@ -110,18 +112,18 @@ KMixerWidget::createLayout()
 
    if( ! m_small )
    {
-		QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 11, 6, "FullLayout" );
+		QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 0, 1, "FullLayout" );
 
    	if( m_topLayout )
       	delete m_topLayout;
       // create main layout
 
       m_topLayout = new QVBoxLayout( this, 0, 3 );
-      m_topLayout->setMargin( KDialog::marginHint() );
+      // m_topLayout->setMargin( KDialog::marginHint() );  // !! Why should we pick up KDialog::marginHint()? - esken
 
       // Create tabs e widgetstack
       m_ioTab = new KTabWidget( this, "ioTab" );
-		m_ioTab->setMaximumSize( QSize( 32767, 250 ) );
+		//m_ioTab->setMaximumSize( QSize( 32767, 500 ) );  // !!! What is this good for ?!? - esken
 
       m_topLayout->add( m_ioTab );
 
@@ -144,6 +146,9 @@ KMixerWidget::createLayout()
    }
    else
    {
+   		// This is called for the small version (PanelApplet)
+   		// Bad. With the current design, users will not see recordable devices, e.g. PCM, CD, ...
+   		// This is because "Output" currently means: "can be recorded"
       m_oWidget = new QHBox( this, "OutputTab" );
       m_appletLayout = new QHBoxLayout( this, 0, 0 );
       m_appletLayout->add( m_oWidget );
@@ -209,14 +214,30 @@ KMixerWidget::createDeviceWidgets()
 
    if ( !m_small )
    {
+		QHBoxLayout *balanceAndDetail = new QHBoxLayout( this, 0, 8 );
+   	
    	// Create the left-right-slider
       m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
                                      this, "RightLeft" );
       m_balanceSlider->setTickmarks( QSlider::Below );
       m_balanceSlider->setTickInterval( 25 );
-      if( ! m_small )
-         m_topLayout->addWidget( m_balanceSlider );
+     // if( ! m_small ) // superfluous
+        
+        QLabel *mixerName = new QLabel(this, "mixerName");
+        mixerName->setText( m_mixer->mixerName() );
+        
+        QCheckBox *hideShowDetail = new QCheckBox(this, "hideShowDetail");
+        hideShowDetail->setChecked(true);
+        //hideShowDetail->setToggleButton(true);
+        hideShowDetail->setText( i18n("Advanced") );
+
+		balanceAndDetail->addWidget( hideShowDetail);
+		balanceAndDetail->addWidget( m_balanceSlider );
+		balanceAndDetail->addWidget( mixerName );
+		
+ 		m_topLayout->addLayout( balanceAndDetail );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
+      connect( hideShowDetail, SIGNAL(toggled(bool)), this, SLOT(hideShowDetail(bool)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
       // Add the Switch widget
@@ -233,6 +254,7 @@ KMixerWidget::createDeviceWidgets()
 void 
 KMixerWidget::updateSize()
 {
+	kdDebug() << "KMixerWidget::updateSize(): (" << layout()->minimumSize().width() << "," << layout()->minimumSize().height() << ")\n";
    layout()->activate();
    setMinimumWidth( layout()->minimumSize().width() );
    setMinimumHeight( layout()->minimumSize().height() );
@@ -270,6 +292,15 @@ KMixerWidget::setIcons( bool on )
       for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() )
          chn->dev->setIcons( on );
    }
+}
+
+void KMixerWidget::hideShowDetail(bool on) {
+	if ( on ) {
+			m_swWidget->show();
+	}
+	else {
+			m_swWidget->hide();
+	}
 }
 
 void 
@@ -458,6 +489,9 @@ KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 	}
 }
 
+/**
+ * Updates the Balance slider (GUI).
+ */
 void 
 KMixerWidget::updateBalance()
 {
