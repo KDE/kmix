@@ -8,15 +8,12 @@
  </Menu>
 </MenuBar>
 
-<ToolBar name="mainToolBar"> 
- <Action name="file_new>
- <Action name="file_save_volume"/>
- <Action name="file_close>
+<ToolBar noMerge="1" name="mainToolBar"> 
+ <Action name="file_new"/>
+ <Action name="file_close"/>
  <Seperator/>
- <Action name"options_show_menubar">
- <Action name"options_configure">
- <Seperator/>
- <Action name="file_quit">
+ <Action name="options_show_menubar"/>
+ <Action name="file_quit"/>
 </ToolBar>
 
 </kpartgui>
