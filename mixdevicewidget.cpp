@@ -64,11 +64,11 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    // global stuff
    connect( this, SIGNAL(newVolume(int, Volume)), m_mixer, SLOT(writeVolumeToHW(int, Volume) ));
    connect( this, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecsrc(int, bool)) );
-   connect( m_mixer, SIGNAL(newRecsrc()), this, SLOT(update()) );
+   connect( m_mixer, SIGNAL(newRecsrc()), SLOT(update()) );
    if( m_mixdevice->num()==m_mixer->masterDevice() )
-      connect( m_mixer, SIGNAL(newBalance(Volume)), this, SLOT(update()) );
+      connect( m_mixer, SIGNAL(newBalance(Volume)), SLOT(update()) );
 
-   connect( this, SIGNAL(rightMouseClick()), this, SLOT(contextMenu()) );
+   connect( this, SIGNAL(rightMouseClick()), SLOT(contextMenu()) );
 
    // create actions
    m_actions = new KActionCollection( this );
@@ -80,7 +80,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
        new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
 
    KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
-   a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setMuted(bool)) );
+   	connect( a, SIGNAL(toggled(bool)), SLOT(setMuted(bool)) );
 
    if (parent->isA("KMixerWidget")) {
      new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
@@ -89,7 +89,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    if( m_mixdevice->isRecordable() )
    {
       a = new KToggleAction( i18n("Set &Record Source"), 0, 0, 0, m_actions, "recsrc" );
-      a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
+      	connect( a, SIGNAL(toggled(bool)), SLOT(setRecsrc(bool)) );
    }
 
    new KAction( i18n("Define &Keys..."), 0, this, SLOT(defineKeys()), m_actions, "keys" );
@@ -207,7 +207,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       if( i>0 && isStereoLinked() ) slider->hide();
       sliders->addWidget( slider );
       m_sliders.append ( slider );
-      connect( slider, SIGNAL(valueChanged(int)), this, SLOT(volumeChange(int)) );
+      connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
    }
 
    // create channel icon
