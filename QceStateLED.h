@@ -1,3 +1,4 @@
+//-*- C++ -*-
 /* This file is part of the KDE libraries
     Copyright (C) 1997 Richard Moore (moorer@cs.man.ac.uk)
 

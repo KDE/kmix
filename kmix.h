@@ -97,6 +97,8 @@ private:
   QPopupMenu	*Mhelp;
   KMenuBar	*mainmenu;
   QPopupMenu	*Mbalancing;
+  QLabel	*i_lbl_infoLine;
+  QLabel	*i_lbl_setNum;
 
   QSlider	*LeftRightSB;
   QPoint        KCMpopup_point;

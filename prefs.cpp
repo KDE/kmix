@@ -2,7 +2,7 @@
  *              KMix -- KDE's full featured mini mixer
  *
  *
- *              Copyright (C) 1996-98 Christian Esken
+ *              Copyright (C) 1996-2000 Christian Esken
  *                        esken@kde.org
  *
  * This program is free software; you can redistribute it and/or
@@ -127,24 +127,12 @@ void Preferences::createChannelConfWindow(QWidget *p)
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
     // 1. line edit
     QLineEdit *qle;
-#if 0
-    qle->setEnabled(false);
-    l->addWidget(qle, lay_i, 0); 
-
-    qlb = new  QLabel(mdev->name(), grpbox, mdev->name());
-    qlb->setEnabled(false);
-    l->addWidget(qlb, lay_i, 0); 
-#else
-
 #if QT_VERSION >= 200
     qle = new QLineEdit(mdev->name(), grpbox, mdev->name().ascii());
 #else
     qle = new QLineEdit(grpbox, (const char*)(mdev->name()));
 #endif
-    //qle->setPalette(qpl);  // Use a palette, where one can read the text
-    //qle->setEnabled(false);
     l->addWidget(qle, lay_i, 0); 
-#endif
 
     // 2. check box  (Show)
     QCheckBox *qcb = new QCheckBox(grpbox);

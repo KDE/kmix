@@ -2,7 +2,7 @@
  *              KMix -- KDE's full featured mini mixer
  *
  *
- *              Copyright (C) 1996-99 Christian Esken
+ *              Copyright (C) 1996-2000 Christian Esken
  *                        esken@kde.org
  *
  * This program is free software; you can redistribute it and/or
@@ -47,6 +47,7 @@ static char rcsid[]="$Id$";
 #include <qlabel.h>
 #include <qaccel.h>
 #include <qmessagebox.h>
+#include <qtooltip.h>
 
 KApplication   *globalKapp;
 KMix	       *kmix;
@@ -202,6 +203,9 @@ KMix::KMix(int mixernum, int SetNum)
 
 
   createWidgets();
+  if (SetNum > 0) {
+    i_lbl_setNum->setText( QString(" %1 ").arg(SetNum));
+  }
   placeWidgets();
 
   prefDL     = new Preferences(NULL, this->mix);
@@ -263,6 +267,24 @@ void KMix::createWidgets()
   // Create Menu
   createMenu();
   setMenu(mainmenu);
+
+  // Create the info line
+  i_lbl_infoLine = new QLabel(Container) ;
+  i_lbl_infoLine->setText(mix->mixerName());
+  QFont f10("Helvetica", 10, QFont::Normal);
+  i_lbl_infoLine->setFont( f10 );
+  i_lbl_infoLine->resize(i_lbl_infoLine->sizeHint());
+  //  i_lbl_infoLine->setAlignment(QLabel::AlignRight);
+  QToolTip::add( i_lbl_infoLine, mix->mixerName() );
+
+  i_lbl_setNum =  new QLabel(Container);
+  i_lbl_setNum->setText("   "); // set a dummy Text, so that the height() is valid.
+  QFont f8("Helvetica", 10, QFont::Bold);
+  i_lbl_setNum->setFont( f8 );
+  i_lbl_setNum->setBackgroundMode(PaletteLight);
+  i_lbl_setNum->resize( i_lbl_setNum->sizeHint());
+  QToolTip::add( i_lbl_setNum, i18n("Shows the current set number"));
+
   // Create Sliders (Volume indicators)
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
@@ -384,6 +406,7 @@ void KMix::placeWidgets()
   else
     mainmenu->hide();
 
+  iy = i_lbl_setNum->height();
 
   bool first = true;
   MixDevice *MixPtr = mix->First;
@@ -419,6 +442,8 @@ void KMix::placeWidgets()
 
     QSize VolSBsize = qs->sizeHint();
     qs->setValue(100-MixPtr->Left->volume);
+
+
     qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
     qs->show();
 
@@ -502,8 +527,7 @@ void KMix::placeWidgets()
     int l_i_newWidth;
     l_i_newWidth = ix - old_x - 6;
     
-    int l_i_xpos, l_i_height; //l_i_width, l_i_height;
-    //!!!    l_i_width  = l_KLed_state->width();
+    int l_i_xpos, l_i_height;
     l_i_height = l_KLed_state->height();
 
     l_i_xpos  = ix + old_x;
@@ -524,6 +548,23 @@ void KMix::placeWidgets()
   ix += 4;
   iy = qsMaxY +4;
   LeftRightSB->setGeometry(0,iy,ix,LeftRightSB->sizeHint().height());
+
+
+  // Size the set number.
+  i_lbl_setNum->resize( i_lbl_setNum->sizeHint());
+  // Now I know how many space the set number needs.
+  // The rest is going to the infoLine Label
+  QSize l_qsz_infoWidth = i_lbl_infoLine->sizeHint();
+
+  int l_i_allowedWidth = ix - i_lbl_setNum->width();
+  if ( l_i_allowedWidth < 1) {
+    l_i_allowedWidth = 1;
+  }
+  if ( l_i_allowedWidth > l_qsz_infoWidth.width() ) {
+    l_i_allowedWidth = l_qsz_infoWidth.width();
+  }
+  i_lbl_infoLine->resize(l_i_allowedWidth, i_lbl_infoLine->height());
+  i_lbl_infoLine->move(ix - i_lbl_infoLine->width(),0);
 
   iy+=LeftRightSB->height();
   Container->setFixedSize( ix, iy );
@@ -546,6 +587,7 @@ void KMix::slotReadSet(int num)
 {
   mix->Set2Set0(num,true);
   mix->Set0toHW();
+  i_lbl_setNum->setText( QString(" %1 ").arg(num));
   placeWidgets();
 }
 
