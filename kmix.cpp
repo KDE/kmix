@@ -670,17 +670,17 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_4), this,  SLOT(slotWriteSet4()));
 
 
-  QPopupMenu *l_m_readSet = new QPopupMenu;
-  l_m_readSet->insertItem(i18n("Profile &1")	, this, SLOT(slotReadSet1()) , Key_F1);
-  l_m_readSet->insertItem(i18n("Profile &2")	, this, SLOT(slotReadSet2()) , Key_F2);
-  l_m_readSet->insertItem(i18n("Profile &3")	, this, SLOT(slotReadSet3()) , Key_F3);
-  l_m_readSet->insertItem(i18n("Profile &4")	, this, SLOT(slotReadSet4()) , Key_F4);
+  i_m_readSet = new QPopupMenu;
+  i_m_readSet->insertItem(i18n("Profile &1")	, this, SLOT(slotReadSet1()) , Key_1);
+  i_m_readSet->insertItem(i18n("Profile &2")	, this, SLOT(slotReadSet2()) , Key_2);
+  i_m_readSet->insertItem(i18n("Profile &3")	, this, SLOT(slotReadSet3()) , Key_3);
+  i_m_readSet->insertItem(i18n("Profile &4")	, this, SLOT(slotReadSet4()) , Key_4);
 
-  QPopupMenu *l_m_writeSet = new QPopupMenu;
-  l_m_writeSet->insertItem(i18n("Profile &1")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F1);
-  l_m_writeSet->insertItem(i18n("Profile &2")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F2);
-  l_m_writeSet->insertItem(i18n("Profile &3")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F3);
-  l_m_writeSet->insertItem(i18n("Profile &4")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F4);
+  i_m_writeSet = new QPopupMenu;
+  i_m_writeSet->insertItem(i18n("Profile &1")	, this, SLOT(slotWriteSet1()) , CTRL+Key_1);
+  i_m_writeSet->insertItem(i18n("Profile &2")	, this, SLOT(slotWriteSet1()) , CTRL+Key_2);
+  i_m_writeSet->insertItem(i18n("Profile &3")	, this, SLOT(slotWriteSet1()) , CTRL+Key_3);
+  i_m_writeSet->insertItem(i18n("Profile &4")	, this, SLOT(slotWriteSet1()) , CTRL+Key_4);
 
   //int QMenuData::insertItem ( const QString & text, QPopupMenu * popup, int id=-1, int index=-1 )
   Mfile = new QPopupMenu;
@@ -693,8 +693,8 @@ void KMix::createMenu()
 
   Mfile->insertItem( i18n("&Options...")	, this, SLOT(showOptsCB()) );
   Mfile->insertSeparator();
-  Mfile->insertItem( i18n("Restore Profile")	, l_m_readSet );
-  Mfile->insertItem( i18n("Store Profile")	, l_m_writeSet);
+  Mfile->insertItem( i18n("Restore Profile")	, i_m_readSet );
+  Mfile->insertItem( i18n("Store Profile")	, i_m_writeSet);
   Mfile->insertSeparator();
   Mfile->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
@@ -803,6 +803,9 @@ QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
   else
     Mlocal->insertItem( i18n("&Show Menubar") , this, SLOT(hideMenubarCB()) );
   Mlocal->insertItem( i18n("&Options...")        , this, SLOT(showOptsCB()) );
+  Mlocal->insertSeparator();
+  Mlocal->insertItem( i18n("Restore Profile")	, i_m_readSet );
+  Mlocal->insertItem( i18n("Store Profile")	, i_m_writeSet);
   Mlocal->insertSeparator();
   Mlocal->insertItem( i18n("&About")           , this, SLOT(launchAboutCB()) );
   Mlocal->insertItem( i18n("&Help")           , this, SLOT(launchHelpCB()) );

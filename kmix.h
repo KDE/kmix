@@ -98,11 +98,16 @@ private:
   void setBalance(int left, int right);
   QWidget	*Container;
 
+  KMenuBar	*mainmenu;
+
   QPopupMenu	*Mfile;
   QPopupMenu	*Moptions;
   QPopupMenu	*Mhelp;
-  KMenuBar	*mainmenu;
   QPopupMenu	*Mbalancing;
+  QPopupMenu	*i_m_readSet;
+  QPopupMenu	*i_m_writeSet;
+
+
   QLabel	*i_lbl_infoLine;
   QLabel	*i_lbl_setNum;
 
