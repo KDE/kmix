@@ -42,7 +42,6 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kglobalaccel.h>
-#include <kaccelaction.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -231,7 +230,8 @@ void KMixerWidget::saveConfig( KConfig *config, QString grp )
       if (keys) {
 	 QString devgrpkeys;
 	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
-	 keys->actions().writeActions(devgrpkeys,config);
+	 keys->setConfigGroup(devgrpkeys);
+	 keys->writeSettings(config);
       }
       n++;
    }
@@ -259,7 +259,8 @@ void KMixerWidget::loadConfig( KConfig *config, QString grp )
 	 QString devgrpkeys;
 	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
 
-	 keys->actions().readActions(devgrpkeys,config);
+	 keys->setConfigGroup(devgrpkeys);
+	 keys->writeSettings(config);
 	 keys->updateConnections();
       }
 
