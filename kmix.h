@@ -83,7 +83,7 @@ KMixWindow : public KMainWindow
    void showHelp();
    void showAbout();
    void toggleMenuBar();
-   void loadVolumes();
+   //void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void stopVisibilityUpdates();

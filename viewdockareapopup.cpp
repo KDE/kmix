@@ -40,9 +40,6 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _layoutMDW = new QHBoxLayout(this);
     _layoutMDW->setMargin(10);
     init();
-
-    // !! mmmh, how to do this ??? setFrameStyle(QFrame::PopupPanel);
-    // !! mmmh, how to do this ??? setMargin(KDialog::marginHint());
 }
 
 ViewDockAreaPopup::~ViewDockAreaPopup() {

@@ -310,6 +310,7 @@ KMixWindow::updateDocking()
 	{
 
 		// create dock widget
+                // !! This should be a View in the future
 		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget", m_volumeWidget );
 
 		// create RMB menu
@@ -368,17 +369,14 @@ KMixWindow::saveConfig()
    config->writeEntry( "startkdeRestore", m_onLogin );
 
    // save mixer widgets
-   QStringList devices;
    for ( KMixerWidget *mw = m_mixerWidgets.first(); mw != 0; mw = m_mixerWidgets.next() )
    {
 		QString grp;
 		grp.sprintf( "%i", mw->id() );
-		devices << grp;
 		mw->saveConfig( config, grp );
    }
 
    config->setGroup(0);
-   config->writeEntry( "Devices", devices );
 }
 
 void
@@ -426,6 +424,8 @@ KMixWindow::initMixerWidgets()
 	int id=0;
 	Mixer *mixer;
 
+	// Attention!! If m_mixers is empty, we behave stupid. We don't show nothing and there
+        //             is not even a context menu.
 	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
 	{
 	    //kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
@@ -459,9 +459,7 @@ KMixWindow::initMixerWidgets()
 
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
-		// !!!
-		//mw->addActionToPopup( actionCollection()->action("options_show_menubar") );
-		//toggleMenuBar
+		// !! I am still not sure whether this works 100% reliably - chris
 		mw->show();
 	}
 
@@ -521,10 +519,12 @@ KMixWindow::showAbout()
 }
 
 /**
- * Loads the volumes of all mixers from kmixctrl. In other words:
+ * Loads the volumes of all mixers from kmixctrlrc.
+ * In other words:
  * Restores the default voumes as stored via saveVolumes() or the
- * Mixer control center module..
+ * execution of "kmixctrl --save"
  */
+/* Currently this is not in use
 void
 KMixWindow::loadVolumes()
 {
@@ -535,7 +535,7 @@ KMixWindow::loadVolumes()
 	}
 	delete cfg;
 }
-
+*/
 
 /**
  * Stores the volumes of all mixers  Can be restored via loadVolumes() or

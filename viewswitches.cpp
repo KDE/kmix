@@ -123,7 +123,7 @@ void ViewSwitches::refreshVolumeLevels() {
 
 /**
    This implementation makes sure the BackgroundMode's are properly updated
-   with teir alternating colors after hiding/showing channels.
+   with their alternating colors after hiding/showing channels.
 */
 void ViewSwitches::configurationUpdate() {
     bool backGoundModeToggler = true;

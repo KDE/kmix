@@ -116,8 +116,5 @@ void MixDeviceWidget::mousePressEvent( QMouseEvent *e )
    }
 }
 
-QSize MixDeviceWidget::sizeHint() const {
-    return QWidget::sizeHint();
-}
 
 #include "mixdevicewidget.moc"

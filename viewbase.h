@@ -36,7 +36,6 @@ public:
     // of the passed mixset.
     // After that the subclass must be prepared for
     // being fed MixDevice's via the add() method.
-    // the count() and advice() mehtods
     virtual void setMixSet(MixSet *mixset);
 
     // Returns the number of accepted MixDevice's from setMixerSet(). This is
@@ -84,6 +83,8 @@ public:
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
      * _mdws[i] is the Widget for the MixDevice _mixSet[i].
+     * Hint: The new ViewSurround class shows that a 1:1 relationship does not work in a general scenario.
+     *       I actually DID expect this. The solution is unclear yet, probably there will be a virtual mapper method.
      */
     QPtrList<QWidget> _mdws; // this obsoletes the former Channel class
 

@@ -18,38 +18,24 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <iostream>
+//#include <iostream>
 
-#include <qstring.h>
-#include <qlayout.h>
+// Qt
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <qlayout.h>
 #include <qslider.h>
+#include <qstring.h>
 #include <qtooltip.h>
-#include <qcheckbox.h>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
-#include <qwidgetstack.h>
-#include <qmap.h>
-#include <qsize.h>
-#include <qhbox.h>
-#include <qvbox.h>
 
-#include <kaction.h>
-#include <kcombobox.h>
+// KDE
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kdialog.h>
 #include <kglobal.h>
-#include <kglobalaccel.h>
 #include <klocale.h>
-#include <kmessagebox.h>
-#include <kpopupmenu.h>
 #include <ktabwidget.h>
 
 
 // KMix
-#include "mdwslider.h"
 #include "mixdevicewidget.h"
 #include "kmixerwidget.h"
 #include "kmixtoolbox.h"
@@ -60,6 +46,14 @@
 #include "viewsurround.h"
 
 
+/**
+   This widget is embedded in the KMix Main window. Each Hardware Mixer is visualized by one KMixerWidget.
+   KMixerWidget contains
+   (a) a headline where you can change Mixer's (if you got more than one Mixer)
+   (b) a Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
+   (c) A balancing slider
+   (d) A label containg the mixer name
+*/   
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
                             MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
@@ -84,6 +78,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int
    else
    {
        // No mixer found
+       // !! Fix this: This is actually never shown!
        QBoxLayout *layout = new QHBoxLayout( this );
        QString s = i18n("Invalid mixer");
        if ( !mixerName.isEmpty() )
@@ -98,6 +93,9 @@ KMixerWidget::~KMixerWidget()
 {
 }
 
+/**
+ * Creates the widgets as described in the KMixerWidget constructor
+ */
 void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 {
     // delete old objects
@@ -111,7 +109,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     // create main layout
     m_topLayout = new QVBoxLayout( this, 0, 3,  "m_topLayout" );
 
-    // Create tabs of the input + output widgetstack
+    // Create tabs of input + output + [...]
     m_ioTab = new KTabWidget( this, "ioTab" );
     m_topLayout->add( m_ioTab );
 
@@ -164,7 +162,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     connect( m_balanceSlider, SIGNAL(valueChanged(int)), _mixer, SLOT(setBalance(int)) );
     QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
-    // --- "MenuBar" toggling from the various context menus ---
+    // --- "MenuBar" toggling from the various View's ---
     connect( _oWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
     connect( _iWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
     if (_swWidget != 0 )
@@ -273,32 +271,6 @@ void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
     } // for the 3 tabs
 }
 
-/**
- * Updates the Balance slider (GUI).
- */
-/*
-void
-KMixerWidget::updateBalance()
-{
-  MixDevice *md = _mixer->mixDeviceByType( 0 );
-  if (!md) return;
-  int left = md->getVolume().getVolume(Volume::LEFT);
-  int right= md->getVolume().getVolume(Volume::RIGHT);
-
-
-  int value = 0;
-  if ( left != right ) {
-    int refvol = left > right ? left : right;
-    if (left > right)
-      value = (100*right) / refvol - 100;
-    else
-      value = -((100*left) / refvol - 100);
-  }
-  m_balanceSlider->blockSignals( true );
-  m_balanceSlider->setValue( value );
-  m_balanceSlider->blockSignals( false );
-}
-*/
 
 void KMixerWidget::toggleMenuBarSlot() {
     emit toggleMenuBar();

@@ -70,7 +70,6 @@ public:
     virtual void setIcons( bool value );
     virtual void setLabeled( bool value );
     virtual void setMutedColors( QColor high, QColor low, QColor back );
-    QSize sizeHint() const;
 
     virtual KGlobalAccel *keys(void);
 
