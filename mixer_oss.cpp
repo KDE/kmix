@@ -20,37 +20,26 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+
 // Linux section, by Christian Esken
 #if defined(linux)
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
 #include <sys/soundcard.h>
 // FreeBSD section, according to Sebestyen Zoltan
 #elif defined(__FreeBSD__)
-#include <fcntl.h>
-#include "sys/ioctl.h"
-#include <sys/types.h>
 #include "machine/soundcard.h"
 // NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
 #elif defined(__NetBSD__)
-#include <fcntl.h>
-#include "sys/ioctl.h"
-#include <sys/types.h>
 #include <soundcard.h>
 // BSDI section, according to <tom@foo.toetag.com>
 #elif defined()
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
 #include <sys/soundcard.h>
 // UnixWare includes
 #elif defined(_UNIXWARE)
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
 #include <sys/soundcard.h>
 #endif
 
@@ -154,14 +143,13 @@ int Mixer_OSS::openMixer()
             writeVolumeToHW( idx, md->getVolume() );
           }
 
-//  #ifdef SOUND_MIXER_INFO
       struct mixer_info l_mix_info;
       if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1)
         {
           m_mixerName = l_mix_info.name;
         }
       else
-//  #endif /* SOUND_MIXER_INFO */
+
         m_mixerName = "OSS Audio Mixer";
 
       m_isOpen = true;
