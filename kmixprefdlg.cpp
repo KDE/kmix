@@ -41,26 +41,20 @@ KMixPrefDlg::KMixPrefDlg()
    m_generalTab = new QWidget( this );	
    QBoxLayout *layout = new QVBoxLayout( m_generalTab );	
 
-   m_dockingChk = new QCheckBox( i18n("Allow &docking"), m_generalTab );
+   m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
    layout->addWidget( m_dockingChk );
 
-   m_startHiddenChk = new QCheckBox( i18n("&Start hidden"), m_generalTab );
+   m_startHiddenChk = new QCheckBox( i18n("&Hide window on startup"), m_generalTab );
    layout->addWidget( m_startHiddenChk );
 
-   m_hideOnCloseChk = new QCheckBox( i18n("&Hide window on close"), m_generalTab );
+   m_hideOnCloseChk = new QCheckBox( i18n("Only &Hide window with close button"), m_generalTab );
    layout->addWidget( m_hideOnCloseChk );
 
-   m_showTicks = new QCheckBox( i18n("&Tickmarks"), m_generalTab );
+   m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );
 
    m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
    layout->addWidget( m_showLabels );
-
-   m_loadVolumes = new QCheckBox( i18n("L&oad mixer on startup"), m_generalTab );
-   layout->addWidget( m_loadVolumes );
-
-   m_saveVolumes = new QCheckBox( i18n("S&ave mixer on shutdown"), m_generalTab );
-   layout->addWidget( m_saveVolumes );
 
    addTab( m_generalTab, i18n("&General") );
 

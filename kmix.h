@@ -74,8 +74,6 @@ class KMixApp : public KTMainWindow
    void toggleMenuBar();
    void closeMixer();
    void newMixer();
-   void saveVolumes();
-   void loadVolumes();;
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:
@@ -89,8 +87,6 @@ class KMixApp : public KTMainWindow
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
-   bool m_saveVolumes;
-   bool m_loadVolumes;
 
    QList<Mixer> m_mixers;
    QList<KMixerWidget> m_mixerWidgets;

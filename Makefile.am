@@ -1,7 +1,7 @@
 SUBDIRS = control pics
 INCLUDES= $(all_includes)
 
-bin_PROGRAMS = kmix
+bin_PROGRAMS = kmix kmixctrl
 lib_LTLIBRARIES = libkmixapplet.la
 
 
@@ -17,6 +17,9 @@ kmix_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 kmix_LDADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
+kmixctrl_SOURCES = kmixctrl.cpp channel.cpp mixer.cpp volume.cpp
+kmixctrl_LDADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmixctrl_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 libkmixapplet_la_METASOURCES=AUTO
 libkmixapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp mixer.cpp \

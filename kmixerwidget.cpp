@@ -147,6 +147,7 @@ void KMixerWidget::updateDevices( bool vert )
    {      
       m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
 				  this, "RightLeft" );
+      m_balanceSlider->setTickmarks( QSlider::Below );
       m_topLayout->addWidget( m_balanceSlider );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );

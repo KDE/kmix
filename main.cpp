@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 			 APP_VERSION, description, KAboutData::License_GPL,
 			 "(c) 2000 by Stefan Schimanski");
 
-   aboutData.addAuthor("Stefan Schimanski", "GUI", "1Stein@gmx.de");
+   aboutData.addAuthor("Stefan Schimanski", 0, "1Stein@gmx.de");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
    aboutData.addAuthor("Paul Kendall", "SGI Port", "paul@orion.co.nz");
    aboutData.addAuthor("Sebestyen Zoltan", "*BSD fixes", "szoli@digo.inf.elte.hu");
