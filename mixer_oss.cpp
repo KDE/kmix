@@ -55,7 +55,6 @@
 #endif
 
 #include "mixer_oss.h"
-#include "mixdevice.h"
 #include <klocale.h>
 
 

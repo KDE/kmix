@@ -169,7 +169,7 @@ void MixDeviceWidget::setIcon( int icon )
 
 void MixDeviceWidget::setStereoLinked(bool value)
 {
-   m_mixdevice->setStereoLinked( value );
+   m_split = !value;
    QSlider* slider;
    for( slider = m_sliders.at( 1 ); slider != 0 ; slider = m_sliders.next() )
       value ? slider->hide() : slider->show();
@@ -177,7 +177,7 @@ void MixDeviceWidget::setStereoLinked(bool value)
 
 void MixDeviceWidget::toggleStereoLinked()
 {
-   setStereoLinked( !m_mixdevice->isStereoLinked() );
+   setStereoLinked( !m_split );
 }
 
 void MixDeviceWidget::setMuted(bool value)
@@ -249,7 +249,7 @@ void MixDeviceWidget::volumeChange( int )
    {
       int svol = slider->maxValue() - slider->value();
       index = m_sliders.at();
-      if( index == 0 && m_mixdevice->isStereoLinked() )
+      if( index == 0 && !m_split )
       {
 	 vol.setAllVolumes( svol );
 	 break;
@@ -270,7 +270,7 @@ void MixDeviceWidget::setVolume( int channel, int vol )
 
 void MixDeviceWidget::setVolume( Volume vol )
 {
-   if( m_mixdevice->isStereoLinked() )
+   if( !m_split )
    {
       int maxvol = 0;
       for( int i = 0; i < vol.channels(); i++ )

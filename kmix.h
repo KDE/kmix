@@ -29,12 +29,14 @@
 
 // include files for Qt
 #include <qstrlist.h>
+#include <qtabwidget.h>
 
 // include files for KDE 
 #include <kapp.h>
 #include <ktmainwindow.h>
 #include <kaccel.h>
 #include <kaction.h>
+#include <kiconloader.h>
 
 #include "mixer.h"
 
@@ -42,6 +44,7 @@ class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
+
 
 class KMixApp : public KTMainWindow
 {
@@ -56,10 +59,11 @@ class KMixApp : public KTMainWindow
    void sessionLoad( bool sessionConfig );
 
    void initMenuBar();
+   void initToolBar();
    void initMixer();
-   void initView();
    void initPrefDlg();
    void initActions();
+   void initWidgets();
 
    void updateDocking();	
 
@@ -71,7 +75,9 @@ class KMixApp : public KTMainWindow
    void quit();
    void showSettings();
    void showContextMenu();
-   void toggleMenuBar();	
+   void toggleMenuBar();
+   void closeMixer();
+   void newMixer();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:
@@ -88,6 +94,8 @@ class KMixApp : public KTMainWindow
    QList<Mixer> m_mixers;
    QList<KMixerWidget> m_mixerWidgets;
 
+   QTabWidget *m_tab;
+   QWidget *m_buttons;
    KMixPrefDlg *m_prefDlg;	
    KMixDockWidget *m_dockWidget;
 
@@ -95,12 +103,18 @@ class KMixApp : public KTMainWindow
    {
 	 KAction *Quit;
 	 KAction *Settings;
+	 KAction *New;
+	 KAction *Close;
 	 KToggleAction *ToggleMenuBar;
 	 KAction *Show;
 	 KAction *Hide;
 	 KAction *Help;
 	 KAction *About;
+	 KActionSeparator *Separator;
    } m_actions;
+
+   void insertMixerWidget( KMixerWidget *mw );
+   void removeMixerWidget( KMixerWidget *mw );
 };
  
 #endif // KMIX_H

@@ -34,20 +34,29 @@
 #include <kcombobox.h>
 
 #include <kdebug.h>
+#include <kglobal.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
-#include "mixdevice.h"
 #include "mixdevicewidget.h"
 
-KMixerWidget::KMixerWidget( MixSet *mixSet, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixSet(mixSet)
+struct Channel
+{
+      bool show;
+      bool split;
+};
+
+/********************** KMixerWidget *************************/
+ 
+KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
+   : QWidget( parent, name ), m_mixer(mixer), m_name(mixer->mixerName())
 {
    cerr << "KMixerWidget::KMixerWidget" << endl;
-   
-   m_mixer = m_mixSet->mixer();
+
+   m_channels.setAutoDelete( true );
    kDebugInfo("mixer=%x", m_mixer);
    
    // Create update timer
@@ -58,9 +67,15 @@ KMixerWidget::KMixerWidget( MixSet *mixSet, QWidget * parent, const char * name 
    // Create mixer device widgets
    m_topLayout = new QVBoxLayout( this, 0, 3 );
    QBoxLayout* layout = new QHBoxLayout( m_topLayout );   
-   MixDevice *mixDevice = m_mixSet->first();
-   for ( ; mixDevice != 0; mixDevice = m_mixSet->next())
+   MixSet mixSet = m_mixer->getMixSet();
+   MixDevice *mixDevice = mixSet.first();
+   for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
+      Channel *chn = new Channel;
+      chn->split = false;
+      chn->show = true;
+      m_channels.append( chn );
+
       cerr << "mixDevice = " << mixDevice << endl;
       MixDeviceWidget *mdw =  new MixDeviceWidget( mixDevice, true, true,
 						   this, mixDevice->name() );
@@ -93,24 +108,10 @@ KMixerWidget::~KMixerWidget()
    if (m_timer) delete m_timer;
 }
 
-QString KMixerWidget::mixerName()
-{
-   return m_mixer->mixerName();
-}
-
 void KMixerWidget::updateSize()
 {
    setFixedWidth( m_topLayout->minimumSize().width() );
    setMinimumHeight( m_topLayout->minimumSize().height() );
-}
-
-void KMixerWidget::applyPrefs( KMixPrefWidget *prefWidget )
-{
-   updateSize();
-}
-
-void KMixerWidget::initPrefs( KMixPrefWidget *prefWidget )
-{
 }
 
 void KMixerWidget::setTicks( bool on )
@@ -128,117 +129,57 @@ void KMixerWidget::setBalance( int value )
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )
-      emit rightMouseClick();
-}
-
-void KMixerWidget::sessionSave( bool sessionConfig )
-{
-}
-
-void KMixerWidget::sessionLoad( bool sessionConfig )
-{
-}
-
-
-/********************************* KMixPrefWidget *****************************/
-
-KMixerPrefWidget::KMixerPrefWidget( KMixerWidget* mixerWidget,
-				    QWidget *parent, const char *name )
-   : QWidget( parent, name )
-{
-   m_mixerWidget = mixerWidget;
-   m_layout = new QVBoxLayout( this, 3, 3 );
-   Mixer *mix = m_mixerWidget->m_mixer;
-	
-   // Add mixer name
-   QLabel *mixerNameLabel = new  QLabel( mix->mixerName(), this);
-   m_layout->addWidget(mixerNameLabel);
-
-   // Add set selection Combo Box
-   QBoxLayout *setLayout = new QHBoxLayout( m_layout, 3 );
-   KComboBox *setSelectCombo = new KComboBox( this );
-
-   MixSetList sets = mix->getSets();
-   for (MixSet *set=sets.first(); set!=0; set=sets.next())
    {
-      setSelectCombo->insertItem( set->name() );
-   }
-
-   setLayout->addWidget( setSelectCombo );
-
-   QPushButton *add = new QPushButton( i18n("Add"), this );
-   QPushButton *remove = new QPushButton( i18n("Remove"), this );
-   setLayout->addWidget( add );
-   setLayout->addWidget( remove );
-  
-   // Channel selection box
-   QGroupBox *box = new QGroupBox( i18n("Mixer channel setup"), this );
-   m_layout->addWidget( box );
-
-   QGridLayout *grid = new QGridLayout( box, 1, 3, 5 );
-   int line = 0;
-   grid->addRowSpacing( line, 10 );
-   grid->setRowStretch( line++, 0 );
-
-   QLabel *label = new QLabel( i18n("Device"), box );
-   grid->addWidget( label, line, 0 );
-
-   label = new QLabel( i18n("Show"), box );
-   grid->addWidget( label, line, 1 );
-
-   label = new QLabel( i18n("Split"), box );
-   grid->addWidget( label, line, 2 );
-
-   grid->setRowStretch( line++, 0 );
-   grid->setRowStretch( line++, 1 );
-	
-   MixDevice *mixPtr;
-   for ( unsigned int devNum = 0; devNum<mix->size(); devNum++ )
-   {
-      mixPtr = (*mix)[devNum];
-
-      // 1. line edit
-      QLineEdit *devNameEdt;
-      devNameEdt = new QLineEdit(mixPtr->name(), box, mixPtr->name().ascii());
-      grid->addWidget(devNameEdt, line, 0);
-
-      // 2. check box  (Show)
-      QCheckBox *showChk = new QCheckBox( box );
-      grid->addWidget(showChk, line, 1);
-
-#if 0 // remove soon
-#warning This will be removed as soon as possible
-      if (MixPtr->disabled())
-	 showChk->setChecked(false);
-      else
-	 showChk->setChecked(true);
-#endif
-
-      // 3. check box  (Split)
-      QCheckBox *splitChk;
-      if (mixPtr->isStereo()) {
-	 splitChk = new QCheckBox( box );
-
-#if 0 // remove soon
-#warning This will be removed as soon as possible
-	 if (MixPtr->stereoLinked() )
-	    splitChk->setChecked(false);
-	 else
-	    splitChk->setChecked(true);
-#endif
-
-	 grid->addWidget( splitChk, line, 2);
-      }
-      else
-	 splitChk = NULL;
-
-      grid->setRowStretch(line++, 0);
-      grid->setRowStretch(line++, 1);
-
-      m_channels.append(new ChannelSetup(mixPtr->num(), devNameEdt, showChk, splitChk));
+      rightMouseClicked();
    }
 }
 
-KMixerPrefWidget::~KMixerPrefWidget()
+void KMixerWidget::rightMouseClicked()
 {
+}
+
+void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
+{
+   KConfig* config = KGlobal::config();
+   config->setGroup( grp );
+
+   config->writeEntry( "devs", m_channels.count() );
+   config->writeEntry( "name", m_name );
+
+   int n=0;
+   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
+   {
+      QString devgrp;
+      devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
+      config->setGroup( devgrp );
+
+      config->writeEntry( "split", chn->split );
+      config->writeEntry( "show", chn->show );
+
+      n++;
+   }
+}
+
+void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
+{
+   KConfig* config = KGlobal::config();
+   config->setGroup( grp );
+   
+   int num = config->readNumEntry("devs", 0);   
+
+   QString name = config->readEntry("name", QString::null );
+   if ( !name.isEmpty() ) m_name = name;
+
+   int n=0;
+   for (Channel *chn=m_channels.first(); chn!=0 && n<num; chn=m_channels.next())
+   {
+      QString devgrp;
+      devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
+      config->setGroup( devgrp );
+      
+      chn->split = config->readBoolEntry("split", false);
+      chn->show = config->readBoolEntry("show", true);
+
+      n++;
+   }
 }

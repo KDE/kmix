@@ -38,56 +38,58 @@ class MixDevice;
 
 class MixDeviceWidget : public QWidget
 {
-  Q_OBJECT
+      Q_OBJECT
 
-public:
+   public:
 
-  MixDeviceWidget( MixDevice* md, bool showMuteLED, bool showRecordLED,
-		   QWidget* parent = 0, const char* name = 0);
-  ~MixDeviceWidget();
+      MixDeviceWidget( MixDevice* md, bool showMuteLED, bool showRecordLED,
+		       QWidget* parent = 0, const char* name = 0);
+      ~MixDeviceWidget();
 
-  MixDevice* mixDevice() const { return m_mixdevice; };
+      MixDevice* mixDevice() const { return m_mixdevice; };
 
-  bool eventFilter( QObject*, QEvent* );
+      bool eventFilter( QObject*, QEvent* );
 
-public slots:
-  void setRecsrc(bool value);
-  void setDisabled(bool value);
-  void setMuted(bool value);
-	void setUnmuted(bool value) { setMuted( !value ); };
-  void setStereoLinked(bool value);
+   public slots:
+      void setRecsrc(bool value);
+      void setDisabled(bool value);
+      void setMuted(bool value);
+      void setUnmuted(bool value) { setMuted( !value ); };
+      void setStereoLinked(bool value);
 
-  void toggleRecsrc();
-  void toggleMuted();
-  void toggleStereoLinked();
+      void toggleRecsrc();
+      void toggleMuted();
+      void toggleStereoLinked();
 
-  void setVolume( int channel, int volume );
-  void setVolume( Volume volume );
+      void setVolume( int channel, int volume );
+      void setVolume( Volume volume );
 
-  void setIcon( int icontype );
+      void setIcon( int icontype );
 
-  void updateSliders();
-  void updateTicks( bool );
-  void updateRecsrc();
+      void updateSliders();
+      void updateTicks( bool );
+      void updateRecsrc();
 
-private slots:
-  void volumeChange( int );
+   private slots:
+      void volumeChange( int );
 
-signals:
-  void newVolume( int num, Volume volume );
-  void newRecsrc( int num, bool on );
-	void rightMouseClick();
+   signals:
+      void newVolume( int num, Volume volume );
+      void newRecsrc( int num, bool on );
+      void rightMouseClick();
 
-private:
-  MixDevice *m_mixdevice;
-  QList<QSlider> m_sliders;
+   private:
+      MixDevice *m_mixdevice;
+      QList<QSlider> m_sliders;
+      bool m_split;
+      bool m_show;
 
-  QLabel *m_iconLabel;
-  KLedButton *m_muteLED;
-  KLedButton *m_recordLED;
-  QPopupMenu *m_popupMenu;
+      QLabel *m_iconLabel;
+      KLedButton *m_muteLED;
+      KLedButton *m_recordLED;
+      QPopupMenu *m_popupMenu;
 
-  void mousePressEvent( QMouseEvent *e );
+      void mousePressEvent( QMouseEvent *e );
 };
 
 

@@ -31,7 +31,6 @@
 #include <qlist.h>
 
 #include "volume.h"
-#include "mixdevice.h"
 
 /*
   I am using a fixed MAX_MIXDEVS #define here.
@@ -49,6 +48,58 @@
 
 class Volume;
 
+class MixDevice
+{
+   public:
+
+      // For each ChannelType a special icon exists
+      enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
+			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME };
+
+      MixDevice(int num, Volume vol, bool recordable,
+		QString name, ChannelType type = UNKNOWN );
+      ~MixDevice() {};
+
+      int num() const   	         { return m_num; };
+      QString	name() const         { return m_name; };
+      bool isStereo() const        { return (m_volume.channels() > 1); };
+      bool isRecordable() const    { return m_recordable; };
+      bool isRecsrc() const        { return m_recsrc; };
+      bool isMuted() const         { return m_volume.isMuted(); };
+
+      void setMuted(bool value)            { m_volume.setMuted( value ); };
+      void setRecsrc(bool value)           { m_recsrc = value; };
+      void setVolume( Volume volume ) { m_volume = volume; };
+      void setVolume( int channel, int volume );
+      int getVolume( int channel ) const;
+      Volume getVolume() const { return m_volume; };
+      int rightVolume() const;
+      int leftVolume() const;
+
+      void read( const QString& grp );
+      void write( const QString& grp );
+
+      void setType( ChannelType channeltype ) { m_type = channeltype; };
+      ChannelType type() { return m_type; };
+
+   protected:
+      Volume m_volume;
+      ChannelType m_type;
+      int m_num; // ioctl() device number of mixer
+      bool m_recordable; // Can it be recorded?
+      bool m_recsrc; // Is it an actual record source?
+      QString m_name;	// Ascii channel name
+};
+
+
+class MixSet : public QList<MixDevice>
+{
+   public:      
+      void read( const QString& grp );
+      void write( const QString& grp );
+};
+
+
 class Mixer : public QObject
 {
       Q_OBJECT
@@ -64,12 +115,6 @@ class Mixer : public QObject
       /// to create and return an instance of the derived class.
       static Mixer* getMixer( int device = 0, int card = 0 );
       static Mixer* getMixer( MixSet set,int device = 0, int card = 0 );
-
-      MixSet* getSet( int num );
-      int createSet(); // returns set nummber
-      void destroySet( int num );
-      void destroySet( MixSet *set );
-      const MixSetList &getSets() { return m_mixSets; };
 
       void sessionSave(bool sessionConfig);
       void sessionLoad(bool sessionConfig);
@@ -149,8 +194,6 @@ class Mixer : public QObject
       MixSet m_mixDevices;
 
    private:      
-      MixSetList m_mixSets;
-
       int setupMixer() { return setupMixer( m_mixDevices ); };
       int setupMixer( MixSet set );
 };
