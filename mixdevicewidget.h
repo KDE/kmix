@@ -79,7 +79,7 @@ class MixDeviceWidget
       void toggleRecsrc();
       void toggleMuted();
       void toggleStereoLinked();
-
+      
       void setDisabled() { setDisabled( true ); };
       void setDisabled( bool value );
 
@@ -94,14 +94,14 @@ class MixDeviceWidget
 
    private slots:
       void setRecsrc( bool value );
-      void setMuted( bool value );
-      void setUnmuted( bool value) { setMuted( !value ); };
       void setVolume( int channel, int volume );
       void setVolume( Volume volume );
       void contextMenu();
       void update();
       void volumeChange( int );
 
+      void setMuted( bool value );
+      void setUnmuted( bool value) { setMuted( !value ); };
       void increaseVolume();
       void decreaseVolume();
    private:

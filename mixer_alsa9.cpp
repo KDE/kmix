@@ -121,8 +121,6 @@ Mixer_ALSA::openMixer()
 		sprintf( devName, "hw:%i", m_devnum );
 	}	
 
-	//kdDebug() << "Trying to open " << devName << endl; // !!!
-
 	if ( ( err = snd_ctl_open ( &ctl_handle, devName, m_devnum ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_OPEN );
