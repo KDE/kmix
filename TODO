@@ -1,12 +1,11 @@
 TODO list
 
 Bug2 in KMix2.1pre:
-- PanelApplet width wrong. PROBLEM: I get totally bogus values from _layout->getWidth() :-((((((((
-  I suspect a bug in Qt
 - Keys not saved/restored (pending)
 - DockApplet shows "show/hide menubar" (DONE)
 - "reversed" in panelapplet is broken. Remove it for now (DONE)
 - Initial paint of sliders in KMixApplet is broken. (DONE)
+- PanelApplet width wrong. (DONE)
 
 IMPORTANT:
 1) Get Switches working
