@@ -33,7 +33,7 @@ kmixctrl_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
 	mixer.cpp ksmallslider.cpp volume.cpp kledbutton.cpp \
 	mixdevicewidget.cpp colorwidget.ui
-kmix_panelapplet_la_LDFLAGS = $(KDE_PLUGIN) -module
+kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
 $(srcdir)/version.h: VERSION
