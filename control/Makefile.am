@@ -16,5 +16,5 @@ DISTCLEANFILES = $(kcm_kmix_la_METASOURCES)
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkmix.pot
 
-data_DATA = kmixcfg.desktop
-datadir = $(kde_appsdir)/.hidden
+kmix_control_DATA = kmixcfg.desktop
+kmix_controldir = $(kde_appsdir)/.hidden
