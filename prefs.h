@@ -10,7 +10,7 @@
 #include <qradiobt.h>
 #include <qlayout.h>
 #include <ktabctl.h>
-#include "Kconfig.h"
+#include "kconfig.h"
 #include "kslider.h"
 #include "mixer.h"
 
