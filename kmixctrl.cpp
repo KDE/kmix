@@ -40,7 +40,7 @@ static KCmdLineOptions options[] =
    { "save", I18N_NOOP("Save current volumes as default"), 0 },
    { "r", 0, 0 },
    { "restore", I18N_NOOP("Restore default volumes"), 0 },
-   { 0, 0, 0 }
+   KCmdLineLastOption
    // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 

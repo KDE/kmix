@@ -33,7 +33,7 @@ I18N_NOOP("KMix - KDE's full featured mini mixer");
 
 static KCmdLineOptions options[] =
 {
-   { 0, 0, 0 }
+   KCmdLineLastOption
    // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
