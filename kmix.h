@@ -37,7 +37,7 @@
 #include <kaccel.h>
 #include <kaction.h>
 #include <kiconloader.h>
-#include <kuniqueapp.h>
+#include <kuniqueapplication.h>
 
 #include "mixer.h"
 
