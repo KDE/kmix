@@ -52,7 +52,8 @@ void KMixDockWidget::createMasterVolWidget()
 	return;
 
    // create devices
-   MixDevice *masterDevice = m_mixer[m_mixer->masterDevice()]
+   MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
+//   MixDevice *masterDevice = m_mixer->getMixer(m_mixer->masterDevice();
 
    masterVol = new QVBox(0L, "masterVol", WStyle_Customize | 
 			 WType_Popup);
