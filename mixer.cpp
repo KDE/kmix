@@ -144,6 +144,13 @@ void Mixer::volumeSave( KConfig *config )
 void Mixer::volumeLoad( KConfig *config )
 {
    QString grp = QString("Mixer") + mixerName();
+   if ( ! config->hasGroup(grp) ) {
+      // no such group. Volumes (of this mixer) were never saved beforehand.
+      // Thus don't restore anything (also see Bug #69320 for understanding the real reason)
+      return; // make sure to bail out immediately
+   }
+
+   // else restore the volumes
    m_mixDevices.read( config, grp );
 
    // set new settings
@@ -340,6 +347,9 @@ QString Mixer::errorText(int mixer_error)
       l_s_errmsg = i18n("kmix: Not enough memory.");
       break;
     case ERR_OPEN:
+    case ERR_MIXEROPEN:
+      // ERR_MIXEROPEN means: Soundcard could be opened, but has no mixer. ERR_MIXEROPEN is normally never
+      //      passed to the errorText() method, because KMix handles that case explicitely
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
 			"Please check that the soundcard is installed and that\n" \
 			"the soundcard driver is loaded.\n");
