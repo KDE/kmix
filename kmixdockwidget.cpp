@@ -26,7 +26,6 @@
 #include <kapplication.h>
 #include <kpanelapplet.h>
 #include <kpopupmenu.h>
-#include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kconfig.h>
@@ -134,14 +133,14 @@ void KMixDockWidget::updatePixmap()
     MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
 
     if ( masterDevice->isMuted() )
-        setPixmap( BarIcon( "kmixdocked_mute" ) );
+        setPixmap( loadIcon( "kmixdocked_mute" ) );
     else
-        setPixmap( BarIcon( "kmixdocked" ) );
+        setPixmap( loadIcon( "kmixdocked" ) );
 }
 
 void KMixDockWidget::setErrorPixmap()
 {
-    setPixmap( BarIcon( "kmixdocked_error" ) );
+    setPixmap( loadIcon( "kmixdocked_error" ) );
 }
 
 void KMixDockWidget::ignoreNextEvent()
