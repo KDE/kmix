@@ -31,7 +31,7 @@ static char rcsid[]="$Id$";
 #include <klocale.h>
 #include <kmsgbox.h>
 #include <kwm.h>
-#include <qmessagebox.h> 
+#include <qmessagebox.h>
 
 #include "sets.h"
 #include "mixer.h"
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
   if (!initonly && globalKapp->isRestored()) {
 
-    // MODE #1 : Restored by Session Management 
+    // MODE #1 : Restored by Session Management
 
     int n = 1;
     while (KTopLevelWidget::canBeRestored(n)) {
@@ -238,7 +238,7 @@ void KMix::createWidgets()
 #endif
   // Init DnD: Set up drop zone and drop handler
   dropZone = new KDNDDropZone( this, DndURL );
-  connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )), 
+  connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )),
 	   SLOT( onDrop( KDNDDropZone*)));
 
   // Window title
@@ -258,7 +258,7 @@ void KMix::createWidgets()
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
     int devnum = MixPtr->device_num;
-    
+
 
     // Figure out default icon
     unsigned char iconnum;
@@ -414,14 +414,14 @@ void KMix::placeWidgets()
       qs->setBackgroundColor( red );
     else {
       if (MixPtr->is_muted)
-	qs->setBackgroundColor( black ); 
+	qs->setBackgroundColor( black );
       else
 	qs->setBackgroundColor( colorGroup().mid() );
     }
 
     if (MixPtr->is_stereo  == true) {
       qs = MixPtr->Right->slider;
-	  
+	
       if (MixPtr->StereoLink == false) {
 	// Show right slider
 	if (tickmarksOn) {
@@ -430,7 +430,7 @@ void KMix::placeWidgets()
 	}
 	else
 	  qs->setTickmarks(QSlider::NoMarks);
-	      
+	
 	QSize VolSBsize = qs->sizeHint();
 	qs->setValue(100-MixPtr->Right->volume);
 	qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
@@ -444,9 +444,9 @@ void KMix::placeWidgets()
 	  qs->setBackgroundColor( red );
 	else {
 	  if (MixPtr->is_muted)
-	    qs->setBackgroundColor( black ); 
+	    qs->setBackgroundColor( black );
 	  else
-	    qs->setBackgroundColor( colorGroup().mid() ); 
+	    qs->setBackgroundColor( colorGroup().mid() );
 	}
 
 	qs->show();
@@ -529,7 +529,7 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
   QString msg,head;
-  
+
   msg  = "KMix ";
   msg += APP_VERSION;
   msg += i18n("\n(C) 1997-1998 by Christian Esken (esken@kde.org).\n\n" \
@@ -601,9 +601,7 @@ bool KMix::event(QEvent *e)
     this->hide();
     // a trick to remove the window from the taskbar (Matthias)
     recreate(0,0, geometry().topLeft(), FALSE);
-    // set the icons again
-    KWM::setIcon(winId(), kapp->getIcon());
-    KWM::setMiniIcon(winId(), kapp->getMiniIcon());
+    setTopWidget( this );
     return TRUE;
   }
   return QWidget::event(e);
