@@ -163,11 +163,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	//        And using MidButton for showing TrayVolumeControl is more logical (you use the MidButton wheel!)
 	if ( me->button() == LeftButton )
 	{
-		if( parentWidget()->isVisible() )
-			parentWidget()->hide();
-		else
-			parentWidget()->show();
-		return;
+		return KSystemTray::mousePressEvent(me);
 	}
 	else if ( me->button() == MidButton )
 	{
