@@ -4,24 +4,28 @@
 
 
 // undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
-#undef Above
-#undef Below
-#include <qslider.h>
-#include <qtimer.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
-#include <qtooltip.h>
+//  #undef Above
+//  #undef Below
+//  #include <qslider.h>
+//  #include <qtimer.h>
+//  #include <qpopupmenu.h>
+//  #include <qmenubar.h>
+//  #include <qtooltip.h>
 
-#include <kurl.h>
-#include <kapp.h>
-#include <kmenubar.h>
+//  #include <kurl.h>
+//  #include <kapp.h>
+//  #include <kmenubar.h>
 #include <ktmainwindow.h>
 #include <dcopobject.h>
 
-#include "sets.h"
-#include "mixer.h"
-#include "prefs.h"
-#include "kmix-docking.h"
+//  #include "sets.h"
+//  #include "mixer.h"
+
+class QSlider;
+
+class Preferences;
+class Mixer;
+class KMixDockWidget;
 
 class KMix : public KTMainWindow , DCOPObject
 {
@@ -29,14 +33,12 @@ class KMix : public KTMainWindow , DCOPObject
   K_DCOP
 
 public:
-  // Constructs a KMix object, defined by the number (platform dependent). The given set is loaded.
   KMix(int mixernum, int SetNum);
-  // Destructs KMix
   ~KMix();
   bool restore(int n);
-  Mixer			*i_mixer;
-  Preferences		*prefDL;
-  KMixDockWidget	*dock_widget;
+  Mixer		*mix;
+  Preferences	*prefDL;
+  KMixDockWidget    *dock_widget;
 
 public slots:
   void showOptsCB();
@@ -50,23 +52,21 @@ public slots:
   void MbalRightCB();
   void MbalChangeCB(int);
 
-  void placeWidgets();
-  void hideMenubarCB();
+  void toggleMenubarCB();
   void tickmarksTogCB();
   void updateSliders();
-  void updateSlidersI();
 
-signals:
-  void layoutChange();
-  
 protected:
   void hideEvent( QHideEvent *e );
   void closeEvent( QCloseEvent *e );
 
+signals:
+  void newSet( int );
+  void updateTicks( bool );
 
 private slots:
   void quit_myapp();
-  void quickchange_volume(int val_l_diff);
+  void quickchange_volume(int diff);
   void sessionSaveAll();
   void configSave();
   void sessionSave(bool sessionConfig);
@@ -83,38 +83,26 @@ private slots:
   void slotWriteSet(int num);
 
 private:
-  void createWidgets();
-  void createMenu();
-  bool mainmenuOn;
-  bool tickmarksOn;
-  bool allowDocking;
-  bool startDocked; 
-  int		startSet;
-  int		startDevice;
+  KMenuBar* createMenu();
+  void      createWidgets();
+  bool  tickmarksOn;
+  bool  allowDocking;
+  bool  startDocked;
+  int	startSet;
+  int	startDevice;
 
   QString	i_s_aboutMsg;
-
-  QPopupMenu* contextMenu(QObject *, QObject *);
-  QPopupMenu* ContainerContextMenu(QObject *, QObject *);
-
-
+  QPopupMenu* i_m_readSet;
+  QPopupMenu* i_m_writeSet;
+  QPopupMenu* Mbalancing;
+  QPopupMenu* m_defaultPopup;
+  QPopupMenu* contextMenu(QObject *);
+  QPopupMenu* ContainerContextMenu();
   bool eventFilter(QObject *o, QEvent *e);
-  void setBalance(int left, int right);
 
-  QWidget	*i_widget_container;
+  void setBalance( int );
 
-  KMenuBar	*i_menu_main;
-
-  QPopupMenu	*i_popup_balancing;
-  QPopupMenu	*i_popup_readSet;
-  QPopupMenu	*i_popup_writeSet;
-
-
-  QLabel	*i_lbl_infoLine;
-  QLabel	*i_lbl_setNum;
-
-  QSlider	*i_slider_leftRight;
-  QPoint        i_point_popup;
+  QSlider	*LeftRightSB;
   QTimer	*i_time;
 };
 

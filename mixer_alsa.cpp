@@ -21,56 +21,92 @@
  */
 
 #include <sys/asoundlib.h>
+
 #include "mixer_alsa.h"
+#include "mixdevice.h"
+#include "volume.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
-Mixer* Mixer::getMixer(int devnum, int SetNum)
+int Mixer_ALSA::identify( int idx, const char* id )
+{
+  if( !strcmp( id, SND_MIXER_IN_SYNTHESIZER )) return MixDevice::MIDI;
+  if( !strcmp( id, SND_MIXER_IN_PCM         )) return MixDevice::AUDIO;
+  if( !strcmp( id, SND_MIXER_IN_DAC         )) return MixDevice::AUDIO;
+  if( !strcmp( id, SND_MIXER_IN_FM          )) return MixDevice::AUDIO;
+  if( !strcmp( id, SND_MIXER_IN_DSP         )) return MixDevice::AUDIO;
+  if( !strcmp( id, SND_MIXER_IN_LINE        )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_MIC         )) return MixDevice::MICROPHONE;
+  if( !strcmp( id, SND_MIXER_IN_CD          )) return MixDevice::CD;
+  if( !strcmp( id, SND_MIXER_IN_VIDEO       )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_RADIO       )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_PHONE       )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_MONO        )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_SPEAKER     )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_AUX         )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_CENTER      )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_WOOFER      )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_SURROUND    )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_MASTER        ))
+    {
+      m_masterDevice = idx;
+      return MixDevice::VOLUME;
+    }
+  if( !strcmp( id, SND_MIXER_OUT_MASTER_MONO   )) return MixDevice::VOLUME;
+  if( !strcmp( id, SND_MIXER_OUT_MASTER_DIGITAL )) return MixDevice::VOLUME;
+  if( !strcmp( id, SND_MIXER_OUT_HEADPHONE  )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_PHONE      )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_CENTER     )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_WOOFER     )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_SURROUND   )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_DSP        )) return MixDevice::AUDIO;
+  return MixDevice::UNKNOWN;
+}
+
+Mixer* Mixer::getMixer( int device, int card )
 {
   Mixer *l_mixer;
-  l_mixer = new Mixer_ALSA( devnum, SetNum);
-  l_mixer->init(devnum, SetNum);
+  l_mixer = new Mixer_ALSA( device, card );
+  l_mixer->setupMixer();
+  return l_mixer;
+}
+
+Mixer* Mixer::getMixer( MixSet set, int device, int card )
+{
+  Mixer *l_mixer;
+  l_mixer = new Mixer_ALSA( device, card );
+  l_mixer->setupMixer( set );
   return l_mixer;
 }
 
 
 
-Mixer_ALSA::Mixer_ALSA() : Mixer(), 
-  handle(0), gid(0) 
-{};
-
-Mixer_ALSA::Mixer_ALSA(int devnum, int SetNum) : Mixer(devnum, SetNum),
+Mixer_ALSA::Mixer_ALSA( int device, int card ) : Mixer( device, card ),
   handle(0), gid(0)
 {};
+
 
 Mixer_ALSA::~Mixer_ALSA()
 {
   if ( groups.pgroups ) free(groups.pgroups);
 }
 
-MixDevice* Mixer_ALSA::createNewMixDevice(int i)
-{
-  if ( groups.pgroups ) {
-    gid = &groups.pgroups[i];
-    return new MixDevice( i, QCString( (const char*)gid->name, 24 ) );
-  } else
-    return new MixDevice( i );
-}
-
 int Mixer_ALSA::openMixer()
 {
   release();		// To be sure, release mixer before (re-)opening
 
+  bool initset = m_mixDevices.isEmpty();
+
   int err, idx;
 
-  if ((err = snd_mixer_open( &handle,
-                             snd_defaults_mixer_card(),
-                             snd_defaults_mixer_device())) /* card 0 mixer 0 */
-      < 0 )
+  if( m_cardnum == -1 ) m_cardnum = snd_defaults_mixer_card();
+  if( m_devnum == -1 ) m_devnum = snd_defaults_mixer_device(); /* card 0 mixer 0 */
+
+  if ((err = snd_mixer_open( &handle, m_cardnum, m_devnum )) < 0 )
     return Mixer::ERR_OPEN;
-  
-  devmask = recmask = i_recsrc = stereodevs = 0;
+
+  bool deviceWork = false;
 
   bzero(&groups, sizeof(groups));
   if ((err = snd_mixer_groups(handle, &groups)) < 0) {
@@ -96,31 +132,52 @@ int Mixer_ALSA::openMixer()
     if ((err = snd_mixer_group_read(handle, &group)) < 0)
       return Mixer::ERR_READ;
 
-    if ( group.channels && (group.caps & SND_MIXER_GRPCAP_VOLUME) ) {
-      if (group.channels == SND_MIXER_CHN_MASK_STEREO) 
-        stereodevs |= 1 << idx;
-      if ( group.caps & SND_MIXER_GRPCAP_CAPTURE )
-        recmask |= 1 << idx;
-      devmask |= 1 << idx;
+    bool ismono = true;
+    bool canrecord = false;
 
-      MaxVolume = group.max;
-        //  	ret = snd_mixer_channel_read( devhandle, i, &data );
-//  	if ( !ret ) {
-//  	  if ( data.flags & SND_MIXER_FLG_RECORD )
-//  	    i_recsrc |= 1 << i;
-//  	}
+    int channels = numChannels( group.channels );
+
+    if ( group.channels && (group.caps & SND_MIXER_GRPCAP_VOLUME) ) {
+      if ( channels > 1 )
+        ismono = false;
+      if ( group.caps & SND_MIXER_GRPCAP_CAPTURE )
+        canrecord = true;
+      deviceWork = true;
+
+      int maxVolume = group.max;
+      //  	ret = snd_mixer_channel_read( devhandle, i, &data );
+      //  	if ( !ret ) {
+      //  	  if ( data.flags & SND_MIXER_FLG_RECORD )
+      //  	    i_recsrc |= 1 << i;
+      //  	}
+      MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( idx, (const char *)gid->name );
+      if( initset )
+        {
+          Volume vol( channels, maxVolume);
+          readVolumeFromHW( idx, vol );
+          m_mixDevices.append(
+                              new MixDevice( idx, vol, canrecord,
+                                             QString((const char*)gid->name), ct ));
+        }
+      else
+        {
+          MixDevice* md = m_mixDevices.at( idx );
+          if( !md )
+            return ERR_INCOMPATIBLESET;
+          writeVolumeToHW( idx, md->getVolume() );
+        }
     }
   }
-  if ( !devmask ) {
+  if ( !deviceWork ) {
     return Mixer::ERR_NODEV;
   }
 
   snd_mixer_info_t info;
-  if ((err = snd_mixer_info(handle, &info)) < 0) 
+  if ((err = snd_mixer_info(handle, &info)) < 0)
     return Mixer::ERR_READ;
-  i_s_mixer_name = (const char*)info.name;
+  m_mixerName = (const char*)info.name;
 
-  i_b_open = true;
+  m_isOpen = true;
   return 0;
 }
 
@@ -131,48 +188,7 @@ int Mixer_ALSA::releaseMixer()
   return ret;
 }
 
-void Mixer_ALSA::setDevNumName_I(int devnum)
-{
-  devnum=0; //TODO
-  devname = "ALSA";
-}
-
-void Mixer_ALSA::setRecsrc(unsigned int newRecsrc)
-{
-//    snd_mixer_channel_t data;
-//    i_recsrc = 0;
-
-//    MixDevice *MixPtr;
-//    for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
-//      MixPtr = operator[](l_i_mixDevice);
-
-//      ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* get */
-//      if ( ret )
-//        errormsg(Mixer::ERR_READ);
-//      if ( newRecsrc & ( 1 << MixDev->num() ) )
-//        data.flags |= SND_MIXER_FLG_RECORD;
-//      else
-//        data.flags &= ~SND_MIXER_FLG_RECORD;
-//      ret = snd_mixer_channel_write( devhandle, MixDev->num(), &data ); /* set */
-//      if ( ret )
-//        errormsg(Mixer::ERR_WRITE);
-//      ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* check */
-//      if ( ret )
-//        errormsg(Mixer::ERR_READ);
-//      if ( ( data.flags & SND_MIXER_FLG_RECORD ) && /* if it's set and stuck */
-//           ( newRecsrc & ( 1 << MixDev->num() ) ) ) {
-//        i_recsrc |= 1 << MixDev->num();
-//        MixDev->setRecsrc(true);
-//      }
-//      else {
-//        MixDev->setRecsrc(false);
-//      }
-//    }
-//    return; /* I'm done */
-}
-
-
-int Mixer_ALSA::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+bool Mixer_ALSA::isRecsrcHW( int devnum )
 {
     gid = &groups.pgroups[devnum];
 
@@ -183,22 +199,83 @@ int Mixer_ALSA::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
     if ( snd_mixer_group_read(handle, &group) < 0)
       return Mixer::ERR_READ;
 
-    *VolLeft = group.volume.values[SND_MIXER_CHN_FRONT_LEFT];
-    if (group.channels == SND_MIXER_CHN_MASK_MONO) 
-      *VolRight = group.volume.values[SND_MIXER_CHN_FRONT_LEFT];
-    else
-      *VolRight = group.volume.values[SND_MIXER_CHN_FRONT_RIGHT];
+    return group.capture && SND_MIXER_CHN_MASK_FRONT_LEFT;
+}
 
-    printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, *VolLeft, *VolRight );
-    
-   return 0;
+bool Mixer_ALSA::setRecsrcHW( int devnum, bool on )
+{
+    snd_mixer_open( &handle, m_cardnum, m_devnum );
+    gid = &groups.pgroups[devnum];
+
+    snd_mixer_group_t group;
+
+    bzero(&group, sizeof(group));
+    group.gid = *gid;
+    if ( snd_mixer_group_read(handle, &group) < 0)
+      return true;
+
+    group.capture = on ? group.capture | SND_MIXER_CHN_MASK_FRONT_LEFT :
+      group.capture & ~SND_MIXER_CHN_MASK_FRONT_LEFT;
+    if ( numChannels( group.channels ) > 1 )
+      {
+        group.capture = on ? ~0 : 0;
+      }
+    if ( snd_mixer_group_write(handle, &group) < 0)
+      return true;
+
+    return false;
+}
+
+int Mixer_ALSA::numChannels( int mask )
+{
+  int channels = 0;
+  if ( mask & SND_MIXER_CHN_MASK_FRONT_LEFT ) channels++;
+  if ( mask & SND_MIXER_CHN_MASK_FRONT_RIGHT   ) channels++;
+  if ( mask & SND_MIXER_CHN_MASK_FRONT_CENTER  ) channels++;
+  if ( mask & SND_MIXER_CHN_MASK_REAR_LEFT     ) channels++;
+  if ( mask & SND_MIXER_CHN_MASK_REAR_RIGHT    ) channels++;
+  if ( mask & SND_MIXER_CHN_MASK_WOOFER ) channels++;
+  return channels;
+}
+
+int Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
+{
+  gid = &groups.pgroups[devnum];
+
+  snd_mixer_group_t group;
+
+  bzero(&group, sizeof(group));
+  group.gid = *gid;
+  if ( snd_mixer_group_read(handle, &group) < 0)
+    return Mixer::ERR_READ;
+
+  int leftvol, rightvol;
+
+  volume.setVolume( Volume::LEFT,
+                    leftvol = group.volume.values[SND_MIXER_CHN_FRONT_LEFT] );
+  if ( volume.channels() > 1 )
+    {
+      volume.setVolume( Volume::RIGHT,
+                        rightvol =group.volume.values[SND_MIXER_CHN_FRONT_RIGHT] );
+
+      if( devnum == m_masterDevice ) // correct balance
+        {
+          if( leftvol != rightvol )
+            m_balance = leftvol > rightvol ?
+                        - (leftvol - rightvol) * 100 / leftvol :
+                         (rightvol - leftvol) * 100 / rightvol;
+          else
+            m_balance = 0;
+        }
+    }
+
+  return 0;
 }
 
 
-int Mixer_ALSA::writeVolumeToHW( int devnum, int volLeft, int volRight )
+int Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 {
-    printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, volLeft, volRight );
-
+    snd_mixer_open( &handle, m_cardnum, m_devnum );
     gid = &groups.pgroups[devnum];
 
     snd_mixer_group_t group;
@@ -208,9 +285,14 @@ int Mixer_ALSA::writeVolumeToHW( int devnum, int volLeft, int volRight )
     if ( snd_mixer_group_read(handle, &group) < 0)
       return Mixer::ERR_READ;
 
-    group.volume.values[SND_MIXER_CHN_FRONT_LEFT] = volLeft;
-    group.volume.values[SND_MIXER_CHN_FRONT_RIGHT] = volRight;
-
+    group.mute = volume.isMuted() ? group.mute | SND_MIXER_CHN_MASK_FRONT_LEFT :
+      group.mute & ~SND_MIXER_CHN_MASK_FRONT_LEFT;
+    group.volume.values[SND_MIXER_CHN_FRONT_LEFT] = volume[ Volume::LEFT ];
+    if ( numChannels( group.channels ) > 1 )
+      {
+        group.volume.values[SND_MIXER_CHN_FRONT_RIGHT] = volume[ Volume::RIGHT ];
+        group.mute = volume.isMuted() ? ~0 : 0;
+      }
     if ( snd_mixer_group_write(handle, &group) < 0)
       return Mixer::ERR_WRITE;
 

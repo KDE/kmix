@@ -1,3 +1,5 @@
+//-*-C++-*-
+
 #ifndef MIXER_OSS_H
 #define MIXER_OSS_H
 
@@ -6,21 +8,24 @@
 class Mixer_OSS : public Mixer
 {
 public:
-  Mixer_OSS();
-  Mixer_OSS(int devnum, int SetNum);
+  Mixer_OSS(int device = -1, int card = -1 );
   virtual ~Mixer_OSS() {};
 
   virtual QString errorText(int mixer_error);
-  virtual void setRecsrc(unsigned int newRecsrc);
-  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
+  virtual int readVolumeFromHW( int devnum, Volume &vol );
+  virtual int writeVolumeToHW( int devnum, Volume vol );
+
 
 protected:
-  virtual void setDevNumName_I(int devnum);
+  virtual bool setRecsrcHW( int devnum, bool on = true );
+  virtual bool isRecsrcHW( int devnum );
+
   virtual int openMixer();
   virtual int releaseMixer();
 
-  int fd;
+  virtual QString deviceName( int );
+  int     m_fd;
+  QString m_deviceName;
 };
 
 #endif

@@ -63,7 +63,7 @@ int Mixer_IRIX::openMixer()
 
     i_s_mixer_name = "HPUX Audio Mixer";
 
-    i_b_open	= true;
+    isOpen	= true;
     return 0;
   }
 }

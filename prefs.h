@@ -29,7 +29,7 @@
 
 #include <qcheckbox.h>
 #include <qtabdialog.h>
-#include <qcombobox.h> 
+#include <qcombobox.h>
 
 #include "kconfig.h"
 #include "mixer.h"
@@ -44,7 +44,7 @@ class Preferences : public QTabDialog
 
 public:
    Preferences( QWidget *parent, Mixer *mix );
-  ~Preferences(void) { };
+  ~Preferences(void);
   void createOptionsConfWindow(QWidget *);
   void createChannelConfWindow(QWidget *);
   QCheckBox		*menubarChk;

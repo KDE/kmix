@@ -1,20 +1,18 @@
 //-*-C++-*-
-#ifndef KMIXER_H
-#define KMIXER_H
 
-// undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
-#undef Above
-#undef Below
-#undef Unsorted
+#ifndef MIXER_H
+#define MIXER_H
 
-#include <qslider.h>
+//  #include <qslider.h>
 #include <qstring.h>
-#include <qlist.h>
-#include <qarray.h>
-#include <qlabel.h>
+#include <qobject.h>
+#include <qintdict.h>
+//  #include <qlist.h>
+//  #include <qarray.h>
+//  #include <qlabel.h>
 
-#include <QceStateLED.h>
-#include <kapp.h>
+//  #include <QceStateLED.h>
+//  #include <kapp.h>
 
 
 /*
@@ -31,123 +29,32 @@
  */
 #define MAX_MIXDEVS 32
 
+class MixDevice;
+class Volume;
 
-// Declaring crossreferenced classes here.
-class MixChannel;
-class MixSet;
-class Mixer;
+typedef QList<MixDevice> MixSet;
 
-/****************************************************************************
-  The internal device representation of a mixing channel:
-  Sorry. This class is no nice, shiny, encapsulating class, which hides
-  implementation details. This stuff still stems from old times, when kmix
-  was called dmix and was built on top of Motif.
-  Yes! I should rework this some day.
-
-  device_num:    The ioctl() device number of the mixer source, as given by
-                 the SOUND_MIXER_READ_DEVMASK ioctl().
-  is_stereo:     TRUE for a source with stereo capabilities.
-  is_recordable: TRUE for mixer devices, which can be recorded.
-  is_recsrc:     TRUE for a source, which is currently recording source
-  channel:	 Channel descriptor: 0 = Left, 1 = Right.
-  current_value: The current volume of this channel [0...10000]. This is an
-		 internal value only and is getting converted in the
-		 update_channel() function.
-****************************************************************************/
-class MixDevice : public QObject
-{
-  Q_OBJECT
-
-public slots:
-    void MvolSplitCB();
-    void MvolMuteCB();
-    void MvolRecsrcCB();
-
-signals:
-    void relayout();
-
-public:
-  MixDevice(int num, const char* name = 0);
-  int		num() const;
-  QString	name() const;
-  bool		stereo() const;
-  bool		recordable() const;
-  bool		recsrc() const;		// Is it currently being recorded?
-  bool		disabled() const;	// Is slider disabled by user?
-  bool		muted() const;		// Is it muted by user?
-  bool		stereoLinked() const;
-  int		volume(char channel);
-
-  void		setNum(int);
-  void		setName(QString);
-  void		setStereo(bool value);
-  void		setRecordable(bool value);
-  void		setRecsrc(bool value);
-  void		setDisabled(bool value);
-  void		setMuted(bool value);
-  void		setStereoLinked(bool value);
-
-  void		setVolume(char channel, int volume);
-
-  Mixer		*mix;
-
-  QLabel	*picLabel;
-  QceStateLED  	*i_KLed_state;		/* State LED (recsource = red)	   */
-
-  MixChannel	*Left;			//
-  MixChannel	*Right;			//
-
-private:
-  MixSetEntry   *i_mse;
-};
-
-
-
-/***************************************************************************
- * The structure MixChannel is used as hook for user data in the slots.
- * There are pointers to 2 MixChannel's per MixDevice. If neccesary, this
- * could could be modified, so one could build a MixChannel list.
- ***************************************************************************/
-class MixChannel : public QObject
+class Mixer : public QObject
 {
   Q_OBJECT
 
 public:
-  MixDevice	*mixDev;
-  QSlider	*slider;		/* Associated slider               */
-  static bool	i_b_HW_update;
-  static void HW_update(bool val_b_update_allowed);
+  enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP,
+                    ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET };
 
-public slots:
-  void VolChanged( int new_pos );
-  void VolChangedI(int new_pos);
-};
-
-
-
-class Mixer
-{
-public:
-  enum { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP, 
-         ERR_OPEN, ERR_LASTERR, ERR_NOMEM };
-  enum { LEFT, RIGHT, BOTH };
-
-
-  Mixer();
-  Mixer(int devnum, int SetNum);
-  void init();
-  void init(int devnum, int SetNum);
+  Mixer( int device = -1, int card = -1 );
   virtual ~Mixer() {};
 
   /// Static function. This function must be overloaded by any derived mixer class
   /// to create and return an instance of the derived class.
-  static Mixer* getMixer(int devnum, int SetNum);
+  static Mixer* getMixer( int device = 0, int card = 0 );
+  static Mixer* getMixer( MixSet set,int device = 0, int card = 0 );
 
 
   /// Tells the number of the mixing devices
   unsigned int size() const;
   /// Returns a pointer to the mix device with the given number
-  MixDevice& operator[](int val_i_num);
+  MixDevice* operator[](int val_i_num);
 
   /// Grabs (opens) the mixer for further intraction
   virtual int grab();
@@ -162,67 +69,76 @@ public:
   virtual QString errorText(int mixer_error);
   QString mixerName();
 
-  virtual void updateMixDevice(MixDevice *mixdevice);
-  virtual void setBalance(int left, int right);
+  void sessionSave(bool sessionConfig);
 
-
-  /// Write set into the mixer hardware
-  virtual void Set2HW(int Source, bool copyVolume);
-  /// Write mixer hardware into set
-  virtual void HW2Set(int Source);
+  /// get the actual MixSet
+  virtual MixSet getMixSet() { return m_mixDevices; };
+  /// Write a given MixSet to hardware
+  virtual void writeMixSet( MixSet set );
 
   /// Set the record source(s) according to the given device mask
   /// The default implementation does nothing.
-  virtual void setRecsrc(unsigned int newRecsrc);
+
   /// Gets the currently active record source(s) as a device mask
   /// The default implementation just returns the internal stored value.
   /// This value can be outdated, when another applications change the record
   /// source. You can override this in your derived class
-  virtual unsigned int recsrc() const;
+  //  virtual unsigned int recsrc() const;
+
+  /*!
+    Returns the number of the master volume device */
+  int masterDevice() { return m_masterDevice; };
+
   /// Reads the volume of the given device into VolLeft and VolRight.
   /// Abstract method! You must implement it in your dericved class.
-  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight ) = 0;
+  virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
+
+
+public slots:
   /// Writes the given volumes in the given device
   /// Abstract method! You must implement it in your dericved class.
-  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight ) = 0;
+  virtual int writeVolumeToHW( int devnum, Volume volume ) = 0;
+  virtual void readSetFromHW();
 
-  void sessionSave(bool sessionConfig);
+  virtual void setBalance(int balance); // sets the m_balance (see there)
+  virtual void setRecsrc( int devnum, bool on = true);
 
-  ///  The mixing set list
-  MixSetList *i_set_allMixSets;
-
-
-protected:
-  virtual int releaseMixer() = 0;
-  virtual void setDevNumName_I(int devnum) = 0;
-  QString	devname;
-  virtual MixDevice* createNewMixDevice(int num);
+signals:
+  void newBalance( Volume );
+  void newRecsrc( void );
 
 protected:
+  int		m_devnum;
+  int		m_cardnum;
+  int           m_masterDevice; // device num for master volume
   /// Derived classes MUST implement this to open the mixer. Returns a KMix error
   // code (O=OK).
-  virtual int	openMixer() = 0;
+  virtual int   openMixer() = 0;
+  virtual int   releaseMixer() = 0;
+
+  virtual bool  setRecsrcHW( int devnum, bool on) = 0;
+  virtual bool  isRecsrcHW( int devnum ) = 0;
 
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
   /// gives you a usable name, use that name.
-  QString	i_s_mixer_name;
-  bool		i_b_open;
-  unsigned int	devmask, recmask, i_recsrc, stereodevs;
-  int		PercentLeft,PercentRight;
+  QString       m_mixerName;
 
-  ///  Maximum volume Level allowed by the Mixer API (OS dependent)
-  int		MaxVolume;
+
+  bool		m_isOpen;
+  int		m_balance; // from -100 (just left) to 100 (just right)
+
+  // All mix devices of this phyisical device.
+  MixSet        m_mixDevices;
+
 
 private:
-  /// Internal device number
-  int		devnum;
 
-  void setDevNumName(int devnum);
-  int  setupMixer(int devnum, int SetNum);
-  void setupStructs(void);
-  void updateMixDeviceI(MixDevice *mixdevice);
+//    void setDevNumName(int devnum);
+  int  setupMixer()
+  { return setupMixer( m_mixDevices ); };
+  int  setupMixer( MixSet set );
+//    void updateMixDeviceI(MixDevice *mixdevice);
 
-  // All mix devices of this physical device.
-  QArray<MixDevice*> i_ql_mixDevices;
 };
+
 #endif

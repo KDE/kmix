@@ -20,10 +20,12 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "sets.h"
+//#include "sets.h"
 #include "prefs.h"
 #include "prefs.moc"
 #include "kmix.h"
+#include "mixdevice.h"
+
 #include <klocale.h>
 #include <qlayout.h>
 #include <qglobal.h>
@@ -53,11 +55,6 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 
   connect( this, SIGNAL(applyButtonPressed()), this, SLOT(slotApply()));
   connect( this, SIGNAL(cancelButtonPressed()), this, SLOT(slotCancel()));
-  for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < mix->size(); l_i_mixDevice++) {
-    // We will sync the prefs dialog completely, whenever something changes in the MainWindow
-    connect( & ((*mix)[l_i_mixDevice]), SIGNAL(relayout()), this, SLOT(slotUpdatelayout()) );
-  }
-  
 
   addTab( page1,i18n("&General") );
   addTab( page2,i18n("C&hannels") );
@@ -66,6 +63,9 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   setCaption(i18n("KMix Preferences") );
 }
 
+Preferences::~Preferences()
+{
+}
 
 void Preferences::createOptionsConfWindow(QWidget *p)
 {
@@ -83,7 +83,7 @@ void Preferences::createOptionsConfWindow(QWidget *p)
   tickmarksChk = new QCheckBox(grpbox);
   tickmarksChk->setText(i18n("&Tickmarks"));
   l->addWidget(tickmarksChk);
-  
+
   dockingChk = new QCheckBox(grpbox);
   dockingChk->setText(i18n("Allow &docking"));
   l->addWidget(dockingChk);
@@ -107,11 +107,11 @@ void Preferences::createChannelConfWindow(QWidget *val_qw_parent)
   // Add set selection Combo Box
   i_combo_setSelect = new QComboBox(val_qw_parent);
   i_combo_setSelect->insertItem("Set selector - This is not functional yet!");
-
-  for ( unsigned int l_i_set=0; l_i_set < mix->i_set_allMixSets->size(); l_i_set++ ) {
-    MixSet &l_mixSet =  *((*(mix->i_set_allMixSets))[l_i_set]);
-    i_combo_setSelect->insertItem( "bla" );//l_mixSet->name() );
-  }
+  // i_combo_setSelect->insertItem("Current set");
+  // i_combo_setSelect->insertItem("Set 1");
+  // i_combo_setSelect->insertItem("Set 2");
+  // i_combo_setSelect->insertItem("Set 3");
+  // i_combo_setSelect->insertItem("Set 4");
   top->addWidget(i_combo_setSelect);
 
   QGroupBox *grpbox = new QGroupBox (i18n("Mixer channel setup"), val_qw_parent);
@@ -140,35 +140,40 @@ void Preferences::createChannelConfWindow(QWidget *val_qw_parent)
 
 
   // Traverse all mix channels and create one line per channel
+  MixDevice *MixPtr;
   for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < mix->size(); l_i_mixDevice++) {
-    MixDevice &MixPtr = (*mix)[l_i_mixDevice];
+    MixPtr = (*mix)[l_i_mixDevice];
 
     // 1. line edit
     QLineEdit *qle;
-    qle = new QLineEdit(MixPtr.name(), grpbox, MixPtr.name().ascii());
-    l->addWidget(qle, lay_i, 0); 
+#if QT_VERSION >= 200
+    qle = new QLineEdit(MixPtr->name(), grpbox, MixPtr->name().ascii());
+#else
+    qle = new QLineEdit(grpbox, (const char*)(MixPtr->name()));
+#endif
+    l->addWidget(qle, lay_i, 0);
 
     // 2. check box  (Show)
     QCheckBox *qcb = new QCheckBox(grpbox);
 
 #if 0 // remove soon
 #warning This will be removed as soon as possible
-    if (MixPtr.disabled())
+    if (MixPtr->disabled())
       qcb->setChecked(false);
     else
       qcb->setChecked(true);
 #endif
 
-    l->addWidget(qcb, lay_i, 1); 
+    l->addWidget(qcb, lay_i, 1);
 
     // 3. check box  (Split)
     QCheckBox *qcbSplit;
-    if (MixPtr.stereo()) {
+    if (MixPtr->isStereo()) {
       qcbSplit = new QCheckBox(grpbox);
 
 #if 0 // remove soon
 #warning This will be removed as soon as possible
-      if (MixPtr.stereoLinked() )
+      if (MixPtr->stereoLinked() )
 	qcbSplit->setChecked(false);
       else
 	qcbSplit->setChecked(true);
@@ -182,12 +187,12 @@ void Preferences::createChannelConfWindow(QWidget *val_qw_parent)
     l->setRowStretch(lay_i++, 0);
     l->setRowStretch(lay_i++, 1);
 
-    cSetup.append(new ChannelSetup(MixPtr.num(),qle,qcb,qcbSplit));
+    cSetup.append(new ChannelSetup(MixPtr->num(),qle,qcb,qcbSplit));
   }
 
   current2options();
   created = true;
-}      
+}
 
 
 /// Called, when the user activates the options dialog (by selecting the menu entry)
@@ -227,60 +232,56 @@ void Preferences::slotUpdatelayout()
 
 void Preferences::options2current()
 {
-#warning REDO it completely
-#if 0
-  MixSet *cms = mix->i_set_current;
+//    MixSet *cms = mix->TheMixSets->first();
 
-  unsigned int l_i_mixDevice = 1;
-  for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
-    MixDevice &MixPtr = (*mix)[l_i_mixDevice];
+//    MixDevice *MixPtr;
+//    unsigned int l_i_mixDevice = 1;
+//    for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
+//      MixPtr = (*mix)[l_i_mixDevice];
 
-    MixSetEntry &mse  = cms;
-    for (mse = cms->first();
-	 (mse != NULL) && (mse->devnum != chanSet->num) ;
-	 mse=cms->next() );
+//      MixSetEntry *mse;
+//      for (mse = cms->first();
+//  	 (mse != NULL) && (mse->devnum != chanSet->num) ;
+//  	 mse=cms->next() );
 
-    if (mse == NULL)
-      continue;  // entry not found
+//      if (mse == NULL)
+//        continue;  // entry not found
 
-    else {
-      if (MixPtr.stereo()) {
-	mse->StereoLink = ! chanSet->qcbSplit->isChecked();
-      }
-      mse->is_disabled = ! chanSet->qcbShow->isChecked();
-    }
-    l_i_mixDevice++;
-  }
-#endif
+//      else {
+//        if (MixPtr->stereo()) {
+//  	mse->StereoLink = ! chanSet->qcbSplit->isChecked();
+//        }
+//        mse->is_disabled = ! chanSet->qcbShow->isChecked();
+//      }
+//      l_i_mixDevice++;
+//    }
 }
 
 
 void Preferences::current2options()
 {
-#warning REDO it completely
-#if 0
-  // Read from current set;
-  MixSet *cms = mix->i_set_current;
+//    // The first set is the default set. I'll need this to read from
+//    MixSet *cms = mix->TheMixSets->first();
 
-  unsigned int l_i_mixDevice = 1;
-  for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
-    MixDevice &MixPtr = (*mix)[l_i_mixDevice];
+//    MixDevice *MixPtr;
+//    unsigned int l_i_mixDevice = 1;
+//    for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
+//      MixPtr = (*mix)[l_i_mixDevice];
 
-    MixSetEntry *mse;
-    for (mse = cms->first();
-	 (mse != NULL) && (mse->devnum != chanSet->num) ;
-	 mse=cms->next() );
+//      MixSetEntry *mse;
+//      for (mse = cms->first();
+//  	 (mse != NULL) && (mse->devnum != chanSet->num) ;
+//  	 mse=cms->next() );
 
-    if (mse == NULL)
-      continue;  // entry not found
+//      if (mse == NULL)
+//        continue;  // entry not found
 
-    else {
-      if (MixPtr.stereo()) {
-	chanSet->qcbSplit->setChecked( ! mse->StereoLink) ;
-      }
-      chanSet->qcbShow->setChecked( ! mse->is_disabled) ;
-    }
-    l_i_mixDevice++;
-  }
-#endif
+//      else {
+//        if (MixPtr->stereo()) {
+//  	chanSet->qcbSplit->setChecked( ! mse->StereoLink) ;
+//        }
+//        chanSet->qcbShow->setChecked( ! mse->is_disabled) ;
+//      }
+//      l_i_mixDevice++;
+//    }
 }
