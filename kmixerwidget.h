@@ -33,12 +33,17 @@
 #include "channel.h"
 #include "mixer.h"
 
-class Mixer;
+// QT
 class QSlider;
-class Channel;
+
+// KDE
 class KActionCollection;
+class KActionMenu;
 class KConfig;
 
+// KMix
+class Channel;
+class Mixer;
 
 class KMixerWidget : public QWidget  {
    Q_OBJECT

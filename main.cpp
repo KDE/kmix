@@ -25,7 +25,7 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
-#include "kmix.h"
+#include "KMixApp.h"
 #include "version.h"
 
 static const char description[] =
