@@ -74,13 +74,14 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   if ( maxheight < grpbox2a->height() )
     maxheight = grpbox2a->height();
 
-  page1->resize(page1->width(),maxheight+20);
-  page2->resize(page1->width(),maxheight+20);
+  page1->setFixedSize(page1->width(),maxheight+20);
+  page2->setFixedSize(page1->width(),maxheight+20);
   grpbox1a->resize(grpbox1a->width(),maxheight);
   grpbox2a->resize(grpbox2a->width(),maxheight);
-  setFixedSize(width(),maxheight+100);
-  setMinimumSize(width(),maxheight+100);
-  setMaximumSize(width(),maxheight+100);
+
+//  setFixedSize(width(),maxheight+100);
+//  setMinimumSize(width(),maxheight+100);
+//  setMaximumSize(width(),maxheight+100);
   setCaption( "KMix Preferences" );
 }
 
