@@ -118,11 +118,24 @@ void Preferences::createChannelConfWindow()
 
   ypos += qlbd->height();
 
+
+  QPalette qpl (palette());
+  qpl.setDisabled( qpl.normal() );
+
   // Traverse all mix channels and create one line per channel
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
     // 1. line edit
+#if 0
+    QLabel *qlb;
+    qlb = new  QLabel(grpbox2a,mdev->devname);
+    qlb->setText(mdev->devname);
+    qlb->move(x1,ypos);
+    qlb->setFixedWidth(entryWidth);
+#endif
+
     QLineEdit *qle;
-    qle = new  QLineEdit(grpbox2a,mdev->devname);
+    qle = new QLineEdit(grpbox2a,mdev->devname);
+    qle->setPalette(qpl);  // Use a palette, where one can read the text
     qle->setText(mdev->devname);
     qle->setEnabled(false);
     qle->move(x1,ypos);

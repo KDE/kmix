@@ -43,7 +43,7 @@ static char rcsid[]="$Id$";
 #include <qaccel.h>
 
 
-KApplication *globalKapp;
+KApplication   *globalKapp;
 KIconLoader    *globalKIL;
 KMix	       *kmix;
 Mixer	       *initMix;
@@ -231,7 +231,7 @@ void KMix::createWidgets()
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
   setView(Container);
-
+  KCM->insert(Container, (KCmFunc*)contextMenu);
   // Create Menu
   createMenu();
   setMenu(mainmenu);
@@ -282,8 +282,9 @@ void KMix::createWidgets()
     else
       cerr << "Pixmap missing.\n";
     MixPtr->picLabel=qb;
-
     qb->resize(miniDevPM.width(),miniDevPM.height());
+    KCM->insert(qb, (KCmFunc*)contextMenu);
+
 
     QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
 				  QSlider::Vertical, Container, "VolL");
@@ -469,18 +470,14 @@ void KMix::slotWriteSet4() { slotWriteSet(4); }
 
 void KMix::slotReadSet(int num)
 {
-  cerr << "Set0/Hardware <<<<<< Set " << num << "  ... ";
   mix->Set2Set0(num,true);
   mix->Set0toHW();
   placeWidgets();
-  cerr << "Finished\n";
 }
 
 void KMix::slotWriteSet(int num)
 {
-  cerr << "Set0/Hardware >>>>>> Set " << num << "  ... ";
   mix->Set0toSet(num);
-  cerr << "Finished\n";
 }
 
 void KMix::createMenu()
@@ -516,8 +513,6 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
   QString msg,head;
-//  char vers[50];
-//  sprintf (vers,"%s", "APP_VERSION");
   
   msg  = "KMix ";
   msg += APP_VERSION;
@@ -528,7 +523,7 @@ void KMix::createMenu()
     "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
     "and Lennart Augustsson (augustss@cs.chalmers.se).\n"\
     "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
-  head += APP_VERSION; //vers;
+  head += APP_VERSION;
 
   Mhelp = globalKapp->getHelpMenu(true,msg);
   CHECK_PTR( Mhelp );
@@ -596,7 +591,28 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 }
 
 
-QPopupMenu* KMix::contextMenu(QObject *o, QObject *)
+QPopupMenu* KMix::ContainerContextMenu(QObject *o, QObject *)
+{
+  static bool MlocalCreated=false;
+  static QPopupMenu *Mlocal;
+
+  if (MlocalCreated)
+    delete Mlocal;
+
+  Mlocal = new QPopupMenu;
+  if ( mainmenuOn )
+    Mlocal->insertItem( i18n("&Hide Menubar") , this, SLOT(hideMenubarCB()) );
+  else
+    Mlocal->insertItem( i18n("&Show Menubar") , this, SLOT(hideMenubarCB()) );
+  Mlocal->insertItem( i18n("&Help"), this, SLOT(launchHelpCB()) );
+
+  MlocalCreated = true;
+  return Mlocal;
+}
+
+
+
+QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
 {
   if ( o == LeftRightSB )
     return Mbalancing;
@@ -606,44 +622,45 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *)
 
   if (o == NULL)
     return NULL;
-  else {
-    if (MlocalCreated)
-      delete Mlocal;
 
-    // Scan mixerChannels for Slider object *o
-    MixDevice     *MixPtr = mix->First;
-    QSlider       *qs     = (QSlider*)o;
-    MixDevice     *MixFound= NULL;
-    while(MixPtr) {
-      if ( (MixPtr->Left->slider == qs) || (MixPtr->Right->slider == qs) ) {
-	MixFound = MixPtr;
-	break;
-      }
-      MixPtr = MixPtr->Next;
+  if (MlocalCreated)
+    delete Mlocal;
+
+  // Scan mixerChannels for Slider object *o
+  MixDevice     *MixPtr = mix->First;
+  QSlider       *qs     = (QSlider*)o;
+  MixDevice     *MixFound= NULL;
+  while(MixPtr) {
+    if ( (MixPtr->Left->slider == qs) || (MixPtr->Right->slider == qs) ) {
+      MixFound = MixPtr;
+      break;
     }
-
-    // Have not found slider => return and do not pop up context menu
-    if ( MixFound == NULL)
-      return NULL;
-
-    // else
-    Mlocal = new QPopupMenu;
-    CHECK_PTR( Mlocal );
-    if (MixFound->is_muted)
-      Mlocal->insertItem(i18n("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
-    else
-      Mlocal->insertItem(i18n("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
-    if (MixFound->is_stereo)
-      if (MixFound->StereoLink)
-	Mlocal->insertItem(i18n("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
-      else
-	Mlocal->insertItem(i18n("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
-    if (MixFound->is_recordable)
-      Mlocal->insertItem(i18n("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
-
-    MlocalCreated = true;
-    return Mlocal;
+    MixPtr = MixPtr->Next;
   }
+
+  // Have not found slider => return and do not pop up context menu
+  if ( MixFound == NULL )
+    return ContainerContextMenu(o,e);  // Default context menu
+
+
+  // else
+  Mlocal = new QPopupMenu;
+  CHECK_PTR( Mlocal );
+  if (MixFound->is_muted)
+    Mlocal->insertItem(i18n("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
+  else
+    Mlocal->insertItem(i18n("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
+  if (MixFound->is_stereo) {
+    if (MixFound->StereoLink)
+      Mlocal->insertItem(i18n("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
+    else
+      Mlocal->insertItem(i18n("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
+  }
+  if (MixFound->is_recordable)
+    Mlocal->insertItem(i18n("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
+
+  MlocalCreated = true;
+  return Mlocal;
 }
 
 

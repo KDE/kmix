@@ -77,6 +77,7 @@ private:
   bool allowDocking;
   bool startDocked; 
   QPopupMenu* contextMenu(QObject *, QObject *);
+  QPopupMenu* ContainerContextMenu(QObject *, QObject *);
   bool eventFilter(QObject *o, QEvent *e);
 
   void setBalance(int left, int right);
