@@ -26,7 +26,7 @@
 
 
 
-class KMix : public KTopLevelWidget
+class KMix : public KTMainWindow
 {
   Q_OBJECT
 
@@ -54,6 +54,10 @@ public slots:
   void hideMenubarCB();
   void tickmarksTogCB();
 
+protected:
+  void hideEvent( QHideEvent *e );
+  void closeEvent( QCloseEvent *e );
+
 private slots:
   void sessionSaveAll();
   void configSave();
@@ -73,7 +77,6 @@ private slots:
 private:
   void createWidgets();
   void createMenu();
-  void closeEvent( QCloseEvent *e );
   bool event( QEvent *e );
   bool mainmenuOn;
   bool tickmarksOn;

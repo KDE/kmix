@@ -39,8 +39,8 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   page1->setGeometry(10,10,width()-20,height()-20);
   page2 = new QWidget( this );
   page2->setGeometry(10,10,width()-20,height()-20);
-  addTab( page1,i18n("General") );
-  addTab( page2,i18n("Channels") );
+  addTab( page1,i18n("&General") );
+  addTab( page2,i18n("C&hannels") );
 
   // Define page 1
   QButtonGroup *grpbox1a = new QButtonGroup(i18n("Startup settings"), page1 );
@@ -48,17 +48,17 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 
   int x=10, y=20;
   menubarChk = new QCheckBox(grpbox1a);
-  menubarChk->setText(i18n("Menubar"));
+  menubarChk->setText(i18n("&Menubar"));
   menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
 
   y += (menubarChk->height() );
   tickmarksChk = new QCheckBox(grpbox1a);
-  tickmarksChk->setText(i18n("Tickmarks"));
+  tickmarksChk->setText(i18n("&Tickmarks"));
   tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
 
   y += tickmarksChk->height();
   dockingChk = new QCheckBox(grpbox1a);
-  dockingChk->setText(i18n("Allow docking"));
+  dockingChk->setText(i18n("Allow &docking"));
   dockingChk->setGeometry(x,y, grpbox1a->width()-20, dockingChk->height() );
 
   y += dockingChk->height();
@@ -66,9 +66,9 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   // Define page 2
   createChannelConfWindow();
 
-  setCancelButton(i18n("Cancel"));
-  setApplyButton(i18n("Apply"));
-  setOkButton(i18n("OK"));
+  setCancelButton(i18n("&Cancel"));
+  setApplyButton(i18n("&Apply"));
+  setOkButton(i18n("&OK"));
 
 
   connect( this, SIGNAL(applyButtonPressed()), this, SLOT(slotApply()));

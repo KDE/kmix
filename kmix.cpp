@@ -28,6 +28,7 @@ static char rcsid[]="$Id$";
 #include <iostream.h>
 #include <kapp.h>
 #include <kiconloader.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmsgbox.h>
 #include <kwm.h>
@@ -100,7 +101,7 @@ int main(int argc, char **argv)
     // MODE #1 : Restored by Session Management
 
     int n = 1;
-    while (KTopLevelWidget::canBeRestored(n)) {
+    while (KTMainWindow::canBeRestored(n)) {
       // Read mixer number and set number from session management.
       // This is neccesary, because when the application is restarted
       // by the SM, the
@@ -149,7 +150,7 @@ bool KMix::restore(int number)
   return False;
 
 #if 0
-  bool ret = KTopLevelWidget::restore(n);
+  bool ret = KTMainWindow::restore(n);
   if (ret && allowDocking && startDocked )
     hide();
   return ret;
@@ -600,19 +601,6 @@ void KMix::launchHelpCB()
 
 bool KMix::event(QEvent *e)
 {
-  if (e->type() == QEvent::Hide && allowDocking && !dockinginprogress) {
-    sleep(1); // give kwm some time..... ugly I know.
-    if (!KWM::isIconified(winId())) // maybe we are just on another desktop
-      return FALSE;
-
-    if(dock_widget)
-      dock_widget->dock();
-    this->hide();
-    // a trick to remove the window from the taskbar (Matthias)
-    recreate(0,0, QPoint(x(), y()), FALSE);
-    globalKapp->setTopWidget( this );
-    return TRUE;
-  }
   return QWidget::event(e);
 }
 
@@ -793,16 +781,32 @@ void KMix::sessionSave(bool sessionConfig)
 
 void KMix::closeEvent( QCloseEvent *e )
 {
+  cout << "closeEvent()\n";
     dockinginprogress = true;
     configSave();
-    KTopLevelWidget::closeEvent(e);
+    KTMainWindow::closeEvent(e);
     /*
     if ( allowDocking ) {
         dock_widget->dock();
         this->hide();
     }else
-    KTopLevelWidget::closeEvent(e);
+    KTMainWindow::closeEvent(e);
     */
+}
+
+
+void KMix::hideEvent( QHideEvent *e)
+{
+  cout << "hideEvent()\n";
+  if ( allowDocking && !dockinginprogress) {
+    if(dock_widget)
+      dock_widget->dock();
+    this->hide();
+    // a trick to remove the window from the taskbar (Matthias)
+    recreate(0,0, QPoint(x(), y()), FALSE);
+    globalKapp->setTopWidget( this );
+    return ;
+  }
 }
 
 void KMix::quit_myapp()

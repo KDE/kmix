@@ -27,25 +27,56 @@
 #include "docking.h"
 #include <qmessagebox.h>
 
-extern KApplication *globalKapp;
 
-extern bool dockinginprogress;
-
-KDockWidget::KDockWidget(const QString& name=0, const QString& dockIconName=0)
+// --- Constructor ---
+KDockWidget::KDockWidget(const char* name, const char* dockPixmapName)
   : QWidget(0, name, 0)
 {
+  baseInit();
+  setPixmap(dockPixmapName);
+}
 
+// --- Constructor ---
+KDockWidget::KDockWidget(const char* name, QPixmap *dockPixmap)
+  : QWidget(0, name, 0)
+{
+  baseInit();
+  setPixmap(dockPixmap);
+}
+
+
+// --- set a new dock Pixmap by filename ---
+void KDockWidget::setPixmap(const char* dockPixmapName)
+{
+  if ( dockPixmapName == 0 ) {
+    pm_dockPixmap = 0;
+  }
+  else {
+    pm_dockPixmap = new QPixmap();
+    // load dock icon pixmap
+    if ( dockPixmapName != 0 && !pm_dockPixmap->load(dockPixmapName) ) {
+      QString tmp;
+      // !!! this should use KDE error handling functions
+      tmp = i18n("Could not load ") + dockPixmapName;
+      QMessageBox::warning(this, i18n("Error"), tmp);
+    }
+  }
+}
+
+
+// --- set a new dock Pixmap by giving a QPixmap ---
+void KDockWidget::setPixmap(QPixmap* dockPixmap)
+{
+  this->pm_dockPixmap = dockPixmap;
+}
+
+
+void KDockWidget::baseInit() {
+  // initialize some basic variables
   docked = false;
   pos_x = pos_y = 0;
 
-  // load pixmaps
-  if ( dockIconName != 0 && !dockArea_pixmap.load(dockIconName) ) {
-    QString tmp;
-    tmp = i18n("Could not load ") + dockIconName;
-    QMessageBox::warning(this, i18n("Error"), tmp);
-  }
-
-  // popup menu for right mouse button
+  // Create standard popup menu for right mouse button
   popup_m = new QPopupMenu();
 
   // Insert standard item "Restore" into context menu of docking area
@@ -55,45 +86,49 @@ KDockWidget::KDockWidget(const QString& name=0, const QString& dockIconName=0)
   // Insert standard item "Quit" into context menu of docking area
   popup_m->insertItem(i18n("Quit"),
 		      this, SLOT(emit_quit()));
-
 }
 
+
+// --- Destructor ---
 KDockWidget::~KDockWidget()
 {
   delete popup_m;
 }
 
 
+// --- Dock on Panel ---
 void KDockWidget::dock()
 {
   if (!docked) {
-    // prepare panel to accept this widget
+    // Tell the Panel, this widget wants a place on the docking area
     KWM::setDockWindow (this->winId());
 
-    // that's all the space there is !!! COULD BE REWORKED (ask kpanel maintainer) !!!
+    // that's all the space there is !!! SHOULD BE REWORKED (ask kpanel maintainer) !!!
     this->setFixedSize(24, 24);
 
-    // finally dock the widget
+    // finally show the docking widget on the docking area
     show();
     docked = true;
   }
 }
 
+
+// --- Undock from Panel ---
 void KDockWidget::undock()
 {
   if (docked) {
-    // the widget's window has to be destroyed in order 
-    // to undock from the panel. Simply using hide() is
-    // not enough.
+    // The widget's window has to be destroyed in order to undock from the
+    // panel. Simply using hide() is not enough.
     this->destroy(true, true);
 
-    // recreate window for further dockings
+    // recreate docking widget for further dockings
     this->create(0, true, false);
-
     docked = false;
   }
 }
 
+
+// --- check whether dock widget is in "docked" state ---
 bool KDockWidget::isDocked() const
 {
   return docked;
@@ -105,6 +140,8 @@ void KDockWidget::setMainWindow(KTMainWindow *ktmw)
   this->ktmw = ktmw;
 }
 
+
+
 void KDockWidget::paintEvent (QPaintEvent* )
 {
   paintIcon();
@@ -112,7 +149,7 @@ void KDockWidget::paintEvent (QPaintEvent* )
 
 void KDockWidget::paintIcon ()
 {
-  bitBlt(this, 0, 0, &dockArea_pixmap);
+  bitBlt(this, 0, 0, pm_dockPixmap);
 }
 
 void KDockWidget::timeclick()
@@ -122,9 +159,9 @@ void KDockWidget::timeclick()
 }
 
 
-void KDockWidget::mousePressEvent(QMouseEvent *e) {
-
-  // open/close connect-window on right mouse button 
+void KDockWidget::mousePressEvent(QMouseEvent *e)
+{
+  // open/close connect-window on left mouse button 
   if ( e->button() == LeftButton ) {
     toggle_window_state();
   }
@@ -150,27 +187,20 @@ void KDockWidget::mousePressEvent(QMouseEvent *e) {
 void KDockWidget::toggle_window_state()
 {
   if(ktmw != 0) {
-    if (ktmw->isVisible()){
-      dockinginprogress = true;
-      toggled = true;
-      ktmw->hide();
-      ktmw->recreate(0, 0, QPoint(ktmw->x(), ktmw->y()), FALSE);
-      kapp->setTopWidget( ktmw );
-
+    if (ktmw->isVisible()) {
+      // --- Toplevel was visible => hide it
+      dockingInProgress = true;
+      ktmw->fullHide();
     }
     else {
-      toggled = false;
-      ktmw->show();
-      dockinginprogress = false;
-      KWM::activate(ktmw->winId());
+      // --- Toplevel was invisible => show it again
+      ktmw->fullShow();
+      dockingInProgress = false;
     }
   }
 }
 
-bool KDockWidget::isToggled() const
-{
-  return(toggled);
-}
+
 
 void KDockWidget::emit_quit()
 {

@@ -32,33 +32,51 @@
 #include <qpixmap.h>
 #include <qpoint.h>
 
-
+/**
+ This class creates a widget that allows applications to display a widget
+ on the docking area of the panel. The following services are provided:
+ A popup menu with some standard entries is created. You can
+ place further entries in there. The menu is being shown by a right-button
+ click on the widget.
+ Hide and show a main window  
+ */
 class KDockWidget : public QWidget {
 
   Q_OBJECT
 
 public:
-  KDockWidget(const QString& name=0, const QString& dockIconName=0);
+  /// Creates a docking widget and allows passing of the name of
+  /// the docking icon. After the construcor has run
+  KDockWidget(const char *name=0, const char *dockIconName=0);
+  /// Overloader constructor. Only differs from the previous constructor
+  /// in that you can pass the icon as a QPixmap
+  KDockWidget(const char *name=0, QPixmap* dockPixmap=0);
+  /// Deletes the docking widget. Please note that the widget undocks from
+  /// the panel automatically.
   ~KDockWidget();
   void setMainWindow(KTMainWindow *ktmw);
   QPixmap* dockPixmap() const;
   /// Checks, if application is in "docked" state. Returns true, if yes.
   bool isDocked() const;
-  bool isToggled() const;  // !!! Remove?
   void savePosition();
+  void setPixmap(const char* dockPixmapName);
+  void setPixmap(QPixmap* dockPixmap);
+
+public slots:
+  /// Dock this widget - this means to show this widget on the docking area
+  virtual void dock();
+  /// Undock this widget - this means to remove this widget from the docking area
+  virtual void undock();
 
 protected:
   void paintEvent(QPaintEvent *e);
   void paintIcon();
+  void baseInit();
 
 private slots:
   void timeclick();
   void toggle_window_state();
   void mousePressEvent(QMouseEvent *e);
-
-public slots:
-  virtual void dock();
-  virtual void undock();
 
 
 signals:
@@ -68,16 +86,15 @@ protected slots:
   void emit_quit();
 
 protected:
-  bool docked;
-  int toggleID;
-  int pos_x;
-  int pos_y;
-  KTMainWindow *ktmw;
-  QPopupMenu *popup_m;
-  QPixmap dockArea_pixmap;
-  bool dockingInProgress;
-  bool toggled;  // !!! Remove ???
-};
+  bool		docked;
+  int		toggleID;
+  int		pos_x;
+  int		pos_y;
+  KTMainWindow	*ktmw;
+  QPopupMenu	*popup_m;
+  QPixmap	*pm_dockPixmap;
+  bool		dockingInProgress;
+ };
 
 #endif
 
