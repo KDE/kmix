@@ -60,7 +60,7 @@ class MixDevice
       QString	name() const         { return m_name; };
       bool isStereo() const        { return (m_volume.channels() > 1); };
       bool isRecordable() const    { return m_recordable; };
-		bool getRecStatus() const    { return m_recStatus; };
+		bool isRecSource() const    { return m_recSource; };
 		bool isSwitch() const        { return m_switch; }
       bool isMuted() const         { return m_volume.isMuted(); };
 		bool hasMute() const         { return m_mute; }
@@ -68,7 +68,7 @@ class MixDevice
       void setMuted(bool value)            { m_volume.setMuted( value ); };
       void setVolume( Volume volume ) { m_volume = volume; };
       void setVolume( int channel, int volume );
-		void setRecordable( bool rec ) { m_recStatus = rec; }
+		void setRecSource( bool rec ) { m_recSource = rec; }
       int getVolume( int channel ) const;
       Volume getVolume() const { return m_volume; };
       int rightVolume() const;
@@ -97,7 +97,7 @@ class MixDevice
       bool m_recordable; // Can it be recorded?
 		bool m_switch; // On/Off switch
 		bool m_mute; // Available mute option
-		bool m_recStatus; // Current rec status
+		bool m_recSource; // Current rec status
       DeviceCategory m_category; //  category
       QString m_name;	// Ascii channel name
 };

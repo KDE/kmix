@@ -101,7 +101,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
    if ( mute!=-1 ) setMuted( mute!=0 );
 
    int recsrc = config->readNumEntry("is_recsrc", -1);
-	if ( recsrc!=-1 ) setRecordable( recsrc!=0 );
+	if ( recsrc!=-1 ) setRecSource( recsrc!=0 );
    
    kdDebug() << "- MixDevice::read" << endl;
 }
@@ -294,7 +294,7 @@ void Mixer::readSetFromHW()
       Volume vol = md->getVolume();
       readVolumeFromHW( md->num(), vol );
       md->setVolume( vol );
-      md->setRecordable( isRecsrcHW( md->num() ) );
+      md->setRecSource( isRecsrcHW( md->num() ) );
     }
 }
 
@@ -421,13 +421,16 @@ void Mixer::setRecordSource( int devnum, bool on )
 {
   if( !setRecsrcHW( devnum, on ) ) // others have to be updated
   {
-	  for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
-		  md->setRecordable( isRecsrcHW( md->num() ) );
-	  emit newRecsrc();
+	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
+		bool isRecsrc =  isRecsrcHW( md->num() );
+			kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
+			md->setRecSource( isRecsrc );
+		}
+		emit newRecsrc();
   }
   else // just the actual mixdevice
 	  for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
-		  if( md->num() == devnum ) md->setRecordable( on );
+		  if( md->num() == devnum ) md->setRecSource( on );
 }
 
 

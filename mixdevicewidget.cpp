@@ -263,7 +263,7 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	{
 		layout->addSpacing( 2 );
 		m_recordLED = new KLedButton( Qt::red,
-				m_mixdevice->getRecStatus()?KLed::On:KLed::Off,
+				m_mixdevice->isRecSource()?KLed::On:KLed::Off,
 				KLed::Sunken, KLed::Circular, this, "RecordLED" );
 		if ( !showRecordLED )
 			m_recordLED->hide();
@@ -416,9 +416,11 @@ MixDeviceWidget::toggleMuted()
 void 
 MixDeviceWidget::setRecsrc( bool value )
 {
-   if( m_mixdevice->getRecStatus() != value )
+	kdDebug() << "MixDeviceWidget::setRecsrc(" << value << ")\n";
+   if( true /* m_mixdevice->isRecSource() != value */ )
    {
-      m_mixdevice->setRecordable( value );
+ 	  kdDebug() << "MixDeviceWidget::setRecsrc(" << value << ") changing\n";
+      m_mixdevice->setRecSource( value );
       emit newRecsrc( m_mixdevice->num(), value );
    }
 }
@@ -693,7 +695,7 @@ MixDeviceWidget::update()
    if( m_recordLED )
    {
       m_recordLED->blockSignals( true );
-      m_recordLED->setState( m_mixdevice->isRecordable() ? KLed::On : KLed::Off );
+      m_recordLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
       m_recordLED->blockSignals( false );
    }
 }
