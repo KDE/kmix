@@ -516,7 +516,7 @@ void SmallMixDeviceWidget::setIcon( int icon )
    {
       // scale icon
       QWMatrix t;
-      t = t.scale( 8.0/miniDevPM.width(), 8.0/miniDevPM.height() );
+      t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
       
       m_iconLabel->setPixmap( miniDevPM.xForm( t ) );
       m_iconLabel->resize( 10, 10 );
