@@ -14,7 +14,7 @@ noinst_HEADERS = mixconfig.h
 DISTCLEANFILES = $(libkcm_kmix_la_METASOURCES)
 
 messages:
-	$(XGETTEXT) *.cpp -o $(podir)/kmix.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkmix.pot
 
 data_DATA = kmix.desktop
 datadir = $(kde_appsdir)/Settings/Sound
