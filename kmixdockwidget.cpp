@@ -125,31 +125,40 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         switch ( me->button() ) {
     		case LeftButton:
         		if (!m_mixerVisible) {
-			int scnum = QApplication::desktop()->screenNumber(this);
-            		QRect desktop = QApplication::desktop()->screenGeometry(scnum);
-            		int sw = desktop.width();
-            		int sh = desktop.height();
-            		int sx = desktop.x();
-            		int sy = desktop.y();
-            		int x = me->globalPos().x();
-            		int y = me->globalPos().y();
-            		y -= masterVol->geometry().height();
-            		int w = masterVol->width();
-            		int h = masterVol->height();
+			    QRect desktop;
+			    QDesktopWidget *dw = QApplication::desktop();
+			    KConfig gc("kdeglobals", false, false);
+			    gc.setGroup("Windows");
+			    if (dw->isVirtualDesktop() &&
+				gc.readBoolEntry("XineramaEnabled", true)) {
+				desktop = dw->screenGeometry(dw->screenNumber(this));
+			    } else {
+				desktop = dw->geometry();
+			    }
 
-            		if (x+w > sw)
+            		    int sw = desktop.width();
+            		    int sh = desktop.height();
+            		    int sx = desktop.x();
+            		    int sy = desktop.y();
+            		    int x = me->globalPos().x();
+            		    int y = me->globalPos().y();
+            		    y -= masterVol->geometry().height();
+            		    int w = masterVol->width();
+            		    int h = masterVol->height();
+
+            		    if (x+w > sw)
                 		x = me->globalPos().x()-w;
-            		if (y+h > sh)
+            		    if (y+h > sh)
                 		y = me->globalPos().y()-h;
-            		if (x < sx)
+            		    if (x < sx)
                 		x = me->globalPos().x();
-            		if (y < sy)
+            		    if (y < sy)
                 		y = me->globalPos().y();
 
-            		masterVol->move(x, y);
-            		masterVol->show();
+            		    masterVol->move(x, y);
+            		    masterVol->show();
         		} else {
-            		masterVol->hide();          // fixme: this doesn't work?!
+            		    masterVol->hide();   // fixme: this doesn't work?!
         		}
                 m_mixerVisible = !m_mixerVisible;
         		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
