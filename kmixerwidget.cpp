@@ -96,7 +96,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
    MixDevice *mixDevice = mixSet.first();
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
-      MixDeviceWidget *mdw =  new MixDeviceWidget( mixDevice, true, true, this, mixDevice->name() );
+      MixDeviceWidget *mdw =  new MixDeviceWidget( m_mixer, mixDevice, true, true, this, mixDevice->name() );
       layout->addWidget( mdw, 1 );
 
       connect( mdw, SIGNAL( newVolume( int, Volume )), m_mixer, SLOT( writeVolumeToHW( int, Volume ) ));

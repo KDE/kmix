@@ -58,6 +58,7 @@ class MixDevice
 
       MixDevice(int num, Volume vol, bool recordable,
 		QString name, ChannelType type = UNKNOWN );
+      MixDevice(const MixDevice &md);
       ~MixDevice() {};
 
       int num() const   	         { return m_num; };
@@ -97,6 +98,14 @@ class MixSet : public QList<MixDevice>
    public:      
       void read( const QString& grp );
       void write( const QString& grp );
+
+      void clone( MixSet &orig );
+
+      QString name() { return m_name; };
+      void setName( const QString &name ) { m_name = name; };
+
+   private:
+      QString m_name;
 };
 
 
@@ -118,6 +127,15 @@ class Mixer : public QObject
 
       void sessionSave(bool sessionConfig);
       void sessionLoad(bool sessionConfig);
+
+      void volumeSave();
+      void volumeLoad();
+
+      void saveAsProfile( int num, QString name=QString::null );
+      void loadProfile( int num );
+      int numOfProfiles();
+      void deleteProfile( int num );
+      QString nameOfProfile( int num );
 
       /// Tells the number of the mixing devices
       unsigned int size() const;
@@ -192,6 +210,8 @@ class Mixer : public QObject
 
       // All mix devices of this phyisical device.
       MixSet m_mixDevices;
+
+      QList<MixSet> m_profiles;
 
    private:      
       int setupMixer() { return setupMixer( m_mixDevices ); };

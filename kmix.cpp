@@ -190,6 +190,9 @@ void KMixApp::saveConfig()
       n++;
    }
 
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+	 mixer->sessionSave( false );
+
    if ( m_saveVolumes ) saveVolumes();
 }
 
@@ -240,7 +243,10 @@ void KMixApp::loadConfig()
 	 insertMixerWidget( mw );
       }
    }
-   
+
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+      mixer->sessionLoad( false ); 
+
    if ( m_loadVolumes ) loadVolumes();
 }
 
@@ -267,13 +273,13 @@ void KMixApp::removeMixerWidget( KMixerWidget *mw )
 void KMixApp::loadVolumes()
 {
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
-	 mixer->sessionLoad( false );   
+	 mixer->volumeLoad();   
 }
 
 void KMixApp::saveVolumes()
 {
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
-	 mixer->sessionSave( false );
+	 mixer->volumeSave();
 }
 
 bool KMixApp::queryExit()

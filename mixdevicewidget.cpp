@@ -42,9 +42,10 @@
 #include "mixdevicewidget.h"
 #include "kledbutton.h"
 
-MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecordLED,
-                                 QWidget* parent, const char* name) :
-   QWidget( parent, name ), m_mixdevice( md )
+MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md, 
+				 bool showMuteLED, bool showRecordLED, 
+				 QWidget* parent,  const char* name) :
+   QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md )
 {
    // global stuff
    m_popupMenu = 0L;
@@ -132,7 +133,7 @@ void MixDeviceWidget::contextMenu()
    kDebugInfo("MixDeviceWidget::contextMenu");
 
    KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
-
+   
    if ( m_sliders.count()>1 )
    {
       KToggleAction *stereo = (KToggleAction *)m_actions->action( "stereo" );

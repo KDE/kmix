@@ -36,6 +36,7 @@ class QPopupMenu;
 class KLedButton;
 class MixDevice;
 class KActionCollection;
+class Mixer;
 
 class MixDeviceWidget : public QWidget
 {
@@ -43,8 +44,9 @@ class MixDeviceWidget : public QWidget
 
    public:
 
-      MixDeviceWidget( MixDevice* md, bool showMuteLED, bool showRecordLED,
-		       QWidget* parent = 0, const char* name = 0);
+      MixDeviceWidget( Mixer *mixer, MixDevice* md, bool showMuteLED, 
+		       bool showRecordLED, QWidget* parent = 0, 
+		       const char* name = 0);
       ~MixDeviceWidget();
 
       MixDevice* mixDevice() const { return m_mixdevice; };    
@@ -88,6 +90,7 @@ class MixDeviceWidget : public QWidget
       void rightMouseClick();
 
    private:
+      Mixer *m_mixer;
       MixDevice *m_mixdevice;
       QList<QSlider> m_sliders;
       bool m_linked;
