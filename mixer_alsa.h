@@ -33,6 +33,7 @@ class Mixer_ALSA : public Mixer
 		AlsaMixerSidList mixer_sid_list;
 
 		bool masterChosen;
+                bool _initialUpdate;
 		snd_mixer_t *_handle;
 };
 

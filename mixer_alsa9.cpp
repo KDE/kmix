@@ -57,6 +57,7 @@ Mixer_ALSA::Mixer_ALSA( int device, int card ) :
 	Mixer( device, card ), _handle(0)
 {
 	masterChosen = false;
+        _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
@@ -209,7 +210,6 @@ Mixer_ALSA::openMixer()
 	    if( virginOpen )
 	    {
 		MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
-		//MixDevice::DeviceCategory ccRec  = MixDevice::UNDEFINED;
 
 		Volume::ChannelMask chn = Volume::MNONE;
                 Volume::ChannelMask chnTmp;
@@ -235,17 +235,27 @@ Mixer_ALSA::openMixer()
 		//mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
 
+                kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
 		if ( snd_mixer_selem_has_playback_switch ( elem ) )
+                {   kdDebug(67100) << "has_playback_switch()" << endl;
 		    hasMute = true;
+                }
 		if ( snd_mixer_selem_has_capture_switch ( elem ) )
+                {   kdDebug(67100) << "has_capture_switch()" << endl;
 		    canRecord = true;
+                }
+                if ( snd_mixer_selem_has_common_switch ( elem ) ) {
+                    kdDebug(67100) << "has_common_switch()" << endl;
+                    hasMute = true;
+                    canRecord = true;
+                }
 
-		if ( snd_mixer_selem_has_common_switch ( elem ) ||
+		if ( /*snd_mixer_selem_has_common_switch ( elem ) || */
                      cc == MixDevice::UNDEFINED )
 		{
 		    // Everything unknown is handled as switch
 		    cc = MixDevice::SWITCH;
-		    hasMute = true; // The mute button acts as switch in this case (ugly!)
+		    //hasMute = true; // The mute button acts as switch in this case (ugly!)
 		}
 
 		MixDevice* mdw =
@@ -312,6 +322,12 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 
 bool Mixer_ALSA::prepareUpdate() {
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
+    if ( _initialUpdate ) {
+        // make sure the very first call to prepareUpdate() returns "true". Otherwise kmix will
+        // show wrong values until a mixer change happens.
+        _initialUpdate = false;
+        return true;
+    }
     bool updated = false;
     struct pollfd  *fds;
     unsigned short revents;
@@ -465,21 +481,14 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	}
 	else
 	{
-		if ( snd_mixer_selem_has_capture_channel( elem, SND_MIXER_SCHN_FRONT_LEFT ) )
-		{
 #ifdef ALSA_SWITCH_DEBUG
 			kdDebug(67100) << "Mixer_ALSA::setRecsrcHW LEFT\n";
 #endif
 			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, sw );
-		}
-
-		if ( snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
-		{
 #ifdef ALSA_SWITCH_DEBUG
 			kdDebug(67100) << "Mixer_ALSA::setRecsrcHW RIGHT\n";
 #endif
 			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, sw);
-		}
 	}
 
 #ifdef ALSA_SWITCH_DEBUG
@@ -556,6 +565,8 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		volume.setMuted( ! elem );
 	}
 */
+
+/*
 	if ( snd_mixer_selem_has_capture_switch(  elem ) )
 	{
 	    snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
@@ -564,6 +575,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	    else
 		volume.setMuted(false);
 	}
+*/
 
 	//kdDebug(67100) << "EXIT Mixer_ALSA::readVolumeFromHW()\n";
 	return 0;
@@ -573,15 +585,15 @@ int
 Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
 {
 	int left, right;
-	int elem_sw;
 
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
-
 	if ( !elem )
 	{
-return 0;
+           return 0;
 	}
 
+
+        // --- PLAYBACK ----------------------------------------------------------------------
 	left = volume[ Volume::LEFT ];
 	right = volume[ Volume::RIGHT ];
 
@@ -591,26 +603,37 @@ return 0;
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
 			snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
 	}
-	else if ( snd_mixer_selem_has_capture_volume( elem ) )
+        if ( snd_mixer_selem_has_playback_switch( elem ) )
+        {
+                int sw = 0;
+                if (! volume.isMuted())
+                   sw = !sw;
+                kdDebug(67100) << "snd_mixer_selem_set_playback_switch_all(): sw=" << sw << endl;
+                snd_mixer_selem_set_playback_switch_all(elem, sw);
+        }
+
+
+
+        // --- CAPTURE ----------------------------------------------------------------------
+        left = volume[ Volume::LEFTREC ];
+        right = volume[ Volume::RIGHTREC ];
+
+	if ( snd_mixer_selem_has_capture_volume( elem ) )
 	{
 		snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
 			snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
 	}
 
-/* !! will try to remove this for test later - esken */
-	if ( snd_mixer_selem_has_playback_switch( elem ) )
-	{
-		snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-		if( elem_sw == volume.isMuted() )
-			snd_mixer_selem_set_playback_switch_all( elem, ! elem_sw );
-	}
-	else if (  snd_mixer_selem_has_capture_switch(  elem ) )
+/* !! will try to remove this for test later, it is in setRecsrc() - esken */
+/*
+	if (  snd_mixer_selem_has_capture_switch(  elem ) )
 	{
 		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-		if( elem_sw == volume.isMuted() )
+		if( elem_sw != isRecordSource() )
 			snd_mixer_selem_set_capture_switch_all( elem, ! elem_sw );
 	}
+*/
 	return 0;
 }
 
