@@ -410,9 +410,11 @@ void Mixer::setVolume( int deviceidx, int percentage )
 
 /**
    Call this if you have a *reference* to a Volume object and have modified that locally.
-   Pass the mixdevice where you got that referenc from to this method for writing back
+   Pass the MixDevice associated to that Volume to this method for writing back
    the changed value to the mixer.
-   Hint: This is not meant to be good design, but to be fast (as no copying of Volume objects is required)
+   Hint: Why do we do it this way?
+   - It is fast               (no copying of Volume objects required)
+   - It is easy to understand ( read - modify - commit )
 */
 void Mixer::commitVolumeChange( MixDevice* md ) {
     writeVolumeToHW(md->num(), md->getVolume() );
