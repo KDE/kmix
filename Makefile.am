@@ -9,14 +9,14 @@ kde_module_LTLIBRARIES = kmix_panelapplet.la
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 	channel.h mixer.h volume.h kledbutton.h version.h \
 	mixdevicewidget.h ksmallslider.h kmixapplet.h mixerIface.h VerticalText.h \
-	MixerSelector.h MixerSelectionInfo.h
+	MixerSelector.h MixerSelectionInfo.h KMixApp.h
 
 
 METASOURCES = AUTO
 kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	kmixerwidget.cpp channel.cpp mixer.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp mixdevicewidget.cpp VerticalText.cpp mixerIface.skel \
-	MixerSelector.cpp MixerSelectionInfo.cpp
+	MixerSelector.cpp MixerSelectionInfo.cpp KMixApp.cpp
 
 kmix_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version
@@ -39,7 +39,7 @@ kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
-EXTRA_DIST = kmix.desktop VERSION
+EXTRA_DIST = kmix.desktop
 
 xdg_apps_DATA = kmix.desktop
 
