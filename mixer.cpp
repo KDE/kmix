@@ -114,8 +114,8 @@ char KMixErrors[6][200]=
 {
   "kmix: This message should not appear. :-(",
 #ifdef OSS_MIXER
-  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
-  "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.",
+  "kmix: Could not open mixer.\nProbably you have not yet configured your soundcard.\n"
+  "Try running /usr/sbin/sndconfig as root before running kmix.\n",
 #elif defined (SUN_MIXER)
   "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
   "Ask your system administrator to fix /dev/sndctl to allow the access.",
