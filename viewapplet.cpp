@@ -147,12 +147,12 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
     // decide whether we have to show or hide all icons
     bool showIcons = false;
     if ( _orientation == Qt::Horizontal ) {
-	if ( qre->size().height() > 50 ) {
+	if ( qre->size().height() >= 32 ) {
 	    showIcons = true;
 	}
     }
     else {
-       if ( qre->size().width() > 50 ) {
+       if ( qre->size().width() >= 32 ) {
            showIcons = true;
        }
     }
