@@ -29,7 +29,7 @@ appsdir = $(kde_appsdir)/Multimedia
 apps_DATA = kmix.desktop
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kmix_SOURCES) && mv messages.po $(podir)/kmix.pot
+	$(XGETTEXT) $(kmix_SOURCES) -o $(podir)/kmix.pot
 
 edit:
 	xemacs $(kmix_SOURCES) $(noinst_HEADERS) &
