@@ -303,10 +303,14 @@ Mixer_ALSA::releaseMixer()
 
 
 snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
-	snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
-	snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
-	if ( elem == 0 ) {
-		kdDebug() << "Error finding mixer element " << devnum << endl;
+	snd_mixer_elem_t* elem = 0;
+	if ( int( mixer_sid_list.count() ) > devnum ) {
+		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
+		elem = snd_mixer_find_selem(handle, sid);
+
+		if ( elem == 0 ) {
+			kdDebug() << "Error finding mixer element " << devnum << endl;
+		}
 	}
 	return elem;
 //	return mixer_elem_list[ devnum ];
@@ -317,6 +321,10 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 {
 	bool isCurrentlyRecSrc = false;
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
+
+	if ( !elem ) {
+		return false;
+	}
 
 	if ( snd_mixer_selem_has_capture_switch( elem ) ) {
 		// Has a on-off switch
@@ -420,6 +428,12 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	long left, right;
 
 	snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
+
+	if ( !elem )
+	{
+		return 0;
+	}
+		
 
 	hasVol = ( snd_mixer_selem_has_playback_volume ( elem ) ||
 			snd_mixer_selem_has_capture_volume ( elem ) );
