@@ -22,6 +22,7 @@
 
 #include <klocale.h>
 #include <kapp.h>
+#include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kdialog.h>
@@ -63,7 +64,7 @@ void KMixDockWidget::createMasterVolWidget()
 
    MixDeviceWidget *mdw =
        new MixDeviceWidget( m_mixer, masterDevice, false, false,
-			    false, true, masterVol,
+			    false, KPanelApplet::Up, masterVol,
 			    masterDevice->name().latin1() );
    connect(mdw, SIGNAL(newVolume(int, Volume)),
 	   this, SLOT(setVolumeTip(int, Volume)));

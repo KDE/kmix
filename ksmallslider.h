@@ -23,6 +23,8 @@
 #ifndef KSMALLSLIDER_H
 #define KSMALLSLIDER_H
 
+#include <kpanelapplet.h>
+
 #include <qwidget.h>
 #include <qpixmap.h>
 #include <qrangecontrol.h>
@@ -33,12 +35,10 @@ class KSmallSlider : public QWidget, public QRangeControl
 
    public:
       KSmallSlider( QWidget *parent, const char *name=0 );
-      KSmallSlider( Orientation, QWidget *parent, const char *name=0 );
-      KSmallSlider( int minValue, int maxValue, int pageStep, int value, Orientation,
-                    QWidget *parent, const char *name=0 );
+      KSmallSlider( KPanelApplet::Direction, QWidget *parent, const char *name=0 );
+      KSmallSlider( int minValue, int maxValue, int pageStep, int value,
+                    KPanelApplet::Direction, QWidget *parent, const char *name=0 );
 
-      virtual void setOrientation( Orientation );
-      Orientation orientation() const;
       virtual void setTracking( bool enable );
       bool tracking() const;
       QSize sizeHint() const;
@@ -47,8 +47,8 @@ class KSmallSlider : public QWidget, public QRangeControl
 
       int minValue() const;
       int maxValue() const;
-      void setMinValue( int );
-      void setMaxValue( int );
+      void setMinValue( int ); //  Don't use these unless you make versions
+      void setMaxValue( int ); //  that work. -esigra
       int lineStep() const;
       int pageStep() const;
       void setLineStep( int );
@@ -102,7 +102,7 @@ public slots:
       State state;
       bool track;
       bool grayed;
-      Orientation orient;
+      KPanelApplet::Direction direction;
       QColor colHigh, colLow, colBack;
       QColor grayHigh, grayLow, grayBack;
 };
@@ -111,11 +111,6 @@ public slots:
 inline bool KSmallSlider::tracking() const
 {
     return track;
-}
-
-inline KSmallSlider::Orientation KSmallSlider::orientation() const
-{
-    return orient;
 }
 
 #endif

@@ -22,6 +22,8 @@
 #ifndef KMIXERWIDGET_H
 #define KMIXERWIDGET_H
 
+#include <kpanelapplet.h>
+
 #include <qwidget.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -41,9 +43,9 @@ class KMixerWidget : public QWidget  {
    Q_OBJECT
 
   public:
-   KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum, 
-		 bool small=false, bool vert=true, 
-		 QWidget *parent=0, const char *name=0 );
+   KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum,
+                 bool small, KPanelApplet::Direction,
+                 QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
    QString name() { return m_name; };
@@ -92,14 +94,14 @@ class KMixerWidget : public QWidget  {
    KActionCollection *m_actions;
 
    bool m_small;
-   bool m_vertical;
+   KPanelApplet::Direction m_direction;
    bool m_iconsEnabled;
    bool m_labelsEnabled;
    bool m_ticksEnabled;
 
    void mousePressEvent( QMouseEvent *e );
-   void createDeviceWidgets( bool vert );
-   void createMasterVolWidget(bool vert);
+   void createDeviceWidgets( KPanelApplet::Direction );
+   void createMasterVolWidget(KPanelApplet::Direction);
 };
 
 #endif

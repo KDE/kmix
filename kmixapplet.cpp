@@ -70,6 +70,15 @@ QList<Mixer> *KMixApplet::s_mixers;
 #define defMutedLow "#808080"
 #define defMutedBack "#000000"
 
+KPanelApplet::Direction reverse(const KPanelApplet::Direction dir) {
+   switch (dir) {
+   case KPanelApplet::Up   : return KPanelApplet::Down;
+   case KPanelApplet::Down : return KPanelApplet::Up;
+   case KPanelApplet::Right: return KPanelApplet::Left;
+   default                 : return KPanelApplet::Right;
+   }
+}
+
 KMixApplet::KMixApplet( const QString& configFile, Type t,
                         QWidget *parent, const char *name )
 
@@ -141,9 +150,9 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    m_colors.mutedBack = QColor(cfg->readEntry( "MutedColorBack", defMutedBack));
 
    // find out to use which mixer
-   int mixerNum = cfg->readNumEntry( "Mixer", -1 );
-   QString mixerName = cfg->readEntry( "MixerName", QString::null );
-   Mixer *mixer = 0;
+   mixerNum = cfg->readNumEntry( "Mixer", -1 );
+   mixerName = cfg->readEntry( "MixerName", QString::null );
+   mixer = 0;
    if ( mixerNum>=0 )
    {
       for (mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
@@ -156,19 +165,15 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    if ( !mixer && s_mixers->count() == 1 )
        mixer = s_mixers->first();
 
-   if ( mixer )
-   {
-      m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum,
-                                        true, true, this );
-      m_mixerWidget->loadConfig( cfg, "Widget" );
-      m_mixerWidget->setColors( m_colors );
-      connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
-      connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-   } else
+   if ( !mixer )
    {
       m_errorLabel = new QPushButton( i18n("Select mixer"), this );
       connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
    }
+   
+   //  Find out wether the applet should be reversed
+   insideOut = cfg->readBoolEntry("InsideOut", false);
+   popupDirectionChange(KPanelApplet::Up);
 }
 
 KMixApplet::~KMixApplet()
@@ -203,6 +208,8 @@ void KMixApplet::saveConfig()
         cfg->writeEntry( "ColorMutedLow", m_colors.mutedLow.name() );
         cfg->writeEntry( "ColorMutedBack", m_colors.mutedBack.name() );
 
+        cfg->writeEntry( "InsideOut", insideOut );
+
         m_mixerWidget->saveConfig( cfg, "Widget" );
         cfg->sync();
     }
@@ -233,8 +240,9 @@ void KMixApplet::selectMixer()
       {
          delete m_errorLabel;
          m_errorLabel = 0;
-         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixer->mixerNum(),
-                                           true, true, this );
+         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
+                                           mixer->mixerNum(), true,
+                                           popupDirection(), this );
          m_mixerWidget->setColors( m_colors );
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
@@ -279,7 +287,7 @@ int KMixApplet::heightForWidth( int width ) const
    if ( m_mixerWidget )
    {
       m_mixerWidget->setIcons( width>=32 );
-      return width;
+      return m_mixerWidget->minimumHeight();
    } else
       return m_errorLabel->sizeHint().height();
 }
@@ -324,6 +332,20 @@ void KMixApplet::applyColors()
         m_mixerWidget->setColors( cols );
     } else
         m_mixerWidget->setColors( m_colors );
+}
+
+void KMixApplet::popupDirectionChange(Direction dir) {
+  if (!m_errorLabel) {
+    if (m_mixerWidget) delete m_mixerWidget;
+    m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
+                                      insideOut ? reverse(dir) : dir,
+                                      this );
+    m_mixerWidget->loadConfig( config(), "Widget" );
+    m_mixerWidget->setColors( m_colors );
+    connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
+    connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
+    m_mixerWidget->show();
+  }
 }
 
 
