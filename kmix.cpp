@@ -117,17 +117,29 @@ void KMixApp::initMenuBar()
 
 void KMixApp::initView()
 {
-   m_mixerWidget = new KMixerWidget( 0, this );
-   setView( m_mixerWidget );
+   Mixer *mixer = Mixer::getMixer();
 
-   connect( m_mixerWidget, SIGNAL(rightMouseClick()), this, SLOT(showContextMenu()));
+   int mixerError = mixer->grab();
+   if ( mixerError!=0 )
+   {
+      KMessageBox::error(0, mixer->errorText(mixerError), i18n("Mixer failure"));
+      exit(1);
+   }
 
-   setCaption( m_mixerWidget->mixerName() );
+   m_mixers.append( mixer );
+
+   KMixerWidget *mixerWidget = new KMixerWidget( mixer, this );
+   m_mixerWidgets.append( mixerWidget );
+   setView( mixerWidget );
+
+   connect( mixerWidget, SIGNAL(rightMouseClick()), this, SLOT(showContextMenu()));
+
+   setCaption( mixerWidget->mixerName() );
 }
 
 void KMixApp::initPrefDlg()
 {
-   QWidget *tab = new KMixerPrefWidget( m_mixerWidget );
+   QWidget *tab = new KMixerPrefWidget( m_mixerWidgets.at(0) );
    m_prefDlg = new KMixPrefDlg;
    m_prefDlg->addTab( tab, i18n("Nixus") );
 
@@ -177,7 +189,7 @@ void KMixApp::sessionSave( bool sessionConfig )
    config->writeEntry("HideOnClose", m_hideOnClose);
    config->writeEntry("Tickmarks", m_showTicks);
 
-   m_mixerWidget->sessionSave( sessionConfig );
+   m_mixerWidgets.at(0)->sessionSave( sessionConfig );
 }
 
 void KMixApp::sessionLoad( bool sessionConfig )
@@ -207,7 +219,7 @@ void KMixApp::sessionLoad( bool sessionConfig )
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", false);
 
-   m_mixerWidget->sessionLoad( sessionConfig );
+   m_mixerWidgets.at(0)->sessionLoad( sessionConfig );
 }
 
 void KMixApp::saveProperties(KConfig *_cfg)
@@ -256,7 +268,7 @@ void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )
    m_hideOnClose    = prefDlg->m_hideOnCloseChk->isChecked();
 
    m_showTicks	= prefDlg->m_showTicks->isChecked();
-   m_mixerWidget->setTicks( m_showTicks );
+   m_mixerWidgets.at(0)->setTicks( m_showTicks );
 
    updateDocking();
 }

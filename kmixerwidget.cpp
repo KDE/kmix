@@ -41,19 +41,12 @@
 #include "mixdevice.h"
 
 KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixer( mixer )
+   : QWidget( parent, name ), m_mixer(mixer)
 {
    cerr << "KMixerWidget::KMixerWidget" << endl;
-   if (!m_mixer)
-      m_mixer = Mixer::getMixer(); // TODO: allow mixer selection
    
-   int mixerError = m_mixer->grab();
-   if ( mixerError!=0 )
-   {
-      KMessageBox::error(0, m_mixer->errorText(mixerError), i18n("Mixer failure"));
-      exit(1);
-   }		
-
+   ASSERT(m_mixer!=0);
+   
    // Create update timer
    m_timer = new QTimer;
    m_timer->start( 1000 );
@@ -95,7 +88,6 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
 
 KMixerWidget::~KMixerWidget()
 {
-   if (m_mixer) delete m_mixer;
    if (m_timer) delete m_timer;
 }
 

@@ -36,6 +36,8 @@
 #include <kaccel.h>
 #include <kaction.h>
 
+#include "mixer.h"
+
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
@@ -82,7 +84,9 @@ class KMixApp : public KTMainWindow
    bool m_hideOnClose;
    bool m_showTicks;
 
-   KMixerWidget *m_mixerWidget;
+   QList<Mixer> m_mixers;
+   QList<KMixerWidget> m_mixerWidgets;
+
    KMixPrefDlg *m_prefDlg;	
    KMixDockWidget *m_dockWidget;
 
