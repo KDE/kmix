@@ -766,7 +766,7 @@ void MDWSlider::showContextMenu() {
 
     KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
     if ( ta ) {
-	ta->setChecked( m_mixdevice->isRecordable() );
+	ta->setChecked( m_mixdevice->isRecSource() );
 	ta->plug( menu );
     }
 
