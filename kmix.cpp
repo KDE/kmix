@@ -227,13 +227,9 @@ KMix::KMix(int mixernum, int SetNum) : DCOPObject("KMix")
     show();
 }
 
-bool KMix::process(const QCString &fun, const QByteArray &data,
-		   QCString& /*replyType*/, QByteArray& /*replyData*/ )
+// DCOP method
+void KMix::activateSet(int l_i_setNum)
 {
-  if ( fun == "activateSet(int)" ) {
-    QDataStream dataStream( data, IO_ReadOnly );
-    int l_i_setNum;
-    dataStream >> l_i_setNum;
     switch( l_i_setNum ) {
     case 1:
       slotReadSet1(); break;
@@ -244,11 +240,7 @@ bool KMix::process(const QCString &fun, const QByteArray &data,
     case 4:
       slotReadSet4(); break;
     }
-    return TRUE;
-  }
-  return FALSE;
 }
-
 
 void KMix::applyOptions()
 {

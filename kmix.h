@@ -40,6 +40,9 @@ public:
   Preferences	*prefDL;
   KMixDockWidget    *dock_widget;
 
+k_dcop:
+  void activateSet(int l_i_setNum);
+
 public slots:
   void showOptsCB();
   void quitClickedCB();
