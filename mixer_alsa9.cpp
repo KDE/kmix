@@ -113,15 +113,19 @@ Mixer_ALSA::openMixer()
 	snd_mixer_selem_id_alloca( &sid );
 
 	// Card information
-	char devName[32];
-	if ( (unsigned)m_devnum > 31 ) {
-		strcpy ( devName, "default" );
+	QString devName;
+	if ( (unsigned)m_devnum > 31 ) 
+	{
+		devName = "default";
 	}
-	else {
-		sprintf( devName, "hw:%i", m_devnum );
+	else 
+	{
+		devName = QString( "hw:%1" ).arg( m_devnum );
 	}	
+		
+	kdDebug() << "Trying Alsa 0.9x Device " << devName << endl;
 
-	if ( ( err = snd_ctl_open ( &ctl_handle, devName, m_devnum ) ) < 0 )
+	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), m_devnum ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_OPEN );
 		return false;
@@ -149,7 +153,7 @@ Mixer_ALSA::openMixer()
 		errormsg( Mixer::ERR_OPEN );
 	}
 	
-	if ( ( err = snd_mixer_attach ( handle, devName ) ) < 0 )
+	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_PERM );
 	}
@@ -406,7 +410,31 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 	return 0;
 }
 
-QString ALSA_getDriverName() {
-        return "ALSA0.9";
+QString 
+Mixer_ALSA::errorText( int mixer_error )
+{
+	QString l_s_errmsg;
+	switch ( mixer_error )
+	{
+		case ERR_PERM:
+			l_s_errmsg = i18n("You do not have permission to access the alsa mixer device.\n" \
+					"Please verify if all alsa devices are propely created.");
+      break;
+		case ERR_OPEN:
+			l_s_errmsg = i18n("Alsa mixer cannot be found.\n" \
+					"Please check that the soundcard is installed and the\n" \
+					"soundcard driver is loaded.\n" );
+			break;
+		default:
+			l_s_errmsg = Mixer::errorText( mixer_error );
+	}
+	return l_s_errmsg;
 }
+
+QString 
+ALSA_getDriverName() 
+{
+	return "ALSA0.9";
+}
+
 
