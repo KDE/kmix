@@ -185,7 +185,7 @@ KMixWindow::initMixer()
 	timer = new QTimer( this );  // timer will be started on show()
 
 	// get maximum values
-   KConfig *config= new KConfig("kcmkmixrc", false);
+ 	KConfig *config= new KConfig("kcmkmixrc", false);
 	config->setGroup("Misc");
 	int maxCards = config->readNumEntry( "maxCards", 2 );
 	int maxDevices = config->readNumEntry( "maxDevices", 2 );
@@ -199,20 +199,21 @@ KMixWindow::initMixer()
    bool multipleDriversActive = false;
 
    //kdDebug() << "Number of drivers : " << tmpstr.setNum( drvNum ) << endl;
-	for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ ) {   // ; drv++ )
+#ifndef MULTIDRIVERMODE
+	for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
+#else
+	for( int drv=0; drv<drvNum ; drv++ )
+#endif
 	{
-	    //	  kdDebug() << "drv=" << drv << endl;
+	    {
 		for( int dev=0; dev<maxDevices; dev++ )
 		{
-		    //		  kdDebug() << "  dev=" << dev << endl;
 			for( int card=0; card<maxCards; card++ )
 			{
-			    //	kdDebug() << "    card=" << card << endl;
 				Mixer *mixer = Mixer::getMixer( drv, dev, card );
 				int mixerError = mixer->grab();
 				if ( mixerError!=0 )
 				{
-				    //	kdDebug() << "mixer error" << endl;
 					delete mixer;
 					continue;
 				}
@@ -233,7 +234,7 @@ KMixWindow::initMixer()
 					}
 					if( same == true )
 					{
-					    //					  kdDebug() << "same mixer ... not adding again" << endl;
+					//    kdDebug() << "same mixer ... not adding again" << endl;
 						delete mixer;
 						continue;
 					}
@@ -241,7 +242,7 @@ KMixWindow::initMixer()
 			#endif
 				connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
 				m_mixers.append( mixer );
-				kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
+				// kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
 
  				// Check whether there are mixers in different drivers, so that the usr can be warned
 				if (!multipleDriversActive) {
@@ -265,8 +266,7 @@ KMixWindow::initMixer()
 	}
 	}
 
-	//int mixercount =  m_mixers.count();
-	//kdDebug() << "Mixers found: " << mixercount << ", multi-driver-mode: " << multipleDriversActive << endl;
+	//kdDebug() << "Mixers found: " << m_mixers.count() << ", multi-driver-mode: " << multipleDriversActive << endl;
 }
 
 
