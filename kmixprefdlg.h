@@ -22,19 +22,19 @@
 #ifndef KPREFDLG_H
 #define KPREFDLG_H
 
-#include <qtabdialog.h>
+#include <kdialogbase.h>
 
 class KMixPrefWidget;
 class KMixApp;
 class QCheckBox;
 
-class KMixPrefDlg : public QTabDialog  {
+class KMixPrefDlg : public KDialogBase  {
    Q_OBJECT
 
    friend class KMixWindow;
 
   public: 
-   KMixPrefDlg();
+   KMixPrefDlg( QWidget *parent );
    ~KMixPrefDlg();
 
   signals:
@@ -44,7 +44,7 @@ class KMixPrefDlg : public QTabDialog  {
       void apply();
 
   private:
-   QWidget *m_generalTab;
+   QFrame *m_generalTab;
    KMixApp *m_mixApp;
    KMixPrefWidget *m_mixPrefTab;
 

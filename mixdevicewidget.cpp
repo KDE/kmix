@@ -30,6 +30,7 @@
 #include <kpopupmenu.h>
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
+#include <kdebug.h>
 
 #include <qcursor.h>
 #include <qslider.h>
@@ -39,8 +40,6 @@
 #include <qtooltip.h>
 #include <qtimer.h>
 #include <qwmatrix.h>
-
-#include <iostream.h>
 
 #include "mixer.h"
 #include "mixdevicewidget.h"
@@ -275,7 +274,7 @@ void MixDeviceWidget::setIcon( int icon )
       m_iconLabel->setAlignment( Qt::AlignCenter );
    } else
    {
-      cerr << "Pixmap missing.\n";
+      kdDebug() << "Pixmap missing." << endl;
    }
 
    layout()->activate();

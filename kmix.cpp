@@ -190,7 +190,7 @@ void KMixWindow::initMixer()
 
 void KMixWindow::initPrefDlg()
 {
-   m_prefDlg = new KMixPrefDlg;
+   m_prefDlg = new KMixPrefDlg( this );
    connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)),
             this, SLOT(applyPrefs(KMixPrefDlg *)) );
 }
@@ -247,8 +247,6 @@ void KMixWindow::saveConfig()
    config->writeEntry( "Menubar", m_showMenubar );
    config->writeEntry( "AllowDocking", m_showDockWidget );
    config->writeEntry( "TrayVolumeControl", m_volumeWidget );
-// commented out for usability. nolden
-//   config->writeEntry( "HideOnClose", m_hideOnClose );
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
 
@@ -412,7 +410,6 @@ void KMixWindow::showSettings()
    {
       m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
       m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
-//      m_prefDlg->m_hideOnCloseChk->setChecked( m_hideOnClose );
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
 
@@ -506,7 +503,6 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 {
    m_showDockWidget = prefDlg->m_dockingChk->isChecked();
    m_volumeWidget = prefDlg->m_volumeChk->isChecked();
-//   m_hideOnClose = prefDlg->m_hideOnCloseChk->isChecked();
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
 
