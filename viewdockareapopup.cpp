@@ -40,7 +40,7 @@
 #include "kmixdockwidget.h"
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
-      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup & WStyle_NoBorder, vflags), _dock(dockW)
+      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup | Qt::WStyle_DialogBorder, vflags), _dock(dockW)
 {
     QBoxLayout *layout = new QHBoxLayout( this );
     _frame = new QFrame( this );
