@@ -102,7 +102,10 @@ KMixWindow::KMixWindow()
    : KMainWindow(0, 0, 0 ), m_maxId( 0 ), m_dockWidget( 0L )
 {
     m_visibilityUpdateAllowed = true;
-	m_mixerWidgets.setAutoDelete(true);
+    // As long as we do not know better, we assume to start hidden. We need
+    // to initialize this variable here, as we don't trigger a hideEvent().
+    m_isVisible = false;
+    m_mixerWidgets.setAutoDelete(true);
 	initMixer();
 	initActions();
 	initWidgets();
@@ -143,7 +146,11 @@ KMixWindow::KMixWindow()
 
    if ( m_startVisible )
 	{
-		show();
+	    /* Started visible: We should do probably do:
+	     *   m_isVisible = true;
+	     * But as a showEvent() is triggered by show() we don't need it.
+	     */
+	    show();
 	}
 	else
 	{
@@ -390,7 +397,6 @@ KMixWindow::updateDockIcon()
 void
 KMixWindow::saveConfig()
 {
-    //printf("saveConfig(): Visible=%i , %i\n", isVisible() , m_isVisible); // !!!
 	KConfig *config = kapp->config();
 	config->setGroup(0);
 
@@ -750,7 +756,7 @@ KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask)
 	    break;
 	}
     }
-    
+
     return categoryUsed;
 }
 
