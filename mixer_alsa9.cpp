@@ -72,7 +72,7 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
 	QString name = snd_mixer_selem_id_get_name( sid );
 
-	cout << name.latin1() << endl;
+	//cout << name.latin1() << endl;
 	
 	snd_mixer_elem_t *elem = snd_mixer_find_selem(handle, sid);
 
