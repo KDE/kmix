@@ -90,13 +90,13 @@ int Mixer_OSS::openMixer()
       return Mixer::ERR_NODEV;
     MaxVolume =100;
 
-#ifndef __NetBSD__
+#ifdef SOUND_MIXER_INFO
     struct mixer_info l_mix_info;
     if (ioctl(fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
       i_s_mixer_name = l_mix_info.name;
     }
     else
-#endif /* !__NetBSD__ */
+#endif /* SOUND_MIXER_INFO */
       i_s_mixer_name = "OSS Audio Mixer";
 
     isOpen = true;
