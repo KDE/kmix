@@ -28,6 +28,7 @@ class QString;
 class QGridLayout;
 
 #include <kpanelapplet.h>
+class KPopupMenu;
 
 #include "channel.h"
 #include "mixer.h"
@@ -82,6 +83,11 @@ KMixerWidget : public QWidget
 
    int id() const { return m_id; };
 
+	KPopupMenu* getPopup();
+	void popupReset();
+
+	KActionCollection* getActionCollection() const { return m_actions; }
+	
    struct Colors {
        QColor high, low, back, mutedHigh, mutedLow, mutedBack;
    };
@@ -126,6 +132,7 @@ KMixerWidget : public QWidget
 
    KActionCollection *m_actions;
    KActionMenu *m_toggleMixerChannels;
+	KPopupMenu *m_popMenu;
 
    bool m_small;
    KPanelApplet::Direction m_direction;

@@ -42,6 +42,7 @@
 
 #include "mixer.h"
 #include "mixdevicewidget.h"
+#include "kmixerwidget.h"
 #include "kledbutton.h"
 #include "ksmallslider.h"
 #include "verticaltext.h"
@@ -56,8 +57,8 @@
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
                                  bool small, KPanelApplet::Direction dir,
-                                 QWidget* parent,  const char* name) :
-   QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md ),
+                                 QWidget* parent, KMixerWidget* mw, const char* name) :
+   QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md ), m_mixerwidget( mw ),
    m_linked( true ), m_disabled( false ), m_direction( dir ), m_small( small ),
    m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 )
 {
@@ -71,28 +72,24 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    connect( this, SIGNAL(rightMouseClick()), SLOT(contextMenu()) );
 
    // create actions
-   m_actions = new KActionCollection( this );
+   m_sliderActions = new KActionCollection( this );
 
    if (parent->isA("KMixerWidget"))
-       new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
-                      m_actions, "stereo" );
+		new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
+				m_sliderActions, "stereo" );
 	
-	new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
+	new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_sliderActions, "hide" );
 
-   KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
+   KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_sliderActions, "mute" );
    	connect( a, SIGNAL(toggled(bool)), SLOT(setMuted(bool)) );
-
-   if (parent->isA("KMixerWidget")) {
-     new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
-   }
 
    if( m_mixdevice->isRecordable() )
    {
-      a = new KToggleAction( i18n("Set &Record Source"), 0, 0, 0, m_actions, "recsrc" );
+      a = new KToggleAction( i18n("Set &Record Source"), 0, 0, 0, m_sliderActions, "recsrc" );
       	connect( a, SIGNAL(toggled(bool)), SLOT(setRecsrc(bool)) );
    }
 
-   new KAction( i18n("Define &Keys..."), 0, this, SLOT(defineKeys()), m_actions, "keys" );
+   new KAction( i18n("Define &Keys..."), 0, this, SLOT(defineKeys()), m_sliderActions, "keys" );
 
    // create widgets
    createWidgets( showMuteLED, showRecordLED );
@@ -109,7 +106,8 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
       KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
    m_keys->insert( "Toggle mute", i18n( "Toggle Mute" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
-   // No need for m_keys->readSettings(), the keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp
+   
+	// No need for m_keys->readSettings(), the keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp
    m_keys->updateConnections();
 }
 
@@ -118,8 +116,10 @@ MixDeviceWidget::~MixDeviceWidget()
 }
 
 
-void MixDeviceWidget::addActionToPopup( KAction *action ) {
-  m_actions->insert( action );
+void 
+MixDeviceWidget::addActionToPopup( KAction *action ) 
+{
+	m_sliderActions->insert( action );
 }
 
 
@@ -675,15 +675,19 @@ MixDeviceWidget::update()
    }
 }
 
-void 
+void
 MixDeviceWidget::contextMenu()
 {
-   KPopupMenu *menu = new KPopupMenu( this );
+	if( m_mixerwidget == NULL )
+		return;
+
+	KPopupMenu *menu = m_mixerwidget->getPopup();
+
    menu->insertTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
 
    if ( m_sliders.count()>1 )
    {
-      KToggleAction *stereo = (KToggleAction *)m_actions->action( "stereo" );
+      KToggleAction *stereo = (KToggleAction *)m_sliderActions->action( "stereo" );
       if ( stereo )
       {
          stereo->setChecked( !isStereoLinked() );
@@ -691,25 +695,25 @@ MixDeviceWidget::contextMenu()
       }
    }
 
-   KToggleAction *ta = (KToggleAction *)m_actions->action( "recsrc" );
+   KToggleAction *ta = (KToggleAction *)m_sliderActions->action( "recsrc" );
    if ( ta )
    {
       ta->setChecked( m_mixdevice->isRecordable() );
       ta->plug( menu );
    }
 
-	ta = ( KToggleAction* )m_actions->action( "mute" );
+	ta = ( KToggleAction* )m_sliderActions->action( "mute" );
    if ( ta )
    {
       ta->setChecked( m_mixdevice->isMuted() );
       ta->plug( menu );
    }
 	
-	KAction *a = m_actions->action(  "hide" );
+	KAction *a = m_sliderActions->action(  "hide" );
 	if ( a ) 
 		a->plug(  menu );
 
-   a = m_actions->action( "keys" );
+   a = m_sliderActions->action( "keys" );
    if ( a && m_keys ) 
 	{
       KActionSeparator sep( this );
@@ -717,15 +721,6 @@ MixDeviceWidget::contextMenu()
 		a->plug( menu );
    }
 
-   KActionSeparator sep( this );
-   sep.plug( menu );
-
-   a = m_actions->action( "options_show_menubar" );
-   if ( a ) a->plug( menu );
-
-   a = m_actions->action( "toggle_channels" );
-	if ( a ) a->plug( menu );
-	
    QPoint pos = QCursor::pos();
    menu->popup( pos );
 }

@@ -33,18 +33,21 @@
 #include <qpixmap.h>
 #include <qrangecontrol.h>
 
-class KLed;
 class QLabel;
 class QPopupMenu;
-class KLedButton;
-class MixDevice;
-class KActionCollection;
-class Mixer;
 class QTimer;
-class KSmallSlider;
 class QSlider;
+
+class KLed;
+class KLedButton;
+class KActionCollection;
+class KSmallSlider;
 class KGlobalAccel;
+
+class MixDevice;
 class VerticalText;
+class Mixer;
+class KMixerWidget;
 
 class MixDeviceWidget
  : public QWidget
@@ -55,7 +58,7 @@ class MixDeviceWidget
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
                        bool showMuteLED, bool showRecordLED,
                        bool small, KPanelApplet::Direction dir,
-                       QWidget* parent = 0, const char* name = 0);
+                       QWidget* parent = 0, KMixerWidget* mw = 0, const char* name = 0);
       ~MixDeviceWidget();
 
       void addActionToPopup( KAction *action );
@@ -119,8 +122,9 @@ class MixDeviceWidget
       MixDevice *m_mixdevice;
       QTimer *m_updateTimer;
       QPtrList<QWidget> m_sliders;
-      KActionCollection *m_actions;
+      KActionCollection *m_sliderActions;
       KGlobalAccel *m_keys;
+		KMixerWidget *m_mixerwidget;
 
       bool m_linked;
       bool m_disabled;

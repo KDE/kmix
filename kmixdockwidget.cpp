@@ -50,7 +50,7 @@ KMixMasterVolume::KMixMasterVolume(QWidget* parent, const char* name, Mixer* mix
 
     MixDevice *masterDevice = (*mixer)[mixer->masterDevice()];
     mdw = new MixDeviceWidget( mixer, masterDevice, false, false,
-                                false, KPanelApplet::Up, this,
+                                false, KPanelApplet::Up, this, NULL,
                                 masterDevice->name().latin1() );
     resize(sizeHint());
     installEventFilter( mdw );
