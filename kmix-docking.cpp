@@ -85,7 +85,7 @@ void KMixDockWidget::mousePressLeftEvent ( QMouseEvent *qme )
 }
 
 
-void KMixDockWidget::mouseReleaseEvent ( QMouseEvent *e )
+void KMixDockWidget::mouseReleaseEvent ( QMouseEvent* /*e*/ )
 {
   if ( i_b_mouse_moved )
     emit quickchange(i_i_diff);

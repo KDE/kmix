@@ -116,6 +116,7 @@ void Preferences::createChannelConfWindow(QWidget *p)
   // Traverse all mix channels and create one line per channel
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
     // 1. line edit
+    QLineEdit *qle;
 #if 0
     qle->setEnabled(false);
     l->addWidget(qle, lay_i, 0); 
@@ -125,14 +126,13 @@ void Preferences::createChannelConfWindow(QWidget *p)
     l->addWidget(qlb, lay_i, 0); 
 #else
 
-    QLineEdit *qle;
 #if QT_VERSION >= 200
     qle = new QLineEdit(mdev->name(), grpbox, mdev->name().ascii());
 #else
     qle = new QLineEdit(grpbox, (const char*)(mdev->name()));
 #endif
     //qle->setPalette(qpl);  // Use a palette, where one can read the text
-    qle->setEnabled(false);
+    //qle->setEnabled(false);
     l->addWidget(qle, lay_i, 0); 
 #endif
 

@@ -57,8 +57,6 @@ KConfig	       *KmConfig;
 signed char	SetNumber;
 bool dockinginprogress = false;
 
-extern char	KMixErrors[6][200];
-
 int main(int argc, char **argv)
 {
   bool initonly = false;
@@ -196,7 +194,7 @@ KMix::KMix(int mixernum, int SetNum)
 
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
-    KMessageBox::error(0, KMixErrors[mixer_error], i18n("Mixer failure"));
+    KMessageBox::error(0, mix->errorText(mixer_error), i18n("Mixer failure"));
     mix->errormsg(mixer_error);
     exit(1);
   }

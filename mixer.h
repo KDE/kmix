@@ -154,7 +154,7 @@ public slots:
 class Mixer
 {
 public:
-  enum { ERR_OPEN=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP, ERR_LASTERR };
+  enum { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP, ERR_OPEN, ERR_LASTERR };
   enum { LEFT, RIGHT, BOTH };
 
 
@@ -168,7 +168,10 @@ public:
 
   virtual int grab();
   virtual int release();
+  /// Prints out a translated error text for the given error number on stderr
   void errormsg(int mixer_error);
+  /// Returns a translated error text for the given error number
+  virtual QString errorText(int mixer_error);
   virtual void updateMixDevice(MixDevice *mixdevice);
   virtual void setBalance(int left, int right);
   /// Write set 0 into the mixer hardware
@@ -234,6 +237,8 @@ public:
   Mixer_OSS(int devnum, int SetNum);
   virtual ~Mixer_OSS() {};
 
+  virtual QString errorText(int mixer_error);
+
 protected:
   virtual void setDevNumName_I(int devnum);
 };
@@ -255,6 +260,8 @@ public:
   Mixer_SUN();
   Mixer_SUN(int devnum, int SetNum);
   virtual ~Mixer_SUN() {};
+
+  virtual QString errorText(int mixer_error);
 
 protected:
   virtual void setDevNumName_I(int devnum);

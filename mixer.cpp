@@ -23,12 +23,14 @@
 #include "iostream.h"
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #include "sets.h"
 #include "mixer.h"
 #include "mixer.moc"
 
 #include <qstring.h>
+#include <klocale.h>
 
 #if defined(sun) || defined(__sun__)
 #include <sys/types.h>
@@ -103,36 +105,23 @@
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
-#if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER) || defined(ALSA) || defined(HPUX_MIXER)
-// We are happy. Do nothing
+#if defined(SUN_MIXER)
+#include "mixer_sun.cpp"
+#elif defined(IRIX_MIXER)
+#include "mixer_irix.cpp"
+#elif defined(ALSA_MIXER)
+#include "mixer_alsa.cpp"
+#elif defined(OSS_MIXER)
+#include "mixer_oss.cpp"
+#elif defined(HPUX_MIXER)
+#include "mixer_hpux.cpp"
 #else
-
-// We need to include always fcntl.h for the open syscall
-#include <fcntl.h>
-// We cannot handle this!
+// We cannot handle this! I install a dummy mixer instead.
 #define NO_MIXER
+include "mixer_none.cpp"
 #endif
 
 
-// If you change the definition here, make sure to fix the declaration in kmix.cpp, too.
-char KMixErrors[6][200]=
-{
-  "kmix: This message should not appear. :-(",
-#ifdef OSS_MIXER
-  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
-  "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.",
-#elif defined (SUN_MIXER)
-  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
-  "Ask your system administrator to fix /dev/sndctl to allow the access.",
-#else
-  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
-  "Please check your operating systems manual to allow the access.",
-#endif
-  "kmix: Could not read from mixer.",
-  "kmix: Could not write to mixer.",
-  "kmix: Your mixer does not control any devices.",
-  "kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING)."
-};
 
 const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   , "Pcm"  ,    \
 			       "Speaker" , "Line"    , "Microphone", "CD"      , "Mix"  ,    \
@@ -150,7 +139,7 @@ Mixer::Mixer()
 {
 }
 
-Mixer::Mixer(int devnum, int SetNum)
+Mixer::Mixer(int /*devnum*/, int /*SetNum*/)
 {
 }
 
@@ -163,27 +152,6 @@ void Mixer::init()
 void Mixer::init(int devnum, int SetNum)
 {
   setupMixer(devnum, SetNum);
-}
-
-Mixer* Mixer::getMixer(int devnum, int SetNum)
-{
-  Mixer *l_mixer;
-#ifdef SUN_MIXER
-  l_mixer = new Mixer_SUN( devnum, SetNum);
-#elif defined(IRIX_MIXER)
-  l_mixer = new Mixer_IRIX( devnum, SetNum);
-#elif defined(OSS_MIXER)
-  l_mixer = new Mixer_OSS( devnum, SetNum);
-#elif defined(ALSA_MIXER)
-  l_mixer = new Mixer_ALSA( devnum, SetNum);
-#elif defined(IRIX_MIXER)
-  l_mixer = new Mixer_HPUX( devnum, SetNum);
-#else
-  l_mixer = new Mixer( devnum, SetNum);;
-#endif
-
-  l_mixer->init(devnum, SetNum);
-  return l_mixer;
 }
 
 
@@ -225,90 +193,6 @@ int Mixer::release_I()
   l_i_ret = close(fd);
   return l_i_ret;
 }
-
-
-
-
-#ifdef OSS_MIXER
-Mixer_OSS::Mixer_OSS() : Mixer() { }
-Mixer_OSS::Mixer_OSS(int devnum, int SetNum) : Mixer(devnum, SetNum) { }
-
-void Mixer_OSS::setDevNumName_I(int devnum)
-{
-  switch (devnum) {
-  case 0:
-  case 1:
-    devname = "/dev/mixer";
-    break;
-  default:
-    devname = "/dev/mixer";
-    devname += ('0'+devnum-1);
-    break;
-  }
-}
-#endif
-
-#ifdef SUN_MIXER
-Mixer_SUN::Mixer_SUN() : Mixer() { };
-Mixer_SUN::Mixer_SUN(int devnum, int SetNum) : Mixer(devnum, SetNum);
-void Mixer_SUN::setDevNumName_I(int devnum)
-{
-  devname = "/dev/audioctl";
-}
-#endif
-
-
-
-#ifdef HPUX_MIXER
-Mixer_HPUX::Mixer_HPUX() : Mixer() { };
-Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum);
-
-int Mixer_HPUX::release_I()
-{
-  ACloseAudio(hpux_audio,0);
-}
-
-
-void Mixer_HPUX::setDevNumName_I(int devnum)
-{
-  devname = "HP-UX Mixer";
-}
-#endif
-
-
-#ifdef ALSA
-Mixer_ALSA::Mixer_ALSA() : Mixer() { };
-Mixer_ALSA::Mixer_ALSA(int devnum, int SetNum) : Mixer(devnum, SetNum);
-
-int Mixer_ALSA::release_I()
-{
-  ret = snd_mixer_close(devhandle);
-  return ret;
-}
-
-void Mixer_ALSA::setDevNumName_I(int devnum)
-{
-  devname = "ALSA";
-}
-#endif
-
-
-
-
-
-#ifdef IRIX_MIXER
-Mixer_IRIX::Mixer_IRIX() : Mixer() { };
-Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum);
-
-int Mixer_IRIX::release_I()
-{
-    ALfreeconfig(m_config);
-    ALcloseport(m_port);
-return 0;
-}
-
-#endif
-
 
 
 
@@ -718,7 +602,12 @@ int Mixer::openMixer(void)
 #else
   if ((fd= open((const char*)devname, O_RDWR)) < 0)
 #endif
-    return Mixer::ERR_OPEN;
+    {
+      if ( errno == EACCES )
+	return Mixer::ERR_PERM;
+      else
+	return Mixer::ERR_OPEN;
+    }
 
 #endif
 
@@ -797,10 +686,42 @@ int Mixer::openMixer(void)
 
 void Mixer::errormsg(int mixer_error)
 {
-  if (mixer_error < Mixer::ERR_LASTERR )
-    cerr << KMixErrors[mixer_error] << '\n';
-  else
-    cerr << "Mixer: Unknown error.\n";
+  QString l_s_errText;
+  l_s_errText = errorText(mixer_error);
+  cerr << l_s_errText << "\n";
+}
+
+QString Mixer::errorText(int mixer_error)
+{
+  QString l_s_errmsg;
+  switch (mixer_error)
+    {
+    case ERR_PERM:
+      l_s_errmsg = i18n("kmix:You have no permission to access the mixer device.\n" \
+			"Please check your operating systems manual to allow the access.");
+      break;
+    case ERR_WRITE:
+      l_s_errmsg = i18n("kmix: Could not write to mixer.");
+      break;
+    case ERR_READ:
+      l_s_errmsg = i18n("kmix: Could not read from mixer.");
+      break;
+    case ERR_NODEV:
+      l_s_errmsg = i18n("kmix: Your mixer does not control any devices.");
+      break;
+    case  ERR_NOTSUPP: 
+      l_s_errmsg = i18n("kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING).");
+      break;
+    case ERR_OPEN: 
+      l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
+			"Please check that the soundcard is installed and the\n" \
+			"soundcard driver is loaded\n");
+      break;
+    default:
+      l_s_errmsg = i18n("kmix: Unknown error. Please report, how you produced this error.");
+      break;
+    }
+  return l_s_errmsg;
 }
 
 
@@ -1131,7 +1052,6 @@ bool MixDevice::recsrc()	{ return is_recsrc; }
 bool MixDevice::disabled()	{ return is_disabled; }
 bool MixDevice::muted()		{ return is_muted; }
 bool MixDevice::stereoLinked()	{ return StereoLink; }
-//bool MixDevice::()	{ return is_; }
 
 
 void MixDevice::setStereo(bool value)	{ is_stereo = value; }
