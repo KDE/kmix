@@ -353,6 +353,7 @@ KMixWindow::updateDockIcon()
 void
 KMixWindow::updateDockTip(Volume vol)
 {
+   if ( m_dockWidget )
 	m_dockWidget->setVolumeTip( 0, vol );
 }
 
