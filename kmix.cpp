@@ -276,6 +276,7 @@ KMixWindow::initWidgets()
 
 	// Mixer widget line
 	mixerNameLayout = new QHBox( centralWidget(), "mixerNameLayout" );
+        widgetsLayout->setStretchFactor( mixerNameLayout, 0 );
 	QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
 	mixerNameLayout->setSizePolicy(qsp);
 	mixerNameLayout->setSpacing(KDialog::spacingHint());
@@ -290,6 +291,7 @@ KMixWindow::initWidgets()
 	widgetsLayout->addWidget( mixerNameLayout );
 
 	m_wsMixers = new QWidgetStack( centralWidget(), "MixerWidgetStack" );
+        widgetsLayout->setStretchFactor( m_wsMixers, 10 );
 	widgetsLayout->addWidget( m_wsMixers );
 
 	if ( m_showMenubar )
