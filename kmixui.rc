@@ -8,7 +8,7 @@
  </Menu>
 </MenuBar>
 
-<ToolBar name="mainToolBar" noMerge="1">
+<ToolBar name="mainToolBar" noMerge="1"><text>Main Toolbar</text>
 </ToolBar>
 
 </kpartgui>
