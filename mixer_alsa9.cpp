@@ -93,13 +93,15 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 	if ( name == "CD" ) return MixDevice::CD;
 	if ( name == "Video" ) return MixDevice::VIDEO;
 	if ( name == "PCM" || name == "Wave" || name == "Line" )	return MixDevice::AUDIO;
+	if ( name == "Surround" ) return MixDevice::SURROUND_BACK;
+	if ( name == "Center" ) return MixDevice::SURROUND_CENTERFRONT;
 	if ( name.find( "surround", 0, false ) != -1 ) return MixDevice::SURROUND;
 	if ( name.find( "ac97", 0, false ) != -1 ) return MixDevice::AC97;
 	if ( name.find( "coaxial", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "optical", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "IEC958", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "Mic" ) != -1 ) return MixDevice::MICROPHONE;
-	if ( name.find( "LFE" ) != -1 ) return MixDevice::BASS;
+	if ( name.find( "LFE" ) != -1 ) return MixDevice::SURROUND_LFE;
 	if ( name.find( "3D", 0, false ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
 
 	return MixDevice::EXTERNAL;
@@ -240,20 +242,14 @@ Mixer_ALSA::openMixer()
 					! snd_mixer_selem_is_playback_mono( elem ) )
 				chn = 2; // Stereo channel ?
 
-			/* !!!! The next line looked like this:   !!!! Other mixer_* implementations might be buggy now !!!!
-			   Volume( chn, ( int )maxVolume );
+			/* !!!! The next line looked like this:   !!!! Other mixer_* implementations might be buggy !!!!
+			   Volume vol( chn, ( int )maxVolume );
 			   I wonder why it has ever worked.
 			   Probably by accident because the Volume objects were copied so much until KMix2.0 (inclusive)
 			*/
 			Volume* vol = new Volume( chn, ( int )maxVolume );
 			//mixer_elem_list.append( elem );
 			mixer_sid_list.append( sid );
-			/*
-			unsigned int currentID = snd_mixer_selem_get_index(elem);
-			if ( currentID != mixerIdx ) {
-				kdDebug(67100) <<  "Index mismatch: " <<  currentID << " != " << mixerIdx <<endl;
-			}
-			*/
 
 			if ( snd_mixer_selem_has_playback_volume ( elem ) ||
 					snd_mixer_selem_has_capture_volume ( elem ) )
@@ -465,8 +461,10 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 
 	if ( hasVol )
 	{
+                bool usePlaybackVolume = snd_mixer_selem_has_playback_volume ( elem );
+		
 		// Read value from LEFT playback/capture volume
-		if (snd_mixer_selem_has_playback_volume( elem ) )
+		if ( usePlaybackVolume )
 		{
 			int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
 #ifdef KMIX_ALSA_VOLUME_DEBUG
@@ -485,7 +483,10 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		}
 
 		// Is Mono channel ?  !! What if we only have capture volume? Does snd_mixer_selem_is_PLAYBACK_mono() apply?
-		if ( snd_mixer_selem_is_playback_mono ( elem ) )
+		// Trying the following temporary fix.
+		// (the real solution is to support both playback and capture volumes with 0-2 sliders)
+		if ( ( usePlaybackVolume && snd_mixer_selem_is_playback_mono ( elem )) ||
+		     (!usePlaybackVolume && snd_mixer_selem_is_capture_mono  ( elem ))   )
 		{
 #ifdef KMIX_ALSA_VOLUME_DEBUG
 			kdDebug(67100) << "Is mono volume: " << left << endl;
@@ -495,7 +496,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		else
 		{
 			// Read value from RIGHT playback/capture volume
-			if ( snd_mixer_selem_has_playback_volume ( elem ) )
+			if ( usePlaybackVolume )
 			{
 				int ret = 	snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
 #ifdef KMIX_ALSA_VOLUME_DEBUG
