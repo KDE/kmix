@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #ifndef KMIX_H
@@ -41,6 +41,8 @@
 
 #include "mixer.h"
 
+class QTimer;
+
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
@@ -49,11 +51,18 @@ class KMixWindow;
 
 class KMixApp : public KUniqueApplication
 {
+Q_OBJECT
  public:
     KMixApp();
     ~KMixApp();
     int newInstance ();
 
+    public slots:
+    void quitExtended();  // For a hack on visibility()
+
+ signals:
+    void stopUpdatesOnVisibility();
+    
  private:
     KMixWindow *m_kmix;
 };
@@ -68,6 +77,7 @@ class KMixWindow : public KMainWindow
 
   protected slots:
    void saveConfig();
+  //   void dummySlot();
   protected:
    void loadConfig();
 
@@ -79,6 +89,8 @@ class KMixWindow : public KMainWindow
    void updateDocking();
 
    void closeEvent( QCloseEvent * e );
+   void showEvent( QShowEvent * );
+   void hideEvent( QHideEvent * );
 
   public slots:
    void quit();
@@ -92,6 +104,7 @@ class KMixWindow : public KMainWindow
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void updateDockIcon();
+   void stopVisibilityUpdates();
 
   private:
    KAccel *m_keyAccel;
@@ -106,6 +119,8 @@ class KMixWindow : public KMainWindow
    bool m_showLabels;
    bool m_startVisible;
    bool m_showMenubar;
+   bool m_isVisible;
+   bool m_visibilityUpdateAllowed;
    int m_maxId;
 
    QPtrList<Mixer> m_mixers;
@@ -115,6 +130,9 @@ class KMixWindow : public KMainWindow
    QWidget *m_buttons;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
+   QTimer *timer;	// Timer for reading volume from HW
+
+   bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
 
   private slots:
    void insertMixerWidget( KMixerWidget *mw );

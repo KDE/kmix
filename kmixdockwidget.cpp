@@ -4,6 +4,7 @@
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
+ * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,7 +18,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <kaction.h>
@@ -26,6 +27,7 @@
 #include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
+#include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kconfig.h>
 
@@ -43,7 +45,7 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer,
     : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), m_mixerVisible(false)
 {
     createMasterVolWidget();
-    connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
+    connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -78,7 +80,7 @@ void KMixDockWidget::createMasterVolWidget()
 void KMixDockWidget::setVolumeTip(int, Volume vol)
 {
     MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
-    QString tip = i18n("Volume at %1%").arg((vol.getVolume(0)*100)/(vol.maxVolume()));
+	 QString tip = i18n( "Volume at %1%" ).arg( ( vol.getVolume( 0 )*100 )/( vol.maxVolume() ) );
     if ( masterDevice->isMuted() )
         tip += i18n( " (Muted)" );
 
@@ -94,6 +96,11 @@ void KMixDockWidget::updatePixmap()
         setPixmap( BarIcon( "kmixdocked_mute" ) );
     else
         setPixmap( BarIcon( "kmixdocked" ) );
+}
+
+void KMixDockWidget::setErrorPixmap()
+{
+    setPixmap( BarIcon( "kmixdocked_error" ) );
 }
 
 void KMixDockWidget::mousePressEvent(QMouseEvent *me)
@@ -119,40 +126,38 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         switch ( me->button() ) {
     		case LeftButton:
         		if (!m_mixerVisible) {
-			int scnum = QApplication::desktop()->screenNumber(this);
-            		QRect desktop = QApplication::desktop()->screenGeometry(scnum);
-            		int sw = desktop.width();
-            		int sh = desktop.height();
-            		int sx = desktop.x();
-            		int sy = desktop.y();
-            		int x = me->globalPos().x();
-            		int y = me->globalPos().y();
-            		y -= masterVol->geometry().height();
-            		int w = masterVol->width();
-            		int h = masterVol->height();
-
-            		if (x+w > sw)
-                		x = me->globalPos().x()-w;
-            		if (y+h > sh)
-                		y = me->globalPos().y()-h;
-            		if (x < sx)
-                		x = me->globalPos().x();
-            		if (y < sy)
-                		y = me->globalPos().y();
-
-            		masterVol->move(x, y);
-            		masterVol->show();
-        		} else {
-            		masterVol->hide();          // fixme: this doesn't work?!
-        		}
-                m_mixerVisible = !m_mixerVisible;
-        		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
-        		return;
-    		default:
-        		//masterVol->hide();
-        		//KSystemTray::mouseReleaseEvent(me);
-        		return;
-        }
+						  int scnum = QApplication::desktop()->screenNumber(this);
+						  QRect desktop = QApplication::desktop()->screenGeometry(scnum);
+						  int sw = desktop.width();
+						  int sh = desktop.height();
+						  int sx = desktop.x();
+						  int sy = desktop.y();
+						  int x = me->globalPos().x();
+						  int y = me->globalPos().y();
+						  y -= masterVol->geometry().height();
+						  int w = masterVol->width();
+						  int h = masterVol->height();
+						  
+						  if (x+w > sw)
+							  x = me->globalPos().x()-w;
+						  if (y+h > sh)
+							  y = me->globalPos().y()-h;
+						  if (x < sx)
+							  x = me->globalPos().x();
+						  if (y < sy)
+							  y = me->globalPos().y();
+						  
+						  masterVol->move(x, y);
+						  masterVol->show();
+				} else {
+					masterVol->hide();   // fixme: this doesn't work?!
+				}
+				m_mixerVisible = !m_mixerVisible;
+				QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this
+				return;
+			default:
+				return;
+		  }
     }
     KSystemTray::mouseReleaseEvent(me);
 }
@@ -165,13 +170,13 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
     int inc = vol.maxVolume() / 20;
 
     if ( inc == 0 ) inc = 1;
- 
+
     for ( int i = 0; i < vol.channels(); i++ ) {
         int newVal = vol[i] + (inc * (e->delta() / 120));
 	if( newVal < 0 ) newVal = 0;
         vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
-    
+
     masterDevice->setVolume(vol);
     m_mixer->writeVolumeToHW(masterDevice->num(), vol);
     setVolumeTip(masterDevice->num(), vol);
@@ -180,7 +185,7 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
 void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 {
     KAction* showAction = actionCollection()->action("minimizeRestore");
-    if ( parentWidget() && showAction ) 
+    if ( parentWidget() && showAction )
     {
         if ( parentWidget()->isVisible() )
         {

@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <kcmdlineargs.h>
@@ -41,10 +41,11 @@ int main(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
                          APP_VERSION, description, KAboutData::License_GPL,
-                         I18N_NOOP("(c) 2000 by Stefan Schimanski"));
+                         I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003  Christian Esken, Stefan Schimanski"));
 
    aboutData.addAuthor("Stefan Schimanski", 0, "schimmi@kde.org");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
+   aboutData.addAuthor("Sven Leiber", 0, "s.leiber@web.de");
    aboutData.addAuthor("Brian Hanson", I18N_NOOP("Solaris port"), "bhanson@hotmail.com");
    aboutData.addAuthor("Paul Kendall", I18N_NOOP("SGI Port"), "paul@orion.co.nz");
    aboutData.addAuthor("Sebestyen Zoltan", I18N_NOOP("*BSD fixes"), "szoli@digo.inf.elte.hu");

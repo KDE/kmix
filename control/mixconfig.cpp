@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <stdlib.h>
@@ -49,14 +49,14 @@
 KMixConfig::KMixConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  QVBoxLayout *topLayout = new QVBoxLayout(this, 5);
+  QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   // Restore settings
   QGroupBox *restGrp = new QGroupBox( i18n("Default Volumes"), this );
+  restGrp->setColumnLayout( 0, Qt::Horizontal );
+  QBoxLayout *restLayout = new QVBoxLayout( restGrp->layout(), 
+      KDialog::spacingHint());
   topLayout->addWidget( restGrp );
-  QBoxLayout *restLayout =
-     new QVBoxLayout( restGrp, KDialog::marginHint(), KDialog::spacingHint());
-  restLayout->addSpacing( fontMetrics().lineSpacing() );
 
   // Save profile
   QHBoxLayout *profLayout = new QHBoxLayout( restLayout, 5 );
@@ -77,9 +77,9 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   // Hardware settings
   QGroupBox *hdwGrp = new QGroupBox( i18n("Hardware Settings"), this );
   topLayout->addWidget( hdwGrp );
-  QBoxLayout *hdwLayout =
-     new QVBoxLayout( hdwGrp, KDialog::marginHint(), KDialog::spacingHint());
-  hdwLayout->addSpacing( fontMetrics().lineSpacing() );
+  hdwGrp->setColumnLayout( 0, Qt::Horizontal );
+  QBoxLayout *hdwLayout = new QVBoxLayout( hdwGrp->layout(), 
+      KDialog::spacingHint());
 
   m_maxCards = new KIntNumInput( hdwGrp );
   m_maxCards->setLabel( i18n("Maximum number of probed mixers:") );

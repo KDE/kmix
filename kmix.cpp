@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
+ * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,7 +19,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 // include files for QT
@@ -74,6 +75,7 @@ KMixApp::newInstance()
 	else
 	{
 		m_kmix = new KMixWindow;
+		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isRestored() && KMainWindow::canBeRestored(0) )
 		{
 			m_kmix->restore(0, FALSE);
@@ -84,9 +86,18 @@ KMixApp::newInstance()
 }
 
 
+void KMixApp::quitExtended() {
+    //printf("KMixDockWidget::quitExtended()\n");
+    emit stopUpdatesOnVisibility();
+    quit();
+}
+
+
+
 KMixWindow::KMixWindow()
    : KMainWindow(0, 0, 0 ), m_maxId( 0 ), m_dockWidget( 0L )
 {
+    m_visibilityUpdateAllowed = true;
 	m_mixerWidgets.setAutoDelete(true);
 	initMixer();
 	initActions();
@@ -113,6 +124,7 @@ KMixWindow::KMixWindow()
 						       mixer->mixerName(),
 						       mixer->mixerNum(),
 						       false, KPanelApplet::Up,
+						       MixDevice::ALL, // !!!
 						       this );
 		  mw->setName( mixer->mixerName() );
 		  insertMixerWidget( mw );
@@ -171,11 +183,10 @@ void
 KMixWindow::initMixer()
 {
 	QString tmpstr;
-	QTimer *timer = new QTimer( this );
-	timer->start( 500 );
+	timer = new QTimer( this );  // timer will be started on show()
 
 	// get maximum values
-   KConfig *config= new KConfig("kcmkmixrc", false);
+ 	KConfig *config= new KConfig("kcmkmixrc", false);
 	config->setGroup("Misc");
 	int maxCards = config->readNumEntry( "maxCards", 2 );
 	int maxDevices = config->readNumEntry( "maxDevices", 2 );
@@ -184,9 +195,18 @@ KMixWindow::initMixer()
    // poll for mixers
    QMap<QString,int> mixerNums;
    int drvNum = Mixer::getDriverNum();
-	kdDebug() << "Number of drivers : " << tmpstr.setNum( drvNum ) << endl;
-   for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
+
+   int driverWithMixer = -1;
+   bool multipleDriversActive = false;
+
+   //kdDebug() << "Number of drivers : " << tmpstr.setNum( drvNum ) << endl;
+#ifndef MULTIDRIVERMODE
+	for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
+#else
+	for( int drv=0; drv<drvNum ; drv++ )
+#endif
 	{
+	    {
 		for( int dev=0; dev<maxDevices; dev++ )
 		{
 			for( int card=0; card<maxCards; card++ )
@@ -199,7 +219,7 @@ KMixWindow::initMixer()
 					continue;
 				}
 			#ifdef HAVE_ALSA_ASOUNDLIB_H	
-				else 
+				else
 				{
 					// Avoid multiple mixer detections with new ALSA
 					// TODO: This is a temporary solution, right code must be
@@ -215,6 +235,7 @@ KMixWindow::initMixer()
 					}
 					if( same == true )
 					{
+					//    kdDebug() << "same mixer ... not adding again" << endl;
 						delete mixer;
 						continue;
 					}
@@ -222,7 +243,21 @@ KMixWindow::initMixer()
 			#endif
 				connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
 				m_mixers.append( mixer );
-				kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
+				// kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
+
+ 				// Check whether there are mixers in different drivers, so that the usr can be warned
+				if (!multipleDriversActive) {
+				  if ( driverWithMixer == -1 ) {
+				    // Aha, this is the very first detected device
+				    driverWithMixer = drv;
+				  }
+				  else {
+				    if ( driverWithMixer != drv ) {
+				      // Got him: There are mixers in different drivers
+				      multipleDriversActive = true;
+				    }
+				  }
+				}
 
 				// count mixer nums for every mixer name to identify mixers with equal names
 				mixerNums[mixer->mixerName()]++;
@@ -230,6 +265,9 @@ KMixWindow::initMixer()
 			}
 		}
 	}
+	}
+
+	//kdDebug() << "Mixers found: " << m_mixers.count() << ", multi-driver-mode: " << multipleDriversActive << endl;
 }
 
 
@@ -307,7 +345,10 @@ KMixWindow::updateDockIcon()
 {
 	Mixer *mixer = m_mixers.first();
         if ( !mixer )
+	{
+	    m_dockWidget->setErrorPixmap();
             return;
+	}
 	MixDevice *masterDevice = ( *mixer )[ mixer->masterDevice() ];
 
 	// Required if muted from mixer widget
@@ -321,12 +362,15 @@ KMixWindow::updateDockIcon()
 void
 KMixWindow::saveConfig()
 {
+    //printf("saveConfig(): Visible=%i , %i\n", isVisible() , m_isVisible); // !!!
 	KConfig *config = kapp->config();
 	config->setGroup(0);
 
 	config->writeEntry( "Size", size() );
    config->writeEntry( "Position", pos() );
-   config->writeEntry( "Visible", isVisible() );
+   // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
+   // (Please note that the problem was only there when quitting via Systray - esken).
+   config->writeEntry( "Visible", m_isVisible );
    config->writeEntry( "Menubar", m_showMenubar );
    config->writeEntry( "AllowDocking", m_showDockWidget );
    config->writeEntry( "TrayVolumeControl", m_volumeWidget );
@@ -417,7 +461,7 @@ KMixWindow::loadConfig()
 
        // only if an actual mixer device is found for the config entry
        if (mixer) {
-	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, this );
+	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, MixDevice::ALL, this );
 	 mw->setName( name );
 	 mw->loadConfig( config, *tab );
 	 insertMixerWidget( mw );
@@ -609,13 +653,64 @@ KMixWindow::newMixer()
 				 mixer->mixerName(), &ok, this );
       if ( ok ) {
 	// create mixer widget
-	KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-					     false, KPanelApplet::Up, this );
-	m_maxId++;
-	mw->setName( name );
-	insertMixerWidget( mw );
+	bool categoryInUse;
+
+	MixDevice::DeviceCategory dc;
+	dc = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY);
+	categoryInUse = isCategoryUsed(mixer, dc);
+	if ( categoryInUse ) {
+	    KMixerWidget *mw1 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up,  dc, this );
+	    m_maxId++;
+	    mw1->setName( name + "");
+	    insertMixerWidget( mw1 );
+	}
+	// TODO: Check whether mw1 contains devices. Otherwise do not insert. Same goes for mw2!!!
+
+	dc = (MixDevice::DeviceCategory)(MixDevice::SECONDARY);
+	categoryInUse = isCategoryUsed(mixer, dc);
+	if ( categoryInUse ) {
+	    KMixerWidget *mw2 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up,  dc, this );
+	    m_maxId++;
+	    mw2->setName( name + "(1)");
+	    insertMixerWidget( mw2 );
+	}
+
+	dc = (MixDevice::DeviceCategory)(MixDevice::SWITCH);
+	categoryInUse = isCategoryUsed(mixer, dc);
+	if ( categoryInUse ) {
+	    KMixerWidget *mw3 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up,  dc, this );
+	    m_maxId++;
+	    mw3->setName( name + "(2)");
+	    insertMixerWidget( mw3 );
+	}
+
       }
    }
+}
+
+
+/**
+ * Returns whether the given mixer contains devices matching the given
+ * DeviceCategory.
+ * @returns true if there is at least on device. false if there is no such device.
+ */
+bool
+KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask) {
+    bool categoryUsed = false;
+    MixSet mixSet = mixer->getMixSet();
+    MixDevice *mixDevice = mixSet.first();
+    for ( ; mixDevice != 0; mixDevice = mixSet.next()) {
+	if ( mixDevice->category() & categoryMask ) {
+	    // found one device wiht a matching category, that is enough.
+	    categoryUsed = true;
+	    break;
+	}
+    }
+    
+    return categoryUsed;
 }
 
 
@@ -662,6 +757,7 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    // avoid invisible and unaccessible main window
    if( !m_showDockWidget && !isVisible() )
 	{
+      timer->start(500);  // !!! Lets see how context menu, tooltips work
       show();
 	}
 
@@ -684,6 +780,7 @@ KMixWindow::toggleMenuBar()
 }
 
 
+// !! Ehem. Is this method used at all?!?
 void
 KMixWindow::toggleVisibility()
 {
@@ -696,6 +793,33 @@ KMixWindow::toggleVisibility()
 		show();
 	}
 }
+
+
+void KMixWindow::showEvent( QShowEvent * ) {
+    if ( m_visibilityUpdateAllowed ) {
+	m_isVisible = true;
+    }
+    timer->start(500);
+}
+
+void KMixWindow::hideEvent( QHideEvent * ) {
+    if ( m_visibilityUpdateAllowed ) {
+	m_isVisible = false;
+    }
+    timer->stop();
+}
+
+/*
+void KMixWindow::dummySlot() {
+    printf("dummySlot(): Visible=%i, %i\n", isVisible(), m_isVisible );
+}
+*/
+
+void KMixWindow::stopVisibilityUpdates() {
+    //printf("stopVisibilityUpdates(): Visible=%i, %i\n", isVisible(), m_isVisible );
+    m_visibilityUpdateAllowed = false;
+}
+
 
 #include "kmix.moc"
 

@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <iostream>
@@ -61,7 +61,7 @@ class Channel
 /********************** KMixerWidget *************************/
 
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum,
-                            bool small, KPanelApplet::Direction dir,
+                            bool small, KPanelApplet::Direction dir, MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
      m_topLayout(0), m_devLayout(0),
@@ -78,7 +78,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 
    // Create mixer device widgets
    if ( mixer ) {
-      createDeviceWidgets( m_direction );
+      createDeviceWidgets( m_direction, categoryMask );
    } else {
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
@@ -93,7 +93,7 @@ KMixerWidget::~KMixerWidget()
 {
 }
 
-void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
+void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir, MixDevice::DeviceCategory categoryMask)
 {
    if ( !m_mixer ) return;
 
@@ -125,6 +125,10 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
                   SIGNAL( masterMuted( bool ) ) );
 
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
+      if ( (mixDevice->category() & categoryMask) == 0) {
+	  // This device does not fit the category => Hide it
+	  mdw->setDisabled(true);
+      }
       m_devLayout->addWidget( mdw, 0 );
 
       Channel *chn = new Channel;
@@ -224,7 +228,7 @@ void KMixerWidget::rightMouseClicked()
 
    a = m_actions->action( "options_show_menubar" );
    if ( a ) a->plug( menu );
-   
+
    QPoint pos = QCursor::pos();
    menu->popup( pos );
 }
@@ -304,7 +308,7 @@ void KMixerWidget::updateBalance()
   if (!md) return;
   int right= md->rightVolume();
   int left = md->leftVolume();
-  
+
   int value = 0;
   if ( left != right ) {
     int refvol = left > right ? left : right;
@@ -312,10 +316,10 @@ void KMixerWidget::updateBalance()
       value = (100*right) / refvol - 100;
     else
       value = -((100*left) / refvol - 100);
-  } 
+  }
   m_balanceSlider->blockSignals( true );
   m_balanceSlider->setValue( value );
-  m_balanceSlider->blockSignals( false );  
+  m_balanceSlider->blockSignals( false );
 }
 
 

@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <klocale.h>
@@ -44,8 +44,12 @@
 #include "mixdevicewidget.h"
 #include "kledbutton.h"
 #include "ksmallslider.h"
+#include "VerticalText.h"
 
-
+/**
+ * Class that represents a single mix device, inlcuding PopUp, ...
+ * Used of KMix main window (and DockWidget and PanelApplet?).
+ */
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
                                  bool small, KPanelApplet::Direction dir,
@@ -123,6 +127,16 @@ void MixDeviceWidget::addActionToPopup( KAction *action ) {
        	else \
 		x = new QVBoxLayout( layout );
 
+
+#define GET_NEWLAYOUT_LAS(x) \
+	QBoxLayout *x; \
+	if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down)) \
+		x = new QHBoxLayout( labelAndSliders ); \
+       	else \
+		x = new QVBoxLayout( labelAndSliders );
+
+
+
 void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 {
    QBoxLayout *layout;
@@ -140,14 +154,6 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       QToolTip::add( m_iconLabel, m_mixdevice->name() );
    } //  otherwise it is created after the slider
 
-   // create label
-   m_label = new QLabel( m_mixdevice->name(), this );
-   m_label->setAlignment( AlignCenter | AlignVCenter );
-   m_label->hide();
-   layout->addWidget( m_label );
-   m_label->installEventFilter( this );
-   QToolTip::add( m_label, m_mixdevice->name() );
-
    // create mute LED
    m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
                                KLed::Circular, this, "MuteLED" );
@@ -159,9 +165,21 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    m_muteLED->installEventFilter( this );
    connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(setUnmuted(bool)) );
 
-   // create sliders
    layout->addSpacing( 1 );
-   GET_NEWLAYOUT( sliders );
+   
+   // create label
+   GET_NEWLAYOUT( labelAndSliders );
+   //m_label = new QLabel( m_mixdevice->name(), this );
+   m_label = new VerticalText( this, m_mixdevice->name().latin1() );
+   //m_label->setAlignment( AlignCenter | AlignVCenter );
+   m_label->hide();
+   labelAndSliders->addWidget( m_label );
+   m_label->installEventFilter( this );
+   QToolTip::add( m_label, m_mixdevice->name() );
+
+   // create sliders
+
+   GET_NEWLAYOUT_LAS( sliders );
    for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
    {
       int maxvol = m_mixdevice->getVolume().maxVolume();
@@ -188,7 +206,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       m_sliders.append ( slider );
       connect( slider, SIGNAL(valueChanged(int)), this, SLOT(volumeChange(int)) );
    }
-
+   
    // create channel icon
    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) {
       m_iconLabel = 0L;
@@ -201,6 +219,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    // create record source LED
    if( m_mixdevice->isRecordable() )
    {
+      //kdDebug() << "new KLedButton()\n";
       m_recordLED = new KLedButton( Qt::red, m_mixdevice->isRecsrc()?KLed::On:KLed::Off,
                                     KLed::Sunken, KLed::Circular, this,
                                     "RecordLED" );
@@ -582,7 +601,7 @@ void MixDeviceWidget::update()
 void MixDeviceWidget::contextMenu()
 {
    KPopupMenu *menu = new KPopupMenu( this );
-   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
+   menu->insertTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
 
    if ( m_sliders.count()>1 )
    {

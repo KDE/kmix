@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <stdlib.h>
@@ -121,16 +121,38 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                   Mixer *mixer = Mixer::getMixer( drv, dev, card );
                   int mixerError = mixer->grab();
                   if ( mixerError!=0 )
+						{
                       delete mixer;
-                  else {
-                      s_mixers->append( mixer );
-
-                      // count mixer nums for every mixer name to identify mixers with equal names
-                      mixerNums[mixer->mixerName()]++;
-                      mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-                  }
-              }
-   }
+							 continue;
+						}
+					#ifdef HAVE_ALSA_ASOUNDLIB_H	
+						else
+						{
+							// Avoid multiple mixer detections with new ALSA
+							// TODO: This is a temporary solution, right code must be
+							// implemented in future
+							Mixer *lmixer;
+							bool same = false;
+							for( lmixer = s_mixers->first(); lmixer; lmixer = s_mixers->next() )
+							{
+								if( lmixer->mixerName() == mixer->mixerName() )
+								{
+									same = true;
+								}
+							}
+							if( same == true )
+							{
+								delete mixer;
+								continue;
+							}
+						}
+					#endif
+						s_mixers->append( mixer );
+						// count mixer nums for every mixer name to identify mixers with equal names
+						mixerNums[mixer->mixerName()]++;
+						mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+				  }
+	}
 
    s_instCount++;
 
@@ -179,7 +201,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
       m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
       connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
    }
-   
+
    //  Find out wether the applet should be reversed
    reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 
@@ -257,7 +279,7 @@ void KMixApplet::selectMixer()
          m_errorLabel = 0;
          m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
                                            mixer->mixerNum(), true,
-                                           popupDirection(), this );
+                                           popupDirection(), MixDevice::BASIC, this );
          setColors();
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
@@ -334,7 +356,7 @@ void KMixApplet::applyColors()
     m_colors.mutedBack = m_pref->mutedBack->color();
 
     m_customColors = m_pref->customColors->isChecked();
-    
+
     setColors();
 }
 
@@ -358,7 +380,7 @@ void KMixApplet::popupDirectionChange(Direction dir) {
   if (!m_errorLabel) {
     if (m_mixerWidget) delete m_mixerWidget;
     m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
-                                      checkReverse(dir), this );
+                                      checkReverse(dir), MixDevice::ALL, this );
     m_mixerWidget->loadConfig( config(), "Widget" );
     setColors();
     connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
@@ -382,7 +404,7 @@ void KMixApplet::preferences()
 
         m_pref->defaultLook->setChecked( !m_customColors );
         m_pref->customColors->setChecked( m_customColors );
-        
+
         m_pref->reverseDirection->setChecked( reversedDir );
 
         m_pref->show();

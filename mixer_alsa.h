@@ -28,7 +28,6 @@ class Mixer_ALSA : public Mixer
 		int identify( snd_mixer_selem_id_t *sid );
 		QString mixer_card_name;
 		QString mixer_device_name;
-		QString card_id;
 		typedef QValueList<snd_mixer_elem_t *> AlsaMixerElemList;
 		AlsaMixerElemList mixer_elem_list;
 		

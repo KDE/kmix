@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <fcntl.h>
@@ -38,6 +38,19 @@
 #include "mixer_oss.h"
 #include <klocale.h>
 
+/*
+  I am using a fixed MAX_MIXDEVS #define here.
+   People might argue, that I should rather use the SOUND_MIXER_NRDEVICES
+   #define used by OSS. But using this #define is not good, because it is
+   evaluated during compile time. Compiling on one platform and running
+   on another with another version of OSS with a different value of
+   SOUND_MIXER_NRDEVICES is very bad. Because of this, usage of
+   SOUND_MIXER_NRDEVICES should be discouraged.
+
+   The #define below is only there for internal reasons.
+   In other words: Don't play around with this value
+ */
+#define MAX_MIXDEVS 32
 
 const char* MixerDevNames[32]={
     I18N_NOOP("Volume"), I18N_NOOP("Bass"), I18N_NOOP("Treble"),
@@ -105,7 +118,7 @@ int Mixer_OSS::openMixer()
 		    }
 	  }
     }
-  
+
       int devmask, recmask, i_recsrc, stereodevs;
       // Mixer is open. Now define properties
       if (ioctl(m_fd, SOUND_MIXER_READ_DEVMASK, &devmask) == -1)
