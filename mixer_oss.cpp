@@ -258,10 +258,17 @@ bool Mixer_OSS::setRecsrcHW( int devnum, bool on )
   return i_recsrc == oldrecsrc;
 }
 
-bool Mixer_OSS::isRecsrcHW( int /*devnum*/ )
+bool Mixer_OSS::isRecsrcHW( int devnum )
 {
-#warning "isRecsrcHW not implemented in OSS yet"
-	return false;
+	bool isRecsrc = false;
+	int recsrcMask;
+	if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
+		errormsg(Mixer::ERR_READ);
+	else {
+		// test if device bit is set in record bit mask
+		isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
+	}
+	return isRecsrc;
 }
 
 int Mixer_OSS::readVolumeFromHW( int devnum, Volume &vol )
