@@ -122,7 +122,7 @@ KMixDockWidget::setVolumeTip()
     {
         long val = -1;
         if ( md->maxVolume() != 0 ) {
-	    val = (md->getAvgVolume()*100 )/( md->maxVolume() );
+	    val = (md->getVolume().getAvgVolume(Volume::MMAIN)*100 )/( md->maxVolume() );
         }
 	newToolTipValue = val + 10000*md->isMuted();
 	if ( _oldToolTipValue != newToolTipValue ) {

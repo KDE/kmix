@@ -133,7 +133,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode)
                 {
 		    drvInfoAppended = true;
 		    QString driverName = Mixer::driverName(drv);
-		    if ( drv!= 0 && mixers.count() > 0) { //  !!! 
+		    if ( drv!= 0 && mixers.count() > 0) {
 			driverInfoUsed += " + ";
 		    }
 		    driverInfoUsed += driverName;
