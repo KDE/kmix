@@ -117,7 +117,6 @@ Mixer* SUN_getMixer( int devnum, int SetNum )
 {
    Mixer *l_mixer;
    l_mixer = new Mixer_SUN( devnum, SetNum );
-   l_mixer->setupMixer();
    return l_mixer;
 }
 
@@ -125,13 +124,14 @@ Mixer* SUN_getMixer( int devnum, int SetNum )
 // FUNCTION    : SUN_getMixerSet
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
+/*
 Mixer* SUN_getMixerSet( MixSet set, int device, int card )
 {
    Mixer *l_mixer;
    l_mixer = new Mixer_SUN( device, card );
-   l_mixer->setupMixer( set );
    return l_mixer;
 }
+*/
 
 //======================================================================
 // FUNCTION    : Mixer::Mixer

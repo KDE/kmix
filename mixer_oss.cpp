@@ -79,18 +79,17 @@ Mixer* OSS_getMixer( int device, int card )
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_OSS( device, card );
-  l_mixer->setupMixer();
   return l_mixer;
 }
 
+/*
 Mixer* OSS_getMixerSet( MixSet set, int device, int card )
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_OSS( device, card );
-  l_mixer->setupMixer( set );
   return l_mixer;
 }
-
+*/
 
 Mixer_OSS::Mixer_OSS(int device, int card) : Mixer(device, card)
 {
