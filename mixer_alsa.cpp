@@ -269,6 +269,9 @@ int Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
    group.gid = *gid;
    if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
 
+   // update mute flag   
+   volume.setMuted( group.mute!=0 );
+
    // read volumes channel for channel
    int volChannel = 0;
    int leftvol = 1;
@@ -279,8 +282,7 @@ int Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
       {
 	 volume.setVolume( volChannel, group.volume.values[channel] );
 	 if ( volChannel==0 ) leftvol = group.volume.values[channel];
-	 volChannel++;
-
+	 
 	 // correct balance
 	 if( volChannel==1 && devnum==m_masterDevice ) 
 	 {
@@ -293,6 +295,8 @@ int Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
 	    } else
 	       m_balance = 0;
          }
+
+	 volChannel++;
       }
    }
 
@@ -311,7 +315,7 @@ int Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
    group.gid = *gid;
    if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
   
-    // update muting flags
+   // update muting flags
    group.mute = volume.isMuted() ? ~0 : 0;
 
    // write volumes channel for channel
