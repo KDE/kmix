@@ -9,6 +9,7 @@ MimeType=
 Terminal=0
 Icon=kmix
 GenericName=Sound Mixer
+GenericName[af]=klank menger
 GenericName[ar]=مازج الصوت
 GenericName[bg]=Звуков Миксер
 GenericName[bs]=Zvučni mikser
