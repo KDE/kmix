@@ -604,7 +604,7 @@ void KMix::createMenu()
     "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
   head += APP_VERSION;
 
-  Mhelp = globalKapp->helpMenu(true, i_s_aboutMsg);
+  Mhelp = helpMenu(i_s_aboutMsg);
   CHECK_PTR( Mhelp );
 
   mainmenu = new KMenuBar( this, "main menu");
