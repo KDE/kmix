@@ -215,8 +215,6 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 		_dockAreaPopup->show();
-                // !! change back the next line after detemining how to do it properly
-		XWarpPointer( _dockAreaPopup->x11Display(), None, _dockAreaPopup->handle(), 0,0,0,0, w/2, h/2 - 16 );
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;

@@ -133,48 +133,25 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
     }
     QToolTip::add( this, m_mixdevice->name() );
 
-
-    // --- DEVICE ICON --------------------------
-    // !!! Fixme: Correct check would be: "Left or Right". But we will add another parameter
-    //            to the constructor (ViewFlags).
-    if (true /* _orientation == Qt::Horizontal*/ ) {
-	m_iconLabel = 0L;
-	setIcon( m_mixdevice->type() );
-	_layout->addWidget( m_iconLabel );
+	 // --- ICON  ----------------------------
+    QBoxLayout *deviceIcon;
+    if ( _orientation == Qt::Vertical ) {
+		 deviceIcon = new QVBoxLayout( _layout );
+		 deviceIcon->setAlignment(Qt::AlignHCenter);
+	 }
+	 else {
+		 deviceIcon = new QHBoxLayout( _layout );
+		 deviceIcon->setAlignment(Qt::AlignVCenter);
+	 }
+	 
+	 m_iconLabel = 0L;
+	 setIcon( m_mixdevice->type() );
+	 deviceIcon->addWidget( m_iconLabel );
 	 m_iconLabel->installEventFilter( this );
-    } //  otherwise it is created after the slider
 
-    _layout->addSpacing( 2 );
-
-
-    // --- MUTE LED --------------------------
-    if ( showMuteLED ) {
-	if( m_mixdevice->hasMute() )
-        {
-	    // create mute LED
-	    m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
-					KLed::Circular, this, "MuteLED" );
-	    m_muteLED->setFixedSize( QSize(16, 16) );
-	    m_muteLED->resize( QSize(16, 16) );
-	    //m_muteLED->setSizePolicy( QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
-	    _layout->addWidget( m_muteLED );
-	    QToolTip::add( m_muteLED, i18n( "Mute" ) );
-
-	    connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(toggleMuted()) );
-	    m_muteLED->installEventFilter( this );
-	} // has Mute LED
-	else {
-	    // we don't have a MUTE LED. We create a dummy widget
-	    // !! possibly not neccesary any more (we are layouted)
-	    QWidget *qw = new QWidget(this, "Spacer");
-	    qw->setFixedSize( QSize(16, 16) );
-	    _layout->addWidget(qw);
-	    qw->installEventFilter( this );
-	} // has no Mute LED
-
-	_layout->addSpacing( 2 );
-    } // showMuteLED
-
+    deviceIcon->addSpacing( 2 );
+	 
+	 _layout->addSpacing( 2 );
 
     // --- LABEL and SLIDER(S) --------------------------
 
@@ -190,32 +167,68 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
     }
 
     // --- Part 1: LABEL ---
-    //m_label = new VerticalText( this, m_mixdevice->name().latin1() );
-    if ( _orientation == Qt::Vertical ) {
-	m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
-	m_label->hide();
-	labelAndSliders->addWidget( m_label );
-	m_label->installEventFilter( this );
+	 QBoxLayout *labels;
+	 if ( _orientation == Qt::Vertical ) {
+		 labels = new QVBoxLayout( labelAndSliders );
+		 labels->setAlignment(Qt::AlignHCenter);
     }
     else {
-	m_label = new QLabel(this);
-        static_cast<QLabel*>(m_label) ->setText(m_mixdevice->name());
-        m_label->hide();
-        labelAndSliders->addWidget( m_label );
-        m_label->installEventFilter( this );
+		 labels = new QHBoxLayout( labelAndSliders );
+		 labels->setAlignment(Qt::AlignVCenter);
     }
+	 
+    if ( _orientation == Qt::Vertical ) {
+		 m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
+		 m_label->hide();
+		 labels->addWidget( m_label );
+		 m_label->installEventFilter( this );
+	 }
+	 else {
+		 m_label = new QLabel(this);
+		 static_cast<QLabel*>(m_label) ->setText(m_mixdevice->name());
+		 m_label->hide();
+		 labels->addWidget( m_label );
+		 m_label->installEventFilter( this );
+	 }
+	 
+	 // Standard spacing for not draw at same rec led level
+	 labels->addSpacing( 16 );
 		
-    // --- Part 2: SLIDERS ---
+    // --- Part 2: SLIDERS AND LED ---
     QBoxLayout *sliders;
     if ( _orientation == Qt::Vertical ) {
-	sliders = new QHBoxLayout( labelAndSliders );
-	sliders->setAlignment(Qt::AlignVCenter);
-    }
-    else {
 	sliders = new QVBoxLayout( labelAndSliders );
 	sliders->setAlignment(Qt::AlignHCenter);
     }
+    else {
+	sliders = new QHBoxLayout( labelAndSliders );
+	sliders->setAlignment(Qt::AlignVCenter);
+    }
 
+	 if ( showMuteLED ) {
+		 if( m_mixdevice->hasMute() )
+		 {
+			 // create mute LED
+			 m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
+					 KLed::Circular, this, "MuteLED" );
+			 m_muteLED->setFixedSize( QSize(16, 16) );
+			 m_muteLED->resize( QSize(16, 16) );
+			 sliders->addWidget( m_muteLED );
+			 QToolTip::add( m_muteLED, i18n( "Mute" ) );
+			 connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(toggleMuted()) );
+			 m_muteLED->installEventFilter( this );
+		 } // has Mute LED
+		 else {
+			 // we don't have a MUTE LED. We create a dummy widget
+			 // !! possibly not neccesary any more (we are layouted)
+			 QWidget *qw = new QWidget(this, "Spacer");
+			 qw->setFixedSize( QSize(16, 16) );
+			 sliders->addWidget(qw);
+			 qw->installEventFilter( this );
+		 } // has no Mute LED
+		 
+	 	sliders->addSpacing( 3 );
+    } // showMuteLED
 
     long chmask = m_mixdevice->getVolume()._chmask;
     for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
@@ -291,45 +304,34 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
     } // if (useSlider)
     } // for all channels of this device
 
-
-
-    // --- DEVICE ICON --------------------------
-    if ( false /*_orientation == Qt::Horizontal*/ ) {  // Fixme !!! see above
-	/*    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) */
-	m_iconLabel = 0L;
-	setIcon( m_mixdevice->type() );
-	_layout->addWidget( m_iconLabel );
-	m_iconLabel->installEventFilter( this );
-    } //  otherwise it is created before the slider
-
-
     if (showRecordLED) {
-	_layout->addSpacing( 2 );
     }
 
     // --- RECORD SOURCE LED --------------------------
-    if ( showRecordLED ) {
-	if( m_mixdevice->isRecordable() )
-        {
-	    m_recordLED = new KLedButton( Qt::red,
-					  m_mixdevice->isRecSource()?KLed::On:KLed::Off,
-					  KLed::Sunken, KLed::Circular, this, "RecordLED" );
-	    m_recordLED->setFixedSize( QSize(16, 16) );
-	    _layout->addWidget( m_recordLED );
-	    // @todo add Tooltip !!
-	    connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
-	    m_recordLED->installEventFilter( this );
-	}
-	else
-	{
-	    // we don't have a RECORD LED. We create a dummy widget
-	    // !! possibly not neccesary any more (we are layouted)
-	    QWidget *qw = new QWidget(this, "Spacer");
-	    qw->setFixedSize( QSize(16, 16) );
-	    _layout->addWidget(qw);
-	    qw->installEventFilter( this );
-	} // has no Record LED
-    } // showRecordLED
+    if ( showRecordLED ) 
+	 {
+		sliders->addSpacing( 2 );
+		if( m_mixdevice->isRecordable() )
+		{
+			m_recordLED = new KLedButton( Qt::red,
+					m_mixdevice->isRecSource()?KLed::On:KLed::Off,
+					KLed::Sunken, KLed::Circular, this, "RecordLED" );
+			m_recordLED->setFixedSize( QSize(16, 16) );
+			sliders->addWidget( m_recordLED );
+			// @todo add Tooltip !!
+			connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
+			m_recordLED->installEventFilter( this );
+		}
+		else
+		{
+			// we don't have a RECORD LED. We create a dummy widget
+			// !! possibly not neccesary any more (we are layouted)
+			QWidget *qw = new QWidget(this, "Spacer");
+			qw->setFixedSize( QSize(16, 16) );
+			sliders->addWidget(qw);
+			qw->installEventFilter( this );
+		} // has no Record LED
+	 } // showRecordLED
 }
 
 
