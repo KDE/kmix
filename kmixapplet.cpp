@@ -43,7 +43,7 @@
 
 KMixApplet::KMixApplet( Mixer *mixer, QString id, 
 			QWidget *parent, const char* name )
-   : KPanelApplet( parent, name ), m_dockId( id ), m_lockedLayout( 0 )
+   : KPanelApplet( id, KPanelApplet::Normal, 0, parent, name ), m_dockId( id ), m_lockedLayout( 0 )
 {
    kdDebug() << "dockId = " << endl;
 
@@ -64,8 +64,8 @@ KMixApplet::KMixApplet( Mixer *mixer, QString id,
    connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()) );
    connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
 
-   // activate menu items
-   setActions(About | Help | Preferences);
+   //FIXME activate menu items
+   //setActions(About | Help | Preferences);
 }
 
 void KMixApplet::updateLayout()

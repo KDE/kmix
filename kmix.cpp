@@ -329,7 +329,7 @@ void KMixApp::insertApplet( KMixApplet *applet )
    connect( applet, SIGNAL(helpClicked()), this, SLOT(showHelp()));
    connect( applet, SIGNAL(prefClicked()), this, SLOT(showSettings()));
    m_applets.append( applet );
-   applet->dock( applet->dockId().ascii() );
+   //FIXME applet->dock( applet->dockId().ascii() );
 }
 
 void KMixApp::removeApplet( KMixApplet *applet )
