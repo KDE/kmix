@@ -415,7 +415,7 @@ void BigMixDeviceWidget::update()
 
 void BigMixDeviceWidget::contextMenu()
 {
-   kDebugInfo("MixDeviceWidget::contextMenu");
+   kdDebug() << "MixDeviceWidget::contextMenu" << endl;
 
    KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
    
@@ -572,7 +572,7 @@ void SmallMixDeviceWidget::setStereoLinked(bool value)
    MixDeviceWidget::setStereoLinked( value );
    
    layout()->activate();
-   kDebugInfo("min=%d", layout()->minimumSize().width() );
+   kdDebug() << "min=" << layout()->minimumSize().width() << endl;
    emit updateLayout();
 }
 
@@ -626,7 +626,7 @@ void SmallMixDeviceWidget::update()
 
 void SmallMixDeviceWidget::contextMenu()
 {
-   kDebugInfo("MixDeviceWidget::contextMenu");
+   kdDebug() << "MixDeviceWidget::contextMenu" << endl;
 
    KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
    

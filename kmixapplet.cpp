@@ -45,7 +45,7 @@ KMixApplet::KMixApplet( Mixer *mixer, QString id,
 			QWidget *parent, const char* name )
    : KPanelApplet( parent, name ), m_dockId( id ), m_lockedLayout( 0 )
 {
-   kDebugInfo("dockId = " + m_dockId );
+   kdDebug() << "dockId = " << endl;
 
    // scale icon
    QPixmap icon = BarIcon("kmixdocked");

@@ -77,7 +77,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * paren
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0), 
    m_topLayout(0), m_devLayout(0), m_name(mixer->mixerName())
 {   
-   kDebugInfo("-> KMixerWidget::KMixerWidget");
+   kdDebug() << "-> KMixerWidget::KMixerWidget" << endl;
    m_actions = new KActionCollection( this );
    new KAction( i18n("Show &all"), 0, this, SLOT(showAll()), m_actions, "show_all" );
    m_channels.setAutoDelete( true );
@@ -87,7 +87,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * paren
    // Create mixer device widgets        
    updateDevices( vert ); 
 
-   kDebugInfo("<- KMixerWidget::KMixerWidget");
+   kdDebug() << "<- KMixerWidget::KMixerWidget" << endl;
 }
 
 KMixerWidget::~KMixerWidget()
@@ -96,7 +96,7 @@ KMixerWidget::~KMixerWidget()
 
 void KMixerWidget::updateDevices( bool vert )
 {   
-   kDebugInfo("-> KMixerWidget::updateDevices");
+   kdDebug() << "-> KMixerWidget::updateDevices" << endl;
 
    // delete old objects
    m_channels.clear(); 
@@ -111,12 +111,12 @@ void KMixerWidget::updateDevices( bool vert )
    m_devLayout = new QHBoxLayout( m_topLayout );
 
    // create devices
-   kDebugInfo("mixSet");
+   kdDebug() << "mixSet" << endl;
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
-      kDebugInfo("MixDeviceWidget");
+      kdDebug() << "MixDeviceWidget" << endl;
       MixDeviceWidget *mdw;
       if ( m_small )
       {
@@ -154,7 +154,7 @@ void KMixerWidget::updateDevices( bool vert )
 
    updateSize();
 
-   kDebugInfo("<- KMixerWidget::updateDevices");
+   kdDebug() << "<- KMixerWidget::updateDevices" << endl;
 }
 
 void KMixerWidget::updateSize()
@@ -177,7 +177,7 @@ void KMixerWidget::setLabels( bool on )
 
 void KMixerWidget::setIcons( bool on )
 {
-   kDebugInfo("KMixerWidget::setIcons( %d )", on );
+   kdDebug() << "KMixerWidget::setIcons( " << on << " )" << endl;
    emit updateIcons( on );
 }
 
@@ -242,7 +242,7 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
 
 void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
 {
-   kDebugInfo("-> KMixerWidget::sessionLoad");
+   kdDebug() << "-> KMixerWidget::sessionLoad" << endl;
 
    KConfig* config = KGlobal::config();
    config->setGroup( grp );
@@ -263,7 +263,7 @@ void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
       n++;
    }
 
-   kDebugInfo("<- KMixerWidget::sessionLoad");
+   kdDebug() << "<- KMixerWidget::sessionLoad" << endl;
 }
 
 void KMixerWidget::showAll()
