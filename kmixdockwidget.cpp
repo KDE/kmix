@@ -89,6 +89,10 @@ void KMixDockWidget::mousePressEvent(QMouseEvent *me)
 
 void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
 {
+    if(!masterVol) {
+        KSystemTray::mouseReleaseEvent(me);
+        return;
+    }
     KConfig *config = kapp->config();
     config->setGroup(0);
     if( config->readBoolEntry("TrayVolumeControl", true ) ) {
