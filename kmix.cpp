@@ -459,6 +459,10 @@ KMixWindow::initMixerWidgets()
 		// Add to Stack
 		kdDebug() << "Inserted mixer " << id << ":" << mw->name() << endl;
 		m_wsMixers->addWidget( mw, id );
+
+		QString grp;
+		grp.sprintf( "%i", mw->id() );
+		mw->loadConfig( kapp->config(), grp );
 		
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
