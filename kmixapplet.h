@@ -25,7 +25,7 @@
 #include <qwidget.h>
 #include <kaction.h>
 #include <kpanelapplet.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <kcolordialog.h>
 
 #include "colorwidget.h"
@@ -90,7 +90,7 @@ class KMixApplet : public KPanelApplet
    ColorWidget *m_pref;
 
    static int s_instCount;
-   static QList<Mixer> *s_mixers;
+   static QPtrList<Mixer> *s_mixers;
    static QTimer *s_timer;    
 
    KMixerWidget::Colors m_colors;

@@ -210,7 +210,7 @@ void Mixer::volumeLoad( KConfig *config )
    m_mixDevices.read( config, grp );
 
    // set new settings
-   QListIterator<MixDevice> it( m_mixDevices );
+   QPtrListIterator<MixDevice> it( m_mixDevices );
    for(MixDevice *md=it.toFirst(); md!=0; md=++it )
    {
       setRecsrc( md->num(), md->isRecsrc() );

@@ -61,7 +61,7 @@ extern "C"
 
 int KMixApplet::s_instCount = 0;
 QTimer *KMixApplet::s_timer = 0;
-QList<Mixer> *KMixApplet::s_mixers;
+QPtrList<Mixer> *KMixApplet::s_mixers;
 
 #define defHigh "#00FF00"
 #define defLow "#FF0000"
@@ -80,7 +80,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    if ( !s_instCount )
    {
       // create mixer list
-      s_mixers = new QList<Mixer>;
+      s_mixers = new QPtrList<Mixer>;
 
       // create timers
       s_timer = new QTimer;

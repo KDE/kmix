@@ -25,7 +25,7 @@
 #include <qwidget.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 
 #include "channel.h"
@@ -82,7 +82,7 @@ class KMixerWidget : public QWidget  {
    QSlider *m_balanceSlider;
    QBoxLayout *m_topLayout;
    QBoxLayout *m_devLayout;
-   QList<Channel> m_channels;
+   QPtrList<Channel> m_channels;
 
    QString m_name;
    QString m_mixerName;

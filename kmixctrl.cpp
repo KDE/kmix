@@ -26,7 +26,7 @@
 #include <kstddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "mixer.h"
 #include "version.h"
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
    delete config;
 
    // create mixers
-   QList<Mixer> mixers;
+   QPtrList<Mixer> mixers;
    int drvNum = Mixer::getDriverNum();
    for( int drv=0; drv<drvNum && mixers.count()==0; drv++ )
        for ( int dev=0; dev<maxDevices; dev++ )

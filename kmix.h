@@ -107,8 +107,8 @@ class KMixWindow : public KMainWindow
    bool m_showMenubar;
    int m_maxId;
 
-   QList<Mixer> m_mixers;
-   QList<KMixerWidget> m_mixerWidgets;
+   QPtrList<Mixer> m_mixers;
+   QPtrList<KMixerWidget> m_mixerWidgets;
    int m_visibleTabs;
 
    QTabWidget *m_tab;

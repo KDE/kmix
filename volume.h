@@ -2,7 +2,7 @@
 #ifndef VOLUME_H
 #define VOLUME_H
 
-#include <qarray.h>
+#include <qmemarray.h>
 
 class Volume
 {
@@ -30,7 +30,7 @@ private:
   int           v_maxVolume;
 
   bool          v_muted;
-  QArray<int>   v_volumes;
+  QMemArray<int>   v_volumes;
 };
 
 class MonoVolume : public Volume

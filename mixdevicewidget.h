@@ -27,7 +27,7 @@
 
 #include <qwidget.h>
 #include <volume.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpixmap.h>
 #include <qrangecontrol.h>
 
@@ -109,7 +109,7 @@ class MixDeviceWidget
       Mixer *m_mixer;
       MixDevice *m_mixdevice;
       QTimer *m_updateTimer;
-      QList<QWidget> m_sliders;
+      QPtrList<QWidget> m_sliders;
       KActionCollection *m_actions;
       KGlobalAccel *m_keys;
 

@@ -28,7 +28,7 @@
 #include <qstring.h>
 #include <qobject.h>
 #include <qintdict.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "volume.h"
 
@@ -94,7 +94,7 @@ class MixDevice
 };
 
 
-class MixSet : public QList<MixDevice>
+class MixSet : public QPtrList<MixDevice>
 {
    public:
       void read( KConfig *config, const QString& grp );
@@ -211,7 +211,7 @@ class Mixer : public QObject
       // All mix devices of this phyisical device.
       MixSet m_mixDevices;
 
-      QList<MixSet> m_profiles;
+      QPtrList<MixSet> m_profiles;
 
    public:
       int setupMixer() { return setupMixer( m_mixDevices ); };
