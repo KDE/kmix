@@ -106,13 +106,13 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
             int h = masterVol->height();
 
             if (x+w > sw)
-                x = me->pos().x()-w;
+                x = me->globalPos().x()-w;
             if (y+h > sh)
-                y = me->pos().y()-h;
+                y = me->globalPos().y()-h;
             if (x < sx)
-                x = me->pos().x();
+                x = me->globalPos().x();
             if (y < sy)
-                y = me->pos().y();
+                y = me->globalPos().y();
 
 	masterVol->move(x, y);
 	masterVol->show();
