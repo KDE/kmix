@@ -137,7 +137,8 @@ void KMixWindow::initActions()
    KStdAction::quit( this, SLOT(quit()), actionCollection());
 
    // settings menu
-   //KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   KAction *a = KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   a->setAccel( CTRL+Key_M );
    KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
    createGUI( "kmixui.rc" );
