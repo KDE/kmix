@@ -33,8 +33,10 @@ static char rcsid[]="$Id$";
 #include <klocale.h>
 #include <kconfig.h>
 #include <kwm.h>
+#include <dcopclient.h>
 
 #include <kmessagebox.h>
+#include <kstddirs.h>
 
 #include "sets.h"
 #include "mixer.h"
@@ -93,9 +95,17 @@ int main(int argc, char **argv)
 
 
   if (!initonly) {
-    // Don't initialize GUI, when we only do "init"
+    // Only initialize GUI, when we only do not just "init"
     globalKapp  = new KApplication( argc, argv, "kmix" );
+    // setup dcop communication
+    if ( !kapp->dcopClient()->isAttached() )
+      kapp->dcopClient()->registerAs("kmix");
   }
+
+  //(  KGlobal::dirs()->addResourceType("mini", KStandardDirs::kde_default("data") +     "kmix/pics");
+    
+  KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_default("data") + "kmix/pics");
+
 
   if (!initonly && globalKapp->isRestored()) {
 
@@ -163,7 +173,7 @@ bool KMix::restore(int number)
 
 
 
-KMix::KMix(int mixernum, int SetNum)
+KMix::KMix(int mixernum, int SetNum) : DCOPObject("KMix")
 {
   // First store how the mixer was started. This two
   // things will be stored in the session config.
@@ -217,7 +227,7 @@ KMix::KMix(int mixernum, int SetNum)
   connect(prefDL, SIGNAL(optionsApply()), this  , SLOT(applyOptions()));
   connect(this,   SIGNAL(layoutChange()), prefDL, SLOT(slotUpdatelayout()));
 
-  showOptsCB();  // !!! For faster debugging
+  //showOptsCB();  // !!! For faster debugging
 
   globalKapp->setMainWidget( this );
    if ( allowDocking && startDocked)
@@ -225,6 +235,29 @@ KMix::KMix(int mixernum, int SetNum)
   else
     show();
 }
+
+bool KMix::process(const QCString &fun, const QByteArray &data,
+		   QCString& /*replyType*/, QByteArray& /*replyData*/ )
+{
+  if ( fun == "activateSet(int)" ) {
+    QDataStream dataStream( data, IO_ReadOnly );
+    int l_i_setNum;
+    dataStream >> l_i_setNum;
+    switch( l_i_setNum ) {
+    case 1:
+      slotReadSet1(); break;
+    case 2:
+      slotReadSet2(); break;
+    case 3:
+      slotReadSet3(); break;
+    case 4:
+      slotReadSet4(); break;
+    }
+    return TRUE;
+  }
+  return FALSE;
+}
+
 
 void KMix::applyOptions()
 {
@@ -241,7 +274,7 @@ void KMix::createWidgets()
 
   QPixmap miniDevPM;
 
-  QPixmap WMminiIcon = BarIcon("mixer_mini");
+  QPixmap WMminiIcon = BarIcon("mini-kmix");
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
@@ -408,7 +441,7 @@ void KMix::createWidgets()
 void KMix::placeWidgets()
 {
   Container->setUpdatesEnabled(false);
-  debug("Placing widgets");
+  // !!!debug("Placing widgets");
   int sliderHeight=100;
   int qsMaxY=0;
   int l_i_belowSlider=0;
@@ -637,8 +670,19 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_4), this,  SLOT(slotWriteSet4()));
 
 
+  QPopupMenu *l_m_readSet = new QPopupMenu;
+  l_m_readSet->insertItem(i18n("Profile &1")	, this, SLOT(slotReadSet1()) , Key_F1);
+  l_m_readSet->insertItem(i18n("Profile &2")	, this, SLOT(slotReadSet2()) , Key_F2);
+  l_m_readSet->insertItem(i18n("Profile &3")	, this, SLOT(slotReadSet3()) , Key_F3);
+  l_m_readSet->insertItem(i18n("Profile &4")	, this, SLOT(slotReadSet4()) , Key_F4);
 
+  QPopupMenu *l_m_writeSet = new QPopupMenu;
+  l_m_writeSet->insertItem(i18n("Profile &1")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F1);
+  l_m_writeSet->insertItem(i18n("Profile &2")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F2);
+  l_m_writeSet->insertItem(i18n("Profile &3")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F3);
+  l_m_writeSet->insertItem(i18n("Profile &4")	, this, SLOT(slotWriteSet1()) , CTRL+Key_F4);
 
+  //int QMenuData::insertItem ( const QString & text, QPopupMenu * popup, int id=-1, int index=-1 )
   Mfile = new QPopupMenu;
   CHECK_PTR( Mfile );
   Mfile->insertItem(i18n("&Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
@@ -647,7 +691,10 @@ void KMix::createMenu()
   Mfile->insertItem(i18n("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_T),this, SLOT(tickmarksTogCB()));
 
-  Mfile->insertItem( i18n("&Options...")       , this, SLOT(showOptsCB()) );
+  Mfile->insertItem( i18n("&Options...")	, this, SLOT(showOptsCB()) );
+  Mfile->insertSeparator();
+  Mfile->insertItem( i18n("Restore Profile")	, l_m_readSet );
+  Mfile->insertItem( i18n("Store Profile")	, l_m_writeSet);
   Mfile->insertSeparator();
   Mfile->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
@@ -783,8 +830,8 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   }
 
   // Scan mixerChannels for Slider object *o
-  QSlider       *qs     = (QSlider*)o;
-  MixDevice     *MixFound= NULL;
+  QSlider       *qs       = (QSlider*)o;
+  MixDevice     *MixFound = 0;
   MixDevice	*MixPtr;
   for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
     MixPtr = (*mix)[l_i_mixDevice];
@@ -803,17 +850,17 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   Mlocal = new QPopupMenu;
   CHECK_PTR( Mlocal );
   if (MixFound->muted())
-    Mlocal->insertItem(i18n("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
+    Mlocal->insertItem(i18n("Un&mute")    , MixFound, SLOT(MvolMuteCB()    ));
   else
-    Mlocal->insertItem(i18n("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
+    Mlocal->insertItem(i18n("&Mute")      , MixFound, SLOT(MvolMuteCB()    ));
   if (MixFound->stereo()) {
     if (MixFound->stereoLinked())
-      Mlocal->insertItem(i18n("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
+      Mlocal->insertItem(i18n("&Split")   , MixFound, SLOT(MvolSplitCB()   ));
     else
-      Mlocal->insertItem(i18n("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
+      Mlocal->insertItem(i18n("Un&split") , MixFound, SLOT(MvolSplitCB()   ));
   }
   if (MixFound->recordable())
-    Mlocal->insertItem(i18n("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
+    Mlocal->insertItem(i18n("&RecSource") , MixFound, SLOT(MvolRecsrcCB()  ));
 
   MlocalCreated = true;
   return Mlocal;

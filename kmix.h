@@ -16,15 +16,17 @@
 #include <kapp.h>
 #include <kmenubar.h>
 #include <ktmainwindow.h>
+#include <dcopobject.h>
 
 #include "sets.h"
 #include "mixer.h"
 #include "prefs.h"
 #include "kmix-docking.h"
 
-class KMix : public KTMainWindow
+class KMix : public KTMainWindow , DCOPObject
 {
   Q_OBJECT
+  K_DCOP
 
 public:
   KMix(int mixernum, int SetNum);

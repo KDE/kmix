@@ -1,3 +1,12 @@
+1999-11-18  Christian Esken  <esken@kde.org>
+
+	* KMix 1.2 : Big internal rewrite
+	* Made proper classes instead of structs
+	* Got rid of the "Next" pointer in the MixDevice class, using
+	  a QArray<MixDevice*> instead
+	* Splitted everyting into platform classes (OSS, ALSA, SUN, IRIX, ...)
+	* 	
+
 1998-12-12  Christian Esken  <esken@kde.org>
 
 	* Tweaked docking a bit more. Under certain circumstances,

@@ -20,7 +20,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// Linux stuff, by Christian Esken
+// Linux section, by Christian Esken
 #if defined(linux)
 #include <fcntl.h>
 #include <sys/ioctl.h>

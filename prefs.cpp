@@ -106,11 +106,12 @@ void Preferences::createChannelConfWindow(QWidget *val_qw_parent)
 
   // Add set selection Combo Box
   i_combo_setSelect = new QComboBox(val_qw_parent);
-  i_combo_setSelect->insertItem("Current set");
-  i_combo_setSelect->insertItem("Set 1");
-  i_combo_setSelect->insertItem("Set 2");
-  i_combo_setSelect->insertItem("Set 3");
-  i_combo_setSelect->insertItem("Set 4");
+  i_combo_setSelect->insertItem("Set selector - This is not functional yet!");
+  // i_combo_setSelect->insertItem("Current set");
+  // i_combo_setSelect->insertItem("Set 1");
+  // i_combo_setSelect->insertItem("Set 2");
+  // i_combo_setSelect->insertItem("Set 3");
+  // i_combo_setSelect->insertItem("Set 4");
   top->addWidget(i_combo_setSelect);
 
   QGroupBox *grpbox = new QGroupBox (i18n("Mixer channel setup"), val_qw_parent);
