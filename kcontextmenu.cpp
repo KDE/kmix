@@ -54,12 +54,8 @@ KCmFunc* KCmManager::getContextFunction(QObject *o, QEvent *e)
 	  for (kcm=CmList->first(); kcm!=NULL; kcm=CmList->next() )
 	    if (kcm->o == o)
 	      break;
-	  QPoint p1 =  qme->pos();
-
-#ifdef DEBUG
-	  cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
-#endif
-
+	  // QPoint p1 =  qme->pos();
+	  // cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
 	  if (kcm)
 	    popup_point = QCursor::pos();
 	}

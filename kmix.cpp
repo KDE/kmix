@@ -502,10 +502,8 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 	  QPopupMenu *qpm = contextMenu(o);
 
 	  if (qpm) {
-	    QPoint p1 =  qme->pos();
-#ifdef DEBUG
-	    cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
-#endif
+	    // QPoint p1 =  qme->pos();
+	    // cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
 	    KCMpopup_point = QCursor::pos();
 	    qpm->popup(KCMpopup_point);
 	    return true;
@@ -527,9 +525,7 @@ QPopupMenu* KMix::contextMenu(QObject *o)
   static QPopupMenu *Mlocal;
 
   if (o == NULL) {
-#ifdef DEBUG
-    cerr << "ContextMenu for NULL object requested!"; 
-#endif
+//    cerr << "ContextMenu for NULL object requested!"; 
     return NULL;
   }
   else {
@@ -581,13 +577,11 @@ void KMix::onDrop( KDNDDropZone* _zone )
   QStrList strlist;
   KURL *url;
 
-#ifdef DEBUG
-  cerr << "URLs dropped on KMix!\n";
-#endif
+//  cerr << "URLs dropped on KMix!\n";
   strlist = _zone->getURLList();
 
   url = new KURL( strlist.first() );
-  cout << url->path() << "\n";
+//  cout << url->path() << "\n";
   delete url;
 }
 

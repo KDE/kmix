@@ -19,7 +19,6 @@ KDE_RPATH = @KDE_RPATH@
 # both are clear, I think
 CXX     = @CXX@
 MOC   	= @MOC@
-#MSGFMT  = msgfmt
 
 ############# INSTALL #################
 
@@ -88,8 +87,8 @@ depend:
 install: $(TARGET) install-icons # install-nls
 	$(INSTALL_DIR) $(BINDIR)
 	$(INSTALL) $(TARGET) $(BINDIR)
-	$(INSTALL_DIR) $(prefix)/share/doc/HTML/default/kmedia
-	$(INSTALL_DATA) kmix.html $(prefix)/share/doc/HTML/default/kmedia
+	$(INSTALL_DIR) $(prefix)/share/doc/HTML/en/kmedia
+	$(INSTALL_DATA) kmix.html $(prefix)/share/doc/HTML/en/kmedia
 	$(INSTALL_DIR) $(prefix)/share/applnk/Multimedia
 	$(INSTALL_DATA) KMix.kdelnk $(prefix)/share/applnk/Multimedia
 
