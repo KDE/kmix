@@ -24,6 +24,8 @@
 #include <qwhatsthis.h>
 
 #include <klocale.h>
+// For "kapp"
+#include <kapplication.h>
 
 #include "kmix.h"
 #include "kmixprefdlg.h"
@@ -71,7 +73,16 @@ KMixPrefDlg::~KMixPrefDlg()
 
 void KMixPrefDlg::apply()
 {
+   // disabling buttons => users sees that we are working
+   enableButtonOK(false);
+   enableButtonCancel(false);
+   enableButtonApply(false);
+   kapp->processEvents();
    emit signalApplied( this );
+   // re-enable (in case of "Apply")
+   enableButtonOK(true);
+   enableButtonCancel(true);
+   enableButtonApply(true);
 }
 
 #include "kmixprefdlg.moc"
