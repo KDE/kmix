@@ -3,8 +3,8 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
- *		 1996-2000 Christian Esken <esken@kde.org>
- *        		   Sven Fischer <herpes@kawo2.rwth-aachen.de>
+ *               1996-2000 Christian Esken <esken@kde.org>
+ *                         Sven Fischer <herpes@kawo2.rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,17 +47,17 @@
 
 
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
-				 bool showMuteLED, bool showRecordLED, 
-				 bool small, bool vert,
-				 QWidget* parent,  const char* name) :
+                                 bool showMuteLED, bool showRecordLED,
+                                 bool small, bool vert,
+                                 QWidget* parent,  const char* name) :
    QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md ),
    m_linked( true ), m_disabled( false ), m_vert( vert ), m_small( small ),
    m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 )
 {
-   // global stuff  
+   // global stuff
    connect( this, SIGNAL(newVolume(int, Volume)), m_mixer, SLOT(writeVolumeToHW(int, Volume) ));
    connect( this, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecsrc(int, bool)) );
-   connect( m_mixer, SIGNAL(newRecsrc()), this, SLOT(update()) );   
+   connect( m_mixer, SIGNAL(newRecsrc()), this, SLOT(update()) );
    if( m_mixdevice->num()==m_mixer->masterDevice() )
       connect( m_mixer, SIGNAL(newBalance(Volume)), this, SLOT(update()) );
 
@@ -65,24 +65,24 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 
    // create actions
    m_actions = new KActionCollection( this );
-   new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()), 
-		      m_actions, "stereo" );   
+   new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()),
+                      m_actions, "stereo" );
    new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
-      
-   KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, this, 0, m_actions, "mute" );
+
+   KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
    a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setMuted(bool)) );
 
-    new KAction( i18n("Show &all"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
-   
+   new KAction( i18n("Show &all"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
+
    if( m_mixdevice->isRecordable() )
    {
-      a = new KToggleAction( i18n("Set &record source"), 0, this, 0, m_actions, "recsrc" );
+      a = new KToggleAction( i18n("Set &record source"), 0, 0, 0, m_actions, "recsrc" );
       a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
    }
 
    // create widgets
    createWidgets( showMuteLED, showRecordLED );
-   
+
    // create update timer
    m_updateTimer = new QTimer( this );
    connect( m_updateTimer, SIGNAL(timeout()), this, SLOT(update()) );
@@ -94,11 +94,11 @@ MixDeviceWidget::~MixDeviceWidget()
 }
 
 void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
-{  
-   QBoxLayout *layout; 
-   if ( m_vert ) 
-      layout = new QVBoxLayout( this ); 
-   else 
+{
+   QBoxLayout *layout;
+   if ( m_vert )
+      layout = new QVBoxLayout( this );
+   else
       layout = new QHBoxLayout( this );
 
    // create channel icon
@@ -118,7 +118,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 
    // create mute LED
    m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
-			       KLed::Circular, this, "MuteLED" );
+                               KLed::Circular, this, "MuteLED" );
    if (!showMuteLED) m_muteLED->hide();
    m_muteLED->setFixedSize( QSize(16, 16) );
    QToolTip::add( m_muteLED, i18n("Muting") );
@@ -135,15 +135,15 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       int maxvol = m_mixdevice->getVolume().maxVolume();
       QWidget* slider;
       if ( m_small )
-	 slider = new KSmallSlider( 0, maxvol, maxvol/10, 
-				    maxvol - m_mixdevice->getVolume( i ),
-				    m_vert?QSlider::Vertical:QSlider::Horizontal, 
-				    this, m_mixdevice->name().ascii() );
+         slider = new KSmallSlider( 0, maxvol, maxvol/10,
+                                    maxvol - m_mixdevice->getVolume( i ),
+                                    m_vert?QSlider::Vertical:QSlider::Horizontal,
+                                    this, m_mixdevice->name().ascii() );
       else
-	 slider = new QSlider( 0, maxvol, maxvol/10, 
-			       maxvol - m_mixdevice->getVolume( i ),
-			       m_vert?QSlider::Vertical:QSlider::Horizontal, 
-			       this, m_mixdevice->name().ascii() );
+         slider = new QSlider( 0, maxvol, maxvol/10,
+                               maxvol - m_mixdevice->getVolume( i ),
+                               m_vert?QSlider::Vertical:QSlider::Horizontal,
+                               this, m_mixdevice->name().ascii() );
 
       QToolTip::add( slider, m_mixdevice->name() );
       slider->installEventFilter( this );
@@ -157,8 +157,8 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    if( m_mixdevice->isRecordable() )
    {
       m_recordLED = new KLedButton( Qt::red, m_mixdevice->isRecsrc()?KLed::On:KLed::Off,
-				    KLed::Sunken, KLed::Circular, this,
-				    "RecordLED" );
+                                    KLed::Sunken, KLed::Circular, this,
+                                    "RecordLED" );
       if (!showRecordLED) m_recordLED->hide();
       QToolTip::add( m_recordLED, i18n("Recording") );
       m_recordLED->setFixedSize( QSize(16, 16) );
@@ -179,31 +179,31 @@ QPixmap MixDeviceWidget::getIcon( int icon )
    QPixmap miniDevPM;
    switch (icon) {
       case MixDevice::AUDIO:
-	 miniDevPM = UserIcon("mix_audio"); break;
+         miniDevPM = UserIcon("mix_audio"); break;
       case MixDevice::BASS:
-	 miniDevPM = UserIcon("mix_bass"); break;
+         miniDevPM = UserIcon("mix_bass"); break;
       case MixDevice::CD:
-	 miniDevPM = UserIcon("mix_cd");	break;
+         miniDevPM = UserIcon("mix_cd");        break;
       case MixDevice::EXTERNAL:
-	 miniDevPM = UserIcon("mix_ext");	break;
+         miniDevPM = UserIcon("mix_ext");       break;
       case MixDevice::MICROPHONE:
-	 miniDevPM = UserIcon("mix_microphone");break;
+         miniDevPM = UserIcon("mix_microphone");break;
       case MixDevice::MIDI:
-	 miniDevPM = UserIcon("mix_midi"); break;
+         miniDevPM = UserIcon("mix_midi"); break;
       case MixDevice::RECMONITOR:
-	 miniDevPM = UserIcon("mix_recmon"); break;
+         miniDevPM = UserIcon("mix_recmon"); break;
       case MixDevice::TREBLE:
-	 miniDevPM = UserIcon("mix_treble"); break;
+         miniDevPM = UserIcon("mix_treble"); break;
       case MixDevice::UNKNOWN:
-	 miniDevPM = UserIcon("mix_unknown"); break;
+         miniDevPM = UserIcon("mix_unknown"); break;
       case MixDevice::VOLUME:
-	 miniDevPM = UserIcon("mix_volume"); break;
+         miniDevPM = UserIcon("mix_volume"); break;
       case MixDevice::VIDEO:
-	 miniDevPM = UserIcon("mix_video"); break;
+         miniDevPM = UserIcon("mix_video"); break;
       case MixDevice::SURROUND:
-	 miniDevPM = UserIcon("mix_surround"); break;
+         miniDevPM = UserIcon("mix_surround"); break;
       default:
-	 miniDevPM = UserIcon("mix_unknown"); break;
+         miniDevPM = UserIcon("mix_unknown"); break;
    }
 
    return miniDevPM;
@@ -217,20 +217,20 @@ void MixDeviceWidget::setIcon( int icon )
       m_iconLabel->installEventFilter( parent() );
    }
 
-   QPixmap miniDevPM = getIcon( icon );  
+   QPixmap miniDevPM = getIcon( icon );
    if ( !miniDevPM.isNull() )
    {
       if ( m_small )
       {
-	 // scale icon
-	 QWMatrix t;
-	 t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );      
-	 m_iconLabel->setPixmap( miniDevPM.xForm( t ) );
-	 m_iconLabel->resize( 10, 10 );
+         // scale icon
+         QWMatrix t;
+         t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
+         m_iconLabel->setPixmap( miniDevPM.xForm( t ) );
+         m_iconLabel->resize( 10, 10 );
       } else
-	 m_iconLabel->setPixmap( miniDevPM );      
+         m_iconLabel->setPixmap( miniDevPM );
       m_iconLabel->setAlignment( Qt::AlignCenter );
-   } else 
+   } else
    {
       cerr << "Pixmap missing.\n";
    }
@@ -259,7 +259,7 @@ bool MixDeviceWidget::isRecsrc()
 }
 
 void MixDeviceWidget::toggleStereoLinked()
-{   
+{
    setStereoLinked( !isStereoLinked() );
 }
 
@@ -277,12 +277,11 @@ void MixDeviceWidget::toggleMuted()
 
 void MixDeviceWidget::setRecsrc( bool value )
 {
-   kdDebug() << "MixDeviceWidget::setRecsrc( " << value << " )" << endl;
    if( m_mixdevice->isRecsrc()!=value )
    {
       m_mixdevice->setRecsrc( value );
       emit newRecsrc( m_mixdevice->num(), value );
-   }  
+   }
 }
 
 void MixDeviceWidget::setStereoLinked(bool value)
@@ -292,7 +291,7 @@ void MixDeviceWidget::setStereoLinked(bool value)
    for( QWidget *slider=m_sliders.at( 1 ); slider!=0 ; slider=m_sliders.next() )
       value ? slider->hide() : slider->show();
 
-   layout()->activate();  
+   layout()->activate();
    emit updateLayout();
 }
 
@@ -303,7 +302,7 @@ void MixDeviceWidget::setLabeled(bool value)
       m_label->show();
    else
       m_label->hide();
-  
+
    layout()->activate();
    emit updateLayout();
 }
@@ -313,17 +312,17 @@ void MixDeviceWidget::setTicks( bool ticks )
    for( QWidget* slider=m_sliders.first(); slider!=0; slider=m_sliders.next() )
    {
       if ( slider->inherits( "QSlider" ) )
-      {	 
-	 if( ticks )
-	    if( m_sliders.at() == 0 )
-	       static_cast<QSlider *>(slider)->setTickmarks( QSlider::Right );
-	    else
-	       static_cast<QSlider *>(slider)->setTickmarks( QSlider::Left );
-	 else
-	    static_cast<QSlider *>(slider)->setTickmarks( QSlider::NoMarks );
+      {
+         if( ticks )
+            if( m_sliders.at() == 0 )
+               static_cast<QSlider *>(slider)->setTickmarks( QSlider::Right );
+            else
+               static_cast<QSlider *>(slider)->setTickmarks( QSlider::Left );
+         else
+            static_cast<QSlider *>(slider)->setTickmarks( QSlider::NoMarks );
       }
    }
- 
+
    layout()->activate();
    emit updateLayout();
 }
@@ -333,10 +332,10 @@ void MixDeviceWidget::setIcons(bool value)
    if ( m_iconLabel->isVisible()!=value )
    {
       if (value)
-	 m_iconLabel->show();
+         m_iconLabel->show();
       else
-	 m_iconLabel->hide();
-  
+         m_iconLabel->hide();
+
       layout()->activate();
       emit updateLayout();
    }
@@ -345,35 +344,35 @@ void MixDeviceWidget::setIcons(bool value)
 void MixDeviceWidget::volumeChange( int )
 {
    Volume vol = m_mixdevice->getVolume();
-   
+
    if ( isStereoLinked() )
    {
       QWidget *slider = m_sliders.first();
       if ( slider->inherits( "KSmallSlider" ) )
       {
-	 KSmallSlider *slider = dynamic_cast<KSmallSlider *>(m_sliders.first());
+         KSmallSlider *slider = dynamic_cast<KSmallSlider *>(m_sliders.first());
          vol.setAllVolumes( slider->maxValue() - slider->value() );
       } else
       {
-	 QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
+         QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
          vol.setAllVolumes( slider->maxValue() - slider->value() );
       }
    } else
    {
-      int n = 0;       
+      int n = 0;
       for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next() )
       {
-	 if ( slider->inherits( "KSmallSlider" ) )
-	 {
-	    KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-	    vol.setVolume( n, smallSlider->maxValue() - smallSlider->value() );	    
-	 } else
-	 {
-	    QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-	    vol.setVolume( n, bigSlider->maxValue() - bigSlider->value() );	    
-	 }
+         if ( slider->inherits( "KSmallSlider" ) )
+         {
+            KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
+            vol.setVolume( n, smallSlider->maxValue() - smallSlider->value() );
+         } else
+         {
+            QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
+            vol.setVolume( n, bigSlider->maxValue() - bigSlider->value() );
+         }
 
-	 n++;
+         n++;
       }
    }
 
@@ -382,7 +381,6 @@ void MixDeviceWidget::volumeChange( int )
 
 void MixDeviceWidget::toggleRecsrc()
 {
-   kdDebug() << "MixDeviceWidget::toggleRecsrc" << endl;
    setRecsrc( !m_mixdevice->isRecsrc() );
 }
 
@@ -397,7 +395,7 @@ void MixDeviceWidget::setDisabled( bool value )
 }
 
 void MixDeviceWidget::setVolume( int channel, int vol )
-{   
+{
    m_mixdevice->setVolume( channel, vol );
    emit newVolume( m_mixdevice->num(), m_mixdevice->getVolume() );
 }
@@ -417,40 +415,40 @@ void MixDeviceWidget::update()
       QWidget *slider =  m_sliders.first();
       int maxvol = 0;
       for( int i = 0; i < vol.channels(); i++ )
-	 maxvol = vol[i] > maxvol ? vol[i] : maxvol;
+         maxvol = vol[i] > maxvol ? vol[i] : maxvol;
       slider->blockSignals( true );
 
       if ( slider->inherits( "KSmallSlider" ) )
       {
-	 KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);   
-	 smallSlider->setValue( vol.maxVolume() - maxvol );
-	 smallSlider->setGray( m_mixdevice->isMuted() );
+         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
+         smallSlider->setValue( vol.maxVolume() - maxvol );
+         smallSlider->setGray( m_mixdevice->isMuted() );
       } else
       {
-	 QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-	 bigSlider->setValue( vol.maxVolume() - maxvol );	    	    
+         QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
+         bigSlider->setValue( vol.maxVolume() - maxvol );
       }
-      
+
       slider->blockSignals( false );
    }
    else
       for( int i=0; i<vol.channels(); i++ )
       {
-	 QWidget *slider = m_sliders.at( i );
-	 slider->blockSignals( true );
+         QWidget *slider = m_sliders.at( i );
+         slider->blockSignals( true );
 
-	 if ( slider->inherits( "KSmallSlider" ) )
-	 {
-	    KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);   
-	    smallSlider->setValue( vol.maxVolume() - vol[i] );
-	    smallSlider->setGray( m_mixdevice->isMuted() );
-	 } else
-	 {
-	    QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-	    bigSlider->setValue( vol.maxVolume() - vol[i] );	    	    
-	 }
+         if ( slider->inherits( "KSmallSlider" ) )
+         {
+            KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
+            smallSlider->setValue( vol.maxVolume() - vol[i] );
+            smallSlider->setGray( m_mixdevice->isMuted() );
+         } else
+         {
+            QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
+            bigSlider->setValue( vol.maxVolume() - vol[i] );
+         }
 
-	 slider->blockSignals( false );
+         slider->blockSignals( false );
       }
 
    // update mute led
@@ -472,17 +470,15 @@ void MixDeviceWidget::update()
 
 void MixDeviceWidget::contextMenu()
 {
-   kdDebug() << "MixDeviceWidget::contextMenu" << endl;
-
    KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
-   
+
    if ( m_sliders.count()>1 )
    {
       KToggleAction *stereo = (KToggleAction *)m_actions->action( "stereo" );
       if ( stereo )
       {
-	 stereo->setChecked( !isStereoLinked() );
-	 stereo->plug( menu );
+         stereo->setChecked( !isStereoLinked() );
+         stereo->plug( menu );
       }
    }
 
@@ -492,14 +488,14 @@ void MixDeviceWidget::contextMenu()
       ta->setChecked( m_mixdevice->isRecsrc() );
       ta->plug( menu );
    }
-   
+
    ta = (KToggleAction *)m_actions->action( "mute" );
    if ( ta )
    {
       ta->setChecked( m_mixdevice->isMuted() );
       ta->plug( menu );
    }
-   
+
    KAction *a = m_actions->action( "hide" );
    if ( a ) a->plug( menu );
 
@@ -508,7 +504,7 @@ void MixDeviceWidget::contextMenu()
 
    a = m_actions->action( "show_all" );
    if ( a ) a->plug( menu );
-  
+
    QPoint pos = QCursor::pos();
    menu->popup( pos );
 }
@@ -519,7 +515,7 @@ bool MixDeviceWidget::eventFilter( QObject* , QEvent* e)
    {
       QMouseEvent *qme = (QMouseEvent*)e;
       if (qme->button() == RightButton) {
-	 emit rightMouseClick();
+         emit rightMouseClick();
       }
    }
    return false;
@@ -528,7 +524,7 @@ bool MixDeviceWidget::eventFilter( QObject* , QEvent* e)
 void MixDeviceWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )
-      emit rightMouseClick();   
+      emit rightMouseClick();
 }
 
 #include "mixdevicewidget.moc"

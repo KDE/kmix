@@ -89,9 +89,7 @@ Mixer_ALSA::Mixer_ALSA( int device, int card ) : Mixer( device, card ),
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-   kdDebug() << "-> Mixer_ALSA::~Mixer_ALSA" << endl;
    if ( groups.pgroups ) free(groups.pgroups);
-   kdDebug() << "<- Mixer_ALSA::~Mixer_ALSA" << endl;
 }
 
 void printGroup( snd_mixer_group_t *grp )

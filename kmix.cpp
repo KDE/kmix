@@ -118,15 +118,11 @@ KMixWindow::KMixWindow()
 
 KMixWindow::~KMixWindow()
 {
-    kdDebug() << "-> KMixWindow::~KMixWindow" << endl;
     saveConfig();
-    kdDebug() << "<- KMixWindow::~KMixWindow" << endl;
 }
 
 void KMixWindow::initActions()
 {
-   kdDebug() << "KMixWindow::initActions" << endl;
-
    // file menu
    KStdAction::openNew( this, SLOT(newMixer()), actionCollection());
    KStdAction::close( this, SLOT(closeMixer()), actionCollection());
@@ -145,7 +141,6 @@ void KMixWindow::initActions()
 
 void KMixWindow::initMixer()
 {
-   kdDebug() << "-> KMixWindow::initMixer" << endl;
    QTimer *timer = new QTimer( this );
    timer->start( 500 );
 
@@ -170,8 +165,6 @@ void KMixWindow::initMixer()
             m_mixers.append( mixer );
          }
       }
-
-   kdDebug() << "<- KMixWindow::initMixer" << endl;
 }
 
 void KMixWindow::initPrefDlg()
@@ -189,8 +182,6 @@ void KMixWindow::initWidgets()
 
 void KMixWindow::updateDocking()
 {
-   kdDebug() << "KMixWindow::updateDocking" << endl;
-
    if (m_dockWidget)
    {
       delete m_dockWidget;
@@ -222,8 +213,6 @@ void KMixWindow::updateDocking()
 
 void KMixWindow::saveConfig()
 {
-   kdDebug() << "KMixWindow::sessionSave" << endl;
-
    KConfig *config = kapp->config();
    config->setGroup(0);
 
@@ -257,8 +246,6 @@ void KMixWindow::saveConfig()
 
 void KMixWindow::loadConfig()
 {
-   kdDebug() << "-> KMixWindow::sessionLoad" << endl;
-
    KConfig *config = kapp->config();
    config->setGroup(0);
 
@@ -309,13 +296,10 @@ void KMixWindow::loadConfig()
          }
       }
 
-      kdDebug() << "mixer=" << mixer << endl;
       KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, true, this );
       mw->loadConfig( config, *tab );
       insertMixerWidget( mw );
    }
-
-   kdDebug() << "<- KMixWindow::sessionLoad" << endl;
 }
 
 void KMixWindow::insertMixerWidget( KMixerWidget *mw )
