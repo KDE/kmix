@@ -80,7 +80,7 @@ void DockWidget::dock() {
     this->setFixedSize(24, 24);
 
     // finally dock the widget
-    this->show();
+    show();
     docked = true;
   }
   if(kmix){
