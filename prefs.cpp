@@ -20,6 +20,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "sets.h"
 #include "prefs.h"
 #include "prefs.moc"
 #include "kmix.h"

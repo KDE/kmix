@@ -29,6 +29,7 @@ static char rcsid[]="$Id$";
 #include <kiconloader.h>
 #include <klocale.h>
 
+#include "sets.h"
 #include "mixer.h"
 #include "kmix.h"
 #include "kmix.moc"

@@ -19,6 +19,7 @@
 #include <ktopwidget.h>
 #include "kcontextmenu.h"
 
+#include "sets.h"
 #include "mixer.h"
 #include "prefs.h"
 
@@ -28,6 +29,7 @@
 class KMix : public KTopLevelWidget
 {
   Q_OBJECT
+
 public:
   KMix(char *mixername);
   ~KMix();

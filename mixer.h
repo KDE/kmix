@@ -12,6 +12,7 @@
 #undef Unsorted
 //#undef Both
 #include <qslider.h>
+#include <qlist.h>
 
 #include <kurl.h>
 #include <kapp.h>
@@ -32,6 +33,7 @@
 // I am doing crossreferencing between classes, so I must declare all
 // referenced classes here.
 class MixChannel;
+class MixSet;
 class Mixer;
 
 /****************************************************************************
@@ -99,7 +101,7 @@ public:
   char		channel;		/* channel number:                 */
 					/* Even = Left, Odd = Right        */
   int		volume;			/* Volume of this channel	   */
-  QSlider	*slider;
+  QSlider	*slider;		/* Associated slider               */
 public slots:
   void	VolChanged( int new_pos );
 };
@@ -148,7 +150,10 @@ private:
 
   unsigned int devmask, recmask, recsrc, stereodevs;
   int PercentLeft,PercentRight;
-  int MaxVolume; // Maximum volume Level allowed by the OS
+  ///  Maximum volume Level allowed by the Mixer API (OS dependent)
+  int MaxVolume;
+  ///  The mixing set list
+  static QList<MixSet> TheMixSets;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "sets.h"
 #include "mixer.h"
 #include "mixer.moc"
 
@@ -98,6 +99,9 @@ char KMixErrors[6][100]=
 			   "Speaker", "Line"  , "Microphone", "CD"   , "Mix"  , \
 			   "Pcm2"   , "RecMon", "IGain"     , "OGain", "Line1", \
 			   "Line2"  , "Line3" };
+
+/// The mixing set list
+QList<MixSet> Mixer::TheMixSets;
 
 Mixer::Mixer()
 {
@@ -207,7 +211,7 @@ void  Mixer::setupStructs(void)
   int         devicework, recwork, recsrcwork, stereowork;
   MixDevice   *MixPtr, *MixNext;
 
-  // Copy the bit mask to scratch registers
+  // Copy the bit mask to scratch registers. I will do bit shiftings on these.
   devicework  = devmask;
   recwork     = recmask;
   recsrcwork  = recsrc;
@@ -234,7 +238,7 @@ void  Mixer::setupStructs(void)
       /* !!! Here I can fill in a test, if the mixing device should
        *     be shown. You can create a super small mixer if you only
        *     enable one channel. This is most useful in conjunction with
-       *     using different mixing setups. TODO
+       *     using different mixing sets. TODO
        */
 
 
@@ -283,7 +287,7 @@ void  Mixer::setupStructs(void)
  * Task:	Reads volume settings from either the mixer or a mixing set
  *		and fills in the values in the according "dt_mixer_T"
  *		structure.
- *		This function decides on policy, if a slider is created
+ *		This function defines the policy, if a slider is created
  *		for a mixing channel, if the "StereoLink" is enabled,
  *		and thus if two sliders will be created. The idea is as
  *		follows: Reading from a set reads in the "StereoLink"
@@ -294,9 +298,9 @@ void  Mixer::setupStructs(void)
  *
  *
  * in:		The source, where the volume settings are read from.
- *		-1  = Read from mixer hardware
- *		 0  = Default mixing set
- *		 1-5= Other mixing sets
+ *		-1    = Read from mixer hardware
+ *		 0    = Default mixing set
+ *		 1-...= Other mixing sets
  * 
  * out:		-
  *
@@ -309,9 +313,9 @@ void Mixer::InternalSetVolumes(int Source)
   /*
    * Source can be the number of a mixing set, or -1 for reading from
    * the hardware.
-   * -1  = Read from mixer hardware
-   *  0  = Default mixing set
-   *  1-5= Other mixing sets
+   * -1    = Read from mixer hardware
+   *  0    = Default mixing set
+   *  1-...= Other mixing sets
    */
 
   if ( Source < 0 )
@@ -375,7 +379,11 @@ void Mixer::InternalSetVolumes(int Source)
 	  MixPtr=MixPtr->Next;
 	}
     } /* if ( Source < 0 ) */
+  else {
+    // Read from a set
 
+    // First find set in the set list
+  }
 }
 
 
