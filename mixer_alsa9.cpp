@@ -109,18 +109,16 @@ Mixer_ALSA::openMixer()
 	snd_ctl_card_info_alloca(&hw_info);
 
 	snd_mixer_elem_t *elem;
-   snd_mixer_selem_id_t *sid;
+	snd_mixer_selem_id_t *sid;
 	snd_mixer_selem_id_alloca( &sid );
 
 	// Card information
-	char *devName = new char[32];
-	devName[0] = 0;
-
-	if ( m_devnum < 0 || m_devnum > 31 ) {
-	strcpy ( devName, "default" );
+	char devName[32];
+	if ( (unsigned)m_devnum > 31 ) {
+		strcpy ( devName, "default" );
 	}
 	else {
-	    sprintf( devName, "hw:%i", m_devnum );
+		sprintf( devName, "hw:%i", m_devnum );
 	}	
 
 	//kdDebug() << "Trying to open " << devName << endl; // !!!
