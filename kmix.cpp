@@ -303,17 +303,6 @@ KMixWindow::updateDocking()
 		// create RMB menu
 		KPopupMenu *menu = m_dockWidget->contextMenu();
 
-		KAction *a = actionCollection()->action("options_configure");
-		if (a) a->plug( menu );
-
-		a = actionCollection()->action("help_about_app");
-		if (a) a->plug( menu );
-
-		a = actionCollection()->action("help");
-		if (a) a->plug( menu );
-
-		menu->insertSeparator();
-
 		a = actionCollection()->action( "dock_mute" );
 		if ( a ) a->plug( menu );
 
