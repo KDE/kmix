@@ -72,9 +72,9 @@ int main(int argc, char **argv)
     else if (strcmp(argv[i],"-r") == 0) {
       SetNumber   = 1;
     }
-    else if (strcmp(argv[i],"-init") == 0) {
-      initonly   = true;
-    }
+//    else if (strcmp(argv[i],"-init") == 0) {
+//      initonly   = true;
+//    }
     else if (strcmp(argv[i],"-R") == 0 && i+1<argc) {
       /* -R is the command to read in a specified set.
        * The set number is given as the next argument.
