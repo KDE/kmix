@@ -180,8 +180,7 @@ KMix::KMix(int mixernum, int SetNum)
   mix = new Mixer(mixernum, SetNum);
   CHECK_PTR(mix);
 
-  QString dockIcon = globalKapp->kde_datadir() + "/kmix/pics/kmixdocked.xpm";
-  dock_widget = new KDockWidget("dockw",dockIcon);
+  dock_widget = new KDockWidget("dockw", "kmixdocked.xpm");
   dock_widget->setMainWindow(this);
   if ( allowDocking ) {
     dock_widget->dock();
@@ -694,21 +693,6 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   MlocalCreated = true;
   return Mlocal;
 }
-
-
-
-
-
-void KMix::onDrop( KDNDDropZone*  )
-{
-  QStrList strlist;
-  KURL *url;
-
-  //  strlist = _zone->getURLList();
-  url = new KURL( strlist.first() );
-  delete url;
-}
-
 
 void KMix::MbalCentCB()
 {

@@ -26,10 +26,12 @@
 
 #include "docking.h"
 #include <qmessagebox.h>
-
+#include <ktmainwindow.h>
+#include <kiconloader.h>
+#include <kglobal.h>
 
 // --- Constructor ---
-KDockWidget::KDockWidget(const char* name, const QString& dockPixmapName)
+KDockWidget::KDockWidget(const QString& dockPixmapName, const char* name)
   : QWidget(0, name, 0)
 {
   baseInit();
@@ -37,35 +39,22 @@ KDockWidget::KDockWidget(const char* name, const QString& dockPixmapName)
 }
 
 // --- Constructor ---
-KDockWidget::KDockWidget(const char* name, QPixmap *dockPixmap)
+KDockWidget::KDockWidget(const QPixmap& dockPixmap, const char* name)
   : QWidget(0, name, 0)
 {
   baseInit();
   setPixmap(dockPixmap);
 }
 
-
 // --- set a new dock Pixmap by filename ---
 void KDockWidget::setPixmap(const QString& dockPixmapName)
 {
-  if ( dockPixmapName.isNull() ) {
-    pm_dockPixmap = 0;
-  }
-  else {
-    pm_dockPixmap = new QPixmap();
-    // load dock icon pixmap
-    if ( dockPixmapName != 0 && !pm_dockPixmap->load(dockPixmapName) ) {
-      QString tmp;
-      // !!! this should use KDE error handling functions
-      tmp = i18n("Could not load ") + dockPixmapName;
-      QMessageBox::warning(this, i18n("Error"), tmp, i18n("OK"));
-    }
-  }
+  setPixmap(ICON(dockPixmapName));
 }
 
 
 // --- set a new dock Pixmap by giving a QPixmap ---
-void KDockWidget::setPixmap(QPixmap* dockPixmap)
+void KDockWidget::setPixmap(const QPixmap& dockPixmap)
 {
   this->pm_dockPixmap = dockPixmap;
 }
@@ -160,8 +149,8 @@ void KDockWidget::paintEvent (QPaintEvent* )
 
 void KDockWidget::paintIcon ()
 {
-  if (pm_dockPixmap)
-    bitBlt(this, 0, 0, pm_dockPixmap);
+  if (!pm_dockPixmap.isNull())
+    bitBlt(this, 0, 0, &pm_dockPixmap);
 }
 
 

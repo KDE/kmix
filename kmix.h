@@ -16,14 +16,11 @@
 #include <kapp.h>
 #include <kmenubar.h>
 #include <ktopwidget.h>
-#include <drag.h> 
 
 #include "sets.h"
 #include "mixer.h"
 #include "prefs.h"
 #include "docking.h"
-
-
 
 class KMix : public KTMainWindow
 {
@@ -38,7 +35,6 @@ public:
   KDockWidget    *dock_widget;
 
 public slots:
-  void onDrop( KDNDDropZone*);
   void showOptsCB();
   void quitClickedCB();
   void launchHelpCB();
@@ -89,7 +85,6 @@ private:
 
   void setBalance(int left, int right);
   QWidget	*Container;
-  KDNDDropZone  *dropZone;
 
   QPopupMenu	*Mfile;
   QPopupMenu	*Moptions;

@@ -28,9 +28,8 @@
 #ifndef _DOCKING_H_
 #define _DOCKING_H_
 
-#include <ktmainwindow.h>
+class KTMainWindow;
 #include <qpixmap.h>
-#include <qpoint.h>
 
 /**
  This class creates a widget that allows applications to display a widget
@@ -47,15 +46,15 @@ class KDockWidget : public QWidget {
 public:
   /// Creates a docking widget and allows passing of the name of
   /// the docking icon.
-  KDockWidget(const char *name=0, const QString& dockIconName=0);
+  KDockWidget(const QString& dockIcon, const char *name=0);
   /// Overloaded constructor. Only differs from the previous constructor
   /// in that you can pass the icon as a QPixmap
-  KDockWidget(const char *name=0, QPixmap* dockPixmap=0);
+  KDockWidget(const QPixmap& dockPixmap, const char *name=0);
   /// Deletes the docking widget. Please note that the widget undocks from
   /// the panel automatically.
   ~KDockWidget();
   void setMainWindow(KTMainWindow *ktmw);
-  QPixmap* dockPixmap() const;
+  QPixmap dockPixmap() const;
   /** Checks, if application is in "docked" state. Returns true, if yes.
     It has still to be defined what the exact semantics are: Complete
     application docked, a single window docked, or is this application
@@ -63,7 +62,7 @@ public:
   bool isDocked() const;
   void savePosition();
   void setPixmap(const QString& dockPixmapName);
-  void setPixmap(QPixmap* dockPixmap);
+  void setPixmap(const QPixmap& dockPixmap);
 
 public slots:
   /// Dock this widget - this means to show this widget on the docking area
@@ -99,7 +98,7 @@ protected:
   int		showHidePopmenuEntry;
   KTMainWindow	*ktmw;
   QPopupMenu	*popup_m;
-  QPixmap	*pm_dockPixmap;
+  QPixmap	pm_dockPixmap;
  };
 
 #endif
