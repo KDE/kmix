@@ -65,3 +65,5 @@ void KMixApp::quitExtended() {
     emit stopUpdatesOnVisibility();
     quit();
 }
+
+#include "KMixApp.moc"
