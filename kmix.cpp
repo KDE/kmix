@@ -323,7 +323,6 @@ void KMix::createWidgets()
 
     // Create state LED
     MixPtr->i_KLed_state = new QceStateLED(Container);
-  //    MixPtr->i_KLed_state->setFixedSize(50,50);
 
     // Create slider
     QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
@@ -417,7 +416,7 @@ void KMix::placeWidgets()
     // Tickmarks
     qs = MixPtr->Left->slider;
     if (tickmarksOn) {
-      qs->setTickmarks(QSlider::Left);
+      qs->setTickmarks(QSlider::Right);
       qs->setTickInterval(10);
     }
     else
@@ -475,7 +474,7 @@ void KMix::placeWidgets()
       if (MixPtr->stereoLinked() == false) {
 	// Show right slider
 	if (tickmarksOn) {
-	  qs->setTickmarks(QSlider::Right);
+	  qs->setTickmarks(QSlider::Left);
 	  qs->setTickInterval(10);
 	}
 	else {
@@ -505,15 +504,18 @@ void KMix::placeWidgets()
 
 
     // The same for the state LED
-    int l_i_xpos, l_i_width, l_i_height;
-    l_i_width  = l_KLed_state->width();
+    int l_i_newWidth;
+    l_i_newWidth = ix - old_x - 6;
+    
+    int l_i_xpos, l_i_height; //l_i_width, l_i_height;
+    //!!!    l_i_width  = l_KLed_state->width();
     l_i_height = l_KLed_state->height();
 
     l_i_xpos  = ix + old_x;
-    l_i_xpos -= l_i_width;
+    l_i_xpos -= l_i_newWidth;
     l_i_xpos /= 2;
  
-    l_KLed_state->move(l_i_xpos,l_i_belowSlider);
+    l_KLed_state->setGeometry(l_i_xpos,l_i_belowSlider, l_i_newWidth, l_i_height);
     l_KLed_state->show();
 
     if (first) {
