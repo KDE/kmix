@@ -107,7 +107,7 @@ MixerSelectionInfo* MixerSelector::exec() {
 }
 
 void MixerSelector::newMixerSelected(const QString &newMixer) {
-	// using mid(2) here to strip off the numbering prefix (e.g. "1. AU8830 Soundcard")
+	// using mid(3) here to strip off the numbering prefix (e.g. "1. AU8830 Soundcard")
 	shownName->setText(newMixer.mid(3));
 }
 
