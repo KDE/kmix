@@ -13,8 +13,7 @@ public:
 
   virtual QString errorText(int mixer_error);
   virtual int readVolumeFromHW( int devnum, Volume &vol );
-  virtual int writeVolumeToHW( int devnum, Volume vol );
-
+  virtual int writeVolumeToHW( int devnum, Volume &vol );
 
 protected:
   virtual bool setRecsrcHW( int devnum, bool on = true );

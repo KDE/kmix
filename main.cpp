@@ -41,7 +41,7 @@ extern "C" int kdemain(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
                          APP_VERSION, description, KAboutData::License_GPL,
-                         I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski\n(c) 2002-2003 Christian Esken, Helio Chissini de Castro"));
+                         I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski\n(c) 2002-2003 Christian Esken, Helio Chissini de Castro\n(c) 2004 Christian Esken"));
 
    aboutData.addAuthor("Christian Esken", "Current maintainer", "esken@kde.org");
    aboutData.addAuthor("Helio Chissini de Castro", I18N_NOOP("Current redesign, Alsa 0.9x port"), "helio@kde.org" );

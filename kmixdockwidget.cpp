@@ -5,6 +5,7 @@
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
+ * Copyright (C) 2004 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,55 +41,17 @@
 #include "mixdevicewidget.h"
 #include "kmixdockwidget.h"
 #include "kwin.h"
-
-//-----------------------------------------------------------------------
-// MasterVolume
-
-KMixMasterVolume::KMixMasterVolume(QWidget* parent, const char* name, Mixer* mixer, KMixDockWidget *dockW)
-    : QVBox(parent, name, WStyle_Customize | WType_Popup), dock(dockW)
-{
-    setFrameStyle(QFrame::PopupPanel);
-    setMargin(KDialog::marginHint());
-
-    MixDevice *masterDevice = (*mixer)[mixer->masterDevice()];
-    mdw = new MixDeviceWidget( mixer, masterDevice, false, false,
-                                false, KPanelApplet::Up, this, NULL,
-                                masterDevice->name().latin1() );
-    resize(sizeHint());
-    installEventFilter( mdw );
-}
-
-void 
-KMixMasterVolume::mousePressEvent(QMouseEvent *e)
-{
-  // this is very tricky:
-  // if we hide this popup here, the dockWidget receives the event.
-  // if we wouldn't hide this popup, the dockWidget doesn't receive this event
-  // and could therefore not hide this popup
-  // solution: we hide this popup here, but tell the dockWidget to ignore the
-  // mouseRelease event - otherwise it would show the popup again.
-  // We must to do this only for the "LeftButton", otherwise we would ignore events after
-  // a right-click (which shows the context menu)
-  if ( dock->hasMouse() ) 
-  {
-	  if ( e->button() == MidButton)  
-		  dock->ignoreNextEvent();
-	  hide();
-	  return;
-  }
-  QVBox::mousePressEvent(e);  // will hide this popup
-}
-
-//-----------------------------------------------------------------------
-// DockWidget
+#include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name )
     : KSystemTray( parent, name ),
       m_mixer(mixer),
-      masterVol(0L),
-      audioPlayer(0L),
-      m_playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
-      m_ignoreNextEvent(false)
+      _dockAreaPopup(0L),
+      _audioPlayer(0L),
+      _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
+      _ignoreNextEvent(false),
+      _oldToolTipValue(-1),
+      _oldPixmapType('-')
 {
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
@@ -96,69 +59,147 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name 
 
 KMixDockWidget::~KMixDockWidget()
 {
-    delete audioPlayer;
-    delete masterVol;
+    delete _audioPlayer;
+    delete _dockAreaPopup;
 }
 
-void 
+void
 KMixDockWidget::createMasterVolWidget()
 {
-    if (!m_mixer)
+    if (m_mixer == 0) {
         return;
+    }
 
-   // create devices
-   MixDevice *masterDevice = (*m_mixer)[ m_mixer->masterDevice() ];
+    // create devices
 
-   masterVol = new KMixMasterVolume(0, "masterVol", m_mixer, this);
-   connect(masterVol->mixerWidget(), SIGNAL(newVolume(int, Volume)),
-           SLOT(setVolumeTip(int, Volume)));
-   setVolumeTip(0, masterDevice->getVolume());
+    _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, this);
+    _dockAreaPopup->createDeviceWidgets();
+    /* We are setting up 3 connections:
+     * Refreshig the _dockAreaPopup
+     * Refreshing the Tooltip
+     * Refreshing the Icon
+     *
+     */
+    connect( m_mixer, SIGNAL(newVolumeLevels()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
+    connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(setVolumeTip() ) );
+    connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(updatePixmap() ) );
 
+    /*
+      MixDevice *md = _dockAreaPopup->dockDevice();
+      if (md !=  0) {
+        setVolumeTip(0, md->getVolume());
+      }
+    */
+	
    // Setup volume preview
-   if ( m_playBeepOnVolumeChange ) {
-        audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
-        connect(masterVol->mixerWidget(), SIGNAL(newVolume(int, Volume)), audioPlayer, SLOT(play()));
+   if ( _playBeepOnVolumeChange ) {
+        _audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
+        // !! it would be better to connect the MixDevice, but it is not yet implemented
+        connect(_dockAreaPopup->getMdwHACK(),
+                SIGNAL(newVolume(int, Volume)),
+                _audioPlayer,
+                SLOT(play()));
    }
 }
 
-void 
-KMixDockWidget::setVolumeTip(int, Volume vol)
-{
-    MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
-    QString tip = i18n( "Volume at %1%" ).arg( ( vol.getVolume( 0 )*100 )/( vol.maxVolume() ) );
-    if ( masterDevice->isMuted() )
-        tip += i18n( " (Muted)" );
 
-    QToolTip::remove(this);
-    QToolTip::add(this, tip);
+
+void
+KMixDockWidget::setVolumeTip()
+{
+    MixDevice *md = 0;
+    if ( _dockAreaPopup != 0 ) {
+        md = _dockAreaPopup->dockDevice();
+    }
+    QString tip = "";
+
+    int newToolTipValue = 0;
+    if ( md == 0 )
+    {
+        tip = i18n("Mixer cannot be found"); // !! text could be reworked
+	newToolTipValue = -2;
+    }
+    else
+    {
+        long val = -1;
+        if ( md->maxVolume() != 0 ) {
+	    val = (md->getAvgVolume()*100 )/( md->maxVolume() );
+        }
+	newToolTipValue = val + 10000*md->isMuted();
+	if ( _oldToolTipValue != newToolTipValue ) {
+	    tip = i18n( "Volume at %1%" ).arg( val );
+	    if ( md->isMuted() ) {
+		tip += i18n( " (Muted)" );
+	    }
+	}
+	// create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
+	newToolTipValue = val + 10000*md->isMuted();
+    }
+
+    // The actual updating is only done when the "toolTipValue" was changed
+    if ( newToolTipValue != _oldToolTipValue ) {
+	// changed (or completely new tooltip)
+	if ( _oldToolTipValue >= 0 ) {
+	    // there was an old Tooltip: remove it
+	    QToolTip::remove(this);
+	}
+	QToolTip::add(this, tip);
+    }
+    _oldToolTipValue = newToolTipValue;
 }
 
-void 
+void
 KMixDockWidget::updatePixmap()
 {
-    MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
-
-    if ( masterDevice->isMuted() )
-        setPixmap( loadIcon( "kmixdocked_mute" ) );
+    MixDevice *md = 0;
+    if ( _dockAreaPopup != 0 ) {
+        md = _dockAreaPopup->dockDevice();
+    }
+    char newPixmapType;
+    if ( md == 0 )
+    {
+	newPixmapType = 'e';
+    }
+    else if ( md->isMuted() )
+    {
+	newPixmapType = 'm';
+    }
     else
-        setPixmap( loadIcon( "kmixdocked" ) );
+    {
+	newPixmapType = 'd';
+    }
+    
+    if ( newPixmapType != _oldPixmapType ) {
+	// Pixmap must be changed => do so
+	switch ( newPixmapType ) {
+	case 'e': setErrorPixmap(); break;
+	case 'm': setPixmap( loadIcon( "kmixdocked_mute" ) ); break;
+	case 'd': setPixmap( loadIcon( "kmixdocked"      ) ); break;
+	}
+    }
+    
+    _oldPixmapType = newPixmapType;
 }
 
-void 
+void
 KMixDockWidget::setErrorPixmap()
 {
     setPixmap( loadIcon( "kmixdocked_error" ) );
 }
 
-void 
+void
 KMixDockWidget::ignoreNextEvent()
 {
-  m_ignoreNextEvent = true;
+  _ignoreNextEvent = true;
 }
 
-void 
+void
 KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
+	if ( _dockAreaPopup == 0 ) {
+		return KSystemTray::mousePressEvent(me);
+	}
+
 	// esken: exchanged LeftButton and MidButton, because helio changed mousePressEvent() to MidButton.
 	//        And using MidButton for showing TrayVolumeControl is more logical (you use the MidButton wheel!)
 	if ( me->button() == LeftButton )
@@ -167,15 +208,15 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	}
 	else if ( me->button() == MidButton )
 	{
-		if ( m_ignoreNextEvent )
+		if ( _ignoreNextEvent )
 		{
-			m_ignoreNextEvent = false;
+			_ignoreNextEvent = false;
 			return;
 		}
 		
-		if ( masterVol->isVisible() )
+		if ( _dockAreaPopup->isVisible() )
 		{
-			masterVol->hide();
+			_dockAreaPopup->hide();
 			return;
 		}
 		
@@ -186,9 +227,9 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		int sy = desktop.y();
 		int x = me->globalPos().x();
 		int y = me->globalPos().y();
-		y -= masterVol->geometry().height();
-		int w = masterVol->width();
-		int h = masterVol->height();
+		y -= _dockAreaPopup->geometry().height();
+		int w = _dockAreaPopup->width();
+		int h = _dockAreaPopup->height();
 		
 		if (x+w > sw)
 			x = me->globalPos().x() - w - 2;
@@ -199,9 +240,10 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		if (y < sy)
 			y = me->globalPos().y() + 2;
 		
-		masterVol->move(x, y);  // so that the mouse is outside of the widget
-		masterVol->show();
-		XWarpPointer(masterVol->x11Display(), None, masterVol->handle(), 0,0,0,0, w/2, h/2);
+		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
+		_dockAreaPopup->show();
+                // !! change back the next line after detemining how to do it properly
+		XWarpPointer(_dockAreaPopup->x11Display(), None, _dockAreaPopup->handle(), 0,0,0,0, w/2, h/2);
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
@@ -211,18 +253,23 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	
 }
 
-void 
+void
 KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
 {
 	
     KSystemTray::mouseReleaseEvent(me);
 }
 
-void 
+void
 KMixDockWidget::wheelEvent(QWheelEvent *e)
 {
-    MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
-    Volume vol = masterDevice->getVolume();
+  MixDevice *md = 0;
+  if ( _dockAreaPopup != 0 ) {
+      md = _dockAreaPopup->dockDevice();
+  }
+  if ( md != 0 )
+  {
+    Volume vol = md->getVolume();
     int inc = vol.maxVolume() / 20;
 
     if ( inc == 0 ) inc = 1;
@@ -230,18 +277,21 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
     for ( int i = 0; i < vol.channels(); i++ ) {
         int newVal = vol[i] + (inc * (e->delta() / 120));
         if( newVal < 0 ) newVal = 0;
-        vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
+        vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
 
-    if ( m_playBeepOnVolumeChange ) {
-        audioPlayer->play();
+    if ( _playBeepOnVolumeChange ) {
+        _audioPlayer->play();
     }
-    masterDevice->setVolume(vol);
-    m_mixer->writeVolumeToHW(masterDevice->num(), vol);
-    setVolumeTip(masterDevice->num(), vol);
+    md->getVolume().setVolume(vol);
+    m_mixer->commitVolumeChange(md);
+    // refresh the toolTip (Qt removes it on a MouseWheel event)
+    // Mhhh, it doesn't work. Qt does not show it again.
+    //setVolumeTip();
+  }
 }
 
-void 
+void
 KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 {
     KAction* showAction = actionCollection()->action("minimizeRestore");
@@ -260,4 +310,3 @@ KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 
 #include "kmixdockwidget.moc"
 
-// vim: ts=3 sw=3

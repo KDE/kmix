@@ -310,7 +310,7 @@ int Mixer_SUN::readVolumeFromHW( int devnum, Volume& volume )
 // FUNCTION    : Mixer::writeVolumeToHW
 // DESCRIPTION : Write the specified audio settings to the hardware.
 //======================================================================
-int Mixer_SUN::writeVolumeToHW( int devnum, Volume volume )
+int Mixer_SUN::writeVolumeToHW( int devnum, Volume &volume )
 {
    uint_t gain;
    uchar_t balance;

@@ -3,6 +3,7 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
+ * Copyright (C) 2004 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,40 +20,47 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+// System
 #include <stdlib.h>
 
+// QT
 #include <qgroupbox.h>
+#include <qcheckbox.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpixmap.h>
-#include <qcheckbox.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qwmatrix.h>
 
+
+// KDE
+#include <kaboutapplication.h>
+#include <kaboutdata.h>
+#include <kaction.h>
+#include <kapplication.h>
+#include <kbugreport.h>
+#include <kcolorbutton.h>
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kconfig.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
-#include <kaction.h>
-#include <qpushbutton.h>
-#include <kapplication.h>
-#include <qwmatrix.h>
-#include <kiconloader.h>
-#include <qtimer.h>
-#include <kinputdialog.h>
-#include <qlabel.h>
-#include <kmessagebox.h>
-#include <kcolorbutton.h>
-#include <qradiobutton.h>
+#include <kglobalaccel.h>
 #include <kglobalsettings.h>
-#include <kbugreport.h>
-#include <kaboutdata.h>
-#include <kaboutapplication.h>
+#include <kiconloader.h>
+#include <kinputdialog.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
 
-#include "kmixerwidget.h"
-#include "mixer.h"
-#include "mixdevicewidget.h"
-#include "kmixapplet.h"
+// KMix
 #include "colorwidget.h"
+#include "kmixapplet.h"
+#include "kmixtoolbox.h"
+#include "mdwslider.h"
+#include "mixdevicewidget.h"
+#include "mixer.h"
 #include "version.h"
+#include "viewapplet.h"
 
 
 extern "C"
@@ -60,7 +68,7 @@ extern "C"
   KPanelApplet* init(QWidget *parent, const QString& configFile)
   {
      KGlobal::locale()->insertCatalogue("kmix");
-     return new KMixApplet(configFile, KPanelApplet::Normal,
+     return new KMixApplet(configFile, KPanelApplet::Stretch,
                            parent, "kmixapplet");
   }
 }
@@ -68,7 +76,6 @@ extern "C"
 KMixApplet *kmixApp = 0L;
 
 int KMixApplet::s_instCount = 0;
-QTimer *KMixApplet::s_timer = 0;
 QPtrList<Mixer> *KMixApplet::s_mixers;
 
 static const QColor highColor = KGlobalSettings::baseColor();
@@ -179,106 +186,184 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
-	kmixApp = this;
-	
-	// init static vars
-	if ( !s_instCount )
-	{
-		// create mixer list
-		s_mixers = new QPtrList<Mixer>;
-		
-		// create timers
-		s_timer = new QTimer;
-		s_timer->start( 500 );
-		
-		// get maximum values
-		KConfig *config= new KConfig("kcmkmixrc", false);
-		config->setGroup("Misc");
-		//int maxCards = config->readNumEntry( "maxCards", 2 );
-		int maxDevices = config->readNumEntry( "maxDevices", 2 );
-		delete config;
-		
-		// get mixer devices
-		s_mixers->setAutoDelete( TRUE );
-		QMap<QString,int> mixerNums;
-		int drvNum = Mixer::getDriverNum();
-		for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
-		{
-			for ( int dev=0; dev<maxDevices; dev++ )
-			{
-				// hint: no driver is using cardnum, except the unsupported alsa0.5 - esken
-				for ( int card=0; card<1 /*maxCards*/; card++ )
-				{
-					Mixer *mixer = Mixer::getMixer( drv, dev, card );
-					int mixerError = mixer->grab();
-					if ( mixerError!=0 )
-					{
-						delete mixer;
-						continue;
-					}
-					s_mixers->append( mixer );
-					
-					// count mixer nums for every mixer name to identify mixers with equal names
-					mixerNums[mixer->mixerName()]++;
-					mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-				}
-			}
-		}
-	}
-	
-	s_instCount++;
-	
-	KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
-	
-	// ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
-	m_layoutTimer = new QTimer( this );
-	connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateLayoutNow()) );
-	
-	// get configuration
-   KConfig *cfg = kmixApp->config();
-	cfg->setGroup(0);
-	
-	// get colors
-	m_customColors = cfg->readBoolEntry( "ColorCustom", false );
-	
-	m_colors.high = cfg->readColorEntry("ColorHigh", &highColor);
-	m_colors.low = cfg->readColorEntry("ColorLow", &lowColor);
-	m_colors.back = cfg->readColorEntry("ColorBack", &backColor);
-	
-	m_colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
-	m_colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
-	m_colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
-	
-   // find out to use which mixer
-	mixerNum = cfg->readNumEntry( "Mixer", -1 );
-	mixerName = cfg->readEntry( "MixerName", QString::null );
-	mixer = 0;
-	if ( mixerNum>=0 )
-	{
-		for (mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
-		{
-			if ( mixer->mixerName()==mixerName && mixer->mixerNum()==mixerNum ) break;
-		}
-	}
-	
-	// don't prompt for a mixer if there is just one available
-	if ( !mixer && s_mixers->count() == 1 )
-		mixer = s_mixers->first();
-	
-	if ( !mixer )
-	{
-		m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
-		connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
-	}
-	
-	//  Find out wether the applet should be reversed
-	reversedDir = cfg->readBoolEntry("ReversedDirection", false);
+    kdDebug(67100) << "KMixApplet::KMixApplet()" << endl;
+    kmixApp = this;
 
-	// To take over reversedDir and (more important) to create the mixer widget
-	// if necessary!
-	positionChange(position());
+    // init static vars
+    if ( !s_instCount ) {
+	int driverWithMixer = -1;
+	bool multipleDriversActive = false;
+
+	QString driverInfo = "";
+	QString driverInfoUsed = "";
+
+	QString m_hwInfoString;
+	// create mixer list
+	s_mixers = new QPtrList<Mixer>;
+		
+		
+	// get mixer devices
+	s_mixers->setAutoDelete( TRUE );
+	QMap<QString,int> mixerNums;
+
+	int drvNum = Mixer::getDriverNum();
+
+	// following line and loop identical with kmix.cpp
+	bool autodetectionFinished = false;
+	for( int drv=0; drv<drvNum; drv++ )
+	{
+	    kdDebug(67100) << "KMixApplet::KMixApplet() detecting drv=" << drv << endl;
+	    if ( autodetectionFinished ) {
+		// sane exit from loop
+		break;
+	    }
+	    bool drvInfoAppended = false;
+	    // The "64" below is just a "silly" number:
+	    // The loop will break as soon as an error is detected (e.g. on 3rd loop when 2 soundcards are installed)
+	    for( int dev=0; dev<64; dev++ )
+	    {
+		kdDebug(67100) << "KMixApplet::KMixApplet() detecting drv=" << drv << "dev=" << dev << endl;
+		Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
+		int mixerError = mixer->grab();
+		if ( mixerError!=0 )
+		{
+		    if ( s_mixers->count() > 0 ) {
+			// why not always ?!? !!
+			delete mixer;
+			mixer = 0;
+		    }
+
+		    /* If we get here, we *assume* that we probed the last dev of the current soundcard driver.
+		     * We cannot be sure 100%, probably it would help to check the "mixerError" variable. But I
+		     * currently don't see an error code that needs to be handled explicitely.
+		     *
+		     * Lets decide if we the autoprobing shall continue:
+		     */
+		    if ( s_mixers->count() == 0 ) {
+			// Simple case: We have no mixers. Lets go on with next driver
+			break;
+		    }
+		    else if ( false /* no multi-driver for now on applet !! m_multiDriverMode */ ) {
+			// Special case: Multi-driver mode will probe more soundcards
+			break;
+		    }
+		    else {
+			// We have mixers, but no Multi-driver mode: Fine, we're done
+			autodetectionFinished = true;
+			break;
+		    }
+		}
+
+		if ( mixer != 0 ) {
+		    kdDebug(67100) << "KMixApplet::KMixApplet() appending mixer: drv=" << drv << "dev=" << dev << endl;
+		    s_mixers->append( mixer );
+		}
+
+		// append driverName (used drivers)
+		if ( !drvInfoAppended )
+		{
+		    drvInfoAppended = true;
+		    QString driverName = Mixer::driverName(drv);
+		    if ( drv!= 0 )
+		    {
+			driverInfoUsed += " + ";
+		    }
+		    driverInfoUsed += driverName;
+		}
+
+		// Check whether there are mixers in different drivers, so that the user can be warned
+		if (!multipleDriversActive)
+		{
+		    if ( driverWithMixer == -1 )
+		    {
+			// Aha, this is the very first detected device
+			driverWithMixer = drv;
+		    }
+		    else
+		    {
+			if ( driverWithMixer != drv )
+			{
+			    // Got him: There are mixers in different drivers
+			    multipleDriversActive = true;
+			}
+		    }
+		}
+
+		// count mixer nums for every mixer name to identify mixers with equal names
+		mixerNums[mixer->mixerName()]++;
+		mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+	    } // loop over sound card devices of current driver
+	} // loop over soundcard drivers
+
+	m_hwInfoString = i18n("Sound drivers supported");
+	m_hwInfoString += ": " + driverInfo +
+		"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
+	if ( multipleDriversActive )
+	{
+		// this will only be possible by hacking the config-file, as it will not be officially supported
+		m_hwInfoString += "\nExperimental multiple-Driver mode activated";
+	}
+
+	kdDebug(67100) << m_hwInfoString << endl;
+    }	
+    s_instCount++;
 	
-	m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
+    kdDebug(67100) << "KMixApplet::KMixApplet() init continue 1" <<  endl;
+    KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
+	
+    // get configuration
+    KConfig *cfg = kmixApp->config();
+    cfg->setGroup(0);
+	
+    // get colors
+    _customColors = cfg->readBoolEntry( "ColorCustom", false );
+	
+    m_colors.high = cfg->readColorEntry("ColorHigh", &highColor);
+    m_colors.low = cfg->readColorEntry("ColorLow", &lowColor);
+    m_colors.back = cfg->readColorEntry("ColorBack", &backColor);
+
+    m_colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
+    m_colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
+    m_colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
+
+    // find out to use which mixer
+    kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer" <<  endl;
+    mixerNum = cfg->readNumEntry( "Mixer", -1 );
+    const QString& mixerName = cfg->readEntry( "MixerName", QString::null );
+    _mixer = 0;
+    if ( mixerNum>=0 ) {
+	for (_mixer=s_mixers->first(); _mixer!=0; _mixer=s_mixers->next())
+	{
+	    if ( _mixer->mixerName()==mixerName && _mixer->mixerNum()==mixerNum ) break;
+	}
+    }
+	
+    // don't prompt for a mixer if there is just one available
+    if ( !_mixer && s_mixers->count() == 1 ) {
+	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer: using default first mixer" <<  endl;
+	_mixer = s_mixers->first();
+    }
+	
+    //  Find out wether the applet should be reversed
+    reversedDir = cfg->readBoolEntry("ReversedDirection", false);
+
+    if ( !_mixer )
+    {
+	m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
+	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 2" <<  endl;
+	m_errorLabel->setGeometry(0, 0, m_errorLabel->sizeHint().width(),  m_errorLabel->sizeHint().height() );
+	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 3" <<  endl;
+	resize( m_errorLabel->sizeHint() );
+	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 4" <<  endl;
+	connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
+	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 5" <<  endl;
+    }
+    else {
+	// To take over reversedDir and (more important) to create the mixer widget
+	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer OK" <<  endl;
+	positionChange(position());
+    }
+    m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
 }
 
 KMixApplet::~KMixApplet()
@@ -294,7 +379,6 @@ KMixApplet::~KMixApplet()
          it.current()->release();
 
       s_mixers->clear();
-      delete s_timer;
       delete s_mixers;
    }
 }
@@ -304,10 +388,10 @@ void KMixApplet::saveConfig()
     if ( m_mixerWidget ) {
         KConfig *cfg = kmixApp->config();
         cfg->setGroup( 0 );
-        cfg->writeEntry( "Mixer", m_mixerWidget->mixerNum() );
-        cfg->writeEntry( "MixerName", m_mixerWidget->mixerName() );
+        cfg->writeEntry( "Mixer", _mixer->mixerNum() );
+        cfg->writeEntry( "MixerName", _mixer->mixerName() );
 
-        cfg->writeEntry( "ColorCustom", m_customColors );
+        cfg->writeEntry( "ColorCustom", _customColors );
 
         cfg->writeEntry( "ColorHigh", m_colors.high.name() );
         cfg->writeEntry( "ColorLow", m_colors.low.name() );
@@ -319,9 +403,22 @@ void KMixApplet::saveConfig()
 
         cfg->writeEntry( "ReversedDirection", reversedDir );
 
-        m_mixerWidget->saveConfig( cfg, "Widget" );
+        saveConfig( cfg, "Widget" );
         cfg->sync();
     }
+}
+
+void KMixApplet::loadConfig( KConfig *config, const QString &grp )
+{
+    KMixToolBox::loadConfig(m_mixerWidget->_mdws, config, grp, "PanelApplet" );
+}
+
+void KMixApplet::saveConfig( KConfig *config, const QString &grp )
+{
+    config->setGroup( grp );
+    // Write mixer name. It cannot be changed in the Mixer instance, but we need a "PK" when restoring the config.
+    config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
+    KMixToolBox::saveConfig(m_mixerWidget->_mdws, config, grp, "PanelApplet" );
 }
 
 void KMixApplet::selectMixer()
@@ -351,83 +448,51 @@ void KMixApplet::selectMixer()
          delete m_errorLabel;
          m_errorLabel = 0;
 
-	 KPanelApplet::Direction dirHack = getDirectionFromPositionHack(position());
-         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
-                                           mixer->mixerNum(), true,
-                                           checkReverse(dirHack), MixDevice::SLIDER, this );
-         setColors();
-         m_mixerWidget->show();
-         m_mixerWidget->setGeometry( 0, 0, width(), height() );
-         connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
-         connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-         updateLayoutNow();
+	 _mixer = mixer;
+	 // Create the ViewApplet by calling positionChange() ... :)
+	 // To take over reversedDir and (more important) to create the mixer widget
+	 // if necessary!
+	 positionChange(position());
       }
    }
 }
 
-KPanelApplet::Direction KMixApplet::getDirectionFromPositionHack(Position pos) {
+KMixApplet::Direction KMixApplet::getDirectionFromPositionHack(Position pos) const {
 	/*
 	Position hack: KMixApplet was using popupDirection() which is nonsense and now leeds to
 	an unusable KMixApplet on vertical panels. As the "Direction" is used throughout
 	KMix we now use position and do an ugly conversion.
-	This is to be removed for KMix2.1 !!!
+	This is to be removed for KMix3.0 !!!
 	*/
 	KPanelApplet::Direction dir = KPanelApplet::Down; // Random default value
 	switch ( pos ) {
 		case KPanelApplet::pTop    : dir=KPanelApplet::Up; break;
 		case KPanelApplet::pLeft   : dir=KPanelApplet::Left; break;
-		case KPanelApplet::pRight  : dir=KPanelApplet::Right; break;
-		case KPanelApplet::pBottom : dir=KPanelApplet::Down; break;
+		case KPanelApplet::pRight  : dir=KPanelApplet::Left; break;
+		case KPanelApplet::pBottom : dir=KPanelApplet::Up; break;
 	}
 	return dir;
 }
 
-
-void KMixApplet::triggerUpdateLayout()
-{
-   if ( m_lockedLayout ) return;
-   if ( !m_layoutTimer->isActive() ) {
-     m_layoutTimer->start( 100, TRUE );
-   }
-}
-
-void KMixApplet::updateLayoutNow()
+/*
+void KMixApplet::updat eLayou tNow()
 {
    m_lockedLayout++;
-   emit updateLayout();
-   saveConfig(); // ugly hack to get the config saved somehow
+   emit updat eLayout();
+   // ugly hack to get the config saved somehow
+   // !!! @todo Fix it somehow else. But it will be difficult with the panel applet
+   saveConfig();
    m_lockedLayout--;
 }
+*/
 
-int KMixApplet::widthForHeight( int height) const
-{
-   int width = 0;
-   if ( m_mixerWidget )
-   {
-      m_mixerWidget->setIcons( height>=32 );
-      width = m_mixerWidget->minimumWidth();
-   } else
-      if ( m_errorLabel )
-         width = m_errorLabel->sizeHint().width();
-
-   return width;
-}
-
-int KMixApplet::heightForWidth( int width ) const
-{
-   if ( m_mixerWidget )
-   {
-      m_mixerWidget->setIcons( width>=32 );
-      return m_mixerWidget->minimumHeight();
-   } else
-      return m_errorLabel->sizeHint().height();
-}
 
 void KMixApplet::resizeEvent(QResizeEvent *e)
 {
-   KPanelApplet::resizeEvent( e );
-   if ( m_mixerWidget ) m_mixerWidget->setGeometry( 0, 0, width(), height() );
-   if ( m_errorLabel ) m_errorLabel->setGeometry( 0, 0, width(), height() );
+    kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
+    if ( m_mixerWidget ) m_mixerWidget->resize( e->size().width(), e->size().height() );
+    if ( m_errorLabel  ) m_errorLabel ->resize( e->size().width(), e->size().height() );
+    KPanelApplet::resizeEvent( e );
 }
 
 void KMixApplet::about()
@@ -442,8 +507,8 @@ void KMixApplet::help()
 
 void KMixApplet::setColors()
 {
-    if ( !m_customColors ) {
-        KMixerWidget::Colors cols;
+    if ( !_customColors ) {
+        KMixApplet::Colors cols;
         cols.high = highColor;
         cols.low = lowColor;
         cols.back = backColor;
@@ -451,25 +516,48 @@ void KMixApplet::setColors()
         cols.mutedLow = mutedLowColor;
         cols.mutedBack = mutedBackColor;
 
-        m_mixerWidget->setColors( cols );
+        setColors( cols );
     } else
-        m_mixerWidget->setColors( m_colors );
+        setColors( m_colors );
 }
 
 void KMixApplet::positionChange(Position pos) {
-  if (!m_errorLabel) {
-    if (m_mixerWidget) delete m_mixerWidget;
-    Direction dir = getDirectionFromPositionHack(pos);
-    m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
-                                      checkReverse(dir), MixDevice::ALL, this );
-    m_mixerWidget->loadConfig( config(), "Widget" );
-    setColors();
-    connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
-    connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-    m_mixerWidget->show();
-  }
+    if (!m_errorLabel) {
+	// do this only after we deleted the error label
+	if (m_mixerWidget) {
+	    saveConfig(); // save the applet before recreating it
+	    delete m_mixerWidget;
+	}
+	Direction dir = getDirectionFromPositionHack(pos);
+	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, dir );
+	m_mixerWidget->createDeviceWidgets();
+	
+	loadConfig( config(), "Widget" );
+	setColors();
+	
+	const QSize panelAppletConstrainedSize = sizeHint();
+	m_mixerWidget->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
+	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
+	setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
+	kdDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
+	m_mixerWidget->show();
+	connect( _mixer, SIGNAL(newVolumeLevels()), m_mixerWidget, SLOT(refreshVolumeLevels()) );
+    }
 }
 
+QSize KMixApplet::sizeHint() const {
+    if ( m_errorLabel !=0 ) {
+	return m_errorLabel->sizeHint();
+    }
+    else if (  m_mixerWidget != 0) {
+	return  m_mixerWidget->sizeHint();
+    }
+    else {
+	// During construction of m_mixerWidget or if something goes wrong:
+	// Return something that should resemble our former sizeHint().
+	return size();
+    }
+}
 
 void KMixApplet::preferences()
 {
@@ -482,7 +570,7 @@ void KMixApplet::preferences()
         m_pref->setActiveColors(m_colors.high, m_colors.low, m_colors.back);
         m_pref->setMutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
 
-        m_pref->setUseCustomColors( m_customColors );
+        m_pref->setUseCustomColors( _customColors );
         m_pref->setReverseDirection( reversedDir );
 
     }
@@ -510,7 +598,7 @@ void KMixApplet::applyPreferences()
 
     m_pref->activeColors(m_colors.high, m_colors.low, m_colors.back);
     m_pref->mutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
-    m_customColors = m_pref->useCustomColors();
+    _customColors = m_pref->useCustomColors();
     reversedDir = m_pref->reverseDirection();
     if (!m_mixerWidget)
         return;
@@ -518,14 +606,55 @@ void KMixApplet::applyPreferences()
     QSize si = m_mixerWidget->size();
     positionChange( position());
     if( position() == pTop || position() == pBottom )
-        m_mixerWidget->setIcons( si.height()>=32 );
+        setIcons( si.height()>=32 );
     else
-        m_mixerWidget->setIcons( si.width()>=32 );
+        setIcons( si.width()>=32 );
 
     m_mixerWidget->resize( si );
     setColors();
+    saveConfig(); // might be saved twice: once 10 lines above canning  positionChange() and here again
+}
+
+
+void KMixApplet::setColors( const Colors &color )
+{
+    QPtrList<QWidget> &mdws = m_mixerWidget->_mdws;
+    for ( QWidget* qmdw=mdws.first(); qmdw != 0; qmdw=mdws.next() ) {
+	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- temporary check. Later we *know* that it is correct
+	    static_cast<MixDeviceWidget*>(qmdw)->setColors( color.high, color.low, color.back );
+	    static_cast<MixDeviceWidget*>(qmdw)->setMutedColors( color.mutedHigh, color.mutedLow, color.mutedBack );
+	}
+    }
+}
+
+void KMixApplet::setIcons( bool on )
+{
+    if ( _iconsEnabled!=on )
+    {
+	// value was changed
+	_iconsEnabled = on;
+	KMixToolBox::setIcons(m_mixerWidget->_mdws, on);
+    }
+}
+
+void KMixApplet::setLabels( bool on )
+{
+    if ( _labelsEnabled!=on ) {
+	// value was changed
+	_labelsEnabled = on;
+	KMixToolBox::setLabels(m_mixerWidget->_mdws, on);
+    }
+}
+
+void KMixApplet::setTicks( bool on )
+{
+    if ( _ticksEnabled!=on )
+    {
+	// value was changed
+	_ticksEnabled = on;
+	KMixToolBox::setTicks(m_mixerWidget->_mdws, on);
+    }
 }
 
 #include "kmixapplet.moc"
 
-// vim: sw=3 ts=3

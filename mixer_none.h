@@ -9,7 +9,7 @@ public:
   virtual ~Mixer_None();
 
   virtual int readVolumeFromHW( int devnum, Volume& vol );
-  virtual int writeVolumeToHW( int devnum, Volume vol );
+  virtual int writeVolumeToHW( int devnum, Volume& vol );
   virtual bool setRecsrcHW( int devnum, bool on);
   virtual bool isRecsrcHW( int devnum );
 

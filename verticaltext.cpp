@@ -2,7 +2,7 @@
  * KMix -- KDE's full featured mini mixer
  *
  *
- * Copyright (C) 2003 Christian Esken <esken@kde.org>
+ * Copyright (C) 2003-2004 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,6 @@
 VerticalText::VerticalText(QWidget * parent, const char * name, WFlags f) : QWidget(parent,name,f)
 {
 	resize(20,100 /*parent->height() */ );
-	//setFixedWidth(20);
 	setMinimumSize(20,10); // neccesary for smooth integration into layouts (we only care for the widths).
 }
 
@@ -39,5 +38,12 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
 	//kdDebug(67100) << "paintEvent(). height()=" <<  height() << "\n";
 	QPainter paint(this);
 	paint.rotate(270);
-	paint.drawText(-height()+2,width(),name());
+	// Fix for bug 72520
+	//-       paint.drawText(-height()+2,width(),name());
+	//+       paint.drawText( -height()+2, width(), QString::fromUtf8(name()) );
+	paint.drawText( -height()+2, width(), QString::fromUtf8(name()) );
+}
+
+QSize VerticalText::sizeHint() {
+    return QSize(20,100); // !! UGLY. Should be reworked
 }

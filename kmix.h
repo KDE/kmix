@@ -32,7 +32,6 @@
 #include <qmap.h>
 
 class QHBox;
-class QTimer;
 class QWidgetStack;
 
 // include files for KDE
@@ -87,8 +86,8 @@ KMixWindow : public KMainWindow
    void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
-   void updateDockIcon();
-   void updateDockTip(Volume vol);
+   //void updateDockIcon();
+   //void updateDockTip(Volume vol);
    void stopVisibilityUpdates();
 
   private:
@@ -113,27 +112,21 @@ KMixWindow : public KMainWindow
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
 
-   QTimer *m_layoutTimer;
-   int m_lockedLayout;
+   int m_lockedLayout; // !!
 
    QHBox* mixerNameLayout;
    KComboBox *m_cMixer;
    QWidgetStack *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
-   QTimer *timer;	// Timer for reading volume from HW
    QString m_hwInfoString;
-	QVBoxLayout *widgetsLayout;
-   //bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
+   QVBoxLayout *widgetsLayout;
 
   private slots:
    //void removeMixerWidget( KMixerWidget *mw );
-   //void updateLayout();
    void dockMute();
    void slotHWInfo();
-	void showSelectedMixer( int mixer );
-	void triggerUpdateLayout();
-	void updateLayoutNow();
+   void showSelectedMixer( int mixer );
 };
 
 #endif // KMIX_H

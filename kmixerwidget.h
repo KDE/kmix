@@ -30,7 +30,6 @@ class QGridLayout;
 #include <kpanelapplet.h>
 class KPopupMenu;
 
-#include "channel.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
@@ -45,109 +44,81 @@ class KConfig;
 class KTabWidget;
 
 // KMix
-class Channel;
 class Mixer;
+class ViewInput;
+class ViewOutput;
+class ViewSwitches;
 
 
-class 
-Channel
-{
-   public:
-      Channel() : dev( 0 ) {};
-      ~Channel() { delete dev; };
-
-      MixDeviceWidget *dev;
-};
-
-class 
-KMixerWidget : public QWidget  
+class KMixerWidget : public QWidget  
 {
    Q_OBJECT
 
   public:
    KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
-                 bool small, KPanelApplet::Direction, MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
-                 QWidget *parent=0, const char *name=0 );
+                 MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
+                 QWidget *parent=0, const char *name=0, bool menuInitallyVisible=true );
    ~KMixerWidget();
 	
    enum KMixerWidgetIO { OUTPUT=0, INPUT };
 
-   void addActionToPopup( KAction *action );
+   //   void addActionToPopup( KAction *action );
 
-   QString name() const { return m_name; };
-   void setName( const QString &name ) { m_name = name; };
+   //QString name() const { return m_name; };
+   //void setName( const QString &name ) { m_name = name; };
 
-   const Mixer *mixer() const { return m_mixer; };
-   QString mixerName()  const { return m_mixerName; };
+   const Mixer *mixer() const { return _mixer; };
+   //QString mixerName()  const { return m_mixerName; };
    int mixerNum() const { return m_mixerNum; };
 
    int id() const { return m_id; };
 
-   KPopupMenu* getPopup();
-   void popupReset();
-
-   KActionCollection* getActionCollection() const { return m_actions; }
+   KActionCollection* getActionCollection() const { return 0; /* m_actions; */ }
 	
-   struct Colors {
-       QColor high, low, back, mutedHigh, mutedLow, mutedBack;
-   };
-
   signals:
-   void updateLayout();
    void masterMuted( bool );
    void newMasterVolume(Volume vol);
+   void toggleMenuBar();
 
   public slots:
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
-   void setColors( const Colors &color );
-   void hideShowDetail(bool on);
+   void toggleMenuBarSlot();
 
-   void saveConfig( KConfig *config, const QString &grp ) const;
+   void saveConfig( KConfig *config, const QString &grp );
    void loadConfig( KConfig *config, const QString &grp );
 
   private slots:
-   void rightMouseClicked();
    void updateBalance();
-   void updateSize();
-   void slotFillPopup();
-   void slotToggleMixerDevice(int id);
+  //   void slotToggleMixerDevice(int id);
 
   private:
-   Mixer *m_mixer;
+   Mixer *_mixer;
    QSlider *m_balanceSlider;
-   QWidget *m_swWidget;
-   QVBoxLayout *m_topLayout;
-   QBoxLayout *m_appletLayout;
-   QWidget *m_iWidget;
-   QWidget *m_oWidget;
-   QGridLayout *m_devSwitchLayout;
-	
-   mutable QPtrList<Channel> m_channels;
-   KTabWidget *m_ioTab;
+   QVBoxLayout *m_topLayout; // contains the Card selector, TabWidget and balance slider
 
-   QString m_name;
-   QString m_mixerName;
+   KTabWidget* m_ioTab;
+
+   ViewOutput*    _oWidget;
+   ViewInput*     _iWidget;
+   ViewSwitches*  _swWidget;
+
+   //QString m_name;
+   //QString m_mixerName;
    int m_mixerNum;
    int m_id;
 
-   KActionCollection *m_actions;
+   //KActionCollection *m_actions;
    KActionMenu *m_toggleMixerChannels;
-   KPopupMenu *m_popMenu;
 
-   bool m_small;
-   KPanelApplet::Direction m_direction;
-   bool m_iconsEnabled;
-   bool m_labelsEnabled;
-   bool m_ticksEnabled;
+   bool _iconsEnabled;
+   bool _labelsEnabled;
+   bool _ticksEnabled;
    MixDevice::DeviceCategory m_categoryMask;
 
-   void mousePressEvent( QMouseEvent *e );
-   void createDeviceWidgets();
-   void createLayout();
+   void createLayout(bool menuInitallyVisible);
    void createMasterVolWidget(KPanelApplet::Direction);
-   void updateSize(bool force);
 };
 
 #endif

@@ -34,7 +34,7 @@ public:
 
   virtual QString errorText(int mixer_error);
   virtual int readVolumeFromHW( int devnum, Volume& volume );
-  virtual int writeVolumeToHW( int devnum, Volume volume );
+  virtual int writeVolumeToHW( int devnum, Volume& volume );
   bool setRecsrcHW( int devnum, bool on );
   bool isRecsrcHW( int devnum );
 

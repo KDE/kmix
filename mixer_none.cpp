@@ -59,7 +59,7 @@ int Mixer_None::readVolumeFromHW( int , Volume &vol )
   return Mixer::ERR_NOTSUPP;
 }
 
-int Mixer_None::writeVolumeToHW( int , Volume vol )
+int Mixer_None::writeVolumeToHW( int , Volume &vol )
 {
   return Mixer::ERR_NOTSUPP;
 }

@@ -19,12 +19,17 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <qsizepolicy.h>
+
 #include "kledbutton.h"
 
 
 KLedButton::KLedButton(const QColor &col, QWidget *parent, const char *name)
    : KLed( col, parent, name )
 {	
+    // KLed and thus KLedButtung does not do proper positioning in QLayout's.
+    // Thus I will do a dirty trick here
+    installEventFilter(parent);
 }
 
 KLedButton::KLedButton(const QColor& col, KLed::State st, KLed::Look look,
@@ -44,6 +49,26 @@ void KLedButton::mousePressEvent( QMouseEvent *e )
       toggle();
       emit stateChanged( state() );
    }
+}
+
+bool KLedButton::eventFilter( QObject* /*obj*/ , QEvent* /*ev*/ ) {
+    // KLed and thus KLedButtung does not do proper positioning in QLayout's.
+    // Thus I listen to my parents resize events and do it here ... OUCH, that's ugly
+    /* No, this cannot work !
+    if ( ev->type() == QEvent::Resize ) {
+	QResizeEvent* qre = (QResizeEvent*)ev;
+	this->move( qre->size().width()  - width()/2,
+		    qre->size().height() - height()/2 );
+    }
+    */
+    return false;
+    //    KLed::eventFilter(obj, ev);
+
+}	
+
+QSizePolicy KLedButton::sizePolicy () const
+{
+    return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 #include "kledbutton.moc"

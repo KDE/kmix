@@ -8,6 +8,8 @@ class VerticalText : public QWidget
 public:
 	VerticalText(QWidget * parent, const char * name, WFlags f = 0);
 	~VerticalText();
+
+    QSize sizeHint();
 	
 protected:
 	void paintEvent ( QPaintEvent * event );

@@ -23,6 +23,7 @@
 #define KLEDBUTTON_H
 
 #include <qwidget.h>
+
 #include <kled.h>
 
 /**
@@ -37,11 +38,15 @@ class KLedButton : public KLed  {
 	      QWidget *parent=0, const char *name=0);
    ~KLedButton();	
 
+   QSizePolicy sizePolicy () const;
   signals:
    void stateChanged( bool newState );
 
   protected:	
    void mousePressEvent ( QMouseEvent *e );
+
+ private:
+   bool eventFilter( QObject*, QEvent* );
 };
 
 #endif

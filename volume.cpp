@@ -1,14 +1,283 @@
+/*
+ * KMix -- KDE's full featured mini mixer
+ *
+ *
+ * Copyright (C) 1996-2004 Christian Esken <esken@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+// for operator<<()
+#include <iostream>
+
+#include <kdebug.h>
+
 #include "volume.h"
 
 
-Volume::Volume( int channels, int maxVolume ) : v_volumes(channels)
-{
-  v_maxVolume = maxVolume;
-  v_muted = false;
-}
-Volume::Volume( const Volume &v ) : v_volumes( v.v_volumes )
-{
-  v_maxVolume = v.v_maxVolume;
-  v_muted = v.v_muted;
+int Volume::_channelMaskEnum[8] =
+    { MLEFT, MRIGHT, MCENTER,
+      MREARLEFT, MREARRIGHT, MWOOFER,
+      MCUSTOM1, MCUSTOM2
+    };
+/*
+ChannelID Volume::_channelIndexEnum[9] =
+    {
+	LEFT    , RIGHT    , CENTER,
+	REARLEFT, REARRIGHT, WOOFER,
+	CUSTOM1 , CUSTOM2
+    };
+*/
 
+Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume )
+{
+  init(chmask, maxVolume, minVolume);
+}
+
+// @ compatiblity constructor
+Volume::Volume( int channels, long maxVolume ) {
+   if (channels == 1 ) {
+       init(Volume::MLEFT, maxVolume, 0);
+   }
+   else if (channels == 2) {
+      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0);
+   }
+   else {
+     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0);
+     kdError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
+   }
+}
+
+Volume::Volume( const Volume &v )
+{
+    //    kdDebug(67100) << "Volume::copy-constructor running on vol " << v << "\n";
+    _chmask     = v._chmask;
+    _maxVolume  = v._maxVolume;
+    _minVolume  = v._minVolume;
+    _muted      = v._muted;
+    setVolume(v, (ChannelMask)v._chmask);
+    //    kdDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
+}
+
+void Volume::init( ChannelMask chmask, int maxVolume, int minVolume )
+{
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+	_volumes[i] = 0;
+    }
+    _chmask     = chmask;
+    _maxVolume  = maxVolume;
+    _minVolume  = minVolume;
+    _muted      = false;
+    //kdDebug(67100) << "Volume::init() initialized " << count() << " channels\n";
+}
+
+// @ compatibility
+void Volume::setAllVolumes(long vol)
+{
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+        if (  (_channelMaskEnum[i]) & _chmask ) {
+            // we are supposed to set it
+            _volumes[i] = volrange(vol);
+            // !!! check whether volrange() will conflict here (e.g. on loading a stored profile)
+        }
+    }
+}
+
+// @ compatibility
+void Volume::setVolume( ChannelID chid, long vol)
+{
+    if ( chid>=0 && chid<=Volume::CHIDMAX ) {
+        // accepted. we don't care if we support the channel,
+        // because there is NO good action we could take.
+        // Anyway: getVolume() on an unsupported channel will return 0 all the time
+        _volumes[chid] = volrange(vol);
+    }
+}
+
+/**
+ * Copy the volume elements contained in v to this Volume object.
+ * Only those elments are copied, that are supported in BOTH Volume objects.
+ */
+void Volume::setVolume(const Volume &v)
+{
+    //kdDebug(67100) << "Volume::init() initialized " << count() << " channels\n";
+     setVolume(v, (ChannelMask)(v._chmask&_chmask) );
+}
+
+/**
+ * Copy the volume elements contained in v to this Volume object.
+ * Only those elments are copied, that are supported in BOTH Volume objects
+ * and match the ChannelMask given by chmask.
+ */
+void Volume::setVolume(const Volume &v, ChannelMask chmask) {
+    //    _chmask = chmask;
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+        if ( _channelMaskEnum[i] & _chmask & chmask ) {
+            // we are supposed to copy it
+            _volumes[i] = volrange(v._volumes[i]);
+        }
+	else {
+	    // Safety first! Lets play safe here and put sane values in
+	    _volumes[i] = 0;
+	}
+    }
+
+}
+
+long Volume::maxVolume() {
+  return _maxVolume;
+}
+
+long Volume::minVolume() {
+  return _minVolume;
+}
+
+// @ compatibility
+long Volume::operator[](int id) {
+  return getVolume( (Volume::ChannelID) id );
+}
+
+long Volume::getVolume(ChannelID chid) {
+  long vol = 0;
+
+  if ( chid < 0 || chid > Volume::CHIDMAX ) {
+    // should throw exception here. I will return 0 instead
+  }
+  else {
+    // check if channel is supported
+    int chmask = _channelMaskEnum[chid];
+    if ( (chmask & _chmask) != 0 ) {
+       // channel is supported
+      vol = _volumes[chid];
+    }
+    else {
+      // should throw exception here. I will return 0 instead
+    }
+  }
+
+  return vol;
+}
+
+long Volume::getAvgVolume() {
+    int avgVolumeCounter = 0;
+    long long sumOfActiveVolumes = 0;
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+        if ( _channelMaskEnum[i] & _chmask ) {
+	    /*
+	    kdDebug(67100) << "Volume::getAvgVolume "
+			   << "avgVolumeCounter=" << avgVolumeCounter
+			   << " sumOfActiveVolumes=" << sumOfActiveVolumes
+			   << " i=" << i
+			   << " _volumes[i]" << _volumes[i]
+			   << endl;
+	    */
+
+            avgVolumeCounter++;
+            sumOfActiveVolumes += _volumes[i];
+        }
+    }
+    /*
+    kdDebug(67100) << "Volume::getAvgVolume FINAL "
+		   << "avgVolumeCounter=" << avgVolumeCounter
+		   << " sumOfActiveVolumes=" << sumOfActiveVolumes
+		   << endl;
+    */
+    if (avgVolumeCounter != 0) {
+        sumOfActiveVolumes /= avgVolumeCounter;
+    }
+    else {
+        // just return 0;
+    }
+    return (long)sumOfActiveVolumes;
+}
+
+// @deprecated
+int Volume::channels() {
+    return count();
+}
+
+int Volume::count() {
+    int counter = 0;
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+        if ( _channelMaskEnum[i] & _chmask ) {
+            counter++;
+        }
+    }
+    return counter;
+}
+
+/**
+  * returns a "sane" volume level. This means, it is a volume level inside the
+  * valid bounds
+  */
+long Volume::volrange( int vol )
+{
+    if ( vol < _minVolume ) {
+         return _minVolume;
+    }
+    else if ( vol < _maxVolume ) {
+         return vol;
+   }
+   else {
+         return _maxVolume;
+    }
+};
+
+
+std::ostream& operator<<(std::ostream& os, const Volume& vol) {
+    os << "(";
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+	if ( i != 0 ) {
+	    os << ",";
+	}
+	if ( Volume::_channelMaskEnum[i] & vol._chmask ) {
+	    // supported channel: Print Volume
+	    os << vol._volumes[i];
+	}
+	else {
+	    // unsupported channel: Print "x"
+	    os << "x";
+	}
+    } // all channels
+    os << ")";
+
+    os << " [" << vol._minVolume << "-" << vol._maxVolume;
+    if ( vol._muted ) { os << " : muted ]"; } else { os << " : playing ]"; }
+
+    return os;
+}
+
+kdbgstream& operator<<(kdbgstream &os, const Volume& vol) {
+    os << "(";
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+	if ( i != 0 ) {
+	    os << ",";
+	}
+	if ( Volume::_channelMaskEnum[i] & vol._chmask ) {
+	    // supported channel: Print Volume
+	    os << vol._volumes[i];
+	}
+	else {
+	    // unsupported channel: Print "x"
+	    os << "x";
+	}
+    } // all channels
+    os << ")";
+
+    os << " [" << vol._minVolume << "-" << vol._maxVolume;
+    if ( vol._muted ) { os << " : muted ]"; } else { os << " : playing ]"; }
+
+    return os;
 }

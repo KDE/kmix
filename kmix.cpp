@@ -6,7 +6,6 @@
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -25,7 +24,6 @@
 // include files for QT
 #include <qmap.h>
 #include <qhbox.h>
-#include <qtimer.h>
 #include <qcheckbox.h>
 #include <qwidgetstack.h>
 #include <qlayout.h>
@@ -92,8 +90,6 @@ KMixWindow::KMixWindow()
 		hide();
 	}
 	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveSettings()) );
-
-	//setMaximumSize( QSize( 32767, size().height() ) );  // !!! What is this good for ?!?
 }
 
 
@@ -125,14 +121,7 @@ void
 KMixWindow::initMixer()
 {
 	QString tmpstr;
-	timer = new QTimer( this );  // timer will be started on show()
-
-	// get maximum values
-	KConfig *config= new KConfig("kcmkmixrc", false);
-	config->setGroup("Misc");
-	int maxDevices = config->readNumEntry( "maxDevices", 2 );
-	delete config;
-
+	
 	// poll for mixers
 	QMap<QString,int> mixerNums;
 	int drvNum = Mixer::getDriverNum();
@@ -164,64 +153,87 @@ KMixWindow::initMixer()
 	   - Another remark: For KMix3.0 or so, we should allow multiple-driver, for allowing
 	     addition of special-use drivers, e.g. an ARTS-mixer-driver, or a CD-Rom volume driver.
 	 */
-	for( int drv=0; drv<drvNum && ( m_multiDriverMode || m_mixers.count()==0) ; drv++ )
+	
+	bool autodetectionFinished = false;
+	for( int drv=0; drv<drvNum; drv++ )
 	{
-		bool drvInfoAppended = false;
+	    if ( autodetectionFinished ) {
+		// sane exit from loop
+		break;
+	    }
+	    bool drvInfoAppended = false;
+	    // The "64" below is just a "silly" number:
+	    // The loop will break as soon as an error is detected (e.g. on 3rd loop when 2 soundcards are installed)
+	    for( int dev=0; dev<64; dev++ )
+	    {
+		Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
+		int mixerError = mixer->grab();
+		if ( mixerError!=0 )
 		{
-			for( int dev=0; dev<maxDevices; dev++ )
-			{
-				// hint: no driver is using cardnum, except the unsupported alsa0.5 - esken
-				for( int card=0; card<1 /*maxCards*/; card++ )
-				{
-					Mixer *mixer = Mixer::getMixer( drv, dev, card );
-					int mixerError = mixer->grab();
-					if ( mixerError!=0 )
-					{
-						delete mixer;
-						continue;
-					}
+		    if ( m_mixers.count() > 0 ) {
+			// why not always ?!? !!
+			delete mixer;
+			mixer = 0;
+		    }
 
-					connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-					m_mixers.append( mixer );
-					mixer->readSetFromHW();
-
-					// append driverName (used drivers)
-					if ( !drvInfoAppended )
-					{
-						drvInfoAppended = true;
-						QString driverName = Mixer::driverName(drv);
-						if ( drv!= 0 )
-						{
-							driverInfoUsed += " + ";
-						}
-						driverInfoUsed += driverName;
-					}
-
-					// Check whether there are mixers in different drivers, so that the usr can be warned
-					if (!multipleDriversActive)
-					{
-						if ( driverWithMixer == -1 )
-						{
-							// Aha, this is the very first detected device
-							driverWithMixer = drv;
-						}
-						else
-						{
-							if ( driverWithMixer != drv )
-							{
-								// Got him: There are mixers in different drivers
-								multipleDriversActive = true;
-							}
-						}
-					}
-
-					// count mixer nums for every mixer name to identify mixers with equal names
-					mixerNums[mixer->mixerName()]++;
-					mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-				}
-			}
+		    /* If we get here, we *assume* that we probed the last dev of the current soundcard driver.
+		     * We cannot be sure 100%, probably it would help to check the "mixerError" variable. But I
+		     * currently don't see an error code that needs to be handled explicitely.
+		     *
+		     * Lets decide if we the autoprobing shall continue:
+		     */
+		    if ( m_mixers.count() == 0 ) {
+			// Simple case: We have no mixers. Lets go on with next driver
+			break;
+		    }
+		    else if ( m_multiDriverMode ) {
+			// Special case: Multi-driver mode will probe more soundcards
+			break;
+		    }
+		    else {
+			// We have mixers, but no Multi-driver mode: Fine, we're done
+			autodetectionFinished = true;
+			break;
+		    }
 		}
-	}
+
+		if ( mixer != 0 ) {
+		    m_mixers.append( mixer );
+		}
+
+		// append driverName (used drivers)
+		if ( !drvInfoAppended ) {
+		    drvInfoAppended = true;
+		    QString driverName = Mixer::driverName(drv);
+		    if ( drv!= 0 ) {
+			driverInfoUsed += " + ";
+		    }
+		    driverInfoUsed += driverName;
+		}
+
+		// Check whether there are mixers in different drivers, so that the user can be warned
+		if (!multipleDriversActive)
+		{
+		    if ( driverWithMixer == -1 )
+		    {
+			// Aha, this is the very first detected device
+			driverWithMixer = drv;
+		    }
+		    else
+		    {
+			if ( driverWithMixer != drv )
+			{
+			    // Got him: There are mixers in different drivers
+			    multipleDriversActive = true;
+			}
+		    }
+		}
+
+		// count mixer nums for every mixer name to identify mixers with equal names
+		mixerNums[mixer->mixerName()]++;
+		mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+	    } // loop over sound card devices of current driver
+	} // loop over soundcard drivers
 
 	m_hwInfoString = i18n("Sound drivers supported");
 	m_hwInfoString += ": " + driverInfo +
@@ -253,13 +265,18 @@ KMixWindow::initWidgets()
 
 	// Widgets layout
 	widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
-	widgetsLayout->setResizeMode(QLayout::Minimum); // basically good, but needs more work
+	widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
+	
 
 	// Mixer widget line
 	mixerNameLayout = new QHBox( centralWidget(), "mixerNameLayout" );
+	QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
+	mixerNameLayout->setSizePolicy(qsp);
 	mixerNameLayout->setSpacing(KDialog::spacingHint());
-	new QLabel( i18n(" Current mixer:"), mixerNameLayout );
+	QLabel *qlbl = new QLabel( i18n(" Current mixer:"), mixerNameLayout );
+	qlbl->setFixedHeight(qlbl->sizeHint().height());
 	m_cMixer = new KComboBox( FALSE, mixerNameLayout, "mixerCombo" );
+	m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
 	connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( showSelectedMixer( int ) ) );
 	QToolTip::add( m_cMixer, i18n("Current mixer" ) );
 
@@ -273,7 +290,8 @@ KMixWindow::initWidgets()
 		menuBar()->show();
 	else
 		menuBar()->hide();
-
+	
+	widgetsLayout->activate();
 }
 
 
@@ -292,11 +310,12 @@ KMixWindow::updateDocking()
 
 		// create dock widget
 		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget" );
-		updateDockIcon();
+		//updateDockIcon();
 
 		// create RMB menu
 		KPopupMenu *menu = m_dockWidget->contextMenu();
 
+		// !! check this
 		KAction *a = actionCollection()->action( "dock_mute" );
 		if ( a ) a->plug( menu );
 
@@ -315,9 +334,10 @@ KMixWindow::dockMute()
 	masterDevice->setMuted( !masterDevice->isMuted() );
 	mixer->writeVolumeToHW( masterDevice->num(), masterDevice->getVolume() );
 
-	updateDockIcon();
+	//	updateDockIcon();
 }
 
+/*
 void
 KMixWindow::updateDockIcon()
 {
@@ -334,15 +354,21 @@ KMixWindow::updateDockIcon()
 	if ( a ) a->setChecked( masterDevice->isMuted() );
 
 	m_dockWidget->updatePixmap();
-	m_dockWidget->setVolumeTip( 0, masterDevice->getVolume() );
-}
 
+	// not neccesary any more
+	//	m_dockWidget->setVolumeTip( 0, masterDevice->getVolume() );
+}
+*/
+
+/*
 void
 KMixWindow::updateDockTip(Volume vol)
 {
+    // not neccesary any more
    if ( m_dockWidget )
 	m_dockWidget->setVolumeTip( 0, vol );
 }
+*/
 
 void
 KMixWindow::saveSettings()
@@ -354,8 +380,9 @@ KMixWindow::saveSettings()
 void
 KMixWindow::saveConfig()
 {
-	KConfig *config = kapp->config();
-	config->setGroup(0);
+    //    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
+    KConfig *config = kapp->config();
+    config->setGroup(0);
 
    // make sure we don't start without any UI
    // can happen e.g. when not docked and kmix closed via 'X' button
@@ -363,7 +390,7 @@ KMixWindow::saveConfig()
    if ( !m_showDockWidget )
        startVisible = true;
 
-	config->writeEntry( "Size", size() );
+   config->writeEntry( "Size", size() );
    config->writeEntry( "Position", pos() );
    // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
    // (Please note that the problem was only there when quitting via Systray - esken).
@@ -382,12 +409,6 @@ KMixWindow::saveConfig()
 		QString grp;
 		grp.sprintf( "%i", mw->id() );
 		devices << grp;
-
-		config->setGroup( grp );
-		config->writeEntry( "Mixer", mw->mixerNum() );
-		config->writeEntry( "MixerName", mw->mixerName() );
-		config->writeEntry( "Name", mw->name() );
-
 		mw->saveConfig( config, grp );
 	}
 
@@ -441,21 +462,21 @@ KMixWindow::initMixerWidgets()
 
 	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
 	{
-		kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+	    //kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
 
 
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
-				false, KPanelApplet::Up, MixDevice::ALL, this, "KMixerWidget" );
+						     MixDevice::ALL, this, "KMixerWidget",  m_showMenubar );
 
-		mw->setName( mixer->mixerName() );
+		//mw->setName( mixer->mixerName() );
 
 		m_mixerWidgets.append( mw );
 
 		// Add to Combo
-		m_cMixer->insertItem( mw->name() );
+		m_cMixer->insertItem( mixer->mixerName() );
 
 		// Add to Stack
-		kdDebug(67100) << "Inserted mixer " << id << ":" << mw->name() << endl;
+		//kdDebug(67100) << "Inserted mixer " << id << ":" << mw->name() << endl;
 		m_wsMixers->addWidget( mw, id );
 
 		QString grp;
@@ -464,16 +485,10 @@ KMixWindow::initMixerWidgets()
 
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
-		mw->addActionToPopup( actionCollection()->action("options_show_menubar") );
+		// !!!
+		//mw->addActionToPopup( actionCollection()->action("options_show_menubar") );
+		//toggleMenuBar
 		mw->show();
-
-		// ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
-		m_layoutTimer = new QTimer( this );
-		connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateLayoutNow()) );
-
-		connect( mw, SIGNAL( masterMuted( bool ) ), SLOT( updateDockIcon() ) );
-		connect( mw, SIGNAL( newMasterVolume( Volume ) ), SLOT( updateDockTip(Volume) ) );
-		connect( mw, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
 	}
 
 	if (id == 1)
@@ -499,25 +514,6 @@ void
 KMixWindow::quit()
 {
 	kapp->quit();
-}
-
-// method "stolen" from KMixApplet
-void KMixWindow::triggerUpdateLayout()
-{
-	if ( m_lockedLayout ) return;
-	if ( !m_layoutTimer->isActive() ) {
-		m_layoutTimer->start( 100, TRUE );
-	}
-}
-
-// method "stolen" from KMixApplet
-void KMixWindow::updateLayoutNow()
-{
-   m_lockedLayout++;
- 	resize(widgetsLayout->minimumSize() );
-   //emit updateLayout();
-   //saveConfig(); // ugly hack to get the config saved somehow
-   m_lockedLayout--;
 }
 
 
@@ -574,12 +570,13 @@ KMixWindow::loadVolumes()
 void
 KMixWindow::saveVolumes()
 {
-	KConfig *cfg = new KConfig( "kmixctrlrc", false );
-   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
-	{
-      mixer->volumeSave( cfg );
-	}
-   delete cfg;
+    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
+    KConfig *cfg = new KConfig( "kmixctrlrc", false );
+    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next()) {
+	//kdDebug(67100) << "KMixWindow::saveConfig() loop" << endl;
+	mixer->volumeSave( cfg );
+    }
+    delete cfg;
 }
 
 
@@ -605,10 +602,9 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 
    // avoid invisible and unaccessible main window
    if( !m_showDockWidget && !isVisible() )
-	{
-      timer->start(500);  // !!! Lets see how context menu, tooltips work
-      show();
-	}
+   {
+       show();
+   }
 
    this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
    kapp->processEvents();
@@ -634,18 +630,18 @@ void
 KMixWindow::showEvent( QShowEvent * )
 {
     if ( m_visibilityUpdateAllowed )
-		 m_isVisible = true;
-	 timer->start(500);
+	m_isVisible = true;
+    // !! could possibly start polling now (idea: use someting like ref() and unref() on Mixer instance
 }
 
 void
 KMixWindow::hideEvent( QHideEvent * )
 {
-	if ( m_visibilityUpdateAllowed )
-	{
-		m_isVisible = false;
-	}
-	timer->stop();
+    if ( m_visibilityUpdateAllowed )
+    {
+	m_isVisible = false;
+    }
+    // !! could possibly stop polling now (idea: use someting like ref() and unref() on Mixer instance
 }
 
 

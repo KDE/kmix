@@ -30,9 +30,8 @@
 #include <kcolordialog.h>
 #include <kaboutdata.h>
 
-#include "kmixerwidget.h"
+#include "viewapplet.h"
 
-class QTimer;
 class Mixer;
 class ColorWidget;
 class KMixApplet;
@@ -75,21 +74,24 @@ class KMixApplet : public KPanelApplet
    Q_OBJECT
 
   public:
+
    KMixApplet( const QString& configFile, Type t = Normal,
 	       QWidget *parent = 0, const char *name = 0 );
    virtual ~KMixApplet();
 
-   int widthForHeight(int height) const;
-   int heightForWidth(int width) const; 
+   struct Colors {
+       QColor high, low, back, mutedHigh, mutedLow, mutedBack;
+   };
+
+   //   int widthForHeight(int height) const;
+   //   int heightForWidth(int width) const; 
    
    void about();
    void help();
    void preferences();   
    void reportBug();
-
+   QSize sizeHint() const;
   protected slots:
-   void triggerUpdateLayout();
-   void updateLayoutNow(); 
    void selectMixer();
    void applyPreferences();
    void preferencesDone();
@@ -97,29 +99,38 @@ class KMixApplet : public KPanelApplet
   protected:
    void resizeEvent( QResizeEvent * );
    void saveConfig();
-    
+   void saveConfig( KConfig *config, const QString &grp );
+   void loadConfig( KConfig *config, const QString &grp );
+
   private:
-   KMixerWidget *m_mixerWidget;
+   void setIcons( bool on );
+   void setLabels( bool on );
+   void setTicks( bool on );
+   void setColors( const Colors &color );
+
+   ViewApplet *m_mixerWidget;
    QPushButton *m_errorLabel;
-   QTimer *m_layoutTimer;
    int m_lockedLayout;
    AppletConfigDialog *m_pref;
    bool reversedDir; //  reverses direction of sliders and icon position
    void positionChange(Position);
    Direction checkReverse(Direction);
-   Direction getDirectionFromPositionHack(Position pos);
+   Direction getDirectionFromPositionHack(Position pos) const;
    void setColors();
 
    static int s_instCount;
    static QPtrList<Mixer> *s_mixers;
-   static QTimer *s_timer;    
 
-   KMixerWidget::Colors m_colors;
-   bool m_customColors;
+   KMixApplet::Colors m_colors;
+
+   bool _customColors;
+   bool _iconsEnabled;
+   bool _labelsEnabled;
+   bool _ticksEnabled;
    
    int mixerNum;
-   QString mixerName;
-   Mixer *mixer;
+   //QString mixerName;
+   Mixer *_mixer;
    KAboutData m_aboutData;
 };
 

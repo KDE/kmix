@@ -27,97 +27,18 @@
 #define MIXER_H
 
 #include <qstring.h>
+#include <qtimer.h>
 #include <qobject.h>
 #include <qintdict.h>
 #include <qptrlist.h>
 
 #include "volume.h"
 #include "mixerIface.h"
-
+#include "mixset.h"
+#include "mixdevice.h"
 
 class Volume;
 class KConfig;
-
-class MixDevice
-{
-   public:
-      // For each ChannelType a special icon exists
-      enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
-			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME,
-			VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97 };
-
-      // The DeviceCategory tells, how "important" a MixDevice is. See m_category.
-      // It is used in bitmasks, so you must use values of 2^n .
-      enum DeviceCategory { SLIDER=0x01, SWITCH=0x02, ALL=0xff };
-
-    
-      MixDevice(int num, Volume vol, bool recordable, bool mute,
-				QString name, ChannelType type = UNKNOWN, DeviceCategory category = SLIDER );
-      MixDevice(const MixDevice &md);
-      ~MixDevice() {};
-
-      int num() const   	         { return m_num; };
-      QString	name() const         { return m_name; };
-      bool isStereo() const        { return (m_volume.channels() > 1); };
-      bool isRecordable() const    { return m_recordable; };
-		bool isRecSource() const    { return m_recSource; };
-		bool isSwitch() const        { return m_switch; }
-      bool isMuted() const         { return m_volume.isMuted(); };
-		bool hasMute() const         { return m_mute; }
-
-      void setMuted(bool value)            { m_volume.setMuted( value ); };
-      void setVolume( Volume volume ) { m_volume = volume; };
-      void setVolume( int channel, int volume );
-		void setRecSource( bool rec ) { m_recSource = rec; }
-      int getVolume( int channel ) const;
-      Volume getVolume() const { return m_volume; };
-      int rightVolume() const;
-      int leftVolume() const;
-
-      void read( KConfig *config, const QString& grp );
-      void write( KConfig *config, const QString& grp );
-
-      void setType( ChannelType channeltype ) { m_type = channeltype; };
-      ChannelType type() { return m_type; };
-
-      DeviceCategory category() { return m_category; };
-
-   protected:
-      Volume m_volume;
-      ChannelType m_type;
-      // The DeviceCategory tells, how "important" a MixDevice is.
-      // The driver (e.g. mixer_oss.cpp) must set this value. It is
-      // used for deciding what Sliders to show and for distributing
-      // the sliders. It is advised to use the following categories:
-      // BASIC:     Master, PCM
-      // PRIMARY:   CD, Headphone, Microphone, Line
-      // SECONDARY: All others
-      // SWITCH:    All devices which only have a On/Off-Switch
-      int m_num; // ioctl() device number of mixer
-      bool m_recordable; // Can it be recorded?
-		bool m_switch; // On/Off switch
-		bool m_mute; // Available mute option
-		bool m_recSource; // Current rec status
-      DeviceCategory m_category; //  category
-      QString m_name;	// Ascii channel name
-};
-
-
-class MixSet : public QPtrList<MixDevice>
-{
-   public:
-      void read( KConfig *config, const QString& grp );
-      void write( KConfig *config, const QString& grp );
-
-      void clone( MixSet &orig );
-
-      QString name() { return m_name; };
-      void setName( const QString &name ) { m_name = name; };
-
-   private:
-      QString m_name;
-};
-
 
 class Mixer : public QObject, virtual public MixerIface
 {
@@ -171,8 +92,6 @@ class Mixer : public QObject, virtual public MixerIface
 
       /// get the actual MixSet
       virtual MixSet getMixSet() { return m_mixDevices; };
-      /// Write a given MixSet to hardware
-      virtual void writeMixSet( MixSet set );
 
       /// Set the record source(s) according to the given device mask
       /// The default implementation does nothing.
@@ -207,18 +126,23 @@ class Mixer : public QObject, virtual public MixerIface
 
       virtual bool isAvailableDevice( int deviceidx );
 
+      void commitVolumeChange( MixDevice* md );
+
+      virtual bool hasBrokenRecSourceHandling();
+
    public slots:
       /// Writes the given volumes in the given device
       /// Abstract method! You must implement it in your dericved class.
-      virtual int writeVolumeToHW( int devnum, Volume volume ) = 0;
+      virtual int writeVolumeToHW( int devnum, Volume &volume ) = 0;
       virtual void readSetFromHW();
       virtual void setRecordSource( int deviceidx, bool on );
 
       virtual void setBalance(int balance); // sets the m_balance (see there)
 
    signals:
-      void newBalance( Volume );
+      void newBalance( Volume& );
       void newRecsrc( void );
+      void newVolumeLevels(void);
 
    protected:
       int m_devnum;
@@ -235,6 +159,8 @@ class Mixer : public QObject, virtual public MixerIface
       /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
       /// gives you a usable name, use that name.
       QString m_mixerName;
+
+      QTimer* _pollingTimer;
 
       // mixer number to identify mixers with equal name correctly (set by the client)
       int m_mixerNum;

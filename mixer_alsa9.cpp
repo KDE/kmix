@@ -5,6 +5,7 @@
  *
  *
  * Copyright (C) 2002 Helio Chissini de Castro <helio@conectiva.com.br>
+ *               2004 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +42,8 @@ extern "C"
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
+
+// @todo Add file descriptor based notifying for seeing changes
 
 Mixer*
 ALSA_getMixer( int device, int card )
@@ -135,17 +138,17 @@ Mixer_ALSA::openMixer()
 
 	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
 	{
-                kdError(67100) << "snd_ctl_open err=" << snd_strerror(err) << endl;
-		errormsg( Mixer::ERR_OPEN );
-		return false;
+	    kdError(67100) << "snd_ctl_open err=" << snd_strerror(err) << endl;
+	    //errormsg( Mixer::ERR_OPEN );
+	    return Mixer::ERR_OPEN;
 	}
 
 	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
 	{
-                kdError(67100) << "snd_ctl_card_info err=" << snd_strerror(err) << endl;
-		errormsg( Mixer::ERR_READ );
-		snd_ctl_close( ctl_handle );
-		return false;
+	    kdError(67100) << "snd_ctl_card_info err=" << snd_strerror(err) << endl;
+	    //errormsg( Mixer::ERR_READ );
+	    snd_ctl_close( ctl_handle );
+	    return Mixer::ERR_READ;
 	}
 
 	// Device and mixer names
@@ -160,28 +163,31 @@ Mixer_ALSA::openMixer()
 	/* open mixer device */
 	if ( ( err = snd_mixer_open ( &handle, 0 ) ) < 0 )
 	{
-                kdError(67100) << "snd_mixer_open err=" << snd_strerror(err) << endl;
-		errormsg( Mixer::ERR_OPEN );
+	    kdError(67100) << "snd_mixer_open err=" << snd_strerror(err) << endl;
+	    //errormsg( Mixer::ERR_OPEN );
+	    return Mixer::ERR_OPEN;
 	}
 
 	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )
 	{
-                kdError(67100) << "snd_mixer_attach err=" << snd_strerror(err) << endl;
-		errormsg( Mixer::ERR_PERM );
+	    kdError(67100) << "snd_mixer_attach err=" << snd_strerror(err) << endl;
+	    //errormsg( Mixer::ERR_PERM );
+	    return Mixer::ERR_OPEN;
 	}
 
 	if ( ( err = snd_mixer_selem_register ( handle, NULL, NULL ) ) < 0 )
 	{
-                kdError(67100) << "snd_mixer_selem_register err=" << snd_strerror(err) << endl;
-		errormsg( Mixer::ERR_READ );
+	    kdError(67100) << "snd_mixer_selem_register err=" << snd_strerror(err) << endl;
+	    //errormsg( Mixer::ERR_READ );
+	    return Mixer::ERR_READ;
 	}
 
 	if ( ( err = snd_mixer_load ( handle ) ) < 0 )
 	{
                 kdError(67100) << "snd_mixer_load err=" << snd_strerror(err) << endl;
-		errormsg( Mixer::ERR_READ );
+		//errormsg( Mixer::ERR_READ );
 		releaseMixer();
-		return 1;
+		return Mixer::ERR_READ;
 	}
 
 	// default mixers?
@@ -234,7 +240,12 @@ Mixer_ALSA::openMixer()
 					! snd_mixer_selem_is_playback_mono( elem ) )
 				chn = 2; // Stereo channel ?
 
-			Volume vol( chn, ( int )maxVolume );
+			/* !!!! The next line looked like this:   !!!! Other mixer_* implementations might be buggy now !!!!
+			   Volume( chn, ( int )maxVolume );
+			   I wonder why it has ever worked.
+			   Probably by accident because the Volume objects were copied so much until KMix2.0 (inclusive)
+			*/
+			Volume* vol = new Volume( chn, ( int )maxVolume );
 			//mixer_elem_list.append( elem );
 			mixer_sid_list.append( sid );
 			/*
@@ -250,26 +261,30 @@ Mixer_ALSA::openMixer()
 				cc = MixDevice::SLIDER;
 				if ( snd_mixer_selem_has_playback_switch ( elem ) ||
 						snd_mixer_selem_has_capture_switch ( elem ) )
-					hasMute = true;    // !!! I do not like the *_has_capture_switch()  here - cesken
+					hasMute = true;    // !! I do not like the *_has_capture_switch()  here - cesken
 			}
 			else if ( ! snd_mixer_selem_has_playback_volume ( elem ) ||
 						snd_mixer_selem_has_capture_volume ( elem ) )
 			{
-				cc = MixDevice::SWITCH;  // !!! Why is something with *_has_capture_volume()  a switch? - cesken
+				cc = MixDevice::SWITCH;  // !! Why is something with *_has_capture_volume()  a switch? - cesken
 				hasMute = true; // The mute button act as switch in this case
 			}
 			else {
 				continue;
 			}
 
-			mixerIDs[mixerIdx] = mixerIdx; // -<- Remove this array again!!!         // was: currentID;
-			m_mixDevices.append(	new MixDevice( mixerIdx,
-						vol,
-						canRecord,
-						hasMute,
-						snd_mixer_selem_id_get_name( sid ),
-						ct,
-						cc ) );
+			mixerIDs[mixerIdx] = mixerIdx; // -<- Remove this array again!!         // was: currentID;
+			MixDevice* mdw =
+			    new MixDevice( mixerIdx,
+					   *vol,
+					   canRecord,
+					   hasMute,
+					   snd_mixer_selem_id_get_name( sid ),
+					   ct,
+					   cc );
+			m_mixDevices.append( mdw );
+			//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
+			delete vol;
 		}
 		else
 		{
@@ -465,7 +480,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 			if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] failed, errno=" << ret << endl;			
 		}
 
-		// Is Mono channel ?  !!! What if we only have capture volume? Does snd_mixer_selem_is_PLAYBACK_mono() apply?
+		// Is Mono channel ?  !! What if we only have capture volume? Does snd_mixer_selem_is_PLAYBACK_mono() apply?
 		if ( snd_mixer_selem_is_playback_mono ( elem ) )
 		{
 #ifdef KMIX_ALSA_VOLUME_DEBUG
@@ -517,7 +532,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 			volume.setMuted(false);
 
 	}
-/* I will try this after KDE3.2 - esken !!!
+/* I will try this after KDE3.2 - esken !!
 	// The next line is a nice workaround for channels that have no explicite "muted" switch (esken)
 	else if ( (left == pmin ) &&
 				( (right == pmin) || snd_mixer_selem_is_playback_mono ( elem ) ) )
@@ -531,12 +546,12 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 }
 
 int
-Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
+Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
 {
 	int left, right;
 	int elem_sw;
 
-	Volume data = volume; // !!! Variable called "data" is never used - cesken
+	Volume data = volume; // !! Variable called "data" is never used - cesken
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
 
 	if ( !elem )
@@ -560,7 +575,7 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 			snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
 	}
 
-/* !!! will try to remove this for test later - esken */
+/* !! will try to remove this for test later - esken */
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 		snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
@@ -595,6 +610,13 @@ Mixer_ALSA::errorText( int mixer_error )
 			l_s_errmsg = Mixer::errorText( mixer_error );
 	}
 	return l_s_errmsg;
+}
+
+bool Mixer_ALSA::hasBrokenRecSourceHandling() {
+    // Only for the current Mixer_ALSA implementation.
+    // This implementation does not see changes from the Mixer Hardware to the Record Sources.
+    // So the workaround is to manually call md.setRecSrc(false) for all aother channels.
+    return true;
 }
 
 QString

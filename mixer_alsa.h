@@ -14,9 +14,10 @@ class Mixer_ALSA : public Mixer
 		~Mixer_ALSA();
 		
 		virtual int  readVolumeFromHW( int devnum, Volume &vol );
-		virtual int  writeVolumeToHW( int devnum, Volume vol );
+		virtual int  writeVolumeToHW( int devnum, Volume &vol );
 		virtual bool setRecsrcHW( int devnum, bool on);
 		virtual bool isRecsrcHW( int devnum );
+		virtual bool hasBrokenRecSourceHandling();
 		
 	protected:
 		virtual int	openMixer();

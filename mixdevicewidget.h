@@ -33,13 +33,14 @@
 #include <qpixmap.h>
 #include <qrangecontrol.h>
 
+class QBoxLayout;
 class QLabel;
 class QPopupMenu;
-class QTimer;
 class QSlider;
 
 class KLed;
 class KLedButton;
+class KAction;
 class KActionCollection;
 class KSmallSlider;
 class KGlobalAccel;
@@ -47,96 +48,75 @@ class KGlobalAccel;
 class MixDevice;
 class VerticalText;
 class Mixer;
-class KMixerWidget;
+class ViewBase;
 
 class MixDeviceWidget
  : public QWidget
 {
       Q_OBJECT
 
-   public:
+public:
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
-                       bool showMuteLED, bool showRecordLED,
                        bool small, KPanelApplet::Direction dir,
-                       QWidget* parent = 0, KMixerWidget* mw = 0, const char* name = 0);
-      ~MixDeviceWidget();
+                       QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
+    ~MixDeviceWidget();
 
-      void addActionToPopup( KAction *action );
+    void addActionToPopup( KAction *action );
 
-      bool isDisabled() const;
-      bool isMuted() const;
-      bool isRecsrc() const;
-		bool isSwitch() const;
-		bool hasMute() const;
-      bool isStereoLinked() const { return m_linked; };
-      bool isLabeled() const;
-      MixDevice* mixDevice() { return m_mixdevice; };
+    virtual bool isDisabled() const;
+    //    virtual bool isMuted() const;
+    //    virtual bool isRecsrc() const;
+    //    virtual bool hasMute() const;
+    // virtual bool isLabeled() const;
+    MixDevice* mixDevice() { return m_mixdevice; };
 
-      void setStereoLinked( bool value );
-      void setLabeled( bool value );
-      void setTicks( bool ticks );
-      void setIcons( bool value );
-      void setColors( QColor high, QColor low, QColor back );
-      void setMutedColors( QColor high, QColor low, QColor back );
+    virtual void setColors( QColor high, QColor low, QColor back );
+    virtual void setIcons( bool value );
+    virtual void setLabeled( bool value );
+    virtual void setMutedColors( QColor high, QColor low, QColor back );
+    QSize sizeHint();
 
-      KGlobalAccel *keys(void);
+    virtual KGlobalAccel *keys(void);
 
-   public slots:
-      void toggleRecsrc();
-      void toggleMuted();
-      void toggleStereoLinked();
-      
-      void setDisabled() { setDisabled( true ); };
-      void setDisabled( bool value );
+public slots:
+//    virtual void toggleRecsrc();
+    //    virtual void toggleMuted();
+    virtual void setDisabled( bool value );
+    virtual void defineKeys();
+    virtual void update();
+    virtual void showContextMenu();
+    //    bool eventFilter( QObject*, QEvent* );
 
-      void defineKeys();
+protected slots:
+//    void setRecsrc( bool value );
+    //    virtual void setMuted( bool value );
 
-   signals:
-      void newVolume( int num, Volume volume );
-      void newMasterVolume( Volume volume );
-      void masterMuted( bool );
-      void newRecsrc( int num, bool on );
-      void updateLayout();
-      void rightMouseClick();
+signals:
+    void newVolume( int num, Volume volume );
+    void newMasterVolume( Volume volume );
+    void masterMuted( bool );
+    void newRecsrc( int num, bool on );
 
-   private slots:
-      void setRecsrc( bool value );
-      void setVolume( int channel, int volume );
-      void setVolume( Volume volume );
-      void contextMenu();
-      void update();
-      void volumeChange( int );
+protected slots:
 
-      void setMuted( bool value );
-      void setUnmuted( bool value) { setMuted( !value ); };
-      void increaseVolume();
-      void decreaseVolume();
-   private:
-      QPixmap icon( int icontype );
-      void setIcon( int icontype );
+    void volumeChange( int );
+    //virtual void increaseVolume();
+    //virtual void decreaseVolume();
+    virtual void setVolume( int channel, int volume );
+    virtual void setVolume( Volume volume );
 
-      void mousePressEvent( QMouseEvent *e );
-      bool eventFilter( QObject*, QEvent* );
-
-      void createWidgets( bool showMuteLED, bool showRecordLED );
-
-      Mixer *m_mixer;
-      MixDevice *m_mixdevice;
-      QTimer *m_updateTimer;
-      QPtrList<QWidget> m_sliders;
-      KActionCollection *m_sliderActions;
-      KGlobalAccel *m_keys;
-		KMixerWidget *m_mixerwidget;
-
-      bool m_linked;
-      bool m_disabled;
+protected:
+      Mixer*               m_mixer;
+      MixDevice*           m_mixdevice;
+      KActionCollection*   _mdwActions;
+      KGlobalAccel*        m_keys;
+      ViewBase*            m_mixerwidget;
+      bool                 m_disabled;
       KPanelApplet::Direction m_direction;
-      bool m_small;
+      bool                 m_small;
 
-      QLabel *m_iconLabel;
-      KLedButton *m_muteLED;
-      KLedButton *m_recordLED;
-      VerticalText *m_label;
+private:
+      void mousePressEvent( QMouseEvent *e );
 };
 
 #endif

@@ -1,7 +1,44 @@
 TODO list
 
+IMPORTANT:
+1) Get Switches working
+This means: ALL switches: Record-LED's, MUTE-Switches and regular switches.
+Currently only the DockAreaPopup MUTE-Switch is working.
+This is the biggest work.
+Status:
+MUTE-LED's  : Read: OK, Click: OK    , Saved/Restored: no  (was not in KMix2.0 and is shifted)
+Record-LED's: Read: OK, Click: OK    , Saved/Restored: yes
+Switches    : Read: OK, Click: OK    , Saved/Restored: yes
+Dockarea    : Read: OK, Click: OK    , Saved/Restored: n/a (its a view, not HW)
+
+2a) Splitted sliders and balance
+OK
+Splitted sliders: Read: OK, Click: OK, Drag: OK, Wheel: OK
+Balance slider  : OK (works like in KMix2.0)
+
+3) Mouse wheel
+OK
+
+4) Make Volume Tip work (is currently always "0%")
+OK
+
+5) Switches MUST be restored properly
+OK
+
+6) kmixapplet restoring and working
+OK
+
+7) Keys are not saved
+Pending
+
+
+14.6.2004 Christian Esken
+I believe Mixer_IRIX is broken.
+This is due to the old "writeVolumeToHW" and "readVolumeFromHW" interface.
+
 14 december 2002 - Helio Chissini de Castro
 - Figure out devices like SBLive with external Live Drives and their multiple in/outs. As a sample, using headphone output from live drive, mute switch not work as they must, but we need mutting the headphone lfe and center channel to really mute headphone output.
 
-- Introduce a Switch widget in base mixer widget class to real visual representation
 - Introduce a new widget to enable route control in pro's ( Turtle ) and pro like ( Audigy, Live ) cards.
+
+
