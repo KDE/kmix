@@ -129,10 +129,12 @@ char KMixErrors[6][200]=
   "kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING)."
 };
 
-char* MixerDevNames[17]={"Volume" , "Bass"  , "Treble"    , "Synth", "Pcm"  , \
-			 "Speaker", "Line"  , "Microphone", "CD"   , "Mix"  , \
-			 "Pcm2"   , "RecMon", "IGain"     , "OGain", "Line1", \
-			 "Line2"  , "Line3" };
+char* MixerDevNames[27]={"Volume"  , "Bass"    , "Treble"    , "Synth"   , "Pcm"  ,    \
+			 "Speaker" , "Line"    , "Microphone", "CD"      , "Mix"  ,    \
+			 "Pcm2"    , "RecMon"  , "IGain"     , "OGain"   , "Line1",    \
+			 "Line2"   , "Line3"   , "Digital1"  , "Digital2", "Digital3", \
+                         "PhoneIn" , "PhoneOut", "Video"     , "Radio"   , "Monitor",  \
+                         "3D-depth", "3D-center"};
 
 /// The mixing set list
 

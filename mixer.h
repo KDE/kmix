@@ -12,6 +12,19 @@
 #include <kapp.h>
 #include <kmsgbox.h>
 
+
+/*
+   I am using a fixed MAX_MIXDEVS #define here.
+   People might argue, that I should rather use the SOUND_MIXER_NRDEVICES
+   #define used by OSS. But using this #define is not good, because it is
+   evaluated during compile time. Compiling on one platform and running
+   on another with another version of OSS with a different value of
+   SOUND_MIXER_NRDEVICES is very bad. Because of this, usage of
+   SOUND_MIXER_NRDEVICES should be discouraged.
+
+   The #define below is only there for internal reasons.
+   In other words: Don't play around with this value
+ */
 #define MAX_MIXDEVS 32
 
 #if defined(sun) || defined(__sun__)
@@ -35,17 +48,17 @@ class Mixer;
 
 /****************************************************************************
   The internal device representation of a mixing channel:
+  Sorry. This class is no nice, shiny, encapsulating class, which hides
+  implementation details. This stuff still stems from old times, when kmix
+  was called dmix and was built on top of Motif.
+  Yes! I should rework this some day.
+
   device_num:    The ioctl() device number of the mixer source, as given by
                  the SOUND_MIXER_READ_DEVMASK ioctl().
   is_stereo:     TRUE for a source with stereo capabilities.
   is_recordable: TRUE for mixer devices, which can be recorded.
   is_recsrc:     TRUE for a source, which is currently recording source
   channel:	 Channel descriptor: 0 = Left, 1 = Right.
-		 !!! This may be expanded to EVEN = Left, ODD = Right in
-		 !!! the future. This interpretation may be useful in
-		 !!! conjunction with a multiple channel soundcard as
-		 !!! the GUS. Multiple channels may be controlled via a
-		 !!! single slider.
   current_value: The current volume of this channel [0...10000]. This is an
 		 internal value only and is getting converted in the
 		 update_channel() function.
@@ -82,12 +95,9 @@ public:
 };
 
 /***************************************************************************
- * The structure MixChannel is used as hook for user data in callbacks.
+ * The structure MixChannel is used as hook for user data in the slots.
  * There are pointers to 2 MixChannel's per MixDevice. If neccesary, this
  * could could be modified, so one could build a MixChannel list.
- *
- * !!! Hmm, I am wondering if there are there Multi-Channel (more than 2) cards
- * out there, which can regulate each channel separately (GUS perhaps?!?).
  ***************************************************************************/
 class MixChannel : public QWidget
 {
