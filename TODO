@@ -1,9 +1,11 @@
 TODO list
 
 Bug2 in KMix2.1pre:
-- DockApplet shows "show/hide menubar"
-- Keys not saved/restored
-- "reversed" in panelapplet is broken. Remove it for now
+- DockApplet shows "show/hide menubar" (in Progress)
+- Keys not saved/restored (pending)
+- "reversed" in panelapplet is broken. Remove it for now (DONE)
+- Initial paint of sliders in KMixApplet is broken. "initial" means: after installing or after dragging panel,
+  but not after logging in ... very strange (in Progress)
 
 IMPORTANT:
 1) Get Switches working
