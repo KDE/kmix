@@ -23,16 +23,19 @@
 #define KMIXDOCKWIDGET_H
 
 #include <qwidget.h>
-#include <kdockwindow.h>
+#include <ksystemtray.h>
 
-class KMixDockWidget : public KDockWindow  {
+class KMixDockWidget : public KSystemTray  {
    Q_OBJECT
 
    friend class KMixApp;
 
-  public: 
+ public: 
    KMixDockWidget(QWidget *parent=0, const char *name=0);
    ~KMixDockWidget();
+
+ protected:
+   void contextMenuAboutToShow( KPopupMenu* menu );
 };
 
 #endif

@@ -49,7 +49,6 @@ class KMixPrefDlg : public QTabDialog  {
    KMixPrefWidget *m_mixPrefTab;
 
    QCheckBox *m_dockingChk;
-   QCheckBox *m_startHiddenChk;
    QCheckBox *m_hideOnCloseChk;
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;

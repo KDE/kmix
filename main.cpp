@@ -30,7 +30,7 @@
 
 static const char *description =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
-	
+
 static KCmdLineOptions options[] =
 {
    { 0, 0, 0 }
@@ -40,8 +40,8 @@ static KCmdLineOptions options[] =
 int main(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
-			 APP_VERSION, description, KAboutData::License_GPL,
-			 I18N_NOOP("(c) 2000 by Stefan Schimanski"));
+                         APP_VERSION, description, KAboutData::License_GPL,
+                         I18N_NOOP("(c) 2000 by Stefan Schimanski"));
 
    aboutData.addAuthor("Stefan Schimanski", 0, "1Stein@gmx.de");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
@@ -50,23 +50,16 @@ int main(int argc, char *argv[])
    aboutData.addAuthor("Lennart Augustsson", I18N_NOOP("*BSD fixes"), "augustss@cs.chalmers.se");
    aboutData.addAuthor("Nick Lopez", I18N_NOOP("ALSA port"), "kimo_sabe@usa.net");
    aboutData.addAuthor("Helge Deller", I18N_NOOP("HP/UX port"), "deller@gmx.de");
-   	
+
    KCmdLineArgs::init( argc, argv, &aboutData );
-   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.	
+   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
    KApplication app;
+   KMixApp *kmix = new KMixApp;
+   if ( app.isRestored() && KMainWindow::canBeRestored(0) )
+       kmix->restore(0, FALSE);
 
-   if (app.isRestored())
-   {
-      RESTORE(KMixApp);
-   }
-   else 
-   {
-      KMixApp *kmix = new KMixApp();      
-      KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		
-      args->clear();
-   }
-
-   return app.exec();
-}  
+   int result = app.exec();
+   delete kmix;
+   return result;
+}

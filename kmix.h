@@ -84,11 +84,11 @@ class KMixApp : public KTMainWindow
    QPopupMenu *m_viewMenu;
    QPopupMenu *m_helpMenu;
 
-   bool m_showDockWidget;
-   bool m_startHidden;
+   bool m_showDockWidget;   
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
+   bool m_startVisible;
    int m_maxId;
 
    QList<Mixer> m_mixers;

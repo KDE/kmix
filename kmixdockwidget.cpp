@@ -19,16 +19,31 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <klocale.h>
+#include <kapp.h>
+#include <kpopupmenu.h>
+
 #include "kmixdockwidget.h"
 
 
 KMixDockWidget::KMixDockWidget( QWidget *parent, const char *name )
-   : KDockWindow(parent, name)
+   : KSystemTray( parent, name )
 {
 }
 
 KMixDockWidget::~KMixDockWidget()
 {
+}
+
+void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* menu )
+{
+    for ( unsigned n=0; n<menu->count(); n++ )
+    {
+        if ( QString( menu->text( menu->idAt(n) ) )==i18n("Quit") )
+            menu->removeItemAt( n );
+    }
+
+    menu->insertItem( i18n("Quit" ), kapp, SLOT(quit()) );
 }
 
 #include "kmixdockwidget.moc"

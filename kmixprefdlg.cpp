@@ -35,19 +35,16 @@
 
 KMixPrefDlg::KMixPrefDlg()
 {
-   setCaption( i18n("KMix Preferences") );	
+   setCaption( i18n("KMix Preferences") );
 
    // general buttons
-   m_generalTab = new QWidget( this );	
-   QBoxLayout *layout = new QVBoxLayout( m_generalTab );	
+   m_generalTab = new QWidget( this );
+   QBoxLayout *layout = new QVBoxLayout( m_generalTab );
 
    m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
    layout->addWidget( m_dockingChk );
 
-   m_startHiddenChk = new QCheckBox( i18n("Hide window on &startup"), m_generalTab );
-   layout->addWidget( m_startHiddenChk );
-
-   m_hideOnCloseChk = new QCheckBox( i18n("Only &Hide window with close button"), m_generalTab );
+   m_hideOnCloseChk = new QCheckBox( i18n("Only &hide window with close button"), m_generalTab );
    layout->addWidget( m_hideOnCloseChk );
 
    m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
