@@ -190,7 +190,7 @@ int Mixer_SUN::openMixer()
          {
             Volume vol( 2, AUDIO_MAX_GAIN );
             readVolumeFromHW( idx, vol );
-            MixDevice* md = new MixDevice( idx, vol, 0,
+            MixDevice* md = new MixDevice( idx, vol, false, true,
                QString(MixerDevNames[idx]), MixerChannelTypes[idx]);
 				md->setRecordSource( isRecsrcHW( idx ), true );
             m_mixDevices.append( md );

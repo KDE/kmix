@@ -67,6 +67,7 @@ class MixDeviceWidget
       bool isMuted() const;
       bool isRecsrc() const;
 		bool isSwitch() const;
+		bool hasMute() const;
       bool isStereoLinked() const { return m_linked; };
       bool isLabeled() const;
 

@@ -67,15 +67,9 @@
 #include "mixer_irix.cpp"
 #endif
 
-// Old and new alsa API's 
+// Alsa API's 
 #if defined(ALSA_MIXER)
-
-#ifdef HAVE_ALSA_ASOUNDLIB_H
 #include "mixer_alsa9.cpp"
-#elif defined(HAVE_SYS_ASOUNDLIB_H)
-#include "mixer_alsa5.cpp"
-#endif
-
 #endif
 
 #if defined(OSS_MIXER)

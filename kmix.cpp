@@ -461,6 +461,7 @@ KMixWindow::initMixerWidgets()
 		m_cMixer->insertItem( mw->name() );
 		
 		// Add to Stack
+		kdDebug() << "Inserted mixer " << id << ":" << mw->name() << endl;
 		m_wsMixers->addWidget( mw );
 		
 		mw->setTicks( m_showTicks );

@@ -162,106 +162,123 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 		} //  otherwise it is created after the slider
 	}
 	
-   // create mute LED
-   m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
-                               KLed::Circular, this, "MuteLED" );
-	if( !isSwitch() )
-		if (!showMuteLED) m_muteLED->hide();
+	layout->addSpacing( 2 );
 	
-   m_muteLED->setFixedSize( QSize(16, 16) );
-	QString switchLabel;
-	if( m_mixdevice->name().length() > 10 )
+	if( hasMute() )
 	{
-		switchLabel = m_mixdevice->name().mid(0, 10 );
-		switchLabel.append("...");
+		// create mute LED
+		m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
+				KLed::Circular, this, "MuteLED" );
+		if( !isSwitch() )
+		{
+			if (!showMuteLED) m_muteLED->hide();
+			QToolTip::add( m_muteLED, i18n( "Mute" ) );
+		}
+		
+		m_muteLED->setFixedSize( QSize(16, 16) );
+		
+		GET_NEWLAYOUT( ledlayout );
+		ledlayout->addWidget( m_muteLED );
+		
+		// Add name to switch
+		if( isSwitch() )
+		{
+			QString switchLabel;
+			if( m_mixdevice->name().length() > 10 )
+			{
+				switchLabel = m_mixdevice->name().mid(0, 10 );
+				switchLabel.append("...");
+			}
+			else
+				switchLabel = m_mixdevice->name();
+			ledlayout->addSpacing( 1 );
+			ledlayout->addWidget( new QLabel( switchLabel, this, "LedName" ) );
+		}
+		
+		connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(setUnmuted(bool)) );
+		m_muteLED->installEventFilter( this );
 	}
 	else
-		switchLabel = m_mixdevice->name();
-
-   GET_NEWLAYOUT( ledlayout );
-   ledlayout->addWidget( m_muteLED );
-	// Add name to switch
-	if( isSwitch() )
-		ledlayout->addWidget( new QLabel( switchLabel, this, "LedName" ) );
-   m_muteLED->installEventFilter( this );
+	{
+		m_muteLED = 0L;
+		if ( showMuteLED ) layout->addSpacing( 16 );
+	}
 	
-   connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(setUnmuted(bool)) );
-
-   layout->addSpacing( 1 );
-
-		// create label
-		GET_NEWLAYOUT( labelAndSliders );
-		m_label = new VerticalText( this, m_mixdevice->name().latin1() );
+	layout->addSpacing( 2 );
+	
+	// create label
+	GET_NEWLAYOUT( labelAndSliders );
+	m_label = new VerticalText( this, m_mixdevice->name().latin1() );
+	m_label->hide();
+	labelAndSliders->addWidget( m_label );
+	m_label->installEventFilter( this );
+	
+	if( isSwitch() )
 		m_label->hide();
-		labelAndSliders->addWidget( m_label );
-		m_label->installEventFilter( this );
-
-		if( isSwitch() )
-			m_label->hide();
+	
+	// create sliders
+	GET_NEWLAYOUT_LAS( sliders );
+	for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
+	{
+		int maxvol = m_mixdevice->getVolume().maxVolume();
+		QWidget* slider;
+		if ( m_small )
+			slider = new KSmallSlider( 0, maxvol, maxvol/10,
+					m_mixdevice->getVolume( i ),
+					m_direction,
+					this, m_mixdevice->name().ascii() );
+		else 
+		{
+			slider = new QSlider( 0, maxvol, maxvol/10,
+					maxvol - m_mixdevice->getVolume( i ),
+					(m_direction == KPanelApplet::Up ||
+					 m_direction == KPanelApplet::Down) ?
+					QSlider::Vertical : QSlider::Horizontal,
+					this, m_mixdevice->name().ascii() );
+			slider->setMinimumSize( slider->sizeHint() );
+		}
 		
-		// create sliders
-		GET_NEWLAYOUT_LAS( sliders );
-		for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
-		{
-			int maxvol = m_mixdevice->getVolume().maxVolume();
-			QWidget* slider;
-			if ( m_small )
-				slider = new KSmallSlider( 0, maxvol, maxvol/10,
-						m_mixdevice->getVolume( i ),
-						m_direction,
-						this, m_mixdevice->name().ascii() );
-			else 
-			{
-				slider = new QSlider( 0, maxvol, maxvol/10,
-						maxvol - m_mixdevice->getVolume( i ),
-						(m_direction == KPanelApplet::Up ||
-						 m_direction == KPanelApplet::Down) ?
-						QSlider::Vertical : QSlider::Horizontal,
-						this, m_mixdevice->name().ascii() );
-				slider->setMinimumSize( slider->sizeHint() );
-			}
-			
-			slider->installEventFilter( this );
-			if( i>0 && isStereoLinked() ) slider->hide();
-			if( isSwitch() )
-				slider->hide();
-			sliders->addWidget( slider );
-			m_sliders.append ( slider );
-			connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
-		}
-
-		// create channel icon
-		if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) 
-		{
-			m_iconLabel = 0L;
-			setIcon( m_mixdevice->type() );
-			if( isSwitch() )
-				m_iconLabel->hide();
-			layout->addWidget( m_iconLabel );
-			m_iconLabel->installEventFilter( this );
-		} //  otherwise it is created before the slider
-
-		// create record source LED
-		if( m_mixdevice->isRecordable() )
-		{
-			m_recordLED = new KLedButton( Qt::red,
-					m_mixdevice->isRecordable()?KLed::On:KLed::Off,
-					KLed::Sunken, KLed::Circular, this, "RecordLED" );
-			if (!showRecordLED) m_recordLED->hide();
-			m_recordLED->setFixedSize( QSize(16, 16) );
-			
-			GET_NEWLAYOUT( reclayout );
-			if( isSwitch() )
-				m_recordLED->hide();
-			reclayout->addWidget( m_recordLED );
-			connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
-			m_recordLED->installEventFilter( this );
-		}
-		else
-		{
-			m_recordLED = 0L;
-			if ( showRecordLED ) layout->addSpacing( 16 );
-		}
+		slider->installEventFilter( this );
+		if( i>0 && isStereoLinked() ) slider->hide();
+		if( isSwitch() )
+			slider->hide();
+		sliders->addWidget( slider );
+		m_sliders.append ( slider );
+		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
+	}
+	
+	// create channel icon
+	if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) 
+	{
+		m_iconLabel = 0L;
+		setIcon( m_mixdevice->type() );
+		if( isSwitch() )
+			m_iconLabel->hide();
+		layout->addWidget( m_iconLabel );
+		m_iconLabel->installEventFilter( this );
+	} //  otherwise it is created before the slider
+	
+	// create record source LED
+	if( m_mixdevice->isRecordable() )
+	{
+		m_recordLED = new KLedButton( Qt::red,
+				m_mixdevice->isRecordable()?KLed::On:KLed::Off,
+				KLed::Sunken, KLed::Circular, this, "RecordLED" );
+		if (!showRecordLED) m_recordLED->hide();
+		m_recordLED->setFixedSize( QSize(16, 16) );
+		
+		GET_NEWLAYOUT( reclayout );
+		if( isSwitch() )
+			m_recordLED->hide();
+		reclayout->addWidget( m_recordLED );
+		connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
+		m_recordLED->installEventFilter( this );
+	}
+	else
+	{
+		m_recordLED = 0L;
+		if ( showRecordLED ) layout->addSpacing( 16 );
+	}
 }
 #undef GET_NEWLAYOUT
 
@@ -365,6 +382,12 @@ bool
 MixDeviceWidget::isSwitch() const
 {
 	return m_mixdevice->isSwitch();
+}
+
+bool
+MixDeviceWidget::hasMute() const
+{
+	return m_mixdevice->hasMute();
 }
 
 void 
@@ -702,12 +725,15 @@ MixDeviceWidget::contextMenu()
       ta->plug( menu );
    }
 
-	ta = ( KToggleAction* )m_sliderActions->action( "mute" );
-   if ( ta )
-   {
-      ta->setChecked( m_mixdevice->isMuted() );
-      ta->plug( menu );
-   }
+	if ( hasMute() )
+	{
+		ta = ( KToggleAction* )m_sliderActions->action( "mute" );
+		if ( ta )
+		{
+			ta->setChecked( m_mixdevice->isMuted() );
+			ta->plug( menu );
+		}
+	}
 	
 	KAction *a = m_sliderActions->action(  "hide" );
 	if ( a ) 

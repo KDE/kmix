@@ -184,12 +184,14 @@ Mixer_ALSA::openMixer()
 	int mixerIdx = 0;
 	for ( elem = snd_mixer_first_elem( handle ); elem; elem = snd_mixer_elem_next( elem ) )
 	{
-		snd_mixer_selem_get_id( elem, sid );
-
-		if ( ! snd_mixer_selem_is_active( elem ) )
+		// If element is not active, just skip
+		if ( ! snd_mixer_selem_is_active ( elem ) )
 			continue;
+
+		snd_mixer_selem_get_id( elem, sid );
 		
 		bool canRecord = false;
+		bool hasMute = false;
 		long maxVolume, minVolume;
 		validDevice = true;
 		
@@ -209,26 +211,37 @@ Mixer_ALSA::openMixer()
 			
 			MixDevice::DeviceCategory cc;
 			
-			if( snd_mixer_selem_has_playback_volume( elem ) ||
-					snd_mixer_selem_has_capture_volume( elem ) ||
-					snd_mixer_selem_has_playback_switch( elem ) ||
-					snd_mixer_selem_has_capture_switch( elem ) ||
-					! snd_mixer_selem_is_capture_mono( elem )  ||
+			if(	! snd_mixer_selem_is_capture_mono( elem )  ||
 					! snd_mixer_selem_is_playback_mono( elem ) )
 				chn = 2; // Stereo channel ?
-			else
-				continue;
 			
 			Volume vol( chn, ( int )maxVolume );	
 			mixer_elem_list.append( elem );
-			
-			if( snd_mixer_selem_is_playback_mono( elem ) ||
-					snd_mixer_selem_is_capture_mono( elem ) )
-				cc = MixDevice::SWITCH;
-			else
+		
+			if ( snd_mixer_selem_has_playback_volume ( elem ) || 
+					snd_mixer_selem_has_capture_volume ( elem ) )
+			{
 				cc = MixDevice::SLIDER;
+				if ( snd_mixer_selem_has_playback_switch ( elem ) || 
+						snd_mixer_selem_has_capture_switch ( elem ) )
+					hasMute = true;
+			}
+			else if ( ! snd_mixer_selem_has_playback_volume ( elem ) ||
+						snd_mixer_selem_has_capture_volume ( elem ) )
+			{
+				cc = MixDevice::SWITCH;
+				hasMute = true; // The mute button act as switch in this case
+			}
+			else
+				continue;
 			
-			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct, cc) );
+			m_mixDevices.append(	new MixDevice( mixerIdx, 
+						vol, 
+						canRecord, 
+						hasMute, 
+						snd_mixer_selem_id_get_name( sid ), 
+						ct, 
+						cc ) );
 			mixerIdx++;
 		}
 		else

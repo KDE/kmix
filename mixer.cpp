@@ -35,10 +35,10 @@
  */
 
 
-MixDevice::MixDevice(int num, Volume vol, bool recordable,
-                     QString name, ChannelType type,
-		     DeviceCategory category ) :
-    m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable ), m_category( category)
+MixDevice::MixDevice(	int num, Volume vol, bool recordable, bool mute,
+		QString name, ChannelType type, DeviceCategory category ) :
+	m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable ),
+	m_category( category ), m_mute( mute )
 {
 	m_switch = false;
    if( name.isEmpty() )
@@ -59,6 +59,8 @@ MixDevice::MixDevice(const MixDevice &md)
    m_num = md.m_num;
    m_recordable = md.m_recordable;
    m_category = md.m_category;
+	m_switch = md.m_switch;
+	m_mute = md.m_mute;
 }
 
 int MixDevice::getVolume( int channel ) const

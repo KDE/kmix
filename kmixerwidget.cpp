@@ -327,13 +327,59 @@ KMixerWidget::slotFillPopup()
 {
    m_toggleMixerChannels->popupMenu()->clear();
 
+	QStringList output, input, sw;
+	bool stOut, stIn, stSw;
+
    int n=0;
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
    {
-      m_toggleMixerChannels->popupMenu()->insertItem(chn->dev->name(), n);
-      m_toggleMixerChannels->popupMenu()->setItemChecked(n, !chn->dev->isDisabled());
-      n++;
+		if( chn->dev->isSwitch() )
+		{
+			sw << chn->dev->name();
+			stOut = !chn->dev->isDisabled();
+		}
+		else if ( chn->dev->isRecsrc() )
+		{
+			input << chn->dev->name();
+			stIn = !chn->dev->isDisabled();
+		}
+		else
+		{
+			output << chn->dev->name();
+			stSw = !chn->dev->isDisabled();
+		}
    }
+
+	// Output
+	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Output" ) );
+	n++;
+	for ( QStringList::Iterator it = output.begin(); it != output.end(); ++it )
+	{
+		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( n, stOut );
+		n++;
+	}
+	
+	// Input
+	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Input" ) );
+	n++;
+	for ( QStringList::Iterator it = input.begin(); it != input.end(); ++it )
+	{
+		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( n, stIn );
+		n++;
+	}
+	
+	// Switch
+	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Switchs" ) );
+	n++;
+	for ( QStringList::Iterator it = sw.begin(); it != sw.end(); ++it )
+	{
+		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( n, stSw );
+		n++;
+	}
+
 }
 
 void 

@@ -24,20 +24,12 @@ class Mixer_ALSA : public Mixer
 		
 	private:
 		snd_mixer_t *handle;
-#ifdef HAVE_ALSA_ASOUNDLIB_H
 		int identify( snd_mixer_selem_id_t *sid );
 		QString mixer_card_name;
 		QString mixer_device_name;
 		virtual QString errorText(int mixer_error);
 		typedef QValueList<snd_mixer_elem_t *> AlsaMixerElemList;
 		AlsaMixerElemList mixer_elem_list;
-		
-#elif defined(HAVE_SYS_ASOUNDLIB_H)
-		snd_mixer_groups_t  groups;
-		snd_mixer_gid_t    *gid;
-		int numChannels( int mask );
-		int identify( int, const char* id );
-#endif
 };
 
 #endif

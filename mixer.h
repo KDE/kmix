@@ -51,8 +51,8 @@ class MixDevice
       enum DeviceCategory { SLIDER=0x01, SWITCH=0x02, ALL=0xff };
 
     
-      MixDevice(int num, Volume vol, bool recordable,
-		QString name, ChannelType type = UNKNOWN, DeviceCategory category = SLIDER );
+      MixDevice(int num, Volume vol, bool recordable, bool mute,
+				QString name, ChannelType type = UNKNOWN, DeviceCategory category = SLIDER );
       MixDevice(const MixDevice &md);
       ~MixDevice() {};
 
@@ -62,6 +62,7 @@ class MixDevice
       bool isRecordable() const    { return m_recordable; };
 		bool isSwitch() const        { return m_switch; }
       bool isMuted() const         { return m_volume.isMuted(); };
+		bool hasMute() const         { return m_mute; }
 
       void setMuted(bool value)            { m_volume.setMuted( value ); };
       void setVolume( Volume volume ) { m_volume = volume; };
@@ -94,6 +95,7 @@ class MixDevice
       int m_num; // ioctl() device number of mixer
       bool m_recordable; // Can it be recorded?
 		bool m_switch; // On/Off switch
+		bool m_mute; // Available mute option
       DeviceCategory m_category; //  category
       QString m_name;	// Ascii channel name
 };
