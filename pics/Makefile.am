@@ -6,13 +6,13 @@ pics_DATA = mix_audio.xpm mix_bass.xpm mix_cd.xpm mix_ext.xpm \
 
 install-data-local:
 	$(mkinstalldirs) $(kde_minidir)
-	$(mkinstalldirs) $(kde_minidir)/../large
-	$(INSTALL_DATA) $(srcdir)/kmix_mini.xpm $(kde_minidir)/kmix.xpm
-	$(INSTALL_DATA) $(srcdir)/large-kmix.xpm $(kde_minidir)/../large/kmix.xpm
+	$(mkinstalldirs) $(kde_icondir)/large
+	$(INSTALL_DATA) $(srcdir)/kmix_mini.xpm $(kde_icondir)ix.xpm
+	$(INSTALL_DATA) $(srcdir)/large-kmix.xpm $(kde_icondir)/large/kmix.xpm
 
 uninstall-local:
-	-rm -f $(kde_minidir)/kmix.xpm
-	-rm -f $(kde_minidir)/../large/kmix.xpm
+	-rm -f $(kde_icondir)ix.xpm
+	-rm -f $(kde_icondir)/large/kmix.xpm
 
 icon_DATA = kmix.xpm
 icondir = $(kde_icondir)
