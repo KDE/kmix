@@ -211,8 +211,7 @@ extern "C"
 {
     KCModule *create_kmix(QWidget *parent, const char *name)
     {
-      KGlobal::locale()->insertCatalogue("kcmkmix");
-      return new KMixConfig(parent, name);
+      return new KMixConfig(parent, "kcmkmix");
     }
 
     void init_kmix()
