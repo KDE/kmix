@@ -214,8 +214,32 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
     }
 
 
+    long chmask = m_mixdevice->getVolume()._chmask;
     for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
     {
+        bool useSlider = false;
+
+        if ( chmask & Volume::_channelMaskEnum[i] ) {
+            // mask fits. Possibly include slider
+        // *** Next lines decide which sliders to show **********
+        if ( m_recordLED != 0 && ( i==2 || i==3) ) {
+            // if we show the record LED, we will also want to show the
+            // record volume (!! This is a decision, and works with the
+            // current GUI code. In future this might need to change).
+            // WARNING: This hardcoded "i==X" stuff is stupid, but I have
+            //          no mapper - Additionaly I know that for now this
+            //          is fixed!!
+            
+            useSlider = true;
+        }
+        else if ( m_recordLED == 0 && ( i!=2 && i!=3 ) ) {
+            useSlider = true;
+        }
+        } // ChannelMask fits
+
+
+	if ( useSlider ) {
+
 	Volume::ChannelID chid = Volume::ChannelID(i);
 	// @todo !! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
 	// We should look up the mapping here, but for now, we simply assume "chid == i".
@@ -246,7 +270,9 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	}
 	sliders->addWidget( slider );  // add to layout
 	m_sliders.append ( slider );   // add to list
+        _slidersChids.append(chid);        // Remember slider-chid association
 	connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
+    } // if (useSlider)
     } // for all channels of this device
 
 
@@ -477,25 +503,41 @@ void MDWSlider::volumeChange( int )
    {
        //      kdDebug(67100) << "MDWSlider::volumeChange() stereoLinked vol=" << vol << endl;
       QWidget *slider = m_sliders.first();
+      Volume::ChannelID chid  = _slidersChids.first();
+
+      int sliderValue = 0;
       if ( slider->inherits( "KSmallSlider" ) )
       {
          KSmallSlider *slider = dynamic_cast<KSmallSlider *>(m_sliders.first());
-         if (slider)
-            vol.setAllVolumes( slider->value() );
-      } else
-      {
-         QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
-         if (slider)
-            vol.setAllVolumes( slider->maxValue() - slider->value() );
+         if (slider) {
+	    sliderValue= slider->value();
+	 }
       }
-   }
+      else {
+         QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
+         if (slider) {
+            sliderValue= slider->maxValue() - slider->value();
+         }
+      }
+
+      if ( chid == Volume::LEFT ) {
+              vol.setVolume( Volume::LEFT , sliderValue );
+              vol.setVolume( Volume::RIGHT, sliderValue );
+      }
+      else if ( chid == Volume::LEFTREC ) {
+              vol.setVolume( Volume::LEFTREC , sliderValue );
+              vol.setVolume( Volume::RIGHTREC, sliderValue );
+      }
+      else {
+         kdDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
+      }
+   } // joined
    else {
       int n = 0;
-      for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next() )
+      QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+      for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next(), ++it )
       {
-	  // @todo !! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
-	  // We should look up the mapping here, but for now, we simply assume "chid == n".
-	  Volume::ChannelID chid = Volume::ChannelID(n);
+          Volume::ChannelID chid = *it;
 	  if ( slider->inherits( "KSmallSlider" ) )
 	  {
 	      KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
@@ -620,9 +662,22 @@ void MDWSlider::update()
     Volume vol = m_mixdevice->getVolume();
     if( isStereoLinked() )
     {
-	long avgVol = vol.getAvgVolume();
+	long avgVol;
+	if ( m_recordLED != 0 ) {
+	    // if we show the record LED, we will also want to show the
+	    // record volume (!! This is a decision, and works with the
+	    // current GUI code. In future this might need to change).
+            avgVol = vol.getAvgVolume( Volume::MREC );
+	}
+	else {
+            avgVol = vol.getAvgVolume( Volume::MMAIN );
+        }
+
 
 	QWidget *slider =  m_sliders.first();
+        if ( slider == 0 ) {
+            return; // !!! Development version, check this !!!
+        }
 	slider->blockSignals( true );
 	if ( slider->inherits( "KSmallSlider" ) )
 	{
@@ -645,6 +700,12 @@ void MDWSlider::update()
 	for( int i=0; i<vol.channels(); i++ )
         {
 	    QWidget *slider = m_sliders.at( i );
+            if (slider == 0) {
+                // not implemented: happens if there are record and playback
+                // sliders in the same device. Or if you only show
+                // the left slider
+                continue;
+            }
 	    slider->blockSignals( true );
 
 	    if ( slider->inherits( "KSmallSlider" ) )
