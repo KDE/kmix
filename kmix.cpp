@@ -31,6 +31,7 @@ static char rcsid[]="$Id$";
 #include <klocale.h>
 #include <kmsgbox.h>
 #include <kwm.h>
+#include <kglobal.h>
 #include <qmessagebox.h>
 
 #include "sets.h"
@@ -46,7 +47,6 @@ static char rcsid[]="$Id$";
 
 
 KApplication   *globalKapp;
-KIconLoader    *globalKIL;
 KMix	       *kmix;
 Mixer	       *initMix;
 KConfig	       *KmConfig;
@@ -93,7 +93,6 @@ int main(int argc, char **argv)
   if (!initonly) {
     // Don't initialize GUI, when we only do "init"
     globalKapp  = new KApplication( argc, argv, "kmix" );
-    globalKIL   = globalKapp->getIconLoader();
   }
 
   if (!initonly && globalKapp->isRestored()) {
@@ -228,7 +227,7 @@ void KMix::applyOptions()
 void KMix::createWidgets()
 {
   QPixmap miniDevPM;
-  QPixmap WMminiIcon = globalKIL->loadIcon("mixer_mini.xpm");
+  QPixmap WMminiIcon = ICON("mixer_mini.xpm");
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
@@ -281,27 +280,27 @@ void KMix::createWidgets()
     switch (iconnum) {
       // TODO: Should be replaceable by user.
     case audioIcon:
-      miniDevPM = globalKIL->loadIcon("mix_audio.xpm");	break;
+      miniDevPM = ICON("mix_audio.xpm");	break;
     case bassIcon:
-      miniDevPM = globalKIL->loadIcon("mix_bass.xpm");	break;
+      miniDevPM = ICON("mix_bass.xpm");	break;
     case cdIcon:
-      miniDevPM = globalKIL->loadIcon("mix_cd.xpm");	break;
+      miniDevPM = ICON("mix_cd.xpm");	break;
     case extIcon:
-      miniDevPM = globalKIL->loadIcon("mix_ext.xpm");	break;
+      miniDevPM = ICON("mix_ext.xpm");	break;
     case microphoneIcon:
-      miniDevPM = globalKIL->loadIcon("mix_microphone.xpm");break;
+      miniDevPM = ICON("mix_microphone.xpm");break;
     case midiIcon:
-      miniDevPM = globalKIL->loadIcon("mix_midi.xpm");	break;
+      miniDevPM = ICON("mix_midi.xpm");	break;
     case recmonIcon:
-      miniDevPM = globalKIL->loadIcon("mix_recmon.xpm");	break;
+      miniDevPM = ICON("mix_recmon.xpm");	break;
     case trebleIcon:
-      miniDevPM = globalKIL->loadIcon("mix_treble.xpm");	break;
+      miniDevPM = ICON("mix_treble.xpm");	break;
     case unknownIcon:
-      miniDevPM = globalKIL->loadIcon("mix_unknown.xpm");	break;
+      miniDevPM = ICON("mix_unknown.xpm");	break;
     case volumeIcon:
-      miniDevPM = globalKIL->loadIcon("mix_volume.xpm");	break;
+      miniDevPM = ICON("mix_volume.xpm");	break;
     default:
-      miniDevPM = globalKIL->loadIcon("mix_unknown.xpm");	break;
+      miniDevPM = ICON("mix_unknown.xpm");	break;
     }
 
     QLabel *qb = new QLabel(Container);
