@@ -153,6 +153,21 @@ void KMix::applyOptions()
   tickmarksOn = prefDL->tickmarksChk->isChecked();
   allowDocking= prefDL->dockingChk->isChecked();
 
+  MixDevice *mdev = mix->First;
+  for  (ChannelSetup *chanSet = prefDL->cSetup.first() ; chanSet!=0;  chanSet = prefDL->cSetup.next() ) {
+    if (mdev->device_num != chanSet->num)
+      QMessageBox::critical(NULL, "Inconsistency warning", \
+			     "The cSetup list does not match the mdev list\nPlease report this error",
+			     1,2);
+    else {
+      if (mdev->is_stereo)
+	mdev->StereoLink = ! chanSet->qcbSplit->isChecked();
+      mdev->is_disabled =  ! chanSet->qcbShow->isChecked();
+    }
+    mdev = mdev->Next;
+  }
+
+
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  , true );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn , true );
   KmConfig->writeEntry( "Docking"    , allowDocking, true );
@@ -299,9 +314,14 @@ void KMix::placeWidgets()
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
     if (MixPtr->is_disabled) {
+      MixPtr->picLabel->hide();
+      MixPtr->Left->slider->hide();
+      if (MixPtr->is_stereo)
+	MixPtr->Right->slider->hide();
       MixPtr=MixPtr->Next;
       continue;
     }
+
     if ( !first ) ix += 6;
     else          ix += 4; // On first loop add 4
 
@@ -354,47 +374,47 @@ void KMix::placeWidgets()
 	qs->setBackgroundColor( colorGroup().mid() );
     }
 
-    if (MixPtr->is_stereo  == true)
-      {
-	qs = MixPtr->Right->slider;
+    if (MixPtr->is_stereo  == true) {
+      qs = MixPtr->Right->slider;
 	  
-	if (MixPtr->StereoLink == false)
-	  { // Show right slider
-	    if (tickmarksOn)
-	      {
-		qs->setTickmarks(QSlider::Right);
-		qs->setTickInterval(10);
-	      }
-	    else
-	      qs->setTickmarks(QSlider::NoMarks);
-	      
-	    QSize VolSBsize = qs->sizeHint();
-	    qs->setValue(100-MixPtr->Right->volume);
-	    qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
-
-	    ix += qs->width();
-	    ToolTipString = MixPtr->name();
-	    ToolTipString += " (Right)";
-	    QToolTip::add( qs, ToolTipString );
-
-	    if (MixPtr->is_recsrc)
-	      qs->setBackgroundColor( red );
-	    else {
-	      if (MixPtr->is_muted)
-		qs->setBackgroundColor( black ); 
-	      else
-		qs->setBackgroundColor( colorGroup().mid() ); 
-	    }
-
-	    qs->show();
-	  }
+      if (MixPtr->StereoLink == false) {
+	// Show right slider
+	if (tickmarksOn) {
+	  qs->setTickmarks(QSlider::Right);
+	  qs->setTickInterval(10);
+	}
 	else
-	  // Don't show right slider
-	  qs->hide();
+	  qs->setTickmarks(QSlider::NoMarks);
+	      
+	QSize VolSBsize = qs->sizeHint();
+	qs->setValue(100-MixPtr->Right->volume);
+	qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
+
+	ix += qs->width();
+	ToolTipString = MixPtr->name();
+	ToolTipString += " (Right)";
+	QToolTip::add( qs, ToolTipString );
+
+	if (MixPtr->is_recsrc)
+	  qs->setBackgroundColor( red );
+	else {
+	  if (MixPtr->is_muted)
+	    qs->setBackgroundColor( black ); 
+	  else
+	    qs->setBackgroundColor( colorGroup().mid() ); 
+	}
+
+	qs->show();
       }
+      else
+	// Don't show right slider
+	qs->hide();
+    }
 
     // Pixmap label. Place it horizontally centered to volume slider(s)
     qb->move((int)((ix+old_x-qb->width())/2),iy);
+    qb->show();
+
 
     first=false;
     MixPtr=MixPtr->Next;
@@ -471,7 +491,7 @@ void KMix::tickmarksTogCB()
 void KMix::hideMenubarCB()
 {
   mainmenuOn=!mainmenuOn;
-  prefDL->updateChannelConfWindow();
+  //  prefDL->createChannelConfWindow();
   placeWidgets();
 }
 
@@ -482,8 +502,6 @@ void KMix::showOptsCB()
 
 void KMix::quitClickedCB()
 {
-  //  int  ok = KMsgBox::yesNo(NULL, "Confirm", "Quit KMix?" );
-  //  if (ok==1) 
   delete this;
   exit(0);
 }

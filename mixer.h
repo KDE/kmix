@@ -3,22 +3,17 @@
 #define KMIXER_H
 
 // undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
-// HINTS: uncomments more #undef linew, this may help with compile errors
 #undef Above
 #undef Below
-//#undef NoMarks
-//#undef Left
-//#undef Right
 #undef Unsorted
-//#undef Both
 #include <qslider.h>
 #include <qlist.h>
-
 #include <kurl.h>
 #include <kapp.h>
 #include <kmsgbox.h>
 
 #define MAX_MIXDEVS 32
+
 #if defined(sun) || defined(__sun__)
 #define DEFAULT_MIXER "/dev/audioctl"
 #elif sgi
@@ -30,7 +25,7 @@
 #define DEFAULT_MIXER "/dev/mixer"
 #endif
 
-// I am doing crossreferencing between classes, so I must declare all
+// For the crossreferencing between classes, I must declare all
 // referenced classes here.
 class MixChannel;
 class MixSet;

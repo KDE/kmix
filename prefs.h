@@ -22,10 +22,11 @@ class Preferences : public QTabDialog
 public:
    Preferences( QWidget *parent, Mixer *mix );
   ~Preferences(void) { };
-  void updateChannelConfWindow();
+  void createChannelConfWindow();
   QCheckBox		*menubarChk;
   QCheckBox		*tickmarksChk;
   QCheckBox		*dockingChk;
+  QList<ChannelSetup>	cSetup;
   KConfig		*kcfg;
   Mixer		*mix;
 
@@ -35,7 +36,6 @@ private:
   QTabDialog	*tabctl;
   QWidget		*page1, *page2;
   QGroupBox		*grpbox2a;
-  QList<ChannelSetup>	cSetup;
 
 signals:
       void optionsApply();

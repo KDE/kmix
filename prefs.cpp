@@ -62,7 +62,7 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   y += dockingChk->height();
   grpbox1a->setGeometry( 10, 10, page1->width()-20, y+10);
   // Define page 2
-  updateChannelConfWindow();
+  createChannelConfWindow();
 
   setCancelButton();
   setApplyButton();
@@ -85,8 +85,12 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 }
 
 
-void Preferences::updateChannelConfWindow()
+
+
+void Preferences::createChannelConfWindow()
 {
+  bool created = false;
+
   grpbox2a = new QGroupBox (i18n("Mixer channel setup (not saved yet)"),page2);
   QLabel *qlb;
 
@@ -104,10 +108,6 @@ void Preferences::updateChannelConfWindow()
   ypos += qlb->height();
 
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
-
-    /// TODO: Create an array, where qle's are inserted. Dann bei "apply"
-    /// das qle Array durchgehen und neue Namen setzen.
-
     QLineEdit *qle;
     qle = new  QLineEdit(grpbox2a,mdev->devname);
     qle->setText(mdev->devname);
@@ -136,6 +136,8 @@ void Preferences::updateChannelConfWindow()
   }
 
   grpbox2a->setGeometry( 10, 10, page2->width()-20, ypos+10);
+
+  created = true;
 }      
 
 

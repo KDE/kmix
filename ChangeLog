@@ -1,3 +1,7 @@
+Mon May  4 00:07:55 1998    <chris@magicon.ping.de>
+
+	* Added layout setup in config dialog. It works but isn't saved yet.
+
 Fri May  1 19:35:39 1998    <chris@magicon.ping.de>
 	* Show dock icon directly (even if undocked)
 	* Add "Quit" option in docked window popup menu
