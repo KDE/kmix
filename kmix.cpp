@@ -47,7 +47,6 @@
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kaccel.h>
-#include <kkeydialog.h>
 #include <kpopupmenu.h>
 
 	// application specific includes
