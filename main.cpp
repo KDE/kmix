@@ -28,7 +28,7 @@
 #include "kmix.h"
 #include "version.h"
 
-static const char *description =
+static const char description[] =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
 
 static KCmdLineOptions options[] =

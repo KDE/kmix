@@ -31,7 +31,7 @@
 #include "mixer.h"
 #include "version.h"
 
-static const char *description =
+static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
 
 static KCmdLineOptions options[] =
