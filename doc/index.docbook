@@ -52,14 +52,14 @@
 </authorgroup>
 
 <copyright>
-<year>1996</year><year>2003</year>
+<year>1996</year><year>2005</year>
 <holder>Christian Esken &amp; Matt Johnston</holder>
 </copyright>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2003-04-24</date>
-<releaseinfo>1.91.00</releaseinfo>
+<date>2005-02-08</date>
+<releaseinfo>2.2</releaseinfo>
 
 <abstract><para>&kmix; is an application to allow you to change the volume of
 your sound card.</para></abstract>
@@ -82,31 +82,94 @@ your sound card.</para></abstract>
 full-featured. The program should give controls for each of your
 soundcards.</para>
 
-<para>&kmix; supports several platforms and sound drivers. Version 1.91 works with:</para>
+<para>&kmix; supports several platforms and sound drivers:</para>
 
 <itemizedlist>
+<listitem><para> The ALSA soundcard driver.</para></listitem>
 <listitem><para> All Open Sound System platforms. Explicitly tested
 are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <listitem><para> &Solaris; based machines.</para></listitem>
 <listitem><para> &IRIX; based machines.</para></listitem>
-<listitem><para> The ALSA soundcard driver.</para></listitem>
 <listitem><para> &HP-UX; based machines.</para></listitem>
 </itemizedlist>
+
+<para>If you have both ALSA and Open Sound System drivers installed, KMix will use the ALSA driver.</para>
 
 </chapter>
 
 <chapter id="working-with-kmix">
 <title>Working with &kmix;</title>
 
+<sect1 id="basic-usage">
+<title>Basics</title>
+
 <para>&kmix; usage is straightforward. Every mixer device that your
 soundcard provides is represented by a volume slider. Mono devices
 have a single slider, stereo devices can have either one or two
 sliders, depending on your choice.  Additionally there is a panning
-slider at the bottom of the &kmix; window. If you have multiple
-soundcards, they will each have their own tab.</para>
+slider at the bottom of the &kmix; window. If you have more than one soundcard, a list will be displayed on the top of the window, where you can choose between your soundcards.
+
+<screenshot>
+<screeninfo>The &kmix; Main Window</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-window.png" format="PNG"/></imageobject>
+<textobject><phrase>The &kmix; Main Window</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+</para>
+
+
+<para>The Window has three sections with soundcard controls:
+<simplelist>
+<member>Output: This holds the controls that are most likely playback related, like the "Master" volume control.</member>
+<member>Input: This holds all controls that are most likely record related, like "Capture".</member>
+<member>Switches: This holds all controls, that allows only to switch some functionality ON or OFF (like "Mic Boost (+20dB)"), and multiple-choice controls (like "Microphone Select: Mic1 or Mic2").</member>
+</simplelist>
+</para>
+
+<para>Besides volumes controls, KMix also features LED's. The general coloring rule is:</para>
+<simplelist>
+<member>Green: A LED dealing with playback</member>
+<member>Red: A LED dealing with recording</member>
+<member>Yellow: A LED dealing with special soundcard capabilities</member>
+</simplelist>
+</sect1>
 
 <sect1 id="volume-sliders">
-<title>Volume sliders</title>
+<title>Volume controls</title>
+
+<para>The volume controls in section "Output" and "Input" consist of (top to bottom):
+<screenshot>
+<screeninfo>Volume control ("Input" Section)</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-channel-playback.png" format="PNG"/></imageobject>
+<textobject><phrase>Volume control ("Input" Section)</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+<simplelist>
+<member>An icon, representing the function of the control.</member>
+<member>A Green Mute LED, that allows you to mute a control (light goes off/gets dark) or unmute it again (light goes on/gets bright).</member>
+<member>A slider, for volume control (Hint: You can hide the label on the slider, for example if the mixer takes too much of your screen space).</member>
+<member>If a control supports recording, there will be a red Record LED. If the LED is lit (bright red), the control is selected for recording. If it is not lit (dark red), the control is NOT selected for recording.</member>
+</simplelist>
+
+<screenshot>
+<screeninfo>Volume control with Recording Switchi ("Output"Section)</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-channel-record.png" format="PNG"/></imageobject>
+<textobject><phrase>Volume control with Recording Switchi ("Output"Section)</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+
+</para>
+
+<para>The controls in section "Switches" consist of a LED and a short label describing the function. Please remember, red LED's are for recording issues, yellow LED's are for special soundcard features. If you are uncertain about the meaning of a control, please ask your soundcard driver supplier (for most current Linux distributions this is ALSA from http://www.alsa-project.org).</para>
 
 <para>The volume sliders have a context menu, accessible by right clicking on
 the slider or device icon (at the top). Several entries are possible, but only
@@ -128,17 +191,17 @@ controls left side volume.</para></listitem>
 
 <varlistentry>
 <term><guilabel>Hide</guilabel></term>
-<listitem><para>If you are not interested in regulating this device you can hide it with this option. If you want to show it again, you can only do this by selecting the <guilabel>Show All</guilabel> option (see below)</para></listitem>
+<listitem><para>If you are not interested in regulating this device you can hide it with this option. If you want to show it again, you can only do this by selecting the <guilabel>Channels</guilabel> option (see below)</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Define Keys</guilabel></term>
+<term><guilabel>Configure Shortcuts</guilabel></term>
 <listitem><para>You can control a device with your keyboard. Use this menu option to show the KDE <guilabel>Configure Shortcuts</guilabel> dialog. Here you can define keys for increasing and decreasing volume and for muting the device. The keys are global and operate also when &kmix; is iconified or docked.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Show All</guilabel></term>
-<listitem><para>If you have hidden devices via the <guilabel>Hide</guilabel> option (see above), you can show them all again with this option.</para></listitem>
+<term><guilabel>Channels</guilabel></term>
+<listitem><para>You will get a dialog box where you can configure per section (Output, Input, Switches), which channels you want to see.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -153,28 +216,32 @@ controls left side volume.</para></listitem>
 <title>Panning slider</title>
 
 <para>With this slider you can control the volume distribution between left and
-right speaker. This slider is an overall regulator, which affects all stereo
-devices (Mono devices are ignored). The middle position is the default. Dragging
+right speaker. This slider is an overall regulator, which affects the Master Volume.
+The middle position is the default. Dragging
 the slider to the left lowers the volume of the right speaker, dragging it to
 the right vice versa. Of course, these might be swapped if your speakers aren't
-positioned correctly.</para> 
+positioned correctly.</para>
+<para>For Surround Systems please be aware that the Master device often regulates only the Front Speakers. This is a limitation of your Soundcard driver.
+if your soundcard has 
+</para> 
+<para>If your soundcard has no Master device, some other device might get picked by KMix - for most people this is the Wave (or PCM) control.</para>
 
 </sect1>
 
 <sect1 id="configuration-options">
 <title>Configuration options</title>
 
-<para>If the &kmix; icon is docked into the system tray, you can right click it
+<para>Use <guilabel>Menubar -> Settings -> Configure KMix...</guilabel>
 to choose preferences. These items are:</para>
 
 <variablelist>
 <varlistentry>
 <term><guilabel>Dock into panel</guilabel></term>
-<listitem><para>minimize to an icon in the system tray</para></listitem>
+<listitem><para>If checked, &kmix; will dock in the systray when pressing the window close button. If not checked, &kmix; will quit on pressing the window close button. Attention: After quitting you will not be able to control the volume if you have assigned keys for this.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Enable system tray volume control</guilabel></term>
-<listitem><para>If checked, &kmix; will dock in the systray when pressing the window close button. If not checked, &kmix; will quit on pressing the window close button. Attention: After quitting you will not be able to control the volume if you have assigned keys for this.</para></listitem>
+<listitem><para>If enabled, a left-clicking the KMix dock icon will show a popup window with a volume control for the preferred device (Hint: currently you cannot change this device - it is selected by KMix instead). If the option is disabled, the KMix Main Window will be shown on a left-click on the KMix dock icon.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Show tickmarks</guilabel></term>
@@ -184,6 +251,10 @@ to choose preferences. These items are:</para>
 <term><guilabel>Show labels</guilabel></term>
 <listitem><para>Display labels for each of the sound devices. Wether this item
 is checked or not, by holding the mouse over the icon for each device, you can see this information.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Restore volumes on login</guilabel></term>
+<listitem><para>Let KDE restore the volumes when you Login: This restores your personal volume levels, stored when you last logged out. If your Operating System saves the volume levels,  you might not need this option (but on a computer with multiple users it is still needed).</para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -212,51 +283,11 @@ Due to the limited space in the panel there are differences:
 <member>Icons only available when panel is big enough.</member>
 <member>No device name labels available.</member>
 <member>Configuration is done via panel menu - you can configure colors and slider direction there.</member>
+<member>No automatic volume saving. If you want your volumes saved when you logout for later restauration, you must also start KMix from the K-Menu.</member>
 </simplelist>
 
 </para>
 </chapter>
-
-<chapter id="control-panel">
-<title>&kcontrol; Settings</title>
-
-<sect1 id="config-opt">
-<title>Configuration options</title>
-
-<para>In the <guimenuitem>Mixer</guimenuitem> item, under
-<guimenu>Sound</guimenu> in &kcontrol;, you can set
-various options for &kmix;:</para>
-
-<variablelist>
-<varlistentry>
-<term><guilabel>Save current volumes</guilabel></term>
-<listitem><para>Save the current sound settings to load later.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Load volumes</guilabel></term>
-<listitem><para>Load sound settings which were previously
-saved.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Load volumes on login</guilabel></term>
-<listitem><para>Automatically load the previous settings when you start
-&kde;.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Maximum number of probed mixers</guilabel></term>
-<listitem><para>How many different soundcards &kmix; should look for when
-starting.  Set this low to speed up &kmix;'s startup time.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Maximum number of probed devices per mixer</guilabel></term>
-<listitem><para>How many devices to look for per soundcard.  Again, set this low
-to speed up &kmix;.</para></listitem>
-</varlistentry>
-</variablelist>
-
-</sect1>
-</chapter>
-
 
 
 <chapter id="advanced-kmix">
@@ -358,7 +389,7 @@ The &kmix; specific interfaces are:</para>
 <itemizedlist>
 <listitem><para>Copyright 1996-2000 Christian Esken</para></listitem>
 <listitem><para>Copyright 2000-2003 Christian Esken &amp; Stefan Schimanski</para></listitem>
-<listitem><para>Copyright 2003 Christian Esken &amp; Helio Chissini de Castro</para></listitem>
+<listitem><para>Copyright 2003-2005 Christian Esken &amp; Helio Chissini de Castro</para></listitem>
 </itemizedlist>
 
 <para>Contributors:</para>
@@ -385,6 +416,10 @@ Fixes</para></listitem>
 
 <para>Updated 2003 to match &kmix; V1.91 by Christian Esken
 <email>esken@kde.org</email></para>
+
+<para>Updated 2005 to match &kmix; V2.2 by Christian Esken
+<email>esken@kde.org</email></para>
+
 
 <para>Based on documentation by Christian Esken
 <email>esken@kde.org</email></para>
