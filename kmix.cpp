@@ -45,6 +45,7 @@ static char rcsid[]="$Id$";
 KApplication *globalKapp;
 KIconLoader    *globalKIL;
 KMix	       *kmix;
+Mixer	       *initMix;
 KConfig	       *KmConfig;
 
 
@@ -53,8 +54,7 @@ extern char	KMixErrors[6][100];
 
 int main(int argc, char **argv)
 {
-  globalKapp  = new KApplication( argc, argv, "kmix" );
-  globalKIL   = globalKapp->getIconLoader();
+  bool initonly = false;
 
   SetNumber = -1;
   /* Parse the command line arguments */
@@ -66,6 +66,9 @@ int main(int argc, char **argv)
     else if (strcmp(argv[i],"-r") == 0) {
       SetNumber   = 0;
     }
+    else if (strcmp(argv[i],"-init") == 0) {
+      initonly   = true;
+    }
     else if (strcmp(argv[i],"-R") == 0 && i+1<argc) {
       /* -R is the command to read in a specified set.
        * The set number is given as the next argument.
@@ -75,7 +78,13 @@ int main(int argc, char **argv)
     }
   }
 
-  if (kapp->isRestored()) {
+  if (!initonly) {
+    // Don't initialize GUI, when we only do "init"
+    globalKapp  = new KApplication( argc, argv, "kmix" );
+    globalKIL   = globalKapp->getIconLoader();
+  }
+
+  if (!initonly && kapp->isRestored()) {
     int n = 1;
     while (KTopLevelWidget::canBeRestored(n)) {
       // !!! TODO: Read mixer number from session management
@@ -85,13 +94,23 @@ int main(int argc, char **argv)
     }
   }
   else {
+    int mixer_id;
     if (argc > 1)
-      kmix = new KMix(atoi(argv[argc - 1]));
+      mixer_id = atoi(argv[argc - 1]);
     else
-      kmix = new KMix(0);
-  }
+      mixer_id = 0;
 
-  return globalKapp->exec();
+    if ( initonly ) {
+      cout << "Doing initonly ... ";
+      initMix = new Mixer( mixer_id );
+      cout << "Finished\n";
+      return 0;
+    }
+    else {
+      kmix = new KMix( mixer_id );
+      return globalKapp->exec();
+    }
+  }
 }
 
 KMix::~KMix()
