@@ -31,6 +31,7 @@
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
 
+#include <qcursor.h>
 #include <qslider.h>
 #include <qlabel.h>
 #include <qlayout.h>
