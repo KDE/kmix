@@ -33,6 +33,8 @@
 #include <kiconloader.h>
 #include <kdebug.h>
 
+#include <qapplication.h>
+#include <qcursor.h>
 #include <qtooltip.h>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
@@ -272,6 +274,10 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
     // refresh the toolTip (Qt removes it on a MouseWheel event)
     // Mhhh, it doesn't work. Qt does not show it again.
     //setVolumeTip();
+    setVolumeTip();
+    // Simulate a mouse move to make Qt show the tooltip again
+    QApplication::postEvent( this, new QMouseEvent( QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton ) );
+
   }
 }
 
