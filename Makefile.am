@@ -33,7 +33,7 @@ docking.moc: docking.h
 	$(MOC) docking.h -o docking.moc
 
 version.h: VERSION
-	sed "s/0/#define APP_VERSION 0/" <VERSION >version.h
+	sed "s/1/#define APP_VERSION \"1/" <VERSION >version.h
 
 EXTRA_DIST = KMix.kdelnk VERSION
 

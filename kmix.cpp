@@ -516,11 +516,11 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
   QString msg,head;
-  char vers[50];
-  sprintf (vers,"%.2f", APP_VERSION);
+//  char vers[50];
+//  sprintf (vers,"%s", "APP_VERSION");
   
   msg  = "KMix ";
-  msg += vers;
+  msg += APP_VERSION;
   msg += i18n("\n(C) 1997-1998 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
     "This program is in the GPL.\n"\
@@ -528,7 +528,7 @@ void KMix::createMenu()
     "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
     "and Lennart Augustsson (augustss@cs.chalmers.se).\n"\
     "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
-  head += vers;
+  head += APP_VERSION; //vers;
 
   Mhelp = globalKapp->getHelpMenu(true,msg);
   CHECK_PTR( Mhelp );
