@@ -30,7 +30,7 @@ class MixDevice : public QObject
 
       // The DeviceCategory tells the type of the device
       // It is used in bitmasks, so you must use values of 2^n .
-      enum DeviceCategory { SLIDER=0x01, SWITCH=0x02, ENUM=0x04, ALL=0xff };
+      enum DeviceCategory { UNDEFINED= 0x00, SLIDER=0x01, SWITCH=0x02, ENUM=0x04, ALL=0xff };
 
 
       MixDevice(int num, Volume &vol, bool recordable, bool mute,
@@ -66,7 +66,6 @@ SLIDER );
       void setRecSource( bool rec ) { _recSource = rec; }
       long getVolume(Volume::ChannelID chid);
       Volume& getVolume();
-      long getAvgVolume();
       long maxVolume();
       long minVolume();
 

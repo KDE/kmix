@@ -79,10 +79,6 @@ long MixDevice::getVolume(Volume::ChannelID chid) {
     return _volume.getVolume(chid);
 }
 
-long MixDevice::getAvgVolume() {
-    return _volume.getAvgVolume();
-}
-
 long MixDevice::maxVolume() {
     return _volume.maxVolume();
 }
