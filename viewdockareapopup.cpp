@@ -25,6 +25,7 @@
 #include <qwidget.h>
 #include <qevent.h>
 #include <qlayout.h>
+#include <qframe.h>
 #include <qpushbutton.h>
 
 // KDE
@@ -41,7 +42,14 @@
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
       : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup & WStyle_NoBorder, vflags), _dock(dockW)
 {
-    _layoutMDW = new QGridLayout( this, 1, 1, 2, 1, "KmixPopupLayout" );
+    QBoxLayout *layout = new QHBoxLayout( this );
+    _frame = new QFrame( this );
+    layout->addWidget( _frame );
+
+    _frame->setFrameStyle( QFrame::PopupPanel | QFrame::Raised );
+    _frame->setLineWidth( 1 );
+
+    _layoutMDW = new QGridLayout( _frame, 1, 1, 2, 1, "KmixPopupLayout" );
     init();
 }
 
@@ -52,6 +60,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 
 void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
 {
+	kdDebug() << "Teste pres mouse" << endl;
     /**
        Hide the popup:
        This should work automatically, when the user clicks outside the bounds of this popup:
@@ -101,7 +110,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 			    false,        // Show Record LED
                             false,        // Small
 			    Qt::Vertical, // Direction: only 1 device, so doesn't matter
-			    this,         // parent
+			    _frame,       // parent
 			    0,            // Is "NULL", so that there is no RMB-popup
 			    _dockDevice->name().latin1() );
 	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
@@ -109,7 +118,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
     _layoutMDW->addWidget( _mdw, 0, 1 );
 
 	 // Add button to show main panel
-	 _showPanelBox = new QPushButton( i18n("Mixer"), this, "MixerPanel" );
+	 _showPanelBox = new QPushButton( i18n("Mixer"), _frame, "MixerPanel" );
 	 connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
     _layoutMDW->addMultiCellWidget( _showPanelBox, 1, 1, 0, 2 );
 
@@ -182,17 +191,6 @@ void ViewDockAreaPopup::showPanelSlot() {
 		
 	_dock->_dockAreaPopup->hide();
 }
-
-
-// @todo REMOVE THIS after MixDevice can signal "volumeChanged()"
-//       But this method is only used by the currently disabled
-//       "play-beep-on-volume-change method".
-//       Hint: That one should rather be moved here.
-MixDeviceWidget* ViewDockAreaPopup::getMdwHACK() {
-   return _mdw;
-}
-
-
 
 #include "viewdockareapopup.moc"
 
