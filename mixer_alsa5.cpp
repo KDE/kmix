@@ -25,6 +25,10 @@
 // now is named alsa_mixer_old.cpp and alsa_mixer.cpp contains new API
 
 // STD Headers
+
+#error "ALSA0.5 is too old and is not longer supported by KMix. Please upgrade to ALSA0.9 or newer."
+
+
 #include <stdlib.h>
 #include <stdio.h>
 
