@@ -39,6 +39,7 @@
 #include <kmessagebox.h>
 #include <kcolorbutton.h>
 #include <qradiobutton.h>
+#include <kglobalsettings.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -62,12 +63,12 @@ int KMixApplet::s_instCount = 0;
 QTimer *KMixApplet::s_timer = 0;
 QPtrList<Mixer> *KMixApplet::s_mixers;
 
-#define defHigh "#00FF00"
-#define defLow "#FF0000"
-#define defBack "#000000"
-#define defMutedHigh "#FFFFFF"
-#define defMutedLow "#808080"
-#define defMutedBack "#000000"
+static const QColor highColor = KGlobalSettings::baseColor();
+static const QColor lowColor = KGlobalSettings::highlightColor();
+static const QColor backColor = "#000000";
+static const QColor mutedHighColor = "#FFFFFF";
+static const QColor mutedLowColor = "#808080";
+static const QColor mutedBackColor = "#000000";
 
 KPanelApplet::Direction KMixApplet::checkReverse(Direction dir) {
    if( reversedDir ) {
@@ -172,13 +173,13 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    connect( m_pref, SIGNAL(applied()), SLOT(applyDirection()));
    m_customColors = cfg->readBoolEntry( "ColorCustom", false );
 
-   m_colors.high = QColor(cfg->readEntry("ColorHigh", defHigh));
-   m_colors.low = QColor(cfg->readEntry( "ColorLow", defLow));
-   m_colors.back = QColor(cfg->readEntry( "ColorBack", defBack));
+   m_colors.high = cfg->readColorEntry("ColorHigh", &highColor);
+   m_colors.low = cfg->readColorEntry("ColorLow", &lowColor);
+   m_colors.back = cfg->readColorEntry("ColorBack", &backColor);
 
-   m_colors.mutedHigh = QColor(cfg->readEntry("MutedColorHigh", defMutedHigh));
-   m_colors.mutedLow = QColor(cfg->readEntry( "MutedColorLow", defMutedLow));
-   m_colors.mutedBack = QColor(cfg->readEntry( "MutedColorBack", defMutedBack));
+   m_colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
+   m_colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
+   m_colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
 
    // find out to use which mixer
    mixerNum = cfg->readNumEntry( "Mixer", -1 );
@@ -364,12 +365,12 @@ void KMixApplet::setColors()
 {
     if ( !m_customColors ) {
         KMixerWidget::Colors cols;
-        cols.high = QColor(defHigh);
-        cols.low = QColor(defLow);
-        cols.back = QColor(defBack);
-        cols.mutedHigh = QColor(defMutedHigh);
-        cols.mutedLow = QColor(defMutedLow);
-        cols.mutedBack = QColor(defMutedBack);
+        cols.high = highColor;
+        cols.low = lowColor;
+        cols.back = backColor;
+        cols.mutedHigh = mutedHighColor;
+        cols.mutedLow = mutedLowColor;
+        cols.mutedBack = mutedBackColor;
 
         m_mixerWidget->setColors( cols );
     } else
