@@ -390,6 +390,7 @@ KMixWindow::saveConfig()
    config->writeEntry( "TrayVolumeControl", m_volumeWidget );
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
+   config->writeEntry( "startkdeRestore", m_onLogin );
 
    // save mixer widgets
    QStringList devices;
@@ -423,6 +424,7 @@ KMixWindow::loadConfig()
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", false);
    m_showLabels = config->readBoolEntry("Labels", false);
+   m_onLogin = config->readBoolEntry("startkdeRestore", true );
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
 
@@ -545,6 +547,7 @@ KMixWindow::showSettings()
       m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
+      m_prefDlg->m_onLogin->setChecked( m_onLogin );
 
       m_prefDlg->show();
    }
@@ -604,6 +607,8 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_volumeWidget = prefDlg->m_volumeChk->isChecked();
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
+   m_onLogin = prefDlg->m_onLogin->isChecked();
+
 
    this->setUpdatesEnabled(false);
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())

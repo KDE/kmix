@@ -55,6 +55,7 @@ KMixPrefDlg : public KDialogBase
    QCheckBox *m_hideOnCloseChk;
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;
+   QCheckBox *m_onLogin;
 };
 
 #endif

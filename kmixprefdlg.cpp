@@ -61,6 +61,10 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    QWhatsThis::add(m_showLabels, 
            i18n("Enables/disables description labels above the sliders"));
 
+   
+   m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
+   layout->addWidget( m_onLogin );
+
    layout->addStretch();
    enableButtonSeparator(true);
 

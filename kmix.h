@@ -103,6 +103,7 @@ KMixWindow : public KMainWindow
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
+   bool m_onLogin;
    bool m_startVisible;
    bool m_showMenubar;
    bool m_isVisible;

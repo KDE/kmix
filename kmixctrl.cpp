@@ -59,10 +59,10 @@ extern "C" int kdemain(int argc, char *argv[])
    KApplication app( false, false );
 
    // get maximum values
-   KConfig *config= new KConfig("kcmkmixrc", true, false);
+   KConfig *config= new KConfig("kmixrc", true, false);
    config->setGroup("Misc");
    //int maxCards = config->readNumEntry( "maxCards", 2 );
-   int maxDevices = config->readNumEntry( "maxDevices", 2 );
+   int maxDevices = config->readNumEntry( "maxDevices", 3 );
    delete config;
 
    // create mixers
