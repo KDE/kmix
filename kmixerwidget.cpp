@@ -301,6 +301,7 @@ void KMixerWidget::showAll()
 void KMixerWidget::updateBalance()
 {
   MixDevice *md = m_mixer->mixDeviceByType( 0 );
+  if (!md) return;
   int right= md->rightVolume();
   int left = md->leftVolume();
   
