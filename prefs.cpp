@@ -44,6 +44,8 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   // Define page 2
   createChannelConfWindow(page2);
 
+  // Define page 3
+
   setCancelButton(i18n("&Cancel"));
   setApplyButton(i18n("&Apply"));
   setOkButton(i18n("&OK"));
@@ -51,10 +53,12 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 
   connect( this, SIGNAL(applyButtonPressed()), this, SLOT(slotApply()));
   connect( this, SIGNAL(cancelButtonPressed()), this, SLOT(slotCancel()));
+  connect( mix->First, SIGNAL(relayout()), this, SLOT(slotUpdatelayout()));
 
 
   addTab( page1,i18n("&General") );
   addTab( page2,i18n("C&hannels") );
+  showPage(page2); // !!! DEBUG
 
   setCaption(i18n("KMix Preferences") );
 }
@@ -83,22 +87,30 @@ void Preferences::createOptionsConfWindow(QWidget *p)
 }
 
 
-void Preferences::createChannelConfWindow(QWidget *p)
+void Preferences::createChannelConfWindow(QWidget *val_qw_parent)
 {
   static bool created = false;
 
-  QBoxLayout *top = new QVBoxLayout(p, 10);
+  QBoxLayout *top = new QVBoxLayout(val_qw_parent, 10);
 
+  // Add mixer name
   QString l_s_cardTitle;
   l_s_cardTitle = mix->mixerName();
-
-  QLabel *l_qw_tmp = new  QLabel( l_s_cardTitle , p);
+  QLabel *l_qw_tmp = new  QLabel( l_s_cardTitle , val_qw_parent);
   QFont f("Helvetica", 12, QFont::Bold);
   l_qw_tmp->setFont( f );
-
   top->addWidget(l_qw_tmp);
 
-  QGroupBox *grpbox = new QGroupBox (i18n("Mixer channel setup"), p);
+  // Add set selection Combo Box
+  i_combo_setSelect = new QComboBox(val_qw_parent);
+  i_combo_setSelect->insertItem("Current set");
+  i_combo_setSelect->insertItem("Set 1");
+  i_combo_setSelect->insertItem("Set 2");
+  i_combo_setSelect->insertItem("Set 3");
+  i_combo_setSelect->insertItem("Set 4");
+  top->addWidget(i_combo_setSelect);
+
+  QGroupBox *grpbox = new QGroupBox (i18n("Mixer channel setup"), val_qw_parent);
   top->addWidget(grpbox);
   QGridLayout *l = new QGridLayout(grpbox, 1, 3, 5);
   int lay_i = 0; //CT use it to grow the grid
@@ -136,20 +148,30 @@ void Preferences::createChannelConfWindow(QWidget *p)
 
     // 2. check box  (Show)
     QCheckBox *qcb = new QCheckBox(grpbox);
+
+#if 0 // remove soon
+#warning This will be removed as soon as possible
     if (mdev->disabled())
       qcb->setChecked(false);
     else
       qcb->setChecked(true);
+#endif
+
     l->addWidget(qcb, lay_i, 1); 
 
     // 3. check box  (Split)
     QCheckBox *qcbSplit;
     if (mdev->stereo()) {
       qcbSplit = new QCheckBox(grpbox);
+
+#if 0 // remove soon
+#warning This will be removed as soon as possible
       if (mdev->stereoLinked() )
 	qcbSplit->setChecked(false);
       else
 	qcbSplit->setChecked(true);
+#endif
+
       l->addWidget(qcbSplit, lay_i, 2);
     }
     else
@@ -161,6 +183,7 @@ void Preferences::createChannelConfWindow(QWidget *p)
     cSetup.append(new ChannelSetup(mdev->num(),qle,qcb,qcbSplit));
   }
 
+  current2options();
   created = true;
 }      
 
@@ -178,10 +201,34 @@ void Preferences::slotOk()
   hide();
 }
 
+
+
+void Preferences::slotApply()
+{
+  options2current();
+  emit optionsApply();
+}
+
+void Preferences::slotCancel()
+{
+  hide();
+}
+
+
+void Preferences::slotUpdatelayout()
+{
+  // When the MainWinodw GUI changes (Splitting), it will a signal. This is connected
+  // to this slot, so the prefs window can update it's view to match the MainWindow settings.
+  current2options();
+}
+
+
 void Preferences::options2current()
 {
   MixSet *cms = mix->TheMixSets->first();
+
   MixDevice *mdev = mix->First;
+
   for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
 
     MixSetEntry *mse;
@@ -202,14 +249,30 @@ void Preferences::options2current()
   }
 }
 
-void Preferences::slotApply()
-{
-  options2current();
-  emit optionsApply();
-}
 
-void Preferences::slotCancel()
+void Preferences::current2options()
 {
-  hide();
-}
+  // The first set is the default set. I'll need this to read from
+  MixSet *cms = mix->TheMixSets->first();
 
+  MixDevice *mdev = mix->First;
+
+  for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
+
+    MixSetEntry *mse;
+    for (mse = cms->first();
+	 (mse != NULL) && (mse->devnum != chanSet->num) ;
+	 mse=cms->next() );
+
+    if (mse == NULL)
+      continue;  // entry not found
+
+    else {
+      if (mdev->stereo()) {
+	chanSet->qcbSplit->setChecked( ! mse->StereoLink) ;
+      }
+      chanSet->qcbShow->setChecked( ! mse->is_disabled) ;
+    }
+    mdev = mdev->Next;
+  }
+}

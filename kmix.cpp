@@ -214,6 +214,7 @@ KMix::KMix(int mixernum, int SetNum)
   prefDL->dockingChk->setChecked(allowDocking);
 
   connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
+  showOptsCB();  // !!! For faster debugging
 
   globalKapp->setMainWidget( this );
    if ( allowDocking && startDocked)
@@ -263,10 +264,18 @@ void KMix::createWidgets()
 
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
+
+#if 0
+  QPixmap l_pixmap_bg;
+  l_pixmap_bg = BarIcon("Chicken-Songs-small2");
+  Container->setBackgroundPixmap( l_pixmap_bg );
+#endif
+
   setView(Container);
   // Create Menu
   createMenu();
   setMenu(mainmenu);
+
 
   // Create the info line
   i_lbl_infoLine = new QLabel(Container) ;
@@ -285,10 +294,12 @@ void KMix::createWidgets()
   i_lbl_setNum->resize( i_lbl_setNum->sizeHint());
   QToolTip::add( i_lbl_setNum, i18n("Shows the current set number"));
 
+
   // Create Sliders (Volume indicators)
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
+#warning This might be called multiple times (e.g. on a set change). I should change it
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
     int devnum = MixPtr->num();
@@ -382,6 +393,7 @@ void KMix::createWidgets()
   i_time = new QTimer();
   connect( i_time,     SIGNAL(timeout()),      SLOT(updateSliders()) );
   i_time->start( 20 );
+
 }
 
 
@@ -571,6 +583,10 @@ void KMix::placeWidgets()
 
   // tell the Toplevel to do a relayout
   updateRects();
+
+  // And tell anybody who might be interested that the layout has changed (today only the
+  // preferences window is interested).
+  emit layoutChange();
 }
 
 
@@ -913,7 +929,7 @@ void KMix::updateSlidersI( )
   /* The next line is tricky. Lets explain it:
      Several lines later I will call qs->setValue(). Doing so changes the value of the QSlider.
 
-     This will lead to the emitting of its valueChanged() signal. This again ist the hint for
+     This will lead to the emitting of its valueChanged() signal. This again is the hint for
      my code that the user has dragged the slider. As the user expects that the volume changes
      when he drags the slider, this action is indeed being triggered.
 

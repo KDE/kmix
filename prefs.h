@@ -28,8 +28,9 @@
 
 
 #include <qcheckbox.h>
-
 #include <qtabdialog.h>
+#include <qcombobox.h> 
+
 #include "kconfig.h"
 #include "mixer.h"
 #include "channel.h"
@@ -58,17 +59,20 @@ private:
   QPushButton	*buttonOk, *buttonApply, *buttonCancel;
   QTabDialog	*tabctl;
   QWidget	*page1, *page2;
+  QComboBox	*i_combo_setSelect;
 
   void options2current();
+  void current2options();
 
 signals:
-      void optionsApply();
+  void optionsApply();
 	
 public slots:
-      void slotShow();
-      void slotOk();
-      void slotApply();
-      void slotCancel();
+void slotShow();
+  void slotOk();
+  void slotApply();
+  void slotCancel();
+  void slotUpdatelayout();
 };
 
 

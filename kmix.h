@@ -51,10 +51,14 @@ public slots:
   void tickmarksTogCB();
   void updateSliders();
   void updateSlidersI();
+
+signals:
+  void layoutChange();
   
 protected:
   void hideEvent( QHideEvent *e );
   void closeEvent( QCloseEvent *e );
+
 
 private slots:
   void quit_myapp();
