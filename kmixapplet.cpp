@@ -131,44 +131,13 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
 
    if ( mixer )
    {
-      m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );          
+      m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );
+      connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
    } else
    {
-      QStringList lst;
-
-      int n=1;
-      for (Mixer *mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
-      {
-	 QString s;
-	 s.sprintf("%i. %s", n, mixer->mixerName().ascii());
-	 lst << s;
-	 n++;
-      }
-
-      bool ok = FALSE;
-      QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst,
-					   1, TRUE, &ok, this );
-      if ( ok )
-      {
-	 int mixerNum = lst.findIndex( res );
-	 Mixer *mixer = s_mixers->at( mixerNum );
-	 if (!mixer)
-	    KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
-	 else   
-	    m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum, true, true, this );	 
-      }
+      m_errorLabel = new QPushButton( i18n("Select mixer"), this );         
+      connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
    }
-
-   // Insert error label
-   if ( !m_mixerWidget )
-   {
-      m_errorLabel = new QLabel( i18n("Invalid mixer"), this );
-      m_errorLabel->setAlignment( QLabel::AlignCenter );
-   } else
-      connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout())); 
-     
-   // FIXME activate menu items
-   //setActions(About | Help | Preferences);
 
    kdDebug() << "<- KMixApplet::KMixApplet" << endl;
 }
@@ -195,6 +164,41 @@ KMixApplet::~KMixApplet()
    }
 
    kdDebug() << "<- KMixApplet::~KMixApplet" << endl;
+}
+
+void KMixApplet::selectMixer()
+{
+   QStringList lst;
+
+   int n=1;
+   for (Mixer *mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
+   {
+      QString s;
+      s.sprintf("%i. %s", n, mixer->mixerName().ascii());
+      lst << s;
+      n++;
+   }
+
+   bool ok = FALSE;
+   QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst,
+					1, TRUE, &ok, this );
+   if ( ok )
+   {
+      int mixerNum = lst.findIndex( res );
+      Mixer *mixer = s_mixers->at( mixerNum );
+      if (!mixer)
+	 KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
+      else   
+      {
+	 delete m_errorLabel;
+	 m_errorLabel = 0;
+	 m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum, true, true, this );
+	 m_mixerWidget->show();
+	 m_mixerWidget->setGeometry( 0, 0, width(), height() );	 
+	 connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
+	 updateLayoutNow();
+      }
+   }
 }
 
 void KMixApplet::triggerUpdateLayout()
