@@ -309,7 +309,7 @@ void KMix::createWidgets()
       cerr << "Pixmap missing.\n";
     MixPtr->picLabel=qb;
     qb->resize(miniDevPM.width(),miniDevPM.height());
-    KCM->insert(qb, (KCmFunc*)contextMenu);
+    KCM->insert(qb, (KCmFunc *) contextMenu);
 
 
     QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\

@@ -20,6 +20,8 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qlayout.h>
+
 #include "sets.h"
 #include "prefs.h"
 #include "prefs.moc"
@@ -31,38 +33,19 @@
 Preferences::Preferences( QWidget *parent, Mixer *mix ) :
    QTabDialog( parent )
 {
-  resize(300,400);
   this->mix = mix;
-  grpbox2a  = NULL;
+
+  setCaption(i18n("KMix Preferences") );
 
   page1 = new QWidget( this );
-  page1->setGeometry(10,10,width()-20,height()-20);
   page2 = new QWidget( this );
-  page2->setGeometry(10,10,width()-20,height()-20);
-  addTab( page1,i18n("General") );
-  addTab( page2,i18n("Channels") );
+
+  addTab(page1, i18n("General"));
+  addTab(page2, i18n("Channels"));
 
   // Define page 1
-  QButtonGroup *grpbox1a = new QButtonGroup(i18n("Startup settings"), page1 );
-  grpbox1a->setGeometry( 10, 10, page1->width()-20, page1->height()-20 );
+  createUserConfWindow();
 
-  int x=10, y=20;
-  menubarChk = new QCheckBox(grpbox1a);
-  menubarChk->setText(i18n("Menubar"));
-  menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
-
-  y += (menubarChk->height() );
-  tickmarksChk = new QCheckBox(grpbox1a);
-  tickmarksChk->setText(i18n("Tickmarks"));
-  tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
-
-  y += tickmarksChk->height();
-  dockingChk = new QCheckBox(grpbox1a);
-  dockingChk->setText(i18n("Allow docking"));
-  dockingChk->setGeometry(x,y, grpbox1a->width()-20, dockingChk->height() );
-
-  y += dockingChk->height();
-  grpbox1a->setGeometry( 10, 10, page1->width()-20, y+10);
   // Define page 2
   createChannelConfWindow();
 
@@ -74,103 +57,124 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   connect( this, SIGNAL(applyButtonPressed()), this, SLOT(slotApply()));
   connect( this, SIGNAL(cancelButtonPressed()), this, SLOT(slotCancel()));
 
-  int maxheight = grpbox1a->height();
-  if ( maxheight < grpbox2a->height() )
-    maxheight = grpbox2a->height();
-
-  page1->setFixedSize(page1->width(),maxheight+10);
-  page2->setFixedSize(page1->width(),maxheight+10);
-  grpbox1a->resize(grpbox1a->width(),maxheight);
-  grpbox2a->resize(grpbox2a->width(),maxheight);
-
-  setCaption(i18n("KMix Preferences") );
+  resize(sizeHint());
 }
 
 
+void Preferences::createUserConfWindow()
+{
+  QVBoxLayout *topLayout = new QVBoxLayout(page1, 5);
 
+  topLayout->addStretch();
+
+  QButtonGroup *groupBox = new QButtonGroup(i18n("Startup settings"), page1 );
+  topLayout->addWidget(groupBox);
+
+  QVBoxLayout *subLayout = new QVBoxLayout(groupBox, 10);
+  subLayout->addSpacing(10);
+
+  menubarChk = new QCheckBox(groupBox);
+  menubarChk->setText(i18n("Menubar"));
+  menubarChk->setMinimumSize(menubarChk->sizeHint());
+  subLayout->addWidget(menubarChk);
+
+  tickmarksChk = new QCheckBox(groupBox);
+  tickmarksChk->setText(i18n("Tickmarks"));
+  tickmarksChk->setMinimumSize(tickmarksChk->sizeHint());
+  subLayout->addWidget(tickmarksChk);
+
+  dockingChk = new QCheckBox(groupBox);
+  dockingChk->setText(i18n("Allow docking"));
+  dockingChk->setMinimumSize(dockingChk->sizeHint());
+  subLayout->addWidget(dockingChk);
+
+  topLayout->addStretch();
+
+  subLayout->activate();
+  topLayout->activate();
+}
 
 void Preferences::createChannelConfWindow()
 {
-  static bool created = false;
+  QVBoxLayout *topLayout = new QVBoxLayout(page2, 5);
+  QGroupBox *groupBox = new QGroupBox (i18n("Mixer channel setup"),page2);
+  topLayout->addWidget(groupBox);
 
-  grpbox2a = new QGroupBox (i18n("Mixer channel setup"),page2);
-  QLabel *qlb,*qlbd;
+  QVBoxLayout *subLayout = new QVBoxLayout(groupBox, 10);
+  subLayout->addSpacing(10);
 
-  const int entryWidth = 100;
-  int ypos=20;
-  int x1=10, x2, x3;
-  qlbd = new QLabel(grpbox2a);
-  qlbd->setText(i18n("Device"));
-  qlbd->setFixedWidth(entryWidth);
-  qlbd->move(x1,ypos);
+  QHBoxLayout *hLayout = new QHBoxLayout();
+  subLayout->addLayout(hLayout);
 
-  x2 = x1 + qlbd->width() + 4;
-  qlb = new QLabel(grpbox2a);
+  QLabel *qlb = new QLabel(groupBox);
+  qlb->setText(i18n("Device"));
+  qlb->setFixedWidth(100);
+  qlb->setMinimumHeight(qlb->sizeHint().height());
+  hLayout->addWidget(qlb);
+
+  qlb = new QLabel(groupBox);
   qlb->setText(i18n("Show"));
-  qlb->setFixedWidth(qlb->sizeHint().width());
-  qlb->move(x2,ypos);
+  qlb->setMinimumSize(qlb->sizeHint());
+  hLayout->addWidget(qlb);
 
-  x3= x2 + qlb->width() + 8;
-  qlb = new QLabel(grpbox2a);
+  qlb = new QLabel(groupBox);
   qlb->setText(i18n("Split"));
-  qlb->setFixedWidth(qlb->sizeHint().width());
-  qlb->move(x3,ypos);
-
-  ypos += qlbd->height();
-
+  qlb->setMinimumSize(qlb->sizeHint());
+  hLayout->addWidget(qlb);
 
   QPalette qpl (palette());
   qpl.setDisabled( qpl.normal() );
 
   // Traverse all mix channels and create one line per channel
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
+    QHBoxLayout *hLayout = new QHBoxLayout();
+    subLayout->addLayout(hLayout);
     // 1. line edit
 #if 0
     QLabel *qlb;
-    qlb = new  QLabel(grpbox2a,mdev->devname);
+    qlb = new  QLabel(groupBox,mdev->devname);
     qlb->setText(mdev->devname);
-    qlb->move(x1,ypos);
-    qlb->setFixedWidth(entryWidth);
+    qlb->setMinimumSize(qlb->sizeHint());
+    hLayout->addWidget(qlb);
 #endif
 
     QLineEdit *qle;
-    qle = new QLineEdit(grpbox2a,mdev->devname);
+    qle = new QLineEdit(groupBox,mdev->devname);
     qle->setPalette(qpl);  // Use a palette, where one can read the text
     qle->setText(mdev->devname);
     qle->setEnabled(false);
-    qle->move(x1,ypos);
-    qle->setFixedWidth(entryWidth);
+    qle->setFixedWidth(100);
+    qle->setMinimumHeight(qle->sizeHint().height());
+    hLayout->addWidget(qle);
 
     // 2. check box  (Show)
-    QCheckBox *qcb = new QCheckBox(grpbox2a);
-    qcb->setFixedSize(qcb->sizeHint());
-    qcb->move(x2,ypos);
+    QCheckBox *qcb = new QCheckBox(groupBox);
+    qcb->setMinimumSize(qcb->sizeHint());
     if (mdev->is_disabled)
       qcb->setChecked(false);
     else
       qcb->setChecked(true);
+    hLayout->addWidget(qcb);
 
     // 3. check box  (Split)
     QCheckBox *qcbSplit;
     if (mdev->is_stereo) {
-      qcbSplit = new QCheckBox(grpbox2a);
-      qcbSplit->setFixedSize(qcbSplit->sizeHint());
-      qcbSplit->move(x3,ypos);
+      qcbSplit = new QCheckBox(groupBox);
+      qcbSplit->setMinimumSize(qcbSplit->sizeHint());
       if (mdev->StereoLink)
 	qcbSplit->setChecked(false);
       else
 	qcbSplit->setChecked(true);
+      hLayout->addWidget(qcbSplit);
     }
     else
       qcbSplit = NULL;
 
     cSetup.append(new ChannelSetup(mdev->device_num,qle,qcb,qcbSplit));
-    ypos += qle->height();
   }
 
-  grpbox2a->setGeometry( 10, 10, page2->width()-20, ypos+10);
-
-  created = true;
+  subLayout->activate();
+  topLayout->activate();
 }      
 
 

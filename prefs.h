@@ -22,7 +22,6 @@ class Preferences : public QTabDialog
 public:
    Preferences( QWidget *parent, Mixer *mix );
   ~Preferences(void) { };
-  void createChannelConfWindow();
   QCheckBox		*menubarChk;
   QCheckBox		*tickmarksChk;
   QCheckBox		*dockingChk;
@@ -30,23 +29,24 @@ public:
   KConfig		*kcfg;
   Mixer		*mix;
 
+public slots:
+  void slotShow();
+  void slotOk();
+  void slotApply();
+  void slotCancel();
+
+signals:
+  void optionsApply();
+
+protected:
+  void createUserConfWindow();
+  void createChannelConfWindow();
 
 private:
   QPushButton	*buttonOk, *buttonApply, *buttonCancel;
   QTabDialog	*tabctl;
   QWidget	*page1, *page2;
-  QGroupBox	*grpbox2a;
-
   void options2current();
-
-signals:
-      void optionsApply();
-	
-public slots:
-      void slotShow();
-      void slotOk();
-      void slotApply();
-      void slotCancel();
 };
 
 
