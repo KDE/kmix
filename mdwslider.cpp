@@ -137,7 +137,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
     // --- DEVICE ICON --------------------------
     // !!! Fixme: Correct check would be: "Left or Right". But we will add another parameter
     //            to the constructor (CreationFlags).
-    if ( _orientation == Qt::Horizontal ) {
+    if (true /* _orientation == Qt::Horizontal*/ ) {
 	m_iconLabel = 0L;
 	setIcon( m_mixdevice->type() );
 	_layout->addWidget( m_iconLabel );
@@ -246,7 +246,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
 
     // --- DEVICE ICON --------------------------
-    if ( _orientation == Qt::Horizontal ) {  // Fixme !!! see above
+    if ( false /*_orientation == Qt::Horizontal*/ ) {  // Fixme !!! see above
 	/*    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) */
 	m_iconLabel = 0L;
 	setIcon( m_mixdevice->type() );
