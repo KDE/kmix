@@ -103,11 +103,18 @@ int Mixer_OSS::openMixer()
     {
       if ( errno == EACCES )
         return Mixer::ERR_PERM;
-      else
-        return Mixer::ERR_OPEN;
+      else {
+		  if ((m_fd= ::open( deviceNameDevfs( m_devnum ).latin1(),
+						  O_RDWR)) < 0)
+		    {
+      			if ( errno == EACCES )
+        			return Mixer::ERR_PERM;
+				else
+					return Mixer::ERR_OPEN;
+		    }
+	  }
     }
-  else
-    {
+  
       int devmask, recmask, i_recsrc, stereodevs;
       // Mixer is open. Now define properties
       if (ioctl(m_fd, SOUND_MIXER_READ_DEVMASK, &devmask) == -1)
@@ -163,7 +170,6 @@ int Mixer_OSS::openMixer()
 
       m_isOpen = true;
       return 0;
-    }
 }
 
 int Mixer_OSS::releaseMixer()
@@ -182,6 +188,20 @@ QString Mixer_OSS::deviceName(int devnum)
 
   default:
     QString devname("/dev/mixer");
+    devname += ('0'+devnum);
+    return devname;
+  }
+}
+
+QString Mixer_OSS::deviceNameDevfs(int devnum)
+{
+  switch (devnum) {
+  case 0:
+    return QString("/dev/sound/mixer");
+    break;
+
+  default:
+    QString devname("/dev/sound/mixer");
     devname += ('0'+devnum);
     return devname;
   }
