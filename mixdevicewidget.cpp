@@ -47,8 +47,11 @@
 #include "VerticalText.h"
 
 /**
- * Class that represents a single mix device, inlcuding PopUp, ...
- * Used of KMix main window (and DockWidget and PanelApplet?).
+ * Class that represents a single mix device, inlcuding PopUp, muteLED, ...
+ * Used of KMix main window and DockWidget and PanelApplet?
+ * It can be configured to include or exclude the recordLED and the muteLED.
+ * The direction (horizontal, vertical) can be configured and whether it should
+ * be "small"  (uses KSmallSlider instead of QSlider then).
  */
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
@@ -542,12 +545,15 @@ void MixDeviceWidget::update()
    Volume vol = m_mixdevice->getVolume();
    if( isStereoLinked() )
    {
-      QWidget *slider =  m_sliders.first();
+		// calculate highest current volume (maxvol) of
+		// all channels (typically: 1 <= vol.channels() <= 2 )
       int maxvol = 0;
       for( int i = 0; i < vol.channels(); i++ )
          maxvol = vol[i] > maxvol ? vol[i] : maxvol;
-      slider->blockSignals( true );
 
+		// Set value of first Slider to maxvol
+      QWidget *slider =  m_sliders.first();
+      slider->blockSignals( true );
       if ( slider->inherits( "KSmallSlider" ) )
       {
          KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
