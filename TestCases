@@ -1,0 +1,28 @@
+These are the recommended test cases for KMix.
+They should be tested before a new KDE version is being shipped.
+
+01: Basic: Start KMix with existing profile (kmixrc)
+02: Basic: Close KMix -> Dock
+03: Basic: Close KMix -> Exit
+04: Show/Hide Labels
+05: Show/Hide Tickmarks
+06: New Mixer Tab ("distribute" and "no distribute")
+07: System tray volume control
+08: Start KMix with no Mixer Hardware/Drivers available
+
+-----------+----+----+----+----+----+----+----+----+
+TestCase>  | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 |
+Version    |    |    |    |    |    |    |    |    |
+-----------+----+----+----+----+----+----+----+----+
+CVS20030502| OK | OK | OK | OK | OK | OK | OK |    |
+-----------+----+----+----+----+----+----+----+----+
+KDE3.2     |    |    |    |    |    |    |    |    |
+-----------+----+----+----+----+----+----+----+----+
+KDE3.2.1   |    |    |    |    |    |    |    |    |
+-----------+----+----+----+----+----+----+----+----+
+
+
+Test case results:
+OK : Fully OK
+   : Not tested
+xx : Failure
