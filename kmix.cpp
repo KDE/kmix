@@ -121,7 +121,7 @@ void
 KMixWindow::initMixer()
 {
 	QString tmpstr;
-	
+
 	// poll for mixers
 	QMap<QString,int> mixerNums;
 	int drvNum = Mixer::getDriverNum();
@@ -153,7 +153,7 @@ KMixWindow::initMixer()
 	   - Another remark: For KMix3.0 or so, we should allow multiple-driver, for allowing
 	     addition of special-use drivers, e.g. an ARTS-mixer-driver, or a CD-Rom volume driver.
 	 */
-	
+
 	bool autodetectionFinished = false;
 	for( int drv=0; drv<drvNum; drv++ )
 	{
@@ -266,7 +266,7 @@ KMixWindow::initWidgets()
 	// Widgets layout
 	widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
 	widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
-	
+
 
 	// Mixer widget line
 	mixerNameLayout = new QHBox( centralWidget(), "mixerNameLayout" );
@@ -290,7 +290,7 @@ KMixWindow::initWidgets()
 		menuBar()->show();
 	else
 		menuBar()->hide();
-	
+
 	widgetsLayout->activate();
 }
 
@@ -433,7 +433,7 @@ KMixWindow::initMixerWidgets()
                 if ( m_showMenubar ) {
                     vflags |= ViewBase::MenuBarVisible;
 	        }
-	
+
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
 
@@ -620,7 +620,7 @@ KMixWindow::stopVisibilityUpdates() {
 
 void
 KMixWindow::slotHWInfo() {
-	KMessageBox::information( 0, m_hwInfoString, i18n("Mixer hardware information") );
+	KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
 }
 
 void

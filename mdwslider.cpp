@@ -77,7 +77,7 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 	connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
     }
 
-    new KAction( i18n("Define &Keys..."), 0, this, SLOT(defineKeys()), _mdwActions, "keys" );
+    new KAction( i18n("C&onfigure Shortcuts..."), 0, this, SLOT(defineKeys()), _mdwActions, "keys" );
 
     // create widgets
     createWidgets( showMuteLED, showRecordLED );
@@ -143,7 +143,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	_layout->addWidget( m_iconLabel );
 	 m_iconLabel->installEventFilter( this );
     } //  otherwise it is created after the slider
-	
+
     _layout->addSpacing( 2 );
 
 
@@ -177,7 +177,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
 
     // --- LABEL and SLIDER(S) --------------------------
-	
+
     // create label
     QBoxLayout *labelAndSliders;
     if ( _orientation == Qt::Vertical ) {
@@ -195,13 +195,13 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
     m_label->hide();
     labelAndSliders->addWidget( m_label );
     m_label->installEventFilter( this );
-		
+
     // --- Part 2: SLIDERS ---
     QBoxLayout *sliders;
     if ( _orientation == Qt::Vertical ) {
 	sliders = new QHBoxLayout( labelAndSliders );
 	sliders->setAlignment(Qt::AlignVCenter);
-    }	
+    }
     else {
 	sliders = new QVBoxLayout( labelAndSliders );
 	sliders->setAlignment(Qt::AlignHCenter);
@@ -233,7 +233,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	}
 
 	slider->installEventFilter( this );
-	
+
 	if( i>0 && isStereoLinked() ) {
 	    // show only one (the first) slider, when the user wants it so
 	    slider->hide();
@@ -253,7 +253,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	_layout->addWidget( m_iconLabel );
 	m_iconLabel->installEventFilter( this );
     } //  otherwise it is created before the slider
-	
+
 
     if (showRecordLED) {
 	_layout->addSpacing( 2 );
@@ -695,7 +695,7 @@ void MDWSlider::showContextMenu() {
 	    ta->plug( menu );
 	}
     }
-	
+
     KAction *a = _mdwActions->action(  "hide" );
     if ( a )
 	a->plug(  menu );
