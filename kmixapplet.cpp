@@ -511,8 +511,10 @@ void KMixApplet::applyPreferences()
     m_pref->activeColors(m_colors.high, m_colors.low, m_colors.back);
     m_pref->mutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
     m_customColors = m_pref->useCustomColors();
-
     reversedDir = m_pref->reverseDirection();
+    if (!m_mixerWidget)
+        return;
+
     QSize si = m_mixerWidget->size();
     positionChange( position());
     if( position() == pTop || position() == pBottom )
