@@ -54,7 +54,8 @@ class MixDevice
    public:
       // For each ChannelType a special icon exists
       enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
-			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME };
+			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME,
+			VIDEO, SURROUND};
 
       MixDevice(int num, Volume vol, bool recordable,
 		QString name, ChannelType type = UNKNOWN );

@@ -38,15 +38,15 @@ int Mixer_ALSA::identify( int idx, const char* id )
   if( !strcmp( id, SND_MIXER_IN_LINE        )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_MIC         )) return MixDevice::MICROPHONE;
   if( !strcmp( id, SND_MIXER_IN_CD          )) return MixDevice::CD;
-  if( !strcmp( id, SND_MIXER_IN_VIDEO       )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_VIDEO       )) return MixDevice::VIDEO;
   if( !strcmp( id, SND_MIXER_IN_RADIO       )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_PHONE       )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_MONO        )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_SPEAKER     )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_AUX         )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_CENTER      )) return MixDevice::EXTERNAL;
-  if( !strcmp( id, SND_MIXER_IN_WOOFER      )) return MixDevice::EXTERNAL;
-  if( !strcmp( id, SND_MIXER_IN_SURROUND    )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_IN_WOOFER      )) return MixDevice::BASS;
+  if( !strcmp( id, SND_MIXER_IN_SURROUND    )) return MixDevice::SURROUND;
   if( !strcmp( id, SND_MIXER_OUT_MASTER        ))
     {
       m_masterDevice = idx;
@@ -57,8 +57,8 @@ int Mixer_ALSA::identify( int idx, const char* id )
   if( !strcmp( id, SND_MIXER_OUT_HEADPHONE  )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_OUT_PHONE      )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_OUT_CENTER     )) return MixDevice::EXTERNAL;
-  if( !strcmp( id, SND_MIXER_OUT_WOOFER     )) return MixDevice::EXTERNAL;
-  if( !strcmp( id, SND_MIXER_OUT_SURROUND   )) return MixDevice::EXTERNAL;
+  if( !strcmp( id, SND_MIXER_OUT_WOOFER     )) return MixDevice::BASS;
+  if( !strcmp( id, SND_MIXER_OUT_SURROUND   )) return MixDevice::SURROUND;
   if( !strcmp( id, SND_MIXER_OUT_DSP        )) return MixDevice::AUDIO;
   return MixDevice::UNKNOWN;
 }
