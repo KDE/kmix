@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>The KMix Handbook: Onscreen Fundamentals</TITLE>
+</HEAD>
+<BODY>
+<A HREF="index-4.html">Next</A>
+<A HREF="index-2.html">Previous</A>
+<A HREF="index.html#toc3">Contents</A>
+<HR>
+<H2><A NAME="s3">3. Onscreen Fundamentals</A></H2>
+
+<P>
+<P>KMix usage is straightforward. Every mixer device that your soundcard
+provides, is represented by a volume slider. Mono devices have only
+one slider, Stereo devices have two sliders. You are able to merge
+the two sliders of a stereo device to a single slider.
+Additionaly there is a panning slider at the bottom of the KMix window.
+<P>
+<P>
+<P>
+<P>
+<H2><A NAME="ss3.1">3.1 Volume sliders</A>
+</H2>
+
+<P>The volume sliders show the volume of the selected device. Top is
+maximum, bottom is minimum volume. The slider can have three background
+colors:
+<UL>
+<LI><CODE>Normal</CODE> No special situation applies to this device.</LI>
+<LI><CODE>Black</CODE> The device is muted.</LI>
+<LI><CODE>Red</CODE> The device is the current record source. The device
+may be muted as well.</LI>
+</UL>
+<P>The volume sliders have a context menu. Three entries are possible,
+but only the applicable are shown.
+<P>
+<UL>
+<LI><CODE>Mute [On,Off]</CODE> Mute and unmute the the device.</LI>
+<LI><CODE>(Un-)Split</CODE> Show either one or two sliders. Only applicable to
+stereo devices.</LI>
+<LI><CODE>Record Source</CODE> Set this device as record source. Only applicable to
+recordable devices.</LI>
+</UL>
+<P>
+<P>
+<H2><A NAME="ss3.2">3.2 Panning slider</A>
+</H2>
+
+<P>With this slider you can control the volume distribution between left
+and right speaker. This slider is an overall regulator, which
+affects all stereo devices (Mono devices are ignored).
+The middle position is the default. Dragging the slider to the left
+lowers the volume of the right speaker, dragging it to the right
+vice versa. The panning slider has a context menu which you can
+reach with the right mouse button. You can set the slider to some
+prominent positions with this menu.
+<P>
+<P>
+<P>
+<H2><A NAME="ss3.3">3.3 Multiple Soundcards</A>
+</H2>
+
+<P>KMix is prepared for multiple sound cards. If called via the KDE Panel,
+the default mixer is used. For the Open Sound System, this is
+<CODE>/dev/mixer</CODE>. For other operating systems or sound drivers,
+this may vary.
+<P>If you want KMix to use a specific soundcard (primary, secondary, ...),
+you must tell this KMix on startup. 
+You can start the mixer with a device number. 0 means the default
+device, 1 your primary card, 2 your secondary and so on.
+<P>
+<P>
+<P>
+<P>
+<P>
+<P>
+<P>
+<H2><A NAME="ss3.4">3.4 Key Bindings</A>
+</H2>
+
+<P>KMix honors the following key bindings.
+<P>
+<P>
+<UL>
+<LI><CODE>Up Arrow</CODE> Increase volume by 1% </LI>
+<LI><CODE>Down Arrow</CODE> Decrease volume by 1% </LI>
+<LI><CODE>Page Up</CODE> Increase volume by 10% </LI>
+<LI><CODE>Page Down</CODE> Decrease volume by 10% </LI>
+<LI><CODE>Control-M</CODE> Switch the menu bar on and off </LI>
+</UL>
+<P>
+<HR>
+<A HREF="index-4.html">Next</A>
+<A HREF="index-2.html">Previous</A>
+<A HREF="index.html#toc3">Contents</A>
+</BODY>
+</HTML>
