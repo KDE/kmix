@@ -166,7 +166,11 @@ int Mixer_SUN::openMixer()
    //
    // Open the mixer hardware driver
    //
-   if ( ( fd = open( "/dev/audioctl", O_RDWR ) ) < 0 )
+   QCString audiodev(getenv("AUDIODEV"));
+   if(audiodev.isNull())
+     audiodev = "/dev/audio";
+   audiodev += "ctl";
+   if ( ( fd = open( audiodev.data(), O_RDWR ) ) < 0 )
    {
       if ( errno == EACCES )
          return Mixer::ERR_PERM;
