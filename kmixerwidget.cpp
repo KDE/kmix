@@ -70,7 +70,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 
 {
    m_actions = new KActionCollection( this );
-   new KAction( i18n("Show &all"), 0, this, SLOT(showAll()), m_actions, "show_all" );
+   new KAction( i18n("Show &All"), 0, this, SLOT(showAll()), m_actions, "show_all" );
    m_channels.setAutoDelete( true );
    m_small = small;
 
