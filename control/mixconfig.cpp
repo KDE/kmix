@@ -49,14 +49,14 @@
 KMixConfig::KMixConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  QVBoxLayout *topLayout = new QVBoxLayout(this, 5);
+  QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   // Restore settings
   QGroupBox *restGrp = new QGroupBox( i18n("Default Volumes"), this );
+  restGrp->setColumnLayout( 0, Qt::Horizontal );
+  QBoxLayout *restLayout = new QVBoxLayout( restGrp->layout(), 
+      KDialog::spacingHint());
   topLayout->addWidget( restGrp );
-  QBoxLayout *restLayout =
-     new QVBoxLayout( restGrp, KDialog::marginHint(), KDialog::spacingHint());
-  restLayout->addSpacing( fontMetrics().lineSpacing() );
 
   // Save profile
   QHBoxLayout *profLayout = new QHBoxLayout( restLayout, 5 );
@@ -77,9 +77,9 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   // Hardware settings
   QGroupBox *hdwGrp = new QGroupBox( i18n("Hardware Settings"), this );
   topLayout->addWidget( hdwGrp );
-  QBoxLayout *hdwLayout =
-     new QVBoxLayout( hdwGrp, KDialog::marginHint(), KDialog::spacingHint());
-  hdwLayout->addSpacing( fontMetrics().lineSpacing() );
+  hdwGrp->setColumnLayout( 0, Qt::Horizontal );
+  QBoxLayout *hdwLayout = new QVBoxLayout( hdwGrp->layout(), 
+      KDialog::spacingHint());
 
   m_maxCards = new KIntNumInput( hdwGrp );
   m_maxCards->setLabel( i18n("Maximum number of probed mixers:") );
