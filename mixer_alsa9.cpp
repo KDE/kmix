@@ -208,7 +208,21 @@ Mixer_ALSA::openMixer()
 		
 		if( virginOpen )
 		{
-			Volume vol( SND_MIXER_SCHN_LAST, (int)maxVolume );
+			int chn = 1; // Assuming default mono
+			
+			if( snd_mixer_selem_has_playback_volume( elem ) ||
+					snd_mixer_selem_has_playback_switch( elem ) || 
+					! snd_mixer_selem_is_playback_mono( elem ) )
+				chn = 2; // Stereo channel ?
+			else if( snd_mixer_selem_has_capture_volume( elem ) || 
+					snd_mixer_selem_has_capture_switch( elem ) || 
+					! snd_mixer_selem_is_capture_mono( elem ) )
+				chn = 2; // Stereo channel ?
+			else
+				continue;
+			
+			Volume vol( chn, ( int )maxVolume );
+				
 			mixer_elem_list.append( elem );
 			readVolumeFromHW( mixerIdx, vol );
 			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct) );
@@ -330,6 +344,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 			volume.setVolume( Volume::LEFT, left );
 			volume.setVolume( Volume::RIGHT, right );
 		}
+		return 0;
 	}
 	
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
