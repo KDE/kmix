@@ -43,6 +43,7 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kglobalaccel.h>
+#include <kdialog.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -107,6 +108,9 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir, MixDevice::
 
    // create layouts
    m_topLayout = new QVBoxLayout( this, 0, 3 );
+   if ( !m_small )
+     m_topLayout->setMargin( KDialog::marginHint() );
+
    if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down))
      m_devLayout = new QHBoxLayout( m_topLayout );
    else
