@@ -39,8 +39,8 @@ class KSmallSlider : public QWidget, public QRangeControl
       KSmallSlider( int minValue, int maxValue, int pageStep, int value,
 		    Qt::Orientation, QWidget *parent, const char *name=0 );
 
-      virtual void setTracking( bool enable );
-      bool tracking() const;
+    //virtual void setTracking( bool enable );
+    //bool tracking() const;
       QSize sizeHint() const;
       QSizePolicy sizePolicy() const;
       QSize minimumSizeHint() const;
@@ -86,23 +86,23 @@ public slots:
       void rangeChange();
 
    private:
-      enum State { Idle, Dragging };
+    //enum State { Idle, Dragging };
 
       void init();
       int positionFromValue( int ) const;
       int valueFromPosition( int ) const;
       void moveSlider( int );
-      void reallyMoveSlider( int );
-      void resetState();
-      int slideLength() const;
+    //void resetState();
+
+    //      int slideLength() const;
       int available() const;
       int goodPart( const QPoint& ) const;
-      void initTicks();
+    //void initTicks();
 
-      QCOORD sliderPos;
-      int sliderVal;
-      State state;
-      bool track;
+    //QCOORD sliderPos;
+    //int sliderVal;
+    //State state;
+    //bool track;
       bool grayed;
       Qt::Orientation _orientation;
       QColor colHigh, colLow, colBack;
@@ -110,10 +110,10 @@ public slots:
 
 };
 
-
+/*
 inline bool KSmallSlider::tracking() const
 {
     return track;
 }
-
+*/
 #endif
