@@ -258,6 +258,7 @@ int Mixer::setupMixer( MixSet mset )
 
 void Mixer::volumeSave( KConfig *config )
 {
+   readSetFromHW();
    QString grp = QString("Mixer") + mixerName();
    m_mixDevices.write( config, grp );
 }
