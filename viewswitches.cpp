@@ -37,10 +37,16 @@ ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, View
     // Create switch buttonGroup
     if ( _vflags & ViewBase::Vertical ) {
         _layoutMDW = new QVBoxLayout(this);
+        _layoutSwitch = new QVBoxLayout(_layoutMDW);
 	_layoutEnum = new QVBoxLayout(_layoutMDW); // always vertical!
     }
     else {
         _layoutMDW = new QHBoxLayout(this);
+	_layoutSwitch = new QHBoxLayout(_layoutMDW);
+	// Place enums right from the switches: This is done, so that there will be no
+	// ugly space on the left side, when no Switch is shown.
+	// Actually it is not really clear yet, why there is empty space at all: There are 0 items in
+	// the _layoutEnum, so it might be a sizeHint() or some other subtle layout issue.
 	_layoutEnum = new QVBoxLayout(_layoutMDW);
     }
     init();
@@ -106,7 +112,7 @@ QWidget* ViewSwitches::add(MixDevice *md)
 		      this,         // View widget
 		      md->name().latin1()
 		      );
-        _layoutMDW->add(mdw);
+        _layoutSwitch->add(mdw);
     } // a switch
 
     return mdw;

@@ -29,6 +29,7 @@ public slots:
 private:
     QLayout* _layoutMDW;
     QLayout* _layoutEnum;
+    QLayout* _layoutSwitch;
 };
 
 #endif
