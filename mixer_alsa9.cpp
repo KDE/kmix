@@ -91,7 +91,7 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 	if ( name.find( "Mic" ) != -1 ) return MixDevice::MICROPHONE;
 	if ( name.find( "LFE" ) != -1 ) return MixDevice::BASS;
 	if ( name.find( "3D", 0, false ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
-	
+
 	return MixDevice::EXTERNAL;
 }
 
@@ -114,15 +114,15 @@ Mixer_ALSA::openMixer()
 
 	// Card information
 	QString devName;
-	if ( (unsigned)m_devnum > 31 ) 
+	if ( (unsigned)m_devnum > 31 )
 	{
 		devName = "default";
 	}
-	else 
+	else
 	{
 		devName = QString( "hw:%1" ).arg( m_devnum );
-	}	
-		
+	}
+
 	kdDebug() << "Trying Alsa 0.9x Device " << devName << endl;
 
 	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), m_devnum ) ) < 0 )
@@ -143,21 +143,21 @@ Mixer_ALSA::openMixer()
 	mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
 
 	snd_ctl_close( ctl_handle );
-	
+
 	// release mixer before (re-)opening
 	release();
-		
+
 	/* open mixer device */
 	if ( ( err = snd_mixer_open ( &handle, 0 ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_OPEN );
 	}
-	
+
 	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_PERM );
 	}
-	
+
 	if ( ( err = snd_mixer_selem_register ( handle, NULL, NULL ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_READ );
@@ -189,40 +189,40 @@ Mixer_ALSA::openMixer()
 			continue;
 
 		snd_mixer_selem_get_id( elem, sid );
-		
+
 		bool canRecord = false;
 		bool hasMute = false;
 		long maxVolume, minVolume;
 		validDevice = true;
-		
+
 		if ( snd_mixer_selem_has_capture_switch( elem ) )
 		{
 			canRecord = true;
 		}
-		
+
 		snd_mixer_selem_get_playback_volume_range( elem, &minVolume, &maxVolume );
 
 		// New mix device
 		MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
-		
+
 		if( virginOpen )
 		{
 			int chn = 1; // Assuming default mono
-			
+
 			MixDevice::DeviceCategory cc;
-			
+
 			if(	! snd_mixer_selem_is_capture_mono( elem )  ||
 					! snd_mixer_selem_is_playback_mono( elem ) )
 				chn = 2; // Stereo channel ?
-			
-			Volume vol( chn, ( int )maxVolume );	
+
+			Volume vol( chn, ( int )maxVolume );
 			mixer_elem_list.append( elem );
-		
-			if ( snd_mixer_selem_has_playback_volume ( elem ) || 
+
+			if ( snd_mixer_selem_has_playback_volume ( elem ) ||
 					snd_mixer_selem_has_capture_volume ( elem ) )
 			{
 				cc = MixDevice::SLIDER;
-				if ( snd_mixer_selem_has_playback_switch ( elem ) || 
+				if ( snd_mixer_selem_has_playback_switch ( elem ) ||
 						snd_mixer_selem_has_capture_switch ( elem ) )
 					hasMute = true;
 			}
@@ -234,13 +234,13 @@ Mixer_ALSA::openMixer()
 			}
 			else
 				continue;
-			
-			m_mixDevices.append(	new MixDevice( mixerIdx, 
-						vol, 
-						canRecord, 
-						hasMute, 
-						snd_mixer_selem_id_get_name( sid ), 
-						ct, 
+
+			m_mixDevices.append(	new MixDevice( mixerIdx,
+						vol,
+						canRecord,
+						hasMute,
+						snd_mixer_selem_id_get_name( sid ),
+						ct,
 						cc ) );
 			mixerIdx++;
 		}
@@ -253,10 +253,10 @@ Mixer_ALSA::openMixer()
 			}
 			writeVolumeToHW( mixerIdx, md->getVolume() );
 		}
-		
-	}	
 
-	//return error for invalid devices	
+	}
+
+	//return error for invalid devices
 	if ( !validDevice )
 	{
 		return Mixer::ERR_NODEV;
@@ -265,7 +265,7 @@ Mixer_ALSA::openMixer()
 	// Copy the name of kmix mixer from card name
 	// Real name of mixer is not too good
 	m_mixerName = mixer_card_name;
-	
+
 	// return with success
 	m_isOpen = true;
 
@@ -313,7 +313,7 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 			isCurrentlyRecSrc = true;
 		}
 	}
-	
+
 	return isCurrentlyRecSrc;
 }
 
@@ -323,7 +323,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	int sw = (int)on;
 	kdDebug() << "ENTR Mixer_ALSA::setRecsrcHW(" << devnum << " , " << on << " , " << sw << ")\n";
 	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
-	
+
 	if (snd_mixer_selem_has_capture_switch_joined( elem ) )
 	{
 //		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
@@ -338,7 +338,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 			kdDebug() << "Mixer_ALSA::setRecsrcHW LEFT\n";
 			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, sw );
 		}
-		
+
 		if ( snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
 		{
 //			snd_mixer_selem_get_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, &sw);
@@ -363,14 +363,14 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 
 	hasVol = ( snd_mixer_selem_has_playback_volume ( elem ) ||
 			snd_mixer_selem_has_capture_volume ( elem ) );
-	
+
 	if ( hasVol )
 	{
 		if ( snd_mixer_selem_has_playback_volume ( elem ) )
 			snd_mixer_selem_get_playback_volume_range ( elem, &pmin, &pmax );
 		else
 			snd_mixer_selem_get_capture_volume_range ( elem, &pmin, &pmax );
-		
+
 		// Read value from LEFT playback/capture volume
 		if (snd_mixer_selem_has_playback_volume( elem ) )
 			snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
@@ -394,7 +394,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 			volume.setVolume( Volume::LEFT, left );
 		}
 	}
-	
+
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 		snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
@@ -426,7 +426,7 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 	int left, right;
 	int elem_sw;
 	long pmin, pmax;
-	
+
 	Volume data = volume;
 	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
 
@@ -466,7 +466,7 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 	return 0;
 }
 
-QString 
+QString
 Mixer_ALSA::errorText( int mixer_error )
 {
 	QString l_s_errmsg;
@@ -474,7 +474,7 @@ Mixer_ALSA::errorText( int mixer_error )
 	{
 		case ERR_PERM:
 			l_s_errmsg = i18n("You do not have permission to access the alsa mixer device.\n" \
-					"Please verify if all alsa devices are propely created.");
+					"Please verify if all alsa devices are properly created.");
       break;
 		case ERR_OPEN:
 			l_s_errmsg = i18n("Alsa mixer cannot be found.\n" \
@@ -487,8 +487,8 @@ Mixer_ALSA::errorText( int mixer_error )
 	return l_s_errmsg;
 }
 
-QString 
-ALSA_getDriverName() 
+QString
+ALSA_getDriverName()
 {
 	return "ALSA0.9";
 }
