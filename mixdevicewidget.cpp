@@ -582,7 +582,7 @@ void MixDeviceWidget::update()
 void MixDeviceWidget::contextMenu()
 {
    KPopupMenu *menu = new KPopupMenu( this );
-   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
+   menu->insertTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
 
    if ( m_sliders.count()>1 )
    {
