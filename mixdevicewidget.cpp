@@ -223,7 +223,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    if( m_mixdevice->isRecordable() )
    {
       //kdDebug() << "new KLedButton()\n";
-      m_recordLED = new KLedButton( Qt::red, 
+      m_recordLED = new KLedButton( Qt::red,
                            m_mixdevice->isRecsrc()?KLed::On:KLed::Off,
                            KLed::Sunken, KLed::Circular, this, "RecordLED" );
       if (!showRecordLED) m_recordLED->hide();
@@ -666,7 +666,7 @@ void MixDeviceWidget::contextMenu()
    menu->popup( pos );
 }
 
-bool MixDeviceWidget::eventFilter( QObject* , QEvent* e)
+bool MixDeviceWidget::eventFilter( QObject* , QEvent* e )
 {
    if (e->type() == QEvent::MouseButtonPress)
    {
@@ -674,6 +674,19 @@ bool MixDeviceWidget::eventFilter( QObject* , QEvent* e)
       if (qme->button() == RightButton) {
          emit rightMouseClick();
       }
+   }
+   else if (e->type() == QEvent::Wheel)
+   {
+      QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
+      if (qwe->delta() > 0)
+      {
+         increaseVolume();
+      }
+      else
+      {
+         decreaseVolume();
+      }
+      return true;
    }
    return false;
 }

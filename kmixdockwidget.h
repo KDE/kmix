@@ -24,25 +24,28 @@
 #define KMIXDOCKWIDGET_H
 
 #include <qwidget.h>
+#include <qvbox.h>
 #include <ksystemtray.h>
 
 class Mixer;
 class QFrame;
 class KAudioPlayer;
+class KMixMasterVolume;
+class MixDeviceWidget;
 
 class KMixDockWidget : public KSystemTray  {
    Q_OBJECT
 
    friend class KMixWindow;
 
- public: 
+ public:
    KMixDockWidget(Mixer *, QWidget *parent=0, const char *name=0);
    ~KMixDockWidget();
 
    void updatePixmap();
    void setErrorPixmap();
 
- public slots:  
+ public slots:
    void setVolumeTip(int, Volume);
 
  protected:
@@ -55,10 +58,21 @@ class KMixDockWidget : public KSystemTray  {
 
  private:
    Mixer *m_mixer;
-   QFrame *masterVol;   
+   KMixMasterVolume *masterVol;
    KAudioPlayer *audioPlayer;
    bool m_playBeepOnVolumeChange;
    bool m_mixerVisible;
+};
+
+class KMixMasterVolume : public QVBox
+{
+    public:
+        KMixMasterVolume(QWidget* parent, const char* name, Mixer* mixer);
+        ~KMixMasterVolume() {}
+        MixDeviceWidget* mixerWidget() { return mdw; }
+
+    protected:
+        MixDeviceWidget *mdw;
 };
 
 #endif
