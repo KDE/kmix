@@ -121,7 +121,7 @@ MixSetEntry* MixSet::findDev(int num)
 
 MixSetList::MixSetList()
 {
-  KmConfig->setGroup("");
+  KmConfig->setGroup(0);
   int NumSets = KmConfig->readNumEntry( "NumSets"  , 1 );
   // create one extra set. The first one is the current mix set
   for (int i=0; i<NumSets+1; i++)
@@ -151,7 +151,7 @@ void MixSetList::write()
 
   for ( ; ms!=NULL; ms=next(),i++ )
     ms->write(i);
-  KmConfig->setGroup("");
+  KmConfig->setGroup(0);
   KmConfig->writeEntry( "NumSets", i-1 );
 }
 

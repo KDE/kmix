@@ -713,7 +713,7 @@ int Mixer::openMixer(void)
     return Mixer::ERR_OPEN;
 #else
 
-#if KDE_VERSION_MAJOR >= 2
+#if QT_VERSION >= 200
   if ((fd= open(devname.ascii(), O_RDWR)) < 0)
 #else
   if ((fd= open((const char*)devname, O_RDWR)) < 0)

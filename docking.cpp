@@ -198,14 +198,16 @@ void KDockWidget::toggle_window_state()
   if(ktmw != 0) {
     if (ktmw->isVisible()) {
       // --- Toplevel was visible => hide it
+      debug("Hide\n");
       ktmw->hide();
-      ktmw->recreate(0, 0, QPoint(x(), y()), FALSE);
-      // kapp->setTopWidget( this );  // !!! esken: Is this line needed?
+      //ktmw->recreate(0, 0, QPoint(x(), y()), FALSE);
+      //kapp->setTopWidget( this );  // !!! esken: Is this line needed?
     }
     else {
       // --- Toplevel was invisible => show it again
+      debug("Show\n");
       ktmw->show();
-      KWM::activate(ktmw->winId());
+      //KWM::activate(ktmw->winId());
     }
   }
 }

@@ -26,6 +26,7 @@
 #include "kmix.h"
 #include <klocale.h>
 #include <qlayout.h>
+#include <qglobal.h>
 
 //static char rcsid[]="$Id$";
 
@@ -116,18 +117,24 @@ void Preferences::createChannelConfWindow(QWidget *p)
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
     // 1. line edit
 #if 0
-    qlb = new  QLabel(mdev->devname, grpbox, mdev->devname);
-#endif
+    qle->setEnabled(false);
+    l->addWidget(qle, lay_i, 0); 
+
+    qlb = new  QLabel(mdev->name(), grpbox, mdev->name());
+    qlb->setEnabled(false);
+    l->addWidget(qlb, lay_i, 0); 
+#else
 
     QLineEdit *qle;
-#if KDE_VERSION_MAJOR >= 2
-    qle = new QLineEdit(mdev->devname, grpbox, mdev->name().ascii());
+#if QT_VERSION >= 200
+    qle = new QLineEdit(mdev->name(), grpbox, mdev->name().ascii());
 #else
     qle = new QLineEdit(grpbox, (const char*)(mdev->name()));
 #endif
-    qle->setPalette(qpl);  // Use a palette, where one can read the text
+    //qle->setPalette(qpl);  // Use a palette, where one can read the text
     qle->setEnabled(false);
     l->addWidget(qle, lay_i, 0); 
+#endif
 
     // 2. check box  (Show)
     QCheckBox *qcb = new QCheckBox(grpbox);

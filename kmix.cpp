@@ -173,7 +173,7 @@ KMix::KMix(int mixernum, int SetNum)
   i_time = 0;
   KmConfig=KApplication::kApplication()->config();
 
-  KmConfig->setGroup("");
+  KmConfig->setGroup(0);
   mainmenuOn  = KmConfig->readNumEntry( "Menubar"  , 1 );
   tickmarksOn = KmConfig->readNumEntry( "Tickmarks", 1 );
   int Balance;
@@ -604,7 +604,12 @@ void KMix::createMenu()
     "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
   head += APP_VERSION;
 
+#if QT_VERSION >= 200
   Mhelp = helpMenu(i_s_aboutMsg);
+#else
+  Mhelp = globalKapp->helpMenu(true, i_s_aboutMsg);
+#endif
+
   CHECK_PTR( Mhelp );
 
   mainmenu = new KMenuBar( this, "main menu");
@@ -802,7 +807,7 @@ void KMix::configSave()
 
 void KMix::sessionSave(bool sessionConfig)
 {
-  KmConfig->setGroup("");
+  KmConfig->setGroup(0);
   KmConfig->writeEntry( "Balance"    , LeftRightSB->value() , true );
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
