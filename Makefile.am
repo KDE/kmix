@@ -5,12 +5,12 @@ INCLUDES= $(all_includes)
 bin_PROGRAMS = kmix2
 
 kmix2_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
-	kmixerwidget.cpp channel.cpp mixdevice.cpp mixer.cpp sets.cpp \
-	volume.cpp kledbutton.cpp
+	kmixerwidget.cpp channel.cpp mixdevice.cpp mixer.cpp \
+	volume.cpp kledbutton.cpp mixdevicewidget.cpp
 
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
-	channel.h mixdevice.h mixer.h sets.h volume.h kledbutton.h \
-	version.h
+	channel.h mixdevice.h mixer.h volume.h kledbutton.h version.h \
+	mixdevicewidget.h
 
 kmix2_LDADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
