@@ -601,7 +601,7 @@ bool KMix::event(QEvent *e)
     this->hide();
     // a trick to remove the window from the taskbar (Matthias)
     recreate(0,0, geometry().topLeft(), FALSE);
-    setTopWidget( this );
+    globalKapp->setTopWidget( this );
     return TRUE;
   }
   return QWidget::event(e);
