@@ -9,6 +9,7 @@ They should be tested before a new KDE version is being shipped.
 06: New Mixer Tab ("distribute" and "no distribute")
 07: System tray volume control
 08: Start KMix with no Mixer Hardware/Drivers available
+09: Basic: Start KMix with NO existing profile (kmixrc)
 
 -----------+----+----+----+----+----+----+----+----+
 TestCase>  | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 |
