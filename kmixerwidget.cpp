@@ -106,19 +106,19 @@ KMixerWidget::createLayout()
 		delete m_balanceSlider;
    if( m_topLayout )
 		delete m_topLayout;
-	
-	// create main layout
-
-	m_topLayout = new QVBoxLayout( this, 0, 4 );
-	m_topLayout->setMargin( KDialog::marginHint() );
-
-	// Create tabs e widgetstack
-	m_ioTab = new KTabWidget( this, "ioTab" );
-
-	m_topLayout->add( m_ioTab );
 
 	if( ! m_small )
 	{
+		// create main layout
+
+		m_topLayout = new QVBoxLayout( this, 0, 4 );
+		m_topLayout->setMargin( KDialog::marginHint() );
+
+		// Create tabs e widgetstack
+		m_ioTab = new KTabWidget( this, "ioTab" );
+
+		m_topLayout->add( m_ioTab );
+
 		// Create switch buttonGroup
 		m_swWidget = new QWidget( this, "switchWidget" );
 		m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
@@ -133,7 +133,7 @@ KMixerWidget::createLayout()
 	}
 	else
 	{
-		m_oWidget = new QHBox( m_ioTab, "OutputTab" );
+		m_oWidget = new QHBox( this, "OutputTab" );
 		m_topLayout = new QHBoxLayout( this, 0, 0 );
 		m_topLayout->add( m_oWidget );
 	}
