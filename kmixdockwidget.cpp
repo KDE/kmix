@@ -20,6 +20,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <kaction.h>
 #include <klocale.h>
 #include <kapplication.h>
 #include <kpanelapplet.h>
@@ -176,8 +177,20 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
     setVolumeTip(masterDevice->num(), vol);
 }
 
-void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* menu )
+void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 {
+    KAction* showAction = actionCollection()->action("minimizeRestore");
+    if ( parentWidget() && showAction ) 
+    {
+        if ( parentWidget()->isVisible() )
+        {
+            showAction->setText( i18n("Hide Mixer Window") );
+        }
+        else
+        {
+            showAction->setText( i18n("Show Mixer Window") );
+        }
+    }
 }
 
 #include "kmixdockwidget.moc"
