@@ -149,6 +149,8 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    else
       layout = new QHBoxLayout( this );
 
+   QToolTip::add( this, m_mixdevice->name() );
+	
    // create channel icon
 	if( ! isSwitch() )
 	{
@@ -157,7 +159,6 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 			m_iconLabel = 0L;
 			setIcon( m_mixdevice->type() );
 			layout->addWidget( m_iconLabel );
-			QToolTip::add( m_iconLabel, m_mixdevice->name() );
 		} //  otherwise it is created after the slider
 	}
 	
@@ -177,7 +178,6 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	else
 		switchLabel = m_mixdevice->name();
 
-   QToolTip::add( m_muteLED, m_mixdevice->name() );
    GET_NEWLAYOUT( ledlayout );
    ledlayout->addWidget( m_muteLED );
 	// Add name to switch
@@ -198,8 +198,6 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 
 		if( isSwitch() )
 			m_label->hide();
-		
-		QToolTip::add( m_label, m_mixdevice->name() );
 		
 		// create sliders
 		GET_NEWLAYOUT_LAS( sliders );
@@ -223,7 +221,6 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 				slider->setMinimumSize( slider->sizeHint() );
 			}
 			
-			QToolTip::add( slider, m_mixdevice->name() );
 			slider->installEventFilter( this );
 			if( i>0 && isStereoLinked() ) slider->hide();
 			if( isSwitch() )
@@ -242,7 +239,6 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 				m_iconLabel->hide();
 			layout->addWidget( m_iconLabel );
 			m_iconLabel->installEventFilter( this );
-			QToolTip::add( m_iconLabel, m_mixdevice->name() );
 		} //  otherwise it is created before the slider
 
 		// create record source LED
@@ -252,7 +248,6 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 					m_mixdevice->isRecordable()?KLed::On:KLed::Off,
 					KLed::Sunken, KLed::Circular, this, "RecordLED" );
 			if (!showRecordLED) m_recordLED->hide();
-			QToolTip::add( m_recordLED, i18n("Recording") );
 			m_recordLED->setFixedSize( QSize(16, 16) );
 			
 			GET_NEWLAYOUT( reclayout );

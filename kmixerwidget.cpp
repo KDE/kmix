@@ -121,7 +121,7 @@ KMixerWidget::createLayout()
 
 		// Create switch buttonGroup
 		m_swWidget = new QWidget( this, "switchWidget" );
-		m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
+		m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 0,"devSwitchLayout" );
 
 		// Both Layouts and widgets
 	

@@ -189,16 +189,11 @@ Mixer_ALSA::openMixer()
 		if ( ! snd_mixer_selem_is_active( elem ) )
 			continue;
 		
-		bool isMono = false;
 		bool canRecord = false;
 		long maxVolume, minVolume;
 		validDevice = true;
 		
-		if ( snd_mixer_selem_is_playback_mono( elem ) )
-		{
-			isMono = true;
-		}
-		if ( snd_mixer_selem_has_capture_volume( elem ) )
+		if ( snd_mixer_selem_has_capture_switch( elem ) )
 		{
 			canRecord = true;
 		}
