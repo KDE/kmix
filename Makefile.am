@@ -2,7 +2,7 @@ SUBDIRS = control pics
 INCLUDES= $(all_includes)
 
 bin_PROGRAMS = kmix kmixctrl
-lib_LTLIBRARIES = kdeinit_kmix.la kdeinit_kmixctrl.la
+lib_LTLIBRARIES = kmix.la kmixctrl.la
 kde_module_LTLIBRARIES = kmix_panelapplet.la
 
 
@@ -12,22 +12,22 @@ noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 
 
 METASOURCES = AUTO
-kdeinit_kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
+kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	kmixerwidget.cpp channel.cpp mixer.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp mixdevicewidget.cpp
-kdeinit_kmix_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
-kdeinit_kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version
+kmix_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 kmix_SOURCES = dummy.cpp
-kmix_LDADD = kdeinit_kmix.la
+kmix_LDADD = kmix.la
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
-kdeinit_kmixctrl_la_SOURCES = kmixctrl.cpp channel.cpp mixer.cpp volume.cpp 
-kdeinit_kmixctrl_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
-kdeinit_kmixctrl_la_LDFLAGS = $(all_libraries) -module -avoid-version
+kmixctrl_la_SOURCES = kmixctrl.cpp channel.cpp mixer.cpp volume.cpp 
+kmixctrl_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmixctrl_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 kmixctrl_SOURCES = dummy.cpp
-kmixctrl_LDADD = kdeinit_kmixctrl.la
+kmixctrl_LDADD = kmixctrl.la
 kmixctrl_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
