@@ -27,7 +27,7 @@
 VerticalText::VerticalText(QWidget * parent, const char * name, WFlags f) : QWidget(parent,name,f)
 {
 	resize(20,100 /*parent->height() */ );
-	setFixedSize(20,100);
+	setFixedWidth(20);
 }
 
 VerticalText::~VerticalText() {
