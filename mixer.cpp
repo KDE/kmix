@@ -45,7 +45,7 @@ MixDevice::MixDevice(int num, Volume vol, bool recordable,
    else
       m_name = name;
    
-};
+}
 
 MixDevice::MixDevice(const MixDevice &md)
 {
@@ -237,7 +237,7 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   objid.setNum(m_devnum);
   objid.prepend("Mixer");
   DCOPObject::setObjId( objid );
-};
+}
 
 int Mixer::setupMixer( MixSet mset )
 {
