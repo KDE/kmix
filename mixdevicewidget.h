@@ -70,6 +70,7 @@ class MixDeviceWidget
 		bool hasMute() const;
       bool isStereoLinked() const { return m_linked; };
       bool isLabeled() const;
+      MixDevice* mixDevice() { return m_mixdevice; };
 
       void setStereoLinked( bool value );
       void setLabeled( bool value );

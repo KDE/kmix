@@ -250,7 +250,7 @@ KMixerWidget::createDeviceWidgets()
 		m_balanceSlider = 0;
 	}
 
-	updateSize(true);
+	updateSize(false);
 	// we have to expliciteley set the size, as
 }
 
@@ -382,38 +382,41 @@ KMixerWidget::slotFillPopup()
 {
 	QStringList output, input, sw;
 	QMap<QString, bool> state;
-   int n=0;
+	QMap<QString, int> id;
+	QMap<QString, QString> name;
 
    m_toggleMixerChannels->popupMenu()->clear();
 
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
    {
+		QString uniqueName;
+		uniqueName.append(chn->dev->mixDevice()->num()).append(chn->dev->name());
 		if( chn->dev->isSwitch() )
-			sw << chn->dev->name();
+			sw << uniqueName;
 		else if ( chn->dev->isRecsrc() )
-			input << chn->dev->name();
+			input << uniqueName;
 		else
-			output << chn->dev->name();
+			output << uniqueName;
 
-		state[ chn->dev->name() ] = !chn->dev->isDisabled();
+		state[ uniqueName ] = !chn->dev->isDisabled();
+		id[ uniqueName ] = chn->dev->mixDevice()->num();
+		name[ uniqueName ] = chn->dev->name();
    }
 
 	// Output
 	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Output" ) );
 	for ( QStringList::Iterator it = output.begin(); it != output.end(); ++it )
 	{
-		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-		m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
-		n++;
+		m_toggleMixerChannels->popupMenu()->insertItem( name[ *it ], id[ *it ] );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( id[ *it ], state[ *it ] );
 	}
 
 	// Input
 	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Input" ) );
 	for ( QStringList::Iterator it = input.begin(); it != input.end(); ++it )
 	{
-		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-		m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
-		n++;
+		m_toggleMixerChannels->popupMenu()->insertItem( name[ *it ], id[ *it ] );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( id[ *it ], state[ *it ] );
 	}
 
 	if( ! m_small )
@@ -422,9 +425,8 @@ KMixerWidget::slotFillPopup()
 		m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Switches" ) );
 		for ( QStringList::Iterator it = sw.begin(); it != sw.end(); ++it )
 		{
-			m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-			m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
-			n++;
+			m_toggleMixerChannels->popupMenu()->insertItem( name[ *it ], id[ *it ] );
+			m_toggleMixerChannels->popupMenu()->setItemChecked( id[ *it ], state[ *it ] );
 		}
 	}
 }
@@ -438,7 +440,6 @@ KMixerWidget::slotToggleMixerDevice( int id)
    Channel *chn = m_channels.at(id);
    if(!chn)
       return;
-
    bool gotCheck = m_toggleMixerChannels->popupMenu()->isItemChecked(id);
 
    chn->dev->setDisabled(gotCheck);

@@ -432,7 +432,8 @@ MixDeviceWidget::setStereoLinked(bool value)
       value ? slider->hide() : slider->show();
 
    layout()->activate();
-   emit updateLayout();
+   QTimer::singleShot(0, m_mixerwidget, SLOT(updateSize()));
+   //emit updateLayout();
 }
 
 
