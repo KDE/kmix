@@ -39,6 +39,7 @@
 #include <kmessagebox.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
+#include <kiconloader.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -193,7 +194,8 @@ void KMixerWidget::mousePressEvent( QMouseEvent *e )
 
 void KMixerWidget::rightMouseClicked()
 {
-   KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
+   KPopupMenu *menu = new KPopupMenu( this );
+   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device settings") );
 
    KAction *a = m_actions->action( "show_all" );
    if ( a ) a->plug( menu );

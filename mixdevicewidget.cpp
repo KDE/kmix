@@ -34,7 +34,6 @@
 #include <qlayout.h>
 #include <qpixmap.h>
 #include <qtooltip.h>
-#include <qpopupmenu.h>
 #include <qtimer.h>
 #include <qwmatrix.h>
 
@@ -486,7 +485,8 @@ void MixDeviceWidget::update()
 
 void MixDeviceWidget::contextMenu()
 {
-   KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
+   KPopupMenu *menu = new KPopupMenu( this );
+   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device settings") );
 
    if ( m_sliders.count()>1 )
    {
