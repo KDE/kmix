@@ -71,6 +71,8 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 {
    m_actions = new KActionCollection( this );
    new KAction( i18n("Show &All"), 0, this, SLOT(showAll()), m_actions, "show_all" );
+   KStdAction::showMenubar( this, SIGNAL(toggleMenuBar()), m_actions);
+
    m_channels.setAutoDelete( true );
    m_small = small;
 
@@ -116,11 +118,12 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
       MixDeviceWidget *mdw =
-         new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small,
-                              m_direction, this, mixDevice->name().latin1() );
+	new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small,
+			     m_direction, this, mixDevice->name().latin1() );
 
       connect( mdw, SIGNAL( masterMuted( bool ) ),
                   SIGNAL( masterMuted( bool ) ) );
+      connect( mdw, SIGNAL( toggleMenuBar() ), SIGNAL( toggleMenuBar() ) );
 
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       m_devLayout->addWidget( mdw, 0 );
@@ -200,6 +203,10 @@ void KMixerWidget::mousePressEvent( QMouseEvent *e )
       rightMouseClicked();
 }
 
+void KMixerWidget::addActionToPopup( KAction *action ) {
+  m_actions->insert( action );
+}
+
 void KMixerWidget::rightMouseClicked()
 {
    KPopupMenu *menu = new KPopupMenu( this );
@@ -208,6 +215,9 @@ void KMixerWidget::rightMouseClicked()
    KAction *a = m_actions->action( "show_all" );
    if ( a ) a->plug( menu );
 
+   a = m_actions->action( "options_show_menubar" );
+   if ( a ) a->plug( menu );
+   
    QPoint pos = QCursor::pos();
    menu->popup( pos );
 }
@@ -280,5 +290,6 @@ void KMixerWidget::showAll()
 
    updateSize();
 }
+
 
 #include "kmixerwidget.moc"

@@ -81,12 +81,14 @@ class MixDeviceWidget
       void setDisabled( bool value );
 
       void defineKeys();
+
    signals:
       void newVolume( int num, Volume volume );
       void masterMuted( bool );
       void newRecsrc( int num, bool on );
       void updateLayout();
       void rightMouseClick();
+      void toggleMenuBar();
 
    private slots:
       void setRecsrc( bool value );

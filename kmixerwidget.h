@@ -48,6 +48,8 @@ class KMixerWidget : public QWidget  {
                  QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
+   void addActionToPopup( KAction *action );
+
    QString name() { return m_name; };
    void setName( QString name ) { m_name = name; };
 
@@ -64,6 +66,7 @@ class KMixerWidget : public QWidget  {
   signals:
    void updateLayout();
    void masterMuted( bool );
+   void toggleMenuBar();
 
   public slots:     
    void setTicks( bool on );
@@ -75,7 +78,7 @@ class KMixerWidget : public QWidget  {
    void loadConfig( KConfig *config, QString grp );
 
    void showAll();
-
+   
   private slots:	
    void rightMouseClicked();	
    void updateSize();

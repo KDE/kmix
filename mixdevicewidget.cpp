@@ -76,8 +76,10 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
    a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setMuted(bool)) );
 
-   if (parent->isA("KMixerWidget"))
-       new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
+   if (parent->isA("KMixerWidget")) {
+     new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
+     KStdAction::showMenubar( this, SIGNAL(toggleMenuBar()), m_actions);
+   }
 
    if( m_mixdevice->isRecordable() )
    {
@@ -612,6 +614,8 @@ void MixDeviceWidget::contextMenu()
    sep.plug( menu );
 
    a = m_actions->action( "show_all" );
+   if ( a ) a->plug( menu );
+   a = m_actions->action( "options_show_menubar" );
    if ( a ) a->plug( menu );
 
    QPoint pos = QCursor::pos();

@@ -385,6 +385,7 @@ void KMixWindow::insertMixerWidget( KMixerWidget *mw )
 
    connect( mw, SIGNAL(updateLayout()), this, SLOT(updateLayout()) );
    connect( mw, SIGNAL( masterMuted( bool ) ), SLOT( updateDockIcon() ) );
+   connect( mw, SIGNAL(toggleMenuBar()), SLOT(toggleMenuBar()) );
 
    KAction *a = actionCollection()->action( "file_close_tab" );
    if ( a ) a->setEnabled( m_visibleTabs>1 );
