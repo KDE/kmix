@@ -256,7 +256,7 @@ void MixDeviceWidget::setIcon( int icon )
 
 bool MixDeviceWidget::isLabeled()
 {
-   return m_label->isVisible();
+   return !m_label->isHidden();
 }
 
 bool MixDeviceWidget::isDisabled()
@@ -346,7 +346,7 @@ void MixDeviceWidget::setTicks( bool ticks )
 
 void MixDeviceWidget::setIcons(bool value)
 {
-   if ( m_iconLabel->isVisible()!=value )
+   if ( ( !m_iconLabel->isHidden()) !=value ) 
    {
       if (value)
          m_iconLabel->show();

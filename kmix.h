@@ -66,8 +66,9 @@ class KMixWindow : public KMainWindow
    KMixWindow();
    ~KMixWindow();
 
-  protected:
+  protected slots:
    void saveConfig();
+  protected:
    void loadConfig();
 
    void initMixer();

@@ -118,12 +118,13 @@ KMixWindow::KMixWindow()
        show();
    else
        hide();
+       
+   connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()));
 }
 
 
 KMixWindow::~KMixWindow()
 {
-    saveConfig();
 }
 
 
@@ -388,7 +389,11 @@ void KMixWindow::closeEvent ( QCloseEvent * e )
         kapp->ref(); // prevent KMainWindow from closing the app
         // </evil>
     } else
+    {
         kapp->quit(); // force the application to quit
+        e->ignore(); // don't close the window, isVisible() is called in saveConfig()
+        return;
+    }
 
     KMainWindow::closeEvent( e );
 }

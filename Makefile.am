@@ -2,7 +2,7 @@ SUBDIRS = control pics
 INCLUDES= $(all_includes)
 
 bin_PROGRAMS = kmix kmixctrl
-lib_LTLIBRARIES = libkmixapplet.la kmixctrl.la
+lib_LTLIBRARIES = kmix.la libkmixapplet.la kmixctrl.la
 
 
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
@@ -11,10 +11,14 @@ noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 
 
 METASOURCES = AUTO
-kmix_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
+kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	kmixerwidget.cpp channel.cpp mixer.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp mixdevicewidget.cpp
-kmix_LDADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmix_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version
+
+kmix_SOURCES = dummy.cpp
+kmix_LDADD = kmix.la
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 kmixctrl_SOURCES = dummy.cpp
