@@ -252,6 +252,7 @@ void Mixer::readSetFromHW()
   if ( ! updated ) {
     // Some drivers (ALSA) are smart. We don't need to run the following
     // time-consuming update loop if there was no change
+    return;
   }
   MixDevice* md;
   for( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
