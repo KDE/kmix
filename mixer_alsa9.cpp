@@ -133,14 +133,16 @@ Mixer_ALSA::openMixer()
 	if (virginOpen)
 		kdDebug(67100) << "Trying Alsa 0.9x Device " << devName << endl;
 
-	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), m_devnum ) ) < 0 )
+	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
 	{
+                kdError(67100) << "snd_ctl_open err=" << err << endl;
 		errormsg( Mixer::ERR_OPEN );
 		return false;
 	}
 
 	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
 	{
+                kdError(67100) << "snd_ctl_card_info err=" << err << endl;
 		errormsg( Mixer::ERR_READ );
 		snd_ctl_close( ctl_handle );
 		return false;
@@ -158,21 +160,25 @@ Mixer_ALSA::openMixer()
 	/* open mixer device */
 	if ( ( err = snd_mixer_open ( &handle, 0 ) ) < 0 )
 	{
+                kdError(67100) << "snd_mixer_open err=" << err << endl;
 		errormsg( Mixer::ERR_OPEN );
 	}
 
 	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )
 	{
+                kdError(67100) << "snd_mixer_attach err=" << err << endl;
 		errormsg( Mixer::ERR_PERM );
 	}
 
 	if ( ( err = snd_mixer_selem_register ( handle, NULL, NULL ) ) < 0 )
 	{
+                kdError(67100) << "snd_mixer_selem_register err=" << err << endl;
 		errormsg( Mixer::ERR_READ );
 	}
 
 	if ( ( err = snd_mixer_load ( handle ) ) < 0 )
 	{
+                kdError(67100) << "snd_mixer_load err=" << err << endl;
 		errormsg( Mixer::ERR_READ );
 		releaseMixer();
 		return 1;
