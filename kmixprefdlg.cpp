@@ -44,7 +44,7 @@ KMixPrefDlg::KMixPrefDlg()
    m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
    layout->addWidget( m_dockingChk );
 
-   m_startHiddenChk = new QCheckBox( i18n("&Hide window on startup"), m_generalTab );
+   m_startHiddenChk = new QCheckBox( i18n("Hide window on &startup"), m_generalTab );
    layout->addWidget( m_startHiddenChk );
 
    m_hideOnCloseChk = new QCheckBox( i18n("Only &Hide window with close button"), m_generalTab );

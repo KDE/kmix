@@ -79,9 +79,9 @@ void KMixApp::initActions()
    // file menu
    KStdAction::openNew( this, SLOT(newMixer()), actionCollection());
    KStdAction::close( this, SLOT(closeMixer()), actionCollection());
-   (void)new KAction( i18n("&Load volumes"), 0, this, SLOT(loadVolumes()),
+   (void)new KAction( i18n("&Restore default volumes"), 0, this, SLOT(loadVolumes()),
 		      actionCollection(), "file_load_volume" );
-   (void)new KAction( i18n("&Save volumes"), 0, this, SLOT(saveVolumes()),
+   (void)new KAction( i18n("&Save current volumes as default"), 0, this, SLOT(saveVolumes()),
 		      actionCollection(), "file_save_volume" );
    KStdAction::quit( this, SLOT(quit()), actionCollection());
 
@@ -370,6 +370,22 @@ void KMixApp::newMixer()
 	 insertMixerWidget( mw );
       }
    }
+}
+
+void KMixApp::loadVolumes()
+{
+   KConfig *cfg = new KConfig( "kmixctrlrc", true );
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+      mixer->volumeLoad( cfg );
+   delete cfg;
+}
+
+void KMixApp::saveVolumes()
+{
+   KConfig *cfg = new KConfig( "kmixctrlrc", false );
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+      mixer->volumeSave( cfg );
+   delete cfg;
 }
 
 void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )

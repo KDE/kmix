@@ -93,7 +93,9 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
    else
    {
       QBoxLayout *layout = new QHBoxLayout( this );
-      QLabel *errorLabel = new QLabel( i18n("Invalid mixer"), this );
+      QString s = i18n("Invalid mixer");
+      if ( mixerName ) s += " \"" + mixerName + "\"";
+      QLabel *errorLabel = new QLabel( s, this );
       errorLabel->setAlignment( QLabel::AlignCenter );
       layout->addWidget( errorLabel );
    }
@@ -158,6 +160,7 @@ void KMixerWidget::updateDevices( bool vert )
       m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
 				  this, "RightLeft" );
       m_balanceSlider->setTickmarks( QSlider::Below );
+      m_balanceSlider->setTickInterval( 25 );
       m_topLayout->addWidget( m_balanceSlider );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );

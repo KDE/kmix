@@ -74,6 +74,8 @@ class KMixApp : public KTMainWindow
    void toggleMenuBar();
    void closeMixer();
    void newMixer();
+   void loadVolumes();
+   void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:
