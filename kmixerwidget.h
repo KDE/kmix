@@ -77,9 +77,10 @@ class KMixerWidget : public QWidget  {
    void loadConfig( KConfig *config, QString grp );
 
    void showAll();
-   
+
   private slots:	
    void rightMouseClicked();	
+   void updateBalance();
    void updateSize();
 
   private:

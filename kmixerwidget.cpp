@@ -143,6 +143,10 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
       m_topLayout->addWidget( m_balanceSlider );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
+
+      QTimer *updateTimer = new QTimer( this );
+      connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateBalance()) );
+      updateTimer->start( 200, FALSE );
    } else
       m_balanceSlider = 0;
 
@@ -291,6 +295,25 @@ void KMixerWidget::showAll()
    }
 
    updateSize();
+}
+
+void KMixerWidget::updateBalance()
+{
+  MixDevice *md = m_mixer->mixDeviceByType( 0 );
+  int right= md->rightVolume();
+  int left = md->leftVolume();
+  
+  int value = 0;
+  if ( left != right ) {
+    int refvol = left > right ? left : right;
+    if (left > right)
+      value = (100*right) / refvol - 100;
+    else
+      value = -((100*left) / refvol - 100);
+  } 
+  m_balanceSlider->blockSignals( true );
+  m_balanceSlider->setValue( value );
+  m_balanceSlider->blockSignals( false );  
 }
 
 

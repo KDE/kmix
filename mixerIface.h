@@ -51,11 +51,18 @@ k_dcop:
     Makes the given device a record source.
     */
    virtual void setRecordSource( int deviceidx, bool on )=0;
+
    /**
     Returns if the given device is a record source.
     */
    virtual bool isRecordSource( int deviceidx )=0;
-	       
+       
+   /**
+    Sets the balance of the master device (negative means balanced to the left
+    speaker and positive to the right one)
+    */
+   virtual void setBalance( int balance )=0;
+
    /**
     Returns true if the given device is available in the current mixer
     and false if it's not.
