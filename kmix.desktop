@@ -60,4 +60,4 @@ Name[sv]=Kmix
 Name[ven]=U tanganisa ha K
 X-KDE-StartupNotify=true
 X-DCOP-ServiceType=Unique
-Categories=QT;KDE;AudioVideo
+Categories=Qt;KDE;AudioVideo
