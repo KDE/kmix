@@ -138,10 +138,10 @@ QWidget* ViewSurround::add(MixDevice *md)
 	_layoutSurround->addWidget(mdw,1,3,  Qt::AlignVCenter | Qt::AlignRight ); break;
 	break;
     case MixDevice::SURROUND_CENTERFRONT:
-	_layoutSurround->addWidget(mdw,0,1,  Qt::AlignTop    | Qt::AlignHCenter); break;
+	_layoutSurround->addWidget(mdw,0,2,  Qt::AlignTop | Qt::AlignHCenter); break;
 	break;
     case MixDevice::SURROUND_CENTERBACK:
-	_layoutSurround->addWidget(mdw,2,1,  Qt::AlignBottom | Qt::AlignHCenter); break;
+	_layoutSurround->addWidget(mdw,2,2,  Qt::AlignBottom | Qt::AlignHCenter); break;
 	break;
 
     case MixDevice::SURROUND:
@@ -179,6 +179,7 @@ void ViewSurround::constructionFinished() {
 	MixDeviceWidget *mdw = createMDW(_mdSurroundFront, true, Qt::Vertical);
 	_layoutSurround->addWidget(mdw,0,4, Qt::AlignBottom | Qt::AlignRight);
 	_mdws.append(mdw);
+
 	QLabel* speakerIcon = new QLabel("Speaker", this);
         icon = UserIcon( "SpeakerFrontLeft" );
 	if ( ! icon.isNull()) speakerIcon->setPixmap(icon);
@@ -193,8 +194,20 @@ void ViewSurround::constructionFinished() {
 
     if ( _mdSurroundBack != 0 ) {
 	MixDeviceWidget *mdw = createMDW(_mdSurroundBack, true, Qt::Vertical);
-	_layoutSurround->addWidget(mdw,2,2, Qt::AlignTop | Qt::AlignRight);
+	_layoutSurround->addWidget(mdw,2,4, Qt::AlignTop | Qt::AlignRight);
 	_mdws.append(mdw);
+
+        QLabel* speakerIcon = new QLabel("Speaker", this);
+        icon = UserIcon( "SpeakerRearLeft" );
+        if ( ! icon.isNull()) speakerIcon->setPixmap(icon);
+        _layoutSurround->addWidget(speakerIcon,2,1, Qt::AlignBottom | Qt::AlignLeft);
+
+        speakerIcon = new QLabel("Speaker", this);
+        icon = UserIcon( "SpeakerRearRight" );
+        if ( ! icon.isNull()) speakerIcon->setPixmap(icon);
+        _layoutSurround->addWidget(speakerIcon,2,3, Qt::AlignBottom | Qt::AlignRight);
+
+
     }
 
     // !! just for the demo version
