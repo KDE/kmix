@@ -41,7 +41,6 @@ MixDevice::MixDevice( int num, Volume &vol, bool recordable, bool mute,
     _mute( mute ), _category( category )
 {
     // Hint: "_volume" gets COPIED from "vol" due to the fact that the copy-constructor actually copies the volume levels.
-    //kdDebug(67100) << "MixDevice::MixDevice(): Creating dev " << num << " with " << _volume.count() << " channels (" << vol.count() << ")\n";
     _switch = false;
     _recSource = false;
     if( name.isEmpty() )

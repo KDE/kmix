@@ -229,83 +229,52 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 
 	 	sliders->addSpacing( 3 );
     } // showMuteLED
-
-    long chmask = m_mixdevice->getVolume()._chmask;
-    for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
+	 
+	 long chmask = m_mixdevice->getVolume()._chmask;
+	 for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
     {
-        bool useSlider = false;
+		 Volume::ChannelID chid = Volume::ChannelID(i);
+		 // @todo !! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
+		 // We should look up the mapping here, but for now, we simply assume "chid == i".
+		 
+		 int maxvol = m_mixdevice->getVolume().maxVolume();
+		 int minvol = m_mixdevice->getVolume().minVolume();
+		 
+		 QWidget* slider;
+		 if ( m_small ) {
+			 slider = new KSmallSlider( minvol, maxvol, maxvol/10,
+					 m_mixdevice->getVolume( chid ), _orientation, 
+					 this, m_mixdevice->name().ascii() );
+		 }
+		 else	{
+			 int sliderMinVol, sliderMaxVol;
+			 if ( _orientation == Qt::Horizontal ) {
+				 sliderMinVol = minvol;
+				 sliderMaxVol = maxvol;
+			 }
+			 else  {
+				 sliderMinVol = maxvol;
+				 sliderMaxVol = minvol;
+			 }
+			 
+			 slider = new QSlider( 0, maxvol, maxvol/10,
+					 maxvol - m_mixdevice->getVolume( chid ), _orientation,
+					 this, m_mixdevice->name().ascii() );
+			 slider->setMinimumSize( slider->sizeHint() );
+		 }
+		 
+		 slider->installEventFilter( this );
+		 
+		 if( i>0 && isStereoLinked() ) {
+			 // show only one (the first) slider, when the user wants it so
+			 slider->hide();
+		 }
+		 sliders->addWidget( slider );  // add to layout
+		 m_sliders.append ( slider );   // add to list
+		 _slidersChids.append(chid);        // Remember slider-chid association
+		 connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
+	 } // for all channels of this device
 
-        if ( chmask & Volume::_channelMaskEnum[i] ) {
-            // mask fits. Possibly include slider
-        // *** Next lines decide which sliders to show **********
-        if ( m_recordLED != 0 && ( i==2 || i==3) ) {
-            // if we show the record LED, we will also want to show the
-            // record volume (!! This is a decision, and works with the
-            // current GUI code. In future this might need to change).
-            // WARNING: This hardcoded "i==X" stuff is stupid, but I have
-            //          no mapper - Additionaly I know that for now this
-            //          is fixed!!
-
-            useSlider = true;
-        }
-        else if ( m_recordLED == 0 && ( i!=2 && i!=3 ) ) {
-            useSlider = true;
-        }
-        } // ChannelMask fits
-
-
-	if ( useSlider ) {
-
-	Volume::ChannelID chid = Volume::ChannelID(i);
-	// @todo !! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
-	// We should look up the mapping here, but for now, we simply assume "chid == i".
-
-	int maxvol = m_mixdevice->getVolume().maxVolume();
-        int minvol = m_mixdevice->getVolume().minVolume();
-
-	QWidget* slider;
-	if ( m_small )
-	{
-	    slider = new KSmallSlider( minvol, maxvol, maxvol/10,
-				       m_mixdevice->getVolume( chid ),
-				       _orientation,
-				       this, m_mixdevice->name().ascii() );
-	}
-	else
-	{
-            int sliderMinVol, sliderMaxVol;
-            if ( _orientation == Qt::Horizontal ) {
-                sliderMinVol = minvol;
-                sliderMaxVol = maxvol;
-            }
-            else  {
-                sliderMinVol = maxvol;
-                sliderMaxVol = minvol;
-            }
-
-            
-	    slider = new QSlider( 0, maxvol, maxvol/10,
-				  maxvol - m_mixdevice->getVolume( chid ),
-				  _orientation,
-				  this, m_mixdevice->name().ascii() );
-	    slider->setMinimumSize( slider->sizeHint() );
-	}
-
-	slider->installEventFilter( this );
-
-	if( i>0 && isStereoLinked() ) {
-	    // show only one (the first) slider, when the user wants it so
-	    slider->hide();
-	}
-	sliders->addWidget( slider );  // add to layout
-	m_sliders.append ( slider );   // add to list
-        _slidersChids.append(chid);        // Remember slider-chid association
-	connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
-    } // if (useSlider)
-    } // for all channels of this device
-
-    if (showRecordLED) {
-    }
 
     // --- RECORD SOURCE LED --------------------------
     if ( showRecordLED ) 
@@ -542,10 +511,6 @@ void MDWSlider::volumeChange( int )
               vol.setVolume( Volume::LEFT , sliderValue );
               vol.setVolume( Volume::RIGHT, sliderValue );
       }
-      else if ( chid == Volume::LEFTREC ) {
-              vol.setVolume( Volume::LEFTREC , sliderValue );
-              vol.setVolume( Volume::RIGHTREC, sliderValue );
-      }
       else {
          kdDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
       }
@@ -678,93 +643,79 @@ void MDWSlider::update()
 {
     // update volumes
     Volume vol = m_mixdevice->getVolume();
-    if( isStereoLinked() )
-    {
-	QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-        Volume::ChannelID chid = *it;
-
-	long avgVol;
-	if ( m_recordLED != 0 && ( chid==2 || chid==3) ) {
-	    // if we show the record LED, we will also want to show the
-	    // record volume (!! This is a decision, and works with the
-	    // current GUI code. In future this might need to change).
-            avgVol = vol.getAvgVolume( Volume::MREC );
-	}
-	else {
-            avgVol = vol.getAvgVolume( Volume::MMAIN );
-        }
-
-
-	QWidget *slider =  m_sliders.first();
-        if ( slider == 0 ) {
-            return; // !!! Development version, check this !!!
-        }
-	slider->blockSignals( true );
-	if ( slider->inherits( "KSmallSlider" ) )
-	{
-	    KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-	    if (smallSlider) {
-		smallSlider->setValue( avgVol ); // !! inverted ?!?
-		smallSlider->setGray( m_mixdevice->isMuted() );
-	    }
-	} // small slider
-	else
-	{
-	    QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-	    if (bigSlider)
-		bigSlider->setValue( vol.maxVolume() - avgVol );  // !! inverted ?!?
-	} // big slider
-
-	slider->blockSignals( false );
-    } // only 1 slider (stereo-linked)
-    else {
-        QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-	for( int i=0; i<vol.channels(); i++, ++it )
-        {
-	    QWidget *slider = m_sliders.at( i );
-            Volume::ChannelID chid = *it;
-            if (slider == 0) {
-                // not implemented: happens if there are record and playback
-                // sliders in the same device. Or if you only show
-                // the right slider (or any other fancy occasion)
-                continue;
-            }
-	    slider->blockSignals( true );
-
-	    if ( slider->inherits( "KSmallSlider" ) )
-	    {
-		KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-		if (smallSlider) {
-		    smallSlider->setValue( vol[chid] );
-		    smallSlider->setGray( m_mixdevice->isMuted() );
-		}
-	    }
-	    else
-	    {
-		QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-		if (bigSlider)
-		    bigSlider->setValue( vol.maxVolume() - vol[i] );
-	    }
-
-	    slider->blockSignals( false );
-	} // for all sliders
-    } // more than 1 slider
-
-   // update mute led
-   if ( m_muteLED )
-   {
-      m_muteLED->blockSignals( true );
-      m_muteLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
-      m_muteLED->blockSignals( false );
-   }
-
-   // update recsrc
-   if( m_recordLED )
-   {
-      m_recordLED->blockSignals( true );
-      m_recordLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
-      m_recordLED->blockSignals( false );
-   }
+	 if( isStereoLinked() )
+	 {
+		 QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+		 Volume::ChannelID chid = *it;
+		 
+		 long avgVol = vol.getAvgVolume( Volume::MMAIN );
+		 
+		 QWidget *slider =  m_sliders.first();
+		 if ( slider == 0 ) {
+			 return; // !!! Development version, check this !!!
+		 }
+		 slider->blockSignals( true );
+		 if ( slider->inherits( "KSmallSlider" ) )
+		 {
+			 KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
+			 if (smallSlider) {
+				 smallSlider->setValue( avgVol ); // !! inverted ?!?
+				 smallSlider->setGray( m_mixdevice->isMuted() );
+			 }
+		 } // small slider
+		 else {
+			 QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
+			 if (bigSlider)
+				 bigSlider->setValue( vol.maxVolume() - avgVol );  // !! inverted ?!?
+		 } // big slider
+		 
+		 slider->blockSignals( false );
+	 } // only 1 slider (stereo-linked)
+	 else {
+		 QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+		 for( int i=0; i<vol.channels(); i++, ++it ) {
+			 QWidget *slider = m_sliders.at( i );
+			 Volume::ChannelID chid = *it;
+			 if (slider == 0) {
+				 // not implemented: happens if there are record and playback
+				 // sliders in the same device. Or if you only show
+				 // the right slider (or any other fancy occasion)
+				 continue;
+			 }
+			 slider->blockSignals( true );
+			 
+			 if ( slider->inherits( "KSmallSlider" ) )
+			 {
+				 KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
+				 if (smallSlider) {
+					 smallSlider->setValue( vol[chid] );
+					 smallSlider->setGray( m_mixdevice->isMuted() );
+				 }
+			 }
+			 else
+			 {
+				 QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
+				 if (bigSlider)
+					 bigSlider->setValue( vol.maxVolume() - vol[i] );
+			 }
+			 
+			 slider->blockSignals( false );
+		 } // for all sliders
+	 } // more than 1 slider
+	 
+	 // update mute led
+	 if ( m_muteLED ) {
+		 m_muteLED->blockSignals( true );
+		 m_muteLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
+		 m_muteLED->blockSignals( false );
+	 }
+	 
+	 // update recsrc
+	 if( m_recordLED ) {
+		 m_recordLED->blockSignals( true );
+		 m_recordLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
+		 m_recordLED->blockSignals( false );
+	 }
 }
 
 void MDWSlider::showContextMenu() {
