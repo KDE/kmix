@@ -49,7 +49,7 @@ KMixPrefDlg::KMixPrefDlg()
    layout->addWidget( m_dockingChk );
    QWhatsThis::add(m_dockingChk, i18n("Docks the mixer into the KDE panel"));
 
-   m_volumeChk = new QCheckBox(i18n("Enable System Tray &volume control"),
+   m_volumeChk = new QCheckBox(i18n("Enable system tray &volume control"),
 			       m_generalTab);
    layout->addWidget(m_volumeChk);
 
