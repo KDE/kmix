@@ -132,9 +132,14 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 slidersLayout->setAlignment(Qt::AlignHCenter);
 	 }
 
-    if ( _orientation == Qt::Horizontal )
+	 /* cesken: This is inconsistent. Why should vertical and horizontal layout differ?
+	  *         Also it eats too much space - especially when you don't show sliders at all.
+	  *         Even more on the vertical panel applet (see Bug #97667)
+	     if ( _orientation == Qt::Horizontal )
 		 slidersLayout->addSpacing( 10 );
-
+	 */
+	 
+	 
 	 // -- LABEL LAYOUT TO POSITION
 	 QBoxLayout *labelLayout;
 	 if ( _orientation == Qt::Vertical ) {
