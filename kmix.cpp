@@ -153,6 +153,14 @@ void KMix::applyOptions()
   tickmarksOn = prefDL->tickmarksChk->isChecked();
   allowDocking= prefDL->dockingChk->isChecked();
 
+
+  KmConfig->setGroup("");
+  KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
+  KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
+  KmConfig->writeEntry( "Docking"    , allowDocking);
+
+
+  QString groupname;
   MixDevice *mdev = mix->First;
   for  (ChannelSetup *chanSet = prefDL->cSetup.first() ; chanSet!=0;  chanSet = prefDL->cSetup.next() ) {
     if (mdev->device_num != chanSet->num)
@@ -160,17 +168,19 @@ void KMix::applyOptions()
 			     "The cSetup list does not match the mdev list\nPlease report this error",
 			     1,2);
     else {
-      if (mdev->is_stereo)
+      groupname.sprintf("Device %i", mdev->device_num);
+      KmConfig->setGroup(groupname);
+      if (mdev->is_stereo) {
 	mdev->StereoLink = ! chanSet->qcbSplit->isChecked();
+        KmConfig->writeEntry("Linked", mdev->StereoLink);
+      }
       mdev->is_disabled =  ! chanSet->qcbShow->isChecked();
+      KmConfig->writeEntry("Disabled", mdev->is_disabled);
     }
     mdev = mdev->Next;
   }
 
 
-  KmConfig->writeEntry( "Menubar"    , mainmenuOn  , true );
-  KmConfig->writeEntry( "Tickmarks"  , tickmarksOn , true );
-  KmConfig->writeEntry( "Docking"    , allowDocking, true );
   KmConfig->sync();
 
   placeWidgets();
