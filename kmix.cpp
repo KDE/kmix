@@ -89,7 +89,9 @@ KMixApp::newInstance()
 
 
 void KMixApp::quitExtended() {
-    //printf("KMixDockWidget::quitExtended()\n");
+    // This method is here for quiting from the dock icon (when directly calling
+    // quit(), the main window will be hidden before saving the configuration.
+    // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();
     quit();
 }
@@ -624,28 +626,50 @@ void
 KMixWindow::newMixer()
 {
 	QStringList lst;
-   Mixer *mixer;
+	Mixer *mixer;
 
-	// !!! testing code - esken
+	// Open the MixerSelector dialog - the user can select a mixer or cancel this dialog.
 	MixerSelector *ms = new MixerSelector( m_mixers , 0);
 	MixerSelectionInfo *msi = ms->exec();
 	delete ms;
 	if ( msi != 0 ) {
-       // valid mixer?
+       // Dialog not canceled
        int num = msi->m_num;
+       // Matching on number, not on name. If we would match on name it would be
+       // a) slower
+       // b) impossible to insert a mixer from a duplicated sound card (e.g. 2 x Audigy)
        mixer = m_mixers.at( num );
        if (!mixer)
-		 {
-		 	delete msi;
-           KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
-           return;
-       }
+		{
+			// This can normally never happen. If it happens, it is a bug.
+			delete msi;
+			KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
+			return;
+		}
 
+		// Should we distribute the devices on Tabs?
+		if ( msi->m_tabDistribution ) {
+			msi->m_deviceTypeMask1 = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY);
+			msi->m_deviceTypeMask2 = (MixDevice::SECONDARY);
+			msi->m_deviceTypeMask3 = (MixDevice::SWITCH);
+		}
+		else {
+			msi->m_deviceTypeMask1 = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY | MixDevice::SECONDARY | MixDevice::SWITCH);
+			msi->m_deviceTypeMask2 = (MixDevice::DeviceCategory)0;
+			msi->m_deviceTypeMask3 = (MixDevice::DeviceCategory)0;
+		}
+		
+		addMixerTabs(mixer, msi);
+		delete msi;
+   }
+}
+
+void KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi) {
 	// create mixer widget
 	bool categoryInUse;
 
 	MixDevice::DeviceCategory dc;
-	dc = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY);
+	dc = msi->m_deviceTypeMask1;
 	categoryInUse = isCategoryUsed(mixer, dc);
 	if ( categoryInUse ) {
 	    KMixerWidget *mw1 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
@@ -655,7 +679,7 @@ KMixWindow::newMixer()
 	    insertMixerWidget( mw1 );
 	}
 
-	dc = (MixDevice::DeviceCategory)(MixDevice::SECONDARY);
+	dc = msi->m_deviceTypeMask2;
 	categoryInUse = isCategoryUsed(mixer, dc);
 	if ( categoryInUse ) {
 	    KMixerWidget *mw2 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
@@ -665,7 +689,7 @@ KMixWindow::newMixer()
 	    insertMixerWidget( mw2 );
 	}
 
-	dc = (MixDevice::DeviceCategory)(MixDevice::SWITCH);
+	dc = msi->m_deviceTypeMask3;
 	categoryInUse = isCategoryUsed(mixer, dc);
 	if ( categoryInUse ) {
 	    KMixerWidget *mw3 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
@@ -674,9 +698,6 @@ KMixWindow::newMixer()
 	    mw3->setName( msi->m_name + "(2)");
 	    insertMixerWidget( mw3 );
 	}
-	delete msi;
-
-   }
 }
 
 

@@ -22,17 +22,22 @@
  */
 
 #include "MixerSelectionInfo.h"
-#include "qstring.h"
 
 /**
  * Stores information of a mixer selection done with the MixerSelector dialog.
  * num is the number from the list of mixers
  */
-MixerSelectionInfo::MixerSelectionInfo(int num, QString name, bool tabDistribution, MixDevice::DeviceCategory deviceTypeMask) {
- 	m_num = num;
+MixerSelectionInfo::MixerSelectionInfo(int num, QString name, bool tabDistribution,
+		MixDevice::DeviceCategory deviceTypeMask1,
+		MixDevice::DeviceCategory deviceTypeMask2,
+		MixDevice::DeviceCategory deviceTypeMask3)
+{
+	m_num = num;
  	m_name = name;
  	m_tabDistribution = tabDistribution;
- 	m_deviceTypeMask = deviceTypeMask;
+ 	m_deviceTypeMask1 = deviceTypeMask1;
+ 	m_deviceTypeMask2 = deviceTypeMask2;
+ 	m_deviceTypeMask3 = deviceTypeMask3;
  }
  
 MixerSelectionInfo::~MixerSelectionInfo()

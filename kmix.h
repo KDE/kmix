@@ -48,6 +48,8 @@ class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
 class KMixWindow;
+class Mixer;
+class MixerSelectionInfo;
 
 class KMixApp : public KUniqueApplication
 {
@@ -86,6 +88,7 @@ class KMixWindow : public KMainWindow
    void initActions();
    void initWidgets();
 
+	void addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi);
    void updateDocking();
 
    void closeEvent( QCloseEvent * e );
