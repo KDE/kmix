@@ -1,17 +1,28 @@
+1998-11-09  Christian Esken  <esken@kde.org>
+
+	* kmix1.0
+	* Set support added: Sets can be stored by pressing CTRL-1,
+	CTRL-2, ... and rstored by pressing 1, 2, ...
+	* Command line parameters: "-devnum" to set the mixer device
+	number and "-r" to read set 1 and "-R num" to read set 'num'
+	on startup.
+	* Session management. Mixer restarts with the same device
+	and set number, as specified in the command line.
+
 1998-7-1    Nick Lopez <kimo_sabe@usa.net>
-        * ALSA support added.
-          Known limitations:
-	    - If another program changes a mixer setting it will not
-	      automagicaly update. yet.
-            - I'm unsure if they channel icons will be correct for cards
-              other than my SB16. If you have a different card tell me
-              if the icons match the tooltips.
+        * ALSA support added. Known limitations:
+	  - If another program changes a mixer setting it will not
+	    automagicaly update. yet.
+          - I'm unsure if they channel icons will be correct for cards
+            other than my SB16. If you have a different card tell me
+            if the icons match the tooltips.
 
 1998-06-17  Christian Esken  <esken@kde.org>
 
 	* Can now start docked.
 
 1998-05-20    <esken@kde.org>
+
 	* Set support is basically in. No user visible aspects, though.
 	* User can now switch visualization of channels on and off.
 	* Options saving now works via Quit as well as via SM.
@@ -19,18 +30,22 @@
 	the version number to 0.80
 
 1998-05-19    <chris@magicon.ping.de>
+
 	* Implementing major aspects of set support. Nothing
 	is visible for the user at the point.
 
 Mon May  4 00:07:55 1998    <chris@magicon.ping.de>
+
 	* Added layout setup in config dialog. It works but isn't saved yet.
 
 Fri May  1 19:35:39 1998    <chris@magicon.ping.de>
+
 	* Show dock icon directly (even if undocked)
 	* Add "Quit" option in docked window popup menu
 	* New option "Allow docking"
 
 Thu Apr  9 23:27:42 CEST 1998
+
 	* Adding F1 as global help
 	* Add Accelerators
 	* Remove obsolete code (Help menu items)
@@ -39,10 +54,12 @@ Thu Apr  9 23:27:42 CEST 1998
 	  (0=default mixer, 1=first mixer, ...)
 
 Thu Apr  2 20:00:00 CEST 1998
+
 	* Added GPL headers to all *.cpp files
 	* Implemented docking on kpanel - now kmix is cool.
 
 Mon Apr  1 20:00:00 CEST 1998
+
 	* Added changes file
 	* Documentation now in SGML
 

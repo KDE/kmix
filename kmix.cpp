@@ -78,6 +78,9 @@ int main(int argc, char **argv)
       i=i+1;
       SetNumber   = atoi(argv[i]);
     }
+    else if (strcmp(argv[i],"-devnum") == 0  && i+1<argc) {
+      mixer_id = atoi(argv[i]);
+    }
     else if ( i+1 == argc )
       mixer_id = atoi(argv[i]);
   }
