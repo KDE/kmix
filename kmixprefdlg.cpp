@@ -58,6 +58,9 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    QWhatsThis::add(m_showLabels, 
            i18n("Enables/disables description labels above the sliders"));
 
+   layout->addStretch();
+   enableButtonSeparator(true);
+
    connect( this, SIGNAL(applyClicked()), this, SLOT(apply()) );
    connect( this, SIGNAL(okClicked()), this, SLOT(apply()) );
 }
