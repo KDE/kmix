@@ -30,6 +30,8 @@
 
 #if defined(sun) || defined(__sun__)
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <sys/file.h>
 #include <sys/audioio.h>
 //#include <stropts.h>
