@@ -28,21 +28,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-// Linux section, by Christian Esken
-#if defined(__linux__)
-#include <sys/soundcard.h>
-// FreeBSD section, according to Sebestyen Zoltan
-#elif defined(__FreeBSD__)
-#include <sys/soundcard.h>
-// NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
-#elif defined(__NetBSD__)
-#include <soundcard.h>
-// BSDI section, according to <tom@foo.toetag.com>
-#elif defined(__bsdi__)
-#include <sys/soundcard.h>
-// UnixWare includes
-#elif defined(_UNIXWARE)
-#include <sys/soundcard.h>
+// Since we're guaranteed an OSS setup here, let's make life easier
+#if !defined(__NetBSD__)
+	#include <sys/soundcard.h>
+#else
+	#include <soundcard.h>
 #endif
 
 #include "mixer_oss.h"
