@@ -172,7 +172,8 @@ void Mixer::volumeLoad( KConfig *config )
    {
        //       kdDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
        // !! @todo Restore record source
-       setRecordSource( md->num(), md->isRecSource() );
+       //setRecordSource( md->num(), md->isRecSource() );
+       setRecsrcHW( md->num(), md->isRecSource() );
        writeVolumeToHW( md->num(), md->getVolume() );
        if ( md->isEnum() ) setEnumIdHW( md->num(), md->enumId() );
    }
