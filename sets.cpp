@@ -22,7 +22,6 @@
 
 #include <kconfig.h>
 #include "sets.h"
-#include "sets.moc"
 
 extern KConfig	     *KmConfig;
 
