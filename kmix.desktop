@@ -108,4 +108,4 @@ Name[zh_CN.GB2312]=声音混音器
 Name[zh_TW.Big5]=聲音混音器
 
 X-KDE-StartupNotify=true
-X-DCOP-ServiceType=Multi
+X-DCOP-ServiceType=Unique
