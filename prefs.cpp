@@ -124,6 +124,7 @@ void Preferences::createChannelConfWindow()
     QLineEdit *qle;
     qle = new  QLineEdit(grpbox2a,mdev->devname);
     qle->setText(mdev->devname);
+    qle->setEnabled(false);
     qle->move(x1,ypos);
     qle->setFixedWidth(entryWidth);
 
