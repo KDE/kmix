@@ -273,6 +273,9 @@ void Mixer::readSetFromHW()
       Volume& vol = md->getVolume();
       readVolumeFromHW( md->num(), vol );
       md->setRecSource( isRecsrcHW( md->num() ) );
+      if (md->isEnum() ) {
+         md->setEnumId( enumIdHW(md->num()) );
+      }
     }
   // Trivial implementation. Without looking at the devices
   //  kdDebug(67100) << "Mixer::readSetFromHW(): emit newVolumeLevels()" << endl;
@@ -283,6 +286,7 @@ void Mixer::readSetFromHW()
 bool Mixer::prepareUpdate() {
   return true;
 }
+
 void Mixer::setBalance(int balance)
 {
   // !! BAD, because balance only works on the master device. If you have not Master, the slider is a NOP
@@ -441,6 +445,26 @@ void Mixer::setRecordSource( int devnum, bool on )
   }
 }
 
+/**
+ * Sets the ID of the currently selected Enum entry.
+ * This is a dummy implementation - if the Mixer backend
+ * wants to support it, it must implement the driver specific 
+ * code in its subclass (see Mixer_ALSA.cpp for an example).
+ */
+void Mixer::setEnumIdHW(int, unsigned int) {
+   return;
+}
+
+/**
+ * Return the ID of the currently selected Enum entry.
+ * This is a dummy implementation - if the Mixer backend
+ * wants to support it, it must implement the driver specific
+ * code in its subclass (see Mixer_ALSA.cpp for an example).
+ */
+unsigned int Mixer::enumIdHW(int) {
+   return 0;
+}
+
 
 MixDevice *Mixer::mixDeviceByType( int deviceidx )
 {
@@ -473,6 +497,7 @@ void Mixer::setVolume( int deviceidx, int percentage )
 */
 void Mixer::commitVolumeChange( MixDevice* md ) {
     writeVolumeToHW(md->num(), md->getVolume() );
+    setEnumIdHW(md->num(), md->enumId() );
 }
 
 // @dcop only

@@ -545,6 +545,54 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	return false; // we should always return false, so that other devnum's get updated
 }
 
+/**
+ * Sets the ID of the currently selected Enum entry.
+ * Warning: ALSA supports to have different enums selected on each channel
+ *          of the SAME snd_mixer_elem_t. KMix does NOT support that and
+ *          always sets both channels (0 and 1).
+ */
+void Mixer_ALSA::setEnumIdHW(int mixerIdx, unsigned int idx) {
+	//kdDebug(67100) << "Mixer_ALSA::setEnumIdHW(" << mixerIdx << ", idx=" << idx << ") 1\n";
+        snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
+        if ( elem==0 || ( !snd_mixer_selem_is_enumerated(elem)) )
+        {
+                return;
+        }
+
+	//kdDebug(67100) << "Mixer_ALSA::setEnumIdHW(" << mixerIdx << ", idx=" << idx << ") 2\n";
+	int ret = snd_mixer_selem_set_enum_item(elem,SND_MIXER_SCHN_FRONT_LEFT,idx);
+        if (ret < 0) {
+           kdError(67100) << "Mixer_ALSA::setEnumIdHW(" << mixerIdx << "), errno=" << ret << "\n";
+        }
+	snd_mixer_selem_set_enum_item(elem,SND_MIXER_SCHN_FRONT_RIGHT,idx);
+	// we don't care about possible error codes on channel 1
+        return;
+}
+
+/**
+ * Return the ID of the currently selected Enum entry.
+ * Warning: ALSA supports to have different enums selected on each channel
+ *          of the SAME snd_mixer_elem_t. KMix does NOT support that and
+ *          always shows the value of the first channel.
+ */
+unsigned int Mixer_ALSA::enumIdHW(int mixerIdx) {
+	snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
+        if ( elem==0 || ( !snd_mixer_selem_is_enumerated(elem)) )
+        {
+                return 0;
+        }
+
+	unsigned int idx = 0;
+	int ret = snd_mixer_selem_get_enum_item(elem,SND_MIXER_SCHN_FRONT_LEFT,&idx);
+	//kdDebug(67100) << "Mixer_ALSA::enumIdHW(" << mixerIdx << ") idx=" << idx << "\n";
+	if (ret < 0) {
+	   idx = 0;
+	   kdError(67100) << "Mixer_ALSA::enumIdHW(" << mixerIdx << "), errno=" << ret << "\n";
+	}
+	return idx;
+}
+
+
 int
 Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 {

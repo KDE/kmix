@@ -17,7 +17,9 @@ class Mixer_ALSA : public Mixer
 		virtual int  writeVolumeToHW( int devnum, Volume &vol );
 		virtual bool setRecsrcHW( int devnum, bool on);
 		virtual bool isRecsrcHW( int devnum );
-	        virtual bool prepareUpdate();
+	        virtual void setEnumIdHW(int mixerIdx, unsigned int);
+      		virtual unsigned int enumIdHW(int mixerIdx);
+		virtual bool prepareUpdate();
 
 		
 	protected:

@@ -136,10 +136,13 @@ void ViewSwitches::refreshVolumeLevels() {
 		 // a slider, fine. Lets update its value
 		 static_cast<MDWSwitch*>(mdw)->update();
 	     }
+	     else if ( mdw->inherits("MDWEnum")) {
+		static_cast<MDWEnum*>(mdw)->update();
+             }
 	     else {
 		 kdError(67100) << "ViewSwitches::refreshVolumeLevels(): mdw is not slider\n";
 		 // no switch. Cannot happen in theory => skip it
-		 // If I start putting enums in the switch tab, I will get a nice warning.
+		 // If I start putting other stuff in the switch tab, I will get a nice warning.
 	     }
 	 }
 	 mdw = _mdws.next();

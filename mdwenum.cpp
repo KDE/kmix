@@ -100,7 +100,7 @@ void MDWEnum::createWidgets()
 	// ------------ fill ComboBox end --------------
 	_layout->addWidget(_enumCombo);
         _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
-        connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( changeEnumInMixer( int ) ) );
+        connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnum( int ) ) );
         QToolTip::add( _enumCombo, m_mixdevice->name() );
 	
 	//_layout->addSpacing( 4 );
@@ -109,6 +109,7 @@ void MDWEnum::createWidgets()
 void MDWEnum::update()
 {
   if ( m_mixdevice->isEnum() ) {
+    //kdDebug(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << endl;
     _enumCombo->setCurrentItem( m_mixdevice->enumId() );
   }
   else {
@@ -160,6 +161,7 @@ void MDWEnum::setEnum(int value)
 {
 	if (  m_mixdevice->isEnum() ) {
 		m_mixdevice->setEnumId( value );
+		m_mixer->commitVolumeChange( m_mixdevice );
 	}
 }
 

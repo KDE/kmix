@@ -115,6 +115,8 @@ class Mixer : public QObject, virtual public MixerIface
       /// Abstract method! You must implement it in your dericved class.
       virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
       virtual bool prepareUpdate();
+      virtual void setEnumIdHW(int mixerIdx, unsigned int);
+      virtual unsigned int enumIdHW(int mixerIdx);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
       virtual void setVolume( int channeltype, int percentage );
