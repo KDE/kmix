@@ -1,0 +1,28 @@
+#ifndef MIXER_HPUX_H
+#define MIXER_HPUX_H
+
+#define DEFAULT_MIXER "HP-UX Mixer"
+#ifdef HAVE_ALIB_H
+#include <Alib.h>
+#define HPUX_MIXER
+#endif
+
+class Mixer_HPUX : public Mixer
+{
+public:
+  Mixer_HPUX();
+  Mixer_HPUX(int devnum, int SetNum);
+  virtual ~Mixer_HPUX() {};
+
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+
+protected:
+  virtual int openMixer();
+  virtual int releaseMixer();
+  virtual void setDevNumName_I(int devnum);
+
+  // HP-UX uses Alib stuff
+  Audio		*hpux_audio;
+};
+
+#endif

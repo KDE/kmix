@@ -17,7 +17,7 @@
 
 
 /*
-   I am using a fixed MAX_MIXDEVS #define here.
+  I am using a fixed MAX_MIXDEVS #define here.
    People might argue, that I should rather use the SOUND_MIXER_NRDEVICES
    #define used by OSS. But using this #define is not good, because it is
    evaluated during compile time. Compiling on one platform and running
@@ -30,24 +30,6 @@
  */
 #define MAX_MIXDEVS 32
 
-#if defined(sun) || defined(__sun__)
-#define DEFAULT_MIXER "/dev/audioctl"
-#elif sgi
-#define DEFAULT_MIXER "SGI Mixer" // no device name on SGI
-#define _LANGUAGE_C_PLUS_PLUS
-#include <dmedia/audio.h>
-#elif defined(ALSA)
-#define DEFAULT_MIXER "ALSA Mixer"
-#elif defined(hpux)
-# define DEFAULT_MIXER "HP-UX Mixer"
-# ifdef HAVE_ALIB_H
-#  include <Alib.h>
-#  define HPUX_MIXER
-# endif
-#else
-// hope that we have a OSS System
-# define DEFAULT_MIXER "/dev/mixer"
-#endif
 
 // For the crossreferencing between classes, I must declare all
 // referenced classes here.
@@ -86,16 +68,16 @@ signals:
 
 public:
   MixDevice(int num);
-  int		num();
-  void		setNum(int);
-  QString	name();
-  bool		stereo();
-  bool		recordable();
-  bool		recsrc();		// Is it currently being recorded?
-  bool		disabled();		// Is slider disabled by user?
-  bool		muted();		// Is it muted by user?
-  bool		stereoLinked();
+  int		num() const;
+  QString	name() const;
+  bool		stereo() const;
+  bool		recordable() const;
+  bool		recsrc() const;		// Is it currently being recorded?
+  bool		disabled() const;	// Is slider disabled by user?
+  bool		muted() const;		// Is it muted by user?
+  bool		stereoLinked() const;
 
+  void		setNum(int);
   void		setName(QString);
   void		setStereo(bool value);
   void		setRecordable(bool value);
@@ -125,6 +107,10 @@ private:
   QString	dev_name;		// Ascii channel name
 };
 
+
+
+                                                                            
+
 /***************************************************************************
  * The structure MixChannel is used as hook for user data in the slots.
  * There are pointers to 2 MixChannel's per MixDevice. If neccesary, this
@@ -146,7 +132,7 @@ public:
   static void HW_update(bool val_b_update_allowed);
 
 public slots:
-  void	VolChanged( int new_pos );
+  void VolChanged( int new_pos );
   void VolChangedI(int new_pos);
 };
 
@@ -165,7 +151,14 @@ public:
   void init(int devnum, int SetNum);
   virtual ~Mixer() {};
 
+  /// Static function. This function must be overloaded by any derived mixer class
+  /// to create and return an instance of the derived class.
   static Mixer* getMixer(int devnum, int SetNum);
+
+
+  /// Tells the number of the mixing devices
+  unsigned int size() const;
+  MixDevice* operator[](int val_i_num);
 
   /// Grabs (opens) the mixer for further intraction
   virtual int grab();
@@ -179,15 +172,19 @@ public:
 
   virtual void updateMixDevice(MixDevice *mixdevice);
   virtual void setBalance(int left, int right);
+
+
   /// Write set 0 into the mixer hardware
   virtual void Set0toHW();
   /// Write a given set into set 0
   virtual void Set2Set0(int Source, bool copy_volume);
   virtual void Set0toSet(int Source);
+
   virtual void setRecsrc(unsigned int newRecsrc);
-  unsigned int getRecsrc();
+  unsigned int recsrc() const;
   /// Reads the volume of the given device into VolLeft and VolRight
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight ) = 0;
+  virtual void writeVolumeToHW( int devnum, int volLeft, int volRight ) = 0;
 
   void sessionSave(bool sessionConfig);
 
@@ -199,113 +196,31 @@ public:
 
 
 protected:
-  virtual int release_I();
+  virtual int releaseMixer() = 0;
   virtual void setDevNumName_I(int devnum) = 0;
-
   QString	devname;
 
+
 protected:
-  // This will go into the corresponding class
-#ifdef sgi
-  // IRIX uses ALport stuff
-  ALport	m_port;
-  ALconfig	m_config;
-#elif defined(HPUX_MIXER)
-  // HP-UX uses Alib stuff
-  Audio		*hpux_audio;
-#else
-  // Other platforms use a standard file descriptor
-  int		fd;
-#endif
+  /// Derived classes MUST implement this to open the mixer. Returns a KMix error
+  // code (O=OK).
+  virtual int	openMixer() = 0;
+  /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If the mixer API of
+  /// your OS gives you a usable name, use this.
+  QString	i_s_mixer_name;
+  bool		isOpen;
+  unsigned int	devmask, recmask, i_recsrc, stereodevs;
+  int		PercentLeft,PercentRight;
+  ///  Maximum volume Level allowed by the Mixer API (OS dependent)
+  int		MaxVolume;
 
 private:
   int		devnum;
-  QString	i_s_mixer_name;
-  bool		isOpen;
 
   void setDevNumName(int devnum);
   int  setupMixer(int devnum, int SetNum);
   void setupStructs(void);
-  int  openMixer(void);
   void updateMixDeviceI(MixDevice *mixdevice);
 
-  unsigned int devmask, recmask, recsrc, stereodevs;
-  int PercentLeft,PercentRight;
-  ///  Maximum volume Level allowed by the Mixer API (OS dependent)
-  int MaxVolume;
 };
-
-
-class Mixer_OSS : public Mixer
-{
-public:
-  Mixer_OSS();
-  Mixer_OSS(int devnum, int SetNum);
-  virtual ~Mixer_OSS() {};
-
-  virtual QString errorText(int mixer_error);
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-
-protected:
-  virtual void setDevNumName_I(int devnum);
-};
-
-class Mixer_ALSA : public Mixer
-{
-public:
-  Mixer_ALSA();
-  Mixer_ALSA(int devnum, int SetNum);
-  virtual ~Mixer_ALSA() {};
-
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-
-protected:
-  virtual void setDevNumName_I(int devnum);
-};
-
-class Mixer_SUN : public Mixer
-{
-public:
-  Mixer_SUN();
-  Mixer_SUN(int devnum, int SetNum);
-  virtual ~Mixer_SUN() {};
-
-  virtual QString errorText(int mixer_error);
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-
-protected:
-  virtual void setDevNumName_I(int devnum);
-};
-
-class Mixer_IRIX : public Mixer
-{
-public:
-  Mixer_IRIX();
-  Mixer_IRIX(int devnum, int SetNum);
-  virtual ~Mixer_IRIX() {};
-
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-
-protected:
-  virtual void setDevNumName_I(int devnum);
-};
-
-class Mixer_HPUX : public Mixer
-{
-public:
-  Mixer_HPUX();
-  Mixer_HPUX(int devnum, int SetNum);
-  virtual ~Mixer_HPUX() {};
-
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-
-protected:
-  virtual int release_I();
-  virtual void setDevNumName_I(int devnum);
-};
-
-class Mixer_None : public Mixer
-{
-};
-
 #endif
