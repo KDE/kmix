@@ -24,6 +24,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
+#include <dcopobject.h>
 
 #include "mixer.h"
 #include "kmix-platforms.cpp"
@@ -167,7 +168,7 @@ Mixer* Mixer::getMixer( int driver, MixSet set,int device, int card )
 }
 
 
-Mixer::Mixer( int device, int card )
+Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
 {
   m_devnum = device;
   m_cardnum = card;
@@ -179,6 +180,11 @@ Mixer::Mixer( int device, int card )
   m_mixDevices.setAutoDelete( true );
   m_profiles.setAutoDelete( true );
   m_mixerNum = 0;
+
+  QCString objid;
+  objid.setNum(m_devnum);
+  objid.prepend("Mixer");
+  DCOPObject::setObjId( objid );
 };
 
 int Mixer::setupMixer( MixSet mset )
@@ -390,6 +396,93 @@ void Mixer::setRecsrc( int devnum, bool on )
   else // just the actual mixdevice
     for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
         if( md->num() == devnum ) md->setRecsrc( on );
+}
+
+
+MixDevice *Mixer::mixDeviceByType( int deviceidx )
+{
+  int i=0;
+  while (i<size() && (*this)[i]->num()!=deviceidx) i++;
+  if (i==size()) return 0;
+ 
+  return (*this)[i];
+}
+
+void Mixer::setVolume( int deviceidx, int percentage )
+{
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return;
+  
+  Volume vol=mixdev->getVolume();
+  vol.setAllVolumes( (percentage*vol.maxVolume())/100 );
+  writeVolumeToHW(deviceidx, vol);
+}
+
+void Mixer::setMasterVolume( int percentage )
+{
+  setVolume( 0, percentage );
+}
+
+int Mixer::volume( int deviceidx )
+{
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return 0;
+  
+  Volume vol=mixdev->getVolume();
+  return (vol.getVolume( Volume::LEFT )*100)/vol.maxVolume();
+}
+
+int Mixer::masterVolume()
+{
+  return volume( 0 );
+}
+
+void Mixer::increaseVolume( int deviceidx )
+{
+  int vol=volume(deviceidx);
+  setVolume(deviceidx, vol+5);
+}
+
+void Mixer::decreaseVolume( int deviceidx )
+{
+  int vol=volume(deviceidx);
+  setVolume(deviceidx, vol-5);
+}
+
+void Mixer::setMute( int deviceidx, bool on )
+{
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return;
+
+  mixdev->setMuted( on ); 
+
+  writeVolumeToHW(deviceidx, mixdev->getVolume() );
+}
+
+bool Mixer::mute( int deviceidx )
+{
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return true;
+  
+  return mixdev->isMuted();
+}
+
+void Mixer::setRecordSource( int deviceidx, bool on )
+{
+  setRecsrc( deviceidx, on ); 
+}
+
+bool Mixer::isRecordSource( int deviceidx )
+{
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return false;
+  
+  return mixdev->isRecsrc();
+}
+
+bool Mixer::isAvailableDevice( int deviceidx )
+{
+  return mixDeviceByType( deviceidx );
 }
 
 #include "mixer.moc"

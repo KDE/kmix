@@ -31,6 +31,7 @@
 #include <qptrlist.h>
 
 #include "volume.h"
+#include "mixerIface.h"
 
 /*
   I am using a fixed MAX_MIXDEVS #define here.
@@ -110,7 +111,7 @@ class MixSet : public QPtrList<MixDevice>
 };
 
 
-class Mixer : public QObject
+class Mixer : public QObject, virtual public MixerIface
 {
       Q_OBJECT
 
@@ -135,6 +136,11 @@ class Mixer : public QObject
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);
 
+      /// Returns a pointer to the mix device whose type matches the value
+      /// given by the parameter and the array MixerDevNames given in
+      /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.) 
+      MixDevice *mixDeviceByType( int deviceidx );
+
       /// Grabs (opens) the mixer for further intraction
       virtual int grab();
       /// Releases (closes) the mixer
@@ -145,7 +151,7 @@ class Mixer : public QObject
       /// Derived classes can override this method to produce platform
       /// specific error descriptions.
       virtual QString errorText(int mixer_error);
-      QString mixerName();
+      virtual QString mixerName();
 
       /// set/get mixer number used to identify mixers with equal names
       void setMixerNum( int num );
@@ -173,6 +179,23 @@ class Mixer : public QObject
       virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
 
 
+      /// DCOP oriented methods (look at mixerIface.h for the descriptions)
+      virtual void setVolume( int channeltype, int percentage );
+      virtual void setMasterVolume( int percentage );
+
+      virtual void increaseVolume( int channeltype );
+      virtual void decreaseVolume( int channeltype );
+
+      virtual int volume( int channeltype );
+      virtual int masterVolume();
+
+      virtual void setMute( int channeltype, bool on );
+      virtual bool mute( int channeltype );
+      virtual void setRecordSource( int deviceidx, bool on );
+      virtual bool isRecordSource( int deviceidx );
+
+      virtual bool isAvailableDevice( int deviceidx );
+      
    public slots:
       /// Writes the given volumes in the given device
       /// Abstract method! You must implement it in your dericved class.
