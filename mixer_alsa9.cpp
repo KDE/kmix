@@ -214,19 +214,19 @@ Mixer_ALSA::openMixer()
 	{
 		MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
 		
-		kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
+		//kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
 		
 		Volume::ChannelMask chn = Volume::MNONE;
 		Volume::ChannelMask chnTmp;
 		if ( snd_mixer_selem_has_playback_volume(elem) ) {
-			kdDebug(67100) << "has_playback_volume()" << endl;
+			//kdDebug(67100) << "has_playback_volume()" << endl;
 			chnTmp = snd_mixer_selem_is_playback_mono ( elem )
 				? Volume::MLEFT : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
 			chn = (Volume::ChannelMask) (chn | chnTmp);
 			cc = MixDevice::SLIDER;
 		}
 		else if ( snd_mixer_selem_has_capture_volume(elem) ) {
-			kdDebug(67100) << "has_capture_volume()" << endl;
+			//kdDebug(67100) << "has_capture_volume()" << endl;
 			chnTmp = snd_mixer_selem_is_capture_mono( elem )
 				? Volume::MLEFT : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT );
 			chn = (Volume::ChannelMask) (chn | chnTmp);
@@ -243,15 +243,15 @@ Mixer_ALSA::openMixer()
 		mixer_sid_list.append( sid );
 		
 		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {   
-			kdDebug(67100) << "has_playback_switch()" << endl;
+			//kdDebug(67100) << "has_playback_switch()" << endl;
 			canMute = true;
 		}
 		if ( snd_mixer_selem_has_capture_switch ( elem ) )	{
-			kdDebug(67100) << "has_capture_switch()" << endl;
+			//kdDebug(67100) << "has_capture_switch()" << endl;
 			canRecord = true;
 		}
 		if ( snd_mixer_selem_has_common_switch ( elem ) ) {
-			kdDebug(67100) << "has_common_switch()" << endl;
+			//kdDebug(67100) << "has_common_switch()" << endl;
 			canMute = true;
 			canRecord = true;
 		}
