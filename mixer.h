@@ -29,7 +29,8 @@
 #define DEFAULT_MIXER "/dev/mixer"
 #endif
 
-// MixChannel must be declared here
+// I am doing crossreferencing between classes, so I must declare all
+// referenced classes here.
 class MixChannel;
 class Mixer;
 

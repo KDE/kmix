@@ -1,5 +1,5 @@
 /*
- * Copyright by Christian Esken 1996-97
+ * Copyright by Christian Esken 1996-98
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -25,6 +25,7 @@
 #include "prefs.h"
 #include "prefs.moc"
 #include "kmix.h"
+#include <klocale.h>
 #include <qchkbox.h> 
 #include <qlabel.h>
 
@@ -39,21 +40,21 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   page1->setGeometry(10,10,width()-20,height()-20);
   page2 = new QWidget( this );
   page2->setGeometry(10,10,width()-20,height()-20);
-  addTab( page1, "General" );
-  addTab( page2, "Channels" );
+  addTab( page1, klocale->translate("General") );
+  addTab( page2, klocale->translate("Channels") );
 
   // Define page 1
-  QButtonGroup *grpbox1a = new QButtonGroup( "General", page1 );
+  QButtonGroup *grpbox1a = new QButtonGroup( klocale->translate("Startup settings"), page1 );
   grpbox1a->setGeometry( 10, 10, page1->width()-20, page1->height()-20 );
 
   int x=10, y=20;
-  menubarChk = new QCheckBox(grpbox1a,"Menubar");
-  menubarChk->setText("Menubar");
+  menubarChk = new QCheckBox(grpbox1a);
+  menubarChk->setText(klocale->translate("Menubar"));
   menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
 
   y += (menubarChk->height() );
-  tickmarksChk = new QCheckBox(grpbox1a,"Tickmarks");
-  tickmarksChk->setText("Tickmarks");
+  tickmarksChk = new QCheckBox(grpbox1a);
+  tickmarksChk->setText(klocale->translate("Tickmarks"));
   tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
 
   y += tickmarksChk->height();
@@ -61,7 +62,6 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   // Define page 2
   updateChannelConfWindow();
 
-  //  buttonOk = new QPushButton( "Ok", this );
   setCancelButton();
   setApplyButton();
   setOkButton();
@@ -79,30 +79,31 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   grpbox1a->resize(grpbox1a->width(),maxheight);
   grpbox2a->resize(grpbox2a->width(),maxheight);
 
-//  setFixedSize(width(),maxheight+100);
-//  setMinimumSize(width(),maxheight+100);
-//  setMaximumSize(width(),maxheight+100);
-  setCaption( "KMix Preferences" );
+  setCaption( klocale->translate("KMix Preferences") );
 }
 
 
 void Preferences::updateChannelConfWindow()
 {
-  grpbox2a = new QGroupBox ("Mixer channel setup (not saved yet)",page2);
+  grpbox2a = new QGroupBox (klocale->translate("Mixer channel setup (not saved yet)"),page2);
   MixDevice *mdev = mix->First;
   QLabel *qlb;
 
   int ypos=20;
   int x1=10,x2=120;
-  qlb = new QLabel(grpbox2a,"Device");
-  qlb->setText("Device");
+  qlb = new QLabel(grpbox2a);
+  qlb->setText(klocale->translate("Device"));
   qlb->move(x1,ypos);
-  qlb = new QLabel(grpbox2a,"Show");
-  qlb->setText("Show");
+  qlb = new QLabel(grpbox2a);
+  qlb->setText(klocale->translate("Show"));
   qlb->move(x2,ypos);
   ypos += qlb->height();
 
   while (mdev) {
+
+    /// TODO: Create an array, where qle's are inserted. Dann bei "apply"
+    /// das qle Array durchgehen und neue Namen setzen.
+
     QLineEdit *qle;
     qle = new  QLineEdit(grpbox2a,mdev->devname);
     qle->setText(mdev->devname);

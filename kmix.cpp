@@ -26,20 +26,11 @@ static char rcsid[]="$Id$";
  * SUCH DAMAGE.
  */
 
-//!!!
-#define _(TEXT) TEXT
-
 
 #include <stdio.h>
 #include <iostream.h>
-/*
-#include <sys/ioctl.h>
-#include <stdlib.h> 
-#include <fcntl.h>
-*/
 #include <kiconloader.h>
 #include <klocale.h>
-//#include <kwm.h>
 
 #include "mixer.h"
 #include "kmix.h"
@@ -417,35 +408,35 @@ void KMix::createMenu()
 
   Mfile = new QPopupMenu;
   CHECK_PTR( Mfile );
-  Mfile->insertItem(_("Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
+  Mfile->insertItem(klocale->translate("Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_M),this, SLOT(hideMenubarCB()));
 
-  Mfile->insertItem(_("Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
+  Mfile->insertItem(klocale->translate("Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_T),this, SLOT(tickmarksTogCB()));
 
-  Mfile->insertItem( _("&Options")       , this, SLOT(showOptsCB()) );
+  Mfile->insertItem( klocale->translate("&Options")       , this, SLOT(showOptsCB()) );
   Mfile->insertSeparator();
-  Mfile->insertItem( _("&Quit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
+  Mfile->insertItem( klocale->translate("&Quit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
   Mhelp = new QPopupMenu;
   CHECK_PTR( Mhelp );
-  Mhelp->insertItem( "&Contents", this, SLOT(launchHelpCB()), Key_F1);
+  Mhelp->insertItem( klocale->translate("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
   qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
   Mhelp->insertSeparator();
-  Mhelp->insertItem( "&About", this, SLOT(aboutClickedCB()));
-  Mhelp->insertItem( "&About Qt...", this, SLOT(aboutqt()));
+  Mhelp->insertItem( klocale->translate("&About"), this, SLOT(aboutClickedCB()));
+  Mhelp->insertItem( klocale->translate("&About Qt..."), this, SLOT(aboutqt()));
 
   mainmenu = new KMenuBar( this, "main menu");
   CHECK_PTR( mainmenu );
-  mainmenu->insertItem( _("&File"), Mfile );
+  mainmenu->insertItem( klocale->translate("&File"), Mfile );
   mainmenu->insertSeparator();
-  mainmenu->insertItem( _("&Help"), Mhelp );
+  mainmenu->insertItem( klocale->translate("&Help"), Mhelp );
 
   Mbalancing = new QPopupMenu;
   CHECK_PTR( Mbalancing );
-  Mbalancing->insertItem(_("&Left")  , this, SLOT(MbalLeftCB()));
-  Mbalancing->insertItem(_("&Center"), this, SLOT(MbalCentCB()));
-  Mbalancing->insertItem(_("&Right") , this, SLOT(MbalRightCB()));
+  Mbalancing->insertItem(klocale->translate("&Left")  , this, SLOT(MbalLeftCB()));
+  Mbalancing->insertItem(klocale->translate("&Center"), this, SLOT(MbalCentCB()));
+  Mbalancing->insertItem(klocale->translate("&Right") , this, SLOT(MbalRightCB()));
 }
 
 void KMix::tickmarksTogCB()
@@ -567,16 +558,16 @@ QPopupMenu* KMix::contextMenu(QObject *o)
     Mlocal = new QPopupMenu;
     CHECK_PTR( Mlocal );
     if (MixFound->is_muted)
-      Mlocal->insertItem(_("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
+      Mlocal->insertItem(klocale->translate("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
     else
-      Mlocal->insertItem(_("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
+      Mlocal->insertItem(klocale->translate("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
     if (MixFound->is_stereo)
       if (MixFound->StereoLink)
-	Mlocal->insertItem(_("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
+	Mlocal->insertItem(klocale->translate("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
       else
-	Mlocal->insertItem(_("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
+	Mlocal->insertItem(klocale->translate("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
     if (MixFound->is_recordable)
-      Mlocal->insertItem(_("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
+      Mlocal->insertItem(klocale->translate("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
 
     MlocalCreated = true;
     return Mlocal;
