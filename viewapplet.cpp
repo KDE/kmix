@@ -151,6 +151,11 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
 	    showIcons = true;
 	}
     }
+    else {
+       if ( qre->size().width() > 50 ) {
+           showIcons = true;
+       }
+    }
     for ( QWidget *mdw = _mdws.first(); mdw != 0; mdw = _mdws.next() ) {
 	if ( mdw == 0 ) {
 	    kdError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";

@@ -100,7 +100,7 @@ void KSmallSlider::valueChange()
         sliderVal = QRangeControl::value();
         reallyMoveSlider( newPos );
     }
-    kdDebug(67100) << "KSmallSlider::valueChange() value=" << value() << "\n";
+    //kdDebug(67100) << "KSmallSlider::valueChange() value=" << value() << "\n";
     emit valueChanged(value());
 }
 
@@ -110,9 +110,11 @@ void KSmallSlider::resizeEvent( QResizeEvent * )
     static int w, h;
     if ((w != width()) || (h != height())) {
         w = width(), h = height();
+/*
         kdDebug(67100)
             << "KSmallSlider::resizeEvent: width() = " << width()
             << ", height() = " << height() << endl;
+*/
     }
     update();
     //QWidget::resizeEvent( ev );
@@ -206,7 +208,7 @@ QColor interpolate( QColor low, QColor high, int percent ) {
 
 void KSmallSlider::paintEvent( QPaintEvent * )
 {
-    kdDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
+//    kdDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
    QPainter p( this );
 
    // ------------------------ draw 3d border ---------------------------------------------
@@ -251,7 +253,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
        
        if (  _orientation == Qt::Horizontal ) {
          QRect outer = QRect( 1, 1, sliderPos, height() - 2 );
-	 kdDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer << endl;
+//	 kdDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer << endl;
 
          if ( grayed )
              gradient( p, true, outer, grayLow,
@@ -264,11 +266,12 @@ void KSmallSlider::paintEvent( QPaintEvent * )
       }
       else {
          QRect outer = QRect( 1, height()-sliderPos-1, width() - 2, sliderPos-1 );
+/*
 	 kdDebug(67100) << "KSmallSlider::paintEvent: sliderPos=" << sliderPos
 			<< "height()=" << height()
 			<< "width()=" << width()
 			<< "outer = " << outer << endl;
-
+*/
          if ( grayed )
              gradient( p, false, outer,
                        interpolate( grayLow, grayHigh, 100*sliderPos/(height()-2) ),
@@ -335,7 +338,7 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
-    kdDebug(67100) << "KSmallslider::wheelEvent()" << endl;
+//    kdDebug(67100) << "KSmallslider::wheelEvent()" << endl;
     /* Unfortunately KSmallSlider is no MixDeviceWidget, so we don't have access to
      * the MixDevice.
      */
@@ -343,7 +346,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
     if ( inc < 1)
 	inc = 1;
 
-    kdDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta() << endl;
+    //kdDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta() << endl;
     if ( e->delta() > 0 ) {
 	QRangeControl::setValue( QRangeControl::value() + inc );
     }
@@ -481,11 +484,11 @@ QSizePolicy KSmallSlider::sizePolicy() const
 {
 
     if ( _orientation == Qt::Vertical ) {
-	kdDebug(67100) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
+	//kdDebug(67100) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
 	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
     }
     else {
-	kdDebug(67100) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
+	//kdDebug(67100) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
         return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     }
 }

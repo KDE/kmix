@@ -105,11 +105,11 @@ QSizePolicy MDWSlider::sizePolicy() const
 {
 
     if ( _orientation == Qt::Vertical ) {
-	kdDebug(67100) << "MDWSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
+//	kdDebug(67100) << "MDWSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
 	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
     }
     else {
-	kdDebug(67100) << "MDWSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
+//	kdDebug(67100) << "MDWSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
         return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     }
 }
