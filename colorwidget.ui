@@ -27,9 +27,6 @@
             <property name="text">
                 <string>Show &amp;volume meters in reverse direction</string>
             </property>
-            <property name="accel">
-                <string>Alt+V</string>
-            </property>
         </widget>
         <widget class="QCheckBox">
             <property name="name">
@@ -37,9 +34,6 @@
             </property>
             <property name="text">
                 <string>&amp;Use custom colors</string>
-            </property>
-            <property name="accel">
-                <string>Alt+U</string>
             </property>
         </widget>
         <widget class="QGroupBox">
