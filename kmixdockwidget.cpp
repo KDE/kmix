@@ -39,7 +39,7 @@
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer,
 				QWidget *parent, const char *name )
-    : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L)
+    : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), m_mixerVisible(false)
 {
     createMasterVolWidget();
 }
@@ -116,7 +116,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         // If left-click, toggle the master volume control.
         switch ( me->button() ) {
     		case LeftButton:
-        		if (!masterVol->isVisible()) {
+        		if (!m_mixerVisible) {
 			int scnum = QApplication::desktop()->screenNumber(this);
             		QRect desktop = QApplication::desktop()->screenGeometry(scnum);
             		int sw = desktop.width();
@@ -143,6 +143,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         		} else {
             		masterVol->hide();          // fixme: this doesn't work?!
         		}
+                m_mixerVisible = !m_mixerVisible;
         		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
         		return;
     		default:
@@ -156,6 +157,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
 
 void KMixDockWidget::wheelEvent(QWheelEvent *e)
 {
+    m_mixerVisible = masterVol->isVisible();
     MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
     Volume vol = masterDevice->getVolume();
     int inc = vol.maxVolume() / 20;

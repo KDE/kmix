@@ -110,7 +110,6 @@ class KMixWindow : public KMainWindow
 
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
-   int m_visibleTabs;
 
    QTabWidget *m_tab;
    QWidget *m_buttons;

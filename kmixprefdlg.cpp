@@ -31,11 +31,11 @@
 
 
 KMixPrefDlg::KMixPrefDlg( QWidget *parent )
-    : KDialogBase(  Tabbed, i18n( "KMix Preferences" ),
+    : KDialogBase(  Plain, i18n( "KMix Preferences" ),
           Ok|Cancel|Apply, Ok, parent )
 {
    // general buttons
-   m_generalTab = addPage( i18n("&General") );
+   m_generalTab = plainPage( /* i18n("&General") */ );
 
    QBoxLayout *layout = new QVBoxLayout( m_generalTab );
    layout->setSpacing( KDialog::spacingHint() );

@@ -85,8 +85,9 @@ KMixApp::newInstance()
 
 
 KMixWindow::KMixWindow()
-   : KMainWindow(0, 0, 0 ), m_maxId( 0 ), m_visibleTabs( 0 ), m_dockWidget( 0L )
+   : KMainWindow(0, 0, 0 ), m_maxId( 0 ), m_dockWidget( 0L )
 {
+	m_mixerWidgets.setAutoDelete(true);
 	initMixer();
 	initActions();
 	initWidgets();
@@ -226,7 +227,7 @@ void
 KMixWindow::initWidgets()
 {
 	m_tab = new QTabWidget( this );
-	setCentralWidget( m_tab );
+//	setCentralWidget( m_tab );
 }
 
 
@@ -421,9 +422,22 @@ void
 KMixWindow::insertMixerWidget( KMixerWidget *mw )
 {
 	m_mixerWidgets.append( mw );
-	
-	m_visibleTabs++;
-	m_tab->addTab( mw, mw->name() );
+	if (m_mixerWidgets.count() == 2)
+	{
+		m_tab->addTab( m_mixerWidgets.at(0), m_mixerWidgets.at(0)->name() );
+		setCentralWidget( m_tab );
+		m_tab->show();
+	}
+    
+	if ( m_mixerWidgets.count() > 1 )
+	{
+		m_tab->addTab( mw, mw->name() );
+	}
+	else
+	{
+		setCentralWidget( mw );
+	}
+ 
    mw->setTicks( m_showTicks );
    mw->setLabels( m_showLabels );
    mw->show();
@@ -435,25 +449,32 @@ KMixWindow::insertMixerWidget( KMixerWidget *mw )
    KAction *a = actionCollection()->action( "file_close_tab" );
    if ( a ) 
 	{
-		a->setEnabled( m_visibleTabs>1 );
+		a->setEnabled( m_mixerWidgets.count() > 1 );
 	}
 
    updateLayout();
 }
 
-
 void 
 KMixWindow::removeMixerWidget( KMixerWidget *mw )
 {
-    m_visibleTabs--;
-    m_tab->removePage( mw );
     m_mixerWidgets.remove( mw );
+    m_tab->removePage( mw );
 
+    if ( m_mixerWidgets.count() == 1 )
+    {
+        m_tab->removePage( m_mixerWidgets.at(0) );
+        m_tab->hide();
+        m_mixerWidgets.at(0)->reparent(this, QPoint());
+        setCentralWidget( m_mixerWidgets.at(0) );
+        m_mixerWidgets.at(0)->show();
+    }
+    
     KAction *a = actionCollection()->action( "file_close_tab" );
     if ( a ) 
-	 {
-		 a->setEnabled( m_visibleTabs>1 );
-	 }
+    {
+        a->setEnabled( m_mixerWidgets.count() > 1 );
+    }
 
     updateLayout();
 }
@@ -462,7 +483,10 @@ KMixWindow::removeMixerWidget( KMixerWidget *mw )
 void 
 KMixWindow::updateLayout()
 {
-    m_tab->setMinimumSize( m_tab->minimumSizeHint() );
+    if ( m_mixerWidgets.count() > 1 )
+    {
+        m_tab->setMinimumSize( m_tab->minimumSizeHint() );
+    }
 }
 
 void 
@@ -522,11 +546,11 @@ KMixWindow::showAbout()
 void 
 KMixWindow::closeMixer()
 {
-   if ( m_mixerWidgets.count() <= 1 )
+   if ( m_mixerWidgets.count() < 2 )
 	{
 		return;
 	}
-   removeMixerWidget( (KMixerWidget *)m_tab->currentPage() );
+   removeMixerWidget( static_cast<KMixerWidget *>(m_tab->currentPage()) );
 }
 
 

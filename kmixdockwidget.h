@@ -53,6 +53,7 @@ class KMixDockWidget : public KSystemTray  {
  private:
    Mixer *m_mixer;
    QFrame *masterVol;   
+   bool m_mixerVisible;
 };
 
 #endif
