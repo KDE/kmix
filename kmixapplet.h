@@ -77,6 +77,7 @@ class KMixApplet : public KPanelApplet
    void updateLayoutNow(); 
    void selectMixer();
    void applyColors();
+   void applyDirection();
   
   protected:
    void resizeEvent( QResizeEvent * );
@@ -88,8 +89,10 @@ class KMixApplet : public KPanelApplet
    QTimer *m_layoutTimer;
    int m_lockedLayout;
    ColorWidget *m_pref;
-   bool insideOut; //  reverses direction of sliders and icon position
+   bool reversedDir; //  reverses direction of sliders and icon position
    void popupDirectionChange(Direction);
+   Direction checkReverse(Direction);
+   void setColors();
 
    static int s_instCount;
    static QPtrList<Mixer> *s_mixers;

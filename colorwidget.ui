@@ -14,8 +14,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>283</width>
-            <height>352</height>
+            <width>360</width>
+            <height>456</height>
         </rect>
     </property>
     <property stdset="1">
@@ -40,6 +40,14 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>ButtonGroup6</cstring>
+            </property>
+            <property stdset="1">
+                <name>frameShape</name>
+                <enum>Box</enum>
+            </property>
+            <property stdset="1">
+                <name>frameShadow</name>
+                <enum>Sunken</enum>
             </property>
             <property stdset="1">
                 <name>title</name>
@@ -74,13 +82,6 @@
                             <height>21</height>
                         </size>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>40</width>
-                            <height>21</height>
-                        </size>
-                    </property>
                 </spacer>
                 <widget row="1"  column="0"  rowspan="1"  colspan="2" >
                     <class>QRadioButton</class>
@@ -89,12 +90,12 @@
                         <cstring>customColors</cstring>
                     </property>
                     <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Custom colors</string>
-                    </property>
-                    <property stdset="1">
                         <name>enabled</name>
                         <bool>true</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Custom colors</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
@@ -132,13 +133,6 @@
                             <height>20</height>
                         </size>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
                 </spacer>
                 <widget row="2"  column="1" >
                     <class>QFrame</class>
@@ -147,16 +141,16 @@
                         <cstring>customFrame</cstring>
                     </property>
                     <property stdset="1">
-                        <name>frameShadow</name>
-                        <enum>Raised</enum>
+                        <name>enabled</name>
+                        <bool>true</bool>
                     </property>
                     <property stdset="1">
                         <name>frameShape</name>
                         <enum>NoFrame</enum>
                     </property>
                     <property stdset="1">
-                        <name>enabled</name>
-                        <bool>true</bool>
+                        <name>frameShadow</name>
+                        <enum>Raised</enum>
                     </property>
                     <property>
                         <name>layoutMargin</name>
@@ -235,12 +229,12 @@
                                 <cstring>TextLabel8</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Background:</string>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Background:</string>
                             </property>
                         </widget>
                         <widget row="8"  column="1" >
@@ -261,12 +255,12 @@
                                 <cstring>TextLabel3</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Silent:</string>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Silent:</string>
                             </property>
                         </widget>
                         <widget row="3"  column="0" >
@@ -276,12 +270,12 @@
                                 <cstring>TextLabel4</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Background:</string>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Background:</string>
                             </property>
                         </widget>
                         <widget row="1"  column="0" >
@@ -291,12 +285,12 @@
                                 <cstring>labelLoad</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Loud:</string>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Loud:</string>
                             </property>
                         </widget>
                         <widget row="0"  column="0"  rowspan="1"  colspan="2" >
@@ -315,54 +309,18 @@
                                     <number>6</number>
                                 </property>
                                 <widget>
-                                    <class>KSeparator</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>Line1</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>orientation</name>
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minimumSize</name>
-                                        <size>
-                                            <width>16</width>
-                                            <height>0</height>
-                                        </size>
-                                    </property>
-                                </widget>
-                                <widget>
                                     <class>QLabel</class>
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>TextLabel5</cstring>
                                     </property>
                                     <property stdset="1">
-                                        <name>text</name>
-                                        <string>Active</string>
-                                    </property>
-                                    <property stdset="1">
                                         <name>enabled</name>
                                         <bool>true</bool>
                                     </property>
-                                </widget>
-                                <widget>
-                                    <class>KSeparator</class>
                                     <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>Line2</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>orientation</name>
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>sizePolicy</name>
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                        </sizepolicy>
+                                        <name>text</name>
+                                        <string>Active</string>
                                     </property>
                                 </widget>
                             </hbox>
@@ -374,12 +332,12 @@
                                 <cstring>TextLabel6</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Loud:</string>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Loud:</string>
                             </property>
                         </widget>
                         <widget row="7"  column="0" >
@@ -389,12 +347,12 @@
                                 <cstring>TextLabel7</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Silent:</string>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Silent:</string>
                             </property>
                         </widget>
                         <widget row="5"  column="0"  rowspan="1"  colspan="2" >
@@ -413,54 +371,18 @@
                                     <number>6</number>
                                 </property>
                                 <widget>
-                                    <class>KSeparator</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>Line1_2</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>orientation</name>
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minimumSize</name>
-                                        <size>
-                                            <width>16</width>
-                                            <height>0</height>
-                                        </size>
-                                    </property>
-                                </widget>
-                                <widget>
                                     <class>QLabel</class>
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>TextLabel5_2</cstring>
                                     </property>
                                     <property stdset="1">
-                                        <name>text</name>
-                                        <string>Muted</string>
-                                    </property>
-                                    <property stdset="1">
                                         <name>enabled</name>
                                         <bool>true</bool>
                                     </property>
-                                </widget>
-                                <widget>
-                                    <class>KSeparator</class>
                                     <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>Line2_2</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>orientation</name>
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>sizePolicy</name>
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                        </sizepolicy>
+                                        <name>text</name>
+                                        <string>Muted</string>
                                     </property>
                                 </widget>
                             </hbox>
@@ -485,17 +407,21 @@
                                     <height>16</height>
                                 </size>
                             </property>
-                            <property>
-                                <name>sizeHint</name>
-                                <size>
-                                    <width>20</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
                         </spacer>
                     </grid>
                 </widget>
             </grid>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>reverseDirection</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Reverse direction</string>
+            </property>
         </widget>
         <widget>
             <class>QLayoutWidget</class>
@@ -524,13 +450,6 @@
                     <property stdset="1">
                         <name>sizeType</name>
                         <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
                     </property>
                     <property>
                         <name>sizeHint</name>

@@ -102,7 +102,7 @@ void KSmallSlider::valueChange()
     emit valueChanged(value());
 }
 
-void KSmallSlider::resizeEvent( QResizeEvent * )
+void KSmallSlider::resizeEvent( QResizeEvent * ev )
 {
     rangeChange();
     static int w, h;
@@ -112,6 +112,7 @@ void KSmallSlider::resizeEvent( QResizeEvent * )
             << "KSmallSlider::resizeEvent: width() = " << width()
             << ", height() = " << height() << endl;
     }
+    QWidget::resizeEvent( ev );
 }
 
 //  usually returns a positive integer
@@ -217,28 +218,28 @@ void KSmallSlider::paintEvent( QPaintEvent * )
                        colLow, 32 );
       }
       else if (direction == KPanelApplet::Down ) {
-         QRect outer = QRect( 1, 1, width() - 2, sliderPos - 1 );
+         QRect outer = QRect( 1, 1, width() - 2, sliderPos );
 
          if ( grayed )
-             gradient( p, false, outer,
-                       interpolate( grayHigh, grayLow, 100*sliderPos/(height()-2) ),
-                       grayHigh, 32 );
+             gradient( p, false, outer, grayLow,
+                       interpolate( grayLow, grayHigh, 100*sliderPos/(height()-2) ),
+                       32 );
          else
-             gradient( p, false, outer,
-                       interpolate( colHigh, colLow, 100*sliderPos/(height()-2) ),
-                       colHigh, 32 );
+             gradient( p, false, outer, colLow,
+                       interpolate( colLow, colHigh, 100*sliderPos/(height()-2) ),
+                       32 );
       }
       else if (direction == KPanelApplet::Right ) {
-         QRect outer = QRect( 1, 1, sliderPos - 1, height() - 2 );
+         QRect outer = QRect( 1, 1, sliderPos, height() - 2 );
 
          if ( grayed )
-             gradient( p, true, outer,
-                       interpolate( grayHigh, grayLow, 100*sliderPos/(width()-2) ),
-                       grayHigh, 32 );
+             gradient( p, true, outer, grayLow,
+                       interpolate( grayLow, grayHigh, 100*sliderPos/(width()-2) ),
+                       32 );
          else
-             gradient( p, true, outer,
-                       interpolate( colHigh, colLow, 100*sliderPos/(width()-2) ),
-                       colHigh, 32 );
+             gradient( p, true, outer, colLow,
+                       interpolate( colLow, colHigh, 100*sliderPos/(width()-2) ),
+                       32 );
       }
       else {
          QRect outer = QRect( sliderPos + 1, 1, width() - 2 - sliderPos, height() - 2 );
@@ -256,13 +257,13 @@ void KSmallSlider::paintEvent( QPaintEvent * )
       // drow upper/right part
       QRect inner;
       if ( direction == KPanelApplet::Up )
-         inner = QRect( 1, 1, width() - 2, sliderPos - 1 );
+         inner = QRect( 1, 1, width() - 2, sliderPos );
       else if ( direction == KPanelApplet::Down )
          inner = QRect( 1, sliderPos + 1, width() - 2, height() - 2 - sliderPos );
       else if ( direction == KPanelApplet::Right )
          inner = QRect( sliderPos + 1, 1, width() - 2 - sliderPos, height() - 2 );
       else
-         inner = QRect( 1, 1, sliderPos - 1, height() - 2 );
+         inner = QRect( 1, 1, sliderPos, height() - 2 );
 
       if ( grayed ) {
           p.setBrush( grayBack );

@@ -69,12 +69,21 @@ QPtrList<Mixer> *KMixApplet::s_mixers;
 #define defMutedLow "#808080"
 #define defMutedBack "#000000"
 
-KPanelApplet::Direction reverse(const KPanelApplet::Direction dir) {
-   switch (dir) {
-   case KPanelApplet::Up   : return KPanelApplet::Down;
-   case KPanelApplet::Down : return KPanelApplet::Up;
-   case KPanelApplet::Right: return KPanelApplet::Left;
-   default                 : return KPanelApplet::Right;
+KPanelApplet::Direction KMixApplet::checkReverse(Direction dir) {
+   if( reversedDir ) {
+       switch (dir) {
+       case KPanelApplet::Up   : return KPanelApplet::Down;
+       case KPanelApplet::Down : return KPanelApplet::Down;
+       case KPanelApplet::Right: return KPanelApplet::Left;
+       default                 : return KPanelApplet::Left;
+       }
+   } else {
+       switch (dir) {
+       case KPanelApplet::Up   : return KPanelApplet::Up;
+       case KPanelApplet::Down : return KPanelApplet::Up;
+       case KPanelApplet::Right: return KPanelApplet::Right;
+       default                 : return KPanelApplet::Right;
+       }
    }
 }
 
@@ -138,6 +147,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    // get colors
    m_pref = new ColorDialog( this );
    connect( m_pref, SIGNAL(applied()), SLOT(applyColors()) );
+   connect( m_pref, SIGNAL(applied()), SLOT(applyDirection()));
    m_customColors = cfg->readBoolEntry( "ColorCustom", false );
 
    m_colors.high = QColor(cfg->readEntry("ColorHigh", defHigh));
@@ -171,7 +181,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    }
    
    //  Find out wether the applet should be reversed
-   insideOut = cfg->readBoolEntry("InsideOut", false);
+   reversedDir = cfg->readBoolEntry("ReversedDirection", false);
+
    popupDirectionChange(KPanelApplet::Up);
 }
 
@@ -207,7 +218,7 @@ void KMixApplet::saveConfig()
         cfg->writeEntry( "ColorMutedLow", m_colors.mutedLow.name() );
         cfg->writeEntry( "ColorMutedBack", m_colors.mutedBack.name() );
 
-        cfg->writeEntry( "InsideOut", insideOut );
+        cfg->writeEntry( "ReversedDirection", reversedDir );
 
         m_mixerWidget->saveConfig( cfg, "Widget" );
         cfg->sync();
@@ -242,7 +253,7 @@ void KMixApplet::selectMixer()
          m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
                                            mixer->mixerNum(), true,
                                            popupDirection(), this );
-         m_mixerWidget->setColors( m_colors );
+         setColors();
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
          connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
@@ -318,7 +329,12 @@ void KMixApplet::applyColors()
     m_colors.mutedBack = m_pref->mutedBack->color();
 
     m_customColors = m_pref->customColors->isChecked();
+    
+    setColors();
+}
 
+void KMixApplet::setColors()
+{
     if ( !m_customColors ) {
         KMixerWidget::Colors cols;
         cols.high = QColor(defHigh);
@@ -337,10 +353,10 @@ void KMixApplet::popupDirectionChange(Direction dir) {
   if (!m_errorLabel) {
     if (m_mixerWidget) delete m_mixerWidget;
     m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
-                                      insideOut ? reverse(dir) : dir,
+                                      checkReverse(dir),
                                       this );
     m_mixerWidget->loadConfig( config(), "Widget" );
-    m_mixerWidget->setColors( m_colors );
+    setColors();
     connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
     connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
     m_mixerWidget->show();
@@ -362,11 +378,25 @@ void KMixApplet::preferences()
 
         m_pref->defaultLook->setChecked( !m_customColors );
         m_pref->customColors->setChecked( m_customColors );
+        
+        m_pref->reverseDirection->setChecked( reversedDir );
 
         m_pref->show();
 
     } else
         m_pref->raise();
+}
+
+void KMixApplet::applyDirection()
+{
+    reversedDir = m_pref->reverseDirection->isChecked();
+    QSize si = m_mixerWidget->size();
+    popupDirectionChange( popupDirection());
+    if( popupDirection() == Up || popupDirection() == Down )
+        m_mixerWidget->setIcons( si.height()>=32 );
+    else
+        m_mixerWidget->setIcons( si.width()>=32 );
+    m_mixerWidget->resize( si );
 }
 
 #include "kmixapplet.moc"
