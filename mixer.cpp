@@ -257,7 +257,7 @@ unsigned int Mixer::size() const
 MixDevice* Mixer::operator[](int num)
 {
   MixDevice* md =  m_mixDevices.at( num );
-  ASSERT( md );
+  Q_ASSERT( md );
   return md;
 }
 

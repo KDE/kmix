@@ -466,7 +466,7 @@ void KMixWindow::newMixer()
        }
 
        // ask for description
-       QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ),
+       QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ), QLineEdit::Normal,
                                              mixer->mixerName(), &ok, this );
       if ( ok ) {
 

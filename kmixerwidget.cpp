@@ -22,6 +22,7 @@
 #include <iostream.h>
 #include <stdlib.h>
 
+#include <qcursor.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
