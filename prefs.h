@@ -1,35 +1,41 @@
+//-*-C++-*-
 #ifndef PREFS_H
 #define PREFS_H
 
 #include <stdio.h>
 
-#include <qdialog.h>
-#include <qpushbt.h>
+
 #include <qchkbox.h>
-#include <qbttngrp.h>
-#include <qradiobt.h>
-#include <qlayout.h>
+
 #include <qtabdlg.h>
-//#include <ktabctl.h>
 #include "kconfig.h"
 #include "mixer.h"
+#include "channel.h"
 
+
+
+/// Preferences dialog for kmix
 class Preferences : public QTabDialog
 {
       Q_OBJECT
-private:
-      QPushButton	*buttonOk, *buttonApply, *buttonCancel;
-      QTabDialog	*tabctl;
-      QWidget		*page1, *page2;
-      QGroupBox		*grpbox2a;
+
 public:
-      Preferences( QWidget *parent, Mixer *mix );
-      void updateChannelConfWindow();
-      QCheckBox		*menubarChk;
-      QCheckBox		*tickmarksChk;
-      QCheckBox		*dockingChk;
-      KConfig		*kcfg;
-      Mixer		*mix;
+   Preferences( QWidget *parent, Mixer *mix );
+  ~Preferences(void) { };
+  void updateChannelConfWindow();
+  QCheckBox		*menubarChk;
+  QCheckBox		*tickmarksChk;
+  QCheckBox		*dockingChk;
+  KConfig		*kcfg;
+  Mixer		*mix;
+
+
+private:
+  QPushButton	*buttonOk, *buttonApply, *buttonCancel;
+  QTabDialog	*tabctl;
+  QWidget		*page1, *page2;
+  QGroupBox		*grpbox2a;
+  QList<ChannelSetup>	cSetup;
 
 signals:
       void optionsApply();

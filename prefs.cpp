@@ -25,8 +25,6 @@
 #include "prefs.moc"
 #include "kmix.h"
 #include <klocale.h>
-#include <qchkbox.h> 
-#include <qlabel.h>
 
 Preferences::Preferences( QWidget *parent, Mixer *mix ) :
    QTabDialog( parent )
@@ -90,20 +88,22 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 void Preferences::updateChannelConfWindow()
 {
   grpbox2a = new QGroupBox (i18n("Mixer channel setup (not saved yet)"),page2);
-  MixDevice *mdev = mix->First;
   QLabel *qlb;
 
   int ypos=20;
-  int x1=10,x2=120;
+  int x1=10,x2=120, x3=160;
   qlb = new QLabel(grpbox2a);
   qlb->setText(i18n("Device"));
   qlb->move(x1,ypos);
   qlb = new QLabel(grpbox2a);
   qlb->setText(i18n("Show"));
   qlb->move(x2,ypos);
+  qlb = new QLabel(grpbox2a);
+  qlb->setText(i18n("Split"));
+  qlb->move(x3,ypos);
   ypos += qlb->height();
 
-  while (mdev) {
+  for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
 
     /// TODO: Create an array, where qle's are inserted. Dann bei "apply"
     /// das qle Array durchgehen und neue Namen setzen.
@@ -119,8 +119,20 @@ void Preferences::updateChannelConfWindow()
     else
       qcb->setChecked(true);
 
+    QCheckBox *qcbSplit;
+    if (mdev->is_stereo) {
+      qcbSplit = new QCheckBox(grpbox2a);
+      qcbSplit->move(x3,ypos);
+      if (mdev->StereoLink)
+	qcbSplit->setChecked(false);
+      else
+	qcbSplit->setChecked(true);
+    }
+    else
+      qcbSplit = NULL;
+
+    cSetup.append(new ChannelSetup(mdev->device_num,qle,qcb,qcbSplit));
     ypos += qle->height();
-    mdev = mdev->Next;
   }
 
   grpbox2a->setGeometry( 10, 10, page2->width()-20, ypos+10);
@@ -147,5 +159,4 @@ void Preferences::slotCancel()
 {
   hide();
 }
-
 
