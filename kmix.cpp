@@ -265,7 +265,6 @@ void KMixApp::loadConfig()
 	 KMixApplet *ap = new KMixApplet( mixer );
 	 ap->mixerWidget()->sessionLoad( grp, false );
 	 int argc = kapp->argc();
-	 ap->init( argc, kapp->argv() );
 	 insertApplet( ap );
       }
    }
@@ -450,7 +449,6 @@ void KMixApp::newApplet()
              
       KMixApplet *ap = new KMixApplet( mixer );
       int argc = kapp->argc();
-      ap->init( argc, kapp->argv() );
       insertApplet( ap );         
    }
 }
