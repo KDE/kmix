@@ -42,7 +42,7 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kglobalaccel.h>
-#include <kaccelbase.h>
+#include <kaccelaction.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"

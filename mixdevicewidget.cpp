@@ -98,11 +98,11 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 
    m_keys=new KGlobalAccel(this,"Keys");
    m_keys->insertAction( "Increase volume", i18n( "Increase volume" ), QString::null,
-      KShortcuts(), KShortcuts(), this, SLOT( increaseVolume() ) );
+      KShortcut(), KShortcut(), this, SLOT( increaseVolume() ) );
    m_keys->insertAction( "Decrease volume", i18n( "Decrease volume" ), QString::null,
-      KShortcuts(), KShortcuts(), this, SLOT( decreaseVolume() ) );
+      KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
    m_keys->insertAction( "Toggle mute", i18n( "Toggle mute" ), QString::null,
-      KShortcuts(), KShortcuts(), this, SLOT( toggleMuted() ) );
+      KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
    m_keys->updateConnections();
 };
 
