@@ -2,7 +2,8 @@ SUBDIRS = control pics
 INCLUDES= $(all_includes)
 
 bin_PROGRAMS = kmix kmixctrl
-lib_LTLIBRARIES = kmix.la libkmixapplet.la kmixctrl.la
+lib_LTLIBRARIES = kmix.la kmixctrl.la
+kde_module_LTLIBRARIES = kmixapplet.la
 
 
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
@@ -29,12 +30,12 @@ kmixctrl_la_SOURCES = kmixctrl.cpp channel.cpp mixer.cpp volume.cpp
 kmixctrl_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmixctrl_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-libkmixapplet_la_METASOURCES=AUTO
-libkmixapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
+kmixapplet_la_METASOURCES=AUTO
+kmixapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
 	mixer.cpp ksmallslider.cpp volume.cpp kledbutton.cpp \
 	mixdevicewidget.cpp colorwidget.ui
-libkmixapplet_la_LDFLAGS = $(all_libraries) -version-info 1:0:0 -module 
-libkmixapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmixapplet_la_LDFLAGS = $(all_libraries) -version-info 1:0:0 -module -no-undefined
+kmixapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
 $(srcdir)/version.h: VERSION
 	cd $(srcdir) ;\
