@@ -28,21 +28,13 @@
 #endif
 
 // include files for Qt
-#include <qstrlist.h>
-#include <qtabwidget.h>
-
-// include files for KDE
-#include <kapplication.h>
-#include <kmainwindow.h>
-#include <kaccel.h>
-#include <kaction.h>
-#include <kiconloader.h>
-#include <kuniqueapplication.h>
-
-#include "mixer.h"
-
+class QTabWidget;
 class QTimer;
 
+// include files for KDE
+#include <kmainwindow.h>
+
+class KAccel;
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
@@ -51,23 +43,8 @@ class KMixWindow;
 class Mixer;
 class MixerSelectionInfo;
 
-class KMixApp : public KUniqueApplication
-{
-Q_OBJECT
- public:
-    KMixApp();
-    ~KMixApp();
-    int newInstance ();
+#include "mixer.h"
 
-    public slots:
-    void quitExtended();  // For a hack on visibility()
-
- signals:
-    void stopUpdatesOnVisibility();
-    
- private:
-    KMixWindow *m_kmix;
-};
 
 class KMixWindow : public KMainWindow
 {
