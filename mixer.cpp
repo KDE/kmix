@@ -40,7 +40,7 @@ MixDevice::MixDevice(int num, Volume vol, bool recordable,
    else
       m_name = name;
    
-   kdDebug() << "MixDevice::MixDevice(): created " << m_name << " , category: " << category << endl;
+   //kdDebug() << "MixDevice::MixDevice(): created " << m_name << " , category: " << category << endl;
 };
 
 MixDevice::MixDevice(const MixDevice &md)

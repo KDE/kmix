@@ -51,6 +51,8 @@
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
+#include "MixerSelector.h"
+#include "MixerSelectionInfo.h"
 
 
 KMixApp::KMixApp()
@@ -124,7 +126,7 @@ KMixWindow::KMixWindow()
 						       mixer->mixerName(),
 						       mixer->mixerNum(),
 						       false, KPanelApplet::Up,
-						       MixDevice::ALL, // !!!
+						       MixDevice::ALL, // !!! Here we shall do splitting - esken
 						       this );
 		  mw->setName( mixer->mixerName() );
 		  insertMixerWidget( mw );
@@ -624,34 +626,21 @@ KMixWindow::newMixer()
 	QStringList lst;
    Mixer *mixer;
 
-   int n = 1;
-   for (mixer=m_mixers.first(); mixer; mixer=m_mixers.next())
-   {
-      QString s;
-      s.sprintf("%i. %s", n, mixer->mixerName().ascii());
-      lst << s;
-      n++;
-   }
-
-   bool ok = FALSE;
-   QString res = QInputDialog::getItem( i18n("Mixers"),
-			i18n("Available mixers:"),
-			lst, 1, FALSE, &ok, this );
-	if ( ok )
-   {
+	// !!! testing code - esken
+	MixerSelector *ms = new MixerSelector( m_mixers , 0);
+	MixerSelectionInfo *msi = ms->exec();
+	delete ms;
+	if ( msi != 0 ) {
        // valid mixer?
-       mixer = m_mixers.at( lst.findIndex( res ) );
+       int num = msi->m_num;
+       mixer = m_mixers.at( num );
        if (!mixer)
 		 {
+		 	delete msi;
            KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
            return;
        }
 
-       // ask for description
-       QString name = KLineEditDlg::getText(
-				 i18n("Description"), i18n("Enter description:"),
-				 mixer->mixerName(), &ok, this );
-      if ( ok ) {
 	// create mixer widget
 	bool categoryInUse;
 
@@ -662,10 +651,9 @@ KMixWindow::newMixer()
 	    KMixerWidget *mw1 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
 					     false, KPanelApplet::Up,  dc, this );
 	    m_maxId++;
-	    mw1->setName( name + "");
+	    mw1->setName( msi->m_name + "");
 	    insertMixerWidget( mw1 );
 	}
-	// TODO: Check whether mw1 contains devices. Otherwise do not insert. Same goes for mw2!!!
 
 	dc = (MixDevice::DeviceCategory)(MixDevice::SECONDARY);
 	categoryInUse = isCategoryUsed(mixer, dc);
@@ -673,7 +661,7 @@ KMixWindow::newMixer()
 	    KMixerWidget *mw2 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
 					     false, KPanelApplet::Up,  dc, this );
 	    m_maxId++;
-	    mw2->setName( name + "(1)");
+	    mw2->setName( msi->m_name + "(1)");
 	    insertMixerWidget( mw2 );
 	}
 
@@ -683,11 +671,11 @@ KMixWindow::newMixer()
 	    KMixerWidget *mw3 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
 					     false, KPanelApplet::Up,  dc, this );
 	    m_maxId++;
-	    mw3->setName( name + "(2)");
+	    mw3->setName( msi->m_name + "(2)");
 	    insertMixerWidget( mw3 );
 	}
+	delete msi;
 
-      }
    }
 }
 
