@@ -25,6 +25,7 @@
 // STD Headers
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream.h>
 
 extern "C"
 {
