@@ -8,7 +8,7 @@ CXXFLAGS= @CXXFLAGS@ @all_includes@ -DHAVE_CONFIG_H -I..
 # @LDFLAGS@    : is set to -s (when not debuging) for stripping
 # @all_libra.@ : is set to all needed libraries paths for QT, KDE and X11
 # you need also @LIBSOCKET@, if you link with -lkfm
-LDFLAGS	= @LDFLAGS@ @all_libraries@ -lkdecore -lkdeui -lqt -lXext -lX11 
+LDFLAGS	= @LDFLAGS@ @all_libraries@ -lkdecore -lkdeui -lqt -lXext -lX11
 
 top_builddir = ..
 kde_libraries = @kde_libraries@
@@ -41,11 +41,11 @@ APPDIR = $(prefix)/share/apps/kmix
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $<
 
-%.moc: %.h
-	$(MOC) $< -o $@
-
-%.mo: %.po
-	$(MSGFMT) $< -o $@
+#%.moc: %.h
+#	$(MOC) $< -o $@
+#
+#%.mo: %.po
+#	$(MSGFMT) $< -o $@
 
 ########## Files #####################
 
