@@ -593,7 +593,8 @@ void MixDeviceWidget::update()
                smallSlider->setValue( vol[i] );
                smallSlider->setGray( m_mixdevice->isMuted() );
             }
-         } else
+         } 
+			else
          {
             QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
             if (bigSlider)

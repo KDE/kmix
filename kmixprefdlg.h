@@ -28,7 +28,9 @@ class KMixPrefWidget;
 class KMixApp;
 class QCheckBox;
 
-class KMixPrefDlg : public KDialogBase  {
+class 
+KMixPrefDlg : public KDialogBase  
+{
    Q_OBJECT
 
    friend class KMixWindow;

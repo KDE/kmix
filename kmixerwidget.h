@@ -22,16 +22,17 @@
 #ifndef KMIXERWIDGET_H
 #define KMIXERWIDGET_H
 
-#include <kpanelapplet.h>
-
 #include <qwidget.h>
-#include <qcheckbox.h>
-#include <qlayout.h>
 #include <qptrlist.h>
-#include <qstring.h>
+class QString;
+class QWidgetStack;
+
+#include <kpanelapplet.h>
+class KMultiTabBar;
 
 #include "channel.h"
 #include "mixer.h"
+#include "mixdevicewidget.h"
 
 // QT
 class QSlider;
@@ -40,12 +41,26 @@ class QSlider;
 class KActionCollection;
 class KActionMenu;
 class KConfig;
+class KMultiTabBar;
 
 // KMix
 class Channel;
 class Mixer;
 
-class KMixerWidget : public QWidget  {
+
+class 
+Channel
+{
+   public:
+      Channel() : dev( 0 ) {};
+      ~Channel() { delete dev; };
+
+      MixDeviceWidget *dev;
+};
+
+class 
+KMixerWidget : public QWidget  
+{
    Q_OBJECT
 
   public:
@@ -53,6 +68,8 @@ class KMixerWidget : public QWidget  {
                  bool small, KPanelApplet::Direction, MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
+	
+	enum KMixerWidgetIO { OUTPUT, INPUT };
 
    void addActionToPopup( KAction *action );
 
@@ -92,14 +109,18 @@ class KMixerWidget : public QWidget  {
    void updateSize();
    void slotFillPopup();
    void slotToggleMixerDevice(int id);
-
+	void ioMixerTabClicked( int tb );
 
   private:
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
    QBoxLayout *m_topLayout;
    QBoxLayout *m_devLayout;
+   QBoxLayout *m_devLayoutInput;
+   QBoxLayout *m_devLayoutOutput;
    QPtrList<Channel> m_channels;
+	KMultiTabBar *m_ioTab;
+	QWidgetStack *m_ioStack;
 
    QString m_name;
    QString m_mixerName;
@@ -114,9 +135,11 @@ class KMixerWidget : public QWidget  {
    bool m_iconsEnabled;
    bool m_labelsEnabled;
    bool m_ticksEnabled;
+	MixDevice::DeviceCategory m_categoryMask;
 
    void mousePressEvent( QMouseEvent *e );
-   void createDeviceWidgets( KPanelApplet::Direction, MixDevice::DeviceCategory categoryMask );
+   void createDeviceWidgets();
+	void createLayout();
    void createMasterVolWidget(KPanelApplet::Direction);
 };
 

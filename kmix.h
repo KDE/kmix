@@ -28,14 +28,17 @@
 #endif
 
 // include files for Qt
-class QTabWidget;
+#include <qstring.h>
+#include <qmap.h>
+
 class QTimer;
-#include "qstring.h"
+class QWidgetStack;
 
 // include files for KDE
 #include <kmainwindow.h>
 
 class KAccel;
+class KMultiTabBar;
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
@@ -57,7 +60,6 @@ class KMixWindow : public KMainWindow
 
   protected slots:
    void saveConfig();
-  //   void dummySlot();
   protected:
    void loadConfig();
 
@@ -109,7 +111,8 @@ class KMixWindow : public KMainWindow
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
 
-   QTabWidget *m_tab;
+   KMultiTabBar *m_tab;
+	QWidgetStack *m_wStack;
    QWidget *m_buttons;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
@@ -121,11 +124,11 @@ class KMixWindow : public KMainWindow
   private slots:
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
+	void mainMixerTabClicked( int tb );
    void updateLayout();
    void dockMute();
    void slotHWInfo();
 
-   void toggleVisibility();
 };
 
 #endif // KMIX_H

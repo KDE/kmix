@@ -30,6 +30,7 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kaudioplayer.h>
+#include <kiconloader.h>
 
 #include <qtooltip.h>
 

@@ -26,10 +26,12 @@
 //#include <qapplication.h>
 #include <qmap.h>
 #include <qpopupmenu.h>
-#include <qtabwidget.h>
 #include <qtimer.h>
+#include <qcheckbox.h>
+#include <qwidgetstack.h>
 
 // include files for KDE
+#include <kmultitabbar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kmenubar.h>
@@ -45,6 +47,7 @@
 #include <kdebug.h>
 #include <kaccel.h>
 #include <kkeydialog.h>
+
 // application specific includes
 #include "kmix.h"
 #include "kmixerwidget.h"
@@ -79,32 +82,6 @@ KMixWindow::KMixWindow()
 			{
 				break;
 			}
-		}
-
-		if ( widget==0 ) {
-#undef CHRIS_TEST
-#ifdef CHRIS_TEST
-// this new code inserts n Tabs, but it does not work yet :-(
-			// b) No widget found => create new widget
-			MixerSelectionInfo *msi = new MixerSelectionInfo(
-				mixer->mixerNum(),
-				mixer->mixerName(),
-				(MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY),
-				(MixDevice::SECONDARY),
-				(MixDevice::SWITCH) );
-			addMixerTabs(mixer, msi);
-			delete msi;
-#else
-		  KMixerWidget *mw = new KMixerWidget( m_maxId, mixer,
-						       mixer->mixerName(),
-						       mixer->mixerNum(),
-						       false, KPanelApplet::Up,
-						       MixDevice::ALL, // !!! Here we shall do splitting - esken
-						       this );
-		  mw->setName( mixer->mixerName() );
-		  insertMixerWidget( mw );
-		  m_maxId++;
-#endif
 		}
 	}
 
@@ -275,11 +252,11 @@ KMixWindow::initMixer()
 	}
 	}
 
-	//kdDebug() << "Mixers found: " << m_mixers.count() << ", multi-driver-mode: " << multipleDriversActive << endl;
 	m_hwInfoString = i18n("Sound drivers supported");
 	m_hwInfoString += ": " + driverInfo + 
 		"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
-	if ( multipleDriversActive ) {
+	if ( multipleDriversActive ) 
+	{
 		// this will only be possible by hacking the config-file, as it will not be officially supported
 		m_hwInfoString += "\nExperimental multiple-Driver mode activated";
 	}
@@ -300,8 +277,20 @@ KMixWindow::initPrefDlg()
 void
 KMixWindow::initWidgets()
 {
-	m_tab = new QTabWidget( this );
-//	setCentralWidget( m_tab );
+	QHBoxLayout *layout = new QHBoxLayout( this );
+	// The tab bar
+	m_tab = new KMultiTabBar( KMultiTabBar::Horizontal, this, "mainTabBar" );
+	m_tab->showActiveTabTexts( true );
+	
+	// The Widget Stack
+	m_wStack = new QWidgetStack( this, "mainWidgetStack" );
+	m_wStack->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+	setCentralWidget( m_wStack );
+
+	layout->add( m_tab );
+	layout->add( m_wStack );
+	
+	layout->activate();
 }
 
 
@@ -319,7 +308,7 @@ KMixWindow::updateDocking()
 	{
 
 		// create dock widget
-		m_dockWidget = new KMixDockWidget( m_mixers.first(), this );
+		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget" );
 		updateDockIcon();
 
 		// create RMB menu
@@ -483,10 +472,11 @@ KMixWindow::loadConfig()
 
        // only if an actual mixer device is found for the config entry
        if (mixer) {
-	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, MixDevice::ALL, this );
+	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, MixDevice::ALL, this, "KMixerWidget" );
 	 mw->setName( name );
 	 mw->loadConfig( config, *tab );
 	 insertMixerWidget( mw );
+	 m_tab->show();
        }
    }
 
@@ -507,22 +497,13 @@ KMixWindow::loadConfig()
 void
 KMixWindow::insertMixerWidget( KMixerWidget *mw )
 {
+	int idTab;
 	m_mixerWidgets.append( mw );
-	if (m_mixerWidgets.count() == 2)
-	{
-		m_tab->addTab( m_mixerWidgets.at(0), m_mixerWidgets.at(0)->name() );
-		setCentralWidget( m_tab );
-		m_tab->show();
-	}
 
-	if ( m_mixerWidgets.count() > 1 )
-	{
-		m_tab->addTab( mw, mw->name() );
-	}
-	else
-	{
-		setCentralWidget( mw );
-	}
+	idTab = m_wStack->addWidget( mw ); 
+	m_tab->appendTab( SmallIcon("misc"), idTab, mw->name() );
+	m_wStack->raiseWidget( idTab );
+	connect( m_tab->tab( idTab ),SIGNAL( clicked(int) ), this, SLOT( mainMixerTabClicked(int) ) );
 
    mw->setTicks( m_showTicks );
    mw->setLabels( m_showLabels );
@@ -543,19 +524,26 @@ KMixWindow::insertMixerWidget( KMixerWidget *mw )
 }
 
 void
+KMixWindow::mainMixerTabClicked( int idTab )
+{
+	if( m_tab->isTabRaised( idTab ) )
+	{
+		if( m_wStack->isHidden() )
+			m_wStack->show();
+		
+		m_wStack->raiseWidget( idTab );
+	}
+	
+}
+
+void
 KMixWindow::removeMixerWidget( KMixerWidget *mw )
 {
     m_mixerWidgets.remove( mw );
-    m_tab->removePage( mw );
+	 m_wStack->removeWidget( mw );
 
     if ( m_mixerWidgets.count() == 1 )
-    {
-        m_tab->removePage( m_mixerWidgets.at(0) );
         m_tab->hide();
-        m_mixerWidgets.at(0)->reparent(this, QPoint());
-        setCentralWidget( m_mixerWidgets.at(0) );
-        m_mixerWidgets.at(0)->show();
-    }
 
     KAction *a = actionCollection()->action( "file_close_tab" );
     if ( a )
@@ -634,31 +622,30 @@ void
 KMixWindow::closeMixer()
 {
    if ( m_mixerWidgets.count() < 2 )
-	{
 		return;
-	}
-   removeMixerWidget( static_cast<KMixerWidget *>(m_tab->currentPage()) );
+   removeMixerWidget( static_cast<KMixerWidget *>( m_wStack->visibleWidget() ));
 }
 
 
 void
 KMixWindow::newMixer()
-{
+{	
 	QStringList lst;
 	Mixer *mixer;
-
+	
 	// Open the MixerSelector dialog - the user can select a mixer or cancel this dialog.
-	MixerSelector *ms = new MixerSelector( m_mixers , 0);
+	MixerSelector *ms = new MixerSelector( m_mixers , 0, "mixerSelector" );
 	MixerSelectionInfo *msi = ms->exec();
 	delete ms;
-	if ( msi != 0 ) {
-       // Dialog not canceled
-       int num = msi->m_num;
-       // Matching on number, not on name. If we would match on name it would be
-       // a) slower
-       // b) impossible to insert a mixer from a duplicated sound card (e.g. 2 x Audigy)
-       mixer = m_mixers.at( num );
-       if (!mixer)
+	if ( msi != 0 ) 
+	{
+		// Dialog not canceled
+		int num = msi->m_num;
+		// Matching on number, not on name. If we would match on name it would be
+      // a) slower
+      // b) impossible to insert a mixer from a duplicated sound card (e.g. 2 x Audigy)
+      mixer = m_mixers.at( num );
+      if (!mixer)
 		{
 			// This can normally never happen. If it happens, it is a bug.
 			delete msi;
@@ -666,21 +653,13 @@ KMixWindow::newMixer()
 			return;
 		}
 
-		// Should we distribute the devices on Tabs?
-		if ( msi->m_tabDistribution ) {
-			msi->m_deviceTypeMask1 = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY);
-			msi->m_deviceTypeMask2 = (MixDevice::SECONDARY);
-			msi->m_deviceTypeMask3 = (MixDevice::SWITCH);
-		}
-		else {
-			msi->m_deviceTypeMask1 = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY | MixDevice::SECONDARY | MixDevice::SWITCH);
-			msi->m_deviceTypeMask2 = (MixDevice::DeviceCategory)0;
-			msi->m_deviceTypeMask3 = (MixDevice::DeviceCategory)0;
-		}
+		msi->m_deviceTypeMask1 = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY | MixDevice::SECONDARY | MixDevice::SWITCH);
+		msi->m_deviceTypeMask2 = (MixDevice::DeviceCategory)0;
+		msi->m_deviceTypeMask3 = (MixDevice::DeviceCategory)0;
 
 		addMixerTabs(mixer, msi);
 		delete msi;
-   }
+	}
 }
 
 /**
@@ -691,16 +670,19 @@ KMixWindow::newMixer()
  * @param mixer The Mixer
  * @param msi The MixerSelectionInfo as described above
  **/
-void KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi) {
+void 
+KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi) 
+{
 	// create mixer widget
 	bool categoryInUse;
 
 	MixDevice::DeviceCategory dc;
 	dc = msi->m_deviceTypeMask1;
 	categoryInUse = isCategoryUsed(mixer, dc);
-	if ( categoryInUse ) {
+	if ( categoryInUse ) 
+	{
 	    KMixerWidget *mw1 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-					     false, KPanelApplet::Up,  dc, this );
+					     false, KPanelApplet::Up,  dc, this, "KMixerWidget1" );
 	    m_maxId++;
 	    mw1->setName( msi->m_name + "");
 	    insertMixerWidget( mw1 );
@@ -708,9 +690,10 @@ void KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi) {
 
 	dc = msi->m_deviceTypeMask2;
 	categoryInUse = isCategoryUsed(mixer, dc);
-	if ( categoryInUse ) {
+	if ( categoryInUse ) 
+	{
 	    KMixerWidget *mw2 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-					     false, KPanelApplet::Up,  dc, this );
+					     false, KPanelApplet::Up,  dc, this, "KMixerWidget2" );
 	    m_maxId++;
 	    mw2->setName( msi->m_name + "(1)");
 	    insertMixerWidget( mw2 );
@@ -718,13 +701,17 @@ void KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi) {
 
 	dc = msi->m_deviceTypeMask3;
 	categoryInUse = isCategoryUsed(mixer, dc);
-	if ( categoryInUse ) {
+	if ( categoryInUse ) 
+	{
 	    KMixerWidget *mw3 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-					     false, KPanelApplet::Up,  dc, this );
+					     false, KPanelApplet::Up,  dc, this, "KMixerWidget3" );
 	    m_maxId++;
 	    mw3->setName( msi->m_name + "(2)");
 	    insertMixerWidget( mw3 );
 	}
+	
+	m_tab->show();
+	m_wStack->show();
 }
 
 
@@ -828,48 +815,30 @@ KMixWindow::toggleMenuBar()
 	}
 }
 
-
-// !! Ehem. Is this method used at all?!?
-void
-KMixWindow::toggleVisibility()
-{
-	if ( isVisible() )
-	{
-		hide();
-	}
-	else
-	{
-		show();
-	}
-}
-
-
-void KMixWindow::showEvent( QShowEvent * ) {
+void 
+KMixWindow::showEvent( QShowEvent * ) {
     if ( m_visibilityUpdateAllowed ) {
 	m_isVisible = true;
     }
     timer->start(500);
 }
 
-void KMixWindow::hideEvent( QHideEvent * ) {
+void 
+KMixWindow::hideEvent( QHideEvent * ) {
     if ( m_visibilityUpdateAllowed ) {
 	m_isVisible = false;
     }
     timer->stop();
 }
 
-/*
-void KMixWindow::dummySlot() {
-    printf("dummySlot(): Visible=%i, %i\n", isVisible(), m_isVisible );
-}
-*/
 
-void KMixWindow::stopVisibilityUpdates() {
-    //printf("stopVisibilityUpdates(): Visible=%i, %i\n", isVisible(), m_isVisible );
+void 
+KMixWindow::stopVisibilityUpdates() {
     m_visibilityUpdateAllowed = false;
 }
 
-void KMixWindow::slotHWInfo() {
+void 
+KMixWindow::slotHWInfo() {
 	KMessageBox::information( 0, m_hwInfoString, i18n("Mixer hardware information") );
 }
 

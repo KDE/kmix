@@ -22,6 +22,7 @@
 
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qcheckbox.h>
 
 #include <klocale.h>
 // For "kapp"

@@ -24,6 +24,8 @@
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpixmap.h>
+#include <qcheckbox.h>
+
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kconfig.h>
