@@ -28,6 +28,7 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qslider.h>
+#include <qtimer.h>
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qcheckbox.h>
