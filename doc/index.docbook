@@ -1,10 +1,9 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.1-Based Variant V1.0//EN" "dtd/kdex.dtd" [
   <!ENTITY kappname "&kmix;">
+  <!ENTITY package "kdemultimedia">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
   <!ENTITY % addindex "IGNORE">
-  
-  
 ]>
 
 <book lang="&language;">
@@ -31,7 +30,7 @@
 <othercredit role="reviewer">
 <firstname>Lauri</firstname>
 <surname>Watts</surname>
-<affiliation><address><email>vampyr@atconnex.net</email></address></affiliation>
+<affiliation><address><email>lauri@kde.org</email></address></affiliation>
 <contrib>Reviewer</contrib>
 </othercredit>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
@@ -63,18 +62,19 @@ your sound card.</para></abstract>
 <chapter id="introduction">
 <title>Introduction</title>
 
-<para>&kmix; is KDE's soundcard mixer program. Though small, it is full-featured.
-The program should give controls for each of your soundcards.</para>
+<para>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para>
 
 <para>&kmix; supports several platforms and sound drivers. Version 1.9 works with:</para>
 
 <itemizedlist>
-<listitem><para> All Open Sound System platforms. Explicitly tested are Linux,
-FreeBSD, NetBSD and BSDI.</para></listitem>
-<listitem><para> Solaris based machines.</para></listitem>
-<listitem><para> IRIX based machines.</para></listitem>
+<listitem><para> All Open Sound System platforms. Explicitly tested
+are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
+<listitem><para> &Solaris; based machines.</para></listitem>
+<listitem><para> &IRIX; based machines.</para></listitem>
 <listitem><para> The ALSA soundcard driver.</para></listitem>
-<listitem><para> HP-UX based machines.</para></listitem>
+<listitem><para> &HP-UX; based machines.</para></listitem>
 </itemizedlist>
 
 </chapter>
@@ -82,11 +82,12 @@ FreeBSD, NetBSD and BSDI.</para></listitem>
 <chapter id="working-with-kmix">
 <title>Working with &kmix;</title>
 
-<para>&kmix; usage is straightforward. Every mixer device that your soundcard
-provides is represented by a volume slider. Mono devices have a single slider,
-stereo devices can have either one or two sliders, depending on your choice.
-Additionaly there is a panning slider at the bottom of the &kmix; window. If you
-have multiple soundcards, they will each have their own tab.</para>
+<para>&kmix; usage is straightforward. Every mixer device that your
+soundcard provides is represented by a volume slider. Mono devices
+have a single slider, stereo devices can have either one or two
+sliders, depending on your choice.  Additionaly there is a panning
+slider at the bottom of the &kmix; window. If you have multiple
+soundcards, they will each have their own tab.</para>
 
 <sect1 id="volume-sliders">
 <title>Volume sliders</title>
@@ -162,13 +163,13 @@ see this information.</para></listitem>
 </chapter>
 
 <chapter id="control-panel">
-<title><application>KControl</application> Settings</title>
+<title>&kcontrol; Settings</title>
 
 <sect1 id="config-opt">
 <title>Configuration options</title>
 
 <para>In the <guimenuitem>Mixer</guimenuitem> item, under
-<guimenu>Sound</guimenu> in <application>KControl</application>, you can set
+<guimenu>Sound</guimenu> in &kcontrol;, you can set
 various options for &kmix;:</para>
 
 <variablelist>
@@ -184,7 +185,7 @@ saved.</para></listitem>
 <varlistentry>
 <term><guilabel>Load volumes on login</guilabel></term>
 <listitem><para>Automatically load the previous settings when you start
-KDE.</para></listitem>
+&kde;.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Maximum number of probed mixers</guilabel></term>
@@ -199,57 +200,6 @@ to speed up &kmix;.</para></listitem>
 </variablelist>
 
 </sect1>
-</chapter>
-
-<chapter id="installation">
-<title>Installation</title>
-
-<sect1 id="getting-kmix">
-<title>How to obtain &kmix;</title>
-
-<para>&kmix; is part of the KDE project <ulink
-url="http://www.kde.org">http://www.kde.org</ulink>.  &kmix; can be found in the
-kdemultimedia package on <ulink
-url="ftp://ftp.kde.org/pub/kde/">ftp://ftp.kde.org/pub/kde/</ulink>, the main
-ftp site of the KDE project. </para>
-</sect1>
-
-<sect1 id="requirements">
-<title>Requirements</title>
-
-<para>Obviously, &kmix; is only of use if you have a soundcard.
-&kmix; supports several platforms and sound drivers:</para>
-
-<itemizedlist>
-<listitem><para> All Open Sound System platforms. Explicitly tested are Linux,
-FreeBSD, NetBSD and BSDI.</para></listitem>
-<listitem><para> Solaris based machines.</para></listitem>
-<listitem><para> IRIX based machines.</para></listitem>
-<listitem><para> The ALSA soundcard driver.</para></listitem>
-<listitem><para> HP-UX based machines.</para></listitem>
-</itemizedlist>
-
-</sect1>
-
-<sect1 id="compilation">
-<title>Compilation and Installation</title>
-
-<para>In order to compile and install &kmix; on your system, type the following
-in the base directory of the kdemultimedia distribution:</para>
-
-<screen width="40">
-<prompt>%</prompt> <command>./configure</command>
-<prompt>%</prompt> <command>make</command>
-<prompt>%</prompt> <command>make <option>install</option></command>
-</screen>
-
-<para>Since &kmix; uses <application>autoconf</application> and
-<application>automake</application> you should have not trouble compiling
-it. Should you run into problems please report them to the KDE mailing
-lists.</para>
-
-</sect1>
-
 </chapter>
 
 <chapter id="credits">
@@ -291,6 +241,41 @@ Fixes</para></listitem>
 
 </chapter>
 
+<appendix id="installation">
+<title>Installation</title>
+
+<sect1 id="getting-kmix">
+<title>How to obtain &kmix;</title>
+
+&install.intro.documentation;
+
+</sect1>
+
+<sect1 id="requirements">
+<title>Requirements</title>
+
+<para>Obviously, &kmix; is only of use if you have a soundcard.
+&kmix; supports several platforms and sound drivers:</para>
+
+<itemizedlist>
+<listitem><para> All Open Sound System platforms. Explicitly tested
+are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
+<listitem><para> &Solaris; based machines.</para></listitem>
+<listitem><para> &IRIX; based machines.</para></listitem>
+<listitem><para> The ALSA soundcard driver.</para></listitem>
+<listitem><para> &HP-UX; based machines.</para></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="compilation">
+<title>Compilation and Installation</title>
+
+&install.compile.documentation;
+
+</sect1>
+
+</appendix>
 
 </book>
 <!--
