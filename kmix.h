@@ -90,7 +90,6 @@ KMixWindow : public KMainWindow
    void updateDockIcon();
    void updateDockTip(Volume vol);
    void stopVisibilityUpdates();
-   void slotConfigureKeys();
 
   private:
    KAccel *m_keyAccel;
