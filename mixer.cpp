@@ -174,6 +174,7 @@ void Mixer::volumeLoad( KConfig *config )
        // !! @todo Restore record source
        setRecordSource( md->num(), md->isRecSource() );
        writeVolumeToHW( md->num(), md->getVolume() );
+       if ( md->isEnum() ) setEnumIdHW( md->num(), md->enumId() );
    }
 }
 

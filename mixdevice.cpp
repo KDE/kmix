@@ -169,6 +169,11 @@ void MixDevice::read( KConfig *config, const QString& grp )
    if ( recsrc!=-1 ) {
         setRecSource( recsrc!=0 );
    }
+
+   int enumId = config->readNumEntry("enum_id", -1);
+   if ( enumId != -1 ) {
+      setEnumId( enumId );
+   }
 }
 
 /**
@@ -186,6 +191,9 @@ void MixDevice::write( KConfig *config, const QString& grp )
    config->writeEntry("is_muted", (int)_volume.isMuted() );
    config->writeEntry("is_recsrc", (int)isRecSource() );
    config->writeEntry("name", _name);
+   if ( isEnum() ) {
+      config->writeEntry("enum_id", enumId() );
+   }
 }
 
 #include "mixdevice.moc"

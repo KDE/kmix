@@ -30,10 +30,10 @@
 #include <kcombobox.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-/*
+
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
-*/
+
 #include <kdebug.h>
 
 #include "mdwenum.h"
@@ -59,10 +59,9 @@ MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
     // create widgets
     createWidgets();
 
-/* !!! TODO
-    m_keys->insert( "Toggle switch", i18n( "Toggle Switch" ), QString::null,
-		    KShortcut(), KShortcut(), this, SLOT( toggleSwitch() ) );
-*/
+    /* !!! remove this for production version */
+    m_keys->insert( "Next Value", i18n( "Next Value" ), QString::null,
+		    KShortcut(), KShortcut(), this, SLOT( nextEnumId() ) );
 
     installEventFilter( this ); // filter for popup
 }
@@ -100,7 +99,7 @@ void MDWEnum::createWidgets()
 	// ------------ fill ComboBox end --------------
 	_layout->addWidget(_enumCombo);
         _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
-        connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnum( int ) ) );
+        connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
         QToolTip::add( _enumCombo, m_mixdevice->name() );
 	
 	//_layout->addSpacing( 4 );
@@ -143,25 +142,35 @@ QSize MDWEnum::sizeHint() const {
    This slot is called, when a user has clicked the mute button. Also it is called by any other
     associated KAction like the context menu.
 */
-void MDWEnum::nextEnum() {
+void MDWEnum::nextEnumId() {
   if( m_mixdevice->isEnum() ) {
-    int curEnum = m_mixdevice->enumId();
+    int curEnum = enumId();
     if ( (unsigned int)curEnum < m_mixdevice->enumValues().count() ) {
       // next enum value
-      m_mixdevice->setEnumId(curEnum+1);
+      setEnumId(curEnum+1);
     }
     else {
       // wrap around
-      m_mixdevice->setEnumId(0);
+      setEnumId(0);
     }
   } // isEnum
 }
 
-void MDWEnum::setEnum(int value)
+void MDWEnum::setEnumId(int value)
 {
 	if (  m_mixdevice->isEnum() ) {
 		m_mixdevice->setEnumId( value );
 		m_mixer->commitVolumeChange( m_mixdevice );
+	}
+}
+
+int MDWEnum::enumId()
+{
+	if (  m_mixdevice->isEnum() ) {
+		return m_mixdevice->enumId();
+	}
+	else {
+		return 0;
 	}
 }
 

@@ -59,8 +59,9 @@ public slots:
     void setDisabled(bool);
 
     // Enum handling: next and selecting
-    void nextEnum();
-    void setEnum(int value);
+    void nextEnumId();
+    int  enumId();
+    void setEnumId(int value);
 
     void update();
     virtual void showContextMenu();
