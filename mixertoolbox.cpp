@@ -38,7 +38,7 @@
  not to put any GUI classes in here.
  In the case where it is unavoidable, please put them in KMixToolBox.
  ***********************************************************************************/
-void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode)
+void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QString& ref_hwInfoString)
 {
     // Find all mixers and initalize them
     QMap<QString,int> mixerNums;
@@ -49,7 +49,6 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode)
 
     QString driverInfo = "";
     QString driverInfoUsed = "";
-    QString m_hwInfoString;
 
     for( int drv=0; drv<drvNum ; drv++ )
     {
@@ -163,17 +162,16 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode)
 	    } // loop over sound card devices of current driver
 	} // loop over soundcard drivers
 
-	m_hwInfoString = i18n("Sound drivers supported:");
-	m_hwInfoString += " " + driverInfo +
+	ref_hwInfoString = i18n("Sound drivers supported:");
+	ref_hwInfoString += " " + driverInfo +
 		"\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
 
 	if ( multipleDriversActive )
 	{
 	    // this will only be possible by hacking the config-file, as it will not be officially supported
-	    m_hwInfoString += "\nExperimental multiple-Driver mode activated";
+	    ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
 	}
 
-	kdDebug(67100) << m_hwInfoString << endl;
+	kdDebug(67100) << ref_hwInfoString << endl;
 }
-
 

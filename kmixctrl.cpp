@@ -67,7 +67,8 @@ extern "C" int kdemain(int argc, char *argv[])
 
    // create mixers
    QPtrList<Mixer> mixers;
-   MixerToolBox::initMixer(mixers, false);
+   QString dummyStringHwinfo;
+   MixerToolBox::initMixer(mixers, false, dummyStringHwinfo);
 
    // load volumes
    if ( args->isSet("restore") )

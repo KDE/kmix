@@ -73,7 +73,7 @@ KMixWindow::KMixWindow()
 	m_isVisible = false;
 	m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-	MixerToolBox::initMixer(m_mixers, m_multiDriverMode);
+	MixerToolBox::initMixer(m_mixers, m_multiDriverMode, m_hwInfoString);
 	initActions();
 	initWidgets();
 	initMixerWidgets();
@@ -117,6 +117,7 @@ KMixWindow::initActions()
 				 actionCollection(), "dock_mute" );
 
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
+	(void) new KAction( i18n( "Hide" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
 	createGUI( "kmixui.rc" );
 }
 
@@ -505,7 +506,7 @@ void
 KMixWindow::showEvent( QShowEvent * )
 {
     if ( m_visibilityUpdateAllowed )
-	m_isVisible = true;
+	m_isVisible = isVisible();
     // !! could possibly start polling now (idea: use someting like ref() and unref() on Mixer instance
 }
 
@@ -514,7 +515,7 @@ KMixWindow::hideEvent( QHideEvent * )
 {
     if ( m_visibilityUpdateAllowed )
     {
-	m_isVisible = false;
+	m_isVisible = isVisible();
     }
     // !! could possibly stop polling now (idea: use someting like ref() and unref() on Mixer instance
     //    Update: This is a stupid idea, because now the views are responsible for updating. So it will be done in the Views.
