@@ -92,7 +92,7 @@ KMixWindow::KMixWindow()
 	}
 	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()));
 
-	setMaximumSize( QSize( 32767, size().height() ) );
+	//setMaximumSize( QSize( 32767, size().height() ) );  // !!! What is this good for ?!?
 }
 
 
@@ -178,7 +178,7 @@ KMixWindow::initMixer()
 		{
 			for( int dev=0; dev<maxDevices; dev++ )
 			{
-				// hint: no driver is using cardnum, except the unsupported alsa0.5
+				// hint: no driver is using cardnum, except the unsupported alsa0.5 - esken
 				for( int card=0; card<1 /*maxCards*/; card++ )
 				{
 					Mixer *mixer = Mixer::getMixer( drv, dev, card );
@@ -257,10 +257,10 @@ KMixWindow::initWidgets()
 {
 	// Main widget and layout
    setCentralWidget( new QWidget(  this, "qt_central_widget" ) );
-	QGridLayout *mainLayout = new QGridLayout( centralWidget(), 1, 1, 11, 6, "MainLayout" );
+	//QGridLayout *mainLayout = new QGridLayout( centralWidget(), 1, 1, 3, 1, "MainLayout" );
 
 	// Widgets layout
-	QVBoxLayout *widgetsLayout = new QVBoxLayout(  0, 0, 6, "widgetsLayout" );
+	QVBoxLayout *widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
 	
 	// Mixer widget line
 	QHBoxLayout *mixerNameLayout = new QHBoxLayout( 0, 0, 6, "mixerNameLayout" );
@@ -277,7 +277,7 @@ KMixWindow::initWidgets()
 	widgetsLayout->addWidget( m_wsMixers );
 
 	// Add to main layout
-	mainLayout->addLayout( widgetsLayout, 0, 0 );
+	//mainLayout->addLayout( widgetsLayout, 0, 0 );
 }
 
 
@@ -459,7 +459,7 @@ KMixWindow::initMixerWidgets()
 		
 		// Add to Stack
 		kdDebug() << "Inserted mixer " << id << ":" << mw->name() << endl;
-		m_wsMixers->addWidget( mw );
+		m_wsMixers->addWidget( mw, id );
 		
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
@@ -628,6 +628,7 @@ KMixWindow::slotHWInfo() {
 void
 KMixWindow::showSelectedMixer( int mixer )
 {
+		kdDebug() << "showSelectedMixer(" << mixer << ")\n";
 	m_wsMixers->raiseWidget( mixer );
 }
 
