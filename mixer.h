@@ -9,7 +9,7 @@
 //#undef NoMarks
 //#undef Left
 //#undef Right
-//#undef Unsorted
+#undef Unsorted
 //#undef Both
 #include <qslider.h>
 
