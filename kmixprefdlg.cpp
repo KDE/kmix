@@ -77,6 +77,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    _rbVertical   = new QRadioButton(i18n("&Vertical"  ), orientationGroup);
    orientationGroup->insert(_rbHorizontal);
    orientationGroup->insert(_rbVertical);
+   orientationGroup->hide();
    //orientationLayout->add(qlb);
    //orientationLayout->add(orientationGroup);
    /*
