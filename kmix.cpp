@@ -58,7 +58,7 @@
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
-	: KMainWindow(0, 0, 0 ), m_showTicks( false ), m_maxId( 0 ),
+	: KMainWindow(0, 0, 0 ), m_showTicks( true ), m_maxId( 0 ),
 	m_lockedLayout(0),
 	m_dockWidget( 0L )
 {
@@ -205,7 +205,7 @@ KMixWindow::initMixer()
 		if ( !drvInfoAppended ) {
 		    drvInfoAppended = true;
 		    QString driverName = Mixer::driverName(drv);
-		    if ( drv!= 0 ) {
+		    if ( drv!= 0 && m_mixers.count() > 0) {
 			driverInfoUsed += " + ";
 		    }
 		    driverInfoUsed += driverName;
@@ -338,17 +338,13 @@ KMixWindow::dockMute()
 void
 KMixWindow::saveSettings()
 {
-    kdDebug(67100) << "KMixWindow::saveSeeting() ENTR" << endl;
     saveConfig();
     saveVolumes();
-    kdDebug(67100) << "KMixWindow::saveSeeting() EXIT" << endl;
 }
 
 void
 KMixWindow::saveConfig()
 {
-    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
-    //    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
     KConfig *config = kapp->config();
     config->setGroup(0);
 
@@ -394,8 +390,8 @@ KMixWindow::loadConfig()
    m_volumeWidget = config->readBoolEntry("TrayVolumeControl", true);
 	//hide on close has to stay true for usability. KMixPrefDlg option commented out. nolden
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
-   m_showTicks = config->readBoolEntry("Tickmarks", false);
-   m_showLabels = config->readBoolEntry("Labels", false);
+   m_showTicks = config->readBoolEntry("Tickmarks", true);
+   m_showLabels = config->readBoolEntry("Labels", true);
    m_onLogin = config->readBoolEntry("startkdeRestore", true );
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
@@ -474,15 +470,11 @@ KMixWindow::initMixerWidgets()
 bool
 KMixWindow::queryClose ( )
 {
-    kdDebug() << "KMixWindow::queryClose()\n";
     if ( m_showDockWidget && !kapp->sessionSaving() )
     {
-        kdDebug() << "KMixWindow::queryClose() 2\n";
         hide();
-        kdDebug() << "KMixWindow::queryClose() 3\n";
         return false;
     }
-    kdDebug() << "KMixWindow::queryClose() 4\n";
     return true;
 }
 
@@ -547,16 +539,12 @@ KMixWindow::loadVolumes()
 void
 KMixWindow::saveVolumes()
 {
-    kdDebug(67100) << "KMixWindow::saveVolumes()" << endl;
     KConfig *cfg = new KConfig( "kmixctrlrc", false );
     for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next()) {
-	kdDebug(67100) << "KMixWindow::saveVolumes() loop" << endl;
-	//kdDebug(67100) << "KMixWindow::saveConfig() loop" << endl;
+	//kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
 	mixer->volumeSave( cfg );
     }
-    kdDebug(67100) << "KMixWindow::saveVolumes() delete" << endl;
     delete cfg;
-    kdDebug(67100) << "KMixWindow::saveVolumes() exit" << endl;
 }
 
 
