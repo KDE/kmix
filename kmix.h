@@ -8,7 +8,6 @@
 #undef Below
 #include <qslider.h>
 #include <qtimer.h>
-#include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qtooltip.h>

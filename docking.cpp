@@ -20,15 +20,14 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <kwm.h>
 #include <kapp.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 #include <klocale.h>
+#include <ktmainwindow.h>
+#include <kwm.h>
 
 #include "docking.h"
-#include <qmessagebox.h>
-#include <ktmainwindow.h>
-#include <kiconloader.h>
-#include <kglobal.h>
 
 // --- Constructor ---
 KDockWidget::KDockWidget(const QString& dockPixmapName, const char* name)
