@@ -93,16 +93,16 @@ void MixDeviceWidget::defineKeys()
    }
 }
 
-void MixDeviceWidget::volumeChange( int ) { /* is virtual */ } ;
-void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ } ;
-void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ } ;
-void MixDeviceWidget::setVolume( Volume /*vol*/ ) { /* is virtual */ } ;
-void MixDeviceWidget::update() { /* is virtual */ } ;
-void MixDeviceWidget::showContextMenu() { /* is virtual */ } ;
-void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ } ;
-void MixDeviceWidget::setIcons( bool ) { /* is virtual */ } ;
-void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ } ;
-void MixDeviceWidget::setMutedColors( QColor , QColor , QColor ) { /* is virtual */ } ;
+void MixDeviceWidget::volumeChange( int ) { /* is virtual */ } 
+void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
+void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ }
+void MixDeviceWidget::setVolume( Volume /*vol*/ ) { /* is virtual */ }
+void MixDeviceWidget::update() { /* is virtual */ }
+void MixDeviceWidget::showContextMenu() { /* is virtual */ }
+void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ }
+void MixDeviceWidget::setIcons( bool ) { /* is virtual */ }
+void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ }
+void MixDeviceWidget::setMutedColors( QColor , QColor , QColor ) { /* is virtual */ }
 
 
 

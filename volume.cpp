@@ -219,7 +219,7 @@ long Volume::volrange( int vol )
    else {
          return _maxVolume;
     }
-};
+}
 
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol) {
