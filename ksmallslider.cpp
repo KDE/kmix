@@ -208,7 +208,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    // draw 3d border
    style().drawPrimitive ( QStyle::PE_Panel, &p, QRect( 0, 0, width(), height() ), colorGroup(), TRUE );
 
-   // drow lower/left part
+   // draw lower/left part
    if ( width()>2 && height()>2 )
    {
       if ( direction == KPanelApplet::Up) {
@@ -317,7 +317,10 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
    offset += -e->delta()*QMAX(pageStep(),lineStep())/120;
    if (QABS(offset)<1)
       return;
-   QRangeControl::setValue( QRangeControl::value() + int(offset) );
+   int diff = 1;
+   if (direction == KPanelApplet::Up || direction == KPanelApplet::Down)
+      diff = -1; 
+   QRangeControl::setValue( QRangeControl::value() + diff*int(offset) );
    offset -= int(offset);
 }
 
