@@ -108,6 +108,7 @@ class KMixWindow : public KMainWindow
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void updateDockIcon();
    void stopVisibilityUpdates();
+   void slotConfigureKeys();
 
   private:
    KAccel *m_keyAccel;

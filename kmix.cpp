@@ -45,7 +45,7 @@
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kaccel.h>
-
+#include <kkeydialog.h>
 // application specific includes
 #include "kmix.h"
 #include "kmixerwidget.h"
@@ -183,12 +183,18 @@ KMixWindow::initActions()
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
+        KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
+
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
 				 actionCollection(), "dock_mute" );
 
 	createGUI( "kmixui.rc" );
 }
 
+void KMixWindow::slotConfigureKeys()
+{
+  KKeyDialog::configure( actionCollection(), this );
+}
 
 void
 KMixWindow::initMixer()
@@ -240,7 +246,7 @@ KMixWindow::initMixer()
 					delete mixer;
 					continue;
 				}
-			#ifdef HAVE_ALSA_ASOUNDLIB_H	
+			#ifdef HAVE_ALSA_ASOUNDLIB_H
 				else
 				{
 					// Avoid multiple mixer detections with new ALSA
@@ -688,7 +694,7 @@ KMixWindow::newMixer()
 			msi->m_deviceTypeMask2 = (MixDevice::DeviceCategory)0;
 			msi->m_deviceTypeMask3 = (MixDevice::DeviceCategory)0;
 		}
-		
+
 		addMixerTabs(mixer, msi);
 		delete msi;
    }
