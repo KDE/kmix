@@ -591,13 +591,13 @@ bool KMix::event(QEvent *e)
 {
   if (e->type() == Event_Hide && allowDocking && !dockinginprogress) {
     sleep(1); // give kwm some time..... ugly I know.
-    cerr << "eventFilter() says hide()\n";
     if (!KWM::isIconified(winId())) // maybe we are just on another desktop
       return FALSE;
 
-    if(dock_widget)
+    if(dock_widget) {
+      dock_widget->dock();
       dock_widget->savePosition();
-
+    }
     this->hide();
     // a trick to remove the window from the taskbar (Matthias)
     recreate(0,0, geometry().topLeft(), FALSE);

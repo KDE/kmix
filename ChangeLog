@@ -1,3 +1,10 @@
+1998-12-12  Christian Esken  <esken@kde.org>
+
+	* Tweaked docking a bit more. Under certain circumstances,
+	dock_widget->dock() correctly does not get called at the start
+	of the program. So if you docked, the window just vanished.	
+	I added a call to dock_widget->dock()  at "appropiate" places.
+
 1998-11-22 Sam Maloney <thufir@illogic.ml.org>
 
 	* Tweeked docking, to compensate for a (qt bug?). Made it so it
@@ -14,7 +21,7 @@
 
 	* kmix1.0
 	* Set support added: Sets can be stored by pressing CTRL-1,
-	CTRL-2, ... and rstored by pressing 1, 2, ...
+	CTRL-2, ... and restored by pressing 1, 2, ...
 	* Command line parameters: "-devnum" to set the mixer device
 	number and "-r" to read set 1 and "-R num" to read set 'num'
 	on startup.

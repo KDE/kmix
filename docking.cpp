@@ -188,7 +188,7 @@ void DockWidget::toggle_window_state() {
             kmix->show();
         }
     }
-    /**/
+    */
     if(kmix != 0L)  {
         if (kmix->isVisible()){
             dockinginprogress = true;
