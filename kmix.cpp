@@ -521,7 +521,7 @@ void KMix::createMenu()
   Mfile->insertItem(i18n("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_T),this, SLOT(tickmarksTogCB()));
 
-  Mfile->insertItem( i18n("&Options")       , this, SLOT(showOptsCB()) );
+  Mfile->insertItem( i18n("&Options...")       , this, SLOT(showOptsCB()) );
   Mfile->insertSeparator();
   Mfile->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
@@ -639,7 +639,7 @@ QPopupMenu* KMix::ContainerContextMenu(QObject *o, QObject *)
     Mlocal->insertItem( i18n("&Hide Menubar") , this, SLOT(hideMenubarCB()) );
   else
     Mlocal->insertItem( i18n("&Show Menubar") , this, SLOT(hideMenubarCB()) );
-  Mlocal->insertItem( i18n("&Options")        , this, SLOT(showOptsCB()) );
+  Mlocal->insertItem( i18n("&Options...")        , this, SLOT(showOptsCB()) );
   Mlocal->insertItem( i18n("&Help")           , this, SLOT(launchHelpCB()) );
 
   MlocalCreated = true;

@@ -1,3 +1,8 @@
+1998-11-16  Alex Zepeda  <garbanzo@hooked.net>
+
+	* kmix.cpp (createMenu): &Options -> &Options... (afterall it does
+	pop up a dialog box)
+
 1998-11-09  Christian Esken  <esken@kde.org>
 
 	* kmix1.0
