@@ -56,6 +56,7 @@ class KMixApp : public KTMainWindow
    void sessionLoad( bool sessionConfig );
 
    void initMenuBar();
+   void initMixer();
    void initView();
    void initPrefDlg();
    void initActions();

@@ -21,16 +21,16 @@
  */
 
 #include <iostream.h>
-//  #include <unistd.h>
-//  #include <string.h>
-//  #include <errno.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kdebug.h>
 
 #include "mixer.h"
 #include "kmix-platforms.cpp"
 
-#include <klocale.h>
-
 Mixer::Mixer( int device, int card )
+   : m_mixDevices( this )
 {
   m_devnum = device;
   m_cardnum = card;
@@ -40,16 +40,97 @@ Mixer::Mixer( int device, int card )
 
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
-  m_mixDevices.clear();
+
+  m_mixSets.setAutoDelete( true );
 };
 
-
-void Mixer::sessionSave(bool /*sessionConfig*/)
+int Mixer::setupMixer( MixSet mset )
 {
-  //  TheMixSets->write();
+   kDebugInfo("Mixer::setupMixer");
+   m_mixSets.clear();
+   sessionLoad( false );
+   
+   release();	// To be sure, release mixer before (re-)opening
+
+   int ret = openMixer();
+   if (ret != 0) {
+      return ret;
+   } else
+      if( m_mixDevices.isEmpty() )
+	 return ERR_NODEV;
+
+   if( !mset.isEmpty() ) // Copies the initial mix set
+      writeMixSet( mset );
+
+   return 0;
 }
 
+MixSet* Mixer::getSet( int num )
+{
+   return m_mixSets.at( num );
+}
 
+int Mixer::createSet()
+{
+   kDebugInfo("Mixer::createSet - this=%x", this);
+   MixSet *ms = new MixSet( m_mixDevices );
+   m_mixSets.append( ms );
+   kDebugInfo("m_mixSets size=%i", m_mixSets.count());
+   return m_mixSets.find( ms );
+}
+
+void Mixer::destroySet( int num )
+{
+   kDebugInfo("Mixer::destroySet( num=%i )", num);
+   m_mixSets.remove( m_mixSets.at( num ) );
+}
+
+void Mixer::destroySet( MixSet *set )
+{
+   kDebugInfo("Mixer::destroySet( set=%x )", set);
+   m_mixSets.remove( set );
+}
+
+void Mixer::sessionSave( bool /*sessionConfig*/ )
+{
+   kDebugInfo("Mixer::sessionSave - this=%x m_mixSets.count=%i", this, m_mixSets.count());
+   QString grp = QString("Mixer") + mixerName();
+   KConfig* config = KGlobal::config();
+   config->setGroup(grp);
+   config->writeEntry( "sets", m_mixSets.count() );
+
+   MixSet* ms;
+   int set = 0;
+   for( ms=m_mixSets.first(); ms!=0; ms=m_mixSets.next() )
+   {
+      kDebugInfo("saving mixset %i", set);
+      QString setgrp;
+      setgrp.sprintf( "%s.Set%i", grp.ascii(), set );
+      ms->write( setgrp );
+      set++;
+   }
+}
+
+void Mixer::sessionLoad( bool /*sessionConfig*/ )
+{
+   QString grp = QString("Mixer") + mixerName();
+   KConfig* config = KGlobal::config();
+   config->setGroup(grp);
+   int num = config->readNumEntry( "sets", 0 );
+
+   m_mixSets.clear();
+
+   int set;
+   for ( set=0; set<num; set++ )
+   {
+      MixSet* ms = getSet( createSet() );
+      
+      QString setgrp;
+      setgrp.sprintf( "%s.Set%i", grp.ascii(), set );
+      ms->read( setgrp );
+      set++;
+   }
+}
 
 int Mixer::grab()
 {
@@ -94,27 +175,6 @@ MixDevice* Mixer::operator[](int num)
   MixDevice* md =  m_mixDevices.at( num );
   ASSERT( md );
   return md;
-}
-
-
-int Mixer::setupMixer( MixSet mset )
-{
-//    TheMixSets = new MixSetList;
-//    TheMixSets->read();  // Read sets from kmixrc
-
-  release();	// To be sure, release mixer before (re-)opening
-
-//    int ret = openMixer();
-//    if (ret != 0) {
-//      return ret;
-//    } else
-//      if( m_mixDevices.isEmpty() )
-//        return ERR_NODEV;
-
-  if( !mset.isEmpty() ) // Copies the initial mix set
-    writeMixSet( mset );
-
-  return 0;
 }
 
 

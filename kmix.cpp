@@ -51,10 +51,12 @@ KMixApp::KMixApp()
 {
    initActions();
    initMenuBar();
+   initMixer();
+   
+   sessionLoad( false );
+
    initView();
    initPrefDlg();
-
-   sessionLoad( false );
 
    if ( m_showDockWidget && m_startHidden )
    {
@@ -115,8 +117,9 @@ void KMixApp::initMenuBar()
    menuBar()->insertItem(i18n("&Help"), m_helpMenu);	
 }
 
-void KMixApp::initView()
+void KMixApp::initMixer()
 {
+   kDebugInfo("-> KMixApp::initMixer");
    Mixer *mixer = Mixer::getMixer();
 
    int mixerError = mixer->grab();
@@ -128,13 +131,32 @@ void KMixApp::initView()
 
    m_mixers.append( mixer );
 
-   KMixerWidget *mixerWidget = new KMixerWidget( mixer, this );
+   kDebugInfo("<- KMixApp::initMixer");
+}
+
+void KMixApp::initView()
+{
+   kDebugInfo("-> KMixApp::initView");
+
+   Mixer *mixer = m_mixers.at(0);
+   kDebugInfo("mixer=%x", mixer);
+   MixSet *ms = mixer->getSet(0);
+   kDebugInfo("ms=%x", ms);
+   if (!ms)
+   {
+      ms = mixer->getSet( mixer->createSet() );
+      kDebugInfo("createSet=%x", ms);
+      ms->setName( i18n("Default") );
+   }
+   
+   KMixerWidget *mixerWidget = new KMixerWidget( ms, this );
    m_mixerWidgets.append( mixerWidget );
    setView( mixerWidget );
-
    connect( mixerWidget, SIGNAL(rightMouseClick()), this, SLOT(showContextMenu()));
 
    setCaption( mixerWidget->mixerName() );
+
+   kDebugInfo("<- KMixApp::initView");
 }
 
 void KMixApp::initPrefDlg()
@@ -190,6 +212,11 @@ void KMixApp::sessionSave( bool sessionConfig )
    config->writeEntry("Tickmarks", m_showTicks);
 
    m_mixerWidgets.at(0)->sessionSave( sessionConfig );
+
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+   {
+      mixer->sessionSave( sessionConfig );
+   }
 }
 
 void KMixApp::sessionLoad( bool sessionConfig )
@@ -220,15 +247,20 @@ void KMixApp::sessionLoad( bool sessionConfig )
    m_showTicks = config->readBoolEntry("Tickmarks", false);
 
    m_mixerWidgets.at(0)->sessionLoad( sessionConfig );
+   
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+   {
+      mixer->sessionLoad( sessionConfig );
+   }
 }
 
-void KMixApp::saveProperties(KConfig *_cfg)
+void KMixApp::saveProperties(KConfig */*_cfg*/)
 {
    sessionSave( true );
 }
 
 
-void KMixApp::readProperties(KConfig* _cfg)
+void KMixApp::readProperties(KConfig* /*_cfg*/)
 {
    sessionSave( true );
 }		

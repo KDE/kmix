@@ -31,21 +31,24 @@
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
+#include <kcombobox.h>
 
+#include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
 #include "mixdevice.h"
+#include "mixdevicewidget.h"
 
-KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixer(mixer)
+KMixerWidget::KMixerWidget( MixSet *mixSet, QWidget * parent, const char * name )
+   : QWidget( parent, name ), m_mixSet(mixSet)
 {
    cerr << "KMixerWidget::KMixerWidget" << endl;
    
-   ASSERT(m_mixer!=0);
+   m_mixer = m_mixSet->mixer();
+   kDebugInfo("mixer=%x", m_mixer);
    
    // Create update timer
    m_timer = new QTimer;
@@ -54,10 +57,9 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
 
    // Create mixer device widgets
    m_topLayout = new QVBoxLayout( this, 0, 3 );
-   QBoxLayout* layout = new QHBoxLayout( m_topLayout );
-   MixSet mixSet = m_mixer->getMixSet();
-   MixDevice *mixDevice = mixSet.first();
-   for ( ; mixDevice != 0; mixDevice = mixSet.next())
+   QBoxLayout* layout = new QHBoxLayout( m_topLayout );   
+   MixDevice *mixDevice = m_mixSet->first();
+   for ( ; mixDevice != 0; mixDevice = m_mixSet->next())
    {
       cerr << "mixDevice = " << mixDevice << endl;
       MixDeviceWidget *mdw =  new MixDeviceWidget( mixDevice, true, true,
@@ -131,7 +133,6 @@ void KMixerWidget::mousePressEvent( QMouseEvent *e )
 
 void KMixerWidget::sessionSave( bool sessionConfig )
 {
-   m_mixer->sessionSave( sessionConfig );
 }
 
 void KMixerWidget::sessionLoad( bool sessionConfig )
@@ -155,9 +156,14 @@ KMixerPrefWidget::KMixerPrefWidget( KMixerWidget* mixerWidget,
 
    // Add set selection Combo Box
    QBoxLayout *setLayout = new QHBoxLayout( m_layout, 3 );
-   QComboBox *setSelectCombo = new QComboBox( this);
-   setSelectCombo->insertItem(i18n("Kicker applet"));
-   setSelectCombo->insertItem(i18n("Standard"));
+   KComboBox *setSelectCombo = new KComboBox( this );
+
+   MixSetList sets = mix->getSets();
+   for (MixSet *set=sets.first(); set!=0; set=sets.next())
+   {
+      setSelectCombo->insertItem( set->name() );
+   }
+
    setLayout->addWidget( setSelectCombo );
 
    QPushButton *add = new QPushButton( i18n("Add"), this );

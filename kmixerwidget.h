@@ -33,6 +33,7 @@
 class Mixer;
 class QSlider;
 class QTimer;
+class MixSet;
 
 class KMixerWidget : public QWidget  {
    Q_OBJECT
@@ -40,7 +41,7 @@ class KMixerWidget : public QWidget  {
    friend class KMixerPrefWidget;
 
   public:
-   KMixerWidget( Mixer *mixer, QWidget *parent=0, const char *name=0 );
+   KMixerWidget( MixSet *mixSet, QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
    QString mixerName();
@@ -66,6 +67,7 @@ class KMixerWidget : public QWidget  {
 
   private:
    Mixer *m_mixer;
+   MixSet *m_mixSet;
    QSlider *m_balanceSlider;
    QTimer *m_timer;
    QBoxLayout *m_topLayout;
