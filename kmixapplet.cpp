@@ -27,10 +27,10 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kaction.h>
 #include <qpushbutton.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <qwmatrix.h>
 #include <kiconloader.h>
 #include <qtimer.h>

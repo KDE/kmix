@@ -23,7 +23,7 @@
 #include <kaboutdata.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 #include "kmix.h"
 #include "version.h"

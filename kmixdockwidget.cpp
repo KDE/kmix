@@ -21,7 +21,7 @@
  */
 
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>

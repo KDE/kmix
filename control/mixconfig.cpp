@@ -30,11 +30,11 @@
 #include <qpushbutton.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <kdialog.h>
 #include <kdebug.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kfile.h>
 #include <qtextstream.h>
 #include <kiconloader.h>
