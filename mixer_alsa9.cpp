@@ -5,7 +5,6 @@
  *
  *
  * Copyright (C) 2002 Helio Chissini de Castro <helio@conectiva.com.br>
- * Copyright (C) 1996-2000 Christian Esken esken@kde.org
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +38,6 @@ extern "C"
 #include "mixer_alsa.h"
 #include "volume.h"
 
-
 Mixer* 
 ALSA_getMixer( int device, int card )
 {
@@ -72,14 +70,7 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
 	QString name = snd_mixer_selem_id_get_name( sid );
 
-	//cout << name.latin1() << endl;
-	
 	snd_mixer_elem_t *elem = snd_mixer_find_selem(handle, sid);
-
-	if ( ( ! snd_mixer_selem_has_playback_volume( elem )  ) || ( ! snd_mixer_selem_has_capture_volume( elem ) ) )
-	{
-		return MixDevice::UNKNOWN;
-	}
 	
 	if ( name == "Master" )
 	{
@@ -101,6 +92,8 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 int 
 Mixer_ALSA::openMixer()
 {
+	kdDebug() << "Mixer_ALSA::openMixer - Enter" << endl;
+	
 	bool virginOpen = m_mixDevices.isEmpty();
 	bool validDevice = false;
 	int err;
@@ -148,19 +141,17 @@ Mixer_ALSA::openMixer()
 		return 1;
 	}
 
-	//snd_ctl_card_info_alloca(&hw_info);
+	snd_ctl_card_info_alloca(&hw_info);
 
-	//if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
-	//{
-	//	errormsg( Mixer::ERR_READ );
-	//}
-	//snd_ctl_close( ctl_handle );
+	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
+	{
+		errormsg( Mixer::ERR_READ );
+	}
+	snd_ctl_close( ctl_handle );
 	
 	// Device and mixer names
-	//mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
-	//mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
-	mixer_card_name = "default";
-	mixer_device_name = "default";
+	mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
+	mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
 
 	// default mixers?
 	if( m_cardnum == -1 )
@@ -170,10 +161,7 @@ Mixer_ALSA::openMixer()
 
 	if( m_devnum == -1 )
 	{
-		//if( mixer_card_name == "default" )
-		//{	
-			m_devnum = 0;
-		//}
+		m_devnum = 0;
 	}
 
 	for ( elem = snd_mixer_first_elem( handle ); elem; elem = snd_mixer_elem_next( elem ) ) 
@@ -236,6 +224,9 @@ Mixer_ALSA::openMixer()
 	
 	// return with success
 	m_isOpen = true;
+
+	kdDebug() << "Mixer_ALSA::openMixer - Out" << endl;
+	
 	return 0;
 }
 
@@ -288,7 +279,6 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	return false;
 }
 
-// New function to test alsa 0.9
 void 
 Mixer_ALSA::readVolumeHW( snd_mixer_elem_t *elem, Volume &volume )
 {
