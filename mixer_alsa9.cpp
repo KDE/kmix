@@ -77,22 +77,25 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 		}
 		return MixDevice::VOLUME;
 	}
+        if ( name == "Capture" ) return MixDevice::VOLUME;
 	if ( name == "Master Mono" ) return MixDevice::VOLUME;
+        if ( name == "PC Speaker" ) return MixDevice::VOLUME;
+        if ( name == "Music" || name == "Synth" || name == "FM" ) return MixDevice::MIDI;
 	if ( name.find( "Headphone", 0, false ) != -1 ) return MixDevice::HEADPHONE;
 	if ( name == "Bass" ) return MixDevice::BASS;
 	if ( name == "Treble" ) return MixDevice::TREBLE;
 	if ( name == "CD" ) return MixDevice::CD;
 	if ( name == "Video" ) return MixDevice::VIDEO;
-	if ( name == "PCM" || name == "Wave" || name == "Line" )	return MixDevice::AUDIO;
+	if ( name == "PCM" || name == "Wave" ) return MixDevice::AUDIO;
 	if ( name == "Surround" ) return MixDevice::SURROUND_BACK;
 	if ( name == "Center" ) return MixDevice::SURROUND_CENTERFRONT;
-	if ( name.find( "surround", 0, false ) != -1 ) return MixDevice::SURROUND;
 	if ( name.find( "ac97", 0, false ) != -1 ) return MixDevice::AC97;
 	if ( name.find( "coaxial", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "optical", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "IEC958", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "Mic" ) != -1 ) return MixDevice::MICROPHONE;
 	if ( name.find( "LFE" ) != -1 ) return MixDevice::SURROUND_LFE;
+        if ( name.find( "Monitor" ) != -1 ) return MixDevice::RECMONITOR;
 	if ( name.find( "3D", 0, false ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
 
 	return MixDevice::EXTERNAL;
