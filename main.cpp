@@ -41,21 +41,20 @@ int main(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
 			 APP_VERSION, description, KAboutData::License_GPL,
-			 "(c) 2000 by Stefan Schimanski");
+			 I18N_NOOP("(c) 2000 by Stefan Schimanski"));
 
    aboutData.addAuthor("Stefan Schimanski", 0, "1Stein@gmx.de");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
-   aboutData.addAuthor("Paul Kendall", "SGI Port", "paul@orion.co.nz");
-   aboutData.addAuthor("Sebestyen Zoltan", "*BSD fixes", "szoli@digo.inf.elte.hu");
-   aboutData.addAuthor("Lennart Augustsson", "*BSD fixes", "augustss@cs.chalmers.se");
-   aboutData.addAuthor("Nick Lopez", "ALSA port", "kimo_sabe@usa.net");
-   aboutData.addAuthor("Helge Deller", "HP/UX port", "deller@gmx.de");
+   aboutData.addAuthor("Paul Kendall", I18N_NOOP("SGI Port"), "paul@orion.co.nz");
+   aboutData.addAuthor("Sebestyen Zoltan", I18N_NOOP("*BSD fixes"), "szoli@digo.inf.elte.hu");
+   aboutData.addAuthor("Lennart Augustsson", I18N_NOOP("*BSD fixes"), "augustss@cs.chalmers.se");
+   aboutData.addAuthor("Nick Lopez", I18N_NOOP("ALSA port"), "kimo_sabe@usa.net");
+   aboutData.addAuthor("Helge Deller", I18N_NOOP("HP/UX port"), "deller@gmx.de");
    	
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.	
 
    KApplication app;
-   KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_default("data") + "kmix/pics");
 
    if (app.isRestored())
    {
