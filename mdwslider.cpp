@@ -198,8 +198,11 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	m_label->installEventFilter( this );
     }
     else {
-	// !! later
-	m_label = 0;
+	m_label = new QLabel(this);
+        static_cast<QLabel*>(m_label) ->setText(m_mixdevice->name());
+        m_label->hide();
+        labelAndSliders->addWidget( m_label );
+        m_label->installEventFilter( this );
     }
 		
     // --- Part 2: SLIDERS ---
@@ -245,16 +248,29 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	// We should look up the mapping here, but for now, we simply assume "chid == i".
 
 	int maxvol = m_mixdevice->getVolume().maxVolume();
+        int minvol = m_mixdevice->getVolume().minVolume();
+
 	QWidget* slider;
 	if ( m_small )
 	{
-	    slider = new KSmallSlider( 0, maxvol, maxvol/10,
+	    slider = new KSmallSlider( minvol, maxvol, maxvol/10,
 				       m_mixdevice->getVolume( chid ),
 				       _orientation,
 				       this, m_mixdevice->name().ascii() );
 	}
 	else
 	{
+            int sliderMinVol, sliderMaxVol;
+            if ( _orientation == Qt::Horizontal ) {
+                sliderMinVol = minvol;
+                sliderMaxVol = maxvol;
+            }
+            else  {
+                sliderMinVol = maxvol;
+                sliderMaxVol = minvol;
+            }
+
+            
 	    slider = new QSlider( 0, maxvol, maxvol/10,
 				  maxvol - m_mixdevice->getVolume( chid ),
 				  _orientation,

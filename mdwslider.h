@@ -113,7 +113,7 @@ private:
     QLabel *m_iconLabel;
     KLedButton *m_muteLED;
     KLedButton *m_recordLED;
-    VerticalText *m_label;
+    QWidget *m_label; // is either QLabel or VerticalText
     QBoxLayout *_layout;
     QPtrList<QWidget> m_sliders;
     QValueList<Volume::ChannelID> _slidersChids;
