@@ -7,8 +7,8 @@
 #undef Above
 #undef Below
 #include <qslider.h>
-#include <qmsgbox.h>
-#include <qpopmenu.h>
+#include <qmessagebox.h>
+#include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qtooltip.h>
 

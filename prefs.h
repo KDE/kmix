@@ -5,9 +5,9 @@
 #include <stdio.h>
 
 
-#include <qchkbox.h>
+#include <qcheckbox.h>
 
-#include <qtabdlg.h>
+#include <qtabdialog.h>
 #include "kconfig.h"
 #include "mixer.h"
 #include "channel.h"

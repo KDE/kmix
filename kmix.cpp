@@ -599,7 +599,7 @@ void KMix::launchHelpCB()
 
 bool KMix::event(QEvent *e)
 {
-  if (e->type() == Event_Hide && allowDocking && !dockinginprogress) {
+  if (e->type() == QEvent::Hide && allowDocking && !dockinginprogress) {
     sleep(1); // give kwm some time..... ugly I know.
     if (!KWM::isIconified(winId())) // maybe we are just on another desktop
       return FALSE;
@@ -618,7 +618,7 @@ bool KMix::event(QEvent *e)
 bool KMix::eventFilter(QObject *o, QEvent *e)
 {
   // Lets see, if we have a "Right mouse button press"
-  if (e->type() == Event_MouseButtonPress) {
+  if (e->type() == QEvent::MouseButtonPress) {
     QMouseEvent *qme = (QMouseEvent*)e;
     if (qme->button() == RightButton) {
       QPopupMenu *qpm = contextMenu(o,0);

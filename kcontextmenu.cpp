@@ -67,7 +67,7 @@ KCmFunc* KCmManager::getContextFunction(QObject *o, QEvent *e)
   KContextMenu *kcm = NULL;
 
   // Lets see, if we have a "Right mouse button press"
-  if (e->type() == Event_MouseButtonPress)
+  if (e->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent *qme = (QMouseEvent*)e;
       if (qme->button() == RightButton)

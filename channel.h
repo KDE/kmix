@@ -2,9 +2,9 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-#include <qchkbox.h>
-#include <qbttngrp.h>
-#include <qlined.h>
+#include <qcheckbox.h>
+#include <qbuttongroup.h>
+#include <qlineedit.h>
 
 /// Channel setup
 class ChannelSetup

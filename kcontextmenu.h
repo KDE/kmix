@@ -3,7 +3,7 @@
 #define KCONTEXTMENU_H
 
 #include <qobject.h>
-#include <qpopmenu.h>
+#include <qpopupmenu.h>
 #include <qlist.h>
 
 typedef QPopupMenu* (KCmFunc)(QObject *,QObject*);
