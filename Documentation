@@ -1,0 +1,13 @@
+
+Additional documentation for the mixer class and destricption of
+class members:
+
+devmask:     All devices being at least output capable
+
+recmask:     All devices, that can be a record source
+
+recsrc:     All devices (again a bit mask!), which are currently record
+            source. There can be multiple record sources. Attention: Even
+            OSS can have multiple record sources, plain Soundblasters dont
+            have, but OSS claims to be prepared for this case.
+
