@@ -57,6 +57,7 @@ class KMixDockWidget : public KSystemTray  {
    Mixer *m_mixer;
    QFrame *masterVol;   
    KAudioPlayer *audioPlayer;
+   bool m_playBeepOnVolumeChange;
    bool m_mixerVisible;
 };
 

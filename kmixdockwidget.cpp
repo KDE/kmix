@@ -46,13 +46,16 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer,
     : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), 
       audioPlayer(0L), m_mixerVisible(false)
 {
+	m_playBeepOnVolumeChange = false; // disabled due to triggering a "Bug"
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
 
 KMixDockWidget::~KMixDockWidget()
 {
-    delete audioPlayer;
+	if ( audioPlayer != 0 )  {
+	    delete audioPlayer;
+	}
     delete masterVol;
 }
 
@@ -80,8 +83,10 @@ void KMixDockWidget::createMasterVolWidget()
    masterVol->resize(masterVol->sizeHint());
 
    // Setup volume preview
-   audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
-   connect(mdw, SIGNAL(newVolume(int, Volume)), audioPlayer, SLOT(play()));
+   if ( m_playBeepOnVolumeChange ) {
+		audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
+		connect(mdw, SIGNAL(newVolume(int, Volume)), audioPlayer, SLOT(play()));
+   }
 }
 
 void KMixDockWidget::setVolumeTip(int, Volume vol)
@@ -183,7 +188,9 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
         vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
 
-    audioPlayer->play();
+	if ( m_playBeepOnVolumeChange ) {
+	    audioPlayer->play();
+	}
     masterDevice->setVolume(vol);
     m_mixer->writeVolumeToHW(masterDevice->num(), vol);
     setVolumeTip(masterDevice->num(), vol);
