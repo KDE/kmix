@@ -20,7 +20,8 @@ class Volume
                      MALL=65535 };
 
 
- enum ChannelID { LEFT     = 0, RIGHT     = 1, CENTER = 2,
+ enum ChannelID { CHIDMIN  = 0,
+                  LEFT     = 0, RIGHT     = 1, CENTER = 2,
                   REARLEFT = 3, REARRIGHT = 4, WOOFER = 5,
                   LEFTREC  = 6, RIGHTREC  = 7,
                   CUSTOM1  = 8, CUSTOM2   = 9, CHIDMAX  = 9 };

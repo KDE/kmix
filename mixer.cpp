@@ -30,6 +30,7 @@
 
 #include "mixer.h"
 #include "kmix-platforms.cpp"
+#include "volume.h"
 
 
 /**
@@ -515,15 +516,52 @@ int Mixer::masterVolume()
 // @dcop
 void Mixer::increaseVolume( int deviceidx )
 {
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (mixdev != 0) {
+     Volume vol=mixdev->getVolume();
+     double fivePercent = vol.maxVolume() / 20;
+     for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++) {
+        int volToChange = vol.getVolume((Volume::ChannelID)i);
+        if ( fivePercent < 1 ) fivePercent = 1;
+        volToChange += (int)fivePercent;
+        vol.setVolume((Volume::ChannelID)i, volToChange);
+     }
+     writeVolumeToHW(deviceidx, vol);
+  }
+
+  /* see comment at the end of decreaseVolume()
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol+5);
+  */
 }
 
 // @dcop
 void Mixer::decreaseVolume( int deviceidx )
 {
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (mixdev != 0) {
+     Volume vol=mixdev->getVolume();
+     double fivePercent = vol.maxVolume() / 20;
+     for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++) {
+        int volToChange = vol.getVolume((Volume::ChannelID)i);
+        std::cout << "Mixer::decreaseVolume(): before: volToChange " <<i<< "=" <<volToChange << std::endl;
+        if ( fivePercent < 1 ) fivePercent = 1;
+        volToChange -= (int)fivePercent;
+	std::cout << "Mixer::decreaseVolume():  after: volToChange " <<i<< "=" <<volToChange << std::endl;
+        vol.setVolume((Volume::ChannelID)i, volToChange);
+        int volChanged = vol.getVolume((Volume::ChannelID)i);
+        std::cout << "Mixer::decreaseVolume():  check: volChanged " <<i<< "=" <<volChanged << std::endl;
+     } // for
+     writeVolumeToHW(deviceidx, vol);
+  }
+
+  /************************************************************
+    It is important, not to implement this method like this: this->volume()
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol-5);
+     It creates too big rounding errors. If you don't beleive me, then
+     do a decreaseVolume() and increaseVolume() with "vol.maxVolume() == 31".
+   ***********************************************************/
 }
 
 // @dcop
