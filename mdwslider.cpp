@@ -421,10 +421,10 @@ MDWSlider::setStereoLinked(bool value)
    for( slider=m_sliders.next(); slider!=0 ; slider=m_sliders.next() )
       value ? slider->hide() : slider->show();
 
-	slider = m_sliders.last();
-	if( static_cast<QSlider *>(slider)->tickmarks() )
-		setTicks( true );
-	
+   slider = m_sliders.last();
+   if( slider && static_cast<QSlider *>(slider)->tickmarks() )
+      setTicks( true );
+
    layout()->activate();
 }
 
