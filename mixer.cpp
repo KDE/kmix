@@ -224,6 +224,11 @@ MixDevice* Mixer::operator[](int num)
 */
 void Mixer::readSetFromHW()
 {
+  bool updated = prepareUpdate();
+  if ( ! updated ) {
+    // Some drivers (ALSA) are smart. We don't need to run the following
+    // time-consuming update loop if there was no change
+  }
   MixDevice* md;
   for( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
     {
@@ -237,6 +242,9 @@ void Mixer::readSetFromHW()
   emit newRecsrc(); // cheap, but works
 }
 
+bool Mixer::prepareUpdate() {
+  return true;
+}
 void Mixer::setBalance(int balance)
 {
   // !! BAD, because balance only works on the master device. If you have not Master, the slider is a NOP

@@ -333,6 +333,76 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 //	return mixer_elem_list[ devnum ];
 }
 
+bool Mixer_ALSA::prepareUpdate() {
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
+    bool updated = false;
+    struct pollfd  *fds;
+    unsigned short revents;
+    int count, err;
+
+/* setup for select on stdin and the mixer fd */
+    if ((count = snd_mixer_poll_descriptors_count(handle)) < 0) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  count << "\n";
+	return false;
+    }
+
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
+    
+    fds = (struct pollfd*)calloc(count + 1, sizeof(struct pollfd));
+    if (fds == NULL) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
+	return false;
+    }
+
+    fds->events = POLLIN;
+    if ((err = snd_mixer_poll_descriptors(handle, fds, count)) < 0) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
+	return false;
+    }
+    if (err != count) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " count=" <<  count << "\n";
+	    return false;
+    }
+
+    // Poll on fds with 10ms timeout
+    // Hint: alsamixer has an infinite timeout, but we cannot do this because we would block
+    // the X11 event handling (Qt event loop) with this.
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 3\n";
+    int finished = poll(fds, count, 10);
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 4\n";
+
+    if (finished > 0) {
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
+
+	if (snd_mixer_poll_descriptors_revents(handle, fds, count, &revents) >= 0) {
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
+
+
+	    if (revents & POLLNVAL) {
+		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
+		return false;
+	    }
+	    if (revents & POLLERR) {
+		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLERR\n";
+		return false;
+	    }
+	    if (revents & POLLIN) {
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
+
+		snd_mixer_handle_events(handle);
+                updated = true;
+	    }
+	}
+    }
+
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 8\n";
+
+
+    // !!! memory leak under any error condition
+    free(fds);
+    return updated;
+}
+
 bool
 Mixer_ALSA::isRecsrcHW( int devnum )
 {
@@ -621,7 +691,8 @@ bool Mixer_ALSA::hasBrokenRecSourceHandling() {
     // Only for the current Mixer_ALSA implementation.
     // This implementation does not see changes from the Mixer Hardware to the Record Sources.
     // So the workaround is to manually call md.setRecSrc(false) for all aother channels.
-    return true;
+    // Fixed now :-)))
+    return false;
 }
 
 QString

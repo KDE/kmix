@@ -18,6 +18,8 @@ class Mixer_ALSA : public Mixer
 		virtual bool setRecsrcHW( int devnum, bool on);
 		virtual bool isRecsrcHW( int devnum );
 		virtual bool hasBrokenRecSourceHandling();
+	        virtual bool prepareUpdate();
+
 		
 	protected:
 		virtual int	openMixer();
