@@ -7,6 +7,7 @@
 #undef Above
 #undef Below
 #include <qslider.h>
+#include <qtimer.h>
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
@@ -48,7 +49,8 @@ public slots:
   void placeWidgets();
   void hideMenubarCB();
   void tickmarksTogCB();
-
+  void updateSliders();
+  
 protected:
   void hideEvent( QHideEvent *e );
   void closeEvent( QCloseEvent *e );
@@ -72,7 +74,6 @@ private slots:
 private:
   void createWidgets();
   void createMenu();
-  bool event( QEvent *e );
   bool mainmenuOn;
   bool tickmarksOn;
   bool allowDocking;
@@ -94,6 +95,7 @@ private:
 
   QSlider	*LeftRightSB;
   QPoint        KCMpopup_point;
+  QTimer	*i_time;
 
 private slots:
   void quit_myapp();

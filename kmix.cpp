@@ -1,4 +1,4 @@
-/* 
+/*
  *              KMix -- KDE's full featured mini mixer
  *
  *
@@ -139,6 +139,8 @@ KMix::~KMix()
 {
   configSave();
   delete mainmenu;
+
+  if (  i_time != 0 ) delete i_time;
 }
 
 bool KMix::restore(int number)
@@ -168,6 +170,8 @@ KMix::KMix(int mixernum, int SetNum)
   // things will be stored in the session config.
   startSet = SetNum;
   startDevice = mixernum;
+
+  i_time = 0;
   KmConfig=KApplication::getKApplication()->getConfig();
 
   KmConfig->setGroup("");
@@ -341,6 +345,10 @@ void KMix::createWidgets()
 	   this, SLOT(MbalChangeCB(int)));
   LeftRightSB->installEventFilter(this);
   QToolTip::add( LeftRightSB, "Left/Right balancing" );
+
+  i_time = new QTimer();
+  connect( i_time,     SIGNAL(timeout()),      SLOT(updateSliders()) );
+  i_time->start( 200 );
 }
 
 
@@ -595,10 +603,6 @@ void KMix::launchHelpCB()
 }
 
 
-bool KMix::event(QEvent *e)
-{
-  return QWidget::event(e);
-}
 
 bool KMix::eventFilter(QObject *o, QEvent *e)
 {
@@ -792,6 +796,39 @@ void KMix::hideEvent( QHideEvent *)
     return ;
   }
 }
+
+
+void KMix::updateSliders( )
+{
+  QSlider *qs;
+  MixSet *SrcSet = mix->TheMixSets->first();
+
+      mix->Set2Set0(-1,true);        // Read from hardware
+      // now update the slider positions...
+      MixDevice        *MixPtr = mix->First;
+      while(MixPtr) {
+          MixSetEntry *mse;
+          for(mse = SrcSet->first();
+                    (mse != NULL) && (mse->devnum != MixPtr->device_num);
+                    mse=SrcSet->next() );
+          if (mse == NULL)
+                continue;
+
+          if(! MixPtr->is_disabled){
+              MixPtr->Left->volume = mse->volumeL;
+              MixPtr->Right->volume = mse->volumeR;
+          }
+          qs = MixPtr->Left->slider;
+          qs->setValue(100-MixPtr->Left->volume);
+          if (MixPtr->is_stereo  == true) {
+              qs = MixPtr->Right->slider;
+              qs->setValue(100-MixPtr->Right->volume);
+          }
+          MixPtr = MixPtr->Next;
+      }
+} // enterEvent()
+
+
 
 void KMix::quit_myapp()
 {
