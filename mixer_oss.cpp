@@ -258,9 +258,9 @@ bool Mixer_OSS::setRecsrcHW( int devnum, bool on )
   return i_recsrc == oldrecsrc;
 }
 
-bool Mixer_OSS::isRecsrcHW( int devnum )
+bool Mixer_OSS::isRecsrcHW( int /*devnum*/ )
 {
-#warning "isRecsrcHR not implemented in OSS yet"
+#warning "isRecsrcHW not implemented in OSS yet"
 	return false;
 }
 
