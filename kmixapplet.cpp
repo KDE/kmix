@@ -95,6 +95,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
       // get mixer devices
       s_mixers->setAutoDelete( TRUE );
+      QMap<QString,int> mixerNums;
       int drvNum = Mixer::getDriverNum();
       for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
           for ( int dev=0; dev<maxDevices; dev++ )
@@ -104,8 +105,13 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                   int mixerError = mixer->grab();
                   if ( mixerError!=0 )
                       delete mixer;
-                  else
+                  else {
                       s_mixers->append( mixer );
+
+                      // count mixer nums for every mixer name to identify mixers with equal names
+                      mixerNums[mixer->mixerName()]++;
+                      mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+                  }
               }
    }
 
@@ -140,11 +146,9 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    Mixer *mixer = 0;
    if ( mixerNum>=0 )
    {
-      int m = mixerNum+1;
       for (mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
       {
-         if ( mixer->mixerName()==mixerName ) m--;
-         if ( m==0 ) break;
+          if ( mixer->mixerName()==mixerName && mixer->mixerNum()==mixerNum ) break;
       }
    }
 
@@ -154,7 +158,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
    if ( mixer )
    {
-      m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );
+      m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum,
+                                        true, true, this );
       m_mixerWidget->loadConfig( cfg, "Widget" );
       m_mixerWidget->setColors( m_colors );
       connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
@@ -185,8 +190,8 @@ void KMixApplet::saveConfig()
     if ( m_mixerWidget ) {
         KConfig *cfg = config();
         cfg->setGroup( 0 );
-        cfg->writeEntry( "Mixer", s_mixers->find( m_mixerWidget->mixer() ) );
-        cfg->writeEntry( "MixerName", m_mixerWidget->mixer()->mixerName() );
+        cfg->writeEntry( "Mixer", m_mixerWidget->mixerNum() );
+        cfg->writeEntry( "MixerName", m_mixerWidget->mixerName() );
 
         cfg->writeEntry( "ColorCustom", m_customColors );
 
@@ -221,15 +226,14 @@ void KMixApplet::selectMixer()
                                         1, TRUE, &ok, this );
    if ( ok )
    {
-      int mixerNum = lst.findIndex( res );
-      Mixer *mixer = s_mixers->at( mixerNum );
+      Mixer *mixer = s_mixers->at( lst.findIndex( res ) );
       if (!mixer)
          KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
       else
       {
          delete m_errorLabel;
          m_errorLabel = 0;
-         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum,
+         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixer->mixerNum(),
                                            true, true, this );
          m_mixerWidget->setColors( m_colors );
          m_mixerWidget->show();

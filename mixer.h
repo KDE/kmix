@@ -147,6 +147,10 @@ class Mixer : public QObject
       virtual QString errorText(int mixer_error);
       QString mixerName();
 
+      /// set/get mixer number used to identify mixers with equal names
+      void setMixerNum( int num );
+      int mixerNum();
+
       /// get the actual MixSet
       virtual MixSet getMixSet() { return m_mixDevices; };
       /// Write a given MixSet to hardware
@@ -197,6 +201,9 @@ class Mixer : public QObject
       /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
       /// gives you a usable name, use that name.
       QString m_mixerName;
+
+      // mixer number to identify mixers with equal name correctly (set by the client)
+      int m_mixerNum;
 
       bool m_isOpen;
       int m_balance; // from -100 (just left) to 100 (just right)

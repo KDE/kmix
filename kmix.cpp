@@ -29,6 +29,7 @@
 #include <qtabbar.h>
 #include <qinputdialog.h>
 #include <qtimer.h>
+#include <qmap.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -87,7 +88,6 @@ KMixWindow::KMixWindow()
    loadConfig();
 
    // create mixer widgets for unused mixers
-   int mixerNum = 0;
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next()) {
 
        // search for mixer widget with current mixer
@@ -99,13 +99,13 @@ KMixWindow::KMixWindow()
        if ( widget==0 ) {
 
            KMixerWidget *mw = new KMixerWidget( m_maxId, mixer,
-                                              mixer->mixerName(), mixerNum,
+                                                mixer->mixerName(),
+                                                mixer->mixerNum(),
                                               false, true, this );
            mw->setName( mixer->mixerName() );
            insertMixerWidget( mw );
 
            m_maxId++;
-           mixerNum++;
        }
    }
 
@@ -128,22 +128,24 @@ KMixWindow::~KMixWindow()
 
 void KMixWindow::initActions()
 {
-   // file menu
-   KStdAction::openNew( this, SLOT(newMixer()), actionCollection());
-   KStdAction::close( this, SLOT(closeMixer()), actionCollection());
-   (void)new KAction( i18n("&Restore default volumes"), 0, this, SLOT(loadVolumes()),
-                      actionCollection(), "file_load_volume" );
-   (void)new KAction( i18n("&Save current volumes as default"), 0, this, SLOT(saveVolumes()),
-                      actionCollection(), "file_save_volume" );
-   KStdAction::quit( this, SLOT(quit()), actionCollection());
+    // file menu
+    (void)new KAction( i18n("&New mixer tab"), "filenew", 0, this,
+                       SLOT(newMixer()), actionCollection(), "file_new_tab" );
+    (void)new KAction( i18n("&Close mixer tab"), "fileclose", 0, this,
+                       SLOT(closeMixer()), actionCollection(), "file_close_tab" );
+    (void)new KAction( i18n("&Restore default volumes"), 0, this, SLOT(loadVolumes()),
+                       actionCollection(), "file_load_volume" );
+    (void)new KAction( i18n("&Save current volumes as default"), 0, this, SLOT(saveVolumes()),
+                       actionCollection(), "file_save_volume" );
+    KStdAction::quit( this, SLOT(quit()), actionCollection());
 
-   // settings menu
-   KAction *a = KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
-   a->setAccel( CTRL+Key_M );
-   a->plugAccel( new KAccel(this) ); // to make action working without visible menubar
-   KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
+    // settings menu
+    KAction *a = KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+    a->setAccel( CTRL+Key_M );
+    a->plugAccel( new KAccel(this) ); // to make action working without visible menubar
+    KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
-   createGUI( "kmixui.rc" );
+    createGUI( "kmixui.rc" );
 }
 
 
@@ -160,6 +162,7 @@ void KMixWindow::initMixer()
    delete config;
 
    // poll for mixers
+   QMap<QString,int> mixerNums;
    int drvNum = Mixer::getDriverNum();
    for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
        for( int dev=0; dev<maxDevices; dev++ )
@@ -172,6 +175,10 @@ void KMixWindow::initMixer()
                else {
                    connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
                    m_mixers.append( mixer );
+
+                   // count mixer nums for every mixer name to identify mixers with equal names
+                   mixerNums[mixer->mixerName()]++;
+                   mixer->setMixerNum( mixerNums[mixer->mixerName()] );
                }
 
            }
@@ -251,6 +258,7 @@ void KMixWindow::saveConfig()
       config->setGroup( grp );
       config->writeEntry( "Mixer", mw->mixerNum() );
       config->writeEntry( "MixerName", mw->mixerName() );
+      config->writeEntry( "Name", mw->name() );
 
       mw->saveConfig( config, grp );
    }
@@ -297,18 +305,19 @@ void KMixWindow::loadConfig()
        // find mixer
        int mixerNum = config->readNumEntry( "Mixer", -1 );
        QString mixerName = config->readEntry( "MixerName", QString::null );
+       QString name = config->readEntry( "Name", mixerName );
        Mixer *mixer = 0;
+
        if ( mixerNum>=0 ) {
 
-           int m = mixerNum+1;
            for ( mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next() ) {
-               if ( mixer->mixerName()==mixerName ) m--;
-               if ( m==0 ) break;
+               if ( mixer->mixerName()==mixerName && mixer->mixerNum()==mixerNum ) break;
            }
 
        }
 
        KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, true, this );
+       mw->setName( name );
        mw->loadConfig( config, *tab );
        insertMixerWidget( mw );
    }
@@ -338,7 +347,7 @@ void KMixWindow::insertMixerWidget( KMixerWidget *mw )
    mw->show();
    connect( mw, SIGNAL(updateLayout()), this, SLOT(updateLayout()) );
 
-   KAction *a = actionCollection()->action( "file_close" );
+   KAction *a = actionCollection()->action( "file_close_tab" );
    if ( a ) a->setEnabled( m_visibleTabs>1 );
 
    updateLayout();
@@ -351,7 +360,7 @@ void KMixWindow::removeMixerWidget( KMixerWidget *mw )
     m_tab->removePage( mw );
     m_mixerWidgets.remove( mw );
 
-    KAction *a = actionCollection()->action( "file_close" );
+    KAction *a = actionCollection()->action( "file_close_tab" );
     if ( a ) a->setEnabled( m_visibleTabs>1 );
 
     updateLayout();
@@ -435,23 +444,24 @@ void KMixWindow::newMixer()
                                         1, TRUE, &ok, this );
    if ( ok )
    {
-      int mixerNum = lst.findIndex( res );
-      Mixer *mixer = m_mixers.at( mixerNum );
-      if (!mixer)
-      {
-         KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
-         return;
-      }
+       // valid mixer?
+       Mixer *mixer = m_mixers.at( lst.findIndex( res ) );
+       if (!mixer) {
+           KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
+           return;
+       }
 
-      QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ),
-                                            mixer->mixerName(), &ok, this );
-      if ( ok )
-      {
-         KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixerNum,
-                                              false, true, this );
-         m_maxId++;
-         mw->setName( name );
-         insertMixerWidget( mw );
+       // ask for description
+       QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ),
+                                             mixer->mixerName(), &ok, this );
+      if ( ok ) {
+
+          // create mixer widget
+          KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+                                               false, true, this );
+          m_maxId++;
+          mw->setName( name );
+          insertMixerWidget( mw );
       }
    }
 }

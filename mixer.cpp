@@ -178,6 +178,7 @@ Mixer::Mixer( int device, int card )
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
   m_profiles.setAutoDelete( true );
+  m_mixerNum = 0;
 };
 
 int Mixer::setupMixer( MixSet mset )
@@ -305,6 +306,17 @@ void Mixer::setBalance(int balance)
 QString Mixer::mixerName()
 {
   return m_mixerName;
+}
+
+
+void Mixer::setMixerNum( int num )
+{
+    m_mixerNum = num;
+}
+
+int Mixer::mixerNum()
+{
+    return m_mixerNum;
 }
 
 void Mixer::errormsg(int mixer_error)
