@@ -81,7 +81,7 @@ int KMixApp::newInstance()
 
 
 KMixWindow::KMixWindow()
-   : m_maxId( 0 ), m_dockWidget( 0L )
+   : KMainWindow(0), m_maxId( 0 ), m_dockWidget( 0L )
 {
    initMixer();
    initActions();
@@ -177,7 +177,7 @@ void KMixWindow::initPrefDlg()
 void KMixWindow::initWidgets()
 {
    m_tab = new QTabWidget( this );
-   setView( m_tab );
+   setCentralWidget( m_tab );
 }
 
 void KMixWindow::updateDocking()
@@ -336,7 +336,7 @@ void KMixWindow::closeEvent ( QCloseEvent * e )
       return;
    }
 
-   KTMainWindow::closeEvent( e );
+   KMainWindow::closeEvent( e );
 }
 
 void KMixWindow::quit()

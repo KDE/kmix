@@ -33,7 +33,7 @@
 
 // include files for KDE 
 #include <kapp.h>
-#include <ktmainwindow.h>
+#include <kmainwindow.h>
 #include <kaccel.h>
 #include <kaction.h>
 #include <kiconloader.h>
@@ -58,7 +58,7 @@ class KMixApp : public KUniqueApplication
     KMixWindow *m_kmix;
 };
 
-class KMixWindow : public KTMainWindow
+class KMixWindow : public KMainWindow
 {
    Q_OBJECT
 
