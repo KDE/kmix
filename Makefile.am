@@ -39,7 +39,7 @@ rcdir = $(kde_datadir)/kmix
 rc_DATA = kmixui.rc
 
 autostart_DATA = restore_kmix_volumes.desktop
-autostartdir = $(prefix)/share/autostart
+autostartdir = $(datadir)/autostart
 
 lnkdir = $(kde_datadir)/kicker/applets
 lnk_DATA = kmixapplet.desktop
