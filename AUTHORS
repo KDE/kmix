@@ -3,5 +3,6 @@ Written by         Christian Esken (esken@kde.org)
 SGI port done      Paul Kendall (paul@orion.co.nz)
 Fixes for FreeBSD  Sebestyen Zoltan (szoli@digo.inf.elte.hu)
 Solaris fixes      Faraut Jean-Louis <jlf@essi.fr>
+ALSA port          Nick Lopez <kimo_sabe@usa.net>
 
 The package is maintained by Christian Esken (esken@kde.org)

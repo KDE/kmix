@@ -1,3 +1,12 @@
+1998-7-1    Nick Lopez <kimo_sabe@usa.net>
+        * ALSA support added.
+          Known limitations:
+	    - If another program changes a mixer setting it will not
+	      automagicaly update. yet.
+            - I'm unsure if they channel icons will be correct for cards
+              other than my SB16. If you have a different card tell me
+              if the icons match the tooltips.
+
 1998-06-17  Christian Esken  <esken@kde.org>
 
 	* Can now start docked.

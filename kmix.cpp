@@ -104,7 +104,7 @@ bool KMix::restore(int n)
 {
   bool ret = KTopLevelWidget::restore(n);
 //  if (ret && allowDocking && startDocked )
-    hide();
+//    hide();
   return ret;
 }
 
@@ -177,7 +177,13 @@ void KMix::createWidgets()
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
 	midiIcon, recmonIcon,trebleIcon, unknownIcon, volumeIcon };
-
+#ifdef ALSA /* not sure if this is for ALSA in general or just my SB16 */
+  char DefaultMixerIcons[]={
+    volumeIcon,		bassIcon,	trebleIcon,	midiIcon,	audioIcon,
+    extIcon,	microphoneIcon,	cdIcon, recmonIcon, recmonIcon, unknownIcon
+  };
+  const unsigned char numDefaultMixerIcons=11;
+#else
   char DefaultMixerIcons[]={
     volumeIcon,		bassIcon,	trebleIcon,	midiIcon,	audioIcon,
     unknownIcon,	extIcon,	microphoneIcon,	cdIcon,		recmonIcon,
@@ -185,7 +191,7 @@ void KMix::createWidgets()
     extIcon,		extIcon
   };
   const unsigned char numDefaultMixerIcons=17;
-
+#endif
   // Init DnD: Set up drop zone and drop handler
   dropZone = new KDNDDropZone( this, DndURL );
   connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )), 
@@ -457,7 +463,8 @@ void KMix::createMenu()
     "This program is in the GPL.\n"\
     "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
     "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
-    "and Lennart Augustsson (augustss@cs.chalmers.se).");
+    "and Lennart Augustsson (augustss@cs.chalmers.se).\n"\
+    "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
   head += vers;
 
   Mhelp = globalKapp->getHelpMenu(true,msg);

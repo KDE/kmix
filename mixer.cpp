@@ -46,11 +46,17 @@
 #endif
 
 #ifdef linux
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/soundcard.h>
-#define OSS_MIXER
+#ifdef ALSA
+  #include <sys/soundlib.h>
+  void *devhandle;
+  int ret;
+#else
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+ #include <sys/types.h>
+ #include <sys/soundcard.h>
+ #define OSS_MIXER
+#endif
 #endif
 
 // FreeBSD section, according to Sebestyen Zoltan
@@ -83,7 +89,7 @@
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
-#if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER)
+#if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER) || defined(ALSA)
 // We are happy. Do nothing
 #else
 
@@ -148,6 +154,9 @@ int Mixer::release()
 #ifdef IRIX_MIXER
     ALfreeconfig(m_config);
     ALcloseport(m_port);
+#elif defined(ALSA)
+    ret = snd_mixer_close(devhandle);
+    return ret;
 #else
     close(fd);
 #endif
@@ -210,6 +219,9 @@ void Mixer::setDevNumName(int devnum)
 #endif
 #ifdef SUN_MIXER
   devname = "/dev/audioctl";
+#endif
+#ifdef ALSA
+  devname = "ALSA";
 #endif
 #ifdef NO_MIXER
   devname = "Mixer";
@@ -433,6 +445,15 @@ void Mixer::set2set0(int Source)
       VolRight = (Volume>>8) & 0x7f;
 // PORTING: add #ifdef PLATFORM , commands , #endif
 #endif
+#ifdef ALSA
+      snd_mixer_channel_t data;
+      ret = snd_mixer_channel_read( devhandle, MixPtr->device_num, &data );
+      if ( !ret ) {
+	VolLeft = data.left;
+	VolRight = data.right;
+      } else 
+ 	errormsg(Mixer::ERR_READ);
+#endif
 
       if ( (VolLeft == VolRight) && (MixPtr->is_stereo == true) )
 	mse->StereoLink = true;
@@ -492,8 +513,10 @@ int Mixer::openMixer(void)
   m_port = ALopenport("XVDOPlayer", "w", m_config);
   if (m_port == (ALport)0)
     return Mixer::ERR_OPEN;
-
-
+#elif defined(ALSA)
+  ret = snd_mixer_open( &devhandle, 0, 0 ); /* card 0 mixer 0 */
+  if ( ret )
+    return Mixer::ERR_OPEN;
 #else
   if ((fd= open(devname, O_RDWR)) < 0)
     return Mixer::ERR_OPEN;
@@ -528,7 +551,33 @@ int Mixer::openMixer(void)
     return Mixer::ERR_NODEV;
   MaxVolume =100;
 #endif
-
+#ifdef ALSA
+  snd_mixer_channel_info_t chinfo;
+  snd_mixer_channel_t data;
+  int num, i;
+  devmask=recmask=recsrc=stereodevs=0;
+  MaxVolume = 100;
+  num = snd_mixer_channels( devhandle );
+  if ( num < 0 )
+    return Mixer::ERR_NODEV;
+  for( i=0;i<=num; i++ ) {
+    ret = snd_mixer_channel_info(devhandle, i, &chinfo);
+    if ( !ret ) {
+      if ( chinfo.caps & SND_MIXER_CINFO_CAP_STEREO )
+        stereodevs |= 1 << i;
+      if ( chinfo.caps & SND_MIXER_CINFO_CAP_RECORD )
+        recmask |= 1 << i;
+      devmask |= 1 << i;
+      ret = snd_mixer_channel_read( devhandle, i, &data );
+      if ( !ret ) {
+        if ( data.flags & SND_MIXER_FLG_RECORD )
+        recsrc |= 1 << i;
+      }
+    }
+  }    
+  if ( !devmask )
+    return Mixer::ERR_NODEV;
+#endif
 // PORTING: add #ifdef PLATFORM , commands , #endif
 
   isOpen = true;
@@ -622,6 +671,19 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
     errormsg(Mixer::ERR_WRITE);
 // PORTING: add #ifdef PLATFORM , commands , #endif
 #endif
+#ifdef ALSA
+  snd_mixer_channel_t data;
+  ret = snd_mixer_channel_read( devhandle, mixdevice->device_num, &data );
+  if ( !ret ) {
+    data.left = volLeft;
+    data.right = volRight;
+    data.channel = mixdevice->device_num;
+    ret = snd_mixer_channel_write( devhandle, mixdevice->device_num, &data );
+    if ( ret )
+      errormsg(Mixer::ERR_WRITE);
+  } else
+    errormsg(Mixer::ERR_READ);
+#endif
 }
 
 
@@ -691,6 +753,7 @@ unsigned int Mixer::getRecsrc()
 
 void Mixer::setRecsrc(unsigned int newRecsrc)
 {
+MixDevice *MixDev = First; /* moved up for use with ALSA */
 #ifdef OSS_MIXER
   // Change status of record source(s)
   if (ioctl(fd, SOUND_MIXER_WRITE_RECSRC, &newRecsrc) == -1)
@@ -699,6 +762,32 @@ void Mixer::setRecsrc(unsigned int newRecsrc)
   // my settings. And with this line mix->recsrc gets its new value. :-)
   if (ioctl(fd, SOUND_MIXER_READ_RECSRC, &recsrc) == -1)
     errormsg(Mixer::ERR_READ);
+#elif defined(ALSA)
+  snd_mixer_channel_t data;
+  recsrc = 0;
+  while (MixDev) {
+    ret = snd_mixer_channel_read( devhandle, MixDev->device_num, &data ); /* get */
+    if ( ret )
+      errormsg(Mixer::ERR_READ);
+    if ( newRecsrc & ( 1 << MixDev->device_num ) )
+      data.flags |= SND_MIXER_FLG_RECORD;
+    else
+      data.flags &= ~SND_MIXER_FLG_RECORD;
+    ret = snd_mixer_channel_write( devhandle, MixDev->device_num, &data ); /* set */
+    if ( ret )
+      errormsg(Mixer::ERR_WRITE);
+    ret = snd_mixer_channel_read( devhandle, MixDev->device_num, &data ); /* check */
+    if ( ret )
+      errormsg(Mixer::ERR_READ);
+    if ( ( data.flags & SND_MIXER_FLG_RECORD ) && /* if it's set and stuck */
+         ( newRecsrc & ( 1 << MixDev->device_num ) ) ) {
+      recsrc |= 1 << MixDev->device_num;
+      MixDev->is_recsrc = true;
+    } else
+      MixDev->is_recsrc = false;
+    MixDev = MixDev->Next;
+  }
+  return; /* I'm done */ 
 #else
   KMsgBox::message(0, "Porting required.", "Please port this feature :-)", KMsgBox::INFORMATION, "OK" );
   // PORTING: Hint: Do not forget to set recsrc to the new valid
@@ -709,7 +798,6 @@ void Mixer::setRecsrc(unsigned int newRecsrc)
    * This is especially necessary for mixer devices that sometimes do
    * not obey blindly (because of hardware limitations)
    */
-  MixDevice *MixDev = First;
   unsigned int recsrcwork = recsrc;
   while (MixDev) {
     if (recsrcwork & (1 << (MixDev->device_num) ) )
@@ -725,7 +813,16 @@ void Mixer::setRecsrc(unsigned int newRecsrc)
 MixDevice::MixDevice(int num)
 {
   device_num=num;
-  strncpy(devname, MixerDevNames[num],11);
+  #ifdef ALSA
+    snd_mixer_channel_info_t chinfo;
+    ret = snd_mixer_channel_info( devhandle, num, &chinfo );
+    if ( ret )
+      devname = "unknown   ";
+    else
+      strncpy( devname, (const char *)chinfo.name, 11 );
+  #else
+    strncpy(devname, MixerDevNames[num],11);
+  #endif
   devname[10]=0;
 };
 
