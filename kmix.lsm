@@ -1,0 +1,21 @@
+
+Begin3
+Title:          kmix
+Version:        0.60
+Entered-date:   03JUL1997
+Description:    A small, but nifty mixer for the Linux Sound driver (OSS).
+		Features of kmix:
+		- QT user interface, utilizing KDE libraries
+		- The first mixer with an overall balancing slider.
+		- Autodetect of supported mixing devices
+		- Option menu: Tickmarks and Menubar hideable
+Keywords:       media sound mixer X11 Qt KDE
+Author:         chris@magicon.prima.ruhr.de (chris@magicon.prima.ruhr.de)
+Maintained-by:  chris@magicon.prima.ruhr.de (chris@magicon.prima.ruhr.de)
+Primary-site:   ftp://fiwi02.wiwi.uni-tuebingen.de/pub/kde/apps/multimedia
+Alternate-site:
+Original-site:
+Platform:	Every OS with OSS (Open Sound System; formerly USS,TASD or
+                Voxware), audiocard and mixer. Tested on Linux2.0.0
+Copying-policy: GPL
+End
