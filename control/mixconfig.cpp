@@ -38,6 +38,7 @@
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include <qwhatsthis.h>
+#include <qprogressdialog.h>
 
 #include "mixconfig.h"
 
@@ -57,12 +58,12 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   QHBoxLayout *profLayout = new QHBoxLayout( restLayout, 5 );
   QPushButton *saveProf = new QPushButton( i18n("Save current volumes"), restGrp );
   profLayout->addWidget( saveProf );
-  connect( saveProf, SIGNAL(clicked()), this, SLOT(saveProfile()) );
+  connect( saveProf, SIGNAL(clicked()), this, SLOT(saveVolumes()) );
 
   // Load profile
   QPushButton *loadProf = new QPushButton( i18n("Load volumes"), restGrp );
   profLayout->addWidget( loadProf );
-  connect( loadProf, SIGNAL(clicked()), this, SLOT(loadProfile()) );
+  connect( loadProf, SIGNAL(clicked()), this, SLOT(loadVolumes()) );
 
   // start in startkde?
   m_startkdeRestore = new QCheckBox( i18n("Load volumes on login"), restGrp );
@@ -110,6 +111,62 @@ KMixConfig::~KMixConfig() {}
 void KMixConfig::configChanged()
 {
   emit changed(true);
+}
+
+void KMixConfig::loadVolumes()
+{
+   QProgressDialog progress( i18n("Restoring default volumes"), i18n("Cancel"), 1, this );
+   KProcess *ctrl = new KProcess;
+   QString ctrlExe = KGlobal::dirs()->findExe("kmixctrl");
+   if (!ctrlExe)
+   {
+      kdDebug() << "can't find kmixctrl" << endl;
+      delete ctrlExe;
+
+      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") ); 
+      return;
+   }
+         
+   *ctrl << ctrlExe;
+   *ctrl << "--restore";
+   ctrl->start();
+
+   while ( ctrl->isRunning() )
+   {          	 
+      if ( progress.wasCancelled() ) break;	 
+      kapp->processEvents();
+   }
+   progress.setProgress( 1 );
+
+   delete ctrl;
+}
+
+void KMixConfig::saveVolumes()
+{
+   QProgressDialog progress( i18n("Saving default volumes"), i18n("Cancel"), 1, this );
+   KProcess *ctrl = new KProcess;
+   QString ctrlExe = KGlobal::dirs()->findExe("kmixctrl");
+   if (!ctrlExe)
+   {
+      kdDebug() << "can't find kmixctrl" << endl;
+      delete ctrlExe;
+
+      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") ); 
+      return;
+   }
+         
+   *ctrl << ctrlExe;
+   *ctrl << "--save";
+   ctrl->start();
+
+   while ( ctrl->isRunning() )
+   {          	 
+      if ( progress.wasCancelled() ) break;	 
+      kapp->processEvents();
+   }
+   progress.setProgress( 1 );
+
+   delete ctrl;
 }
 
 void KMixConfig::load()

@@ -42,6 +42,8 @@ public:
   
 protected slots:
   void configChanged();
+  void loadVolumes();
+  void saveVolumes();
       
 private:
   QCheckBox *m_startkdeRestore;
