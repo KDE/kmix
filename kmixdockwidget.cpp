@@ -83,7 +83,7 @@ void KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
     KConfig *config = kapp->config();
     config->setGroup(0);
-    if( config->readBoolEntry("TrayVolumeControl", true ) && (me->button() == MidButton))
+    if( config->readBoolEntry("TrayVolumeControl", true ) && (me->button() == LeftButton))
         QWidget::mousePressEvent(me);
     else
         KSystemTray::mousePressEvent(me);
@@ -98,10 +98,9 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
     KConfig *config = kapp->config();
     config->setGroup(0);
     if( config->readBoolEntry("TrayVolumeControl", true ) ) {
-        // If middle-click, toggle the master volume control.
-        // Else, hide the master volume control.
+        // If left-click, toggle the master volume control.
         switch ( me->button() ) {
-        case MidButton:
+        case LeftButton:
             if (!masterVol->isVisible()) {
                 QWidget *desktop = QApplication::desktop();
                 int sw = desktop->width();
@@ -126,7 +125,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
                 masterVol->move(x, y);
                 masterVol->show();
             } else {
-                masterVol->hide();
+                masterVol->hide();		// fixme: this doesn't work?!
             }
             QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
             return;
