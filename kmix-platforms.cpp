@@ -105,7 +105,7 @@ MixerFactory g_mixerFactories[] = {
 #endif
 
 #if defined(SUN_MIXER)
-    { SUN_getMixer, SUN_getMixerSet , SUN_getDriverName },
+    { SUN_getMixer, 0 , SUN_getDriverName },
 #endif
 
 #if defined(IRIX_MIXER)
@@ -113,11 +113,11 @@ MixerFactory g_mixerFactories[] = {
 #endif
 
 #if defined(ALSA_MIXER)
-    { ALSA_getMixer, ALSA_getMixerSet, ALSA_getDriverName },
+    { ALSA_getMixer, 0, ALSA_getDriverName },
 #endif
 
 #if defined(OSS_MIXER)
-    { OSS_getMixer, OSS_getMixerSet , OSS_getDriverName },
+    { OSS_getMixer, 0 , OSS_getDriverName },
 #endif
 
 #if defined(HPUX_MIXER)
