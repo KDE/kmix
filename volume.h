@@ -41,5 +41,4 @@ class StereoVolume : public Volume
   StereoVolume( int maxVolume = 100 ) : Volume( 2, maxVolume ) {};
 };
 
-
 #endif // VOLUME
