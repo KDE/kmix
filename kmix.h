@@ -105,7 +105,8 @@ class KMixWindow : public KMainWindow
    int m_maxId;
 
    QList<Mixer> m_mixers;
-   QList<KMixerWidget> m_mixerWidgets;
+   QList<KMixerWidget> m_mixerWidgets;   
+   int m_visibleTabs;
 
    QTabWidget *m_tab;
    QWidget *m_buttons;
@@ -115,6 +116,7 @@ class KMixWindow : public KMainWindow
   private slots:
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
+   void updateLayout();
   
    void toggleVisibility();
 };
