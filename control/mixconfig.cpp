@@ -81,18 +81,6 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   QBoxLayout *hdwLayout = new QVBoxLayout( hdwGrp->layout(), 
       KDialog::spacingHint());
 
-  m_maxCards = new KIntNumInput( hdwGrp );
-  m_maxCards->setLabel( i18n("Maximum number of probed mixers:") );
-  m_maxCards->setRange( 1, 16 );
-  hdwLayout->addWidget( m_maxCards );
-  connect( m_maxCards, SIGNAL(valueChanged(int)), this, SLOT(configChanged()) );
-  QWhatsThis::add( m_maxCards, i18n("Change this value to optimize the startup time "
-                                    "of kmix.\n"
-                                    "High values mean that kmix probes for "
-                                    "many soundcards. If you have more mixers "
-                                    "installed than kmix detects, increase this "
-                                    "value.") );
-
   m_maxDevices = new KIntNumInput( hdwGrp );
   m_maxDevices->setLabel( i18n("Maximum number of probed devices per mixer:") );
   m_maxDevices->setRange( 1, 16 );
@@ -179,7 +167,6 @@ void KMixConfig::load()
 
   config->setGroup("Misc");
   m_startkdeRestore->setChecked( config->readBoolEntry( "startkdeRestore", true ) );
-  m_maxCards->setValue( config->readNumEntry( "maxCards", 2 ) );
   m_maxDevices->setValue( config->readNumEntry( "maxDevices", 2 ) );
   delete config;
 
@@ -193,7 +180,6 @@ void KMixConfig::save()
 
   config->setGroup("Misc");
   config->writeEntry( "startkdeRestore", m_startkdeRestore->isChecked() );
-  config->writeEntry( "maxCards", m_maxCards->value() );
   config->writeEntry( "maxDevices", m_maxDevices->value() );
   config->sync();
   delete config;
@@ -204,7 +190,6 @@ void KMixConfig::save()
 void KMixConfig::defaults()
 {
   m_startkdeRestore->setChecked( true );
-  m_maxCards->setValue( 2 );
   m_maxDevices->setValue( 2 );
   emit changed(true);
 }

@@ -61,24 +61,27 @@ extern "C" int kdemain(int argc, char *argv[])
    // get maximum values
    KConfig *config= new KConfig("kcmkmixrc", false);
    config->setGroup("Misc");
-   int maxCards = config->readNumEntry( "maxCards", 2 );
+   //int maxCards = config->readNumEntry( "maxCards", 2 );
    int maxDevices = config->readNumEntry( "maxDevices", 2 );
    delete config;
 
    // create mixers
    QPtrList<Mixer> mixers;
    int drvNum = Mixer::getDriverNum();
+   // Following loop iterates over all soundcard drivers (e.g. OSS, ALSA).
+   // As soon as a card is found by one dricer (mixers.count()==0) the detection stops.
    for( int drv=0; drv<drvNum && mixers.count()==0; drv++ )
+   {
        for ( int dev=0; dev<maxDevices; dev++ )
-           for ( int card=0; card<maxCards; card++ ) {
-
-               Mixer *mixer = Mixer::getMixer( drv, dev, card );
+       {
+               Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
                int mixerError = mixer->grab();
                if ( mixerError!=0 )
                    delete mixer;
                else
                    mixers.append( mixer );
-           }
+       }
+   }
 
    // load volumes
    if ( args->isSet("restore") )

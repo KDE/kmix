@@ -47,7 +47,6 @@ protected slots:
       
 private:
   QCheckBox *m_startkdeRestore;
-  KIntNumInput *m_maxCards;
   KIntNumInput *m_maxDevices;
 };
 
