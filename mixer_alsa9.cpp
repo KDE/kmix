@@ -134,7 +134,7 @@ Mixer_ALSA::openMixer()
 	}
 
 	if (virginOpen)
-		kdDebug(67100) << "Trying Alsa 0.9x Device " << devName << endl;
+		kdDebug(67100) << "Trying ALSA Device " << devName << endl;
 
 	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
 	{
