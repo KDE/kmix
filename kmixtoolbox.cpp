@@ -99,9 +99,8 @@ void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 
 	    if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
 		// only sliders have the ability to split apart in mutliple channels
-		MixDeviceWidget *mdws = static_cast<MixDeviceWidget*>(mdw);
 		bool splitChannels = config->readBoolEntry("Split", false);
-		mdws->setStereoLinked( !splitChannels );
+		mdw->setStereoLinked( !splitChannels );
 	    }
 	    mdw->setDisabled( !config->readBoolEntry("Show", true) );
 
@@ -145,8 +144,7 @@ void KMixToolBox::saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 
 	    if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
 		// only sliders have the ability to split apart in mutliple channels
-		MixDeviceWidget *mdws = static_cast<MixDeviceWidget*>(mdw);
-		config->writeEntry( "Split", ! mdws->isStereoLinked() );
+		config->writeEntry( "Split", ! mdw->isStereoLinked() );
 	    }
 	    config->writeEntry( "Show" , ! mdw->isDisabled() );
 
