@@ -207,11 +207,12 @@ Mixer_ALSA::openMixer()
 
 		// New mix device
 		MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
-		MixDevice::DeviceCategory cc = MixDevice::type2category( ct ); // For now we use the default mapping
 		
 		if( virginOpen )
 		{
 			int chn = 1; // Assuming default mono
+			
+			MixDevice::DeviceCategory cc;
 			
 			if( snd_mixer_selem_has_playback_volume( elem ) ||
 					snd_mixer_selem_has_capture_volume( elem ) ||
@@ -229,6 +230,8 @@ Mixer_ALSA::openMixer()
 			if( snd_mixer_selem_is_playback_mono( elem ) ||
 					snd_mixer_selem_is_capture_mono( elem ) )
 				cc = MixDevice::SWITCH;
+			else
+				cc = MixDevice::SLIDER;
 			
 			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct, cc) );
 			mixerIdx++;

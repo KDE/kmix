@@ -32,13 +32,12 @@
 #include <qmap.h>
 
 class QTimer;
-class QWidgetStack;
 
 // include files for KDE
 #include <kmainwindow.h>
 
 class KAccel;
-class KMultiTabBar;
+class KTabWidget;
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
@@ -111,8 +110,7 @@ class KMixWindow : public KMainWindow
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
 
-   KMultiTabBar *m_tab;
-	QWidgetStack *m_wStack;
+   KTabWidget *m_tab;
    QWidget *m_buttons;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
@@ -124,7 +122,6 @@ class KMixWindow : public KMainWindow
   private slots:
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
-	void mainMixerTabClicked( int tb );
    void updateLayout();
    void dockMute();
    void slotHWInfo();

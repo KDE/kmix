@@ -48,11 +48,11 @@ class MixDevice
 
       // The DeviceCategory tells, how "important" a MixDevice is. See m_category.
       // It is used in bitmasks, so you must use values of 2^n .
-      enum DeviceCategory { BASIC=0x01, PRIMARY=0x02, SECONDARY=0x04, SWITCH=0x08, ALL=0xff };
+      enum DeviceCategory { SLIDER=0x01, SWITCH=0x02, ALL=0xff };
 
     
       MixDevice(int num, Volume vol, bool recordable,
-		QString name, ChannelType type = UNKNOWN, DeviceCategory category = BASIC );
+		QString name, ChannelType type = UNKNOWN, DeviceCategory category = SLIDER );
       MixDevice(const MixDevice &md);
       ~MixDevice() {};
 
@@ -80,7 +80,6 @@ class MixDevice
       ChannelType type() { return m_type; };
 
       DeviceCategory category() { return m_category; };
-      static DeviceCategory type2category( ChannelType ct);
 
    protected:
       Volume m_volume;

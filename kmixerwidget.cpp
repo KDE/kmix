@@ -20,7 +20,6 @@
  */
 
 #include <iostream>
-//#include <stdlib.h>
 
 #include <qcursor.h>
 #include <qstring.h>
@@ -33,6 +32,7 @@
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qcheckbox.h>
+#include <qbuttongroup.h>
 #include <qwidgetstack.h>
 
 #include <kcombobox.h>
@@ -118,8 +118,11 @@ KMixerWidget::createLayout()
      m_topLayout->setMargin( KDialog::marginHint() );
 
 	// Create tabs e widgetstack
-	m_ioTab = new KMultiTabBar( KMultiTabBar::Vertical, this, "ioTab" );
-	m_ioTab->showActiveTabTexts( true );
+	m_ioTab = new QButtonGroup( this, "ioTab" );
+	m_ioTab->setFrameShape( QFrame::NoFrame );
+	m_ioTab->setOrientation( Qt::Vertical );
+	connect( m_ioTab, SIGNAL( clicked(int) ),	this, SLOT( ioMixerTabClicked( int ) ) );
+
 	m_ioStack = new QWidgetStack( this, "ioStack" );
 	m_ioStack->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 	
@@ -128,25 +131,31 @@ KMixerWidget::createLayout()
 	m_devLayout->add( m_ioStack );
 
 	// Add I/O Tabs
-	m_ioTab->appendTab( SmallIcon( "player_play" ), 
-				m_ioStack->addWidget( new QWidget( m_ioStack, "outputPanelStack" ), KMixerWidget::OUTPUT ), 
-				i18n("Input") );
-	connect( m_ioTab->tab( KMixerWidget::OUTPUT ),SIGNAL( clicked(int) ), 
-			this, SLOT( ioMixerTabClicked( int ) ) );
-	
-	m_devLayoutOutput =	new QHBoxLayout( m_ioStack->widget( KMixerWidget::OUTPUT ) );
-	
-	m_ioTab->appendTab( SmallIcon( "player_stop" ), 
-				m_ioStack->addWidget( new QWidget( m_ioStack, "inputPanelStack" ), KMixerWidget::INPUT ), 
-				i18n("Output") );
-	connect( m_ioTab->tab( KMixerWidget::INPUT ),SIGNAL( clicked(int) ), 
-			this, SLOT( ioMixerTabClicked( int ) ) );
+	QPushButton *b;
 
-	m_devLayoutInput = new QHBoxLayout( m_ioStack->widget( KMixerWidget::INPUT ) );
+	// Output Button
+	b = new QPushButton( m_ioTab, "OutputButton" );
+	QToolTip::add( b, i18n( "Output" ) ); 
+	b->setGeometry( QRect( 0, 0, 30, 30 ) );
+	b->setFlat( true );
+	b->setPixmap( SmallIcon( "player_play" ) );
+	m_ioStack->addWidget( new QWidget( m_ioStack, "outputPanelStack" ), KMixerWidget::OUTPUT );
+	
+	// Input Button
+	b = new QPushButton( m_ioTab, "InputButton" );
+	QToolTip::add( b, i18n( "Input" ) ); 
+	b->setGeometry( QRect( 0, 30, 30, 30 ) );
+	b->setFlat( true );
+	b->setPixmap( SmallIcon( "player_stop" ) );
+	m_ioStack->addWidget( new QWidget( m_ioStack, "inputPanelStack" ), KMixerWidget::INPUT );
+	
+	// Both Layouts
+	m_devLayoutOutput =	new QHBoxLayout( m_ioStack->widget( KMixerWidget::OUTPUT ) );
+	m_devLayoutInput =	new QHBoxLayout( m_ioStack->widget( KMixerWidget::INPUT ) );
 
 	// Create switch buttonGroup
 	m_swWidget = new QWidget( this, "switchWidget" );
-	m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 5,"devSwtchLayout" );
+	m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
 	
 	// Create de widgets
 	createDeviceWidgets();
@@ -231,7 +240,8 @@ KMixerWidget::updateSize()
    emit updateLayout();
 }
 
-void KMixerWidget::setTicks( bool on )
+void 
+KMixerWidget::setTicks( bool on )
 {
    if ( m_ticksEnabled!=on )
    {
@@ -241,7 +251,8 @@ void KMixerWidget::setTicks( bool on )
    }
 }
 
-void KMixerWidget::setLabels( bool on )
+void 
+KMixerWidget::setLabels( bool on )
 {
    if ( m_labelsEnabled!=on )
    {
@@ -251,7 +262,8 @@ void KMixerWidget::setLabels( bool on )
    }
 }
 
-void KMixerWidget::setIcons( bool on )
+void 
+KMixerWidget::setIcons( bool on )
 {
    if ( m_iconsEnabled!=on )
    {
@@ -261,7 +273,8 @@ void KMixerWidget::setIcons( bool on )
    }
 }
 
-void KMixerWidget::setColors( const Colors &color )
+void 
+KMixerWidget::setColors( const Colors &color )
 {
     for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() ) {
         chn->dev->setColors( color.high, color.low, color.back );
@@ -269,13 +282,15 @@ void KMixerWidget::setColors( const Colors &color )
     }
 }
 
-void KMixerWidget::mousePressEvent( QMouseEvent *e )
+void 
+KMixerWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )
       rightMouseClicked();
 }
 
-void KMixerWidget::addActionToPopup( KAction *action ) {
+void 
+KMixerWidget::addActionToPopup( KAction *action ) {
   m_actions->insert( action );
 
   for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() ) {
@@ -283,7 +298,8 @@ void KMixerWidget::addActionToPopup( KAction *action ) {
   }
 }
 
-void KMixerWidget::rightMouseClicked()
+void 
+KMixerWidget::rightMouseClicked()
 {
    KAction *a;
    KPopupMenu *menu = new KPopupMenu( this );
@@ -305,7 +321,8 @@ void KMixerWidget::rightMouseClicked()
    menu->popup( pos );
 }
 
-void KMixerWidget::slotFillPopup()
+void 
+KMixerWidget::slotFillPopup()
 {
    m_toggleMixerChannels->popupMenu()->clear();
 
@@ -318,7 +335,8 @@ void KMixerWidget::slotFillPopup()
    }
 }
 
-void KMixerWidget::slotToggleMixerDevice(int id)
+void 
+KMixerWidget::slotToggleMixerDevice(int id)
 {
    if(id >= static_cast<int>(m_channels.count())) // too big
       return;
@@ -333,7 +351,8 @@ void KMixerWidget::slotToggleMixerDevice(int id)
    m_toggleMixerChannels->popupMenu()->setItemChecked(id, !gotCheck);
 }
 
-void KMixerWidget::saveConfig( KConfig *config, QString grp )
+void 
+KMixerWidget::saveConfig( KConfig *config, QString grp )
 {
    config->setGroup( grp );
 
@@ -361,7 +380,8 @@ void KMixerWidget::saveConfig( KConfig *config, QString grp )
    }
 }
 
-void KMixerWidget::loadConfig( KConfig *config, QString grp )
+void 
+KMixerWidget::loadConfig( KConfig *config, QString grp )
 {
    config->setGroup( grp );
 
@@ -392,7 +412,8 @@ void KMixerWidget::loadConfig( KConfig *config, QString grp )
    }
 }
 
-void KMixerWidget::showAll()
+void 
+KMixerWidget::showAll()
 {
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
    {
@@ -402,7 +423,8 @@ void KMixerWidget::showAll()
    updateSize();
 }
 
-void KMixerWidget::hideAll()
+void 
+KMixerWidget::hideAll()
 {
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
    {
@@ -436,12 +458,13 @@ KMixerWidget::updateBalance()
 void
 KMixerWidget::ioMixerTabClicked( int tb )
 {
-	if( m_ioTab->isTabRaised( tb ) )
+	if( tb == KMixerWidget::OUTPUT )
 	{
-		if( m_ioStack->isHidden() )
-			m_ioStack->show();
-		
-		m_ioStack->raiseWidget( tb );
+		m_ioStack->raiseWidget( KMixerWidget::OUTPUT );
+	}
+	else
+	{
+		m_ioStack->raiseWidget( KMixerWidget::INPUT );
 	}
 }
 

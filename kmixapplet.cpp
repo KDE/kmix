@@ -354,7 +354,7 @@ void KMixApplet::selectMixer()
          m_errorLabel = 0;
          m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
                                            mixer->mixerNum(), true,
-                                           popupDirection(), MixDevice::BASIC, this );
+                                           popupDirection(), MixDevice::SLIDER, this );
          setColors();
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );

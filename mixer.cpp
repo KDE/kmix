@@ -104,46 +104,6 @@ void MixDevice::read( KConfig *config, const QString& grp )
    kdDebug() << "- MixDevice::read" << endl;
 }
 
-/**
- * Provides a standard DeviceCategory assignment, based on the ChannelType.
- * Drivers may map special devices for themself (e.g. MixDevice::SWITCH is only
- * available/used in ALSA). For non-special devices the drivers can call this method
- * for a standard assignment.
- * This mehtod is static, so it can be called before actually constructing a MixDevice
- */
-MixDevice::DeviceCategory MixDevice::type2category( ChannelType ct) {
-    MixDevice::DeviceCategory cc;
-    switch (ct) {
-    case AUDIO:
-    case VOLUME:
-	cc = MixDevice::BASIC;
-	break;
-
-    case CD:
-    case MICROPHONE:
-    case HEADPHONE:
-    case MIDI:
-    case RECMONITOR:
-    case BASS:
-    case TREBLE:
-	cc = MixDevice::PRIMARY;
-	break;
-    
-    case EXTERNAL:
-    case UNKNOWN:
-    case DIGITAL:
-    case SURROUND:
-    case AC97:
-    case VIDEO:
-	cc = MixDevice::SECONDARY;
-	break;
-	
-    default:
-	cc = MixDevice::SECONDARY;
-    }
-    return cc;
-}
-
 void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;

@@ -25,10 +25,11 @@
 #include <qwidget.h>
 #include <qptrlist.h>
 class QString;
+class QGridLayout;
 class QWidgetStack;
+class QButtonGroup;
 
 #include <kpanelapplet.h>
-class KMultiTabBar;
 
 #include "channel.h"
 #include "mixer.h"
@@ -70,7 +71,7 @@ KMixerWidget : public QWidget
                  QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 	
-	enum KMixerWidgetIO { OUTPUT, INPUT };
+	enum KMixerWidgetIO { OUTPUT=0, INPUT };
 
    void addActionToPopup( KAction *action );
 
@@ -123,7 +124,7 @@ KMixerWidget : public QWidget
 	QGridLayout *m_devSwitchLayout;
 	
    QPtrList<Channel> m_channels;
-	KMultiTabBar *m_ioTab;
+	QButtonGroup *m_ioTab;
 	QWidgetStack *m_ioStack;
 
    QString m_name;

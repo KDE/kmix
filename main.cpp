@@ -44,7 +44,7 @@ extern "C" int kdemain(int argc, char *argv[])
                          I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski"));
 
    aboutData.addAuthor("Stefan Schimanski", 0, "schimmi@kde.org");
-   aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
+   aboutData.addAuthor("Christian Esken", "Current maintainer", "esken@kde.org");
    aboutData.addAuthor("Sven Leiber", 0, "s.leiber@web.de");
    aboutData.addAuthor("Brian Hanson", I18N_NOOP("Solaris port"), "bhanson@hotmail.com");
    aboutData.addAuthor("Paul Kendall", I18N_NOOP("SGI Port"), "paul@orion.co.nz");
@@ -53,7 +53,7 @@ extern "C" int kdemain(int argc, char *argv[])
    aboutData.addAuthor("Nick Lopez", I18N_NOOP("ALSA port"), "kimo_sabe@usa.net");
    aboutData.addAuthor("Helge Deller", I18N_NOOP("HP/UX port"), "deller@gmx.de");
    aboutData.addAuthor("Jean Labrousse", I18N_NOOP("NAS port"), "jean.labrousse@alcatel.com" );
-   aboutData.addAuthor("Helio Chissini de Castro", I18N_NOOP("ALSA 0.9x port"), "helio@conectiva.com.br" );
+   aboutData.addAuthor("Helio Chissini de Castro", I18N_NOOP("ALSA 0.9x port - layout redesign"), "helio@conectiva.com.br" );
    aboutData.addCredit("Nadeem Hasan", I18N_NOOP("Mute and volume preview, other fixes"), "nhasan@kde.org");
 
    KCmdLineArgs::init( argc, argv, &aboutData );

@@ -52,13 +52,13 @@ MixerSelector::MixerSelector(QPtrList<Mixer> &mixers, QWidget * parent, const ch
 {
    int n = 1;
    QStringList lst;
-   for (Mixer *mixer=mixers.first(); mixer; mixer=mixers.next())
-   {
-      QString s;
-      s.sprintf("%i. %s", n, mixer->mixerName().ascii());
-      lst << s;
-      n++;
-   }
+   for (Mixer *mixer=mixers.first(); mixer; mixer=mixers.next() )
+	{
+		QString str;
+		str.sprintf( "%i. %s", n, mixer->mixerName().ascii() );
+		lst << str;
+		n++;
+	}
 
 	dialog =
 		new KDialogBase(this,"Select Mixer",true,i18n("Select Mixer"),  KDialogBase::Ok|KDialogBase::Cancel);
@@ -69,7 +69,7 @@ MixerSelector::MixerSelector(QPtrList<Mixer> &mixers, QWidget * parent, const ch
 	hwNames->insertStringList(lst);
 	
 	QHBox *hbox = new QHBox( vbox );
-	/*QLabel *nameLabel =*/ new QLabel(i18n("Name:"), hbox);
+	new QLabel(i18n("Name:"), hbox);
 	shownName = new QLineEdit(hbox);
 
 	connect (hwNames, SIGNAL(highlighted(const QString&)), this, SLOT(newMixerSelected(const QString&)) );
@@ -93,10 +93,6 @@ MixerSelector::~MixerSelector()
 MixerSelectionInfo* 
 MixerSelector::exec() 
 {
-	/*
-	connect(dialog, SIGNAL(okClicked()), this, okClicked());
-	connect(dialog, SIGNAL(cancelClicked()), this, cancelClicked());
-	*/
 	int ret = dialog->exec();
 	if (ret != QDialog::Accepted) 
 	{
