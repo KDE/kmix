@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kapp.h>
 #include <kpopupmenu.h>
+#include <kiconloader.h>
 
 #include "kmixdockwidget.h"
 
@@ -39,11 +40,11 @@ void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* menu )
 {
     for ( unsigned n=0; n<menu->count(); n++ )
     {
-        if ( QString( menu->text( menu->idAt(n) ) )==i18n("Quit") )
+        if ( QString( menu->text( menu->idAt(n) ) )==i18n("&Quit") )
             menu->removeItemAt( n );
     }
 
-    menu->insertItem( i18n("Quit" ), kapp, SLOT(quit()) );
+    menu->insertItem( SmallIcon("exit"), i18n("&Quit" ), kapp, SLOT(quit()) );
 }
 
 #include "kmixdockwidget.moc"
