@@ -4,8 +4,9 @@
 #include "viewbase.h"
 
 class QMouseEvent;
-class QHBoxLayout;
+class QVBoxLayout;
 class QWidget;
+class QCheckBox;
 
 class Mixer;
 class KMixDockWidget;
@@ -35,10 +36,14 @@ protected:
     MixDeviceWidget *_mdw;
     KMixDockWidget  *_dock;
     MixDevice       *_dockDevice;
+	 QCheckBox       *_showPanelBox;
 
     void mousePressEvent(QMouseEvent *e);
 private:
-    QHBoxLayout* _layoutMDW;
+    QVBoxLayout* _layoutMDW;
+
+private slots:
+	 void showPanelSlot();
 
 };
 

@@ -25,9 +25,13 @@
 #include <qwidget.h>
 #include <qevent.h>
 #include <qlayout.h>
+#include <qcheckbox.h>
 
 // KDE
 #include <kdebug.h>
+#include <kaction.h>
+#include <kapplication.h>
+#include <klocale.h>
 
 // KMix
 #include "mdwslider.h"
@@ -37,8 +41,8 @@
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
       : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup, vflags), _dock(dockW)
 {
-    _layoutMDW = new QHBoxLayout(this);
-    _layoutMDW->setMargin(10);
+    _layoutMDW = new QVBoxLayout( this, 2, 1, "KmixPopupLayout" );
+    _layoutMDW->setAlignment( Qt::AlignCenter );
     init();
 }
 
@@ -105,6 +109,12 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 			    0,            // Is "NULL", so that there is no RMB-popup
 			    _dockDevice->name().latin1() );
     _layoutMDW->add(_mdw);
+
+	 // Add button to show main panel
+	 _showPanelBox = new QCheckBox( i18n("Hide"), this, "PanelHideCheckbox" );
+	 connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
+    _layoutMDW->add( _showPanelBox );
+	 
     return _mdw;
 }
 
@@ -135,10 +145,12 @@ QSize ViewDockAreaPopup::sizeHint() const {
 
 void ViewDockAreaPopup::constructionFinished() {
     //    kdDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
+
     _mdw->move(0,0);
     _mdw->show();
     _mdw->resize(_mdw->sizeHint() );
     resize(sizeHint());
+	 
 }
 
 
@@ -159,6 +171,23 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 	}
     }
 }
+
+void ViewDockAreaPopup::showPanelSlot() {
+	if( _showPanelBox->isChecked() )
+	{
+		_dock->parentWidget()->show();
+		_showPanelBox->setText( i18n( "Hide" ) );
+	}
+	else
+	{
+		_dock->parentWidget()->hide();
+		_showPanelBox->setText( i18n( "Show" ) );
+	}
+		
+	_dock->_dockAreaPopup->hide();
+		
+}
+
 
 // @todo REMOVE THIS after MixDevice can signal "volumeChanged()"
 //       But this method is only used by the currently disabled

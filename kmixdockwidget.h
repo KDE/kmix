@@ -47,6 +47,10 @@ class KMixDockWidget : public KSystemTray  {
    void ignoreNextEvent();
    ViewDockAreaPopup* getDockAreaPopup();
 
+	Mixer *m_mixer;
+   ViewDockAreaPopup *_dockAreaPopup;
+   KAudioPlayer *_audioPlayer;
+
  public slots:
    void setVolumeTip();
    void updatePixmap();
@@ -60,9 +64,6 @@ class KMixDockWidget : public KSystemTray  {
    void toggleMinimizeRestore();
 
  private:
-   Mixer *m_mixer;
-   ViewDockAreaPopup *_dockAreaPopup;
-   KAudioPlayer *_audioPlayer;
    bool _playBeepOnVolumeChange;
    bool _ignoreNextEvent;
    int  _oldToolTipValue;

@@ -205,29 +205,18 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		}
 		
 		QRect desktop = KGlobalSettings::desktopGeometry(this);
-		int sw = desktop.width();
-		int sh = desktop.height();
-		int sx = desktop.x();
-		int sy = desktop.y();
-		int x = me->globalPos().x();
-		int y = me->globalPos().y();
-		y -= _dockAreaPopup->geometry().height();
+
 		int w = _dockAreaPopup->width();
 		int h = _dockAreaPopup->height();
-		
-		if (x+w > sw)
-			x = me->globalPos().x() - w - 2;
-		if (y+h > sh)
-			y = me->globalPos().y() - h - 2;
-		if (x < sx)
-			x = me->globalPos().x() + 2;
-		if (y < sy)
-			y = me->globalPos().y() + 2;
-		
+		int x = this->mapToGlobal( QPoint( 0, 0 ) ).x() - this->width()/2;
+		int y = this->mapToGlobal( QPoint( 0, 0 ) ).y() - h + this->height();
+		if ( y - h < 0 )
+			y = y + h - this->height();
+	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 		_dockAreaPopup->show();
                 // !! change back the next line after detemining how to do it properly
-		XWarpPointer(_dockAreaPopup->x11Display(), None, _dockAreaPopup->handle(), 0,0,0,0, w/2, h/2);
+		XWarpPointer( _dockAreaPopup->x11Display(), None, _dockAreaPopup->handle(), 0,0,0,0, w/2, h/2 - 16 );
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
