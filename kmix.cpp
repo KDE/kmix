@@ -204,12 +204,23 @@ KMixWindow::initMixer()
    bool multipleDriversActive = false;
 
    //kdDebug() << "Number of drivers : " << tmpstr.setNum( drvNum ) << endl;
+   QString driverInfo = "";
+   for( int drv=0; drv<drvNum ; drv++ ) {
+	QString driverName = Mixer::driverName(drv);
+	if ( drv!= 0 ) {
+		driverInfo += " + ";
+	}
+	driverInfo += driverName;
+   }
+   driverInfo += " / ";
+
 #ifndef MULTIDRIVERMODE
 	for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
 #else
 	for( int drv=0; drv<drvNum ; drv++ )
 #endif
 	{
+	    bool drvInfoAppended = false;
 	    {
 		for( int dev=0; dev<maxDevices; dev++ )
 		{
@@ -247,6 +258,17 @@ KMixWindow::initMixer()
 			#endif
 				connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
 				m_mixers.append( mixer );
+
+				// append driverName (used drivers)
+				if ( !drvInfoAppended ) {
+					drvInfoAppended = true;
+					QString driverName = Mixer::driverName(drv);
+					if ( drv!= 0 ) {
+						driverInfo += " + ";
+					}
+					driverInfo += driverName;
+				}
+
 				// kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
 
  				// Check whether there are mixers in different drivers, so that the usr can be warned
@@ -272,6 +294,8 @@ KMixWindow::initMixer()
 	}
 
 	//kdDebug() << "Mixers found: " << m_mixers.count() << ", multi-driver-mode: " << multipleDriversActive << endl;
+	kdDebug() << "Drivers supported / used: " << driverInfo << endl;
+
 }
 
 

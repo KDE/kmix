@@ -158,6 +158,10 @@ class Mixer : public QObject, virtual public MixerIface
       virtual QString errorText(int mixer_error);
       virtual QString mixerName();
 
+      // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
+      QString driverName();
+      static QString driverName(int num);
+
       /// set/get mixer number used to identify mixers with equal names
       void setMixerNum( int num );
       int mixerNum();

@@ -30,6 +30,11 @@
 #include "kmix-platforms.cpp"
 
 
+/**
+ * Some general design hints. Hierachy is Mixer->MixDevice->Volume
+ */
+
+
 MixDevice::MixDevice(int num, Volume vol, bool recordable,
                      QString name, ChannelType type,
 		     DeviceCategory category ) :
@@ -356,6 +361,15 @@ void Mixer::setBalance(int balance)
 QString Mixer::mixerName()
 {
   return m_mixerName;
+}
+
+QString Mixer::driverName( int driver )
+{
+    getDriverNameFunc *f = g_mixerFactories[driver].getDriverName;
+    if( f!=0 )
+        return f();
+    else
+        return "unknown";
 }
 
 
