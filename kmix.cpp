@@ -276,6 +276,12 @@ KMixWindow::initWidgets()
 	
 	m_wsMixers = new QWidgetStack( centralWidget(), "MixerWidgetStack" );
 	widgetsLayout->addWidget( m_wsMixers );
+
+	if ( m_showMenubar )
+		menuBar()->show();
+	else
+		menuBar()->hide();
+
 }
 
 
@@ -411,10 +417,6 @@ KMixWindow::loadConfig()
 
    // show/hide menu bar
    m_showMenubar = config->readBoolEntry("Menubar", true);
-   if ( m_showMenubar )
-      menuBar()->show();
-   else
-      menuBar()->hide();
 
    KToggleAction *a = static_cast<KToggleAction*>(actionCollection()->action("options_show_menubar"));
    if (a) a->setChecked( m_showMenubar );
