@@ -47,5 +47,3 @@ services_DATA = kmixctrl_restore.desktop
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kmix.pot
 
-dummy.cpp:
-	echo > dummy.cpp

@@ -35,7 +35,7 @@
 
 #ifdef __linux__
 
-#ifdef HAVE_ALSA_ASOUNDLIB_H
+#if defined(HAVE_ALSA_ASOUNDLIB_H) && defined(ALSA)
 #define ALSA_MIXER
 #endif
 
