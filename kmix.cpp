@@ -184,7 +184,7 @@ KMix::KMix(int mixernum, int SetNum)
   mix = new Mixer(mixernum, SetNum);
   CHECK_PTR(mix);
 
-  dock_widget = new KDockWidget("dockw", "kmixdocked.xpm");
+  dock_widget = new KDockWidget("kmixdocked", "kmixdocked");
   dock_widget->setMainWindow(this);
   if ( allowDocking ) {
     dock_widget->dock();
@@ -230,7 +230,6 @@ void KMix::applyOptions()
 void KMix::createWidgets()
 {
   QPixmap miniDevPM;
-  QPixmap WMminiIcon = BarIcon("mixer_mini.xpm");
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
@@ -282,27 +281,26 @@ void KMix::createWidgets()
     switch (iconnum) {
       // TODO: Should be replaceable by user.
     case audioIcon:
-      miniDevPM = BarIcon("mix_audio.xpm");	break;
+      miniDevPM = BarIcon("mix_audio");	break;
     case bassIcon:
-      miniDevPM = BarIcon("mix_bass.xpm");	break;
+      miniDevPM = BarIcon("mix_bass");	break;
     case cdIcon:
-      miniDevPM = BarIcon("mix_cd.xpm");	break;
+      miniDevPM = BarIcon("mix_cd");	break;
     case extIcon:
-      miniDevPM = BarIcon("mix_ext.xpm");	break;
+      miniDevPM = BarIcon("mix_ext");	break;
     case microphoneIcon:
-      miniDevPM = BarIcon("mix_microphone.xpm");break;
+      miniDevPM = BarIcon("mix_microphone");break;
     case midiIcon:
-      miniDevPM = BarIcon("mix_midi.xpm");	break;
+      miniDevPM = BarIcon("mix_midi");	break;
     case recmonIcon:
-      miniDevPM = BarIcon("mix_recmon.xpm");	break;
+      miniDevPM = BarIcon("mix_recmon");	break;
     case trebleIcon:
-      miniDevPM = BarIcon("mix_treble.xpm");	break;
-    case unknownIcon:
-      miniDevPM = BarIcon("mix_unknown.xpm");	break;
+      miniDevPM = BarIcon("mix_treble");	break;
     case volumeIcon:
-      miniDevPM = BarIcon("mix_volume.xpm");	break;
+      miniDevPM = BarIcon("mix_volume");	break;
+    case unknownIcon:
     default:
-      miniDevPM = BarIcon("mix_unknown.xpm");	break;
+      miniDevPM = BarIcon("mix_unknown");	break;
     }
 
     QLabel *qb = new QLabel(Container);
