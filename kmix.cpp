@@ -236,9 +236,9 @@ KMixWindow::initMixer()
 	    } // loop over sound card devices of current driver
 	} // loop over soundcard drivers
 
-	m_hwInfoString = i18n("Sound drivers supported");
-	m_hwInfoString += ": " + driverInfo +
-		"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
+	m_hwInfoString = i18n("Sound drivers supported:");
+	m_hwInfoString += " " + driverInfo +
+		"\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
 	if ( multipleDriversActive )
 	{
 		// this will only be possible by hacking the config-file, as it will not be officially supported
@@ -438,7 +438,7 @@ KMixWindow::initMixerWidgets()
 		if (  m_surroundView ) {
 		    vflags |= ViewBase::Experimental_SurroundView;
 		}
-	
+
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
 
