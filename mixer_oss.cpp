@@ -31,24 +31,28 @@
 // FreeBSD section, according to Sebestyen Zoltan
 #elif defined(__FreeBSD__)
 #include <fcntl.h>
+#include <errno.h>
 #include "sys/ioctl.h"
 #include <sys/types.h>
 #include "machine/soundcard.h"
 // NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
 #elif defined(__NetBSD__)
 #include <fcntl.h>
+#include <errno.h>
 #include "sys/ioctl.h"
 #include <sys/types.h>
 #include <soundcard.h>
 // BSDI section, according to <tom@foo.toetag.com>
 #elif defined()
 #include <fcntl.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/soundcard.h>
 // UnixWare includes
 #elif defined(_UNIXWARE)
 #include <fcntl.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/soundcard.h>
