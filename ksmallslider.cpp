@@ -401,3 +401,5 @@ bool  KSmallSlider::gray() const
 {
    return grayed;
 }
+
+#include "ksmallslider.moc"

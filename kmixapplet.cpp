@@ -39,33 +39,88 @@
 #include "mixdevicewidget.h"
 #include "kmixapplet.h"
 
+
 #define BUTTONSIZE 15
+#define MAXDEVICES 2
+#define MAXCARDS 4
 
-KMixApplet::KMixApplet( Mixer *mixer, QString id, 
-			QWidget *parent, const char* name )
-   : KPanelApplet( id, KPanelApplet::Normal, 0, parent, name ), m_dockId( id ), m_lockedLayout( 0 )
+
+extern "C"
 {
-   kdDebug() << "dockId = " << endl;
+  KPanelApplet* init(QWidget *parent, const QString& configFile)
+  {
+     KGlobal::locale()->insertCatalogue("kmixapplet");
+     return new KMixApplet(configFile, KPanelApplet::Normal,
+			   KPanelApplet::About | KPanelApplet::Help | KPanelApplet::Preferences,
+			   parent, "kmixapplet");
+  }
+}
 
-   // scale icon
-   QPixmap icon = BarIcon("kmixdocked");
-   QWMatrix t;
-   t = t.scale( 10.0/icon.width(), 10.0/icon.height() );
 
-   // create show/hide button      
-   m_button = new QPushButton( icon.xForm( t ), QString::null, this );
-   connect( m_button, SIGNAL(clicked()), this, SLOT(showButton()) );
+int KMixApplet::s_instCount = 0;
 
-   // init mixer widget
-   m_mixerWidget = new KMixerWidget( mixer, true, true, this );
-   
+KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
+			QWidget *parent, const char *name )
+
+   : KPanelApplet( configFile, t, actions, parent, name ), m_lockedLayout( 0 )
+{
+   // init static vars
+   if ( !s_instCount )
+   {
+      // create update timer
+      QTimer *s_timer = new QTimer;
+      s_timer->start( 500 );
+
+      // get mixer devices
+      s_mixers.setAutoDelete( TRUE );
+      for ( int dev=0; dev<MAXDEVICES; dev++ )
+	 for ( int card=0; card<MAXCARDS; card++ )
+	 {
+	    Mixer *mixer = Mixer::getMixer( dev, card );
+	    int mixerError = mixer->grab();
+	    if ( mixerError!=0 )
+	    {
+	       delete mixer;	
+	    } else
+	    {
+	       connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
+	       s_mixers.append( mixer );
+	    }
+	 }
+   }
+
+   s_instCount++;
+
    // ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
    m_layoutTimer = new QTimer( this );
    connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()) );
-   connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
 
-   //FIXME activate menu items
+   // init mixer widget
+   initMixer( s_mixers.first() );
+     
+   // FIXME activate menu items
    //setActions(About | Help | Preferences);
+}
+
+KMixApplet::~KMixApplet()
+{
+   // destroy static vars
+   s_instCount--;
+   if ( !s_instCount )
+   {
+      s_mixers.clear();
+      delete s_timer;
+   }
+}
+
+void KMixApplet::initMixer( Mixer *mixer )
+{
+   delete m_mixerWidget;   
+   if ( mixer )
+   {
+      m_mixerWidget = new KMixerWidget( mixer, true, true, this );
+      connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
+   }
 }
 
 void KMixApplet::updateLayout()
@@ -91,26 +146,13 @@ int KMixApplet::heightForWidth(int width)
   return BUTTONSIZE + width + 1 ;
 }    
 
-void KMixApplet::removedFromPanel()
-{
-   emit closeApplet( this );
-}
-
 void KMixApplet::resizeEvent(QResizeEvent *e) 
 {      
    KPanelApplet::resizeEvent( e );
 
    m_lockedLayout++;
-   if ( orientation()==Vertical )
-   {
-      m_button->setGeometry( 0 ,0, width(), BUTTONSIZE );
-      m_mixerWidget->setGeometry( 0, BUTTONSIZE + 1, 
-				  width(), height()-BUTTONSIZE - 1 );
-   } else
-   {
-      m_button->setGeometry( 0 ,0, BUTTONSIZE, height() );   
-      m_mixerWidget->setGeometry( BUTTONSIZE + 1, 0, 
-				  width()-BUTTONSIZE-1, height() );
-   }
+   m_mixerWidget->setGeometry( 0, 0, width(), height() );
    m_lockedLayout--;
 }
+
+#include "kmixapplet.moc"

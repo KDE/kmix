@@ -83,12 +83,16 @@ Mixer* Mixer::getMixer( MixSet set, int device, int card )
 
 Mixer_ALSA::Mixer_ALSA( int device, int card ) : Mixer( device, card ),
   handle(0), gid(0)
-{};
+{  
+   groups.pgroups = 0;
+}
 
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-  if ( groups.pgroups ) free(groups.pgroups);
+   kdDebug() << "-> Mixer_ALSA::~Mixer_ALSA" << endl;
+   if ( groups.pgroups ) free(groups.pgroups);
+   kdDebug() << "<- Mixer_ALSA::~Mixer_ALSA" << endl;
 }
 
 int Mixer_ALSA::openMixer()
@@ -156,7 +160,7 @@ int Mixer_ALSA::openMixer()
           readVolumeFromHW( idx, vol );
           m_mixDevices.append(
                               new MixDevice( idx, vol, canrecord,
-                                             QString(gid->name), ct ));
+                                             QString((char*)gid->name), ct ));
         }
       else
         {
@@ -174,7 +178,7 @@ int Mixer_ALSA::openMixer()
   snd_mixer_info_t info;
   if ((err = snd_mixer_info(handle, &info)) < 0)
     return Mixer::ERR_READ;
-  m_mixerName = info.name;
+  m_mixerName = QString((char*)info.name);
 
   m_isOpen = true;
   return 0;

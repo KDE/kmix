@@ -47,13 +47,15 @@
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
-#include "kmixapplet.h"
+
+
+#define MAXDEVICES 2
+#define MAXCARDS 4
+
 
 KMixApp::KMixApp()
    : m_dockWidget( 0L )
 {
-   m_applets.setAutoDelete( TRUE );
-
    initMixer();
    initActions();
    initWidgets();
@@ -85,9 +87,6 @@ void KMixApp::initActions()
 		      actionCollection(), "file_save_volume" );
    KStdAction::quit( this, SLOT(quit()), actionCollection());
 
-   (void)new KAction( i18n("&New panel applet"), 0, this, SLOT(newApplet()),
-		      actionCollection(), "file_new_applet" );
-
    // settings menu
    KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
    KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
@@ -101,14 +100,13 @@ void KMixApp::initMixer()
    QTimer *timer = new QTimer( this );
    timer->start( 500 );
 
-   for ( int dev=0; dev<4; dev++ )
-      for ( int card=0; card<4; card++ )
+   for ( int dev=0; dev<MAXDEVICES; dev++ )
+      for ( int card=0; card<MAXCARDS; card++ )
       {
 	 Mixer *mixer = Mixer::getMixer( dev, card );
 	 int mixerError = mixer->grab();
 	 if ( mixerError!=0 )
-	 {
-	    //KMessageBox::error(0, mixer->errorText(mixerError), i18n("Mixer failure"));
+	 {	    
 	    delete mixer;	
 	 } else
 	 {
@@ -184,10 +182,10 @@ void KMixApp::saveConfig()
    config->writeEntry( "Tabs", m_mixerWidgets.count() );
    config->writeEntry( "SaveVolumes", m_saveVolumes );
    config->writeEntry( "LoadVolumes", m_loadVolumes );
-   config->writeEntry( "Applets", m_applets.count() );
 
    // save applet widgets
-   int n = 0;
+/*   
+     int n = 0;
    for (KMixApplet *ma=m_applets.first(); ma!=0; ma=m_applets.next())
    {
       KMixerWidget *mw = ma->mixerWidget();
@@ -200,11 +198,13 @@ void KMixApp::saveConfig()
 
       mw->sessionSave( grp, false );
    }
+*/
 
    // save mixer widgets
+   int n = 0;
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
    {
-      QString grp;
+      QString grp;      
       grp.sprintf( "Widget%i", n );
 
       config->setGroup( grp );
@@ -251,9 +251,9 @@ void KMixApp::loadConfig()
    m_loadVolumes = config->readBoolEntry("LoadCVolumes", true);
    m_saveVolumes = config->readBoolEntry("SaveVolumes", true);
    int tabs = config->readNumEntry("Tabs", 1);
-   int applets = config->readNumEntry("Applets", 1);
 
    // load appels
+/*
    m_applets.clear();
    for (int n=0; n<applets; n++)
    {
@@ -271,6 +271,7 @@ void KMixApp::loadConfig()
 	 insertApplet( ap );
       }
    }
+*/
 
    // load mixer widgets
    m_mixerWidgets.clear();
@@ -320,25 +321,6 @@ void KMixApp::removeMixerWidget( KMixerWidget *mw )
    m_tab->removePage( mw );
    m_mixerWidgets.remove( mw );
 }	
-
-void KMixApp::insertApplet( KMixApplet *applet )
-{
-   connect( applet, SIGNAL(closeApplet(KMixApplet*)), this, SLOT(removeApplet(KMixApplet*)));
-   connect( applet, SIGNAL(clickedButton()), this, SLOT(toggleVisibility()));
-   connect( applet, SIGNAL(aboutClicked()), this, SLOT(showAbout()));
-   connect( applet, SIGNAL(helpClicked()), this, SLOT(showHelp()));
-   connect( applet, SIGNAL(prefClicked()), this, SLOT(showSettings()));
-   m_applets.append( applet );
-   //FIXME applet->dock( applet->dockId().ascii() );
-}
-
-void KMixApp::removeApplet( KMixApplet *applet )
-{
-   kdDebug() << "KMixApp::removeApplet" << endl;
-   m_applets.remove( applet );
-   if ( !isVisible() && !m_showDockWidget && m_applets.count()==0 )
-      quit();
-}
 
 void KMixApp::loadVolumes()
 {
@@ -439,7 +421,7 @@ void KMixApp::newMixer()
    }
 }
 
-void KMixApp::newApplet()
+/*void KMixApp::newApplet()
 {
    QStringList lst;
 
@@ -468,7 +450,7 @@ void KMixApp::newApplet()
       KMixApplet *ap = new KMixApplet( mixer, dockId );
       insertApplet( ap );
    }
-}
+   }*/
 
 void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )
 {
@@ -491,7 +473,7 @@ void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )
    updateDocking();
 
    // avoid invisible and unaccessible main window
-   if( !m_showDockWidget && !isVisible() && m_applets.count()==0 )
+   if( !m_showDockWidget && !isVisible()/* && m_applets.count()==0*/ )
       show();
 }
 
@@ -508,3 +490,5 @@ void KMixApp::toggleVisibility()
 {
    if ( isVisible() ) hide(); else show();
 }
+
+#include "kmix.moc"

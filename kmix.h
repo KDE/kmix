@@ -44,7 +44,6 @@ class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
-class KMixApplet;
 
 class KMixApp : public KTMainWindow
 {
@@ -75,7 +74,6 @@ class KMixApp : public KTMainWindow
    void toggleMenuBar();
    void closeMixer();
    void newMixer();
-   void newApplet();
    void saveVolumes();
    void loadVolumes();;
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
@@ -93,11 +91,9 @@ class KMixApp : public KTMainWindow
    bool m_showLabels;
    bool m_saveVolumes;
    bool m_loadVolumes;
-   bool m_showApplet;
 
    QList<Mixer> m_mixers;
    QList<KMixerWidget> m_mixerWidgets;
-   QList<KMixApplet> m_applets;
 
    QTabWidget *m_tab;
    QWidget *m_buttons;
@@ -107,10 +103,7 @@ class KMixApp : public KTMainWindow
   private slots:
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
-
-   void insertApplet( KMixApplet *applet );
-   void removeApplet( KMixApplet *applet );
-
+  
    void toggleVisibility();
 };
  

@@ -25,51 +25,46 @@
 #include <qwidget.h>
 #include <kaction.h>
 #include <kpanelapplet.h>
+#include <qlist.h>
 
 class KMixerWidget;
 class Mixer;
-class QPushButton;
 class QTimer;
+
 
 class KMixApplet : public KPanelApplet
 {
    Q_OBJECT
 
   public:
-   KMixApplet( Mixer *mixer, QString id, QWidget *parent = 0, const char* name = 0 );
-
-   KMixerWidget *mixerWidget() { return m_mixerWidget; };
-   void setMixerWidget( KMixerWidget *mw );
+   KMixApplet( const QString& configFile, Type t = Normal, int actions = 0,
+	       QWidget *parent = 0, const char *name = 0 );
+   virtual ~KMixApplet();
 
    int widthForHeight(int height);
    int heightForWidth(int width); 
-   void removedFromPanel();
-   void about() { emit aboutClicked(); };
-   void help() { emit helpClicked(); }
-   void preferences() { emit prefClicked(); }   
-   QString dockId() { return m_dockId; }
-
-  signals:
-   void closeApplet( KMixApplet *applet );
-   void clickedButton();
-   void aboutClicked();
-   void helpClicked();
-   void prefClicked();
+   
+   void about();
+   void help();
+   void preferences();
 
   protected slots:
    void updateSize() { updateLayout(); }
-   void showButton() { emit clickedButton(); };
    void updateLayout();
+   void slotTextChanged( const QString& );
 
   protected:
    void resizeEvent( QResizeEvent * );
+   void initMixer( Mixer *mixer );
     
   private:
    KMixerWidget *m_mixerWidget;
-   QButton *m_button;
    QTimer *m_layoutTimer;
-   QString m_dockId;
    int m_lockedLayout;
+
+   static int s_instCount;
+   static QList<Mixer> s_mixers;
+   static QTimer *s_timer;
 };
 
 

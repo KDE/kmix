@@ -47,3 +47,5 @@ void KLedButton::mousePressEvent( QMouseEvent *e )
       emit stateChanged( state() );
    }
 }
+
+#include "kledbutton.moc"

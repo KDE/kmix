@@ -21,6 +21,7 @@
 
 #include "kmixdockwidget.h"
 
+
 KMixDockWidget::KMixDockWidget( QWidget *parent, const char *name )
    : KDockWindow(parent, name)
 {
@@ -29,3 +30,5 @@ KMixDockWidget::KMixDockWidget( QWidget *parent, const char *name )
 KMixDockWidget::~KMixDockWidget()
 {
 }
+
+#include "kmixdockwidget.moc"

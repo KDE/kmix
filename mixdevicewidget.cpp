@@ -45,6 +45,7 @@
 #include "kledbutton.h"
 #include "ksmallslider.h"
 
+
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 				 QWidget* parent,  const char* name) :
    QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md )
@@ -687,3 +688,5 @@ void SmallMixDeviceWidget::mousePressEvent( QMouseEvent *e )
    if ( e->button()==RightButton )
       emit rightMouseClick();   
 }
+
+#include "mixdevicewidget.moc"

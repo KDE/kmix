@@ -44,6 +44,7 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
+
 struct Channel
 {
       MixDeviceWidget *dev;
@@ -276,3 +277,4 @@ void KMixerWidget::showAll()
    updateSize();
 }
 
+#include "kmixerwidget.moc"

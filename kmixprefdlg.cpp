@@ -30,6 +30,8 @@
 #include "kmix.h"
 #include "kmixprefdlg.h"
 #include "kmixerwidget.h"
+#include "kmixprefdlg.h"
+
 
 KMixPrefDlg::KMixPrefDlg()
 {
@@ -79,3 +81,5 @@ void KMixPrefDlg::apply()
    cerr << "KMixPrefDlg::apply()" << endl;
    emit signalApplied( this );
 }
+
+#include "kmixprefdlg.moc"

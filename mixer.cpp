@@ -425,3 +425,5 @@ void Mixer::setRecsrc( int devnum, bool on )
     for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
         if( md->num() == devnum ) md->setRecsrc( on );
 }
+
+#include "mixer.moc"
