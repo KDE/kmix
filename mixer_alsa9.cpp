@@ -52,15 +52,7 @@ ALSA_getMixer( int device, int card )
 	l_mixer = new Mixer_ALSA( device, card );
 	return l_mixer;
 }
-/*
-Mixer*
-ALSA_getMixerSet( MixSet set, int device, int card )
-{
-	Mixer *l_mixer;
-	l_mixer = new Mixer_ALSA( device, card );
-	return l_mixer;
-}
-*/
+
 Mixer_ALSA::Mixer_ALSA( int device, int card ) :
 	Mixer( device, card ), _handle(0)
 {
@@ -108,204 +100,191 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 int
 Mixer_ALSA::openMixer()
 {
-	bool virginOpen = m_mixDevices.isEmpty();
-	bool validDevice = false;
-	int err;
+    bool virginOpen = m_mixDevices.isEmpty();
+    bool validDevice = false;
+    int err;
 
-	release();
+    release();
 
-	snd_ctl_t *ctl_handle;
-	snd_ctl_card_info_t *hw_info;
-	snd_ctl_card_info_alloca(&hw_info);
+    snd_ctl_t *ctl_handle;
+    snd_ctl_card_info_t *hw_info;
+    snd_ctl_card_info_alloca(&hw_info);
 
-	snd_mixer_elem_t *elem;
-	snd_mixer_selem_id_t *sid;
-	snd_mixer_selem_id_alloca( &sid );
+    snd_mixer_elem_t *elem;
+    snd_mixer_selem_id_t *sid;
+    snd_mixer_selem_id_alloca( &sid );
 
-	// Card information
-	QString devName;
-	if ( (unsigned)m_devnum > 31 )
-	{
-		devName = "default";
-	}
-	else
-	{
-		devName = QString( "hw:%1" ).arg( m_devnum );
-	}
+    // Card information
+    QString devName;
+    if( m_devnum == -1 )
+        m_devnum = 0;
+    if ( (unsigned)m_devnum > 31 )
+	devName = "default";
+    else
+	devName = QString( "hw:%1" ).arg( m_devnum );
 
-	QString probeMessage;
+    QString probeMessage;
 	
-	if (virginOpen)
-		probeMessage += "Trying ALSA Device '" + devName + "': ";
+    if (virginOpen)
+	probeMessage += "Trying ALSA Device '" + devName + "': ";
 
-	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
-	{
-	    kdDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
-	    //_stateMessage = errorText( Mixer::ERR_NODEV );
-	    return Mixer::ERR_OPEN;
-	}
+    if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
+    {
+	kdDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
+	//_stateMessage = errorText( Mixer::ERR_NODEV );
+	return Mixer::ERR_OPEN;
+    }
 
-	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
-	{
-	    kdDebug(67100) << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err) << endl;
-	    //_stateMessage = errorText( Mixer::ERR_READ );
-	    snd_ctl_close( ctl_handle );
-	    return Mixer::ERR_READ;
-	}
-
-	// Device and mixer names
-	const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
-	//mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
-        // Copy the name of kmix mixer from card name (mixername is rumoured to be not that good)
-        m_mixerName = mixer_card_name;
-
+    if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
+    {
+	kdDebug(67100) << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err) << endl;
+	//_stateMessage = errorText( Mixer::ERR_READ );
 	snd_ctl_close( ctl_handle );
+	return Mixer::ERR_READ;
+    }
 
-	/* open mixer device */
-	if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
-	{
-	    kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
-	    //errormsg( Mixer::ERR_NODEV );
-	    return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
+    // Device and mixer names
+    const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
+    //mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
+    // Copy the name of kmix mixer from card name (mixername is rumoured to be not that good)
+    m_mixerName = mixer_card_name;
+
+    snd_ctl_close( ctl_handle );
+
+    /* open mixer device */
+    if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
+    {
+	kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
+	//errormsg( Mixer::ERR_NODEV );
+	return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
+    }
+
+    if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
+    {
+	kdDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
+	//errormsg( Mixer::ERR_PERM );
+	return Mixer::ERR_OPEN;
+    }
+
+    if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
+    {
+	kdDebug(67100) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err) << endl;
+	//errormsg( Mixer::ERR_READ );
+	return Mixer::ERR_READ;
+    }
+
+    if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
+    {
+	kdDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
+	//errormsg( Mixer::ERR_READ );
+	releaseMixer();
+	return Mixer::ERR_READ;
+    }
+
+    kdDebug(67100) << probeMessage << "found" << endl;	
+
+    unsigned int mixerIdx = 0;
+    for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
+    {
+	// If element is not active, just skip
+	if ( ! snd_mixer_selem_is_active ( elem ) ) {
+	    continue;
 	}
 
-	if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
-	{
-	    kdDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
-	    //errormsg( Mixer::ERR_PERM );
-	    return Mixer::ERR_OPEN;
-	}
 
-	if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
-	{
-	    kdDebug(67100) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err) << endl;
-	    //errormsg( Mixer::ERR_READ );
-	    return Mixer::ERR_READ;
-	}
+	    sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
+	    snd_mixer_selem_get_id( elem, sid );
 
-	if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
-	{
-                kdDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
-		//errormsg( Mixer::ERR_READ );
-		releaseMixer();
-		return Mixer::ERR_READ;
-	}
+	    bool canRecord = false;
+	    bool hasMute = false;
+	    long maxVolumePlay= 0, minVolumePlay= 0;
+	    long maxVolumeRec = 0, minVolumeRec = 0;
+	    validDevice = true;
 
-	// default mixers?
-	if( m_cardnum == -1 )
-	{
-		m_cardnum = 0;
-	}
+	    snd_mixer_selem_get_playback_volume_range( elem, &minVolumePlay, &maxVolumePlay );
+	    snd_mixer_selem_get_playback_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
+	    // New mix device
+	    MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
 
-	if( m_devnum == -1 )
-	{
-		m_devnum = 0;
-	}
+	    if( virginOpen )
+	    {
+		MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
+		//MixDevice::DeviceCategory ccRec  = MixDevice::UNDEFINED;
 
-	kdDebug(67100) << probeMessage << "found" << endl;	
-	//int selem_count = snd_mixer_get_count(_handle);
-
-	unsigned int mixerIdx = 0;
-	for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
-	{
-		// If element is not active, just skip
-		if ( ! snd_mixer_selem_is_active ( elem ) ) {
-			continue;
+		Volume::ChannelMask chn = Volume::MNONE;
+                Volume::ChannelMask chnTmp;
+		if ( snd_mixer_selem_has_playback_volume(elem) ) {
+		    //chn |= 
+                   chnTmp = snd_mixer_selem_is_playback_mono ( elem )
+			? Volume::MLEFT
+			: (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
+                    chn = (Volume::ChannelMask) (chn | chnTmp);
+		    cc = MixDevice::SLIDER;
+		}
+		if ( snd_mixer_selem_has_capture_volume(elem) ) {
+		    chnTmp = snd_mixer_selem_is_capture_mono( elem )
+			? Volume::MLEFTREC
+			: (Volume::ChannelMask)(Volume::MLEFTREC | Volume::MRIGHTREC);
+                    chn = (Volume::ChannelMask) (chn | chnTmp);
+		    cc = MixDevice::SLIDER;
 		}
 
-		sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
-		snd_mixer_selem_get_id( elem, sid );
+		/* Create Volume object. If there is no volume on this device,
+		 * it will be created with maxVolume == 0 && minVolume == 0 */
+		Volume* vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
+		//mixer_elem_list.append( elem );
+		mixer_sid_list.append( sid );
 
-		bool canRecord = false;
-		bool hasMute = false;
-		long maxVolume, minVolume;
-		validDevice = true;
+		if ( snd_mixer_selem_has_playback_switch ( elem ) )
+		    hasMute = true;
+		if ( snd_mixer_selem_has_capture_switch ( elem ) )
+		    canRecord = true;
 
-		if ( snd_mixer_selem_has_capture_switch( elem ) )
+		if ( snd_mixer_selem_has_common_switch ( elem ) ||
+                     cc == MixDevice::UNDEFINED )
 		{
-			canRecord = true;
+		    // Everything unknown is handled as switch
+		    cc = MixDevice::SWITCH;
+		    hasMute = true; // The mute button acts as switch in this case (ugly!)
 		}
 
-		snd_mixer_selem_get_playback_volume_range( elem, &minVolume, &maxVolume );
-
-		// New mix device
-		MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
-
-		if( virginOpen )
+		MixDevice* mdw =
+		    new MixDevice( mixerIdx,
+				   *vol,
+                                   canRecord,
+				   hasMute,
+				   snd_mixer_selem_id_get_name( sid ),
+				   ct,
+				   cc );
+		m_mixDevices.append( mdw );
+		//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
+		delete vol;
+	    } // virginOpen
+	    else
+	    {
+		MixDevice* md = m_mixDevices.at( mixerIdx );
+		if( !md )
 		{
-			int chn = 1; // Assuming default mono
-
-			MixDevice::DeviceCategory cc;
-
-			if(	! snd_mixer_selem_is_capture_mono( elem )  ||
-					! snd_mixer_selem_is_playback_mono( elem ) )
-				chn = 2; // Stereo channel ?
-
-			/* !!!! The next line looked like this:   !!!! Other mixer_* implementations might be buggy !!!!
-			   Volume vol( chn, ( int )maxVolume );
-			   I wonder why it has ever worked.
-			   Probably by accident because the Volume objects were copied so much until KMix2.0 (inclusive)
-			*/
-			Volume* vol = new Volume( chn, ( int )maxVolume );
-			//mixer_elem_list.append( elem );
-			mixer_sid_list.append( sid );
-
-			if ( snd_mixer_selem_has_playback_volume ( elem ) ||
-					snd_mixer_selem_has_capture_volume ( elem ) )
-			{
-				cc = MixDevice::SLIDER;
-				if ( snd_mixer_selem_has_playback_switch ( elem ) ||
-						snd_mixer_selem_has_capture_switch ( elem ) )
-					hasMute = true;    // !! I do not like the *_has_capture_switch()  here - cesken
-			}
-			else if ( ! snd_mixer_selem_has_playback_volume ( elem ) ||
-						snd_mixer_selem_has_capture_volume ( elem ) )
-			{
-				cc = MixDevice::SWITCH;  // !! Why is something with *_has_capture_volume()  a switch? - cesken
-				hasMute = true; // The mute button act as switch in this case
-			}
-			else {
-				continue;
-			}
-
-			MixDevice* mdw =
-			    new MixDevice( mixerIdx,
-					   *vol,
-					   canRecord,
-					   hasMute,
-					   snd_mixer_selem_id_get_name( sid ),
-					   ct,
-					   cc );
-			m_mixDevices.append( mdw );
-			//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
-			delete vol;
+		    return ERR_INCOMPATIBLESET;
 		}
-		else
-		{
-			MixDevice* md = m_mixDevices.at( mixerIdx );
-			if( !md )
-			{
-				return ERR_INCOMPATIBLESET;
-			}
-			writeVolumeToHW( mixerIdx, md->getVolume() );
-		}
+		writeVolumeToHW( mixerIdx, md->getVolume() );
+	    } // !virginOpen
+    } // for all elems
 
-	}
+    // If no devices are supported by this soundcard, return "NO Devices"
+    if ( !validDevice )
+    {
+	return Mixer::ERR_NODEV;
+    }
 
-	// If no devices are supported by this soundcard, return "NO Devices"
-	if ( !validDevice )
-	{
-		return Mixer::ERR_NODEV;
-	}
+    // Copy the name of kmix mixer from card name
+    // Real name of mixer is not too good
+    m_mixerName = mixer_card_name;
 
-	// Copy the name of kmix mixer from card name
-	// Real name of mixer is not too good
-	m_mixerName = mixer_card_name;
+    // return with success
+    m_isOpen = true;
 
-	// return with success
-	m_isOpen = true;
-
-	return 0;
+    return 0;
 }
 
 
@@ -513,106 +492,78 @@ int
 Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 {
 	int elem_sw;
-	bool hasVol = false;
 	long left, right;
 
 	snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
-
 	if ( !elem )
 	{
 		return 0;
 	}
 		
 
-	hasVol = ( snd_mixer_selem_has_playback_volume ( elem ) ||
-			snd_mixer_selem_has_capture_volume ( elem ) );
+	bool hasPlaybackVolume = snd_mixer_selem_has_playback_volume( elem );
+	bool hasRecordVolume   = snd_mixer_selem_has_capture_volume ( elem );
 
-	if ( hasVol )
+	// *** READ PLAYBACK VOLUMES *************
+	if ( hasPlaybackVolume )
 	{
-                bool usePlaybackVolume = snd_mixer_selem_has_playback_volume ( elem );
-		
-		// Read value from LEFT playback/capture volume
-		if ( usePlaybackVolume )
-		{
-			int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
-#ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,L] = " << left << endl;
-#endif
-
-			if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,L] failed, errno=" << ret << endl;
-		}
-		else
-		{
-			int ret = snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
-#ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] = " << left << endl;
-#endif
-			if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] failed, errno=" << ret << endl;			
-		}
-
-		// Is Mono channel ?  !! What if we only have capture volume? Does snd_mixer_selem_is_PLAYBACK_mono() apply?
-		// Trying the following temporary fix.
-		// (the real solution is to support both playback and capture volumes with 0-2 sliders)
-		if ( ( usePlaybackVolume && snd_mixer_selem_is_playback_mono ( elem )) ||
-		     (!usePlaybackVolume && snd_mixer_selem_is_capture_mono  ( elem ))   )
-		{
-#ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug(67100) << "Is mono volume: " << left << endl;
-#endif
-			volume.setAllVolumes( left );
-		}
-		else
-		{
-			// Read value from RIGHT playback/capture volume
-			if ( usePlaybackVolume )
-			{
-				int ret = 	snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-#ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] = " << right << endl;
-#endif
-				if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
-			}
-			else {
-				int ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-#ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] = " << right << endl;
-#endif
-				if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;			
-			}
-
-			volume.setVolume( Volume::RIGHT, right );
-			volume.setVolume( Volume::LEFT, left );
-		}
+		int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
+                if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
+		if ( snd_mixer_selem_is_playback_mono ( elem )) {
+                    volume.setVolume( Volume::LEFT , left );
+                    volume.setVolume( Volume::RIGHT, left );
+                }
+                else {
+                    int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
+                    if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
+                    volume.setVolume( Volume::LEFT , left );
+                    volume.setVolume( Volume::RIGHT, right );
+                }
 	}
-	else {
-		//kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") has no volume\n";
+
+        // *** READ RECORD VOLUMES **************
+	if ( hasRecordVolume )
+	{
+            int ret = snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
+            if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [get_capture_volume,L] failed, errno=" << ret << endl;
+	    if ( snd_mixer_selem_is_capture_mono  ( elem )) {
+		volume.setVolume( Volume::LEFTREC , left );
+		volume.setVolume( Volume::RIGHTREC, left );
+	    }
+	    else
+	    {
+		int ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
+		if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;			
+		volume.setVolume( Volume::LEFTREC , left );
+		volume.setVolume( Volume::RIGHTREC, right );
+	    }
 	}
 
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
-		snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-		if( elem_sw == 0 )
-			volume.setMuted(true);
-		else
-			volume.setMuted(false);
+	    snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
+	    if( elem_sw == 0 )
+		volume.setMuted(true);
+	    else
+		volume.setMuted(false);
 	}
-	else if (  snd_mixer_selem_has_capture_switch(  elem ) )
+/*
+  test this later
+	// The next lines are a nice workaround for channels that have no explicite "muted" switch (esken)
+	else if (   (left  == pmin ) &&
+		  ( (right == pmin) || snd_mixer_selem_is_playback_mono ( elem ) ) )
 	{
-		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-		if( elem_sw == 0 )
-			volume.setMuted(true);
-		else
-			volume.setMuted(false);
-
-	}
-/* I will try this after KDE3.2 - esken !!
-	// The next line is a nice workaround for channels that have no explicite "muted" switch (esken)
-	else if ( (left == pmin ) &&
-				( (right == pmin) || snd_mixer_selem_is_playback_mono ( elem ) ) )
-	{
-		volume.setMuted( ! elem_sw );
+		volume.setMuted( ! elem );
 	}
 */
+	if ( snd_mixer_selem_has_capture_switch(  elem ) )
+	{
+	    snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
+	    if( elem_sw == 0 )
+		volume.setMuted(true);
+	    else
+		volume.setMuted(false);
+	}
 
 	//kdDebug(67100) << "EXIT Mixer_ALSA::readVolumeFromHW()\n";
 	return 0;
@@ -624,12 +575,11 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
 	int left, right;
 	int elem_sw;
 
-	Volume data = volume; // !! Variable called "data" is never used - cesken
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
 
 	if ( !elem )
 	{
-		return 0;
+return 0;
 	}
 
 	left = volume[ Volume::LEFT ];
