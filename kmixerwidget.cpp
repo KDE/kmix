@@ -434,8 +434,10 @@ KMixerWidget::slotFillPopup()
 void
 KMixerWidget::slotToggleMixerDevice( int id)
 {
+   /* id is now the real unique mixer id: it cannot be too big now (BTW: this check had broken the panel applet)
    if(id >= static_cast<int>(m_channels.count())) // too big
       return;
+    */
 
    Channel *chn = 0;
    for (Channel *ch=m_channels.first(); ch!=0; ch=m_channels.next()) {
