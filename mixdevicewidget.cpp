@@ -249,6 +249,12 @@ QPixmap MixDeviceWidget::getIcon( int icon )
          miniDevPM = UserIcon("mix_video"); break;
       case MixDevice::SURROUND:
          miniDevPM = UserIcon("mix_surround"); break;
+		case MixDevice::HEADPHONE:
+			miniDevPM = UserIcon( "mix_headphone" ); break;
+		case MixDevice::DIGITAL:
+			miniDevPM = UserIcon( "mix_digital" ); break;
+		case MixDevice::AC97:
+			miniDevPM = UserIcon( "mix_ac97" ); break;
       default:
          miniDevPM = UserIcon("mix_unknown"); break;
    }

@@ -76,13 +76,17 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 		return MixDevice::VOLUME;
 	}
 	if ( name == "Master Mono" ) return MixDevice::VOLUME;
-	if ( name == "Headphone" ) return MixDevice::EXTERNAL;
+	if ( name.find( "Headphone", 0, false ) != -1 ) return MixDevice::HEADPHONE;
 	if ( name == "Bass" ) return MixDevice::BASS;
 	if ( name == "Treble" ) return MixDevice::TREBLE;
 	if ( name == "CD" ) return MixDevice::CD;
 	if ( name == "Video" ) return MixDevice::VIDEO;
 	if ( name == "PCM" || name == "Wave" || name == "Line" )	return MixDevice::AUDIO;
-	if ( name == "Surround" ) return MixDevice::SURROUND;
+	if ( name.find( "surround", 0, false ) != -1 ) return MixDevice::SURROUND;
+	if ( name.find( "ac97", 0, false ) != -1 ) return MixDevice::AC97;
+	if ( name.find( "coaxial", 0, false ) != -1 ) return MixDevice::DIGITAL;
+	if ( name.find( "optical", 0, false ) != -1 ) return MixDevice::DIGITAL;
+	if ( name.find( "Mic" ) != -1 ) return MixDevice::MICROPHONE;
 	
 	return MixDevice::EXTERNAL;
 }
@@ -90,11 +94,11 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 int 
 Mixer_ALSA::openMixer()
 {
-	kdDebug() << "Mixer_ALSA::openMixer - Enter" << endl;
-	
 	bool virginOpen = m_mixDevices.isEmpty();
 	bool validDevice = false;
 	int err;
+
+	release();
 
 	snd_ctl_t *ctl_handle;
 	snd_ctl_card_info_t *hw_info;
@@ -155,7 +159,6 @@ Mixer_ALSA::openMixer()
 		return 1;
 	}
 
-
 	// default mixers?
 	if( m_cardnum == -1 )
 	{
@@ -167,19 +170,17 @@ Mixer_ALSA::openMixer()
 		m_devnum = 0;
 	}
 
+	int mixerIdx = 0;
 	for ( elem = snd_mixer_first_elem( handle ); elem; elem = snd_mixer_elem_next( elem ) ) 
 	{
 		snd_mixer_selem_get_id( elem, sid );
-		
-		if ( !snd_mixer_selem_is_active( elem ) )
-		{
-			continue;
-		}
 
+		if ( ! snd_mixer_selem_is_active( elem ) )
+			continue;
+		
 		bool isMono = false;
 		bool canRecord = false;
 		long maxVolume, minVolume;
-		int mixerIdx;
 		validDevice = true;
 		
 		if ( snd_mixer_selem_is_playback_mono( elem ) )
@@ -192,7 +193,6 @@ Mixer_ALSA::openMixer()
 		}
 		
 		snd_mixer_selem_get_playback_volume_range( elem, &minVolume, &maxVolume );
-		mixerIdx = snd_mixer_selem_id_get_index( sid );
 
 		// New mix device
 		MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
@@ -200,8 +200,10 @@ Mixer_ALSA::openMixer()
 		if( virginOpen )
 		{
 			Volume vol( SND_MIXER_SCHN_LAST, (int)maxVolume );
-			readVolumeHW( elem, vol );			
+			mixer_elem_list.append( elem );
+			readVolumeFromHW( mixerIdx, vol );
 			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct) );
+			mixerIdx++;
 		} 
 		else
 		{
@@ -228,8 +230,6 @@ Mixer_ALSA::openMixer()
 	// return with success
 	m_isOpen = true;
 
-	kdDebug() << "Mixer_ALSA::openMixer - Out" << endl;
-	
 	return 0;
 }
 
@@ -282,98 +282,105 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	return false;
 }
 
-void 
-Mixer_ALSA::readVolumeHW( snd_mixer_elem_t *elem, Volume &volume )
+int 
+Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 {
-   int volChannel = 0;
-	long leftvol, rightvol;
-	long vol;
-	snd_mixer_selem_channel_id_t chn;
-	
-	for (int channel = 0; channel < SND_MIXER_SCHN_LAST; channel++)
-	{
+	int elem_sw;
+	bool hasVol = false;
+	long left, right, pmin, pmax;
+	snd_mixer_elem_t *elem = mixer_elem_list[ mixerIdx ];
 
-		if ( ( ( snd_mixer_selem_has_playback_volume( elem ) ) || 
-				( snd_mixer_selem_has_capture_volume( elem ) ) ) &	( 1 << channel ) )
+	hasVol = ( snd_mixer_selem_has_playback_volume ( elem ) ||
+			snd_mixer_selem_has_capture_volume ( elem ) );
+	
+	if ( hasVol )
+	{
+		if ( snd_mixer_selem_has_playback_volume ( elem ) )
+			snd_mixer_selem_get_playback_volume_range ( elem, &pmin, &pmax );
+		else
+			snd_mixer_selem_get_capture_volume_range ( elem, &pmin, &pmax );
+		
+		if (snd_mixer_selem_has_playback_volume( elem ) )
+			snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
+		else
+			snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
+
+
+		// Is Mono channel ???
+		if ( snd_mixer_selem_is_playback_mono ( elem ) )
 		{
-			if( snd_mixer_selem_has_playback_volume( elem ) )
-			{
-				//snd_mixer_selem_get_playback_volume(elem, chn, &vol);
-			}
+			volume.setAllVolumes( left );
+		} 
+		else 
+		{
+			if ( snd_mixer_selem_has_playback_volume ( elem ) )
+				snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
 			else
-			{
-				//snd_mixer_selem_get_capture_volume(elem, chn, &vol);
-			}
-			
-			//volume.setVolume( volChannel, (int)&vol );
-			
-			//if ( volChannel==0 ) 
-			//	leftvol = vol;
-			
-			//if ( volChannel==1 )
-			//{
-			//	rightvol = vol;
-			//	if( leftvol != rightvol )
-			//	{
-			//		m_balance = ( leftvol > rightvol ) ?
-			//			(-(leftvol-rightvol)*100/leftvol) :
-			//			(+(rightvol-leftvol)*100/rightvol);
-			//	} 
-			//	else
-			//		m_balance = 0;
-			//}
-			volChannel++;
+				snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
+
+			volume.setVolume( Volume::LEFT, left );
+			volume.setVolume( Volume::RIGHT, right );
 		}
 	}
-}
-
-int 
-Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
-{
-	// Avoid warnings
-	Volume data = volume;
-	int teste = devnum;
-	teste++;
 	
+	if ( snd_mixer_selem_has_playback_switch( elem ) )
+	{
+		snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
+		if( elem_sw == volume.isMuted() )
+			volume.setMuted( ! elem_sw );
+	}
+	else if (  snd_mixer_selem_has_capture_switch(  elem ) )
+	{
+		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
+		if( elem_sw == volume.isMuted() )
+			volume.setMuted( ! elem_sw );
+	}
+
 	return 0;
 }
-
 
 int 
 Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 {
-	// Avoid warnings
-	Volume data = volume;
-	int teste = devnum;
-	teste++;
-
-	kdDebug() << "MixerALSA::Write volume call..." << endl;
-	//snd_mixer_open( &handle, m_cardnum );
-	//gid = &groups.pgroups[devnum];
+	int left, right;
+	int elem_sw;
+	long pmin, pmax;
 	
-	// get current group info
-   //snd_mixer_group_t group;
-   //bzero(&group, sizeof(group));
-   //group.gid = *gid;
-   //if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
+	Volume data = volume;
+	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
 
-   // update muting flags
-   //group.mute = volume.isMuted() ? ~0 : 0;
+	if (snd_mixer_selem_has_playback_volume( elem ) )
+		snd_mixer_selem_get_playback_volume_range( elem, &pmin, &pmax );
+	else
+		snd_mixer_selem_get_capture_volume_range ( elem, &pmin, &pmax );
 
-   // write volumes channel for channel
-   //int volChannel = 0;
-   //for ( int channel=0; channel<32; channel++ )
-   //{
-      //if ( group.channels & (1 << channel) )
-      //{
-         //group.volume.values[channel] = volume[volChannel];
-         //volChannel++;
-      //}
-   //}
+	left = volume[ Volume::LEFT ];
+	right = volume[ Volume::RIGHT ];
 
-   // write volumes back
-   //if ( snd_mixer_group_write(handle, &group)<0 ) return Mixer::ERR_WRITE;
+	if (snd_mixer_selem_has_playback_volume( elem ) ) 
+	{
+		snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
+		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
+			snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
+	} 
+	else if ( snd_mixer_selem_has_capture_volume( elem ) )
+	{
+		snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
+		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
+			snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
+	}
 
-   return 0;
+	if ( snd_mixer_selem_has_playback_switch( elem ) )
+	{
+		snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
+		if( elem_sw == volume.isMuted() )
+			snd_mixer_selem_set_playback_switch_all( elem, ! elem_sw );
+	}
+	else if (  snd_mixer_selem_has_capture_switch(  elem ) )
+	{
+		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
+		if( elem_sw == volume.isMuted() )
+			snd_mixer_selem_set_capture_switch_all( elem, ! elem_sw );
+	}
 }
 
