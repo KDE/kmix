@@ -50,7 +50,7 @@ Mixer	       *initMix;
 KConfig	       *KmConfig;
 
 
-char		SetNumber;
+signed char	SetNumber;
 extern char	KMixErrors[6][200];
 
 int main(int argc, char **argv)
@@ -89,16 +89,21 @@ int main(int argc, char **argv)
     globalKIL   = globalKapp->getIconLoader();
   }
 
-  if (!initonly && kapp->isRestored()) {
+  if (!initonly && globalKapp->isRestored()) {
 
     // MODE #1 : Restored by Session Management 
 
     int n = 1;
     while (KTopLevelWidget::canBeRestored(n)) {
-      // I could read mixer number from session management.
-      // But the parameters should be passed by the SM, so this
+      // Read mixer number and set number from session management.
+      // This is neccesary, because when the application is restarted
+      // by the SM, the
       // should work, too.
-      kmix = new KMix(mixer_id, SetNumber);
+      KConfig* scfg = globalKapp->getSessionConfig();
+      scfg->setGroup("kmixoptions");
+      int startSet    = scfg->readNumEntry("startSet",-1);
+      int startDevice = scfg->readNumEntry("startDevice",0);
+      kmix = new KMix(startDevice, startSet);
       kmix->restore(n);
       n++;
     }
@@ -123,7 +128,7 @@ int main(int argc, char **argv)
 
 KMix::~KMix()
 {
-  sessionSave();
+  configSave();
   delete mainmenu;
 }
 
@@ -140,6 +145,10 @@ bool KMix::restore(int n)
 
 KMix::KMix(int mixernum, int SetNum)
 {
+  // First store how the mixer was started. This two
+  // things will be stored in the session config.
+  startSet = SetNum;
+  startDevice = mixernum;
   KmConfig=KApplication::getKApplication()->getConfig();
 
   KmConfig->setGroup("");
@@ -161,7 +170,7 @@ KMix::KMix(int mixernum, int SetNum)
   }
 
   connect ( dock_widget, SIGNAL(quit_clicked()), this, SLOT(quit_myapp()  ));
-  connect ( globalKapp , SIGNAL(saveYourself()), this, SLOT(sessionSave() ));
+  connect ( globalKapp , SIGNAL(saveYourself()), this, SLOT(sessionSaveAll() ));
 
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
@@ -604,7 +613,8 @@ QPopupMenu* KMix::ContainerContextMenu(QObject *o, QObject *)
     Mlocal->insertItem( i18n("&Hide Menubar") , this, SLOT(hideMenubarCB()) );
   else
     Mlocal->insertItem( i18n("&Show Menubar") , this, SLOT(hideMenubarCB()) );
-  Mlocal->insertItem( i18n("&Help"), this, SLOT(launchHelpCB()) );
+  Mlocal->insertItem( i18n("&Options")        , this, SLOT(showOptsCB()) );
+  Mlocal->insertItem( i18n("&Help")           , this, SLOT(launchHelpCB()) );
 
   MlocalCreated = true;
   return Mlocal;
@@ -713,8 +723,19 @@ void KMix::setBalance(int left, int right)
 }
 
 
-// first aspects of session management
-void KMix::sessionSave()
+// Session management and config saving
+
+
+void KMix::sessionSaveAll()
+{
+  sessionSave(true);
+}
+void KMix::configSave()
+{
+  sessionSave(false);
+}
+
+void KMix::sessionSave(bool sessionConfig)
 {
   KmConfig->setGroup("");
   KmConfig->writeEntry( "Balance"    , LeftRightSB->value() , true );
@@ -722,7 +743,15 @@ void KMix::sessionSave()
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
   KmConfig->writeEntry( "Docking"    , allowDocking);
   KmConfig->writeEntry( "StartDocked", !isVisible());
-  mix->sessionSave();
+
+  if (sessionConfig) {
+    // Save session specific data only when needed
+    KConfig* scfg = globalKapp->getSessionConfig();
+    scfg->setGroup("kmixoptions");
+    scfg->writeEntry("startSet", startSet);
+    scfg->writeEntry("startDevice", startDevice);
+  }
+  mix->sessionSave(sessionConfig);
   KmConfig->sync();
 }
 
@@ -738,6 +767,6 @@ void KMix::closeEvent( QCloseEvent *e )
 
 void KMix::quit_myapp()
 {
-  sessionSave();
+  configSave();
   globalKapp->quit();
 }

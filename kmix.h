@@ -54,7 +54,9 @@ public slots:
   void tickmarksTogCB();
 
 private slots:
-  void sessionSave();
+  void sessionSaveAll();
+  void configSave();
+  void sessionSave(bool sessionConfig);
   void slotReadSet1();
   void slotReadSet2();
   void slotReadSet3();
@@ -76,6 +78,8 @@ private:
   bool tickmarksOn;
   bool allowDocking;
   bool startDocked; 
+  int		startSet;
+  int		startDevice;
   QPopupMenu* contextMenu(QObject *, QObject *);
   QPopupMenu* ContainerContextMenu(QObject *, QObject *);
   bool eventFilter(QObject *o, QEvent *e);

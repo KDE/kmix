@@ -36,7 +36,8 @@
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/audioio.h>
-                               
+                     extern KApplication *globalKapp; 
+          
 #define SUN_MIXER
 #endif
 
@@ -138,7 +139,7 @@ Mixer::Mixer(int devnum, int SetNum)
   setupMixer(devnum, SetNum);
 }
 
-void Mixer::sessionSave()
+void Mixer::sessionSave(bool /*sessionConfig*/)
 {
   TheMixSets->write();
 }

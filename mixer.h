@@ -126,7 +126,7 @@ public:
   void Set0toSet(int Source);
   void setRecsrc(unsigned int newRecsrc);
   unsigned int getRecsrc();
-  void sessionSave();
+  void sessionSave(bool sessionConfig);
 
   int num_mixdevs;
   MixDevice	*First;
