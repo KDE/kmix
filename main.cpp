@@ -37,7 +37,7 @@ static KCmdLineOptions options[] =
    // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
-extern "C" int kdemain(int argc, char *argv[])
+extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
                          APP_VERSION, description, KAboutData::License_GPL,

@@ -46,7 +46,7 @@ static KCmdLineOptions options[] =
    // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
-extern "C" int kdemain(int argc, char *argv[])
+extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
    KLocale::setMainCatalogue("kmix");
    KAboutData aboutData( "kmixctrl", I18N_NOOP("KMixCtrl"),
