@@ -39,7 +39,7 @@ kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp \
 	viewoutput.cpp viewinput.cpp viewsliders.cpp viewswitches.cpp \
 	mixdevicewidget.cpp mdwslider.cpp mdwswitch.cpp \
 	mixer.cpp mixset.cpp mixdevice.cpp ksmallslider.cpp volume.cpp kledbutton.cpp \
-	verticaltext.cpp mixerIface.skel colorwidget.cpp dialogviewconfiguration.cpp kmixtoolbox.cpp
+	verticaltext.cpp mixerIface.skel colorwidget.ui dialogviewconfiguration.cpp kmixtoolbox.cpp
 
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
