@@ -3,7 +3,7 @@
 BinaryPattern=kmix;
 Protocols=
 Exec=kmix -caption "%c" %i %m
-DocPath=kmix/kmix.html
+DocPath=kmix/index.html
 TerminalOptions=
 Path=
 Extensions=
