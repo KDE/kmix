@@ -6,7 +6,7 @@ pics_DATA = mix_audio.xpm mix_bass.xpm mix_cd.xpm mix_ext.xpm \
 
 install-data-local:
 	$(mkinstalldirs) $(kde_minidir)
-	$(INSTALL_DATA) kmix_mini.xpm $(kde_minidir)/kmix.xpm
+	$(INSTALL_DATA) $(srcdir)/kmix_mini.xpm $(kde_minidir)/kmix.xpm
 
 uninstall-local:
 	-rm -f $(kde_minidir)/kmix.xpm
