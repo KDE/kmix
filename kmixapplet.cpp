@@ -43,12 +43,16 @@
 #include <kcolorbutton.h>
 #include <qradiobutton.h>
 #include <kglobalsettings.h>
+#include <kbugreport.h>
+#include <kaboutdata.h>
+#include <kaboutapplication.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "kmixapplet.h"
 #include "colorwidget.h"
+#include "version.h"
 
 
 extern "C"
@@ -168,8 +172,11 @@ KPanelApplet::Direction KMixApplet::checkReverse(Direction dir) {
 KMixApplet::KMixApplet( const QString& configFile, Type t,
                         QWidget *parent, const char *name )
 
-   : KPanelApplet( configFile, t, KPanelApplet::Preferences, parent, name ),
-     m_mixerWidget(0), m_errorLabel(0), m_lockedLayout(0), m_pref(0)
+   : KPanelApplet( configFile, t, KPanelApplet::Preferences | KPanelApplet::ReportBug | KPanelApplet::About, parent, name ),
+     m_mixerWidget(0), m_errorLabel(0), m_lockedLayout(0), m_pref(0),
+     m_aboutData( "kmix", I18N_NOOP("KMix Panel Applet"),
+                         APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
+                         I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
    // init static vars
    if ( !s_instCount )
@@ -259,6 +266,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 
    popupDirectionChange(KPanelApplet::Up);
+
+   m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
 }
 
 KMixApplet::~KMixApplet()
@@ -391,6 +400,8 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
 
 void KMixApplet::about()
 {
+    KAboutApplication aboutDlg(&m_aboutData);
+    aboutDlg.exec();
 }
 
 void KMixApplet::help()
@@ -445,6 +456,12 @@ void KMixApplet::preferences()
 
     m_pref->show();
     m_pref->raise();
+}
+
+void KMixApplet::reportBug()
+{
+    KBugReport bugReportDlg(this, true, &m_aboutData);
+    bugReportDlg.exec();
 }
 
 void KMixApplet::preferencesDone()

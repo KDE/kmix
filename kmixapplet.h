@@ -28,6 +28,7 @@
 #include <kpanelapplet.h>
 #include <qptrlist.h>
 #include <kcolordialog.h>
+#include <kaboutdata.h>
 
 #include "kmixerwidget.h"
 
@@ -81,6 +82,7 @@ class KMixApplet : public KPanelApplet
    void about();
    void help();
    void preferences();   
+   void reportBug();
 
   protected slots:
    void triggerUpdateLayout();
@@ -114,6 +116,7 @@ class KMixApplet : public KPanelApplet
    int mixerNum;
    QString mixerName;
    Mixer *mixer;
+   KAboutData m_aboutData;
 };
 
 
