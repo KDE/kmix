@@ -71,6 +71,16 @@
 #define OSS_MIXER
 #endif
 
+// BSDI section, according to <tom@foo.toetag.com>
+#ifdef __bsdi__ 
+#include <fcntl.h> 
+#include <sys/ioctl.h> 
+#include <sys/types.h> 
+#include <sys/soundcard.h> 
+#define OSS_MIXER 
+#endif 
+
+
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
 #if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER)
