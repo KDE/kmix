@@ -89,7 +89,7 @@ KMixApp::newInstance()
 
 
 void KMixApp::quitExtended() {
-    // This method is here for quiting from the dock icon (when directly calling
+    // This method is here for quiting from the dock icon: When directly calling
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();
@@ -171,7 +171,7 @@ KMixWindow::initActions()
 	// file menu
 	(void)new KAction( i18n("&New Mixer Tab..."), "filenew", 0, this,
 							 SLOT(newMixer()), actionCollection(), "file_new_tab" );
-	(void)new KAction( i18n("&Close Mixer Tab"), "fileclose", 0, this,
+	(void)new KAction( i18n("&Close Mixer Tab"), "fileclose", CTRL+Key_W, this,
 							 SLOT(closeMixer()), actionCollection(), "file_close_tab" );
 	(void)new KAction( i18n("&Restore Default Volumes"), 0, this, SLOT(loadVolumes()),
 							 actionCollection(), "file_load_volume" );
