@@ -37,7 +37,7 @@
 #include <qwmatrix.h>
 #include <kiconloader.h>
 #include <qtimer.h>
-#include <qinputdialog.h>
+#include <kinputdialog.h>
 #include <qlabel.h>
 #include <kmessagebox.h>
 #include <kcolorbutton.h>
@@ -340,7 +340,7 @@ void KMixApplet::selectMixer()
    }
 
    bool ok = FALSE;
-   QString res = QInputDialog::getItem( i18n("Mixers"),
+   QString res = KInputDialog::getItem( i18n("Mixers"),
                                         i18n("Available mixers:"),
 					lst, 1, FALSE, &ok, this );
    if ( ok )
