@@ -51,7 +51,7 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
-KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum,
+KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
                             bool small, KPanelApplet::Direction dir, MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
@@ -353,7 +353,7 @@ KMixerWidget::slotToggleMixerDevice(int id)
 }
 
 void 
-KMixerWidget::saveConfig( KConfig *config, QString grp )
+KMixerWidget::saveConfig( KConfig *config, const QString &grp ) const
 {
    config->setGroup( grp );
 
@@ -382,7 +382,7 @@ KMixerWidget::saveConfig( KConfig *config, QString grp )
 }
 
 void 
-KMixerWidget::loadConfig( KConfig *config, QString grp )
+KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
    config->setGroup( grp );
 

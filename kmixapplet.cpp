@@ -108,7 +108,7 @@ void AppletConfigDialog::setActiveColors(const QColor& high, const QColor& low, 
     colorWidget->activeBack->setColor(back);
 }
 
-void AppletConfigDialog::activeColors(QColor& high, QColor& low, QColor& back)
+void AppletConfigDialog::activeColors(QColor& high, QColor& low, QColor& back) const
 {
     high = colorWidget->activeHigh->color();
     low  = colorWidget->activeLow->color();
@@ -122,7 +122,7 @@ void AppletConfigDialog::setMutedColors(const QColor& high, const QColor& low, c
     colorWidget->mutedBack->setColor(back);
 }
 
-void AppletConfigDialog::mutedColors(QColor& high, QColor& low, QColor& back)
+void AppletConfigDialog::mutedColors(QColor& high, QColor& low, QColor& back) const
 {
     high = colorWidget->mutedHigh->color();
     low  = colorWidget->mutedLow->color();
@@ -136,7 +136,7 @@ void AppletConfigDialog::setUseCustomColors(bool custom)
     colorWidget->mutedColors->setEnabled(custom);
 }
 
-bool AppletConfigDialog::useCustomColors()
+bool AppletConfigDialog::useCustomColors() const
 {
     return colorWidget->customColors->isChecked();
 }
@@ -146,7 +146,7 @@ void AppletConfigDialog::setReverseDirection(bool reverse)
     colorWidget->reverseDirection->setChecked(reverse);
 }
 
-bool AppletConfigDialog::reverseDirection()
+bool AppletConfigDialog::reverseDirection() const
 {
     return colorWidget->reverseDirection->isChecked();
 }

@@ -65,7 +65,7 @@ KMixerWidget : public QWidget
    Q_OBJECT
 
   public:
-   KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum,
+   KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
                  bool small, KPanelApplet::Direction, MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
@@ -75,9 +75,9 @@ KMixerWidget : public QWidget
    void addActionToPopup( KAction *action );
 
    QString name() const { return m_name; };
-   void setName( QString name ) { m_name = name; };
+   void setName( const QString &name ) { m_name = name; };
 
-   Mixer *mixer() const { return m_mixer; };
+   const Mixer *mixer() const { return m_mixer; };
    QString mixerName()  const { return m_mixerName; };
    int mixerNum() const { return m_mixerNum; };
 
@@ -103,8 +103,8 @@ KMixerWidget : public QWidget
    void setIcons( bool on );
    void setColors( const Colors &color );
 
-   void saveConfig( KConfig *config, QString grp );
-   void loadConfig( KConfig *config, QString grp );
+   void saveConfig( KConfig *config, const QString &grp ) const;
+   void loadConfig( KConfig *config, const QString &grp );
 
   private slots:
    void rightMouseClicked();
@@ -122,7 +122,7 @@ KMixerWidget : public QWidget
    QWidget *m_oWidget;
    QGridLayout *m_devSwitchLayout;
 	
-   QPtrList<Channel> m_channels;
+   mutable QPtrList<Channel> m_channels;
    KTabWidget *m_ioTab;
 
    QString m_name;

@@ -45,16 +45,16 @@ class AppletConfigDialog : public KDialogBase
    virtual ~AppletConfigDialog() {};
 
    void setActiveColors(const QColor& high, const QColor& low, const QColor& back);
-   void activeColors(QColor& high, QColor& low, QColor& back);
+   void activeColors(QColor& high, QColor& low, QColor& back) const;
 
    void setMutedColors(const QColor& high, const QColor& low, const QColor& back);
-   void mutedColors(QColor& high, QColor& low, QColor& back);
+   void mutedColors(QColor& high, QColor& low, QColor& back) const;
 
    void setUseCustomColors(bool);
-   bool useCustomColors();
+   bool useCustomColors() const;
 
    void setReverseDirection(bool);
-   bool reverseDirection();
+   bool reverseDirection() const;
 
   protected slots:
    virtual void slotOk();
