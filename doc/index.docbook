@@ -224,6 +224,58 @@ to speed up &kmix;.</para></listitem>
 </sect1>
 </chapter>
 
+
+
+<chapter id="dcop-interface">
+<title>The DCOP Interface (Controlling &kmix; remotely)</title>
+
+<sect1 id="dcop-overview">
+<title>Overview</title>
+
+<para>Sometimes you want to do specialized things. Things like controlling the mixer from another application or muting the master device every day at 10pm. &kmix; has a DCOP interface that allows you achive much with minimal work. You can start a shell and <guilabel>dcop kmix</guilabel> to start exploring the &kmix; DCOP interface. The &kmix; specific interfaces are:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Mixer0</guilabel></term>
+<listitem><para>Allows manipulating the first mixer. You can set volume levels, mute the device, change balance, retrieve the mixer name and much more. Type <guilabel>dcop kmix Mixer0</guilabel> if you want to explore all the features. There are more entries like <guilabel>Mixer1</guilabel> in case multiple soundcards are installed.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>kmix-mainwindow#1</guilabel></term>
+<listitem><para>The GUI window can be controlled with this command. You can hide and show the window, resize it and much more. Type <guilabel>dcop kmix kmix-mainwindow#1</guilabel> if you want to explore all the features.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="dcop-examples">
+<title>DCOP Examples</title>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>dcop kmix kmix-mainwindow#1 hide</guilabel></term>
+<listitem><para>Hides the GUI window. Use <guilabel>dcop kmix kmix-mainwindow#1 show</guilabel> or the dock icon to show it again.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>dcop kmix kmix-mainwindow#1 resize 1 1</guilabel></term>
+<listitem><para>Resizes the GUI window to the smallest size possible. This is the size so that all sliders (and other GUI elements) will fit into the window.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>dcop kmix Mixer0 mixerName</guilabel></term>
+<listitem><para>Tells the name of the first Mixer, for example <guilabel>Sound Fusion CS46xx</guilabel></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>dcop kmix Mixer1 setVolume 0 10</guilabel></term>
+<listitem><para>Sets the volume on the second mixer, device 0 to 10 percent. Device 0 is often the master device, but not always. If you want to quiten down the (first) master device on your second soundcard, you can use <guilabel>dcop kmix Mixer1 setMasterVolume 0</guilabel></para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+
+</chapter>
+
 <chapter id="credits">
 <title>Credits and License</title>
 
