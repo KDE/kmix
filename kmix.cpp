@@ -243,7 +243,8 @@ void KMixWindow::saveConfig()
    config->writeEntry( "Visible", isVisible() );
    config->writeEntry( "Menubar", m_showMenubar );
    config->writeEntry( "AllowDocking", m_showDockWidget );
-   config->writeEntry( "HideOnClose", m_hideOnClose );
+// commented out for usability. nolden
+//   config->writeEntry( "HideOnClose", m_hideOnClose );
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
 
@@ -274,6 +275,7 @@ void KMixWindow::loadConfig()
    config->setGroup(0);
 
    m_showDockWidget = config->readBoolEntry("AllowDocking", true);
+  //hide on close has to stay true for usability. KMixPrefDlg option commented out. nolden
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", false);
    m_showLabels = config->readBoolEntry("Labels", false);
@@ -397,7 +399,7 @@ void KMixWindow::showSettings()
    if (!m_prefDlg->isVisible())
    {
       m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
-      m_prefDlg->m_hideOnCloseChk->setChecked( m_hideOnClose );
+//      m_prefDlg->m_hideOnCloseChk->setChecked( m_hideOnClose );
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
 
@@ -488,7 +490,7 @@ void KMixWindow::saveVolumes()
 void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 {
    m_showDockWidget = prefDlg->m_dockingChk->isChecked();
-   m_hideOnClose = prefDlg->m_hideOnCloseChk->isChecked();
+//   m_hideOnClose = prefDlg->m_hideOnCloseChk->isChecked();
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
 

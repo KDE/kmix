@@ -24,8 +24,10 @@
 #include <qwidget.h>
 #include <qtabdialog.h>
 #include <qlayout.h>
+#include <qwhatsthis.h>
 
 #include <klocale.h>
+#include <kdialog.h>
 
 #include "kmix.h"
 #include "kmixprefdlg.h"
@@ -40,18 +42,25 @@ KMixPrefDlg::KMixPrefDlg()
    // general buttons
    m_generalTab = new QWidget( this );
    QBoxLayout *layout = new QVBoxLayout( m_generalTab );
+     layout->setSpacing( KDialog::spacingHint() );
+    layout->setMargin( KDialog::marginHint() );
 
    m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
    layout->addWidget( m_dockingChk );
+   QWhatsThis::add(m_dockingChk, i18n("Docks the mixer into the KDE panel"));
 
-   m_hideOnCloseChk = new QCheckBox( i18n("Only &hide window with close button"), m_generalTab );
-   layout->addWidget( m_hideOnCloseChk );
+// commented this out. From the usability point of view, this option makes absolutely no sense. nolden
+//   m_hideOnCloseChk = new QCheckBox( i18n("Only &hide window with close button"), m_generalTab );
+//   layout->addWidget( m_hideOnCloseChk );
+
 
    m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );
+  QWhatsThis::add(m_showTicks, i18n("Enable/disable tickmark scales on the sliders"));
 
    m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
    layout->addWidget( m_showLabels );
+   QWhatsThis::add(m_showLabels, i18n("Enables/disables description labels above the sliders"));
 
    addTab( m_generalTab, i18n("&General") );
 
