@@ -21,7 +21,7 @@ kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	KMixApp.cpp
 
 kmix_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
-kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version
+kmix_la_LDFLAGS = $(all_libraries) -module $(KDE_PLUGIN) -avoid-version
 
 kmixctrl_la_SOURCES = kmixctrl.cpp channel.cpp mixer.cpp volume.cpp mixerIface.skel
 kmixctrl_la_LIBADD = $(LIB_KDECORE) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
