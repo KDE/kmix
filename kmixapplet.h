@@ -36,7 +36,7 @@ class KMixApplet : public KPanelApplet
    Q_OBJECT
 
   public:
-   KMixApplet( Mixer *mixer, QWidget *parent = 0, const char* name = 0 );
+   KMixApplet( Mixer *mixer, QString id, QWidget *parent = 0, const char* name = 0 );
 
    KMixerWidget *mixerWidget() { return m_mixerWidget; };
    void setMixerWidget( KMixerWidget *mw );
@@ -44,10 +44,17 @@ class KMixApplet : public KPanelApplet
    int widthForHeight(int height);
    int heightForWidth(int width); 
    void removedFromPanel();
+   void about() { emit aboutClicked(); };
+   void help() { emit helpClicked(); }
+   void preferences() { emit prefClicked(); }   
+   QString dockId() { return m_dockId; }
 
   signals:
    void closeApplet( KMixApplet *applet );
    void clickedButton();
+   void aboutClicked();
+   void helpClicked();
+   void prefClicked();
 
   protected slots:
    void updateSize() { updateLayout(); }
@@ -61,6 +68,7 @@ class KMixApplet : public KPanelApplet
    KMixerWidget *m_mixerWidget;
    QButton *m_button;
    QTimer *m_layoutTimer;
+   QString m_dockId;
    int m_lockedLayout;
 };
 

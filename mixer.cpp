@@ -154,9 +154,7 @@ Mixer::Mixer( int device, int card )
 };
 
 int Mixer::setupMixer( MixSet mset )
-{
-   kDebugInfo("Mixer::setupMixer");
-      
+{  
    release();	// To be sure, release mixer before (re-)opening
 
    int ret = openMixer();

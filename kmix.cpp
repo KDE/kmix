@@ -195,6 +195,7 @@ void KMixApp::saveConfig()
 
       config->setGroup( grp );
       config->writeEntry( "Mixer", m_mixers.find( mw->mixer() ) );
+      config->writeEntry( "DockId", ma->dockId() );
 
       mw->sessionSave( grp, false );       
    }
@@ -258,13 +259,14 @@ void KMixApp::loadConfig()
       QString grp;
       grp.sprintf( "Applet%i", n );
       config->setGroup(grp);
+      QString dockId = config->readEntry( "DockId", 
+	 "KMixApplet" + KApplication::randomString( 16 ) );
 
       Mixer *mixer = m_mixers.at( config->readNumEntry("Mixer", 0) );
       if (mixer)
       {	 
-	 KMixApplet *ap = new KMixApplet( mixer );
-	 ap->mixerWidget()->sessionLoad( grp, false );
-	 int argc = kapp->argc();
+	 KMixApplet *ap = new KMixApplet( mixer, dockId );
+	 ap->mixerWidget()->sessionLoad( grp, false ); 	 
 	 insertApplet( ap );
       }
    }
@@ -322,7 +324,11 @@ void KMixApp::insertApplet( KMixApplet *applet )
 {
    connect( applet, SIGNAL(closeApplet(KMixApplet*)), this, SLOT(removeApplet(KMixApplet*)));
    connect( applet, SIGNAL(clickedButton()), this, SLOT(toggleVisibility()));
-   m_applets.append( applet  );
+   connect( applet, SIGNAL(aboutClicked()), this, SLOT(showAbout()));
+   connect( applet, SIGNAL(helpClicked()), this, SLOT(showHelp()));
+   connect( applet, SIGNAL(prefClicked()), this, SLOT(showSettings()));
+   m_applets.append( applet );
+   applet->dock( applet->dockId().ascii() );
 }
 
 void KMixApp::removeApplet( KMixApplet *applet )
@@ -378,6 +384,16 @@ void KMixApp::showSettings()
 
       m_prefDlg->show();
    }
+}
+
+void KMixApp::showHelp()
+{
+   actionCollection()->action( "help_contents" )->activate();
+}
+
+void KMixApp::showAbout()
+{
+   actionCollection()->action( "help_about_app" )->activate();
 }
 
 void KMixApp::closeMixer()
@@ -447,8 +463,8 @@ void KMixApp::newApplet()
 	 return;
       }
              
-      KMixApplet *ap = new KMixApplet( mixer );
-      int argc = kapp->argc();
+      QString dockId = "KMixApplet" + KApplication::randomString( 16 );      
+      KMixApplet *ap = new KMixApplet( mixer, dockId );
       insertApplet( ap );         
    }
 }

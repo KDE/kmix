@@ -70,12 +70,14 @@ class KMixApp : public KTMainWindow
   public slots:
    void quit();
    void showSettings();
+   void showHelp();
+   void showAbout();
    void toggleMenuBar();
    void closeMixer();
    void newMixer();
    void newApplet();
-   void loadVolumes();
    void saveVolumes();
+   void loadVolumes();;
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:

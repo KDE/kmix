@@ -41,9 +41,12 @@
 
 #define BUTTONSIZE 15
 
-KMixApplet::KMixApplet( Mixer *mixer, QWidget *parent, const char* name )
-   : KPanelApplet( parent, name ), m_lockedLayout( 0 )
+KMixApplet::KMixApplet( Mixer *mixer, QString id, 
+			QWidget *parent, const char* name )
+   : KPanelApplet( parent, name ), m_dockId( id ), m_lockedLayout( 0 )
 {
+   kDebugInfo("dockId = " + m_dockId );
+
    // scale icon
    QPixmap icon = BarIcon("kmixdocked");
    QWMatrix t;
@@ -60,6 +63,9 @@ KMixApplet::KMixApplet( Mixer *mixer, QWidget *parent, const char* name )
    m_layoutTimer = new QTimer( this );
    connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()) );
    connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
+
+   // activate menu items
+   setActions(About | Help | Preferences);
 }
 
 void KMixApplet::updateLayout()
