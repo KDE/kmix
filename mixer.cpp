@@ -430,16 +430,23 @@ void Mixer::setRecordSource( int devnum, bool on )
 {
   if( !setRecsrcHW( devnum, on ) ) // others have to be updated
   {
+	//sleep (2);
 	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
 		bool isRecsrc =  isRecsrcHW( md->num() );
-			kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
-			md->setRecSource( isRecsrc );
-		}
-		emit newRecsrc();
+		kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
+		md->setRecSource( isRecsrc );
+	}
+	emit newRecsrc();
   }
-  else // just the actual mixdevice
-	  for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
-		  if( md->num() == devnum ) md->setRecSource( on );
+  else {
+	// just the actual mixdevice
+	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
+		  if( md->num() == devnum ) {
+			md->setRecSource( on );
+		  }
+	}
+	emit newRecsrc();
+  }
 }
 
 
