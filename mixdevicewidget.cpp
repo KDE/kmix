@@ -108,7 +108,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
       KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
    // No need for m_keys->readSettings(), the keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp
    m_keys->updateConnections();
-};
+}
 
 MixDeviceWidget::~MixDeviceWidget()
 {
