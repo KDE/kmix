@@ -3,7 +3,6 @@
 BinaryPattern=kmix;
 Protocols=
 Exec=kmix
-Icon=media.xpm
 DocPath=kmedia/kmix.html
 TerminalOptions=
 Path=
