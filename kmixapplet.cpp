@@ -121,16 +121,38 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                   Mixer *mixer = Mixer::getMixer( drv, dev, card );
                   int mixerError = mixer->grab();
                   if ( mixerError!=0 )
+						{
                       delete mixer;
-                  else {
-                      s_mixers->append( mixer );
-
-                      // count mixer nums for every mixer name to identify mixers with equal names
-                      mixerNums[mixer->mixerName()]++;
-                      mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-                  }
-              }
-   }
+							 continue;
+						}
+					#ifdef HAVE_ALSA_ASOUNDLIB_H	
+						else 
+						{
+							// Avoid multiple mixer detections with new ALSA
+							// TODO: This is a temporary solution, right code must be
+							// implemented in future
+							Mixer *lmixer;
+							bool same = false;
+							for( lmixer = m_mixers.first(); lmixer; lmixer = m_mixers.next() )
+							{
+								if( lmixer->mixerName() == mixer->mixerName() )
+								{
+									same = true;
+								}
+							}
+							if( same == true )
+							{
+								delete mixer;
+								continue;
+							}
+						}
+					#endif
+						s_mixers->append( mixer );
+						// count mixer nums for every mixer name to identify mixers with equal names
+						mixerNums[mixer->mixerName()]++;
+						mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+				  }
+	}
 
    s_instCount++;
 
