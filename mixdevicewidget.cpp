@@ -110,6 +110,14 @@ MixDeviceWidget::~MixDeviceWidget()
 {
 }
 
+
+#define GET_NEWLAYOUT(x) \
+	QBoxLayout *x; \
+	if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down)) \
+		x = new QHBoxLayout( layout ); \
+       	else \
+		x = new QVBoxLayout( layout );
+
 void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 {
    QBoxLayout *layout;
@@ -141,17 +149,14 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    if (!showMuteLED) m_muteLED->hide();
    m_muteLED->setFixedSize( QSize(16, 16) );
    QToolTip::add( m_muteLED, i18n("Muting") );
-   layout->addWidget( m_muteLED );
+   GET_NEWLAYOUT( ledlayout );
+   ledlayout->addWidget( m_muteLED );
    m_muteLED->installEventFilter( this );
    connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(setUnmuted(bool)) );
 
    // create sliders
    layout->addSpacing( 1 );
-   QBoxLayout *sliders;
-   if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down))
-     sliders = new QHBoxLayout( layout );
-   else
-     sliders = new QVBoxLayout( layout );
+   GET_NEWLAYOUT( sliders );
    for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
    {
       int maxvol = m_mixdevice->getVolume().maxVolume();
@@ -161,13 +166,15 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
                                     m_mixdevice->getVolume( i ),
                                     m_direction,
                                     this, m_mixdevice->name().ascii() );
-      else
+      else {
          slider = new QSlider( 0, maxvol, maxvol/10,
                                maxvol - m_mixdevice->getVolume( i ),
                                (m_direction == KPanelApplet::Up ||
                                 m_direction == KPanelApplet::Down) ?
                                 QSlider::Vertical : QSlider::Horizontal,
                                this, m_mixdevice->name().ascii() );
+	 slider->setMinimumSize( slider->sizeHint() );
+      }
 
       QToolTip::add( slider, m_mixdevice->name() );
       slider->installEventFilter( this );
@@ -196,7 +203,8 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       QToolTip::add( m_recordLED, i18n("Recording") );
       m_recordLED->setFixedSize( QSize(16, 16) );
 
-      layout->addWidget( m_recordLED );
+      GET_NEWLAYOUT( reclayout );
+      reclayout->addWidget( m_recordLED );
       connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
       m_recordLED->installEventFilter( this );
    }
@@ -206,6 +214,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       if ( showRecordLED ) layout->addSpacing( 16 );
    }
 }
+#undef GET_NEWLAYOUT
 
 QPixmap MixDeviceWidget::getIcon( int icon )
 {
@@ -216,9 +225,9 @@ QPixmap MixDeviceWidget::getIcon( int icon )
       case MixDevice::BASS:
          miniDevPM = UserIcon("mix_bass"); break;
       case MixDevice::CD:
-         miniDevPM = UserIcon("mix_cd");        break;
+         miniDevPM = UserIcon("mix_cd"); break;
       case MixDevice::EXTERNAL:
-         miniDevPM = UserIcon("mix_ext");       break;
+         miniDevPM = UserIcon("mix_ext"); break;
       case MixDevice::MICROPHONE:
          miniDevPM = UserIcon("mix_microphone");break;
       case MixDevice::MIDI:

@@ -443,9 +443,10 @@ void KMixWindow::closeMixer()
 void KMixWindow::newMixer()
 {
    QStringList lst;
+   Mixer *mixer;
 
-   int n=1;
-   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+   int n = 1;
+   for (mixer=m_mixers.first(); mixer; mixer=m_mixers.next())
    {
       QString s;
       s.sprintf("%i. %s", n, mixer->mixerName().ascii());
@@ -455,20 +456,21 @@ void KMixWindow::newMixer()
 
    bool ok = FALSE;
    QString res = QInputDialog::getItem( i18n("Mixers"),
-                                        i18n( "Available mixers" ), lst,
-                                        1, TRUE, &ok, this );
+                                        i18n( "Available mixers" ),
+					lst, 1, FALSE, &ok, this );
    if ( ok )
    {
        // valid mixer?
-       Mixer *mixer = m_mixers.at( lst.findIndex( res ) );
+       mixer = m_mixers.at( lst.findIndex( res ) );
        if (!mixer) {
            KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
            return;
        }
 
        // ask for description
-       QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ), QLineEdit::Normal,
-                                             mixer->mixerName(), &ok, this );
+       QString name = QInputDialog::getText(
+                        i18n("Description"), i18n("Description"),
+                        QLineEdit::Normal, mixer->mixerName(), &ok, this );
       if ( ok ) {
 
           // create mixer widget
