@@ -47,7 +47,8 @@ int Mixer_ALSA::identify( int idx, const char* id )
   if( !strcmp( id, SND_MIXER_IN_CENTER      )) return MixDevice::EXTERNAL;
   if( !strcmp( id, SND_MIXER_IN_WOOFER      )) return MixDevice::BASS;
   if( !strcmp( id, SND_MIXER_IN_SURROUND    )) return MixDevice::SURROUND;
-  if( !strcmp( id, SND_MIXER_OUT_MASTER        ))
+  if( !strcmp( id, "Rear" )) return MixDevice::SURROUND; // SB Live Rear
+  if( !strcmp( id, SND_MIXER_OUT_MASTER ))
     {
       m_masterDevice = idx;
       return MixDevice::VOLUME;
