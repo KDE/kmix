@@ -4,7 +4,7 @@
 
 
 // undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
-// HINTS: uncomments more #undef linew, this may help with compile errors
+// HINTS: uncomments more #undef lines, this may help with compile errors
 #undef Above
 #undef Below
 //#undef NoMarks
@@ -62,6 +62,7 @@ public slots:
 private:
   void createWidgets();
   void createMenu();
+  void sessionSave();
 
   bool mainmenuOn, tickmarksOn;
   QPopupMenu* contextMenu(QObject *);

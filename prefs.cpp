@@ -87,13 +87,13 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   grpbox2a->resize(tabwidth-20,maxheight);
   tabctl->resize(tabwidth,maxheight +60 );
   setFixedSize( tabwidth + 20, maxheight+100 );
-  setCaption( "KMedia Preferences" );
+  setCaption( "KMix Preferences" );
 }
 
 
 void Preferences::updateChannelConfWindow()
 {
-  grpbox2a = new QGroupBox ("Mixer channel setup",page2);
+  grpbox2a = new QGroupBox ("Mixer channel setup (not saved yet)",page2);
   MixDevice *mdev = mix->First;
   QLabel *qlb;
 
@@ -107,10 +107,11 @@ void Preferences::updateChannelConfWindow()
   qlb->move(x2,ypos);
 
   while (mdev) {
-    ypos +=20;
-    qlb = new  QLabel(grpbox2a,mdev->devname);
-    qlb->setText(mdev->devname);
-    qlb->move(x1,ypos);
+    QLineEdit *qle;
+    qle = new  QLineEdit(grpbox2a,mdev->devname);
+    qle->setText(mdev->devname);
+    ypos += qle->height();
+    qle->move(x1,ypos);
     QCheckBox *qcb = new QCheckBox(grpbox2a);
     qcb->move(x2,ypos);
     if (mdev->is_disabled)

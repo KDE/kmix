@@ -145,7 +145,7 @@ int Mixer::setupMixer(char *devname)
   this->devname = strdup(devname);
   int ret = openMixer();
   if (ret)
-      return ret;
+    return ret;
 
   /*
    * Set up the structures for the internal representation of the mixer devs.
