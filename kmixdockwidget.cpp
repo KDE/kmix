@@ -92,7 +92,7 @@ KMixDockWidget::createMasterVolWidget()
 
    // Setup volume preview
    if ( _playBeepOnVolumeChange ) {
-        _audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
+        _audioPlayer = new KAudioPlayer("KDE_Beep_Digital_1.ogg");
 	// !! it would be better to connect the MixDevice, but it is not yet implemented
         connect(_dockAreaPopup->getMdwHACK(),
                 SIGNAL(newVolume(int, Volume)),
