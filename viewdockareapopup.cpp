@@ -25,7 +25,7 @@
 #include <qwidget.h>
 #include <qevent.h>
 #include <qlayout.h>
-#include <qcheckbox.h>
+#include <qpushbutton.h>
 
 // KDE
 #include <kdebug.h>
@@ -39,10 +39,9 @@
 #include "kmixdockwidget.h"
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
-      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup, vflags), _dock(dockW)
+      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup & WStyle_NoBorder, vflags), _dock(dockW)
 {
-    _layoutMDW = new QVBoxLayout( this, 2, 1, "KmixPopupLayout" );
-    _layoutMDW->setAlignment( Qt::AlignCenter );
+    _layoutMDW = new QGridLayout( this, 1, 1, 2, 1, "KmixPopupLayout" );
     init();
 }
 
@@ -60,9 +59,7 @@ void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
        Why it does not work, I do not know: this->isPopup() returns "true", so Qt should
        properly take care of it in QWidget.
     */
-    //    kdDebug(67100) << "ViewDockAreaPopup::mousePressEvent()\n";
     if ( ! this->hasMouse() ) {
-	//  kdDebug(67100) << "ViewDockAreaPopup::mousePressEvent() hasMouse()\n";
         hide(); // needed!
     }
     return;
@@ -96,7 +93,6 @@ void ViewDockAreaPopup::setMixSet(MixSet *)
 
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
 {
-    //    kdDebug(67100) << "ViewDockAreaPopup::add()\n";
     _mdw =
 	new MDWSlider(
 			    _mixer,       // the mixer for this device
@@ -108,13 +104,15 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 			    this,         // parent
 			    0,            // Is "NULL", so that there is no RMB-popup
 			    _dockDevice->name().latin1() );
-    _layoutMDW->add(_mdw);
+	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
+	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 0 );
+    _layoutMDW->addWidget( _mdw, 0, 1 );
 
 	 // Add button to show main panel
-	 _showPanelBox = new QCheckBox( i18n("Hide"), this, "PanelHideCheckbox" );
+	 _showPanelBox = new QPushButton( i18n("Mixer"), this, "MixerPanel" );
 	 connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
-    _layoutMDW->add( _showPanelBox );
-	 
+    _layoutMDW->addMultiCellWidget( _showPanelBox, 1, 1, 0, 2 );
+
     return _mdw;
 }
 
@@ -173,19 +171,16 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 }
 
 void ViewDockAreaPopup::showPanelSlot() {
-	if( _showPanelBox->isChecked() )
+	if( ! _dock->parentWidget()->isVisible() )
 	{
 		_dock->parentWidget()->show();
-		_showPanelBox->setText( i18n( "Hide" ) );
 	}
 	else
 	{
 		_dock->parentWidget()->hide();
-		_showPanelBox->setText( i18n( "Show" ) );
 	}
 		
 	_dock->_dockAreaPopup->hide();
-		
 }
 
 
