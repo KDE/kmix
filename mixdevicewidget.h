@@ -28,7 +28,7 @@
 #include <kpanelapplet.h>
 
 #include <qwidget.h>
-#include <volume.h>
+#include "volume.h"
 #include <qptrlist.h>
 #include <qpixmap.h>
 #include <qrangecontrol.h>
