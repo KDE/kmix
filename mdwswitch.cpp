@@ -42,13 +42,13 @@
 
 /**
  * Class that represents a single Switch
- * The direction (horizontal, vertical) can be configured and whether it should
+ * The orientation (horizontal, vertical) can be configured and whether it should
  * be "small"  (uses KSmallSlider instead of QSlider then).
  */
 MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
-                                 bool small, KPanelApplet::Direction dir,
+                                 bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw, const char* name) :
-    MixDeviceWidget(mixer,md,small,dir,parent,mw,name),
+    MixDeviceWidget(mixer,md,small,orientation,parent,mw,name),
     _label(0) , _labelV(0) , _switchLED(0), _layout(0)
 {
     // create actions (on _mdwActions, see MixDeviceWidget)
@@ -77,7 +77,7 @@ MDWSwitch::~MDWSwitch()
 
 void MDWSwitch::createWidgets()
 {
-    if ( (m_direction == KPanelApplet::Up) ||  (m_direction == KPanelApplet::Down) ) {
+    if ( _orientation == Qt::Vertical ) {
 	_layout = new QVBoxLayout( this );
 	_layout->setAlignment(Qt::AlignHCenter);
     }
@@ -90,7 +90,7 @@ void MDWSwitch::createWidgets()
 
     _layout->addSpacing( 4 );
     // --- DEVICE ICON --------------------------
-    if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Left))
+    if ( _orientation == Qt::Vertical )
     {
 	_switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken,
 				     KLed::Circular, this, "SwitchLED" );
@@ -192,7 +192,7 @@ void MDWSwitch::setSwitch(bool value)
 	//            This has reversed semantics:
 	// muted : 1=off (no sound)
 	// switch: 1=on  (enabled)
-	// 
+	//
 	// But we still don't use "!value", because actually we only toggle the switch:
 	// In other words "This method is only called from MDWSwitch::toggleSwitch()"
 	m_mixdevice->setMuted( value );

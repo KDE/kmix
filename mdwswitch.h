@@ -55,7 +55,7 @@ class MDWSwitch : public MixDeviceWidget
 
 public:
     MDWSwitch( Mixer *mixer, MixDevice* md,
-	       bool small, KPanelApplet::Direction dir,
+	       bool small, Qt::Orientation orientation,
 	       QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
     ~MDWSwitch();
 
@@ -68,11 +68,11 @@ public slots:
     // GUI hide and show
     void setDisabled();
     void setDisabled(bool);
-    
+
     // Switch on/off
     void toggleSwitch();
     void setSwitch(bool value);
-    
+
     void update();
     virtual void showContextMenu();
 

@@ -87,7 +87,7 @@ QWidget* ViewSliders::add(MixDevice *md)
 			    true,         // Show Mute LED
 			    true,         // Show Record LED
 			    false,        // Small
-			    KPanelApplet::Up,   // Direction
+			    Qt::Vertical, // Direction
 			    this,         // parent
 			    this,         // View widget
 			    md->name().latin1()

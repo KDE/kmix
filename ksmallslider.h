@@ -35,9 +35,9 @@ class KSmallSlider : public QWidget, public QRangeControl
 
    public:
       KSmallSlider( QWidget *parent, const char *name=0 );
-      KSmallSlider( KPanelApplet::Direction, QWidget *parent, const char *name=0 );
+      KSmallSlider( Qt::Orientation, QWidget *parent, const char *name=0 );
       KSmallSlider( int minValue, int maxValue, int pageStep, int value,
-                    KPanelApplet::Direction, QWidget *parent, const char *name=0 );
+		    Qt::Orientation, QWidget *parent, const char *name=0 );
 
       virtual void setTracking( bool enable );
       bool tracking() const;
@@ -55,12 +55,14 @@ class KSmallSlider : public QWidget, public QRangeControl
       void setPageStep( int );
       int  value() const;
 
+      void paletteChange ( const QPalette & oldPalette );
       bool gray() const;
 
 public slots:
-      virtual void setValue( int );
-      void addStep();
-      void subtractStep();
+    virtual void setValue( int );
+    void addStep();
+    void subtractStep();
+
       void setGray( bool value );
       void setColors( QColor high, QColor low, QColor back );
       void setGrayColors( QColor high, QColor low, QColor back );
@@ -102,9 +104,10 @@ public slots:
       State state;
       bool track;
       bool grayed;
-      KPanelApplet::Direction direction;
+      Qt::Orientation _orientation;
       QColor colHigh, colLow, colBack;
       QColor grayHigh, grayLow, grayBack;
+
 };
 
 

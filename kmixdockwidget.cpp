@@ -94,7 +94,7 @@ KMixDockWidget::createMasterVolWidget()
    // Setup volume preview
    if ( _playBeepOnVolumeChange ) {
         _audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
-        // !! it would be better to connect the MixDevice, but it is not yet implemented
+	// !! it would be better to connect the MixDevice, but it is not yet implemented
         connect(_dockAreaPopup->getMdwHACK(),
                 SIGNAL(newVolume(int, Volume)),
                 _audioPlayer,
@@ -168,7 +168,7 @@ KMixDockWidget::updatePixmap()
     {
 	newPixmapType = 'd';
     }
-    
+
     if ( newPixmapType != _oldPixmapType ) {
 	// Pixmap must be changed => do so
 	switch ( newPixmapType ) {
@@ -177,7 +177,7 @@ KMixDockWidget::updatePixmap()
 	case 'd': setPixmap( loadIcon( "kmixdocked"      ) ); break;
 	}
     }
-    
+
     _oldPixmapType = newPixmapType;
 }
 

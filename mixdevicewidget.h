@@ -57,7 +57,7 @@ class MixDeviceWidget
 
 public:
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
-                       bool small, KPanelApplet::Direction dir,
+                       bool small, Qt::Orientation orientation,
                        QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
     ~MixDeviceWidget();
 
@@ -112,7 +112,7 @@ protected:
       KGlobalAccel*        m_keys;
       ViewBase*            m_mixerwidget;
       bool                 m_disabled;
-      KPanelApplet::Direction m_direction;
+      Qt::Orientation      _orientation;
       bool                 m_small;
 
 private:

@@ -159,24 +159,6 @@ bool AppletConfigDialog::reverseDirection() const
     return colorWidget->reverseDirection->isChecked();
 }
 
-KPanelApplet::Direction KMixApplet::checkReverse(Direction dir) {
-   if( reversedDir ) {
-       switch (dir) {
-       case KPanelApplet::Up   : return KPanelApplet::Down;
-       case KPanelApplet::Down : return KPanelApplet::Down;
-       case KPanelApplet::Right: return KPanelApplet::Left;
-       default                 : return KPanelApplet::Left;
-       }
-   } else {
-       switch (dir) {
-       case KPanelApplet::Up   : return KPanelApplet::Up;
-       case KPanelApplet::Down : return KPanelApplet::Up;
-       case KPanelApplet::Right: return KPanelApplet::Right;
-       default                 : return KPanelApplet::Right;
-       }
-   }
-}
-
 KMixApplet::KMixApplet( const QString& configFile, Type t,
                         QWidget *parent, const char *name )
 
@@ -447,42 +429,13 @@ void KMixApplet::selectMixer()
    }
 }
 
-KMixApplet::Direction KMixApplet::getDirectionFromPositionHack(Position pos) const {
-	/*
-	Position hack: KMixApplet was using popupDirection() which is nonsense and now leeds to
-	an unusable KMixApplet on vertical panels. As the "Direction" is used throughout
-	KMix we now use position and do an ugly conversion.
-	This is to be removed for KMix3.0 !!!
-	*/
-	KPanelApplet::Direction dir = KPanelApplet::Down; // Random default value
-	switch ( pos ) {
-		case KPanelApplet::pTop    : dir=KPanelApplet::Up; break;
-		case KPanelApplet::pLeft   : dir=KPanelApplet::Left; break;
-		case KPanelApplet::pRight  : dir=KPanelApplet::Left; break;
-		case KPanelApplet::pBottom : dir=KPanelApplet::Up; break;
-	}
-	return dir;
-}
-
-/*
-void KMixApplet::updat eLayou tNow()
-{
-   m_lockedLayout++;
-   emit updat eLayout();
-   // ugly hack to get the config saved somehow
-   // !!! @todo Fix it somehow else. But it will be difficult with the panel applet
-   saveConfig();
-   m_lockedLayout--;
-}
-*/
-
 
 void KMixApplet::resizeEvent(QResizeEvent *e)
 {
-    //kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
+    kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
     if ( m_mixerWidget ) m_mixerWidget->resize( e->size().width(), e->size().height() );
     if ( m_errorLabel  ) m_errorLabel ->resize( e->size().width(), e->size().height() );
-    KPanelApplet::resizeEvent( e );
+    //KPanelApplet::resizeEvent( e );
 }
 
 void KMixApplet::about()
@@ -518,8 +471,7 @@ void KMixApplet::positionChange(Position pos) {
 	    saveConfig(); // save the applet before recreating it
 	    delete m_mixerWidget;
 	}
-	Direction dir = getDirectionFromPositionHack(pos);
-	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, dir );
+	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, pos );
 	m_mixerWidget->createDeviceWidgets();
 	
 	loadConfig( config(), "Widget" );
@@ -528,7 +480,7 @@ void KMixApplet::positionChange(Position pos) {
 	const QSize panelAppletConstrainedSize = sizeHint();
 	m_mixerWidget->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
-	setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
+	//setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	//kdDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
 	m_mixerWidget->show();
 	connect( _mixer, SIGNAL(newVolumeLevels()), m_mixerWidget, SLOT(refreshVolumeLevels()) );
@@ -536,17 +488,27 @@ void KMixApplet::positionChange(Position pos) {
 }
 
 QSize KMixApplet::sizeHint() const {
+    QSize qsz;
     if ( m_errorLabel !=0 ) {
-	return m_errorLabel->sizeHint();
+	qsz = m_errorLabel->sizeHint();
     }
     else if (  m_mixerWidget != 0) {
-	return  m_mixerWidget->sizeHint();
+	qsz = m_mixerWidget->sizeHint();
     }
     else {
 	// During construction of m_mixerWidget or if something goes wrong:
 	// Return something that should resemble our former sizeHint().
-	return size();
+	qsz = size();
     }
+    
+    // now constrain the size by the height() or width() of the panel
+    if ( position() == KPanelApplet::pLeft || position() == KPanelApplet::pRight ) {
+	qsz.setHeight( this->height() );
+    }
+    else {
+	qsz.setWidth ( this->width() );
+    }
+    return qsz;
 }
 
 void KMixApplet::preferences()

@@ -114,8 +114,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 			    true,         // Show Mute LED
 			    false,        // Show Record LED
                             false,        // Small
-			    KPanelApplet::Up, // Direction: only 1 device, so doesn't matter
-			    //			    KPanelApplet::Left, // Direction: only 1 device, so doesn't matter
+			    Qt::Vertical, // Direction: only 1 device, so doesn't matter
 			    this,         // parent
 			    0,            // Is "NULL", so that there is no RMB-popup
 			    _dockDevice->name().latin1() );

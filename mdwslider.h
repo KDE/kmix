@@ -57,7 +57,7 @@ class MDWSlider : public MixDeviceWidget
 public:
     MDWSlider( Mixer *mixer, MixDevice* md,
 	       bool showMuteLED, bool showRecordLED,
-	       bool small, KPanelApplet::Direction dir,
+	       bool small, Qt::Orientation,
 	       QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
     ~MDWSlider();
 
@@ -75,6 +75,7 @@ public:
     QSize sizeHint();
     bool eventFilter( QObject* obj, QEvent* e );
     // void resizeEvent ( QResizeEvent * );
+    QSizePolicy sizePolicy() const;
 
 public slots:
     void toggleRecsrc();

@@ -31,22 +31,22 @@
 
 
 KSmallSlider::KSmallSlider( QWidget *parent, const char *name )
-    : QWidget( parent, name ), direction( KPanelApplet::Up )
+    : QWidget( parent, name ),  _orientation(  Qt::Vertical )
 {
     init();
 }
 
-KSmallSlider::KSmallSlider( KPanelApplet::Direction dir, QWidget *parent, const char *name )
-    : QWidget( parent, name ), direction( dir )
+KSmallSlider::KSmallSlider(  Qt::Orientation orientation, QWidget *parent, const char *name )
+    : QWidget( parent, name ), _orientation( orientation )
 {
     init();
 }
 
 KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,
-                  int value, KPanelApplet::Direction dir,
+                  int value, Qt::Orientation orientation,
                   QWidget *parent, const char *name )
     : QWidget( parent, name ),
-      QRangeControl( minValue, maxValue, 1, pageStep, value ), direction( dir )
+      QRangeControl( minValue, maxValue, 1, pageStep, value ),  _orientation( orientation)
 {
     init();
     sliderVal = value;
@@ -100,35 +100,48 @@ void KSmallSlider::valueChange()
         sliderVal = QRangeControl::value();
         reallyMoveSlider( newPos );
     }
+    kdDebug(67100) << "KSmallSlider::valueChange() value=" << value() << "\n";
     emit valueChanged(value());
 }
 
-void KSmallSlider::resizeEvent( QResizeEvent * ev )
+void KSmallSlider::resizeEvent( QResizeEvent * )
 {
-    rangeChange();
+    //    rangeChange();
     static int w, h;
     if ((w != width()) || (h != height())) {
         w = width(), h = height();
-#if 0
         kdDebug(67100)
             << "KSmallSlider::resizeEvent: width() = " << width()
             << ", height() = " << height() << endl;
-#endif
     }
-    QWidget::resizeEvent( ev );
+    update();
+    //QWidget::resizeEvent( ev );
 }
 
-//  usually returns a positive integer
+//  Returns the really available space for the slider. If there is no space, 0 is returned;
 int KSmallSlider::available() const
 {
-   return ((direction == KPanelApplet::Up) || (direction == KPanelApplet::Down)) ?
-     height() - 2 : width() - 2;
+    int available = 0;
+    if ( _orientation == Qt::Vertical) {
+	available = height();
+    }
+    else {
+	available = width();
+    }
+    if ( available > 1 ) {
+	available -= 2;
+    }
+    else {
+	available = 0;
+    }
+    return available;
 }
 
 void KSmallSlider::reallyMoveSlider( int newPos )
 {
     sliderPos = newPos;
-    repaint( FALSE );
+    update();
+    //repaint( FALSE );
 }
 
 namespace
@@ -193,27 +206,19 @@ QColor interpolate( QColor low, QColor high, int percent ) {
 
 void KSmallSlider::paintEvent( QPaintEvent * )
 {
-   //  FIXME: The problem is that height() and width() respectively have wrong
-   //         values when the panel is dragged between the top and the bottom
-   //         of the screen or between the left and the right. It gets right
-   //         again when when it is dragged in another way. The correct value
-   //         is 43 (for the largest panel) and 31 (for the size below the
-   //         largest). The wrong values are 19 and 89 respectively (for the
-   //         largest panel). Note that these 4 numbers are prime numbers.
-#if 0
-   kdDebug(67100)
-    << "KSmallSlider::paintEvent: width() = " << width()
-    << ", height() = " << height() << endl;
-#endif
+    kdDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
    QPainter p( this );
 
-   // draw 3d border
+   // ------------------------ draw 3d border ---------------------------------------------
    style().drawPrimitive ( QStyle::PE_Panel, &p, QRect( 0, 0, width(), height() ), colorGroup(), TRUE );
 
-   // draw lower/left part
+
+   // ------------------------ draw lower/left part ----------------------------------------
    if ( width()>2 && height()>2 )
    {
-      if ( direction == KPanelApplet::Up) {
+       /*
+       if ( _orientation == Qt::Vertical ) // !! was: KPanelApplet::Up
+       {
          QRect outer = QRect( 1, sliderPos + 1, width() - 2, height() - 2 - sliderPos );
 
          if ( grayed )
@@ -224,8 +229,12 @@ void KSmallSlider::paintEvent( QPaintEvent * )
              gradient( p, false, outer,
                        interpolate( colHigh, colLow, 100*sliderPos/(height()-2) ),
                        colLow, 32 );
-      }
-      else if (direction == KPanelApplet::Down ) {
+       }
+       else
+       */
+       
+       /*
+       if ( _orientation == Qt::Vertical ) { // !! was: direction == KPanelApplet::Down ) {
          QRect outer = QRect( 1, 1, width() - 2, sliderPos );
 
          if ( grayed )
@@ -236,9 +245,13 @@ void KSmallSlider::paintEvent( QPaintEvent * )
              gradient( p, false, outer, colLow,
                        interpolate( colLow, colHigh, 100*sliderPos/(height()-2) ),
                        32 );
-      }
-      else if (direction == KPanelApplet::Right ) {
+       }
+       else
+       */
+       
+       if (  _orientation == Qt::Horizontal ) {
          QRect outer = QRect( 1, 1, sliderPos, height() - 2 );
+	 kdDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer << endl;
 
          if ( grayed )
              gradient( p, true, outer, grayLow,
@@ -250,20 +263,25 @@ void KSmallSlider::paintEvent( QPaintEvent * )
                        32 );
       }
       else {
-         QRect outer = QRect( sliderPos + 1, 1, width() - 2 - sliderPos, height() - 2 );
+         QRect outer = QRect( 1, height()-sliderPos-1, width() - 2, sliderPos-1 );
+	 kdDebug(67100) << "KSmallSlider::paintEvent: sliderPos=" << sliderPos
+			<< "height()=" << height()
+			<< "width()=" << width()
+			<< "outer = " << outer << endl;
 
          if ( grayed )
-             gradient( p, true, outer,
-                       interpolate( grayHigh, grayLow, 100*sliderPos/(width()-2) ),
+             gradient( p, false, outer,
+                       interpolate( grayLow, grayHigh, 100*sliderPos/(height()-2) ),
                        grayLow, 32 );
          else
-             gradient( p, true, outer,
-                       interpolate( colHigh, colLow, 100*sliderPos/(width()-2) ),
+             gradient( p, false, outer,
+                       interpolate( colLow, colHigh, 100*sliderPos/(height()-2) ),
                        colLow, 32 );
       }
 
-      // drow upper/right part
+      // -------- draw upper/right part --------------------------------------------------
       QRect inner;
+      /*
       if ( direction == KPanelApplet::Up )
          inner = QRect( 1, 1, width() - 2, sliderPos );
       else if ( direction == KPanelApplet::Down )
@@ -272,7 +290,14 @@ void KSmallSlider::paintEvent( QPaintEvent * )
          inner = QRect( sliderPos + 1, 1, width() - 2 - sliderPos, height() - 2 );
       else
          inner = QRect( 1, 1, sliderPos, height() - 2 );
-
+      */
+      if ( _orientation == Qt::Vertical ) {
+	  inner = QRect( 1, 1, width() - 2, height() - 2 -sliderPos );
+      }
+      else {
+	  inner = QRect( sliderPos + 1, 1, width() - 2 - sliderPos, height() - 2 );
+      }
+	
       if ( grayed ) {
           p.setBrush( grayBack );
           p.setPen( grayBack );
@@ -310,6 +335,34 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
+    kdDebug(67100) << "KSmallslider::wheelEvent()" << endl;
+    /* Unfortunately KSmallSlider is no MixDeviceWidget, so we don't have access to
+     * the MixDevice.
+     */
+    int inc = ( maxValue() - minValue() ) / 20;
+    if ( inc < 1)
+	inc = 1;
+
+    kdDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta() << endl;
+    if ( e->delta() > 0 ) {
+	QRangeControl::setValue( QRangeControl::value() + inc );
+    }
+    else {
+	QRangeControl::setValue( QRangeControl::value() - inc );
+    }
+    e->accept(); // Accept the event
+
+    // Hint: Qt autmatically triggers a valueChange() when we do setValue()
+    return;
+
+
+    /* the solution below is quite "interesting". If we did not "use up"
+     * all "wheel delta" due to rounding,
+     * we save some up in the "factor" variable for the next wheel event.
+     * Unfortunately this means, that the increase or decrease is unregular.
+     * There's a bugreport in bugs.kde.org about that.
+     * So we throw that away and use trivial code now (see above).
+     */
    static float offset = 0;
    static KSmallSlider* offset_owner = 0;
    if (offset_owner != this){
@@ -319,10 +372,16 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
    offset += -e->delta()*QMAX(pageStep(),lineStep())/120;
    if (QABS(offset)<1)
       return;
-   int diff = 1;
-   if (direction == KPanelApplet::Up || direction == KPanelApplet::Down)
-      diff = -1; 
-   QRangeControl::setValue( QRangeControl::value() + diff*int(offset) );
+
+   /*
+   // !!! is this good for?
+   int factor = 1;
+   if ( _orientation == Qt::Vertical ) {
+      factor = -1;
+   }
+   */
+
+   QRangeControl::setValue( QRangeControl::value() + int(offset) );
    offset -= int(offset);
 }
 
@@ -368,10 +427,13 @@ void KSmallSlider::resetState()
 
 void KSmallSlider::setValue( int value )
 {
+    QRangeControl::setValue( value );
+    /* !!! unclear semantics
     if ( (direction == KPanelApplet::Right) || (direction == KPanelApplet::Down) )
         QRangeControl::setValue( value );
     else
         QRangeControl::setValue( QRangeControl::maxValue() - value );
+    */
 }
 
 void KSmallSlider::addStep()
@@ -386,37 +448,49 @@ void KSmallSlider::subtractStep()
 
 int KSmallSlider::goodPart( const QPoint &p ) const
 {
-    return ((direction == KPanelApplet::Up) || (direction == KPanelApplet::Down)) ?
-        p.y() - 1 : p.x() - 1;
+    if ( _orientation == Qt::Vertical ) {
+	return p.y() - 1;
+    }
+    else {
+	return p.x() -1;
+    }
 }
 
 QSize KSmallSlider::sizeHint() const
 { // FIXME Här har vi roten till det onda (89)!
-    constPolish();
-    const int length = 84;
-    const int thick = 10;
+    //constPolish();
+    const int length = 25;
+    const int thick  = 10;
 
-    if ( (direction == KPanelApplet::Up) || (direction == KPanelApplet::Down) )
+    if (  _orientation == Qt::Vertical )
         return QSize( thick, length );
     else
         return QSize( length, thick );
 }
 
+
+/***************** SIZE STUFF START ***************/
 QSize KSmallSlider::minimumSizeHint() const
 {
-    QSize s = sizeHint();
-    s.setHeight( 8 );
-    s.setWidth( 8 );
+    QSize s(8,8);
     return s;
 }
 
+
 QSizePolicy KSmallSlider::sizePolicy() const
 {
-    if ( (direction == KPanelApplet::Up) || (direction == KPanelApplet::Down) )
-        return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
-    else
+
+    if ( _orientation == Qt::Vertical ) {
+	kdDebug(67100) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
+	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
+    }
+    else {
+	kdDebug(67100) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
         return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
+    }
 }
+/***************** SIZE STUFF END ***************/
+
 
 int KSmallSlider::minValue() const
 {
@@ -451,10 +525,24 @@ void KSmallSlider::setPageStep( int i )
 //  Only for external acces. You MUST use QRangeControl::value() internally.
 int KSmallSlider::value() const
 {
+    return QRangeControl::value();
+    /** !!! @todo correct value
     if ( (direction == KPanelApplet::Right) || (direction == KPanelApplet::Down) )
         return QRangeControl::value();
     else
         return QRangeControl::maxValue() - QRangeControl::value();
+    */
+}
+
+void KSmallSlider::paletteChange ( const QPalette &) {
+    if ( grayed ) {
+	const QColorGroup& qcg = palette().disabled();
+	setColors(qcg.highlight(), qcg.dark(), qcg.background() );
+    }
+    else {
+	const QColorGroup& qcg = palette().active();
+	setColors(qcg.highlight(), qcg.dark(), qcg.background() );
+    }
 }
 
 void KSmallSlider::setGray( bool value )
@@ -462,11 +550,12 @@ void KSmallSlider::setGray( bool value )
    if ( grayed!=value )
    {
       grayed = value;
-      repaint();
+      update();
+      //repaint();
    }
 }
 
-bool  KSmallSlider::gray() const
+bool KSmallSlider::gray() const
 {
    return grayed;
 }
@@ -476,7 +565,8 @@ void KSmallSlider::setColors( QColor high, QColor low, QColor back )
     colHigh = high;
     colLow = low;
     colBack = back;
-    repaint();
+    update();
+    //repaint();
 }
 
 void KSmallSlider::setGrayColors( QColor high, QColor low, QColor back )
@@ -484,7 +574,8 @@ void KSmallSlider::setGrayColors( QColor high, QColor low, QColor back )
     grayHigh = high;
     grayLow = low;
     grayBack = back;
-    repaint();
+    update();
+    //repaint();
 }
 
 #include "ksmallslider.moc"

@@ -57,9 +57,9 @@
  */
 MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
-                                 bool small, KPanelApplet::Direction dir,
+                                 bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw, const char* name) :
-    MixDeviceWidget(mixer,md,small,dir,parent,mw,name),
+    MixDeviceWidget(mixer,md,small,orientation,parent,mw,name),
     m_linked(true), m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
@@ -101,6 +101,20 @@ MDWSlider::~MDWSlider()
 }
 
 
+QSizePolicy MDWSlider::sizePolicy() const
+{
+
+    if ( _orientation == Qt::Vertical ) {
+	kdDebug(67100) << "MDWSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
+	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
+    }
+    else {
+	kdDebug(67100) << "MDWSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
+        return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
+    }
+}
+
+
 /**
  * Creates up to 4 widgets - Icon, Mute-Button, Slider and Record-Button.
  *
@@ -109,7 +123,7 @@ MDWSlider::~MDWSlider()
 */
 void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 {
-    if ( (m_direction == KPanelApplet::Up) ||  (m_direction == KPanelApplet::Down) ) {
+    if ( _orientation == Qt::Vertical ) {
 	_layout = new QVBoxLayout( this );
 	_layout->setAlignment(Qt::AlignCenter);
     }
@@ -121,8 +135,9 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
 
     // --- DEVICE ICON --------------------------
-    if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Left))
-    {
+    // !!! Fixme: Correct check would be: "Left or Right". But we will add another parameter
+    //            to the constructor (CreationFlags).
+    if ( _orientation == Qt::Horizontal ) {
 	m_iconLabel = 0L;
 	setIcon( m_mixdevice->type() );
 	_layout->addWidget( m_iconLabel );
@@ -165,7 +180,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	
     // create label
     QBoxLayout *labelAndSliders;
-    if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down)) {
+    if ( _orientation == Qt::Vertical ) {
 	labelAndSliders = new QHBoxLayout( _layout );
 	labelAndSliders->setAlignment(Qt::AlignVCenter);
     }
@@ -183,7 +198,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		
     // --- Part 2: SLIDERS ---
     QBoxLayout *sliders;
-    if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down)) {
+    if ( _orientation == Qt::Vertical ) {
 	sliders = new QHBoxLayout( labelAndSliders );
 	sliders->setAlignment(Qt::AlignVCenter);
     }	
@@ -205,16 +220,14 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	{
 	    slider = new KSmallSlider( 0, maxvol, maxvol/10,
 				       m_mixdevice->getVolume( chid ),
-				       m_direction,
+				       _orientation,
 				       this, m_mixdevice->name().ascii() );
 	}
 	else
 	{
 	    slider = new QSlider( 0, maxvol, maxvol/10,
 				  maxvol - m_mixdevice->getVolume( chid ),
-				  (m_direction == KPanelApplet::Up ||
-				   m_direction == KPanelApplet::Down) ?
-				  QSlider::Vertical : QSlider::Horizontal,
+				  _orientation,
 				  this, m_mixdevice->name().ascii() );
 	    slider->setMinimumSize( slider->sizeHint() );
 	}
@@ -233,8 +246,8 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
 
     // --- DEVICE ICON --------------------------
-    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down))
-    {
+    if ( _orientation == Qt::Horizontal ) {  // Fixme !!! see above
+	/*    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) */
 	m_iconLabel = 0L;
 	setIcon( m_mixdevice->type() );
 	_layout->addWidget( m_iconLabel );
@@ -403,15 +416,16 @@ MDWSlider::setTicks( bool ticks )
 void
 MDWSlider::setIcons(bool value)
 {
-   if ( ( !m_iconLabel->isHidden()) !=value )
-   {
-      if (value)
-         m_iconLabel->show();
-      else
-         m_iconLabel->hide();
+    if ( m_iconLabel != 0 ) {
+	if ( ( !m_iconLabel->isHidden()) !=value ) {
+	    if (value)
+		m_iconLabel->show();
+	    else
+		m_iconLabel->hide();
 
-      layout()->activate();
-   }
+	    layout()->activate();
+	}
+    } // if it has an icon
 }
 
 void
@@ -726,7 +740,8 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 	    return true;
 	}
     }
-    else if (e->type() == QEvent::Wheel) {
+    // Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
+    else if ( (e->type() == QEvent::Wheel) && !obj->isA("KSmallSlider") ) {
 	QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
 	if (qwe->delta() > 0) {
 	    increaseVolume();

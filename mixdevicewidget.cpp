@@ -53,10 +53,10 @@
  * be "small"  (uses KSmallSlider instead of QSlider then).
  */
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
-                                 bool small, KPanelApplet::Direction dir,
+                                 bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw, const char* name) :
    QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md ), m_mixerwidget( mw ),
-   m_disabled( false ), m_direction( dir ), m_small( small )
+   m_disabled( false ), _orientation( orientation ), m_small( small )
 {
    _mdwActions = new KActionCollection( this );
    m_keys = new KGlobalAccel( this, "Keys" );

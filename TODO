@@ -1,11 +1,12 @@
 TODO list
 
+Bug2 in KMix2.1pre:
+- DockApplet shows "show/hide menubar"
+- Keys not saved/restored
+- "reversed" in panelapplet is broken. Remove it for now
+
 IMPORTANT:
 1) Get Switches working
-This means: ALL switches: Record-LED's, MUTE-Switches and regular switches.
-Currently only the DockAreaPopup MUTE-Switch is working.
-This is the biggest work.
-Status:
 MUTE-LED's  : Read: OK, Click: OK    , Saved/Restored: no  (was not in KMix2.0 and is shifted)
 Record-LED's: Read: OK, Click: OK    , Saved/Restored: yes
 Switches    : Read: OK, Click: OK    , Saved/Restored: yes

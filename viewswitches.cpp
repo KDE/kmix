@@ -75,7 +75,7 @@ QWidget* ViewSwitches::add(MixDevice *md)
 		      _mixer,       // the mixer for this device
 		      md,           // MixDevice (parameter)
 		      false,        // Small
-		      KPanelApplet::Up,   // Direction
+		      Qt::Vertical, // Direction
 		      this,         // parent
 		      this,         // View widget
 		      md->name().latin1()

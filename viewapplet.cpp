@@ -26,25 +26,40 @@
 #include <qlayout.h>
 
 // KDE
+#include <kactioncollection.h>
 #include <kdebug.h>
+#include <kpanelapplet.h>
+#include <kstdaction.h>
 
 // KMix
 #include "mdwslider.h"
 #include "mixer.h"
 
-ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, KPanelApplet::Direction direction)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder)
+ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, KPanelApplet::Position position )
+    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder) , _position(position)
 {
-    _direction = direction;
-    if ( _direction == KPanelApplet::Left || _direction == KPanelApplet::Right )
-    {
-	_layoutMDW = new QVBoxLayout( this );
+    // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
+    //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
+    _actions->remove( KStdAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
+
+    if ( position == KPanelApplet::pLeft || position == KPanelApplet::pRight ) {
+	_orientation = Qt::Vertical;
     }
-    else
-    {
+    else {
+	_orientation = Qt::Horizontal;
+    }
+    
+    if ( _orientation == Qt::Horizontal ) {
 	_layoutMDW = new QHBoxLayout( this );
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     }
-    _layoutMDW->setResizeMode(QLayout::Fixed);
+    else {
+	_layoutMDW = new QVBoxLayout( this );
+	setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+    }
+
+
+    //_layoutMDW->setResizeMode(QLayout::Fixed);
     init();
 }
 
@@ -82,6 +97,16 @@ int ViewApplet::advice() {
 
 QWidget* ViewApplet::add(MixDevice *md)
 {
+    /**
+       Slider orientation is exactly the other way round. If the applet stretches horzontally,
+       the sliders must be vertical
+    */
+    Qt::Orientation sliderOrientation;
+    if (_orientation == Qt::Horizontal )
+	sliderOrientation = Qt::Vertical;
+    else
+	sliderOrientation = Qt::Horizontal;
+	
     //    kdDebug(67100) << "ViewApplet::add()\n";
     MixDeviceWidget *mdw =
 	new MDWSlider(
@@ -90,28 +115,56 @@ QWidget* ViewApplet::add(MixDevice *md)
 			    false,        // Show Mute LED
 			    false,        // Show Record LED
 			    true,         // Small
-			    _direction,   // Direction
+			    sliderOrientation, // Orientation
 			    this,         // parent
 			    this,         // View widget
 			    md->name().latin1()
 			    );
     _layoutMDW->add(mdw);
-    //QLayout::maximumSize
     return mdw;
 }
 
 QSize ViewApplet::sizeHint() {
     //kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
-    return( _layoutMDW->sizeHint() );
+    QSize qsz = _layoutMDW->sizeHint();
+    // now constrain the size by the height() or width() of the panel
+    if ( _orientation == Qt::Horizontal ) {
+	qsz.setHeight( parentWidget()->height() );
+    }
+    else {
+	qsz.setWidth ( parentWidget()->width() );
+    }
+    return qsz;    
 }
 
 void ViewApplet::constructionFinished() {
     _layoutMDW->activate();
 }
 
-void ViewApplet::resizeEvent(QResizeEvent *e)
+void ViewApplet::resizeEvent(QResizeEvent *qre)
 {
-    //kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << e->size() << endl;
+    kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
+    // decide whether we have to show or hide all icons
+    bool showIcons = false;
+    if ( _orientation == Qt::Horizontal ) {
+	if ( qre->size().height() > 50 ) {
+	    showIcons = true;
+	}
+    }
+    for ( QWidget *mdw = _mdws.first(); mdw != 0; mdw = _mdws.next() ) {
+	if ( mdw == 0 ) {
+	    kdError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";
+	    break; // sanity check (normally the lists are set up correctly)
+	}
+	else {
+	    if ( mdw->inherits("MDWSlider")) {
+		static_cast<MDWSlider*>(mdw)->setIcons(showIcons);
+		//static_cast<MDWSlider*>(mdw)->resize(qre->size());
+	    }
+	}
+    }
+    //    kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
+    //QWidget::resizeEvent(qre);
 }
 
 

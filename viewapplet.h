@@ -12,7 +12,7 @@ class ViewApplet : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, KPanelApplet::Direction direction);
+    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, KPanelApplet::Position pos);
     ~ViewApplet();
 
     virtual int count();
@@ -29,7 +29,10 @@ public slots:
 
 private:
     QBoxLayout*   _layoutMDW;
-    KPanelApplet::Direction _direction;
+    // Position of the applet (pLeft, pRight, pTop, pBottom)
+    KPanelApplet::Position  _position;
+    // Orientation of the applet (horizontal or vertical)
+    Qt::Orientation _orientation;
 };
 
 #endif

@@ -118,7 +118,7 @@ class KMixerWidget : public QWidget
    MixDevice::DeviceCategory m_categoryMask;
 
    void createLayout(bool menuInitallyVisible);
-   void createMasterVolWidget(KPanelApplet::Direction);
+   //   void createMasterVolWidget(KPanelApplet::Direction);
 };
 
 #endif
