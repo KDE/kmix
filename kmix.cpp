@@ -142,8 +142,6 @@ void KMixWindow::initActions()
 
     // settings menu
     KAction *a = KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
-    a->setAccel( CTRL+Key_M );
-    a->plugAccel( new KAccel(this) ); // to make action working without visible menubar
     KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
     createGUI( "kmixui.rc" );
