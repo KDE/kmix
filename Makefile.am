@@ -43,8 +43,7 @@ $(srcdir)/version.h: VERSION
 
 EXTRA_DIST = kmix.desktop VERSION
 
-appsdir = $(kde_appsdir)/Multimedia
-apps_DATA = kmix.desktop
+xdg_apps_DATA = kmix.desktop
 
 rcdir = $(kde_datadir)/kmix
 rc_DATA = kmixui.rc
