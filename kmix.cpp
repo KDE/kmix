@@ -309,8 +309,7 @@ KMixWindow::updateDocking()
 	{
 
 		// create dock widget
-		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget" );
-		//updateDockIcon();
+		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget", m_volumeWidget );
 
 		// create RMB menu
 		KPopupMenu *menu = m_dockWidget->contextMenu();
@@ -334,52 +333,21 @@ KMixWindow::dockMute()
 	masterDevice->setMuted( !masterDevice->isMuted() );
 	mixer->writeVolumeToHW( masterDevice->num(), masterDevice->getVolume() );
 
-	//	updateDockIcon();
 }
-
-/*
-void
-KMixWindow::updateDockIcon()
-{
-	Mixer *mixer = m_mixers.first();
-        if ( !mixer )
-	{
-	    m_dockWidget->setErrorPixmap();
-            return;
-	}
-	MixDevice *masterDevice = ( *mixer )[ mixer->masterDevice() ];
-
-	// Required if muted from mixer widget
-	KToggleAction *a = static_cast<KToggleAction *>( actionCollection()->action(  "dock_mute" ) );
-	if ( a ) a->setChecked( masterDevice->isMuted() );
-
-	m_dockWidget->updatePixmap();
-
-	// not neccesary any more
-	//	m_dockWidget->setVolumeTip( 0, masterDevice->getVolume() );
-}
-*/
-
-/*
-void
-KMixWindow::updateDockTip(Volume vol)
-{
-    // not neccesary any more
-   if ( m_dockWidget )
-	m_dockWidget->setVolumeTip( 0, vol );
-}
-*/
 
 void
 KMixWindow::saveSettings()
 {
+    kdDebug(67100) << "KMixWindow::saveSeeting() ENTR" << endl;
     saveConfig();
     saveVolumes();
+    kdDebug(67100) << "KMixWindow::saveSeeting() EXIT" << endl;
 }
 
 void
 KMixWindow::saveConfig()
 {
+    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
     //    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
     KConfig *config = kapp->config();
     config->setGroup(0);
@@ -410,7 +378,7 @@ KMixWindow::saveConfig()
 		grp.sprintf( "%i", mw->id() );
 		devices << grp;
 		mw->saveConfig( config, grp );
-	}
+   }
 
    config->setGroup(0);
    config->writeEntry( "Devices", devices );
@@ -419,8 +387,8 @@ KMixWindow::saveConfig()
 void
 KMixWindow::loadConfig()
 {
-	KConfig *config = kapp->config();
-	config->setGroup(0);
+    KConfig *config = kapp->config();
+    config->setGroup(0);
 
    m_showDockWidget = config->readBoolEntry("AllowDocking", true);
    m_volumeWidget = config->readBoolEntry("TrayVolumeControl", true);
@@ -506,12 +474,16 @@ KMixWindow::initMixerWidgets()
 bool
 KMixWindow::queryClose ( )
 {
+    kdDebug() << "KMixWindow::queryClose()\n";
     if ( m_showDockWidget && !kapp->sessionSaving() )
     {
-		  hide();
-		 return false;
-	 }
-	 return true;
+        kdDebug() << "KMixWindow::queryClose() 2\n";
+        hide();
+        kdDebug() << "KMixWindow::queryClose() 3\n";
+        return false;
+    }
+    kdDebug() << "KMixWindow::queryClose() 4\n";
+    return true;
 }
 
 
@@ -525,7 +497,7 @@ KMixWindow::quit()
 void
 KMixWindow::showSettings()
 {
-	if (!m_prefDlg->isVisible())
+   if (!m_prefDlg->isVisible())
    {
       m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
       m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
@@ -575,13 +547,16 @@ KMixWindow::loadVolumes()
 void
 KMixWindow::saveVolumes()
 {
-    kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
+    kdDebug(67100) << "KMixWindow::saveVolumes()" << endl;
     KConfig *cfg = new KConfig( "kmixctrlrc", false );
     for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next()) {
+	kdDebug(67100) << "KMixWindow::saveVolumes() loop" << endl;
 	//kdDebug(67100) << "KMixWindow::saveConfig() loop" << endl;
 	mixer->volumeSave( cfg );
     }
+    kdDebug(67100) << "KMixWindow::saveVolumes() delete" << endl;
     delete cfg;
+    kdDebug(67100) << "KMixWindow::saveVolumes() exit" << endl;
 }
 
 

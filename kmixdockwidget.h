@@ -40,7 +40,7 @@ class KMixDockWidget : public KSystemTray  {
    friend class KMixWindow;
 
  public:
-   KMixDockWidget(Mixer *, QWidget *parent=0, const char *name=0);
+   KMixDockWidget(Mixer *, QWidget *parent=0, const char *name=0, bool volumePopup=true);
    ~KMixDockWidget();
 
    void setErrorPixmap();
@@ -67,6 +67,7 @@ class KMixDockWidget : public KSystemTray  {
    bool _ignoreNextEvent;
    int  _oldToolTipValue;
    char _oldPixmapType;
+   bool _volumePopup;
 };
 
 #endif

@@ -73,7 +73,7 @@ KMixWindow : public KMainWindow
 
    void updateDocking();
 
-	bool queryClose();
+   bool queryClose();
    void showEvent( QShowEvent * );
    void hideEvent( QHideEvent * );
 
@@ -86,8 +86,6 @@ KMixWindow : public KMainWindow
    void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
-   //void updateDockIcon();
-   //void updateDockTip(Volume vol);
    void stopVisibilityUpdates();
 
   private:

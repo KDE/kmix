@@ -43,15 +43,15 @@
 #include "kwin.h"
 #include "viewdockareapopup.h"
 
-KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name )
+KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name, bool volumePopup )
     : KSystemTray( parent, name ),
       m_mixer(mixer),
       _dockAreaPopup(0L),
       _audioPlayer(0L),
       _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
-      _ignoreNextEvent(false),
       _oldToolTipValue(-1),
-      _oldPixmapType('-')
+      _oldPixmapType('-'),
+      _volumePopup(volumePopup)
 {
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
@@ -181,32 +181,22 @@ KMixDockWidget::setErrorPixmap()
 }
 
 void
-KMixDockWidget::ignoreNextEvent()
-{
-  _ignoreNextEvent = true;
-}
-
-void
 KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
 	if ( _dockAreaPopup == 0 ) {
 		return KSystemTray::mousePressEvent(me);
 	}
 
-	// esken: exchanged LeftButton and MidButton, because helio changed mousePressEvent() to MidButton.
-	//        And using MidButton for showing TrayVolumeControl is more logical (you use the MidButton wheel!)
+        // esken: Due to overwhelming request, LeftButton shows the ViewDockAreaPopup, if configured
+        //        to do so. Otherwise the main window will be shown.
 	if ( me->button() == LeftButton )
 	{
-		return KSystemTray::mousePressEvent(me);
-	}
-	else if ( me->button() == MidButton )
-	{
-		if ( _ignoreNextEvent )
-		{
-			_ignoreNextEvent = false;
-			return;
+		if ( ! _volumePopup ) {
+                    // Case 1: User wants to show main window => This is the KSystemTray default action
+		    return KSystemTray::mousePressEvent(me);
 		}
-		
+
+                // Case 2: User wants to show volume popup
 		if ( _dockAreaPopup->isVisible() )
 		{
 			_dockAreaPopup->hide();
@@ -240,9 +230,10 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
-	}
-	else
+	} // LeftMouseButton pressed
+	else {
 		KSystemTray::mousePressEvent(me);
+	} // Other MouseButton pressed
 	
 }
 
