@@ -98,11 +98,21 @@ int main(int argc, char **argv)
 
 KMix::~KMix()
 {
+  sessionSave();
   delete mainmenu;
 }
 
 KMix::KMix(char *mixername)
 {
+  KmConfig=KApplication::getKApplication()->getConfig();
+  mainmenuOn  = true;  // obsolete?
+  tickmarksOn = true;  // have to check KConfig specification to make sure
+
+  mainmenuOn  = KmConfig->readNumEntry( "Menubar"  , 1 );
+  tickmarksOn = KmConfig->readNumEntry( "Tickmarks", 1 );
+  int Balance;
+  Balance     = KmConfig->readNumEntry( "Balance"  , 0 );  // centered by default
+
   KCM = new KCmManager(this);
   CHECK_PTR(KCM);
   mix = new Mixer(mixername);
@@ -115,12 +125,7 @@ KMix::KMix(char *mixername)
     exit(1);
   }
 
-  mainmenuOn = true;
-  tickmarksOn = true;
 
-  KmConfig=KApplication::getKApplication()->getConfig();
-  mainmenuOn  = KmConfig->readNumEntry( "Menubar"  , 1 );
-  tickmarksOn = KmConfig->readNumEntry( "Tickmarks", 1 );
   createWidgets();
   placeWidgets();
 
@@ -457,6 +462,7 @@ void KMix::quitClickedCB()
 {
   //  int  ok = KMsgBox::yesNo(NULL, "Confirm", "Quit KMix?" );
   //  if (ok==1) 
+  delete this;
   exit(0);
 }
 
@@ -622,3 +628,10 @@ void KMix::setBalance(int left, int right)
 }
 
 
+// first aspects of session management
+void KMix::sessionSave()
+{
+  KmConfig->writeEntry( "Balance"  , LeftRightSB->value() , true );
+  KmConfig->sync();
+
+}
