@@ -92,7 +92,7 @@ KMixWindow::KMixWindow()
 	{
 		hide();
 	}
-	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()));
+	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveSettings()) );
 
 	//setMaximumSize( QSize( 32767, size().height() ) );  // !!! What is this good for ?!?
 }
@@ -107,7 +107,7 @@ void
 KMixWindow::initActions()
 {
 	// file menu
-	KStdAction::quit( this, SLOT(close()), actionCollection());
+	KStdAction::quit( this, SLOT(quit()), actionCollection());
 
 	// settings menu
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
@@ -362,16 +362,29 @@ KMixWindow::updateDockTip(Volume vol)
 }
 
 void
+KMixWindow::saveSettings()
+{
+    saveConfig();
+    saveVolumes();
+}
+
+void
 KMixWindow::saveConfig()
 {
 	KConfig *config = kapp->config();
 	config->setGroup(0);
 
+   // make sure we don't start without any UI
+   // can happen e.g. when not docked and kmix closed via 'X' button
+   bool startVisible = m_isVisible;
+   if ( !m_showDockWidget )
+       startVisible = true;
+
 	config->writeEntry( "Size", size() );
    config->writeEntry( "Position", pos() );
    // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
    // (Please note that the problem was only there when quitting via Systray - esken).
-   config->writeEntry( "Visible", m_isVisible );
+   config->writeEntry( "Visible", startVisible );
    config->writeEntry( "Menubar", m_showMenubar );
    config->writeEntry( "AllowDocking", m_showDockWidget );
    config->writeEntry( "TrayVolumeControl", m_volumeWidget );
@@ -498,9 +511,8 @@ KMixWindow::queryClose ( )
 
 
 void
-KMixWindow::close()
+KMixWindow::quit()
 {
-	saveVolumes();
 	kapp->quit();
 }
 
