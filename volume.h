@@ -23,7 +23,7 @@ class Volume
  enum ChannelID { LEFT     = 0, RIGHT     = 1, CENTER = 2,
                   REARLEFT = 3, REARRIGHT = 4, WOOFER = 5,
                   LEFTREC  = 6, RIGHTREC  = 7,
-                  CUSTOM1  = 8, CUSTOM2   = 9, CHIDMAX  = 10 };
+                  CUSTOM1  = 8, CUSTOM2   = 9, CHIDMAX  = 9 };
 
 
   Volume( ChannelMask chmask = MALL, long maxVolume = 100, long minVolume=0 );
