@@ -259,7 +259,6 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
     m_mixer->commitVolumeChange(md);
     // refresh the toolTip (Qt removes it on a MouseWheel event)
     // Mhhh, it doesn't work. Qt does not show it again.
-    //setVolumeTip();
     setVolumeTip();
     // Simulate a mouse move to make Qt show the tooltip again
     QApplication::postEvent( this, new QMouseEvent( QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton ) );

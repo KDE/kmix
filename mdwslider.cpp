@@ -323,7 +323,7 @@ MDWSlider::icon( int icontype )
       case MixDevice::MIDI:
          miniDevPM = UserIcon("mix_midi"); break;
       case MixDevice::RECMONITOR:
-         miniDevPM = UserIcon("mix_recmon"); break;
+         miniDevPM = UserIcon("mix_record"); break;
       case MixDevice::TREBLE:
          miniDevPM = UserIcon("mix_treble"); break;
       case MixDevice::UNKNOWN:

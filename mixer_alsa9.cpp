@@ -77,7 +77,7 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 		}
 		return MixDevice::VOLUME;
 	}
-        if ( name == "Capture" ) return MixDevice::VOLUME;
+        if ( name == "Capture" ) return MixDevice::RECMONITOR;
 	if ( name == "Master Mono" ) return MixDevice::VOLUME;
         if ( name == "PC Speaker" ) return MixDevice::VOLUME;
         if ( name == "Music" || name == "Synth" || name == "FM" ) return MixDevice::MIDI;
