@@ -108,17 +108,16 @@ KMixWindow::KMixWindow()
 		}
 		
 		// create new widget
-		if ( widget==0 ) 
-		{
-			KMixerWidget *mw = new KMixerWidget( m_maxId, mixer,
-					mixer->mixerName(),
-					mixer->mixerNum(),
-					false, KPanelApplet::Up,
-					this );
-			mw->setName( mixer->mixerName() );
-			insertMixerWidget( mw );
-			
-			m_maxId++;
+		if ( widget==0 ) {
+		  KMixerWidget *mw = new KMixerWidget( m_maxId, mixer,
+						       mixer->mixerName(),
+						       mixer->mixerNum(),
+						       false, KPanelApplet::Up,
+						       this );
+		  mw->setName( mixer->mixerName() );
+		  insertMixerWidget( mw );
+		  
+		  m_maxId++;
 		}
 	}
 
@@ -162,7 +161,7 @@ KMixWindow::initActions()
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 	
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
-									 actionCollection(), "dock_mute" );
+				 actionCollection(), "dock_mute" );
 	
 	createGUI( "kmixui.rc" );
 }
@@ -395,14 +394,13 @@ KMixWindow::loadConfig()
 		 }
 
        // only if an actual mixer device is found for the config entry
-       if (mixer) 
-		 {
-			 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, this );
-			 mw->setName( name );
-			 mw->loadConfig( config, *tab );
-			 insertMixerWidget( mw );
-		 }
-	}
+       if (mixer) {
+	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, this );
+	 mw->setName( name );
+	 mw->loadConfig( config, *tab );
+	 insertMixerWidget( mw );
+       }
+   }
 
    // restore window size and position
    if ( !kapp->isRestored() ) // done by the session manager otherwise
@@ -440,11 +438,11 @@ KMixWindow::insertMixerWidget( KMixerWidget *mw )
  
    mw->setTicks( m_showTicks );
    mw->setLabels( m_showLabels );
+   mw->addActionToPopup( actionCollection()->action("options_show_menubar") );
    mw->show();
 
    connect( mw, SIGNAL(updateLayout()), this, SLOT(updateLayout()) );
    connect( mw, SIGNAL( masterMuted( bool ) ), SLOT( updateDockIcon() ) );
-   connect( mw, SIGNAL(toggleMenuBar()), SLOT(toggleMenuBar()) );
 
    KAction *a = actionCollection()->action( "file_close_tab" );
    if ( a ) 
@@ -587,15 +585,14 @@ KMixWindow::newMixer()
        QString name = KLineEditDlg::getText(
 				 i18n("Description"), i18n("Enter description:"),
 				 mixer->mixerName(), &ok, this );
-      if ( ok ) 
-		{
-			// create mixer widget
-         KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-					false, KPanelApplet::Up, this );
-			m_maxId++;
-			mw->setName( name );
-			insertMixerWidget( mw );
-		}
+      if ( ok ) {
+	// create mixer widget
+	KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up, this );
+	m_maxId++;
+	mw->setName( name );
+	insertMixerWidget( mw );
+      }
    }
 }
 

@@ -57,6 +57,8 @@ class MixDeviceWidget
                        QWidget* parent = 0, const char* name = 0);
       ~MixDeviceWidget();
 
+      void addActionToPopup( KAction *action );
+
       bool isDisabled();
       bool isMuted();
       bool isRecsrc();
@@ -88,7 +90,6 @@ class MixDeviceWidget
       void newRecsrc( int num, bool on );
       void updateLayout();
       void rightMouseClick();
-      void toggleMenuBar();
 
    private slots:
       void setRecsrc( bool value );

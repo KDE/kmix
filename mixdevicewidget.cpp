@@ -78,7 +78,6 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 
    if (parent->isA("KMixerWidget")) {
      new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
-     KStdAction::showMenubar( this, SIGNAL(toggleMenuBar()), m_actions);
    }
 
    if( m_mixdevice->isRecordable() )
@@ -110,6 +109,11 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 
 MixDeviceWidget::~MixDeviceWidget()
 {
+}
+
+
+void MixDeviceWidget::addActionToPopup( KAction *action ) {
+  m_actions->insert( action );
 }
 
 

@@ -66,7 +66,6 @@ class KMixerWidget : public QWidget  {
   signals:
    void updateLayout();
    void masterMuted( bool );
-   void toggleMenuBar();
 
   public slots:     
    void setTicks( bool on );

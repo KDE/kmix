@@ -71,7 +71,6 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 {
    m_actions = new KActionCollection( this );
    new KAction( i18n("Show &All"), 0, this, SLOT(showAll()), m_actions, "show_all" );
-   KStdAction::showMenubar( this, SIGNAL(toggleMenuBar()), m_actions);
 
    m_channels.setAutoDelete( true );
    m_small = small;
@@ -123,7 +122,6 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
 
       connect( mdw, SIGNAL( masterMuted( bool ) ),
                   SIGNAL( masterMuted( bool ) ) );
-      connect( mdw, SIGNAL( toggleMenuBar() ), SIGNAL( toggleMenuBar() ) );
 
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       m_devLayout->addWidget( mdw, 0 );
@@ -205,6 +203,10 @@ void KMixerWidget::mousePressEvent( QMouseEvent *e )
 
 void KMixerWidget::addActionToPopup( KAction *action ) {
   m_actions->insert( action );
+
+  for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() ) {
+    chn->dev->addActionToPopup( action );
+  }
 }
 
 void KMixerWidget::rightMouseClicked()

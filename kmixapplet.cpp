@@ -358,8 +358,7 @@ void KMixApplet::popupDirectionChange(Direction dir) {
   if (!m_errorLabel) {
     if (m_mixerWidget) delete m_mixerWidget;
     m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
-                                      checkReverse(dir),
-                                      this );
+                                      checkReverse(dir), this );
     m_mixerWidget->loadConfig( config(), "Widget" );
     setColors();
     connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
