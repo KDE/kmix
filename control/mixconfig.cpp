@@ -217,14 +217,14 @@ extern "C"
 
     void init_kmix()
     {
-        KConfig *config = new KConfig("kcmkmixrc", true);
+        KConfig *config = new KConfig("kcmkmixrc", true, false);
 
         config->setGroup("Misc");
         bool start = config->readBoolEntry( "startkdeRestore", true );
         delete config;
 
         if ( start )
-            system( "kmixctrl --restore" );
+            kapp->startServiceByDesktopName( "kmixctrl_restore" );
     }
 }
 

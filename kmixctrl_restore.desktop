@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Service
+Name=Restore Mixer Settings
+Exec=kmixctrl --restore
+ServiceTypes=Daemon
