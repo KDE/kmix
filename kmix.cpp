@@ -38,7 +38,7 @@ static char rcsid[]="$Id$";
 
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kwm.h>
+//#include <kwm.h>
 
 #include "mixer.h"
 #include "kmix.h"
@@ -149,7 +149,7 @@ void KMix::createWidgets()
 {
   QPixmap miniDevPM;
   QPixmap WMminiIcon = globalKIL->loadIcon("mixer_mini.xpm");
-  KWM::setMiniIcon(this->winId(), WMminiIcon);
+//   KWM::setMiniIcon(this->winId(), WMminiIcon);
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
