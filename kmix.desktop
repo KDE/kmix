@@ -1,12 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
-BinaryPattern=kmix;
-Protocols=
 Exec=kmix -caption "%c" %i %m
 DocPath=kmix/index.html
 TerminalOptions=
 Path=
-Extensions=
 Type=Application
 MimeType=
 Terminal=0
@@ -41,6 +38,5 @@ Name[lv]=KMiks
 Name[sl]=KMiks
 Name[sv]=Kmix
 Name[xx]=xx
-
 X-KDE-StartupNotify=true
 X-DCOP-ServiceType=Unique
