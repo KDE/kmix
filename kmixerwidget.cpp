@@ -102,8 +102,6 @@ void
 KMixerWidget::createLayout()
 {
    if ( !m_mixer ) return;
-		
-	QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 11, 6, "FullLayout" );
 
    // delete old objects
    m_channels.clear();
@@ -112,6 +110,7 @@ KMixerWidget::createLayout()
 
    if( ! m_small )
    {
+		QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 11, 6, "FullLayout" );
 
    	if( m_topLayout )
       	delete m_topLayout;
@@ -137,20 +136,19 @@ KMixerWidget::createLayout()
 
       m_ioTab->addTab( m_oWidget, i18n("Output") );
       m_ioTab->addTab( m_iWidget, i18n("Input" ) );
+
+   	// Create de widgets
+		createDeviceWidgets();
+		
+		fullLayout->addLayout( m_topLayout, 0, 0 );
    }
    else
    {
       m_oWidget = new QHBox( this, "OutputTab" );
       m_appletLayout = new QHBoxLayout( this, 0, 0 );
       m_appletLayout->add( m_oWidget );
+		createDeviceWidgets();
    }
-   // Create de widgets
-   createDeviceWidgets();
-	
-   if( ! m_small )
-	{
-		fullLayout->addLayout( m_topLayout, 0, 0 );
-	}
 }
 
 void 
