@@ -93,7 +93,7 @@ void Preferences::createChannelConfWindow()
 {
   static bool created = false;
 
-  grpbox2a = new QGroupBox (i18n("Mixer channel setup (not saved yet)"),page2);
+  grpbox2a = new QGroupBox (i18n("Mixer channel setup"),page2);
   QLabel *qlb,*qlbd;
 
   const int entryWidth = 100;
