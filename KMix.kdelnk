@@ -27,7 +27,7 @@ Comment[pt_BR]=Controla o volume dos canais sonoros
 Comment[ro]=Program de mixat canalele plãcii de sunet
 Comment[ru]=õĞÒÁ×ÌÑÅÔ ÇÒÏÍËÏÓÔØÀ Ú×ÕËÏ×ÙÈ ËÁÎÁÌÏ×
 Comment[sk]=Nastavenie hlasitosti zvukovıch kanálov
-Comment[sv]=Kontrollerar volymen på ljud kanalerna
+Comment[sv]=Kontrollerar ljudkanalernas volym
 Name=Sound Mixer Panel
 Name[cs]=Nastavení hlasitosti
 Name[de]=Lautstärkeregelung
@@ -45,7 +45,7 @@ Name[pt_BR]=Mixer
 Name[ro]=Panou de mixaj
 Name[ru]=íÉËÛÅÒ
 Name[sk]=Nastavenie hlasitosti
-Name[sv]=Ljud Mixer
+Name[sv]=Ljudmixningspanel
 Icon=kmix.xpm
 MiniIcon=kmix.xpm
 
