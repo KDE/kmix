@@ -230,7 +230,7 @@ void KMix::applyOptions()
 void KMix::createWidgets()
 {
   QPixmap miniDevPM;
-  QPixmap WMminiIcon = ICON("mixer_mini.xpm");
+  QPixmap WMminiIcon = BarIcon("mixer_mini.xpm");
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
@@ -282,27 +282,27 @@ void KMix::createWidgets()
     switch (iconnum) {
       // TODO: Should be replaceable by user.
     case audioIcon:
-      miniDevPM = ICON("mix_audio.xpm");	break;
+      miniDevPM = BarIcon("mix_audio.xpm");	break;
     case bassIcon:
-      miniDevPM = ICON("mix_bass.xpm");	break;
+      miniDevPM = BarIcon("mix_bass.xpm");	break;
     case cdIcon:
-      miniDevPM = ICON("mix_cd.xpm");	break;
+      miniDevPM = BarIcon("mix_cd.xpm");	break;
     case extIcon:
-      miniDevPM = ICON("mix_ext.xpm");	break;
+      miniDevPM = BarIcon("mix_ext.xpm");	break;
     case microphoneIcon:
-      miniDevPM = ICON("mix_microphone.xpm");break;
+      miniDevPM = BarIcon("mix_microphone.xpm");break;
     case midiIcon:
-      miniDevPM = ICON("mix_midi.xpm");	break;
+      miniDevPM = BarIcon("mix_midi.xpm");	break;
     case recmonIcon:
-      miniDevPM = ICON("mix_recmon.xpm");	break;
+      miniDevPM = BarIcon("mix_recmon.xpm");	break;
     case trebleIcon:
-      miniDevPM = ICON("mix_treble.xpm");	break;
+      miniDevPM = BarIcon("mix_treble.xpm");	break;
     case unknownIcon:
-      miniDevPM = ICON("mix_unknown.xpm");	break;
+      miniDevPM = BarIcon("mix_unknown.xpm");	break;
     case volumeIcon:
-      miniDevPM = ICON("mix_volume.xpm");	break;
+      miniDevPM = BarIcon("mix_volume.xpm");	break;
     default:
-      miniDevPM = ICON("mix_unknown.xpm");	break;
+      miniDevPM = BarIcon("mix_unknown.xpm");	break;
     }
 
     QLabel *qb = new QLabel(Container);

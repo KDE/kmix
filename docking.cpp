@@ -48,7 +48,7 @@ KDockWidget::KDockWidget(const QPixmap& dockPixmap, const char* name)
 // --- set a new dock Pixmap by filename ---
 void KDockWidget::setPixmap(const QString& dockPixmapName)
 {
-  setPixmap(ICON(dockPixmapName));
+  setPixmap(BarIcon(dockPixmapName));
 }
 
 
