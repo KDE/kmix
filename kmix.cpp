@@ -488,7 +488,7 @@ KMixWindow::initMixerWidgets()
 bool
 KMixWindow::queryClose ( )
 {
-    if ( m_showDockWidget )
+    if ( m_showDockWidget && !kapp->sessionSaving() )
     {
 		  hide();
 		 return false;
