@@ -48,7 +48,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
    m_show = true;
    m_split = false;
 
-   connect( this, SIGNAL(rightMouseClick()), SLOT(contectMenu()) );
+   connect( this, SIGNAL(rightMouseClick()), SLOT(contextMenu()) );
 
    QBoxLayout *layout = new QVBoxLayout( this );
 
