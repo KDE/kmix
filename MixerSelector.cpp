@@ -75,7 +75,7 @@ MixerSelector::MixerSelector(QPtrList<Mixer> &mixers, QWidget * parent, const ch
 	connect (hwNames, SIGNAL(highlighted(const QString&)), this, SLOT(newMixerSelected(const QString&)) );
 	newMixerSelected( hwNames->currentText() );
 	
-	distributeCheck = new QCheckBox(i18n("&Distribution to multiple Tabs allowed"), vbox);
+	distributeCheck = new QCheckBox(i18n("&Distribution to multiple tabs allowed"), vbox);
 	distributeCheck->setChecked(true);
 
 	dialog->setMinimumSize( 300, 180);

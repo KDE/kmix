@@ -225,7 +225,7 @@ void KMixerWidget::addActionToPopup( KAction *action ) {
 void KMixerWidget::rightMouseClicked()
 {
    KPopupMenu *menu = new KPopupMenu( this );
-   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device settings") );
+   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
    KAction *a = m_actions->action( "show_all" );
    if ( a ) a->plug( menu );
