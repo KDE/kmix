@@ -7,4 +7,4 @@ pics_DATA = mix_audio.png mix_bass.png mix_cd.png mix_ext.png \
 
 EXTRA_DIST = $(pics_DATA) 
 
-KDE_ICON=AUTO
+KDE_ICON=kmix
