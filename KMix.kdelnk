@@ -20,6 +20,7 @@ Comment[pt]=Controla o volume dos canais sonoros
 Comment[cs]=Nastavení hlasitosti zvukových kanálù
 Comment[sk]=Nastavenie hlasitosti zvukových kanálov
 Comment[hr]=Kontrolira jaèinu zvuka
+Comment[sv]=Kontrollerar volymen på ljud kanalerna
 Name=Sound Mixer Panel
 Name[fr]=Console de mixage
 Name[de]=Lautstärkeregelung
@@ -30,5 +31,7 @@ Name[pt]=Mesa de Mistura
 Name[cs]=Nasvavení hlasitosti
 Name[sk]=Nasvavenie hlasitosti
 Name[hr]=Sound Mixer Ploèa
+Name[sv]=Ljud Mixer
 Icon=kmix.xpm
 MiniIcon=kmix.xpm
+
