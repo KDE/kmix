@@ -132,13 +132,13 @@ KMixWindow::~KMixWindow()
 void KMixWindow::initActions()
 {
     // file menu
-    (void)new KAction( i18n("&New mixer tab"), "filenew", 0, this,
+    (void)new KAction( i18n("&New Mixer Tab"), "filenew", 0, this,
                        SLOT(newMixer()), actionCollection(), "file_new_tab" );
-    (void)new KAction( i18n("&Close mixer tab"), "fileclose", 0, this,
+    (void)new KAction( i18n("&Close Mixer Tab"), "fileclose", 0, this,
                        SLOT(closeMixer()), actionCollection(), "file_close_tab" );
-    (void)new KAction( i18n("&Restore default volumes"), 0, this, SLOT(loadVolumes()),
+    (void)new KAction( i18n("&Restore Default Volumes"), 0, this, SLOT(loadVolumes()),
                        actionCollection(), "file_load_volume" );
-    (void)new KAction( i18n("&Save current volumes as default"), 0, this, SLOT(saveVolumes()),
+    (void)new KAction( i18n("&Save Current Volumes as Default"), 0, this, SLOT(saveVolumes()),
                        actionCollection(), "file_save_volume" );
     KStdAction::quit( this, SLOT(quit()), actionCollection());
 
