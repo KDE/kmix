@@ -11,7 +11,7 @@ kmix_LDADD =   $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 kmixclient_SOURCES	= kmixclient.cpp
-kmixclient_LDADD	= $(LIB_KDECORE)
+kmixclient_LDADD	= $(LIB_KDECORE) $(LIBAUDIO)
 kmixclient_LDFLAGS	= $(all_libraries) $(KDE_RPATH)
 
 
