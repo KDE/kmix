@@ -30,8 +30,10 @@
 #include <kdialog.h>
 #include <kaudioplayer.h>
 #include <kiconloader.h>
+#include <kdebug.h>
 
 #include <qtooltip.h>
+#include <X11/Xlib.h>
 
 #include "mixer.h"
 #include "mixdevicewidget.h"
@@ -156,7 +158,9 @@ KMixDockWidget::ignoreNextEvent()
 void 
 KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
-	if ( me->button() == MidButton )
+	// esken: exchanged LeftButton and MidButton, because helio changed mousePressEvent() to MidButton.
+	//        And using MidButton for showing TrayVolumeControl is more logical (you use the MidButton wheel!)
+	if ( me->button() == LeftButton )
 	{
 		if( parentWidget()->isVisible() )
 			parentWidget()->hide();
@@ -164,7 +168,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			parentWidget()->show();
 		return;
 	}
-	else if ( me->button() == LeftButton )
+	else if ( me->button() == MidButton )
 	{
 		if ( m_ignoreNextEvent )
 		{
@@ -200,6 +204,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		
 		masterVol->move(x, y);  // so that the mouse is outside of the widget
 		masterVol->show();
+		XWarpPointer(masterVol->x11Display(), None, masterVol->handle(), 0,0,0,0, w/2, h/2);
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
