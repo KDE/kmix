@@ -393,6 +393,10 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 		sw = !sw;
 
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
+	if ( !elem )
+	{
+		return 0;
+	}
 
 	if (snd_mixer_selem_has_capture_switch_joined( elem ) )
 	{
