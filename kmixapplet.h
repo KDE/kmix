@@ -22,22 +22,23 @@
 #ifndef KMIXAPPLET_H
 #define KMIXAPPLET_H
 
+// Qt
+#include <qlayout.h>
+#include <qptrlist.h>
 #include <qwidget.h>
-#include <kaction.h>
+
+// KDE
+#include <kaboutdata.h>
 #include <kdialogbase.h>
 #include <kpanelapplet.h>
-#include <qptrlist.h>
-#include <kcolordialog.h>
-#include <kaboutdata.h>
 
+//KMix
 #include "viewapplet.h"
 
 class Mixer;
 class ColorWidget;
 class KMixApplet;
 
-// External main pointer
-extern KMixApplet *kmixApp;
 
 class AppletConfigDialog : public KDialogBase
 {
@@ -55,11 +56,6 @@ class AppletConfigDialog : public KDialogBase
    void setUseCustomColors(bool);
    bool useCustomColors() const;
 
-   /*
-   void setReverseDirection(bool);
-   bool reverseDirection() const;
-   */
-
   protected slots:
    virtual void slotOk();
    virtual void slotApply();
@@ -75,8 +71,7 @@ class KMixApplet : public KPanelApplet
 {
    Q_OBJECT
 
-  public:
-
+public:
    KMixApplet( const QString& configFile, Type t = Normal,
 	       QWidget *parent = 0, const char *name = 0 );
    virtual ~KMixApplet();
@@ -85,56 +80,50 @@ class KMixApplet : public KPanelApplet
        QColor high, low, back, mutedHigh, mutedLow, mutedBack;
    };
 
-   //   int widthForHeight(int height) const;
-   //   int heightForWidth(int width) const; 
-   
    void about();
    void help();
    void preferences();   
    void reportBug();
+
    QSize sizeHint() const;
-  protected slots:
+   QSizePolicy sizePolicy() const;
+   int widthForHeight(int) const;
+   int heightForWidth(int) const;
+
+protected slots:
    void selectMixer();
    void applyPreferences();
    void preferencesDone();
   
-  protected:
+protected:
    void resizeEvent( QResizeEvent * );
    void saveConfig();
    void saveConfig( KConfig *config, const QString &grp );
+   void loadConfig();
    void loadConfig( KConfig *config, const QString &grp );
 
-  private:
-   /*
-   void setIcons( bool on );
-   void setLabels( bool on );
-   void setTicks( bool on );
-   */
+private:
+   void positionChange(Position);
+   void setColors();
    void setColors( const Colors &color );
+   void initMixer();
 
    ViewApplet *m_mixerWidget;
    QPushButton *m_errorLabel;
-   int m_lockedLayout;
    AppletConfigDialog *m_pref;
-   //bool reversedDir; //  ! unupported (was: reverses direction of sliders and icon position)
-   void positionChange(Position);
-   //   Direction checkReverse(Direction);
-   //   Direction getDirectionFromPositionHack(Position pos) const;
-   void setColors();
 
-   static int s_instCount;
-   static QPtrList<Mixer> *s_mixers;
+   static int             s_instCount;
+   static QPtrList<Mixer> s_mixers;
+   Mixer                  *_mixer;
 
-   KMixApplet::Colors m_colors;
+   KMixApplet::Colors _colors;
+   bool               _customColors;
 
-   bool _customColors;
-   bool _iconsEnabled;
-   bool _labelsEnabled;
-   bool _ticksEnabled;
-   
-   int mixerNum;
-   //QString mixerName;
-   Mixer *_mixer;
+   QLayout* _layout;
+
+   int     _mixerNum;
+   QString _mixerName;
+
    KAboutData m_aboutData;
 };
 

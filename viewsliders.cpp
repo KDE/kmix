@@ -96,7 +96,7 @@ QWidget* ViewSliders::add(MixDevice *md)
     return mdw;
 }
 
-QSize ViewSliders::sizeHint() {
+QSize ViewSliders::sizeHint() const {
     //    kdDebug(67100) << "ViewSliders::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( _layoutMDW->sizeHint() );
 }

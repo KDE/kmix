@@ -66,6 +66,11 @@ bool KLedButton::eventFilter( QObject* /*obj*/ , QEvent* /*ev*/ ) {
 
 }	
 
+QSize KLedButton::sizeHint() const
+{
+    return size();
+}
+
 QSizePolicy KLedButton::sizePolicy () const
 {
     return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

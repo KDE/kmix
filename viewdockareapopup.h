@@ -28,7 +28,7 @@ public:
     virtual void refreshVolumeLevels();
     virtual void showContextMenu();
 
-    QSize sizeHint();
+    QSize sizeHint() const;
     MixDeviceWidget* getMdwHACK();
 
 protected:

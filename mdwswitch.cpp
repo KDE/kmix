@@ -166,7 +166,7 @@ void MDWSwitch::showContextMenu()
     menu->popup( pos );
 }
 
-QSize MDWSwitch::sizeHint() {
+QSize MDWSwitch::sizeHint() const {
     if ( _layout != 0 ) {
 	return _layout->sizeHint();
     }

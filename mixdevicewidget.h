@@ -64,32 +64,21 @@ public:
     void addActionToPopup( KAction *action );
 
     virtual bool isDisabled() const;
-    //    virtual bool isMuted() const;
-    //    virtual bool isRecsrc() const;
-    //    virtual bool hasMute() const;
-    // virtual bool isLabeled() const;
     MixDevice* mixDevice() { return m_mixdevice; };
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
     virtual void setLabeled( bool value );
     virtual void setMutedColors( QColor high, QColor low, QColor back );
-    QSize sizeHint();
+    QSize sizeHint() const;
 
     virtual KGlobalAccel *keys(void);
 
 public slots:
-//    virtual void toggleRecsrc();
-    //    virtual void toggleMuted();
     virtual void setDisabled( bool value );
     virtual void defineKeys();
     virtual void update();
     virtual void showContextMenu();
-    //    bool eventFilter( QObject*, QEvent* );
-
-protected slots:
-//    void setRecsrc( bool value );
-    //    virtual void setMuted( bool value );
 
 signals:
     void newVolume( int num, Volume volume );
@@ -98,10 +87,7 @@ signals:
     void newRecsrc( int num, bool on );
 
 protected slots:
-
     void volumeChange( int );
-    //virtual void increaseVolume();
-    //virtual void decreaseVolume();
     virtual void setVolume( int channel, int volume );
     virtual void setVolume( Volume volume );
 

@@ -44,6 +44,12 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
 	paint.drawText( -height()+2, width(), QString::fromUtf8(name()) );
 }
 
-QSize VerticalText::sizeHint() {
+QSize VerticalText::sizeHint() const {
     return QSize(20,100); // !! UGLY. Should be reworked
 }
+
+QSizePolicy VerticalText::sizePolicy () const
+{
+    return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+}
+

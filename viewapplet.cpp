@@ -9,8 +9,7 @@
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * This program is distributed in the hope that it will be useful, * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
  *
@@ -51,11 +50,11 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase
 
     if ( _orientation == Qt::Horizontal ) {
 	_layoutMDW = new QHBoxLayout( this );
-	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
     else {
 	_layoutMDW = new QVBoxLayout( this );
-	setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 
 
@@ -122,28 +121,33 @@ QWidget* ViewApplet::add(MixDevice *md)
     return mdw;
 }
 
-QSize ViewApplet::sizeHint() {
-    // kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
-
-    // Basically out main layout knows very good what the sizes should be
-    QSize qsz = _layoutMDW->sizeHint();
-    // But the panel is limited - thus constrain the size by the height() or width() of the panel
-    if ( _orientation == Qt::Horizontal ) {
-	qsz.setHeight( parentWidget()->height() );
-    }
-    else {
-	qsz.setWidth ( parentWidget()->width() );
-    }
-    return qsz;
-}
-
 void ViewApplet::constructionFinished() {
     _layoutMDW->activate();
 }
 
+
+QSize ViewApplet::sizeHint() const {
+    // Basically out main layout knows very good what the sizes should be
+    QSize qsz = _layoutMDW->sizeHint();
+    //kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << qsz << "\n";
+    return qsz;
+}
+
+QSizePolicy ViewApplet::sizePolicy() const {
+    if ( _orientation == Qt::Horizontal ) {
+	//kdDebug(67100) << "ViewApplet::sizePolicy=(Fixed,Expanding)\n";
+	return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    }
+    else {
+	//kdDebug(67100) << "ViewApplet::sizePolicy=(Expanding,Fixed)\n";
+	return QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    }
+}
+
+
 void ViewApplet::resizeEvent(QResizeEvent *qre)
 {
-    //    kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
+    //kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
     // decide whether we have to show or hide all icons
     bool showIcons = false;
     if ( _orientation == Qt::Horizontal ) {
@@ -170,6 +174,10 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
     }
     //    kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
     //QWidget::resizeEvent(qre);
+
+    // resizing changes our own sizeHint(), because we must take the new PanelSize in account.
+    // So updateGeometry() is amust for us.
+    updateGeometry();
 }
 
 
@@ -196,6 +204,16 @@ void ViewApplet::refreshVolumeLevels() {
 	 }
 	 mdw = _mdws.next();
     }
+}
+
+void ViewApplet::configurationUpdate() {
+    updateGeometry();
+    _layoutMDW->activate();
+    kdDebug(67100) << "ViewApplet::configurationUpdate()" << endl;
+    // the following "emit" is only here to be picked up by KMixApplet, because it has to
+    // - make sure the panel is informed about the size change
+    // - save the new configuration
+    //emit configurationUpdated();
 }
 
 #include "viewapplet.moc"

@@ -21,7 +21,7 @@ public:
     virtual void constructionFinished();
     virtual void configurationUpdate();
 
-    QSize sizeHint();
+    QSize sizeHint() const;
 
 public slots:
     virtual void refreshVolumeLevels();

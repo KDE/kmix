@@ -141,7 +141,7 @@ int ViewDockAreaPopup::advice() {
     }
 }
 
-QSize ViewDockAreaPopup::sizeHint() {
+QSize ViewDockAreaPopup::sizeHint() const {
     //    kdDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
     return( _mdw->sizeHint() );
 }

@@ -20,8 +20,10 @@ public:
     virtual void setMixSet(MixSet *mixset);
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
+    virtual void configurationUpdate();
 
-    QSize sizeHint();
+    QSize       sizeHint() const;
+    QSizePolicy sizePolicy() const;
     virtual void resizeEvent(QResizeEvent*);
 
 public slots:

@@ -711,7 +711,7 @@ void MDWSlider::showContextMenu() {
    menu->popup( pos );
 }
 
-QSize MDWSlider::sizeHint() {
+QSize MDWSlider::sizeHint() const {
     if ( _layout != 0 ) {
 	return _layout->sizeHint();
     }

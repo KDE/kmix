@@ -38,6 +38,7 @@ class KLedButton : public KLed  {
 	      QWidget *parent=0, const char *name=0);
    ~KLedButton();	
 
+   QSize sizeHint () const;
    QSizePolicy sizePolicy () const;
   signals:
    void stateChanged( bool newState );

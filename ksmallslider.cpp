@@ -220,7 +220,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
 {
 //    kdDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
    QPainter p( this );
-   
+
    int sliderPos = positionFromValue( QRangeControl::value() );
 
    // ------------------------ draw 3d border ---------------------------------------------
@@ -394,6 +394,7 @@ int KSmallSlider::goodPart( const QPoint &p ) const
     }
 }
 
+/***************** SIZE STUFF START ***************/
 QSize KSmallSlider::sizeHint() const
 {
     //constPolish();
@@ -407,7 +408,6 @@ QSize KSmallSlider::sizeHint() const
 }
 
 
-/***************** SIZE STUFF START ***************/
 QSize KSmallSlider::minimumSizeHint() const
 {
     QSize s(10,10);

@@ -60,7 +60,7 @@ public:
     ~MDWSwitch();
 
     void addActionToPopup( KAction *action );
-    QSize sizeHint();
+    QSize sizeHint() const;
     void setBackgroundMode(BackgroundMode m);
     bool eventFilter( QObject* obj, QEvent* e );
 

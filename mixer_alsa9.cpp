@@ -1,6 +1,6 @@
 /*
  *              KMix -- KDE's full featured mini mixer
- *              Alsa 0.9x - Based on original alsamixer code
+ *              Alsa 0.9x and 1.0 - Based on original alsamixer code
  *              from alsa-project ( www/alsa-project.org )
  *
  *
@@ -626,7 +626,7 @@ bool Mixer_ALSA::hasBrokenRecSourceHandling() {
 QString
 ALSA_getDriverName()
 {
-	return "ALSA0.9";
+	return "ALSA";
 }
 
 

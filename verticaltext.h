@@ -6,15 +6,14 @@
 class VerticalText : public QWidget
 {
 public:
-	VerticalText(QWidget * parent, const char * name, WFlags f = 0);
-	~VerticalText();
+    VerticalText(QWidget * parent, const char * name, WFlags f = 0);
+    ~VerticalText();
 
-    QSize sizeHint();
+    QSize sizeHint() const;
+    QSizePolicy sizePolicy () const;
 	
 protected:
-	void paintEvent ( QPaintEvent * event );
-
+    void paintEvent ( QPaintEvent * event );
 };
-
 
 #endif
