@@ -456,7 +456,7 @@ void KMixWindow::newMixer()
 
    bool ok = FALSE;
    QString res = QInputDialog::getItem( i18n("Mixers"),
-                                        i18n( "Available mixers" ),
+                                        i18n("Available mixers"),
 					lst, 1, FALSE, &ok, this );
    if ( ok )
    {

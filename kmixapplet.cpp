@@ -239,8 +239,9 @@ void KMixApplet::selectMixer()
    }
 
    bool ok = FALSE;
-   QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst,
-                                        1, TRUE, &ok, this );
+   QString res = QInputDialog::getItem( i18n("Mixers"),
+                                        i18n("Available mixers"),
+					lst, 1, FALSE, &ok, this );
    if ( ok )
    {
       Mixer *mixer = s_mixers->at( lst.findIndex( res ) );
