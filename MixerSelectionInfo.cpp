@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * MixerSelector
+ * MixerSelectionInfo
  * Copyright (C) 2003 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
@@ -25,7 +25,9 @@
 
 /**
  * Stores information of a mixer selection done with the MixerSelector dialog.
- * num is the number from the list of mixers
+ * num is the number from the list of mixers.
+ * Hint: The deviceTypeMask[123] design is probably a bit hacky. It should be
+ *  reworked later if we cannot live with it.
  */
 MixerSelectionInfo::MixerSelectionInfo(int num, QString name, bool tabDistribution,
 		MixDevice::DeviceCategory deviceTypeMask1,
