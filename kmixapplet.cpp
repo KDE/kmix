@@ -535,6 +535,10 @@ void KMixApplet::setColors()
 
 void KMixApplet::setColors( const Colors &color )
 {
+    if ( m_mixerWidget == 0 ) {
+        // can happen for example after a paletteChange()
+        return;
+    }
     QPtrList<QWidget> &mdws = m_mixerWidget->_mdws;
     for ( QWidget* qmdw=mdws.first(); qmdw != 0; qmdw=mdws.next() ) {
 	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- temporary check. Later we *know* that it is correct
