@@ -505,6 +505,7 @@ void MDWSlider::volumeChange( int )
       QWidget *slider = m_sliders.first();
       Volume::ChannelID chid  = _slidersChids.first();
 
+      // !!!! HERE IS A BUG !!!!
       int sliderValue = 0;
       if ( slider->inherits( "KSmallSlider" ) )
       {
