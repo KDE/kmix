@@ -13,6 +13,7 @@ noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 
 
 METASOURCES = AUTO
+
 kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	kmixerwidget.cpp channel.cpp mixer.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp mixdevicewidget.cpp VerticalText.cpp mixerIface.skel \
