@@ -186,7 +186,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
-    kdDebug(67100) << "KMixApplet::KMixApplet()" << endl;
+    //kdDebug(67100) << "KMixApplet::KMixApplet()" << endl;
     kmixApp = this;
 
     // init static vars
@@ -212,7 +212,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	bool autodetectionFinished = false;
 	for( int drv=0; drv<drvNum; drv++ )
 	{
-	    kdDebug(67100) << "KMixApplet::KMixApplet() detecting drv=" << drv << endl;
 	    if ( autodetectionFinished ) {
 		// sane exit from loop
 		break;
@@ -222,7 +221,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	    // The loop will break as soon as an error is detected (e.g. on 3rd loop when 2 soundcards are installed)
 	    for( int dev=0; dev<64; dev++ )
 	    {
-		kdDebug(67100) << "KMixApplet::KMixApplet() detecting drv=" << drv << "dev=" << dev << endl;
+		//kdDebug(67100) << "KMixApplet::KMixApplet() detecting drv=" << drv << "dev=" << dev << endl;
 		Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
 		int mixerError = mixer->grab();
 		if ( mixerError!=0 )
@@ -255,7 +254,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 		}
 
 		if ( mixer != 0 ) {
-		    kdDebug(67100) << "KMixApplet::KMixApplet() appending mixer: drv=" << drv << "dev=" << dev << endl;
 		    s_mixers->append( mixer );
 		}
 
@@ -308,7 +306,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     }	
     s_instCount++;
 	
-    kdDebug(67100) << "KMixApplet::KMixApplet() init continue 1" <<  endl;
     KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
 	
     // get configuration
@@ -327,7 +324,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     m_colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
 
     // find out to use which mixer
-    kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer" <<  endl;
     mixerNum = cfg->readNumEntry( "Mixer", -1 );
     const QString& mixerName = cfg->readEntry( "MixerName", QString::null );
     _mixer = 0;
@@ -340,7 +336,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	
     // don't prompt for a mixer if there is just one available
     if ( !_mixer && s_mixers->count() == 1 ) {
-	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer: using default first mixer" <<  endl;
 	_mixer = s_mixers->first();
     }
 	
@@ -350,17 +345,12 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     if ( !_mixer )
     {
 	m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
-	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 2" <<  endl;
 	m_errorLabel->setGeometry(0, 0, m_errorLabel->sizeHint().width(),  m_errorLabel->sizeHint().height() );
-	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 3" <<  endl;
 	resize( m_errorLabel->sizeHint() );
-	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 4" <<  endl;
 	connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
-	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer 5" <<  endl;
     }
     else {
 	// To take over reversedDir and (more important) to create the mixer widget
-	kdDebug(67100) << "KMixApplet::KMixApplet() init find mixer OK" <<  endl;
 	positionChange(position());
     }
     m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
@@ -489,7 +479,7 @@ void KMixApplet::updat eLayou tNow()
 
 void KMixApplet::resizeEvent(QResizeEvent *e)
 {
-    kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
+    //kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
     if ( m_mixerWidget ) m_mixerWidget->resize( e->size().width(), e->size().height() );
     if ( m_errorLabel  ) m_errorLabel ->resize( e->size().width(), e->size().height() );
     KPanelApplet::resizeEvent( e );
@@ -539,7 +529,7 @@ void KMixApplet::positionChange(Position pos) {
 	m_mixerWidget->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
-	kdDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
+	//kdDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
 	m_mixerWidget->show();
 	connect( _mixer, SIGNAL(newVolumeLevels()), m_mixerWidget, SLOT(refreshVolumeLevels()) );
     }

@@ -142,7 +142,7 @@ void ViewBase::popupReset()
 */
 void ViewBase::showContextMenu()
 {
-    kdDebug(67100) << "ViewBase::showContextMenu()" << endl;
+    //kdDebug(67100) << "ViewBase::showContextMenu()" << endl;
     popupReset();
 
     QPoint pos = QCursor::pos();
@@ -171,9 +171,9 @@ void ViewBase::configureView() {
 }
 
 void ViewBase::toggleMenuBarSlot() {
-    kdDebug(67100) << "ViewBase::toggleMenuBarSlot() start\n";
+    //kdDebug(67100) << "ViewBase::toggleMenuBarSlot() start\n";
     emit toggleMenuBar();
-    kdDebug(67100) << "ViewBase::toggleMenuBarSlot() done\n";
+    //kdDebug(67100) << "ViewBase::toggleMenuBarSlot() done\n";
 }
 
 // ---------- Popup stuff END ---------------------

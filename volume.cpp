@@ -62,7 +62,6 @@ Volume::Volume( int channels, long maxVolume ) {
 
 Volume::Volume( const Volume &v )
 {
-    //    kdDebug(67100) << "Volume::copy-constructor running on vol " << v << "\n";
     _chmask     = v._chmask;
     _maxVolume  = v._maxVolume;
     _minVolume  = v._minVolume;
@@ -175,25 +174,10 @@ long Volume::getAvgVolume() {
     long long sumOfActiveVolumes = 0;
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
         if ( _channelMaskEnum[i] & _chmask ) {
-	    /*
-	    kdDebug(67100) << "Volume::getAvgVolume "
-			   << "avgVolumeCounter=" << avgVolumeCounter
-			   << " sumOfActiveVolumes=" << sumOfActiveVolumes
-			   << " i=" << i
-			   << " _volumes[i]" << _volumes[i]
-			   << endl;
-	    */
-
             avgVolumeCounter++;
             sumOfActiveVolumes += _volumes[i];
         }
     }
-    /*
-    kdDebug(67100) << "Volume::getAvgVolume FINAL "
-		   << "avgVolumeCounter=" << avgVolumeCounter
-		   << " sumOfActiveVolumes=" << sumOfActiveVolumes
-		   << endl;
-    */
     if (avgVolumeCounter != 0) {
         sumOfActiveVolumes /= avgVolumeCounter;
     }

@@ -182,13 +182,11 @@ QSize MDWSwitch::sizeHint() {
     associated KAction like the context menu.
 */
 void MDWSwitch::toggleSwitch() {
-    kdDebug(67100) << "MDWSwitch::toggleSwitch()" << endl;
     setSwitch( !m_mixdevice->isMuted() );
 }
 
 void MDWSwitch::setSwitch(bool value)
 {
-    kdDebug(67100) << "MDWSwitch::toggleSwitch()" << value << endl;
     if (  m_mixdevice->isSwitch() ) {
 	// Attention: Please note that we are using the "muted" flag
 	//            This has reversed semantics:
@@ -204,12 +202,10 @@ void MDWSwitch::setSwitch(bool value)
 
 void MDWSwitch::setDisabled()
 {
-    // kdDebug(67100) << "MDWSwitch::setDisabled()" << endl;
     setDisabled( true );
 }
 
 void MDWSwitch::setDisabled( bool value ) {
-    // kdDebug(67100) << "MDWSwitch::setDisabled(bool) " << value << endl;
     if ( m_disabled!=value)
     {
 	value ? hide() : show();

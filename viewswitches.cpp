@@ -87,7 +87,7 @@ QWidget* ViewSwitches::add(MixDevice *md)
 }
 
 QSize ViewSwitches::sizeHint() {
-    kdDebug(67100) << "ViewSwitches::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    //kdDebug(67100) << "ViewSwitches::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( _layoutMDW->sizeHint() );
 }
 

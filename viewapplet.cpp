@@ -101,7 +101,7 @@ QWidget* ViewApplet::add(MixDevice *md)
 }
 
 QSize ViewApplet::sizeHint() {
-    kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    //kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( _layoutMDW->sizeHint() );
 }
 
@@ -111,7 +111,7 @@ void ViewApplet::constructionFinished() {
 
 void ViewApplet::resizeEvent(QResizeEvent *e)
 {
-    kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << e->size() << endl;
+    //kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << e->size() << endl;
 }
 
 

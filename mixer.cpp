@@ -227,16 +227,6 @@ void Mixer::readSetFromHW()
   MixDevice* md;
   for( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
     {
-	/*
-	// DEBUG START
-	if ( md->num() == 0 ) {
-	    kdDebug(67100) << "Mixer::readSetFromHW(): vol avg=" << md->getVolume().getAvgVolume()
-			   << "  left=" <<  md->getVolume().getVolume(Volume::LEFT)
-			   << "  right=" <<  md->getVolume().getVolume(Volume::RIGHT)
-			   << endl;
-	}
-	// DEBUG END
-	*/
       Volume& vol = md->getVolume();
       readVolumeFromHW( md->num(), vol );
       /*
