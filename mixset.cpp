@@ -67,5 +67,5 @@ void MixSet::write( KConfig *config, const QString& grp )
 void MixSet::setName( const QString &name )
 {
     m_name = name;
-}
+};
 

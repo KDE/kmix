@@ -283,7 +283,7 @@ int Mixer_OSS::readVolumeFromHW( int devnum, Volume &vol )
   else
     {
       vol.setVolume( Volume::LEFT, (volume & 0x7f));
-      if( vol.channels() > 1 )
+      if( vol.count() > 1 )
         vol.setVolume( Volume::RIGHT, ((volume>>8) & 0x7f));
       //fprintf(stderr, "Mixer_OSS::readVolumeFromHW(%i,vol) set vol %i %i\n", devnum,  vol.getVolume(Volume::LEFT), vol.getVolume(Volume::RIGHT));
 	return 0;
@@ -297,7 +297,7 @@ int Mixer_OSS::writeVolumeToHW( int devnum, Volume &vol )
   int volume;
   if( vol.isMuted() ) volume = 0;
   else
-    if ( vol.channels() > 1 )
+    if ( vol.count() > 1 )
       volume = vol[ Volume::LEFT ] + ((vol[ Volume::RIGHT ])<<8);
     else
       volume = vol[ Volume::LEFT ];

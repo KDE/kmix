@@ -32,6 +32,7 @@
 #include <kaudioplayer.h>
 #include <kiconloader.h>
 #include <kdebug.h>
+#include <kwin.h>
 
 #include <qapplication.h>
 #include <qcursor.h>
@@ -204,9 +205,6 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			return;
 		}
 		
-		QRect desktop = KGlobalSettings::desktopGeometry(this);
-
-		int w = _dockAreaPopup->width();
 		int h = _dockAreaPopup->height();
 		int x = this->mapToGlobal( QPoint( 0, 0 ) ).x() - this->width()/2;
 		int y = this->mapToGlobal( QPoint( 0, 0 ) ).y() - h + this->height();
@@ -215,6 +213,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 		_dockAreaPopup->show();
+                KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
@@ -246,7 +245,7 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
 
     if ( inc == 0 ) inc = 1;
 
-    for ( int i = 0; i < vol.channels(); i++ ) {
+    for ( int i = 0; i < vol.count(); i++ ) {
         int newVal = vol[i] + (inc * (e->delta() / 120));
         if( newVal < 0 ) newVal = 0;
         vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );

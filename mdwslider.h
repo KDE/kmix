@@ -61,7 +61,7 @@ public:
 	       bool showMuteLED, bool showRecordLED,
 	       bool small, Qt::Orientation,
 	       QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
-    ~MDWSlider();
+    ~MDWSlider() {}
 
     void addActionToPopup( KAction *action );
 

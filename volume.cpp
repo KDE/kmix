@@ -79,10 +79,9 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, long maxV
     _chmask     = chmask;
     _maxVolume  = maxVolume;
     _minVolume  = minVolume;
-    _maxVolumeRec  = _maxVolumeRec;
-    _minVolumeRec  = _minVolumeRec;
+    _maxVolumeRec  = maxVolumeRec;
+    _minVolumeRec  = minVolumeRec;
     _muted      = false;
-    //kdDebug(67100) << "Volume::init() initialized " << count() << " channels\n";
 }
 
 // @ compatibility
@@ -113,7 +112,6 @@ void Volume::setVolume( ChannelID chid, long vol)
  */
 void Volume::setVolume(const Volume &v)
 {
-    //kdDebug(67100) << "Volume::init() initialized " << count() << " channels\n";
      setVolume(v, (ChannelMask)(v._chmask&_chmask) );
 }
 
@@ -123,7 +121,6 @@ void Volume::setVolume(const Volume &v)
  * and match the ChannelMask given by chmask.
  */
 void Volume::setVolume(const Volume &v, ChannelMask chmask) {
-    //    _chmask = chmask;
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
         if ( _channelMaskEnum[i] & _chmask & chmask ) {
             // we are supposed to copy it
@@ -189,9 +186,15 @@ long Volume::getAvgVolume(ChannelMask chmask) {
     return (long)sumOfActiveVolumes;
 }
 
-// @deprecated
-int Volume::channels() {
-    return count();
+long Volume::getTopStereoVolume(ChannelMask chmask) {
+    long long topVolumeCount = 0;
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+        if ( (_channelMaskEnum[i] & _chmask) & chmask ) {
+			  if ( topVolumeCount < _volumes[i] )
+				  topVolumeCount = _volumes[i];
+        }
+    }
+    return (long)topVolumeCount;
 }
 
 int Volume::count() {
@@ -219,7 +222,7 @@ long Volume::volrange( int vol )
    else {
          return _maxVolume;
     }
-}
+};
 
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol) {
