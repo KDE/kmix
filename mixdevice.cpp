@@ -93,13 +93,6 @@ void MixDevice::setVolume( int channel, int volume )
   _volume.setVolume( (Volume::ChannelID)channel /* ARGH! */, volume );
 }
 
-/*
-void MixDevice::setVolume( Volume& vol )
-{
-   _volume.setVolume( vol, vol._chmask );
-}
-*/
-
 /**
  * This mehtod is currently only called on "kmixctrl --restore"
  *
@@ -123,7 +116,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
    if (vr!=-1) {
        chMask = (Volume::ChannelMask)(chMask | Volume::MRIGHT);
    }
-   
+
    /*
     * Now start construction a temporary Volume object.
     * We take the maxvol and minvol values from _volume, which is already constructed.

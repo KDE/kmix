@@ -23,7 +23,10 @@ class MixDevice : public QObject
       // For each ChannelType a special icon exists
       enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
                         MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME,
-                        VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97 };
+                        VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97,
+			SURROUND_BACK, SURROUND_LFE, SURROUND_CENTERFRONT, SURROUND_CENTERBACK
+     };
+
 
       // The DeviceCategory tells, how "important" a MixDevice is. See _category.
       // It is used in bitmasks, so you must use values of 2^n .
@@ -46,15 +49,13 @@ SLIDER );
       bool hasMute()         { return _mute; }
 
       void setMuted(bool value)            { _volume.setMuted( value ); };
-      //void setVolume( Volume &volume );
       void setVolume( int channel, int volume );
       void setRecSource( bool rec ) { _recSource = rec; }
-      //long getVolume( int channel );
       long getVolume(Volume::ChannelID chid);
       Volume& getVolume();
       long getAvgVolume();
-  long maxVolume();
-  long minVolume();
+      long maxVolume();
+      long minVolume();
 
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
