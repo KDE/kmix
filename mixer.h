@@ -7,7 +7,7 @@
 #include <qstring.h>
 #include <qobject.h>
 #include <qintdict.h>
-//  #include <qlist.h>
+#include <qlist.h>
 //  #include <qarray.h>
 //  #include <qlabel.h>
 

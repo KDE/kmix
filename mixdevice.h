@@ -26,6 +26,7 @@
 
 #include <qwidget.h>
 #include <volume.h>
+#include <qlist.h>
 
 class KLed;
 class QSlider;
