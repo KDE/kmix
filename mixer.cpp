@@ -50,6 +50,7 @@ MixDevice::MixDevice(	int num, Volume vol, bool recordable, bool mute,
 	m_mute( mute ), m_category( category )
 {
 	m_switch = false;
+	m_recSource = false;
    if( name.isEmpty() )
       m_name = i18n("unknown");
    else
@@ -67,6 +68,7 @@ MixDevice::MixDevice(const MixDevice &md)
    m_type = md.m_type;
    m_num = md.m_num;
    m_recordable = md.m_recordable;
+   m_recSource  = md.m_recSource;
    m_category = md.m_category;
 	m_switch = md.m_switch;
 	m_mute = md.m_mute;
@@ -124,7 +126,7 @@ void MixDevice::write( KConfig *config, const QString& grp )
    config->writeEntry("volumeL", getVolume( Volume::LEFT ) );
    config->writeEntry("volumeR", getVolume( Volume::RIGHT ) );
    config->writeEntry("is_muted", (int)isMuted() );
-	config->writeEntry("is_recsrc", (int)isRecordable() );
+   config->writeEntry("is_recsrc", (int)isRecSource() );
    config->writeEntry("name", m_name);
 }
 
@@ -247,7 +249,7 @@ void Mixer::volumeLoad( KConfig *config )
    QPtrListIterator<MixDevice> it( m_mixDevices );
    for(MixDevice *md=it.toFirst(); md!=0; md=++it )
    {
-		setRecordSource( md->num(), md->isRecordable() );
+		//setRecordSource( md->num(), md->isRecSource() );
       writeVolumeToHW( md->num(), md->getVolume() );
    }
 }
@@ -411,26 +413,23 @@ QString Mixer::errorText(int mixer_error)
 
 void Mixer::writeMixSet( MixSet mset )
 {
-  kdDebug() << "+ Mixer:writeMixSet" << endl;
-  
   MixDevice* md;
   for( md = mset.first(); md != 0; md = mset.next() )
     {
       MixDevice* comp = m_mixDevices.first();
-      while( comp && comp->num() != md->num() ) comp = m_mixDevices.next();
-		setRecordSource( md->num(), md->isRecordable() );
+      while( comp && comp->num() != md->num() ) {
+		comp = m_mixDevices.next();
+      }
+      setRecordSource( md->num(), md->isRecSource() );
       comp->setVolume( md->getVolume() );
       comp->setMuted( md->isMuted() );
     }
-  
-  kdDebug() << "- Mixer:writeMixSet" << endl;
 }
 
 void Mixer::setRecordSource( int devnum, bool on )
 {
   if( !setRecsrcHW( devnum, on ) ) // others have to be updated
   {
-	//sleep (2);
 	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
 		bool isRecsrc =  isRecsrcHW( md->num() );
 		kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
@@ -442,7 +441,8 @@ void Mixer::setRecordSource( int devnum, bool on )
 	// just the actual mixdevice
 	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
 		  if( md->num() == devnum ) {
-			md->setRecSource( on );
+			bool isRecsrc =  isRecsrcHW( md->num() );
+			md->setRecSource( isRecsrc );
 		  }
 	}
 	emit newRecsrc();
@@ -527,7 +527,7 @@ bool Mixer::isRecordSource( int deviceidx )
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return false;
 
-  return mixdev->isRecordable();
+  return mixdev->isRecSource();
 }
 
 bool Mixer::isAvailableDevice( int deviceidx )
