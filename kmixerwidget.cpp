@@ -178,11 +178,8 @@ KMixerWidget::createDeviceWidgets()
       }
       else
       {
-         if( ! m_small )
-            mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
                                        m_direction, m_iWidget, this, mixDevice->name().latin1() );
-         else
-            continue;
       }
 
       connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
@@ -414,15 +411,17 @@ KMixerWidget::slotFillPopup()
 		n++;
 	}
 
-	// Switch
-	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Switches" ) );
-	for ( QStringList::Iterator it = sw.begin(); it != sw.end(); ++it )
+	if( ! m_small )
 	{
-		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-		m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
-		n++;
+		// Switch
+		m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Switches" ) );
+		for ( QStringList::Iterator it = sw.begin(); it != sw.end(); ++it )
+		{
+			m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
+			m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
+			n++;
+		}
 	}
-
 }
 
 void
