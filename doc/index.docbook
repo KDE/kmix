@@ -101,7 +101,7 @@ are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <para>&kmix; usage is straightforward. Every mixer device that your
 soundcard provides is represented by a volume slider. Mono devices
 have a single slider, stereo devices can have either one or two
-sliders, depending on your choice.  Additionaly there is a panning
+sliders, depending on your choice.  Additionally there is a panning
 slider at the bottom of the &kmix; window. If you have multiple
 soundcards, they will each have their own tab.</para>
 
@@ -208,7 +208,7 @@ Due to the limited space in the panel there are differences:
 <simplelist>
 <member>No main menu available.</member>
 <member>If you have multiple soundcards, you cannot change the selected mixer after the initial selection.</member>
-<member>No dock icon. If you want to use the dock item you must additionaly start &kmix; from the K-Menu (usually installed under <guilabel>K-Menu</guilabel> -> <guilabel>Mulitimedia</guilabel> -> <guilabel>Sound Mixer</guilabel>).</member>
+<member>No dock icon. If you want to use the dock item you must additionally start &kmix; from the K-Menu (usually installed under <guilabel>K-Menu</guilabel> -> <guilabel>Multimedia</guilabel> -> <guilabel>Sound Mixer</guilabel>).</member>
 <member>Icons only available when panel is big enough.</member>
 <member>No device name labels available.</member>
 <member>Configuration is done via panel menu - you can configure colors and slider direction there.</member>
@@ -273,7 +273,7 @@ to speed up &kmix;.</para></listitem>
 <para>
 Sometimes you want to do specialized things.
 Things like controlling the mixer from another application or muting the master device every day at 10pm.
-&kmix; has a DCOP interface that allows you to achive much with minimal work.
+&kmix; has a DCOP interface that allows you to achieve much with minimal work.
 You can start a shell and type <guilabel>dcop kmix</guilabel> to start exploring the &kmix; DCOP interface.
 The &kmix; specific interfaces are:</para>
 
@@ -316,7 +316,7 @@ The &kmix; specific interfaces are:</para>
 
 <varlistentry>
 <term><guilabel>dcop kmix Mixer1 setVolume 0 10</guilabel></term>
-<listitem><para>Sets the volume on the second mixer, device 0 to 10 percent. Device 0 is often the master device, but not always. If you want to quiten down the (first) master device on your second soundcard, you can use <guilabel>dcop kmix Mixer1 setMasterVolume 0</guilabel></para></listitem>
+<listitem><para>Sets the volume on the second mixer, device 0 to 10 percent. Device 0 is often the master device, but not always. If you want to quiet down the (first) master device on your second soundcard, you can use <guilabel>dcop kmix Mixer1 setMasterVolume 0</guilabel></para></listitem>
 </varlistentry>
 </variablelist>
 
