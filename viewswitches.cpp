@@ -123,7 +123,7 @@ void ViewSwitches::refreshVolumeLevels() {
 
 /**
    This implementation makes sure the BackgroundMode's are properly updated
-   after hiding/showing channels.
+   with teir alternating colors after hiding/showing channels.
 */
 void ViewSwitches::configurationUpdate() {
     bool backGoundModeToggler = true;
@@ -135,6 +135,8 @@ void ViewSwitches::configurationUpdate() {
 		    mdw->setBackgroundMode(PaletteBackground);
 		}
 		else {
+		    // !! Should use KGlobalSettings::alternateBackgroundColor()
+		    // or KGlobalSettings::calculateAlternateBackgroundColor() instead.
 		    mdw->setBackgroundMode( PaletteBase );
 		}
 		backGoundModeToggler = !backGoundModeToggler;

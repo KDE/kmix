@@ -30,10 +30,11 @@
 #include "kglobalsettings.h"
 #include "ksmallslider.h"
 
+/*
 static const QColor mutedHighColor2 = "#FFFFFF";
 static const QColor mutedLowColor2 = "#808080";
 static const QColor backColor2 = "#000000";
-
+*/
 
 KSmallSlider::KSmallSlider( QWidget *parent, const char *name )
     : QWidget( parent, name ),  _orientation(  Qt::Vertical )
@@ -466,6 +467,7 @@ int KSmallSlider::value() const
     return QRangeControl::value();
 }
 
+/*
 void KSmallSlider::paletteChange ( const QPalette &) {
     if ( grayed ) {
 	setColors(mutedLowColor2, mutedHighColor2, backColor2 );
@@ -476,6 +478,7 @@ void KSmallSlider::paletteChange ( const QPalette &) {
 	setColors(KGlobalSettings::baseColor(), KGlobalSettings::highlightColor(), backColor2 );
     }
 }
+*/
 
 void KSmallSlider::setGray( bool value )
 {

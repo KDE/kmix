@@ -55,7 +55,7 @@ class KSmallSlider : public QWidget, public QRangeControl
       void setPageStep( int );
       int  value() const;
 
-      void paletteChange ( const QPalette & oldPalette );
+    //void paletteChange ( const QPalette & oldPalette );
       bool gray() const;
 
 public slots:

@@ -274,7 +274,7 @@ void KMixApplet::loadConfig()
     _colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
     _colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
     _colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
-    
+
     loadConfig( cfg, "Widget");
 }
 
@@ -350,21 +350,6 @@ void KMixApplet::help()
 {
 }
 
-void KMixApplet::setColors()
-{
-    if ( !_customColors ) {
-        KMixApplet::Colors cols;
-        cols.high = highColor;
-        cols.low = lowColor;
-        cols.back = backColor;
-        cols.mutedHigh = mutedHighColor;
-        cols.mutedLow = mutedLowColor;
-        cols.mutedBack = mutedBackColor;
-
-        setColors( cols );
-    } else
-        setColors( _colors );
-}
 
 void KMixApplet::positionChange(Position pos) {
 
@@ -394,6 +379,7 @@ void KMixApplet::positionChange(Position pos) {
 }
 
 
+/************* GEOMETRY STUFF START ********************************/
 void KMixApplet::resizeEvent(QResizeEvent *e)
 {
     //kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
@@ -462,6 +448,18 @@ QSizePolicy KMixApplet::sizePolicy() const {
    }
 }
 
+
+void KMixApplet::reportBug()
+{
+    KBugReport bugReportDlg(this, true, &m_aboutData);
+    bugReportDlg.exec();
+}
+/************* GEOMETRY STUFF END ********************************/
+
+
+
+/******************* COLOR STUFF START ***********************************/
+
 void KMixApplet::preferences()
 {
     if ( !m_pref )
@@ -481,11 +479,6 @@ void KMixApplet::preferences()
     m_pref->raise();
 }
 
-void KMixApplet::reportBug()
-{
-    KBugReport bugReportDlg(this, true, &m_aboutData);
-    bugReportDlg.exec();
-}
 
 void KMixApplet::preferencesDone()
 {
@@ -513,6 +506,32 @@ void KMixApplet::applyPreferences()
     saveConfig();
 }
 
+void KMixApplet::paletteChange ( const QPalette &) {
+    if ( ! _customColors ) {
+	// We take over Colors from paletteChange(), if the user has not set custom colors.
+	// ignore the given QPalette and use the values from KGlobalSettings instead
+	_colors.high = KGlobalSettings::highlightColor();
+	_colors.low  = KGlobalSettings::baseColor();
+	_colors.back = backColor;
+	setColors( _colors );
+    }
+}
+
+void KMixApplet::setColors()
+{
+    if ( !_customColors ) {
+        KMixApplet::Colors cols;
+        cols.high = highColor;
+        cols.low = lowColor;
+        cols.back = backColor;
+        cols.mutedHigh = mutedHighColor;
+        cols.mutedLow = mutedLowColor;
+        cols.mutedBack = mutedBackColor;
+
+        setColors( cols );
+    } else
+        setColors( _colors );
+}
 
 void KMixApplet::setColors( const Colors &color )
 {
@@ -524,6 +543,8 @@ void KMixApplet::setColors( const Colors &color )
 	}
     }
 }
+
+/******************* COLOR STUFF END ***********************************/
 
 
 void KMixApplet::initMixer()

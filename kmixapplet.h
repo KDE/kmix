@@ -84,6 +84,7 @@ public:
    void help();
    void preferences();   
    void reportBug();
+   void paletteChange ( const QPalette & oldPalette );
 
    QSize sizeHint() const;
    QSizePolicy sizePolicy() const;
