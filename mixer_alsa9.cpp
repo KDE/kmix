@@ -86,7 +86,10 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 	if ( name.find( "ac97", 0, false ) != -1 ) return MixDevice::AC97;
 	if ( name.find( "coaxial", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "optical", 0, false ) != -1 ) return MixDevice::DIGITAL;
+	if ( name.find( "IEC958", 0, false ) != -1 ) return MixDevice::DIGITAL;
 	if ( name.find( "Mic" ) != -1 ) return MixDevice::MICROPHONE;
+	if ( name.find( "LFE" ) != -1 ) return MixDevice::BASS;
+	if ( name.find( "3D", 0, false ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
 	
 	return MixDevice::EXTERNAL;
 }
