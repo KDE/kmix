@@ -1,5 +1,9 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kmix" version="1">
+<kpartgui name="kmix" version="2">
+
+<ActionProperties>
+    <Action name="hide_kmixwindow" icon="window"/>
+</ActionProperties>
 
 <MenuBar>
  <Menu name="file"><text>&amp;File</text>
