@@ -30,7 +30,7 @@ class KMix : public KTopLevelWidget
   Q_OBJECT
 
 public:
-  KMix(int mixernum);
+  KMix(int mixernum, int SetNum);
   ~KMix();
   bool restore(int n);
   Mixer		*mix;

@@ -56,6 +56,7 @@ extern char	KMixErrors[6][200];
 int main(int argc, char **argv)
 {
   bool initonly = false;
+  int mixer_id  = 0;     // Use default mixer
 
   SetNumber = -1;
   /* Parse the command line arguments */
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
       exit(0);
     }
     else if (strcmp(argv[i],"-r") == 0) {
-      SetNumber   = 0;
+      SetNumber   = 1;
     }
     else if (strcmp(argv[i],"-init") == 0) {
       initonly   = true;
@@ -77,7 +78,10 @@ int main(int argc, char **argv)
       i=i+1;
       SetNumber   = atoi(argv[i]);
     }
+    else if ( i+1 == argc )
+      mixer_id = atoi(argv[i]);
   }
+
 
   if (!initonly) {
     // Don't initialize GUI, when we only do "init"
@@ -91,8 +95,10 @@ int main(int argc, char **argv)
 
     int n = 1;
     while (KTopLevelWidget::canBeRestored(n)) {
-      // !!! TODO: Read mixer number from session management
-      kmix = new KMix(0);
+      // I could read mixer number from session management.
+      // But the parameters should be passed by the SM, so this
+      // should work, too.
+      kmix = new KMix(mixer_id, SetNumber);
       kmix->restore(n);
       n++;
     }
@@ -100,22 +106,16 @@ int main(int argc, char **argv)
   }
   else {
     // MODE #2 and #3
-    int mixer_id;
-    if (argc > 1)
-      mixer_id = atoi(argv[argc - 1]);
-    else
-      mixer_id = 0;
-
     if ( initonly ) {
       // MODE #2 : Only initialize mixer, no GUI
       cout << "Doing initonly ... ";
-      initMix = new Mixer( mixer_id );
+      initMix = new Mixer( mixer_id, SetNumber );
       cout << "Finished\n";
       return 0;
     }
     else {
       // MODE #3 : Started regulary by the user
-      kmix = new KMix( mixer_id );
+      kmix = new KMix( mixer_id, SetNumber );
       return globalKapp->exec();
     }
   }
@@ -138,7 +138,7 @@ bool KMix::restore(int n)
 
 
 
-KMix::KMix(int mixernum)
+KMix::KMix(int mixernum, int SetNum)
 {
   KmConfig=KApplication::getKApplication()->getConfig();
 
@@ -152,7 +152,7 @@ KMix::KMix(int mixernum)
 
   KCM = new KCmManager(this);
   CHECK_PTR(KCM);
-  mix = new Mixer(mixernum);
+  mix = new Mixer(mixernum, SetNum);
   CHECK_PTR(mix);
 
   dock_widget = new DockWidget("dockw");

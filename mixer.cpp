@@ -100,7 +100,7 @@
 #endif
 
 
-// If you change the definition here, make sure to fix it in kmix.cpp, too.
+// If you change the definition here, make sure to fix the declaration in kmix.cpp, too.
 char KMixErrors[6][200]=
 {
   "kmix: This message should not appear. :-(",
@@ -129,13 +129,13 @@ char* MixerDevNames[17]={"Volume" , "Bass"  , "Treble"    , "Synth", "Pcm"  , \
 
 Mixer::Mixer()
 {
-  // use default mixer device
-  setupMixer(0);
+  // use default mixer device and no mixing set
+  setupMixer(0, -1);
 }
 
-Mixer::Mixer(int devnum)
+Mixer::Mixer(int devnum, int SetNum)
 {
-  setupMixer(devnum);
+  setupMixer(devnum, SetNum);
 }
 
 void Mixer::sessionSave()
@@ -151,7 +151,7 @@ int Mixer::grab()
 
   if (!isOpen)
     // Try to open Mixer, if it is not open already.
-    ret=setupMixer(this->devnum);
+    ret=openMixer();
 
   return ret;
 }
@@ -174,7 +174,7 @@ int Mixer::release()
 }
 
 
-int Mixer::setupMixer(int devnum)
+int Mixer::setupMixer(int devnum, int SetNum)
 {
   TheMixSets = new MixSetList;
   TheMixSets->read();  // Read sets from kmixrc
@@ -210,8 +210,10 @@ int Mixer::setupMixer(int devnum)
    *  if you pick up a configuration file from a friend with different mixing
    *  hardware, the result could be some serious mess. 
    */
-  Set2Set0(-1,true);
-  Set0toHW();
+  Set2Set0(-1,true);       // Read from hardware
+  if ( SetNum >= 0)
+    Set2Set0(SetNum,true); // Read (additionaly) from Set, if SetNum >= 0
+  Set0toHW();              // Forward to the hardware
 
   return 0;
 }

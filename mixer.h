@@ -113,7 +113,7 @@ public:
 
 
   Mixer();
-  Mixer(int devnum);
+  Mixer(int devnum, int SetNum);
   int grab();
   int release();
   void errormsg(int mixer_error);
@@ -149,7 +149,7 @@ private:
   bool		isOpen;
 
   void setDevNumName(int devnum);
-  int  setupMixer(int devnum);
+  int  setupMixer(int devnum, int SetNum);
   void setupStructs(void);
   int  openMixer(void);
   void updateMixDeviceI(MixDevice *mixdevice);
