@@ -32,7 +32,6 @@
 
 class Mixer;
 class QSlider;
-class QTimer;
 class Channel;
 class KActionCollection;
 
@@ -59,7 +58,8 @@ class KMixerWidget : public QWidget  {
    Q_OBJECT
 
   public:
-   KMixerWidget( Mixer *mixer, QWidget *parent=0, const char *name=0 );
+   KMixerWidget( Mixer *mixer, bool small=false, bool vert=true, 
+		 QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
    QString name() { return m_name; };
@@ -69,11 +69,13 @@ class KMixerWidget : public QWidget  {
   signals:
    void updateTicks( bool on );
    void updateLabels( bool on );
+   void updateLayout();
 
   public slots:     
    void setTicks( bool on );
    void setLabels( bool on );
    void setBalance( int value );
+   void setOrientation( int vert );
 
    void sessionSave( QString grp, bool sessionConfig );
    void sessionLoad( QString grp, bool sessionConfig );
@@ -82,20 +84,21 @@ class KMixerWidget : public QWidget  {
 
   private slots:	
    void rightMouseClicked();	
-
-  protected:
    void updateSize();
 
   private:
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
-   QTimer *m_timer;
    QBoxLayout *m_topLayout;
+   QBoxLayout *m_devLayout;
    QList<Channel> m_channels;
    QString m_name;
    KActionCollection *m_actions;
+   bool m_small;
+   bool m_vertical;
 
    void mousePressEvent( QMouseEvent *e );
+   void updateDevices( bool vert );
 };
 
 #endif

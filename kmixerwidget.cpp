@@ -26,7 +26,6 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qtimer.h>
 #include <qslider.h>
 #include <qtooltip.h>
 #include <qgroupbox.h>
@@ -74,87 +73,105 @@ void Profile::saveConfig( const QString &/*grp*/ )
 
 /********************** KMixerWidget *************************/
  
-KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
+KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_name(mixer->mixerName())
-{
-   cerr << "KMixerWidget::KMixerWidget" << endl;
-
+{   
+   kDebugInfo("-> KMixerWidget::KMixerWidget");
    m_actions = new KActionCollection( this );
    new KAction( i18n("Show &all"), 0, this, SLOT(showAll()), m_actions, "show_all" );
    m_channels.setAutoDelete( true );
-   kDebugInfo("mixer=%x", m_mixer);
-   
-   // Create update timer
-   m_timer = new QTimer;
-   m_timer->start( 500 );
-  
-   // Create mixer device widgets
+   m_small = small;
+   m_vertical = vert;
+
+   // Create mixer device widgets  
    m_topLayout = new QVBoxLayout( this, 0, 3 );
-   QBoxLayout* layout = new QHBoxLayout( m_topLayout );   
+   m_devLayout = new QHBoxLayout( m_topLayout );  
+   updateDevices( vert );
+
+   // Create the left-right-slider   
+   if ( !small )
+   {      
+      m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
+				  this, "RightLeft" );
+      m_topLayout->addWidget( m_balanceSlider );
+      connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
+      QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
+   } else
+      m_balanceSlider = false;
+
+   updateSize();
+
+   kDebugInfo("<- KMixerWidget::KMixerWidget");
+}
+
+KMixerWidget::~KMixerWidget()
+{
+}
+
+void KMixerWidget::updateDevices( bool vert )
+{   
+   m_channels.clear();
+   m_vertical = vert;
 
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
-      MixDeviceWidget *mdw =  new MixDeviceWidget( m_mixer, mixDevice, true, true, this, mixDevice->name() );
-      layout->addWidget( mdw, 1 );
+      MixDeviceWidget *mdw;
+      if ( m_small )
+      {
+	 mdw =  new SmallMixDeviceWidget( m_mixer, mixDevice, true, this, mixDevice->name() );
+      } else
+      {
+	 mdw =  new BigMixDeviceWidget( m_mixer, mixDevice, true, true, true, this, 
+					mixDevice->name() );
+           
+	 connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(setTicks(bool)) );
+	 connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );      
+      }
 
-      connect( mdw, SIGNAL( newVolume( int, Volume )), m_mixer, SLOT( writeVolumeToHW( int, Volume ) ));
-      connect( mdw, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecsrc(int, bool)) );
-      connect( m_mixer, SIGNAL(newRecsrc()), mdw, SLOT(updateRecsrc()) );
-      
-      connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(setTicks(bool)) );
-      connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );      
+      connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
+      m_devLayout->addWidget( mdw, 1 );
 
-      if( mixDevice->num()==m_mixer->masterDevice() )
-	 connect( m_mixer, SIGNAL(newBalance(Volume)), mdw, SLOT(setVolume(Volume)) );
-
-      connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateSliders()) );
-      connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateRecsrc()) );
-      
       Channel *chn = new Channel;
       chn->dev = mdw;
       m_channels.append( chn );
    }
 
-   //layout->addStretch( 1000 );
-
-   // Create the left-right-slider
-   m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
-				  this, "RightLeft" );
-   m_topLayout->addWidget( m_balanceSlider );
-   connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
-   QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
-}
-
-KMixerWidget::~KMixerWidget()
-{
-   if (m_timer) delete m_timer;
+   updateSize();
 }
 
 void KMixerWidget::updateSize()
 {
-   setFixedWidth( m_topLayout->minimumSize().width() );
+   kDebugInfo("KMixerWidget::updateSize()");
+   setMinimumWidth( m_topLayout->minimumSize().width() );
    setMinimumHeight( m_topLayout->minimumSize().height() );
+   updateGeometry();
+   emit updateLayout();
 }
 
 void KMixerWidget::setTicks( bool on )
 {
    emit updateTicks( on );
-   updateGeometry();
+   updateSize();
 }
 
 void KMixerWidget::setLabels( bool on )
 {
-   kDebugInfo("KMixerWidget::setLabels");
    emit updateLabels( on );
-   updateGeometry();
+   updateSize();
 }
 
 void KMixerWidget::setBalance( int value )
 {
    m_mixer->setBalance( value );
-   m_balanceSlider->setValue( value );
+   if ( m_balanceSlider )
+      m_balanceSlider->setValue( value );
+}
+
+void KMixerWidget::setOrientation( int vert )
+{
+   updateDevices( vert ); 
 }
 
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
@@ -199,7 +216,7 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
 
       config->writeEntry( "Split", !chn->dev->isStereoLinked() );
       config->writeEntry( "Show", !chn->dev->isDisabled() );
-
+      
       n++;
    }
 }
@@ -232,4 +249,7 @@ void KMixerWidget::showAll()
    {
       chn->dev->setDisabled( false );
    }
+   
+   updateSize();
 }
+

@@ -51,7 +51,6 @@ class Volume;
 class MixDevice
 {
    public:
-
       // For each ChannelType a special icon exists
       enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
 			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME };
@@ -185,7 +184,7 @@ class Mixer : public QObject
       virtual void setBalance(int balance); // sets the m_balance (see there)
       virtual void setRecsrc( int devnum, bool on = true);
 
-      signals:
+   signals:
       void newBalance( Volume );
       void newRecsrc( void );
 

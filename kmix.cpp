@@ -46,10 +46,13 @@
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
+#include "kmixapplet.h"
 
 KMixApp::KMixApp()
    : m_dockWidget( 0L )
 {
+   m_applets.setAutoDelete( TRUE );
+
    initMixer();
    initActions();
    initWidgets();
@@ -60,18 +63,18 @@ KMixApp::KMixApp()
 
    if ( m_showDockWidget && m_startHidden )
       hide();
-   
+
    updateDocking();
 }
 
 KMixApp::~KMixApp()
 {
-   if (m_prefDlg)
-      delete m_prefDlg;
 }
 
 void KMixApp::initActions()
 {
+   kDebugInfo("KMixApp::initActions");
+
    // file menu
    KStdAction::openNew( this, SLOT(newMixer()), actionCollection());
    KStdAction::close( this, SLOT(closeMixer()), actionCollection());
@@ -80,14 +83,13 @@ void KMixApp::initActions()
    (void)new KAction( i18n("&Save volumes"), 0, this, SLOT(saveVolumes()), 
 		      actionCollection(), "file_save_volume" );
    KStdAction::quit( this, SLOT(quit()), actionCollection());
+
+   (void)new KAction( i18n("&New panel applet"), 0, this, SLOT(newApplet()),
+		      actionCollection(), "file_new_applet" );
       
    // settings menu
    KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
    KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
-
-   // help menu
-   /*KStdAction::aboutApp( this, SLOT(showAboutApplication(void)), actionCollection());
-   KStdAction::help( this, SLOT(appHelpActivated()), actionCollection()); */
 
    createGUI( "kmixui.rc" );
 }
@@ -127,7 +129,7 @@ void KMixApp::initWidgets()
 
 void KMixApp::updateDocking()
 {
-   cerr << "updateDocking()" << endl;
+   kDebugInfo("KMixApp::updateDocking");
 
    if (m_dockWidget)
    {
@@ -160,7 +162,7 @@ void KMixApp::updateDocking()
 
 void KMixApp::saveConfig()
 {	
-   cerr << "KMixApp::sessionSave()" << endl;
+   kDebugInfo("KMixApp::sessionSave");
 
    KConfig *config = kapp->config();
    config->setGroup(0);
@@ -176,8 +178,23 @@ void KMixApp::saveConfig()
    config->writeEntry( "Tabs", m_mixerWidgets.count() ); 
    config->writeEntry( "SaveVolumes", m_saveVolumes );
    config->writeEntry( "LoadVolumes", m_loadVolumes );
+   config->writeEntry( "Applets", m_applets.count() );
 
-   int n = 0;   
+   // save applet widgets
+   int n = 0;
+   for (KMixApplet *ma=m_applets.first(); ma!=0; ma=m_applets.next())
+   {
+      KMixerWidget *mw = ma->mixerWidget();
+      QString grp;
+      grp.sprintf( "Applet%i", n );
+
+      config->setGroup( grp );
+      config->writeEntry( "Mixer", m_mixers.find( mw->mixer() ) );
+
+      mw->sessionSave( grp, false );       
+   }
+
+   // save mixer widgets     
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
    {
       QString grp;
@@ -185,25 +202,26 @@ void KMixApp::saveConfig()
 
       config->setGroup( grp );
       config->writeEntry( "Mixer", m_mixers.find( mw->mixer() ) );
-
+      
       mw->sessionSave( grp, false ); 
       n++;
    }
 
+   // save mixers
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
 	 mixer->sessionSave( false );
 
+   // save volumes
    if ( m_saveVolumes ) saveVolumes();
 }
 
 void KMixApp::loadConfig()
 {
-   cerr << "KMixApp::sessionLoad()" << endl;
+   kDebugInfo("-> KMixApp::sessionLoad");
 
    KConfig *config = kapp->config();
    config->setGroup(0);
-
-   // bar status settings
+   
    bool bViewMenubar = config->readBoolEntry("Menubar", true);
    if (bViewMenubar) 
       menuBar()->show();
@@ -225,29 +243,56 @@ void KMixApp::loadConfig()
    m_showLabels = config->readBoolEntry("Labels", false);
    m_loadVolumes = config->readBoolEntry("LoadCVolumes", true);
    m_saveVolumes = config->readBoolEntry("SaveVolumes", true);
+   int tabs = config->readNumEntry("Tabs", 1);
+   int applets = config->readNumEntry("Applets", 1);
 
-   m_mixerWidgets.clear();
-   int num = config->readNumEntry("Tabs", 1);
-   for (int n=0; n<num; n++)
+   // load appels
+   m_applets.clear();
+   for (int n=0; n<applets; n++)
    {
-      kDebugInfo("load %i", n);
+      QString grp;
+      grp.sprintf( "Applet%i", n );
+      config->setGroup(grp);
+
+      Mixer *mixer = m_mixers.at( config->readNumEntry("Mixer", 0) );
+      if (mixer)
+      {
+	 KMixerWidget *mw = new KMixerWidget( mixer, true, true, this );
+	 mw->sessionLoad( grp, false );
+	 KMixApplet *ap = new KMixApplet( mw );
+	 int argc = kapp->argc();
+	 ap->init( argc, kapp->argv() );
+	 insertApplet( ap );
+      }
+   }
+
+   // load mixer widgets
+   m_mixerWidgets.clear();
+   for (int n=0; n<tabs; n++)
+   {
       QString grp;
       grp.sprintf( "Widget%i", n );
+      config->setGroup(grp);
 
       Mixer *mixer = m_mixers.at( config->readNumEntry("Mixer", 0) );
       if (mixer)
       {
 	 kDebugInfo("mixer=%x", mixer);
-	 KMixerWidget *mw = new KMixerWidget( mixer, this );
+	 KMixerWidget *mw = new KMixerWidget( mixer, false, true, this );
 	 mw->sessionLoad( grp, false ); 
+	 
 	 insertMixerWidget( mw );
       }
    }
-
+   
+   // load mixer setting
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
       mixer->sessionLoad( false ); 
-
+   
+   // load volumes
    if ( m_loadVolumes ) loadVolumes();
+   
+   kDebugInfo("<- KMixApp::sessionLoad");
 }
 
 void KMixApp::insertMixerWidget( KMixerWidget *mw )
@@ -270,6 +315,19 @@ void KMixApp::removeMixerWidget( KMixerWidget *mw )
    m_mixerWidgets.remove( mw );
 }	
 
+void KMixApp::insertApplet( KMixApplet *applet )
+{
+   connect( applet, SIGNAL(closeApplet(KMixApplet*)), this, SLOT(removeApplet(KMixApplet*)));
+   m_applets.append( applet  );
+}
+
+void KMixApp::removeApplet( KMixApplet *applet )
+{
+   m_applets.remove( applet );
+   if ( !isVisible() && !m_showDockWidget && m_applets.count()==0 )
+      quit();   
+}
+
 void KMixApp::loadVolumes()
 {
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
@@ -282,10 +340,16 @@ void KMixApp::saveVolumes()
 	 mixer->volumeSave();
 }
 
-bool KMixApp::queryExit()
+void KMixApp::closeEvent ( QCloseEvent * e )
 {
-   saveConfig();
-   return true;
+   if ( m_hideOnClose )
+   {
+      e->ignore();
+      hide();      
+      return;      
+   }
+
+   KTMainWindow::closeEvent( e );   
 }
 
 void KMixApp::quit()
@@ -333,7 +397,6 @@ void KMixApp::newMixer()
    bool ok = FALSE;
    QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst, 
 					1, TRUE, &ok, this );  
-
    if ( ok )
    {
       Mixer *mixer = m_mixers.at( lst.findIndex( res ) );
@@ -345,14 +408,45 @@ void KMixApp::newMixer()
 	 
       QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ),
 					    mixer->mixerName(), &ok, this );
-
       if ( ok )
       {
-	 KMixerWidget *mw = new KMixerWidget( mixer, this );
+	 KMixerWidget *mw = new KMixerWidget( mixer, false, true, this );
 	 mw->setName( name );
 	 insertMixerWidget( mw );
+      }     
+   }
+}
+
+void KMixApp::newApplet()
+{
+   QStringList lst;
+
+   int n=1;
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+   {
+      QString s;
+      s.sprintf("%i. %s", n, mixer->mixerName().ascii());   
+      lst << s;
+      n++;
+   }
+
+   bool ok = FALSE;
+   QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst, 
+					1, TRUE, &ok, this );  
+   if ( ok )
+   {
+      Mixer *mixer = m_mixers.at( lst.findIndex( res ) );
+      if (!mixer)
+      {
+	 KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
+	 return;
       }
-      
+	 
+      KMixerWidget *mw = new KMixerWidget( mixer, true, true, this );      
+      KMixApplet *ap = new KMixApplet( mw );
+      int argc = kapp->argc();
+      ap->init( argc, kapp->argv() );
+      insertApplet( ap );         
    }
 }
 
@@ -375,6 +469,10 @@ void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )
    }
 
    updateDocking();
+
+   // avoid invisible and unaccessible main window
+   if( !m_showDockWidget && !isVisible() && m_applets.count()==0 )
+      show();
 }
 
 void KMixApp::toggleMenuBar()
