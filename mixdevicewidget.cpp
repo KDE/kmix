@@ -74,7 +74,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    // create actions
    m_sliderActions = new KActionCollection( this );
 
-   if (parent->isA("KMixerWidget"))
+   if ( true /* parent->isA("KMixerWidget") */ ) // esken: Removed, as Mixer is now always the parent !!!
 		new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
 				m_sliderActions, "stereo" );
 	
