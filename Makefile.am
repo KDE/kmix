@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = kmix_panelapplet.la
 
 
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
-	viewbase.h viewoutput.h viewinput.h viewsliders.h viewswitches.h viewdockareapopup.h \
+	viewbase.h viewoutput.h viewinput.h viewsliders.h viewswitches.h viewsurround.h viewdockareapopup.h \
 	mixdevicewidget.h mdwslider.h mdwswitch.h \
 	mixer.h mixset.h mixdevice.h volume.h kledbutton.h version.h kmixtoolbox.h \
 	ksmallslider.h kmixapplet.h mixerIface.h verticaltext.h \
@@ -18,7 +18,7 @@ noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 METASOURCES = AUTO
 
 kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
-	viewbase.cpp viewoutput.cpp viewinput.cpp viewswitches.cpp viewdockareapopup.cpp \
+	viewbase.cpp viewoutput.cpp viewinput.cpp viewswitches.cpp viewsurround.cpp viewdockareapopup.cpp \
 	viewsliders.cpp \
 	mixdevicewidget.cpp mdwslider.cpp mdwswitch.cpp \
 	kmixerwidget.cpp mixer.cpp mixset.cpp mixdevice.cpp ksmallslider.cpp \
@@ -32,17 +32,18 @@ kmixctrl_la_SOURCES = kmixctrl.cpp mixer.cpp mixset.cpp mixdevice.cpp volume.cpp
 kmixctrl_la_LIBADD = $(LIB_KDECORE) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmixctrl_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-# !!! todo: remove viewinput,viewoutput,viewsliders.cpp dependency on panelapplet
+# !!! todo: remove mdwslider.cpp mdwswitch.cpp from kmix_panelapplet_la_SOURCE
 
-kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp \
+kmix_panelapplet_la_SOURCES = kmixapplet.cpp \
 	viewbase.cpp viewapplet.cpp \
-	viewoutput.cpp viewinput.cpp viewsliders.cpp viewswitches.cpp \
 	mixdevicewidget.cpp mdwslider.cpp mdwswitch.cpp \
 	mixer.cpp mixset.cpp mixdevice.cpp ksmallslider.cpp volume.cpp kledbutton.cpp \
 	verticaltext.cpp mixerIface.skel colorwidget.ui dialogviewconfiguration.cpp kmixtoolbox.cpp
 
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+
+#FOO kmixerwidget.cpp viewoutput.cpp viewinput.cpp viewsliders.cpp viewsurround.cpp viewswitches.cpp
 
 xdg_apps_DATA = kmix.desktop
 
