@@ -44,41 +44,25 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
-
-struct Channel
+class Channel
 {
+   public:
+      Channel() : dev( 0 ) {};
+      ~Channel() { delete dev; };
+
       MixDeviceWidget *dev;
 };
 
-Profile::Profile( Mixer *mixer )
-{
-   m_mixer = mixer;
-}
-
-void Profile::write()
-{
-   
-}
-
-void Profile::read()
-{
-}
-
-void Profile::loadConfig( KConfig */*config*/, const QString &/*grp*/ )
-{
-}
-
-void Profile::saveConfig( KConfig */*config*/, const QString &/*grp*/ )
-{
-}
 
 /********************** KMixerWidget *************************/
  
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum, 
 			    bool small, bool vert, QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0), m_devLayout(0), m_name( mixerName ), 
-     m_iconsEnabled(true), m_mixerName( mixerName ), m_mixerNum( mixerNum ), m_id( _id )
+     m_topLayout(0), m_devLayout(0), 
+     m_name( mixerName ), m_mixerName( mixerName ), m_mixerNum( mixerNum ), m_id( _id ),
+     m_iconsEnabled( true ), m_labelsEnabled( false ), m_ticksEnabled( false )
+     
 {   
    kdDebug() << "-> KMixerWidget::KMixerWidget" << endl;
    m_actions = new KActionCollection( this );
@@ -89,7 +73,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 
    // Create mixer device widgets        
    if ( mixer )
-      updateDevices( vert ); 
+      createDeviceWidgets( vert ); 
    else
    {
       QBoxLayout *layout = new QHBoxLayout( this );
@@ -107,9 +91,9 @@ KMixerWidget::~KMixerWidget()
 {
 }
 
-void KMixerWidget::updateDevices( bool vert )
+void KMixerWidget::createDeviceWidgets( bool vert )
 {   
-   kdDebug() << "-> KMixerWidget::updateDevices" << endl;
+   kdDebug() << "-> KMixerWidget::createDeviceWidgets" << endl;
 
    if ( !m_mixer ) return;
 
@@ -132,22 +116,12 @@ void KMixerWidget::updateDevices( bool vert )
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
       kdDebug() << "MixDeviceWidget" << endl;
-      MixDeviceWidget *mdw;
-      if ( m_small )
-      {
-	 mdw =  new SmallMixDeviceWidget( m_mixer, mixDevice, true, this, mixDevice->name() );
-      } else
-      {
-	 mdw =  new BigMixDeviceWidget( m_mixer, mixDevice, true, true, true, this, 
-					mixDevice->name() );
-           
-	 connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(setTicks(bool)) );
-	 connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );
-      }
-
-      connect( this, SIGNAL(updateIcons(bool)), mdw, SLOT(setIcons(bool)) );
+      MixDeviceWidget *mdw = 
+	 new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small, vert,
+				 this, mixDevice->name().latin1() );
+          
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
-      m_devLayout->addWidget( mdw, 0 );
+      m_devLayout->addWidget( mdw, 0 );            
 
       Channel *chn = new Channel;
       chn->dev = mdw;
@@ -164,14 +138,14 @@ void KMixerWidget::updateDevices( bool vert )
       m_balanceSlider->setTickmarks( QSlider::Below );
       m_balanceSlider->setTickInterval( 25 );
       m_topLayout->addWidget( m_balanceSlider );
-      connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
+      connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
    } else
       m_balanceSlider = 0;
 
    updateSize();
 
-   kdDebug() << "<- KMixerWidget::updateDevices" << endl;
+   kdDebug() << "<- KMixerWidget::createDeviceWidgets" << endl;
 }
 
 void KMixerWidget::updateSize()
@@ -183,13 +157,23 @@ void KMixerWidget::updateSize()
 }
 
 void KMixerWidget::setTicks( bool on )
-{
-   emit updateTicks( on );
+{  
+   if ( m_ticksEnabled!=on )
+   {
+      m_ticksEnabled = on;
+      for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() )
+	 chn->dev->setTicks( on );        
+   }
 }
 
 void KMixerWidget::setLabels( bool on )
 {
-   emit updateLabels( on );
+   if ( m_labelsEnabled!=on )
+   {
+      m_labelsEnabled = on;
+      for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() )
+	 chn->dev->setLabeled( on );            
+   }
 }
 
 void KMixerWidget::setIcons( bool on )
@@ -197,23 +181,15 @@ void KMixerWidget::setIcons( bool on )
    if ( m_iconsEnabled!=on )
    {
       m_iconsEnabled = on;
-      kdDebug() << "KMixerWidget::setIcons( " << on << " )" << endl;
-      emit updateIcons( on );
+      for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() )
+	 chn->dev->setIcons( on );      
    }
-}
-
-void KMixerWidget::setBalance( int value )
-{
-   if ( m_mixer ) m_mixer->setBalance( value );
-   if ( m_balanceSlider ) m_balanceSlider->setValue( value );
 }
 
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )
-   {
-      rightMouseClicked();
-   }
+      rightMouseClicked();   
 }
 
 void KMixerWidget::rightMouseClicked()
@@ -221,16 +197,10 @@ void KMixerWidget::rightMouseClicked()
    KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
 
    KAction *a = m_actions->action( "show_all" );
-   if ( a )
-   {
-      a->plug( menu );
-  
-      if (menu)
-      {
-	 QPoint pos = QCursor::pos();
-	 menu->popup( pos );
-      }
-   }
+   if ( a ) a->plug( menu );
+   
+   QPoint pos = QCursor::pos();
+   menu->popup( pos );   
 }
 
 void KMixerWidget::saveConfig( KConfig *config, QString grp )

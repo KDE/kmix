@@ -36,52 +36,33 @@ class Channel;
 class KActionCollection;
 class KConfig;
 
-struct ChannelProfile
-{       
-};
-
-class Profile : public QList<ChannelProfile>
-{
-  public:  
-   Profile( Mixer *mixer );
-
-   void write();
-   void read();
-
-   void loadConfig( KConfig *config, const QString &grp );
-   void saveConfig( KConfig *config, const QString &grp);
-
-  private:
-   Mixer *m_mixer;
-};
 
 class KMixerWidget : public QWidget  {
    Q_OBJECT
 
   public:
-   KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum, bool small=false, bool vert=true, 
+   KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum, 
+		 bool small=false, bool vert=true, 
 		 QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
    QString name() { return m_name; };
    void setName( QString name ) { m_name = name; };
+
    Mixer *mixer() { return m_mixer; };
    QString mixerName() { return m_mixerName; };
    int mixerNum() { return m_mixerNum; };
+
    int id() { return m_id; };
 
   signals:
-   void updateTicks( bool on );
-   void updateLabels( bool on );
-   void updateIcons( bool on );
    void updateLayout();
 
   public slots:     
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
-   void setBalance( int value );   
-
+    
    void saveConfig( KConfig *config, QString grp );
    void loadConfig( KConfig *config, QString grp );
 
@@ -97,17 +78,22 @@ class KMixerWidget : public QWidget  {
    QBoxLayout *m_topLayout;
    QBoxLayout *m_devLayout;
    QList<Channel> m_channels;
+
    QString m_name;
-   KActionCollection *m_actions;
-   bool m_small;
-   bool m_vertical;
-   bool m_iconsEnabled;
    QString m_mixerName;
    int m_mixerNum;
    int m_id;
 
+   KActionCollection *m_actions;
+
+   bool m_small;
+   bool m_vertical;
+   bool m_iconsEnabled;
+   bool m_labelsEnabled;
+   bool m_ticksEnabled;
+   
    void mousePressEvent( QMouseEvent *e );
-   void updateDevices( bool vert );
+   void createDeviceWidgets( bool vert );
 };
 
 #endif

@@ -79,8 +79,6 @@ Mixer* Mixer::getMixer( MixSet set, int device, int card )
   return l_mixer;
 }
 
-
-
 Mixer_ALSA::Mixer_ALSA( int device, int card ) : Mixer( device, card ),
   handle(0), gid(0)
 {  
@@ -95,91 +93,113 @@ Mixer_ALSA::~Mixer_ALSA()
    kdDebug() << "<- Mixer_ALSA::~Mixer_ALSA" << endl;
 }
 
+void printGroup( snd_mixer_group_t *grp )
+{
+   kdDebug() << "gid = " << QString((char*)grp->gid.name) << endl;
+   kdDebug() << " elements = " << grp->elements << endl;
+
+   for ( int n=0; n<grp->elements; n++ )
+      kdDebug() << "  #" << n << " name = " << QString((char*)grp->pelements[n].name) << endl;
+   
+   kdDebug() << " caps = " << grp->caps << endl;
+   kdDebug() << " channels = " << grp->channels << endl;
+   kdDebug() << " mute = " << grp->mute << endl;
+   kdDebug() << " capture = " << grp->capture << endl;
+   kdDebug() << " capture_group = " << grp->capture_group << endl;
+   kdDebug() << " min = " << grp->min << endl;
+   kdDebug() << " max = " << grp->max << endl;
+   kdDebug() << " front_left = " << grp->volume.names.front_left << endl;
+   kdDebug() << " front_right = " << grp->volume.names.front_right << endl;
+   kdDebug() << " front_center = " << grp->volume.names.front_center << endl;
+   kdDebug() << " rear_left = " << grp->volume.names.rear_left << endl;
+   kdDebug() << " rear_right = " << grp->volume.names.rear_right << endl;
+   kdDebug() << " woofer = " << grp->volume.names.woofer << endl;
+}
+
 int Mixer_ALSA::openMixer()
 {
-  release();		// To be sure, release mixer before (re-)opening
+  bool virginOpen = m_mixDevices.isEmpty();
+  int err;
+  bool validDevice = false;
 
-  bool initset = m_mixDevices.isEmpty();
+  // release mixer before (re-)opening
+  release();		
 
-  int err, idx;
-
+  // default mixers?
   if( m_cardnum == -1 ) m_cardnum = snd_defaults_mixer_card();
-  if( m_devnum == -1 ) m_devnum = snd_defaults_mixer_device(); /* card 0 mixer 0 */
+  if( m_devnum == -1 ) m_devnum = snd_defaults_mixer_device();
 
+  // open mixer
   if ((err = snd_mixer_open( &handle, m_cardnum, m_devnum )) < 0 )
-    return Mixer::ERR_OPEN;
+     return Mixer::ERR_OPEN;
 
-  bool deviceWork = false;
+  // only mixers with valid channels allowed
+  
 
+  // get number of groups
   bzero(&groups, sizeof(groups));
-  if ((err = snd_mixer_groups(handle, &groups)) < 0) {
-    return Mixer::ERR_NODEV;
-  }
-  groups.pgroups = (snd_mixer_gid_t *)
-                   malloc(groups.groups_over * sizeof(snd_mixer_eid_t));
-  if (!groups.pgroups) {
-    return Mixer::ERR_NOMEM;
-  }
+  if ((err = snd_mixer_groups(handle, &groups)) < 0) 
+     return Mixer::ERR_NODEV;
+  
+  // get groups
+  groups.pgroups = (snd_mixer_gid_t *)malloc(groups.groups_over * sizeof(snd_mixer_eid_t));
+  if (!groups.pgroups) return Mixer::ERR_NOMEM; 
   groups.groups_size = groups.groups_over;
   groups.groups_over = groups.groups = 0;
-  if ((err = snd_mixer_groups(handle, &groups)) < 0) {
-    return Mixer::ERR_READ;
-  }
-  for (idx = 0; idx < groups.groups; idx++) {
-    gid = &groups.pgroups[idx];
+  if ((err = snd_mixer_groups(handle, &groups)) < 0) return Mixer::ERR_READ;
+  
+  // iterate through groups
+  for ( int groupNum = 0; groupNum < groups.groups; groupNum++ )
+  {
+     gid = &groups.pgroups[groupNum];
 
-    snd_mixer_group_t group;
+     // get group info
+     snd_mixer_group_t group;
+     bzero(&group, sizeof(group));
+     group.gid = *gid;
+     if ( (err = snd_mixer_group_read(handle, &group))<0 )  return Mixer::ERR_READ;
 
-    bzero(&group, sizeof(group));
-    group.gid = *gid;
-    if ((err = snd_mixer_group_read(handle, &group)) < 0)
-      return Mixer::ERR_READ;
+     //printGroup( &group );
 
-    bool ismono = true;
-    bool canrecord = false;
+     // parse group caps
+     bool isMono = true;
+     bool canRecord = false;
+     int channels = numChannels( group.channels );
 
-    int channels = numChannels( group.channels );
+     if ( group.channels && (group.caps & SND_MIXER_GRPCAP_VOLUME) )
+     {
+	validDevice = true;
+	if ( channels>1 ) isMono = false;
+	if ( group.caps & SND_MIXER_GRPCAP_CAPTURE ) canRecord = true;      
 
-    if ( group.channels && (group.caps & SND_MIXER_GRPCAP_VOLUME) ) {
-      if ( channels > 1 )
-        ismono = false;
-      if ( group.caps & SND_MIXER_GRPCAP_CAPTURE )
-        canrecord = true;
-      deviceWork = true;
-
-      int maxVolume = group.max;
-      //  	ret = snd_mixer_channel_read( devhandle, i, &data );
-      //  	if ( !ret ) {
-      //  	  if ( data.flags & SND_MIXER_FLG_RECORD )
-      //  	    i_recsrc |= 1 << i;
-      //  	}
-      MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( idx, (const char *)gid->name );
-      if( initset )
-        {
-          Volume vol( channels, maxVolume);
-          readVolumeFromHW( idx, vol );
-          m_mixDevices.append(
-                              new MixDevice( idx, vol, canrecord,
-                                             QString((char*)gid->name), ct ));
-        }
-      else
-        {
-          MixDevice* md = m_mixDevices.at( idx );
-          if( !md )
-            return ERR_INCOMPATIBLESET;
-          writeVolumeToHW( idx, md->getVolume() );
-        }
-    }
-  }
-  if ( !deviceWork ) {
-    return Mixer::ERR_NODEV;
+	// create mix device
+	int maxVolume = group.max;
+	MixDevice::ChannelType ct = 
+	   (MixDevice::ChannelType)identify( groupNum, (const char *)gid->name );
+	if( virginOpen )
+	{
+	   Volume vol( channels, maxVolume);
+	   readVolumeFromHW( groupNum, vol );
+	   m_mixDevices.append(
+	      new MixDevice( groupNum, vol, canRecord, QString((char*)gid->name), ct) );
+	} else
+	{
+	   MixDevice* md = m_mixDevices.at( groupNum );
+	   if( !md ) return ERR_INCOMPATIBLESET;
+	   writeVolumeToHW( groupNum, md->getVolume() );
+	}
+     }
   }
 
+  // return error for invlid devices
+  if ( !validDevice ) return Mixer::ERR_NODEV;
+  
+  // get mixer name
   snd_mixer_info_t info;
-  if ((err = snd_mixer_info(handle, &info)) < 0)
-    return Mixer::ERR_READ;
+  if ( (err = snd_mixer_info(handle, &info))<0 ) return Mixer::ERR_READ;
   m_mixerName = QString((char*)info.name);
 
+  // return with success
   m_isOpen = true;
   return 0;
 }
@@ -192,17 +212,16 @@ int Mixer_ALSA::releaseMixer()
 }
 
 bool Mixer_ALSA::isRecsrcHW( int devnum )
-{
+{   
     gid = &groups.pgroups[devnum];
 
+    // get device caps to check for capture
     snd_mixer_group_t group;
-
     bzero(&group, sizeof(group));
     group.gid = *gid;
-    if ( snd_mixer_group_read(handle, &group) < 0)
-      return Mixer::ERR_READ;
+    if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
 
-    return group.capture && SND_MIXER_CHN_MASK_FRONT_LEFT;
+    return group.capture && SND_MIXER_CHN_MASK_FRONT_LEFT;    
 }
 
 bool Mixer_ALSA::setRecsrcHW( int devnum, bool on )
@@ -210,21 +229,19 @@ bool Mixer_ALSA::setRecsrcHW( int devnum, bool on )
     snd_mixer_open( &handle, m_cardnum, m_devnum );
     gid = &groups.pgroups[devnum];
 
+    // get current device caps
     snd_mixer_group_t group;
-
     bzero(&group, sizeof(group));
     group.gid = *gid;
-    if ( snd_mixer_group_read(handle, &group) < 0)
-      return true;
+    if ( snd_mixer_group_read(handle, &group)<0 ) return true;
 
+    // set capture flag
     group.capture = on ? group.capture | SND_MIXER_CHN_MASK_FRONT_LEFT :
-      group.capture & ~SND_MIXER_CHN_MASK_FRONT_LEFT;
-    if ( numChannels( group.channels ) > 1 )
-      {
-        group.capture = on ? ~0 : 0;
-      }
-    if ( snd_mixer_group_write(handle, &group) < 0)
-      return true;
+       group.capture & ~SND_MIXER_CHN_MASK_FRONT_LEFT;
+    if ( numChannels(group.channels)>1 ) group.capture = on ? ~0 : 0;
+      
+    // write caps back
+    if ( snd_mixer_group_write(handle, &group)<0 ) return true;
 
     return false;
 }
@@ -232,75 +249,85 @@ bool Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 int Mixer_ALSA::numChannels( int mask )
 {
   int channels = 0;
-  if ( mask & SND_MIXER_CHN_MASK_FRONT_LEFT ) channels++;
-  if ( mask & SND_MIXER_CHN_MASK_FRONT_RIGHT   ) channels++;
-  if ( mask & SND_MIXER_CHN_MASK_FRONT_CENTER  ) channels++;
-  if ( mask & SND_MIXER_CHN_MASK_REAR_LEFT     ) channels++;
-  if ( mask & SND_MIXER_CHN_MASK_REAR_RIGHT    ) channels++;
-  if ( mask & SND_MIXER_CHN_MASK_WOOFER ) channels++;
+  // count set bits
+  while ( mask )
+  {
+     channels += (mask & 1);
+     mask = mask >> 1;
+  }
+
   return channels;
 }
 
 int Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
 {
-  gid = &groups.pgroups[devnum];
+   gid = &groups.pgroups[devnum];
 
-  snd_mixer_group_t group;
+   // read device info to get volumes
+   snd_mixer_group_t group;
+   bzero(&group, sizeof(group));
+   group.gid = *gid;
+   if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
 
-  bzero(&group, sizeof(group));
-  group.gid = *gid;
-  if ( snd_mixer_group_read(handle, &group) < 0)
-    return Mixer::ERR_READ;
+   // read volumes channel for channel
+   int volChannel = 0;
+   int leftvol = 1;
+   int rightvol = 1;
+   for ( int channel=0; channel<32; channel++ )
+   {
+      if ( group.channels & (1 << channel) )
+      {
+	 volume.setVolume( volChannel, group.volume.values[channel] );
+	 if ( volChannel==0 ) leftvol = group.volume.values[channel];
+	 volChannel++;
 
-  int leftvol, rightvol;
+	 // correct balance
+	 if( volChannel==1 && devnum==m_masterDevice ) 
+	 {
+	    rightvol = group.volume.values[channel];
+	    if( leftvol!=rightvol )
+	    {
+	       m_balance = (leftvol>rightvol) ?
+		  (-(leftvol-rightvol)*100/leftvol) : 
+	          (+(rightvol-leftvol)*100/rightvol);
+	    } else
+	       m_balance = 0;
+         }
+      }
+   }
 
-  volume.setVolume( Volume::LEFT,
-                    leftvol = group.volume.values[SND_MIXER_CHN_FRONT_LEFT] );
-  if ( volume.channels() > 1 )
-    {
-      volume.setVolume( Volume::RIGHT,
-                        rightvol =group.volume.values[SND_MIXER_CHN_FRONT_RIGHT] );
-
-      if( devnum == m_masterDevice ) // correct balance
-        {
-          if( leftvol != rightvol )
-            m_balance = leftvol > rightvol ?
-                        - (leftvol - rightvol) * 100 / leftvol :
-                         (rightvol - leftvol) * 100 / rightvol;
-          else
-            m_balance = 0;
-        }
-    }
-
-  return 0;
+   return 0;
 }
 
 
 int Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 {
-   //kdDebug() << "Mixer_ALSA::writeVolumeToHW" << endl;
+   snd_mixer_open( &handle, m_cardnum, m_devnum );
+   gid = &groups.pgroups[devnum];
 
-    snd_mixer_open( &handle, m_cardnum, m_devnum );
-    gid = &groups.pgroups[devnum];
+   // get current group info
+   snd_mixer_group_t group;
+   bzero(&group, sizeof(group));
+   group.gid = *gid;
+   if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
+  
+    // update muting flags
+   group.mute = volume.isMuted() ? ~0 : 0;
 
-    snd_mixer_group_t group;
-
-    bzero(&group, sizeof(group));
-    group.gid = *gid;
-    if ( snd_mixer_group_read(handle, &group) < 0)
-      return Mixer::ERR_READ;
-
-    group.mute = volume.isMuted() ? group.mute | SND_MIXER_CHN_MASK_FRONT_LEFT :
-      group.mute & ~SND_MIXER_CHN_MASK_FRONT_LEFT;
-    group.volume.values[SND_MIXER_CHN_FRONT_LEFT] = volume[ Volume::LEFT ];
-    if ( numChannels( group.channels ) > 1 )
+   // write volumes channel for channel
+   int volChannel = 0;
+   for ( int channel=0; channel<32; channel++ )
+   {
+      if ( group.channels & (1 << channel) )
       {
-        group.volume.values[SND_MIXER_CHN_FRONT_RIGHT] = volume[ Volume::RIGHT ];
-        group.mute = volume.isMuted() ? ~0 : 0;
+	 group.volume.values[channel] = volume[volChannel];
+	 volChannel++;
       }
-    if ( snd_mixer_group_write(handle, &group) < 0)
-      return Mixer::ERR_WRITE;
+   }
 
-    return 0;
+   // write volumes back
+   if ( snd_mixer_group_write(handle, &group)<0 ) return Mixer::ERR_WRITE;
+
+   return 0;
 }
 
