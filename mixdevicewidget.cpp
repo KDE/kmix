@@ -209,7 +209,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       m_sliders.append ( slider );
       connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
    }
-   
+
    // create channel icon
    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) {
       m_iconLabel = 0L;
@@ -313,22 +313,22 @@ void MixDeviceWidget::setIcon( int icontype )
    layout()->activate();
 }
 
-bool MixDeviceWidget::isLabeled()
+bool MixDeviceWidget::isLabeled() const
 {
    return !m_label->isHidden();
 }
 
-bool MixDeviceWidget::isDisabled()
+bool MixDeviceWidget::isDisabled() const
 {
    return m_disabled;
 }
 
-bool MixDeviceWidget::isMuted()
+bool MixDeviceWidget::isMuted() const
 {
    return m_mixdevice->isMuted();
 }
 
-bool MixDeviceWidget::isRecsrc()
+bool MixDeviceWidget::isRecsrc() const
 {
    return m_mixdevice->isRecsrc();
 }

@@ -60,11 +60,11 @@ class MixDeviceWidget
 
       void addActionToPopup( KAction *action );
 
-      bool isDisabled();
-      bool isMuted();
-      bool isRecsrc();
-      bool isStereoLinked() { return m_linked; };
-      bool isLabeled();
+      bool isDisabled() const;
+      bool isMuted() const;
+      bool isRecsrc() const;
+      bool isStereoLinked() const { return m_linked; };
+      bool isLabeled() const;
 
       void setStereoLinked( bool value );
       void setLabeled( bool value );
