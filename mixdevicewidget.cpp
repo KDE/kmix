@@ -721,10 +721,10 @@ MixDeviceWidget::contextMenu()
    sep.plug( menu );
 
    a = m_actions->action( "options_show_menubar" );
-   if ( ta ) ta->plug( menu );
+   if ( a ) a->plug( menu );
 
    a = m_actions->action( "toggle_channels" );
-	if ( ta ) ta->plug( menu );
+	if ( a ) a->plug( menu );
 	
    QPoint pos = QCursor::pos();
    menu->popup( pos );
