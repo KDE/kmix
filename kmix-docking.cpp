@@ -37,9 +37,8 @@ KMixDockWidget::KMixDockWidget(const char *name,
 			       const QString& dockIconName) 
     : KDockWidget((QString)name, dockIconName)
 {
-  i_i_y		= 0;
-  i_i_height	= 0;
-  i_i_percent	= 0;
+  //CT assure that the vars are correctly initialized before the first paint
+  setDisplay(0); 
 
   // Now for the mouse click stuff
   i_b_move_active = false;
@@ -54,10 +53,9 @@ KMixDockWidget::~KMixDockWidget()
 void KMixDockWidget::doPaint()
 {
   QPainter paint( this );
-  int h = this->height(), w = this->width();
-  paint.eraseRect(0, 0, w, h);
-  for (int i = 0; i < i_i_height; i=i+2) {
-    paint.setPen( QColor(255*i/h, 0, 255*(h-i)/h) );
+  int h = this->height();
+  for (int i = 0; i < h; i=i+2) {
+    paint.setPen( i>i_i_height?gray:QColor(255*i/h, 0, 255*(h-i)/h) );
     paint.drawLine(i_i_width / 2, h - i,
 		   i_i_width / 2 + i_i_width * i / h, h - i);
   }
