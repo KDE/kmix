@@ -6,13 +6,13 @@ INCLUDES= $(all_includes)
 
 SUBDIRS = pics docs
 bin_PROGRAMS = 	kmix
-kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp
-noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h
+kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp docking.cpp
+noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h docking.h
 kmix_LDADD = $(all_libraries) -lkdeui -lkdecore -lqt -lXext -lX11
 kmix_LDFLAGS = $(LDFLAGS) $(KDE_RPATH)
 
-BUILTSOURCES = kmix.moc mixer.moc prefs.moc
-DISTCLEANFILES = kmix.moc mixer.moc prefs.moc
+BUILTSOURCES = kmix.moc mixer.moc prefs.moc docking.moc
+DISTCLEANFILES = kmix.moc mixer.moc prefs.moc docking.moc
 
 
 
@@ -27,6 +27,10 @@ mixer.moc: mixer.h
 prefs.cpp: prefs.moc
 prefs.moc: prefs.h
 	$(MOC) prefs.h -o prefs.moc
+
+docking.cpp: docking.moc
+docking.moc: docking.h
+	$(MOC) docking.h -o docking.moc
 
 version.h: VERSION
 	sed "s/0/#define APP_VERSION 0/" <VERSION >version.h

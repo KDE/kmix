@@ -1,31 +1,27 @@
-static char rcsid[]="$Id$";
-
-// Thanks for taking a look in here. :-)
-
 /*
- * Copyright by Christian Esken 1996-97
+ *              KMix -- KDE's full featured mini mixer
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met: 1. Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer. 2.
- * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ *              Copyright (C) 1996-98 Christian Esken
+ *                        esken@kde.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+// Thanks for taking a look in here. :-)
+static char rcsid[]="$Id$";
 
 #include <stdio.h>
 #include <iostream.h>
@@ -37,6 +33,7 @@ static char rcsid[]="$Id$";
 #include "kmix.h"
 #include "kmix.moc"
 #include "version.h"
+#include "docking.h"
 
 
 #include <qkeycode.h>
@@ -46,6 +43,8 @@ static char rcsid[]="$Id$";
 
 KApplication *globalKapp;
 KIconLoader  *globalKIL;
+KMix	     *kmix;
+DockWidget*     dock_widget;
 
 bool		ReadFromSet=false;		// !!! Sets not implemented yet
 char		SetNumber;
@@ -53,10 +52,9 @@ extern char	KMixErrors[6][100];
 
 int main(int argc, char **argv)
 {
-  globalKapp = new KApplication( argc, argv, "kmix" );
-  globalKIL  = globalKapp->getIconLoader();
-  KMix *kmix;
-
+  globalKapp  = new KApplication( argc, argv, "kmix" );
+  globalKIL   = globalKapp->getIconLoader();
+  dock_widget = new DockWidget("dockw");
 
   /* Parse the command line arguments */
   for (int i=0 ; i<argc; i++) {
@@ -634,4 +632,15 @@ void KMix::sessionSave()
   KmConfig->writeEntry( "Balance"  , LeftRightSB->value() , true );
   KmConfig->sync();
 
+}
+
+void KMix::closeEvent( QCloseEvent *e )
+{
+  if (1 /*allowDocking*/ ) {
+    dock_widget->dock();
+    this->hide();
+  }
+  else{
+    e->ignore();
+  }
 }

@@ -4,7 +4,6 @@
 
 
 // undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
-// HINTS: uncomments more #undef lines, this may help with compile errors
 #undef Above
 #undef Below
 #include <qslider.h>
@@ -58,6 +57,7 @@ private:
   void createWidgets();
   void createMenu();
   void sessionSave();
+  void closeEvent( QCloseEvent *e );
 
   bool mainmenuOn, tickmarksOn;
   QPopupMenu* contextMenu(QObject *);
