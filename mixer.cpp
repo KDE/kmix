@@ -34,7 +34,16 @@
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
  */
 
-
+/**
+ * Constructs a MixDevice. A MixDevice represents one channel or control of
+ * the mixer hardware. A MixDevice has a type (e.g. PCM), a descriptive name
+ * (for example "Master" or "Headphone" or "IEC 958 Output"),
+ * can have a volume level (2 when stereo), can be recordable and muted.
+ * The category tells which kind of control the MixDevice is.
+ * 
+ * Hints: Meaning of "category" has changed. In future the MixDevice might contain two
+ * Volume objects, one for Output (Playback volume) and one for Input (Record volume).
+ */
 MixDevice::MixDevice(	int num, Volume vol, bool recordable, bool mute,
 		QString name, ChannelType type, DeviceCategory category ) :
 	m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable ),
