@@ -20,3 +20,10 @@ void Mixer_HPUX::setDevNumName_I(int devnum)
 {
   devname = "HP-UX Mixer";
 }
+
+
+void Mixer_::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
+{
+  *VolRight = 100;
+  *VolLeft  = 100;
+}

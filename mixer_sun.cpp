@@ -1,3 +1,9 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/file.h>
+#include <sys/audioio.h>
+
 
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
@@ -28,4 +34,16 @@ QString Mixer_SUN::errorText(int mixer_error)
       l_s_errmsg = Mixer::errorText(mixer_error);
     }
   return l_s_errmsg;
+}
+
+
+void Mixer_SUN::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
+{
+  audio_info_t audioinfo;
+  int Volume;
+
+  if (ioctl(fd, AUDIO_GETINFO, &audioinfo) < 0)
+    errormsg(Mixer::ERR_READ);
+  Volume = audioinfo.play.gain;
+  *VolLeft  = *VolRight = (Volume & 0x7f);
 }

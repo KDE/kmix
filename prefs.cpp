@@ -87,7 +87,17 @@ void Preferences::createChannelConfWindow(QWidget *p)
 {
   static bool created = false;
 
-  QBoxLayout *top = new QHBoxLayout(p, 10);
+  QBoxLayout *top = new QVBoxLayout(p, 10);
+
+  QString l_s_cardTitle;
+  l_s_cardTitle = mix->mixerName();
+
+  QLabel *l_qw_tmp = new  QLabel( l_s_cardTitle , p);
+  QFont f("Helvetica", 12, QFont::Bold);
+  l_qw_tmp->setFont( f );
+
+  top->addWidget(l_qw_tmp);
+
   QGroupBox *grpbox = new QGroupBox (i18n("Mixer channel setup"), p);
   top->addWidget(grpbox);
   QGridLayout *l = new QGridLayout(grpbox, 1, 3, 5);

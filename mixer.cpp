@@ -33,12 +33,6 @@
 #include <klocale.h>
 
 #if defined(sun) || defined(__sun__)
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/file.h>
-#include <sys/audioio.h>
-          
 #define SUN_MIXER
 #endif
 
@@ -49,56 +43,16 @@
 
 #ifdef linux
 #ifdef ALSA
-  #include <sys/soundlib.h>
-  void *devhandle;
-  int ret;
-  #define ALSA_MIXER
+#define ALSA_MIXER
 #else
- #include <fcntl.h>
- #include <sys/ioctl.h>
- #include <sys/types.h>
- #include <sys/soundcard.h>
- #define OSS_MIXER
+#define OSS_MIXER
 #endif
 #endif
 
-// FreeBSD section, according to Sebestyen Zoltan
-#ifdef __FreeBSD__
-#include <fcntl.h>
-#include "sys/ioctl.h"
-#include <sys/types.h>
-#include "machine/soundcard.h"
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__bsdi__) || defined(_UNIXWARE)
 #define OSS_MIXER
 #endif
 
-// NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
-#ifdef __NetBSD__
-#include <fcntl.h>
-#include "sys/ioctl.h"
-#include <sys/types.h>
-#include <soundcard.h>
-#define OSS_MIXER
-#endif
-
-// BSDI section, according to <tom@foo.toetag.com>
-#ifdef __bsdi__ 
-#include <fcntl.h> 
-#include <sys/ioctl.h> 
-#include <sys/types.h> 
-#include <sys/soundcard.h> 
-#define OSS_MIXER 
-#endif 
-
-// UnixWare includes
-#ifdef _UNIXWARE
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/soundcard.h>
-#define OSS_MIXER
-#endif
-
-// HP-UX includes
 #if defined(hpux) && defined(HAVE_ALIB_H)
 #define HPUX_MIXER
 #endif
@@ -248,6 +202,12 @@ void Mixer::setDevNumName(int devnum)
   QString devname;
   this->devnum  = devnum;
   this->setDevNumName_I(devnum);
+}
+
+
+void Mixer::readVolumeFromHW( int /*devnum*/, int */*VolLeft*/, int */*VolRight*/ )
+{
+  errormsg(Mixer::ERR_READ);  
 }
 
 /*
@@ -412,7 +372,7 @@ void Mixer::Set0toHW()
 void Mixer::Set2Set0(int Source, bool copy_volume)
 {
   MixDevice	*MixPtr;
-  int		VolLeft,VolRight,Volume;
+  int		VolLeft,VolRight;
 
   MixSet *DestSet = TheMixSets->first();
 
@@ -436,80 +396,7 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
       if (mse == NULL)
 	continue;  // entry not found
 
-
-#ifdef SUN_MIXER
-      audio_info_t audioinfo;
-
-      if (ioctl(fd, AUDIO_GETINFO, &audioinfo) < 0)
-	errormsg(Mixer::ERR_READ);
-      Volume = audioinfo.play.gain;
-      VolLeft  = VolRight = Volume & 0x7f;
-#endif
-#ifdef IRIX_MIXER
-      // Get volume
-      long in_buf[4];
-      switch( MixPtr->num() ) {
-      case 0:       // Speaker Output
-	in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
-	in_buf[2] = AL_LEFT_SPEAKER_GAIN;
-	break;
-      case 7:       // Microphone Input (actually selectable).
-	in_buf[0] = AL_RIGHT_INPUT_ATTEN;
-	in_buf[2] = AL_LEFT_INPUT_ATTEN;
-	break;
-      case 11:      // Record monitor
-	in_buf[0] = AL_RIGHT_MONITOR_ATTEN;
-	in_buf[2] = AL_LEFT_MONITOR_ATTEN;
-	break;
-      default:
-	printf("Unknown device %d\n", MixPtr->num() );
-      }
-      ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4);
-      VolRight = in_buf[1]*100/255;
-      VolLeft  = in_buf[3]*100/255;
-#endif
-#ifdef OSS_MIXER
-      if (ioctl(fd, MIXER_READ( MixPtr->num() ), &Volume) == -1)
-	/* Oops, can't read mixer */
-	errormsg(Mixer::ERR_READ);
-	  
-      VolLeft  = Volume & 0x7f;
-      VolRight = (Volume>>8) & 0x7f;
-#endif
-#ifdef ALSA
-      snd_mixer_channel_t data;
-      ret = snd_mixer_channel_read( devhandle, MixPtr->num(), &data );
-      if ( !ret ) {
-	VolLeft = data.left;
-	VolRight = data.right;
-      }
-      else 
- 	errormsg(Mixer::ERR_READ);
-#endif
-#ifdef HPUX_MIXER
-      // Get volume
-/*      long in_buf[4];
-      switch( MixPtr->num() ) {
-      case 0:       // Speaker Output
-	in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
-	in_buf[2] = AL_LEFT_SPEAKER_GAIN;
-	break;
-      case 7:       // Microphone Input (actually selectable).
-	in_buf[0] = AL_RIGHT_INPUT_ATTEN;
-	in_buf[2] = AL_LEFT_INPUT_ATTEN;
-	break;
-      case 11:      // Record monitor
-	in_buf[0] = AL_RIGHT_MONITOR_ATTEN;
-	in_buf[2] = AL_LEFT_MONITOR_ATTEN;
-	break;
-      default:
-	printf("Unknown device %d\n", MixPtr->num() );
-      }
-      ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4); */
-      VolRight = 100; // in_buf[1]*100/255;
-      VolLeft  = 100; // in_buf[3]*100/255;
-#endif
-// PORTING: add #ifdef PLATFORM , commands , #endif
+      readVolumeFromHW( MixPtr->num(), &VolLeft, &VolRight);
 
       if ( (VolLeft == VolRight) && (MixPtr->stereo() ) )
 	mse->StereoLink = true;
@@ -564,9 +451,17 @@ void Mixer::setBalance(int left, int right)
   updateMixDevice(NULL);
 }
 
+
+QString Mixer::mixerName()
+{
+  return i_s_mixer_name;
+}
+
 /* Open mixer device */
 int Mixer::openMixer(void)
 {
+  i_s_mixer_name = i18n("Standard mixer");
+
 #ifdef NO_MIXER
   return Mixer::ERR_NOTSUPP;
 #endif
@@ -637,6 +532,12 @@ int Mixer::openMixer(void)
   if (!devmask)
     return Mixer::ERR_NODEV;
   MaxVolume =100;
+
+  struct mixer_info l_mix_info;
+  if (ioctl(fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
+    i_s_mixer_name = l_mix_info.name;
+  }
+
 #endif
 #ifdef ALSA
   snd_mixer_channel_info_t chinfo;

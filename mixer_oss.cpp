@@ -1,3 +1,34 @@
+// Linux stuff, by Christian Esken
+#if defined(linux)
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/soundcard.h>
+// FreeBSD section, according to Sebestyen Zoltan
+#elif defined(__FreeBSD__)
+#include <fcntl.h>
+#include "sys/ioctl.h"
+#include <sys/types.h>
+#include "machine/soundcard.h"
+// NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
+#elif defined(__NetBSD__)
+#include <fcntl.h>
+#include "sys/ioctl.h"
+#include <sys/types.h>
+#include <soundcard.h>
+// BSDI section, according to <tom@foo.toetag.com>
+#elif defined()
+#include <fcntl.h> 
+#include <sys/ioctl.h> 
+#include <sys/types.h> 
+#include <sys/soundcard.h> 
+// UnixWare includes
+#elif defined(_UNIXWARE)
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/soundcard.h>
+#endif
 
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
@@ -46,3 +77,16 @@ QString Mixer_OSS::errorText(int mixer_error)
     }
   return l_s_errmsg;
 }
+
+void Mixer_OSS::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+{
+  int Volume;
+  if (ioctl(fd, MIXER_READ( devnum ), &Volume) == -1)
+    /* Oops, can't read mixer */
+    errormsg(Mixer::ERR_READ);
+
+  *VolLeft  = (Volume & 0x7f);
+  *VolRight = ((Volume>>8) & 0x7f);
+}
+
+

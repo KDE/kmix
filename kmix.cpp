@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 
   SetNumber = -1;
   /* Parse the command line arguments */
-  for (int i=0 ; i<argc; i++) {
+  for (int i=1 ; i<argc; i++) {
     if (strcmp(argv[i],"-version") == 0) {
       cout << "kmix " << rcsid << '\n';
       exit(0);
@@ -79,10 +79,11 @@ int main(int argc, char **argv)
       /* -R is the command to read in a specified set.
        * The set number is given as the next argument.
        */
-      i=i+1;
+      i += 1;
       SetNumber   = atoi(argv[i]);
     }
     else if (strcmp(argv[i],"-devnum") == 0  && i+1<argc) {
+      i += 1;
       mixer_id = atoi(argv[i]);
     }
     else if ( i+1 == argc )

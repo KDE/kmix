@@ -8,6 +8,7 @@
 #undef Unsorted
 
 #include <qslider.h>
+#include <qstring.h>
 #include <qlist.h>
 #include <qlabel.h>
 
@@ -166,12 +167,16 @@ public:
 
   static Mixer* getMixer(int devnum, int SetNum);
 
+  /// Grabs (opens) the mixer for further intraction
   virtual int grab();
+  /// Releases (closes) the mixer
   virtual int release();
   /// Prints out a translated error text for the given error number on stderr
   void errormsg(int mixer_error);
   /// Returns a translated error text for the given error number
   virtual QString errorText(int mixer_error);
+  QString mixerName();
+
   virtual void updateMixDevice(MixDevice *mixdevice);
   virtual void setBalance(int left, int right);
   /// Write set 0 into the mixer hardware
@@ -181,8 +186,8 @@ public:
   virtual void Set0toSet(int Source);
   virtual void setRecsrc(unsigned int newRecsrc);
   unsigned int getRecsrc();
-
-
+  /// Reads the volume of the given device into VolLeft and VolRight
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
 
   void sessionSave(bool sessionConfig);
 
@@ -199,10 +204,8 @@ protected:
 
   QString	devname;
 
-
-private:
-  int		devnum;
-
+protected:
+  // This will go into the corresponding class
 #ifdef sgi
   // IRIX uses ALport stuff
   ALport	m_port;
@@ -215,6 +218,9 @@ private:
   int		fd;
 #endif
 
+private:
+  int		devnum;
+  QString	i_s_mixer_name;
   bool		isOpen;
 
   void setDevNumName(int devnum);
@@ -238,6 +244,7 @@ public:
   virtual ~Mixer_OSS() {};
 
   virtual QString errorText(int mixer_error);
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
 
 protected:
   virtual void setDevNumName_I(int devnum);
@@ -249,6 +256,8 @@ public:
   Mixer_ALSA();
   Mixer_ALSA(int devnum, int SetNum);
   virtual ~Mixer_ALSA() {};
+
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
 
 protected:
   virtual void setDevNumName_I(int devnum);
@@ -262,6 +271,7 @@ public:
   virtual ~Mixer_SUN() {};
 
   virtual QString errorText(int mixer_error);
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
 
 protected:
   virtual void setDevNumName_I(int devnum);
@@ -274,6 +284,8 @@ public:
   Mixer_IRIX(int devnum, int SetNum);
   virtual ~Mixer_IRIX() {};
 
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+
 protected:
   virtual void setDevNumName_I(int devnum);
 };
@@ -285,10 +297,15 @@ public:
   Mixer_HPUX(int devnum, int SetNum);
   virtual ~Mixer_HPUX() {};
 
+  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+
 protected:
   virtual int release_I();
   virtual void setDevNumName_I(int devnum);
 };
 
+class Mixer_None : public Mixer
+{
+};
 
 #endif
