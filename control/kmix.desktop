@@ -1,0 +1,13 @@
+[Desktop Entry]
+Icon=kmix
+Type=Application
+Exec=kcmshell Sound/kmix
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kmix
+
+Name=Mixer
+
+Comment=Soundcard mixer control
+
+Keywords=Sound,Mixer,Volume,Audio,KMix,Mix

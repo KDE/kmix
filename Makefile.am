@@ -1,4 +1,4 @@
-SUBDIRS = pics
+SUBDIRS = control pics
 INCLUDES= $(all_includes)
 
 bin_PROGRAMS = kmix

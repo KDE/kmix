@@ -49,6 +49,7 @@ extern "C"
 {
   KPanelApplet* init(QWidget *parent, const QString& configFile)
   {
+     kdDebug() << "kmixapplet init" << endl;
      KGlobal::locale()->insertCatalogue("kmixapplet");
      return new KMixApplet(configFile, KPanelApplet::Normal,
 			   KPanelApplet::About | KPanelApplet::Help | KPanelApplet::Preferences,

@@ -51,7 +51,6 @@ class KMixApplet : public KPanelApplet
   protected slots:
    void updateSize() { updateLayout(); }
    void updateLayout();
-   void slotTextChanged( const QString& );
 
   protected:
    void resizeEvent( QResizeEvent * );
