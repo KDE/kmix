@@ -265,10 +265,10 @@ KMixWindow::initWidgets()
 	
 	// Mixer widget line
 	QHBoxLayout *mixerNameLayout = new QHBoxLayout( 0, 0, 6, "mixerNameLayout" );
-	mixerNameLayout->addWidget( new QLabel( i18n(" Current mixer: "), centralWidget() ) );
+	mixerNameLayout->addWidget( new QLabel( i18n(" Current mixer:"), centralWidget() ) );
 	m_cMixer = new KComboBox( FALSE, centralWidget(), "mixerCombo" );
    connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( showSelectedMixer( int ) ) );
-	QToolTip::add( m_cMixer, i18n("Current Mixer" ) );
+	QToolTip::add( m_cMixer, i18n("Current mixer" ) );
 	mixerNameLayout->addWidget( m_cMixer );
 
 	// Add first layout to widgets
