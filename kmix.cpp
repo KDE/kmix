@@ -85,6 +85,9 @@ int main(int argc, char **argv)
   }
 
   if (!initonly && kapp->isRestored()) {
+
+    // MODE #1 : Restored by Session Management 
+
     int n = 1;
     while (KTopLevelWidget::canBeRestored(n)) {
       // !!! TODO: Read mixer number from session management
@@ -92,8 +95,10 @@ int main(int argc, char **argv)
       kmix->restore(n);
       n++;
     }
+    return globalKapp->exec();
   }
   else {
+    // MODE #2 and #3
     int mixer_id;
     if (argc > 1)
       mixer_id = atoi(argv[argc - 1]);
@@ -101,12 +106,14 @@ int main(int argc, char **argv)
       mixer_id = 0;
 
     if ( initonly ) {
+      // MODE #2 : Only initialize mixer, no GUI
       cout << "Doing initonly ... ";
       initMix = new Mixer( mixer_id );
       cout << "Finished\n";
       return 0;
     }
     else {
+      // MODE #3 : Started regulary by the user
       kmix = new KMix( mixer_id );
       return globalKapp->exec();
     }
@@ -122,8 +129,8 @@ KMix::~KMix()
 bool KMix::restore(int n)
 {
   bool ret = KTopLevelWidget::restore(n);
-//  if (ret && allowDocking && startDocked )
-  hide();
+  if (ret && allowDocking && startDocked )
+    hide();
   return ret;
 }
 
