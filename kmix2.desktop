@@ -1,14 +1,15 @@
 [Desktop Entry]
-BinaryPattern=kmix;
+BinaryPattern=kmix2;
 Protocols=
-Exec=kmix -caption "%c" %i %m
-DocPath=kmix/index.html
+Exec=kmix2 -caption "%c" %i %m
+DocPath=kmix2/index.html
 TerminalOptions=
 Path=
 Extensions=
 Type=Application
 MimeType=
 Terminal=0
+Icon=kmix
 Comment=Controls the volume of the Sound channels
 Comment[ca]=Controla el volum dels canals de so
 Comment[cs]=Nastavení hlasitosti zvukových kanálů
@@ -47,5 +48,3 @@ Name[sl]=Mešalna miza
 Name[sr]=Mikser za zvuk
 Name[sv]=Ljudmixningspanel
 Name[ta]=ஒலிகள கலககம பலகம
-Icon=kmix
-
