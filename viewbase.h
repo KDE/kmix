@@ -12,7 +12,7 @@ class Mixer;
 class MixDevice;
 
 /**
-  * The ViewBase is a base class, where all Mixer views derive from.
+  * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
   */
 class ViewBase : public QWidget
 {
@@ -21,8 +21,11 @@ public:
 
     typedef uint ViewFlags;
     enum ViewFlagsEnum {
+	// Regular flags
         HasMenuBar     = 0x0001,
-        MenuBarVisible = 0x0002
+        MenuBarVisible = 0x0002,
+	// Experimental flags
+	Experimental_SurroundView = 0x1000
     };
 
     ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0);
@@ -65,7 +68,7 @@ public:
 
     /**
      * Creates a suitable representation for the given MixDevice.
-     * The default implememntaion creates a label
+     * The default implementation creates a label
      */
     virtual QWidget* add(MixDevice *);
 
@@ -98,7 +101,6 @@ public slots:
    void toggleMenuBarSlot();
 
 protected slots:
-    //   void slotFillPopup();
    void mousePressEvent( QMouseEvent *e );
 
 signals:
