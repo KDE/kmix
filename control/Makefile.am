@@ -17,4 +17,4 @@ messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkmix.pot
 
 data_DATA = kmixcfg.desktop
-datadir = $(kde_appsdir)/Settings/Sound
+datadir = $(kde_appsdir)/.hidden
