@@ -142,7 +142,9 @@ const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   ,
 			       "3D-depth", "3D-center", "unknown"  , "unknown" , "unknown",  \
 			       "unknown" , "unused" };
 
-/// The mixing set list
+
+bool MixChannel::i_b_HW_update = true;
+
 
 Mixer::Mixer()
 {
@@ -944,8 +946,17 @@ void MixChannel::VolChangedI(int new_pos)
   else {
     cerr << "MixChannel::VolChanged(): no such mix set entry\n";
   }
-  mixdevice->mix->updateMixDevice(mixdevice);
+  if ( i_b_HW_update ) {
+    mixdevice->mix->updateMixDevice(mixdevice);
+  }
 }
+
+void MixChannel::HW_update(bool val_b_update_allowed)
+{
+  i_b_HW_update = val_b_update_allowed;
+}
+
+
 
 
 void MixDevice::MvolSplitCB()

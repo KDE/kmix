@@ -863,38 +863,55 @@ void KMix::updateSlidersI( )
   QSlider *qs;
   MixSet *SrcSet = mix->TheMixSets->first();
 
-      // now update the slider positions...
-      MixDevice        *MixPtr = mix->First;
+  // now update the slider positions...
+  MixDevice        *MixPtr = mix->First;
 
-      bool setDisplay = true;
+  bool setDisplay = true;
 
-      while(MixPtr) {
-          MixSetEntry *mse;
-          for(mse = SrcSet->first();
-                    (mse != NULL) && (mse->devnum != MixPtr->num() );
-                    mse=SrcSet->next() );
-          if (mse == NULL)
-                continue;
+  /* The next line is tricky. Lets explain it:
+     Several lines later I will call qs->setValue(). Doing so changes the value of the QSlider.
 
-          if(! MixPtr->disabled()){
-              MixPtr->Left->volume = mse->volumeL;
-              MixPtr->Right->volume = mse->volumeR;
-          }
-          qs = MixPtr->Left->slider;
-          qs->setValue(100-MixPtr->Left->volume);
-          if (MixPtr->stereo()  == true) {
-              qs = MixPtr->Right->slider;
-              qs->setValue(100-MixPtr->Right->volume);
-          }
-	  if ( setDisplay) {
-	    dock_widget->setDisplay(( MixPtr->Left->volume + MixPtr->Right->volume )/2);
-	    setDisplay = false;
-	  }
+     This will lead to the emitting of its valueChanged() signal. This again ist the hint for
+     my code that the user has dragged the slider. As the user expects that the volume changes
+     when he drags the slider, this action is indeed being triggered.
+
+     The above scenario shows that everything goes well. Alas - it wasn't the user who dragged
+     the slider. We only want to display changes that other programs did - so we are NOT expected
+     to write to the hardware again. Using the HW_update(false) does exactly this (avoiding
+     writing to the hardware).
+  */
+  MixChannel::HW_update(false);
+
+  while(MixPtr) {
+    MixSetEntry *mse;
+
+    // Traverse all MixSetEntries to find the entry which corresponds to  MixPtr->num()
+    for(mse = SrcSet->first();
+	(mse != NULL) && (mse->devnum != MixPtr->num() );
+	mse=SrcSet->next() );
+    if (mse == NULL)
+      continue;		// -<- not found : Shouldn't this better break the loop?   !!!		(1)
+
+    if(! MixPtr->disabled()){
+      MixPtr->Left->volume = mse->volumeL;
+      MixPtr->Right->volume = mse->volumeR;
+    }
+    qs = MixPtr->Left->slider;
+    qs->setValue(100-MixPtr->Left->volume);
+    if (MixPtr->stereo()  == true) {
+      qs = MixPtr->Right->slider;
+      qs->setValue(100-MixPtr->Right->volume);
+    }
+    if ( setDisplay) {
+      dock_widget->setDisplay(( MixPtr->Left->volume + MixPtr->Right->volume )/2);
+      setDisplay = false;
+    }
 
 
-          MixPtr = MixPtr->Next;
-      }
-} // enterEvent()
+    MixPtr = MixPtr->Next;	// !!! Not executed in the case "mse == NULL", see at (1)
+  }
+  MixChannel::HW_update(true);
+}
 
 
 

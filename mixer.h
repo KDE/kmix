@@ -140,6 +140,10 @@ public:
   int		volume;			/* Volume of this channel	   */
   QSlider	*slider;		/* Associated slider               */
 
+  static bool	i_b_HW_update;
+
+  static void HW_update(bool val_b_update_allowed);
+
 public slots:
   void	VolChanged( int new_pos );
   void VolChangedI(int new_pos);
