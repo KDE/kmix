@@ -283,44 +283,72 @@ Mixer_ALSA::releaseMixer()
 bool
 Mixer_ALSA::isRecsrcHW( int devnum )
 {
+	bool isCurrentlyRecSrc = false;
 	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
 
-	return( 	snd_mixer_selem_has_capture_volume( elem ) ||
+	// !!! bug. This must return whether it is at the moment a record source
+	/**	return( 	snd_mixer_selem_has_capture_volume( elem ) ||
 				snd_mixer_selem_has_capture_switch( elem ) );
+	*/
+	if ( snd_mixer_selem_has_capture_switch( elem ) ) {
+		// Has a on-off switch
+		// Yes, this element can be record source. But the user can switch it off, so lets see if it is switched on.
+		int swLeft;
+		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &swLeft );
+		if (snd_mixer_selem_has_capture_switch_joined( elem ) ) {
+			isCurrentlyRecSrc = (swLeft != 0);
+		}
+		else {
+			int swRight;
+			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &swRight );
+			if (snd_mixer_selem_has_capture_switch_joined( elem ) ) {
+				isCurrentlyRecSrc = ( (swLeft != 0) || (swRight != 0) );
+			}
+		}
+	}
+	else {
+		// Has no on-off switch
+		if ( snd_mixer_selem_has_capture_volume( elem ) ) {
+			// Has a volume, but has no OnOffSwitch => We assume that this is a fixed record source (always on). (esken)
+			isCurrentlyRecSrc = true;
+		}
+	}
+	
+	return isCurrentlyRecSrc;
 }
 
 bool
 Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 {
-	int sw;
-	bool retOk = false;
-	
+	int sw = (int)on;
+	kdDebug() << "ENTR Mixer_ALSA::setRecsrcHW(" << devnum << " , " << on << " , " << sw << ")\n";
 	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
 	
-	if (snd_mixer_selem_has_capture_switch_joined( elem ) && on )
+	if (snd_mixer_selem_has_capture_switch_joined( elem ) )
 	{
-		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
-		snd_mixer_selem_set_capture_switch_all( elem, !sw );
-		retOk = !sw;
+//		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
+		kdDebug() << "Mixer_ALSA::setRecsrcHW joined\n";
+		snd_mixer_selem_set_capture_switch_all( elem, sw );
 	}
 	else
 	{
-		if ( on && snd_mixer_selem_has_capture_channel( elem, SND_MIXER_SCHN_FRONT_LEFT ) )
+		if ( snd_mixer_selem_has_capture_channel( elem, SND_MIXER_SCHN_FRONT_LEFT ) )
 		{
-			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
-			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, !sw );
-			retOk = !sw;
+//			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
+			kdDebug() << "Mixer_ALSA::setRecsrcHW LEFT\n";
+			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, sw );
 		}
 		
-		if ( on &&  snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
+		if ( snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
 		{
-			snd_mixer_selem_get_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, &sw);
-			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, !sw);
-			retOk = !sw;
+//			snd_mixer_selem_get_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, &sw);
+			kdDebug() << "Mixer_ALSA::setRecsrcHW RIGHT\n";
+			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, sw);
 		}
 	}
 
-	return retOk;
+	kdDebug() << "EXIT Mixer_ALSA::setRecsrcHW(" << devnum << "," << on <<  ")\n";
+	return false; // we should always return false, so that other devnum's get updated
 }
 
 int
@@ -330,6 +358,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	bool hasVol = false;
 	long left, right, pmin, pmax;
 
+	//kdDebug() << "ENTR Mixer_ALSA::readVolumeFromHW()\n";
 	snd_mixer_elem_t *elem = mixer_elem_list[ mixerIdx ];
 
 	hasVol = ( snd_mixer_selem_has_playback_volume ( elem ) ||
@@ -342,6 +371,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		else
 			snd_mixer_selem_get_capture_volume_range ( elem, &pmin, &pmax );
 		
+		// Read value from LEFT playback/capture volume
 		if (snd_mixer_selem_has_playback_volume( elem ) )
 			snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
 		else
@@ -354,6 +384,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		}
 		else
 		{
+			// Read value from RIGHT playback/capture volume
 			if ( snd_mixer_selem_has_playback_volume ( elem ) )
 				snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
 			else
@@ -376,7 +407,16 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		if( elem_sw == volume.isMuted() )
 			volume.setMuted( ! elem_sw );
 	}
+/* I will try this afer KDE3.2 - esken !!!
+	// The next line is a nice workaround for channels that have no explicite "muted" switch (esken)
+	else if ( (left == pmin ) &&
+				( (right == pmin) || snd_mixer_selem_is_playback_mono ( elem ) ) )
+	{
+		volume.setMuted( ! elem_sw );
+	}
+*/
 
+	//kdDebug() << "EXIT Mixer_ALSA::readVolumeFromHW()\n";
 	return 0;
 }
 
