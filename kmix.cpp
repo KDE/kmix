@@ -166,8 +166,6 @@ KMix::KMix(int mixernum)
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
     KMsgBox::message(0, "Mixer failure.", KMixErrors[mixer_error], KMsgBox::INFORMATION, "OK" );
-
-    cerr << mixer_error << "," << KMixErrors[mixer_error] << "\n###\n";
     mix->errormsg(mixer_error);
     exit(1);
   }

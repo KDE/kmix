@@ -99,7 +99,7 @@ or end your session.<p>
 <itemize>
 <item><tt/Menu/ If switched off, the menu bar will disappear. You can
 get the menu bar by pressing <tt/Control-M/.
-<item><tt/Tickmarks/ Switches the Tickamrks on and off
+<item><tt/Tickmarks/ Switches the Tickamrks on and off.
 <item><tt/Docking on the KDE Panel/ If switched on, kmix will dock
 itself on the KDE Panel, when pressing the close button. If switched
 off, kmix will quit, when you press the close button.
@@ -110,9 +110,12 @@ off, kmix will quit, when you press the close button.
 <p>
 
 This is one of the advanced features of kmix. If you have a standard
-layout you like, you can save this layout by pressing <tt/Control-1/.
-This will save the layout as profile <tt/1/. Likewise you can
-save profile <tt/2/, <tt/3/ and <tt/4/. You can
+layout you like, you can save this layout. A layout stores, which
+channels are shown, if the channels slider are split and if they
+are muted.
+
+Just press <tt/Control-1/ to save the layout as profile <tt/1/.
+Likewise you can save profile <tt/2/, <tt/3/ and <tt/4/. You can
 restore a profile by pressing <tt/1/, <tt/2/, <tt/3/ and <tt/4/
 respectively.
 
@@ -188,22 +191,26 @@ Displays informations about KMix.
 
 <sect>Installation
 <p>
+
+Normally you don't need to care about the installation of KMix.
+KMix is shipped with nearly all Linux distributions. On other
+platforms you need to download KMix
+
 <sect1>How to obtain KMix
 <p>
-KMix is a core application of the KDE project <url
-url="http://www.kde.org">.
+KMix is a core application of the KDE project <url url="http://www.kde.org">.
 KMix can be found on <url url="ftp://ftp.kde.org/pub/kde/">, the main ftp
-site
-of the KDE project.
+site of the KDE project.
+
 
 <sect1>Requirements
 <p>
-In order to successfully compile KMix, you need the latest versions of <tt>
-libkdecore</tt>
-and <tt> libkdeui</tt>. All required libraries as well as KMix itself can be
-found
+In order to successfully compile KMix, you need an installed KDE1.0 or
+KDE1.1. These releases can be found
 on <url url="ftp://ftp.kde.org/pub/kde/">.
-
+Look for a stable KDE release, KMix is contained
+in the kdemultimedia package. Mirrors can be found under
+<url url="http://www.kde.org/mirrors.html">.
 
 
 <sect1>Compilation and installation
@@ -234,14 +241,14 @@ config file to get it back?<p>
 
 <item><tt/Q:/ When I leave kmix, and restart it, the mixer does
 not restore the "split" settings of the channels.<p>
-<tt/A:/ This is intended. kmix determinates on startup, whether a "split" is
-  neccesary, automatically. It splits the sliders, if both channels have
-  different volume settings.
+<tt/A:/ This is intended. kmix determinates on startup automatically,
+  whether a "split" is neccesary. It splits the sliders, if both
+  channels have different volume settings.
 
 
 <item><tt/Q:/ The program does not save any options.<p>
 <tt/A:/ The "Menu", "Tickmarks" and "Docking" option are saved
-automatically. The layout is saved manually in profiles.
+  automatically. The layout is saved manually in profiles.
 </itemize>
 
 
