@@ -44,7 +44,7 @@ extern "C" int kdemain(int argc, char *argv[])
                          I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski\n(c) 2002-2003 Christian Esken, Helio Chissini de Castro\n(c) 2004 Christian Esken, Helio Chissini de Castro"));
 
    aboutData.addAuthor("Christian Esken", "Current maintainer", "esken@kde.org");
-   aboutData.addAuthor("Helio Chissini de Castro", I18N_NOOP("Current redesign and co-mainteiner, Alsa 0.9x port"), "helio@kde.org" );
+   aboutData.addAuthor("Helio Chissini de Castro", I18N_NOOP("Current redesign and co-maintainer, Alsa 0.9x port"), "helio@kde.org" );
    aboutData.addAuthor("Stefan Schimanski", 0, "schimmi@kde.org");
    aboutData.addAuthor("Sven Leiber", 0, "s.leiber@web.de");
    aboutData.addAuthor("Brian Hanson", I18N_NOOP("Solaris port"), "bhanson@hotmail.com");
