@@ -122,7 +122,6 @@ KMixWindow : public KMainWindow
 
   private slots:
    //void removeMixerWidget( KMixerWidget *mw );
-   void dockMute();
    void slotHWInfo();
    void showSelectedMixer( int mixer );
 };

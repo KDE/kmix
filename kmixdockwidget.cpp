@@ -77,6 +77,13 @@ KMixDockWidget::createMasterVolWidget()
         return;
     }
 
+    // Put "Mute" selector in context menu
+    (void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
+                             actionCollection(), "dock_mute" );
+    KAction *a = actionCollection()->action( "dock_mute" );
+    KPopupMenu *popupMenu = contextMenu();
+    if ( a ) a->plug( popupMenu );
+
     // create devices
 
     _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, this);
@@ -261,6 +268,20 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
 }
 
 void
+KMixDockWidget::dockMute()
+{
+	MixDevice *md = 0;
+	if ( _dockAreaPopup != 0 )
+	{
+		md = _dockAreaPopup->dockDevice();
+		if ( md != 0 ) {
+        		md->setMuted( !md->isMuted() );
+        		m_mixer->commitVolumeChange( md );
+		}
+	}
+}
+
+void
 KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 {
     KAction* showAction = actionCollection()->action("minimizeRestore");
@@ -273,6 +294,18 @@ KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
         else
         {
             showAction->setText( i18n("Show Mixer Window") );
+        }
+    }
+
+    // Enable/Disable "Muted" menu item
+    MixDevice *md = 0;
+    if ( _dockAreaPopup != 0 )
+    {
+        md = _dockAreaPopup->dockDevice();
+        KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
+	//kdDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted() << endl;
+        if ( md != 0 && dockMuteAction != 0 ) {
+           dockMuteAction->setChecked( md->isMuted() );
         }
     }
 }

@@ -69,6 +69,8 @@ class KMixDockWidget : public KSystemTray  {
    int  _oldToolTipValue;
    char _oldPixmapType;
    bool _volumePopup;
+ private slots:
+   void dockMute();
 };
 
 #endif

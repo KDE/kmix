@@ -113,9 +113,10 @@ KMixWindow::initActions()
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
+/* Belongs in KMixDockWidget
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
 				 actionCollection(), "dock_mute" );
-
+*/
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
 	(void) new KAction( i18n( "Hide Mixer Window" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
 	createGUI( "kmixui.rc" );
@@ -188,12 +189,14 @@ KMixWindow::updateDocking()
                 // !! This should be a View in the future
 		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget", m_volumeWidget );
 
+/* Belongs in KMixDockWidget
 		// create RMB menu
 		KPopupMenu *menu = m_dockWidget->contextMenu();
 
 		// !! check this
 		KAction *a = actionCollection()->action( "dock_mute" );
 		if ( a ) a->plug( menu );
+*/
 
 		/*
 		 * Mail from 31.1.2005: "make sure your features are at least string complete"
@@ -204,19 +207,6 @@ KMixWindow::updateDocking()
 
 		m_dockWidget->show();
 	}
-}
-
-void
-KMixWindow::dockMute()
-{
-	Mixer *mixer = m_mixers.first();
-        if ( !mixer )
-            return;
-	MixDevice *masterDevice = ( *mixer )[ mixer->masterDevice() ];
-
-	masterDevice->setMuted( !masterDevice->isMuted() );
-	mixer->writeVolumeToHW( masterDevice->num(), masterDevice->getVolume() );
-
 }
 
 void
