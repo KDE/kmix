@@ -258,7 +258,8 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	// create record source LED
 	if( m_mixdevice->isRecordable() && ! isSwitch() )
 	{
-		layout->addSpacing( 2 );
+		if ( showRecordLED )
+		  layout->addSpacing( 2 );
 		m_recordLED = new KLedButton( Qt::red,
 				m_mixdevice->isRecSource()?KLed::On:KLed::Off,
 				KLed::Sunken, KLed::Circular, this, "RecordLED" );
