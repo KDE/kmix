@@ -29,6 +29,7 @@ static char rcsid[]="$Id$";
 
 #include <stdio.h>
 #include <iostream.h>
+#include <kapp.h>
 #include <kiconloader.h>
 #include <klocale.h>
 
@@ -418,13 +419,13 @@ void KMix::createMenu()
   Mfile->insertSeparator();
   Mfile->insertItem( klocale->translate("&Quit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
-  Mhelp = new QPopupMenu;
+  Mhelp = globalKapp->getHelpMenu(true,(const char*)"KMIX bla bla bla");
   CHECK_PTR( Mhelp );
-  Mhelp->insertItem( klocale->translate("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
-  qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
-  Mhelp->insertSeparator();
-  Mhelp->insertItem( klocale->translate("&About"), this, SLOT(aboutClickedCB()));
-  Mhelp->insertItem( klocale->translate("&About Qt..."), this, SLOT(aboutqt()));
+//  Mhelp->insertItem( klocale->translate("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
+//  qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
+//  Mhelp->insertSeparator();
+//  Mhelp->insertItem( klocale->translate("&About"), this, SLOT(aboutClickedCB()));
+//  Mhelp->insertItem( klocale->translate("&About Qt..."), this, SLOT(aboutqt()));
 
   mainmenu = new KMenuBar( this, "main menu");
   CHECK_PTR( mainmenu );
@@ -491,7 +492,7 @@ void KMix::aboutqt()
 
 void KMix::launchHelpCB()
 {
-  globalKapp->invokeHTMLHelp("kmedia/kmix.html", "");
+  globalKapp->invokeHTMLHelp("kmillion/index.html", "");
 }
 
 

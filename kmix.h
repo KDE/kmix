@@ -7,11 +7,6 @@
 // HINTS: uncomments more #undef lines, this may help with compile errors
 #undef Above
 #undef Below
-//#undef NoMarks
-//#undef Left
-//#undef Right
-//#undef Unsorted
-//#undef Both
 #include <qslider.h>
 #include <qmsgbox.h>
 #include <qpopmenu.h>

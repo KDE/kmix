@@ -4,7 +4,7 @@ INCLUDES= $(all_includes)
 
 ####### Files
 
-SUBDIRS = pics
+SUBDIRS = pics docs
 bin_PROGRAMS = 	kmix
 kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp
 noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h
