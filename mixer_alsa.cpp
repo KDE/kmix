@@ -23,7 +23,6 @@
 #include <sys/asoundlib.h>
 
 #include "mixer_alsa.h"
-#include "mixdevice.h"
 #include "volume.h"
 
 #include <stdlib.h>

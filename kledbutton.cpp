@@ -27,14 +27,12 @@
 KLedButton::KLedButton(const QColor &col, QWidget *parent, const char *name)
    : KLed( col, parent, name )
 {	
-   cerr << "KLedButton::KLedButton" << endl;
 }
 
 KLedButton::KLedButton(const QColor& col, KLed::State st, KLed::Look look,
 		       KLed::Shape shape, QWidget *parent, const char *name)
    : KLed( col, st, look, shape, parent, name )
 {
-   cerr << "KLedButton::KLedButton" << endl;
 }
 
 KLedButton::~KLedButton()
@@ -45,7 +43,6 @@ void KLedButton::mousePressEvent( QMouseEvent *e )
 {
    if (e->button() == LeftButton)
    {
-      cerr << "KLedButton::mousePressEvent" << endl;
       toggle();
       emit stateChanged( state() );
    }

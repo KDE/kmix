@@ -26,11 +26,10 @@
 #include <kstddirs.h>
 
 #include "kmix.h"
+#include "version.h"
 
 static const char *description =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
-// INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
-	
 	
 static KCmdLineOptions options[] =
 {
@@ -41,12 +40,17 @@ static KCmdLineOptions options[] =
 int main(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
-			 VERSION, description, KAboutData::License_GPL,
+			 APP_VERSION, description, KAboutData::License_GPL,
 			 "(c) 2000 by Stefan Schimanski");
 
-   aboutData.addAuthor("Stefan Schimanski",0, "1Stein@gmx.de");
-   aboutData.addAuthor("Christian Esken",0, "esken@kde.org");	
-	
+   aboutData.addAuthor("Stefan Schimanski", "GUI", "1Stein@gmx.de");
+   aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
+   aboutData.addAuthor("Paul Kendall", "SGI Port", "paul@orion.co.nz");
+   aboutData.addAuthor("Sebestyen Zoltan", "*BSD fixes", "szoli@digo.inf.elte.hu");
+   aboutData.addAuthor("Lennart Augustsson", "*BSD fixes", "augustss@cs.chalmers.se");
+   aboutData.addAuthor("Nick Lopez", "ALSA port", "kimo_sabe@usa.net");
+   aboutData.addAuthor("Helge Deller", "HP/UX port", "deller@gmx.de");
+   	
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.	
 

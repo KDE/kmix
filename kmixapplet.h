@@ -27,31 +27,49 @@
 #include <kpanelapplet.h>
 
 class KMixerWidget;
+class Mixer;
+class QPushButton;
+class QTimer;
 
 class KMixApplet : public KPanelApplet
 {
    Q_OBJECT
 
   public:
-   KMixApplet( KMixerWidget *mixerWidget, QWidget *parent = 0, const char* name = 0 );
+   KMixApplet( Mixer *mixer, QString id, QWidget *parent = 0, const char* name = 0 );
 
    KMixerWidget *mixerWidget() { return m_mixerWidget; };
+   void setMixerWidget( KMixerWidget *mw );
 
    int widthForHeight(int height);
    int heightForWidth(int width); 
    void removedFromPanel();
+   void about() { emit aboutClicked(); };
+   void help() { emit helpClicked(); }
+   void preferences() { emit prefClicked(); }   
+   QString dockId() { return m_dockId; }
 
   signals:
    void closeApplet( KMixApplet *applet );
+   void clickedButton();
+   void aboutClicked();
+   void helpClicked();
+   void prefClicked();
 
   protected slots:
    void updateSize() { updateLayout(); }
+   void showButton() { emit clickedButton(); };
+   void updateLayout();
 
   protected:
-   void resizeEvent( QResizeEvent* );
-
+   void resizeEvent( QResizeEvent * );
+    
   private:
    KMixerWidget *m_mixerWidget;
+   QButton *m_button;
+   QTimer *m_layoutTimer;
+   QString m_dockId;
+   int m_lockedLayout;
 };
 
 

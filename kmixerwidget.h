@@ -32,58 +32,75 @@
 
 class Mixer;
 class QSlider;
-class QTimer;
+class Channel;
+class KActionCollection;
+
+struct ChannelProfile
+{       
+};
+
+class Profile : public QList<ChannelProfile>
+{
+  public:  
+   Profile( Mixer *mixer );
+
+   void write();
+   void read();
+
+   void loadConfig( const QString &grp );
+   void saveConfig( const QString &grp);
+
+  private:
+   Mixer *m_mixer;
+};
 
 class KMixerWidget : public QWidget  {
    Q_OBJECT
 
-   friend class KMixerPrefWidget;
-
   public:
-   KMixerWidget( QWidget *parent=0, const char *name=0 );
+   KMixerWidget( Mixer *mixer, bool small=false, bool vert=true, 
+		 QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
-   QString mixerName();
+   QString name() { return m_name; };
+   void setName( QString name ) { m_name = name; };
+   Mixer *mixer() { return m_mixer; };
 
   signals:
-   void rightMouseClick();
    void updateTicks( bool on );
+   void updateLabels( bool on );
+   void updateIcons( bool on );
+   void updateLayout();
 
-   public slots:
-      virtual void applyPrefs( class KMixPrefWidget *prefWidget );
-   virtual void initPrefs( class KMixPrefWidget *prefWidget );
+  public slots:     
    void setTicks( bool on );
+   void setLabels( bool on );
+   void setIcons( bool on );
    void setBalance( int value );
+   // void setOrientation( int vert );
 
-   void sessionSave( bool sessionConfig );
-   void sessionLoad( bool sessionConfig );
+   void sessionSave( QString grp, bool sessionConfig );
+   void sessionLoad( QString grp, bool sessionConfig );
 
-   private slots:	
-      void rightMouseClicked() { emit rightMouseClick(); };	
+   void showAll();
 
-  protected:
+  private slots:	
+   void rightMouseClicked();	
    void updateSize();
 
   private:
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
-   QTimer *m_timer;
    QBoxLayout *m_topLayout;
+   QBoxLayout *m_devLayout;
+   QList<Channel> m_channels;
+   QString m_name;
+   KActionCollection *m_actions;
+   bool m_small;
+   bool m_vertical;
 
    void mousePressEvent( QMouseEvent *e );
-};
-
-class KMixerPrefWidget : public QWidget {
-   Q_OBJECT	
-
-  public:
-   KMixerPrefWidget( KMixerWidget* mixerWidget, QWidget *parent=0, const char *name=0 );
-   ~KMixerPrefWidget();
-
-  protected:
-   KMixerWidget *m_mixerWidget;
-   QBoxLayout *m_layout;
-   QList<ChannelSetup> m_channels;
+   void updateDevices( bool vert );
 };
 
 #endif

@@ -29,17 +29,22 @@
 
 // include files for Qt
 #include <qstrlist.h>
+#include <qtabwidget.h>
 
 // include files for KDE 
 #include <kapp.h>
 #include <ktmainwindow.h>
 #include <kaccel.h>
 #include <kaction.h>
+#include <kiconloader.h>
+
+#include "mixer.h"
 
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
+class KMixApplet;
 
 class KMixApp : public KTMainWindow
 {
@@ -50,25 +55,29 @@ class KMixApp : public KTMainWindow
    ~KMixApp();
 
   protected:
-   void sessionSave( bool sessionConfig );
-   void sessionLoad( bool sessionConfig );
+   void saveConfig();
+   void loadConfig();
 
-   void initMenuBar();
-   void initView();
+   void initMixer();
    void initPrefDlg();
    void initActions();
+   void initWidgets();
 
-   void updateDocking();	
+   void updateDocking();
 
-   virtual bool queryExit();
-   virtual void saveProperties(KConfig *_cfg);
-   virtual void readProperties(KConfig *_cfg);
-
-   public slots:
-      void quit();
+   void closeEvent( QCloseEvent * e );
+ 
+  public slots:
+   void quit();
    void showSettings();
-   void showContextMenu();
-   void toggleMenuBar();	
+   void showHelp();
+   void showAbout();
+   void toggleMenuBar();
+   void closeMixer();
+   void newMixer();
+   void newApplet();
+   void saveVolumes();
+   void loadVolumes();;
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:
@@ -81,22 +90,28 @@ class KMixApp : public KTMainWindow
    bool m_startHidden;
    bool m_hideOnClose;
    bool m_showTicks;
+   bool m_showLabels;
+   bool m_saveVolumes;
+   bool m_loadVolumes;
+   bool m_showApplet;
 
-   KMixerWidget *m_mixerWidget;
-   KMixerPrefWidget *m_mixerPrefWidget;
+   QList<Mixer> m_mixers;
+   QList<KMixerWidget> m_mixerWidgets;
+   QList<KMixApplet> m_applets;
+
+   QTabWidget *m_tab;
+   QWidget *m_buttons;
    KMixPrefDlg *m_prefDlg;	
    KMixDockWidget *m_dockWidget;
+    
+  private slots:
+   void insertMixerWidget( KMixerWidget *mw );
+   void removeMixerWidget( KMixerWidget *mw );
 
-   struct
-   {
-	 KAction *Quit;
-	 KAction *Settings;
-	 KToggleAction *ToggleMenuBar;
-	 KAction *Show;
-	 KAction *Hide;
-	 KAction *Help;
-	 KAction *About;
-   } m_actions;
+   void insertApplet( KMixApplet *applet );
+   void removeApplet( KMixApplet *applet );
+
+   void toggleVisibility();
 };
  
 #endif // KMIX_H

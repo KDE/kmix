@@ -26,213 +26,253 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qtimer.h>
 #include <qslider.h>
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
+#include <kcombobox.h>
 
+#include <kdebug.h>
+#include <kglobal.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kaction.h>
+#include <kpopupmenu.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
-#include "mixdevice.h"
+#include "mixdevicewidget.h"
 
-KMixerWidget::KMixerWidget( QWidget * parent, const char * name )
-   : QWidget( parent, name )
+struct Channel
 {
-   cerr << "KMixerWidget::KMixerWidget" << endl;
-   m_mixer = Mixer::getMixer(); // TODO: allow mixer selection
-   int mixerError = m_mixer->grab();
-   if ( mixerError!=0 )
-   {
-      KMessageBox::error(0, m_mixer->errorText(mixerError), i18n("Mixer failure"));
-      exit(1);
-   }		
+      MixDeviceWidget *dev;
+};
 
-   // Create update timer
-   m_timer = new QTimer;
-   m_timer->start( 1000 );
-   connect( m_timer, SIGNAL(timeout()), m_mixer, SLOT(readSetFromHW()));
+Profile::Profile( Mixer *mixer )
+{
+   m_mixer = mixer;
+}
 
-   // Create mixer device widgets
-   m_topLayout = new QVBoxLayout( this, 0, 3 );
-   QBoxLayout* layout = new QHBoxLayout( m_topLayout );
-   MixSet mixSet = m_mixer->getMixSet();
-   MixDevice *mixDevice = mixSet.first();
-   for ( ; mixDevice != 0; mixDevice = mixSet.next())
-   {
-      cerr << "mixDevice = " << mixDevice << endl;
-      MixDeviceWidget *mdw =  new MixDeviceWidget( mixDevice, true, true,
-						   this, mixDevice->name() );
-      layout->addWidget( mdw );
-      connect( mdw, SIGNAL( newVolume( int, Volume )),
-               m_mixer, SLOT( writeVolumeToHW( int, Volume ) ));
-      connect( mdw, SIGNAL( newRecsrc(int, bool)),
-               m_mixer, SLOT( setRecsrc(int, bool ) ));
-      connect( m_mixer, SIGNAL( newRecsrc()),
-               mdw, SLOT( updateRecsrc() ));
-      connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateSliders()) );
-      connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(updateTicks(bool)) );
-      if( mixDevice->num()==m_mixer->masterDevice() )
-	 connect( m_mixer, SIGNAL(newBalance(Volume)), mdw, SLOT(setVolume(Volume)));
-      connect( mdw, SIGNAL(rightMouseClick()), this, SLOT(rightMouseClicked()));
-   }
+void Profile::write()
+{
+   
+}
 
-   // Create the left-right-slider
-   m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
-				  this, "RightLeft" );
-   m_topLayout->addWidget( m_balanceSlider );
-   connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
-   QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
+void Profile::read()
+{
+}
 
-   updateSize();
+void Profile::loadConfig( const QString &/*grp*/ )
+{
+}
+
+void Profile::saveConfig( const QString &/*grp*/ )
+{
+}
+
+/********************** KMixerWidget *************************/
+ 
+KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * parent, const char * name )
+   : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0), 
+   m_topLayout(0), m_devLayout(0), m_name(mixer->mixerName())
+{   
+   kDebugInfo("-> KMixerWidget::KMixerWidget");
+   m_actions = new KActionCollection( this );
+   new KAction( i18n("Show &all"), 0, this, SLOT(showAll()), m_actions, "show_all" );
+   m_channels.setAutoDelete( true );
+   m_small = small;
+   m_vertical = vert;
+
+   // Create mixer device widgets        
+   updateDevices( vert ); 
+
+   kDebugInfo("<- KMixerWidget::KMixerWidget");
 }
 
 KMixerWidget::~KMixerWidget()
 {
-   if (m_mixer) delete m_mixer;
-   if (m_timer) delete m_timer;
 }
 
-QString KMixerWidget::mixerName()
-{
-   return m_mixer->mixerName();
+void KMixerWidget::updateDevices( bool vert )
+{   
+   kDebugInfo("-> KMixerWidget::updateDevices");
+
+   // delete old objects
+   m_channels.clear(); 
+   delete m_balanceSlider;
+   delete m_devLayout;
+   delete m_topLayout;
+
+   m_vertical = vert;
+
+   // create layouts   
+   m_topLayout = new QVBoxLayout( this, 0, 3 );
+   m_devLayout = new QHBoxLayout( m_topLayout );
+
+   // create devices
+   kDebugInfo("mixSet");
+   MixSet mixSet = m_mixer->getMixSet();
+   MixDevice *mixDevice = mixSet.first();
+   for ( ; mixDevice != 0; mixDevice = mixSet.next())
+   {
+      kDebugInfo("MixDeviceWidget");
+      MixDeviceWidget *mdw;
+      if ( m_small )
+      {
+	 mdw =  new SmallMixDeviceWidget( m_mixer, mixDevice, true, this, mixDevice->name() );
+      } else
+      {
+	 mdw =  new BigMixDeviceWidget( m_mixer, mixDevice, true, true, true, this, 
+					mixDevice->name() );
+           
+	 connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(setTicks(bool)) );
+	 connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );
+      }
+
+      connect( this, SIGNAL(updateIcons(bool)), mdw, SLOT(setIcons(bool)) );
+      connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
+      m_devLayout->addWidget( mdw, 0 );
+
+      Channel *chn = new Channel;
+      chn->dev = mdw;
+      m_channels.append( chn );
+   }
+
+   m_devLayout->addStretch( 1 );
+
+   // Create the left-right-slider   
+   if ( !m_small )
+   {      
+      m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
+				  this, "RightLeft" );
+      m_topLayout->addWidget( m_balanceSlider );
+      connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
+      QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
+   } else
+      m_balanceSlider = 0;
+
+   updateSize();
+
+   kDebugInfo("<- KMixerWidget::updateDevices");
 }
 
 void KMixerWidget::updateSize()
-{
-   setFixedWidth( m_topLayout->minimumSize().width() );
-   setMinimumHeight( m_topLayout->minimumSize().height() );
-}
-
-void KMixerWidget::applyPrefs( KMixPrefWidget *prefWidget )
-{
-   updateSize();
-}
-
-void KMixerWidget::initPrefs( KMixPrefWidget *prefWidget )
-{
+{   
+   layout()->activate();
+   setMinimumWidth( layout()->minimumSize().width() );
+   setMinimumHeight( layout()->minimumSize().height() );
+   emit updateLayout();
 }
 
 void KMixerWidget::setTicks( bool on )
 {
    emit updateTicks( on );
-   updateSize();
+}
+
+void KMixerWidget::setLabels( bool on )
+{
+   emit updateLabels( on );
+}
+
+void KMixerWidget::setIcons( bool on )
+{
+   kDebugInfo("KMixerWidget::setIcons( %d )", on );
+   emit updateIcons( on );
 }
 
 void KMixerWidget::setBalance( int value )
 {
    m_mixer->setBalance( value );
-   m_balanceSlider->setValue( value );
+   if ( m_balanceSlider )
+      m_balanceSlider->setValue( value );
 }
+
+/*void KMixerWidget::setOrientation( int vert )
+{
+   updateDevices( vert ); 
+}*/
 
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )
-      emit rightMouseClick();
-}
-
-void KMixerWidget::sessionSave( bool sessionConfig )
-{
-   m_mixer->sessionSave( sessionConfig );
-}
-
-void KMixerWidget::sessionLoad( bool sessionConfig )
-{
-}
-
-
-/********************************* KMixPrefWidget *****************************/
-
-KMixerPrefWidget::KMixerPrefWidget( KMixerWidget* mixerWidget,
-				    QWidget *parent, const char *name )
-   : QWidget( parent, name )
-{
-   m_mixerWidget = mixerWidget;
-   m_layout = new QVBoxLayout( this, 3, 3 );
-   Mixer *mix = m_mixerWidget->m_mixer;
-	
-   // Add mixer name
-   QLabel *mixerNameLabel = new  QLabel( mix->mixerName(), this);
-   m_layout->addWidget(mixerNameLabel);
-
-   // Add set selection Combo Box
-   QComboBox *setSelectCombo = new QComboBox( this);
-   setSelectCombo->insertItem(i18n("Set 1"));
-   setSelectCombo->insertItem(i18n("Set 2"));
-   m_layout->addWidget( setSelectCombo );
-
-   // Channel selection box
-   QGroupBox *box = new QGroupBox( i18n("Mixer channel setup"), this );
-   m_layout->addWidget( box );
-
-   QGridLayout *grid = new QGridLayout( box, 1, 3, 5 );
-   int line = 0;
-   grid->addRowSpacing( line, 10 );
-   grid->setRowStretch( line++, 0 );
-
-   QLabel *label = new QLabel( i18n("Device"), box );
-   grid->addWidget( label, line, 0 );
-
-   label = new QLabel( i18n("Show"), box );
-   grid->addWidget( label, line, 1 );
-
-   label = new QLabel( i18n("Split"), box );
-   grid->addWidget( label, line, 2 );
-
-   grid->setRowStretch( line++, 0 );
-   grid->setRowStretch( line++, 1 );
-	
-   MixDevice *mixPtr;
-   for ( unsigned int devNum = 0; devNum<mix->size(); devNum++ )
    {
-      mixPtr = (*mix)[devNum];
-
-      // 1. line edit
-      QLineEdit *devNameEdt;
-      devNameEdt = new QLineEdit(mixPtr->name(), box, mixPtr->name().ascii());
-      grid->addWidget(devNameEdt, line, 0);
-
-      // 2. check box  (Show)
-      QCheckBox *showChk = new QCheckBox( box );
-      grid->addWidget(showChk, line, 1);
-
-#if 0 // remove soon
-#warning This will be removed as soon as possible
-      if (MixPtr->disabled())
-	 showChk->setChecked(false);
-      else
-	 showChk->setChecked(true);
-#endif
-
-      // 3. check box  (Split)
-      QCheckBox *splitChk;
-      if (mixPtr->isStereo()) {
-	 splitChk = new QCheckBox( box );
-
-#if 0 // remove soon
-#warning This will be removed as soon as possible
-	 if (MixPtr->stereoLinked() )
-	    splitChk->setChecked(false);
-	 else
-	    splitChk->setChecked(true);
-#endif
-
-	 grid->addWidget( splitChk, line, 2);
-      }
-      else
-	 splitChk = NULL;
-
-      grid->setRowStretch(line++, 0);
-      grid->setRowStretch(line++, 1);
-
-      m_channels.append(new ChannelSetup(mixPtr->num(), devNameEdt, showChk, splitChk));
+      rightMouseClicked();
    }
 }
 
-KMixerPrefWidget::~KMixerPrefWidget()
+void KMixerWidget::rightMouseClicked()
 {
+   KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
+
+   KAction *a = m_actions->action( "show_all" );
+   if ( a )
+   {
+      a->plug( menu );
+  
+      if (menu)
+      {
+	 QPoint pos = QCursor::pos();
+	 menu->popup( pos );
+      }
+   }
 }
+
+void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
+{
+   KConfig* config = KGlobal::config();
+   config->setGroup( grp );
+
+   config->writeEntry( "Devs", m_channels.count() );
+   config->writeEntry( "Name", m_name );
+
+   int n=0;
+   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
+   {
+      QString devgrp;
+      devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
+      config->setGroup( devgrp );
+
+      config->writeEntry( "Split", !chn->dev->isStereoLinked() );
+      config->writeEntry( "Show", !chn->dev->isDisabled() );
+      
+      n++;
+   }
+}
+
+void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
+{
+   kDebugInfo("-> KMixerWidget::sessionLoad");
+
+   KConfig* config = KGlobal::config();
+   config->setGroup( grp );
+   
+   int num = config->readNumEntry("Devs", 0);   
+   m_name = config->readEntry("Name", m_name );
+   
+   int n=0;
+   for (Channel *chn=m_channels.first(); chn!=0 && n<num; chn=m_channels.next())
+   {
+      QString devgrp;
+      devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
+      config->setGroup( devgrp );
+      
+      chn->dev->setStereoLinked( !config->readBoolEntry("Split", false) );
+      chn->dev->setDisabled( !config->readBoolEntry("Show", true) );
+
+      n++;
+   }
+
+   kDebugInfo("<- KMixerWidget::sessionLoad");
+}
+
+void KMixerWidget::showAll()
+{
+   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
+   {
+      chn->dev->setDisabled( false );
+   }
+   
+   updateSize();
+}
+

@@ -21,14 +21,124 @@
  */
 
 #include <iostream.h>
-//  #include <unistd.h>
-//  #include <string.h>
-//  #include <errno.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kdebug.h>
 
 #include "mixer.h"
 #include "kmix-platforms.cpp"
 
-#include <klocale.h>
+
+MixDevice::MixDevice(int num, Volume vol, bool recordable,
+                     QString name, ChannelType type ) :
+   m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable )
+{
+   if( name.isEmpty() )
+      m_name = i18n("unknown");
+   else
+      m_name = name;
+};
+
+MixDevice::MixDevice(const MixDevice &md)
+{
+   m_name = md.m_name;
+   m_volume = md.m_volume;
+   m_type = md.m_type;
+   m_num = md.m_num;
+   m_recordable = md.m_recordable;
+}
+
+int MixDevice::getVolume( int channel ) const
+{
+   return m_volume[ channel ];
+}
+
+int MixDevice::rightVolume() const
+{
+   return m_volume.getVolume( Volume::RIGHT );
+}
+
+int MixDevice::leftVolume() const
+{
+   return m_volume.getVolume( Volume::LEFT );
+}
+
+void MixDevice::setVolume( int channel, int vol )
+{
+   m_volume.setVolume( channel, vol );
+}
+
+void MixDevice::read( const QString& grp )
+{
+   QString devgrp;
+   devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
+   KConfig* config = KGlobal::config();
+   config->setGroup( devgrp );
+   
+   int vl = config->readNumEntry("volumeL", -1);
+   if (vl!=-1) setVolume( Volume::LEFT, vl );
+
+   int vr = config->readNumEntry("volumeR", -1);
+   if (vr!=-1) setVolume( Volume::RIGHT, vr );
+
+   int mute = config->readNumEntry("is_muted", -1);
+   if ( mute!=-1 ) setMuted( mute!=0 );
+   
+   int recsrc = config->readNumEntry("is_recsrc", -1);
+   if ( recsrc!=-1 ) setRecsrc( recsrc!=0 );
+}
+
+void MixDevice::write( const QString& grp )
+{
+   QString devgrp;
+   devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
+   KConfig* config = KGlobal::config();
+   config->setGroup(devgrp);
+
+   config->writeEntry("volumeL", getVolume( Volume::LEFT ) );
+   config->writeEntry("volumeR", getVolume( Volume::RIGHT ) );
+   config->writeEntry("is_muted", (int)isMuted() );
+   config->writeEntry("is_recsrc", (int)isRecsrc() );
+   config->writeEntry("name", m_name);
+}
+
+
+/***************** MixSet *****************/
+
+void MixSet::clone( MixSet &set )
+{
+   clear();
+
+   for( MixDevice *md=set.first(); md!=0; md=set.next() )
+      append( new MixDevice( *md ) );
+}
+
+void MixSet::read( const QString& grp )
+{
+   KConfig* config = KGlobal::config();
+   config->setGroup(grp);
+
+   m_name = config->readEntry( "name", m_name );
+
+   MixDevice* md;
+   for( md=first(); md!=0; md=next() )
+      md->read( grp );
+}
+
+void MixSet::write( const QString& grp )
+{
+   KConfig* config = KGlobal::config();
+   config->setGroup(grp);
+
+   config->writeEntry( "name", m_name );
+
+   MixDevice* md;
+   for( md=first(); md!=0; md=next() )
+      md->write( grp );      
+}
+
+/********************** Mixer ***********************/
 
 Mixer::Mixer( int device, int card )
 {
@@ -40,16 +150,118 @@ Mixer::Mixer( int device, int card )
 
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
-  m_mixDevices.clear();
+  m_profiles.setAutoDelete( true );
 };
 
+int Mixer::setupMixer( MixSet mset )
+{  
+   release();	// To be sure, release mixer before (re-)opening
 
-void Mixer::sessionSave(bool /*sessionConfig*/)
-{
-  //  TheMixSets->write();
+   int ret = openMixer();
+   if (ret != 0) {
+      return ret;
+   } else
+      if( m_mixDevices.isEmpty() )
+	 return ERR_NODEV;
+
+   if( !mset.isEmpty() ) // Copies the initial mix set
+      writeMixSet( mset );
+
+   return 0;
 }
 
+void Mixer::volumeSave()
+{
+   QString grp = QString("Mixer") + mixerName();
+   m_mixDevices.write(grp);
+}
 
+void Mixer::volumeLoad()
+{
+   QString grp = QString("Mixer") + mixerName();
+   m_mixDevices.read(grp);  
+   
+   // set new settings
+   QListIterator<MixDevice> it( m_mixDevices );
+   for(MixDevice *md=it.toFirst(); md!=0; md=++it )
+   {
+      setRecsrc( md->num(), md->isRecsrc() );
+      writeVolumeToHW( md->num(), md->getVolume() );    
+   }
+}
+
+void Mixer::sessionSave( bool /*sessionConfig*/ )
+{ 
+   QString grp = QString("Mixer") + mixerName();
+   KConfig* config = KGlobal::config();
+   config->setGroup( grp );
+
+   config->writeEntry( "profiles", m_profiles.count() );
+
+   int n=0;
+   for ( MixSet *ms=m_profiles.first(); ms!=0; ms=m_profiles.next() )
+   {
+      QString grp;
+      grp.sprintf("Mixer%s.Profile%i", mixerName().ascii(), n);
+      ms->write( grp );
+      n++;
+   }
+}
+
+void Mixer::sessionLoad( bool /*sessionConfig*/ )
+{
+   QString grp = QString("Mixer") + mixerName();
+   KConfig* config = KGlobal::config();
+   config->setGroup( grp );
+
+   m_profiles.clear();
+  
+   int num = config->readNumEntry( "profiles", 0 );
+   for ( int n=0; n<num; n++)
+   {
+      MixSet *set = new MixSet;
+      
+      QString grp;
+      grp.sprintf("Mixer%s.Profile%i", mixerName().ascii(), n);
+      set->read( grp );
+
+      m_profiles.append( set );
+   }
+}
+
+void Mixer::saveAsProfile( int num, QString name )
+{
+   MixSet *set = new MixSet;
+   set->clone( m_mixDevices );
+   set->setName( name );
+   m_profiles.insert( num, set );   
+}
+
+void Mixer::loadProfile( int num )
+{
+   MixSet *set = m_profiles.at(num);
+   if ( set )
+      writeMixSet( *m_profiles.at(num) );
+}
+
+int Mixer::numOfProfiles()
+{
+   return m_profiles.count();
+}
+
+void Mixer::deleteProfile( int num )
+{
+   m_profiles.remove( num );
+}
+
+QString Mixer::nameOfProfile( int num )
+{
+   MixSet *set = m_profiles.at(num);
+   if ( set )
+      return set->name();
+   else
+      return QString::null;
+}
 
 int Mixer::grab()
 {
@@ -82,8 +294,6 @@ int Mixer::release()
   return 0;
 }
 
-
-
 unsigned int Mixer::size() const
 {
   return m_mixDevices.count();
@@ -96,28 +306,6 @@ MixDevice* Mixer::operator[](int num)
   return md;
 }
 
-
-int Mixer::setupMixer( MixSet mset )
-{
-//    TheMixSets = new MixSetList;
-//    TheMixSets->read();  // Read sets from kmixrc
-
-  release();	// To be sure, release mixer before (re-)opening
-
-//    int ret = openMixer();
-//    if (ret != 0) {
-//      return ret;
-//    } else
-//      if( m_mixDevices.isEmpty() )
-//        return ERR_NODEV;
-
-  if( !mset.isEmpty() ) // Copies the initial mix set
-    writeMixSet( mset );
-
-  return 0;
-}
-
-
 void Mixer::readSetFromHW()
 {
   MixDevice* md;
@@ -126,9 +314,9 @@ void Mixer::readSetFromHW()
       Volume vol = md->getVolume();
       readVolumeFromHW( md->num(), vol );
       md->setVolume( vol );
+      md->setRecsrc( isRecsrcHW( md->num() ) );
     }
 }
-
 
 void Mixer::setBalance(int balance)
 {
@@ -160,14 +348,10 @@ void Mixer::setBalance(int balance)
   emit newBalance( vol );
 }
 
-
 QString Mixer::mixerName()
 {
   return m_mixerName;
 }
-
-
-
 
 void Mixer::errormsg(int mixer_error)
 {
@@ -223,7 +407,9 @@ void Mixer::writeMixSet( MixSet mset )
     {
       MixDevice* comp = m_mixDevices.first();
       while( comp && comp->num() != md->num() ) comp = m_mixDevices.next();
+      setRecsrc( md->num(), md->isRecsrc() );
       comp->setVolume( md->getVolume() );
+      comp->setMuted( md->isMuted() );
     }
 }
 

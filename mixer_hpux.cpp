@@ -23,7 +23,6 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "mixdevice.h"
 #include "mixer_hpux.h"
 
 #warning "HP/UX mixer (maybe) doesn't work yet !"

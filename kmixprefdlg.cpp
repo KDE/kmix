@@ -31,7 +31,7 @@
 #include "kmixprefdlg.h"
 #include "kmixerwidget.h"
 
-KMixPrefDlg::KMixPrefDlg( QWidget *customTab )
+KMixPrefDlg::KMixPrefDlg()
 {
    setCaption( i18n("KMix Preferences") );	
 
@@ -51,13 +51,16 @@ KMixPrefDlg::KMixPrefDlg( QWidget *customTab )
    m_showTicks = new QCheckBox( i18n("&Tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );
 
-   addTab( m_generalTab, i18n("&General") );
+   m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
+   layout->addWidget( m_showLabels );
 
-   // custom tab widget	
-   if (customTab)
-   {
-      addTab( customTab, i18n("&Channels") );
-   }
+   m_loadVolumes = new QCheckBox( i18n("L&oad mixer on startup"), m_generalTab );
+   layout->addWidget( m_loadVolumes );
+
+   m_saveVolumes = new QCheckBox( i18n("S&ave mixer on shutdown"), m_generalTab );
+   layout->addWidget( m_saveVolumes );
+
+   addTab( m_generalTab, i18n("&General") );
 
    // dialog buttons
    setCancelButton( i18n("&Cancel") );
