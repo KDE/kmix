@@ -107,7 +107,7 @@ void
 KMixWindow::initActions()
 {
 	// file menu
-	KStdAction::quit( this, SLOT(quit()), actionCollection());
+	KStdAction::quit( this, SLOT(close()), actionCollection());
 
 	// settings menu
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
@@ -498,7 +498,7 @@ KMixWindow::queryClose ( )
 
 
 void
-KMixWindow::quit()
+KMixWindow::close()
 {
 	saveVolumes();
 	kapp->quit();

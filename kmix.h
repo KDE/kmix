@@ -77,7 +77,7 @@ KMixWindow : public KMainWindow
    void hideEvent( QHideEvent * );
 
   public slots:
-   void quit();
+   void close();
    void showSettings();
    void showHelp();
    void showAbout();
