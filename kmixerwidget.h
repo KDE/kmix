@@ -70,7 +70,7 @@ KMixerWidget : public QWidget
                  QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 	
-	enum KMixerWidgetIO { OUTPUT=0, INPUT };
+   enum KMixerWidgetIO { OUTPUT=0, INPUT };
 
    void addActionToPopup( KAction *action );
 
@@ -83,10 +83,10 @@ KMixerWidget : public QWidget
 
    int id() const { return m_id; };
 
-	KPopupMenu* getPopup();
-	void popupReset();
+   KPopupMenu* getPopup();
+   void popupReset();
 
-	KActionCollection* getActionCollection() const { return m_actions; }
+   KActionCollection* getActionCollection() const { return m_actions; }
 	
    struct Colors {
        QColor high, low, back, mutedHigh, mutedLow, mutedBack;
@@ -116,14 +116,14 @@ KMixerWidget : public QWidget
   private:
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
-	QWidget *m_swWidget;
+   QWidget *m_swWidget;
    QBoxLayout *m_topLayout;
-	QWidget *m_iWidget;
-	QWidget *m_oWidget;
-	QGridLayout *m_devSwitchLayout;
+   QWidget *m_iWidget;
+   QWidget *m_oWidget;
+   QGridLayout *m_devSwitchLayout;
 	
    QPtrList<Channel> m_channels;
-	KTabWidget *m_ioTab;
+   KTabWidget *m_ioTab;
 
    QString m_name;
    QString m_mixerName;
@@ -132,18 +132,18 @@ KMixerWidget : public QWidget
 
    KActionCollection *m_actions;
    KActionMenu *m_toggleMixerChannels;
-	KPopupMenu *m_popMenu;
+   KPopupMenu *m_popMenu;
 
    bool m_small;
    KPanelApplet::Direction m_direction;
    bool m_iconsEnabled;
    bool m_labelsEnabled;
    bool m_ticksEnabled;
-	MixDevice::DeviceCategory m_categoryMask;
+   MixDevice::DeviceCategory m_categoryMask;
 
    void mousePressEvent( QMouseEvent *e );
    void createDeviceWidgets();
-	void createLayout();
+   void createLayout();
    void createMasterVolWidget(KPanelApplet::Direction);
 };
 
