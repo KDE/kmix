@@ -63,7 +63,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 {
    m_actions = new KActionCollection( this );
 
-	m_categoryMask = categoryMask;
+   m_categoryMask = categoryMask;
 	
    m_toggleMixerChannels = new KActionMenu(i18n("&Channels"), m_actions, "toggle_channels");
 
@@ -77,14 +77,15 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 
    // Create mixer device widgets
    if ( mixer ) 
-	{
+   {
       createLayout();
    } 
-	else 
-	{
+   else 
+   {
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
-      if ( !mixerName.isEmpty() ) s += " \"" + mixerName + "\"";
+      if ( !mixerName.isEmpty() )
+	 s += " \"" + mixerName + "\"";
       QLabel *errorLabel = new QLabel( s, this );
       errorLabel->setAlignment( QLabel::AlignCenter | QLabel::WordBreak );
       layout->addWidget( errorLabel );
@@ -100,96 +101,96 @@ KMixerWidget::createLayout()
 {
    if ( !m_mixer ) return;
 
-	// delete old objects
+   // delete old objects
    m_channels.clear();
    if( m_balanceSlider ) 
-		delete m_balanceSlider;
+      delete m_balanceSlider;
    if( m_topLayout )
-		delete m_topLayout;
+      delete m_topLayout;
 
-	if( ! m_small )
-	{
-		// create main layout
+   if( ! m_small )
+   {
+      // create main layout
 
-		m_topLayout = new QVBoxLayout( this, 0, 4 );
-		m_topLayout->setMargin( KDialog::marginHint() );
+      m_topLayout = new QVBoxLayout( this, 0, 4 );
+      m_topLayout->setMargin( KDialog::marginHint() );
 
-		// Create tabs e widgetstack
-		m_ioTab = new KTabWidget( this, "ioTab" );
+      // Create tabs e widgetstack
+      m_ioTab = new KTabWidget( this, "ioTab" );
 
-		m_topLayout->add( m_ioTab );
+      m_topLayout->add( m_ioTab );
 
-		// Create switch buttonGroup
-		m_swWidget = new QWidget( this, "switchWidget" );
-		m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 0,"devSwitchLayout" );
+      // Create switch buttonGroup
+      m_swWidget = new QWidget( this, "switchWidget" );
+      m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 0,"devSwitchLayout" );
 
-		// Both Layouts and widgets
+      // Both Layouts and widgets
 	
-		m_oWidget = new QHBox( m_ioTab, "OutputTab" );
-		m_iWidget = new QHBox( m_ioTab, "InputTab" );
+      m_oWidget = new QHBox( m_ioTab, "OutputTab" );
+      m_iWidget = new QHBox( m_ioTab, "InputTab" );
 
-		m_ioTab->addTab( m_oWidget, i18n("Output") );
-		m_ioTab->addTab( m_iWidget, i18n("Input" ) );
-	}
-	else
-	{
-		m_oWidget = new QHBox( this, "OutputTab" );
-		m_topLayout = new QHBoxLayout( this, 0, 0 );
-		m_topLayout->add( m_oWidget );
-	}
-	// Create de widgets
-	createDeviceWidgets();
+      m_ioTab->addTab( m_oWidget, i18n("Output") );
+      m_ioTab->addTab( m_iWidget, i18n("Input" ) );
+   }
+   else
+   {
+      m_oWidget = new QHBox( this, "OutputTab" );
+      m_topLayout = new QHBoxLayout( this, 0, 0 );
+      m_topLayout->add( m_oWidget );
+   }
+   // Create de widgets
+   createDeviceWidgets();
 }
 
 void 
 KMixerWidget::createDeviceWidgets()
 {
-	int row=0, col=0;
+   int row=0, col=0;
    // create devices
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
-		MixDeviceWidget *mdw;
-		if ( mixDevice->isSwitch() )
-		{
-			if( ! m_small )
-				mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
-						m_direction, m_swWidget, this, mixDevice->name().latin1() );
-			else 
-				continue;
-		}
-		else if( ! mixDevice->isRecordable() )
-		{
-			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
-					m_direction, m_oWidget, this, mixDevice->name().latin1() );
-		}
-		else
-		{
-			if( ! m_small )
-				mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
-						m_direction, m_iWidget, this, mixDevice->name().latin1() );
-			else 
-				continue;
-		}
+      MixDeviceWidget *mdw;
+      if ( mixDevice->isSwitch() )
+      {
+         if( ! m_small )
+            mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+                                       m_direction, m_swWidget, this, mixDevice->name().latin1() );
+         else 
+            continue;
+      }
+      else if( ! mixDevice->isRecordable() )
+      {
+         mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+                                    m_direction, m_oWidget, this, mixDevice->name().latin1() );
+      }
+      else
+      {
+         if( ! m_small )
+            mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+                                       m_direction, m_iWidget, this, mixDevice->name().latin1() );
+         else 
+            continue;
+      }
 
-		connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
-		connect( mdw, SIGNAL( updateLayout() ), this, SLOT(updateSize()));
-		connect( mdw, SIGNAL( masterMuted( bool ) ), SIGNAL( masterMuted( bool ) ) );
+      connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
+      connect( mdw, SIGNAL( updateLayout() ), this, SLOT(updateSize()));
+      connect( mdw, SIGNAL( masterMuted( bool ) ), SIGNAL( masterMuted( bool ) ) );
      
-		if( ! m_small )
-		{
-			if( mixDevice->isSwitch() )
-			{
-				m_devSwitchLayout->addWidget( mdw, row, col );
-				col++;
-			}
-			if( col > 3 )
-			{
-				col = 0;
-				row++;
-			}
-		}
+      if( ! m_small )
+      {
+         if( mixDevice->isSwitch() )
+         {
+            m_devSwitchLayout->addWidget( mdw, row, col );
+            col++;
+         }
+         if( col > 3 )
+         {
+            col = 0;
+            row++;
+         }
+      }
 		
       Channel *chn = new Channel;
       chn->dev = mdw;
@@ -200,11 +201,11 @@ KMixerWidget::createDeviceWidgets()
    if ( !m_small )
    {
       m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
-                                  this, "RightLeft" );
+                                     this, "RightLeft" );
       m_balanceSlider->setTickmarks( QSlider::Below );
       m_balanceSlider->setTickInterval( 25 );
-		if( ! m_small )
-      m_topLayout->addWidget( m_balanceSlider );
+      if( ! m_small )
+         m_topLayout->addWidget( m_balanceSlider );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
@@ -212,10 +213,10 @@ KMixerWidget::createDeviceWidgets()
       connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateBalance()) );
       updateTimer->start( 200, FALSE );
 
-		// Add the Switch widget
-		m_topLayout->addWidget( m_swWidget );
+      // Add the Switch widget
+      m_topLayout->addWidget( m_swWidget );
    } 
-	else
+   else
       m_balanceSlider = 0;
 
    updateSize();
@@ -282,34 +283,34 @@ KMixerWidget::mousePressEvent( QMouseEvent *e )
 void 
 KMixerWidget::addActionToPopup( KAction *action ) 
 {
-	m_actions->insert( action );
+   m_actions->insert( action );
 	
-	for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() ) 
-	{
-		chn->dev->addActionToPopup( action );
-	}
+   for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() ) 
+   {
+      chn->dev->addActionToPopup( action );
+   }
 }
 
 KPopupMenu*
 KMixerWidget::getPopup()
 {
-	popupReset();
-	return m_popMenu;
+   popupReset();
+   return m_popMenu;
 }
 
 void 
 KMixerWidget::popupReset()
 {
-	KAction *a;
+   KAction *a;
 
-	m_popMenu = new KPopupMenu( this );
-	m_popMenu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
+   m_popMenu = new KPopupMenu( this );
+   m_popMenu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 	
-	a = m_actions->action( "toggle_channels" );
-	if ( a ) a->plug( m_popMenu );
+   a = m_actions->action( "toggle_channels" );
+   if ( a ) a->plug( m_popMenu );
 	
-	a = m_actions->action( "options_show_menubar" );
-	if ( a ) a->plug( m_popMenu );
+   a = m_actions->action( "options_show_menubar" );
+   if ( a ) a->plug( m_popMenu );
 }
 
 void 

@@ -178,46 +178,50 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
-   // init static vars
-   if ( !s_instCount )
-   {
-      // create mixer list
-      s_mixers = new QPtrList<Mixer>;
+    // init static vars
+    if ( !s_instCount )
+    {
+	// create mixer list
+	s_mixers = new QPtrList<Mixer>;
 
-      // create timers
-      s_timer = new QTimer;
-      s_timer->start( 500 );
+	// create timers
+	s_timer = new QTimer;
+	s_timer->start( 500 );
 
-      // get maximum values
-      KConfig *config= new KConfig("kcmkmixrc", false);
-      config->setGroup("Misc");
-      int maxCards = config->readNumEntry( "maxCards", 2 );
-      int maxDevices = config->readNumEntry( "maxDevices", 2 );
-      delete config;
+	// get maximum values
+	KConfig *config= new KConfig("kcmkmixrc", false);
+	config->setGroup("Misc");
+	int maxCards = config->readNumEntry( "maxCards", 2 );
+	int maxDevices = config->readNumEntry( "maxDevices", 2 );
+	delete config;
 
-      // get mixer devices
-      s_mixers->setAutoDelete( TRUE );
-      QMap<QString,int> mixerNums;
-      int drvNum = Mixer::getDriverNum();
-      for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
-          for ( int dev=0; dev<maxDevices; dev++ )
-              for ( int card=0; card<maxCards; card++ )
-              {
-                  Mixer *mixer = Mixer::getMixer( drv, dev, card );
-                  int mixerError = mixer->grab();
-                  if ( mixerError!=0 )
-						{
-                      delete mixer;
-							 continue;
-						}
-						s_mixers->append( mixer );
-						// count mixer nums for every mixer name to identify mixers with equal names
-						mixerNums[mixer->mixerName()]++;
-						mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-				  }
+	// get mixer devices
+	s_mixers->setAutoDelete( TRUE );
+	QMap<QString,int> mixerNums;
+	int drvNum = Mixer::getDriverNum();
+	for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
+	{
+	    for ( int dev=0; dev<maxDevices; dev++ )
+	    {
+		for ( int card=0; card<maxCards; card++ )
+		{
+		    Mixer *mixer = Mixer::getMixer( drv, dev, card );
+		    int mixerError = mixer->grab();
+		    if ( mixerError!=0 )
+		    {
+			delete mixer;
+			continue;
+		    }
+		    s_mixers->append( mixer );
+		    // count mixer nums for every mixer name to identify mixers with equal names
+		    mixerNums[mixer->mixerName()]++;
+		    mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+		}
+	    }
 	}
+    }
 
-   s_instCount++;
+    s_instCount++;
 
    KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
 
