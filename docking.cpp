@@ -29,7 +29,7 @@
 
 
 // --- Constructor ---
-KDockWidget::KDockWidget(const char* name, const char* dockPixmapName)
+KDockWidget::KDockWidget(const char* name, const QString& dockPixmapName)
   : QWidget(0, name, 0)
 {
   baseInit();
@@ -46,9 +46,9 @@ KDockWidget::KDockWidget(const char* name, QPixmap *dockPixmap)
 
 
 // --- set a new dock Pixmap by filename ---
-void KDockWidget::setPixmap(const char* dockPixmapName)
+void KDockWidget::setPixmap(const QString& dockPixmapName)
 {
-  if ( dockPixmapName == 0 ) {
+  if ( dockPixmapName.isNull() ) {
     pm_dockPixmap = 0;
   }
   else {

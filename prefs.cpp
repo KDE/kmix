@@ -120,7 +120,7 @@ void Preferences::createChannelConfWindow(QWidget *p)
 #endif
 
     QLineEdit *qle;
-    qle = new QLineEdit(mdev->devname, grpbox, mdev->devname);
+    qle = new QLineEdit(mdev->devname, grpbox, mdev->devname.ascii());
     qle->setPalette(qpl);  // Use a palette, where one can read the text
     qle->setEnabled(false);
     l->addWidget(qle, lay_i, 0); 

@@ -6,11 +6,13 @@
 #undef Above
 #undef Below
 #undef Unsorted
+
 #include <qslider.h>
 #include <qlist.h>
+#include <qlabel.h>
+
 #include <kurl.h>
 #include <kapp.h>
-#include <kmsgbox.h>
 
 
 /*
@@ -87,7 +89,7 @@ public:
   MixChannel	*Left;			//
   MixChannel	*Right;			//
   Mixer		*mix;
-  char* name();
+  QString name();
   QLabel	*picLabel;
   int		device_num;		// ioctl() device number of mixer
   bool		StereoLink;		// Is this channel linked via the
@@ -97,7 +99,7 @@ public:
   bool		is_recsrc;		// Is it currently being recorded?
   bool		is_disabled;		// Is slider disabled by user?
   bool		is_muted;		// Is it muted by user?
-  char		devname[11];		// Ascii channel name (10char max)
+  QString	devname;		// Ascii channel name
 };
 
 /***************************************************************************
@@ -150,7 +152,7 @@ public:
   MixSetList *TheMixSets;
 
 private:
-  char		*devname;
+  QString	devname;
   int		devnum;
 
 #ifdef sgi

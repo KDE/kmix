@@ -34,7 +34,7 @@ class KMixDockWidget : public KDockWidget {
   Q_OBJECT
 
 public:
-  KMixDockWidget(const QString& name=0, const QString& dockIconName=0);
+  KMixDockWidget(const char *name=0, const QString& dockIconName=0);
   ~KMixDockWidget();
 };
 

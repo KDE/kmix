@@ -268,9 +268,7 @@ void Mixer::setDevNumName(int devnum)
   devname = "Mixer";
 #endif
 
-  // Using a (const char*) cast. There seem to be some broken platforms out
-  // there, so I had to add it.
-  this->devname = strdup((const char *)devname);
+  this->devname = devname;
 }
 
 
@@ -613,7 +611,7 @@ int Mixer::openMixer(void)
   if (hpux_audio==0)
     return Mixer::ERR_OPEN;
 #else
-  if ((fd= open(devname, O_RDWR)) < 0)
+  if ((fd= open(devname.ascii(), O_RDWR)) < 0)
     return Mixer::ERR_OPEN;
 #endif
 
@@ -976,14 +974,13 @@ MixDevice::MixDevice(int num)
     if ( ret )
       devname = "unknown   ";
     else
-      strncpy( devname, (const char *)chinfo.name, 11 );
+      devname = chinfo.name;
 #else
-    strncpy(devname, MixerDevNames[num],11);
+    devname = MixerDevNames[num];
 #endif
-  devname[10]=0;
 };
 
-char* MixDevice::name()
+QString MixDevice::name()
 {
   return devname;
 }

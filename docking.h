@@ -47,7 +47,7 @@ class KDockWidget : public QWidget {
 public:
   /// Creates a docking widget and allows passing of the name of
   /// the docking icon.
-  KDockWidget(const char *name=0, const char *dockIconName=0);
+  KDockWidget(const char *name=0, const QString& dockIconName=0);
   /// Overloaded constructor. Only differs from the previous constructor
   /// in that you can pass the icon as a QPixmap
   KDockWidget(const char *name=0, QPixmap* dockPixmap=0);
@@ -62,7 +62,7 @@ public:
     dependent? */
   bool isDocked() const;
   void savePosition();
-  void setPixmap(const char* dockPixmapName);
+  void setPixmap(const QString& dockPixmapName);
   void setPixmap(QPixmap* dockPixmap);
 
 public slots:

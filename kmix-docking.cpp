@@ -29,7 +29,7 @@
 #include "kmix-docking.h"
 
 
-KMixDockWidget::KMixDockWidget(const QString& name, 
+KMixDockWidget::KMixDockWidget(const char *name, 
 			       const QString& dockIconName) 
     : KDockWidget(name, dockIconName)
 {
