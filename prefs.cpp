@@ -25,6 +25,7 @@
 #include "prefs.moc"
 #include "kmix.h"
 #include <klocale.h>
+#include <qlayout.h>
 
 //static char rcsid[]="$Id$";
 

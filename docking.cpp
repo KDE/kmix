@@ -75,14 +75,12 @@ void KDockWidget::baseInit() {
   // initialize some basic variables
   docked = false;
   pos_x = pos_y = 0;
+  ktmw = 0;
+  showHidePopmenuEntry = -1;	// invalid
 
   // Create standard popup menu for right mouse button
   popup_m = new QPopupMenu();
 
-  // Insert standard item "Restore" into context menu of docking area
-  toggleID = popup_m->insertItem(i18n("Restore"),
-				 this, SLOT(toggle_window_state()));
-  
   // Insert standard item "Quit" into context menu of docking area
   popup_m->insertItem(i18n("Quit"),
 		      this, SLOT(emit_quit()));
@@ -138,6 +136,19 @@ bool KDockWidget::isDocked() const
 void KDockWidget::setMainWindow(KTMainWindow *ktmw)
 {
   this->ktmw = ktmw;
+
+  if ( ktmw == 0 ) {
+    if ( showHidePopmenuEntry != -1 ) {
+      // Remove menu entry from menu of docking area
+      popup_m->removeItem(showHidePopmenuEntry);
+    }
+    showHidePopmenuEntry = -1;
+  }
+  else {
+    // Insert the standard show/hide item into context menu of docking area
+    showHidePopmenuEntry = popup_m->insertItem("",
+                           this, SLOT(toggle_window_state()) );
+  }
 }
 
 
@@ -149,13 +160,8 @@ void KDockWidget::paintEvent (QPaintEvent* )
 
 void KDockWidget::paintIcon ()
 {
-  bitBlt(this, 0, 0, pm_dockPixmap);
-}
-
-void KDockWidget::timeclick()
-{
-  if( this->isVisible() )
-    paintIcon();
+  if (pm_dockPixmap)
+    bitBlt(this, 0, 0, pm_dockPixmap);
 }
 
 
@@ -167,38 +173,48 @@ void KDockWidget::mousePressEvent(QMouseEvent *e)
   }
 
   // open popup menu on right mouse button
-  if ( e->button() == RightButton  || e->button() == MidButton) {
+  if ( e->button() == RightButton ) {
     int x = e->x() + this->x();
     int y = e->y() + this->y();
 
-    QString text;
-    if(ktmw != 0 && ktmw->isVisible())
-      text = i18n("&Minimize");
-    else
-      text = i18n("&Restore");
-    
-    popup_m->changeItem(text, toggleID);
+    setShowHideText();
     popup_m->popup(QPoint(x, y));
     popup_m->exec();
   }
 
 }
 
+
+void KDockWidget::setShowHideText()
+{
+  if (showHidePopmenuEntry != -1) {
+    // set the show/hide Text appropiate
+    QString text;
+    if ( ktmw->isVisible() )
+      text = i18n("&Minimize");
+    else
+      text = i18n("&Restore");
+    popup_m->changeItem(text, showHidePopmenuEntry);
+  }
+}
+
 void KDockWidget::toggle_window_state()
 {
+  if(ktmw != 0) {
+    if (ktmw->isVisible()) {
+      // --- Toplevel was visible => hide it
+      ktmw->hide();
+      ktmw->recreate(0, 0, QPoint(x(), y()), FALSE);
+      // kapp->setTopWidget( this );  // !!! esken: Is this line needed?
 #warning where is KTMainWindow::fullShow and fullHide supposed to be defined?
-    if(ktmw != 0) {
-	if (ktmw->isVisible()) {
-	    // --- Toplevel was visible => hide it
-	    dockingInProgress = true;
-	    // ktmw->fullHide();
-	}
-	else {
-	    // --- Toplevel was invisible => show it again
-	    // ktmw->fullShow();
-	    dockingInProgress = false;
-	}
+#warning esken: I used an experimental (own) version of KTMainWindow. I now removed this stuff
     }
+    else {
+      // --- Toplevel was invisible => show it again
+      ktmw->show();
+      KWM::activate(ktmw->winId());
+    }
+  }
 }
 
 

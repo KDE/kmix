@@ -46,9 +46,9 @@ class KDockWidget : public QWidget {
 
 public:
   /// Creates a docking widget and allows passing of the name of
-  /// the docking icon. After the construcor has run
+  /// the docking icon.
   KDockWidget(const char *name=0, const char *dockIconName=0);
-  /// Overloader constructor. Only differs from the previous constructor
+  /// Overloaded constructor. Only differs from the previous constructor
   /// in that you can pass the icon as a QPixmap
   KDockWidget(const char *name=0, QPixmap* dockPixmap=0);
   /// Deletes the docking widget. Please note that the widget undocks from
@@ -56,7 +56,10 @@ public:
   ~KDockWidget();
   void setMainWindow(KTMainWindow *ktmw);
   QPixmap* dockPixmap() const;
-  /// Checks, if application is in "docked" state. Returns true, if yes.
+  /** Checks, if application is in "docked" state. Returns true, if yes.
+    It has still to be defined what the exact semantics are: Complete
+    application docked, a single window docked, or is this application
+    dependent? */
   bool isDocked() const;
   void savePosition();
   void setPixmap(const char* dockPixmapName);
@@ -69,12 +72,16 @@ public slots:
   virtual void undock();
 
 protected:
+  /// The paint event normally repaints the icon by calling paintIcon().
+  /// If you do not want to show an icon, but draw some grapics, you
+  /// must derive from QDockWidget and override this function.
   void paintEvent(QPaintEvent *e);
+  /// Paint the icon.
   void paintIcon();
+  void setShowHideText(); 
   void baseInit();
 
 private slots:
-  void timeclick();
   void toggle_window_state();
   void mousePressEvent(QMouseEvent *e);
 
@@ -87,13 +94,12 @@ protected slots:
 
 protected:
   bool		docked;
-  int		toggleID;
   int		pos_x;
   int		pos_y;
+  int		showHidePopmenuEntry;
   KTMainWindow	*ktmw;
   QPopupMenu	*popup_m;
   QPixmap	*pm_dockPixmap;
-  bool		dockingInProgress;
  };
 
 #endif
