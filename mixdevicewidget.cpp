@@ -25,7 +25,6 @@
 #include <kled.h>
 #include <kiconloader.h>
 #include <kconfig.h>
-#include <kdebug.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <kglobalaccel.h>
@@ -189,7 +188,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       m_sliders.append ( slider );
       connect( slider, SIGNAL(valueChanged(int)), this, SLOT(volumeChange(int)) );
    }
-   
+
    // create channel icon
    if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) {
       m_iconLabel = 0L;
@@ -381,7 +380,7 @@ void MixDeviceWidget::setTicks( bool ticks )
 
 void MixDeviceWidget::setIcons(bool value)
 {
-   if ( ( !m_iconLabel->isHidden()) !=value ) 
+   if ( ( !m_iconLabel->isHidden()) !=value )
    {
       if (value)
          m_iconLabel->show();
