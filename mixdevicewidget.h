@@ -68,8 +68,13 @@ public:
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
-    virtual void setLabeled( bool value );
     virtual void setMutedColors( QColor high, QColor low, QColor back );
+
+    virtual bool isStereoLinked() const { return false; };
+    //virtual bool isLabeled() const { return false; };
+    virtual void setStereoLinked( bool ) {};
+    virtual void setLabeled( bool );
+    virtual void setTicks( bool ) {};
 
     virtual KGlobalAccel *keys(void);
 
