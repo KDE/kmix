@@ -33,8 +33,6 @@ kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
-EXTRA_DIST = kmix.desktop
-
 xdg_apps_DATA = kmix.desktop
 
 rcdir = $(kde_datadir)/kmix
