@@ -29,10 +29,9 @@ INSTALL_DIR = $(install) -d -m 0755
 INSTALL_DIR_PRIVATE = $(install) -d -m 0700
 
 prefix = @prefix@
-KDEINC = $(prefix)/include
-BINDIR = $(prefix)/bin
-LIBDIR = $(prefix)/lib
-APPDIR = $(prefix)/share/apps/kmix
+install_root = @install_root@
+BINDIR = @kde_bindir@
+APPDIR = @kde_datadir@/kmix
 
 ########### File Formats ###########
 
@@ -80,18 +79,13 @@ depend:
 install: $(TARGET) install-icons # install-nls
 	$(INSTALL_DIR) $(BINDIR)
 	$(INSTALL) $(TARGET) $(BINDIR)
-	$(INSTALL_DIR) $(prefix)/share/doc/HTML/en/kmedia
-	$(INSTALL_DATA) kmix.html $(prefix)/share/doc/HTML/en/kmedia
-	$(INSTALL_DIR) $(prefix)/share/applnk/Multimediawxit
-	$(INSTALL_DATA) KMix.kdelnk $(prefix)/share/applnk/Multimedia
+	$(INSTALL_DIR) @kde_htmldir@/en/kmedia
+	$(INSTALL_DATA) kmix.html @kde_htmldir@/en/kmedia
+	$(INSTALL_DIR) @kde_appsdir@/Multimedia
+	$(INSTALL_DATA) KMix.kdelnk @kde_appsdir@/Multimedia
 
 install-icons:
-	$(INSTALL_DIR) $(APPDIR)/pics
-	$(INSTALL_DATA) pics/mix_*.xpm $(APPDIR)/pics
-	$(INSTALL_DIR) $(prefix)/share/icons/mini
-	$(INSTALL_DATA) pics/kmix_mini.xpm $(prefix)/share/icons/mini/kmix.xpm
-	$(INSTALL_DIR) $(prefix)/share/icons
-	$(INSTALL_DATA) pics/kmix.xpm $(prefix)/share/icons/kmix.xpm
+	(cd pics && $(MAKE) install)
 
 #install-nls:
 #	for i in $(SRCNLS); do \
@@ -102,9 +96,10 @@ install-icons:
 
 uninstall:
 	rm -f $(BINDIR)/$(TARGET)
-	rm -f $(prefix)/share/doc/HTML/kmedia/kmix.html
-	rm -f $(prefix)/share/applnk/Multimedia/KMix.kdelnk
+	rm -f @kde_htmldir@/en/kmedia/kmix.html
+	rm -f @kde_appsdir@/Multimedia/KMix.kdelnk
 	rm -rf $(APPDIR)
+	(cd pics && $(MAKE) uninstall)
 
 kmix.moc: kmix.h
 	$(MOC) kmix.h -o kmix.moc
