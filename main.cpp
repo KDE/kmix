@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
                          APP_VERSION, description, KAboutData::License_GPL,
-                         I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003  Christian Esken, Stefan Schimanski"));
+                         I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski"));
 
    aboutData.addAuthor("Stefan Schimanski", 0, "schimmi@kde.org");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
