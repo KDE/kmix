@@ -1,18 +1,10 @@
 
 picsdir = $(kde_datadir)/kmix/pics
-pics_DATA = mix_audio.xpm mix_bass.xpm mix_cd.xpm mix_ext.xpm \
-	mix_microphone.xpm mix_midi.xpm	mix_recmon.xpm mix_treble.xpm \
-	mix_unknown.xpm mix_volume.xpm kmixdocked.xpm
+pics_DATA = mix_audio.png mix_bass.png mix_cd.png mix_ext.png \
+	mix_microphone.png mix_midi.png	mix_recmon.png mix_treble.png \
+	mix_unknown.png mix_volume.png kmixdocked.png
 
-install-data-local:
-	$(mkinstalldirs) $(kde_minidir)
-	$(INSTALL_DATA) $(srcdir)/kmix_mini.xpm $(kde_minidir)/kmix.xpm
+KDE_ICON = kmix
 
-uninstall-local:
-	-rm -f $(kde_minidir)/kmix.xpm
-
-icon_DATA = kmix.xpm
-icondir = $(kde_icondir)
-
-EXTRA_DIST = $(icon_DATA) $(pics_DATA) kmix_mini.xpm
+EXTRA_DIST = $(pics_DATA) 
 
