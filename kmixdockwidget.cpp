@@ -27,6 +27,7 @@
 #include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
+#include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kconfig.h>
 
@@ -125,17 +126,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         switch ( me->button() ) {
     		case LeftButton:
         		if (!m_mixerVisible) {
-			    QRect desktop;
-			    QDesktopWidget *dw = QApplication::desktop();
-			    KConfig gc("kdeglobals", false, false);
-			    gc.setGroup("Windows");
-			    if (dw->isVirtualDesktop() &&
-				gc.readBoolEntry("XineramaEnabled", true)) {
-				desktop = dw->screenGeometry(dw->screenNumber(this));
-			    } else {
-				desktop = dw->geometry();
-			    }
-
+			    QRect desktop = KGlobalSettings::desktopGeometry(this);
             		    int sw = desktop.width();
             		    int sh = desktop.height();
             		    int sx = desktop.x();
