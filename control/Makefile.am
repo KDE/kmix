@@ -16,5 +16,5 @@ DISTCLEANFILES = $(libkcm_kmix_la_METASOURCES)
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkmix.pot
 
-data_DATA = kmix.desktop
+data_DATA = kmixcfg.desktop
 datadir = $(kde_appsdir)/Settings/Sound
