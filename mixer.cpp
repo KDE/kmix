@@ -69,11 +69,10 @@ void MixDevice::setVolume( int channel, int vol )
    m_volume.setVolume( channel, vol );
 }
 
-void MixDevice::read( const QString& grp )
+void MixDevice::read( KConfig *config, const QString& grp )
 {
    QString devgrp;
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
-   KConfig* config = KGlobal::config();
    config->setGroup( devgrp );
    
    int vl = config->readNumEntry("volumeL", -1);
@@ -89,11 +88,10 @@ void MixDevice::read( const QString& grp )
    if ( recsrc!=-1 ) setRecsrc( recsrc!=0 );
 }
 
-void MixDevice::write( const QString& grp )
+void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
-   KConfig* config = KGlobal::config();
    config->setGroup(devgrp);
 
    config->writeEntry("volumeL", getVolume( Volume::LEFT ) );
@@ -114,28 +112,24 @@ void MixSet::clone( MixSet &set )
       append( new MixDevice( *md ) );
 }
 
-void MixSet::read( const QString& grp )
+void MixSet::read( KConfig *config, const QString& grp )
 {
-   KConfig* config = KGlobal::config();
    config->setGroup(grp);
-
    m_name = config->readEntry( "name", m_name );
 
    MixDevice* md;
    for( md=first(); md!=0; md=next() )
-      md->read( grp );
+      md->read( config, grp );
 }
 
-void MixSet::write( const QString& grp )
+void MixSet::write( KConfig *config, const QString& grp )
 {
-   KConfig* config = KGlobal::config();
    config->setGroup(grp);
-
    config->writeEntry( "name", m_name );
 
    MixDevice* md;
    for( md=first(); md!=0; md=next() )
-      md->write( grp );      
+      md->write( config, grp );      
 }
 
 /********************** Mixer ***********************/
@@ -170,16 +164,16 @@ int Mixer::setupMixer( MixSet mset )
    return 0;
 }
 
-void Mixer::volumeSave()
+void Mixer::volumeSave( KConfig *config )
 {
    QString grp = QString("Mixer") + mixerName();
-   m_mixDevices.write(grp);
+   m_mixDevices.write( config, grp );
 }
 
-void Mixer::volumeLoad()
+void Mixer::volumeLoad( KConfig *config )
 {
    QString grp = QString("Mixer") + mixerName();
-   m_mixDevices.read(grp);  
+   m_mixDevices.read( config, grp );  
    
    // set new settings
    QListIterator<MixDevice> it( m_mixDevices );
@@ -188,79 +182,6 @@ void Mixer::volumeLoad()
       setRecsrc( md->num(), md->isRecsrc() );
       writeVolumeToHW( md->num(), md->getVolume() );    
    }
-}
-
-void Mixer::sessionSave( bool /*sessionConfig*/ )
-{ 
-   QString grp = QString("Mixer") + mixerName();
-   KConfig* config = KGlobal::config();
-   config->setGroup( grp );
-
-   config->writeEntry( "profiles", m_profiles.count() );
-
-   int n=0;
-   for ( MixSet *ms=m_profiles.first(); ms!=0; ms=m_profiles.next() )
-   {
-      QString grp;
-      grp.sprintf("Mixer%s.Profile%i", mixerName().ascii(), n);
-      ms->write( grp );
-      n++;
-   }
-}
-
-void Mixer::sessionLoad( bool /*sessionConfig*/ )
-{
-   QString grp = QString("Mixer") + mixerName();
-   KConfig* config = KGlobal::config();
-   config->setGroup( grp );
-
-   m_profiles.clear();
-  
-   int num = config->readNumEntry( "profiles", 0 );
-   for ( int n=0; n<num; n++)
-   {
-      MixSet *set = new MixSet;
-      
-      QString grp;
-      grp.sprintf("Mixer%s.Profile%i", mixerName().ascii(), n);
-      set->read( grp );
-
-      m_profiles.append( set );
-   }
-}
-
-void Mixer::saveAsProfile( int num, QString name )
-{
-   MixSet *set = new MixSet;
-   set->clone( m_mixDevices );
-   set->setName( name );
-   m_profiles.insert( num, set );   
-}
-
-void Mixer::loadProfile( int num )
-{
-   MixSet *set = m_profiles.at(num);
-   if ( set )
-      writeMixSet( *m_profiles.at(num) );
-}
-
-int Mixer::numOfProfiles()
-{
-   return m_profiles.count();
-}
-
-void Mixer::deleteProfile( int num )
-{
-   m_profiles.remove( num );
-}
-
-QString Mixer::nameOfProfile( int num )
-{
-   MixSet *set = m_profiles.at(num);
-   if ( set )
-      return set->name();
-   else
-      return QString::null;
 }
 
 int Mixer::grab()

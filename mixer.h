@@ -47,6 +47,7 @@
 #define MAX_MIXDEVS 32
 
 class Volume;
+class KConfig;
 
 class MixDevice
 {
@@ -76,8 +77,8 @@ class MixDevice
       int rightVolume() const;
       int leftVolume() const;
 
-      void read( const QString& grp );
-      void write( const QString& grp );
+      void read( KConfig *config, const QString& grp );
+      void write( KConfig *config, const QString& grp );
 
       void setType( ChannelType channeltype ) { m_type = channeltype; };
       ChannelType type() { return m_type; };
@@ -95,8 +96,8 @@ class MixDevice
 class MixSet : public QList<MixDevice>
 {
    public:      
-      void read( const QString& grp );
-      void write( const QString& grp );
+      void read( KConfig *config, const QString& grp );
+      void write( KConfig *config, const QString& grp );
 
       void clone( MixSet &orig );
 
@@ -124,19 +125,10 @@ class Mixer : public QObject
       static Mixer* getMixer( int device = 0, int card = 0 );
       static Mixer* getMixer( MixSet set,int device = 0, int card = 0 );
 
-      void sessionSave(bool sessionConfig);
-      void sessionLoad(bool sessionConfig);
+      void volumeSave( KConfig *config );
+      void volumeLoad( KConfig *config );
 
-      void volumeSave();
-      void volumeLoad();
-
-      void saveAsProfile( int num, QString name=QString::null );
-      void loadProfile( int num );
-      int numOfProfiles();
-      void deleteProfile( int num );
-      QString nameOfProfile( int num );
-
-      /// Tells the number of the mixing devices
+       /// Tells the number of the mixing devices
       unsigned int size() const;
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);

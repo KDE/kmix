@@ -64,19 +64,21 @@ void Profile::read()
 {
 }
 
-void Profile::loadConfig( const QString &/*grp*/ )
+void Profile::loadConfig( KConfig */*config*/, const QString &/*grp*/ )
 {
 }
 
-void Profile::saveConfig( const QString &/*grp*/ )
+void Profile::saveConfig( KConfig */*config*/, const QString &/*grp*/ )
 {
 }
 
 /********************** KMixerWidget *************************/
  
-KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0), 
-   m_topLayout(0), m_devLayout(0), m_name(mixer->mixerName())
+KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum, 
+			    bool small, bool vert, QWidget * parent, const char * name )
+   : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
+     m_topLayout(0), m_devLayout(0), m_name( mixerName ), 
+     m_iconsEnabled(true), m_mixerName( mixerName ), m_mixerNum( mixerNum ), m_id( _id )
 {   
    kdDebug() << "-> KMixerWidget::KMixerWidget" << endl;
    m_actions = new KActionCollection( this );
@@ -86,7 +88,15 @@ KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * paren
    m_vertical = vert;
 
    // Create mixer device widgets        
-   updateDevices( vert ); 
+   if ( mixer )
+      updateDevices( vert ); 
+   else
+   {
+      QBoxLayout *layout = new QHBoxLayout( this );
+      QLabel *errorLabel = new QLabel( i18n("Invalid mixer"), this );
+      errorLabel->setAlignment( QLabel::AlignCenter );
+      layout->addWidget( errorLabel );
+   }
 
    kdDebug() << "<- KMixerWidget::KMixerWidget" << endl;
 }
@@ -179,21 +189,19 @@ void KMixerWidget::setLabels( bool on )
 
 void KMixerWidget::setIcons( bool on )
 {
-   kdDebug() << "KMixerWidget::setIcons( " << on << " )" << endl;
-   emit updateIcons( on );
+   if ( m_iconsEnabled!=on )
+   {
+      m_iconsEnabled = on;
+      kdDebug() << "KMixerWidget::setIcons( " << on << " )" << endl;
+      emit updateIcons( on );
+   }
 }
 
 void KMixerWidget::setBalance( int value )
 {
-   m_mixer->setBalance( value );
-   if ( m_balanceSlider )
-      m_balanceSlider->setValue( value );
+   if ( m_mixer ) m_mixer->setBalance( value );
+   if ( m_balanceSlider ) m_balanceSlider->setValue( value );
 }
-
-/*void KMixerWidget::setOrientation( int vert )
-{
-   updateDevices( vert ); 
-}*/
 
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
 {
@@ -220,9 +228,8 @@ void KMixerWidget::rightMouseClicked()
    }
 }
 
-void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
+void KMixerWidget::saveConfig( KConfig *config, QString grp )
 {
-   KConfig* config = KGlobal::config();
    config->setGroup( grp );
 
    config->writeEntry( "Devs", m_channels.count() );
@@ -242,11 +249,9 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
    }
 }
 
-void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
+void KMixerWidget::loadConfig( KConfig *config, QString grp )
 {
    kdDebug() << "-> KMixerWidget::sessionLoad" << endl;
-
-   KConfig* config = KGlobal::config();
    config->setGroup( grp );
    
    int num = config->readNumEntry("Devs", 0);   

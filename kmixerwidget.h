@@ -34,6 +34,7 @@ class Mixer;
 class QSlider;
 class Channel;
 class KActionCollection;
+class KConfig;
 
 struct ChannelProfile
 {       
@@ -47,8 +48,8 @@ class Profile : public QList<ChannelProfile>
    void write();
    void read();
 
-   void loadConfig( const QString &grp );
-   void saveConfig( const QString &grp);
+   void loadConfig( KConfig *config, const QString &grp );
+   void saveConfig( KConfig *config, const QString &grp);
 
   private:
    Mixer *m_mixer;
@@ -58,13 +59,16 @@ class KMixerWidget : public QWidget  {
    Q_OBJECT
 
   public:
-   KMixerWidget( Mixer *mixer, bool small=false, bool vert=true, 
+   KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum, bool small=false, bool vert=true, 
 		 QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
    QString name() { return m_name; };
    void setName( QString name ) { m_name = name; };
    Mixer *mixer() { return m_mixer; };
+   QString mixerName() { return m_mixerName; };
+   int mixerNum() { return m_mixerNum; };
+   int id() { return m_id; };
 
   signals:
    void updateTicks( bool on );
@@ -76,11 +80,10 @@ class KMixerWidget : public QWidget  {
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
-   void setBalance( int value );
-   // void setOrientation( int vert );
+   void setBalance( int value );   
 
-   void sessionSave( QString grp, bool sessionConfig );
-   void sessionLoad( QString grp, bool sessionConfig );
+   void saveConfig( KConfig *config, QString grp );
+   void loadConfig( KConfig *config, QString grp );
 
    void showAll();
 
@@ -98,6 +101,10 @@ class KMixerWidget : public QWidget  {
    KActionCollection *m_actions;
    bool m_small;
    bool m_vertical;
+   bool m_iconsEnabled;
+   QString m_mixerName;
+   int m_mixerNum;
+   int m_id;
 
    void mousePressEvent( QMouseEvent *e );
    void updateDevices( bool vert );

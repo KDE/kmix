@@ -41,23 +41,23 @@ class KMixApplet : public KPanelApplet
 	       QWidget *parent = 0, const char *name = 0 );
    virtual ~KMixApplet();
 
-   int widthForHeight(int height);
-   int heightForWidth(int width); 
+   int widthForHeight(int height) const;
+   int heightForWidth(int width) const; 
    
    void about();
    void help();
    void preferences();
 
   protected slots:
-   void updateSize() { updateLayout(); }
-   void updateLayout();
+   void triggerUpdateLayout();
+   void updateLayoutNow(); 
 
   protected:
    void resizeEvent( QResizeEvent * );
-   void initMixer( Mixer *mixer );
     
   private:
    KMixerWidget *m_mixerWidget;
+   QLabel *m_errorLabel;
    QTimer *m_layoutTimer;
    int m_lockedLayout;
 

@@ -87,6 +87,7 @@ class KMixApp : public KTMainWindow
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
+   int m_maxId;
 
    QList<Mixer> m_mixers;
    QList<KMixerWidget> m_mixerWidgets;

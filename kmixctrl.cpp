@@ -83,13 +83,13 @@ int main(int argc, char *argv[])
    if ( args->isSet("restore") )
    {
       for (Mixer *mixer=mixers.first(); mixer!=0; mixer=mixers.next())
-	 mixer->volumeLoad();
+	 mixer->volumeLoad( KGlobal::config() );
    }
 
    // save volumes
    if ( args->isSet("save") )
    {
       for (Mixer *mixer=mixers.first(); mixer!=0; mixer=mixers.next())
-	 mixer->volumeSave();
+	 mixer->volumeSave( KGlobal::config() );
    }
 }  

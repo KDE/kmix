@@ -49,18 +49,16 @@
 #include "kmixdockwidget.h"
 
 
-#define MAXDEVICES 2
-#define MAXCARDS 4
-
-
 KMixApp::KMixApp()
-   : m_dockWidget( 0L )
+   : m_maxId( 0 ), m_dockWidget( 0L )
 {
    initMixer();
    initActions();
    initWidgets();
 
    loadConfig();
+   if ( m_mixerWidgets.count()==0 )
+      newMixer();
 
    initPrefDlg();
 
@@ -186,25 +184,24 @@ void KMixApp::saveConfig()
    config->writeEntry( "HideOnClose", m_hideOnClose );
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
-   config->writeEntry( "Tabs", m_mixerWidgets.count() );
-
+   
    // save mixer widgets
-   int n = 0;
+   QStringList tabs;
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
-   {
-      QString grp;      
-      grp.sprintf( "Widget%i", n );
-
+   {     
+      QString grp;
+      grp.sprintf( "%i", mw->id() );
+      tabs << grp;
+      
       config->setGroup( grp );
-      config->writeEntry( "Mixer", m_mixers.find( mw->mixer() ) );
+      config->writeEntry( "Mixer", mw->mixerNum() );
+      config->writeEntry( "MixerName", mw->mixerName() );
 
-      mw->sessionSave( grp, false );
-      n++;
-   }
+      mw->saveConfig( config, grp );
+   }  
 
-   // save mixers
-   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
-	 mixer->sessionSave( false );
+   config->setGroup(0);
+   config->writeEntry( "Tabs", tabs );
 }
 
 void KMixApp::loadConfig()
@@ -233,30 +230,36 @@ void KMixApp::loadConfig()
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", false);
    m_showLabels = config->readBoolEntry("Labels", false);
-   int tabs = config->readNumEntry("Tabs", 1);
+   
+   QString tabsStr = config->readEntry( "Tabs" );
+   QStringList tabs = QStringList::split( ',', tabsStr );
 
    // load mixer widgets
    m_mixerWidgets.clear();
-   for (int n=0; n<tabs; n++)
+   for (QStringList::Iterator tab=tabs.begin(); tab!=tabs.end(); ++tab) 
    {
-      QString grp;
-      grp.sprintf( "Widget%i", n );
-      config->setGroup(grp);
+      config->setGroup(*tab);
+      int id = (*tab).toInt();
+      if ( id>=m_maxId ) m_maxId = id+1;
 
-      Mixer *mixer = m_mixers.at( config->readNumEntry("Mixer", 0) );
-      if (mixer)
-      {
-	 kdDebug() << "mixer=" << mixer << endl;
-	 KMixerWidget *mw = new KMixerWidget( mixer, false, true, this );
-	 mw->sessionLoad( grp, false );
-	
-	 insertMixerWidget( mw );
-      }
+      int mixerNum = config->readNumEntry( "Mixer", -1 );
+      QString mixerName = config->readEntry( "MixerName", QString::null );
+      Mixer *mixer = 0;
+      if ( mixerNum>=0 )
+      {	 	 
+	 int m = mixerNum+1;
+	 for (mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+	 {
+	    if ( mixer->mixerName()==mixerName ) m--;
+	    if ( m==0 ) break;
+	 }	 
+      } 
+      
+      kdDebug() << "mixer=" << mixer << endl;
+      KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, true, this );
+      mw->loadConfig( config, *tab );
+      insertMixerWidget( mw );      
    }
-
-   // load mixer setting
-   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
-      mixer->sessionLoad( false );
 
    kdDebug() << "<- KMixApp::sessionLoad" << endl;
 }
@@ -283,7 +286,7 @@ void KMixApp::removeMixerWidget( KMixerWidget *mw )
 
 void KMixApp::closeEvent ( QCloseEvent * e )
 {
-   if ( m_hideOnClose )
+   if ( m_hideOnClose && m_showDockWidget )
    {
       e->ignore();
       hide();
@@ -348,7 +351,8 @@ void KMixApp::newMixer()
 					1, TRUE, &ok, this );
    if ( ok )
    {
-      Mixer *mixer = m_mixers.at( lst.findIndex( res ) );
+      int mixerNum = lst.findIndex( res );
+      Mixer *mixer = m_mixers.at( mixerNum );
       if (!mixer)
       {
 	 KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
@@ -359,7 +363,9 @@ void KMixApp::newMixer()
 					    mixer->mixerName(), &ok, this );
       if ( ok )
       {
-	 KMixerWidget *mw = new KMixerWidget( mixer, false, true, this );
+	 KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixerNum, 
+					      false, true, this );
+	 m_maxId++;
 	 mw->setName( name );
 	 insertMixerWidget( mw );
       }
@@ -385,7 +391,7 @@ void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )
    updateDocking();
 
    // avoid invisible and unaccessible main window
-   if( !m_showDockWidget && !isVisible()/* && m_applets.count()==0*/ )
+   if( !m_showDockWidget && !isVisible() )
       show();
 }
 
