@@ -64,9 +64,9 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   // Define page 2
   createChannelConfWindow();
 
-  setCancelButton();
-  setApplyButton();
-  setOkButton();
+  setCancelButton(i18n("Cancel"));
+  setApplyButton(i18n("Apply"));
+  setOkButton(i18n("OK"));
 
 
   connect( this, SIGNAL(applyButtonPressed()), this, SLOT(slotApply()));
