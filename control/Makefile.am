@@ -7,7 +7,7 @@ libkcm_kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_kmix_la_METASOURCES = AUTO
 libkcm_kmix_la_SOURCES = mixconfig.cpp
 
-lib_LTLIBRARIES = libkcm_kmix.la
+kde_module_LTLIBRARIES = libkcm_kmix.la
 
 noinst_HEADERS = mixconfig.h
 
