@@ -44,7 +44,7 @@ static KCmdLineOptions options[] =
    // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
-int main(int argc, char *argv[])
+extern "C" int kdemain(int argc, char *argv[])
 {
    KLocale::setMainCatalogue("kmix");
    KAboutData aboutData( "kmixctrl", I18N_NOOP("KMixCtrl"),
@@ -93,4 +93,6 @@ int main(int argc, char *argv[])
       for (Mixer *mixer=mixers.first(); mixer!=0; mixer=mixers.next())
 	 mixer->volumeSave( KGlobal::config() );
    }
+
+   return 0;
 }
