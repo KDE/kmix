@@ -27,7 +27,7 @@
 VerticalText::VerticalText(QWidget * parent, const char * name, WFlags f) : QWidget(parent,name,f)
 {
 	resize(20,100 /*parent->height() */ );
-	setFixedSize(20,100);
+	setFixedWidth(20);
 }
 
 VerticalText::~VerticalText() {
@@ -35,7 +35,7 @@ VerticalText::~VerticalText() {
 
 
 void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
-    //kdDebug() << "paintEvent()\n";
+	//kdDebug() << "paintEvent(). height()=" <<  height() << "\n";
 	QPainter paint(this);
 	paint.rotate(270);
 	paint.drawText(-height()+2,width(),name());
