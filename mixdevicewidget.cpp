@@ -87,7 +87,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
       a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
    }
 
-   new KAction( i18n("Define &Keys"), 0, this, SLOT(defineKeys()), m_actions, "keys" );
+   new KAction( i18n("Define &Keys..."), 0, this, SLOT(defineKeys()), m_actions, "keys" );
 
    // create widgets
    createWidgets( showMuteLED, showRecordLED );
@@ -98,11 +98,11 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    m_updateTimer->start( 200, FALSE );
 
    m_keys = new KGlobalAccel( this, "Keys" );
-   m_keys->insert( "Increase volume", i18n( "Increase volume" ), QString::null,
+   m_keys->insert( "Increase volume", i18n( "Increase Volume" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( increaseVolume() ) );
-   m_keys->insert( "Decrease volume", i18n( "Decrease volume" ), QString::null,
+   m_keys->insert( "Decrease volume", i18n( "Decrease Volume" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
-   m_keys->insert( "Toggle mute", i18n( "Toggle mute" ), QString::null,
+   m_keys->insert( "Toggle mute", i18n( "Toggle Mute" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
    // No need for m_keys->readSettings(), the keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp
    m_keys->updateConnections();
