@@ -176,7 +176,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
    if ( !mixer )
    {
-      m_errorLabel = new QPushButton( i18n("Select mixer"), this );
+      m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
       connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
    }
    
