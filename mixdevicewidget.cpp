@@ -132,7 +132,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       m_iconLabel = 0L;
       setIcon( m_mixdevice->type() );
       layout->addWidget( m_iconLabel );
-      m_iconLabel->installEventFilter( this );
+      //m_iconLabel->installEventFilter( this );
       QToolTip::add( m_iconLabel, m_mixdevice->name() );
    } //  otherwise it is created after the slider
 

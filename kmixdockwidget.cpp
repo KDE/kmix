@@ -102,11 +102,12 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         switch ( me->button() ) {
     		case LeftButton:
         		if (!masterVol->isVisible()) {
-            		QWidget *desktop = QApplication::desktop();
-            		int sw = desktop->width();
-            		int sh = desktop->height();
-            		int sx = desktop->x();
-            		int sy = desktop->y();
+			int scnum = QApplication::desktop()->screenNumber(this);
+            		QRect desktop = QApplication::desktop()->screenGeometry(scnum);
+            		int sw = desktop.width();
+            		int sh = desktop.height();
+            		int sx = desktop.x();
+            		int sy = desktop.y();
             		int x = me->globalPos().x();
             		int y = me->globalPos().y();
             		y -= masterVol->geometry().height();
