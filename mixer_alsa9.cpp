@@ -38,6 +38,8 @@ extern "C"
 // Local Headers
 #include "mixer_alsa.h"
 #include "volume.h"
+// #define if you want MUCH debugging output
+#undef ALSA_SWITCH_DEBUG
 
 Mixer*
 ALSA_getMixer( int device, int card )
@@ -286,10 +288,6 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 	bool isCurrentlyRecSrc = false;
 	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
 
-	// !!! bug. This must return whether it is at the moment a record source
-	/**	return( 	snd_mixer_selem_has_capture_volume( elem ) ||
-				snd_mixer_selem_has_capture_switch( elem ) );
-	*/
 	if ( snd_mixer_selem_has_capture_switch( elem ) ) {
 		// Has a on-off switch
 		// Yes, this element can be record source. But the user can switch it off, so lets see if it is switched on.
@@ -297,13 +295,17 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &swLeft );
 		if (snd_mixer_selem_has_capture_switch_joined( elem ) ) {
 			isCurrentlyRecSrc = (swLeft != 0);
+#ifdef ALSA_SWITCH_DEBUG
+			kdDebug() << "Mixer_ALSA::isRecsrcHW() has_switch joined, state " << swLeft << " : " << isCurrentlyRecSrc << endl;
+#endif
 		}
 		else {
 			int swRight;
 			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &swRight );
-			if (snd_mixer_selem_has_capture_switch_joined( elem ) ) {
-				isCurrentlyRecSrc = ( (swLeft != 0) || (swRight != 0) );
-			}
+			isCurrentlyRecSrc = ( (swLeft != 0) || (swRight != 0) );
+#ifdef ALSA_SWITCH_DEBUG
+			kdDebug() << "Mixer_ALSA::isRecsrcHW() has_switch non-joined, state " << isCurrentlyRecSrc << endl;
+#endif
 		}
 	}
 	else {
@@ -311,6 +313,9 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 		if ( snd_mixer_selem_has_capture_volume( elem ) ) {
 			// Has a volume, but has no OnOffSwitch => We assume that this is a fixed record source (always on). (esken)
 			isCurrentlyRecSrc = true;
+#ifdef ALSA_SWITCH_DEBUG
+			kdDebug() << "Mixer_ALSA::isRecsrcHW() has_no_switch, state " << isCurrentlyRecSrc << endl;
+#endif
 		}
 	}
 
@@ -320,34 +325,48 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 bool
 Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 {
-	int sw = (int)on;
+	int sw = 0;
+	if (on)
+		sw = !sw;
+
+#ifdef ALSA_SWITCH_DEBUG
 	kdDebug() << "ENTR Mixer_ALSA::setRecsrcHW(" << devnum << " , " << on << " , " << sw << ")\n";
+#endif
 	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
 
 	if (snd_mixer_selem_has_capture_switch_joined( elem ) )
 	{
-//		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
-		kdDebug() << "Mixer_ALSA::setRecsrcHW joined\n";
+		int before, after;
+		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &before );
 		snd_mixer_selem_set_capture_switch_all( elem, sw );
+		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &after );
+#ifdef ALSA_SWITCH_DEBUG
+		kdDebug() << "Mixer_ALSA::setRecsrcHW joined. Before=" << before << " Set=" << sw << " After=" << after <<"\n";
+#endif
+		
 	}
 	else
 	{
 		if ( snd_mixer_selem_has_capture_channel( elem, SND_MIXER_SCHN_FRONT_LEFT ) )
 		{
-//			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
+#ifdef ALSA_SWITCH_DEBUG
 			kdDebug() << "Mixer_ALSA::setRecsrcHW LEFT\n";
+#endif
 			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, sw );
 		}
 
 		if ( snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
 		{
-//			snd_mixer_selem_get_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, &sw);
+#ifdef ALSA_SWITCH_DEBUG
 			kdDebug() << "Mixer_ALSA::setRecsrcHW RIGHT\n";
+#endif
 			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, sw);
 		}
 	}
 
+#ifdef ALSA_SWITCH_DEBUG
 	kdDebug() << "EXIT Mixer_ALSA::setRecsrcHW(" << devnum << "," << on <<  ")\n";
+#endif
 	return false; // we should always return false, so that other devnum's get updated
 }
 
