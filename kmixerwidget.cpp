@@ -160,6 +160,7 @@ KMixerWidget::createDeviceWidgets()
    // create devices
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
+   bool hasSwitches = false; // so we know whether showing the "advanced" checkbox makes sense
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
       MixDeviceWidget *mdw;
@@ -196,6 +197,7 @@ KMixerWidget::createDeviceWidgets()
          if( mixDevice->isSwitch() )
          {
             m_devSwitchLayout->addWidget( mdw, row, col );
+            hasSwitches = true;
             col++;
 
 				if( col > 3 )
@@ -232,7 +234,10 @@ KMixerWidget::createDeviceWidgets()
         hideShowDetail->setText( i18n("Advanced") );
 
 		balanceAndDetail->addSpacing( 10 );
-		balanceAndDetail->addWidget( hideShowDetail);
+		if ( hasSwitches )
+		   balanceAndDetail->addWidget( hideShowDetail);
+		else
+		  hideShowDetail->hide();
 		balanceAndDetail->addWidget( m_balanceSlider );
 		balanceAndDetail->addWidget( mixerName );
 		balanceAndDetail->addSpacing( 10 );
@@ -264,6 +269,7 @@ void
 KMixerWidget::updateSize(bool force)
 {
 	//kdDebug() << "KMixerWidget::updateSize(): (" << layout()->minimumSize().width() << "," << layout()->minimumSize().height() << ")\n";
+   // !!! The whole updateSize stuff must be reworked after KDE3.2 ... currently it is only working by chance
    layout()->activate();
    setMinimumWidth( layout()->minimumSize().width() );
    setMinimumHeight( layout()->minimumSize().height() );
