@@ -210,12 +210,9 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	GET_NEWLAYOUT( labelAndSliders );
 	m_label = new VerticalText( this, m_mixdevice->name().latin1() );
 	m_label->hide();
-	labelAndSliders->addWidget( m_label );
+	labelAndSliders->addWidget( m_label ); // even on a switch it is created (but we hide it everywhere where needed)
 	m_label->installEventFilter( this );
-	
-	if( isSwitch() )
-		m_label->hide();
-	
+		
 	// create sliders
 	GET_NEWLAYOUT_LAS( sliders );
 	for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
@@ -442,7 +439,7 @@ MixDeviceWidget::setStereoLinked(bool value)
 void 
 MixDeviceWidget::setLabeled(bool value)
 {
-   if (value)
+   if (value && !isSwitch() )
       m_label->show();
    else
       m_label->hide();
