@@ -1,0 +1,117 @@
+# This is a sample Makefile.in 
+
+# @CXXFLAGS@     : is set to -g -Wall (when debuging) or -O2 -Wall (when not)
+# @all_includes@ : is set to all needed include paths for QT, KDE and X11
+# -I.. 	         : needed for config.h
+CXXFLAGS= @CXXFLAGS@ @all_includes@ -DHAVE_CONFIG_H -I..
+
+# @LDFLAGS@    : is set to -s (when not debuging) for stripping
+# @all_libra.@ : is set to all needed libraries paths for QT, KDE and X11
+# you need also @LIBSOCKET@, if you link with -lkfm
+LDFLAGS	= @LDFLAGS@ @all_libraries@ -lkdecore -lkdeui -lqt -lXext -lX11 # add -lintl for NLS support
+
+# both are clear, I think
+CXX     = @CXX@
+MOC   	= @MOC@
+MSGFMT  = msgfmt
+
+############# INSTALL #################
+
+install = @INSTALL@
+INSTALL = $(install) -m 0755
+INSTALL_DATA = $(install) -m 0644
+INSTALL_DIR = $(install) -d -m 0755
+INSTALL_DIR_PRIVATE = $(install) -d -m 0700
+
+prefix = @prefix@
+KDEINC = $(prefix)/include
+BINDIR = $(prefix)/bin
+LIBDIR = $(prefix)/lib
+APPDIR = $(prefix)/share/apps/kmix
+
+########### File Formats ###########
+
+.SUFFIXES: .cpp
+
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $<
+
+%.moc: %.h
+	$(MOC) $< -o $@
+
+%.mo: %.po
+	$(MSGFMT) $< -o $@
+
+########## Files #####################
+
+OBJECTS =	kmix.o mixer.o prefs.o kcontextmenu.o
+SRCS :=         $(OBJECTS:*.o:*.c)
+SRCMETA =	kmix.moc prefs.moc mixer.moc
+SRCNLS  :=	$(patsubst %.po,%, $(wildcard *.po))
+OBJNLS  :=	$(patsubst %,%.mo, $(SRCNLS))
+TARGET	=	kmix
+
+######### build rules ################
+
+all: .depend version.h $(TARGET)
+
+
+version.h: VERSION
+	sed "s/0/#define APP_VERSION 0/" <VERSION >version.h
+
+$(TARGET): $(SRCMETA) $(OBJECTS) # $(OBJNLS)
+	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
+
+clean:
+	rm -f *.o *.bak .depend *~ *% core #*
+	rm -f $(SRCMETA) $(TARGET)
+	rm -f *.mo
+
+distclean: clean
+	rm -f Makefile
+
+.depend: $(SRCS)
+	@if test ! -f .depend ; then make depend ; fi
+
+depend:
+	@echo "Creating dependencies."
+	@makedepend $(INCDIRS) $(SRCS) 2> /dev/null
+	touch .depend
+
+install: $(TARGET) install-icons # install-nls
+	$(INSTALL_DIR) $(BINDIR)
+	$(INSTALL) $(TARGET) $(BINDIR)
+	$(INSTALL_DIR) $(prefix)/share/doc/HTML/kmedia
+	$(INSTALL_DATA) kmix.html $(prefix)/share/doc/HTML/kmedia
+	$(INSTALL_DIR) $(prefix)/share/applnk/Multimedia
+	$(INSTALL_DATA) KMix.kdelnk $(prefix)/share/applnk/Multimedia
+
+install-icons:
+	$(INSTALL_DIR) $(APPDIR)/pics
+	cd pics; $(INSTALL_DATA) *.xpm $(APPDIR)/pics
+
+install-nls:
+	for i in $(SRCNLS); do \
+	$(INSTALL_DIR) $(prefix)/share/locale/$$i/LC_MESSAGES; \
+	$(INSTALL_DATA) $$i.mo $(prefix)/share/locale/$$i/LC_MESSAGES/kmix.mo; \
+	done
+
+
+uninstall:
+	rm -f $(BINDIR)/$(TARGET)
+	rm -f $(prefix)/doc/HTML/ksoundsystem/kmix.html
+	rm -f $(prefix)/share/applnk/Multimedia/KMix.kdelnk
+	rm -rf $(APPDIR)
+
+kmix.moc: kmix.h
+	$(MOC) kmix.h -o kmix.moc
+
+prefs.moc: prefs.h
+	$(MOC) prefs.h -o prefs.moc
+
+mixer.moc: mixer.h
+	$(MOC) mixer.h -o mixer.moc
+
+
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.

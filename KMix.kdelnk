@@ -1,0 +1,17 @@
+# KDE Config File
+[KDE Desktop Entry]
+BinaryPattern=kix;
+Protocols=
+Exec=kmix
+Icon=media.xpm
+DocPath=kmedia/kmix.html
+TerminalOptions=
+Path=
+Extensions=
+Type=Application
+MimeType=
+Terminal=0
+Comment=Controls the volume of the Sound channels
+Comment[de]=Einstellung der Lautstärke der Soundkanäle
+Name=Sound Mixer Panel
+Name[de]=Lautstärkeregelung

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>maudio User Manual</TITLE>
+</HEAD>
+<BODY>
+
+<H3>kmix- audio mixer for the KDE Desktop Environment</H3>
+
+<P>This documentation has been upgraded to match V0.53
+<HR WIDTH="100%"></P>
+
+<P>The mixer can control every mixer device, that OSS provides. Features
+are:</P>
+
+<UL>
+<LI>It uses <I>/dev/mixer</I>. You can give a parameter to use an other
+device, e.g call: &nbsp;&nbsp;<I>kmix&nbsp;/dev/mixer1</I></LI>
+
+<LI>You have a single slider for mono devices.</LI>
+
+<LI>You can have one or two sliders for stereo capable devices. Click with
+the right mouse button for a context menu to toggle this option.</LI>
+
+<LI>You can mute mixer devices. Click with the right mouse button for a
+context menu to toggle this option.</LI>
+
+<LI>The slider at the bottom is an overall balancing slider.</LI>
+
+<UL>
+<LI>Drag it left to reduce the right channel volume of all devices</LI>
+
+<LI>Drag it right to reduce the left channel volume of all devices</LI>
+
+<LI>Click with the right mouse button for a context menu to restore center
+position, or to set balance to full left or right.</LI>
+</UL>
+
+<LI>You can hide and show menu and tickmarks. Press CTRL-M and CTRL-T to
+do this</LI>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P>Thats it for today. Please mail <B>every</B> compilation problem and/or
+bug to <A HREF="mailto:esken@kde.org">Christian Esken</A>,
+the author of kmix.</P>
+<P>Sun and SGI mixer support is included, but should be
+regarded as PRE-alpha, so it is very likely not even compiling. Patches
+to get it running are very appreciated.</P>
+
+</BODY>
+</HTML>
