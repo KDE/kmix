@@ -398,11 +398,13 @@ bool Mixer_ALSA::prepareUpdate() {
     fds->events = POLLIN;
     if ((err = snd_mixer_poll_descriptors(_handle, fds, count)) < 0) {
 	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
+        free(fds);
 	return false;
     }
     if (err != count) {
 	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " count=" <<  count << "\n";
-	    return false;
+        free(fds);
+	return false;
     }
 
     // Poll on fds with 10ms timeout
@@ -421,10 +423,12 @@ bool Mixer_ALSA::prepareUpdate() {
 
 	    if (revents & POLLNVAL) {
 		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
+                free(fds);
 		return false;
 	    }
 	    if (revents & POLLERR) {
 		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLERR\n";
+                free(fds);
 		return false;
 	    }
 	    if (revents & POLLIN) {
@@ -437,9 +441,6 @@ bool Mixer_ALSA::prepareUpdate() {
     }
 
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 8\n";
-
-
-    // !!! memory leak under any error condition
     free(fds);
     return updated;
 }
@@ -543,6 +544,12 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	kdDebug(67100) << "EXIT Mixer_ALSA::setRecsrcHW(" << devnum << "," << on <<  ")\n";
 #endif
 	return false; // we should always return false, so that other devnum's get updated
+	// The ALSA polling has been implemented some time ago. So it should be safe to
+	// return "true" here.
+	// The other devnum's Rec-Sources won't get update by KMix code, but ALSA will send
+	// us an event, if neccesary. But OTOH it is possibly better not to trust alsalib fully,
+        // because the old code is working also well (just takes more processing time).
+	// return true;
 }
 
 /**
