@@ -393,7 +393,7 @@ KMixerWidget::slotFillPopup()
 		uniqueName.append(chn->dev->mixDevice()->num()).append(chn->dev->name());
 		if( chn->dev->isSwitch() )
 			sw << uniqueName;
-		else if ( chn->dev->isRecsrc() )
+		else if ( chn->dev->mixDevice()->isRecordable() )
 			input << uniqueName;
 		else
 			output << uniqueName;
@@ -437,7 +437,14 @@ KMixerWidget::slotToggleMixerDevice( int id)
    if(id >= static_cast<int>(m_channels.count())) // too big
       return;
 
-   Channel *chn = m_channels.at(id);
+   Channel *chn = 0;
+   for (Channel *ch=m_channels.first(); ch!=0; ch=m_channels.next()) {
+	if ( ch->dev->mixDevice()->num() == id ) {
+		chn = ch;
+		break;
+	}
+   }
+ 
    if(!chn)
       return;
    bool gotCheck = m_toggleMixerChannels->popupMenu()->isItemChecked(id);
