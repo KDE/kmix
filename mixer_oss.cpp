@@ -20,11 +20,12 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 // Linux section, by Christian Esken
 #if defined(linux)
