@@ -69,7 +69,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    m_actions = new KActionCollection( this );
 
    if (parent->isA("KMixerWidget"))
-       new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()),
+       new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
                       m_actions, "stereo" );
    if (parent->isA("KMixerWidget"))
        new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
@@ -78,15 +78,15 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setMuted(bool)) );
 
    if (parent->isA("KMixerWidget"))
-       new KAction( i18n("Show &all"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
+       new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
 
    if( m_mixdevice->isRecordable() )
    {
-      a = new KToggleAction( i18n("Set &record source"), 0, 0, 0, m_actions, "recsrc" );
+      a = new KToggleAction( i18n("Set &Record Source"), 0, 0, 0, m_actions, "recsrc" );
       a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
    }
 
-   new KAction( i18n("Define &keys"), 0, this, SLOT(defineKeys()), m_actions, "keys" );
+   new KAction( i18n("Define &Keys"), 0, this, SLOT(defineKeys()), m_actions, "keys" );
 
    // create widgets
    createWidgets( showMuteLED, showRecordLED );
@@ -556,7 +556,7 @@ void MixDeviceWidget::update()
 void MixDeviceWidget::contextMenu()
 {
    KPopupMenu *menu = new KPopupMenu( this );
-   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device settings") );
+   menu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
    if ( m_sliders.count()>1 )
    {
