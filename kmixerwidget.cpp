@@ -42,6 +42,7 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kglobalaccel.h>
+#include <kaccelbase.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -226,14 +227,11 @@ void KMixerWidget::saveConfig( KConfig *config, QString grp )
       config->writeEntry( "Split", !chn->dev->isStereoLinked() );
       config->writeEntry( "Show", !chn->dev->isDisabled() );
 
-      QString devgrpkeys;
-      devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
-
       KGlobalAccel *keys=chn->dev->keys();
       if (keys) {
 	 QString devgrpkeys;
 	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
-	 KAccel::writeKeyMap(keys->keyDict(),devgrpkeys,config);
+	 keys->actions().writeActions(devgrpkeys,config);
       }
       n++;
    }
@@ -261,9 +259,8 @@ void KMixerWidget::loadConfig( KConfig *config, QString grp )
 	 QString devgrpkeys;
 	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
 
-	 KKeyEntryMap keymap=keys->keyDict();
-	 KAccel::readKeyMap(keymap,devgrpkeys,config);
-	 keys->setKeyDict(keymap);
+	 keys->actions().readActions(devgrpkeys,config);
+	 keys->updateConnections();
       }
 
       n++;
