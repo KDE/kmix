@@ -109,16 +109,16 @@ KMixerWidget::createLayout()
 	
 	// create main layout
 
+	m_topLayout = new QVBoxLayout( this, 0, 4 );
+	m_topLayout->setMargin( KDialog::marginHint() );
+
+	// Create tabs e widgetstack
+	m_ioTab = new KTabWidget( this, "ioTab" );
+
+	m_topLayout->add( m_ioTab );
+
 	if( ! m_small )
 	{
-		m_topLayout = new QVBoxLayout( this, 0, 4 );
-		m_topLayout->setMargin( KDialog::marginHint() );
-
-		// Create tabs e widgetstack
-		m_ioTab = new KTabWidget( this, "ioTab" );
-
-		m_topLayout->add( m_ioTab );
-
 		// Create switch buttonGroup
 		m_swWidget = new QWidget( this, "switchWidget" );
 		m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
