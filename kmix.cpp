@@ -331,9 +331,8 @@ void KMix::placeWidgets()
     // Mark record source(s) and muted channel(s). This is done by ordinary
     // color marks on the slider, but this will be changed by red and green
     // and black "bullets" below the slider. TODO !!!
-    if (MixPtr->is_recsrc) {
+    if (MixPtr->is_recsrc)
       qs->setBackgroundColor( red );
-    }
     else {
       if (MixPtr->is_muted)
 	qs->setBackgroundColor( black ); 
@@ -364,10 +363,14 @@ void KMix::placeWidgets()
 	    ToolTipString += " (Right)";
 	    QToolTip::add( qs, ToolTipString );
 
-	    if (MixPtr->is_muted)
-	      qs->setBackgroundColor( black ); 
-	    else
-	      qs->setBackgroundColor( colorGroup().mid() ); 
+	    if (MixPtr->is_recsrc)
+	      qs->setBackgroundColor( red );
+	    else {
+	      if (MixPtr->is_muted)
+		qs->setBackgroundColor( black ); 
+	      else
+		qs->setBackgroundColor( colorGroup().mid() ); 
+	    }
 
 	    qs->show();
 	  }
@@ -417,14 +420,13 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
   Mhelp->insertSeparator();
   Mhelp->insertItem( "&About", this, SLOT(aboutClickedCB()));
+  Mhelp->insertItem( "&About Qt...", this, SLOT(aboutqt()));
 
   mainmenu = new KMenuBar( this, "main menu");
   CHECK_PTR( mainmenu );
   mainmenu->insertItem( _("&File"), Mfile );
   mainmenu->insertSeparator();
   mainmenu->insertItem( _("&Help"), Mhelp );
-  //mainmenu->enableMoving(false);
-  //mainmenu->enableFloating(false);
 
   Mbalancing = new QPopupMenu;
   CHECK_PTR( Mbalancing );
@@ -461,19 +463,25 @@ void KMix::quitClickedCB()
 void KMix::aboutClickedCB()
 {
   QString msg,head;
-  msg = \
-    "KMix was written and (C) 1997 by Christian Esken.\n" \
-    "This program is in the GPL. Please send comments\n"  \
-    "and bug reports to esken@kde.org\n";
+  char vers[50];
+  sprintf (vers,"%.2f", APP_VERSION);
+  
+  msg  = "kmix ";
+  msg += vers;
+  msg += "\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
+    "Sound mixer panel for the KDE Desktop Environment.\n"\
+    "This program is in the GPL.";
 
-  head = "About KMix ";
-  head += "APP_VERSION";
+  head = "About kmix ";
+  head += vers;
 
-  KMsgBox::message(0, head,\
-		   msg,
-		   KMsgBox::INFORMATION, "OK" );
+  QMessageBox::about(this, head, msg );
 }
 
+void KMix::aboutqt()
+{
+  QMessageBox::aboutQt(this);
+}
 
 void KMix::launchHelpCB()
 {

@@ -13,6 +13,7 @@
 //#undef Unsorted
 //#undef Both
 #include <qslider.h>
+#include <qmsgbox.h>
 #include <qpopmenu.h>
 #include <qmenubar.h>
 #include <qtooltip.h>
@@ -41,21 +42,22 @@ public:
   KConfig	*KmConfig;
 
 public slots:
-    void onDrop( KDNDDropZone*);
-    void showOptsCB();
-    void quitClickedCB();
-    void launchHelpCB();
-    void aboutClickedCB();
-    void applyOptions();
+  void onDrop( KDNDDropZone*);
+  void showOptsCB();
+  void quitClickedCB();
+  void launchHelpCB();
+  void aboutClickedCB();
+  void aboutqt();
+  void applyOptions();
 
-    void MbalCentCB();
-    void MbalLeftCB();
-    void MbalRightCB();
-    void MbalChangeCB(int);
+  void MbalCentCB();
+  void MbalLeftCB();
+  void MbalRightCB();
+  void MbalChangeCB(int);
 
-    void placeWidgets();
-    void hideMenubarCB();
-    void tickmarksTogCB();
+  void placeWidgets();
+  void hideMenubarCB();
+  void tickmarksTogCB();
 
 private:
   void createWidgets();
