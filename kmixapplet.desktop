@@ -1,5 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
+Type=Plugin
 Name=Sound Mixer
 Name[bg]=Аудио миксер
 Name[br]=Mesker ar Son
@@ -63,7 +64,7 @@ Comment[fi]=Äänimikserisovelma
 Comment[fr]=Une applet de console de mixage
 Comment[gl]=Unha applet de Mesturar Sons
 Comment[he]=יישומון מערבל צליל
-Comment[hi]=ध्वनि मिक्सर एप्लेट
+Comment[hi]=ध्वनि मिक्सर ऐपलेट
 Comment[hr]=Applet miksera za zvuk
 Comment[hu]=Hangkeverő panel-kisalkalmazás
 Comment[is]=Hljóðblöndunarsmáforrit
