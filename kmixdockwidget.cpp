@@ -30,6 +30,7 @@
 #include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kconfig.h>
+#include <kaudioplayer.h>
 
 #include <qvbox.h>
 #include <qtooltip.h>
@@ -42,7 +43,8 @@
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer,
 				QWidget *parent, const char *name )
-    : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), m_mixerVisible(false)
+    : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), 
+      m_mixerVisible(false), audioPlayer(0L)
 {
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
@@ -50,6 +52,7 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer,
 
 KMixDockWidget::~KMixDockWidget()
 {
+    delete audioPlayer;
     delete masterVol;
 }
 
@@ -72,9 +75,13 @@ void KMixDockWidget::createMasterVolWidget()
 			    false, KPanelApplet::Up, masterVol,
 			    masterDevice->name().latin1() );
    connect(mdw, SIGNAL(newVolume(int, Volume)),
-	   this, SLOT(setVolumeTip(int, Volume)));
+	   SLOT(setVolumeTip(int, Volume)));
    setVolumeTip(0, masterDevice->getVolume());
    masterVol->resize(masterVol->sizeHint());
+
+   // Setup volume preview
+   audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");
+   connect(mdw, SIGNAL(newVolume(int, Volume)), audioPlayer, SLOT(play()));
 }
 
 void KMixDockWidget::setVolumeTip(int, Volume vol)

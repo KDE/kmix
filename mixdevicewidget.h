@@ -105,7 +105,7 @@ class MixDeviceWidget
       void increaseVolume();
       void decreaseVolume();
    private:
-      QPixmap getIcon( int icon );
+      QPixmap icon( int icontype );
       void setIcon( int icontype );
 
       void mousePressEvent( QMouseEvent *e );

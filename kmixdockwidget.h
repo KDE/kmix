@@ -28,6 +28,7 @@
 
 class Mixer;
 class QFrame;
+class KAudioPlayer;
 
 class KMixDockWidget : public KSystemTray  {
    Q_OBJECT
@@ -55,6 +56,7 @@ class KMixDockWidget : public KSystemTray  {
  private:
    Mixer *m_mixer;
    QFrame *masterVol;   
+   KAudioPlayer *audioPlayer;
    bool m_mixerVisible;
 };
 

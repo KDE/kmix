@@ -64,9 +64,9 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    // global stuff
    connect( this, SIGNAL(newVolume(int, Volume)), m_mixer, SLOT(writeVolumeToHW(int, Volume) ));
    connect( this, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecsrc(int, bool)) );
-   connect( m_mixer, SIGNAL(newRecsrc()), this, SLOT(update()) );
+   connect( m_mixer, SIGNAL(newRecsrc()), SLOT(update()) );
    if( m_mixdevice->num()==m_mixer->masterDevice() )
-      connect( m_mixer, SIGNAL(newBalance(Volume)), this, SLOT(update()) );
+      connect( m_mixer, SIGNAL(newBalance(Volume)), SLOT(update()) );
 
    connect( this, SIGNAL(rightMouseClick()), SLOT(contextMenu()) );
 
@@ -80,7 +80,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
        new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
 
    KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
-   a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setMuted(bool)) );
+   a->connect( a, SIGNAL(toggled(bool)), SLOT(setMuted(bool)) );
 
    if (parent->isA("KMixerWidget")) {
      new KAction( i18n("Show &All"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
@@ -166,10 +166,10 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    GET_NEWLAYOUT( ledlayout );
    ledlayout->addWidget( m_muteLED );
    m_muteLED->installEventFilter( this );
-   connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(setUnmuted(bool)) );
+   connect( m_muteLED, SIGNAL(stateChanged(bool)), SLOT(setUnmuted(bool)) );
 
    layout->addSpacing( 1 );
-   
+
    // create label
    GET_NEWLAYOUT( labelAndSliders );
    //m_label = new QLabel( m_mixdevice->name(), this );
@@ -207,7 +207,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       if( i>0 && isStereoLinked() ) slider->hide();
       sliders->addWidget( slider );
       m_sliders.append ( slider );
-      connect( slider, SIGNAL(valueChanged(int)), this, SLOT(volumeChange(int)) );
+      connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
    }
    
    // create channel icon
@@ -223,9 +223,9 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    if( m_mixdevice->isRecordable() )
    {
       //kdDebug() << "new KLedButton()\n";
-      m_recordLED = new KLedButton( Qt::red, m_mixdevice->isRecsrc()?KLed::On:KLed::Off,
-                                    KLed::Sunken, KLed::Circular, this,
-                                    "RecordLED" );
+      m_recordLED = new KLedButton( Qt::red, 
+                           m_mixdevice->isRecsrc()?KLed::On:KLed::Off,
+                           KLed::Sunken, KLed::Circular, this, "RecordLED" );
       if (!showRecordLED) m_recordLED->hide();
       QToolTip::add( m_recordLED, i18n("Recording") );
       m_recordLED->setFixedSize( QSize(16, 16) );
@@ -243,10 +243,10 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 }
 #undef GET_NEWLAYOUT
 
-QPixmap MixDeviceWidget::getIcon( int icon )
+QPixmap MixDeviceWidget::icon( int icontype )
 {
    QPixmap miniDevPM;
-   switch (icon) {
+   switch (icontype) {
       case MixDevice::AUDIO:
          miniDevPM = UserIcon("mix_audio"); break;
       case MixDevice::BASS:
@@ -271,12 +271,12 @@ QPixmap MixDeviceWidget::getIcon( int icon )
          miniDevPM = UserIcon("mix_video"); break;
       case MixDevice::SURROUND:
          miniDevPM = UserIcon("mix_surround"); break;
-		case MixDevice::HEADPHONE:
-			miniDevPM = UserIcon( "mix_headphone" ); break;
-		case MixDevice::DIGITAL:
-			miniDevPM = UserIcon( "mix_digital" ); break;
-		case MixDevice::AC97:
-			miniDevPM = UserIcon( "mix_ac97" ); break;
+      case MixDevice::HEADPHONE:
+         miniDevPM = UserIcon( "mix_headphone" ); break;
+      case MixDevice::DIGITAL:
+         miniDevPM = UserIcon( "mix_digital" ); break;
+      case MixDevice::AC97:
+         miniDevPM = UserIcon( "mix_ac97" ); break;
       default:
          miniDevPM = UserIcon("mix_unknown"); break;
    }
@@ -284,7 +284,7 @@ QPixmap MixDeviceWidget::getIcon( int icon )
    return miniDevPM;
 }
 
-void MixDeviceWidget::setIcon( int icon )
+void MixDeviceWidget::setIcon( int icontype )
 {
    if( !m_iconLabel )
    {
@@ -292,7 +292,7 @@ void MixDeviceWidget::setIcon( int icon )
       m_iconLabel->installEventFilter( parent() );
    }
 
-   QPixmap miniDevPM = getIcon( icon );
+   QPixmap miniDevPM = icon( icontype );
    if ( !miniDevPM.isNull() )
    {
       if ( m_small )
