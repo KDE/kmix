@@ -122,6 +122,10 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
       }
    }
 
+   // don't prompt for a mixer if there is just one available
+   if ( !mixer && s_mixers->count() == 1 )
+       mixer = s_mixers->first();
+   
    if ( mixer )
    {
       m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );
