@@ -1,4 +1,11 @@
-1998-11-16  Alex Zepeda  <garbanzo@hooked.net>
+1998-11-22 Sam Maloney <thufir@illogic.ml.org>
+
+	* Tweeked docking, to compensate for a (qt bug?). Made it so it
+	  won't pause for 1 second, when quiting, or using the dock widget
+	  to toggle state. Made it so KMix exits when it is sent a
+	  closeEvent, instead of docking. 
+
+ 1998-11-16  Alex Zepeda  <garbanzo@hooked.net>
 
 	* kmix.cpp (createMenu): &Options -> &Options... (afterall it does
 	pop up a dialog box)

@@ -53,6 +53,8 @@ KConfig	       *KmConfig;
 
 
 signed char	SetNumber;
+bool dockinginprogress = false;
+
 extern char	KMixErrors[6][200];
 
 int main(int argc, char **argv)
@@ -587,7 +589,7 @@ void KMix::launchHelpCB()
 
 bool KMix::event(QEvent *e)
 {
-  if (e->type() == Event_Hide && allowDocking ) {
+  if (e->type() == Event_Hide && allowDocking && !dockinginprogress) {
     sleep(1); // give kwm some time..... ugly I know.
     cerr << "eventFilter() says hide()\n";
     if (!KWM::isIconified(winId())) // maybe we are just on another desktop
@@ -783,12 +785,16 @@ void KMix::sessionSave(bool sessionConfig)
 
 void KMix::closeEvent( QCloseEvent *e )
 {
-  if ( allowDocking ) {
-    dock_widget->dock();
-    this->hide();
-  }
-  else
+    dockinginprogress = true;
+    configSave();
     KTopLevelWidget::closeEvent(e);
+    /*
+    if ( allowDocking ) {
+        dock_widget->dock();
+        this->hide();
+    }else
+    KTopLevelWidget::closeEvent(e);
+    */
 }
 
 void KMix::quit_myapp()
