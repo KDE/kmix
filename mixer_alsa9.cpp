@@ -56,7 +56,6 @@ ALSA_getMixer( int device, int card )
 Mixer_ALSA::Mixer_ALSA( int device, int card ) :
 	Mixer( device, card ), _handle(0)
 {
-	masterChosen = false;
         _initialUpdate = true;
 }
 
@@ -69,14 +68,7 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
 	QString name = snd_mixer_selem_id_get_name( sid );
 
-	if ( name == "Master" )
-	{
-		if (!masterChosen) {
-			m_masterDevice = snd_mixer_selem_id_get_index( sid );
-			masterChosen = true; // -<- this makes KMix select the *first* master device
-		}
-		return MixDevice::VOLUME;
-	}
+	if ( name == "Master" ) return MixDevice::VOLUME;
         if ( name == "Capture" ) return MixDevice::RECMONITOR;
 	if ( name == "Master Mono" ) return MixDevice::VOLUME;
         if ( name == "PC Speaker" ) return MixDevice::VOLUME;
@@ -106,6 +98,7 @@ Mixer_ALSA::openMixer()
 {
     bool virginOpen = m_mixDevices.isEmpty();
     bool validDevice = false;
+    bool masterChosen = false;
     int err;
 
     release();
@@ -209,6 +202,11 @@ Mixer_ALSA::openMixer()
 	snd_mixer_selem_get_capture_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
 	// New mix device
 	MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
+        if (!masterChosen && ct==MixDevice::VOLUME) {
+           // Determine a nicer MasterVolume
+	   m_masterDevice = mixerIdx;
+           masterChosen = true;
+        }
 
 	if( virginOpen )
 	{
