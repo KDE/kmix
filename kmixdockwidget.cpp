@@ -164,6 +164,7 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
  
     for ( int i = 0; i < vol.channels(); i++ ) {
         int newVal = vol[i] + (inc * (e->delta() / 120));
+	if( newVal < 0 ) newVal = 0;
         vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
     
