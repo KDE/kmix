@@ -27,7 +27,6 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <klocale.h>
-#include <kglobal.h>
 #include <kstddirs.h>
 #include <kaction.h>
 #include <qpushbutton.h>

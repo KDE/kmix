@@ -33,7 +33,6 @@
 #include "kmix.h"
 #include "kmixprefdlg.h"
 #include "kmixerwidget.h"
-#include "kmixprefdlg.h"
 
 
 KMixPrefDlg::KMixPrefDlg()

@@ -42,7 +42,6 @@
 #include <kstdaction.h>
 #include <kpopupmenu.h>
 #include <khelpmenu.h>
-#include <kiconloader.h>
 #include <kdebug.h>
 #include <kaccel.h>
 
