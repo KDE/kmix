@@ -24,6 +24,7 @@ protected:
   virtual int releaseMixer();
 
   virtual QString deviceName( int );
+  virtual QString deviceNameDevfs( int );
   int     m_fd;
   QString m_deviceName;
 };
