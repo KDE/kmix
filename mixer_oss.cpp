@@ -37,7 +37,7 @@
 #elif defined(__NetBSD__)
 #include <soundcard.h>
 // BSDI section, according to <tom@foo.toetag.com>
-#elif defined()
+#elif defined(__bsdi__)
 #include <sys/soundcard.h>
 // UnixWare includes
 #elif defined(_UNIXWARE)
