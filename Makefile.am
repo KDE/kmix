@@ -2,9 +2,9 @@ SUBDIRS = pics
 
 INCLUDES= $(all_includes)
 
-bin_PROGRAMS = kmix2
+bin_PROGRAMS = kmix
 
-kmix2_SOURCES = main.cpp kmixapplet.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
+kmix_SOURCES = main.cpp kmixapplet.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	kmixerwidget.cpp channel.cpp mixer.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp mixdevicewidget.cpp
 
@@ -12,9 +12,9 @@ noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 	channel.h mixer.h volume.h kledbutton.h version.h \
 	mixdevicewidget.h ksmallslider.h kmixapplet.h
 
-kmix2_LDADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
+kmix_LDADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
-kmix2_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 METASOURCES = AUTO
 
@@ -23,10 +23,10 @@ $(srcdir)/version.h: VERSION
 	sed "s/1/#define APP_VERSION \"1/" <VERSION >version.h ;\
 	echo \" >> version.h
 
-EXTRA_DIST = kmix2.desktop VERSION
+EXTRA_DIST = kmix.desktop VERSION
 
 appsdir = $(kde_appsdir)/Multimedia
-apps_DATA = kmix2.desktop
+apps_DATA = kmix.desktop
 
 rcdir = $(kde_datadir)/kmix
 rc_DATA = kmixui.rc
