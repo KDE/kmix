@@ -107,7 +107,7 @@ int main(int argc, char **argv)
       // This is neccesary, because when the application is restarted
       // by the SM, the
       // should work, too.
-      KConfig* scfg = globalKapp->getSessionConfig();
+      KConfig* scfg = globalKapp->sessionConfig();
       scfg->setGroup("kmixoptions");
       int startSet    = scfg->readNumEntry("startSet",-1);
       int startDevice = scfg->readNumEntry("startDevice",0);
@@ -146,7 +146,7 @@ bool KMix::restore(int number)
 {
   if (!canBeRestored(number))
     return False;
-  KConfig *config = kapp->getSessionConfig();
+  KConfig *config = kapp->sessionConfig();
   if (readPropertiesInternal(config, number)){
     return True;
   }
@@ -171,7 +171,7 @@ KMix::KMix(int mixernum, int SetNum)
   startDevice = mixernum;
 
   i_time = 0;
-  KmConfig=KApplication::getKApplication()->getConfig();
+  KmConfig=KApplication::kApplication()->config();
 
   KmConfig->setGroup("");
   mainmenuOn  = KmConfig->readNumEntry( "Menubar"  , 1 );
@@ -260,7 +260,7 @@ void KMix::createWidgets()
   //	   SLOT( onDrop( KDNDDropZone*)));
 
   // Window title
-  setCaption( globalKapp->getCaption() );
+  setCaption( globalKapp->caption() );
 
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
@@ -604,7 +604,7 @@ void KMix::createMenu()
     "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
   head += APP_VERSION;
 
-  Mhelp = globalKapp->getHelpMenu(true, i_s_aboutMsg);
+  Mhelp = globalKapp->helpMenu(true, i_s_aboutMsg);
   CHECK_PTR( Mhelp );
 
   mainmenu = new KMenuBar( this, "main menu");
@@ -651,7 +651,7 @@ void KMix::launchHelpCB()
 
 void KMix::launchAboutCB()
 {
-  QMessageBox::about( 0L, globalKapp->getCaption(), i_s_aboutMsg ); 
+  QMessageBox::about( 0L, globalKapp->caption(), i_s_aboutMsg ); 
 }
 
 
@@ -812,7 +812,7 @@ void KMix::sessionSave(bool sessionConfig)
 
   if (sessionConfig) {
     // Save session specific data only when needed
-    KConfig* scfg = globalKapp->getSessionConfig();
+    KConfig* scfg = globalKapp->sessionConfig();
     scfg->setGroup("kmixoptions");
     scfg->writeEntry("startSet", startSet);
     scfg->writeEntry("startDevice", startDevice);
