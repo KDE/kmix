@@ -94,11 +94,6 @@ KMixDockWidget::createMasterVolWidget()
    // Setup volume preview
    if ( _playBeepOnVolumeChange ) {
         _audioPlayer = new KAudioPlayer("KDE_Beep_Digital_1.ogg");
-	// !! it would be better to connect the MixDevice, but it is not yet implemented
-        connect(_dockAreaPopup->getMdwHACK(),
-                SIGNAL(newVolume(int, Volume)),
-                _audioPlayer,
-                SLOT(play()));
    }
 }
 
@@ -213,7 +208,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 		_dockAreaPopup->show();
-                KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
+		KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
