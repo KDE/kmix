@@ -29,12 +29,18 @@ static char rcsid[]="$Id$";
 
 #include <kapp.h>
 #include <kiconloader.h>
+#if KDE_VERSION_MAJOR >= 2
 #include <kglobal.h>
+#endif
 #include <klocale.h>
 #include <kconfig.h>
 #include <kwm.h>
-#include <kglobal.h>
+
+#if KDE_VERSION_MAJOR >= 2
 #include <kmessagebox.h>
+#endif
+#include <kmsgbox.h>
+
 
 #include "sets.h"
 #include "mixer.h"
@@ -46,7 +52,7 @@ static char rcsid[]="$Id$";
 #include <qkeycode.h>
 #include <qlabel.h>
 #include <qaccel.h>
-
+#include <qmessagebox.h>
 
 KApplication   *globalKapp;
 KMix	       *kmix;
@@ -122,7 +128,7 @@ int main(int argc, char **argv)
     if ( initonly ) {
       // MODE #2 : Only initialize mixer, no GUI
       cout << "Doing initonly ... ";
-      initMix = new Mixer( mixer_id, SetNumber );
+      initMix = Mixer::getMixer( mixer_id, SetNumber );
       cout << "Finished\n";
       return 0;
     }
@@ -181,21 +187,26 @@ KMix::KMix(int mixernum, int SetNum)
   allowDocking= KmConfig->readNumEntry( "Docking"  , 0 );
   startDocked = KmConfig->readNumEntry( "StartDocked"  , 0 );
 
-  mix = new Mixer(mixernum, SetNum);
+  mix = Mixer::getMixer(mixernum, SetNum);
   CHECK_PTR(mix);
 
-  dock_widget = new KDockWidget("kmixdocked", "kmixdocked");
+  dock_widget = new KMixDockWidget((QString)"dockw", "kmixdocked.xpm");
   dock_widget->setMainWindow(this);
   if ( allowDocking ) {
     dock_widget->dock();
   }
 
   connect ( dock_widget, SIGNAL(quit_clicked()), this, SLOT(quit_myapp()  ));
+  connect ( dock_widget, SIGNAL(quickchange(int)), this, SLOT(quickchange_volume(int)  ));
   connect ( globalKapp , SIGNAL(saveYourself()), this, SLOT(sessionSaveAll() ));
 
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
+#if KDE_VERSION_MAJOR >= 2
     KMessageBox::error(0, KMixErrors[mixer_error], i18n("Mixer failure"));
+#else
+    KMsgBox(0, KMixErrors[mixer_error], i18n("Mixer failure"));
+#endif
     mix->errormsg(mixer_error);
     exit(1);
   }
@@ -229,7 +240,14 @@ void KMix::applyOptions()
 
 void KMix::createWidgets()
 {
+  bool i_b_first = true;
+
   QPixmap miniDevPM;
+#if KDE_VERSION_MAJOR < 2
+#define BarIcon Icon
+#endif
+
+  QPixmap WMminiIcon = BarIcon("mixer_mini.xpm");
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
@@ -269,7 +287,7 @@ void KMix::createWidgets()
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
-    int devnum = MixPtr->device_num;
+    int devnum = MixPtr->num();
 
 
     // Figure out default icon
@@ -281,26 +299,27 @@ void KMix::createWidgets()
     switch (iconnum) {
       // TODO: Should be replaceable by user.
     case audioIcon:
-      miniDevPM = BarIcon("mix_audio");	break;
+      miniDevPM = BarIcon("mix_audio.xpm");	break;
     case bassIcon:
-      miniDevPM = BarIcon("mix_bass");	break;
+      miniDevPM = BarIcon("mix_bass.xpm");	break;
     case cdIcon:
-      miniDevPM = BarIcon("mix_cd");	break;
+      miniDevPM = BarIcon("mix_cd.xpm");	break;
     case extIcon:
-      miniDevPM = BarIcon("mix_ext");	break;
+      miniDevPM = BarIcon("mix_ext.xpm");	break;
     case microphoneIcon:
-      miniDevPM = BarIcon("mix_microphone");break;
+      miniDevPM = BarIcon("mix_microphone.xpm");break;
     case midiIcon:
-      miniDevPM = BarIcon("mix_midi");	break;
+      miniDevPM = BarIcon("mix_midi.xpm");	break;
     case recmonIcon:
-      miniDevPM = BarIcon("mix_recmon");	break;
+      miniDevPM = BarIcon("mix_recmon.xpm");	break;
     case trebleIcon:
-      miniDevPM = BarIcon("mix_treble");	break;
-    case volumeIcon:
-      miniDevPM = BarIcon("mix_volume");	break;
+      miniDevPM = BarIcon("mix_treble.xpm");	break;
     case unknownIcon:
+      miniDevPM = BarIcon("mix_unknown.xpm");	break;
+    case volumeIcon:
+      miniDevPM = BarIcon("mix_volume.xpm");	break;
     default:
-      miniDevPM = BarIcon("mix_unknown");	break;
+      miniDevPM = BarIcon("mix_unknown.xpm");	break;
     }
 
     QLabel *qb = new QLabel(Container);
@@ -316,14 +335,20 @@ void KMix::createWidgets()
 
     QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
 				  QSlider::Vertical, Container, "VolL");
+    if (i_b_first) {
+      VolSB->setFocus();
+    }
 
     MixPtr->Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
     connect( VolSB, SIGNAL(valueChanged(int)), MixPtr->Left, SLOT(VolChanged(int)));
     VolSB->installEventFilter(this);
-    // Create a second slider, when the current channel is a stereo channel.
-    bool BothSliders = (MixPtr->is_stereo  == true );
 
-    if ( BothSliders) {
+
+    // Create a second slider, when the current channel is a stereo channel.
+    bool l_b_bothSliders;
+    l_b_bothSliders = (MixPtr->stereo()  == true );
+
+    if ( l_b_bothSliders) {
       QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
 				     QSlider::Vertical, Container, "VolR");
       MixPtr->Right->slider= VolSB2;  // Remember Slider (for eventFilter)
@@ -331,6 +356,8 @@ void KMix::createWidgets()
       VolSB2->installEventFilter(this);
 
     }
+
+    i_b_first = false;
     MixPtr=MixPtr->Next;
     // Append MixEntry of current mixer device
   }
@@ -345,7 +372,7 @@ void KMix::createWidgets()
 
   i_time = new QTimer();
   connect( i_time,     SIGNAL(timeout()),      SLOT(updateSliders()) );
-  i_time->start( 200 );
+  i_time->start( 20 );
 }
 
 
@@ -354,14 +381,13 @@ void KMix::placeWidgets()
 {
   int sliderHeight=100;
   int qsMaxY=0;
-  int ix = 0;
+  int ix = 4;
   int iy = 0;
 
   QSlider *qs;
   QLabel  *qb;
 
   // Place Sliders (Volume indicators)
-  ix  = 0;
   if (mainmenuOn)
     mainmenu->show();
   else
@@ -371,23 +397,23 @@ void KMix::placeWidgets()
   bool first = true;
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
-    if (MixPtr->is_disabled) {
+    if (MixPtr->disabled() ) {
       MixPtr->picLabel->hide();
       MixPtr->Left->slider->hide();
-      if (MixPtr->is_stereo)
+      if (MixPtr->stereo())
 	MixPtr->Right->slider->hide();
       MixPtr=MixPtr->Next;
       continue;
     }
 
+    // Add some blank space between sliders
     if ( !first ) ix += 6;
-    else          ix += 4; // On first loop add 4
 
     int old_x=ix;
 
     qb = MixPtr->picLabel;
 
-    // left slider
+    // Tickmarks
     qs = MixPtr->Left->slider;
     if (tickmarksOn) {
       qs->setTickmarks(QSlider::Left);
@@ -410,32 +436,32 @@ void KMix::placeWidgets()
     ix += qs->width();
 
     // But make sure it isn't linked to the left channel.
-    bool BothSliders =
-      (MixPtr->is_stereo  == true ) &&
-      (MixPtr->StereoLink == false);
+    bool l_b_bothSliders =
+      (MixPtr->stereo()       == true ) &&
+      (MixPtr->stereoLinked() == false);
 
     QString ToolTipString;
     ToolTipString = MixPtr->name();
-    if ( BothSliders)
+    if ( l_b_bothSliders)
       ToolTipString += " (Left)";
     QToolTip::add( qs, ToolTipString );
 
     // Mark record source(s) and muted channel(s). This is done by ordinary
     // color marks on the slider, but this will be changed by red and green
     // and black "bullets" below the slider. TODO !!!
-    if (MixPtr->is_recsrc)
+    if (MixPtr->recsrc())
       qs->setBackgroundColor( red );
     else {
-      if (MixPtr->is_muted)
+      if (MixPtr->muted())
 	qs->setBackgroundColor( black );
       else
 	qs->setBackgroundColor( colorGroup().mid() );
     }
 
-    if (MixPtr->is_stereo  == true) {
+    if (MixPtr->stereo()  == true) {
       qs = MixPtr->Right->slider;
 	
-      if (MixPtr->StereoLink == false) {
+      if (MixPtr->stereoLinked() == false) {
 	// Show right slider
 	if (tickmarksOn) {
 	  qs->setTickmarks(QSlider::Right);
@@ -453,10 +479,10 @@ void KMix::placeWidgets()
 	ToolTipString += " (Right)";
 	QToolTip::add( qs, ToolTipString );
 
-	if (MixPtr->is_recsrc)
+	if (MixPtr->recsrc())
 	  qs->setBackgroundColor( red );
 	else {
-	  if (MixPtr->is_muted)
+	  if (MixPtr->muted())
 	    qs->setBackgroundColor( black );
 	  else
 	    qs->setBackgroundColor( colorGroup().mid() );
@@ -470,7 +496,7 @@ void KMix::placeWidgets()
     }
 
     // Pixmap label. Place it horizontally centered to volume slider(s)
-    qb->move((int)((ix + old_x - qb->width() )/2),iy);
+    qb->move((int)((ix + old_x- qb->width() )/2),iy);
     qb->show();
 
 
@@ -484,6 +510,8 @@ void KMix::placeWidgets()
 
   iy+=LeftRightSB->height();
   Container->setFixedSize( ix, iy );
+
+  // tell the Toplevel to do a relayout
   updateRects();
 }
 
@@ -541,11 +569,11 @@ void KMix::createMenu()
   Mfile->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
-  QString msg,head;
+  QString head;
 
-  msg  = "KMix ";
-  msg += APP_VERSION;
-  msg += i18n("\n(C) 1997-1998 by Christian Esken (esken@kde.org).\n\n" \
+  i_s_aboutMsg  = "KMix ";
+  i_s_aboutMsg += APP_VERSION;
+  i_s_aboutMsg += i18n("\n(C) 1997-2000 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
     "This program is in the GPL.\n"\
     "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
@@ -554,7 +582,7 @@ void KMix::createMenu()
     "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
   head += APP_VERSION;
 
-  Mhelp = globalKapp->getHelpMenu(true,msg);
+  Mhelp = globalKapp->getHelpMenu(true, i_s_aboutMsg);
   CHECK_PTR( Mhelp );
 
   mainmenu = new KMenuBar( this, "main menu");
@@ -599,12 +627,21 @@ void KMix::launchHelpCB()
   globalKapp->invokeHTMLHelp("", "");
 }
 
+void KMix::launchAboutCB()
+{
+  QMessageBox::about( 0L, globalKapp->getCaption(), i_s_aboutMsg ); 
+}
 
 
 bool KMix::eventFilter(QObject *o, QEvent *e)
 {
   // Lets see, if we have a "Right mouse button press"
-  if (e->type() == QEvent::MouseButtonPress) {
+#if KDE_VERSION_MAJOR >= 2
+  if (e->type() == QEvent::MouseButtonPress)
+#else
+  if (e->type() == Event_MouseButtonPress)
+#endif
+ {
     QMouseEvent *qme = (QMouseEvent*)e;
     if (qme->button() == RightButton) {
       QPopupMenu *qpm = contextMenu(o,0);
@@ -635,6 +672,8 @@ QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
   else
     Mlocal->insertItem( i18n("&Show Menubar") , this, SLOT(hideMenubarCB()) );
   Mlocal->insertItem( i18n("&Options...")        , this, SLOT(showOptsCB()) );
+  Mlocal->insertSeparator();
+  Mlocal->insertItem( i18n("&About")           , this, SLOT(launchAboutCB()) );
   Mlocal->insertItem( i18n("&Help")           , this, SLOT(launchHelpCB()) );
 
   MlocalCreated = true;
@@ -679,17 +718,17 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   // else
   Mlocal = new QPopupMenu;
   CHECK_PTR( Mlocal );
-  if (MixFound->is_muted)
+  if (MixFound->muted())
     Mlocal->insertItem(i18n("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
   else
     Mlocal->insertItem(i18n("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
-  if (MixFound->is_stereo) {
-    if (MixFound->StereoLink)
+  if (MixFound->stereo()) {
+    if (MixFound->stereoLinked())
       Mlocal->insertItem(i18n("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
     else
       Mlocal->insertItem(i18n("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
   }
-  if (MixFound->is_recordable)
+  if (MixFound->recordable())
     Mlocal->insertItem(i18n("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
 
   MlocalCreated = true;
@@ -803,24 +842,33 @@ void KMix::updateSliders( )
       mix->Set2Set0(-1,true);        // Read from hardware
       // now update the slider positions...
       MixDevice        *MixPtr = mix->First;
+
+      bool setDisplay = true;
+
       while(MixPtr) {
           MixSetEntry *mse;
           for(mse = SrcSet->first();
-                    (mse != NULL) && (mse->devnum != MixPtr->device_num);
+                    (mse != NULL) && (mse->devnum != MixPtr->num() );
                     mse=SrcSet->next() );
           if (mse == NULL)
                 continue;
 
-          if(! MixPtr->is_disabled){
+          if(! MixPtr->disabled()){
               MixPtr->Left->volume = mse->volumeL;
               MixPtr->Right->volume = mse->volumeR;
           }
           qs = MixPtr->Left->slider;
           qs->setValue(100-MixPtr->Left->volume);
-          if (MixPtr->is_stereo  == true) {
+          if (MixPtr->stereo()  == true) {
               qs = MixPtr->Right->slider;
               qs->setValue(100-MixPtr->Right->volume);
           }
+	  if ( setDisplay) {
+	    dock_widget->setDisplay(( MixPtr->Left->volume + MixPtr->Right->volume )/2);
+	    setDisplay = false;
+	  }
+
+
           MixPtr = MixPtr->Next;
       }
 } // enterEvent()
@@ -831,4 +879,9 @@ void KMix::quit_myapp()
 {
   configSave();
   globalKapp->quit();
+}
+
+void KMix::quickchange_volume(int val_l_diff)
+{
+  cerr << "quickchange diff = " << val_l_diff;
 }

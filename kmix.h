@@ -20,7 +20,7 @@
 #include "sets.h"
 #include "mixer.h"
 #include "prefs.h"
-#include "docking.h"
+#include "kmix-docking.h"
 
 class KMix : public KTMainWindow
 {
@@ -32,12 +32,13 @@ public:
   bool restore(int n);
   Mixer		*mix;
   Preferences	*prefDL;
-  KDockWidget    *dock_widget;
+  KMixDockWidget    *dock_widget;
 
 public slots:
   void showOptsCB();
   void quitClickedCB();
   void launchHelpCB();
+  void launchAboutCB();
   void applyOptions();
 
   void MbalCentCB();
@@ -55,6 +56,8 @@ protected:
   void closeEvent( QCloseEvent *e );
 
 private slots:
+  void quit_myapp();
+  void quickchange_volume(int val_l_diff);
   void sessionSaveAll();
   void configSave();
   void sessionSave(bool sessionConfig);
@@ -79,6 +82,8 @@ private:
   bool startDocked; 
   int		startSet;
   int		startDevice;
+
+  QString	i_s_aboutMsg;
   QPopupMenu* contextMenu(QObject *, QObject *);
   QPopupMenu* ContainerContextMenu(QObject *, QObject *);
   bool eventFilter(QObject *o, QEvent *e);
@@ -95,9 +100,6 @@ private:
   QSlider	*LeftRightSB;
   QPoint        KCMpopup_point;
   QTimer	*i_time;
-
-private slots:
-  void quit_myapp();
 };
 
 #endif

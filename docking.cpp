@@ -21,7 +21,11 @@
  */
 
 #include <kapp.h>
+#if KDE_VERSION_MAJOR >= 2
 #include <kglobal.h>
+#else
+#define BarIcon Icon
+#endif
 #include <kiconloader.h>
 #include <klocale.h>
 #include <ktmainwindow.h>
@@ -157,19 +161,27 @@ void KDockWidget::mousePressEvent(QMouseEvent *e)
 {
   // open/close connect-window on left mouse button 
   if ( e->button() == LeftButton ) {
-    toggle_window_state();
+    mousePressLeftEvent(e);
   }
 
   // open popup menu on right mouse button
   if ( e->button() == RightButton ) {
+    mousePressRightEvent(e);
+  }
+}
+
+void KDockWidget::mousePressLeftEvent(QMouseEvent *e)
+{
+  toggle_window_state();
+}
+void KDockWidget::mousePressRightEvent(QMouseEvent *e)
+{
     int x = e->x() + this->x();
     int y = e->y() + this->y();
 
     setShowHideText();
     popup_m->popup(QPoint(x, y));
     popup_m->exec();
-  }
-
 }
 
 

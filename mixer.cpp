@@ -36,7 +36,6 @@
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/audioio.h>
-                     extern KApplication *globalKapp; 
           
 #define SUN_MIXER
 #endif
@@ -51,6 +50,7 @@
   #include <sys/soundlib.h>
   void *devhandle;
   int ret;
+  #define ALSA_MIXER
 #else
  #include <fcntl.h>
  #include <sys/ioctl.h>
@@ -146,14 +146,45 @@ const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   ,
 
 Mixer::Mixer()
 {
-  // use default mixer device and no mixing set
-  setupMixer(0, -1);
 }
 
 Mixer::Mixer(int devnum, int SetNum)
 {
+}
+
+void Mixer::init()
+{
+  // use default mixer device and no mixing set
+  setupMixer(0, -1);
+}
+
+void Mixer::init(int devnum, int SetNum)
+{
   setupMixer(devnum, SetNum);
 }
+
+Mixer* Mixer::getMixer(int devnum, int SetNum)
+{
+  Mixer *l_mixer;
+#ifdef SUN_MIXER
+  l_mixer = new Mixer_SUN( devnum, SetNum);
+#elif defined(IRIX_MIXER)
+  l_mixer = new Mixer_IRIX( devnum, SetNum);
+#elif defined(OSS_MIXER)
+  l_mixer = new Mixer_OSS( devnum, SetNum);
+#elif defined(ALSA_MIXER)
+  l_mixer = new Mixer_ALSA( devnum, SetNum);
+#elif defined(IRIX_MIXER)
+  l_mixer = new Mixer_HPUX( devnum, SetNum);
+#else
+  l_mixer = new Mixer( devnum, SetNum);;
+#endif
+
+  l_mixer->init(devnum, SetNum);
+  return l_mixer;
+}
+
+
 
 void Mixer::sessionSave(bool /*sessionConfig*/)
 {
@@ -175,22 +206,110 @@ int Mixer::grab()
 
 int Mixer::release()
 {
+  int l_i_ret = 0;
   if(isOpen) {
     isOpen=false;
+    // Call the target system dependent "release device" function
+    l_i_ret = release_I();
+  }
+
+  return l_i_ret;
+}
+
+int Mixer::release_I()
+{
+  int l_i_ret;
+
+  l_i_ret = close(fd);
+  return l_i_ret;
+}
+
+
+
+
+#ifdef OSS_MIXER
+Mixer_OSS::Mixer_OSS() { Mixer(); }
+Mixer_OSS::Mixer_OSS(int devnum, int SetNum) { Mixer(devnum, SetNum); }
+
+void Mixer_OSS::setDevNumName_I(int devnum)
+{
+  switch (devnum) {
+  case 0:
+  case 1:
+    devname = "/dev/mixer";
+    break;
+  default:
+    devname = "/dev/mixer";
+    devname += ('0'+devnum-1);
+    break;
+  }
+}
+#endif
+
+#ifdef SUN_MIXER
+Mixer_SUN::Mixer_SUN() : Mixer() { };
+Mixer_SUN::Mixer_SUN(int devnum, int SetNum) : Mixer(devnum, SetNum);
+void Mixer_SUN::setDevNumName_I(int devnum)
+{
+  devname = "/dev/audioctl";
+}
+#endif
+
+
+
+#ifdef HPUX_MIXER
+Mixer_HPUX::Mixer_HPUX() : Mixer() { };
+Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum);
+
+int Mixer_HPUX::release_I()
+{
+  ACloseAudio(hpux_audio,0);
+}
+
+
+void Mixer_HPUX::setDevNumName_I(int devnum)
+{
+  devname = "HP-UX Mixer";
+}
+#endif
+
+
+#ifdef ALSA
+Mixer_ALSA::Mixer_ALSA() : Mixer() { };
+Mixer_ALSA::Mixer_ALSA(int devnum, int SetNum) : Mixer(devnum, SetNum);
+
+int Mixer_ALSA::release_I()
+{
+  ret = snd_mixer_close(devhandle);
+  return ret;
+}
+
+void Mixer_ALSA::setDevNumName_I(int devnum)
+{
+  devname = "ALSA";
+}
+#endif
+
+
+
+
+
 #ifdef IRIX_MIXER
+Mixer_IRIX::Mixer_IRIX() : Mixer() { };
+Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum);
+
+int Mixer_IRIX::release_I()
+{
     ALfreeconfig(m_config);
     ALcloseport(m_port);
-#elif defined(HPUX_MIXER)
-    ACloseAudio(hpux_audio,0);
-#elif defined(ALSA)
-    ret = snd_mixer_close(devhandle);
-    return ret;
-#else
-    close(fd);
-#endif
-  }
-  return 0;
+return 0;
 }
+
+#endif
+
+
+
+
 
 
 int Mixer::setupMixer(int devnum, int SetNum)
@@ -242,35 +361,15 @@ void Mixer::setDevNumName(int devnum)
 {
   QString devname;
   this->devnum  = devnum;
-
-#ifdef OSS_MIXER
-  switch (devnum) {
-  case 0:
-  case 1:
-    devname = "/dev/mixer";
-    break;
-  default:
-    devname = "/dev/mixer";
-    devname += ('0'+devnum-1);
-    break;
-  }
-#endif
-#ifdef SUN_MIXER
-  devname = "/dev/audioctl";
-#endif
-#ifdef ALSA
-  devname = "ALSA";
-#endif
-#ifdef HPUX_MIXER
-  devname = "HP-UX Mixer";
-#endif
-#ifdef NO_MIXER
-  devname = "Mixer";
-#endif
-
-  this->devname = devname;
+  this->setDevNumName_I(devnum);
 }
 
+/*
+void Mixer::setDevNumName_I(int devnum)
+{
+  devname = "Unknown Mixer";
+}
+*/
 
 
 /******************************************************************************
@@ -347,12 +446,12 @@ void  Mixer::setupStructs(void)
 
       // Fill out the device structure for the current mixing device.
       // 1. Remember the device number (for use in the callback).
-      MixPtr->device_num    = i;
-      MixPtr->is_stereo     = (stereowork & 1);
-      MixPtr->is_recsrc     = (recsrcwork & 1);
-      MixPtr->is_recordable = (recwork    & 1);
-      MixPtr->is_disabled   = false;
-      MixPtr->is_muted      = false;
+      MixPtr->setNum(i);
+      MixPtr->setStereo(stereowork & 1);
+      MixPtr->setRecsrc(recsrcwork & 1);
+      MixPtr->setRecordable(recwork & 1);
+      MixPtr->setDisabled(false);
+      MixPtr->setMuted(false);
       num_mixdevs++;
     }
     devicework = (devicework>>1);
@@ -402,16 +501,16 @@ void Mixer::Set0toHW()
     // Find mix set entry for current MixPtr
     MixSetEntry *mse;
     for (mse = SrcSet->first();
-	 (mse != NULL) && (mse->devnum != MixPtr->device_num);
+	 (mse != NULL) && (mse->devnum != MixPtr->num() );
 	 mse=SrcSet->next() );
 
     if (mse == NULL)
       continue;  // entry not found
 
-    MixPtr->StereoLink  = mse->StereoLink;
-    MixPtr->is_muted    = mse->is_muted;
-    MixPtr->is_disabled = mse->is_disabled;
-    if (! MixPtr->is_disabled) {
+    MixPtr->setStereoLinked	(mse->StereoLink);
+    MixPtr->setMuted		(mse->is_muted  );
+    MixPtr->setDisabled		(mse->is_disabled);
+    if (! MixPtr->disabled() ) {
       // Write volume (when channel is enabled)
       MixPtr->Left->volume  =  mse->volumeL;
       MixPtr->Right->volume =  mse->volumeR;
@@ -447,7 +546,7 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
     while (MixPtr) {
 
       // Find mix set entry for current MixPtr
-      MixSetEntry *mse = DestSet->findDev(MixPtr->device_num);
+      MixSetEntry *mse = DestSet->findDev(MixPtr->num());
       if (mse == NULL)
 	continue;  // entry not found
 
@@ -463,7 +562,7 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 #ifdef IRIX_MIXER
       // Get volume
       long in_buf[4];
-      switch( MixPtr->device_num ) {
+      switch( MixPtr->num() ) {
       case 0:       // Speaker Output
 	in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
 	in_buf[2] = AL_LEFT_SPEAKER_GAIN;
@@ -477,14 +576,14 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 	in_buf[2] = AL_LEFT_MONITOR_ATTEN;
 	break;
       default:
-	printf("Unknown device %d\n", MixPtr->device_num);
+	printf("Unknown device %d\n", MixPtr->num() );
       }
       ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4);
       VolRight = in_buf[1]*100/255;
       VolLeft  = in_buf[3]*100/255;
 #endif
 #ifdef OSS_MIXER
-      if (ioctl(fd, MIXER_READ( MixPtr->device_num ), &Volume) == -1)
+      if (ioctl(fd, MIXER_READ( MixPtr->num() ), &Volume) == -1)
 	/* Oops, can't read mixer */
 	errormsg(Mixer::ERR_READ);
 	  
@@ -493,7 +592,7 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 #endif
 #ifdef ALSA
       snd_mixer_channel_t data;
-      ret = snd_mixer_channel_read( devhandle, MixPtr->device_num, &data );
+      ret = snd_mixer_channel_read( devhandle, MixPtr->num(), &data );
       if ( !ret ) {
 	VolLeft = data.left;
 	VolRight = data.right;
@@ -504,7 +603,7 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 #ifdef HPUX_MIXER
       // Get volume
 /*      long in_buf[4];
-      switch( MixPtr->device_num ) {
+      switch( MixPtr->num() ) {
       case 0:       // Speaker Output
 	in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
 	in_buf[2] = AL_LEFT_SPEAKER_GAIN;
@@ -518,7 +617,7 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 	in_buf[2] = AL_LEFT_MONITOR_ATTEN;
 	break;
       default:
-	printf("Unknown device %d\n", MixPtr->device_num);
+	printf("Unknown device %d\n", MixPtr->num() );
       }
       ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4); */
       VolRight = 100; // in_buf[1]*100/255;
@@ -526,13 +625,13 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 #endif
 // PORTING: add #ifdef PLATFORM , commands , #endif
 
-      if ( (VolLeft == VolRight) && (MixPtr->is_stereo == true) )
+      if ( (VolLeft == VolRight) && (MixPtr->stereo() ) )
 	mse->StereoLink = true;
       else
 	mse->StereoLink = false;
 
       mse->volumeL = VolLeft;
-      if ( MixPtr->StereoLink )
+      if ( MixPtr->stereoLinked() )
 	mse->volumeR = VolLeft;
       else
 	mse->volumeR = VolRight;
@@ -611,8 +710,14 @@ int Mixer::openMixer(void)
   if (hpux_audio==0)
     return Mixer::ERR_OPEN;
 #else
+
+#if KDE_VERSION_MAJOR >= 2
   if ((fd= open(devname.ascii(), O_RDWR)) < 0)
+#else
+  if ((fd= open((const char*)devname, O_RDWR)) < 0)
+#endif
     return Mixer::ERR_OPEN;
+
 #endif
 
 #ifdef SUN_MIXER
@@ -715,7 +820,7 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
   int Volume,volLeft,volRight;
 
 
-  if ( mixdevice->is_muted ) {
+  if ( mixdevice->muted() ) {
     // The mute is on! Thats really easy then
     volLeft = volRight = 0;
   }
@@ -751,7 +856,7 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
     0, volRight,
     0, volLeft
   };
-  switch( mixdevice->device_num ) {
+  switch( mixdevice->num() ) {
   case 0:      // Speaker
     out_buf[0] = AL_RIGHT_SPEAKER_GAIN;
     out_buf[2] = AL_LEFT_SPEAKER_GAIN;
@@ -768,18 +873,18 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
   ALsetparams(AL_DEFAULT_DEVICE, out_buf, 4);
 #endif
 #ifdef OSS_MIXER
-  if (ioctl(fd, MIXER_WRITE( mixdevice->device_num ), &Volume) == -1)
+  if (ioctl(fd, MIXER_WRITE( mixdevice->num() ), &Volume) == -1)
     errormsg(Mixer::ERR_WRITE);
 // PORTING: add #ifdef PLATFORM , commands , #endif
 #endif
 #ifdef ALSA
   snd_mixer_channel_t data;
-  ret = snd_mixer_channel_read( devhandle, mixdevice->device_num, &data );
+  ret = snd_mixer_channel_read( devhandle, mixdevice->num(), &data );
   if ( !ret ) {
     data.left = volLeft;
     data.right = volRight;
-    data.channel = mixdevice->device_num;
-    ret = snd_mixer_channel_write( devhandle, mixdevice->device_num, &data );
+    data.channel = mixdevice->num();
+    ret = snd_mixer_channel_write( devhandle, mixdevice->num(), &data );
     if ( ret )
       errormsg(Mixer::ERR_WRITE);
   }
@@ -793,7 +898,7 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
     0, volRight,
     0, volLeft
   };
-  switch( mixdevice->device_num ) {
+  switch( mixdevice->num() ) {
   case 0:      // Speaker
     out_buf[0] = AL_RIGHT_SPEAKER_GAIN;
     out_buf[2] = AL_LEFT_SPEAKER_GAIN;
@@ -823,11 +928,11 @@ void MixChannel::VolChanged(int new_pos)
   /* Set right channel volume to the same amount as left channel, if right
    * is linked to left
    */
-  if (mixdevice->StereoLink == TRUE)
+  if (mixdevice->stereoLinked() )
     mixdevice->Right->volume = volume;
 
   MixSet *Set0  = mixDev->mix->TheMixSets->first();
-  MixSetEntry *mse = Set0->findDev(mixdevice->device_num);
+  MixSetEntry *mse = Set0->findDev(mixdevice->num() );
   if (mse) {
     mse->volumeL =  mixdevice->Left->volume;
     mse->volumeR =  mixdevice->Right->volume;
@@ -845,7 +950,7 @@ void MixDevice::MvolSplitCB()
   Right->volume = Left->volume = (Right->volume + Left->volume)/2;
 
   MixSet *Set0  = mix->TheMixSets->first();
-  MixSetEntry *mse = Set0->findDev(device_num);
+  MixSetEntry *mse = Set0->findDev( num() );
   if (mse) {
     mse->StereoLink =  StereoLink;
   }
@@ -866,7 +971,7 @@ void MixDevice::MvolMuteCB()
 {
   is_muted = ! is_muted;
   MixSet *Set0  = mix->TheMixSets->first();
-  MixSetEntry *mse = Set0->findDev(device_num);
+  MixSetEntry *mse = Set0->findDev( num() );
   if (mse) {
     mse->is_muted =  is_muted;
   }
@@ -885,13 +990,13 @@ void MixDevice::MvolRecsrcCB()
   // changed at all.
   unsigned int old_recsrc = mix->getRecsrc();
   // Determine the Bit in the record source mask, which must be changed
-  unsigned int bit_in_recsrc =  ( 1 << device_num );
+  unsigned int bit_in_recsrc =  ( 1 << num() );
   // And calculate the new wanted record source mask.
   unsigned int new_recsrc = old_recsrc ^ bit_in_recsrc;
 
   mix->setRecsrc(new_recsrc);
 
-  // If something has changed, tell the UI to da a relayout.
+  // If something has changed, tell the UI to a relayout.
   // OK! In future, I will give relayout hints, so the UI will only
   // relayout certain parts, e.g. the Record source "bullets". TODO !!!
   if (mix->getRecsrc() != old_recsrc)
@@ -918,25 +1023,27 @@ MixDevice *MixDev = First; /* moved up for use with ALSA */
   snd_mixer_channel_t data;
   recsrc = 0;
   while (MixDev) {
-    ret = snd_mixer_channel_read( devhandle, MixDev->device_num, &data ); /* get */
+    ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* get */
     if ( ret )
       errormsg(Mixer::ERR_READ);
-    if ( newRecsrc & ( 1 << MixDev->device_num ) )
+    if ( newRecsrc & ( 1 << MixDev->num() ) )
       data.flags |= SND_MIXER_FLG_RECORD;
     else
       data.flags &= ~SND_MIXER_FLG_RECORD;
-    ret = snd_mixer_channel_write( devhandle, MixDev->device_num, &data ); /* set */
+    ret = snd_mixer_channel_write( devhandle, MixDev->num(), &data ); /* set */
     if ( ret )
       errormsg(Mixer::ERR_WRITE);
-    ret = snd_mixer_channel_read( devhandle, MixDev->device_num, &data ); /* check */
+    ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* check */
     if ( ret )
       errormsg(Mixer::ERR_READ);
     if ( ( data.flags & SND_MIXER_FLG_RECORD ) && /* if it's set and stuck */
-         ( newRecsrc & ( 1 << MixDev->device_num ) ) ) {
-      recsrc |= 1 << MixDev->device_num;
-      MixDev->is_recsrc = true;
-    } else
-      MixDev->is_recsrc = false;
+         ( newRecsrc & ( 1 << MixDev->num() ) ) ) {
+      recsrc |= 1 << MixDev->num();
+      MixDev->setRecsrc(true);
+    }
+    else {
+      MixDev->setRecsrc(false);
+    }
     MixDev = MixDev->Next;
   }
   return; /* I'm done */ 
@@ -955,10 +1062,10 @@ MixDevice *MixDev = First; /* moved up for use with ALSA */
    */
   unsigned int recsrcwork = recsrc;
   while (MixDev) {
-    if (recsrcwork & (1 << (MixDev->device_num) ) )
-      MixDev->is_recsrc = true;
+    if (recsrcwork & (1 << (MixDev->num()) ) )
+      MixDev->setRecsrc(true);
     else
-      MixDev->is_recsrc = false;
+      MixDev->setRecsrc(false);
 
     MixDev            = MixDev->Next;
   }
@@ -967,20 +1074,54 @@ MixDevice *MixDev = First; /* moved up for use with ALSA */
 
 MixDevice::MixDevice(int num)
 {
-  device_num=num;
+  setNum(num);
 #ifdef ALSA
     snd_mixer_channel_info_t chinfo;
     ret = snd_mixer_channel_info( devhandle, num, &chinfo );
     if ( ret )
-      devname = "unknown   ";
+      setName("unknown   ");
     else
-      devname = chinfo.name;
+      setName(chinfo.name);
 #else
-    devname = MixerDevNames[num];
+    setName(MixerDevNames[num]);
 #endif
 };
 
+
+
 QString MixDevice::name()
 {
-  return devname;
+  return dev_name;
 }
+
+
+int MixDevice::num()
+{
+  return dev_num;
+}
+
+void MixDevice::setNum(int num)
+{
+  dev_num = num;
+}
+
+void MixDevice::setName(QString name)
+{
+  dev_name = name;
+}
+
+bool MixDevice::stereo()	{ return is_stereo; }
+bool MixDevice::recordable()	{ return is_recordable; }
+bool MixDevice::recsrc()	{ return is_recsrc; }
+bool MixDevice::disabled()	{ return is_disabled; }
+bool MixDevice::muted()		{ return is_muted; }
+bool MixDevice::stereoLinked()	{ return StereoLink; }
+//bool MixDevice::()	{ return is_; }
+
+
+void MixDevice::setStereo(bool value)	{ is_stereo = value; }
+void MixDevice::setRecordable(bool value)	{ is_recordable = value; }
+void MixDevice::setRecsrc(bool value)	{ is_recsrc = value; }
+void MixDevice::setDisabled(bool value)	{ is_disabled = value; }
+void MixDevice::setMuted(bool value)		{ is_muted = value; }
+void MixDevice::setStereoLinked(bool value)	{ StereoLink = value; }

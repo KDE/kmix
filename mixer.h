@@ -85,13 +85,34 @@ signals:
 
 public:
   MixDevice(int num);
+  int		num();
+  void		setNum(int);
+  QString	name();
+  bool		stereo();
+  bool		recordable();
+  bool		recsrc();		// Is it currently being recorded?
+  bool		disabled();		// Is slider disabled by user?
+  bool		muted();		// Is it muted by user?
+  bool		stereoLinked();
+
+  void		setName(QString);
+  void		setStereo(bool value);
+  void		setRecordable(bool value);
+  void		setRecsrc(bool value);
+  void		setDisabled(bool value);
+  void		setMuted(bool value);
+  void		setStereoLinked(bool value);
+
+
   MixDevice	*Next;			// Pointer to next elment of MixDevice list
   MixChannel	*Left;			//
   MixChannel	*Right;			//
   Mixer		*mix;
-  QString name();
+
   QLabel	*picLabel;
-  int		device_num;		// ioctl() device number of mixer
+
+private:
+  int		dev_num;		// ioctl() device number of mixer
   bool		StereoLink;		// Is this channel linked via the
                                         // left-right-controller?
   bool	 	is_stereo;		// Is it stereo capable?
@@ -99,7 +120,7 @@ public:
   bool		is_recsrc;		// Is it currently being recorded?
   bool		is_disabled;		// Is slider disabled by user?
   bool		is_muted;		// Is it muted by user?
-  QString	devname;		// Ascii channel name
+  QString	dev_name;		// Ascii channel name
 };
 
 /***************************************************************************
@@ -132,18 +153,27 @@ public:
 
   Mixer();
   Mixer(int devnum, int SetNum);
-  int grab();
-  int release();
+  void init();
+  void init(int devnum, int SetNum);
+  virtual ~Mixer() {};
+
+  static Mixer* getMixer(int devnum, int SetNum);
+
+  virtual int grab();
+  virtual int release();
   void errormsg(int mixer_error);
-  void updateMixDevice(MixDevice *mixdevice);
-  void setBalance(int left, int right);
+  virtual void updateMixDevice(MixDevice *mixdevice);
+  virtual void setBalance(int left, int right);
   /// Write set 0 into the mixer hardware
-  void Set0toHW();
+  virtual void Set0toHW();
   /// Write a given set into set 0
-  void Set2Set0(int Source, bool copy_volume);
-  void Set0toSet(int Source);
-  void setRecsrc(unsigned int newRecsrc);
+  virtual void Set2Set0(int Source, bool copy_volume);
+  virtual void Set0toSet(int Source);
+  virtual void setRecsrc(unsigned int newRecsrc);
   unsigned int getRecsrc();
+
+
+
   void sessionSave(bool sessionConfig);
 
   int num_mixdevs;
@@ -151,8 +181,16 @@ public:
   ///  The mixing set list
   MixSetList *TheMixSets;
 
-private:
+
+
+protected:
+  virtual int release_I();
+  virtual void setDevNumName_I(int devnum) = 0;
+
   QString	devname;
+
+
+private:
   int		devnum;
 
 #ifdef sgi
@@ -180,5 +218,63 @@ private:
   ///  Maximum volume Level allowed by the Mixer API (OS dependent)
   int MaxVolume;
 };
+
+
+class Mixer_OSS : public Mixer
+{
+public:
+  Mixer_OSS();
+  Mixer_OSS(int devnum, int SetNum);
+  virtual ~Mixer_OSS() {};
+
+protected:
+  virtual void setDevNumName_I(int devnum);
+};
+
+class Mixer_ALSA : public Mixer
+{
+public:
+  Mixer_ALSA();
+  Mixer_ALSA(int devnum, int SetNum);
+  virtual ~Mixer_ALSA() {};
+
+protected:
+  virtual void setDevNumName_I(int devnum);
+};
+
+class Mixer_SUN : public Mixer
+{
+public:
+  Mixer_SUN();
+  Mixer_SUN(int devnum, int SetNum);
+  virtual ~Mixer_SUN() {};
+
+protected:
+  virtual void setDevNumName_I(int devnum);
+};
+
+class Mixer_IRIX : public Mixer
+{
+public:
+  Mixer_IRIX();
+  Mixer_IRIX(int devnum, int SetNum);
+  virtual ~Mixer_IRIX() {};
+
+protected:
+  virtual void setDevNumName_I(int devnum);
+};
+
+class Mixer_HPUX : public Mixer
+{
+public:
+  Mixer_HPUX();
+  Mixer_HPUX(int devnum, int SetNum);
+  virtual ~Mixer_HPUX() {};
+
+protected:
+  virtual int release_I();
+  virtual void setDevNumName_I(int devnum);
+};
+
 
 #endif

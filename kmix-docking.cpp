@@ -22,7 +22,11 @@
 
 #include "kmix.h"
 
+#include <iostream.h>
+
+
 #include <qtooltip.h>
+#include <qpainter.h>
 #include <kwm.h>
 #include <kapp.h>
 
@@ -31,14 +35,91 @@
 
 KMixDockWidget::KMixDockWidget(const char *name, 
 			       const QString& dockIconName) 
-    : KDockWidget(name, dockIconName)
+    : KDockWidget((QString)name, dockIconName)
 {
+  i_i_y		= 0;
+  i_i_height	= 0;
+  i_i_percent	= 0;
+
+  // Now for the mouse click stuff
+  i_b_move_active = false;
+  i_i_move_delta  = 5;
 }
 
 KMixDockWidget::~KMixDockWidget()
 {
 }
 
+
+void KMixDockWidget::doPaint()
+{
+  QPainter paint( this );
+  paint.eraseRect(0, 0, this->width(), i_i_y);
+  paint.setBrush( blue );
+  paint.drawRect(i_i_width/2, i_i_y, i_i_width, i_i_height);
+}
+
+void KMixDockWidget::paintEvent (QPaintEvent* )
+{
+  cerr << "PaintEvent()\n";
+  doPaint();
+}
+
+void KMixDockWidget::setDisplay(int val_i_percent)
+{
+  i_i_percent = val_i_percent;
+  i_i_height  = ( val_i_percent * this->height() ) / 100;
+  i_i_y	      = this->height() - i_i_height;
+  i_i_width	= this->width() / 2;
+
+  doPaint();
+}
+
+void KMixDockWidget::mousePressLeftEvent ( QMouseEvent *qme )
+{
+  cerr << "mplEvent()\n";
+
+  i_b_mouse_moved = false;
+  i_b_move_active = true;
+  i_i_click_x = qme->x();
+  i_i_click_y = qme->y();
+}
+
+
+void KMixDockWidget::mouseReleaseEvent ( QMouseEvent *e )
+{
+  if ( i_b_mouse_moved )
+    emit quickchange(i_i_diff);
+  else
+    toggle_window_state();
+
+  i_b_move_active = false;
+}
+
+void KMixDockWidget::mouseMoveEvent ( QMouseEvent *qme )
+{
+  if ( !i_b_move_active ) {
+    KDockWidget::mouseMoveEvent(qme);
+  }
+  else {
+    // We come here if the LEFT mouse button was pressed and the mouse was moved
+    if ( ! i_b_mouse_moved ) {
+      // Verifying whether the mouse was moved far away after the click
+      if ( i_b_move_active ) {
+	if ( abs ( i_i_click_x - qme->x() ) > i_i_move_delta ||
+	     abs ( i_i_click_y - qme->y() ) > i_i_move_delta    ) {
+	  i_b_mouse_moved = true;
+	}
+      }
+    }
+
+    if ( i_b_mouse_moved ) {
+      //!!!cerr << "Distance = " <<  i_i_click_y - qme->y() << "\n";
+      i_i_diff = i_i_click_y - qme->y();      
+      emit quickchange(i_i_diff);
+    }
+  }
+}
 
 
 #include "kmix-docking.moc"

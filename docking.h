@@ -4,11 +4,6 @@
  *              Copyright (C) 1999 Christian Esken
  *                       esken@kde.org
  * 
- * This class is based on a contribution by Harri Porten <porten@tu-harburg.de>
- * It has been reworked by Christian Esken to be a generic base class for
- * docking.
- *
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -45,30 +40,39 @@ class KDockWidget : public QWidget {
 
 public:
   /// Creates a docking widget and allows passing of the name of
-  /// the docking icon.
+  /// the docking icon. You must either pass a valid icon or 0.
+  /// Passing 0, you can paint anything you like on the docking widget
+  /// by overrdiding tjhe paint event.
   KDockWidget(const QString& dockIcon, const char *name=0);
   /// Overloaded constructor. Only differs from the previous constructor
   /// in that you can pass the icon as a QPixmap
   KDockWidget(const QPixmap& dockPixmap, const char *name=0);
   /// Deletes the docking widget. Please note that the widget undocks from
   /// the panel automatically.
-  ~KDockWidget();
-  void setMainWindow(KTMainWindow *ktmw);
-  QPixmap dockPixmap() const;
+  virtual ~KDockWidget();
+  virtual void setMainWindow(KTMainWindow *ktmw);
   /** Checks, if application is in "docked" state. Returns true, if yes.
     It has still to be defined what the exact semantics are: Complete
     application docked, a single window docked, or is this application
-    dependent? */
-  bool isDocked() const;
-  void savePosition();
-  void setPixmap(const QString& dockPixmapName);
-  void setPixmap(const QPixmap& dockPixmap);
+    dependent?!? */
+  virtual bool isDocked() const;
+  //  void savePosition();
+  virtual void setPixmap(const QString& dockPixmapName);
+  virtual void setPixmap(const QPixmap& dockPixmap);
 
 public slots:
   /// Dock this widget - this means to show this widget on the docking area
   virtual void dock();
   /// Undock this widget - this means to remove this widget from the docking area
   virtual void undock();
+  /// A MousePressEvent for the left button. The default implementation shows and
+  /// hides the main window set via setMainWindow().
+  virtual void mousePressLeftEvent(QMouseEvent *e);
+  /// A MousePressEvent for the right button. The default implementation pops up
+  /// a menu.
+  virtual void mousePressRightEvent(QMouseEvent *e);
+  virtual void toggle_window_state();
+
 
 protected:
   /// The paint event normally repaints the icon by calling paintIcon().
@@ -76,12 +80,11 @@ protected:
   /// must derive from QDockWidget and override this function.
   void paintEvent(QPaintEvent *e);
   /// Paint the icon.
-  void paintIcon();
-  void setShowHideText(); 
-  void baseInit();
+  virtual void paintIcon();
+  virtual void setShowHideText(); 
+  virtual void baseInit();
 
 private slots:
-  void toggle_window_state();
   void mousePressEvent(QMouseEvent *e);
 
 

@@ -1,11 +1,9 @@
 /*
- *              kmix: KDE's small mixer
+ *              KMix -- KDE's full featured mini mixer
  *
- *              Copyright (C) 1997 Christian Esken
- *                       esken@kde.org
- * 
- * This file is based on a contribution by Harri Porten <porten@tu-harburg.de>
  *
+ *              Copyright (C) 1996-98 Christian Esken
+ *                        esken@kde.org
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +25,7 @@
 #define KMIX_DOCKING_H
 
 #include "docking.h"
-
+#include <qrect.h>
 
 class KMixDockWidget : public KDockWidget {
 
@@ -36,6 +34,32 @@ class KMixDockWidget : public KDockWidget {
 public:
   KMixDockWidget(const char *name=0, const QString& dockIconName=0);
   ~KMixDockWidget();
+
+  void paintEvent (QPaintEvent* );
+  void setDisplay(int i_volume);
+
+
+  void mouseReleaseEvent ( QMouseEvent *e );
+  void mousePressLeftEvent ( QMouseEvent * );
+  void mouseMoveEvent ( QMouseEvent *qme );
+
+signals:
+  void quickchange(int diff);
+
+private:
+  void doPaint();
+
+  int i_i_percent;
+  int i_i_height;
+  int i_i_y;
+  int i_i_width;
+
+  bool i_b_mouse_moved;
+  bool i_b_move_active;
+  int  i_i_diff;
+  int  i_i_click_x;
+  int  i_i_click_y;
+  int  i_i_move_delta;
 };
 
 #endif

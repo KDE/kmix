@@ -120,14 +120,18 @@ void Preferences::createChannelConfWindow(QWidget *p)
 #endif
 
     QLineEdit *qle;
-    qle = new QLineEdit(mdev->devname, grpbox, mdev->devname.ascii());
+#if KDE_VERSION_MAJOR >= 2
+    qle = new QLineEdit(mdev->devname, grpbox, mdev->name().ascii());
+#else
+    qle = new QLineEdit(grpbox, (const char*)(mdev->name()));
+#endif
     qle->setPalette(qpl);  // Use a palette, where one can read the text
     qle->setEnabled(false);
     l->addWidget(qle, lay_i, 0); 
 
     // 2. check box  (Show)
     QCheckBox *qcb = new QCheckBox(grpbox);
-    if (mdev->is_disabled)
+    if (mdev->disabled())
       qcb->setChecked(false);
     else
       qcb->setChecked(true);
@@ -135,9 +139,9 @@ void Preferences::createChannelConfWindow(QWidget *p)
 
     // 3. check box  (Split)
     QCheckBox *qcbSplit;
-    if (mdev->is_stereo) {
+    if (mdev->stereo()) {
       qcbSplit = new QCheckBox(grpbox);
-      if (mdev->StereoLink)
+      if (mdev->stereoLinked() )
 	qcbSplit->setChecked(false);
       else
 	qcbSplit->setChecked(true);
@@ -149,7 +153,7 @@ void Preferences::createChannelConfWindow(QWidget *p)
     l->setRowStretch(lay_i++, 0);
     l->setRowStretch(lay_i++, 1);
 
-    cSetup.append(new ChannelSetup(mdev->device_num,qle,qcb,qcbSplit));
+    cSetup.append(new ChannelSetup(mdev->num(),qle,qcb,qcbSplit));
   }
 
   created = true;
@@ -182,7 +186,7 @@ void Preferences::options2current()
       continue;  // entry not found
 
     else {
-      if (mdev->is_stereo)
+      if (mdev->stereo())
 	mse->StereoLink = ! chanSet->qcbSplit->isChecked();
       mse->is_disabled = ! chanSet->qcbShow->isChecked();
     }
