@@ -45,15 +45,11 @@
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
-#include "version.h"
-
 
 KMixApp::KMixApp()
    : m_dockWidget( 0L )
 {
    initActions();
-//   initMenuBar();
-//   initToolBar();
    initMixer();
    initWidgets();
    
@@ -82,70 +78,18 @@ void KMixApp::initActions()
 		      actionCollection(), "file_load_volume" );
    (void)new KAction( i18n("&Save volumes"), 0, this, SLOT(saveVolumes()), 
 		      actionCollection(), "file_save_volume" );
-   KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
    KStdAction::quit( this, SLOT(quit()), actionCollection());
       
-   // view menu
+   // settings menu
    KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
    // help menu
-   KStdAction::aboutApp( this, SLOT(showAboutApplication(void)), actionCollection());
-   KStdAction::help( this, SLOT(appHelpActivated()), actionCollection()); 
+   /*KStdAction::aboutApp( this, SLOT(showAboutApplication(void)), actionCollection());
+   KStdAction::help( this, SLOT(appHelpActivated()), actionCollection()); */
 
    createGUI( "kmixui.rc" );
 }
-
-/*void KMixApp::initMenuBar()
-{
-   KActionCollection *actcol = actionCollection();
-
-   m_fileMenu = new QPopupMenu();  
-   actcol->action( i18n("New") ->plug( m_fileMenu );
-   m_actions.Close->plug( m_fileMenu  );
-   m_actions.Separator->plug( m_fileMenu  );
-   m_actions.LoadVolumes->plug( m_fileMenu );
-   m_actions.SaveVolumes->plug( m_fileMenu );
-   m_actions.Separator->plug( m_fileMenu  );
-   m_actions.Settings->plug( m_fileMenu );	
-   m_actions.Separator->plug( m_fileMenu );
-   m_actions.Quit->plug( m_fileMenu );
-  	
-   m_viewMenu = new QPopupMenu();
-   m_actions.ToggleMenuBar->plug( m_viewMenu );
-
-   QString aboutMsg  = "KMix ";
-   aboutMsg += APP_VERSION;
-   aboutMsg += i18n(
-      "\n"
-      "(C) 2000 by Stefan Schimanski (1Stein@gmx.de)\n"
-      "(C) 1997-2000 by Christian Esken (esken@kde.org)\n\n"
-      "Sound mixer panel for the KDE Desktop Environment.\n"
-      "This program is in the GPL.\n"
-      "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"
-      "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"
-      "and Lennart Augustsson (augustss@cs.chalmers.se).\n"
-      "ALSA port by Nick Lopez (kimo_sabe@usa.net).\n"
-      "HP/UX port by Helge Deller (deller@gmx.de)." );
-
-   m_helpMenu = helpMenu( aboutMsg, false );
-
-   menuBar()->insertItem(i18n("&File"), m_fileMenu);
-   menuBar()->insertItem(i18n("&View"), m_viewMenu);
-   menuBar()->insertSeparator();
-   menuBar()->insertItem(i18n("&Help"), m_helpMenu);	
-   }*/
-
-/*void KMixApp::initToolBar()
-{
-   KToolBar *tb = toolBar( 0 );
-   
-   m_actions.ToggleMenuBar->plug( tb );
-   m_actions.Separator->plug( tb );
-   m_actions.New->plug( tb );
-   m_actions.Close->plug( tb );
-   m_actions.Separator->plug( tb );
-   m_actions.Quit->plug( tb );
-   }*/
 
 void KMixApp::initMixer()
 {
@@ -198,10 +142,10 @@ void KMixApp::updateDocking()
 		
       QPopupMenu *menu = m_dockWidget->contextMenu();		
   	
-//      m_actions.Settings->plug( menu );
+      actionCollection()->action("options_configure")->plug( menu );
       menu->insertSeparator();
-//		m_actions.About->plug( menu );
-//      m_actions.Help->plug( menu );
+      actionCollection()->action("help_about_app")->plug( menu );
+      actionCollection()->action("help")->plug( menu );
 		
       m_dockWidget->show();
    }
@@ -251,8 +195,10 @@ void KMixApp::loadConfig()
 
    // bar status settings
    bool bViewMenubar = config->readBoolEntry("Menubar", true);
-   //m_actions.ToggleMenuBar->setChecked( bViewMenubar );
-   if(!bViewMenubar) menuBar()->hide();
+   if (bViewMenubar) 
+      menuBar()->show();
+   else
+      menuBar()->hide();
    	
    QSize defSize = size();
    QSize size = config->readSizeEntry("Size", &defSize );
