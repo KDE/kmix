@@ -192,7 +192,7 @@ int Mixer_SUN::openMixer()
             readVolumeFromHW( idx, vol );
             MixDevice* md = new MixDevice( idx, vol, 0,
                QString(MixerDevNames[idx]), MixerChannelTypes[idx]);
-            md->setRecsrc( isRecsrcHW( idx ) );
+				md->setRecordSource( isRecsrcHW( idx ), true );
             m_mixDevices.append( md );
          }
      }

@@ -146,7 +146,7 @@ int Mixer_OSS::openMixer()
                     new MixDevice( idx, vol, recmask & ( 1 << idx ),
                                    i18n(MixerDevNames[idx]),
                                    MixerChannelTypes[idx]);
-                  md->setRecsrc( isRecsrcHW( idx ) );
+                  md->setRecordable( isRecsrcHW( idx ) );
                   m_mixDevices.append( md );
                 }
               idx++;

@@ -24,6 +24,7 @@
 
 #include "KMixApp.h"
 #include "kmix.h"
+#include <kdebug.h>
 
 KMixApp::KMixApp()
     : KUniqueApplication(), m_kmix( 0 )
@@ -40,12 +41,16 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
+	kdDebug() << "newInstance" << endl;
 	if ( m_kmix )
 	{
+	kdDebug() << "newInstance2" << endl;
 		m_kmix->show();
+		kdDebug() << "shown" << endl;
 	}
 	else
 	{
+	kdDebug() << "newInstance3" << endl;
 		m_kmix = new KMixWindow;
 		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isRestored() && KMainWindow::canBeRestored(0) )

@@ -63,7 +63,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 {
    // global stuff
    connect( this, SIGNAL(newVolume(int, Volume)), m_mixer, SLOT(writeVolumeToHW(int, Volume) ));
-   connect( this, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecsrc(int, bool)) );
+   connect( this, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecordSource(int, bool)) );
    connect( m_mixer, SIGNAL(newRecsrc()), SLOT(update()) );
    if( m_mixdevice->num()==m_mixer->masterDevice() )
       connect( m_mixer, SIGNAL(newBalance(Volume)), SLOT(update()) );
@@ -249,7 +249,7 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 		if( m_mixdevice->isRecordable() )
 		{
 			m_recordLED = new KLedButton( Qt::red,
-					m_mixdevice->isRecsrc()?KLed::On:KLed::Off,
+					m_mixdevice->isRecordable()?KLed::On:KLed::Off,
 					KLed::Sunken, KLed::Circular, this, "RecordLED" );
 			if (!showRecordLED) m_recordLED->hide();
 			QToolTip::add( m_recordLED, i18n("Recording") );
@@ -363,7 +363,7 @@ MixDeviceWidget::isMuted() const
 bool 
 MixDeviceWidget::isRecsrc() const
 {
-   return m_mixdevice->isRecsrc();
+   return m_mixdevice->isRecordable();
 }
 
 bool 
@@ -398,9 +398,9 @@ MixDeviceWidget::toggleMuted()
 void 
 MixDeviceWidget::setRecsrc( bool value )
 {
-   if( m_mixdevice->isRecsrc()!=value )
+   if( m_mixdevice->isRecordable()!=value )
    {
-      m_mixdevice->setRecsrc( value );
+      m_mixdevice->setRecordable( value );
       emit newRecsrc( m_mixdevice->num(), value );
    }
 }
@@ -537,7 +537,7 @@ MixDeviceWidget::volumeChange( int )
 void 
 MixDeviceWidget::toggleRecsrc()
 {
-   setRecsrc( !m_mixdevice->isRecsrc() );
+	setRecsrc( !m_mixdevice->isRecordable() );
 }
 
 void 
@@ -675,7 +675,7 @@ MixDeviceWidget::update()
    if( m_recordLED )
    {
       m_recordLED->blockSignals( true );
-      m_recordLED->setState( m_mixdevice->isRecsrc() ? KLed::On : KLed::Off );
+      m_recordLED->setState( m_mixdevice->isRecordable() ? KLed::On : KLed::Off );
       m_recordLED->blockSignals( false );
    }
 }
@@ -699,7 +699,7 @@ MixDeviceWidget::contextMenu()
    KToggleAction *ta = (KToggleAction *)m_actions->action( "recsrc" );
    if ( ta )
    {
-      ta->setChecked( m_mixdevice->isRecsrc() );
+      ta->setChecked( m_mixdevice->isRecordable() );
       ta->plug( menu );
    }
 
@@ -710,25 +710,24 @@ MixDeviceWidget::contextMenu()
       ta->plug( menu );
    }
 
-   KAction *a = m_actions->action( "hide" );
-   if ( a ) a->plug( menu );
-
-   a = m_actions->action( "keys" );
-   if ( a && m_keys ) {
+   ta = (KToggleAction *)m_actions->action( "keys" );
+   if ( ta && m_keys ) 
+	{
       KActionSeparator sep( this );
       sep.plug( menu );
 
-      a->plug( menu );
+      ta->plug( menu );
    }
 
    KActionSeparator sep( this );
    sep.plug( menu );
 
-   a = m_actions->action( "show_all" );
-   if ( a ) a->plug( menu );
-   a = m_actions->action( "options_show_menubar" );
-   if ( a ) a->plug( menu );
+   ta = (KToggleAction *)m_actions->action( "options_show_menubar" );
+   if ( ta ) ta->plug( menu );
 
+   ta = (KToggleAction *)m_actions->action( "toggle_channels" );
+	if ( ta ) ta->plug( menu );
+	
    QPoint pos = QCursor::pos();
    menu->popup( pos );
 }

@@ -26,8 +26,6 @@
 #include <qptrlist.h>
 class QString;
 class QGridLayout;
-class QWidgetStack;
-class QButtonGroup;
 
 #include <kpanelapplet.h>
 
@@ -43,7 +41,7 @@ class QSlider;
 class KActionCollection;
 class KActionMenu;
 class KConfig;
-class KMultiTabBar;
+class KTabWidget;
 
 // KMix
 class Channel;
@@ -102,30 +100,24 @@ KMixerWidget : public QWidget
    void saveConfig( KConfig *config, QString grp );
    void loadConfig( KConfig *config, QString grp );
 
-   void showAll();
-   void hideAll();
-
   private slots:
    void rightMouseClicked();
    void updateBalance();
    void updateSize();
    void slotFillPopup();
    void slotToggleMixerDevice(int id);
-	void ioMixerTabClicked( int tb );
 
   private:
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
 	QWidget *m_swWidget;
    QBoxLayout *m_topLayout;
-   QBoxLayout *m_devLayout;
-   QBoxLayout *m_devLayoutInput;
-   QBoxLayout *m_devLayoutOutput;
+	QWidget *m_iWidget;
+	QWidget *m_oWidget;
 	QGridLayout *m_devSwitchLayout;
 	
    QPtrList<Channel> m_channels;
-	QButtonGroup *m_ioTab;
-	QWidgetStack *m_ioStack;
+	KTabWidget *m_ioTab;
 
    QString m_name;
    QString m_mixerName;

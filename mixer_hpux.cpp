@@ -164,41 +164,6 @@ bool Mixer_HPUX::isRecsrcHW( int devnum )
     return FALSE;
 }
 
-#if 0
-void Mixer_HPUX::setRecsrc(unsigned int newRecsrc)
-{
-    long error = (long) AENoError;
-    int	 Source;
-
-    i_recsrc = newRecsrc;
-
-    Source = 0;
-    if (newRecsrc & (1<<ID_IN_MICROPHONE))
-	Source |= (1<<AISTMonoMicrophone);
-    if (newRecsrc & (1<<ID_IN_AUX))
-        Source |= (1<<AISTLeftAuxiliary) + (1<<AISTRightAuxiliary);
-
-    ASetDefaultInput(audio, (AInputSrcType) Source, &error);
-    if (error)
-	errorText(error + HPUX_ERROR_OFFSET);
-
-  /* Traverse through the mixer devices and set the record source flags
-   * This is especially necessary for mixer devices that sometimes do
-   * not obey blindly (because of hardware limitations)
-   */
-  unsigned int recsrcwork = i_recsrc;
-  MixDevice *MixPtr;
-  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
-    MixPtr = operator[](l_i_mixDevice);
-
-    if (recsrcwork & (1 << (MixPtr->num()) ) )
-      MixPtr->setRecsrc(true);
-    else
-      MixPtr->setRecsrc(false);
-  }
-}
-#endif
-
 int Mixer_HPUX::readVolumeFromHW( int devnum, Volume &vol )
 {
     long Gain;

@@ -24,13 +24,11 @@
 #include <qcursor.h>
 #include <qstring.h>
 #include <qlayout.h>
-#include <qpushbutton.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qslider.h>
 #include <qtimer.h>
 #include <qtooltip.h>
-#include <qgroupbox.h>
 #include <qcheckbox.h>
 #include <qbuttongroup.h>
 #include <qwidgetstack.h>
@@ -47,6 +45,7 @@
 #include <kglobalaccel.h>
 #include <kmultitabbar.h>
 #include <kdialog.h>
+#include <ktabwidget.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -56,15 +55,13 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
                             bool small, KPanelApplet::Direction dir, MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0), m_devLayout(0),
+     m_topLayout(0),
      m_name( mixerName ), m_mixerName( mixerName ), m_mixerNum( mixerNum ), m_id( _id ),
      m_direction( dir ),
      m_iconsEnabled( true ), m_labelsEnabled( false ), m_ticksEnabled( false )
 
 {
    m_actions = new KActionCollection( this );
-   new KAction( i18n("&Show All"), 0, this, SLOT(showAll()), m_actions, "show_all" );
-   new KAction( i18n("&Hide All"), 0, this, SLOT(hideAll()), m_actions, "hide_all" );
 
 	m_categoryMask = categoryMask;
 	
@@ -107,8 +104,6 @@ KMixerWidget::createLayout()
    m_channels.clear();
    if( m_balanceSlider ) 
 		delete m_balanceSlider;
-   if( m_devLayout )
-		delete m_devLayout;
    if( m_topLayout )
 		delete m_topLayout;
 	
@@ -118,45 +113,21 @@ KMixerWidget::createLayout()
      m_topLayout->setMargin( KDialog::marginHint() );
 
 	// Create tabs e widgetstack
-	m_ioTab = new QButtonGroup( this, "ioTab" );
-	m_ioTab->setFrameShape( QFrame::NoFrame );
-	m_ioTab->setOrientation( Qt::Vertical );
-	connect( m_ioTab, SIGNAL( clicked(int) ),	this, SLOT( ioMixerTabClicked( int ) ) );
+	m_ioTab = new KTabWidget( this, "ioTab" );
 
-	m_ioStack = new QWidgetStack( this, "ioStack" );
-	m_ioStack->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-	
-	m_devLayout = new QHBoxLayout( m_topLayout );
-	m_devLayout->add( m_ioTab );
-	m_devLayout->add( m_ioStack );
-
-	// Add I/O Tabs
-	QPushButton *b;
-
-	// Output Button
-	b = new QPushButton( m_ioTab, "OutputButton" );
-	QToolTip::add( b, i18n( "Output" ) ); 
-	b->setGeometry( QRect( 0, 0, 30, 30 ) );
-	b->setFlat( true );
-	b->setPixmap( SmallIcon( "player_play" ) );
-	m_ioStack->addWidget( new QWidget( m_ioStack, "outputPanelStack" ), KMixerWidget::OUTPUT );
-	
-	// Input Button
-	b = new QPushButton( m_ioTab, "InputButton" );
-	QToolTip::add( b, i18n( "Input" ) ); 
-	b->setGeometry( QRect( 0, 30, 30, 30 ) );
-	b->setFlat( true );
-	b->setPixmap( SmallIcon( "player_stop" ) );
-	m_ioStack->addWidget( new QWidget( m_ioStack, "inputPanelStack" ), KMixerWidget::INPUT );
-	
-	// Both Layouts
-	m_devLayoutOutput =	new QHBoxLayout( m_ioStack->widget( KMixerWidget::OUTPUT ) );
-	m_devLayoutInput =	new QHBoxLayout( m_ioStack->widget( KMixerWidget::INPUT ) );
+	m_topLayout->add( m_ioTab );
 
 	// Create switch buttonGroup
 	m_swWidget = new QWidget( this, "switchWidget" );
 	m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
-	
+
+	// Both Layouts and widgets
+	m_oWidget = new QHBox( m_ioTab, "OutputTab" );
+	m_iWidget = new QHBox( m_ioTab, "InputTab" );
+
+	m_ioTab->addTab( m_oWidget, i18n("Output") );
+	m_ioTab->addTab( m_iWidget, i18n("Input" ) );
+
 	// Create de widgets
 	createDeviceWidgets();
 }
@@ -176,12 +147,16 @@ KMixerWidget::createDeviceWidgets()
 			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
 					m_direction, m_swWidget, mixDevice->name().latin1() );
 		}
+		else if( ! mixDevice->isRecordable() )
+		{
+			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+					m_direction, m_oWidget, mixDevice->name().latin1() );
+		}
 		else
 		{
 			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
-					m_direction, m_ioStack->widget( mixDevice->isRecsrc() ? KMixerWidget::INPUT: KMixerWidget::OUTPUT ) , mixDevice->name().latin1() );
+					m_direction, m_iWidget, mixDevice->name().latin1() );
 		}
-		
 		connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
 		connect( mdw, SIGNAL( updateLayout() ), this, SLOT(updateSize()));
 		connect( mdw, SIGNAL( masterMuted( bool ) ), SIGNAL( masterMuted( bool ) ) );
@@ -191,11 +166,6 @@ KMixerWidget::createDeviceWidgets()
 			m_devSwitchLayout->addWidget( mdw, row, col );
 			col++;
 		}
-		else if( ! mixDevice->isRecsrc() )
-			m_devLayoutOutput->addWidget( mdw, 0 );
-		else
-			m_devLayoutInput->addWidget( mdw, 0 );
-
 		if( col > 3 )
 		{
 			col = 0;
@@ -305,12 +275,6 @@ KMixerWidget::rightMouseClicked()
    KPopupMenu *menu = new KPopupMenu( this );
    menu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
-   a = m_actions->action( "show_all" );
-   if ( a ) a->plug( menu );
-
-   a = m_actions->action( "hide_all" );
-   if ( a ) a->plug( menu );
-
    a = m_actions->action( "toggle_channels" );
    if ( a ) a->plug( menu );
 
@@ -413,28 +377,6 @@ KMixerWidget::loadConfig( KConfig *config, QString grp )
 }
 
 void 
-KMixerWidget::showAll()
-{
-   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
-   {
-      chn->dev->setDisabled( false );
-   }
-
-   updateSize();
-}
-
-void 
-KMixerWidget::hideAll()
-{
-   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
-   {
-      chn->dev->setDisabled( true );
-   }
-
-   updateSize();
-}
-
-void 
 KMixerWidget::updateBalance()
 {
   MixDevice *md = m_mixer->mixDeviceByType( 0 );
@@ -453,19 +395,6 @@ KMixerWidget::updateBalance()
   m_balanceSlider->blockSignals( true );
   m_balanceSlider->setValue( value );
   m_balanceSlider->blockSignals( false );
-}
-
-void
-KMixerWidget::ioMixerTabClicked( int tb )
-{
-	if( tb == KMixerWidget::OUTPUT )
-	{
-		m_ioStack->raiseWidget( KMixerWidget::OUTPUT );
-	}
-	else
-	{
-		m_ioStack->raiseWidget( KMixerWidget::INPUT );
-	}
 }
 
 #include "kmixerwidget.moc"

@@ -11,6 +11,7 @@ class Volume
                    REARLEFT, REARRIGHT, WOOFER, MAXCHANNELS };
 
   Volume( int channels = 2, int maxVolume = 100 );
+  Volume( const Volume &v );
 
   void setAllVolumes( int value )
     { v_volumes.fill( volrange(value) ); };

@@ -47,7 +47,7 @@ class KMixDockWidget : public KSystemTray  {
    void ignoreNextEvent();
 
  public slots:
-   void setVolumeTip(int, Volume);
+   void setVolumeTip(int, Volume );
 
  protected:
    void createMasterVolWidget();

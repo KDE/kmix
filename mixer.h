@@ -60,14 +60,13 @@ class MixDevice
       QString	name() const         { return m_name; };
       bool isStereo() const        { return (m_volume.channels() > 1); };
       bool isRecordable() const    { return m_recordable; };
-      bool isRecsrc() const        { return m_recsrc; };
 		bool isSwitch() const        { return m_switch; }
       bool isMuted() const         { return m_volume.isMuted(); };
 
       void setMuted(bool value)            { m_volume.setMuted( value ); };
-      void setRecsrc(bool value)           { m_recsrc = value; };
       void setVolume( Volume volume ) { m_volume = volume; };
       void setVolume( int channel, int volume );
+		void setRecordable( bool rec ) { m_recordable = rec; }
       int getVolume( int channel ) const;
       Volume getVolume() const { return m_volume; };
       int rightVolume() const;
@@ -94,7 +93,6 @@ class MixDevice
       // SWITCH:    All devices which only have a On/Off-Switch
       int m_num; // ioctl() device number of mixer
       bool m_recordable; // Can it be recorded?
-      bool m_recsrc; // Is it an actual record source?
 		bool m_switch; // On/Off switch
       DeviceCategory m_category; //  category
       QString m_name;	// Ascii channel name
@@ -201,7 +199,6 @@ class Mixer : public QObject, virtual public MixerIface
 
       virtual void setMute( int channeltype, bool on );
       virtual bool mute( int channeltype );
-      virtual void setRecordSource( int deviceidx, bool on );
       virtual bool isRecordSource( int deviceidx );
 
       virtual bool isAvailableDevice( int deviceidx );
@@ -211,9 +208,9 @@ class Mixer : public QObject, virtual public MixerIface
       /// Abstract method! You must implement it in your dericved class.
       virtual int writeVolumeToHW( int devnum, Volume volume ) = 0;
       virtual void readSetFromHW();
+      virtual void setRecordSource( int deviceidx, bool on );
 
       virtual void setBalance(int balance); // sets the m_balance (see there)
-      virtual void setRecsrc( int devnum, bool on = true);
 
    signals:
       void newBalance( Volume );

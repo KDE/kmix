@@ -32,24 +32,25 @@
 #include <qmap.h>
 
 class QTimer;
+class QWidgetStack;
 
 // include files for KDE
 #include <kmainwindow.h>
 
 class KAccel;
-class KTabWidget;
+class KComboBox;
 class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
 class KMixWindow;
 class Mixer;
-class MixerSelectionInfo;
 
 #include "mixer.h"
 
 
-class KMixWindow : public KMainWindow
+class 
+KMixWindow : public KMainWindow
 {
    Q_OBJECT
 
@@ -66,11 +67,11 @@ class KMixWindow : public KMainWindow
    void initPrefDlg();
    void initActions();
    void initWidgets();
+   void initMixerWidgets();
 
-	void addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi);
    void updateDocking();
 
-   void closeEvent( QCloseEvent * e );
+	bool queryClose();
    void showEvent( QShowEvent * );
    void hideEvent( QHideEvent * );
 
@@ -80,8 +81,6 @@ class KMixWindow : public KMainWindow
    void showHelp();
    void showAbout();
    void toggleMenuBar();
-   void closeMixer();
-   void newMixer();
    void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
@@ -110,22 +109,21 @@ class KMixWindow : public KMainWindow
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
 
-   KTabWidget *m_tab;
-   QWidget *m_buttons;
+   KComboBox *m_cMixer;
+   QWidgetStack *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QTimer *timer;	// Timer for reading volume from HW
    QString m_hwInfoString;
 
-   bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
+   //bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
 
   private slots:
-   void insertMixerWidget( KMixerWidget *mw );
-   void removeMixerWidget( KMixerWidget *mw );
-   void updateLayout();
+   //void removeMixerWidget( KMixerWidget *mw );
+   //void updateLayout();
    void dockMute();
    void slotHWInfo();
-
+	void showSelectedMixer( int mixer );
 };
 
 #endif // KMIX_H

@@ -130,9 +130,7 @@ class MixDeviceWidget
       QLabel *m_iconLabel;
       KLedButton *m_muteLED;
       KLedButton *m_recordLED;
-      //QLabel *m_label;
       VerticalText *m_label;
-
 };
 
 #endif
