@@ -1,29 +1,28 @@
-	/*
-	 * KMix -- KDE's full featured mini mixer
-	 *
-	 * $Id$
-	 *
-	 * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
-	 * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
-	 * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
-	 *
-	 * This program is free software; you can redistribute it and/or
-	 * modify it under the terms of the GNU Library General Public
-	 * License as published by the Free Software Foundation; either
-	 * version 2 of the License, or (at your option) any later version.
-	 *
-	 * This program is distributed in the hope that it will be useful,
-	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	 * Library General Public License for more details.
-	 *
-	 * You should have received a copy of the GNU Library General Public
-	 * License along with this program; if not, write to the Free
-	 * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-	 */
+/*
+ * KMix -- KDE's full featured mini mixer
+ *
+ * $Id$
+ *
+ * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
+ * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
+ * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
-	// include files for QT
-	//#include <qapplication.h>
+// include files for QT
 #include <qmap.h>
 #include <qtimer.h>
 #include <qcheckbox.h>
@@ -57,128 +56,125 @@
 #include "kmixdockwidget.h"
 
 
-	KMixWindow::KMixWindow()
-		: KMainWindow(0, 0, 0 ), m_showTicks( false ), m_maxId( 0 ),
-		m_dockWidget( 0L ) 
+KMixWindow::KMixWindow()
+	: KMainWindow(0, 0, 0 ), m_showTicks( false ), m_maxId( 0 ),
+	m_dockWidget( 0L ) 
+{
+	 m_visibilityUpdateAllowed = true;
+	 // As long as we do not know better, we assume to start hidden. We need
+	 // to initialize this variable here, as we don't trigger a hideEvent().
+	 m_isVisible = false;
+	 m_mixerWidgets.setAutoDelete(true);
+	initMixer();
+	initActions();
+	initWidgets();
+	loadConfig();
+	initMixerWidgets();
+
+
+	// create mixer widgets for Mixers not found in the kmixrc configuration file
+	for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
 	{
-		 m_visibilityUpdateAllowed = true;
-		 // As long as we do not know better, we assume to start hidden. We need
-		 // to initialize this variable here, as we don't trigger a hideEvent().
-		 m_isVisible = false;
-		 m_mixerWidgets.setAutoDelete(true);
-		initMixer();
-		initActions();
-		initWidgets();
-		loadConfig();
-		initMixerWidgets();
-
-
-		// create mixer widgets for Mixers not found in the kmixrc configuration file
-		for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+		// a) search for mixer widget with current mixer
+		KMixerWidget *widget;
+		for ( widget=m_mixerWidgets.first(); widget!=0; widget=m_mixerWidgets.next() )
 		{
-			// a) search for mixer widget with current mixer
-			KMixerWidget *widget;
-			for ( widget=m_mixerWidgets.first(); widget!=0; widget=m_mixerWidgets.next() )
+			if ( widget->mixer()==mixer )
 			{
-				if ( widget->mixer()==mixer )
-				{
-					break;
-				}
+				break;
 			}
 		}
-
-		initPrefDlg();
-
-		updateDocking();
-
-		if ( m_startVisible )
-		{
-			 /* Started visible: We should do probably do:
-			  *   m_isVisible = true;
-			  * But as a showEvent() is triggered by show() we don't need it.
-			  */
-			 show();
-		}
-		else
-		{
-			hide();
-		}
-		connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()));
 	}
 
+	initPrefDlg();
 
-	KMixWindow::~KMixWindow()
+	updateDocking();
+
+	if ( m_startVisible )
 	{
+		 /* Started visible: We should do probably do:
+		  *   m_isVisible = true;
+		  * But as a showEvent() is triggered by show() we don't need it.
+		  */
+		 show();
 	}
-
-
-	void
-	KMixWindow::initActions()
+	else
 	{
-		// file menu
-		(void)new KAction( i18n("&Restore Default Volumes"), 0, this, SLOT(loadVolumes()),
-								 actionCollection(), "file_load_volume" );
-		(void)new KAction( i18n("&Save Current Volumes as Default"), 0, this, SLOT(saveVolumes()),
-								 actionCollection(), "file_save_volume" );
-		KStdAction::quit( this, SLOT(quit()), actionCollection());
-
-		// settings menu
-		KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
-		KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
-
-			  KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
-
-		(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
-					 actionCollection(), "dock_mute" );
-
-		(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
-		createGUI( "kmixui.rc" );
+		hide();
 	}
+	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()));
+}
 
-	void KMixWindow::slotConfigureKeys()
+
+KMixWindow::~KMixWindow()
+{
+}
+
+
+void
+KMixWindow::initActions()
+{
+	// file menu
+	(void)new KAction( i18n("&Restore Default Volumes"), 0, this, SLOT(loadVolumes()),
+							 actionCollection(), "file_load_volume" );
+	(void)new KAction( i18n("&Save Current Volumes as Default"), 0, this, SLOT(saveVolumes()),
+							 actionCollection(), "file_save_volume" );
+	KStdAction::quit( this, SLOT(quit()), actionCollection());
+
+	// settings menu
+	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
+
+		  KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
+
+	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
+				 actionCollection(), "dock_mute" );
+
+	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
+	createGUI( "kmixui.rc" );
+}
+
+void KMixWindow::slotConfigureKeys()
+{
+  KKeyDialog::configure( actionCollection(), this );
+}
+
+void
+KMixWindow::initMixer()
+{
+	QString tmpstr;
+	timer = new QTimer( this );  // timer will be started on show()
+
+	// get maximum values
+	KConfig *config= new KConfig("kcmkmixrc", false);
+	config->setGroup("Misc");
+	int maxCards = config->readNumEntry( "maxCards", 2 );
+	int maxDevices = config->readNumEntry( "maxDevices", 2 );
+	delete config;
+
+	// poll for mixers
+	QMap<QString,int> mixerNums;
+	int drvNum = Mixer::getDriverNum();
+
+	int driverWithMixer = -1;
+	bool multipleDriversActive = false;
+
+	QString driverInfo = "";
+	QString driverInfoUsed = "";
+	for( int drv=0; drv<drvNum ; drv++ ) 
 	{
-	  KKeyDialog::configure( actionCollection(), this );
-	}
-
-	void
-	KMixWindow::initMixer()
-	{
-		QString tmpstr;
-		timer = new QTimer( this );  // timer will be started on show()
-
-		// get maximum values
-		KConfig *config= new KConfig("kcmkmixrc", false);
-		config->setGroup("Misc");
-		int maxCards = config->readNumEntry( "maxCards", 2 );
-		int maxDevices = config->readNumEntry( "maxDevices", 2 );
-		delete config;
-
-		// poll for mixers
-		QMap<QString,int> mixerNums;
-		int drvNum = Mixer::getDriverNum();
-
-		int driverWithMixer = -1;
-		bool multipleDriversActive = false;
-
-		//kdDebug() << "Number of drivers : " << tmpstr.setNum( drvNum ) << endl;
-		QString driverInfo = "";
-		QString driverInfoUsed = "";
-		for( int drv=0; drv<drvNum ; drv++ ) {
 		QString driverName = Mixer::driverName(drv);
-		if ( drv!= 0 ) {
+		if ( drv!= 0 ) 
+		{
 			driverInfo += " + ";
 		}
 		driverInfo += driverName;
-		}
+	}
 
-#ifndef MULTIDRIVERMODE
-		for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
-#else
-		for( int drv=0; drv<drvNum ; drv++ )
-#endif
+	for( int drv=0; drv<drvNum ; drv++ )
+	{
+		bool drvInfoAppended = false;
 		{
-			 bool drvInfoAppended = false;
-			 {
 			for( int dev=0; dev<maxDevices; dev++ )
 			{
 				for( int card=0; card<maxCards; card++ )
@@ -190,86 +186,68 @@
 						delete mixer;
 						continue;
 					}
-				#ifdef HAVE_ALSA_ASOUNDLIB_H
-					else
-					{
-						// Avoid multiple mixer detections with new ALSA
-						// TODO: This is a temporary solution, right code must be
-						// implemented in future
-						Mixer *lmixer;
-						bool same = false;
-						for( lmixer = m_mixers.first(); lmixer; lmixer = m_mixers.next() )
-						{
-							if( lmixer->mixerName() == mixer->mixerName() )
-							{
-								same = true;
-							}
-						}
-						if( same == true )
-						{
-						//    kdDebug() << "same mixer ... not adding again" << endl;
-							delete mixer;
-							continue;
-						}
-					}
-				#endif
+					
 					connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
 					m_mixers.append( mixer );
-
+					
 					// append driverName (used drivers)
-					if ( !drvInfoAppended ) {
+					if ( !drvInfoAppended )
+					{
 						drvInfoAppended = true;
 						QString driverName = Mixer::driverName(drv);
-						if ( drv!= 0 ) {
+						if ( drv!= 0 ) 
+						{
 							driverInfoUsed += " + ";
 						}
 						driverInfoUsed += driverName;
 					}
-
-					// kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
-
+					
 					// Check whether there are mixers in different drivers, so that the usr can be warned
-					if (!multipleDriversActive) {
-					  if ( driverWithMixer == -1 ) {
-						 // Aha, this is the very first detected device
-						 driverWithMixer = drv;
-					  }
-					  else {
-						 if ( driverWithMixer != drv ) {
-							// Got him: There are mixers in different drivers
-							multipleDriversActive = true;
-						 }
-					  }
+					if (!multipleDriversActive) 
+					{
+						if ( driverWithMixer == -1 ) 
+						{
+							// Aha, this is the very first detected device
+							driverWithMixer = drv;
+						}
+						else 
+						{
+							if ( driverWithMixer != drv ) 
+							{
+								// Got him: There are mixers in different drivers
+								multipleDriversActive = true;
+							}
+						}
 					}
-
+					
 					// count mixer nums for every mixer name to identify mixers with equal names
 					mixerNums[mixer->mixerName()]++;
 					mixer->setMixerNum( mixerNums[mixer->mixerName()] );
 				}
 			}
 		}
-		}
-
-		m_hwInfoString = i18n("Sound drivers supported");
-		m_hwInfoString += ": " + driverInfo + 
-			"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
-		if ( multipleDriversActive ) 
-		{
-			// this will only be possible by hacking the config-file, as it will not be officially supported
-			m_hwInfoString += "\nExperimental multiple-Driver mode activated";
-		}
-		kdDebug() << m_hwInfoString << endl;
-
 	}
 
-
-	void
-	KMixWindow::initPrefDlg()
+	m_hwInfoString = i18n("Sound drivers supported");
+	m_hwInfoString += ": " + driverInfo + 
+		"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
+	if ( multipleDriversActive ) 
 	{
-		m_prefDlg = new KMixPrefDlg( this );
-		connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)),
-				this, SLOT(applyPrefs(KMixPrefDlg *)) );
+		// this will only be possible by hacking the config-file, as it will not be officially supported
+		m_hwInfoString += "\nExperimental multiple-Driver mode activated";
 	}
+	
+	kdDebug() << m_hwInfoString << endl;
+}
+
+
+void
+KMixWindow::initPrefDlg()
+{
+	m_prefDlg = new KMixPrefDlg( this );
+	connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)),
+			this, SLOT(applyPrefs(KMixPrefDlg *)) );
+}
 
 
 void
@@ -382,6 +360,25 @@ KMixWindow::saveConfig()
    config->writeEntry( "TrayVolumeControl", m_volumeWidget );
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
+
+   // save mixer widgets
+   QStringList devices;
+   for ( KMixerWidget *mw = m_mixerWidgets.first(); mw != 0; mw = m_mixerWidgets.next() )
+   {
+		QString grp;
+		grp.sprintf( "%i", mw->id() );
+		devices << grp;
+		
+		config->setGroup( grp );
+		config->writeEntry( "Mixer", mw->mixerNum() );
+		config->writeEntry( "MixerName", mw->mixerName() );
+		config->writeEntry( "Name", mw->name() );
+		
+		mw->saveConfig( config, grp );
+	}
+
+   config->setGroup(0);
+   config->writeEntry( "Devices", devices );
 }
 
 void
@@ -432,6 +429,9 @@ KMixWindow::initMixerWidgets()
 	
 	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
 	{
+		kdDebug() << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+
+		
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 				false, KPanelApplet::Up, MixDevice::ALL, this, "KMixerWidget" );
 

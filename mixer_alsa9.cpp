@@ -275,42 +275,44 @@ Mixer_ALSA::releaseMixer()
 bool
 Mixer_ALSA::isRecsrcHW( int devnum )
 {
-	devnum++;
-	//gid = &groups.pgroups[devnum];
-	
-	// get device caps to check for capture
-	//snd_mixer_group_t group;
-	//bzero(&group, sizeof(group));
-	//group.gid = *gid;
-	//if ( snd_mixer_group_read(handle, &group)<0 ) return Mixer::ERR_READ;
-	
-	//return group.capture && SND_MIXER_CHN_MASK_FRONT_LEFT;
-	return false;
+	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
+
+	return( 	snd_mixer_selem_has_capture_volume( elem ) ||
+				snd_mixer_selem_has_capture_switch( elem ) );
 }
 
 bool
 Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 {
-	devnum++;
-	on = false;
-	//snd_mixer_open( &handle, m_cardnum );
-	//gid = &groups.pgroups[devnum];
+	int sw;
+	bool retOk = false;
+	
+	snd_mixer_elem_t *elem = mixer_elem_list[ devnum ];
+	
+	if (snd_mixer_selem_has_capture_switch_joined( elem ) && on )
+	{
+		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
+		snd_mixer_selem_set_capture_switch_all( elem, !sw );
+		retOk = true;
+	}
+	else
+	{
+		if ( on && snd_mixer_selem_has_capture_channel( elem, SND_MIXER_SCHN_FRONT_LEFT ) )
+		{
+			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
+			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, !sw );
+			retOk = true;
+		}
 		
-	// get current device caps
-	//snd_mixer_group_t group;
-	//bzero(&group, sizeof(group));
-	//group.gid = *gid;
-	//if ( snd_mixer_group_read(handle, &group)<0 ) return true;
-	
-	// set capture flag
-	//group.capture = on ? group.capture | SND_MIXER_CHN_MASK_FRONT_LEFT :
-		//group.capture & ~SND_MIXER_CHN_MASK_FRONT_LEFT;
-	//if ( numChannels(group.channels)>1 ) group.capture = on ? ~0 : 0;
+		if ( on &&  snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
+		{
+			snd_mixer_selem_get_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, &sw);
+			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, !sw);
+			retOk = true;
+		}
+	}
 
-   // write caps back
-   //if ( snd_mixer_group_write(handle, &group)<0 ) return true;
-	
-	return false;
+	return retOk;
 }
 
 int

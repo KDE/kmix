@@ -41,16 +41,13 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
-	kdDebug() << "newInstance" << endl;
 	if ( m_kmix )
 	{
-	kdDebug() << "newInstance2" << endl;
 		m_kmix->show();
 		kdDebug() << "shown" << endl;
 	}
 	else
 	{
-	kdDebug() << "newInstance3" << endl;
 		m_kmix = new KMixWindow;
 		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isRestored() && KMainWindow::canBeRestored(0) )
@@ -63,7 +60,9 @@ KMixApp::newInstance()
 }
 
 
-void KMixApp::quitExtended() {
+void 
+KMixApp::quitExtended() 
+{
     // This method is here for quiting from the dock icon: When directly calling
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
@@ -72,3 +71,4 @@ void KMixApp::quitExtended() {
 }
 
 #include "KMixApp.moc"
+

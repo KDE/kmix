@@ -76,8 +76,8 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    if (parent->isA("KMixerWidget"))
        new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
                       m_actions, "stereo" );
-   if (parent->isA("KMixerWidget"))
-       new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
+	
+	new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
 
    KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
    	connect( a, SIGNAL(toggled(bool)), SLOT(setMuted(bool)) );
@@ -703,29 +703,32 @@ MixDeviceWidget::contextMenu()
       ta->plug( menu );
    }
 
-   ta = (KToggleAction *)m_actions->action( "mute" );
+	ta = ( KToggleAction* )m_actions->action( "mute" );
    if ( ta )
    {
       ta->setChecked( m_mixdevice->isMuted() );
       ta->plug( menu );
    }
+	
+	KAction *a = m_actions->action(  "hide" );
+	if ( a ) 
+		a->plug(  menu );
 
-   ta = (KToggleAction *)m_actions->action( "keys" );
-   if ( ta && m_keys ) 
+   a = m_actions->action( "keys" );
+   if ( a && m_keys ) 
 	{
       KActionSeparator sep( this );
       sep.plug( menu );
-
-      ta->plug( menu );
+		a->plug( menu );
    }
 
    KActionSeparator sep( this );
    sep.plug( menu );
 
-   ta = (KToggleAction *)m_actions->action( "options_show_menubar" );
+   a = m_actions->action( "options_show_menubar" );
    if ( ta ) ta->plug( menu );
 
-   ta = (KToggleAction *)m_actions->action( "toggle_channels" );
+   a = m_actions->action( "toggle_channels" );
 	if ( ta ) ta->plug( menu );
 	
    QPoint pos = QCursor::pos();
