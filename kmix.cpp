@@ -247,7 +247,7 @@ void KMix::createWidgets()
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
   setView(Container);
-  KCM->insert(Container, (KCmFunc*)contextMenu);
+  //  KCM->insert(Container, (KCmFunc*)contextMenu);  // !!!
   // Create Menu
   createMenu();
   setMenu(mainmenu);
