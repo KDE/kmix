@@ -35,26 +35,29 @@
 #include "mixer.h"
 
 ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KPanelApplet::Position position )
-    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags) , _position(position)
+    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
     _actions->remove( KStdAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
 
+
     if ( position == KPanelApplet::pLeft || position == KPanelApplet::pRight ) {
-	_orientation = Qt::Vertical;
+      //kdDebug(67100) << "ViewApplet() isVertical" << "\n";
+      _viewOrientation = Qt::Vertical;
     }
-    else {
-	_orientation = Qt::Horizontal;
+     else {
+      //kdDebug(67100) << "ViewApplet() isHorizontal" << "\n";
+      _viewOrientation = Qt::Horizontal;
     }
 
-    if ( _orientation == Qt::Horizontal ) {
+    if ( _viewOrientation == Qt::Horizontal ) {
 	_layoutMDW = new QHBoxLayout( this );
-	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     }
     else {
 	_layoutMDW = new QVBoxLayout( this );
-	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     }
 
 
@@ -99,7 +102,7 @@ QWidget* ViewApplet::add(MixDevice *md)
        the sliders must be vertical
     */
     Qt::Orientation sliderOrientation;
-    if (_orientation == Qt::Horizontal )
+    if (_viewOrientation == Qt::Horizontal )
 	sliderOrientation = Qt::Vertical;
     else
 	sliderOrientation = Qt::Horizontal;
@@ -134,7 +137,7 @@ QSize ViewApplet::sizeHint() const {
 }
 
 QSizePolicy ViewApplet::sizePolicy() const {
-    if ( _orientation == Qt::Horizontal ) {
+    if ( _viewOrientation == Qt::Horizontal ) {
 	//kdDebug(67100) << "ViewApplet::sizePolicy=(Fixed,Expanding)\n";
 	return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
@@ -150,13 +153,15 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
     //kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
     // decide whether we have to show or hide all icons
     bool showIcons = false;
-    if ( _orientation == Qt::Horizontal ) {
+    if ( _viewOrientation == Qt::Horizontal ) {
 	if ( qre->size().height() >= 32 ) {
+	    //kdDebug(67100) << "ViewApplet::resizeEvent() hor >=32" << qre->size() << "\n";
 	    showIcons = true;
 	}
     }
     else {
        if ( qre->size().width() >= 32 ) {
+           //kdDebug(67100) << "ViewApplet::resizeEvent() vert >=32" << qre->size() << "\n";
            showIcons = true;
        }
     }
@@ -209,6 +214,7 @@ void ViewApplet::refreshVolumeLevels() {
 void ViewApplet::configurationUpdate() {
     updateGeometry();
     _layoutMDW->activate();
+    emit appletContentChanged();
     kdDebug(67100) << "ViewApplet::configurationUpdate()" << endl;
     // the following "emit" is only here to be picked up by KMixApplet, because it has to
     // - make sure the panel is informed about the size change

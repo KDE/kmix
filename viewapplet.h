@@ -26,15 +26,18 @@ public:
     QSizePolicy sizePolicy() const;
     virtual void resizeEvent(QResizeEvent*);
 
+signals:
+    void appletContentChanged();
+
 public slots:
    virtual void refreshVolumeLevels();
 
 private:
     QBoxLayout*   _layoutMDW;
     // Position of the applet (pLeft, pRight, pTop, pBottom)
-    KPanelApplet::Position  _position;
+    //KPanelApplet::Position  _KMIXposition;
     // Orientation of the applet (horizontal or vertical)
-    Qt::Orientation _orientation;
+    Qt::Orientation _viewOrientation;
 };
 
 #endif
