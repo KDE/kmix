@@ -1,6 +1,7 @@
 /*
  *              KMix -- KDE's full featured mini mixer
  *
+ *              $Id$
  *
  *              Copyright (C) 1996-2000 Christian Esken
  *                        esken@kde.org
@@ -32,7 +33,7 @@
 #include <sys/soundcard.h>
 // FreeBSD section, according to Sebestyen Zoltan
 #elif defined(__FreeBSD__)
-#include "machine/soundcard.h"
+#include <sys/soundcard.h>
 // NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
 #elif defined(__NetBSD__)
 #include <soundcard.h>
