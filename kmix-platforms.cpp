@@ -22,6 +22,8 @@
 
 /* This code is being #include'd from mixer.cpp */
 
+#include <config.h>
+
 #if defined(sun) || defined(__sun__)
 #define SUN_MIXER
 #endif
@@ -33,9 +35,11 @@
 
 #ifdef linux
 #ifdef ALSA
+//#warning ALSA defined
 #define ALSA_MIXER
 #else
 #define OSS_MIXER
+//#warning OSS defined
 #endif
 #endif
 

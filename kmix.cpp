@@ -316,16 +316,16 @@ void KMix::createWidgets()
   // Create the info line
   i_lbl_infoLine = new QLabel(Container) ;
   i_lbl_infoLine->setText(mix->mixerName());
-  QFont f10("Helvetica", 10, QFont::Normal);
-  i_lbl_infoLine->setFont( f10 );
+//    QFont f10("Helvetica", 10, QFont::Normal);
+//    i_lbl_infoLine->setFont( f10 );
   i_lbl_infoLine->resize(i_lbl_infoLine->sizeHint());
   //  i_lbl_infoLine->setAlignment(QLabel::AlignRight);
   QToolTip::add( i_lbl_infoLine, mix->mixerName() );
 
   i_lbl_setNum =  new QLabel(Container);
   i_lbl_setNum->setText("   "); // set a dummy Text, so that the height() is valid.
-  QFont f8("Helvetica", 10, QFont::Bold);
-  i_lbl_setNum->setFont( f8 );
+//    QFont f8("Helvetica", 10, QFont::Bold);
+//    i_lbl_setNum->setFont( f8 );
   i_lbl_setNum->setBackgroundMode(PaletteLight);
   i_lbl_setNum->resize( i_lbl_setNum->sizeHint());
   QToolTip::add( i_lbl_setNum, i18n("Shows the current set number"));
@@ -380,7 +380,7 @@ void KMix::createWidgets()
     if (! miniDevPM.isNull()) {
       qb->setPixmap(miniDevPM);
       qb->installEventFilter(this);
-    } 
+    }
     else {
       cerr << "Pixmap missing.\n";
     }
@@ -430,7 +430,7 @@ void KMix::createWidgets()
 
   i_time = new QTimer();
   connect( i_time,     SIGNAL(timeout()),      SLOT(updateSliders()) );
-  i_time->start( 20 );
+  i_time->start( 1000 );
 
 }
 
@@ -578,14 +578,14 @@ void KMix::placeWidgets()
     // The same for the state LED
     int l_i_newWidth;
     l_i_newWidth = ix - old_x - 6;
-    
+
     int l_i_xpos, l_i_height;
     l_i_height = l_KLed_state->height();
 
     l_i_xpos  = ix + old_x;
     l_i_xpos -= l_i_newWidth;
     l_i_xpos /= 2;
- 
+
     l_KLed_state->setGeometry(l_i_xpos,l_i_belowSlider, l_i_newWidth, l_i_height);
     l_KLed_state->show();
 
@@ -764,7 +764,7 @@ void KMix::launchHelpCB()
 
 void KMix::launchAboutCB()
 {
-  QMessageBox::about( 0L, globalKapp->caption(), i_s_aboutMsg ); 
+  QMessageBox::about( 0L, globalKapp->caption(), i_s_aboutMsg );
 }
 
 

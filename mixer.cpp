@@ -109,7 +109,7 @@ unsigned int Mixer::size() const
 
 MixDevice* Mixer::operator[](int val_i_num)
 {
-  
+
   MixDevice *l_mc_device;
 
 
@@ -161,7 +161,7 @@ int Mixer::setupMixer(int devnum, int SetNum)
    *  devices are not specified in the mixing set. BTW: Usually they are
    *  specified, but if the "Load/Save options" does not work properly or
    *  if you pick up a configuration file from a friend with different mixing
-   *  hardware, the result could be some serious mess. 
+   *  hardware, the result could be some serious mess.
    */
   Set2Set0(-1,true);       // Read from hardware
   if ( SetNum >= 0) {
@@ -180,6 +180,10 @@ void Mixer::setDevNumName(int devnum)
   this->setDevNumName_I(devnum);
 }
 
+MixDevice* Mixer::createNewMixDevice(int num)
+{ 
+  return new MixDevice(num); 
+};
 
 
 /******************************************************************************
@@ -200,7 +204,7 @@ void Mixer::setDevNumName(int devnum)
  *		some user callbacks (the latter only in the future).
  *
  * in:		-
- * 
+ *
  * out:		-
  *
  *****************************************************************************/
@@ -221,7 +225,7 @@ void  Mixer::setupStructs(void)
       // If we come here, the mixer device with num i is supported by sound driver.
 
       // 1) Create the new MixDevice
-      MixPtr = new MixDevice(i);
+      MixPtr = createNewMixDevice(i);
 
       // 2) Fill the MixDevice
       MixPtr->mix  = this;		// keep track, which mixer is used by device i
@@ -274,7 +278,7 @@ void  Mixer::setupStructs(void)
  *		-1    = Read from mixer hardware
  *		 0    = Default mixing set
  *		 1-...= Other mixing sets
- * 
+ *
  * out:		-
  *
  *****************************************************************************/
@@ -343,6 +347,8 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 	continue;  // entry not found
 
       readVolumeFromHW( MixPtr->num(), &VolLeft, &VolRight);
+      VolLeft  = int(100 * VolLeft / (float)MaxVolume);
+      VolRight = int(100 * VolRight / (float)MaxVolume);
 
       if ( (VolLeft == VolRight) && (MixPtr->stereo() ) )
 	mse->StereoLink = true;
@@ -429,10 +435,13 @@ QString Mixer::errorText(int mixer_error)
     case ERR_NODEV:
       l_s_errmsg = i18n("kmix: Your mixer does not control any devices.");
       break;
-    case  ERR_NOTSUPP: 
+    case  ERR_NOTSUPP:
       l_s_errmsg = i18n("kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING).");
       break;
-    case ERR_OPEN: 
+    case  ERR_NOMEM:
+      l_s_errmsg = i18n("kmix: Not enough memory.");
+      break;
+    case ERR_OPEN:
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
 			"Please check that the soundcard is installed and the\n" \
 			"soundcard driver is loaded\n");
@@ -601,19 +610,13 @@ void Mixer::setRecsrc(unsigned int /* newRecsrc */)
 
 
 
-MixDevice::MixDevice(int num)
+MixDevice::MixDevice(int num, const char* name)
 {
   setNum(num);
-#ifdef ALSA
-    snd_mixer_channel_info_t chinfo;
-    ret = snd_mixer_channel_info( devhandle, num, &chinfo );
-    if ( ret )
-      setName("unknown   ");
-    else
-      setName(chinfo.name);
-#else
+  if( name == 0 ) 
     setName(MixerDevNames[num]);
-#endif
+  else
+    setName( name );
 };
 
 

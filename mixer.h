@@ -68,7 +68,7 @@ signals:
     void relayout();
 
 public:
-  MixDevice(int num);
+  MixDevice(int num, const char* name = 0);
   int		num() const;
   QString	name() const;
   bool		stereo() const;
@@ -109,7 +109,7 @@ private:
 
 
 
-                                                                            
+
 
 /***************************************************************************
  * The structure MixChannel is used as hook for user data in the slots.
@@ -141,7 +141,8 @@ public slots:
 class Mixer
 {
 public:
-  enum { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP, ERR_OPEN, ERR_LASTERR };
+  enum { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP, 
+         ERR_OPEN, ERR_LASTERR, ERR_NOMEM };
   enum { LEFT, RIGHT, BOTH };
 
 
@@ -210,7 +211,7 @@ protected:
   virtual int releaseMixer() = 0;
   virtual void setDevNumName_I(int devnum) = 0;
   QString	devname;
-
+  virtual MixDevice* createNewMixDevice(int num);
 
 protected:
   /// Derived classes MUST implement this to open the mixer. Returns a KMix error
