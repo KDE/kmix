@@ -470,7 +470,8 @@ void KMix::aboutClickedCB()
   msg += vers;
   msg += "\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
-    "This program is in the GPL.";
+    "This program is in the GPL.\n"
+    "SGI Port done by Paul Kendall (paul@orion.co.nz)";
 
   head = "About kmix ";
   head += vers;

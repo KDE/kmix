@@ -132,6 +132,9 @@ int Mixer::setupMixer(char *devname)
   bool ReadFromSet=false;  // !!! Sets not implemented yet
   int  SetNumber=0;
 
+  // !!! Please check other elements, too, and if necessary, set them to a
+  // !!! sane value
+  isOpen = false;
   release();	// To be sure, release mixer before (re-)opening
 
   devmask = recmask = recsrc = stereodevs = 0;
