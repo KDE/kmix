@@ -321,10 +321,13 @@ void KMixWindow::loadConfig()
 
        }
 
-       KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, true, this );
-       mw->setName( name );
-       mw->loadConfig( config, *tab );
-       insertMixerWidget( mw );
+       // only if an actual mixer device is found for the config entry
+       if (mixer) {
+           KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, true, this );
+           mw->setName( name );
+           mw->loadConfig( config, *tab );
+           insertMixerWidget( mw );
+       }
    }
 
    // restore window size and position
