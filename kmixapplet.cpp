@@ -363,10 +363,8 @@ void KMixApplet::selectMixer()
 
 void KMixApplet::triggerUpdateLayout()
 {
-	kdDebug() << "KMixApplet::triggerUpdateLayout()\n";
    if ( m_lockedLayout ) return;
    if ( !m_layoutTimer->isActive() ) {
-	 	kdDebug() << "KMixApplet::triggerUpdateLayout() starting timer\n";
      m_layoutTimer->start( 100, TRUE );
    }
 }
@@ -374,7 +372,6 @@ void KMixApplet::triggerUpdateLayout()
 void KMixApplet::updateLayoutNow()
 {
    m_lockedLayout++;
- 	kdDebug() << "KMixApplet::updateLayoutNow()\n";
    emit updateLayout();
    saveConfig(); // ugly hack to get the config saved somehow
    m_lockedLayout--;
