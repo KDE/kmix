@@ -181,7 +181,7 @@ int Mixer_ALSA::openMixer()
            Volume vol( channels, maxVolume);
            readVolumeFromHW( groupNum, vol );
            m_mixDevices.append(
-              new MixDevice( groupNum, vol, canRecord, i18n(gid->name), ct) );
+              new MixDevice( groupNum, vol, canRecord, i18n((const char*)gid->name), ct) );
         } else
         {
            MixDevice* md = m_mixDevices.at( groupNum );
