@@ -111,6 +111,8 @@ void KMixerWidget::updateDevices( bool vert )
 {   
    kdDebug() << "-> KMixerWidget::updateDevices" << endl;
 
+   if ( !m_mixer ) return;
+
    // delete old objects
    m_channels.clear(); 
    delete m_balanceSlider;

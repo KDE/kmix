@@ -67,6 +67,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
    : KPanelApplet( configFile, t, actions, parent, name ), 
    m_mixerWidget( 0 ), m_errorLabel( 0 ), m_lockedLayout( 0 )
 {
+   kdDebug() << "-> KMixApplet::KMixApplet" << endl;
+
    // init static vars
    if ( !s_instCount )
    { 
@@ -167,10 +169,13 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
      
    // FIXME activate menu items
    //setActions(About | Help | Preferences);
+
+   kdDebug() << "<- KMixApplet::KMixApplet" << endl;
 }
 
 KMixApplet::~KMixApplet()
 {
+   kdDebug() << "-> KMixApplet::~KMixApplet" << endl;
    if ( m_mixerWidget )
    {
       KConfig *cfg = config();
@@ -188,13 +193,16 @@ KMixApplet::~KMixApplet()
       delete s_timer;
       delete s_mixers;
    }
+
+   kdDebug() << "<- KMixApplet::~KMixApplet" << endl;
 }
 
 void KMixApplet::triggerUpdateLayout()
 {   
+   kdDebug() << "KMixApplet::triggerUpdateLayout" << endl;
    if ( m_lockedLayout ) return;
    if ( !m_layoutTimer->isActive() )
-      m_layoutTimer->start( 100, TRUE );
+     m_layoutTimer->start( 100, TRUE );
 }
 
 void KMixApplet::updateLayoutNow()
@@ -208,16 +216,23 @@ void KMixApplet::updateLayoutNow()
 
 int KMixApplet::widthForHeight( int height) const
 {
+   kdDebug() << "-> KMixApplet::widthForHeight" << endl;
+   int width = 0;
    if ( m_mixerWidget )
    {
-      m_mixerWidget->setIcons( height>=32 );
-      return m_mixerWidget->minimumWidth();
-   } else   
-      return m_errorLabel->sizeHint().width();
+      m_mixerWidget->setIcons( height>=32 );      
+      width = m_mixerWidget->minimumWidth();
+   } else 
+      if ( m_errorLabel )
+	 width = m_errorLabel->sizeHint().width();
+
+   kdDebug() << "<- KMixApplet::widthForHeight = " << width << endl;
+   return width;
 }
  
 int KMixApplet::heightForWidth( int width ) const
 {
+   kdDebug() << "KMixApplet::heightForWidth" << endl;
    if ( m_mixerWidget )
    {
       m_mixerWidget->setIcons( width>=32 );
@@ -228,9 +243,11 @@ int KMixApplet::heightForWidth( int width ) const
 
 void KMixApplet::resizeEvent(QResizeEvent *e) 
 {      
+   kdDebug() << "-> KMixApplet::resizeEvent" << endl;
    KPanelApplet::resizeEvent( e );
    if ( m_mixerWidget ) m_mixerWidget->setGeometry( 0, 0, width(), height() );
    if ( m_errorLabel ) m_errorLabel->setGeometry( 0, 0, width(), height() );
+   kdDebug() << "<- KMixApplet::resizeEvent" << endl;
 }
 
 void KMixApplet::about()
