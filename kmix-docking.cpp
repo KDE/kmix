@@ -54,9 +54,14 @@ KMixDockWidget::~KMixDockWidget()
 void KMixDockWidget::doPaint()
 {
   QPainter paint( this );
-  paint.eraseRect(0, 0, this->width(), i_i_y);
-  paint.setBrush( blue );
-  paint.drawRect(i_i_width/2, i_i_y, i_i_width, i_i_height);
+  int h = this->height(), w = this->width();
+  paint.eraseRect(0, 0, w, h);
+  for (int i = 0; i < i_i_height; i=i+2) {
+    //CT why are the colors refusing to function?
+    paint.setBrush( QColor( qRgb( 255 * ( h - i ) / h, 0, 255 * i / h ) ) );
+    paint.drawLine(i_i_width / 2, h - i,
+		   i_i_width / 2 + i_i_width * i / h, h - i);
+  }
 }
 
 void KMixDockWidget::paintEvent (QPaintEvent* )
