@@ -18,14 +18,14 @@ $(srcdir)/version.h: VERSION
 	sed "s/1/#define APP_VERSION \"1/" <VERSION >version.h ;\
 	echo \" >> version.h
 
-EXTRA_DIST = KMix.kdelnk VERSION
+EXTRA_DIST = kmix.desktop VERSION
 
 install-data-local: 
 	$(mkinstalldirs) $(APPSDIR)
-	$(INSTALL_DATA) $(srcdir)/KMix.kdelnk $(APPSDIR)
+	$(INSTALL_DATA) $(srcdir)/kmix.desktop $(APPSDIR)
 
 uninstall-local:
-	rm -f $(APPSDIR)/KMix.kdelnk
+	rm -f $(APPSDIR)/kmix.desktop
 
 messages:
 	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kmix_SOURCES) && mv messages.po ../po/kmix.pot
