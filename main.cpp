@@ -2,7 +2,7 @@
  * KMix -- KDE's full featured mini mixer
  *
  *
- * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
                          APP_VERSION, description, KAboutData::License_GPL,
                          I18N_NOOP("(c) 2000 by Stefan Schimanski"));
 
-   aboutData.addAuthor("Stefan Schimanski", 0, "1Stein@gmx.de");
+   aboutData.addAuthor("Stefan Schimanski", 0, "schimmi@kde.org");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
    aboutData.addAuthor("Brian Hanson", I18N_NOOP("Solaris port"), "bhanson@hotmail.com");
    aboutData.addAuthor("Paul Kendall", I18N_NOOP("SGI Port"), "paul@orion.co.nz");

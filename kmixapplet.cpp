@@ -2,7 +2,7 @@
  * KMix -- KDE's full featured mini mixer
  *
  *
- * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

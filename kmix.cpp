@@ -3,7 +3,7 @@
  *
  * $Id$
  *
- * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  *
  * This program is free software; you can redistribute it and/or
