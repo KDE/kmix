@@ -32,14 +32,11 @@ version.h: VERSION
 	sed "s/0/#define APP_VERSION 0/" <VERSION >version.h
 
 install-data-local: 
-	(cd pics && $(MAKE) install)
 	$(mkinstalldirs) $(APPSDIR)
 	$(INSTALL_DATA) KMix.kdelnk $(APPSDIR)
 
 uninstall-local:
 	rm -f $(APPSDIR)/KMix.kdelnk
-	rm -f $(kde_icondir)/kmix.xpm
-	rm -f $(kde_minidir)/kmix.xpm
 
 messages:
 	@XGETTEXT@ -C -ki18n *.cpp -x../../kdelibs/po/kde.pot && mv messages.po ../po/kmix.pot
