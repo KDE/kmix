@@ -60,8 +60,10 @@ KMixWindow : public KMainWindow
    ~KMixWindow();
 
   protected slots:
-   void saveConfig();
+   void saveSettings();
+
   protected:
+   void saveConfig();
    void loadConfig();
 
    void initMixer();
@@ -77,7 +79,7 @@ KMixWindow : public KMainWindow
    void hideEvent( QHideEvent * );
 
   public slots:
-   void close();
+   void quit();
    void showSettings();
    void showHelp();
    void showAbout();
