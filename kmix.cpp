@@ -430,7 +430,7 @@ void KMix::createMenu()
 
   Mfile->insertItem( i18n("&Options")       , this, SLOT(showOptsCB()) );
   Mfile->insertSeparator();
-  Mfile->insertItem( i18n("&Exit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
+  Mfile->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
   QString msg,head;
