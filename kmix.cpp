@@ -296,8 +296,9 @@ void KMix::createWidgets()
 
 
   // Create Sliders (Volume indicators)
-  MixDevice *MixPtr = mix->First;
-  while (MixPtr) {
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
+    MixPtr = (*mix)[l_i_mixDevice];
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
 #warning This might be called multiple times (e.g. on a set change). I should change it
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
@@ -378,7 +379,6 @@ void KMix::createWidgets()
     }
 
     i_b_first = false;
-    MixPtr=MixPtr->Next;
     // Append MixEntry of current mixer device
   }
 

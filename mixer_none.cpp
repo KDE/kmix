@@ -20,8 +20,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// We need to include always fcntl.h for the open syscall
-#include <fcntl.h>
+#include "mixer_none.h"
 
 // This static method must be implemented (as fallback)
 Mixer* Mixer::getMixer(int devnum, int SetNum)
@@ -32,3 +31,21 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
   return l_mixer;
 }
 
+Mixer_none::Mixer_none()
+{
+}
+
+Mixer_none::~Mixer_none()
+{
+}
+
+int Mixer_none::openMixer()
+{
+   i_s_mixer_name = "No mixer";
+   return Mixer::ERR_NOTSUPP;
+}
+
+int Mixer_none::releaseMixer()
+{
+  return Mixer::ERR_NOTSUPP;
+}

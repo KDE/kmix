@@ -52,6 +52,8 @@
 #include <sys/soundcard.h>
 #endif
 
+#include "mixer_oss.h"
+
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
@@ -63,6 +65,50 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 
 Mixer_OSS::Mixer_OSS() : Mixer() { }
 Mixer_OSS::Mixer_OSS(int devnum, int SetNum) : Mixer(devnum, SetNum) { }
+
+int Mixer_OSS::openMixer()
+{
+  release();		// To be sure, release mixer before (re-)opening
+
+  if ((fd= open(devname.latin1(), O_RDWR)) < 0) {
+    if ( errno == EACCES )
+      return Mixer::ERR_PERM;
+    else
+      return Mixer::ERR_OPEN;
+  }
+  else {
+    // Mixer is open. Now define properties
+    if (ioctl(fd, SOUND_MIXER_READ_DEVMASK, &devmask) == -1)
+      return Mixer::ERR_READ;
+    if (ioctl(fd, SOUND_MIXER_READ_RECMASK, &recmask) == -1)
+      return Mixer::ERR_READ;
+    if (ioctl(fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
+      return Mixer::ERR_READ;
+    if (ioctl(fd, SOUND_MIXER_READ_STEREODEVS, &stereodevs) == -1)
+      return Mixer::ERR_READ;
+    if (!devmask)
+      return Mixer::ERR_NODEV;
+    MaxVolume =100;
+
+    struct mixer_info l_mix_info;
+    if (ioctl(fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
+      i_s_mixer_name = l_mix_info.name;
+    }
+    else {
+      i_s_mixer_name = "OSS Audio Mixer";
+    }
+
+    isOpen = true;
+    return 0;
+  }
+}
+
+int Mixer_OSS::releaseMixer()
+{
+  int l_i_ret = close(fd);
+  return l_i_ret;
+}
+
 
 void Mixer_OSS::setDevNumName_I(int devnum)
 {
@@ -112,3 +158,11 @@ void Mixer_OSS::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
 }
 
 
+
+void Mixer_OSS::writeVolumeToHW( int devnum, int volLeft, int volRight )
+{
+  int Volume = volLeft + ((volRight)<<8);
+
+  if (ioctl(fd, MIXER_WRITE( devnum ), &Volume) == -1)
+    errormsg(Mixer::ERR_WRITE);
+}

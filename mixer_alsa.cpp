@@ -37,7 +37,52 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 Mixer_ALSA::Mixer_ALSA() : Mixer() { };
 Mixer_ALSA::Mixer_ALSA(int devnum, int SetNum) : Mixer(devnum, SetNum);
 
-int Mixer_ALSA::release_I()
+int Mixer_ALSA::openMixer()
+{
+  release();		// To be sure, release mixer before (re-)opening
+
+  int ret = snd_mixer_open( &devhandle, 0, 0 ); /* card 0 mixer 0 */
+  if ( ret ) {
+    return Mixer::ERR_OPEN;
+  }
+  else {
+    // Mixer is open. Now define properties
+    snd_mixer_channel_info_t chinfo;
+    snd_mixer_channel_t data;
+    int num, i;
+    devmask=recmask=i_recsrc=stereodevs=0;
+    MaxVolume = 100;
+    
+    num = snd_mixer_channels( devhandle );
+    if ( num < 0 )
+      return Mixer::ERR_NODEV;
+    for( i=0;i<=num; i++ ) {
+      ret = snd_mixer_channel_info(devhandle, i, &chinfo);
+      if ( !ret ) {
+	if ( chinfo.caps & SND_MIXER_CINFO_CAP_STEREO )
+	  stereodevs |= 1 << i;
+	if ( chinfo.caps & SND_MIXER_CINFO_CAP_RECORD )
+	  recmask |= 1 << i;
+	devmask |= 1 << i;
+	ret = snd_mixer_channel_read( devhandle, i, &data );
+	if ( !ret ) {
+	  if ( data.flags & SND_MIXER_FLG_RECORD )
+	    i_recsrc |= 1 << i;
+	}
+      }
+    }    
+    if ( !devmask ) {
+      return Mixer::ERR_NODEV;
+    }
+
+    i_s_mixer_name = "ALSA Audio Mixer"
+
+    isOpen = true;
+    return 0;
+  }
+}
+
+int Mixer_ALSA::releaseMixer()
 {
   ret = snd_mixer_close(devhandle);
   return ret;

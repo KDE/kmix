@@ -20,6 +20,8 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "mixer_irix.h"
+
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
@@ -35,7 +37,37 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 Mixer_IRIX::Mixer_IRIX() : Mixer() { };
 Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum);
 
-int Mixer_IRIX::release_I()
+int Mixer_IRIX::openMixer()
+{
+  release();		// To be sure, release mixer before (re-)opening
+
+  // Create config
+  m_config = ALnewconfig();
+  if (m_config == (ALconfig)0) {
+    cerr << "OpenAudioDevice(): ALnewconfig() failed\n";
+    return Mixer::ERR_OPEN;
+  }
+  // Open audio device
+  m_port = ALopenport("XVDOPlayer", "w", m_config);
+  if (m_port == (ALport)0) {
+    return Mixer::ERR_OPEN;
+  }
+  else {
+    // Mixer is open. Now define properties
+    devmask	= 1+128+2048;
+    recmask	= 128;
+    i_recsrc    = 128;
+    stereodevs	= 1+128+2048;
+    MaxVolume	= 255; 
+
+    i_s_mixer_name = "HPUX Audio Mixer";
+
+    isOpen	= true;
+    return 0;
+  }
+}
+
+int Mixer_IRIX::releaseMixer()
 {
     ALfreeconfig(m_config);
     ALcloseport(m_port);

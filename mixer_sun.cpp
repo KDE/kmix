@@ -26,6 +26,7 @@
 #include <sys/file.h>
 #include <sys/audioio.h>
 
+#include "mixer_sun.h"
 
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
@@ -41,6 +42,36 @@ Mixer_SUN::Mixer_SUN(int devnum, int SetNum) : Mixer(devnum, SetNum);
 void Mixer_SUN::setDevNumName_I(int devnum)
 {
   devname = "/dev/audioctl";
+}
+
+int Mixer_SUN::openMixer()
+{
+  release();		// To be sure, release mixer before (re-)opening
+
+  if ((fd= open(devname.latin1(), O_RDWR)) < 0) {
+    if ( errno == EACCES )
+      return Mixer::ERR_PERM;
+    else
+      return Mixer::ERR_OPEN;
+  }
+  else {
+    // Mixer is open. Now define properties
+    devmask	= 1;
+    recmask	= 0;
+    i_recsrc	= 0;
+    stereodevs	= 0;
+    MaxVolume	= 255;
+    isOpen	= true;
+
+    i_s_mixer_name = "SUN Audio Mixer"
+    return 0;
+  }
+}
+
+int Mixer_SUN::releaseMixer()
+{
+  int l_i_ret = close(fd);
+  return l_i_ret;
 }
 
 QString Mixer_SUN::errorText(int mixer_error)
