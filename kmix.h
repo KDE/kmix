@@ -33,6 +33,7 @@ class KMix : public KTopLevelWidget
 public:
   KMix(int mixernum);
   ~KMix();
+  bool restore(int n);
   Mixer		*mix;
   Preferences	*prefDL;
   DockWidget    *dock_widget;
@@ -62,6 +63,7 @@ private:
   bool mainmenuOn;
   bool tickmarksOn;
   bool allowDocking;
+  bool startDocked; 
   QPopupMenu* contextMenu(QObject *);
   bool eventFilter(QObject *o, QEvent *e);
 

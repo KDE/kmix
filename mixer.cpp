@@ -288,8 +288,8 @@ void  Mixer::setupStructs(void)
       MixPtr->is_stereo     = (stereowork & 1);
       MixPtr->is_recsrc     = (recsrcwork & 1);
       MixPtr->is_recordable = (recwork    & 1);
-      MixPtr->is_disabled   = false; // !!! sets
-      MixPtr->is_muted      = false; // !!! sets
+      MixPtr->is_disabled   = false;
+      MixPtr->is_muted      = false;
       num_mixdevs++;
     }
     devicework = (devicework>>1);

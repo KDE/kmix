@@ -1,3 +1,7 @@
+1998-06-17  Christian Esken  <esken@kde.org>
+
+	* Can now start docked.
+
 1998-05-20    <esken@kde.org>
 	* Set support is basically in. No user visible aspects, though.
 	* User can now switch visualization of channels on and off.

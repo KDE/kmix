@@ -48,7 +48,6 @@ KMix	     *kmix;
 KConfig	     *KmConfig;
 
 
-bool		ReadFromSet=false;		// !!! Sets not implemented yet
 char		SetNumber;
 extern char	KMixErrors[6][100];
 
@@ -57,14 +56,14 @@ int main(int argc, char **argv)
   globalKapp  = new KApplication( argc, argv, "kmix" );
   globalKIL   = globalKapp->getIconLoader();
 
+  SetNumber = -1;
   /* Parse the command line arguments */
   for (int i=0 ; i<argc; i++) {
-    if (strcmp(argv[i],"-V") == 0) {
+    if (strcmp(argv[i],"-version") == 0) {
       cout << "kmix " << rcsid << '\n';
       exit(0);
     }
     else if (strcmp(argv[i],"-r") == 0) {
-      ReadFromSet = true;
       SetNumber   = 0;
     }
     else if (strcmp(argv[i],"-R") == 0 && i+1<argc) {
@@ -72,7 +71,6 @@ int main(int argc, char **argv)
        * The set number is given as the next argument.
        */
       i=i+1;
-      ReadFromSet = true;
       SetNumber   = atoi(argv[i]);
     }
   }
@@ -102,6 +100,17 @@ KMix::~KMix()
   delete mainmenu;
 }
 
+bool KMix::restore(int n)
+{
+  bool ret = KTopLevelWidget::restore(n);
+//  if (ret && allowDocking && startDocked )
+    hide();
+  return ret;
+}
+
+
+
+
 KMix::KMix(int mixernum)
 {
   KmConfig=KApplication::getKApplication()->getConfig();
@@ -112,6 +121,7 @@ KMix::KMix(int mixernum)
   int Balance;
   Balance     = KmConfig->readNumEntry( "Balance"  , 0 );  // centered by default
   allowDocking= KmConfig->readNumEntry( "Docking"  , 0 );
+  startDocked = KmConfig->readNumEntry( "StartDocked"  , 0 );
 
   KCM = new KCmManager(this);
   CHECK_PTR(KCM);
@@ -144,7 +154,10 @@ KMix::KMix(int mixernum)
   connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
 
   globalKapp->setMainWidget( this );
-  show();
+  if ( !allowDocking || !startDocked)
+    show();
+  else
+    hide();
 }
 
 void KMix::applyOptions()
@@ -401,7 +414,7 @@ void KMix::placeWidgets()
     MixPtr=MixPtr->Next;
   }
 
-  ix += 4; // !!! Hack. TODO chris
+  ix += 4;
   iy = qsMaxY;
   LeftRightSB->setGeometry(0,iy,ix,LeftRightSB->sizeHint().height());
 
@@ -472,7 +485,6 @@ void KMix::tickmarksTogCB()
 void KMix::hideMenubarCB()
 {
   mainmenuOn=!mainmenuOn;
-  //  prefDL->createChannelConfWindow();
   placeWidgets();
 }
 
@@ -504,8 +516,6 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
       QPopupMenu *qpm = contextMenu(o);
 
       if (qpm) {
-	// QPoint p1 =  qme->pos();
-	// cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
 	KCMpopup_point = QCursor::pos();
 	qpm->popup(KCMpopup_point);
 	return true;
@@ -575,11 +585,8 @@ void KMix::onDrop( KDNDDropZone* _zone )
   QStrList strlist;
   KURL *url;
 
-//  cerr << "URLs dropped on KMix!\n";
   strlist = _zone->getURLList();
-
   url = new KURL( strlist.first() );
-//  cout << url->path() << "\n";
   delete url;
 }
 
@@ -623,10 +630,11 @@ void KMix::setBalance(int left, int right)
 void KMix::sessionSave()
 {
   KmConfig->setGroup("");
-  KmConfig->writeEntry( "Balance"  , LeftRightSB->value() , true );
+  KmConfig->writeEntry( "Balance"    , LeftRightSB->value() , true );
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
   KmConfig->writeEntry( "Docking"    , allowDocking);
+  KmConfig->writeEntry( "StartDocked", !isVisible());
   mix->sessionSave();
   KmConfig->sync();
 }

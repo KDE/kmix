@@ -20,6 +20,8 @@
 #define DEFAULT_MIXER "SGI Mixer" // no device name on SGI
 #define _LANGUAGE_C_PLUS_PLUS
 #include <dmedia/audio.h>
+#elif defined(ALSA)
+#define DEFAULT_MIXER "ALSA Mixer"
 #else
 // hope that we have a OSS System
 #define DEFAULT_MIXER "/dev/mixer"

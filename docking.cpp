@@ -45,24 +45,11 @@ DockWidget::DockWidget(const char *name)
   tmp.sprintf(i18n("Could not load %s !"), pm); \
   QMessageBox::warning(this, i18n("Error"), tmp);
 
-  //     printf("trying to load %s\n",pixdir.data());
   // load pixmaps
 
   if (!cdsmall_pixmap.load(pixdir + "kmixdocked.xpm")){
     PMERROR("kmixdocked.xpm");
   }
-
-     /*
-     if (!dock_left_pixmap.load(pixdir + "dock_left.xpm")){
-    PMERROR("dock_left.xpm");
-  }
-  if (!dock_right_pixmap.load(pixdir + "dock_right.xpm")){
-    PMERROR("dock_right.xpm");
-  }
-  if (!dock_both_pixmap.load(pixdir + "dock_both.xpm")){
-    PMERROR("dock_both.xpm");
-  }
-  */
 
   // popup menu for right mouse button
   popup_m = new QPopupMenu();
