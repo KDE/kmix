@@ -112,13 +112,13 @@ KMixerWidget::createLayout()
 
    if( ! m_small )
    {
-		QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 0, 1, "FullLayout" );
+		//QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 0, 1, "FullLayout" );
 
    	if( m_topLayout )
       	delete m_topLayout;
       // create main layout
 
-      m_topLayout = new QVBoxLayout( this, 0, 3 );
+      m_topLayout = new QVBoxLayout( this, 0, 3,  "m_topLayout" );
       // m_topLayout->setMargin( KDialog::marginHint() );  // !! Why should we pick up KDialog::marginHint()? - esken
 
       // Create tabs e widgetstack
@@ -129,6 +129,7 @@ KMixerWidget::createLayout()
 
       // Create switch buttonGroup
       m_swWidget = new QWidget( this, "switchWidget" );
+      m_swWidget->hide(); // hidden, until the user clicks the "Advanced/Expand" button.
       m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 0,"devSwitchLayout" );
 
       // Both Layouts and widgets
@@ -142,7 +143,7 @@ KMixerWidget::createLayout()
    	// Create de widgets
 		createDeviceWidgets();
 		
-		fullLayout->addLayout( m_topLayout, 0, 0 );
+		//fullLayout->addLayout( m_topLayout, 0, 0 );
    }
    else
    {
@@ -214,28 +215,31 @@ KMixerWidget::createDeviceWidgets()
 
    if ( !m_small )
    {
-		QHBoxLayout *balanceAndDetail = new QHBoxLayout( this, 0, 8 );
+		QHBoxLayout *balanceAndDetail = new QHBoxLayout( m_topLayout, 8,  "balanceAndDetail");
    	
    	// Create the left-right-slider
       m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
                                      this, "RightLeft" );
       m_balanceSlider->setTickmarks( QSlider::Below );
       m_balanceSlider->setTickInterval( 25 );
+      m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
      // if( ! m_small ) // superfluous
         
         QLabel *mixerName = new QLabel(this, "mixerName");
         mixerName->setText( m_mixer->mixerName() );
         
         QCheckBox *hideShowDetail = new QCheckBox(this, "hideShowDetail");
-        hideShowDetail->setChecked(true);
+        hideShowDetail->setChecked(false);
         //hideShowDetail->setToggleButton(true);
         hideShowDetail->setText( i18n("Advanced") );
 
+		balanceAndDetail->addSpacing( 10 );
 		balanceAndDetail->addWidget( hideShowDetail);
 		balanceAndDetail->addWidget( m_balanceSlider );
 		balanceAndDetail->addWidget( mixerName );
+		balanceAndDetail->addSpacing( 10 );
 		
- 		m_topLayout->addLayout( balanceAndDetail );
+ 		//m_topLayout->addLayout( balanceAndDetail );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
       connect( hideShowDetail, SIGNAL(toggled(bool)), this, SLOT(hideShowDetail(bool)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
@@ -248,16 +252,26 @@ KMixerWidget::createDeviceWidgets()
 		m_balanceSlider = 0;
 	}
 
-	updateSize();
+	updateSize(true);
+	// we have to expliciteley set the size, as
 }
 
 void 
 KMixerWidget::updateSize()
 {
-	kdDebug() << "KMixerWidget::updateSize(): (" << layout()->minimumSize().width() << "," << layout()->minimumSize().height() << ")\n";
+	updateSize(false);
+}
+
+void 
+KMixerWidget::updateSize(bool force)
+{
+	//kdDebug() << "KMixerWidget::updateSize(): (" << layout()->minimumSize().width() << "," << layout()->minimumSize().height() << ")\n";
    layout()->activate();
    setMinimumWidth( layout()->minimumSize().width() );
    setMinimumHeight( layout()->minimumSize().height() );
+   if ( force ) {
+		resize( layout()->minimumSize().width(), layout()->minimumSize().height() );
+   }
    emit updateLayout();
 }
 
@@ -270,6 +284,7 @@ KMixerWidget::setTicks( bool on )
       for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() )
          chn->dev->setTicks( on );
    }
+   updateSize(false);
 }
 
 void 
@@ -281,6 +296,7 @@ KMixerWidget::setLabels( bool on )
       for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() )
          chn->dev->setLabeled( on );
    }
+   updateSize(false);
 }
 
 void 
@@ -297,9 +313,11 @@ KMixerWidget::setIcons( bool on )
 void KMixerWidget::hideShowDetail(bool on) {
 	if ( on ) {
 			m_swWidget->show();
+			updateSize(false); // don't force new size (will make automatically bigger if neccesary)
 	}
 	else {
 			m_swWidget->hide();
+			updateSize(true); //
 	}
 }
 
