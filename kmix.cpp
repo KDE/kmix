@@ -604,13 +604,11 @@ bool KMix::event(QEvent *e)
     if (!KWM::isIconified(winId())) // maybe we are just on another desktop
       return FALSE;
 
-    if(dock_widget) {
+    if(dock_widget)
       dock_widget->dock();
-      dock_widget->savePosition();
-    }
     this->hide();
     // a trick to remove the window from the taskbar (Matthias)
-    recreate(0,0, geometry().topLeft(), FALSE);
+    recreate(0,0, QPoint(x(), y()), FALSE);
     globalKapp->setTopWidget( this );
     return TRUE;
   }

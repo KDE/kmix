@@ -30,6 +30,7 @@
 
 extern KApplication *globalKapp;
 extern KMix *kmix;
+
 extern bool dockinginprogress;
 
 DockWidget::DockWidget(const char *name)
@@ -85,12 +86,12 @@ void DockWidget::dock() {
     show();
     docked = true;
   }
-  if(kmix){
+/*  if(kmix){
     QPoint point = kmix->mapToGlobal (QPoint (0,0));
     pos_x = point.x();
     pos_y = point.y();
 
-  }
+  }*/
 }
 
 void DockWidget::undock() {
@@ -163,79 +164,29 @@ void DockWidget::mousePressEvent(QMouseEvent *e) {
 
 }
 
-void DockWidget::toggle_window_state() {
-
-    // restore/hide connect-window
-    /*
-    if(kmix != 0L)  {
-        if (kmix->isVisible()){
-
-            QPoint point = kmix->mapToGlobal (QPoint (0,0));
-            pos_x = point.x();
-            pos_y = point.y();
-            toggled = true;
-            kmix->hide();
-        }
-        else {
-            if(!have_position)
-                savePosition();
-            kmix->setGeometry( pos_x,
-                               pos_y,
-                               kmix->width(),
-                               kmix->height());
-
-            toggled = false;
-            kmix->show();
-        }
-    }
-    */
+void DockWidget::toggle_window_state()
+{
     if(kmix != 0L)  {
         if (kmix->isVisible()){
             dockinginprogress = true;
-            savePosition();
-//            QPoint point = k->mapToGlobal (QPoint (0,0));
-//            pos_x = point.x();
-//            pos_y = point.y();
             toggled = true;
             kmix->hide();
+            kmix->recreate(0, 0, QPoint(kmix->x(), kmix->y()), FALSE);
+            kapp->setTopWidget( kmix );
+
         }
         else {
-
-            if(!have_position)
-                savePosition();
-
-            kmix->setGeometry(
-                           pos_x,
-                           pos_y,
-                           kmix->width(),
-                           kmix->height());
             toggled = false;
-            //
-            QPoint zp = kmix->mapToGlobal(QPoint (0,0));
-            if(zp.x() == pos_x && zp.y() == pos_y){
-//                if(debugflag)
-//                  printf("warning: qt bug? compensating.....\n");
-                kmix->setGeometry(pos_x-4, pos_y-24, kmix->width(), kmix->height());
-            }
-            //
             kmix->show();
-            KWM::activate(kmix->winId());
             dockinginprogress = false;
+            KWM::activate(kmix->winId());
         }
     }
-
 }
 
 const bool DockWidget::isToggled()
 {
     return(toggled);
-}
-
-void DockWidget::savePosition() {
-  QPoint point = kmix->mapToGlobal (QPoint (0,0));
-  pos_x = point.x();
-  pos_y = point.y();
-  have_position = true;
 }
 
 void DockWidget::emit_quit()
