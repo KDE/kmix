@@ -42,7 +42,7 @@
 #define OSS_MIXER
 #endif
 
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__bsdi__) || defined(_UNIXWARE)
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(_UNIXWARE)
 #define OSS_MIXER
 #endif
 
