@@ -8,7 +8,7 @@ SUBDIRS = pics docs
 bin_PROGRAMS = 	kmix
 kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp docking.cpp sets.cpp channel.cpp
 noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h docking.h sets.h channel.h
-kmix_LDADD = -lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET)
+kmix_LDADD = -lkdeui -lkdecore  -lXext  $(LIB_QT)
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 BUILTSOURCES = kmix.moc mixer.moc prefs.moc docking.moc
