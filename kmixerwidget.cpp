@@ -61,7 +61,7 @@
 
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
                             MixDevice::DeviceCategory categoryMask,
-                            QWidget * parent, const char * name, bool menuInitallyVisible  )
+                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
    : QWidget( parent, name ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0),
      //m_name( mixerName ), m_mixerName( mixerName ),
@@ -78,7 +78,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int
 
    if ( _mixer )
    {
-      createLayout(menuInitallyVisible);
+      createLayout(vflags);
    }
    else
    {
@@ -97,7 +97,7 @@ KMixerWidget::~KMixerWidget()
 {
 }
 
-void KMixerWidget::createLayout(bool menuInitallyVisible)
+void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 {
     // delete old objects
     if( m_balanceSlider ) {
@@ -115,9 +115,9 @@ void KMixerWidget::createLayout(bool menuInitallyVisible)
     m_topLayout->add( m_ioTab );
 
     // Both Layouts and widgets
-    _oWidget  = new ViewOutput  ( m_ioTab, "OutputTab" , _mixer, menuInitallyVisible );
-    _iWidget  = new ViewInput   ( m_ioTab, "InputTab"  , _mixer, menuInitallyVisible );
-    _swWidget = new ViewSwitches( m_ioTab, "SwitchTab" , _mixer, menuInitallyVisible );
+    _oWidget  = new ViewOutput  ( m_ioTab, "OutputTab" , _mixer, vflags );
+    _iWidget  = new ViewInput   ( m_ioTab, "InputTab"  , _mixer, vflags );
+    _swWidget = new ViewSwitches( m_ioTab, "SwitchTab" , _mixer, vflags );
 
     m_ioTab->addTab( _oWidget , i18n("Output") );
     m_ioTab->addTab( _iWidget , i18n("Input" ) );
@@ -156,6 +156,7 @@ void KMixerWidget::createLayout(bool menuInitallyVisible)
     connect( m_balanceSlider, SIGNAL(valueChanged(int)), _mixer, SLOT(setBalance(int)) );
     QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
+    /** !! newVolume and newRecsrc Signals are now connected in ViewBase (where it belongs)
     // ------------------ SIGNALLING ------------------
     // --- volume levels from HW to GUI ---
     connect( _mixer, SIGNAL(newVolumeLevels()), _oWidget, SLOT(refreshVolumeLevels()) );
@@ -165,6 +166,7 @@ void KMixerWidget::createLayout(bool menuInitallyVisible)
 
     // --- Record source from HW to GUI ---
     connect( _mixer, SIGNAL(newRecsrc())      , _iWidget, SLOT(refreshVolumeLevels()) ); // only _iWidget has record sources
+    */
 
     // --- "MenuBar" toggling from the various context menus ---
     connect( _oWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
@@ -276,6 +278,7 @@ void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 /**
  * Updates the Balance slider (GUI).
  */
+/*
 void
 KMixerWidget::updateBalance()
 {
@@ -297,6 +300,7 @@ KMixerWidget::updateBalance()
   m_balanceSlider->setValue( value );
   m_balanceSlider->blockSignals( false );
 }
+*/
 
 void KMixerWidget::toggleMenuBarSlot() {
     emit toggleMenuBar();

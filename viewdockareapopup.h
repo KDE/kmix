@@ -16,7 +16,7 @@ class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, KMixDockWidget *dockW);
+    ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW);
     ~ViewDockAreaPopup();
     MixDevice* dockDevice();
 

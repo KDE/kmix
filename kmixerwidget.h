@@ -45,6 +45,7 @@ class KTabWidget;
 
 // KMix
 class Mixer;
+#include "viewbase.h"
 class ViewInput;
 class ViewOutput;
 class ViewSwitches;
@@ -57,18 +58,12 @@ class KMixerWidget : public QWidget
   public:
    KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
                  MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
-                 QWidget *parent=0, const char *name=0, bool menuInitallyVisible=true );
+                 QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
    ~KMixerWidget();
 	
    enum KMixerWidgetIO { OUTPUT=0, INPUT };
 
-   //   void addActionToPopup( KAction *action );
-
-   //QString name() const { return m_name; };
-   //void setName( const QString &name ) { m_name = name; };
-
    const Mixer *mixer() const { return _mixer; };
-   //QString mixerName()  const { return m_mixerName; };
    int mixerNum() const { return m_mixerNum; };
 
    int id() const { return m_id; };
@@ -90,8 +85,7 @@ class KMixerWidget : public QWidget
    void loadConfig( KConfig *config, const QString &grp );
 
   private slots:
-   void updateBalance();
-  //   void slotToggleMixerDevice(int id);
+      //void updateBalance();
 
   private:
    Mixer *_mixer;
@@ -104,12 +98,9 @@ class KMixerWidget : public QWidget
    ViewInput*     _iWidget;
    ViewSwitches*  _swWidget;
 
-   //QString m_name;
-   //QString m_mixerName;
    int m_mixerNum;
    int m_id;
 
-   //KActionCollection *m_actions;
    KActionMenu *m_toggleMixerChannels;
 
    bool _iconsEnabled;
@@ -117,8 +108,7 @@ class KMixerWidget : public QWidget
    bool _ticksEnabled;
    MixDevice::DeviceCategory m_categoryMask;
 
-   void createLayout(bool menuInitallyVisible);
-   //   void createMasterVolWidget(KPanelApplet::Direction);
+   void createLayout(ViewBase::ViewFlags vflags);
 };
 
 #endif

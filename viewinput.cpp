@@ -25,10 +25,11 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
-ViewInput::ViewInput(QWidget* parent, const char* name, Mixer* mixer, bool menuInitallyVisible)
-      : ViewSliders(parent, name, mixer, menuInitallyVisible)
+ViewInput::ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
+      : ViewSliders(parent, name, mixer, vflags)
 {
     init();
+    connect ( _mixer, SIGNAL(newRecsrc())      , this, SLOT(refreshVolumeLevels()) ); // only the input widget has record sources
 }
 
 ViewInput::~ViewInput() {

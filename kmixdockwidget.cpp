@@ -72,25 +72,18 @@ KMixDockWidget::createMasterVolWidget()
 
     // create devices
 
-    _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, this);
+    _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, this);
     _dockAreaPopup->createDeviceWidgets();
     /* We are setting up 3 connections:
-     * Refreshig the _dockAreaPopup
+     * Refreshig the _dockAreaPopup (not anymore neccesary, because ViewBase already does it)
      * Refreshing the Tooltip
      * Refreshing the Icon
      *
      */
-    connect( m_mixer, SIGNAL(newVolumeLevels()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
+    //    connect( m_mixer, SIGNAL(newVolumeLevels()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
     connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(setVolumeTip() ) );
     connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(updatePixmap() ) );
 
-    /*
-      MixDevice *md = _dockAreaPopup->dockDevice();
-      if (md !=  0) {
-        setVolumeTip(0, md->getVolume());
-      }
-    */
-	
    // Setup volume preview
    if ( _playBeepOnVolumeChange ) {
         _audioPlayer = new KAudioPlayer("KDE_Beep_ShortBeep.wav");

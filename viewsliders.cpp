@@ -37,8 +37,8 @@
  * correctly because init() does not get called.
  * See ViewInput and ViewOutput for "real" implementations.
  */
-ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, bool menuInitallyVisible)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, menuInitallyVisible)
+ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
+      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
 {
     _layoutMDW = new QHBoxLayout(this);
     /*

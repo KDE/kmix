@@ -34,8 +34,8 @@
 #include "mixer.h"
 #include "kmixdockwidget.h"
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, KMixDockWidget *dockW)
-      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup), _dock(dockW)
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
+      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup, vflags), _dock(dockW)
 {
     init();
 

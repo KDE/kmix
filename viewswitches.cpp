@@ -29,8 +29,8 @@
 #include "mdwswitch.h"
 #include "mixer.h"
 
-ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, bool menuInitallyVisible)
-      : ViewBase(parent, name, mixer, 0, menuInitallyVisible)
+ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
+      : ViewBase(parent, name, mixer, 0, vflags)
 {
     // Create switch buttonGroup
     _layoutMDW = new QHBoxLayout(this);

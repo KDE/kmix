@@ -18,7 +18,14 @@ class ViewBase : public QWidget
 {
     Q_OBJECT
 public:
-    ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, bool menuInitallyVisible=true);
+
+    typedef uint ViewFlags;
+    enum ViewFlagsEnum {
+        HasMenuBar     = 0x0001,
+        MenuBarVisible = 0x0002
+    };
+
+    ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0);
     virtual ~ViewBase();
 
     // Subclasses must define this method. It is called by the ViewBase() constuctor.

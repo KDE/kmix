@@ -11,7 +11,7 @@ class ViewSwitches : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, bool menuInitallyVisible);
+    ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
     ~ViewSwitches();
 
     virtual int count();

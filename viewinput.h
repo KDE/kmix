@@ -9,7 +9,7 @@ class ViewInput : public ViewSliders
 {
     Q_OBJECT
 public:
-    ViewInput(QWidget* parent, const char* name, Mixer* mixer, bool menuInitallyVisible);
+    ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
     ~ViewInput();
 
     virtual void setMixSet(MixSet *mixset);

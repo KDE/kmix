@@ -37,7 +37,7 @@
 #include "mixer.h"
 
 
-ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, bool menuInitallyVisible)
+ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, ViewBase::ViewFlags vflags)
      : QWidget(parent, name, f)
 {
     _mixer = mixer;
@@ -49,12 +49,18 @@ ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, bo
     */
     _actions = new KActionCollection( this );
 
-    // !! "show menubar" is also plugged into the Popup of ViewDockAreaPopup.
-    //     But luckily that Popup is disabled. :)
-    KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-    m->setChecked(menuInitallyVisible);
-    new KAction(i18n("&Channels"), 0,
-		this, SLOT(configureView()), _actions, "toggle_channels");
+    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only neccesary for views in the KMix main window.
+    if ( vflags && ViewBase::HasMenuBar ) {
+	KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
+	if ( vflags && ViewBase::MenuBarVisible ) {
+	    m->setChecked(true);
+	}
+	else {
+	    m->setChecked(false);
+	}
+    }
+    new KAction(i18n("&Channels"), 0, this, SLOT(configureView()), _actions, "toggle_channels");
+    connect ( _mixer, SIGNAL(newVolumeLevels()), this, SLOT(refreshVolumeLevels()) );
 }
 
 ViewBase::~ViewBase() {

@@ -465,8 +465,13 @@ KMixWindow::initMixerWidgets()
 	    //kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
 
 
+                ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
+                if ( m_showMenubar ) {
+                    vflags |= ViewBase::MenuBarVisible;
+	        }
+	
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
-						     MixDevice::ALL, this, "KMixerWidget",  m_showMenubar );
+						     MixDevice::ALL, this, "KMixerWidget", vflags );
 
 		//mw->setName( mixer->mixerName() );
 

@@ -35,8 +35,8 @@
 #include "mdwslider.h"
 #include "mixer.h"
 
-ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, KPanelApplet::Position position )
-    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder) , _position(position)
+ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KPanelApplet::Position position )
+    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags) , _position(position)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
@@ -48,7 +48,7 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, KPanelAp
     else {
 	_orientation = Qt::Horizontal;
     }
-    
+
     if ( _orientation == Qt::Horizontal ) {
 	_layoutMDW = new QHBoxLayout( this );
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -70,11 +70,9 @@ void ViewApplet::setMixSet(MixSet *mixset)
 {
     MixDevice* md;
     for ( md = mixset->first(); md != 0; md = mixset->next() ) {
-	//	kdDebug(67100) << "ViewApplet::setMixSet() loop\n";
 	if ( ! md->isSwitch() ) {
 	    _mixSet->append(md);
 	}
-	//	kdDebug(67100) << "ViewApplet::setMixSet() loop size is now " << count() <<"\n";
     }
 }
 
@@ -125,16 +123,18 @@ QWidget* ViewApplet::add(MixDevice *md)
 }
 
 QSize ViewApplet::sizeHint() {
-    //kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    // kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+
+    // Basically out main layout knows very good what the sizes should be
     QSize qsz = _layoutMDW->sizeHint();
-    // now constrain the size by the height() or width() of the panel
+    // But the panel is limited - thus constrain the size by the height() or width() of the panel
     if ( _orientation == Qt::Horizontal ) {
 	qsz.setHeight( parentWidget()->height() );
     }
     else {
 	qsz.setWidth ( parentWidget()->width() );
     }
-    return qsz;    
+    return qsz;
 }
 
 void ViewApplet::constructionFinished() {
@@ -143,7 +143,7 @@ void ViewApplet::constructionFinished() {
 
 void ViewApplet::resizeEvent(QResizeEvent *qre)
 {
-    kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
+    //    kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
     // decide whether we have to show or hide all icons
     bool showIcons = false;
     if ( _orientation == Qt::Horizontal ) {

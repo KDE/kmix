@@ -149,15 +149,20 @@ bool AppletConfigDialog::useCustomColors() const
     return colorWidget->customColors->isChecked();
 }
 
+/*
 void AppletConfigDialog::setReverseDirection(bool reverse)
 {
-    colorWidget->reverseDirection->setChecked(reverse);
+    // ! unsupported
+    //colorWidget->reverseDirection->setChecked(reverse);
 }
 
 bool AppletConfigDialog::reverseDirection() const
 {
-    return colorWidget->reverseDirection->isChecked();
+    return false;
+    // ! unsupportd
+    return colorWidget->reverseDirection->isChecked();    
 }
+*/
 
 KMixApplet::KMixApplet( const QString& configFile, Type t,
                         QWidget *parent, const char *name )
@@ -322,7 +327,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     }
 	
     //  Find out wether the applet should be reversed
-    reversedDir = cfg->readBoolEntry("ReversedDirection", false);
+    //reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 
     if ( !_mixer )
     {
@@ -373,7 +378,7 @@ void KMixApplet::saveConfig()
         cfg->writeEntry( "ColorMutedLow", m_colors.mutedLow.name() );
         cfg->writeEntry( "ColorMutedBack", m_colors.mutedBack.name() );
 
-        cfg->writeEntry( "ReversedDirection", reversedDir );
+        //cfg->writeEntry( "ReversedDirection", reversedDir );
 
         saveConfig( cfg, "Widget" );
         cfg->sync();
@@ -432,7 +437,7 @@ void KMixApplet::selectMixer()
 
 void KMixApplet::resizeEvent(QResizeEvent *e)
 {
-    kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
+    //    kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
     if ( m_mixerWidget ) m_mixerWidget->resize( e->size().width(), e->size().height() );
     if ( m_errorLabel  ) m_errorLabel ->resize( e->size().width(), e->size().height() );
     //KPanelApplet::resizeEvent( e );
@@ -471,7 +476,7 @@ void KMixApplet::positionChange(Position pos) {
 	    saveConfig(); // save the applet before recreating it
 	    delete m_mixerWidget;
 	}
-	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, pos );
+	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, 0, pos );
 	m_mixerWidget->createDeviceWidgets();
 	
 	loadConfig( config(), "Widget" );
@@ -483,7 +488,7 @@ void KMixApplet::positionChange(Position pos) {
 	//setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	//kdDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
 	m_mixerWidget->show();
-	connect( _mixer, SIGNAL(newVolumeLevels()), m_mixerWidget, SLOT(refreshVolumeLevels()) );
+	//connect( _mixer, SIGNAL(newVolumeLevels()), m_mixerWidget, SLOT(refreshVolumeLevels()) );
     }
 }
 
@@ -500,7 +505,7 @@ QSize KMixApplet::sizeHint() const {
 	// Return something that should resemble our former sizeHint().
 	qsz = size();
     }
-    
+
     // now constrain the size by the height() or width() of the panel
     if ( position() == KPanelApplet::pLeft || position() == KPanelApplet::pRight ) {
 	qsz.setHeight( this->height() );
@@ -523,7 +528,7 @@ void KMixApplet::preferences()
         m_pref->setMutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
 
         m_pref->setUseCustomColors( _customColors );
-        m_pref->setReverseDirection( reversedDir );
+	//      m_pref->setReverseDirection( reversedDir );
 
     }
 
@@ -551,16 +556,19 @@ void KMixApplet::applyPreferences()
     m_pref->activeColors(m_colors.high, m_colors.low, m_colors.back);
     m_pref->mutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
     _customColors = m_pref->useCustomColors();
-    reversedDir = m_pref->reverseDirection();
+    //reversedDir = m_pref->reverseDirection();
     if (!m_mixerWidget)
         return;
 
     QSize si = m_mixerWidget->size();
     positionChange( position());
+
+    /* now done by ViewApplet
     if( position() == pTop || position() == pBottom )
         setIcons( si.height()>=32 );
     else
         setIcons( si.width()>=32 );
+    */
 
     m_mixerWidget->resize( si );
     setColors();
@@ -579,6 +587,7 @@ void KMixApplet::setColors( const Colors &color )
     }
 }
 
+/* // ViewApplet does this now
 void KMixApplet::setIcons( bool on )
 {
     if ( _iconsEnabled!=on )
@@ -607,6 +616,7 @@ void KMixApplet::setTicks( bool on )
 	KMixToolBox::setTicks(m_mixerWidget->_mdws, on);
     }
 }
+*/
 
 #include "kmixapplet.moc"
 

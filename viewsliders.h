@@ -11,7 +11,7 @@ class ViewSliders : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewSliders(QWidget* parent, const char* name, Mixer* mixer, bool menuInitallyVisiblee);
+    ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
     ~ViewSliders();
 
     virtual int count();

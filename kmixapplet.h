@@ -55,8 +55,10 @@ class AppletConfigDialog : public KDialogBase
    void setUseCustomColors(bool);
    bool useCustomColors() const;
 
+   /*
    void setReverseDirection(bool);
    bool reverseDirection() const;
+   */
 
   protected slots:
    virtual void slotOk();
@@ -103,16 +105,18 @@ class KMixApplet : public KPanelApplet
    void loadConfig( KConfig *config, const QString &grp );
 
   private:
+   /*
    void setIcons( bool on );
    void setLabels( bool on );
    void setTicks( bool on );
+   */
    void setColors( const Colors &color );
 
    ViewApplet *m_mixerWidget;
    QPushButton *m_errorLabel;
    int m_lockedLayout;
    AppletConfigDialog *m_pref;
-   bool reversedDir; //  reverses direction of sliders and icon position
+   //bool reversedDir; //  ! unupported (was: reverses direction of sliders and icon position)
    void positionChange(Position);
    //   Direction checkReverse(Direction);
    //   Direction getDirectionFromPositionHack(Position pos) const;
