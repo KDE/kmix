@@ -54,7 +54,7 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   // Restore settings
   QGroupBox *restGrp = new QGroupBox( i18n("Default Volumes"), this );
   restGrp->setColumnLayout( 0, Qt::Horizontal );
-  QBoxLayout *restLayout = new QVBoxLayout( restGrp->layout(), 
+  QBoxLayout *restLayout = new QVBoxLayout( restGrp->layout(),
       KDialog::spacingHint());
   topLayout->addWidget( restGrp );
 
@@ -78,7 +78,7 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   QGroupBox *hdwGrp = new QGroupBox( i18n("Hardware Settings"), this );
   topLayout->addWidget( hdwGrp );
   hdwGrp->setColumnLayout( 0, Qt::Horizontal );
-  QBoxLayout *hdwLayout = new QVBoxLayout( hdwGrp->layout(), 
+  QBoxLayout *hdwLayout = new QVBoxLayout( hdwGrp->layout(),
       KDialog::spacingHint());
 
   m_maxDevices = new KIntNumInput( hdwGrp );
@@ -114,7 +114,7 @@ void KMixConfig::loadVolumes()
    {
       kdDebug() << "can't find kmixctrl" << endl;
 
-      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") );
+      KMessageBox::sorry ( this, i18n("The kmixctrl executable cannot be found.") );
       delete ctrl;
       return;
    }
@@ -142,7 +142,7 @@ void KMixConfig::saveVolumes()
    {
       kdDebug() << "can't find kmixctrl" << endl;
 
-      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") );
+      KMessageBox::sorry ( this, i18n("The kmixctrl executable cannot be found.") );
       delete ctrl;
       return;
    }
