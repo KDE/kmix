@@ -52,7 +52,7 @@ KMixDockWidget::~KMixDockWidget()
 void KMixDockWidget::createMasterVolWidget()
 {
     if (!m_mixer)
-	return;
+        return;
 
    // create devices
    MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
@@ -92,47 +92,47 @@ void KMixDockWidget::mousePressEvent(QMouseEvent *me)
 void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
 {
     if(!masterVol) {
-	KSystemTray::mouseReleaseEvent(me);
-	return;
+        KSystemTray::mouseReleaseEvent(me);
+        return;
     }
     KConfig *config = kapp->config();
     config->setGroup(0);
     if( config->readBoolEntry("TrayVolumeControl", true ) ) {
         // If left-click, toggle the master volume control.
         switch ( me->button() ) {
-        case LeftButton:
-            if (!masterVol->isVisible()) {
-                QWidget *desktop = QApplication::desktop();
-                int sw = desktop->width();
-                int sh = desktop->height();
-                int sx = desktop->x();
-                int sy = desktop->y();
-                int x = me->globalPos().x();
-                int y = me->globalPos().y();
-                y -= masterVol->geometry().height();
-                int w = masterVol->width();
-                int h = masterVol->height();
+    		case LeftButton:
+        		if (!masterVol->isVisible()) {
+            		QWidget *desktop = QApplication::desktop();
+            		int sw = desktop->width();
+            		int sh = desktop->height();
+            		int sx = desktop->x();
+            		int sy = desktop->y();
+            		int x = me->globalPos().x();
+            		int y = me->globalPos().y();
+            		y -= masterVol->geometry().height();
+            		int w = masterVol->width();
+            		int h = masterVol->height();
 
-                if (x+w > sw)
-                    x = me->globalPos().x()-w;
-                if (y+h > sh)
-                    y = me->globalPos().y()-h;
-                if (x < sx)
-                    x = me->globalPos().x();
-                if (y < sy)
-                    y = me->globalPos().y();
+            		if (x+w > sw)
+                		x = me->globalPos().x()-w;
+            		if (y+h > sh)
+                		y = me->globalPos().y()-h;
+            		if (x < sx)
+                		x = me->globalPos().x();
+            		if (y < sy)
+                		y = me->globalPos().y();
 
-                masterVol->move(x, y);
-                masterVol->show();
-            } else {
-                masterVol->hide();		// fixme: this doesn't work?!
-            }
-            QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
-            return;
-        default:
-            masterVol->hide();
-            KSystemTray::mouseReleaseEvent(me);
-            return;
+            		masterVol->move(x, y);
+            		masterVol->show();
+        		} else {
+            		masterVol->hide();          // fixme: this doesn't work?!
+        		}
+        		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
+        		return;
+    		default:
+        		masterVol->hide();
+        		KSystemTray::mouseReleaseEvent(me);
+        		return;
         }
     }
     KSystemTray::mouseReleaseEvent(me);
