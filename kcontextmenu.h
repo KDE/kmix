@@ -45,7 +45,7 @@ private:
       a derivation. In the initialization of a KApplication you would typically hand over "this". */
   QObject		*filterObj;
   /// The event filter will filter all events for filterObj
-  bool KCmManager::eventFilter(QObject *, QEvent *);
+  bool eventFilter(QObject *, QEvent *);
   /// This is where the menu will be popped up
   QPoint		popup_point;
 };
