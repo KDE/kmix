@@ -156,6 +156,7 @@ KMixWindow::initActions()
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
 				 actionCollection(), "dock_mute" );
 
+	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
 	createGUI( "kmixui.rc" );
 }
 
@@ -186,6 +187,7 @@ KMixWindow::initMixer()
 
    //kdDebug() << "Number of drivers : " << tmpstr.setNum( drvNum ) << endl;
    QString driverInfo = "";
+   QString driverInfoUsed = "";
    for( int drv=0; drv<drvNum ; drv++ ) {
 	QString driverName = Mixer::driverName(drv);
 	if ( drv!= 0 ) {
@@ -193,7 +195,6 @@ KMixWindow::initMixer()
 	}
 	driverInfo += driverName;
    }
-   driverInfo += " / ";
 
 #ifndef MULTIDRIVERMODE
 	for( int drv=0; drv<drvNum && m_mixers.count()==0; drv++ )
@@ -245,9 +246,9 @@ KMixWindow::initMixer()
 					drvInfoAppended = true;
 					QString driverName = Mixer::driverName(drv);
 					if ( drv!= 0 ) {
-						driverInfo += " + ";
+						driverInfoUsed += " + ";
 					}
-					driverInfo += driverName;
+					driverInfoUsed += driverName;
 				}
 
 				// kdDebug() << "Added one mixer: " << mixer->mixerName() << endl;
@@ -275,7 +276,14 @@ KMixWindow::initMixer()
 	}
 
 	//kdDebug() << "Mixers found: " << m_mixers.count() << ", multi-driver-mode: " << multipleDriversActive << endl;
-	kdDebug() << "Drivers supported / used: " << driverInfo << endl;
+	m_hwInfoString = i18n("Sound drivers supported");
+	m_hwInfoString += ": " + driverInfo + 
+		"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
+	if ( multipleDriversActive ) {
+		// this will only be possible by hacking the config-file, as it will not be officially supported
+		m_hwInfoString += "\nExperimental multiple-Driver mode activated";
+	}
+	kdDebug() << m_hwInfoString << endl;
 
 }
 
@@ -861,6 +869,9 @@ void KMixWindow::stopVisibilityUpdates() {
     m_visibilityUpdateAllowed = false;
 }
 
+void KMixWindow::slotHWInfo() {
+	KMessageBox::information( 0, m_hwInfoString, i18n("Mixer hardware information") );
+}
 
 #include "kmix.moc"
 

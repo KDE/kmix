@@ -9,6 +9,9 @@
   <Action name="file_load_volume"/>
   <Action name="file_save_volume"/>
  </Menu>
+ <Menu name="help" append="about_merge"><text>&amp;Help</text>
+  <Action name="hwinfo"/>
+ </Menu>
 </MenuBar>
 
 </kpartgui>

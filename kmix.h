@@ -30,6 +30,7 @@
 // include files for Qt
 class QTabWidget;
 class QTimer;
+#include "qstring.h"
 
 // include files for KDE
 #include <kmainwindow.h>
@@ -113,6 +114,7 @@ class KMixWindow : public KMainWindow
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QTimer *timer;	// Timer for reading volume from HW
+   QString m_hwInfoString;
 
    bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
 
@@ -121,6 +123,7 @@ class KMixWindow : public KMainWindow
    void removeMixerWidget( KMixerWidget *mw );
    void updateLayout();
    void dockMute();
+   void slotHWInfo();
 
    void toggleVisibility();
 };
