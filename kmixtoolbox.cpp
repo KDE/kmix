@@ -82,8 +82,10 @@ void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 	    if ( keys )
 	    {
 		QString devgrpkeys;
-		devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
+		devgrpkeys.sprintf( "%s.%s.Dev%i.keys", viewPrefix.ascii(), grp.ascii(), n );
+		//kdDebug(67100) << "KMixToolBox::loadConfig() load Keys " << devgrpkeys << endl;
 
+		// please see KMixToolBox::saveConfig() for some rambling about saving/loading Keys
 		keys->setConfigGroup(devgrpkeys);
 		keys->readSettings(config);
 		keys->updateConnections();
@@ -96,7 +98,7 @@ void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 
 
 void KMixToolBox::saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix) {
-    config->setGroup( grp );
+    config->setGroup( grp  );
     config->writeEntry( viewPrefix + ".Devs", mdws.count() );
 
     int n=0;
@@ -115,10 +117,19 @@ void KMixToolBox::saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 	    }
 	    config->writeEntry( "Show" , ! mdw->isDisabled() );
 
+	    // Save key bindings
+	    /*
+	       Implementation hint: Conceptually keys SHOULD be bound to the actual hardware, and not
+	       to one GUI representation. Both work, but it COULD confuse users, if we have multiple
+	       GUI representations (e.g. "Dock Icon" and "Main Window").
+	       If you think about this aspect more deeply, you will find out that this is the case already
+	       today with "kmixapplet" and "kmix main application". It would really nice to rework this.
+	    */
 	    KGlobalAccel *keys=mdw->keys();
 	    if (keys) {
 		QString devgrpkeys;
-		devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
+		devgrpkeys.sprintf( "%s.%s.Dev%i.keys", viewPrefix.ascii(), grp.ascii(), n );
+		//kdDebug(67100) << "KMixToolBox::saveConfig() save Keys " << devgrpkeys << endl;
 		keys->setConfigGroup(devgrpkeys);
 		keys->writeSettings(config);
 	    }
