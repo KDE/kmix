@@ -42,6 +42,7 @@
 #include <khelpmenu.h>
 #include <kiconloader.h>
 #include <kdebug.h>
+#include <kaccel.h>
 
 // application specific includes
 #include "kmix.h"
@@ -139,6 +140,7 @@ void KMixWindow::initActions()
    // settings menu
    KAction *a = KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
    a->setAccel( CTRL+Key_M );
+   a->plugAccel( new KAccel(this) ); // to make action working without visible menubar
    KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
    createGUI( "kmixui.rc" );
@@ -230,7 +232,7 @@ void KMixWindow::saveConfig()
    config->writeEntry( "Size", size() );
    config->writeEntry( "Position", pos() );
    config->writeEntry( "Visible", isVisible() );
-   config->writeEntry( "Menubar", menuBar()->isVisible() );
+   config->writeEntry( "Menubar", m_showMenubar );
    config->writeEntry( "AllowDocking", m_showDockWidget );
    config->writeEntry( "HideOnClose", m_hideOnClose );
    config->writeEntry( "Tickmarks", m_showTicks );
@@ -261,18 +263,21 @@ void KMixWindow::loadConfig()
    KConfig *config = kapp->config();
    config->setGroup(0);
 
-   // show/hide menu bar
-   bool bViewMenubar = config->readBoolEntry("Menubar", true);
-   if (bViewMenubar)
-      menuBar()->show();
-   else
-      menuBar()->hide();
-
    m_showDockWidget = config->readBoolEntry("AllowDocking", true);
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", false);
    m_showLabels = config->readBoolEntry("Labels", false);
    m_startVisible = config->readBoolEntry("Visible", true);
+
+   // show/hide menu bar
+   m_showMenubar = config->readBoolEntry("Menubar", true);
+   if ( m_showMenubar )
+      menuBar()->show();
+   else
+      menuBar()->hide();
+
+   KToggleAction *a = static_cast<KToggleAction*>(actionCollection()->action("options_show_menubar"));
+   if (a) a->setChecked( m_showMenubar );
 
    // load mixer widgets
    QString tabsStr = config->readEntry( "Tabs" );
@@ -490,10 +495,11 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 
 void KMixWindow::toggleMenuBar()
 {
-   if( menuBar()->isVisible() )
-      menuBar()->hide();
-   else
+    m_showMenubar = !m_showMenubar;
+   if( m_showMenubar )
       menuBar()->show();
+   else
+      menuBar()->hide();
 }
 
 

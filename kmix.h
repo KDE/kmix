@@ -102,6 +102,7 @@ class KMixWindow : public KMainWindow
    bool m_showTicks;
    bool m_showLabels;
    bool m_startVisible;
+   bool m_showMenubar;
    int m_maxId;
 
    QList<Mixer> m_mixers;
