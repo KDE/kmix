@@ -105,8 +105,9 @@ class KMixApplet : public KPanelApplet
    int m_lockedLayout;
    AppletConfigDialog *m_pref;
    bool reversedDir; //  reverses direction of sliders and icon position
-   void popupDirectionChange(Direction);
+   void positionChange(Position);
    Direction checkReverse(Direction);
+   Direction getDirectionFromPositionHack(Position pos);
    void setColors();
 
    static int s_instCount;
