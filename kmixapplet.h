@@ -24,35 +24,44 @@
 
 #include <qwidget.h>
 #include <kaction.h>
+#include <kdialogbase.h>
 #include <kpanelapplet.h>
 #include <qptrlist.h>
 #include <kcolordialog.h>
 
-#include "colorwidget.h"
 #include "kmixerwidget.h"
 
 class Mixer;
 class QTimer;
+class ColorWidget;
 
 
-class ColorDialog : public ColorWidget {
-   Q_OBJECT
+class AppletConfigDialog : public KDialogBase
+{
+  Q_OBJECT
   public:
-   ColorDialog( QWidget * parent=0, const char * name=0, bool modal=FALSE, WFlags f=0 ) 
-       : ColorWidget( parent, name, modal, f ) {
-       connect( buttonApply, SIGNAL(clicked()), SLOT(apply()) );
-   };
+   AppletConfigDialog( QWidget * parent=0, const char * name=0 );
+   virtual ~AppletConfigDialog() {};
 
-   virtual ~ColorDialog() {};
+   void setActiveColors(const QColor& high, const QColor& low, const QColor& back);
+   void activeColors(QColor& high, QColor& low, QColor& back);
+
+   void setMutedColors(const QColor& high, const QColor& low, const QColor& back);
+   void mutedColors(QColor& high, QColor& low, QColor& back);
+
+   void setUseCustomColors(bool);
+   bool useCustomColors();
+
+   void setReverseDirection(bool);
+   bool reverseDirection();
 
   protected slots:
-   virtual void apply() { emit applied(); }
-   virtual void accept() { ColorWidget::accept(); emit applied(); }
-   virtual void reject() { ColorWidget::reject(); emit rejected(); }
+   virtual void slotOk();
+   virtual void slotApply();
 
   signals:
    void applied();
-   void rejected();	
+   ColorWidget* colorWidget;
 };
 
 
@@ -76,8 +85,8 @@ class KMixApplet : public KPanelApplet
    void triggerUpdateLayout();
    void updateLayoutNow(); 
    void selectMixer();
-   void applyColors();
-   void applyDirection();
+   void applyPreferences();
+   void preferencesDone();
   
   protected:
    void resizeEvent( QResizeEvent * );
@@ -88,7 +97,7 @@ class KMixApplet : public KPanelApplet
    QPushButton *m_errorLabel;
    QTimer *m_layoutTimer;
    int m_lockedLayout;
-   ColorWidget *m_pref;
+   AppletConfigDialog *m_pref;
    bool reversedDir; //  reverses direction of sliders and icon position
    void popupDirectionChange(Direction);
    Direction checkReverse(Direction);

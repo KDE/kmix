@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 
+#include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpixmap.h>
 #include <kdebug.h>
@@ -69,6 +70,80 @@ static const QColor backColor = "#000000";
 static const QColor mutedHighColor = "#FFFFFF";
 static const QColor mutedLowColor = "#808080";
 static const QColor mutedBackColor = "#000000";
+
+AppletConfigDialog::AppletConfigDialog( QWidget * parent, const char * name )
+   : KDialogBase( KDialogBase::Plain, QString::null,
+                  KDialogBase::Ok | KDialogBase::Apply | KDialogBase::Cancel,
+                  KDialogBase::Ok, parent, name, false, true)
+{
+   setPlainCaption(i18n("Configure - Mixer Applet"));
+   QFrame* page = plainPage();
+   QVBoxLayout *topLayout = new QVBoxLayout(page);
+   colorWidget = new ColorWidget(page);
+   topLayout->addWidget(colorWidget);
+   setUseCustomColors(false);
+}
+
+void AppletConfigDialog::slotOk()
+{
+    slotApply();
+    KDialogBase::slotOk();
+}
+
+void AppletConfigDialog::slotApply()
+{
+    emit applied();
+}
+
+void AppletConfigDialog::setActiveColors(const QColor& high, const QColor& low, const QColor& back)
+{
+    colorWidget->activeHigh->setColor(high);
+    colorWidget->activeLow->setColor(low);
+    colorWidget->activeBack->setColor(back);
+}
+
+void AppletConfigDialog::activeColors(QColor& high, QColor& low, QColor& back)
+{
+    high = colorWidget->activeHigh->color();
+    low  = colorWidget->activeLow->color();
+    back = colorWidget->activeBack->color();
+}
+
+void AppletConfigDialog::setMutedColors(const QColor& high, const QColor& low, const QColor& back)
+{
+    colorWidget->mutedHigh->setColor(high);
+    colorWidget->mutedLow->setColor(low);
+    colorWidget->mutedBack->setColor(back);
+}
+
+void AppletConfigDialog::mutedColors(QColor& high, QColor& low, QColor& back)
+{
+    high = colorWidget->mutedHigh->color();
+    low  = colorWidget->mutedLow->color();
+    back = colorWidget->mutedBack->color();
+}
+
+void AppletConfigDialog::setUseCustomColors(bool custom)
+{
+    colorWidget->customColors->setChecked(custom);
+    colorWidget->activeColors->setEnabled(custom);
+    colorWidget->mutedColors->setEnabled(custom);
+}
+
+bool AppletConfigDialog::useCustomColors()
+{
+    return colorWidget->customColors->isChecked();
+}
+
+void AppletConfigDialog::setReverseDirection(bool reverse)
+{
+    colorWidget->reverseDirection->setChecked(reverse);
+}
+
+bool AppletConfigDialog::reverseDirection()
+{
+    return colorWidget->reverseDirection->isChecked();
+}
 
 KPanelApplet::Direction KMixApplet::checkReverse(Direction dir) {
    if( reversedDir ) {
@@ -168,9 +243,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
    cfg->setGroup(0);
 
    // get colors
-   m_pref = new ColorDialog( this );
-   connect( m_pref, SIGNAL(applied()), SLOT(applyColors()) );
-   connect( m_pref, SIGNAL(applied()), SLOT(applyDirection()));
    m_customColors = cfg->readBoolEntry( "ColorCustom", false );
 
    m_colors.high = cfg->readColorEntry("ColorHigh", &highColor);
@@ -345,22 +417,6 @@ void KMixApplet::help()
 {
 }
 
-
-void KMixApplet::applyColors()
-{
-    m_colors.high = m_pref->activeHigh->color();
-    m_colors.low = m_pref->activeLow->color();
-    m_colors.back = m_pref->activeBack->color();
-
-    m_colors.mutedHigh = m_pref->mutedHigh->color();
-    m_colors.mutedLow = m_pref->mutedLow->color();
-    m_colors.mutedBack = m_pref->mutedBack->color();
-
-    m_customColors = m_pref->customColors->isChecked();
-
-    setColors();
-}
-
 void KMixApplet::setColors()
 {
     if ( !m_customColors ) {
@@ -393,37 +449,49 @@ void KMixApplet::popupDirectionChange(Direction dir) {
 
 void KMixApplet::preferences()
 {
-    if ( !m_pref->isVisible() ) {
+    if ( !m_pref )
+    {
+        m_pref = new AppletConfigDialog( this );
+        connect(m_pref, SIGNAL(finished()), SLOT(preferencesDone()));
+        connect( m_pref, SIGNAL(applied()), SLOT(applyPreferences()) );
 
-        m_pref->activeHigh->setColor( m_colors.high );
-        m_pref->activeLow->setColor( m_colors.low );
-        m_pref->activeBack->setColor( m_colors.back );
+        m_pref->setActiveColors(m_colors.high, m_colors.low, m_colors.back);
+        m_pref->setMutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
 
-        m_pref->mutedHigh->setColor( m_colors.mutedHigh );
-        m_pref->mutedLow->setColor( m_colors.mutedLow );
-        m_pref->mutedBack->setColor( m_colors.mutedBack );
+        m_pref->setUseCustomColors( m_customColors );
+        m_pref->setReverseDirection( reversedDir );
 
-        m_pref->defaultLook->setChecked( !m_customColors );
-        m_pref->customColors->setChecked( m_customColors );
+    }
 
-        m_pref->reverseDirection->setChecked( reversedDir );
-
-        m_pref->show();
-
-    } else
-        m_pref->raise();
+    m_pref->show();
+    m_pref->raise();
 }
 
-void KMixApplet::applyDirection()
+void KMixApplet::preferencesDone()
 {
-    reversedDir = m_pref->reverseDirection->isChecked();
+    m_pref->delayedDestruct();
+    m_pref = 0;
+}
+
+void KMixApplet::applyPreferences()
+{
+    if (!m_pref)
+        return;
+
+    m_pref->activeColors(m_colors.high, m_colors.low, m_colors.back);
+    m_pref->mutedColors(m_colors.mutedHigh, m_colors.mutedLow, m_colors.mutedBack);
+    m_customColors = m_pref->useCustomColors();
+
+    reversedDir = m_pref->reverseDirection();
     QSize si = m_mixerWidget->size();
     popupDirectionChange( popupDirection());
     if( popupDirection() == Up || popupDirection() == Down )
         m_mixerWidget->setIcons( si.height()>=32 );
     else
         m_mixerWidget->setIcons( si.width()>=32 );
+
     m_mixerWidget->resize( si );
+    setColors();
 }
 
 #include "kmixapplet.moc"

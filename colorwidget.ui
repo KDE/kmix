@@ -1,557 +1,294 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ColorWidget</class>
 <author>Stefan Schimanski &lt;1Stein@gmx.de&gt;</author>
-<include location="global">klocale.h</include>
-<include location="global">kseparator.h</include>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>ColorWidget</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>360</width>
-            <height>456</height>
+            <width>272</width>
+            <height>305</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
-        <string>Preferences</string>
-    </property>
-    <property stdset="1">
-        <name>sizeGripEnabled</name>
-        <bool>true</bool>
+    <property name="caption">
+        <string>ColorWidget</string>
     </property>
     <vbox>
-        <property stdset="1">
-            <name>margin</name>
-            <number>11</number>
+        <property name="name">
+            <cstring>unnamed</cstring>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
-            <number>6</number>
+        <property name="margin">
+            <number>0</number>
         </property>
-        <widget>
-            <class>QButtonGroup</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>ButtonGroup6</cstring>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>reverseDirection</cstring>
             </property>
-            <property stdset="1">
-                <name>frameShape</name>
-                <enum>Box</enum>
+            <property name="text">
+                <string>Show &amp;volume meters in reverse direction</string>
             </property>
-            <property stdset="1">
-                <name>frameShadow</name>
-                <enum>Sunken</enum>
+            <property name="accel">
+                <string>Alt+V</string>
             </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Colors</string>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>customColors</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Use custom colors</string>
+            </property>
+            <property name="accel">
+                <string>Alt+U</string>
+            </property>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>activeColors</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="title">
+                <string>Active</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
+                <property name="name">
+                    <cstring>unnamed</cstring>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <spacer row="2"  column="0" >
-                    <property>
-                        <name>name</name>
-                        <cstring>Spacer1</cstring>
+                <widget class="KColorButton" row="2" column="1">
+                    <property name="name">
+                        <cstring>activeBack</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
-                        <enum>Fixed</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>40</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>customColors</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Custom colors</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
+                    <property name="text">
+                        <string></string>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>defaultLook</cstring>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Default look</string>
-                    </property>
-                </widget>
-                <spacer row="3"  column="1" >
-                    <property>
-                        <name>name</name>
-                        <cstring>Spacer2</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>orientation</name>
-                        <enum>Vertical</enum>
-                    </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
-                        <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget row="2"  column="1" >
-                    <class>QFrame</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>customFrame</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
-                    <property stdset="1">
-                        <name>frameShape</name>
-                        <enum>NoFrame</enum>
+                    <property name="text">
+                        <string>&amp;Silent:</string>
                     </property>
-                    <property stdset="1">
-                        <name>frameShadow</name>
-                        <enum>Raised</enum>
+                    <property name="buddy" stdset="0">
+                        <cstring>activeLow</cstring>
                     </property>
-                    <property>
-                        <name>layoutMargin</name>
+                </widget>
+                <widget class="KColorButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>activeLow</cstring>
                     </property>
-                    <property>
-                        <name>layoutSpacing</name>
+                    <property name="enabled">
+                        <bool>true</bool>
                     </property>
-                    <grid>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>0</number>
-                        </property>
-                        <widget row="1"  column="1" >
-                            <class>KColorButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>activeHigh</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget row="2"  column="1" >
-                            <class>KColorButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>activeLow</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget row="3"  column="1" >
-                            <class>KColorButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>activeBack</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget row="6"  column="1" >
-                            <class>KColorButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>mutedHigh</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget row="7"  column="1" >
-                            <class>KColorButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>mutedLow</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget row="8"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel8</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Background:</string>
-                            </property>
-                        </widget>
-                        <widget row="8"  column="1" >
-                            <class>KColorButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>mutedBack</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget row="2"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel3</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Silent:</string>
-                            </property>
-                        </widget>
-                        <widget row="3"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel4</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Background:</string>
-                            </property>
-                        </widget>
-                        <widget row="1"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>labelLoad</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Loud:</string>
-                            </property>
-                        </widget>
-                        <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-                            <class>QLayoutWidget</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>Layout8</cstring>
-                            </property>
-                            <hbox>
-                                <property stdset="1">
-                                    <name>margin</name>
-                                    <number>0</number>
-                                </property>
-                                <property stdset="1">
-                                    <name>spacing</name>
-                                    <number>6</number>
-                                </property>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>TextLabel5</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>enabled</name>
-                                        <bool>true</bool>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>Active</string>
-                                    </property>
-                                </widget>
-                            </hbox>
-                        </widget>
-                        <widget row="6"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel6</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Loud:</string>
-                            </property>
-                        </widget>
-                        <widget row="7"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel7</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Silent:</string>
-                            </property>
-                        </widget>
-                        <widget row="5"  column="0"  rowspan="1"  colspan="2" >
-                            <class>QLayoutWidget</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>Layout8_2</cstring>
-                            </property>
-                            <hbox>
-                                <property stdset="1">
-                                    <name>margin</name>
-                                    <number>0</number>
-                                </property>
-                                <property stdset="1">
-                                    <name>spacing</name>
-                                    <number>6</number>
-                                </property>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>TextLabel5_2</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>enabled</name>
-                                        <bool>true</bool>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>Muted</string>
-                                    </property>
-                                </widget>
-                            </hbox>
-                        </widget>
-                        <spacer row="4"  column="1" >
-                            <property>
-                                <name>name</name>
-                                <cstring>Spacer3</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Vertical</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
-                                <enum>Fixed</enum>
-                            </property>
-                            <property>
-                                <name>sizeHint</name>
-                                <size>
-                                    <width>20</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </grid>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>activeHigh</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>labelLoad</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Loud:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>activeHigh</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Background:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>activeBack</cstring>
+                    </property>
                 </widget>
             </grid>
         </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>reverseDirection</cstring>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>mutedColors</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Reverse direction</string>
+            <property name="enabled">
+                <bool>true</bool>
             </property>
-        </widget>
-        <widget>
-            <class>QLayoutWidget</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Layout6</cstring>
+            <property name="title">
+                <string>Muted</string>
             </property>
-            <hbox>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>0</number>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <spacer>
-                    <property>
-                        <name>name</name>
-                        <cstring>Horizontal Spacing2</cstring>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel6</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
-                        <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget>
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>buttonOk</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;OK</string>
-                    </property>
-                    <property stdset="1">
-                        <name>autoDefault</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
-                    <property stdset="1">
-                        <name>default</name>
-                        <bool>true</bool>
+                    <property name="text">
+                        <string>Lou&amp;d:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mutedHigh</cstring>
                     </property>
                 </widget>
-                <widget>
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>buttonApply</cstring>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel8</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Apply</string>
-                    </property>
-                    <property stdset="1">
-                        <name>autoDefault</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
+                    <property name="text">
+                        <string>Backgrou&amp;nd:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mutedBack</cstring>
+                    </property>
                 </widget>
-                <widget>
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>buttonCancel</cstring>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel7</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Cancel</string>
-                    </property>
-                    <property stdset="1">
-                        <name>autoDefault</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
+                    <property name="text">
+                        <string>Silen&amp;t:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mutedLow</cstring>
+                    </property>
                 </widget>
-            </hbox>
+                <widget class="KColorButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>mutedHigh</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>mutedLow</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="2" column="1">
+                    <property name="name">
+                        <cstring>mutedBack</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>KColorButton</class>
-        <header location="global">kcolorbutton.h</header>
-        <sizehint>
-            <width>80</width>
-            <height>30</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-    </customwidget>
-</customwidgets>
-<images>
-    <image>
-        <name>image0</name>
-        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
-    </image>
-</images>
 <connections>
     <connection>
-        <sender>buttonOk</sender>
-        <signal>clicked()</signal>
-        <receiver>ColorWidget</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>ColorWidget</receiver>
-        <slot>reject()</slot>
+        <sender>customColors</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>activeColors</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
         <sender>customColors</sender>
         <signal>toggled(bool)</signal>
-        <receiver>customFrame</receiver>
+        <receiver>mutedColors</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>reverseDirection</tabstop>
+    <tabstop>customColors</tabstop>
+    <tabstop>activeHigh</tabstop>
+    <tabstop>activeLow</tabstop>
+    <tabstop>activeBack</tabstop>
+    <tabstop>mutedHigh</tabstop>
+    <tabstop>mutedLow</tabstop>
+    <tabstop>mutedBack</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in declaration">klocale.h</include>
+    <include location="global" impldecl="in declaration">kseparator.h</include>
+</includes>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -31,7 +31,7 @@
 
 
 KMixPrefDlg::KMixPrefDlg( QWidget *parent )
-    : KDialogBase(  Plain, i18n( "KMix Preferences" ),
+    : KDialogBase(  Plain, i18n( "Configure" ),
           Ok|Cancel|Apply, Ok, parent )
 {
    // general buttons
