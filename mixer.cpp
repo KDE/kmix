@@ -32,48 +32,8 @@
 #include <qstring.h>
 #include <klocale.h>
 
-#if defined(sun) || defined(__sun__)
-#define SUN_MIXER
-#endif
 
-#ifdef sgi
-#include <sys/fcntl.h>
-#define IRIX_MIXER
-#endif
-
-#ifdef linux
-#ifdef ALSA
-#define ALSA_MIXER
-#else
-#define OSS_MIXER
-#endif
-#endif
-
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__bsdi__) || defined(_UNIXWARE)
-#define OSS_MIXER
-#endif
-
-#if defined(hpux) && defined(HAVE_ALIB_H)
-#define HPUX_MIXER
-#endif
-
-// PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
-
-#if defined(SUN_MIXER)
-#include "mixer_sun.cpp"
-#elif defined(IRIX_MIXER)
-#include "mixer_irix.cpp"
-#elif defined(ALSA_MIXER)
-#include "mixer_alsa.cpp"
-#elif defined(OSS_MIXER)
-#include "mixer_oss.cpp"
-#elif defined(HPUX_MIXER)
-#include "mixer_hpux.cpp"
-#else
-// We cannot handle this! I install a dummy mixer instead.
-#define NO_MIXER
-include "mixer_none.cpp"
-#endif
+#include "kmix-platforms.cpp"
 
 
 
@@ -144,36 +104,23 @@ int Mixer::release()
 
 unsigned int Mixer::size() const
 {
-  unsigned int l_i_num=0;
-
-  MixDevice *l_mc_device = First;
-  while ( l_mc_device != NULL ) {
-    l_mc_device = l_mc_device->Next;
-    l_i_num++;
-  }
-  return l_i_num;
+  return i_ql_mixDevices.size();
 }
 
 MixDevice* Mixer::operator[](int val_i_num)
 {
-  MixDevice *l_mc_device = First;
+  
+  MixDevice *l_mc_device;
 
 
-  if (val_i_num < 1 ) {
-    // Index too small (or first) => Return first entry
-    debug("Mixer::operator[]: Falscher Index");
+  if ( (val_i_num < 1) || (val_i_num > (int)i_ql_mixDevices.size()) ) {
+    // Index wrong => Return 0
+    debug("Mixer::operator[]: Wrong Index");
+    l_mc_device = 0;
   }
 
   else {
-    for ( int l_i = 1 ; l_i < val_i_num ; l_i++) {
-      if ( l_mc_device->Next == NULL) {
-	// Stop traversing, otherwise we would end up behind the last entry in the list
-	break;
-      }
-      else {
-	l_mc_device = l_mc_device->Next;
-      }
-    }
+    l_mc_device =  i_ql_mixDevices[val_i_num-1];
   }
 
   return l_mc_device;
@@ -191,16 +138,15 @@ int Mixer::setupMixer(int devnum, int SetNum)
 
   devmask = recmask = i_recsrc = stereodevs = 0;
   PercentLeft = PercentRight=100;
-  num_mixdevs = 0;
-  First=NULL;
 
   // set the mixer device name from a given device id
   setDevNumName(devnum);
 
 
   int ret = openMixer();
-  if (ret)
+  if (ret != 0) {
     return ret;
+  }
 
   /*
    * Set up the structures for the internal representation of the mixer devs.
@@ -218,8 +164,9 @@ int Mixer::setupMixer(int devnum, int SetNum)
    *  hardware, the result could be some serious mess. 
    */
   Set2Set0(-1,true);       // Read from hardware
-  if ( SetNum >= 0)
+  if ( SetNum >= 0) {
     Set2Set0(SetNum,true); // Read (additionaly) from Set, if SetNum >= 0
+  }
   Set0toHW();              // Forward to the hardware
 
   return 0;
@@ -233,18 +180,6 @@ void Mixer::setDevNumName(int devnum)
   this->setDevNumName_I(devnum);
 }
 
-
-void Mixer::readVolumeFromHW( int /*devnum*/, int */*VolLeft*/, int */*VolRight*/ )
-{
-  errormsg(Mixer::ERR_READ);  
-}
-
-/*
-void Mixer::setDevNumName_I(int devnum)
-{
-  devname = "Unknown Mixer";
-}
-*/
 
 
 /******************************************************************************
@@ -272,62 +207,44 @@ void Mixer::setDevNumName_I(int devnum)
 void  Mixer::setupStructs(void)
 {
   int         devicework, recwork, recsrcwork, stereowork;
-  MixDevice   *MixPtr, *MixNext;
+  MixDevice   *MixPtr;
 
   // Copy the bit mask to scratch registers. I will do bit shiftings on these.
   devicework  = devmask;
   recwork     = recmask;
   recsrcwork  = i_recsrc;
   stereowork  = stereodevs;
-  num_mixdevs = 0;
-
-
-  // Clear old List of devices
-  MixPtr = First;
-  while ( MixPtr != NULL ) {
-    MixNext = MixPtr->Next;
-    delete MixPtr;
-    MixPtr = MixNext;
-  }
-    
-  MixPtr= NULL;
-  num_mixdevs= 0;
+  int l_i_numMixdevs = 0;
 
   for (int i=0 ; i<=MAX_MIXDEVS; i++) {
     if ( (devicework & 1) == 1 ) {
-      // If we come here, the mixer device with num i is supported by
-      // sound driver.
+      // If we come here, the mixer device with num i is supported by sound driver.
 
-      // Store old Adress, for setting up its "Next" pointer
-      MixDevice *MixOld = MixPtr;
-
-      // Set up a pointer to the general mixing structure
+      // 1) Create the new MixDevice
       MixPtr = new MixDevice(i);
-      CHECK_PTR(MixPtr);
-      // set up old "Next" pointer
-      if (MixOld == NULL)
-	First = MixPtr;
-      else
-	MixOld->Next = MixPtr;
-      MixPtr->Next = NULL;
 
-      MixPtr->mix  = this;	// keep track, which mixer is used by device i
+      // 2) Fill the MixDevice
+      MixPtr->mix  = this;		// keep track, which mixer is used by device i
+      // 2a) Fill the two MixChannel's
       MixPtr->Left  = new MixChannel;
       MixPtr->Right = new MixChannel;
       MixPtr->Left->mixDev = MixPtr->Right->mixDev = MixPtr;
       MixPtr->Left->channel  = Mixer::LEFT;
       MixPtr->Right->channel = Mixer::RIGHT;
-
-
-      // Fill out the device structure for the current mixing device.
-      // 1. Remember the device number (for use in the callback).
+      // 2b) Fill out the device structure
       MixPtr->setNum(i);
       MixPtr->setStereo(stereowork & 1);
       MixPtr->setRecsrc(recsrcwork & 1);
       MixPtr->setRecordable(recwork & 1);
       MixPtr->setDisabled(false);
       MixPtr->setMuted(false);
-      num_mixdevs++;
+
+      // 3) Register a pointer to the MixDevice
+      i_ql_mixDevices.resize(l_i_numMixdevs+1);
+      i_ql_mixDevices[l_i_numMixdevs] = MixPtr;
+
+      // 4) Next device
+      l_i_numMixdevs++;
     }
     devicework = (devicework>>1);
     recwork    = (recwork   >>1);
@@ -370,9 +287,10 @@ void  Mixer::setupStructs(void)
 void Mixer::Set0toHW()
 {
   MixSet *SrcSet = TheMixSets->first();
-  MixDevice *MixPtr = First;
 
-  while ( MixPtr) {
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
+    MixPtr = operator[](l_i_mixDevice);
     // Find mix set entry for current MixPtr
     MixSetEntry *mse;
     for (mse = SrcSet->first();
@@ -390,8 +308,6 @@ void Mixer::Set0toHW()
       MixPtr->Left->volume  =  mse->volumeL;
       MixPtr->Right->volume =  mse->volumeR;
     }
-
-    MixPtr=MixPtr->Next;
   }
 }
 
@@ -400,7 +316,6 @@ void Mixer::Set0toHW()
  *****************************************************************************/
 void Mixer::Set2Set0(int Source, bool copy_volume)
 {
-  MixDevice	*MixPtr;
   int		VolLeft,VolRight;
 
   MixSet *DestSet = TheMixSets->first();
@@ -417,8 +332,10 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 
   if ( Source < 0 ) {
     // Read from hardware
-    MixPtr = First;
-    while (MixPtr) {
+
+    MixDevice *MixPtr;
+    for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
+      MixPtr = operator[](l_i_mixDevice);
 
       // Find mix set entry for current MixPtr
       MixSetEntry *mse = DestSet->findDev(MixPtr->num());
@@ -437,8 +354,6 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 	mse->volumeR = VolLeft;
       else
 	mse->volumeR = VolRight;
-
-      MixPtr=MixPtr->Next;
     }
   } /* if ( Source < 0 ) */
   else {
@@ -532,20 +447,24 @@ QString Mixer::errorText(int mixer_error)
 
 void Mixer::updateMixDevice(MixDevice *mixdevice)
 {
-  if (mixdevice == NULL)
+  if (mixdevice == 0 )
     {
-      /* Argument NULL => Update all devices */
-      for (MixDevice *i = First; i!=NULL ; i=i->Next)
-	  updateMixDeviceI(i);
+      /* Argument 0 => Update all devices */
+      MixDevice *MixPtr;
+      for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
+	MixPtr = operator[](l_i_mixDevice);
+	  updateMixDeviceI(MixPtr);
+      }
     }
-  else
+  else {
     updateMixDeviceI(mixdevice);
+  }
 }
 
 /* Internal function */
 void Mixer::updateMixDeviceI(MixDevice *mixdevice)
 {
-  int Volume,volLeft,volRight;
+  int volLeft,volRight;
 
 
   if ( mixdevice->muted() ) {
@@ -566,82 +485,10 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
     volRight = (volRight*PercentRight*MaxVolume) / 10000;
   }
 
-
-  Volume = volLeft + ((volRight)<<8);
-
-#ifdef SUN_MIXER
-  audio_info_t audioinfo;
-  AUDIO_INITINFO(&audioinfo);
-  audioinfo.play.gain = volLeft;	// -<- Only left volume (one channel on Sun)
-
-  if (ioctl(fd, AUDIO_SETINFO, &audioinfo) < 0)
-    errormsg(Mixer::ERR_WRITE);
-#endif
-#ifdef IRIX_MIXER
-  // Set volume (right&left)
-  long out_buf[4] =
-  {
-    0, volRight,
-    0, volLeft
-  };
-  switch( mixdevice->num() ) {
-  case 0:      // Speaker
-    out_buf[0] = AL_RIGHT_SPEAKER_GAIN;
-    out_buf[2] = AL_LEFT_SPEAKER_GAIN;
-    break;
-  case 7:      // Microphone (Input)
-    out_buf[0] = AL_RIGHT_INPUT_ATTEN;
-    out_buf[2] = AL_LEFT_INPUT_ATTEN;
-    break;
-  case 11:     // Record monitor
-    out_buf[0] = AL_RIGHT_MONITOR_ATTEN;
-    out_buf[2] = AL_LEFT_MONITOR_ATTEN;
-    break;
+  int l_i_err = writeVolumeToHW(mixdevice->num(), volLeft, volRight);
+  if (l_i_err != 0) {
+    errormsg(l_i_err);
   }
-  ALsetparams(AL_DEFAULT_DEVICE, out_buf, 4);
-#endif
-#ifdef OSS_MIXER
-  writeVolumeToHW(mixdevice->num(), volLeft, volRight);
-// PORTING: add #ifdef PLATFORM , commands , #endif
-#endif
-#ifdef ALSA
-  snd_mixer_channel_t data;
-  ret = snd_mixer_channel_read( devhandle, mixdevice->num(), &data );
-  if ( !ret ) {
-    data.left = volLeft;
-    data.right = volRight;
-    data.channel = mixdevice->num();
-    ret = snd_mixer_channel_write( devhandle, mixdevice->num(), &data );
-    if ( ret )
-      errormsg(Mixer::ERR_WRITE);
-  }
-  else
-    errormsg(Mixer::ERR_READ);
-#endif
-#ifdef HPUX_MIXER
-  // Set volume (right&left)
-/*  long out_buf[4] =
-  {
-    0, volRight,
-    0, volLeft
-  };
-  switch( mixdevice->num() ) {
-  case 0:      // Speaker
-    out_buf[0] = AL_RIGHT_SPEAKER_GAIN;
-    out_buf[2] = AL_LEFT_SPEAKER_GAIN;
-    break;
-  case 7:      // Microphone (Input)
-    out_buf[0] = AL_RIGHT_INPUT_ATTEN;
-    out_buf[2] = AL_LEFT_INPUT_ATTEN;
-    break;
-  case 11:     // Record monitor
-    out_buf[0] = AL_RIGHT_MONITOR_ATTEN;
-    out_buf[2] = AL_LEFT_MONITOR_ATTEN;
-    break;
-  }
-  ALsetparams(AL_DEFAULT_DEVICE, out_buf, 4); */
-#endif
-// PORTING: add #ifdef PLATFORM , commands , #endif
 }
 
 
@@ -748,72 +595,10 @@ unsigned int Mixer::recsrc() const
   return i_recsrc;
 }
 
-void Mixer::setRecsrc(unsigned int newRecsrc)
+void Mixer::setRecsrc(unsigned int /* newRecsrc */)
 {
-#if 1
-#warning Christian: Have to port over setRecsrc() to derived classes
-#else
-MixDevice *MixDev = First; /* moved up for use with ALSA */
-#ifdef OSS_MIXER
-  // Change status of record source(s)
-  if (ioctl(fd, SOUND_MIXER_WRITE_RECSRC, &newRecsrc) == -1)
-    errormsg (Mixer::ERR_WRITE);
-  // Re-read status of record source(s). Just in case, OSS does not like
-  // my settings. And with this line mix->recsrc gets its new value. :-)
-  if (ioctl(fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
-    errormsg(Mixer::ERR_READ);
-#elif defined(ALSA)
-  snd_mixer_channel_t data;
-  i_recsrc = 0;
-  while (MixDev) {
-    ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* get */
-    if ( ret )
-      errormsg(Mixer::ERR_READ);
-    if ( newRecsrc & ( 1 << MixDev->num() ) )
-      data.flags |= SND_MIXER_FLG_RECORD;
-    else
-      data.flags &= ~SND_MIXER_FLG_RECORD;
-    ret = snd_mixer_channel_write( devhandle, MixDev->num(), &data ); /* set */
-    if ( ret )
-      errormsg(Mixer::ERR_WRITE);
-    ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* check */
-    if ( ret )
-      errormsg(Mixer::ERR_READ);
-    if ( ( data.flags & SND_MIXER_FLG_RECORD ) && /* if it's set and stuck */
-         ( newRecsrc & ( 1 << MixDev->num() ) ) ) {
-      i_recsrc |= 1 << MixDev->num();
-      MixDev->setRecsrc(true);
-    }
-    else {
-      MixDev->setRecsrc(false);
-    }
-    MixDev = MixDev->Next;
-  }
-  return; /* I'm done */ 
-#elif defined(HPUX_MIXER)
-  i_recsrc = newRecsrc;
-  // nothing else (yet!)
-#else
-  KMsgBox::message(0, "Porting required.", "Please port this feature :-)", KMsgBox::INFORMATION, "OK" );
-  // PORTING: Hint: Do not forget to set i_recsrc to the new valid
-  //                record source mask.
-#endif
-
-  /* Traverse through the mixer devices and set the record source flags
-   * This is especially necessary for mixer devices that sometimes do
-   * not obey blindly (because of hardware limitations)
-   */
-  unsigned int recsrcwork = i_recsrc;
-  while (MixDev) {
-    if (recsrcwork & (1 << (MixDev->num()) ) )
-      MixDev->setRecsrc(true);
-    else
-      MixDev->setRecsrc(false);
-
-    MixDev            = MixDev->Next;
-  }
-#endif
 }
+
 
 
 MixDevice::MixDevice(int num)

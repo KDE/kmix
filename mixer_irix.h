@@ -11,7 +11,9 @@ public:
   Mixer_IRIX(int devnum, int SetNum);
   virtual ~Mixer_IRIX() {};
 
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual void setRecsrc(unsigned int newRecsrc);
+  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
 
 protected:
   virtual void setDevNumName_I(int devnum);

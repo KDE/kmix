@@ -8,6 +8,9 @@ public:
   Mixer_None(int devnum, int SetNum);
   virtual ~Mixer_None() {};
 
+  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
+
 protected:
   virtual int openMixer();
   virtual int releaseMixer();

@@ -146,23 +146,64 @@ QString Mixer_OSS::errorText(int mixer_error)
   return l_s_errmsg;
 }
 
-void Mixer_OSS::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+
+void Mixer_OSS::setRecsrc(unsigned int newRecsrc)
 {
-  int Volume;
-  if (ioctl(fd, MIXER_READ( devnum ), &Volume) == -1)
-    /* Oops, can't read mixer */
+  // Change status of record source(s)
+  if (ioctl(fd, SOUND_MIXER_WRITE_RECSRC, &newRecsrc) == -1)
+    errormsg (Mixer::ERR_WRITE);
+  // Re-read status of record source(s). Just in case, OSS does not like
+  // my settings. And with this line mix->recsrc gets its new value. :-)
+  if (ioctl(fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
     errormsg(Mixer::ERR_READ);
 
-  *VolLeft  = (Volume & 0x7f);
-  *VolRight = ((Volume>>8) & 0x7f);
+  // PORTING: Hint: Do not forget to set i_recsrc to the new valid
+  //                record source mask.
+
+  /* Traverse through the mixer devices and set the record source flags
+   * This is especially necessary for mixer devices that sometimes do
+   * not obey blindly (because of hardware limitations)
+   */
+  unsigned int recsrcwork = i_recsrc;
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
+    MixPtr = operator[](l_i_mixDevice);
+
+    if (recsrcwork & (1 << (MixPtr->num()) ) ) {
+      MixPtr->setRecsrc(true);
+    }
+    else {
+      MixPtr->setRecsrc(false);
+    }
+  }
 }
 
 
 
-void Mixer_OSS::writeVolumeToHW( int devnum, int volLeft, int volRight )
+int Mixer_OSS::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+{
+  int Volume;
+  if (ioctl(fd, MIXER_READ( devnum ), &Volume) == -1) {
+    /* Oops, can't read mixer */
+    return(Mixer::ERR_READ);
+  }
+  else {
+    *VolLeft  = (Volume & 0x7f);
+    *VolRight = ((Volume>>8) & 0x7f);
+    return 0;
+  }
+}
+
+
+
+int Mixer_OSS::writeVolumeToHW( int devnum, int volLeft, int volRight )
 {
   int Volume = volLeft + ((volRight)<<8);
 
-  if (ioctl(fd, MIXER_WRITE( devnum ), &Volume) == -1)
-    errormsg(Mixer::ERR_WRITE);
+  if (ioctl(fd, MIXER_WRITE( devnum ), &Volume) == -1) {
+    return Mixer::ERR_WRITE;
+  }
+  else {
+    return 0;
+  }
 }

@@ -14,14 +14,15 @@ public:
   Mixer_HPUX(int devnum, int SetNum);
   virtual ~Mixer_HPUX() {};
 
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual void setRecsrc(unsigned int newRecsrc);
+  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
 
 protected:
   virtual int openMixer();
   virtual int releaseMixer();
   virtual void setDevNumName_I(int devnum);
 
-  // HP-UX uses Alib stuff
   Audio		*hpux_audio;
 };
 

@@ -93,7 +93,42 @@ void Mixer_ALSA::setDevNumName_I(int devnum)
   devname = "ALSA";
 }
 
-void Mixer_ALSA::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+void Mixer_ALSA::setRecsrc(unsigned int newRecsrc)
+{
+  snd_mixer_channel_t data;
+  i_recsrc = 0;
+
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
+    MixPtr = operator[](l_i_mixDevice);
+
+    ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* get */
+    if ( ret )
+      errormsg(Mixer::ERR_READ);
+    if ( newRecsrc & ( 1 << MixDev->num() ) )
+      data.flags |= SND_MIXER_FLG_RECORD;
+    else
+      data.flags &= ~SND_MIXER_FLG_RECORD;
+    ret = snd_mixer_channel_write( devhandle, MixDev->num(), &data ); /* set */
+    if ( ret )
+      errormsg(Mixer::ERR_WRITE);
+    ret = snd_mixer_channel_read( devhandle, MixDev->num(), &data ); /* check */
+    if ( ret )
+      errormsg(Mixer::ERR_READ);
+    if ( ( data.flags & SND_MIXER_FLG_RECORD ) && /* if it's set and stuck */
+         ( newRecsrc & ( 1 << MixDev->num() ) ) ) {
+      i_recsrc |= 1 << MixDev->num();
+      MixDev->setRecsrc(true);
+    }
+    else {
+      MixDev->setRecsrc(false);
+    }
+  }
+  return; /* I'm done */ 
+}
+
+
+int Mixer_ALSA::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
 {
   snd_mixer_channel_t data;
   ret = snd_mixer_channel_read( devhandle, devnum(), &data );
@@ -101,6 +136,31 @@ void Mixer_ALSA::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
     *VolLeft = data.left;
     *VolRight = data.right;
   }
-  else 
-    errormsg(Mixer::ERR_READ);
+  else {
+    return(Mixer::ERR_READ);
+  }
+
+  return 0;
 }
+
+
+int Mixer_ALSA::writeVolumeToHW( int devnum, int volLeft, int volRight )
+{
+  snd_mixer_channel_t data;
+  ret = snd_mixer_channel_read( devhandle, mixdevice->num(), &data );
+  if ( !ret ) {
+    data.left = volLeft;
+    data.right = volRight;
+    data.channel = mixdevice->num();
+    ret = snd_mixer_channel_write( devhandle, mixdevice->num(), &data );
+    if ( ret ) {
+      return Mixer::ERR_WRITE;
+    }
+  }
+  else {
+    return Mixer::ERR_READ;
+  }
+
+  return 0;
+}
+

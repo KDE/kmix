@@ -11,8 +11,9 @@ public:
   virtual ~Mixer_OSS() {};
 
   virtual QString errorText(int mixer_error);
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-  virtual void writeVolumeToHW( int devnum, int volLeft, int volRight );
+  virtual void setRecsrc(unsigned int newRecsrc);
+  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
+  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
 
 protected:
   virtual void setDevNumName_I(int devnum);

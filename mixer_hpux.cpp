@@ -22,6 +22,8 @@
 
 #include "mixer_hpux.h"
 
+#warning It looks like somebody wanted to add HPUX support, but stopped in the middle of the work. The mixer will not work properly.
+
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
@@ -74,8 +76,23 @@ void Mixer_HPUX::setDevNumName_I(int devnum)
 }
 
 
-void Mixer_::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
+void Mixer_HPUX::setRecsrc(unsigned int newRecsrc)
+{
+  i_recsrc = newRecsrc;
+  // nothing else (yet!)
+}
+
+
+int Mixer_HPUX::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
 {
   *VolRight = 100;
   *VolLeft  = 100;
+
+  return 0;
+}
+
+int Mixer_HPUX::writeVolumeToHW( int devnum, int volLeft, int volRight )
+{
+  // Set volume (right&left)
+  return Mixer::ERR_NOTSUPP;
 }

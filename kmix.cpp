@@ -213,7 +213,10 @@ KMix::KMix(int mixernum, int SetNum)
   prefDL->tickmarksChk->setChecked(tickmarksOn);
   prefDL->dockingChk->setChecked(allowDocking);
 
-  connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
+  // Synchronize from KTMW to Prefs and vice versa via signals
+  connect(prefDL, SIGNAL(optionsApply()), this  , SLOT(applyOptions()));
+  connect(this,   SIGNAL(layoutChange()), prefDL, SLOT(slotUpdatelayout()));
+
   showOptsCB();  // !!! For faster debugging
 
   globalKapp->setMainWidget( this );
@@ -299,8 +302,10 @@ void KMix::createWidgets()
   MixDevice *MixPtr;
   for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
     MixPtr = (*mix)[l_i_mixDevice];
+
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
-#warning This might be called multiple times (e.g. on a set change). I should change it
+    // #warning This might be called multiple times (e.g. on a set change). I should change it
+    // OK, it doesn't happen. And I know why. But still I might want to rework this
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
     int devnum = MixPtr->num();
@@ -402,6 +407,8 @@ void KMix::createWidgets()
 
 void KMix::placeWidgets()
 {
+  Container->setUpdatesEnabled(false);
+  debug("Placing widgets");
   int sliderHeight=100;
   int qsMaxY=0;
   int l_i_belowSlider=0;
@@ -421,9 +428,10 @@ void KMix::placeWidgets()
   iy = i_lbl_setNum->height();
 
   bool first = true;
-  MixDevice *MixPtr = mix->First;
-  while (MixPtr) {
 
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
+    MixPtr = (*mix)[l_i_mixDevice];
 
     if (MixPtr->disabled() ) {
       // Volume regulator not shown => Hide complete and skip the rest of the code
@@ -432,7 +440,6 @@ void KMix::placeWidgets()
       if (MixPtr->stereo())
 	MixPtr->Right->slider->hide();
       MixPtr->i_KLed_state->hide();
-      MixPtr=MixPtr->Next;
       continue;
     }
 
@@ -554,7 +561,6 @@ void KMix::placeWidgets()
     }
 
     first=false;
-    MixPtr=MixPtr->Next;
   }
 
   ix += 4;
@@ -580,6 +586,8 @@ void KMix::placeWidgets()
 
   iy+=LeftRightSB->height();
   Container->setFixedSize( ix, iy );
+
+  Container->setUpdatesEnabled(true);
 
   // tell the Toplevel to do a relayout
   updateRects();
@@ -775,15 +783,15 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   }
 
   // Scan mixerChannels for Slider object *o
-  MixDevice     *MixPtr = mix->First;
   QSlider       *qs     = (QSlider*)o;
   MixDevice     *MixFound= NULL;
-  while(MixPtr) {
+  MixDevice	*MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
+    MixPtr = (*mix)[l_i_mixDevice];
     if ( (MixPtr->Left->slider == qs) || (MixPtr->Right->slider == qs) ) {
       MixFound = MixPtr;
       break;
     }
-    MixPtr = MixPtr->Next;
   }
 
   // Have not found slider => return and do not pop up context menu
@@ -921,8 +929,6 @@ void KMix::updateSlidersI( )
   QSlider *qs;
   MixSet *SrcSet = mix->TheMixSets->first();
 
-  // now update the slider positions...
-  MixDevice        *MixPtr = mix->First;
 
   bool setDisplay = true;
 
@@ -940,7 +946,10 @@ void KMix::updateSlidersI( )
   */
   MixChannel::HW_update(false);
 
-  while(MixPtr) {
+  // now update the slider positions...
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
+    MixPtr = (*mix)[l_i_mixDevice];
     MixSetEntry *mse;
 
     // Traverse all MixSetEntries to find the entry which corresponds to  MixPtr->num()
@@ -948,7 +957,7 @@ void KMix::updateSlidersI( )
 	(mse != NULL) && (mse->devnum != MixPtr->num() );
 	mse=SrcSet->next() );
     if (mse == NULL)
-      continue;		// -<- not found : Shouldn't this better break the loop?   !!!		(1)
+      continue;		// -<- not found : Shouldn't this better break the loop?   !!!
 
     if(! MixPtr->disabled()){
       MixPtr->Left->volume = mse->volumeL;
@@ -964,9 +973,6 @@ void KMix::updateSlidersI( )
       dock_widget->setDisplay(( MixPtr->Left->volume + MixPtr->Right->volume )/2);
       setDisplay = false;
     }
-
-
-    MixPtr = MixPtr->Next;	// !!! Not executed in the case "mse == NULL", see at (1)
   }
   MixChannel::HW_update(true);
 }
@@ -985,10 +991,10 @@ void KMix::quickchange_volume(int val_l_diff)
   //cerr << "quickchange diff = " << val_l_diff;
 
 
-  MixDevice        *MixPtr = mix->First;
-
+  MixDevice        *MixPtr = (*mix)[1];
   MixSet *Set0  = mix->TheMixSets->first();
   MixSetEntry *mse = Set0->findDev(MixPtr->num() );
+
   if (mse) {
     // left volume
     l_i_volNew =  mse->volumeL + val_l_diff;

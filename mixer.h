@@ -10,6 +10,7 @@
 #include <qslider.h>
 #include <qstring.h>
 #include <qlist.h>
+#include <qarray.h>
 #include <qlabel.h>
 
 #include <QceStateLED.h>
@@ -86,10 +87,9 @@ public:
   void		setMuted(bool value);
   void		setStereoLinked(bool value);
 
-
-  MixDevice	*Next;			// Pointer to next elment of MixDevice list
   MixChannel	*Left;			//
   MixChannel	*Right;			//
+
   Mixer		*mix;
 
   QLabel	*picLabel;
@@ -158,6 +158,7 @@ public:
 
   /// Tells the number of the mixing devices
   unsigned int size() const;
+  /// Returns a pointer to the mix device with the given number
   MixDevice* operator[](int val_i_num);
 
   /// Grabs (opens) the mixer for further intraction
@@ -166,7 +167,10 @@ public:
   virtual int release();
   /// Prints out a translated error text for the given error number on stderr
   void errormsg(int mixer_error);
-  /// Returns a translated error text for the given error number
+  /**
+     Returns a translated error text for the given error number. Derived classes
+     can override this method to produce platform specific error descriptions.
+  */
   virtual QString errorText(int mixer_error);
   QString mixerName();
 
@@ -180,16 +184,23 @@ public:
   virtual void Set2Set0(int Source, bool copy_volume);
   virtual void Set0toSet(int Source);
 
+  /// Set the record source(s) according to the given device mask
+  /// The default implementation does nothing.
   virtual void setRecsrc(unsigned int newRecsrc);
-  unsigned int recsrc() const;
-  /// Reads the volume of the given device into VolLeft and VolRight
-  virtual void readVolumeFromHW( int devnum, int *VolLeft, int *VolRight ) = 0;
-  virtual void writeVolumeToHW( int devnum, int volLeft, int volRight ) = 0;
+  /// Gets the currently active record source(s) as a device mask
+  /// The default implementation just returns the internal stored value.
+  /// This value can be outdated, when another applications change the record
+  /// source. You can override this in your derived class
+  virtual unsigned int recsrc() const;
+  /// Reads the volume of the given device into VolLeft and VolRight.
+  /// Abstract method! You must implement it in your dericved class.
+  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight ) = 0;
+  /// Writes the given volumes in the given device
+  /// Abstract method! You must implement it in your dericved class.
+  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight ) = 0;
 
   void sessionSave(bool sessionConfig);
 
-  int num_mixdevs;
-  MixDevice	*First;
   ///  The mixing set list
   MixSetList *TheMixSets;
 
@@ -205,12 +216,14 @@ protected:
   /// Derived classes MUST implement this to open the mixer. Returns a KMix error
   // code (O=OK).
   virtual int	openMixer() = 0;
-  /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If the mixer API of
-  /// your OS gives you a usable name, use this.
+
+  /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
+  /// gives you a usable name, use that name.
   QString	i_s_mixer_name;
   bool		isOpen;
   unsigned int	devmask, recmask, i_recsrc, stereodevs;
   int		PercentLeft,PercentRight;
+
   ///  Maximum volume Level allowed by the Mixer API (OS dependent)
   int		MaxVolume;
 
@@ -222,5 +235,7 @@ private:
   void setupStructs(void);
   void updateMixDeviceI(MixDevice *mixdevice);
 
+  // All mix devices of this phyisical device.
+  QArray<MixDevice*> i_ql_mixDevices;
 };
 #endif

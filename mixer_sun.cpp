@@ -90,13 +90,31 @@ QString Mixer_SUN::errorText(int mixer_error)
 }
 
 
-void Mixer_SUN::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
+int Mixer_SUN::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
 {
   audio_info_t audioinfo;
   int Volume;
 
-  if (ioctl(fd, AUDIO_GETINFO, &audioinfo) < 0)
-    errormsg(Mixer::ERR_READ);
-  Volume = audioinfo.play.gain;
-  *VolLeft  = *VolRight = (Volume & 0x7f);
+  if (ioctl(fd, AUDIO_GETINFO, &audioinfo) < 0) {
+    return(Mixer::ERR_READ);
+  }
+  else {
+    Volume = audioinfo.play.gain;
+    *VolLeft  = *VolRight = (Volume & 0x7f);
+    return 0;
+  }
+}
+
+int Mixer_SUN::writeVolumeToHW( int devnum, int volLeft, int volRight )
+{
+  audio_info_t audioinfo;
+  AUDIO_INITINFO(&audioinfo);
+  audioinfo.play.gain = volLeft;	// -<- Only left volume (one channel on Sun)
+
+  if (ioctl(fd, AUDIO_SETINFO, &audioinfo) < 0) {
+    return(Mixer::ERR_WRITE);
+  }
+  else {
+    return 0;
+  }
 }

@@ -31,21 +31,31 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
   return l_mixer;
 }
 
-Mixer_none::Mixer_none()
+Mixer_None::Mixer_None()
 {
 }
 
-Mixer_none::~Mixer_none()
+Mixer_None::~Mixer_None()
 {
 }
 
-int Mixer_none::openMixer()
+int Mixer_None::openMixer()
 {
    i_s_mixer_name = "No mixer";
    return Mixer::ERR_NOTSUPP;
 }
 
-int Mixer_none::releaseMixer()
+int Mixer_None::releaseMixer()
+{
+  return Mixer::ERR_NOTSUPP;
+}
+
+int Mixer_None::readVolumeFromHW( int , int * , int * )
+{
+  return Mixer::ERR_NOTSUPP;
+}
+
+int Mixer_None::writeVolumeToHW( int , int , int )
 {
   return Mixer::ERR_NOTSUPP;
 }
