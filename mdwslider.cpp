@@ -229,7 +229,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
             // WARNING: This hardcoded "i==X" stuff is stupid, but I have
             //          no mapper - Additionaly I know that for now this
             //          is fixed!!
-            
+
             useSlider = true;
         }
         else if ( m_recordLED == 0 && ( i!=2 && i!=3 ) ) {
@@ -662,8 +662,11 @@ void MDWSlider::update()
     Volume vol = m_mixdevice->getVolume();
     if( isStereoLinked() )
     {
+	QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+        Volume::ChannelID chid = *it;
+
 	long avgVol;
-	if ( m_recordLED != 0 ) {
+	if ( m_recordLED != 0 && ( chid==2 || chid==3) ) {
 	    // if we show the record LED, we will also want to show the
 	    // record volume (!! This is a decision, and works with the
 	    // current GUI code. In future this might need to change).
@@ -697,13 +700,15 @@ void MDWSlider::update()
 	slider->blockSignals( false );
     } // only 1 slider (stereo-linked)
     else {
-	for( int i=0; i<vol.channels(); i++ )
+        QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+	for( int i=0; i<vol.channels(); i++, ++it )
         {
 	    QWidget *slider = m_sliders.at( i );
+            Volume::ChannelID chid = *it;
             if (slider == 0) {
                 // not implemented: happens if there are record and playback
                 // sliders in the same device. Or if you only show
-                // the left slider
+                // the right slider (or any other fancy occasion)
                 continue;
             }
 	    slider->blockSignals( true );
@@ -712,7 +717,7 @@ void MDWSlider::update()
 	    {
 		KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
 		if (smallSlider) {
-		    smallSlider->setValue( vol[i] );
+		    smallSlider->setValue( vol[chid] );
 		    smallSlider->setGray( m_mixdevice->isMuted() );
 		}
 	    }
