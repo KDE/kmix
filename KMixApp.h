@@ -18,10 +18,13 @@ Q_OBJECT
 
  signals:
     void stopUpdatesOnVisibility();
+
+ private slots:
+    void rememberLastWindowClosed();
     
  private:
     KMixWindow *m_kmix;
-    bool       _refActive;
+    bool       _lastWindowClosed;
 };
 
 #endif

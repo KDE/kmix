@@ -62,6 +62,8 @@ extern "C" int kdemain(int argc, char *argv[])
    if (!KMixApp::start())
        return 0;
 
-   KMixApp app;
-   return app.exec();
+   KMixApp *app = new KMixApp();
+   int ret = app->exec();
+   delete app;
+   return ret;
 }
