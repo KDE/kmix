@@ -56,10 +56,10 @@ extern "C" int kdemain(int argc, char *argv[])
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-   KApplication app;
+   KApplication app( false, false );
 
    // get maximum values
-   KConfig *config= new KConfig("kcmkmixrc", false);
+   KConfig *config= new KConfig("kcmkmixrc", true, false);
    config->setGroup("Misc");
    //int maxCards = config->readNumEntry( "maxCards", 2 );
    int maxDevices = config->readNumEntry( "maxDevices", 2 );
