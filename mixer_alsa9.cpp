@@ -385,5 +385,6 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 		if( elem_sw == volume.isMuted() )
 			snd_mixer_selem_set_capture_switch_all( elem, ! elem_sw );
 	}
+	return 0;
 }
 
