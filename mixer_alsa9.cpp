@@ -533,6 +533,11 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 	Volume data = volume; // !!! Variable called "data" is never used - cesken
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
 
+	if ( !elem )
+	{
+		return 0;
+	}
+
 	left = volume[ Volume::LEFT ];
 	right = volume[ Volume::RIGHT ];
 
