@@ -37,7 +37,7 @@
 #include <kconfig.h>
 #include <kaction.h>
 #include <kstdaction.h>
-#include <kpopmenu.h>
+#include <kpopupmenu.h>
 #include <khelpmenu.h>
 #include <kiconloader.h>
 

@@ -27,7 +27,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kaction.h>
-#include <kpopmenu.h>
+#include <kpopupmenu.h>
 
 #include <qslider.h>
 #include <qlabel.h>

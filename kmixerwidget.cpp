@@ -39,7 +39,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kaction.h>
-#include <kpopmenu.h>
+#include <kpopupmenu.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
