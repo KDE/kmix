@@ -21,6 +21,13 @@
 </author>
 
 <othercredit role="developer">
+<firstname>Christian</firstname>
+<surname>Esken</surname>
+<affiliation><address><email>esken@kde.org</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="developer">
 <firstname>Stefan</firstname>
 <surname>Schimanski</surname>
 <affiliation><address><email>1Stein@gmx.de</email></address></affiliation>
@@ -37,13 +44,14 @@
 </authorgroup>
 
 <copyright>
-<year>1999</year><year>2000</year>
-<holder>Matt Johnston &amp; Christian Esken</holder>
+<year>1996</year><year>2003</year>
+<holder>Christian Esken &amp; Matt Johnston</holder>
 </copyright>
+
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2002-02-05</date>
-<releaseinfo>1.90.00</releaseinfo>
+<date>2003-04-24</date>
+<releaseinfo>1.91.00</releaseinfo>
 
 <abstract><para>&kmix; is an application to allow you to change the volume of
 your sound card.</para></abstract>
@@ -66,7 +74,7 @@ your sound card.</para></abstract>
 full-featured. The program should give controls for each of your
 soundcards.</para>
 
-<para>&kmix; supports several platforms and sound drivers. Version 1.9 works with:</para>
+<para>&kmix; supports several platforms and sound drivers. Version 1.91 works with:</para>
 
 <itemizedlist>
 <listitem><para> All Open Sound System platforms. Explicitly tested
@@ -93,26 +101,43 @@ soundcards, they will each have their own tab.</para>
 <title>Volume sliders</title>
 
 <para>The volume sliders have a context menu, accessible by right clicking on
-the slider or device icon (at the top). Three entries are possible, but only
+the slider or device icon (at the top). Several entries are possible, but only
 those applicable are shown.</para>
 
 <variablelist>
-<varlistentry>
-<term><guilabel>Muted</guilabel></term>
-<listitem><para>Mute or unmute the device</para></listitem>
-</varlistentry>
+
 <varlistentry>
 <term><guilabel>Split Channels</guilabel></term>
 <listitem><para>Show either one or two sliders. This is only applicable to
 stereo devices. The right slider controls right side volume, and the left
 controls left side volume.</para></listitem>
 </varlistentry>
+
 <varlistentry>
-<term><guilabel>Set Record Source</guilabel></term>
-<listitem><para>Set this device as record source. Only applicable to recordable
-devices. This can also be done by clicking the red button below the slider (if
-it is available).</para></listitem>
+<term><guilabel>Muted</guilabel></term>
+<listitem><para>Mute or unmute the device</para></listitem>
 </varlistentry>
+
+<varlistentry>
+<term><guilabel>Hide</guilabel></term>
+<listitem><para>If you are not interested in regulating this device you can hide it with this option. If you want to show it again, you can only do this by selecting the <guilabel>Show All</guilabel> option (see below)</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Define Keys</guilabel></term>
+<listitem><para>You can control a device with your keyboard. Use this menu option to show the KDE <guilabel>Configure Shortcuts</guilabel> dialog. Here you can define keys for increasing and decreasing volume and for muting the device. The keys are global and operate also when &kmix; is iconified or docked.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show All</guilabel></term>
+<listitem><para>If you have hidden devices via the <guilabel>Hide</guilabel> option (see above), you can show them all again with this option.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Show Menubar</guilabel></term>
+<listitem><para>This option is not device specific, but affects the mixer window. You can hide and show the menu bar with this option. You can also do this by pressing the Shortcut (usually CTRL-m)</para></listitem>
+</varlistentry>
+
 </variablelist>
 </sect1>
 
@@ -140,10 +165,8 @@ to choose preferences. These items are:</para>
 <listitem><para>minimize to an icon in the system tray</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Only hide window with close button - don't close
-KMix</guilabel></term>
-<listitem><para>Just minimize &kmix; when closing the window, don't close
-it.</para></listitem>
+<term><guilabel>Enable system tray volume control</guilabel></term>
+<listitem><para>If checked, &kmix; will dock in the systray when pressing the window close button. If not checked, &kmix; will quit on pressing the window close button. Attention: After quitting you will not be able to control the volume if you have assigned keys for this.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Show tickmarks</guilabel></term>
@@ -152,8 +175,7 @@ it.</para></listitem>
 <varlistentry>
 <term><guilabel>Show labels</guilabel></term>
 <listitem><para>Display labels for each of the sound devices. Wether this item
-is checked or not, by holding the mouse over the icon for each device, you can
-see this information.</para></listitem>
+is checked or not, by holding the mouse over the icon for each device, you can see this information.</para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -205,10 +227,22 @@ to speed up &kmix;.</para></listitem>
 <chapter id="credits">
 <title>Credits and License</title>
 
-<para>&kmix;</para>
+<para>Main developers</para>
 
-<para>Program copyright 2000 Stefan Schimanski
-<email>1Stein@gmx.de</email></para>
+<itemizedlist>
+<listitem><para>Copyright 1996-2000 Christian Esken</para></listitem>
+<listitem><para>Copyright 2000-2003 Christian Esken &amp; Stefan Schimanski</para></listitem>
+</itemizedlist>
+
+<!--
+Copyright 1996-2000 Christian Esken
+Copyright 2000-2003 Christian Esken &amp; Stefan Schimanski
+
+<copyright>
+<year>2000</year><year>2003</year>
+<holder>Christian Esken &amp; Stefan Schimanski</holder>
+</copyright>
+-->
 
 <para>Contributors:</para>
 
@@ -231,6 +265,9 @@ Fixes</para></listitem>
 
 <para>Documentation copyright 2000 Matt Johnston
 <email>mattj@flashmail.com</email></para>
+
+<para>Updated 2003 to match &kmix; V1.91 by Christian Esken
+<email>esken@kde.org</email></para>
 
 <para>Based on documentation by Christian Esken
 <email>esken@kde.org</email></para>
