@@ -102,7 +102,7 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
                    i18n("Change this value to optimize the startup time "
                         "of kmix. High values mean that kmix probes for "
                         "many devices per soundcard driver.\n"
-                        "If there're more mixer sub devices in a "
+                        "If there are more mixer sub devices in a "
                         "driver than kmix detects, increase this value") );
 
   topLayout->addStretch( 1 );
