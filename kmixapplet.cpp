@@ -274,7 +274,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	//  Find out wether the applet should be reversed
 	reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 	
-	popupDirectionChange(KPanelApplet::Up);
+	//positionChange(position()); // To take over reversedDir
 	
 	m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
 }
@@ -348,9 +348,11 @@ void KMixApplet::selectMixer()
       {
          delete m_errorLabel;
          m_errorLabel = 0;
+
+	 KPanelApplet::Direction dirHack = getDirectionFromPositionHack(position());
          m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
                                            mixer->mixerNum(), true,
-                                           popupDirection(), MixDevice::SLIDER, this );
+                                           checkReverse(dirHack), MixDevice::SLIDER, this );
          setColors();
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
@@ -360,6 +362,24 @@ void KMixApplet::selectMixer()
       }
    }
 }
+
+KPanelApplet::Direction KMixApplet::getDirectionFromPositionHack(Position pos) {
+	/*
+	Position hack: KMixApplet was using popupDirection() which is nonsense and now leeds to
+	an unusable KMixApplet on vertical panels. As the "Direction" is used throughout
+	KMix we now use position and do an ugly conversion.
+	This is to be removed for KMix2.1 !!!
+	*/
+	KPanelApplet::Direction dir = KPanelApplet::Down; // Random default value
+	switch ( pos ) {
+		case KPanelApplet::pTop    : dir=KPanelApplet::Up; break;
+		case KPanelApplet::pLeft   : dir=KPanelApplet::Left; break;
+		case KPanelApplet::pRight  : dir=KPanelApplet::Right; break;
+		case KPanelApplet::pBottom : dir=KPanelApplet::Down; break;
+	}
+	return dir;
+}
+
 
 void KMixApplet::triggerUpdateLayout()
 {
@@ -434,9 +454,10 @@ void KMixApplet::setColors()
         m_mixerWidget->setColors( m_colors );
 }
 
-void KMixApplet::popupDirectionChange(Direction dir) {
+void KMixApplet::positionChange(Position pos) {
   if (!m_errorLabel) {
     if (m_mixerWidget) delete m_mixerWidget;
+    Direction dir = getDirectionFromPositionHack(pos);
     m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
                                       checkReverse(dir), MixDevice::ALL, this );
     m_mixerWidget->loadConfig( config(), "Widget" );
@@ -491,8 +512,8 @@ void KMixApplet::applyPreferences()
 
     reversedDir = m_pref->reverseDirection();
     QSize si = m_mixerWidget->size();
-    popupDirectionChange( popupDirection());
-    if( popupDirection() == Up || popupDirection() == Down )
+    positionChange( position());
+    if( position() == pTop || position() == pBottom )
         m_mixerWidget->setIcons( si.height()>=32 );
     else
         m_mixerWidget->setIcons( si.width()>=32 );

@@ -36,6 +36,7 @@
 #include <qmap.h>
 #include <qsize.h>
 #include <qhbox.h>
+#include <qvbox.h>
 
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -143,11 +144,14 @@ KMixerWidget::createLayout()
    }
    else
    {
-   		// This is called for the small version (PanelApplet)
-   		// Bad. With the current design, users will not see recordable devices, e.g. PCM, CD, ...
-   		// This is because "Output" currently means: "can be recorded"
-      m_oWidget = new QHBox( this, "OutputTab" );
-      m_appletLayout = new QHBoxLayout( this, 0, 0 );
+      if ( m_direction == KPanelApplet::Left || m_direction == KPanelApplet::Right ) {
+	m_oWidget = new QVBox( this, "OutputTab" );
+        m_appletLayout = new QVBoxLayout( this, 0, 0 );
+      }
+      else {
+	m_oWidget = new QHBox( this, "OutputTab" );
+	m_appletLayout = new QHBoxLayout( this, 0, 0 );
+      }
       m_appletLayout->add( m_oWidget );
 		createDeviceWidgets();
    }
