@@ -1,7 +1,9 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
+ * $Id$
  *
+ * MixerSelectionInfo
  * Copyright (C) 2003 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
@@ -19,24 +21,27 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "VerticalText.h"
-#include <qpainter.h>
-#include <kdebug.h>
+#include "mixerselectioninfo.h"
 
-
-VerticalText::VerticalText(QWidget * parent, const char * name, WFlags f) : QWidget(parent,name,f)
+/**
+ * Stores information of a mixer selection done with the MixerSelector dialog.
+ * num is the number from the list of mixers.
+ * Hint: The deviceTypeMask[123] design is probably a bit hacky. It should be
+ *  reworked later if we cannot live with it.
+ */
+MixerSelectionInfo::MixerSelectionInfo(int num, QString name,
+		MixDevice::DeviceCategory deviceTypeMask1,
+		MixDevice::DeviceCategory deviceTypeMask2,
+		MixDevice::DeviceCategory deviceTypeMask3)
 {
-	resize(20,100 /*parent->height() */ );
-	setFixedWidth(20);
+	m_num = num;
+ 	m_name = name;
+ 	m_deviceTypeMask1 = deviceTypeMask1;
+ 	m_deviceTypeMask2 = deviceTypeMask2;
+ 	m_deviceTypeMask3 = deviceTypeMask3;
+ }
+ 
+MixerSelectionInfo::~MixerSelectionInfo()
+{
 }
 
-VerticalText::~VerticalText() {
-}
-
-
-void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
-	//kdDebug() << "paintEvent(). height()=" <<  height() << "\n";
-	QPainter paint(this);
-	paint.rotate(270);
-	paint.drawText(-height()+2,width(),name());
-}

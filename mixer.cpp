@@ -40,10 +40,14 @@ MixDevice::MixDevice(int num, Volume vol, bool recordable,
 		     DeviceCategory category ) :
     m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable ), m_category( category)
 {
+	m_switch = false;
    if( name.isEmpty() )
       m_name = i18n("unknown");
    else
       m_name = name;
+	
+	if( category == MixDevice::SWITCH )
+		m_switch = true;
    
 }
 

@@ -37,6 +37,7 @@ class KMultiTabBar;
 // QT
 class QSlider;
 
+
 // KDE
 class KActionCollection;
 class KActionMenu;
@@ -114,10 +115,13 @@ KMixerWidget : public QWidget
   private:
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
+	QWidget *m_swWidget;
    QBoxLayout *m_topLayout;
    QBoxLayout *m_devLayout;
    QBoxLayout *m_devLayoutInput;
    QBoxLayout *m_devLayoutOutput;
+	QGridLayout *m_devSwitchLayout;
+	
    QPtrList<Channel> m_channels;
 	KMultiTabBar *m_ioTab;
 	QWidgetStack *m_ioStack;

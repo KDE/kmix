@@ -21,8 +21,8 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "MixerSelector.h"
-#include "MixerSelectionInfo.h"
+#include "mixerselector.h"
+#include "mixerselectioninfo.h"
 #include "mixer.h"
 
 #include <qcombobox.h>
@@ -75,9 +75,6 @@ MixerSelector::MixerSelector(QPtrList<Mixer> &mixers, QWidget * parent, const ch
 	connect (hwNames, SIGNAL(highlighted(const QString&)), this, SLOT(newMixerSelected(const QString&)) );
 	newMixerSelected( hwNames->currentText() );
 	
-	distributeCheck = new QCheckBox(i18n("&Distribution to multiple tabs allowed"), vbox);
-	distributeCheck->setChecked(true);
-
 	dialog->setMinimumSize( 300, 180);
 }
 
@@ -92,25 +89,33 @@ MixerSelector::~MixerSelector()
  *  have to delete this object after using its content.
  *  If the user pressed the Cancel button, 0 will be returned.
  */
-MixerSelectionInfo* MixerSelector::exec() {
+
+MixerSelectionInfo* 
+MixerSelector::exec() 
+{
 	/*
 	connect(dialog, SIGNAL(okClicked()), this, okClicked());
 	connect(dialog, SIGNAL(cancelClicked()), this, cancelClicked());
 	*/
 	int ret = dialog->exec();
-	if (ret != QDialog::Accepted) {
+	if (ret != QDialog::Accepted) 
+	{
 		return 0;
-	} else {
-		MixerSelectionInfo *msi = new MixerSelectionInfo(hwNames->currentItem(), shownName->text(), distributeCheck->isChecked(), MixDevice::ALL);
+	} 
+	else 
+	{
+		MixerSelectionInfo *msi = new MixerSelectionInfo(hwNames->currentItem(), 
+				shownName->text(), MixDevice::ALL );
 		return msi;
 	}
 }
 
-void MixerSelector::newMixerSelected(const QString &newMixer) {
+void 
+MixerSelector::newMixerSelected( const QString &newMixer ) 
+{
 	// using mid(3) here to strip off the numbering prefix (e.g. "1. AU8830 Soundcard")
 	shownName->setText(newMixer.mid(3));
 }
 
-
-#include "MixerSelector.moc"
+#include "mixerselector.moc"
 

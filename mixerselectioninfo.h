@@ -6,8 +6,8 @@
 
 class MixerSelectionInfo
 {
-public:
-	MixerSelectionInfo(int num, QString name, bool tabDistribution,
+	public:
+	MixerSelectionInfo(int num, QString name,
 		MixDevice::DeviceCategory deviceTypeMask1 = ((MixDevice::DeviceCategory)0),
 		MixDevice::DeviceCategory deviceTypeMask2 = ((MixDevice::DeviceCategory)0),
 		MixDevice::DeviceCategory deviceTypeMask3 = ((MixDevice::DeviceCategory)0)
@@ -15,7 +15,6 @@ public:
 	~MixerSelectionInfo();
 	int m_num;
 	QString m_name;
-	bool m_tabDistribution;
 	MixDevice::DeviceCategory m_deviceTypeMask1;
 	MixDevice::DeviceCategory m_deviceTypeMask2;
 	MixDevice::DeviceCategory m_deviceTypeMask3;

@@ -214,19 +214,22 @@ Mixer_ALSA::openMixer()
 			int chn = 1; // Assuming default mono
 			
 			if( snd_mixer_selem_has_playback_volume( elem ) ||
+					snd_mixer_selem_has_capture_volume( elem ) ||
 					snd_mixer_selem_has_playback_switch( elem ) ||
-					! snd_mixer_selem_is_playback_mono( elem ) )
-				chn = 2; // Stereo channel ?
-			else if( snd_mixer_selem_has_capture_volume( elem ) ||
 					snd_mixer_selem_has_capture_switch( elem ) ||
-					! snd_mixer_selem_is_capture_mono( elem ) )
+					! snd_mixer_selem_is_capture_mono( elem )  ||
+					! snd_mixer_selem_is_playback_mono( elem ) )
 				chn = 2; // Stereo channel ?
 			else
 				continue;
 			
-			Volume vol( chn, ( int )maxVolume );
-				
+			Volume vol( chn, ( int )maxVolume );	
 			mixer_elem_list.append( elem );
+			
+			if( snd_mixer_selem_is_playback_mono( elem ) ||
+					snd_mixer_selem_is_capture_mono( elem ) )
+				cc = MixDevice::SWITCH;
+			
 			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct, cc) );
 			mixerIdx++;
 		}

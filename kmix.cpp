@@ -53,8 +53,8 @@
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
-#include "MixerSelector.h"
-#include "MixerSelectionInfo.h"
+#include "mixerselector.h"
+#include "mixerselectioninfo.h"
 
 
 KMixWindow::KMixWindow()
@@ -277,7 +277,7 @@ KMixWindow::initPrefDlg()
 void
 KMixWindow::initWidgets()
 {
-	QHBoxLayout *layout = new QHBoxLayout( this );
+	QHBoxLayout *layout = new QHBoxLayout( this, 0, -1, "mainLayoutQHBox" );
 	// The tab bar
 	m_tab = new KMultiTabBar( KMultiTabBar::Horizontal, this, "mainTabBar" );
 	m_tab->showActiveTabTexts( true );
@@ -721,7 +721,8 @@ KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi)
  * @returns true if there is at least on device. false if there is no such device.
  */
 bool
-KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask) {
+KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask) 
+{
     bool categoryUsed = false;
     MixSet mixSet = mixer->getMixSet();
     MixDevice *mixDevice = mixSet.first();

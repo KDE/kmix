@@ -61,6 +61,7 @@ class MixDevice
       bool isStereo() const        { return (m_volume.channels() > 1); };
       bool isRecordable() const    { return m_recordable; };
       bool isRecsrc() const        { return m_recsrc; };
+		bool isSwitch() const        { return m_switch; }
       bool isMuted() const         { return m_volume.isMuted(); };
 
       void setMuted(bool value)            { m_volume.setMuted( value ); };
@@ -95,6 +96,7 @@ class MixDevice
       int m_num; // ioctl() device number of mixer
       bool m_recordable; // Can it be recorded?
       bool m_recsrc; // Is it an actual record source?
+		bool m_switch; // On/Off switch
       DeviceCategory m_category; //  category
       QString m_name;	// Ascii channel name
 };
