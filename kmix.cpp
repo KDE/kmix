@@ -83,7 +83,7 @@ KMixWindow::KMixWindow()
 
 		if ( widget==0 ) {
 #undef CHRIS_TEST
-#ifndef CHRIS_TEST
+#ifdef CHRIS_TEST
 // this new code inserts n Tabs, but it does not work yet :-(
 			// b) No widget found => create new widget
 			MixerSelectionInfo *msi = new MixerSelectionInfo(
