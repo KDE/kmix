@@ -31,38 +31,39 @@
 Preferences::Preferences( QWidget *parent, Mixer *mix ) :
    QTabDialog( parent )
 {
-  resize(300,400);
+  //resize(300,400);
   this->mix = mix;
   grpbox2a  = NULL;
 
   page1 = new QWidget( this );
-  page1->setGeometry(10,10,width()-20,height()-20);
+  //page1->setGeometry(10,10,width()-20,height()-20);
   page2 = new QWidget( this );
-  page2->setGeometry(10,10,width()-20,height()-20);
-  addTab( page1,i18n("General") );
-  addTab( page2,i18n("Channels") );
+  //page2->setGeometry(10,10,width()-20,height()-20);
 
   // Define page 1
   QButtonGroup *grpbox1a = new QButtonGroup(i18n("Startup settings"), page1 );
-  grpbox1a->setGeometry( 10, 10, page1->width()-20, page1->height()-20 );
+  grpbox1a->move( 10, 10 ); //, page1->width()-20, page1->height()-20 );
 
-  int x=10, y=20;
+  int x=10, y=20, maxwidth=0;
   menubarChk = new QCheckBox(grpbox1a);
   menubarChk->setText(i18n("Menubar"));
-  menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
+  menubarChk->move(x,y); // , grpbox1a->width()-20, menubarChk->height() );
+  if (menubarChk->width() > maxwidth ) maxwidth = menubarChk->width();
 
   y += (menubarChk->height() );
   tickmarksChk = new QCheckBox(grpbox1a);
   tickmarksChk->setText(i18n("Tickmarks"));
-  tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
+  tickmarksChk->move(x,y);
+  if (tickmarksChk->width() > maxwidth ) maxwidth = tickmarksChk->width();
 
   y += tickmarksChk->height();
   dockingChk = new QCheckBox(grpbox1a);
   dockingChk->setText(i18n("Allow docking"));
-  dockingChk->setGeometry(x,y, grpbox1a->width()-20, dockingChk->height() );
+  dockingChk->move(x,y);
+  if (dockingChk->width() > maxwidth ) maxwidth = dockingChk->width();
 
   y += dockingChk->height();
-  grpbox1a->setGeometry( 10, 10, page1->width()-20, y+10);
+  grpbox1a->setGeometry( 10, 10, maxwidth+20, y+10);
   // Define page 2
   createChannelConfWindow();
 
@@ -77,11 +78,17 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   int maxheight = grpbox1a->height();
   if ( maxheight < grpbox2a->height() )
     maxheight = grpbox2a->height();
+  maxwidth =grpbox1a->width();
+  if ( maxwidth < grpbox2a->width() )
+    maxwidth = grpbox2a->width();
 
-  page1->setFixedSize(page1->width(),maxheight+10);
-  page2->setFixedSize(page1->width(),maxheight+10);
-  grpbox1a->resize(grpbox1a->width(),maxheight);
-  grpbox2a->resize(grpbox2a->width(),maxheight);
+  grpbox1a->setFixedSize(maxwidth,maxheight);
+  grpbox2a->setFixedSize(maxwidth,maxheight);
+  page1->setFixedSize( maxwidth+10, maxheight+10);
+  page2->setFixedSize( maxwidth+10, maxheight+10);
+
+  addTab( page1,i18n("General") );
+  addTab( page2,i18n("Channels") );
 
   setCaption(i18n("KMix Preferences") );
 }
@@ -116,6 +123,7 @@ void Preferences::createChannelConfWindow()
   qlb->setFixedWidth(qlb->sizeHint().width());
   qlb->move(x3,ypos);
 
+  int maxwidth = x3 + qlb->width();
   ypos += qlbd->height();
 
 
@@ -168,7 +176,7 @@ void Preferences::createChannelConfWindow()
     ypos += qle->height();
   }
 
-  grpbox2a->setGeometry( 10, 10, page2->width()-20, ypos+10);
+  grpbox2a->setGeometry( 10, 10, maxwidth+10, ypos+10);
 
   created = true;
 }      

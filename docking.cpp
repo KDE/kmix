@@ -214,11 +214,12 @@ void DockWidget::toggle_window_state() {
             QPoint zp = kmix->mapToGlobal(QPoint (0,0));
             if(zp.x() == pos_x && zp.y() == pos_y){
 //                if(debugflag)
-                    printf("warning: qt bug? compensating.....\n");
+//                  printf("warning: qt bug? compensating.....\n");
                 kmix->setGeometry(pos_x-4, pos_y-24, kmix->width(), kmix->height());
             }
             //
             kmix->show();
+            KWM::activate(kmix->winId());
             dockinginprogress = false;
         }
     }
