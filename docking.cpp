@@ -42,8 +42,8 @@ DockWidget::DockWidget(const char *name)
   QString tmp;
 
 #define PMERROR(pm) \
-  tmp.sprintf(klocale->translate("Could not load %s !"), pm); \
-  QMessageBox::warning(this, klocale->translate("Error"), tmp);
+  tmp.sprintf(i18n("Could not load %s !"), pm); \
+  QMessageBox::warning(this, i18n("Error"), tmp);
 
   //     printf("trying to load %s\n",pixdir.data());
   // load pixmaps
@@ -67,7 +67,7 @@ DockWidget::DockWidget(const char *name)
   // popup menu for right mouse button
   popup_m = new QPopupMenu();
 
-  toggleID = popup_m->insertItem(klocale->translate("Restore"),
+  toggleID = popup_m->insertItem(i18n("Restore"),
 				 this, SLOT(toggle_window_state()));
 
 
@@ -161,9 +161,9 @@ void DockWidget::mousePressEvent(QMouseEvent *e) {
 
     QString text;
     if(kmix->isVisible())
-      text = klocale->translate("Minimize");
+      text = i18n("Minimize");
     else
-      text = klocale->translate("Restore");
+      text = i18n("Restore");
     
     popup_m->changeItem(text, toggleID);
     popup_m->popup(QPoint(x, y));

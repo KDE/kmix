@@ -1,3 +1,5 @@
+Sun Apr 12 21:42:48 CEST 1998
+- 
 
 Thu Apr  9 23:27:42 CEST 1998
 - Adding F1 as global help
@@ -7,11 +9,14 @@ Thu Apr  9 23:27:42 CEST 1998
 - Now one can give kmix numbers, on which he choses an mixer
   (0=default mixer, 1=first mixer, ...)
 
-02.03.1998 Added GPL headers to all *.cpp files
-           Implemented docking on kpanel - now kmix is cool.
-01.03.1998 Added changes file
-           Documentation now in SGML
+Thu Apr  2 20:00:00 CEST 1998
+- Added GPL headers to all *.cpp files
+- Implemented docking on kpanel - now kmix is cool.
+Mon Apr  1 20:00:00 CEST 1998
+- Added changes file
+- Documentation now in SGML
 
 
 
-PS: This is my personally most liked program I ever did. :-)
+PS: This is my personally most liked program I ever did.
+    Hope you like it, too. :-)

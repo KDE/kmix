@@ -411,15 +411,15 @@ void KMix::createMenu()
 
   Mfile = new QPopupMenu;
   CHECK_PTR( Mfile );
-  Mfile->insertItem(klocale->translate("&Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
+  Mfile->insertItem(i18n("&Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_M),this, SLOT(hideMenubarCB()));
 
-  Mfile->insertItem(klocale->translate("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
+  Mfile->insertItem(i18n("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_T),this, SLOT(tickmarksTogCB()));
 
-  Mfile->insertItem( klocale->translate("&Options")       , this, SLOT(showOptsCB()) );
+  Mfile->insertItem( i18n("&Options")       , this, SLOT(showOptsCB()) );
   Mfile->insertSeparator();
-  Mfile->insertItem( klocale->translate("&Quit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
+  Mfile->insertItem( i18n("&Quit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
   QString msg,head;
@@ -430,29 +430,31 @@ void KMix::createMenu()
   msg += vers;
   msg += i18n("\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
-    "This program is in the GPL.\n"
-    "SGI Port done by Paul Kendall (paul@orion.co.nz)");
+    "This program is in the GPL.\n"\
+    "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
+    "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
+    "and Lennart Augustsson (augustss@cs.chalmers.se).");
   head += vers;
 
   Mhelp = globalKapp->getHelpMenu(true,msg);
   CHECK_PTR( Mhelp );
-//  Mhelp->insertItem( klocale->translate("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
+//  Mhelp->insertItem( i18n("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
 //  qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
 //  Mhelp->insertSeparator();
-//  Mhelp->insertItem( klocale->translate("&About"), this, SLOT(aboutClickedCB()));
-//  Mhelp->insertItem( klocale->translate("&About Qt..."), this, SLOT(aboutqt()));
+//  Mhelp->insertItem( i18n("&About"), this, SLOT(aboutClickedCB()));
+//  Mhelp->insertItem( i18n("&About Qt..."), this, SLOT(aboutqt()));
 
   mainmenu = new KMenuBar( this, "main menu");
   CHECK_PTR( mainmenu );
-  mainmenu->insertItem( klocale->translate("&File"), Mfile );
+  mainmenu->insertItem( i18n("&File"), Mfile );
   mainmenu->insertSeparator();
-  mainmenu->insertItem( klocale->translate("&Help"), Mhelp );
+  mainmenu->insertItem( i18n("&Help"), Mhelp );
 
   Mbalancing = new QPopupMenu;
   CHECK_PTR( Mbalancing );
-  Mbalancing->insertItem(klocale->translate("&Left")  , this, SLOT(MbalLeftCB()));
-  Mbalancing->insertItem(klocale->translate("&Center"), this, SLOT(MbalCentCB()));
-  Mbalancing->insertItem(klocale->translate("&Right") , this, SLOT(MbalRightCB()));
+  Mbalancing->insertItem(i18n("&Left")  , this, SLOT(MbalLeftCB()));
+  Mbalancing->insertItem(i18n("&Center"), this, SLOT(MbalCentCB()));
+  Mbalancing->insertItem(i18n("&Right") , this, SLOT(MbalRightCB()));
 }
 
 void KMix::tickmarksTogCB()
@@ -492,8 +494,10 @@ void KMix::aboutClickedCB()
   msg += vers;
   msg += i18n("\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
-    "This program is in the GPL.\n"
-    "SGI Port done by Paul Kendall (paul@orion.co.nz)");
+    "This program is in the GPL.\n"\
+    "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
+    "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
+    "and Lennart Augustsson (augustss@cs.chalmers.se).";
 
   head = i18n("About kmix ");
   head += vers;
@@ -573,16 +577,16 @@ QPopupMenu* KMix::contextMenu(QObject *o)
     Mlocal = new QPopupMenu;
     CHECK_PTR( Mlocal );
     if (MixFound->is_muted)
-      Mlocal->insertItem(klocale->translate("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
+      Mlocal->insertItem(i18n("Un&mute")    , MixPtr, SLOT(MvolMuteCB()    ));
     else
-      Mlocal->insertItem(klocale->translate("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
+      Mlocal->insertItem(i18n("&Mute")      , MixPtr, SLOT(MvolMuteCB()    ));
     if (MixFound->is_stereo)
       if (MixFound->StereoLink)
-	Mlocal->insertItem(klocale->translate("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
+	Mlocal->insertItem(i18n("&Split")   , MixPtr, SLOT(MvolSplitCB()   ));
       else
-	Mlocal->insertItem(klocale->translate("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
+	Mlocal->insertItem(i18n("Un&split") , MixPtr, SLOT(MvolSplitCB()   ));
     if (MixFound->is_recordable)
-      Mlocal->insertItem(klocale->translate("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
+      Mlocal->insertItem(i18n("&RecSource") , MixPtr, SLOT(MvolRecsrcCB()  ));
 
     MlocalCreated = true;
     return Mlocal;

@@ -39,21 +39,21 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   page1->setGeometry(10,10,width()-20,height()-20);
   page2 = new QWidget( this );
   page2->setGeometry(10,10,width()-20,height()-20);
-  addTab( page1, klocale->translate("General") );
-  addTab( page2, klocale->translate("Channels") );
+  addTab( page1,i18n("General") );
+  addTab( page2,i18n("Channels") );
 
   // Define page 1
-  QButtonGroup *grpbox1a = new QButtonGroup( klocale->translate("Startup settings"), page1 );
+  QButtonGroup *grpbox1a = new QButtonGroup(i18n("Startup settings"), page1 );
   grpbox1a->setGeometry( 10, 10, page1->width()-20, page1->height()-20 );
 
   int x=10, y=20;
   menubarChk = new QCheckBox(grpbox1a);
-  menubarChk->setText(klocale->translate("Menubar"));
+  menubarChk->setText(i18n("Menubar"));
   menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
 
   y += (menubarChk->height() );
   tickmarksChk = new QCheckBox(grpbox1a);
-  tickmarksChk->setText(klocale->translate("Tickmarks"));
+  tickmarksChk->setText(i18n("Tickmarks"));
   tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
 
   y += tickmarksChk->height();
@@ -73,28 +73,28 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   if ( maxheight < grpbox2a->height() )
     maxheight = grpbox2a->height();
 
-  page1->setFixedSize(page1->width(),maxheight+20);
-  page2->setFixedSize(page1->width(),maxheight+20);
+  page1->setFixedSize(page1->width(),maxheight+10);
+  page2->setFixedSize(page1->width(),maxheight+10);
   grpbox1a->resize(grpbox1a->width(),maxheight);
   grpbox2a->resize(grpbox2a->width(),maxheight);
 
-  setCaption( klocale->translate("KMix Preferences") );
+  setCaption(i18n("KMix Preferences") );
 }
 
 
 void Preferences::updateChannelConfWindow()
 {
-  grpbox2a = new QGroupBox (klocale->translate("Mixer channel setup (not saved yet)"),page2);
+  grpbox2a = new QGroupBox (i18n("Mixer channel setup (not saved yet)"),page2);
   MixDevice *mdev = mix->First;
   QLabel *qlb;
 
   int ypos=20;
   int x1=10,x2=120;
   qlb = new QLabel(grpbox2a);
-  qlb->setText(klocale->translate("Device"));
+  qlb->setText(i18n("Device"));
   qlb->move(x1,ypos);
   qlb = new QLabel(grpbox2a);
-  qlb->setText(klocale->translate("Show"));
+  qlb->setText(i18n("Show"));
   qlb->move(x2,ypos);
   ypos += qlb->height();
 
