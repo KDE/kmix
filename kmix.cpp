@@ -195,6 +195,13 @@ KMixWindow::updateDocking()
 		KAction *a = actionCollection()->action( "dock_mute" );
 		if ( a ) a->plug( menu );
 
+		/*
+		 * Mail from 31.1.2005: "make sure your features are at least string complete"
+		 * Preparation for fixing Bug #55078 - scheduled for KDE3.4.1 .
+		 * This text will be plugged into the dock-icon popup menu.
+		 */
+		QString selectChannel = i18n("Select Channel"); // This text will be used in KDE3.4.1 !!!
+
 		m_dockWidget->show();
 	}
 }
