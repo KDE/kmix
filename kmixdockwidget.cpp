@@ -69,6 +69,10 @@ void
 KMixDockWidget::createMasterVolWidget()
 {
     if (m_mixer == 0) {
+        // In case that there is no mixer installed, there will be no newVolumeLevels() signal's
+        // Thus we prepare the dock areas manually
+        setVolumeTip();
+        updatePixmap();
         return;
     }
 
@@ -164,22 +168,17 @@ KMixDockWidget::updatePixmap()
 	newPixmapType = 'd';
     }
 
+
     if ( newPixmapType != _oldPixmapType ) {
 	// Pixmap must be changed => do so
 	switch ( newPixmapType ) {
-	case 'e': setErrorPixmap(); break;
-	case 'm': setPixmap( loadIcon( "kmixdocked_mute" ) ); break;
-	case 'd': setPixmap( loadIcon( "kmixdocked"      ) ); break;
+	case 'e': setPixmap( loadIcon( "kmixdocked_error" ) ); break;
+	case 'm': setPixmap( loadIcon( "kmixdocked_mute"  ) ); break;
+	case 'd': setPixmap( loadIcon( "kmixdocked"       ) ); break;
 	}
     }
 
     _oldPixmapType = newPixmapType;
-}
-
-void
-KMixDockWidget::setErrorPixmap()
-{
-    setPixmap( loadIcon( "kmixdocked_error" ) );
 }
 
 void
