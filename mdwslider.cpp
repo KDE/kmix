@@ -136,7 +136,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
     // --- DEVICE ICON --------------------------
     // !!! Fixme: Correct check would be: "Left or Right". But we will add another parameter
-    //            to the constructor (CreationFlags).
+    //            to the constructor (ViewFlags).
     if (true /* _orientation == Qt::Horizontal*/ ) {
 	m_iconLabel = 0L;
 	setIcon( m_mixdevice->type() );
@@ -191,11 +191,17 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
     // --- Part 1: LABEL ---
     //m_label = new VerticalText( this, m_mixdevice->name().latin1() );
-    m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
-    m_label->hide();
-    labelAndSliders->addWidget( m_label );
-    m_label->installEventFilter( this );
-
+    if ( _orientation == Qt::Vertical ) {
+	m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
+	m_label->hide();
+	labelAndSliders->addWidget( m_label );
+	m_label->installEventFilter( this );
+    }
+    else {
+	// !! later
+	m_label = 0;
+    }
+		
     // --- Part 2: SLIDERS ---
     QBoxLayout *sliders;
     if ( _orientation == Qt::Vertical ) {
@@ -293,6 +299,7 @@ MDWSlider::icon( int icontype )
       case MixDevice::AUDIO:
          miniDevPM = UserIcon("mix_audio"); break;
       case MixDevice::BASS:
+      case MixDevice::SURROUND_LFE:  // "LFE" SHOULD have an own icon
          miniDevPM = UserIcon("mix_bass"); break;
       case MixDevice::CD:
          miniDevPM = UserIcon("mix_cd"); break;
@@ -313,6 +320,9 @@ MDWSlider::icon( int icontype )
       case MixDevice::VIDEO:
          miniDevPM = UserIcon("mix_video"); break;
       case MixDevice::SURROUND:
+      case MixDevice::SURROUND_BACK:
+      case MixDevice::SURROUND_CENTERFRONT:
+      case MixDevice::SURROUND_CENTERBACK:
          miniDevPM = UserIcon("mix_surround"); break;
       case MixDevice::HEADPHONE:
          miniDevPM = UserIcon( "mix_headphone" ); break;
@@ -360,7 +370,10 @@ MDWSlider::setIcon( int icontype )
 bool
 MDWSlider::isLabeled() const
 {
-   return !m_label->isHidden();
+    if ( m_label == 0 )
+	return false;
+    else
+	return !m_label->isHidden();
 }
 
 void
@@ -385,6 +398,9 @@ MDWSlider::setStereoLinked(bool value)
 void
 MDWSlider::setLabeled(bool value)
 {
+    if ( m_label == 0 )
+	return;
+
    if (value )
       m_label->show();
    else
