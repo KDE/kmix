@@ -519,7 +519,7 @@ void Mixer::increaseVolume( int deviceidx )
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (mixdev != 0) {
      Volume vol=mixdev->getVolume();
-     double fivePercent = vol.maxVolume() / 20;
+     double fivePercent = (vol.maxVolume()-vol.minVolume()+1) / 20;
      for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++) {
         int volToChange = vol.getVolume((Volume::ChannelID)i);
         if ( fivePercent < 1 ) fivePercent = 1;
@@ -541,22 +541,22 @@ void Mixer::decreaseVolume( int deviceidx )
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (mixdev != 0) {
      Volume vol=mixdev->getVolume();
-     double fivePercent = vol.maxVolume() / 20;
+     double fivePercent = (vol.maxVolume()-vol.minVolume()+1) / 20;
      for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++) {
         int volToChange = vol.getVolume((Volume::ChannelID)i);
-        std::cout << "Mixer::decreaseVolume(): before: volToChange " <<i<< "=" <<volToChange << std::endl;
+        //std::cout << "Mixer::decreaseVolume(): before: volToChange " <<i<< "=" <<volToChange << std::endl;
         if ( fivePercent < 1 ) fivePercent = 1;
         volToChange -= (int)fivePercent;
-	std::cout << "Mixer::decreaseVolume():  after: volToChange " <<i<< "=" <<volToChange << std::endl;
+	//std::cout << "Mixer::decreaseVolume():  after: volToChange " <<i<< "=" <<volToChange << std::endl;
         vol.setVolume((Volume::ChannelID)i, volToChange);
         int volChanged = vol.getVolume((Volume::ChannelID)i);
-        std::cout << "Mixer::decreaseVolume():  check: volChanged " <<i<< "=" <<volChanged << std::endl;
+        //std::cout << "Mixer::decreaseVolume():  check: volChanged " <<i<< "=" <<volChanged << std::endl;
      } // for
      writeVolumeToHW(deviceidx, vol);
   }
 
   /************************************************************
-    It is important, not to implement this method like this: this->volume()
+    It is important, not to implement this method like this:
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol-5);
      It creates too big rounding errors. If you don't beleive me, then
