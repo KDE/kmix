@@ -8,9 +8,4 @@
  </Menu>
 </MenuBar>
 
-<ToolBar noMerge="1" name="mainToolBar">
- <Action name="options_show_menubar"/>
- <Action name="file_quit"/>
-</ToolBar>
-
 </kpartgui>

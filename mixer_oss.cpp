@@ -49,12 +49,12 @@
 
 
 const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   , "Pcm"  ,    \
-			       "Speaker" , "Line"    , "Microphone", "CD"      , "Mix"  ,    \
-			       "Pcm2"    , "RecMon"  , "IGain"     , "OGain"   , "Line1",    \
-			       "Line2"   , "Line3"   , "Digital1"  , "Digital2", "Digital3", \
-			       "PhoneIn" , "PhoneOut", "Video"     , "Radio"   , "Monitor",  \
-			       "3D-depth", "3D-center", "unknown"  , "unknown" , "unknown",  \
-			       "unknown" , "unused" };
+                               "Speaker" , "Line"    , "Microphone", "CD"      , "Mix"  ,    \
+                               "Pcm2"    , "RecMon"  , "IGain"     , "OGain"   , "Line1",    \
+                               "Line2"   , "Line3"   , "Digital1"  , "Digital2", "Digital3", \
+                               "PhoneIn" , "PhoneOut", "Video"     , "Radio"   , "Monitor",  \
+                               "3D-depth", "3D-center", "unknown"  , "unknown" , "unknown",  \
+                               "unknown" , "unused" };
 
 const MixDevice::ChannelType MixerChannelTypes[32] = {
   MixDevice::VOLUME,   MixDevice::BASS,       MixDevice::TREBLE,   MixDevice::MIDI,
@@ -91,7 +91,8 @@ Mixer_OSS::Mixer_OSS(int device, int card) : Mixer(device, card)
 
 int Mixer_OSS::openMixer()
 {
-  release();		// To be sure, release mixer before (re-)opening
+    if ( m_cardnum!=0 ) return Mixer::ERR_OPEN; // OSS doesn't support different card numbers
+  release();            // To be sure, release mixer before (re-)opening
 
   if ((m_fd= ::open( deviceName( m_devnum ).latin1(), O_RDWR)) < 0)
     {
@@ -152,7 +153,7 @@ int Mixer_OSS::openMixer()
         }
       else
 #endif
-	  
+
         m_mixerName = "OSS Audio Mixer";
 
       m_isOpen = true;
@@ -171,14 +172,13 @@ QString Mixer_OSS::deviceName(int devnum)
 {
   switch (devnum) {
   case 0:
-  case 1:
     return QString("/dev/mixer");
     break;
+
   default:
     QString devname("/dev/mixer");
-    devname += ('0'+devnum-1);
+    devname += ('0'+devnum);
     return devname;
-    break;
   }
 }
 
@@ -189,14 +189,14 @@ QString Mixer_OSS::errorText(int mixer_error)
     {
     case ERR_PERM:
       l_s_errmsg = i18n("kmix: You have no permission to access the mixer device.\n" \
-			"Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.");
+                        "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.");
       break;
     case ERR_OPEN:
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
-			"Please check that the soundcard is installed and the\n" \
-			"soundcard driver is loaded.\n" \
-			"On Linux you might need to use 'insmod' to load the driver.\n" \
-			"Use 'soundon' when using commercial OSS.");
+                        "Please check that the soundcard is installed and the\n" \
+                        "soundcard driver is loaded.\n" \
+                        "On Linux you might need to use 'insmod' to load the driver.\n" \
+                        "Use 'soundon' when using commercial OSS.");
       break;
     default:
       l_s_errmsg = Mixer::errorText(mixer_error);
