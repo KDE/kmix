@@ -56,7 +56,6 @@ KApplication *globalKapp;
 KIconLoader  *globalKIL;
 
 bool		ReadFromSet=false;		// !!! Sets not implemented yet
-bool		StereoSliderAvailable;
 char		SetNumber;
 extern char	KMixErrors[6][100];
 
@@ -68,7 +67,6 @@ int main(int argc, char **argv)
 
 
   /* Parse the command line arguments */
-  /* Parse command line args */
   for (int i=0 ; i<argc; i++) {
     if (strcmp(argv[i],"-V") == 0) {
       cout << "kmix " << rcsid << '\n';
@@ -88,11 +86,20 @@ int main(int argc, char **argv)
     }
   }
 
-
-  if (argc > 1)
-    kmix = new KMix(argv[argc - 1]);
-  else
-    kmix = new KMix(DEFAULT_MIXER);
+  if (kapp->isRestored()){
+      int n = 1;
+      while (KTopLevelWidget::canBeRestored(n)){
+        kmix = new KMix(DEFAULT_MIXER);
+        kmix->restore(n);
+        n++;
+      }
+   }
+  else {
+    if (argc > 1)
+      kmix = new KMix(argv[argc - 1]);
+    else
+      kmix = new KMix(DEFAULT_MIXER);
+  }
 
   return globalKapp->exec();
 }

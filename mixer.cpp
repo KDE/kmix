@@ -374,7 +374,6 @@ void Mixer::InternalSetVolumes(int Source)
 
 	  MixPtr=MixPtr->Next;
 	}
-      //StereoSliderAvailable = true;
     } /* if ( Source < 0 ) */
 
 }
