@@ -27,11 +27,15 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_None( devnum, SetNum);
-  l_mixer->init(devnum, SetNum);
+  l_mixer->setupMixer();
   return l_mixer;
 }
 
 Mixer_None::Mixer_None()
+{
+}
+
+Mixer_None::Mixer_None(int devnum, int SetNum)
 {
 }
 
@@ -41,7 +45,7 @@ Mixer_None::~Mixer_None()
 
 int Mixer_None::openMixer()
 {
-   i_s_mixer_name = "No mixer";
+   //i_s_mixer_name = "No mixer";
    return Mixer::ERR_NOTSUPP;
 }
 
@@ -50,12 +54,23 @@ int Mixer_None::releaseMixer()
   return Mixer::ERR_NOTSUPP;
 }
 
-int Mixer_None::readVolumeFromHW( int , int * , int * )
+int Mixer_None::readVolumeFromHW( int , Volume &vol )
 {
   return Mixer::ERR_NOTSUPP;
 }
 
-int Mixer_None::writeVolumeToHW( int , int , int )
+int Mixer_None::writeVolumeToHW( int , Volume vol )
 {
   return Mixer::ERR_NOTSUPP;
 }
+
+bool Mixer_None::setRecsrcHW( int devnum, bool on)
+{
+    return false;
+}
+
+bool Mixer_None::isRecsrcHW( int devnum )
+{
+    return false;
+}
+
