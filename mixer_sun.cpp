@@ -27,6 +27,7 @@
 #include <sys/audioio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "mixer_sun.h"
 
