@@ -155,8 +155,6 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this
         		return;
     		default:
-        		//masterVol->hide();
-        		//KSystemTray::mouseReleaseEvent(me);
         		return;
         }
     }

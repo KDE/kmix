@@ -113,16 +113,19 @@ Mixer_ALSA::openMixer()
 	snd_mixer_selem_id_alloca( &sid );
 
 	// Card information
-	QString devName = "default";
+	char *devName = new char[32];
+	devName[0] = 0;
 
-	if ( m_devnum > 0 || m_devnum < 31 )
-	{
-		devName.sprintf( "hw:%i", m_devnum );
+	if ( m_devnum < 0 || m_devnum > 31 ) {
+	strcpy ( devName, "default" );
+	}
+	else {
+	    sprintf( devName, "hw:%i", m_devnum );
 	}	
 
-	kdDebug() << "Trying to open " << devName << endl; // !!!
+	//kdDebug() << "Trying to open " << devName << endl; // !!!
 
-	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), m_devnum ) ) < 0 )
+	if ( ( err = snd_ctl_open ( &ctl_handle, devName, m_devnum ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_OPEN );
 		return false;
@@ -150,7 +153,7 @@ Mixer_ALSA::openMixer()
 		errormsg( Mixer::ERR_OPEN );
 	}
 	
-	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )
+	if ( ( err = snd_mixer_attach ( handle, devName ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_PERM );
 	}
