@@ -389,6 +389,8 @@ KMixWindow::showSettings()
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
       m_prefDlg->m_onLogin->setChecked( m_onLogin );
+      m_prefDlg->_rbVertical  ->setChecked( m_toplevelOrientation == Qt::Vertical );
+      m_prefDlg->_rbHorizontal->setChecked( m_toplevelOrientation == Qt::Horizontal );
 
       m_prefDlg->show();
    }
