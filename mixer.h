@@ -140,6 +140,7 @@ public:
   QSlider	*slider;		/* Associated slider               */
 public slots:
   void	VolChanged( int new_pos );
+  void VolChangedI(int new_pos);
 };
 
 

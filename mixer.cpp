@@ -918,12 +918,16 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
 }
 
 
-
 void MixChannel::VolChanged(int new_pos)
 {
-  MixDevice *mixdevice=mixDev;
+  this->VolChangedI(100-new_pos); // The slider is reversed
+}
 
-  volume = 100-new_pos; // The panning slider is reversed
+
+void MixChannel::VolChangedI(int new_pos)
+{
+  MixDevice *mixdevice=mixDev;
+  volume = new_pos;
 
   /* Set right channel volume to the same amount as left channel, if right
    * is linked to left

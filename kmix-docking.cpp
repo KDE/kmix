@@ -106,7 +106,7 @@ void KMixDockWidget::mouseMoveEvent ( QMouseEvent *qme )
     if ( ! i_b_mouse_moved ) {
       // Verifying whether the mouse was moved far away after the click
       if ( i_b_move_active ) {
-	if ( abs ( i_i_click_x - qme->x() ) > i_i_move_delta ||
+	if ( /* abs ( i_i_click_x - qme->x() ) > i_i_move_delta || */
 	     abs ( i_i_click_y - qme->y() ) > i_i_move_delta    ) {
 	  i_b_mouse_moved = true;
 	}
@@ -114,8 +114,9 @@ void KMixDockWidget::mouseMoveEvent ( QMouseEvent *qme )
     }
 
     if ( i_b_mouse_moved ) {
-      //!!!cerr << "Distance = " <<  i_i_click_y - qme->y() << "\n";
-      i_i_diff = i_i_click_y - qme->y();      
+      //cerr << "Distance = " <<  (i_i_click_y - qme->y())/2 << "\n";
+      i_i_diff = (i_i_click_y - qme->y())/1 ; // -<- Scaled distance
+      i_i_click_y = qme->y();
       emit quickchange(i_i_diff);
     }
   }

@@ -50,6 +50,7 @@ public slots:
   void hideMenubarCB();
   void tickmarksTogCB();
   void updateSliders();
+  void updateSlidersI();
   
 protected:
   void hideEvent( QHideEvent *e );

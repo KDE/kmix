@@ -836,10 +836,15 @@ void KMix::hideEvent( QHideEvent *)
 
 void KMix::updateSliders( )
 {
+  mix->Set2Set0(-1,true);        // Read from hardware
+  updateSlidersI();
+}
+
+void KMix::updateSlidersI( )
+{
   QSlider *qs;
   MixSet *SrcSet = mix->TheMixSets->first();
 
-      mix->Set2Set0(-1,true);        // Read from hardware
       // now update the slider positions...
       MixDevice        *MixPtr = mix->First;
 
@@ -883,5 +888,28 @@ void KMix::quit_myapp()
 
 void KMix::quickchange_volume(int val_l_diff)
 {
-  cerr << "quickchange diff = " << val_l_diff;
+  int l_i_volNew;
+  //cerr << "quickchange diff = " << val_l_diff;
+
+
+  MixDevice        *MixPtr = mix->First;
+
+  MixSet *Set0  = mix->TheMixSets->first();
+  MixSetEntry *mse = Set0->findDev(MixPtr->num() );
+  if (mse) {
+    // left volume
+    l_i_volNew =  mse->volumeL + val_l_diff;
+    if (l_i_volNew > 100) l_i_volNew = 100;
+    if (l_i_volNew <   0) l_i_volNew = 0;
+    MixPtr->Left->VolChangedI(l_i_volNew);
+    if (! MixPtr->stereoLinked() ) {
+      // right volume
+      l_i_volNew =  mse->volumeR + val_l_diff;
+      if (l_i_volNew > 100) l_i_volNew = 100;
+      if (l_i_volNew <   0) l_i_volNew = 0;
+      MixPtr->Right->VolChangedI(l_i_volNew);
+    }
+    updateSliders();
+  }
+
 }
