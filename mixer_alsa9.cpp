@@ -301,7 +301,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	{
 		snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
 		snd_mixer_selem_set_capture_switch_all( elem, !sw );
-		retOk = true;
+		retOk = !sw;
 	}
 	else
 	{
@@ -309,14 +309,14 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 		{
 			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &sw );
 			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, !sw );
-			retOk = true;
+			retOk = !sw;
 		}
 		
 		if ( on &&  snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
 		{
 			snd_mixer_selem_get_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, &sw);
 			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, !sw);
-			retOk = true;
+			retOk = !sw;
 		}
 	}
 

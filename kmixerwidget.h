@@ -117,7 +117,8 @@ KMixerWidget : public QWidget
    Mixer *m_mixer;
    QSlider *m_balanceSlider;
    QWidget *m_swWidget;
-   QBoxLayout *m_topLayout;
+   QVBoxLayout *m_topLayout;
+   QHBoxLayout *m_appletLayout;
    QWidget *m_iWidget;
    QWidget *m_oWidget;
    QGridLayout *m_devSwitchLayout;

@@ -25,7 +25,6 @@ protected:
 
   virtual int openMixer();
   virtual int releaseMixer();
-//  virtual void setDevNumName_I(int devnum);
 
   Audio	  *audio;
   unsigned int stereodevs,devmask, recmask, MaxVolume, i_recsrc;

@@ -75,22 +75,6 @@ KMixWindow::KMixWindow()
 	initWidgets();
 	initMixerWidgets();
 
-
-	// create mixer widgets for Mixers not found in the kmixrc configuration file
-	for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
-	{
-		// a) search for mixer widget with current mixer
-		KMixerWidget *widget;
-		for ( widget=m_mixerWidgets.first(); widget!=0; widget=m_mixerWidgets.next() )
-		{
-			if ( widget->mixer()==mixer )
-			{
-				break;
-			}
-		}
-		// What is going on here ??? No code is executed here !!!
-	}
-
 	initPrefDlg();
 	updateDocking();
 
@@ -107,6 +91,8 @@ KMixWindow::KMixWindow()
 		hide();
 	}
 	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()));
+
+	setMaximumSize( QSize( 32767, size().height() ) );
 }
 
 
@@ -152,7 +138,6 @@ KMixWindow::initMixer()
 	// get maximum values
 	KConfig *config= new KConfig("kcmkmixrc", false);
 	config->setGroup("Misc");
-	int maxCards = config->readNumEntry( "maxCards", 2 );
 	int maxDevices = config->readNumEntry( "maxDevices", 2 );
 	delete config;
 
@@ -270,17 +255,29 @@ KMixWindow::initPrefDlg()
 void
 KMixWindow::initWidgets()
 {
+	// Main widget and layout
+   setCentralWidget( new QWidget(  this, "qt_central_widget" ) );
+	QGridLayout *mainLayout = new QGridLayout( centralWidget(), 1, 1, 11, 6, "MainLayout" );
+
+	// Widgets layout
+	QVBoxLayout *widgetsLayout = new QVBoxLayout(  0, 0, 6, "widgetsLayout" );
 	
-	QVBox *vbox=new QVBox(this);
-	// The Combo and identification
-	QWidget *w = new QHBox( vbox );
-	new QLabel( i18n(" Current Mixer: "), w );
-	m_cMixer = new KComboBox( w, "mixerCombo" );
+	// Mixer widget line
+	QHBoxLayout *mixerNameLayout = new QHBoxLayout( 0, 0, 6, "mixerNameLayout" );
+	mixerNameLayout->addWidget( new QLabel( i18n(" Current Mixer: "), centralWidget() ) );
+	m_cMixer = new KComboBox( FALSE, centralWidget(), "mixerCombo" );
    connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( showSelectedMixer( int ) ) );
 	QToolTip::add( m_cMixer, i18n("Current Mixer" ) );
+	mixerNameLayout->addWidget( m_cMixer );
 
-	m_wsMixers = new QWidgetStack( vbox, "MixerWidgetStack" );
-	setCentralWidget( vbox );
+	// Add first layout to widgets
+	widgetsLayout->addLayout( mixerNameLayout );
+	
+	m_wsMixers = new QWidgetStack( centralWidget(), "MixerWidgetStack" );
+	widgetsLayout->addWidget( m_wsMixers );
+
+	// Add to main layout
+	mainLayout->addLayout( widgetsLayout, 0, 0 );
 }
 
 

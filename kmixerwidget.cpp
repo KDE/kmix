@@ -33,6 +33,8 @@
 #include <qbuttongroup.h>
 #include <qwidgetstack.h>
 #include <qmap.h>
+#include <qsize.h>
+#include <qhbox.h>
 
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -44,7 +46,6 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kglobalaccel.h>
-#include <kmultitabbar.h>
 #include <kdialog.h>
 #include <ktabwidget.h>
 
@@ -56,7 +57,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int
                             bool small, KPanelApplet::Direction dir, MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0),
+     m_topLayout(0), m_appletLayout(0),
      m_name( mixerName ), m_mixerName( mixerName ), m_mixerNum( mixerNum ), m_id( _id ),
      m_direction( dir ),
      m_iconsEnabled( true ), m_labelsEnabled( false ), m_ticksEnabled( false )
@@ -101,23 +102,27 @@ void
 KMixerWidget::createLayout()
 {
    if ( !m_mixer ) return;
+		
+	QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 11, 6, "FullLayout" );
 
    // delete old objects
    m_channels.clear();
    if( m_balanceSlider ) 
       delete m_balanceSlider;
-   if( m_topLayout )
-      delete m_topLayout;
 
    if( ! m_small )
    {
+
+   	if( m_topLayout )
+      	delete m_topLayout;
       // create main layout
 
-      m_topLayout = new QVBoxLayout( this, 0, 4 );
+      m_topLayout = new QVBoxLayout( this, 0, 3 );
       m_topLayout->setMargin( KDialog::marginHint() );
 
       // Create tabs e widgetstack
       m_ioTab = new KTabWidget( this, "ioTab" );
+		m_ioTab->setMaximumSize( QSize( 32767, 250 ) );
 
       m_topLayout->add( m_ioTab );
 
@@ -136,11 +141,16 @@ KMixerWidget::createLayout()
    else
    {
       m_oWidget = new QHBox( this, "OutputTab" );
-      m_topLayout = new QHBoxLayout( this, 0, 0 );
-      m_topLayout->add( m_oWidget );
+      m_appletLayout = new QHBoxLayout( this, 0, 0 );
+      m_appletLayout->add( m_oWidget );
    }
    // Create de widgets
    createDeviceWidgets();
+	
+   if( ! m_small )
+	{
+		fullLayout->addLayout( m_topLayout, 0, 0 );
+	}
 }
 
 void 
@@ -185,12 +195,13 @@ KMixerWidget::createDeviceWidgets()
          {
             m_devSwitchLayout->addWidget( mdw, row, col );
             col++;
-         }
-         if( col > 3 )
-         {
-            col = 0;
-            row++;
-         }
+				
+				if( col > 3 )
+				{
+					col = 0;
+					row++;
+				}
+			}
       }
 		
       Channel *chn = new Channel;
@@ -198,9 +209,9 @@ KMixerWidget::createDeviceWidgets()
       m_channels.append( chn );
    }
 
-   // Create the left-right-slider
    if ( !m_small )
    {
+   	// Create the left-right-slider
       m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
                                      this, "RightLeft" );
       m_balanceSlider->setTickmarks( QSlider::Below );
@@ -210,17 +221,15 @@ KMixerWidget::createDeviceWidgets()
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
-      QTimer *updateTimer = new QTimer( this );
-      connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateBalance()) );
-      updateTimer->start( 200, FALSE );
-
       // Add the Switch widget
       m_topLayout->addWidget( m_swWidget );
    } 
    else
-      m_balanceSlider = 0;
+	{
+		m_balanceSlider = 0;
+	}
 
-   updateSize();
+	updateSize();
 }
 
 void 

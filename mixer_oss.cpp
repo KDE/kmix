@@ -260,13 +260,9 @@ bool Mixer_OSS::setRecsrcHW( int devnum, bool on )
 
 bool Mixer_OSS::isRecsrcHW( int devnum )
 {
-  int i_recsrc;
-  if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
-    errormsg(Mixer::ERR_READ);
-
-  return i_recsrc & (1 << devnum );
+#warning "isRecsrcHR not implemented in OSS yet"
+	return false;
 }
-
 
 int Mixer_OSS::readVolumeFromHW( int devnum, Volume &vol )
 {

@@ -247,7 +247,7 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
 	}
 	
-	// create channel icon
+	// create channel icon if inverted
 	if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) 
 	{
 		m_iconLabel = 0L;
@@ -261,16 +261,15 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	// create record source LED
 	if( m_mixdevice->isRecordable() && ! isSwitch() )
 	{
-
+		layout->addSpacing( 2 );
 		m_recordLED = new KLedButton( Qt::red,
-				m_mixdevice->isRecordable()?KLed::On:KLed::Off,
+				m_mixdevice->getRecStatus()?KLed::On:KLed::Off,
 				KLed::Sunken, KLed::Circular, this, "RecordLED" );
 		if ( !showRecordLED )
 			m_recordLED->hide();
 		m_recordLED->setFixedSize( QSize(16, 16) );
 		
 		GET_NEWLAYOUT( reclayout );
-		reclayout->addSpacing( 2 );
 		reclayout->addWidget( m_recordLED );
 		connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
 		m_recordLED->installEventFilter( this );
@@ -417,7 +416,7 @@ MixDeviceWidget::toggleMuted()
 void 
 MixDeviceWidget::setRecsrc( bool value )
 {
-   if( m_mixdevice->isRecordable()!=value )
+   if( m_mixdevice->getRecStatus() != value )
    {
       m_mixdevice->setRecordable( value );
       emit newRecsrc( m_mixdevice->num(), value );
