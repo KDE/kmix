@@ -132,6 +132,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
    if ( mixer )
    {
       m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );
+      m_mixerWidget->loadConfig( cfg, "Widget" );
       connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
    } else
    {
