@@ -34,6 +34,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kmenubar.h>
+#include <klineeditdlg.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
@@ -495,9 +496,9 @@ void KMixWindow::newMixer()
        }
 
        // ask for description
-       QString name = QInputDialog::getText(
-                        i18n("Description"), i18n("Description"),
-                        QLineEdit::Normal, mixer->mixerName(), &ok, this );
+       QString name = KLineEditDlg::getText(
+                        i18n("Description"), i18n("Enter description:"),
+                        mixer->mixerName(), &ok, this );
       if ( ok ) {
 
           // create mixer widget
