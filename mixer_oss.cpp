@@ -193,7 +193,7 @@ QString Mixer_OSS::errorText(int mixer_error)
   switch (mixer_error)
     {
     case ERR_PERM:
-      l_s_errmsg = i18n("kmix: You have no permission to access the mixer device.\n" \
+      l_s_errmsg = i18n("kmix: You do not have permission to access the mixer device.\n" \
                         "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.");
       break;
     case ERR_OPEN:

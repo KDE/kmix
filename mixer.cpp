@@ -332,7 +332,7 @@ QString Mixer::errorText(int mixer_error)
   switch (mixer_error)
     {
     case ERR_PERM:
-      l_s_errmsg = i18n("kmix:You have no permission to access the mixer device.\n" \
+      l_s_errmsg = i18n("kmix:You do not have permission to access the mixer device.\n" \
 			"Please check your operating systems manual to allow the access.");
       break;
     case ERR_WRITE:
@@ -352,15 +352,15 @@ QString Mixer::errorText(int mixer_error)
       break;
     case ERR_OPEN:
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
-			"Please check that the soundcard is installed and the\n" \
-			"soundcard driver is loaded\n");
+			"Please check that the soundcard is installed and that\n" \
+			"the soundcard driver is loaded.\n");
       break;
     case ERR_INCOMPATIBLESET:
       l_s_errmsg = i18n("kmix: Initial set is incompatible.\n" \
 			"Using a default set.\n");
       break;
     default:
-      l_s_errmsg = i18n("kmix: Unknown error. Please report, how you produced this error.");
+      l_s_errmsg = i18n("kmix: Unknown error. Please report how you produced this error.");
       break;
     }
   return l_s_errmsg;

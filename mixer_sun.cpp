@@ -230,7 +230,7 @@ QString Mixer_SUN::errorText( int mixer_error )
    {
       case ERR_PERM:
          errmsg = i18n(
-           "kmix: You have no permission to access the mixer device.\n"
+           "kmix: You do not have permission to access the mixer device.\n"
            "Ask your system administrator to fix /dev/audioctl to allow access."
          );
          break;
