@@ -133,7 +133,7 @@ int Mixer_OSS::openMixer()
                   readVolumeFromHW( idx, vol );
                   MixDevice* md =
                     new MixDevice( idx, vol, recmask & ( 1 << idx ),
-                                   QString(MixerDevNames[idx]),
+                                   i18n(MixerDevNames[idx]),
                                    MixerChannelTypes[idx]);
                   md->setRecsrc( isRecsrcHW( idx ) );
                   m_mixDevices.append( md );
