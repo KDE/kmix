@@ -87,6 +87,14 @@
 #define OSS_MIXER 
 #endif 
 
+// UnixWare includes
+#ifdef _UNIXWARE
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/soundcard.h>
+#define OSS_MIXER
+#endif
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
