@@ -163,9 +163,9 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode)
 	    } // loop over sound card devices of current driver
 	} // loop over soundcard drivers
 
-	m_hwInfoString = i18n("Sound drivers supported");
-	m_hwInfoString += ": " + driverInfo +
-		"\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
+	m_hwInfoString = i18n("Sound drivers supported:");
+	m_hwInfoString += " " + driverInfo +
+		"\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
 
 	if ( multipleDriversActive )
 	{
