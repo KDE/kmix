@@ -96,9 +96,14 @@
 #define OSS_MIXER
 #endif
 
+// HP-UX includes
+#if defined(hpux) && defined(HAVE_ALIB_H)
+#define HPUX_MIXER
+#endif
+
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
-#if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER) || defined(ALSA)
+#if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER) || defined(ALSA) || defined(HPUX_MIXER)
 // We are happy. Do nothing
 #else
 
@@ -175,6 +180,8 @@ int Mixer::release()
 #ifdef IRIX_MIXER
     ALfreeconfig(m_config);
     ALcloseport(m_port);
+#elif defined(HPUX_MIXER)
+    ACloseAudio(hpux_audio,0);
 #elif defined(ALSA)
     ret = snd_mixer_close(devhandle);
     return ret;
@@ -253,6 +260,9 @@ void Mixer::setDevNumName(int devnum)
 #endif
 #ifdef ALSA
   devname = "ALSA";
+#endif
+#ifdef HPUX_MIXER
+  devname = "HP-UX Mixer";
 #endif
 #ifdef NO_MIXER
   devname = "Mixer";
@@ -482,7 +492,6 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
 	  
       VolLeft  = Volume & 0x7f;
       VolRight = (Volume>>8) & 0x7f;
-// PORTING: add #ifdef PLATFORM , commands , #endif
 #endif
 #ifdef ALSA
       snd_mixer_channel_t data;
@@ -494,6 +503,30 @@ void Mixer::Set2Set0(int Source, bool copy_volume)
       else 
  	errormsg(Mixer::ERR_READ);
 #endif
+#ifdef HPUX_MIXER
+      // Get volume
+/*      long in_buf[4];
+      switch( MixPtr->device_num ) {
+      case 0:       // Speaker Output
+	in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
+	in_buf[2] = AL_LEFT_SPEAKER_GAIN;
+	break;
+      case 7:       // Microphone Input (actually selectable).
+	in_buf[0] = AL_RIGHT_INPUT_ATTEN;
+	in_buf[2] = AL_LEFT_INPUT_ATTEN;
+	break;
+      case 11:      // Record monitor
+	in_buf[0] = AL_RIGHT_MONITOR_ATTEN;
+	in_buf[2] = AL_LEFT_MONITOR_ATTEN;
+	break;
+      default:
+	printf("Unknown device %d\n", MixPtr->device_num);
+      }
+      ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4); */
+      VolRight = 100; // in_buf[1]*100/255;
+      VolLeft  = 100; // in_buf[3]*100/255;
+#endif
+// PORTING: add #ifdef PLATFORM , commands , #endif
 
       if ( (VolLeft == VolRight) && (MixPtr->is_stereo == true) )
 	mse->StereoLink = true;
@@ -573,13 +606,18 @@ int Mixer::openMixer(void)
   ret = snd_mixer_open( &devhandle, 0, 0 ); /* card 0 mixer 0 */
   if ( ret )
     return Mixer::ERR_OPEN;
+#elif defined(HPUX_MIXER)
+  char ServerName[50];
+  ServerName[0] = 0;
+  hpux_audio = AOpenAudio(ServerName,NULL);
+  if (hpux_audio==0)
+    return Mixer::ERR_OPEN;
 #else
   if ((fd= open(devname, O_RDWR)) < 0)
     return Mixer::ERR_OPEN;
 #endif
 
 #ifdef SUN_MIXER
-
   devmask   =1;
   recmask   =0;
   recsrc    =0;
@@ -587,7 +625,6 @@ int Mixer::openMixer(void)
   MaxVolume =255;
 #endif
 #ifdef IRIX_MIXER
-
   devmask   =1+128+2048;
   recmask   =128;
   recsrc    =128;
@@ -633,6 +670,18 @@ int Mixer::openMixer(void)
   }    
   if ( !devmask )
     return Mixer::ERR_NODEV;
+#endif
+#ifdef HPUX_MIXER
+  devmask = 1 + 16; // volume+pcm
+  if (AOutputDestinations(hpux_audio) & AMonoIntSpeakerMask) 	devmask |= 32; // Speaker
+  if (AOutputDestinations(hpux_audio) & AMonoLineOutMask)	devmask |= 64; // Line
+  if (AInputSources(hpux_audio) & AMonoMicrophoneMask)		devmask |= 128;// Microphone
+  if (AOutputDestinations(hpux_audio) & AMonoJackMask)		devmask |= (1<<14); // Line1
+  if (AOutputDestinations(hpux_audio) & AMonoHeadphoneMask)	devmask |= (1<<15); // Line2
+  if (AInputSources(hpux_audio) & AMonoAuxiliaryMask)		devmask |= (1<<20); // PhoneIn
+  MaxVolume = aMaxOutputGain(hpux_audio) - aMinOutputGain(hpux_audio);
+  recmask = stereodevs = devmask; 
+  recsrc = 0;
 #endif
 // PORTING: add #ifdef PLATFORM , commands , #endif
 
@@ -739,6 +788,30 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
   else
     errormsg(Mixer::ERR_READ);
 #endif
+#ifdef HPUX_MIXER
+  // Set volume (right&left)
+/*  long out_buf[4] =
+  {
+    0, volRight,
+    0, volLeft
+  };
+  switch( mixdevice->device_num ) {
+  case 0:      // Speaker
+    out_buf[0] = AL_RIGHT_SPEAKER_GAIN;
+    out_buf[2] = AL_LEFT_SPEAKER_GAIN;
+    break;
+  case 7:      // Microphone (Input)
+    out_buf[0] = AL_RIGHT_INPUT_ATTEN;
+    out_buf[2] = AL_LEFT_INPUT_ATTEN;
+    break;
+  case 11:     // Record monitor
+    out_buf[0] = AL_RIGHT_MONITOR_ATTEN;
+    out_buf[2] = AL_LEFT_MONITOR_ATTEN;
+    break;
+  }
+  ALsetparams(AL_DEFAULT_DEVICE, out_buf, 4); */
+#endif
+// PORTING: add #ifdef PLATFORM , commands , #endif
 }
 
 
@@ -869,6 +942,9 @@ MixDevice *MixDev = First; /* moved up for use with ALSA */
     MixDev = MixDev->Next;
   }
   return; /* I'm done */ 
+#elif defined(HPUX_MIXER)
+  recsrc = newRecsrc;
+  // nothing else (yet!)
 #else
   KMsgBox::message(0, "Porting required.", "Please port this feature :-)", KMsgBox::INFORMATION, "OK" );
   // PORTING: Hint: Do not forget to set recsrc to the new valid

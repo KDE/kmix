@@ -35,9 +35,15 @@
 #include <dmedia/audio.h>
 #elif defined(ALSA)
 #define DEFAULT_MIXER "ALSA Mixer"
+#elif defined(hpux)
+# define DEFAULT_MIXER "HP-UX Mixer"
+# ifdef HAVE_ALIB_H
+#  include <Alib.h>
+#  define HPUX_MIXER
+# endif
 #else
 // hope that we have a OSS System
-#define DEFAULT_MIXER "/dev/mixer"
+# define DEFAULT_MIXER "/dev/mixer"
 #endif
 
 // For the crossreferencing between classes, I must declare all
@@ -151,6 +157,9 @@ private:
   // IRIX uses ALport stuff
   ALport	m_port;
   ALconfig	m_config;
+#elif defined(HPUX_MIXER)
+  // HP-UX uses Alib stuff
+  Audio		*hpux_audio;
 #else
   // Other platforms use a standard file descriptor
   int		fd;
