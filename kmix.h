@@ -15,7 +15,7 @@
 #include <kurl.h>
 #include <kapp.h>
 #include <kmenubar.h>
-#include <ktopwidget.h>
+#include <ktmainwindow.h>
 
 #include "sets.h"
 #include "mixer.h"

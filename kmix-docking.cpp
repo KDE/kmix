@@ -61,7 +61,6 @@ void KMixDockWidget::doPaint()
 
 void KMixDockWidget::paintEvent (QPaintEvent* )
 {
-  cerr << "PaintEvent()\n";
   doPaint();
 }
 

@@ -213,10 +213,10 @@ KMix::KMix(int mixernum, int SetNum)
   connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
 
   globalKapp->setMainWidget( this );
-   if ( !allowDocking || !startDocked)
-    show();
-  else
+   if ( allowDocking && startDocked)
     hide();
+  else
+    show();
 }
 
 void KMix::applyOptions()
