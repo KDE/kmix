@@ -78,7 +78,7 @@ int KMixApp::newInstance()
 
 
 KMixWindow::KMixWindow()
-   : KMainWindow(0), m_maxId( 0 ), m_visibleTabs( 0 ), m_dockWidget( 0L )
+   : KMainWindow(0, 0, 0 ), m_maxId( 0 ), m_visibleTabs( 0 ), m_dockWidget( 0L )
 {
    initMixer();
    initActions();
@@ -365,14 +365,15 @@ void KMixWindow::updateLayout()
 
 void KMixWindow::closeEvent ( QCloseEvent * e )
 {
-   if ( m_hideOnClose && m_showDockWidget )
-   {
-      e->ignore();
-      hide();
-      return;
-   }
+    if ( m_hideOnClose && m_showDockWidget )
+    {
+        // <evil>
+        kapp->ref(); // prevent KMainWindow from closing the app
+        // </evil>
+    } else
+        kapp->quit(); // force the application to quit
 
-   KMainWindow::closeEvent( e );
+    KMainWindow::closeEvent( e );
 }
 
 

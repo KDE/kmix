@@ -21,7 +21,7 @@
 
 #ifndef KMIX_H
 #define KMIX_H
- 
+
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -31,7 +31,7 @@
 #include <qstrlist.h>
 #include <qtabwidget.h>
 
-// include files for KDE 
+// include files for KDE
 #include <kapp.h>
 #include <kmainwindow.h>
 #include <kaccel.h>
@@ -78,7 +78,7 @@ class KMixWindow : public KMainWindow
    void updateDocking();
 
    void closeEvent( QCloseEvent * e );
- 
+
   public slots:
    void quit();
    void showSettings();
@@ -97,7 +97,7 @@ class KMixWindow : public KMainWindow
    QPopupMenu *m_viewMenu;
    QPopupMenu *m_helpMenu;
 
-   bool m_showDockWidget;   
+   bool m_showDockWidget;
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
@@ -106,20 +106,20 @@ class KMixWindow : public KMainWindow
    int m_maxId;
 
    QList<Mixer> m_mixers;
-   QList<KMixerWidget> m_mixerWidgets;   
+   QList<KMixerWidget> m_mixerWidgets;
    int m_visibleTabs;
 
    QTabWidget *m_tab;
    QWidget *m_buttons;
-   KMixPrefDlg *m_prefDlg;	
+   KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
-    
+
   private slots:
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
    void updateLayout();
-  
+
    void toggleVisibility();
 };
- 
+
 #endif // KMIX_H
