@@ -11,7 +11,7 @@
 #include <qlist.h>
 #include <qlabel.h>
 
-#include <kurl.h>
+#include <QceStateLED.h>
 #include <kapp.h>
 
 
@@ -110,6 +110,7 @@ public:
   Mixer		*mix;
 
   QLabel	*picLabel;
+  QceStateLED  	*i_KLed_state;		/* State LED (recsource = red)	   */
 
 private:
   int		dev_num;		// ioctl() device number of mixer
@@ -138,6 +139,7 @@ public:
 					/* Even = Left, Odd = Right        */
   int		volume;			/* Volume of this channel	   */
   QSlider	*slider;		/* Associated slider               */
+
 public slots:
   void	VolChanged( int new_pos );
   void VolChangedI(int new_pos);

@@ -228,8 +228,8 @@ int Mixer::release_I()
 
 
 #ifdef OSS_MIXER
-Mixer_OSS::Mixer_OSS() { Mixer(); }
-Mixer_OSS::Mixer_OSS(int devnum, int SetNum) { Mixer(devnum, SetNum); }
+Mixer_OSS::Mixer_OSS() : Mixer() { }
+Mixer_OSS::Mixer_OSS(int devnum, int SetNum) : Mixer(devnum, SetNum) { }
 
 void Mixer_OSS::setDevNumName_I(int devnum)
 {

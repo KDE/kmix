@@ -313,13 +313,19 @@ void KMix::createWidgets()
     if (! miniDevPM.isNull()) {
       qb->setPixmap(miniDevPM);
       qb->installEventFilter(this);
-    }
-    else
+    } 
+    else {
       cerr << "Pixmap missing.\n";
+    }
     MixPtr->picLabel=qb;
     qb->resize(miniDevPM.width(),miniDevPM.height());
 
 
+    // Create state LED
+    MixPtr->i_KLed_state = new QceStateLED(Container);
+  //    MixPtr->i_KLed_state->setFixedSize(50,50);
+
+    // Create slider
     QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
 				  QSlider::Vertical, Container, "VolL");
     if (i_b_first) {
@@ -364,15 +370,19 @@ void KMix::createWidgets()
 
 
 
+
+
 void KMix::placeWidgets()
 {
   int sliderHeight=100;
   int qsMaxY=0;
+  int l_i_belowSlider=0;
   int ix = 4;
   int iy = 0;
 
   QSlider *qs;
   QLabel  *qb;
+  QceStateLED	  *l_KLed_state;
 
   // Place Sliders (Volume indicators)
   if (mainmenuOn)
@@ -384,11 +394,15 @@ void KMix::placeWidgets()
   bool first = true;
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
+
+
     if (MixPtr->disabled() ) {
+      // Volume regulator not shown => Hide complete and skip the rest of the code
       MixPtr->picLabel->hide();
       MixPtr->Left->slider->hide();
       if (MixPtr->stereo())
 	MixPtr->Right->slider->hide();
+      MixPtr->i_KLed_state->hide();
       MixPtr=MixPtr->Next;
       continue;
     }
@@ -412,13 +426,13 @@ void KMix::placeWidgets()
     QSize VolSBsize = qs->sizeHint();
     qs->setValue(100-MixPtr->Left->volume);
     qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
-
-    qs->move(ix,iy+qb->height());
     qs->show();
 
+
     // Its a good point to find out the maximum y pos of the slider right here
-    if (first)
-      qsMaxY = qs->y()+qs->height();
+    if (first) {
+      l_i_belowSlider = iy+qb->height() + sliderHeight + 4;
+     }
 
     ix += qs->width();
 
@@ -433,17 +447,27 @@ void KMix::placeWidgets()
       ToolTipString += " (Left)";
     QToolTip::add( qs, ToolTipString );
 
-    // Mark record source(s) and muted channel(s). This is done by ordinary
-    // color marks on the slider, but this will be changed by red and green
-    // and black "bullets" below the slider. TODO !!!
-    if (MixPtr->recsrc())
-      qs->setBackgroundColor( red );
-    else {
-      if (MixPtr->muted())
-	qs->setBackgroundColor( black );
-      else
-	qs->setBackgroundColor( colorGroup().mid() );
+    // Mark record source(s) and muted channel(s). This is done by using
+    // red and green and 'off' LED's
+    l_KLed_state = MixPtr->i_KLed_state;
+    if (MixPtr->muted()) {
+      // Is muted => Off
+      l_KLed_state->setState( QceStateLED::Off );
+      l_KLed_state->setColor( Qt::black );
     }
+    else {
+      if (MixPtr->recsrc()) {
+	// Is record source => Red
+	l_KLed_state->setState( QceStateLED::On );
+	l_KLed_state->setColor(  Qt::red );
+      }
+      else {
+	// Is in standard mode (playback) => Green
+	l_KLed_state->setState( QceStateLED::On );
+	l_KLed_state->setColor( Qt::green );
+      }
+    }
+    l_KLed_state->show();
 
     if (MixPtr->stereo()  == true) {
       qs = MixPtr->Right->slider;
@@ -454,9 +478,9 @@ void KMix::placeWidgets()
 	  qs->setTickmarks(QSlider::Right);
 	  qs->setTickInterval(10);
 	}
-	else
+	else {
 	  qs->setTickmarks(QSlider::NoMarks);
-	
+	}
 	QSize VolSBsize = qs->sizeHint();
 	qs->setValue(100-MixPtr->Right->volume);
 	qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
@@ -466,33 +490,42 @@ void KMix::placeWidgets()
 	ToolTipString += " (Right)";
 	QToolTip::add( qs, ToolTipString );
 
-	if (MixPtr->recsrc())
-	  qs->setBackgroundColor( red );
-	else {
-	  if (MixPtr->muted())
-	    qs->setBackgroundColor( black );
-	  else
-	    qs->setBackgroundColor( colorGroup().mid() );
-	}
-
 	qs->show();
       }
-      else
+      else {
 	// Don't show right slider
 	qs->hide();
+      }
     }
 
+
     // Pixmap label. Place it horizontally centered to volume slider(s)
-    qb->move((int)((ix + old_x- qb->width() )/2),iy);
+    qb->move((int)((ix + old_x - qb->width() )/2),iy);
     qb->show();
 
+
+    // The same for the state LED
+    int l_i_xpos, l_i_width, l_i_height;
+    l_i_width  = l_KLed_state->width();
+    l_i_height = l_KLed_state->height();
+
+    l_i_xpos  = ix + old_x;
+    l_i_xpos -= l_i_width;
+    l_i_xpos /= 2;
+ 
+    l_KLed_state->move(l_i_xpos,l_i_belowSlider);
+    l_KLed_state->show();
+
+    if (first) {
+      qsMaxY = l_i_belowSlider + l_i_height;
+    }
 
     first=false;
     MixPtr=MixPtr->Next;
   }
 
   ix += 4;
-  iy = qsMaxY;
+  iy = qsMaxY +4;
   LeftRightSB->setGeometry(0,iy,ix,LeftRightSB->sizeHint().height());
 
   iy+=LeftRightSB->height();
