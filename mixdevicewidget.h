@@ -41,6 +41,7 @@ class Mixer;
 class QTimer;
 class KSmallSlider;
 class QSlider;
+class KGlobalAccel;
 
 class MixDeviceWidget
  : public QWidget
@@ -67,6 +68,8 @@ class MixDeviceWidget
       void setColors( QColor high, QColor low, QColor back );
       void setMutedColors( QColor high, QColor low, QColor back );
 
+      KGlobalAccel *keys(void);
+
    public slots:
       void toggleRecsrc();
       void toggleMuted();
@@ -75,6 +78,7 @@ class MixDeviceWidget
       void setDisabled() { setDisabled( true ); };
       void setDisabled( bool value );
 
+      void defineKeys();
    signals:
       void newVolume( int num, Volume volume );
       void newRecsrc( int num, bool on );
@@ -91,6 +95,8 @@ class MixDeviceWidget
       void update();
       void volumeChange( int );
 
+      void increaseVolume();
+      void decreaseVolume();
    private:
       QPixmap getIcon( int icon );
       void setIcon( int icontype );
@@ -105,6 +111,7 @@ class MixDeviceWidget
       QTimer *m_updateTimer;
       QList<QWidget> m_sliders;
       KActionCollection *m_actions;
+      KGlobalAccel *m_keys;
 
       bool m_linked;
       bool m_disabled;

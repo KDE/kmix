@@ -28,6 +28,8 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
+#include <kglobalaccel.h>
+#include <kkeydialog.h>
 
 #include <qslider.h>
 #include <qlabel.h>
@@ -79,6 +81,8 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
       a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
    }
 
+   new KAction( i18n("Define &keys"), 0, this, SLOT(defineKeys()), m_actions, "keys" );
+
    // create widgets
    createWidgets( showMuteLED, showRecordLED );
 
@@ -86,6 +90,15 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    m_updateTimer = new QTimer( this );
    connect( m_updateTimer, SIGNAL(timeout()), this, SLOT(update()) );
    m_updateTimer->start( 200, FALSE );
+
+   m_keys=new KGlobalAccel(this,"Keys");
+   m_keys->insertItem( i18n( "Increase volume" ), "Increase volume", "" );
+   m_keys->insertItem( i18n( "Decrease volume" ), "Decrease volume", "" );
+   m_keys->insertItem( i18n( "Toggle mute" ), "Toggle mute", "" );
+   
+   m_keys->connectItem( "Toggle mute", this, SLOT( toggleMuted() ) );
+   m_keys->connectItem( "Increase volume", this, SLOT( increaseVolume() ) );
+   m_keys->connectItem( "Decrease volume", this, SLOT( decreaseVolume() ) );
 };
 
 MixDeviceWidget::~MixDeviceWidget()
@@ -357,6 +370,11 @@ void MixDeviceWidget::setMutedColors( QColor high, QColor low, QColor back )
     }
 }
 
+KGlobalAccel *MixDeviceWidget::keys(void)
+{
+    return m_keys;
+}
+
 void MixDeviceWidget::volumeChange( int )
 {
    Volume vol = m_mixdevice->getVolume();
@@ -407,6 +425,36 @@ void MixDeviceWidget::setDisabled( bool value )
       value ? hide() : show();
       m_disabled = value;
       emit updateLayout();
+   }
+}
+
+void MixDeviceWidget::defineKeys()
+{
+   if (m_keys)
+      KKeyDialog::configureKeys(m_keys,false);
+}
+
+void MixDeviceWidget::increaseVolume()
+{
+   Volume vol = m_mixdevice->getVolume();
+   int inc = vol.maxVolume() / 20;
+   if ( inc == 0 )
+      inc = 1;
+   for ( int i = 0; i < vol.channels(); i++ ) {
+      int newVal = vol[i] + inc;
+      setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
+   }
+}
+
+void MixDeviceWidget::decreaseVolume()
+{
+   Volume vol = m_mixdevice->getVolume();
+   int inc = vol.maxVolume() / 20;
+   if ( inc == 0 )
+      inc = 1;
+   for ( int i = 0; i < vol.channels(); i++ ) {
+      int newVal = vol[i] - inc;
+      setVolume( i, newVal > 0 ? newVal : 0 );
    }
 }
 
@@ -515,6 +563,14 @@ void MixDeviceWidget::contextMenu()
 
    KAction *a = m_actions->action( "hide" );
    if ( a ) a->plug( menu );
+
+   a = m_actions->action( "keys" );
+   if ( a && m_keys ) {
+      KActionSeparator sep( this );
+      sep.plug( menu );
+
+      a->plug( menu );
+   }
 
    KActionSeparator sep( this );
    sep.plug( menu );
