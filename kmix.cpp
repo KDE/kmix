@@ -73,7 +73,7 @@ KMixWindow::KMixWindow()
 	m_isVisible = false;
 	m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-	MixerToolBox::initMixer(m_mixers, m_multiDriverMode);
+	MixerToolBox::initMixer(m_mixers, m_multiDriverMode, m_hwInfoString);
 	initActions();
 	initWidgets();
 	initMixerWidgets();

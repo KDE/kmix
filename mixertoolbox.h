@@ -1,7 +1,8 @@
 #ifndef MIXERTOOLBOX_H
 #define MIXERTOOLBOX_H
 
-#include "qptrlist.h"
+#include <qptrlist.h>
+#include <qstring.h>
 
 class Mixer;
 
@@ -13,7 +14,7 @@ class Mixer;
  */
 class MixerToolBox {
  public:
-    static void initMixer(QPtrList<Mixer>&, bool);
+    static void initMixer(QPtrList<Mixer>&, bool, QString&);
 };
     
 

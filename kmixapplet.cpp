@@ -165,7 +165,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     // init static vars
     if ( s_instCount == 0) {
         s_mixers.setAutoDelete( TRUE );
-	MixerToolBox::initMixer(s_mixers, false);
+	QString dummyStringHwinfo;
+	MixerToolBox::initMixer(s_mixers, false, dummyStringHwinfo);
     }	
     s_instCount++;
     kdDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
