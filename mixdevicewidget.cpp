@@ -351,13 +351,16 @@ void BigMixDeviceWidget::setTicks( bool ticks )
 
 void BigMixDeviceWidget::setIcons(bool value)
 {
-   if (value)
-      m_iconLabel->show();
-   else
-      m_iconLabel->hide();
+   if ( m_iconLabel->isVisible()!=value )
+   {
+      if (value)
+	 m_iconLabel->show();
+      else
+	 m_iconLabel->hide();
   
-   layout()->activate();
-   emit updateLayout();
+      layout()->activate();
+      emit updateLayout();
+   }
 }
 
 void BigMixDeviceWidget::volumeChange( int )
@@ -548,14 +551,16 @@ void SmallMixDeviceWidget::setIcon( int icon )
 
 void SmallMixDeviceWidget::setIcons(bool value)
 {
-   kDebugInfo("SmallMixDeviceWidget::setIcons");
-   if (value)
-      m_iconLabel->show();
-   else
-      m_iconLabel->hide();
+   if ( m_iconLabel->isVisible()!=value )
+   {   
+      if (value)
+	 m_iconLabel->show();
+      else
+	 m_iconLabel->hide();
   
-   layout()->activate();
-   emit updateLayout();
+      layout()->activate();
+      emit updateLayout();
+   }
 }
 
 void SmallMixDeviceWidget::setStereoLinked(bool value)

@@ -77,7 +77,7 @@ class KMixerWidget : public QWidget  {
    void setLabels( bool on );
    void setIcons( bool on );
    void setBalance( int value );
-   void setOrientation( int vert );
+   // void setOrientation( int vert );
 
    void sessionSave( QString grp, bool sessionConfig );
    void sessionLoad( QString grp, bool sessionConfig );

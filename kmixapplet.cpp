@@ -39,8 +39,10 @@
 #include "mixdevicewidget.h"
 #include "kmixapplet.h"
 
+#define BUTTONSIZE 15
+
 KMixApplet::KMixApplet( Mixer *mixer, QWidget *parent, const char* name )
-   : KPanelApplet( parent, name )
+   : KPanelApplet( parent, name ), m_lockedLayout( 0 )
 {
    // scale icon
    QPixmap icon = BarIcon("kmixdocked");
@@ -48,33 +50,39 @@ KMixApplet::KMixApplet( Mixer *mixer, QWidget *parent, const char* name )
    t = t.scale( 10.0/icon.width(), 10.0/icon.height() );
 
    // create show/hide button      
-   m_button = new QPushButton( icon.xForm( t ), "*", this );
-   m_button->setFixedWidth( 15 );   
-   connect( m_button, SIGNAL(clicked()), this, SLOT(showButton()));
+   m_button = new QPushButton( icon.xForm( t ), QString::null, this );
+   connect( m_button, SIGNAL(clicked()), this, SLOT(showButton()) );
 
    // init mixer widget
    m_mixerWidget = new KMixerWidget( mixer, true, true, this );
    
    // ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
-   m_timer = new QTimer( this );
-   connect( m_timer, SIGNAL(timeout()), this, SLOT(updateSize()) );
+   m_layoutTimer = new QTimer( this );
+   connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()) );
    connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
 }
 
 void KMixApplet::updateLayout()
 {
-   if ( !m_timer->isActive() )
-      m_timer->start( 100, TRUE );
+   if ( m_lockedLayout ) return;
+   if ( !m_layoutTimer->isActive() )
+      m_layoutTimer->start( 100, TRUE );
 }
 
 int KMixApplet::widthForHeight(int )
 {
-  return m_mixerWidget->minimumWidth() + m_button->minimumWidth() + 1;
+  m_lockedLayout++;  
+  m_mixerWidget->setIcons( height()>=32 );
+  m_lockedLayout--;
+  return m_mixerWidget->minimumWidth() + BUTTONSIZE + 1;
 }
  
-int KMixApplet::heightForWidth(int )
+int KMixApplet::heightForWidth(int width)
 {
-  return m_mixerWidget->minimumHeight();
+  m_lockedLayout++;
+  m_mixerWidget->setIcons( height()>=32 );
+  m_lockedLayout--;
+  return BUTTONSIZE + width + 1 ;
 }    
 
 void KMixApplet::removedFromPanel()
@@ -86,9 +94,17 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
 {      
    KPanelApplet::resizeEvent( e );
 
-   m_button->setGeometry( 0 ,0, m_button->minimumWidth(), height() );
-   //m_mixerWidget->setOrientation( orientation()==Left || orientation()==Right ); 
-   m_mixerWidget->setIcons( height()>=32 );
-   m_mixerWidget->setGeometry( m_button->minimumWidth() + 1, 0, 
-			       width() - m_button->minimumWidth(), height() );
+   m_lockedLayout++;
+   if ( orientation()==Vertical )
+   {
+      m_button->setGeometry( 0 ,0, width(), BUTTONSIZE );
+      m_mixerWidget->setGeometry( 0, BUTTONSIZE + 1, 
+				  width(), height()-BUTTONSIZE - 1 );
+   } else
+   {
+      m_button->setGeometry( 0 ,0, BUTTONSIZE, height() );   
+      m_mixerWidget->setGeometry( BUTTONSIZE + 1, 0, 
+				  width()-BUTTONSIZE-1, height() );
+   }
+   m_lockedLayout--;
 }

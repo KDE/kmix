@@ -52,15 +52,16 @@ class KMixApplet : public KPanelApplet
   protected slots:
    void updateSize() { updateLayout(); }
    void showButton() { emit clickedButton(); };
+   void updateLayout();
 
   protected:
    void resizeEvent( QResizeEvent * );
-   void updateLayout();
- 
+    
   private:
    KMixerWidget *m_mixerWidget;
-   QPushButton *m_button;
-   QTimer *m_timer;
+   QButton *m_button;
+   QTimer *m_layoutTimer;
+   int m_lockedLayout;
 };
 
 

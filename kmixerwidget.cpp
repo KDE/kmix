@@ -74,7 +74,8 @@ void Profile::saveConfig( const QString &/*grp*/ )
 /********************** KMixerWidget *************************/
  
 KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixer(mixer), m_devLayout(0), m_name(mixer->mixerName())
+   : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0), 
+   m_topLayout(0), m_devLayout(0), m_name(mixer->mixerName())
 {   
    kDebugInfo("-> KMixerWidget::KMixerWidget");
    m_actions = new KActionCollection( this );
@@ -83,23 +84,8 @@ KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * paren
    m_small = small;
    m_vertical = vert;
 
-   // Create mixer device widgets  
-   kDebugInfo("m_topLayout");
-   m_topLayout = new QVBoxLayout( this, 0, 3 );     
-   updateDevices( vert );
-
-   // Create the left-right-slider   
-   if ( !small )
-   {      
-      m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
-				  this, "RightLeft" );
-      m_topLayout->addWidget( m_balanceSlider );
-      connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
-      QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
-   } else
-      m_balanceSlider = 0;
-
-   updateSize();
+   // Create mixer device widgets        
+   updateDevices( vert ); 
 
    kDebugInfo("<- KMixerWidget::KMixerWidget");
 }
@@ -112,14 +98,19 @@ void KMixerWidget::updateDevices( bool vert )
 {   
    kDebugInfo("-> KMixerWidget::updateDevices");
 
-   m_channels.clear();
+   // delete old objects
+   m_channels.clear(); 
+   delete m_balanceSlider;
+   delete m_devLayout;
+   delete m_topLayout;
+
    m_vertical = vert;
 
-   kDebugInfo("m_devLayout");
-   delete m_devLayout;
+   // create layouts   
+   m_topLayout = new QVBoxLayout( this, 0, 3 );
    m_devLayout = new QHBoxLayout( m_topLayout );
-//   m_topLayout->insertLayout( 0, m_devLayout );
-   
+
+   // create devices
    kDebugInfo("mixSet");
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
@@ -148,8 +139,18 @@ void KMixerWidget::updateDevices( bool vert )
       m_channels.append( chn );
    }
 
-   kDebugInfo("m_devLayout stretch");
    m_devLayout->addStretch( 1 );
+
+   // Create the left-right-slider   
+   if ( !m_small )
+   {      
+      m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
+				  this, "RightLeft" );
+      m_topLayout->addWidget( m_balanceSlider );
+      connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
+      QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
+   } else
+      m_balanceSlider = 0;
 
    updateSize();
 
@@ -159,7 +160,6 @@ void KMixerWidget::updateDevices( bool vert )
 void KMixerWidget::updateSize()
 {   
    layout()->activate();
-   kDebugInfo("KMixerWidget::updateSize minwidth=%d", m_topLayout->minimumSize().width() );
    setMinimumWidth( layout()->minimumSize().width() );
    setMinimumHeight( layout()->minimumSize().height() );
    emit updateLayout();
@@ -188,10 +188,10 @@ void KMixerWidget::setBalance( int value )
       m_balanceSlider->setValue( value );
 }
 
-void KMixerWidget::setOrientation( int vert )
+/*void KMixerWidget::setOrientation( int vert )
 {
    updateDevices( vert ); 
-}
+}*/
 
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
 {

@@ -328,6 +328,7 @@ void KMixApp::insertApplet( KMixApplet *applet )
 
 void KMixApp::removeApplet( KMixApplet *applet )
 {
+   kDebugInfo("KMixApp::removeApplet");
    m_applets.remove( applet );
    if ( !isVisible() && !m_showDockWidget && m_applets.count()==0 )
       quit();   
