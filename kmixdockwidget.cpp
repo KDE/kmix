@@ -42,6 +42,7 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer,
     : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), m_mixerVisible(false)
 {
     createMasterVolWidget();
+    connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -177,13 +178,6 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
 
 void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* menu )
 {
-    for ( unsigned n=0; n<menu->count(); n++ )
-    {
-        if ( QString( menu->text( menu->idAt(n) ) )==i18n("&Quit") )
-            menu->removeItemAt( n );
-    }
-
-    menu->insertItem( SmallIcon("exit"), i18n("&Quit" ), kapp, SLOT(quit()) );
 }
 
 #include "kmixdockwidget.moc"
