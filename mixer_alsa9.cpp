@@ -1,6 +1,6 @@
 /*
  *              KMix -- KDE's full featured mini mixer
- *              Alsa 0.9x - Based on original alsamixer code 
+ *              Alsa 0.9x - Based on original alsamixer code
  *              from alsa-project ( www/alsa-project.org )
  *
  *
@@ -24,7 +24,7 @@
 // STD Headers
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream.h>
+#include <iostream>
 
 extern "C"
 {
@@ -33,12 +33,13 @@ extern "C"
 
 // KDE Headers
 #include <klocale.h>
+#include <kdebug.h>
 
 // Local Headers
 #include "mixer_alsa.h"
 #include "volume.h"
 
-Mixer* 
+Mixer*
 ALSA_getMixer( int device, int card )
 {
 	Mixer *l_mixer;
@@ -47,7 +48,7 @@ ALSA_getMixer( int device, int card )
 	return l_mixer;
 }
 
-Mixer* 
+Mixer*
 ALSA_getMixerSet( MixSet set, int device, int card )
 {
 	Mixer *l_mixer;
@@ -56,7 +57,7 @@ ALSA_getMixerSet( MixSet set, int device, int card )
 	return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( int device, int card ) : 
+Mixer_ALSA::Mixer_ALSA( int device, int card ) :
 	Mixer( device, card ), handle(0)
 {
 }
@@ -94,7 +95,7 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 	return MixDevice::EXTERNAL;
 }
 
-int 
+int
 Mixer_ALSA::openMixer()
 {
 	bool virginOpen = m_mixDevices.isEmpty();
@@ -112,12 +113,19 @@ Mixer_ALSA::openMixer()
 	snd_mixer_selem_id_alloca( &sid );
 
 	// Card information
-	if( card_id.isEmpty() )
-	{
-		card_id = "default";
-	}
+	char *devName = new char[32];
+	devName[0] = 0;
 
-	if ( ( err = snd_ctl_open ( &ctl_handle, card_id.latin1(), 0 ) ) < 0 )
+	if ( m_devnum < 0 || m_devnum > 31 ) {
+	strcpy ( devName, "default" );
+	}
+	else {
+	    sprintf( devName, "hw:%i", m_devnum );
+	}	
+
+	//kdDebug() << "Trying to open " << devName << endl; // !!!
+
+	if ( ( err = snd_ctl_open ( &ctl_handle, devName, m_devnum ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_OPEN );
 		return false;
@@ -145,7 +153,7 @@ Mixer_ALSA::openMixer()
 		errormsg( Mixer::ERR_OPEN );
 	}
 	
-	if ( ( err = snd_mixer_attach ( handle, card_id.latin1() ) ) < 0 )
+	if ( ( err = snd_mixer_attach ( handle, devName ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_PERM );
 	}
@@ -174,7 +182,7 @@ Mixer_ALSA::openMixer()
 	}
 
 	int mixerIdx = 0;
-	for ( elem = snd_mixer_first_elem( handle ); elem; elem = snd_mixer_elem_next( elem ) ) 
+	for ( elem = snd_mixer_first_elem( handle ); elem; elem = snd_mixer_elem_next( elem ) )
 	{
 		snd_mixer_selem_get_id( elem, sid );
 
@@ -207,11 +215,11 @@ Mixer_ALSA::openMixer()
 			readVolumeFromHW( mixerIdx, vol );
 			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct) );
 			mixerIdx++;
-		} 
+		}
 		else
 		{
 			MixDevice* md = m_mixDevices.at( mixerIdx );
-			if( !md ) 
+			if( !md )
 			{
 				return ERR_INCOMPATIBLESET;
 			}
@@ -221,14 +229,14 @@ Mixer_ALSA::openMixer()
 	}	
 
 	//return error for invalid devices	
-	if ( !validDevice ) 
+	if ( !validDevice )
 	{
 		return Mixer::ERR_NODEV;
 	}
 
 	// Copy the name of kmix mixer from card name
 	// Real name of mixer is not too good
-	m_mixerName = mixer_card_name; 
+	m_mixerName = mixer_card_name;
 	
 	// return with success
 	m_isOpen = true;
@@ -237,14 +245,14 @@ Mixer_ALSA::openMixer()
 }
 
 
-int 
+int
 Mixer_ALSA::releaseMixer()
 {
 	int ret = snd_mixer_close( handle );
 	return ret;
 }
 
-bool 
+bool
 Mixer_ALSA::isRecsrcHW( int devnum )
 {
 	devnum++;
@@ -260,7 +268,7 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 	return false;
 }
 
-bool 
+bool
 Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 {
 	devnum++;
@@ -285,7 +293,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	return false;
 }
 
-int 
+int
 Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 {
 	int elem_sw;
@@ -313,8 +321,8 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		if ( snd_mixer_selem_is_playback_mono ( elem ) )
 		{
 			volume.setAllVolumes( left );
-		} 
-		else 
+		}
+		else
 		{
 			if ( snd_mixer_selem_has_playback_volume ( elem ) )
 				snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
@@ -342,7 +350,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	return 0;
 }
 
-int 
+int
 Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 {
 	int left, right;
@@ -360,12 +368,12 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 	left = volume[ Volume::LEFT ];
 	right = volume[ Volume::RIGHT ];
 
-	if (snd_mixer_selem_has_playback_volume( elem ) ) 
+	if (snd_mixer_selem_has_playback_volume( elem ) )
 	{
 		snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
 			snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
-	} 
+	}
 	else if ( snd_mixer_selem_has_capture_volume( elem ) )
 	{
 		snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
