@@ -341,6 +341,22 @@ void MixDeviceWidget::setIcons(bool value)
    }
 }
 
+void MixDeviceWidget::setColors( QColor high, QColor low, QColor back )
+{
+    for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next() ) {
+        KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
+        if ( smallSlider ) smallSlider->setColors( high, low, back );
+    }
+}
+
+void MixDeviceWidget::setMutedColors( QColor high, QColor low, QColor back )
+{
+    for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next() ) {
+        KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
+        if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
+    }
+}
+
 void MixDeviceWidget::volumeChange( int )
 {
    Volume vol = m_mixdevice->getVolume();

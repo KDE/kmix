@@ -26,10 +26,34 @@
 #include <kaction.h>
 #include <kpanelapplet.h>
 #include <qlist.h>
+#include <kcolordialog.h>
 
-class KMixerWidget;
+#include "colorwidget.h"
+#include "kmixerwidget.h"
+
 class Mixer;
 class QTimer;
+
+
+class ColorDialog : public ColorWidget {
+   Q_OBJECT
+  public:
+   ColorDialog( QWidget * parent=0, const char * name=0, bool modal=FALSE, WFlags f=0 ) 
+       : ColorWidget( parent, name, modal, f ) {
+       connect( buttonApply, SIGNAL(clicked()), SLOT(apply()) );
+   };
+
+   virtual ~ColorDialog() {};
+
+  protected slots:
+   virtual void apply() { emit applied(); }
+   virtual void accept() { ColorWidget::accept(); emit applied(); }
+   virtual void reject() { ColorWidget::reject(); emit rejected(); }
+
+  signals:
+   void applied();
+   void rejected();	
+};
 
 
 class KMixApplet : public KPanelApplet
@@ -37,7 +61,7 @@ class KMixApplet : public KPanelApplet
    Q_OBJECT
 
   public:
-   KMixApplet( const QString& configFile, Type t = Normal, int actions = 0,
+   KMixApplet( const QString& configFile, Type t = Normal,
 	       QWidget *parent = 0, const char *name = 0 );
    virtual ~KMixApplet();
 
@@ -52,7 +76,8 @@ class KMixApplet : public KPanelApplet
    void triggerUpdateLayout();
    void updateLayoutNow(); 
    void selectMixer();
-
+   void applyColors();
+  
   protected:
    void resizeEvent( QResizeEvent * );
    void saveConfig();
@@ -62,10 +87,14 @@ class KMixApplet : public KPanelApplet
    QPushButton *m_errorLabel;
    QTimer *m_layoutTimer;
    int m_lockedLayout;
+   ColorWidget *m_pref;
 
    static int s_instCount;
    static QList<Mixer> *s_mixers;
    static QTimer *s_timer;    
+
+   KMixerWidget::Colors m_colors;
+   bool m_customColors;
 };
 
 

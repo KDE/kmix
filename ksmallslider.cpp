@@ -42,8 +42,8 @@ KSmallSlider::KSmallSlider( Orientation orientation, QWidget *parent, const char
 }
 
 KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,
-		  int value, Orientation orientation,
-		  QWidget *parent, const char *name )
+                  int value, Orientation orientation,
+                  QWidget *parent, const char *name )
     : QWidget( parent, name ),
       QRangeControl( minValue, maxValue, 1, pageStep, value )
 {
@@ -55,10 +55,18 @@ KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,
 void KSmallSlider::init()
 {
     sliderPos = 0;
-    sliderVal = 0;   
+    sliderVal = 0;
     state = Idle;
     track = TRUE;
-    setFocusPolicy( TabFocus  );    
+    setFocusPolicy( TabFocus  );
+
+    colHigh = QColor(0,255,0);
+    colLow = QColor(255,0,0);
+    colBack = QColor(0,0,0);
+
+    grayHigh = QColor(255,255,255);
+    grayLow = QColor(128,128,128);
+    grayBack = QColor(0,0,0);
 }
 
 void KSmallSlider::setTracking( bool enable )
@@ -67,7 +75,7 @@ void KSmallSlider::setTracking( bool enable )
 }
 
 int KSmallSlider::positionFromValue( int v ) const
-{   
+{
     return QRangeControl::positionFromValue( v, available() );
 }
 
@@ -80,23 +88,23 @@ void KSmallSlider::rangeChange()
 {
     int newPos = positionFromValue( value() );
     if ( newPos != sliderPos ) {
-	reallyMoveSlider( newPos );
+        reallyMoveSlider( newPos );
     }
 }
 
 void KSmallSlider::valueChange()
 {
     if ( sliderVal != value() ) {
-	int newPos = positionFromValue( value() );
-	sliderVal = value();
-	reallyMoveSlider( newPos );
+        int newPos = positionFromValue( value() );
+        sliderVal = value();
+        reallyMoveSlider( newPos );
     }
     emit valueChanged(value());
 }
 
 void KSmallSlider::resizeEvent( QResizeEvent * )
 {
-    rangeChange();    
+    rangeChange();
 }
 
 void KSmallSlider::setOrientation( Orientation orientation )
@@ -112,7 +120,7 @@ int KSmallSlider::available() const
 }
 
 void KSmallSlider::reallyMoveSlider( int newPos )
-{    
+{
     sliderPos = newPos;
     repaint( FALSE );
 }
@@ -143,30 +151,39 @@ void gradient( QPainter &p, bool hor, const QRect &rect, const QColor &ca, const
    if (!hor)
    {
       for ( y = rect.top(); y <= rect.bottom(); y++ ) {
-	 rl += rcdelta;
-	 gl += gcdelta;
-	 bl += bcdelta;
+         rl += rcdelta;
+         gl += gcdelta;
+         bl += bcdelta;
 
-	 p.setPen(QColor(rl>>16, gl>>16, bl>>16));
-	 p.drawLine(rect.left(), y, rect.right(), y);
+         p.setPen(QColor(rl>>16, gl>>16, bl>>16));
+         p.drawLine(rect.left(), y, rect.right(), y);
       }
    } else
    {
       for( x = rect.left(); x <= rect.right(); x++) {
-	 rl += rcdelta;
-	 gl += gcdelta;
-	 bl += bcdelta;
+         rl += rcdelta;
+         gl += gcdelta;
+         bl += bcdelta;
 
-	 p.setPen(QColor(rl>>16, gl>>16, bl>>16));	
-	 p.drawLine(x, rect.top(), x, rect.bottom());
+         p.setPen(QColor(rl>>16, gl>>16, bl>>16));
+         p.drawLine(x, rect.top(), x, rect.bottom());
       }
    }
+}
+
+QColor interpolate( QColor low, QColor high, int percent ) {
+    if ( percent<=0 ) return low; else
+    if ( percent>=100 ) return high; else
+    return QColor(
+        low.red() + (high.red()-low.red()) * percent/100,
+        low.green() + (high.green()-low.green()) * percent/100,
+        low.blue() + (high.blue()-low.blue()) * percent/100 );
 }
 
 void KSmallSlider::paintEvent( QPaintEvent * )
 {
    QPainter p( this );
-  
+
    // draw 3d border
    style().drawPanel ( &p, 0, 0, width(), height(), colorGroup(), TRUE );
 
@@ -175,43 +192,44 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    {
       if ( orient==Horizontal )
       {
-	 QRect lower = QRect( 1, 1, sliderPos, height()-2 );
-	 
-	 if ( grayed )
-	 {
-	    int light = 128*sliderPos/(width()-2);
-	    gradient( p, true, lower, QColor(255-light, 255-light, 255-light), 
-		      QColor(128,128,128), 32 );
-	 } else
-	 {
-	    int red = 255*sliderPos/(width()-2);
-	    gradient( p, true, lower, QColor(red, 255-red, 0), QColor(255,0,0), 32 );
-	 }
+         QRect lower = QRect( 1, 1, sliderPos, height()-2 );
+
+         if ( grayed )
+             gradient( p, true, lower,
+                       interpolate( grayHigh, grayLow, 100*sliderPos/(width()-2) ),
+                       grayLow, 32 );
+         else
+             gradient( p, true, lower,
+                       interpolate( colHigh, colLow, 100*sliderPos/(width()-2) ),
+                       colLow, 32 );
       } else
       {
-	 QRect lower = QRect( 1, sliderPos+1, width()-2, height()-2-sliderPos );
+         QRect lower = QRect( 1, sliderPos+1, width()-2, height()-2-sliderPos );
 
-	 if ( grayed )
-	 {
-	    int light = 128*sliderPos/(height()-2);
-	    gradient( p, false, lower, QColor(255-light, 255-light, 255-light), 
-		      QColor(128,128,128), 32 );
-	 } else
-	 {
-	    int red = 255*sliderPos/(height()-2);
-	    gradient( p, false, lower, QColor(red, 255-red, 0), QColor(255,0,0), 32 );
-	 }
+         if ( grayed )
+             gradient( p, false, lower,
+                       interpolate( grayHigh, grayLow, 100*sliderPos/(height()-2) ),
+                       grayLow, 32 );
+         else
+             gradient( p, false, lower,
+                       interpolate( colHigh, colLow, 100*sliderPos/(height()-2) ),
+                       colLow, 32 );
       }
 
       // drow upper/right part
       QRect upper;
       if ( orient==Horizontal )
-	 upper = QRect( sliderPos+1, 1, width()-2-sliderPos, height()-2 );
+         upper = QRect( sliderPos+1, 1, width()-2-sliderPos, height()-2 );
       else
-	 upper = QRect( 1, 1, width()-2, sliderPos );
+         upper = QRect( 1, 1, width()-2, sliderPos );
 
-      p.setBrush( QColor(0,0,0) );
-      p.setPen( QColor(0,0,0) );
+      if ( grayed ) {
+          p.setBrush( grayBack );
+          p.setPen( grayBack );
+      } else {
+          p.setBrush( colBack );
+          p.setPen( colBack );
+      }
       p.drawRect( upper );
    }
 }
@@ -219,12 +237,12 @@ void KSmallSlider::paintEvent( QPaintEvent * )
 void KSmallSlider::mousePressEvent( QMouseEvent *e )
 {
    resetState();
-    
+
    if ( e->button() == RightButton ) {
       return;
    }
 
-   state = Dragging;    
+   state = Dragging;
    emit sliderPressed();
 
    int pos = goodPart( e->pos() );
@@ -234,7 +252,7 @@ void KSmallSlider::mousePressEvent( QMouseEvent *e )
 void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 {
     if ( state != Dragging )
-	return;
+        return;
 
     int pos = goodPart( e->pos() );
     moveSlider( pos );
@@ -257,7 +275,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
 
 void KSmallSlider::mouseReleaseEvent( QMouseEvent * )
 {
-   resetState();   
+   resetState();
 }
 
 void KSmallSlider::moveSlider( int pos )
@@ -266,31 +284,31 @@ void KSmallSlider::moveSlider( int pos )
     int newPos = QMIN( a, QMAX( 0, pos ) );
     int newVal = valueFromPosition( newPos );
     if ( sliderVal != newVal ) {
-	sliderVal = newVal;
-	emit sliderMoved( sliderVal );
+        sliderVal = newVal;
+        emit sliderMoved( sliderVal );
     }
     if ( tracking() && sliderVal != value() ) {
-	directSetValue( sliderVal );
-	emit valueChanged( sliderVal );
+        directSetValue( sliderVal );
+        emit valueChanged( sliderVal );
     }
 
     if ( sliderPos != newPos )
-	reallyMoveSlider( newPos );
+        reallyMoveSlider( newPos );
 }
 
 void KSmallSlider::resetState()
-{   
-    switch ( state ) {    
+{
+    switch ( state ) {
     case Dragging: {
-	setValue( valueFromPosition( sliderPos ) );
-	emit sliderReleased();
-	break;
+        setValue( valueFromPosition( sliderPos ) );
+        emit sliderReleased();
+        break;
     }
     case Idle:
        break;
 
     default:
-	qWarning("KSmallSlider: (%s) in wrong state", name( "unnamed" ) );
+        qWarning("KSmallSlider: (%s) in wrong state", name( "unnamed" ) );
     }
     state = Idle;
 }
@@ -320,11 +338,11 @@ QSize KSmallSlider::sizeHint() const
     constPolish();
     const int length = 84;
     const int thick = 10;
-  
+
     if ( orient == Horizontal )
-	return QSize( length, thick );
+        return QSize( length, thick );
     else
-	return QSize( thick, length );
+        return QSize( thick, length );
 }
 
 QSize KSmallSlider::minimumSizeHint() const
@@ -338,9 +356,9 @@ QSize KSmallSlider::minimumSizeHint() const
 QSizePolicy KSmallSlider::sizePolicy() const
 {
     if ( orient == Horizontal )
-	return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
+        return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     else
-	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
+        return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
 }
 
 int KSmallSlider::minValue() const
@@ -400,6 +418,22 @@ void KSmallSlider::setGray( bool value )
 bool  KSmallSlider::gray() const
 {
    return grayed;
+}
+
+void KSmallSlider::setColors( QColor high, QColor low, QColor back )
+{
+    colHigh = high;
+    colLow = low;
+    colBack = back;
+    repaint();
+}
+
+void KSmallSlider::setGrayColors( QColor high, QColor low, QColor back )
+{
+    grayHigh = high;
+    grayLow = low;
+    grayBack = back;
+    repaint();
 }
 
 #include "ksmallslider.moc"

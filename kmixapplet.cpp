@@ -38,11 +38,14 @@
 #include <qinputdialog.h>
 #include <qlabel.h>
 #include <kmessagebox.h>
+#include <kcolorbutton.h>
+#include <qradiobutton.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "kmixapplet.h"
+#include "colorwidget.h"
 
 
 extern "C"
@@ -51,7 +54,7 @@ extern "C"
   {
      KGlobal::locale()->insertCatalogue("kmix");
      return new KMixApplet(configFile, KPanelApplet::Normal,
-                           0, parent, "kmixapplet");
+                           parent, "kmixapplet");
   }
 }
 
@@ -60,11 +63,18 @@ int KMixApplet::s_instCount = 0;
 QTimer *KMixApplet::s_timer = 0;
 QList<Mixer> *KMixApplet::s_mixers;
 
-KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
+#define defHigh "#00FF00"
+#define defLow "#FF0000"
+#define defBack "#000000"
+#define defMutedHigh "#FFFFFF"
+#define defMutedLow "#808080"
+#define defMutedBack "#000000"
+
+KMixApplet::KMixApplet( const QString& configFile, Type t,
                         QWidget *parent, const char *name )
 
-   : KPanelApplet( configFile, t, actions, parent, name ),
-   m_mixerWidget( 0 ), m_errorLabel( 0 ), m_lockedLayout( 0 )
+   : KPanelApplet( configFile, t, KPanelApplet::Preferences, parent, name ),
+     m_mixerWidget(0), m_errorLabel(0), m_lockedLayout(0), m_pref(0)
 {
    // init static vars
    if ( !s_instCount )
@@ -105,10 +115,24 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
    m_layoutTimer = new QTimer( this );
    connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateLayoutNow()) );
 
-   // find out to use which mixer
+   // get configuration
    KConfig *cfg = config();
    cfg->setGroup(0);
 
+   // get colors
+   m_pref = new ColorDialog( this );
+   connect( m_pref, SIGNAL(applied()), SLOT(applyColors()) );
+   m_customColors = cfg->readBoolEntry( "ColorCustom", false );
+
+   m_colors.high = QColor(cfg->readEntry("ColorHigh", defHigh));
+   m_colors.low = QColor(cfg->readEntry( "ColorLow", defLow));
+   m_colors.back = QColor(cfg->readEntry( "ColorBack", defBack));
+
+   m_colors.mutedHigh = QColor(cfg->readEntry("MutedColorHigh", defMutedHigh));
+   m_colors.mutedLow = QColor(cfg->readEntry( "MutedColorLow", defMutedLow));
+   m_colors.mutedBack = QColor(cfg->readEntry( "MutedColorBack", defMutedBack));
+
+   // find out to use which mixer
    int mixerNum = cfg->readNumEntry( "Mixer", -1 );
    QString mixerName = cfg->readEntry( "MixerName", QString::null );
    Mixer *mixer = 0;
@@ -125,11 +149,12 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
    // don't prompt for a mixer if there is just one available
    if ( !mixer && s_mixers->count() == 1 )
        mixer = s_mixers->first();
-   
+
    if ( mixer )
    {
       m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );
       m_mixerWidget->loadConfig( cfg, "Widget" );
+      m_mixerWidget->setColors( m_colors );
       connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
       connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
    } else
@@ -160,6 +185,17 @@ void KMixApplet::saveConfig()
         cfg->setGroup( 0 );
         cfg->writeEntry( "Mixer", s_mixers->find( m_mixerWidget->mixer() ) );
         cfg->writeEntry( "MixerName", m_mixerWidget->mixer()->mixerName() );
+
+        cfg->writeEntry( "ColorCustom", m_customColors );
+
+        cfg->writeEntry( "ColorHigh", m_colors.high.name() );
+        cfg->writeEntry( "ColorLow", m_colors.low.name() );
+        cfg->writeEntry( "ColorBack", m_colors.back.name() );
+
+        cfg->writeEntry( "ColorMutedHigh", m_colors.mutedHigh.name() );
+        cfg->writeEntry( "ColorMutedLow", m_colors.mutedLow.name() );
+        cfg->writeEntry( "ColorMutedBack", m_colors.mutedBack.name() );
+
         m_mixerWidget->saveConfig( cfg, "Widget" );
         cfg->sync();
     }
@@ -191,7 +227,9 @@ void KMixApplet::selectMixer()
       {
          delete m_errorLabel;
          m_errorLabel = 0;
-         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum, true, true, this );
+         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum,
+                                           true, true, this );
+         m_mixerWidget->setColors( m_colors );
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
          connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
@@ -255,8 +293,53 @@ void KMixApplet::help()
 {
 }
 
+
+void KMixApplet::applyColors()
+{
+    m_colors.high = m_pref->activeHigh->color();
+    m_colors.low = m_pref->activeLow->color();
+    m_colors.back = m_pref->activeBack->color();
+
+    m_colors.mutedHigh = m_pref->mutedHigh->color();
+    m_colors.mutedLow = m_pref->mutedLow->color();
+    m_colors.mutedBack = m_pref->mutedBack->color();
+
+    m_customColors = m_pref->customColors->isChecked();
+
+    if ( !m_customColors ) {
+        KMixerWidget::Colors cols;
+        cols.high = QColor(defHigh);
+        cols.low = QColor(defLow);
+        cols.back = QColor(defBack);
+        cols.mutedHigh = QColor(defMutedHigh);
+        cols.mutedLow = QColor(defMutedLow);
+        cols.mutedBack = QColor(defMutedBack);
+
+        m_mixerWidget->setColors( cols );
+    } else
+        m_mixerWidget->setColors( m_colors );
+}
+
+
 void KMixApplet::preferences()
 {
+    if ( !m_pref->isVisible() ) {
+
+        m_pref->activeHigh->setColor( m_colors.high );
+        m_pref->activeLow->setColor( m_colors.low );
+        m_pref->activeBack->setColor( m_colors.back );
+
+        m_pref->mutedHigh->setColor( m_colors.mutedHigh );
+        m_pref->mutedLow->setColor( m_colors.mutedLow );
+        m_pref->mutedBack->setColor( m_colors.mutedBack );
+
+        m_pref->defaultLook->setChecked( !m_customColors );
+        m_pref->customColors->setChecked( m_customColors );
+
+        m_pref->show();
+
+    } else
+        m_pref->raise();
 }
 
 #include "kmixapplet.moc"

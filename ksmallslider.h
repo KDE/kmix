@@ -35,12 +35,12 @@ class KSmallSlider : public QWidget, public QRangeControl
       KSmallSlider( QWidget *parent, const char *name=0 );
       KSmallSlider( Orientation, QWidget *parent, const char *name=0 );
       KSmallSlider( int minValue, int maxValue, int pageStep, int value, Orientation,
-		    QWidget *parent, const char *name=0 );
+                    QWidget *parent, const char *name=0 );
 
       virtual void setOrientation( Orientation );
       Orientation orientation() const;
       virtual void setTracking( bool enable );
-      bool tracking() const;    
+      bool tracking() const;
       QSize sizeHint() const;
       QSizePolicy sizePolicy() const;
       QSize minimumSizeHint() const;
@@ -54,7 +54,7 @@ class KSmallSlider : public QWidget, public QRangeControl
       void setLineStep( int );
       void setPageStep( int );
       int  value() const;
-      
+
       bool gray() const;
 
 public slots:
@@ -62,6 +62,8 @@ public slots:
       void addStep();
       void subtractStep();
       void setGray( bool value );
+      void setColors( QColor high, QColor low, QColor back );
+      void setGrayColors( QColor high, QColor low, QColor back );
 
       signals:
       void valueChanged( int value );
@@ -76,7 +78,7 @@ public slots:
       void mousePressEvent( QMouseEvent * );
       void mouseReleaseEvent( QMouseEvent * );
       void mouseMoveEvent( QMouseEvent * );
-      void wheelEvent( QWheelEvent * );    
+      void wheelEvent( QWheelEvent * );
 
       void valueChange();
       void rangeChange();
@@ -98,9 +100,11 @@ public slots:
       QCOORD sliderPos;
       int sliderVal;
       State state;
-      bool track; 
+      bool track;
       bool grayed;
       Orientation orient;
+      QColor colHigh, colLow, colBack;
+      QColor grayHigh, grayLow, grayBack;
 };
 
 

@@ -177,6 +177,14 @@ void KMixerWidget::setIcons( bool on )
    }
 }
 
+void KMixerWidget::setColors( const Colors &color )
+{
+    for ( Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next() ) {
+        chn->dev->setColors( color.high, color.low, color.back );
+        chn->dev->setMutedColors( color.mutedHigh, color.mutedLow, color.mutedBack );
+    }
+}
+
 void KMixerWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )

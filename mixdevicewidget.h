@@ -4,8 +4,8 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
- *		 1996-2000 Christian Esken <esken@kde.org>
- *        		   Sven Fischer <herpes@kawo2.rwth-aachen.de>
+ *               1996-2000 Christian Esken <esken@kde.org>
+ *                         Sven Fischer <herpes@kawo2.rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,21 +49,23 @@ class MixDeviceWidget
 
    public:
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
-		       bool showMuteLED, bool showRecordLED, 
-		       bool small, bool vert,
-		       QWidget* parent = 0, const char* name = 0);
+                       bool showMuteLED, bool showRecordLED,
+                       bool small, bool vert,
+                       QWidget* parent = 0, const char* name = 0);
       ~MixDeviceWidget();
-      
+
       bool isDisabled();
       bool isMuted();
       bool isRecsrc();
       bool isStereoLinked() { return m_linked; };
       bool isLabeled();
-      
-      void setStereoLinked( bool value );    
+
+      void setStereoLinked( bool value );
       void setLabeled( bool value );
       void setTicks( bool ticks );
-      void setIcons( bool value );      
+      void setIcons( bool value );
+      void setColors( QColor high, QColor low, QColor back );
+      void setMutedColors( QColor high, QColor low, QColor back );
 
    public slots:
       void toggleRecsrc();
@@ -72,7 +74,7 @@ class MixDeviceWidget
 
       void setDisabled() { setDisabled( true ); };
       void setDisabled( bool value );
-      
+
    signals:
       void newVolume( int num, Volume volume );
       void newRecsrc( int num, bool on );
@@ -84,8 +86,8 @@ class MixDeviceWidget
       void setMuted( bool value );
       void setUnmuted( bool value) { setMuted( !value ); };
       void setVolume( int channel, int volume );
-      void setVolume( Volume volume );          
-      void contextMenu();           
+      void setVolume( Volume volume );
+      void contextMenu();
       void update();
       void volumeChange( int );
 
@@ -100,19 +102,20 @@ class MixDeviceWidget
 
       Mixer *m_mixer;
       MixDevice *m_mixdevice;
-      QTimer *m_updateTimer;      
+      QTimer *m_updateTimer;
       QList<QWidget> m_sliders;
       KActionCollection *m_actions;
 
       bool m_linked;
-      bool m_disabled;      
+      bool m_disabled;
       bool m_vert;
       bool m_small;
-      
+
       QLabel *m_iconLabel;
       KLedButton *m_muteLED;
-      KLedButton *m_recordLED;      
-      QLabel *m_label; 
+      KLedButton *m_recordLED;
+      QLabel *m_label;
+
 };
 
 #endif

@@ -55,6 +55,10 @@ class KMixerWidget : public QWidget  {
 
    int id() { return m_id; };
 
+   struct Colors {      
+       QColor high, low, back, mutedHigh, mutedLow, mutedBack;
+   };
+
   signals:
    void updateLayout();
 
@@ -62,6 +66,7 @@ class KMixerWidget : public QWidget  {
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
+   void setColors( const Colors &color );
     
    void saveConfig( KConfig *config, QString grp );
    void loadConfig( KConfig *config, QString grp );
