@@ -60,12 +60,12 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
 
   // Save profile
   QHBoxLayout *profLayout = new QHBoxLayout( restLayout, 5 );
-  QPushButton *saveProf = new QPushButton( i18n("Save current volumes"), restGrp );
+  QPushButton *saveProf = new QPushButton( i18n("Save Current Volumes"), restGrp );
   profLayout->addWidget( saveProf );
   connect( saveProf, SIGNAL(clicked()), this, SLOT(saveVolumes()) );
 
   // Load profile
-  QPushButton *loadProf = new QPushButton( i18n("Load volumes"), restGrp );
+  QPushButton *loadProf = new QPushButton( i18n("Load Volumes"), restGrp );
   profLayout->addWidget( loadProf );
   connect( loadProf, SIGNAL(clicked()), this, SLOT(loadVolumes()) );
 
