@@ -28,6 +28,7 @@
 
 // KDE
 #include <kdebug.h>
+#include <kiconloader.h>
 
 // KMix
 #include "kmixtoolbox.h"
@@ -46,7 +47,7 @@ ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, View
     _layoutMDW = new QHBoxLayout(this);
     _layoutMDW->setMargin(8);
     _layoutSliders = new QHBoxLayout(_layoutMDW);
-    _layoutSurround = new QGridLayout(_layoutMDW,3,3);
+    _layoutSurround = new QGridLayout(_layoutMDW,3,5);
     //    _layoutMDW->setMargin(8);
     init();
 }
@@ -134,7 +135,7 @@ QWidget* ViewSurround::add(MixDevice *md)
 	_layoutSurround->addWidget(mdw ,2,0, Qt::AlignTop | Qt::AlignLeft);
 	break;
     case MixDevice::SURROUND_LFE:
-	_layoutSurround->addWidget(mdw,1,2,  Qt::AlignVCenter | Qt::AlignRight ); break;
+	_layoutSurround->addWidget(mdw,1,3,  Qt::AlignVCenter | Qt::AlignRight ); break;
 	break;
     case MixDevice::SURROUND_CENTERFRONT:
 	_layoutSurround->addWidget(mdw,0,1,  Qt::AlignTop    | Qt::AlignHCenter); break;
@@ -161,16 +162,35 @@ QSize ViewSurround::sizeHint() const {
 
 void ViewSurround::constructionFinished() {
     QLabel* personLabel = new QLabel("Listener", this);
+    QPixmap icon = UserIcon( "Listener" );
+    if ( ! icon.isNull()) personLabel->setPixmap(icon);
     personLabel->setLineWidth( 4 );
     personLabel->setMidLineWidth( 3 );
     personLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-    _layoutSurround->addWidget(personLabel ,1,1, Qt::AlignHCenter | Qt::AlignVCenter);
+    int rowOfSpeaker = 0;
+    if ( _mdSurroundBack != 0 ) {
+       // let the speaker "sit" in the rear of the room, if there is
+       // rear speaker support in this sound card
+       rowOfSpeaker = 1;
+    }
+    _layoutSurround->addWidget(personLabel ,rowOfSpeaker, 2, Qt::AlignHCenter | Qt::AlignVCenter);
     
     if ( _mdSurroundFront != 0 ) {
 	MixDeviceWidget *mdw = createMDW(_mdSurroundFront, true, Qt::Vertical);
-	_layoutSurround->addWidget(mdw,0,2, Qt::AlignBottom | Qt::AlignRight);
+	_layoutSurround->addWidget(mdw,0,4, Qt::AlignBottom | Qt::AlignRight);
 	_mdws.append(mdw);
+	QLabel* speakerIcon = new QLabel("Speaker", this);
+        icon = UserIcon( "SpeakerFrontLeft" );
+	if ( ! icon.isNull()) speakerIcon->setPixmap(icon);
+        _layoutSurround->addWidget(speakerIcon,0,1, Qt::AlignTop | Qt::AlignLeft);
+
+        speakerIcon = new QLabel("Speaker", this);
+        icon = UserIcon( "SpeakerFrontRight" );
+        if ( ! icon.isNull()) speakerIcon->setPixmap(icon);
+	_layoutSurround->addWidget(speakerIcon,0,3, Qt::AlignTop | Qt::AlignRight);
+
     }
+
     if ( _mdSurroundBack != 0 ) {
 	MixDeviceWidget *mdw = createMDW(_mdSurroundBack, true, Qt::Vertical);
 	_layoutSurround->addWidget(mdw,2,2, Qt::AlignTop | Qt::AlignRight);
