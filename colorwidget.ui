@@ -22,14 +22,6 @@
         </property>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>reverseDirection</cstring>
-            </property>
-            <property name="text">
-                <string>Show &amp;volume meters in reverse direction</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
                 <cstring>customColors</cstring>
             </property>
             <property name="text">
@@ -268,7 +260,6 @@
     </connection>
 </connections>
 <tabstops>
-    <tabstop>reverseDirection</tabstop>
     <tabstop>customColors</tabstop>
     <tabstop>activeHigh</tabstop>
     <tabstop>activeLow</tabstop>
