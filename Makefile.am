@@ -45,7 +45,7 @@ uninstall-local:
 	rm -f $(APPSDIR)/KMix.kdelnk
 
 messages:
-	@XGETTEXT@ -C -ki18n *.cpp -x../../kdelibs/po/kde.pot && mv messages.po ../po/kmix.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kmix_SOURCES) && mv messages.po ../po/kmix.pot
 
 edit:
 	xemacs $(kmix_SOURCES) $(noinst_HEADERS) &
