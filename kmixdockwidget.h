@@ -44,8 +44,9 @@ class KMixDockWidget : public KSystemTray  {
    void createMasterVolWidget();
    void mousePressEvent(QMouseEvent *);
    void mouseReleaseEvent(QMouseEvent *);
-   void mouseDoubleClickEvent(QMouseEvent *);
+   void wheelEvent(QWheelEvent *);
    void contextMenuAboutToShow( KPopupMenu* menu );
+   void toggleMinimizeRestore();
 
  private:
    Mixer *m_mixer;

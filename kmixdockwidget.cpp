@@ -33,6 +33,7 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "kmixdockwidget.h"
+#include "kwin.h"
 
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer,
@@ -81,7 +82,7 @@ void KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
     KConfig *config = kapp->config();
     config->setGroup(0);
-    if( config->readBoolEntry("TrayVolumeControl", true ) )
+    if( config->readBoolEntry("TrayVolumeControl", true ) && (me->button() == MidButton))
         QWidget::mousePressEvent(me);
     else
         KSystemTray::mousePressEvent(me);
@@ -92,45 +93,63 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
     KConfig *config = kapp->config();
     config->setGroup(0);
     if( config->readBoolEntry("TrayVolumeControl", true ) ) {
-        if (me->button() == QMouseEvent::LeftButton &&
-            !masterVol->isVisible()) {
-            QWidget *desktop = QApplication::desktop();
-            int sw = desktop->width();
-            int sh = desktop->height();
-            int sx = desktop->x();
-            int sy = desktop->y();
-            int x = me->globalPos().x();
-            int y = me->globalPos().y();
-            y -= masterVol->geometry().height();
-            int w = masterVol->width();
-            int h = masterVol->height();
+        // If middle-click, toggle the master volume control.
+        // Else, hide the master volume control.
+        switch ( me->button() ) {
+        case MidButton:
+            if (!masterVol->isVisible()) {
+                QWidget *desktop = QApplication::desktop();
+                int sw = desktop->width();
+                int sh = desktop->height();
+                int sx = desktop->x();
+                int sy = desktop->y();
+                int x = me->globalPos().x();
+                int y = me->globalPos().y();
+                y -= masterVol->geometry().height();
+                int w = masterVol->width();
+                int h = masterVol->height();
 
-            if (x+w > sw)
-                x = me->globalPos().x()-w;
-            if (y+h > sh)
-                y = me->globalPos().y()-h;
-            if (x < sx)
-                x = me->globalPos().x();
-            if (y < sy)
-                y = me->globalPos().y();
+                if (x+w > sw)
+                    x = me->globalPos().x()-w;
+                if (y+h > sh)
+                    y = me->globalPos().y()-h;
+                if (x < sx)
+                    x = me->globalPos().x();
+                if (y < sy)
+                    y = me->globalPos().y();
 
-	masterVol->move(x, y);
-	masterVol->show();
-        } else if (me->button() == QMouseEvent::LeftButton &&
-                   masterVol->isVisible()) {
+                masterVol->move(x, y);
+                masterVol->show();
+            } else {
+                masterVol->hide();
+            }
+            QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
+            return;
+        default:
             masterVol->hide();
-        } else {
-            masterVol->hide();
-            KSystemTray::mousePressEvent(me);
+            KSystemTray::mouseReleaseEvent(me);
+            return;
         }
-    } else {
-        KSystemTray::mouseReleaseEvent(me);
     }
+    KSystemTray::mouseReleaseEvent(me);
 }
 
-void KMixDockWidget::mouseDoubleClickEvent(QMouseEvent *me)
+void KMixDockWidget::wheelEvent(QWheelEvent *e)
 {
-    KSystemTray::mousePressEvent(me);
+    MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
+    Volume vol = masterDevice->getVolume();
+    int inc = vol.maxVolume() / 20;
+
+    if ( inc == 0 ) inc = 1;
+ 
+    for ( int i = 0; i < vol.channels(); i++ ) {
+        int newVal = vol[i] + (inc * (e->delta() / 120));
+        vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
+    }
+    
+    masterDevice->setVolume(vol);
+    m_mixer->writeVolumeToHW(masterDevice->num(), vol);
+    setVolumeTip(masterDevice->num(), vol);
 }
 
 void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* menu )
