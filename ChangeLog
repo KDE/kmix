@@ -1,0 +1,17 @@
+
+Thu Apr  9 23:27:42 CEST 1998
+- Adding F1 as global help
+- Add Accelerators
+- Remove obsolete code (Help menu items)
+- i18n for about box
+- Now one can give kmix numbers, on which he choses an mixer
+  (0=default mixer, 1=first mixer, ...)
+
+02.03.1998 Added GPL headers to all *.cpp files
+           Implemented docking on kpanel - now kmix is cool.
+01.03.1998 Added changes file
+           Documentation now in SGML
+
+
+
+PS: This is my personally most liked program I ever did. :-)
