@@ -54,12 +54,9 @@ int main(int argc, char *argv[])
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
-   KApplication app;
-   KMixApp *kmix = new KMixApp;
-   if ( app.isRestored() && KMainWindow::canBeRestored(0) )
-       kmix->restore(0, FALSE);
+   if (!KMixApp::start())
+       return 0;
 
-   int result = app.exec();
-   delete kmix;
-   return result;
+   KMixApp app;
+   return app.exec();
 }

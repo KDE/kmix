@@ -37,6 +37,7 @@
 #include <kaccel.h>
 #include <kaction.h>
 #include <kiconloader.h>
+#include <kuniqueapp.h>
 
 #include "mixer.h"
 
@@ -44,14 +45,26 @@ class KMixerWidget;
 class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
+class KMixWindow;
 
-class KMixApp : public KTMainWindow
+class KMixApp : public KUniqueApplication
+{
+ public:
+    KMixApp();
+    ~KMixApp();
+    int newInstance ();
+
+ private:
+    KMixWindow *m_kmix;
+};
+
+class KMixWindow : public KTMainWindow
 {
    Q_OBJECT
 
   public:
-   KMixApp();
-   ~KMixApp();
+   KMixWindow();
+   ~KMixWindow();
 
   protected:
    void saveConfig();

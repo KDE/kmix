@@ -28,7 +28,7 @@
 class KMixDockWidget : public KSystemTray  {
    Q_OBJECT
 
-   friend class KMixApp;
+   friend class KMixWindow;
 
  public: 
    KMixDockWidget(QWidget *parent=0, const char *name=0);

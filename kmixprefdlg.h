@@ -31,7 +31,7 @@ class QCheckBox;
 class KMixPrefDlg : public QTabDialog  {
    Q_OBJECT
 
-   friend class KMixApp;
+   friend class KMixWindow;
 
   public: 
    KMixPrefDlg();
