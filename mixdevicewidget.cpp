@@ -21,13 +21,11 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "mixdevicewidget.h"
-#include "mixdevice.h"
-
 #include <klocale.h>
 #include <kled.h>
 #include <kiconloader.h>
 #include <kconfig.h>
+#include <kdebug.h>
 
 #include <qslider.h>
 #include <qlabel.h>
@@ -38,9 +36,8 @@
 
 #include <iostream.h>
 
-// {{{ ========== MixDeviceWidget implementation ==================
-
-#include "mixdevice.h"
+#include "mixer.h"
+#include "mixdevicewidget.h"
 #include "kledbutton.h"
 
 MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecordLED,
@@ -48,14 +45,28 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
    QWidget( parent, name ), m_mixdevice( md )
 {
    m_popupMenu = 0L;
+   m_show = true;
+   m_split = false;
+
+   connect( this, SIGNAL(rightMouseClick()), SLOT(contectMenu()) );
 
    QBoxLayout *layout = new QVBoxLayout( this );
 
+   // create channel icon
    m_iconLabel = 0L;
    setIcon( md->type() );
    layout->addWidget( m_iconLabel );
    m_iconLabel->installEventFilter( this );
+   QToolTip::add( m_iconLabel, md->name() );
 
+   // create label
+   m_label = new QLabel( md->name(), this );
+   m_label->setAlignment( AlignCenter | AlignVCenter );
+   layout->addWidget( m_label );
+   m_label->installEventFilter( this );
+   QToolTip::add( m_label, md->name() );
+
+   // create mute LED
    m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Flat,
 			       KLed::Circular, this, "MuteLED" );
    if (!showMuteLED) m_muteLED->hide();
@@ -65,13 +76,13 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
    m_muteLED->installEventFilter( this );
    connect(m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(setUnmuted(bool)));
 
+   // create sliders
    QBoxLayout *sliders = new QHBoxLayout( layout );
    for( int i = 0; i < md->getVolume().channels(); i++ )
    {
       int maxvol = md->getVolume().maxVolume();
-      QSlider* slider =
-	 new QSlider( 0, maxvol, maxvol/10, maxvol - md->getVolume( i ),
-		      QSlider::Vertical, this, md->name() );
+      QSlider* slider = new QSlider( 0, maxvol, maxvol/10, maxvol - md->getVolume( i ),
+				     QSlider::Vertical, this, md->name() );
       QToolTip::add( slider, md->name() );
       slider->installEventFilter( this );
       if( i>0 ) slider->hide();
@@ -80,6 +91,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
       connect( slider, SIGNAL( valueChanged(int) ), this, SLOT( volumeChange ( int ) ));
    }
 
+   // create record source LED
    if( md->isRecordable() )
    {
       m_recordLED = new KLedButton( Qt::red, md->isRecsrc() ? KLed::On : KLed::Off,
@@ -105,6 +117,25 @@ MixDeviceWidget::~MixDeviceWidget()
    //TODO: delete Sliders
    delete m_muteLED;
    if( m_recordLED ) delete m_recordLED;
+}
+
+void MixDeviceWidget::contextMenu()
+{
+/*   QPopupMenu *qpm = new QPopupMenu;	
+
+   
+   m_actions.ToggleMenuBar->plug( qpm );
+   qpm->insertSeparator();
+   m_actions.Settings->plug( qpm );
+   qpm->insertSeparator();
+   //	m_actions.About->plug( qpm );
+   m_actions.Help->plug( qpm );
+
+   if (qpm)
+   {
+      QPoint KCMpopup_point = QCursor::pos();
+      qpm->popup(KCMpopup_point);
+      }*/
 }
 
 bool MixDeviceWidget::eventFilter( QObject* , QEvent* e)
@@ -167,6 +198,31 @@ void MixDeviceWidget::setIcon( int icon )
    updateGeometry();
 }
 
+bool MixDeviceWidget::isDisabled()
+{
+   return !m_show;
+}
+
+bool MixDeviceWidget::isMuted()
+{
+   return m_mixdevice->isMuted();
+}
+
+bool MixDeviceWidget::isRecsrc()
+{
+   return m_mixdevice->isRecsrc();
+}
+
+bool MixDeviceWidget::isStereoLinked()
+{
+   return !m_split;
+}
+
+bool MixDeviceWidget::isLabeled()
+{
+   return m_label->isVisible();
+}
+
 void MixDeviceWidget::setStereoLinked(bool value)
 {
    m_split = !value;
@@ -205,6 +261,18 @@ void MixDeviceWidget::setRecsrc(bool value)
    }
 }
 
+void MixDeviceWidget::setLabeled(bool value)
+{
+   if (value)
+      m_label->show();
+   else
+      m_label->hide();
+  
+   updateGeometry(); 
+  
+   layout()->activate();
+}
+
 void MixDeviceWidget::updateRecsrc()
 {
    if( m_recordLED ) m_recordLED->setState( m_mixdevice->isRecsrc() ? KLed::On : KLed::Off );
@@ -218,9 +286,10 @@ void MixDeviceWidget::toggleRecsrc()
 void MixDeviceWidget::setDisabled(bool value)
 {
    value ? hide() : show();
+   m_show = !value;
 }
 
-void MixDeviceWidget::updateTicks( bool ticks )
+void MixDeviceWidget::setTicks( bool ticks )
 {
    for( QSlider* slider = m_sliders.first(); slider != 0; slider = m_sliders.next() )
    {
@@ -232,6 +301,8 @@ void MixDeviceWidget::updateTicks( bool ticks )
       else
 	 slider->setTickmarks( QSlider::NoMarks );
    }
+ 
+   layout()->activate();
 }
 
 void MixDeviceWidget::updateSliders()
@@ -290,6 +361,6 @@ void MixDeviceWidget::setVolume( Volume vol )
 void MixDeviceWidget::mousePressEvent( QMouseEvent *e )
 {
    if ( e->button()==RightButton )
-      emit rightMouseClick();
+      emit rightMouseClick();   
 }
 

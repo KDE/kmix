@@ -35,6 +35,25 @@ class QSlider;
 class QTimer;
 class Channel;
 
+struct ChannelProfile
+{       
+};
+
+class Profile : public QList<ChannelProfile>
+{
+  public:  
+   Profile( Mixer *mixer );
+
+   void write();
+   void read();
+
+   void loadConfig( const QString &grp );
+   void saveConfig( const QString &grp);
+
+  private:
+   Mixer *m_mixer;
+};
+
 class KMixerWidget : public QWidget  {
    Q_OBJECT
 
@@ -48,9 +67,11 @@ class KMixerWidget : public QWidget  {
 
   signals:
    void updateTicks( bool on );
+   void updateLabels( bool on );
 
   public slots:     
    void setTicks( bool on );
+   void setLabels( bool on );
    void setBalance( int value );
 
    void sessionSave( QString grp, bool sessionConfig );
@@ -71,6 +92,8 @@ class KMixerWidget : public QWidget  {
    QString m_name;
 
    void mousePressEvent( QMouseEvent *e );
+   void channelsToGUI();
+   void GUIToChannels();
 };
 
 #endif

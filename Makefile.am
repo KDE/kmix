@@ -28,5 +28,8 @@ EXTRA_DIST = kmix2.desktop VERSION
 appsdir = $(kde_appsdir)/Multimedia
 apps_DATA = kmix2.desktop
 
+rcdir = $(kde_datadir)/kmix
+rc_DATA = kmixui.rc
+
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kmix.pot

@@ -45,9 +45,30 @@
 
 struct Channel
 {
-      bool show;
-      bool split;
+      MixDeviceWidget *dev;
 };
+
+Profile::Profile( Mixer *mixer )
+{
+   m_mixer = mixer;
+}
+
+void Profile::write()
+{
+   
+}
+
+void Profile::read()
+{
+}
+
+void Profile::loadConfig( const QString &/*grp*/ )
+{
+}
+
+void Profile::saveConfig( const QString &/*grp*/ )
+{
+}
 
 /********************** KMixerWidget *************************/
  
@@ -61,37 +82,40 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
    
    // Create update timer
    m_timer = new QTimer;
-   m_timer->start( 1000 );
-   connect( m_timer, SIGNAL(timeout()), m_mixer, SLOT(readSetFromHW()));
-
+   m_timer->start( 500 );
+  
    // Create mixer device widgets
    m_topLayout = new QVBoxLayout( this, 0, 3 );
    QBoxLayout* layout = new QHBoxLayout( m_topLayout );   
+
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
-      Channel *chn = new Channel;
-      chn->split = false;
-      chn->show = true;
-      m_channels.append( chn );
+      MixDeviceWidget *mdw =  new MixDeviceWidget( mixDevice, true, true, this, mixDevice->name() );
+      layout->addWidget( mdw, 1 );
 
-      cerr << "mixDevice = " << mixDevice << endl;
-      MixDeviceWidget *mdw =  new MixDeviceWidget( mixDevice, true, true,
-						   this, mixDevice->name() );
-      layout->addWidget( mdw );
-      connect( mdw, SIGNAL( newVolume( int, Volume )),
-               m_mixer, SLOT( writeVolumeToHW( int, Volume ) ));
-      connect( mdw, SIGNAL( newRecsrc(int, bool)),
-               m_mixer, SLOT( setRecsrc(int, bool ) ));
-      connect( m_mixer, SIGNAL( newRecsrc()),
-               mdw, SLOT( updateRecsrc() ));
-      connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateSliders()) );
-      connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(updateTicks(bool)) );
+      connect( mdw, SIGNAL( newVolume( int, Volume )), m_mixer, SLOT( writeVolumeToHW( int, Volume ) ));
+      connect( mdw, SIGNAL(newRecsrc(int, bool)), m_mixer, SLOT(setRecsrc(int, bool)) );
+      connect( m_mixer, SIGNAL(newRecsrc()), mdw, SLOT(updateRecsrc()) );
+      
+      connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(setTicks(bool)) );
+      connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );      
+
       if( mixDevice->num()==m_mixer->masterDevice() )
-	 connect( m_mixer, SIGNAL(newBalance(Volume)), mdw, SLOT(setVolume(Volume)));
-      connect( mdw, SIGNAL(rightMouseClick()), this, SLOT(rightMouseClicked()));
+	 connect( m_mixer, SIGNAL(newBalance(Volume)), mdw, SLOT(setVolume(Volume)) );
+
+      connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateSliders()) );
+      connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateRecsrc()) );
+      
+      connect( mdw, SIGNAL(rightMouseClick()), this, SLOT(rightMouseClicked()) );
+
+      Channel *chn = new Channel;
+      chn->dev = mdw;
+      m_channels.append( chn );
    }
+
+   //layout->addStretch( 1000 );
 
    // Create the left-right-slider
    m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal,
@@ -99,8 +123,6 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
    m_topLayout->addWidget( m_balanceSlider );
    connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
    QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
-
-   updateSize();
 }
 
 KMixerWidget::~KMixerWidget()
@@ -117,7 +139,14 @@ void KMixerWidget::updateSize()
 void KMixerWidget::setTicks( bool on )
 {
    emit updateTicks( on );
-   updateSize();
+   updateGeometry();
+}
+
+void KMixerWidget::setLabels( bool on )
+{
+   kDebugInfo("KMixerWidget::setLabels");
+   emit updateLabels( on );
+   updateGeometry();
 }
 
 void KMixerWidget::setBalance( int value )
@@ -153,8 +182,8 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
       devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
       config->setGroup( devgrp );
 
-      config->writeEntry( "split", chn->split );
-      config->writeEntry( "show", chn->show );
+      config->writeEntry( "split", !chn->dev->isStereoLinked() );
+      config->writeEntry( "show", !chn->dev->isDisabled() );
 
       n++;
    }
@@ -177,9 +206,18 @@ void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
       devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
       config->setGroup( devgrp );
       
-      chn->split = config->readBoolEntry("split", false);
-      chn->show = config->readBoolEntry("show", true);
+      chn->dev->setStereoLinked( !config->readBoolEntry("split", false) );
+      chn->dev->setDisabled( !config->readBoolEntry("show", true) );
 
       n++;
    }
+}
+
+void KMixerWidget::channelsToGUI()
+{
+   
+}
+
+void KMixerWidget::GUIToChannels()
+{
 }

@@ -46,16 +46,23 @@ class MixDeviceWidget : public QWidget
 		       QWidget* parent = 0, const char* name = 0);
       ~MixDeviceWidget();
 
-      MixDevice* mixDevice() const { return m_mixdevice; };
-
-      bool eventFilter( QObject*, QEvent* );
-
+      MixDevice* mixDevice() const { return m_mixdevice; };    
+      
+      bool isDisabled();
+      bool isMuted();
+      bool isUnmuted() { return !isMuted(); };
+      bool isRecsrc();
+      bool isStereoLinked();
+      bool isLabeled();
+      
    public slots:
-      void setRecsrc(bool value);
-      void setDisabled(bool value);
-      void setMuted(bool value);
-      void setUnmuted(bool value) { setMuted( !value ); };
-      void setStereoLinked(bool value);
+      void setRecsrc( bool value );
+      void setDisabled( bool value );
+      void setMuted( bool value );
+      void setUnmuted( bool value) { setMuted( !value ); };
+      void setStereoLinked( bool value );
+      void setLabeled( bool value );
+      void setTicks( bool ticks );
 
       void toggleRecsrc();
       void toggleMuted();
@@ -67,11 +74,11 @@ class MixDeviceWidget : public QWidget
       void setIcon( int icontype );
 
       void updateSliders();
-      void updateTicks( bool );
       void updateRecsrc();
 
    private slots:
       void volumeChange( int );
+      void contextMenu();
 
    signals:
       void newVolume( int num, Volume volume );
@@ -88,8 +95,10 @@ class MixDeviceWidget : public QWidget
       KLedButton *m_muteLED;
       KLedButton *m_recordLED;
       QPopupMenu *m_popupMenu;
+      QLabel *m_label;
 
       void mousePressEvent( QMouseEvent *e );
+      bool eventFilter( QObject*, QEvent* );
 };
 
 

@@ -55,11 +55,11 @@ class KMixApp : public KTMainWindow
    ~KMixApp();
 
   protected:
-   void sessionSave( bool sessionConfig );
-   void sessionLoad( bool sessionConfig );
+   void saveConfig();
+   void loadConfig();
 
-   void initMenuBar();
-   void initToolBar();
+   /*void initMenuBar();
+   void initToolBar();*/
    void initMixer();
    void initPrefDlg();
    void initActions();
@@ -68,16 +68,15 @@ class KMixApp : public KTMainWindow
    void updateDocking();	
 
    virtual bool queryExit();
-   virtual void saveProperties(KConfig *_cfg);
-   virtual void readProperties(KConfig *_cfg);
 
   public slots:
    void quit();
    void showSettings();
-   void showContextMenu();
    void toggleMenuBar();
    void closeMixer();
    void newMixer();
+   void loadVolumes();
+   void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:
@@ -90,6 +89,9 @@ class KMixApp : public KTMainWindow
    bool m_startHidden;
    bool m_hideOnClose;
    bool m_showTicks;
+   bool m_showLabels;
+   bool m_saveVolumes;
+   bool m_loadVolumes;
 
    QList<Mixer> m_mixers;
    QList<KMixerWidget> m_mixerWidgets;
@@ -98,21 +100,7 @@ class KMixApp : public KTMainWindow
    QWidget *m_buttons;
    KMixPrefDlg *m_prefDlg;	
    KMixDockWidget *m_dockWidget;
-
-   struct
-   {
-	 KAction *Quit;
-	 KAction *Settings;
-	 KAction *New;
-	 KAction *Close;
-	 KToggleAction *ToggleMenuBar;
-	 KAction *Show;
-	 KAction *Hide;
-	 KAction *Help;
-	 KAction *About;
-	 KActionSeparator *Separator;
-   } m_actions;
-
+ 
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
 };

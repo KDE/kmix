@@ -51,6 +51,15 @@ KMixPrefDlg::KMixPrefDlg()
    m_showTicks = new QCheckBox( i18n("&Tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );
 
+   m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
+   layout->addWidget( m_showLabels );
+
+   m_loadVolumes = new QCheckBox( i18n("L&oad mixer on startup"), m_generalTab );
+   layout->addWidget( m_loadVolumes );
+
+   m_saveVolumes = new QCheckBox( i18n("S&ave mixer on shutdown"), m_generalTab );
+   layout->addWidget( m_saveVolumes );
+
    addTab( m_generalTab, i18n("&General") );
 
    // dialog buttons

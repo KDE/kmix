@@ -52,6 +52,9 @@ class KMixPrefDlg : public QTabDialog  {
    QCheckBox *m_startHiddenChk;
    QCheckBox *m_hideOnCloseChk;
    QCheckBox *m_showTicks;
+   QCheckBox *m_showLabels;
+   QCheckBox *m_loadVolumes;
+   QCheckBox *m_saveVolumes;
 };
 
 #endif

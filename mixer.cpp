@@ -66,12 +66,18 @@ void MixDevice::read( const QString& grp )
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
    KConfig* config = KGlobal::config();
    config->setGroup( devgrp );
+   
+   int vl = config->readNumEntry("volumeL", -1);
+   if (vl!=-1) setVolume( Volume::LEFT, vl );
 
-   setVolume( Volume::LEFT, config->readNumEntry("volumeL", 50) );
-   setVolume( Volume::RIGHT, config->readNumEntry("volumeR", 50) );
+   int vr = config->readNumEntry("volumeR", -1);
+   if (vr!=-1) setVolume( Volume::RIGHT, vr );
 
-   setMuted( config->readNumEntry("is_muted", 0) );
-   m_name = config->readEntry("name", "unnamed");
+   int mute = config->readNumEntry("is_muted", -1);
+   if ( mute!=-1 ) setMuted( mute!=0 );
+   
+   int recsrc = config->readNumEntry("is_recsrc", -1);
+   if ( recsrc!=-1 ) setRecsrc( recsrc!=0 );
 }
 
 void MixDevice::write( const QString& grp )
@@ -83,7 +89,8 @@ void MixDevice::write( const QString& grp )
 
    config->writeEntry("volumeL", getVolume( Volume::LEFT ) );
    config->writeEntry("volumeR", getVolume( Volume::RIGHT ) );
-   config->writeEntry("is_muted", isMuted() );
+   config->writeEntry("is_muted", (int)isMuted() );
+   config->writeEntry("is_recsrc", (int)isRecsrc() );
    config->writeEntry("name", m_name);
 }
 
@@ -107,7 +114,7 @@ void MixSet::write( const QString& grp )
 
    MixDevice* md;
    for( md=first(); md!=0; md=next() )
-      md->write( grp );
+      md->write( grp );      
 }
 
 /********************** Mixer ***********************/
@@ -145,14 +152,27 @@ int Mixer::setupMixer( MixSet mset )
 
 void Mixer::sessionSave( bool /*sessionConfig*/ )
 {
-   QString grp = QString("Mixer.") + mixerName();
+   kDebugInfo("-> Mixer::sessionSave");
+
+   QString grp = QString("Mixer") + mixerName();
    m_mixDevices.write(grp);
+
+   kDebugInfo("<- Mixer::sessionSave");
 }
 
 void Mixer::sessionLoad( bool /*sessionConfig*/ )
 {
+   kDebugInfo("Mixer::sessionLoad");
+
    QString grp = QString("Mixer") + mixerName();
    m_mixDevices.read(grp);
+
+   QListIterator<MixDevice> it( m_mixDevices );
+   for(MixDevice *md=it.toFirst(); md!=0; md=++it )
+   {
+      setRecsrc( md->num(), md->isRecsrc() );
+      writeVolumeToHW( md->num(), md->getVolume() );    
+   }
 }
 
 int Mixer::grab()
@@ -186,8 +206,6 @@ int Mixer::release()
   return 0;
 }
 
-
-
 unsigned int Mixer::size() const
 {
   return m_mixDevices.count();
@@ -200,7 +218,6 @@ MixDevice* Mixer::operator[](int num)
   return md;
 }
 
-
 void Mixer::readSetFromHW()
 {
   MixDevice* md;
@@ -209,9 +226,9 @@ void Mixer::readSetFromHW()
       Volume vol = md->getVolume();
       readVolumeFromHW( md->num(), vol );
       md->setVolume( vol );
+      md->setRecsrc( isRecsrcHW( md->num() ) );
     }
 }
-
 
 void Mixer::setBalance(int balance)
 {
@@ -243,14 +260,10 @@ void Mixer::setBalance(int balance)
   emit newBalance( vol );
 }
 
-
 QString Mixer::mixerName()
 {
   return m_mixerName;
 }
-
-
-
 
 void Mixer::errormsg(int mixer_error)
 {
