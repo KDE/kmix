@@ -29,7 +29,7 @@ appsdir = $(kde_appsdir)/Multimedia
 apps_DATA = kmix.desktop
 
 messages:
-	$(XGETTEXT) $(kmix_SOURCES) -o $(podir)/kmix.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kmix.pot
 
 edit:
 	xemacs $(kmix_SOURCES) $(noinst_HEADERS) &
