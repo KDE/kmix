@@ -96,9 +96,10 @@ class KMixerWidget : public QWidget  {
    bool m_iconsEnabled;
    bool m_labelsEnabled;
    bool m_ticksEnabled;
-   
+
    void mousePressEvent( QMouseEvent *e );
    void createDeviceWidgets( bool vert );
+   void createMasterVolWidget(bool vert);
 };
 
 #endif

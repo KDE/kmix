@@ -66,14 +66,18 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 
    // create actions
    m_actions = new KActionCollection( this );
-   new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()),
+
+   if (parent->isA("KMixerWidget"))
+       new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()),
                       m_actions, "stereo" );
-   new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
+   if (parent->isA("KMixerWidget"))
+       new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
 
    KToggleAction *a = new KToggleAction( i18n("&Muted"), 0, 0, 0, m_actions, "mute" );
    a->connect( a, SIGNAL(toggled(bool)), this, SLOT(setMuted(bool)) );
 
-   new KAction( i18n("Show &all"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
+   if (parent->isA("KMixerWidget"))
+       new KAction( i18n("Show &all"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
 
    if( m_mixdevice->isRecordable() )
    {

@@ -25,17 +25,31 @@
 #include <qwidget.h>
 #include <ksystemtray.h>
 
+class Mixer;
+class QFrame;
+
 class KMixDockWidget : public KSystemTray  {
    Q_OBJECT
 
    friend class KMixWindow;
 
  public: 
-   KMixDockWidget(QWidget *parent=0, const char *name=0);
+   KMixDockWidget(Mixer *, QWidget *parent=0, const char *name=0);
    ~KMixDockWidget();
 
+ protected slots:  
+   void setVolumeTip(int, Volume);
+
  protected:
+   void createMasterVolWidget();
+   void mousePressEvent(QMouseEvent *);
+   void mouseReleaseEvent(QMouseEvent *);
+   void mouseDoubleClickEvent(QMouseEvent *);
    void contextMenuAboutToShow( KPopupMenu* menu );
+
+ private:
+   Mixer *m_mixer;
+   QFrame *masterVol;   
 };
 
 #endif

@@ -3,6 +3,7 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,10 +50,13 @@ KMixPrefDlg::KMixPrefDlg()
    layout->addWidget( m_dockingChk );
    QWhatsThis::add(m_dockingChk, i18n("Docks the mixer into the KDE panel"));
 
+   m_volumeChk = new QCheckBox(i18n("Enable System Tray &volume control"),
+			       m_generalTab);
+   layout->addWidget(m_volumeChk);
+
 // commented this out. From the usability point of view, this option makes absolutely no sense. nolden
 //   m_hideOnCloseChk = new QCheckBox( i18n("Only &hide window with close button"), m_generalTab );
 //   layout->addWidget( m_hideOnCloseChk );
-
 
    m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );

@@ -73,10 +73,9 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
    m_vertical = vert;
 
    // Create mixer device widgets
-   if ( mixer )
+   if ( mixer ) {
       createDeviceWidgets( vert );
-   else
-   {
+   } else {
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
       if ( !mixerName.isEmpty() ) s += " \"" + mixerName + "\"";

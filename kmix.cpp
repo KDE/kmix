@@ -4,6 +4,7 @@
  * $Id$
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -211,7 +212,7 @@ void KMixWindow::updateDocking()
     if (m_showDockWidget) {
 
         // create dock widget
-        m_dockWidget = new KMixDockWidget( this );
+        m_dockWidget = new KMixDockWidget( m_mixers.first(), this );
         m_dockWidget->setPixmap( BarIcon("kmixdocked") );
 
         // create RMB menu
@@ -243,6 +244,7 @@ void KMixWindow::saveConfig()
    config->writeEntry( "Visible", isVisible() );
    config->writeEntry( "Menubar", m_showMenubar );
    config->writeEntry( "AllowDocking", m_showDockWidget );
+   config->writeEntry( "TrayVolumeControl", m_volumeWidget );
 // commented out for usability. nolden
 //   config->writeEntry( "HideOnClose", m_hideOnClose );
    config->writeEntry( "Tickmarks", m_showTicks );
@@ -275,6 +277,7 @@ void KMixWindow::loadConfig()
    config->setGroup(0);
 
    m_showDockWidget = config->readBoolEntry("AllowDocking", true);
+   m_volumeWidget = config->readBoolEntry("TrayVolumeControl", true);
   //hide on close has to stay true for usability. KMixPrefDlg option commented out. nolden
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", false);
@@ -399,6 +402,7 @@ void KMixWindow::showSettings()
    if (!m_prefDlg->isVisible())
    {
       m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
+      m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
 //      m_prefDlg->m_hideOnCloseChk->setChecked( m_hideOnClose );
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
@@ -490,6 +494,7 @@ void KMixWindow::saveVolumes()
 void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 {
    m_showDockWidget = prefDlg->m_dockingChk->isChecked();
+   m_volumeWidget = prefDlg->m_volumeChk->isChecked();
 //   m_hideOnClose = prefDlg->m_hideOnCloseChk->isChecked();
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();

@@ -98,6 +98,7 @@ class KMixWindow : public KMainWindow
    QPopupMenu *m_helpMenu;
 
    bool m_showDockWidget;
+   bool m_volumeWidget;
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;

@@ -3,6 +3,7 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,17 +24,100 @@
 #include <kapp.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
+#include <kdialog.h>
 
+#include <qvbox.h>
+#include <qtooltip.h>
+
+#include "mixer.h"
+#include "mixdevicewidget.h"
 #include "kmixdockwidget.h"
 
 
-KMixDockWidget::KMixDockWidget( QWidget *parent, const char *name )
-   : KSystemTray( parent, name )
+KMixDockWidget::KMixDockWidget( Mixer *mixer, 
+				QWidget *parent, const char *name )
+    : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L)
 {
+    createMasterVolWidget();
 }
 
 KMixDockWidget::~KMixDockWidget()
 {
+    delete masterVol;
+}
+
+void KMixDockWidget::createMasterVolWidget()
+{
+    if (!m_mixer)
+	return;
+
+   // create devices
+   MixDevice *masterDevice = m_mixer[m_mixer->masterDevice()]
+
+   masterVol = new QVBox(0L, "masterVol", WStyle_Customize | 
+			 WType_Popup);
+   masterVol->setFrameStyle(QFrame::PopupPanel);
+   masterVol->setMargin(KDialog::marginHint());
+   
+   MixDeviceWidget *mdw =
+       new MixDeviceWidget( m_mixer, masterDevice, false, false, 
+			    false, true, masterVol, 
+			    masterDevice->name().latin1() );
+   connect(mdw, SIGNAL(newVolume(int, Volume)),
+	   this, SLOT(setVolumeTip(int, Volume)));
+   setVolumeTip(0, masterDevice->getVolume());
+   masterVol->resize(masterVol->sizeHint());
+}
+
+void KMixDockWidget::setVolumeTip(int, Volume vol)
+{
+    QToolTip::remove(this);
+    QToolTip::add(this, i18n("Volume at %1%").arg(vol.getVolume(0)));
+}
+
+void KMixDockWidget::mousePressEvent(QMouseEvent *me)
+{
+    QWidget::mousePressEvent(me);
+}
+
+void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
+{
+    if (me->button() == QMouseEvent::LeftButton && 
+	!masterVol->isVisible()) {
+	QWidget *desktop = QApplication::desktop();
+	int sw = desktop->width();
+	int sh = desktop->height();
+	int sx = desktop->x();
+	int sy = desktop->y();
+	int x = me->globalPos().x();
+	int y = me->globalPos().y();
+	y -= masterVol->geometry().height();
+	int w = masterVol->width();
+	int h = masterVol->height();
+	
+	if (x+w > sw)
+	    x = me->pos().x()-w;
+	if (y+h > sh)
+	    y = me->pos().y()-h;
+	if (x < sx)
+	    x = me->pos().x();
+	if (y < sy)
+	    y = me->pos().y();
+	
+	masterVol->move(x, y);
+	masterVol->show();
+    } else if (me->button() == QMouseEvent::LeftButton &&
+	       masterVol->isVisible()) {
+	masterVol->hide();
+    } else {
+	masterVol->hide();
+	KSystemTray::mousePressEvent(me);
+    }
+}
+
+void KMixDockWidget::mouseDoubleClickEvent(QMouseEvent *me)
+{
+    KSystemTray::mousePressEvent(me);
 }
 
 void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* menu )
