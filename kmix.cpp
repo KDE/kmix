@@ -33,6 +33,7 @@ static char rcsid[]="$Id$";
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kconfig.h>
 #include <kwm.h>
 #include <kglobal.h>
 
