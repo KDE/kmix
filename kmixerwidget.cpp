@@ -38,6 +38,8 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kaction.h>
+#include <kpopmenu.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -77,6 +79,8 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
 {
    cerr << "KMixerWidget::KMixerWidget" << endl;
 
+   m_actions = new KActionCollection( this );
+   new KAction( i18n("Show &all"), 0, this, SLOT(showAll()), m_actions, "show_all" );
    m_channels.setAutoDelete( true );
    kDebugInfo("mixer=%x", m_mixer);
    
@@ -108,8 +112,6 @@ KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
       connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateSliders()) );
       connect( m_timer, SIGNAL(timeout()), mdw, SLOT(updateRecsrc()) );
       
-      connect( mdw, SIGNAL(rightMouseClick()), this, SLOT(rightMouseClicked()) );
-
       Channel *chn = new Channel;
       chn->dev = mdw;
       m_channels.append( chn );
@@ -165,6 +167,19 @@ void KMixerWidget::mousePressEvent( QMouseEvent *e )
 
 void KMixerWidget::rightMouseClicked()
 {
+   KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
+
+   KAction *a = m_actions->action( "show_all" );
+   if ( a )
+   {
+      a->plug( menu );
+  
+      if (menu)
+      {
+	 QPoint pos = QCursor::pos();
+	 menu->popup( pos );
+      }
+   }
 }
 
 void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
@@ -172,8 +187,8 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
    KConfig* config = KGlobal::config();
    config->setGroup( grp );
 
-   config->writeEntry( "devs", m_channels.count() );
-   config->writeEntry( "name", m_name );
+   config->writeEntry( "Devs", m_channels.count() );
+   config->writeEntry( "Name", m_name );
 
    int n=0;
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
@@ -182,8 +197,8 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
       devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
       config->setGroup( devgrp );
 
-      config->writeEntry( "split", !chn->dev->isStereoLinked() );
-      config->writeEntry( "show", !chn->dev->isDisabled() );
+      config->writeEntry( "Split", !chn->dev->isStereoLinked() );
+      config->writeEntry( "Show", !chn->dev->isDisabled() );
 
       n++;
    }
@@ -194,11 +209,9 @@ void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
    KConfig* config = KGlobal::config();
    config->setGroup( grp );
    
-   int num = config->readNumEntry("devs", 0);   
-
-   QString name = config->readEntry("name", QString::null );
-   if ( !name.isEmpty() ) m_name = name;
-
+   int num = config->readNumEntry("Devs", 0);   
+   m_name = config->readEntry("Name", m_name );
+   
    int n=0;
    for (Channel *chn=m_channels.first(); chn!=0 && n<num; chn=m_channels.next())
    {
@@ -206,18 +219,17 @@ void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
       devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );   
       config->setGroup( devgrp );
       
-      chn->dev->setStereoLinked( !config->readBoolEntry("split", false) );
-      chn->dev->setDisabled( !config->readBoolEntry("show", true) );
+      chn->dev->setStereoLinked( !config->readBoolEntry("Split", false) );
+      chn->dev->setDisabled( !config->readBoolEntry("Show", true) );
 
       n++;
    }
 }
 
-void KMixerWidget::channelsToGUI()
+void KMixerWidget::showAll()
 {
-   
-}
-
-void KMixerWidget::GUIToChannels()
-{
+   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
+   {
+      chn->dev->setDisabled( false );
+   }
 }

@@ -26,6 +26,8 @@
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kaction.h>
+#include <kpopmenu.h>
 
 #include <qslider.h>
 #include <qlabel.h>
@@ -44,15 +46,21 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
                                  QWidget* parent, const char* name) :
    QWidget( parent, name ), m_mixdevice( md )
 {
+   // global stuff
    m_popupMenu = 0L;
    m_show = true;
    m_split = false;
+   m_actions = new KActionCollection( this );
 
-   connect( this, SIGNAL(rightMouseClick()), SLOT(contextMenu()) );
+   new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()), 
+		      m_actions, "stereo" );   
+   new KAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), m_actions, "hide" );
+   new KAction( i18n("&Show all"), 0, parent, SLOT(showAll()), m_actions, "show_all" );
 
-   QBoxLayout *layout = new QVBoxLayout( this );
+   connect( this, SIGNAL(rightMouseClick()), SLOT(contextMenu()) );   
 
    // create channel icon
+   QBoxLayout *layout = new QVBoxLayout( this );
    m_iconLabel = 0L;
    setIcon( md->type() );
    layout->addWidget( m_iconLabel );
@@ -121,21 +129,31 @@ MixDeviceWidget::~MixDeviceWidget()
 
 void MixDeviceWidget::contextMenu()
 {
-/*   QPopupMenu *qpm = new QPopupMenu;	
+   kDebugInfo("MixDeviceWidget::contextMenu");
 
-   
-   m_actions.ToggleMenuBar->plug( qpm );
-   qpm->insertSeparator();
-   m_actions.Settings->plug( qpm );
-   qpm->insertSeparator();
-   //	m_actions.About->plug( qpm );
-   m_actions.Help->plug( qpm );
+   KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
 
-   if (qpm)
+   KToggleAction *stereo = (KToggleAction *)m_actions->action( "stereo" );
+   if ( stereo )
    {
-      QPoint KCMpopup_point = QCursor::pos();
-      qpm->popup(KCMpopup_point);
-      }*/
+      stereo->setChecked( !isStereoLinked() );
+      stereo->plug( menu );
+   }
+   
+   KAction *a = m_actions->action( "hide" );
+   if ( a ) a->plug( menu );
+
+   KActionSeparator sep( this );
+   sep.plug( menu );
+
+   a = m_actions->action( "show_all" );
+   if ( a ) a->plug( menu );
+  
+   if (menu)
+   {
+      QPoint pos = QCursor::pos();
+      menu->popup( pos );
+   }
 }
 
 bool MixDeviceWidget::eventFilter( QObject* , QEvent* e)

@@ -26,6 +26,7 @@
 #include <qapplication.h>
 #include <qpopupmenu.h>
 #include <qtabbar.h>
+#include <qinputdialog.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -49,8 +50,8 @@
 KMixApp::KMixApp()
    : m_dockWidget( 0L )
 {
-   initActions();
    initMixer();
+   initActions();
    initWidgets();
    
    loadConfig();
@@ -142,10 +143,16 @@ void KMixApp::updateDocking()
 		
       QPopupMenu *menu = m_dockWidget->contextMenu();		
   	
-      actionCollection()->action("options_configure")->plug( menu );
+      KAction *a = actionCollection()->action("options_configure");
+      if (a) a->plug( menu );
+
       menu->insertSeparator();
-      actionCollection()->action("help_about_app")->plug( menu );
-      actionCollection()->action("help")->plug( menu );
+
+      a = actionCollection()->action("help_about_app");
+      if (a) a->plug( menu );
+
+      a= actionCollection()->action("help");
+      if (a) a->plug( menu );
 		
       m_dockWidget->show();
    }
@@ -229,9 +236,8 @@ void KMixApp::loadConfig()
       {
 	 kDebugInfo("mixer=%x", mixer);
 	 KMixerWidget *mw = new KMixerWidget( mixer, this );
-	 insertMixerWidget( mw );
-
 	 mw->sessionLoad( grp, false ); 
+	 insertMixerWidget( mw );
       }
    }
    
@@ -241,6 +247,11 @@ void KMixApp::loadConfig()
 void KMixApp::insertMixerWidget( KMixerWidget *mw )
 {
    m_mixerWidgets.append( mw );
+
+   KAction *a = actionCollection()->action( "file_close" );
+   if ( a )
+      a->setEnabled( m_mixerWidgets.count()>1 );
+   
    m_tab->addTab( mw, mw->name() );
 
    mw->setTicks( m_showTicks );
@@ -296,19 +307,47 @@ void KMixApp::showSettings()
 
 void KMixApp::closeMixer()
 {
-   if (m_mixerWidgets.count()<=1)
-   {
-      KMessageBox::error( this, i18n("There must be at least on mixer. You can't close the last one.") );
-   } else
-   {
-      removeMixerWidget( (KMixerWidget *)m_tab->currentPage() );
-   }
+   if (m_mixerWidgets.count()<=1) return;
+   removeMixerWidget( (KMixerWidget *)m_tab->currentPage() );   
 }
 
 void KMixApp::newMixer()
 {
-   KMixerWidget *mw = new KMixerWidget( m_mixers.at(0), this );
-   insertMixerWidget( mw );
+   QStringList lst;
+
+   int n=1;
+   for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+   {
+      QString s;
+      s.sprintf("%i. %s", n, mixer->mixerName().ascii());   
+      lst << s;
+      n++;
+   }
+
+   bool ok = FALSE;
+   QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst, 
+					1, TRUE, &ok, this );  
+
+   if ( ok )
+   {
+      Mixer *mixer = m_mixers.at( lst.findIndex( res ) );
+      if (!mixer)
+      {
+	 KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
+	 return;
+      }
+	 
+      QString name = QInputDialog::getText( i18n("Description"), i18n( "Description" ),
+					    mixer->mixerName(), &ok, this );
+
+      if ( ok )
+      {
+	 KMixerWidget *mw = new KMixerWidget( mixer, this );
+	 mw->setName( name );
+	 insertMixerWidget( mw );
+      }
+      
+   }
 }
 
 void KMixApp::applyPrefs( KMixPrefDlg *prefDlg )

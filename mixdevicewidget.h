@@ -35,6 +35,7 @@ class QLabel;
 class QPopupMenu;
 class KLedButton;
 class MixDevice;
+class KActionCollection;
 
 class MixDeviceWidget : public QWidget
 {
@@ -57,6 +58,7 @@ class MixDeviceWidget : public QWidget
       
    public slots:
       void setRecsrc( bool value );
+      void setDisabled() { setDisabled( true ); };
       void setDisabled( bool value );
       void setMuted( bool value );
       void setUnmuted( bool value) { setMuted( !value ); };
@@ -96,6 +98,7 @@ class MixDeviceWidget : public QWidget
       KLedButton *m_recordLED;
       QPopupMenu *m_popupMenu;
       QLabel *m_label;
+      KActionCollection *m_actions;
 
       void mousePressEvent( QMouseEvent *e );
       bool eventFilter( QObject*, QEvent* );

@@ -34,6 +34,7 @@ class Mixer;
 class QSlider;
 class QTimer;
 class Channel;
+class KActionCollection;
 
 struct ChannelProfile
 {       
@@ -77,6 +78,8 @@ class KMixerWidget : public QWidget  {
    void sessionSave( QString grp, bool sessionConfig );
    void sessionLoad( QString grp, bool sessionConfig );
 
+   void showAll();
+
   private slots:	
    void rightMouseClicked();	
 
@@ -90,10 +93,9 @@ class KMixerWidget : public QWidget  {
    QBoxLayout *m_topLayout;
    QList<Channel> m_channels;
    QString m_name;
+   KActionCollection *m_actions;
 
    void mousePressEvent( QMouseEvent *e );
-   void channelsToGUI();
-   void GUIToChannels();
 };
 
 #endif
