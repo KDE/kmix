@@ -156,7 +156,7 @@ int Mixer_ALSA::openMixer()
           readVolumeFromHW( idx, vol );
           m_mixDevices.append(
                               new MixDevice( idx, vol, canrecord,
-                                             QString((const char*)gid->name), ct ));
+                                             QString(gid->name), ct ));
         }
       else
         {
@@ -174,7 +174,7 @@ int Mixer_ALSA::openMixer()
   snd_mixer_info_t info;
   if ((err = snd_mixer_info(handle, &info)) < 0)
     return Mixer::ERR_READ;
-  m_mixerName = (const char*)info.name;
+  m_mixerName = info.name;
 
   m_isOpen = true;
   return 0;
