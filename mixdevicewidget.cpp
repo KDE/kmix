@@ -163,7 +163,7 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       else
          slider = new QSlider( 0, maxvol, maxvol/10,
                                maxvol - m_mixdevice->getVolume( i ),
-                               (m_direction == KPanelApplet::Up or
+                               (m_direction == KPanelApplet::Up ||
                                 m_direction == KPanelApplet::Down) ?
                                 QSlider::Vertical : QSlider::Horizontal,
                                this, m_mixdevice->name().ascii() );
