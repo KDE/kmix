@@ -178,8 +178,13 @@ KMixerWidget::createDeviceWidgets()
       }
       else
       {
-			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+			if( ! m_small )
+				mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
                                        m_direction, m_iWidget, this, mixDevice->name().latin1() );
+			else
+				mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
+                                       m_direction, m_oWidget, this, mixDevice->name().latin1() );
+				
       }
 
       connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
