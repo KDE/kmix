@@ -212,10 +212,38 @@ Mixer_ALSA::openMixer()
 
 	if( virginOpen )
 	{
-		MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
+	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
 		
 		//kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
+
+	    Volume* vol = 0;
+	    QPtrList<QString> enumList;
+	    if ( snd_mixer_selem_is_enumerated(elem) ) {
+		cc = MixDevice::ENUM;
+		vol = new Volume(); // Dummy, unused
+		mixer_sid_list.append( sid );
 		
+		// --- get Enum names START ---
+		int numEnumitems = snd_mixer_selem_get_enum_items(elem);
+		if ( numEnumitems > 0 ) {
+		  // OK. no error
+		  for (int iEnum = 0; iEnum<numEnumitems; iEnum++ ) {
+		    char buffer[100];
+		    int ret = snd_mixer_selem_get_enum_item_name(elem, iEnum, 99, buffer);
+		    if ( ret == 0 ) {
+		      QString* enumName = new QString(buffer);
+		      //enumName->append(buffer);
+		      enumList.append( enumName);
+		    } // enumName could be read succesfully
+		  } // for all enum items of this device
+		} // no error in reading enum list
+		else {
+		  // 0 items or Error code => ignore this entry
+		}
+		// --- get Enum names END ---
+	    } // is an enum
+
+	    else {
 		Volume::ChannelMask chn = Volume::MNONE;
 		Volume::ChannelMask chnTmp;
 		if ( snd_mixer_selem_has_playback_volume(elem) ) {
@@ -238,7 +266,7 @@ Mixer_ALSA::openMixer()
 		
 		/* Create Volume object. If there is no volume on this device,
 		 * it will be created with maxVolume == 0 && minVolume == 0 */
-		Volume* vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
+		vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
 		//mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
 		
@@ -262,6 +290,7 @@ Mixer_ALSA::openMixer()
 		    // Everything unknown is handled as switch
 		    cc = MixDevice::SWITCH;
 		}
+	    } // is ordinary mixer element (NOT an enum)
 
 		MixDevice* mdw =
 		    new MixDevice( mixerIdx,
@@ -271,6 +300,15 @@ Mixer_ALSA::openMixer()
 				   snd_mixer_selem_id_get_name( sid ),
 				   ct,
 				   cc );
+		if ( enumList.count() > 0 ) {
+		  int maxEnumId= enumList.count();
+		  QPtrList<QString>& enumValuesRef = mdw->enumValues(); // retrieve a ref
+		  for (int i=0; i<maxEnumId; i++ ) {
+		    // we have an enum. Lets set the names of the enum items in the MixDevice
+		    // the enum names are assumed to be static!
+		    enumValuesRef.append(enumList.at(i) );
+		  }
+		}
 		m_mixDevices.append( mdw );
 		//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
 		delete vol;
@@ -286,7 +324,12 @@ Mixer_ALSA::openMixer()
 	    } // !virginOpen
     } // for all elems
 
+    /**************************************************************************************
     // If no devices are supported by this soundcard, return "NO Devices"
+       It is VERY important to return THIS error code, so that the caller knows, that the
+       the device exists.
+       This is used for scanning for existing soundcard devices, see MixerToolBox::initMixer().
+    ***************************************************************************************/
     if ( !validDevice )
     {
 	return Mixer::ERR_NODEV;

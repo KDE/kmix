@@ -67,6 +67,7 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
    _category = md._category;
    _switch = md._switch;
    _mute = md._mute;
+   _enumValues = md._enumValues;
 }
 
 Volume& MixDevice::getVolume()
@@ -85,6 +86,23 @@ long MixDevice::maxVolume() {
 long MixDevice::minVolume() {
     return _volume.minVolume();
 }
+
+void MixDevice::setEnumId(int enumId)
+{
+  if ( enumId < _enumValues.count() ) {
+    _enumCurrentId = enumId;
+  }
+}
+
+unsigned int MixDevice::enumId()
+{
+  return _enumCurrentId;
+}
+
+QPtrList<QString>& MixDevice::enumValues() {
+  return _enumValues;
+}
+
 
 // @todo Used only at mixdevicewidget.cpp:625 . Replace that ASAP  !!!
 void MixDevice::setVolume( int channel, int volume )

@@ -25,8 +25,10 @@
 #include <qwidget.h>
 
 #include <kdebug.h>
+#include <klocale.h>
 
 #include "mdwswitch.h"
+#include "mdwenum.h"
 #include "mixer.h"
 
 ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
@@ -35,9 +37,11 @@ ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, View
     // Create switch buttonGroup
     if ( _vflags & ViewBase::Vertical ) {
         _layoutMDW = new QVBoxLayout(this);
+	_layoutEnum = new QVBoxLayout(_layoutMDW); // always vertical!
     }
     else {
         _layoutMDW = new QHBoxLayout(this);
+	_layoutEnum = new QVBoxLayout(_layoutMDW);
     }
     init();
 }
@@ -49,7 +53,7 @@ void ViewSwitches::setMixSet(MixSet *mixset)
 {
     MixDevice* md;
     for ( md = mixset->first(); md != 0; md = mixset->next() ) {
-	if ( md->isSwitch()) {
+	if ( md->isSwitch() || md->isEnum() ) {
 	    _mixSet->append(md);
 	}
 	else {
@@ -75,8 +79,24 @@ int ViewSwitches::advice() {
 
 QWidget* ViewSwitches::add(MixDevice *md)
 {
+  MixDeviceWidget *mdw;
+
+  if ( md->isEnum() ) {
+     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
+     mdw = new MDWEnum(
+		      _mixer,       // the mixer for this device
+                      md,           // MixDevice (parameter)
+                      orientation,  // Orientation
+                      this,         // parent
+                      this,         // View widget
+                      md->name().latin1()
+                      );
+     _layoutEnum->add(mdw);
+  } // an enum
+  else {
+    // must be a switch
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
-    MDWSwitch *mdw =
+    mdw =
 	new MDWSwitch(
 		      _mixer,       // the mixer for this device
 		      md,           // MixDevice (parameter)
@@ -86,9 +106,9 @@ QWidget* ViewSwitches::add(MixDevice *md)
 		      this,         // View widget
 		      md->name().latin1()
 		      );
+        _layoutMDW->add(mdw);
+    } // a switch
 
-    _layoutMDW->add(mdw);
-    // !! later: allow the other direction as well
     return mdw;
 }
 

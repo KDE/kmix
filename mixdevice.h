@@ -5,6 +5,7 @@
 #include <qstring.h>
 #include <kconfig.h>
 #include <qobject.h>
+#include <qptrlist.h>
 
 // ! @todo : CONSIDER MERGING OF MixDevice and Volume classes:
 //           Not easy possible, because Volume is used in the driver backends
@@ -56,7 +57,8 @@ SLIDER );
       void setPK(QString &id);
       bool isRecordable()    { return _recordable; };
       bool isRecSource()    { return _recSource; };
-      bool isSwitch()        { return _switch; }
+      bool isSwitch()        { return _switch; } // !! change to _category == MixDevice::SWITCH
+      bool isEnum()          { return _category == MixDevice::ENUM; }
       bool isMuted()         { return _volume.isMuted(); };
       bool hasMute()         { return _mute; }
 
@@ -67,6 +69,10 @@ SLIDER );
       Volume& getVolume();
       long maxVolume();
       long minVolume();
+
+      void setEnumId(int);
+      unsigned int enumId();
+      QPtrList<QString>& enumValues();
 
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
@@ -92,12 +98,16 @@ SLIDER );
       // SWITCH:    All devices which only have a On/Off-Switch
       int _num; // ioctl() device number of mixer
       bool _recordable; // Can it be recorded?
-      bool _switch; // On/Off switch
+      bool _switch; // On/Off switch // !! remove
       bool _mute; // Available mute option
       bool _recSource; // Current rec status
       DeviceCategory _category; //  category
       QString _name;   // Ascii channel name
       QString _pk;     // Primary key, used as part in config file keys
+      // A MixDevice, that is an ENUM, has these _enumValues
+      QPtrList<QString> _enumValues;
+      int _enumCurrentId;
+
 };
 
 #endif

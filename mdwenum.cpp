@@ -92,6 +92,12 @@ void MDWEnum::createWidgets()
 	_layout->addWidget(_label);
         _label->setFixedHeight(_label->sizeHint().height());
         _enumCombo = new KComboBox( FALSE, this, "mixerCombo" );
+	// ------------ fill ComboBox start ------------
+	int maxEnumId= m_mixdevice->enumValues().count();
+	for (int i=0; i<maxEnumId; i++ ) {
+	  _enumCombo->insertItem( *(m_mixdevice->enumValues().at(i)),i);
+	}
+	// ------------ fill ComboBox end --------------
 	_layout->addWidget(_enumCombo);
         _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
         connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( changeEnumInMixer( int ) ) );
@@ -102,12 +108,12 @@ void MDWEnum::createWidgets()
 
 void MDWEnum::update()
 {
-/* !!! TODO
-		if( m_mixdevice->isRecordable() )
-			_switchLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
-		else
-			_switchLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
-*/		
+  if ( m_mixdevice->isEnum() ) {
+    _enumCombo->setCurrentItem( m_mixdevice->enumId() );
+  }
+  else {
+    // !!! print warning message
+  }	
 }
 
 void MDWEnum::showContextMenu()
@@ -137,24 +143,23 @@ QSize MDWEnum::sizeHint() const {
     associated KAction like the context menu.
 */
 void MDWEnum::nextEnum() {
-// TODO !!!
-	if( m_mixdevice->isRecordable() )
-		setEnum( 0 );
-	else
-		setEnum( 0 );
+  if( m_mixdevice->isEnum() ) {
+    int curEnum = m_mixdevice->enumId();
+    if ( (unsigned int)curEnum < m_mixdevice->enumValues().count() ) {
+      // next enum value
+      m_mixdevice->setEnumId(curEnum+1);
+    }
+    else {
+      // wrap around
+      m_mixdevice->setEnumId(0);
+    }
+  } // isEnum
 }
 
 void MDWEnum::setEnum(int value)
 {
-// TODO !!!
-	if (  m_mixdevice->isSwitch() ) {
-		if ( m_mixdevice->isRecordable() ) {
-			m_mixer->setRecordSource( m_mixdevice->num(), value );
-		}
-		else {
-			m_mixdevice->setMuted( value );
-			m_mixer->commitVolumeChange( m_mixdevice );
-		}
+	if (  m_mixdevice->isEnum() ) {
+		m_mixdevice->setEnumId( value );
 	}
 }
 

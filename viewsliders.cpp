@@ -62,7 +62,7 @@ void ViewSliders::setMixSet(MixSet *mixset)
 {
     MixDevice* md;
     for ( md = mixset->first(); md != 0; md = mixset->next() ) {
-	if ( ! md->isSwitch() ) {
+	if ( (! md->isSwitch()) && ( ! md->isEnum() ) ) {
 	    _mixSet->append(md);
 	}
     }
