@@ -20,7 +20,6 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
