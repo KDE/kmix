@@ -1,8 +1,8 @@
 /*
- *              KMix -- KDE's full featured mini mixer
+ *                     The KDE docking class
  *
  *
- *              Copyright (C) 1996-98 Christian Esken
+ *              Copyright (C) 1999 Christian Esken
  *                        esken@kde.org
  *
  * This program is free software; you can redistribute it and/or
@@ -20,84 +20,68 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "kmix.h"
-
-#include <qtooltip.h>
 #include <kwm.h>
 #include <kapp.h>
+#include <klocale.h>
 
 #include "docking.h"
+#include <qmessagebox.h>
 
 extern KApplication *globalKapp;
-extern KMix *kmix;
 
 extern bool dockinginprogress;
 
-DockWidget::DockWidget(const char *name)
-  : QWidget(0, name, 0) {
+KDockWidget::KDockWidget(const QString& name=0, const QString& dockIconName=0)
+  : QWidget(0, name, 0)
+{
 
   docked = false;
-
   pos_x = pos_y = 0;
-  have_position = false;
-
-  QString pixdir = globalKapp->kde_datadir() + "/kmix/pics/";
-  QString tmp;
-
-#define PMERROR(pm) \
-  tmp.sprintf(i18n("Could not load %s !"), pm); \
-  QMessageBox::warning(this, i18n("Error"), tmp);
 
   // load pixmaps
-
-  if (!small_pixmap.load(pixdir + "kmixdocked.xpm")){
-    PMERROR("kmixdocked.xpm");
+  if ( dockIconName != 0 && !dockArea_pixmap.load(dockIconName) ) {
+    QString tmp;
+    tmp = i18n("Could not load ") + dockIconName;
+    QMessageBox::warning(this, i18n("Error"), tmp);
   }
 
   // popup menu for right mouse button
   popup_m = new QPopupMenu();
 
+  // Insert standard item "Restore" into context menu of docking area
   toggleID = popup_m->insertItem(i18n("Restore"),
 				 this, SLOT(toggle_window_state()));
   
+  // Insert standard item "Quit" into context menu of docking area
   popup_m->insertItem(i18n("Quit"),
 		      this, SLOT(emit_quit()));
 
-
-  //  QToolTip::add( this, statstring.data() );
-
 }
 
-DockWidget::~DockWidget() {
+KDockWidget::~KDockWidget()
+{
+  delete popup_m;
 }
 
-void DockWidget::dock() {
 
+void KDockWidget::dock()
+{
   if (!docked) {
-
-
     // prepare panel to accept this widget
     KWM::setDockWindow (this->winId());
 
-    // that's all the space there is
+    // that's all the space there is !!! COULD BE REWORKED (ask kpanel maintainer) !!!
     this->setFixedSize(24, 24);
 
     // finally dock the widget
     show();
     docked = true;
   }
-/*  if(kmix){
-    QPoint point = kmix->mapToGlobal (QPoint (0,0));
-    pos_x = point.x();
-    pos_y = point.y();
-
-  }*/
 }
 
-void DockWidget::undock() {
-
+void KDockWidget::undock()
+{
   if (docked) {
-
     // the widget's window has to be destroyed in order 
     // to undock from the panel. Simply using hide() is
     // not enough.
@@ -110,52 +94,51 @@ void DockWidget::undock() {
   }
 }
 
-const bool DockWidget::isDocked() {
-
+bool KDockWidget::isDocked() const
+{
   return docked;
-
 }
 
-void DockWidget::paintEvent (QPaintEvent *e) {
 
-  (void) e;
+void KDockWidget::setMainWindow(KTMainWindow *ktmw)
+{
+  this->ktmw = ktmw;
+}
 
+void KDockWidget::paintEvent (QPaintEvent* )
+{
   paintIcon();
-
 }
 
-void DockWidget::paintIcon () {
-
-  bitBlt(this, 0, 0, &small_pixmap);
-
-
+void KDockWidget::paintIcon ()
+{
+  bitBlt(this, 0, 0, &dockArea_pixmap);
 }
 
-void DockWidget::timeclick() {
-
-  if(this->isVisible()){
+void KDockWidget::timeclick()
+{
+  if( this->isVisible() )
     paintIcon();
-  }  
 }
 
 
-void DockWidget::mousePressEvent(QMouseEvent *e) {
+void KDockWidget::mousePressEvent(QMouseEvent *e) {
 
   // open/close connect-window on right mouse button 
   if ( e->button() == LeftButton ) {
     toggle_window_state();
   }
 
-  // open popup menu on left mouse button
+  // open popup menu on right mouse button
   if ( e->button() == RightButton  || e->button() == MidButton) {
     int x = e->x() + this->x();
     int y = e->y() + this->y();
 
     QString text;
-    if(kmix->isVisible())
-      text = i18n("Minimize");
+    if(ktmw != 0 && ktmw->isVisible())
+      text = i18n("&Minimize");
     else
-      text = i18n("Restore");
+      text = i18n("&Restore");
     
     popup_m->changeItem(text, toggleID);
     popup_m->popup(QPoint(x, y));
@@ -164,32 +147,32 @@ void DockWidget::mousePressEvent(QMouseEvent *e) {
 
 }
 
-void DockWidget::toggle_window_state()
+void KDockWidget::toggle_window_state()
 {
-    if(kmix != 0L)  {
-        if (kmix->isVisible()){
-            dockinginprogress = true;
-            toggled = true;
-            kmix->hide();
-            kmix->recreate(0, 0, QPoint(kmix->x(), kmix->y()), FALSE);
-            kapp->setTopWidget( kmix );
+  if(ktmw != 0) {
+    if (ktmw->isVisible()){
+      dockinginprogress = true;
+      toggled = true;
+      ktmw->hide();
+      ktmw->recreate(0, 0, QPoint(ktmw->x(), ktmw->y()), FALSE);
+      kapp->setTopWidget( ktmw );
 
-        }
-        else {
-            toggled = false;
-            kmix->show();
-            dockinginprogress = false;
-            KWM::activate(kmix->winId());
-        }
     }
+    else {
+      toggled = false;
+      ktmw->show();
+      dockinginprogress = false;
+      KWM::activate(ktmw->winId());
+    }
+  }
 }
 
-const bool DockWidget::isToggled()
+bool KDockWidget::isToggled() const
 {
-    return(toggled);
+  return(toggled);
 }
 
-void DockWidget::emit_quit()
+void KDockWidget::emit_quit()
 {
   emit quit_clicked();
 }

@@ -181,7 +181,9 @@ KMix::KMix(int mixernum, int SetNum)
   mix = new Mixer(mixernum, SetNum);
   CHECK_PTR(mix);
 
-  dock_widget = new DockWidget("dockw");
+  QString dockIcon = globalKapp->kde_datadir() + "/kmix/pics/kmixdocked.xpm";
+  dock_widget = new KDockWidget("dockw",dockIcon);
+  dock_widget->setMainWindow(this);
   if ( allowDocking ) {
     dock_widget->dock();
   }
@@ -247,9 +249,9 @@ void KMix::createWidgets()
   const unsigned char numDefaultMixerIcons=17;
 #endif
   // Init DnD: Set up drop zone and drop handler
-  dropZone = new KDNDDropZone( this, DndURL );
-  connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )),
-	   SLOT( onDrop( KDNDDropZone*)));
+  //  dropZone = new KDNDDropZone( this, DndURL );
+  //connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )),
+  //	   SLOT( onDrop( KDNDDropZone*)));
 
   // Window title
   setCaption( globalKapp->getCaption() );
@@ -716,7 +718,7 @@ void KMix::onDrop( KDNDDropZone* _zone )
   QStrList strlist;
   KURL *url;
 
-  strlist = _zone->getURLList();
+  //  strlist = _zone->getURLList();
   url = new KURL( strlist.first() );
   delete url;
 }

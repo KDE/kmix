@@ -1,10 +1,12 @@
 /*
- *              kmix: KDE's small mixer
+ * KDockWidget
  *
- *              Copyright (C) 1997 Christian Esken
+ *              Copyright (C) 1999 Christian Esken
  *                       esken@kde.org
  * 
- * This file is based on a contribution by Harri Porten <porten@tu-harburg.de>
+ * This class is based on a contribution by Harri Porten <porten@tu-harburg.de>
+ * It has been reworked by Christian Esken to be a generic base class for
+ * docking.
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -26,24 +28,28 @@
 #ifndef _DOCKING_H_
 #define _DOCKING_H_
 
-#include <stdio.h>
-#include <qapplication.h>
+#include <ktmainwindow.h>
 #include <qpixmap.h>
-#include <qtimer.h>
-#include <qpopupmenu.h>
 #include <qpoint.h>
 
 
-class DockWidget : public QWidget {
+class KDockWidget : public QWidget {
 
   Q_OBJECT
 
 public:
-  DockWidget(const char *name=0);
-  ~DockWidget();
+  KDockWidget(const QString& name=0, const QString& dockIconName=0);
+  ~KDockWidget();
+  void setMainWindow(KTMainWindow *ktmw);
+  QPixmap* dockPixmap() const;
+  /// Checks, if application is in "docked" state. Returns true, if yes.
+  bool isDocked() const;
+  bool isToggled() const;  // !!! Remove?
+  void savePosition();
 
 protected:
   void paintEvent(QPaintEvent *e);
+  void paintIcon();
 
 private slots:
   void timeclick();
@@ -51,30 +57,26 @@ private slots:
   void mousePressEvent(QMouseEvent *e);
 
 public slots:
-  void dock();
-  void undock();
-  void paintIcon();
+  virtual void dock();
+  virtual void undock();
 
-public:
-  const bool isDocked();
-  const bool isToggled();  // !!! Remove?
-  void savePosition();
 
 signals:
   void quit_clicked();
 
-private:
+protected slots:
+  void emit_quit();
+
+protected:
   bool docked;
   int toggleID;
   int pos_x;
   int pos_y;
+  KTMainWindow *ktmw;
   QPopupMenu *popup_m;
-  bool have_position;
-  QPixmap small_pixmap;
-  bool toggled;  // !!! Remove
-
-private slots:
-  void emit_quit();
+  QPixmap dockArea_pixmap;
+  bool dockingInProgress;
+  bool toggled;  // !!! Remove ???
 };
 
 #endif

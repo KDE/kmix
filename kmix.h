@@ -35,7 +35,7 @@ public:
   bool restore(int n);
   Mixer		*mix;
   Preferences	*prefDL;
-  DockWidget    *dock_widget;
+  KDockWidget    *dock_widget;
 
 public slots:
   void onDrop( KDNDDropZone*);
