@@ -49,6 +49,13 @@ const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   ,
 bool MixChannel::i_b_HW_update = true;
 
 
+
+
+
+
+// ### Mixer ############################################################
+
+
 Mixer::Mixer()
 {
     MixChannel::i_b_HW_update = true;
@@ -177,10 +184,13 @@ void Mixer::setDevNumName(int devnum)
   this->setDevNumName_I(devnum);
 }
 
+
+// This function is overwritten in the ALSA descendant
 MixDevice* Mixer::createNewMixDevice(int num)
-{ 
+{
   return new MixDevice(num); 
 };
+
 
 
 /******************************************************************************
@@ -222,11 +232,8 @@ void  Mixer::setupStructs(void)
 
       // 1) Create the new MixDevice
       i_ql_mixDevices.resize(l_i_numMixdevs+1);
-      MixDevice *MixPtr = new MixDevice(i);
+      MixDevice *MixPtr = createNewMixDevice(i);
       i_ql_mixDevices[l_i_numMixdevs] = MixPtr;
-
-#warning Check, if it is a good idea to keep createNewMixDevice()
-      //createNewMixDevice(i);
 
       // 2) Fill the MixDevice
       MixPtr->mix  = this;		// keep track, which mixer is used by device i
@@ -234,10 +241,7 @@ void  Mixer::setupStructs(void)
       MixPtr->Left  = new MixChannel;
       MixPtr->Right = new MixChannel;
       MixPtr->Left->mixDev = MixPtr->Right->mixDev = MixPtr;
-#if 0
-      MixPtr->Left->channel  = Mixer::LEFT;
-      MixPtr->Right->channel = Mixer::RIGHT;
-#endif
+
       // 2b) Fill out the device structure
       MixPtr->setNum(i);
       MixPtr->setStereo(stereowork & 1);
@@ -258,25 +262,25 @@ void  Mixer::setupStructs(void)
 
 /******************************************************************************
  *
- * Function:	InternalSetVolumes
+ * Function:	Set2HW
  *
  * Task:	Reads volume settings from either the mixer or a mixing set
- *		and fills in the values in the according "dt_mixer_T"
- *		structure.
+ *		and fills in the values in the according MixDevice.
+ *
  *		This function defines the policy, if a slider is created
  *		for a mixing channel, if the "StereoLink" is enabled,
  *		and thus if two sliders will be created. The idea is as
  *		follows: Reading from a set reads in the "StereoLink"
- *		element. Reading from the mixer sets "StereoLink", if
- *		left and right channel use the same volume.
+ *		element. Reading from the mixer does not manipulate the
+ *		"StereoLink".
+ *
  *		Attention! This function decidedes on policy, but the
  *		sliders are created elsewhere.
  *
  *
  * in:		The source, where the volume settings are read from.
  *		-1    = Read from mixer hardware
- *		 0    = Default mixing set
- *		 1-...= Other mixing sets
+ *		 0-...= Mixing set
  *
  * out:		-
  *
@@ -295,6 +299,12 @@ void Mixer::Set2HW(int Source, bool copyVolume)
 
   if ( Source >= 0 ) {
     // Read from a set (means copy set data to current MixSet)
+    int l_i_num_sets;
+    while ( ( l_i_num_sets = i_set_allMixSets->size()) < Source+1 ) {
+      MixSet* l_ms = new MixSet();
+      i_set_allMixSets->resize(l_i_num_sets+1);
+      i_set_allMixSets->insert(l_i_num_sets, l_ms);
+    }
     SrcSet = ((*i_set_allMixSets)[Source]);
   }
 
@@ -309,7 +319,7 @@ void Mixer::Set2HW(int Source, bool copyVolume)
 	MixPtr.setVolume(0, int(100 * VolLeft  / (float)MaxVolume) );
 	MixPtr.setVolume(1, int(100 * VolRight / (float)MaxVolume) );
 
-	// MixPtr.setStereoLinked(true); -<- Nicht dran rummanipulieren !
+	// MixPtr.setStereoLinked(true); -<- Don't touch this !
       }
     }
     else {
@@ -329,7 +339,13 @@ void Mixer::Set2HW(int Source, bool copyVolume)
 
 void Mixer::HW2Set(int Source)
 {
-#warning Have to devise a method to create "missing" sets
+  int l_i_num_sets;
+  while ( ( l_i_num_sets = i_set_allMixSets->size()) < Source+1 ) {
+    MixSet* l_ms = new MixSet();
+    i_set_allMixSets->resize(l_i_num_sets+1);
+      i_set_allMixSets->insert(l_i_num_sets, l_ms);
+  }
+
 
   MixSet	&DestSet = *((*i_set_allMixSets)[Source]);
   for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < size(); l_i_mixDevice++) {
@@ -360,6 +376,17 @@ QString Mixer::mixerName()
 {
   return i_s_mixer_name;
 }
+
+
+unsigned int Mixer::recsrc() const
+{
+  return i_recsrc;
+}
+
+void Mixer::setRecsrc(unsigned int /* newRecsrc */)
+{
+}
+
 
 
 
@@ -454,6 +481,12 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
 }
 
 
+
+
+
+// ### MixChannel ############################################################
+
+
 void MixChannel::VolChanged(int new_pos)
 {
   this->VolChangedI(100-new_pos); // The slider is reversed
@@ -483,6 +516,13 @@ void MixChannel::HW_update(bool val_b_update_allowed)
 }
 
 
+
+
+
+
+
+
+// ### MixDevice ############################################################
 
 
 void MixDevice::MvolSplitCB()
@@ -530,47 +570,22 @@ void MixDevice::MvolRecsrcCB()
     emit relayout();
 }
 
-unsigned int Mixer::recsrc() const
-{
-  return i_recsrc;
-}
-
-void Mixer::setRecsrc(unsigned int /* newRecsrc */)
-{
-}
 
 
-
-MixDevice::MixDevice(int num, const char* name)
+MixDevice::MixDevice(int val_i_num, const char* val_s_name)
 {
   i_mse = new MixSetEntry;
-  setNum(num);
-  if( name == 0 ) 
-    setName(MixerDevNames[num]);
+  setNum(val_i_num);
+  if( val_s_name == 0 ) 
+    setName(MixerDevNames[val_i_num]);
   else
-    setName( name );
+    setName( val_s_name );
 };
 
 
 
-QString MixDevice::name() const
-{
-  return i_mse->name;
-}
-
-
-
-
-void MixDevice::setNum(int num)
-{
-  i_mse->devnum = num;
-}
-
-void MixDevice::setName(QString name)
-{
-  i_mse->name = name;
-}
 int MixDevice::num() const		{ return i_mse->devnum; }
+QString MixDevice::name() const		{ return i_mse->name; }
 bool MixDevice::stereo() const		{ return i_mse->is_stereo; }
 bool MixDevice::recordable() const	{ return i_mse->is_recordable; }
 bool MixDevice::recsrc() const		{ return i_mse->is_recsrc; }
@@ -579,30 +594,22 @@ bool MixDevice::muted() const		{ return i_mse->is_muted; }
 bool MixDevice::stereoLinked() const	{ return i_mse->StereoLink; }
 int MixDevice::volume(char channel)
 {
-  if (channel == 0) {
-    return i_mse->volumeL;
-  }
-  else if (channel == 1) {
-    return i_mse->volumeR;
-  }
-  else {
-    return 0;
-  }
+  if (channel == 0)		{ return i_mse->volumeL; }
+  else if (channel == 1)	{ return i_mse->volumeR; }
+  else				{ return 0; }
 }
 
-void MixDevice::setStereo(bool value)	{ i_mse->is_stereo = value; }
+void MixDevice::setNum(int num)			{ i_mse->devnum = num; }
+void MixDevice::setName(QString name)		{ i_mse->name = name; }
+void MixDevice::setStereo(bool value)		{ i_mse->is_stereo = value; }
 void MixDevice::setRecordable(bool value)	{ i_mse->is_recordable = value; }
-void MixDevice::setRecsrc(bool value)	{ i_mse->is_recsrc = value; }
-void MixDevice::setDisabled(bool value)	{ i_mse->is_disabled = value; }
+void MixDevice::setRecsrc(bool value)		{ i_mse->is_recsrc = value; }
+void MixDevice::setDisabled(bool value)		{ i_mse->is_disabled = value; }
 void MixDevice::setMuted(bool value)		{ i_mse->is_muted = value; }
 void MixDevice::setStereoLinked(bool value)	{ i_mse->StereoLink = value; }
 void MixDevice::setVolume(char channel, int volume)
 {
 #warning Change this to a list
-  if (channel == 0) {
-    i_mse->volumeL = volume;
-  }
-  else if (channel == 1) {
-    i_mse->volumeR = volume;
-  }
+  if (channel == 0)				{ i_mse->volumeL = volume; }
+  else if (channel == 1)			{ i_mse->volumeR = volume; }
 }

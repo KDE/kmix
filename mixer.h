@@ -98,21 +98,7 @@ public:
   MixChannel	*Right;			//
 
 private:
-
   MixSetEntry   *i_mse;
-
-#if 0
-  int		dev_num;		// ioctl() device number of mixer
-  bool		StereoLink;		// Is this channel linked via the
-                                        // left-right-controller?
-  bool	 	is_stereo;		// Is it stereo capable?
-  bool      	is_recordable;		// Can it be recorded?
-  bool		is_recsrc;		// Is it currently being recorded?
-  bool		is_disabled;		// Is slider disabled by user?
-  bool		is_muted;		// Is it muted by user?
-  QString	dev_name;		// Ascii channel name
-
-#endif
 };
 
 
@@ -131,13 +117,6 @@ public:
   QSlider	*slider;		/* Associated slider               */
   static bool	i_b_HW_update;
   static void HW_update(bool val_b_update_allowed);
-
-#if 0
-  char		channel;		/* channel number:                 */
-					/* Even = Left, Odd = Right        */
-  int		volume;			/* Volume of this channel	   */
-#endif
-
 
 public slots:
   void VolChanged( int new_pos );
@@ -243,7 +222,7 @@ private:
   void setupStructs(void);
   void updateMixDeviceI(MixDevice *mixdevice);
 
-  // All mix devices of this phyisical device.
+  // All mix devices of this physical device.
   QArray<MixDevice*> i_ql_mixDevices;
 };
 #endif

@@ -189,8 +189,8 @@ void MixSetList::addSet()
 
 void MixSetList::read()
 {
-  // !!!  return;
-#warning Something is wrong. Several functons crash in in glibc alloc functions :-(
+  return;
+  //#warning Something is wrong. Several functons crash in in glibc alloc functions :-(
   for ( unsigned int l_i_setNum=0; l_i_setNum<this->size(); l_i_setNum++ ) {
     MixSet &ms = *(this->operator[](l_i_setNum));
     ms.read(l_i_setNum);
