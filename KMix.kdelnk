@@ -15,3 +15,5 @@ Comment=Controls the volume of the Sound channels
 Comment[de]=Einstellung der Lautstärke der Soundkanäle
 Name=Sound Mixer Panel
 Name[de]=Lautstärkeregelung
+Icon=kmix.xpm
+MiniIcon=kmix.xpm

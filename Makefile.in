@@ -90,7 +90,7 @@ install-icons:
 	$(INSTALL_DIR) $(APPDIR)/pics
 	cd pics; $(INSTALL_DATA) mix_*.xpm $(APPDIR)/pics
 	$(INSTALL_DIR) $(prefix)/share/icons/mini
-	cd pics; $(INSTALL_DATA) kmix_mini.xpm $(prefix)/share/icons/mini/kmix.xpm
+	cd pics; $(INSTALL_DATA) kmix.xpm $(prefix)/share/icons/mini/kmix.xpm
 
 install-nls:
 	for i in $(SRCNLS); do \
@@ -101,7 +101,7 @@ install-nls:
 
 uninstall:
 	rm -f $(BINDIR)/$(TARGET)
-	rm -f $(prefix)/doc/HTML/ksoundsystem/kmix.html
+	rm -f $(prefix)/share/doc/HTML/kmedia/kmix.html
 	rm -f $(prefix)/share/applnk/Multimedia/KMix.kdelnk
 	rm -rf $(APPDIR)
 
