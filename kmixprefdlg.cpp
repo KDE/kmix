@@ -59,6 +59,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
            i18n("Enables/disables description labels above the sliders"));
 
    connect( this, SIGNAL(applyClicked()), this, SLOT(apply()) );
+   connect( this, SIGNAL(okClicked()), this, SLOT(apply()) );
 }
 
 KMixPrefDlg::~KMixPrefDlg()
