@@ -91,6 +91,7 @@ class KMixWindow : public KMainWindow
    void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
+   void updateDockIcon();
 
   private:
    KAccel *m_keyAccel;
@@ -120,6 +121,7 @@ class KMixWindow : public KMainWindow
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );
    void updateLayout();
+   void dockMute();
 
    void toggleVisibility();
 };

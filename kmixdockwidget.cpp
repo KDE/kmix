@@ -75,8 +75,23 @@ void KMixDockWidget::createMasterVolWidget()
 
 void KMixDockWidget::setVolumeTip(int, Volume vol)
 {
+    MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
+    QString tip = i18n("Volume at %1%").arg(vol.getVolume(0));
+    if ( masterDevice->isMuted() )
+        tip += i18n( " (Muted)" );
+
     QToolTip::remove(this);
-    QToolTip::add(this, i18n("Volume at %1%").arg(vol.getVolume(0)));
+    QToolTip::add(this, tip);
+}
+
+void KMixDockWidget::updatePixmap()
+{
+    MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
+
+    if ( masterDevice->isMuted() )
+        setPixmap( BarIcon( "kmixdocked_mute" ) );
+    else
+        setPixmap( BarIcon( "kmixdocked" ) );
 }
 
 void KMixDockWidget::mousePressEvent(QMouseEvent *me)
@@ -131,8 +146,8 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
         		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
         		return;
     		default:
-        		masterVol->hide();
-        		KSystemTray::mouseReleaseEvent(me);
+        		//masterVol->hide();
+        		//KSystemTray::mouseReleaseEvent(me);
         		return;
         }
     }

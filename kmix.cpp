@@ -141,8 +141,11 @@ void KMixWindow::initActions()
     KStdAction::quit( this, SLOT(quit()), actionCollection());
 
     // settings menu
-    KAction *a = KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+    KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
     KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
+
+    ( void ) new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
+            actionCollection(), "dock_mute" );
 
     createGUI( "kmixui.rc" );
 }
@@ -211,7 +214,7 @@ void KMixWindow::updateDocking()
 
         // create dock widget
         m_dockWidget = new KMixDockWidget( m_mixers.first(), this );
-        m_dockWidget->setPixmap( BarIcon("kmixdocked") );
+        updateDockIcon();
 
         // create RMB menu
         QPopupMenu *menu = m_dockWidget->contextMenu();
@@ -219,18 +222,47 @@ void KMixWindow::updateDocking()
         KAction *a = actionCollection()->action("options_configure");
         if (a) a->plug( menu );
 
-        menu->insertSeparator();
-
         a = actionCollection()->action("help_about_app");
         if (a) a->plug( menu );
 
         a = actionCollection()->action("help");
         if (a) a->plug( menu );
 
+        menu->insertSeparator();
+
+        a = actionCollection()->action( "dock_mute" );
+        if ( a ) a->plug( menu );
+
         m_dockWidget->show();
     }
 }
 
+void KMixWindow::dockMute()
+{
+    Mixer *mixer = m_mixers.first();
+
+    MixDevice *masterDevice = ( *mixer )[ mixer->masterDevice() ];
+
+    masterDevice->setMuted( !masterDevice->isMuted() );
+    mixer->writeVolumeToHW( masterDevice->num(), masterDevice->getVolume() );
+
+    updateDockIcon();
+}
+
+void KMixWindow::updateDockIcon()
+{
+    Mixer *mixer = m_mixers.first();
+
+    MixDevice *masterDevice = ( *mixer )[ mixer->masterDevice() ];
+
+    // Required if muted from mixer widget
+    KToggleAction *a = static_cast<KToggleAction *>
+            ( actionCollection()->action(  "dock_mute" ) );
+    if ( a ) a->setChecked( masterDevice->isMuted() );
+
+    m_dockWidget->updatePixmap();
+    m_dockWidget->setVolumeTip( 0, masterDevice->getVolume() );
+}
 
 void KMixWindow::saveConfig()
 {
@@ -349,7 +381,9 @@ void KMixWindow::insertMixerWidget( KMixerWidget *mw )
    mw->setTicks( m_showTicks );
    mw->setLabels( m_showLabels );
    mw->show();
+
    connect( mw, SIGNAL(updateLayout()), this, SLOT(updateLayout()) );
+   connect( mw, SIGNAL( masterMuted( bool ) ), SLOT( updateDockIcon() ) );
 
    KAction *a = actionCollection()->action( "file_close_tab" );
    if ( a ) a->setEnabled( m_visibleTabs>1 );

@@ -310,6 +310,9 @@ void MixDeviceWidget::setMuted(bool value)
    m_mixdevice->setMuted( value );
    update();
    emit newVolume( m_mixdevice->num(), m_mixdevice->getVolume() );
+
+   if ( m_mixdevice->num()==m_mixer->masterDevice() )
+       emit masterMuted( value );
 }
 
 void MixDeviceWidget::toggleMuted()

@@ -119,6 +119,9 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
          new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small,
                               m_direction, this, mixDevice->name().latin1() );
 
+      connect( mdw, SIGNAL( masterMuted( bool ) ),
+                  SIGNAL( masterMuted( bool ) ) );
+
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       m_devLayout->addWidget( mdw, 0 );
 

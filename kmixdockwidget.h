@@ -37,7 +37,9 @@ class KMixDockWidget : public KSystemTray  {
    KMixDockWidget(Mixer *, QWidget *parent=0, const char *name=0);
    ~KMixDockWidget();
 
- protected slots:  
+   void updatePixmap();
+
+ public slots:  
    void setVolumeTip(int, Volume);
 
  protected:

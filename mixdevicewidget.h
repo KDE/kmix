@@ -83,6 +83,7 @@ class MixDeviceWidget
       void defineKeys();
    signals:
       void newVolume( int num, Volume volume );
+      void masterMuted( bool );
       void newRecsrc( int num, bool on );
       void updateLayout();
       void rightMouseClick();
