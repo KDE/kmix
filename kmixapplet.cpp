@@ -73,7 +73,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
       s_mixers = new QList<Mixer>;
 
       // create timers
-      QTimer *s_timer = new QTimer;
+      s_timer = new QTimer;
       s_timer->start( 500 );
 
       // get maximum values
@@ -91,15 +91,11 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
             Mixer *mixer = Mixer::getMixer( dev, card );
             int mixerError = mixer->grab();
             if ( mixerError!=0 )
-            {
                delete mixer;
-            } else
-            {
-               connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
+            else
                s_mixers->append( mixer );
             }
          }
-   }
 
    s_instCount++;
 
@@ -131,6 +127,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
       m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true, true, this );
       m_mixerWidget->loadConfig( cfg, "Widget" );
       connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
+      connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
    } else
    {
       m_errorLabel = new QPushButton( i18n("Select mixer"), this );
@@ -194,6 +191,7 @@ void KMixApplet::selectMixer()
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
          connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
+         connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
          updateLayoutNow();
       }
    }
