@@ -116,7 +116,7 @@ public:
 
 
   Mixer();
-  Mixer(char *devname);
+  Mixer(int devnum);
   int grab();
   int release();
   void errormsg(int mixer_error);
@@ -129,7 +129,9 @@ public:
   MixDevice	*First;
 
 private:
+  void setDevNumName(int devnum);
   char		*devname;
+  int		devnum;
 
 #ifdef sgi
   // IRIX uses ALport stuff
@@ -142,7 +144,7 @@ private:
 
   bool		isOpen;
 
-  int  setupMixer(char *devname);
+  int  setupMixer(int devnum);
   void setupStructs(void);
   void InternalSetVolumes(int Source);
   int  openMixer(void);

@@ -31,7 +31,7 @@ class KMix : public KTopLevelWidget
   Q_OBJECT
 
 public:
-  KMix(char *mixername);
+  KMix(int mixernum);
   ~KMix();
   Mixer		*mix;
   Preferences	*prefDL;
@@ -42,8 +42,8 @@ public slots:
   void showOptsCB();
   void quitClickedCB();
   void launchHelpCB();
-  void aboutClickedCB();
-  void aboutqt();
+  //  void aboutClickedCB();
+  //  void aboutqt();
   void applyOptions();
 
   void MbalCentCB();

@@ -28,6 +28,7 @@
 #include "mixer.h"
 #include "mixer.moc"
 
+#include <qstring.h>
 
 #if defined(sun) || defined(__sun__)
 #include <sys/types.h>
@@ -35,7 +36,6 @@
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/audioio.h>
-//#include <stropts.h>
                                
 #define SUN_MIXER
 #endif
@@ -105,12 +105,13 @@ QList<MixSet> Mixer::TheMixSets;
 
 Mixer::Mixer()
 {
-  setupMixer(DEFAULT_MIXER);
+  // use default mixer device
+  setupMixer(0);
 }
 
-Mixer::Mixer(char *devname)
+Mixer::Mixer(int devnum)
 {
-  setupMixer(devname);
+  setupMixer(devnum);
 }
 
 int Mixer::grab()
@@ -119,7 +120,7 @@ int Mixer::grab()
 
   if (!isOpen)
     // Try to open Mixer, if it is not open already.
-    ret=setupMixer(this->devname);
+    ret=setupMixer(this->devnum);
 
   return ret;
 }
@@ -140,7 +141,7 @@ int Mixer::release()
   return 0;
 }
 
-int Mixer::setupMixer(char *devname)
+int Mixer::setupMixer(int devnum)
 {
 
   bool ReadFromSet=false;  // !!! Sets not implemented yet
@@ -156,7 +157,9 @@ int Mixer::setupMixer(char *devname)
   num_mixdevs = 0;
   First=NULL;
 
-  this->devname = strdup(devname);
+  setDevNumName(devnum);
+
+
   int ret = openMixer();
   if (ret)
     return ret;
@@ -182,6 +185,24 @@ int Mixer::setupMixer(char *devname)
 
   return 0;
 }
+
+
+void Mixer::setDevNumName(int devnum)
+{
+  QString devname;
+  this->devnum  = devnum;
+
+#ifdef OSS_MIXER
+  devname = "/dev/mixer";
+  if (devnum!=0)
+    devname += ('0'+devnum-1);
+#else
+  devname = "Mixer";
+#endif
+
+  this->devname = strdup(devname);
+}
+
 
 
 /******************************************************************************

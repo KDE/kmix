@@ -80,16 +80,17 @@ int main(int argc, char **argv)
   if (kapp->isRestored()){
       int n = 1;
       while (KTopLevelWidget::canBeRestored(n)){
-        kmix = new KMix(DEFAULT_MIXER);
+	// !!! TODO: Read mixer number from session management
+        kmix = new KMix(0);
         kmix->restore(n);
         n++;
       }
    }
   else {
     if (argc > 1)
-      kmix = new KMix(argv[argc - 1]);
+      kmix = new KMix(atoi(argv[argc - 1]));
     else
-      kmix = new KMix(DEFAULT_MIXER);
+      kmix = new KMix(0);
   }
 
   return globalKapp->exec();
@@ -101,7 +102,7 @@ KMix::~KMix()
   delete mainmenu;
 }
 
-KMix::KMix(char *mixername)
+KMix::KMix(int mixernum)
 {
   KmConfig=KApplication::getKApplication()->getConfig();
   mainmenuOn  = true;  // obsolete?
@@ -114,7 +115,7 @@ KMix::KMix(char *mixername)
 
   KCM = new KCmManager(this);
   CHECK_PTR(KCM);
-  mix = new Mixer(mixername);
+  mix = new Mixer(mixernum);
   CHECK_PTR(mix);
 
   int mixer_error = mix->grab();
@@ -153,7 +154,6 @@ void KMix::createWidgets()
 {
   QPixmap miniDevPM;
   QPixmap WMminiIcon = globalKIL->loadIcon("mixer_mini.xpm");
-//   KWM::setMiniIcon(this->winId(), WMminiIcon);
 
   // keep this enum local. It is really only needed here
   enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
@@ -173,7 +173,7 @@ void KMix::createWidgets()
 	   SLOT( onDrop( KDNDDropZone*)));
 
   // Window title
-  setCaption( "KMix" );
+  setCaption( globalKapp->getCaption() );
 
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
@@ -406,19 +406,35 @@ void KMix::createMenu()
 
   QAccel *qAcc = new QAccel( this );
 
+  // Globaler "Help"-Key
+  qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
+
   Mfile = new QPopupMenu;
   CHECK_PTR( Mfile );
-  Mfile->insertItem(klocale->translate("Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
+  Mfile->insertItem(klocale->translate("&Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_M),this, SLOT(hideMenubarCB()));
 
-  Mfile->insertItem(klocale->translate("Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
+  Mfile->insertItem(klocale->translate("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_T),this, SLOT(tickmarksTogCB()));
 
   Mfile->insertItem( klocale->translate("&Options")       , this, SLOT(showOptsCB()) );
   Mfile->insertSeparator();
   Mfile->insertItem( klocale->translate("&Quit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
-  Mhelp = globalKapp->getHelpMenu(true,(const char*)"KMIX bla bla bla");
+
+  QString msg,head;
+  char vers[50];
+  sprintf (vers,"%.2f", APP_VERSION);
+  
+  msg  = "KMix ";
+  msg += vers;
+  msg += i18n("\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
+    "Sound mixer panel for the KDE Desktop Environment.\n"\
+    "This program is in the GPL.\n"
+    "SGI Port done by Paul Kendall (paul@orion.co.nz)");
+  head += vers;
+
+  Mhelp = globalKapp->getHelpMenu(true,msg);
   CHECK_PTR( Mhelp );
 //  Mhelp->insertItem( klocale->translate("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
 //  qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
@@ -465,20 +481,21 @@ void KMix::quitClickedCB()
   exit(0);
 }
 
+/*
 void KMix::aboutClickedCB()
 {
   QString msg,head;
   char vers[50];
   sprintf (vers,"%.2f", APP_VERSION);
   
-  msg  = "kmix ";
+  msg  = "KMix ";
   msg += vers;
-  msg += "\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
+  msg += i18n("\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
     "This program is in the GPL.\n"
-    "SGI Port done by Paul Kendall (paul@orion.co.nz)";
+    "SGI Port done by Paul Kendall (paul@orion.co.nz)");
 
-  head = "About kmix ";
+  head = i18n("About kmix ");
   head += vers;
 
   QMessageBox::about(this, head, msg );
@@ -488,34 +505,32 @@ void KMix::aboutqt()
 {
   QMessageBox::aboutQt(this);
 }
+*/
 
 void KMix::launchHelpCB()
 {
-  globalKapp->invokeHTMLHelp("kmillion/index.html", "");
+  globalKapp->invokeHTMLHelp("kmix/index.html", "");
 }
-
 
 
 
 bool KMix::eventFilter(QObject *o, QEvent *e)
 {
   // Lets see, if we have a "Right mouse button press"
-  if (e->type() == Event_MouseButtonPress)
-    {
-      QMouseEvent *qme = (QMouseEvent*)e;
-      if (qme->button() == RightButton)
-	{
-	  QPopupMenu *qpm = contextMenu(o);
+  if (e->type() == Event_MouseButtonPress) {
+    QMouseEvent *qme = (QMouseEvent*)e;
+    if (qme->button() == RightButton) {
+      QPopupMenu *qpm = contextMenu(o);
 
-	  if (qpm) {
-	    // QPoint p1 =  qme->pos();
-	    // cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
-	    KCMpopup_point = QCursor::pos();
-	    qpm->popup(KCMpopup_point);
-	    return true;
-	  }
-	}
+      if (qpm) {
+	// QPoint p1 =  qme->pos();
+	// cerr << "Right Mouse button pressed at (" << p1.x() << "," << p1.y() << ").\n";
+	KCMpopup_point = QCursor::pos();
+	qpm->popup(KCMpopup_point);
+	return true;
+      }
     }
+  }
   return false;
 }
 
