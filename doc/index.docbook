@@ -28,6 +28,14 @@
 </othercredit>
 
 <othercredit role="developer">
+<firstname>Helio</firstname>
+<surname>Chissini de Castro</surname>
+<affiliation><address><email>helio@conectiva.com.br</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+
+<othercredit role="developer">
 <firstname>Stefan</firstname>
 <surname>Schimanski</surname>
 <affiliation><address><email>1Stein@gmx.de</email></address></affiliation>
@@ -251,8 +259,8 @@ to speed up &kmix;.</para></listitem>
 
 
 
-<chapter id="dcop-interface">
-<title>The DCOP Interface</title>
+<chapter id="advanced-kmix">
+<title>Advanced KMix features</title>
 
 
 
@@ -260,7 +268,7 @@ to speed up &kmix;.</para></listitem>
 
 
 <sect1 id="dcop-overview">
-<title>Overview</title>
+<title>The DCOP Interface</title>
 
 <para>
 Sometimes you want to do specialized things.
@@ -323,6 +331,22 @@ The &kmix; specific interfaces are:</para>
 
 </sect1>
 
+<sect1 id="tips-and-tricks">
+<title>Tips and Tricks</title>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Using ALSA and OSS driver at the same time></guilabel></term>
+<listitem>
+<para>KMix on Linux can use either the ALSA driver or the OSS driver, not both. If you really need to use both drivers at the same time (a very rare situation), you can do it as follows: Quit KMix and add the following line to your <guilabel>kmixrc</guilabel> file in the global configuration section.</para>
+<para><guilabel>MultiDriver=true</guilabel></para>
+<para>Start KMix again. If you click <guilabel>Help->Hardware Information</guilabel> you should see "<guilabel>Sound drivers used: ALSA0.9 + OSS</guilabel>" and "<guilabel>Experimental multiple-Driver mode activated</guilabel>"</para>
+<warning><para>Warning: You will probably see all of your mixers doubled.</para><para>There is no support for this kind of configuration.</para></warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
 
 </chapter>
 
@@ -334,17 +358,8 @@ The &kmix; specific interfaces are:</para>
 <itemizedlist>
 <listitem><para>Copyright 1996-2000 Christian Esken</para></listitem>
 <listitem><para>Copyright 2000-2003 Christian Esken &amp; Stefan Schimanski</para></listitem>
+<listitem><para>Copyright 2003 Christian Esken &amp; Helio Chissini de Castro</para></listitem>
 </itemizedlist>
-
-<!--
-Copyright 1996-2000 Christian Esken
-Copyright 2000-2003 Christian Esken &amp; Stefan Schimanski
-
-<copyright>
-<year>2000</year><year>2003</year>
-<holder>Christian Esken &amp; Stefan Schimanski</holder>
-</copyright>
--->
 
 <para>Contributors:</para>
 
