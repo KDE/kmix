@@ -34,7 +34,7 @@ class KMixPrefDlg : public QTabDialog  {
    friend class KMixApp;
 
   public: 
-   KMixPrefDlg( QWidget *customTab = 0L );
+   KMixPrefDlg();
    ~KMixPrefDlg();
 
   signals:

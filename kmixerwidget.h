@@ -40,7 +40,7 @@ class KMixerWidget : public QWidget  {
    friend class KMixerPrefWidget;
 
   public:
-   KMixerWidget( QWidget *parent=0, const char *name=0 );
+   KMixerWidget( Mixer *mixer=0, QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
    QString mixerName();

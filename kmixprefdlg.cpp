@@ -31,7 +31,7 @@
 #include "kmixprefdlg.h"
 #include "kmixerwidget.h"
 
-KMixPrefDlg::KMixPrefDlg( QWidget *customTab )
+KMixPrefDlg::KMixPrefDlg()
 {
    setCaption( i18n("KMix Preferences") );	
 
@@ -52,12 +52,6 @@ KMixPrefDlg::KMixPrefDlg( QWidget *customTab )
    layout->addWidget( m_showTicks );
 
    addTab( m_generalTab, i18n("&General") );
-
-   // custom tab widget	
-   if (customTab)
-   {
-      addTab( customTab, i18n("&Channels") );
-   }
 
    // dialog buttons
    setCancelButton( i18n("&Cancel") );

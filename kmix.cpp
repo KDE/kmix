@@ -117,7 +117,7 @@ void KMixApp::initMenuBar()
 
 void KMixApp::initView()
 {
-   m_mixerWidget = new KMixerWidget( this );
+   m_mixerWidget = new KMixerWidget( 0, this );
    setView( m_mixerWidget );
 
    connect( m_mixerWidget, SIGNAL(rightMouseClick()), this, SLOT(showContextMenu()));
@@ -127,8 +127,9 @@ void KMixApp::initView()
 
 void KMixApp::initPrefDlg()
 {
-   m_mixerPrefWidget = new KMixerPrefWidget( m_mixerWidget );
-   m_prefDlg = new KMixPrefDlg( m_mixerPrefWidget );
+   QWidget *tab = new KMixerPrefWidget( m_mixerWidget );
+   m_prefDlg = new KMixPrefDlg;
+   m_prefDlg->addTab( tab, i18n("Nixus") );
 
    connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)), this, SLOT(applyPrefs(KMixPrefDlg *)));
 }

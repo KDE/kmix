@@ -64,8 +64,8 @@ class KMixApp : public KTMainWindow
    virtual void saveProperties(KConfig *_cfg);
    virtual void readProperties(KConfig *_cfg);
 
-   public slots:
-      void quit();
+  public slots:
+   void quit();
    void showSettings();
    void showContextMenu();
    void toggleMenuBar();	
@@ -83,7 +83,6 @@ class KMixApp : public KTMainWindow
    bool m_showTicks;
 
    KMixerWidget *m_mixerWidget;
-   KMixerPrefWidget *m_mixerPrefWidget;
    KMixPrefDlg *m_prefDlg;	
    KMixDockWidget *m_dockWidget;
 

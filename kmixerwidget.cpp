@@ -40,11 +40,13 @@
 #include "mixer.h"
 #include "mixdevice.h"
 
-KMixerWidget::KMixerWidget( QWidget * parent, const char * name )
-   : QWidget( parent, name )
+KMixerWidget::KMixerWidget( Mixer *mixer, QWidget * parent, const char * name )
+   : QWidget( parent, name ), m_mixer( mixer )
 {
    cerr << "KMixerWidget::KMixerWidget" << endl;
-   m_mixer = Mixer::getMixer(); // TODO: allow mixer selection
+   if (!m_mixer)
+      m_mixer = Mixer::getMixer(); // TODO: allow mixer selection
+   
    int mixerError = m_mixer->grab();
    if ( mixerError!=0 )
    {
@@ -160,11 +162,17 @@ KMixerPrefWidget::KMixerPrefWidget( KMixerWidget* mixerWidget,
    m_layout->addWidget(mixerNameLabel);
 
    // Add set selection Combo Box
+   QBoxLayout *setLayout = new QHBoxLayout( m_layout, 3 );
    QComboBox *setSelectCombo = new QComboBox( this);
-   setSelectCombo->insertItem(i18n("Set 1"));
-   setSelectCombo->insertItem(i18n("Set 2"));
-   m_layout->addWidget( setSelectCombo );
+   setSelectCombo->insertItem(i18n("Kicker applet"));
+   setSelectCombo->insertItem(i18n("Standard"));
+   setLayout->addWidget( setSelectCombo );
 
+   QPushButton *add = new QPushButton( i18n("Add"), this );
+   QPushButton *remove = new QPushButton( i18n("Remove"), this );
+   setLayout->addWidget( add );
+   setLayout->addWidget( remove );
+  
    // Channel selection box
    QGroupBox *box = new QGroupBox( i18n("Mixer channel setup"), this );
    m_layout->addWidget( box );
