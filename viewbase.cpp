@@ -38,7 +38,7 @@
 
 
 ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, ViewBase::ViewFlags vflags)
-     : QWidget(parent, name, f)
+     : QWidget(parent, name, f), _vflags(vflags)
 {
     _mixer = mixer;
     _mixSet = new MixSet();
@@ -50,9 +50,9 @@ ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, Vi
     _actions = new KActionCollection( this );
 
     // Plug in the "showMenubar" action, if the caller wants it. Typically this is only neccesary for views in the KMix main window.
-    if ( vflags && ViewBase::HasMenuBar ) {
+    if ( vflags & ViewBase::HasMenuBar ) {
 	KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-	if ( vflags && ViewBase::MenuBarVisible ) {
+	if ( vflags & ViewBase::MenuBarVisible ) {
 	    m->setChecked(true);
 	}
 	else {

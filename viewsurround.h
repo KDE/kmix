@@ -1,7 +1,7 @@
 #ifndef ViewSurround_h
 #define ViewSurround_h
 
-class QHBoxLayout;
+class QBoxLayout;
 class QGridLayout;
 class QWidget;
 
@@ -33,8 +33,8 @@ private:
     MixDevice *_mdSurroundFront;
     MixDevice *_mdSurroundBack;
 
-    QHBoxLayout* _layoutMDW;
-    QHBoxLayout* _layoutSliders;
+    QBoxLayout* _layoutMDW;
+    QBoxLayout* _layoutSliders;
     QGridLayout* _layoutSurround;
 };
 

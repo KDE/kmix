@@ -11,17 +11,23 @@ class Volume
  public:
   enum ChannelMask { MNONE     = 0,
                      MLEFT     = 1, MRIGHT     =   2, MCENTER =  4,
+                     MMAIN     = 3, MFRONT    = 7,
                      MREARLEFT = 8, MREARRIGHT =  16, MWOOFER = 32,
-                     MCUSTOM1  =64, MCUSTOM2   = 128,
+                     MREAR     = 56,
+                     MLEFTREC  = 64, MRIGHTREC = 128,
+                     MREC      =192,
+                     MCUSTOM1  =256, MCUSTOM2  = 512,
                      MALL=65535 };
 
 
  enum ChannelID { LEFT     = 0, RIGHT     = 1, CENTER = 2,
                   REARLEFT = 3, REARRIGHT = 4, WOOFER = 5,
-                  CUSTOM1  = 6, CUSTOM2   = 7, CHIDMAX  = 7 };
+                  LEFTREC  = 6, RIGHTREC  = 7,
+                  CUSTOM1  = 8, CUSTOM2   = 9, CHIDMAX  = 9 };
 
 
   Volume( ChannelMask chmask = MALL, long maxVolume = 100, long minVolume=0 );
+  Volume( ChannelMask chmask, long maxVolume, long minVolume, long maxVolumeRec, long minVolumeRec );
   Volume( const Volume &v );
   Volume( int channels, long maxVolume );
 
@@ -36,7 +42,7 @@ class Volume
   void setVolume( ChannelID chid, long volume);
 
   long getVolume(ChannelID chid);
-  long getAvgVolume();
+  long getAvgVolume(ChannelMask chmask);
   long operator[](int);
   long maxVolume();
   long minVolume();
@@ -51,17 +57,20 @@ class Volume
 
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
-  static int _channelMaskEnum[8];
+  static int _channelMaskEnum[10];
   bool          _muted;
   long          _chmask;
   long          _volumes[CHIDMAX+1];
   long          _maxVolume;
   long          _minVolume;
+  long          _maxVolumeRec;
+  long          _minVolumeRec;
 
 private:
-  void init( ChannelMask chmask, int maxVolume, int minVolume );
+  void init( ChannelMask chmask, long, long, long, long );
 
   long volrange( int vol );
+  long volrangeRec( int vol );
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);

@@ -4,6 +4,8 @@
 #include "qptrlist.h"
 #include "qwidget.h"
 
+class Mixer;
+
 class KConfig;
 
 /**

@@ -26,15 +26,20 @@
 #include "kmix.h"
 #include <kdebug.h>
 
+
 KMixApp::KMixApp()
-    : KUniqueApplication(), m_kmix( 0 )
+    : KUniqueApplication(), m_kmix( 0 ), _lastWindowClosed( false )
 {
+   connect( this, SIGNAL(lastWindowClosed()), this, SLOT(rememberLastWindowClosed()) );
 }
 
 
 KMixApp::~KMixApp()
 {
-    delete m_kmix;
+   if ( !_lastWindowClosed) {
+       _lastWindowClosed = true;
+       delete m_kmix;
+   }
 }
 
 
@@ -53,7 +58,6 @@ KMixApp::newInstance()
 		{
 			m_kmix->restore(0, FALSE);
 		}
-		this->ref(); // referencing myself, so that quitExtended() can run
 	}
 
 	return 0;
@@ -67,9 +71,12 @@ KMixApp::quitExtended()
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();
-    this->deref();
     quit();
 }
 
-#include "KMixApp.moc"
+void KMixApp::rememberLastWindowClosed() {
+   // remember that, so that we don't delete the MainWindow again in the destructor
+   _lastWindowClosed = true;
+}
 
+#include "KMixApp.moc"

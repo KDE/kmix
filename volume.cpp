@@ -27,35 +27,34 @@
 #include "volume.h"
 
 
-int Volume::_channelMaskEnum[8] =
+int Volume::_channelMaskEnum[10] =
     { MLEFT, MRIGHT, MCENTER,
       MREARLEFT, MREARRIGHT, MWOOFER,
+      MLEFTREC , MRIGHTREC ,
       MCUSTOM1, MCUSTOM2
     };
-/*
-ChannelID Volume::_channelIndexEnum[9] =
-    {
-	LEFT    , RIGHT    , CENTER,
-	REARLEFT, REARRIGHT, WOOFER,
-	CUSTOM1 , CUSTOM2
-    };
-*/
 
 Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume )
 {
-  init(chmask, maxVolume, minVolume);
+  init(chmask, maxVolume, minVolume, maxVolume, minVolume);
+}
+
+
+Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, long maxVolumeRec, long minVolumeRec )
+{
+  init(chmask, maxVolume, minVolume, maxVolumeRec, minVolumeRec);
 }
 
 // @ compatiblity constructor
 Volume::Volume( int channels, long maxVolume ) {
    if (channels == 1 ) {
-       init(Volume::MLEFT, maxVolume, 0);
+       init(Volume::MLEFT, maxVolume, 0, maxVolume, 0);
    }
    else if (channels == 2) {
-      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0);
+      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, maxVolume, 0);
    }
    else {
-     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0);
+     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, maxVolume, 0);
      kdError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
    }
 }
@@ -65,12 +64,14 @@ Volume::Volume( const Volume &v )
     _chmask     = v._chmask;
     _maxVolume  = v._maxVolume;
     _minVolume  = v._minVolume;
+    _maxVolumeRec  = v._maxVolumeRec;
+    _minVolumeRec  = v._minVolumeRec;
     _muted      = v._muted;
     setVolume(v, (ChannelMask)v._chmask);
     //    kdDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
 }
 
-void Volume::init( ChannelMask chmask, int maxVolume, int minVolume )
+void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, long maxVolumeRec, long minVolumeRec )
 {
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
 	_volumes[i] = 0;
@@ -78,6 +79,8 @@ void Volume::init( ChannelMask chmask, int maxVolume, int minVolume )
     _chmask     = chmask;
     _maxVolume  = maxVolume;
     _minVolume  = minVolume;
+    _maxVolumeRec  = _maxVolumeRec;
+    _minVolumeRec  = _minVolumeRec;
     _muted      = false;
     //kdDebug(67100) << "Volume::init() initialized " << count() << " channels\n";
 }
@@ -89,7 +92,6 @@ void Volume::setAllVolumes(long vol)
         if (  (_channelMaskEnum[i]) & _chmask ) {
             // we are supposed to set it
             _volumes[i] = volrange(vol);
-            // !!! check whether volrange() will conflict here (e.g. on loading a stored profile)
         }
     }
 }
@@ -169,11 +171,11 @@ long Volume::getVolume(ChannelID chid) {
   return vol;
 }
 
-long Volume::getAvgVolume() {
+long Volume::getAvgVolume(ChannelMask chmask) {
     int avgVolumeCounter = 0;
     long long sumOfActiveVolumes = 0;
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( _channelMaskEnum[i] & _chmask ) {
+        if ( (_channelMaskEnum[i] & _chmask) & chmask ) {
             avgVolumeCounter++;
             sumOfActiveVolumes += _volumes[i];
         }

@@ -27,7 +27,6 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_None( devnum, SetNum);
-  l_mixer->setupMixer();
   return l_mixer;
 }
 

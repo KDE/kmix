@@ -38,6 +38,8 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
 	//kdDebug(67100) << "paintEvent(). height()=" <<  height() << "\n";
 	QPainter paint(this);
 	paint.rotate(270);
+        paint.translate(0,-4); // Silly "solution" to make underlengths work
+
 	// Fix for bug 72520
 	//-       paint.drawText(-height()+2,width(),name());
 	//+       paint.drawText( -height()+2, width(), QString::fromUtf8(name()) );

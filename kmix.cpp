@@ -25,6 +25,7 @@
 #include <qmap.h>
 #include <qhbox.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qwidgetstack.h>
 #include <qlayout.h>
 #include <qtooltip.h>
@@ -47,11 +48,13 @@
 #include <kaccel.h>
 #include <kpopupmenu.h>
 
-	// application specific includes
+// application specific includes
+#include "mixertoolbox.h"
 #include "kmix.h"
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
+#include "kmixtoolbox.h"
 
 
 /**
@@ -70,7 +73,7 @@ KMixWindow::KMixWindow()
 	m_isVisible = false;
 	m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-	initMixer();
+	MixerToolBox::initMixer(m_mixers, m_multiDriverMode);
 	initActions();
 	initWidgets();
 	initMixerWidgets();
@@ -108,7 +111,6 @@ KMixWindow::initActions()
 	// settings menu
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
-
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
@@ -116,136 +118,6 @@ KMixWindow::initActions()
 
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
 	createGUI( "kmixui.rc" );
-}
-
-void
-KMixWindow::initMixer()
-{
-	QString tmpstr;
-
-	// poll for mixers
-	QMap<QString,int> mixerNums;
-	int drvNum = Mixer::getDriverNum();
-
-	int driverWithMixer = -1;
-	bool multipleDriversActive = false;
-
-	QString driverInfo = "";
-	QString driverInfoUsed = "";
-	for( int drv=0; drv<drvNum ; drv++ )
-	{
-		QString driverName = Mixer::driverName(drv);
-		if ( drv!= 0 )
-		{
-			driverInfo += " + ";
-		}
-		driverInfo += driverName;
-	}
-
-	/* Run a loop over all drivers. The loop will terminate after the first driver which
-	   has mixers. And here is the reason:
-	   - If you run ALSA with ALSA-OSS-Emulation enabled, mixers will show up twice: once
-	     as native ALSA mixer, once as OSS mixer (emulated by ALSA). This is bad and WILL
-	     confuse users. So it is a design decision that we can compile in multiple drivers
-	     but we can run only one driver.
-	   - For special usage scenarios, people will still want to run both drivers at the
-	     same time. We allow them to hack their Config-File, where they can enable a
-	     multi-driver mode.
-	   - Another remark: For KMix3.0 or so, we should allow multiple-driver, for allowing
-	     addition of special-use drivers, e.g. an ARTS-mixer-driver, or a CD-Rom volume driver.
-	 */
-
-	bool autodetectionFinished = false;
-	for( int drv=0; drv<drvNum; drv++ )
-	{
-	    if ( autodetectionFinished ) {
-		// sane exit from loop
-		break;
-	    }
-	    bool drvInfoAppended = false;
-	    // The "64" below is just a "silly" number:
-	    // The loop will break as soon as an error is detected (e.g. on 3rd loop when 2 soundcards are installed)
-	    for( int dev=0; dev<64; dev++ )
-	    {
-		Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
-		int mixerError = mixer->grab();
-		if ( mixerError!=0 )
-		{
-		    if ( m_mixers.count() > 0 ) {
-			// why not always ?!? !!
-			delete mixer;
-			mixer = 0;
-		    }
-
-		    /* If we get here, we *assume* that we probed the last dev of the current soundcard driver.
-		     * We cannot be sure 100%, probably it would help to check the "mixerError" variable. But I
-		     * currently don't see an error code that needs to be handled explicitely.
-		     *
-		     * Lets decide if we the autoprobing shall continue:
-		     */
-		    if ( m_mixers.count() == 0 ) {
-			// Simple case: We have no mixers. Lets go on with next driver
-			break;
-		    }
-		    else if ( m_multiDriverMode ) {
-			// Special case: Multi-driver mode will probe more soundcards
-			break;
-		    }
-		    else {
-			// We have mixers, but no Multi-driver mode: Fine, we're done
-			autodetectionFinished = true;
-			break;
-		    }
-		}
-
-		if ( mixer != 0 ) {
-		    m_mixers.append( mixer );
-		}
-
-		// append driverName (used drivers)
-		if ( !drvInfoAppended ) {
-		    drvInfoAppended = true;
-		    QString driverName = Mixer::driverName(drv);
-		    if ( drv!= 0 && m_mixers.count() > 0) {
-			driverInfoUsed += " + ";
-		    }
-		    driverInfoUsed += driverName;
-		}
-
-		// Check whether there are mixers in different drivers, so that the user can be warned
-		if (!multipleDriversActive)
-		{
-		    if ( driverWithMixer == -1 )
-		    {
-			// Aha, this is the very first detected device
-			driverWithMixer = drv;
-		    }
-		    else
-		    {
-			if ( driverWithMixer != drv )
-			{
-			    // Got him: There are mixers in different drivers
-			    multipleDriversActive = true;
-			}
-		    }
-		}
-
-		// count mixer nums for every mixer name to identify mixers with equal names
-		mixerNums[mixer->mixerName()]++;
-		mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-	    } // loop over sound card devices of current driver
-	} // loop over soundcard drivers
-
-	m_hwInfoString = i18n("Sound drivers supported:");
-	m_hwInfoString += " " + driverInfo +
-		"\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
-	if ( multipleDriversActive )
-	{
-		// this will only be possible by hacking the config-file, as it will not be officially supported
-		m_hwInfoString += "\nExperimental multiple-Driver mode activated";
-	}
-
-	kdDebug(67100) << m_hwInfoString << endl;
 }
 
 
@@ -271,6 +143,7 @@ KMixWindow::initWidgets()
 
 	// Mixer widget line
 	mixerNameLayout = new QHBox( centralWidget(), "mixerNameLayout" );
+        widgetsLayout->setStretchFactor( mixerNameLayout, 0 );
 	QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
 	mixerNameLayout->setSizePolicy(qsp);
 	mixerNameLayout->setSpacing(KDialog::spacingHint());
@@ -285,6 +158,7 @@ KMixWindow::initWidgets()
 	widgetsLayout->addWidget( mixerNameLayout );
 
 	m_wsMixers = new QWidgetStack( centralWidget(), "MixerWidgetStack" );
+        widgetsLayout->setStretchFactor( m_wsMixers, 10 );
 	widgetsLayout->addWidget( m_wsMixers );
 
 	if ( m_showMenubar )
@@ -367,6 +241,10 @@ KMixWindow::saveConfig()
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
    config->writeEntry( "startkdeRestore", m_onLogin );
+   if ( m_toplevelOrientation  == Qt::Vertical )
+      config->writeEntry( "Orientation","Vertical" );
+   else
+      config->writeEntry( "Orientation","Horizontal" );
 
    // save mixer widgets
    for ( KMixerWidget *mw = m_mixerWidgets.first(); mw != 0; mw = m_mixerWidgets.next() )
@@ -395,6 +273,11 @@ KMixWindow::loadConfig()
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
+   const QString& orientationString = config->readEntry("Orientation", "Horizontal");
+   if ( orientationString == "Vertical" )
+       m_toplevelOrientation  = Qt::Vertical;
+   else
+       m_toplevelOrientation = Qt::Horizontal;
 
    // show/hide menu bar
    m_showMenubar = config->readBoolEntry("Menubar", true);
@@ -438,7 +321,14 @@ KMixWindow::initMixerWidgets()
 		if (  m_surroundView ) {
 		    vflags |= ViewBase::Experimental_SurroundView;
 		}
+		if ( m_toplevelOrientation == Qt::Vertical ) {
+		    vflags |= ViewBase::Vertical;
+		}
+		else {
+		    vflags |= ViewBase::Horizontal;
+		}
 
+	
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
 
@@ -499,6 +389,8 @@ KMixWindow::showSettings()
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
       m_prefDlg->m_onLogin->setChecked( m_onLogin );
+      m_prefDlg->_rbVertical  ->setChecked( m_toplevelOrientation == Qt::Vertical );
+      m_prefDlg->_rbHorizontal->setChecked( m_toplevelOrientation == Qt::Horizontal );
 
       m_prefDlg->show();
    }
@@ -561,16 +453,26 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
    m_onLogin = prefDlg->m_onLogin->isChecked();
+   if ( prefDlg->_rbVertical->isChecked() ) {
+      kdDebug(67100) << "KMix should change to Vertical layout\n";
+      m_toplevelOrientation = Qt::Vertical;
+   }
+   else if ( prefDlg->_rbHorizontal->isChecked() ) {
+     kdDebug(67100) << "KMix should change to Horizontal layout\n";
+     m_toplevelOrientation = Qt::Horizontal;
+   }
 
 
    this->setUpdatesEnabled(false);
+   updateDocking();
+
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
    {
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
+      mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
    }
 
-   updateDocking();
    this->setUpdatesEnabled(false);
 
    // avoid invisible and unaccessible main window

@@ -41,13 +41,15 @@ MixDevice::MixDevice( int num, Volume &vol, bool recordable, bool mute,
     _mute( mute ), _category( category )
 {
     // Hint: "_volume" gets COPIED from "vol" due to the fact that the copy-constructor actually copies the volume levels.
-    //kdDebug(67100) << "MixDevice::MixDevice(): Creating dev " << num << " with " << _volume.count() << " channels (" << vol.count() << ")\n";
     _switch = false;
     _recSource = false;
     if( name.isEmpty() )
 	_name = i18n("unknown");
     else
 	_name = name;
+
+    _pk.setNum(num);
+
 
     if( category == MixDevice::SWITCH )
 	_switch = true;
@@ -59,6 +61,7 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
    _volume = md._volume;
    _type = md._type;
    _num = md._num;
+   _pk = md._pk;
    _recordable = md._recordable;
    _recSource  = md._recSource;
    _category = md._category;
@@ -75,10 +78,6 @@ long MixDevice::getVolume(Volume::ChannelID chid) {
     return _volume.getVolume(chid);
 }
 
-long MixDevice::getAvgVolume() {
-    return _volume.getAvgVolume();
-}
-
 long MixDevice::maxVolume() {
     return _volume.maxVolume();
 }
@@ -91,6 +90,16 @@ long MixDevice::minVolume() {
 void MixDevice::setVolume( int channel, int volume )
 {
   _volume.setVolume( (Volume::ChannelID)channel /* ARGH! */, volume );
+}
+
+QString& MixDevice::getPK() {
+    return _pk;
+}
+
+void MixDevice::setPK(QString &PK) {
+    _pk = PK;
+    // The key is used in the config file. It should not contain spaces
+    _pk.replace(' ', '_');
 }
 
 /**

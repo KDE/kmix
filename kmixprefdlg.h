@@ -27,6 +27,7 @@
 class KMixPrefWidget;
 class KMixApp;
 class QCheckBox;
+class QRadioButton;
 
 class 
 KMixPrefDlg : public KDialogBase  
@@ -56,6 +57,8 @@ KMixPrefDlg : public KDialogBase
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;
    QCheckBox *m_onLogin;
+   QRadioButton *_rbVertical;
+   QRadioButton *_rbHorizontal;
 };
 
 #endif

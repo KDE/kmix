@@ -26,6 +26,7 @@
 #include <qslider.h>
 #include <qstring.h>
 #include <qtooltip.h>
+#include <qapplication.h> // for QApplication::revsreseLayout()
 
 // KDE
 #include <kconfig.h>
@@ -53,7 +54,7 @@
    (b) a Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
    (c) A balancing slider
    (d) A label containg the mixer name
-*/   
+*/
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
                             MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
@@ -159,7 +160,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     balanceAndDetail->addWidget( mixerName );
     balanceAndDetail->addSpacing( 10 );
 
-    connect( m_balanceSlider, SIGNAL(valueChanged(int)), _mixer, SLOT(setBalance(int)) );
+    connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
     QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
     // --- "MenuBar" toggling from the various View's ---
@@ -276,5 +277,14 @@ void KMixerWidget::toggleMenuBarSlot() {
     emit toggleMenuBar();
 }
 
+// in RTL mode, the slider is reversed, we cannot just connect the signal to setBalance()
+// hack arround it before calling _mixer->setBalance()
+void KMixerWidget::balanceChanged(int balance)
+{
+    if (QApplication::reverseLayout())
+        balance = -balance;
+
+    _mixer->setBalance( balance );
+}
 
 #include "kmixerwidget.moc"

@@ -40,7 +40,12 @@
 ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
       : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
 {
-    _layoutMDW = new QHBoxLayout(this);
+    if ( _vflags & ViewBase::Vertical ) {
+        _layoutMDW = new QVBoxLayout(this);
+    }
+    else {
+        _layoutMDW = new QHBoxLayout(this);
+    }
     /*
      * Do not call init(). Call init() only for "end usage" classes.
      * Otherwise setMixSet() will be called multiple times.
@@ -80,6 +85,7 @@ int ViewSliders::advice() {
 
 QWidget* ViewSliders::add(MixDevice *md)
 {
+    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
     MixDeviceWidget *mdw =
 	new MDWSlider(
 			    _mixer,       // the mixer for this device
@@ -87,7 +93,7 @@ QWidget* ViewSliders::add(MixDevice *md)
 			    true,         // Show Mute LED
 			    true,         // Show Record LED
 			    false,        // Small
-			    Qt::Vertical, // Direction
+			    orientation,  // Orientation
 			    this,         // parent
 			    this,         // View widget
 			    md->name().latin1()

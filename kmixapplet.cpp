@@ -54,6 +54,7 @@
 
 // KMix
 #include "colorwidget.h"
+#include "mixertoolbox.h"
 #include "kmixapplet.h"
 #include "kmixtoolbox.h"
 #include "mdwslider.h"
@@ -163,15 +164,16 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
     // init static vars
     if ( s_instCount == 0) {
-	initMixer();
-    }
+        s_mixers.setAutoDelete( TRUE );
+	MixerToolBox::initMixer(s_mixers, false);
+    }	
     s_instCount++;
     kdDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
-
+	
     KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
 
     loadConfig();
-
+	
 
     /********** find out to use which mixer ****************************************/
     _mixer = 0;
@@ -182,12 +184,12 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	    if ( _mixer->mixerName() == _mixerName && _mixer->mixerNum()==_mixerNum ) break;
 	}
     }
-
+	
     // don't prompt for a mixer if there is just one available
     if ( !_mixer && s_mixers.count() == 1 ) {
 	_mixer = s_mixers.first();
     }
-
+	
     //  Find out wether the applet should be reversed
     //reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 
@@ -261,12 +263,12 @@ void KMixApplet::loadConfig()
     kdDebug(67100) << "KMixApplet::loadConfig()" << endl;
     KConfig *cfg = this->config();
     cfg->setGroup(0);
-
+	
     _mixerNum = cfg->readNumEntry( "Mixer", -1 );
     _mixerName = cfg->readEntry( "MixerName", QString::null );
 
     _customColors = cfg->readBoolEntry( "ColorCustom", false );
-
+	
     _colors.high = cfg->readColorEntry("ColorHigh", &highColor);
     _colors.low = cfg->readColorEntry("ColorLow", &lowColor);
     _colors.back = cfg->readColorEntry("ColorBack", &backColor);
@@ -364,10 +366,10 @@ void KMixApplet::positionChange(Position pos) {
 	m_mixerWidget->createDeviceWidgets();
 	_layout->add(m_mixerWidget);
 	_layout->activate();
-
+	
 	loadConfig();
 	setColors();
-
+	
 	const QSize panelAppletConstrainedSize = sizeHint();
 	m_mixerWidget->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
@@ -549,123 +551,6 @@ void KMixApplet::setColors( const Colors &color )
 }
 
 /******************* COLOR STUFF END ***********************************/
-
-
-void KMixApplet::initMixer()
-{
-    int driverWithMixer = -1;
-    bool multipleDriversActive = false;
-
-    QString driverInfo = "";
-    QString driverInfoUsed = "";
-
-    QString m_hwInfoString;
-    // create mixer list
-    //s_mixers = new QPtrList<Mixer>;
-
-
-    // get mixer devices
-    s_mixers.setAutoDelete( TRUE );
-    QMap<QString,int> mixerNums;
-
-    int drvNum = Mixer::getDriverNum();
-
-    // following line and loop identical with kmix.cpp
-    bool autodetectionFinished = false;
-    for( int drv=0; drv<drvNum; drv++ )
-	{
-	    if ( autodetectionFinished ) {
-		// sane exit from loop
-		break;
-	    }
-	    bool drvInfoAppended = false;
-	    // The "64" below is just a "silly" number:
-	    // The loop will break as soon as an error is detected (e.g. on 3rd loop when 2 soundcards are installed)
-	    for( int dev=0; dev<64; dev++ )
-		{
-		    //kdDebug(67100) << "KMixApplet::KMixApplet() detecting drv=" << drv << "dev=" << dev << endl;
-		    Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
-		    int mixerError = mixer->grab();
-		    if ( mixerError!=0 )
-			{
-			    if ( s_mixers.count() > 0 ) {
-				// why not always ?!? !!
-				delete mixer;
-				mixer = 0;
-			    }
-
-			    /* If we get here, we *assume* that we probed the last dev of the current soundcard driver.
-			     * We cannot be sure 100%, probably it would help to check the "mixerError" variable. But I
-			     * currently don't see an error code that needs to be handled explicitely.
-			     *
-			     * Lets decide if we the autoprobing shall continue:
-			     */
-			    if ( s_mixers.count() == 0 ) {
-				// Simple case: We have no mixers. Lets go on with next driver
-				break;
-			    }
-			    else if ( false /* no multi-driver for now on applet !! m_multiDriverMode */ ) {
-				// Special case: Multi-driver mode will probe more soundcards
-				break;
-			    }
-			    else {
-				// We have mixers, but no Multi-driver mode: Fine, we're done
-				autodetectionFinished = true;
-				break;
-			    }
-			}
-
-		    if ( mixer != 0 ) {
-			s_mixers.append( mixer );
-		    }
-
-		    // append driverName (used drivers)
-		    if ( !drvInfoAppended )
-			{
-			    drvInfoAppended = true;
-			    QString driverName = Mixer::driverName(drv);
-			    if ( drv!= 0 )
-				{
-				    driverInfoUsed += " + ";
-				}
-			    driverInfoUsed += driverName;
-			}
-
-		    // Check whether there are mixers in different drivers, so that the user can be warned
-		    if (!multipleDriversActive)
-			{
-			    if ( driverWithMixer == -1 )
-				{
-				    // Aha, this is the very first detected device
-				    driverWithMixer = drv;
-				}
-			    else
-				{
-				    if ( driverWithMixer != drv )
-					{
-					    // Got him: There are mixers in different drivers
-					    multipleDriversActive = true;
-					}
-				}
-			}
-
-		    // count mixer nums for every mixer name to identify mixers with equal names
-		    mixerNums[mixer->mixerName()]++;
-		    mixer->setMixerNum( mixerNums[mixer->mixerName()] );
-		} // loop over sound card devices of current driver
-	} // loop over soundcard drivers
-
-    m_hwInfoString = i18n("Sound drivers supported:");
-    m_hwInfoString += " " + driverInfo +
-		      "\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
-
-    if ( multipleDriversActive ) {
-	// this will only be possible by hacking the config-file, as it will not be officially supported
-	m_hwInfoString += "\nExperimental multiple-Driver mode activated";
-    }
-
-    kdDebug(67100) << m_hwInfoString << endl;
-}
 
 #include "kmixapplet.moc"
 

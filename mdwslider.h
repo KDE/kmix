@@ -25,8 +25,8 @@
 
 #include <kpanelapplet.h>
 
+#include <qvaluelist.h>
 #include <qwidget.h>
-#include "volume.h"
 #include <qptrlist.h>
 #include <qpixmap.h>
 #include <qrangecontrol.h>
@@ -49,6 +49,8 @@ class Mixer;
 class ViewBase;
 
 #include "mixdevicewidget.h"
+#include "volume.h"
+
 
 class MDWSlider : public MixDeviceWidget
 {
@@ -111,9 +113,10 @@ private:
     QLabel *m_iconLabel;
     KLedButton *m_muteLED;
     KLedButton *m_recordLED;
-    VerticalText *m_label;
+    QWidget *m_label; // is either QLabel or VerticalText
     QBoxLayout *_layout;
     QPtrList<QWidget> m_sliders;
+    QValueList<Volume::ChannelID> _slidersChids;
 };
 
 #endif

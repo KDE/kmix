@@ -28,9 +28,9 @@ class MixDevice : public QObject
      };
 
 
-      // The DeviceCategory tells, how "important" a MixDevice is. See _category.
+      // The DeviceCategory tells the type of the device
       // It is used in bitmasks, so you must use values of 2^n .
-      enum DeviceCategory { SLIDER=0x01, SWITCH=0x02, ALL=0xff };
+      enum DeviceCategory { UNDEFINED= 0x00, SLIDER=0x01, SWITCH=0x02, ENUM=0x04, ALL=0xff };
 
 
       MixDevice(int num, Volume &vol, bool recordable, bool mute,
@@ -41,6 +41,19 @@ SLIDER );
 
       int num()                    { return _num; };
       QString   name()         { return _name; };
+      /**
+       * Returns an unique ID of this MixDevice. By default the number
+       * 'num' from the constructor is returned. It is recommended that
+       * a better ID is set directly after constructing the MixDevice using
+       * the setUniqueID().
+       */
+      QString&   getPK();
+      /**
+       * Set a suitable PK for this MixDevice. It is used in looking up
+       * the keys in kmixrc. It is advised to set a nice name, like
+       * 'PCM_2', which would mean "2nd PCM device of the sound card".
+       */
+      void setPK(QString &id);
       bool isStereo()        { return (_volume.channels() > 1); };
       bool isRecordable()    { return _recordable; };
       bool isRecSource()    { return _recSource; };
@@ -53,7 +66,6 @@ SLIDER );
       void setRecSource( bool rec ) { _recSource = rec; }
       long getVolume(Volume::ChannelID chid);
       Volume& getVolume();
-      long getAvgVolume();
       long maxVolume();
       long minVolume();
 
@@ -86,6 +98,7 @@ SLIDER );
       bool _recSource; // Current rec status
       DeviceCategory _category; //  category
       QString _name;   // Ascii channel name
+      QString _pk;     // Primary key, used as part in config file keys
 };
 
 #endif

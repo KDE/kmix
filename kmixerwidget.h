@@ -87,6 +87,7 @@ class KMixerWidget : public QWidget
 
   private slots:
       //void updateBalance();
+      void balanceChanged(int balance);
 
   private:
    Mixer *_mixer;

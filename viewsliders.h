@@ -1,7 +1,7 @@
 #ifndef ViewSliders_h
 #define ViewSliders_h
 
-class QHBoxLayout;
+class QBoxLayout;
 class QWidget;
 
 class Mixer;
@@ -26,7 +26,7 @@ public slots:
     virtual void refreshVolumeLevels();
 
 private:
-    QHBoxLayout* _layoutMDW;
+    QBoxLayout* _layoutMDW;
 };
 
 #endif

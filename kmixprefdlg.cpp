@@ -20,9 +20,12 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <qbuttongroup.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
+#include <qradiobutton.h>
 
 #include <klocale.h>
 // For "kapp"
@@ -53,18 +56,34 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
 
    m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );
-   QWhatsThis::add(m_showTicks, 
+   QWhatsThis::add(m_showTicks,
            i18n("Enable/disable tickmark scales on the sliders"));
 
    m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
    layout->addWidget( m_showLabels );
-   QWhatsThis::add(m_showLabels, 
+   QWhatsThis::add(m_showLabels,
            i18n("Enables/disables description labels above the sliders"));
 
-   
+
    m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
    layout->addWidget( m_onLogin );
 
+   QBoxLayout *orientationLayout = new QHBoxLayout( layout );
+   QButtonGroup* orientationGroup = new QButtonGroup( 3, Qt::Horizontal, i18n("Orientation"), m_generalTab );
+   orientationLayout->add(orientationGroup);
+   orientationGroup->setRadioButtonExclusive(true);
+   //QLabel* qlb = new QLabel( i18n("Orientation"), orientationGroup );
+   _rbHorizontal = new QRadioButton(i18n("&Horizontal"), orientationGroup);
+   _rbVertical   = new QRadioButton(i18n("&Vertical"  ), orientationGroup);
+   orientationGroup->insert(_rbHorizontal);
+   orientationGroup->insert(_rbVertical);
+   //orientationLayout->add(qlb);
+   //orientationLayout->add(orientationGroup);
+   /*
+   orientationLayout->add(qlb);
+   orientationLayout->add(_rbHorizontal);
+   orientationLayout->add(_rbVertical);
+   */
    layout->addStretch();
    enableButtonSeparator(true);
 

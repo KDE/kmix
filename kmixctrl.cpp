@@ -18,6 +18,7 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "mixertoolbox.h"
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
@@ -28,6 +29,7 @@
 #include <kdebug.h>
 #include <qptrlist.h>
 
+#include "kmixtoolbox.h"
 #include "mixer.h"
 #include "version.h"
 
@@ -61,31 +63,11 @@ extern "C" int kdemain(int argc, char *argv[])
    // get maximum values
    KConfig *config= new KConfig("kmixrc", true, false);
    config->setGroup("Misc");
-   int maxDevices = 32;
    delete config;
 
    // create mixers
    QPtrList<Mixer> mixers;
-   int drvNum = Mixer::getDriverNum();
-
-   // Following loop iterates over all soundcard drivers (e.g. OSS, ALSA).
-   // As soon as a card is found by one driver (mixers.count()==0) the detection stops.
-   // Even if there are more drivers, they are not queried (due to "mixers.count()==0" check).
-   for( int drv=0; drv<drvNum && mixers.count()==0; drv++ )
-   {
-       for ( int dev=0; dev<maxDevices; dev++ )
-       {
-	   Mixer *mixer = Mixer::getMixer( drv, dev, 0 );
-	   int mixerError = mixer->grab();
-	   if ( mixerError!=0 ) {
-	       delete mixer;
-	       break;  // skip the other devices
-	   }
-	   else {
-	       mixers.append( mixer );
-	   }
-       } // for all devices (Soundcards) of this driver
-   } // for all drivers
+   MixerToolBox::initMixer(mixers, false);
 
    // load volumes
    if ( args->isSet("restore") )

@@ -46,7 +46,7 @@ class Mixer : public QObject, virtual public MixerIface
 
    public:
       enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP,
-			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET };
+			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET, ERR_MIXEROPEN };
 
       Mixer( int device = -1, int card = -1 );
       virtual ~Mixer() {};
@@ -54,8 +54,8 @@ class Mixer : public QObject, virtual public MixerIface
       /// Static function. This function must be overloaded by any derived mixer class
       /// to create and return an instance of the derived class.
       static int getDriverNum();
-      static Mixer* getMixer( int driver, int device = 0, int card = 0 );
-      static Mixer* getMixer( int driver, MixSet set,int device = 0, int card = 0 );
+      static Mixer* getMixer( int driver, int device = 0 );
+      //static Mixer* getMixer( int driver, MixSet set,int device = 0 );
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
@@ -80,6 +80,12 @@ class Mixer : public QObject, virtual public MixerIface
       /// Derived classes can override this method to produce platform
       /// specific error descriptions.
       virtual QString errorText(int mixer_error);
+      /// Returns the last error number
+      int getErrno() const;
+
+      /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
+      QString& stateMessage() const;
+
       virtual QString mixerName();
 
       // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
@@ -108,7 +114,7 @@ class Mixer : public QObject, virtual public MixerIface
       /// Reads the volume of the given device into VolLeft and VolRight.
       /// Abstract method! You must implement it in your dericved class.
       virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
-
+      virtual bool prepareUpdate();
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
       virtual void setVolume( int channeltype, int percentage );
@@ -135,6 +141,7 @@ class Mixer : public QObject, virtual public MixerIface
       /// Abstract method! You must implement it in your dericved class.
       virtual int writeVolumeToHW( int devnum, Volume &volume ) = 0;
       virtual void readSetFromHW();
+      void readSetFromHWforceUpdate() const;
       virtual void setRecordSource( int deviceidx, bool on );
 
       virtual void setBalance(int balance); // sets the m_balance (see there)
@@ -167,6 +174,7 @@ class Mixer : public QObject, virtual public MixerIface
 
       bool m_isOpen;
       int m_balance; // from -100 (just left) to 100 (just right)
+      int     _errno;
 
       // All mix devices of this phyisical device.
       MixSet m_mixDevices;
@@ -174,8 +182,10 @@ class Mixer : public QObject, virtual public MixerIface
       QPtrList<MixSet> m_profiles;
 
    public:
-      int setupMixer() { return setupMixer( m_mixDevices ); };
       int setupMixer( MixSet set );
+
+   private:
+      mutable bool _readSetFromHWforceUpdate;
 };
 
 #endif

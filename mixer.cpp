@@ -42,7 +42,7 @@ int Mixer::getDriverNum()
     MixerFactory *factory = g_mixerFactories;
     int num = 0;
     while( factory->getMixer!=0 )
-	 {
+    {
         num++;
         factory++;
     }
@@ -50,27 +50,30 @@ int Mixer::getDriverNum()
     return num;
 }
 
-
-Mixer* Mixer::getMixer( int driver, int device, int card )
+Mixer* Mixer::getMixer( int driver, int device )
 {
+    Mixer *mixer = 0;
     getMixerFunc *f = g_mixerFactories[driver].getMixer;
     if( f!=0 )
-        return f( device, card );
-    else
-        return 0;
+        mixer = f( device, 0 );
+    if ( mixer != 0 )
+        mixer->setupMixer(mixer->m_mixDevices); 
+    return mixer;
 }
 
-
-/* !! Is anybody using the "Mixer::getMixer( int driver, MixSet set,int device, int card )" interface ? */
-Mixer* Mixer::getMixer( int driver, MixSet set,int device, int card )
+/*
+// !! Is anybody using the "Mixer::getMixer( int driver, MixSet set,int device, int card )" interface ?
+Mixer* Mixer::getMixer( int driver, MixSet set,int device )
 {
+    Mixer *mixer = 0;
     getMixerSetFunc *f = g_mixerFactories[driver].getMixerSet;
     if( f!=0 )
-        return f( set, device, card );
-    else
-        return 0;
+       mixer = f( set, device, 0 );
+    if ( mixer != 0 )
+       mixer->setupMixer(m_mixDevices);
+    return mixer;
 }
-
+*/
 
 Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
 {
@@ -79,6 +82,8 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   m_masterDevice = 0;
 
   m_isOpen = false;
+  _errno  = 0;
+  readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
 
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
@@ -101,10 +106,19 @@ int Mixer::setupMixer( MixSet mset )
 
    int ret = openMixer();
    if (ret != 0) {
+      _errno = ret;
       return ret;
    } else
+   {
+      // This case is a workaround for old Mixer_*.cpp backends. They return 0 on openMixer() but
+      // might not have devices in them. So we work around them here. It would be better if they
+      // would return ERR_NODEV themselves.
       if( m_mixDevices.isEmpty() )
+      {
+         _errno = ERR_NODEV;
 	 return ERR_NODEV;
+      }
+   }
 
 
    if( !mset.isEmpty() ) {
@@ -135,7 +149,6 @@ int Mixer::setupMixer( MixSet mset )
 void Mixer::volumeSave( KConfig *config )
 {
     //    kdDebug(67100) << "Mixer::volumeSave()" << endl;
-    // !!! @todo Volumes not saved yet
     readSetFromHW();
     QString grp = QString("Mixer") + mixerName();
     m_mixDevices.write( config, grp );
@@ -144,13 +157,13 @@ void Mixer::volumeSave( KConfig *config )
 void Mixer::volumeLoad( KConfig *config )
 {
    QString grp = QString("Mixer") + mixerName();
-   if ( ! config->hasGroup(grp) ) { 
-      // no such group. Volumes (of this mixer) were never saved beforehand. 
-      // Thus don't restore anything (also see Bug #69320 for understanding the real reason) 
-      return; // make sure to bail out immediately 
-   } 
- 
-   // else restore the volumes 
+   if ( ! config->hasGroup(grp) ) {
+      // no such group. Volumes (of this mixer) were never saved beforehand.
+      // Thus don't restore anything (also see Bug #69320 for understanding the real reason)
+      return; // make sure to bail out immediately
+   }
+
+   // else restore the volumes
    m_mixDevices.read( config, grp );
 
    // set new settings
@@ -176,6 +189,10 @@ int Mixer::grab()
   if ( !m_isOpen )
     {
       // Try to open Mixer, if it is not open already.
+      if ( size() == 0 ) {
+          // there is no point in opening a mixer with no devices in it
+          return ERR_NODEV;
+      }
       int err =  openMixer();
       if( err == ERR_INCOMPATIBLESET )
         {
@@ -189,7 +206,7 @@ int Mixer::grab()
       }
       return err;
     }
-  _pollingTimer->start(150); // !!
+  _pollingTimer->start(50); // !!
   return 0;
 }
 
@@ -226,11 +243,30 @@ MixDevice* Mixer::operator[](int num)
 
 
 /**
+ * After calling this, readSetFromHW() will do a complete update. This will
+ * trigger emitting the appropriate signals like newVolumeLevels().
+ *
+ * This method is useful, if you need to get a "refresh signal" - used at:
+ * 1) Start of KMix - so that we can be sure an initial signal is emitted
+ * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
+ */
+void Mixer::readSetFromHWforceUpdate() const {
+   _readSetFromHWforceUpdate = true;
+}
+
+/**
    You can call this to retrieve the freshest information from the mixer HW.
    This method is also called regulary by the mixer timer.
 */
 void Mixer::readSetFromHW()
 {
+  bool updated = prepareUpdate();
+  if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
+    // Some drivers (ALSA) are smart. We don't need to run the following
+    // time-consuming update loop if there was no change
+    return;
+  }
+  _readSetFromHWforceUpdate = false;
   MixDevice* md;
   for( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
     {
@@ -244,6 +280,9 @@ void Mixer::readSetFromHW()
   emit newRecsrc(); // cheap, but works
 }
 
+bool Mixer::prepareUpdate() {
+  return true;
+}
 void Mixer::setBalance(int balance)
 {
   // !! BAD, because balance only works on the master device. If you have not Master, the slider is a NOP
@@ -307,6 +346,10 @@ int Mixer::mixerNum()
     return m_mixerNum;
 }
 
+int Mixer::getErrno() const {
+    return this->_errno;
+}
+
 void Mixer::errormsg(int mixer_error)
 {
   QString l_s_errText;
@@ -339,6 +382,9 @@ QString Mixer::errorText(int mixer_error)
       l_s_errmsg = i18n("kmix: Not enough memory.");
       break;
     case ERR_OPEN:
+    case ERR_MIXEROPEN:
+      // ERR_MIXEROPEN means: Soundcard could be opened, but has no mixer. ERR_MIXEROPEN is normally never
+      //      passed to the errorText() method, because KMix handles that case explicitely
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
 			"Please check that the soundcard is installed and that\n" \
 			"the soundcard driver is loaded.\n");
@@ -405,10 +451,8 @@ MixDevice *Mixer::mixDeviceByType( int deviceidx )
   return (*this)[i];
 }
 
-// !!
-// ?!? What is this? Uses setAllVolumes()
-// I believe it is only used by the strange setMasterVolume() method.
-// Mmmh. That might to be reworked, too.
+// @dcop
+// Used also by the setMasterVolume() method.
 void Mixer::setVolume( int deviceidx, int percentage )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
@@ -431,11 +475,13 @@ void Mixer::commitVolumeChange( MixDevice* md ) {
     writeVolumeToHW(md->num(), md->getVolume() );
 }
 
+// @dcop only
 void Mixer::setMasterVolume( int percentage )
 {
   setVolume( 0, percentage );
 }
 
+// @dcop
 int Mixer::volume( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
@@ -445,23 +491,27 @@ int Mixer::volume( int deviceidx )
   return (vol.getVolume( Volume::LEFT )*100)/vol.maxVolume();
 }
 
+// @dcop
 int Mixer::masterVolume()
 {
   return volume( 0 );
 }
 
+// @dcop
 void Mixer::increaseVolume( int deviceidx )
 {
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol+5);
 }
 
+// @dcop
 void Mixer::decreaseVolume( int deviceidx )
 {
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol-5);
 }
 
+// @dcop
 void Mixer::setMute( int deviceidx, bool on )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
@@ -472,6 +522,7 @@ void Mixer::setMute( int deviceidx, bool on )
   writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
 
+// @dcop
 bool Mixer::mute( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
