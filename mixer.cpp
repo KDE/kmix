@@ -239,6 +239,13 @@ void Mixer::volumeSave( KConfig *config )
 void Mixer::volumeLoad( KConfig *config )
 {
    QString grp = QString("Mixer") + mixerName();
+   if ( ! config->hasGroup(grp) ) {
+      // no such group. Volumes (of this mixer) were never saved beforehand.
+      // Thus don't restore anything (also see Bug #69320 for understanding the real reason)
+      return; // make sure to bail out immediately
+   }
+
+   // else restore the volumes
    m_mixDevices.read( config, grp );
 
    // set new settings
