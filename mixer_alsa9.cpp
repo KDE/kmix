@@ -70,8 +70,6 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
 	QString name = snd_mixer_selem_id_get_name( sid );
 
-	snd_mixer_elem_t *elem = snd_mixer_find_selem(handle, sid);
-	
 	if ( name == "Master" )
 	{
 		m_masterDevice = snd_mixer_selem_id_get_index( sid );
@@ -97,27 +95,43 @@ Mixer_ALSA::openMixer()
 	bool virginOpen = m_mixDevices.isEmpty();
 	bool validDevice = false;
 	int err;
+
 	snd_ctl_t *ctl_handle;
 	snd_ctl_card_info_t *hw_info;
+	snd_ctl_card_info_alloca(&hw_info);
+
 	snd_mixer_elem_t *elem;
    snd_mixer_selem_id_t *sid;
 	snd_mixer_selem_id_alloca( &sid );
-   
-	// release mixer before (re-)opening
-	release();
 
+	// Card information
 	if( card_id.isEmpty() )
 	{
 		card_id = "default";
 	}
-	
-	
+
 	if ( ( err = snd_ctl_open ( &ctl_handle, card_id.latin1(), 0 ) ) < 0 )
 	{
 		errormsg( Mixer::ERR_OPEN );
+		return false;
 	}
+
+	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
+	{
+		errormsg( Mixer::ERR_READ );
+		snd_ctl_close( ctl_handle );
+		return false;
+	}
+
+	// Device and mixer names
+	mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
+	mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
+
+	snd_ctl_close( ctl_handle );
 	
-	
+	// release mixer before (re-)opening
+	release();
+		
 	/* open mixer device */
 	if ( ( err = snd_mixer_open ( &handle, 0 ) ) < 0 )
 	{
@@ -141,17 +155,6 @@ Mixer_ALSA::openMixer()
 		return 1;
 	}
 
-	snd_ctl_card_info_alloca(&hw_info);
-
-	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
-	{
-		errormsg( Mixer::ERR_READ );
-	}
-	snd_ctl_close( ctl_handle );
-	
-	// Device and mixer names
-	mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
-	mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
 
 	// default mixers?
 	if( m_cardnum == -1 )
@@ -343,7 +346,8 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 	Volume data = volume;
 	int teste = devnum;
 	teste++;
-		
+
+	kdDebug() << "MixerALSA::Write volume call..." << endl;
 	//snd_mixer_open( &handle, m_cardnum );
 	//gid = &groups.pgroups[devnum];
 	

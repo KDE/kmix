@@ -137,7 +137,8 @@ int Mixer::getDriverNum()
 {
     MixerFactory *factory = g_mixerFactories;
     int num = 0;
-    while( factory->getMixer!=0 ) {
+    while( factory->getMixer!=0 ) 
+	 {
         num++;
         factory++;
     }
