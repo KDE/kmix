@@ -192,6 +192,7 @@ KMixWindow::initMixer()
 					
 					connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
 					m_mixers.append( mixer );
+					mixer->readSetFromHW();
 					
 					// append driverName (used drivers)
 					if ( !drvInfoAppended )
@@ -502,10 +503,8 @@ KMixWindow::quit()
 // method "stolen" from KMixApplet
 void KMixWindow::triggerUpdateLayout()
 {
-	kdDebug() << "KMixWindow::triggerUpdateLayout()\n";
 	if ( m_lockedLayout ) return;
 	if ( !m_layoutTimer->isActive() ) {
-		kdDebug() << "KMixWindow::triggerUpdateLayout() starting timer\n";
 		m_layoutTimer->start( 100, TRUE );
 	}
 }
@@ -514,7 +513,6 @@ void KMixWindow::triggerUpdateLayout()
 void KMixWindow::updateLayoutNow()
 {
    m_lockedLayout++;
- 	kdDebug() << "KMixWindow::updateLayoutNow()\n";
  	resize(widgetsLayout->minimumSize() );
    //emit updateLayout();
    //saveConfig(); // ugly hack to get the config saved somehow
