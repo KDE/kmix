@@ -278,6 +278,8 @@ int Mixer_ALSA::readVolumeFromHW( int devnum, Volume &volume )
 
 int Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 {
+   //kdDebug() << "Mixer_ALSA::writeVolumeToHW" << endl;
+
     snd_mixer_open( &handle, m_cardnum, m_devnum );
     gid = &groups.pgroups[devnum];
 

@@ -59,6 +59,8 @@ extern "C"
 
 
 int KMixApplet::s_instCount = 0;
+QTimer *KMixApplet::s_timer = 0;
+QList<Mixer> *KMixApplet::s_mixers;
 
 KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
 			QWidget *parent, const char *name )
@@ -67,13 +69,16 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
 {
    // init static vars
    if ( !s_instCount )
-   {
+   { 
+      // create mixer list
+      s_mixers = new QList<Mixer>;
+
       // create update timer
       QTimer *s_timer = new QTimer;
       s_timer->start( 500 );
 
       // get mixer devices
-      s_mixers.setAutoDelete( TRUE );
+      s_mixers->setAutoDelete( TRUE );
       for ( int dev=0; dev<MAXDEVICES; dev++ )
 	 for ( int card=0; card<MAXCARDS; card++ )
 	 {
@@ -85,7 +90,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
 	    } else
 	    {
 	       connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-	       s_mixers.append( mixer );
+	       s_mixers->append( mixer );
 	    }
 	 }
    }
@@ -97,7 +102,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
    connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateSize()) );
 
    // init mixer widget
-   initMixer( s_mixers.first() );
+   initMixer( s_mixers->first() );
      
    // FIXME activate menu items
    //setActions(About | Help | Preferences);
@@ -109,8 +114,9 @@ KMixApplet::~KMixApplet()
    s_instCount--;
    if ( !s_instCount )
    {
-      s_mixers.clear();
+      s_mixers->clear();
       delete s_timer;
+      delete s_mixers;
    }
 }
 
@@ -154,6 +160,18 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
    m_lockedLayout++;
    m_mixerWidget->setGeometry( 0, 0, width(), height() );
    m_lockedLayout--;
+}
+
+void KMixApplet::about()
+{
+}
+
+void KMixApplet::help()
+{
+}
+
+void KMixApplet::preferences()
+{
 }
 
 #include "kmixapplet.moc"

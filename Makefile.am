@@ -25,7 +25,7 @@ libkmixapplet_la_METASOURCES=AUTO
 libkmixapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp mixer.cpp \
 	ksmallslider.cpp volume.cpp kledbutton.cpp mixdevicewidget.cpp
 libkmixapplet_la_LDFLAGS = $(all_libraries) -version-info 1:0:0 -module 
-libkmixapplet_la_LIBADD = $(LIB_KDEUI)
+libkmixapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
 $(srcdir)/version.h: VERSION
 	cd $(srcdir) ;\

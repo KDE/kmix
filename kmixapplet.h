@@ -62,7 +62,7 @@ class KMixApplet : public KPanelApplet
    int m_lockedLayout;
 
    static int s_instCount;
-   static QList<Mixer> s_mixers;
+   static QList<Mixer> *s_mixers;
    static QTimer *s_timer;
 };
 

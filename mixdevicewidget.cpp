@@ -395,7 +395,9 @@ void BigMixDeviceWidget::update()
       int maxvol = 0;
       for( int i = 0; i < vol.channels(); i++ )
 	 maxvol = vol[i] > maxvol ? vol[i] : maxvol;
+      m_sliders.first()->blockSignals( true );
       m_sliders.first()->setValue( vol.maxVolume() - maxvol );
+      m_sliders.first()->blockSignals( false );
    }
    else
       for( int i = 0; i < vol.channels(); i++ )
@@ -407,11 +409,19 @@ void BigMixDeviceWidget::update()
 
    // update mute led
    if (m_muteLED)
+   {
+      m_muteLED->blockSignals( true );
       m_muteLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
+      m_muteLED->blockSignals( false );
+   }
 
    // update recsrc
    if( m_recordLED )
+   {
+      m_recordLED->blockSignals( true );
       m_recordLED->setState(m_mixdevice->isRecsrc() ? KLed::On : KLed::Off );
+      m_recordLED->blockSignals( false );
+   }
 }
 
 void BigMixDeviceWidget::contextMenu()
