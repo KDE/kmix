@@ -194,7 +194,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 		// get maximum values
 		KConfig *config= new KConfig("kcmkmixrc", false);
 		config->setGroup("Misc");
-		int maxCards = config->readNumEntry( "maxCards", 2 );
+		//int maxCards = config->readNumEntry( "maxCards", 2 );
 		int maxDevices = config->readNumEntry( "maxDevices", 2 );
 		delete config;
 		
@@ -206,7 +206,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 		{
 			for ( int dev=0; dev<maxDevices; dev++ )
 			{
-				for ( int card=0; card<maxCards; card++ )
+				// hint: no driver is using cardnum, except the unsupported alsa0.5 - esken
+				for ( int card=0; card<1 /*maxCards*/; card++ )
 				{
 					Mixer *mixer = Mixer::getMixer( drv, dev, card );
 					int mixerError = mixer->grab();
@@ -362,14 +363,18 @@ void KMixApplet::selectMixer()
 
 void KMixApplet::triggerUpdateLayout()
 {
+	kdDebug() << "KMixApplet::triggerUpdateLayout()\n";
    if ( m_lockedLayout ) return;
-   if ( !m_layoutTimer->isActive() )
+   if ( !m_layoutTimer->isActive() ) {
+	 	kdDebug() << "KMixApplet::triggerUpdateLayout() starting timer\n";
      m_layoutTimer->start( 100, TRUE );
+   }
 }
 
 void KMixApplet::updateLayoutNow()
 {
    m_lockedLayout++;
+ 	kdDebug() << "KMixApplet::updateLayoutNow()\n";
    emit updateLayout();
    saveConfig(); // ugly hack to get the config saved somehow
    m_lockedLayout--;
