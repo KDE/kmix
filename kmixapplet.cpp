@@ -133,7 +133,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 							// implemented in future
 							Mixer *lmixer;
 							bool same = false;
-							for( lmixer = s_mixers.first(); lmixer; lmixer = s_mixers.next() )
+							for( lmixer = s_mixers->first(); lmixer; lmixer = s_mixers->next() )
 							{
 								if( lmixer->mixerName() == mixer->mixerName() )
 								{
