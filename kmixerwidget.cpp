@@ -18,7 +18,6 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-//#include <iostream>
 
 // Qt
 #include <qlabel.h>
@@ -34,7 +33,6 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <ktabwidget.h>
-
 
 // KMix
 #include "mixdevicewidget.h"

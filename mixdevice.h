@@ -54,7 +54,6 @@ SLIDER );
        * 'PCM_2', which would mean "2nd PCM device of the sound card".
        */
       void setPK(QString &id);
-      bool isStereo()        { return (_volume.channels() > 1); };
       bool isRecordable()    { return _recordable; };
       bool isRecSource()    { return _recSource; };
       bool isSwitch()        { return _switch; }

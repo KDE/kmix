@@ -43,10 +43,10 @@ class Volume
 
   long getVolume(ChannelID chid);
   long getAvgVolume(ChannelMask chmask);
+  long getTopStereoVolume(ChannelMask chmask);
   long operator[](int);
   long maxVolume();
   long minVolume();
-  int  channels(); // @deprecated
   int  count();
 
   void setMuted( bool val ) { _muted = val; };
