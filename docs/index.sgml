@@ -10,8 +10,8 @@
 
 <title>The KMix Handbook
 <author>Christian Esken, <tt/esken@kde.org/
-<date>Version 0.90, 9.10.1998
-<abstract>This Handbook describes KMix Version 0.90
+<date>Version 0.98, 18.10.1998
+<abstract>This Handbook describes KMix Version 0.98
 
 <!-- Table of contents -->
 <toc>
@@ -20,8 +20,8 @@
 
 
 <sect>Introduction
-
 <p>
+
 KMix is KDE's soundcard mixer program. It is thought as a convinient tool.
 Though small, it is full-featured. There are regulators for each device:
 One for mono devices,
@@ -39,36 +39,6 @@ Much fun with KDE's multimedia application wishes
 <htmlurl url="mailto:esken@kde.org" name="esken@kde.org">
 <p>
 
-<sect>Installation
-<p>
-<sect1>How to obtain KMix
-<p>
-KMix is a core application of the KDE project <url url="http://www.kde.org">.
-KMix can be found on <url url="ftp://ftp.kde.org/pub/kde/">, the main ftp site
-of the KDE project.
-
-<sect1>Requirements
-<p>
-In order to successfully compile KMix, you need the latest versions of <tt> libkdecore</tt>
-and <tt> libkdeui</tt>. All required libraries as well as KMix itself can be found
-on <url url="ftp://ftp.kde.org/pub/kde/">. 
-
-
-
-<sect1>Compilation and installation
-<p>
-
-In order to compile and install KMix on your system, type the following in the base 
-directory of the KMix distribution:
-<tscreen><verb>
-% ./configure
-% make
-% make install
-</verb></tscreen>
-
-
-Since KMix uses <tt>autoconf</tt> you should have not trouble compiling it.
-Should you run into problems please report them to the <sf/KDE/ mailing lists.
 
 <sect>Working with kmix
 <p>
@@ -84,6 +54,7 @@ Additionaly there is a panning slider at the bottom of the KMix window.
 
 <sect1>Volume sliders
 <p>
+
 The volume sliders show the volume of the selected device. Top is
 maximum, bottom is minimum volume. The slider can have three background
 colors:
@@ -108,6 +79,7 @@ recordable devices.
 
 <sect1>Panning slider
 <p>
+
 With this slider you can control the volume distribution between left
 and right speaker. This slider is an overall regulator, which
 affects all stereo devices (Mono devices are ignored).
@@ -118,13 +90,37 @@ reach with the right mouse button. You can set the slider to some
 prominent positions with this menu.
 
 
-<sect 1>Configuration options
+<sect1>Configuration options
+<p>
+
+The following options are automatically saved when you quit kmix
+or end your session.<p>
+
 <itemize>
-<item>Docking on the KDE Panel
+<item><tt/Menu/ If switched off, the menu bar will disappear. You can
+get the menu bar by pressing <tt/Control-M/.
+<item><tt/Tickmarks/ Switches the Tickamrks on and off
+<item><tt/Docking on the KDE Panel/ If switched on, kmix will dock
+itself on the KDE Panel, when pressing the close button. If switched
+off, kmix will quit, when you press the close button.
 </itemize>
+
+
+<sect1>Mixer layout and stored Profiles
+<p>
+
+This is one of the advanced features of kmix. If you have a standard
+layout you like, you can save this layout by pressing <tt/Control-1/.
+This will save the layout as profile <tt/1/. Likewise you can
+save profile <tt/2/, <tt/3/ and <tt/4/. You can
+restore a profile by pressing <tt/1/, <tt/2/, <tt/3/ and <tt/4/
+respectively.
+
+
 
 <sect1>Multiple Soundcards
 <p>
+
 KMix is prepared for multiple sound cards. If called via the KDE Panel,
 the default mixer is used. For the Open Sound System, this is
 <tt>/dev/mixer</tt>. For other operating systems or sound drivers,
@@ -133,7 +129,10 @@ this may vary.
 If you want KMix to use a specific soundcard (primary, secondary, ...),
 you must tell this KMix on startup. 
 You can start the mixer with a device number. 0 means the default
-device, 1 your primary card, 2 your secondary and so on.
+device, 1 your primary mixer, 2 your secondary mixer and so on. If
+you use this regulary, you should create a new program kdelnk (using kfm
+or the menu editor). This should just call kmix with the appropriate
+device number as parameter, for example "kmix 2".
 
 
 
@@ -143,6 +142,7 @@ device, 1 your primary card, 2 your secondary and so on.
 <p>
 <sect1> Key Bindings
 <p>
+
 KMix honors the following key bindings.
 
 
@@ -182,7 +182,9 @@ Quits the Mixer.
 Invokes the KDE help system with the KMix help pages displayed.
 <sect2>About 
 <p>
-Displays essential information about KMix.
+Displays informations about KMix.
+
+
 
 <sect>Installation
 <p>
@@ -224,28 +226,22 @@ lists.
 
 
 <sect>Questions and answers
-
+<p>
 <itemize>
-
-<item><tt/Q:/ I have switched the menu bar off. Have I to hack the
-config file to get it back?
+<item><tt/Q:/ I have switched the menu bar off. Do I have to hack the
+config file to get it back?<p>
 <tt/A:/ No, just press <tt/Control-M/
 
-<item>
-<item><tt/Q:/ The mixer does not save the "Split Option" for the Stereo
-channels
-<tt/A:/ This is intended. kmix determinates, whether a "split" is
+<item><tt/Q:/ When I leave kmix, and restart it, the mixer does
+not restore the "split" settings of the channels.<p>
+<tt/A:/ This is intended. kmix determinates on startup, whether a "split" is
   neccesary, automatically. It splits the sliders, if both channels have
   different volume settings.
 
-<item>
-<item><tt/Q:/
-<tt/A:/
 
-<item>
-<item><tt/Q:/
-<tt/A:/
-
+<item><tt/Q:/ The program does not save any options.<p>
+<tt/A:/ The "Menu", "Tickmarks" and "Docking" option are saved
+automatically. The layout is saved manually in profiles.
 </itemize>
 
 

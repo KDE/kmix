@@ -100,21 +100,30 @@
 #endif
 
 
-
-char KMixErrors[6][100]=
+// If you change the definition here, make sure to fix it in kmix.cpp, too.
+char KMixErrors[6][200]=
 {
   "kmix: This message should not appear. :-(",
-  "kmix: There is no mixer support for your system.",
+#ifdef OSS_MIXER
+  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
+  "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.",
+#elif defined (SUN_MIXER)
+  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
+  "Ask your system administrator to fix /dev/sndctl to allow the access.",
+#else
+  "kmix: Could not open mixer.\nPerhaps you have no permission to access the mixer device.\n" \
+  "Please check your operating systems manual to allow the access.",
+#endif
   "kmix: Could not read from mixer.",
   "kmix: Could not write to mixer.",
   "kmix: Your mixer does not control any devices.",
   "kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING)."
 };
 
-  char* MixerDevNames[17]={"Volume" , "Bass"  , "Treble"    , "Synth", "Pcm"  , \
-			   "Speaker", "Line"  , "Microphone", "CD"   , "Mix"  , \
-			   "Pcm2"   , "RecMon", "IGain"     , "OGain", "Line1", \
-			   "Line2"  , "Line3" };
+char* MixerDevNames[17]={"Volume" , "Bass"  , "Treble"    , "Synth", "Pcm"  , \
+			 "Speaker", "Line"  , "Microphone", "CD"   , "Mix"  , \
+			 "Pcm2"   , "RecMon", "IGain"     , "OGain", "Line1", \
+			 "Line2"  , "Line3" };
 
 /// The mixing set list
 
@@ -214,9 +223,16 @@ void Mixer::setDevNumName(int devnum)
   this->devnum  = devnum;
 
 #ifdef OSS_MIXER
-  devname = "/dev/mixer";
-  if (devnum!=0)
+  switch (devnum) {
+  case 0:
+  case 1:
+    devname = "/dev/mixer";
+    break;
+  default:
+    devname = "/dev/mixer";
     devname += ('0'+devnum-1);
+    break;
+  }
 #endif
 #ifdef SUN_MIXER
   devname = "/dev/audioctl";

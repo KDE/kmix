@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>The KMix Handbook: The Menu Entries</TITLE>
+<TITLE>The KMix Handbook: Installation</TITLE>
 <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=iso-8859-1">
 <META NAME="keywords" CONTENT="KDE sound mixer multimedia">
 <META NAME="description" CONTENT="KDE's soundcard mixer">
@@ -18,40 +18,50 @@
 <A HREF="index-3.html">Previous</A>
 <A HREF="index.html#toc4">Table of Contents</A>
 </P>
-<H3><A NAME="s4">4. The Menu Entries</A></H3>
+<H3><A NAME="s4">4. Installation</A></H3>
 
 <P>
-<H3><A NAME="ss4.1">4.1 File</A>
+<H3><A NAME="ss4.1">4.1 How to obtain KMix</A>
+</H3>
+
+<P>KMix is a core application of the KDE project 
+<A HREF="http://www.kde.org">http://www.kde.org</A>.
+KMix can be found on 
+<A HREF="ftp://ftp.kde.org/pub/kde/">ftp://ftp.kde.org/pub/kde/</A>, the main ftp
+site
+of the KDE project.
+<P>
+<H3><A NAME="ss4.2">4.2 Requirements</A>
+</H3>
+
+<P>In order to successfully compile KMix, you need the latest versions of <CODE>libkdecore</CODE>
+and <CODE> libkdeui</CODE>. All required libraries as well as KMix itself can be
+found
+on 
+<A HREF="ftp://ftp.kde.org/pub/kde/">ftp://ftp.kde.org/pub/kde/</A>.
+<P>
+<P>
+<P>
+<H3><A NAME="ss4.3">4.3 Compilation and installation</A>
 </H3>
 
 <P>
-<H4>Show,Hide Menu</H4>
-
-<P>Switch the menu bar on and off
-<H4>Tickmarks On,Off</H4>
-
-<P>Switches the tick marks on the volume sliders on and off
-<H4>Options</H4>
-
-<P>Opens the KMix options menu
+<P>In order to compile and install KMix on your system, type the following in
+the base
+directory of the KMix distribution:
+<BLOCKQUOTE><CODE>
+<PRE>
+% ./configure
+% make
+% make install
+</PRE>
+</CODE></BLOCKQUOTE>
 <P>
-<H4>Quit</H4>
-
-<P>Quits the Mixer.
+<P>Since KMix uses <CODE>autoconf</CODE> you should have not trouble compiling it.
+Should you run into problems please report them to the <SF>KDE</SF> mailing
+lists.
 <P>
 <P>
-<P>
-<P>
-<H3><A NAME="ss4.2">4.2 Help</A>
-</H3>
-
-<P>
-<H4>Help</H4>
-
-<P>Invokes the KDE help system with the KMix help pages displayed.
-<H4>About </H4>
-
-<P>Displays essential information about KMix.
 <P>
 <P ALIGN="RIGHT">
 

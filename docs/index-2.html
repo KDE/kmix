@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <HTML>
 <HEAD>
-<TITLE>The KMix Handbook: Installation</TITLE>
+<TITLE>The KMix Handbook: Working with kmix</TITLE>
 <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=iso-8859-1">
 <META NAME="keywords" CONTENT="KDE sound mixer multimedia">
 <META NAME="description" CONTENT="KDE's soundcard mixer">
@@ -18,44 +18,124 @@
 <A HREF="index-1.html">Previous</A>
 <A HREF="index.html#toc2">Table of Contents</A>
 </P>
-<H3><A NAME="s2">2. Installation</A></H3>
+<H3><A NAME="s2">2. Working with kmix</A></H3>
 
 <P>
-<H3><A NAME="ss2.1">2.1 How to obtain KMix</A>
-</H3>
-
-<P>KMix is a core application of the KDE project 
-<A HREF="http://www.kde.org">http://www.kde.org</A>.
-KMix can be found on 
-<A HREF="ftp://ftp.kde.org/pub/kde/">ftp://ftp.kde.org/pub/kde/</A>, the main ftp site
-of the KDE project.
-<P>
-<H3><A NAME="ss2.2">2.2 Requirements</A>
-</H3>
-
-<P>In order to successfully compile KMix, you need the latest versions of <CODE> libkdecore</CODE>
-and <CODE> libkdeui</CODE>. All required libraries as well as KMix itself can be found
-on 
-<A HREF="ftp://ftp.kde.org/pub/kde/">ftp://ftp.kde.org/pub/kde/</A>. 
+<P>KMix usage is straightforward. Every mixer device that your soundcard
+provides, is represented by a volume slider. Mono devices have only
+one slider, Stereo devices have two sliders. You are able to merge
+the two sliders of a stereo device to a single slider.
+Additionaly there is a panning slider at the bottom of the KMix window.
 <P>
 <P>
 <P>
-<H3><A NAME="ss2.3">2.3 Compilation and installation</A>
+<P>
+<H3><A NAME="ss2.1">2.1 Volume sliders</A>
 </H3>
 
 <P>
-<P>In order to compile and install KMix on your system, type the following in the base 
-directory of the KMix distribution:
-<BLOCKQUOTE><CODE>
-<PRE>
-% ./configure
-% make
-% make install
-</PRE>
-</CODE></BLOCKQUOTE>
+<P>The volume sliders show the volume of the selected device. Top is
+maximum, bottom is minimum volume. The slider can have three background
+colors:
+<UL>
+<LI><CODE>Normal</CODE> No special situation applies to this device.</LI>
+<LI><CODE>Black</CODE> The device is muted.</LI>
+<LI><CODE>Red</CODE> The device is the current record source. The device
+may be muted as well.</LI>
+</UL>
+<P>The volume sliders have a context menu. Three entries are possible,
+but only the applicable are shown.
 <P>
-<P>Since KMix uses <CODE>autoconf</CODE> you should have not trouble compiling it.
-Should you run into problems please report them to the <SF>KDE</SF> mailing lists.
+<UL>
+<LI><CODE>Mute [On,Off]</CODE> Mute and unmute the the device.</LI>
+<LI><CODE>(Un-)Split</CODE> Show either one or two sliders. Only applicable to
+stereo devices.</LI>
+<LI><CODE>Record Source</CODE> Set this device as record source. Only applicable to
+recordable devices.</LI>
+</UL>
+<P>
+<P>
+<H3><A NAME="ss2.2">2.2 Panning slider</A>
+</H3>
+
+<P>
+<P>With this slider you can control the volume distribution between left
+and right speaker. This slider is an overall regulator, which
+affects all stereo devices (Mono devices are ignored).
+The middle position is the default. Dragging the slider to the left
+lowers the volume of the right speaker, dragging it to the right
+vice versa. The panning slider has a context menu which you can
+reach with the right mouse button. You can set the slider to some
+prominent positions with this menu.
+<P>
+<P>
+<H3><A NAME="ss2.3">2.3 Configuration options</A>
+</H3>
+
+<P>
+<P>The following options are automatically saved when you quit kmix
+or end your session.
+<P>
+<P>
+<UL>
+<LI><CODE>Menu</CODE> If switched off, the menu bar will disappear. You can
+get the menu bar by pressing <CODE>Control-M</CODE>.</LI>
+<LI><CODE>Tickmarks</CODE> Switches the Tickamrks on and off</LI>
+<LI><CODE>Docking on the KDE Panel</CODE> If switched on, kmix will dock
+itself on the KDE Panel, when pressing the close button. If switched
+off, kmix will quit, when you press the close button.</LI>
+</UL>
+<P>
+<P>
+<H3><A NAME="ss2.4">2.4 Mixer layout and stored Profiles</A>
+</H3>
+
+<P>
+<P>This is one of the advanced features of kmix. If you have a standard
+layout you like, you can save this layout by pressing <CODE>Control-1</CODE>.
+This will save the layout as profile <CODE>1</CODE>. Likewise you can
+save profile <CODE>2</CODE>, <CODE>3</CODE> and <CODE>4</CODE>. You can
+restore a profile by pressing <CODE>1</CODE>, <CODE>2</CODE>, <CODE>3</CODE> and <CODE>4</CODE>
+respectively.
+<P>
+<P>
+<P>
+<H3><A NAME="ss2.5">2.5 Multiple Soundcards</A>
+</H3>
+
+<P>
+<P>KMix is prepared for multiple sound cards. If called via the KDE Panel,
+the default mixer is used. For the Open Sound System, this is
+<CODE>/dev/mixer</CODE>. For other operating systems or sound drivers,
+this may vary.
+<P>If you want KMix to use a specific soundcard (primary, secondary, ...),
+you must tell this KMix on startup. 
+You can start the mixer with a device number. 0 means the default
+device, 1 your primary mixer, 2 your secondary mixer and so on. If
+you use this regulary, you should create a new program kdelnk (using kfm
+or the menu editor). This should just call kmix with the appropriate
+device number as parameter, for example "kmix 2".
+<P>
+<P>
+<P>
+<P>
+<P>
+<P>
+<P>
+<H3><A NAME="ss2.6">2.6 Key Bindings</A>
+</H3>
+
+<P>
+<P>KMix honors the following key bindings.
+<P>
+<P>
+<UL>
+<LI><CODE>Up Arrow</CODE> Increase volume by 1% </LI>
+<LI><CODE>Down Arrow</CODE> Decrease volume by 1% </LI>
+<LI><CODE>Page Up</CODE> Increase volume by 10% </LI>
+<LI><CODE>Page Down</CODE> Decrease volume by 10% </LI>
+<LI><CODE>Control-M</CODE> Switch the menu bar on and off </LI>
+</UL>
 <P>
 <P ALIGN="RIGHT">
 

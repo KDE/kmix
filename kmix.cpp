@@ -29,6 +29,7 @@ static char rcsid[]="$Id$";
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmsgbox.h>
+#include <qmessagebox.h> 
 
 #include "sets.h"
 #include "mixer.h"
@@ -50,7 +51,7 @@ KConfig	       *KmConfig;
 
 
 char		SetNumber;
-extern char	KMixErrors[6][100];
+extern char	KMixErrors[6][200];
 
 int main(int argc, char **argv)
 {
@@ -165,6 +166,8 @@ KMix::KMix(int mixernum)
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
     KMsgBox::message(0, "Mixer failure.", KMixErrors[mixer_error], KMsgBox::INFORMATION, "OK" );
+
+    cerr << mixer_error << "," << KMixErrors[mixer_error] << "\n###\n";
     mix->errormsg(mixer_error);
     exit(1);
   }
