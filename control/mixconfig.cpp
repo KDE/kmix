@@ -127,6 +127,7 @@ void KMixConfig::loadVolumes()
       kdDebug() << "can't find kmixctrl" << endl;
 
       KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") );
+      delete ctrl;
       return;
    }
 
@@ -154,6 +155,7 @@ void KMixConfig::saveVolumes()
       kdDebug() << "can't find kmixctrl" << endl;
 
       KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") );
+      delete ctrl;
       return;
    }
 
