@@ -34,7 +34,7 @@ KMixApp::KMixApp()
 
 KMixApp::~KMixApp()
 {
-	delete m_kmix;
+    delete m_kmix;
 }
 
 
@@ -53,19 +53,21 @@ KMixApp::newInstance()
 		{
 			m_kmix->restore(0, FALSE);
 		}
+		this->ref(); // referencing myself, so that quitExtended() can run
 	}
 
 	return 0;
 }
 
 
-void 
-KMixApp::quitExtended() 
+void
+KMixApp::quitExtended()
 {
     // This method is here for quiting from the dock icon: When directly calling
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();
+    this->deref();
     quit();
 }
 
