@@ -205,8 +205,6 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			return;
 		}
 		
-		QRect desktop = KGlobalSettings::desktopGeometry(this);
-
 		int w = _dockAreaPopup->width();
 		int h = _dockAreaPopup->height();
 		int x = this->mapToGlobal( QPoint( 0, 0 ) ).x() - this->width()/2;
