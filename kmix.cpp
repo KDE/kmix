@@ -146,7 +146,7 @@ void
 KMixWindow::initActions()
 {
 	// file menu
-	(void)new KAction( i18n("&New Mixer Tab"), "filenew", 0, this,
+	(void)new KAction( i18n("&New Mixer Tab..."), "filenew", 0, this,
 							 SLOT(newMixer()), actionCollection(), "file_new_tab" );
 	(void)new KAction( i18n("&Close Mixer Tab"), "fileclose", 0, this,
 							 SLOT(closeMixer()), actionCollection(), "file_close_tab" );
@@ -547,7 +547,7 @@ KMixWindow::newMixer()
 
    bool ok = FALSE;
    QString res = QInputDialog::getItem( i18n("Mixers"),
-			i18n("Available mixers"),
+			i18n("Available mixers:"),
 			lst, 1, FALSE, &ok, this );
 	if ( ok )
    {
