@@ -58,7 +58,7 @@ void KDockWidget::setPixmap(const char* dockPixmapName)
       QString tmp;
       // !!! this should use KDE error handling functions
       tmp = i18n("Could not load ") + dockPixmapName;
-      QMessageBox::warning(this, i18n("Error"), tmp);
+      QMessageBox::warning(this, i18n("Error"), tmp, i18n("OK"));
     }
   }
 }

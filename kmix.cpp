@@ -595,7 +595,7 @@ void KMix::quitClickedCB()
 
 void KMix::launchHelpCB()
 {
-  globalKapp->invokeHTMLHelp("kmix/index.html", "");
+  globalKapp->invokeHTMLHelp("", "");
 }
 
 
