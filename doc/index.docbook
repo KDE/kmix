@@ -184,6 +184,31 @@ is checked or not, by holding the mouse over the icon for each device, you can s
 
 </chapter>
 
+
+<chapter id="working-with-kmixapplet">
+<title>The &kmix; panel applet</title>
+
+<para>
+The &kmix; panel applet is an alternative interface to &kmix;.
+You can add it to the KDE panel by using the panel menu (<guilabel>Panel Menu</guilabel> -> <guilabel>Add</guilabel> -> <guilabel>Applet</guilabel> -> <guilabel>KMix Applet</guilabel>).
+</para>
+
+<para>
+You can work with the &kmix; applet as described for the <link linkend="working-with-kmix">main window</link> - including the context menu.
+Due to the limited space in the panel there are differences:
+
+<simplelist>
+<member>No main menu available.</member>
+<member>If you have multiple soundcards, you cannot change the selected mixer after the initial selection.</member>
+<member>No dock icon. If you want to use the dock item you must additionaly start &kmix; from the K-Menu (usually installed under <guilabel>K-Menu</guilabel> -> <guilabel>Mulitimedia</guilabel> -> <guilabel>Sound Mixer</guilabel>).</member>
+<member>Icons only available when panel is big enough.</member>
+<member>No device name labels available.</member>
+<member>Configuration is done via panel menu - you can configure colors and slider direction there.</member>
+</simplelist>
+
+</para>
+</chapter>
+
 <chapter id="control-panel">
 <title>&kcontrol; Settings</title>
 
@@ -227,12 +252,22 @@ to speed up &kmix;.</para></listitem>
 
 
 <chapter id="dcop-interface">
-<title>The DCOP Interface (Controlling &kmix; remotely)</title>
+<title>The DCOP Interface</title>
+
+
+
+<warning><para>This chapter describes &kmix; functionality that is targeted at the experienced user. Most users will never have a need for this functionality, so you can safely skip this chapter</para></warning>
+
 
 <sect1 id="dcop-overview">
 <title>Overview</title>
 
-<para>Sometimes you want to do specialized things. Things like controlling the mixer from another application or muting the master device every day at 10pm. &kmix; has a DCOP interface that allows you achive much with minimal work. You can start a shell and <guilabel>dcop kmix</guilabel> to start exploring the &kmix; DCOP interface. The &kmix; specific interfaces are:</para>
+<para>
+Sometimes you want to do specialized things.
+Things like controlling the mixer from another application or muting the master device every day at 10pm.
+&kmix; has a DCOP interface that allows you to achive much with minimal work.
+You can start a shell and type <guilabel>dcop kmix</guilabel> to start exploring the &kmix; DCOP interface.
+The &kmix; specific interfaces are:</para>
 
 <variablelist>
 <varlistentry>
@@ -245,7 +280,12 @@ to speed up &kmix;.</para></listitem>
 <listitem><para>The GUI window can be controlled with this command. You can hide and show the window, resize it and much more. Type <guilabel>dcop kmix kmix-mainwindow#1</guilabel> if you want to explore all the features.</para></listitem>
 </varlistentry>
 </variablelist>
+
 </sect1>
+
+
+
+
 
 <sect1 id="dcop-examples">
 <title>DCOP Examples</title>
@@ -271,6 +311,16 @@ to speed up &kmix;.</para></listitem>
 <listitem><para>Sets the volume on the second mixer, device 0 to 10 percent. Device 0 is often the master device, but not always. If you want to quiten down the (first) master device on your second soundcard, you can use <guilabel>dcop kmix Mixer1 setMasterVolume 0</guilabel></para></listitem>
 </varlistentry>
 </variablelist>
+
+<para>                                                                          You can directly execute these commands from a shell that you started from inside KDE. If you need to execute dcop commands from somewhere else, for example from a crontab script, you need to define the <guilabel>DCOPSERVER</guilabel> environment variable (as seen in the first line of your ~/.DCOPserver_hostname_:0 file), for example:                      </para>
+                                                                         <!-- Don't know a better way to format code - esken -->
+<simplelist>
+<member>#!/bin/sh</member>
+<member>DCOPSERVER=`cat /home/yourhome/.DCOPserver_yourhostname_:0 | grep local`</member>
+<member>export DCOPSERVER</member>
+<member>dcop kmix Mixer0 setMasterVolume 0</member>
+</simplelist>
+
 </sect1>
 
 
