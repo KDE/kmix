@@ -224,7 +224,6 @@ Mixer_ALSA::openMixer()
 			Volume vol( chn, ( int )maxVolume );
 				
 			mixer_elem_list.append( elem );
-			readVolumeFromHW( mixerIdx, vol );
 			m_mixDevices.append(	new MixDevice( mixerIdx, vol, canRecord, snd_mixer_selem_id_get_name( sid ), ct) );
 			mixerIdx++;
 		}
@@ -311,6 +310,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	int elem_sw;
 	bool hasVol = false;
 	long left, right, pmin, pmax;
+
 	snd_mixer_elem_t *elem = mixer_elem_list[ mixerIdx ];
 
 	hasVol = ( snd_mixer_selem_has_playback_volume ( elem ) ||
@@ -328,7 +328,6 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		else
 			snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
 
-
 		// Is Mono channel ???
 		if ( snd_mixer_selem_is_playback_mono ( elem ) )
 		{
@@ -341,10 +340,9 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 			else
 				snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
 
-			volume.setVolume( Volume::LEFT, left );
 			volume.setVolume( Volume::RIGHT, right );
+			volume.setVolume( Volume::LEFT, left );
 		}
-		return 0;
 	}
 	
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
