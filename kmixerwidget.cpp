@@ -78,7 +78,7 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
    {
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
-      if ( mixerName ) s += " \"" + mixerName + "\"";
+      if ( !mixerName.isEmpty() ) s += " \"" + mixerName + "\"";
       QLabel *errorLabel = new QLabel( s, this );
       errorLabel->setAlignment( QLabel::AlignCenter );
       layout->addWidget( errorLabel );

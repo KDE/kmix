@@ -278,7 +278,7 @@ void Mixer::errormsg(int mixer_error)
 {
   QString l_s_errText;
   l_s_errText = errorText(mixer_error);
-  cerr << l_s_errText << "\n";
+  kdError() << l_s_errText << "\n";
 }
 
 QString Mixer::errorText(int mixer_error)

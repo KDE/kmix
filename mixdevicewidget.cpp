@@ -138,12 +138,12 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	 slider = new KSmallSlider( 0, maxvol, maxvol/10, 
 				    maxvol - m_mixdevice->getVolume( i ),
 				    m_vert?QSlider::Vertical:QSlider::Horizontal, 
-				    this, m_mixdevice->name() );
+				    this, m_mixdevice->name().ascii() );
       else
 	 slider = new QSlider( 0, maxvol, maxvol/10, 
 			       maxvol - m_mixdevice->getVolume( i ),
 			       m_vert?QSlider::Vertical:QSlider::Horizontal, 
-			       this, m_mixdevice->name() );
+			       this, m_mixdevice->name().ascii() );
 
       QToolTip::add( slider, m_mixdevice->name() );
       slider->installEventFilter( this );
