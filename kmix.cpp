@@ -623,7 +623,7 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 }
 
 
-QPopupMenu* KMix::ContainerContextMenu(QObject *o, QObject *)
+QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
 {
   static bool MlocalCreated=false;
   static QPopupMenu *Mlocal;
@@ -700,7 +700,7 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
 
 
 
-void KMix::onDrop( KDNDDropZone* _zone )
+void KMix::onDrop( KDNDDropZone*  )
 {
   QStrList strlist;
   KURL *url;
@@ -795,7 +795,7 @@ void KMix::closeEvent( QCloseEvent *e )
 }
 
 
-void KMix::hideEvent( QHideEvent *e)
+void KMix::hideEvent( QHideEvent *)
 {
   cout << "hideEvent()\n";
   if ( allowDocking && !dockinginprogress) {

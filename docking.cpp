@@ -186,18 +186,19 @@ void KDockWidget::mousePressEvent(QMouseEvent *e)
 
 void KDockWidget::toggle_window_state()
 {
-  if(ktmw != 0) {
-    if (ktmw->isVisible()) {
-      // --- Toplevel was visible => hide it
-      dockingInProgress = true;
-      ktmw->fullHide();
+#warning where is KTMainWindow::fullShow and fullHide supposed to be defined?
+    if(ktmw != 0) {
+	if (ktmw->isVisible()) {
+	    // --- Toplevel was visible => hide it
+	    dockingInProgress = true;
+	    // ktmw->fullHide();
+	}
+	else {
+	    // --- Toplevel was invisible => show it again
+	    // ktmw->fullShow();
+	    dockingInProgress = false;
+	}
     }
-    else {
-      // --- Toplevel was invisible => show it again
-      ktmw->fullShow();
-      dockingInProgress = false;
-    }
-  }
 }
 
 

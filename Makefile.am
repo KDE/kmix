@@ -1,17 +1,16 @@
  
-APPSDIR = $(kde_appsdir)/Multimedia
 INCLUDES= $(all_includes)
 
 ####### Files
 
 SUBDIRS = pics
 bin_PROGRAMS = 	kmix
-kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp kmix-docking.cpp sets.cpp channel.cpp docking.cpp ktmainwindow.cpp
-noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h kmix-docking.h sets.h channel.h docking.h ktmainwindow.h
+kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp kmix-docking.cpp sets.cpp channel.cpp docking.cpp 
+noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h kmix-docking.h sets.h channel.h docking.h 
 kmix_LDADD =   $(LIB_KDEUI) $(LIBALIB)
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
-METASOURCES = kmix.moc mixer.moc prefs.moc kmix-docking.moc docking.moc ktmainwindow.moc
+METASOURCES = kmix.moc mixer.moc prefs.moc kmix-docking.moc docking.moc 
 
 $(srcdir)/version.h: VERSION
 	cd $(srcdir) ;\
@@ -20,15 +19,12 @@ $(srcdir)/version.h: VERSION
 
 EXTRA_DIST = kmix.desktop VERSION
 
-install-data-local: 
-	$(mkinstalldirs) $(APPSDIR)
-	$(INSTALL_DATA) $(srcdir)/kmix.desktop $(APPSDIR)
-
-uninstall-local:
-	rm -f $(APPSDIR)/kmix.desktop
+appsdir = $(kde_appsdir)/Multimedia
+apps_DATA = kmix.desktop
 
 messages:
 	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kmix_SOURCES) && mv messages.po ../po/kmix.pot
 
 edit:
 	xemacs $(kmix_SOURCES) $(noinst_HEADERS) &
+
