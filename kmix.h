@@ -103,6 +103,7 @@ KMixWindow : public KMainWindow
    bool m_startVisible;
    bool m_showMenubar;
    bool m_isVisible;
+   bool m_multiDriverMode;
    bool m_visibilityUpdateAllowed;
    int m_maxId;
 

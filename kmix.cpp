@@ -56,19 +56,23 @@
 #include "kmixdockwidget.h"
 
 
+/**
+ * Constructs a mixer window (KMix main window)
+ */
 KMixWindow::KMixWindow()
 	: KMainWindow(0, 0, 0 ), m_showTicks( false ), m_maxId( 0 ),
 	m_dockWidget( 0L ) 
 {
-	 m_visibilityUpdateAllowed = true;
-	 // As long as we do not know better, we assume to start hidden. We need
-	 // to initialize this variable here, as we don't trigger a hideEvent().
-	 m_isVisible = false;
-	 m_mixerWidgets.setAutoDelete(true);
+	m_visibilityUpdateAllowed	= true;
+	m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
+	// As long as we do not know better, we assume to start hidden. We need
+	// to initialize this variable here, as we don't trigger a hideEvent().
+	m_isVisible = false;
+	m_mixerWidgets.setAutoDelete(true);
+	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
 	initMixer();
 	initActions();
 	initWidgets();
-	loadConfig();
 	initMixerWidgets();
 
 
@@ -84,10 +88,10 @@ KMixWindow::KMixWindow()
 				break;
 			}
 		}
+		// What is going on here ??? No code is executed here !!!
 	}
 
 	initPrefDlg();
-
 	updateDocking();
 
 	if ( m_startVisible )
@@ -125,7 +129,7 @@ KMixWindow::initActions()
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 
-		  KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
+	KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
 
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
 				 actionCollection(), "dock_mute" );
@@ -171,13 +175,26 @@ KMixWindow::initMixer()
 		driverInfo += driverName;
 	}
 
-	for( int drv=0; drv<drvNum ; drv++ )
+	/* Run a loop over all drivers. The loop will terminate after the first driver which
+	   has mixers. And here is the reason:
+	   - If you run ALSA with ALSA-OSS-Emulation enabled, mixers will show up twice: once
+	     as native ALSA mixer, once as OSS mixer (emulated by ALSA). This is bad and WILL
+	     confuse users. So it is a design decision that we can compile in multiple drivers
+	     but we can run only one driver.
+	   - For special usage scenarios, people will still want to run both drivers at the
+	     same time. We allow them to hack their Config-File, where they can enable a
+	     multi-driver mode.
+	   - Another remark: For KMix3.0 or so, we should allow multiple-driver, for allowing
+	     addition of special-use drivers, e.g. an ARTS-mixer-driver, or a CD-Rom volume driver.
+	 */
+	for( int drv=0; drv<drvNum && ( m_multiDriverMode || m_mixers.count()==0) ; drv++ )
 	{
 		bool drvInfoAppended = false;
 		{
 			for( int dev=0; dev<maxDevices; dev++ )
 			{
-				for( int card=0; card<maxCards; card++ )
+				// hint: no driver is using cardnum, except the unsupported alsa0.5
+				for( int card=0; card<1 /*maxCards*/; card++ )
 				{
 					Mixer *mixer = Mixer::getMixer( drv, dev, card );
 					int mixerError = mixer->grab();
@@ -394,6 +411,7 @@ KMixWindow::loadConfig()
    m_showTicks = config->readBoolEntry("Tickmarks", false);
    m_showLabels = config->readBoolEntry("Labels", false);
    m_startVisible = config->readBoolEntry("Visible", true);
+   m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
 
    // show/hide menu bar
    m_showMenubar = config->readBoolEntry("Menubar", true);
