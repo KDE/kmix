@@ -61,6 +61,7 @@ class AppletConfigDialog : public KDialogBase
 
   signals:
    void applied();
+  private:
    ColorWidget* colorWidget;
 };
 
