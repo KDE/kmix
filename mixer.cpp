@@ -2,8 +2,8 @@
  *              KMix -- KDE's full featured mini mixer
  *
  *
- *              Copyright (C) 1996-2000 Christian Esken
- *                        esken@kde.org
+ * Copyright (C) 1996-2000 Christian Esken - esken@kde.org
+ * 2002 Helio Chissini de Castro - helio@conectiva.com.br
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -401,7 +401,7 @@ void Mixer::setRecsrc( int devnum, bool on )
 
 MixDevice *Mixer::mixDeviceByType( int deviceidx )
 {
-  int i=0;
+  unsigned int i=0;
   while (i<size() && (*this)[i]->num()!=deviceidx) i++;
   if (i==size()) return 0;
  

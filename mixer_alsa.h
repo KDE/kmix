@@ -1,6 +1,9 @@
 #ifndef MIXER_ALSA_H
 #define MIXER_ALSA_H
 
+// QT includes
+#include <qvaluelist.h>
+
 // Forward QT includes
 class QString;
 
@@ -23,10 +26,12 @@ class Mixer_ALSA : public Mixer
 		snd_mixer_t *handle;
 #ifdef HAVE_ALSA_ASOUNDLIB_H
 		int identify( snd_mixer_selem_id_t *sid );
-		void readVolumeHW( snd_mixer_elem_t *elem, Volume &volume );
 		QString mixer_card_name;
 		QString mixer_device_name;
 		QString card_id;
+		typedef QValueList<snd_mixer_elem_t *> AlsaMixerElemList;
+		AlsaMixerElemList mixer_elem_list;
+		
 #elif defined(HAVE_SYS_ASOUNDLIB_H)
 		snd_mixer_groups_t  groups;
 		snd_mixer_gid_t    *gid;

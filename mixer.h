@@ -4,8 +4,9 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
- *		 1996-2000 Christian Esken <esken@kde.org>
- *        		   Sven Fischer <herpes@kawo2.rwth-aachen.de>
+ * 1996-2000 Christian Esken <esken@kde.org>
+ * Sven Fischer <herpes@kawo2.rwth-aachen.de>
+ * 2002 - Helio Chissini de Castro <helio@conectiva.com.br>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,7 +57,7 @@ class MixDevice
       // For each ChannelType a special icon exists
       enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
 			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME,
-			VIDEO, SURROUND};
+			VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97 };
 
       MixDevice(int num, Volume vol, bool recordable,
 		QString name, ChannelType type = UNKNOWN );
