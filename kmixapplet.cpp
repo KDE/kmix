@@ -52,7 +52,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 
-// KMix
+// // KMix
 #include "colorwidget.h"
 #include "mixertoolbox.h"
 #include "kmixapplet.h"
@@ -206,7 +206,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
     }
     else {
-	// We know which mixer to use: Call postionChange()m whcih does all the creating
+	// We know which mixer to use: Call positionChange(), which does all the creating
 	positionChange(position());
     }
     m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
@@ -234,9 +234,9 @@ void KMixApplet::saveConfig()
 {
     kdDebug(67100) << "KMixApplet::saveConfig()" << endl;
     if ( m_mixerWidget != 0) {
-	kdDebug(67100) << "KMixApplet::saveConfig() save" << endl;
+	//kdDebug(67100) << "KMixApplet::saveConfig() save" << endl;
         KConfig *cfg = this->config();
-	kdDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg << endl;
+	//kdDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg << endl;
         cfg->setGroup( 0 );
         cfg->writeEntry( "Mixer", _mixer->mixerNum() );
         cfg->writeEntry( "MixerName", _mixer->mixerName() );
@@ -355,7 +355,10 @@ void KMixApplet::help()
 
 
 void KMixApplet::positionChange(Position pos) {
-
+    orientationChange( orientation() );
+    QResizeEvent e( size(), size() ); // from KPanelApplet::positionChange
+    resizeEvent( &e ); // from KPanelApplet::positionChange
+    
     if ( m_errorLabel == 0) {
 	// do this only after we deleted the error label
 	if (m_mixerWidget) {
@@ -364,6 +367,7 @@ void KMixApplet::positionChange(Position pos) {
 	    delete m_mixerWidget;
 	}
 	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, 0, pos );
+	connect ( m_mixerWidget, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
 	m_mixerWidget->createDeviceWidgets();
 	_layout->add(m_mixerWidget);
 	_layout->activate();
@@ -405,6 +409,11 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
     emit updateLayout();
 }
 
+void KMixApplet::updateGeometrySlot() {
+   updateGeometry();
+}
+
+
 QSize KMixApplet::sizeHint() const {
     //kdDebug(67100) << "KMixApplet::sizeHint()\n";
     QSize qsz;
@@ -441,15 +450,17 @@ int KMixApplet::heightForWidth(int) const {
 
 QSizePolicy KMixApplet::sizePolicy() const {
     //    return QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    if ( position() == KPanelApplet::pLeft || position() == KPanelApplet::pRight ) {
+    if ( orientation() == Qt::Vertical ) {
 	//kdDebug(67100) << "KMixApplet::sizePolicy=(Ignored,Fixed)\n";
-        return QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+        return QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     }
     else {
 	//kdDebug(67100) << "KMixApplet::sizePolicy=(Fixed,Ignored)\n";
-        return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+        return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
    }
 }
+
+/************* GEOMETRY STUFF END ********************************/
 
 
 void KMixApplet::reportBug()
@@ -457,8 +468,6 @@ void KMixApplet::reportBug()
     KBugReport bugReportDlg(this, true, &m_aboutData);
     bugReportDlg.exec();
 }
-/************* GEOMETRY STUFF END ********************************/
-
 
 
 /******************* COLOR STUFF START ***********************************/

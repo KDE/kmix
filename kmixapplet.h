@@ -95,6 +95,7 @@ protected slots:
    void selectMixer();
    void applyPreferences();
    void preferencesDone();
+   void updateGeometrySlot();
   
 protected:
    void resizeEvent( QResizeEvent * );
