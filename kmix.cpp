@@ -106,10 +106,6 @@ void
 KMixWindow::initActions()
 {
 	// file menu
-	(void)new KAction( i18n("&Restore Default Volumes"), 0, this, SLOT(loadVolumes()),
-							 actionCollection(), "file_load_volume" );
-	(void)new KAction( i18n("&Save Current Volumes as Default"), 0, this, SLOT(saveVolumes()),
-							 actionCollection(), "file_save_volume" );
 	KStdAction::quit( this, SLOT(quit()), actionCollection());
 
 	// settings menu
@@ -497,6 +493,7 @@ KMixWindow::queryClose ( )
 void
 KMixWindow::quit()
 {
+	saveVolumes();
 	kapp->quit();
 }
 

@@ -5,9 +5,6 @@
  <Menu name="file"><text>&amp;File</text>
   <Action name="file_new_tab"/>
   <Action name="file_close_tab"/>
-  <Separator/>
-  <Action name="file_load_volume"/>
-  <Action name="file_save_volume"/>
  </Menu>
  <Menu name="help" append="about_merge"><text>&amp;Help</text>
   <Action name="hwinfo"/>
