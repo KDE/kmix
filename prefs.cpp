@@ -21,72 +21,66 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-                                                                            
+
 #include "prefs.h"
 #include "prefs.moc"
 #include "kmix.h"
 #include <qchkbox.h> 
-#include <qlabel.h> 
+#include <qlabel.h>
 
 Preferences::Preferences( QWidget *parent, Mixer *mix ) :
-   QDialog( parent )
+   QTabDialog( parent )
 {
-  int tabwidth = 300, tabheight = 200;
-
+  resize(300,400);
   this->mix = mix;
   grpbox2a  = NULL;
 
-  // create the tabbox
-  tabctl = new KTabCtl( this );
-   
-  page1 = new QWidget( tabctl );
-  page2 = new QWidget( tabctl );
-  tabctl->addTab( page1, "General" );
-  tabctl->addTab( page2, "Channels" );
-  tabctl->setGeometry( 10, 10, tabwidth, tabheight );
+  page1 = new QWidget( this );
+  page1->setGeometry(10,10,width()-20,height()-20);
+  page2 = new QWidget( this );
+  page2->setGeometry(10,10,width()-20,height()-20);
+  addTab( page1, "General" );
+  addTab( page2, "Channels" );
 
-  int x=10,y=20;
   // Define page 1
   QButtonGroup *grpbox1a = new QButtonGroup( "General", page1 );
-  grpbox1a->setGeometry( x, y, tabctl->width()-20, tabctl->height()-80 );
+  grpbox1a->setGeometry( 10, 10, page1->width()-20, page1->height()-20 );
 
-  y+=10;
+  int x=10, y=20;
   menubarChk = new QCheckBox(grpbox1a,"Menubar");
   menubarChk->setText("Menubar");
-  QFontMetrics qfm = fontMetrics();
   menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
 
   y += (menubarChk->height() );
   tickmarksChk = new QCheckBox(grpbox1a,"Tickmarks");
   tickmarksChk->setText("Tickmarks");
-  qfm = fontMetrics();
   tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
 
+  y += tickmarksChk->height();
+  grpbox1a->setGeometry( 10, 10, page1->width()-20, y+10);
   // Define page 2
   updateChannelConfWindow();
 
+  //  buttonOk = new QPushButton( "Ok", this );
+  setCancelButton();
+  setApplyButton();
+  setOkButton();
 
-  buttonOk = new QPushButton( "Ok", this );
-  connect( buttonOk, SIGNAL(clicked()), this, SLOT(slotOk()));
 
-  buttonApply = new QPushButton( "Apply", this );
-  connect( buttonApply, SIGNAL(clicked()), this, SLOT(slotApply()));
-
-  buttonCancel = new QPushButton( "Cancel", this );
-  connect( buttonCancel, SIGNAL(clicked()), this, SLOT(slotCancel()));
+  connect( this, SIGNAL(applyButtonPressed()), this, SLOT(slotApply()));
+  connect( this, SIGNAL(cancelButtonPressed()), this, SLOT(slotCancel()));
 
   int maxheight = grpbox1a->height();
   if ( maxheight < grpbox2a->height() )
     maxheight = grpbox2a->height();
 
-  buttonOk->setGeometry( tabwidth-250   , maxheight+73, 80, 25 );
-  buttonApply->setGeometry( tabwidth-160, maxheight+73, 80, 25 );
-  buttonCancel->setGeometry( tabwidth-70, maxheight+73, 80, 25 );
-
-  grpbox1a->resize(tabwidth-20,maxheight);
-  grpbox2a->resize(tabwidth-20,maxheight);
-  tabctl->resize(tabwidth,maxheight +60 );
-  setFixedSize( tabwidth + 20, maxheight+100 );
+  page1->resize(page1->width(),maxheight+20);
+  page2->resize(page1->width(),maxheight+20);
+  grpbox1a->resize(grpbox1a->width(),maxheight);
+  grpbox2a->resize(grpbox2a->width(),maxheight);
+  setFixedSize(width(),maxheight+100);
+  setMinimumSize(width(),maxheight+100);
+  setMaximumSize(width(),maxheight+100);
   setCaption( "KMix Preferences" );
 }
 
@@ -98,19 +92,19 @@ void Preferences::updateChannelConfWindow()
   QLabel *qlb;
 
   int ypos=20;
-  int x1=20,x2=130;
+  int x1=10,x2=120;
   qlb = new QLabel(grpbox2a,"Device");
   qlb->setText("Device");
   qlb->move(x1,ypos);
   qlb = new QLabel(grpbox2a,"Show");
   qlb->setText("Show");
   qlb->move(x2,ypos);
+  ypos += qlb->height();
 
   while (mdev) {
     QLineEdit *qle;
     qle = new  QLineEdit(grpbox2a,mdev->devname);
     qle->setText(mdev->devname);
-    ypos += qle->height();
     qle->move(x1,ypos);
     QCheckBox *qcb = new QCheckBox(grpbox2a);
     qcb->move(x2,ypos);
@@ -119,16 +113,17 @@ void Preferences::updateChannelConfWindow()
     else
       qcb->setChecked(true);
 
+    ypos += qle->height();
     mdev = mdev->Next;
   }
 
-  grpbox2a->setGeometry( 10, 20, tabctl->width()-20, ypos+40);
+  grpbox2a->setGeometry( 10, 10, page2->width()-20, ypos+10);
 }      
 
 
 void Preferences::slotShow()
 {
-   show();
+  show();
 }
 
 void Preferences::slotOk()

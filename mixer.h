@@ -18,8 +18,8 @@
 #include <kmsgbox.h>
 
 #define MAX_MIXDEVS 32
-#ifdef SOLARIS
-#define DEFAULT_MIXER "/dev/audio"
+#if defined(sun) || defined(__sun__)
+#define DEFAULT_MIXER "/dev/audioctl"
 #elif sgi
 #define DEFAULT_MIXER "SGI Mixer" // no device name on SGI
 #define _LANGUAGE_C_PLUS_PLUS

@@ -9,17 +9,17 @@
 #include <qbttngrp.h>
 #include <qradiobt.h>
 #include <qlayout.h>
-#include <ktabctl.h>
+#include <qtabdlg.h>
+//#include <ktabctl.h>
 #include "kconfig.h"
-#include "kslider.h"
 #include "mixer.h"
 
-class Preferences : public QDialog 
+class Preferences : public QTabDialog
 {
       Q_OBJECT
 private:
       QPushButton	*buttonOk, *buttonApply, *buttonCancel;
-      KTabCtl		*tabctl;
+      QTabDialog	*tabctl;
       QWidget		*page1, *page2;
       QGroupBox		*grpbox2a;
 public:
@@ -31,9 +31,9 @@ public:
       Mixer		*mix;
 
 signals:
-	void optionsApply();
+      void optionsApply();
 	
-   public slots:
+public slots:
       void slotShow();
       void slotOk();
       void slotApply();

@@ -32,10 +32,11 @@ static char rcsid[]="$Id$";
 
 #include <stdio.h>
 #include <iostream.h>
+/*
 #include <sys/ioctl.h>
 #include <stdlib.h> 
 #include <fcntl.h>
-
+*/
 #include <kiconloader.h>
 #include <klocale.h>
 //#include <kwm.h>
@@ -455,7 +456,7 @@ void KMix::hideMenubarCB()
 
 void KMix::showOptsCB()
 {
-  prefDL->slotShow();
+  prefDL->show();
 }
 
 void KMix::quitClickedCB()
