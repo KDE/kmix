@@ -2,15 +2,15 @@
 #define ViewDockAreaPopup_h
 
 #include "viewbase.h"
+
+class QMouseEvent;
+class QHBoxLayout;
 class QWidget;
+
 class Mixer;
 class KMixDockWidget;
 class MixDeviceWidget;
 class MixDevice;
-class QMouseEvent;
-
-#define KMIX_DOCKAREA_MPE 1
-//#define KMIX_DOCKAREA_EF  1
 
 class ViewDockAreaPopup : public ViewBase
 {
@@ -36,15 +36,10 @@ protected:
     KMixDockWidget  *_dock;
     MixDevice       *_dockDevice;
 
-#ifdef KMIX_DOCKAREA_MPE
     void mousePressEvent(QMouseEvent *e);
-#endif
 private:
-#ifdef KMIX_DOCKAREA_EF
-    bool eventFilter( QObject*, QEvent* );
-#endif
-    void showEvent(QShowEvent *);
-    void hideEvent(QHideEvent *);
+    QHBoxLayout* _layoutMDW;
+
 };
 
 #endif

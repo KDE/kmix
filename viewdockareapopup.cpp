@@ -24,7 +24,7 @@
 // Qt
 #include <qwidget.h>
 #include <qevent.h>
-#include <kdialog.h>
+#include <qlayout.h>
 
 // KDE
 #include <kdebug.h>
@@ -37,6 +37,8 @@
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
       : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup, vflags), _dock(dockW)
 {
+    _layoutMDW = new QHBoxLayout(this);
+    _layoutMDW->setMargin(10);
     init();
 
     // !! mmmh, how to do this ??? setFrameStyle(QFrame::PopupPanel);
@@ -47,18 +49,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 }
 
 
-void ViewDockAreaPopup::showEvent(QShowEvent *) {
-    //kdDebug(67100) << "ViewDockAreaPopup::showEvent()\n";
-    //grabMouse();
-}
 
-void ViewDockAreaPopup::hideEvent(QHideEvent *) {
-    //kdDebug(67100) << "ViewDockAreaPopup::hideEvent() RELEASE MOUSE\n";
-    //releaseMouse();
-}
-
-
-#ifdef KMIX_DOCKAREA_MPE
 void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
 {
     /**
@@ -68,7 +59,6 @@ void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
        Why it does not work, I do not know: this->isPopup() returns "true", so Qt should
        properly take care of it in QWidget.
     */
-
     //    kdDebug(67100) << "ViewDockAreaPopup::mousePressEvent()\n";
     if ( ! this->hasMouse() ) {
 	//  kdDebug(67100) << "ViewDockAreaPopup::mousePressEvent() hasMouse()\n";
@@ -76,7 +66,6 @@ void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
     }
     return;
 }
-#endif
 
 MixDevice* ViewDockAreaPopup::dockDevice()
 {
@@ -118,6 +107,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 			    this,         // parent
 			    0,            // Is "NULL", so that there is no RMB-popup
 			    _dockDevice->name().latin1() );
+    _layoutMDW->add(_mdw);
     return _mdw;
 }
 
@@ -150,10 +140,6 @@ void ViewDockAreaPopup::constructionFinished() {
     //    kdDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
     _mdw->move(0,0);
     _mdw->show();
-#ifdef KMIX_DOCKAREA_EF
-    installEventFilter( _mdw );
-    installEventFilter( _dock );
-#endif
     _mdw->resize(_mdw->sizeHint() );
     resize(sizeHint());
 }
