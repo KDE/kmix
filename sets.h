@@ -24,7 +24,7 @@
  */
 
 #include <qobject.h>
-#include <qlist.h>
+#include <qvector.h>
 #include <qstring.h>
 
 
@@ -38,7 +38,9 @@ public:
   ~MixSetEntry();
   void read(int set,int devnum);
   void write(int set,int devnum);
-  static void clone(MixSetEntry *Src, MixSetEntry *Dest, bool clone_volume);
+  void reset();
+
+  static void clone(MixSetEntry &Src, MixSetEntry &Dest, bool clone_volume);
 
   /// internal device number
   char		devnum;
@@ -50,6 +52,12 @@ public:
   bool		is_disabled;		// Is slider disabled by user?
   /// Is the device muted?
   bool		is_muted;		// Is it muted by user?
+  /// Is the device stereo capable?
+  bool		is_stereo;
+  /// Is the device recording capable?
+  bool		is_recordable;
+  /// Is the device currently record source?
+  bool		is_recsrc;
   /// Are the sliders linked?
   bool		StereoLink;
   /// Device Name. When using STL, this will be a String, that is
@@ -59,8 +67,7 @@ public:
 
 
 
-
-class MixSet : public QList<MixSetEntry>
+class MixSet : public QVector<MixSetEntry>
 {
 
 public:
@@ -68,10 +75,7 @@ public:
   ~MixSet();
   void read(int set);
   void write(int set);
-  MixSetEntry* findDev(int num);
-  static void clone(MixSet *Src, MixSet *Dest, bool clone_volume);
-  /// Return the mix set entry in the MixSet with devnum==num,
-  /// or return NULL, if it does not exist
+  static void clone(MixSet &Src, MixSet &Dest, bool clone_volume);
 
   QString&      name() { return SetName; };
 private:
@@ -79,7 +83,8 @@ private:
 };
 
 
-class MixSetList : public QList<MixSet>
+
+class MixSetList : public QVector<MixSet>
 {
 
 public:
@@ -87,7 +92,7 @@ public:
   ~MixSetList();
   void read();
   void write();
-  MixSet* addSet();
+  void addSet();
 };
 
 #endif // SETS_H

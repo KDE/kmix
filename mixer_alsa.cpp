@@ -120,7 +120,7 @@ int Mixer_ALSA::openMixer()
     return Mixer::ERR_READ;
   i_s_mixer_name = (const char*)info.name;
 
-  isOpen = true;
+  i_b_open = true;
   return 0;
 }
 

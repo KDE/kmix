@@ -32,8 +32,7 @@
 #define MAX_MIXDEVS 32
 
 
-// For the crossreferencing between classes, I must declare all
-// referenced classes here.
+// Declaring crossreferenced classes here.
 class MixChannel;
 class MixSet;
 class Mixer;
@@ -55,7 +54,7 @@ class Mixer;
 		 internal value only and is getting converted in the
 		 update_channel() function.
 ****************************************************************************/
-class MixDevice : public QWidget
+class MixDevice : public QObject
 {
   Q_OBJECT
 
@@ -77,6 +76,7 @@ public:
   bool		disabled() const;	// Is slider disabled by user?
   bool		muted() const;		// Is it muted by user?
   bool		stereoLinked() const;
+  int		volume(char channel);
 
   void		setNum(int);
   void		setName(QString);
@@ -87,15 +87,21 @@ public:
   void		setMuted(bool value);
   void		setStereoLinked(bool value);
 
-  MixChannel	*Left;			//
-  MixChannel	*Right;			//
+  void		setVolume(char channel, int volume);
 
   Mixer		*mix;
 
   QLabel	*picLabel;
   QceStateLED  	*i_KLed_state;		/* State LED (recsource = red)	   */
 
+  MixChannel	*Left;			//
+  MixChannel	*Right;			//
+
 private:
+
+  MixSetEntry   *i_mse;
+
+#if 0
   int		dev_num;		// ioctl() device number of mixer
   bool		StereoLink;		// Is this channel linked via the
                                         // left-right-controller?
@@ -105,9 +111,9 @@ private:
   bool		is_disabled;		// Is slider disabled by user?
   bool		is_muted;		// Is it muted by user?
   QString	dev_name;		// Ascii channel name
+
+#endif
 };
-
-
 
 
 
@@ -116,20 +122,22 @@ private:
  * There are pointers to 2 MixChannel's per MixDevice. If neccesary, this
  * could could be modified, so one could build a MixChannel list.
  ***************************************************************************/
-class MixChannel : public QWidget
+class MixChannel : public QObject
 {
   Q_OBJECT
 
 public:
   MixDevice	*mixDev;
+  QSlider	*slider;		/* Associated slider               */
+  static bool	i_b_HW_update;
+  static void HW_update(bool val_b_update_allowed);
+
+#if 0
   char		channel;		/* channel number:                 */
 					/* Even = Left, Odd = Right        */
   int		volume;			/* Volume of this channel	   */
-  QSlider	*slider;		/* Associated slider               */
+#endif
 
-  static bool	i_b_HW_update;
-
-  static void HW_update(bool val_b_update_allowed);
 
 public slots:
   void VolChanged( int new_pos );
@@ -160,7 +168,7 @@ public:
   /// Tells the number of the mixing devices
   unsigned int size() const;
   /// Returns a pointer to the mix device with the given number
-  MixDevice* operator[](int val_i_num);
+  MixDevice& operator[](int val_i_num);
 
   /// Grabs (opens) the mixer for further intraction
   virtual int grab();
@@ -179,11 +187,10 @@ public:
   virtual void setBalance(int left, int right);
 
 
-  /// Write set 0 into the mixer hardware
-  virtual void Set0toHW();
-  /// Write a given set into set 0
-  virtual void Set2Set0(int Source, bool copy_volume);
-  virtual void Set0toSet(int Source);
+  /// Write set into the mixer hardware
+  virtual void Set2HW(int Source, bool copyVolume);
+  /// Write mixer hardware into set
+  virtual void HW2Set(int Source);
 
   /// Set the record source(s) according to the given device mask
   /// The default implementation does nothing.
@@ -203,8 +210,7 @@ public:
   void sessionSave(bool sessionConfig);
 
   ///  The mixing set list
-  MixSetList *TheMixSets;
-
+  MixSetList *i_set_allMixSets;
 
 
 protected:
@@ -221,7 +227,7 @@ protected:
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
   /// gives you a usable name, use that name.
   QString	i_s_mixer_name;
-  bool		isOpen;
+  bool		i_b_open;
   unsigned int	devmask, recmask, i_recsrc, stereodevs;
   int		PercentLeft,PercentRight;
 
@@ -229,6 +235,7 @@ protected:
   int		MaxVolume;
 
 private:
+  /// Internal device number
   int		devnum;
 
   void setDevNumName(int devnum);

@@ -99,7 +99,7 @@ int Mixer_OSS::openMixer()
 #endif /* SOUND_MIXER_INFO */
       i_s_mixer_name = "OSS Audio Mixer";
 
-    isOpen = true;
+    i_b_open = true;
     return 0;
   }
 }
@@ -166,17 +166,18 @@ void Mixer_OSS::setRecsrc(unsigned int newRecsrc)
    * not obey blindly (because of hardware limitations)
    */
   unsigned int recsrcwork = i_recsrc;
-  MixDevice *MixPtr;
-  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
-    MixPtr = operator[](l_i_mixDevice);
 
-    if (recsrcwork & (1 << (MixPtr->num()) ) ) {
-      MixPtr->setRecsrc(true);
+  for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < size(); l_i_mixDevice++) {
+    MixDevice &MixPtr = operator[](l_i_mixDevice);
+
+    if (recsrcwork & (1 << (MixPtr.num()) ) ) {
+      MixPtr.setRecsrc(true);
     }
     else {
-      MixPtr->setRecsrc(false);
+      MixPtr.setRecsrc(false);
     }
   }
+#warning Must convert other Backends from MixDevice* to MixDevice (returned now by operator[]). And numbering is now from 0
 }
 
 

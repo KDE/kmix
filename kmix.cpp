@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 KMix::~KMix()
 {
   configSave();
-  delete mainmenu;
+  delete i_menu_main;
 
   if (  i_time != 0 ) delete i_time;
 }
@@ -191,8 +191,7 @@ KMix::KMix(int mixernum, int SetNum) : DCOPObject("KMix")
   allowDocking= KmConfig->readNumEntry( "Docking"  , 0 );
   startDocked = KmConfig->readNumEntry( "StartDocked"  , 0 );
 
-  mix = Mixer::getMixer(mixernum, SetNum);
-  CHECK_PTR(mix);
+  i_mixer = Mixer::getMixer(mixernum, SetNum);
 
   dock_widget = new KMixDockWidget((QString)"dockw", "kmixdocked");
   dock_widget->setMainWindow(this);
@@ -204,10 +203,10 @@ KMix::KMix(int mixernum, int SetNum) : DCOPObject("KMix")
   connect ( dock_widget, SIGNAL(quickchange(int)), this, SLOT(quickchange_volume(int)  ));
   connect ( globalKapp , SIGNAL(saveYourself()), this, SLOT(sessionSaveAll() ));
 
-  int mixer_error = mix->grab();
+  int mixer_error = i_mixer->grab();
   if ( mixer_error != 0 ) {
-    KMessageBox::error(0, mix->errorText(mixer_error), i18n("Mixer failure"));
-    mix->errormsg(mixer_error);
+    KMessageBox::error(0, i_mixer->errorText(mixer_error), i18n("Mixer failure"));
+    i_mixer->errormsg(mixer_error);
     exit(1);
   }
 
@@ -218,7 +217,7 @@ KMix::KMix(int mixernum, int SetNum) : DCOPObject("KMix")
   }
   placeWidgets();
 
-  prefDL     = new Preferences(NULL, this->mix);
+  prefDL     = new Preferences(NULL, this->i_mixer);
   prefDL->menubarChk->setChecked  (mainmenuOn );
   prefDL->tickmarksChk->setChecked(tickmarksOn);
   prefDL->dockingChk->setChecked(allowDocking);
@@ -264,7 +263,8 @@ void KMix::applyOptions()
   mainmenuOn  = prefDL->menubarChk->isChecked();
   tickmarksOn = prefDL->tickmarksChk->isChecked();
   allowDocking= prefDL->dockingChk->isChecked();
-  mix->Set0toHW(); // Do NOT write volume after "applying" Options from config dailog
+#warning Why is here no Set2Set0 ???
+  // !!!  i_mixer->Set0toHW(); // Do NOT write volume after "applying" Options from config dailog
   placeWidgets();
 }
 
@@ -296,33 +296,27 @@ void KMix::createWidgets()
 #endif
 
   // Window title
-  setCaption( mix->mixerName() );
+  setCaption( i_mixer->mixerName() );
 
   // Create a big container containing every widget of this toplevel
-  Container  = new QWidget(this);
+  i_widget_container  = new QWidget(this);
 
-#if 0
-  QPixmap l_pixmap_bg;
-  l_pixmap_bg = BarIcon("Chicken-Songs-small2");
-  Container->setBackgroundPixmap( l_pixmap_bg );
-#endif
-
-  setView(Container);
+  setView(i_widget_container);
   // Create Menu
   createMenu();
-  setMenu(mainmenu);
+  setMenu(i_menu_main);
 
 
   // Create the info line
-  i_lbl_infoLine = new QLabel(Container) ;
-  i_lbl_infoLine->setText(mix->mixerName());
+  i_lbl_infoLine = new QLabel(i_widget_container) ;
+  i_lbl_infoLine->setText(i_mixer->mixerName());
 //    QFont f10("Helvetica", 10, QFont::Normal);
 //    i_lbl_infoLine->setFont( f10 );
   i_lbl_infoLine->resize(i_lbl_infoLine->sizeHint());
   //  i_lbl_infoLine->setAlignment(QLabel::AlignRight);
-  QToolTip::add( i_lbl_infoLine, mix->mixerName() );
+  QToolTip::add( i_lbl_infoLine, i_mixer->mixerName() );
 
-  i_lbl_setNum =  new QLabel(Container);
+  i_lbl_setNum =  new QLabel(i_widget_container);
   i_lbl_setNum->setText("   "); // set a dummy Text, so that the height() is valid.
 //    QFont f8("Helvetica", 10, QFont::Bold);
 //    i_lbl_setNum->setFont( f8 );
@@ -332,16 +326,15 @@ void KMix::createWidgets()
 
 
   // Create Sliders (Volume indicators)
-  MixDevice *MixPtr;
-  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
-    MixPtr = (*mix)[l_i_mixDevice];
+  for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < i_mixer->size(); l_i_mixDevice++) {
+    MixDevice &MixPtr = (*i_mixer)[l_i_mixDevice];
 
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
     // #warning This might be called multiple times (e.g. on a set change). I should change it
     // OK, it doesn't happen. And I know why. But still I might want to rework this
-    connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
+    connect( &MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
-    int devnum = MixPtr->num();
+    int devnum = MixPtr.num();
 
 
     // Figure out default icon
@@ -376,7 +369,7 @@ void KMix::createWidgets()
       miniDevPM = BarIcon("mix_unknown");	break;
     }
 
-    QLabel *qb = new QLabel(Container);
+    QLabel *qb = new QLabel(i_widget_container);
     if (! miniDevPM.isNull()) {
       qb->setPixmap(miniDevPM);
       qb->installEventFilter(this);
@@ -384,34 +377,34 @@ void KMix::createWidgets()
     else {
       cerr << "Pixmap missing.\n";
     }
-    MixPtr->picLabel=qb;
+    MixPtr.picLabel=qb;
     qb->resize(miniDevPM.width(),miniDevPM.height());
 
 
     // Create state LED
-    MixPtr->i_KLed_state = new QceStateLED(Container);
+    MixPtr.i_KLed_state = new QceStateLED(i_widget_container);
 
     // Create slider
-    QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
-				  QSlider::Vertical, Container, "VolL");
+    QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr.volume(0),\
+				  QSlider::Vertical, i_widget_container, "VolL");
     if (i_b_first) {
       VolSB->setFocus();
     }
 
-    MixPtr->Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
-    connect( VolSB, SIGNAL(valueChanged(int)), MixPtr->Left, SLOT(VolChanged(int)));
+    MixPtr.Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
+    connect( VolSB, SIGNAL(valueChanged(int)), MixPtr.Left, SLOT(VolChanged(int)));
     VolSB->installEventFilter(this);
 
 
     // Create a second slider, when the current channel is a stereo channel.
     bool l_b_bothSliders;
-    l_b_bothSliders = (MixPtr->stereo()  == true );
+    l_b_bothSliders = (MixPtr.stereo()  == true );
 
     if ( l_b_bothSliders) {
-      QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
-				     QSlider::Vertical, Container, "VolR");
-      MixPtr->Right->slider= VolSB2;  // Remember Slider (for eventFilter)
-      connect( VolSB2, SIGNAL(valueChanged(int)), MixPtr->Right, SLOT(VolChanged(int)));
+      QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr.volume(1),\
+				     QSlider::Vertical, i_widget_container, "VolR");
+      MixPtr.Right->slider= VolSB2;  // Remember Slider (for eventFilter)
+      connect( VolSB2, SIGNAL(valueChanged(int)), MixPtr.Right, SLOT(VolChanged(int)));
       VolSB2->installEventFilter(this);
 
     }
@@ -421,12 +414,12 @@ void KMix::createWidgets()
   }
 
   // Create the Left-Right-Slider, add Tooltip and Context menu
-  LeftRightSB = new QSlider( -100, 100, 25, 0,\
-			     QSlider::Horizontal, Container, "RightLeft");
-  connect( LeftRightSB, SIGNAL(valueChanged(int)), \
+  i_slider_leftRight = new QSlider( -100, 100, 25, 0,\
+			     QSlider::Horizontal, i_widget_container, "RightLeft");
+  connect( i_slider_leftRight, SIGNAL(valueChanged(int)), \
 	   this, SLOT(MbalChangeCB(int)));
-  LeftRightSB->installEventFilter(this);
-  QToolTip::add( LeftRightSB, "Left/Right balancing" );
+  i_slider_leftRight->installEventFilter(this);
+  QToolTip::add( i_slider_leftRight, "Left/Right balancing" );
 
   i_time = new QTimer();
   connect( i_time,     SIGNAL(timeout()),      SLOT(updateSliders()) );
@@ -440,7 +433,7 @@ void KMix::createWidgets()
 
 void KMix::placeWidgets()
 {
-  Container->setUpdatesEnabled(false);
+  i_widget_container->setUpdatesEnabled(false);
   // !!!debug("Placing widgets");
   int sliderHeight=100;
   int qsMaxY=0;
@@ -454,25 +447,24 @@ void KMix::placeWidgets()
 
   // Place Sliders (Volume indicators)
   if (mainmenuOn)
-    mainmenu->show();
+    i_menu_main->show();
   else
-    mainmenu->hide();
+    i_menu_main->hide();
 
   iy = i_lbl_setNum->height();
 
   bool first = true;
 
-  MixDevice *MixPtr;
-  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
-    MixPtr = (*mix)[l_i_mixDevice];
+  for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < i_mixer->size(); l_i_mixDevice++) {
+    MixDevice &MixPtr = (*i_mixer)[l_i_mixDevice];
 
-    if (MixPtr->disabled() ) {
+    if (MixPtr.disabled() ) {
       // Volume regulator not shown => Hide complete and skip the rest of the code
-      MixPtr->picLabel->hide();
-      MixPtr->Left->slider->hide();
-      if (MixPtr->stereo())
-	MixPtr->Right->slider->hide();
-      MixPtr->i_KLed_state->hide();
+      MixPtr.picLabel->hide();
+      MixPtr.Left->slider->hide();
+      if (MixPtr.stereo())
+	MixPtr.Right->slider->hide();
+      MixPtr.i_KLed_state->hide();
       continue;
     }
 
@@ -481,10 +473,10 @@ void KMix::placeWidgets()
 
     int old_x=ix;
 
-    qb = MixPtr->picLabel;
+    qb = MixPtr.picLabel;
 
     // Tickmarks
-    qs = MixPtr->Left->slider;
+    qs = MixPtr.Left->slider;
     if (tickmarksOn) {
       qs->setTickmarks(QSlider::Right);
       qs->setTickInterval(10);
@@ -493,7 +485,7 @@ void KMix::placeWidgets()
       qs->setTickmarks(QSlider::NoMarks);
 
     QSize VolSBsize = qs->sizeHint();
-    qs->setValue(100-MixPtr->Left->volume);
+    qs->setValue(100-MixPtr.volume(0));
 
 
     qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
@@ -509,25 +501,25 @@ void KMix::placeWidgets()
 
     // But make sure it isn't linked to the left channel.
     bool l_b_bothSliders =
-      (MixPtr->stereo()       == true ) &&
-      (MixPtr->stereoLinked() == false);
+      (MixPtr.stereo()       == true ) &&
+      (MixPtr.stereoLinked() == false);
 
     QString ToolTipString;
-    ToolTipString = MixPtr->name();
+    ToolTipString = MixPtr.name();
     if ( l_b_bothSliders)
       ToolTipString += " (Left)";
     QToolTip::add( qs, ToolTipString );
 
     // Mark record source(s) and muted channel(s). This is done by using
     // red and green and 'off' LED's
-    l_KLed_state = MixPtr->i_KLed_state;
-    if (MixPtr->muted()) {
+    l_KLed_state = MixPtr.i_KLed_state;
+    if (MixPtr.muted()) {
       // Is muted => Off
       l_KLed_state->setState( QceStateLED::Off );
       l_KLed_state->setColor( Qt::black );
     }
     else {
-      if (MixPtr->recsrc()) {
+      if (MixPtr.recsrc()) {
 	// Is record source => Red
 	l_KLed_state->setState( QceStateLED::On );
 	l_KLed_state->setColor(  Qt::red );
@@ -540,10 +532,10 @@ void KMix::placeWidgets()
     }
     l_KLed_state->show();
 
-    if (MixPtr->stereo()  == true) {
-      qs = MixPtr->Right->slider;
+    if (MixPtr.stereo()  == true) {
+      qs = MixPtr.Right->slider;
 	
-      if (MixPtr->stereoLinked() == false) {
+      if (MixPtr.stereoLinked() == false) {
 	// Show right slider
 	if (tickmarksOn) {
 	  qs->setTickmarks(QSlider::Left);
@@ -553,11 +545,11 @@ void KMix::placeWidgets()
 	  qs->setTickmarks(QSlider::NoMarks);
 	}
 	QSize VolSBsize = qs->sizeHint();
-	qs->setValue(100-MixPtr->Right->volume);
+	qs->setValue(100-MixPtr.volume(1));
 	qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
 
 	ix += qs->width();
-	ToolTipString = MixPtr->name();
+	ToolTipString = MixPtr.name();
 	ToolTipString += " (Right)";
 	QToolTip::add( qs, ToolTipString );
 
@@ -598,7 +590,7 @@ void KMix::placeWidgets()
 
   ix += 4;
   iy = qsMaxY +4;
-  LeftRightSB->setGeometry(0,iy,ix,LeftRightSB->sizeHint().height());
+  i_slider_leftRight->setGeometry(0,iy,ix,i_slider_leftRight->sizeHint().height());
 
 
   // Size the set number.
@@ -617,10 +609,10 @@ void KMix::placeWidgets()
   i_lbl_infoLine->resize(l_i_allowedWidth, i_lbl_infoLine->height());
   i_lbl_infoLine->move(ix - i_lbl_infoLine->width(),0);
 
-  iy+=LeftRightSB->height();
-  Container->setFixedSize( ix, iy );
+  iy+=i_slider_leftRight->height();
+  i_widget_container->setFixedSize( ix, iy );
 
-  Container->setUpdatesEnabled(true);
+  i_widget_container->setUpdatesEnabled(true);
 
   // tell the Toplevel to do a relayout
   updateRects();
@@ -631,30 +623,30 @@ void KMix::placeWidgets()
 }
 
 
-void KMix::slotReadSet1() { slotReadSet(1); }
-void KMix::slotReadSet2() { slotReadSet(2); }
-void KMix::slotReadSet3() { slotReadSet(3); }
-void KMix::slotReadSet4() { slotReadSet(4); }
-void KMix::slotWriteSet1() { slotWriteSet(1); }
-void KMix::slotWriteSet2() { slotWriteSet(2); }
-void KMix::slotWriteSet3() { slotWriteSet(3); }
-void KMix::slotWriteSet4() { slotWriteSet(4); }
+void KMix::slotReadSet1() { slotReadSet(0); }
+void KMix::slotReadSet2() { slotReadSet(1); }
+void KMix::slotReadSet3() { slotReadSet(2); }
+void KMix::slotReadSet4() { slotReadSet(3); }
+void KMix::slotWriteSet1() { slotWriteSet(0); }
+void KMix::slotWriteSet2() { slotWriteSet(1); }
+void KMix::slotWriteSet3() { slotWriteSet(2); }
+void KMix::slotWriteSet4() { slotWriteSet(3); }
 
 void KMix::slotReadSet(int num)
 {
-  mix->Set2Set0(num,true);
-  mix->Set0toHW();
+  i_mixer->Set2HW(num,true);
   i_lbl_setNum->setText( QString(" %1 ").arg(num));
   placeWidgets();
 }
 
 void KMix::slotWriteSet(int num)
 {
-  mix->Set0toSet(num);
+  i_mixer->HW2Set(num);
 }
 
 void KMix::createMenu()
 {
+  QPopupMenu *l_popup_help, *l_popup_file;
 
   QAccel *qAcc = new QAccel( this );
 
@@ -670,33 +662,33 @@ void KMix::createMenu()
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_4), this,  SLOT(slotWriteSet4()));
 
 
-  i_m_readSet = new QPopupMenu;
-  i_m_readSet->insertItem(i18n("Profile &1")	, this, SLOT(slotReadSet1()) , Key_1);
-  i_m_readSet->insertItem(i18n("Profile &2")	, this, SLOT(slotReadSet2()) , Key_2);
-  i_m_readSet->insertItem(i18n("Profile &3")	, this, SLOT(slotReadSet3()) , Key_3);
-  i_m_readSet->insertItem(i18n("Profile &4")	, this, SLOT(slotReadSet4()) , Key_4);
+  i_popup_readSet = new QPopupMenu;
+  i_popup_readSet->insertItem(i18n("Profile &1")	, this, SLOT(slotReadSet1()) , Key_1);
+  i_popup_readSet->insertItem(i18n("Profile &2")	, this, SLOT(slotReadSet2()) , Key_2);
+  i_popup_readSet->insertItem(i18n("Profile &3")	, this, SLOT(slotReadSet3()) , Key_3);
+  i_popup_readSet->insertItem(i18n("Profile &4")	, this, SLOT(slotReadSet4()) , Key_4);
 
-  i_m_writeSet = new QPopupMenu;
-  i_m_writeSet->insertItem(i18n("Profile &1")	, this, SLOT(slotWriteSet1()) , CTRL+Key_1);
-  i_m_writeSet->insertItem(i18n("Profile &2")	, this, SLOT(slotWriteSet1()) , CTRL+Key_2);
-  i_m_writeSet->insertItem(i18n("Profile &3")	, this, SLOT(slotWriteSet1()) , CTRL+Key_3);
-  i_m_writeSet->insertItem(i18n("Profile &4")	, this, SLOT(slotWriteSet1()) , CTRL+Key_4);
+  i_popup_writeSet = new QPopupMenu;
+  i_popup_writeSet->insertItem(i18n("Profile &1")	, this, SLOT(slotWriteSet1()) , CTRL+Key_1);
+  i_popup_writeSet->insertItem(i18n("Profile &2")	, this, SLOT(slotWriteSet2()) , CTRL+Key_2);
+  i_popup_writeSet->insertItem(i18n("Profile &3")	, this, SLOT(slotWriteSet3()) , CTRL+Key_3);
+  i_popup_writeSet->insertItem(i18n("Profile &4")	, this, SLOT(slotWriteSet4()) , CTRL+Key_4);
 
   //int QMenuData::insertItem ( const QString & text, QPopupMenu * popup, int id=-1, int index=-1 )
-  Mfile = new QPopupMenu;
-  CHECK_PTR( Mfile );
-  Mfile->insertItem(i18n("&Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
+  l_popup_file = new QPopupMenu;
+  CHECK_PTR( l_popup_file );
+  l_popup_file->insertItem(i18n("&Hide Menubar")    , this, SLOT(hideMenubarCB()) , CTRL+Key_M);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_M),this, SLOT(hideMenubarCB()));
 
-  Mfile->insertItem(i18n("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
+  l_popup_file->insertItem(i18n("&Tickmarks On/Off"), this, SLOT(tickmarksTogCB()), CTRL+Key_T);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_T),this, SLOT(tickmarksTogCB()));
 
-  Mfile->insertItem( i18n("&Options...")	, this, SLOT(showOptsCB()) );
-  Mfile->insertSeparator();
-  Mfile->insertItem( i18n("Restore Profile")	, i_m_readSet );
-  Mfile->insertItem( i18n("Store Profile")	, i_m_writeSet);
-  Mfile->insertSeparator();
-  Mfile->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
+  l_popup_file->insertItem( i18n("&Options...")	, this, SLOT(showOptsCB()) );
+  l_popup_file->insertSeparator();
+  l_popup_file->insertItem( i18n("Restore Profile")	, i_popup_readSet );
+  l_popup_file->insertItem( i18n("Store Profile")	, i_popup_writeSet);
+  l_popup_file->insertSeparator();
+  l_popup_file->insertItem( i18n("E&xit")          , this, SLOT(quitClickedCB()) , CTRL+Key_Q);
   qAcc->connectItem( qAcc->insertItem(CTRL+Key_Q),this, SLOT(quitClickedCB()));
 
   QString head;
@@ -713,25 +705,17 @@ void KMix::createMenu()
     "HP/UX port by Helge Deller (deller@gmx.de).");
   head += APP_VERSION;
 
-#if QT_VERSION >= 200
-  Mhelp = helpMenu(i_s_aboutMsg);
-#else
-  Mhelp = globalKapp->helpMenu(true, i_s_aboutMsg);
-#endif
+  l_popup_help = helpMenu(i_s_aboutMsg);
 
-  CHECK_PTR( Mhelp );
+  i_menu_main = new KMenuBar( this, "main menu");
+  i_menu_main->insertItem( i18n("&File"), l_popup_file );
+  i_menu_main->insertSeparator();
+  i_menu_main->insertItem( i18n("&Help"), l_popup_help );
 
-  mainmenu = new KMenuBar( this, "main menu");
-  CHECK_PTR( mainmenu );
-  mainmenu->insertItem( i18n("&File"), Mfile );
-  mainmenu->insertSeparator();
-  mainmenu->insertItem( i18n("&Help"), Mhelp );
-
-  Mbalancing = new QPopupMenu;
-  CHECK_PTR( Mbalancing );
-  Mbalancing->insertItem(i18n("&Left")  , this, SLOT(MbalLeftCB()));
-  Mbalancing->insertItem(i18n("&Center"), this, SLOT(MbalCentCB()));
-  Mbalancing->insertItem(i18n("&Right") , this, SLOT(MbalRightCB()));
+  i_popup_balancing = new QPopupMenu;
+  i_popup_balancing->insertItem(i18n("&Left")  , this, SLOT(MbalLeftCB()));
+  i_popup_balancing->insertItem(i18n("&Center"), this, SLOT(MbalCentCB()));
+  i_popup_balancing->insertItem(i18n("&Right") , this, SLOT(MbalRightCB()));
 }
 
 void KMix::tickmarksTogCB()
@@ -779,8 +763,8 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
       QPopupMenu *qpm = contextMenu(o,0);
 
       if (qpm) {
-	KCMpopup_point = QCursor::pos();
-	qpm->popup(KCMpopup_point);
+	i_point_popup = QCursor::pos();
+	qpm->popup(i_point_popup);
 	return true;
       }
     }
@@ -789,6 +773,10 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 }
 
 
+/**
+   This function returns a suitable context menu to use when the user
+   right-clicks on the "free space" of the main window
+*/
 QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
 {
   static bool MlocalCreated=false;
@@ -805,8 +793,8 @@ QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
     Mlocal->insertItem( i18n("&Show Menubar") , this, SLOT(hideMenubarCB()) );
   Mlocal->insertItem( i18n("&Options...")        , this, SLOT(showOptsCB()) );
   Mlocal->insertSeparator();
-  Mlocal->insertItem( i18n("Restore Profile")	, i_m_readSet );
-  Mlocal->insertItem( i18n("Store Profile")	, i_m_writeSet);
+  Mlocal->insertItem( i18n("Restore Profile")	, i_popup_readSet );
+  Mlocal->insertItem( i18n("Store Profile")	, i_popup_writeSet);
   Mlocal->insertSeparator();
   Mlocal->insertItem( i18n("&About")           , this, SLOT(launchAboutCB()) );
   Mlocal->insertItem( i18n("&Help")           , this, SLOT(launchHelpCB()) );
@@ -819,8 +807,8 @@ QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
 
 QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
 {
-  if ( o == LeftRightSB )
-    return Mbalancing;
+  if ( o == i_slider_leftRight )
+    return i_popup_balancing;
 
   static bool MlocalCreated=false;
   static QPopupMenu *Mlocal;
@@ -836,11 +824,10 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   // Scan mixerChannels for Slider object *o
   QSlider       *qs       = (QSlider*)o;
   MixDevice     *MixFound = 0;
-  MixDevice	*MixPtr;
-  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
-    MixPtr = (*mix)[l_i_mixDevice];
-    if ( (MixPtr->Left->slider == qs) || (MixPtr->Right->slider == qs) ) {
-      MixFound = MixPtr;
+  for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < i_mixer->size(); l_i_mixDevice++) {
+    MixDevice &MixPtr = (*i_mixer)[l_i_mixDevice];
+    if ( (MixPtr.Left->slider == qs) || (MixPtr.Right->slider == qs) ) {
+      MixFound = &MixPtr;
       break;
     }
   }
@@ -852,7 +839,6 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
 
   // else
   Mlocal = new QPopupMenu;
-  CHECK_PTR( Mlocal );
   if (MixFound->muted())
     Mlocal->insertItem(i18n("Un&mute")    , MixFound, SLOT(MvolMuteCB()    ));
   else
@@ -897,11 +883,11 @@ void KMix::MbalChangeCB(int pos)
 
 void KMix::setBalance(int left, int right)
 {
-  mix->setBalance(left,right);
+  i_mixer->setBalance(left,right);
   if (left==100)
-    LeftRightSB->setValue(right-100);
+    i_slider_leftRight->setValue(right-100);
   else
-    LeftRightSB->setValue(100-left);
+    i_slider_leftRight->setValue(100-left);
 }
 
 
@@ -920,7 +906,7 @@ void KMix::configSave()
 void KMix::sessionSave(bool sessionConfig)
 {
   KmConfig->setGroup(0);
-  KmConfig->writeEntry( "Balance"    , LeftRightSB->value() , true );
+  KmConfig->writeEntry( "Balance"    , i_slider_leftRight->value() , true );
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
   KmConfig->writeEntry( "Docking"    , allowDocking);
@@ -934,7 +920,7 @@ void KMix::sessionSave(bool sessionConfig)
     scfg->writeEntry("startSet", startSet);
     scfg->writeEntry("startDevice", startDevice);
   }
-  mix->sessionSave(sessionConfig);
+  i_mixer->sessionSave(sessionConfig);
   KmConfig->sync();
 }
 
@@ -971,18 +957,14 @@ void KMix::hideEvent( QHideEvent *)
 
 void KMix::updateSliders( )
 {
-  mix->Set2Set0(-1,true);        // Read from hardware
+  i_mixer->Set2HW(-1,true);        // Read from hardware
   updateSlidersI();
 }
 
 void KMix::updateSlidersI( )
 {
   QSlider *qs;
-  MixSet *SrcSet = mix->TheMixSets->first();
-
-
   bool setDisplay = true;
-
   /* The next line is tricky. Lets explain it:
      Several lines later I will call qs->setValue(). Doing so changes the value of the QSlider.
 
@@ -998,30 +980,17 @@ void KMix::updateSlidersI( )
   MixChannel::HW_update(false);
 
   // now update the slider positions...
-  MixDevice *MixPtr;
-  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= mix->size(); l_i_mixDevice++) {
-    MixPtr = (*mix)[l_i_mixDevice];
-    MixSetEntry *mse;
+  for ( unsigned int l_i_mixDevice = 0; l_i_mixDevice < i_mixer->size(); l_i_mixDevice++) {
+    MixDevice &MixPtr = (*i_mixer)[l_i_mixDevice];
 
-    // Traverse all MixSetEntries to find the entry which corresponds to  MixPtr->num()
-    for(mse = SrcSet->first();
-	(mse != NULL) && (mse->devnum != MixPtr->num() );
-	mse=SrcSet->next() );
-    if (mse == NULL)
-      continue;		// -<- not found : Shouldn't this better break the loop?   !!!
-
-    if(! MixPtr->disabled()){
-      MixPtr->Left->volume = mse->volumeL;
-      MixPtr->Right->volume = mse->volumeR;
-    }
-    qs = MixPtr->Left->slider;
-    qs->setValue(100-MixPtr->Left->volume);
-    if (MixPtr->stereo()  == true) {
-      qs = MixPtr->Right->slider;
-      qs->setValue(100-MixPtr->Right->volume);
+    qs = MixPtr.Left->slider;
+    qs->setValue(100-MixPtr.volume(0));
+    if (MixPtr.stereo()  == true) {
+      qs = MixPtr.Right->slider;
+      qs->setValue(100-MixPtr.volume(1));
     }
     if ( setDisplay) {
-      dock_widget->setDisplay(( MixPtr->Left->volume + MixPtr->Right->volume )/2);
+      dock_widget->setDisplay(( MixPtr.volume(0) + MixPtr.volume(1) )/2);
       setDisplay = false;
     }
   }
@@ -1039,25 +1008,22 @@ void KMix::quit_myapp()
 void KMix::quickchange_volume(int val_l_diff)
 {
   int l_i_volNew;
-  //cerr << "quickchange diff = " << val_l_diff;
 
+  // Quick hack: Always use first channel
+  MixDevice     &MixPtr = (*i_mixer)[0];
 
-  MixDevice        *MixPtr = (*mix)[1];
-  MixSet *Set0  = mix->TheMixSets->first();
-  MixSetEntry *mse = Set0->findDev(MixPtr->num() );
-
-  if (mse) {
+  if (&MixPtr) {
     // left volume
-    l_i_volNew =  mse->volumeL + val_l_diff;
+    l_i_volNew =  MixPtr.volume(0) + val_l_diff;
     if (l_i_volNew > 100) l_i_volNew = 100;
     if (l_i_volNew <   0) l_i_volNew = 0;
-    MixPtr->Left->VolChangedI(l_i_volNew);
-    if (! MixPtr->stereoLinked() ) {
+    MixPtr.Left->VolChangedI(l_i_volNew);
+    if (! MixPtr.stereoLinked() ) {
       // right volume
-      l_i_volNew =  mse->volumeR + val_l_diff;
+      l_i_volNew =  MixPtr.volume(1) + val_l_diff;
       if (l_i_volNew > 100) l_i_volNew = 100;
       if (l_i_volNew <   0) l_i_volNew = 0;
-      MixPtr->Right->VolChangedI(l_i_volNew);
+      MixPtr.Right->VolChangedI(l_i_volNew);
     }
     updateSliders();
   }

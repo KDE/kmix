@@ -29,12 +29,14 @@ class KMix : public KTMainWindow , DCOPObject
   K_DCOP
 
 public:
+  // Constructs a KMix object, defined by the number (platform dependent). The given set is loaded.
   KMix(int mixernum, int SetNum);
+  // Destructs KMix
   ~KMix();
   bool restore(int n);
-  Mixer		*mix;
-  Preferences	*prefDL;
-  KMixDockWidget    *dock_widget;
+  Mixer			*i_mixer;
+  Preferences		*prefDL;
+  KMixDockWidget	*dock_widget;
 
 public slots:
   void showOptsCB();
@@ -91,28 +93,28 @@ private:
   int		startDevice;
 
   QString	i_s_aboutMsg;
+
   QPopupMenu* contextMenu(QObject *, QObject *);
   QPopupMenu* ContainerContextMenu(QObject *, QObject *);
+
+
   bool eventFilter(QObject *o, QEvent *e);
-
   void setBalance(int left, int right);
-  QWidget	*Container;
 
-  KMenuBar	*mainmenu;
+  QWidget	*i_widget_container;
 
-  QPopupMenu	*Mfile;
-  QPopupMenu	*Moptions;
-  QPopupMenu	*Mhelp;
-  QPopupMenu	*Mbalancing;
-  QPopupMenu	*i_m_readSet;
-  QPopupMenu	*i_m_writeSet;
+  KMenuBar	*i_menu_main;
+
+  QPopupMenu	*i_popup_balancing;
+  QPopupMenu	*i_popup_readSet;
+  QPopupMenu	*i_popup_writeSet;
 
 
   QLabel	*i_lbl_infoLine;
   QLabel	*i_lbl_setNum;
 
-  QSlider	*LeftRightSB;
-  QPoint        KCMpopup_point;
+  QSlider	*i_slider_leftRight;
+  QPoint        i_point_popup;
   QTimer	*i_time;
 };
 

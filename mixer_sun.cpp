@@ -61,7 +61,7 @@ int Mixer_SUN::openMixer()
     i_recsrc	= 0;
     stereodevs	= 0;
     MaxVolume	= 255;
-    isOpen	= true;
+    i_b_open	= true;
 
     i_s_mixer_name = "SUN Audio Mixer"
     return 0;

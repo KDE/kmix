@@ -135,7 +135,7 @@ int Mixer_HPUX::openMixer()
     if (error) errorText(error + HPUX_ERROR_OFFSET);
 
     i_recsrc = 0;
-    isOpen = true;
+    i_b_open = true;
 
     i_s_mixer_name = "HP Mixer"; /* AAudioString(audio); */
     return 0;

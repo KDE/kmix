@@ -22,7 +22,7 @@
 
 #include "kmix.h"
 
-#include <iostream.h>
+//#include <iostream.h>
 
 
 #include <qtooltip.h>
@@ -78,8 +78,6 @@ void KMixDockWidget::setDisplay(int val_i_percent)
 
 void KMixDockWidget::mousePressLeftEvent ( QMouseEvent *qme )
 {
-  cerr << "mplEvent()\n";
-
   i_b_mouse_moved = false;
   i_b_move_active = true;
   i_i_click_x = qme->x();
@@ -115,7 +113,6 @@ void KMixDockWidget::mouseMoveEvent ( QMouseEvent *qme )
     }
 
     if ( i_b_mouse_moved ) {
-      //cerr << "Distance = " <<  (i_i_click_y - qme->y())/2 << "\n";
       i_i_diff = (i_i_click_y - qme->y())/1 ; // -<- Scaled distance
       i_i_click_y = qme->y();
       emit quickchange(i_i_diff);
