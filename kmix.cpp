@@ -68,10 +68,10 @@ KMixWindow::KMixWindow()
 
 	loadConfig();
 
-	// create mixer widgets for unused mixers
+	// create mixer widgets for Mixers not found in the kmixrc configuration file
    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
 	{
-		// search for mixer widget with current mixer
+		// a) search for mixer widget with current mixer
 		KMixerWidget *widget;
 		for ( widget=m_mixerWidgets.first(); widget!=0; widget=m_mixerWidgets.next() )
 		{
@@ -81,8 +81,20 @@ KMixWindow::KMixWindow()
 			}
 		}
 
-		// create new widget
 		if ( widget==0 ) {
+#undef CHRIS_TEST
+#ifndef CHRIS_TEST
+// this new code inserts n Tabs, but it does not work yet :-(
+			// b) No widget found => create new widget
+			MixerSelectionInfo *msi = new MixerSelectionInfo(
+				mixer->mixerNum(),
+				mixer->mixerName(),
+				(MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY),
+				(MixDevice::SECONDARY),
+				(MixDevice::SWITCH) );
+			addMixerTabs(mixer, msi);
+			delete msi;
+#else
 		  KMixerWidget *mw = new KMixerWidget( m_maxId, mixer,
 						       mixer->mixerName(),
 						       mixer->mixerNum(),
@@ -91,8 +103,8 @@ KMixWindow::KMixWindow()
 						       this );
 		  mw->setName( mixer->mixerName() );
 		  insertMixerWidget( mw );
-
 		  m_maxId++;
+#endif
 		}
 	}
 
@@ -764,6 +776,7 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
 
+   this->setUpdatesEnabled(false);
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
    {
       mw->setTicks( m_showTicks );
@@ -771,6 +784,7 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    }
 
    updateDocking();
+   this->setUpdatesEnabled(false);
 
    // avoid invisible and unaccessible main window
    if( !m_showDockWidget && !isVisible() )
@@ -779,6 +793,8 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
       show();
 	}
 
+   this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
+   kapp->processEvents();
    saveConfig();
 }
 
