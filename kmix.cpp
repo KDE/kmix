@@ -2,7 +2,7 @@
  *              KMix -- KDE's full featured mini mixer
  *
  *
- *              Copyright (C) 1996-98 Christian Esken
+ *              Copyright (C) 1996-99 Christian Esken
  *                        esken@kde.org
  *
  * This program is free software; you can redistribute it and/or
@@ -176,8 +176,6 @@ KMix::KMix(int mixernum, int SetNum)
   allowDocking= KmConfig->readNumEntry( "Docking"  , 0 );
   startDocked = KmConfig->readNumEntry( "StartDocked"  , 0 );
 
-  KCM = new KCmManager(this);
-  CHECK_PTR(KCM);
   mix = new Mixer(mixernum, SetNum);
   CHECK_PTR(mix);
 
@@ -247,9 +245,9 @@ void KMix::createWidgets()
   const unsigned char numDefaultMixerIcons=17;
 #endif
   // Init DnD: Set up drop zone and drop handler
-  dropZone = new KDNDDropZone( this, DndURL );
-  connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )),
-	   SLOT( onDrop( KDNDDropZone*)));
+  //  dropZone = new KDNDDropZone( this, DndURL );
+  //connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )),
+  //	   SLOT( onDrop( KDNDDropZone*)));
 
   // Window title
   setCaption( globalKapp->getCaption() );
@@ -257,7 +255,6 @@ void KMix::createWidgets()
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
   setView(Container);
-  //  KCM->insert(Container, (KCmFunc*)contextMenu);  // !!!
   // Create Menu
   createMenu();
   setMenu(mainmenu);
@@ -303,13 +300,14 @@ void KMix::createWidgets()
     }
 
     QLabel *qb = new QLabel(Container);
-    if (! miniDevPM.isNull())
+    if (! miniDevPM.isNull()) {
       qb->setPixmap(miniDevPM);
+      qb->installEventFilter(this);
+    }
     else
       cerr << "Pixmap missing.\n";
     MixPtr->picLabel=qb;
     qb->resize(miniDevPM.width(),miniDevPM.height());
-    KCM->insert(qb, (KCmFunc *) contextMenu);
 
 
     QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
@@ -317,9 +315,7 @@ void KMix::createWidgets()
 
     MixPtr->Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
     connect( VolSB, SIGNAL(valueChanged(int)), MixPtr->Left, SLOT(VolChanged(int)));
-
-    KCM->insert(VolSB, (KCmFunc*)contextMenu);
-
+    VolSB->installEventFilter(this);
     // Create a second slider, when the current channel is a stereo channel.
     bool BothSliders = (MixPtr->is_stereo  == true );
 
@@ -327,10 +323,9 @@ void KMix::createWidgets()
       QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
 				     QSlider::Vertical, Container, "VolR");
       MixPtr->Right->slider= VolSB2;  // Remember Slider (for eventFilter)
-      connect( VolSB2, SIGNAL(valueChanged(int)), \
-	       MixPtr->Right, SLOT(VolChanged(int)));
+      connect( VolSB2, SIGNAL(valueChanged(int)), MixPtr->Right, SLOT(VolChanged(int)));
+      VolSB2->installEventFilter(this);
 
-      KCM->insert(VolSB2, (KCmFunc*)contextMenu);
     }
     MixPtr=MixPtr->Next;
     // Append MixEntry of current mixer device
@@ -341,7 +336,7 @@ void KMix::createWidgets()
 			     QSlider::Horizontal, Container, "RightLeft");
   connect( LeftRightSB, SIGNAL(valueChanged(int)), \
 	   this, SLOT(MbalChangeCB(int)));
-  KCM->insert(LeftRightSB, (KCmFunc*)contextMenu);
+  LeftRightSB->installEventFilter(this);
   QToolTip::add( LeftRightSB, "Left/Right balancing" );
 }
 
@@ -634,14 +629,15 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 }
 
 
-QPopupMenu* KMix::ContainerContextMenu(QObject *o, QObject *)
+QPopupMenu* KMix::ContainerContextMenu(QObject *, QObject *)
 {
   static bool MlocalCreated=false;
   static QPopupMenu *Mlocal;
 
-  if (MlocalCreated)
+  if (MlocalCreated) {
+    MlocalCreated = false;
     delete Mlocal;
-
+  }
   Mlocal = new QPopupMenu;
   if ( mainmenuOn )
     Mlocal->insertItem( i18n("&Hide Menubar") , this, SLOT(hideMenubarCB()) );
@@ -667,8 +663,10 @@ QPopupMenu* KMix::contextMenu(QObject *o, QObject *e)
   if (o == NULL)
     return NULL;
 
-  if (MlocalCreated)
+  if (MlocalCreated) {
+    MlocalCreated = false;
     delete Mlocal;
+  }
 
   // Scan mixerChannels for Slider object *o
   MixDevice     *MixPtr = mix->First;

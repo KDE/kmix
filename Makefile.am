@@ -6,8 +6,8 @@ INCLUDES= $(all_includes)
 
 SUBDIRS = pics docs
 bin_PROGRAMS = 	kmix
-kmix_SOURCES	= kcontextmenu.cpp kmix.cpp mixer.cpp prefs.cpp docking.cpp sets.cpp channel.cpp
-noinst_HEADERS = kcontextmenu.h kmix.h mixer.h prefs.h version.h docking.h sets.h channel.h
+kmix_SOURCES	= kmix.cpp mixer.cpp prefs.cpp docking.cpp sets.cpp channel.cpp
+noinst_HEADERS = kmix.h mixer.h prefs.h version.h docking.h sets.h channel.h
 kmix_LDADD =       $(LIB_KDEUI)
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 

@@ -16,7 +16,6 @@
 #include <kapp.h>
 #include <kmenubar.h>
 #include <ktopwidget.h>
-#include "kcontextmenu.h"
 
 #include "sets.h"
 #include "mixer.h"
@@ -87,7 +86,6 @@ private:
   void setBalance(int left, int right);
   QWidget	*Container;
   KDNDDropZone  *dropZone;
-  KCmManager	*KCM;
 
   QPopupMenu	*Mfile;
   QPopupMenu	*Moptions;
