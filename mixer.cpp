@@ -50,31 +50,6 @@ int Mixer::getDriverNum()
     return num;
 }
 
-Mixer* Mixer::getMixer( int driver, int device )
-{
-    Mixer *mixer = 0;
-    getMixerFunc *f = g_mixerFactories[driver].getMixer;
-    if( f!=0 )
-        mixer = f( device, 0 );
-    if ( mixer != 0 )
-        mixer->setupMixer(mixer->m_mixDevices); 
-    return mixer;
-}
-
-/*
-// !! Is anybody using the "Mixer::getMixer( int driver, MixSet set,int device, int card )" interface ?
-Mixer* Mixer::getMixer( int driver, MixSet set,int device )
-{
-    Mixer *mixer = 0;
-    getMixerSetFunc *f = g_mixerFactories[driver].getMixerSet;
-    if( f!=0 )
-       mixer = f( set, device, 0 );
-    if ( mixer != 0 )
-       mixer->setupMixer(m_mixDevices);
-    return mixer;
-}
-*/
-
 Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
 {
   m_devnum = device;
@@ -99,41 +74,54 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   DCOPObject::setObjId( objid );
 }
 
-int Mixer::setupMixer( MixSet mset )
+Mixer* Mixer::getMixer( int driver, int device )
 {
-    //   kdDebug(67100) << "Mixer::setupMixer()" << endl;
-   release();	// To be sure, release mixer before (re-)opening
+   // ---------------- Get the mixer Factory and produce one Mixer instance ------------
+   Mixer *mixer = 0;
+   getMixerFunc *f = g_mixerFactories[driver].getMixer;
+   if( f!=0 ) {
+      mixer = f( device, 0 );
+   }
+   if ( mixer == 0 ) {
+      return 0;
+   }
 
-   int ret = openMixer();
+   // ---------------- Open the freshly produced Mixer instance -----------------------
+
+   //   kdDebug(67100) << "Mixer::setupMixer()" << endl;
+   mixer->release();	// To be sure, release mixer before (re-)opening
+
+   // We open the Mixer, so that we have an initialized MixDevice list
+   int ret = mixer->openMixer();
    if (ret != 0) {
-      _errno = ret;
-      return ret;
-   } else
+      mixer->_errno = ret;
+      return mixer;
+   }
+   else if( mixer->m_mixDevices.isEmpty() )
    {
       // This case is a workaround for old Mixer_*.cpp backends. They return 0 on openMixer() but
       // might not have devices in them. So we work around them here. It would be better if they
       // would return ERR_NODEV themselves.
-      if( m_mixDevices.isEmpty() )
-      {
-         _errno = ERR_NODEV;
-	 return ERR_NODEV;
-      }
+      mixer->_errno = ERR_NODEV;
+      return mixer;
    }
 
 
+   // --------- For what do we need the following lines of code ?!? -------------------
+   MixSet &mset = mixer->m_mixDevices;
    if( !mset.isEmpty() ) {
        // Copy the initial mix set
        //       kdDebug(67100) << "Mixer::setupMixer() copy Set" << endl;
        MixDevice* md;
        for( md = mset.first(); md != 0; md = mset.next() )
        {
-	   MixDevice* mdCopy = m_mixDevices.first();
+	   MixDevice* mdCopy = mixer->m_mixDevices.first();
 	   while( mdCopy!=0 && mdCopy->num() != md->num() ) {
-	       mdCopy = m_mixDevices.next();
+	       mdCopy = mixer->m_mixDevices.next();
 	   }
 	   if ( mdCopy != 0 ) {
 	       // The "mdCopy != 0" was not checked before, but its safer to do so
-	       setRecordSource( md->num(), md->isRecSource() );
+	       mixer->setRecordSource( md->num(), md->isRecSource() );
 	       Volume &vol = mdCopy->getVolume();
 	       vol.setVolume( md->getVolume() );
 	       mdCopy->setMuted( md->isMuted() );
@@ -143,7 +131,7 @@ int Mixer::setupMixer( MixSet mset )
        }
    }
 
-   return 0;
+   return mixer;
 }
 
 void Mixer::volumeSave( KConfig *config )

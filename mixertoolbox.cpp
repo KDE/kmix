@@ -91,7 +91,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		if ( mixerError!=0 )
 		{
 		    if ( mixers.count() > 0 ) {
-			// why not always ?!? !!
+			// why not always ?!? It looks very wrong !!!
 			delete mixer;
 			mixer = 0;
 		    }
@@ -107,13 +107,14 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		    if ( mixers.count() == 0 ) {
 			// Simple case: We have no mixers. Lets go on with next driver
 			// The only exception is Mixer::ERR_NODEV
-			if (mixerError!=Mixer::ERR_NODEV)
+			if (mixerError==Mixer::ERR_NODEV)
 			    continue;
 			else
 			    break;
 		    }
 		    else if ( multiDriverMode ) {
-			// Special case: Multi-driver mode will probe more soundcards
+			// Special case: Multi-driver mode will break this loop, but
+                        // probe more drivers (as autodetectionFinished is NOT set to "true")
 			break;
 		    }
 		    else {
@@ -121,7 +122,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 			autodetectionFinished = true;
 			break;
 		    }
-		}
+		} // mixerError!=0
 
 		if ( mixer != 0 ) {
 		    mixers.append( mixer );
