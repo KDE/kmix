@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kmix">
+<kpartgui name="kmix" version="1">
 
 <MenuBar>
  <Menu name="file"><text>&amp;File</text>
@@ -7,5 +7,8 @@
   <Action name="file_save_volume"/>
  </Menu>
 </MenuBar>
+
+<ToolBar name="mainToolBar" noMerge="1">
+</ToolBar>
 
 </kpartgui>
