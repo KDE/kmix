@@ -2,6 +2,7 @@
 <class>ColorWidget</class>
 <author>Stefan Schimanski &lt;1Stein@gmx.de&gt;</author>
 <include location="global">klocale.h</include>
+<include location="global">kseparator.h</include>
 <widget>
     <class>QDialog</class>
     <property stdset="1">
@@ -314,7 +315,7 @@
                                     <number>6</number>
                                 </property>
                                 <widget>
-                                    <class>Line</class>
+                                    <class>KSeparator</class>
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>Line1</cstring>
@@ -347,7 +348,7 @@
                                     </property>
                                 </widget>
                                 <widget>
-                                    <class>Line</class>
+                                    <class>KSeparator</class>
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>Line2</cstring>
@@ -412,7 +413,7 @@
                                     <number>6</number>
                                 </property>
                                 <widget>
-                                    <class>Line</class>
+                                    <class>KSeparator</class>
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>Line1_2</cstring>
@@ -445,7 +446,7 @@
                                     </property>
                                 </widget>
                                 <widget>
-                                    <class>Line</class>
+                                    <class>KSeparator</class>
                                     <property stdset="1">
                                         <name>name</name>
                                         <cstring>Line2_2</cstring>
