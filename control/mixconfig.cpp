@@ -82,7 +82,7 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   hdwLayout->addSpacing( fontMetrics().lineSpacing() );
 
   m_maxCards = new KIntNumInput( hdwGrp );
-  m_maxCards->setLabel( i18n("Maximum number of probed mixers") );
+  m_maxCards->setLabel( i18n("Maximum number of probed mixers:") );
   m_maxCards->setRange( 1, 16 );
   hdwLayout->addWidget( m_maxCards );
   connect( m_maxCards, SIGNAL(valueChanged(int)), this, SLOT(configChanged()) );
@@ -94,7 +94,7 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
                                     "value.") );
 
   m_maxDevices = new KIntNumInput( hdwGrp );
-  m_maxDevices->setLabel( i18n("Maximum number of probed devices per mixer") );
+  m_maxDevices->setLabel( i18n("Maximum number of probed devices per mixer:") );
   m_maxDevices->setRange( 1, 16 );
   hdwLayout->addWidget( m_maxDevices );
   connect( m_maxDevices, SIGNAL(valueChanged(int)), this, SLOT(configChanged()) );
