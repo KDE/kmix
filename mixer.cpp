@@ -31,7 +31,6 @@
 
 
 #if defined(sun) || defined(__sun__)
-#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/audioio.h>
@@ -47,9 +46,9 @@
 
 #ifdef linux
 #include <fcntl.h>
-#include "sys/ioctl.h"
+#include <sys/ioctl.h>
 #include <sys/types.h>
-#include "sys/soundcard.h"  // Here UNIX_SOUND_SYSTEM gets defined
+#include <sys/soundcard.h>  // Here UNIX_SOUND_SYSTEM gets defined
 #define OSS_MIXER
 #endif
 
@@ -62,12 +61,23 @@
 #define OSS_MIXER
 #endif
 
+// NetBSD section, according to  Lennart Augustsson <augustss@cs.chalmers.se>
+#ifdef __NetBSD__
+#include <fcntl.h>
+#include "sys/ioctl.h"
+#include <sys/types.h>
+#include <soundcard.h>
+#define OSS_MIXER
+#endif
+
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
 #if defined(SUN_MIXER) || defined(IRIX_MIXER)  || defined(OSS_MIXER)
 // We are happy. Do nothing
 #else
 
+// We need to include always fcntl.h for the open syscall
+#include <fcntl.h>
 // We cannot handle this!
 #define NO_MIXER
 #endif
