@@ -97,7 +97,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * paren
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
    } else
-      m_balanceSlider = false;
+      m_balanceSlider = 0;
 
    updateSize();
 
