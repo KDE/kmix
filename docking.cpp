@@ -37,6 +37,7 @@ DockWidget::DockWidget(const char *name)
   docked = false;
 
   pos_x = pos_y = 0;
+  have_position = false;
 
   QString pixdir = globalKapp->kde_datadir() + "/kmix/pics/";
   QString tmp;
@@ -47,7 +48,7 @@ DockWidget::DockWidget(const char *name)
 
   // load pixmaps
 
-  if (!cdsmall_pixmap.load(pixdir + "kmixdocked.xpm")){
+  if (!small_pixmap.load(pixdir + "kmixdocked.xpm")){
     PMERROR("kmixdocked.xpm");
   }
 
@@ -123,7 +124,7 @@ void DockWidget::paintEvent (QPaintEvent *e) {
 
 void DockWidget::paintIcon () {
 
-  bitBlt(this, 0, 0, &cdsmall_pixmap);
+  bitBlt(this, 0, 0, &small_pixmap);
 
 
 }
@@ -170,20 +171,34 @@ void DockWidget::toggle_window_state() {
      QPoint point = kmix->mapToGlobal (QPoint (0,0));
      pos_x = point.x();
      pos_y = point.y();
+     toggled = true;
      kmix->hide();
     }
     else {
-     kmix->setGeometry(
-		 pos_x, 
-		 pos_y,
-		 kmix->width(),
-		 kmix->height());
+      if(!have_position)
+	savePosition();
+      kmix->setGeometry( pos_x, 
+			 pos_y,
+			 kmix->width(),
+			 kmix->height());
 
+      toggled = false;
       kmix->show();
     }
   }
 }
 
+const bool DockWidget::isToggled()
+{
+    return(toggled);
+}
+
+void DockWidget::savePosition() {
+  QPoint point = kmix->mapToGlobal (QPoint (0,0));
+  pos_x = point.x();
+  pos_y = point.y();
+  have_position = true;
+}
 
 void DockWidget::emit_quit()
 {

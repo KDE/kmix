@@ -73,7 +73,7 @@ private:
   void createWidgets();
   void createMenu();
   void closeEvent( QCloseEvent *e );
-
+  bool event( QEvent *e );
   bool mainmenuOn;
   bool tickmarksOn;
   bool allowDocking;

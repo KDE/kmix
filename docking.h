@@ -57,6 +57,8 @@ public slots:
 
 public:
   const bool isDocked();
+  const bool isToggled();  // !!! Remove?
+  void savePosition();
 
 signals:
   void quit_clicked();
@@ -67,8 +69,9 @@ private:
   int pos_x;
   int pos_y;
   QPopupMenu *popup_m;
-
-  QPixmap cdsmall_pixmap;
+  bool have_position;
+  QPixmap small_pixmap;
+  bool toggled;  // !!! Remove
 
 private slots:
   void emit_quit();
