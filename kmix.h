@@ -65,7 +65,6 @@ KMixWindow : public KMainWindow
    void saveConfig();
    void loadConfig();
 
-   void initMixer();
    void initPrefDlg();
    void initActions();
    void initWidgets();

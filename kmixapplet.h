@@ -107,7 +107,6 @@ private:
    void positionChange(Position);
    void setColors();
    void setColors( const Colors &color );
-   void initMixer();
 
    ViewApplet *m_mixerWidget;
    QPushButton *m_errorLabel;
