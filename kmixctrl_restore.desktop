@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Service
 Name=Restore Mixer Settings
-Name[af]=HERSTEL MENGER INSTELLINGS
 Name[az]=Qarışdırıcı Qurğularını Yenidən Yükle
 Name[bg]=Възстановява настройките на миксера
 Name[bs]=Vrati postavke miksera
@@ -43,7 +42,7 @@ Name[ta]=¸Äì¸¢ «¨ÁôÒ¸¨Ç Á£ð¸×õ
 Name[tr]=Karıştırıcı Ayarlarını Yeniden Yükle
 Name[uk]=Відновити параметри мікшера
 Name[vi]=Khôi phục khác thiết lập của bềElọc(mixer) 
+Name[xh]=Gcina kwakhona izicwangciso zoMxubi
 Name[zh_CN.GB2312]=恢复混音器设置
-Name[zh_TW.Big5]=恢復混音器設定
 Exec=kmixctrl --restore
 ServiceTypes=Daemon

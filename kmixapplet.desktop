@@ -1,6 +1,5 @@
 [Desktop Entry]
 Name=KMix Applet
-Name[af]=KMIX MINIPROGRAM
 Name[az]=KMix Programcığı
 Name[bg]=Аплет KMix
 Name[br]=Arloadig KMix
@@ -39,10 +38,8 @@ Name[ta]=KMix ÌÚ¿¢Ãø
 Name[tr]=KMix Programcığı
 Name[uk]=Аплет KMix
 Name[zh_CN.GB2312]=KMix 小程序
-Name[zh_TW.Big5]=KMix 小程式
 
 Comment=Controls the volume of the Sound channels
-Comment[af]=KONTROLES DIE VOLUME VAN DIE KLANK KANALE
 Comment[az]=Səs kanallarının səs səviyyəsini idarə eder
 Comment[bg]=Управление силата на звуковите канали
 Comment[br]=Ren nerzh ar ganolioÃ¹ Son
@@ -86,8 +83,8 @@ Comment[ta]=´Ä¢ò¾¼í¸Ç¢ý ¯Ãô¨Àì ¸ðÎôÀÎòÐõ
 Comment[tr]=Ses kanallarının ses düzeyini kontrol eder
 Comment[uk]=Керує гучністю каналів звуку
 Comment[vi]=Điều khiển âm lượng của các kênh sound 
+Comment[xh]=Ilawula umqulu wemijelo yesandi
 Comment[zh_CN.GB2312]=控制音频通道的音量
-Comment[zh_TW.Big5]=控制音軌的聲音
 
 Icon=kmix
 X-KDE-Library=libkmixapplet
