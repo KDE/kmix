@@ -38,6 +38,7 @@ public:
   ~MixSetEntry();
   void read(int set,int devnum);
   void write(int set,int devnum);
+  static void clone(MixSetEntry *Src, MixSetEntry *Dest);
 
   /// internal device number
   char		devnum;
@@ -67,6 +68,11 @@ public:
   ~MixSet();
   void read(int set);
   void write(int set);
+  MixSetEntry* findDev(int num);
+  static void clone(MixSet *Src, MixSet *Dest);
+  /// Return the mix set entry in the MixSet with devnum==num,
+  /// or return NULL, if it does not exist
+
   QString&      name() { return SetName; };
 private:
   QString	SetName;

@@ -40,7 +40,7 @@ MixSetEntry::~MixSetEntry()
 void MixSetEntry::read(int set,int devnum)
 {
   QString grp;
-  grp.sprintf("%i.Dev%i",set,devnum);
+  grp.sprintf("Set%i.Dev%i",set,devnum);
   KmConfig->setGroup(grp);
   this->devnum = devnum;
   volumeL      = KmConfig->readNumEntry("volumeL", 50);
@@ -53,7 +53,7 @@ void MixSetEntry::read(int set,int devnum)
 void MixSetEntry::write(int set,int devnum)
 {
   QString grp;
-  grp.sprintf("%i.Dev%i",set,devnum);
+  grp.sprintf("Set%i.Dev%i",set,devnum);
   KmConfig->setGroup(grp);
   KmConfig->writeEntry("volumeL", volumeL);
   KmConfig->writeEntry("volumeR", volumeR);
@@ -62,6 +62,16 @@ void MixSetEntry::write(int set,int devnum)
   KmConfig->writeEntry("StereoLink", StereoLink);
   KmConfig->writeEntry("name", name);
 }
+void MixSetEntry::clone(MixSetEntry *Src, MixSetEntry *Dest)  // bound static
+{
+  Dest->volumeL      = Src->volumeL;
+  Dest->volumeR      = Src->volumeR;
+  Dest->is_disabled  = Src->is_disabled;
+  Dest->is_muted     = Src->is_muted;
+  Dest->StereoLink   = Src->StereoLink;
+  Dest->name         = Src->name;
+}
+
 
 
 
@@ -76,7 +86,7 @@ MixSet::~MixSet()
 void MixSet::read(int set)
 {
   int i=0;
-  for ( MixSetEntry *mse=first(); mse!=NULL; mse=next() , i++ )
+  for ( MixSetEntry *mse=first(); mse!=NULL; mse=next(), i++ )
     mse->read(set,i);
 }
 void MixSet::write(int set)
@@ -85,14 +95,35 @@ void MixSet::write(int set)
   for ( MixSetEntry *mse=first(); mse!=NULL; mse=next(), i++ )
     mse->write(set,i);
 }
+void MixSet::clone(MixSet *Src, MixSet *Dest) // bound static
+{
+  MixSetEntry *src,*dest;
+  for ( src=Src->first(), dest=Dest->first();
+	(src!=0) && (dest!=0);
+	src=Src->next(), dest=Dest->next() )
+    MixSetEntry::clone(src,dest);
+}
+MixSetEntry* MixSet::findDev(int num)
+{
+  MixSetEntry* mse;
+
+  for (mse = first();
+       (mse != NULL) && (mse->devnum != num);
+       mse=next() );
+
+  return mse;
+}
+
+
 
 
 
 MixSetList::MixSetList()
 {
   KmConfig->setGroup("");
-  NumSets = KmConfig->readNumEntry( "NumSets"  , 0 );
-  for (int i=0; i<NumSets; i++)
+  NumSets = KmConfig->readNumEntry( "NumSets"  , 1 );
+  // create one extra set. The first one is the current mix set
+  for (int i=0; i<NumSets+1; i++)
     append( new MixSet );
 }
 MixSetList::~MixSetList()

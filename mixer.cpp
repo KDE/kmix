@@ -49,7 +49,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
-#include <sys/soundcard.h>  // Here UNIX_SOUND_SYSTEM gets defined
+#include <sys/soundcard.h>
 #define OSS_MIXER
 #endif
 
@@ -58,7 +58,7 @@
 #include <fcntl.h>
 #include "sys/ioctl.h"
 #include <sys/types.h>
-#include "machine/soundcard.h"  // Here UNIX_SOUND_SYSTEM gets defined
+#include "machine/soundcard.h"
 #define OSS_MIXER
 #endif
 
@@ -101,7 +101,6 @@ char KMixErrors[6][100]=
 			   "Line2"  , "Line3" };
 
 /// The mixing set list
-QList<MixSet> Mixer::TheMixSets;
 
 Mixer::Mixer()
 {
@@ -113,6 +112,13 @@ Mixer::Mixer(int devnum)
 {
   setupMixer(devnum);
 }
+
+void Mixer::sessionSave()
+{
+  TheMixSets->write();
+}
+
+
 
 int Mixer::grab()
 {
@@ -127,28 +133,24 @@ int Mixer::grab()
 
 int Mixer::release()
 {
-  if(isOpen)
-    {
-      isOpen=false;
+  if(isOpen) {
+    isOpen=false;
 #ifdef IRIX_MIXER
-      ALfreeconfig(m_config);
-      ALcloseport(m_port);
+    ALfreeconfig(m_config);
+    ALcloseport(m_port);
 #else
-      close(fd);
+    close(fd);
 #endif
-    }
-
+  }
   return 0;
 }
 
+
 int Mixer::setupMixer(int devnum)
 {
+  TheMixSets = new MixSetList;
+  TheMixSets->read();  // Read sets from kmixrc
 
-  bool ReadFromSet=false;  // !!! Sets not implemented yet
-  int  SetNumber=0;
-
-  // !!! Please check other elements, too, and if necessary, set them to a
-  // !!! sane value
   isOpen = false;
   release();	// To be sure, release mixer before (re-)opening
 
@@ -157,6 +159,7 @@ int Mixer::setupMixer(int devnum)
   num_mixdevs = 0;
   First=NULL;
 
+  // set the mixer device name from a given device id
   setDevNumName(devnum);
 
 
@@ -179,9 +182,7 @@ int Mixer::setupMixer(int devnum)
    *  if you pick up a configuration file from a friend with different mixing
    *  hardware, the result could be some serious mess. 
    */
-  InternalSetVolumes(-1);
-  if ( ReadFromSet == TRUE )
-    InternalSetVolumes(SetNumber);
+  set2set0(-1);
 
   return 0;
 }
@@ -260,13 +261,6 @@ void  Mixer::setupStructs(void)
       // If we come here, the mixer device with num i is supported by
       // sound driver.
 
-      /* !!! Here I can fill in a test, if the mixing device should
-       *     be shown. You can create a super small mixer if you only
-       *     enable one channel. This is most useful in conjunction with
-       *     using different mixing sets. TODO
-       */
-
-
       // Store old Adress, for setting up its "Next" pointer
       MixDevice *MixOld = MixPtr;
 
@@ -330,87 +324,133 @@ void  Mixer::setupStructs(void)
  * out:		-
  *
  *****************************************************************************/
-void Mixer::InternalSetVolumes(int Source)
+
+
+
+
+void Mixer::set0toHW()
+{
+  MixSet *SrcSet = TheMixSets->first();
+  MixDevice *MixPtr = First;
+
+  while ( MixPtr) {
+    // Find mix set entry for current MixPtr
+    MixSetEntry *mse;
+    for (mse = SrcSet->first();
+	 (mse != NULL) && (mse->devnum != MixPtr->device_num);
+	 mse=SrcSet->next() );
+
+    if (mse == NULL)
+      continue;  // entry not found
+
+    MixPtr->StereoLink = mse->StereoLink;
+    MixPtr->is_disabled = mse->is_disabled;
+    if (! MixPtr->is_disabled) {
+      // Write volume (when channel is enabled)
+      MixPtr->Left->volume  =  mse->volumeL;
+      MixPtr->Right->volume =  mse->volumeR;
+    }
+
+    MixPtr=MixPtr->Next;
+  }
+}
+
+void Mixer::set2set0(int Source)
 {
   MixDevice	*MixPtr;
   int		VolLeft,VolRight,Volume;
+
+  MixSet *DestSet = TheMixSets->first();
 
   /*
    * Source can be the number of a mixing set, or -1 for reading from
    * the hardware.
    * -1    = Read from mixer hardware
-   *  0    = Default mixing set
+   *  0    = Default mixing set (request gets ignored)
    *  1-...= Other mixing sets
+   *
+   * Destination set is always set 0
    */
 
-  if ( Source < 0 )
-    {
-      // Read from hardware
-      MixPtr = First;
-      while (MixPtr)
-	{
-#ifdef SUN_MIXER
-	  audio_info_t audioinfo;
+  if ( Source < 0 ) {
+    // Read from hardware
+    MixPtr = First;
+    while (MixPtr) {
 
-	  if (ioctl(fd, AUDIO_GETINFO, &audioinfo) < 0)
-	    errormsg(Mixer::ERR_READ);
-	  Volume = audioinfo.play.gain;
-	  VolLeft  = VolRight = Volume & 0x7f;
+      // Find mix set entry for current MixPtr
+      MixSetEntry *mse = DestSet->findDev(MixPtr->device_num);
+      if (mse == NULL)
+	continue;  // entry not found
+
+
+#ifdef SUN_MIXER
+      audio_info_t audioinfo;
+
+      if (ioctl(fd, AUDIO_GETINFO, &audioinfo) < 0)
+	errormsg(Mixer::ERR_READ);
+      Volume = audioinfo.play.gain;
+      VolLeft  = VolRight = Volume & 0x7f;
 #endif
 #ifdef IRIX_MIXER
-	  // Get volume
-	  long in_buf[4];
-	  switch( MixPtr->device_num ) {
-	  case 0:       // Speaker Output
-	    in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
-	    in_buf[2] = AL_LEFT_SPEAKER_GAIN;
-	    break;
-	  case 7:       // Microphone Input (actually selectable).
-	    in_buf[0] = AL_RIGHT_INPUT_ATTEN;
-	    in_buf[2] = AL_LEFT_INPUT_ATTEN;
-	    break;
-	  case 11:      // Record monitor
-	    in_buf[0] = AL_RIGHT_MONITOR_ATTEN;
-	    in_buf[2] = AL_LEFT_MONITOR_ATTEN;
-	    break;
-	  default:
-	    printf("Unknown device %d\n", MixPtr->device_num);
-	  }
-	  ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4);
-	  VolRight = in_buf[1]*100/255;
-	  VolLeft  = in_buf[3]*100/255;
+      // Get volume
+      long in_buf[4];
+      switch( MixPtr->device_num ) {
+      case 0:       // Speaker Output
+	in_buf[0] = AL_RIGHT_SPEAKER_GAIN;
+	in_buf[2] = AL_LEFT_SPEAKER_GAIN;
+	break;
+      case 7:       // Microphone Input (actually selectable).
+	in_buf[0] = AL_RIGHT_INPUT_ATTEN;
+	in_buf[2] = AL_LEFT_INPUT_ATTEN;
+	break;
+      case 11:      // Record monitor
+	in_buf[0] = AL_RIGHT_MONITOR_ATTEN;
+	in_buf[2] = AL_LEFT_MONITOR_ATTEN;
+	break;
+      default:
+	printf("Unknown device %d\n", MixPtr->device_num);
+      }
+      ALgetparams(AL_DEFAULT_DEVICE, in_buf, 4);
+      VolRight = in_buf[1]*100/255;
+      VolLeft  = in_buf[3]*100/255;
 #endif
 #ifdef OSS_MIXER
-	  if (ioctl(fd, MIXER_READ( MixPtr->device_num ), &Volume) == -1)
-	    /* Oops, can't read mixer */
-	    errormsg(Mixer::ERR_READ);
+      if (ioctl(fd, MIXER_READ( MixPtr->device_num ), &Volume) == -1)
+	/* Oops, can't read mixer */
+	errormsg(Mixer::ERR_READ);
 	  
-	  VolLeft  = Volume & 0x7f;
-	  VolRight = (Volume>>8) & 0x7f;
+      VolLeft  = Volume & 0x7f;
+      VolRight = (Volume>>8) & 0x7f;
 // PORTING: add #ifdef PLATFORM , commands , #endif
 #endif
 
-	  if ( (VolLeft == VolRight) && (MixPtr->is_stereo == true) )
-	    MixPtr->StereoLink = true;
-	  else
-	    MixPtr->StereoLink = false;
+      if ( (VolLeft == VolRight) && (MixPtr->is_stereo == true) )
+	mse->StereoLink = true;
+      else
+	mse->StereoLink = false;
 
-	  MixPtr->Left->volume = VolLeft;
-	  if ( MixPtr->StereoLink )
-	    MixPtr->Right->volume = MixPtr->Left->volume;
-	  else
-	    MixPtr->Right->volume = VolRight;
+      mse->volumeL = VolLeft;
+      if ( MixPtr->StereoLink )
+	mse->volumeR = VolLeft;
+      else
+	mse->volumeR = VolRight;
 
-	  MixPtr=MixPtr->Next;
-	}
-    } /* if ( Source < 0 ) */
+      MixPtr=MixPtr->Next;
+    }
+  } /* if ( Source < 0 ) */
   else {
-    // Read from a set
+    // Read from a set (means copy set data to actual MixDevice)    
+    MixSet *SrcSet = TheMixSets->first();
+    for (int ssn=0; ssn<Source; ssn++)
+      SrcSet = TheMixSets->next();
+    if (SrcSet == DestSet)
+      return; // nothing to do (means: Set 0)
 
-    // First find set in the set list
+    MixSet::clone( SrcSet, DestSet );
   }
-}
 
+  set0toHW();
+}
 
 void Mixer::setBalance(int left, int right)
 {

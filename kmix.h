@@ -36,7 +36,6 @@ public:
   Mixer		*mix;
   Preferences	*prefDL;
   DockWidget    *dock_widget;
-  MixSetList    *TheMixSets;
 
 public slots:
   void onDrop( KDNDDropZone*);

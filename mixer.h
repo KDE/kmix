@@ -117,21 +117,25 @@ public:
   void errormsg(int mixer_error);
   void updateMixDevice(MixDevice *mixdevice);
   void setBalance(int left, int right);
+  void set0toHW();
+  void set2set0(int Source);
   void setRecsrc(unsigned int newRecsrc);
   unsigned int getRecsrc();
+  void sessionSave();
 
   int num_mixdevs;
   MixDevice	*First;
+  ///  The mixing set list
+  MixSetList *TheMixSets;
 
 private:
-  void setDevNumName(int devnum);
   char		*devname;
   int		devnum;
 
 #ifdef sgi
   // IRIX uses ALport stuff
-  ALport   m_port;
-  ALconfig m_config;
+  ALport	m_port;
+  ALconfig	m_config;
 #else
   // Other platforms use a standard file descriptor
   int		fd;
@@ -139,9 +143,9 @@ private:
 
   bool		isOpen;
 
+  void setDevNumName(int devnum);
   int  setupMixer(int devnum);
   void setupStructs(void);
-  void InternalSetVolumes(int Source);
   int  openMixer(void);
   void updateMixDeviceI(MixDevice *mixdevice);
 
@@ -149,8 +153,6 @@ private:
   int PercentLeft,PercentRight;
   ///  Maximum volume Level allowed by the Mixer API (OS dependent)
   int MaxVolume;
-  ///  The mixing set list
-  static QList<MixSet> TheMixSets;
 };
 
 #endif

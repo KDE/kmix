@@ -91,39 +91,56 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 
 void Preferences::createChannelConfWindow()
 {
-  bool created = false;
+  static bool created = false;
 
   grpbox2a = new QGroupBox (i18n("Mixer channel setup (not saved yet)"),page2);
-  QLabel *qlb;
+  QLabel *qlb,*qlbd;
 
+  const int entryWidth = 100;
   int ypos=20;
-  int x1=10,x2=120, x3=160;
-  qlb = new QLabel(grpbox2a);
-  qlb->setText(i18n("Device"));
-  qlb->move(x1,ypos);
+  int x1=10, x2, x3;
+  qlbd = new QLabel(grpbox2a);
+  qlbd->setText(i18n("Device"));
+  qlbd->setFixedWidth(entryWidth);
+  qlbd->move(x1,ypos);
+
+  x2 = x1 + qlbd->width() + 4;
   qlb = new QLabel(grpbox2a);
   qlb->setText(i18n("Show"));
+  qlb->setFixedWidth(qlb->sizeHint().width());
   qlb->move(x2,ypos);
+
+  x3= x2 + qlb->width() + 8;
   qlb = new QLabel(grpbox2a);
   qlb->setText(i18n("Split"));
+  qlb->setFixedWidth(qlb->sizeHint().width());
   qlb->move(x3,ypos);
-  ypos += qlb->height();
 
+  ypos += qlbd->height();
+
+  // Traverse all mix channels and create one line per channel
   for  (MixDevice *mdev = mix->First ; mdev ;  mdev = mdev->Next  ) {
+    // 1. line edit
     QLineEdit *qle;
     qle = new  QLineEdit(grpbox2a,mdev->devname);
     qle->setText(mdev->devname);
     qle->move(x1,ypos);
+    qle->setFixedWidth(entryWidth);
+
+    // 2. check box  (Show)
     QCheckBox *qcb = new QCheckBox(grpbox2a);
+    qcb->setFixedSize(qcb->sizeHint());
     qcb->move(x2,ypos);
     if (mdev->is_disabled)
       qcb->setChecked(false);
     else
       qcb->setChecked(true);
 
+    // 3. check box  (Split)
     QCheckBox *qcbSplit;
     if (mdev->is_stereo) {
       qcbSplit = new QCheckBox(grpbox2a);
+      qcbSplit->setFixedSize(qcbSplit->sizeHint());
       qcbSplit->move(x3,ypos);
       if (mdev->StereoLink)
 	qcbSplit->setChecked(false);
@@ -154,8 +171,32 @@ void Preferences::slotOk()
   hide();
 }
 
+void Preferences::options2current()
+{
+  MixSet *cms = mix->TheMixSets->first();
+  MixDevice *mdev = mix->First;
+  for (ChannelSetup *chanSet = cSetup.first() ; chanSet!=0; chanSet = cSetup.next() ) {
+
+    MixSetEntry *mse;
+    for (mse = cms->first();
+	 (mse != NULL) && (mse->devnum != chanSet->num) ;
+	 mse=cms->next() );
+
+    if (mse == NULL)
+      continue;  // entry not found
+
+    else {
+      if (mdev->is_stereo)
+	mse->StereoLink = ! chanSet->qcbSplit->isChecked();
+      mse->is_disabled =  ! chanSet->qcbShow->isChecked();
+    }
+    mdev = mdev->Next;
+  }
+}
+
 void Preferences::slotApply()
 {
+  options2current();
   emit optionsApply();
 }
 

@@ -117,8 +117,6 @@ KMix::KMix(int mixernum)
   CHECK_PTR(KCM);
   mix = new Mixer(mixernum);
   CHECK_PTR(mix);
-  TheMixSets = new MixSetList;
-  TheMixSets->read();
 
   dock_widget = new DockWidget("dockw");
   if ( allowDocking ) {
@@ -154,40 +152,7 @@ void KMix::applyOptions()
   mainmenuOn  = prefDL->menubarChk->isChecked();
   tickmarksOn = prefDL->tickmarksChk->isChecked();
   allowDocking= prefDL->dockingChk->isChecked();
-
-
-  KmConfig->setGroup("");
-  KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
-  KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
-  KmConfig->writeEntry( "Docking"    , allowDocking);
-
-
-  TheMixSets->write();
-
-
-  QString groupname;
-  MixDevice *mdev = mix->First;
-  for  (ChannelSetup *chanSet = prefDL->cSetup.first() ; chanSet!=0;  chanSet = prefDL->cSetup.next() ) {
-    if (mdev->device_num != chanSet->num)
-      QMessageBox::critical(NULL, "Inconsistency warning", \
-			     "The cSetup list does not match the mdev list\nPlease report this error",
-			     1,2);
-    else {
-      groupname.sprintf("Device %i", mdev->device_num);
-      KmConfig->setGroup(groupname);
-      if (mdev->is_stereo) {
-	mdev->StereoLink = ! chanSet->qcbSplit->isChecked();
-        KmConfig->writeEntry("Linked", mdev->StereoLink);
-      }
-      mdev->is_disabled =  ! chanSet->qcbShow->isChecked();
-      KmConfig->writeEntry("Disabled", mdev->is_disabled);
-    }
-    mdev = mdev->Next;
-  }
-
-
-  KmConfig->sync();
-
+  mix->set0toHW();
   placeWidgets();
 }
 
@@ -224,14 +189,11 @@ void KMix::createWidgets()
   createMenu();
   setMenu(mainmenu);
   // Create Sliders (Volume indicators)
-
-  //  MixSet *stdMixSet = TheMixSets->first(); !!!
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
-    MixSetEntry *mse = new MixSetEntry();
     int devnum = MixPtr->device_num;
     
 
@@ -521,8 +483,7 @@ void KMix::showOptsCB()
 
 void KMix::quitClickedCB()
 {
-  delete this;
-  exit(0);
+  quit_myapp();
 }
 
 
@@ -663,7 +624,10 @@ void KMix::sessionSave()
 {
   KmConfig->setGroup("");
   KmConfig->writeEntry( "Balance"  , LeftRightSB->value() , true );
-  TheMixSets->write();
+  KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
+  KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
+  KmConfig->writeEntry( "Docking"    , allowDocking);
+  mix->sessionSave();
   KmConfig->sync();
 }
 
@@ -679,5 +643,6 @@ void KMix::closeEvent( QCloseEvent *e )
 
 void KMix::quit_myapp()
 {
+  sessionSave();
   globalKapp->quit();
 }

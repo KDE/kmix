@@ -1,10 +1,15 @@
-1998-05-19    <chris@magicon.ping.de>
+1998-05-20    <esken@kde.org>
+	* Set support is basically in. No user visible aspects, though.
+	* User can now switch visualization of channels on and off.
+	* Options saving now works via Quit as well as via SM.
+	* This revision is a major step towards kmix1.0, so I warped
+	the version number to 0.80
 
+1998-05-19    <chris@magicon.ping.de>
 	* Implementing major aspects of set support. Nothing
 	is visible for the user at the point.
 
 Mon May  4 00:07:55 1998    <chris@magicon.ping.de>
-
 	* Added layout setup in config dialog. It works but isn't saved yet.
 
 Fri May  1 19:35:39 1998    <chris@magicon.ping.de>

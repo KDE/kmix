@@ -34,8 +34,10 @@ public:
 private:
   QPushButton	*buttonOk, *buttonApply, *buttonCancel;
   QTabDialog	*tabctl;
-  QWidget		*page1, *page2;
-  QGroupBox		*grpbox2a;
+  QWidget	*page1, *page2;
+  QGroupBox	*grpbox2a;
+
+  void options2current();
 
 signals:
       void optionsApply();
