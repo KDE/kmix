@@ -49,7 +49,7 @@
 
 /**
  * Class that represents a single mix device, inlcuding PopUp, muteLED, ...
- * Used of KMix main window and DockWidget and PanelApplet?
+ * Used in KMix main window and DockWidget and PanelApplet.
  * It can be configured to include or exclude the recordLED and the muteLED.
  * The direction (horizontal, vertical) can be configured and whether it should
  * be "small"  (uses KSmallSlider instead of QSlider then).
