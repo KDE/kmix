@@ -78,11 +78,15 @@ class KMixerWidget : public QWidget  {
    void loadConfig( KConfig *config, QString grp );
 
    void showAll();
+   void hideAll();
 
   private slots:
    void rightMouseClicked();
    void updateBalance();
    void updateSize();
+   void slotFillPopup();
+   void slotToggleMixerDevice(int id);
+
 
   private:
    Mixer *m_mixer;
@@ -97,6 +101,7 @@ class KMixerWidget : public QWidget  {
    int m_id;
 
    KActionCollection *m_actions;
+   KActionMenu *m_toggleMixerChannels;
 
    bool m_small;
    KPanelApplet::Direction m_direction;

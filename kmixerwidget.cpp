@@ -72,7 +72,15 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
 
 {
    m_actions = new KActionCollection( this );
-   new KAction( i18n("Show &All"), 0, this, SLOT(showAll()), m_actions, "show_all" );
+   new KAction( i18n("&Show All"), 0, this, SLOT(showAll()), m_actions, "show_all" );
+   new KAction( i18n("&Hide All"), 0, this, SLOT(hideAll()), m_actions, "hide_all" );
+
+   m_toggleMixerChannels = new KActionMenu(i18n("&Channels"), m_actions, "toggle_channels");
+
+   connect(m_toggleMixerChannels->popupMenu(), SIGNAL(aboutToShow()),
+      this, SLOT(slotFillPopup()));
+   connect(m_toggleMixerChannels->popupMenu(), SIGNAL(activated(int)),
+      this, SLOT(slotToggleMixerDevice(int)));
 
    m_channels.setAutoDelete( true );
    m_small = small;
@@ -122,16 +130,16 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir, MixDevice::
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
       MixDeviceWidget *mdw =
-	new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small,
-			     m_direction, this, mixDevice->name().latin1() );
+         new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small,
+            m_direction, this, mixDevice->name().latin1() );
 
       connect( mdw, SIGNAL( masterMuted( bool ) ),
                   SIGNAL( masterMuted( bool ) ) );
 
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       if ( (mixDevice->category() & categoryMask) == 0) {
-	  // This device does not fit the category => Hide it
-	  mdw->setDisabled(true);
+         // This device does not fit the category => Hide it
+         mdw->setDisabled(true);
       }
       m_devLayout->addWidget( mdw, 0 );
 
@@ -224,10 +232,17 @@ void KMixerWidget::addActionToPopup( KAction *action ) {
 
 void KMixerWidget::rightMouseClicked()
 {
+   KAction *a;
    KPopupMenu *menu = new KPopupMenu( this );
    menu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
-   KAction *a = m_actions->action( "show_all" );
+   a = m_actions->action( "show_all" );
+   if ( a ) a->plug( menu );
+
+   a = m_actions->action( "hide_all" );
+   if ( a ) a->plug( menu );
+
+   a = m_actions->action( "toggle_channels" );
    if ( a ) a->plug( menu );
 
    a = m_actions->action( "options_show_menubar" );
@@ -235,6 +250,34 @@ void KMixerWidget::rightMouseClicked()
 
    QPoint pos = QCursor::pos();
    menu->popup( pos );
+}
+
+void KMixerWidget::slotFillPopup()
+{
+   m_toggleMixerChannels->popupMenu()->clear();
+
+   int n=0;
+   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
+   {
+      m_toggleMixerChannels->popupMenu()->insertItem(chn->dev->name(), n);
+      m_toggleMixerChannels->popupMenu()->setItemChecked(n, !chn->dev->isDisabled());
+      n++;
+   }
+}
+
+void KMixerWidget::slotToggleMixerDevice(int id)
+{
+   if(id >= static_cast<int>(m_channels.count())) // too big
+      return;
+
+   Channel *chn = m_channels.at(id);
+   if(!chn)
+      return;
+
+   bool gotCheck = m_toggleMixerChannels->popupMenu()->isItemChecked(id);
+
+   chn->dev->setDisabled(gotCheck);
+   m_toggleMixerChannels->popupMenu()->setItemChecked(id, !gotCheck);
 }
 
 void KMixerWidget::saveConfig( KConfig *config, QString grp )
@@ -256,10 +299,10 @@ void KMixerWidget::saveConfig( KConfig *config, QString grp )
 
       KGlobalAccel *keys=chn->dev->keys();
       if (keys) {
-	 QString devgrpkeys;
-	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
-	 keys->setConfigGroup(devgrpkeys);
-	 keys->writeSettings(config);
+         QString devgrpkeys;
+         devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
+         keys->setConfigGroup(devgrpkeys);
+         keys->writeSettings(config);
       }
       n++;
    }
@@ -301,6 +344,16 @@ void KMixerWidget::showAll()
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
    {
       chn->dev->setDisabled( false );
+   }
+
+   updateSize();
+}
+
+void KMixerWidget::hideAll()
+{
+   for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
+   {
+      chn->dev->setDisabled( true );
    }
 
    updateSize();
