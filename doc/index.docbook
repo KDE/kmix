@@ -232,7 +232,7 @@ FreeBSD, NetBSD and BSDI.</para></listitem>
 </sect1>
 
 <sect1 id="compilation">
-<title>Compilation and installation</title>
+<title>Compilation and Installation</title>
 
 <para>In order to compile and install &kmix; on your system, type the following
 in the base directory of the kdemultimedia distribution:</para>
