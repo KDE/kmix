@@ -120,13 +120,19 @@ class Mixer : public QObject, virtual public MixerIface
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
       virtual void setVolume( int deviceidx, int percentage );
+      virtual void setAbsoluteVolume( int deviceidx, long absoluteVolume );
       virtual void setMasterVolume( int percentage );
 
       virtual void increaseVolume( int deviceidx );
       virtual void decreaseVolume( int deviceidx );
 
+      virtual long absoluteVolume( int deviceidx );
+      virtual long absoluteVolumeMin( int deviceidx );
+      virtual long absoluteVolumeMax( int deviceidx );
       virtual int volume( int deviceidx );
       virtual int masterVolume();
+
+
 
       virtual void setMute( int deviceidx, bool on );
       virtual bool mute( int deviceidx );

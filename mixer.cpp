@@ -507,6 +507,49 @@ int Mixer::volume( int deviceidx )
   return (vol.getVolume( Volume::LEFT )*100)/vol.maxVolume();
 }
 
+// @dcop , especially for use in KMilo
+void Mixer::setAbsoluteVolume( int deviceidx, long absoluteVolume ) {
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return;
+
+  Volume vol=mixdev->getVolume();
+  vol.setAllVolumes( absoluteVolume );
+  writeVolumeToHW(deviceidx, vol);
+}
+
+// @dcop , especially for use in KMilo
+long Mixer::absoluteVolume( int deviceidx )
+{
+   MixDevice *mixdev= mixDeviceByType( deviceidx );
+   if (!mixdev) return 0;
+
+   Volume vol=mixdev->getVolume();
+   long avgVolume=vol.getAvgVolume((Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT));
+   return avgVolume;
+}
+
+// @dcop , especially for use in KMilo
+long Mixer::absoluteVolumeMax( int deviceidx )
+{
+   MixDevice *mixdev= mixDeviceByType( deviceidx );
+   if (!mixdev) return 0;
+
+   Volume vol=mixdev->getVolume();
+   long maxVolume=vol.maxVolume();
+   return maxVolume;
+}
+
+// @dcop , especially for use in KMilo
+long Mixer::absoluteVolumeMin( int deviceidx )
+{
+   MixDevice *mixdev= mixDeviceByType( deviceidx );
+   if (!mixdev) return 0;
+
+   Volume vol=mixdev->getVolume();
+   long minVolume=vol.minVolume();
+   return minVolume;
+}
+
 // @dcop
 int Mixer::masterVolume()
 {
@@ -549,7 +592,7 @@ void Mixer::decreaseVolume( int deviceidx )
         volToChange -= (int)fivePercent;
 	//std::cout << "Mixer::decreaseVolume():  after: volToChange " <<i<< "=" <<volToChange << std::endl;
         vol.setVolume((Volume::ChannelID)i, volToChange);
-        int volChanged = vol.getVolume((Volume::ChannelID)i);
+        //int volChanged = vol.getVolume((Volume::ChannelID)i);
         //std::cout << "Mixer::decreaseVolume():  check: volChanged " <<i<< "=" <<volChanged << std::endl;
      } // for
      writeVolumeToHW(deviceidx, vol);

@@ -37,6 +37,26 @@ k_dcop:
     */
    virtual int masterVolume()=0;
 
+
+   /**
+    Sets the absolute volume of the device. Lower bound is absoluteVolumeMin(),
+    upper bound is absoluteVolumeMax().
+    */
+   virtual void setAbsoluteVolume( int deviceidx, long absoluteVolume )=0;
+   /**
+    Returns the absolute volume of the device. The volume is in the range of
+    absoluteVolumeMin() <= absoluteVolume() <= absoluteVolumeMax()
+    */
+   virtual long absoluteVolume( int deviceidx )=0;
+   /**
+    Returns the absolute maximum volume of the device.
+    */
+   virtual long absoluteVolumeMin( int deviceidx )=0;
+   /**
+    Returns the absolute minimum volume of the device.
+    */
+   virtual long absoluteVolumeMax( int deviceidx )=0;
+
    /**
     Mutes or unmutes the specified device.
     */
