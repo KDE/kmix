@@ -42,6 +42,10 @@ k_dcop:
     */
    virtual void setMute( int deviceidx, bool on )=0;
    /**
+    Toggles mute-state for the given device.
+    */
+   virtual void toggleMute( int deviceidx )=0;
+   /**
     Returns if the given device is muted or not. If the device is not
     available in this mixer, it is reported as muted.
     */

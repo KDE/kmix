@@ -119,17 +119,18 @@ class Mixer : public QObject, virtual public MixerIface
       virtual unsigned int enumIdHW(int mixerIdx);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
-      virtual void setVolume( int channeltype, int percentage );
+      virtual void setVolume( int deviceidx, int percentage );
       virtual void setMasterVolume( int percentage );
 
-      virtual void increaseVolume( int channeltype );
-      virtual void decreaseVolume( int channeltype );
+      virtual void increaseVolume( int deviceidx );
+      virtual void decreaseVolume( int deviceidx );
 
-      virtual int volume( int channeltype );
+      virtual int volume( int deviceidx );
       virtual int masterVolume();
 
-      virtual void setMute( int channeltype, bool on );
-      virtual bool mute( int channeltype );
+      virtual void setMute( int deviceidx, bool on );
+      virtual bool mute( int deviceidx );
+      virtual void toggleMute( int deviceidx );
       virtual bool isRecordSource( int deviceidx );
 
       virtual bool isAvailableDevice( int deviceidx );

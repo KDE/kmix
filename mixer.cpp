@@ -548,6 +548,19 @@ void Mixer::setMute( int deviceidx, bool on )
 }
 
 // @dcop
+void Mixer::toggleMute( int deviceidx )
+{
+  MixDevice *mixdev= mixDeviceByType( deviceidx );
+  if (!mixdev) return;
+
+  bool previousState= mixdev->isMuted();
+  
+  mixdev->setMuted( !previousState );
+
+  writeVolumeToHW(deviceidx, mixdev->getVolume() );
+}
+
+// @dcop
 bool Mixer::mute( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
