@@ -46,7 +46,7 @@ class Mixer : public QObject, virtual public MixerIface
 
    public:
       enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP,
-			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET };
+			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET, ERR_MIXEROPEN };
 
       Mixer( int device = -1, int card = -1 );
       virtual ~Mixer() {};

@@ -167,7 +167,7 @@ Mixer_ALSA::openMixer()
 	{
 	    kdError(67100) << "snd_mixer_open err=" << snd_strerror(err) << endl;
 	    //errormsg( Mixer::ERR_OPEN );
-	    return Mixer::ERR_OPEN;
+	    return Mixer::ERR_MIXEROPEN;
 	}
 
 	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )

@@ -108,7 +108,6 @@ KMixWindow::initActions()
 	// settings menu
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
-
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
 	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
@@ -179,13 +178,19 @@ KMixWindow::initMixer()
 
 		    /* If we get here, we *assume* that we probed the last dev of the current soundcard driver.
 		     * We cannot be sure 100%, probably it would help to check the "mixerError" variable. But I
-		     * currently don't see an error code that needs to be handled explicitely.
+		     * currently don't see an error code that needs to be handled explicitely (Update:
+		     *  We now have ERR_MIXEROPEN, which means, that a soundcard is present but has no Mixer.
+		     *  It sounds pretty wise to probe the following soundcards of this driver. See Bug #87778).
 		     *
 		     * Lets decide if we the autoprobing shall continue:
 		     */
 		    if ( m_mixers.count() == 0 ) {
 			// Simple case: We have no mixers. Lets go on with next driver
-			break;
+			// The only exception is the noted Mixer::ERR_MIXEROPEN
+			if (mixerError!=Mixer::ERR_MIXEROPEN)
+			  continue;
+			else
+			  break;
 		    }
 		    else if ( m_multiDriverMode ) {
 			// Special case: Multi-driver mode will probe more soundcards
