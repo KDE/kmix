@@ -3,7 +3,6 @@ Encoding=UTF-8
 Exec=kmix -caption "%c" %i %m
 DocPath=kmix/index.html
 OnlyShowIn=KDE
-TerminalOptions=
 Path=
 Type=Application
 MimeType=
