@@ -25,6 +25,8 @@
 #ifndef MIXDEVICEWIDGET_H
 #define MIXDEVICEWIDGET_H
 
+#include <kpanelapplet.h>
+
 #include <qwidget.h>
 #include <volume.h>
 #include <qptrlist.h>
@@ -51,7 +53,7 @@ class MixDeviceWidget
    public:
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
                        bool showMuteLED, bool showRecordLED,
-                       bool small, bool vert,
+                       bool small, KPanelApplet::Direction dir,
                        QWidget* parent = 0, const char* name = 0);
       ~MixDeviceWidget();
 
@@ -115,7 +117,7 @@ class MixDeviceWidget
 
       bool m_linked;
       bool m_disabled;
-      bool m_vert;
+      KPanelApplet::Direction m_direction;
       bool m_small;
 
       QLabel *m_iconLabel;

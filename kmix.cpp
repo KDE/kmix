@@ -40,6 +40,7 @@
 #include <kconfig.h>
 #include <kaction.h>
 #include <kstdaction.h>
+#include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <khelpmenu.h>
 #include <kdebug.h>
@@ -101,7 +102,8 @@ KMixWindow::KMixWindow()
            KMixerWidget *mw = new KMixerWidget( m_maxId, mixer,
                                                 mixer->mixerName(),
                                                 mixer->mixerNum(),
-                                              false, true, this );
+                                                false, KPanelApplet::Up,
+                                                this );
            mw->setName( mixer->mixerName() );
            insertMixerWidget( mw );
 
@@ -323,7 +325,7 @@ void KMixWindow::loadConfig()
 
        // only if an actual mixer device is found for the config entry
        if (mixer) {
-           KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, true, this );
+           KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, this );
            mw->setName( name );
            mw->loadConfig( config, *tab );
            insertMixerWidget( mw );
@@ -471,7 +473,7 @@ void KMixWindow::newMixer()
 
           // create mixer widget
           KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-                                               false, true, this );
+                                               false, KPanelApplet::Up, this );
           m_maxId++;
           mw->setName( name );
           insertMixerWidget( mw );

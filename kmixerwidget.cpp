@@ -60,10 +60,12 @@ class Channel
 /********************** KMixerWidget *************************/
 
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum,
-                            bool small, bool vert, QWidget * parent, const char * name )
+                            bool small, KPanelApplet::Direction dir,
+                            QWidget * parent, const char * name )
    : QWidget( parent, name ), m_mixer(mixer), m_balanceSlider(0),
      m_topLayout(0), m_devLayout(0),
      m_name( mixerName ), m_mixerName( mixerName ), m_mixerNum( mixerNum ), m_id( _id ),
+     m_direction(dir),
      m_iconsEnabled( true ), m_labelsEnabled( false ), m_ticksEnabled( false )
 
 {
@@ -71,11 +73,10 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerN
    new KAction( i18n("Show &all"), 0, this, SLOT(showAll()), m_actions, "show_all" );
    m_channels.setAutoDelete( true );
    m_small = small;
-   m_vertical = vert;
 
    // Create mixer device widgets
    if ( mixer ) {
-      createDeviceWidgets( vert );
+      createDeviceWidgets( m_direction );
    } else {
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
@@ -90,7 +91,7 @@ KMixerWidget::~KMixerWidget()
 {
 }
 
-void KMixerWidget::createDeviceWidgets( bool vert )
+void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir )
 {
    if ( !m_mixer ) return;
 
@@ -100,11 +101,14 @@ void KMixerWidget::createDeviceWidgets( bool vert )
    delete m_devLayout;
    delete m_topLayout;
 
-   m_vertical = vert;
+   m_direction = dir;
 
    // create layouts
    m_topLayout = new QVBoxLayout( this, 0, 3 );
-   m_devLayout = new QHBoxLayout( m_topLayout );
+   if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down))
+     m_devLayout = new QHBoxLayout( m_topLayout );
+   else
+     m_devLayout = new QVBoxLayout( m_topLayout );
 
    // create devices
    MixSet mixSet = m_mixer->getMixSet();
@@ -112,8 +116,8 @@ void KMixerWidget::createDeviceWidgets( bool vert )
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
       MixDeviceWidget *mdw =
-         new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small, vert,
-                                 this, mixDevice->name().latin1() );
+         new MixDeviceWidget( m_mixer, mixDevice, !m_small, !m_small, m_small,
+                              m_direction, this, mixDevice->name().latin1() );
 
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       m_devLayout->addWidget( mdw, 0 );

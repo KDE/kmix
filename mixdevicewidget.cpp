@@ -49,10 +49,10 @@
 
 MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
-                                 bool small, bool vert,
+                                 bool small, KPanelApplet::Direction dir,
                                  QWidget* parent,  const char* name) :
    QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md ),
-   m_linked( true ), m_disabled( false ), m_vert( vert ), m_small( small ),
+   m_linked( true ), m_disabled( false ), m_direction( dir ), m_small( small ),
    m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 )
 {
    // global stuff
@@ -112,17 +112,19 @@ MixDeviceWidget::~MixDeviceWidget()
 void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 {
    QBoxLayout *layout;
-   if ( m_vert )
+   if ( (m_direction == KPanelApplet::Up) ||  (m_direction == KPanelApplet::Down) )
       layout = new QVBoxLayout( this );
    else
       layout = new QHBoxLayout( this );
 
    // create channel icon
-   m_iconLabel = 0L;
-   setIcon( m_mixdevice->type() );
-   layout->addWidget( m_iconLabel );
-   m_iconLabel->installEventFilter( this );
-   QToolTip::add( m_iconLabel, m_mixdevice->name() );
+   if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Left)) {
+      m_iconLabel = 0L;
+      setIcon( m_mixdevice->type() );
+      layout->addWidget( m_iconLabel );
+      m_iconLabel->installEventFilter( this );
+      QToolTip::add( m_iconLabel, m_mixdevice->name() );
+   } //  otherwise it is created after the slider
 
    // create label
    m_label = new QLabel( m_mixdevice->name(), this );
@@ -145,20 +147,25 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
    // create sliders
    layout->addSpacing( 1 );
    QBoxLayout *sliders;
-   if ( m_vert ) sliders = new QHBoxLayout( layout ); else sliders = new QVBoxLayout( layout );
+   if ((m_direction == KPanelApplet::Up) || (m_direction == KPanelApplet::Down))
+     sliders = new QHBoxLayout( layout );
+   else
+     sliders = new QVBoxLayout( layout );
    for( int i = 0; i < m_mixdevice->getVolume().channels(); i++ )
    {
       int maxvol = m_mixdevice->getVolume().maxVolume();
       QWidget* slider;
       if ( m_small )
          slider = new KSmallSlider( 0, maxvol, maxvol/10,
-                                    maxvol - m_mixdevice->getVolume( i ),
-                                    m_vert?QSlider::Vertical:QSlider::Horizontal,
+                                    m_mixdevice->getVolume( i ),
+                                    m_direction,
                                     this, m_mixdevice->name().ascii() );
       else
          slider = new QSlider( 0, maxvol, maxvol/10,
                                maxvol - m_mixdevice->getVolume( i ),
-                               m_vert?QSlider::Vertical:QSlider::Horizontal,
+                               (m_direction == KPanelApplet::Up or
+                                m_direction == KPanelApplet::Down) ?
+                                QSlider::Vertical : QSlider::Horizontal,
                                this, m_mixdevice->name().ascii() );
 
       QToolTip::add( slider, m_mixdevice->name() );
@@ -168,6 +175,15 @@ void MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
       m_sliders.append ( slider );
       connect( slider, SIGNAL(valueChanged(int)), this, SLOT(volumeChange(int)) );
    }
+   
+   // create channel icon
+   if ((m_direction == KPanelApplet::Right) || (m_direction == KPanelApplet::Down)) {
+      m_iconLabel = 0L;
+      setIcon( m_mixdevice->type() );
+      layout->addWidget( m_iconLabel );
+      m_iconLabel->installEventFilter( this );
+      QToolTip::add( m_iconLabel, m_mixdevice->name() );
+   } //  otherwise it is created before the slider
 
    // create record source LED
    if( m_mixdevice->isRecordable() )
@@ -389,7 +405,7 @@ void MixDeviceWidget::volumeChange( int )
       if ( slider->inherits( "KSmallSlider" ) )
       {
          KSmallSlider *slider = dynamic_cast<KSmallSlider *>(m_sliders.first());
-         vol.setAllVolumes( slider->maxValue() - slider->value() );
+         vol.setAllVolumes( slider->value() );
       } else
       {
          QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
@@ -403,7 +419,7 @@ void MixDeviceWidget::volumeChange( int )
          if ( slider->inherits( "KSmallSlider" ) )
          {
             KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-            vol.setVolume( n, smallSlider->maxValue() - smallSlider->value() );
+            vol.setVolume( n, smallSlider->value() );
          } else
          {
             QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
@@ -489,7 +505,7 @@ void MixDeviceWidget::update()
       if ( slider->inherits( "KSmallSlider" ) )
       {
          KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-         smallSlider->setValue( vol.maxVolume() - maxvol );
+         smallSlider->setValue( maxvol );
          smallSlider->setGray( m_mixdevice->isMuted() );
       } else
       {
@@ -508,7 +524,7 @@ void MixDeviceWidget::update()
          if ( slider->inherits( "KSmallSlider" ) )
          {
             KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-            smallSlider->setValue( vol.maxVolume() - vol[i] );
+            smallSlider->setValue( vol[i] );
             smallSlider->setGray( m_mixdevice->isMuted() );
          } else
          {
