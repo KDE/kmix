@@ -23,6 +23,7 @@
 #include <qpainter.h>
 #include <qcolor.h>
 #include <qbrush.h>
+#include <qstyle.h>
 
 #include "ksmallslider.h"
 
@@ -185,7 +186,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    QPainter p( this );
 
    // draw 3d border
-   style().drawPanel ( &p, 0, 0, width(), height(), colorGroup(), TRUE );
+   style().drawPrimitive ( QStyle::PE_Panel, &p, QRect( 0, 0, width(), height() ), colorGroup(), TRUE );
 
    // drow lower/left part
    if ( width()>2 && height()>2 )
