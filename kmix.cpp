@@ -58,12 +58,13 @@
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
-	: KMainWindow(0, 0, 0 ), m_showTicks( true ), m_maxId( 0 ),
+	: KMainWindow(0, 0, 0 ), m_showTicks( true ),
 	m_lockedLayout(0),
 	m_dockWidget( 0L )
 {
 	m_visibilityUpdateAllowed	= true;
 	m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
+	m_surroundView		        = false; // -<- The same is true for the experimental surround View (3D)
 	// As long as we do not know better, we assume to start hidden. We need
 	// to initialize this variable here, as we don't trigger a hideEvent().
 	m_isVisible = false;
@@ -395,6 +396,7 @@ KMixWindow::loadConfig()
    m_onLogin = config->readBoolEntry("startkdeRestore", true );
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
+   m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
 
    // show/hide menu bar
    m_showMenubar = config->readBoolEntry("Menubar", true);
@@ -433,7 +435,10 @@ KMixWindow::initMixerWidgets()
                 if ( m_showMenubar ) {
                     vflags |= ViewBase::MenuBarVisible;
 	        }
-
+		if (  m_surroundView ) {
+		    vflags |= ViewBase::Experimental_SurroundView;
+		}
+	
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
 
@@ -610,6 +615,8 @@ KMixWindow::hideEvent( QHideEvent * )
 	m_isVisible = false;
     }
     // !! could possibly stop polling now (idea: use someting like ref() and unref() on Mixer instance
+    //    Update: This is a stupid idea, because now the views are responsible for updating. So it will be done in the Views.
+    //    But the dock icon is currently no View, so that must be done first.
 }
 
 

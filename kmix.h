@@ -103,9 +103,9 @@ KMixWindow : public KMainWindow
    bool m_startVisible;
    bool m_showMenubar;
    bool m_isVisible;
-   bool m_multiDriverMode;
    bool m_visibilityUpdateAllowed;
-   int m_maxId;
+   bool m_multiDriverMode;         // Not officially supported. 
+   bool m_surroundView;            // Experimental. Off by defualt
 
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;

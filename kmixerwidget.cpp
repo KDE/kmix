@@ -57,6 +57,7 @@
 #include "viewinput.h"
 #include "viewoutput.h"
 #include "viewswitches.h"
+#include "viewsurround.h"
 
 
 KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
@@ -114,21 +115,35 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     m_ioTab = new KTabWidget( this, "ioTab" );
     m_topLayout->add( m_ioTab );
 
-    // Both Layouts and widgets
+    // *** Create Views *********************************************************************
     _oWidget  = new ViewOutput  ( m_ioTab, "OutputTab" , _mixer, vflags );
     _iWidget  = new ViewInput   ( m_ioTab, "InputTab"  , _mixer, vflags );
     _swWidget = new ViewSwitches( m_ioTab, "SwitchTab" , _mixer, vflags );
+    if ( vflags & ViewBase::Experimental_SurroundView )
+	_surroundWidget = new ViewSurround( m_ioTab, "SurroundTab", _mixer, vflags );
 
-    m_ioTab->addTab( _oWidget , i18n("Output") );
-    m_ioTab->addTab( _iWidget , i18n("Input" ) );
-    // _swWidget : see below
-
-    // Create device widgets
+    // *** Create device widgets ************************************************************
     _oWidget ->createDeviceWidgets();
     _iWidget ->createDeviceWidgets();
     _swWidget->createDeviceWidgets();
+    if ( vflags & ViewBase::Experimental_SurroundView )
+	_surroundWidget->createDeviceWidgets();
+
+    // *** Add Views to Tab *****************************************************************
+    m_ioTab->addTab( _oWidget , i18n("Output") );
+    m_ioTab->addTab( _iWidget , i18n("Input" ) );
+    if ( _swWidget->count() > 0 ) { // Add switches Tab only, if there are Switches
+	m_ioTab->addTab( _swWidget, i18n("Switches" ) );
+    }
+    else {
+	delete _swWidget;
+	_swWidget = 0;
+    }
+    if ( vflags & ViewBase::Experimental_SurroundView )
+	m_ioTab->addTab(_surroundWidget, i18n("Surround" ) );
 
 
+    // *** Lower part: Slider and Mixer Name ************************************************
     QHBoxLayout *balanceAndDetail = new QHBoxLayout( m_topLayout, 8,  "balanceAndDetail");
     // Create the left-right-slider
     m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal, this, "RightLeft" );
@@ -141,13 +156,6 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     mixerName->setText( _mixer->mixerName() );
 
     balanceAndDetail->addSpacing( 10 );
-    if ( _swWidget->count() > 0 ) {
-	m_ioTab->addTab( _swWidget, i18n("Switches" ) );
-    }
-    else {
-	delete _swWidget;
-	_swWidget = 0;
-    }
 
     balanceAndDetail->addWidget( m_balanceSlider );
     balanceAndDetail->addWidget( mixerName );
@@ -156,24 +164,13 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     connect( m_balanceSlider, SIGNAL(valueChanged(int)), _mixer, SLOT(setBalance(int)) );
     QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
-    /** !! newVolume and newRecsrc Signals are now connected in ViewBase (where it belongs)
-    // ------------------ SIGNALLING ------------------
-    // --- volume levels from HW to GUI ---
-    connect( _mixer, SIGNAL(newVolumeLevels()), _oWidget, SLOT(refreshVolumeLevels()) );
-    connect( _mixer, SIGNAL(newVolumeLevels()), _iWidget, SLOT(refreshVolumeLevels()) );
-    if (_swWidget != 0 )
-	connect( _mixer, SIGNAL(newVolumeLevels()), _swWidget, SLOT(refreshVolumeLevels()) );
-
-    // --- Record source from HW to GUI ---
-    connect( _mixer, SIGNAL(newRecsrc())      , _iWidget, SLOT(refreshVolumeLevels()) ); // only _iWidget has record sources
-    */
-
     // --- "MenuBar" toggling from the various context menus ---
     connect( _oWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
     connect( _iWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
     if (_swWidget != 0 )
 	connect( _swWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
-
+    if ( vflags & ViewBase::Experimental_SurroundView )
+	connect( _surroundWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
 
 
     show();
@@ -259,7 +256,7 @@ void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 {
     config->setGroup( grp );
     // Write mixer name. It cannot be changed in the Mixer instance,
-    // it is only saved for diagnostical purposes (analyzing the config file). 
+    // it is only saved for diagnostical purposes (analyzing the config file).
     config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
 
     for (int i=0; i<=2; i++) {

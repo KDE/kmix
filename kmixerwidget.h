@@ -49,6 +49,7 @@ class Mixer;
 class ViewInput;
 class ViewOutput;
 class ViewSwitches;
+class ViewSurround;
 
 
 class KMixerWidget : public QWidget  
@@ -97,6 +98,7 @@ class KMixerWidget : public QWidget
    ViewOutput*    _oWidget;
    ViewInput*     _iWidget;
    ViewSwitches*  _swWidget;
+   ViewSurround*  _surroundWidget;
 
    int m_mixerNum;
    int m_id;
