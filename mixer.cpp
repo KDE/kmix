@@ -186,13 +186,13 @@ void Mixer::volumeLoad( KConfig *config )
  */
 int Mixer::grab()
 {
+  if ( size() == 0 ) {
+     // there is no point in opening a mixer with no devices in it
+     return ERR_NODEV;
+  }
   if ( !m_isOpen )
     {
       // Try to open Mixer, if it is not open already.
-      if ( size() == 0 ) {
-          // there is no point in opening a mixer with no devices in it
-          return ERR_NODEV;
-      }
       int err =  openMixer();
       if( err == ERR_INCOMPATIBLESET )
         {
