@@ -25,6 +25,7 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kdialog.h>
+#include <kconfig.h>
 
 #include <qvbox.h>
 #include <qtooltip.h>
@@ -34,7 +35,7 @@
 #include "kmixdockwidget.h"
 
 
-KMixDockWidget::KMixDockWidget( Mixer *mixer, 
+KMixDockWidget::KMixDockWidget( Mixer *mixer,
 				QWidget *parent, const char *name )
     : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L)
 {
@@ -55,14 +56,14 @@ void KMixDockWidget::createMasterVolWidget()
    MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
 //   MixDevice *masterDevice = m_mixer->getMixer(m_mixer->masterDevice();
 
-   masterVol = new QVBox(0L, "masterVol", WStyle_Customize | 
+   masterVol = new QVBox(0L, "masterVol", WStyle_Customize |
 			 WType_Popup);
    masterVol->setFrameStyle(QFrame::PopupPanel);
    masterVol->setMargin(KDialog::marginHint());
-   
+
    MixDeviceWidget *mdw =
-       new MixDeviceWidget( m_mixer, masterDevice, false, false, 
-			    false, true, masterVol, 
+       new MixDeviceWidget( m_mixer, masterDevice, false, false,
+			    false, true, masterVol,
 			    masterDevice->name().latin1() );
    connect(mdw, SIGNAL(newVolume(int, Volume)),
 	   this, SLOT(setVolumeTip(int, Volume)));
@@ -78,41 +79,52 @@ void KMixDockWidget::setVolumeTip(int, Volume vol)
 
 void KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
-    QWidget::mousePressEvent(me);
+    KConfig *config = kapp->config();
+    config->setGroup(0);
+    if( config->readBoolEntry("TrayVolumeControl", true ) )
+        QWidget::mousePressEvent(me);
+    else
+        KSystemTray::mousePressEvent(me);
 }
 
 void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
 {
-    if (me->button() == QMouseEvent::LeftButton && 
-	!masterVol->isVisible()) {
-	QWidget *desktop = QApplication::desktop();
-	int sw = desktop->width();
-	int sh = desktop->height();
-	int sx = desktop->x();
-	int sy = desktop->y();
-	int x = me->globalPos().x();
-	int y = me->globalPos().y();
-	y -= masterVol->geometry().height();
-	int w = masterVol->width();
-	int h = masterVol->height();
-	
-	if (x+w > sw)
-	    x = me->pos().x()-w;
-	if (y+h > sh)
-	    y = me->pos().y()-h;
-	if (x < sx)
-	    x = me->pos().x();
-	if (y < sy)
-	    y = me->pos().y();
-	
+    KConfig *config = kapp->config();
+    config->setGroup(0);
+    if( config->readBoolEntry("TrayVolumeControl", true ) ) {
+        if (me->button() == QMouseEvent::LeftButton &&
+            !masterVol->isVisible()) {
+            QWidget *desktop = QApplication::desktop();
+            int sw = desktop->width();
+            int sh = desktop->height();
+            int sx = desktop->x();
+            int sy = desktop->y();
+            int x = me->globalPos().x();
+            int y = me->globalPos().y();
+            y -= masterVol->geometry().height();
+            int w = masterVol->width();
+            int h = masterVol->height();
+
+            if (x+w > sw)
+                x = me->pos().x()-w;
+            if (y+h > sh)
+                y = me->pos().y()-h;
+            if (x < sx)
+                x = me->pos().x();
+            if (y < sy)
+                y = me->pos().y();
+
 	masterVol->move(x, y);
 	masterVol->show();
-    } else if (me->button() == QMouseEvent::LeftButton &&
-	       masterVol->isVisible()) {
-	masterVol->hide();
+        } else if (me->button() == QMouseEvent::LeftButton &&
+                   masterVol->isVisible()) {
+            masterVol->hide();
+        } else {
+            masterVol->hide();
+            KSystemTray::mousePressEvent(me);
+        }
     } else {
-	masterVol->hide();
-	KSystemTray::mousePressEvent(me);
+        KSystemTray::mouseReleaseEvent(me);
     }
 }
 

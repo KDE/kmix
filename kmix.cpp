@@ -379,7 +379,7 @@ void KMixWindow::updateLayout()
 
 void KMixWindow::closeEvent ( QCloseEvent * e )
 {
-    if ( m_hideOnClose && m_showDockWidget )
+    if ( /*m_hideOnClose &&*/ m_showDockWidget )
     {
         // <evil>
         kapp->ref(); // prevent KMainWindow from closing the app
@@ -510,6 +510,8 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    // avoid invisible and unaccessible main window
    if( !m_showDockWidget && !isVisible() )
       show();
+
+   saveConfig();
 }
 
 
