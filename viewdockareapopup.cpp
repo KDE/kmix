@@ -43,7 +43,7 @@
 //    Users will not be able to close the Popup without opening the KMix main window then.
 //    See Bug #93443, #96332 and #96404 for further details. -- esken
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KMixDockWidget *dockW )
-      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup | Qt::WStyle_DialogBorder, vflags), _dock(dockW)
+      : ViewBase(parent, name, mixer, WStyle_Customize | WType_Popup | Qt::WStyle_DialogBorder, vflags), _mdw(0), _dock(dockW)
 {
     QBoxLayout *layout = new QHBoxLayout( this );
     _frame = new QFrame( this );
@@ -63,7 +63,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 
 void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
 {
-	kdDebug() << "Teste pres mouse" << endl;
+//	kdDebug() << "Teste pres mouse" << endl;
     /**
        Hide the popup:
        This should work automatically, when the user clicks outside the bounds of this popup:
@@ -75,6 +75,13 @@ void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
         hide(); // needed!
     }
     return;
+}
+
+void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {
+   // Pass wheel event from "border widget" to child
+   if ( _mdw != 0 ) {
+      QApplication::sendEvent( _mdw, e);
+   }
 }
 
 MixDevice* ViewDockAreaPopup::dockDevice()

@@ -39,6 +39,8 @@ protected:
 	 QPushButton     *_showPanelBox;
 
     void mousePressEvent(QMouseEvent *e);
+    void wheelEvent ( QWheelEvent * e );
+
 private:
     QGridLayout* _layoutMDW;
     QFrame *_frame;
