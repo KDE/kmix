@@ -103,6 +103,10 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
       KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
    m_keys->insert( "Toggle mute", i18n( "Toggle mute" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
+   // FIXME: The keys need to be loaded from the config file with m_keys->readSettings().
+   //  However, we need to know what group to read from first.  Normally this would be
+   //  [Global Shortcuts], but the its saved somewhere else in kmixerwidget.cpp.
+   //  Someone who knows what's going on should fix this. --ellis, 2002/01/28
    m_keys->updateConnections();
 };
 
