@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <klocale.h>
+
 int Mixer_ALSA::identify( int idx, const char* id )
 {
   if( !strcmp( id, SND_MIXER_IN_SYNTHESIZER )) return MixDevice::MIDI;
