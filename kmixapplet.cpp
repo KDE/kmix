@@ -602,7 +602,11 @@ void KMixApplet::initMixer()
 			     */
 			    if ( s_mixers.count() == 0 ) {
 				// Simple case: We have no mixers. Lets go on with next driver
-				break;
+                                // The only exception is Mixer::ERR_MIXEROPEN (see kmix.cpp for details)
+                               if (mixerError!=Mixer::ERR_MIXEROPEN)
+                                   continue;
+                               else
+				   break;
 			    }
 			    else if ( false /* no multi-driver for now on applet !! m_multiDriverMode */ ) {
 				// Special case: Multi-driver mode will probe more soundcards

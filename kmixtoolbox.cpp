@@ -22,6 +22,7 @@
 
 #include "qcolor.h"
 #include "qwidget.h"
+#include "qstring.h"
 
 //#include <kdebug.h>
 #include <kglobalaccel.h>
@@ -29,6 +30,7 @@
 #include "mdwslider.h"
 #include "mdwswitch.h"
 #include "mixdevicewidget.h"
+#include "mixdevice.h"
 
 #include "kmixtoolbox.h"
 
@@ -67,7 +69,21 @@ void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- play safe here
 	    MixDeviceWidget* mdw = static_cast<MixDeviceWidget*>(qmdw);
 	    QString devgrp;
-	    devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
+
+	    /*
+	     * Compatibility config loader! We use the old config group only, if the
+	     * new one does not exist.
+	     * The new group system has been introduced, because it accounts much
+	     * better for soundcard driver updates (if numbering changes, or semantics
+	     * of an ID changes like ALSA changing from "Disable Amplifier" to "External Amplifier").
+	     */
+            /* !!! to be done
+	    devgrp.sprintf( "%s.%s.Dev%s", viewPrefix.ascii(), grp.ascii(), mdw->mixDevice()->getPK().ascii() );
+	    if ( ! config->hasGroup(devgrp) ) {
+		// fall back to old config style
+            */
+		devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
+	    //}
 	    config->setGroup( devgrp );
 
 	    if ( qmdw->isA("MDWSlider") ) {
@@ -107,7 +123,8 @@ void KMixToolBox::saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 	    MixDeviceWidget* mdw = static_cast<MixDeviceWidget*>(qmdw);
 
 	    QString devgrp;
-	    devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
+	    devgrp.sprintf( "%s.%s.Dev%s", viewPrefix.ascii(), grp.ascii(), mdw->mixDevice()->getPK().ascii() );
+	    //devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
 	    config->setGroup( devgrp );
 
 	    if ( qmdw->isA("MDWSlider") ) {

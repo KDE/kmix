@@ -49,6 +49,9 @@ MixDevice::MixDevice( int num, Volume &vol, bool recordable, bool mute,
     else
 	_name = name;
 
+    _pk.setNum(num);
+
+
     if( category == MixDevice::SWITCH )
 	_switch = true;
 }
@@ -59,6 +62,7 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
    _volume = md._volume;
    _type = md._type;
    _num = md._num;
+   _pk = md._pk;
    _recordable = md._recordable;
    _recSource  = md._recSource;
    _category = md._category;
@@ -91,6 +95,16 @@ long MixDevice::minVolume() {
 void MixDevice::setVolume( int channel, int volume )
 {
   _volume.setVolume( (Volume::ChannelID)channel /* ARGH! */, volume );
+}
+
+QString& MixDevice::getPK() {
+    return _pk;
+}
+
+void MixDevice::setPK(QString &PK) {
+    _pk = PK;
+    // The key is used in the config file. It should not contain spaces
+    _pk.replace(' ', '_');
 }
 
 /**
