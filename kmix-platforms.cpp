@@ -33,7 +33,7 @@
 #define IRIX_MIXER
 #endif
 
-#ifdef __linux
+#ifdef __linux__
 #ifdef ALSA
 //#warning ALSA defined
 #define ALSA_MIXER

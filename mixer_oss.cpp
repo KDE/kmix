@@ -28,7 +28,7 @@
 #include <sys/stat.h>
 
 // Linux section, by Christian Esken
-#if defined(__linux)
+#if defined(__linux__)
 #include <sys/soundcard.h>
 // FreeBSD section, according to Sebestyen Zoltan
 #elif defined(__FreeBSD__)
