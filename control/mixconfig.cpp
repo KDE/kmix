@@ -18,6 +18,10 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
 #include <qlayout.h>
 #include <qvbox.h>
 #include <qgroupbox.h>
@@ -50,9 +54,9 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   // Restore settings
   QGroupBox *restGrp = new QGroupBox( i18n("Default Volumes"), this );
   topLayout->addWidget( restGrp );
-  QBoxLayout *restLayout = 
+  QBoxLayout *restLayout =
      new QVBoxLayout( restGrp, KDialog::marginHint(), KDialog::spacingHint());
-  restLayout->addSpacing( fontMetrics().lineSpacing() );  
+  restLayout->addSpacing( fontMetrics().lineSpacing() );
 
   // Save profile
   QHBoxLayout *profLayout = new QHBoxLayout( restLayout, 5 );
@@ -73,7 +77,7 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   // Hardware settings
   QGroupBox *hdwGrp = new QGroupBox( i18n("Hardware Settings"), this );
   topLayout->addWidget( hdwGrp );
-  QBoxLayout *hdwLayout = 
+  QBoxLayout *hdwLayout =
      new QVBoxLayout( hdwGrp, KDialog::marginHint(), KDialog::spacingHint());
   hdwLayout->addSpacing( fontMetrics().lineSpacing() );
 
@@ -83,27 +87,27 @@ KMixConfig::KMixConfig(QWidget *parent, const char *name)
   hdwLayout->addWidget( m_maxCards );
   connect( m_maxCards, SIGNAL(valueChanged(int)), this, SLOT(configChanged()) );
   QWhatsThis::add( m_maxCards, i18n("Change this value to optimize the startup time "
-				    "of kmix.\n"
-				    "High values mean that kmix probes for "
-				    "many soundcards. If you have more mixers "
-				    "installed than kmix detects, increase this "
-				    "value.") );
+                                    "of kmix.\n"
+                                    "High values mean that kmix probes for "
+                                    "many soundcards. If you have more mixers "
+                                    "installed than kmix detects, increase this "
+                                    "value.") );
 
   m_maxDevices = new KIntNumInput( hdwGrp );
   m_maxDevices->setLabel( i18n("Maximum number of probed devices per mixer") );
-  m_maxDevices->setRange( 1, 16 ); 
+  m_maxDevices->setRange( 1, 16 );
   hdwLayout->addWidget( m_maxDevices );
   connect( m_maxDevices, SIGNAL(valueChanged(int)), this, SLOT(configChanged()) );
-  QWhatsThis::add( m_maxDevices, 
-		   i18n("Change this value to optimize the startup time "
-			"of kmix. High values mean that kmix probes for "
-			"many devices per soundcard driver.\n"
-			"If there're more mixer sub devices in a "
-			"driver than kmix detects, increase this value") );
+  QWhatsThis::add( m_maxDevices,
+                   i18n("Change this value to optimize the startup time "
+                        "of kmix. High values mean that kmix probes for "
+                        "many devices per soundcard driver.\n"
+                        "If there're more mixer sub devices in a "
+                        "driver than kmix detects, increase this value") );
 
   topLayout->addStretch( 1 );
 
-  load();  
+  load();
 }
 
 KMixConfig::~KMixConfig() {}
@@ -123,17 +127,17 @@ void KMixConfig::loadVolumes()
       kdDebug() << "can't find kmixctrl" << endl;
       delete ctrlExe;
 
-      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") ); 
+      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") );
       return;
    }
-         
+
    *ctrl << ctrlExe;
    *ctrl << "--restore";
    ctrl->start();
 
    while ( ctrl->isRunning() )
-   {          	 
-      if ( progress.wasCancelled() ) break;	 
+   {
+      if ( progress.wasCancelled() ) break;
       kapp->processEvents();
    }
    progress.setProgress( 1 );
@@ -151,17 +155,17 @@ void KMixConfig::saveVolumes()
       kdDebug() << "can't find kmixctrl" << endl;
       delete ctrlExe;
 
-      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") ); 
+      KMessageBox::sorry ( this, i18n("The kmixctrl executable can't be found.") );
       return;
    }
-         
+
    *ctrl << ctrlExe;
    *ctrl << "--save";
    ctrl->start();
 
    while ( ctrl->isRunning() )
-   {          	 
-      if ( progress.wasCancelled() ) break;	 
+   {
+      if ( progress.wasCancelled() ) break;
       kapp->processEvents();
    }
    progress.setProgress( 1 );
@@ -172,7 +176,7 @@ void KMixConfig::saveVolumes()
 void KMixConfig::load()
 {
   KConfig *config = new KConfig("kcmkmixrc", true);
-  
+
   config->setGroup("Misc");
   m_startkdeRestore->setChecked( config->readBoolEntry( "startkdeRestore", true ) );
   m_maxCards->setValue( config->readNumEntry( "maxCards", 2 ) );
@@ -207,11 +211,23 @@ void KMixConfig::defaults()
 
 extern "C"
 {
-  KCModule *create_kmix(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmkmix");
-    return new KMixConfig(parent, name);
-  };
+    KCModule *create_kmix(QWidget *parent, const char *name)
+    {
+      KGlobal::locale()->insertCatalogue("kcmkmix");
+      return new KMixConfig(parent, name);
+    }
+
+    void init_kmix()
+    {
+        KConfig *config = new KConfig("kcmkmixrc", true);
+
+        config->setGroup("Misc");
+        bool start = config->readBoolEntry( "startkdeRestore", true );
+        delete config;
+
+        if ( start )
+            system( "kmixctrl --restore" );
+    }
 }
 
 #include "mixconfig.moc"
