@@ -117,7 +117,7 @@ KMixWindow::initActions()
 				 actionCollection(), "dock_mute" );
 
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
-	(void) new KAction( i18n( "Hide" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
+	(void) new KAction( i18n( "Hide Mixer Window" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
 	createGUI( "kmixui.rc" );
 }
 
