@@ -47,7 +47,7 @@
 MixDevice::MixDevice(	int num, Volume vol, bool recordable, bool mute,
 		QString name, ChannelType type, DeviceCategory category ) :
 	m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable ),
-	m_category( category ), m_mute( mute )
+	m_mute( mute ), m_category( category )
 {
 	m_switch = false;
    if( name.isEmpty() )
