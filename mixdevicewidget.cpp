@@ -451,11 +451,13 @@ void MixDeviceWidget::volumeChange( int )
       if ( slider->inherits( "KSmallSlider" ) )
       {
          KSmallSlider *slider = dynamic_cast<KSmallSlider *>(m_sliders.first());
-         vol.setAllVolumes( slider->value() );
+         if (slider)
+            vol.setAllVolumes( slider->value() );
       } else
       {
          QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
-         vol.setAllVolumes( slider->maxValue() - slider->value() );
+         if (slider)
+            vol.setAllVolumes( slider->maxValue() - slider->value() );
       }
    } else
    {
@@ -465,11 +467,13 @@ void MixDeviceWidget::volumeChange( int )
          if ( slider->inherits( "KSmallSlider" ) )
          {
             KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-            vol.setVolume( n, smallSlider->value() );
+            if (smallSlider)
+               vol.setVolume( n, smallSlider->value() );
          } else
          {
             QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-            vol.setVolume( n, bigSlider->maxValue() - bigSlider->value() );
+            if (bigSlider)
+               vol.setVolume( n, bigSlider->maxValue() - bigSlider->value() );
          }
 
          n++;
@@ -557,12 +561,15 @@ void MixDeviceWidget::update()
       if ( slider->inherits( "KSmallSlider" ) )
       {
          KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-         smallSlider->setValue( maxvol );
-         smallSlider->setGray( m_mixdevice->isMuted() );
+         if (smallSlider) {
+            smallSlider->setValue( maxvol );
+            smallSlider->setGray( m_mixdevice->isMuted() );
+         }
       } else
       {
          QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-         bigSlider->setValue( vol.maxVolume() - maxvol );
+         if (bigSlider)
+            bigSlider->setValue( vol.maxVolume() - maxvol );
       }
 
       slider->blockSignals( false );
@@ -576,12 +583,15 @@ void MixDeviceWidget::update()
          if ( slider->inherits( "KSmallSlider" ) )
          {
             KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-            smallSlider->setValue( vol[i] );
-            smallSlider->setGray( m_mixdevice->isMuted() );
+            if (smallSlider) {
+               smallSlider->setValue( vol[i] );
+               smallSlider->setGray( m_mixdevice->isMuted() );
+            }
          } else
          {
             QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-            bigSlider->setValue( vol.maxVolume() - vol[i] );
+            if (bigSlider)
+               bigSlider->setValue( vol.maxVolume() - vol[i] );
          }
 
          slider->blockSignals( false );
