@@ -195,8 +195,6 @@ void KDockWidget::toggle_window_state()
       ktmw->hide();
       ktmw->recreate(0, 0, QPoint(x(), y()), FALSE);
       // kapp->setTopWidget( this );  // !!! esken: Is this line needed?
-#warning where is KTMainWindow::fullShow and fullHide supposed to be defined?
-#warning esken: I used an experimental (own) version of KTMainWindow. I now removed this stuff
     }
     else {
       // --- Toplevel was invisible => show it again
