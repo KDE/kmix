@@ -39,11 +39,6 @@ kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 
-$(srcdir)/version.h: VERSION
-	cd $(srcdir) ;\
-	sed "s/1/#define APP_VERSION \"1/" <VERSION >version.h ;\
-	echo \" >> version.h
-
 EXTRA_DIST = kmix.desktop VERSION
 
 xdg_apps_DATA = kmix.desktop
