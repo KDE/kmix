@@ -31,5 +31,6 @@ apps_DATA = kmix.desktop
 rcdir = $(kde_datadir)/kmix
 rc_DATA = kmixui.rc
 
-messages:
+messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kmix.pot
+
