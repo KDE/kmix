@@ -1,0 +1,5 @@
+dnl for NetBSD OSS compat library
+AC_CHECK_LIB(ossaudio, main, [LIBOSSAUDIO="-lossaudio"],[],[])
+AC_SUBST(LIBOSSAUDIO)
+AC_CHECK_LIB(asound, main, [LIBASOUND="-lasound"],[],[])
+AC_SUBST(LIBASOUND)
