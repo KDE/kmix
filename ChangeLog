@@ -1,3 +1,8 @@
+1998-05-19    <chris@magicon.ping.de>
+
+	* Implementing major aspects of set support. Nothing
+	is visible for the user at the point.
+
 Mon May  4 00:07:55 1998    <chris@magicon.ping.de>
 
 	* Added layout setup in config dialog. It works but isn't saved yet.

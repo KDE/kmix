@@ -14,7 +14,6 @@
 
 #include <kurl.h>
 #include <kapp.h>
-#include <kmsgbox.h>
 #include <kmenubar.h>
 #include <ktopwidget.h>
 #include "kcontextmenu.h"
@@ -22,6 +21,7 @@
 #include "sets.h"
 #include "mixer.h"
 #include "prefs.h"
+#include "docking.h"
 
 
 
@@ -35,15 +35,14 @@ public:
   ~KMix();
   Mixer		*mix;
   Preferences	*prefDL;
-  KConfig	*KmConfig;
+  DockWidget    *dock_widget;
+  MixSetList    *TheMixSets;
 
 public slots:
   void onDrop( KDNDDropZone*);
   void showOptsCB();
   void quitClickedCB();
   void launchHelpCB();
-  //  void aboutClickedCB();
-  //  void aboutqt();
   void applyOptions();
 
   void MbalCentCB();
@@ -70,7 +69,7 @@ private:
   void setBalance(int left, int right);
   QWidget	*Container;
   KDNDDropZone  *dropZone;
-  KCmManager	*KCM;		// <- usually this could be in class Kapp
+  KCmManager	*KCM;
 
   QPopupMenu	*Mfile;
   QPopupMenu	*Moptions;

@@ -32,5 +32,9 @@ ChannelSetup::ChannelSetup(int num,QLineEdit *qleName, QCheckBox *qcbShow, QChec
 
 ChannelSetup::~ChannelSetup(void)
 {
-  delete qleName; delete qcbShow; delete qcbSplit;
+  delete qleName;
+  delete qcbShow;
+  delete qcbSplit;
 }
+
+

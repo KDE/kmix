@@ -28,13 +28,13 @@ static char rcsid[]="$Id$";
 #include <kapp.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kmsgbox.h>
 
 #include "sets.h"
 #include "mixer.h"
 #include "kmix.h"
 #include "kmix.moc"
 #include "version.h"
-#include "docking.h"
 
 
 #include <qkeycode.h>
@@ -45,7 +45,8 @@ static char rcsid[]="$Id$";
 KApplication *globalKapp;
 KIconLoader  *globalKIL;
 KMix	     *kmix;
-DockWidget   *dock_widget;
+KConfig	     *KmConfig;
+
 
 bool		ReadFromSet=false;		// !!! Sets not implemented yet
 char		SetNumber;
@@ -104,9 +105,8 @@ KMix::~KMix()
 KMix::KMix(int mixernum)
 {
   KmConfig=KApplication::getKApplication()->getConfig();
-  //  mainmenuOn  = true;  // obsolete?
-  //  tickmarksOn = true;  // have to check KConfig specification to make sure
 
+  KmConfig->setGroup("");
   mainmenuOn  = KmConfig->readNumEntry( "Menubar"  , 1 );
   tickmarksOn = KmConfig->readNumEntry( "Tickmarks", 1 );
   int Balance;
@@ -117,6 +117,8 @@ KMix::KMix(int mixernum)
   CHECK_PTR(KCM);
   mix = new Mixer(mixernum);
   CHECK_PTR(mix);
+  TheMixSets = new MixSetList;
+  TheMixSets->read();
 
   dock_widget = new DockWidget("dockw");
   if ( allowDocking ) {
@@ -158,6 +160,9 @@ void KMix::applyOptions()
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
   KmConfig->writeEntry( "Docking"    , allowDocking);
+
+
+  TheMixSets->write();
 
 
   QString groupname;
@@ -220,12 +225,15 @@ void KMix::createWidgets()
   setMenu(mainmenu);
   // Create Sliders (Volume indicators)
 
+  //  MixSet *stdMixSet = TheMixSets->first(); !!!
   MixDevice *MixPtr = mix->First;
   while (MixPtr) {
     // If you encounter a relayout signal from a mixer device, obey blindly ;-)
     connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
+    MixSetEntry *mse = new MixSetEntry();
     int devnum = MixPtr->device_num;
+    
 
     // Figure out default icon
     unsigned char iconnum;
@@ -289,6 +297,7 @@ void KMix::createWidgets()
       KCM->insert(VolSB2, (KCmFunc*)contextMenu);
     }
     MixPtr=MixPtr->Next;
+    // Append MixEntry of current mixer device
   }
 
   // Create the Left-Right-Slider, add Tooltip and Context menu
@@ -422,7 +431,7 @@ void KMix::placeWidgets()
     }
 
     // Pixmap label. Place it horizontally centered to volume slider(s)
-    qb->move((int)((ix+old_x-qb->width())/2),iy);
+    qb->move((int)((ix + old_x - qb->width() )/2),iy);
     qb->show();
 
 
@@ -549,16 +558,13 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 QPopupMenu* KMix::contextMenu(QObject *o)
 {
   if ( o == LeftRightSB )
-    {
-      return Mbalancing;
-    }
+    return Mbalancing;
 
   static bool MlocalCreated=false;
   static QPopupMenu *Mlocal;
 
-  if (o == NULL) {
+  if (o == NULL)
     return NULL;
-  }
   else {
     if (MlocalCreated)
       delete Mlocal;
@@ -655,7 +661,9 @@ void KMix::setBalance(int left, int right)
 // first aspects of session management
 void KMix::sessionSave()
 {
+  KmConfig->setGroup("");
   KmConfig->writeEntry( "Balance"  , LeftRightSB->value() , true );
+  TheMixSets->write();
   KmConfig->sync();
 }
 
@@ -665,9 +673,8 @@ void KMix::closeEvent( QCloseEvent *e )
     dock_widget->dock();
     this->hide();
   }
-  else{
+  else
     KTopLevelWidget::closeEvent(e);
-  }
 }
 
 void KMix::quit_myapp()

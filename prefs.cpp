@@ -26,6 +26,8 @@
 #include "kmix.h"
 #include <klocale.h>
 
+//static char rcsid[]="$Id$";
+
 Preferences::Preferences( QWidget *parent, Mixer *mix ) :
    QTabDialog( parent )
 {

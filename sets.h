@@ -28,32 +28,60 @@
 #include <qstring.h>
 
 
+/**
+  The MixSetEntry class represents the state of one mixer device.
+  It contains device states as well as GUI aspects of the device */
 class MixSetEntry
 {
-  char		channel;
+public:
+  MixSetEntry();
+  ~MixSetEntry();
+  void read(int set,int devnum);
+  void write(int set,int devnum);
+
+  /// internal device number
+  char		devnum;
+  /// saved volume of left channel
   int		volumeL;
+  /// saved volume of right channel
   int		volumeR;
+  /// Is the device to be shown?
   bool		is_disabled;		// Is slider disabled by user?
+  /// Is the device muted?
   bool		is_muted;		// Is it muted by user?
+  /// Are the sliders linked?
+  bool		StereoLink;
+  /// Device Name. When using STL, this will be a String, that is
+  /// shared between all the same channels in the list of MixSets
+  QString       name;
 };
+
+
 
 
 class MixSet : public QList<MixSetEntry>
 {
-  Q_OBJECT
 
 public:
-  MixSet(int num, const QString &name);
-  ~MixSet() {};
-  bool readSet();
-  bool writeSet();
-
-  int		getNum() { return num; };
-  QString&      getName() { return name; };
-
+  MixSet();
+  ~MixSet();
+  void read(int set);
+  void write(int set);
+  QString&      name() { return SetName; };
 private:
-  int		num;
-  QString	name;
+  QString	SetName;
+};
+
+
+class MixSetList : public QList<MixSet>
+{
+
+public:
+  MixSetList();
+  ~MixSetList();
+  void read();
+  void write();
+  int NumSets;
 };
 
 #endif // SETS_H
