@@ -164,14 +164,14 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     // init static vars
     if ( s_instCount == 0) {
 	initMixer();
-    }	
+    }
     s_instCount++;
     kdDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
-	
+
     KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
 
     loadConfig();
-	
+
 
     /********** find out to use which mixer ****************************************/
     _mixer = 0;
@@ -182,12 +182,12 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	    if ( _mixer->mixerName() == _mixerName && _mixer->mixerNum()==_mixerNum ) break;
 	}
     }
-	
+
     // don't prompt for a mixer if there is just one available
     if ( !_mixer && s_mixers.count() == 1 ) {
 	_mixer = s_mixers.first();
     }
-	
+
     //  Find out wether the applet should be reversed
     //reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 
@@ -261,12 +261,12 @@ void KMixApplet::loadConfig()
     kdDebug(67100) << "KMixApplet::loadConfig()" << endl;
     KConfig *cfg = this->config();
     cfg->setGroup(0);
-	
+
     _mixerNum = cfg->readNumEntry( "Mixer", -1 );
     _mixerName = cfg->readEntry( "MixerName", QString::null );
 
     _customColors = cfg->readBoolEntry( "ColorCustom", false );
-	
+
     _colors.high = cfg->readColorEntry("ColorHigh", &highColor);
     _colors.low = cfg->readColorEntry("ColorLow", &lowColor);
     _colors.back = cfg->readColorEntry("ColorBack", &backColor);
@@ -364,10 +364,10 @@ void KMixApplet::positionChange(Position pos) {
 	m_mixerWidget->createDeviceWidgets();
 	_layout->add(m_mixerWidget);
 	_layout->activate();
-	
+
 	loadConfig();
 	setColors();
-	
+
 	const QSize panelAppletConstrainedSize = sizeHint();
 	m_mixerWidget->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
@@ -562,8 +562,8 @@ void KMixApplet::initMixer()
     QString m_hwInfoString;
     // create mixer list
     //s_mixers = new QPtrList<Mixer>;
-		
-		
+
+
     // get mixer devices
     s_mixers.setAutoDelete( TRUE );
     QMap<QString,int> mixerNums;
@@ -655,9 +655,9 @@ void KMixApplet::initMixer()
 		} // loop over sound card devices of current driver
 	} // loop over soundcard drivers
 
-    m_hwInfoString = i18n("Sound drivers supported");
-    m_hwInfoString += ": " + driverInfo +
-		      "\n" + i18n("Sound drivers used") + ": " + driverInfoUsed;
+    m_hwInfoString = i18n("Sound drivers supported:");
+    m_hwInfoString += " " + driverInfo +
+		      "\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
 
     if ( multipleDriversActive ) {
 	// this will only be possible by hacking the config-file, as it will not be officially supported
