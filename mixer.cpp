@@ -31,13 +31,16 @@
 
 
 MixDevice::MixDevice(int num, Volume vol, bool recordable,
-                     QString name, ChannelType type ) :
-   m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable )
+                     QString name, ChannelType type,
+		     DeviceCategory category ) :
+    m_volume( vol ), m_type( type ), m_num( num ), m_recordable( recordable ), m_category( category)
 {
    if( name.isEmpty() )
       m_name = i18n("unknown");
    else
       m_name = name;
+   
+   kdDebug() << "MixDevice::MixDevice(): created " << m_name << " , category: " << category << endl;
 };
 
 MixDevice::MixDevice(const MixDevice &md)
@@ -47,6 +50,7 @@ MixDevice::MixDevice(const MixDevice &md)
    m_type = md.m_type;
    m_num = md.m_num;
    m_recordable = md.m_recordable;
+   m_category = md.m_category;
 }
 
 int MixDevice::getVolume( int channel ) const
@@ -86,6 +90,46 @@ void MixDevice::read( KConfig *config, const QString& grp )
 
    int recsrc = config->readNumEntry("is_recsrc", -1);
    if ( recsrc!=-1 ) setRecsrc( recsrc!=0 );
+}
+
+/**
+ * Provides a standard DeviceCategory assignment, based on the ChannelType.
+ * Drivers may map special devices for themself (e.g. MixDevice::SWITCH is only
+ * available/used in ALSA). For non-special devices the drivers can call this method
+ * for a standard assignment.
+ * This mehtod is static, so it can be called before actually constructing a MixDevice
+ */
+MixDevice::DeviceCategory MixDevice::type2category( ChannelType ct) {
+    MixDevice::DeviceCategory cc;
+    switch (ct) {
+    case AUDIO:
+    case VOLUME:
+	cc = MixDevice::BASIC;
+	break;
+
+    case CD:
+    case MICROPHONE:
+    case HEADPHONE:
+    case MIDI:
+    case RECMONITOR:
+    case BASS:
+    case TREBLE:
+	cc = MixDevice::PRIMARY;
+	break;
+    
+    case EXTERNAL:
+    case UNKNOWN:
+    case DIGITAL:
+    case SURROUND:
+    case AC97:
+    case VIDEO:
+	cc = MixDevice::SECONDARY;
+	break;
+	
+    default:
+	cc = MixDevice::SECONDARY;
+    }
+    return cc;
 }
 
 void MixDevice::write( KConfig *config, const QString& grp )
@@ -138,7 +182,7 @@ int Mixer::getDriverNum()
 {
     MixerFactory *factory = g_mixerFactories;
     int num = 0;
-    while( factory->getMixer!=0 ) 
+    while( factory->getMixer!=0 )
 	 {
         num++;
         factory++;
@@ -404,7 +448,7 @@ MixDevice *Mixer::mixDeviceByType( int deviceidx )
   unsigned int i=0;
   while (i<size() && (*this)[i]->num()!=deviceidx) i++;
   if (i==size()) return 0;
- 
+
   return (*this)[i];
 }
 
@@ -412,7 +456,7 @@ void Mixer::setVolume( int deviceidx, int percentage )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return;
-  
+
   Volume vol=mixdev->getVolume();
   vol.setAllVolumes( (percentage*vol.maxVolume())/100 );
   writeVolumeToHW(deviceidx, vol);
@@ -427,7 +471,7 @@ int Mixer::volume( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return 0;
-  
+
   Volume vol=mixdev->getVolume();
   return (vol.getVolume( Volume::LEFT )*100)/vol.maxVolume();
 }
@@ -454,7 +498,7 @@ void Mixer::setMute( int deviceidx, bool on )
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return;
 
-  mixdev->setMuted( on ); 
+  mixdev->setMuted( on );
 
   writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
@@ -463,20 +507,20 @@ bool Mixer::mute( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return true;
-  
+
   return mixdev->isMuted();
 }
 
 void Mixer::setRecordSource( int deviceidx, bool on )
 {
-  setRecsrc( deviceidx, on ); 
+  setRecsrc( deviceidx, on );
 }
 
 bool Mixer::isRecordSource( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return false;
-  
+
   return mixdev->isRecsrc();
 }
 

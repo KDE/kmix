@@ -8,13 +8,13 @@ kde_module_LTLIBRARIES = kmix_panelapplet.la
 
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 	channel.h mixer.h volume.h kledbutton.h version.h \
-	mixdevicewidget.h ksmallslider.h kmixapplet.h mixerIface.h
+	mixdevicewidget.h ksmallslider.h kmixapplet.h mixerIface.h VerticalText.h
 
 
 METASOURCES = AUTO
 kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	kmixerwidget.cpp channel.cpp mixer.cpp ksmallslider.cpp \
-	volume.cpp kledbutton.cpp mixdevicewidget.cpp mixerIface.skel
+	volume.cpp kledbutton.cpp mixdevicewidget.cpp VerticalText.cpp mixerIface.skel
 kmix_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmix_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
@@ -32,7 +32,7 @@ kmixctrl_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 kmix_panelapplet_la_SOURCES = kmixapplet.cpp kmixerwidget.cpp channel.cpp \
 	mixer.cpp ksmallslider.cpp volume.cpp kledbutton.cpp \
-	mixdevicewidget.cpp mixerIface.skel colorwidget.ui
+	mixdevicewidget.cpp VerticalText.cpp mixerIface.skel colorwidget.ui
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 

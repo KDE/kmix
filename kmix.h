@@ -132,6 +132,8 @@ class KMixWindow : public KMainWindow
    KMixDockWidget *m_dockWidget;
    QTimer *timer;	// Timer for reading volume from HW
 
+   bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
+
   private slots:
    void insertMixerWidget( KMixerWidget *mw );
    void removeMixerWidget( KMixerWidget *mw );

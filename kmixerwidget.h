@@ -31,6 +31,7 @@
 #include <qstring.h>
 
 #include "channel.h"
+#include "mixer.h"
 
 class Mixer;
 class QSlider;
@@ -44,7 +45,7 @@ class KMixerWidget : public QWidget  {
 
   public:
    KMixerWidget( int _id, Mixer *mixer, QString mixerName, int mixerNum,
-                 bool small, KPanelApplet::Direction,
+                 bool small, KPanelApplet::Direction, MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0 );
    ~KMixerWidget();
 
@@ -104,7 +105,7 @@ class KMixerWidget : public QWidget  {
    bool m_ticksEnabled;
 
    void mousePressEvent( QMouseEvent *e );
-   void createDeviceWidgets( KPanelApplet::Direction );
+   void createDeviceWidgets( KPanelApplet::Direction, MixDevice::DeviceCategory categoryMask );
    void createMasterVolWidget(KPanelApplet::Direction);
 };
 

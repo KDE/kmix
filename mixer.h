@@ -34,19 +34,6 @@
 #include "volume.h"
 #include "mixerIface.h"
 
-/*
-  I am using a fixed MAX_MIXDEVS #define here.
-   People might argue, that I should rather use the SOUND_MIXER_NRDEVICES
-   #define used by OSS. But using this #define is not good, because it is
-   evaluated during compile time. Compiling on one platform and running
-   on another with another version of OSS with a different value of
-   SOUND_MIXER_NRDEVICES is very bad. Because of this, usage of
-   SOUND_MIXER_NRDEVICES should be discouraged.
-
-   The #define below is only there for internal reasons.
-   In other words: Don't play around with this value
- */
-#define MAX_MIXDEVS 32
 
 class Volume;
 class KConfig;
@@ -59,8 +46,13 @@ class MixDevice
 			MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME,
 			VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97 };
 
+      // The DeviceCategory tells, how "important" a MixDevice is. See m_category.
+      // It is used in bitmasks, so you must use values of 2^n .
+      enum DeviceCategory { BASIC=0x01, PRIMARY=0x02, SECONDARY=0x04, SWITCH=0x08, ALL=0xff };
+
+    
       MixDevice(int num, Volume vol, bool recordable,
-		QString name, ChannelType type = UNKNOWN );
+		QString name, ChannelType type = UNKNOWN, DeviceCategory category = BASIC );
       MixDevice(const MixDevice &md);
       ~MixDevice() {};
 
@@ -86,12 +78,24 @@ class MixDevice
       void setType( ChannelType channeltype ) { m_type = channeltype; };
       ChannelType type() { return m_type; };
 
+      DeviceCategory category() { return m_category; };
+      static DeviceCategory type2category( ChannelType ct);
+
    protected:
       Volume m_volume;
       ChannelType m_type;
+      // The DeviceCategory tells, how "important" a MixDevice is.
+      // The driver (e.g. mixer_oss.cpp) must set this value. It is
+      // used for deciding what Sliders to show and for distributing
+      // the sliders. It is advised to use the following categories:
+      // BASIC:     Master, PCM
+      // PRIMARY:   CD, Headphone, Microphone, Line
+      // SECONDARY: All others
+      // SWITCH:    All devices which only have a On/Off-Switch
       int m_num; // ioctl() device number of mixer
       bool m_recordable; // Can it be recorded?
       bool m_recsrc; // Is it an actual record source?
+      DeviceCategory m_category; //  category
       QString m_name;	// Ascii channel name
 };
 
@@ -139,7 +143,7 @@ class Mixer : public QObject, virtual public MixerIface
 
       /// Returns a pointer to the mix device whose type matches the value
       /// given by the parameter and the array MixerDevNames given in
-      /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.) 
+      /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
       MixDevice *mixDeviceByType( int deviceidx );
 
       /// Grabs (opens) the mixer for further intraction
@@ -196,7 +200,7 @@ class Mixer : public QObject, virtual public MixerIface
       virtual bool isRecordSource( int deviceidx );
 
       virtual bool isAvailableDevice( int deviceidx );
-      
+
    public slots:
       /// Writes the given volumes in the given device
       /// Abstract method! You must implement it in your dericved class.

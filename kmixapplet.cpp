@@ -126,7 +126,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 							 continue;
 						}
 					#ifdef HAVE_ALSA_ASOUNDLIB_H	
-						else 
+						else
 						{
 							// Avoid multiple mixer detections with new ALSA
 							// TODO: This is a temporary solution, right code must be
@@ -201,7 +201,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
       m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
       connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
    }
-   
+
    //  Find out wether the applet should be reversed
    reversedDir = cfg->readBoolEntry("ReversedDirection", false);
 
@@ -279,7 +279,7 @@ void KMixApplet::selectMixer()
          m_errorLabel = 0;
          m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(),
                                            mixer->mixerNum(), true,
-                                           popupDirection(), this );
+                                           popupDirection(), MixDevice::BASIC, this );
          setColors();
          m_mixerWidget->show();
          m_mixerWidget->setGeometry( 0, 0, width(), height() );
@@ -356,7 +356,7 @@ void KMixApplet::applyColors()
     m_colors.mutedBack = m_pref->mutedBack->color();
 
     m_customColors = m_pref->customColors->isChecked();
-    
+
     setColors();
 }
 
@@ -380,7 +380,7 @@ void KMixApplet::popupDirectionChange(Direction dir) {
   if (!m_errorLabel) {
     if (m_mixerWidget) delete m_mixerWidget;
     m_mixerWidget = new KMixerWidget( 0, mixer, mixerName, mixerNum, true,
-                                      checkReverse(dir), this );
+                                      checkReverse(dir), MixDevice::ALL, this );
     m_mixerWidget->loadConfig( config(), "Widget" );
     setColors();
     connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
@@ -404,7 +404,7 @@ void KMixApplet::preferences()
 
         m_pref->defaultLook->setChecked( !m_customColors );
         m_pref->customColors->setChecked( m_customColors );
-        
+
         m_pref->reverseDirection->setChecked( reversedDir );
 
         m_pref->show();

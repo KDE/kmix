@@ -124,6 +124,7 @@ KMixWindow::KMixWindow()
 						       mixer->mixerName(),
 						       mixer->mixerNum(),
 						       false, KPanelApplet::Up,
+						       MixDevice::ALL, // !!!
 						       this );
 		  mw->setName( mixer->mixerName() );
 		  insertMixerWidget( mw );
@@ -460,7 +461,7 @@ KMixWindow::loadConfig()
 
        // only if an actual mixer device is found for the config entry
        if (mixer) {
-	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, this );
+	 KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixerNum, false, KPanelApplet::Up, MixDevice::ALL, this );
 	 mw->setName( name );
 	 mw->loadConfig( config, *tab );
 	 insertMixerWidget( mw );
@@ -652,13 +653,64 @@ KMixWindow::newMixer()
 				 mixer->mixerName(), &ok, this );
       if ( ok ) {
 	// create mixer widget
-	KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
-					     false, KPanelApplet::Up, this );
-	m_maxId++;
-	mw->setName( name );
-	insertMixerWidget( mw );
+	bool categoryInUse;
+
+	MixDevice::DeviceCategory dc;
+	dc = (MixDevice::DeviceCategory)(MixDevice::BASIC |MixDevice::PRIMARY);
+	categoryInUse = isCategoryUsed(mixer, dc);
+	if ( categoryInUse ) {
+	    KMixerWidget *mw1 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up,  dc, this );
+	    m_maxId++;
+	    mw1->setName( name + "");
+	    insertMixerWidget( mw1 );
+	}
+	// TODO: Check whether mw1 contains devices. Otherwise do not insert. Same goes for mw2!!!
+
+	dc = (MixDevice::DeviceCategory)(MixDevice::SECONDARY);
+	categoryInUse = isCategoryUsed(mixer, dc);
+	if ( categoryInUse ) {
+	    KMixerWidget *mw2 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up,  dc, this );
+	    m_maxId++;
+	    mw2->setName( name + "(1)");
+	    insertMixerWidget( mw2 );
+	}
+
+	dc = (MixDevice::DeviceCategory)(MixDevice::SWITCH);
+	categoryInUse = isCategoryUsed(mixer, dc);
+	if ( categoryInUse ) {
+	    KMixerWidget *mw3 = new KMixerWidget( m_maxId, mixer, mixer->mixerName(), mixer->mixerNum(),
+					     false, KPanelApplet::Up,  dc, this );
+	    m_maxId++;
+	    mw3->setName( name + "(2)");
+	    insertMixerWidget( mw3 );
+	}
+
       }
    }
+}
+
+
+/**
+ * Returns whether the given mixer contains devices matching the given
+ * DeviceCategory.
+ * @returns true if there is at least on device. false if there is no such device.
+ */
+bool
+KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask) {
+    bool categoryUsed = false;
+    MixSet mixSet = mixer->getMixSet();
+    MixDevice *mixDevice = mixSet.first();
+    for ( ; mixDevice != 0; mixDevice = mixSet.next()) {
+	if ( mixDevice->category() & categoryMask ) {
+	    // found one device wiht a matching category, that is enough.
+	    categoryUsed = true;
+	    break;
+	}
+    }
+    
+    return categoryUsed;
 }
 
 

@@ -44,6 +44,7 @@ class QTimer;
 class KSmallSlider;
 class QSlider;
 class KGlobalAccel;
+class VerticalText;
 
 class MixDeviceWidget
  : public QWidget
@@ -127,7 +128,8 @@ class MixDeviceWidget
       QLabel *m_iconLabel;
       KLedButton *m_muteLED;
       KLedButton *m_recordLED;
-      QLabel *m_label;
+      //QLabel *m_label;
+      VerticalText *m_label;
 
 };
 
