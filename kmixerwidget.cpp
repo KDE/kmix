@@ -108,26 +108,35 @@ KMixerWidget::createLayout()
 		delete m_topLayout;
 	
 	// create main layout
-   m_topLayout = new QVBoxLayout( this, 0, 4 );
-   if ( !m_small )
-     m_topLayout->setMargin( KDialog::marginHint() );
 
-	// Create tabs e widgetstack
-	m_ioTab = new KTabWidget( this, "ioTab" );
+	if( ! m_small )
+	{
+		m_topLayout = new QVBoxLayout( this, 0, 4 );
+		m_topLayout->setMargin( KDialog::marginHint() );
 
-	m_topLayout->add( m_ioTab );
+		// Create tabs e widgetstack
+		m_ioTab = new KTabWidget( this, "ioTab" );
 
-	// Create switch buttonGroup
-	m_swWidget = new QWidget( this, "switchWidget" );
-	m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
+		m_topLayout->add( m_ioTab );
 
-	// Both Layouts and widgets
-	m_oWidget = new QHBox( m_ioTab, "OutputTab" );
-	m_iWidget = new QHBox( m_ioTab, "InputTab" );
+		// Create switch buttonGroup
+		m_swWidget = new QWidget( this, "switchWidget" );
+		m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 1,"devSwitchLayout" );
 
-	m_ioTab->addTab( m_oWidget, i18n("Output") );
-	m_ioTab->addTab( m_iWidget, i18n("Input" ) );
+		// Both Layouts and widgets
+	
+		m_oWidget = new QHBox( m_ioTab, "OutputTab" );
+		m_iWidget = new QHBox( m_ioTab, "InputTab" );
 
+		m_ioTab->addTab( m_oWidget, i18n("Output") );
+		m_ioTab->addTab( m_iWidget, i18n("Input" ) );
+	}
+	else
+	{
+		m_oWidget = new QHBox( m_ioTab, "OutputTab" );
+		m_topLayout = new QHBoxLayout( this, 0, 0 );
+		m_topLayout->add( m_oWidget );
+	}
 	// Create de widgets
 	createDeviceWidgets();
 }
@@ -144,32 +153,40 @@ KMixerWidget::createDeviceWidgets()
 		MixDeviceWidget *mdw;
 		if ( mixDevice->isSwitch() )
 		{
+			if( ! m_small )
 			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
 					m_direction, m_swWidget, mixDevice->name().latin1() );
+			else continue;
 		}
 		else if( ! mixDevice->isRecordable() )
 		{
 			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
-					m_direction, m_oWidget, mixDevice->name().latin1() );
+					m_direction, m_small ? m_oWidget : m_oWidget, mixDevice->name().latin1() );
 		}
 		else
 		{
+			if( ! m_small )
 			mdw = new MixDeviceWidget( m_mixer,  mixDevice, !m_small, !m_small, m_small,
 					m_direction, m_iWidget, mixDevice->name().latin1() );
+			else continue;
 		}
+
 		connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
 		connect( mdw, SIGNAL( updateLayout() ), this, SLOT(updateSize()));
 		connect( mdw, SIGNAL( masterMuted( bool ) ), SIGNAL( masterMuted( bool ) ) );
-      
-		if( mixDevice->isSwitch() )
+     
+		if( ! m_small )
 		{
-			m_devSwitchLayout->addWidget( mdw, row, col );
-			col++;
-		}
-		if( col > 3 )
-		{
-			col = 0;
-			row++;
+			if( mixDevice->isSwitch() )
+			{
+				m_devSwitchLayout->addWidget( mdw, row, col );
+				col++;
+			}
+			if( col > 3 )
+			{
+				col = 0;
+				row++;
+			}
 		}
 		
       Channel *chn = new Channel;
@@ -184,6 +201,7 @@ KMixerWidget::createDeviceWidgets()
                                   this, "RightLeft" );
       m_balanceSlider->setTickmarks( QSlider::Below );
       m_balanceSlider->setTickInterval( 25 );
+		if( ! m_small )
       m_topLayout->addWidget( m_balanceSlider );
       connect( m_balanceSlider, SIGNAL(valueChanged(int)), m_mixer, SLOT(setBalance(int)) );
       QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
@@ -191,12 +209,12 @@ KMixerWidget::createDeviceWidgets()
       QTimer *updateTimer = new QTimer( this );
       connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateBalance()) );
       updateTimer->start( 200, FALSE );
+
+		// Add the Switch widget
+		m_topLayout->addWidget( m_swWidget );
    } 
 	else
       m_balanceSlider = 0;
-
-	// Add the Switch widget
-	m_topLayout->addWidget( m_swWidget );
 
    updateSize();
 }

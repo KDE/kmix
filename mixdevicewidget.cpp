@@ -169,9 +169,9 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	
    m_muteLED->setFixedSize( QSize(16, 16) );
 	QString switchLabel;
-	if( m_mixdevice->name().length() > 15 )
+	if( m_mixdevice->name().length() > 10 )
 	{
-		switchLabel = m_mixdevice->name().mid(0, 15 );
+		switchLabel = m_mixdevice->name().mid(0, 10 );
 		switchLabel.append("...");
 	}
 	else

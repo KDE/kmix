@@ -427,18 +427,15 @@ KMixWindow::initMixerWidgets()
 {
    m_mixerWidgets.clear();
 
-   Mixer *mixer = 0;
 	int id=0;
+	Mixer *mixer;
 	
 	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
 	{
-		QString mixerName = mixer->name();
-		KMixerWidget *mw = new KMixerWidget( id, mixer, mixerName, mixer->mixerNum(),
+		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 				false, KPanelApplet::Up, MixDevice::ALL, this, "KMixerWidget" );
 
-		kdDebug() << " Output for name: " << mixerName << endl;
-		
-		mw->setName( mixer->name() );
+		mw->setName( mixer->mixerName() );
 		
 		m_mixerWidgets.append( mw );
 		
@@ -584,22 +581,21 @@ KMixWindow::toggleMenuBar()
 }
 
 void 
-KMixWindow::showEvent( QShowEvent * ) {
-    if ( m_visibilityUpdateAllowed ) {
-	m_isVisible = true;
-	 kdDebug() << "visi allow" << endl;
-    }
-	 kdDebug() << "showEvent" << endl;
-    timer->start(500);
-	 kdDebug() << "timer " << endl;
+KMixWindow::showEvent( QShowEvent * ) 
+{
+    if ( m_visibilityUpdateAllowed ) 
+		 m_isVisible = true;
+	 timer->start(500);
 }
 
 void 
-KMixWindow::hideEvent( QHideEvent * ) {
-    if ( m_visibilityUpdateAllowed ) {
-	m_isVisible = false;
-    }
-    timer->stop();
+KMixWindow::hideEvent( QHideEvent * ) 
+{
+	if ( m_visibilityUpdateAllowed ) 
+	{
+		m_isVisible = false;
+	}
+	timer->stop();
 }
 
 

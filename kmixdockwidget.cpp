@@ -66,12 +66,12 @@ void KMixMasterVolume::mousePressEvent(QMouseEvent *e)
   // mouseRelease event - otherwise it would show the popup again.
   // We must to do this only for the "LeftButton", otherwise we would ignore events after
   // a right-click (which shows the context menu)
-  if ( dock->hasMouse() ) {
-	if ( e->button() == LeftButton)  {
-		dock->ignoreNextEvent();
-	}
-	hide();
-	return;
+  if ( dock->hasMouse() ) 
+  {
+	  if ( e->button() == MidButton)  
+		  dock->ignoreNextEvent();
+	  hide();
+	  return;
   }
   QVBox::mousePressEvent(e);  // will hide this popup
 }
@@ -153,6 +153,16 @@ void KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
     KConfig *config = kapp->config();
     config->setGroup(0);
+
+	 if ( me->button() == LeftButton )
+	 {
+		 if( parentWidget()->isVisible() )
+			 parentWidget()->hide();
+		 else
+			 parentWidget()->show();
+		 return;
+	 }
+	 
     if( config->readBoolEntry("TrayVolumeControl", true ) && (me->button() == LeftButton))
     {
         if ( m_ignoreNextEvent )
