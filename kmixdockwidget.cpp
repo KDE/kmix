@@ -45,7 +45,7 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer,
     : KSystemTray( parent, name ), m_mixer(mixer), masterVol(0L), m_mixerVisible(false)
 {
     createMasterVolWidget();
-    connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
+    connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -152,7 +152,7 @@ void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
             		    masterVol->hide();   // fixme: this doesn't work?!
         		}
                 m_mixerVisible = !m_mixerVisible;
-        		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this 
+        		QWidget::mouseReleaseEvent(me); // KSystemTray's shouldn't do the default action for this
         		return;
     		default:
         		//masterVol->hide();
@@ -171,13 +171,13 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
     int inc = vol.maxVolume() / 20;
 
     if ( inc == 0 ) inc = 1;
- 
+
     for ( int i = 0; i < vol.channels(); i++ ) {
         int newVal = vol[i] + (inc * (e->delta() / 120));
 	if( newVal < 0 ) newVal = 0;
         vol.setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
-    
+
     masterDevice->setVolume(vol);
     m_mixer->writeVolumeToHW(masterDevice->num(), vol);
     setVolumeTip(masterDevice->num(), vol);
@@ -186,7 +186,7 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
 void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 {
     KAction* showAction = actionCollection()->action("minimizeRestore");
-    if ( parentWidget() && showAction ) 
+    if ( parentWidget() && showAction )
     {
         if ( parentWidget()->isVisible() )
         {
