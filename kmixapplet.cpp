@@ -194,6 +194,10 @@ KMixApplet::~KMixApplet()
    s_instCount--;
    if ( !s_instCount )
    {
+      QPtrListIterator<Mixer> it( *s_mixers );
+      for ( ; it.current(); ++it )
+         it.current()->release();
+
       s_mixers->clear();
       delete s_timer;
       delete s_mixers;
