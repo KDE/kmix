@@ -422,7 +422,7 @@ bool Mixer_SUN::isRecsrcHW( int devnum )
 //======================================================================
 void Mixer_SUN::VolumeToGainBalance( Volume& volume, uint_t& gain, uchar_t& balance )
 {
-   if ( ( volume.channels() == 1 ) ||
+   if ( ( volume.count() == 1 ) ||
         ( volume[Volume::LEFT] == volume[Volume::RIGHT] ) )
    {
       gain = volume[Volume::LEFT];
@@ -454,7 +454,7 @@ void Mixer_SUN::VolumeToGainBalance( Volume& volume, uint_t& gain, uchar_t& bala
 //======================================================================
 void Mixer_SUN::GainBalanceToVolume( uint_t& gain, uchar_t& balance, Volume& volume )
 {
-   if ( volume.channels() == 1 )
+   if ( volume.count() == 1 )
    {
       volume.setVolume( Volume::LEFT, gain );
    }
