@@ -260,7 +260,7 @@ void KMixerWidget::loadConfig( KConfig *config, QString grp )
 	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
 
 	 keys->setConfigGroup(devgrpkeys);
-	 keys->writeSettings(config);
+	 keys->readSettings(config);
 	 keys->updateConnections();
       }
 

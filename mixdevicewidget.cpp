@@ -96,17 +96,14 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
    connect( m_updateTimer, SIGNAL(timeout()), this, SLOT(update()) );
    m_updateTimer->start( 200, FALSE );
 
-   m_keys=new KGlobalAccel(this,"Keys");
+   m_keys = new KGlobalAccel( this, "Keys" );
    m_keys->insert( "Increase volume", i18n( "Increase volume" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( increaseVolume() ) );
    m_keys->insert( "Decrease volume", i18n( "Decrease volume" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
    m_keys->insert( "Toggle mute", i18n( "Toggle mute" ), QString::null,
       KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
-   // FIXME: The keys need to be loaded from the config file with m_keys->readSettings().
-   //  However, we need to know what group to read from first.  Normally this would be
-   //  [Global Shortcuts], but the its saved somewhere else in kmixerwidget.cpp.
-   //  Someone who knows what's going on should fix this. --ellis, 2002/01/28
+   // No need for m_keys->readSettings(), the keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp
    m_keys->updateConnections();
 };
 
@@ -404,7 +401,7 @@ void MixDeviceWidget::setMutedColors( QColor high, QColor low, QColor back )
     }
 }
 
-KGlobalAccel *MixDeviceWidget::keys(void)
+KGlobalAccel *MixDeviceWidget::keys( void )
 {
     return m_keys;
 }
@@ -464,8 +461,11 @@ void MixDeviceWidget::setDisabled( bool value )
 
 void MixDeviceWidget::defineKeys()
 {
-   if (m_keys)
-      KKeyDialog::configureKeys(m_keys,false);
+   if (m_keys) {
+      KKeyDialog::configure(m_keys, 0, false);
+      // The keys are saved in KMixerWidget::saveConfig, see kmixerwidget.cpp
+      m_keys->updateConnections();
+   }
 }
 
 void MixDeviceWidget::increaseVolume()
