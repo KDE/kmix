@@ -41,12 +41,6 @@ APPDIR = $(prefix)/share/apps/kmix
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $<
 
-#%.moc: %.h
-#	$(MOC) $< -o $@
-#
-#%.mo: %.po
-#	$(MSGFMT) $< -o $@
-
 ########## Files #####################
 
 OBJECTS =	kmix.o mixer.o prefs.o kcontextmenu.o
@@ -66,7 +60,6 @@ version.h: VERSION
 
 $(TARGET): $(SRCMETA) $(OBJECTS)
 	$(LIBTOOL) --mode=link $(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS) $(KDE_RPATH)
-#	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
 
 clean:
 	rm -f *.o *.bak .depend *~ *% core "#*"
