@@ -42,7 +42,7 @@ int Mixer::getDriverNum()
     MixerFactory *factory = g_mixerFactories;
     int num = 0;
     while( factory->getMixer!=0 )
-	 {
+    {
         num++;
         factory++;
     }
@@ -50,27 +50,30 @@ int Mixer::getDriverNum()
     return num;
 }
 
-
-Mixer* Mixer::getMixer( int driver, int device, int card )
+Mixer* Mixer::getMixer( int driver, int device )
 {
+    Mixer *mixer = 0;
     getMixerFunc *f = g_mixerFactories[driver].getMixer;
     if( f!=0 )
-        return f( device, card );
-    else
-        return 0;
+        mixer = f( device, 0 );
+    if ( mixer != 0 )
+        mixer->setupMixer(mixer->m_mixDevices); 
+    return mixer;
 }
 
-
-/* !! Is anybody using the "Mixer::getMixer( int driver, MixSet set,int device, int card )" interface ? */
-Mixer* Mixer::getMixer( int driver, MixSet set,int device, int card )
+/*
+// !! Is anybody using the "Mixer::getMixer( int driver, MixSet set,int device, int card )" interface ?
+Mixer* Mixer::getMixer( int driver, MixSet set,int device )
 {
+    Mixer *mixer = 0;
     getMixerSetFunc *f = g_mixerFactories[driver].getMixerSet;
     if( f!=0 )
-        return f( set, device, card );
-    else
-        return 0;
+       mixer = f( set, device, 0 );
+    if ( mixer != 0 )
+       mixer->setupMixer(m_mixDevices);
+    return mixer;
 }
-
+*/
 
 Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
 {
@@ -79,6 +82,8 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   m_masterDevice = 0;
 
   m_isOpen = false;
+  //_stateMessage = "OK";
+  _errno  = 0;
 
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
@@ -101,10 +106,19 @@ int Mixer::setupMixer( MixSet mset )
 
    int ret = openMixer();
    if (ret != 0) {
+      _errno = ret;
       return ret;
    } else
+   {
+      // This case is a workaround for old Mixer_*.cpp backends. They return 0 on openMixer() but
+      // might not have devices in them. So we work around them here. It would be better if they
+      // would return ERR_NODEV themselves.
       if( m_mixDevices.isEmpty() )
+      {
+         _errno = ERR_NODEV;
 	 return ERR_NODEV;
+      }
+   }
 
 
    if( !mset.isEmpty() ) {
@@ -135,7 +149,6 @@ int Mixer::setupMixer( MixSet mset )
 void Mixer::volumeSave( KConfig *config )
 {
     //    kdDebug(67100) << "Mixer::volumeSave()" << endl;
-    // !!! @todo Volumes not saved yet
     readSetFromHW();
     QString grp = QString("Mixer") + mixerName();
     m_mixDevices.write( config, grp );
@@ -176,6 +189,10 @@ int Mixer::grab()
   if ( !m_isOpen )
     {
       // Try to open Mixer, if it is not open already.
+      if ( size() == 0 ) {
+          // there is no point in opening a mixer with no devices in it
+          return ERR_NODEV;
+      }
       int err =  openMixer();
       if( err == ERR_INCOMPATIBLESET )
         {
@@ -189,7 +206,7 @@ int Mixer::grab()
       }
       return err;
     }
-  _pollingTimer->start(150); // !!
+  _pollingTimer->start(50); // !!
   return 0;
 }
 
@@ -315,6 +332,10 @@ int Mixer::mixerNum()
     return m_mixerNum;
 }
 
+int Mixer::getErrno() const {
+    return this->_errno;
+}
+
 void Mixer::errormsg(int mixer_error)
 {
   QString l_s_errText;
@@ -365,6 +386,12 @@ QString Mixer::errorText(int mixer_error)
   return l_s_errmsg;
 }
 
+/*
+QString& Mixer::stateMessage() const {
+    const QString &s = _stateMessage;
+    return s;
+}
+*/
 
 /**
    Used internally by the Mixer class and as DCOP method
@@ -416,10 +443,8 @@ MixDevice *Mixer::mixDeviceByType( int deviceidx )
   return (*this)[i];
 }
 
-// !!
-// ?!? What is this? Uses setAllVolumes()
-// I believe it is only used by the strange setMasterVolume() method.
-// Mmmh. That might to be reworked, too.
+// @dcop
+// Used also by the setMasterVolume() method.
 void Mixer::setVolume( int deviceidx, int percentage )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
@@ -442,11 +467,13 @@ void Mixer::commitVolumeChange( MixDevice* md ) {
     writeVolumeToHW(md->num(), md->getVolume() );
 }
 
+// @dcop only
 void Mixer::setMasterVolume( int percentage )
 {
   setVolume( 0, percentage );
 }
 
+// @dcop
 int Mixer::volume( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
@@ -456,23 +483,27 @@ int Mixer::volume( int deviceidx )
   return (vol.getVolume( Volume::LEFT )*100)/vol.maxVolume();
 }
 
+// @dcop
 int Mixer::masterVolume()
 {
   return volume( 0 );
 }
 
+// @dcop
 void Mixer::increaseVolume( int deviceidx )
 {
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol+5);
 }
 
+// @dcop
 void Mixer::decreaseVolume( int deviceidx )
 {
   int vol=volume(deviceidx);
   setVolume(deviceidx, vol-5);
 }
 
+// @dcop
 void Mixer::setMute( int deviceidx, bool on )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
@@ -483,6 +514,7 @@ void Mixer::setMute( int deviceidx, bool on )
   writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
 
+// @dcop
 bool Mixer::mute( int deviceidx )
 {
   MixDevice *mixdev= mixDeviceByType( deviceidx );
