@@ -55,6 +55,7 @@ class KMixApplet : public KPanelApplet
 
   protected:
    void resizeEvent( QResizeEvent * );
+   void saveConfig();
     
   private:
    KMixerWidget *m_mixerWidget;
@@ -64,7 +65,7 @@ class KMixApplet : public KPanelApplet
 
    static int s_instCount;
    static QList<Mixer> *s_mixers;
-   static QTimer *s_timer;
+   static QTimer *s_timer;    
 };
 
 

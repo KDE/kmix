@@ -52,7 +52,7 @@ extern "C"
      kdDebug() << "kmixapplet init" << endl;
      KGlobal::locale()->insertCatalogue("kmixapplet");
      return new KMixApplet(configFile, KPanelApplet::Normal,
-			   0, parent, "kmixapplet");
+                           0, parent, "kmixapplet");
   }
 }
 
@@ -62,26 +62,26 @@ QTimer *KMixApplet::s_timer = 0;
 QList<Mixer> *KMixApplet::s_mixers;
 
 KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
-			QWidget *parent, const char *name )
+                        QWidget *parent, const char *name )
 
-   : KPanelApplet( configFile, t, actions, parent, name ), 
+   : KPanelApplet( configFile, t, actions, parent, name ),
    m_mixerWidget( 0 ), m_errorLabel( 0 ), m_lockedLayout( 0 )
 {
    kdDebug() << "-> KMixApplet::KMixApplet" << endl;
 
    // init static vars
    if ( !s_instCount )
-   { 
+   {
       // create mixer list
       s_mixers = new QList<Mixer>;
 
-      // create update timer
+      // create timers
       QTimer *s_timer = new QTimer;
       s_timer->start( 500 );
 
       // get maximum values
       KConfig *config= new KConfig("kcmkmixrc", false);
-      config->setGroup("Misc"); 
+      config->setGroup("Misc");
       int maxCards = config->readNumEntry( "maxCards", 2 );
       int maxDevices = config->readNumEntry( "maxDevices", 2 );
       delete config;
@@ -89,19 +89,19 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
       // get mixer devices
       s_mixers->setAutoDelete( TRUE );
       for ( int dev=0; dev<maxDevices; dev++ )
-	 for ( int card=0; card<maxCards; card++ )
-	 {
-	    Mixer *mixer = Mixer::getMixer( dev, card );
-	    int mixerError = mixer->grab();
-	    if ( mixerError!=0 )
-	    {
-	       delete mixer;	
-	    } else
-	    {
-	       connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-	       s_mixers->append( mixer );
-	    }
-	 }
+         for ( int card=0; card<maxCards; card++ )
+         {
+            Mixer *mixer = Mixer::getMixer( dev, card );
+            int mixerError = mixer->grab();
+            if ( mixerError!=0 )
+            {
+               delete mixer;
+            } else
+            {
+               connect( s_timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
+               s_mixers->append( mixer );
+            }
+         }
    }
 
    s_instCount++;
@@ -115,19 +115,19 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
    // find out to use which mixer
    KConfig *cfg = config();
    cfg->setGroup(0);
-      
+
    int mixerNum = cfg->readNumEntry( "Mixer", -1 );
    QString mixerName = cfg->readEntry( "MixerName", QString::null );
    Mixer *mixer = 0;
    if ( mixerNum>=0 )
-   {	 	 
+   {
       int m = mixerNum+1;
       for (mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
       {
-	 if ( mixer->mixerName()==mixerName ) m--;
-	 if ( m==0 ) break;
-      }	 
-   } 
+         if ( mixer->mixerName()==mixerName ) m--;
+         if ( m==0 ) break;
+      }
+   }
 
    if ( mixer )
    {
@@ -136,7 +136,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
       connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
    } else
    {
-      m_errorLabel = new QPushButton( i18n("Select mixer"), this );         
+      m_errorLabel = new QPushButton( i18n("Select mixer"), this );
       connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
    }
 
@@ -146,14 +146,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
 KMixApplet::~KMixApplet()
 {
    kdDebug() << "-> KMixApplet::~KMixApplet" << endl;
-   if ( m_mixerWidget )
-   {
-      KConfig *cfg = config();
-      cfg->setGroup( 0 );
-      cfg->writeEntry( "Mixer", s_mixers->find( m_mixerWidget->mixer() ) );
-      cfg->writeEntry( "MixerName", m_mixerWidget->mixer()->mixerName() );
-      m_mixerWidget->saveConfig( cfg, "Widget" );      
-   }
+
+   saveConfig();
 
    // destroy static vars
    s_instCount--;
@@ -165,6 +159,20 @@ KMixApplet::~KMixApplet()
    }
 
    kdDebug() << "<- KMixApplet::~KMixApplet" << endl;
+}
+
+void KMixApplet::saveConfig()
+{
+    if ( m_mixerWidget ) {
+        kdDebug() << "saveConfig" << endl;
+
+        KConfig *cfg = config();
+        cfg->setGroup( 0 );
+        cfg->writeEntry( "Mixer", s_mixers->find( m_mixerWidget->mixer() ) );
+        cfg->writeEntry( "MixerName", m_mixerWidget->mixer()->mixerName() );
+        m_mixerWidget->saveConfig( cfg, "Widget" );
+        cfg->sync();
+    }
 }
 
 void KMixApplet::selectMixer()
@@ -182,28 +190,28 @@ void KMixApplet::selectMixer()
 
    bool ok = FALSE;
    QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst,
-					1, TRUE, &ok, this );
+                                        1, TRUE, &ok, this );
    if ( ok )
    {
       int mixerNum = lst.findIndex( res );
       Mixer *mixer = s_mixers->at( mixerNum );
       if (!mixer)
-	 KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
-      else   
+         KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
+      else
       {
-	 delete m_errorLabel;
-	 m_errorLabel = 0;
-	 m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum, true, true, this );
-	 m_mixerWidget->show();
-	 m_mixerWidget->setGeometry( 0, 0, width(), height() );	 
-	 connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
-	 updateLayoutNow();
+         delete m_errorLabel;
+         m_errorLabel = 0;
+         m_mixerWidget = new KMixerWidget( 0, mixer, mixer->mixerName(), mixerNum, true, true, this );
+         m_mixerWidget->show();
+         m_mixerWidget->setGeometry( 0, 0, width(), height() );
+         connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
+         updateLayoutNow();
       }
    }
 }
 
 void KMixApplet::triggerUpdateLayout()
-{   
+{
    kdDebug() << "KMixApplet::triggerUpdateLayout" << endl;
    if ( m_lockedLayout ) return;
    if ( !m_layoutTimer->isActive() )
@@ -211,10 +219,11 @@ void KMixApplet::triggerUpdateLayout()
 }
 
 void KMixApplet::updateLayoutNow()
-{ 
+{
    kdDebug() << "-> KMixApplet::updateLayoutNow" << endl;
    m_lockedLayout++;
    emit updateLayout();
+   saveConfig(); // ugly hack to get the config saved somehow
    m_lockedLayout--;
    kdDebug() << "<- KMixApplet::updateLayoutNow" << endl;
 }
@@ -225,16 +234,16 @@ int KMixApplet::widthForHeight( int height) const
    int width = 0;
    if ( m_mixerWidget )
    {
-      m_mixerWidget->setIcons( height>=32 );      
+      m_mixerWidget->setIcons( height>=32 );
       width = m_mixerWidget->minimumWidth();
-   } else 
+   } else
       if ( m_errorLabel )
-	 width = m_errorLabel->sizeHint().width();
+         width = m_errorLabel->sizeHint().width();
 
    kdDebug() << "<- KMixApplet::widthForHeight = " << width << endl;
    return width;
 }
- 
+
 int KMixApplet::heightForWidth( int width ) const
 {
    kdDebug() << "KMixApplet::heightForWidth" << endl;
@@ -244,10 +253,10 @@ int KMixApplet::heightForWidth( int width ) const
       return width;
    } else
       return m_errorLabel->sizeHint().height();
-}    
+}
 
-void KMixApplet::resizeEvent(QResizeEvent *e) 
-{      
+void KMixApplet::resizeEvent(QResizeEvent *e)
+{
    kdDebug() << "-> KMixApplet::resizeEvent" << endl;
    KPanelApplet::resizeEvent( e );
    if ( m_mixerWidget ) m_mixerWidget->setGeometry( 0, 0, width(), height() );
