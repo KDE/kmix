@@ -17,7 +17,6 @@ class Mixer_ALSA : public Mixer
 		virtual int  writeVolumeToHW( int devnum, Volume &vol );
 		virtual bool setRecsrcHW( int devnum, bool on);
 		virtual bool isRecsrcHW( int devnum );
-		virtual bool hasBrokenRecSourceHandling();
 	        virtual bool prepareUpdate();
 
 		
@@ -26,18 +25,15 @@ class Mixer_ALSA : public Mixer
 		virtual int releaseMixer();
 		
 	private:
-		snd_mixer_t *handle;
 		int identify( snd_mixer_selem_id_t *sid );
 		snd_mixer_elem_t* getMixerElem(int devnum);
-		QString mixer_card_name;
-		QString mixer_device_name;
+
 		virtual QString errorText(int mixer_error);
-		//typedef QValueList<snd_mixer_elem_t *> AlsaMixerElemList;
-		//AlsaMixerElemList mixer_elem_list;
 		typedef QValueList<snd_mixer_selem_id_t *>AlsaMixerSidList;
 		AlsaMixerSidList mixer_sid_list;
-		unsigned int *mixerIDs;
+
 		bool masterChosen;
+		snd_mixer_t *_handle;
 };
 
 #endif

@@ -50,21 +50,19 @@ ALSA_getMixer( int device, int card )
 {
 	Mixer *l_mixer;
 	l_mixer = new Mixer_ALSA( device, card );
-	l_mixer->setupMixer();
 	return l_mixer;
 }
-
+/*
 Mixer*
 ALSA_getMixerSet( MixSet set, int device, int card )
 {
 	Mixer *l_mixer;
 	l_mixer = new Mixer_ALSA( device, card );
-	l_mixer->setupMixer( set );
 	return l_mixer;
 }
-
+*/
 Mixer_ALSA::Mixer_ALSA( int device, int card ) :
-	Mixer( device, card ), handle(0)
+	Mixer( device, card ), _handle(0)
 {
 	masterChosen = false;
 }
@@ -135,58 +133,59 @@ Mixer_ALSA::openMixer()
 		devName = QString( "hw:%1" ).arg( m_devnum );
 	}
 
+	QString probeMessage;
+	
 	if (virginOpen)
-		kdDebug(67100) << "Trying ALSA Device " << devName << endl;
+		probeMessage += "Trying ALSA Device '" + devName + "': ";
 
 	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
 	{
-	    kdError(67100) << "snd_ctl_open err=" << snd_strerror(err) << endl;
-	    //errormsg( Mixer::ERR_OPEN );
+	    kdDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
+	    //_stateMessage = errorText( Mixer::ERR_NODEV );
 	    return Mixer::ERR_OPEN;
 	}
 
 	if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
 	{
-	    kdError(67100) << "snd_ctl_card_info err=" << snd_strerror(err) << endl;
-	    //errormsg( Mixer::ERR_READ );
+	    kdDebug(67100) << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err) << endl;
+	    //_stateMessage = errorText( Mixer::ERR_READ );
 	    snd_ctl_close( ctl_handle );
 	    return Mixer::ERR_READ;
 	}
 
 	// Device and mixer names
-	mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
-	mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
+	const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
+	//mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
+        // Copy the name of kmix mixer from card name (mixername is rumoured to be not that good)
+        m_mixerName = mixer_card_name;
 
 	snd_ctl_close( ctl_handle );
 
-	// release mixer before (re-)opening
-	release();
-
 	/* open mixer device */
-	if ( ( err = snd_mixer_open ( &handle, 0 ) ) < 0 )
+	if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
 	{
-	    kdError(67100) << "snd_mixer_open err=" << snd_strerror(err) << endl;
-	    //errormsg( Mixer::ERR_OPEN );
-	    return Mixer::ERR_MIXEROPEN;
+	    kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
+	    //errormsg( Mixer::ERR_NODEV );
+	    return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
 	}
 
-	if ( ( err = snd_mixer_attach ( handle, devName.latin1() ) ) < 0 )
+	if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
 	{
-	    kdError(67100) << "snd_mixer_attach err=" << snd_strerror(err) << endl;
+	    kdDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
 	    //errormsg( Mixer::ERR_PERM );
 	    return Mixer::ERR_OPEN;
 	}
 
-	if ( ( err = snd_mixer_selem_register ( handle, NULL, NULL ) ) < 0 )
+	if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
 	{
-	    kdError(67100) << "snd_mixer_selem_register err=" << snd_strerror(err) << endl;
+	    kdDebug(67100) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err) << endl;
 	    //errormsg( Mixer::ERR_READ );
 	    return Mixer::ERR_READ;
 	}
 
-	if ( ( err = snd_mixer_load ( handle ) ) < 0 )
+	if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
 	{
-                kdError(67100) << "snd_mixer_load err=" << snd_strerror(err) << endl;
+                kdDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
 		//errormsg( Mixer::ERR_READ );
 		releaseMixer();
 		return Mixer::ERR_READ;
@@ -202,12 +201,12 @@ Mixer_ALSA::openMixer()
 	{
 		m_devnum = 0;
 	}
-	
-	int selem_count = snd_mixer_get_count(handle);
-	mixerIDs = new unsigned int[selem_count];
+
+	kdDebug(67100) << probeMessage << "found" << endl;	
+	//int selem_count = snd_mixer_get_count(_handle);
 
 	unsigned int mixerIdx = 0;
-	for ( elem = snd_mixer_first_elem( handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
+	for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
 	{
 		// If element is not active, just skip
 		if ( ! snd_mixer_selem_is_active ( elem ) ) {
@@ -269,7 +268,6 @@ Mixer_ALSA::openMixer()
 				continue;
 			}
 
-			mixerIDs[mixerIdx] = mixerIdx; // -<- Remove this array again!!         // was: currentID;
 			MixDevice* mdw =
 			    new MixDevice( mixerIdx,
 					   *vol,
@@ -294,7 +292,7 @@ Mixer_ALSA::openMixer()
 
 	}
 
-	//return error for invalid devices
+	// If no devices are supported by this soundcard, return "NO Devices"
 	if ( !validDevice )
 	{
 		return Mixer::ERR_NODEV;
@@ -314,7 +312,7 @@ Mixer_ALSA::openMixer()
 int
 Mixer_ALSA::releaseMixer()
 {
-	int ret = snd_mixer_close( handle );
+	int ret = snd_mixer_close( _handle );
 	return ret;
 }
 
@@ -323,7 +321,7 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 	snd_mixer_elem_t* elem = 0;
 	if ( int( mixer_sid_list.count() ) > devnum ) {
 		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
-		elem = snd_mixer_find_selem(handle, sid);
+		elem = snd_mixer_find_selem(_handle, sid);
 
 		if ( elem == 0 ) {
 			kdDebug(67100) << "Error finding mixer element " << devnum << endl;
@@ -341,7 +339,7 @@ bool Mixer_ALSA::prepareUpdate() {
     int count, err;
 
 /* setup for select on stdin and the mixer fd */
-    if ((count = snd_mixer_poll_descriptors_count(handle)) < 0) {
+    if ((count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
 	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  count << "\n";
 	return false;
     }
@@ -355,7 +353,7 @@ bool Mixer_ALSA::prepareUpdate() {
     }
 
     fds->events = POLLIN;
-    if ((err = snd_mixer_poll_descriptors(handle, fds, count)) < 0) {
+    if ((err = snd_mixer_poll_descriptors(_handle, fds, count)) < 0) {
 	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
 	return false;
     }
@@ -374,7 +372,7 @@ bool Mixer_ALSA::prepareUpdate() {
     if (finished > 0) {
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
 
-	if (snd_mixer_poll_descriptors_revents(handle, fds, count, &revents) >= 0) {
+	if (snd_mixer_poll_descriptors_revents(_handle, fds, count, &revents) >= 0) {
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
 
 
@@ -389,7 +387,7 @@ bool Mixer_ALSA::prepareUpdate() {
 	    if (revents & POLLIN) {
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
 
-		snd_mixer_handle_events(handle);
+		snd_mixer_handle_events(_handle);
                 updated = true;
 	    }
 	}
@@ -687,13 +685,6 @@ Mixer_ALSA::errorText( int mixer_error )
 	return l_s_errmsg;
 }
 
-bool Mixer_ALSA::hasBrokenRecSourceHandling() {
-    // Only for the current Mixer_ALSA implementation.
-    // This implementation does not see changes from the Mixer Hardware to the Record Sources.
-    // So the workaround is to manually call md.setRecSrc(false) for all aother channels.
-    // Fixed now :-)))
-    return false;
-}
 
 QString
 ALSA_getDriverName()
