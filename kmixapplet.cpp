@@ -106,7 +106,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t, int actions,
 
    s_instCount++;
 
-   KGlobal::dirs()->addResourceType( "icon", KStandardDirs::kde_default("data") + "kmix/pics" );
+   KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
 
    // ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
    m_layoutTimer = new QTimer( this );

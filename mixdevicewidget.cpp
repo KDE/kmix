@@ -93,27 +93,27 @@ QPixmap MixDeviceWidget::getIcon( int icon )
    QPixmap miniDevPM;
    switch (icon) {
       case MixDevice::AUDIO:
-	 miniDevPM = BarIcon("mix_audio");	break;
+	 miniDevPM = UserIcon("mix_audio"); break;
       case MixDevice::BASS:
-	 miniDevPM = BarIcon("mix_bass");	break;
+	 miniDevPM = UserIcon("mix_bass"); break;
       case MixDevice::CD:
-	 miniDevPM = BarIcon("mix_cd");	break;
+	 miniDevPM = UserIcon("mix_cd");	break;
       case MixDevice::EXTERNAL:
-	 miniDevPM = BarIcon("mix_ext");	break;
+	 miniDevPM = UserIcon("mix_ext");	break;
       case MixDevice::MICROPHONE:
-	 miniDevPM = BarIcon("mix_microphone");break;
+	 miniDevPM = UserIcon("mix_microphone");break;
       case MixDevice::MIDI:
-	 miniDevPM = BarIcon("mix_midi");	break;
+	 miniDevPM = UserIcon("mix_midi"); break;
       case MixDevice::RECMONITOR:
-	 miniDevPM = BarIcon("mix_recmon");	break;
+	 miniDevPM = UserIcon("mix_recmon"); break;
       case MixDevice::TREBLE:
-	 miniDevPM = BarIcon("mix_treble");	break;
+	 miniDevPM = UserIcon("mix_treble"); break;
       case MixDevice::UNKNOWN:
-	 miniDevPM = BarIcon("mix_unknown");	break;
+	 miniDevPM = UserIcon("mix_unknown"); break;
       case MixDevice::VOLUME:
-	 miniDevPM = BarIcon("mix_volume");	break;
+	 miniDevPM = UserIcon("mix_volume"); break;
       default:
-	 miniDevPM = BarIcon("mix_unknown");	break;
+	 miniDevPM = UserIcon("mix_unknown"); break;
    }
 
    return miniDevPM;
