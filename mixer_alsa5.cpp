@@ -32,9 +32,9 @@
 #include <klocale.h>
 
 // Local Headers
-#include "mixer_alsa.h"
-
 #include <sys/asoundlib.h>
+
+#include "mixer_alsa.h"
 
 int 
 Mixer_ALSA::identify( int idx, const char* id )

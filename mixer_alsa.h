@@ -27,7 +27,7 @@ class Mixer_ALSA : public Mixer
 		QString mixer_card_name;
 		QString mixer_device_name;
 		QString card_id;
-#elif defined(HAVE_SYS_ASOUNDLIB_H
+#elif defined(HAVE_SYS_ASOUNDLIB_H)
 		snd_mixer_groups_t  groups;
 		snd_mixer_gid_t    *gid;
 		int numChannels( int mask );
