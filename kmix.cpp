@@ -57,8 +57,23 @@ KMixApp::KMixApp()
    initWidgets();
 
    loadConfig();
+   
+   // first time setup
    if ( m_mixerWidgets.count()==0 )
-      newMixer();
+   {
+      int mixerNum = 0;
+      for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+      {
+	 KMixerWidget *mw = new KMixerWidget( m_maxId, mixer, 
+					      mixer->mixerName(), mixerNum,
+                                              false, true, this );         
+         mw->setName( mixer->mixerName() );
+         insertMixerWidget( mw );
+
+	 m_maxId++;
+	 mixerNum++;
+      }
+   }
 
    initPrefDlg();
 
@@ -284,12 +299,17 @@ void KMixApp::insertMixerWidget( KMixerWidget *mw )
 
    mw->setTicks( m_showTicks );
    mw->setLabels( m_showLabels );
+   mw->show();
 }
 
 void KMixApp::removeMixerWidget( KMixerWidget *mw )
 {
    m_tab->removePage( mw );
    m_mixerWidgets.remove( mw );
+
+   KAction *a = actionCollection()->action( "file_close" );
+   if ( a )
+      a->setEnabled( m_mixerWidgets.count()>1 );
 }
 
 void KMixApp::closeEvent ( QCloseEvent * e )
@@ -353,7 +373,8 @@ void KMixApp::newMixer()
    }
 
    bool ok = FALSE;
-   QString res = QInputDialog::getItem( i18n("Mixers"), i18n( "Available mixers" ), lst,
+   QString res = QInputDialog::getItem( i18n("Mixers"),
+					i18n( "Available mixers" ), lst,
                                         1, TRUE, &ok, this );
    if ( ok )
    {
