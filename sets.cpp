@@ -61,13 +61,15 @@ void MixSetEntry::write(int set,int devnum)
   KmConfig->writeEntry("StereoLink", StereoLink);
   KmConfig->writeEntry("name", name);
 }
-void MixSetEntry::clone(MixSetEntry *Src, MixSetEntry *Dest)  // bound static
+void MixSetEntry::clone(MixSetEntry *Src, MixSetEntry *Dest, bool clone_volume)  // bound static
 {
-  Dest->volumeL      = Src->volumeL;
-  Dest->volumeR      = Src->volumeR;
+  if (clone_volume) {
+    Dest->volumeL      = Src->volumeL;
+    Dest->volumeR      = Src->volumeR;
+    Dest->StereoLink   = Src->StereoLink;
+  }
   Dest->is_disabled  = Src->is_disabled;
   Dest->is_muted     = Src->is_muted;
-  Dest->StereoLink   = Src->StereoLink;
   Dest->name         = Src->name;
 }
 
@@ -94,13 +96,13 @@ void MixSet::write(int set)
   for ( MixSetEntry *mse=first(); mse!=NULL; mse=next(), i++ )
     mse->write(set,i);
 }
-void MixSet::clone(MixSet *Src, MixSet *Dest) // bound static
+void MixSet::clone(MixSet *Src, MixSet *Dest, bool clone_volume) // bound static
 {
   MixSetEntry *src,*dest;
   for ( src=Src->first(), dest=Dest->first();
 	(src!=0) && (dest!=0);
 	src=Src->next(), dest=Dest->next() )
-    MixSetEntry::clone(src,dest);
+    MixSetEntry::clone(src,dest,clone_volume);
 }
 MixSetEntry* MixSet::findDev(int num)
 {
@@ -120,7 +122,7 @@ MixSetEntry* MixSet::findDev(int num)
 MixSetList::MixSetList()
 {
   KmConfig->setGroup("");
-  NumSets = KmConfig->readNumEntry( "NumSets"  , 1 );
+  int NumSets = KmConfig->readNumEntry( "NumSets"  , 1 );
   // create one extra set. The first one is the current mix set
   for (int i=0; i<NumSets+1; i++)
     append( new MixSet );
@@ -128,6 +130,13 @@ MixSetList::MixSetList()
 MixSetList::~MixSetList()
 {
 }
+MixSet* MixSetList::addSet()
+{
+  MixSet *m = new MixSet;
+  append( m );
+  return m;
+}
+
 void MixSetList::read()
 {
   int i=0;
@@ -136,9 +145,14 @@ void MixSetList::read()
 }
 void MixSetList::write()
 {
-  int i=0;
-  for ( MixSet *ms=first(); ms!=NULL; ms=next(),i++ )
+  int i=1;
+  MixSet *ms=first();
+  ms=next(); // skip first set (Set 0)
+
+  for ( ; ms!=NULL; ms=next(),i++ )
     ms->write(i);
+  KmConfig->setGroup("");
+  KmConfig->writeEntry( "NumSets", i-1 );
 }
 
 

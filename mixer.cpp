@@ -201,7 +201,8 @@ int Mixer::setupMixer(int devnum)
    *  if you pick up a configuration file from a friend with different mixing
    *  hardware, the result could be some serious mess. 
    */
-  set2set0(-1);
+  Set2Set0(-1,true);
+  Set0toHW();
 
   return 0;
 }
@@ -227,7 +228,9 @@ void Mixer::setDevNumName(int devnum)
   devname = "Mixer";
 #endif
 
-  this->devname = strdup(devname);
+  // Using a (const char*) cast. There seem to be some broken platforms out
+  // there, so I had to add it.
+  this->devname = strdup((const char *)devname);
 }
 
 
@@ -349,8 +352,10 @@ void  Mixer::setupStructs(void)
 
 
 
-
-void Mixer::set0toHW()
+/*****************************************************************************
+ * This functions writes mixing set 0 to the Hardware
+ *****************************************************************************/
+void Mixer::Set0toHW()
 {
   MixSet *SrcSet = TheMixSets->first();
   MixDevice *MixPtr = First;
@@ -365,7 +370,8 @@ void Mixer::set0toHW()
     if (mse == NULL)
       continue;  // entry not found
 
-    MixPtr->StereoLink = mse->StereoLink;
+    MixPtr->StereoLink  = mse->StereoLink;
+    MixPtr->is_muted    = mse->is_muted;
     MixPtr->is_disabled = mse->is_disabled;
     if (! MixPtr->is_disabled) {
       // Write volume (when channel is enabled)
@@ -377,7 +383,10 @@ void Mixer::set0toHW()
   }
 }
 
-void Mixer::set2set0(int Source)
+/*****************************************************************************
+ * This functions writes a mixing set with number "Source" into mixing set 0
+ *****************************************************************************/
+void Mixer::Set2Set0(int Source, bool copy_volume)
 {
   MixDevice	*MixPtr;
   int		VolLeft,VolRight,Volume;
@@ -451,7 +460,8 @@ void Mixer::set2set0(int Source)
       if ( !ret ) {
 	VolLeft = data.left;
 	VolRight = data.right;
-      } else 
+      }
+      else 
  	errormsg(Mixer::ERR_READ);
 #endif
 
@@ -470,17 +480,33 @@ void Mixer::set2set0(int Source)
     }
   } /* if ( Source < 0 ) */
   else {
-    // Read from a set (means copy set data to actual MixDevice)    
+    // Read from a set (means copy set data to MixSet 0)
     MixSet *SrcSet = TheMixSets->first();
-    for (int ssn=0; ssn<Source; ssn++)
+    for (int ssn=0; ssn<Source; ssn++) {
       SrcSet = TheMixSets->next();
+      if (SrcSet == 0)
+	SrcSet = TheMixSets->addSet(); // automatically create any "missing" sets
+    }
     if (SrcSet == DestSet)
       return; // nothing to do (means: Set 0)
 
-    MixSet::clone( SrcSet, DestSet );
+    MixSet::clone( SrcSet, DestSet, copy_volume );
   }
+}
 
-  set0toHW();
+void Mixer::Set0toSet(int Source)
+{
+  MixSet *SrcSet  = TheMixSets->first();
+  MixSet *DestSet = SrcSet;
+  for (int ssn=0; ssn<Source; ssn++) {
+    DestSet = TheMixSets->next();
+    if (DestSet == 0)
+      DestSet = TheMixSets->addSet(); // automatically create any "missing" sets
+  }
+  if (SrcSet == DestSet)
+    return; // nothing to do (means: Set 0)
+
+  MixSet::clone( SrcSet, DestSet, true );
 }
 
 void Mixer::setBalance(int left, int right)
@@ -612,25 +638,23 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
   int Volume,volLeft,volRight;
 
 
-  if ( mixdevice->is_muted )
-    {
-      // The mute is on! Thats really easy then
-      volLeft = volRight = 0;
-    }
-  else
-    {
-      // Not muted. Hmm, lets ask left and right channel
-      volLeft  = mixdevice->Left->volume;
-      volRight = mixdevice->Right->volume;
+  if ( mixdevice->is_muted ) {
+    // The mute is on! Thats really easy then
+    volLeft = volRight = 0;
+  }
+  else {
+    // Not muted. Hmm, lets ask left and right channel
+    volLeft  = mixdevice->Left->volume;
+    volRight = mixdevice->Right->volume;
 
-      /* Now multiply the value with the percentage given by the stereo
-       * slider. Multiply with the maximum allowed value (100 with OSS,
-       * 255 with SGI) Divide everything by 100.
-       * This give a value in the interval [0..100] or [0..255].
-       */
-      volLeft  = (volLeft *PercentLeft *MaxVolume) / 10000;
-      volRight = (volRight*PercentRight*MaxVolume) / 10000;
-    }
+    /* Now multiply the value with the percentage given by the stereo
+     * slider. Multiply with the maximum allowed value (100 with OSS,
+     * 255 with SGI) Divide everything by 100.
+     * This give a value in the interval [0..100] or [0..255].
+     */
+    volLeft  = (volLeft *PercentLeft *MaxVolume) / 10000;
+    volRight = (volRight*PercentRight*MaxVolume) / 10000;
+  }
 
 
   Volume = volLeft + ((volRight)<<8);
@@ -681,7 +705,8 @@ void Mixer::updateMixDeviceI(MixDevice *mixdevice)
     ret = snd_mixer_channel_write( devhandle, mixdevice->device_num, &data );
     if ( ret )
       errormsg(Mixer::ERR_WRITE);
-  } else
+  }
+  else
     errormsg(Mixer::ERR_READ);
 #endif
 }
@@ -692,13 +717,23 @@ void MixChannel::VolChanged(int new_pos)
 {
   MixDevice *mixdevice=mixDev;
 
-  volume = 100-new_pos; // The slider is reversed
+  volume = 100-new_pos; // The panning slider is reversed
+
   /* Set right channel volume to the same amount as left channel, if right
    * is linked to left
    */
   if (mixdevice->StereoLink == TRUE)
     mixdevice->Right->volume = volume;
 
+  MixSet *Set0  = mixDev->mix->TheMixSets->first();
+  MixSetEntry *mse = Set0->findDev(mixdevice->device_num);
+  if (mse) {
+    mse->volumeL =  mixdevice->Left->volume;
+    mse->volumeR =  mixdevice->Right->volume;
+  }
+  else {
+    cerr << "MixChannel::VolChanged(): no such mix set entry\n";
+  }
   mixdevice->mix->updateMixDevice(mixdevice);
 }
 
@@ -708,9 +743,17 @@ void MixDevice::MvolSplitCB()
   StereoLink = !StereoLink;
   Right->volume = Left->volume = (Right->volume + Left->volume)/2;
 
-  /* This really should be a member of Mixer and not MixDevice. But I
-   * do not want every darn Class to be a derivation of QWidget. So I
-   * do a bit magic in here.
+  MixSet *Set0  = mix->TheMixSets->first();
+  MixSetEntry *mse = Set0->findDev(device_num);
+  if (mse) {
+    mse->StereoLink =  StereoLink;
+  }
+  else {
+    cerr << "MixChannel::MvolSplitCB(): no such mix set entry\n";
+  }
+  /* This really should better be a member of Mixer and not MixDevice.
+   * But I do not want every darn Class to be a derivation of QWidget.
+   * So I do a bit magic in here.
    */
   mix->updateMixDevice(NULL);
 
@@ -721,7 +764,15 @@ void MixDevice::MvolSplitCB()
 void MixDevice::MvolMuteCB()
 {
   is_muted = ! is_muted;
-  // Again, this glorious line :-(
+  MixSet *Set0  = mix->TheMixSets->first();
+  MixSetEntry *mse = Set0->findDev(device_num);
+  if (mse) {
+    mse->is_muted =  is_muted;
+  }
+  else {
+    cerr << "MixChannel::MvolMuteCB(): no such mix set entry\n";
+  }
+  // Again, this glorious line ;-)
   mix->updateMixDevice(NULL);
 
   emit relayout();
@@ -813,16 +864,16 @@ MixDevice *MixDev = First; /* moved up for use with ALSA */
 MixDevice::MixDevice(int num)
 {
   device_num=num;
-  #ifdef ALSA
+#ifdef ALSA
     snd_mixer_channel_info_t chinfo;
     ret = snd_mixer_channel_info( devhandle, num, &chinfo );
     if ( ret )
       devname = "unknown   ";
     else
       strncpy( devname, (const char *)chinfo.name, 11 );
-  #else
+#else
     strncpy(devname, MixerDevNames[num],11);
-  #endif
+#endif
   devname[10]=0;
 };
 

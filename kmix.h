@@ -25,7 +25,6 @@
 
 
 
-
 class KMix : public KTopLevelWidget
 {
   Q_OBJECT
@@ -54,17 +53,30 @@ public slots:
   void hideMenubarCB();
   void tickmarksTogCB();
 
+private slots:
+  void sessionSave();
+  void slotReadSet1();
+  void slotReadSet2();
+  void slotReadSet3();
+  void slotReadSet4();
+  void slotWriteSet1();
+  void slotWriteSet2();
+  void slotWriteSet3();
+  void slotWriteSet4();
+
+  void slotReadSet(int num);
+  void slotWriteSet(int num);
+
 private:
   void createWidgets();
   void createMenu();
-  void sessionSave();
   void closeEvent( QCloseEvent *e );
 
   bool mainmenuOn;
   bool tickmarksOn;
   bool allowDocking;
   bool startDocked; 
-  QPopupMenu* contextMenu(QObject *);
+  QPopupMenu* contextMenu(QObject *, QObject *);
   bool eventFilter(QObject *o, QEvent *e);
 
   void setBalance(int left, int right);

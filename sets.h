@@ -38,7 +38,7 @@ public:
   ~MixSetEntry();
   void read(int set,int devnum);
   void write(int set,int devnum);
-  static void clone(MixSetEntry *Src, MixSetEntry *Dest);
+  static void clone(MixSetEntry *Src, MixSetEntry *Dest, bool clone_volume);
 
   /// internal device number
   char		devnum;
@@ -69,7 +69,7 @@ public:
   void read(int set);
   void write(int set);
   MixSetEntry* findDev(int num);
-  static void clone(MixSet *Src, MixSet *Dest);
+  static void clone(MixSet *Src, MixSet *Dest, bool clone_volume);
   /// Return the mix set entry in the MixSet with devnum==num,
   /// or return NULL, if it does not exist
 
@@ -87,7 +87,7 @@ public:
   ~MixSetList();
   void read();
   void write();
-  int NumSets;
+  MixSet* addSet();
 };
 
 #endif // SETS_H

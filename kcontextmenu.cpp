@@ -88,6 +88,7 @@ KCmFunc* KCmManager::getContextFunction(QObject *o, QEvent *e)
   else
     return NULL;
 }
+
 bool KCmManager::eventFilter(QObject *o, QEvent *e)
 {
   bool b;
@@ -100,8 +101,9 @@ bool KCmManager::eventFilter(QObject *o, QEvent *e)
   }
   else
     return false;
-
 }
+
+
 /// The following function must be called by event filter of the KApplication
 bool KCmManager::showContextMenu(QPopupMenu *qpm)
 {

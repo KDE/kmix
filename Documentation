@@ -2,9 +2,9 @@
 Additional documentation for the mixer class and destricption of
 class members:
 
-devmask:     All devices being at least output capable
+devmask:     All devices being at least output capable (bit mask)
 
-recmask:     All devices, that can be a record source
+recmask:     All devices, that can be a record source (bit mask)
 
 recsrc:     All devices (again a bit mask!), which are currently record
             source. There can be multiple record sources. Attention: Even

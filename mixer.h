@@ -119,8 +119,11 @@ public:
   void errormsg(int mixer_error);
   void updateMixDevice(MixDevice *mixdevice);
   void setBalance(int left, int right);
-  void set0toHW();
-  void set2set0(int Source);
+  /// Write set 0 into the mixer hardware
+  void Set0toHW();
+  /// Write a given set into set 0
+  void Set2Set0(int Source, bool copy_volume);
+  void Set0toSet(int Source);
   void setRecsrc(unsigned int newRecsrc);
   unsigned int getRecsrc();
   void sessionSave();

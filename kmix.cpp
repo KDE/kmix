@@ -43,9 +43,9 @@ static char rcsid[]="$Id$";
 
 
 KApplication *globalKapp;
-KIconLoader  *globalKIL;
-KMix	     *kmix;
-KConfig	     *KmConfig;
+KIconLoader    *globalKIL;
+KMix	       *kmix;
+KConfig	       *KmConfig;
 
 
 char		SetNumber;
@@ -104,7 +104,7 @@ bool KMix::restore(int n)
 {
   bool ret = KTopLevelWidget::restore(n);
 //  if (ret && allowDocking && startDocked )
-//    hide();
+  hide();
   return ret;
 }
 
@@ -133,7 +133,8 @@ KMix::KMix(int mixernum)
     dock_widget->dock();
   }
 
-  connect ( dock_widget, SIGNAL(quit_clicked()), this, SLOT(quit_myapp()));
+  connect ( dock_widget, SIGNAL(quit_clicked()), this, SLOT(quit_myapp()  ));
+  connect ( globalKapp , SIGNAL(saveYourself()), this, SLOT(sessionSave() ));
 
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
@@ -165,7 +166,7 @@ void KMix::applyOptions()
   mainmenuOn  = prefDL->menubarChk->isChecked();
   tickmarksOn = prefDL->tickmarksChk->isChecked();
   allowDocking= prefDL->dockingChk->isChecked();
-  mix->set0toHW();
+  mix->Set0toHW(); // Do NOT write volume after "applying" Options from config dailog
   placeWidgets();
 }
 
@@ -430,6 +431,30 @@ void KMix::placeWidgets()
 }
 
 
+void KMix::slotReadSet1() { slotReadSet(1); }
+void KMix::slotReadSet2() { slotReadSet(2); }
+void KMix::slotReadSet3() { slotReadSet(3); }
+void KMix::slotReadSet4() { slotReadSet(4); }
+void KMix::slotWriteSet1() { slotWriteSet(1); }
+void KMix::slotWriteSet2() { slotWriteSet(2); }
+void KMix::slotWriteSet3() { slotWriteSet(3); }
+void KMix::slotWriteSet4() { slotWriteSet(4); }
+
+void KMix::slotReadSet(int num)
+{
+  cerr << "Set0/Hardware <<<<<< Set " << num << "  ... ";
+  mix->Set2Set0(num,true);
+  mix->Set0toHW();
+  placeWidgets();
+  cerr << "Finished\n";
+}
+
+void KMix::slotWriteSet(int num)
+{
+  cerr << "Set0/Hardware >>>>>> Set " << num << "  ... ";
+  mix->Set0toSet(num);
+  cerr << "Finished\n";
+}
 
 void KMix::createMenu()
 {
@@ -438,6 +463,17 @@ void KMix::createMenu()
 
   // Global "Help"-Key
   qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
+  qAcc->connectItem( qAcc->insertItem(Key_1), this,  SLOT(slotReadSet1()));
+  qAcc->connectItem( qAcc->insertItem(Key_2), this,  SLOT(slotReadSet2()));
+  qAcc->connectItem( qAcc->insertItem(Key_3), this,  SLOT(slotReadSet3()));
+  qAcc->connectItem( qAcc->insertItem(Key_4), this,  SLOT(slotReadSet4()));
+  qAcc->connectItem( qAcc->insertItem(CTRL+Key_1), this,  SLOT(slotWriteSet1()));
+  qAcc->connectItem( qAcc->insertItem(CTRL+Key_2), this,  SLOT(slotWriteSet2()));
+  qAcc->connectItem( qAcc->insertItem(CTRL+Key_3), this,  SLOT(slotWriteSet3()));
+  qAcc->connectItem( qAcc->insertItem(CTRL+Key_4), this,  SLOT(slotWriteSet4()));
+
+
+
 
   Mfile = new QPopupMenu;
   CHECK_PTR( Mfile );
@@ -458,7 +494,7 @@ void KMix::createMenu()
   
   msg  = "KMix ";
   msg += vers;
-  msg += i18n("\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
+  msg += i18n("\n(C) 1997-1998 by Christian Esken (esken@kde.org).\n\n" \
     "Sound mixer panel for the KDE Desktop Environment.\n"\
     "This program is in the GPL.\n"\
     "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
@@ -520,7 +556,7 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
   if (e->type() == Event_MouseButtonPress) {
     QMouseEvent *qme = (QMouseEvent*)e;
     if (qme->button() == RightButton) {
-      QPopupMenu *qpm = contextMenu(o);
+      QPopupMenu *qpm = contextMenu(o,0);
 
       if (qpm) {
 	KCMpopup_point = QCursor::pos();
@@ -533,7 +569,7 @@ bool KMix::eventFilter(QObject *o, QEvent *e)
 }
 
 
-QPopupMenu* KMix::contextMenu(QObject *o)
+QPopupMenu* KMix::contextMenu(QObject *o, QObject *)
 {
   if ( o == LeftRightSB )
     return Mbalancing;

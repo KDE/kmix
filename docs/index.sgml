@@ -10,8 +10,8 @@
 
 <title>The KMix Handbook
 <author>Christian Esken, <tt/esken@kde.org/
-<date>Version 0.60, 27.2.1998
-<abstract>This Handbook describes KMix Version 0.60
+<date>Version 0.90, 9.10.1998
+<abstract>This Handbook describes KMix Version 0.90
 
 <!-- Table of contents -->
 <toc>
@@ -29,11 +29,6 @@ and as to your liking one or two for stereo devices. Single devices may
 be muted and the record source can be set.
 
 
-<p>
-<sect1>New<p>
-<itemize>
-<item>Docking on the KDE Panel
-</itemize>
 
 
 <P>
@@ -75,7 +70,7 @@ directory of the KMix distribution:
 Since KMix uses <tt>autoconf</tt> you should have not trouble compiling it.
 Should you run into problems please report them to the <sf/KDE/ mailing lists.
 
-<sect>Onscreen Fundamentals
+<sect>Working with kmix
 <p>
 
 KMix usage is straightforward. Every mixer device that your soundcard
@@ -123,6 +118,10 @@ reach with the right mouse button. You can set the slider to some
 prominent positions with this menu.
 
 
+<sect 1>Configuration options
+<itemize>
+<item>Docking on the KDE Panel
+</itemize>
 
 <sect1>Multiple Soundcards
 <p>
@@ -185,7 +184,69 @@ Invokes the KDE help system with the KMix help pages displayed.
 <p>
 Displays essential information about KMix.
 
+<sect>Installation
+<p>
+<sect1>How to obtain KMix
+<p>
+KMix is a core application of the KDE project <url
+url="http://www.kde.org">.
+KMix can be found on <url url="ftp://ftp.kde.org/pub/kde/">, the main ftp
+site
+of the KDE project.
+
+<sect1>Requirements
+<p>
+In order to successfully compile KMix, you need the latest versions of <tt>
+libkdecore</tt>
+and <tt> libkdeui</tt>. All required libraries as well as KMix itself can be
+found
+on <url url="ftp://ftp.kde.org/pub/kde/">.
+
+
+
+<sect1>Compilation and installation
+<p>
+
+In order to compile and install KMix on your system, type the following in
+the base
+directory of the KMix distribution:
+<tscreen><verb>
+% ./configure
+% make
+% make install
+</verb></tscreen>
+
+
+Since KMix uses <tt>autoconf</tt> you should have not trouble compiling it.
+Should you run into problems please report them to the <sf/KDE/ mailing
+lists.
+
+
+
 <sect>Questions and answers
+
+<itemize>
+
+<item><tt/Q:/ I have switched the menu bar off. Have I to hack the
+config file to get it back?
+<tt/A:/ No, just press <tt/Control-M/
+
+<item>
+<item><tt/Q:/ The mixer does not save the "Split Option" for the Stereo
+channels
+<tt/A:/ This is intended. kmix determinates, whether a "split" is
+  neccesary, automatically. It splits the sliders, if both channels have
+  different volume settings.
+
+<item>
+<item><tt/Q:/
+<tt/A:/
+
+<item>
+<item><tt/Q:/
+<tt/A:/
+
+</itemize>
 
 
 

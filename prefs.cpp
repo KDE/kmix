@@ -189,7 +189,7 @@ void Preferences::options2current()
     else {
       if (mdev->is_stereo)
 	mse->StereoLink = ! chanSet->qcbSplit->isChecked();
-      mse->is_disabled =  ! chanSet->qcbShow->isChecked();
+      mse->is_disabled = ! chanSet->qcbShow->isChecked();
     }
     mdev = mdev->Next;
   }
