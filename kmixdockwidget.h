@@ -3,6 +3,7 @@
  *
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +39,7 @@ class KMixDockWidget : public KSystemTray  {
    ~KMixDockWidget();
 
    void updatePixmap();
+   void setErrorPixmap();
 
  public slots:  
    void setVolumeTip(int, Volume);

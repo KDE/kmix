@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 
    aboutData.addAuthor("Stefan Schimanski", 0, "schimmi@kde.org");
    aboutData.addAuthor("Christian Esken", 0, "esken@kde.org");
+   aboutData.addAuthor("Sven Leiber", 0, "s.leiber@web.de");
    aboutData.addAuthor("Brian Hanson", I18N_NOOP("Solaris port"), "bhanson@hotmail.com");
    aboutData.addAuthor("Paul Kendall", I18N_NOOP("SGI Port"), "paul@orion.co.nz");
    aboutData.addAuthor("Sebestyen Zoltan", I18N_NOOP("*BSD fixes"), "szoli@digo.inf.elte.hu");
