@@ -79,7 +79,10 @@ extern "C" int kdemain(int argc, char *argv[])
 	   int mixerError = mixer->grab();
 	   if ( mixerError!=0 ) {
 	       delete mixer;
-	       break;  // skip the other devices
+               if ( mixerError == Mixer::ERR_MIXEROPEN )
+                   continue; // there was a soundcard, but no mixer => continue autodetection
+               else
+	           break;  // no more soundcards in this driver => skip the other devices
 	   }
 	   else {
 	       mixers.append( mixer );
