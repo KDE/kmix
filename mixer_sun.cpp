@@ -62,14 +62,14 @@ const int numDevs = MIXERDEV_END_MARKER;
 //
 const char* MixerDevNames[] =
 {
-   "Master Volume",
-   "Internal Speaker",
-   "Headphone",
-   "Line Out",
-   "Record Monitor",
-   "Microphone",
-   "Line In",
-   "CD"
+   I18N_NOOP("Master Volume"),
+   I18N_NOOP("Internal Speaker"),
+   I18N_NOOP("Headphone"),
+   I18N_NOOP("Line Out"),
+   I18N_NOOP("Record Monitor"),
+   I18N_NOOP("Microphone"),
+   I18N_NOOP("Line In"),
+   I18N_NOOP("CD")
 };
 
 //

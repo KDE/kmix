@@ -48,13 +48,18 @@
 #include <klocale.h>
 
 
-const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   , "Pcm"  ,    \
-                               "Speaker" , "Line"    , "Microphone", "CD"      , "Mix"  ,    \
-                               "Pcm2"    , "RecMon"  , "IGain"     , "OGain"   , "Line1",    \
-                               "Line2"   , "Line3"   , "Digital1"  , "Digital2", "Digital3", \
-                               "PhoneIn" , "PhoneOut", "Video"     , "Radio"   , "Monitor",  \
-                               "3D-depth", "3D-center", "unknown"  , "unknown" , "unknown",  \
-                               "unknown" , "unused" };
+const char* MixerDevNames[32]={
+    I18N_NOOP("Volume"), I18N_NOOP("Bass"), I18N_NOOP("Treble"),
+    I18N_NOOP("Synth"), I18N_NOOP("Pcm"), I18N_NOOP("Speaker"),
+    I18N_NOOP("Line"), I18N_NOOP("Microphone"), I18N_NOOP("CD"),
+    I18N_NOOP("Mix"), I18N_NOOP("Pcm2"), I18N_NOOP("RecMon"),
+    I18N_NOOP("IGain"), I18N_NOOP("OGain"), I18N_NOOP("Line1"),
+    I18N_NOOP("Line2"), I18N_NOOP("Line3"), I18N_NOOP("Digital1"),
+    I18N_NOOP("Digital2"), I18N_NOOP("Digital3"), I18N_NOOP("PhoneIn"),
+    I18N_NOOP("PhoneOut"), I18N_NOOP("Video"), I18N_NOOP("Radio"),
+    I18N_NOOP("Monitor"), I18N_NOOP("3D-depth"), I18N_NOOP("3D-center"),
+    I18N_NOOP("unknown"), I18N_NOOP("unknown"), I18N_NOOP("unknown"),
+    I18N_NOOP("unknown") , I18N_NOOP("unused") };
 
 const MixDevice::ChannelType MixerChannelTypes[32] = {
   MixDevice::VOLUME,   MixDevice::BASS,       MixDevice::TREBLE,   MixDevice::MIDI,
