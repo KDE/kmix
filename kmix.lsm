@@ -1,7 +1,7 @@
 
 Begin3
 Title:          kmix
-Version:        0.60
+Version:        0.90
 Entered-date:   03JUL1997
 Description:    A small, but nifty mixer for the Linux Sound driver (OSS).
 		Features of kmix:
@@ -12,10 +12,11 @@ Description:    A small, but nifty mixer for the Linux Sound driver (OSS).
 Keywords:       media sound mixer X11 Qt KDE
 Author:         chris@magicon.prima.ruhr.de (chris@magicon.prima.ruhr.de)
 Maintained-by:  chris@magicon.prima.ruhr.de (chris@magicon.prima.ruhr.de)
-Primary-site:   ftp://fiwi02.wiwi.uni-tuebingen.de/pub/kde/apps/multimedia
+Primary-site:   ftp://fiwi02.wiwi.uni-tuebingen.de/pub/kde/stable/1.0
 Alternate-site:
 Original-site:
 Platform:	Every OS with OSS (Open Sound System; formerly USS,TASD or
-                Voxware), audiocard and mixer. Tested on Linux2.0.0
+                Voxware), audiocard and mixer. Tested on Linux (2.0.0,
+                2.0.3x, 2.1.105), FreeBSD, NetBSD, BSDI, Solaris and IRIX
 Copying-policy: GPL
 End
