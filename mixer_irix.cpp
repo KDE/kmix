@@ -33,10 +33,12 @@ Mixer* IRIX_getMixer(int devnum, int SetNum)
 
 
 Mixer_IRIX::Mixer_IRIX() : Mixer()
-{ }
+{
+}
 
 Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum)
-{ }
+{
+}
 
 int Mixer_IRIX::openMixer()
 {
@@ -127,3 +129,8 @@ int Mixer_IRIX::writeVolumeToHW( int devnum, int volLeft, int volRight )
 
   return 0;
 }
+
+QString IRIX_getDriverName() {
+        return "IRIX";
+}
+

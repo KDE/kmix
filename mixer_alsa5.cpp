@@ -350,3 +350,8 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume volume )
 
    return 0;
 }
+
+QString ALSA_getDriverName() {
+        return "ALSA0.5";
+}
+

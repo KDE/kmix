@@ -304,3 +304,8 @@ int Mixer_OSS::writeVolumeToHW( int devnum, Volume vol )
 
   return 0;
 }
+
+QString OSS_getDriverName() {
+	return "OSS";
+}
+

@@ -476,3 +476,8 @@ void Mixer_SUN::GainBalanceToVolume( uint_t& gain, uchar_t& balance, Volume& vol
       }
    }
 }
+
+QString SUN_getDriverName() {
+        return "SUNAudio";
+}
+

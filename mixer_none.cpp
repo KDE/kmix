@@ -74,3 +74,7 @@ bool Mixer_None::isRecsrcHW( int devnum )
     return false;
 }
 
+QString NONE_getDriverName() {
+        return "None";
+}
+

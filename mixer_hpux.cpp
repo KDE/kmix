@@ -296,3 +296,8 @@ QString Mixer_HPUX::errorText(int mixer_error)
     }
   return l_s_errmsg;
 }
+
+QString HPUX_getDriverName() {
+        return "HPUX";
+}
+
