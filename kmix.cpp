@@ -23,13 +23,11 @@
  */
 
 // include files for QT
-#include <qdir.h>
-#include <qapplication.h>
-#include <qpopupmenu.h>
-#include <qtabbar.h>
-#include <qinputdialog.h>
-#include <qtimer.h>
+//#include <qapplication.h>
 #include <qmap.h>
+#include <qpopupmenu.h>
+#include <qtabwidget.h>
+#include <qtimer.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -39,6 +37,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
+#include <kapplication.h>
 #include <kstdaction.h>
 #include <kpanelapplet.h>
 #include <kpopupmenu.h>
@@ -53,49 +52,6 @@
 #include "kmixdockwidget.h"
 #include "MixerSelector.h"
 #include "MixerSelectionInfo.h"
-
-
-KMixApp::KMixApp()
-    : KUniqueApplication(), m_kmix( 0 )
-{
-}
-
-
-KMixApp::~KMixApp()
-{
-	delete m_kmix;
-}
-
-
-int
-KMixApp::newInstance()
-{
-	if ( m_kmix )
-	{
-		m_kmix->show();
-	}
-	else
-	{
-		m_kmix = new KMixWindow;
-		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
-		if ( isRestored() && KMainWindow::canBeRestored(0) )
-		{
-			m_kmix->restore(0, FALSE);
-		}
-	}
-
-	return 0;
-}
-
-
-void KMixApp::quitExtended() {
-    // This method is here for quiting from the dock icon: When directly calling
-    // quit(), the main window will be hidden before saving the configuration.
-    // isVisible() would return on quit always false (which would be bad).
-    emit stopUpdatesOnVisibility();
-    quit();
-}
-
 
 
 KMixWindow::KMixWindow()
