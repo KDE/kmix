@@ -29,6 +29,7 @@
 class KMixerWidget;
 class Mixer;
 class QPushButton;
+class QTimer;
 
 class KMixApplet : public KPanelApplet
 {
@@ -53,11 +54,13 @@ class KMixApplet : public KPanelApplet
    void showButton() { emit clickedButton(); };
 
   protected:
-   void resizeEvent ( QResizeEvent * );
+   void resizeEvent( QResizeEvent * );
+   void updateLayout();
  
   private:
    KMixerWidget *m_mixerWidget;
    QPushButton *m_button;
+   QTimer *m_timer;
 };
 
 

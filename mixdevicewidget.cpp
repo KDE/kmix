@@ -349,6 +349,17 @@ void BigMixDeviceWidget::setTicks( bool ticks )
    emit updateLayout();
 }
 
+void BigMixDeviceWidget::setIcons(bool value)
+{
+   if (value)
+      m_iconLabel->show();
+   else
+      m_iconLabel->hide();
+  
+   layout()->activate();
+   emit updateLayout();
+}
+
 void BigMixDeviceWidget::volumeChange( int )
 {
    QSlider* slider;
@@ -533,6 +544,18 @@ void SmallMixDeviceWidget::setIcon( int icon )
    }
 
    layout()->activate();
+}
+
+void SmallMixDeviceWidget::setIcons(bool value)
+{
+   kDebugInfo("SmallMixDeviceWidget::setIcons");
+   if (value)
+      m_iconLabel->show();
+   else
+      m_iconLabel->hide();
+  
+   layout()->activate();
+   emit updateLayout();
 }
 
 void SmallMixDeviceWidget::setStereoLinked(bool value)

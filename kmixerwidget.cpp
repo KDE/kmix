@@ -74,7 +74,7 @@ void Profile::saveConfig( const QString &/*grp*/ )
 /********************** KMixerWidget *************************/
  
 KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixer(mixer), m_name(mixer->mixerName()), m_devLayout(0)
+   : QWidget( parent, name ), m_mixer(mixer), m_devLayout(0), m_name(mixer->mixerName())
 {   
    kDebugInfo("-> KMixerWidget::KMixerWidget");
    m_actions = new KActionCollection( this );
@@ -136,9 +136,10 @@ void KMixerWidget::updateDevices( bool vert )
 					mixDevice->name() );
            
 	 connect( this, SIGNAL(updateTicks(bool)), mdw, SLOT(setTicks(bool)) );
-	 connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );      
+	 connect( this, SIGNAL(updateLabels(bool)), mdw, SLOT(setLabeled(bool)) );
       }
 
+      connect( this, SIGNAL(updateIcons(bool)), mdw, SLOT(setIcons(bool)) );
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       m_devLayout->addWidget( mdw, 0 );
 
@@ -172,6 +173,12 @@ void KMixerWidget::setTicks( bool on )
 void KMixerWidget::setLabels( bool on )
 {
    emit updateLabels( on );
+}
+
+void KMixerWidget::setIcons( bool on )
+{
+   kDebugInfo("KMixerWidget::setIcons( %d )", on );
+   emit updateIcons( on );
 }
 
 void KMixerWidget::setBalance( int value )

@@ -69,11 +69,13 @@ class KMixerWidget : public QWidget  {
   signals:
    void updateTicks( bool on );
    void updateLabels( bool on );
+   void updateIcons( bool on );
    void updateLayout();
 
   public slots:     
    void setTicks( bool on );
    void setLabels( bool on );
+   void setIcons( bool on );
    void setBalance( int value );
    void setOrientation( int vert );
 

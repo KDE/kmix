@@ -32,6 +32,7 @@
 #include <kapp.h>
 #include <qwmatrix.h>
 #include <kiconloader.h>
+#include <qtimer.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
@@ -54,7 +55,16 @@ KMixApplet::KMixApplet( Mixer *mixer, QWidget *parent, const char* name )
    // init mixer widget
    m_mixerWidget = new KMixerWidget( mixer, true, true, this );
    
-   connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateSize()));
+   // ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
+   m_timer = new QTimer( this );
+   connect( m_timer, SIGNAL(timeout()), this, SLOT(updateSize()) );
+   connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
+}
+
+void KMixApplet::updateLayout()
+{
+   if ( !m_timer->isActive() )
+      m_timer->start( 100, TRUE );
 }
 
 int KMixApplet::widthForHeight(int )
@@ -77,6 +87,8 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
    KPanelApplet::resizeEvent( e );
 
    m_button->setGeometry( 0 ,0, m_button->minimumWidth(), height() );
+
+   m_mixerWidget->setIcons( height()>=32 );
    m_mixerWidget->setGeometry( m_button->minimumWidth() + 1, 0, 
 			       width() - m_button->minimumWidth(), height() );
 }

@@ -65,7 +65,7 @@ class MixDeviceWidget : public QWidget
       void setUnmuted( bool value) { setMuted( !value ); };
       void setVolume( int channel, int volume );
       void setVolume( Volume volume );
-
+      
       virtual void setStereoLinked( bool value );
       
       void toggleRecsrc();
@@ -110,6 +110,7 @@ class BigMixDeviceWidget : public MixDeviceWidget
       void setIcon( int icontype );
       void setLabeled( bool value );
       void setTicks( bool ticks );
+      void setIcons( bool value );
 
    private slots:
       void volumeChange( int );
@@ -144,6 +145,7 @@ class SmallMixDeviceWidget : public MixDeviceWidget
    public slots:
       void setStereoLinked( bool value );     
       void setIcon( int icontype );
+      void setIcons( bool value );
 
    private slots:
       void volumeChange( int );
