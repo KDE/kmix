@@ -65,6 +65,7 @@ extern "C"
   }
 }
 
+KMixApplet *kmixApp = 0L;
 
 int KMixApplet::s_instCount = 0;
 QTimer *KMixApplet::s_timer = 0;
@@ -178,100 +179,103 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
-    // init static vars
-    if ( !s_instCount )
-    {
-	// create mixer list
-	s_mixers = new QPtrList<Mixer>;
-
-	// create timers
-	s_timer = new QTimer;
-	s_timer->start( 500 );
-
-	// get maximum values
-	KConfig *config= new KConfig("kcmkmixrc", false);
-	config->setGroup("Misc");
-	int maxCards = config->readNumEntry( "maxCards", 2 );
-	int maxDevices = config->readNumEntry( "maxDevices", 2 );
-	delete config;
-
-	// get mixer devices
-	s_mixers->setAutoDelete( TRUE );
-	QMap<QString,int> mixerNums;
-	int drvNum = Mixer::getDriverNum();
-	for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
+	kmixApp = this;
+	
+	// init static vars
+	if ( !s_instCount )
 	{
-	    for ( int dev=0; dev<maxDevices; dev++ )
-	    {
-		for ( int card=0; card<maxCards; card++ )
+		// create mixer list
+		s_mixers = new QPtrList<Mixer>;
+		
+		// create timers
+		s_timer = new QTimer;
+		s_timer->start( 500 );
+		
+		// get maximum values
+		KConfig *config= new KConfig("kcmkmixrc", false);
+		config->setGroup("Misc");
+		int maxCards = config->readNumEntry( "maxCards", 2 );
+		int maxDevices = config->readNumEntry( "maxDevices", 2 );
+		delete config;
+		
+		// get mixer devices
+		s_mixers->setAutoDelete( TRUE );
+		QMap<QString,int> mixerNums;
+		int drvNum = Mixer::getDriverNum();
+		for( int drv=0; drv<drvNum && s_mixers->count()==0; drv++ )
 		{
-		    Mixer *mixer = Mixer::getMixer( drv, dev, card );
-		    int mixerError = mixer->grab();
-		    if ( mixerError!=0 )
-		    {
-			delete mixer;
-			continue;
-		    }
-		    s_mixers->append( mixer );
-		    // count mixer nums for every mixer name to identify mixers with equal names
-		    mixerNums[mixer->mixerName()]++;
-		    mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+			for ( int dev=0; dev<maxDevices; dev++ )
+			{
+				for ( int card=0; card<maxCards; card++ )
+				{
+					Mixer *mixer = Mixer::getMixer( drv, dev, card );
+					int mixerError = mixer->grab();
+					if ( mixerError!=0 )
+					{
+						delete mixer;
+						continue;
+					}
+					s_mixers->append( mixer );
+					
+					// count mixer nums for every mixer name to identify mixers with equal names
+					mixerNums[mixer->mixerName()]++;
+					mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+				}
+			}
 		}
-	    }
 	}
-    }
-
-    s_instCount++;
-
-   KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
-
-   // ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
-   m_layoutTimer = new QTimer( this );
-   connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateLayoutNow()) );
-
-   // get configuration
-   KConfig *cfg = config();
-   cfg->setGroup(0);
-
-   // get colors
-   m_customColors = cfg->readBoolEntry( "ColorCustom", false );
-
-   m_colors.high = cfg->readColorEntry("ColorHigh", &highColor);
-   m_colors.low = cfg->readColorEntry("ColorLow", &lowColor);
-   m_colors.back = cfg->readColorEntry("ColorBack", &backColor);
-
-   m_colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
-   m_colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
-   m_colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
-
+	
+	s_instCount++;
+	
+	KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
+	
+	// ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
+	m_layoutTimer = new QTimer( this );
+	connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateLayoutNow()) );
+	
+	// get configuration
+   KConfig *cfg = kmixApp->config();
+	cfg->setGroup(0);
+	
+	// get colors
+	m_customColors = cfg->readBoolEntry( "ColorCustom", false );
+	
+	m_colors.high = cfg->readColorEntry("ColorHigh", &highColor);
+	m_colors.low = cfg->readColorEntry("ColorLow", &lowColor);
+	m_colors.back = cfg->readColorEntry("ColorBack", &backColor);
+	
+	m_colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
+	m_colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
+	m_colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
+	
    // find out to use which mixer
-   mixerNum = cfg->readNumEntry( "Mixer", -1 );
-   mixerName = cfg->readEntry( "MixerName", QString::null );
-   mixer = 0;
-   if ( mixerNum>=0 )
-   {
-      for (mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
-      {
-          if ( mixer->mixerName()==mixerName && mixer->mixerNum()==mixerNum ) break;
-      }
-   }
-
-   // don't prompt for a mixer if there is just one available
-   if ( !mixer && s_mixers->count() == 1 )
-       mixer = s_mixers->first();
-
-   if ( !mixer )
-   {
-      m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
-      connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
-   }
-
-   //  Find out wether the applet should be reversed
-   reversedDir = cfg->readBoolEntry("ReversedDirection", false);
-
-   popupDirectionChange(KPanelApplet::Up);
-
-   m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
+	mixerNum = cfg->readNumEntry( "Mixer", -1 );
+	mixerName = cfg->readEntry( "MixerName", QString::null );
+	mixer = 0;
+	if ( mixerNum>=0 )
+	{
+		for (mixer=s_mixers->first(); mixer!=0; mixer=s_mixers->next())
+		{
+			if ( mixer->mixerName()==mixerName && mixer->mixerNum()==mixerNum ) break;
+		}
+	}
+	
+	// don't prompt for a mixer if there is just one available
+	if ( !mixer && s_mixers->count() == 1 )
+		mixer = s_mixers->first();
+	
+	if ( !mixer )
+	{
+		m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
+		connect( m_errorLabel, SIGNAL(clicked()), this, SLOT(selectMixer()) );
+	}
+	
+	//  Find out wether the applet should be reversed
+	reversedDir = cfg->readBoolEntry("ReversedDirection", false);
+	
+	popupDirectionChange(KPanelApplet::Up);
+	
+	m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
 }
 
 KMixApplet::~KMixApplet()
@@ -295,7 +299,7 @@ KMixApplet::~KMixApplet()
 void KMixApplet::saveConfig()
 {
     if ( m_mixerWidget ) {
-        KConfig *cfg = config();
+        KConfig *cfg = kmixApp->config();
         cfg->setGroup( 0 );
         cfg->writeEntry( "Mixer", m_mixerWidget->mixerNum() );
         cfg->writeEntry( "MixerName", m_mixerWidget->mixerName() );
@@ -496,3 +500,5 @@ void KMixApplet::applyPreferences()
 }
 
 #include "kmixapplet.moc"
+
+// vim: sw=3 ts=3

@@ -32,6 +32,7 @@
 #include <qcheckbox.h>
 #include <qbuttongroup.h>
 #include <qwidgetstack.h>
+#include <qmap.h>
 
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -325,65 +326,55 @@ KMixerWidget::rightMouseClicked()
 void 
 KMixerWidget::slotFillPopup()
 {
+	QStringList output, input, sw;
+	QMap<QString, bool> state;
+   int n=0;
+
    m_toggleMixerChannels->popupMenu()->clear();
 
-	QStringList output, input, sw;
-	bool stOut, stIn, stSw;
-
-   int n=0;
    for (Channel *chn=m_channels.first(); chn!=0; chn=m_channels.next())
    {
 		if( chn->dev->isSwitch() )
-		{
 			sw << chn->dev->name();
-			stOut = !chn->dev->isDisabled();
-		}
 		else if ( chn->dev->isRecsrc() )
-		{
 			input << chn->dev->name();
-			stIn = !chn->dev->isDisabled();
-		}
 		else
-		{
 			output << chn->dev->name();
-			stSw = !chn->dev->isDisabled();
-		}
+		
+		state[ chn->dev->name() ] = !chn->dev->isDisabled();
    }
 
 	// Output
 	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Output" ) );
-	n++;
 	for ( QStringList::Iterator it = output.begin(); it != output.end(); ++it )
 	{
 		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-		m_toggleMixerChannels->popupMenu()->setItemChecked( n, stOut );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
 		n++;
 	}
 	
 	// Input
 	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Input" ) );
-	n++;
 	for ( QStringList::Iterator it = input.begin(); it != input.end(); ++it )
 	{
 		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-		m_toggleMixerChannels->popupMenu()->setItemChecked( n, stIn );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
 		n++;
 	}
 	
 	// Switch
 	m_toggleMixerChannels->popupMenu()->insertTitle(  SmallIcon(  "kmix" ), i18n( "Switchs" ) );
-	n++;
 	for ( QStringList::Iterator it = sw.begin(); it != sw.end(); ++it )
 	{
 		m_toggleMixerChannels->popupMenu()->insertItem( *it, n );
-		m_toggleMixerChannels->popupMenu()->setItemChecked( n, stSw );
+		m_toggleMixerChannels->popupMenu()->setItemChecked( n, state[ *it ] );
 		n++;
 	}
 
 }
 
 void 
-KMixerWidget::slotToggleMixerDevice(int id)
+KMixerWidget::slotToggleMixerDevice( int id)
 {
    if(id >= static_cast<int>(m_channels.count())) // too big
       return;
@@ -430,33 +421,34 @@ KMixerWidget::saveConfig( KConfig *config, const QString &grp ) const
 void 
 KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
-   config->setGroup( grp );
-
-   int num = config->readNumEntry("Devs", 0);
-   m_name = config->readEntry("Name", m_name );
-
-   int n=0;
-   for (Channel *chn=m_channels.first(); chn!=0 && n<num; chn=m_channels.next())
-   {
-      QString devgrp;
-      devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );
-      config->setGroup( devgrp );
-
-      chn->dev->setStereoLinked( !config->readBoolEntry("Split", false) );
-      chn->dev->setDisabled( !config->readBoolEntry("Show", true) );
-
-      KGlobalAccel *keys=chn->dev->keys();
-      if ( keys ) {
-	 QString devgrpkeys;
-	 devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
-
-	 keys->setConfigGroup(devgrpkeys);
-	 keys->readSettings(config);
-	 keys->updateConnections();
-      }
-
-      n++;
-   }
+	config->setGroup( grp );
+	
+	int num = config->readNumEntry("Devs", 0);
+	m_name = config->readEntry("Name", m_name );
+	
+	int n=0;
+	for (Channel *chn=m_channels.first(); chn!=0 && n<num; chn=m_channels.next())
+	{
+		QString devgrp;
+		devgrp.sprintf( "%s.Dev%i", grp.ascii(), n );
+		config->setGroup( devgrp );
+		
+		chn->dev->setStereoLinked( !config->readBoolEntry("Split", false) );
+		chn->dev->setDisabled( !config->readBoolEntry("Show", true) );
+		
+		KGlobalAccel *keys=chn->dev->keys();
+		if ( keys ) 
+		{
+			QString devgrpkeys;
+			devgrpkeys.sprintf( "%s.Dev%i.keys", grp.ascii(), n );
+			
+			keys->setConfigGroup(devgrpkeys);
+			keys->readSettings(config);
+			keys->updateConnections();
+		}
+		
+		n++;
+	}
 }
 
 void 

@@ -32,10 +32,13 @@
 
 #include "kmixerwidget.h"
 
-class Mixer;
 class QTimer;
+class Mixer;
 class ColorWidget;
+class KMixApplet;
 
+// External main pointer
+extern KMixApplet *kmixApp;
 
 class AppletConfigDialog : public KDialogBase
 {

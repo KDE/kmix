@@ -259,17 +259,18 @@ MixDeviceWidget::createWidgets( bool showMuteLED, bool showRecordLED )
 	} //  otherwise it is created before the slider
 	
 	// create record source LED
-	if( m_mixdevice->isRecordable() )
+	if( m_mixdevice->isRecordable() && ! isSwitch() )
 	{
+
 		m_recordLED = new KLedButton( Qt::red,
 				m_mixdevice->isRecordable()?KLed::On:KLed::Off,
 				KLed::Sunken, KLed::Circular, this, "RecordLED" );
-		if (!showRecordLED) m_recordLED->hide();
+		if ( !showRecordLED )
+			m_recordLED->hide();
 		m_recordLED->setFixedSize( QSize(16, 16) );
 		
 		GET_NEWLAYOUT( reclayout );
-		if( isSwitch() )
-			m_recordLED->hide();
+		reclayout->addSpacing( 2 );
 		reclayout->addWidget( m_recordLED );
 		connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
 		m_recordLED->installEventFilter( this );

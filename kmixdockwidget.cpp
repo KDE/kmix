@@ -28,7 +28,6 @@
 #include <kpopupmenu.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
-#include <kconfig.h>
 #include <kaudioplayer.h>
 #include <kiconloader.h>
 
@@ -56,7 +55,8 @@ KMixMasterVolume::KMixMasterVolume(QWidget* parent, const char* name, Mixer* mix
     installEventFilter( mdw );
 }
 
-void KMixMasterVolume::mousePressEvent(QMouseEvent *e)
+void 
+KMixMasterVolume::mousePressEvent(QMouseEvent *e)
 {
   // this is very tricky:
   // if we hide this popup here, the dockWidget receives the event.
@@ -97,14 +97,14 @@ KMixDockWidget::~KMixDockWidget()
     delete masterVol;
 }
 
-void KMixDockWidget::createMasterVolWidget()
+void 
+KMixDockWidget::createMasterVolWidget()
 {
     if (!m_mixer)
         return;
 
    // create devices
-   MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
-//   MixDevice *masterDevice = m_mixer->getMixer(m_mixer->masterDevice();
+   MixDevice *masterDevice = (*m_mixer)[ m_mixer->masterDevice() ];
 
    masterVol = new KMixMasterVolume(0, "masterVol", m_mixer, this);
    connect(masterVol->mixerWidget(), SIGNAL(newVolume(int, Volume)),
@@ -118,7 +118,8 @@ void KMixDockWidget::createMasterVolWidget()
    }
 }
 
-void KMixDockWidget::setVolumeTip(int, Volume vol)
+void 
+KMixDockWidget::setVolumeTip(int, Volume vol)
 {
     MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
     QString tip = i18n( "Volume at %1" ).arg( ( vol.getVolume( 0 )*100 )/( vol.maxVolume() ) );
@@ -129,7 +130,8 @@ void KMixDockWidget::setVolumeTip(int, Volume vol)
     QToolTip::add(this, tip);
 }
 
-void KMixDockWidget::updatePixmap()
+void 
+KMixDockWidget::updatePixmap()
 {
     MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
 
@@ -139,80 +141,83 @@ void KMixDockWidget::updatePixmap()
         setPixmap( loadIcon( "kmixdocked" ) );
 }
 
-void KMixDockWidget::setErrorPixmap()
+void 
+KMixDockWidget::setErrorPixmap()
 {
     setPixmap( loadIcon( "kmixdocked_error" ) );
 }
 
-void KMixDockWidget::ignoreNextEvent()
+void 
+KMixDockWidget::ignoreNextEvent()
 {
   m_ignoreNextEvent = true;
 }
 
-void KMixDockWidget::mousePressEvent(QMouseEvent *me)
+void 
+KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
-    KConfig *config = kapp->config();
-    config->setGroup(0);
-
-	 if ( me->button() == LeftButton )
-	 {
-		 if( parentWidget()->isVisible() )
-			 parentWidget()->hide();
-		 else
-			 parentWidget()->show();
-		 return;
-	 }
-	 
-    if( config->readBoolEntry("TrayVolumeControl", true ) && (me->button() == LeftButton))
-    {
-        if ( m_ignoreNextEvent )
-        {
-          m_ignoreNextEvent = false;
-          return;
-        }
-
-        if ( masterVol->isVisible() )
-        {
-          masterVol->hide();
-          return;
-        }
-
-        QRect desktop = KGlobalSettings::desktopGeometry(this);
-        int sw = desktop.width();
-        int sh = desktop.height();
-        int sx = desktop.x();
-        int sy = desktop.y();
-        int x = me->globalPos().x();
-        int y = me->globalPos().y();
-        y -= masterVol->geometry().height();
-        int w = masterVol->width();
-        int h = masterVol->height();
-
-        if (x+w > sw)
-          x = me->globalPos().x() - w - 2;
-        if (y+h > sh)
-          y = me->globalPos().y() - h - 2;
-        if (x < sx)
-          x = me->globalPos().x() + 2;
-        if (y < sy)
-          y = me->globalPos().y() + 2;
-
-        masterVol->move(x, y);  // so that the mouse is outside of the widget
-        masterVol->show();
-
-        QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
-        return;
-    }
-    else
-        KSystemTray::mousePressEvent(me);
+	if ( me->button() == MidButton )
+	{
+		if( parentWidget()->isVisible() )
+			parentWidget()->hide();
+		else
+			parentWidget()->show();
+		return;
+	}
+	else if ( me->button() == LeftButton )
+	{
+		if ( m_ignoreNextEvent )
+		{
+			m_ignoreNextEvent = false;
+			return;
+		}
+		
+		if ( masterVol->isVisible() )
+		{
+			masterVol->hide();
+			return;
+		}
+		
+		QRect desktop = KGlobalSettings::desktopGeometry(this);
+		int sw = desktop.width();
+		int sh = desktop.height();
+		int sx = desktop.x();
+		int sy = desktop.y();
+		int x = me->globalPos().x();
+		int y = me->globalPos().y();
+		y -= masterVol->geometry().height();
+		int w = masterVol->width();
+		int h = masterVol->height();
+		
+		if (x+w > sw)
+			x = me->globalPos().x() - w - 2;
+		if (y+h > sh)
+			y = me->globalPos().y() - h - 2;
+		if (x < sx)
+			x = me->globalPos().x() + 2;
+		if (y < sy)
+			y = me->globalPos().y() + 2;
+		
+		masterVol->move(x, y);  // so that the mouse is outside of the widget
+		masterVol->show();
+		
+		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
+		return;
+	}
+	else
+		KSystemTray::mousePressEvent(me);
+	
 }
 
-void KMixDockWidget::mouseReleaseEvent(QMouseEvent *me)
+void 
+KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
 {
+	
     KSystemTray::mouseReleaseEvent(me);
 }
 
-void KMixDockWidget::wheelEvent(QWheelEvent *e)
+void 
+KMixDockWidget::wheelEvent(QWheelEvent *e)
 {
     MixDevice *masterDevice = (*m_mixer)[m_mixer->masterDevice()];
     Volume vol = masterDevice->getVolume();
@@ -234,7 +239,8 @@ void KMixDockWidget::wheelEvent(QWheelEvent *e)
     setVolumeTip(masterDevice->num(), vol);
 }
 
-void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
+void 
+KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 {
     KAction* showAction = actionCollection()->action("minimizeRestore");
     if ( parentWidget() && showAction )
@@ -251,3 +257,5 @@ void KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
 }
 
 #include "kmixdockwidget.moc"
+
+// vim: ts=3 sw=3
