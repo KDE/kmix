@@ -139,12 +139,22 @@ KMix::~KMix()
   delete mainmenu;
 }
 
-bool KMix::restore(int n)
+bool KMix::restore(int number)
 {
+  if (!canBeRestored(number))
+    return False;
+  KConfig *config = kapp->getSessionConfig();
+  if (readPropertiesInternal(config, number)){
+    return True;
+  }
+  return False;
+
+#if 0
   bool ret = KTopLevelWidget::restore(n);
   if (ret && allowDocking && startDocked )
     hide();
   return ret;
+#endif
 }
 
 
@@ -198,7 +208,7 @@ KMix::KMix(int mixernum, int SetNum)
   connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
 
   globalKapp->setMainWidget( this );
-  if ( !allowDocking || !startDocked)
+   if ( !allowDocking || !startDocked)
     show();
   else
     hide();
@@ -768,7 +778,8 @@ void KMix::sessionSave(bool sessionConfig)
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn );
   KmConfig->writeEntry( "Docking"    , allowDocking);
-  KmConfig->writeEntry( "StartDocked", !isVisible());
+  bool iv = isVisible();
+  KmConfig->writeEntry( "StartDocked", !iv);
 
   if (sessionConfig) {
     // Save session specific data only when needed
