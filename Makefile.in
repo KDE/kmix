@@ -68,6 +68,11 @@ clean:
 distclean: clean
 	rm -f Makefile
 
+
+nls:
+	xgettext --keyword=translate *.cpp
+	mv messages.po kmix.po
+
 .depend: $(SRCS) *.h
 	$(MAKE) depend
 
