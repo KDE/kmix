@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+X-KDE-autostart-phase=1
+X-KDE-autostart-condition=kmixrc::startkdeRestore:true
+Type=Application
+Exec=kmixctrl --restore
+Name=Restore mixer volumes
+

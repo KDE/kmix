@@ -1,4 +1,4 @@
-SUBDIRS = control pics
+SUBDIRS = pics
 INCLUDES= $(all_includes)
 
 bin_PROGRAMS = 
@@ -37,6 +37,9 @@ xdg_apps_DATA = kmix.desktop
 
 rcdir = $(kde_datadir)/kmix
 rc_DATA = kmixui.rc
+
+autostart_DATA = restore_kmix_volumes.desktop
+autostartdir = $(prefix)/share/autostart
 
 lnkdir = $(kde_datadir)/kicker/applets
 lnk_DATA = kmixapplet.desktop
