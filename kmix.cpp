@@ -26,8 +26,9 @@ static char rcsid[]="$Id$";
  * SUCH DAMAGE.
  */
 
+//!!!
 #define _(TEXT) TEXT
-#define DEBUG
+
 
 #include <stdio.h>
 #include <iostream.h>
@@ -36,14 +37,16 @@ static char rcsid[]="$Id$";
 #include <fcntl.h>
 
 #include <kiconloader.h>
+#include <klocale.h>
+#include <kwm.h>
 
 #include "mixer.h"
 #include "kmix.h"
 #include "kmix.moc"
 #include "version.h"
 
+
 #include <qkeycode.h>
-#include <qslider.h>
 #include <qlabel.h>
 #include <qaccel.h>
 
@@ -90,8 +93,6 @@ int main(int argc, char **argv)
   else
     kmix = new KMix(DEFAULT_MIXER);
 
-  globalKapp->setMainWidget( kmix );
-  kmix->show();
   return globalKapp->exec();
 }
 
@@ -127,6 +128,9 @@ KMix::KMix(char *mixername)
   prefDL->menubarChk->setChecked  (mainmenuOn );
   prefDL->tickmarksChk->setChecked(tickmarksOn);
   connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
+
+  globalKapp->setMainWidget( this );
+  show();
 }
 
 void KMix::applyOptions()
@@ -144,9 +148,12 @@ void KMix::applyOptions()
 void KMix::createWidgets()
 {
   QPixmap miniDevPM;
+  QPixmap WMminiIcon = globalKIL->loadIcon("mixer_mini.xpm");
+  KWM::setMiniIcon(this->winId(), WMminiIcon);
 
-  enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon, midiIcon, recmonIcon, \
-	trebleIcon, unknownIcon, volumeIcon };
+  // keep this enum local. It is really only needed here
+  enum {audioIcon, bassIcon, cdIcon, extIcon, microphoneIcon,
+	midiIcon, recmonIcon,trebleIcon, unknownIcon, volumeIcon };
 
   char DefaultMixerIcons[]={
     volumeIcon,		bassIcon,	trebleIcon,	midiIcon,	audioIcon,
@@ -166,11 +173,11 @@ void KMix::createWidgets()
 
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);
+  setView(Container);
 
   // Create Menu
   createMenu();
-  //  mainmenu->show(); // Show it, so accelerators take effect. This cheats Qt
-
+  setMenu(mainmenu);
   // Create Sliders (Volume indicators)
 
   MixDevice *MixPtr = mix->First;
@@ -228,36 +235,33 @@ void KMix::createWidgets()
       MixPtr->Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
       connect( VolSB, 	SIGNAL(valueChanged(int)), MixPtr->Left, SLOT(VolChanged(int)));
 
-      //      VolSB->installEventFilter(this);
       KCM->insert(VolSB, (KCmFunc*)contextMenu);
 
-      // Create a second slider, when the current channel is a stereo
-      // channel.
+      // Create a second slider, when the current channel is a stereo channel.
       bool BothSliders = (MixPtr->is_stereo  == true );
 
-      if ( BothSliders)
-	{
-	  QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
-					QSlider::Vertical, Container, "VolR");
-	  MixPtr->Right->slider= VolSB2;  // Remember the Slider (for the eventFilter)
-	  connect( VolSB2, SIGNAL(valueChanged(int)), MixPtr->Right, SLOT(VolChanged(int)));
+      if ( BothSliders) {
+	QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
+				       QSlider::Vertical, Container, "VolR");
+	MixPtr->Right->slider= VolSB2;  // Remember Slider (for eventFilter)
+	connect( VolSB2, SIGNAL(valueChanged(int)), \
+		 MixPtr->Right, SLOT(VolChanged(int)));
 
-	  //VolSB2->installEventFilter(this);
-	  KCM->insert(VolSB2, (KCmFunc*)contextMenu);
-	}
-
+	KCM->insert(VolSB2, (KCmFunc*)contextMenu);
+      }
       MixPtr=MixPtr->Next;
     }
 
-  LeftRightSB = new QSlider( -100, 100, 25, 0, QSlider::Horizontal, Container, "RightLeft");
-
-  connect( LeftRightSB, SIGNAL(valueChanged(int)), this, SLOT(MbalChangeCB(int)));
-
-  //LeftRightSB->installEventFilter(this);
+  // Create the Left-Right-Slider, add Tooltip and Context menu
+  LeftRightSB = new QSlider( -100, 100, 25, 0,\
+			     QSlider::Horizontal, Container, "RightLeft");
+  connect( LeftRightSB, SIGNAL(valueChanged(int)), \
+	   this, SLOT(MbalChangeCB(int)));
   KCM->insert(LeftRightSB, (KCmFunc*)contextMenu);
-
   QToolTip::add( LeftRightSB, "Left/Right balancing" );
 }
+
+
 
 void KMix::placeWidgets()
 {
@@ -266,148 +270,126 @@ void KMix::placeWidgets()
   int ix = 0;
   int iy = 0;
 
-  static char *sdn[]={"Volume", "Bass", "Treble", "Synth", "Pcm", "Speaker", "Line", \
-				 "Microphone", "CD", "Mix", "Pcm2", "RecMon", "IGain", "OGain", \
-				 "Line1", "Line2", "Line3"};
-
   QSlider *qs;
   QLabel  *qb;
 
   // Place Sliders (Volume indicators)
   ix  = 0;
   if (mainmenuOn)
-    {
-      iy += mainmenu->height();
-      mainmenu->show();
-    }
+    mainmenu->show();
   else
     mainmenu->hide();
 
 
   bool first = true;
   MixDevice *MixPtr = mix->First;
-  while (MixPtr)
-    {
-      if (MixPtr->is_disabled)
-	{
-      	   MixPtr=MixPtr->Next;
-	   continue;
-	}
-      if ( !first )
-	// Perhaps I should use a "real" separator here (But not on thefirst loop)
-	ix += 6;
-      else
-	{
-	  ix += 4; // On first loop add 4
-	}
-
-      int old_x=ix;
-
-      qb = MixPtr->picLabel;
-
-      // left slider
-      qs = MixPtr->Left->slider;
-      if (tickmarksOn)
-	{
-	  qs->setTickmarks(QSlider::Left);
-	  qs->setTickInterval(10);
-	}
-      else
-	qs->setTickmarks(QSlider::NoMarks);
-
-      QSize VolSBsize = qs->sizeHint();
-      qs->setValue(100-MixPtr->Left->volume);
-      qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
-
-      qs->move(ix,iy+qb->height());
-      qs->show();
-
-      // Its a good point to find out the maximum y pos of the slider right here
-      if (first)
-	qsMaxY = qs->y()+qs->height();
-
-      ix += qs->width();
-
-      // But make sure it isn't linked to the left channel.
-      bool BothSliders =
-	(MixPtr->is_stereo  == true ) &&
-	(MixPtr->StereoLink == false);
-
-      QString ToolTipString;
-      ToolTipString = sdn[MixPtr->device_num];
-      if ( BothSliders)
-	ToolTipString += " (Left)";
-      QToolTip::add( qs, ToolTipString );
-
-      // Mark record source(s) and muted channel(s). This is done by ordinary
-      // color marks on the slider, but this will be changed by red and green
-      // and black "bullets" below the slider. TODO !!!
-      if (MixPtr->is_recsrc) {
-	qs->setBackgroundColor( red );
-      }
-      else {
-	if (MixPtr->is_muted)
-	  qs->setBackgroundColor( black ); 
-	else
-	  qs->setBackgroundColor( colorGroup().mid() );
-      }
-
-      if (MixPtr->is_stereo  == true)
-	{
-	  qs = MixPtr->Right->slider;
-	  
-	  if (MixPtr->StereoLink == false)
-	    { // Show right slider
-	      if (tickmarksOn)
-		{
-		  qs->setTickmarks(QSlider::Right);
-		  qs->setTickInterval(10);
-		}
-	      else
-		qs->setTickmarks(QSlider::NoMarks);
-	      
-	      QSize VolSBsize = qs->sizeHint();
-	      qs->setValue(100-MixPtr->Right->volume);
-	      qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
-
-	      ix += qs->width();
-	      ToolTipString = sdn[MixPtr->device_num];
-	      ToolTipString += " (Right)";
-	      QToolTip::add( qs, ToolTipString );
-
-	      if (MixPtr->is_muted)
-		qs->setBackgroundColor( black ); 
-	      else
-		qs->setBackgroundColor( colorGroup().mid() ); 
-
-	      qs->show();
-	    }
-	  else
-	    // Don't show right slider
-	    qs->hide();
-	}
-
-      // Pixmap label. Place it horizontally centered to volume slider(s)
-      qb->move((int)((ix+old_x-qb->width())/2),iy);
-
-      first=false;
+  while (MixPtr) {
+    if (MixPtr->is_disabled) {
       MixPtr=MixPtr->Next;
+      continue;
+    }
+    if ( !first ) ix += 6;
+    else          ix += 4; // On first loop add 4
+
+    int old_x=ix;
+
+    qb = MixPtr->picLabel;
+
+    // left slider
+    qs = MixPtr->Left->slider;
+    if (tickmarksOn) {
+      qs->setTickmarks(QSlider::Left);
+      qs->setTickInterval(10);
+    }
+    else
+      qs->setTickmarks(QSlider::NoMarks);
+
+    QSize VolSBsize = qs->sizeHint();
+    qs->setValue(100-MixPtr->Left->volume);
+    qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
+
+    qs->move(ix,iy+qb->height());
+    qs->show();
+
+    // Its a good point to find out the maximum y pos of the slider right here
+    if (first)
+      qsMaxY = qs->y()+qs->height();
+
+    ix += qs->width();
+
+    // But make sure it isn't linked to the left channel.
+    bool BothSliders =
+      (MixPtr->is_stereo  == true ) &&
+      (MixPtr->StereoLink == false);
+
+    QString ToolTipString;
+    ToolTipString = MixPtr->name();
+    if ( BothSliders)
+      ToolTipString += " (Left)";
+    QToolTip::add( qs, ToolTipString );
+
+    // Mark record source(s) and muted channel(s). This is done by ordinary
+    // color marks on the slider, but this will be changed by red and green
+    // and black "bullets" below the slider. TODO !!!
+    if (MixPtr->is_recsrc) {
+      qs->setBackgroundColor( red );
+    }
+    else {
+      if (MixPtr->is_muted)
+	qs->setBackgroundColor( black ); 
+      else
+	qs->setBackgroundColor( colorGroup().mid() );
     }
 
-  ix += 4; // !!! Hack. TODO chris
+    if (MixPtr->is_stereo  == true)
+      {
+	qs = MixPtr->Right->slider;
+	  
+	if (MixPtr->StereoLink == false)
+	  { // Show right slider
+	    if (tickmarksOn)
+	      {
+		qs->setTickmarks(QSlider::Right);
+		qs->setTickInterval(10);
+	      }
+	    else
+	      qs->setTickmarks(QSlider::NoMarks);
+	      
+	    QSize VolSBsize = qs->sizeHint();
+	    qs->setValue(100-MixPtr->Right->volume);
+	    qs->setGeometry( ix, iy+qb->height(), VolSBsize.width(), sliderHeight);
 
+	    ix += qs->width();
+	    ToolTipString = MixPtr->name();
+	    ToolTipString += " (Right)";
+	    QToolTip::add( qs, ToolTipString );
+
+	    if (MixPtr->is_muted)
+	      qs->setBackgroundColor( black ); 
+	    else
+	      qs->setBackgroundColor( colorGroup().mid() ); 
+
+	    qs->show();
+	  }
+	else
+	  // Don't show right slider
+	  qs->hide();
+      }
+
+    // Pixmap label. Place it horizontally centered to volume slider(s)
+    qb->move((int)((ix+old_x-qb->width())/2),iy);
+
+    first=false;
+    MixPtr=MixPtr->Next;
+  }
+
+  ix += 4; // !!! Hack. TODO chris
   iy = qsMaxY;
   LeftRightSB->setGeometry(0,iy,ix,LeftRightSB->sizeHint().height());
 
   iy+=LeftRightSB->height();
-
-  Container->setMinimumSize(ix, iy);
-  Container->setMaximumSize(ix, iy);
-  setMinimumSize(ix, iy);
-  setMaximumSize(ix, iy);
-
-  mainmenu->resize( ix, mainmenu->height() );
-  resize( ix, iy );
+  Container->setFixedSize( ix, iy );
+  updateRects();
 }
 
 
@@ -436,13 +418,13 @@ void KMix::createMenu()
   Mhelp->insertSeparator();
   Mhelp->insertItem( "&About", this, SLOT(aboutClickedCB()));
 
-  mainmenu = new KMenuBar( Container , "mainmenu" );
+  mainmenu = new KMenuBar( this, "main menu");
   CHECK_PTR( mainmenu );
   mainmenu->insertItem( _("&File"), Mfile );
   mainmenu->insertSeparator();
   mainmenu->insertItem( _("&Help"), Mhelp );
-  mainmenu->enableMoving(false);
-  mainmenu->enableFloating(false);
+  //mainmenu->enableMoving(false);
+  //mainmenu->enableFloating(false);
 
   Mbalancing = new QPopupMenu;
   CHECK_PTR( Mbalancing );
@@ -471,8 +453,8 @@ void KMix::showOptsCB()
 
 void KMix::quitClickedCB()
 {
-//  int  ok = KMsgBox::yesNo(NULL, "Confirm", "Quit KMix?" );
-//  if (ok==1) 
+  //  int  ok = KMsgBox::yesNo(NULL, "Confirm", "Quit KMix?" );
+  //  if (ok==1) 
   exit(0);
 }
 
@@ -488,8 +470,8 @@ void KMix::aboutClickedCB()
   head += "APP_VERSION";
 
   KMsgBox::message(0, head,\
-			msg,
-			KMsgBox::INFORMATION, "OK" );
+		   msg,
+		   KMsgBox::INFORMATION, "OK" );
 }
 
 

@@ -2,6 +2,15 @@
 #ifndef KMIXER_H
 #define KMIXER_H
 
+// undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
+// HINTS: uncomments more #undef linew, this may help with compile errors
+#undef Above
+#undef Below
+//#undef NoMarks
+//#undef Left
+//#undef Right
+//#undef Unsorted
+//#undef Both
 #include <qslider.h>
 
 #include <kurl.h>
@@ -54,11 +63,12 @@ signals:
     void relayout();
 
 public:
-  MixDevice(int num) { device_num=num; };
+  MixDevice(int num);
   MixDevice	*Next;			// Pointer to next elment of MixDevice list
   MixChannel	*Left;			//
   MixChannel	*Right;			//
   Mixer		*mix;
+  char* name();
   QLabel	*picLabel;
   int		device_num;		// ioctl() device number of mixer
   bool		StereoLink;		// Is this channel linked via the
@@ -110,11 +120,10 @@ public:
   void updateMixDevice(MixDevice *mixdevice);
   void setBalance(int left, int right);
   void setRecsrc(unsigned int newRecsrc);
-  unsigned int Mixer::getRecsrc();
+  unsigned int getRecsrc();
 
   int num_mixdevs;
   MixDevice	*First;
-
 
 private:
   char		*devname;

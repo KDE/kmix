@@ -41,14 +41,14 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
    
   page1 = new QWidget( tabctl );
   page2 = new QWidget( tabctl );
-  tabctl->addTab( page1, "Options" );
-  tabctl->addTab( page2, "Sliders" );
+  tabctl->addTab( page1, "General" );
+  tabctl->addTab( page2, "Channels" );
   tabctl->setGeometry( 10, 10, tabwidth, tabheight );
 
-  int x=10,y=10;
+  int x=10,y=20;
   // Define page 1
   QButtonGroup *grpbox1a = new QButtonGroup( "General", page1 );
-  grpbox1a->setGeometry( 10, 10, tabctl->width()-20, tabctl->height()-80 );
+  grpbox1a->setGeometry( x, y, tabctl->width()-20, tabctl->height()-80 );
 
   y+=10;
   menubarChk = new QCheckBox(grpbox1a,"Menubar");
@@ -56,7 +56,7 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   QFontMetrics qfm = fontMetrics();
   menubarChk->setGeometry(x,y, grpbox1a->width()-20, menubarChk->height() );
 
-  y += (4 + menubarChk->height() );
+  y += (menubarChk->height() );
   tickmarksChk = new QCheckBox(grpbox1a,"Tickmarks");
   tickmarksChk->setText("Tickmarks");
   qfm = fontMetrics();
@@ -67,51 +67,61 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
 
 
   buttonOk = new QPushButton( "Ok", this );
-  buttonOk->setGeometry( tabwidth-250, tabheight+20, 80, 25 );
   connect( buttonOk, SIGNAL(clicked()), this, SLOT(slotOk()));
 
   buttonApply = new QPushButton( "Apply", this );
-  buttonApply->setGeometry( tabwidth-160, tabheight+20, 80, 25 );
   connect( buttonApply, SIGNAL(clicked()), this, SLOT(slotApply()));
 
   buttonCancel = new QPushButton( "Cancel", this );
-  buttonCancel->setGeometry( tabwidth-70, tabheight+20, 80, 25 );
   connect( buttonCancel, SIGNAL(clicked()), this, SLOT(slotCancel()));
-   
-  setFixedSize( tabwidth + 20, tabheight + 55 );
+
+  int maxheight = grpbox1a->height();
+  if ( maxheight < grpbox2a->height() )
+    maxheight = grpbox2a->height();
+
+  buttonOk->setGeometry( tabwidth-250   , maxheight+73, 80, 25 );
+  buttonApply->setGeometry( tabwidth-160, maxheight+73, 80, 25 );
+  buttonCancel->setGeometry( tabwidth-70, maxheight+73, 80, 25 );
+
+  grpbox1a->resize(tabwidth-20,maxheight);
+  grpbox2a->resize(tabwidth-20,maxheight);
+  tabctl->resize(tabwidth,maxheight +60 );
+  setFixedSize( tabwidth + 20, maxheight+100 );
   setCaption( "KMedia Preferences" );
 }
 
 
 void Preferences::updateChannelConfWindow()
 {
-  if(grpbox2a)
-    delete grpbox2a;
-  grpbox2a = new QGridLayout(page1,2,2+mix->num_mixdevs);
+  grpbox2a = new QGroupBox ("Mixer channel setup",page2);
   MixDevice *mdev = mix->First;
-
-  int line=1;
   QLabel *qlb;
 
-  qlb = new QLabel("Device");
-  grpbox2a->addWidget(qlb,0,0);
-  qlb = new QLabel("Show");
-  grpbox2a->addWidget(qlb,1,0);
+  int ypos=20;
+  int x1=20,x2=130;
+  qlb = new QLabel(grpbox2a,"Device");
+  qlb->setText("Device");
+  qlb->move(x1,ypos);
+  qlb = new QLabel(grpbox2a,"Show");
+  qlb->setText("Show");
+  qlb->move(x2,ypos);
 
   while (mdev) {
-    qlb = new  QLabel(mdev->devname);
-    grpbox2a->addWidget((QWidget*)qlb,0,line);
-    QCheckBox *qcb = new QCheckBox();
+    ypos +=20;
+    qlb = new  QLabel(grpbox2a,mdev->devname);
+    qlb->setText(mdev->devname);
+    qlb->move(x1,ypos);
+    QCheckBox *qcb = new QCheckBox(grpbox2a);
+    qcb->move(x2,ypos);
     if (mdev->is_disabled)
       qcb->setChecked(false);
     else
       qcb->setChecked(true);
-    grpbox2a->addWidget((QWidget*)qcb,1,line);
 
-    line++;
     mdev = mdev->Next;
   }
-  grpbox2a->activate();
+
+  grpbox2a->setGeometry( 10, 20, tabctl->width()-20, ypos+40);
 }      
 
 

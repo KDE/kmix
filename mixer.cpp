@@ -24,6 +24,7 @@
                                                                             
 #include "iostream.h"
 #include <unistd.h>
+#include <string.h>
 
 #include "mixer.h"
 #include "mixer.moc"
@@ -83,6 +84,10 @@ char KMixErrors[6][100]=
   "kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING)."
 };
 
+  char* MixerDevNames[17]={"Volume" , "Bass"  , "Treble"    , "Synth", "Pcm"  , \
+			   "Speaker", "Line"  , "Microphone", "CD"   , "Mix"  , \
+			   "Pcm2"   , "RecMon", "IGain"     , "OGain", "Line1", \
+			   "Line2"  , "Line3" };
 
 Mixer::Mixer()
 {
@@ -298,6 +303,7 @@ void Mixer::InternalSetVolumes(int Source)
 
   if ( Source < 0 )
     {
+      // Read from hardware
       MixPtr = First;
       while (MixPtr)
 	{
@@ -618,4 +624,17 @@ void Mixer::setRecsrc(unsigned int newRecsrc)
 
     MixDev            = MixDev->Next;
   }
+}
+
+
+MixDevice::MixDevice(int num)
+{
+  device_num=num;
+  strncpy(devname, MixerDevNames[num],11);
+  devname[10]=0;
+};
+
+char* MixDevice::name()
+{
+  return devname;
 }

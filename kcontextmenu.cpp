@@ -34,7 +34,7 @@ void KCmManager::insert(KContextMenu *kcm)
 void KCmManager::remove(KContextMenu* kcm)
 {
   if (! CmList->remove((KContextMenu* const) kcm) )
-    cerr << "Trying to remove non-existant ContextMenu " << kcm << " from manager " << this ;
+    cerr << "Trying to remove non-existent ContextMenu " << kcm << " from manager " << this ;
 }
 
 

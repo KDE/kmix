@@ -45,7 +45,7 @@ APPDIR = $(prefix)/share/apps/kmix
 ########## Files #####################
 
 OBJECTS =	kmix.o mixer.o prefs.o kcontextmenu.o
-SRCS :=         $(OBJECTS:*.o:*.c)
+SRCS :=         $(OBJECTS:*.o:*.cpp)
 SRCMETA =	kmix.moc prefs.moc mixer.moc
 SRCNLS  :=	$(patsubst %.po,%, $(wildcard *.po))
 OBJNLS  :=	$(patsubst %,%.mo, $(SRCNLS))
@@ -63,19 +63,19 @@ $(TARGET): $(SRCMETA) $(OBJECTS) # $(OBJNLS)
 	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
 
 clean:
-	rm -f *.o *.bak .depend *~ *% core #*
+	rm -f *.o *.bak .depend *~ *% core "#*"
 	rm -f $(SRCMETA) $(TARGET)
 	rm -f *.mo
 
 distclean: clean
 	rm -f Makefile
 
-.depend: $(SRCS)
-	@if test ! -f .depend ; then make depend ; fi
+.depend: $(SRCS) *.h
+	make depend
 
 depend:
-	@echo "Creating dependencies."
-	@makedepend $(INCDIRS) $(SRCS) 2> /dev/null
+# Does not work :-(
+#makedepend -I$(QTDIR)/include -I$(KDEDIR)/include *.cpp
 	touch .depend
 
 install: $(TARGET) install-icons # install-nls
@@ -88,7 +88,9 @@ install: $(TARGET) install-icons # install-nls
 
 install-icons:
 	$(INSTALL_DIR) $(APPDIR)/pics
-	cd pics; $(INSTALL_DATA) *.xpm $(APPDIR)/pics
+	cd pics; $(INSTALL_DATA) mix_*.xpm $(APPDIR)/pics
+	$(INSTALL_DIR) $(prefix)/share/icons/mini
+	cd pics; $(INSTALL_DATA) kmix_mini.xpm $(prefix)/share/icons/mini/kmix.xpm
 
 install-nls:
 	for i in $(SRCNLS); do \

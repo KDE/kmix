@@ -21,7 +21,7 @@ private:
       QPushButton	*buttonOk, *buttonApply, *buttonCancel;
       KTabCtl		*tabctl;
       QWidget		*page1, *page2;
-      QGridLayout	*grpbox2a;
+      QGroupBox		*grpbox2a;
 public:
       Preferences( QWidget *parent, Mixer *mix );
       void updateChannelConfWindow();

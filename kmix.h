@@ -2,10 +2,16 @@
 #ifndef KMIX_H
 #define KMIX_H
 
-#undef Above // grrr!
-#undef Below // grrr!
-//#undef None  // grrr!
 
+// undef Above+Below because of Qt <-> X11 collision. Grr, I hate X11 headers
+// HINTS: uncomments more #undef linew, this may help with compile errors
+#undef Above
+#undef Below
+//#undef NoMarks
+//#undef Left
+//#undef Right
+//#undef Unsorted
+//#undef Both
 #include <qslider.h>
 #include <qpopmenu.h>
 #include <qmenubar.h>
@@ -24,7 +30,7 @@
 
 
 
-class KMix : public KTopLevelWidget //QWidget
+class KMix : public KTopLevelWidget
 {
   Q_OBJECT
 public:
@@ -33,7 +39,6 @@ public:
   Mixer		*mix;
   Preferences	*prefDL;
   KConfig	*KmConfig;
-  //  bool eventFilter(QObject *o, QEvent *e);	// Supposed to be put in kdecore
 
 public slots:
     void onDrop( KDNDDropZone*);
@@ -58,7 +63,6 @@ private:
 
   bool mainmenuOn, tickmarksOn;
   QPopupMenu* contextMenu(QObject *);
-  //QPopupMenu* contextMenuLR(QObject *,QObject *);
   bool eventFilter(QObject *o, QEvent *e);
 
   void setBalance(int left, int right);
