@@ -32,6 +32,7 @@
 #include <kaudioplayer.h>
 #include <kiconloader.h>
 #include <kdebug.h>
+#include <kwin.h>
 
 #include <qapplication.h>
 #include <qcursor.h>
@@ -215,6 +216,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 		_dockAreaPopup->show();
+                KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
