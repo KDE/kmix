@@ -229,9 +229,6 @@ void Mixer::readSetFromHW()
     {
       Volume& vol = md->getVolume();
       readVolumeFromHW( md->num(), vol );
-      /*
-      md->setVolume( vol );
-      */
       md->setRecSource( isRecsrcHW( md->num() ) );
     }
   // Trivial implementation. Without looking at the devices
@@ -242,12 +239,19 @@ void Mixer::readSetFromHW()
 
 void Mixer::setBalance(int balance)
 {
-  // !! BAD
-  if( balance == m_balance ) return;
+  // !! BAD, because balance only works on the master device. If you have not Master, the slider is a NOP
+  if( balance == m_balance ) {
+      // balance unchanged => return
+      return;
+  }
 
   m_balance = balance;
 
   MixDevice* master = m_mixDevices.at( m_masterDevice );
+  if ( master == 0 ) {
+      // no master device available => return
+      return;
+  }
 
   Volume& vol = master->getVolume();
   readVolumeFromHW( m_masterDevice, vol );
