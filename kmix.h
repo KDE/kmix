@@ -31,6 +31,7 @@
 #include <qstring.h>
 #include <qmap.h>
 
+class QHBox;
 class QTimer;
 class QWidgetStack;
 
@@ -113,6 +114,7 @@ KMixWindow : public KMainWindow
    QTimer *m_layoutTimer;
    int m_lockedLayout;
 
+   QHBox* mixerNameLayout;
    KComboBox *m_cMixer;
    QWidgetStack *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
