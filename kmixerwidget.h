@@ -51,16 +51,16 @@ class KMixerWidget : public QWidget  {
 
    void addActionToPopup( KAction *action );
 
-   QString name() { return m_name; };
+   QString name() const { return m_name; };
    void setName( QString name ) { m_name = name; };
 
-   Mixer *mixer() { return m_mixer; };
-   QString mixerName() { return m_mixerName; };
-   int mixerNum() { return m_mixerNum; };
+   Mixer *mixer() const { return m_mixer; };
+   QString mixerName()  const { return m_mixerName; };
+   int mixerNum() const { return m_mixerNum; };
 
-   int id() { return m_id; };
+   int id() const { return m_id; };
 
-   struct Colors {      
+   struct Colors {
        QColor high, low, back, mutedHigh, mutedLow, mutedBack;
    };
 
@@ -68,19 +68,19 @@ class KMixerWidget : public QWidget  {
    void updateLayout();
    void masterMuted( bool );
 
-  public slots:     
+  public slots:
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
    void setColors( const Colors &color );
-    
+
    void saveConfig( KConfig *config, QString grp );
    void loadConfig( KConfig *config, QString grp );
 
    void showAll();
 
-  private slots:	
-   void rightMouseClicked();	
+  private slots:
+   void rightMouseClicked();
    void updateBalance();
    void updateSize();
 

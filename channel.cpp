@@ -21,6 +21,9 @@
  */
 
 #include "channel.h"
+#include <qcheckbox.h>
+#include <qbuttongroup.h>
+#include <qlineedit.h>
 
 ChannelSetup::ChannelSetup(int num,QLineEdit *qleName, QCheckBox *qcbShow, QCheckBox *qcbSplit)
 {
