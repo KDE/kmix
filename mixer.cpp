@@ -96,8 +96,6 @@ void MixDevice::setVolume( int channel, int vol )
 
 void MixDevice::read( KConfig *config, const QString& grp )
 {
-   kdDebug() << "+ MixDevice::read" << endl;
-   
    QString devgrp;
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), m_num );
    config->setGroup( devgrp );
@@ -113,8 +111,6 @@ void MixDevice::read( KConfig *config, const QString& grp )
 
    int recsrc = config->readNumEntry("is_recsrc", -1);
 	if ( recsrc!=-1 ) setRecSource( recsrc!=0 );
-   
-   kdDebug() << "- MixDevice::read" << endl;
 }
 
 void MixDevice::write( KConfig *config, const QString& grp )
@@ -432,7 +428,7 @@ void Mixer::setRecordSource( int devnum, bool on )
   {
 	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
 		bool isRecsrc =  isRecsrcHW( md->num() );
-		kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
+//		kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
 		md->setRecSource( isRecsrc );
 	}
 	emit newRecsrc();
@@ -502,16 +498,12 @@ void Mixer::decreaseVolume( int deviceidx )
 
 void Mixer::setMute( int deviceidx, bool on )
 {
-  kdDebug() << "+ Mixer::setMute" << endl;
-  
   MixDevice *mixdev= mixDeviceByType( deviceidx );
   if (!mixdev) return;
 
   mixdev->setMuted( on );
 
   writeVolumeToHW(deviceidx, mixdev->getVolume() );
-  
-  kdDebug() << "- Mixer::setMute" << endl;
 }
 
 bool Mixer::mute( int deviceidx )

@@ -44,7 +44,6 @@ KMixApp::newInstance()
 	if ( m_kmix )
 	{
 		m_kmix->show();
-		kdDebug() << "shown" << endl;
 	}
 	else
 	{

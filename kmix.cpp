@@ -658,7 +658,6 @@ KMixWindow::slotHWInfo() {
 void
 KMixWindow::showSelectedMixer( int mixer )
 {
-		kdDebug() << "showSelectedMixer(" << mixer << ")\n";
 	m_wsMixers->raiseWidget( mixer );
 }
 

@@ -109,9 +109,11 @@ void KSmallSlider::resizeEvent( QResizeEvent * ev )
     static int w, h;
     if ((w != width()) || (h != height())) {
         w = width(), h = height();
+#if 0
         kdDebug()
             << "KSmallSlider::resizeEvent: width() = " << width()
             << ", height() = " << height() << endl;
+#endif
     }
     QWidget::resizeEvent( ev );
 }

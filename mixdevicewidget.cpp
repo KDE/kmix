@@ -413,10 +413,8 @@ MixDeviceWidget::toggleMuted()
 void 
 MixDeviceWidget::setRecsrc( bool value )
 {
-	kdDebug() << "MixDeviceWidget::setRecsrc(" << value << ")\n";
-   if( true /* m_mixdevice->isRecSource() != value */ )
+   if( true /* m_mixdevice->isRecSource() != value !WRONG PLACE FOR CHECK! */ ) 
    {
- 	  kdDebug() << "MixDeviceWidget::setRecsrc(" << value << ") changing\n";
       m_mixdevice->setRecSource( value );
       emit newRecsrc( m_mixdevice->num(), value );
    }
