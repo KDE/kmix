@@ -418,8 +418,47 @@ MDWSlider::setStereoLinked(bool value)
    m_linked = value;
 
    QWidget *slider = m_sliders.first();
-   for( slider=m_sliders.next(); slider!=0 ; slider=m_sliders.next() )
-      value ? slider->hide() : slider->show();
+
+   /***********************************************************
+      Remember value of first slider, so that it can be copied 
+      to the other sliders.
+    ***********************************************************/
+   int firstSliderValue = 0;
+   bool firstSliderValueValid = false;
+   if (slider->isA("QSlider") ) {
+      QSlider *sld = static_cast<QSlider*>(slider);
+      firstSliderValue = sld->value();
+      firstSliderValueValid = true;
+   }
+   else if ( slider->isA("KSmallSlider") ) {
+      KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
+      firstSliderValue = sld->value();
+      firstSliderValueValid = true;
+   }
+
+   for( slider=m_sliders.next(); slider!=0 ; slider=m_sliders.next() ) {
+      if ( m_linked ) {
+         slider->hide();
+      }
+      else {
+         // When splitting, make the next sliders show the same value as the first.
+         // This might not be entirely true, but better than showing the random value
+         // that was used to be shown before hot-fixing this. !! must be revised
+         if ( firstSliderValueValid ) {
+            // Remark: firstSlider== 0 could happen, if the static_cast<QRangeControl*> above fails.
+            //         It's a safety measure, if we got other Slider types in the future.
+            if (slider->isA("QSlider") ) {
+               QSlider *sld = static_cast<QSlider*>(slider);
+               sld->setValue( firstSliderValue );
+            }
+            if (slider->isA("KSmallSlider") ) {
+               KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
+               sld->setValue( firstSliderValue );
+            }
+         }
+         slider->show();
+      }
+   }
 
    slider = m_sliders.last();
    if( slider && static_cast<QSlider *>(slider)->tickmarks() )
@@ -713,6 +752,7 @@ void MDWSlider::update()
 			QWidget *slider = m_sliders.at( i );
 			Volume::ChannelID chid = *it;
 			if (slider == 0) {
+				// !!! not implemented !!!
 				// not implemented: happens if there are record and playback
 				// sliders in the same device. Or if you only show
 				// the right slider (or any other fancy occasion)
