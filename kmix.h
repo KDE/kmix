@@ -16,8 +16,9 @@
 #include <kapp.h>
 #include <kmenubar.h>
 #include <ktopwidget.h>
-#include "kcontextmenu.h"
+#include <drag.h> 
 
+#include "kcontextmenu.h"
 #include "sets.h"
 #include "mixer.h"
 #include "prefs.h"
