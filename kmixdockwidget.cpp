@@ -78,7 +78,7 @@ void KMixDockWidget::createMasterVolWidget()
 void KMixDockWidget::setVolumeTip(int, Volume vol)
 {
     MixDevice *masterDevice = ( *m_mixer )[ m_mixer->masterDevice() ];
-    QString tip = i18n("Volume at %1%").arg(vol.getVolume(0));
+    QString tip = i18n("Volume at %1%").arg((vol.getVolume(0)*100)/(vol.maxVolume()));
     if ( masterDevice->isMuted() )
         tip += i18n( " (Muted)" );
 
