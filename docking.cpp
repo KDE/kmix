@@ -69,7 +69,9 @@ DockWidget::DockWidget(const char *name)
 
   toggleID = popup_m->insertItem(i18n("Restore"),
 				 this, SLOT(toggle_window_state()));
-
+  
+  popup_m->insertItem(i18n("Quit"),
+		      this, SLOT(emit_quit()));
 
 
   //  QToolTip::add( this, statstring.data() );
@@ -196,6 +198,10 @@ void DockWidget::toggle_window_state() {
 }
 
 
+void DockWidget::emit_quit()
+{
+  emit quit_clicked();
+}
 
 #include "docking.moc"
 

@@ -57,6 +57,11 @@ Preferences::Preferences( QWidget *parent, Mixer *mix ) :
   tickmarksChk->setGeometry(x,y, grpbox1a->width()-20, tickmarksChk->height() );
 
   y += tickmarksChk->height();
+  dockingChk = new QCheckBox(grpbox1a);
+  dockingChk->setText(i18n("Allow docking"));
+  dockingChk->setGeometry(x,y, grpbox1a->width()-20, dockingChk->height() );
+
+  y += dockingChk->height();
   grpbox1a->setGeometry( 10, 10, page1->width()-20, y+10);
   // Define page 2
   updateChannelConfWindow();

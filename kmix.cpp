@@ -45,7 +45,7 @@ static char rcsid[]="$Id$";
 KApplication *globalKapp;
 KIconLoader  *globalKIL;
 KMix	     *kmix;
-DockWidget*     dock_widget;
+DockWidget   *dock_widget;
 
 bool		ReadFromSet=false;		// !!! Sets not implemented yet
 char		SetNumber;
@@ -55,7 +55,6 @@ int main(int argc, char **argv)
 {
   globalKapp  = new KApplication( argc, argv, "kmix" );
   globalKIL   = globalKapp->getIconLoader();
-  dock_widget = new DockWidget("dockw");
 
   /* Parse the command line arguments */
   for (int i=0 ; i<argc; i++) {
@@ -77,15 +76,15 @@ int main(int argc, char **argv)
     }
   }
 
-  if (kapp->isRestored()){
-      int n = 1;
-      while (KTopLevelWidget::canBeRestored(n)){
-	// !!! TODO: Read mixer number from session management
-        kmix = new KMix(0);
-        kmix->restore(n);
-        n++;
-      }
-   }
+  if (kapp->isRestored()) {
+    int n = 1;
+    while (KTopLevelWidget::canBeRestored(n)) {
+      // !!! TODO: Read mixer number from session management
+      kmix = new KMix(0);
+      kmix->restore(n);
+      n++;
+    }
+  }
   else {
     if (argc > 1)
       kmix = new KMix(atoi(argv[argc - 1]));
@@ -105,18 +104,26 @@ KMix::~KMix()
 KMix::KMix(int mixernum)
 {
   KmConfig=KApplication::getKApplication()->getConfig();
-  mainmenuOn  = true;  // obsolete?
-  tickmarksOn = true;  // have to check KConfig specification to make sure
+  //  mainmenuOn  = true;  // obsolete?
+  //  tickmarksOn = true;  // have to check KConfig specification to make sure
 
   mainmenuOn  = KmConfig->readNumEntry( "Menubar"  , 1 );
   tickmarksOn = KmConfig->readNumEntry( "Tickmarks", 1 );
   int Balance;
   Balance     = KmConfig->readNumEntry( "Balance"  , 0 );  // centered by default
+  allowDocking= KmConfig->readNumEntry( "Docking"  , 0 );
 
   KCM = new KCmManager(this);
   CHECK_PTR(KCM);
   mix = new Mixer(mixernum);
   CHECK_PTR(mix);
+
+  dock_widget = new DockWidget("dockw");
+  if ( allowDocking ) {
+    dock_widget->dock();
+  }
+
+  connect ( dock_widget, SIGNAL(quit_clicked()), this, SLOT(quit_myapp()));
 
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
@@ -132,6 +139,8 @@ KMix::KMix(int mixernum)
   prefDL     = new Preferences(NULL, this->mix);
   prefDL->menubarChk->setChecked  (mainmenuOn );
   prefDL->tickmarksChk->setChecked(tickmarksOn);
+  prefDL->dockingChk->setChecked(allowDocking);
+
   connect(prefDL, SIGNAL(optionsApply()), this, SLOT(applyOptions()));
 
   globalKapp->setMainWidget( this );
@@ -142,9 +151,11 @@ void KMix::applyOptions()
 {
   mainmenuOn  = prefDL->menubarChk->isChecked();
   tickmarksOn = prefDL->tickmarksChk->isChecked();
+  allowDocking= prefDL->dockingChk->isChecked();
 
   KmConfig->writeEntry( "Menubar"    , mainmenuOn  , true );
   KmConfig->writeEntry( "Tickmarks"  , tickmarksOn , true );
+  KmConfig->writeEntry( "Docking"    , allowDocking, true );
   KmConfig->sync();
 
   placeWidgets();
@@ -185,76 +196,75 @@ void KMix::createWidgets()
   // Create Sliders (Volume indicators)
 
   MixDevice *MixPtr = mix->First;
-  while (MixPtr)
-    {
-      // If you encounter a relayout signal from a mixer device, obey blindly ;-)
-      connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
+  while (MixPtr) {
+    // If you encounter a relayout signal from a mixer device, obey blindly ;-)
+    connect((QObject*)MixPtr, SIGNAL(relayout()), this, SLOT(placeWidgets()));
 
-      int devnum = MixPtr->device_num;
+    int devnum = MixPtr->device_num;
 
-      // Figure out default icon
-      unsigned char iconnum;
-      if (devnum < numDefaultMixerIcons)
-	iconnum=DefaultMixerIcons[devnum];
-      else
-	iconnum=unknownIcon;
-      switch (iconnum)
-	{ // TODO: Should be replaceable by user.
-	case audioIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_audio.xpm");	break;
-	case bassIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_bass.xpm");	break;
-	case cdIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_cd.xpm");	break;
-	case extIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_ext.xpm");	break;
-	case microphoneIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_microphone.xpm");break;
-	case midiIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_midi.xpm");	break;
-	case recmonIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_recmon.xpm");	break;
-	case trebleIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_treble.xpm");	break;
-	case unknownIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_unknown.xpm");	break;
-	case volumeIcon:
-	  miniDevPM = globalKIL->loadIcon("mix_volume.xpm");	break;
-	default:
-	  miniDevPM = globalKIL->loadIcon("mix_unknown.xpm");	break;
-	}
-
-      QLabel *qb = new QLabel(Container);
-      if (! miniDevPM.isNull())
-	qb->setPixmap(miniDevPM);
-      else
-	cerr << "Pixmap missing.\n";
-      MixPtr->picLabel=qb;
-
-      qb->resize(miniDevPM.width(),miniDevPM.height());
-
-      QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
-				    QSlider::Vertical, Container, "VolL");
-
-      MixPtr->Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
-      connect( VolSB, 	SIGNAL(valueChanged(int)), MixPtr->Left, SLOT(VolChanged(int)));
-
-      KCM->insert(VolSB, (KCmFunc*)contextMenu);
-
-      // Create a second slider, when the current channel is a stereo channel.
-      bool BothSliders = (MixPtr->is_stereo  == true );
-
-      if ( BothSliders) {
-	QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
-				       QSlider::Vertical, Container, "VolR");
-	MixPtr->Right->slider= VolSB2;  // Remember Slider (for eventFilter)
-	connect( VolSB2, SIGNAL(valueChanged(int)), \
-		 MixPtr->Right, SLOT(VolChanged(int)));
-
-	KCM->insert(VolSB2, (KCmFunc*)contextMenu);
-      }
-      MixPtr=MixPtr->Next;
+    // Figure out default icon
+    unsigned char iconnum;
+    if (devnum < numDefaultMixerIcons)
+      iconnum=DefaultMixerIcons[devnum];
+    else
+      iconnum=unknownIcon;
+    switch (iconnum) {
+      // TODO: Should be replaceable by user.
+    case audioIcon:
+      miniDevPM = globalKIL->loadIcon("mix_audio.xpm");	break;
+    case bassIcon:
+      miniDevPM = globalKIL->loadIcon("mix_bass.xpm");	break;
+    case cdIcon:
+      miniDevPM = globalKIL->loadIcon("mix_cd.xpm");	break;
+    case extIcon:
+      miniDevPM = globalKIL->loadIcon("mix_ext.xpm");	break;
+    case microphoneIcon:
+      miniDevPM = globalKIL->loadIcon("mix_microphone.xpm");break;
+    case midiIcon:
+      miniDevPM = globalKIL->loadIcon("mix_midi.xpm");	break;
+    case recmonIcon:
+      miniDevPM = globalKIL->loadIcon("mix_recmon.xpm");	break;
+    case trebleIcon:
+      miniDevPM = globalKIL->loadIcon("mix_treble.xpm");	break;
+    case unknownIcon:
+      miniDevPM = globalKIL->loadIcon("mix_unknown.xpm");	break;
+    case volumeIcon:
+      miniDevPM = globalKIL->loadIcon("mix_volume.xpm");	break;
+    default:
+      miniDevPM = globalKIL->loadIcon("mix_unknown.xpm");	break;
     }
+
+    QLabel *qb = new QLabel(Container);
+    if (! miniDevPM.isNull())
+      qb->setPixmap(miniDevPM);
+    else
+      cerr << "Pixmap missing.\n";
+    MixPtr->picLabel=qb;
+
+    qb->resize(miniDevPM.width(),miniDevPM.height());
+
+    QSlider *VolSB = new QSlider( 0, 100, 10, MixPtr->Left->volume,\
+				  QSlider::Vertical, Container, "VolL");
+
+    MixPtr->Left->slider = VolSB;  // Remember the Slider (for the eventFilter)
+    connect( VolSB, SIGNAL(valueChanged(int)), MixPtr->Left, SLOT(VolChanged(int)));
+
+    KCM->insert(VolSB, (KCmFunc*)contextMenu);
+
+    // Create a second slider, when the current channel is a stereo channel.
+    bool BothSliders = (MixPtr->is_stereo  == true );
+
+    if ( BothSliders) {
+      QSlider *VolSB2 = new QSlider( 0, 100, 10, MixPtr->Right->volume,\
+				     QSlider::Vertical, Container, "VolR");
+      MixPtr->Right->slider= VolSB2;  // Remember Slider (for eventFilter)
+      connect( VolSB2, SIGNAL(valueChanged(int)), \
+	       MixPtr->Right, SLOT(VolChanged(int)));
+
+      KCM->insert(VolSB2, (KCmFunc*)contextMenu);
+    }
+    MixPtr=MixPtr->Next;
+  }
 
   // Create the Left-Right-Slider, add Tooltip and Context menu
   LeftRightSB = new QSlider( -100, 100, 25, 0,\
@@ -406,7 +416,7 @@ void KMix::createMenu()
 
   QAccel *qAcc = new QAccel( this );
 
-  // Globaler "Help"-Key
+  // Global "Help"-Key
   qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
 
   Mfile = new QPopupMenu;
@@ -438,11 +448,6 @@ void KMix::createMenu()
 
   Mhelp = globalKapp->getHelpMenu(true,msg);
   CHECK_PTR( Mhelp );
-//  Mhelp->insertItem( i18n("&Contents"), this, SLOT(launchHelpCB()), Key_F1);
-//  qAcc->connectItem( qAcc->insertItem(Key_F1),this, SLOT(launchHelpCB()));
-//  Mhelp->insertSeparator();
-//  Mhelp->insertItem( i18n("&About"), this, SLOT(aboutClickedCB()));
-//  Mhelp->insertItem( i18n("&About Qt..."), this, SLOT(aboutqt()));
 
   mainmenu = new KMenuBar( this, "main menu");
   CHECK_PTR( mainmenu );
@@ -483,33 +488,7 @@ void KMix::quitClickedCB()
   exit(0);
 }
 
-/*
-void KMix::aboutClickedCB()
-{
-  QString msg,head;
-  char vers[50];
-  sprintf (vers,"%.2f", APP_VERSION);
-  
-  msg  = "KMix ";
-  msg += vers;
-  msg += i18n("\n(C) 1997 by Christian Esken (esken@kde.org).\n\n" \
-    "Sound mixer panel for the KDE Desktop Environment.\n"\
-    "This program is in the GPL.\n"\
-    "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
-    "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
-    "and Lennart Augustsson (augustss@cs.chalmers.se).";
 
-  head = i18n("About kmix ");
-  head += vers;
-
-  QMessageBox::about(this, head, msg );
-}
-
-void KMix::aboutqt()
-{
-  QMessageBox::aboutQt(this);
-}
-*/
 
 void KMix::launchHelpCB()
 {
@@ -550,7 +529,6 @@ QPopupMenu* KMix::contextMenu(QObject *o)
   static QPopupMenu *Mlocal;
 
   if (o == NULL) {
-//    cerr << "ContextMenu for NULL object requested!"; 
     return NULL;
   }
   else {
@@ -651,16 +629,20 @@ void KMix::sessionSave()
 {
   KmConfig->writeEntry( "Balance"  , LeftRightSB->value() , true );
   KmConfig->sync();
-
 }
 
 void KMix::closeEvent( QCloseEvent *e )
 {
-  if (1 /*allowDocking*/ ) {
+  if ( allowDocking ) {
     dock_widget->dock();
     this->hide();
   }
   else{
-    e->ignore();
+    KTopLevelWidget::closeEvent(e);
   }
+}
+
+void KMix::quit_myapp()
+{
+  globalKapp->quit();
 }

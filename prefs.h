@@ -27,6 +27,7 @@ public:
       void updateChannelConfWindow();
       QCheckBox		*menubarChk;
       QCheckBox		*tickmarksChk;
+      QCheckBox		*dockingChk;
       KConfig		*kcfg;
       Mixer		*mix;
 

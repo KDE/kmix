@@ -196,7 +196,11 @@ void Mixer::setDevNumName(int devnum)
   devname = "/dev/mixer";
   if (devnum!=0)
     devname += ('0'+devnum-1);
-#else
+#endif
+#ifdef SUN_MIXER
+  devname = "/dev/audioctl";
+#endif
+#ifdef NO_MIXER
   devname = "Mixer";
 #endif
 

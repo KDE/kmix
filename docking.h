@@ -58,6 +58,9 @@ public slots:
 public:
   const bool isDocked();
 
+signals:
+  void quit_clicked();
+
 private:
   bool docked;
   int toggleID;
@@ -67,6 +70,8 @@ private:
 
   QPixmap cdsmall_pixmap;
 
+private slots:
+  void emit_quit();
 };
 
 #endif

@@ -61,7 +61,9 @@ private:
   void sessionSave();
   void closeEvent( QCloseEvent *e );
 
-  bool mainmenuOn, tickmarksOn;
+  bool mainmenuOn;
+  bool tickmarksOn;
+  bool allowDocking;
   QPopupMenu* contextMenu(QObject *);
   bool eventFilter(QObject *o, QEvent *e);
 
@@ -78,6 +80,9 @@ private:
 
   QSlider	*LeftRightSB;
   QPoint        KCMpopup_point;
+
+private slots:
+  void quit_myapp();
 };
 
 #endif

@@ -1,20 +1,23 @@
-Sun Apr 12 21:42:48 CEST 1998
-- 
+Fri May  1 19:35:39 1998    <chris@magicon.ping.de>
+	* Show dock icon directly (even if undocked)
+	* Add "Quit" option in docked window popup menu
+	* New option "Allow docking"
 
 Thu Apr  9 23:27:42 CEST 1998
-- Adding F1 as global help
-- Add Accelerators
-- Remove obsolete code (Help menu items)
-- i18n for about box
-- Now one can give kmix numbers, on which he choses an mixer
-  (0=default mixer, 1=first mixer, ...)
+	* Adding F1 as global help
+	* Add Accelerators
+	* Remove obsolete code (Help menu items)
+	* i18n for about box
+	* Now one can give kmix numbers, on which he choses a mixer
+	  (0=default mixer, 1=first mixer, ...)
 
 Thu Apr  2 20:00:00 CEST 1998
-- Added GPL headers to all *.cpp files
-- Implemented docking on kpanel - now kmix is cool.
+	* Added GPL headers to all *.cpp files
+	* Implemented docking on kpanel - now kmix is cool.
+
 Mon Apr  1 20:00:00 CEST 1998
-- Added changes file
-- Documentation now in SGML
+	* Added changes file
+	* Documentation now in SGML
 
 
 
