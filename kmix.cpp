@@ -27,11 +27,11 @@
 #include <qpopupmenu.h>
 #include <qtabbar.h>
 #include <qinputdialog.h>
+#include <qtimer.h>
 
 // include files for KDE
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kfiledialog.h>
 #include <kmenubar.h>
 #include <klocale.h>
 #include <kconfig.h>
