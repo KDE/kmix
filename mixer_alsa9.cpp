@@ -131,7 +131,7 @@ Mixer_ALSA::openMixer()
 	}
 
 	if (virginOpen)
-		kdDebug() << "Trying Alsa 0.9x Device " << devName << endl;
+		kdDebug(67100) << "Trying Alsa 0.9x Device " << devName << endl;
 
 	if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), m_devnum ) ) < 0 )
 	{
@@ -234,7 +234,7 @@ Mixer_ALSA::openMixer()
 			/*
 			unsigned int currentID = snd_mixer_selem_get_index(elem);
 			if ( currentID != mixerIdx ) {
-				kdDebug() <<  "Index mismatch: " <<  currentID << " != " << mixerIdx <<endl;
+				kdDebug(67100) <<  "Index mismatch: " <<  currentID << " != " << mixerIdx <<endl;
 			}
 			*/
 
@@ -309,7 +309,7 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 		elem = snd_mixer_find_selem(handle, sid);
 
 		if ( elem == 0 ) {
-			kdDebug() << "Error finding mixer element " << devnum << endl;
+			kdDebug(67100) << "Error finding mixer element " << devnum << endl;
 		}
 	}
 	return elem;
@@ -332,13 +332,13 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 		int swLeft;
 		int ret = snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &swLeft );
                 if ( ret != 0 ) {
-                        kdDebug() << "snd_mixer_selem_get_capture_switch() failed 1\n";
+                        kdDebug(67100) << "snd_mixer_selem_get_capture_switch() failed 1\n";
                 }
 
 		if (snd_mixer_selem_has_capture_switch_joined( elem ) ) {
 			isCurrentlyRecSrc = (swLeft != 0);
 #ifdef ALSA_SWITCH_DEBUG
-			kdDebug() << "Mixer_ALSA::isRecsrcHW() has_switch joined: #" << devnum << " >>> " << swLeft << " : " << isCurrentlyRecSrc << endl;
+			kdDebug(67100) << "Mixer_ALSA::isRecsrcHW() has_switch joined: #" << devnum << " >>> " << swLeft << " : " << isCurrentlyRecSrc << endl;
 #endif
 		}
 		else {
@@ -346,7 +346,7 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 			snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_RIGHT, &swRight );
 			isCurrentlyRecSrc = ( (swLeft != 0) || (swRight != 0) );
 #ifdef ALSA_SWITCH_DEBUG
-			kdDebug() << "Mixer_ALSA::isRecsrcHW() has_switch non-joined, state " << isCurrentlyRecSrc << endl;
+			kdDebug(67100) << "Mixer_ALSA::isRecsrcHW() has_switch non-joined, state " << isCurrentlyRecSrc << endl;
 #endif
 		}
 	}
@@ -356,7 +356,7 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 			// Has a volume, but has no OnOffSwitch => We assume that this is a fixed record source (always on). (esken)
 			isCurrentlyRecSrc = true;
 #ifdef ALSA_SWITCH_DEBUG
-			kdDebug() << "Mixer_ALSA::isRecsrcHW() has_no_switch, state " << isCurrentlyRecSrc << endl;
+			kdDebug(67100) << "Mixer_ALSA::isRecsrcHW() has_no_switch, state " << isCurrentlyRecSrc << endl;
 #endif
 		}
 	}
@@ -378,20 +378,20 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 		int before, after;
 		int ret = snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &before );
 		if ( ret != 0 ) {
-			kdDebug() << "snd_mixer_selem_get_capture_switch() failed 1\n";
+			kdDebug(67100) << "snd_mixer_selem_get_capture_switch() failed 1\n";
 		}
 	
 		ret = snd_mixer_selem_set_capture_switch_all( elem, sw );
                 if ( ret != 0 ) {
-                        kdDebug() << "snd_mixer_selem_set_capture_switch_all() failed 2: errno=" << ret << "\n";
+                        kdDebug(67100) << "snd_mixer_selem_set_capture_switch_all() failed 2: errno=" << ret << "\n";
                 }
 		ret = snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &after );
                 if ( ret != 0 ) {
-                        kdDebug() << "snd_mixer_selem_get_capture_switch() failed 3: errno=" << ret << "\n";
+                        kdDebug(67100) << "snd_mixer_selem_get_capture_switch() failed 3: errno=" << ret << "\n";
                 }
 
 #ifdef ALSA_SWITCH_DEBUG
-		kdDebug() << "Mixer_ALSA::setRecsrcHW(" << devnum <<  "," << on << ")joined. Before=" << before << " Set=" << sw << " After=" << after <<"\n";
+		kdDebug(67100) << "Mixer_ALSA::setRecsrcHW(" << devnum <<  "," << on << ")joined. Before=" << before << " Set=" << sw << " After=" << after <<"\n";
 #endif
 		
 	}
@@ -400,7 +400,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 		if ( snd_mixer_selem_has_capture_channel( elem, SND_MIXER_SCHN_FRONT_LEFT ) )
 		{
 #ifdef ALSA_SWITCH_DEBUG
-			kdDebug() << "Mixer_ALSA::setRecsrcHW LEFT\n";
+			kdDebug(67100) << "Mixer_ALSA::setRecsrcHW LEFT\n";
 #endif
 			snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, sw );
 		}
@@ -408,14 +408,14 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 		if ( snd_mixer_selem_has_capture_channel(elem, SND_MIXER_SCHN_FRONT_RIGHT ) )
 		{
 #ifdef ALSA_SWITCH_DEBUG
-			kdDebug() << "Mixer_ALSA::setRecsrcHW RIGHT\n";
+			kdDebug(67100) << "Mixer_ALSA::setRecsrcHW RIGHT\n";
 #endif
 			snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, sw);
 		}
 	}
 
 #ifdef ALSA_SWITCH_DEBUG
-	kdDebug() << "EXIT Mixer_ALSA::setRecsrcHW(" << devnum << "," << on <<  ")\n";
+	kdDebug(67100) << "EXIT Mixer_ALSA::setRecsrcHW(" << devnum << "," << on <<  ")\n";
 #endif
 	return false; // we should always return false, so that other devnum's get updated
 }
@@ -445,25 +445,25 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		{
 			int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
 #ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,L] = " << left << endl;
+			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,L] = " << left << endl;
 #endif
 
-			if ( ret != 0 ) kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,L] failed, errno=" << ret << endl;
+			if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,L] failed, errno=" << ret << endl;
 		}
 		else
 		{
 			int ret = snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
 #ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] = " << left << endl;
+			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] = " << left << endl;
 #endif
-			if ( ret != 0 ) kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] failed, errno=" << ret << endl;			
+			if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,L] failed, errno=" << ret << endl;			
 		}
 
 		// Is Mono channel ?  !!! What if we only have capture volume? Does snd_mixer_selem_is_PLAYBACK_mono() apply?
 		if ( snd_mixer_selem_is_playback_mono ( elem ) )
 		{
 #ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug() << "Is mono volume: " << left << endl;
+			kdDebug(67100) << "Is mono volume: " << left << endl;
 #endif
 			volume.setAllVolumes( left );
 		}
@@ -474,16 +474,16 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 			{
 				int ret = 	snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
 #ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] = " << right << endl;
+			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] = " << right << endl;
 #endif
-				if ( ret != 0 ) kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
+				if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
 			}
 			else {
 				int ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
 #ifdef KMIX_ALSA_VOLUME_DEBUG
-			kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] = " << right << endl;
+			kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] = " << right << endl;
 #endif
-				if ( ret != 0 ) kdDebug() << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;			
+				if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;			
 			}
 
 			volume.setVolume( Volume::RIGHT, right );
@@ -491,7 +491,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 		}
 	}
 	else {
-		//kdDebug() << "readVolumeFromHW(" << mixerIdx << ") has no volume\n";
+		//kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") has no volume\n";
 	}
 
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
@@ -520,7 +520,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	}
 */
 
-	//kdDebug() << "EXIT Mixer_ALSA::readVolumeFromHW()\n";
+	//kdDebug(67100) << "EXIT Mixer_ALSA::readVolumeFromHW()\n";
 	return 0;
 }
 

@@ -238,7 +238,7 @@ KMixWindow::initMixer()
 		m_hwInfoString += "\nExperimental multiple-Driver mode activated";
 	}
 
-	kdDebug() << m_hwInfoString << endl;
+	kdDebug(67100) << m_hwInfoString << endl;
 }
 
 
@@ -447,7 +447,7 @@ KMixWindow::initMixerWidgets()
 
 	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
 	{
-		kdDebug() << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+		kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
 
 
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
@@ -461,7 +461,7 @@ KMixWindow::initMixerWidgets()
 		m_cMixer->insertItem( mw->name() );
 
 		// Add to Stack
-		kdDebug() << "Inserted mixer " << id << ":" << mw->name() << endl;
+		kdDebug(67100) << "Inserted mixer " << id << ":" << mw->name() << endl;
 		m_wsMixers->addWidget( mw, id );
 
 		QString grp;

@@ -110,7 +110,7 @@ void KSmallSlider::resizeEvent( QResizeEvent * ev )
     if ((w != width()) || (h != height())) {
         w = width(), h = height();
 #if 0
-        kdDebug()
+        kdDebug(67100)
             << "KSmallSlider::resizeEvent: width() = " << width()
             << ", height() = " << height() << endl;
 #endif
@@ -201,7 +201,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    //         largest). The wrong values are 19 and 89 respectively (for the
    //         largest panel). Note that these 4 numbers are prime numbers.
 #if 0
-   kdDebug()
+   kdDebug(67100)
     << "KSmallSlider::paintEvent: width() = " << width()
     << ", height() = " << height() << endl;
 #endif

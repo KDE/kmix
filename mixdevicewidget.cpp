@@ -346,7 +346,7 @@ MixDeviceWidget::setIcon( int icontype )
       m_iconLabel->setAlignment( Qt::AlignCenter );
    } else
    {
-      kdDebug() << "Pixmap missing." << endl;
+      kdDebug(67100) << "Pixmap missing." << endl;
    }
 
    layout()->activate();

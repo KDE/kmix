@@ -36,7 +36,7 @@ VerticalText::~VerticalText() {
 
 
 void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
-	//kdDebug() << "paintEvent(). height()=" <<  height() << "\n";
+	//kdDebug(67100) << "paintEvent(). height()=" <<  height() << "\n";
 	QPainter paint(this);
 	paint.rotate(270);
 	paint.drawText(-height()+2,width(),name());

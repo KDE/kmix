@@ -428,7 +428,7 @@ void Mixer::setRecordSource( int devnum, bool on )
   {
 	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
 		bool isRecsrc =  isRecsrcHW( md->num() );
-//		kdDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
+//		kdDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
 		md->setRecSource( isRecsrc );
 	}
 	emit newRecsrc();

@@ -272,7 +272,7 @@ KMixerWidget::updateSize()
 void
 KMixerWidget::updateSize(bool force)
 {
-	//kdDebug() << "KMixerWidget::updateSize(): (" << layout()->minimumSize().width() << "," << layout()->minimumSize().height() << ")\n";
+	//kdDebug(67100) << "KMixerWidget::updateSize(): (" << layout()->minimumSize().width() << "," << layout()->minimumSize().height() << ")\n";
    // !!! The whole updateSize stuff must be reworked after KDE3.2 ... currently it is only working by chance
    layout()->activate();
    setMinimumWidth( layout()->minimumSize().width() );
