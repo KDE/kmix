@@ -21,6 +21,7 @@ Q_OBJECT
     
  private:
     KMixWindow *m_kmix;
+    bool       _refActive;
 };
 
 #endif

@@ -54,6 +54,7 @@ KMixApp::newInstance()
 			m_kmix->restore(0, FALSE);
 		}
 		this->ref(); // referencing myself, so that quitExtended() can run
+               _refActive = true; 
 	}
 
 	return 0;
@@ -67,9 +68,8 @@ KMixApp::quitExtended()
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();
-    this->deref();
+    if ( _refActive) { _refActive= false; this->deref(); }
     quit();
 }
 
 #include "KMixApp.moc"
-
