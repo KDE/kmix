@@ -287,7 +287,8 @@ void MixDeviceWidget::setStereoLinked(bool value)
 {
    m_linked = value;
 
-   for( QWidget *slider=m_sliders.at( 1 ); slider!=0 ; slider=m_sliders.next() )
+   QWidget *slider = m_sliders.first();
+   for( slider=m_sliders.next(); slider!=0 ; slider=m_sliders.next() )
       value ? slider->hide() : slider->show();
 
    layout()->activate();
