@@ -22,47 +22,61 @@
 #include <stdlib.h>
 
 #include <qlayout.h>
-
+#include <qpixmap.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kaction.h>
 #include <qpushbutton.h>
+#include <kapp.h>
+#include <qwmatrix.h>
+#include <kiconloader.h>
 
 #include "kmixerwidget.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "kmixapplet.h"
 
-
-KMixApplet::KMixApplet( KMixerWidget *mixerWidget, QWidget *parent, const char* name )
+KMixApplet::KMixApplet( Mixer *mixer, QWidget *parent, const char* name )
    : KPanelApplet( parent, name )
 {
-   // init mixer widget
-   m_mixerWidget = mixerWidget;
-   m_mixerWidget->reparent( this, QPoint(0, 0), TRUE );
+   // scale icon
+   QPixmap icon = BarIcon("kmixdocked");
+   QWMatrix t;
+   t = t.scale( 10.0/icon.width(), 10.0/icon.height() );
 
+   // create show/hide button      
+   m_button = new QPushButton( icon.xForm( t ), "*", this );
+   m_button->setFixedWidth( 15 );   
+   connect( m_button, SIGNAL(clicked()), this, SLOT(showButton()));
+
+   // init mixer widget
+   m_mixerWidget = new KMixerWidget( mixer, true, true, this );
+   
    connect( m_mixerWidget, SIGNAL(updateLayout()), this, SLOT(updateSize()));
 }
 
 int KMixApplet::widthForHeight(int )
 {
-  return m_mixerWidget->minimumSize().width();
+  return m_mixerWidget->minimumWidth() + m_button->minimumWidth() + 1;
 }
  
 int KMixApplet::heightForWidth(int )
 {
-  return m_mixerWidget->minimumSize().height();
-}
- 
-void KMixApplet::resizeEvent( QResizeEvent *e )
-{
-   KPanelApplet::resizeEvent(e);
-   m_mixerWidget->resize( width(), height() );
-}           
+  return m_mixerWidget->minimumHeight();
+}    
 
 void KMixApplet::removedFromPanel()
 {
    emit closeApplet( this );
+}
+
+void KMixApplet::resizeEvent(QResizeEvent *e) 
+{      
+   KPanelApplet::resizeEvent( e );
+
+   m_button->setGeometry( 0 ,0, m_button->minimumWidth(), height() );
+   m_mixerWidget->setGeometry( m_button->minimumWidth() + 1, 0, 
+			       width() - m_button->minimumWidth(), height() );
 }

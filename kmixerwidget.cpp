@@ -74,7 +74,7 @@ void Profile::saveConfig( const QString &/*grp*/ )
 /********************** KMixerWidget *************************/
  
 KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * parent, const char * name )
-   : QWidget( parent, name ), m_mixer(mixer), m_name(mixer->mixerName())
+   : QWidget( parent, name ), m_mixer(mixer), m_name(mixer->mixerName()), m_devLayout(0)
 {   
    kDebugInfo("-> KMixerWidget::KMixerWidget");
    m_actions = new KActionCollection( this );
@@ -84,8 +84,8 @@ KMixerWidget::KMixerWidget( Mixer *mixer, bool small, bool vert, QWidget * paren
    m_vertical = vert;
 
    // Create mixer device widgets  
-   m_topLayout = new QVBoxLayout( this, 0, 3 );
-   m_devLayout = new QHBoxLayout( m_topLayout );  
+   kDebugInfo("m_topLayout");
+   m_topLayout = new QVBoxLayout( this, 0, 3 );     
    updateDevices( vert );
 
    // Create the left-right-slider   
@@ -110,13 +110,22 @@ KMixerWidget::~KMixerWidget()
 
 void KMixerWidget::updateDevices( bool vert )
 {   
+   kDebugInfo("-> KMixerWidget::updateDevices");
+
    m_channels.clear();
    m_vertical = vert;
 
+   kDebugInfo("m_devLayout");
+   delete m_devLayout;
+   m_devLayout = new QHBoxLayout( m_topLayout );
+//   m_topLayout->insertLayout( 0, m_devLayout );
+   
+   kDebugInfo("mixSet");
    MixSet mixSet = m_mixer->getMixSet();
    MixDevice *mixDevice = mixSet.first();
    for ( ; mixDevice != 0; mixDevice = mixSet.next())
    {
+      kDebugInfo("MixDeviceWidget");
       MixDeviceWidget *mdw;
       if ( m_small )
       {
@@ -131,35 +140,38 @@ void KMixerWidget::updateDevices( bool vert )
       }
 
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
-      m_devLayout->addWidget( mdw, 1 );
+      m_devLayout->addWidget( mdw, 0 );
 
       Channel *chn = new Channel;
       chn->dev = mdw;
       m_channels.append( chn );
    }
 
+   kDebugInfo("m_devLayout stretch");
+   m_devLayout->addStretch( 1 );
+
    updateSize();
+
+   kDebugInfo("<- KMixerWidget::updateDevices");
 }
 
 void KMixerWidget::updateSize()
-{
-   kDebugInfo("KMixerWidget::updateSize()");
-   setMinimumWidth( m_topLayout->minimumSize().width() );
-   setMinimumHeight( m_topLayout->minimumSize().height() );
-   updateGeometry();
+{   
+   layout()->activate();
+   kDebugInfo("KMixerWidget::updateSize minwidth=%d", m_topLayout->minimumSize().width() );
+   setMinimumWidth( layout()->minimumSize().width() );
+   setMinimumHeight( layout()->minimumSize().height() );
    emit updateLayout();
 }
 
 void KMixerWidget::setTicks( bool on )
 {
    emit updateTicks( on );
-   updateSize();
 }
 
 void KMixerWidget::setLabels( bool on )
 {
    emit updateLabels( on );
-   updateSize();
 }
 
 void KMixerWidget::setBalance( int value )
@@ -223,6 +235,8 @@ void KMixerWidget::sessionSave( QString grp, bool /*sessionConfig*/ )
 
 void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
 {
+   kDebugInfo("-> KMixerWidget::sessionLoad");
+
    KConfig* config = KGlobal::config();
    config->setGroup( grp );
    
@@ -241,6 +255,8 @@ void KMixerWidget::sessionLoad( QString grp, bool /*sessionConfig*/ )
 
       n++;
    }
+
+   kDebugInfo("<- KMixerWidget::sessionLoad");
 }
 
 void KMixerWidget::showAll()

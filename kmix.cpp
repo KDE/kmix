@@ -256,10 +256,9 @@ void KMixApp::loadConfig()
 
       Mixer *mixer = m_mixers.at( config->readNumEntry("Mixer", 0) );
       if (mixer)
-      {
-	 KMixerWidget *mw = new KMixerWidget( mixer, true, true, this );
-	 mw->sessionLoad( grp, false );
-	 KMixApplet *ap = new KMixApplet( mw );
+      {	 
+	 KMixApplet *ap = new KMixApplet( mixer );
+	 ap->mixerWidget()->sessionLoad( grp, false );
 	 int argc = kapp->argc();
 	 ap->init( argc, kapp->argv() );
 	 insertApplet( ap );
@@ -318,6 +317,7 @@ void KMixApp::removeMixerWidget( KMixerWidget *mw )
 void KMixApp::insertApplet( KMixApplet *applet )
 {
    connect( applet, SIGNAL(closeApplet(KMixApplet*)), this, SLOT(removeApplet(KMixApplet*)));
+   connect( applet, SIGNAL(clickedButton()), this, SLOT(toggleVisibility()));
    m_applets.append( applet  );
 }
 
@@ -441,9 +441,8 @@ void KMixApp::newApplet()
 	 KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
 	 return;
       }
-	 
-      KMixerWidget *mw = new KMixerWidget( mixer, true, true, this );      
-      KMixApplet *ap = new KMixApplet( mw );
+             
+      KMixApplet *ap = new KMixApplet( mixer );
       int argc = kapp->argc();
       ap->init( argc, kapp->argv() );
       insertApplet( ap );         
@@ -484,3 +483,7 @@ void KMixApp::toggleMenuBar()
       menuBar()->show();
 }
 
+void KMixApp::toggleVisibility()
+{
+   if ( isVisible() ) hide(); else show();
+}

@@ -108,6 +108,8 @@ class KMixApp : public KTMainWindow
 
    void insertApplet( KMixApplet *applet );
    void removeApplet( KMixApplet *applet );
+
+   void toggleVisibility();
 };
  
 #endif // KMIX_H

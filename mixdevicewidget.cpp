@@ -274,6 +274,9 @@ BigMixDeviceWidget::BigMixDeviceWidget(Mixer *mixer, MixDevice* md,
       m_recordLED = 0L;
       layout->addSpacing( 16 );
    }
+
+   // relayout widget
+//   layout->activate();
 };
 
 BigMixDeviceWidget::~BigMixDeviceWidget()
@@ -304,8 +307,6 @@ void BigMixDeviceWidget::setIcon( int icon )
    {
       cerr << "Pixmap missing.\n";
    }
-
-   updateGeometry();
 }
 
 void BigMixDeviceWidget::setStereoLinked(bool value)
@@ -314,8 +315,9 @@ void BigMixDeviceWidget::setStereoLinked(bool value)
    for( slider=m_sliders.at( 1 ); slider!=0 ; slider=m_sliders.next() )
       value ? slider->hide() : slider->show();
 
-   layout()->activate();   
    MixDeviceWidget::setStereoLinked( value );
+
+   layout()->activate();  
    emit updateLayout();
 }
 
@@ -445,7 +447,6 @@ void BigMixDeviceWidget::contextMenu()
 
 bool BigMixDeviceWidget::eventFilter( QObject* , QEvent* e)
 {
-   // Lets see, if we have a "Right mouse button press"
    if (e->type() == QEvent::MouseButtonPress)
    {
       QMouseEvent *qme = (QMouseEvent*)e;
@@ -480,7 +481,9 @@ SmallMixDeviceWidget::SmallMixDeviceWidget(Mixer *mixer, MixDevice* md, bool ver
    layout->addWidget( m_iconLabel );
    m_iconLabel->installEventFilter( this );
    QToolTip::add( m_iconLabel, md->name() );
-   
+
+   layout->addSpacing( 1 );
+
    // create sliders
    QBoxLayout *sliders = new QHBoxLayout( layout );
    for( int i = 0; i < md->getVolume().channels(); i++ )
@@ -497,6 +500,9 @@ SmallMixDeviceWidget::SmallMixDeviceWidget(Mixer *mixer, MixDevice* md, bool ver
       m_sliders.append ( slider );
       connect( slider, SIGNAL( valueChanged(int) ), this, SLOT( volumeChange ( int ) ));
    }   
+
+   // relayout widget
+//   layout()->activate();
 };
 
 SmallMixDeviceWidget::~SmallMixDeviceWidget()
@@ -526,18 +532,19 @@ void SmallMixDeviceWidget::setIcon( int icon )
       cerr << "Pixmap missing.\n";
    }
 
-   updateGeometry();
+   layout()->activate();
 }
 
 void SmallMixDeviceWidget::setStereoLinked(bool value)
 {
    KSmallSlider* slider;
    for( slider=m_sliders.at( 1 ); slider!=0 ; slider=m_sliders.next() )
-      value ? slider->hide() : slider->show();
-
-   layout()->activate();
+      value ? slider->hide() : slider->show();   
 
    MixDeviceWidget::setStereoLinked( value );
+   
+   layout()->activate();
+   kDebugInfo("min=%d", layout()->minimumSize().width() );
    emit updateLayout();
 }
 
@@ -637,7 +644,6 @@ void SmallMixDeviceWidget::contextMenu()
 
 bool SmallMixDeviceWidget::eventFilter( QObject* , QEvent* e)
 {
-   // Lets see, if we have a "Right mouse button press"
    if (e->type() == QEvent::MouseButtonPress)
    {
       QMouseEvent *qme = (QMouseEvent*)e;
