@@ -664,6 +664,14 @@ KMixWindow::newMixer()
    }
 }
 
+/**
+ * Adds 1-3 mixer Tabs for the given mixer. Tabs will only be added to the
+ * Main Window, when there are devices on it. The MixerSelectionInfo is queried
+ * whether to distribute the devices on Tabs (and how). Additionaly the Tab name is
+ * taken from from msi.
+ * @param mixer The Mixer
+ * @param msi The MixerSelectionInfo as described above
+ **/
 void KMixWindow::addMixerTabs(Mixer *mixer, MixerSelectionInfo *msi) {
 	// create mixer widget
 	bool categoryInUse;
@@ -713,7 +721,7 @@ KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask)
     MixDevice *mixDevice = mixSet.first();
     for ( ; mixDevice != 0; mixDevice = mixSet.next()) {
 	if ( mixDevice->category() & categoryMask ) {
-	    // found one device wiht a matching category, that is enough.
+	    // found one device with a matching category, that is enough.
 	    categoryUsed = true;
 	    break;
 	}
@@ -723,6 +731,11 @@ KMixWindow::isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask)
 }
 
 
+/**
+ * Loads the volumes of all mixers from kmixctrl. In other words:
+ * Restores the default voumes as stored via saveVolumes() or the
+ * Mixer control center module..
+ */
 void
 KMixWindow::loadVolumes()
 {
@@ -735,6 +748,10 @@ KMixWindow::loadVolumes()
 }
 
 
+/**
+ * Stores the volumes of all mixers  Can be restored via loadVolumes() or
+ * the kmixctrl application.
+ */
 void
 KMixWindow::saveVolumes()
 {
