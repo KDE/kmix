@@ -209,7 +209,7 @@ void KMixConfig::defaults()
 
 extern "C"
 {
-    KCModule *create_kmix(QWidget *parent, const char *name)
+    KCModule *create_kmix(QWidget *parent, const char * /*name*/)
     {
       return new KMixConfig(parent, "kcmkmix");
     }

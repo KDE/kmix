@@ -58,6 +58,7 @@ void KSmallSlider::init()
     sliderVal = 0;
     state = Idle;
     track = TRUE;
+    grayed = false;
     setFocusPolicy( TabFocus  );
 
     colHigh = QColor(0,255,0);
@@ -128,6 +129,9 @@ void KSmallSlider::reallyMoveSlider( int newPos )
     repaint( FALSE );
 }
 
+namespace
+{
+
 void gradient( QPainter &p, bool hor, const QRect &rect, const QColor &ca, const QColor &cb, int /*ncols*/)
 {
    int rDiff, gDiff, bDiff;
@@ -181,6 +185,8 @@ QColor interpolate( QColor low, QColor high, int percent ) {
         low.red() + (high.red()-low.red()) * percent/100,
         low.green() + (high.green()-low.green()) * percent/100,
         low.blue() + (high.blue()-low.blue()) * percent/100 );
+}
+
 }
 
 void KSmallSlider::paintEvent( QPaintEvent * )

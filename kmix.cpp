@@ -21,8 +21,6 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream.h>
-
 // include files for QT
 #include <qdir.h>
 #include <qapplication.h>
