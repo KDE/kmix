@@ -273,8 +273,10 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	
 	//  Find out wether the applet should be reversed
 	reversedDir = cfg->readBoolEntry("ReversedDirection", false);
-	
-	//positionChange(position()); // To take over reversedDir
+
+	// To take over reversedDir and (more important) to create the mixer widget
+	// if necessary!
+	positionChange(position());
 	
 	m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
 }
