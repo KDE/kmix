@@ -204,7 +204,7 @@ KMix::KMix(int mixernum, int SetNum) : DCOPObject("KMix")
 
   createWidgets();
   setMenu( createMenu() );
-  menuBar()->enable( mainmenuOn ? KMenuBar::Show : KMenuBar::Hide );
+  if (mainmenuOn) menuBar()->show(); else menuBar()->hide();
 
   if (SetNum > 0) {
     emit newSet( SetNum );
@@ -252,8 +252,11 @@ bool KMix::process(const QCString &fun, const QByteArray &data,
 
 void KMix::applyOptions()
 {
-  menuBar()->enable( prefDL->menubarChk->isChecked() ?
-                     KMenuBar::Show : KMenuBar::Hide );
+  if (prefDL->menubarChk->isChecked())
+    menuBar()->show();
+  else
+    menuBar()->hide();
+
   tickmarksOn = prefDL->tickmarksChk->isChecked();
   allowDocking= prefDL->dockingChk->isChecked();
   //  mix->Set0toHW(); // Do NOT write volume after "applying" Options from config dailog
@@ -453,7 +456,10 @@ void KMix::tickmarksTogCB()
 
 void KMix::toggleMenubarCB()
 {
-  menuBar()->enable( KMenuBar::Toggle );
+  if (menuBar()->isVisible())
+    menuBar()->hide();
+  else
+    menuBar()->show();
 }
 
 void KMix::showOptsCB()
