@@ -10,8 +10,8 @@
 
 <title>The KMix Handbook
 <author>Christian Esken, <tt/esken@kde.org/
-<date>Version 0.98, 18.10.1998
-<abstract>This Handbook describes KMix Version 0.98
+<date>Version 1.0, 4.11.1998
+<abstract>This Handbook describes KMix Version 1.0
 
 <!-- Table of contents -->
 <toc>
@@ -28,6 +28,15 @@ One for mono devices,
 and as to your liking one or two for stereo devices. Single devices may
 be muted and the record source can be set.
 
+KMix supports several platforms and sound drivers. Version 1.0 works with:
+
+<itemize>
+<item> All Open Sound System platforms. Explicitly tested are Linux,
+FreeBSD, NetBSD and BSDI.
+<item> Solaris based machines.
+<item> IRIX based machines.
+<item> The ALSA soundcard driver.
+</itemize>
 
 
 
@@ -90,6 +99,7 @@ reach with the right mouse button. You can set the slider to some
 prominent positions with this menu.
 
 
+
 <sect1>Configuration options
 <p>
 
@@ -104,41 +114,6 @@ get the menu bar by pressing <tt/Control-M/.
 itself on the KDE Panel, when pressing the close button. If switched
 off, kmix will quit, when you press the close button.
 </itemize>
-
-
-<sect1>Mixer layout and stored Profiles
-<p>
-
-This is one of the advanced features of kmix. If you have a standard
-layout you like, you can save this layout. A layout stores, which
-channels are shown, if the channels slider are split and if they
-are muted.
-
-Just press <tt/Control-1/ to save the layout as profile <tt/1/.
-Likewise you can save profile <tt/2/, <tt/3/ and <tt/4/. You can
-restore a profile by pressing <tt/1/, <tt/2/, <tt/3/ and <tt/4/
-respectively.
-
-
-
-<sect1>Multiple Soundcards
-<p>
-
-KMix is prepared for multiple sound cards. If called via the KDE Panel,
-the default mixer is used. For the Open Sound System, this is
-<tt>/dev/mixer</tt>. For other operating systems or sound drivers,
-this may vary.
-
-If you want KMix to use a specific soundcard (primary, secondary, ...),
-you must tell this KMix on startup. 
-You can start the mixer with a device number. 0 means the default
-device, 1 your primary mixer, 2 your secondary mixer and so on. If
-you use this regulary, you should create a new program kdelnk (using kfm
-or the menu editor). This should just call kmix with the appropriate
-device number as parameter, for example "kmix 2".
-
-
-
 
 
 
@@ -186,6 +161,76 @@ Invokes the KDE help system with the KMix help pages displayed.
 <sect2>About 
 <p>
 Displays informations about KMix.
+
+
+
+<sect>Advanced features
+<p>
+
+<sect1>Mixer layout and stored Profiles
+<p>
+
+This is one of the advanced features of kmix. If you have a standard
+layout you like, you can save this layout. A layout stores for each
+channel four configuration options.
+
+<p>
+<itemize>
+<item> The volume of the channel
+<item> If the channel is shown
+<item> If the channels slider is split (for stereo channels)
+<item> If the channel are muted.
+</itemize>
+
+If you want to save the current layout, just press <tt/Control-1/
+to save the layout as profile <tt/1/.
+Likewise you can save profile <tt/2/, <tt/3/ and <tt/4/ by pressing
+<tt/Control-2/, <tt/Control-3/ or <tt/Control-4/.
+
+You can restore a profile by pressing <tt/1/, <tt/2/, <tt/3/ and
+<tt/4/ respectively. If you want to start kmix with a certain
+layout directly set up, you must pass a command line argument.
+
+<sect1>Command line arguments
+<p>
+
+You can pass some parameters to kmix, to have influence on
+kmix's initial settings.
+
+
+<p>
+<itemize>
+<item> <tt/-r/ will restore the default set (set 1), that you saved
+by pressing<tt/Control-1/.
+<item> <tt/-R n/ will restore the given set.
+<item> With passing <tt/-devnum n/, kmix will use the n'th mixer
+device on your system.
+</itemize>
+
+
+
+<sect1>Multiple Soundcards
+<p>
+
+KMix is prepared for multiple sound cards. If called via the KDE Panel,
+the default mixer is used. For the Open Sound System, this is
+<tt>/dev/mixer</tt>. For other operating systems or sound drivers,
+this may vary.
+
+If you want KMix to use a specific soundcard (primary, secondary, ...),
+you must tell this KMix on startup.
+You can start the mixer with a device number, using the <tt/-devnum n/
+parameter. <tt/-devnum 0/ means the default
+device, 1 your primary mixer, 2 your secondary mixer and so on. If
+you use this regulary, you should create a new program kdelnk (using kfm
+or the menu editor). This should just call kmix with the appropriate
+device number as parameter, for example "kmix -devnum 2".
+
+
+
+
+
+
 
 
 
