@@ -9,7 +9,7 @@ X-KDE-Library=kmix
 X-KDE-Init=kmix
 
 Name=Mixer
-Name[af]=menger
+Name[af]=Menger
 Name[ar]=متحكم الصوت
 Name[az]=Qarışdırıcı
 Name[bg]=Миксер
@@ -55,7 +55,7 @@ Name[zh_TW]=混音器
 Name[zu]=Umxubi
 
 Comment=Soundcard mixer control
-Comment[af]=klankkaart menger kontrole
+Comment[af]=Klankkaart menger kontrole
 Comment[ar]=التحكم بالصوت و بطاقة الصوت
 Comment[az]=Səs kartı/qarışdırma idarəsi
 Comment[bg]=Контрол на звуково смесване
