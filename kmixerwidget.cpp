@@ -112,19 +112,17 @@ KMixerWidget::createLayout()
 
    if( ! m_small )
    {
-		//QGridLayout *fullLayout = new QGridLayout( this, 1, 1, 0, 1, "FullLayout" );
 
    	if( m_topLayout )
-      	delete m_topLayout;
+	{
+		delete m_topLayout;
+	}
+ 
       // create main layout
-
       m_topLayout = new QVBoxLayout( this, 0, 3,  "m_topLayout" );
-      // m_topLayout->setMargin( KDialog::marginHint() );  // !! Why should we pick up KDialog::marginHint()? - esken
-
+ 
       // Create tabs e widgetstack
       m_ioTab = new KTabWidget( this, "ioTab" );
-		//m_ioTab->setMaximumSize( QSize( 32767, 500 ) );  // !!! What is this good for ?!? - esken
-
       m_topLayout->add( m_ioTab );
 
       // Create switch buttonGroup
@@ -133,17 +131,15 @@ KMixerWidget::createLayout()
       m_devSwitchLayout = new QGridLayout( m_swWidget, 0, 0, 0, 0,"devSwitchLayout" );
 
       // Both Layouts and widgets
-
       m_oWidget = new QHBox( m_ioTab, "OutputTab" );
       m_iWidget = new QHBox( m_ioTab, "InputTab" );
 
       m_ioTab->addTab( m_oWidget, i18n("Output") );
       m_ioTab->addTab( m_iWidget, i18n("Input" ) );
 
-   	// Create de widgets
+	// Create device widgets
 		createDeviceWidgets();
 
-		//fullLayout->addLayout( m_topLayout, 0, 0 );
    }
    else
    {
