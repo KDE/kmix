@@ -23,9 +23,10 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "mixdevice.h"
 #include "mixer_hpux.h"
 
-#warning HP/UX mixer doesn't work yet !
+#warning "HP/UX mixer (maybe) doesn't work yet !"
 
 #define HPUX_ERROR_OFFSET 1024
 
@@ -65,7 +66,7 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
   Mixer *l_mixer;
   l_mixer = new Mixer_HPUX( devnum, SetNum);
-  l_mixer->init(devnum, SetNum);
+//  l_mixer->init(devnum, SetNum);
   return l_mixer;
 }
 
@@ -135,9 +136,9 @@ int Mixer_HPUX::openMixer()
     if (error) errorText(error + HPUX_ERROR_OFFSET);
 
     i_recsrc = 0;
-    isOpen = true;
+    m_isOpen = true;
 
-    i_s_mixer_name = "HP Mixer"; /* AAudioString(audio); */
+    m_mixerName = "HP Mixer"; /* AAudioString(audio); */
     return 0;
   }
 }
@@ -148,12 +149,23 @@ int Mixer_HPUX::releaseMixer()
 }
 
 
-void Mixer_HPUX::setDevNumName_I(int /*devnum*/)
+/*
+void Mixer_HPUX::setDevNumName_I(int devnum)
 {
   devname = "HP Mixer";
 }
+*/
+bool Mixer_HPUX::setRecsrcHW( int devnum, bool on )
+{
+    return FALSE;
+}
 
+bool Mixer_HPUX::isRecsrcHW( int devnum )
+{
+    return FALSE;
+}
 
+#if 0
 void Mixer_HPUX::setRecsrc(unsigned int newRecsrc)
 {
     long error = (long) AENoError;
@@ -186,23 +198,29 @@ void Mixer_HPUX::setRecsrc(unsigned int newRecsrc)
       MixPtr->setRecsrc(false);
   }
 }
+#endif
 
-int Mixer_HPUX::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+int Mixer_HPUX::readVolumeFromHW( int devnum, Volume &vol )
 {
     long Gain;
     long error = 0;
+    int  vl,vr;
 
     switch (devnum) {
     case ID_OUT_INT_SPEAKER:	/* AODTMonoIntSpeaker */
 	AGetSystemChannelGain(audio, ASGTPlay, ACTMono, &Gain, &error );
-	*VolLeft = *VolRight = (Gain-GAIN_OUT_MIN)*255 / GAIN_OUT_DIFF;
-printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, *VolLeft, *VolRight );
+	vl = vr = (Gain-GAIN_OUT_MIN)*255 / GAIN_OUT_DIFF;
+	vol.setVolume( Volume::LEFT, vl);
+	vol.setVolume( Volume::RIGHT, vr);
+printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr );
 	break;
 
     case ID_IN_AUX:		/* AISTLeftAuxiliary, AISTRightAuxiliary */
     case ID_IN_MICROPHONE:	/* AISTMonoMicrophone */
 	AGetSystemChannelGain(audio, ASGTRecord, ACTMono, &Gain, &error );
-	*VolLeft = *VolRight = (Gain-GAIN_IN_MIN)*255 / GAIN_IN_DIFF;
+	vl = vr = (Gain-GAIN_IN_MIN)*255 / GAIN_IN_DIFF;
+	vol.setVolume( Volume::LEFT, vl);
+	vol.setVolume( Volume::RIGHT, vr);
 	break;
 
     default:
@@ -218,30 +236,31 @@ printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, *VolLeft, *VolRight )
 	AChType                	=     ACTMono, ACTLeft, ACTRight
 */
 
-int Mixer_HPUX::writeVolumeToHW( int devnum, int VolLeft, int VolRight )
+int Mixer_HPUX::writeVolumeToHW( int devnum, Volume vol )
 {
-
     long Gain;
     long error = 0;
-
+    int vl = vol.getVolume(Volume::LEFT);
+    int vr = vol.getVolume(Volume::RIGHT);
+    
     switch (devnum) {
     case ID_OUT_INT_SPEAKER:	/* AODTMonoIntSpeaker */
-printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, VolLeft, VolRight );
-	Gain = VolLeft;		// only left Volume
+printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr);
+	Gain = vl;	// only left Volume
 	Gain = (Gain*GAIN_OUT_DIFF) / 255 - GAIN_OUT_MIN;
 	ASetSystemChannelGain(audio, ASGTPlay, ACTMono, (AGainDB) Gain, &error );
 	break;
 
     case ID_IN_MICROPHONE:	/* AISTMonoMicrophone */
-	Gain = VolLeft;		// only left Volume
+	Gain = vl;	// only left Volume
 	Gain = (Gain*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
 	ASetSystemChannelGain(audio, ASGTRecord, ACTMono, (AGainDB) Gain, &error );
 	break;
 
     case ID_IN_AUX:		/* AISTLeftAuxiliary, AISTRightAuxiliary */
-	Gain = (VolLeft*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
+	Gain = (vl*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
 	ASetSystemChannelGain(audio, ASGTRecord, ACTLeft, (AGainDB) Gain, &error );
-	Gain = (VolRight*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
+	Gain = (vr*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
 	ASetSystemChannelGain(audio, ASGTRecord, ACTRight, (AGainDB) Gain, &error );
 	break;
 
@@ -260,16 +279,17 @@ QString Mixer_HPUX::errorText(int mixer_error)
       char errorstr[200];
       AGetErrorText(audio, (AError) (mixer_error-HPUX_ERROR_OFFSET), 
                 	    errorstr, sizeof(errorstr));
-      printf("kmix: %s: %s\n",i_s_mixer_name.data(), errorstr);
+      printf("kmix: %s: %s\n",mixerName().data(), errorstr);
       l_s_errmsg = errorstr;
   } else
   switch (mixer_error)
     {
     case ERR_OPEN:
-      l_s_errmsg = i18n("kmix: HP-UX Alib-Mixer cannot be found.\n" \
+		// should use i18n...
+      l_s_errmsg = "kmix: HP-UX Alib-Mixer cannot be found.\n" \
 			"Please check that you have:\n" \
 			"  1. Installed the libAlib package  and\n" \
-			"  2. started the Aserver program from the /opt/audio/bin directory\n" );
+			"  2. started the Aserver program from the /opt/audio/bin directory\n";
       break;
     default:
       l_s_errmsg = Mixer::errorText(mixer_error);

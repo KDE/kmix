@@ -15,16 +15,22 @@ public:
   virtual ~Mixer_HPUX();
 
   virtual QString errorText(int mixer_error);
-  virtual void setRecsrc(unsigned int newRecsrc);
-  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
+
+  virtual int readVolumeFromHW( int devnum, Volume &vol );
+  virtual int writeVolumeToHW( int devnum, Volume vol );
 
 protected:
+  virtual bool setRecsrcHW( int devnum, bool on = true );
+  virtual bool isRecsrcHW( int devnum );
+
   virtual int openMixer();
   virtual int releaseMixer();
-  virtual void setDevNumName_I(int devnum);
+//  virtual void setDevNumName_I(int devnum);
 
   Audio	  *audio;
+  unsigned int stereodevs,devmask, recmask, MaxVolume, i_recsrc;
+    
+
 };
 
 #endif
