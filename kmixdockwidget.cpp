@@ -63,12 +63,15 @@ void KMixMasterVolume::mousePressEvent(QMouseEvent *e)
   // if we wouldn't hide this popup, the dockWidget doesn't receive this event
   // and could therefore not hide this popup
   // solution: we hide this popup here, but tell the dockWidget to ignore the
-  // mouseRelease event - otherwise it would show the popup again
-  if ( dock->hasMouse() )
-  {
-    dock->ignoreNextEvent();
-    hide();
-    return;
+  // mouseRelease event - otherwise it would show the popup again.
+  // We must to do this only for the "LeftButton", otherwise we would ignore events after
+  // a right-click (which shows the context menu)
+  if ( dock->hasMouse() ) {
+	if ( e->button() == LeftButton)  {
+		dock->ignoreNextEvent();
+	}
+	hide();
+	return;
   }
   QVBox::mousePressEvent(e);  // will hide this popup
 }
