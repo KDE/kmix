@@ -50,6 +50,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
 	if ( qw->inherits("MixDeviceWidget") ) {
 	    MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
 	    QString mdName = mdw->mixDevice()->name();
+            mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
 	    QCheckBox* cb = new QCheckBox( mdName, plainPage() );
 	    _qEnabledCB.append(cb);
 	    cb->setChecked( !mdw->isDisabled() ); //mdw->isVisible() );
