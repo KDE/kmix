@@ -49,7 +49,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md,
   m_popupMenu = 0L;
   setIcon( md->type() );
 
-  m_muteLED = new KLed( Qt::green, KLed::On, KLed::sunken, KLed::Circular, this,
+  m_muteLED = new KLed( Qt::green, KLed::On, KLed::Sunken, KLed::Circular, this,
                         "MuteLED" );
   m_muteLED->setFixedSize( QSize(16, 16) );
   QToolTip::add( m_muteLED, i18n("Muting") );
@@ -83,7 +83,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md,
   if( md->isRecordable() )
     {
       m_recordLED = new KLed( Qt::red, md->isRecsrc() ? KLed::On : KLed::Off,
-                              KLed::sunken, KLed::Circular, this,
+                              KLed::Sunken, KLed::Circular, this,
                               "RecordLED" );
       QToolTip::add( m_recordLED, i18n("Recording") );
       m_recordLED->setFixedSize( QSize(16, 16) );
