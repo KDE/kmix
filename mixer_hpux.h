@@ -12,8 +12,9 @@ class Mixer_HPUX : public Mixer
 public:
   Mixer_HPUX();
   Mixer_HPUX(int devnum, int SetNum);
-  virtual ~Mixer_HPUX() {};
+  virtual ~Mixer_HPUX();
 
+  virtual QString errorText(int mixer_error);
   virtual void setRecsrc(unsigned int newRecsrc);
   virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
   virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
@@ -23,7 +24,7 @@ protected:
   virtual int releaseMixer();
   virtual void setDevNumName_I(int devnum);
 
-  Audio		*hpux_audio;
+  Audio	  *audio;
 };
 
 #endif

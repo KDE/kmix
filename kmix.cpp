@@ -709,7 +709,8 @@ void KMix::createMenu()
     "SGI Port done by Paul Kendall (paul@orion.co.nz).\n"\
     "*BSD fixes by Sebestyen Zoltan (szoli@digo.inf.elte.hu)\n"\
     "and Lennart Augustsson (augustss@cs.chalmers.se).\n"\
-    "ALSA port by Nick Lopez (kimo_sabe@usa.net).");
+    "ALSA port by Nick Lopez (kimo_sabe@usa.net).\n"\
+    "HP/UX port by Helge Deller (deller@gmx.de).");
   head += APP_VERSION;
 
 #if QT_VERSION >= 200

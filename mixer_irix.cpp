@@ -32,8 +32,11 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
 
 
 
-Mixer_IRIX::Mixer_IRIX() : Mixer() { };
-Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum);
+Mixer_IRIX::Mixer_IRIX() : Mixer() 
+{ }
+
+Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum)
+{ }
 
 int Mixer_IRIX::openMixer()
 {

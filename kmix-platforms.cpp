@@ -47,9 +47,13 @@
 #define OSS_MIXER
 #endif
 
-#if defined(hpux) && defined(HAVE_ALIB_H)
-#define HPUX_MIXER
-#endif
+#if defined(hpux)
+# if defined(HAVE_ALIB_H)
+#  define HPUX_MIXER
+# else
+#  warning ** YOU NEED to have libAlib installed to use the HP-UX-Mixer **
+# endif // HAVE_ALIB_H
+#endif // hpux
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 

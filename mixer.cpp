@@ -51,10 +51,12 @@ bool MixChannel::i_b_HW_update = true;
 
 Mixer::Mixer()
 {
+    MixChannel::i_b_HW_update = true;
 }
 
 Mixer::Mixer(int /*devnum*/, int /*SetNum*/)
 {
+    MixChannel::i_b_HW_update = true;
 }
 
 void Mixer::init()

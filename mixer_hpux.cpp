@@ -5,6 +5,9 @@
  *              Copyright (C) 1996-2000 Christian Esken
  *                        esken@kde.org
  *
+ * HP/UX-Port:	Copyright (C) 1999 by Helge Deller
+ *			  deller@gmx.de
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -22,7 +25,41 @@
 
 #include "mixer_hpux.h"
 
-#warning It looks like somebody wanted to add HPUX support, but stopped in the middle of the work. The mixer will not work properly.
+#warning HP/UX mixer doesn't work yet !
+
+#define HPUX_ERROR_OFFSET 1024
+
+#define myGain 	AUnityGain	/* AUnityGain or AZeroGain */
+
+#define GAIN_OUT_DIFF	((long) ((int)aMaxOutputGain(audio) - (int)aMinOutputGain(audio)))
+#define GAIN_OUT_MIN	((long) aMinOutputGain(audio))
+#define GAIN_IN_DIFF	((long) ((int)aMaxInputGain(audio)  - (int)aMinInputGain(audio)))
+#define GAIN_IN_MIN	((long) aMinOutputGain(audio))
+
+/* standard */
+#define	ID_PCM			4
+
+/* AInputSrcType: */	     /*OSS:*/
+#define ID_IN_MICROPHONE 	7	/* AISTMonoMicrophone */
+#define ID_IN_AUX		6	/* AISTLeftAuxiliary, AISTRightAuxiliary */
+
+/* AOutputDstType: */
+#define ID_OUT_INT_SPEAKER	0	/* AODTMonoIntSpeaker */
+
+/* not yet implemented:
+    AODTLeftJack,    AODTRightJack,
+    AODTLeftLineOut,  AODTRightLineOut,
+    AODTLeftHeadphone, AODTRightHeadphone
+
+const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   , "Pcm"  ,    \
+			       "Speaker" , "Line"    , "Microphone", "CD"      , "Mix"  ,    \
+			       "Pcm2"    , "RecMon"  , "IGain"     , "OGain"   , "Line1",    \
+			       "Line2"   , "Line3"   , "Digital1"  , "Digital2", "Digital3", \
+			       "PhoneIn" , "PhoneOut", "Video"     , "Radio"   , "Monitor",  \
+			       "3D-depth", "3D-center", "unknown"  , "unknown" , "unknown",  \
+			       "unknown" , "unused" };
+*/
+
 
 Mixer* Mixer::getMixer(int devnum, int SetNum)
 {
@@ -32,67 +69,211 @@ Mixer* Mixer::getMixer(int devnum, int SetNum)
   return l_mixer;
 }
 
-Mixer_HPUX::Mixer_HPUX() : Mixer() { };
-Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum);
+
+Mixer_HPUX::Mixer_HPUX() : Mixer() 
+{ 
+    Mixer_HPUX(0,-1);
+}
+
+Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum) 
+{ 
+  char ServerName[10];
+  ServerName[0] = 0;
+  audio = AOpenAudio(ServerName,NULL);
+}
+
+Mixer_HPUX::~Mixer_HPUX()
+{ 
+  if (audio) {
+      ACloseAudio(audio,0);
+      audio = 0;
+  }
+}
+
 
 int Mixer_HPUX::openMixer()
 {
-  release();		// To be sure, release mixer before (re-)opening
-
-  char ServerName[50];
-  ServerName[0] = 0;
-  hpux_audio = AOpenAudio(ServerName,NULL);
-  if (hpux_audio==0) {
+  if (audio==0) {
     return Mixer::ERR_OPEN;
   }
-  else {
-     // Mixer is open. Now define properties
-    devmask = 1 + 16; // volume+pcm
-    if (AOutputDestinations(hpux_audio) & AMonoIntSpeakerMask) 	devmask |= 32; // Speaker
-    if (AOutputDestinations(hpux_audio) & AMonoLineOutMask)	devmask |= 64; // Line
-    if (AInputSources(hpux_audio) & AMonoMicrophoneMask)		devmask |= 128;// Microphone
-    if (AOutputDestinations(hpux_audio) & AMonoJackMask)		devmask |= (1<<14); // Line1
-    if (AOutputDestinations(hpux_audio) & AMonoHeadphoneMask)	devmask |= (1<<15); // Line2
-    if (AInputSources(hpux_audio) & AMonoAuxiliaryMask)		devmask |= (1<<20); // PhoneIn
-    MaxVolume = aMaxOutputGain(hpux_audio) - aMinOutputGain(hpux_audio);
-    recmask = stereodevs = devmask; 
-    i_recsrc = 0;   
+  else 
+  { 
+    /* Mixer is open. Now define properties */
+    stereodevs = devmask = (1<<ID_PCM); /* activate pcm */
+    recmask = 0;
+
+    /* check Input devices... */
+    if (AInputSources(audio) & AMonoMicrophoneMask) {
+	    devmask	|= (1<<ID_IN_MICROPHONE); 
+	    recmask	|= (1<<ID_IN_MICROPHONE);
+    }
+    if (AInputSources(audio) & (ALeftAuxiliaryMask|ARightAuxiliaryMask)) {
+	    devmask	|= (1<<ID_IN_AUX); 
+	    recmask	|= (1<<ID_IN_AUX);
+	    stereodevs	|= (1<<ID_IN_AUX);
+    }
+
+    /* check Output devices... */
+    if (AOutputDestinations(audio) & AMonoIntSpeakerMask) {
+	    devmask	|= (1<<ID_OUT_INT_SPEAKER); 
+	    stereodevs	|= (1<<ID_OUT_INT_SPEAKER);
+    }
+
+/*  implement later:
+    ----------------
+    if (AOutputDestinations(audio) & AMonoLineOutMask)	devmask |= 64; // Line
+    if (AOutputDestinations(audio) & AMonoJackMask)	devmask |= (1<<14); // Line1
+    if (AOutputDestinations(audio) & AMonoHeadphoneMask)	devmask |= (1<<15); // Line2
+*/
+
+    MaxVolume = 255;
+
+    long error = 0;
+    ASetSystemPlayGain(audio, myGain, &error);
+    if (error) errorText(error + HPUX_ERROR_OFFSET);
+    ASetSystemRecordGain(audio, myGain, &error);
+    if (error) errorText(error + HPUX_ERROR_OFFSET);
+
+    i_recsrc = 0;
     isOpen = true;
 
-    i_s_mixer_name = "HPUX Audio Mixer"
+    i_s_mixer_name = "HP Mixer"; /* AAudioString(audio); */
     return 0;
   }
 }
 
 int Mixer_HPUX::releaseMixer()
 {
-  ACloseAudio(hpux_audio,0);
+  return 0;
 }
 
 
-void Mixer_HPUX::setDevNumName_I(int devnum)
+void Mixer_HPUX::setDevNumName_I(int /*devnum*/)
 {
-  devname = "HP-UX Mixer";
+  devname = "HP Mixer";
 }
 
 
 void Mixer_HPUX::setRecsrc(unsigned int newRecsrc)
 {
-  i_recsrc = newRecsrc;
-  // nothing else (yet!)
+    long error = (long) AENoError;
+    int	 Source;
+    
+    i_recsrc = newRecsrc;
+
+    Source = 0;
+    if (newRecsrc & (1<<ID_IN_MICROPHONE))
+	Source |= (1<<AISTMonoMicrophone);
+    if (newRecsrc & (1<<ID_IN_AUX))
+        Source |= (1<<AISTLeftAuxiliary) + (1<<AISTRightAuxiliary);
+
+    ASetDefaultInput(audio, (AInputSrcType) Source, &error);
+    if (error)
+	errorText(error + HPUX_ERROR_OFFSET);
+
+  /* Traverse through the mixer devices and set the record source flags
+   * This is especially necessary for mixer devices that sometimes do
+   * not obey blindly (because of hardware limitations)
+   */
+  unsigned int recsrcwork = i_recsrc;
+  MixDevice *MixPtr;
+  for ( unsigned int l_i_mixDevice = 1; l_i_mixDevice <= size(); l_i_mixDevice++) {
+    MixPtr = operator[](l_i_mixDevice);
+
+    if (recsrcwork & (1 << (MixPtr->num()) ) )
+      MixPtr->setRecsrc(true);
+    else
+      MixPtr->setRecsrc(false);
+  }
+}
+
+int Mixer_HPUX::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+{
+    long Gain;
+    long error = 0;
+
+    switch (devnum) {
+    case ID_OUT_INT_SPEAKER:	/* AODTMonoIntSpeaker */
+	AGetSystemChannelGain(audio, ASGTPlay, ACTMono, &Gain, &error );
+	*VolLeft = *VolRight = (Gain-GAIN_OUT_MIN)*255 / GAIN_OUT_DIFF;
+printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, *VolLeft, *VolRight );
+	break;
+
+    case ID_IN_AUX:		/* AISTLeftAuxiliary, AISTRightAuxiliary */
+    case ID_IN_MICROPHONE:	/* AISTMonoMicrophone */
+	AGetSystemChannelGain(audio, ASGTRecord, ACTMono, &Gain, &error );
+	*VolLeft = *VolRight = (Gain-GAIN_IN_MIN)*255 / GAIN_IN_DIFF;
+	break;
+
+    default:
+	error = ERR_NODEV - HPUX_ERROR_OFFSET;
+	break;
+    };
+
+  return (error ? (error+HPUX_ERROR_OFFSET) : 0);
+}
+
+/*
+        ASystemGainType         =     ASGTPlay, ASGTRecord, ASGTMonitor
+	AChType                	=     ACTMono, ACTLeft, ACTRight
+*/
+
+int Mixer_HPUX::writeVolumeToHW( int devnum, int VolLeft, int VolRight )
+{
+
+    long Gain;
+    long error = 0;
+
+    switch (devnum) {
+    case ID_OUT_INT_SPEAKER:	/* AODTMonoIntSpeaker */
+printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, VolLeft, VolRight );
+	Gain = VolLeft;		// only left Volume
+	Gain = (Gain*GAIN_OUT_DIFF) / 255 - GAIN_OUT_MIN;
+	ASetSystemChannelGain(audio, ASGTPlay, ACTMono, (AGainDB) Gain, &error );
+	break;
+
+    case ID_IN_MICROPHONE:	/* AISTMonoMicrophone */
+	Gain = VolLeft;		// only left Volume
+	Gain = (Gain*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
+	ASetSystemChannelGain(audio, ASGTRecord, ACTMono, (AGainDB) Gain, &error );
+	break;
+
+    case ID_IN_AUX:		/* AISTLeftAuxiliary, AISTRightAuxiliary */
+	Gain = (VolLeft*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
+	ASetSystemChannelGain(audio, ASGTRecord, ACTLeft, (AGainDB) Gain, &error );
+	Gain = (VolRight*GAIN_IN_DIFF) / 255 - GAIN_IN_MIN;
+	ASetSystemChannelGain(audio, ASGTRecord, ACTRight, (AGainDB) Gain, &error );
+	break;
+
+    default:
+	error = ERR_NODEV - HPUX_ERROR_OFFSET;
+	break;
+    };
+  return (error ? (error+HPUX_ERROR_OFFSET) : 0);
 }
 
 
-int Mixer_HPUX::readVolumeFromHW( int /*devnum*/, int *VolLeft, int *VolRight )
+QString Mixer_HPUX::errorText(int mixer_error)
 {
-  *VolRight = 100;
-  *VolLeft  = 100;
-
-  return 0;
-}
-
-int Mixer_HPUX::writeVolumeToHW( int devnum, int volLeft, int volRight )
-{
-  // Set volume (right&left)
-  return Mixer::ERR_NOTSUPP;
+  QString l_s_errmsg;
+  if (mixer_error >= HPUX_ERROR_OFFSET) {
+      char errorstr[200];
+      AGetErrorText(audio, (AError) (mixer_error-HPUX_ERROR_OFFSET), 
+                	    errorstr, sizeof(errorstr));
+      printf("kmix: %s: %s\n",i_s_mixer_name.data(), errorstr);
+      l_s_errmsg = errorstr;
+  } else
+  switch (mixer_error)
+    {
+    case ERR_OPEN:
+      l_s_errmsg = i18n("kmix: HP-UX Alib-Mixer cannot be found.\n" \
+			"Please check that you have:\n" \
+			"  1. Installed the libAlib package  and\n" \
+			"  2. started the Aserver program from the /opt/audio/bin directory\n" );
+      break;
+    default:
+      l_s_errmsg = Mixer::errorText(mixer_error);
+      break;
+    }
+  return l_s_errmsg;
 }
