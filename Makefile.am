@@ -35,6 +35,8 @@ docking.moc: docking.h
 version.h: VERSION
 	sed "s/0/#define APP_VERSION 0/" <VERSION >version.h
 
+EXTRA_DIST = KMix.kdelnk VERSION
+
 install-data-local: 
 	$(mkinstalldirs) $(APPSDIR)
 	$(INSTALL_DATA) KMix.kdelnk $(APPSDIR)

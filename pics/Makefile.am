@@ -14,3 +14,5 @@ uninstall-local:
 icon_DATA = kmix.xpm
 icondir = $(kde_icondir)
 
+EXTRA_DIST = $(icon_DATA) $(pics_DATA) kmix_mini.xpm
+
