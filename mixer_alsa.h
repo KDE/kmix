@@ -34,6 +34,7 @@ class Mixer_ALSA : public Mixer
 		typedef QValueList<snd_mixer_selem_id_t *>AlsaMixerSidList;
 		AlsaMixerSidList mixer_sid_list;
 		unsigned int *mixerIDs;
+		bool masterChosen;
 };
 
 #endif

@@ -63,6 +63,7 @@ ALSA_getMixerSet( MixSet set, int device, int card )
 Mixer_ALSA::Mixer_ALSA( int device, int card ) :
 	Mixer( device, card ), handle(0)
 {
+	masterChosen = false;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
@@ -76,7 +77,10 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 
 	if ( name == "Master" )
 	{
-		m_masterDevice = snd_mixer_selem_id_get_index( sid );
+		if (!masterChosen) {
+			m_masterDevice = snd_mixer_selem_id_get_index( sid );
+			masterChosen = true; // -<- this makes KMix select the *first* master device
+		}
 		return MixDevice::VOLUME;
 	}
 	if ( name == "Master Mono" ) return MixDevice::VOLUME;
