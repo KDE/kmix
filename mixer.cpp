@@ -82,8 +82,8 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   m_masterDevice = 0;
 
   m_isOpen = false;
-  //_stateMessage = "OK";
   _errno  = 0;
+  readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
 
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
@@ -243,17 +243,30 @@ MixDevice* Mixer::operator[](int num)
 
 
 /**
+ * After calling this, readSetFromHW() will do a complete update. This will
+ * trigger emitting the appropriate signals like newVolumeLevels().
+ *
+ * This method is useful, if you need to get a "refresh signal" - used at:
+ * 1) Start of KMix - so that we can be sure an initial signal is emitted
+ * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
+ */
+void Mixer::readSetFromHWforceUpdate() const {
+   _readSetFromHWforceUpdate = true;
+}
+
+/**
    You can call this to retrieve the freshest information from the mixer HW.
    This method is also called regulary by the mixer timer.
 */
 void Mixer::readSetFromHW()
 {
   bool updated = prepareUpdate();
-  if ( ! updated ) {
+  if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
     // Some drivers (ALSA) are smart. We don't need to run the following
     // time-consuming update loop if there was no change
     return;
   }
+  _readSetFromHWforceUpdate = false;
   MixDevice* md;
   for( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
     {
@@ -387,12 +400,6 @@ QString Mixer::errorText(int mixer_error)
   return l_s_errmsg;
 }
 
-/*
-QString& Mixer::stateMessage() const {
-    const QString &s = _stateMessage;
-    return s;
-}
-*/
 
 /**
    Used internally by the Mixer class and as DCOP method

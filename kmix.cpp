@@ -464,13 +464,15 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 
 
    this->setUpdatesEnabled(false);
+   updateDocking();
+
    for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
    {
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
+      mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
    }
 
-   updateDocking();
    this->setUpdatesEnabled(false);
 
    // avoid invisible and unaccessible main window

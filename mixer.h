@@ -114,7 +114,6 @@ class Mixer : public QObject, virtual public MixerIface
       /// Reads the volume of the given device into VolLeft and VolRight.
       /// Abstract method! You must implement it in your dericved class.
       virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
-
       virtual bool prepareUpdate();
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
@@ -142,6 +141,7 @@ class Mixer : public QObject, virtual public MixerIface
       /// Abstract method! You must implement it in your dericved class.
       virtual int writeVolumeToHW( int devnum, Volume &volume ) = 0;
       virtual void readSetFromHW();
+      void readSetFromHWforceUpdate() const;
       virtual void setRecordSource( int deviceidx, bool on );
 
       virtual void setBalance(int balance); // sets the m_balance (see there)
@@ -174,8 +174,6 @@ class Mixer : public QObject, virtual public MixerIface
 
       bool m_isOpen;
       int m_balance; // from -100 (just left) to 100 (just right)
-      // The state of the driver (Mixer_* backends should change it after an initialization error)
-      //QString _stateMessage;
       int     _errno;
 
       // All mix devices of this phyisical device.
@@ -185,6 +183,9 @@ class Mixer : public QObject, virtual public MixerIface
 
    public:
       int setupMixer( MixSet set );
+
+   private:
+      mutable bool _readSetFromHWforceUpdate;
 };
 
 #endif
