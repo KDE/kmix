@@ -33,7 +33,12 @@ ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, View
       : ViewBase(parent, name, mixer, 0, vflags)
 {
     // Create switch buttonGroup
-    _layoutMDW = new QHBoxLayout(this);
+    if ( _vflags & ViewBase::Vertical ) {
+        _layoutMDW = new QVBoxLayout(this);
+    }
+    else {
+        _layoutMDW = new QHBoxLayout(this);
+    }
     init();
 }
 
@@ -70,12 +75,13 @@ int ViewSwitches::advice() {
 
 QWidget* ViewSwitches::add(MixDevice *md)
 {
+    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
     MDWSwitch *mdw =
 	new MDWSwitch(
 		      _mixer,       // the mixer for this device
 		      md,           // MixDevice (parameter)
 		      false,        // Small
-		      Qt::Vertical, // Direction
+		      orientation,  // Orientation
 		      this,         // parent
 		      this,         // View widget
 		      md->name().latin1()

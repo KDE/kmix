@@ -608,7 +608,7 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
                 int sw = 0;
                 if (! volume.isMuted())
                    sw = !sw;
-                kdDebug(67100) << "snd_mixer_selem_set_playback_switch_all(): sw=" << sw << endl;
+                //kdDebug(67100) << "snd_mixer_selem_set_playback_switch_all(): sw=" << sw << endl;
                 snd_mixer_selem_set_playback_switch_all(elem, sw);
         }
 

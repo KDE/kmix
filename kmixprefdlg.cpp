@@ -23,6 +23,8 @@
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
+#include <qradiobutton.h>
 
 #include <klocale.h>
 // For "kapp"
@@ -64,6 +66,14 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    
    m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
    layout->addWidget( m_onLogin );
+
+   QBoxLayout *orientationLayout = new QHBoxLayout( layout );
+   QLabel* qlb = new QLabel( i18n("Orientation"), m_generalTab );
+   _rbHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab);
+   _rbVertical   = new QRadioButton(i18n("&Vertical" ), m_generalTab);
+   orientationLayout->add(qlb);
+   orientationLayout->add(_rbHorizontal);
+   orientationLayout->add(_rbVertical);
 
    layout->addStretch();
    enableButtonSeparator(true);

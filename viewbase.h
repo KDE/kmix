@@ -24,6 +24,8 @@ public:
 	// Regular flags
         HasMenuBar     = 0x0001,
         MenuBarVisible = 0x0002,
+        Horizontal     = 0x0004,
+        Vertical       = 0x0008,
 	// Experimental flags
 	Experimental_SurroundView = 0x1000
     };
@@ -95,6 +97,7 @@ protected:
     MixSet *_mixSet;
     KPopupMenu *_popMenu;
     KActionCollection* _actions;
+    ViewFlags _vflags;
 
 public slots:
    virtual void refreshVolumeLevels();

@@ -25,6 +25,7 @@
 #include <qmap.h>
 #include <qhbox.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qwidgetstack.h>
 #include <qlayout.h>
 #include <qtooltip.h>
@@ -240,6 +241,10 @@ KMixWindow::saveConfig()
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
    config->writeEntry( "startkdeRestore", m_onLogin );
+   if ( m_toplevelOrientation  == Qt::Vertical )
+      config->writeEntry( "Orientation","Vertical" );
+   else
+      config->writeEntry( "Orientation","Horizontal" );
 
    // save mixer widgets
    for ( KMixerWidget *mw = m_mixerWidgets.first(); mw != 0; mw = m_mixerWidgets.next() )
@@ -268,6 +273,11 @@ KMixWindow::loadConfig()
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
+   const QString& orientationString = config->readEntry("Orientation", "Horizontal");
+   if ( orientationString == "Vertical" )
+       m_toplevelOrientation  = Qt::Vertical;
+   else
+       m_toplevelOrientation = Qt::Horizontal;
 
    // show/hide menu bar
    m_showMenubar = config->readBoolEntry("Menubar", true);
@@ -311,6 +321,13 @@ KMixWindow::initMixerWidgets()
 		if (  m_surroundView ) {
 		    vflags |= ViewBase::Experimental_SurroundView;
 		}
+		if ( m_toplevelOrientation == Qt::Vertical ) {
+		    vflags |= ViewBase::Vertical;
+		}
+		else {
+		    vflags |= ViewBase::Horizontal;
+		}
+
 	
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
@@ -434,6 +451,14 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
    m_onLogin = prefDlg->m_onLogin->isChecked();
+   if ( prefDlg->_rbVertical->isChecked() ) {
+      kdDebug(67100) << "KMix should change to Vertical layout\n";
+      m_toplevelOrientation = Qt::Vertical;
+   }
+   else if ( prefDlg->_rbHorizontal->isChecked() ) {
+     kdDebug(67100) << "KMix should change to Horizontal layout\n";
+     m_toplevelOrientation = Qt::Horizontal;
+   }
 
 
    this->setUpdatesEnabled(false);

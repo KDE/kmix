@@ -46,7 +46,13 @@ ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, View
     _mdSurroundBack  = 0;
     _layoutMDW = new QHBoxLayout(this);
     _layoutMDW->setMargin(8);
-    _layoutSliders = new QHBoxLayout(_layoutMDW);
+    // Create switch buttonGroup
+    if ( _vflags & ViewBase::Vertical ) {
+        _layoutSliders = new QVBoxLayout(_layoutMDW);
+    }
+    else {
+        _layoutSliders = new QHBoxLayout(_layoutMDW);
+    }
     _layoutSurround = new QGridLayout(_layoutMDW,3,5);
     //    _layoutMDW->setMargin(8);
     init();
@@ -121,7 +127,8 @@ QWidget* ViewSurround::add(MixDevice *md)
 	
     default:
 	small       = false;
-	orientation = Qt::Vertical;
+	// these are the sliders on the left side of the surround View
+	orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
     } // switch(type)
 
     MixDeviceWidget *mdw = createMDW(md, small, orientation);
@@ -151,7 +158,7 @@ QWidget* ViewSurround::add(MixDevice *md)
 	_layoutSliders->add(mdw);
 	break;
     } // switch(type)
-    
+
     return mdw;
 }
 
@@ -174,7 +181,7 @@ void ViewSurround::constructionFinished() {
        rowOfSpeaker = 1;
     }
     _layoutSurround->addWidget(personLabel ,rowOfSpeaker, 2, Qt::AlignHCenter | Qt::AlignVCenter);
-    
+
     if ( _mdSurroundFront != 0 ) {
 	MixDeviceWidget *mdw = createMDW(_mdSurroundFront, true, Qt::Vertical);
 	_layoutSurround->addWidget(mdw,0,4, Qt::AlignBottom | Qt::AlignRight);
@@ -214,7 +221,7 @@ void ViewSurround::constructionFinished() {
     KMixToolBox::setIcons (_mdws, true);
     KMixToolBox::setLabels(_mdws, true);
     KMixToolBox::setTicks (_mdws, true);
-    
+
     _layoutMDW->activate();
 }
 
