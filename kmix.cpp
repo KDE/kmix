@@ -253,13 +253,9 @@ void KMix::createWidgets()
   };
   const unsigned char numDefaultMixerIcons=17;
 #endif
-  // Init DnD: Set up drop zone and drop handler
-  //  dropZone = new KDNDDropZone( this, DndURL );
-  //connect( dropZone, SIGNAL( dropAction( KDNDDropZone* )),
-  //	   SLOT( onDrop( KDNDDropZone*)));
 
   // Window title
-  setCaption( globalKapp->caption() );
+  setCaption( mix->mixerName() );
 
   // Create a big container containing every widget of this toplevel
   Container  = new QWidget(this);

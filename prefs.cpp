@@ -177,11 +177,13 @@ void Preferences::createChannelConfWindow(QWidget *p)
 }      
 
 
+/// Called, when the user activates the options dialog (by selecting the menu entry)
 void Preferences::slotShow()
 {
   show();
 }
 
+/// Called, when the user pressed the "OK" button of the configuration dialog
 void Preferences::slotOk()
 {
   slotApply();
@@ -203,8 +205,9 @@ void Preferences::options2current()
       continue;  // entry not found
 
     else {
-      if (mdev->stereo())
+      if (mdev->stereo()) {
 	mse->StereoLink = ! chanSet->qcbSplit->isChecked();
+      }
       mse->is_disabled = ! chanSet->qcbShow->isChecked();
     }
     mdev = mdev->Next;
