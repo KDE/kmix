@@ -23,6 +23,7 @@ Comment[cs]=Nastavení hlasitosti zvukových kanálù
 Comment[sk]=Nastavenie hlasitosti zvukových kanálov
 Comment[hr]=Kontrolira jaèinu zvuka
 Comment[sv]=Kontrollerar volymen på ljud kanalerna
+Comment[ro]=Program de mixat canalele plãcii de sunet
 Name=Sound Mixer Panel
 Name[fr]=Console de mixage
 Name[de]=Lautstärkeregelung
@@ -36,6 +37,7 @@ Name[cs]=Nasvavení hlasitosti
 Name[sk]=Nasvavenie hlasitosti
 Name[hr]=Sound Mixer Ploèa
 Name[sv]=Ljud Mixer
+Name[ro]=Panou de mixaj
 Icon=kmix.xpm
 MiniIcon=kmix.xpm
 
