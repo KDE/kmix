@@ -46,6 +46,7 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
+   KLocale::setMainCatalogue("kmix");
    KAboutData aboutData( "kmixctrl", I18N_NOOP("KMixCtrl"),
 			 APP_VERSION, description, KAboutData::License_GPL,
 			 "(c) 2000 by Stefan Schimanski");
