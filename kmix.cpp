@@ -261,6 +261,7 @@ KMixWindow::initWidgets()
 
 	// Widgets layout
 	QVBoxLayout *widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
+	widgetsLayout->setResizeMode(QLayout::Minimum); // basically good, but needs more work
 	
 	// Mixer widget line
 	QHBoxLayout *mixerNameLayout = new QHBoxLayout( 0, 0, 6, "mixerNameLayout" );
