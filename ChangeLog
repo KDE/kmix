@@ -1,0 +1,10 @@
+V1.90
+Version shipped with KDE3.1
+
+V1.91
+- Multiple soundcards on ALSA are now supported
+- Mixer device names are now shown with a vertical label (saves space and looks nice)
+- MixerDevice categories. Allows to distribute devices on "New Mixer Tab...". It is used
+  in the panel applet to show only important devices initally.
+- Much nicer "New Mixer Tab..." dialog
+
