@@ -147,6 +147,7 @@ KMixerWidget : public QWidget
    void createDeviceWidgets();
    void createLayout();
    void createMasterVolWidget(KPanelApplet::Direction);
+   void updateSize(bool force);
 };
 
 #endif
