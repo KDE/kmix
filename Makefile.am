@@ -7,7 +7,7 @@ SUBDIRS = pics
 bin_PROGRAMS = 	kmix
 kmix_SOURCES	= kmix.cpp mixer.cpp prefs.cpp kmix-docking.cpp sets.cpp channel.cpp docking.cpp QceStateLED.cpp
 noinst_HEADERS = kmix.h mixer.h prefs.h version.h kmix-docking.h sets.h channel.h docking.h QceStateLED.h
-kmix_LDADD =   $(LIB_KDEUI) $(LIBALIB)
+kmix_LDADD =   $(LIB_KDEUI) $(LIBALIB) $(LIBOSSAUDIO)
 kmix_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 METASOURCES = kmix.moc mixer.moc prefs.moc kmix-docking.moc docking.moc QceStateLED.moc
