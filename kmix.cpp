@@ -61,7 +61,8 @@
  */
 KMixWindow::KMixWindow()
 	: KMainWindow(0, 0, 0 ), m_showTicks( false ), m_maxId( 0 ),
-	m_dockWidget( 0L ) 
+	m_lockedLayout(0),
+	m_dockWidget( 0L )
 {
 	m_visibilityUpdateAllowed	= true;
 	m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
@@ -257,10 +258,9 @@ KMixWindow::initWidgets()
 {
 	// Main widget and layout
    setCentralWidget( new QWidget(  this, "qt_central_widget" ) );
-	//QGridLayout *mainLayout = new QGridLayout( centralWidget(), 1, 1, 3, 1, "MainLayout" );
 
 	// Widgets layout
-	QVBoxLayout *widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
+	widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
 	widgetsLayout->setResizeMode(QLayout::Minimum); // basically good, but needs more work
 	
 	// Mixer widget line
@@ -276,9 +276,6 @@ KMixWindow::initWidgets()
 	
 	m_wsMixers = new QWidgetStack( centralWidget(), "MixerWidgetStack" );
 	widgetsLayout->addWidget( m_wsMixers );
-
-	// Add to main layout
-	//mainLayout->addLayout( widgetsLayout, 0, 0 );
 }
 
 
@@ -466,9 +463,14 @@ KMixWindow::initMixerWidgets()
 		mw->setLabels( m_showLabels );
 		mw->addActionToPopup( actionCollection()->action("options_show_menubar") );
 		mw->show();
+
+		// ulgy hack to avoid sending to many updateSize requests to kicker that would freeze it
+		m_layoutTimer = new QTimer( this );
+		connect( m_layoutTimer, SIGNAL(timeout()), this, SLOT(updateLayoutNow()) );
 		
 		connect( mw, SIGNAL( masterMuted( bool ) ), SLOT( updateDockIcon() ) );
 		connect( mw, SIGNAL( newMasterVolume( Volume ) ), SLOT( updateDockTip(Volume) ) );
+		connect( mw, SIGNAL(updateLayout()), this, SLOT(triggerUpdateLayout()));
 	}
 }
 
@@ -488,6 +490,28 @@ void
 KMixWindow::quit()
 {
 	kapp->quit();
+}
+
+// method "stolen" from KMixApplet
+void KMixWindow::triggerUpdateLayout()
+{
+	kdDebug() << "KMixWindow::triggerUpdateLayout()\n";
+	if ( m_lockedLayout ) return;
+	if ( !m_layoutTimer->isActive() ) {
+		kdDebug() << "KMixWindow::triggerUpdateLayout() starting timer\n";
+		m_layoutTimer->start( 100, TRUE );
+	}
+}
+
+// method "stolen" from KMixApplet
+void KMixWindow::updateLayoutNow()
+{
+   m_lockedLayout++;
+ 	kdDebug() << "KMixWindow::updateLayoutNow()\n";
+ 	resize(widgetsLayout->minimumSize() );
+   //emit updateLayout();
+   //saveConfig(); // ugly hack to get the config saved somehow
+   m_lockedLayout--;
 }
 
 

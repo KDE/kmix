@@ -110,13 +110,16 @@ KMixWindow : public KMainWindow
    QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
 
+   QTimer *m_layoutTimer;
+   int m_lockedLayout;
+
    KComboBox *m_cMixer;
    QWidgetStack *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QTimer *timer;	// Timer for reading volume from HW
    QString m_hwInfoString;
-
+	QVBoxLayout *widgetsLayout;
    //bool isCategoryUsed(Mixer* mixer, MixDevice::DeviceCategory categoryMask);
 
   private slots:
@@ -125,6 +128,8 @@ KMixWindow : public KMainWindow
    void dockMute();
    void slotHWInfo();
 	void showSelectedMixer( int mixer );
+	void triggerUpdateLayout();
+	void updateLayoutNow();
 };
 
 #endif // KMIX_H
