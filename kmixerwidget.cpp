@@ -136,6 +136,8 @@ void KMixerWidget::createDeviceWidgets( KPanelApplet::Direction dir, MixDevice::
       connect( mdw, SIGNAL( masterMuted( bool ) ),
                   SIGNAL( masterMuted( bool ) ) );
 
+	  connect( mdw, SIGNAL( newMasterVolume(Volume) ), SIGNAL( newMasterVolume(Volume) ) );
+
       connect( mdw, SIGNAL(updateLayout()), this, SLOT(updateSize()));
       if ( (mixDevice->category() & categoryMask) == 0) {
          // This device does not fit the category => Hide it

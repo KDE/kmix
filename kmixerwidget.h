@@ -72,6 +72,7 @@ class KMixerWidget : public QWidget  {
   signals:
    void updateLayout();
    void masterMuted( bool );
+   void newMasterVolume(Volume vol);
 
   public slots:
    void setTicks( bool on );

@@ -535,12 +535,18 @@ void MixDeviceWidget::setVolume( int channel, int vol )
 {
    m_mixdevice->setVolume( channel, vol );
    emit newVolume( m_mixdevice->num(), m_mixdevice->getVolume() );
+
+   if ( m_mixdevice->num()==m_mixer->masterDevice() )
+       emit newMasterVolume( vol );
 }
 
 void MixDeviceWidget::setVolume( Volume vol )
 {
    m_mixdevice->setVolume( vol );
    emit newVolume( m_mixdevice->num(), m_mixdevice->getVolume() );
+
+   if ( m_mixdevice->num()==m_mixer->masterDevice() )
+       emit newMasterVolume( vol );
 }
 
 void MixDeviceWidget::update()

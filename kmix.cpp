@@ -369,6 +369,12 @@ KMixWindow::updateDockIcon()
 }
 
 void
+KMixWindow::updateDockTip(Volume vol)
+{
+	m_dockWidget->setVolumeTip( 0, vol );
+}
+
+void
 KMixWindow::saveConfig()
 {
 	KConfig *config = kapp->config();
@@ -517,6 +523,7 @@ KMixWindow::insertMixerWidget( KMixerWidget *mw )
 
    connect( mw, SIGNAL(updateLayout()), this, SLOT(updateLayout()) );
    connect( mw, SIGNAL( masterMuted( bool ) ), SLOT( updateDockIcon() ) );
+   connect( mw, SIGNAL( newMasterVolume( Volume ) ), SLOT( updateDockTip(Volume) ) );
 
    KAction *a = actionCollection()->action( "file_close_tab" );
    if ( a )

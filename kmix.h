@@ -84,6 +84,7 @@ class KMixWindow : public KMainWindow
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void updateDockIcon();
+   void updateDockTip(Volume vol);
    void stopVisibilityUpdates();
    void slotConfigureKeys();
 

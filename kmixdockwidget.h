@@ -44,6 +44,7 @@ class KMixDockWidget : public KSystemTray  {
 
    void updatePixmap();
    void setErrorPixmap();
+   void ignoreNextEvent();
 
  public slots:
    void setVolumeTip(int, Volume);
@@ -61,18 +62,21 @@ class KMixDockWidget : public KSystemTray  {
    KMixMasterVolume *masterVol;
    KAudioPlayer *audioPlayer;
    bool m_playBeepOnVolumeChange;
-   bool m_mixerVisible;
+   bool m_ignoreNextEvent;
 };
 
 class KMixMasterVolume : public QVBox
 {
     public:
-        KMixMasterVolume(QWidget* parent, const char* name, Mixer* mixer);
+        KMixMasterVolume(QWidget* parent, const char* name, Mixer* mixer, KMixDockWidget *dockW);
         ~KMixMasterVolume() {}
         MixDeviceWidget* mixerWidget() { return mdw; }
 
     protected:
         MixDeviceWidget *mdw;
+        KMixDockWidget *dock;
+
+        void mousePressEvent(QMouseEvent *e);
 };
 
 #endif
