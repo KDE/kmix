@@ -29,18 +29,12 @@ static char rcsid[]="$Id$";
 
 #include <kapp.h>
 #include <kiconloader.h>
-#if KDE_VERSION_MAJOR >= 2
 #include <kglobal.h>
-#endif
 #include <klocale.h>
 #include <kconfig.h>
 #include <kwm.h>
 
-#if KDE_VERSION_MAJOR >= 2
 #include <kmessagebox.h>
-#endif
-#include <kmsgbox.h>
-
 
 #include "sets.h"
 #include "mixer.h"
@@ -202,11 +196,7 @@ KMix::KMix(int mixernum, int SetNum)
 
   int mixer_error = mix->grab();
   if ( mixer_error != 0 ) {
-#if KDE_VERSION_MAJOR >= 2
     KMessageBox::error(0, KMixErrors[mixer_error], i18n("Mixer failure"));
-#else
-    KMsgBox(0, KMixErrors[mixer_error], i18n("Mixer failure"));
-#endif
     mix->errormsg(mixer_error);
     exit(1);
   }
@@ -243,9 +233,6 @@ void KMix::createWidgets()
   bool i_b_first = true;
 
   QPixmap miniDevPM;
-#if KDE_VERSION_MAJOR < 2
-#define BarIcon Icon
-#endif
 
   QPixmap WMminiIcon = BarIcon("mixer_mini.xpm");
 
@@ -636,11 +623,7 @@ void KMix::launchAboutCB()
 bool KMix::eventFilter(QObject *o, QEvent *e)
 {
   // Lets see, if we have a "Right mouse button press"
-#if KDE_VERSION_MAJOR >= 2
   if (e->type() == QEvent::MouseButtonPress)
-#else
-  if (e->type() == Event_MouseButtonPress)
-#endif
  {
     QMouseEvent *qme = (QMouseEvent*)e;
     if (qme->button() == RightButton) {

@@ -21,11 +21,6 @@
  */
 
 #include <kapp.h>
-#if KDE_VERSION_MAJOR >= 2
-#include <kglobal.h>
-#else
-#define BarIcon Icon
-#endif
 #include <kiconloader.h>
 #include <klocale.h>
 #include <ktmainwindow.h>
@@ -170,7 +165,7 @@ void KDockWidget::mousePressEvent(QMouseEvent *e)
   }
 }
 
-void KDockWidget::mousePressLeftEvent(QMouseEvent *e)
+void KDockWidget::mousePressLeftEvent(QMouseEvent *)
 {
   toggle_window_state();
 }
