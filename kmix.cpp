@@ -64,6 +64,8 @@ KMixApp::KMixApp()
 
    if ( m_showDockWidget && m_startHidden )
       hide();
+   else
+      show();
 
    updateDocking();
 }

@@ -62,9 +62,7 @@ int main(int argc, char *argv[])
    }
    else 
    {
-      KMixApp *kmix = new KMixApp();
-      kmix->show();
-
+      KMixApp *kmix = new KMixApp();      
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		
       args->clear();
