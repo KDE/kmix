@@ -100,17 +100,22 @@ void KMixApp::initMixer()
    QTimer *timer = new QTimer( this );
    timer->start( 500 );
 
-   Mixer *mixer = Mixer::getMixer();
-   int mixerError = mixer->grab();
-   if ( mixerError!=0 )
-   {
-      KMessageBox::error(0, mixer->errorText(mixerError), i18n("Mixer failure"));
-      exit(1);
-   }
+   for ( int dev=0; dev<4; dev++ )
+      for ( int card=0; card<4; card++ )
+      {
+	 Mixer *mixer = Mixer::getMixer( dev, card );
+	 int mixerError = mixer->grab();
+	 if ( mixerError!=0 )
+	 {
+	    //KMessageBox::error(0, mixer->errorText(mixerError), i18n("Mixer failure"));
+	    delete mixer;	    
+	 } else
+	 {
+	    connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
+	    m_mixers.append( mixer );
+	 }  
+      }
 
-   connect( timer, SIGNAL(timeout()), mixer, SLOT(readSetFromHW()));
-   m_mixers.append( mixer );
-  
    kDebugInfo("<- KMixApp::initMixer");
 }
 

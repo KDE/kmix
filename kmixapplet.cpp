@@ -87,7 +87,7 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
    KPanelApplet::resizeEvent( e );
 
    m_button->setGeometry( 0 ,0, m_button->minimumWidth(), height() );
-
+   //m_mixerWidget->setOrientation( orientation()==Left || orientation()==Right ); 
    m_mixerWidget->setIcons( height()>=32 );
    m_mixerWidget->setGeometry( m_button->minimumWidth() + 1, 0, 
 			       width() - m_button->minimumWidth(), height() );
