@@ -90,7 +90,7 @@ class MixDeviceWidget : public QWidget
    private:
       MixDevice *m_mixdevice;
       QList<QSlider> m_sliders;
-      bool m_split;
+      bool m_linked;
       bool m_show;
 
       QLabel *m_iconLabel;

@@ -49,7 +49,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
    // global stuff
    m_popupMenu = 0L;
    m_show = true;
-   m_split = false;
+   m_linked = true;
    m_actions = new KActionCollection( this );
 
    new KToggleAction( i18n("&Split channels"), 0, this, SLOT(toggleStereoLinked()), 
@@ -93,7 +93,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md, bool showMuteLED, bool showRecor
 				     QSlider::Vertical, this, md->name() );
       QToolTip::add( slider, md->name() );
       slider->installEventFilter( this );
-      if( i>0 ) slider->hide();
+      if( i>0 && m_linked ) slider->hide();
       sliders->addWidget( slider );
       m_sliders.append ( slider );
       connect( slider, SIGNAL( valueChanged(int) ), this, SLOT( volumeChange ( int ) ));
@@ -133,11 +133,14 @@ void MixDeviceWidget::contextMenu()
 
    KPopupMenu *menu = new KPopupMenu( i18n("Device settings"), this );
 
-   KToggleAction *stereo = (KToggleAction *)m_actions->action( "stereo" );
-   if ( stereo )
+   if ( m_sliders.count()>1 )
    {
-      stereo->setChecked( !isStereoLinked() );
-      stereo->plug( menu );
+      KToggleAction *stereo = (KToggleAction *)m_actions->action( "stereo" );
+      if ( stereo )
+      {
+	 stereo->setChecked( !isStereoLinked() );
+	 stereo->plug( menu );
+      }
    }
    
    KAction *a = m_actions->action( "hide" );
@@ -233,7 +236,7 @@ bool MixDeviceWidget::isRecsrc()
 
 bool MixDeviceWidget::isStereoLinked()
 {
-   return !m_split;
+   return m_linked;
 }
 
 bool MixDeviceWidget::isLabeled()
@@ -243,15 +246,19 @@ bool MixDeviceWidget::isLabeled()
 
 void MixDeviceWidget::setStereoLinked(bool value)
 {
-   m_split = !value;
+   kDebugInfo("MixDeviceWidget::setStereoLinked( %i )", value );
+
+   m_linked = value;
    QSlider* slider;
-   for( slider = m_sliders.at( 1 ); slider != 0 ; slider = m_sliders.next() )
+   for( slider=m_sliders.at( 1 ); slider!=0 ; slider=m_sliders.next() )
       value ? slider->hide() : slider->show();
+
+   layout()->activate();
 }
 
 void MixDeviceWidget::toggleStereoLinked()
 {
-   setStereoLinked( !m_split );
+   setStereoLinked( !m_linked );
 }
 
 void MixDeviceWidget::setMuted(bool value)
@@ -285,8 +292,6 @@ void MixDeviceWidget::setLabeled(bool value)
       m_label->show();
    else
       m_label->hide();
-  
-   updateGeometry(); 
   
    layout()->activate();
 }
@@ -338,7 +343,7 @@ void MixDeviceWidget::volumeChange( int )
    {
       int svol = slider->maxValue() - slider->value();
       index = m_sliders.at();
-      if( index == 0 && !m_split )
+      if( index==0 && m_linked )
       {
 	 vol.setAllVolumes( svol );
 	 break;
@@ -359,7 +364,7 @@ void MixDeviceWidget::setVolume( int channel, int vol )
 
 void MixDeviceWidget::setVolume( Volume vol )
 {
-   if( !m_split )
+   if( m_linked )
    {
       int maxvol = 0;
       for( int i = 0; i < vol.channels(); i++ )
