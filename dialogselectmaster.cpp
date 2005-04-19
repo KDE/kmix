@@ -19,13 +19,14 @@
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <qvbox.h>
+#include <qbuttongroup.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qptrlist.h>
 #include <qradiobutton.h>
 #include <qscrollview.h>
 #include <qtooltip.h>
+#include <qvbox.h>
 
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -40,25 +41,27 @@ DialogSelectMaster::DialogSelectMaster( QWidget* )
     : KDialogBase(  Plain, i18n( "Configure" ), Ok|Cancel, Ok )
 {
    _layout = 0;
-   createPage(0);  // Open with Mixer Hardware #0
+   m_vboxForScrollView = 0;
+   createWidgets(0);  // Open with Mixer Hardware #0
 
 }
 
 DialogSelectMaster::~DialogSelectMaster()
 {
    delete _layout;
-   _layout = 0;
+   delete m_vboxForScrollView;
 }
 
-void DialogSelectMaster::createPage(int mixerId)
+/**
+ * Create basic widgets of the Dialog.
+ */
+void DialogSelectMaster::createWidgets(int mixerId)
 {
-    delete _layout; // Remove old layout (in case of a re-layout by selecting another soundcard).
-    _layout = new QVBoxLayout(plainPage(),0,-1, "_layout" );
-
-    
-    //    kdDebug(67100) << "DialogSelectMaster::DialogSelectMaster add header" << "\n";
+    QFrame *m_mainFrame = plainPage();
+    _layout = new QVBoxLayout(m_mainFrame,0,-1, "_layout" );
 
     if ( Mixer::mixers().count() > 1 ) {
+      kdDebug(67100) << "DialogSelectMaster::createPage count()>1" << "\n";
       // More than one Mixer => show Combo-Box to select Mixer
       // Mixer widget line
       QHBoxLayout* mixerNameLayout = new QHBoxLayout( _layout );
@@ -66,62 +69,98 @@ void DialogSelectMaster::createPage(int mixerId)
       //QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
       //mixerNameLayout->setSizePolicy(qsp);
       mixerNameLayout->setSpacing(KDialog::spacingHint());
-      
-      QLabel *qlbl = new QLabel( i18n("Current Mixer"), this );
+
+      QLabel *qlbl = new QLabel( i18n("Current Mixer"), m_mainFrame );
       mixerNameLayout->addWidget(qlbl);
       qlbl->setFixedHeight(qlbl->sizeHint().height());
-      
-      KComboBox* m_cMixer = new KComboBox( FALSE, this, "mixerCombo" );
+
+      m_cMixer = new KComboBox( FALSE, m_mainFrame, "mixerCombo" );
       m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
       connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPage( int ) ) );
       for ( Mixer *mixer = Mixer::mixers().first(); mixer !=0; mixer = Mixer::mixers().next() ) {
 	m_cMixer->insertItem( mixer->mixerName() );
       }
-      m_cMixer->setCurrentItem(mixerId);
+
       QToolTip::add( m_cMixer, i18n("Current mixer" ) );
       mixerNameLayout->addWidget(m_cMixer);
-      _layout->addLayout(mixerNameLayout);
-      mixerNameLayout->activate();   // !!
+      m_cMixer->setCurrentItem(mixerId);
     }
 
+    QLabel *qlbl = new QLabel( i18n("Select Channel"), m_mainFrame );
+    _layout->addWidget(qlbl);
+
+    m_scrollableChannelSelector = new QScrollView(m_mainFrame, "scrollableChannelSelector");
+    m_scrollableChannelSelector->viewport()->setBackgroundMode(Qt::PaletteBackground);
+    _layout->add(m_scrollableChannelSelector);
+
+    m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
+    m_buttonGroupForScrollView->hide();
+
+    createPage(mixerId);
+    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+}
+
+
+/**
+ * Create RadioButton's for the Mixer with number 'mixerId'.
+ * @par mixerId The Mixer, for which the RadioButton's should be created.
+ */
+void DialogSelectMaster::createPage(int mixerId)
+{
+    //kdDebug(67100) << "DialogSelectMaster::createPage()" << endl;
     Mixer *mixer = Mixer::mixers().at(mixerId);
     if ( mixer == 0 ) {
-      kdDebug(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << mixerId << ")" << endl;
+      kdError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << mixerId << ")" << endl;
       return; // can not happen
     }
     
-    QLabel *qlbl = new QLabel( i18n("Select Channel"), this );
-    _layout->addWidget(qlbl);
-    
-    // --- Show devices of current mixer ---
-    QScrollView* scrollableChannelSelector = new QScrollView(this, "scrollableChannelSelector");
-    _layout->add(scrollableChannelSelector);
-    QVBox* vboxForScrollView = new QVBox(scrollableChannelSelector->viewport());
-    scrollableChannelSelector->addChild(vboxForScrollView);
-    
-    
+    /** --- Reset page -----------------------------------------------
+     * In case the user selected a new Mixer via m_cMixer, we need
+     * to remove the stuff created on the last call.
+     */
+    //m_buttonGroupForScrollView->clear();
+    //_qEnabledCB.setAutoDelete(true);
+    //_qEnabledCB.clear();
+    // delete the VBox. This should automatically remove all contained QRadioButton's.
+    delete m_vboxForScrollView;
+    /** Reset page end -------------------------------------------------- */
+
+    m_vboxForScrollView = new QVBox(m_scrollableChannelSelector->viewport());
+    m_scrollableChannelSelector->addChild(m_vboxForScrollView);
+
+
     const MixSet& mixset = mixer->getMixSet();
     MixSet& mset = const_cast<MixSet&>(mixset);
     for( MixDevice* md = mset.first(); md != 0; md = mset.next() )
     {
-	    QString mdName = md->name();
+            //kdDebug(67100) << "DialogSelectMaster::createPage() mset append qrb" << endl;
+            QString mdName = md->name();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
-	    QRadioButton* qrb = new QRadioButton( mdName, vboxForScrollView );  // plainPage()
-	    _qEnabledCB.append(qrb);
+	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
+	    m_buttonGroupForScrollView->insert(qrb, md->num());
+	    //_qEnabledCB.append(qrb);
 	    qrb->setChecked(false); // cannot match the current master at the moment.
-	    //cb->setChecked( !mdw->isDisabled() ); //mdw->isVisible() );
-	    //vboxForScrollView->addWidget(qrb);
+	    //cb->setChecked( !mdw->isDisabled() ); // !! Select the currently active item
     }
-    _layout->activate();
-    resize(_layout->sizeHint() );
-    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+
+    //m_vboxForScrollView->resize(m_vboxForScrollView->sizeHint());
+    m_vboxForScrollView->show();  // show() is neccesary starting with the second call to createPage()
+    //resize(m_vboxForScrollView->sizeHint() );
 }
 
 
 void DialogSelectMaster::apply()
 {
-   // emit parameters: soundcard_id, channel_id
-   emit newMasterSelected(0,5);
+   int soundcard_id = 0;
+   if ( Mixer::mixers().count() > 1 ) {
+     soundcard_id = m_cMixer->currentItem();
+   }
+   int channel_id = m_buttonGroupForScrollView->selectedId();
+   if ( channel_id != -1 ) {
+     // A channel was selected by the user => emit the "newMasterSelected()" signal
+     kdDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
+     emit newMasterSelected(soundcard_id, channel_id);
+   }
 }
 
 #include "dialogselectmaster.moc"
