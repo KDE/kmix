@@ -43,7 +43,6 @@ extern "C"
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
-// @todo Add file descriptor based notifying for seeing changes
 
 Mixer*
 ALSA_getMixer( int device, int card )
@@ -61,6 +60,7 @@ Mixer_ALSA::Mixer_ALSA( int device, int card ) :
 
 Mixer_ALSA::~Mixer_ALSA()
 {
+    releaseMixer();
 }
 
 int
@@ -112,7 +112,6 @@ Mixer_ALSA::openMixer()
     snd_mixer_selem_id_alloca( &sid );
 
     // Card information
-    QString devName;
     if( m_devnum == -1 )
         m_devnum = 0;
     if ( (unsigned)m_devnum > 31 )
@@ -153,6 +152,7 @@ Mixer_ALSA::openMixer()
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
 	//errormsg( Mixer::ERR_NODEV );
+	_handle = 0;
 	return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
     }
 
@@ -170,6 +170,7 @@ Mixer_ALSA::openMixer()
 	return Mixer::ERR_READ;
     }
 
+    // Memory leak (according to Valgrind): Must possibly call sth. like snd_mixer_unload() in releaseMixer()
     if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
@@ -189,7 +190,7 @@ Mixer_ALSA::openMixer()
 	}
 
 
-	sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
+	//sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
 	snd_mixer_selem_get_id( elem, sid );
 
 	bool canRecord = false;
@@ -219,7 +220,8 @@ Mixer_ALSA::openMixer()
 	    if ( snd_mixer_selem_is_enumerated(elem) ) {
 		cc = MixDevice::ENUM;
 		vol = new Volume(); // Dummy, unused
-		mixer_sid_list.append( sid );
+		mixer_elem_list.append( elem );
+		//mixer_sid_list.append( sid );
 		
 		// --- get Enum names START ---
 		int numEnumitems = snd_mixer_selem_get_enum_items(elem);
@@ -265,8 +267,8 @@ Mixer_ALSA::openMixer()
 		/* Create Volume object. If there is no volume on this device,
 		 * it will be created with maxVolume == 0 && minVolume == 0 */
 		vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
-		//mixer_elem_list.append( elem );
-		mixer_sid_list.append( sid );
+		mixer_elem_list.append( elem );
+		//mixer_sid_list.append( sid );
 		
 		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {   
 			//kdDebug(67100) << "has_playback_switch()" << endl;
@@ -347,12 +349,32 @@ Mixer_ALSA::openMixer()
 int
 Mixer_ALSA::releaseMixer()
 {
-	int ret = snd_mixer_close( _handle );
-	return ret;
+//  kdDebug(67100) << "IN  Mixer_ALSA::releaseMixer()" << endl;
+  int ret=0;
+  if ( _handle != 0 )
+  { 
+    snd_mixer_free ( _handle );
+    if ( ( ret = snd_mixer_detach ( _handle, devName.latin1() ) ) < 0 )
+    {
+        kdDebug(67100) << "snd_mixer_detach err=" << snd_strerror(ret) << endl;
+    }
+    int ret2 = 0;
+    if ( ( ret2 = snd_mixer_close ( _handle ) ) < 0 )
+    {
+        kdDebug(67100) << "snd_mixer_close err=" << snd_strerror(ret2) << endl;
+	if ( ret == 0 ) ret = ret2; // no error before => use current error code
+    }
+
+    _handle = 0;
+  }
+
+//  kdDebug(67100) << "OUT Mixer_ALSA::releaseMixer()" << endl;
+  return ret;
 }
 
 
 snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
+/*
 	snd_mixer_elem_t* elem = 0;
 	if ( int( mixer_sid_list.count() ) > devnum ) {
 		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
@@ -363,7 +385,10 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 		}
 	}
 	return elem;
-//	return mixer_elem_list[ devnum ];
+*/
+
+	snd_mixer_elem_t* elem = mixer_elem_list[ devnum ];
+	return elem;
 }
 
 bool Mixer_ALSA::prepareUpdate() {
