@@ -49,7 +49,7 @@ class Mixer : public QObject, virtual public MixerIface
 			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET, ERR_MIXEROPEN };
 
       Mixer( int device = -1, int card = -1 );
-      virtual ~Mixer() {};
+      virtual ~Mixer();
 
       /// Static function. This function must be overloaded by any derived mixer class
       /// to create and return an instance of the derived class.
@@ -189,12 +189,15 @@ class Mixer : public QObject, virtual public MixerIface
       MixSet m_mixDevices;
 
       QPtrList<MixSet> m_profiles;
+      static QPtrList<Mixer> s_mixers;
 
    public:
       int setupMixer( MixSet set );
+      static QPtrList<Mixer>& mixers();
 
    private:
       mutable bool _readSetFromHWforceUpdate;
+      static int _dcopID;
 };
 
 #endif

@@ -37,6 +37,11 @@
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
  */
 
+// !! Warning: Don't commit with "KMIX_DCOP_OBJID_TEST" #define'd (cesken)
+#undef KMIX_DCOP_OBJID_TEST
+int Mixer::_dcopID = 0;
+
+QPtrList<Mixer> Mixer::s_mixers;
 
 int Mixer::getDriverNum()
 {
@@ -51,11 +56,21 @@ int Mixer::getDriverNum()
     return num;
 }
 
+/*
+ * Returns a reference of the current mixer list.
+ */
+QPtrList<Mixer>& Mixer::mixers()
+{
+  return s_mixers;
+}
+
+
 Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
 {
   m_devnum = device;
   m_cardnum = card;
   m_masterDevice = 0;
+  _pollingTimer = 0;
 
   m_isOpen = false;
   _errno  = 0;
@@ -70,9 +85,21 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
 
   QCString objid;
+#ifndef KMIX_DCOP_OBJID_TEST
   objid.setNum(m_devnum);
+#else
+  objid.setNum(Mixer::_dcopID);
+  Mixer::_dcopID ++;  // !!! Change this before commiting !!!
+#endif
   objid.prepend("Mixer");
   DCOPObject::setObjId( objid );
+  
+}
+
+Mixer::~Mixer() {
+   // Release Mixer. This might also free memory, depending on the called backend method
+   release();
+   delete _pollingTimer;
 }
 
 Mixer* Mixer::getMixer( int driver, int device )
