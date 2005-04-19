@@ -37,13 +37,12 @@
 #include "kmixtoolbox.h"
 
 /***********************************************************************************
- Attention:
- This KMixToolBox is linked to the KMix Main Program, the KMix Applet and kmixctrl.
- As we do not want to link in more than neccesary to kmixctrl, you are asked
- not to put any GUI classes in here.
- In the case where it is unavoidable, please use a single  base class, like with
- MixDeviceWidget. It has the penalty that any "specialities" used here must be
- implemented in the base class, but thats the price for it ...
+ KMixToolbox contains several GUI relevant methods that are shared between the 
+ KMix Main Program, and the KMix Applet.
+ kmixctrl - as not non-GUI application - does NOT link to KMixToolBox.
+
+ This means: Shared GUI stuff goes into the KMixToolBox class , non-GUI stuff goes
+ into the MixerToolBox class.
  ***********************************************************************************/
 void KMixToolBox::setIcons(QPtrList<QWidget> &mdws, bool on ) {
     for ( QWidget *qmdw=mdws.first(); qmdw!=0; qmdw=mdws.next() ) {
