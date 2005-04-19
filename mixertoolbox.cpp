@@ -38,6 +38,17 @@
  not to put any GUI classes in here.
  In the case where it is unavoidable, please put them in KMixToolBox.
  ***********************************************************************************/
+
+/**
+ * Scan for Mixers in the System. This is the method that implicitely fills the
+ * list of Mixer's, which is accesible via the static Mixer::mixer() method.
+ * @par mixers The list where to add the found Mixers. This parameter is superfluous
+ *             nowadays, as it is now really trivial to get it - just call the static
+ *             Mixer::mixer() method.
+ * @par multiDriverMode Whether the Mixer scan should try more all backendends.
+ *          'true' means to scan all backends. 'false' means: After scanning the
+ *          current backend the next backend is only scanned if no Mixers were found yet.
+ */
 void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QString& ref_hwInfoString)
 {
     // Find all mixers and initalize them
@@ -176,3 +187,17 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 	kdDebug(67100) << ref_hwInfoString << endl;
 }
 
+
+/*
+ * Clean up and free all ressources of all found Mixers, which were found in the initMixer() call
+ */
+void MixerToolBox::deinitMixer()
+{
+   Mixer *mixer;
+   while ( (mixer=Mixer::mixers().first()) != 0)
+   {
+      mixer->release();
+      Mixer::mixers().remove(mixer);
+      delete mixer;
+   }
+}
