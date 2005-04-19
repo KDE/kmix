@@ -70,6 +70,12 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
    _enumValues = md._enumValues;
 }
 
+MixDevice::~MixDevice() {
+  // Clear MixDevices enum Strings (switch on auto-delete, so the QString's inside will be cleared)
+  _enumValues.setAutoDelete(true);
+  _enumValues.clear();
+}
+
 Volume& MixDevice::getVolume()
 {
    return _volume;
