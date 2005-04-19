@@ -12,7 +12,7 @@ noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
 	mixdevicewidget.h mdwslider.h mdwswitch.h mdwenum.h \
 	mixer.h mixset.h mixdevice.h volume.h kledbutton.h version.h kmixtoolbox.h \
 	ksmallslider.h kmixapplet.h mixerIface.h verticaltext.h \
-	KMixApp.h dialogviewconfiguration.h kmixtoolbox.h mixertoolbox.h
+	KMixApp.h dialogviewconfiguration.h kmixtoolbox.h mixertoolbox.h dialogselectmaster.h
 
 
 METASOURCES = AUTO
@@ -23,7 +23,7 @@ kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	mixdevicewidget.cpp mdwslider.cpp mdwswitch.cpp mdwenum.cpp \
 	kmixerwidget.cpp mixer.cpp mixset.cpp mixdevice.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp verticaltext.cpp mixerIface.skel \
-	kmixtoolbox.cpp mixertoolbox.cpp dialogviewconfiguration.cpp KMixApp.cpp
+	kmixtoolbox.cpp mixertoolbox.cpp dialogviewconfiguration.cpp KMixApp.cpp dialogselectmaster.cpp
 
 kmix_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)
 kmix_la_LDFLAGS = $(all_libraries) -module $(KDE_PLUGIN) -avoid-version
@@ -38,7 +38,8 @@ kmix_panelapplet_la_SOURCES = kmixapplet.cpp \
 	viewbase.cpp viewapplet.cpp \
 	mixdevicewidget.cpp mdwslider.cpp \
 	mixer.cpp mixset.cpp mixdevice.cpp ksmallslider.cpp volume.cpp kledbutton.cpp \
-	verticaltext.cpp mixerIface.skel colorwidget.ui dialogviewconfiguration.cpp kmixtoolbox.cpp mixertoolbox.cpp
+	verticaltext.cpp mixerIface.skel colorwidget.ui dialogviewconfiguration.cpp \
+	kmixtoolbox.cpp mixertoolbox.cpp dialogselectmaster.cpp
 
 kmix_panelapplet_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 kmix_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS) $(LIBALIB) $(LIBOSSAUDIO) $(LIBASOUND)

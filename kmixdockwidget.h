@@ -57,6 +57,7 @@ class KMixDockWidget : public KSystemTray  {
 
  protected:
    void createMasterVolWidget();
+   void createActions();
    void mousePressEvent(QMouseEvent *);
    void mouseReleaseEvent(QMouseEvent *);
    void wheelEvent(QWheelEvent *);
@@ -71,6 +72,8 @@ class KMixDockWidget : public KSystemTray  {
    bool _volumePopup;
  private slots:
    void dockMute();
+   void selectMaster();
+   void handleNewMaster(int soundcard_id, int channel_id);
 };
 
 #endif
