@@ -107,10 +107,7 @@ KMixWindow : public KMainWindow
    bool m_surroundView;            // Experimental. Off by defualt
    Qt::Orientation m_toplevelOrientation;
 
-   QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
-
-   int m_lockedLayout; // !!
 
    QHBox* mixerNameLayout;
    KComboBox *m_cMixer;

@@ -75,7 +75,7 @@ extern "C"
 }
 
 int KMixApplet::s_instCount = 0;
-QPtrList<Mixer> KMixApplet::s_mixers;
+//<Mixer> KMixApplet::Mixer::mixers();
 
 static const QColor highColor = KGlobalSettings::baseColor();
 static const QColor lowColor = KGlobalSettings::highlightColor();
@@ -164,9 +164,9 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
     // init static vars
     if ( s_instCount == 0) {
-        s_mixers.setAutoDelete( TRUE );
+        Mixer::mixers().setAutoDelete( TRUE );
 	QString dummyStringHwinfo;
-	MixerToolBox::initMixer(s_mixers, false, dummyStringHwinfo);
+	MixerToolBox::initMixer(Mixer::mixers(), false, dummyStringHwinfo);
     }	
     s_instCount++;
     kdDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
@@ -179,7 +179,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     /********** find out to use which mixer ****************************************/
     _mixer = 0;
     if ( _mixerNum>=0 ) {
-	for (_mixer=s_mixers.first(); _mixer!=0; _mixer=s_mixers.next())
+      for (_mixer= Mixer::mixers().first(); _mixer!=0; _mixer=Mixer::mixers().next())
 	{
 	    // Name and number must match with the configuration
 	    if ( _mixer->mixerName() == _mixerName && _mixer->mixerNum()==_mixerNum ) break;
@@ -187,8 +187,8 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
     }
 	
     // don't prompt for a mixer if there is just one available
-    if ( !_mixer && s_mixers.count() == 1 ) {
-	_mixer = s_mixers.first();
+    if ( !_mixer && Mixer::mixers().count() == 1 ) {
+	_mixer = Mixer::mixers().first();
     }
 	
     //  Find out wether the applet should be reversed
@@ -221,11 +221,7 @@ KMixApplet::~KMixApplet()
    s_instCount--;
    if ( s_instCount == 0)
    {
-      QPtrListIterator<Mixer> it( s_mixers );
-      for ( ; it.current(); ++it )
-         it.current()->release();
-
-      s_mixers.clear();
+      MixerToolBox::deinitMixer();
    }
    */
 }
@@ -311,7 +307,7 @@ void KMixApplet::selectMixer()
    QStringList lst;
 
    int n=1;
-   for (Mixer *mixer=s_mixers.first(); mixer!=0; mixer=s_mixers.next())
+   for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
    {
       QString s;
       s.sprintf("%i. %s", n, mixer->mixerName().ascii());
@@ -325,7 +321,7 @@ void KMixApplet::selectMixer()
 					lst, 1, FALSE, &ok, this );
    if ( ok )
    {
-      Mixer *mixer = s_mixers.at( lst.findIndex( res ) );
+      Mixer *mixer = Mixer::mixers().at( lst.findIndex( res ) );
       if (!mixer)
          KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
       else

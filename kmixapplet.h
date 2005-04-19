@@ -114,7 +114,6 @@ private:
    AppletConfigDialog *m_pref;
 
    static int             s_instCount;
-   static QPtrList<Mixer> s_mixers;
    Mixer                  *_mixer;
 
    KMixApplet::Colors _colors;

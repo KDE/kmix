@@ -62,7 +62,6 @@
  */
 KMixWindow::KMixWindow()
 	: KMainWindow(0, 0, 0 ), m_showTicks( true ),
-	m_lockedLayout(0),
 	m_dockWidget( 0L )
 {
 	m_visibilityUpdateAllowed	= true;
@@ -73,7 +72,7 @@ KMixWindow::KMixWindow()
 	m_isVisible = false;
 	m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-	MixerToolBox::initMixer(m_mixers, m_multiDriverMode, m_hwInfoString);
+	MixerToolBox::initMixer(Mixer::mixers(), m_multiDriverMode, m_hwInfoString);
 	initActions();
 	initWidgets();
 	initMixerWidgets();
@@ -99,6 +98,7 @@ KMixWindow::KMixWindow()
 
 KMixWindow::~KMixWindow()
 {
+   MixerToolBox::deinitMixer();
 }
 
 
@@ -187,7 +187,7 @@ KMixWindow::updateDocking()
 
 		// create dock widget
                 // !! This should be a View in the future
-		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget", m_volumeWidget );
+		m_dockWidget = new KMixDockWidget( Mixer::mixers().first(), this, "mainDockWidget", m_volumeWidget );
 
 /* Belongs in KMixDockWidget
 		// create RMB menu
@@ -305,9 +305,9 @@ KMixWindow::initMixerWidgets()
 	int id=0;
 	Mixer *mixer;
 
-	// Attention!! If m_mixers is empty, we behave stupid. We don't show nothing and there
+	// Attention!! If Mixer::mixers() is empty, we behave stupid. We don't show nothing and there
         //             is not even a context menu.
-	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
+	for ( mixer=Mixer::mixers().first(),id=0; mixer!=0; mixer=Mixer::mixers().next(),id++ )
 	{
 	    //kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
 
@@ -419,7 +419,7 @@ void
 KMixWindow::loadVolumes()
 {
 	KConfig *cfg = new KConfig( "kmixctrlrc", true );
-	for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+	for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
 	{
 		mixer->volumeLoad( cfg );
 	}
@@ -435,7 +435,7 @@ void
 KMixWindow::saveVolumes()
 {
     KConfig *cfg = new KConfig( "kmixctrlrc", false );
-    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next()) {
+    for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next()) {
 	//kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
 	mixer->volumeSave( cfg );
     }
