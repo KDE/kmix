@@ -53,13 +53,12 @@
    (c) A balancing slider
    (d) A label containg the mixer name
 */
-KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
+KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
                             MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
    : QWidget( parent, name ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0),
-     //m_name( mixerName ), m_mixerName( mixerName ),
-     m_mixerNum( mixerNum ), m_id( _id ),
+     m_id( _id ),
      _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false )
 
 {

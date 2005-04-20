@@ -327,7 +327,7 @@ KMixWindow::initMixerWidgets()
 		}
 
 	
-		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
+		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
 
 		//mw->setName( mixer->mixerName() );

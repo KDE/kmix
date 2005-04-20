@@ -57,7 +57,7 @@ class KMixerWidget : public QWidget
    Q_OBJECT
 
   public:
-   KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
+   KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
                  MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
    ~KMixerWidget();
@@ -65,7 +65,6 @@ class KMixerWidget : public QWidget
    enum KMixerWidgetIO { OUTPUT=0, INPUT };
 
    const Mixer *mixer() const { return _mixer; };
-   int mixerNum() const { return m_mixerNum; };
 
    int id() const { return m_id; };
 
@@ -101,7 +100,6 @@ class KMixerWidget : public QWidget
    ViewSwitches*  _swWidget;
    ViewSurround*  _surroundWidget;
 
-   int m_mixerNum;
    int m_id;
 
    KActionMenu *m_toggleMixerChannels;
