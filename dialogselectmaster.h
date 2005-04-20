@@ -11,12 +11,13 @@ class QVBoxLayout;
 class KComboBox;
 #include <kdialogbase.h>
 
+class Mixer;
 
 class DialogSelectMaster : public KDialogBase
 {
     Q_OBJECT
  public:
-    DialogSelectMaster(QWidget* parent);
+    DialogSelectMaster(Mixer *);
     ~DialogSelectMaster();
 
  signals:
@@ -26,16 +27,16 @@ class DialogSelectMaster : public KDialogBase
     void apply();
 
  private:
-   void createWidgets(int);
+    void createWidgets(Mixer*);
+    void createPage(Mixer*);
     QVBoxLayout* _layout;
-    //QPtrList<QRadioButton>  _qEnabledCB;
     KComboBox* m_cMixer;
     QScrollView* m_scrollableChannelSelector;
     QVBox *m_vboxForScrollView;
     QButtonGroup *m_buttonGroupForScrollView;
     
  private slots:
-    void createPage(int mixerId);
+   void createPageByID(int mixerId);
 };
 
 #endif

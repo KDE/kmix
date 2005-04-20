@@ -76,7 +76,7 @@ void KMixDockWidget::createActions()
   KAction *a = actionCollection()->action( "dock_mute" );
   KPopupMenu *popupMenu = contextMenu();
   if ( a ) a->plug( popupMenu );
-  
+
   // Put "Select Master Channel" dialog in context menu
   (void)new KAction( i18n("Select Channel"), 0, this, SLOT(selectMaster()),
   actionCollection(), "select_master");
@@ -104,6 +104,7 @@ KMixDockWidget::createMasterVolWidget()
 
     _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, this);
     _dockAreaPopup->createDeviceWidgets();
+    m_mixer->readSetFromHWforceUpdate();  // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     /* We are setting up 3 connections:
      * Refreshig the _dockAreaPopup (not anymore neccesary, because ViewBase already does it)
      * Refreshing the Tooltip
@@ -118,7 +119,7 @@ KMixDockWidget::createMasterVolWidget()
 
 void KMixDockWidget::selectMaster()
 {
-   DialogSelectMaster* dsm = new DialogSelectMaster(0);
+   DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
    connect ( dsm, SIGNAL(newMasterSelected(int, int)), SLOT( handleNewMaster(int,int) ) );
    dsm->show();
     // !! The dialog is modal. Does it delete itself?
@@ -132,6 +133,8 @@ void KMixDockWidget::handleNewMaster(int soundcard_id, int channel_id)
     kdDebug(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
     return; // can not happen
   }
+  m_mixer = mixer;
+  createMasterVolWidget();
 }
 
 

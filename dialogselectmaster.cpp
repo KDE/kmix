@@ -37,12 +37,12 @@
 #include "mixdevice.h"
 #include "mixer.h"
 
-DialogSelectMaster::DialogSelectMaster( QWidget* )
-    : KDialogBase(  Plain, i18n( "Configure" ), Ok|Cancel, Ok )
+DialogSelectMaster::DialogSelectMaster( Mixer *mixer  )
+  : KDialogBase(  Plain, i18n( "Configure" ), Ok|Cancel, Ok )
 {
    _layout = 0;
    m_vboxForScrollView = 0;
-   createWidgets(0);  // Open with Mixer Hardware #0
+   createWidgets(mixer);  // Open with Mixer Hardware #0
 
 }
 
@@ -55,7 +55,7 @@ DialogSelectMaster::~DialogSelectMaster()
 /**
  * Create basic widgets of the Dialog.
  */
-void DialogSelectMaster::createWidgets(int mixerId)
+void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 {
     QFrame *m_mainFrame = plainPage();
     _layout = new QVBoxLayout(m_mainFrame,0,-1, "_layout" );
@@ -76,15 +76,22 @@ void DialogSelectMaster::createWidgets(int mixerId)
 
       m_cMixer = new KComboBox( FALSE, m_mainFrame, "mixerCombo" );
       m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-      connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPage( int ) ) );
+      connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPageByID( int ) ) );
+      
+      //int id=1;
       for ( Mixer *mixer = Mixer::mixers().first(); mixer !=0; mixer = Mixer::mixers().next() ) {
 	m_cMixer->insertItem( mixer->mixerName() );
-      }
+	if ( ptr_mixer == mixer ) {
+	  // Make the current Mixer the current item in the ComboBos
+	  m_cMixer->setCurrentItem( m_cMixer->count()-1 );
+	}
+	//id++;
+      } // end for all_Mixers
 
       QToolTip::add( m_cMixer, i18n("Current mixer" ) );
       mixerNameLayout->addWidget(m_cMixer);
-      m_cMixer->setCurrentItem(mixerId);
-    }
+      
+    } // end if (more_than_1_Mixer)
 
     QLabel *qlbl = new QLabel( i18n("Select Channel"), m_mainFrame );
     _layout->addWidget(qlbl);
@@ -96,16 +103,15 @@ void DialogSelectMaster::createWidgets(int mixerId)
     m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
     m_buttonGroupForScrollView->hide();
 
-    createPage(mixerId);
+    createPage(ptr_mixer);
     connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
 }
-
 
 /**
  * Create RadioButton's for the Mixer with number 'mixerId'.
  * @par mixerId The Mixer, for which the RadioButton's should be created.
  */
-void DialogSelectMaster::createPage(int mixerId)
+void DialogSelectMaster::createPageByID(int mixerId)
 {
     //kdDebug(67100) << "DialogSelectMaster::createPage()" << endl;
     Mixer *mixer = Mixer::mixers().at(mixerId);
@@ -113,14 +119,20 @@ void DialogSelectMaster::createPage(int mixerId)
       kdError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << mixerId << ")" << endl;
       return; // can not happen
     }
+    createPage(mixer);
+}
+
+/**
+ * Create RadioButton's for the Mixer with number 'mixerId'.
+ * @par mixerId The Mixer, for which the RadioButton's should be created.
+ */
+void DialogSelectMaster::createPage(Mixer* mixer)
+{
     
     /** --- Reset page -----------------------------------------------
      * In case the user selected a new Mixer via m_cMixer, we need
      * to remove the stuff created on the last call.
      */
-    //m_buttonGroupForScrollView->clear();
-    //_qEnabledCB.setAutoDelete(true);
-    //_qEnabledCB.clear();
     // delete the VBox. This should automatically remove all contained QRadioButton's.
     delete m_vboxForScrollView;
     /** Reset page end -------------------------------------------------- */
@@ -145,7 +157,6 @@ void DialogSelectMaster::createPage(int mixerId)
 
     //m_vboxForScrollView->resize(m_vboxForScrollView->sizeHint());
     m_vboxForScrollView->show();  // show() is neccesary starting with the second call to createPage()
-    //resize(m_vboxForScrollView->sizeHint() );
 }
 
 
