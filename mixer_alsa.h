@@ -10,7 +10,7 @@ class QString;
 class Mixer_ALSA : public Mixer
 {
 	public:
-		Mixer_ALSA( int device = -1, int card = -1 );
+		Mixer_ALSA( int device = -1 );
 		~Mixer_ALSA();
 		
 		virtual int  readVolumeFromHW( int devnum, Volume &vol );

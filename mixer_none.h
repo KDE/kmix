@@ -4,8 +4,7 @@
 class Mixer_None : public Mixer
 {
 public:
-  Mixer_None();
-  Mixer_None(int devnum, int SetNum);
+  Mixer_None(int devnum);
   virtual ~Mixer_None();
 
   virtual int readVolumeFromHW( int devnum, Volume& vol );

@@ -113,36 +113,22 @@ const uint_t MixerSunPortMasks[] =
 // FUNCTION    : SUN_getMixer
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
-Mixer* SUN_getMixer( int devnum, int SetNum )
+Mixer* SUN_getMixer( int devnum )
 {
    Mixer *l_mixer;
-   l_mixer = new Mixer_SUN( devnum, SetNum );
+   l_mixer = new Mixer_SUN( devnum );
    return l_mixer;
 }
 
-//======================================================================
-// FUNCTION    : SUN_getMixerSet
-// DESCRIPTION : Creates and returns a new mixer object.
-//======================================================================
-/*
-Mixer* SUN_getMixerSet( MixSet set, int device, int card )
-{
-   Mixer *l_mixer;
-   l_mixer = new Mixer_SUN( device, card );
-   return l_mixer;
-}
-*/
 
 //======================================================================
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class constructor.
 //======================================================================
-Mixer_SUN::Mixer_SUN(int devnum, int card) : Mixer(devnum, card)
+Mixer_SUN::Mixer_SUN(int devnum) : Mixer(devnum)
 {
    if ( devnum == -1 )
       m_devnum = 0;
-   if ( card == -1 )
-      m_cardnum = 0;
 }
 
 //======================================================================
@@ -152,10 +138,8 @@ Mixer_SUN::Mixer_SUN(int devnum, int card) : Mixer(devnum, card)
 int Mixer_SUN::openMixer()
 {
    //
-   // We don't support multiple cards or devices
+   // We don't support multiple devices
    //
-   if ( m_cardnum != 0 )
-      return Mixer::ERR_OPEN;
    if ( m_devnum !=0 )
       return Mixer::ERR_OPEN;
 

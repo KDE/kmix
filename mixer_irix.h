@@ -7,8 +7,7 @@
 class Mixer_IRIX : public Mixer
 {
 public:
-  Mixer_IRIX();
-  Mixer_IRIX(int devnum, int SetNum);
+  Mixer_IRIX(int devnum);
   virtual ~Mixer_IRIX() {};
 
   virtual void setRecsrc(unsigned int newRecsrc);

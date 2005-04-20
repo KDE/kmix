@@ -10,8 +10,7 @@
 class Mixer_HPUX : public Mixer
 {
 public:
-  Mixer_HPUX();
-  Mixer_HPUX(int devnum, int SetNum);
+  Mixer_HPUX(int devnum);
   virtual ~Mixer_HPUX();
 
   virtual QString errorText(int mixer_error);

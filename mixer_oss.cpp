@@ -75,31 +75,20 @@ const MixDevice::ChannelType MixerChannelTypes[32] = {
   MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,   MixDevice::UNKNOWN,
   MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
 
-Mixer* OSS_getMixer( int device, int card )
+Mixer* OSS_getMixer( int device )
 {
   Mixer *l_mixer;
-  l_mixer = new Mixer_OSS( device, card );
+  l_mixer = new Mixer_OSS( device );
   return l_mixer;
 }
 
-/*
-Mixer* OSS_getMixerSet( MixSet set, int device, int card )
-{
-  Mixer *l_mixer;
-  l_mixer = new Mixer_OSS( device, card );
-  return l_mixer;
-}
-*/
-
-Mixer_OSS::Mixer_OSS(int device, int card) : Mixer(device, card)
+Mixer_OSS::Mixer_OSS(int device) : Mixer(device)
 {
   if( device == -1 ) m_devnum = 0;
-  if( card   == -1 ) m_cardnum = 0;
 }
 
 int Mixer_OSS::openMixer()
 {
-    if ( m_cardnum!=0 ) return Mixer::ERR_OPEN; // OSS doesn't support different card numbers
   release();            // To be sure, release mixer before (re-)opening
 
   if ((m_fd= ::open( deviceName( m_devnum ).latin1(), O_RDWR)) < 0)

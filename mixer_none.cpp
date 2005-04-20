@@ -23,18 +23,14 @@
 #include "mixer_none.h"
 
 // This static method must be implemented (as fallback)
-Mixer* Mixer::getMixer(int devnum, int SetNum)
+Mixer* Mixer::getMixer(int devnum)
 {
   Mixer *l_mixer;
-  l_mixer = new Mixer_None( devnum, SetNum);
+  l_mixer = new Mixer_None( devnum);
   return l_mixer;
 }
 
-Mixer_None::Mixer_None()
-{
-}
-
-Mixer_None::Mixer_None(int devnum, int SetNum)
+Mixer_None::Mixer_None(int devnum)
 {
 }
 

@@ -28,8 +28,7 @@
 class Mixer_SUN : public Mixer
 {
 public:
-  Mixer_SUN();
-  Mixer_SUN(int devnum, int SetNum);
+  Mixer_SUN(int devnum);
   virtual ~Mixer_SUN() {};
 
   virtual QString errorText(int mixer_error);

@@ -79,11 +79,10 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
   m_balance = 0;
   m_mixDevices.setAutoDelete( true );
   m_profiles.setAutoDelete( true );
-  m_mixerNum = 0;
 
   _pollingTimer = new QTimer(); // will be started on grab() and stopped on release()
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
-
+  
   QCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST
   objid.setNum(m_devnum);
@@ -108,7 +107,7 @@ Mixer* Mixer::getMixer( int driver, int device )
    Mixer *mixer = 0;
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
    if( f!=0 ) {
-      mixer = f( device, 0 );
+      mixer = f( device );
    }
    if ( mixer == 0 ) {
       return 0;
@@ -134,7 +133,9 @@ Mixer* Mixer::getMixer( int driver, int device )
       return mixer;
    }
 
-
+   // Create a near-perfect unique ID
+   mixer->_id = mixer->mixerName() + ":" + (Mixer::mixers().count() + 1);
+   
    // --------- For what do we need the following lines of code ?!? -------------------
    MixSet &mset = mixer->m_mixDevices;
    if( !mset.isEmpty() ) {
@@ -357,17 +358,10 @@ QString Mixer::driverName( int driver )
         return "unknown";
 }
 
-
-void Mixer::setMixerNum( int num )
+QString& Mixer::id()
 {
-    m_mixerNum = num;
+  return _id;
 }
-
-int Mixer::mixerNum()
-{
-    return m_mixerNum;
-}
-
 int Mixer::getErrno() const {
     return this->_errno;
 }

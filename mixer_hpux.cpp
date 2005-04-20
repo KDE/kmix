@@ -61,21 +61,16 @@ const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   ,
 */
 
 
-Mixer* HPUX_getMixer(int devnum, int SetNum)
+Mixer* HPUX_getMixer(int devnum)
 {
   Mixer *l_mixer;
-  l_mixer = new Mixer_HPUX( devnum, SetNum);
-//  l_mixer->init(devnum, SetNum);
+  l_mixer = new Mixer_HPUX( devnum);
+//  l_mixer->init(devnum);
   return l_mixer;
 }
 
 
-Mixer_HPUX::Mixer_HPUX() : Mixer()
-{
-    Mixer_HPUX(0,-1);
-}
-
-Mixer_HPUX::Mixer_HPUX(int devnum, int SetNum) : Mixer(devnum, SetNum)
+Mixer_HPUX::Mixer_HPUX(int devnum) : Mixer(devnum)
 {
   char ServerName[10];
   ServerName[0] = 0;

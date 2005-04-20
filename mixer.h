@@ -92,9 +92,8 @@ class Mixer : public QObject, virtual public MixerIface
       QString driverName();
       static QString driverName(int num);
 
-      /// set/get mixer number used to identify mixers with equal names
-      void setMixerNum( int num );
-      int mixerNum();
+      /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>:<hw_number>"
+      QString& id();
 
       /// get the actual MixSet
       virtual MixSet getMixSet() { return m_mixDevices; };
@@ -178,12 +177,9 @@ class Mixer : public QObject, virtual public MixerIface
 
       QTimer* _pollingTimer;
 
-      // mixer number to identify mixers with equal name correctly (set by the client)
-      int m_mixerNum;
-
       bool m_isOpen;
       int m_balance; // from -100 (just left) to 100 (just right)
-      int     _errno;
+      int  _errno;
 
       // All mix devices of this phyisical device.
       MixSet m_mixDevices;
@@ -198,6 +194,7 @@ class Mixer : public QObject, virtual public MixerIface
    private:
       mutable bool _readSetFromHWforceUpdate;
       static int _dcopID;
+      QString _id;
 };
 
 #endif

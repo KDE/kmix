@@ -45,15 +45,15 @@ extern "C"
 
 
 Mixer*
-ALSA_getMixer( int device, int card )
+ALSA_getMixer( int device )
 {
 	Mixer *l_mixer;
-	l_mixer = new Mixer_ALSA( device, card );
+	l_mixer = new Mixer_ALSA( device );
 	return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( int device, int card ) :
-	Mixer( device, card ), _handle(0)
+Mixer_ALSA::Mixer_ALSA( int device ) :
+	Mixer( device ), _handle(0)
 {
         _initialUpdate = true;
 }

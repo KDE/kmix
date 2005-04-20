@@ -22,21 +22,17 @@
 
 #include "mixer_irix.h"
 
-Mixer* IRIX_getMixer(int devnum, int SetNum)
+Mixer* IRIX_getMixer(int devnum)
 {
   Mixer *l_mixer;
-  l_mixer = new Mixer_IRIX( devnum, SetNum);
-  l_mixer->init(devnum, SetNum);
+  l_mixer = new Mixer_IRIX( devnum);
+  l_mixer->init(devnum);
   return l_mixer;
 }
 
 
 
-Mixer_IRIX::Mixer_IRIX() : Mixer()
-{
-}
-
-Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum)
+Mixer_IRIX::Mixer_IRIX(int devnum) : Mixer(devnum)
 {
 }
 

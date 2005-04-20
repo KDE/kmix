@@ -8,7 +8,7 @@
 class Mixer_OSS : public Mixer
 {
 public:
-  Mixer_OSS(int device = -1, int card = -1 );
+  Mixer_OSS(int device = -1);
   virtual ~Mixer_OSS() {};
 
   virtual QString errorText(int mixer_error);
