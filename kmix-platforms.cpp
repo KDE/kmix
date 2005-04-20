@@ -88,7 +88,7 @@
 #endif
 */
 
-typedef Mixer *getMixerFunc( int device, int card );
+typedef Mixer *getMixerFunc( int device );
 typedef Mixer *getMixerSetFunc( MixSet set, int device, int card );
 typedef QString getDriverNameFunc( );
 
