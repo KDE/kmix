@@ -178,12 +178,18 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
     /********** find out to use which mixer ****************************************/
     _mixer = 0;
-    if ( _mixerNum>=0 ) {
+    for (_mixer= Mixer::mixers().first(); _mixer!=0; _mixer=Mixer::mixers().next())
+    {
+      if ( _mixer->id() == _mixerId ) break;
+    }
+    if ( _mixer == 0 ) {
+      /* Until KMix V3.4-0 the mixerNumber (int) was stored. This was too complicated to handle, so we use an
+       * unique ID (_mixer->mixerId(). But in case when the user changes soundcards (or when upgrading from
+       * KMix 3.4-0 to a 3.4-1 or newer), we scan also for the soundcard name */
       for (_mixer= Mixer::mixers().first(); _mixer!=0; _mixer=Mixer::mixers().next())
-	{
-	    // Name and number must match with the configuration
-	    if ( _mixer->mixerName() == _mixerName && _mixer->mixerNum()==_mixerNum ) break;
-	}
+      {
+	if ( _mixer->mixerName() == _mixerName ) break;
+      }
     }
 	
     // don't prompt for a mixer if there is just one available
@@ -191,9 +197,6 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 	_mixer = Mixer::mixers().first();
     }
 	
-    //  Find out wether the applet should be reversed
-    //reversedDir = cfg->readBoolEntry("ReversedDirection", false);
-
 
 
     if ( _mixer == 0 )
@@ -234,7 +237,7 @@ void KMixApplet::saveConfig()
         KConfig *cfg = this->config();
 	//kdDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg << endl;
         cfg->setGroup( 0 );
-        cfg->writeEntry( "Mixer", _mixer->mixerNum() );
+        cfg->writeEntry( "Mixer", _mixer->id() );
         cfg->writeEntry( "MixerName", _mixer->mixerName() );
 
         cfg->writeEntry( "ColorCustom", _customColors );
@@ -261,7 +264,7 @@ void KMixApplet::loadConfig()
     KConfig *cfg = this->config();
     cfg->setGroup(0);
 	
-    _mixerNum = cfg->readNumEntry( "Mixer", -1 );
+    _mixerId = cfg->readEntry( "Mixer", "undef" );
     _mixerName = cfg->readEntry( "MixerName", QString::null );
 
     _customColors = cfg->readBoolEntry( "ColorCustom", false );

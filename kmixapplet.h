@@ -121,7 +121,7 @@ private:
 
    QLayout* _layout;
 
-   int     _mixerNum;
+   QString _mixerId;
    QString _mixerName;
 
    KAboutData m_aboutData;
