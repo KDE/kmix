@@ -52,7 +52,7 @@
 void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QString& ref_hwInfoString)
 {
     // Find all mixers and initalize them
-    QMap<QString,int> mixerNums;
+    //QMap<QString,int> mixerNums;
     int drvNum = Mixer::getDriverNum();
 
     int driverWithMixer = -1;
@@ -168,9 +168,10 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		    }
 		}
 
-		// count mixer nums for every mixer name to identify mixers with equal names
-		mixerNums[mixer->mixerName()]++;
-		mixer->setMixerNum( mixerNums[mixer->mixerName()] );
+		// count mixer nums for every mixer name to identify mixers with equal names.
+		// Not neccesary anymore, as we work with the unique mixer->id() now.
+		//mixerNums[mixer->mixerName()]++;
+		//mixer->setMixerNum( mixerNums[mixer->mixerName()] );
 	    } // loop over sound card devices of current driver
 	} // loop over soundcard drivers
 
