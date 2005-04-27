@@ -145,14 +145,22 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     MixSet& mset = const_cast<MixSet&>(mixset);
     for( MixDevice* md = mset.first(); md != 0; md = mset.next() )
     {
+        // Create a RadioButton for each MixDevice (excluding Enum's)
+        if ( ! md->isEnum() ) {
             //kdDebug(67100) << "DialogSelectMaster::createPage() mset append qrb" << endl;
             QString mdName = md->name();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
 	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
 	    m_buttonGroupForScrollView->insert(qrb, md->num());
 	    //_qEnabledCB.append(qrb);
-	    qrb->setChecked(false); // cannot match the current master at the moment.
-	    //cb->setChecked( !mdw->isDisabled() ); // !! Select the currently active item
+	    MixDevice* master = (*mixer)[mixer->masterDevice()];
+	    if ( master!=0 && md->getPK() ==  master->getPK() ) {
+	      qrb->setChecked(true); // preselect the current master
+	    }
+	    else {
+	      qrb->setChecked(false);
+	    }
+        }
     }
 
     //m_vboxForScrollView->resize(m_vboxForScrollView->sizeHint());
@@ -170,7 +178,15 @@ void DialogSelectMaster::apply()
    if ( channel_id != -1 ) {
      // A channel was selected by the user => emit the "newMasterSelected()" signal
      kdDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
-     emit newMasterSelected(soundcard_id, channel_id);
+     Mixer *mixer = Mixer::mixers().at(soundcard_id);
+     if ( mixer == 0 ) {
+       kdError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << soundcard_id << ")" << endl;
+       return; // can not happen
+     }
+     else {
+        mixer->setMasterDevice(channel_id);
+     	emit newMasterSelected(soundcard_id, channel_id);
+     }
    }
 }
 

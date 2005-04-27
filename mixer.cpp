@@ -457,6 +457,17 @@ void Mixer::setRecordSource( int devnum, bool on )
   }
 }
 
+
+int Mixer::masterDevice()
+{
+  return m_masterDevice;
+};
+
+void Mixer::setMasterDevice(int val_masterDevice)
+{
+  m_masterDevice = val_masterDevice;
+}
+
 /**
  * Sets the ID of the currently selected Enum entry.
  * This is a dummy implementation - if the Mixer backend

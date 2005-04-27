@@ -107,8 +107,10 @@ class Mixer : public QObject, virtual public MixerIface
       /// source. You can override this in your derived class
       //  virtual unsigned int recsrc() const;
 
-      /// Returns the number of the master volume device */
-      int masterDevice() { return m_masterDevice; };
+      /// Returns the id of the master volume device
+      int masterDevice();
+      /// Sets the id of the master volume device
+      void setMasterDevice(int);
 
       /// Reads the volume of the given device into VolLeft and VolRight.
       /// Abstract method! You must implement it in your dericved class.
