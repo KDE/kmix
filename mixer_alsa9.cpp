@@ -186,6 +186,9 @@ Mixer_ALSA::openMixer()
     {
 	// If element is not active, just skip
 	if ( ! snd_mixer_selem_is_active ( elem ) ) {
+	    // ...but we still want to insert a null value into our mixer element
+	    // list so that the list indexes match up.
+	    mixer_elem_list.append( 0 );
 	    continue;
 	}
 
