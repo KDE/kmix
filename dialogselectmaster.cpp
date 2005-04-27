@@ -146,7 +146,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     for( MixDevice* md = mset.first(); md != 0; md = mset.next() )
     {
         // Create a RadioButton for each MixDevice (excluding Enum's)
-        if ( ! md->isEnum() ) {
+        if ( ! md->isEnum() && ! md->isSwitch() ) {
             //kdDebug(67100) << "DialogSelectMaster::createPage() mset append qrb" << endl;
             QString mdName = md->name();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
