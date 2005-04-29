@@ -28,18 +28,14 @@
 
 
 KMixApp::KMixApp()
-    : KUniqueApplication(), m_kmix( 0 ), _lastWindowClosed( false )
+    : KUniqueApplication(), m_kmix( 0 )
 {
-   connect( this, SIGNAL(lastWindowClosed()), this, SLOT(rememberLastWindowClosed()) );
 }
 
 
 KMixApp::~KMixApp()
 {
-   if ( !_lastWindowClosed) {
-       _lastWindowClosed = true;
-       delete m_kmix;
-   }
+   delete m_kmix;
 }
 
 
@@ -72,11 +68,6 @@ KMixApp::quitExtended()
     // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();
     quit();
-}
-
-void KMixApp::rememberLastWindowClosed() {
-   // remember that, so that we don't delete the MainWindow again in the destructor
-   _lastWindowClosed = true;
 }
 
 #include "KMixApp.moc"
