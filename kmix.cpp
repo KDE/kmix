@@ -61,7 +61,7 @@
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
-	: KMainWindow(0, 0, 0 ), m_showTicks( true ),
+	: KMainWindow(0, 0, 0, 0), m_showTicks( true ),
 	m_dockWidget( 0L )
 {
 	m_visibilityUpdateAllowed	= true;
