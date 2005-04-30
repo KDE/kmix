@@ -79,9 +79,6 @@ class Mixer : public QObject, virtual public MixerIface
       /// Close/release the mixer
       virtual int close();
 
-      /// Returns the last error number
-      int getErrno() const;
-
       /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
       QString& stateMessage() const;
 
@@ -141,7 +138,6 @@ class Mixer : public QObject, virtual public MixerIface
       QTimer* _pollingTimer;
 
       int m_balance; // from -100 (just left) to 100 (just right)
-      int  _errno;
 
       QPtrList<MixSet> m_profiles;
       static QPtrList<Mixer> s_mixers;

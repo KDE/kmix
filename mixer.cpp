@@ -70,8 +70,6 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 {
   _pollingTimer = 0;
 
-  _errno  = 0;
-
    _mixerBackend = 0;
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
    if( f!=0 ) {
@@ -85,7 +83,7 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 
   _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
-  
+ 
   QCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST
   objid.setNum(_mixerBackend->m_devnum);
@@ -104,67 +102,6 @@ Mixer::~Mixer() {
    close();
    delete _pollingTimer;
 }
-
-#if 0
-Mixer* Mixer::getMixer( int driver, int device )
-{
-   // ---------------- Get the mixer Factory and produce one Mixer instance ------------
-   _mixerBackend = 0;
-   getMixerFunc *f = g_mixerFactories[driver].getMixer;
-   if( f!=0 ) {
-     _mixerBackend = f( device );
-   }
-
-   // ---------------- Open the freshly produced Mixer instance -----------------------
-
-   //   kdDebug(67100) << "Mixer::setupMixer()" << endl;
-   mixer->close();	// To be sure, release mixer before (re-)opening
-
-   // We open the Mixer, so that we have an initialized MixDevice list
-   int ret = mixer->open();
-   if (ret != 0) {
-      mixer->_errno = ret;
-      return mixer;
-   }
-   else if( mixer->m_mixDevices.isEmpty() )
-   {
-      // This case is a workaround for old Mixer_*.cpp backends. They return 0 on openMixer() but
-      // might not have devices in them. So we work around them here. It would be better if they
-      // would return ERR_NODEV themselves.
-      mixer->_errno = ERR_NODEV;
-      return mixer;
-   }
-
-   // Create a near-perfect unique ID
-   mixer->_id = mixer->mixerName() + ":" + (Mixer::mixers().count() + 1);
-   
-   // --------- Copy the hardware values to the MixDevice -------------------
-   MixSet &mset = mixer->m_mixDevices;
-   if( !mset.isEmpty() ) {
-       // Copy the initial mix set
-       //       kdDebug(67100) << "Mixer::setupMixer() copy Set" << endl;
-       MixDevice* md;
-       for( md = mset.first(); md != 0; md = mset.next() )
-       {
-	   MixDevice* mdCopy = mixer->m_mixDevices.first();
-	   while( mdCopy!=0 && mdCopy->num() != md->num() ) {
-	       mdCopy = mixer->m_mixDevices.next();
-	   }
-	   if ( mdCopy != 0 ) {
-	       // The "mdCopy != 0" was not checked before, but its safer to do so
-	       mixer->setRecordSource( md->num(), md->isRecSource() );
-	       Volume &vol = mdCopy->getVolume();
-	       vol.setVolume( md->getVolume() );
-	       mdCopy->setMuted( md->isMuted() );
-
-	       // !! might need writeVolumeToHW( mdCopy->num(), mdCopy->getVolume() );
-	   }
-       }
-   }
-
-   return mixer;
-}
-#endif
 
 void Mixer::volumeSave( KConfig *config )
 {
@@ -209,6 +146,8 @@ void Mixer::volumeLoad( KConfig *config )
 int Mixer::open()
 {
       int err = _mixerBackend->open();
+      _id = mixerName() + ":" + (Mixer::mixers().count() + 1);
+
       if( err == ERR_INCOMPATIBLESET )   // !!! When does this happen ?!?
         {
           // Clear the mixdevices list
@@ -381,13 +320,6 @@ QString& Mixer::id()
 {
   return _id;
 }
-
-// !!! remove
-int Mixer::getErrno() const {
-    return this->_errno;
-}
-
-
 
 
 
