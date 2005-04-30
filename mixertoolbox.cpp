@@ -114,7 +114,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		/* Lets decide if we the autoprobing shall continue: */
 		if ( multiDriverMode ) {
 			// trivial case: In multiDriverMode, we scan ALL 20 devs of ALL drivers
-			continue;
+			// so we have to do "nothing" in this case
 		} // multiDriver
 		else {
 			// In No-multiDriver-mode we only need to check after we reached devNumMax
