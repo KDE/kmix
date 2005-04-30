@@ -113,9 +113,9 @@ const uint_t MixerSunPortMasks[] =
 // FUNCTION    : SUN_getMixer
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
-Mixer* SUN_getMixer( int devnum )
+Mixer_Backend* SUN_getMixer( int devnum )
 {
-   Mixer *l_mixer;
+   Mixer_Backend *l_mixer;
    l_mixer = new Mixer_SUN( devnum );
    return l_mixer;
 }
@@ -125,28 +125,32 @@ Mixer* SUN_getMixer( int devnum )
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class constructor.
 //======================================================================
-Mixer_SUN::Mixer_SUN(int devnum) : Mixer(devnum)
+Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(devnum)
 {
    if ( devnum == -1 )
       m_devnum = 0;
 }
 
 //======================================================================
-// FUNCTION    : Mixer::openMixer
+// FUNCTION    : Mixer::Mixer
+// DESCRIPTION : Class destructor.
+//======================================================================
+Mixer_SUN::~Mixer_SUN(int devnum) : Mixer_Backend(devnum)
+{
+   close();
+}
+
+//======================================================================
+// FUNCTION    : Mixer::open
 // DESCRIPTION : Initialize the mixer and open the hardware driver.
 //======================================================================
-int Mixer_SUN::openMixer()
+int Mixer_SUN::open()
 {
    //
    // We don't support multiple devices
    //
    if ( m_devnum !=0 )
       return Mixer::ERR_OPEN;
-
-   //
-   // Release mixer before (re-)opening
-   //
-   release();
 
    //
    // Open the mixer hardware driver
@@ -186,7 +190,7 @@ int Mixer_SUN::openMixer()
         {
            MixDevice* md = m_mixDevices.at( idx );
            if( !md )
-              return ERR_INCOMPATIBLESET;
+              return Mixer::ERR_INCOMPATIBLESET;
            writeVolumeToHW( idx, md->getVolume() );
         }
      }
@@ -199,12 +203,14 @@ int Mixer_SUN::openMixer()
 }
 
 //======================================================================
-// FUNCTION    : Mixer::releaseMixer
+// FUNCTION    : Mixer::close
 // DESCRIPTION : Close the hardware driver.
 //======================================================================
-int Mixer_SUN::releaseMixer()
+int Mixer_SUN::close()
 {
+   m_isOpen = false;
    int l_i_ret = ::close( fd );
+   m_mixDevices.clear();
    return l_i_ret;
 }
 
@@ -217,14 +223,14 @@ QString Mixer_SUN::errorText( int mixer_error )
    QString errmsg;
    switch (mixer_error)
    {
-      case ERR_PERM:
+      case Mixer::ERR_PERM:
          errmsg = i18n(
            "kmix: You do not have permission to access the mixer device.\n"
            "Ask your system administrator to fix /dev/audioctl to allow access."
          );
          break;
       default:
-         errmsg = Mixer::errorText( mixer_error );
+         errmsg = Mixer_Backend::errorText( mixer_error );
    }
    return errmsg;
 }

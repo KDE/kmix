@@ -29,6 +29,7 @@
 #include <dcopobject.h>
 
 #include "mixer.h"
+#include "mixer_backend.h"
 #include "kmix-platforms.cpp"
 #include "volume.h"
 
@@ -43,7 +44,7 @@ int Mixer::_dcopID = 0;
 
 QPtrList<Mixer> Mixer::s_mixers;
 
-int Mixer::getDriverNum()
+int Mixer::numDrivers()
 {
     MixerFactory *factory = g_mixerFactories;
     int num = 0;
@@ -65,30 +66,33 @@ QPtrList<Mixer>& Mixer::mixers()
 }
 
 
-Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
+Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 {
-  m_devnum = device;
-  m_cardnum = card;
-  m_masterDevice = 0;
   _pollingTimer = 0;
 
-  m_isOpen = false;
   _errno  = 0;
+
+   _mixerBackend = 0;
+   getMixerFunc *f = g_mixerFactories[driver].getMixer;
+   if( f!=0 ) {
+     _mixerBackend = f( device );
+   }
+
   readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
 
   m_balance = 0;
-  m_mixDevices.setAutoDelete( true );
   m_profiles.setAutoDelete( true );
 
-  _pollingTimer = new QTimer(); // will be started on grab() and stopped on release()
+  _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
   
   QCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST
-  objid.setNum(m_devnum);
+  objid.setNum(_mixerBackend->m_devnum);
 #else
+// should use a nice name like the Unique-Card-ID instead !!
   objid.setNum(Mixer::_dcopID);
-  Mixer::_dcopID ++;  // !!! Change this before commiting !!!
+  Mixer::_dcopID ++;
 #endif
   objid.prepend("Mixer");
   DCOPObject::setObjId( objid );
@@ -96,30 +100,28 @@ Mixer::Mixer( int device, int card ) : DCOPObject( "Mixer" )
 }
 
 Mixer::~Mixer() {
-   // Release Mixer. This might also free memory, depending on the called backend method
-   release();
+   // Close the mixer. This might also free memory, depending on the called backend method
+   close();
    delete _pollingTimer;
 }
 
+#if 0
 Mixer* Mixer::getMixer( int driver, int device )
 {
    // ---------------- Get the mixer Factory and produce one Mixer instance ------------
-   Mixer *mixer = 0;
+   _mixerBackend = 0;
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
    if( f!=0 ) {
-      mixer = f( device );
-   }
-   if ( mixer == 0 ) {
-      return 0;
+     _mixerBackend = f( device );
    }
 
    // ---------------- Open the freshly produced Mixer instance -----------------------
 
    //   kdDebug(67100) << "Mixer::setupMixer()" << endl;
-   mixer->release();	// To be sure, release mixer before (re-)opening
+   mixer->close();	// To be sure, release mixer before (re-)opening
 
    // We open the Mixer, so that we have an initialized MixDevice list
-   int ret = mixer->openMixer();
+   int ret = mixer->open();
    if (ret != 0) {
       mixer->_errno = ret;
       return mixer;
@@ -136,7 +138,7 @@ Mixer* Mixer::getMixer( int driver, int device )
    // Create a near-perfect unique ID
    mixer->_id = mixer->mixerName() + ":" + (Mixer::mixers().count() + 1);
    
-   // --------- For what do we need the following lines of code ?!? -------------------
+   // --------- Copy the hardware values to the MixDevice -------------------
    MixSet &mset = mixer->m_mixDevices;
    if( !mset.isEmpty() ) {
        // Copy the initial mix set
@@ -162,13 +164,14 @@ Mixer* Mixer::getMixer( int driver, int device )
 
    return mixer;
 }
+#endif
 
 void Mixer::volumeSave( KConfig *config )
 {
     //    kdDebug(67100) << "Mixer::volumeSave()" << endl;
     readSetFromHW();
     QString grp = QString("Mixer") + mixerName();
-    m_mixDevices.write( config, grp );
+    _mixerBackend->m_mixDevices.write( config, grp );
 }
 
 void Mixer::volumeLoad( KConfig *config )
@@ -181,85 +184,104 @@ void Mixer::volumeLoad( KConfig *config )
    }
 
    // else restore the volumes
-   m_mixDevices.read( config, grp );
+   _mixerBackend->m_mixDevices.read( config, grp );
 
    // set new settings
-   QPtrListIterator<MixDevice> it( m_mixDevices );
+   QPtrListIterator<MixDevice> it( _mixerBackend->m_mixDevices );
    for(MixDevice *md=it.toFirst(); md!=0; md=++it )
    {
        //       kdDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
        // !! @todo Restore record source
        //setRecordSource( md->num(), md->isRecSource() );
-       setRecsrcHW( md->num(), md->isRecSource() );
-       writeVolumeToHW( md->num(), md->getVolume() );
-       if ( md->isEnum() ) setEnumIdHW( md->num(), md->enumId() );
+       _mixerBackend->setRecsrcHW( md->num(), md->isRecSource() );
+       _mixerBackend->writeVolumeToHW( md->num(), md->getVolume() );
+       if ( md->isEnum() ) _mixerBackend->setEnumIdHW( md->num(), md->enumId() );
    }
 }
 
 
 /**
- * Opens the mixer. If it is already open, this call is ignored
+ * Opens the mixer.
  * Also, starts the polling timer, for polling the Volumes from the Mixer.
  *
- * @return 0 (always)
+ * @return 0, if OK. An Mixer::ERR_ error code otherwise
  */
-int Mixer::grab()
+int Mixer::open()
 {
-  if ( size() == 0 ) {
-     // there is no point in opening a mixer with no devices in it
-     return ERR_NODEV;
-  }
-  if ( !m_isOpen )
-    {
-      // Try to open Mixer, if it is not open already.
-      int err =  openMixer();
-      if( err == ERR_INCOMPATIBLESET )
+      int err = _mixerBackend->open();
+      if( err == ERR_INCOMPATIBLESET )   // !!! When does this happen ?!?
         {
           // Clear the mixdevices list
-          m_mixDevices.clear();
+	  _mixerBackend->m_mixDevices.clear();
           // try again with fresh set
-          err =  openMixer();
+	  err = _mixerBackend->open();
         }
-      if( !err && m_mixDevices.isEmpty() ) {
-        return ERR_NODEV;
+	
+	/*
+   // --------- Copy the hardware values to the MixDevice -------------------
+      MixSet &mset = _mixerBackend->m_mixDevices;
+      if( !mset.isEmpty() ) {
+       // Copy the initial mix set
+       //       kdDebug(67100) << "Mixer::setupMixer() copy Set" << endl;
+	MixDevice* md;
+	for( md = mset.first(); md != 0; md = mset.next() )
+	{
+	  MixDevice* mdCopy = _mixerBackend->m_mixDevices.first();
+	  while( mdCopy!=0 && mdCopy->num() != md->num() ) {
+	    mdCopy = _mixerBackend->m_mixDevices.next();
+	  }
+	  if ( mdCopy != 0 ) {
+	       // The "mdCopy != 0" was not checked before, but its safer to do so
+	    setRecordSource( md->num(), md->isRecSource() );
+	    Volume &vol = mdCopy->getVolume();
+	    vol.setVolume( md->getVolume() );
+	    mdCopy->setMuted( md->isMuted() );
+
+	       // !! might need writeVolumeToHW( mdCopy->num(), mdCopy->getVolume() );
+	  }
+	}
       }
+	*/
+      _pollingTimer->start(50); // !!
       return err;
-    }
-  _pollingTimer->start(50); // !!
-  return 0;
 }
 
 
 /**
- * Closes the mixer. If it is already closed, this call is ignored
+ * Closes the mixer.
  * Also, stops the polling timer.
  *
  * @return 0 (always)
  */
-int Mixer::release()
+int Mixer::close()
 {
   _pollingTimer->stop();
-  if( m_isOpen ) {
-    m_isOpen = false;
-    // Call the target system dependent "release device" function
-    return releaseMixer();
-  }
-
-  return 0;
+  return _mixerBackend->close();
 }
 
+
+/* ------- WRAPPER METHODS. START ------------------------------ */
 unsigned int Mixer::size() const
 {
-  return m_mixDevices.count();
+  return _mixerBackend->m_mixDevices.count();
 }
 
 MixDevice* Mixer::operator[](int num)
 {
-  MixDevice* md =  m_mixDevices.at( num );
+  MixDevice* md =  _mixerBackend->m_mixDevices.at( num );
   Q_ASSERT( md );
   return md;
 }
 
+MixSet Mixer::getMixSet()
+{
+  return _mixerBackend->m_mixDevices;
+}
+
+bool Mixer::isValid() {
+  return _mixerBackend->isValid();
+}
+/* ------- WRAPPER METHODS. END -------------------------------- */
 
 /**
  * After calling this, readSetFromHW() will do a complete update. This will
@@ -279,7 +301,7 @@ void Mixer::readSetFromHWforceUpdate() const {
 */
 void Mixer::readSetFromHW()
 {
-  bool updated = prepareUpdate();
+  bool updated = _mixerBackend->prepareUpdateFromHW();
   if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
     // Some drivers (ALSA) are smart. We don't need to run the following
     // time-consuming update loop if there was no change
@@ -287,13 +309,13 @@ void Mixer::readSetFromHW()
   }
   _readSetFromHWforceUpdate = false;
   MixDevice* md;
-  for( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() )
+  for( md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() )
     {
       Volume& vol = md->getVolume();
-      readVolumeFromHW( md->num(), vol );
-      md->setRecSource( isRecsrcHW( md->num() ) );
+      _mixerBackend->readVolumeFromHW( md->num(), vol );
+      md->setRecSource( _mixerBackend->isRecsrcHW( md->num() ) );
       if (md->isEnum() ) {
-         md->setEnumId( enumIdHW(md->num()) );
+	md->setEnumId( _mixerBackend->enumIdHW(md->num()) );
       }
     }
   // Trivial implementation. Without looking at the devices
@@ -302,9 +324,6 @@ void Mixer::readSetFromHW()
   emit newRecsrc(); // cheap, but works
 }
 
-bool Mixer::prepareUpdate() {
-  return true;
-}
 
 void Mixer::setBalance(int balance)
 {
@@ -316,14 +335,14 @@ void Mixer::setBalance(int balance)
 
   m_balance = balance;
 
-  MixDevice* master = m_mixDevices.at( m_masterDevice );
+  MixDevice* master = _mixerBackend->m_mixDevices.at( _mixerBackend->m_masterDevice );
   if ( master == 0 ) {
       // no master device available => return
       return;
   }
 
   Volume& vol = master->getVolume();
-  readVolumeFromHW( m_masterDevice, vol );
+  _mixerBackend->readVolumeFromHW( _mixerBackend->m_masterDevice, vol );
 
   int left = vol[ Volume::LEFT ];
   int right = vol[ Volume::RIGHT ];
@@ -339,14 +358,14 @@ void Mixer::setBalance(int balance)
       vol.setVolume( Volume::RIGHT,  refvol);
     }
 
-  writeVolumeToHW( m_masterDevice, vol );
+    _mixerBackend->writeVolumeToHW( _mixerBackend->m_masterDevice, vol );
 
   emit newBalance( vol );
 }
 
 QString Mixer::mixerName()
 {
-  return m_mixerName;
+  return _mixerBackend->m_mixerName;
 }
 
 QString Mixer::driverName( int driver )
@@ -362,59 +381,14 @@ QString& Mixer::id()
 {
   return _id;
 }
+
+// !!! remove
 int Mixer::getErrno() const {
     return this->_errno;
 }
 
-void Mixer::errormsg(int mixer_error)
-{
-  QString l_s_errText;
-  l_s_errText = errorText(mixer_error);
-  kdError() << l_s_errText << "\n";
-}
 
-QString Mixer::errorText(int mixer_error)
-{
-  QString l_s_errmsg;
-  switch (mixer_error)
-    {
-    case ERR_PERM:
-      l_s_errmsg = i18n("kmix:You do not have permission to access the mixer device.\n" \
-			"Please check your operating systems manual to allow the access.");
-      break;
-    case ERR_WRITE:
-      l_s_errmsg = i18n("kmix: Could not write to mixer.");
-      break;
-    case ERR_READ:
-      l_s_errmsg = i18n("kmix: Could not read from mixer.");
-      break;
-    case ERR_NODEV:
-      l_s_errmsg = i18n("kmix: Your mixer does not control any devices.");
-      break;
-    case  ERR_NOTSUPP:
-      l_s_errmsg = i18n("kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING).");
-      break;
-    case  ERR_NOMEM:
-      l_s_errmsg = i18n("kmix: Not enough memory.");
-      break;
-    case ERR_OPEN:
-    case ERR_MIXEROPEN:
-      // ERR_MIXEROPEN means: Soundcard could be opened, but has no mixer. ERR_MIXEROPEN is normally never
-      //      passed to the errorText() method, because KMix handles that case explicitely
-      l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
-			"Please check that the soundcard is installed and that\n" \
-			"the soundcard driver is loaded.\n");
-      break;
-    case ERR_INCOMPATIBLESET:
-      l_s_errmsg = i18n("kmix: Initial set is incompatible.\n" \
-			"Using a default set.\n");
-      break;
-    default:
-      l_s_errmsg = i18n("kmix: Unknown error. Please report how you produced this error.");
-      break;
-    }
-  return l_s_errmsg;
-}
+
 
 
 /**
@@ -422,10 +396,10 @@ QString Mixer::errorText(int mixer_error)
 */
 void Mixer::setRecordSource( int devnum, bool on )
 {
-  if( !setRecsrcHW( devnum, on ) ) // others have to be updated
+  if( !_mixerBackend->setRecsrcHW( devnum, on ) ) // others have to be updated
   {
-	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
-		bool isRecsrc =  isRecsrcHW( md->num() );
+    for( MixDevice* md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() ) {
+	  bool isRecsrc =  _mixerBackend->isRecsrcHW( md->num() );
 //		kdDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
 		md->setRecSource( isRecsrc );
 	}
@@ -434,9 +408,9 @@ void Mixer::setRecordSource( int devnum, bool on )
   }
   else {
 	// just the actual mixdevice
-	for( MixDevice* md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
+    for( MixDevice* md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() ) {
 		  if( md->num() == devnum ) {
-			bool isRecsrc =  isRecsrcHW( md->num() );
+		    bool isRecsrc =  _mixerBackend->isRecsrcHW( md->num() );
 			md->setRecSource( isRecsrc );
 		  }
 	}
@@ -444,49 +418,22 @@ void Mixer::setRecordSource( int devnum, bool on )
 	//emit newRecsrc(); // like "emit newVolumeLevels()", but for record source
   }
 
-  if ( hasBrokenRecSourceHandling() ) {
-      //      kdDebug(67100) << "Applying RecordSource workaround" << endl;
-      // If we are too stupid to read from the Hardware (as with the current Mixer_ALSA class),
-      // we simply set all other devices to "off".
-      for (unsigned int i=0; i<size(); i++) {
-	  if (i != (unsigned int)devnum) {
-	      //      kdDebug(67100) << "Applying RecordSource workaround" << i << endl;
-	      setRecsrcHW( i, false );
-	  }
-      }
-  }
 }
 
 
 int Mixer::masterDevice()
 {
-  return m_masterDevice;
+  return _mixerBackend->m_masterDevice;
 }
 
 void Mixer::setMasterDevice(int val_masterDevice)
 {
-  m_masterDevice = val_masterDevice;
+  _mixerBackend->m_masterDevice = val_masterDevice;
 }
 
-/**
- * Sets the ID of the currently selected Enum entry.
- * This is a dummy implementation - if the Mixer backend
- * wants to support it, it must implement the driver specific 
- * code in its subclass (see Mixer_ALSA.cpp for an example).
- */
-void Mixer::setEnumIdHW(int, unsigned int) {
-   return;
-}
 
-/**
- * Return the ID of the currently selected Enum entry.
- * This is a dummy implementation - if the Mixer backend
- * wants to support it, it must implement the driver specific
- * code in its subclass (see Mixer_ALSA.cpp for an example).
- */
-unsigned int Mixer::enumIdHW(int) {
-   return 0;
-}
+
+
 
 
 MixDevice *Mixer::mixDeviceByType( int deviceidx )
@@ -507,7 +454,7 @@ void Mixer::setVolume( int deviceidx, int percentage )
 
   Volume vol=mixdev->getVolume();
   vol.setAllVolumes( (percentage*vol.maxVolume())/100 );
-  writeVolumeToHW(deviceidx, vol);
+  _mixerBackend->writeVolumeToHW(deviceidx, vol);
 }
 
 /**
@@ -519,8 +466,8 @@ void Mixer::setVolume( int deviceidx, int percentage )
    - It is easy to understand ( read - modify - commit )
 */
 void Mixer::commitVolumeChange( MixDevice* md ) {
-    writeVolumeToHW(md->num(), md->getVolume() );
-    setEnumIdHW(md->num(), md->enumId() );
+  _mixerBackend->writeVolumeToHW(md->num(), md->getVolume() );
+  _mixerBackend->setEnumIdHW(md->num(), md->enumId() );
 }
 
 // @dcop only
@@ -546,7 +493,7 @@ void Mixer::setAbsoluteVolume( int deviceidx, long absoluteVolume ) {
 
   Volume vol=mixdev->getVolume();
   vol.setAllVolumes( absoluteVolume );
-  writeVolumeToHW(deviceidx, vol);
+  _mixerBackend->writeVolumeToHW(deviceidx, vol);
 }
 
 // @dcop , especially for use in KMilo
@@ -601,7 +548,7 @@ void Mixer::increaseVolume( int deviceidx )
         volToChange += (int)fivePercent;
         vol.setVolume((Volume::ChannelID)i, volToChange);
      }
-     writeVolumeToHW(deviceidx, vol);
+     _mixerBackend->writeVolumeToHW(deviceidx, vol);
   }
 
   /* see comment at the end of decreaseVolume()
@@ -627,7 +574,7 @@ void Mixer::decreaseVolume( int deviceidx )
         //int volChanged = vol.getVolume((Volume::ChannelID)i);
         //std::cout << "Mixer::decreaseVolume():  check: volChanged " <<i<< "=" <<volChanged << std::endl;
      } // for
-     writeVolumeToHW(deviceidx, vol);
+     _mixerBackend->writeVolumeToHW(deviceidx, vol);
   }
 
   /************************************************************
@@ -647,7 +594,7 @@ void Mixer::setMute( int deviceidx, bool on )
 
   mixdev->setMuted( on );
 
-  writeVolumeToHW(deviceidx, mixdev->getVolume() );
+  _mixerBackend->writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
 
 // @dcop
@@ -660,7 +607,7 @@ void Mixer::toggleMute( int deviceidx )
   
   mixdev->setMuted( !previousState );
 
-  writeVolumeToHW(deviceidx, mixdev->getVolume() );
+  _mixerBackend->writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
 
 // @dcop
@@ -680,16 +627,10 @@ bool Mixer::isRecordSource( int deviceidx )
   return mixdev->isRecSource();
 }
 
+/// @DCOP    WHAT DOES THIS METHOD?!?!?
 bool Mixer::isAvailableDevice( int deviceidx )
 {
   return mixDeviceByType( deviceidx );
-}
-
-bool Mixer::hasBrokenRecSourceHandling() {
-    // Only for the current Mixer_ALSA implementation.
-    // This implementation does not see changes from the Mixer Hardware to the Record Sources.
-    // So the workaround is to manually call md.setRecSrc(false) for all aother channels.
-    return false;
 }
 
 #include "mixer.moc"

@@ -1,7 +1,7 @@
 #ifndef MIXER_NONE_H
 #define MIXER_NONE_H
 
-class Mixer_None : public Mixer
+class Mixer_None : public Mixer_Backend
 {
 public:
   Mixer_None(int devnum);
@@ -13,8 +13,8 @@ public:
   virtual bool isRecsrcHW( int devnum );
 
 protected:
-  virtual int openMixer();
-  virtual int releaseMixer();
+  virtual int open();
+  virtual int close();
 };
 
 #endif

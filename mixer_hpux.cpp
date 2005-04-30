@@ -61,16 +61,8 @@ const char* MixerDevNames[32]={"Volume"  , "Bass"    , "Treble"    , "Synth"   ,
 */
 
 
-Mixer* HPUX_getMixer(int devnum)
-{
-  Mixer *l_mixer;
-  l_mixer = new Mixer_HPUX( devnum);
-//  l_mixer->init(devnum);
-  return l_mixer;
-}
 
-
-Mixer_HPUX::Mixer_HPUX(int devnum) : Mixer(devnum)
+Mixer_HPUX::Mixer_HPUX(int devnum) : Mixer_Backend(devnum)
 {
   char ServerName[10];
   ServerName[0] = 0;
@@ -86,7 +78,7 @@ Mixer_HPUX::~Mixer_HPUX()
 }
 
 
-int Mixer_HPUX::openMixer()
+int Mixer_HPUX::open()
 {
   if (audio==0) {
     return Mixer::ERR_OPEN;
@@ -137,8 +129,10 @@ int Mixer_HPUX::openMixer()
   }
 }
 
-int Mixer_HPUX::releaseMixer()
+int Mixer_HPUX::close()
 {
+  m_isOpen = false;
+  m_mixDevices.clear();
   return 0;
 }
 
@@ -183,7 +177,7 @@ printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr );
 	break;
 
     default:
-	error = ERR_NODEV - HPUX_ERROR_OFFSET;
+	error = Mixer::ERR_NODEV - HPUX_ERROR_OFFSET;
 	break;
     };
 
@@ -224,7 +218,7 @@ printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr);
 	break;
 
     default:
-	error = ERR_NODEV - HPUX_ERROR_OFFSET;
+	error = Mixer::ERR_NODEV - HPUX_ERROR_OFFSET;
 	break;
     };
   return (error ? (error+HPUX_ERROR_OFFSET) : 0);
@@ -243,7 +237,7 @@ QString Mixer_HPUX::errorText(int mixer_error)
   } else
   switch (mixer_error)
     {
-    case ERR_OPEN:
+    case Mixer::ERR_OPEN:
 		// should use i18n...
       l_s_errmsg = "kmix: HP-UX Alib-Mixer cannot be found.\n" \
 			"Please check that you have:\n" \
@@ -251,7 +245,7 @@ QString Mixer_HPUX::errorText(int mixer_error)
 			"  2. started the Aserver program from the /opt/audio/bin directory\n";
       break;
     default:
-      l_s_errmsg = Mixer::errorText(mixer_error);
+      l_s_errmsg = Mixer_Backend::errorText(mixer_error);
       break;
     }
   return l_s_errmsg;

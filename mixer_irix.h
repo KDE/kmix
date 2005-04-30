@@ -4,11 +4,11 @@
 #define _LANGUAGE_C_PLUS_PLUS
 #include <dmedia/audio.h>
 
-class Mixer_IRIX : public Mixer
+class Mixer_IRIX : public Mixer_Backend
 {
 public:
   Mixer_IRIX(int devnum);
-  virtual ~Mixer_IRIX() {};
+  virtual ~Mixer_IRIX();
 
   virtual void setRecsrc(unsigned int newRecsrc);
   virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
@@ -16,8 +16,8 @@ public:
 
 protected:
   virtual void setDevNumName_I(int devnum);
-  virtual int openMixer();
-  virtual int releaseMixer();
+  virtual int open();
+  virtual int close();
 
   ALport	m_port;
   ALconfig	m_config;

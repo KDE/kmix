@@ -38,29 +38,30 @@ extern "C"
 
 // Local Headers
 #include "mixer_alsa.h"
+//#include "mixer.h"
 #include "volume.h"
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
 
-Mixer*
+Mixer_Backend*
 ALSA_getMixer( int device )
 {
-	Mixer *l_mixer;
+	Mixer_Backend *l_mixer;
 	l_mixer = new Mixer_ALSA( device );
 	return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( int device ) :
-	Mixer( device ), _handle(0)
+Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
 {
+	_handle = 0;
         _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-    releaseMixer();
+  close();
 }
 
 int
@@ -94,14 +95,12 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 }
 
 int
-Mixer_ALSA::openMixer()
+Mixer_ALSA::open()
 {
     bool virginOpen = m_mixDevices.isEmpty();
     bool validDevice = false;
     bool masterChosen = false;
     int err;
-
-    release();
 
     snd_ctl_t *ctl_handle;
     snd_ctl_card_info_t *hw_info;
@@ -148,6 +147,8 @@ Mixer_ALSA::openMixer()
     snd_ctl_close( ctl_handle );
 
     /* open mixer device */
+
+    kdDebug(67100) << "IN  Mixer_ALSA snd_mixer_open()" << endl;
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
@@ -155,6 +156,7 @@ Mixer_ALSA::openMixer()
 	_handle = 0;
 	return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
     }
+    kdDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
 
     if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
     {
@@ -170,12 +172,11 @@ Mixer_ALSA::openMixer()
 	return Mixer::ERR_READ;
     }
 
-    // Memory leak (according to Valgrind): Must possibly call sth. like snd_mixer_unload() in releaseMixer()
     if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
 	//errormsg( Mixer::ERR_READ );
-	releaseMixer();
+	close();
 	return Mixer::ERR_READ;
     }
 
@@ -321,7 +322,7 @@ Mixer_ALSA::openMixer()
 		MixDevice* md = m_mixDevices.at( mixerIdx );
 		if( !md )
 		{
-		    return ERR_INCOMPATIBLESET;
+		    return Mixer::ERR_INCOMPATIBLESET;
 		}
 		writeVolumeToHW( mixerIdx, md->getVolume() );
 	    } // !virginOpen
@@ -350,10 +351,11 @@ Mixer_ALSA::openMixer()
 
 
 int
-Mixer_ALSA::releaseMixer()
+Mixer_ALSA::close()
 {
-//  kdDebug(67100) << "IN  Mixer_ALSA::releaseMixer()" << endl;
+  kdDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
   int ret=0;
+  m_isOpen = false;
   if ( _handle != 0 )
   { 
     snd_mixer_free ( _handle );
@@ -371,7 +373,10 @@ Mixer_ALSA::releaseMixer()
     _handle = 0;
   }
 
-//  kdDebug(67100) << "OUT Mixer_ALSA::releaseMixer()" << endl;
+  mixer_elem_list.clear();
+  m_mixDevices.clear();
+
+  kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
   return ret;
 }
 
@@ -394,7 +399,7 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 	return elem;
 }
 
-bool Mixer_ALSA::prepareUpdate() {
+bool Mixer_ALSA::prepareUpdateFromHW() {
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
     if ( _initialUpdate ) {
         // make sure the very first call to prepareUpdate() returns "true". Otherwise kmix will
@@ -729,17 +734,17 @@ Mixer_ALSA::errorText( int mixer_error )
 	QString l_s_errmsg;
 	switch ( mixer_error )
 	{
-		case ERR_PERM:
+		case Mixer::ERR_PERM:
 			l_s_errmsg = i18n("You do not have permission to access the alsa mixer device.\n" \
 					"Please verify if all alsa devices are properly created.");
       break;
-		case ERR_OPEN:
+		case Mixer::ERR_OPEN:
 			l_s_errmsg = i18n("Alsa mixer cannot be found.\n" \
 					"Please check that the soundcard is installed and the\n" \
 					"soundcard driver is loaded.\n" );
 			break;
 		default:
-			l_s_errmsg = Mixer::errorText( mixer_error );
+			l_s_errmsg = Mixer_Backend::errorText( mixer_error );
 	}
 	return l_s_errmsg;
 }

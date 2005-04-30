@@ -7,7 +7,7 @@
 #define HPUX_MIXER
 #endif
 
-class Mixer_HPUX : public Mixer
+class Mixer_HPUX : public Mixer_Backend
 {
 public:
   Mixer_HPUX(int devnum);
@@ -22,8 +22,8 @@ protected:
   virtual bool setRecsrcHW( int devnum, bool on = true );
   virtual bool isRecsrcHW( int devnum );
 
-  virtual int openMixer();
-  virtual int releaseMixer();
+  virtual int open();
+  virtual int close();
 
   Audio	  *audio;
   unsigned int stereodevs,devmask, recmask, MaxVolume, i_recsrc;

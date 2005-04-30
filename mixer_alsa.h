@@ -7,7 +7,7 @@
 // Forward QT includes
 class QString;
 
-class Mixer_ALSA : public Mixer
+class Mixer_ALSA : public Mixer_Backend
 {
 	public:
 		Mixer_ALSA( int device = -1 );
@@ -19,12 +19,12 @@ class Mixer_ALSA : public Mixer
 		virtual bool isRecsrcHW( int devnum );
 	        virtual void setEnumIdHW(int mixerIdx, unsigned int);
       		virtual unsigned int enumIdHW(int mixerIdx);
-		virtual bool prepareUpdate();
+		virtual bool prepareUpdateFromHW();
 
 		
 	protected:
-		virtual int	openMixer();
-		virtual int releaseMixer();
+		virtual int open();
+		virtual int close();
 		
 	private:
 		int identify( snd_mixer_selem_id_t *sid );
