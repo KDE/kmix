@@ -324,6 +324,8 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 			 qw->installEventFilter( this );
 		 } // has no Record LED
 	 } // showRecordLED
+
+	layout()->activate();
 }
 
 
