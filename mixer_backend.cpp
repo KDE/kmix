@@ -24,7 +24,7 @@
 #include "mixer.h"
 
 Mixer_Backend::Mixer_Backend(int device) :
-   m_isOpen(false), m_devnum (device), m_masterDevice(0)
+   m_devnum (device) , m_isOpen(false), m_recommendedMaster(0)
 {
   m_mixDevices.setAutoDelete( true );
 }
@@ -57,6 +57,23 @@ bool Mixer_Backend::prepareUpdateFromHW() {
   return true;
 }
 
+/**
+ * Return the MixDevice, that would qualify best as MasterDevice. The default is to return the
+ * first device in the device list. Backends can override this (i.e. the ALSA Backend does so).
+ * The users preference is NOT returned by this method - see the Mixer class for that.
+ */
+MixDevice* Mixer_Backend::recommendedMaster() {
+   MixDevice* recommendedMixDevice = 0;
+   if ( m_recommendedMaster != 0 ) {
+      recommendedMixDevice = m_recommendedMaster;
+   } // recommendation from Backend
+   else {
+      if ( m_mixDevices.count() > 0 ) {
+         recommendedMixDevice = m_mixDevices.at(0);
+      } //first device (if exists)
+   }
+   return recommendedMixDevice;
+}
 
 /**
  * Sets the ID of the currently selected Enum entry.

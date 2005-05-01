@@ -66,6 +66,8 @@ protected:
   virtual bool setRecsrcHW( int devnum, bool on) = 0;
   virtual bool isRecsrcHW( int devnum ) = 0;
 
+  MixDevice* recommendedMaster();
+
   /** Return a translated error text for the given error number.
    * Subclasses can override this method to produce platform
    * specific error descriptions.
@@ -75,15 +77,20 @@ protected:
   void errormsg(int mixer_error);
 
 
-  bool m_isOpen;
   int m_devnum;
-  int m_masterDevice; // device num for master volume
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
   /// gives you a usable name, use that name.
   QString m_mixerName;
   // All mix devices of this phyisical device.
   MixSet m_mixDevices;
 
+  /******************************************************************************************
+   * Please don't access the next vars from the Mixer class (even though Mixer is a friend).
+   * There are proper accesor methods for them.
+   ******************************************************************************************/
+  bool m_isOpen;
+  // The MixDevice that would qualify best as MasterDevice (according to the taste of the Backend developer)
+  MixDevice* m_recommendedMaster;
 };
 
 #endif

@@ -207,12 +207,13 @@ Mixer_ALSA::open()
 	snd_mixer_selem_get_capture_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
 	// New mix device
 	MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
+/*
         if (!masterChosen && ct==MixDevice::VOLUME) {
            // Determine a nicer MasterVolume
 	   m_masterDevice = mixerIdx;
            masterChosen = true;
         }
-
+*/
 	if( virginOpen )
 	{
 	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
@@ -296,7 +297,7 @@ Mixer_ALSA::open()
 		}
 	    } // is ordinary mixer element (NOT an enum)
 
-		MixDevice* mdw =
+		MixDevice* md =
 		    new MixDevice( mixerIdx,
 				   *vol,
 					canRecord,
@@ -304,16 +305,22 @@ Mixer_ALSA::open()
 				   snd_mixer_selem_id_get_name( sid ),
 				   ct,
 				   cc );
+        if (!masterChosen && ct==MixDevice::VOLUME) {
+           // Determine a nicer MasterVolume
+           m_recommendedMaster = md;
+           masterChosen = true;
+        }
+
 		if ( enumList.count() > 0 ) {
 		  int maxEnumId= enumList.count();
-		  QPtrList<QString>& enumValuesRef = mdw->enumValues(); // retrieve a ref
+		  QPtrList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
 		  for (int i=0; i<maxEnumId; i++ ) {
 		    // we have an enum. Lets set the names of the enum items in the MixDevice
 		    // the enum names are assumed to be static!
 		    enumValuesRef.append(enumList.at(i) );
 		  }
 		}
-		m_mixDevices.append( mdw );
+		m_mixDevices.append( md );
 		//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
 		delete vol;
 	    } // virginOpen

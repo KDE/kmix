@@ -102,7 +102,7 @@ void ViewDockAreaPopup::setMixSet(MixSet *)
     //    kdDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
     // This implementation of setMixSet() is a bit "exotic". But I will leave it like this, until I implement
     // a configuration option for "what device to show on the dock area"
-    _dockDevice = (*_mixer)[_mixer->masterDevice()];
+    _dockDevice = _mixer->masterDevice();
     if ( _dockDevice == 0 ) {
         // If we have no mixer device, we will take the first available mixer device
         _dockDevice = (*_mixer)[0];

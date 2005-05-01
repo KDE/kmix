@@ -155,7 +155,16 @@ int Mixer::open()
           // try again with fresh set
 	  err = _mixerBackend->open();
         }
-	
+
+      MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
+      if ( recommendedMaster != 0 ) {
+         setMasterDevice(recommendedMaster->getPK() );
+      }
+      else {
+         kdError(67100) << "Mixer::open() no master detected." << endl;
+         QString noMaster = "---no-master-detected---";
+         setMasterDevice(noMaster); // no master
+      }
 	/*
    // --------- Copy the hardware values to the MixDevice -------------------
       MixSet &mset = _mixerBackend->m_mixDevices;
@@ -274,14 +283,14 @@ void Mixer::setBalance(int balance)
 
   m_balance = balance;
 
-  MixDevice* master = _mixerBackend->m_mixDevices.at( _mixerBackend->m_masterDevice );
+  MixDevice* master = masterDevice();
   if ( master == 0 ) {
       // no master device available => return
       return;
   }
 
   Volume& vol = master->getVolume();
-  _mixerBackend->readVolumeFromHW( _mixerBackend->m_masterDevice, vol );
+  _mixerBackend->readVolumeFromHW( master->num(), vol );
 
   int left = vol[ Volume::LEFT ];
   int right = vol[ Volume::RIGHT ];
@@ -297,7 +306,7 @@ void Mixer::setBalance(int balance)
       vol.setVolume( Volume::RIGHT,  refvol);
     }
 
-    _mixerBackend->writeVolumeToHW( _mixerBackend->m_masterDevice, vol );
+    _mixerBackend->writeVolumeToHW( master->num(), vol );
 
   emit newBalance( vol );
 }
@@ -353,19 +362,27 @@ void Mixer::setRecordSource( int devnum, bool on )
 }
 
 
-int Mixer::masterDevice()
+MixDevice* Mixer::masterDevice()
 {
-  return _mixerBackend->m_masterDevice;
+  return find( _masterDevicePK );
 }
 
-void Mixer::setMasterDevice(int val_masterDevice)
+void Mixer::setMasterDevice(QString &devPK)
 {
-  _mixerBackend->m_masterDevice = val_masterDevice;
+    _masterDevicePK = devPK;
 }
 
 
-
-
+MixDevice* Mixer::find(QString& devPK)
+{
+    MixDevice* md = 0;
+    for( md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() ) {
+        if( devPK == md->getPK() ) {
+           break;
+        }
+    }
+    return md;
+}
 
 
 MixDevice *Mixer::mixDeviceByType( int deviceidx )
@@ -405,7 +422,10 @@ void Mixer::commitVolumeChange( MixDevice* md ) {
 // @dcop only
 void Mixer::setMasterVolume( int percentage )
 {
-  setVolume( 0, percentage );
+  MixDevice *master = masterDevice();
+  if (master != 0 ) {
+    setVolume( master->num(), percentage );
+  }
 }
 
 // @dcop
@@ -464,7 +484,12 @@ long Mixer::absoluteVolumeMin( int deviceidx )
 // @dcop
 int Mixer::masterVolume()
 {
-  return volume( 0 );
+  int vol = 0;
+  MixDevice *master = masterDevice();
+  if (master != 0 ) {
+    vol = volume( master->num() );
+  }
+  return vol;
 }
 
 // @dcop

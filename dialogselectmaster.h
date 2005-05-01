@@ -3,8 +3,8 @@
 
 class QButtonGroup;
 #include <qradiobutton.h>
-#include <qptrlist.h>
 class QScrollView;
+#include <qstringlist.h>
 class QVBox;
 class QVBoxLayout;
 
@@ -34,7 +34,8 @@ class DialogSelectMaster : public KDialogBase
     QScrollView* m_scrollableChannelSelector;
     QVBox *m_vboxForScrollView;
     QButtonGroup *m_buttonGroupForScrollView;
-    
+    QStringList m_mixerPKs;
+
  private slots:
    void createPageByID(int mixerId);
 };

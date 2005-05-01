@@ -53,10 +53,8 @@ class Mixer : public QObject, virtual public MixerIface
       virtual ~Mixer();
 
       static int numDrivers();
-      /// Static function. This function must be overloaded by any derived mixer class
-      /// to create and return an instance of the derived class.
-      //static Mixer* getMixer( int driver, int device = 0 );
-      //static Mixer* getMixer( int driver, MixSet set,int device = 0 );
+
+      MixDevice* Mixer::find(QString& devPK);
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
@@ -94,10 +92,10 @@ class Mixer : public QObject, virtual public MixerIface
       /// get the actual MixSet
       MixSet getMixSet();
 
-      /// Returns the id of the master volume device
-      int masterDevice();
-      /// Sets the id of the master volume device
-      void setMasterDevice(int);
+      /// Returns the master volume device
+      MixDevice* masterDevice();
+      /// Sets the master volume device
+      void setMasterDevice(QString&);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
       virtual void setVolume( int deviceidx, int percentage );
@@ -151,6 +149,7 @@ class Mixer : public QObject, virtual public MixerIface
       mutable bool _readSetFromHWforceUpdate;
       static int _dcopID;
       QString _id;
+      QString _masterDevicePK;
 };
 
 #endif

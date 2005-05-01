@@ -135,11 +135,15 @@ void DialogSelectMaster::createPage(Mixer* mixer)
      */
     // delete the VBox. This should automatically remove all contained QRadioButton's.
     delete m_vboxForScrollView;
+    m_mixerPKs.clear();
     /** Reset page end -------------------------------------------------- */
 
     m_vboxForScrollView = new QVBox(m_scrollableChannelSelector->viewport());
     m_scrollableChannelSelector->addChild(m_vboxForScrollView);
 
+    QString masterKey = "----noMaster---";  // Use a non-matching name as default
+    MixDevice* master = mixer->masterDevice();
+    if ( master != 0 ) masterKey = master->getPK();
 
     const MixSet& mixset = mixer->getMixSet();
     MixSet& mset = const_cast<MixSet&>(mixset);
@@ -151,10 +155,10 @@ void DialogSelectMaster::createPage(Mixer* mixer)
             QString mdName = md->name();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
 	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
-	    m_buttonGroupForScrollView->insert(qrb, md->num());
+	    m_buttonGroupForScrollView->insert(qrb);  //(qrb, md->num());
 	    //_qEnabledCB.append(qrb);
-	    MixDevice* master = (*mixer)[mixer->masterDevice()];
-	    if ( master!=0 && md->getPK() ==  master->getPK() ) {
+            m_mixerPKs.push_back(md->getPK());
+	    if ( md->getPK() == masterKey ) {
 	      qrb->setChecked(true); // preselect the current master
 	    }
 	    else {
@@ -163,7 +167,6 @@ void DialogSelectMaster::createPage(Mixer* mixer)
         }
     }
 
-    //m_vboxForScrollView->resize(m_vboxForScrollView->sizeHint());
     m_vboxForScrollView->show();  // show() is neccesary starting with the second call to createPage()
 }
 
@@ -184,7 +187,7 @@ void DialogSelectMaster::apply()
        return; // can not happen
      }
      else {
-        mixer->setMasterDevice(channel_id);
+        mixer->setMasterDevice( m_mixerPKs[channel_id] );
      	emit newMasterSelected(soundcard_id, channel_id);
      }
    }
