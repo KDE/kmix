@@ -42,6 +42,8 @@
 #include "viewinput.h"
 #include "viewoutput.h"
 #include "viewswitches.h"
+// KMix experimental
+#include "viewgrid.h"
 #include "viewsurround.h"
 
 
@@ -117,13 +119,17 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     _swWidget = new ViewSwitches( m_ioTab, "SwitchTab" , _mixer, vflags );
     if ( vflags & ViewBase::Experimental_SurroundView )
 	_surroundWidget = new ViewSurround( m_ioTab, "SurroundTab", _mixer, vflags );
-
+    if ( vflags & ViewBase::Experimental_GridView ) // @hint: new_view
+        _gridWidget = new ViewGrid( m_ioTab, "GridTab", _mixer, vflags );
+    
     // *** Create device widgets ************************************************************
     _oWidget ->createDeviceWidgets();
     _iWidget ->createDeviceWidgets();
     _swWidget->createDeviceWidgets();
     if ( vflags & ViewBase::Experimental_SurroundView )
 	_surroundWidget->createDeviceWidgets();
+    if ( vflags & ViewBase::Experimental_GridView )  // @hint: new_view
+      _gridWidget->createDeviceWidgets();
 
     // *** Add Views to Tab *****************************************************************
     m_ioTab->addTab( _oWidget , i18n("Output") );
@@ -137,6 +143,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     }
     if ( vflags & ViewBase::Experimental_SurroundView )
 	m_ioTab->addTab(_surroundWidget, i18n("Surround" ) );
+    if ( vflags & ViewBase::Experimental_GridView )  // @hint: new_view
+      m_ioTab->addTab(_gridWidget, i18n("Grid-Test" ) );
 
 
     // *** Lower part: Slider and Mixer Name ************************************************
@@ -167,6 +175,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 	connect( _swWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
     if ( vflags & ViewBase::Experimental_SurroundView )
 	connect( _surroundWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
+    if ( vflags & ViewBase::Experimental_SurroundView ) // @hint: new_view
+      connect( _gridWidget, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
 
 
     show();

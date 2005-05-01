@@ -49,6 +49,8 @@ class Mixer;
 class ViewInput;
 class ViewOutput;
 class ViewSwitches;
+// KMix experimental
+class ViewGrid;
 class ViewSurround;
 
 
@@ -99,6 +101,7 @@ class KMixerWidget : public QWidget
    ViewInput*     _iWidget;
    ViewSwitches*  _swWidget;
    ViewSurround*  _surroundWidget;
+   ViewGrid*      _gridWidget;
 
    int m_id;
 

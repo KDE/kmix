@@ -66,7 +66,8 @@ KMixWindow::KMixWindow()
 {
 	m_visibilityUpdateAllowed	= true;
 	m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
-	m_surroundView		        = false; // -<- The same is true for the experimental surround View (3D)
+	m_surroundView		        = false; // -<- Also the experimental surround View (3D)
+	m_gridView		        = false; // -<- Also the experimental Grid View
 	// As long as we do not know better, we assume to start hidden. We need
 	// to initialize this variable here, as we don't trigger a hideEvent().
 	m_isVisible = false;
@@ -271,6 +272,7 @@ KMixWindow::loadConfig()
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
+   m_gridView    = config->readBoolEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
    if ( orientationString == "Vertical" )
        m_toplevelOrientation  = Qt::Vertical;
@@ -319,7 +321,9 @@ KMixWindow::initMixerWidgets()
 		if (  m_surroundView ) {
 		    vflags |= ViewBase::Experimental_SurroundView;
 		}
-		if ( m_toplevelOrientation == Qt::Vertical ) {
+		if (  m_gridView ) {
+		  vflags |= ViewBase::Experimental_GridView;
+		}		if ( m_toplevelOrientation == Qt::Vertical ) {
 		    vflags |= ViewBase::Vertical;
 		}
 		else {
