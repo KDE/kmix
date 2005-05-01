@@ -252,6 +252,10 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
 	} // LeftMouseButton pressed
+	else if ( me->button() ==  MidButton ) {
+		toggleActive();
+		return;
+	}
 	else {
 		KSystemTray::mousePressEvent(me);
 	} // Other MouseButton pressed

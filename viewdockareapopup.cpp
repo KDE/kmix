@@ -190,15 +190,7 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 }
 
 void ViewDockAreaPopup::showPanelSlot() {
-	if( ! _dock->parentWidget()->isVisible() )
-	{
-		_dock->parentWidget()->show();
-	}
-	else
-	{
-		_dock->parentWidget()->hide();
-	}
-		
+	_dock->toggleActive();
 	_dock->_dockAreaPopup->hide();
 }
 
