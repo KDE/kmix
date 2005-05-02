@@ -54,7 +54,7 @@ class Mixer : public QObject, virtual public MixerIface
 
       static int numDrivers();
 
-      MixDevice* Mixer::find(QString& devPK);
+      MixDevice* find(QString& devPK);
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
