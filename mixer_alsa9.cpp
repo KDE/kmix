@@ -190,11 +190,12 @@ Mixer_ALSA::open()
 	    // ...but we still want to insert a null value into our mixer element
 	    // list so that the list indexes match up.
 	    mixer_elem_list.append( 0 );
+	    mixer_sid_list.append( 0 );
 	    continue;
 	}
 
 
-	//sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
+	sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
 	snd_mixer_selem_get_id( elem, sid );
 
 	bool canRecord = false;
@@ -226,7 +227,7 @@ Mixer_ALSA::open()
 		cc = MixDevice::ENUM;
 		vol = new Volume(); // Dummy, unused
 		mixer_elem_list.append( elem );
-		//mixer_sid_list.append( sid );
+		mixer_sid_list.append( sid );
 		
 		// --- get Enum names START ---
 		int numEnumitems = snd_mixer_selem_get_enum_items(elem);
@@ -273,7 +274,7 @@ Mixer_ALSA::open()
 		 * it will be created with maxVolume == 0 && minVolume == 0 */
 		vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
 		mixer_elem_list.append( elem );
-		//mixer_sid_list.append( sid );
+		mixer_sid_list.append( sid );
 		
 		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {   
 			//kdDebug(67100) << "has_playback_switch()" << endl;
@@ -381,6 +382,7 @@ Mixer_ALSA::close()
   }
 
   mixer_elem_list.clear();
+  mixer_sid_list.clear();
   m_mixDevices.clear();
 
   kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
@@ -389,21 +391,28 @@ Mixer_ALSA::close()
 
 
 snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
-/*
 	snd_mixer_elem_t* elem = 0;
 	if ( int( mixer_sid_list.count() ) > devnum ) {
 		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
+		// The next line (hopefully) only finds selem's, not elem's.
 		elem = snd_mixer_find_selem(_handle, sid);
 
 		if ( elem == 0 ) {
+			// !! Check, whether the warning should be omitted. Probably
+			//    Route controls are non-simple elements.
 			kdDebug(67100) << "Error finding mixer element " << devnum << endl;
 		}
 	}
 	return elem;
-*/
 
+/*
+ I would have liked to use the following trivial implementation instead of the
+ code above. But it will also return elem's. which are not selem's. As there is 
+ no way to check an elem's type (e.g. elem->type == SND_MIXER_ELEM_SIMPLE), callers
+ of getMixerElem() cannot check the type. :-(
 	snd_mixer_elem_t* elem = mixer_elem_list[ devnum ];
 	return elem;
+ */
 }
 
 bool Mixer_ALSA::prepareUpdateFromHW() {
