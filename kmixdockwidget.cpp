@@ -246,6 +246,17 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			y = y + h - this->height();
 	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
+
+		// Now handle Multihead displays. And also make sure that the dialog is not
+		// moved out-of-the screen on the right (see Bug 101742).
+		QDesktopWidget* vdesktop = QApplication::desktop();
+		const QRect& vScreenSize = vdesktop->screenGeometry(_dockAreaPopup);
+		if ( (x+_dockAreaPopup->width()) > (vScreenSize.width()) ) {
+			// move horizontally, so that it is completely visible
+			_dockAreaPopup->move(vScreenSize.width() - _dockAreaPopup->width() -1 , y);
+		} // horizontally out-of bound
+		// the above stuff could also be implemented vertically
+
 		_dockAreaPopup->show();
 		KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 		
