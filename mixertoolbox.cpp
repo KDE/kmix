@@ -54,7 +54,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
    kdDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
 
     // Find all mixers and initalize them
-    //QMap<QString,int> mixerNums;
+    QMap<QString,int> mixerNums;
     int drvNum = Mixer::numDrivers();
 
     int driverWithMixer = -1;
@@ -85,7 +85,8 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 
     bool autodetectionFinished = false;
     for( int drv=0; drv<drvNum; drv++ )
-        {
+    {
+	  QString driverName = Mixer::driverName(drv);
 
 	  if ( autodetectionFinished ) {
 		// sane exit from loop
@@ -104,6 +105,16 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		if ( mixer->isValid() ) {
 			mixer->open();
 			mixers.append( mixer );
+			// Count mixer nums for every mixer name to identify mixers with equal names.
+			// This is for creating persistent (reusable) primary keys, which can safely
+			// be referenced (especially for config file access, so it is meant to be persistent!).
+			mixerNums[mixer->mixerName()]++;
+			// Create a useful PK
+			QString primaryKeyOfMixer = QString("%1:%2@%3")
+			    .arg(mixer->mixerName())
+			    .arg(mixerNums[mixer->mixerName()])
+			    .arg(driverName);
+			mixer->setID(primaryKeyOfMixer);
 		} // valid
 		else
 		{
@@ -155,10 +166,6 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		    }
 		} //  !multipleDriversActive
 		
-		// count mixer nums for every mixer name to identify mixers with equal names.
-		// Not neccesary anymore, as we work with the unique mixer->id() now.
-		//mixerNums[mixer->mixerName()]++;
-		//mixer->setMixerNum( mixerNums[mixer->mixerName()] );
 	    } // loop over sound card devices of current driver
 	} // loop over soundcard drivers
 

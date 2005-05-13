@@ -146,7 +146,9 @@ void Mixer::volumeLoad( KConfig *config )
 int Mixer::open()
 {
       int err = _mixerBackend->open();
-      _id = mixerName() + ":" + (Mixer::mixers().count() + 1);
+      // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
+      // but we want a somhow usable fallback just in case.
+      _id = mixerName();
 
       if( err == ERR_INCOMPATIBLESET )   // !!! When does this happen ?!?
         {
@@ -229,6 +231,8 @@ MixSet Mixer::getMixSet()
 bool Mixer::isValid() {
   return _mixerBackend->isValid();
 }
+
+
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
 /**
@@ -324,6 +328,12 @@ QString Mixer::driverName( int driver )
     else
         return "unknown";
 }
+
+void Mixer::setID(QString& ref_id)
+{
+  _id = ref_id;
+}
+
 
 QString& Mixer::id()
 {

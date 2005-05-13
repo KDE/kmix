@@ -83,12 +83,13 @@ class Mixer : public QObject, virtual public MixerIface
       virtual QString mixerName();
 
       // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
-      QString driverName();
       static QString driverName(int num);
 
-      /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>:<hw_number>"
+      /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>:<hw_number>@<driver>"
       QString& id();
-
+      /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
+      /// the user, but can be used for referencing configuration items and such.
+      void setID(QString& ref_id);
       /// get the actual MixSet
       MixSet getMixSet();
 
