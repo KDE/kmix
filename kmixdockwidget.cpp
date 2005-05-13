@@ -255,6 +255,9 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			// move horizontally, so that it is completely visible
 			_dockAreaPopup->move(vScreenSize.width() - _dockAreaPopup->width() -1 , y);
 		} // horizontally out-of bound
+		else if ( x < 0 ) {
+			_dockAreaPopup->move(0, y);
+		}
 		// the above stuff could also be implemented vertically
 
 		_dockAreaPopup->show();
