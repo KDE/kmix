@@ -110,10 +110,13 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 			// be referenced (especially for config file access, so it is meant to be persistent!).
 			mixerNums[mixer->mixerName()]++;
 			// Create a useful PK
-			QString primaryKeyOfMixer = QString("%1:%2@%3")
+			QString primaryKeyOfMixer = QString("%1::%2:%3")
+			    .arg(driverName)
 			    .arg(mixer->mixerName())
-			    .arg(mixerNums[mixer->mixerName()])
-			    .arg(driverName);
+			    .arg(mixerNums[mixer->mixerName()]);
+			primaryKeyOfMixer.replace("]","_");
+			primaryKeyOfMixer.replace(" ","_");
+			primaryKeyOfMixer.replace("=","_");
 			mixer->setID(primaryKeyOfMixer);
 		} // valid
 		else
