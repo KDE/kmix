@@ -361,11 +361,11 @@ Mixer_ALSA::open()
 int
 Mixer_ALSA::close()
 {
-  kdDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
   int ret=0;
   m_isOpen = false;
   if ( _handle != 0 )
-  { 
+  {
+    kdDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
     snd_mixer_free ( _handle );
     if ( ( ret = snd_mixer_detach ( _handle, devName.latin1() ) ) < 0 )
     {
@@ -379,13 +379,14 @@ Mixer_ALSA::close()
     }
 
     _handle = 0;
+    kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
+
   }
 
   mixer_elem_list.clear();
   mixer_sid_list.clear();
   m_mixDevices.clear();
 
-  kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
   return ret;
 }
 
