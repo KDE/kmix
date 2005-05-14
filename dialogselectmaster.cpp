@@ -61,7 +61,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     _layout = new QVBoxLayout(m_mainFrame,0,-1, "_layout" );
 
     if ( Mixer::mixers().count() > 1 ) {
-      kdDebug(67100) << "DialogSelectMaster::createPage count()>1" << "\n";
+      //kdDebug(67100) << "DialogSelectMaster::createPage count()>1" << "\n";
       // More than one Mixer => show Combo-Box to select Mixer
       // Mixer widget line
       QHBoxLayout* mixerNameLayout = new QHBoxLayout( _layout );
@@ -180,7 +180,7 @@ void DialogSelectMaster::apply()
    int channel_id = m_buttonGroupForScrollView->selectedId();
    if ( channel_id != -1 ) {
      // A channel was selected by the user => emit the "newMasterSelected()" signal
-     kdDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
+     //kdDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
      Mixer *mixer = Mixer::mixers().at(soundcard_id);
      if ( mixer == 0 ) {
        kdError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << soundcard_id << ")" << endl;

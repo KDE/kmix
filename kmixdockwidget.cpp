@@ -57,6 +57,14 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name,
       _oldPixmapType('-'),
       _volumePopup(volumePopup)
 {
+    Mixer* preferredMasterMixer = Mixer::masterCard();
+    if ( preferredMasterMixer != 0 ) {
+       m_mixer = preferredMasterMixer;
+    }
+    MixDevice* mdMaster = Mixer::masterCardDevice();
+    if ( mdMaster != 0 ) {
+       m_mixer->setMasterDevice(mdMaster->getPK()); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
+    }
     createActions();
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
@@ -125,15 +133,18 @@ void KMixDockWidget::selectMaster()
     // !! The dialog is modal. Does it delete itself?
 }
 
-void KMixDockWidget::handleNewMaster(int soundcard_id, int channel_id)
+
+void KMixDockWidget::handleNewMaster(int soundcard_id, int channel_id) // !! @todo rework parameters
 {
-  kdDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , channel_id=" << channel_id << endl;
+  //kdDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , channel_id=" << channel_id << endl;
   Mixer *mixer = Mixer::mixers().at(soundcard_id);
   if ( mixer == 0 ) {
-    kdDebug(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
+    kdError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
     return; // can not happen
   }
   m_mixer = mixer;
+  Mixer::setMasterCard(mixer->id()); // We must save this information "somewhere".
+  Mixer::setMasterCardDevice( (*mixer)[channel_id]->getPK());
   createMasterVolWidget();
 }
 

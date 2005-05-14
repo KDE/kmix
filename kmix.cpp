@@ -240,6 +240,15 @@ KMixWindow::saveConfig()
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
    config->writeEntry( "startkdeRestore", m_onLogin );
+   Mixer* mixerMasterCard = Mixer::masterCard();
+   if ( mixerMasterCard != 0 ) {
+      config->writeEntry( "MasterMixer", mixerMasterCard->id() );
+   }
+   MixDevice* mdMaster = Mixer::masterCardDevice();
+   if ( mdMaster != 0 ) {
+      config->writeEntry( "MasterMixerDevice", mdMaster->getPK() );
+   }
+
    if ( m_toplevelOrientation  == Qt::Vertical )
       config->writeEntry( "Orientation","Vertical" );
    else
@@ -274,6 +283,12 @@ KMixWindow::loadConfig()
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
    m_gridView    = config->readBoolEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
+   QString mixerMasterCard = config->readEntry( "MasterMixer", "" );
+   Mixer::setMasterCard(mixerMasterCard);
+   QString masterDev = config->readEntry( "MasterMixerDevice", "" );
+   Mixer::setMasterCardDevice(masterDev);
+
+
    if ( orientationString == "Vertical" )
        m_toplevelOrientation  = Qt::Vertical;
    else
