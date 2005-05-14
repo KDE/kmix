@@ -43,6 +43,8 @@
 int Mixer::_dcopID = 0;
 
 QPtrList<Mixer> Mixer::s_mixers;
+QString Mixer::_masterCard;
+QString Mixer::_masterCardDevice;
 
 int Mixer::numDrivers()
 {
@@ -339,6 +341,50 @@ QString& Mixer::id()
 {
   return _id;
 }
+
+void Mixer::setMasterCard(QString& ref_id)
+{
+  // The value is taken over without checking on existance. This allows the User to define
+  // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
+  // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
+  // and before actually constructing the Mixer instances (hint: this mehtod is static!).
+  _masterCard = ref_id;
+}
+
+Mixer* Mixer::masterCard()
+{
+  Mixer *mixer = 0;
+  for (mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
+  {
+     if ( mixer->id() == _masterCard ) {
+        break;
+     }
+  }
+  return mixer;
+}
+
+void Mixer::setMasterCardDevice(QString& ref_id)
+{
+  // The value is taken over without checking on existance. This allows the User to define
+  // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
+  // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
+  // and before actually constructing the Mixer instances (hint: this mehtod is static!).
+  _masterCardDevice = ref_id;
+}
+
+MixDevice* Mixer::masterCardDevice()
+{
+  MixDevice* md = 0;
+  Mixer *mixer = masterCard();
+  if ( mixer != 0 ) {
+     for( MixDevice* md = mixer->_mixerBackend->m_mixDevices.first(); md != 0; md = mixer->_mixerBackend->m_mixDevices.next() ) {
+       if ( md->getPK() == _masterCardDevice )
+          break;
+     }
+  }
+  return md;
+}
+
 
 
 

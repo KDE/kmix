@@ -90,12 +90,23 @@ class Mixer : public QObject, virtual public MixerIface
       /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
       /// the user, but can be used for referencing configuration items and such.
       void setID(QString& ref_id);
+
+      /// The KMix global master card. Please note that KMix and KMixPanelApplet can have a
+      /// different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
+      /// At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
+      static void setMasterCard(QString& ref_id);
+      static Mixer* masterCard();
+      /// The global Master Device inside the current MasterCard (as returned by masterCard()).
+      static void setMasterCardDevice(QString& ref_id);
+      static MixDevice* masterCardDevice();
+
+
       /// get the actual MixSet
       MixSet getMixSet();
 
-      /// Returns the master volume device
+      /// Returns the master volume device (doesn't work out :-(. See masterCard() and masterCardDevice() instead)
       MixDevice* masterDevice();
-      /// Sets the master volume device
+      /// Sets the master volume device (doesn't work out :-(. See setMasterCard() and setMasterCardDevice() instead)
       void setMasterDevice(QString&);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
@@ -151,6 +162,8 @@ class Mixer : public QObject, virtual public MixerIface
       static int _dcopID;
       QString _id;
       QString _masterDevicePK;
+      static QString _masterCard;
+      static QString _masterCardDevice;
 };
 
 #endif
