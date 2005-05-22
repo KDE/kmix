@@ -387,7 +387,7 @@ bool Mixer_ALSA::prepareUpdate() {
 
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
     
-    fds = (struct pollfd*)calloc(count + 1, sizeof(struct pollfd));
+    fds = (struct pollfd*)calloc(count, sizeof(struct pollfd));
     if (fds == NULL) {
 	kdDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
 	return false;
