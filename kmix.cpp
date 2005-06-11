@@ -322,23 +322,22 @@ KMixWindow::initMixerWidgets()
         //             is not even a context menu.
 	for ( mixer=Mixer::mixers().first(),id=0; mixer!=0; mixer=Mixer::mixers().next(),id++ )
 	{
-	    //kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
-
-
-                ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-                if ( m_showMenubar ) {
-                    vflags |= ViewBase::MenuBarVisible;
-	        }
+		//kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+		ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
+		if ( m_showMenubar ) {
+			vflags |= ViewBase::MenuBarVisible;
+		}
 		if (  m_surroundView ) {
-		    vflags |= ViewBase::Experimental_SurroundView;
+			vflags |= ViewBase::Experimental_SurroundView;
 		}
 		if (  m_gridView ) {
-		  vflags |= ViewBase::Experimental_GridView;
-		}		if ( m_toplevelOrientation == Qt::Vertical ) {
-		    vflags |= ViewBase::Vertical;
+			vflags |= ViewBase::Experimental_GridView;
+		}
+		if ( m_toplevelOrientation == Qt::Vertical ) {
+			vflags |= ViewBase::Vertical;
 		}
 		else {
-		    vflags |= ViewBase::Horizontal;
+			vflags |= ViewBase::Horizontal;
 		}
 
 	
@@ -366,6 +365,8 @@ KMixWindow::initMixerWidgets()
 		mixerNameLayout->hide();
 	}
 }
+
+
 
 bool
 KMixWindow::queryClose ( )

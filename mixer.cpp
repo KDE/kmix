@@ -109,13 +109,15 @@ void Mixer::volumeSave( KConfig *config )
 {
     //    kdDebug(67100) << "Mixer::volumeSave()" << endl;
     readSetFromHW();
-    QString grp = QString("Mixer") + mixerName();
+    QString grp("Mixer");
+    grp.append(mixerName());
     _mixerBackend->m_mixDevices.write( config, grp );
 }
 
 void Mixer::volumeLoad( KConfig *config )
 {
-   QString grp = QString("Mixer") + mixerName();
+   QString grp("Mixer");
+   grp.append(mixerName());
    if ( ! config->hasGroup(grp) ) {
       // no such group. Volumes (of this mixer) were never saved beforehand.
       // Thus don't restore anything (also see Bug #69320 for understanding the real reason)
@@ -377,7 +379,12 @@ MixDevice* Mixer::masterCardDevice()
   MixDevice* md = 0;
   Mixer *mixer = masterCard();
   if ( mixer != 0 ) {
-     for( MixDevice* md = mixer->_mixerBackend->m_mixDevices.first(); md != 0; md = mixer->_mixerBackend->m_mixDevices.next() ) {
+     for( md = mixer->_mixerBackend->m_mixDevices.first(); md != 0; md = mixer->_mixerBackend->m_mixDevices.next() ) {
+/*
+     	kdDebug(67100) << "Mixer::masterCardDevice() getPK()="
+     		<< md->getPK() << " , _masterCardDevice="
+     		<< _masterCardDevice << "\n";
+*/
        if ( md->getPK() == _masterCardDevice )
           break;
      }

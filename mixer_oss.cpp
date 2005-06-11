@@ -292,7 +292,7 @@ int Mixer_OSS::writeVolumeToHW( int devnum, Volume &vol )
   if( vol.isMuted() ) volume = 0;
   else
     if ( vol.count() > 1 )
-      volume = vol[ Volume::LEFT ] + ((vol[ Volume::RIGHT ])<<8);
+      volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
     else
       volume = vol[ Volume::LEFT ];
 

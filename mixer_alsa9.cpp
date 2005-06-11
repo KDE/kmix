@@ -148,7 +148,7 @@ Mixer_ALSA::open()
 
     /* open mixer device */
 
-    kdDebug(67100) << "IN  Mixer_ALSA snd_mixer_open()" << endl;
+    //kdDebug(67100) << "IN  Mixer_ALSA snd_mixer_open()" << endl;
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
@@ -156,7 +156,7 @@ Mixer_ALSA::open()
 	_handle = 0;
 	return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
     }
-    kdDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
+    //kdDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
 
     if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
     {
@@ -365,7 +365,7 @@ Mixer_ALSA::close()
   m_isOpen = false;
   if ( _handle != 0 )
   {
-    kdDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
+    //kdDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
     snd_mixer_free ( _handle );
     if ( ( ret = snd_mixer_detach ( _handle, devName.latin1() ) ) < 0 )
     {
@@ -379,7 +379,7 @@ Mixer_ALSA::close()
     }
 
     _handle = 0;
-    kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
+    //kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
 
   }
 

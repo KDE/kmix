@@ -65,11 +65,6 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
 
 {
     m_categoryMask = categoryMask;
-/*
-   _oWidget = 0;
-   _iWidget = 0;
-   _swWidget = 0;
-   */
 
    if ( _mixer )
    {
@@ -113,10 +108,17 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     m_ioTab = new KTabWidget( this, "ioTab" );
     m_topLayout->add( m_ioTab );
 
-    
-	// *** Create Views *********************************************************************
-	// *** Create device widgets ************************************************************
-	// *** Add Views to Tab *****************************************************************
+
+     /*******************************************************************
+      *  Now the main GUI is created.
+      * 1) Select a (GUI) profile,  which defines  which controls to show on which Tab
+      * 2a) Create the Tab's and the corresponding Views
+      * 2b) Create device widgets
+      * 2c) Add Views to Tab
+      ********************************************************************/
+      //KMixGUIProfile* prof = MixerToolbox::selectProfile(_mixer);
+      
+      
 	ViewBase* vbase;
    vbase = new ViewOutput  ( m_ioTab, "Output" , _mixer, vflags );
     _views.push_back(vbase);

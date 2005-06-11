@@ -51,7 +51,7 @@
  */
 void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QString& ref_hwInfoString)
 {
-   kdDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
+   //kdDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
 
     // Find all mixers and initalize them
     QMap<QString,int> mixerNums;
@@ -63,9 +63,9 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
     QString driverInfo = "";
     QString driverInfoUsed = "";
 
-    for( int drv=0; drv<drvNum; drv++ )
+    for( int drv1=0; drv1<drvNum; drv1++ )
     {
-      QString driverName = Mixer::driverName(drv);
+      QString driverName = Mixer::driverName(drv1);
       if ( driverInfo.length() > 0 )
 	driverInfo += " + ";
       driverInfo += driverName;
@@ -184,8 +184,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 	} // loop over soundcard drivers
 
 	ref_hwInfoString = i18n("Sound drivers supported:");
-	ref_hwInfoString += " " + driverInfo +
-		"\n" + i18n("Sound drivers used:") + " " + driverInfoUsed;
+	ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
 
 	if ( multipleDriversActive )
 	{
@@ -193,8 +192,8 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 	    ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
 	}
 
-	kdDebug(67100) << ref_hwInfoString << endl;
-   kdDebug(67100) << "OUT MixerToolBox::initMixer()"<<endl;
+	kdDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count() << endl;
+   //kdDebug(67100) << "OUT MixerToolBox::initMixer()"<<endl;
 
 }
 
@@ -204,14 +203,14 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
  */
 void MixerToolBox::deinitMixer()
 {
-   kdDebug(67100) << "IN MixerToolBox::deinitMixer()"<<endl;
+   //kdDebug(67100) << "IN MixerToolBox::deinitMixer()"<<endl;
    Mixer *mixer;
    while ( (mixer=Mixer::mixers().first()) != 0)
    {
-      kdDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer" << endl;
+      //kdDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer" << endl;
       mixer->close();
       Mixer::mixers().remove(mixer);
       delete mixer;
    }
-  kdDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
+   // kdDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
 }
