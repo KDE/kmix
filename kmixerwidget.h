@@ -22,6 +22,8 @@
 #ifndef KMIXERWIDGET_H
 #define KMIXERWIDGET_H
 
+#include <vector>
+
 #include <qwidget.h>
 #include <qptrlist.h>
 class QString;
@@ -97,12 +99,14 @@ class KMixerWidget : public QWidget
 
    KTabWidget* m_ioTab;
 
+	std::vector<ViewBase*> _views;
+	/*
    ViewOutput*    _oWidget;
    ViewInput*     _iWidget;
    ViewSwitches*  _swWidget;
    ViewSurround*  _surroundWidget;
    ViewGrid*      _gridWidget;
-
+*/
    int m_id;
 
    KActionMenu *m_toggleMixerChannels;

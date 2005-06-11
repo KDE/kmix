@@ -4,6 +4,8 @@
 #define _LANGUAGE_C_PLUS_PLUS
 #include <dmedia/audio.h>
 
+#include "mixer_backend.h"
+
 class Mixer_IRIX : public Mixer_Backend
 {
 public:

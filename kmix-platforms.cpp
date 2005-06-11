@@ -24,6 +24,10 @@
 
 #include <config.h>
 
+#include <qstring.h>
+
+#include "mixer_backend.h"
+
 #if defined(sun) || defined(__sun__)
 #define SUN_MIXER
 #endif

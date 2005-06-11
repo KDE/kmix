@@ -1,6 +1,8 @@
 #ifndef MIXER_NONE_H
 #define MIXER_NONE_H
 
+#include "mixer_backend.h"
+
 class Mixer_None : public Mixer_Backend
 {
 public:

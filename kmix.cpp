@@ -114,10 +114,6 @@ KMixWindow::initActions()
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
-/* Belongs in KMixDockWidget
-	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
-				 actionCollection(), "dock_mute" );
-*/
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
 	(void) new KAction( i18n( "Hide Mixer Window" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
 	createGUI( "kmixui.rc" );
@@ -348,16 +344,10 @@ KMixWindow::initMixerWidgets()
 	
 		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
-
-		//mw->setName( mixer->mixerName() );
-
 		m_mixerWidgets.append( mw );
 
-		// Add to Combo
+		// Add to Combo and Stack
 		m_cMixer->insertItem( mixer->mixerName() );
-
-		// Add to Stack
-		//kdDebug(67100) << "Inserted mixer " << id << ":" << mw->name() << endl;
 		m_wsMixers->addWidget( mw, id );
 
 		QString grp;

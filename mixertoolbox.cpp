@@ -110,13 +110,24 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 			// be referenced (especially for config file access, so it is meant to be persistent!).
 			mixerNums[mixer->mixerName()]++;
 			// Create a useful PK
+			/* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
+			 * contain it.
+			 * %1, the driver name is from the KMix backends, it does not contain colons.
+			 * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
+			 * %3, the mixer number, is a number: it does not contain colons.
+			 */
+			QString mixerName = mixer->mixerName();
+			mixerName.replace(":","_");
 			QString primaryKeyOfMixer = QString("%1::%2:%3")
 			    .arg(driverName)
-			    .arg(mixer->mixerName())
+			    .arg(mixerName)
 			    .arg(mixerNums[mixer->mixerName()]);
+			// The following 3 replaces are for not messing up the config file
 			primaryKeyOfMixer.replace("]","_");
+			primaryKeyOfMixer.replace("[","_"); // not strictly neccesary, but lets play safe
 			primaryKeyOfMixer.replace(" ","_");
 			primaryKeyOfMixer.replace("=","_");
+			
 			mixer->setID(primaryKeyOfMixer);
 		} // valid
 		else

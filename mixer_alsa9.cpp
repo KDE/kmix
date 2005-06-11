@@ -55,7 +55,7 @@ ALSA_getMixer( int device )
 
 Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
 {
-	_handle = 0;
+	_handle = 0; 
         _initialUpdate = true;
 }
 

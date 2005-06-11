@@ -7,6 +7,8 @@
 // Forward QT includes
 class QString;
 
+#include "mixer_backend.h"
+
 class Mixer_ALSA : public Mixer_Backend
 {
 	public:

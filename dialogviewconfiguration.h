@@ -6,7 +6,8 @@
 class QVBoxLayout;
 
 #include <kdialogbase.h>
-#include <viewbase.h>
+
+#include "viewbase.h"
 
 
 class DialogViewConfiguration : public KDialogBase

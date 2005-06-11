@@ -7,6 +7,8 @@
 #define HPUX_MIXER
 #endif
 
+#include "mixer_backend.h"
+
 class Mixer_HPUX : public Mixer_Backend
 {
 public:

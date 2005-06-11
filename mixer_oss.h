@@ -5,6 +5,8 @@
 
 #include <qstring.h>
 
+#include "mixer_backend.h"
+
 class Mixer_OSS : public Mixer_Backend
 {
 public:

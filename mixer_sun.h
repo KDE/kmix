@@ -25,6 +25,8 @@
 
 #include <qstring.h>
 
+#include "mixer_backend.h"
+
 class Mixer_SUN : public Mixer_Backend
 {
 public:

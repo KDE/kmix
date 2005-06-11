@@ -50,7 +50,7 @@ bool Mixer_Backend::isOpen() {
 
 /**
  * Queries the backend driver whether there are new changes in any of the controls.
- * If you cannot find out for a backend, return "true" - this is also the default implemntation.
+ * If you cannot find out for a backend, return "true" - this is also the default implementation.
  * @return true, if there are changes. Otherwise false is returned.
  */
 bool Mixer_Backend::prepareUpdateFromHW() {
