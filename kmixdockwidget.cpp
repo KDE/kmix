@@ -86,7 +86,7 @@ void KMixDockWidget::createActions()
   if ( a ) a->plug( popupMenu );
 
   // Put "Select Master Channel" dialog in context menu
-  (void)new KAction( i18n("Select Channel"), 0, this, SLOT(selectMaster()),
+  (void)new KAction( i18n("Select Master Channel..."), 0, this, SLOT(selectMaster()),
   actionCollection(), "select_master");
   KAction *a2 = actionCollection()->action( "select_master" );
   if (a2) a2->plug( popupMenu );
@@ -249,13 +249,13 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			_dockAreaPopup->hide();
 			return;
 		}
-		
+
 		int h = _dockAreaPopup->height();
 		int x = this->mapToGlobal( QPoint( 0, 0 ) ).x() - this->width()/2;
 		int y = this->mapToGlobal( QPoint( 0, 0 ) ).y() - h + this->height();
 		if ( y - h < 0 )
 			y = y + h - this->height();
-	
+
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 
 		// Now handle Multihead displays. And also make sure that the dialog is not
@@ -273,7 +273,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 
 		_dockAreaPopup->show();
 		KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-		
+
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
 	} // LeftMouseButton pressed
@@ -284,13 +284,13 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	else {
 		KSystemTray::mousePressEvent(me);
 	} // Other MouseButton pressed
-	
+
 }
 
 void
 KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
 {
-	
+
     KSystemTray::mouseReleaseEvent(me);
 }
 

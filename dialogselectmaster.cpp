@@ -38,7 +38,7 @@
 #include "mixer.h"
 
 DialogSelectMaster::DialogSelectMaster( Mixer *mixer  )
-  : KDialogBase(  Plain, i18n( "Configure" ), Ok|Cancel, Ok )
+  : KDialogBase(  Plain, i18n( "Select Master Channel" ), Ok|Cancel, Ok )
 {
    _layout = 0;
    m_vboxForScrollView = 0;
@@ -77,7 +77,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
       m_cMixer = new KComboBox( FALSE, m_mainFrame, "mixerCombo" );
       m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
       connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPageByID( int ) ) );
-      
+
       //int id=1;
       for ( Mixer *mixer = Mixer::mixers().first(); mixer !=0; mixer = Mixer::mixers().next() ) {
 	m_cMixer->insertItem( mixer->mixerName() );
@@ -90,10 +90,10 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 
       QToolTip::add( m_cMixer, i18n("Current mixer" ) );
       mixerNameLayout->addWidget(m_cMixer);
-      
+
     } // end if (more_than_1_Mixer)
 
-    QLabel *qlbl = new QLabel( i18n("Select Channel"), m_mainFrame );
+    QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), m_mainFrame );
     _layout->addWidget(qlbl);
 
     m_scrollableChannelSelector = new QScrollView(m_mainFrame, "scrollableChannelSelector");
@@ -128,7 +128,7 @@ void DialogSelectMaster::createPageByID(int mixerId)
  */
 void DialogSelectMaster::createPage(Mixer* mixer)
 {
-    
+
     /** --- Reset page -----------------------------------------------
      * In case the user selected a new Mixer via m_cMixer, we need
      * to remove the stuff created on the last call.
