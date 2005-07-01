@@ -70,7 +70,7 @@ class KMixerWidget : public QWidget
 
    const Mixer *mixer() const { return _mixer; };
 
-   int id() const { return m_id; };
+  int id() const { return m_id; };
 
    KActionCollection* getActionCollection() const { return 0; /* m_actions; */ }
 	
@@ -100,13 +100,6 @@ class KMixerWidget : public QWidget
    KTabWidget* m_ioTab;
 
 	std::vector<ViewBase*> _views;
-	/*
-   ViewOutput*    _oWidget;
-   ViewInput*     _iWidget;
-   ViewSwitches*  _swWidget;
-   ViewSurround*  _surroundWidget;
-   ViewGrid*      _gridWidget;
-*/
    int m_id;
 
    KActionMenu *m_toggleMixerChannels;
@@ -117,6 +110,7 @@ class KMixerWidget : public QWidget
    MixDevice::DeviceCategory m_categoryMask;
 
    void createLayout(ViewBase::ViewFlags vflags);
+   void possiblyAddView(ViewBase* vbase);
 };
 
 #endif
