@@ -1,8 +1,6 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * $Id$
- *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
@@ -461,12 +459,21 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
    m_onLogin = prefDlg->m_onLogin->isChecked();
+
+   bool toplevelOrientationHasChanged =
+        ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
+     || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
+   if ( toplevelOrientationHasChanged ) {
+      QString msg = i18n("The change of orientation will be adopted on the next start of KMix.");
+      KMessageBox::information(0,msg);
+   }
    if ( prefDlg->_rbVertical->isChecked() ) {
-      kdDebug(67100) << "KMix should change to Vertical layout\n";
+      //QString "For a change of language to take place, quit and restart KDiff3.";
+      //kdDebug(67100) << "KMix should change to Vertical layout\n";
       m_toplevelOrientation = Qt::Vertical;
    }
    else if ( prefDlg->_rbHorizontal->isChecked() ) {
-     kdDebug(67100) << "KMix should change to Horizontal layout\n";
+     //kdDebug(67100) << "KMix should change to Horizontal layout\n";
      m_toplevelOrientation = Qt::Horizontal;
    }
 

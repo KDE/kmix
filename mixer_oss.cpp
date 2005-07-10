@@ -1,8 +1,6 @@
 /*
  *              KMix -- KDE's full featured mini mixer
  *
- *              $Id$
- *
  *              Copyright (C) 1996-2000 Christian Esken
  *                        esken@kde.org
  *
