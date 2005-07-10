@@ -27,7 +27,8 @@ public:
         Horizontal     = 0x0004,
         Vertical       = 0x0008,
 	// Experimental flags
-	Experimental_SurroundView = 0x1000
+	Experimental_SurroundView = 0x1000,
+	Experimental_GridView = 0x2000
     };
 
     ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0);

@@ -22,6 +22,8 @@
 #ifndef KMIXERWIDGET_H
 #define KMIXERWIDGET_H
 
+#include <vector>
+
 #include <qwidget.h>
 #include <qptrlist.h>
 class QString;
@@ -49,6 +51,8 @@ class Mixer;
 class ViewInput;
 class ViewOutput;
 class ViewSwitches;
+// KMix experimental
+class ViewGrid;
 class ViewSurround;
 
 
@@ -57,7 +61,7 @@ class KMixerWidget : public QWidget
    Q_OBJECT
 
   public:
-   KMixerWidget( int _id, Mixer *mixer, const QString &mixerName, int mixerNum,
+   KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
                  MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
    ~KMixerWidget();
@@ -65,9 +69,8 @@ class KMixerWidget : public QWidget
    enum KMixerWidgetIO { OUTPUT=0, INPUT };
 
    const Mixer *mixer() const { return _mixer; };
-   int mixerNum() const { return m_mixerNum; };
 
-   int id() const { return m_id; };
+  int id() const { return m_id; };
 
    KActionCollection* getActionCollection() const { return 0; /* m_actions; */ }
 	
@@ -96,12 +99,7 @@ class KMixerWidget : public QWidget
 
    KTabWidget* m_ioTab;
 
-   ViewOutput*    _oWidget;
-   ViewInput*     _iWidget;
-   ViewSwitches*  _swWidget;
-   ViewSurround*  _surroundWidget;
-
-   int m_mixerNum;
+	std::vector<ViewBase*> _views;
    int m_id;
 
    KActionMenu *m_toggleMixerChannels;
@@ -112,6 +110,7 @@ class KMixerWidget : public QWidget
    MixDevice::DeviceCategory m_categoryMask;
 
    void createLayout(ViewBase::ViewFlags vflags);
+   void possiblyAddView(ViewBase* vbase);
 };
 
 #endif

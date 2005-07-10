@@ -1,8 +1,6 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * $Id$
- *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>

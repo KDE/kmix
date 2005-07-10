@@ -682,11 +682,11 @@ void MDWSlider::setDisabled( bool value )
 void MDWSlider::increaseVolume()
 {
 	Volume vol = m_mixdevice->getVolume();
-	int inc = vol.maxVolume() / 20;
+	long inc = vol.maxVolume() / 20;
 	if ( inc == 0 )
 		inc = 1;
 	for ( int i = 0; i < vol.count(); i++ ) {
-		int newVal = vol[i] + inc;
+		long newVal = (vol[i]) + inc;
 		m_mixdevice->setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
 	}
 	m_mixer->commitVolumeChange(m_mixdevice);
@@ -699,11 +699,11 @@ void MDWSlider::increaseVolume()
 void MDWSlider::decreaseVolume()
 {
 	Volume vol = m_mixdevice->getVolume();
-	int inc = vol.maxVolume() / 20;
+	long inc = vol.maxVolume() / 20;
 	if ( inc == 0 )
 		inc = 1;
 	for ( int i = 0; i < vol.count(); i++ ) {
-		int newVal = vol[i] - inc;
+		long newVal = (vol[i]) - inc;
 		m_mixdevice->setVolume( i, newVal > 0 ? newVal : 0 );
 	}
 	m_mixer->commitVolumeChange(m_mixdevice);
@@ -780,10 +780,12 @@ void MDWSlider::update()
 			{
 				QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
 				if (bigSlider)
-					if ( _orientation == Qt::Vertical )
+					if ( _orientation == Qt::Vertical ) {
 						bigSlider->setValue( vol.maxVolume() - vol[i] );
-					else
+					}
+					else {
 						bigSlider->setValue( vol[i] );
+				}
 			}
 			
 			slider->blockSignals( false );

@@ -33,6 +33,7 @@
 #include <qptrlist.h>
 
 #include "volume.h"
+class Mixer_Backend;
 #include "mixerIface.h"
 #include "mixset.h"
 #include "mixdevice.h"
@@ -48,20 +49,21 @@ class Mixer : public QObject, virtual public MixerIface
       enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP,
 			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET, ERR_MIXEROPEN };
 
-      Mixer( int device = -1, int card = -1 );
-      virtual ~Mixer() {};
+      Mixer( int driver, int device );
+      virtual ~Mixer();
 
-      /// Static function. This function must be overloaded by any derived mixer class
-      /// to create and return an instance of the derived class.
-      static int getDriverNum();
-      static Mixer* getMixer( int driver, int device = 0 );
-      //static Mixer* getMixer( int driver, MixSet set,int device = 0 );
+      static int numDrivers();
+
+      MixDevice* find(QString& devPK);
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
 
        /// Tells the number of the mixing devices
       unsigned int size() const;
+      
+      bool isValid();
+      
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);
 
@@ -70,18 +72,10 @@ class Mixer : public QObject, virtual public MixerIface
       /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
       MixDevice *mixDeviceByType( int deviceidx );
 
-      /// Grabs (opens) the mixer for further intraction
-      virtual int grab();
-      /// Releases (closes) the mixer
-      virtual int release();
-      /// Prints out a translated error text for the given error number on stderr
-      void errormsg(int mixer_error);
-      /// Returns a translated error text for the given error number.
-      /// Derived classes can override this method to produce platform
-      /// specific error descriptions.
-      virtual QString errorText(int mixer_error);
-      /// Returns the last error number
-      int getErrno() const;
+      /// Open/grab the mixer for further intraction
+      virtual int open();
+      /// Close/release the mixer
+      virtual int close();
 
       /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
       QString& stateMessage() const;
@@ -89,34 +83,31 @@ class Mixer : public QObject, virtual public MixerIface
       virtual QString mixerName();
 
       // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
-      QString driverName();
       static QString driverName(int num);
 
-      /// set/get mixer number used to identify mixers with equal names
-      void setMixerNum( int num );
-      int mixerNum();
+      /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>:<hw_number>@<driver>"
+      QString& id();
+      /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
+      /// the user, but can be used for referencing configuration items and such.
+      void setID(QString& ref_id);
+
+      /// The KMix global master card. Please note that KMix and KMixPanelApplet can have a
+      /// different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
+      /// At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
+      static void setMasterCard(QString& ref_id);
+      static Mixer* masterCard();
+      /// The global Master Device inside the current MasterCard (as returned by masterCard()).
+      static void setMasterCardDevice(QString& ref_id);
+      static MixDevice* masterCardDevice();
+
 
       /// get the actual MixSet
-      virtual MixSet getMixSet() { return m_mixDevices; };
+      MixSet getMixSet();
 
-      /// Set the record source(s) according to the given device mask
-      /// The default implementation does nothing.
-
-      /// Gets the currently active record source(s) as a device mask
-      /// The default implementation just returns the internal stored value.
-      /// This value can be outdated, when another applications change the record
-      /// source. You can override this in your derived class
-      //  virtual unsigned int recsrc() const;
-
-      /// Returns the number of the master volume device */
-      int masterDevice() { return m_masterDevice; };
-
-      /// Reads the volume of the given device into VolLeft and VolRight.
-      /// Abstract method! You must implement it in your dericved class.
-      virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
-      virtual bool prepareUpdate();
-      virtual void setEnumIdHW(int mixerIdx, unsigned int);
-      virtual unsigned int enumIdHW(int mixerIdx);
+      /// Returns the master volume device (doesn't work out :-(. See masterCard() and masterCardDevice() instead)
+      MixDevice* masterDevice();
+      /// Sets the master volume device (doesn't work out :-(. See setMasterCard() and setMasterCardDevice() instead)
+      void setMasterDevice(QString&);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
       virtual void setVolume( int deviceidx, int percentage );
@@ -132,8 +123,6 @@ class Mixer : public QObject, virtual public MixerIface
       virtual int volume( int deviceidx );
       virtual int masterVolume();
 
-
-
       virtual void setMute( int deviceidx, bool on );
       virtual bool mute( int deviceidx );
       virtual void toggleMute( int deviceidx );
@@ -143,12 +132,7 @@ class Mixer : public QObject, virtual public MixerIface
 
       void commitVolumeChange( MixDevice* md );
 
-      virtual bool hasBrokenRecSourceHandling();
-
    public slots:
-      /// Writes the given volumes in the given device
-      /// Abstract method! You must implement it in your dericved class.
-      virtual int writeVolumeToHW( int devnum, Volume &volume ) = 0;
       virtual void readSetFromHW();
       void readSetFromHWforceUpdate() const;
       virtual void setRecordSource( int deviceidx, bool on );
@@ -161,40 +145,25 @@ class Mixer : public QObject, virtual public MixerIface
       void newVolumeLevels(void);
 
    protected:
-      int m_devnum;
-      int m_cardnum;
-      int m_masterDevice; // device num for master volume
-      /// Derived classes MUST implement this to open the mixer. Returns a KMix error
-      // code (O=OK).
-      virtual int openMixer() = 0;
-      virtual int releaseMixer() = 0;
-
-      virtual bool setRecsrcHW( int devnum, bool on) = 0;
-      virtual bool isRecsrcHW( int devnum ) = 0;
-
-      /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
-      /// gives you a usable name, use that name.
-      QString m_mixerName;
-
       QTimer* _pollingTimer;
 
-      // mixer number to identify mixers with equal name correctly (set by the client)
-      int m_mixerNum;
-
-      bool m_isOpen;
       int m_balance; // from -100 (just left) to 100 (just right)
-      int     _errno;
-
-      // All mix devices of this phyisical device.
-      MixSet m_mixDevices;
 
       QPtrList<MixSet> m_profiles;
+      static QPtrList<Mixer> s_mixers;
 
    public:
       int setupMixer( MixSet set );
+      static QPtrList<Mixer>& mixers();
 
    private:
+     Mixer_Backend *_mixerBackend;
       mutable bool _readSetFromHWforceUpdate;
+      static int _dcopID;
+      QString _id;
+      QString _masterDevicePK;
+      static QString _masterCard;
+      static QString _masterCardDevice;
 };
 
 #endif

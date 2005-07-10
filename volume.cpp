@@ -122,7 +122,7 @@ void Volume::setVolume(const Volume &v)
  */
 void Volume::setVolume(const Volume &v, ChannelMask chmask) {
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( _channelMaskEnum[i] & _chmask & chmask ) {
+        if ( _channelMaskEnum[i] & _chmask & (int)chmask ) {
             // we are supposed to copy it
             _volumes[i] = volrange(v._volumes[i]);
         }
@@ -150,7 +150,7 @@ long Volume::operator[](int id) {
 long Volume::getVolume(ChannelID chid) {
   long vol = 0;
 
-  if ( chid < 0 || chid > Volume::CHIDMAX ) {
+  if ( chid < 0 || chid > (Volume::CHIDMAX) ) {
     // should throw exception here. I will return 0 instead
   }
   else {
@@ -172,7 +172,7 @@ long Volume::getAvgVolume(ChannelMask chmask) {
     int avgVolumeCounter = 0;
     long long sumOfActiveVolumes = 0;
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( (_channelMaskEnum[i] & _chmask) & chmask ) {
+        if ( (_channelMaskEnum[i] & _chmask) & (int)chmask ) {
             avgVolumeCounter++;
             sumOfActiveVolumes += _volumes[i];
         }
@@ -189,7 +189,7 @@ long Volume::getAvgVolume(ChannelMask chmask) {
 long Volume::getTopStereoVolume(ChannelMask chmask) {
     long long topVolumeCount = 0;
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( (_channelMaskEnum[i] & _chmask) & chmask ) {
+        if ( (_channelMaskEnum[i] & _chmask) & (int)chmask ) {
 			  if ( topVolumeCount < _volumes[i] )
 				  topVolumeCount = _volumes[i];
         }

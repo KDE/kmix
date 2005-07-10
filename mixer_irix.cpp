@@ -22,28 +22,23 @@
 
 #include "mixer_irix.h"
 
-Mixer* IRIX_getMixer(int devnum, int SetNum)
+Mixer_Backend* IRIX_getMixer(int devnum)
 {
-  Mixer *l_mixer;
-  l_mixer = new Mixer_IRIX( devnum, SetNum);
-  l_mixer->init(devnum, SetNum);
+  Mixer_Backend *l_mixer;
+  l_mixer = new Mixer_IRIX( devnum);
+  l_mixer->init(devnum);
   return l_mixer;
 }
 
 
 
-Mixer_IRIX::Mixer_IRIX() : Mixer()
+Mixer_IRIX::Mixer_IRIX(int devnum) : Mixer_Backend(devnum)
 {
+  close();
 }
 
-Mixer_IRIX::Mixer_IRIX(int devnum, int SetNum) : Mixer(devnum, SetNum)
+int Mixer_IRIX::open()
 {
-}
-
-int Mixer_IRIX::openMixer()
-{
-  release();		// To be sure, release mixer before (re-)opening
-
   // Create config
   m_config = ALnewconfig();
   if (m_config == (ALconfig)0) {
@@ -70,10 +65,12 @@ int Mixer_IRIX::openMixer()
   }
 }
 
-int Mixer_IRIX::releaseMixer()
+int Mixer_IRIX::close()
 {
+  m_isOpen = false;
   ALfreeconfig(m_config);
   ALcloseport(m_port);
+  m_mixDevices.clear();
   return 0;
 }
 

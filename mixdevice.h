@@ -38,7 +38,7 @@ class MixDevice : public QObject
                                 QString name, ChannelType type = UNKNOWN, DeviceCategory category =
 SLIDER );
       MixDevice(const MixDevice &md);
-      ~MixDevice() {};
+      ~MixDevice();
 
       int num()                    { return _num; };
       QString   name()         { return _name; };

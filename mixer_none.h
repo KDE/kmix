@@ -1,11 +1,12 @@
 #ifndef MIXER_NONE_H
 #define MIXER_NONE_H
 
-class Mixer_None : public Mixer
+#include "mixer_backend.h"
+
+class Mixer_None : public Mixer_Backend
 {
 public:
-  Mixer_None();
-  Mixer_None(int devnum, int SetNum);
+  Mixer_None(int devnum);
   virtual ~Mixer_None();
 
   virtual int readVolumeFromHW( int devnum, Volume& vol );
@@ -14,8 +15,8 @@ public:
   virtual bool isRecsrcHW( int devnum );
 
 protected:
-  virtual int openMixer();
-  virtual int releaseMixer();
+  virtual int open();
+  virtual int close();
 };
 
 #endif

@@ -24,6 +24,10 @@
 
 #include <config.h>
 
+#include <qstring.h>
+
+#include "mixer_backend.h"
+
 #if defined(sun) || defined(__sun__)
 #define SUN_MIXER
 #endif
@@ -88,42 +92,40 @@
 #endif
 */
 
-typedef Mixer *getMixerFunc( int device, int card );
-typedef Mixer *getMixerSetFunc( MixSet set, int device, int card );
+typedef Mixer_Backend *getMixerFunc( int device );
 typedef QString getDriverNameFunc( );
 
 struct MixerFactory {
     getMixerFunc *getMixer;
-    getMixerSetFunc *getMixerSet;
     getDriverNameFunc *getDriverName;
 };
 
 MixerFactory g_mixerFactories[] = {
 
 #if defined(NAS_MIXER)
-    { NAS_getMixer, 0 , 0 },
+    { NAS_getMixer, 0 },
 #endif
 
 #if defined(SUN_MIXER)
-    { SUN_getMixer, 0 , SUN_getDriverName },
+    { SUN_getMixer, SUN_getDriverName },
 #endif
 
 #if defined(IRIX_MIXER)
-    { IRIX_getMixer, 0 , IRIX_getDriverName },
+    { IRIX_getMixer, IRIX_getDriverName },
 #endif
 
 #if defined(ALSA_MIXER)
-    { ALSA_getMixer, 0, ALSA_getDriverName },
+    { ALSA_getMixer, ALSA_getDriverName },
 #endif
 
 #if defined(OSS_MIXER)
-    { OSS_getMixer, 0 , OSS_getDriverName },
+    { OSS_getMixer, OSS_getDriverName },
 #endif
 
 #if defined(HPUX_MIXER)
-    { HPUX_getMixer, 0, HPUX_getDriverName },
+    { HPUX_getMixer, HPUX_getDriverName },
 #endif
 
-    { 0, 0, 0 }
+    { 0, 0 }
 };
 

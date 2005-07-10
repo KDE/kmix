@@ -25,12 +25,13 @@
 
 #include <qstring.h>
 
-class Mixer_SUN : public Mixer
+#include "mixer_backend.h"
+
+class Mixer_SUN : public Mixer_Backend
 {
 public:
-  Mixer_SUN();
-  Mixer_SUN(int devnum, int SetNum);
-  virtual ~Mixer_SUN() {};
+  Mixer_SUN(int devnum);
+  virtual ~Mixer_SUN();
 
   virtual QString errorText(int mixer_error);
   virtual int readVolumeFromHW( int devnum, Volume& volume );
@@ -39,8 +40,8 @@ public:
   bool isRecsrcHW( int devnum );
 
 protected:
-  virtual int openMixer();
-  virtual int releaseMixer();
+  virtual int open();
+  virtual int close();
 
   void VolumeToGainBalance( Volume& volume, uint_t& gain, uchar_t& balance );
   void GainBalanceToVolume( uint_t& gain, uchar_t& balance, Volume& volume );

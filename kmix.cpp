@@ -1,8 +1,6 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * $Id$
- *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
  * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
@@ -62,18 +60,18 @@
  */
 KMixWindow::KMixWindow()
 	: KMainWindow(0, 0, 0, 0), m_showTicks( true ),
-	m_lockedLayout(0),
 	m_dockWidget( 0L )
 {
 	m_visibilityUpdateAllowed	= true;
 	m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
-	m_surroundView		        = false; // -<- The same is true for the experimental surround View (3D)
+	m_surroundView		        = false; // -<- Also the experimental surround View (3D)
+	m_gridView		        = false; // -<- Also the experimental Grid View
 	// As long as we do not know better, we assume to start hidden. We need
 	// to initialize this variable here, as we don't trigger a hideEvent().
 	m_isVisible = false;
 	m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-	MixerToolBox::initMixer(m_mixers, m_multiDriverMode, m_hwInfoString);
+	MixerToolBox::initMixer(Mixer::mixers(), m_multiDriverMode, m_hwInfoString);
 	initActions();
 	initWidgets();
 	initMixerWidgets();
@@ -99,6 +97,7 @@ KMixWindow::KMixWindow()
 
 KMixWindow::~KMixWindow()
 {
+   MixerToolBox::deinitMixer();
 }
 
 
@@ -113,10 +112,6 @@ KMixWindow::initActions()
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
-/* Belongs in KMixDockWidget
-	(void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
-				 actionCollection(), "dock_mute" );
-*/
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
 	(void) new KAction( i18n( "Hide Mixer Window" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
 	createGUI( "kmixui.rc" );
@@ -187,7 +182,7 @@ KMixWindow::updateDocking()
 
 		// create dock widget
                 // !! This should be a View in the future
-		m_dockWidget = new KMixDockWidget( m_mixers.first(), this, "mainDockWidget", m_volumeWidget );
+		m_dockWidget = new KMixDockWidget( Mixer::mixers().first(), this, "mainDockWidget", m_volumeWidget );
 
 /* Belongs in KMixDockWidget
 		// create RMB menu
@@ -239,6 +234,15 @@ KMixWindow::saveConfig()
    config->writeEntry( "Tickmarks", m_showTicks );
    config->writeEntry( "Labels", m_showLabels );
    config->writeEntry( "startkdeRestore", m_onLogin );
+   Mixer* mixerMasterCard = Mixer::masterCard();
+   if ( mixerMasterCard != 0 ) {
+      config->writeEntry( "MasterMixer", mixerMasterCard->id() );
+   }
+   MixDevice* mdMaster = Mixer::masterCardDevice();
+   if ( mdMaster != 0 ) {
+      config->writeEntry( "MasterMixerDevice", mdMaster->getPK() );
+   }
+
    if ( m_toplevelOrientation  == Qt::Vertical )
       config->writeEntry( "Orientation","Vertical" );
    else
@@ -271,7 +275,14 @@ KMixWindow::loadConfig()
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
+   //m_gridView    = config->readBoolEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
+   QString mixerMasterCard = config->readEntry( "MasterMixer", "" );
+   Mixer::setMasterCard(mixerMasterCard);
+   QString masterDev = config->readEntry( "MasterMixerDevice", "" );
+   Mixer::setMasterCardDevice(masterDev);
+
+
    if ( orientationString == "Vertical" )
        m_toplevelOrientation  = Qt::Vertical;
    else
@@ -305,40 +316,35 @@ KMixWindow::initMixerWidgets()
 	int id=0;
 	Mixer *mixer;
 
-	// Attention!! If m_mixers is empty, we behave stupid. We don't show nothing and there
+	// Attention!! If Mixer::mixers() is empty, we behave stupid. We don't show nothing and there
         //             is not even a context menu.
-	for ( mixer=m_mixers.first(),id=0; mixer!=0; mixer=m_mixers.next(),id++ )
+	for ( mixer=Mixer::mixers().first(),id=0; mixer!=0; mixer=Mixer::mixers().next(),id++ )
 	{
-	    //kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
-
-
-                ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-                if ( m_showMenubar ) {
-                    vflags |= ViewBase::MenuBarVisible;
-	        }
+		//kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+		ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
+		if ( m_showMenubar ) {
+			vflags |= ViewBase::MenuBarVisible;
+		}
 		if (  m_surroundView ) {
-		    vflags |= ViewBase::Experimental_SurroundView;
+			vflags |= ViewBase::Experimental_SurroundView;
+		}
+		if (  m_gridView ) {
+			vflags |= ViewBase::Experimental_GridView;
 		}
 		if ( m_toplevelOrientation == Qt::Vertical ) {
-		    vflags |= ViewBase::Vertical;
+			vflags |= ViewBase::Vertical;
 		}
 		else {
-		    vflags |= ViewBase::Horizontal;
+			vflags |= ViewBase::Horizontal;
 		}
 
 	
-		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(), mixer->mixerNum(),
+		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(),
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
-
-		//mw->setName( mixer->mixerName() );
-
 		m_mixerWidgets.append( mw );
 
-		// Add to Combo
+		// Add to Combo and Stack
 		m_cMixer->insertItem( mixer->mixerName() );
-
-		// Add to Stack
-		//kdDebug(67100) << "Inserted mixer " << id << ":" << mw->name() << endl;
 		m_wsMixers->addWidget( mw, id );
 
 		QString grp;
@@ -357,6 +363,8 @@ KMixWindow::initMixerWidgets()
 		mixerNameLayout->hide();
 	}
 }
+
+
 
 bool
 KMixWindow::queryClose ( )
@@ -419,7 +427,7 @@ void
 KMixWindow::loadVolumes()
 {
 	KConfig *cfg = new KConfig( "kmixctrlrc", true );
-	for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next())
+	for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
 	{
 		mixer->volumeLoad( cfg );
 	}
@@ -435,7 +443,7 @@ void
 KMixWindow::saveVolumes()
 {
     KConfig *cfg = new KConfig( "kmixctrlrc", false );
-    for (Mixer *mixer=m_mixers.first(); mixer!=0; mixer=m_mixers.next()) {
+    for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next()) {
 	//kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
 	mixer->volumeSave( cfg );
     }
@@ -451,12 +459,21 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_showTicks = prefDlg->m_showTicks->isChecked();
    m_showLabels = prefDlg->m_showLabels->isChecked();
    m_onLogin = prefDlg->m_onLogin->isChecked();
+
+   bool toplevelOrientationHasChanged =
+        ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
+     || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
+   if ( toplevelOrientationHasChanged ) {
+      QString msg = i18n("The change of orientation will be adopted on the next start of KMix.");
+      KMessageBox::information(0,msg);
+   }
    if ( prefDlg->_rbVertical->isChecked() ) {
-      kdDebug(67100) << "KMix should change to Vertical layout\n";
+      //QString "For a change of language to take place, quit and restart KDiff3.";
+      //kdDebug(67100) << "KMix should change to Vertical layout\n";
       m_toplevelOrientation = Qt::Vertical;
    }
    else if ( prefDlg->_rbHorizontal->isChecked() ) {
-     kdDebug(67100) << "KMix should change to Horizontal layout\n";
+     //kdDebug(67100) << "KMix should change to Horizontal layout\n";
      m_toplevelOrientation = Qt::Horizontal;
    }
 

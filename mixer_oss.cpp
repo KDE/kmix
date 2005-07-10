@@ -1,8 +1,6 @@
 /*
  *              KMix -- KDE's full featured mini mixer
  *
- *              $Id$
- *
  *              Copyright (C) 1996-2000 Christian Esken
  *                        esken@kde.org
  *
@@ -75,33 +73,25 @@ const MixDevice::ChannelType MixerChannelTypes[32] = {
   MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,   MixDevice::UNKNOWN,
   MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
 
-Mixer* OSS_getMixer( int device, int card )
+Mixer_Backend* OSS_getMixer( int device )
 {
-  Mixer *l_mixer;
-  l_mixer = new Mixer_OSS( device, card );
+  Mixer_Backend *l_mixer;
+  l_mixer = new Mixer_OSS( device );
   return l_mixer;
 }
 
-/*
-Mixer* OSS_getMixerSet( MixSet set, int device, int card )
-{
-  Mixer *l_mixer;
-  l_mixer = new Mixer_OSS( device, card );
-  return l_mixer;
-}
-*/
-
-Mixer_OSS::Mixer_OSS(int device, int card) : Mixer(device, card)
+Mixer_OSS::Mixer_OSS(int device) : Mixer_Backend(device)
 {
   if( device == -1 ) m_devnum = 0;
-  if( card   == -1 ) m_cardnum = 0;
 }
 
-int Mixer_OSS::openMixer()
+Mixer_OSS::~Mixer_OSS()
 {
-    if ( m_cardnum!=0 ) return Mixer::ERR_OPEN; // OSS doesn't support different card numbers
-  release();            // To be sure, release mixer before (re-)opening
+  close();
+}
 
+int Mixer_OSS::open()
+{
   if ((m_fd= ::open( deviceName( m_devnum ).latin1(), O_RDWR)) < 0)
     {
       if ( errno == EACCES )
@@ -156,7 +146,7 @@ int Mixer_OSS::openMixer()
           {
             MixDevice* md = m_mixDevices.at( idx );
             if( !md )
-              return ERR_INCOMPATIBLESET;
+              return Mixer::ERR_INCOMPATIBLESET;
             writeVolumeToHW( idx, md->getVolume() );
           }
 
@@ -175,9 +165,11 @@ int Mixer_OSS::openMixer()
       return 0;
 }
 
-int Mixer_OSS::releaseMixer()
+int Mixer_OSS::close()
 {
+  m_isOpen = false;
   int l_i_ret = ::close(m_fd);
+  m_mixDevices.clear();
   return l_i_ret;
 }
 
@@ -215,11 +207,11 @@ QString Mixer_OSS::errorText(int mixer_error)
   QString l_s_errmsg;
   switch (mixer_error)
     {
-    case ERR_PERM:
+    case Mixer::ERR_PERM:
       l_s_errmsg = i18n("kmix: You do not have permission to access the mixer device.\n" \
                         "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access.");
       break;
-    case ERR_OPEN:
+    case Mixer::ERR_OPEN:
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
                         "Please check that the soundcard is installed and the\n" \
                         "soundcard driver is loaded.\n" \
@@ -227,7 +219,7 @@ QString Mixer_OSS::errorText(int mixer_error)
                         "Use 'soundon' when using commercial OSS.");
       break;
     default:
-      l_s_errmsg = Mixer::errorText(mixer_error);
+      l_s_errmsg = Mixer_Backend::errorText(mixer_error);
     }
   return l_s_errmsg;
 }
@@ -298,7 +290,7 @@ int Mixer_OSS::writeVolumeToHW( int devnum, Volume &vol )
   if( vol.isMuted() ) volume = 0;
   else
     if ( vol.count() > 1 )
-      volume = vol[ Volume::LEFT ] + ((vol[ Volume::RIGHT ])<<8);
+      volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
     else
       volume = vol[ Volume::LEFT ];
 

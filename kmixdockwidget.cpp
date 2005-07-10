@@ -40,6 +40,7 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
+#include "dialogselectmaster.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "kmixdockwidget.h"
@@ -56,6 +57,15 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name,
       _oldPixmapType('-'),
       _volumePopup(volumePopup)
 {
+    Mixer* preferredMasterMixer = Mixer::masterCard();
+    if ( preferredMasterMixer != 0 ) {
+       m_mixer = preferredMasterMixer;
+    }
+    MixDevice* mdMaster = Mixer::masterCardDevice();
+    if ( mdMaster != 0 ) {
+       m_mixer->setMasterDevice(mdMaster->getPK()); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
+    }
+    createActions();
     createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
@@ -65,6 +75,28 @@ KMixDockWidget::~KMixDockWidget()
     delete _audioPlayer;
     delete _dockAreaPopup;
 }
+
+void KMixDockWidget::createActions()
+{
+  // Put "Mute" selector in context menu
+  (void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
+  actionCollection(), "dock_mute" );
+  KAction *a = actionCollection()->action( "dock_mute" );
+  KPopupMenu *popupMenu = contextMenu();
+  if ( a ) a->plug( popupMenu );
+
+  // Put "Select Master Channel" dialog in context menu
+  (void)new KAction( i18n("Select Channel"), 0, this, SLOT(selectMaster()),
+  actionCollection(), "select_master");
+  KAction *a2 = actionCollection()->action( "select_master" );
+  if (a2) a2->plug( popupMenu );
+
+   // Setup volume preview
+  if ( _playBeepOnVolumeChange ) {
+    _audioPlayer = new KAudioPlayer("KDE_Beep_Digital_1.ogg");
+  }
+}
+
 
 void
 KMixDockWidget::createMasterVolWidget()
@@ -76,18 +108,11 @@ KMixDockWidget::createMasterVolWidget()
         updatePixmap();
         return;
     }
-
-    // Put "Mute" selector in context menu
-    (void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
-                             actionCollection(), "dock_mute" );
-    KAction *a = actionCollection()->action( "dock_mute" );
-    KPopupMenu *popupMenu = contextMenu();
-    if ( a ) a->plug( popupMenu );
-
     // create devices
 
     _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, this);
     _dockAreaPopup->createDeviceWidgets();
+    m_mixer->readSetFromHWforceUpdate();  // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     /* We are setting up 3 connections:
      * Refreshig the _dockAreaPopup (not anymore neccesary, because ViewBase already does it)
      * Refreshing the Tooltip
@@ -97,13 +122,31 @@ KMixDockWidget::createMasterVolWidget()
     //    connect( m_mixer, SIGNAL(newVolumeLevels()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
     connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(setVolumeTip() ) );
     connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(updatePixmap() ) );
-
-   // Setup volume preview
-   if ( _playBeepOnVolumeChange ) {
-        _audioPlayer = new KAudioPlayer("KDE_Beep_Digital_1.ogg");
-   }
 }
 
+
+void KMixDockWidget::selectMaster()
+{
+   DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
+   connect ( dsm, SIGNAL(newMasterSelected(int, int)), SLOT( handleNewMaster(int,int) ) );
+   dsm->show();
+    // !! The dialog is modal. Does it delete itself?
+}
+
+
+void KMixDockWidget::handleNewMaster(int soundcard_id, int channel_id) // !! @todo rework parameters
+{
+  //kdDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , channel_id=" << channel_id << endl;
+  Mixer *mixer = Mixer::mixers().at(soundcard_id);
+  if ( mixer == 0 ) {
+    kdError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
+    return; // can not happen
+  }
+  m_mixer = mixer;
+  Mixer::setMasterCard(mixer->id()); // We must save this information "somewhere".
+  Mixer::setMasterCardDevice( (*mixer)[channel_id]->getPK());
+  createMasterVolWidget();
+}
 
 
 void
@@ -214,12 +257,30 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 			y = y + h - this->height();
 	
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
+
+		// Now handle Multihead displays. And also make sure that the dialog is not
+		// moved out-of-the screen on the right (see Bug 101742).
+		QDesktopWidget* vdesktop = QApplication::desktop();
+		const QRect& vScreenSize = vdesktop->screenGeometry(_dockAreaPopup);
+		if ( (x+_dockAreaPopup->width()) > (vScreenSize.width()) ) {
+			// move horizontally, so that it is completely visible
+			_dockAreaPopup->move(vScreenSize.width() - _dockAreaPopup->width() -1 , y);
+		} // horizontally out-of bound
+		else if ( x < 0 ) {
+			_dockAreaPopup->move(0, y);
+		}
+		// the above stuff could also be implemented vertically
+
 		_dockAreaPopup->show();
 		KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 		
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
 	} // LeftMouseButton pressed
+	else if ( me->button() ==  MidButton ) {
+		toggleActive();
+		return;
+	}
 	else {
 		KSystemTray::mousePressEvent(me);
 	} // Other MouseButton pressed

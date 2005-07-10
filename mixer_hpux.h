@@ -7,11 +7,12 @@
 #define HPUX_MIXER
 #endif
 
-class Mixer_HPUX : public Mixer
+#include "mixer_backend.h"
+
+class Mixer_HPUX : public Mixer_Backend
 {
 public:
-  Mixer_HPUX();
-  Mixer_HPUX(int devnum, int SetNum);
+  Mixer_HPUX(int devnum);
   virtual ~Mixer_HPUX();
 
   virtual QString errorText(int mixer_error);
@@ -23,8 +24,8 @@ protected:
   virtual bool setRecsrcHW( int devnum, bool on = true );
   virtual bool isRecsrcHW( int devnum );
 
-  virtual int openMixer();
-  virtual int releaseMixer();
+  virtual int open();
+  virtual int close();
 
   Audio	  *audio;
   unsigned int stereodevs,devmask, recmask, MaxVolume, i_recsrc;

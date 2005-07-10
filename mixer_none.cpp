@@ -23,33 +23,32 @@
 #include "mixer_none.h"
 
 // This static method must be implemented (as fallback)
-Mixer* Mixer::getMixer(int devnum, int SetNum)
+Mixer_Backend* Mixer::getMixer(int devnum)
 {
-  Mixer *l_mixer;
-  l_mixer = new Mixer_None( devnum, SetNum);
+  Mixer_Backend *l_mixer;
+  l_mixer = new Mixer_None( devnum);
   return l_mixer;
 }
 
-Mixer_None::Mixer_None()
-{
-}
-
-Mixer_None::Mixer_None(int devnum, int SetNum)
+Mixer_None::Mixer_None(int devnum) : Mixer_Backend( device )
 {
 }
 
 Mixer_None::~Mixer_None()
 {
+  close();
 }
 
-int Mixer_None::openMixer()
+int Mixer_None::open()
 {
    //i_s_mixer_name = "No mixer";
    return Mixer::ERR_NOTSUPP;
 }
 
-int Mixer_None::releaseMixer()
+int Mixer_None::close()
 {
+  m_isOpen = false;
+  m_mixDevices.clear();
   return Mixer::ERR_NOTSUPP;
 }
 

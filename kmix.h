@@ -105,12 +105,10 @@ KMixWindow : public KMainWindow
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported. 
    bool m_surroundView;            // Experimental. Off by defualt
+   bool m_gridView;                // Experimental. Off by default
    Qt::Orientation m_toplevelOrientation;
 
-   QPtrList<Mixer> m_mixers;
    QPtrList<KMixerWidget> m_mixerWidgets;
-
-   int m_lockedLayout; // !!
 
    QHBox* mixerNameLayout;
    KComboBox *m_cMixer;

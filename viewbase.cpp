@@ -26,13 +26,13 @@
 #include <qcursor.h>
 
 // KDE
-#include <dialogviewconfiguration.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <klocale.h>
 #include <kiconloader.h>
 
 // KMix
+#include "dialogviewconfiguration.h"
 #include "mixdevicewidget.h"
 #include "mixer.h"
 

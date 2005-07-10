@@ -7,10 +7,12 @@
 // Forward QT includes
 class QString;
 
-class Mixer_ALSA : public Mixer
+#include "mixer_backend.h"
+
+class Mixer_ALSA : public Mixer_Backend
 {
 	public:
-		Mixer_ALSA( int device = -1, int card = -1 );
+		Mixer_ALSA( int device = -1 );
 		~Mixer_ALSA();
 		
 		virtual int  readVolumeFromHW( int devnum, Volume &vol );
@@ -19,12 +21,12 @@ class Mixer_ALSA : public Mixer
 		virtual bool isRecsrcHW( int devnum );
 	        virtual void setEnumIdHW(int mixerIdx, unsigned int);
       		virtual unsigned int enumIdHW(int mixerIdx);
-		virtual bool prepareUpdate();
+		virtual bool prepareUpdateFromHW();
 
 		
 	protected:
-		virtual int	openMixer();
-		virtual int releaseMixer();
+		virtual int open();
+		virtual int close();
 		
 	private:
 		int identify( snd_mixer_selem_id_t *sid );
@@ -33,9 +35,12 @@ class Mixer_ALSA : public Mixer
 		virtual QString errorText(int mixer_error);
 		typedef QValueList<snd_mixer_selem_id_t *>AlsaMixerSidList;
 		AlsaMixerSidList mixer_sid_list;
+		typedef QValueList<snd_mixer_elem_t *> AlsaMixerElemList; // !! remove
+		AlsaMixerElemList mixer_elem_list; // !! remove
 
                 bool _initialUpdate;
 		snd_mixer_t *_handle;
+		QString devName;
 };
 
 #endif

@@ -38,29 +38,30 @@ extern "C"
 
 // Local Headers
 #include "mixer_alsa.h"
+//#include "mixer.h"
 #include "volume.h"
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
-// @todo Add file descriptor based notifying for seeing changes
 
-Mixer*
-ALSA_getMixer( int device, int card )
+Mixer_Backend*
+ALSA_getMixer( int device )
 {
-	Mixer *l_mixer;
-	l_mixer = new Mixer_ALSA( device, card );
+	Mixer_Backend *l_mixer;
+	l_mixer = new Mixer_ALSA( device );
 	return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( int device, int card ) :
-	Mixer( device, card ), _handle(0)
+Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
 {
+	_handle = 0; 
         _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
 {
+  close();
 }
 
 int
@@ -94,14 +95,12 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 }
 
 int
-Mixer_ALSA::openMixer()
+Mixer_ALSA::open()
 {
     bool virginOpen = m_mixDevices.isEmpty();
     bool validDevice = false;
     bool masterChosen = false;
     int err;
-
-    release();
 
     snd_ctl_t *ctl_handle;
     snd_ctl_card_info_t *hw_info;
@@ -112,7 +111,6 @@ Mixer_ALSA::openMixer()
     snd_mixer_selem_id_alloca( &sid );
 
     // Card information
-    QString devName;
     if( m_devnum == -1 )
         m_devnum = 0;
     if ( (unsigned)m_devnum > 31 )
@@ -149,12 +147,16 @@ Mixer_ALSA::openMixer()
     snd_ctl_close( ctl_handle );
 
     /* open mixer device */
+
+    //kdDebug(67100) << "IN  Mixer_ALSA snd_mixer_open()" << endl;
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
 	//errormsg( Mixer::ERR_NODEV );
+	_handle = 0;
 	return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
     }
+    //kdDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
 
     if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
     {
@@ -174,7 +176,7 @@ Mixer_ALSA::openMixer()
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
 	//errormsg( Mixer::ERR_READ );
-	releaseMixer();
+	close();
 	return Mixer::ERR_READ;
     }
 
@@ -185,6 +187,10 @@ Mixer_ALSA::openMixer()
     {
 	// If element is not active, just skip
 	if ( ! snd_mixer_selem_is_active ( elem ) ) {
+	    // ...but we still want to insert a null value into our mixer element
+	    // list so that the list indexes match up.
+	    mixer_elem_list.append( 0 );
+	    mixer_sid_list.append( 0 );
 	    continue;
 	}
 
@@ -202,12 +208,13 @@ Mixer_ALSA::openMixer()
 	snd_mixer_selem_get_capture_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
 	// New mix device
 	MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
+/*
         if (!masterChosen && ct==MixDevice::VOLUME) {
            // Determine a nicer MasterVolume
 	   m_masterDevice = mixerIdx;
            masterChosen = true;
         }
-
+*/
 	if( virginOpen )
 	{
 	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
@@ -219,6 +226,7 @@ Mixer_ALSA::openMixer()
 	    if ( snd_mixer_selem_is_enumerated(elem) ) {
 		cc = MixDevice::ENUM;
 		vol = new Volume(); // Dummy, unused
+		mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
 		
 		// --- get Enum names START ---
@@ -265,7 +273,7 @@ Mixer_ALSA::openMixer()
 		/* Create Volume object. If there is no volume on this device,
 		 * it will be created with maxVolume == 0 && minVolume == 0 */
 		vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
-		//mixer_elem_list.append( elem );
+		mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
 		
 		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {   
@@ -290,7 +298,7 @@ Mixer_ALSA::openMixer()
 		}
 	    } // is ordinary mixer element (NOT an enum)
 
-		MixDevice* mdw =
+		MixDevice* md =
 		    new MixDevice( mixerIdx,
 				   *vol,
 					canRecord,
@@ -298,16 +306,22 @@ Mixer_ALSA::openMixer()
 				   snd_mixer_selem_id_get_name( sid ),
 				   ct,
 				   cc );
+        if (!masterChosen && ct==MixDevice::VOLUME) {
+           // Determine a nicer MasterVolume
+           m_recommendedMaster = md;
+           masterChosen = true;
+        }
+
 		if ( enumList.count() > 0 ) {
 		  int maxEnumId= enumList.count();
-		  QPtrList<QString>& enumValuesRef = mdw->enumValues(); // retrieve a ref
+		  QPtrList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
 		  for (int i=0; i<maxEnumId; i++ ) {
 		    // we have an enum. Lets set the names of the enum items in the MixDevice
 		    // the enum names are assumed to be static!
 		    enumValuesRef.append(enumList.at(i) );
 		  }
 		}
-		m_mixDevices.append( mdw );
+		m_mixDevices.append( md );
 		//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
 		delete vol;
 	    } // virginOpen
@@ -316,7 +330,7 @@ Mixer_ALSA::openMixer()
 		MixDevice* md = m_mixDevices.at( mixerIdx );
 		if( !md )
 		{
-		    return ERR_INCOMPATIBLESET;
+		    return Mixer::ERR_INCOMPATIBLESET;
 		}
 		writeVolumeToHW( mixerIdx, md->getVolume() );
 	    } // !virginOpen
@@ -345,10 +359,35 @@ Mixer_ALSA::openMixer()
 
 
 int
-Mixer_ALSA::releaseMixer()
+Mixer_ALSA::close()
 {
-	int ret = snd_mixer_close( _handle );
-	return ret;
+  int ret=0;
+  m_isOpen = false;
+  if ( _handle != 0 )
+  {
+    //kdDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
+    snd_mixer_free ( _handle );
+    if ( ( ret = snd_mixer_detach ( _handle, devName.latin1() ) ) < 0 )
+    {
+        kdDebug(67100) << "snd_mixer_detach err=" << snd_strerror(ret) << endl;
+    }
+    int ret2 = 0;
+    if ( ( ret2 = snd_mixer_close ( _handle ) ) < 0 )
+    {
+        kdDebug(67100) << "snd_mixer_close err=" << snd_strerror(ret2) << endl;
+	if ( ret == 0 ) ret = ret2; // no error before => use current error code
+    }
+
+    _handle = 0;
+    //kdDebug(67100) << "OUT Mixer_ALSA::close()" << endl;
+
+  }
+
+  mixer_elem_list.clear();
+  mixer_sid_list.clear();
+  m_mixDevices.clear();
+
+  return ret;
 }
 
 
@@ -356,17 +395,28 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 	snd_mixer_elem_t* elem = 0;
 	if ( int( mixer_sid_list.count() ) > devnum ) {
 		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
+		// The next line (hopefully) only finds selem's, not elem's.
 		elem = snd_mixer_find_selem(_handle, sid);
 
 		if ( elem == 0 ) {
+			// !! Check, whether the warning should be omitted. Probably
+			//    Route controls are non-simple elements.
 			kdDebug(67100) << "Error finding mixer element " << devnum << endl;
 		}
 	}
 	return elem;
-//	return mixer_elem_list[ devnum ];
+
+/*
+ I would have liked to use the following trivial implementation instead of the
+ code above. But it will also return elem's. which are not selem's. As there is 
+ no way to check an elem's type (e.g. elem->type == SND_MIXER_ELEM_SIMPLE), callers
+ of getMixerElem() cannot check the type. :-(
+	snd_mixer_elem_t* elem = mixer_elem_list[ devnum ];
+	return elem;
+ */
 }
 
-bool Mixer_ALSA::prepareUpdate() {
+bool Mixer_ALSA::prepareUpdateFromHW() {
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
     if ( _initialUpdate ) {
         // make sure the very first call to prepareUpdate() returns "true". Otherwise kmix will
@@ -701,17 +751,17 @@ Mixer_ALSA::errorText( int mixer_error )
 	QString l_s_errmsg;
 	switch ( mixer_error )
 	{
-		case ERR_PERM:
+		case Mixer::ERR_PERM:
 			l_s_errmsg = i18n("You do not have permission to access the alsa mixer device.\n" \
 					"Please verify if all alsa devices are properly created.");
       break;
-		case ERR_OPEN:
+		case Mixer::ERR_OPEN:
 			l_s_errmsg = i18n("Alsa mixer cannot be found.\n" \
 					"Please check that the soundcard is installed and the\n" \
 					"soundcard driver is loaded.\n" );
 			break;
 		default:
-			l_s_errmsg = Mixer::errorText( mixer_error );
+			l_s_errmsg = Mixer_Backend::errorText( mixer_error );
 	}
 	return l_s_errmsg;
 }

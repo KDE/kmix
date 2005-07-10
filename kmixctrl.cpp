@@ -66,14 +66,13 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    delete config;
 
    // create mixers
-   QPtrList<Mixer> mixers;
    QString dummyStringHwinfo;
-   MixerToolBox::initMixer(mixers, false, dummyStringHwinfo);
+   MixerToolBox::initMixer(Mixer::mixers(), false, dummyStringHwinfo);
 
    // load volumes
    if ( args->isSet("restore") )
    {
-       for (Mixer *mixer=mixers.first(); mixer!=0; mixer=mixers.next()) {
+       for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next()) {
 	   mixer->volumeLoad( KGlobal::config() );
        }
    }
@@ -81,9 +80,11 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    // save volumes
    if ( args->isSet("save") )
    {
-      for (Mixer *mixer=mixers.first(); mixer!=0; mixer=mixers.next())
+       for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
 	 mixer->volumeSave( KGlobal::config() );
    }
+
+   MixerToolBox::deinitMixer();
 
    return 0;
 }
