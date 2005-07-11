@@ -43,7 +43,7 @@
 #include "viewoutput.h"
 #include "viewswitches.h"
 // KMix experimental
-#include "viewgrid.h"
+//#include "viewgrid.h"
 #include "viewsurround.h"
 
 

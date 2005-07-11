@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = kmix_panelapplet.la
 
 
 noinst_HEADERS = kmix.h kmixdockwidget.h kmixprefdlg.h kmixerwidget.h \
-	viewbase.h viewoutput.h viewinput.h viewsliders.h viewswitches.h viewsurround.h viewdockareapopup.h viewgrid.h \
+	viewbase.h viewoutput.h viewinput.h viewsliders.h viewswitches.h viewsurround.h viewdockareapopup.h \
 	mixdevicewidget.h mdwslider.h mdwswitch.h mdwenum.h \
 	mixer.h mixset.h mixdevice.h mixer_backend.h volume.h kledbutton.h version.h kmixtoolbox.h \
 	ksmallslider.h kmixapplet.h mixerIface.h verticaltext.h \
@@ -19,7 +19,7 @@ METASOURCES = AUTO
 
 kmix_la_SOURCES = main.cpp kmix.cpp kmixdockwidget.cpp kmixprefdlg.cpp \
 	viewbase.cpp viewoutput.cpp viewinput.cpp viewswitches.cpp viewsurround.cpp viewdockareapopup.cpp \
-	viewsliders.cpp viewgrid.cpp \
+	viewsliders.cpp \
 	mixdevicewidget.cpp mdwslider.cpp mdwswitch.cpp mdwenum.cpp \
 	kmixerwidget.cpp mixer.cpp mixset.cpp mixdevice.cpp mixer_backend.cpp ksmallslider.cpp \
 	volume.cpp kledbutton.cpp verticaltext.cpp mixerIface.skel \
