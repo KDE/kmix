@@ -39,7 +39,7 @@
 
 #ifdef __linux__
 
-#ifdef HAVE_ALSA_ASOUNDLIB_H
+#ifdef HAVE_LIBASOUND2
 #define ALSA_MIXER
 #endif
 

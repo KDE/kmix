@@ -1,7 +1,0 @@
-dnl for NetBSD OSS compat library
-AC_CHECK_LIB(ossaudio, main, [LIBOSSAUDIO="-lossaudio"],[],[])
-AC_SUBST(LIBOSSAUDIO)
-if test "$kde_with_alsa" = "yes"; then
-AC_CHECK_LIB(asound, main, [LIBASOUND="-lasound"],[],[])
-AC_SUBST(LIBASOUND)
-fi
