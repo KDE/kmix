@@ -103,9 +103,9 @@ are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <sect1 id="basic-usage">
 <title>Basics</title>
 
-<para>&kmix; usage is straightforward. Every mixer device that your
-soundcard provides is represented by a volume slider. Mono devices
-have a single slider, stereo devices can have either one or two
+<para>&kmix; usage is straightforward. Every mixer control that your
+soundcard provides is represented by a volume slider. Mono controls
+have a single slider, stereo controls can have either one or two
 sliders, depending on your choice.  Additionally there is a panning
 slider at the bottom of the &kmix; window. If you have more than one soundcard, a list will be displayed on the top of the window, where you can choose between your soundcards.
 
@@ -121,7 +121,9 @@ slider at the bottom of the &kmix; window. If you have more than one soundcard, 
 </para>
 
 
-<para>The Window has three sections with soundcard controls:
+<para>The Window can have up to three sections with different soundcard controls: Output, Input and Switches.
+Those sections contain volume sliders, switches for enabling/disabling record or playback, and multiple-choice selectors.
+
 <simplelist>
 <member>Output: This holds the controls that are most likely playback related, like the "Master" volume control.</member>
 <member>Input: This holds all controls that are most likely record related, like "Capture".</member>
@@ -135,6 +137,7 @@ slider at the bottom of the &kmix; window. If you have more than one soundcard, 
 <member>Red: A LED dealing with recording</member>
 <member>Yellow: A LED dealing with special soundcard capabilities</member>
 </simplelist>
+<para>These 3 colors come in two flavours: A lit LED means ON, a non-lit LED means OFF.</para>
 </sect1>
 
 <sect1 id="volume-sliders">
@@ -158,25 +161,22 @@ slider at the bottom of the &kmix; window. If you have more than one soundcard, 
 </simplelist>
 
 <screenshot>
-<screeninfo>Volume control with Recording Switchi ("Output"Section)</screeninfo>
+<screeninfo>Volume control with Recording Switch ("Output"Section)</screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="kmix-channel-record.png" format="PNG"/></imageobject>
-<textobject><phrase>Volume control with Recording Switchi ("Output"Section)</phrase></textobject>
+<textobject><phrase>Volume control with Recording Switch ("Output" Section)</phrase></textobject>
 </mediaobject>
 </screenshot>
 
-
 </para>
 
-<para>The controls in section "Switches" consist of a LED and a short label describing the function. Please remember, red LED's are for recording issues, yellow LED's are for special soundcard features. If you are uncertain about the meaning of a control, please ask your soundcard driver supplier (for most current Linux distributions this is ALSA from http://www.alsa-project.org).</para>
 
-<para>The volume sliders have a context menu, accessible by right clicking on
-the slider or device icon (at the top). Several entries are possible, but only
-those applicable are shown.</para>
+<para>
+Most of these controls have a context menu, accessible by right clicking on the control or device icon. Several entries are possible in the context menu, but only those applicable are shown.
+</para>
 
 <variablelist>
-
 <varlistentry>
 <term><guilabel>Split Channels</guilabel></term>
 <listitem><para>Show either one or two sliders. This is only applicable to
@@ -205,11 +205,34 @@ controls left side volume.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Show Menubar</guilabel></term>
+<term><guilabel>Show/Hide Menubar</guilabel></term>
 <listitem><para>This option is not device specific, but affects the mixer window. You can hide and show the menu bar with this option. You can also do this by pressing the Shortcut (usually CTRL-m)</para></listitem>
 </varlistentry>
 
 </variablelist>
+</sect1>
+
+<sect1 id="switches">
+<title>Switches and Multiple-Choice selectors</title>
+
+<para>The controls in the section "Switches" consist of a LED and a short label describing the function. The "Switches" section can also contain Multiple-Choice selectors. Please note that these controls are often very special and usually don't need to be changed by the average user. The context menu contains the <guilabel>Channels</guilabel> and <guilabel>Show/Hide Menubar</guilabel> entries already described.
+
+<screenshot>
+<screeninfo>Switches and Multiple-Choice selectors ("Switches" Section)</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-channel-switches.png" format="PNG"/></imageobject>
+<textobject><phrase>Switches and Multiple-Choice selectors ("Switches" Section)</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+Please remember, red LED's are recording related, yellow LED's control special soundcard capabilities.
+
+The screenshot above shows from left to right an unlit "IEC958 Output" LED (yellow = special control), a lit "Mix" LED (red = Recording related), an unlit recording related LED, a lit special control and one multiple-choice selector ("PCM Out Path &amp; Mute").
+
+If you are uncertain about the meaning of a control, please ask your soundcard driver supplier (for most current Linux distributions this is ALSA from http://www.alsa-project.org).
+</para>
+
 </sect1>
 
 <sect1 id="panning-slider">
@@ -255,6 +278,10 @@ is checked or not, by holding the mouse over the icon for each device, you can s
 <varlistentry>
 <term><guilabel>Restore volumes on login</guilabel></term>
 <listitem><para>Let KDE restore the volumes when you Login: This restores your personal volume levels, stored when you last logged out. If your Operating System saves the volume levels,  you might not need this option (but on a computer with multiple users it is still needed).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Orientation</guilabel></term>
+<listitem><para>With this option you can turn the KMix main window content by 90 degrees. Sliders, Texts and everything else (if applicable) is rotated. There are some exclusions to this rule, most notably the menubar, the mixer selector (if shown at all), the panning slider and the multiple-choice selectors.</para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -352,7 +379,8 @@ The &kmix; specific interfaces are:</para>
 </variablelist>
 
 <para>                                                                          You can directly execute these commands from a shell that you started from inside KDE. If you need to execute dcop commands from somewhere else, for example from a crontab script, you need to define the <guilabel>DCOPSERVER</guilabel> environment variable (as seen in the first line of your ~/.DCOPserver_hostname_:0 file), for example:                      </para>
-                                                                         <!-- Don't know a better way to format code - esken -->
+
+<!-- Don't know a better way to format code - esken -->
 <simplelist>
 <member>#!/bin/sh</member>
 <member>DCOPSERVER=`cat /home/yourhome/.DCOPserver_yourhostname_:0 | grep local`</member>
@@ -367,7 +395,7 @@ The &kmix; specific interfaces are:</para>
 
 <variablelist>
 <varlistentry>
-<term><guilabel>Using ALSA and OSS driver at the same time></guilabel></term>
+<term><guilabel>Using ALSA and OSS driver at the same time</guilabel></term>
 <listitem>
 <para>KMix on Linux can use either the ALSA driver or the OSS driver, not both. If you really need to use both drivers at the same time (a very rare situation), you can do it as follows: Quit KMix and add the following line to your <guilabel>kmixrc</guilabel> file in the global configuration section.</para>
 <para><guilabel>MultiDriver=true</guilabel></para>
@@ -420,6 +448,8 @@ Fixes</para></listitem>
 <para>Updated 2005 to match &kmix; V2.2 by Christian Esken
 <email>esken@kde.org</email></para>
 
+<para>Updated 7/2005 to match &kmix; V2.6 by Christian Esken
+<email>esken@kde.org</email></para>
 
 <para>Based on documentation by Christian Esken
 <email>esken@kde.org</email></para>
