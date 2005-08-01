@@ -258,8 +258,8 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		int h = _dockAreaPopup->height();
 		int x = this->mapToGlobal( QPoint( 0, 0 ) ).x() + this->width()/2 - _dockAreaPopup->width()/2;
 		int y = this->mapToGlobal( QPoint( 0, 0 ) ).y() - h;
-		if ( y - h < 0 )
-			y = y + h - this->height();
+		if ( y < 0 )
+			y = y + h + this->height();
 
 		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 
