@@ -13,6 +13,7 @@ class KMixDockWidget;
 class MixDeviceWidget;
 class MixDevice;
 class QFrame;
+class QTime;
 
 class ViewDockAreaPopup : public ViewBase
 {
@@ -31,6 +32,7 @@ public:
     virtual void showContextMenu();
 
     QSize sizeHint() const;
+    bool justHidden();
 
 protected:
     MixDeviceWidget *_mdw;
@@ -44,6 +46,7 @@ protected:
 private:
     QGridLayout* _layoutMDW;
     QFrame *_frame;
+    QTime *_hideTimer;
 
 private slots:
 	 void showPanelSlot();
