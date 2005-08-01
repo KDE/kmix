@@ -144,7 +144,7 @@ KMixWindow::initWidgets()
 	QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
 	mixerNameLayout->setSizePolicy(qsp);
 	mixerNameLayout->setSpacing(KDialog::spacingHint());
-	QLabel *qlbl = new QLabel( i18n(" Current mixer:"), mixerNameLayout );
+	QLabel *qlbl = new QLabel( i18n("Current mixer:"), mixerNameLayout );
 	qlbl->setFixedHeight(qlbl->sizeHint().height());
 	m_cMixer = new KComboBox( FALSE, mixerNameLayout, "mixerCombo" );
 	m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
