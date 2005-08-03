@@ -264,12 +264,12 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		// moved out-of-the screen on the right (see Bug 101742).
 		QDesktopWidget* vdesktop = QApplication::desktop();
 		const QRect& vScreenSize = vdesktop->screenGeometry(_dockAreaPopup);
-		if ( (x+_dockAreaPopup->width()) > (vScreenSize.width()) ) {
+		if ( (x+_dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
 			// move horizontally, so that it is completely visible
-			_dockAreaPopup->move(vScreenSize.width() - _dockAreaPopup->width() -1 , y);
+			_dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - _dockAreaPopup->width() -1 , y);
 		} // horizontally out-of bound
-		else if ( x < 0 ) {
-			_dockAreaPopup->move(0, y);
+		else if ( x < vScreenSize.x() ) {
+			_dockAreaPopup->move(vScreenSize.x(), y);
 		}
 		// the above stuff could also be implemented vertically
 
