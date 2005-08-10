@@ -33,6 +33,7 @@ I18N_NOOP("KMix - KDE's full featured mini mixer");
 
 static KCmdLineOptions options[] =
 {
+   { "keepvisibility", I18N_NOOP("Inhibits the unhiding of the KMix main window, if KMix is already running."), 0 },
    KCmdLineLastOption
    // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
@@ -58,6 +59,11 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+   KUniqueApplication::addCmdLineOptions();
+
+   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+   bool hasArgKeepvisibility = args->isSet("keepvisibility");
+   KMixApp::keepVisibility(hasArgKeepvisibility);
 
    if (!KMixApp::start())
        return 0;

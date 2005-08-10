@@ -25,6 +25,8 @@
 #include <kdebug.h>
 
 
+bool KMixApp::_keepVisibility = false;
+
 KMixApp::KMixApp()
     : KUniqueApplication(), m_kmix( 0 )
 {
@@ -40,12 +42,30 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
+	//kdDebug(67100) <<  "KMixApp::newInstance()" << endl;
 	if ( m_kmix )
-	{
-		m_kmix->show();
+	{	// There already exists an instance/window
+		//kdDebug(67100) <<  "KMixApp::newInstance() m_kmix" << endl;
+		if ( ! _keepVisibility ) {
+			//kdDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=false" << endl;
+			// Default case: If KMix is running and the user starts it again,
+			// the KMix main window will be shown.
+			m_kmix->show();
+		}
+		else {
+			//kdDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=true" << endl;
+			// Special case: Command line arg --keepVisibility was used:
+			// We don't want to change the visibiliy, thus we don't call show() here.
+			//
+			//  Hint: --keepVisibility is a special option for applications that
+			//    want to start a mixer service, but don't need to show the KMix
+			//    GUI (like KMilo , KAlarm, ...).
+			//    See (e.g.) Bug 58901 for deeper insight.
+		}
 	}
 	else
 	{
+		//kdDebug(67100) <<  "KMixApp::newInstance() !m_kmix" << endl;
 		m_kmix = new KMixWindow;
 		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isRestored() && KMainWindow::canBeRestored(0) )
@@ -55,6 +75,12 @@ KMixApp::newInstance()
 	}
 
 	return 0;
+}
+
+
+void KMixApp::keepVisibility(bool val_keepVisibility) {
+   //kdDebug(67100) <<  "KMixApp::keepVisibility()" << endl;
+   _keepVisibility = val_keepVisibility;
 }
 
 
