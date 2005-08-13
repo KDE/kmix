@@ -146,7 +146,7 @@ KMixWindow::initWidgets()
 	mixerNameLayout->setSpacing(KDialog::spacingHint());
 	QLabel *qlbl = new QLabel( i18n("Current mixer:"), mixerNameLayout );
 	qlbl->setFixedHeight(qlbl->sizeHint().height());
-	m_cMixer = new KComboBox( FALSE, mixerNameLayout, "mixerCombo" );
+	m_cMixer = new KComboBox( false, mixerNameLayout, "mixerCombo" );
 	m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
 	connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( showSelectedMixer( int ) ) );
 	QToolTip::add( m_cMixer, i18n("Current mixer" ) );

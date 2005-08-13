@@ -164,7 +164,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
     // init static vars
     if ( s_instCount == 0) {
-        Mixer::mixers().setAutoDelete( TRUE );
+        Mixer::mixers().setAutoDelete( true );
 	QString dummyStringHwinfo;
 	MixerToolBox::initMixer(Mixer::mixers(), false, dummyStringHwinfo);
     }	
@@ -318,10 +318,10 @@ void KMixApplet::selectMixer()
       n++;
    }
 
-   bool ok = FALSE;
+   bool ok = false;
    QString res = KInputDialog::getItem( i18n("Mixers"),
                                         i18n("Available mixers:"),
-					lst, 1, FALSE, &ok, this );
+					lst, 1, false, &ok, this );
    if ( ok )
    {
       Mixer *mixer = Mixer::mixers().at( lst.findIndex( res ) );

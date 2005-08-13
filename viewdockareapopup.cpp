@@ -63,7 +63,6 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 
 void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
 {
-//	kdDebug() << "Teste pres mouse" << endl;
     /**
        Hide the popup:
        This should work automatically, when the user clicks outside the bounds of this popup:

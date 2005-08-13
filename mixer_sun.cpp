@@ -267,14 +267,14 @@ int Mixer_SUN::readVolumeFromHW( int devnum, Volume& volume )
             break;
 
          case MIXERDEV_RECORD_MONITOR :
-            volume.setMuted(FALSE);
+            volume.setMuted(false);
             volume.setAllVolumes( audioinfo.monitor_gain );
             break;
 
          case MIXERDEV_INTERNAL_SPEAKER :
          case MIXERDEV_HEADPHONE :
          case MIXERDEV_LINE_OUT :
-            volume.setMuted( (audioinfo.play.port & devMask) ? FALSE : TRUE );
+            volume.setMuted( (audioinfo.play.port & devMask) ? false : true );
             GainBalanceToVolume( audioinfo.play.gain,
                                  audioinfo.play.balance,
                                  volume );
@@ -283,7 +283,7 @@ int Mixer_SUN::readVolumeFromHW( int devnum, Volume& volume )
          case MIXERDEV_MICROPHONE :
          case MIXERDEV_LINE_IN :
          case MIXERDEV_CD :
-            volume.setMuted( (audioinfo.record.port & devMask) ? FALSE : TRUE );
+            volume.setMuted( (audioinfo.record.port & devMask) ? false : true );
             GainBalanceToVolume( audioinfo.record.gain,
                                  audioinfo.record.balance,
                                  volume );
@@ -384,7 +384,7 @@ int Mixer_SUN::writeVolumeToHW( int devnum, Volume &volume )
 //======================================================================
 bool Mixer_SUN::setRecsrcHW( int /* devnum */, bool /* on */ )
 {
-   return FALSE;
+   return false;
 }
 
 //======================================================================
@@ -398,10 +398,10 @@ bool Mixer_SUN::isRecsrcHW( int devnum )
       case MIXERDEV_MICROPHONE :
       case MIXERDEV_LINE_IN :
       case MIXERDEV_CD :
-         return TRUE;
+         return true;
 
       default :
-         return FALSE;
+         return false;
    }
 }
 

@@ -145,12 +145,12 @@ void Mixer_HPUX::setDevNumName_I(int devnum)
 */
 bool Mixer_HPUX::setRecsrcHW( int devnum, bool on )
 {
-    return FALSE;
+    return false;
 }
 
 bool Mixer_HPUX::isRecsrcHW( int devnum )
 {
-    return FALSE;
+    return false;
 }
 
 int Mixer_HPUX::readVolumeFromHW( int devnum, Volume &vol )

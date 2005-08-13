@@ -219,7 +219,7 @@ Mixer_ALSA::open()
 	{
 	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
 		
-		//kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
+		//kdDebug(67100) << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
 
 	    Volume* vol = 0;
 	    QPtrList<QString> enumList;

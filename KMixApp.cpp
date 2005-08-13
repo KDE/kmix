@@ -70,7 +70,7 @@ KMixApp::newInstance()
 		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isRestored() && KMainWindow::canBeRestored(0) )
 		{
-			m_kmix->restore(0, FALSE);
+			m_kmix->restore(0, false);
 		}
 	}
 

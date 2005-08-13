@@ -171,7 +171,8 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase)
 
 void KMixerWidget::setIcons( bool on )
 {
-	for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
+	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 		ViewBase* mixerWidget = *it;
 		KMixToolBox::setIcons(mixerWidget->_mdws, on);
     } // for all tabs
@@ -182,7 +183,8 @@ void KMixerWidget::setLabels( bool on )
     if ( _labelsEnabled!=on ) {
 		// value was changed
 		_labelsEnabled = on;
-		for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
+		const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+		for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 			ViewBase* mixerWidget = *it;
 			KMixToolBox::setLabels(mixerWidget->_mdws, on);
 	    } // for all tabs
@@ -194,7 +196,8 @@ void KMixerWidget::setTicks( bool on )
     if ( _ticksEnabled!=on ) {
 		// value was changed
 		_ticksEnabled = on;
-		for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
+		const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+		for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 			ViewBase* mixerWidget = *it;
 		    KMixToolBox::setTicks(mixerWidget->_mdws, on);
 		} // for all tabs
@@ -207,8 +210,8 @@ void KMixerWidget::setTicks( bool on )
  */
 void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
-
-	for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
+	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 		ViewBase* mixerWidget = *it;
 		QString viewPrefix = "View.";
 		viewPrefix += mixerWidget->name();
@@ -225,8 +228,9 @@ void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
 	config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
-	
-	for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
+
+	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 		ViewBase* mixerWidget = *it;
 		QString viewPrefix = "View.";
 		viewPrefix += mixerWidget->name();

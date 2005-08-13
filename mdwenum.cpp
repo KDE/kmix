@@ -90,7 +90,7 @@ void MDWEnum::createWidgets()
         _label = new QLabel( m_mixdevice->name(), this);
 	_layout->addWidget(_label);
         _label->setFixedHeight(_label->sizeHint().height());
-        _enumCombo = new KComboBox( FALSE, this, "mixerCombo" );
+        _enumCombo = new KComboBox( false, this, "mixerCombo" );
 	// ------------ fill ComboBox start ------------
 	int maxEnumId= m_mixdevice->enumValues().count();
 	for (int i=0; i<maxEnumId; i++ ) {

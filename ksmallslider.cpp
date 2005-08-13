@@ -65,7 +65,7 @@ void KSmallSlider::init()
     // no signals or to do no initial paint.
     //    sliderPos = -1;
     //    state = Idle;
-    //track = TRUE;
+    //track = true;
     //setMouseTracking(true);
     grayed = false;
     setFocusPolicy( TabFocus  );
@@ -225,7 +225,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    int sliderPos = positionFromValue( QRangeControl::value() );
 
    // ------------------------ draw 3d border ---------------------------------------------
-   style().drawPrimitive ( QStyle::PE_Panel, &p, QRect( 0, 0, width(), height() ), colorGroup(), TRUE );
+   style().drawPrimitive ( QStyle::PE_Panel, &p, QRect( 0, 0, width(), height() ), colorGroup(), true );
 
 
    // ------------------------ draw lower/left part ----------------------------------------
