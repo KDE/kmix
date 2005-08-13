@@ -26,6 +26,7 @@
 #include <string>
 #include <map>
 #include <set>
+#include <vector>
 
 struct SortedStringComparator
 {
@@ -54,6 +55,16 @@ struct ProfControl
 	// Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
 	// Because the name is visible, some kind of i18n() will be used.
 	QString name;
+	// show or hide (contains the GUI type: simple, extended, full)
+	QString show;
+};
+
+struct ProfTab
+{
+	// Name of the Tab, in english
+	QString name;
+	// Type of the Tab, either "play", "record" or "switches"
+	QString type;
 };
 
 struct ProductComparator
@@ -74,11 +85,20 @@ public:
 	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringMap;
 	typedef std::set<ProfProduct*, ProductComparator> ProductSet;
 	typedef std::set<ProfControl*> ControlSet;
-	typedef std::map<std::string, std::string, SortedStringComparator> SortedStringSet;
+	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringSet;
 	typedef std::map<std::string, std::string> StringMap;
 	ControlSet _controls;
-	StringMap _tabs;        // shouldn't be sorted
+	std::vector<ProfTab*> _tabs;        // shouldn't be sorted
 	ProductSet _products;
+
+	// The values from the <soundcard> tag
+	QString _soundcardDriver;
+	// The driver version: 1000*1000*MAJOR + 1000*MINOR + PATCHLEVEL
+	unsigned long _driverVersionMin;
+	unsigned long _driverVersionMax;
+	QString _soundcardDriverName;
+	QString _soundcardDriverType;
+	unsigned long _generation;
 };
 
 std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
@@ -88,7 +108,7 @@ class GUIProfileParser : public QXmlDefaultHandler
 public:
 		GUIProfileParser::GUIProfileParser(GUIProfile& ref_gp);
 		// Enumeration for the scope
-		enum ProfileScope { NONE, SOUNDCARD, TAB  };
+		enum ProfileScope { NONE, SOUNDCARD };
 		
 		bool startDocument();
 		bool startElement( const QString&, const QString&, const QString& , const QXmlAttributes& );
@@ -100,6 +120,7 @@ private:
 		void addSoundcard(const QXmlAttributes& attributes);
 		void addTab(const QXmlAttributes& attributes);
 		void printAttributes(const QXmlAttributes& attributes);
+		void splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim);
 
 		ProfileScope _scope;
 		GUIProfile& _guiProfile;

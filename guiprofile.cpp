@@ -4,6 +4,7 @@
 #include <qstring.h>
 
 #include <iostream>
+#include <utility>
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
     return ( s1 < s2 );
@@ -67,29 +68,43 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 
 
 std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
-	for ( std::set<ProfProduct*>::iterator it = guiprof._products.begin(); it != guiprof._products.end();  it++)
+	os  << "Soundcard:" << std::endl
+			<< "  Driver=" << guiprof._soundcardDriver.utf8() << std::endl
+			<< "  Driver-Version min=" << guiprof._driverVersionMin
+			<< " max=" << guiprof._driverVersionMax << std::endl
+			<< "  Card-Name=" << guiprof._soundcardDriverName.utf8() << std::endl
+			<< "  Card-Type=" << guiprof._soundcardDriverType.utf8() << std::endl
+			<< "  Profile-Generation="  << guiprof._generation
+			<< std::endl;
+	for ( std::set<ProfProduct*>::iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
 	{
 		ProfProduct* prd = *it;
-		os << "Product:\n Vendor=" << prd->vendor.utf8() << std::endl << " Name=" << prd->productName.utf8() << std::endl;
+		os << "Product:\n  Vendor=" << prd->vendor.utf8() << std::endl << "  Name=" << prd->productName.utf8() << std::endl;
 		if ( ! prd->productRelease.isNull() ) {
-			os << " Release=" << prd->productRelease.utf8()<< std::endl;
+			os << "  Release=" << prd->productRelease.utf8()<< std::endl;
 		}
 		if ( ! prd->comment.isNull() ) {
-			os << " Comment = " << prd->comment.utf8() << std::endl;
+			os << "  Comment = " << prd->comment.utf8() << std::endl;
 		}
 	} // for all products
 
-	for ( std::set<ProfControl*>::iterator it = guiprof._controls.begin(); it != guiprof._controls.end();  it++)
+	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
+		ProfTab* profTab = *it;
+		os << "Tab: " << std::endl << "  " << profTab->name.utf8() << " (" << profTab->type.utf8() << ")" << std::endl;
+	} // for all tabs
+
+	for ( std::set<ProfControl*>::iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
 	{
 		ProfControl* profControl = *it;
-		os << "Control:\n ID=" << profControl->id.utf8() << std::endl;
+		os << "Control:\n  ID=" << profControl->id.utf8() << std::endl;
 		if ( profControl->name != profControl->id ) {
-		 		os << " Name = " << profControl->name.utf8() << std::endl;
+		 		os << "  Name = " << profControl->name.utf8() << std::endl;
 		}
-		os << " Subcontrols=" << profControl->subcontrols.utf8() << std::endl;
+		os << "  Subcontrols=" << profControl->subcontrols.utf8() << std::endl;
 		if ( ! profControl->tab.isNull() ) {
-			os << " Tab=" << profControl->tab.utf8()<< std::endl;
+			os << "  Tab=" << profControl->tab.utf8()<< std::endl;
 		}
+		os << "  Shown-On=" << profControl->show.utf8() << std::endl;
 	} // for all controls
 
 	return os;
@@ -125,7 +140,7 @@ bool GUIProfileParser::startElement( const QString& ,
 			}
 			else {
 				// skip unknown top-level nodes
-				std::cerr << "Ignoring unsupported element '" << qName.ascii() << "'" << std::endl;
+				std::cerr << "Ignoring unsupported element '" << qName.utf8() << "'" << std::endl;
 			}
 			// we are accepting <soundcard> and <tab>
 		break;
@@ -142,21 +157,12 @@ bool GUIProfileParser::startElement( const QString& ,
 				addTab(attributes);
 			}
 			else {
-				std::cerr << "Ignoring unsupported element '" << qName.ascii() << "'" << std::endl;
+				std::cerr << "Ignoring unsupported element '" << qName.utf8() << "'" << std::endl;
 			}
-			// we are accepting <soundcard> and <tab>
+			// we are accepting <product>, <control> and <tab>
 			
-	    break;
+		break;
 	    
-		case GUIProfileParser::TAB:
-	    	std::cout  << "Tab: ";
-		    if ( attributes.length() > 0 ) {
-		        for ( int i = 0 ; i < attributes.length(); i++ ) {
-					std::cout << attributes.qName(i).ascii() << ":"<< attributes.uri(i).ascii() << " , ";
-		        }
-		    }
-		    std::cout << std::endl;
-	    break;
 	} // switch()
     return true;
 }
@@ -170,13 +176,66 @@ bool GUIProfileParser::endElement( const QString&, const QString&, const QString
 }
 
 void GUIProfileParser::addSoundcard(const QXmlAttributes& attributes) {
-	    	std::cout  << "Soundcard: ";
-	    	printAttributes(attributes);
+/*
+	std::cout  << "Soundcard: ";
+	printAttributes(attributes);
+*/
+	QString driver	= attributes.value("driver");
+	QString version = attributes.value("version");
+	QString name	= attributes.value("name");
+	QString type	= attributes.value("type");
+	QString generation = attributes.value("generation");
+	if ( !driver.isNull() && !name.isNull() ) {
+		_guiProfile._soundcardDriver = driver;
+		_guiProfile._soundcardDriverName = name;
+		if ( type.isNull() ) {
+			_guiProfile._soundcardDriverType = "";
+		}
+		else {
+			_guiProfile._soundcardDriverType = type;
+		}
+		if ( version.isNull() ) {
+			_guiProfile._driverVersionMin = 0;
+			_guiProfile._driverVersionMax = 0;
+		}
+		else {
+			std::pair<QString,QString> versionMinMax;
+			splitPair(version, versionMinMax, ':');
+			_guiProfile._driverVersionMin = versionMinMax.first.toULong();
+			_guiProfile._driverVersionMax = versionMinMax.second.toULong();
+		}
+		if ( type.isNull() ) { type = ""; };
+		_guiProfile._soundcardDriverType = type;
+		if ( generation.isNull() ) {
+			_guiProfile._generation = 0;
+		}
+		else {
+			// Hint: If the conversion fails, _generation will be assigned 0 (which is fine)
+			_guiProfile._generation = generation.toUInt();
+		}
+	}
+
 }
 
+
 void GUIProfileParser::addTab(const QXmlAttributes& attributes) {
+/*
 	    	std::cout  << "Tab: ";
 	    	printAttributes(attributes);
+*/
+	QString name = attributes.value("name");
+	QString type	= attributes.value("type");
+	if ( !name.isNull() && !type.isNull() ) {
+		// If you define a Tab, you must set its Type
+		// It is either "Input", "Output", "Switches" or "Surround"
+		// These names are case sensitive and correspond 1:1 to the View-Names 1:1 .
+		// This could make it possible in the (far) future to have Views as Plugins.
+		ProfTab* tab = new ProfTab();
+		tab->name = name;
+		tab->type = type;
+
+		_guiProfile._tabs.push_back(tab);
+	}
 }
 
 void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
@@ -209,6 +268,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	QString subcontrols = attributes.value("controls");
 	QString tab = attributes.value("tab");
 	QString name = attributes.value("name");
+	QString show = attributes.value("show");
 	if ( !id.isNull() ) {
 		// We need at least an "id". We can set defaults for the rest, if undefined.
 		ProfControl *profControl = new ProfControl();
@@ -227,7 +287,8 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		profControl->name = name;
 		profControl->subcontrols = subcontrols;
 		profControl->name = name;
-		
+		if ( show.isNull() ) { show = "*"; }
+		profControl->show = show;		
 		_guiProfile._controls.insert(profControl);
 	} // id != null
 }
@@ -239,4 +300,19 @@ void GUIProfileParser::printAttributes(const QXmlAttributes& attributes) {
 		        }
 			    std::cout << std::endl;
 		    }
+}
+
+void GUIProfileParser::splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim)
+{
+	int delimPos = pairString.find(delim);
+	if ( delimPos == -1 ) {
+		// delimiter not found => use an empty String for "second"
+		result.first  = pairString;
+		result.second = "";
+	}
+	else {
+		// delimiter found
+		result.first  = pairString.left(delimPos);
+		result.second = pairString.left(delimPos+1);
+	}
 }

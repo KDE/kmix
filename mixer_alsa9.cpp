@@ -236,6 +236,7 @@ Mixer_ALSA::open()
 		  for (int iEnum = 0; iEnum<numEnumitems; iEnum++ ) {
 		    char buffer[100];
 		    int ret = snd_mixer_selem_get_enum_item_name(elem, iEnum, 99, buffer);
+		    buffer[99] = 0; // protect from overflow
 		    if ( ret == 0 ) {
 		      QString* enumName = new QString(buffer);
 		      //enumName->append(buffer);
