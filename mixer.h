@@ -53,6 +53,7 @@ class Mixer : public QObject, virtual public MixerIface
       virtual ~Mixer();
 
       static int numDrivers();
+      QString getDriverName();
 
       MixDevice* find(QString& devPK);
 

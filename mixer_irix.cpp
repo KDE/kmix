@@ -131,3 +131,8 @@ QString IRIX_getDriverName() {
         return "IRIX";
 }
 
+QString Mixer_IRIX::getDriverName()
+{
+        return "IRIX";
+}
+

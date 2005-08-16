@@ -35,12 +35,15 @@
 #include <ktabwidget.h>
 
 // KMix
-#include "mixdevicewidget.h"
+#include "guiprofile.h"
 #include "kmixerwidget.h"
 #include "kmixtoolbox.h"
+#include "mixdevicewidget.h"
 #include "mixer.h"
+#include "mixertoolbox.h"
 #include "viewinput.h"
 #include "viewoutput.h"
+#include "viewsliderset.h"
 #include "viewswitches.h"
 // KMix experimental
 #include "viewgrid.h"
@@ -48,7 +51,7 @@
 
 
 /**
-   This widget is embedded in the KMix Main window. Each Hardware Mixer is visualized by one KMixerWidget.
+   This widget is embedded in the KMix Main window. Each Hardware Card is visualized by one KMixerWidget.
    KMixerWidget contains
    (a) a headline where you can change Mixer's (if you got more than one Mixer)
    (b) a Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
@@ -116,16 +119,22 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
       * 2b) Create device widgets
       * 2c) Add Views to Tab
       ********************************************************************/
-      //KMixGUIProfile* prof = MixerToolbox::selectProfile(_mixer);
-      
-      
+      GUIProfile* guiprof = MixerToolBox::selectProfile(_mixer);
+      if ( guiprof != 0 ) {
+	createViewsByProfile(_mixer, guiprof, vflags);
+      }
+      else
+      {
+	// Fallback, if no GUI Profile could be found
 	possiblyAddView(new ViewOutput  ( m_ioTab, "Output" , _mixer, vflags ) );
 	possiblyAddView(new ViewInput( m_ioTab, "Input"  , _mixer, vflags ) );
 	possiblyAddView(new ViewSwitches( m_ioTab, "Switches" , _mixer, vflags ) );
 	if ( vflags & ViewBase::Experimental_SurroundView )
 		possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags ) );
-    if ( vflags & ViewBase::Experimental_GridView )
+	if ( vflags & ViewBase::Experimental_GridView )
 		possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags ) );
+      }
+
 
 
     // *** Lower part: Slider and Mixer Name ************************************************
@@ -155,6 +164,38 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
     show();
     //    kdDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
+}
+
+/**
+ * Creates all the Views for the Tabs described in the GUIProfile
+ */
+void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags) // !!! Impl. pending
+{
+	/*** How it works:
+	 * A loop is done over all tabs.
+	 * For each Tab a View (e.g. ViewSliderSet) is instanciated and added to the list of Views
+	 */
+	std::vector<ProfTab*>::const_iterator itEnd = guiprof->_tabs.end();
+	for ( std::vector<ProfTab*>::const_iterator it = guiprof->_tabs.begin(); it != itEnd; ++it) {
+		ProfTab* profTab = *it;
+
+		// The i18n() in the next line will only produce a translated version, if the text is known.
+		// This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
+		// It is possible that the Profile author puts arbitrary names in it.
+		if ( profTab->type == "SliderSet" ) {
+			ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.utf8(), mixer, vflags, guiprof );
+			possiblyAddView(view);
+		}
+		/*
+		else if ( profTab->type == "Switches" ) {
+			ViewSliderSet* view = new ViewSwitchSet  ( m_ioTab, profTab->name, _mixer, vflags, guiprof );
+			possiblyAddView(view);
+		}
+		*/
+		else {
+			kdDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
+		}
+	} // for all tabs
 }
 
 void KMixerWidget::possiblyAddView(ViewBase* vbase)

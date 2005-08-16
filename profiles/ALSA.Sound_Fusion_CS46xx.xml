@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- example configuration for my (= esken@kde.org) soundcard. Pretty nonsense, and just for testing now. -->
+
+<!--  WARNING: THIS IS NO EXAMPLE AND NO GOOD START FOR CREATING PROFILES -->
+
+<soundcard driver="ALSA"
+	   version="1002005:*"
+	   name="Sound Fusion CS46xx"
+	   type="Cirrus Logic CS4294 rev 5,Cirrus Logic CS4294 rev 5,Cirrus Logic CS4294 rev 5"
+	   generation="2"
+>
+<!-- Example from above:
+     Driver     : ALSA, Versions 1.2.5 and newer.
+     name       : Card name, e.g. with the Hercules 7.1 card the name is "Sound Fusion CS46xx"
+     type       : Chip type. ALSA says: "Cirrus Logic CS4294 rev 5,Cirrus Logic CS4294 rev 5,Cirrus Logic CS4294 rev 5"
+     generation : The "version" of this XML file. If you create an updated version of this XML file,
+                  "generation" must be incremented.
+-->
+
+<!-- The products below are for letting the user select the correct product name.
+  It could be implemented like this:
+   If a new GUIProfile gets selected (either implictly on the first run or a Profile update, or
+   explicitely by the user), prompt the user for the card name.
+   Hint: The product stuff is only used in the GUI. It is NOT refeferenced otherwise in the code,
+            and especially nothing of it is used as primary key.
+ -->
+  <product vendor="Hercules" name="Game Theater 7.1 XP" />
+  <product vendor="Foo-Venodor" name="Bar-Productname" release="6/2005 and newer" comment="Products sold before 6/2005 contain a different chipset." />
+  <product vendor="Hercules" name="Game Theater 6.1 XP" />
+  <product vendor="ABC Cardmakers" name="Zypressen Audio 3-" release="new" />
+  <product vendor="ABC Cardmakers" name="Zypressen Audio 3-" />
+  <product vendor="ABC Cardmakers" name="Zypressen Audio 3-" release="old" />
+  <product vendor="ABC Cardmakers" name="Apfelsinen Audio 2+" release="old" />
+
+
+
+<!--
+    Control definitions:
+    ********************
+
+    *** comment from cesken, 13.8.2005 ***
+    It is probably possible, that only soundcard specific changes against the default profile
+    needs be put in a profile file. This approach has advantages and disadvantaged. This needs
+    some discussion. !
+    **************************************
+
+  'id' is the controls' primary key as defined by the KMix driver backend.
+       This can either be a name or an id, complemeted by an optional index.
+       (this is "control_name:index" or "control_id:index" or "control_id")
+  'name' == What name to show to the user. (DEFAULT: Name as returned by the driver backend).
+  'name_CC' is the i18n() name for country CC, e.g. "name_de" or "name_pt_BR"
+             It is VERY questionable, whether we want i18n() in this XML file. It should probably better
+	     be "outsourced" as every driver tends to have a limited (and well defined) set of
+	     control names. This is also true for ALSA, but there we must ALWAYS be prepared for
+	     new control names.
+- 'controls' is an enumeration of the (sub)controls of this control, e.g "playvol:1" or
+             "recvol:1-2,4-6" or "2:*,playswitch,recswitch" or ...
+	     DEFAULT: "*,switches"     (* = recvol:* playvol:*   switches=playswitch recswitch genericswitch
+- 'tab' is a definable tab name (DEFAULT: "Main")
+- 'show' defines, on which GUI types the control will be shown.
+             simple   = Show on the simple GUI (typically only 1 Tab: Master, PCM, CDROM, Microphone)
+             extended = Show on the mildly more complex GUI (all "simple" controls plus Recording & Surround stuff).
+             full     = Show (only) on the full GUI (all controls)
+             default is "full"
+- HINT: I will probably merge "tab" and "show", like this:
+     show="guitype:tabname" or show="guitype1:tabname1,guitype2:tabname2"
+     For example:
+     show="*:Play"
+     or
+     show="simple:Play,extended:Various,full:Play"
+-->
+<control id="PCM:0" controls="rec:1-2,recswitch" tab="Record" name="PCM" name_de="WAVE Audio" show="extended" />
+<control id="CD:0" controls="rec:1-2,recswitch" tab="Record" name="PCM" name_de="WAVE Audio" show="extended" />
+<control id="Master:0" controls="play:1-4,playswitch" tab="Play" name="Master" name_de="Lautstärke" show="simple" />
+<control id="Master:0" controls="rec:1-2,recswitch" tab="Record" name="Master" name_de="Lautstärke" show="extended" />
+<control id="Mic_Boost_(+20dB):0" controls="switches" />
+<control id="KMix::Recselect:0" controls="*" show="extended"/>      <!-- A virtual control (ComboBox) for selecting soundcard recording channel 0 -->
+<control id="KMix::RecSwitch:0" controls="*" />      <!-- A virtual control (CheckBox) for switching off/on recording of channel 0 -->
+<control id="KMix::RecSwitch:1" controls="*" />      <!-- A virtual control (CheckBox) for switching off/on recording of channel 1 -->
+ <!-- A virtual control (CheckBox) for switching off/on recording of all channels -->
+ <!-- <control id="KMix::RecSwitch" controls="*" />    -->
+<!-- ... -->
+
+<!-- The fallback control (if not defined, a hardcoded version from KMix will be used)-->
+<control id="*" channels="*" />
+
+
+<!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted -->
+<tab name="Record" type="SliderSet"/>
+<tab name="Play" type="SliderSet"/>
+<tab name="Switches" type="Switches"/>
+<tab name="Cool-Layout" type="Themed"/>
+
+</soundcard>
+
+

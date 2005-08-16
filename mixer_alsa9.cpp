@@ -27,6 +27,10 @@
 #include <stdio.h>
 #include <iostream>
 
+#undef KMIX_ALSA_NEW_PK
+// use the next line for enabling the correct primary-key generation (needed e.g. for Profiles)
+//#define KMIX_ALSA_NEW_PK
+
 extern "C"
 {
 	#include <alsa/asoundlib.h>
@@ -307,6 +311,14 @@ Mixer_ALSA::open()
 				   snd_mixer_selem_id_get_name( sid ),
 				   ct,
 				   cc );
+#ifdef KMIX_ALSA_NEW_PK
+               /*** generate a nice unique key, e.g. "PCM:0" or "Master:1" *******/
+               QString mdPK("%1:%2");
+               mdPK = mdPK.arg(snd_mixer_selem_id_get_name ( sid ) )
+                          .arg(snd_mixer_selem_id_get_index( sid ) );
+               md->setPK(mdPK);
+               /******************************************************************/
+#endif
         if (!masterChosen && ct==MixDevice::VOLUME) {
            // Determine a nicer MasterVolume
            m_recommendedMaster = md;
@@ -770,6 +782,11 @@ Mixer_ALSA::errorText( int mixer_error )
 
 QString
 ALSA_getDriverName()
+{
+	return "ALSA";
+}
+
+QString Mixer_ALSA::getDriverName()
 {
 	return "ALSA";
 }

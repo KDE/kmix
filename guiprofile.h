@@ -21,6 +21,8 @@
 #ifndef _GUIPROFILE_H_
 #define _GUIPROFILE_H_
 
+class Mixer;
+
 #include <qxml.h>
 #include <qstring.h>
 #include <string>
@@ -79,12 +81,13 @@ public:
 	virtual ~GUIProfile();
 
 	bool readProfile(QString& ref_fileNamestring);
+	unsigned long match(Mixer* mixer);
 	friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
-  
+ 
 	// key, value, comparator
 	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringMap;
 	typedef std::set<ProfProduct*, ProductComparator> ProductSet;
-	typedef std::set<ProfControl*> ControlSet;
+	typedef std::vector<ProfControl*> ControlSet;
 	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringSet;
 	typedef std::map<std::string, std::string> StringMap;
 	ControlSet _controls;

@@ -35,7 +35,19 @@ protected:
   /// Derived classes MUST implement this to open the mixer. Returns a KMix error code (O=OK).
   virtual int open() = 0;
   virtual int close() = 0;
-  
+
+  /*
+   * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for looking up the
+   * driver name on instanciated objects.
+   *
+   * Please note, that there is also a static implementation of the driverName
+   * (Because there is no "virtual static" in C++, I need the method twice). 
+   * The static implementation is for the Mixer Factory (who needs it *before* instanciating an object).
+   * While it is not a member function, its implementation can still be found in the corresponding
+   * Backend implementation. For example in mixer_oss.cpp there is a global function called OSS_getDriverName().
+   */
+  virtual QString getDriverName() = 0;
+
   /** Returns, whether this Mixer object contains a valid Mixer. You should return "false", when
    * the Mixer with the devnum given in the constructor is not supported by the Backend. The two
    * typical cases are:

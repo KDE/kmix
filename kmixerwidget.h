@@ -46,6 +46,7 @@ class KConfig;
 class KTabWidget;
 
 // KMix
+class GUIProfile;
 class Mixer;
 #include "viewbase.h"
 class ViewInput;
@@ -111,6 +112,7 @@ class KMixerWidget : public QWidget
 
    void createLayout(ViewBase::ViewFlags vflags);
    void possiblyAddView(ViewBase* vbase);
+   void createViewsByProfile(Mixer* mixer, GUIProfile* guiprof, ViewBase::ViewFlags vflags);
 };
 
 #endif

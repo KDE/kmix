@@ -471,3 +471,8 @@ QString SUN_getDriverName() {
         return "SUNAudio";
 }
 
+QString Mixer_SUN::getDriverName()
+{
+        return "SUNAudio";
+}
+

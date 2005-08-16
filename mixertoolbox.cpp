@@ -25,7 +25,9 @@
 
 //#include <kdebug.h>
 #include <klocale.h>
+#include <kstandarddirs.h>
 
+#include "guiprofile.h"
 #include "mixdevice.h"
 #include "mixer.h"
 
@@ -213,4 +215,75 @@ void MixerToolBox::deinitMixer()
       delete mixer;
    }
    // kdDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
+}
+
+
+GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
+{
+	/** This is a two-step process *****************************************
+	 * (1) Evaluate the default profile
+	 * (2) Evaluate the soundcard specific profile
+	 * (3) Find out who's best
+	 ***********************************************************************/
+	
+	// (1) Evaluate the default profile
+	GUIProfile* guiprofBest = new GUIProfile();
+	QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
+	QString fileName = fileNamePrefix + "default.xml";
+	kdDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
+	fileName = locate("appdata", fileName );
+	kdDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
+	unsigned long matchValueBest = 0;
+	if ( !fileName.isNull() && guiprofBest->readProfile(fileName) ) {
+		// Profile exists and was succesfully read
+		matchValueBest = guiprofBest->match(mixer);
+		if ( matchValueBest == 0 ) {
+			delete guiprofBest;
+			guiprofBest = 0;
+		}
+	}
+	else {
+		// No default profile => bad
+		delete guiprofBest;
+		guiprofBest = 0;
+	}
+
+	kdDebug(67100) << "Cur Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+	
+	// (2) Evaluate the soundcard specific profile  (the code is quite similar to the upper one
+	// Here we could also start a while loop over all matching filenames, e.g.: "<driverName>.<cardName>*.xml"
+	// But for now wie will just check one filename: "<driverName>.<cardName>.xml" (note the missing '*')
+	QString mixerNameSpacesToUnderscores = mixer->mixerName();
+	mixerNameSpacesToUnderscores.replace(" ","_");
+	fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
+	kdDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
+	fileName = locate("appdata", fileName );
+	kdDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
+	
+	GUIProfile* guiprofCardSpecific = new GUIProfile();
+	unsigned long matchValueCardSpecific = 0;
+	if ( !fileName.isNull() && guiprofCardSpecific->readProfile(fileName) ) {
+		matchValueCardSpecific = guiprofCardSpecific->match(mixer);
+	}
+
+	// (3) Find out who's best (and discard the other one)
+		
+	if ( matchValueCardSpecific !=0 && matchValueCardSpecific >= matchValueBest ) {
+		// Current profile is better than the default Profile
+		// => Discard old best Profile, and make the Current Profile best
+		matchValueBest = matchValueCardSpecific;
+		delete guiprofBest;
+		guiprofBest = guiprofCardSpecific;
+		guiprofCardSpecific =  0;
+	}
+	else {
+		// Current "best" profile is better than current card specific Profile
+		// => Discard current Profile
+		delete guiprofCardSpecific;
+		guiprofCardSpecific =  0;
+	}
+
+	kdDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+
+	return guiprofBest;
 }

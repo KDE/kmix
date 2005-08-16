@@ -24,6 +24,7 @@
 #include <qptrlist.h>
 #include <qstring.h>
 
+class GUIProfile;
 class Mixer;
 
 /**
@@ -36,6 +37,8 @@ class MixerToolBox {
  public:
     static void initMixer(QPtrList<Mixer>&, bool, QString&);
     static void deinitMixer();
+
+    static GUIProfile* selectProfile(Mixer*);
 };
     
 

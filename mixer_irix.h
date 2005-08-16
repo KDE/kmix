@@ -36,6 +36,8 @@ public:
   virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
   virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
 
+  virtual QString getDriverName();
+
 protected:
   virtual void setDevNumName_I(int devnum);
   virtual int open();

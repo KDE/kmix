@@ -6,6 +6,9 @@
 #include <iostream>
 #include <utility>
 
+#include "mixer.h"
+
+
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
     return ( s1 < s2 );
 }
@@ -52,20 +55,132 @@ GUIProfile::~GUIProfile()
 
 bool GUIProfile::readProfile(QString& ref_fileName)
 {
-		QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-		
-		QFile xmlFile( ref_fileName );
-		QXmlInputSource source( &xmlFile );
-		GUIProfileParser* gpp = new GUIProfileParser(*this);
-		xmlReader->setContentHandler(gpp);
+	QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
+	
+	QFile xmlFile( ref_fileName );
+	QXmlInputSource source( &xmlFile );
+	GUIProfileParser* gpp = new GUIProfileParser(*this);
+	xmlReader->setContentHandler(gpp);
+	bool ok = xmlReader->parse( source );
+	delete gpp;
+	if ( ok ) {
+		// Reading is OK => now make the profile consistent
 
-		bool ok = xmlReader->parse( source );
+		// (1) Make sure the _tabs are complete (add any missing Tabs)
+		std::vector<ProfControl*>::const_iterator itEnd = _controls.end();
+		for ( std::vector<ProfControl*>::const_iterator it = _controls.begin(); it != itEnd; ++it)
+		{
+			ProfControl* control = *it;
+			QString tabnameOfControl = control->tab;
+			if ( tabnameOfControl.isNull() ) {
+				// OK, it has no TabName defined. We will assign a TabName in step (3).
+			}
+			else {
+				// check, whether we have this Tab yet.
+				//std::vector<ProfTab*>::iterator tabRef = std::find(_tabs.begin(), _tabs.end(), tabnameOfControl);
+				std::vector<ProfTab*>::const_iterator itTEnd = _tabs.end();
+				std::vector<ProfTab*>::const_iterator itT = _tabs.begin();
+				for ( ; itT != itTEnd; ++itT) {
+				    if ( (*itT)->name == tabnameOfControl ) break;
+				}
+				if ( itT == itTEnd ) {
+					// no such Tab yet => insert it
+					ProfTab* tab = new ProfTab();
+					tab->name = tabnameOfControl;
+					tab->type = "SliderSet";  //  as long as we don't know better
+					_tabs.push_back(tab);
+				} // tab does not exist yet => insert new tab
+			} // Control contains a TabName
+		} // Step (1)
 
-		delete gpp;
+		// (2) Make sure that there is at least one Tab
+		if ( _tabs.size() == 0) {
+			ProfTab* tab = new ProfTab();
+			tab->name = "Controls"; // !! A better name should be used. What about i18n() ?
+			tab->type = "SliderSet";  //  as long as we don't know better
+			_tabs.push_back(tab);
+		} // Step (2)
+
+		// (3) Assign a Tab Name to all controls that have no defined Tab Name yet.
+		ProfTab* tab = _tabs.front();
+		itEnd = _controls.end();		for ( std::vector<ProfControl*>::const_iterator it = _controls.begin(); it != itEnd; ++it)
+		{
+			ProfControl* control = *it;
+			QString& tabnameOfControl = control->tab;
+			if ( tabnameOfControl.isNull() ) {
+				// OK, it has no TabName defined. We will assign a TabName in step (3).
+				control->tab = tab->name;
+			}
+		} // Step (3)
 		
-		return ok;
+	} // Read OK
+	
+	return ok;
 }
 
+/**
+ * Returns how good the given Mixer matches this GUIProfile.
+ * A value between 0 (not matching at all) and MAXLONG (perfect match) is returned.
+ *
+ * Here is the current algorithm:
+ *
+ * If the driver doesn't match, 0 is returned. (OK)
+ * If the card-name ...  (OK)
+ *     is "*", this is worth 1 point
+ *     doesn't match, 0 is returned.
+ *     matches, this is worth 500 points.
+ *
+ * If the "card type" ...
+ *     is empty, this is worth 0 points.     !!! not implemented yet
+ *     doesn't match, 0 is returned.         !!! not implemented yet 
+ *     matches , this is worth 500 points.  !!! not implemented yet
+ *
+ * If the "driver version" doesn't match, 0 is returned. !!! not implemented yet
+ * If the "driver version" matches, this is worth ...
+ *     4000 unlimited                             <=> "*:*"
+ *     6000 lower-bound-limited                   <=> "lower-bound:*"
+ *     6000 upper-bound-limited                   <=> "*:upper-bound"
+ *     8000 upper- and lower-bound limited        <=> "lower-bound:upper-bound"
+ * or 10000 points (upper-bound=lower-bound=bound <=> "bound:bound"
+ *
+ * The Profile-Generation is added to the already achived points. (done)
+ *   The maximum gain is 900 points.
+ *   Thus you can create up to 900 generations (0-899) without "overriding"
+ *   the points gained from the "driver version" or "card-type".
+ *
+ * For example:  card-name="*" (1), card-type matches (1000),
+ *               driver version "*:*" (4000), Profile-Generation 4 (4).
+ *         Sum:  1 + 1000 + 4000 + 4 = 5004
+ *
+ * @todo Implement "card type" match value
+ * @todo Implement "version" match value (must be in backends as well)
+ */
+unsigned long GUIProfile::match(Mixer* mixer) {
+	unsigned long matchValue = 0;
+	if ( _soundcardDriver != mixer->getDriverName() ) {
+		return 0;
+	}
+	if ( _soundcardDriverName == "*" ) {
+		matchValue += 1;
+	}
+	else if ( _soundcardDriverName != mixer->mixerName() ) {
+		return 0; // card name does not match
+	}
+	else {
+		matchValue += 500; // card name matches
+	}
+
+	// !!! we don't check current for the driver version.
+	//     So we assign simply 4000 points for now.
+	matchValue += 4000;
+	if ( _generation < 900 ) {
+		matchValue += _generation;
+	}
+	else {
+		matchValue += 900;
+	}
+	return matchValue;
+}
 
 std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 	os  << "Soundcard:" << std::endl
@@ -93,7 +208,7 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		os << "Tab: " << std::endl << "  " << profTab->name.utf8() << " (" << profTab->type.utf8() << ")" << std::endl;
 	} // for all tabs
 
-	for ( std::set<ProfControl*>::iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
+	for ( std::vector<ProfControl*>::const_iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
 	{
 		ProfControl* profControl = *it;
 		os << "Control:\n  ID=" << profControl->id.utf8() << std::endl;
@@ -287,9 +402,10 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		profControl->name = name;
 		profControl->subcontrols = subcontrols;
 		profControl->name = name;
+		profControl->tab = tab;
 		if ( show.isNull() ) { show = "*"; }
 		profControl->show = show;		
-		_guiProfile._controls.insert(profControl);
+		_guiProfile._controls.push_back(profControl);
 	} // id != null
 }
 

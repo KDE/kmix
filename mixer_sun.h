@@ -39,6 +39,8 @@ public:
   bool setRecsrcHW( int devnum, bool on );
   bool isRecsrcHW( int devnum );
 
+  virtual QString getDriverName();
+
 protected:
   virtual int open();
   virtual int close();

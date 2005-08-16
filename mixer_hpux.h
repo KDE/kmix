@@ -41,6 +41,8 @@ public:
   virtual int readVolumeFromHW( int devnum, Volume &vol );
   virtual int writeVolumeToHW( int devnum, Volume &vol );
 
+  virtual QString getDriverName();
+
 protected:
   virtual bool setRecsrcHW( int devnum, bool on = true );
   virtual bool isRecsrcHW( int devnum );

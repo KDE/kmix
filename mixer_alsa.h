@@ -43,6 +43,7 @@ class Mixer_ALSA : public Mixer_Backend
       		virtual unsigned int enumIdHW(int mixerIdx);
 		virtual bool prepareUpdateFromHW();
 
+		virtual QString getDriverName();
 		
 	protected:
 		virtual int open();

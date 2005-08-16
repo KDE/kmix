@@ -236,6 +236,16 @@ bool Mixer::isValid() {
   return _mixerBackend->isValid();
 }
 
+/**
+ * Returns the driver name, that handles this Mixer.
+ */
+QString Mixer::getDriverName()
+{
+  QString driverName = _mixerBackend->getDriverName();
+  kdDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
+  return driverName;
+}
+
 
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
@@ -324,6 +334,11 @@ QString Mixer::mixerName()
   return _mixerBackend->m_mixerName;
 }
 
+
+/**
+ * Queries the Driver Factory for a driver.
+ * @par driver Index number. 0 <= driver < numDrivers()
+ */
 QString Mixer::driverName( int driver )
 {
     getDriverNameFunc *f = g_mixerFactories[driver].getDriverName;

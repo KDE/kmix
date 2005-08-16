@@ -255,3 +255,8 @@ QString HPUX_getDriverName() {
         return "HPUX";
 }
 
+QString Mixer_HPUX::getDriverName()
+{
+        return "HPUX";
+}
+

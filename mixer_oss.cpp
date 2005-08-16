@@ -304,3 +304,7 @@ QString OSS_getDriverName() {
 	return "OSS";
 }
 
+QString Mixer_OSS::getDriverName() {
+        return "OSS";
+}
+
