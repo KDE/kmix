@@ -119,13 +119,13 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
       //KMixGUIProfile* prof = MixerToolbox::selectProfile(_mixer);
       
       
-	possiblyAddView(new ViewOutput  ( m_ioTab, "Output" , _mixer, vflags ) );
-	possiblyAddView(new ViewInput( m_ioTab, "Input"  , _mixer, vflags ) );
-	possiblyAddView(new ViewSwitches( m_ioTab, "Switches" , _mixer, vflags ) );
+	possiblyAddView(new ViewOutput  ( m_ioTab, "output", i18n("Output"), _mixer, vflags ) );
+	possiblyAddView(new ViewInput( m_ioTab, "input", i18n("Input"), _mixer, vflags ) );
+	possiblyAddView(new ViewSwitches( m_ioTab, "switches", i18n("Switches"), _mixer, vflags ) );
 	if ( vflags & ViewBase::Experimental_SurroundView )
-		possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags ) );
+		possiblyAddView( new ViewSurround( m_ioTab, "surround", i18n("Surround"), _mixer, vflags ) );
     if ( vflags & ViewBase::Experimental_GridView )
-		possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags ) );
+		possiblyAddView( new ViewGrid( m_ioTab, "grid", i18n("Grid"), _mixer, vflags ) );
 
 
     // *** Lower part: Slider and Mixer Name ************************************************
@@ -164,7 +164,7 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase)
 	else {
 		_views.push_back(vbase);
 		vbase ->createDeviceWidgets();
-		m_ioTab->addTab( vbase , i18n(vbase->name()) );
+		m_ioTab->addTab( vbase , vbase->caption() );
 		connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
 	}
 }

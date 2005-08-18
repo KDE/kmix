@@ -25,8 +25,8 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
-ViewOutput::ViewOutput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
-      : ViewSliders(parent, name, mixer, vflags)
+ViewOutput::ViewOutput(QWidget* parent, const char* name, const QString & caption, Mixer* mixer, ViewBase::ViewFlags vflags)
+      : ViewSliders(parent, name, caption, mixer, vflags)
 {
     init();
 }

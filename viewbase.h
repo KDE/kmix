@@ -31,7 +31,7 @@ public:
 	Experimental_GridView = 0x2000
     };
 
-    ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0);
+    ViewBase(QWidget* parent, const char* name, const QString & caption, Mixer* mixer, WFlags=0, ViewFlags vflags=0);
     virtual ~ViewBase();
 
     // Subclasses must define this method. It is called by the ViewBase() constuctor.
@@ -90,6 +90,8 @@ public:
      *       I actually DID expect this. The solution is unclear yet, probably there will be a virtual mapper method.
      */
     QPtrList<QWidget> _mdws; // this obsoletes the former Channel class
+    
+    QString caption() const { return _caption; }
 
 protected:
     void init();
@@ -110,6 +112,9 @@ protected slots:
 
 signals:
    void toggleMenuBar();
+   
+private:
+   QString _caption;
 };
 
 #endif

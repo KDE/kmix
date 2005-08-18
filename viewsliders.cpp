@@ -37,8 +37,8 @@
  * correctly because init() does not get called.
  * See ViewInput and ViewOutput for "real" implementations.
  */
-ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
+ViewSliders::ViewSliders(QWidget* parent, const char* name, const QString & caption, Mixer* mixer, ViewBase::ViewFlags vflags)
+      : ViewBase(parent, name, caption, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
 {
     if ( _vflags & ViewBase::Vertical ) {
         _layoutMDW = new QVBoxLayout(this);

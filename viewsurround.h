@@ -14,7 +14,7 @@ class ViewSurround : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
+    ViewSurround(QWidget* parent, const char* name, const QString & caption, Mixer* mixer, ViewBase::ViewFlags vflags);
     ~ViewSurround();
 
     virtual int count();

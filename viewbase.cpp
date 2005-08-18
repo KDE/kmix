@@ -37,8 +37,8 @@
 #include "mixer.h"
 
 
-ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, ViewBase::ViewFlags vflags)
-     : QWidget(parent, name, f), _vflags(vflags)
+ViewBase::ViewBase(QWidget* parent, const char* name, const QString & caption, Mixer* mixer, WFlags f, ViewBase::ViewFlags vflags)
+     : QWidget(parent, name, f), _vflags(vflags), _caption(caption)
 {
     _mixer = mixer;
     _mixSet = new MixSet();
