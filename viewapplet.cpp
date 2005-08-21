@@ -34,8 +34,8 @@
 #include "mdwslider.h"
 #include "mixer.h"
 
-ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KPanelApplet::Position position )
-    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
+ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KPanelApplet::Position position )
+    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));

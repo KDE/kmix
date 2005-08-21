@@ -31,8 +31,8 @@
 #include "mdwenum.h"
 #include "mixer.h"
 
-ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
-      : ViewBase(parent, name, mixer, 0, vflags)
+ViewSwitches::ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
+      : ViewBase(parent, name, mixer, 0, vflags, guiprof)
 {
     // Create switch buttonGroup
     if ( _vflags & ViewBase::Vertical ) {

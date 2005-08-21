@@ -18,38 +18,26 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef ViewSwitches_h
-#define ViewSwitches_h
+#ifndef ViewSliderSet_h
+#define ViewSliderSet_h
 
-class QLayout;
+class GUIProfile;
+#include "viewsliders.h"
+
 class QWidget;
-
 class Mixer;
-#include "viewbase.h"
 
-class ViewSwitches : public ViewBase
+class ViewSliderSet : public ViewSliders
 {
     Q_OBJECT
 public:
-    ViewSwitches(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
-    ~ViewSwitches();
+    ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
+    ~ViewSliderSet();
 
-    virtual int count();
-    virtual int advice();
     virtual void setMixSet(MixSet *mixset);
-    virtual QWidget* add(MixDevice *mdw);
-    virtual void constructionFinished();
-    virtual void configurationUpdate();
-
-    QSize sizeHint() const;
-
-public slots:
-    virtual void refreshVolumeLevels();
 
 private:
-    QLayout* _layoutMDW;
-    QLayout* _layoutEnum;
-    QLayout* _layoutSwitch;
+    GUIProfile* _guiprof;
 };
 
 #endif

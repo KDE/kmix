@@ -39,8 +39,8 @@
  * Demonstration verion of a "surround view"
  * Not really usable right now.
  */
-ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
+ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
+      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
 {
     _mdSurroundFront = 0;
     _mdSurroundBack  = 0;

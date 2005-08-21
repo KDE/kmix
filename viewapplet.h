@@ -32,7 +32,7 @@ class ViewApplet : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KPanelApplet::Position pos);
+    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KPanelApplet::Position pos);
     ~ViewApplet();
 
     virtual int count();

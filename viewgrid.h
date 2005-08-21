@@ -32,7 +32,7 @@ class ViewGrid : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewGrid(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
+    ViewGrid(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
     ~ViewGrid();
 
     virtual int count();

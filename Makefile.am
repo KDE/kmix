@@ -1,4 +1,4 @@
-SUBDIRS = pics tests
+SUBDIRS = pics tests profiles
 INCLUDES= $(all_includes)
 
 bin_PROGRAMS = 

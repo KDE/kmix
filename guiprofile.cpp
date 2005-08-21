@@ -1,11 +1,17 @@
 #include "guiprofile.h"
 
+// Qt
 #include <qxml.h>
 #include <qstring.h>
 
+// System
 #include <iostream>
 #include <utility>
 
+// KDE
+#include <kdebug.h>
+
+// KMix
 #include "mixer.h"
 
 
@@ -63,6 +69,8 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 	xmlReader->setContentHandler(gpp);
 	bool ok = xmlReader->parse( source );
 	delete gpp;
+
+        //std::cout << "Raw Profile: " << *this;
 	if ( ok ) {
 		// Reading is OK => now make the profile consistent
 
@@ -112,8 +120,13 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 				control->tab = tab->name;
 			}
 		} // Step (3)
+		//std::cout << "Consistent Profile: " << *this;
 		
 	} // Read OK
+	else {
+		// !! this error message about faulty profiles should probably be surrounded with i18n()
+		kdError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
+	}
 	
 	return ok;
 }
@@ -160,10 +173,10 @@ unsigned long GUIProfile::match(Mixer* mixer) {
 	if ( _soundcardDriver != mixer->getDriverName() ) {
 		return 0;
 	}
-	if ( _soundcardDriverName == "*" ) {
+	if ( _soundcardName == "*" ) {
 		matchValue += 1;
 	}
-	else if ( _soundcardDriverName != mixer->mixerName() ) {
+	else if ( _soundcardName != mixer->mixerName() ) {
 		return 0; // card name does not match
 	}
 	else {
@@ -187,8 +200,8 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 			<< "  Driver=" << guiprof._soundcardDriver.utf8() << std::endl
 			<< "  Driver-Version min=" << guiprof._driverVersionMin
 			<< " max=" << guiprof._driverVersionMax << std::endl
-			<< "  Card-Name=" << guiprof._soundcardDriverName.utf8() << std::endl
-			<< "  Card-Type=" << guiprof._soundcardDriverType.utf8() << std::endl
+			<< "  Card-Name=" << guiprof._soundcardName.utf8() << std::endl
+			<< "  Card-Type=" << guiprof._soundcardType.utf8() << std::endl
 			<< "  Profile-Generation="  << guiprof._generation
 			<< std::endl;
 	for ( std::set<ProfProduct*>::iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
@@ -302,12 +315,12 @@ void GUIProfileParser::addSoundcard(const QXmlAttributes& attributes) {
 	QString generation = attributes.value("generation");
 	if ( !driver.isNull() && !name.isNull() ) {
 		_guiProfile._soundcardDriver = driver;
-		_guiProfile._soundcardDriverName = name;
+		_guiProfile._soundcardName = name;
 		if ( type.isNull() ) {
-			_guiProfile._soundcardDriverType = "";
+			_guiProfile._soundcardType = "";
 		}
 		else {
-			_guiProfile._soundcardDriverType = type;
+			_guiProfile._soundcardType = type;
 		}
 		if ( version.isNull() ) {
 			_guiProfile._driverVersionMin = 0;
@@ -320,7 +333,6 @@ void GUIProfileParser::addSoundcard(const QXmlAttributes& attributes) {
 			_guiProfile._driverVersionMax = versionMinMax.second.toULong();
 		}
 		if ( type.isNull() ) { type = ""; };
-		_guiProfile._soundcardDriverType = type;
 		if ( generation.isNull() ) {
 			_guiProfile._generation = 0;
 		}

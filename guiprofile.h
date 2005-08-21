@@ -99,8 +99,8 @@ public:
 	// The driver version: 1000*1000*MAJOR + 1000*MINOR + PATCHLEVEL
 	unsigned long _driverVersionMin;
 	unsigned long _driverVersionMax;
-	QString _soundcardDriverName;
-	QString _soundcardDriverType;
+	QString _soundcardName;
+	QString _soundcardType;
 	unsigned long _generation;
 };
 

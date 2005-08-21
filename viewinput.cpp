@@ -25,8 +25,13 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
-ViewInput::ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
-      : ViewSliders(parent, name, mixer, vflags)
+/*
+ * View, showing only "input" sliders.
+ * This View is deprecated, and ViewSliders will be removed once ViewSliderSet is fully operational
+ * (only thing missing in ViewSliderSet is the evaluation of the "controls" information from the Profile.)
+ */
+ViewInput::ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
+      : ViewSliders(parent, name, mixer, vflags, guiprof)
 {
     init();
     connect ( _mixer, SIGNAL(newRecsrc())      , this, SLOT(refreshVolumeLevels()) ); // only the input widget has record sources

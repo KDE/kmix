@@ -365,7 +365,8 @@ void KMixApplet::positionChange(Position pos) {
 	    _layout->remove(m_mixerWidget);
 	    delete m_mixerWidget;
 	}
-	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, 0, pos );
+ 	/**@todo Add View stuff to KMixApplet / ViewApplet */
+	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, 0, (GUIProfile*)0, pos );
 	connect ( m_mixerWidget, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
 	m_mixerWidget->createDeviceWidgets();
 	_layout->add(m_mixerWidget);

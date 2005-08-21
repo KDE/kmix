@@ -35,8 +35,8 @@
 
 /**
  */
-ViewGrid::ViewGrid(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
+ViewGrid::ViewGrid(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
+      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
 {
    m_spacingHorizontal = 5;
    m_spacingVertical = 5;

@@ -31,6 +31,9 @@ class MixSet;
 class Mixer;
 class MixDevice;
 
+// KMix
+class GUIProfile;
+
 /**
   * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
   */
@@ -51,7 +54,7 @@ public:
 	Experimental_GridView = 0x2000
     };
 
-    ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0);
+    ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
     virtual ~ViewBase();
 
     // Subclasses must define this method. It is called by the ViewBase() constuctor.
@@ -119,6 +122,7 @@ protected:
     KPopupMenu *_popMenu;
     KActionCollection* _actions;
     ViewFlags _vflags;
+    GUIProfile* _guiprof;
 
 public slots:
    virtual void refreshVolumeLevels();

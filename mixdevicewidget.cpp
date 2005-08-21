@@ -60,6 +60,10 @@ MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
 {
    _mdwActions = new KActionCollection( this );
    m_keys = new KGlobalAccel( this, "Keys" );
+  
+   /* @todo Fancy Background 
+   setBackgroundMode(Qt::X11ParentRelative);
+    */
 }
 
 MixDeviceWidget::~MixDeviceWidget()

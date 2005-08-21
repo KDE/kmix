@@ -112,7 +112,8 @@ KMixDockWidget::createMasterVolWidget()
     }
     // create devices
 
-    _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, this);
+    /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
+    _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, (GUIProfile*)0, this);
     _dockAreaPopup->createDeviceWidgets();
     m_mixer->readSetFromHWforceUpdate();  // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     /* We are setting up 3 connections:

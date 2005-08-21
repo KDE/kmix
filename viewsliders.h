@@ -31,7 +31,7 @@ class ViewSliders : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
+    ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
     ~ViewSliders();
 
     virtual int count();

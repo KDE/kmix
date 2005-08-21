@@ -28,7 +28,8 @@
 #include <iostream>
 
 #undef KMIX_ALSA_NEW_PK
-// use the next line for enabling the correct primary-key generation (needed e.g. for Profiles)
+// !!! don't commit with the next line uncommented. This enables the correct primary-key
+//     generation (needed e.g. for Profiles)
 //#define KMIX_ALSA_NEW_PK
 
 extern "C"
@@ -316,6 +317,8 @@ Mixer_ALSA::open()
                QString mdPK("%1:%2");
                mdPK = mdPK.arg(snd_mixer_selem_id_get_name ( sid ) )
                           .arg(snd_mixer_selem_id_get_index( sid ) );
+               mdPK.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
+
                md->setPK(mdPK);
                /******************************************************************/
 #endif

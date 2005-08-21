@@ -242,7 +242,7 @@ bool Mixer::isValid() {
 QString Mixer::getDriverName()
 {
   QString driverName = _mixerBackend->getDriverName();
-  kdDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
+//  kdDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
   return driverName;
 }
 

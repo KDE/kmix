@@ -29,7 +29,7 @@ class ViewOutput : public ViewSliders
 {
     Q_OBJECT
 public:
-    ViewOutput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags);
+    ViewOutput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof=0);
     ~ViewOutput();
 
     virtual void setMixSet(MixSet *mixset);

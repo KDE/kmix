@@ -22,6 +22,7 @@
 // Qt
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qpixmap.h>
 #include <qslider.h>
 #include <qstring.h>
 #include <qtooltip.h>
@@ -31,6 +32,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kiconloader.h>
 #include <klocale.h>
 #include <ktabwidget.h>
 
@@ -126,13 +128,13 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
       else
       {
 	// Fallback, if no GUI Profile could be found
-	possiblyAddView(new ViewOutput  ( m_ioTab, "Output" , _mixer, vflags ) );
-	possiblyAddView(new ViewInput( m_ioTab, "Input"  , _mixer, vflags ) );
-	possiblyAddView(new ViewSwitches( m_ioTab, "Switches" , _mixer, vflags ) );
+	possiblyAddView(new ViewOutput  ( m_ioTab, "Output" , _mixer, vflags, 0 ) );
+	possiblyAddView(new ViewInput( m_ioTab, "Input"  , _mixer, vflags, 0 ) );
+	possiblyAddView(new ViewSwitches( m_ioTab, "Switches" , _mixer, vflags, 0 ) );
 	if ( vflags & ViewBase::Experimental_SurroundView )
-		possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags ) );
+		possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ) );
 	if ( vflags & ViewBase::Experimental_GridView )
-		possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags ) );
+		possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
       }
 
 
@@ -158,6 +160,16 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
     QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
 
+    /* @todo : update all Background Pixmaps
+    const QPixmap bgPixmap = UserIcon("bg_speaker");
+    setBackgroundPixmap ( bgPixmap );
+    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+	    ViewBase* view = *it;
+	    view->setBackgroundPixmap ( bgPixmap );
+    } // for all Views
+    */ 
+    
     // --- "MenuBar" toggling from the various View's ---
 
 
@@ -182,8 +194,13 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 		// The i18n() in the next line will only produce a translated version, if the text is known.
 		// This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
 		// It is possible that the Profile author puts arbitrary names in it.
+		kdDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.utf8() << "name="<<profTab->name.utf8() << "\n";
 		if ( profTab->type == "SliderSet" ) {
 			ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.utf8(), mixer, vflags, guiprof );
+			possiblyAddView(view);
+		}
+		else if ( profTab->type == "Surround" ) {
+			ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.utf8(), mixer, vflags, guiprof );
 			possiblyAddView(view);
 		}
 		/*
