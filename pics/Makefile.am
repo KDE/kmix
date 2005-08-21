@@ -6,7 +6,6 @@ pics_DATA = mix_audio.png mix_bass.png mix_cd.png mix_ext.png \
 	mix_headphone.png mix_digital.png mix_ac97.png \
 	kmixdocked.png kmixdocked_mute.png kmixdocked_error.png \
 	mix_record.png \
-	bg_speaker.png \
 	SpeakerFrontLeft.png SpeakerRearLeft.png SpeakerFrontRight.png  SpeakerRearRight.png Listener.png
 
 
