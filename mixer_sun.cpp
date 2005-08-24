@@ -135,7 +135,7 @@ Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(devnum)
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class destructor.
 //======================================================================
-Mixer_SUN::~Mixer_SUN(int devnum)
+Mixer_SUN::~Mixer_SUN()
 {
    close();
 }
