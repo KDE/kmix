@@ -135,7 +135,7 @@ Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(devnum)
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class destructor.
 //======================================================================
-Mixer_SUN::~Mixer_SUN(int devnum) : Mixer_Backend(devnum)
+Mixer_SUN::~Mixer_SUN()
 {
    close();
 }
@@ -159,7 +159,7 @@ int Mixer_SUN::open()
    if(audiodev.isNull())
      audiodev = "/dev/audio";
    audiodev += "ctl";
-   if ( ( fd = open( audiodev.data(), O_RDWR ) ) < 0 )
+   if ( ( fd = ::open( audiodev.data(), O_RDWR ) ) < 0 )
    {
       if ( errno == EACCES )
          return Mixer::ERR_PERM;
