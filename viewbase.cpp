@@ -133,7 +133,7 @@ void ViewBase::popupReset()
     KAction *a;
 
     _popMenu = new KPopupMenu( this );
-    _popMenu->insertTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
+    _popMenu->addTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
     a = _actions->action( "toggle_channels" );
     if ( a ) a->plug( _popMenu );

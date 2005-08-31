@@ -73,6 +73,8 @@
 <control id="PCM:0"    controls="*" tab="Play" name="Welle" show="simple" />
 <control id="PCM:1"    controls="*" tab="Play" name="Welle 2" show="extended" />
 <control id="CD:0"     controls="*" tab="Play" show="simple" />
+<control id="Headphone:0"     controls="*" tab="Play" show="simple" />
+
 <control id="CD:1"     controls="*" tab="Play" show="extended" />
 
 

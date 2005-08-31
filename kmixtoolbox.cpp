@@ -114,9 +114,9 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
          {
             QString devgrpkeys;
             devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().ascii(), mdw->mixDevice()->getPK().ascii() );
-            kdDebug(67100) << "KMixToolBox::loadConfig() load Keys " << devgrpkeys << endl;
+            kdDebug(67100) << "KMixToolBox::loadKeys() load Keys " << devgrpkeys << endl;
 
-            // please see KMixToolBox::saveConfig() for some rambling about saving/loading Keys
+            // please see KMixToolBox::saveKeys() for some rambling about saving/loading Keys
             keys->setConfigGroup(devgrpkeys);
             keys->readSettings(config);
             keys->updateConnections();
@@ -171,7 +171,7 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
        If you think about this aspect more deeply, you will find out that this is the case already
        today with "kmixapplet" and "kmix main application". It would really nice to rework this.
     */
-   kdDebug(67100) << "KMixToolBox::loadKeys()" << endl;
+   kdDebug(67100) << "KMixToolBox::saveKeys()" << endl;
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
@@ -182,7 +182,7 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
          {
             QString devgrpkeys;
             devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().ascii(), mdw->mixDevice()->getPK().ascii() );
-            kdDebug(67100) << "KMixToolBox::loadConfig() load Keys " << devgrpkeys << endl;
+            kdDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys << endl;
             
             keys->setConfigGroup(devgrpkeys);
             keys->writeSettings(config);

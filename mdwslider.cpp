@@ -123,7 +123,6 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	_layout = new QHBoxLayout( this );
 	_layout->setAlignment(Qt::AlignCenter);
     }
-    QToolTip::add( this, m_mixdevice->name() );
 
 	 // -- MAIN SLIDERS LAYOUT  ---
 	 QBoxLayout *slidersLayout;
@@ -155,16 +154,10 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 }
 	 
 	 m_label->hide();
-    if ( _orientation == Qt::Horizontal ) 
-		labelLayout->addSpacing( 36 );   // !!! ?!? Why different in vert. and hor. Style?!?
 	
 	 labelLayout->addWidget( m_label );
 	 m_label->installEventFilter( this );
-
-    if ( _orientation == Qt::Vertical ) {
-		labelLayout->addSpacing( 18 );  // !!! ?!? Why different in vert. and hor. Style?!?
-	 }
-
+	 
 	 // -- SLIDERS, LEDS AND ICON
 	 QBoxLayout *sliLayout;
 	 if ( _orientation == Qt::Vertical ) {
@@ -179,20 +172,22 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 // --- ICON  ----------------------------
     QBoxLayout *iconLayout;
     if ( _orientation == Qt::Vertical ) {
-		 iconLayout = new QHBoxLayout( sliLayout );
-		 iconLayout->setAlignment(Qt::AlignVCenter);
+		 iconLayout = new QVBoxLayout( sliLayout );
+		 iconLayout->setAlignment(Qt::AlignCenter);
 	 }
 	 else {
-		 iconLayout = new QVBoxLayout( sliLayout );
-		 iconLayout->setAlignment(Qt::AlignHCenter);
+		 iconLayout = new QHBoxLayout( sliLayout );
+		 iconLayout->setAlignment(Qt::AlignCenter);
 	 }
+	 iconLayout->setSizeConstraint(QLayout::SetFixedSize);
 	 
 	 m_iconLabel = 0L;
 	 setIcon( m_mixdevice->type() );
-	 iconLayout->addStretch();
 	 iconLayout->addWidget( m_iconLabel );
-	 iconLayout->addStretch();
 	 m_iconLabel->installEventFilter( this );
+	 QString muteTip( i18n( "Mute/Unmute %1"));
+	 muteTip = muteTip.arg(m_mixdevice->name());
+	 QToolTip::add( m_iconLabel, muteTip );
 	 
 	 sliLayout->addSpacing( 3 );
 	 
@@ -228,12 +223,13 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 			 slider = new QSlider( 0, maxvol, maxvol/10,
 					 maxvol - m_mixdevice->getVolume( chid ), _orientation,
 					 this, m_mixdevice->name().ascii() );
-			 slider->setMinimumSize( slider->sizeHint() );
+			 //slider->setMinimumSize( slider->minimumSizeHint() );
                          static_cast<QSlider*>(slider)->setInvertedAppearance(true);
                          static_cast<QSlider*>(slider)->setInvertedControls(true);
 		 }
 		 
 		 slider->installEventFilter( this );
+		 QToolTip::add( slider, m_mixdevice->name() );
 		 
 		 if( i>0 && isStereoLinked() ) {
 			 // show only one (the first) slider, when the user wants it so
@@ -247,23 +243,23 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 
 
     // --- RECORD SOURCE LED --------------------------
-    if ( showRecordLED ) 
+    sliLayout->addSpacing( 3 );
+    if ( showRecordLED )
 	 {
-		 sliLayout->addSpacing( 5 );
 
 		 // --- LED LAYOUT TO CENTER ---
 		 QBoxLayout *reclayout;
 		 if ( _orientation == Qt::Vertical ) {
-			 reclayout = new QHBoxLayout( sliLayout );
+			 reclayout = new QVBoxLayout( sliLayout );
 			 reclayout->setAlignment(Qt::AlignVCenter);
 		 }
 		 else {
-			 reclayout = new QVBoxLayout( sliLayout );
+			 reclayout = new QHBoxLayout( sliLayout );
 			 reclayout->setAlignment(Qt::AlignHCenter);
 		 }
+		 reclayout->setSizeConstraint(QLayout::SetFixedSize);
 		 
 		 if( m_mixdevice->isRecordable() ) {
-			 reclayout->addStretch();
 			 m_recordLED = new KLedButton( Qt::red,
 					 m_mixdevice->isRecSource()?KLed::On:KLed::Off,
 					 KLed::Sunken, KLed::Circular, this, "RecordLED" );
@@ -272,7 +268,6 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 			 connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
 			 m_recordLED->installEventFilter( this );
                          QToolTip::add( m_recordLED, i18n( "Record" ) );
-			 reclayout->addStretch();
 		 }
 		 else
 		 {
@@ -795,7 +790,7 @@ void MDWSlider::showContextMenu()
 		return;
 	
 	KPopupMenu *menu = m_mixerwidget->getPopup();
-	menu->insertTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
+	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
 	
 	if ( m_sliders.count()>1 ) {
 		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );

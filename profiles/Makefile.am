@@ -1,6 +1,6 @@
 
 kmixprofiledir = $(kde_datadir)/kmix/profiles
-kmixprofile_DATA = 
+kmixprofile_DATA = OSS.default.xml ALSA.default.xml
 
 # Read all the following instructions carefully.
 # If you want to try the profile thing NOW, please backup your ~/.kde/share/config/kmix*rc* before!
