@@ -31,6 +31,7 @@
 #include <qpixmap.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
+#include <QResizeEvent>
 #include <qwmatrix.h>
 
 
@@ -69,7 +70,7 @@ extern "C"
   KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
   {
      KGlobal::locale()->insertCatalogue("kmix");
-     return new KMixApplet(configFile, KPanelApplet::Normal,
+     return new KMixApplet(configFile, Plasma::Normal,
                            parent, "kmixapplet");
   }
 }
@@ -149,11 +150,11 @@ bool AppletConfigDialog::useCustomColors() const
 }
 
 
-KMixApplet::KMixApplet( const QString& configFile, Type t,
+KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
                         QWidget *parent, const char *name )
 
-   : KPanelApplet( configFile, t, KPanelApplet::Preferences | KPanelApplet::ReportBug | KPanelApplet::About, parent, name ),
-     m_mixerWidget(0), m_errorLabel(0), m_pref(0),
+   : KPanelApplet( configFile, t, Plasma::Preferences | Plasma::ReportBug | Plasma::About, parent, name ),
+     m_appletView(0), m_errorLabel(0), m_pref(0),
      m_aboutData( "kmix", I18N_NOOP("KMix Panel Applet"),
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
@@ -164,9 +165,9 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
     // init static vars
     if ( s_instCount == 0) {
-        Mixer::mixers().setAutoDelete( true );
+        //  !!! TODO Mixer::mixers().setAutoDelete( true );
 	QString dummyStringHwinfo;
-	MixerToolBox::initMixer(Mixer::mixers(), false, dummyStringHwinfo);
+	MixerToolBox::initMixer(false, dummyStringHwinfo);
     }	
     s_instCount++;
     kdDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
@@ -178,31 +179,27 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
 
     /********** find out to use which mixer ****************************************/
     _mixer = 0;
-    for (_mixer= Mixer::mixers().first(); _mixer!=0; _mixer=Mixer::mixers().next())
+    for ( int i=0; i< Mixer::mixers().count(); ++i )
     {
-      if ( _mixer->id() == _mixerId ) break;
+       Mixer *mixer = (Mixer::mixers())[i];
+       if ( _mixer->mixerName() == _mixerName ) {
+          _mixer = mixer;
+          break;
+       }
     }
-    if ( _mixer == 0 ) {
-      /* Until KMix V3.4-0 the mixerNumber (int) was stored. This was too complicated to handle, so we use an
-       * unique ID (_mixer->mixerId(). But in case when the user changes soundcards (or when upgrading from
-       * KMix 3.4-0 to a 3.4-1 or newer), we scan also for the soundcard name */
-      for (_mixer= Mixer::mixers().first(); _mixer!=0; _mixer=Mixer::mixers().next())
-      {
-	if ( _mixer->mixerName() == _mixerName ) break;
-      }
-    }
-	
-    // don't prompt for a mixer if there is just one available
-    if ( !_mixer && Mixer::mixers().count() == 1 ) {
-	_mixer = Mixer::mixers().first();
+
+    if ( _mixer==0 && Mixer::mixers().count() == 1 ) {
+        // No mixer was matching. But we still don't have to prompt the user, if
+        // there is card available.
+	_mixer = (Mixer::mixers())[0];
     }
 	
 
-
+    /*** Check, whether a Mixer could be selected automagically ******************/
     if ( _mixer == 0 )
     {
 	// No mixer set by user (kmixappletrc_*) and more than one to choose
-	// We do NOT know which mixer to use => ask the User
+	// We do NOT know which mixer to use => Ask the User
 	m_errorLabel = new QPushButton( i18n("Select Mixer"), this );
 	m_errorLabel->setGeometry(0, 0, m_errorLabel->sizeHint().width(),  m_errorLabel->sizeHint().height() );
 	resize( m_errorLabel->sizeHint() );
@@ -232,7 +229,7 @@ KMixApplet::~KMixApplet()
 void KMixApplet::saveConfig()
 {
     kdDebug(67100) << "KMixApplet::saveConfig()" << endl;
-    if ( m_mixerWidget != 0) {
+    if ( m_appletView != 0) {
 	//kdDebug(67100) << "KMixApplet::saveConfig() save" << endl;
         KConfig *cfg = this->config();
 	//kdDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg << endl;
@@ -283,21 +280,23 @@ void KMixApplet::loadConfig()
 
 void KMixApplet::loadConfig( KConfig *config, const QString &grp )
 {
-    if ( m_mixerWidget ) {
+    if ( m_appletView ) {
 	//config->setGroup( grp );
-	KMixToolBox::loadConfig(m_mixerWidget->_mdws, config, grp, "PanelApplet" );
+	KMixToolBox::loadView(m_appletView, config );
+	KMixToolBox::loadKeys(m_appletView, config );
     }
 }
 
 
 void KMixApplet::saveConfig( KConfig *config, const QString &grp )
 {
-    if ( m_mixerWidget ) {
+    if ( m_appletView ) {
 	config->setGroup( grp );
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
 	config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
-	KMixToolBox::saveConfig(m_mixerWidget->_mdws, config, grp, "PanelApplet" );
+	KMixToolBox::saveView(m_appletView, config );
+	KMixToolBox::saveKeys(m_appletView, config );
     }
 }
 
@@ -309,13 +308,12 @@ void KMixApplet::selectMixer()
 {
    QStringList lst;
 
-   int n=1;
-   for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
+   for ( int i=0; i< Mixer::mixers().count(); ++i )
    {
-      QString s;
-      s.sprintf("%i. %s", n, mixer->mixerName().ascii());
-      lst << s;
-      n++;
+       Mixer *mixer = (Mixer::mixers())[i];
+       QString s;
+       s.sprintf("%i. %s", (i+1), mixer->mixerName().ascii());
+       lst << s;
    }
 
    bool ok = false;
@@ -353,35 +351,35 @@ void KMixApplet::help()
 }
 
 
-void KMixApplet::positionChange(Position pos) {
+void KMixApplet::positionChange(Plasma::Position pos) {
     orientationChange( orientation() );
     QResizeEvent e( size(), size() ); // from KPanelApplet::positionChange
     resizeEvent( &e ); // from KPanelApplet::positionChange
     
     if ( m_errorLabel == 0) {
 	// do this only after we deleted the error label
-	if (m_mixerWidget) {
+	if (m_appletView) {
 	    saveConfig(); // save the applet before recreating it
-	    _layout->remove(m_mixerWidget);
-	    delete m_mixerWidget;
+	    _layout->remove(m_appletView);
+	    delete m_appletView;
 	}
  	/**@todo Add View stuff to KMixApplet / ViewApplet */
-	m_mixerWidget = new ViewApplet( this, _mixer->name(), _mixer, 0, (GUIProfile*)0, pos );
-	connect ( m_mixerWidget, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
-	m_mixerWidget->createDeviceWidgets();
-	_layout->add(m_mixerWidget);
+	m_appletView = new ViewApplet( this, _mixer->name(), _mixer, 0, (GUIProfile*)0, pos );
+	connect ( m_appletView, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
+	m_appletView->createDeviceWidgets();
+	_layout->add(m_appletView);
 	_layout->activate();
 	
 	loadConfig();
 	setColors();
 	
 	const QSize panelAppletConstrainedSize = sizeHint();
-	m_mixerWidget->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
+	m_appletView->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	//setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	//kdDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
-	m_mixerWidget->show();
-	//connect( _mixer, SIGNAL(newVolumeLevels()), m_mixerWidget, SLOT(refreshVolumeLevels()) );
+	m_appletView->show();
+	//connect( _mixer, SIGNAL(newVolumeLevels()), m_appletView, SLOT(refreshVolumeLevels()) );
     }
 }
 
@@ -391,12 +389,12 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
 {
     //kdDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
 
-    if ( position() == KPanelApplet::pLeft || position() == KPanelApplet::pRight ) {
-        if ( m_mixerWidget ) m_mixerWidget->resize(e->size().width(),m_mixerWidget->height());
+    if ( position() == Plasma::Left || position() == Plasma::Right ) {
+        if ( m_appletView ) m_appletView->resize(e->size().width(),m_appletView->height());
         if ( m_errorLabel  ) m_errorLabel ->resize(e->size().width(),m_errorLabel ->height());
     }
     else {
-        if ( m_mixerWidget ) m_mixerWidget->resize(m_mixerWidget->width(), e->size().height());
+        if ( m_appletView ) m_appletView->resize(m_appletView->width(), e->size().height());
         if ( m_errorLabel  ) m_errorLabel ->resize(m_errorLabel ->width() ,e->size().height());
     }
 
@@ -420,11 +418,11 @@ QSize KMixApplet::sizeHint() const {
     if ( m_errorLabel !=0 ) {
 	qsz = m_errorLabel->sizeHint();
     }
-    else if (  m_mixerWidget != 0) {
-	qsz = m_mixerWidget->sizeHint();
+    else if (  m_appletView != 0) {
+	qsz = m_appletView->sizeHint();
     }
     else {
-	// During construction of m_mixerWidget or if something goes wrong:
+	// During construction of m_appletView or if something goes wrong:
 	// Return something that should resemble our former sizeHint().
 	qsz = size();
     }
@@ -507,12 +505,12 @@ void KMixApplet::applyPreferences()
     m_pref->activeColors(_colors.high     , _colors.low     , _colors.back);
     m_pref->mutedColors (_colors.mutedHigh, _colors.mutedLow, _colors.mutedBack);
     _customColors = m_pref->useCustomColors();
-    if (!m_mixerWidget)
+    if (!m_appletView)
         return;
 
     /*
-    QSize si = m_mixerWidget->size();
-    m_mixerWidget->resize( si );
+    QSize si = m_appletView->size();
+    m_appletView->resize( si );
     */
     setColors();
     saveConfig();
@@ -547,12 +545,13 @@ void KMixApplet::setColors()
 
 void KMixApplet::setColors( const Colors &color )
 {
-    if ( m_mixerWidget == 0 ) {
+    if ( m_appletView == 0 ) {
         // can happen for example after a paletteChange()
         return;
     }
-    QPtrList<QWidget> &mdws = m_mixerWidget->_mdws;
-    for ( QWidget* qmdw=mdws.first(); qmdw != 0; qmdw=mdws.next() ) {
+    QList<QWidget *> &mdws = m_appletView->_mdws;
+    for ( int i=0; i < mdws.count(); ++i ) {
+        QWidget* qmdw = mdws[i];
 	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- temporary check. Later we *know* that it is correct
 	    static_cast<MixDeviceWidget*>(qmdw)->setColors( color.high, color.low, color.back );
 	    static_cast<MixDeviceWidget*>(qmdw)->setMutedColors( color.mutedHigh, color.mutedLow, color.mutedBack );

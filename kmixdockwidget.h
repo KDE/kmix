@@ -24,7 +24,6 @@
 #define KMIXDOCKWIDGET_H
 
 #include <qwidget.h>
-#include <qvbox.h>
 #include <ksystemtray.h>
 
 class Mixer;

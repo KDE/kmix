@@ -22,8 +22,9 @@
 #include "viewbase.h"
 
 // QT
-#include <qlabel.h>
 #include <qcursor.h>
+#include <qlabel.h>
+#include <QMouseEvent>
 
 // KDE
 #include <kaction.h>
@@ -37,7 +38,7 @@
 #include "mixer.h"
 
 
-ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
+ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
     : QWidget(parent, name, f), _vflags(vflags), _guiprof(guiprof)
 {
     _mixer = mixer;
@@ -99,9 +100,10 @@ void ViewBase::configurationUpdate() {
 void ViewBase::createDeviceWidgets()
 {
     // create devices
-    MixDevice *mixDevice;
-    for ( mixDevice = _mixSet->first(); mixDevice != 0; mixDevice = _mixSet->next())
+    for ( int i=0; i<_mixSet->count(); i++ )
     {
+        MixDevice *mixDevice;
+        mixDevice = (*_mixSet)[i];
 	QWidget* mdw = add(mixDevice);
 	_mdws.append(mdw);
     }
@@ -112,7 +114,7 @@ void ViewBase::createDeviceWidgets()
 // ---------- Popup stuff START ---------------------
 void ViewBase::mousePressEvent( QMouseEvent *e )
 {
-   if ( e->button()==RightButton )
+   if ( e->button() == Qt::RightButton )
       showContextMenu();
 }
 

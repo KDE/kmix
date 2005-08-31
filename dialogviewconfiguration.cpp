@@ -22,7 +22,6 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qptrlist.h>
 
 #include <kdebug.h>
 #include <kdialogbase.h>
@@ -37,7 +36,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
     : KDialogBase(  Plain, i18n( "Configure" ), Ok|Cancel, Ok ),
       _view(view)
 {
-    QPtrList<QWidget> &mdws = view._mdws;
+    QList<QWidget *> &mdws = view._mdws;
     _layout = new QVBoxLayout(plainPage(),0,-1, "_layout" );
 
     //    kdDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
@@ -45,8 +44,8 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
     //QLabel* qlb = new QLabel( i18n("Show"), plainPage() );
     _layout->addWidget(qlb);
 
-    for ( QWidget *qw = mdws.first(); qw != 0; qw = mdws.next())
-    {
+    for ( int i=0; i<mdws.count(); ++i ) {
+	   QWidget *qw = mdws[i];
 	if ( qw->inherits("MixDeviceWidget") ) {
 	    MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
 	    QString mdName = mdw->mixDevice()->name();
@@ -68,14 +67,14 @@ DialogViewConfiguration::~DialogViewConfiguration()
 
 void DialogViewConfiguration::apply()
 {
-    QPtrList<QWidget> &mdws = _view._mdws;
+    QList<QWidget *> &mdws = _view._mdws;
 
     // --- 2-Step Apply ---
 
     // --- Step 1: Show and Hide Widgets ---
-    QCheckBox *cb = _qEnabledCB.first();
-    for ( QWidget *qw = mdws.first(); qw != 0; qw = mdws.next())
-    {
+    for ( int i=0; i<mdws.count(); ++i ) {
+	   QWidget *qw = mdws[i];
+		QCheckBox *cb = _qEnabledCB[i];
 	if ( qw->inherits("MixDeviceWidget") ) {
 	    MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
 	    if ( cb->isChecked() ) {
@@ -85,7 +84,6 @@ void DialogViewConfiguration::apply()
 		mdw->setDisabled(true);
 	    }
 	
-	    cb = _qEnabledCB.next();
 	}
     }
     

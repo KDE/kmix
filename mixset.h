@@ -21,9 +21,11 @@
 #ifndef MixSet_h
 #define MixSet_h
 
+#include <qlist.h>
+
 #include "mixdevice.h"
 
-class MixSet : public QPtrList<MixDevice>
+class MixSet : public QList<MixDevice *>
 {
    public:
       void read( KConfig *config, const QString& grp );

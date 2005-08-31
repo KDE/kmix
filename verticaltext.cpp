@@ -24,7 +24,7 @@
 #include <kdebug.h>
 
 
-VerticalText::VerticalText(QWidget * parent, const char * name, WFlags f) : QWidget(parent,name,f)
+VerticalText::VerticalText(QWidget * parent, const char * name, Qt::WFlags f) : QWidget(parent,name,f)
 {
 	resize(20,100 /*parent->height() */ );
 	setMinimumSize(20,10); // neccesary for smooth integration into layouts (we only care for the widths).

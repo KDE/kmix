@@ -29,8 +29,11 @@
 #include <kkeydialog.h>
 #include <kdebug.h>
 
+#include <qicon.h>
+#include <qtoolbutton.h>
 #include <qobject.h>
 #include <qcursor.h>
+#include <QMouseEvent>
 #include <qslider.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -60,7 +63,7 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw, const char* name) :
     MixDeviceWidget(mixer,md,small,orientation,parent,mw,name),
-    m_linked(true), m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
+    m_linked(true), m_iconLabel( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
 	
@@ -109,8 +112,9 @@ QSizePolicy MDWSlider::sizePolicy() const
  * Those widgets are placed into
 
 */
-void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
+void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 {
+    // !! remove the "showMuteLED" parameter (or let it apply to the icons)
     if ( _orientation == Qt::Vertical ) {
 	_layout = new QVBoxLayout( this );
 	_layout->setAlignment(Qt::AlignCenter);
@@ -132,14 +136,6 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 slidersLayout->setAlignment(Qt::AlignHCenter);
 	 }
 
-	 /* cesken: This is inconsistent. Why should vertical and horizontal layout differ?
-	  *         Also it eats too much space - especially when you don't show sliders at all.
-	  *         Even more on the vertical panel applet (see Bug #97667)
-	     if ( _orientation == Qt::Horizontal )
-		 slidersLayout->addSpacing( 10 );
-	 */
-	 
-	 
 	 // -- LABEL LAYOUT TO POSITION
 	 QBoxLayout *labelLayout;
 	 if ( _orientation == Qt::Vertical ) {
@@ -160,13 +156,13 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	 
 	 m_label->hide();
     if ( _orientation == Qt::Horizontal ) 
-		 labelLayout->addSpacing( 36 );
+		labelLayout->addSpacing( 36 );   // !!! ?!? Why different in vert. and hor. Style?!?
 	
 	 labelLayout->addWidget( m_label );
 	 m_label->installEventFilter( this );
 
     if ( _orientation == Qt::Vertical ) {
-		 labelLayout->addSpacing( 18 );
+		labelLayout->addSpacing( 18 );  // !!! ?!? Why different in vert. and hor. Style?!?
 	 }
 
 	 // -- SLIDERS, LEDS AND ICON
@@ -198,46 +194,8 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	 iconLayout->addStretch();
 	 m_iconLabel->installEventFilter( this );
 	 
-	 sliLayout->addSpacing( 5 );
-
+	 sliLayout->addSpacing( 3 );
 	 
-	 // --- MUTE LED 
-	 if ( showMuteLED ) {
-		 QBoxLayout *ledlayout;
-		 if ( _orientation == Qt::Vertical ) {
-			 ledlayout = new QHBoxLayout( sliLayout );
-			 ledlayout->setAlignment(Qt::AlignVCenter);
-		 }
-		 else {
-			 ledlayout = new QVBoxLayout( sliLayout );
-			 ledlayout->setAlignment(Qt::AlignHCenter);
-		 }
-
-		 if( m_mixdevice->hasMute() )
-		 {
-			 ledlayout->addStretch();
-			 // create mute LED
-			 m_muteLED = new KLedButton( Qt::green, KLed::On, KLed::Sunken,
-					 KLed::Circular, this, "MuteLED" );
-			 m_muteLED->setFixedSize( QSize(16, 16) );
-			 m_muteLED->resize( QSize(16, 16) );
-			 ledlayout->addWidget( m_muteLED );
-			 QToolTip::add( m_muteLED, i18n( "Mute" ) );
-			 connect( m_muteLED, SIGNAL(stateChanged(bool)), this, SLOT(toggleMuted()) );
-			 m_muteLED->installEventFilter( this );
-			 ledlayout->addStretch();
-		 } // has Mute LED
-		 else {
-			 // we don't have a MUTE LED. We create a dummy widget
-			 // !! possibly not neccesary any more (we are layouted)
-			 QWidget *qw = new QWidget(this, "Spacer");
-			 qw->setFixedSize( QSize(16, 16) );
-			 ledlayout->addWidget(qw);
-			 qw->installEventFilter( this );
-		 } // has no Mute LED
-		 
-		 sliLayout->addSpacing( 3 );
-    } // showMuteLED
 
     // --- SLIDERS ---------------------------
 	 QBoxLayout *volLayout;
@@ -254,7 +212,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	 for( int i = 0; i < m_mixdevice->getVolume().count(); i++ )
     {
 		 Volume::ChannelID chid = Volume::ChannelID(i);
-		 // @todo !! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
+		 // @todo !!! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
 		 // We should look up the mapping here, but for now, we simply assume "chid == i".
 		 
 		 int maxvol = m_mixdevice->getVolume().maxVolume();
@@ -271,6 +229,8 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 					 maxvol - m_mixdevice->getVolume( chid ), _orientation,
 					 this, m_mixdevice->name().ascii() );
 			 slider->setMinimumSize( slider->sizeHint() );
+                         static_cast<QSlider*>(slider)->setInvertedAppearance(true);
+                         static_cast<QSlider*>(slider)->setInvertedControls(true);
 		 }
 		 
 		 slider->installEventFilter( this );
@@ -380,7 +340,11 @@ MDWSlider::setIcon( int icontype )
 {
    if( !m_iconLabel )
    {
-      m_iconLabel = new QLabel(this);
+      m_iconLabel = new QToolButton(this); //!!! TODO
+      m_iconLabel->setCheckable(true);
+      if( m_mixdevice->hasMute() ) {
+        connect ( m_iconLabel, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
+      }
       installEventFilter( m_iconLabel );
    }
 
@@ -394,9 +358,15 @@ MDWSlider::setIcon( int icontype )
          t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
          m_iconLabel->setPixmap( miniDevPM.xForm( t ) );
          m_iconLabel->resize( 10, 10 );
-      } else
-         m_iconLabel->setPixmap( miniDevPM );
-      m_iconLabel->setAlignment( Qt::AlignCenter );
+      } // small size
+      else
+      {
+         QIcon icon(miniDevPM);
+         icon.addPixmap( miniDevPM, QIcon::Normal, QIcon::On ) ;
+         QPixmap pixmapOff = icon.pixmap(miniDevPM.size(), QIcon::Disabled, QIcon::Off);
+         icon.addPixmap( pixmapOff, QIcon::Normal, QIcon::Off );
+         m_iconLabel->setIcon( icon );
+      } // normal size
    } else
    {
       kdError(67100) << "Pixmap missing." << endl;
@@ -423,9 +393,10 @@ MDWSlider::toggleStereoLinked()
 void
 MDWSlider::setStereoLinked(bool value)
 {
+   if (m_sliders.count() == 0) return;
    m_linked = value;
 
-   QWidget *slider = m_sliders.first();
+   QWidget *slider = m_sliders[0];
 
    /***********************************************************
       Remember value of first slider, so that it can be copied 
@@ -444,7 +415,11 @@ MDWSlider::setStereoLinked(bool value)
       firstSliderValueValid = true;
    }
 
-   for( slider=m_sliders.next(); slider!=0 ; slider=m_sliders.next() ) {
+   for( int i=1; i<m_sliders.count(); ++i ) {
+      slider = m_sliders[i];
+      if ( slider == 0 ) {
+         continue;
+      }
       if ( m_linked ) {
          slider->hide();
       }
@@ -468,6 +443,7 @@ MDWSlider::setStereoLinked(bool value)
       }
    }
 
+   // Add tickmarks to last slider in the slider list
    slider = m_sliders.last();
    if( slider && static_cast<QSlider *>(slider)->tickmarks() )
       setTicks( true );
@@ -493,10 +469,10 @@ MDWSlider::setLabeled(bool value)
 void
 MDWSlider::setTicks( bool ticks )
 {
-	QWidget* slider;
+   if (m_sliders.count() == 0) return;
 
-		slider = m_sliders.first();
-	
+   QWidget* slider = m_sliders[0];
+
 	if ( slider->inherits( "QSlider" ) )
 	{
 		if( ticks )
@@ -537,7 +513,8 @@ MDWSlider::setIcons(bool value)
 void
 MDWSlider::setColors( QColor high, QColor low, QColor back )
 {
-    for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next() ) {
+    for( int i=0; i<m_sliders.count(); ++i ) {
+        QWidget *slider = m_sliders[i];
         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
         if ( smallSlider ) smallSlider->setColors( high, low, back );
     }
@@ -546,7 +523,8 @@ MDWSlider::setColors( QColor high, QColor low, QColor back )
 void
 MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
 {
-    for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next() ) {
+    for( int i=0; i<m_sliders.count(); ++i ) {
+        QWidget *slider = m_sliders[i];
         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
         if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
     }
@@ -556,6 +534,8 @@ MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
 /** This slot is called, when a user has changed the volume via the KMix Slider */
 void MDWSlider::volumeChange( int )
 {
+   if (m_sliders.count() == 0) return;
+
    // --- Step 1: Get a REFERENCE of the volume Object ---
    Volume& vol = m_mixdevice->getVolume();
 
@@ -599,9 +579,9 @@ void MDWSlider::volumeChange( int )
    } // joined
    else {
       int n = 0;
-      QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-      for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next(), ++it )
-      {
+      QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+      for( int i=0; i<m_sliders.count(); ++i ) {
+          QWidget *slider = m_sliders[i];
           Volume::ChannelID chid = *it;
 	  if ( slider->inherits( "KSmallSlider" ) )
 	  {
@@ -716,24 +696,26 @@ void MDWSlider::decreaseVolume()
 */
 void MDWSlider::update()
 {
+   if (m_sliders.count() == 0) return;
+
 	// update volumes
 	Volume vol = m_mixdevice->getVolume();
 	if( isStereoLinked() )
 	{
-		QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+		QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
 		
 		long avgVol = vol.getAvgVolume( Volume::MMAIN );
 		
 		QWidget *slider =  m_sliders.first();
 		if ( slider == 0 ) {
-			return; // !!! Development version, check this !!!
+			return;
 		}
 		slider->blockSignals( true );
 		if ( slider->inherits( "KSmallSlider" ) )
 		{
 			KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
 			if (smallSlider) {
-				smallSlider->setValue( avgVol ); // !! inverted ?!?
+				smallSlider->setValue( avgVol );
 				smallSlider->setGray( m_mixdevice->isMuted() );
 			}
 		} // small slider
@@ -755,12 +737,12 @@ void MDWSlider::update()
 		slider->blockSignals( false );
 	} // only 1 slider (stereo-linked)
 	else {
-		QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+		QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
 		for( int i=0; i<vol.count(); i++, ++it ) {
 			QWidget *slider = m_sliders.at( i );
 			Volume::ChannelID chid = *it;
 			if (slider == 0) {
-				// !!! not implemented !!!
+				// !! The CHID thing should be done preperly
 				// not implemented: happens if there are record and playback
 				// sliders in the same device. Or if you only show
 				// the right slider (or any other fancy occasion)
@@ -791,14 +773,14 @@ void MDWSlider::update()
 			slider->blockSignals( false );
 		} // for all sliders
 	} // more than 1 slider
-	
-	// update mute led
-	if ( m_muteLED ) {
-		m_muteLED->blockSignals( true );
-		m_muteLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
-		m_muteLED->blockSignals( false );
-	}
-	
+
+
+        if( m_mixdevice->hasMute() ) {
+           m_iconLabel->blockSignals( true );
+           m_iconLabel->setChecked( m_mixdevice->isMuted() ? false : true );
+           m_iconLabel->blockSignals( false );
+        }
+
 	// update recsrc
 	if( m_recordLED ) {
 		m_recordLED->blockSignals( true );

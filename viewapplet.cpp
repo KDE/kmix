@@ -23,26 +23,26 @@
 // Qt
 #include <qwidget.h>
 #include <qlayout.h>
+#include <QResizeEvent>
 
 // KDE
 #include <kactioncollection.h>
 #include <kdebug.h>
-#include <kpanelapplet.h>
 #include <kstdaction.h>
 
 // KMix
 #include "mdwslider.h"
 #include "mixer.h"
 
-ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KPanelApplet::Position position )
-    : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
+ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, Plasma::Position position )
+    : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
     _actions->remove( KStdAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
 
 
-    if ( position == KPanelApplet::pLeft || position == KPanelApplet::pRight ) {
+    if ( position == Plasma::Left || position == Plasma::Right ) {
       //kdDebug(67100) << "ViewApplet() isVertical" << "\n";
       _viewOrientation = Qt::Vertical;
     }
@@ -70,8 +70,8 @@ ViewApplet::~ViewApplet() {
 
 void ViewApplet::setMixSet(MixSet *mixset)
 {
-    MixDevice* md;
-    for ( md = mixset->first(); md != 0; md = mixset->next() ) {
+    for ( int i=0; i<mixset->count(); i++ ) {
+	MixDevice *md = (*mixset)[i];
 	if ( (! md->isSwitch()) && ( ! md->isEnum() ) ) {
 	    _mixSet->append(md);
 	}
@@ -165,7 +165,8 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
            showIcons = true;
        }
     }
-    for ( QWidget *mdw = _mdws.first(); mdw != 0; mdw = _mdws.next() ) {
+    for ( int i=0; i < _mdws.count(); ++i ) {
+        QWidget *mdw = _mdws[i];
 	if ( mdw == 0 ) {
 	    kdError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";
 	    break; // sanity check (normally the lists are set up correctly)
@@ -173,15 +174,13 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
 	else {
 	    if ( mdw->inherits("MDWSlider")) {
 		static_cast<MDWSlider*>(mdw)->setIcons(showIcons);
-		//static_cast<MDWSlider*>(mdw)->resize(qre->size());
 	    }
 	}
     }
-    //    kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
-    //QWidget::resizeEvent(qre);
 
+    //    kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
     // resizing changes our own sizeHint(), because we must take the new PanelSize in account.
-    // So updateGeometry() is amust for us.
+    // So updateGeometry() is a must for us.
     updateGeometry();
 }
 
@@ -189,9 +188,8 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
 void ViewApplet::refreshVolumeLevels() {
     //kdDebug(67100) << "ViewApplet::refreshVolumeLevels()\n";
 
-     QWidget *mdw = _mdws.first();
-     MixDevice* md;
-     for ( md = _mixSet->first(); md != 0; md = _mixSet->next() ) {
+     for ( int i=0; i < _mdws.count(); ++i ) {
+         QWidget* mdw = _mdws[i];
 	 if ( mdw == 0 ) {
 	     kdError(67100) << "ViewApplet::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
@@ -207,7 +205,6 @@ void ViewApplet::refreshVolumeLevels() {
 		 // no slider. Cannot happen in theory => skip it
 	     }
 	 }
-	 mdw = _mdws.next();
     }
 }
 

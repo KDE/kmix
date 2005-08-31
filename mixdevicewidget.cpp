@@ -34,6 +34,7 @@
 #include <qslider.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <QMouseEvent>
 #include <qpixmap.h>
 #include <qtooltip.h>
 #include <qwmatrix.h>
@@ -52,10 +53,10 @@
  * The direction (horizontal, vertical) can be configured and whether it should
  * be "small"  (uses KSmallSlider instead of QSlider then).
  */
-MixDeviceWidget::MixDeviceWidget(Mixer *mixer, MixDevice* md,
+MixDeviceWidget::MixDeviceWidget(Mixer* mixer, MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw, const char* name) :
-   QWidget( parent, name ), m_mixer(mixer), m_mixdevice( md ), m_mixerwidget( mw ),
+   QWidget( parent, name ), m_mixdevice( md ), m_mixer(mixer), m_mixerwidget( mw ),
    m_disabled( false ), _orientation( orientation ), m_small( small )
 {
    _mdwActions = new KActionCollection( this );
@@ -113,7 +114,7 @@ void MixDeviceWidget::setMutedColors( QColor , QColor , QColor ) { /* is virtual
 
 void MixDeviceWidget::mousePressEvent( QMouseEvent *e )
 {
-   if ( e->button()==RightButton )
+   if ( e->button() == Qt::RightButton )
       showContextMenu();
    else {
        QWidget::mousePressEvent(e);

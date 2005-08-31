@@ -30,12 +30,15 @@
 #undef KMIX_ALSA_NEW_PK
 // !!! don't commit with the next line uncommented. This enables the correct primary-key
 //     generation (needed e.g. for Profiles)
-//#define KMIX_ALSA_NEW_PK
+#define KMIX_ALSA_NEW_PK
 
 extern "C"
 {
 	#include <alsa/asoundlib.h>
 }
+
+// QT
+#include <qlist.h>
 
 // KDE Headers
 #include <klocale.h>
@@ -102,7 +105,6 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 int
 Mixer_ALSA::open()
 {
-    bool virginOpen = m_mixDevices.isEmpty();
     bool validDevice = false;
     bool masterChosen = false;
     int err;
@@ -125,13 +127,11 @@ Mixer_ALSA::open()
 
     QString probeMessage;
 	
-    if (virginOpen)
-	probeMessage += "Trying ALSA Device '" + devName + "': ";
+    probeMessage += "Trying ALSA Device '" + devName + "': ";
 
     if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
-	//_stateMessage = errorText( Mixer::ERR_NODEV );
 	return Mixer::ERR_OPEN;
     }
 
@@ -157,9 +157,8 @@ Mixer_ALSA::open()
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
 	kdDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
-	//errormsg( Mixer::ERR_NODEV );
 	_handle = 0;
-	return Mixer::ERR_NODEV; // if we cannot open the mixer, we have no devices
+	return Mixer::ERR_OPEN; // if we cannot open the mixer, we have no devices
     }
     //kdDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
 
@@ -213,21 +212,13 @@ Mixer_ALSA::open()
 	snd_mixer_selem_get_capture_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
 	// New mix device
 	MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
-/*
-        if (!masterChosen && ct==MixDevice::VOLUME) {
-           // Determine a nicer MasterVolume
-	   m_masterDevice = mixerIdx;
-           masterChosen = true;
-        }
-*/
-	if( virginOpen )
-	{
+	
 	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
 		
 		//kdDebug(67100) << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
 
 	    Volume* vol = 0;
-	    QPtrList<QString> enumList;
+	    QList<QString*> enumList;
 	    if ( snd_mixer_selem_is_enumerated(elem) ) {
 		cc = MixDevice::ENUM;
 		vol = new Volume(); // Dummy, unused
@@ -330,38 +321,18 @@ Mixer_ALSA::open()
 
 		if ( enumList.count() > 0 ) {
 		  int maxEnumId= enumList.count();
-		  QPtrList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
+		  QList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
 		  for (int i=0; i<maxEnumId; i++ ) {
 		    // we have an enum. Lets set the names of the enum items in the MixDevice
 		    // the enum names are assumed to be static!
-		    enumValuesRef.append(enumList.at(i) );
+		    enumValuesRef.append( *(enumList.at(i)) );
 		  }
 		}
 		m_mixDevices.append( md );
 		//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
 		delete vol;
-	    } // virginOpen
-	    else
-	    {
-		MixDevice* md = m_mixDevices.at( mixerIdx );
-		if( !md )
-		{
-		    return Mixer::ERR_INCOMPATIBLESET;
-		}
-		writeVolumeToHW( mixerIdx, md->getVolume() );
-	    } // !virginOpen
     } // for all elems
 
-    /**************************************************************************************
-    // If no devices are supported by this soundcard, return "NO Devices"
-       It is VERY important to return THIS error code, so that the caller knows, that the
-       the device exists.
-       This is used for scanning for existing soundcard devices, see MixerToolBox::initMixer().
-    ***************************************************************************************/
-    if ( !validDevice )
-    {
-	return Mixer::ERR_NODEV;
-    }
 
     // Copy the name of kmix mixer from card name
     // Real name of mixer is not too good
@@ -496,7 +467,7 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
 		return false;
 	    }
 	    if (revents & POLLIN) {
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
 
 		snd_mixer_handle_events(_handle);
                 updated = true;

@@ -197,42 +197,42 @@ unsigned long GUIProfile::match(Mixer* mixer) {
 
 std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 	os  << "Soundcard:" << std::endl
-			<< "  Driver=" << guiprof._soundcardDriver.utf8() << std::endl
+			<< "  Driver=" << guiprof._soundcardDriver.utf8().constData() << std::endl
 			<< "  Driver-Version min=" << guiprof._driverVersionMin
 			<< " max=" << guiprof._driverVersionMax << std::endl
-			<< "  Card-Name=" << guiprof._soundcardName.utf8() << std::endl
-			<< "  Card-Type=" << guiprof._soundcardType.utf8() << std::endl
+			<< "  Card-Name=" << guiprof._soundcardName.utf8().constData() << std::endl
+			<< "  Card-Type=" << guiprof._soundcardType.utf8().constData() << std::endl
 			<< "  Profile-Generation="  << guiprof._generation
 			<< std::endl;
 	for ( std::set<ProfProduct*>::iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
 	{
 		ProfProduct* prd = *it;
-		os << "Product:\n  Vendor=" << prd->vendor.utf8() << std::endl << "  Name=" << prd->productName.utf8() << std::endl;
+		os << "Product:\n  Vendor=" << prd->vendor.utf8().constData() << std::endl << "  Name=" << prd->productName.utf8().constData() << std::endl;
 		if ( ! prd->productRelease.isNull() ) {
-			os << "  Release=" << prd->productRelease.utf8()<< std::endl;
+			os << "  Release=" << prd->productRelease.utf8().constData() << std::endl;
 		}
 		if ( ! prd->comment.isNull() ) {
-			os << "  Comment = " << prd->comment.utf8() << std::endl;
+			os << "  Comment = " << prd->comment.utf8().constData() << std::endl;
 		}
 	} // for all products
 
 	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
 		ProfTab* profTab = *it;
-		os << "Tab: " << std::endl << "  " << profTab->name.utf8() << " (" << profTab->type.utf8() << ")" << std::endl;
+		os << "Tab: " << std::endl << "  " << profTab->name.utf8().constData() << " (" << profTab->type.utf8().constData() << ")" << std::endl;
 	} // for all tabs
 
 	for ( std::vector<ProfControl*>::const_iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
 	{
 		ProfControl* profControl = *it;
-		os << "Control:\n  ID=" << profControl->id.utf8() << std::endl;
+		os << "Control:\n  ID=" << profControl->id.utf8().constData() << std::endl;
 		if ( profControl->name != profControl->id ) {
-		 		os << "  Name = " << profControl->name.utf8() << std::endl;
+		 		os << "  Name = " << profControl->name.utf8().constData() << std::endl;
 		}
-		os << "  Subcontrols=" << profControl->subcontrols.utf8() << std::endl;
+		os << "  Subcontrols=" << profControl->subcontrols.utf8().constData() << std::endl;
 		if ( ! profControl->tab.isNull() ) {
-			os << "  Tab=" << profControl->tab.utf8()<< std::endl;
+			os << "  Tab=" << profControl->tab.utf8().constData() << std::endl;
 		}
-		os << "  Shown-On=" << profControl->show.utf8() << std::endl;
+		os << "  Shown-On=" << profControl->show.utf8().constData() << std::endl;
 	} // for all controls
 
 	return os;
@@ -268,7 +268,7 @@ bool GUIProfileParser::startElement( const QString& ,
 			}
 			else {
 				// skip unknown top-level nodes
-				std::cerr << "Ignoring unsupported element '" << qName.utf8() << "'" << std::endl;
+				std::cerr << "Ignoring unsupported element '" << qName.utf8().constData() << "'" << std::endl;
 			}
 			// we are accepting <soundcard> and <tab>
 		break;
@@ -285,7 +285,7 @@ bool GUIProfileParser::startElement( const QString& ,
 				addTab(attributes);
 			}
 			else {
-				std::cerr << "Ignoring unsupported element '" << qName.utf8() << "'" << std::endl;
+				std::cerr << "Ignoring unsupported element '" << qName.utf8().constData() << "'" << std::endl;
 			}
 			// we are accepting <product>, <control> and <tab>
 			
@@ -424,7 +424,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 void GUIProfileParser::printAttributes(const QXmlAttributes& attributes) {
 		    if ( attributes.length() > 0 ) {
 		        for ( int i = 0 ; i < attributes.length(); i++ ) {
-					std::cout << attributes.qName(i).utf8() << ":"<< attributes.value(i).utf8() << " , ";
+					std::cout << attributes.qName(i).utf8().constData() << ":"<< attributes.value(i).utf8().constData() << " , ";
 		        }
 			    std::cout << std::endl;
 		    }

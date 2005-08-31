@@ -177,7 +177,7 @@ printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr );
 	break;
 
     default:
-	error = Mixer::ERR_NODEV - HPUX_ERROR_OFFSET;
+	error = Mixer::ERR_READ - HPUX_ERROR_OFFSET;
 	break;
     };
 
@@ -218,7 +218,7 @@ printf("WRITE - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr);
 	break;
 
     default:
-	error = Mixer::ERR_NODEV - HPUX_ERROR_OFFSET;
+	error = Mixer::ERR_READ - HPUX_ERROR_OFFSET;
 	break;
     };
   return (error ? (error+HPUX_ERROR_OFFSET) : 0);

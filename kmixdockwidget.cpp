@@ -25,7 +25,6 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kapplication.h>
-#include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
@@ -36,7 +35,9 @@
 
 #include <qapplication.h>
 #include <qcursor.h>
+#include <QDesktopWidget>
 #include <qtooltip.h>
+#include <QMouseEvent>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
@@ -239,7 +240,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 
         // esken: Due to overwhelming request, LeftButton shows the ViewDockAreaPopup, if configured
         //        to do so. Otherwise the main window will be shown.
-	if ( me->button() == LeftButton )
+	if ( me->button() == Qt::LeftButton )
 	{
 		if ( ! _volumePopup ) {
                     // Case 1: User wants to show main window => This is the KSystemTray default action
@@ -263,8 +264,9 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 
 		// Now handle Multihead displays. And also make sure that the dialog is not
 		// moved out-of-the screen on the right (see Bug 101742).
-		QDesktopWidget* vdesktop = QApplication::desktop();
+		const QDesktopWidget* vdesktop = QApplication::desktop();
 		const QRect& vScreenSize = vdesktop->screenGeometry(_dockAreaPopup);
+//const QRect screenGeometry(const QWidget *widget) const
 		if ( (x+_dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
 			// move horizontally, so that it is completely visible
 			_dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - _dockAreaPopup->width() -1 , y);
@@ -280,7 +282,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
 		return;
 	} // LeftMouseButton pressed
-	else if ( me->button() ==  MidButton ) {
+	else if ( me->button() ==  Qt::MidButton ) {
 		toggleActive();
 		return;
 	}

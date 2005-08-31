@@ -25,11 +25,9 @@
 #include <vector>
 
 #include <qwidget.h>
-#include <qptrlist.h>
 class QString;
 class QGridLayout;
 
-#include <kpanelapplet.h>
 class KPopupMenu;
 
 #include "mixer.h"
@@ -62,17 +60,17 @@ class KMixerWidget : public QWidget
    Q_OBJECT
 
   public:
-   KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
+   KMixerWidget( Mixer *mixer,
                  MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
    ~KMixerWidget();
 	
-   enum KMixerWidgetIO { OUTPUT=0, INPUT };
-
    const Mixer *mixer() const { return _mixer; };
 
-  int id() const { return m_id; };
-
+/* !!! This id() is rubbish. It is not guaranteed, that it is the same on every KMix start.
+   !!! Still it is used for constructing config file group names :-(((
+*/
+  const QString& id() const;
    KActionCollection* getActionCollection() const { return 0; /* m_actions; */ }
 	
   signals:
@@ -95,13 +93,13 @@ class KMixerWidget : public QWidget
 
   private:
    Mixer *_mixer;
+   QString m_id;
    QSlider *m_balanceSlider;
    QVBoxLayout *m_topLayout; // contains the Card selector, TabWidget and balance slider
 
    KTabWidget* m_ioTab;
 
 	std::vector<ViewBase*> _views;
-   int m_id;
 
    KActionMenu *m_toggleMixerChannels;
 

@@ -33,6 +33,7 @@
 #include "mixdevicewidget.h"
 #include "mixdevice.h"
 #include "mixer.h"
+#include "viewbase.h"
 
 #include "kmixtoolbox.h"
 
@@ -44,127 +45,148 @@
  This means: Shared GUI stuff goes into the KMixToolBox class , non-GUI stuff goes
  into the MixerToolBox class.
  ***********************************************************************************/
-void KMixToolBox::setIcons(QPtrList<QWidget> &mdws, bool on ) {
-    for ( QWidget *qmdw=mdws.first(); qmdw!=0; qmdw=mdws.next() ) {
-	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-	    static_cast<MixDeviceWidget*>(qmdw)->setIcons( on );
-	}
-    }
+void KMixToolBox::setIcons(QList<QWidget *> &mdws, bool on ) {
+   for (int i=0; i < mdws.count(); ++i ){
+      QWidget *mdw = mdws[i];
+      if ( mdw->inherits("MixDeviceWidget") ) { // -<- play safe here
+         static_cast<MixDeviceWidget*>(mdw)->setIcons( on );
+      }
+   }
 }
 
-void KMixToolBox::setLabels(QPtrList<QWidget> &mdws, bool on ) {
-    QWidget *qmdw;
-    for ( qmdw=mdws.first(); qmdw != 0; qmdw=mdws.next() ) {
-	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-	    static_cast<MixDeviceWidget*>(qmdw)->setLabeled( on );
-	}
-    }
+void KMixToolBox::setLabels(QList<QWidget *> &mdws, bool on ) {
+   for (int i=0; i < mdws.count(); ++i ){
+      QWidget *mdw = mdws[i];
+      if ( mdw->inherits("MixDeviceWidget") ) { // -<- play safe here
+         static_cast<MixDeviceWidget*>(mdw)->setLabeled( on );
+      }
+   }
 }
 
-void KMixToolBox::setTicks(QPtrList<QWidget> &mdws, bool on ) {
-    QWidget *qmdw;
-    for ( qmdw=mdws.first(); qmdw != 0; qmdw=mdws.next() ) {
-	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
-	    static_cast<MixDeviceWidget*>(qmdw)->setTicks( on );
-	}
-    }
+void KMixToolBox::setTicks(QList<QWidget *> &mdws, bool on ) {
+   for (int i=0; i < mdws.count(); ++i ){
+      QWidget *mdw = mdws[i];
+      if ( mdw->inherits("MixDeviceWidget") ) { // -<- play safe here
+         static_cast<MixDeviceWidget*>(mdw)->setTicks( on );
+      }
+   }
 }
 
-void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix) {
-    int n = 0;
-    config->setGroup( grp );
-    int num = config->readNumEntry( viewPrefix + ".Devs", 0);
+void KMixToolBox::loadView(ViewBase *view, KConfig *config)
+{
+   QString grp = "View.";
+   grp += view->name();
+   config->setGroup( grp );
+   kdDebug(67100) << "KMixToolBox::loadView() grp=" << grp.ascii() << endl;
 
-    for ( QWidget *qmdw=mdws.first(); qmdw!=0 && n<num; qmdw=mdws.next() ) {
-	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-	    MixDeviceWidget* mdw = static_cast<MixDeviceWidget*>(qmdw);
-	    QString devgrp;
+   for (int i=0; i < view->_mdws.count(); ++i ){
+      QWidget *qmdw = view->_mdws[i];
+      if ( qmdw->inherits("MixDeviceWidget") )
+      {
+         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+         QString devgrp;
+         devgrp.sprintf( "%s.%s.%s", grp.ascii(), view->getMixer()->id().ascii(), mdw->mixDevice()->getPK().ascii() );
+         config->setGroup( devgrp );
 
-	    /*
-	     * Compatibility config loader! We use the old config group only, if the
-	     * new one does not exist.
-	     * The new group system has been introduced, because it accounts much
-	     * better for soundcard driver updates (if numbering changes, or semantics
-	     * of an ID changes like ALSA changing from "Disable Amplifier" to "External Amplifier").
-	     */
-            // !!! check
- 	    devgrp.sprintf( "%s.%s.Dev%s", viewPrefix.ascii(), grp.ascii(), mdw->mixDevice()->getPK().ascii() );
-	    if ( ! config->hasGroup(devgrp) ) {
-		// fall back to old-Style configuration (KMix2.1 and earlier)
-		devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
-		// this configuration group will be deleted when config is saved
-	    }
-	    config->setGroup( devgrp );
+         if ( mdw->inherits("MDWSlider") )
+         {
+            // only sliders have the ability to split apart in mutliple channels
+            bool splitChannels = config->readBoolEntry("Split", false);
+            mdw->setStereoLinked( !splitChannels );
+         }
+         mdw->setDisabled( !config->readBoolEntry("Show", true) );
 
-	    if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
-		// only sliders have the ability to split apart in mutliple channels
-		bool splitChannels = config->readBoolEntry("Split", false);
-		mdw->setStereoLinked( !splitChannels );
-	    }
-	    mdw->setDisabled( !config->readBoolEntry("Show", true) );
+      } // inherits MixDeviceWidget
+   } // for all MDW's
+}
 
-	    KGlobalAccel *keys=mdw->keys();
-	    if ( keys )
-	    {
-		QString devgrpkeys;
-		devgrpkeys.sprintf( "%s.%s.Dev%i.keys", viewPrefix.ascii(), grp.ascii(), n );
-		//kdDebug(67100) << "KMixToolBox::loadConfig() load Keys " << devgrpkeys << endl;
+void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
+// !!! this must be moved out of the views into the kmixd
+{
+   kdDebug(67100) << "KMixToolBox::loadKeys()" << endl;
+   for (int i=0; i < view->_mdws.count(); ++i ){
+      QWidget *qmdw = view->_mdws[i];
+      if ( qmdw->inherits("MixDeviceWidget") )
+      {
+         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+         KGlobalAccel *keys=mdw->keys();
+         if ( keys )
+         {
+            QString devgrpkeys;
+            devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().ascii(), mdw->mixDevice()->getPK().ascii() );
+            kdDebug(67100) << "KMixToolBox::loadConfig() load Keys " << devgrpkeys << endl;
 
-		// please see KMixToolBox::saveConfig() for some rambling about saving/loading Keys
-		keys->setConfigGroup(devgrpkeys);
-		keys->readSettings(config);
-		keys->updateConnections();
-	    }
+            // please see KMixToolBox::saveConfig() for some rambling about saving/loading Keys
+            keys->setConfigGroup(devgrpkeys);
+            keys->readSettings(config);
+            keys->updateConnections();
+         } // MDW has keys
+      } // is a MixDeviceWidget
+   } // for all widgets
+}
 
-	    n++;
-	} // if it is a MixDeviceWidget
-    } // for all widgets
+/*
+ * Saves the View configuration
+ */
+void KMixToolBox::saveView(ViewBase *view, KConfig *config)
+{
+   QString grp = "View.";
+   grp += view->name();
+   config->setGroup( grp );
+   kdDebug(67100) << "KMixToolBox::saveView() grp=" << grp.ascii() << endl;
+
+   for (int i=0; i < view->_mdws.count(); ++i ){
+      QWidget *qmdw = view->_mdws[i];
+      if ( qmdw->inherits("MixDeviceWidget") )
+      {
+         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+         
+         kdDebug(67100) << "  grp=" << grp.ascii() << endl;
+         kdDebug(67100) << "  mixer=" << view->getMixer()->id().ascii() << endl;
+         kdDebug(67100) << "  mdwPK=" << mdw->mixDevice()->getPK().ascii() << endl;
+
+         QString devgrp;
+         devgrp.sprintf( "%s.%s.%s", grp.ascii(), view->getMixer()->id().ascii(), mdw->mixDevice()->getPK().ascii() );
+         config->setGroup( devgrp );
+
+         if ( mdw->inherits("MDWSlider") )
+         {
+            // only sliders have the ability to split apart in mutliple channels
+            config->writeEntry( "Split", ! mdw->isStereoLinked() );
+         }
+         config->writeEntry( "Show" , ! mdw->isDisabled() );
+      } // inherits MixDeviceWidget
+   } // for all MDW's
 }
 
 
-void KMixToolBox::saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix) {
-    config->setGroup( grp  );
-    config->writeEntry( viewPrefix + ".Devs", mdws.count() );
-
-    int n=0;
-    for ( QWidget *qmdw=mdws.first(); qmdw!=0; qmdw=mdws.next() ) {
-	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-	    MixDeviceWidget* mdw = static_cast<MixDeviceWidget*>(qmdw);
-
-	    QString devgrp;
-	    devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
-	    if ( ! config->hasGroup(devgrp) ) {
-		// old-Style configuration (KMix2.1 and earlier => remove now unused group
-		config->deleteGroup(devgrp);
-            }
-	    devgrp.sprintf( "%s.%s.Dev%s", viewPrefix.ascii(), grp.ascii(), mdw->mixDevice()->getPK().ascii() );
-	    //devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
-	    config->setGroup( devgrp );
-
-	    if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
-		// only sliders have the ability to split apart in mutliple channels
-		config->writeEntry( "Split", ! mdw->isStereoLinked() );
-	    }
-	    config->writeEntry( "Show" , ! mdw->isDisabled() );
-
-	    // Save key bindings
-	    /*
-	       Implementation hint: Conceptually keys SHOULD be bound to the actual hardware, and not
-	       to one GUI representation. Both work, but it COULD confuse users, if we have multiple
-	       GUI representations (e.g. "Dock Icon" and "Main Window").
-	       If you think about this aspect more deeply, you will find out that this is the case already
-	       today with "kmixapplet" and "kmix main application". It would really nice to rework this.
-	    */
-	    KGlobalAccel *keys=mdw->keys();
-	    if (keys) {
-		QString devgrpkeys;
-		devgrpkeys.sprintf( "%s.%s.Dev%i.keys", viewPrefix.ascii(), grp.ascii(), n );
-		//kdDebug(67100) << "KMixToolBox::saveConfig() save Keys " << devgrpkeys << endl;
-		keys->setConfigGroup(devgrpkeys);
-		keys->writeSettings(config);
-	    }
-	    n++;
-	} // if it is a MixDeviceWidget
-    } // for all widgets
+// Save key bindings
+void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
+// !!! this must be moved out of the views into the kmixd
+{
+   /*
+       Implementation hint: Conceptually keys SHOULD be bound to the actual hardware, and not
+       to one GUI representation. Both work, but it COULD confuse users, if we have multiple
+       GUI representations (e.g. "Dock Icon" and "Main Window").
+       If you think about this aspect more deeply, you will find out that this is the case already
+       today with "kmixapplet" and "kmix main application". It would really nice to rework this.
+    */
+   kdDebug(67100) << "KMixToolBox::loadKeys()" << endl;
+   for (int i=0; i < view->_mdws.count(); ++i ){
+      QWidget *qmdw = view->_mdws[i];
+      if ( qmdw->inherits("MixDeviceWidget") )
+      {
+         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+         KGlobalAccel *keys=mdw->keys();
+         if ( keys )
+         {
+            QString devgrpkeys;
+            devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().ascii(), mdw->mixDevice()->getPK().ascii() );
+            kdDebug(67100) << "KMixToolBox::loadConfig() load Keys " << devgrpkeys << endl;
+            
+            keys->setConfigGroup(devgrpkeys);
+            keys->writeSettings(config);
+         } // MDW has keys
+      } // is a MixDeviceWidget
+   } // for all widgets
 }
-

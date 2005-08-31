@@ -29,8 +29,7 @@
 #include <qstring.h>
 #include <qtimer.h>
 #include <qobject.h>
-#include <qintdict.h>
-#include <qptrlist.h>
+#include <qlist.h>
 
 #include "volume.h"
 class Mixer_Backend;
@@ -46,8 +45,8 @@ class Mixer : public QObject, virtual public MixerIface
       Q_OBJECT
 
    public:
-      enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ, ERR_NODEV, ERR_NOTSUPP,
-			ERR_OPEN, ERR_LASTERR, ERR_NOMEM, ERR_INCOMPATIBLESET, ERR_MIXEROPEN };
+      enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ,
+			ERR_OPEN, ERR_LASTERR };
 
       Mixer( int driver, int device );
       virtual ~Mixer();
@@ -150,12 +149,10 @@ class Mixer : public QObject, virtual public MixerIface
 
       int m_balance; // from -100 (just left) to 100 (just right)
 
-      QPtrList<MixSet> m_profiles;
-      static QPtrList<Mixer> s_mixers;
+      static QList<Mixer *> s_mixers;
 
    public:
-      int setupMixer( MixSet set );
-      static QPtrList<Mixer>& mixers();
+      static QList<Mixer *>& mixers();
 
    private:
      Mixer_Backend *_mixerBackend;

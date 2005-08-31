@@ -48,7 +48,7 @@
 #include "viewsliderset.h"
 #include "viewswitches.h"
 // KMix experimental
-#include "viewgrid.h"
+//#include "viewgrid.h"
 #include "viewsurround.h"
 
 
@@ -60,16 +60,16 @@
    (c) A balancing slider
    (d) A label containg the mixer name
 */
-KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
+KMixerWidget::KMixerWidget( Mixer *mixer,
                             MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
    : QWidget( parent, name ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0),
-     m_id( _id ),
      _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false )
 
 {
     m_categoryMask = categoryMask;
+    m_id = mixer->mixerName();  // !!! A BETTER ID must probably be found here
 
    if ( _mixer )
    {
@@ -81,10 +81,10 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
        // !! Fix this: This is actually never shown!
        QBoxLayout *layout = new QHBoxLayout( this );
        QString s = i18n("Invalid mixer");
-       if ( !mixerName.isEmpty() )
-	   s.append(" \"").append(mixerName).append("\"");
+       if ( !mixer->mixerName().isEmpty() )
+	   s.append(" \"").append(mixer->mixerName()).append("\"");
        QLabel *errorLabel = new QLabel( s, this );
-       errorLabel->setAlignment( QLabel::AlignCenter | QLabel::WordBreak );
+       errorLabel->setAlignment( Qt::AlignCenter | Qt::WordBreak );
        layout->addWidget( errorLabel );
    }
 }
@@ -133,8 +133,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 	possiblyAddView(new ViewSwitches( m_ioTab, "Switches" , _mixer, vflags, 0 ) );
 	if ( vflags & ViewBase::Experimental_SurroundView )
 		possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ) );
-	if ( vflags & ViewBase::Experimental_GridView )
-		possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
+	//!!if ( vflags & ViewBase::Experimental_GridView )
+	//!!	possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
       }
 
 
@@ -142,7 +142,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     // *** Lower part: Slider and Mixer Name ************************************************
     QHBoxLayout *balanceAndDetail = new QHBoxLayout( m_topLayout, 8,  "balanceAndDetail");
     // Create the left-right-slider
-    m_balanceSlider = new QSlider( -100, 100, 25, 0, QSlider::Horizontal, this, "RightLeft" );
+    m_balanceSlider = new QSlider( -100, 100, 25, 0, Qt::Horizontal, this, "RightLeft" );
     m_balanceSlider->setTickmarks( QSlider::Below );
     m_balanceSlider->setTickInterval( 25 );
     m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
@@ -177,6 +177,12 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     show();
     //    kdDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
+
+
+const QString& KMixerWidget::id() const {
+	return m_id;
+}
+
 
 /**
  * Creates all the Views for the Tabs described in the GUIProfile
@@ -270,11 +276,10 @@ void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-		ViewBase* mixerWidget = *it;
-		QString viewPrefix = "View.";
-		viewPrefix += mixerWidget->name();
-		KMixToolBox::loadConfig(mixerWidget->_mdws, config, grp, viewPrefix );
-		mixerWidget->configurationUpdate();
+		ViewBase* view = *it;
+		KMixToolBox::loadView(view,config);
+		KMixToolBox::loadKeys(view,config);
+		view->configurationUpdate();
 	} // for all tabs
 }
 
@@ -289,10 +294,9 @@ void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-		ViewBase* mixerWidget = *it;
-		QString viewPrefix = "View.";
-		viewPrefix += mixerWidget->name();
-		KMixToolBox::saveConfig(mixerWidget->_mdws, config, grp, viewPrefix );
+		ViewBase* view = *it;
+		KMixToolBox::saveView(view,config);
+		KMixToolBox::saveKeys(view,config);
 	} // for all tabs
 }
 

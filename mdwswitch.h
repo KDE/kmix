@@ -23,13 +23,9 @@
 #ifndef MDWSWITCH_H
 #define MDWSWITCH_H
 
-#include <kpanelapplet.h>
-
 #include <qwidget.h>
 #include "volume.h"
-#include <qptrlist.h>
 #include <qpixmap.h>
-#include <qrangecontrol.h>
 
 class QBoxLayout;
 class QLabel;
@@ -61,7 +57,7 @@ public:
 
     void addActionToPopup( KAction *action );
     QSize sizeHint() const;
-    void setBackgroundMode(BackgroundMode m);
+    void setBackgroundMode(Qt::BackgroundMode m);
     bool eventFilter( QObject* obj, QEvent* e );
 
 public slots:

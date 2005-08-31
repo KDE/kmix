@@ -29,9 +29,10 @@
 // include files for Qt
 #include <qstring.h>
 #include <qmap.h>
+#include <qlist.h>
 
 class QHBox;
-class QWidgetStack;
+class QStackedWidget;
 
 // include files for KDE
 #include <kmainwindow.h>
@@ -71,7 +72,7 @@ KMixWindow : public KMainWindow
 
    void updateDocking();
 
-   bool queryClose();
+   virtual bool queryClose();
    void showEvent( QShowEvent * );
    void hideEvent( QHideEvent * );
 
@@ -88,9 +89,11 @@ KMixWindow : public KMainWindow
 
   private:
    KAccel *m_keyAccel;
-   QPopupMenu *m_fileMenu;
-   QPopupMenu *m_viewMenu;
-   QPopupMenu *m_helpMenu;
+/*
+   QMenu *m_fileMenu;
+   QMenu *m_viewMenu;
+   QMenu *m_helpMenu;
+*/
 
    bool m_showDockWidget;
    bool m_volumeWidget;
@@ -107,11 +110,11 @@ KMixWindow : public KMainWindow
    bool m_gridView;                // Experimental. Off by default
    Qt::Orientation m_toplevelOrientation;
 
-   QPtrList<KMixerWidget> m_mixerWidgets;
+   QList<KMixerWidget *> m_mixerWidgets;
 
-   QHBox* mixerNameLayout;
+   //QHBox* mixerNameLayout;   !!!
    KComboBox *m_cMixer;
-   QWidgetStack *m_wsMixers;
+   QStackedWidget *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QString m_hwInfoString;

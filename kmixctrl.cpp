@@ -27,7 +27,6 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <qptrlist.h>
 
 #include "kmixtoolbox.h"
 #include "mixer.h"
@@ -67,21 +66,24 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    // create mixers
    QString dummyStringHwinfo;
-   MixerToolBox::initMixer(Mixer::mixers(), false, dummyStringHwinfo);
+   MixerToolBox::initMixer(false, dummyStringHwinfo);
 
    // load volumes
    if ( args->isSet("restore") )
    {
-       for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next()) {
-	   mixer->volumeLoad( KGlobal::config() );
-       }
+      for (int i=0; i<Mixer::mixers().count(); ++i) {
+         Mixer *mixer = (Mixer::mixers())[i];
+         mixer->volumeLoad( KGlobal::config() );
+      }
    }
 
    // save volumes
    if ( args->isSet("save") )
    {
-       for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
-	 mixer->volumeSave( KGlobal::config() );
+      for (int i=0; i<Mixer::mixers().count(); ++i) {
+         Mixer *mixer = (Mixer::mixers())[i];
+         mixer->volumeSave( KGlobal::config() );
+      }
    }
 
    MixerToolBox::deinitMixer();

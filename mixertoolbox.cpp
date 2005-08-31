@@ -51,7 +51,7 @@
  *          'true' means to scan all backends. 'false' means: After scanning the
  *          current backend the next backend is only scanned if no Mixers were found yet.
  */
-void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QString& ref_hwInfoString)
+void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 {
    //kdDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
 
@@ -106,7 +106,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		Mixer *mixer = new Mixer( drv, dev );
 		if ( mixer->isValid() ) {
 			mixer->open();
-			mixers.append( mixer );
+			Mixer::mixers().append( mixer );
 			// Count mixer nums for every mixer name to identify mixers with equal names.
 			// This is for creating persistent (reusable) primary keys, which can safely
 			// be referenced (especially for config file access, so it is meant to be persistent!).
@@ -138,7 +138,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 			mixer = 0;
 		} // invalid
 
-		/* Lets decide if we the autoprobing shall continue: */
+		/* Lets decide if the autoprobing shall continue: */
 		if ( multiDriverMode ) {
 			// trivial case: In multiDriverMode, we scan ALL 20 devs of ALL drivers
 			// so we have to do "nothing" in this case
@@ -158,7 +158,7 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
                 {
 		    drvInfoAppended = true;
 		    QString driverName = Mixer::driverName(drv);
-		    if ( drv!= 0 && mixers.count() > 0) {
+		    if (  Mixer::mixers().count() > 1) {
 			driverInfoUsed += " + ";
 		    }
 		    driverInfoUsed += driverName;
@@ -183,6 +183,9 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		} //  !multipleDriversActive
 		
 	    } // loop over sound card devices of current driver
+            if (autodetectionFinished) {
+               break;
+            }
 	} // loop over soundcard drivers
 
 	ref_hwInfoString = i18n("Sound drivers supported:");
@@ -206,9 +209,9 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 void MixerToolBox::deinitMixer()
 {
    //kdDebug(67100) << "IN MixerToolBox::deinitMixer()"<<endl;
-   Mixer *mixer;
-   while ( (mixer=Mixer::mixers().first()) != 0)
+   while ( Mixer::mixers().count() != 0)
    {
+      Mixer* mixer = (Mixer::mixers())[0];
       //kdDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer" << endl;
       mixer->close();
       Mixer::mixers().remove(mixer);

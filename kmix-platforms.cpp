@@ -59,9 +59,6 @@
 #endif // hpux
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
-#if defined(NAS_MIXER)
-#include "mixer_nas.cpp"
-#endif
 
 #if defined(SUN_MIXER)
 #include "mixer_sun.cpp"
@@ -84,13 +81,6 @@
 #include "mixer_hpux.cpp"
 #endif
 
-/*
-#else
-// We cannot handle this! I install a dummy mixer instead.
-#define NO_MIXER
-#include "mixer_none.cpp"
-#endif
-*/
 
 typedef Mixer_Backend *getMixerFunc( int device );
 typedef QString getDriverNameFunc( );

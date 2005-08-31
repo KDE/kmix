@@ -49,11 +49,11 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 	    ProfControl* control = *it;
 	    if ( control->tab == name() ) {   //  !!! using name() here is BAD. An ID should be used
 		// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-		MixDevice* md;
 		bool isUsed = false;
 
 		// The following for-loop could be simplified by using a std::find_if
-		for ( md = mixset->first(); md != 0; md = mixset->next() ) {
+		for ( int i=0; i<mixset->count(); i++ ) {
+			MixDevice *md = (*mixset)[i];
 			if (	md->getPK() == control->id  &&      // name matches
 				! md->isSwitch() && ! md->isEnum()  // and is applicable
 			)

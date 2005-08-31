@@ -26,7 +26,7 @@
 class VerticalText : public QWidget
 {
 public:
-    VerticalText(QWidget * parent, const char * name, WFlags f = 0);
+    VerticalText(QWidget * parent, const char * name, Qt::WFlags f = 0);
     ~VerticalText();
 
     QSize sizeHint() const;

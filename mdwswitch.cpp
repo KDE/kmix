@@ -22,6 +22,7 @@
 #include <qcursor.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <QMouseEvent>
 #include <qobject.h>
 #include <qslider.h>
 #include <qtooltip.h>
@@ -141,7 +142,7 @@ void MDWSwitch::update()
 	}
 }
 
-void MDWSwitch::setBackgroundMode(BackgroundMode m)
+void MDWSwitch::setBackgroundMode(Qt::BackgroundMode m)
 {
     if ( _label != 0 ){
 	_label->setBackgroundMode(m);

@@ -118,12 +118,9 @@ int Mixer_OSS::open()
         return Mixer::ERR_READ;
       if (ioctl(m_fd, SOUND_MIXER_READ_STEREODEVS, &stereodevs) == -1)
         return Mixer::ERR_READ;
-      if (!devmask)
-        return Mixer::ERR_NODEV;
+
       int maxVolume =100;
 
-      if( m_mixDevices.isEmpty() )
-        {
           int idx = 0;
           while( devmask && idx < MAX_MIXDEVS )
             {
@@ -140,15 +137,6 @@ int Mixer_OSS::open()
                 }
               idx++;
             }
-        }
-      else
-        for( unsigned int idx = 0; idx < m_mixDevices.count(); idx++ )
-          {
-            MixDevice* md = m_mixDevices.at( idx );
-            if( !md )
-              return Mixer::ERR_INCOMPATIBLESET;
-            writeVolumeToHW( idx, md->getVolume() );
-          }
 
 #if !defined(__FreeBSD__)
       struct mixer_info l_mix_info;

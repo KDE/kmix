@@ -25,7 +25,7 @@
 #include <qstring.h>
 #include <kconfig.h>
 #include <qobject.h>
-#include <qptrlist.h>
+#include <qlist.h>
 
 // ! @todo : CONSIDER MERGING OF MixDevice and Volume classes:
 //           Not easy possible, because Volume is used in the driver backends
@@ -92,7 +92,7 @@ SLIDER );
 
       void setEnumId(int);
       unsigned int enumId();
-      QPtrList<QString>& enumValues();
+      QList<QString>& enumValues();
 
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
@@ -125,7 +125,7 @@ SLIDER );
       QString _name;   // Ascii channel name
       QString _pk;     // Primary key, used as part in config file keys
       // A MixDevice, that is an ENUM, has these _enumValues
-      QPtrList<QString> _enumValues;
+      QList<QString> _enumValues;
       int _enumCurrentId;
 
 };

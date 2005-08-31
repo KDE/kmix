@@ -22,6 +22,7 @@
 #include <qcursor.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <QMouseEvent>
 #include <qobject.h>
 #include <qtooltip.h>
 
@@ -94,7 +95,7 @@ void MDWEnum::createWidgets()
 	// ------------ fill ComboBox start ------------
 	int maxEnumId= m_mixdevice->enumValues().count();
 	for (int i=0; i<maxEnumId; i++ ) {
-	  _enumCombo->insertItem( *(m_mixdevice->enumValues().at(i)),i);
+	  _enumCombo->insertItem( m_mixdevice->enumValues().at(i),i);
 	}
 	// ------------ fill ComboBox end --------------
 	_layout->addWidget(_enumCombo);
@@ -112,7 +113,7 @@ void MDWEnum::update()
     _enumCombo->setCurrentItem( m_mixdevice->enumId() );
   }
   else {
-    // !!! print warning message
+    kdError(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped" << endl;
   }	
 }
 
@@ -145,7 +146,7 @@ QSize MDWEnum::sizeHint() const {
 void MDWEnum::nextEnumId() {
   if( m_mixdevice->isEnum() ) {
     int curEnum = enumId();
-    if ( (unsigned int)curEnum < m_mixdevice->enumValues().count() ) {
+    if ( curEnum < m_mixdevice->enumValues().count() ) {
       // next enum value
       setEnumId(curEnum+1);
     }

@@ -57,8 +57,8 @@ ViewSwitches::~ViewSwitches() {
 
 void ViewSwitches::setMixSet(MixSet *mixset)
 {
-    MixDevice* md;
-    for ( md = mixset->first(); md != 0; md = mixset->next() ) {
+    for ( int i=0; i<mixset->count(); i++ ) {
+	MixDevice *md = (*mixset)[i];
 	if ( md->isSwitch() || md->isEnum() ) {
 	    _mixSet->append(md);
 	}
@@ -129,9 +129,9 @@ void ViewSwitches::constructionFinished() {
 
 void ViewSwitches::refreshVolumeLevels() {
     //kdDebug(67100) << "ViewSwitches::refreshVolumeLevels()\n";
-     QWidget *mdw = _mdws.first();
-     MixDevice* md;
-     for ( md = _mixSet->first(); md != 0; md = _mixSet->next() ) {
+
+    for ( int i=0; i<_mdws.count(); i++ ) {
+        QWidget *mdw = _mdws[i];
 	 if ( mdw == 0 ) {
 	     kdError(67100) << "ViewSwitches::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
@@ -150,8 +150,7 @@ void ViewSwitches::refreshVolumeLevels() {
 		 // no switch. Cannot happen in theory => skip it
 		 // If I start putting other stuff in the switch tab, I will get a nice warning.
 	     }
-	 }
-	 mdw = _mdws.next();
+        }
     }
 }
 
@@ -162,17 +161,18 @@ void ViewSwitches::refreshVolumeLevels() {
 */
 void ViewSwitches::configurationUpdate() {
     bool backGoundModeToggler = true;
-    for (QWidget *qw = _mdws.first(); qw !=0; qw = _mdws.next() ) {
+    for ( int i=0; i<_mdws.count(); i++ ) {
+        QWidget *qw = _mdws[i];
 	if ( qw->inherits("MDWSwitch")) {
 	    MixDeviceWidget* mdw = static_cast<MDWSwitch*>(qw);
 	    if ( ! mdw->isDisabled() ) {
 		if ( backGoundModeToggler ) {
-		    mdw->setBackgroundMode(PaletteBackground);
+		    mdw->setBackgroundMode(Qt::PaletteBackground);
 		}
 		else {
 		    // !! Should use KGlobalSettings::alternateBackgroundColor()
 		    // or KGlobalSettings::calculateAlternateBackgroundColor() instead.
-		    mdw->setBackgroundMode( PaletteBase );
+		    mdw->setBackgroundMode( Qt::PaletteBase );
 		}
 		backGoundModeToggler = !backGoundModeToggler;
 	    } // ! isDisabled()

@@ -22,7 +22,7 @@
 #define MIXER_ALSA_H
 
 // QT includes
-#include <qvaluelist.h>
+#include <qlist.h>
 
 // Forward QT includes
 class QString;
@@ -54,9 +54,9 @@ class Mixer_ALSA : public Mixer_Backend
 		snd_mixer_elem_t* getMixerElem(int devnum);
 
 		virtual QString errorText(int mixer_error);
-		typedef QValueList<snd_mixer_selem_id_t *>AlsaMixerSidList;
+		typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;
 		AlsaMixerSidList mixer_sid_list;
-		typedef QValueList<snd_mixer_elem_t *> AlsaMixerElemList; // !! remove
+		typedef QList<snd_mixer_elem_t *> AlsaMixerElemList; // !! remove
 		AlsaMixerElemList mixer_elem_list; // !! remove
 
                 bool _initialUpdate;

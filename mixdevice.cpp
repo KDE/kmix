@@ -72,7 +72,8 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
 
 MixDevice::~MixDevice() {
   // Clear MixDevices enum Strings (switch on auto-delete, so the QString's inside will be cleared)
-  _enumValues.setAutoDelete(true);
+  // Not needed anymore, as we store QString's, not pointers
+  //_enumValues.setAutoDelete(true);
   _enumValues.clear();
 }
 
@@ -105,7 +106,7 @@ unsigned int MixDevice::enumId()
   return _enumCurrentId;
 }
 
-QPtrList<QString>& MixDevice::enumValues() {
+QList<QString>& MixDevice::enumValues() {
   return _enumValues;
 }
 

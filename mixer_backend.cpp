@@ -26,11 +26,14 @@
 Mixer_Backend::Mixer_Backend(int device) :
    m_devnum (device) , m_isOpen(false), m_recommendedMaster(0)
 {
-  m_mixDevices.setAutoDelete( true );
+// autoDelete is discontinued in Qt4. See the destructor for the new impl.
+//  m_mixDevices.setAutoDelete( true );
 }
 
 Mixer_Backend::~Mixer_Backend()
 {
+	qDeleteAll(m_mixDevices);
+	m_mixDevices.clear();
 }
 
 
@@ -117,26 +120,10 @@ QString Mixer_Backend::errorText(int mixer_error)
     case Mixer::ERR_READ:
       l_s_errmsg = i18n("kmix: Could not read from mixer.");
       break;
-    case Mixer::ERR_NODEV:
-      l_s_errmsg = i18n("kmix: Your mixer does not control any devices.");
-      break;
-    case  Mixer::ERR_NOTSUPP:
-      l_s_errmsg = i18n("kmix: Mixer does not support your platform. See mixer.cpp for porting hints (PORTING).");
-      break;
-    case  Mixer::ERR_NOMEM:
-      l_s_errmsg = i18n("kmix: Not enough memory.");
-      break;
     case Mixer::ERR_OPEN:
-    case Mixer::ERR_MIXEROPEN:
-      // ERR_MIXEROPEN means: Soundcard could be opened, but has no mixer. ERR_MIXEROPEN is normally never
-      //      passed to the errorText() method, because KMix handles that case explicitely
       l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
 	  "Please check that the soundcard is installed and that\n" \
 	  "the soundcard driver is loaded.\n");
-      break;
-    case Mixer::ERR_INCOMPATIBLESET:
-      l_s_errmsg = i18n("kmix: Initial set is incompatible.\n" \
-	  "Using a default set.\n");
       break;
     default:
       l_s_errmsg = i18n("kmix: Unknown error. Please report how you produced this error.");

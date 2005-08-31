@@ -23,97 +23,59 @@
 #ifndef KSMALLSLIDER_H
 #define KSMALLSLIDER_H
 
-#include <kpanelapplet.h>
-
-#include <qwidget.h>
+#include <qabstractslider.h>
 #include <qpixmap.h>
-#include <qrangecontrol.h>
 
-class KSmallSlider : public QWidget, public QRangeControl
+class KSmallSlider : public QAbstractSlider
 {
       Q_OBJECT
 
    public:
-      KSmallSlider( QWidget *parent, const char *name=0 );
-      KSmallSlider( Qt::Orientation, QWidget *parent, const char *name=0 );
+//      KSmallSlider( QWidget *parent, const char *name=0 );
+//      KSmallSlider( Qt::Orientation, QWidget *parent, const char *name=0 );
       KSmallSlider( int minValue, int maxValue, int pageStep, int value,
-		    Qt::Orientation, QWidget *parent, const char *name=0 );
+        Qt::Orientation, QWidget *parent, const char *name=0 );
 
-    //virtual void setTracking( bool enable );
-    //bool tracking() const;
       QSize sizeHint() const;
       QSizePolicy sizePolicy() const;
       QSize minimumSizeHint() const;
 
-      int minValue() const;
-      int maxValue() const;
-      void setMinValue( int ); //  Don't use these unless you make versions
-      void setMaxValue( int ); //  that work. -esigra
-      int lineStep() const;
-      int pageStep() const;
-      void setLineStep( int );
-      void setPageStep( int );
-      int  value() const;
-
-    //void paletteChange ( const QPalette & oldPalette );
       bool gray() const;
 
 public slots:
-    virtual void setValue( int );
-    void addStep();
-    void subtractStep();
-
       void setGray( bool value );
       void setColors( QColor high, QColor low, QColor back );
       void setGrayColors( QColor high, QColor low, QColor back );
 
       signals:
       void valueChanged( int value );
-      void sliderPressed();
-      void sliderMoved( int value );
-      void sliderReleased();
 
    protected:
       void resizeEvent( QResizeEvent * );
       void paintEvent( QPaintEvent * );
 
       void mousePressEvent( QMouseEvent * );
-      void mouseReleaseEvent( QMouseEvent * );
       void mouseMoveEvent( QMouseEvent * );
-      void wheelEvent( QWheelEvent * );
+//      void wheelEvent( QWheelEvent * );
 
       void valueChange();
-      void rangeChange();
 
    private:
-    //enum State { Idle, Dragging };
 
       void init();
       int positionFromValue( int ) const;
       int valueFromPosition( int ) const;
+      int positionFromValue( int logical_val, int span ) const;
+      int valueFromPosition( int pos, int span ) const;
       void moveSlider( int );
-    //void resetState();
 
-    //      int slideLength() const;
       int available() const;
       int goodPart( const QPoint& ) const;
-    //void initTicks();
 
-    //QCOORD sliderPos;
-    //int sliderVal;
-    //State state;
-    //bool track;
       bool grayed;
-      Qt::Orientation _orientation;
       QColor colHigh, colLow, colBack;
       QColor grayHigh, grayLow, grayBack;
 
 };
 
-/*
-inline bool KSmallSlider::tracking() const
-{
-    return track;
-}
-*/
 #endif

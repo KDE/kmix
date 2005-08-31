@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QMouseEvent>
 #include <qsizepolicy.h>
 
 #include "kledbutton.h"
@@ -44,26 +45,16 @@ KLedButton::~KLedButton()
 
 void KLedButton::mousePressEvent( QMouseEvent *e )
 {
-   if (e->button() == LeftButton)
+   if (e->button() == Qt::LeftButton)
    {
       toggle();
       emit stateChanged( state() );
    }
 }
 
-bool KLedButton::eventFilter( QObject* /*obj*/ , QEvent* /*ev*/ ) {
-    // KLed and thus KLedButtung does not do proper positioning in QLayout's.
-    // Thus I listen to my parents resize events and do it here ... OUCH, that's ugly
-    /* No, this cannot work !
-    if ( ev->type() == QEvent::Resize ) {
-	QResizeEvent* qre = (QResizeEvent*)ev;
-	this->move( qre->size().width()  - width()/2,
-		    qre->size().height() - height()/2 );
-    }
-    */
-    return false;
-    //    KLed::eventFilter(obj, ev);
 
+bool KLedButton::eventFilter( QObject* /*obj*/ , QEvent* /*ev*/ ) { // !! Obsolete
+    return false;
 }	
 
 QSize KLedButton::sizeHint() const

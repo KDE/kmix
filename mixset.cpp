@@ -30,38 +30,39 @@
 
 void MixSet::clone( MixSet &set )
 {
-    clear();
+   clear();
 
-    for( MixDevice *md=set.first(); md!=0; md=set.next() )
-    {
-        append( new MixDevice( *md ) );
-    }
+   for(int i=0; i < set.count() ; i++ )
+   {
+       MixDevice *md = set[i];
+       append( new MixDevice( *md ) );
+   }
 }
 
 void MixSet::read( KConfig *config, const QString& grp )
 {
-    kdDebug(67100) << "MixSet::read() of group " << grp << endl;
-    config->setGroup(grp);
-    m_name = config->readEntry( "name", m_name );
+   kdDebug(67100) << "MixSet::read() of group " << grp << endl;
+   config->setGroup(grp);
+   m_name = config->readEntry( "name", m_name );
 
-    MixDevice* md;
-    for( md=first(); md!=0; md=next() )
-    {
-        md->read( config, grp );
-    }
+   for(int i=0; i < count() ; i++ )
+   {
+       MixDevice *md = operator[](i);
+       md->read( config, grp );
+   }
 }
 
 void MixSet::write( KConfig *config, const QString& grp )
 {
-    kdDebug(67100) << "MixSet::write() of group " << grp << endl;    
-    config->setGroup(grp);
-    config->writeEntry( "name", m_name );
+   kdDebug(67100) << "MixSet::write() of group " << grp << endl;    
+   config->setGroup(grp);
+   config->writeEntry( "name", m_name );
 
-    MixDevice* md;
-    for( md=first(); md!=0; md=next() )
-    {
-        md->write( config, grp );
-    }
+   for(int i=0; i < count() ; i++ )
+   {
+       MixDevice *md = operator[](i);
+       md->write( config, grp );
+   }
 }
 
 void MixSet::setName( const QString &name )

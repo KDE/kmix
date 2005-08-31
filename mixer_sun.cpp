@@ -172,8 +172,6 @@ int Mixer_SUN::open()
       // Mixer is open. Now define all of the mix devices.
       //
 
-      if( m_mixDevices.isEmpty() )
-      {
          for ( int idx = 0; idx < numDevs; idx++ )
          {
             Volume vol( 2, AUDIO_MAX_GAIN );
@@ -183,17 +181,6 @@ int Mixer_SUN::open()
 				md->setRecSource( isRecsrcHW( idx ) );
             m_mixDevices.append( md );
          }
-     }
-     else
-     {
-        for( unsigned int idx = 0; idx < m_mixDevices.count(); idx++ )
-        {
-           MixDevice* md = m_mixDevices.at( idx );
-           if( !md )
-              return Mixer::ERR_INCOMPATIBLESET;
-           writeVolumeToHW( idx, md->getVolume() );
-        }
-     }
 
      m_mixerName = "SUN Audio Mixer";
      m_isOpen = true;
@@ -290,7 +277,7 @@ int Mixer_SUN::readVolumeFromHW( int devnum, Volume& volume )
             break;
 
          default :
-            return Mixer::ERR_NODEV;
+            return Mixer::ERR_READ;
       }
       return 0;
    }
@@ -362,7 +349,7 @@ int Mixer_SUN::writeVolumeToHW( int devnum, Volume &volume )
          break;
 
       default :
-         return Mixer::ERR_NODEV;
+         return Mixer::ERR_READ;
    }
 
    //

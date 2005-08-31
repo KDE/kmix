@@ -40,7 +40,7 @@
  * Not really usable right now.
  */
 ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
+      : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
 {
     _mdSurroundFront = 0;
     _mdSurroundBack  = 0;
@@ -63,8 +63,8 @@ ViewSurround::~ViewSurround() {
 
 void ViewSurround::setMixSet(MixSet *mixset)
 {
-    MixDevice* md;
-    for ( md = mixset->first(); md != 0; md = mixset->next() ) {
+    for ( int i=0; i<mixset->count(); i++ ) {
+	MixDevice *md = (*mixset)[i];
 	if ( ! md->isSwitch() ) {
 	    switch ( md->type() ) {
 	    case MixDevice::VOLUME:
@@ -228,9 +228,8 @@ void ViewSurround::constructionFinished() {
 void ViewSurround::refreshVolumeLevels() {
     //     kdDebug(67100) << "ViewSurround::refreshVolumeLevels()\n";
 
-     QWidget *mdw = _mdws.first();
-     MixDevice* md;
-     for ( md = _mixSet->first(); md != 0; md = _mixSet->next() ) {
+    for ( int i=0; i<_mdws.count(); i++ ) {
+	QWidget *mdw = _mdws[i];
 	 if ( mdw == 0 ) {
 	     kdError(67100) << "ViewSurround::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
@@ -246,7 +245,6 @@ void ViewSurround::refreshVolumeLevels() {
 		 // no slider. Cannot happen in theory => skip it
 	     }
 	 }
-	 mdw = _mdws.next();
     }
 }
 

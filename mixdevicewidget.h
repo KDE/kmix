@@ -25,13 +25,9 @@
 #ifndef MIXDEVICEWIDGET_H
 #define MIXDEVICEWIDGET_H
 
-#include <kpanelapplet.h>
-
 #include <qwidget.h>
 #include "volume.h"
-#include <qptrlist.h>
 #include <qpixmap.h>
-#include <qrangecontrol.h>
 
 class QBoxLayout;
 class QLabel;
@@ -96,8 +92,8 @@ protected slots:
     virtual void setVolume( Volume volume );
 
 protected:
-      Mixer*               m_mixer;
       MixDevice*           m_mixdevice;
+      Mixer*               m_mixer; // !!! This MUST go into the MixDevice class !!!
       KActionCollection*   _mdwActions;
       KGlobalAccel*        m_keys;
       ViewBase*            m_mixerwidget;

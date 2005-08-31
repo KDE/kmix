@@ -42,7 +42,7 @@
 #undef KMIX_DCOP_OBJID_TEST
 int Mixer::_dcopID = 0;
 
-QPtrList<Mixer> Mixer::s_mixers;
+QList<Mixer *> Mixer::s_mixers;
 QString Mixer::_masterCard;
 QString Mixer::_masterCardDevice;
 
@@ -62,7 +62,7 @@ int Mixer::numDrivers()
 /*
  * Returns a reference of the current mixer list.
  */
-QPtrList<Mixer>& Mixer::mixers()
+QList<Mixer *>& Mixer::mixers()
 {
   return s_mixers;
 }
@@ -81,12 +81,11 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
   readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
 
   m_balance = 0;
-  m_profiles.setAutoDelete( true );
 
   _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
  
-  QCString objid;
+  DCOPCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST
   objid.setNum(_mixerBackend->m_devnum);
 #else
@@ -128,10 +127,11 @@ void Mixer::volumeLoad( KConfig *config )
    _mixerBackend->m_mixDevices.read( config, grp );
 
    // set new settings
-   QPtrListIterator<MixDevice> it( _mixerBackend->m_mixDevices );
-   for(MixDevice *md=it.toFirst(); md!=0; md=++it )
+   //QListIterator<MixDevice*> it( _mixerBackend->m_mixDevices );
+   for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
-       //       kdDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
+       MixDevice *md = _mixerBackend->m_mixDevices[i];
+       // kdDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
        // !! @todo Restore record source
        //setRecordSource( md->num(), md->isRecSource() );
        _mixerBackend->setRecsrcHW( md->num(), md->isRecSource() );
@@ -154,14 +154,6 @@ int Mixer::open()
       // but we want a somhow usable fallback just in case.
       _id = mixerName();
 
-      if( err == ERR_INCOMPATIBLESET )   // !!! When does this happen ?!?
-        {
-          // Clear the mixdevices list
-	  _mixerBackend->m_mixDevices.clear();
-          // try again with fresh set
-	  err = _mixerBackend->open();
-        }
-
       MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
       if ( recommendedMaster != 0 ) {
          setMasterDevice(recommendedMaster->getPK() );
@@ -171,31 +163,7 @@ int Mixer::open()
          QString noMaster = "---no-master-detected---";
          setMasterDevice(noMaster); // no master
       }
-	/*
-   // --------- Copy the hardware values to the MixDevice -------------------
-      MixSet &mset = _mixerBackend->m_mixDevices;
-      if( !mset.isEmpty() ) {
-       // Copy the initial mix set
-       //       kdDebug(67100) << "Mixer::setupMixer() copy Set" << endl;
-	MixDevice* md;
-	for( md = mset.first(); md != 0; md = mset.next() )
-	{
-	  MixDevice* mdCopy = _mixerBackend->m_mixDevices.first();
-	  while( mdCopy!=0 && mdCopy->num() != md->num() ) {
-	    mdCopy = _mixerBackend->m_mixDevices.next();
-	  }
-	  if ( mdCopy != 0 ) {
-	       // The "mdCopy != 0" was not checked before, but its safer to do so
-	    setRecordSource( md->num(), md->isRecSource() );
-	    Volume &vol = mdCopy->getVolume();
-	    vol.setVolume( md->getVolume() );
-	    mdCopy->setMuted( md->isMuted() );
 
-	       // !! might need writeVolumeToHW( mdCopy->num(), mdCopy->getVolume() );
-	  }
-	}
-      }
-	*/
       _pollingTimer->start(50); // !!
       return err;
 }
@@ -274,9 +242,9 @@ void Mixer::readSetFromHW()
     return;
   }
   _readSetFromHWforceUpdate = false;
-  MixDevice* md;
-  for( md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() )
-    {
+   for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
+   {
+      MixDevice *md = _mixerBackend->m_mixDevices[i];
       Volume& vol = md->getVolume();
       _mixerBackend->readVolumeFromHW( md->num(), vol );
       md->setRecSource( _mixerBackend->isRecsrcHW( md->num() ) );
@@ -371,9 +339,10 @@ void Mixer::setMasterCard(QString& ref_id)
 Mixer* Mixer::masterCard()
 {
   Mixer *mixer = 0;
-  for (mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
+  for (int i=0; i< Mixer::mixers().count(); ++i )
   {
-     if ( mixer->id() == _masterCard ) {
+     mixer = Mixer::mixers()[i];   
+     if ( mixer != 0 && mixer->id() == _masterCard ) {
         break;
      }
   }
@@ -394,12 +363,9 @@ MixDevice* Mixer::masterCardDevice()
   MixDevice* md = 0;
   Mixer *mixer = masterCard();
   if ( mixer != 0 ) {
-     for( md = mixer->_mixerBackend->m_mixDevices.first(); md != 0; md = mixer->_mixerBackend->m_mixDevices.next() ) {
-/*
-     	kdDebug(67100) << "Mixer::masterCardDevice() getPK()="
-     		<< md->getPK() << " , _masterCardDevice="
-     		<< _masterCardDevice << "\n";
-*/
+   for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
+   {
+       md = mixer->_mixerBackend->m_mixDevices[i];
        if ( md->getPK() == _masterCardDevice )
           break;
      }
@@ -417,7 +383,9 @@ void Mixer::setRecordSource( int devnum, bool on )
 {
   if( !_mixerBackend->setRecsrcHW( devnum, on ) ) // others have to be updated
   {
-    for( MixDevice* md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() ) {
+   for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
+   {
+          MixDevice *md = _mixerBackend->m_mixDevices[i];
 	  bool isRecsrc =  _mixerBackend->isRecsrcHW( md->num() );
 //		kdDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
 		md->setRecSource( isRecsrc );
@@ -427,8 +395,10 @@ void Mixer::setRecordSource( int devnum, bool on )
   }
   else {
 	// just the actual mixdevice
-    for( MixDevice* md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() ) {
-		  if( md->num() == devnum ) {
+        for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
+        {
+           MixDevice *md = _mixerBackend->m_mixDevices[i];
+	   if( md->num() == devnum ) {
 		    bool isRecsrc =  _mixerBackend->isRecsrcHW( md->num() );
 			md->setRecSource( isRecsrc );
 		  }
@@ -453,11 +423,13 @@ void Mixer::setMasterDevice(QString &devPK)
 
 MixDevice* Mixer::find(QString& devPK)
 {
-    MixDevice* md = 0;
-    for( md = _mixerBackend->m_mixDevices.first(); md != 0; md = _mixerBackend->m_mixDevices.next() ) {
-        if( devPK == md->getPK() ) {
+   MixDevice *md = 0;
+   for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
+   {
+       md = _mixerBackend->m_mixDevices[i];
+       if( devPK == md->getPK() ) {
            break;
-        }
+       }
     }
     return md;
 }

@@ -38,7 +38,7 @@
  * See ViewInput and ViewOutput for "real" implementations.
  */
 ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
+      : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
 {
     if ( _vflags & ViewBase::Vertical ) {
         _layoutMDW = new QVBoxLayout(this);
@@ -58,14 +58,9 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 ViewSliders::~ViewSliders() {
 }
 
-void ViewSliders::setMixSet(MixSet *mixset)
+void ViewSliders::setMixSet(MixSet *)
 {
-    MixDevice* md;
-    for ( md = mixset->first(); md != 0; md = mixset->next() ) {
-	if ( (! md->isSwitch()) && ( ! md->isEnum() ) ) {
-	    _mixSet->append(md);
-	}
-    }
+	// no need to implement. Class may not be instanciated after all.
 }
 
 int ViewSliders::count()
@@ -114,9 +109,8 @@ void ViewSliders::constructionFinished() {
 void ViewSliders::refreshVolumeLevels() {
     //     kdDebug(67100) << "ViewSliders::refreshVolumeLevels()\n";
 
-     QWidget *mdw = _mdws.first();
-     MixDevice* md;
-     for ( md = _mixSet->first(); md != 0; md = _mixSet->next() ) {
+    for ( int i=0; i<_mdws.count(); i++ ) {
+        QWidget *mdw = _mdws[i];
 	 if ( mdw == 0 ) {
 	     kdError(67100) << "ViewSliders::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
@@ -132,7 +126,6 @@ void ViewSliders::refreshVolumeLevels() {
 		 // no slider. Cannot happen in theory => skip it
 	     }
 	 }
-	 mdw = _mdws.next();
     }
 }
 

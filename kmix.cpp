@@ -21,10 +21,10 @@
 
 // include files for QT
 #include <qmap.h>
-#include <qhbox.h>
+//#include <qhbox.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-#include <qwidgetstack.h>
+#include <qstackedwidget.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 
@@ -33,18 +33,16 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kmenubar.h>
-#include <klineeditdlg.h>
+//#include <klineeditdlg.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
 #include <kapplication.h>
 #include <kstdaction.h>
-#include <kpanelapplet.h>
 #include <kpopupmenu.h>
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kaccel.h>
-#include <kpopupmenu.h>
 
 // application specific includes
 #include "mixertoolbox.h"
@@ -69,9 +67,10 @@ KMixWindow::KMixWindow()
 	// As long as we do not know better, we assume to start hidden. We need
 	// to initialize this variable here, as we don't trigger a hideEvent().
 	m_isVisible = false;
-	m_mixerWidgets.setAutoDelete(true);
+	//   !!! FIX THIS m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-	MixerToolBox::initMixer(Mixer::mixers(), m_multiDriverMode, m_hwInfoString);
+kdDebug(67100) << "MultiDriver c = " << m_multiDriverMode << endl;
+	MixerToolBox::initMixer(m_multiDriverMode, m_hwInfoString);
 	initActions();
 	initWidgets();
 	initMixerWidgets();
@@ -113,7 +112,7 @@ KMixWindow::initActions()
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
-	(void) new KAction( i18n( "Hide Mixer Window" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
+	(void) new KAction( i18n( "Hide Mixer Window" ), Qt::Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
 	createGUI( "kmixui.rc" );
 }
 
@@ -138,7 +137,8 @@ KMixWindow::initWidgets()
 	widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
 
 
-	// Mixer widget line
+	// Mixer widget line  !!! change this !!!
+/*
 	mixerNameLayout = new QHBox( centralWidget(), "mixerNameLayout" );
         widgetsLayout->setStretchFactor( mixerNameLayout, 0 );
 	QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
@@ -153,8 +153,9 @@ KMixWindow::initWidgets()
 
 	// Add first layout to widgets
 	widgetsLayout->addWidget( mixerNameLayout );
+*/
 
-	m_wsMixers = new QWidgetStack( centralWidget(), "MixerWidgetStack" );
+	m_wsMixers = new QStackedWidget( centralWidget() );
         widgetsLayout->setStretchFactor( m_wsMixers, 10 );
 	widgetsLayout->addWidget( m_wsMixers );
 
@@ -177,21 +178,15 @@ KMixWindow::updateDocking()
 		m_dockWidget = 0L;
 	}
 
+	if ( Mixer::mixers().count() == 0 ) {
+		return;
+	}
 	if (m_showDockWidget)
 	{
 
 		// create dock widget
                 // !! This should be a View in the future
 		m_dockWidget = new KMixDockWidget( Mixer::mixers().first(), this, "mainDockWidget", m_volumeWidget );
-
-/* Belongs in KMixDockWidget
-		// create RMB menu
-		KPopupMenu *menu = m_dockWidget->contextMenu();
-
-		// !! check this
-		KAction *a = actionCollection()->action( "dock_mute" );
-		if ( a ) a->plug( menu );
-*/
 
 		/*
 		 * Mail from 31.1.2005: "make sure your features are at least string complete"
@@ -249,10 +244,10 @@ KMixWindow::saveConfig()
       config->writeEntry( "Orientation","Horizontal" );
 
    // save mixer widgets
-   for ( KMixerWidget *mw = m_mixerWidgets.first(); mw != 0; mw = m_mixerWidgets.next() )
+   for ( int i=0; i<m_mixerWidgets.count() ; ++i )
    {
-		QString grp;
-		grp.sprintf( "%i", mw->id() );
+		KMixerWidget *mw = m_mixerWidgets[i];
+		QString grp (mw->id());
 		mw->saveConfig( config, grp );
    }
 
@@ -273,7 +268,9 @@ KMixWindow::loadConfig()
    m_showLabels = config->readBoolEntry("Labels", true);
    m_onLogin = config->readBoolEntry("startkdeRestore", true );
    m_startVisible = config->readBoolEntry("Visible", true);
+   kdDebug(67100) << "MultiDriver a = " << m_multiDriverMode << endl;
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
+   kdDebug(67100) << "MultiDriver b = " << m_multiDriverMode << endl;
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
    m_gridView    = config->readBoolEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
@@ -313,13 +310,23 @@ KMixWindow::initMixerWidgets()
 {
    m_mixerWidgets.clear();
 
-	int id=0;
-	Mixer *mixer;
+   if ( Mixer::mixers().count() == 0 ) {
+       // No cards present => show a text instead
+       //QBoxLayout *layout = new QHBoxLayout( this );
+       QString s = i18n("No soundcard found. Probably you haven't set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
+       QLabel *errorLabel = new QLabel( s,this  );
+       errorLabel->setAlignment( Qt::AlignCenter );
+       errorLabel->setWordWrap(true);
+       widgetsLayout->addWidget( errorLabel );
+   } // No cards present
 
-	// Attention!! If Mixer::mixers() is empty, we behave stupid. We don't show nothing and there
-        //             is not even a context menu.
-	for ( mixer=Mixer::mixers().first(),id=0; mixer!=0; mixer=Mixer::mixers().next(),id++ )
+   else {
+       // At least one card is present
+
+        unsigned int mixerCount;
+	for ( int i=0; i<Mixer::mixers().count(); ++i)
 	{
+		Mixer *mixer = (Mixer::mixers())[i];
 		//kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
 		ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
 		if ( m_showMenubar ) {
@@ -339,29 +346,30 @@ KMixWindow::initMixerWidgets()
 		}
 
 	
-		KMixerWidget *mw = new KMixerWidget( id, mixer, mixer->mixerName(),
+		KMixerWidget *mw = new KMixerWidget( mixer,
 						     MixDevice::ALL, this, "KMixerWidget", vflags );
 		m_mixerWidgets.append( mw );
 
 		// Add to Combo and Stack
-		m_cMixer->insertItem( mixer->mixerName() );
-		m_wsMixers->addWidget( mw, id );
+		//!!! TODO m_cMixer->insertItem( mixer->mixerName() );
+		m_wsMixers->addWidget( mw );
 
-		QString grp;
-		grp.sprintf( "%i", mw->id() );
+		QString grp(mw->id());
 		mw->loadConfig( kapp->config(), grp );
 
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
 		// !! I am still not sure whether this works 100% reliably - chris
 		mw->show();
+                mixerCount ++;
 	}
 
-	if (id == 1)
+	if (mixerCount < 2)
 	{
 		// don't show the Current Mixer bit unless we have multiple mixers
-		mixerNameLayout->hide();
+		// !!! mixerNameLayout->hide();
 	}
+   } // At least one card is present
 }
 
 
@@ -426,12 +434,13 @@ KMixWindow::showAbout()
 void
 KMixWindow::loadVolumes()
 {
-	KConfig *cfg = new KConfig( "kmixctrlrc", true );
-	for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
-	{
-		mixer->volumeLoad( cfg );
-	}
-	delete cfg;
+    KConfig *cfg = new KConfig( "kmixctrlrc", true );
+    for ( int i=0; i<Mixer::mixers().count(); ++i)
+    {
+        Mixer *mixer = (Mixer::mixers())[i];
+        mixer->volumeLoad( cfg );
+    }
+    delete cfg;
 }
 */
 
@@ -443,7 +452,9 @@ void
 KMixWindow::saveVolumes()
 {
     KConfig *cfg = new KConfig( "kmixctrlrc", false );
-    for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next()) {
+    for ( int i=0; i<Mixer::mixers().count(); ++i)
+    {
+	Mixer *mixer = (Mixer::mixers())[i];
 	//kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
 	mixer->volumeSave( cfg );
     }
@@ -481,8 +492,9 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    this->setUpdatesEnabled(false);
    updateDocking();
 
-   for (KMixerWidget *mw=m_mixerWidgets.first(); mw!=0; mw=m_mixerWidgets.next())
+   for ( int i=0; i<m_mixerWidgets.count(); ++i)
    {
+      KMixerWidget *mw = m_mixerWidgets[i];
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
       mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
@@ -550,7 +562,7 @@ KMixWindow::slotHWInfo() {
 void
 KMixWindow::showSelectedMixer( int mixer )
 {
-	m_wsMixers->raiseWidget( mixer );
+// !!! TODO	m_wsMixers->raiseWidget( mixer );
 }
 
 #include "kmix.moc"

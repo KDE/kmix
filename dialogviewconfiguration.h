@@ -22,7 +22,7 @@
 #define DIALOGVIEWCONFIGURATION_H
 
 #include <qcheckbox.h>
-#include <qptrlist.h>
+#include <qlist.h>
 class QVBoxLayout;
 
 #include <kdialogbase.h>
@@ -44,7 +44,7 @@ class DialogViewConfiguration : public KDialogBase
  private:
     QVBoxLayout* _layout;
     ViewBase&    _view;
-    QPtrList<QCheckBox>  _qEnabledCB;
+    QList<QCheckBox *>  _qEnabledCB;
 };
 
 #endif

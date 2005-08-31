@@ -69,15 +69,16 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    layout->addWidget( m_onLogin );
 
    QBoxLayout *orientationLayout = new QHBoxLayout( layout );
-   QButtonGroup* orientationGroup = new QButtonGroup( 2, Qt::Horizontal, i18n("Orientation"), m_generalTab );
+   QButtonGroup* orientationGroup = new QButtonGroup( m_generalTab ); // !!! Check
+   //QGroupBox* orientationGroupBox = new QGroupBox(i18n("Orientation"), m_generalTab);
    //orientationLayout->add(orientationGroup);
-   orientationGroup->setRadioButtonExclusive(true);
+   orientationGroup->setExclusive(true);
    QLabel* qlb = new QLabel( i18n("Orientation"), m_generalTab );
    _rbHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab );
    _rbVertical   = new QRadioButton(i18n("&Vertical"  ), m_generalTab );
-   orientationGroup->insert(_rbHorizontal);
-   orientationGroup->insert(_rbVertical);
-   orientationGroup->hide();
+   orientationGroup->addButton(_rbHorizontal);
+   orientationGroup->addButton(_rbVertical);
+   //orientationGroup->hide();
    //orientationLayout->add(qlb);
    //orientationLayout->add(orientationGroup);
 

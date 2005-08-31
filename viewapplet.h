@@ -22,7 +22,7 @@
 #define ViewApplet_h
 
 #include "viewbase.h"
-#include <kpanelapplet.h>
+#include <plasma/kpanelapplet.h>     // ??? plasma/
 
 class QBoxLayout;
 class QHBox;
@@ -32,7 +32,7 @@ class ViewApplet : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KPanelApplet::Position pos);
+    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, Plasma::Position position);
     ~ViewApplet();
 
     virtual int count();

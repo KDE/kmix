@@ -22,7 +22,8 @@
 #define ViewBase_h
 
 // QT
-#include "qwidget.h"
+#include <qwidget.h>
+#include <qlist.h>
 
 // KDE
 class KActionCollection;
@@ -54,7 +55,7 @@ public:
 	Experimental_GridView = 0x2000
     };
 
-    ViewBase(QWidget* parent, const char* name, Mixer* mixer, WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
+    ViewBase(QWidget* parent, const char* name, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
     virtual ~ViewBase();
 
     // Subclasses must define this method. It is called by the ViewBase() constuctor.
@@ -109,10 +110,10 @@ public:
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
      * _mdws[i] is the Widget for the MixDevice _mixSet[i].
-     * Hint: The new ViewSurround class shows that a 1:1 relationship does not work in a general scenario.
+     * Hint: !! The new ViewSurround class shows that a 1:1 relationship does not work in a general scenario.
      *       I actually DID expect this. The solution is unclear yet, probably there will be a virtual mapper method.
      */
-    QPtrList<QWidget> _mdws; // this obsoletes the former Channel class
+    QList<QWidget *> _mdws; // this obsoletes the former Channel class
 
 protected:
     void init();

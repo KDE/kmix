@@ -21,10 +21,10 @@
 #ifndef KMIXTOOLBOX_H
 #define KMIXTOOLBOX_H
 
-#include "qptrlist.h"
+#include "qlist.h"
 #include "qwidget.h"
 
-class Mixer;
+class ViewBase;
 
 class KConfig;
 
@@ -36,11 +36,13 @@ class KConfig;
 
 class KMixToolBox {
  public:
-    static void setIcons  (QPtrList<QWidget> &mdws, bool on );
-    static void setLabels (QPtrList<QWidget> &mdws, bool on );
-    static void setTicks  (QPtrList<QWidget> &mdws, bool on );
-    static void loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix  );
-    static void saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix  );
+    static void setIcons  (QList<QWidget *> &mdws, bool on );
+    static void setLabels (QList<QWidget *> &mdws, bool on );
+    static void setTicks  (QList<QWidget *> &mdws, bool on );
+    static void loadView(ViewBase *view, KConfig *config);
+    static void saveView(ViewBase *view, KConfig *config);
+    static void loadKeys(ViewBase *view, KConfig *config);
+    static void saveKeys(ViewBase *view, KConfig *config);
 };
     
 

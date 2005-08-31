@@ -36,7 +36,7 @@
 /**
  */
 ViewGrid::ViewGrid(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewBase(parent, name, mixer, WStyle_Customize|WStyle_NoBorder, vflags, guiprof)
+      : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
 {
    m_spacingHorizontal = 5;
    m_spacingVertical = 5;
@@ -55,9 +55,9 @@ ViewGrid::~ViewGrid() {
 
 void ViewGrid::setMixSet(MixSet *mixset)
 {
-    MixDevice* md;
     int testCounter = 0;
-    for ( md = mixset->first(); md != 0; md = mixset->next() ) {
+    for ( int i=0; i<mixset->count(); i++ ) {
+	MixDevice *md = (*mixset)[i];
        if (testCounter<8) {
 	    _mixSet->append(md);
 	}

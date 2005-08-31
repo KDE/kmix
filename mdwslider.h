@@ -23,15 +23,13 @@
 #ifndef MDWSLIDER_H
 #define MDWSLIDER_H
 
-#include <kpanelapplet.h>
-
-#include <qvaluelist.h>
+#include <QList>
 #include <qwidget.h>
-#include <qptrlist.h>
+#include <qlist.h>
 #include <qpixmap.h>
-#include <qrangecontrol.h>
 
 class QBoxLayout;
+class QToolButton;
 class QLabel;
 class QPopupMenu;
 class QSlider;
@@ -110,13 +108,12 @@ private:
     void createWidgets( bool showMuteLED, bool showRecordLED );
 
     bool m_linked;
-    QLabel *m_iconLabel;
-    KLedButton *m_muteLED;
+    QToolButton *m_iconLabel;
     KLedButton *m_recordLED;
     QWidget *m_label; // is either QLabel or VerticalText
     QBoxLayout *_layout;
-    QPtrList<QWidget> m_sliders;
-    QValueList<Volume::ChannelID> _slidersChids;
+    QList<QWidget *> m_sliders;
+    QList<Volume::ChannelID> _slidersChids;
 };
 
 #endif
