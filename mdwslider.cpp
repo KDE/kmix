@@ -81,11 +81,11 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 	// create widgets
 	createWidgets( showMuteLED, showRecordLED );
 	
-	m_keys->insert( "Increase volume", i18n( "Increase Volume" ), QString::null,
+	m_keys->insert( "Increase volume", i18n( "Increase Volume of '%1'" ).arg(m_mixdevice->name().utf8().data()), QString::null,
 			KShortcut(), KShortcut(), this, SLOT( increaseVolume() ) );
-	m_keys->insert( "Decrease volume", i18n( "Decrease Volume" ), QString::null,
+	m_keys->insert( "Decrease volume", i18n( "Decrease Volume of '%1'" ).arg(m_mixdevice->name().utf8().data()), QString::null,
 			KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
-	m_keys->insert( "Toggle mute", i18n( "Toggle Mute" ), QString::null,
+	m_keys->insert( "Toggle mute", i18n( "Toggle Mute of '%1'" ).arg(m_mixdevice->name().utf8().data()), QString::null,
 			KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
 	
 	installEventFilter( this ); // filter for popup
