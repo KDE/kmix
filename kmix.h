@@ -38,6 +38,7 @@ class QWidgetStack;
 #include <kmainwindow.h>
 
 class KAccel;
+class KGlobalAccel;
 class KComboBox;
 class KMixerWidget;
 class KMixerPrefWidget;
@@ -89,6 +90,7 @@ KMixWindow : public KMainWindow
 
   private:
    KAccel *m_keyAccel;
+   KGlobalAccel *m_globalAccel;
    QPopupMenu *m_fileMenu;
    QPopupMenu *m_viewMenu;
    QPopupMenu *m_helpMenu;
@@ -122,6 +124,10 @@ KMixWindow : public KMainWindow
    //void removeMixerWidget( KMixerWidget *mw );
    void slotHWInfo();
    void showSelectedMixer( int mixer );
+   void configureGlobalShortcuts();
+   void toggleMuted();
+   void increaseVolume();
+   void decreaseVolume();
 };
 
 #endif // KMIX_H

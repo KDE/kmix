@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kmix" version="2">
+<kpartgui name="kmix" version="3">
 
 <ActionProperties>
     <Action name="hide_kmixwindow" icon="window"/>
@@ -9,6 +9,9 @@
  <Menu name="file"><text>&amp;File</text>
   <Action name="file_new_tab"/>
   <Action name="file_close_tab"/>
+ </Menu>
+ <Menu name="settings">
+  <Action name="settings_global" append="configure_merge"/>
  </Menu>
  <Menu name="help" append="about_merge"><text>&amp;Help</text>
   <Action name="hwinfo"/>

@@ -44,6 +44,8 @@
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kaccel.h>
+#include <kglobalaccel.h>
+#include <kkeydialog.h>
 #include <kpopupmenu.h>
 
 // application specific includes
@@ -110,10 +112,23 @@ KMixWindow::initActions()
 	// settings menu
 	KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
+	new KAction( i18n( "Configure &Global Shortcuts..." ), "configure_shortcuts", 0, this,
+		SLOT( configureGlobalShortcuts() ), actionCollection(), "settings_global" );
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
 	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
 	(void) new KAction( i18n( "Hide Mixer Window" ), Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
+
+	m_globalAccel = new KGlobalAccel( this );
+	m_globalAccel->insert( "Increase volume", i18n( "Increase Volume of Master Channel"), QString::null,
+			KShortcut(), KShortcut(), this, SLOT( increaseVolume() ) );
+	m_globalAccel->insert( "Decrease volume", i18n( "Decrease Volume of Master Channel"), QString::null,
+			KShortcut(), KShortcut(), this, SLOT( decreaseVolume() ) );
+	m_globalAccel->insert( "Toggle mute", i18n( "Toggle Mute of Master Channel"), QString::null,
+			KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
+	m_globalAccel->readSettings();
+	m_globalAccel->updateConnections();
+
 	createGUI( "kmixui.rc" );
 }
 
@@ -551,6 +566,62 @@ void
 KMixWindow::showSelectedMixer( int mixer )
 {
 	m_wsMixers->raiseWidget( mixer );
+}
+
+void
+KMixWindow::configureGlobalShortcuts()
+{
+	KKeyDialog::configure( m_globalAccel, 0, false ) ;
+        m_globalAccel->updateConnections();
+}
+
+void
+KMixWindow::toggleMuted()
+{
+   Mixer* mixerMasterCard = Mixer::masterCard();
+   MixDevice* mdMaster = Mixer::masterCardDevice();
+   if ( mixerMasterCard && mdMaster ) {
+     if ( mdMaster->hasMute() ) {
+       mdMaster->setMuted( !mdMaster->isMuted() );
+       mixerMasterCard->commitVolumeChange(mdMaster);
+     }
+   }
+}
+
+void
+KMixWindow::increaseVolume()
+{
+   Mixer* mixerMasterCard = Mixer::masterCard();
+   MixDevice* mdMaster = Mixer::masterCardDevice();
+   if ( mixerMasterCard && mdMaster ) {
+	Volume vol = mdMaster->getVolume();
+	long inc = vol.maxVolume() / 20;
+	if ( inc == 0 )
+		inc = 1;
+	for ( int i = 0; i < vol.count(); i++ ) {
+		long newVal = (vol[i]) + inc;
+		mdMaster->setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
+	}
+	mixerMasterCard->commitVolumeChange(mdMaster);
+   }
+}
+
+void
+KMixWindow::decreaseVolume()
+{
+   Mixer* mixerMasterCard = Mixer::masterCard();
+   MixDevice* mdMaster = Mixer::masterCardDevice();
+   if ( mixerMasterCard && mdMaster ) {
+	Volume vol = mdMaster->getVolume();
+	long inc = vol.maxVolume() / 20;
+	if ( inc == 0 )
+		inc = 1;
+	for ( int i = 0; i < vol.count(); i++ ) {
+		long newVal = (vol[i]) - inc;
+		mdMaster->setVolume( i, newVal > 0 ? newVal : 0 );
+	}
+	mixerMasterCard->commitVolumeChange(mdMaster);
+   }
 }
 
 #include "kmix.moc"
