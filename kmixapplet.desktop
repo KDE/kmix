@@ -48,6 +48,8 @@ Name[wa]=Maxheu d' sons
 Name[xx]=xxSound Mixerxx
 
 Comment=Volume and sound channel mixer control
+Comment[cs]=Ovládání hlasitosti a zvukových kanálů
+Comment[sv]=Volymkontroll och ljudkanalmixer
 
 Icon=kmix
 X-KDE-Library=kmix_panelapplet
