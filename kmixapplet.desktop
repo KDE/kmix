@@ -11,6 +11,7 @@ Name[cy]=Cymysgydd Sŵn
 Name[da]=Lydmikser
 Name[de]=Lautstärkeregler
 Name[el]=Μείκτης ήχου
+Name[es]=Mezclador de audio
 Name[et]=Helimikser
 Name[eu]=Soinu nahasgailua
 Name[fi]=Äänimikseri
@@ -48,6 +49,9 @@ Name[xx]=xxSound Mixerxx
 
 Comment=Volume and sound channel mixer control
 Comment[cs]=Ovládání hlasitosti a zvukových kanálů
+Comment[de]=Kontrolle der Lautstärke
+Comment[sr]=Контрола јачине и миксета звучних канала
+Comment[sr@Latn]=Контрола јачине и миксета звучних канала
 Comment[sv]=Volymkontroll och ljudkanalmixer
 
 Icon=kmix
