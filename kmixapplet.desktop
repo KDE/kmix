@@ -46,13 +46,19 @@ Name[uk]=Аудіомікшер
 Name[uz]=Аудио миксер
 Name[wa]=Maxheu d' sons
 Name[xx]=xxSound Mixerxx
+Name[zh_CN]=混音器
 
 Comment=Volume and sound channel mixer control
 Comment[cs]=Ovládání hlasitosti a zvukových kanálů
 Comment[de]=Kontrolle der Lautstärke
+Comment[es]=Control del volumen y los canales de sonido del mezclador
+Comment[pt]=Controlo de volume e canais de som
+Comment[pt_BR]=Controlo de volume e canais de som
 Comment[sr]=Контрола јачине и миксета звучних канала
 Comment[sr@Latn]=Контрола јачине и миксета звучних канала
 Comment[sv]=Volymkontroll och ljudkanalmixer
+Comment[uk]=Керування гучністю і міксером звукових каналів
+Comment[zh_CN]=音量和声道混音器控制
 
 Icon=kmix
 X-KDE-Library=kmix_panelapplet
