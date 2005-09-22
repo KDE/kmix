@@ -50,6 +50,7 @@ Name[zh_CN]=混音器
 
 Comment=Volume and sound channel mixer control
 Comment[cs]=Ovládání hlasitosti a zvukových kanálů
+Comment[da]=Mikserkontrol for lydstyrke og lydkanal
 Comment[de]=Kontrolle der Lautstärke
 Comment[es]=Control del volumen y los canales de sonido del mezclador
 Comment[pt]=Controlo de volume e canais de som
