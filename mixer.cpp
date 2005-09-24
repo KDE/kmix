@@ -201,7 +201,8 @@ int Mixer::open()
       }
       else {
           _mixerBackend->prepareSignalling(this);
-          readSetFromHW();
+          // poll once to give the GUI a chance to rebuild it's info
+          QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
       }
       return err;
 }
