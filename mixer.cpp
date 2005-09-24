@@ -85,7 +85,7 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 
   _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
- 
+
   QCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST
   objid.setNum(_mixerBackend->m_devnum);
@@ -96,7 +96,7 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 #endif
   objid.prepend("Mixer");
   DCOPObject::setObjId( objid );
-  
+
 }
 
 Mixer::~Mixer() {
@@ -196,7 +196,13 @@ int Mixer::open()
 	}
       }
 	*/
-      _pollingTimer->start(50); // !!
+      if ( _mixerBackend->needsPolling() ) {
+          _pollingTimer->start(50);
+      }
+      else {
+          _mixerBackend->prepareSignalling(this);
+          readSetFromHW();
+      }
       return err;
 }
 
@@ -624,7 +630,7 @@ void Mixer::toggleMute( int deviceidx )
   if (!mixdev) return;
 
   bool previousState= mixdev->isMuted();
-  
+
   mixdev->setMuted( !previousState );
 
   _mixerBackend->writeVolumeToHW(deviceidx, mixdev->getVolume() );

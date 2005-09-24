@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 #ifndef MIXER_BACKEND_H
 #define MIXER_BACKEND_H
 
@@ -35,7 +35,7 @@ protected:
   /// Derived classes MUST implement this to open the mixer. Returns a KMix error code (O=OK).
   virtual int open() = 0;
   virtual int close() = 0;
-  
+
   /** Returns, whether this Mixer object contains a valid Mixer. You should return "false", when
    * the Mixer with the devnum given in the constructor is not supported by the Backend. The two
    * typical cases are:
@@ -50,7 +50,7 @@ protected:
 
   /** @return true, if the Mixer is open (and thus can be operated) */
   bool isOpen();
-  
+
   virtual bool prepareUpdateFromHW();
 
   /// Volume Read
@@ -65,6 +65,16 @@ protected:
   /// Recording Switches
   virtual bool setRecsrcHW( int devnum, bool on) = 0;
   virtual bool isRecsrcHW( int devnum ) = 0;
+
+  /// Overwrite in the backend if the backend can see changes without polling
+  virtual bool needsPolling() {
+      return true;
+  }
+
+  /** overwrite this if you need to connect to slots in the mixer (e.g. readSetFromHW)
+      this called in the very beginning and only if !needsPolling
+  */
+  virtual void prepareSignalling( Mixer *mixer ) {}
 
   MixDevice* recommendedMaster();
 
