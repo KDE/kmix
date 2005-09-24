@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <assert.h>
+#include <qsocketnotifier.h>
 
 extern "C"
 {
@@ -44,19 +46,20 @@ extern "C"
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
-
 Mixer_Backend*
 ALSA_getMixer( int device )
 {
 	Mixer_Backend *l_mixer;
-	l_mixer = new Mixer_ALSA( device );
+        l_mixer = new Mixer_ALSA( device );
 	return l_mixer;
 }
 
 Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
 {
-	_handle = 0; 
-        _initialUpdate = true;
+    m_fds = 0;
+    m_sns = 0;
+    _handle = 0;
+    _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
@@ -119,7 +122,7 @@ Mixer_ALSA::open()
 	devName = QString( "hw:%1" ).arg( m_devnum );
 
     QString probeMessage;
-	
+
     if (virginOpen)
 	probeMessage += "Trying ALSA Device '" + devName + "': ";
 
@@ -180,7 +183,7 @@ Mixer_ALSA::open()
 	return Mixer::ERR_READ;
     }
 
-    kdDebug(67100) << probeMessage << "found" << endl;	
+    kdDebug(67100) << probeMessage << "found" << endl;
 
     unsigned int mixerIdx = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
@@ -218,7 +221,7 @@ Mixer_ALSA::open()
 	if( virginOpen )
 	{
 	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
-		
+
 		//kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
 
 	    Volume* vol = 0;
@@ -228,7 +231,7 @@ Mixer_ALSA::open()
 		vol = new Volume(); // Dummy, unused
 		mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
-		
+
 		// --- get Enum names START ---
 		int numEnumitems = snd_mixer_selem_get_enum_items(elem);
 		if ( numEnumitems > 0 ) {
@@ -269,14 +272,14 @@ Mixer_ALSA::open()
 			// It's not best coding ever, anyway
 			snd_mixer_selem_get_capture_volume_range( elem, &minVolumePlay, &maxVolumePlay );
 		}
-		
+
 		/* Create Volume object. If there is no volume on this device,
 		 * it will be created with maxVolume == 0 && minVolume == 0 */
 		vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
 		mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
-		
-		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {   
+
+		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {
 			//kdDebug(67100) << "has_playback_switch()" << endl;
 			canMute = true;
 		}
@@ -354,7 +357,44 @@ Mixer_ALSA::open()
     // return with success
     m_isOpen = true;
 
+    /* setup for select on stdin and the mixer fd */
+    if ((m_count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  m_count << "\n";
+	return Mixer::ERR_OPEN;
+    }
+
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
+
+    m_fds = (struct pollfd*)calloc(m_count, sizeof(struct pollfd));
+    if (m_fds == NULL) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
+        return Mixer::ERR_OPEN;
+    }
+
+    m_fds->events = POLLIN;
+    if ((err = snd_mixer_poll_descriptors(_handle, m_fds, m_count)) < 0) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
+        return Mixer::ERR_OPEN;
+    }
+    if (err != m_count) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  m_count << "\n";
+        return Mixer::ERR_OPEN;
+    }
+
     return 0;
+}
+
+void Mixer_ALSA::prepareSignalling( Mixer *mixer )
+{
+    assert( !m_sns );
+
+    m_sns = new QSocketNotifier*[m_count];
+    for ( int i = 0; i < m_count; ++i )
+    {
+        kdDebug() << "socket " << i << endl;
+        m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+        mixer->connect(m_sns[i], SIGNAL(activated(int)), mixer, SLOT(readSetFromHW()));
+    }
 }
 
 
@@ -387,6 +427,18 @@ Mixer_ALSA::close()
   mixer_sid_list.clear();
   m_mixDevices.clear();
 
+  if ( m_fds )
+      free( m_fds );
+  m_fds = 0;
+
+  if ( m_sns )
+  {
+      for ( int i = 0; i < m_count; i++ )
+          delete m_sns[i];
+      delete [] m_sns;
+      m_sns = 0;
+  }
+
   return ret;
 }
 
@@ -408,7 +460,7 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 
 /*
  I would have liked to use the following trivial implementation instead of the
- code above. But it will also return elem's. which are not selem's. As there is 
+ code above. But it will also return elem's. which are not selem's. As there is
  no way to check an elem's type (e.g. elem->type == SND_MIXER_ELEM_SIMPLE), callers
  of getMixerElem() cannot check the type. :-(
 	snd_mixer_elem_t* elem = mixer_elem_list[ devnum ];
@@ -416,80 +468,47 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
  */
 }
 
-bool Mixer_ALSA::prepareUpdateFromHW() {
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
-    if ( _initialUpdate ) {
-        // make sure the very first call to prepareUpdate() returns "true". Otherwise kmix will
-        // show wrong values until a mixer change happens.
-        _initialUpdate = false;
-        return true;
-    }
-    bool updated = false;
-    struct pollfd  *fds;
-    unsigned short revents;
-    int count, err;
+bool Mixer_ALSA::prepareUpdateFromHW()
+{
+    if ( !m_fds )
+	return false;
 
-/* setup for select on stdin and the mixer fd */
-    if ((count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
-	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  count << "\n";
-	return false;
-    }
-
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
-    
-    fds = (struct pollfd*)calloc(count, sizeof(struct pollfd));
-    if (fds == NULL) {
-	kdDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
-	return false;
-    }
-
-    fds->events = POLLIN;
-    if ((err = snd_mixer_poll_descriptors(_handle, fds, count)) < 0) {
-	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
-        free(fds);
-	return false;
-    }
-    if (err != count) {
-	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " count=" <<  count << "\n";
-        free(fds);
-	return false;
-    }
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
 
     // Poll on fds with 10ms timeout
     // Hint: alsamixer has an infinite timeout, but we cannot do this because we would block
     // the X11 event handling (Qt event loop) with this.
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 3\n";
-    int finished = poll(fds, count, 10);
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 4\n";
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 3\n";
+    int finished = poll(m_fds, m_count, 10);
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 4\n";
 
+    bool updated = false;
     if (finished > 0) {
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
+        kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
 
-	if (snd_mixer_poll_descriptors_revents(_handle, fds, count, &revents) >= 0) {
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
+        unsigned short revents;
 
+        if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_count, &revents) >= 0) {
+            kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
 
 	    if (revents & POLLNVAL) {
 		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
-                free(fds);
 		return false;
 	    }
 	    if (revents & POLLERR) {
 		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLERR\n";
-                free(fds);
 		return false;
 	    }
 	    if (revents & POLLIN) {
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
+                kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
 
 		snd_mixer_handle_events(_handle);
                 updated = true;
 	    }
 	}
-    }
 
-    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 8\n";
-    free(fds);
+    }
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() " << updated << endl;;
     return updated;
 }
 
@@ -561,7 +580,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 		if ( ret != 0 ) {
 			kdDebug(67100) << "snd_mixer_selem_get_capture_switch() failed 1\n";
 		}
-	
+
 		ret = snd_mixer_selem_set_capture_switch_all( elem, sw );
                 if ( ret != 0 ) {
                         kdDebug(67100) << "snd_mixer_selem_set_capture_switch_all() failed 2: errno=" << ret << "\n";
@@ -574,7 +593,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 #ifdef ALSA_SWITCH_DEBUG
 		kdDebug(67100) << "Mixer_ALSA::setRecsrcHW(" << devnum <<  "," << on << ")joined. Before=" << before << " Set=" << sw << " After=" << after <<"\n";
 #endif
-		
+
 	}
 	else
 	{
@@ -659,7 +678,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	{
 		return 0;
 	}
-		
+
 
 	// *** READ PLAYBACK VOLUMES *************
 	if ( snd_mixer_selem_has_playback_volume( elem ) )
@@ -689,19 +708,17 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	    else
 	    {
 		int ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-		if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;			
+		if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;
 		volume.setVolume( Volume::LEFT , left );
 		volume.setVolume( Volume::RIGHT, right );
 	    }
 	}
 
+        kdDebug() << "snd_mixer_selem_has_playback_volume " << mixerIdx << " " << snd_mixer_selem_has_playback_switch( elem ) << endl;
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 	    snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-	    if( elem_sw == 0 )
-		volume.setMuted(true);
-	    else
-		volume.setMuted(false);
+            volume.setMuted( elem_sw == 0 );
 	}
 
 	return 0;
@@ -711,18 +728,18 @@ int
 Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
 {
 	int left, right;
-	
+
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
 	if ( !elem )
 	{
 		return 0;
 	}
-	
-	// --- VOLUME  - WE HAVE JUST ONE TYPE OF VOLUME A TIME, 
+
+	// --- VOLUME  - WE HAVE JUST ONE TYPE OF VOLUME A TIME,
 	// CAPTURE OR PLAYBACK, SO IT"S JUST USE VOLUME ------------
 	left = volume[ Volume::LEFT ];
 	right = volume[ Volume::RIGHT ];
-	
+
 	if (snd_mixer_selem_has_playback_volume( elem ) ) {
 		snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
@@ -733,7 +750,7 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
 			snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
 	}
-	
+
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 		int sw = 0;
