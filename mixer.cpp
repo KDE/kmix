@@ -164,7 +164,15 @@ int Mixer::open()
          setMasterDevice(noMaster); // no master
       }
 
-      _pollingTimer->start(50); // !!
+      if ( _mixerBackend->needsPolling() ) {
+           _pollingTimer->start(50);
+       }
+       else {
+           _mixerBackend->prepareSignalling(this);
+           // poll once to give the GUI a chance to rebuild it's info
+           QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
+       }
+
       return err;
 }
 

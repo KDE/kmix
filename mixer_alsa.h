@@ -26,6 +26,7 @@
 
 // Forward QT includes
 class QString;
+class QSocketNotifier;
 
 #include "mixer_backend.h"
 
@@ -62,6 +63,10 @@ class Mixer_ALSA : public Mixer_Backend
                 bool _initialUpdate;
 		snd_mixer_t *_handle;
 		QString devName;
+	        struct pollfd  *m_fds;
+                QSocketNotifier **m_sns;
+		int m_count;
+
 };
 
 #endif

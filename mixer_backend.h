@@ -78,6 +78,14 @@ protected:
   virtual bool setRecsrcHW( int devnum, bool on) = 0;
   virtual bool isRecsrcHW( int devnum ) = 0;
 
+  /// Overwrite in the backend if the backend can see changes without polling
+  virtual bool needsPolling() { return true; }
+
+  /** overwrite this if you need to connect to slots in the mixer (e.g. readSetFromHW)
+      this called in the very beginning and only if !needsPolling
+  */
+  virtual void prepareSignalling( Mixer * ) {}
+
   MixDevice* recommendedMaster();
 
   /** Return a translated error text for the given error number.

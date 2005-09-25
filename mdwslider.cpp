@@ -92,6 +92,8 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 			KShortcut(), KShortcut(), this, SLOT( toggleMuted() ) );
 	
 	installEventFilter( this ); // filter for popup
+
+        update();
 }
 
 

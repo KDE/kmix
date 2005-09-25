@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <assert.h>
+#include <qsocketnotifier.h>
 
 #undef KMIX_ALSA_NEW_PK
 // !!! don't commit with the next line uncommented. This enables the correct primary-key
@@ -52,7 +54,6 @@ extern "C"
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
-
 Mixer_Backend*
 ALSA_getMixer( int device )
 {
@@ -63,6 +64,8 @@ ALSA_getMixer( int device )
 
 Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
 {
+    m_fds = 0;
+    m_sns = 0;
 	_handle = 0; 
         _initialUpdate = true;
 }
@@ -341,7 +344,44 @@ Mixer_ALSA::open()
     // return with success
     m_isOpen = true;
 
+    /* setup for select on stdin and the mixer fd */
+    if ((m_count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  m_count << "\n";
+	return Mixer::ERR_OPEN;
+    }
+
+    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
+
+    m_fds = (struct pollfd*)calloc(m_count, sizeof(struct pollfd));
+    if (m_fds == NULL) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
+        return Mixer::ERR_OPEN;
+    }
+
+    m_fds->events = POLLIN;
+    if ((err = snd_mixer_poll_descriptors(_handle, m_fds, m_count)) < 0) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
+        return Mixer::ERR_OPEN;
+    }
+    if (err != m_count) {
+	kdDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  m_count << "\n";
+        return Mixer::ERR_OPEN;
+    }
+
     return 0;
+}
+
+void Mixer_ALSA::prepareSignalling( Mixer *mixer )
+{
+    assert( !m_sns );
+
+    m_sns = new QSocketNotifier*[m_count];
+    for ( int i = 0; i < m_count; ++i )
+    {
+        kdDebug() << "socket " << i << endl;
+        m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+        mixer->connect(m_sns[i], SIGNAL(activated(int)), mixer, SLOT(readSetFromHW()));
+    }
 }
 
 
@@ -373,6 +413,18 @@ Mixer_ALSA::close()
   mixer_elem_list.clear();
   mixer_sid_list.clear();
   m_mixDevices.clear();
+
+  if ( m_fds )
+      free( m_fds );
+  m_fds = 0;
+
+  if ( m_sns )
+  {
+      for ( int i = 0; i < m_count; i++ )
+          delete m_sns[i];
+      delete [] m_sns;
+      m_sns = 0;
+  }
 
   return ret;
 }
@@ -682,13 +734,11 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	    }
 	}
 
+        kdDebug() << "snd_mixer_selem_has_playback_volume " << mixerIdx << " " << snd_mixer_selem_has_playback_switch( elem ) << endl;
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 	    snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-	    if( elem_sw == 0 )
-		volume.setMuted(true);
-	    else
-		volume.setMuted(false);
+            volume.setMuted( elem_sw == 0 );
 	}
 
 	return 0;
