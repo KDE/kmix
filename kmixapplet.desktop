@@ -53,6 +53,7 @@ Comment[cs]=Ovládání hlasitosti a zvukových kanálů
 Comment[da]=Mikserkontrol for lydstyrke og lydkanal
 Comment[de]=Kontrolle der Lautstärke
 Comment[es]=Control del volumen y los canales de sonido del mezclador
+Comment[it]=Controllo del volume e del mixer sonoro
 Comment[pl]=Sterowanie mikserem dźwięku i kanałów
 Comment[pt]=Controlo de volume e canais de som
 Comment[pt_BR]=Controlo de volume e canais de som
@@ -60,6 +61,7 @@ Comment[sr]=Контрола јачине и миксета звучних ка�
 Comment[sr@Latn]=Контрола јачине и миксета звучних канала
 Comment[sv]=Volymkontroll och ljudkanalmixer
 Comment[uk]=Керування гучністю і міксером звукових каналів
+Comment[xx]=xxVolume and sound channel mixer controlxx
 Comment[zh_CN]=音量和声道混音器控制
 
 Icon=kmix
