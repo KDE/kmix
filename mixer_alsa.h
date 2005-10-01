@@ -44,6 +44,9 @@ class Mixer_ALSA : public Mixer_Backend
       		virtual unsigned int enumIdHW(int mixerIdx);
 		virtual bool prepareUpdateFromHW();
 
+                virtual bool needsPolling() { return false; }
+                virtual void prepareSignalling( Mixer *mixer );
+
 		virtual QString getDriverName();
 		
 	protected:
