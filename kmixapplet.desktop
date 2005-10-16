@@ -49,6 +49,7 @@ Name[xx]=xxSound Mixerxx
 Name[zh_CN]=混音器
 
 Comment=Volume and sound channel mixer control
+Comment[bg]=Управление на силата на звука и каналите
 Comment[ca]=Control i mesclador de volum i canals de so
 Comment[cs]=Ovládání hlasitosti a zvukových kanálů
 Comment[da]=Mikserkontrol for lydstyrke og lydkanal
