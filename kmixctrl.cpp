@@ -47,7 +47,7 @@ static KCmdLineOptions options[] =
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-   KLocale::setMainCatalogue("kmix");
+   KLocale::setMainCatalog("kmix");
    KAboutData aboutData( "kmixctrl", I18N_NOOP("KMixCtrl"),
 			 APP_VERSION, description, KAboutData::License_GPL,
 			 "(c) 2000 by Stefan Schimanski");

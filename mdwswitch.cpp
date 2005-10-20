@@ -30,7 +30,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
 #include <kdebug.h>
@@ -159,7 +159,7 @@ void MDWSwitch::showContextMenu()
     if( m_mixerwidget == NULL )
 	return;
 
-    KPopupMenu *menu = m_mixerwidget->getPopup();
+    KMenu *menu = m_mixerwidget->getPopup();
 
     QPoint pos = QCursor::pos();
     menu->popup( pos );

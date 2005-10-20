@@ -24,7 +24,7 @@
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
 #include <kdebug.h>
@@ -791,7 +791,7 @@ void MDWSlider::showContextMenu()
 	if( m_mixerwidget == NULL )
 		return;
 	
-	KPopupMenu *menu = m_mixerwidget->getPopup();
+	KMenu *menu = m_mixerwidget->getPopup();
 	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
 	
 	if ( m_sliders.count()>1 ) {

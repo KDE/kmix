@@ -39,7 +39,7 @@
 #include <kaction.h>
 #include <kapplication.h>
 #include <kstdaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kaccel.h>
@@ -292,7 +292,7 @@ KMixWindow::loadConfig()
    if (a) a->setChecked( m_showMenubar );
 
    // restore window size and position
-   if ( !kapp->isRestored() ) // done by the session manager otherwise
+   if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
    {
 		QSize defSize( minimumWidth(), height() );
 		QSize size = config->readSizeEntry("Size", &defSize );

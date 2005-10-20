@@ -28,7 +28,7 @@
 
 // KDE
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <klocale.h>
 #include <kiconloader.h>
 
@@ -122,7 +122,7 @@ void ViewBase::mousePressEvent( QMouseEvent *e )
  * Return a popup menu. This contains basic entries.
  * More can be added by the caller.
  */
-KPopupMenu* ViewBase::getPopup()
+KMenu* ViewBase::getPopup()
 {
    popupReset();
    return _popMenu;
@@ -132,7 +132,7 @@ void ViewBase::popupReset()
 {
     KAction *a;
 
-    _popMenu = new KPopupMenu( this );
+    _popMenu = new KMenu( this );
     _popMenu->addTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
     a = _actions->action( "toggle_channels" );

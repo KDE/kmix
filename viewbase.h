@@ -27,7 +27,7 @@
 
 // KDE
 class KActionCollection;
-class KPopupMenu;
+class KMenu;
 class MixSet;
 class Mixer;
 class MixDevice;
@@ -101,7 +101,7 @@ public:
     /**
      * Popup stuff
      */
-    virtual KPopupMenu* getPopup();
+    virtual KMenu* getPopup();
     virtual void popupReset();
     virtual void showContextMenu();
 
@@ -120,7 +120,7 @@ protected:
 
     Mixer *_mixer;
     MixSet *_mixSet;
-    KPopupMenu *_popMenu;
+    KMenu *_popMenu;
     KActionCollection* _actions;
     ViewFlags _vflags;
     GUIProfile* _guiprof;

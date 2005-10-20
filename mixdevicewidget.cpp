@@ -24,7 +24,7 @@
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
 #include <kdebug.h>

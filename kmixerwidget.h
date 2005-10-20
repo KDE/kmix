@@ -28,7 +28,7 @@
 class QString;
 class QGridLayout;
 
-class KPopupMenu;
+class KMenu;
 
 #include "mixer.h"
 #include "mixdevicewidget.h"

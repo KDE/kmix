@@ -30,7 +30,7 @@
 #include <kconfig.h>
 #include <kcombobox.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
@@ -122,7 +122,7 @@ void MDWEnum::showContextMenu()
     if( m_mixerwidget == NULL )
 	return;
 
-    KPopupMenu *menu = m_mixerwidget->getPopup();
+    KMenu *menu = m_mixerwidget->getPopup();
 
     QPoint pos = QCursor::pos();
     menu->popup( pos );

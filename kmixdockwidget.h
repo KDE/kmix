@@ -60,7 +60,7 @@ class KMixDockWidget : public KSystemTray  {
    void mousePressEvent(QMouseEvent *);
    void mouseReleaseEvent(QMouseEvent *);
    void wheelEvent(QWheelEvent *);
-   void contextMenuAboutToShow( KPopupMenu* menu );
+   void contextMenuAboutToShow( KMenu* menu );
    void toggleMinimizeRestore();
 
  private:

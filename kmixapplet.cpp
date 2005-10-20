@@ -69,7 +69,7 @@ extern "C"
 {
   KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
   {
-     KGlobal::locale()->insertCatalogue("kmix");
+     KGlobal::locale()->insertCatalog("kmix");
      return new KMixApplet(configFile, Plasma::Normal,
                            parent, "kmixapplet");
   }

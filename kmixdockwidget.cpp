@@ -25,7 +25,7 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kapplication.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kaudioplayer.h>
@@ -83,7 +83,7 @@ void KMixDockWidget::createActions()
   (void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
   actionCollection(), "dock_mute" );
   KAction *a = actionCollection()->action( "dock_mute" );
-  KPopupMenu *popupMenu = contextMenu();
+  KMenu *popupMenu = contextMenu();
   if ( a ) a->plug( popupMenu );
 
   // Put "Select Master Channel" dialog in context menu
@@ -348,7 +348,7 @@ KMixDockWidget::dockMute()
 }
 
 void
-KMixDockWidget::contextMenuAboutToShow( KPopupMenu* /* menu */ )
+KMixDockWidget::contextMenuAboutToShow( KMenu* /* menu */ )
 {
     KAction* showAction = actionCollection()->action("minimizeRestore");
     if ( parentWidget() && showAction )
