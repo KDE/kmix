@@ -43,6 +43,7 @@
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kaccel.h>
+#include <kxmlguifactory.h>
 
 // application specific includes
 #include "mixertoolbox.h"
