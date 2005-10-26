@@ -27,9 +27,9 @@
 
 // KDE
 #include <kactioncollection.h>
+#include <kactionclasses.h>
 #include <kdebug.h>
 #include <kstdaction.h>
-
 // KMix
 #include "mdwslider.h"
 #include "mixer.h"
