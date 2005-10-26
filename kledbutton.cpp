@@ -26,8 +26,9 @@
 
 
 KLedButton::KLedButton(const QColor &col, QWidget *parent, const char *name)
-   : KLed( col, parent, name )
-{	
+   : KLed( col, parent )
+{
+	setObjectName(name);
     // KLed and thus KLedButtung does not do proper positioning in QLayout's.
     // Thus I will do a dirty trick here
     installEventFilter(parent);
@@ -35,8 +36,9 @@ KLedButton::KLedButton(const QColor &col, QWidget *parent, const char *name)
 
 KLedButton::KLedButton(const QColor& col, KLed::State st, KLed::Look look,
 		       KLed::Shape shape, QWidget *parent, const char *name)
-   : KLed( col, st, look, shape, parent, name )
+   : KLed( col, st, look, shape, parent )
 {
+		setObjectName(name);
 }
 
 KLedButton::~KLedButton()

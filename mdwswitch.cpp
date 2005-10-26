@@ -62,7 +62,7 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
     createWidgets();
 
     m_keys->insert( "Toggle switch", i18n( "Toggle Switch" ), QString::null,
-		    KShortcut(), KShortcut(), this, SLOT( toggleSwitch() ) );
+		    KShortcut(), this, SLOT( toggleSwitch() ) );
 
     // The keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp (now: kmixtoolbox.cpp)
     //m_keys->readSettings();

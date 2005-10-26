@@ -62,7 +62,7 @@ MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
 
     /* !!! remove this for production version */
     m_keys->insert( "Next Value", i18n( "Next Value" ), QString::null,
-		    KShortcut(), KShortcut(), this, SLOT( nextEnumId() ) );
+		    KShortcut(), this, SLOT( nextEnumId() ) );
 
     installEventFilter( this ); // filter for popup
 }
@@ -91,7 +91,8 @@ void MDWEnum::createWidgets()
         _label = new QLabel( m_mixdevice->name(), this);
 	_layout->addWidget(_label);
         _label->setFixedHeight(_label->sizeHint().height());
-        _enumCombo = new KComboBox( false, this, "mixerCombo" );
+        _enumCombo = new KComboBox( false, this);
+		_enumCombo->setObjectName( "mixerCombo" );
 	// ------------ fill ComboBox start ------------
 	int maxEnumId= m_mixdevice->enumValues().count();
 	for (int i=0; i<maxEnumId; i++ ) {
