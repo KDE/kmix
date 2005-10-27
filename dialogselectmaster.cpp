@@ -90,7 +90,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 	//id++;
       } // end for all_Mixers
 
-      QToolTip::add( m_cMixer, i18n("Current mixer" ) );
+      m_cMixer->setToolTip( i18n("Current mixer" ) );
       mixerNameLayout->addWidget(m_cMixer);
 
     } // end if (more_than_1_Mixer)

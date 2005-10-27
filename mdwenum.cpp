@@ -82,7 +82,7 @@ void MDWEnum::createWidgets()
 		_layout = new QHBoxLayout( this );
 		_layout->setAlignment(Qt::AlignVCenter);
 	}
-	QToolTip::add( this, m_mixdevice->name() );
+	this->setToolTip( m_mixdevice->name() );
 	
         //this->setStretchFactor( _layout, 0 );
         //QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
@@ -102,7 +102,7 @@ void MDWEnum::createWidgets()
 	_layout->addWidget(_enumCombo);
         _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
         connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
-        QToolTip::add( _enumCombo, m_mixdevice->name() );
+        _enumCombo->setToolTip( m_mixdevice->name() );
 	
 	//_layout->addSpacing( 4 );
 }

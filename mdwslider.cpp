@@ -189,7 +189,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 m_iconLabel->installEventFilter( this );
 	 QString muteTip( i18n( "Mute/Unmute %1"));
 	 muteTip = muteTip.arg(m_mixdevice->name());
-	 QToolTip::add( m_iconLabel, muteTip );
+	 m_iconLabel->setToolTip( muteTip );
 	 
 	 sliLayout->addSpacing( 3 );
 	 
@@ -231,7 +231,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 }
 		 
 		 slider->installEventFilter( this );
-		 QToolTip::add( slider, m_mixdevice->name() );
+		 slider->setToolTip( m_mixdevice->name() );
 		 
 		 if( i>0 && isStereoLinked() ) {
 			 // show only one (the first) slider, when the user wants it so
@@ -269,7 +269,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 			 reclayout->addWidget( m_recordLED );
 			 connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
 			 m_recordLED->installEventFilter( this );
-                         QToolTip::add( m_recordLED, i18n( "Record" ) );
+                         m_recordLED->setToolTip( i18n( "Record" ) );
 		 }
 		 else
 		 {

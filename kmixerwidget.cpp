@@ -84,7 +84,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
        if ( !mixer->mixerName().isEmpty() )
 	   s.append(" \"").append(mixer->mixerName()).append("\"");
        QLabel *errorLabel = new QLabel( s, this );
-       errorLabel->setAlignment( Qt::AlignCenter | Qt::WordBreak );
+       errorLabel->setAlignment( Qt::AlignCenter | Qt::TextWordWrap );
        layout->addWidget( errorLabel );
    }
 }
@@ -158,7 +158,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     balanceAndDetail->addSpacing( 10 );
 
     connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
-    QToolTip::add( m_balanceSlider, i18n("Left/Right balancing") );
+    m_balanceSlider->setToolTip( i18n("Left/Right balancing") );
 
     /* @todo : update all Background Pixmaps
     const QPixmap bgPixmap = UserIcon("bg_speaker");

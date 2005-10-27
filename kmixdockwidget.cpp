@@ -192,7 +192,7 @@ KMixDockWidget::setVolumeTip()
 	    // there was an old Tooltip: remove it
 	    QToolTip::remove(this);
 	}
-	QToolTip::add(this, tip);
+	this->setToolTip( tip);
     }
     _oldToolTipValue = newToolTipValue;
 }

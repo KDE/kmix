@@ -86,7 +86,7 @@ void MDWSwitch::createWidgets()
 		_layout = new QHBoxLayout( this );
 		_layout->setAlignment(Qt::AlignVCenter);
 	}
-	QToolTip::add( this, m_mixdevice->name() );
+	this->setToolTip( m_mixdevice->name() );
 	
 	
 	_layout->addSpacing( 4 );
