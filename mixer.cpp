@@ -460,6 +460,7 @@ void Mixer::setVolume( int deviceidx, int percentage )
   if (!mixdev) return;
 
   Volume vol=mixdev->getVolume();
+  // @todo The next call doesn't handle negative volumes correctly.
   vol.setAllVolumes( (percentage*vol.maxVolume())/100 );
   _mixerBackend->writeVolumeToHW(deviceidx, vol);
 }
@@ -493,7 +494,25 @@ int Mixer::volume( int deviceidx )
   if (!mixdev) return 0;
 
   Volume vol=mixdev->getVolume();
-  return (vol.getVolume( Volume::LEFT )*100)/vol.maxVolume();
+  // @todo This will not work, if minVolume != 0      !!! 
+  //       e.g.: minVolume=5 or minVolume=-10
+  // The solution is to check two cases:
+  //     volume < 0 => use minVolume for volumeRange
+  //     volume > 0 => use maxVolume for volumeRange
+  //     If chosen volumeRange==0 => return 0
+  // As this is potentially used often (Sliders, ...), it
+  // should beimplemented in the Volume class. 
+
+  // For now we go with "maxVolume()", like in the rest of KMix.
+  long volumeRange = vol.maxVolume(); // -vol.minVolume() ;
+  if ( volumeRange == 0 )
+  {
+    return 0;
+  }
+  else
+  {
+     return ( vol.getVolume( Volume::LEFT )*100) / volumeRange ;
+  }
 }
 
 // @dcop , especially for use in KMilo
