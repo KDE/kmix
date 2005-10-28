@@ -363,7 +363,7 @@ Mixer_ALSA::open()
 	return Mixer::ERR_OPEN;
     }
 
-    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
 
     m_fds = (struct pollfd*)calloc(m_count, sizeof(struct pollfd));
     if (m_fds == NULL) {
@@ -473,23 +473,23 @@ bool Mixer_ALSA::prepareUpdateFromHW()
     if ( !m_fds )
 	return false;
 
-    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
 
     // Poll on fds with 10ms timeout
     // Hint: alsamixer has an infinite timeout, but we cannot do this because we would block
     // the X11 event handling (Qt event loop) with this.
-    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 3\n";
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 3\n";
     int finished = poll(m_fds, m_count, 10);
-    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 4\n";
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 4\n";
 
     bool updated = false;
     if (finished > 0) {
-        kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
+        //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
 
         unsigned short revents;
 
         if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_count, &revents) >= 0) {
-            kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
+            //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
 
 	    if (revents & POLLNVAL) {
 		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
@@ -500,7 +500,7 @@ bool Mixer_ALSA::prepareUpdateFromHW()
 		return false;
 	    }
 	    if (revents & POLLIN) {
-                kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
+                //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
 
 		snd_mixer_handle_events(_handle);
                 updated = true;
@@ -508,7 +508,7 @@ bool Mixer_ALSA::prepareUpdateFromHW()
 	}
 
     }
-    kdDebug(67100) << "Mixer_ALSA::prepareUpdate() " << updated << endl;;
+    //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() " << updated << endl;;
     return updated;
 }
 
@@ -714,7 +714,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	    }
 	}
 
-        kdDebug() << "snd_mixer_selem_has_playback_volume " << mixerIdx << " " << snd_mixer_selem_has_playback_switch( elem ) << endl;
+        //kdDebug() << "snd_mixer_selem_has_playback_volume " << mixerIdx << " " << snd_mixer_selem_has_playback_switch( elem ) << endl;
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 	    snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
