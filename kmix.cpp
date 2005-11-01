@@ -44,6 +44,7 @@
 #include <kdebug.h>
 #include <kaccel.h>
 #include <kxmlguifactory.h>
+#include <kglobal.h>
 
 // application specific includes
 #include "mixertoolbox.h"
@@ -211,7 +212,7 @@ KMixWindow::saveSettings()
 void
 KMixWindow::saveConfig()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
     config->setGroup(0);
 
    // make sure we don't start without any UI
@@ -259,7 +260,7 @@ KMixWindow::saveConfig()
 void
 KMixWindow::loadConfig()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
     config->setGroup(0);
 
    m_showDockWidget = config->readBoolEntry("AllowDocking", true);
@@ -357,7 +358,7 @@ KMixWindow::initMixerWidgets()
 		m_wsMixers->addWidget( mw );
 
 		QString grp(mw->id());
-		mw->loadConfig( kapp->config(), grp );
+		mw->loadConfig( KGlobal::config(), grp );
 
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
