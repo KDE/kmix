@@ -68,7 +68,7 @@ KMixApp::newInstance()
 		//kdDebug(67100) <<  "KMixApp::newInstance() !m_kmix" << endl;
 		m_kmix = new KMixWindow;
 		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
-		if ( isRestored() && KMainWindow::canBeRestored(0) )
+		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
 		{
 			m_kmix->restore(0, false);
 		}
