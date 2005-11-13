@@ -572,6 +572,7 @@ void
 KMixWindow::configureGlobalShortcuts()
 {
 	KKeyDialog::configure( m_globalAccel, 0, false ) ;
+        m_globalAccel->writeSettings();
         m_globalAccel->updateConnections();
 }
 
