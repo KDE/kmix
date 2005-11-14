@@ -26,7 +26,7 @@ class KComboBox;
 #include <qradiobutton.h>
 class Q3ScrollView;
 #include <qstringlist.h>
-class Q3VBox;
+#include <kvbox.h>
 class QVBoxLayout;
 
 #include <kdialogbase.h>
@@ -52,7 +52,7 @@ class DialogSelectMaster : public KDialogBase
     QVBoxLayout* _layout;
     KComboBox* m_cMixer;
     Q3ScrollView* m_scrollableChannelSelector;
-    Q3VBox *m_vboxForScrollView;
+    KVBox *m_vboxForScrollView;
     Q3ButtonGroup *m_buttonGroupForScrollView;
     QStringList m_mixerPKs;
 

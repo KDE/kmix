@@ -143,7 +143,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     m_mixerPKs.clear();
     /** Reset page end -------------------------------------------------- */
 
-    m_vboxForScrollView = new Q3VBox(m_scrollableChannelSelector->viewport());
+    m_vboxForScrollView = new KVBox(m_scrollableChannelSelector->viewport());
     m_scrollableChannelSelector->addChild(m_vboxForScrollView);
 
     QString masterKey = "----noMaster---";  // Use a non-matching name as default
