@@ -579,49 +579,36 @@ KMixWindow::configureGlobalShortcuts()
 void
 KMixWindow::toggleMuted()
 {
-   Mixer* mixerMasterCard = Mixer::masterCard();
-   MixDevice* mdMaster = Mixer::masterCardDevice();
-   if ( mixerMasterCard && mdMaster ) {
-     if ( mdMaster->hasMute() ) {
-       mdMaster->setMuted( !mdMaster->isMuted() );
-       mixerMasterCard->commitVolumeChange(mdMaster);
-     }
+   Mixer* mixerMaster = Mixer::masterCard();
+   if ( mixerMaster != 0 ) {
+      MixDevice* md = mixerMaster->masterDevice();
+      if ( md != 0 && md->hasMute() ) {
+         mixerMaster->toggleMute(md->num());
+      }
    }
 }
 
 void
 KMixWindow::increaseVolume()
 {
-   Mixer* mixerMasterCard = Mixer::masterCard();
-   MixDevice* mdMaster = Mixer::masterCardDevice();
-   if ( mixerMasterCard && mdMaster ) {
-	Volume vol = mdMaster->getVolume();
-	long inc = vol.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < vol.count(); i++ ) {
-		long newVal = (vol[i]) + inc;
-		mdMaster->setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
-	}
-	mixerMasterCard->commitVolumeChange(mdMaster);
+   Mixer* mixerMaster = Mixer::masterCard();
+   if ( mixerMaster != 0 ) {
+      MixDevice* md = mixerMaster->masterDevice();
+      if ( md != 0 ) {
+         mixerMaster->increaseVolume(md->num());
+      }
    }
 }
 
 void
 KMixWindow::decreaseVolume()
 {
-   Mixer* mixerMasterCard = Mixer::masterCard();
-   MixDevice* mdMaster = Mixer::masterCardDevice();
-   if ( mixerMasterCard && mdMaster ) {
-	Volume vol = mdMaster->getVolume();
-	long inc = vol.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < vol.count(); i++ ) {
-		long newVal = (vol[i]) - inc;
-		mdMaster->setVolume( i, newVal > 0 ? newVal : 0 );
-	}
-	mixerMasterCard->commitVolumeChange(mdMaster);
+   Mixer* mixerMaster = Mixer::masterCard();
+   if ( mixerMaster != 0 ) {
+      MixDevice* md = mixerMaster->masterDevice();
+      if ( md != 0 ) {
+         mixerMaster->decreaseVolume(md->num());
+      }
    }
 }
 
