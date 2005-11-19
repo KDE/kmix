@@ -129,6 +129,13 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 			primaryKeyOfMixer.replace("=","_");
 			
 			mixer->setID(primaryKeyOfMixer);
+                        if ( Mixer::masterCard() == 0 ) {
+                           // We have no master card yet. This actually only happens when there was
+                           // not one defined in the kmixrc.
+                           // So lets set this here as master card.
+                           Mixer::setMasterCard(primaryKeyOfMixer);
+                        }
+
 		} // valid
 		else
 		{
