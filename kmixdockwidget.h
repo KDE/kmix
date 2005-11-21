@@ -47,7 +47,7 @@ class KMixDockWidget : public KSystemTray  {
    void ignoreNextEvent();
    ViewDockAreaPopup* getDockAreaPopup();
 
-	Mixer *m_mixer;
+   Mixer *m_mixer;
    ViewDockAreaPopup *_dockAreaPopup;
    KAudioPlayer *_audioPlayer;
 
