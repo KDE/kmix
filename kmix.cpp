@@ -186,13 +186,12 @@ void
 KMixWindow::updateDocking()
 {
 	// delete old dock widget
-	if (m_dockWidget)
+	if (!m_showDockWidget)
 	{
 		delete m_dockWidget;
 		m_dockWidget = 0L;
 	}
-
-	if (m_showDockWidget)
+	else if (m_showDockWidget && !m_dockWidget)
 	{
 
 		// create dock widget
@@ -215,6 +214,7 @@ KMixWindow::updateDocking()
 		 */
 		QString selectChannel = i18n("Select Channel"); // This text will be used in KDE3.4.1 !!!
 
+		m_dockWidget->updatePixmap();
 		m_dockWidget->show();
 	}
 }
@@ -503,7 +503,7 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
       mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
    }
 
-   this->setUpdatesEnabled(false);
+   this->setUpdatesEnabled(true);
 
    // avoid invisible and unaccessible main window
    if( !m_showDockWidget && !isVisible() )
