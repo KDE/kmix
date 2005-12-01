@@ -45,7 +45,6 @@ Name[tr]=Ses Karıştırıcı
 Name[uk]=Аудіомікшер
 Name[uz]=Аудио миксер
 Name[wa]=Maxheu d' sons
-Name[xx]=xxSound Mixerxx
 Name[zh_CN]=混音器
 
 Comment=Volume and sound channel mixer control
@@ -56,6 +55,7 @@ Comment[da]=Mikserkontrol for lydstyrke og lydkanal
 Comment[de]=Kontrolle der Lautstärke
 Comment[es]=Control del volumen y los canales de sonido del mezclador
 Comment[et]=Helitugevuse ja helikanalite seadistamine
+Comment[eu]=Bolumena eta soinu-kanalen nahasketarako kontrola
 Comment[fr]=Contrôle du volume et des canaux de la console de mixage
 Comment[he]=שינוי הגדרות עוצמת קול של כרטיס הקול
 Comment[hu]=Hangerőbeállító és keverő
@@ -71,7 +71,6 @@ Comment[sr]=Контрола јачине и миксета звучних ка�
 Comment[sr@Latn]=Kontrola jačine i mikseta zvučnih kanala
 Comment[sv]=Volymkontroll och ljudkanalmixer
 Comment[uk]=Керування гучністю і міксером звукових каналів
-Comment[xx]=xxVolume and sound channel mixer controlxx
 Comment[zh_CN]=音量和声道混音器控制
 
 Icon=kmix
