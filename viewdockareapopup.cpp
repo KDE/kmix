@@ -27,6 +27,7 @@
 #include <qlayout.h>
 #include <qframe.h>
 #include <qpushbutton.h>
+#include <qdatetime.h>
 
 // KDE
 #include <kdebug.h>
@@ -53,6 +54,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _frame->setLineWidth( 1 );
 
     _layoutMDW = new QGridLayout( _frame, 1, 1, 2, 1, "KmixPopupLayout" );
+    _hideTimer = new QTime();
     init();
 }
 
@@ -61,7 +63,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 
 
 
-void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
+void ViewDockAreaPopup::mousePressEvent(QMouseEvent *me)
 {
     /**
        Hide the popup:
@@ -71,9 +73,15 @@ void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
        properly take care of it in QWidget.
     */
     if ( ! this->hasMouse() ) {
+        _hideTimer->start();
         hide(); // needed!
     }
     return;
+}
+
+bool ViewDockAreaPopup::justHidden()
+{
+    return _hideTimer->elapsed() < 300;
 }
 
 void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {

@@ -248,6 +248,9 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		}
 
                 // Case 2: User wants to show volume popup
+		if ( _dockAreaPopup->justHidden() )
+			return;
+
 		if ( _dockAreaPopup->isVisible() )
 		{
 			_dockAreaPopup->hide();
