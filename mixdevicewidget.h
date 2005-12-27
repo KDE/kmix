@@ -56,6 +56,8 @@ class MixDeviceWidget
       Q_OBJECT
 
 public:
+    enum ValueStyle { NNONE = 0, NABSOLUTE = 1, NRELATIVE = 2 } ;
+
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
                        bool small, Qt::Orientation orientation,
                        QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
@@ -75,6 +77,7 @@ public:
     virtual void setStereoLinked( bool ) {};
     virtual void setLabeled( bool );
     virtual void setTicks( bool ) {};
+    virtual void setValueStyle( ValueStyle ) {};
 
     virtual KGlobalAccel *keys(void);
 

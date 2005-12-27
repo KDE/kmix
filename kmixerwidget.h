@@ -83,6 +83,7 @@ class KMixerWidget : public QWidget
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
+   void setValueStyle( int vs );
    void toggleMenuBarSlot();
 
    void saveConfig( KConfig *config, const QString &grp );
@@ -107,6 +108,7 @@ class KMixerWidget : public QWidget
    bool _iconsEnabled;
    bool _labelsEnabled;
    bool _ticksEnabled;
+   int _valueStyle;
    MixDevice::DeviceCategory m_categoryMask;
 
    void createLayout(ViewBase::ViewFlags vflags);

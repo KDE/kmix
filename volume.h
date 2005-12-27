@@ -27,8 +27,7 @@ class Volume
                   CUSTOM1  = 8, CUSTOM2   = 9, CHIDMAX  = 9 };
 
 
-  Volume( ChannelMask chmask = MALL, long maxVolume = 100, long minVolume=0 );
-  Volume( ChannelMask chmask, long maxVolume, long minVolume, long maxVolumeRec, long minVolumeRec );
+  Volume( ChannelMask chmask = MALL, long maxVolume = 100, long minVolume=0, bool isCapture=false );
   Volume( const Volume &v );
   Volume( int channels, long maxVolume );
 
@@ -52,6 +51,7 @@ class Volume
 
   void setMuted( bool val ) { _muted = val; };
   bool isMuted()      { return _muted; };
+  bool isCapture() { return _isCapture; };
 
   friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
   friend kdbgstream& operator<<(kdbgstream& os, const Volume& vol);
@@ -60,15 +60,14 @@ class Volume
     // access it, when private. Strange, as operator<<() is declared friend.
   static int _channelMaskEnum[10];
   bool          _muted;
+  bool          _isCapture; // true, when the Volume represents capture/record levels
   long          _chmask;
   long          _volumes[CHIDMAX+1];
   long          _maxVolume;
   long          _minVolume;
-  long          _maxVolumeRec;
-  long          _minVolumeRec;
 
 private:
-  void init( ChannelMask chmask, long, long, long, long );
+  void init( ChannelMask chmask, long, long, bool );
 
   long volrange( int vol );
   long volrangeRec( int vol );

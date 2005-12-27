@@ -63,7 +63,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 
 
 
-void ViewDockAreaPopup::mousePressEvent(QMouseEvent *me)
+void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
 {
 //	kdDebug() << "Teste pres mouse" << endl;
     /**

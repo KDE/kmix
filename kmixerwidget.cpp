@@ -61,7 +61,9 @@ KMixerWidget::KMixerWidget( int _id, Mixer *mixer, const QString &mixerName,
    : QWidget( parent, name ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0),
      m_id( _id ),
-     _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false )
+     _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false ),
+     _valueStyle ( -1 ) // this definitely does not correspond to the 'default value display' style,
+			// so the style will be set by a later call to setValueStyle()
 
 {
     m_categoryMask = categoryMask;
@@ -197,6 +199,18 @@ void KMixerWidget::setTicks( bool on )
 		for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
 			ViewBase* mixerWidget = *it;
 		    KMixToolBox::setTicks(mixerWidget->_mdws, on);
+		} // for all tabs
+    }
+}
+
+void KMixerWidget::setValueStyle( int vs )
+{
+    if ( _valueStyle!=vs ) {
+		// value was changed
+		_valueStyle = vs;
+		for ( std::vector<ViewBase*>::iterator it = _views.begin(); it != _views.end();  it++) {
+			ViewBase* mixerWidget = *it;
+		    KMixToolBox::setValueStyle(mixerWidget->_mdws, vs);
 		} // for all tabs
     }
 }

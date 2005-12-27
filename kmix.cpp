@@ -258,6 +258,13 @@ KMixWindow::saveConfig()
       config->writeEntry( "MasterMixerDevice", mdMaster->getPK() );
    }
 
+   if ( m_valueStyle == MixDeviceWidget::NABSOLUTE )
+      config->writeEntry( "ValueStyle", "Absolute");
+   else if ( m_valueStyle == MixDeviceWidget::NRELATIVE )
+      config->writeEntry( "ValueStyle", "Relative");
+   else 
+     config->writeEntry( "ValueStyle", "None" );
+
    if ( m_toplevelOrientation  == Qt::Vertical )
       config->writeEntry( "Orientation","Vertical" );
    else
@@ -286,6 +293,7 @@ KMixWindow::loadConfig()
    m_hideOnClose = config->readBoolEntry("HideOnClose", true);
    m_showTicks = config->readBoolEntry("Tickmarks", true);
    m_showLabels = config->readBoolEntry("Labels", true);
+   const QString& valueStyleString = config->readEntry("ValueStyle", "None");
    m_onLogin = config->readBoolEntry("startkdeRestore", true );
    m_startVisible = config->readBoolEntry("Visible", true);
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
@@ -297,6 +305,12 @@ KMixWindow::loadConfig()
    QString masterDev = config->readEntry( "MasterMixerDevice", "" );
    Mixer::setMasterCardDevice(masterDev);
 
+   if ( valueStyleString == "Absolute" )
+       m_valueStyle = MixDeviceWidget::NABSOLUTE;
+   else if ( valueStyleString == "Relative" )
+       m_valueStyle = MixDeviceWidget::NRELATIVE;
+   else 
+       m_valueStyle = MixDeviceWidget::NNONE;
 
    if ( orientationString == "Vertical" )
        m_toplevelOrientation  = Qt::Vertical;
@@ -368,6 +382,7 @@ KMixWindow::initMixerWidgets()
 
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
+		mw->setValueStyle ( m_valueStyle );
 		// !! I am still not sure whether this works 100% reliably - chris
 		mw->show();
 	}
@@ -412,6 +427,9 @@ KMixWindow::showSettings()
       m_prefDlg->m_onLogin->setChecked( m_onLogin );
       m_prefDlg->_rbVertical  ->setChecked( m_toplevelOrientation == Qt::Vertical );
       m_prefDlg->_rbHorizontal->setChecked( m_toplevelOrientation == Qt::Horizontal );
+      m_prefDlg->_rbNone->setChecked( m_valueStyle == MixDeviceWidget::NNONE );
+      m_prefDlg->_rbAbsolute->setChecked( m_valueStyle == MixDeviceWidget::NABSOLUTE );
+      m_prefDlg->_rbRelative->setChecked( m_valueStyle == MixDeviceWidget::NRELATIVE );
 
       m_prefDlg->show();
    }
@@ -475,6 +493,14 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    m_showLabels = prefDlg->m_showLabels->isChecked();
    m_onLogin = prefDlg->m_onLogin->isChecked();
 
+   if ( prefDlg->_rbNone->isChecked() ) {
+     m_valueStyle = MixDeviceWidget::NNONE;
+   } else if ( prefDlg->_rbAbsolute->isChecked() ) {
+     m_valueStyle = MixDeviceWidget::NABSOLUTE;
+   } else if ( prefDlg->_rbRelative->isChecked() ) {
+     m_valueStyle = MixDeviceWidget::NRELATIVE;
+   }
+
    bool toplevelOrientationHasChanged =
         ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
      || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
@@ -500,6 +526,7 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    {
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
+      mw->setValueStyle ( m_valueStyle );
       mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
    }
 

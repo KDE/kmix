@@ -252,7 +252,8 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 volLayout->setAlignment(Qt::AlignHCenter);
 	 }
 
-	 // Sliders
+	 // Sliders and volume number indication
+	 QBoxLayout *slinumLayout;
 	 for( int i = 0; i < m_mixdevice->getVolume().count(); i++ )
     {
 		 Volume::ChannelID chid = Volume::ChannelID(i);
@@ -261,6 +262,29 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
 		 int maxvol = m_mixdevice->getVolume().maxVolume();
 		 int minvol = m_mixdevice->getVolume().minVolume();
+
+		 if ( _orientation == Qt::Vertical ) {
+		   slinumLayout = new QVBoxLayout( volLayout );
+		   slinumLayout->setAlignment(Qt::AlignHCenter);
+		 }
+		 else {
+		   slinumLayout = new QHBoxLayout( volLayout );
+		   slinumLayout->setAlignment(Qt::AlignVCenter);
+		 }
+
+		 // create labels to hold volume values (taken from qamix/kamix)
+		 QLabel *number = new QLabel( this );
+		 slinumLayout->addWidget( number );
+		 QFontMetrics *qfm = new QFontMetrics( number->font() );
+		 number->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+		 number->setMinimumWidth( qfm->width("MMM", 3) );
+		 number->setLineWidth( 3 );
+		 number->setPaletteBackgroundColor( QColor(190, 250, 190) );
+		 delete qfm;
+		 // don't show the value by default
+		 number->hide();
+		 updateValue( number, chid );
+		 _numbers.append( number );
 
 		 QWidget* slider;
 		 if ( m_small ) {
@@ -280,8 +304,9 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 if( i>0 && isStereoLinked() ) {
 			 // show only one (the first) slider, when the user wants it so
 			 slider->hide();
+			 number->hide();
 		 }
-		 volLayout->addWidget( slider );  // add to layout
+		 slinumLayout->addWidget( slider );  // add to layout
 		 m_sliders.append ( slider );   // add to list
 		 _slidersChids.append(chid);        // Remember slider-chid association
 		 connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
@@ -428,6 +453,8 @@ MDWSlider::setStereoLinked(bool value)
    m_linked = value;
 
    QWidget *slider = m_sliders.first();
+   QLabel *number = _numbers.first();
+   QString qs = number->text();
 
    /***********************************************************
       Remember value of first slider, so that it can be copied
@@ -446,9 +473,10 @@ MDWSlider::setStereoLinked(bool value)
       firstSliderValueValid = true;
    }
 
-   for( slider=m_sliders.next(); slider!=0 ; slider=m_sliders.next() ) {
+   for( slider=m_sliders.next(), number=_numbers.next();  slider!=0 && number!=0; slider=m_sliders.next(), number=_numbers.next() ) {
       if ( m_linked ) {
          slider->hide();
+	 number->hide();
       }
       else {
          // When splitting, make the next sliders show the same value as the first.
@@ -467,6 +495,9 @@ MDWSlider::setStereoLinked(bool value)
             }
          }
          slider->show();
+	 number->setText(qs);
+         if (m_valueStyle != NNONE)
+	     number->show();
       }
    }
 
@@ -522,6 +553,27 @@ MDWSlider::setTicks( bool ticks )
 }
 
 void
+MDWSlider::setValueStyle( ValueStyle valueStyle )
+{
+    m_valueStyle = valueStyle;
+
+    int i = 0;
+    QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+    for(QLabel *number = _numbers.first(); number!=0; number = _numbers.next(), ++i, ++it) {
+        Volume::ChannelID chid = *it;
+        switch ( m_valueStyle ) {
+	case NNONE: number->hide(); break;
+	default: 
+	    if ( !isStereoLinked() || (i == 0)) {
+	      updateValue( number, chid );
+	      number->show();
+	    }
+	}
+    }
+    layout()->activate();
+}
+
+void
 MDWSlider::setIcons(bool value)
 {
     if ( m_iconLabel != 0 ) {
@@ -552,6 +604,18 @@ MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
         if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
     }
+}
+
+void 
+MDWSlider::updateValue( QLabel *value, Volume::ChannelID chid ) {
+    QString qs;
+    Volume& vol = m_mixdevice->getVolume();
+
+    if (m_valueStyle == NABSOLUTE )
+      qs.sprintf("%3d",  (int) vol.getVolume( chid ) );
+    else
+        qs.sprintf("%3d", (int)( vol.getVolume( chid ) / (double)vol.maxVolume() * 100 ) );
+    value->setText(qs);
 }
 
 
@@ -598,11 +662,14 @@ void MDWSlider::volumeChange( int )
       else {
          kdDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
       }
+
+      updateValue( _numbers.first(), Volume::LEFT );
    } // joined
    else {
       int n = 0;
       QValueList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-      for( QWidget *slider=m_sliders.first(); slider!=0; slider=m_sliders.next(), ++it )
+      QLabel *number = _numbers.first();
+      for( QWidget *slider=m_sliders.first(); slider!=0 && number!=0; slider=m_sliders.next(), number=_numbers.next(), ++it )
       {
           Volume::ChannelID chid = *it;
 	  if ( slider->inherits( "KSmallSlider" ) )
@@ -620,6 +687,7 @@ void MDWSlider::volumeChange( int )
 				else
 					vol.setVolume( chid, bigSlider->value() );
 	  }
+	  updateValue( number, chid );
 	  n++;
       }
    }
@@ -754,6 +822,7 @@ void MDWSlider::update()
 			}
 		} // big slider
 
+		updateValue( _numbers.first(), Volume::LEFT );
 		slider->blockSignals( false );
 	} // only 1 slider (stereo-linked)
 	else {
@@ -789,6 +858,8 @@ void MDWSlider::update()
 						bigSlider->setValue( vol[i] );
 				}
 			}
+
+			updateValue( _numbers.at ( i ), chid );
 
 			slider->blockSignals( false );
 		} // for all sliders

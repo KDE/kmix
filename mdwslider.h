@@ -27,6 +27,7 @@
 
 #include <qvaluelist.h>
 #include <qwidget.h>
+#include <qlabel.h>
 #include <qptrlist.h>
 #include <qpixmap.h>
 #include <qrangecontrol.h>
@@ -72,6 +73,7 @@ public:
     void setLabeled( bool value );
     void setTicks( bool ticks );
     void setIcons( bool value );
+    void setValueStyle( ValueStyle valueStyle );
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
     QSize sizeHint() const;
@@ -108,8 +110,10 @@ private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
     void createWidgets( bool showMuteLED, bool showRecordLED );
+    void updateValue( QLabel *value, Volume::ChannelID chid );
 
     bool m_linked;
+    ValueStyle m_valueStyle;
     QLabel *m_iconLabel;
     KLedButton *m_muteLED;
     KLedButton *m_recordLED;
@@ -117,6 +121,8 @@ private:
     QBoxLayout *_layout;
     QPtrList<QWidget> m_sliders;
     QValueList<Volume::ChannelID> _slidersChids;
+    QPtrList<QLabel> _numbers;
+  //    QValueList<Volume::ChannelID> _numbersChids;
 };
 
 #endif

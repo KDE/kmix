@@ -19,6 +19,7 @@ class KMixToolBox {
     static void setIcons  (QPtrList<QWidget> &mdws, bool on );
     static void setLabels (QPtrList<QWidget> &mdws, bool on );
     static void setTicks  (QPtrList<QWidget> &mdws, bool on );
+    static void setValueStyle  (QPtrList<QWidget> &mdws, int vs );
     static void loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix  );
     static void saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix  );
 };

@@ -70,6 +70,15 @@ void KMixToolBox::setTicks(QPtrList<QWidget> &mdws, bool on ) {
     }
 }
 
+void KMixToolBox::setValueStyle(QPtrList<QWidget> &mdws, int vs ) {
+    QWidget *qmdw;
+    for ( qmdw=mdws.first(); qmdw != 0; qmdw=mdws.next() ) {
+	if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
+	  static_cast<MixDeviceWidget*>(qmdw)->setValueStyle( (MixDeviceWidget::ValueStyle) vs );
+	}
+    }
+}
+
 void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QString &grp, const QString &viewPrefix) {
     int n = 0;
     config->setGroup( grp );

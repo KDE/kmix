@@ -48,6 +48,7 @@ class KMixWindow;
 class Mixer;
 
 #include "mixer.h"
+#include "mixdevicewidget.h"
 
 
 class 
@@ -100,6 +101,7 @@ KMixWindow : public KMainWindow
    bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
+   MixDeviceWidget::ValueStyle m_valueStyle;             // No numbers by default
    bool m_onLogin;
    bool m_startVisible;
    bool m_showMenubar;

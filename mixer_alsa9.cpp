@@ -203,6 +203,7 @@ Mixer_ALSA::open()
 
 	bool canRecord = false;
 	bool canMute = false;
+	bool canCapture = false;
 	long maxVolumePlay= 0, minVolumePlay= 0;
 	long maxVolumeRec = 0, minVolumeRec = 0;
 	validDevice = true;
@@ -224,11 +225,12 @@ Mixer_ALSA::open()
 
 		//kdDebug() << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
 
-	    Volume* vol = 0;
+	    Volume* volPlay = 0, *volCapture = 0;
 	    QPtrList<QString> enumList;
 	    if ( snd_mixer_selem_is_enumerated(elem) ) {
 		cc = MixDevice::ENUM;
-		vol = new Volume(); // Dummy, unused
+		volPlay = new Volume(); // Dummy, unused
+		volCapture = new Volume();
 		mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
 
@@ -261,21 +263,24 @@ Mixer_ALSA::open()
 				? Volume::MLEFT : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
 			chn = (Volume::ChannelMask) (chn | chnTmp);
 			cc = MixDevice::SLIDER;
+			volPlay = new Volume( chn, maxVolumePlay, minVolumePlay );
+		} else {
+			volPlay = new Volume();
 		}
-		else if ( snd_mixer_selem_has_capture_volume(elem) ) {
+		if ( snd_mixer_selem_has_capture_volume(elem) ) {
 			//kdDebug(67100) << "has_capture_volume()" << endl;
 			chnTmp = snd_mixer_selem_is_capture_mono( elem )
 				? Volume::MLEFT : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT );
 			chn = (Volume::ChannelMask) (chn | chnTmp);
 			cc = MixDevice::SLIDER;
-			// We can have Playback OR Capture. Not both at same time
-			// It's not best coding ever, anyway
-			snd_mixer_selem_get_capture_volume_range( elem, &minVolumePlay, &maxVolumePlay );
+			canCapture = true;
+			volCapture = new Volume( chn, maxVolumeRec, minVolumeRec, true );
+		} else {
+			volCapture = new Volume();
 		}
 
 		/* Create Volume object. If there is no volume on this device,
 		 * it will be created with maxVolume == 0 && minVolume == 0 */
-		vol = new Volume( chn, maxVolumePlay, minVolumePlay, maxVolumeRec, minVolumeRec );
 		mixer_elem_list.append( elem );
 		mixer_sid_list.append( sid );
 
@@ -301,19 +306,34 @@ Mixer_ALSA::open()
 		}
 	    } // is ordinary mixer element (NOT an enum)
 
-		MixDevice* md =
-		    new MixDevice( mixerIdx,
-				   *vol,
+		MixDevice* md = new MixDevice( mixerIdx,
+				   *volPlay,
 					canRecord,
 				   canMute,
 				   snd_mixer_selem_id_get_name( sid ),
 				   ct,
 				   cc );
-        if (!masterChosen && ct==MixDevice::VOLUME) {
-           // Determine a nicer MasterVolume
-           m_recommendedMaster = md;
-           masterChosen = true;
-        }
+
+			m_mixDevices.append( md );
+
+
+		if (!masterChosen && ct==MixDevice::VOLUME) {
+		// Determine a nicer MasterVolume
+		m_recommendedMaster = md;
+		masterChosen = true;
+		}
+
+		if ( canCapture && !canRecord ) {
+			MixDevice *mdCapture =
+		    	new MixDevice( mixerIdx,
+				   *volCapture,
+					true,
+				   canMute,
+				   snd_mixer_selem_id_get_name( sid ),
+				   ct,
+				   cc );
+			m_mixDevices.append( mdCapture );
+		}
 
 		if ( enumList.count() > 0 ) {
 		  int maxEnumId= enumList.count();
@@ -324,18 +344,24 @@ Mixer_ALSA::open()
 		    enumValuesRef.append(enumList.at(i) );
 		  }
 		}
-		m_mixDevices.append( md );
 		//kdDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
-		delete vol;
+		delete volPlay;
+		delete volCapture;
 	    } // virginOpen
 	    else
 	    {
-		MixDevice* md = m_mixDevices.at( mixerIdx );
-		if( !md )
-		{
-		    return Mixer::ERR_INCOMPATIBLESET;
-		}
-		writeVolumeToHW( mixerIdx, md->getVolume() );
+			MixDevice* md;
+			bool found = false;
+    		for ( md = m_mixDevices.first(); md != 0; md = m_mixDevices.next() ) {
+				if ( md->num() == mixerIdx ) {
+					found = true;
+					writeVolumeToHW( mixerIdx, md->getVolume() );
+				}
+			}
+			if( !found )
+			{
+				return Mixer::ERR_INCOMPATIBLESET;
+			}
 	    } // !virginOpen
     } // for all elems
 
@@ -681,7 +707,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 
 
 	// *** READ PLAYBACK VOLUMES *************
-	if ( snd_mixer_selem_has_playback_volume( elem ) )
+	if ( snd_mixer_selem_has_playback_volume( elem ) && !volume.isCapture() )
 	{
 		int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
                 if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
@@ -697,7 +723,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
                 }
 	}
 	else
-	if ( snd_mixer_selem_has_capture_volume ( elem ) )
+	if ( snd_mixer_selem_has_capture_volume ( elem ) && volume.isCapture() )
 	{
             int ret = snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
             if ( ret != 0 ) kdDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [get_capture_volume,L] failed, errno=" << ret << endl;
@@ -740,12 +766,12 @@ Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
 	left = volume[ Volume::LEFT ];
 	right = volume[ Volume::RIGHT ];
 
-	if (snd_mixer_selem_has_playback_volume( elem ) ) {
+	if (snd_mixer_selem_has_playback_volume( elem ) && !volume.isCapture() ) {
 		snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
 			snd_mixer_selem_set_playback_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
 	}
-	else if ( snd_mixer_selem_has_capture_volume( elem ) ) {
+	else if ( snd_mixer_selem_has_capture_volume( elem ) && volume.isCapture() ) {
 		snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
 		if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
 			snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );

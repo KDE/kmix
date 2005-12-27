@@ -59,6 +59,9 @@ KMixPrefDlg : public KDialogBase
    QCheckBox *m_onLogin;
    QRadioButton *_rbVertical;
    QRadioButton *_rbHorizontal;
+   QRadioButton *_rbNone;
+   QRadioButton *_rbAbsolute;
+   QRadioButton *_rbRelative;
 };
 
 #endif

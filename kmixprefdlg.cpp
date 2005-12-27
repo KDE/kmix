@@ -68,6 +68,24 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
    layout->addWidget( m_onLogin );
 
+   QBoxLayout *numbersLayout = new QHBoxLayout( layout );
+   QButtonGroup *numbersGroup = new QButtonGroup( 3, Qt::Horizontal, i18n("Numbers"), m_generalTab );
+   numbersGroup->setRadioButtonExclusive(true);
+   QLabel* qlbl = new QLabel(  i18n("Volume Values"), m_generalTab );
+   _rbNone = new QRadioButton( i18n("&None"), m_generalTab );
+   _rbAbsolute = new QRadioButton( i18n("A&bsolute"), m_generalTab );
+   _rbRelative   = new QRadioButton( i18n("&Relative"), m_generalTab );
+   numbersGroup->insert(_rbNone);
+   numbersGroup->insert(_rbAbsolute);
+   numbersGroup->insert(_rbRelative);
+   numbersGroup->hide();
+
+   numbersLayout->add(qlbl);
+   numbersLayout->add(_rbNone);
+   numbersLayout->add(_rbAbsolute);
+   numbersLayout->add(_rbRelative);
+   numbersLayout->addStretch();
+
    QBoxLayout *orientationLayout = new QHBoxLayout( layout );
    QButtonGroup* orientationGroup = new QButtonGroup( 2, Qt::Horizontal, i18n("Orientation"), m_generalTab );
    //orientationLayout->add(orientationGroup);
