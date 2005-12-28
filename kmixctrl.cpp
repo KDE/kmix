@@ -57,7 +57,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    KCmdLineArgs::init( argc, argv, &aboutData );
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-   KApplication app( false, false );
+   KApplication app( false );
 
    // get maximum values
    KConfig *config= new KConfig("kmixrc", true, false);
