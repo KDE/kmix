@@ -193,8 +193,8 @@ void MixDevice::write( KConfig *config, const QString& grp )
    config->setGroup(devgrp);
    // kdDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 
-   config->writeEntry("volumeL", getVolume( Volume::LEFT ) );
-   config->writeEntry("volumeR", getVolume( Volume::RIGHT ) );
+   config->writeEntry("volumeL", int(getVolume( Volume::LEFT )) );
+   config->writeEntry("volumeR", int(getVolume( Volume::RIGHT )) );
    config->writeEntry("is_muted", (int)_volume.isMuted() );
    config->writeEntry("is_recsrc", (int)isRecSource() );
    config->writeEntry("name", _name);
