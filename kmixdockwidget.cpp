@@ -49,7 +49,7 @@
 #include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name, bool volumePopup )
-    : KSystemTray( parent, name ),
+    : KSystemTray( parent ),
       m_mixer(mixer),
       _dockAreaPopup(0L),
       _audioPlayer(0L),
@@ -58,6 +58,7 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name,
       _oldPixmapType('-'),
       _volumePopup(volumePopup)
 {
+	setObjectName(name);
     Mixer* preferredMasterMixer = Mixer::masterCard();
     if ( preferredMasterMixer != 0 ) {
        m_mixer = preferredMasterMixer;

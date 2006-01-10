@@ -262,7 +262,7 @@ void KMixApplet::loadConfig()
     cfg->setGroup(0);
 	
     _mixerId = cfg->readEntry( "Mixer", "undef" );
-    _mixerName = cfg->readEntry( "MixerName", QString::null );
+    _mixerName = cfg->readEntry( "MixerName", QString());
 
     _customColors = cfg->readBoolEntry( "ColorCustom", false );
 	

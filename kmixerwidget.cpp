@@ -110,7 +110,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     m_topLayout = new QVBoxLayout( this, 0, 3,  "m_topLayout" );
 
     // Create tabs of input + output + [...]
-    m_ioTab = new KTabWidget( this, "ioTab" );
+    m_ioTab = new KTabWidget( this);
+	m_ioTab->setObjectName( "ioTab" );
     m_topLayout->add( m_ioTab );
 
 
