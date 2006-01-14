@@ -188,7 +188,7 @@ void DialogSelectMaster::apply()
      }
      else {
         mixer->setMasterDevice( m_mixerPKs[channel_id] );
-     	emit newMasterSelected(soundcard_id, channel_id);
+     	emit newMasterSelected(soundcard_id, m_mixerPKs[channel_id] );
      }
    }
 }

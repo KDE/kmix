@@ -23,15 +23,18 @@
 #ifndef KMIXDOCKWIDGET_H
 #define KMIXDOCKWIDGET_H
 
+class QFrame;
+class QString;
 #include <qwidget.h>
 #include <qvbox.h>
+
 #include <ksystemtray.h>
 
 class Mixer;
-class QFrame;
 class KAudioPlayer;
-class ViewDockAreaPopup;
 class MixDeviceWidget;
+class Mixer;
+class ViewDockAreaPopup;
 class Volume;
 
 class KMixDockWidget : public KSystemTray  {
@@ -73,7 +76,7 @@ class KMixDockWidget : public KSystemTray  {
  private slots:
    void dockMute();
    void selectMaster();
-   void handleNewMaster(int soundcard_id, int channel_id);
+   void handleNewMaster(int soundcard_id, QString& channel_id);
 };
 
 #endif
