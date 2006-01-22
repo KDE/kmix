@@ -130,13 +130,13 @@ KMixDockWidget::createMasterVolWidget()
 void KMixDockWidget::selectMaster()
 {
    DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
-   connect ( dsm, SIGNAL(newMasterSelected(int, int)), SLOT( handleNewMaster(int,int) ) );
+   connect ( dsm, SIGNAL(newMasterSelected(int, QString&)), SLOT( handleNewMaster(int,QString&)) ); 
    dsm->show();
     // !! The dialog is modal. Does it delete itself?
 }
 
 
-void KMixDockWidget::handleNewMaster(int soundcard_id, int channel_id) // !! @todo rework parameters
+void KMixDockWidget::handleNewMaster(int soundcard_id, QString& channel_id)
 {
   //kdDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , channel_id=" << channel_id << endl;
   Mixer *mixer = Mixer::mixers().at(soundcard_id);
@@ -146,7 +146,7 @@ void KMixDockWidget::handleNewMaster(int soundcard_id, int channel_id) // !! @to
   }
   m_mixer = mixer;
   Mixer::setMasterCard(mixer->id()); // We must save this information "somewhere".
-  Mixer::setMasterCardDevice( (*mixer)[channel_id]->getPK());
+  Mixer::setMasterCardDevice( channel_id ); 
   createMasterVolWidget();
 }
 

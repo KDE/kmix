@@ -21,7 +21,7 @@ class DialogSelectMaster : public KDialogBase
     ~DialogSelectMaster();
 
  signals:
-    void newMasterSelected(int, int);
+    void newMasterSelected(int, QString& );
 
  public slots:
     void apply();
