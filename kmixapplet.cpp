@@ -270,9 +270,9 @@ void KMixApplet::loadConfig()
     _colors.low = cfg->readColorEntry("ColorLow", &lowColor);
     _colors.back = cfg->readColorEntry("ColorBack", &backColor);
 
-    _colors.mutedHigh = cfg->readColorEntry("MutedColorHigh", &mutedHighColor);
-    _colors.mutedLow = cfg->readColorEntry("MutedColorLow", &mutedLowColor);
-    _colors.mutedBack = cfg->readColorEntry("MutedColorBack", &mutedBackColor);
+    _colors.mutedHigh = cfg->readColorEntry("ColorMutedHigh", &mutedHighColor);
+    _colors.mutedLow = cfg->readColorEntry("ColorMutedLow", &mutedLowColor);
+    _colors.mutedBack = cfg->readColorEntry("ColorMutedBack", &mutedBackColor);
 
     loadConfig( cfg, "Widget");
 }
