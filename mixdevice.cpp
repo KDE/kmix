@@ -141,12 +141,20 @@ void MixDevice::read( KConfig *config, const QString& grp )
    config->setGroup( devgrp );
    //kdDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
 
+   char *nameLeftVolume, *nameRightVolume;
+   if ( _volume.isCapture() ) {
+		nameLeftVolume = "volumeLCapture";
+		nameRightVolume = "volumeRCapture";
+   } else {
+		nameLeftVolume = "volumeL";
+		nameRightVolume = "volumeR";
+   }
    Volume::ChannelMask chMask = Volume::MNONE;
-   int vl = config->readNumEntry("volumeL", -1);
+   int vl = config->readNumEntry(nameLeftVolume, -1);
    if (vl!=-1) {
         chMask = (Volume::ChannelMask)(chMask | Volume::MLEFT);
    }
-   int vr = config->readNumEntry("volumeR", -1);
+   int vr = config->readNumEntry(nameRightVolume, -1);
    if (vr!=-1) {
        chMask = (Volume::ChannelMask)(chMask | Volume::MRIGHT);
    }
@@ -193,8 +201,19 @@ void MixDevice::write( KConfig *config, const QString& grp )
    config->setGroup(devgrp);
    // kdDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 
-   config->writeEntry("volumeL", int(getVolume( Volume::LEFT )) );
-   config->writeEntry("volumeR", int(getVolume( Volume::RIGHT )) );
+   const char *nameLeftVolume, *nameRightVolume;
+   if ( _volume.isCapture() ) {
+              nameLeftVolume = "volumeLCapture";
+              nameRightVolume = "volumeRCapture";
+   } else {
+              nameLeftVolume = "volumeL";
+              nameRightVolume = "volumeR";
+   }
+
+#warning Must remove the two (int) casts, once KConfig can write long's in writeEntry() again
+   config->writeEntry(nameLeftVolume, (int)getVolume( Volume::LEFT ) );
+   config->writeEntry(nameRightVolume, (int)getVolume( Volume::RIGHT ) );
+
    config->writeEntry("is_muted", (int)_volume.isMuted() );
    config->writeEntry("is_recsrc", (int)isRecSource() );
    config->writeEntry("name", _name);

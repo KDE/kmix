@@ -25,6 +25,7 @@
 #include <qpixmap.h>
 #include <qslider.h>
 #include <qstring.h>
+#include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qapplication.h> // for QApplication::revsreseLayout()
 
@@ -112,6 +113,14 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     // Create tabs of input + output + [...]
     m_ioTab = new KTabWidget( this);
 	m_ioTab->setObjectName( "ioTab" );
+    QToolButton* m_profileButton = new QToolButton( m_ioTab );
+    QToolTip::add(m_profileButton,i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
+    m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
+    m_profileButton->adjustSize();
+    // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
+    connect(m_profileButton, SIGNAL(clicked()), SLOT(newSession()));
+    m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
+    m_profileButton->installEventFilter(this);
     m_topLayout->add( m_ioTab );
 
 

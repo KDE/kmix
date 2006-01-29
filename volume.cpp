@@ -34,27 +34,22 @@ int Volume::_channelMaskEnum[10] =
       MCUSTOM1, MCUSTOM2
     };
 
-Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume )
+Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool isCapture  )
 {
-  init(chmask, maxVolume, minVolume, maxVolume, minVolume);
+  init(chmask, maxVolume, minVolume, isCapture);
 }
 
-
-Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, long maxVolumeRec, long minVolumeRec )
-{
-  init(chmask, maxVolume, minVolume, maxVolumeRec, minVolumeRec);
-}
 
 // @ compatiblity constructor
 Volume::Volume( int channels, long maxVolume ) {
    if (channels == 1 ) {
-       init(Volume::MLEFT, maxVolume, 0, maxVolume, 0);
+       init(Volume::MLEFT, maxVolume, 0, false);
    }
    else if (channels == 2) {
-      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, maxVolume, 0);
+      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false );
    }
    else {
-     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, maxVolume, 0);
+     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false );
      kdError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
    }
 }
@@ -64,14 +59,14 @@ Volume::Volume( const Volume &v )
     _chmask     = v._chmask;
     _maxVolume  = v._maxVolume;
     _minVolume  = v._minVolume;
-    _maxVolumeRec  = v._maxVolumeRec;
-    _minVolumeRec  = v._minVolumeRec;
     _muted      = v._muted;
+    _isCapture  = v._isCapture;
     setVolume(v, (ChannelMask)v._chmask);
+
     //    kdDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
 }
 
-void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, long maxVolumeRec, long minVolumeRec )
+void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool isCapture )
 {
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
 	_volumes[i] = 0;
@@ -79,8 +74,7 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, long maxV
     _chmask     = chmask;
     _maxVolume  = maxVolume;
     _minVolume  = minVolume;
-    _maxVolumeRec  = maxVolumeRec;
-    _minVolumeRec  = minVolumeRec;
+    _isCapture = isCapture;
     _muted      = false;
 }
 

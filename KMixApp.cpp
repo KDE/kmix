@@ -42,18 +42,21 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
-	//kdDebug(67100) <<  "KMixApp::newInstance()" << endl;
+	//kdDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility << endl;
 	if ( m_kmix )
 	{	// There already exists an instance/window
-		//kdDebug(67100) <<  "KMixApp::newInstance() m_kmix" << endl;
-		if ( ! _keepVisibility ) {
+		kdDebug(67100) <<  "KMixApp::newInstance() Instance exists" << endl;
+#warning Have to find another way for KUniqueApplication::isRestored()
+		if ( ! _keepVisibility /*&& ! isRestored()*/ ) {
 			//kdDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=false" << endl;
-			// Default case: If KMix is running and the user starts it again,
-			// the KMix main window will be shown.
+			// Default case: If KMix is running and the *USER*
+                        // starts it again, the KMix main window will be shown.
+			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
+			// explicitely be shown.
 			m_kmix->show();
 		}
 		else {
-			//kdDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=true" << endl;
+			//kdDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=true || isRestored()=true" << endl;
 			// Special case: Command line arg --keepVisibility was used:
 			// We don't want to change the visibiliy, thus we don't call show() here.
 			//
