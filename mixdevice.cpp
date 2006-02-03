@@ -210,7 +210,7 @@ void MixDevice::write( KConfig *config, const QString& grp )
               nameRightVolume = "volumeR";
    }
 
-#warning Must remove the two (int) casts, once KConfig can write long's in writeEntry() again
+#warning Must remove the two (int) casts, once KConfig can write long in writeEntry() again
    config->writeEntry(nameLeftVolume, (int)getVolume( Volume::LEFT ) );
    config->writeEntry(nameRightVolume, (int)getVolume( Volume::RIGHT ) );
 
