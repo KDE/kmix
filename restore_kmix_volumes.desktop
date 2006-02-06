@@ -6,6 +6,7 @@ Type=Application
 Exec=kmixctrl --restore
 Name=Restore Mixer Volumes
 Name[bg]=Възстановяване на стойностите на миксера
+Name[bn]=মিক্সার ভলিউম পুনঃস্থাপন করে
 Name[bs]=Vrati postavke miksera
 Name[ca]=Restaura els volums del mesclador
 Name[cs]=Obnovit nastavení hlasitosti
