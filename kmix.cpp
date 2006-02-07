@@ -263,19 +263,19 @@ KMixWindow::loadConfig()
     KConfig *config = KGlobal::config();
     config->setGroup(0);
 
-   m_showDockWidget = config->readBoolEntry("AllowDocking", true);
-   m_volumeWidget = config->readBoolEntry("TrayVolumeControl", true);
+   m_showDockWidget = config->readEntry("AllowDocking", true);
+   m_volumeWidget = config->readEntry("TrayVolumeControl", true);
 	//hide on close has to stay true for usability. KMixPrefDlg option commented out. nolden
-   m_hideOnClose = config->readBoolEntry("HideOnClose", true);
-   m_showTicks = config->readBoolEntry("Tickmarks", true);
-   m_showLabels = config->readBoolEntry("Labels", true);
-   m_onLogin = config->readBoolEntry("startkdeRestore", true );
-   m_startVisible = config->readBoolEntry("Visible", true);
+   m_hideOnClose = config->readEntry("HideOnClose", true);
+   m_showTicks = config->readEntry("Tickmarks", true);
+   m_showLabels = config->readEntry("Labels", true);
+   m_onLogin = config->readEntry("startkdeRestore", true );
+   m_startVisible = config->readEntry("Visible", true);
    kDebug(67100) << "MultiDriver a = " << m_multiDriverMode << endl;
-   m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
+   m_multiDriverMode = config->readEntry("MultiDriver", false);
    kDebug(67100) << "MultiDriver b = " << m_multiDriverMode << endl;
-   m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
-   m_gridView    = config->readBoolEntry("Experimental-ViewGrid", false );
+   m_surroundView    = config->readEntry("Experimental-ViewSurround", false );
+   m_gridView    = config->readEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
    QString mixerMasterCard = config->readEntry( "MasterMixer", "" );
    Mixer::setMasterCard(mixerMasterCard);
@@ -289,7 +289,7 @@ KMixWindow::loadConfig()
        m_toplevelOrientation = Qt::Horizontal;
 
    // show/hide menu bar
-   m_showMenubar = config->readBoolEntry("Menubar", true);
+   m_showMenubar = config->readEntry("Menubar", true);
 
    KToggleAction *a = static_cast<KToggleAction*>(actionCollection()->action("options_show_menubar"));
    if (a) a->setChecked( m_showMenubar );
@@ -298,11 +298,11 @@ KMixWindow::loadConfig()
    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
    {
 		QSize defSize( minimumWidth(), height() );
-		QSize size = config->readSizeEntry("Size", &defSize );
+		QSize size = config->readEntry("Size", defSize );
 		if(!size.isEmpty()) resize(size);
 
 		QPoint defPos = pos();
-		QPoint pos = config->readPointEntry("Position", &defPos);
+		QPoint pos = config->readEntry("Position", defPos);
 		move(pos);
 	}
 }
