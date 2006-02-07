@@ -50,7 +50,7 @@ Volume::Volume( int channels, long maxVolume ) {
    }
    else {
      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false );
-     kdError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
+     kError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
    }
 }
 
@@ -63,7 +63,7 @@ Volume::Volume( const Volume &v )
     _isCapture  = v._isCapture;
     setVolume(v, (ChannelMask)v._chmask);
 
-    //    kdDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
+    //    kDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
 }
 
 void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool isCapture )

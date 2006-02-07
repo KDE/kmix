@@ -236,7 +236,7 @@ QColor interpolate( QColor low, QColor high, int percent ) {
 
 void KSmallSlider::paintEvent( QPaintEvent * )
 {
-//    kdDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
+//    kDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
    QPainter p( this );
 
    int sliderPos = positionFromValue( QAbstractSlider::value() );
@@ -252,7 +252,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    {
        if (  orientation() == Qt::Horizontal ) {
          QRect outer = QRect( 1, 1, sliderPos, height() - 2 );
-//	 kdDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer << endl;
+//	 kDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer << endl;
 
          if ( grayed )
              gradient( p, true, outer, grayLow,
@@ -266,7 +266,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
       else {
          QRect outer = QRect( 1, height()-sliderPos-1, width() - 2, sliderPos-1 );
 /*
-	 kdDebug(67100) << "KSmallSlider::paintEvent: sliderPos=" << sliderPos
+	 kDebug(67100) << "KSmallSlider::paintEvent: sliderPos=" << sliderPos
 			<< "height()=" << height()
 			<< "width()=" << width()
 			<< "outer = " << outer << endl;
@@ -322,12 +322,12 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 /*
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
-//    kdDebug(67100) << "KSmallslider::wheelEvent()" << endl;
+//    kDebug(67100) << "KSmallslider::wheelEvent()" << endl;
     int inc = ( maxValue() - minValue() ) / 20;
     if ( inc < 1)
 	inc = 1;
 
-    //kdDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta() << endl;
+    //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta() << endl;
     if ( e->delta() > 0 ) {
        setValue( QAbstractSlider::value() + inc );
     }
@@ -394,11 +394,11 @@ QSizePolicy KSmallSlider::sizePolicy() const
 {
 
     if ( orientation() == Qt::Vertical ) {
-	//kdDebug(67100) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
+	//kDebug(67100) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
 	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
     }
     else {
-	//kdDebug(67100) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
+	//kDebug(67100) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
         return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     }
 }

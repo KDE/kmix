@@ -185,7 +185,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
 
     show();
-    //    kdDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
+    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
 
@@ -210,7 +210,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 		// The i18n() in the next line will only produce a translated version, if the text is known.
 		// This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
 		// It is possible that the Profile author puts arbitrary names in it.
-		kdDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.utf8() << "name="<<profTab->name.utf8() << "\n";
+		kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.utf8() << "name="<<profTab->name.utf8() << "\n";
 		if ( profTab->type == "SliderSet" ) {
 			ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.utf8(), mixer, vflags, guiprof );
 			possiblyAddView(view);
@@ -226,7 +226,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 		}
 		*/
 		else {
-			kdDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
+			kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
 		}
 	} // for all tabs
 }

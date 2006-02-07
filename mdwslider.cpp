@@ -366,7 +366,7 @@ MDWSlider::setIcon( int icontype )
       } // normal size
    } else
    {
-      kdError(67100) << "Pixmap missing." << endl;
+      kError(67100) << "Pixmap missing." << endl;
    }
 
    layout()->activate();
@@ -571,7 +571,7 @@ void MDWSlider::volumeChange( int )
 			vol.setVolume( Volume::RIGHT, vol.getVolume( Volume::RIGHT ) + volumeDif );				  
       }
       else {
-         kdDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
+         kDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
       }
    } // joined
    else {

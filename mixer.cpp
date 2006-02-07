@@ -106,7 +106,7 @@ Mixer::~Mixer() {
 
 void Mixer::volumeSave( KConfig *config )
 {
-    //    kdDebug(67100) << "Mixer::volumeSave()" << endl;
+    //    kDebug(67100) << "Mixer::volumeSave()" << endl;
     readSetFromHW();
     QString grp("Mixer");
     grp.append(mixerName());
@@ -131,7 +131,7 @@ void Mixer::volumeLoad( KConfig *config )
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
        MixDevice *md = _mixerBackend->m_mixDevices[i];
-       // kdDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
+       // kDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
        // !! @todo Restore record source
        //setRecordSource( md->num(), md->isRecSource() );
        _mixerBackend->setRecsrcHW( md->num(), md->isRecSource() );
@@ -159,7 +159,7 @@ int Mixer::open()
          setMasterDevice(recommendedMaster->getPK() );
       }
       else {
-         kdError(67100) << "Mixer::open() no master detected." << endl;
+         kError(67100) << "Mixer::open() no master detected." << endl;
          QString noMaster = "---no-master-detected---";
          setMasterDevice(noMaster); // no master
       }
@@ -218,7 +218,7 @@ bool Mixer::isValid() {
 QString Mixer::getDriverName()
 {
   QString driverName = _mixerBackend->getDriverName();
-//  kdDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
+//  kDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
   return driverName;
 }
 
@@ -261,7 +261,7 @@ void Mixer::readSetFromHW()
       }
     }
   // Trivial implementation. Without looking at the devices
-  //  kdDebug(67100) << "Mixer::readSetFromHW(): emit newVolumeLevels()" << endl;
+  //  kDebug(67100) << "Mixer::readSetFromHW(): emit newVolumeLevels()" << endl;
   emit newVolumeLevels();
   emit newRecsrc(); // cheap, but works
 }
@@ -395,7 +395,7 @@ void Mixer::setRecordSource( int devnum, bool on )
    {
           MixDevice *md = _mixerBackend->m_mixDevices[i];
 	  bool isRecsrc =  _mixerBackend->isRecsrcHW( md->num() );
-//		kdDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
+//		kDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
 		md->setRecSource( isRecsrc );
 	}
 	// emitting is done after read

@@ -106,7 +106,7 @@ void ViewDockAreaPopup::showContextMenu()
 
 void ViewDockAreaPopup::setMixSet(MixSet *)
 {
-    //    kdDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
+    //    kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
     // This implementation of setMixSet() is a bit "exotic". But I will leave it like this, until I implement
     // a configuration option for "what device to show on the dock area"
     _dockDevice = _mixer->masterDevice();
@@ -163,12 +163,12 @@ int ViewDockAreaPopup::advice() {
 }
 
 QSize ViewDockAreaPopup::sizeHint() const {
-    //    kdDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
+    //    kDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
     return( _mdw->sizeHint() );
 }
 
 void ViewDockAreaPopup::constructionFinished() {
-    //    kdDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
+    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
     _mdw->move(0,0);
     _mdw->show();
@@ -179,10 +179,10 @@ void ViewDockAreaPopup::constructionFinished() {
 
 
 void ViewDockAreaPopup::refreshVolumeLevels() {
-    //    kdDebug(67100) << "ViewDockAreaPopup::refreshVolumeLevels()\n";
+    //    kDebug(67100) << "ViewDockAreaPopup::refreshVolumeLevels()\n";
     QWidget* mdw = _mdws.first();
     if ( mdw == 0 ) {
-	kdError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw == 0\n";
+	kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw == 0\n";
 	// sanity check (normally the lists are set up correctly)
     }
     else {
@@ -190,7 +190,7 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 	    static_cast<MDWSlider*>(mdw)->update();
 	}
 	else {
-	    kdError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw is not slider\n";
+	    kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw is not slider\n";
 	    // no slider. Cannot happen in theory => skip it
 	}
     }

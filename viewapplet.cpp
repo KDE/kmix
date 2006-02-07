@@ -43,11 +43,11 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase
 
 
     if ( position == Plasma::Left || position == Plasma::Right ) {
-      //kdDebug(67100) << "ViewApplet() isVertical" << "\n";
+      //kDebug(67100) << "ViewApplet() isVertical" << "\n";
       _viewOrientation = Qt::Vertical;
     }
      else {
-      //kdDebug(67100) << "ViewApplet() isHorizontal" << "\n";
+      //kDebug(67100) << "ViewApplet() isHorizontal" << "\n";
       _viewOrientation = Qt::Horizontal;
     }
 
@@ -107,7 +107,7 @@ QWidget* ViewApplet::add(MixDevice *md)
     else
 	sliderOrientation = Qt::Horizontal;
 	
-    //    kdDebug(67100) << "ViewApplet::add()\n";
+    //    kDebug(67100) << "ViewApplet::add()\n";
     MixDeviceWidget *mdw =
 	new MDWSlider(
 			    _mixer,       // the mixer for this device
@@ -132,17 +132,17 @@ void ViewApplet::constructionFinished() {
 QSize ViewApplet::sizeHint() const {
     // Basically out main layout knows very good what the sizes should be
     QSize qsz = _layoutMDW->sizeHint();
-    //kdDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << qsz << "\n";
+    //kDebug(67100) << "ViewApplet::sizeHint(): NewSize is " << qsz << "\n";
     return qsz;
 }
 
 QSizePolicy ViewApplet::sizePolicy() const {
     if ( _viewOrientation == Qt::Horizontal ) {
-	//kdDebug(67100) << "ViewApplet::sizePolicy=(Fixed,Expanding)\n";
+	//kDebug(67100) << "ViewApplet::sizePolicy=(Fixed,Expanding)\n";
 	return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
     else {
-	//kdDebug(67100) << "ViewApplet::sizePolicy=(Expanding,Fixed)\n";
+	//kDebug(67100) << "ViewApplet::sizePolicy=(Expanding,Fixed)\n";
 	return QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 }
@@ -150,25 +150,25 @@ QSizePolicy ViewApplet::sizePolicy() const {
 
 void ViewApplet::resizeEvent(QResizeEvent *qre)
 {
-    //kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
+    //kDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
     // decide whether we have to show or hide all icons
     bool showIcons = false;
     if ( _viewOrientation == Qt::Horizontal ) {
 	if ( qre->size().height() >= 32 ) {
-	    //kdDebug(67100) << "ViewApplet::resizeEvent() hor >=32" << qre->size() << "\n";
+	    //kDebug(67100) << "ViewApplet::resizeEvent() hor >=32" << qre->size() << "\n";
 	    showIcons = true;
 	}
     }
     else {
        if ( qre->size().width() >= 32 ) {
-           //kdDebug(67100) << "ViewApplet::resizeEvent() vert >=32" << qre->size() << "\n";
+           //kDebug(67100) << "ViewApplet::resizeEvent() vert >=32" << qre->size() << "\n";
            showIcons = true;
        }
     }
     for ( int i=0; i < _mdws.count(); ++i ) {
         QWidget *mdw = _mdws[i];
 	if ( mdw == 0 ) {
-	    kdError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";
+	    kError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";
 	    break; // sanity check (normally the lists are set up correctly)
 	}
 	else {
@@ -178,7 +178,7 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
 	}
     }
 
-    //    kdDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
+    //    kDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
     // resizing changes our own sizeHint(), because we must take the new PanelSize in account.
     // So updateGeometry() is a must for us.
     updateGeometry();
@@ -186,22 +186,22 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
 
 
 void ViewApplet::refreshVolumeLevels() {
-    //kdDebug(67100) << "ViewApplet::refreshVolumeLevels()\n";
+    //kDebug(67100) << "ViewApplet::refreshVolumeLevels()\n";
 
      for ( int i=0; i < _mdws.count(); ++i ) {
          QWidget* mdw = _mdws[i];
 	 if ( mdw == 0 ) {
-	     kdError(67100) << "ViewApplet::refreshVolumeLevels(): mdw == 0\n";
+	     kError(67100) << "ViewApplet::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
 	 }
 	 else {
 	     if ( mdw->inherits("MDWSlider")) {
-		 //kdDebug(67100) << "ViewApplet::refreshVolumeLevels(): updating\n";
+		 //kDebug(67100) << "ViewApplet::refreshVolumeLevels(): updating\n";
 		 // a slider, fine. Lets update its value
 		 static_cast<MDWSlider*>(mdw)->update();
 	     }
 	     else {
-		 kdError(67100) << "ViewApplet::refreshVolumeLevels(): mdw is not slider\n";
+		 kError(67100) << "ViewApplet::refreshVolumeLevels(): mdw is not slider\n";
 		 // no slider. Cannot happen in theory => skip it
 	     }
 	 }
@@ -212,7 +212,7 @@ void ViewApplet::configurationUpdate() {
     updateGeometry();
     _layoutMDW->activate();
     emit appletContentChanged();
-    kdDebug(67100) << "ViewApplet::configurationUpdate()" << endl;
+    kDebug(67100) << "ViewApplet::configurationUpdate()" << endl;
     // the following "emit" is only here to be picked up by KMixApplet, because it has to
     // - make sure the panel is informed about the size change
     // - save the new configuration

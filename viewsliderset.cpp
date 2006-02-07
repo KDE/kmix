@@ -66,7 +66,7 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 		} // loop for finding a suitable MixDevice
 		if ( ! isUsed ) {
 			// There is something in the Profile, that doesn't correspond to a Mixer control
-			kdDebug(67100) << "ViewSliderSet::setMixSet(): No such control '" << control->id << "'in the mixer. Please check the GUIProfile\n";
+			kDebug(67100) << "ViewSliderSet::setMixSet(): No such control '" << control->id << "'in the mixer. Please check the GUIProfile\n";
 		}
 	    } // Tab name matches
 	    else {

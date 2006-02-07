@@ -71,7 +71,7 @@ KMixWindow::KMixWindow()
 	m_isVisible = false;
 	//   !!! FIX THIS m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
-kdDebug(67100) << "MultiDriver c = " << m_multiDriverMode << endl;
+kDebug(67100) << "MultiDriver c = " << m_multiDriverMode << endl;
 	MixerToolBox::initMixer(m_multiDriverMode, m_hwInfoString);
 	initActions();
 	initWidgets();
@@ -271,9 +271,9 @@ KMixWindow::loadConfig()
    m_showLabels = config->readBoolEntry("Labels", true);
    m_onLogin = config->readBoolEntry("startkdeRestore", true );
    m_startVisible = config->readBoolEntry("Visible", true);
-   kdDebug(67100) << "MultiDriver a = " << m_multiDriverMode << endl;
+   kDebug(67100) << "MultiDriver a = " << m_multiDriverMode << endl;
    m_multiDriverMode = config->readBoolEntry("MultiDriver", false);
-   kdDebug(67100) << "MultiDriver b = " << m_multiDriverMode << endl;
+   kDebug(67100) << "MultiDriver b = " << m_multiDriverMode << endl;
    m_surroundView    = config->readBoolEntry("Experimental-ViewSurround", false );
    m_gridView    = config->readBoolEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
@@ -330,7 +330,7 @@ KMixWindow::initMixerWidgets()
 	for ( int i=0; i<Mixer::mixers().count(); ++i)
 	{
 		Mixer *mixer = (Mixer::mixers())[i];
-		//kdDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+		//kDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
 		ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
 		if ( m_showMenubar ) {
 			vflags |= ViewBase::MenuBarVisible;
@@ -458,7 +458,7 @@ KMixWindow::saveVolumes()
     for ( int i=0; i<Mixer::mixers().count(); ++i)
     {
 	Mixer *mixer = (Mixer::mixers())[i];
-	//kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
+	//kDebug(67100) << "KMixWindow::saveConfig()" << endl;
 	mixer->volumeSave( cfg );
     }
     delete cfg;
@@ -483,11 +483,11 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    }
    if ( prefDlg->_rbVertical->isChecked() ) {
       //QString "For a change of language to take place, quit and restart KDiff3.";
-      //kdDebug(67100) << "KMix should change to Vertical layout\n";
+      //kDebug(67100) << "KMix should change to Vertical layout\n";
       m_toplevelOrientation = Qt::Vertical;
    }
    else if ( prefDlg->_rbHorizontal->isChecked() ) {
-     //kdDebug(67100) << "KMix should change to Horizontal layout\n";
+     //kDebug(67100) << "KMix should change to Horizontal layout\n";
      m_toplevelOrientation = Qt::Horizontal;
    }
 

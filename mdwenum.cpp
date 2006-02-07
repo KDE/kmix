@@ -110,11 +110,11 @@ void MDWEnum::createWidgets()
 void MDWEnum::update()
 {
   if ( m_mixdevice->isEnum() ) {
-    //kdDebug(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << endl;
+    //kDebug(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << endl;
     _enumCombo->setCurrentItem( m_mixdevice->enumId() );
   }
   else {
-    kdError(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped" << endl;
+    kError(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped" << endl;
   }	
 }
 

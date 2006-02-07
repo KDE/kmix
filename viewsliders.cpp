@@ -98,7 +98,7 @@ QWidget* ViewSliders::add(MixDevice *md)
 }
 
 QSize ViewSliders::sizeHint() const {
-    //    kdDebug(67100) << "ViewSliders::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    //    kDebug(67100) << "ViewSliders::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( _layoutMDW->sizeHint() );
 }
 
@@ -107,22 +107,22 @@ void ViewSliders::constructionFinished() {
 }
 
 void ViewSliders::refreshVolumeLevels() {
-    //     kdDebug(67100) << "ViewSliders::refreshVolumeLevels()\n";
+    //     kDebug(67100) << "ViewSliders::refreshVolumeLevels()\n";
 
     for ( int i=0; i<_mdws.count(); i++ ) {
         QWidget *mdw = _mdws[i];
 	 if ( mdw == 0 ) {
-	     kdError(67100) << "ViewSliders::refreshVolumeLevels(): mdw == 0\n";
+	     kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
 	 }
 	 else {
 	     if ( mdw->inherits("MDWSlider")) {
-		 //kdDebug(67100) << "ViewSliders::refreshVolumeLevels(): updating\n";
+		 //kDebug(67100) << "ViewSliders::refreshVolumeLevels(): updating\n";
 		 // a slider, fine. Lets update its value
 		 static_cast<MDWSlider*>(mdw)->update();
 	     }
 	     else {
-		 kdError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not slider\n";
+		 kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not slider\n";
 		 // no slider. Cannot happen in theory => skip it
 	     }
 	 }

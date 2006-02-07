@@ -39,7 +39,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
     QList<QWidget *> &mdws = view._mdws;
     _layout = new QVBoxLayout(plainPage(),0,-1, "_layout" );
 
-    //    kdDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
+    //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
     QLabel* qlb = new QLabel( i18n("Configure"), plainPage() );
     //QLabel* qlb = new QLabel( i18n("Show"), plainPage() );
     _layout->addWidget(qlb);
@@ -92,7 +92,7 @@ void DialogViewConfiguration::apply()
 }
 
 QSize DialogViewConfiguration::sizeHint() const {
-    //    kdDebug(67100) << "DialogViewConfiguration::sizeHint() is (100,500)\n";
+    //    kDebug(67100) << "DialogViewConfiguration::sizeHint() is (100,500)\n";
     return _layout->sizeHint();
 }
 

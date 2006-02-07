@@ -127,7 +127,7 @@ QWidget* ViewGrid::add(MixDevice *md)
 }
 
 QSize ViewGrid::sizeHint() const {
-    //    kdDebug(67100) << "ViewGrid::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    //    kDebug(67100) << "ViewGrid::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( m_sizeHint);
 }
 
@@ -139,7 +139,7 @@ void ViewGrid::constructionFinished() {
 }
 
 void ViewGrid::refreshVolumeLevels() {
-    //     kdDebug(67100) << "ViewGrid::refreshVolumeLevels()\n";
+    //     kDebug(67100) << "ViewGrid::refreshVolumeLevels()\n";
 
    m_sizeHint.setWidth (0);
    m_sizeHint.setHeight(0);
@@ -151,17 +151,17 @@ void ViewGrid::refreshVolumeLevels() {
      MixDevice* md;
      for ( md = _mixSet->first(); md != 0; md = _mixSet->next() ) {
 	 if ( mdw == 0 ) {
-	     kdError(67100) << "ViewGrid::refreshVolumeLevels(): mdw == 0\n";
+	     kError(67100) << "ViewGrid::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
 	 }
 	 else {
 	     if ( mdw->inherits("MDWSlider")) {
-		 //kdDebug(67100) << "ViewGrid::refreshVolumeLevels(): updating\n";
+		 //kDebug(67100) << "ViewGrid::refreshVolumeLevels(): updating\n";
 		 // a slider, fine. Lets update its value
 		 static_cast<MDWSlider*>(mdw)->update();
 	     }
 	     else if ( mdw->inherits("MDWSwitch")) {
-                 //kdDebug(67100) << "ViewGrid::refreshVolumeLevels(): updating\n";
+                 //kDebug(67100) << "ViewGrid::refreshVolumeLevels(): updating\n";
                  // a slider, fine. Lets update its value
 	       static_cast<MDWSwitch*>(mdw)->update();
 	     }
@@ -169,7 +169,7 @@ void ViewGrid::refreshVolumeLevels() {
 	       static_cast<MDWEnum*>(mdw)->update();
 	     }
 	     else {
-	       kdError(67100) << "ViewGrid::refreshVolumeLevels(): mdw is unknown/unsupported type\n";
+	       kError(67100) << "ViewGrid::refreshVolumeLevels(): mdw is unknown/unsupported type\n";
 		 // no slider. Cannot happen in theory => skip it
 	     }
 	 }

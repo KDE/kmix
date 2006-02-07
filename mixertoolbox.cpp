@@ -53,7 +53,7 @@
  */
 void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 {
-   //kdDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
+   //kDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
 
     // Find all mixers and initalize them
     QMap<QString,int> mixerNums;
@@ -197,8 +197,8 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 	    ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
 	}
 
-	kdDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count() << endl;
-   //kdDebug(67100) << "OUT MixerToolBox::initMixer()"<<endl;
+	kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count() << endl;
+   //kDebug(67100) << "OUT MixerToolBox::initMixer()"<<endl;
 
 }
 
@@ -208,16 +208,16 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
  */
 void MixerToolBox::deinitMixer()
 {
-   //kdDebug(67100) << "IN MixerToolBox::deinitMixer()"<<endl;
+   //kDebug(67100) << "IN MixerToolBox::deinitMixer()"<<endl;
    while ( Mixer::mixers().count() != 0)
    {
       Mixer* mixer = (Mixer::mixers())[0];
-      //kdDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer" << endl;
+      //kDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer" << endl;
       mixer->close();
       Mixer::mixers().remove(mixer);
       delete mixer;
    }
-   // kdDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
+   // kDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
 }
 
 
@@ -233,9 +233,9 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	GUIProfile* guiprofBest = new GUIProfile();
 	QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
 	QString fileName = fileNamePrefix + "default.xml";
-	kdDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
+	kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
 	fileName = locate("appdata", fileName );
-	kdDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
+	kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
 	unsigned long matchValueBest = 0;
 	if ( !fileName.isNull() && guiprofBest->readProfile(fileName) ) {
 		// Profile exists and was succesfully read
@@ -251,7 +251,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 		guiprofBest = 0;
 	}
 
-	kdDebug(67100) << "Cur Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+	kDebug(67100) << "Cur Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
 	
 	// (2) Evaluate the soundcard specific profile  (the code is quite similar to the upper one
 	// Here we could also start a while loop over all matching filenames, e.g.: "<driverName>.<cardName>*.xml"
@@ -259,9 +259,9 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	QString mixerNameSpacesToUnderscores = mixer->mixerName();
 	mixerNameSpacesToUnderscores.replace(" ","_");
 	fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
-	kdDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
+	kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
 	fileName = locate("appdata", fileName );
-	kdDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
+	kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
 	
 	GUIProfile* guiprofCardSpecific = new GUIProfile();
 	unsigned long matchValueCardSpecific = 0;
@@ -286,7 +286,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 		guiprofCardSpecific =  0;
 	}
 
-	kdDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+	kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
 
 	return guiprofBest;
 }

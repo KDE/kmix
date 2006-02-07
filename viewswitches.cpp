@@ -119,7 +119,7 @@ QWidget* ViewSwitches::add(MixDevice *md)
 }
 
 QSize ViewSwitches::sizeHint() const {
-    //kdDebug(67100) << "ViewSwitches::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    //kDebug(67100) << "ViewSwitches::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( _layoutMDW->sizeHint() );
 }
 
@@ -128,17 +128,17 @@ void ViewSwitches::constructionFinished() {
 }
 
 void ViewSwitches::refreshVolumeLevels() {
-    //kdDebug(67100) << "ViewSwitches::refreshVolumeLevels()\n";
+    //kDebug(67100) << "ViewSwitches::refreshVolumeLevels()\n";
 
     for ( int i=0; i<_mdws.count(); i++ ) {
         QWidget *mdw = _mdws[i];
 	 if ( mdw == 0 ) {
-	     kdError(67100) << "ViewSwitches::refreshVolumeLevels(): mdw == 0\n";
+	     kError(67100) << "ViewSwitches::refreshVolumeLevels(): mdw == 0\n";
 	     break; // sanity check (normally the lists are set up correctly)
 	 }
 	 else {
 	     if ( mdw->inherits("MDWSwitch")) {
-		 //kdDebug(67100) << "ViewSwitches::refreshVolumeLevels(): updating\n";
+		 //kDebug(67100) << "ViewSwitches::refreshVolumeLevels(): updating\n";
 		 // a slider, fine. Lets update its value
 		 static_cast<MDWSwitch*>(mdw)->update();
 	     }
@@ -146,7 +146,7 @@ void ViewSwitches::refreshVolumeLevels() {
 		static_cast<MDWEnum*>(mdw)->update();
              }
 	     else {
-		 kdError(67100) << "ViewSwitches::refreshVolumeLevels(): mdw is not slider\n";
+		 kError(67100) << "ViewSwitches::refreshVolumeLevels(): mdw is not slider\n";
 		 // no switch. Cannot happen in theory => skip it
 		 // If I start putting other stuff in the switch tab, I will get a nice warning.
 	     }
@@ -177,7 +177,7 @@ void ViewSwitches::configurationUpdate() {
 		backGoundModeToggler = !backGoundModeToggler;
 	    } // ! isDisabled()
 	    else {
-		//kdDebug(67100) << "ViewSwitches::configurationUpdate() ignoring diabled switch\n";
+		//kDebug(67100) << "ViewSwitches::configurationUpdate() ignoring diabled switch\n";
 	    }
 	} // inherits("MDWSwitch")
     }

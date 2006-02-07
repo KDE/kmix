@@ -139,7 +139,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
    QString devgrp;
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num );
    config->setGroup( devgrp );
-   //kdDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
+   //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
 
    char *nameLeftVolume, *nameRightVolume;
    if ( _volume.isCapture() ) {
@@ -199,7 +199,7 @@ void MixDevice::write( KConfig *config, const QString& grp )
    QString devgrp;
    devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num );
    config->setGroup(devgrp);
-   // kdDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
+   // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 
    const char *nameLeftVolume, *nameRightVolume;
    if ( _volume.isCapture() ) {

@@ -125,7 +125,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 	} // Read OK
 	else {
 		// !! this error message about faulty profiles should probably be surrounded with i18n()
-		kdError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
+		kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
 	}
 	
 	return ok;
