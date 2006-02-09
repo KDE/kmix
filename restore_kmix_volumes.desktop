@@ -4,6 +4,7 @@ X-KDE-autostart-phase=1
 X-KDE-autostart-condition=kmixrc::startkdeRestore:true
 Type=Application
 Exec=kmixctrl --restore
+OnlyShowIn=KDE;
 Name=Restore Mixer Volumes
 Name[x-test]=xxRestore Mixer Volumesxx
 
