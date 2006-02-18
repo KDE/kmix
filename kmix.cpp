@@ -186,12 +186,13 @@ void
 KMixWindow::updateDocking()
 {
 	// delete old dock widget
-	if (!m_showDockWidget)
+	if (m_dockWidget)
 	{
 		delete m_dockWidget;
 		m_dockWidget = 0L;
 	}
-	else if (m_showDockWidget && !m_dockWidget)
+
+	if (m_showDockWidget)
 	{
 
 		// create dock widget
@@ -214,7 +215,6 @@ KMixWindow::updateDocking()
 		 */
 		QString selectChannel = i18n("Select Channel"); // This text will be used in KDE3.4.1 !!!
 
-		m_dockWidget->updatePixmap();
 		m_dockWidget->show();
 	}
 }
