@@ -9,6 +9,7 @@ MimeType=
 Terminal=false
 Icon=kmix
 GenericName=Sound Mixer
+GenericName[fr]=Console de mixage
 GenericName[x-test]=xxSound Mixerxx
 Name=KMix
 Name[x-test]=xxKMixxx
