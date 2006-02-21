@@ -23,6 +23,7 @@
 // Qt
 #include <qwidget.h>
 #include <qlayout.h>
+#include <qsize.h>
 
 // KDE
 #include <kactioncollection.h>
@@ -31,6 +32,7 @@
 #include <kstdaction.h>
 
 // KMix
+#include "kmixtoolbox.h"
 #include "mdwslider.h"
 #include "mixer.h"
 
@@ -120,12 +122,17 @@ QWidget* ViewApplet::add(MixDevice *md)
 			    this,         // View widget
 			    md->name().latin1()
 			    );
+    static_cast<MDWSlider*>(mdw)->setValueStyle(MixDeviceWidget::NNONE);
+    static_cast<MDWSlider*>(mdw)->setIcons(shouldShowIcons( size()) ); // !!! This should use the panel size
     _layoutMDW->add(mdw);
     return mdw;
 }
 
 void ViewApplet::constructionFinished() {
     _layoutMDW->activate();
+    
+    KMixToolBox::setIcons     ( _mdws, shouldShowIcons( size()) ); // !!! This should use the panel size
+    KMixToolBox::setValueStyle( _mdws, MixDeviceWidget::NNONE);
 }
 
 
@@ -147,24 +154,29 @@ QSizePolicy ViewApplet::sizePolicy() const {
     }
 }
 
+bool ViewApplet::shouldShowIcons(QSize qsz) {
+    bool showIcons = false;
+    if ( _viewOrientation == Qt::Horizontal ) {
+        if ( qsz.height() >= 32 ) {
+            //kdDebug(67100) << "ViewApplet::resizeEvent() hor >=32" << qre->size() << "\n";
+            showIcons = true;
+        }
+    }
+    else {
+       if ( qsz.width() >= 32 ) {
+           //kdDebug(67100) << "ViewApplet::resizeEvent() vert >=32" << qre->size() << "\n";
+           showIcons = true;
+       }
+    }
+    return showIcons;
+}
 
 void ViewApplet::resizeEvent(QResizeEvent *qre)
 {
     //kdDebug(67100) << "ViewApplet::resizeEvent() size=" << qre->size() << "\n";
     // decide whether we have to show or hide all icons
-    bool showIcons = false;
-    if ( _viewOrientation == Qt::Horizontal ) {
-	if ( qre->size().height() >= 32 ) {
-	    //kdDebug(67100) << "ViewApplet::resizeEvent() hor >=32" << qre->size() << "\n";
-	    showIcons = true;
-	}
-    }
-    else {
-       if ( qre->size().width() >= 32 ) {
-           //kdDebug(67100) << "ViewApplet::resizeEvent() vert >=32" << qre->size() << "\n";
-           showIcons = true;
-       }
-    }
+    bool showIcons = shouldShowIcons(qre->size());
+
     for ( QWidget *mdw = _mdws.first(); mdw != 0; mdw = _mdws.next() ) {
 	if ( mdw == 0 ) {
 	    kdError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";
@@ -173,6 +185,7 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
 	else {
 	    if ( mdw->inherits("MDWSlider")) {
 		static_cast<MDWSlider*>(mdw)->setIcons(showIcons);
+		static_cast<MDWSlider*>(mdw)->setValueStyle(MixDeviceWidget::NNONE);
 		//static_cast<MDWSlider*>(mdw)->resize(qre->size());
 	    }
 	}
@@ -213,7 +226,8 @@ void ViewApplet::refreshVolumeLevels() {
 
 void ViewApplet::configurationUpdate() {
     updateGeometry();
-    _layoutMDW->activate();
+    //_layoutMDW->activate();
+    constructionFinished(); // contains "_layoutMDW->activate();"
     emit appletContentChanged();
     kdDebug(67100) << "ViewApplet::configurationUpdate()" << endl;
     // the following "emit" is only here to be picked up by KMixApplet, because it has to

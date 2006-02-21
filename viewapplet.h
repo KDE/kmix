@@ -6,6 +6,8 @@
 
 class QBoxLayout;
 class QHBox;
+class QSize;
+
 class Mixer;
 
 class ViewApplet : public ViewBase
@@ -33,6 +35,7 @@ public slots:
    virtual void refreshVolumeLevels();
 
 private:
+    bool shouldShowIcons(QSize);
     QBoxLayout*   _layoutMDW;
     // Position of the applet (pLeft, pRight, pTop, pBottom)
     //KPanelApplet::Position  _KMIXposition;

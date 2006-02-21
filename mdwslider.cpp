@@ -121,7 +121,6 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	_layout = new QHBoxLayout( this );
 	_layout->setAlignment(Qt::AlignCenter);
     }
-    QToolTip::add( this, m_mixdevice->name() );
 
 	 // -- MAIN SLIDERS LAYOUT  ---
 	 QBoxLayout *slidersLayout;
@@ -154,22 +153,31 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 	 }
     if ( _orientation == Qt::Vertical ) {
 		 m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
+		QToolTip::add( m_label, m_mixdevice->name() );
+
 	 }
 	 else {
 		 m_label = new QLabel(this);
 		 static_cast<QLabel*>(m_label) ->setText(m_mixdevice->name());
+		QToolTip::add( m_label, m_mixdevice->name() );
 	 }
 
 	 m_label->hide();
+
+/* This addSpacing() looks VERY bizarre => removing it (cesken, 21.2.2006).
+   Also horizontal and vertical spacing differs. This doesn't look sensible.
     if ( _orientation == Qt::Horizontal )
 		 labelLayout->addSpacing( 36 );
-
+*/
 	 labelLayout->addWidget( m_label );
 	 m_label->installEventFilter( this );
 
+/* This addSpacing() looks VERY bizarre => removing it (cesken, 21.2.2006)
+   Also horizontal and vertical spacing differs. This doesn't look sensible.
     if ( _orientation == Qt::Vertical ) {
 		 labelLayout->addSpacing( 18 );
 	 }
+*/
 
 	 // -- SLIDERS, LEDS AND ICON
 	 QBoxLayout *sliLayout;
@@ -300,6 +308,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 }
 
 		 slider->installEventFilter( this );
+		 QToolTip::add( slider, m_mixdevice->name() );
 
 		 if( i>0 && isStereoLinked() ) {
 			 // show only one (the first) slider, when the user wants it so
