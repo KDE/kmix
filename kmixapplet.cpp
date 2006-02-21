@@ -264,7 +264,7 @@ void KMixApplet::loadConfig()
     _mixerId = cfg->readEntry( "Mixer", "undef" );
     _mixerName = cfg->readEntry( "MixerName", QString());
 
-    _customColors = cfg->readBoolEntry( "ColorCustom", false );
+    _customColors = cfg->readEntry( "ColorCustom", false );
 	
     _colors.high = cfg->readColorEntry("ColorHigh", &highColor);
     _colors.low = cfg->readColorEntry("ColorLow", &lowColor);

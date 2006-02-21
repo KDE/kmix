@@ -150,11 +150,11 @@ void MixDevice::read( KConfig *config, const QString& grp )
 		nameRightVolume = "volumeR";
    }
    Volume::ChannelMask chMask = Volume::MNONE;
-   int vl = config->readNumEntry(nameLeftVolume, -1);
+   int vl = config->readEntry(nameLeftVolume, -1);
    if (vl!=-1) {
         chMask = (Volume::ChannelMask)(chMask | Volume::MLEFT);
    }
-   int vr = config->readNumEntry(nameRightVolume, -1);
+   int vr = config->readEntry(nameRightVolume, -1);
    if (vr!=-1) {
        chMask = (Volume::ChannelMask)(chMask | Volume::MRIGHT);
    }
@@ -175,17 +175,17 @@ void MixDevice::read( KConfig *config, const QString& grp )
    _volume.setVolume(*volFromConfig);
    delete volFromConfig;
 
-   int mute = config->readNumEntry("is_muted", -1);
+   int mute = config->readEntry("is_muted", -1);
    if ( mute!=-1 ) {
         _volume.setMuted( mute!=0 );
    }
 
-   int recsrc = config->readNumEntry("is_recsrc", -1);
+   int recsrc = config->readEntry("is_recsrc", -1);
    if ( recsrc!=-1 ) {
         setRecSource( recsrc!=0 );
    }
 
-   int enumId = config->readNumEntry("enum_id", -1);
+   int enumId = config->readEntry("enum_id", -1);
    if ( enumId != -1 ) {
       setEnumId( enumId );
    }

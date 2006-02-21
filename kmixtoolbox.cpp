@@ -91,10 +91,10 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
          if ( mdw->inherits("MDWSlider") )
          {
             // only sliders have the ability to split apart in mutliple channels
-            bool splitChannels = config->readBoolEntry("Split", false);
+            bool splitChannels = config->readEntry("Split", false);
             mdw->setStereoLinked( !splitChannels );
          }
-         mdw->setDisabled( !config->readBoolEntry("Show", true) );
+         mdw->setDisabled( !config->readEntry("Show", true) );
 
       } // inherits MixDeviceWidget
    } // for all MDW's
