@@ -98,6 +98,36 @@ void KMixToolBox::loadConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
 	     */
             // !!! check
  	    devgrp.sprintf( "%s.%s.Dev%s", viewPrefix.ascii(), grp.ascii(), mdw->mixDevice()->getPK().ascii() );
+
+            /** 
+               Find an appropriate group name for capture GUI elements.
+               We try  devgrp.append(".Capture")
+               If it doesn't exist, we fall back to devgrp.
+               This is the second compatibility measure, and was introduced for KDE3.5.2.
+              */
+            if ( mdw->mixDevice()->getVolume().isCapture() ) {
+               /* A "capture" GUI element must save its own state. Otherwise playback and capture
+                  properties would be written twice under the same name. This would mean, when
+                 restoring, both would get the same value. This is bad, because hidden sliders will re-appear
+                  after restart of KMix, and a lot of other nasty GUI-related problems.
+                  So we add ".Capture" to the group name.
+                  See bug 121451 "KMix panel applet shows broken duplicates of bass, treble sliders"
+
+                  The name should have been set in the backend class, but we REALLY cannot do this for KDE3.5.x. !!
+                  This issue will be fixed in KDE4 by the great config cleanup.
+                */
+               QString devgrpTmp(devgrp);
+               devgrpTmp.append(".Capture");
+               if ( config->hasGroup(devgrpTmp) ) {
+                  // Group for capture device exists => take over the name
+                  devgrp = devgrpTmp;
+               }
+               else {
+                  // do nothing => keep old name (devgrp).
+                  // Saving wil autmatically create the group 'devgrp.append(".Capture")'
+                  kdDebug(67100) << "KMixToolBox::loadConfig() capture fallback activcated. Fallback group is " << devgrp << endl;
+               }
+            } // isCapture()
 	    if ( ! config->hasGroup(devgrp) ) {
 		// fall back to old-Style configuration (KMix2.1 and earlier)
 		devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
@@ -148,6 +178,12 @@ void KMixToolBox::saveConfig(QPtrList<QWidget> &mdws, KConfig *config, const QSt
             }
 	    devgrp.sprintf( "%s.%s.Dev%s", viewPrefix.ascii(), grp.ascii(), mdw->mixDevice()->getPK().ascii() );
 	    //devgrp.sprintf( "%s.%s.Dev%i", viewPrefix.ascii(), grp.ascii(), n );
+
+            if ( mdw->mixDevice()->getVolume().isCapture() ) {
+               /* see loadConfig() for the rationale of having an own name for capture devices. */
+               devgrp.append(".Capture");
+            } // isCapture()
+
 	    config->setGroup( devgrp );
 
 	    if ( qmdw->inherits("MixDeviceWidget") ) { // -<- in reality it is only in MDWSlider
