@@ -4,7 +4,6 @@
  *
  * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
- * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
  * Copyright (C) 2004 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or

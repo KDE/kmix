@@ -92,10 +92,6 @@ struct MixerFactory {
 
 MixerFactory g_mixerFactories[] = {
 
-#if defined(NAS_MIXER)
-    { NAS_getMixer, 0 },
-#endif
-
 #if defined(SUN_MIXER)
     { SUN_getMixer, SUN_getDriverName },
 #endif

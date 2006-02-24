@@ -255,7 +255,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	
 	// (2) Evaluate the soundcard specific profile  (the code is quite similar to the upper one
 	// Here we could also start a while loop over all matching filenames, e.g.: "<driverName>.<cardName>*.xml"
-	// But for now wie will just check one filename: "<driverName>.<cardName>.xml" (note the missing '*')
+	// But for now we will just check one filename: "<driverName>.<cardName>.xml" (note the missing '*')
 	QString mixerNameSpacesToUnderscores = mixer->mixerName();
 	mixerNameSpacesToUnderscores.replace(" ","_");
 	fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";

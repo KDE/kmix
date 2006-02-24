@@ -113,6 +113,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     // Create tabs of input + output + [...]
     m_ioTab = new KTabWidget( this);
 	m_ioTab->setObjectName( "ioTab" );
+
+
     QToolButton* m_profileButton = new QToolButton( m_ioTab );
     QToolTip::add(m_profileButton,i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
     m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
@@ -120,6 +122,15 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
     connect(m_profileButton, SIGNAL(clicked()), SLOT(newSession()));
     m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
+
+    QToolButton* m_closeButton = new QToolButton( m_ioTab );
+    QToolTip::add(m_closeButton,i18n("Close Tab"));
+    m_closeButton->setIconSet( SmallIcon( "tab_remove" ) );
+    m_closeButton->adjustSize();
+    connect(m_closeButton, SIGNAL(clicked()), SLOT(removeSession()));
+    m_ioTab->setCornerWidget( m_closeButton, Qt::TopRightCorner );
+
+
     m_profileButton->installEventFilter(this);
     m_topLayout->add( m_ioTab );
 
@@ -160,6 +171,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
     QLabel *mixerName = new QLabel(this, "mixerName");
     mixerName->setText( _mixer->mixerName() );
+    mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     balanceAndDetail->addSpacing( 10 );
 

@@ -3,7 +3,6 @@
  *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
- * Copyright (C) 2003 Sven Leiber <s.leiber@web.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

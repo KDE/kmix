@@ -41,7 +41,7 @@ bool ProductComparator::operator()(const ProfProduct* p1, const ProfProduct* p2)
 		 * We reach this point, if vendor and product name is identical.
 		 * Actually we don't care about the order then, so we decide that "p1" comes first.
 		 * 
-		 * (Hint: As this is a set comparator, the return value doesn't matter that
+		 * (Hint: As this is a set comparator, the return value HERE doesn't matter that
 		 * much. But if we would decide later to change this Comparator to be a Map Comparator,
 		 *  we must NOT return a "0" for identity - this would lead to non-insertion on insert())
 		 */
@@ -120,7 +120,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 				control->tab = tab->name;
 			}
 		} // Step (3)
-		//std::cout << "Consistent Profile: " << *this;
+		std::cout << "Consistent Profile: " << *this;
 		
 	} // Read OK
 	else {
