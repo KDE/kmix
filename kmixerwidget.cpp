@@ -120,7 +120,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
     m_profileButton->adjustSize();
     // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
-    connect(m_profileButton, SIGNAL(clicked()), SLOT(newSession()));
+    connect(m_profileButton, SIGNAL(clicked()), SLOT(nextLayout()));
     m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
 
     QToolButton* m_closeButton = new QToolButton( m_ioTab );
@@ -173,8 +173,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     mixerName->setText( _mixer->mixerName() );
     mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
+    // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
     balanceAndDetail->addSpacing( 10 );
-
     balanceAndDetail->addWidget( m_balanceSlider );
     balanceAndDetail->addWidget( mixerName );
     balanceAndDetail->addSpacing( 10 );
@@ -205,6 +205,10 @@ const QString& KMixerWidget::id() const {
 	return m_id;
 }
 
+void KMixerWidget::nextLayout() {
+	kDebug(67100) << "KMixerWidget::nextLayout()\n";
+        emit activateNextlayout();  // this a quick hack for replacing the ComboBox
+}
 
 /**
  * Creates all the Views for the Tabs described in the GUIProfile
@@ -296,6 +300,8 @@ void KMixerWidget::setTicks( bool on )
  */
 void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
+        config->setGroup( grp );
+
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 		ViewBase* view = *it;

@@ -18,6 +18,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
 // include files for QT
 #include <qmap.h>
 //#include <qhbox.h>
@@ -158,8 +159,6 @@ KMixWindow::initWidgets()
 */
 
 	m_wsMixers = new QStackedWidget( centralWidget() );
-        widgetsLayout->setStretchFactor( m_wsMixers, 10 );
-	widgetsLayout->addWidget( m_wsMixers );
 
 	if ( m_showMenubar )
 		menuBar()->show();
@@ -325,6 +324,9 @@ KMixWindow::initMixerWidgets()
    else {
        // At least one card is present
 
+        //widgetsLayout->setStretchFactor( m_wsMixers, 10 );
+	widgetsLayout->addWidget( m_wsMixers );
+
         unsigned int mixerCount;
 	for ( int i=0; i<Mixer::mixers().count(); ++i)
 	{
@@ -355,6 +357,7 @@ KMixWindow::initMixerWidgets()
 		// Add to Combo and Stack
 		//!!! TODO m_cMixer->insertItem( mixer->mixerName() );
 		m_wsMixers->addWidget( mw );
+		connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
 		QString grp(mw->id());
 		mw->loadConfig( KGlobal::config(), grp );
@@ -362,7 +365,7 @@ KMixWindow::initMixerWidgets()
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
 		// !! I am still not sure whether this works 100% reliably - chris
-		mw->show();
+		//mw->show();
                 mixerCount ++;
 	}
 
@@ -567,5 +570,12 @@ KMixWindow::showSelectedMixer( int mixer )
 // !!! TODO	m_wsMixers->raiseWidget( mixer );
 }
 
+void KMixWindow::showNextMixer() {
+   int nextIndex = m_wsMixers->currentIndex() + 1;
+   if ( nextIndex >= m_wsMixers->count() ) {
+      nextIndex = 0;
+   }
+   m_wsMixers->setCurrentIndex(nextIndex);
+}
 #include "kmix.moc"
 

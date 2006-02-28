@@ -77,12 +77,14 @@ class KMixerWidget : public QWidget
    void masterMuted( bool );
    void newMasterVolume(Volume vol);
    void toggleMenuBar();
+   void activateNextlayout();
 
   public slots:
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
    void toggleMenuBarSlot();
+   void nextLayout();
 
    void saveConfig( KConfig *config, const QString &grp );
    void loadConfig( KConfig *config, const QString &grp );

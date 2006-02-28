@@ -191,7 +191,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 muteTip = muteTip.arg(m_mixdevice->name());
 	 m_iconLabel->setToolTip( muteTip );
 	 
-	 sliLayout->addSpacing( 3 );
+	 //sliLayout->addSpacing( 3 );
 	 
 
     // --- SLIDERS ---------------------------
