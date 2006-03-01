@@ -125,6 +125,8 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	_layout = new QHBoxLayout( this );
 	_layout->setAlignment(Qt::AlignCenter);
     }
+    _layout->setSpacing(0);
+    _layout->setMargin(0);
 
 	 // -- MAIN SLIDERS LAYOUT  ---
 	 QBoxLayout *slidersLayout;

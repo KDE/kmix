@@ -83,7 +83,8 @@ void ViewBase::setMixSet(MixSet *)
  */
 QWidget* ViewBase::add(MixDevice* mdw) {
     QWidget* label = new QLabel( mdw->name(), this, mdw->name().latin1());
-    label->move(0, mdw->num()*12);
+    label->move(0, _dummyImplPos*12);
+    ++_dummyImplPos;
     return label;
 }
 

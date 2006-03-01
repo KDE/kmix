@@ -91,11 +91,6 @@ KMixWindow : public KMainWindow
 
   private:
    KAccel *m_keyAccel;
-/*
-   QMenu *m_fileMenu;
-   QMenu *m_viewMenu;
-   QMenu *m_helpMenu;
-*/
 
    bool m_showDockWidget;
    bool m_volumeWidget;
@@ -114,8 +109,6 @@ KMixWindow : public KMainWindow
 
    QList<KMixerWidget *> m_mixerWidgets;
 
-   //QHBox* mixerNameLayout;   !!!
-   KComboBox *m_cMixer;
    QStackedWidget *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
@@ -123,9 +116,7 @@ KMixWindow : public KMainWindow
    QVBoxLayout *widgetsLayout;
 
   private slots:
-   //void removeMixerWidget( KMixerWidget *mw );
    void slotHWInfo();
-   void showSelectedMixer( int mixer );
 };
 
 #endif // KMIX_H

@@ -46,6 +46,7 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
     else {
         _layoutMDW = new QHBoxLayout(this);
     }
+    _layoutMDW->setSpacing(0);
     /*
      * Do not call init(). Call init() only for "end usage" classes.
      * Otherwise setMixSet() will be called multiple times.

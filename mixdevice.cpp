@@ -48,7 +48,7 @@ MixDevice::MixDevice( int num, Volume &vol, bool recordable, bool mute,
     else
 	_name = name;
 
-    _pk.setNum(num);
+    _id.setNum(num); // We set a default id - it is used, if the backend does not explicitely call setId().
 
 
     if( category == MixDevice::SWITCH )
@@ -61,7 +61,7 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
    _volume = md._volume;
    _type = md._type;
    _num = md._num;
-   _pk = md._pk;
+   _id = md._id;
    _recordable = md._recordable;
    _recSource  = md._recSource;
    _category = md._category;
@@ -117,18 +117,21 @@ void MixDevice::setVolume( int channel, int volume )
   _volume.setVolume( (Volume::ChannelID)channel /* ARGH! */, volume );
 }
 
-QString& MixDevice::getPK() {
-    return _pk;
+QString& MixDevice::id() {
+    return _id;
 }
 
-void MixDevice::setPK(QString &PK) {
-    _pk = PK;
-    // The key is used in the config file. It should not contain spaces
-    _pk.replace(' ', '_');
+void MixDevice::setId(QString &id) {
+   _id = id;
+   if ( _id.contains(' ') ) {
+      // The key is used in the config file. It MUST NOT contain spaces
+      kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
+      _id.replace(' ', '_');
+   }
 }
 
 /**
- * This mehtod is currently only called on "kmixctrl --restore"
+ * This mehthod is currently only called on "kmixctrl --restore"
  *
  * Normally we have a working _volume object already, which is very important,
  * because we need to read the minimum and maximum volume levels.
@@ -137,7 +140,7 @@ void MixDevice::setPK(QString &PK) {
 void MixDevice::read( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num );
+   devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num );  // !!! must change: _num => id()
    config->setGroup( devgrp );
    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
 
@@ -197,7 +200,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
 void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num );
+   devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num ); // !!! must change: _num => id()
    config->setGroup(devgrp);
    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 

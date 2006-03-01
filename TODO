@@ -1,5 +1,27 @@
 TODO list
 
+KDE4
+1) Remove ComboBox and replace it by a TabBar "corner widget" (like the konsole session menu)
+Status: OK (you can "cycle" through your soundcards now)
+
+2) Replace "confusing green LED"
+Status: OK (icon can be clicked now)
+
+3) Replace "confusing red LED"
+Status: Pending
+
+4) Change "id" of capture controls in mixer_alsa9.cpp.
+Rationale: We need this, so that no control id conflicts arise.
+e.g. if there is a "PCM play" and a "PCM capture", everything will work strange.
+Especially saving and restoring will fail. But there can also be a lot of runtime issues,
+at ANY place that uses mixer ID's (and there are a lot!)
+Status: Pending
+
+5) Move balance slider out of bottom and make it a virtual control.
+Status: Pending
+
+------------------------------------------------------------------------------------
+
 Bug2 in KMix2.1pre:
 - Keys not saved/restored (pending)
 - DockApplet shows "show/hide menubar" (DONE)
@@ -32,7 +54,7 @@ OK
 OK
 
 7) Keys are not saved
-Pending
+OK
 
 
 14.6.2004 Christian Esken

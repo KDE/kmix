@@ -148,7 +148,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 
     QString masterKey = "----noMaster---";  // Use a non-matching name as default
     MixDevice* master = mixer->masterDevice();
-    if ( master != 0 ) masterKey = master->getPK();
+    if ( master != 0 ) masterKey = master->id();
 
     const MixSet& mixset = mixer->getMixSet();
     MixSet& mset = const_cast<MixSet&>(mixset);
@@ -163,8 +163,8 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
 	    m_buttonGroupForScrollView->insert(qrb);  //(qrb, md->num());
 	    //_qEnabledCB.append(qrb);
-            m_mixerPKs.push_back(md->getPK());
-	    if ( md->getPK() == masterKey ) {
+            m_mixerPKs.push_back(md->id());
+	    if ( md->id() == masterKey ) {
 	      qrb->setChecked(true); // preselect the current master
 	    }
 	    else {

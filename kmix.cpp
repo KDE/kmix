@@ -136,29 +136,10 @@ KMixWindow::initWidgets()
 
 	// Widgets layout
 	widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
-	widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
-
-
-	// Mixer widget line  !!! change this !!!
-/*
-	mixerNameLayout = new QHBox( centralWidget(), "mixerNameLayout" );
-        widgetsLayout->setStretchFactor( mixerNameLayout, 0 );
-	QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
-	mixerNameLayout->setSizePolicy(qsp);
-	mixerNameLayout->setSpacing(KDialog::spacingHint());
-	QLabel *qlbl = new QLabel( i18n("Current mixer:"), mixerNameLayout );
-	qlbl->setFixedHeight(qlbl->sizeHint().height());
-	m_cMixer = new KComboBox( false, mixerNameLayout );
-	m_cMixer->setObjectName( "mixerCombo" );
-	m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-	connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( showSelectedMixer( int ) ) );
-	m_cMixer->setToolTip( i18n("Current mixer" ) );
-
-	// Add first layout to widgets
-	widgetsLayout->addWidget( mixerNameLayout );
-*/
+	//widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
 
 	m_wsMixers = new QStackedWidget( centralWidget() );
+        widgetsLayout->add(m_wsMixers);
 
 	if ( m_showMenubar )
 		menuBar()->show();
@@ -236,7 +217,7 @@ KMixWindow::saveConfig()
    }
    MixDevice* mdMaster = Mixer::masterCardDevice();
    if ( mdMaster != 0 ) {
-      config->writeEntry( "MasterMixerDevice", mdMaster->getPK() );
+      config->writeEntry( "MasterMixerDevice", mdMaster->id() );
    }
 
    if ( m_toplevelOrientation  == Qt::Vertical )
@@ -318,6 +299,7 @@ KMixWindow::initMixerWidgets()
        QLabel *errorLabel = new QLabel( s,this  );
        errorLabel->setAlignment( Qt::AlignCenter );
        errorLabel->setWordWrap(true);
+       errorLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
        widgetsLayout->addWidget( errorLabel );
    } // No cards present
 
@@ -327,7 +309,6 @@ KMixWindow::initMixerWidgets()
         //widgetsLayout->setStretchFactor( m_wsMixers, 10 );
 	widgetsLayout->addWidget( m_wsMixers );
 
-        unsigned int mixerCount;
 	for ( int i=0; i<Mixer::mixers().count(); ++i)
 	{
 		Mixer *mixer = (Mixer::mixers())[i];
@@ -357,6 +338,7 @@ KMixWindow::initMixerWidgets()
 		// Add to Combo and Stack
 		//!!! TODO m_cMixer->insertItem( mixer->mixerName() );
 		m_wsMixers->addWidget( mw );
+		if (i==0) { setWindowTitle( mw->mixer()->mixerName() ); }
 		connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
 		QString grp(mw->id());
@@ -364,16 +346,9 @@ KMixWindow::initMixerWidgets()
 
 		mw->setTicks( m_showTicks );
 		mw->setLabels( m_showLabels );
-		// !! I am still not sure whether this works 100% reliably - chris
-		//mw->show();
-                mixerCount ++;
 	}
 
-	if (mixerCount < 2)
-	{
-		// don't show the Current Mixer bit unless we have multiple mixers
-		// !!! mixerNameLayout->hide();
-	}
+
    } // At least one card is present
 }
 
@@ -564,11 +539,7 @@ KMixWindow::slotHWInfo() {
 	KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
 }
 
-void
-KMixWindow::showSelectedMixer( int mixer )
-{
-// !!! TODO	m_wsMixers->raiseWidget( mixer );
-}
+
 
 void KMixWindow::showNextMixer() {
    int nextIndex = m_wsMixers->currentIndex() + 1;
@@ -576,6 +547,10 @@ void KMixWindow::showNextMixer() {
       nextIndex = 0;
    }
    m_wsMixers->setCurrentIndex(nextIndex);
+   KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
+   Mixer* mixer = mw->mixer();
+   setWindowTitle( mixer->mixerName() );
+   updateDocking();
 }
 #include "kmix.moc"
 

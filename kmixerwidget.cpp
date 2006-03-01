@@ -56,10 +56,9 @@
 /**
    This widget is embedded in the KMix Main window. Each Hardware Card is visualized by one KMixerWidget.
    KMixerWidget contains
-   (a) a headline where you can change Mixer's (if you got more than one Mixer)
-   (b) a Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
-   (c) A balancing slider
-   (d) A label containg the mixer name
+   (a)  A Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
+   (b1) A balancing slider
+   (b2) A label containg the mixer name
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
                             MixDevice::DeviceCategory categoryMask,

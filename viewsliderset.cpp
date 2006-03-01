@@ -54,7 +54,7 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 		// The following for-loop could be simplified by using a std::find_if
 		for ( int i=0; i<mixset->count(); i++ ) {
 			MixDevice *md = (*mixset)[i];
-			if (	md->getPK() == control->id  &&      // name matches
+			if (	md->id() == control->id  &&      // name matches
 				! md->isSwitch() && ! md->isEnum()  // and is applicable
 			)
 			{

@@ -29,9 +29,6 @@
 #include <assert.h>
 #include <qsocketnotifier.h>
 
-#undef KMIX_ALSA_NEW_PK
-// !!! don't commit with the next line uncommented. This enables the correct primary-key
-//     generation (needed e.g. for Profiles)
 #define KMIX_ALSA_NEW_PK
 
 extern "C"
@@ -321,7 +318,7 @@ Mixer_ALSA::open()
                           .arg(snd_mixer_selem_id_get_index( sid ) );
                mdPK.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
 
-               md->setPK(mdPK);
+               md->setId(mdPK);
                /******************************************************************/
 #endif
         if (!masterChosen && ct==MixDevice::VOLUME) {
@@ -503,7 +500,7 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
 		return false;
 	    }
 	    if (revents & POLLIN) {
-                kDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
+                //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
 		snd_mixer_handle_events(_handle);
                 updated = true;
 	    }
@@ -716,7 +713,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	    }
 	}
 
-        kDebug() << "snd_mixer_selem_has_playback_volume " << mixerIdx << " " << snd_mixer_selem_has_playback_switch( elem ) << endl;
+        // kDebug() << "snd_mixer_selem_has_playback_volume " << mixerIdx << " " << snd_mixer_selem_has_playback_switch( elem ) << endl;
 	if ( snd_mixer_selem_has_playback_switch( elem ) )
 	{
 	    snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );

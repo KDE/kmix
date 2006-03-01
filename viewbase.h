@@ -135,6 +135,9 @@ protected slots:
 
 signals:
    void toggleMenuBar();
+
+private:
+   unsigned int _dummyImplPos;
 };
 
 #endif

@@ -65,7 +65,7 @@ class KMixerWidget : public QWidget
                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
    ~KMixerWidget();
 	
-   const Mixer *mixer() const { return _mixer; };
+   Mixer *mixer() const { return _mixer; };
 
 /* !!! This id() is rubbish. It is not guaranteed, that it is the same on every KMix start.
    !!! Still it is used for constructing config file group names :-(((

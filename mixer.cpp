@@ -131,9 +131,9 @@ void Mixer::volumeLoad( KConfig *config )
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
        MixDevice *md = _mixerBackend->m_mixDevices[i];
-       // kDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->num() << ", "<< md->getVolume() << ")" << endl;
+       // kDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->id() << ", "<< md->getVolume() << ")" << endl;
        // !! @todo Restore record source
-       //setRecordSource( md->num(), md->isRecSource() );
+       //setRecordSource( md->id(), md->isRecSource() );
        _mixerBackend->setRecsrcHW( md->num(), md->isRecSource() );
        _mixerBackend->writeVolumeToHW( md->num(), md->getVolume() );
        if ( md->isEnum() ) _mixerBackend->setEnumIdHW( md->num(), md->enumId() );
@@ -156,7 +156,7 @@ int Mixer::open()
 
       MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
       if ( recommendedMaster != 0 ) {
-         setMasterDevice(recommendedMaster->getPK() );
+         setMasterDevice(recommendedMaster->id() );
       }
       else {
          kError(67100) << "Mixer::open() no master detected." << endl;
@@ -374,7 +374,7 @@ MixDevice* Mixer::masterCardDevice()
    for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
    {
        md = mixer->_mixerBackend->m_mixDevices[i];
-       if ( md->getPK() == _masterCardDevice )
+       if ( md->id() == _masterCardDevice )
           break;
      }
   }
@@ -395,7 +395,7 @@ void Mixer::setRecordSource( int devnum, bool on )
    {
           MixDevice *md = _mixerBackend->m_mixDevices[i];
 	  bool isRecsrc =  _mixerBackend->isRecsrcHW( md->num() );
-//		kDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->num() << ") =" <<  isRecsrc << endl;
+//		kDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc << endl;
 		md->setRecSource( isRecsrc );
 	}
 	// emitting is done after read
@@ -435,7 +435,7 @@ MixDevice* Mixer::find(QString& devPK)
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
        md = _mixerBackend->m_mixDevices[i];
-       if( devPK == md->getPK() ) {
+       if( devPK == md->id() ) {
            break;
        }
     }

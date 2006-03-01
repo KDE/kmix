@@ -64,7 +64,7 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name,
     }
     MixDevice* mdMaster = Mixer::masterCardDevice();
     if ( mdMaster != 0 ) {
-       m_mixer->setMasterDevice(mdMaster->getPK()); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
+       m_mixer->setMasterDevice(mdMaster->id()); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
     }
     createActions();
     createMasterVolWidget();
@@ -104,6 +104,10 @@ void KMixDockWidget::createActions()
 void
 KMixDockWidget::createMasterVolWidget()
 {
+     // Reset flags, so that the dock icon will be reconstructed
+     _oldToolTipValue = -1;
+     _oldPixmapType   = '-';
+
     if (m_mixer == 0) {
         // In case that there is no mixer installed, there will be no newVolumeLevels() signal's
         // Thus we prepare the dock areas manually
@@ -117,6 +121,13 @@ KMixDockWidget::createMasterVolWidget()
     _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, (GUIProfile*)0, this);
     _dockAreaPopup->createDeviceWidgets();
     m_mixer->readSetFromHWforceUpdate();  // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
+    /* With the recently introduced QSocketNotifier stuff, we can't rely on regular timer updates
+       any longer. Also the readSetFromHWforceUpdate() won't be enough. As a workaround, we trigger
+       all "repaints" manually here.
+       The call to m_mixer->readSetFromHWforceUpdate() is most likely superfluous, even if we don't use QSocketNotifier (e.g. in backends OSS, Solaris, ...)
+     */
+    setVolumeTip();
+    updatePixmap();
     /* We are setting up 3 connections:
      * Refreshig the _dockAreaPopup (not anymore neccesary, because ViewBase already does it)
      * Refreshing the Tooltip

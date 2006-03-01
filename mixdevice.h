@@ -68,13 +68,15 @@ SLIDER );
        * a better ID is set directly after constructing the MixDevice using
        * the setUniqueID().
        */
-      QString&   getPK();
+      QString& id();
       /**
-       * Set a suitable PK for this MixDevice. It is used in looking up
+       * Set a suitable ID for this MixDevice. It is used in looking up
        * the keys in kmixrc. It is advised to set a nice name, like
-       * 'PCM_2', which would mean "2nd PCM device of the sound card".
+       * 'PCM:2', which would mean "2nd PCM device of the sound card".
+       * The ID's may NOT contain whitespace
+       * The ID's are managed by the MixerBackend's (only those know how to avoid name clashes).
        */
-      void setPK(QString &id);
+      void setId(QString &id);
       bool isRecordable()    { return _recordable; };
       bool isRecSource()    { return _recSource; };
       bool isSwitch()        { return _switch; } // !! change to _category == MixDevice::SWITCH
@@ -123,7 +125,7 @@ SLIDER );
       bool _recSource; // Current rec status
       DeviceCategory _category; //  category
       QString _name;   // Ascii channel name
-      QString _pk;     // Primary key, used as part in config file keys
+      QString _id;     // Primary key, used as part in config file keys
       // A MixDevice, that is an ENUM, has these _enumValues
       QList<QString> _enumValues;
       int _enumCurrentId;
