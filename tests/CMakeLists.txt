@@ -1,0 +1,43 @@
+kde4_header()
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(profiletest_SRCS profiletest.cpp )
+
+kde4_automoc(${profiletest_SRCS})
+
+if(KDE4_BUILD_TESTS)
+
+kde4_add_executable(profiletest ${profiletest_SRCS})
+
+target_link_libraries(profiletest  ${QT_AND_KDECORE_LIBS} )
+
+endif(KDE4_BUILD_TESTS)
+
+########### install files ###############
+
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+##INCLUDES = -I$(top_srcdir)/kmix $(all_includes)
+## esken: At my box I need to add -lqt-mt  . I thought it would be included in $(QT_LDFLAGS) ?!?
+##AM_LDFLAGS = -lqt-mt $(QT_LDFLAGS) $(X_LDFLAGS) $(KDE_RPATH)
+##AM_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+#AM_CPPFLAGS = -I$(top_srcdir)/kmix $(all_includes)
+#
+#check_PROGRAMS = profiletest
+#
+#METASOURCES = AUTO
+#
+#profiletest_SOURCES = profiletest.cpp
+## ../guiprofile.cpp
+#profiletest_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+#profiletest_LDADD = ../guiprofile.o
+#
