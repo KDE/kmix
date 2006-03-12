@@ -48,7 +48,7 @@ kde4_add_dcop_skels(kmix_KDEINIT_SRCS mixerIface.h )
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix  ${LIB_KDEUI} ${QT_QTXML_LIBRARY} kutils )
+target_link_libraries(kdeinit_kmix  ${LIB_KDE3SUPPORT} ${QT_QTXML_LIBRARY} kutils )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmix )
 
@@ -73,7 +73,7 @@ kde4_add_dcop_skels(kmixctrl_KDEINIT_SRCS mixerIface.h )
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmixctrl  ${LIB_KDEUI} ${QT_QTXML_LIBRARY} )
+target_link_libraries(kdeinit_kmixctrl  ${LIB_KDE3SUPPORT} ${QT_QTXML_LIBRARY} )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmixctrl )
 
@@ -112,7 +112,7 @@ kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kmix_panelapplet )
 
-target_link_libraries(kmix_panelapplet  ${LIB_KDEUI} kutils kickermain ${QT_QTXML_LIBRARY} )
+target_link_libraries(kmix_panelapplet  ${LIB_KDE3SUPPORT} kutils kickermain ${QT_QTXML_LIBRARY} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kmix_panelapplet )
 
