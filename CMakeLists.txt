@@ -1,4 +1,5 @@
 kde4_header()
+project(kmix)
 
 add_subdirectory( pics ) 
 add_subdirectory( tests ) 
