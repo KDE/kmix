@@ -394,14 +394,14 @@ KMixWindow::showSettings()
 void
 KMixWindow::showHelp()
 {
-	actionCollection()->action( "help_contents" )->activate();
+	actionCollection()->action( "help_contents" )->trigger();
 }
 
 
 void
 KMixWindow::showAbout()
 {
-   actionCollection()->action( "help_about_app" )->activate();
+   actionCollection()->action( "help_about_app" )->trigger();
 }
 
 /**

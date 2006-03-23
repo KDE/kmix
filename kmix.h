@@ -30,7 +30,7 @@
 #include <qstring.h>
 #include <qmap.h>
 #include <qlist.h>
-
+#include <QVBoxLayout>
 class QHBox;
 class QStackedWidget;
 
