@@ -189,8 +189,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 setIcon( m_mixdevice->type() );
 	 iconLayout->addWidget( m_iconLabel );
 	 m_iconLabel->installEventFilter( this );
-	 QString muteTip( i18n( "Mute/Unmute %1"));
-	 muteTip = muteTip.arg(m_mixdevice->name());
+	 QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
 	 m_iconLabel->setToolTip( muteTip );
 	 
 	 //sliLayout->addSpacing( 3 );

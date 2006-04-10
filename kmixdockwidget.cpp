@@ -187,7 +187,7 @@ KMixDockWidget::setVolumeTip()
         }
 	newToolTipValue = val + 10000*md->isMuted();
 	if ( _oldToolTipValue != newToolTipValue ) {
-	    tip = i18n( "Volume at %1%" ).arg( val );
+	    tip = i18n( "Volume at %1%", val );
 	    if ( md->isMuted() ) {
 		tip += i18n( " (Muted)" );
 	    }
