@@ -42,7 +42,7 @@
 #include <kmenu.h>
 #include <khelpmenu.h>
 #include <kdebug.h>
-#include <kaccel.h>
+
 #include <kxmlguifactory.h>
 #include <kglobal.h>
 
