@@ -115,7 +115,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kmix_panelapplet )
 
 target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} kutils kickermain ${QT_QTXML_LIBRARY} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kmix_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} kmix_panelapplet )
 
 
 ########### install files ###############
