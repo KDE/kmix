@@ -109,7 +109,7 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
 class GUIProfileParser : public QXmlDefaultHandler
 {
 public:
-		GUIProfileParser::GUIProfileParser(GUIProfile& ref_gp);
+		GUIProfileParser(GUIProfile& ref_gp);
 		// Enumeration for the scope
 		enum ProfileScope { NONE, SOUNDCARD };
 		

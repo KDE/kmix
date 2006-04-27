@@ -354,7 +354,7 @@ MDWSlider::setIcon( int icontype )
          // scale icon
          QWMatrix t;
          t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
-         m_iconLabel->setPixmap( miniDevPM.xForm( t ) );
+         m_iconLabel->setPixmap( miniDevPM.transformed( t ) );
          m_iconLabel->resize( 10, 10 );
       } // small size
       else
