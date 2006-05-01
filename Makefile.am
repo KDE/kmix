@@ -65,6 +65,4 @@ lnk_DATA = kmixapplet.desktop
 servicesdir = $(kde_servicesdir)
 services_DATA = kmixctrl_restore.desktop
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kmix.pot
 
