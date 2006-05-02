@@ -72,8 +72,6 @@ public:
     virtual void setLabeled( bool );
     virtual void setTicks( bool ) {};
 
-    virtual KGlobalAccel *keys(void);
-
 public slots:
     virtual void setDisabled( bool value );
     virtual void defineKeys();
@@ -95,7 +93,6 @@ protected:
       MixDevice*           m_mixdevice;
       Mixer*               m_mixer; // !!! This MUST go into the MixDevice class !!!
       KActionCollection*   _mdwActions;
-      KGlobalAccel*        m_keys;
       ViewBase*            m_mixerwidget;
       bool                 m_disabled;
       Qt::Orientation      _orientation;

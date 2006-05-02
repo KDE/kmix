@@ -109,7 +109,7 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         KGlobalAccel *keys=mdw->keys();
+         KGlobalAccel *keys = KGlobalAccel::self();
          if ( keys )
          {
             QString devgrpkeys;
@@ -119,7 +119,6 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
             // please see KMixToolBox::saveKeys() for some rambling about saving/loading Keys
             keys->setConfigGroup(devgrpkeys);
             keys->readSettings(config);
-            keys->updateConnections();
          } // MDW has keys
       } // is a MixDeviceWidget
    } // for all widgets
@@ -140,7 +139,7 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         
+
          kDebug(67100) << "  grp=" << grp.ascii() << endl;
          kDebug(67100) << "  mixer=" << view->getMixer()->id().ascii() << endl;
          kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().ascii() << endl;
@@ -177,13 +176,13 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         KGlobalAccel *keys=mdw->keys();
+         KGlobalAccel *keys = KGlobalAccel::self();
          if ( keys )
          {
             QString devgrpkeys;
             devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().ascii(), mdw->mixDevice()->id().ascii() );
             kDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys << endl;
-            
+
             keys->setConfigGroup(devgrpkeys);
             keys->writeSettings(config);
          } // MDW has keys

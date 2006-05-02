@@ -61,12 +61,10 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
     // create widgets
     createWidgets();
 
-    m_keys->insert( "Toggle switch", i18n( "Toggle Switch" ), QString::null,
-		    KShortcut(), this, SLOT( toggleSwitch() ) );
+    KAction *a = new KAction(i18n( "Toggle Switch" ), 0, this, SLOT( toggleSwitch() ), _mdwActions, "Toggle switch" );
+    a->setCustomGlobalShortcut( KShortcut() );
 
-    // The keys are loaded in KMixerWidget::loadConfig, see kmixerwidget.cpp (now: kmixtoolbox.cpp)
-    //m_keys->readSettings();
-    //m_keys->updateConnections();
+    // The accel keys are loaded in KMixerWidget::loadConfig, see kmixtoolbox.cpp
 
     installEventFilter( this ); // filter for popup
 }

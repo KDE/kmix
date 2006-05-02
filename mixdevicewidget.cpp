@@ -60,8 +60,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer* mixer, MixDevice* md,
    m_disabled( false ), _orientation( orientation ), m_small( small )
 {
    _mdwActions = new KActionCollection( this );
-   m_keys = new KGlobalAccel( this );
-  
+
    /* @todo Fancy Background 
    setBackgroundMode(Qt::X11ParentRelative);
     */
@@ -71,31 +70,19 @@ MixDeviceWidget::~MixDeviceWidget()
 {
 }
 
-
 void MixDeviceWidget::addActionToPopup( KAction *action )
 {
 	_mdwActions->insert( action );
 }
-
 
 bool MixDeviceWidget::isDisabled() const
 {
    return m_disabled;
 }
 
-
-KGlobalAccel *MixDeviceWidget::keys( void )
-{
-    return m_keys;
-}
-
 void MixDeviceWidget::defineKeys()
 {
-   if (m_keys) {
-      KKeyDialog::configure(m_keys, 0, false);
-      // The keys are saved in KMixerWidget::saveConfig, see kmixerwidget.cpp
-      m_keys->updateConnections();
-   }
+   KKeyDialog::configure(_mdwActions);
 }
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }

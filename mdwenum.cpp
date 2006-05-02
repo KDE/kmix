@@ -61,8 +61,8 @@ MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
     createWidgets();
 
     /* !!! remove this for production version */
-    m_keys->insert( "Next Value", i18n( "Next Value" ), QString::null,
-		    KShortcut(), this, SLOT( nextEnumId() ) );
+    KAction *a = new KAction(i18n( "Next Value" ), 0, this, SLOT( nextEnumId() ), _mdwActions, "Next Value" );
+    a->setCustomGlobalShortcut( KShortcut() );
 
     installEventFilter( this ); // filter for popup
 }

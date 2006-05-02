@@ -84,13 +84,19 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 	// create widgets
 	createWidgets( showMuteLED, showRecordLED );
 	
-	m_keys->insert( "Increase volume", i18n( "Increase Volume" ), QString::null,
-			KShortcut(), this, SLOT( increaseVolume() ) );
-	m_keys->insert( "Decrease volume", i18n( "Decrease Volume" ), QString::null,
-			KShortcut(), this, SLOT( decreaseVolume() ) );
-	m_keys->insert( "Toggle mute", i18n( "Toggle Mute" ), QString::null,
-			KShortcut(), this, SLOT( toggleMuted() ) );
-	
+	KAction *b;
+	b = new KAction( i18n( "Increase Volume" ), 0, this,
+		SLOT(increaseVolume()), _mdwActions, "Increase volume" );
+	b->setCustomGlobalShortcut( KShortcut() );
+
+	b = new KAction( i18n( "Decrease Volume" ), 0, this,
+		SLOT( decreaseVolume() ), _mdwActions, "Decrease volume" );
+	b->setCustomGlobalShortcut( KShortcut() );
+
+	b = new KAction( i18n( "Toggle mute" ), 0, this,
+		SLOT( toggleMuted() ), _mdwActions, "Toggle mute" );
+	b->setCustomGlobalShortcut( KShortcut() );
+
 	installEventFilter( this ); // filter for popup
 
         update();
@@ -822,7 +828,7 @@ void MDWSlider::showContextMenu()
 		a->plug(  menu );
 	
 	a = _mdwActions->action( "keys" );
-	if ( a && m_keys ) {
+	if ( a ) {
 		KActionSeparator sep( _mdwActions );
 		sep.plug( menu );
 		a->plug( menu );
