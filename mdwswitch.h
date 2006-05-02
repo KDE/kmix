@@ -57,7 +57,7 @@ public:
 
     void addActionToPopup( KAction *action );
     QSize sizeHint() const;
-    void setBackgroundMode(Qt::BackgroundMode m);
+    void setBackgroundRole(QPalette::ColorRole m);
     bool eventFilter( QObject* obj, QEvent* e );
 
 public slots:

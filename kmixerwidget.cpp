@@ -84,7 +84,8 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
        if ( !mixer->mixerName().isEmpty() )
 	   s.append(" \"").append(mixer->mixerName()).append("\"");
        QLabel *errorLabel = new QLabel( s, this );
-       errorLabel->setAlignment( Qt::AlignCenter | Qt::TextWordWrap );
+       errorLabel->setAlignment( Qt::AlignCenter );
+       errorLabel->setWordWrap( true );
        layout->addWidget( errorLabel );
    }
 }
@@ -168,7 +169,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
     m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
 
-    QLabel *mixerName = new QLabel(this, "mixerName");
+    QLabel *mixerName = new QLabel(this );
+    mixerName->setObjectName("mixerName");
     mixerName->setText( _mixer->mixerName() );
     mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
@@ -189,8 +191,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 	    ViewBase* view = *it;
 	    view->setBackgroundPixmap ( bgPixmap );
     } // for all Views
-    */ 
-    
+    */
+
     // --- "MenuBar" toggling from the various View's ---
 
 

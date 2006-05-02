@@ -99,7 +99,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     _layout->addWidget(qlbl);
 
     m_scrollableChannelSelector = new Q3ScrollView(m_mainFrame, "scrollableChannelSelector");
-    m_scrollableChannelSelector->viewport()->setBackgroundMode(Qt::PaletteBackground);
+    m_scrollableChannelSelector->viewport()->setBackgroundRole(QPalette::Background);
     _layout->add(m_scrollableChannelSelector);
 
     m_buttonGroupForScrollView = new Q3ButtonGroup(this); // invisible QButtonGroup

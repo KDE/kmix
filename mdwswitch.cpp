@@ -85,8 +85,8 @@ void MDWSwitch::createWidgets()
 		_layout->setAlignment(Qt::AlignVCenter);
 	}
 	this->setToolTip( m_mixdevice->name() );
-	
-	
+
+
 	_layout->addSpacing( 4 );
 	// --- LEDS --------------------------
 	if ( _orientation == Qt::Vertical ) {
@@ -96,13 +96,13 @@ void MDWSwitch::createWidgets()
 				 KLed::Sunken, KLed::Circular, this, "RecordLED" );
 		else
 		 _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
-		 _switchLED->setFixedSize(16,16); 
+		 _switchLED->setFixedSize(16,16);
 		 _labelV = new VerticalText( this, m_mixdevice->name().utf8().data() );
-		 
+
 		 _layout->addWidget( _switchLED );
 		 _layout->addSpacing( 2 );
 		 _layout->addWidget( _labelV );
-		 
+
 		 _switchLED->installEventFilter( this );
 		 _labelV->installEventFilter( this );
 	 }
@@ -115,8 +115,9 @@ void MDWSwitch::createWidgets()
 		else
 		 _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
 		 _switchLED->setFixedSize(16,16);
-		 _label  = new QLabel(m_mixdevice->name(), this, "SwitchName");
-		 
+		 _label  = new QLabel(m_mixdevice->name(), this );
+                 _label->setObjectName("SwitchName");
+
 		 _layout->addWidget( _switchLED );
 		 _layout->addSpacing( 1 );
 		 _layout->addWidget( _label );
@@ -135,21 +136,21 @@ void MDWSwitch::update()
 			_switchLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
 		else
 			_switchLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
-		
+
 		_switchLED->blockSignals( false );
 	}
 }
 
-void MDWSwitch::setBackgroundMode(Qt::BackgroundMode m)
+void MDWSwitch::setBackgroundRole(QPalette::ColorRole m)
 {
     if ( _label != 0 ){
-	_label->setBackgroundMode(m);
+	_label->setBackgroundRole(m);
     }
     if ( _labelV != 0 ){
-	_labelV->setBackgroundMode(m);
+	_labelV->setBackgroundRole(m);
     }
-    _switchLED->setBackgroundMode(m);
-    MixDeviceWidget::setBackgroundMode(m);
+    _switchLED->setBackgroundRole(m);
+    MixDeviceWidget::setBackgroundRole(m);
 }
 
 void MDWSwitch::showContextMenu()

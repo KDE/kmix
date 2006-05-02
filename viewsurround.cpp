@@ -53,7 +53,8 @@ ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, View
     else {
         _layoutSliders = new QHBoxLayout(_layoutMDW);
     }
-    _layoutSurround = new QGridLayout(_layoutMDW,3,5);
+    _layoutSurround = new QGridLayout();
+    _layoutMDW->addItem( _layoutSurround );
     //    _layoutMDW->setMargin(8);
     init();
 }
@@ -86,7 +87,7 @@ void ViewSurround::setMixSet(MixSet *mixset)
 
 int ViewSurround::count()
 {
-    return ( _mixSet->count() );	
+    return ( _mixSet->count() );
 }
 
 int ViewSurround::advice() {
@@ -107,7 +108,7 @@ QWidget* ViewSurround::add(MixDevice *md)
     case MixDevice::VOLUME:
 	_mdSurroundFront = md;
 	small = true;
-	break;	
+	break;
     case MixDevice::SURROUND_BACK:
 	_mdSurroundBack = md;
 	small = true;
@@ -124,7 +125,7 @@ QWidget* ViewSurround::add(MixDevice *md)
 	orientation = Qt::Horizontal;
 	small = true;
 	break;
-	
+
     default:
 	small       = false;
 	// these are the sliders on the left side of the surround View
@@ -137,7 +138,7 @@ QWidget* ViewSurround::add(MixDevice *md)
     case MixDevice::VOLUME:
 	_layoutSurround->addWidget(mdw ,0,0, Qt::AlignBottom | Qt::AlignLeft);
 	break;
-	
+
     case MixDevice::SURROUND_BACK:
 	_layoutSurround->addWidget(mdw ,2,0, Qt::AlignTop | Qt::AlignLeft);
 	break;

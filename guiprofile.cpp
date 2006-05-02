@@ -40,7 +40,7 @@ bool ProductComparator::operator()(const ProfProduct* p1, const ProfProduct* p2)
 		/**
 		 * We reach this point, if vendor and product name is identical.
 		 * Actually we don't care about the order then, so we decide that "p1" comes first.
-		 * 
+		 *
 		 * (Hint: As this is a set comparator, the return value HERE doesn't matter that
 		 * much. But if we would decide later to change this Comparator to be a Map Comparator,
 		 *  we must NOT return a "0" for identity - this would lead to non-insertion on insert())
@@ -62,7 +62,7 @@ GUIProfile::~GUIProfile()
 bool GUIProfile::readProfile(QString& ref_fileName)
 {
 	QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-	
+
 	QFile xmlFile( ref_fileName );
 	QXmlInputSource source( &xmlFile );
 	GUIProfileParser* gpp = new GUIProfileParser(*this);
@@ -121,13 +121,13 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 			}
 		} // Step (3)
 		std::cout << "Consistent Profile: " << *this;
-		
+
 	} // Read OK
 	else {
 		// !! this error message about faulty profiles should probably be surrounded with i18n()
 		kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
 	}
-	
+
 	return ok;
 }
 
@@ -145,7 +145,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
  *
  * If the "card type" ...
  *     is empty, this is worth 0 points.     !!! not implemented yet
- *     doesn't match, 0 is returned.         !!! not implemented yet 
+ *     doesn't match, 0 is returned.         !!! not implemented yet
  *     matches , this is worth 500 points.  !!! not implemented yet
  *
  * If the "driver version" doesn't match, 0 is returned. !!! not implemented yet
@@ -272,7 +272,7 @@ bool GUIProfileParser::startElement( const QString& ,
 			}
 			// we are accepting <soundcard> and <tab>
 		break;
-		
+
 		case GUIProfileParser::SOUNDCARD:
 			if ( qName.lower() == "product" ) {
 				// Defines product names under which the chipset/hardware is sold
@@ -288,9 +288,9 @@ bool GUIProfileParser::startElement( const QString& ,
 				std::cerr << "Ignoring unsupported element '" << qName.utf8().constData() << "'" << std::endl;
 			}
 			// we are accepting <product>, <control> and <tab>
-			
+
 		break;
-	    
+
 	} // switch()
     return true;
 }
@@ -381,7 +381,7 @@ void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
 		prd->productName = name;
 		prd->productRelease = release;
 		prd->comment = comment;
-		
+
 		_guiProfile._products.insert(prd);
 	}
 }
@@ -409,14 +409,14 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 			// !! should do a dictonary lookup here, and i18n(). For now, just take over "id"
 			name = id;
 		}
-		
+
 		profControl->id = id;
 		profControl->name = name;
 		profControl->subcontrols = subcontrols;
 		profControl->name = name;
 		profControl->tab = tab;
 		if ( show.isNull() ) { show = "*"; }
-		profControl->show = show;		
+		profControl->show = show;
 		_guiProfile._controls.push_back(profControl);
 	} // id != null
 }
@@ -432,7 +432,7 @@ void GUIProfileParser::printAttributes(const QXmlAttributes& attributes) {
 
 void GUIProfileParser::splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim)
 {
-	int delimPos = pairString.find(delim);
+	int delimPos = pairString.indexOf(delim);
 	if ( delimPos == -1 ) {
 		// delimiter not found => use an empty String for "second"
 		result.first  = pairString;

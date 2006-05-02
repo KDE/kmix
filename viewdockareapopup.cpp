@@ -53,7 +53,10 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _frame->setFrameStyle( QFrame::PopupPanel | QFrame::Raised );
     _frame->setLineWidth( 1 );
 
-    _layoutMDW = new QGridLayout( _frame, 1, 1, 2, 1, "KmixPopupLayout" );
+    _layoutMDW = new QGridLayout( _frame );
+    _layoutMDW->setSpacing( 1 );
+    _layoutMDW->setMargin( 2 );
+    _layoutMDW->setObjectName( "KmixPopupLayout" );
     _hideTimer = new QTime();
     init();
 }
@@ -102,7 +105,7 @@ void ViewDockAreaPopup::showContextMenu()
     // no right-button-menu on "dock area popup"
     return;
 }
-	
+
 
 void ViewDockAreaPopup::setMixSet(MixSet *)
 {
@@ -144,7 +147,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 
 int ViewDockAreaPopup::count()
 {
-    return ( _mixSet->count() );	
+    return ( _mixSet->count() );
 }
 
 int ViewDockAreaPopup::advice() {
@@ -174,7 +177,7 @@ void ViewDockAreaPopup::constructionFinished() {
     _mdw->show();
     _mdw->resize(_mdw->sizeHint() );
     resize(sizeHint());
-	 
+
 }
 
 

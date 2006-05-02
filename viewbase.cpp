@@ -82,7 +82,8 @@ void ViewBase::setMixSet(MixSet *)
  * Dummy implementation for add().
  */
 QWidget* ViewBase::add(MixDevice* mdw) {
-    QWidget* label = new QLabel( mdw->name(), this, mdw->name().latin1());
+    QWidget* label = new QLabel( mdw->name(), this );
+    label->setObjectName( mdw->name() );
     label->move(0, _dummyImplPos*12);
     ++_dummyImplPos;
     return label;

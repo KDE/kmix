@@ -70,7 +70,7 @@ void ViewSwitches::setMixSet(MixSet *mixset)
 
 int ViewSwitches::count()
 {
-    return ( _mixSet->count() );	
+    return ( _mixSet->count() );
 }
 
 int ViewSwitches::advice() {
@@ -167,12 +167,12 @@ void ViewSwitches::configurationUpdate() {
 	    MixDeviceWidget* mdw = static_cast<MDWSwitch*>(qw);
 	    if ( ! mdw->isDisabled() ) {
 		if ( backGoundModeToggler ) {
-		    mdw->setBackgroundMode(Qt::PaletteBackground);
+		    mdw->setBackgroundRole(QPalette::Background);
 		}
 		else {
 		    // !! Should use KGlobalSettings::alternateBackgroundColor()
 		    // or KGlobalSettings::calculateAlternateBackgroundColor() instead.
-		    mdw->setBackgroundMode( Qt::PaletteBase );
+		    mdw->setBackgroundRole( QPalette::Base );
 		}
 		backGoundModeToggler = !backGoundModeToggler;
 	    } // ! isDisabled()
