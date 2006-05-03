@@ -37,7 +37,8 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
       _view(view)
 {
     QList<QWidget *> &mdws = view._mdws;
-    _layout = new QVBoxLayout(plainPage(),0,-1, "_layout" );
+    _layout = new QVBoxLayout(plainPage() );
+    _layout->setObjectName( "_layout" );
 
     //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
     QLabel* qlb = new QLabel( i18n("Configure"), plainPage() );
@@ -83,10 +84,10 @@ void DialogViewConfiguration::apply()
 	    else {
 		mdw->setDisabled(true);
 	    }
-	
+
 	}
     }
-    
+
     // --- Step 2: Tell the view, that it has changed (probably it needs some "polishing" ---
     _view.configurationUpdate();
 }

@@ -135,7 +135,10 @@ KMixWindow::initWidgets()
 	setCentralWidget( new QWidget(  this, "qt_central_widget" ) );
 
 	// Widgets layout
-	widgetsLayout = new QVBoxLayout(   centralWidget(), 0, 0, "widgetsLayout" );
+	widgetsLayout = new QVBoxLayout(   centralWidget()   );
+	widgetsLayout->setObjectName(   "widgetsLayout"   );
+	widgetsLayout->setSpacing(   0   );
+	widgetsLayout->setMargin(   0   );
 	//widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
 
 	m_wsMixers = new QStackedWidget( centralWidget() );

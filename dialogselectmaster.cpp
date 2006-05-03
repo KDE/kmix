@@ -57,7 +57,8 @@ DialogSelectMaster::~DialogSelectMaster()
 void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 {
     QFrame *m_mainFrame = plainPage();
-    _layout = new QVBoxLayout(m_mainFrame,0,-1, "_layout" );
+    _layout = new QVBoxLayout(m_mainFrame);
+    _layout->setObjectName( "_layout" );
 
     if ( Mixer::mixers().count() > 1 ) {
       //kDebug(67100) << "DialogSelectMaster::createPage count()>1" << "\n";

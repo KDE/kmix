@@ -108,7 +108,9 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     }
 
     // create main layout
-    m_topLayout = new QVBoxLayout( this, 0, 3,  "m_topLayout" );
+    m_topLayout = new QVBoxLayout( this );
+    m_topLayout->setSpacing( 3 );
+    m_topLayout->setObjectName( "m_topLayout" );
 
     // Create tabs of input + output + [...]
     m_ioTab = new KTabWidget( this);
@@ -161,7 +163,9 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
 
     // *** Lower part: Slider and Mixer Name ************************************************
-    QHBoxLayout *balanceAndDetail = new QHBoxLayout( m_topLayout, 8,  "balanceAndDetail");
+    QHBoxLayout *balanceAndDetail = new QHBoxLayout( m_topLayout );
+    balanceAndDetail->setObjectName( "balanceAndDetail" );
+    balanceAndDetail->setSpacing( 8 );
     // Create the left-right-slider
     m_balanceSlider = new QSlider( -100, 100, 25, 0, Qt::Horizontal, this, "RightLeft" );
     m_balanceSlider->setTickmarks( QSlider::TicksBelow );

@@ -48,11 +48,12 @@ ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, View
     _layoutMDW->setMargin(8);
     // Create switch buttonGroup
     if ( _vflags & ViewBase::Vertical ) {
-        _layoutSliders = new QVBoxLayout(_layoutMDW);
+        _layoutSliders = new QVBoxLayout();
     }
     else {
-        _layoutSliders = new QHBoxLayout(_layoutMDW);
+        _layoutSliders = new QHBoxLayout();
     }
+    _layoutMDW->addItem( _layoutSliders );
     _layoutSurround = new QGridLayout();
     _layoutMDW->addItem( _layoutSurround );
     //    _layoutMDW->setMargin(8);

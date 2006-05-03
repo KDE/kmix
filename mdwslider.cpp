@@ -66,24 +66,24 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
     m_linked(true), m_iconLabel( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
-	
+
 	new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
 			_mdwActions, "stereo" );
 	new KToggleAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), _mdwActions, "hide" );
-	
+
 	KToggleAction *a = new KToggleAction(i18n("&Muted"), 0, 0, 0, _mdwActions, "mute" );
 	connect( a, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
-	
+
 	if( m_mixdevice->isRecordable() ) {
 		a = new KToggleAction( i18n("Set &Record Source"), 0, 0, 0, _mdwActions, "recsrc" );
 		connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
 	}
-	
+
 	new KAction( i18n("C&onfigure Shortcuts..."), 0, this, SLOT(defineKeys()), _mdwActions, "keys" );
-	
+
 	// create widgets
 	createWidgets( showMuteLED, showRecordLED );
-	
+
 	KAction *b;
 	b = new KAction( i18n( "Increase Volume" ), 0, this,
 		SLOT(increaseVolume()), _mdwActions, "Increase volume" );
@@ -137,80 +137,85 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 // -- MAIN SLIDERS LAYOUT  ---
 	 QBoxLayout *slidersLayout;
 	 if ( _orientation == Qt::Vertical ) {
-		 slidersLayout = new QHBoxLayout( _layout );
+		 slidersLayout = new QHBoxLayout( );
 		 slidersLayout->setAlignment(Qt::AlignVCenter);
 	 }
 	 else {
-		 slidersLayout = new QVBoxLayout( _layout );
+		 slidersLayout = new QVBoxLayout();
 		 slidersLayout->setAlignment(Qt::AlignHCenter);
 	 }
+         _layout->addItem( slidersLayout );
 
 	 // -- LABEL LAYOUT TO POSITION
 	 QBoxLayout *labelLayout;
 	 if ( _orientation == Qt::Vertical ) {
-		 labelLayout = new QVBoxLayout( slidersLayout );
+		 labelLayout = new QVBoxLayout( );
+                 slidersLayout->addItem( labelLayout );
 		 labelLayout->setAlignment(Qt::AlignHCenter);
 	 }
 	 else {
 		 labelLayout = new QHBoxLayout( slidersLayout );
 		 labelLayout->setAlignment(Qt::AlignVCenter);
 	 }
-    if ( _orientation == Qt::Vertical ) { 
+    if ( _orientation == Qt::Vertical ) {
 		 m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
 	 }
 	 else {
 		 m_label = new QLabel(this);
 		 static_cast<QLabel*>(m_label) ->setText(m_mixdevice->name());
 	 }
-	 
+
 	 m_label->hide();
-	
+
 	 labelLayout->addWidget( m_label );
 	 m_label->installEventFilter( this );
-	 
+
 	 // -- SLIDERS, LEDS AND ICON
 	 QBoxLayout *sliLayout;
 	 if ( _orientation == Qt::Vertical ) {
-		 sliLayout = new QVBoxLayout( slidersLayout );
+		 sliLayout = new QVBoxLayout();
 		 sliLayout->setAlignment(Qt::AlignHCenter);
     }
     else {
-		 sliLayout = new QHBoxLayout( slidersLayout );
+		 sliLayout = new QHBoxLayout();
 		 sliLayout->setAlignment(Qt::AlignVCenter);
 	 }
-	 
+
+         slidersLayout->addItem( sliLayout );
 	 // --- ICON  ----------------------------
     QBoxLayout *iconLayout;
     if ( _orientation == Qt::Vertical ) {
-		 iconLayout = new QVBoxLayout( sliLayout );
+		 iconLayout = new QVBoxLayout( );
 		 iconLayout->setAlignment(Qt::AlignCenter);
 	 }
 	 else {
-		 iconLayout = new QHBoxLayout( sliLayout );
+		 iconLayout = new QHBoxLayout( );
 		 iconLayout->setAlignment(Qt::AlignCenter);
 	 }
+    sliLayout->addItem( iconLayout );
 	 iconLayout->setSizeConstraint(QLayout::SetFixedSize);
-	 
+
 	 m_iconLabel = 0L;
 	 setIcon( m_mixdevice->type() );
 	 iconLayout->addWidget( m_iconLabel );
 	 m_iconLabel->installEventFilter( this );
 	 QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
 	 m_iconLabel->setToolTip( muteTip );
-	 
+
 	 //sliLayout->addSpacing( 3 );
-	 
+
 
     // --- SLIDERS ---------------------------
 	 QBoxLayout *volLayout;
 	 if ( _orientation == Qt::Vertical ) {
-		 volLayout = new QHBoxLayout( sliLayout );
+		 volLayout = new QHBoxLayout( );
 		 volLayout->setAlignment(Qt::AlignVCenter);
 	 }
 	 else {
-		 volLayout = new QVBoxLayout( sliLayout );
+		 volLayout = new QVBoxLayout(  );
 		 volLayout->setAlignment(Qt::AlignHCenter);
 	 }
+         sliLayout->addItem( volLayout );
 
 	 // Sliders
 	 for( int i = 0; i < m_mixdevice->getVolume().count(); i++ )
@@ -218,14 +223,14 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 Volume::ChannelID chid = Volume::ChannelID(i);
 		 // @todo !!! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
 		 // We should look up the mapping here, but for now, we simply assume "chid == i".
-		 
+
 		 int maxvol = m_mixdevice->getVolume().maxVolume();
 		 int minvol = m_mixdevice->getVolume().minVolume();
-		 
+
 		 QWidget* slider;
 		 if ( m_small ) {
 			 slider = new KSmallSlider( minvol, maxvol, maxvol/10,
-					 m_mixdevice->getVolume( chid ), _orientation, 
+					 m_mixdevice->getVolume( chid ), _orientation,
 					 this, m_mixdevice->name().ascii() );
 		 }
 		 else	{
@@ -236,10 +241,10 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
                          static_cast<QSlider*>(slider)->setInvertedAppearance(true);
                          static_cast<QSlider*>(slider)->setInvertedControls(true);
 		 }
-		 
+
 		 slider->installEventFilter( this );
 		 slider->setToolTip( m_mixdevice->name() );
-		 
+
 		 if( i>0 && isStereoLinked() ) {
 			 // show only one (the first) slider, when the user wants it so
 			 slider->hide();
@@ -259,15 +264,16 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 // --- LED LAYOUT TO CENTER ---
 		 QBoxLayout *reclayout;
 		 if ( _orientation == Qt::Vertical ) {
-			 reclayout = new QVBoxLayout( sliLayout );
+			 reclayout = new QVBoxLayout( );
 			 reclayout->setAlignment(Qt::AlignVCenter);
 		 }
 		 else {
-			 reclayout = new QHBoxLayout( sliLayout );
+			 reclayout = new QHBoxLayout( );
 			 reclayout->setAlignment(Qt::AlignHCenter);
 		 }
+                 sliLayout->addItem( reclayout );
 		 reclayout->setSizeConstraint(QLayout::SetFixedSize);
-		 
+
 		 if( m_mixdevice->isRecordable() ) {
 			 m_recordLED = new KLedButton( Qt::red,
 					 m_mixdevice->isRecSource()?KLed::On:KLed::Off,
@@ -282,7 +288,8 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 {
 			 // we don't have a RECORD LED. We create a dummy widget
 			 // !! possibly not neccesary any more (we are layouted)
-			 QWidget *qw = new QWidget(this, "Spacer");
+                         QWidget *qw = new QWidget(this );
+                         qw->setObjectName( "Spacer" );
 			 qw->setFixedSize( QSize(16, 16) );
 			 reclayout->addWidget(qw);
 			 qw->installEventFilter( this );
@@ -403,7 +410,7 @@ MDWSlider::setStereoLinked(bool value)
    QWidget *slider = m_sliders[0];
 
    /***********************************************************
-      Remember value of first slider, so that it can be copied 
+      Remember value of first slider, so that it can be copied
       to the other sliders.
     ***********************************************************/
    int firstSliderValue = 0;
@@ -495,7 +502,7 @@ MDWSlider::setTicks( bool ticks )
 			static_cast<QSlider *>(slider)->setTickmarks( QSlider::NoMarks );
 		}
 	}
-	
+
 	layout()->activate();
 }
 
@@ -560,11 +567,11 @@ void MDWSlider::volumeChange( int )
       else {
          QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
          if (slider) {
-				if ( _orientation == Qt::Vertical ) 
+				if ( _orientation == Qt::Vertical )
 					sliderValue= slider->maxValue() - slider->value();
 				else
 					sliderValue= slider->value();
-					
+
          }
       }
 
@@ -575,7 +582,7 @@ void MDWSlider::volumeChange( int )
 
       if ( chid == Volume::LEFT ) {
 			vol.setVolume( Volume::LEFT , vol.getVolume( Volume::LEFT ) + volumeDif );
-			vol.setVolume( Volume::RIGHT, vol.getVolume( Volume::RIGHT ) + volumeDif );				  
+			vol.setVolume( Volume::RIGHT, vol.getVolume( Volume::RIGHT ) + volumeDif );
       }
       else {
          kDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
@@ -597,7 +604,7 @@ void MDWSlider::volumeChange( int )
 	  {
 	      QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
 	      if (bigSlider)
-				if ( _orientation == Qt::Vertical ) 
+				if ( _orientation == Qt::Vertical )
 					vol.setVolume( chid, bigSlider->maxValue() - bigSlider->value() );
 				else
 					vol.setVolume( chid, bigSlider->value() );
@@ -707,9 +714,9 @@ void MDWSlider::update()
 	if( isStereoLinked() )
 	{
 		QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-		
+
 		long avgVol = vol.getAvgVolume( Volume::MMAIN );
-		
+
 		QWidget *slider =  m_sliders.first();
 		if ( slider == 0 ) {
 			return;
@@ -728,16 +735,16 @@ void MDWSlider::update()
 			if (bigSlider)
 			{
 				// In case of stereo linked and single slider, slider must
-				// show the top of both volumes, and not strangely low down 
+				// show the top of both volumes, and not strangely low down
 				// the main volume by half
-				
+
 				if ( _orientation == Qt::Vertical )
 					bigSlider->setValue( vol.maxVolume() - vol.getTopStereoVolume( Volume::MMAIN ) );
 				else
 					bigSlider->setValue( vol.getTopStereoVolume( Volume::MMAIN ) );
 			}
 		} // big slider
-		
+
 		slider->blockSignals( false );
 	} // only 1 slider (stereo-linked)
 	else {
@@ -753,7 +760,7 @@ void MDWSlider::update()
 				continue;
 			}
 			slider->blockSignals( true );
-			
+
 			if ( slider->inherits( "KSmallSlider" ) )
 			{
 				KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
@@ -773,7 +780,7 @@ void MDWSlider::update()
 						bigSlider->setValue( vol[i] );
 				}
 			}
-			
+
 			slider->blockSignals( false );
 		} // for all sliders
 	} // more than 1 slider
@@ -793,14 +800,14 @@ void MDWSlider::update()
 	}
 }
 
-void MDWSlider::showContextMenu() 
+void MDWSlider::showContextMenu()
 {
 	if( m_mixerwidget == NULL )
 		return;
-	
+
 	KMenu *menu = m_mixerwidget->getPopup();
 	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
-	
+
 	if ( m_sliders.count()>1 ) {
 		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
 		if ( stereo ) {
@@ -808,13 +815,13 @@ void MDWSlider::showContextMenu()
 			stereo->plug( menu );
 		}
 	}
-	
+
 	KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
 	if ( ta ) {
 		ta->setChecked( m_mixdevice->isRecSource() );
 		ta->plug( menu );
 	}
-	
+
 	if ( m_mixdevice->hasMute() ) {
 		ta = ( KToggleAction* )_mdwActions->action( "mute" );
 		if ( ta ) {
@@ -822,18 +829,18 @@ void MDWSlider::showContextMenu()
 			ta->plug( menu );
 		}
 	}
-	
+
 	KAction *a = _mdwActions->action(  "hide" );
 	if ( a )
 		a->plug(  menu );
-	
+
 	a = _mdwActions->action( "keys" );
 	if ( a ) {
 		KActionSeparator sep( _mdwActions );
 		sep.plug( menu );
 		a->plug( menu );
 	}
-	
+
 	QPoint pos = QCursor::pos();
 	menu->popup( pos );
 }
