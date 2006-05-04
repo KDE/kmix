@@ -56,7 +56,8 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
 
     // KStdAction::showMenubar() is in MixDeviceWidget now
     new KToggleAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), _mdwActions, "hide" );
-    new KAction( i18n("C&onfigure Shortcuts..."), 0, this, SLOT(defineKeys()), _mdwActions, "keys" );
+    KAction *action = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+    connect(action, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
     // create widgets
     createWidgets();

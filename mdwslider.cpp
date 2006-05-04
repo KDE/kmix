@@ -79,7 +79,8 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 		connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
 	}
 
-	new KAction( i18n("C&onfigure Shortcuts..."), 0, this, SLOT(defineKeys()), _mdwActions, "keys" );
+	KAction *action = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+	connect(action, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
 	// create widgets
 	createWidgets( showMuteLED, showRecordLED );
