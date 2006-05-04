@@ -64,7 +64,8 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
       //kDebug(67100) << "DialogSelectMaster::createPage count()>1" << "\n";
       // More than one Mixer => show Combo-Box to select Mixer
       // Mixer widget line
-      QHBoxLayout* mixerNameLayout = new QHBoxLayout( _layout );
+      QHBoxLayout* mixerNameLayout = new QHBoxLayout();
+      _layout->addItem( mixerNameLayout );
       //widgetsLayout->setStretchFactor( mixerNameLayout, 0 );
       //QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
       //mixerNameLayout->setSizePolicy(qsp);

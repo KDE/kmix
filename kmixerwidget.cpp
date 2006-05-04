@@ -163,7 +163,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
 
     // *** Lower part: Slider and Mixer Name ************************************************
-    QHBoxLayout *balanceAndDetail = new QHBoxLayout( m_topLayout );
+    QHBoxLayout *balanceAndDetail = new QHBoxLayout();
+    m_topLayout->addItem( balanceAndDetail );
     balanceAndDetail->setObjectName( "balanceAndDetail" );
     balanceAndDetail->setSpacing( 8 );
     // Create the left-right-slider
