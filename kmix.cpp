@@ -113,8 +113,11 @@ KMixWindow::initActions()
 	KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
 	KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
-	(void) new KAction( i18n( "Hardware &Information" ), 0, this, SLOT( slotHWInfo() ), actionCollection(), "hwinfo" );
-	(void) new KAction( i18n( "Hide Mixer Window" ), Qt::Key_Escape, this, SLOT(hide()), actionCollection(), "hide_kmixwindow" );
+	KAction *action = new KAction( i18n( "Hardware &Information" ), actionCollection(), "hwinfo" );
+	connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
+	action = new KAction( i18n( "Hide Mixer Window" ), actionCollection(), "hide_kmixwindow" );
+	connect(action, SIGNAL(triggered(bool) ), SLOT(hide()));
+	action->setShortcut(Qt::Key_Escape);
 	createGUI( "kmixui.rc" );
 }
 
