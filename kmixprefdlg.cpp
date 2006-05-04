@@ -68,7 +68,8 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
    layout->addWidget( m_onLogin );
 
-   QBoxLayout *orientationLayout = new QHBoxLayout( layout );
+   QBoxLayout *orientationLayout = new QHBoxLayout();
+   layout->addItem( orientationLayout );
    QButtonGroup* orientationGroup = new QButtonGroup( m_generalTab ); // !!! Check
    //QGroupBox* orientationGroupBox = new QGroupBox(i18n("Orientation"), m_generalTab);
    //orientationLayout->add(orientationGroup);

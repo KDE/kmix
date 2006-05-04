@@ -154,7 +154,8 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 labelLayout->setAlignment(Qt::AlignHCenter);
 	 }
 	 else {
-		 labelLayout = new QHBoxLayout( slidersLayout );
+		 labelLayout = new QHBoxLayout();
+		 slidersLayout->addItem( labelLayout );
 		 labelLayout->setAlignment(Qt::AlignVCenter);
 	 }
     if ( _orientation == Qt::Vertical ) {
