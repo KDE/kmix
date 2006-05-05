@@ -839,7 +839,7 @@ void MDWSlider::showContextMenu()
 	a = _mdwActions->action( "keys" );
 	if ( a ) {
 		KActionSeparator sep( _mdwActions );
-		sep.plug( menu );
+		menu->addAction( &sep );
 		menu->addAction( a );
 	}
 

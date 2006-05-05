@@ -139,10 +139,10 @@ void ViewBase::popupReset()
     _popMenu->addTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
     a = _actions->action( "toggle_channels" );
-    if ( a ) a->plug( _popMenu );
+    if ( a ) _popMenu->addAction(a);
 
     a = _actions->action( "options_show_menubar" );
-    if ( a ) a->plug( _popMenu );
+    if ( a ) _popMenu->addAction(a);
 }
 
 

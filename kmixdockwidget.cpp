@@ -84,14 +84,14 @@ void KMixDockWidget::createActions()
   actionCollection(), "dock_mute" );
   KAction *a = actionCollection()->action( "dock_mute" );
   KMenu *popupMenu = contextMenu();
-  if ( a ) a->plug( popupMenu );
+  if ( a ) popupMenu->addAction( a );
 
   // Put "Select Master Channel" dialog in context menu
   if ( m_mixer != 0 ) {
   KAction *action = new KAction( i18n("Select Master Channel..."), actionCollection(), "select_master");
   connect(action, SIGNAL(triggered(bool) ), SLOT(selectMaster()));
   KAction *a2 = actionCollection()->action( "select_master" );
-  if (a2) a2->plug( popupMenu );
+  if (a2) popupMenu->addAction( a2 );
   }
 
    // Setup volume preview
