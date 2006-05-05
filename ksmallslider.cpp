@@ -347,7 +347,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
 void KSmallSlider::moveSlider( int pos )
 {
     int  a = available();
-    int newPos = QMIN( a, QMAX( 0, pos ) );  // keep it inside the available bounds of the slider
+    int newPos = qMin( a, qMax( 0, pos ) );  // keep it inside the available bounds of the slider
     int newVal = valueFromPosition( newPos );
 
     if ( newVal != value() ) {

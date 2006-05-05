@@ -367,7 +367,7 @@ MDWSlider::setIcon( int icontype )
       if ( m_small )
       {
          // scale icon
-         QWMatrix t;
+         QMatrix t;
          t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
          m_iconLabel->setPixmap( miniDevPM.transformed( t ) );
          m_iconLabel->resize( 10, 10 );
