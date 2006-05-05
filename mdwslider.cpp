@@ -814,33 +814,33 @@ void MDWSlider::showContextMenu()
 		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
 		if ( stereo ) {
 			stereo->setChecked( !isStereoLinked() );
-			stereo->plug( menu );
+			menu->addAction( stereo );
 		}
 	}
 
 	KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
 	if ( ta ) {
 		ta->setChecked( m_mixdevice->isRecSource() );
-		ta->plug( menu );
+		menu->addAction( ta );
 	}
 
 	if ( m_mixdevice->hasMute() ) {
 		ta = ( KToggleAction* )_mdwActions->action( "mute" );
 		if ( ta ) {
 			ta->setChecked( m_mixdevice->isMuted() );
-			ta->plug( menu );
+			menu->addAction( ta );
 		}
 	}
 
 	KAction *a = _mdwActions->action(  "hide" );
 	if ( a )
-		a->plug(  menu );
+		menu->addAction( a );
 
 	a = _mdwActions->action( "keys" );
 	if ( a ) {
 		KActionSeparator sep( _mdwActions );
 		sep.plug( menu );
-		a->plug( menu );
+		menu->addAction( a );
 	}
 
 	QPoint pos = QCursor::pos();
