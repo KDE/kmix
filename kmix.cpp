@@ -45,7 +45,8 @@
 
 #include <kxmlguifactory.h>
 #include <kglobal.h>
-
+#include <kactioncollection.h>
+#include <ktoggleaction.h>
 // application specific includes
 #include "mixertoolbox.h"
 #include "kmix.h"

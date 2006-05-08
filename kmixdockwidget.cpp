@@ -31,7 +31,8 @@
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwin.h>
-
+#include <kactioncollection.h>
+#include <ktoggleaction.h>
 #include <qapplication.h>
 #include <qcursor.h>
 #include <QDesktopWidget>

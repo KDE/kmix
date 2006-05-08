@@ -31,7 +31,9 @@
 #include <kmenu.h>
 #include <klocale.h>
 #include <kiconloader.h>
-
+#include <kactioncollection.h>
+#include <ktoggleaction.h>
+#include <kstdaction.h>
 // KMix
 #include "dialogviewconfiguration.h"
 #include "mixdevicewidget.h"
