@@ -39,6 +39,8 @@
 #include <qtooltip.h>
 #include <qwmatrix.h>
 
+#include <kactioncollection.h>
+
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "viewbase.h"

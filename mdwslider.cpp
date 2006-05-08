@@ -28,6 +28,9 @@
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
 #include <kdebug.h>
+#include <kactioncollection.h>
+#include <kseparatoraction.h>
+#include <ktoggleaction.h>
 
 #include <qicon.h>
 #include <qtoolbutton.h>
@@ -838,7 +841,7 @@ void MDWSlider::showContextMenu()
 
 	a = _mdwActions->action( "keys" );
 	if ( a ) {
-		KActionSeparator sep( _mdwActions );
+		KSeparatorAction sep( _mdwActions );
 		menu->addAction( &sep );
 		menu->addAction( a );
 	}

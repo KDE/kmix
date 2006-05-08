@@ -34,6 +34,7 @@
 #include <kglobalaccel.h>
 #include <kkeydialog.h>
 #include <kdebug.h>
+#include <ktoggleaction.h>
 
 #include "kledbutton.h"
 #include "mdwswitch.h"
