@@ -49,7 +49,7 @@ kde4_add_dcop_skels(kmix_KDEINIT_SRCS mixerIface.h )
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} kutils )
+target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} kutils phononcore )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmix )
 

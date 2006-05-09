@@ -25,6 +25,7 @@
 #include <klocale.h>
 #include <kapplication.h>
 #include <kmenu.h>
+#include <kurl.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kaudioplayer.h>
@@ -40,6 +41,7 @@
 #include <QMouseEvent>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
+#include <phonon/simpleplayer.h>
 
 #include "dialogselectmaster.h"
 #include "mixer.h"
@@ -97,7 +99,7 @@ void KMixDockWidget::createActions()
 
    // Setup volume preview
   if ( _playBeepOnVolumeChange ) {
-    _audioPlayer = new KAudioPlayer("KDE_Beep_Digital_1.ogg");
+    _audioPlayer = new Phonon::SimplePlayer(this);
   }
 }
 
@@ -335,7 +337,7 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
     }
 
     if ( _playBeepOnVolumeChange ) {
-        _audioPlayer->play();
+        _audioPlayer->play(KUrl("KDE_Beep_Digital_1.ogg"));
     }
     md->getVolume().setVolume(vol);
     m_mixer->commitVolumeChange(md);
