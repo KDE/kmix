@@ -24,7 +24,7 @@
 class Mixer;
 
 #include <qxml.h>
-#include <qstring.h>
+#include <QString>
 #include <string>
 #include <map>
 #include <set>

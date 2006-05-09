@@ -24,7 +24,7 @@
 
 #include <vector>
 
-#include <qwidget.h>
+#include <QWidget>
 class QString;
 class QGridLayout;
 

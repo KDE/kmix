@@ -21,7 +21,7 @@
 #ifndef VerticalText_h
 #define VerticalText_h
 
-#include <qwidget.h>
+#include <QWidget>
 
 class VerticalText : public QWidget
 {

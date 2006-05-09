@@ -21,8 +21,8 @@
 #include "viewapplet.h"
 
 // Qt
-#include <qwidget.h>
-#include <qlayout.h>
+#include <QWidget>
+#include <QLayout>
 #include <QResizeEvent>
 
 // KDE

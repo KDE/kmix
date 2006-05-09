@@ -25,7 +25,7 @@
 #ifndef MIXDEVICEWIDGET_H
 #define MIXDEVICEWIDGET_H
 
-#include <qwidget.h>
+#include <QWidget>
 #include "volume.h"
 #include <qpixmap.h>
 

@@ -21,8 +21,8 @@
 
 #include "viewswitches.h"
 
-#include <qlayout.h>
-#include <qwidget.h>
+#include <QLayout>
+#include <QWidget>
 
 #include <kdebug.h>
 #include <klocale.h>

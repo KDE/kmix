@@ -25,11 +25,11 @@
 
 // QT
 #include <qgroupbox.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLayout>
 #include <qpixmap.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qradiobutton.h>
 #include <QResizeEvent>
 #include <qwmatrix.h>

@@ -21,10 +21,10 @@
  */
 
 #include <qbuttongroup.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qwhatsthis.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
+#include <QCheckBox>
+#include <QLabel>
 #include <qradiobutton.h>
 
 #include <klocale.h>

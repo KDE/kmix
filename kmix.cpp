@@ -20,13 +20,13 @@
 
 
 // include files for QT
-#include <qmap.h>
+#include <QMap>
 //#include <qhbox.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qradiobutton.h>
 #include <qstackedwidget.h>
-#include <qlayout.h>
-#include <qtooltip.h>
+#include <QLayout>
+#include <QToolTip>
 
 // include files for KDE
 #include <kcombobox.h>

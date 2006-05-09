@@ -26,7 +26,7 @@
 #ifndef MIXER_H
 #define MIXER_H
 
-#include <qstring.h>
+#include <QString>
 #include <qtimer.h>
 #include <qobject.h>
 #include <qlist.h>

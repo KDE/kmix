@@ -38,10 +38,10 @@
 #include <qcursor.h>
 #include <QMouseEvent>
 #include <qslider.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qpixmap.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qwmatrix.h>
 
 #include "mdwslider.h"

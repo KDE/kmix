@@ -20,11 +20,11 @@
  */
 
 #include <q3buttongroup.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLabel>
 #include <qradiobutton.h>
 #include <q3scrollview.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <q3vbox.h>
 
 #include <kcombobox.h>

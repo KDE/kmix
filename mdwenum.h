@@ -23,7 +23,7 @@
 #ifndef MDWENUM_H
 #define MDWENUM_H
 
-#include <qwidget.h>
+#include <QWidget>
 #include "volume.h"
 
 class QBoxLayout;

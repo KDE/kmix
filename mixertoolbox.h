@@ -22,7 +22,7 @@
 #define MIXERTOOLBOX_H
 
 #include <qlist.h>
-#include <qstring.h>
+#include <QString>
 
 class GUIProfile;
 class Mixer;

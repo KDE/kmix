@@ -22,9 +22,9 @@
 #include "viewsurround.h"
 
 // Qt
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qwidget.h>
+#include <QLabel>
+#include <QLayout>
+#include <QWidget>
 
 // KDE
 #include <kdebug.h>

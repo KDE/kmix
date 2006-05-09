@@ -2,7 +2,7 @@
 
 // Qt
 #include <qxml.h>
-#include <qstring.h>
+#include <QString>
 
 // System
 #include <iostream>

@@ -27,8 +27,8 @@
 #endif
 
 // include files for Qt
-#include <qstring.h>
-#include <qmap.h>
+#include <QString>
+#include <QMap>
 #include <qlist.h>
 #include <QVBoxLayout>
 class QHBox;

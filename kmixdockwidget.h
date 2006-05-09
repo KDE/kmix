@@ -25,7 +25,7 @@
 
 class QFrame;
 class QString;
-#include <qwidget.h>
+#include <QWidget>
 
 #include <ksystemtray.h>
 

@@ -20,7 +20,7 @@
  */
 
 #include "viewinput.h"
-#include <qwidget.h>
+#include <QWidget>
 
 #include "mixer.h"
 #include "mixdevicewidget.h"

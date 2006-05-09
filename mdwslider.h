@@ -24,7 +24,7 @@
 #define MDWSLIDER_H
 
 #include <QList>
-#include <qwidget.h>
+#include <QWidget>
 #include <qlist.h>
 #include <qpixmap.h>
 

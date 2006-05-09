@@ -24,9 +24,9 @@
 
 #include <kdebug.h>
 
-#include <qwidget.h>
+#include <QWidget>
 #include <qpainter.h>
-#include <qcolor.h>
+#include <QColor>
 #include <qbrush.h>
 #include <QMouseEvent>
 #include <qstyle.h>

@@ -22,7 +22,7 @@
 #include "viewgrid.h"
 
 // Qt
-#include <qwidget.h>
+#include <QWidget>
 
 // KDE
 #include <kdebug.h>

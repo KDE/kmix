@@ -20,13 +20,13 @@
 
 
 // Qt
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qpixmap.h>
 #include <qslider.h>
-#include <qstring.h>
+#include <QString>
 #include <qtoolbutton.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qapplication.h> // for QApplication::revsreseLayout()
 
 // KDE

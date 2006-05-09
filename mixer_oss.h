@@ -22,7 +22,7 @@
 #ifndef MIXER_OSS_H
 #define MIXER_OSS_H
 
-#include <qstring.h>
+#include <QString>
 
 #include "mixer_backend.h"
 

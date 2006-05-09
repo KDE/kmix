@@ -20,9 +20,9 @@
  */
 
 
-#include <qcolor.h>
-#include <qwidget.h>
-#include <qstring.h>
+#include <QColor>
+#include <QWidget>
+#include <QString>
 
 //#include <kdebug.h>
 #include <kglobalaccel.h>

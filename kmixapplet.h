@@ -23,8 +23,8 @@
 #define KMIXAPPLET_H
 
 // Qt
-#include <qlayout.h>
-#include <qwidget.h>
+#include <QLayout>
+#include <QWidget>
 
 // KDE
 #include <kaboutdata.h>

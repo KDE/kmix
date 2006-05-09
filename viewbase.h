@@ -22,7 +22,7 @@
 #define ViewBase_h
 
 // QT
-#include <qwidget.h>
+#include <QWidget>
 #include <qlist.h>
 
 // KDE

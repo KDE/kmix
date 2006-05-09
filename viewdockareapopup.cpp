@@ -22,11 +22,11 @@
 #include "viewdockareapopup.h"
 
 // Qt
-#include <qwidget.h>
+#include <QWidget>
 #include <qevent.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qframe.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qdatetime.h>
 
 // KDE

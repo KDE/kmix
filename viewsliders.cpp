@@ -22,8 +22,8 @@
 #include "viewsliders.h"
 
 // Qt
-#include <qlayout.h>
-#include <qwidget.h>
+#include <QLayout>
+#include <QWidget>
 
 // KDE
 #include <kdebug.h>

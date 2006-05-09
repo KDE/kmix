@@ -37,7 +37,7 @@
 #include <qapplication.h>
 #include <qcursor.h>
 #include <QDesktopWidget>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <QMouseEvent>
 #include <X11/Xlib.h>
 #include <fixx11h.h>

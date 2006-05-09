@@ -20,7 +20,7 @@
  */
 
 
-#include <qstring.h>
+#include <QString>
 
 #include <kdebug.h>
 #include <kconfig.h>

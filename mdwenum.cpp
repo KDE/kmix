@@ -20,11 +20,11 @@
  */
 
 #include <qcursor.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <QMouseEvent>
 #include <qobject.h>
-#include <qtooltip.h>
+#include <QToolTip>
 
 #include <klocale.h>
 #include <kconfig.h>

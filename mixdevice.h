@@ -22,7 +22,7 @@
 #define MixDevice_h
 
 #include "volume.h"
-#include <qstring.h>
+#include <QString>
 #include <kconfig.h>
 #include <qobject.h>
 #include <qlist.h>

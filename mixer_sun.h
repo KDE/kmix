@@ -23,7 +23,7 @@
 #ifndef MIXER_SUN_H
 #define MIXER_SUN_H
 
-#include <qstring.h>
+#include <QString>
 
 #include "mixer_backend.h"
 

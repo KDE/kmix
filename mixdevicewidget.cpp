@@ -32,11 +32,11 @@
 #include <qobject.h>
 #include <qcursor.h>
 #include <qslider.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <QMouseEvent>
 #include <qpixmap.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qwmatrix.h>
 
 #include <kactioncollection.h>

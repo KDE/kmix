@@ -21,7 +21,7 @@
 #ifndef DIALOGVIEWCONFIGURATION_H
 #define DIALOGVIEWCONFIGURATION_H
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qlist.h>
 class QVBoxLayout;
 

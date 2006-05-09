@@ -20,7 +20,7 @@
  */
 
 #include "viewsliderset.h"
-#include <qwidget.h>
+#include <QWidget>
 
 #include "guiprofile.h"
 #include "mixer.h"
