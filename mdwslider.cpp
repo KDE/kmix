@@ -70,15 +70,16 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
 
-	new KToggleAction( i18n("&Split Channels"), 0, this, SLOT(toggleStereoLinked()),
-			_mdwActions, "stereo" );
-	new KToggleAction( i18n("&Hide"), 0, this, SLOT(setDisabled()), _mdwActions, "hide" );
+	KToggleAction *action = new KToggleAction( i18n("&Split Channels"), _mdwActions, "stereo" );
+	connect(action, SIGNAL(triggered(bool) ), SLOT(toggleStereoLinked()));
+	KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
+	connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
 
-	KToggleAction *a = new KToggleAction(i18n("&Muted"), 0, 0, 0, _mdwActions, "mute" );
+	KToggleAction *a = new KToggleAction(i18n("&Muted"), _mdwActions, "mute" );
 	connect( a, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
 
 	if( m_mixdevice->isRecordable() ) {
-		a = new KToggleAction( i18n("Set &Record Source"), 0, 0, 0, _mdwActions, "recsrc" );
+		a = new KToggleAction( i18n("Set &Record Source"), _mdwActions, "recsrc" );
 		connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
 	}
 

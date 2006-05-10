@@ -83,8 +83,8 @@ KMixDockWidget::~KMixDockWidget()
 void KMixDockWidget::createActions()
 {
   // Put "Mute" selector in context menu
-  (void)new KToggleAction( i18n( "M&ute" ), 0, this, SLOT( dockMute() ),
-  actionCollection(), "dock_mute" );
+  KToggleAction *action = new KToggleAction( i18n( "M&ute" ), actionCollection(), "dock_mute" );
+  connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
   KAction *a = actionCollection()->action( "dock_mute" );
   KMenu *popupMenu = contextMenu();
   if ( a ) popupMenu->addAction( a );
