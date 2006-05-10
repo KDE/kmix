@@ -27,7 +27,7 @@
 #include <QLayout>
 #include <qframe.h>
 #include <QPushButton>
-#include <qdatetime.h>
+#include <QDateTime>
 
 // KDE
 #include <kdebug.h>

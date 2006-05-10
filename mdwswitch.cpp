@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QMouseEvent>
-#include <qobject.h>
+#include <QObject>
 #include <qslider.h>
 #include <QToolTip>
 
@@ -58,8 +58,8 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
     // KStdAction::showMenubar() is in MixDeviceWidget now
     KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
     connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
-    KAction *action = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
-    connect(action, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+    KAction *b = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+    connect(b, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
     // create widgets
     createWidgets();

@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QMouseEvent>
-#include <qobject.h>
+#include <QObject>
 #include <QToolTip>
 
 #include <klocale.h>
@@ -57,8 +57,8 @@ MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
     // KStdAction::showMenubar() is in MixDeviceWidget now
     KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
     connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
-    KAction *action = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
-    connect(action, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+    KAction *c = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+    connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
     // create widgets
     createWidgets();

@@ -27,8 +27,8 @@
 #define MIXER_H
 
 #include <QString>
-#include <qtimer.h>
-#include <qobject.h>
+#include <QTimer>
+#include <QObject>
 #include <qlist.h>
 
 #include "volume.h"

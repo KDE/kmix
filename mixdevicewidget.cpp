@@ -29,7 +29,7 @@
 #include <kkeydialog.h>
 #include <kdebug.h>
 
-#include <qobject.h>
+#include <QObject>
 #include <qcursor.h>
 #include <qslider.h>
 #include <QLabel>

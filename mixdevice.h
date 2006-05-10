@@ -24,7 +24,7 @@
 #include "volume.h"
 #include <QString>
 #include <kconfig.h>
-#include <qobject.h>
+#include <QObject>
 #include <qlist.h>
 
 // ! @todo : CONSIDER MERGING OF MixDevice and Volume classes:

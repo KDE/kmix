@@ -34,7 +34,7 @@
 
 #include <qicon.h>
 #include <qtoolbutton.h>
-#include <qobject.h>
+#include <QObject>
 #include <qcursor.h>
 #include <QMouseEvent>
 #include <qslider.h>
@@ -72,7 +72,7 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 
 	KToggleAction *action = new KToggleAction( i18n("&Split Channels"), _mdwActions, "stereo" );
 	connect(action, SIGNAL(triggered(bool) ), SLOT(toggleStereoLinked()));
-	KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
+	action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
 	connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
 
 	KToggleAction *a = new KToggleAction(i18n("&Muted"), _mdwActions, "mute" );
@@ -83,8 +83,8 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 		connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
 	}
 
-	KAction *action = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
-	connect(action, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+	KAction *c = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+	connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
 	// create widgets
 	createWidgets( showMuteLED, showRecordLED );
