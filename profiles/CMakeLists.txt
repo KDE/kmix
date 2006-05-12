@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -7,7 +6,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kmix/profiles FILES OSS.default.xml ALSA.default.xml )
 
-kde4_footer()
 
 
 

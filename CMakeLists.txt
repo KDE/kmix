@@ -1,4 +1,3 @@
-kde4_header()
 project(kmix)
 
 add_subdirectory( pics ) 
@@ -126,7 +125,6 @@ install_files( ${DATA_INSTALL_DIR}/kmix FILES kmixui.rc )
 install_files( ${SERVICES_INSTALL_DIR} FILES kmixctrl_restore.desktop )
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES kmixapplet.desktop )
 
-kde4_footer()
 
 
 
