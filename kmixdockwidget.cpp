@@ -46,7 +46,6 @@
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "kmixdockwidget.h"
-#include "kwin.h"
 #include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name, bool volumePopup )
