@@ -28,7 +28,6 @@
 #include <kurl.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
-#include <kaudioplayer.h>
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwin.h>
