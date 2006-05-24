@@ -182,7 +182,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
     for ( int i=0; i< Mixer::mixers().count(); ++i )
     {
        Mixer *mixer = (Mixer::mixers())[i];
-       if ( _mixer->mixerName() == _mixerName ) {
+       if ( mixer->mixerName() == _mixerName ) {
           _mixer = mixer;
           break;
        }
