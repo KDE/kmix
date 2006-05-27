@@ -58,7 +58,7 @@ public:
     MDWSlider( Mixer *mixer, MixDevice* md,
 	       bool showMuteLED, bool showRecordLED,
 	       bool small, Qt::Orientation,
-	       QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
+	       QWidget* parent = 0, ViewBase* mw = 0);
     ~MDWSlider() {}
 
     void addActionToPopup( KAction *action );

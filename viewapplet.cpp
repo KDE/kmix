@@ -117,10 +117,9 @@ QWidget* ViewApplet::add(MixDevice *md)
 			    true,         // Small
 			    sliderOrientation, // Orientation
 			    this,         // parent
-			    this,         // View widget
-			    md->name().latin1()
+			    this          // View widget
 			    );
-    _layoutMDW->add(mdw);
+    _layoutMDW->addWidget(mdw);
     return mdw;
 }
 

@@ -131,8 +131,8 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
                             false,        // Small
 			    Qt::Vertical, // Direction: only 1 device, so doesn't matter
 			    _frame,       // parent
-			    0,            // Is "NULL", so that there is no RMB-popup
-			    _dockDevice->name().latin1() );
+			    0             // Is "NULL", so that there is no RMB-popup
+			    );
 	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
 	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 0 );
     _layoutMDW->addWidget( _mdw, 0, 1 );

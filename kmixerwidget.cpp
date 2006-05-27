@@ -118,7 +118,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
 
     QToolButton* m_profileButton = new QToolButton( m_ioTab );
-    QToolTip::add(m_profileButton,i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
+    m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
     m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
     m_profileButton->adjustSize();
     // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
@@ -126,7 +126,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
 
     QToolButton* m_closeButton = new QToolButton( m_ioTab );
-    QToolTip::add(m_closeButton,i18n("Close Tab"));
+    m_closeButton->setToolTip(i18n("Close Tab"));
     m_closeButton->setIconSet( SmallIcon( "tab_remove" ) );
     m_closeButton->adjustSize();
     connect(m_closeButton, SIGNAL(clicked()), SLOT(removeSession()));
@@ -134,7 +134,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
 
     m_profileButton->installEventFilter(this);
-    m_topLayout->add( m_ioTab );
+    m_topLayout->addWidget( m_ioTab );
 
 
      /*******************************************************************
@@ -232,13 +232,13 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 		// The i18n() in the next line will only produce a translated version, if the text is known.
 		// This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
 		// It is possible that the Profile author puts arbitrary names in it.
-		kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.utf8() << "name="<<profTab->name.utf8() << "\n";
+		kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << "name="<<profTab->name.toUtf8() << "\n";
 		if ( profTab->type == "SliderSet" ) {
-			ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.utf8(), mixer, vflags, guiprof );
+			ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
 			possiblyAddView(view);
 		}
 		else if ( profTab->type == "Surround" ) {
-			ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.utf8(), mixer, vflags, guiprof );
+			ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
 			possiblyAddView(view);
 		}
 		/*

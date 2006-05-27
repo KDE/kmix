@@ -48,8 +48,8 @@
  */
 MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
                                  Qt::Orientation orientation,
-                                 QWidget* parent, ViewBase* mw, const char* name) :
-    MixDeviceWidget(mixer,md,false,orientation,parent,mw,name),
+                                 QWidget* parent, ViewBase* mw) :
+    MixDeviceWidget(mixer,md,false,orientation,parent,mw),
      _label(0), _enumCombo(0), _layout(0)
 {
     // create actions (on _mdwActions, see MixDeviceWidget)

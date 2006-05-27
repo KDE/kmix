@@ -54,7 +54,7 @@ class MixDeviceWidget
 public:
       MixDeviceWidget( Mixer *mixer, MixDevice* md,
                        bool small, Qt::Orientation orientation,
-                       QWidget* parent = 0, ViewBase* mw = 0, const char* name = 0);
+                       QWidget* parent = 0, ViewBase* mw = 0 );
     ~MixDeviceWidget();
 
     void addActionToPopup( KAction *action );

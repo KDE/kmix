@@ -89,28 +89,32 @@ QWidget* ViewSliders::add(MixDevice *md)
      QString labeltext;
      switch (num) {
         case 0:  labeltext = "Desktop"; break;
-        case 2:  labeltext = "Audio and Video"; break;
+        case 2:  labeltext = "Music and Video"; break;
         case 5:  labeltext = "Desktop"; break;
         default: labeltext = ""; break;
      }
      num++;
      if ( labeltext != "" ) {
+        _layoutMDW->addStretch(10);
         if (_vflags & ViewBase::Vertical) { 
           QLabel* lbl = new QLabel(labeltext, this);
           //lbl->setBackgroundRole( QPalette::Dark );
           //lbl->setForegroundRole( QPalette::Midlight );
           lbl->setFrameShape( QFrame::Panel );
+          lbl->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Fixed );
           //lbl->setBackgroundRole( QPalette::Base );
-          _layoutMDW->add(lbl);
+          _layoutMDW->addWidget(lbl);
         }
         else {
-          VerticalText* lbl = new VerticalText(this, labeltext.utf8().data());
+          VerticalText* lbl = new VerticalText(this, labeltext.toUtf8().data());
           //lbl->setBackgroundRole( QPalette::Background );
           lbl->setBackgroundRole( QPalette::AlternateBase );
+          lbl->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Preferred );
           //lbl->setBackgroundRole( QPalette::Base );
-          _layoutMDW->add(lbl);
+          _layoutMDW->addWidget(lbl);
         }
-     }
+        _layoutMDW->addStretch(10);
+     } // if category label shall be inserted
     }
 
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
@@ -123,10 +127,9 @@ QWidget* ViewSliders::add(MixDevice *md)
 			    false,        // Small
 			    orientation,  // Orientation
 			    this,         // parent
-			    this,         // View widget
-			    md->name().latin1()
+			    this          // View widget
 			    );
-    _layoutMDW->add(mdw);
+    _layoutMDW->addWidget(mdw);
     return mdw;
 }
 

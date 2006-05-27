@@ -98,10 +98,9 @@ QWidget* ViewSwitches::add(MixDevice *md)
                       md,           // MixDevice (parameter)
                       orientation,  // Orientation
                       this,         // parent
-                      this,         // View widget
-                      md->name().latin1()
+                      this          // View widget
                       );
-     _layoutEnum->add(mdw);
+     _layoutEnum->addWidget(mdw);
   } // an enum
   else {
     // must be a switch
@@ -113,10 +112,9 @@ QWidget* ViewSwitches::add(MixDevice *md)
 		      false,        // Small
 		      orientation,  // Orientation
 		      this,         // parent
-		      this,         // View widget
-		      md->name().latin1()
+		      this          // View widget
 		      );
-        _layoutSwitch->add(mdw);
+        _layoutSwitch->addWidget(mdw);
     } // a switch
 
     return mdw;

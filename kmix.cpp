@@ -136,7 +136,7 @@ void
 KMixWindow::initWidgets()
 {
 	// Main widget and layout
-	setCentralWidget( new QWidget(  this, "qt_central_widget" ) );
+	setCentralWidget( new QWidget( this ) );
 
 	// Widgets layout
 	widgetsLayout = new QVBoxLayout(   centralWidget()   );
@@ -146,7 +146,7 @@ KMixWindow::initWidgets()
 	//widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
 
 	m_wsMixers = new QStackedWidget( centralWidget() );
-        widgetsLayout->add(m_wsMixers);
+        widgetsLayout->addWidget(m_wsMixers);
 
 	if ( m_showMenubar )
 		menuBar()->show();

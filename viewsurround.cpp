@@ -157,7 +157,7 @@ QWidget* ViewSurround::add(MixDevice *md)
     case MixDevice::AC97:
     default:
 	// Add as slider to the layout on the left side
-	_layoutSliders->add(mdw);
+	_layoutSliders->addWidget(mdw);
 	break;
     } // switch(type)
 
@@ -261,8 +261,7 @@ MixDeviceWidget* ViewSurround::createMDW(MixDevice *md, bool small, Qt::Orientat
 			    small,        // Small
 			    orientation,  // Orientation
 			    this,         // parent
-			    this,         // View widget
-			    md->name().latin1()
+			    this          // View widget
 			    );
     return mdw;
 }

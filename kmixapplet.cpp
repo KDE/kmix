@@ -367,7 +367,7 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	m_appletView = new ViewApplet( this, _mixer->name(), _mixer, 0, (GUIProfile*)0, pos );
 	connect ( m_appletView, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
 	m_appletView->createDeviceWidgets();
-	_layout->add(m_appletView);
+	_layout->addWidget(m_appletView);
 	_layout->activate();
 	
 	loadConfig();

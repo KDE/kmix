@@ -64,8 +64,8 @@
 MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
                                  bool small, Qt::Orientation orientation,
-                                 QWidget* parent, ViewBase* mw, const char* name) :
-    MixDeviceWidget(mixer,md,small,orientation,parent,mw,name),
+                                 QWidget* parent, ViewBase* mw) :
+    MixDeviceWidget(mixer,md,small,orientation,parent,mw),
     m_linked(true), m_iconLabel( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
@@ -164,7 +164,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 labelLayout->setAlignment(Qt::AlignVCenter);
 	 }
     if ( _orientation == Qt::Vertical ) {
-		 m_label = new VerticalText( this, m_mixdevice->name().utf8().data() );
+		 m_label = new VerticalText( this, m_mixdevice->name().toUtf8().data() );
 	 }
 	 else {
 		 m_label = new QLabel(this);
@@ -421,12 +421,12 @@ MDWSlider::setStereoLinked(bool value)
     ***********************************************************/
    int firstSliderValue = 0;
    bool firstSliderValueValid = false;
-   if (slider->isA("QSlider") ) {
+   if (slider->metaObject()->className() == "QSlider") {
       QSlider *sld = static_cast<QSlider*>(slider);
       firstSliderValue = sld->value();
       firstSliderValueValid = true;
    }
-   else if ( slider->isA("KSmallSlider") ) {
+   else if ( slider->metaObject()->className()=="KSmallSlider")  {
       KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
       firstSliderValue = sld->value();
       firstSliderValueValid = true;
@@ -447,11 +447,11 @@ MDWSlider::setStereoLinked(bool value)
          if ( firstSliderValueValid ) {
             // Remark: firstSlider== 0 could happen, if the static_cast<QRangeControl*> above fails.
             //         It's a safety measure, if we got other Slider types in the future.
-            if (slider->isA("QSlider") ) {
+            if (slider->metaObject()->className()=="QSlider")  {
                QSlider *sld = static_cast<QSlider*>(slider);
                sld->setValue( firstSliderValue );
             }
-            if (slider->isA("KSmallSlider") ) {
+            if (slider->metaObject()->className()=="KSmallSlider")  {
                KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
                sld->setValue( firstSliderValue );
             }
@@ -875,7 +875,7 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 	}
     }
     // Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
-    else if ( (e->type() == QEvent::Wheel) && !obj->isA("KSmallSlider") ) {
+    else if ( (e->type() == QEvent::Wheel) && ! (obj->metaObject()->className()=="KSmallSlider") )  {
 	QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
 	if (qwe->delta() > 0) {
 	    increaseVolume();

@@ -48,7 +48,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
 
    m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
    layout->addWidget( m_dockingChk );
-   QWhatsThis::add(m_dockingChk, i18n("Docks the mixer into the KDE panel"));
+   m_dockingChk->setWhatsThis( i18n("Docks the mixer into the KDE panel"));
 
    m_volumeChk = new QCheckBox(i18n("Enable system tray &volume control"),
 			       m_generalTab);
@@ -56,14 +56,11 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
 
    m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
    layout->addWidget( m_showTicks );
-   QWhatsThis::add(m_showTicks,
-           i18n("Enable/disable tickmark scales on the sliders"));
+   m_showTicks->setWhatsThis( i18n("Enable/disable tickmark scales on the sliders"));
 
    m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
    layout->addWidget( m_showLabels );
-   QWhatsThis::add(m_showLabels,
-           i18n("Enables/disables description labels above the sliders"));
-
+   m_showLabels->setWhatsThis( i18n("Enables/disables description labels above the sliders"));
 
    m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
    layout->addWidget( m_onLogin );
@@ -83,9 +80,9 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    //orientationLayout->add(qlb);
    //orientationLayout->add(orientationGroup);
 
-   orientationLayout->add(qlb);
-   orientationLayout->add(_rbHorizontal);
-   orientationLayout->add(_rbVertical);
+   orientationLayout->addWidget(qlb);
+   orientationLayout->addWidget(_rbHorizontal);
+   orientationLayout->addWidget(_rbVertical);
 
    orientationLayout->addStretch();
    layout->addStretch();

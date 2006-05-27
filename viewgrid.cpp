@@ -90,8 +90,7 @@ QWidget* ViewGrid::add(MixDevice *md)
     md,           // MixDevice (parameter)
     orientation,  // Orientation
     this,         // parent
-    this,         // View widget
-    md->name().latin1()
+    this          // View widget
 		     );
   } // an enum
   else if (md->isSwitch()) {
@@ -104,7 +103,6 @@ QWidget* ViewGrid::add(MixDevice *md)
     orientation,  // Orientation
     this,         // parent
     this,         // View widget
-    md->name().latin1()
 		     );
   } // a switch
 
@@ -120,7 +118,6 @@ QWidget* ViewGrid::add(MixDevice *md)
 			    orientation,  // Orientation
 			    this,         // parent
 			    this,         // View widget
-			    md->name().latin1()
 			    );
   }
   return mdw;

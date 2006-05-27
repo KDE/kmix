@@ -262,7 +262,7 @@ void Mixer::readSetFromHW()
       }
     }
   // Trivial implementation. Without looking at the devices
-  kDebug(67100) << "Mixer::readSetFromHW(): emit newVolumeLevels()" << endl;
+  //kDebug(67100) << "Mixer::readSetFromHW(): emit newVolumeLevels()" << endl;
   emit newVolumeLevels();
   emit newRecsrc(); // cheap, but works
 }

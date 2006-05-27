@@ -49,8 +49,8 @@
  */
 MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
                                  bool small, Qt::Orientation orientation,
-                                 QWidget* parent, ViewBase* mw, const char* name) :
-    MixDeviceWidget(mixer,md,small,orientation,parent,mw,name),
+                                 QWidget* parent, ViewBase* mw) :
+    MixDeviceWidget(mixer,md,small,orientation,parent,mw),
     _label(0) , _labelV(0) , _switchLED(0), _layout(0)
 {
     // create actions (on _mdwActions, see MixDeviceWidget)
@@ -101,7 +101,7 @@ void MDWSwitch::createWidgets()
 		else
 		 _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
 		 _switchLED->setFixedSize(16,16);
-		 _labelV = new VerticalText( this, m_mixdevice->name().utf8().data() );
+		 _labelV = new VerticalText( this, m_mixdevice->name().toUtf8().data() );
 
 		 _layout->addWidget( _switchLED );
 		 _layout->addSpacing( 2 );
