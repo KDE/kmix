@@ -23,6 +23,8 @@
 /* This code is being #include'd from mixer.cpp */
 
 #include <config.h>
+#include <config-alsa.h>
+
 
 #include <QString>
 

@@ -22,6 +22,7 @@
 #include "viewsliders.h"
 
 // Qt
+#include <QLabel>
 #include <QLayout>
 #include <QWidget>
 
@@ -31,6 +32,7 @@
 // KMix
 #include "mdwslider.h"
 #include "mixer.h"
+#include "verticaltext.h"
 
 /**
  * Don't instanciate objects of this class directly. It won't work
@@ -81,6 +83,36 @@ int ViewSliders::advice() {
 
 QWidget* ViewSliders::add(MixDevice *md)
 {
+    // Mockup Hack
+    static int num = 0;
+    {
+     QString labeltext;
+     switch (num) {
+        case 0:  labeltext = "Desktop"; break;
+        case 2:  labeltext = "Audio and Video"; break;
+        case 5:  labeltext = "Desktop"; break;
+        default: labeltext = ""; break;
+     }
+     num++;
+     if ( labeltext != "" ) {
+        if (_vflags & ViewBase::Vertical) { 
+          QLabel* lbl = new QLabel(labeltext, this);
+          //lbl->setBackgroundRole( QPalette::Dark );
+          //lbl->setForegroundRole( QPalette::Midlight );
+          lbl->setFrameShape( QFrame::Panel );
+          //lbl->setBackgroundRole( QPalette::Base );
+          _layoutMDW->add(lbl);
+        }
+        else {
+          VerticalText* lbl = new VerticalText(this, labeltext.utf8().data());
+          //lbl->setBackgroundRole( QPalette::Background );
+          lbl->setBackgroundRole( QPalette::AlternateBase );
+          //lbl->setBackgroundRole( QPalette::Base );
+          _layoutMDW->add(lbl);
+        }
+     }
+    }
+
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
     MixDeviceWidget *mdw =
 	new MDWSlider(

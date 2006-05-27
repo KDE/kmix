@@ -38,7 +38,7 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
 	//kDebug(67100) << "paintEvent(). height()=" <<  height() << "\n";
 	QPainter paint(this);
 #warning Remove the Rectangle again
-	paint.drawRect(0,0,width(),height()); // !!! width/height test - cesken
+	//paint.drawRect(0,0,width(),height()); // !!! width/height test - cesken
 	paint.rotate(270);
         paint.translate(0,-4); // Silly "solution" to make underlengths work
 
