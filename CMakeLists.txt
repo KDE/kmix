@@ -6,7 +6,6 @@ add_subdirectory( profiles )
 
 
 
-
 ########### next target ###############
 
 set(kmix_KDEINIT_SRCS 
@@ -50,6 +49,10 @@ kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} kutils phononcore )
 
+if (HAVE_LIBASOUND2)
+    target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
+endif (HAVE_LIBASOUND2)
+
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmix )
 
 target_link_libraries( kmix kdeinit_kmix )
@@ -74,6 +77,10 @@ kde4_add_dcop_skels(kmixctrl_KDEINIT_SRCS mixerIface.h )
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kmixctrl  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} )
+
+if (HAVE_LIBASOUND2)
+    target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
+endif (HAVE_LIBASOUND2)
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmixctrl )
 
@@ -113,6 +120,10 @@ kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kmix_panelapplet )
 
 target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} kutils kickermain ${QT_QTXML_LIBRARY} )
+
+if (HAVE_LIBASOUND2)
+    target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
+endif (HAVE_LIBASOUND2)
 
 install_targets(${PLUGIN_INSTALL_DIR} kmix_panelapplet )
 
