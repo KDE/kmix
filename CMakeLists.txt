@@ -43,8 +43,6 @@ set(kmix_KDEINIT_SRCS
 
 kde4_automoc(${kmix_KDEINIT_SRCS})
 
-kde4_add_dcop_skels(kmix_KDEINIT_SRCS mixerIface.h )
-
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} kutils phononcore )
@@ -60,7 +58,8 @@ install_targets(/bin kmix )
 
 ########### next target ###############
 
-set(kmixctrl_KDEINIT_SRCS 
+set(kmixctrl_KDEINIT_SRCS
+   mixeradaptator.cpp
    kmixctrl.cpp 
    mixer.cpp 
    mixset.cpp 
@@ -72,7 +71,6 @@ set(kmixctrl_KDEINIT_SRCS
 
 kde4_automoc(${kmixctrl_KDEINIT_SRCS})
 
-kde4_add_dcop_skels(kmixctrl_KDEINIT_SRCS mixerIface.h )
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
 
@@ -89,7 +87,8 @@ install_targets(/bin kmixctrl )
 
 ########### next target ###############
 
-set(kmix_panelapplet_PART_SRCS 
+set(kmix_panelapplet_PART_SRCS
+   mixeradaptator.cpp
    kmixapplet.cpp 
    viewbase.cpp 
    viewapplet.cpp 
@@ -113,7 +112,6 @@ kde4_automoc(${kmix_panelapplet_PART_SRCS})
 
 kde4_add_ui3_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
 
-kde4_add_dcop_skels(kmix_panelapplet_PART_SRCS mixerIface.h )
 
 kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
 
