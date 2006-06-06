@@ -33,14 +33,13 @@
 
 #include "volume.h"
 class Mixer_Backend;
-#include "mixerIface.h"
 #include "mixset.h"
 #include "mixdevice.h"
 
 class Volume;
 class KConfig;
 
-class Mixer : public QObject, virtual public MixerIface
+class Mixer : public QObject
 {
       Q_OBJECT
 
@@ -61,9 +60,9 @@ class Mixer : public QObject, virtual public MixerIface
 
        /// Tells the number of the mixing devices
       unsigned int size() const;
-      
+
       bool isValid();
-      
+
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);
 

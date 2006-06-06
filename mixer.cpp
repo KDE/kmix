@@ -26,13 +26,13 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
-#include <dcopobject.h>
 
 #include "mixer.h"
 #include "mixer_backend.h"
 #include "kmix-platforms.cpp"
 #include "volume.h"
-
+#include "mixeradaptor.h"
+#include <dbus/qdbus.h>
 
 /**
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
@@ -68,8 +68,12 @@ QList<Mixer *>& Mixer::mixers()
 }
 
 
-Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
+Mixer::Mixer( int driver, int device )
 {
+    (void)new KMixAdaptor(this);
+    QDBus::sessionBus().registerObject(QLatin1String("/Mixer"), this);
+    QDBus::sessionBus().busService()->requestName("org.kde.kmixer", /*flags=*/0);
+
   _pollingTimer = 0;
 
    _mixerBackend = 0;
@@ -84,7 +88,8 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 
   _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
- 
+#warning "kde4 port it to dbus"
+#if 0
   DCOPCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST
   objid.setNum(_mixerBackend->m_devnum);
@@ -95,7 +100,7 @@ Mixer::Mixer( int driver, int device ) : DCOPObject( "Mixer" )
 #endif
   objid.prepend("Mixer");
   DCOPObject::setObjId( objid );
-  
+#endif
 }
 
 Mixer::~Mixer() {
@@ -350,7 +355,7 @@ Mixer* Mixer::masterCard()
   Mixer *mixer = 0;
   for (int i=0; i< Mixer::mixers().count(); ++i )
   {
-     mixer = Mixer::mixers()[i];   
+     mixer = Mixer::mixers()[i];
      if ( mixer != 0 && mixer->id() == _masterCard ) {
         break;
      }
@@ -495,14 +500,14 @@ int Mixer::volume( int deviceidx )
   if (!mixdev) return 0;
 
   Volume vol=mixdev->getVolume();
-  // @todo This will not work, if minVolume != 0      !!! 
+  // @todo This will not work, if minVolume != 0      !!!
   //       e.g.: minVolume=5 or minVolume=-10
   // The solution is to check two cases:
   //     volume < 0 => use minVolume for volumeRange
   //     volume > 0 => use maxVolume for volumeRange
   //     If chosen volumeRange==0 => return 0
   // As this is potentially used often (Sliders, ...), it
-  // should beimplemented in the Volume class. 
+  // should beimplemented in the Volume class.
 
   // For now we go with "maxVolume()", like in the rest of KMix.
   long volumeRange = vol.maxVolume(); // -vol.minVolume() ;
@@ -639,7 +644,7 @@ void Mixer::toggleMute( int deviceidx )
   if (!mixdev) return;
 
   bool previousState= mixdev->isMuted();
-  
+
   mixdev->setMuted( !previousState );
 
   _mixerBackend->writeVolumeToHW(deviceidx, mixdev->getVolume() );
