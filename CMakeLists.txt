@@ -59,7 +59,7 @@ install_targets(/bin kmix )
 ########### next target ###############
 
 set(kmixctrl_KDEINIT_SRCS
-   mixeradaptator.cpp
+   mixeradaptor.cpp
    kmixctrl.cpp 
    mixer.cpp 
    mixset.cpp 
@@ -88,7 +88,7 @@ install_targets(/bin kmixctrl )
 ########### next target ###############
 
 set(kmix_panelapplet_PART_SRCS
-   mixeradaptator.cpp
+   mixeradaptor.cpp
    kmixapplet.cpp 
    viewbase.cpp 
    viewapplet.cpp 

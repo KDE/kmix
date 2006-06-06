@@ -7,8 +7,8 @@
  * This is an auto-generated file.
  */
 
-#include "mixeradaptator.h"
-#include "mixeradaptator.moc"
+#include "mixeradaptor.h"
+#include "mixeradaptor.moc"
 
 KmixAdaptor::KmixAdaptor(QObject *parent)
    : QDBusAbstractAdaptor(parent)
