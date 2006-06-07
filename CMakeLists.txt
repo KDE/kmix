@@ -8,7 +8,8 @@ add_subdirectory( profiles )
 
 ########### next target ###############
 
-set(kmix_KDEINIT_SRCS 
+set(kmix_KDEINIT_SRCS
+   mixeradaptor.cpp	
    main.cpp 
    kmix.cpp 
    kmixdockwidget.cpp 

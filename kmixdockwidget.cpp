@@ -97,7 +97,7 @@ void KMixDockWidget::createActions()
 
    // Setup volume preview
   if ( _playBeepOnVolumeChange ) {
-    _audioPlayer = new Phonon::SimplePlayer(this);
+    _audioPlayer = new Phonon::SimplePlayer(Phonon::MusicCategory, this);
   }
 }
 
