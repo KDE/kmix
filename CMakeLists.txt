@@ -1,5 +1,10 @@
 project(kmix)
 
+FIND_PATH( KICKER_INCLUDE_DIR plasma/kpanelapplet.h
+  ${KDE4_INCLUDE_DIR}
+)
+
+
 add_subdirectory( pics ) 
 add_subdirectory( tests ) 
 add_subdirectory( profiles ) 
@@ -87,6 +92,7 @@ target_link_libraries( kmixctrl kdeinit_kmixctrl )
 install_targets(/bin kmixctrl )
 
 ########### next target ###############
+if(KICKER_INCLUDE_DIR)
 
 set(kmix_panelapplet_PART_SRCS
    mixeradaptor.cpp
@@ -126,6 +132,10 @@ endif (HAVE_LIBASOUND2)
 
 install_targets(${PLUGIN_INSTALL_DIR} kmix_panelapplet )
 
+install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES kmixapplet.desktop )
+else(KICKER_INCLUDE_DIR)
+MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
+endif(KICKER_INCLUDE_DIR)
 
 ########### install files ###############
 
@@ -133,7 +143,6 @@ install_files( ${XDG_APPS_DIR} FILES kmix.desktop )
 install_files( /share/autostart FILES restore_kmix_volumes.desktop )
 install_files( ${DATA_INSTALL_DIR}/kmix FILES kmixui.rc )
 install_files( ${SERVICES_INSTALL_DIR} FILES kmixctrl_restore.desktop )
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES kmixapplet.desktop )
 
 
 
