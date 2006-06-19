@@ -99,13 +99,13 @@ KMixPrefDlg::~KMixPrefDlg()
 void KMixPrefDlg::apply()
 {
    // disabling buttons => users sees that we are working
-   enableButtonOK(false);
+   enableButtonOk(false);
    enableButtonCancel(false);
    enableButtonApply(false);
    kapp->processEvents();
    emit signalApplied( this );
    // re-enable (in case of "Apply")
-   enableButtonOK(true);
+   enableButtonOk(true);
    enableButtonCancel(true);
    enableButtonApply(true);
 }
