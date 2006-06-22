@@ -29,7 +29,6 @@
 
 #include <kcombobox.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
 #include <klocale.h>
 
 #include "dialogselectmaster.h"
@@ -37,8 +36,11 @@
 #include "mixer.h"
 
 DialogSelectMaster::DialogSelectMaster( Mixer *mixer  )
-  : KDialogBase(  Plain, i18n( "Select Master Channel" ), Ok|Cancel, Ok )
+  : KDialog(  0 )
 {
+    setCaption( i18n( "Select Master Channel" ) );
+    setButtons( Ok|Cancel );
+    setDefaultButton( Ok );
    _layout = 0;
    m_vboxForScrollView = 0;
    createWidgets(mixer);  // Open with Mixer Hardware #0
@@ -56,7 +58,8 @@ DialogSelectMaster::~DialogSelectMaster()
  */
 void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 {
-    QFrame *m_mainFrame = plainPage();
+    QFrame *m_mainFrame = new QFrame( this );
+    setMainWidget( m_mainFrame );
     _layout = new QVBoxLayout(m_mainFrame);
     _layout->setObjectName( "_layout" );
 

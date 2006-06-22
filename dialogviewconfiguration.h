@@ -25,12 +25,12 @@
 #include <qlist.h>
 class QVBoxLayout;
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "viewbase.h"
 
 
-class DialogViewConfiguration : public KDialogBase
+class DialogViewConfiguration : public KDialog
 {
     Q_OBJECT
  public:

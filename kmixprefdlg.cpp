@@ -37,11 +37,15 @@
 
 
 KMixPrefDlg::KMixPrefDlg( QWidget *parent )
-    : KDialogBase(  Plain, i18n( "Configure" ),
-          Ok|Cancel|Apply, Ok, parent )
+    : KDialog( parent )
 {
+    setCaption( i18n( "Configure" ) );
+    setButtons( Ok|Cancel|Apply );
+    setDefaultButton( Ok );
+
    // general buttons
-   m_generalTab = plainPage( /* i18n("&General") */ );
+   m_generalTab = new QFrame( this );
+   setMainWidget( m_generalTab );
 
    QBoxLayout *layout = new QVBoxLayout( m_generalTab );
    layout->setSpacing( KDialog::spacingHint() );

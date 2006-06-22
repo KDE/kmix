@@ -28,7 +28,7 @@
 
 // KDE
 #include <kaboutdata.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <plasma/kpanelapplet.h>   // ?? Why plasma/
 
 //KMix
@@ -39,7 +39,7 @@ class ColorWidget;
 class KMixApplet;
 
 
-class AppletConfigDialog : public KDialogBase
+class AppletConfigDialog : public KDialog
 {
   Q_OBJECT
   public:

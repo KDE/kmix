@@ -86,12 +86,15 @@ static const QColor mutedLowColor = "#808080";
 static const QColor mutedBackColor = "#000000";
 
 AppletConfigDialog::AppletConfigDialog( QWidget * parent, const char * name )
-   : KDialogBase( KDialogBase::Plain, QString::null,
-                  KDialogBase::Ok | KDialogBase::Apply | KDialogBase::Cancel,
-                  KDialogBase::Ok, parent, name, false, true)
+   : KDialog( parent)
 {
+    setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
+    setDefaultButton( Ok );
+    setModal( false );
+    enableButtonSeparator( true );
    setPlainCaption(i18n("Configure - Mixer Applet"));
-   QFrame* page = plainPage();
+   QFrame* page = new QFrame(this);
+   setMainWidget( page );
    QVBoxLayout *topLayout = new QVBoxLayout(page);
    colorWidget = new ColorWidget(page);
    topLayout->addWidget(colorWidget);
@@ -101,7 +104,7 @@ AppletConfigDialog::AppletConfigDialog( QWidget * parent, const char * name )
 void AppletConfigDialog::slotOk()
 {
     slotApply();
-    KDialogBase::slotOk();
+    KDialog::accept();
 }
 
 void AppletConfigDialog::slotApply()
@@ -168,14 +171,14 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
         //  !!! TODO Mixer::mixers().setAutoDelete( true );
 	QString dummyStringHwinfo;
 	MixerToolBox::initMixer(false, dummyStringHwinfo);
-    }	
+    }
     s_instCount++;
     kDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
-	
+
     KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
 
     loadConfig();
-	
+
 
     /********** find out to use which mixer ****************************************/
     _mixer = 0;
@@ -193,7 +196,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
         // there is card available.
 	_mixer = (Mixer::mixers())[0];
     }
-	
+
 
     /*** Check, whether a Mixer could be selected automagically ******************/
     if ( _mixer == 0 )
@@ -260,12 +263,12 @@ void KMixApplet::loadConfig()
     kDebug(67100) << "KMixApplet::loadConfig()" << endl;
     KConfig *cfg = this->config();
     cfg->setGroup(0);
-	
+
     _mixerId = cfg->readEntry( "Mixer", "undef" );
     _mixerName = cfg->readEntry( "MixerName", QString());
 
     _customColors = cfg->readEntry( "ColorCustom", false );
-	
+
     _colors.high = cfg->readEntry("ColorHigh", highColor);
     _colors.low = cfg->readEntry("ColorLow", lowColor);
     _colors.back = cfg->readEntry("ColorBack", backColor);
@@ -355,7 +358,7 @@ void KMixApplet::positionChange(Plasma::Position pos) {
     orientationChange( orientation() );
     QResizeEvent e( size(), size() ); // from KPanelApplet::positionChange
     resizeEvent( &e ); // from KPanelApplet::positionChange
-    
+
     if ( m_errorLabel == 0) {
 	// do this only after we deleted the error label
 	if (m_appletView) {
@@ -369,10 +372,10 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	m_appletView->createDeviceWidgets();
 	_layout->addWidget(m_appletView);
 	_layout->activate();
-	
+
 	loadConfig();
 	setColors();
-	
+
 	const QSize panelAppletConstrainedSize = sizeHint();
 	m_appletView->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );

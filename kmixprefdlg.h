@@ -22,7 +22,7 @@
 #ifndef KPREFDLG_H
 #define KPREFDLG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class KMixPrefWidget;
 class KMixApp;
@@ -30,7 +30,7 @@ class QCheckBox;
 class QRadioButton;
 
 class 
-KMixPrefDlg : public KDialogBase  
+KMixPrefDlg : public KDialog
 {
    Q_OBJECT
 

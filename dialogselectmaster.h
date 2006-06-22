@@ -29,11 +29,11 @@ class Q3ScrollView;
 #include <kvbox.h>
 class QVBoxLayout;
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class Mixer;
 
-class DialogSelectMaster : public KDialogBase
+class DialogSelectMaster : public KDialog
 {
     Q_OBJECT
  public:

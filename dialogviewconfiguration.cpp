@@ -24,7 +24,7 @@
 #include <QLabel>
 
 #include <kdebug.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klocale.h>
 
 #include "dialogviewconfiguration.h"
@@ -33,15 +33,20 @@
 
 
 DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
-    : KDialogBase(  Plain, i18n( "Configure" ), Ok|Cancel, Ok ),
+    : KDialog(  0),
       _view(view)
 {
+    setCaption( i18n( "Configure" ) );
+    setButtons( Ok|Cancel );
+    setDefaultButton( Ok );
     QList<QWidget *> &mdws = view._mdws;
-    _layout = new QVBoxLayout(plainPage() );
+    QFrame * frame = new QFrame( this );
+    setMainWidget( frame );
+    _layout = new QVBoxLayout(frame );
     _layout->setObjectName( "_layout" );
 
     //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
-    QLabel* qlb = new QLabel( i18n("Configure"), plainPage() );
+    QLabel* qlb = new QLabel( i18n("Configure"), frame );
     //QLabel* qlb = new QLabel( i18n("Show"), plainPage() );
     _layout->addWidget(qlb);
 
@@ -51,7 +56,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
 	    MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
 	    QString mdName = mdw->mixDevice()->name();
             mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
-	    QCheckBox* cb = new QCheckBox( mdName, plainPage() );
+	    QCheckBox* cb = new QCheckBox( mdName, frame );
 	    _qEnabledCB.append(cb);
 	    cb->setChecked( !mdw->isDisabled() ); //mdw->isVisible() );
 	    _layout->addWidget(cb);
