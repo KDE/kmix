@@ -71,7 +71,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    QBoxLayout *numbersLayout = new QHBoxLayout( layout );
    QButtonGroup *numbersGroup = new QButtonGroup( 3, Qt::Horizontal, i18n("Numbers"), m_generalTab );
    numbersGroup->setRadioButtonExclusive(true);
-   QLabel* qlbl = new QLabel(  i18n("Volume Values"), m_generalTab );
+   QLabel* qlbl = new QLabel(  i18n("Volume Values: "), m_generalTab );
    _rbNone = new QRadioButton( i18n("&None"), m_generalTab );
    _rbAbsolute = new QRadioButton( i18n("A&bsolute"), m_generalTab );
    _rbRelative   = new QRadioButton( i18n("&Relative"), m_generalTab );
@@ -90,7 +90,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    QButtonGroup* orientationGroup = new QButtonGroup( 2, Qt::Horizontal, i18n("Orientation"), m_generalTab );
    //orientationLayout->add(orientationGroup);
    orientationGroup->setRadioButtonExclusive(true);
-   QLabel* qlb = new QLabel( i18n("Orientation"), m_generalTab );
+   QLabel* qlb = new QLabel( i18n("Slider Orientation: "), m_generalTab );
    _rbHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab );
    _rbVertical   = new QRadioButton(i18n("&Vertical"  ), m_generalTab );
    orientationGroup->insert(_rbHorizontal);
