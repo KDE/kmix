@@ -75,7 +75,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    //QGroupBox* orientationGroupBox = new QGroupBox(i18n("Orientation"), m_generalTab);
    //orientationLayout->add(orientationGroup);
    orientationGroup->setExclusive(true);
-   QLabel* qlb = new QLabel( i18n("Orientation"), m_generalTab );
+   QLabel* qlb = new QLabel( i18n("Slider Orientation: "), m_generalTab );
    _rbHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab );
    _rbVertical   = new QRadioButton(i18n("&Vertical"  ), m_generalTab );
    orientationGroup->addButton(_rbHorizontal);
