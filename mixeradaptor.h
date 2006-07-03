@@ -11,7 +11,7 @@
 #define MIXERADAPTOR_H_99191149582401
 
 #include <QtCore/QObject>
-#include <dbus/qdbus.h>
+#include <QtDBus>
 class QByteArray;
 template<class T> class QList;
 template<class Key, class Value> class QMap;

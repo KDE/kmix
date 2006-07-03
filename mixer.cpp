@@ -32,7 +32,7 @@
 #include "kmix-platforms.cpp"
 #include "volume.h"
 #include "mixeradaptor.h"
-#include <dbus/qdbus.h>
+#include <QtDBus>
 
 /**
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
