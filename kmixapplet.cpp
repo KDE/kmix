@@ -91,7 +91,7 @@ AppletConfigDialog::AppletConfigDialog( QWidget * parent, const char * name )
     setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
     setDefaultButton( Ok );
     setModal( false );
-    enableButtonSeparator( true );
+    showButtonSeparator( true );
    setPlainCaption(i18n("Configure - Mixer Applet"));
    QFrame* page = new QFrame(this);
    setMainWidget( page );

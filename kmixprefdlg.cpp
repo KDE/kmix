@@ -90,7 +90,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
 
    orientationLayout->addStretch();
    layout->addStretch();
-   enableButtonSeparator(true);
+   showButtonSeparator(true);
 
    connect( this, SIGNAL(applyClicked()), this, SLOT(apply()) );
    connect( this, SIGNAL(okClicked()), this, SLOT(apply()) );
