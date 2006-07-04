@@ -57,10 +57,10 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kmix )
+install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmix kdeinit_kmix )
-install_targets(/bin kmix )
+install(TARGETS kmix  DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
 
@@ -86,10 +86,10 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kmixctrl )
+install(TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )
-install_targets(/bin kmixctrl )
+install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
 if(KICKER_INCLUDE_DIR)
@@ -130,19 +130,19 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-install_targets(${PLUGIN_INSTALL_DIR} kmix_panelapplet )
+install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES kmixapplet.desktop )
+install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 else(KICKER_INCLUDE_DIR)
 MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
 endif(KICKER_INCLUDE_DIR)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kmix.desktop )
-install_files( /share/autostart FILES restore_kmix_volumes.desktop )
-install_files( ${DATA_INSTALL_DIR}/kmix FILES kmixui.rc )
-install_files( ${SERVICES_INSTALL_DIR} FILES kmixctrl_restore.desktop )
+install( FILES kmix.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES restore_kmix_volumes.desktop  DESTINATION /share/autostart)
+install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
+install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 
