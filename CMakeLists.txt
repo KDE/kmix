@@ -140,7 +140,7 @@ endif(KICKER_INCLUDE_DIR)
 ########### install files ###############
 
 install( FILES kmix.desktop  DESTINATION  ${XDG_APPS_DIR} )
-install( FILES restore_kmix_volumes.desktop  DESTINATION /share/autostart)
+install( FILES restore_kmix_volumes.desktop  DESTINATION ${DATA_INSTALL_DIR}/share/autostart)
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
