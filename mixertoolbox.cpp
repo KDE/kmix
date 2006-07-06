@@ -234,7 +234,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
 	QString fileName = fileNamePrefix + "default.xml";
 	kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
-	fileName = locate("appdata", fileName );
+	fileName = KStandardDirs::locate("appdata", fileName );
 	kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
 	unsigned long matchValueBest = 0;
 	if ( !fileName.isNull() && guiprofBest->readProfile(fileName) ) {
@@ -260,7 +260,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	mixerNameSpacesToUnderscores.replace(" ","_");
 	fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
 	kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
-	fileName = locate("appdata", fileName );
+	fileName = KStandardDirs::locate("appdata", fileName );
 	kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;
 	
 	GUIProfile* guiprofCardSpecific = new GUIProfile();
