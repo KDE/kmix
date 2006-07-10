@@ -27,6 +27,7 @@
 #include <qstackedwidget.h>
 #include <QLayout>
 #include <QToolTip>
+#include <qlabel.h>
 
 // include files for KDE
 #include <kcombobox.h>
