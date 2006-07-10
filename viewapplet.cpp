@@ -27,7 +27,7 @@
 
 // KDE
 #include <kactioncollection.h>
-
+#include <ktoggleaction.h>
 #include <kdebug.h>
 #include <kstdaction.h>
 // KMix
