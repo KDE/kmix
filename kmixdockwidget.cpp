@@ -84,7 +84,7 @@ void KMixDockWidget::createActions()
   KToggleAction *action = new KToggleAction( i18n( "M&ute" ), actionCollection(), "dock_mute" );
   connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
   KAction *a = actionCollection()->action( "dock_mute" );
-  KMenu *popupMenu = contextMenu();
+  QMenu *popupMenu = contextMenu();
   if ( a ) popupMenu->addAction( a );
 
   // Put "Select Master Channel" dialog in context menu
