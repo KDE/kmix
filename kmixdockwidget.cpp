@@ -40,7 +40,7 @@
 #include <QMouseEvent>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
-#include <phonon/simpleplayer.h>
+#include <phonon/audioplayer.h>
 
 #include "dialogselectmaster.h"
 #include "mixer.h"
@@ -97,7 +97,7 @@ void KMixDockWidget::createActions()
 
    // Setup volume preview
   if ( _playBeepOnVolumeChange ) {
-    _audioPlayer = new Phonon::SimplePlayer(Phonon::MusicCategory, this);
+    _audioPlayer = new Phonon::AudioPlayer(Phonon::MusicCategory, this);
   }
 }
 
@@ -144,7 +144,7 @@ KMixDockWidget::createMasterVolWidget()
 void KMixDockWidget::selectMaster()
 {
    DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
-   connect ( dsm, SIGNAL(newMasterSelected(int, QString&)), SLOT( handleNewMaster(int,QString&)) ); 
+   connect ( dsm, SIGNAL(newMasterSelected(int, QString&)), SLOT( handleNewMaster(int,QString&)) );
    dsm->show();
     // !! The dialog is modal. Does it delete itself?
 }
@@ -160,7 +160,7 @@ void KMixDockWidget::handleNewMaster(int soundcard_id, QString& channel_id)
   }
   m_mixer = mixer;
   Mixer::setMasterCard(mixer->id()); // We must save this information "somewhere".
-  Mixer::setMasterCardDevice( channel_id ); 
+  Mixer::setMasterCardDevice( channel_id );
   createMasterVolWidget();
 }
 
