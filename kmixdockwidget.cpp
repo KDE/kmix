@@ -200,10 +200,6 @@ KMixDockWidget::setVolumeTip()
     // The actual updating is only done when the "toolTipValue" was changed
     if ( newToolTipValue != _oldToolTipValue ) {
 	// changed (or completely new tooltip)
-	if ( _oldToolTipValue >= 0 ) {
-	    // there was an old Tooltip: remove it
-	    QToolTip::remove(this);
-	}
 	this->setToolTip( tip);
     }
     _oldToolTipValue = newToolTipValue;
@@ -234,9 +230,9 @@ KMixDockWidget::updatePixmap()
     if ( newPixmapType != _oldPixmapType ) {
 	// Pixmap must be changed => do so
 	switch ( newPixmapType ) {
-	case 'e': setPixmap( loadIcon( "kmixdocked_error" ) ); break;
-	case 'm': setPixmap( loadIcon( "kmixdocked_mute"  ) ); break;
-	case 'd': setPixmap( loadIcon( "kmixdocked"       ) ); break;
+	case 'e': setIcon( loadIcon( "kmixdocked_error" ) ); break;
+	case 'm': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;
+	case 'd': setIcon( loadIcon( "kmixdocked"       ) ); break;
 	}
     }
 
