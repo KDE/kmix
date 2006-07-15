@@ -242,6 +242,8 @@ KMixDockWidget::updatePixmap()
 void
 KMixDockWidget::mousePressEvent(QMouseEvent *me)
 {
+#warning FIXME: ksystemtray is no longer a widget
+#if 0
 	if ( _dockAreaPopup == 0 ) {
 		return KSystemTray::mousePressEvent(me);
 	}
@@ -300,19 +302,21 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	else {
 		KSystemTray::mousePressEvent(me);
 	} // Other MouseButton pressed
-
+#endif
 }
 
 void
 KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
 {
 
-    KSystemTray::mouseReleaseEvent(me);
+    // KSystemTray::mouseReleaseEvent(me);
 }
 
 void
 KMixDockWidget::wheelEvent(QWheelEvent *e)
 {
+#warning ksystemtray is no widget and can't wheel events
+#if 0
   MixDevice *md = 0;
   if ( _dockAreaPopup != 0 ) {
       md = _dockAreaPopup->dockDevice();
@@ -342,6 +346,7 @@ KMixDockWidget::wheelEvent(QWheelEvent *e)
     QApplication::postEvent( this, new QMouseEvent( QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton ) );
 
   }
+#endif
 }
 
 void
