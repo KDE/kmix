@@ -100,7 +100,7 @@ void MDWEnum::createWidgets()
 	// ------------ fill ComboBox start ------------
 	int maxEnumId= m_mixdevice->enumValues().count();
 	for (int i=0; i<maxEnumId; i++ ) {
-	  _enumCombo->insertItem( m_mixdevice->enumValues().at(i),i);
+	  _enumCombo->addItem( m_mixdevice->enumValues().at(i));
 	}
 	// ------------ fill ComboBox end --------------
 	_layout->addWidget(_enumCombo);
