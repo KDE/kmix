@@ -87,7 +87,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     for( int i =0; i<Mixer::mixers().count(); i++ )
     {
       Mixer *mixer = (Mixer::mixers())[i];
-	m_cMixer->insertItem( mixer->mixerName() );
+	m_cMixer->addItem( mixer->mixerName() );
 	if ( ptr_mixer == mixer ) {
 	  // Make the current Mixer the current item in the ComboBos
 	  m_cMixer->setCurrentItem( m_cMixer->count()-1 );
