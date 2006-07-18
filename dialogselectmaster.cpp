@@ -90,7 +90,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 	m_cMixer->addItem( mixer->mixerName() );
 	if ( ptr_mixer == mixer ) {
 	  // Make the current Mixer the current item in the ComboBos
-	  m_cMixer->setCurrentItem( m_cMixer->count()-1 );
+	  m_cMixer->setCurrentIndex( m_cMixer->count()-1 );
 	}
 	//id++;
       } // end for all_Mixers
@@ -186,7 +186,7 @@ void DialogSelectMaster::apply()
 {
    int soundcard_id = 0;
    if ( Mixer::mixers().count() > 1 ) {
-     soundcard_id = m_cMixer->currentItem();
+     soundcard_id = m_cMixer->currentIndex();
    }
    int channel_id = m_buttonGroupForScrollView->selectedId();
    if ( channel_id != -1 ) {
