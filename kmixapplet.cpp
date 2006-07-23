@@ -156,7 +156,7 @@ bool AppletConfigDialog::useCustomColors() const
 KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
                         QWidget *parent, const char *name )
 
-   : KPanelApplet( configFile, t, Plasma::Preferences | Plasma::ReportBug | Plasma::About, parent, name ),
+   : KPanelApplet( configFile, t, Plasma::Preferences | Plasma::ReportBug | Plasma::About, parent ),
      m_appletView(0), m_errorLabel(0), m_pref(0),
      m_aboutData( "kmix", I18N_NOOP("KMix Panel Applet"),
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
