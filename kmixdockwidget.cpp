@@ -49,7 +49,7 @@
 #include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name, bool volumePopup )
-    : KSystemTray( parent ),
+    : KSystemTrayIcon( parent ),
       m_mixer(mixer),
       _dockAreaPopup(0L),
       _audioPlayer(0L),
@@ -245,7 +245,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 #warning FIXME: ksystemtray is no longer a widget
 #if 0
 	if ( _dockAreaPopup == 0 ) {
-		return KSystemTray::mousePressEvent(me);
+		return KSystemTrayIcon::mousePressEvent(me);
 	}
 
         // esken: Due to overwhelming request, LeftButton shows the ViewDockAreaPopup, if configured
@@ -253,8 +253,8 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 	if ( me->button() == Qt::LeftButton )
 	{
 		if ( ! _volumePopup ) {
-                    // Case 1: User wants to show main window => This is the KSystemTray default action
-		    return KSystemTray::mousePressEvent(me);
+                    // Case 1: User wants to show main window => This is the KSystemTrayIcon default action
+		    return KSystemTrayIcon::mousePressEvent(me);
 		}
 
                 // Case 2: User wants to show volume popup
@@ -292,7 +292,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		_dockAreaPopup->show();
 		KWin::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 
-		QWidget::mousePressEvent(me); // KSystemTray's shouldn't do the default action for this
+		QWidget::mousePressEvent(me); // KSystemTrayIcon's shouldn't do the default action for this
 		return;
 	} // LeftMouseButton pressed
 	else if ( me->button() ==  Qt::MidButton ) {
@@ -300,7 +300,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 		return;
 	}
 	else {
-		KSystemTray::mousePressEvent(me);
+		KSystemTrayIcon::mousePressEvent(me);
 	} // Other MouseButton pressed
 #endif
 }
@@ -309,7 +309,7 @@ void
 KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
 {
 
-    // KSystemTray::mouseReleaseEvent(me);
+    // KSystemTrayIcon::mouseReleaseEvent(me);
 }
 
 void
