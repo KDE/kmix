@@ -27,7 +27,7 @@ class QFrame;
 class QString;
 #include <QWidget>
 
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 
 class KAudioPlayer;
 class MixDeviceWidget;
@@ -40,7 +40,7 @@ namespace Phonon
        class AudioPlayer;
 }
 
-class KMixDockWidget : public KSystemTray  {
+class KMixDockWidget : public KSystemTrayIcon  {
    Q_OBJECT
 
    friend class KMixWindow;
