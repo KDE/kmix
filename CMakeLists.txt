@@ -150,7 +150,7 @@ set(profiletest_SRCS tests/profiletest.cpp )
 
 kde4_automoc(${profiletest_SRCS})
 
-if(KDE4_BUILD_TESTS_KMIX)
+if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(profiletest ${profiletest_SRCS} guiprofile.cpp mixer.cpp)
 
