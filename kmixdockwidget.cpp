@@ -315,7 +315,7 @@ KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
 void
 KMixDockWidget::wheelEvent(QWheelEvent *e)
 {
-#warning ksystemtray is no widget and can't wheel events
+#warning ksystemtray is no widget and cannot wheel events
 #if 0
   MixDevice *md = 0;
   if ( _dockAreaPopup != 0 ) {
