@@ -6,6 +6,7 @@ Name[fr]=Console de mixage
 Name[x-test]=xxSound Mixerxx
 
 Comment=Shows and let you control sound volumes
+Comment[x-test]=xxShows and let you control sound volumesxx
 
 Icon=kmix
 X-KDE-Library=kmix_panelapplet
