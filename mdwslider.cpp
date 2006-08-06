@@ -281,14 +281,12 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 		 }
 
 		 // create labels to hold volume values (taken from qamix/kamix)
-		 QLabel *number = new QLabel( this );
+		 QLabel *number = new QLabel( "100", this );
 		 slinumLayout->addWidget( number );
-		 QFontMetrics *qfm = new QFontMetrics( number->font() );
 		 number->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-		 number->setMinimumWidth( qfm->width("MMM", 3) );
-		 number->setLineWidth( 3 );
+		 number->setLineWidth( 2 );
+		 number->setMinimumWidth( number->sizeHint().width() );
 		 number->setPaletteBackgroundColor( QColor(190, 250, 190) );
-		 delete qfm;
 		 // don't show the value by default
 		 number->hide();
 		 updateValue( number, chid );
