@@ -169,7 +169,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     balanceAndDetail->setSpacing( 8 );
     // Create the left-right-slider
     m_balanceSlider = new QSlider( -100, 100, 25, 0, Qt::Horizontal, this, "RightLeft" );
-    m_balanceSlider->setTickmarks( QSlider::TicksBelow );
+    m_balanceSlider->setTickPosition( QSlider::TicksBelow );
     m_balanceSlider->setTickInterval( 25 );
     m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
     m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );

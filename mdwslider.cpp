@@ -494,18 +494,18 @@ MDWSlider::setTicks( bool ticks )
 	{
 		if( ticks )
 			if( isStereoLinked() )
-				static_cast<QSlider *>(slider)->setTickmarks( QSlider::Right );
+				static_cast<QSlider *>(slider)->setTickPosition( QSlider::Right );
 			else
 			{
-				static_cast<QSlider *>(slider)->setTickmarks( QSlider::NoMarks );
+				static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoMarks );
 				slider = m_sliders.last();
-				static_cast<QSlider *>(slider)->setTickmarks( QSlider::Left );
+				static_cast<QSlider *>(slider)->setTickPosition( QSlider::Left );
 			}
 		else
 		{
-			static_cast<QSlider *>(slider)->setTickmarks( QSlider::NoMarks );
+			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoMarks );
 			slider = m_sliders.last();
-			static_cast<QSlider *>(slider)->setTickmarks( QSlider::NoMarks );
+			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoMarks );
 		}
 	}
 
