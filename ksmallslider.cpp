@@ -99,13 +99,13 @@ int KSmallSlider::valueFromPosition( int p ) const
 /*  postionFromValue() discontinued in in Qt4 => taken from Qt3 */
 int KSmallSlider::positionFromValue( int logical_val, int span ) const
 {
-    if ( span <= 0 || logical_val < minValue() || maxValue() <= minValue() )
+    if ( span <= 0 || logical_val < minimum() || maximum() <= minimum() )
         return 0;
-    if ( logical_val > maxValue() )
+    if ( logical_val > maximum() )
         return span;
 
-    uint range = maxValue() - minValue();
-    uint p = logical_val - minValue();
+    uint range = maximum() - minimum();
+    uint p = logical_val - minimum();
 
     if ( range > (uint)INT_MAX/4096 ) {
         const int scale = 4096*2;
@@ -128,20 +128,20 @@ int KSmallSlider::positionFromValue( int logical_val, int span ) const
 int KSmallSlider::valueFromPosition( int pos, int span ) const
 {
     if ( span <= 0 || pos <= 0 )
-        return minValue();
+        return minimum();
     if ( pos >= span )
-        return maxValue();
+        return maximum();
 
-    uint range = maxValue() - minValue();
+    uint range = maximum() - minimum();
 
     if ( (uint)span > range )
-        return  minValue() + (2*pos*range + span) / (2*span);
+        return  minimum() + (2*pos*range + span) / (2*span);
     else {
         uint div = range / span;
         uint mod = range % span;
-        return  minValue() + pos*div + (2*pos*mod + span) / (2*span);
+        return  minimum() + pos*div + (2*pos*mod + span) / (2*span);
     }
-    // equiv. to minValue() + (pos*range)/span + 0.5
+    // equiv. to minimum() + (pos*range)/span + 0.5
     // no overflow because of this implicit assumption:
     // pos <= span < sqrt(INT_MAX+0.0625)+0.25 ~ sqrt(INT_MAX)
 }
@@ -323,7 +323,7 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
 //    kDebug(67100) << "KSmallslider::wheelEvent()" << endl;
-    int inc = ( maxValue() - minValue() ) / 20;
+    int inc = ( maximum() - minimum() ) / 20;
     if ( inc < 1)
 	inc = 1;
 

@@ -75,9 +75,9 @@ void KMixToolBox::setTicks(QList<QWidget *> &mdws, bool on ) {
 void KMixToolBox::loadView(ViewBase *view, KConfig *config)
 {
    QString grp = "View.";
-   grp += view->name();
+   grp += view->objectName();
    config->setGroup( grp );
-   kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.ascii() << endl;
+   kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.toAscii() << endl;
 
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];
@@ -130,7 +130,7 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
 void KMixToolBox::saveView(ViewBase *view, KConfig *config)
 {
    QString grp = "View.";
-   grp += view->name();
+   grp += view->objectName();
    config->setGroup( grp );
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp.ascii() << endl;
 
@@ -140,9 +140,9 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
 
-         kDebug(67100) << "  grp=" << grp.ascii() << endl;
-         kDebug(67100) << "  mixer=" << view->getMixer()->id().ascii() << endl;
-         kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().ascii() << endl;
+         kDebug(67100) << "  grp=" << grp.toAscii() << endl;
+         kDebug(67100) << "  mixer=" << view->getMixer()->id().toAscii() << endl;
+         kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii() << endl;
 
          QString devgrp;
          devgrp.sprintf( "%s.%s.%s", grp.ascii(), view->getMixer()->id().ascii(), mdw->mixDevice()->id().ascii() );
