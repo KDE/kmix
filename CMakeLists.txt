@@ -150,9 +150,17 @@ set(profiletest_SRCS tests/profiletest.cpp )
 
 kde4_automoc(${profiletest_SRCS})
 
-kde4_add_executable(profiletest ${profiletest_SRCS} guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp)
+kde4_add_executable(profiletest ${profiletest_SRCS} 
+    guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp mixer_backend.cpp mixset.cpp
+    mixeradaptor.cpp )
 
 target_link_libraries(profiletest  ${KDE4_KDECORE_LIBS} )
+
+if (HAVE_LIBASOUND2)
+    target_link_libraries(profiletest ${ASOUND_LIBRARY})
+endif (HAVE_LIBASOUND2)
+
+
 
 endif(KDE4_BUILD_TESTS)
 
