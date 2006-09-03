@@ -150,7 +150,7 @@ set(profiletest_SRCS tests/profiletest.cpp )
 
 kde4_automoc(${profiletest_SRCS})
 
-kde4_add_executable(profiletest ${profiletest_SRCS} guiprofile.cpp mixer.cpp)
+kde4_add_executable(profiletest ${profiletest_SRCS} guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp)
 
 target_link_libraries(profiletest  ${KDE4_KDECORE_LIBS} )
 
