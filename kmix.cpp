@@ -606,37 +606,25 @@ KMixWindow::configureGlobalShortcuts()
 void
 KMixWindow::toggleMuted()
 {
-   Mixer* mixerMaster = Mixer::masterCard();
-   if ( mixerMaster != 0 ) {
-      MixDevice* md = mixerMaster->masterDevice();
-      if ( md != 0 && md->hasMute() ) {
-         mixerMaster->toggleMute(md->num());
-      }
-   }
+   MixDevice* md = Mixer::masterCardDevice();
+   if ( md != 0 && md->hasMute() ) 
+      Mixer::masterCard()->toggleMute(md->num());
 }
 
 void
 KMixWindow::increaseVolume()
 {
-   Mixer* mixerMaster = Mixer::masterCard();
-   if ( mixerMaster != 0 ) {
-      MixDevice* md = mixerMaster->masterDevice();
-      if ( md != 0 ) {
-         mixerMaster->increaseVolume(md->num());
-      }
-   }
+   MixDevice* md = Mixer::masterCardDevice();
+   if ( md != 0 ) 
+      Mixer::masterCard()->increaseVolume(md->num());
 }
 
 void
 KMixWindow::decreaseVolume()
 {
-   Mixer* mixerMaster = Mixer::masterCard();
-   if ( mixerMaster != 0 ) {
-      MixDevice* md = mixerMaster->masterDevice();
-      if ( md != 0 ) {
-         mixerMaster->decreaseVolume(md->num());
-      }
-   }
+   MixDevice* md = Mixer::masterCardDevice();
+   if ( md != 0 )
+      Mixer::masterCard()->decreaseVolume(md->num());
 }
 
 #include "kmix.moc"
