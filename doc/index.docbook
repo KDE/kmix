@@ -318,7 +318,7 @@ Due to the limited space in the panel there are differences:
 
 
 <chapter id="advanced-kmix">
-<title>Advanced KMix features</title>
+<title>Advanced &kmix; features</title>
 
 
 
@@ -326,7 +326,7 @@ Due to the limited space in the panel there are differences:
 
 
 <sect1 id="dcop-overview">
-<title>The DCOP Interface</title>
+<title>The &DCOP; Interface</title>
 
 <para>
 Sometimes you want to do specialized things.
@@ -354,7 +354,7 @@ The &kmix; specific interfaces are:</para>
 
 
 <sect1 id="dcop-examples">
-<title>DCOP Examples</title>
+<title>&DCOP; Examples</title>
 
 <variablelist>
 <varlistentry>
@@ -397,7 +397,7 @@ The &kmix; specific interfaces are:</para>
 <varlistentry>
 <term><guilabel>Using ALSA and OSS driver at the same time</guilabel></term>
 <listitem>
-<para>&kmix; on Linux can use either the ALSA driver or the OSS driver, not both. If you really need to use both drivers at the same time (a very rare situation), you can do it as follows: Quit &kmix; and add the following line to your <guilabel>kmixrc</guilabel> file in the global configuration section.</para>
+<para>&kmix; on &Linux; can use either the ALSA driver or the OSS driver, not both. If you really need to use both drivers at the same time (a very rare situation), you can do it as follows: Quit &kmix; and add the following line to your <guilabel>kmixrc</guilabel> file in the global configuration section.</para>
 <para><guilabel>MultiDriver=true</guilabel></para>
 <para>Start &kmix; again. If you click <guilabel>Help->Hardware Information</guilabel> you should see "<guilabel>Sound drivers used: ALSA0.9 + OSS</guilabel>" and "<guilabel>Experimental multiple-Driver mode activated</guilabel>"</para>
 <warning><para>Warning: You will probably see all of your mixers doubled.</para><para>There is no support for this kind of configuration.</para></warning>
