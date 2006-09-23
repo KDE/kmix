@@ -56,7 +56,7 @@ protected:
    * The default implementation calls open(), checks the return code and whether the number of
    * supported channels is > 0. Then it calls close().
    * You should reimplement this method in your backend, when there is a less time-consuming method than
-   * calling open() and close() for checking the existance of a Mixer.
+   * calling open() and close() for checking the existence of a Mixer.
    */
   virtual bool isValid();
 

@@ -51,7 +51,7 @@ KMixApp::newInstance()
 			// Default case: If KMix is running and the *USER*
                         // starts it again, the KMix main window will be shown.
 			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
-			// explicitely be shown.
+			// explicitly be shown.
 			m_kmix->show();
 		}
 		else {
@@ -89,7 +89,7 @@ void KMixApp::keepVisibility(bool val_keepVisibility) {
 void
 KMixApp::quitExtended()
 {
-    // This method is here for quiting from the dock icon: When directly calling
+    // This method is here to quit hold from the dock icon: When directly calling
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
     emit stopUpdatesOnVisibility();

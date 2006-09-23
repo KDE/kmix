@@ -40,7 +40,7 @@ Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool isCaptu
 }
 
 
-// @ compatiblity constructor
+// @ compatibility constructor
 Volume::Volume( int channels, long maxVolume ) {
    if (channels == 1 ) {
        init(Volume::MLEFT, maxVolume, 0, false);

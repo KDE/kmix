@@ -52,7 +52,7 @@ ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, Qt::WFlags f
     */
     _actions = new KActionCollection( this );
 
-    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only neccesary for views in the KMix main window.
+    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
     if ( vflags & ViewBase::HasMenuBar ) {
 	KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
 	if ( vflags & ViewBase::MenuBarVisible ) {

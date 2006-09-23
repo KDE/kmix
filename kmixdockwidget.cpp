@@ -130,7 +130,7 @@ KMixDockWidget::createMasterVolWidget()
     setVolumeTip();
     updatePixmap();
     /* We are setting up 3 connections:
-     * Refreshig the _dockAreaPopup (not anymore neccesary, because ViewBase already does it)
+     * Refreshig the _dockAreaPopup (not anymore necessary, because ViewBase already does it)
      * Refreshing the Tooltip
      * Refreshing the Icon
      *

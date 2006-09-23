@@ -179,7 +179,7 @@ void ViewSwitches::configurationUpdate() {
 		backGoundModeToggler = !backGoundModeToggler;
 	    } // ! isDisabled()
 	    else {
-		//kDebug(67100) << "ViewSwitches::configurationUpdate() ignoring diabled switch\n";
+		//kDebug(67100) << "ViewSwitches::configurationUpdate() ignoring disabled switch\n";
 	    }
 	} // inherits("MDWSwitch")
     }

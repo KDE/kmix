@@ -58,7 +58,7 @@
    KMixerWidget contains
    (a)  A Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
    (b1) A balancing slider
-   (b2) A label containg the mixer name
+   (b2) A label containing the mixer name
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
                             MixDevice::DeviceCategory categoryMask,
@@ -340,7 +340,7 @@ void KMixerWidget::toggleMenuBarSlot() {
 }
 
 // in RTL mode, the slider is reversed, we cannot just connect the signal to setBalance()
-// hack arround it before calling _mixer->setBalance()
+// hack around it before calling _mixer->setBalance()
 void KMixerWidget::balanceChanged(int balance)
 {
     if (QApplication::reverseLayout())

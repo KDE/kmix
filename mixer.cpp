@@ -342,7 +342,7 @@ QString& Mixer::id()
 
 void Mixer::setMasterCard(QString& ref_id)
 {
-  // The value is taken over without checking on existance. This allows the User to define
+  // The value is taken over without checking on existence. This allows the User to define
   // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
   // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
   // and before actually constructing the Mixer instances (hint: this mehtod is static!).
@@ -364,7 +364,7 @@ Mixer* Mixer::masterCard()
 
 void Mixer::setMasterCardDevice(QString& ref_id)
 {
-  // The value is taken over without checking on existance. This allows the User to define
+  // The value is taken over without checking on existence. This allows the User to define
   // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
   // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
   // and before actually constructing the Mixer instances (hint: this mehtod is static!).

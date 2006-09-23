@@ -178,7 +178,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
         }
     }
 
-    m_vboxForScrollView->show();  // show() is neccesary starting with the second call to createPage()
+    m_vboxForScrollView->show();  // show() is necessary starting with the second call to createPage()
 }
 
 

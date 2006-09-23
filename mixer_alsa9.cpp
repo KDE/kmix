@@ -239,7 +239,7 @@ Mixer_ALSA::open()
 		      QString* enumName = new QString(buffer);
 		      //enumName->append(buffer);
 		      enumList.append( enumName);
-		    } // enumName could be read succesfully
+		    } // enumName could be read successfully
 		  } // for all enum items of this device
 		} // no error in reading enum list
 		else {
@@ -613,7 +613,7 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
 	// The ALSA polling has been implemented some time ago. So it should be safe to
 	// return "true" here.
 	// The other devnum's Rec-Sources won't get update by KMix code, but ALSA will send
-	// us an event, if neccesary. But OTOH it is possibly better not to trust alsalib fully,
+	// us an event, if necessary. But OTOH it is possibly better not to trust alsalib fully,
         // because the old code is working also well (just takes more processing time).
 	// return true;
 }

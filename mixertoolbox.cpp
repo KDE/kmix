@@ -36,14 +36,14 @@
 /***********************************************************************************
  Attention:
  This MixerToolBox is linked to the KMix Main Program, the KMix Applet and kmixctrl.
- As we do not want to link in more than neccesary to kmixctrl, you are asked
+ As we do not want to link in more than necessary to kmixctrl, you are asked
  not to put any GUI classes in here.
  In the case where it is unavoidable, please put them in KMixToolBox.
  ***********************************************************************************/
 
 /**
  * Scan for Mixers in the System. This is the method that implicitely fills the
- * list of Mixer's, which is accesible via the static Mixer::mixer() method.
+ * list of Mixer's, which is accessible via the static Mixer::mixer() method.
  * @par mixers The list where to add the found Mixers. This parameter is superfluous
  *             nowadays, as it is now really trivial to get it - just call the static
  *             Mixer::mixer() method.
@@ -55,7 +55,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 {
    //kDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
 
-    // Find all mixers and initalize them
+    // Find all mixers and initialize them
     QMap<QString,int> mixerNums;
     int drvNum = Mixer::numDrivers();
 
@@ -126,7 +126,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 			    .arg(mixerNums[mixer->mixerName()]);
 			// The following 3 replaces are for not messing up the config file
 			primaryKeyOfMixer.replace("]","_");
-			primaryKeyOfMixer.replace("[","_"); // not strictly neccesary, but lets play safe
+			primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
 			primaryKeyOfMixer.replace(" ","_");
 			primaryKeyOfMixer.replace("=","_");
 			
@@ -204,7 +204,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 
 
 /*
- * Clean up and free all ressources of all found Mixers, which were found in the initMixer() call
+ * Clean up and free all resources of all found Mixers, which were found in the initMixer() call
  */
 void MixerToolBox::deinitMixer()
 {
@@ -238,7 +238,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
 	unsigned long matchValueBest = 0;
 	if ( !fileName.isNull() && guiprofBest->readProfile(fileName) ) {
-		// Profile exists and was succesfully read
+		// Profile exists and was successfully read
 		matchValueBest = guiprofBest->match(mixer);
 		if ( matchValueBest == 0 ) {
 			delete guiprofBest;

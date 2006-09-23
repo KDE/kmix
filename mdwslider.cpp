@@ -293,7 +293,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 else
 		 {
 			 // we don't have a RECORD LED. We create a dummy widget
-			 // !! possibly not neccesary any more (we are layouted)
+			 // !! possibly not necessary any more (we are layouted)
                          QWidget *qw = new QWidget(this );
                          qw->setObjectName( "Spacer" );
 			 qw->setFixedSize( QSize(16, 16) );

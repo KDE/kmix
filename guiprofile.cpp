@@ -56,7 +56,7 @@ GUIProfile::GUIProfile()
 GUIProfile::~GUIProfile()
 {
 	// !!! must delete all   std::map and std::set  content and instances here.
-	//    QString content is reference counted and probably doesn't need to be deleted explicitely.
+	//    QString content is reference counted and probably doesn't need to be deleted explicitly.
 }
 
 bool GUIProfile::readProfile(QString& ref_fileName)
@@ -156,7 +156,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
  *     8000 upper- and toLower-bound limited        <=> "toLower-bound:upper-bound"
  * or 10000 points (upper-bound=toLower-bound=bound <=> "bound:bound"
  *
- * The Profile-Generation is added to the already achived points. (done)
+ * The Profile-Generation is added to the already achieved points. (done)
  *   The maximum gain is 900 points.
  *   Thus you can create up to 900 generations (0-899) without "overriding"
  *   the points gained from the "driver version" or "card-type".

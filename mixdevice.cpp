@@ -48,7 +48,7 @@ MixDevice::MixDevice( int num, Volume &vol, bool recordable, bool mute,
     else
 	_name = name;
 
-    _id.setNum(num); // We set a default id - it is used, if the backend does not explicitely call setId().
+    _id.setNum(num); // We set a default id - it is used, if the backend does not explicitly call setId().
 
 
     if( category == MixDevice::SWITCH )
