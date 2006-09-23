@@ -231,7 +231,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	
 	// (1) Evaluate the default profile
 	GUIProfile* guiprofBest = new GUIProfile();
-	QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
+	QString fileNamePrefix = "profiles/" + mixer->getDriverName() + '.';
 	QString fileName = fileNamePrefix + "default.xml";
 	kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName << endl;
 	fileName = KStandardDirs::locate("appdata", fileName );
