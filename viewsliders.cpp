@@ -94,7 +94,7 @@ QWidget* ViewSliders::add(MixDevice *md)
         default: labeltext = ""; break;
      }
      num++;
-     if ( labeltext.isEmpty() ) {
+     if ( !labeltext.isEmpty() ) {
         _layoutMDW->addStretch(10);
         if (_vflags & ViewBase::Vertical) { 
           QLabel* lbl = new QLabel(labeltext, this);
