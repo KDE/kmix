@@ -303,7 +303,7 @@ KMixWindow::initMixerWidgets()
    if ( Mixer::mixers().count() == 0 ) {
        // No cards present => show a text instead
        //QBoxLayout *layout = new QHBoxLayout( this );
-       QString s = i18n("No soundcard found. Probably you haven't set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
+       QString s = i18n("No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
        QLabel *errorLabel = new QLabel( s,this  );
        errorLabel->setAlignment( Qt::AlignCenter );
        errorLabel->setWordWrap(true);
