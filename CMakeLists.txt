@@ -91,6 +91,28 @@ target_link_libraries( kmixctrl kdeinit_kmixctrl )
 install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
+
+set(kmixd_KMIXD_SRCS
+   kmixdevicemanager.cpp )
+
+kde4_automoc(${kmixd_KMIXD_SRCS})
+
+
+kde4_add_kdeinit_executable( kmixd ${kmixd_KMIXD_SRCS})
+
+target_link_libraries(kdeinit_kmixd  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} )
+
+if (HAVE_LIBASOUND2)
+    target_link_libraries(kdeinit_kmixd ${ASOUND_LIBRARY} solid)
+endif (HAVE_LIBASOUND2)
+
+install(TARGETS kdeinit_kmixd DESTINATION ${LIB_INSTALL_DIR} )
+
+target_link_libraries( kmixd kdeinit_kmixd )
+install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
+
+
+########### next target ###############
 if(KICKER_INCLUDE_DIR)
 
 set(kmix_panelapplet_PART_SRCS

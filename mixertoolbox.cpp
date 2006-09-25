@@ -33,6 +33,9 @@
 
 #include "mixertoolbox.h"
 
+
+MixerToolBox* MixerToolBox::s_instance = 0;
+
 /***********************************************************************************
  Attention:
  This MixerToolBox is linked to the KMix Main Program, the KMix Applet and kmixctrl.
@@ -41,15 +44,23 @@
  In the case where it is unavoidable, please put them in KMixToolBox.
  ***********************************************************************************/
 
+MixerToolBox* MixerToolBox::instance()
+{
+   if ( s_instance == 0 ) {
+      s_instance = new MixerToolBox();
+   }
+   return s_instance;
+}
+
+
 /**
  * Scan for Mixers in the System. This is the method that implicitely fills the
  * list of Mixer's, which is accessible via the static Mixer::mixer() method.
- * @par mixers The list where to add the found Mixers. This parameter is superfluous
- *             nowadays, as it is now really trivial to get it - just call the static
- *             Mixer::mixer() method.
+ *
  * @par multiDriverMode Whether the Mixer scan should try more all backendends.
  *          'true' means to scan all backends. 'false' means: After scanning the
  *          current backend the next backend is only scanned if no Mixers were found yet.
+ * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
  */
 void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 {
@@ -131,6 +142,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 			primaryKeyOfMixer.replace("=","_");
 			
 			mixer->setID(primaryKeyOfMixer);
+			emit mixerAdded(primaryKeyOfMixer);
 		} // valid
 		else
 		{
@@ -220,6 +232,26 @@ void MixerToolBox::deinitMixer()
    // kDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
 }
 
+/*
+ * Clean up and free all resources of all found Mixers, which were found in the initMixer() call
+ */
+Mixer* MixerToolBox::find( QString mixer_id)
+{
+   //kDebug(67100) << "IN MixerToolBox::find()"<<endl;
+
+   Mixer* mixer = 0;
+   for ( unsigned int i=0; i<Mixer::mixers().count(); i++ )
+   {
+      if ( ((Mixer::mixers())[i])->id() == mixer_id )
+      {
+         mixer = (Mixer::mixers())[i];
+         break;
+      }
+   }
+
+   return mixer;
+   // kDebug(67100) << "OUT MixerToolBox::find()"<<endl;
+}
 
 GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 {
@@ -290,3 +322,5 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 
 	return guiprofBest;
 }
+
+#include "mixertoolbox.moc"

@@ -170,7 +170,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
     if ( s_instCount == 0) {
         //  !!! TODO Mixer::mixers().setAutoDelete( true );
 	QString dummyStringHwinfo;
-	MixerToolBox::initMixer(false, dummyStringHwinfo);
+	MixerToolBox::instance()->initMixer(false, dummyStringHwinfo);
     }
     s_instCount++;
     kDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;

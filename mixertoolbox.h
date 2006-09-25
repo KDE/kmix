@@ -21,6 +21,7 @@
 #ifndef MIXERTOOLBOX_H
 #define MIXERTOOLBOX_H
 
+#include <qobject.h>
 #include <qlist.h>
 #include <QString>
 
@@ -33,12 +34,23 @@ class Mixer;
  * The reason, why it is not put in a common base class is, that the classes are
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
  */
-class MixerToolBox {
- public:
-    static void initMixer(bool, QString&);
-    static void deinitMixer();
+class MixerToolBox : public QObject
+{
+    Q_OBJECT
 
-    static GUIProfile* selectProfile(Mixer*);
+ public:
+    static MixerToolBox* instance();
+    void initMixer(bool, QString&);
+    void deinitMixer();
+    Mixer* find( QString mixer_id);
+
+    GUIProfile* selectProfile(Mixer*);
+
+ signals:
+  void mixerAdded(QString mixerID);
+
+ private:
+  static MixerToolBox* s_instance;
 };
     
 

@@ -66,7 +66,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    // create mixers
    QString dummyStringHwinfo;
-   MixerToolBox::initMixer(false, dummyStringHwinfo);
+   MixerToolBox::instance()->initMixer(false, dummyStringHwinfo);
 
    // load volumes
    if ( args->isSet("restore") )
@@ -86,7 +86,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
       }
    }
 
-   MixerToolBox::deinitMixer();
+   MixerToolBox::instance()->deinitMixer();
 
    return 0;
 }

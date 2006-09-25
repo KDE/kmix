@@ -57,7 +57,7 @@
 #include "kmixtoolbox.h"
 
 
-/**
+/*
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
@@ -74,10 +74,15 @@ KMixWindow::KMixWindow()
 	//   !!! FIX THIS m_mixerWidgets.setAutoDelete(true);
 	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
 kDebug(67100) << "MultiDriver c = " << m_multiDriverMode << endl;
-	MixerToolBox::initMixer(m_multiDriverMode, m_hwInfoString);
+
 	initActions();
 	initWidgets();
+
+
 	initMixerWidgets();
+	connect ( MixerToolBox::instance(), SIGNAL(mixerAdded(QString)),  SLOT(addMixerWidget(QString)) );
+	MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
+
 
 	initPrefDlg();
 	updateDocking();
@@ -100,7 +105,7 @@ kDebug(67100) << "MultiDriver c = " << m_multiDriverMode << endl;
 
 KMixWindow::~KMixWindow()
 {
-   MixerToolBox::deinitMixer();
+   MixerToolBox::instance()->deinitMixer();
 }
 
 
@@ -143,7 +148,7 @@ KMixWindow::initWidgets()
 	widgetsLayout = new QVBoxLayout(   centralWidget()   );
 	widgetsLayout->setObjectName(   "widgetsLayout"   );
 	widgetsLayout->setSpacing(   0   );
-	widgetsLayout->setMargin(   0   );
+	widgetsLayout->setMargin (   0   );
 	//widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
 
 	m_wsMixers = new QStackedWidget( centralWidget() );
@@ -295,69 +300,68 @@ KMixWindow::loadConfig()
 }
 
 
-void
-KMixWindow::initMixerWidgets()
+void KMixWindow::initMixerWidgets()
 {
+ 
    m_mixerWidgets.clear();
 
-   if ( Mixer::mixers().count() == 0 ) {
-       // No cards present => show a text instead
-       //QBoxLayout *layout = new QHBoxLayout( this );
+   // No cards present => show a text instead
+   //QBoxLayout *layout = new QHBoxLayout( this );
        QString s = i18n("No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
        QLabel *errorLabel = new QLabel( s,this  );
        errorLabel->setAlignment( Qt::AlignCenter );
        errorLabel->setWordWrap(true);
        errorLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-       widgetsLayout->addWidget( errorLabel );
-   } // No cards present
-
-   else {
-       // At least one card is present
-
-        //widgetsLayout->setStretchFactor( m_wsMixers, 10 );
-	widgetsLayout->addWidget( m_wsMixers );
-
-	for ( int i=0; i<Mixer::mixers().count(); ++i)
-	{
-		Mixer *mixer = (Mixer::mixers())[i];
-		//kDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
-		ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-		if ( m_showMenubar ) {
-			vflags |= ViewBase::MenuBarVisible;
-		}
-		if (  m_surroundView ) {
-			vflags |= ViewBase::Experimental_SurroundView;
-		}
-		if (  m_gridView ) {
-			vflags |= ViewBase::Experimental_GridView;
-		}
-		if ( m_toplevelOrientation == Qt::Vertical ) {
-			vflags |= ViewBase::Vertical;
-		}
-		else {
-			vflags |= ViewBase::Horizontal;
-		}
-
-	
-		KMixerWidget *mw = new KMixerWidget( mixer,
-						     MixDevice::ALL, this, "KMixerWidget", vflags );
-		m_mixerWidgets.append( mw );
-
-		// Add to Combo and Stack
-		//!!! TODO m_cMixer->insertItem( mixer->mixerName() );
-		m_wsMixers->addWidget( mw );
-		if (i==0) { setWindowTitle( mw->mixer()->mixerName() ); }
-		connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
-
-		QString grp(mw->id());
-		mw->loadConfig( KGlobal::config(), grp );
-
-		mw->setTicks( m_showTicks );
-		mw->setLabels( m_showLabels );
-	}
+       m_wsMixers->addWidget( errorLabel );
+ }
 
 
-   } // At least one card is present
+
+void KMixWindow::addMixerWidget(QString mixer_ID)
+{
+   //widgetsLayout->setStretchFactor( m_wsMixers, 10 );
+
+   Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
+   if ( mixer != 0 )
+   {
+      //kDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+      ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
+      if ( m_showMenubar ) {
+            vflags |= ViewBase::MenuBarVisible;
+      }
+      if (  m_surroundView ) {
+            vflags |= ViewBase::Experimental_SurroundView;
+      }
+      if (  m_gridView ) {
+            vflags |= ViewBase::Experimental_GridView;
+      }
+      if ( m_toplevelOrientation == Qt::Vertical ) {
+            vflags |= ViewBase::Vertical;
+      }
+      else {
+            vflags |= ViewBase::Horizontal;
+      }
+      
+      
+      KMixerWidget *mw = new KMixerWidget( mixer,
+                                          MixDevice::ALL, this, "KMixerWidget", vflags );
+      m_mixerWidgets.append( mw );
+      
+      // Add to Combo and Stack
+      //!!! TODO m_cMixer->insertItem( mixer->mixerName() );
+
+      /* A newly added mixer will automatically added at the top
+      * and thus the window title is also set appropriately */
+      m_wsMixers->addWidget( mw );
+      setWindowTitle( mw->mixer()->mixerName() );
+      connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
+      
+      QString grp(mw->id());
+      mw->loadConfig( KGlobal::config(), grp );
+      
+      mw->setTicks( m_showTicks );
+      mw->setLabels( m_showLabels );
+   } // given mixer exist really
 }
 
 

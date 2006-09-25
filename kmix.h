@@ -117,6 +117,7 @@ KMixWindow : public KMainWindow
 
   private slots:
    void slotHWInfo();
+   void addMixerWidget(QString);
 };
 
 #endif // KMIX_H

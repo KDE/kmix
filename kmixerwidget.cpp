@@ -144,7 +144,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
       * 2b) Create device widgets
       * 2c) Add Views to Tab
       ********************************************************************/
-      GUIProfile* guiprof = MixerToolBox::selectProfile(_mixer);
+      GUIProfile* guiprof = MixerToolBox::instance()->selectProfile(_mixer);
       if ( guiprof != 0 ) {
 	createViewsByProfile(_mixer, guiprof, vflags);
       }
