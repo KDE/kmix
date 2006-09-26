@@ -237,12 +237,12 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 if ( m_small ) {
 			 slider = new KSmallSlider( minvol, maxvol, maxvol/10,
 					 m_mixdevice->getVolume( chid ), _orientation,
-					 this, m_mixdevice->name().ascii() );
+					 this, m_mixdevice->name().toAscii().data() );
 		 }
 		 else	{
 			 slider = new QSlider( 0, maxvol, maxvol/10,
 					 maxvol - m_mixdevice->getVolume( chid ), _orientation,
-					 this, m_mixdevice->name().ascii() );
+					 this, m_mixdevice->name().toAscii().data() );
 			 //slider->setMinimumSize( slider->minimumSizeHint() );
                          static_cast<QSlider*>(slider)->setInvertedAppearance(true);
                          static_cast<QSlider*>(slider)->setInvertedControls(true);

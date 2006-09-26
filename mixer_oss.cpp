@@ -92,12 +92,12 @@ Mixer_OSS::~Mixer_OSS()
 
 int Mixer_OSS::open()
 {
-  if ((m_fd= ::open( deviceName( m_devnum ).latin1(), O_RDWR)) < 0)
+  if ((m_fd= ::open( deviceName( m_devnum ).toAscii().data(), O_RDWR)) < 0)
     {
       if ( errno == EACCES )
         return Mixer::ERR_PERM;
       else {
-		  if ((m_fd= ::open( deviceNameDevfs( m_devnum ).latin1(),
+		  if ((m_fd= ::open( deviceNameDevfs( m_devnum ).toAscii().data(),
 						  O_RDWR)) < 0)
 		    {
       			if ( errno == EACCES )

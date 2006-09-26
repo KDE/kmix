@@ -21,19 +21,23 @@
 #ifndef VerticalText_h
 #define VerticalText_h
 
+#include <QString>
 #include <QWidget>
 
 class VerticalText : public QWidget
 {
-public:
-    VerticalText(QWidget * parent, const char * name, Qt::WFlags f = 0);
-    ~VerticalText();
+   public:
+      VerticalText(QWidget * parent, const QString&, Qt::WFlags f = 0);
+      ~VerticalText();
 
-    QSize sizeHint() const;
-    QSizePolicy sizePolicy () const;
-	
-protected:
-    void paintEvent ( QPaintEvent * event );
+      QSize sizeHint() const;
+      QSizePolicy sizePolicy () const;
+
+   protected:
+      void paintEvent ( QPaintEvent * event );
+
+   private:
+      QString m_labelText;
 };
 
 #endif

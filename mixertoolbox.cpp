@@ -221,14 +221,16 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 void MixerToolBox::deinitMixer()
 {
    //kDebug(67100) << "IN MixerToolBox::deinitMixer()"<<endl;
-   while ( Mixer::mixers().count() != 0)
+
+   int mixerCount = Mixer::mixers().count();
+   for ( int i=0; i<mixerCount; ++i)
    {
-      Mixer* mixer = (Mixer::mixers())[0];
+      Mixer* mixer = (Mixer::mixers())[i];
       //kDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer" << endl;
       mixer->close();
-      Mixer::mixers().remove(mixer);
       delete mixer;
    }
+   Mixer::mixers().clear();
    // kDebug(67100) << "OUT MixerToolBox::deinitMixer()"<<endl;
 }
 
@@ -240,7 +242,8 @@ Mixer* MixerToolBox::find( QString mixer_id)
    //kDebug(67100) << "IN MixerToolBox::find()"<<endl;
 
    Mixer* mixer = 0;
-   for ( unsigned int i=0; i<Mixer::mixers().count(); i++ )
+   int mixerCount = Mixer::mixers().count();
+   for ( int i=0; i<mixerCount; ++i)
    {
       if ( ((Mixer::mixers())[i])->id() == mixer_id )
       {

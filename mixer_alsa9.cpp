@@ -129,7 +129,7 @@ Mixer_ALSA::open()
 
     probeMessage += "Trying ALSA Device '" + devName + "': ";
 
-    if ( ( err = snd_ctl_open ( &ctl_handle, devName.latin1(), 0 ) ) < 0 )
+    if ( ( err = snd_ctl_open ( &ctl_handle, devName.toAscii().data(), 0 ) ) < 0 )
     {
 	kDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
 	return Mixer::ERR_OPEN;
@@ -162,7 +162,7 @@ Mixer_ALSA::open()
     }
     //kDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
 
-    if ( ( err = snd_mixer_attach ( _handle, devName.latin1() ) ) < 0 )
+    if ( ( err = snd_mixer_attach ( _handle, devName.toAscii().data() ) ) < 0 )
     {
 	kDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
 	//errormsg( Mixer::ERR_PERM );
@@ -411,7 +411,7 @@ Mixer_ALSA::close()
   {
     //kDebug(67100) << "IN  Mixer_ALSA::close()" << endl;
     snd_mixer_free ( _handle );
-    if ( ( ret = snd_mixer_detach ( _handle, devName.latin1() ) ) < 0 )
+    if ( ( ret = snd_mixer_detach ( _handle, devName.toAscii().data() ) ) < 0 )
     {
         kDebug(67100) << "snd_mixer_detach err=" << snd_strerror(ret) << endl;
     }

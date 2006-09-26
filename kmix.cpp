@@ -586,7 +586,7 @@ KMixWindow::slotHWInfo() {
 void KMixWindow::showNextMixer() {
    int nextIndex = m_wsMixers->currentIndex() + 1;
    if ( nextIndex >= m_wsMixers->count() ) {
-      nextIndex = 0;
+      nextIndex = 1; // ! Attention: index 1 is the "dummy widget"
    }
    m_wsMixers->setCurrentIndex(nextIndex);
    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();

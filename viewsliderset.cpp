@@ -47,7 +47,8 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 	for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
 	{
 	    ProfControl* control = *it;
-	    if ( control->tab == name() ) {   //  !!! using name() here is BAD. An ID should be used
+#warning Using name() here is BAD. An ID should be used
+	    if ( control->tab == name() ) {
 		// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
 		bool isUsed = false;
 

@@ -63,11 +63,12 @@
 KMixerWidget::KMixerWidget( Mixer *mixer,
                             MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
-   : QWidget( parent, name ), _mixer(mixer), m_balanceSlider(0),
+   : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0),
      _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false )
 
 {
+   setObjectName(name);
     m_categoryMask = categoryMask;
     m_id = mixer->mixerName();  // !!! A BETTER ID must probably be found here
 
@@ -260,6 +261,7 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase)
 	else {
 		_views.push_back(vbase);
 		vbase ->createDeviceWidgets();
+#warning Using name() here is a bad idea. Use an ID instead for proper i18n
 		m_ioTab->addTab( vbase , i18n(vbase->name()) );
 		connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
 	}

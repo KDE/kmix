@@ -88,10 +88,11 @@ static const QColor mutedBackColor = "#000000";
 AppletConfigDialog::AppletConfigDialog( QWidget * parent, const char * name )
    : KDialog( parent)
 {
-    setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
-    setDefaultButton( Ok );
-    setModal( false );
-    showButtonSeparator( true );
+   setObjectName(name);
+   setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
+   setDefaultButton( Ok );
+   setModal( false );
+   showButtonSeparator( true );
    setPlainCaption(i18n("Configure - Mixer Applet"));
    QFrame* page = new QFrame(this);
    setMainWidget( page );
@@ -162,6 +163,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
+   setObjectName(name);
     kDebug(67100) << "KMixApplet::KMixApplet instancing Applet. Old s_instCount="<< s_instCount << " configfile=" << configFile << endl;
     //kDebug(67100) << "KMixApplet::KMixApplet()" << endl;
     _layout = new QHBoxLayout(this); // it will always only be one item in it, so we don't care whether it is HBox or VBox
@@ -185,7 +187,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
     for ( int i=0; i< Mixer::mixers().count(); ++i )
     {
        Mixer *mixer = (Mixer::mixers())[i];
-       if ( mixer->mixerName() == _mixerName ) {
+       if ( mixer->mixerName() == _mixerName ) {  // @todo Check the change: _mixer->  to   mixer->
           _mixer = mixer;
           break;
        }
@@ -281,10 +283,9 @@ void KMixApplet::loadConfig()
 }
 
 
-void KMixApplet::loadConfig( KConfig *config, const QString &grp )
+void KMixApplet::loadConfig( KConfig *config, const QString& /*grp*/ )
 {
     if ( m_appletView ) {
-	//config->setGroup( grp );
 	KMixToolBox::loadView(m_appletView, config );
 	KMixToolBox::loadKeys(m_appletView, config );
     }
@@ -294,10 +295,11 @@ void KMixApplet::loadConfig( KConfig *config, const QString &grp )
 void KMixApplet::saveConfig( KConfig *config, const QString &grp )
 {
     if ( m_appletView ) {
-	config->setGroup( grp );
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
+	config->setGroup( grp );
 	config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
+
 	KMixToolBox::saveView(m_appletView, config );
 	KMixToolBox::saveKeys(m_appletView, config );
     }
@@ -315,7 +317,7 @@ void KMixApplet::selectMixer()
    {
        Mixer *mixer = (Mixer::mixers())[i];
        QString s;
-       s.sprintf("%i. %s", (i+1), mixer->mixerName().ascii());
+       s.sprintf("%i. %s", (i+1), mixer->mixerName().toAscii().data());
        lst << s;
    }
 
@@ -363,11 +365,11 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	// do this only after we deleted the error label
 	if (m_appletView) {
 	    saveConfig(); // save the applet before recreating it
-	    _layout->remove(m_appletView);
+	    _layout->removeWidget(m_appletView);
 	    delete m_appletView;
 	}
  	/**@todo Add View stuff to KMixApplet / ViewApplet */
-	m_appletView = new ViewApplet( this, _mixer->name(), _mixer, 0, (GUIProfile*)0, pos );
+	m_appletView = new ViewApplet( this, _mixer->mixerName().toAscii().data(), _mixer, 0, (GUIProfile*)0, pos );
 	connect ( m_appletView, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
 	m_appletView->createDeviceWidgets();
 	_layout->addWidget(m_appletView);

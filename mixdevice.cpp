@@ -140,17 +140,22 @@ void MixDevice::setId(QString &id) {
 void MixDevice::read( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num );  // !!! must change: _num => id()
+   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _num );  // !!! must change: _num => id()
    config->setGroup( devgrp );
    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
 
-   char *nameLeftVolume, *nameRightVolume;
+   static const char vol_l_cap[] = "volumeLCapture";
+   static const char vol_r_cap[] = "volumeRCapture";
+   static const char vol_l_play[] = "volumeL";
+   static const char vol_r_play[] = "volumeR";
+
+   const char *nameLeftVolume, *nameRightVolume;
    if ( _volume.isCapture() ) {
-		nameLeftVolume = "volumeLCapture";
-		nameRightVolume = "volumeRCapture";
+      nameLeftVolume  = vol_l_cap;
+      nameRightVolume = vol_r_cap;
    } else {
-		nameLeftVolume = "volumeL";
-		nameRightVolume = "volumeR";
+      nameLeftVolume  = vol_l_play;
+      nameRightVolume = vol_r_play;
    }
    Volume::ChannelMask chMask = Volume::MNONE;
    int vl = config->readEntry(nameLeftVolume, -1);
@@ -200,7 +205,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
 void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.ascii(), _num ); // !!! must change: _num => id()
+   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _num ); // !!! must change: _num => id()
    config->setGroup(devgrp);
    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 

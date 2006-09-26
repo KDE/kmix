@@ -24,7 +24,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
                          "(c) 2007 by Christian Esken");
 
    KCmdLineArgs::init( argc, argv, &aboutData );
-   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+   //KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    KApplication app( false );
 
   std::cerr << "--- before getting dm ---\n";
@@ -36,5 +36,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
   std::cerr << "--- before dl.first() ---\n";
   //Solid::Device dev = dl.first();
+
+  return 0;
 }
 

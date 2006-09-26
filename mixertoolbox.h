@@ -38,20 +38,19 @@ class MixerToolBox : public QObject
 {
     Q_OBJECT
 
- public:
-    static MixerToolBox* instance();
-    void initMixer(bool, QString&);
-    void deinitMixer();
-    Mixer* find( QString mixer_id);
+   public:
+      static MixerToolBox* instance();
+      void initMixer(bool, QString&);
+      void deinitMixer();
+      Mixer* find( QString mixer_id);
 
-    GUIProfile* selectProfile(Mixer*);
+      GUIProfile* selectProfile(Mixer*);
 
- signals:
-  void mixerAdded(QString mixerID);
+   signals:
+      void mixerAdded(QString mixerID);
 
- private:
-  static MixerToolBox* s_instance;
+   private:
+      static MixerToolBox* s_instance;
 };
-    
 
 #endif

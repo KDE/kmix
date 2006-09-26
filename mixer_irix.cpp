@@ -22,6 +22,8 @@
 
 #include "mixer_irix.h"
 
+#error "The IRIX port is not maintained anymore, an no official part of KMix / KDE at this point of time! Please contact the current KMix maintainer if you would like to maintain the port."
+
 Mixer_Backend* IRIX_getMixer(int devnum)
 {
   Mixer_Backend *l_mixer;
