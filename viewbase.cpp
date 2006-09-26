@@ -41,8 +41,9 @@
 
 
 ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-    : QWidget(parent, name, f), _vflags(vflags), _guiprof(guiprof)
+    : QWidget(parent, f), _vflags(vflags), _guiprof(guiprof)
 {
+    setObjectName(name);
     _mixer = mixer;
     _mixSet = new MixSet();
 

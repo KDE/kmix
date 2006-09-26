@@ -28,6 +28,7 @@
 
 // include files for Qt
 #include <QString>
+class QLabel;
 #include <QMap>
 #include <qlist.h>
 #include <QVBoxLayout>
@@ -67,10 +68,12 @@ KMixWindow : public KMainWindow
 
    void initPrefDlg();
    void initActions();
+   void recreateGUI();
    void initWidgets();
    void initMixerWidgets();
 
    void updateDocking();
+   void clearMixerWidgets();
 
    virtual bool queryClose();
    void showEvent( QShowEvent * );
@@ -107,13 +110,12 @@ KMixWindow : public KMainWindow
    bool m_gridView;                // Experimental. Off by default
    Qt::Orientation m_toplevelOrientation;
 
-   QList<KMixerWidget *> m_mixerWidgets;
-
    QStackedWidget *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QString m_hwInfoString;
-   QVBoxLayout *widgetsLayout;
+   QVBoxLayout *m_widgetsLayout;
+   QLabel      *m_errorLabel;
 
   private slots:
    void slotHWInfo();

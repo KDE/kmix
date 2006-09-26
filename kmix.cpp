@@ -57,60 +57,54 @@
 #include "kmixtoolbox.h"
 
 
-/*
+/*KMixWindowu
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
-	: KMainWindow(0, 0, 0), m_showTicks( true ),
-	m_dockWidget( 0L )
+	: KMainWindow(0), m_showTicks( true ),
+	m_dockWidget()
 {
-	m_visibilityUpdateAllowed	= true;
-	m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
-	m_surroundView		        = false; // -<- Also the experimental surround View (3D)
-	m_gridView		        = false; // -<- Also the experimental Grid View
-	// As long as we do not know better, we assume to start hidden. We need
-	// to initialize this variable here, as we don't trigger a hideEvent().
-	m_isVisible = false;
-	//   !!! FIX THIS m_mixerWidgets.setAutoDelete(true);
-	loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
+   setObjectName("KMixWindow");
+   m_visibilityUpdateAllowed	= true;
+   m_multiDriverMode		= false; // -<- I never-ever want the multi-drivermode to be activated by accident
+   m_surroundView		        = false; // -<- Also the experimental surround View (3D)
+   m_gridView		        = false; // -<- Also the experimental Grid View
+   // As long as we do not know better, we assume to start hidden. We need
+   // to initialize this variable here, as we don't trigger a hideEvent().
+   m_isVisible = false;
+   loadConfig(); // Need to load config before initMixer(), due to "MultiDriver" keyword
 kDebug(67100) << "MultiDriver c = " << m_multiDriverMode << endl;
 
-	initActions();
-	initWidgets();
+   initActions();
+   initWidgets();
+   initPrefDlg();
+   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
+   recreateGUI();
 
 
-	initMixerWidgets();
-	connect ( MixerToolBox::instance(), SIGNAL(mixerAdded(QString)),  SLOT(addMixerWidget(QString)) );
-	MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
-
-
-	initPrefDlg();
-	updateDocking();
-
-	if ( m_startVisible )
-	{
-		 /* Started visible: We should do probably do:
-		  *   m_isVisible = true;
-		  * But as a showEvent() is triggered by show() we don't need it.
-		  */
-		 show();
-	}
-	else
-	{
-		hide();
-	}
-	connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveSettings()) );
+   if ( m_startVisible )
+   {
+      /* Started visible: We should do probably do:
+         *   m_isVisible = true;
+         * But as a showEvent() is triggered by show() we don't need it.
+         */
+            show();
+   }
+   else {
+      hide();
+   }
+   connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveSettings()) );
 }
 
 
 KMixWindow::~KMixWindow()
 {
+   clearMixerWidgets();
    MixerToolBox::instance()->deinitMixer();
 }
 
 
-void
-KMixWindow::initActions()
+void KMixWindow::initActions()
 {
 	// file menu
 	KStdAction::quit( this, SLOT(quit()), actionCollection());
@@ -129,8 +123,7 @@ KMixWindow::initActions()
 }
 
 
-void
-KMixWindow::initPrefDlg()
+void KMixWindow::initPrefDlg()
 {
 	m_prefDlg = new KMixPrefDlg( this );
 	connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)),
@@ -138,28 +131,29 @@ KMixWindow::initPrefDlg()
 }
 
 
-void
-KMixWindow::initWidgets()
+
+
+void KMixWindow::initWidgets()
 {
 	// Main widget and layout
 	setCentralWidget( new QWidget( this ) );
 
 	// Widgets layout
-	widgetsLayout = new QVBoxLayout(   centralWidget()   );
-	widgetsLayout->setObjectName(   "widgetsLayout"   );
-	widgetsLayout->setSpacing(   0   );
-	widgetsLayout->setMargin (   0   );
-	//widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
+	m_widgetsLayout = new QVBoxLayout(   centralWidget()   );
+	m_widgetsLayout->setObjectName(   "m_widgetsLayout"   );
+	m_widgetsLayout->setSpacing(   0   );
+	m_widgetsLayout->setMargin (   0   );
+	//m_widgetsLayout->setResizeMode(QLayout::Minimum); // works fine
 
 	m_wsMixers = new QStackedWidget( centralWidget() );
-        widgetsLayout->addWidget(m_wsMixers);
+        m_widgetsLayout->addWidget(m_wsMixers);
 
 	if ( m_showMenubar )
 		menuBar()->show();
 	else
 		menuBar()->hide();
 
-	widgetsLayout->activate();
+	m_widgetsLayout->activate();
 }
 
 
@@ -239,11 +233,14 @@ KMixWindow::saveConfig()
       config->writeEntry( "Orientation","Horizontal" );
 
    // save mixer widgets
-   for ( int i=0; i<m_mixerWidgets.count() ; ++i )
+   for ( int i=0; i<m_wsMixers->count() ; ++i )
    {
-		KMixerWidget *mw = m_mixerWidgets[i];
-		QString grp (mw->id());
-		mw->saveConfig( config, grp );
+      QWidget *w = m_wsMixers->widget(i);
+      if ( w->inherits("KMixerWidget") ) {
+         KMixerWidget* mw = (KMixerWidget*)w;
+         QString grp (mw->id());
+         mw->saveConfig( config, grp );
+      }
    }
 
    config->setGroup(0);
@@ -289,42 +286,69 @@ KMixWindow::loadConfig()
    // restore window size and position
    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
    {
-		QSize defSize( minimumWidth(), height() );
-		QSize size = config->readEntry("Size", defSize );
-		if(!size.isEmpty()) resize(size);
-
-		QPoint defPos = pos();
-		QPoint pos = config->readEntry("Position", defPos);
-		move(pos);
-	}
+      QSize defSize( minimumWidth(), height() );
+      QSize size = config->readEntry("Size", defSize );
+      if(!size.isEmpty()) resize(size);
+      
+      QPoint defPos = pos();
+      QPoint pos = config->readEntry("Position", defPos);
+      move(pos);
+   }
 }
 
 
+
+/**
+ * Create or recreate the Mixer GUI elements
+ */
+void KMixWindow::recreateGUI()
+{
+   initMixerWidgets();
+   for (int i=0; i<Mixer::mixers().count(); ++i) {
+      Mixer *mixer = (Mixer::mixers())[i];
+      addMixerWidget(mixer->id());
+   }
+   updateDocking();
+}
+
+
+/**
+ * Put a "dummy" widget at the bottom of the GUI stack.
+ * This widget shows an error message like "no mixers detected.
+ */
 void KMixWindow::initMixerWidgets()
 {
- 
-   m_mixerWidgets.clear();
+   clearMixerWidgets();
+   QString s = i18n("No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
+   m_errorLabel = new QLabel( s,this  );
+   m_errorLabel->setAlignment( Qt::AlignCenter );
+   m_errorLabel->setWordWrap(true);
+   m_errorLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+   m_wsMixers->addWidget( m_errorLabel );
+}
 
-   // No cards present => show a text instead
-   //QBoxLayout *layout = new QHBoxLayout( this );
-       QString s = i18n("No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
-       QLabel *errorLabel = new QLabel( s,this  );
-       errorLabel->setAlignment( Qt::AlignCenter );
-       errorLabel->setWordWrap(true);
-       errorLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-       m_wsMixers->addWidget( errorLabel );
- }
+void KMixWindow::clearMixerWidgets()
+{
+   while ( m_wsMixers->count() != 0 )
+   {
+      QWidget *mw = m_wsMixers->widget(0);
+      m_wsMixers->removeWidget(mw);
+      delete mw;
+   }
+}
 
 
 
 void KMixWindow::addMixerWidget(QString mixer_ID)
 {
-   //widgetsLayout->setStretchFactor( m_wsMixers, 10 );
+   kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << endl;
+
+   //m_widgetsLayout->setStretchFactor( m_wsMixers, 10 );
 
    Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
    if ( mixer != 0 )
    {
-      //kDebug(67100) << "Mixer number: " << id << " Name: " << mixer->mixerName() << endl ;
+      kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added" << endl;
       ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
       if ( m_showMenubar ) {
             vflags |= ViewBase::MenuBarVisible;
@@ -345,14 +369,12 @@ void KMixWindow::addMixerWidget(QString mixer_ID)
       
       KMixerWidget *mw = new KMixerWidget( mixer,
                                           MixDevice::ALL, this, "KMixerWidget", vflags );
-      m_mixerWidgets.append( mw );
       
-      // Add to Combo and Stack
-      //!!! TODO m_cMixer->insertItem( mixer->mixerName() );
-
+      // Add to WidgetStack
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
       m_wsMixers->addWidget( mw );
+      m_wsMixers->setCurrentWidget(mw);
       setWindowTitle( mw->mixer()->mixerName() );
       connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
       
@@ -467,8 +489,9 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
         ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
      || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
    if ( toplevelOrientationHasChanged ) {
-      QString msg = i18n("The change of orientation will be adopted on the next start of KMix.");
-      KMessageBox::information(0,msg);
+//      QString msg = i18n("The change of orientation will be adopted on the next start of KMix.");
+//      KMessageBox::information(0,msg);
+      recreateGUI();
    }
    if ( prefDlg->_rbVertical->isChecked() ) {
       //QString "For a change of language to take place, quit and restart KDiff3.";
@@ -481,18 +504,25 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    }
 
 
-   this->setUpdatesEnabled(false);
+/********* THE FOLLOWING STUFF IS nOT STRICTLY NECCESARY IF
+ toplevelOrientationHasChanged==true . TGhe GUI wa recreated anyhow in that case
+ *********************************************************************************/
+   //this->setUpdatesEnabled(false);
    updateDocking();
 
-   for ( int i=0; i<m_mixerWidgets.count(); ++i)
+   for ( int i=0; i<m_wsMixers->count() ; ++i )
    {
-      KMixerWidget *mw = m_mixerWidgets[i];
-      mw->setTicks( m_showTicks );
-      mw->setLabels( m_showLabels );
-      mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
+      QWidget *w = m_wsMixers->widget(i);
+      if ( w->inherits("KMixerWidget") ) {
+         KMixerWidget* mw = (KMixerWidget*)w;
+         mw->setTicks( m_showTicks );
+         mw->setLabels( m_showLabels );
+         mw->mixer()->readSetFromHWforceUpdate(); // needed, as updateDocking() has reconstructed the DockWidget
+      }
    }
 
-   this->setUpdatesEnabled(false);
+
+   //this->setUpdatesEnabled(false);
 
    // avoid invisible and unaccessible main window
    if( !m_showDockWidget && !isVisible() )
@@ -564,5 +594,5 @@ void KMixWindow::showNextMixer() {
    setWindowTitle( mixer->mixerName() );
    updateDocking();
 }
-#include "kmix.moc"
 
+#include "kmix.moc"

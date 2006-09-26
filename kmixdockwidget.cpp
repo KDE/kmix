@@ -240,7 +240,7 @@ KMixDockWidget::updatePixmap()
 }
 
 void
-KMixDockWidget::mousePressEvent(QMouseEvent *me)
+KMixDockWidget::mousePressEvent(QMouseEvent * /*me*/)
 {
 #warning FIXME: ksystemtray is no longer a widget
 #if 0
@@ -306,14 +306,14 @@ KMixDockWidget::mousePressEvent(QMouseEvent *me)
 }
 
 void
-KMixDockWidget::mouseReleaseEvent( QMouseEvent *me )
+KMixDockWidget::mouseReleaseEvent( QMouseEvent * /*me*/ )
 {
 
     // KSystemTrayIcon::mouseReleaseEvent(me);
 }
 
 void
-KMixDockWidget::wheelEvent(QWheelEvent *e)
+KMixDockWidget::wheelEvent(QWheelEvent * /*e*/ )
 {
 #warning ksystemtray is no widget and cannot wheel events
 #if 0
