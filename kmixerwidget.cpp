@@ -345,7 +345,7 @@ void KMixerWidget::toggleMenuBarSlot() {
 // hack around it before calling _mixer->setBalance()
 void KMixerWidget::balanceChanged(int balance)
 {
-    if (QApplication::reverseLayout())
+    if (QApplication::isRightToLeft())
         balance = -balance;
 
     _mixer->setBalance( balance );
