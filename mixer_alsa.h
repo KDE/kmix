@@ -22,7 +22,8 @@
 #define MIXER_ALSA_H
 
 // QT includes
-#include <qlist.h>
+#include <QList>
+#include <QHash>
 
 // Forward QT includes
 class QString;
@@ -52,6 +53,7 @@ class Mixer_ALSA : public Mixer_Backend
 	protected:
 		virtual int open();
 		virtual int close();
+		int id2num(const QString& id);
 		
 	private:
 		int identify( snd_mixer_selem_id_t *sid );
@@ -60,8 +62,10 @@ class Mixer_ALSA : public Mixer_Backend
 		virtual QString errorText(int mixer_error);
 		typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;
 		AlsaMixerSidList mixer_sid_list;
-		typedef QList<snd_mixer_elem_t *> AlsaMixerElemList; // !! remove
-		AlsaMixerElemList mixer_elem_list; // !! remove
+		typedef QList<snd_mixer_elem_t *> AlsaMixerElemList;
+		AlsaMixerElemList mixer_elem_list;
+		typedef QHash<QString,int> Id2numHash;
+		Id2numHash m_id2numHash;
 
                 bool _initialUpdate;
 		snd_mixer_t *_handle;
@@ -69,7 +73,6 @@ class Mixer_ALSA : public Mixer_Backend
 	        struct pollfd  *m_fds;
                 QSocketNotifier **m_sns;
 		int m_count;
-
 };
 
 #endif

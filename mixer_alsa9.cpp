@@ -189,14 +189,15 @@ Mixer_ALSA::open()
     kDebug(67100) << probeMessage << "found" << endl;
 
     unsigned int mixerIdx = 0;
+    unsigned int num = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
     {
 	// If element is not active, just skip
 	if ( ! snd_mixer_selem_is_active ( elem ) ) {
 	    // ...but we still want to insert a null value into our mixer element
 	    // list so that the list indexes match up.
-	    mixer_elem_list.append( 0 );
-	    mixer_sid_list.append( 0 );
+	    //mixer_elem_list.append( 0 );
+	    //mixer_sid_list.append( 0 );
 	    continue;
 	}
 
@@ -317,6 +318,7 @@ Mixer_ALSA::open()
 				   cc );
 
 			m_mixDevices.append( md );
+			m_id2numHash[snd_mixer_selem_id_get_name( sid )] = num;
 
         if (!masterChosen && ct==MixDevice::VOLUME) {
            // Determine a nicer MasterVolume
@@ -326,6 +328,7 @@ Mixer_ALSA::open()
 
                if ( canCapture && !canRecord ) {
 /// !! Check whether it is a good idea to have "TWO" MixDevice's with the same ID.
+/// !! Also check, what to do about the m_id2numHash
                        MixDevice *mdCapture =
                        new MixDevice( mdID,
                                   *volCapture,
@@ -428,6 +431,7 @@ Mixer_ALSA::close()
   mixer_elem_list.clear();
   mixer_sid_list.clear();
   m_mixDevices.clear();
+  m_id2numHash.clear();
 
   if ( m_fds )
       free( m_fds );
@@ -445,17 +449,24 @@ Mixer_ALSA::close()
 }
 
 
-snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
+/**
+ * Resolve index to a control (snd_mixer_elem_t*)
+ * @par idx Index to query. For any invalid index (including -1) returns a 0 control.
+ */
+snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
 	snd_mixer_elem_t* elem = 0;
-	if ( int( mixer_sid_list.count() ) > devnum ) {
-		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
+	if ( idx == -1 ) {
+		return elem;
+	}
+	if ( int( mixer_sid_list.count() ) > idx ) {
+		snd_mixer_selem_id_t * sid = mixer_sid_list[ idx ];
 		// The next line (hopefully) only finds selem's, not elem's.
 		elem = snd_mixer_find_selem(_handle, sid);
 
 		if ( elem == 0 ) {
 			// !! Check, whether the warning should be omitted. Probably
 			//    Route controls are non-simple elements.
-			kDebug(67100) << "Error finding mixer element " << devnum << endl;
+			kDebug(67100) << "Error finding mixer element " << idx << endl;
 		}
 	}
 	return elem;
@@ -468,6 +479,14 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 	snd_mixer_elem_t* elem = mixer_elem_list[ devnum ];
 	return elem;
  */
+}
+
+int Mixer_ALSA::id2num(const QString& id) {
+	int num = -1;
+	if ( m_id2numHash.contains(id) ) {
+		int num = m_id2numHash[id];
+	}
+	return num;
 }
 
 bool Mixer_ALSA::prepareUpdateFromHW() {

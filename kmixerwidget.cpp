@@ -244,16 +244,16 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       // It is possible that the Profile author puts arbitrary names in it.
       kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << "name="<<profTab->name.toUtf8() << "\n";
       if ( profTab->type == "SliderSet" ) {
-         ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
+         ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toAscii(), mixer, vflags, guiprof );
          possiblyAddView(view);
       }
       else if ( profTab->type == "Surround" ) {
-         ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
+         ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toAscii(), mixer, vflags, guiprof );
          possiblyAddView(view);
       }
       /*
       else if ( profTab->type == "Switches" ) {
-         ViewSliderSet* view = new ViewSwitchSet  ( m_ioTab, profTab->name, _mixer, vflags, guiprof );
+         ViewSliderSet* view = new ViewSwitchSet  ( m_ioTab, profTab->name.toAscii(), _mixer, vflags, guiprof );
          possiblyAddView(view);
       }
       */

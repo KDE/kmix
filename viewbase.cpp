@@ -40,10 +40,11 @@
 #include "mixer.h"
 
 
-ViewBase::ViewBase(QWidget* parent, const char* name, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
+ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
     : QWidget(parent, f), _vflags(vflags), _guiprof(guiprof)
 {
-    setObjectName(name);
+    setObjectName(id);
+    m_viewId = id;
     _mixer = mixer;
     _mixSet = new MixSet();
 
@@ -94,6 +95,10 @@ QWidget* ViewBase::add(MixDevice* mdw) {
 }
 
 void ViewBase::configurationUpdate() {
+}
+
+QString ViewBase::viewId() const {
+    return m_viewId;
 }
 
 /**

@@ -37,8 +37,7 @@
  */
 MixDevice::MixDevice( const QString& id, Volume &vol, bool recordable, bool mute,
 		      QString name, ChannelType type, DeviceCategory category ) :
-    _volume( vol ), _type( type ), _id( id ), _recordable( recordable ),
-    _mute( mute ), _category( category )
+    _volume( vol ), _type( type ), _recordable( recordable ), _mute( mute ), _category( category ), _id( id )
 {
     // Hint: "_volume" gets COPIED from "vol" due to the fact that the copy-constructor actually copies the volume levels.
     _switch = ( category == MixDevice::SWITCH );
@@ -129,7 +128,7 @@ QString& MixDevice::id() {
 void MixDevice::read( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _id );
+   devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
    config->setGroup( devgrp );
    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
 
@@ -194,7 +193,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
 void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _id );
+   devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
    config->setGroup(devgrp);
    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 

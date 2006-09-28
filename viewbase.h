@@ -55,7 +55,7 @@ public:
 	Experimental_GridView = 0x2000
     };
 
-    ViewBase(QWidget* parent, const char* name, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
+    ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
     virtual ~ViewBase();
 
     // Subclasses must define this method. It is called by the ViewBase() constuctor.
@@ -69,6 +69,9 @@ public:
     // normally smaller that mixset->count(), except when the class creates virtual
     // devices
     virtual int count() = 0;
+
+    QString viewId() const;
+
     // returns an advice about whether this view should be used at all. The returned
     // value is a percentage (0-100). A view without accepted devices would return 0,
     // a "3D sound View" would return 75, if all vital but some optional devices are
@@ -138,6 +141,7 @@ signals:
 
 private:
    unsigned int _dummyImplPos;
+   QString      m_viewId;
 };
 
 #endif
