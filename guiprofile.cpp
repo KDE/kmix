@@ -120,7 +120,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 				control->tab = tab->name;
 			}
 		} // Step (3)
-		std::cout << "Consistent Profile: " << *this;
+		//std::cout << "Consistent Profile: " << *this;
 
 	} // Read OK
 	else {

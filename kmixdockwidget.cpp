@@ -48,9 +48,8 @@
 #include "kmixdockwidget.h"
 #include "viewdockareapopup.h"
 
-KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name, bool volumePopup )
+KMixDockWidget::KMixDockWidget(QWidget *parent, const char *name, bool volumePopup )
     : KSystemTrayIcon( parent ),
-      m_mixer(mixer),
       _dockAreaPopup(0L),
       _audioPlayer(0L),
       _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
@@ -58,17 +57,23 @@ KMixDockWidget::KMixDockWidget( Mixer *mixer, QWidget *parent, const char *name,
       _oldPixmapType('-'),
       _volumePopup(volumePopup)
 {
-	setObjectName(name);
+    setObjectName(name);
     Mixer* preferredMasterMixer = Mixer::masterCard();
     if ( preferredMasterMixer != 0 ) {
        m_mixer = preferredMasterMixer;
     }
+    else {
+      if ( Mixer::mixers().count() > 0 ) {
+         m_mixer = (Mixer::mixers())[0];
+      }
+    }
+
     MixDevice* mdMaster = Mixer::masterCardDevice();
     if ( mdMaster != 0 ) {
        m_mixer->setMasterDevice(mdMaster->id()); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
+       createMasterVolWidget();
     }
     createActions();
-    createMasterVolWidget();
     connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
 

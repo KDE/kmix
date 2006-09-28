@@ -46,7 +46,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    friend class KMixWindow;
 
  public:
-   KMixDockWidget(Mixer *, QWidget *parent=0, const char *name=0, bool volumePopup=true);
+   KMixDockWidget(QWidget *parent=0, const char *name=0, bool volumePopup=true);
    ~KMixDockWidget();
 
    void setErrorPixmap();

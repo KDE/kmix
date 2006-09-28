@@ -55,6 +55,10 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 		// The following for-loop could be simplified by using a std::find_if
 		for ( int i=0; i<mixset->count(); i++ ) {
 			MixDevice *md = (*mixset)[i];
+			kDebug(67100) << "ViewSliderSet::setMixSet(): md->id()==" <<
+				md->id()
+				 << " ; control->id=="
+				 << control->id << "\n";
 			if (	md->id() == control->id  &&      // name matches
 				! md->isSwitch() && ! md->isEnum()  // and is applicable
 			)
@@ -67,7 +71,7 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 		} // loop for finding a suitable MixDevice
 		if ( ! isUsed ) {
 			// There is something in the Profile, that doesn't correspond to a Mixer control
-			kDebug(67100) << "ViewSliderSet::setMixSet(): No such control '" << control->id << "'in the mixer. Please check the GUIProfile\n";
+			kDebug(67100) << "ViewSliderSet::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
 		}
 	    } // Tab name matches
 	    else {

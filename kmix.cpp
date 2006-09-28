@@ -175,7 +175,7 @@ KMixWindow::updateDocking()
 
 		// create dock widget
                 // !! This should be a View in the future
-		m_dockWidget = new KMixDockWidget( Mixer::mixers().first(), this, "mainDockWidget", m_volumeWidget );
+		m_dockWidget = new KMixDockWidget( this, "mainDockWidget", m_volumeWidget );
 
 		/*
 		 * Mail from 31.1.2005: "make sure your features are at least string complete"
@@ -414,9 +414,11 @@ KMixWindow::showSettings()
    {
       m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
       m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
+      m_prefDlg->m_volumeChk->setEnabled( m_showDockWidget );
+      m_prefDlg->m_onLogin->setChecked( m_onLogin );
+
       m_prefDlg->m_showTicks->setChecked( m_showTicks );
       m_prefDlg->m_showLabels->setChecked( m_showLabels );
-      m_prefDlg->m_onLogin->setChecked( m_onLogin );
       m_prefDlg->_rbVertical  ->setChecked( m_toplevelOrientation == Qt::Vertical );
       m_prefDlg->_rbHorizontal->setChecked( m_toplevelOrientation == Qt::Horizontal );
 
@@ -505,7 +507,7 @@ KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 
 
 /********* THE FOLLOWING STUFF IS nOT STRICTLY NECCESARY IF
- toplevelOrientationHasChanged==true . TGhe GUI wa recreated anyhow in that case
+ toplevelOrientationHasChanged==true . The GUI was recreated anyhow in that case
  *********************************************************************************/
    //this->setUpdatesEnabled(false);
    updateDocking();

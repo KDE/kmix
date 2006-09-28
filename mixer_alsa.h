@@ -36,12 +36,12 @@ class Mixer_ALSA : public Mixer_Backend
 		Mixer_ALSA( int device = -1 );
 		~Mixer_ALSA();
 		
-		virtual int  readVolumeFromHW( int devnum, Volume &vol );
-		virtual int  writeVolumeToHW( int devnum, Volume &vol );
-		virtual bool setRecsrcHW( int devnum, bool on);
-		virtual bool isRecsrcHW( int devnum );
-	        virtual void setEnumIdHW(int mixerIdx, unsigned int);
-      		virtual unsigned int enumIdHW(int mixerIdx);
+		virtual int  readVolumeFromHW( const QString& id, Volume &vol );
+		virtual int  writeVolumeToHW( const QString& id, Volume &vol );
+		virtual bool setRecsrcHW( const QString& id, bool on);
+		virtual bool isRecsrcHW( const QString& id );
+	        virtual void setEnumIdHW( const QString& id, unsigned int);
+      		virtual unsigned int enumIdHW(const QString& id);
 		virtual bool prepareUpdateFromHW();
 
                 virtual bool needsPolling() { return false; }

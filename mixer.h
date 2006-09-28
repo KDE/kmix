@@ -53,7 +53,7 @@ class Mixer : public QObject
       static int numDrivers();
       QString getDriverName();
 
-      MixDevice* find(QString& devPK);
+      MixDevice* find(const QString& devPK);
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
@@ -61,7 +61,7 @@ class Mixer : public QObject
        /// Tells the number of the mixing devices
       unsigned int size() const;
 
-      bool isValid();
+      bool openIfValid();
 
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);
@@ -69,7 +69,7 @@ class Mixer : public QObject
       /// Returns a pointer to the mix device whose type matches the value
       /// given by the parameter and the array MixerDevNames given in
       /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
-      MixDevice *mixDeviceByType( int deviceidx );
+      MixDevice *getMixdeviceById( const QString& deviceID );
 
       /// Open/grab the mixer for further intraction
       virtual int open();
@@ -109,32 +109,32 @@ class Mixer : public QObject
       void setMasterDevice(QString&);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
-      virtual void setVolume( int deviceidx, int percentage );
-      virtual void setAbsoluteVolume( int deviceidx, long absoluteVolume );
+      virtual void setVolume( const QString& mixdeviceID, int percentage );
+      virtual void setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume );
       virtual void setMasterVolume( int percentage );
 
-      virtual void increaseVolume( int deviceidx );
-      virtual void decreaseVolume( int deviceidx );
+      virtual void increaseVolume( const QString& mixdeviceID );
+      virtual void decreaseVolume( const QString& mixdeviceID );
 
-      virtual long absoluteVolume( int deviceidx );
-      virtual long absoluteVolumeMin( int deviceidx );
-      virtual long absoluteVolumeMax( int deviceidx );
-      virtual int volume( int deviceidx );
+      virtual long absoluteVolume( const QString& mixdeviceID );
+      virtual long absoluteVolumeMin( const QString& mixdeviceID );
+      virtual long absoluteVolumeMax( const QString& mixdeviceID );
+      virtual int volume( const QString& mixdeviceID );
       virtual int masterVolume();
 
-      virtual void setMute( int deviceidx, bool on );
-      virtual bool mute( int deviceidx );
-      virtual void toggleMute( int deviceidx );
-      virtual bool isRecordSource( int deviceidx );
+      virtual void setMute( const QString& mixdeviceID, bool on );
+      virtual bool mute( const QString& mixdeviceID );
+      virtual void toggleMute( const QString& mixdeviceID );
+      virtual bool isRecordSource( const QString& mixdeviceID );
 
-      virtual bool isAvailableDevice( int deviceidx );
+      virtual bool isAvailableDevice( const QString& mixdeviceID );
 
       void commitVolumeChange( MixDevice* md );
 
    public slots:
       virtual void readSetFromHW();
       void readSetFromHWforceUpdate() const;
-      virtual void setRecordSource( int deviceidx, bool on );
+      virtual void setRecordSource( const QString& controlID, bool on );
 
       virtual void setBalance(int balance); // sets the m_balance (see there)
 

@@ -34,10 +34,10 @@ public:
   virtual ~Mixer_SUN();
 
   virtual QString errorText(int mixer_error);
-  virtual int readVolumeFromHW( int devnum, Volume& volume );
-  virtual int writeVolumeToHW( int devnum, Volume& volume );
-  bool setRecsrcHW( int devnum, bool on );
-  bool isRecsrcHW( int devnum );
+  virtual int readVolumeFromHW( const QString& id, Volume& volume );
+  virtual int writeVolumeToHW ( const QString& id, Volume& volume );
+  bool setRecsrcHW              ( const QString& id, bool on );
+  bool isRecsrcHW               ( const QString& id );
 
   virtual QString getDriverName();
 

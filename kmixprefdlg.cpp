@@ -50,47 +50,71 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    QBoxLayout *layout = new QVBoxLayout( m_generalTab );
    layout->setSpacing( KDialog::spacingHint() );
 
-   m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
-   layout->addWidget( m_dockingChk );
-   m_dockingChk->setWhatsThis( i18n("Docks the mixer into the KDE panel"));
+// -----------------------------------------------------------
 
-   m_volumeChk = new QCheckBox(i18n("Enable system tray &volume control"),
-			       m_generalTab);
-   layout->addWidget(m_volumeChk);
+   QLabel *label;
+   label = new QLabel( i18n("Behaviour"), m_generalTab );
+   layout->addWidget(label);
 
-   m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
-   layout->addWidget( m_showTicks );
-   m_showTicks->setWhatsThis( i18n("Enable/disable tickmark scales on the sliders"));
+   QBoxLayout *l;
+   l = new QHBoxLayout();
+   layout->addItem( l );
+      l->addSpacing(10);
+      m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
+      l->addWidget( m_dockingChk );
+      m_dockingChk->setWhatsThis( i18n("Docks the mixer into the KDE panel"));
 
-   m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
-   layout->addWidget( m_showLabels );
-   m_showLabels->setWhatsThis( i18n("Enables/disables description labels above the sliders"));
+      l = new QHBoxLayout();
+      layout->addItem( l );
+         l->addSpacing(20);
+         m_volumeChk = new QCheckBox(i18n("Enable system tray &volume control"), m_generalTab);
+         l->addWidget(m_volumeChk);
+         m_volumeChk->setWhatsThis( i18n("Allows to control the volume from the system tray"));
+         connect(m_dockingChk, SIGNAL(stateChanged(int)), SLOT(dockIntoPanelChange(int)) );
 
-   m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
-   layout->addWidget( m_onLogin );
+   l = new QHBoxLayout();
+   layout->addItem( l );
+      l->addSpacing(10);
+      m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
+      l->addWidget( m_onLogin );
+
+// -----------------------------------------------------------
+
+   label = new QLabel( i18n("Visual"), m_generalTab );
+   layout->addWidget(label);
+
+   l = new QHBoxLayout();
+   layout->addItem( l );
+      l->addSpacing(10);
+      m_showTicks = new QCheckBox( i18n("Show &tickmarks"), m_generalTab );
+      l->addWidget( m_showTicks );
+      m_showTicks->setWhatsThis( i18n("Enable/disable tickmark scales on the sliders"));
+
+   l = new QHBoxLayout();
+   layout->addItem( l );
+      l->addSpacing(10);
+      m_showLabels = new QCheckBox( i18n("Show &labels"), m_generalTab );
+      l->addWidget( m_showLabels );
+      m_showLabels->setWhatsThis( i18n("Enables/disables description labels above the sliders"));
 
    QBoxLayout *orientationLayout = new QHBoxLayout();
-   layout->addItem( orientationLayout );
-   QButtonGroup* orientationGroup = new QButtonGroup( m_generalTab ); // !!! Check
-   //QGroupBox* orientationGroupBox = new QGroupBox(i18n("Orientation"), m_generalTab);
-   //orientationLayout->add(orientationGroup);
-   orientationGroup->setExclusive(true);
-   QLabel* qlb = new QLabel( i18n("Slider Orientation: "), m_generalTab );
-   _rbHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab );
-   _rbVertical   = new QRadioButton(i18n("&Vertical"  ), m_generalTab );
-   orientationGroup->addButton(_rbHorizontal);
-   orientationGroup->addButton(_rbVertical);
-   //orientationGroup->hide();
-   //orientationLayout->add(qlb);
-   //orientationLayout->add(orientationGroup);
-
-   orientationLayout->addWidget(qlb);
-   orientationLayout->addWidget(_rbHorizontal);
-   orientationLayout->addWidget(_rbVertical);
-
-   orientationLayout->addStretch();
-   layout->addStretch();
-   showButtonSeparator(true);
+      orientationLayout->addSpacing(10);
+      layout->addItem( orientationLayout );
+      QButtonGroup* orientationGroup = new QButtonGroup( m_generalTab );
+      orientationGroup->setExclusive(true);
+      QLabel* qlb = new QLabel( i18n("Slider Orientation: "), m_generalTab );
+      _rbHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab );
+      _rbVertical   = new QRadioButton(i18n("&Vertical"  ), m_generalTab );
+      orientationGroup->addButton(_rbHorizontal);
+      orientationGroup->addButton(_rbVertical);
+      
+      orientationLayout->addWidget(qlb);
+      orientationLayout->addWidget(_rbHorizontal);
+      orientationLayout->addWidget(_rbVertical);
+      
+      orientationLayout->addStretch();
+      layout->addStretch();
+      showButtonSeparator(true);
 
    connect( this, SIGNAL(applyClicked()), this, SLOT(apply()) );
    connect( this, SIGNAL(okClicked()), this, SLOT(apply()) );
@@ -112,6 +136,15 @@ void KMixPrefDlg::apply()
    enableButtonOk(true);
    enableButtonCancel(true);
    enableButtonApply(true);
+}
+
+void KMixPrefDlg::dockIntoPanelChange(int state)
+{
+   if ( state == Qt::Unchecked ) {
+      m_volumeChk->setDisabled(true);
+   } else {
+     m_volumeChk->setEnabled(true);
+   } 
 }
 
 #include "kmixprefdlg.moc"

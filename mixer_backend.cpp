@@ -37,13 +37,15 @@ Mixer_Backend::~Mixer_Backend()
 }
 
 
-bool Mixer_Backend::isValid() {
+bool Mixer_Backend::openIfValid() {
 	bool valid = false;
 	int ret = open();
 	if ( ret == 0  && m_mixDevices.count() > 0) {
 	  valid = true;
 	}
-	close();
+        else {
+	   close();
+	}
 	return valid;
 }
 
@@ -84,7 +86,7 @@ MixDevice* Mixer_Backend::recommendedMaster() {
  * wants to support it, it must implement the driver specific 
  * code in its subclass (see Mixer_ALSA.cpp for an example).
  */
-void Mixer_Backend::setEnumIdHW(int, unsigned int) {
+void Mixer_Backend::setEnumIdHW(const QString& , unsigned int) {
   return;
 }
 
@@ -94,7 +96,7 @@ void Mixer_Backend::setEnumIdHW(int, unsigned int) {
  * wants to support it, it must implement the driver specific
  * code in its subclass (see Mixer_ALSA.cpp for an example).
  */
-unsigned int Mixer_Backend::enumIdHW(int) {
+unsigned int Mixer_Backend::enumIdHW(const QString& ) {
   return 0;
 }
 
@@ -103,6 +105,12 @@ void Mixer_Backend::errormsg(int mixer_error)
   QString l_s_errText;
   l_s_errText = errorText(mixer_error);
   kError() << l_s_errText << "\n";
+}
+
+int Mixer_Backend::id2num(const QString& id)
+{
+#warning This is wrong for the ALSA backend
+   return id.toInt();
 }
 
 QString Mixer_Backend::errorText(int mixer_error)

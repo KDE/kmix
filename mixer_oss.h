@@ -33,14 +33,14 @@ public:
   virtual ~Mixer_OSS();
 
   virtual QString errorText(int mixer_error);
-  virtual int readVolumeFromHW( int devnum, Volume &vol );
-  virtual int writeVolumeToHW( int devnum, Volume &vol );
+  virtual int readVolumeFromHW( const QString& id, Volume &vol );
+  virtual int writeVolumeToHW( const QString& id, Volume &vol );
 
   virtual QString getDriverName();
 
 protected:
-  virtual bool setRecsrcHW( int devnum, bool on = true );
-  virtual bool isRecsrcHW( int devnum );
+  virtual bool setRecsrcHW( const QString& id, bool on = true );
+  virtual bool isRecsrcHW( const QString& id );
 
   virtual int open();
   virtual int close();

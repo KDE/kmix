@@ -35,24 +35,23 @@
  * Hints: Meaning of "category" has changed. In future the MixDevice might contain two
  * Volume objects, one for Output (Playback volume) and one for Input (Record volume).
  */
-MixDevice::MixDevice( int num, Volume &vol, bool recordable, bool mute,
+MixDevice::MixDevice( const QString& id, Volume &vol, bool recordable, bool mute,
 		      QString name, ChannelType type, DeviceCategory category ) :
-    _volume( vol ), _type( type ), _num( num ), _recordable( recordable ),
+    _volume( vol ), _type( type ), _id( id ), _recordable( recordable ),
     _mute( mute ), _category( category )
 {
     // Hint: "_volume" gets COPIED from "vol" due to the fact that the copy-constructor actually copies the volume levels.
-    _switch = false;
+    _switch = ( category == MixDevice::SWITCH );
     _recSource = false;
     if( name.isEmpty() )
 	_name = i18n("unknown");
     else
 	_name = name;
-
-    _id.setNum(num); // We set a default id - it is used, if the backend does not explicitly call setId().
-
-
-    if( category == MixDevice::SWITCH )
-	_switch = true;
+   if ( _id.contains(' ') ) {
+      // The key is used in the config file. It MUST NOT contain spaces
+      kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
+      _id.replace(' ', '_');
+   }
 }
 
 MixDevice::MixDevice(const MixDevice &md) : QObject()
@@ -60,7 +59,6 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
    _name = md._name;
    _volume = md._volume;
    _type = md._type;
-   _num = md._num;
    _id = md._id;
    _recordable = md._recordable;
    _recSource  = md._recSource;
@@ -121,15 +119,6 @@ QString& MixDevice::id() {
     return _id;
 }
 
-void MixDevice::setId(QString &id) {
-   _id = id;
-   if ( _id.contains(' ') ) {
-      // The key is used in the config file. It MUST NOT contain spaces
-      kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
-      _id.replace(' ', '_');
-   }
-}
-
 /**
  * This mehthod is currently only called on "kmixctrl --restore"
  *
@@ -140,7 +129,7 @@ void MixDevice::setId(QString &id) {
 void MixDevice::read( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _num );  // !!! must change: _num => id()
+   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _id );
    config->setGroup( devgrp );
    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
 
@@ -205,7 +194,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
 void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;
-   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _num ); // !!! must change: _num => id()
+   devgrp.sprintf( "%s.Dev%i", grp.toAscii().data(), _id );
    config->setGroup(devgrp);
    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
 

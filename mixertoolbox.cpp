@@ -115,8 +115,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 	    for( int dev=0; dev<=devNumMax; dev++ )
 	    {
 		Mixer *mixer = new Mixer( drv, dev );
-		if ( mixer->isValid() ) {
-			mixer->open();
+		if ( mixer->openIfValid() ) {
 			Mixer::mixers().append( mixer );
 			// Count mixer nums for every mixer name to identify mixers with equal names.
 			// This is for creating persistent (reusable) primary keys, which can safely

@@ -175,8 +175,10 @@ int Mixer_SUN::open()
          for ( int idx = 0; idx < numDevs; idx++ )
          {
             Volume vol( 2, AUDIO_MAX_GAIN );
-            readVolumeFromHW( idx, vol );
-            MixDevice* md = new MixDevice( idx, vol, false, true,
+            QString id;
+            id.setNum(idx);
+            //readVolumeFromHW( idx, vol );
+            MixDevice* md = new MixDevice( id, vol, false, true,
                QString(MixerDevNames[idx]), MixerChannelTypes[idx]);
 				md->setRecSource( isRecsrcHW( idx ) );
             m_mixDevices.append( md );
@@ -227,11 +229,12 @@ QString Mixer_SUN::errorText( int mixer_error )
 // FUNCTION    : Mixer::readVolumeFrmoHW
 // DESCRIPTION : Read the audio information from the driver.
 //======================================================================
-int Mixer_SUN::readVolumeFromHW( int devnum, Volume& volume )
+int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume )
 {
    audio_info_t audioinfo;
    uint_t devMask = MixerSunPortMasks[devnum];
 
+   int devnum = id2num(id);
    //
    // Read the current audio information from the driver
    //
@@ -287,12 +290,13 @@ int Mixer_SUN::readVolumeFromHW( int devnum, Volume& volume )
 // FUNCTION    : Mixer::writeVolumeToHW
 // DESCRIPTION : Write the specified audio settings to the hardware.
 //======================================================================
-int Mixer_SUN::writeVolumeToHW( int devnum, Volume &volume )
+int Mixer_SUN::writeVolumeToHW( const QString& id, Volume &volume )
 {
    uint_t gain;
    uchar_t balance;
    uchar_t mute;
 
+   int devnum = id2num(id);
    //
    // Convert the Volume(left vol, right vol) to the Gain/Balance Sun uses
    //
@@ -369,7 +373,7 @@ int Mixer_SUN::writeVolumeToHW( int devnum, Volume &volume )
 // FUNCTION    : Mixer::setRecsrcHW
 // DESCRIPTION :
 //======================================================================
-bool Mixer_SUN::setRecsrcHW( int /* devnum */, bool /* on */ )
+bool Mixer_SUN::setRecsrcHW( const QString& /*id*/, bool /* on */ )
 {
    return false;
 }
@@ -378,8 +382,9 @@ bool Mixer_SUN::setRecsrcHW( int /* devnum */, bool /* on */ )
 // FUNCTION    : Mixer::isRecsrcHW
 // DESCRIPTION : Returns true if the specified device is a record source.
 //======================================================================
-bool Mixer_SUN::isRecsrcHW( int devnum )
+bool Mixer_SUN::isRecsrcHW( const QString& id )
 {
+   int devnum = id2num(id);
    switch ( devnum )
    {
       case MIXERDEV_MICROPHONE :

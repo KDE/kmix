@@ -237,15 +237,19 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 		 if ( m_small ) {
 			 slider = new KSmallSlider( minvol, maxvol, maxvol/10,
 					 m_mixdevice->getVolume( chid ), _orientation,
-					 this, m_mixdevice->name().toAscii().data() );
+					 this );
+                        slider->setObjectName(m_mixdevice->name());
 		 }
 		 else	{
 			 slider = new QSlider( 0, maxvol, maxvol/10,
 					 maxvol - m_mixdevice->getVolume( chid ), _orientation,
-					 this, m_mixdevice->name().toAscii().data() );
+					 this );
+                        slider->setObjectName(m_mixdevice->name());
 			 //slider->setMinimumSize( slider->minimumSizeHint() );
-                         static_cast<QSlider*>(slider)->setInvertedAppearance(true);
-                         static_cast<QSlider*>(slider)->setInvertedControls(true);
+                        if ( _orientation == Qt::Vertical ) {
+                           static_cast<QSlider*>(slider)->setInvertedAppearance(true);
+                           static_cast<QSlider*>(slider)->setInvertedControls(true);
+                        }
 		 }
 
 		 slider->installEventFilter( this );
@@ -636,7 +640,7 @@ void MDWSlider::toggleRecsrc() {
 void MDWSlider::setRecsrc(bool value )
 {
 	if (  m_mixdevice->isRecordable() ) {
-		m_mixer->setRecordSource( m_mixdevice->num(), value );
+		m_mixer->setRecordSource( m_mixdevice->id(), value );
 	}
 }
 

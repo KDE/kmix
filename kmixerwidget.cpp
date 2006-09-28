@@ -69,8 +69,8 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
 
 {
    setObjectName(name);
-    m_categoryMask = categoryMask;
-    m_id = mixer->mixerName();  // !!! A BETTER ID must probably be found here
+   m_categoryMask = categoryMask;
+   m_id = mixer->mixerName();  // !!! A BETTER ID must probably be found here
 
    if ( _mixer )
    {
@@ -78,16 +78,19 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
    }
    else
    {
-       // No mixer found
-       // !! Fix this: This is actually never shown!
-       QBoxLayout *layout = new QHBoxLayout( this );
-       QString s = i18n("Invalid mixer");
-       if ( !mixer->mixerName().isEmpty() )
-	   s.append(" \"").append(mixer->mixerName()).append("\"");
-       QLabel *errorLabel = new QLabel( s, this );
-       errorLabel->setAlignment( Qt::AlignCenter );
-       errorLabel->setWordWrap( true );
-       layout->addWidget( errorLabel );
+      // No mixer found
+      // This is normally never shown. Only if the application
+      // creates an invalid KMixerWidget (but this would actually be
+      // a programming error).
+      QBoxLayout *layout = new QHBoxLayout( this );
+      QString s = i18n("Invalid mixer");
+      if ( !mixer->mixerName().isEmpty() ) {
+         s.append(" \"").append(mixer->mixerName()).append("\"");
+      }
+      QLabel *errorLabel = new QLabel( s, this );
+      errorLabel->setAlignment( Qt::AlignCenter );
+      errorLabel->setWordWrap( true );
+      layout->addWidget( errorLabel );
    }
 }
 
@@ -100,111 +103,117 @@ KMixerWidget::~KMixerWidget()
  */
 void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 {
-    // delete old objects
-    if( m_balanceSlider ) {
-	delete m_balanceSlider;
-    }
-    if( m_topLayout ) {
-	delete m_topLayout;
-    }
+   // delete old objects
+   if( m_balanceSlider ) {
+      delete m_balanceSlider;
+   }
+   if( m_topLayout ) {
+      delete m_topLayout;
+   }
 
-    // create main layout
-    m_topLayout = new QVBoxLayout( this );
-    m_topLayout->setSpacing( 3 );
-    m_topLayout->setObjectName( "m_topLayout" );
+   // create main layout
+   m_topLayout = new QVBoxLayout( this );
+   m_topLayout->setSpacing( 3 );
+   m_topLayout->setObjectName( "m_topLayout" );
 
-    // Create tabs of input + output + [...]
-    m_ioTab = new KTabWidget( this);
-	m_ioTab->setObjectName( "ioTab" );
-
-
-    QToolButton* m_profileButton = new QToolButton( m_ioTab );
-    m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
-    m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
-    m_profileButton->adjustSize();
-    // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
-    connect(m_profileButton, SIGNAL(clicked()), SLOT(nextLayout()));
-    m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
-
-    QToolButton* m_closeButton = new QToolButton( m_ioTab );
-    m_closeButton->setToolTip(i18n("Close Tab"));
-    m_closeButton->setIconSet( SmallIcon( "tab_remove" ) );
-    m_closeButton->adjustSize();
-    connect(m_closeButton, SIGNAL(clicked()), SLOT(removeSession()));
-    m_ioTab->setCornerWidget( m_closeButton, Qt::TopRightCorner );
+   // Create tabs of input + output + [...]
+   m_ioTab = new KTabWidget( this);
+   m_ioTab->setObjectName( "ioTab" );
 
 
-    m_profileButton->installEventFilter(this);
-    m_topLayout->addWidget( m_ioTab );
+   QToolButton* m_profileButton = new QToolButton( m_ioTab );
+   m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
+   m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
+   m_profileButton->adjustSize();
+   // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
+   connect(m_profileButton, SIGNAL(clicked()), SLOT(nextLayout()));
+   m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
+
+   QToolButton* m_closeButton = new QToolButton( m_ioTab );
+   m_closeButton->setToolTip(i18n("Close Tab"));
+   m_closeButton->setIconSet( SmallIcon( "tab_remove" ) );
+   m_closeButton->adjustSize();
+   connect(m_closeButton, SIGNAL(clicked()), SLOT(removeSession()));
+   m_ioTab->setCornerWidget( m_closeButton, Qt::TopRightCorner );
 
 
-     /*******************************************************************
-      *  Now the main GUI is created.
-      * 1) Select a (GUI) profile,  which defines  which controls to show on which Tab
-      * 2a) Create the Tab's and the corresponding Views
-      * 2b) Create device widgets
-      * 2c) Add Views to Tab
-      ********************************************************************/
-      GUIProfile* guiprof = MixerToolBox::instance()->selectProfile(_mixer);
-      if ( guiprof != 0 ) {
-	createViewsByProfile(_mixer, guiprof, vflags);
-      }
-      else
-      {
-	// Fallback, if no GUI Profile could be found
-	possiblyAddView(new ViewOutput  ( m_ioTab, "Output" , _mixer, vflags, 0 ) );
-	possiblyAddView(new ViewInput( m_ioTab, "Input"  , _mixer, vflags, 0 ) );
-	possiblyAddView(new ViewSwitches( m_ioTab, "Switches" , _mixer, vflags, 0 ) );
-	if ( vflags & ViewBase::Experimental_SurroundView )
-		possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ) );
-	//!!if ( vflags & ViewBase::Experimental_GridView )
-	//!!	possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
-      }
+   m_profileButton->installEventFilter(this);
+   m_topLayout->addWidget( m_ioTab );
 
 
-
-    // *** Lower part: Slider and Mixer Name ************************************************
-    QHBoxLayout *balanceAndDetail = new QHBoxLayout();
-    m_topLayout->addItem( balanceAndDetail );
-    balanceAndDetail->setObjectName( "balanceAndDetail" );
-    balanceAndDetail->setSpacing( 8 );
-    // Create the left-right-slider
-    m_balanceSlider = new QSlider( -100, 100, 25, 0, Qt::Horizontal, this, "RightLeft" );
-    m_balanceSlider->setTickPosition( QSlider::TicksBelow );
-    m_balanceSlider->setTickInterval( 25 );
-    m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
-    m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
-
-    QLabel *mixerName = new QLabel(this );
-    mixerName->setObjectName("mixerName");
-    mixerName->setText( _mixer->mixerName() );
-    mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
-    balanceAndDetail->addSpacing( 10 );
-    balanceAndDetail->addWidget( m_balanceSlider );
-    balanceAndDetail->addWidget( mixerName );
-    balanceAndDetail->addSpacing( 10 );
-
-    connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
-    m_balanceSlider->setToolTip( i18n("Left/Right balancing") );
-
-    /* @todo : update all Background Pixmaps
-    const QPixmap bgPixmap = UserIcon("bg_speaker");
-    setBackgroundPixmap ( bgPixmap );
-    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-	    ViewBase* view = *it;
-	    view->setBackgroundPixmap ( bgPixmap );
-    } // for all Views
-    */
-
-    // --- "MenuBar" toggling from the various View's ---
+   /*******************************************************************
+   *  Now the main GUI is created.
+   * 1) Select a (GUI) profile,  which defines  which controls to show on which Tab
+   * 2a) Create the Tab's and the corresponding Views
+   * 2b) Create device widgets
+   * 2c) Add Views to Tab
+   ********************************************************************/
+   GUIProfile* guiprof = MixerToolBox::instance()->selectProfile(_mixer);
+   if ( guiprof != 0 ) {
+      createViewsByProfile(_mixer, guiprof, vflags);
+   }
+   else
+   {
+      // Fallback, if no GUI Profile could be found
+      possiblyAddView(new ViewOutput   ( m_ioTab, "Output" , _mixer, vflags, 0 ) );
+      possiblyAddView(new ViewInput    ( m_ioTab, "Input"  , _mixer, vflags, 0 ) );
+      possiblyAddView(new ViewSwitches ( m_ioTab, "Switches" , _mixer, vflags, 0 ) );
+      if ( vflags & ViewBase::Experimental_SurroundView )
+         possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ) );
+      //!!if ( vflags & ViewBase::Experimental_GridView )
+      //!!	possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
+   }
 
 
 
-    show();
-    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
+   // *** Lower part: Slider and Mixer Name ************************************************
+   QHBoxLayout *balanceAndDetail = new QHBoxLayout();
+   m_topLayout->addItem( balanceAndDetail );
+   balanceAndDetail->setObjectName( "balanceAndDetail" );
+   balanceAndDetail->setSpacing( 8 );
+   // Create the left-right-slider
+   m_balanceSlider = new QSlider( Qt::Horizontal, this );
+   m_balanceSlider->setMinimum(-100);
+   m_balanceSlider->setMaximum(100);
+   m_balanceSlider->setPageStep(25);
+   m_balanceSlider->setValue(0);
+
+   m_balanceSlider->setObjectName("RightLeft"); 
+   m_balanceSlider->setTickPosition( QSlider::TicksBelow );
+   m_balanceSlider->setTickInterval( 25 );
+   m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
+   m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
+
+   QLabel *mixerName = new QLabel(this );
+   mixerName->setObjectName("mixerName");
+   mixerName->setText( _mixer->mixerName() );
+   mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+   // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
+   balanceAndDetail->addSpacing( 10 );
+   balanceAndDetail->addWidget( m_balanceSlider );
+   balanceAndDetail->addWidget( mixerName );
+   balanceAndDetail->addSpacing( 10 );
+
+   connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
+   m_balanceSlider->setToolTip( i18n("Left/Right balancing") );
+
+   /* @todo : update all Background Pixmaps
+   const QPixmap bgPixmap = UserIcon("bg_speaker");
+   setBackgroundPixmap ( bgPixmap );
+   const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+   for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+         ViewBase* view = *it;
+         view->setBackgroundPixmap ( bgPixmap );
+   } // for all Views
+   */
+
+   // --- "MenuBar" toggling from the various View's ---
+
+
+
+   show();
+   //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
 
@@ -222,49 +231,49 @@ void KMixerWidget::nextLayout() {
  */
 void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags) // !!! Impl. pending
 {
-	/*** How it works:
-	 * A loop is done over all tabs.
-	 * For each Tab a View (e.g. ViewSliderSet) is instanciated and added to the list of Views
-	 */
-	std::vector<ProfTab*>::const_iterator itEnd = guiprof->_tabs.end();
-	for ( std::vector<ProfTab*>::const_iterator it = guiprof->_tabs.begin(); it != itEnd; ++it) {
-		ProfTab* profTab = *it;
+   /*** How it works:
+   * A loop is done over all tabs.
+   * For each Tab a View (e.g. ViewSliderSet) is instanciated and added to the list of Views
+   */
+   std::vector<ProfTab*>::const_iterator itEnd = guiprof->_tabs.end();
+   for ( std::vector<ProfTab*>::const_iterator it = guiprof->_tabs.begin(); it != itEnd; ++it) {
+      ProfTab* profTab = *it;
 
-		// The i18n() in the next line will only produce a translated version, if the text is known.
-		// This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
-		// It is possible that the Profile author puts arbitrary names in it.
-		kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << "name="<<profTab->name.toUtf8() << "\n";
-		if ( profTab->type == "SliderSet" ) {
-			ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
-			possiblyAddView(view);
-		}
-		else if ( profTab->type == "Surround" ) {
-			ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
-			possiblyAddView(view);
-		}
-		/*
-		else if ( profTab->type == "Switches" ) {
-			ViewSliderSet* view = new ViewSwitchSet  ( m_ioTab, profTab->name, _mixer, vflags, guiprof );
-			possiblyAddView(view);
-		}
-		*/
-		else {
-			kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
-		}
-	} // for all tabs
+      // The i18n() in the next line will only produce a translated version, if the text is known.
+      // This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
+      // It is possible that the Profile author puts arbitrary names in it.
+      kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << "name="<<profTab->name.toUtf8() << "\n";
+      if ( profTab->type == "SliderSet" ) {
+         ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
+         possiblyAddView(view);
+      }
+      else if ( profTab->type == "Surround" ) {
+         ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toUtf8(), mixer, vflags, guiprof );
+         possiblyAddView(view);
+      }
+      /*
+      else if ( profTab->type == "Switches" ) {
+         ViewSliderSet* view = new ViewSwitchSet  ( m_ioTab, profTab->name, _mixer, vflags, guiprof );
+         possiblyAddView(view);
+      }
+      */
+      else {
+         kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
+      }
+   } // for all tabs
 }
 
 void KMixerWidget::possiblyAddView(ViewBase* vbase)
 {
-	if ( vbase->count() == 0 )
-		delete vbase;
-	else {
-		_views.push_back(vbase);
-		vbase ->createDeviceWidgets();
+   if ( vbase->count() == 0 )
+      delete vbase;
+   else {
+      _views.push_back(vbase);
+      vbase ->createDeviceWidgets();
 #warning Using name() here is a bad idea. Use an ID instead for proper i18n
-		m_ioTab->addTab( vbase , i18n(vbase->name()) );
-		connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
-	}
+      m_ioTab->addTab( vbase , i18n(vbase->name()) );
+      connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
+   }
 }
 
 void KMixerWidget::setIcons( bool on )

@@ -114,10 +114,14 @@ void ViewDockAreaPopup::setMixSet(MixSet *)
     // a configuration option for "what device to show on the dock area"
     _dockDevice = _mixer->masterDevice();
     if ( _dockDevice == 0 ) {
-        // If we have no mixer device, we will take the first available mixer device
-        _dockDevice = (*_mixer)[0];
+        // If we have no dock device yet, we will take the first available mixer device
+        if ( _mixer->size() > 0) {
+           _dockDevice = (*_mixer)[0];
+        }
     }
-    _mixSet->append(_dockDevice);
+    if ( _dockDevice != 0 ) {
+       _mixSet->append(_dockDevice);
+    }
 }
 
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
@@ -138,7 +142,8 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
     _layoutMDW->addWidget( _mdw, 0, 1 );
 
 	 // Add button to show main panel
-	 _showPanelBox = new QPushButton( i18n("Mixer"), _frame, "MixerPanel" );
+	 _showPanelBox = new QPushButton( i18n("Mixer"), _frame );
+         _showPanelBox->setObjectName("MixerPanel");
 	 connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
     _layoutMDW->addMultiCellWidget( _showPanelBox, 1, 1, 0, 2 );
 
@@ -173,9 +178,11 @@ QSize ViewDockAreaPopup::sizeHint() const {
 void ViewDockAreaPopup::constructionFinished() {
     //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
+    if (_mdw != 0) {
     _mdw->move(0,0);
     _mdw->show();
     _mdw->resize(_mdw->sizeHint() );
+    }
     resize(sizeHint());
 
 }

@@ -127,12 +127,14 @@ int Mixer_OSS::open()
               if( devmask & ( 1 << idx ) ) // device active?
                 {
                   Volume vol( stereodevs & ( 1 << idx ) ? 2 : 1, maxVolume);
-                  readVolumeFromHW( idx, vol );
+                  //readVolumeFromHW( idx, vol );
+                  QString id;
+                  id.setNum(idx);
                   MixDevice* md =
-                    new MixDevice( idx, vol, recmask & ( 1 << idx ), true,
+                    new MixDevice( id, vol, recmask & ( 1 << idx ), true,
                                    i18n(MixerDevNames[idx]),
                                    MixerChannelTypes[idx]);
-                  md->setRecSource( isRecsrcHW( idx ) );
+                  //md->setRecSource( isRecsrcHW( idx ) );
                   m_mixDevices.append( md );
                 }
               idx++;
@@ -213,48 +215,52 @@ QString Mixer_OSS::errorText(int mixer_error)
 }
 
 
-bool Mixer_OSS::setRecsrcHW( int devnum, bool on )
+bool Mixer_OSS::setRecsrcHW( const QString& id, bool on )
 {
-  int i_recsrc, oldrecsrc;
-  if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
-    errormsg(Mixer::ERR_READ);
+   int i_recsrc, oldrecsrc;
+   int devnum = id2num(id);
+   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
+      errormsg(Mixer::ERR_READ);
 
-  oldrecsrc = i_recsrc = on ?
+   oldrecsrc = i_recsrc = on ?
              (i_recsrc | (1 << devnum )) :
              (i_recsrc & ~(1 << devnum ));
 
-  // Change status of record source(s)
-  if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
-    errormsg (Mixer::ERR_WRITE);
-  // Re-read status of record source(s). Just in case, OSS does not like
-  // my settings. And with this line mix->recsrc gets its new value. :-)
-  if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
-    errormsg(Mixer::ERR_READ);
+   // Change status of record source(s)
+   if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
+      errormsg (Mixer::ERR_WRITE);
+   // Re-read status of record source(s). Just in case, OSS does not like
+   // my settings. And with this line mix->recsrc gets its new value. :-)
+   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
+      errormsg(Mixer::ERR_READ);
 
-  // PORTING: Hint: Do not forget to set i_recsrc to the new valid
-  //                record source mask.
+   // PORTING: Hint: Do not forget to set i_recsrc to the new valid
+   //                record source mask.
 
-  return i_recsrc == oldrecsrc;
+   return i_recsrc == oldrecsrc;
 }
 
-bool Mixer_OSS::isRecsrcHW( int devnum )
+bool Mixer_OSS::isRecsrcHW( const QString& id )
 {
-	bool isRecsrc = false;
-	int recsrcMask;
-	if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
-		errormsg(Mixer::ERR_READ);
-	else {
-		// test if device bit is set in record bit mask
-		isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
-	}
-	return isRecsrc;
+   int devnum = id2num(id);
+   bool isRecsrc = false;
+   int recsrcMask;
+   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
+      errormsg(Mixer::ERR_READ);
+   else {
+      // test if device bit is set in record bit mask
+      isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
+   }
+   return isRecsrc;
 }
 
-int Mixer_OSS::readVolumeFromHW( int devnum, Volume &vol )
+int Mixer_OSS::readVolumeFromHW( const QString& id, Volume &vol )
 {
-  if( vol.isMuted() ) return 0; // Don't alter volume when muted
+#warning This is bad, as it will use wrong volume levels on saving volume
+   if( vol.isMuted() ) return 0; // Don't alter volume when muted
 
-  int volume;
+   int volume;
+   int devnum = id2num(id);
   if (ioctl(m_fd, MIXER_READ( devnum ), &volume) == -1)
     {
       /* Oops, can't read mixer */
@@ -272,27 +278,32 @@ int Mixer_OSS::readVolumeFromHW( int devnum, Volume &vol )
 
 
 
-int Mixer_OSS::writeVolumeToHW( int devnum, Volume &vol )
+int Mixer_OSS::writeVolumeToHW( const QString& id, Volume &vol )
 {
-  int volume;
-  if( vol.isMuted() ) volume = 0;
-  else
-    if ( vol.count() > 1 )
-      volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
-    else
-      volume = vol[ Volume::LEFT ];
+   int volume;
+   int devnum = id2num(id);
 
-  if (ioctl(m_fd, MIXER_WRITE( devnum ), &volume) == -1)
-    return Mixer::ERR_WRITE;
+   if( vol.isMuted() )
+      volume = 0;
+   else
+   {
+      if ( vol.count() > 1 )
+         volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
+      else
+         volume = vol[ Volume::LEFT ];
+   }
+
+   if (ioctl(m_fd, MIXER_WRITE( devnum ), &volume) == -1)
+      return Mixer::ERR_WRITE;
 
   return 0;
 }
 
 QString OSS_getDriverName() {
-	return "OSS";
+   return "OSS";
 }
 
 QString Mixer_OSS::getDriverName() {
-        return "OSS";
+   return "OSS";
 }
 

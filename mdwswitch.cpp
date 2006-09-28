@@ -194,7 +194,7 @@ void MDWSwitch::setSwitch(bool value)
 {
 	if (  m_mixdevice->isSwitch() ) {
 		if ( m_mixdevice->isRecordable() ) {
-			m_mixer->setRecordSource( m_mixdevice->num(), value );
+			m_mixer->setRecordSource( m_mixdevice->id(), value );
 		}
 		else {
 			m_mixdevice->setMuted( value );

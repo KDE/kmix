@@ -29,7 +29,6 @@
 #include <assert.h>
 #include <qsocketnotifier.h>
 
-#define KMIX_ALSA_NEW_PK
 
 extern "C"
 {
@@ -54,52 +53,55 @@ extern "C"
 Mixer_Backend*
 ALSA_getMixer( int device )
 {
-	Mixer_Backend *l_mixer;
-	l_mixer = new Mixer_ALSA( device );
-	return l_mixer;
+   Mixer_Backend *l_mixer;
+   l_mixer = new Mixer_ALSA( device );
+   return l_mixer;
 }
 
 Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
 {
-    m_fds = 0;
-    m_sns = 0;
-	_handle = 0;
-        _initialUpdate = true;
+   m_fds = 0;
+   m_sns = 0;
+   _handle = 0;
+   _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-  close();
+   close();
 }
 
 int
 Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
-	QString name = snd_mixer_selem_id_get_name( sid );
+   QString name = snd_mixer_selem_id_get_name( sid );
 
-	if ( name == "Master" ) return MixDevice::VOLUME;
-        if ( name == "Capture" ) return MixDevice::RECMONITOR;
-	if ( name == "Master Mono" ) return MixDevice::VOLUME;
-        if ( name == "PC Speaker" ) return MixDevice::VOLUME;
-        if ( name == "Music" || name == "Synth" || name == "FM" ) return MixDevice::MIDI;
-	if ( name.indexOf( "Headphone", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::HEADPHONE;
-	if ( name == "Bass" ) return MixDevice::BASS;
-	if ( name == "Treble" ) return MixDevice::TREBLE;
-	if ( name == "CD" ) return MixDevice::CD;
-	if ( name == "Video" ) return MixDevice::VIDEO;
-	if ( name == "PCM" || name == "Wave" ) return MixDevice::AUDIO;
-	if ( name == "Surround" ) return MixDevice::SURROUND_BACK;
-	if ( name == "Center" ) return MixDevice::SURROUND_CENTERFRONT;
-	if ( name.indexOf( "ac97", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AC97;
-	if ( name.indexOf( "coaxial", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
-	if ( name.indexOf( "optical", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
-	if ( name.indexOf( "IEC958", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
-	if ( name.indexOf( "Mic" ) != -1 ) return MixDevice::MICROPHONE;
-	if ( name.indexOf( "LFE" ) != -1 ) return MixDevice::SURROUND_LFE;
-        if ( name.indexOf( "Monitor" ) != -1 ) return MixDevice::RECMONITOR;
-	if ( name.indexOf( "3D", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
+   if ( name.indexOf( "master"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
+   if ( name.indexOf( "master mono", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
+   if ( name.indexOf( "pc speaker" , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
+   if ( name.indexOf( "capture"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::RECMONITOR;
+   if ( name.indexOf( "music"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
+   if ( name.indexOf( "Synth"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
+   if ( name.indexOf( "FM"         , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
+   if ( name.indexOf( "headphone"  , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::HEADPHONE;
+   if ( name.indexOf( "bass"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::BASS;
+   if ( name.indexOf( "treble"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::TREBLE;
+   if ( name.indexOf( "cd"         , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::CD;
+   if ( name.indexOf( "video"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VIDEO;
+   if ( name.indexOf( "pcm"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AUDIO;
+   if ( name.indexOf( "Wave"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AUDIO;
+   if ( name.indexOf( "surround"   , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_BACK;
+   if ( name.indexOf( "center"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_CENTERFRONT;
+   if ( name.indexOf( "ac97"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AC97;
+   if ( name.indexOf( "coaxial "   , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
+   if ( name.indexOf( "optical"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
+   if ( name.indexOf( "iec958"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
+   if ( name.indexOf( "mic"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MICROPHONE;
+   if ( name.indexOf( "lfe"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_LFE;
+   if ( name.indexOf( "monitor"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::RECMONITOR;
+   if ( name.indexOf( "3d"         , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
 
-	return MixDevice::EXTERNAL;
+   return MixDevice::EXTERNAL;
 }
 
 int
@@ -300,10 +302,15 @@ Mixer_ALSA::open()
 		}
 	    } // is ordinary mixer element (NOT an enum)
 
+               /*** generate a nice unique key, e.g. "PCM:0" or "Master:1" *******/
+                QString mdID("%1:%2");
+                mdID = mdID.arg(snd_mixer_selem_id_get_name ( sid ) )
+                          .arg(snd_mixer_selem_id_get_index( sid ) );
+                mdID.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
 		MixDevice* md =
-		    new MixDevice( mixerIdx,
+		    new MixDevice( mdID,
 				   *volPlay,
-					canRecord,
+				   canRecord,
 				   canMute,
 				   snd_mixer_selem_id_get_name( sid ),
 				   ct,
@@ -311,16 +318,6 @@ Mixer_ALSA::open()
 
 			m_mixDevices.append( md );
 
-#ifdef KMIX_ALSA_NEW_PK
-               /*** generate a nice unique key, e.g. "PCM:0" or "Master:1" *******/
-               QString mdPK("%1:%2");
-               mdPK = mdPK.arg(snd_mixer_selem_id_get_name ( sid ) )
-                          .arg(snd_mixer_selem_id_get_index( sid ) );
-               mdPK.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
-
-               md->setId(mdPK);
-               /******************************************************************/
-#endif
         if (!masterChosen && ct==MixDevice::VOLUME) {
            // Determine a nicer MasterVolume
            m_recommendedMaster = md;
@@ -328,8 +325,9 @@ Mixer_ALSA::open()
         }
 
                if ( canCapture && !canRecord ) {
+/// !! Check whether it is a good idea to have "TWO" MixDevice's with the same ID.
                        MixDevice *mdCapture =
-                       new MixDevice( mixerIdx,
+                       new MixDevice( mdID,
                                   *volCapture,
                                        true,
                                   canMute,
@@ -512,8 +510,9 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
 }
 
 bool
-Mixer_ALSA::isRecsrcHW( int devnum )
+Mixer_ALSA::isRecsrcHW( const QString& id )
 {
+   int devnum = id2num(id);
 	bool isCurrentlyRecSrc = false;
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
 
@@ -560,8 +559,9 @@ Mixer_ALSA::isRecsrcHW( int devnum )
 }
 
 bool
-Mixer_ALSA::setRecsrcHW( int devnum, bool on )
+Mixer_ALSA::setRecsrcHW( const QString& id, bool on )
 {
+   int devnum = id2num(id);
 	int sw = 0;
 	if (on)
 		sw = !sw;
@@ -624,9 +624,10 @@ Mixer_ALSA::setRecsrcHW( int devnum, bool on )
  *          of the SAME snd_mixer_elem_t. KMix does NOT support that and
  *          always sets both channels (0 and 1).
  */
-void Mixer_ALSA::setEnumIdHW(int mixerIdx, unsigned int idx) {
+void Mixer_ALSA::setEnumIdHW(const QString& id, unsigned int idx) {
 	//kDebug(67100) << "Mixer_ALSA::setEnumIdHW(" << mixerIdx << ", idx=" << idx << ") 1\n";
-        snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
+   int devnum = id2num(id);
+        snd_mixer_elem_t *elem = getMixerElem( devnum );
         if ( elem==0 || ( !snd_mixer_selem_is_enumerated(elem)) )
         {
                 return;
@@ -635,7 +636,7 @@ void Mixer_ALSA::setEnumIdHW(int mixerIdx, unsigned int idx) {
 	//kDebug(67100) << "Mixer_ALSA::setEnumIdHW(" << mixerIdx << ", idx=" << idx << ") 2\n";
 	int ret = snd_mixer_selem_set_enum_item(elem,SND_MIXER_SCHN_FRONT_LEFT,idx);
         if (ret < 0) {
-           kError(67100) << "Mixer_ALSA::setEnumIdHW(" << mixerIdx << "), errno=" << ret << "\n";
+           kError(67100) << "Mixer_ALSA::setEnumIdHW(" << devnum << "), errno=" << ret << "\n";
         }
 	snd_mixer_selem_set_enum_item(elem,SND_MIXER_SCHN_FRONT_RIGHT,idx);
 	// we don't care about possible error codes on channel 1
@@ -648,8 +649,9 @@ void Mixer_ALSA::setEnumIdHW(int mixerIdx, unsigned int idx) {
  *          of the SAME snd_mixer_elem_t. KMix does NOT support that and
  *          always shows the value of the first channel.
  */
-unsigned int Mixer_ALSA::enumIdHW(int mixerIdx) {
-	snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
+unsigned int Mixer_ALSA::enumIdHW(const QString& id) {
+   int devnum = id2num(id);
+   snd_mixer_elem_t *elem = getMixerElem( devnum );
         if ( elem==0 || ( !snd_mixer_selem_is_enumerated(elem)) )
         {
                 return 0;
@@ -660,19 +662,21 @@ unsigned int Mixer_ALSA::enumIdHW(int mixerIdx) {
 	//kDebug(67100) << "Mixer_ALSA::enumIdHW(" << mixerIdx << ") idx=" << idx << "\n";
 	if (ret < 0) {
 	   idx = 0;
-	   kError(67100) << "Mixer_ALSA::enumIdHW(" << mixerIdx << "), errno=" << ret << "\n";
+	   kError(67100) << "Mixer_ALSA::enumIdHW(" << devnum << "), errno=" << ret << "\n";
 	}
 	return idx;
 }
 
 
 int
-Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
+Mixer_ALSA::readVolumeFromHW( const QString& id, Volume &volume )
 {
+   int devnum = id2num(id);
 	int elem_sw;
 	long left, right;
 
-	snd_mixer_elem_t *elem = getMixerElem( mixerIdx );
+#warning Must translate from id to mixerIdx here
+	snd_mixer_elem_t *elem = getMixerElem( devnum );
 	if ( !elem )
 	{
 		return 0;
@@ -683,14 +687,14 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	if ( snd_mixer_selem_has_playback_volume( elem ) && !volume.isCapture() )
 	{
 		int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
-                if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
+                if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [has_playback_volume,R] failed, errno=" << ret << endl;
 		if ( snd_mixer_selem_is_playback_mono ( elem )) {
                     volume.setVolume( Volume::LEFT , left );
                     volume.setVolume( Volume::RIGHT, left );
                 }
                 else {
                     int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-                    if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_playback_volume,R] failed, errno=" << ret << endl;
+                    if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [has_playback_volume,R] failed, errno=" << ret << endl;
                     volume.setVolume( Volume::LEFT , left );
                     volume.setVolume( Volume::RIGHT, right );
                 }
@@ -699,7 +703,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	if ( snd_mixer_selem_has_capture_volume ( elem ) && volume.isCapture() )
 	{
             int ret = snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
-            if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [get_capture_volume,L] failed, errno=" << ret << endl;
+            if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [get_capture_volume,L] failed, errno=" << ret << endl;
 	    if ( snd_mixer_selem_is_capture_mono  ( elem )) {
 		volume.setVolume( Volume::LEFT , left );
 		volume.setVolume( Volume::RIGHT, left );
@@ -707,7 +711,7 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 	    else
 	    {
 		int ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-		if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << mixerIdx << ") [has_capture_volume,R] failed, errno=" << ret << endl;
+		if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [has_capture_volume,R] failed, errno=" << ret << endl;
 		volume.setVolume( Volume::LEFT , left );
 		volume.setVolume( Volume::RIGHT, right );
 	    }
@@ -724,8 +728,9 @@ Mixer_ALSA::readVolumeFromHW( int mixerIdx, Volume &volume )
 }
 
 int
-Mixer_ALSA::writeVolumeToHW( int devnum, Volume& volume )
+Mixer_ALSA::writeVolumeToHW( const QString& id, Volume& volume )
 {
+   int devnum = id2num(id);
 	int left, right;
 
 	snd_mixer_elem_t *elem = getMixerElem( devnum );

@@ -48,17 +48,16 @@ protected:
    */
   virtual QString getDriverName() = 0;
 
-  /** Returns, whether this Mixer object contains a valid Mixer. You should return "false", when
+  /**
+   * Opens the mixer, if it constitures a valid Device. You should return "false", when
    * the Mixer with the devnum given in the constructor is not supported by the Backend. The two
    * typical cases are:
    * (1) No such hardware installed
    * (2) The hardware exists, but has no mixer support (e.g. external soundcard with only mechanical volume knobs)
-   * The default implementation calls open(), checks the return code and whether the number of
-   * supported channels is > 0. Then it calls close().
-   * You should reimplement this method in your backend, when there is a less time-consuming method than
-   * calling open() and close() for checking the existence of a Mixer.
+   * The implementation calls open(), checks the return code and whether the number of
+   * supported channels is > 0. The device remains opened if it is valid, otherwise a close() is done.
    */
-  virtual bool isValid();
+  bool openIfValid();
 
   /** @return true, if the Mixer is open (and thus can be operated) */
   bool isOpen();
@@ -66,17 +65,17 @@ protected:
   virtual bool prepareUpdateFromHW();
 
   /// Volume Read
-  virtual int readVolumeFromHW( int devnum, Volume &vol ) = 0;
+  virtual int readVolumeFromHW( const QString& id, Volume &vol ) = 0;
   /// Volume Write
-  virtual int writeVolumeToHW( int devnum, Volume &volume ) = 0;
+  virtual int writeVolumeToHW( const QString& id, Volume &volume ) = 0;
 
   /// Enums
-  virtual void setEnumIdHW(int mixerIdx, unsigned int);
-  virtual unsigned int enumIdHW(int mixerIdx);
+  virtual void setEnumIdHW(const QString& id, unsigned int);
+  virtual unsigned int enumIdHW(const QString& id);
 
   /// Recording Switches
-  virtual bool setRecsrcHW( int devnum, bool on) = 0;
-  virtual bool isRecsrcHW( int devnum ) = 0;
+  virtual bool setRecsrcHW( const QString& id, bool on) = 0;
+  virtual bool isRecsrcHW( const QString& id ) = 0;
 
   /// Overwrite in the backend if the backend can see changes without polling
   virtual bool needsPolling() { return true; }
@@ -96,6 +95,9 @@ protected:
   /// Prints out a translated error text for the given error number on stderr
   void errormsg(int mixer_error);
 
+
+   /// Translate ID to internal device number
+   virtual int id2num(const QString& id);
 
   int m_devnum;
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API

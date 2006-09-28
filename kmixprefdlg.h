@@ -45,6 +45,7 @@ KMixPrefDlg : public KDialog
 
    private slots:
       void apply();
+      void dockIntoPanelChange(int state);
 
   private:
    QFrame *m_generalTab;

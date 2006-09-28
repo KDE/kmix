@@ -54,13 +54,12 @@ class MixDevice : public QObject
       enum DeviceCategory { UNDEFINED= 0x00, SLIDER=0x01, SWITCH=0x02, ENUM=0x04, ALL=0xff };
 
 
-      MixDevice(int num, Volume &vol, bool recordable, bool mute,
-                                QString name, ChannelType type = UNKNOWN, DeviceCategory category =
-SLIDER );
+      MixDevice(const QString& id, Volume &vol, bool recordable, bool mute,
+                      QString name, ChannelType type = UNKNOWN, DeviceCategory category = SLIDER );
       MixDevice(const MixDevice &md);
       ~MixDevice();
 
-      int num()                    { return _num; };
+
       QString   name()         { return _name; };
       /**
        * Returns an unique ID of this MixDevice. By default the number
@@ -76,9 +75,8 @@ SLIDER );
        * The ID's may NOT contain whitespace
        * The ID's are managed by the MixerBackend's (only those know how to avoid name clashes).
        */
-      void setId(QString &id);
       bool isRecordable()    { return _recordable; };
-      bool isRecSource()    { return _recSource; };
+      bool isRecSource()     { return _recSource; };
       bool isSwitch()        { return _switch; } // !! change to _category == MixDevice::SWITCH
       bool isEnum()          { return _category == MixDevice::ENUM; }
       bool isMuted()         { return _volume.isMuted(); };
@@ -118,7 +116,6 @@ SLIDER );
       // PRIMARY:   CD, Headphone, Microphone, Line
       // SECONDARY: All others
       // SWITCH:    All devices which only have a On/Off-Switch
-      int _num; // ioctl() device number of mixer
       bool _recordable; // Can it be recorded?
       bool _switch; // On/Off switch // !! remove
       bool _mute; // Available mute option
