@@ -318,7 +318,7 @@ Mixer_ALSA::open()
 				   cc );
 
 			m_mixDevices.append( md );
-			m_id2numHash[snd_mixer_selem_id_get_name( sid )] = num;
+			m_id2numHash[mdID] = num;
 
         if (!masterChosen && ct==MixDevice::VOLUME) {
            // Determine a nicer MasterVolume
@@ -484,7 +484,7 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
 int Mixer_ALSA::id2num(const QString& id) {
 	int num = -1;
 	if ( m_id2numHash.contains(id) ) {
-		int num = m_id2numHash[id];
+		num = m_id2numHash[id];
 	}
 	return num;
 }
