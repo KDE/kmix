@@ -7,10 +7,10 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 
-#include "solid/device.h"
-#include "solid/devicemanager.h"
-#include "solid/capability.h"
-#include "solid/audioiface.h"
+#include <solid/device.h>
+#include <solid/devicemanager.h>
+#include <solid/capability.h>
+#include <solid/audiohw.h>
 
 #include "version.h"
 
