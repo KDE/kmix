@@ -113,6 +113,8 @@ install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
 
 
 ########### next target ###############
+
+if(Q_WS_X11)
 if(KICKER_INCLUDE_DIR)
 
 set(kmix_panelapplet_PART_SRCS
@@ -157,6 +159,7 @@ install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/apple
 else(KICKER_INCLUDE_DIR)
 MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
 endif(KICKER_INCLUDE_DIR)
+endif(Q_WS_X11)
 
 ########### install files ###############
 
