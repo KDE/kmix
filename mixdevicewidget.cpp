@@ -49,11 +49,13 @@
 #include "verticaltext.h"
 
 /**
- * Class that represents a single mix device, inlcuding PopUp, muteLED, ...
- * Used in KMix main window and DockWidget and PanelApplet.
- * It can be configured to include or exclude the recordLED and the muteLED.
+ * Base Class for any Widget that represents a MixDevice.
+ * The mix device can be a real (hardware bound) MixDevice or a virtual mix device.
+ *
  * The direction (horizontal, vertical) can be configured and whether it should
- * be "small"  (uses KSmallSlider instead of QSlider then).
+ * be "small"  (uses KSmallSlider instead of QSlider then). The actual implementations
+ * SHOULD honor these values - those who do not might not be suitable for placing in
+ * the panel applet or any other smallish settings.
  */
 MixDeviceWidget::MixDeviceWidget(Mixer* mixer, MixDevice* md,
                                  bool small, Qt::Orientation orientation,

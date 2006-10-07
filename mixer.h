@@ -79,7 +79,14 @@ class Mixer : public QObject
       /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
       QString& stateMessage() const;
 
-      virtual QString mixerName();
+      /// Returns the name of the card/chip/hardware, as given by the driver. The name is NOT instance specific,
+      /// so if you install two identical soundcards, two of them will deliver the same mixerName().
+      /// Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
+      /// mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
+      virtual QString baseName();
+
+      /// Return the name of the card/chip/hardware, which is suitable for humans
+      virtual QString readableName();
 
       // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
       static QString driverName(int num);

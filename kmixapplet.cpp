@@ -187,7 +187,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
     for ( int i=0; i< Mixer::mixers().count(); ++i )
     {
        Mixer *mixer = (Mixer::mixers())[i];
-       if ( mixer->mixerName() == _mixerName ) {  // @todo Check the change: _mixer->  to   mixer->
+       if ( mixer->id() == _mixerName ) {  // @todo Check the change: _mixer->  to   mixer->
           _mixer = mixer;
           break;
        }
@@ -240,7 +240,7 @@ void KMixApplet::saveConfig()
 	//kDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg << endl;
         cfg->setGroup( 0 );
         cfg->writeEntry( "Mixer", _mixer->id() );
-        cfg->writeEntry( "MixerName", _mixer->mixerName() );
+        cfg->writeEntry( "MixerName", _mixer->id() );
 
         cfg->writeEntry( "ColorCustom", _customColors );
 
@@ -298,7 +298,7 @@ void KMixApplet::saveConfig( KConfig *config, const QString &grp )
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
 	config->setGroup( grp );
-	config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
+	config->writeEntry("Mixer_Name_Key", _mixer->id());
 
 	KMixToolBox::saveView(m_appletView, config );
 	KMixToolBox::saveKeys(m_appletView, config );
@@ -317,7 +317,7 @@ void KMixApplet::selectMixer()
    {
        Mixer *mixer = (Mixer::mixers())[i];
        QString s;
-       s.sprintf("%i. %s", (i+1), mixer->mixerName().toAscii().data());
+       s.sprintf("%i. %s", (i+1), mixer->id().toAscii().data());
        lst << s;
    }
 
@@ -369,7 +369,7 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	    delete m_appletView;
 	}
  	/**@todo Add View stuff to KMixApplet / ViewApplet */
-	m_appletView = new ViewApplet( this, _mixer->mixerName().toAscii().data(), _mixer, 0, (GUIProfile*)0, pos );
+	m_appletView = new ViewApplet( this, _mixer->id().toAscii().data(), _mixer, 0, (GUIProfile*)0, pos );
 	connect ( m_appletView, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
 	m_appletView->createDeviceWidgets();
 	_layout->addWidget(m_appletView);

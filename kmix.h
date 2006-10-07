@@ -59,12 +59,14 @@ KMixWindow : public KMainWindow
    KMixWindow();
    ~KMixWindow();
 
-  protected slots:
-   void saveSettings();
-
-  protected:
+  private slots:
    void saveConfig();
+
+  private:
+   void saveBaseConfig();
+   void saveViewConfig();
    void loadConfig();
+   void loadBaseConfig();
 
    void initPrefDlg();
    void initActions();
@@ -72,7 +74,7 @@ KMixWindow : public KMainWindow
    void initWidgets();
    void initMixerWidgets();
 
-   void updateDocking();
+   bool updateDocking();
    void clearMixerWidgets();
 
    virtual bool queryClose();

@@ -113,14 +113,14 @@ void Mixer::volumeSave( KConfig *config )
     //    kDebug(67100) << "Mixer::volumeSave()" << endl;
     readSetFromHW();
     QString grp("Mixer");
-    grp.append(mixerName());
+    grp.append(id());
     _mixerBackend->m_mixDevices.write( config, grp );
 }
 
 void Mixer::volumeLoad( KConfig *config )
 {
    QString grp("Mixer");
-   grp.append(mixerName());
+   grp.append(id());
    if ( ! config->hasGroup(grp) ) {
       // no such group. Volumes (of this mixer) were never saved beforehand.
       // Thus don't restore anything (also see Bug #69320 for understanding the real reason)
@@ -156,7 +156,7 @@ int Mixer::open()
       int err = _mixerBackend->open();
       // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
       // but we want a somhow usable fallback just in case.
-      _id = mixerName();
+      _id = baseName();
 
       MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
       if ( recommendedMaster != 0 ) {
@@ -310,10 +310,20 @@ void Mixer::setBalance(int balance)
   emit newBalance( vol );
 }
 
-QString Mixer::mixerName()
+QString Mixer::baseName()
 {
   return _mixerBackend->m_mixerName;
 }
+
+// should return a name suitable for a human user to read (on a label, ...)
+QString Mixer::readableName()
+{
+  if ( _mixerBackend->m_mixerName.endsWith(":0"))
+     return _mixerBackend->m_mixerName.left(_mixerBackend->m_mixerName.length() - 2);
+  else
+     return _mixerBackend->m_mixerName;
+}
+
 
 
 /**

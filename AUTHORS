@@ -1,11 +1,11 @@
 kmix
 Written by         Christian Esken (esken@kde.org)
-and				   Stefan Schimanski (1Stein@gmx.de)
-SGI port done      Paul Kendall (paul@orion.co.nz)
+Solaris port       Brian Hanson Brian (bhanson@hotmail.com)
+ALSA port          Nick Lopez <kimo_sabe@usa.net>
+ALSA 0.9.x port	   Helio Chissini de Castro <helio@conectiva.com>
+
+Thanks:
 Fixes for FreeBSD  Sebestyen Zoltan (szoli@digo.inf.elte.hu)
 Solaris fixes      Faraut Jean-Louis <jlf@essi.fr>
-ALSA port          Nick Lopez <kimo_sabe@usa.net>
-ALSA 0.9.x port	 Helio Chissini de Castro <helio@conectiva.com>
-HP-UX port         Helge Deller <deller@gmx.de>
 
 The package is maintained by Christian Esken (esken@kde.org)

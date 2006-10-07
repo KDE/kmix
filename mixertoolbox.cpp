@@ -120,7 +120,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 			// Count mixer nums for every mixer name to identify mixers with equal names.
 			// This is for creating persistent (reusable) primary keys, which can safely
 			// be referenced (especially for config file access, so it is meant to be persistent!).
-			mixerNums[mixer->mixerName()]++;
+			mixerNums[mixer->baseName()]++;
 			// Create a useful PK
 			/* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
 			 * contain it.
@@ -128,12 +128,12 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 			 * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
 			 * %3, the mixer number, is a number: it does not contain colons.
 			 */
-			QString mixerName = mixer->mixerName();
+			QString mixerName = mixer->baseName();
 			mixerName.replace(":","_");
 			QString primaryKeyOfMixer = QString("%1::%2:%3")
 			    .arg(driverName)
 			    .arg(mixerName)
-			    .arg(mixerNums[mixer->mixerName()]);
+			    .arg(mixerNums[mixer->baseName()]);
 			// The following 3 replaces are for not messing up the config file
 			primaryKeyOfMixer.replace("]","_");
 			primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
@@ -290,7 +290,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 	// (2) Evaluate the soundcard specific profile  (the code is quite similar to the upper one
 	// Here we could also start a while loop over all matching filenames, e.g.: "<driverName>.<cardName>*.xml"
 	// But for now we will just check one filename: "<driverName>.<cardName>.xml" (note the missing '*')
-	QString mixerNameSpacesToUnderscores = mixer->mixerName();
+	QString mixerNameSpacesToUnderscores = mixer->baseName();
 	mixerNameSpacesToUnderscores.replace(" ","_");
 	fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
 	kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName << endl;

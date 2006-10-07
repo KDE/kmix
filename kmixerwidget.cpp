@@ -70,10 +70,10 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
 {
    setObjectName(name);
    m_categoryMask = categoryMask;
-   m_id = mixer->mixerName();  // !!! A BETTER ID must probably be found here
 
    if ( _mixer )
    {
+      m_id = _mixer->id();
       createLayout(vflags);
    }
    else
@@ -84,9 +84,6 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
       // a programming error).
       QBoxLayout *layout = new QHBoxLayout( this );
       QString s = i18n("Invalid mixer");
-      if ( !mixer->mixerName().isEmpty() ) {
-         s.append(" \"").append(mixer->mixerName()).append("\"");
-      }
       QLabel *errorLabel = new QLabel( s, this );
       errorLabel->setAlignment( Qt::AlignCenter );
       errorLabel->setWordWrap( true );
@@ -186,7 +183,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
    QLabel *mixerName = new QLabel(this );
    mixerName->setObjectName("mixerName");
-   mixerName->setText( _mixer->mixerName() );
+   mixerName->setText( _mixer->readableName() );
    mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
    // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
@@ -335,7 +332,7 @@ void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 	config->setGroup( grp );
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
-	config->writeEntry("Mixer_Name_Key", _mixer->mixerName());
+	config->writeEntry("Mixer_Name_Key", _mixer->id());
 
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {

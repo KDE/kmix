@@ -79,7 +79,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
       qlbl->setFixedHeight(qlbl->sizeHint().height());
 
       m_cMixer = new KComboBox( false, m_mainFrame);
-	  m_cMixer->setObjectName( "mixerCombo" );
+      m_cMixer->setObjectName( "mixerCombo" );
       m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
       connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPageByID( int ) ) );
 
@@ -87,12 +87,12 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     for( int i =0; i<Mixer::mixers().count(); i++ )
     {
       Mixer *mixer = (Mixer::mixers())[i];
-	m_cMixer->addItem( mixer->mixerName() );
-	if ( ptr_mixer == mixer ) {
-	  // Make the current Mixer the current item in the ComboBos
-	  m_cMixer->setCurrentIndex( m_cMixer->count()-1 );
-	}
-	//id++;
+      m_cMixer->addItem( mixer->readableName() );
+      if ( ptr_mixer == mixer ) {
+         // Make the current Mixer the current item in the ComboBos
+         m_cMixer->setCurrentIndex( m_cMixer->count()-1 );
+      }
+      //id++;
       } // end for all_Mixers
 
       m_cMixer->setToolTip( i18n("Current mixer" ) );

@@ -208,7 +208,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 	 QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
 	 m_iconLabel->setToolTip( muteTip );
 
-	 //sliLayout->addSpacing( 3 );
+    sliLayout->addSpacing( 3 );
 
 
     // --- SLIDERS ---------------------------
@@ -284,6 +284,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
                  sliLayout->addItem( reclayout );
 		 reclayout->setSizeConstraint(QLayout::SetFixedSize);
 
+       sliLayout->addSpacing( 3 );
 		 if( m_mixdevice->isRecordable() ) {
 			 m_recordLED = new KLedButton( Qt::red,
 					 m_mixdevice->isRecSource()?KLed::On:KLed::Off,

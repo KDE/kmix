@@ -176,7 +176,7 @@ unsigned long GUIProfile::match(Mixer* mixer) {
 	if ( _soundcardName == "*" ) {
 		matchValue += 1;
 	}
-	else if ( _soundcardName != mixer->mixerName() ) {
+	else if ( _soundcardName != mixer->baseName() ) {
 		return 0; // card name does not match
 	}
 	else {
