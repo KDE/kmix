@@ -71,8 +71,7 @@ Mixer_ALSA::~Mixer_ALSA()
    close();
 }
 
-int
-Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
+int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
    QString name = snd_mixer_selem_id_get_name( sid );
 
@@ -104,290 +103,296 @@ Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    return MixDevice::EXTERNAL;
 }
 
-int
-Mixer_ALSA::open()
+int Mixer_ALSA::open()
 {
-    bool validDevice = false;
-    bool masterChosen = false;
-    int err;
+   bool validDevice = false;
+   bool masterChosen = false;
+   int err;
+   
+   snd_ctl_t *ctl_handle;
+   snd_ctl_card_info_t *hw_info;
+   snd_ctl_card_info_alloca(&hw_info);
+   
+   snd_mixer_elem_t *elem;
+   snd_mixer_selem_id_t *sid;
+   snd_mixer_selem_id_alloca( &sid );
+   
+   // Card information
+   if( m_devnum == -1 )
+      m_devnum = 0;
+   if ( (unsigned)m_devnum > 31 )
+      devName = "default";
+   else
+      devName = QString( "hw:%1" ).arg( m_devnum );
 
-    snd_ctl_t *ctl_handle;
-    snd_ctl_card_info_t *hw_info;
-    snd_ctl_card_info_alloca(&hw_info);
+   QString probeMessage;
+   probeMessage += "Trying ALSA Device '" + devName + "': ";
 
-    snd_mixer_elem_t *elem;
-    snd_mixer_selem_id_t *sid;
-    snd_mixer_selem_id_alloca( &sid );
+   if ( ( err = snd_ctl_open ( &ctl_handle, devName.toAscii().data(), 0 ) ) < 0 )
+   {
+      kDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
+      return Mixer::ERR_OPEN;
+   }
 
-    // Card information
-    if( m_devnum == -1 )
-        m_devnum = 0;
-    if ( (unsigned)m_devnum > 31 )
-	devName = "default";
-    else
-	devName = QString( "hw:%1" ).arg( m_devnum );
+   if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
+   {
+      kDebug(67100) << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err) << endl;
+      //_stateMessage = errorText( Mixer::ERR_READ );
+      snd_ctl_close( ctl_handle );
+      return Mixer::ERR_READ;
+   }
 
-    QString probeMessage;
+   // Device and mixer names
+   const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
+   //mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
+   // Copy the name of kmix mixer from card name (mixername is rumoured to be not that good)
+   m_mixerName = mixer_card_name;
 
-    probeMessage += "Trying ALSA Device '" + devName + "': ";
+   snd_ctl_close( ctl_handle );
 
-    if ( ( err = snd_ctl_open ( &ctl_handle, devName.toAscii().data(), 0 ) ) < 0 )
-    {
-	kDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
-	return Mixer::ERR_OPEN;
-    }
+   /* open mixer device */
+   if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
+   {
+      kDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
+      _handle = 0;
+      return Mixer::ERR_OPEN; // if we cannot open the mixer, we have no devices
+   }
 
-    if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
-    {
-	kDebug(67100) << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err) << endl;
-	//_stateMessage = errorText( Mixer::ERR_READ );
-	snd_ctl_close( ctl_handle );
-	return Mixer::ERR_READ;
-    }
+   if ( ( err = snd_mixer_attach ( _handle, devName.toAscii().data() ) ) < 0 )
+   {
+      kDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
+      //errormsg( Mixer::ERR_PERM );
+      return Mixer::ERR_OPEN;
+   }
 
-    // Device and mixer names
-    const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
-    //mixer_device_name = snd_ctl_card_info_get_mixername( hw_info );
-    // Copy the name of kmix mixer from card name (mixername is rumoured to be not that good)
-    m_mixerName = mixer_card_name;
+   if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
+   {
+      kDebug(67100) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err) << endl;
+      //errormsg( Mixer::ERR_READ );
+      return Mixer::ERR_READ;
+   }
 
-    snd_ctl_close( ctl_handle );
-
-    /* open mixer device */
-
-    //kDebug(67100) << "IN  Mixer_ALSA snd_mixer_open()" << endl;
-    if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
-    {
-	kDebug(67100) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err) << endl;
-	_handle = 0;
-	return Mixer::ERR_OPEN; // if we cannot open the mixer, we have no devices
-    }
-    //kDebug(67100) << "OUT Mixer_ALSA snd_mixer_open()" << endl;
-
-    if ( ( err = snd_mixer_attach ( _handle, devName.toAscii().data() ) ) < 0 )
-    {
-	kDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
-	//errormsg( Mixer::ERR_PERM );
-	return Mixer::ERR_OPEN;
-    }
-
-    if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
-    {
-	kDebug(67100) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err) << endl;
-	//errormsg( Mixer::ERR_READ );
-	return Mixer::ERR_READ;
-    }
-
-    if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
-    {
-	kDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
-	//errormsg( Mixer::ERR_READ );
-	close();
-	return Mixer::ERR_READ;
-    }
+   if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
+   {
+      kDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
+      //errormsg( Mixer::ERR_READ );
+      close();
+      return Mixer::ERR_READ;
+   }
 
     kDebug(67100) << probeMessage << "found" << endl;
 
+    unsigned int idx = 0;
     unsigned int mixerIdx = 0;
-    unsigned int num = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ), mixerIdx++ )
     {
-	// If element is not active, just skip
-	if ( ! snd_mixer_selem_is_active ( elem ) ) {
-	    // ...but we still want to insert a null value into our mixer element
-	    // list so that the list indexes match up.
-	    //mixer_elem_list.append( 0 );
-	    //mixer_sid_list.append( 0 );
-	    continue;
-	}
+      // If element is not active, just skip
+      if ( ! snd_mixer_selem_is_active ( elem ) ) {
+         // ...but we still want to insert a null value into our mixer element
+         // list so that the list indexes match up.
+         //mixer_elem_list.append( 0 );
+         //mixer_sid_list.append( 0 );
+         continue;
+      }
 
 
-	sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
-	snd_mixer_selem_get_id( elem, sid );
+      sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());  // I believe *we* must malloc it for ourself
+      snd_mixer_selem_get_id( elem, sid );
 
-	bool canRecord = false;
-	bool canMute = false;
-	bool canCapture = false;
-	long maxVolumePlay= 0, minVolumePlay= 0;
-	long maxVolumeRec = 0, minVolumeRec = 0;
-	validDevice = true;
+      bool hasCaptureVolume  = false;
+      bool hasMuteSwitch     = false;
+      bool hasCaptureSwitch  = false;
+      bool hasCommonSwitch   = false;
+      long maxVolumePlay= 0, minVolumePlay= 0;
+      long maxVolumeRec = 0, minVolumeRec = 0;
+      validDevice = true;
 
-	snd_mixer_selem_get_playback_volume_range( elem, &minVolumePlay, &maxVolumePlay );
-	snd_mixer_selem_get_capture_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
-	// New mix device
-	MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
+      snd_mixer_selem_get_playback_volume_range( elem, &minVolumePlay, &maxVolumePlay );
+      snd_mixer_selem_get_capture_volume_range( elem, &minVolumeRec , &maxVolumeRec  );
+      // New mix device
+      MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
+      MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
 
-	    MixDevice::DeviceCategory cc = MixDevice::UNDEFINED;
+      Volume* volPlay    = new Volume();
+      Volume* volCapture = 0;
+      QList<QString*> enumList;
+      if ( snd_mixer_selem_is_enumerated(elem) ) {
+         // --- Enumerated ---
+         cc = MixDevice::ENUM;
+         addEnumerated(elem, enumList);
+      }
+      else {
+         // --- Regular control (not enumerated) ---
+         Volume::ChannelMask chn = Volume::MNONE;
+         Volume::ChannelMask chnTmp;
 
-		//kDebug(67100) << "--- Loop: name=" << snd_mixer_selem_id_get_name( sid ) << " , mixerIdx=" << mixerIdx << "------------" << endl;
+         // --- PLAYBACK
+         if ( snd_mixer_selem_has_playback_volume(elem) ) {
+            //kDebug(67100) << "has_playback_volume()" << endl;
+            // @todo looks like this supports only 2 channels here
+            chnTmp = snd_mixer_selem_is_playback_mono ( elem )
+                     ? Volume::MLEFT
+                     : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
+            chn = (Volume::ChannelMask) (chn | chnTmp);
+            cc = MixDevice::SLIDER;
+         }
 
-            Volume* volPlay = 0, *volCapture = 0;
-	    QList<QString*> enumList;
-	    if ( snd_mixer_selem_is_enumerated(elem) ) {
-		cc = MixDevice::ENUM;
-                volPlay = new Volume(); // Dummy, unused
-                volCapture = new Volume();
-		mixer_elem_list.append( elem );
-		mixer_sid_list.append( sid );
+         // --- CAPTURE
+         if ( snd_mixer_selem_has_capture_volume(elem) ) {
+            //kDebug(67100) << "has_capture_volume()" << endl;
+            // @todo looks like this supports only 2 channels here
+            chnTmp = snd_mixer_selem_is_capture_mono( elem )
+                     ? Volume::MLEFT
+                     : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT );
+            chn = (Volume::ChannelMask) (chn | chnTmp);
+            cc = MixDevice::SLIDER;
+            hasCaptureVolume = true;
+            volCapture = new Volume( chn, maxVolumeRec, minVolumeRec, true );
+         }
 
-		// --- get Enum names START ---
-		int numEnumitems = snd_mixer_selem_get_enum_items(elem);
-		if ( numEnumitems > 0 ) {
-		  // OK. no error
-		  for (int iEnum = 0; iEnum<numEnumitems; iEnum++ ) {
-		    char buffer[100];
-		    int ret = snd_mixer_selem_get_enum_item_name(elem, iEnum, 99, buffer);
-		    buffer[99] = 0; // protect from overflow
-		    if ( ret == 0 ) {
-		      QString* enumName = new QString(buffer);
-		      //enumName->append(buffer);
-		      enumList.append( enumName);
-		    } // enumName could be read successfully
-		  } // for all enum items of this device
-		} // no error in reading enum list
-		else {
-		  // 0 items or Error code => ignore this entry
-		}
-		// --- get Enum names END ---
-	    } // is an enum
+         mixer_elem_list.append( elem );
+         mixer_sid_list.append( sid );
+         idx++;
 
-	    else {
-		Volume::ChannelMask chn = Volume::MNONE;
-		Volume::ChannelMask chnTmp;
-		if ( snd_mixer_selem_has_playback_volume(elem) ) {
-			//kDebug(67100) << "has_playback_volume()" << endl;
-			chnTmp = snd_mixer_selem_is_playback_mono ( elem )
-				? Volume::MLEFT : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
-			chn = (Volume::ChannelMask) (chn | chnTmp);
-			cc = MixDevice::SLIDER;
-			volPlay = new Volume( chn, maxVolumePlay, minVolumePlay );
-		} else {
-			volPlay = new Volume();
-		}
-		if ( snd_mixer_selem_has_capture_volume(elem) ) {
-			//kDebug(67100) << "has_capture_volume()" << endl;
-			chnTmp = snd_mixer_selem_is_capture_mono( elem )
-				? Volume::MLEFT : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT );
-			chn = (Volume::ChannelMask) (chn | chnTmp);
-			cc = MixDevice::SLIDER;
-			canCapture = true;
-			volCapture = new Volume( chn, maxVolumeRec, minVolumeRec, true );
-		} else {
-			volCapture = new Volume();
-		}
+         if ( snd_mixer_selem_has_playback_switch ( elem ) ) {
+            //kDebug(67100) << "has_playback_switch()" << endl;
+            hasMuteSwitch = true;
+         }
+         if ( snd_mixer_selem_has_capture_switch ( elem ) )	{
+            //kDebug(67100) << "has_capture_switch()" << endl;
+            hasCaptureSwitch = true;
+         }
+         if ( snd_mixer_selem_has_common_switch ( elem ) ) {
+            //kDebug(67100) << "has_common_switch()" << endl;
+            hasCommonSwitch = true;
+         }
 
-		/* Create Volume object. If there is no volume on this device,
-		 * it will be created with maxVolume == 0 && minVolume == 0 */
-		mixer_elem_list.append( elem );
-		mixer_sid_list.append( sid );
-
-		if ( snd_mixer_selem_has_playback_switch ( elem ) ) {
-			//kDebug(67100) << "has_playback_switch()" << endl;
-			canMute = true;
-		}
-		if ( snd_mixer_selem_has_capture_switch ( elem ) )	{
-			//kDebug(67100) << "has_capture_switch()" << endl;
-			canRecord = true;
-		}
-		if ( snd_mixer_selem_has_common_switch ( elem ) ) {
-			//kDebug(67100) << "has_common_switch()" << endl;
-			canMute = true;
-			canRecord = true;
-		}
-
-		if ( /*snd_mixer_selem_has_common_switch ( elem ) || */
-                     cc == MixDevice::UNDEFINED )
-		{
-		    // Everything unknown is handled as switch
-		    cc = MixDevice::SWITCH;
-		}
-	    } // is ordinary mixer element (NOT an enum)
-
-               /*** generate a nice unique key, e.g. "PCM:0" or "Master:1" *******/
-                QString mdID("%1:%2");
-                mdID = mdID.arg(snd_mixer_selem_id_get_name ( sid ) )
-                          .arg(snd_mixer_selem_id_get_index( sid ) );
-                mdID.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
-		MixDevice* md =
-		    new MixDevice( mdID,
-				   *volPlay,
-				   canRecord,
-				   canMute,
-				   snd_mixer_selem_id_get_name( sid ),
-				   ct,
-				   cc );
-
-			m_mixDevices.append( md );
-			m_id2numHash[mdID] = num;
-
-        if (!masterChosen && ct==MixDevice::VOLUME) {
-           // Determine a nicer MasterVolume
-           m_recommendedMaster = md;
-           masterChosen = true;
-        }
-
-               if ( canCapture && !canRecord ) {
-/// !! Check whether it is a good idea to have "TWO" MixDevice's with the same ID.
-/// !! Also check, what to do about the m_id2numHash
-                       MixDevice *mdCapture =
-                       new MixDevice( mdID,
-                                  *volCapture,
-                                       true,
-                                  canMute,
-                                  snd_mixer_selem_id_get_name( sid ),
-                                  ct,
-                                  cc );
-                       m_mixDevices.append( mdCapture );
-               }
-
-		if ( enumList.count() > 0 ) {
-		  int maxEnumId= enumList.count();
-		  QList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
-		  for (int i=0; i<maxEnumId; i++ ) {
-		    // we have an enum. Lets set the names of the enum items in the MixDevice
-		    // the enum names are assumed to be static!
-		    enumValuesRef.append( *(enumList.at(i)) );
-		  }
-		}
-		//kDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
-               delete volPlay;
-               delete volCapture;
-    } // for all elems
+         if ( cc == MixDevice::UNDEFINED )
+         {
+            // Everything unknown is handled as switch
+            cc = MixDevice::SWITCH;
+         }
+      } // is ordinary mixer element (NOT an enum)
 
 
-    // Copy the name of kmix mixer from card name
-    // Real name of mixer is not too good
-    m_mixerName = mixer_card_name;
 
-    // return with success
-    m_isOpen = true;
+      /*** generate a nice unique key, e.g. "PCM:0" or "Master:1" *******/
+      QString mdID("%1:%2");
+      mdID = mdID.arg(snd_mixer_selem_id_get_name ( sid ) )
+                  .arg(snd_mixer_selem_id_get_index( sid ) );
+      mdID.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
+      MixDevice* md = new MixDevice(
+            mdID,
+            *volPlay,
+            hasCaptureSwitch || hasCommonSwitch,
+            hasMuteSwitch    || hasCommonSwitch,
+            snd_mixer_selem_id_get_name( sid ),
+            ct,
+            cc );
+      
+      // --- ADD admininistrative data ---------------------------------
+      m_mixDevices.append( md );
+      m_id2numHash[mdID] = idx;
+      kDebug(67100) << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx << endl;
+      mixer_elem_list.append( elem );
+      mixer_sid_list.append( sid );
+      idx++;
+      // ---------------------------------------------------------------
 
-    /* setup for select on stdin and the mixer fd */
-    if ((m_count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
-	kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  m_count << "\n";
-	return Mixer::ERR_OPEN;
-    }
 
-    kDebug(67100) << "Mixer_ALSA::prepareUpdate() 2\n";
+      // --- Enums ------------------------------------------------------
+      if ( enumList.count() > 0 ) {
+         int maxEnumId= enumList.count();
+         QList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
+         for (int i=0; i<maxEnumId; i++ ) {
+            // we have an enum. Lets set the names of the enum items in the MixDevice
+            // the enum names are assumed to be static!
+            enumValuesRef.append( *(enumList.at(i)) );
+         }
+      }
 
-    m_fds = (struct pollfd*)calloc(m_count, sizeof(struct pollfd));
-    if (m_fds == NULL) {
-	kDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
-        return Mixer::ERR_OPEN;
-    }
 
-    m_fds->events = POLLIN;
-    if ((err = snd_mixer_poll_descriptors(_handle, m_fds, m_count)) < 0) {
-	kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
-        return Mixer::ERR_OPEN;
-    }
-    if (err != m_count) {
-	kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  m_count << "\n";
-        return Mixer::ERR_OPEN;
-    }
+      // --- Recommended master ----------------------------------------
+      if (!masterChosen && ct==MixDevice::VOLUME) {
+         // Determine a nicer MasterVolume
+         m_recommendedMaster = md;
+         masterChosen = true;
+      }
 
-    return 0;
+      // --- Capture Device --------------------------------------------
+      if ( hasCaptureVolume && !hasCaptureSwitch ) {
+/// @todo Check whether it is a good idea to have "TWO" MixDevice's with the same ID.
+/// @todo Check, what to do about the m_id2numHash
+         MixDevice *mdCapture = new MixDevice(
+               mdID,
+               *volCapture,
+               hasCaptureSwitch || hasCommonSwitch,
+               hasMuteSwitch    || hasCommonSwitch,
+               snd_mixer_selem_id_get_name( sid ),
+               ct,
+               cc );
+               m_mixDevices.append( mdCapture );
+      }
+
+      //kDebug(67100) << "ALSA create MDW, vol= " << *vol << endl;
+      delete volPlay;
+      delete volCapture;
+   } // for all elems
+
+
+   // Copy the name of kmix mixer from card name
+   // Real name of mixer is not too good
+   m_mixerName = mixer_card_name;
+
+   m_isOpen = true; // return with success
+
+   /* setup for select on stdin and the mixer fd */
+   if ((m_count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
+      kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  m_count << "\n";
+      return Mixer::ERR_OPEN;
+   }
+
+
+   m_fds = (struct pollfd*)calloc(m_count, sizeof(struct pollfd));
+   if (m_fds == NULL) {
+      kDebug(67100) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
+      return Mixer::ERR_OPEN;
+   }
+
+   m_fds->events = POLLIN;
+   if ((err = snd_mixer_poll_descriptors(_handle, m_fds, m_count)) < 0) {
+      kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
+      return Mixer::ERR_OPEN;
+   }
+   if (err != m_count) {
+      kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  m_count << "\n";
+      return Mixer::ERR_OPEN;
+   }
+
+   return 0;
 }
+
+void Mixer_ALSA::addEnumerated(snd_mixer_elem_t *elem, QList<QString*>& enumList)
+{
+   // --- get Enum names START ---
+   int numEnumitems = snd_mixer_selem_get_enum_items(elem);
+   if ( numEnumitems > 0 ) {
+      // OK. no error
+      for (int iEnum = 0; iEnum<numEnumitems; iEnum++ ) {
+         char buffer[100];
+         int ret = snd_mixer_selem_get_enum_item_name(elem, iEnum, 99, buffer);
+         buffer[99] = 0; // protect from overflow
+         if ( ret == 0 ) {
+            QString* enumName = new QString(buffer);
+            enumList.append( enumName);
+         } // enumName could be read successfully
+      } // for all enum items of this device
+   } // no error in reading enum list
+   else {
+      // 0 items or Error code => ignore this entry
+   }
+}
+
 
 void Mixer_ALSA::prepareSignalling( Mixer *mixer )
 {
@@ -396,7 +401,7 @@ void Mixer_ALSA::prepareSignalling( Mixer *mixer )
     m_sns = new QSocketNotifier*[m_count];
     for ( int i = 0; i < m_count; ++i )
     {
-        kDebug() << "socket " << i << endl;
+        kDebug(67100) << "socket " << i << endl;
         m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
         mixer->connect(m_sns[i], SIGNAL(activated(int)), mixer, SLOT(readSetFromHW()));
     }
@@ -482,11 +487,13 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
 }
 
 int Mixer_ALSA::id2num(const QString& id) {
-	int num = -1;
-	if ( m_id2numHash.contains(id) ) {
-		num = m_id2numHash[id];
-	}
-	return num;
+   kDebug(67100) << "id2num() id=" << id << endl;
+   int num = -1;
+   if ( m_id2numHash.contains(id) ) {
+      num = m_id2numHash[id];
+   }
+   kDebug(67100) << "id2num() num=" << num << endl;
+   return num;
 }
 
 bool Mixer_ALSA::prepareUpdateFromHW() {

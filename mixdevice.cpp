@@ -68,10 +68,10 @@ MixDevice::MixDevice(const MixDevice &md) : QObject()
 }
 
 MixDevice::~MixDevice() {
-  // Clear MixDevices enum Strings (switch on auto-delete, so the QString's inside will be cleared)
-  // Not needed anymore, as we store QString's, not pointers
-  //_enumValues.setAutoDelete(true);
-  _enumValues.clear();
+   // Clear MixDevices enum Strings (switch on auto-delete, so the QString's inside will be cleared)
+   // Not needed anymore, as we store QString's, not pointers
+   //_enumValues.setAutoDelete(true);
+   _enumValues.clear();
 }
 
 Volume& MixDevice::getVolume()
@@ -80,42 +80,42 @@ Volume& MixDevice::getVolume()
 }
 
 long MixDevice::getVolume(Volume::ChannelID chid) {
-    return _volume.getVolume(chid);
+   return _volume.getVolume(chid);
 }
 
 long MixDevice::maxVolume() {
-    return _volume.maxVolume();
+   return _volume.maxVolume();
 }
 
 long MixDevice::minVolume() {
-    return _volume.minVolume();
+   return _volume.minVolume();
 }
 
 void MixDevice::setEnumId(int enumId)
 {
-  if ( enumId < _enumValues.count() ) {
-    _enumCurrentId = enumId;
-  }
+   if ( enumId < _enumValues.count() ) {
+      _enumCurrentId = enumId;
+   }
 }
 
 unsigned int MixDevice::enumId()
 {
-  return _enumCurrentId;
+   return _enumCurrentId;
 }
 
 QList<QString>& MixDevice::enumValues() {
-  return _enumValues;
+   return _enumValues;
 }
 
 
 // @todo Used only at mixdevicewidget.cpp:625 . Replace that ASAP  !!!
 void MixDevice::setVolume( int channel, int volume )
 {
-  _volume.setVolume( (Volume::ChannelID)channel /* ARGH! */, volume );
+   _volume.setVolume( (Volume::ChannelID)channel /* ARGH! */, volume );
 }
 
 QString& MixDevice::id() {
-    return _id;
+   return _id;
 }
 
 /**

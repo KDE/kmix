@@ -136,6 +136,25 @@ long Volume::minVolume() {
   return _minVolume;
 }
 
+int Volume::percentage(long absoluteVolume)
+{
+   int relativeVolume = 0;
+   if ( _maxVolume == 0 )
+      return 0;
+
+   if ( absoluteVolume > _maxVolume )
+      relativeVolume = 100;
+   else if ( absoluteVolume < _minVolume )
+      relativeVolume = -100;
+   else if ( absoluteVolume > 0 )
+      relativeVolume = ( 100*absoluteVolume) / _maxVolume;
+   else if ( absoluteVolume < 0 )
+      relativeVolume = ( 100*absoluteVolume) / _minVolume;
+
+   return relativeVolume;
+}
+
+
 // @ compatibility
 long Volume::operator[](int id) {
   return getVolume( (Volume::ChannelID) id );

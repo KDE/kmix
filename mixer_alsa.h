@@ -33,46 +33,48 @@ class QSocketNotifier;
 
 class Mixer_ALSA : public Mixer_Backend
 {
-	public:
-		Mixer_ALSA( int device = -1 );
-		~Mixer_ALSA();
-		
-		virtual int  readVolumeFromHW( const QString& id, Volume &vol );
-		virtual int  writeVolumeToHW( const QString& id, Volume &vol );
-		virtual bool setRecsrcHW( const QString& id, bool on);
-		virtual bool isRecsrcHW( const QString& id );
-	        virtual void setEnumIdHW( const QString& id, unsigned int);
-      		virtual unsigned int enumIdHW(const QString& id);
-		virtual bool prepareUpdateFromHW();
+   public:
+      Mixer_ALSA( int device = -1 );
+      ~Mixer_ALSA();
 
-                virtual bool needsPolling() { return false; }
-                virtual void prepareSignalling( Mixer *mixer );
+      virtual int  readVolumeFromHW( const QString& id, Volume &vol );
+      virtual int  writeVolumeToHW( const QString& id, Volume &vol );
+      virtual bool setRecsrcHW( const QString& id, bool on);
+      virtual bool isRecsrcHW( const QString& id );
+      virtual void setEnumIdHW( const QString& id, unsigned int);
+      virtual unsigned int enumIdHW(const QString& id);
+      virtual bool prepareUpdateFromHW();
 
-		virtual QString getDriverName();
-		
-	protected:
-		virtual int open();
-		virtual int close();
-		int id2num(const QString& id);
-		
-	private:
-		int identify( snd_mixer_selem_id_t *sid );
-		snd_mixer_elem_t* getMixerElem(int devnum);
+      virtual bool needsPolling() { return false; }
+      virtual void prepareSignalling( Mixer *mixer );
+      virtual QString getDriverName();
 
-		virtual QString errorText(int mixer_error);
-		typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;
-		AlsaMixerSidList mixer_sid_list;
-		typedef QList<snd_mixer_elem_t *> AlsaMixerElemList;
-		AlsaMixerElemList mixer_elem_list;
-		typedef QHash<QString,int> Id2numHash;
-		Id2numHash m_id2numHash;
+   protected:
+      virtual int open();
+      virtual int close();
+      int id2num(const QString& id);
 
-                bool _initialUpdate;
-		snd_mixer_t *_handle;
-		QString devName;
-	        struct pollfd  *m_fds;
-                QSocketNotifier **m_sns;
-		int m_count;
+   private:
+
+      void addEnumerated(snd_mixer_elem_t *elem, QList<QString*>&);
+
+      int identify( snd_mixer_selem_id_t *sid );
+      snd_mixer_elem_t* getMixerElem(int devnum);
+
+      virtual QString errorText(int mixer_error);
+      typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;
+      AlsaMixerSidList mixer_sid_list;
+      typedef QList<snd_mixer_elem_t *> AlsaMixerElemList;
+      AlsaMixerElemList mixer_elem_list;
+      typedef QHash<QString,int> Id2numHash;
+      Id2numHash m_id2numHash;
+
+      bool _initialUpdate;
+      snd_mixer_t *_handle;
+      QString devName;
+      struct pollfd  *m_fds;
+      QSocketNotifier **m_sns;
+      int m_count;
 };
 
 #endif

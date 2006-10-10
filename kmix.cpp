@@ -56,18 +56,18 @@
 #include "kmixtoolbox.h"
 
 
-/*KMixWindowu
+/* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
    : KMainWindow(0),
    m_showTicks( true ),
+   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
    m_visibilityUpdateAllowed( true ),
-   m_dockWidget(),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_surroundView (false), // -<- Also the experimental surround View (3D)
-   m_gridView (false),  // -<- Also the experimental Grid View
-   m_isVisible (false) // initialize, as we don't trigger a hideEvent()
+   m_gridView (false),      // -<- Also the experimental Grid View
+   m_dockWidget()
 {
    setObjectName("KMixWindow");
 
@@ -342,7 +342,7 @@ void KMixWindow::recreateGUI()
 void KMixWindow::initMixerWidgets()
 {
    clearMixerWidgets();
-   QString s = i18n("No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
+   QString s = i18n("Please plug in your soundcard.No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
    m_errorLabel = new QLabel( s,this  );
    m_errorLabel->setAlignment( Qt::AlignCenter );
    m_errorLabel->setWordWrap(true);

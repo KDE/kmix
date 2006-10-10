@@ -30,9 +30,10 @@ class Volume
  public:
   enum ChannelMask { MNONE     = 0,
                      MLEFT     = 1, MRIGHT     =   2, MCENTER =  4,
-                     MMAIN     = 3, MFRONT    = 7,
+                     MMAIN     = 3, MFRONT     =   7,
                      MREARLEFT = 8, MREARRIGHT =  16, MWOOFER = 32,
                      MREAR     = 56,
+                     MPLAYBACK = 63,
                      MLEFTREC  = 64, MRIGHTREC = 128,
                      MREC      =192,
                      MCUSTOM1  =256, MCUSTOM2  = 512,
@@ -66,6 +67,7 @@ class Volume
   long operator[](int);
   long maxVolume();
   long minVolume();
+  int  percentage(long );
   int  count();
 
   void setMuted( bool val ) { _muted = val; };

@@ -53,7 +53,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    void ignoreNextEvent();
    ViewDockAreaPopup* getDockAreaPopup();
 
-	Mixer *m_mixer;
+   Mixer *m_mixer;
    ViewDockAreaPopup *_dockAreaPopup;
    Phonon::AudioPlayer *_audioPlayer;
 

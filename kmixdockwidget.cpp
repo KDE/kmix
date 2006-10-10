@@ -213,35 +213,41 @@ KMixDockWidget::setVolumeTip()
 void
 KMixDockWidget::updatePixmap()
 {
-    MixDevice *md = 0;
-    if ( _dockAreaPopup != 0 ) {
-        md = _dockAreaPopup->dockDevice();
-    }
-    char newPixmapType;
-    if ( md == 0 )
-    {
-	newPixmapType = 'e';
-    }
-    else if ( md->isMuted() )
-    {
-	newPixmapType = 'm';
-    }
-    else
-    {
-	newPixmapType = 'd';
-    }
+   MixDevice *md = 0;
+   if ( _dockAreaPopup != 0 ) {
+      md = _dockAreaPopup->dockDevice();
+   }
+   char newPixmapType;
+   if ( md == 0 )
+   {
+      newPixmapType = 'e';
+   }
+   else if ( md->isMuted() )
+   {
+      newPixmapType = 'm';
+   }
+   else
+   {
+      long absoluteVolume    = md->getVolume().getAvgVolume(Volume::MPLAYBACK);
+      int percentage         = md->getVolume().percentage(absoluteVolume);
+      if      ( percentage < 25 ) newPixmapType = '1';  // Hint: also negative-values
+      else if ( percentage < 75 ) newPixmapType = '2';
+      else                        newPixmapType = '3';
+   }
 
 
-    if ( newPixmapType != _oldPixmapType ) {
-	// Pixmap must be changed => do so
-	switch ( newPixmapType ) {
-	case 'e': setIcon( loadIcon( "kmixdocked_error" ) ); break;
-	case 'm': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;
-	case 'd': setIcon( loadIcon( "kmixdocked"       ) ); break;
-	}
-    }
+   if ( newPixmapType != _oldPixmapType ) {
+      // Pixmap must be changed => do so
+      switch ( newPixmapType ) {
+         case 'e': setIcon( loadIcon( "kmixdocked_error" ) ); break;
+         case 'm': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;
+         case '1': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;  // @todo
+         case '2': setIcon( loadIcon( "kmixdocked_error" ) ); break;  // @todo
+         case '3': setIcon( loadIcon( "kmixdocked"       ) ); break;
+      }
+   }
 
-    _oldPixmapType = newPixmapType;
+   _oldPixmapType = newPixmapType;
 }
 
 void

@@ -30,13 +30,24 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   std::cerr << "--- before getting dm ---\n";
   Solid::DeviceManager& dm = Solid::DeviceManager::self();
   std::cerr << "--- before dm.allDevices() ---\n";
-  Solid::DeviceList dl = dm.allDevices();
-//  Solid::DeviceList dl = dm.findDevicesFromQuery("/org/kde/solid/fake/pc", Solid::Capability::AudioIface );
+//  Solid::DeviceList dl = dm.allDevices();
+  Solid::DeviceList dl = dm.findDevicesFromQuery("/", Solid::Capability::AudioHw );
   
 
   std::cerr << "--- before dl.first() ---\n";
-  Solid::Device dev = dl.first();
-  //std::cerr << "First device is: " << dev ; 
+
+   bool details = false;
+   foreach ( Solid::Device device, dl )
+   {
+      std::cout << "udi = '"
+<< device.udi().toUtf8().data()
+<< "'\n";
+      if ( details )
+      {
+         QMap<QString,QVariant> properties = device.allProperties();
+         //std::cout << properties << "\n";
+      }
+   }
 
   return 0;
 }
