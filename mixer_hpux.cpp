@@ -25,8 +25,7 @@
 
 #include "mixer_hpux.h"
 
-#error "The HP/UX port is not maintained anymore, an no official part of KMix / KDE at this point of time! Please
-contact the current KMix maintainer if you would like to maintain the port."
+#error "The HP/UX port is not maintained anymore, an no official part of KMix / KDE at this point of time! Please contact the current KMix maintainer if you would like to maintain the port."
 
 #define HPUX_ERROR_OFFSET 1024
 
