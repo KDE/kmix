@@ -46,7 +46,7 @@ set(kmix_KDEINIT_SRCS
    dialogselectmaster.cpp 
    guiprofile.cpp )
 
-kde4_automoc(kmix ${kmix_KDEINIT_SRCS})
+kde4_automoc(${kmix_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
@@ -74,7 +74,7 @@ set(kmixctrl_KDEINIT_SRCS
    mixer_backend.cpp 
    guiprofile.cpp )
 
-kde4_automoc(kmixctrl ${kmixctrl_KDEINIT_SRCS})
+kde4_automoc(${kmixctrl_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
@@ -95,7 +95,7 @@ install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
 set(kmixd_KMIXD_SRCS
    kmixdevicemanager.cpp )
 
-kde4_automoc(kmixd_KMIXD ${kmixd_KMIXD_SRCS})
+kde4_automoc(${kmixd_KMIXD_SRCS})
 
 
 kde4_add_kdeinit_executable( kmixd ${kmixd_KMIXD_SRCS})
@@ -138,7 +138,7 @@ set(kmix_panelapplet_PART_SRCS
    dialogselectmaster.cpp 
    guiprofile.cpp )
 
-kde4_automoc(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
+kde4_automoc(${kmix_panelapplet_PART_SRCS})
 
 kde4_add_ui3_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
 
@@ -173,7 +173,7 @@ install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 if(KDE4_BUILD_TESTS)
 set(profiletest_SRCS tests/profiletest.cpp )
 
-kde4_automoc(profiletest ${profiletest_SRCS})
+kde4_automoc(${profiletest_SRCS})
 
 kde4_add_executable(profiletest ${profiletest_SRCS} 
     guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp mixer_backend.cpp mixset.cpp
