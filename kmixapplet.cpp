@@ -54,7 +54,6 @@
 #include <kstandarddirs.h>
 
 // // KMix
-#include "colorwidget.h"
 #include "mixertoolbox.h"
 #include "kmixapplet.h"
 #include "kmixtoolbox.h"

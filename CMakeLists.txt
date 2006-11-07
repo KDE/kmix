@@ -140,7 +140,7 @@ set(kmix_panelapplet_PART_SRCS
 
 kde4_automoc(${kmix_panelapplet_PART_SRCS})
 
-kde4_add_ui3_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
+kde4_add_ui_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
 
 
 kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})

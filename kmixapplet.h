@@ -33,10 +33,19 @@
 
 //KMix
 #include "viewapplet.h"
+#include "ui_colorwidget.h"
 
 class Mixer;
-class ColorWidget;
 class KMixApplet;
+
+class ColorWidget : public QWidget, public Ui::ColorWidget
+{
+public:
+  ColorWidget( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
 
 
 class AppletConfigDialog : public KDialog
