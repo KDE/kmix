@@ -60,7 +60,7 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw, const char* name) :
     MixDeviceWidget(mixer,md,small,orientation,parent,mw,name),
-    m_linked(true), m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
+    m_linked(true), m_valueStyle( NNONE), m_iconLabel( 0 ), m_muteLED( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
 
