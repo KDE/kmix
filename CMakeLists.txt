@@ -145,7 +145,7 @@ kde4_add_ui_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
 
 kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kmix_panelapplet )
+
 
 target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} kickermain ${QT_QTXML_LIBRARY} )
 
