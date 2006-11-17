@@ -38,7 +38,6 @@
 #include <QDesktopWidget>
 #include <QToolTip>
 #include <QMouseEvent>
-#include <X11/Xlib.h>
 #include <fixx11h.h>
 #include <phonon/audioplayer.h>
 
