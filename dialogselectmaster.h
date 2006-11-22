@@ -21,11 +21,11 @@
 #ifndef DIALOGSELECTMASTER_H
 #define DIALOGSELECTMASTER_H
 
-class Q3ButtonGroup;
+class QButtonGroup;
 class KComboBox;
 #include <qradiobutton.h>
 class Q3ScrollView;
-#include <qstringlist.h>
+//#include <qstringlist.h>
 #include <kvbox.h>
 class QVBoxLayout;
 
@@ -53,8 +53,8 @@ class DialogSelectMaster : public KDialog
     KComboBox* m_cMixer;
     Q3ScrollView* m_scrollableChannelSelector;
     KVBox *m_vboxForScrollView;
-    Q3ButtonGroup *m_buttonGroupForScrollView;
-    QStringList m_mixerPKs;
+    QButtonGroup *m_buttonGroupForScrollView;
+    //QStringList m_mixerPKs;
 
  private slots:
    void createPageByID(int mixerId);

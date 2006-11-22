@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <q3buttongroup.h>
+#include <qbuttongroup.h>
 #include <QLayout>
 #include <QLabel>
 #include <qradiobutton.h>
@@ -107,8 +107,8 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     m_scrollableChannelSelector->viewport()->setBackgroundRole(QPalette::Background);
     _layout->addWidget(m_scrollableChannelSelector);
 
-    m_buttonGroupForScrollView = new Q3ButtonGroup(this); // invisible QButtonGroup
-    m_buttonGroupForScrollView->hide();
+    m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
+    //m_buttonGroupForScrollView->hide();
 
     createPage(ptr_mixer);
     connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
@@ -145,7 +145,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
      */
     // delete the VBox. This should automatically remove all contained QRadioButton's.
     delete m_vboxForScrollView;
-    m_mixerPKs.clear();
+    //m_mixerPKs.clear();
     /** Reset page end -------------------------------------------------- */
 
     m_vboxForScrollView = new KVBox(m_scrollableChannelSelector->viewport());
@@ -166,9 +166,10 @@ void DialogSelectMaster::createPage(Mixer* mixer)
             QString mdName = md->name();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
 	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
-	    m_buttonGroupForScrollView->insert(qrb);  //(qrb, md->num());
+       qrb->setObjectName(md->id());  // The object name is used as ID here: see apply()
+	    m_buttonGroupForScrollView->addButton(qrb);  //(qrb, md->num());
 	    //_qEnabledCB.append(qrb);
-            m_mixerPKs.push_back(md->id());
+       //m_mixerPKs.push_back(md->id());
 	    if ( md->id() == masterKey ) {
 	      qrb->setChecked(true); // preselect the current master
 	    }
@@ -188,19 +189,20 @@ void DialogSelectMaster::apply()
    if ( Mixer::mixers().count() > 1 ) {
      soundcard_id = m_cMixer->currentIndex();
    }
-   int channel_id = m_buttonGroupForScrollView->selectedId();
-   if ( channel_id != -1 ) {
-     // A channel was selected by the user => emit the "newMasterSelected()" signal
-     //kDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
-     Mixer *mixer = Mixer::mixers().at(soundcard_id);
-     if ( mixer == 0 ) {
-       kError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << soundcard_id << ")" << endl;
-       return; // can not happen
-     }
-     else {
-        mixer->setMasterDevice( m_mixerPKs[channel_id] );
-        emit newMasterSelected(soundcard_id, m_mixerPKs[channel_id] );
-     }
+   QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
+   if ( button != 0 ) {
+      QString channel_id = button->objectName();
+      // A channel was selected by the user => emit the "newMasterSelected()" signal
+      //kDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
+      Mixer *mixer = Mixer::mixers().at(soundcard_id);
+      if ( mixer == 0 ) {
+         kError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << soundcard_id << ")" << endl;
+         return; // can not happen
+      }
+      else {
+         mixer->setMasterDevice( channel_id );
+         emit newMasterSelected( soundcard_id, channel_id );
+      }
    }
 }
 
