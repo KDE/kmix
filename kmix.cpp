@@ -266,9 +266,8 @@ void KMixWindow::loadBaseConfig()
    m_gridView    = config->readEntry("Experimental-ViewGrid", false );
    const QString& orientationString = config->readEntry("Orientation", "Horizontal");
    QString mixerMasterCard = config->readEntry( "MasterMixer", "" );
-   Mixer::setMasterCard(mixerMasterCard);
    QString masterDev = config->readEntry( "MasterMixerDevice", "" );
-   Mixer::setMasterCardDevice(masterDev);
+   Mixer::setGlobalMaster(mixerMasterCard, masterDev);
 
 
    if ( orientationString == "Vertical" )

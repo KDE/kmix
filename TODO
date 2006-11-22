@@ -20,6 +20,15 @@ Status: Pending
 5) Move balance slider out of bottom and make it a virtual control.
 Status: Pending
 
+6) Change everything in the source code to a consistent terminology:
+   The piece of hardware is now called:                  Card
+   The devices/slider/controllable-thingy is now called: Control
+Status: pending
+
+7) Several bug reports, including the Audigy stuff.
+Status: Always pending, but ongoing
+
+
 ------------------------------------------------------------------------------------
 
 Bug2 in KMix2.1pre:

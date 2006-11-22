@@ -109,7 +109,6 @@ void Mixer_Backend::errormsg(int mixer_error)
 
 int Mixer_Backend::id2num(const QString& id)
 {
-#warning This is wrong for the ALSA backend
    return id.toInt();
 }
 

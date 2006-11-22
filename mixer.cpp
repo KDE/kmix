@@ -151,16 +151,17 @@ void Mixer::volumeLoad( KConfig *config )
  *
  * @return 0, if OK. An Mixer::ERR_ error code otherwise
  */
-int Mixer::open()
-{
-      int err = _mixerBackend->open();
+bool Mixer::openIfValid() {
+   bool ok = _mixerBackend->openIfValid();
+   if ( ok ) {
       // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
-      // but we want a somhow usable fallback just in case.
+      // but we want a somehow usable fallback just in case.
       _id = baseName();
 
       MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
       if ( recommendedMaster != 0 ) {
          setMasterDevice(recommendedMaster->id() );
+         kDebug() << "Mixer::open() detected master: " << recommendedMaster->id() << endl;
       }
       else {
          kError(67100) << "Mixer::open() no master detected." << endl;
@@ -176,8 +177,9 @@ int Mixer::open()
            // poll once to give the GUI a chance to rebuild it's info
            QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
        }
+   } // cold be opened
 
-      return err;
+   return ok;
 }
 
 
@@ -212,9 +214,6 @@ MixSet Mixer::getMixSet()
   return _mixerBackend->m_mixDevices;
 }
 
-bool Mixer::openIfValid() {
-  return _mixerBackend->openIfValid();
-}
 
 /**
  * Returns the driver name, that handles this Mixer.
@@ -350,13 +349,15 @@ QString& Mixer::id()
   return _id;
 }
 
-void Mixer::setMasterCard(QString& ref_id)
+void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
 {
   // The value is taken over without checking on existence. This allows the User to define
   // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
   // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
   // and before actually constructing the Mixer instances (hint: this mehtod is static!).
-  _masterCard = ref_id;
+  _masterCard       = ref_card;
+  _masterCardDevice = ref_control;
+  kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control << endl;
 }
 
 Mixer* Mixer::masterCard()
@@ -366,19 +367,12 @@ Mixer* Mixer::masterCard()
   {
      mixer = Mixer::mixers()[i];
      if ( mixer != 0 && mixer->id() == _masterCard ) {
+        kDebug() << "Mixer::masterCard() found " << _masterCard << endl;
         break;
      }
   }
+  kDebug() << "Mixer::masterCard() returns " << mixer << endl;
   return mixer;
-}
-
-void Mixer::setMasterCardDevice(QString& ref_id)
-{
-  // The value is taken over without checking on existence. This allows the User to define
-  // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
-  // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
-  // and before actually constructing the Mixer instances (hint: this mehtod is static!).
-  _masterCardDevice = ref_id;
 }
 
 MixDevice* Mixer::masterCardDevice()
@@ -390,9 +384,11 @@ MixDevice* Mixer::masterCardDevice()
    {
        md = mixer->_mixerBackend->m_mixDevices[i];
        if ( md->id() == _masterCardDevice )
+          kDebug() << "Mixer::masterCardDevice() found " << _masterCardDevice << endl;
           break;
      }
   }
+  kDebug() << "Mixer::masterCardDevice() returns " << md << endl;
   return md;
 }
 

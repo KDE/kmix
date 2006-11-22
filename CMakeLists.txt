@@ -93,6 +93,7 @@ install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
 ########### next target ###############
 
 set(kmixd_KMIXD_SRCS
+   kmixd.cpp
    kmixdevicemanager.cpp )
 
 kde4_automoc(${kmixd_KMIXD_SRCS})

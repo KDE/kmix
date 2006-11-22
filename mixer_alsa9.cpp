@@ -487,12 +487,12 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
 }
 
 int Mixer_ALSA::id2num(const QString& id) {
-   kDebug(67100) << "id2num() id=" << id << endl;
+   //kDebug(67100) << "id2num() id=" << id << endl;
    int num = -1;
    if ( m_id2numHash.contains(id) ) {
       num = m_id2numHash[id];
    }
-   kDebug(67100) << "id2num() num=" << num << endl;
+   //kDebug(67100) << "id2num() num=" << num << endl;
    return num;
 }
 
@@ -701,7 +701,6 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, Volume &volume )
 	int elem_sw;
 	long left, right;
 
-#warning Must translate from id to mixerIdx here
 	snd_mixer_elem_t *elem = getMixerElem( devnum );
 	if ( !elem )
 	{

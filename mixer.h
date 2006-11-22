@@ -61,7 +61,6 @@ class Mixer : public QObject
        /// Tells the number of the mixing devices
       unsigned int size() const;
 
-      bool openIfValid();
 
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);
@@ -72,7 +71,8 @@ class Mixer : public QObject
       MixDevice *getMixdeviceById( const QString& deviceID );
 
       /// Open/grab the mixer for further intraction
-      virtual int open();
+      bool openIfValid();
+
       /// Close/release the mixer
       virtual int close();
 
@@ -100,10 +100,9 @@ class Mixer : public QObject
       /// The KMix global master card. Please note that KMix and KMixPanelApplet can have a
       /// different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
       /// At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
-      static void setMasterCard(QString& ref_id);
+      static void setGlobalMaster(QString& ref_card, QString& ref_control);
       static Mixer* masterCard();
       /// The global Master Device inside the current MasterCard (as returned by masterCard()).
-      static void setMasterCardDevice(QString& ref_id);
       static MixDevice* masterCardDevice();
 
 

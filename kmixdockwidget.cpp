@@ -154,17 +154,16 @@ void KMixDockWidget::selectMaster()
 }
 
 
-void KMixDockWidget::handleNewMaster(int soundcard_id, QString& channel_id)
+void KMixDockWidget::handleNewMaster(int soundcard_id, QString& control_id)
 {
-  //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , channel_id=" << channel_id << endl;
+  //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id << endl;
   Mixer *mixer = Mixer::mixers().at(soundcard_id);
   if ( mixer == 0 ) {
     kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
     return; // can not happen
   }
   m_mixer = mixer;
-  Mixer::setMasterCard(mixer->id()); // We must save this information "somewhere".
-  Mixer::setMasterCardDevice( channel_id );
+  Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
   createMasterVolWidget();
 }
 
