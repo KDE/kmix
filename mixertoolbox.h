@@ -42,7 +42,7 @@ class MixerToolBox : public QObject
       static MixerToolBox* instance();
       void initMixer(bool, QString&);
       void deinitMixer();
-      Mixer* find( QString mixer_id);
+      Mixer* find( const QString& mixer_id);
 
       GUIProfile* selectProfile(Mixer*);
 

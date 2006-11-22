@@ -236,7 +236,7 @@ void MixerToolBox::deinitMixer()
 /*
  * Clean up and free all resources of all found Mixers, which were found in the initMixer() call
  */
-Mixer* MixerToolBox::find( QString mixer_id)
+Mixer* MixerToolBox::find( const QString& mixer_id)
 {
    //kDebug(67100) << "IN MixerToolBox::find()"<<endl;
 

@@ -1,8 +1,10 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
- * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
+ * Copyright 1996-2000 Christian Esken
+ * Copyright 2000-2003 Christian Esken, Stefan Schimanski
+ * Copyright 2002-2007 Christian Esken, Helio Chissini de Castro
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -140,7 +142,7 @@ void KMixWindow::initWidgets()
 
 /**
  * Updates the docking icon by recreating it.
- * @returns Whether the docking succeded. Failure usually means that there
+ * @returns Whether the docking succeeded. Failure usually means that there
  *    was no suitable mixer control selected.
  */
 bool KMixWindow::updateDocking()
@@ -242,7 +244,7 @@ void KMixWindow::saveVolumes()
 void KMixWindow::loadConfig()
 {
    loadBaseConfig();
-   //loadViewConfig(); // mw->loadConfig() explicitely called always after creating mw.
+   //loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
    //loadVolumes(); // not in use
 }
 

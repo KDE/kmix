@@ -30,7 +30,7 @@
 class Mixer_SUN : public Mixer_Backend
 {
 public:
-  Mixer_SUN(int devnum);
+  Mixer_SUN(int devnum=0);
   virtual ~Mixer_SUN();
 
   virtual QString errorText(int mixer_error);

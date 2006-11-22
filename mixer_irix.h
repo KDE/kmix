@@ -29,7 +29,7 @@
 class Mixer_IRIX : public Mixer_Backend
 {
 public:
-  Mixer_IRIX(int devnum);
+  Mixer_IRIX(int devnum=0);
   virtual ~Mixer_IRIX();
 
   virtual void setRecsrc(unsigned int newRecsrc);

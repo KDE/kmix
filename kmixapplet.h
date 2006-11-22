@@ -41,7 +41,7 @@ class KMixApplet;
 class ColorWidget : public QWidget, public Ui::ColorWidget
 {
 public:
-  ColorWidget( QWidget *parent ) : QWidget( parent ) {
+  ColorWidget( QWidget *parent=0 ) : QWidget( parent ) {
     setupUi( this );
   }
 };

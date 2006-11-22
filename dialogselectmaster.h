@@ -37,7 +37,7 @@ class DialogSelectMaster : public KDialog
 {
     Q_OBJECT
  public:
-    DialogSelectMaster(Mixer *);
+    DialogSelectMaster(Mixer * = 0);
     ~DialogSelectMaster();
 
  signals:

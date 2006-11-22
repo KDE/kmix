@@ -31,8 +31,6 @@ class KSmallSlider : public QAbstractSlider
       Q_OBJECT
 
    public:
-//      KSmallSlider( QWidget *parent, const char *name=0 );
-//      KSmallSlider( Qt::Orientation, QWidget *parent, const char *name=0 );
       KSmallSlider( int minValue, int maxValue, int pageStep, int value,
         Qt::Orientation, QWidget *parent, const char *name=0 );
 

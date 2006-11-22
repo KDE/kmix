@@ -33,7 +33,7 @@
 class Mixer_HPUX : public Mixer_Backend
 {
 public:
-  Mixer_HPUX(int devnum);
+  Mixer_HPUX(int devnum=0);
   virtual ~Mixer_HPUX();
 
   virtual QString errorText(int mixer_error);

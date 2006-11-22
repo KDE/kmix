@@ -35,20 +35,6 @@
 #include "kglobalsettings.h"
 #include "ksmallslider.h"
 
-/*
-KSmallSlider::KSmallSlider( QWidget *parent, const char *name )
-    : QAbstractSlider( parent ),  orientation()(  Qt::Vertical )
-{
-    init();
-}
-
-KSmallSlider::KSmallSlider(  Qt::Orientation orientation, QWidget *parent, const char *name )
-    : QAbstractSlider( parent ), orientation()( orientation )
-{
-    init();
-}
-*/
-
 KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,
                   int value, Qt::Orientation orientation,
                   QWidget *parent, const char * /*name*/ )

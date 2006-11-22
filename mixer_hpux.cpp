@@ -2,11 +2,8 @@
  *              KMix -- KDE's full featured mini mixer
  *
  *
- *              Copyright (C) 1996-2000 Christian Esken
- *                        esken@kde.org
- *
- * HP/UX-Port:	Copyright (C) 1999 by Helge Deller
- *			  deller@gmx.de
+ *              Copyright (C) 1996-2000 Christian Esken <esken@kde.org>
+ * HP/UX-Port:	Copyright (C) 1999 by Helge Deller <deller@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
