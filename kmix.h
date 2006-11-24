@@ -121,7 +121,7 @@ KMixWindow : public KMainWindow
 
   private slots:
    void slotHWInfo();
-   void addMixerWidget(QString);
+   void addMixerWidget(const QString&);
 };
 
 #endif // KMIX_H

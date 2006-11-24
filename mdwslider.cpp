@@ -308,7 +308,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
       } // has no Record LED
    } // showRecordLED
 
-   layout()->activate(); // Activate it explicitely in KDE3 becaus auf PanelApplet/kicker issues
+   layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
 }
 
 

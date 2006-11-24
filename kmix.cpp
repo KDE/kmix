@@ -1,9 +1,9 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * Copyright 1996-2000 Christian Esken
- * Copyright 2000-2003 Christian Esken, Stefan Schimanski
- * Copyright 2002-2007 Christian Esken, Helio Chissini de Castro
+ * Copyright 1996-2000 Christian Esken <esken@kde.org>
+ * Copyright 2000-2003 Christian Esken <esken@kde.org>, Stefan Schimanski <1Stein@gmx.de>
+ * Copyright 2002-2007 Christian Esken <esken@kde.org>, Helio Chissini de Castro <helio@conectiva.com.br>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -363,7 +363,7 @@ void KMixWindow::clearMixerWidgets()
 
 
 
-void KMixWindow::addMixerWidget(QString mixer_ID)
+void KMixWindow::addMixerWidget(const QString& mixer_ID)
 {
    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << endl;
    Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
