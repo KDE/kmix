@@ -107,7 +107,7 @@ void KMixWindow::initActions()
    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
    action = new KAction( i18n( "Hide Mixer Window" ), actionCollection(), "hide_kmixwindow" );
    connect(action, SIGNAL(triggered(bool) ), SLOT(hide()));
-   action->setShortcut(Qt::Key_Escape);
+   action->setShortcut(QKeySequence(Qt::Key_Escape));
    createGUI( "kmixui.rc" );
 }
 
