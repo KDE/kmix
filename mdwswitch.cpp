@@ -66,7 +66,6 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
 
     KAction *a = new KAction(i18n( "Toggle Switch" ), _mdwActions, "Toggle switch" );
     connect(a, SIGNAL(triggered(bool) ), SLOT( toggleSwitch() ));
-    a->setCustomGlobalShortcut( KShortcut() );
 
     // The accel keys are loaded in KMixerWidget::loadConfig, see kmixtoolbox.cpp
 

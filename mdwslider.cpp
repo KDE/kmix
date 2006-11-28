@@ -92,15 +92,12 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 	KAction *b;
 	b = new KAction( i18n( "Increase Volume" ), _mdwActions, "Increase volume" );
 	connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
-	b->setCustomGlobalShortcut( KShortcut() );
 
 	b = new KAction( i18n( "Decrease Volume" ), _mdwActions, "Decrease volume" );
 	connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
-	b->setCustomGlobalShortcut( KShortcut() );
 
 	b = new KAction( i18n( "Toggle mute" ), _mdwActions, "Toggle mute" );
 	connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
-	b->setCustomGlobalShortcut( KShortcut() );
 
 	installEventFilter( this ); // filter for popup
 
