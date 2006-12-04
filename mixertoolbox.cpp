@@ -129,12 +129,6 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 			primaryKeyOfMixer.replace("=","_");
 			
 			mixer->setID(primaryKeyOfMixer);
-                        if ( Mixer::masterCard() == 0 ) {
-                           // We have no master card yet. This actually only happens when there was
-                           // not one defined in the kmixrc.
-                           // So lets set this here as master card.
-                           Mixer::setMasterCard(primaryKeyOfMixer);
-                        }
 
 		} // valid
 		else
@@ -189,6 +183,15 @@ void MixerToolBox::initMixer(QPtrList<Mixer> &mixers, bool multiDriverMode, QStr
 		
 	    } // loop over sound card devices of current driver
 	} // loop over soundcard drivers
+
+        if ( Mixer::masterCard() == 0 ) {
+           // We have no master card yet. This actually only happens when there was
+           // not one defined in the kmixrc.
+           // So lets just set the first card as master card.
+           if ( Mixer::mixers().count() > 0 ) { 
+              Mixer::setMasterCard( Mixer::mixers().first()->id());
+           } 
+        }
 
 	ref_hwInfoString = i18n("Sound drivers supported:");
 	ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
