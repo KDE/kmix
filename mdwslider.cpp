@@ -227,10 +227,10 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
       Volume::ChannelID chid = Volume::ChannelID(i);
       // @todo !!! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
       // We should look up the mapping here, but for now, we simply assume "chid == i".
-   
+
       int maxvol = m_mixdevice->getVolume().maxVolume();
       int minvol = m_mixdevice->getVolume().minVolume();
-   
+
       QWidget* slider;
       if ( m_small ) {
          slider = new KSmallSlider( minvol, maxvol, maxvol/10,
@@ -240,7 +240,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
       else	{
          QSlider* sliderBig = new QSlider( _orientation, this );
          slider = sliderBig;
-         sliderBig->setMinimum(0); // 
+         sliderBig->setMinimum(0); //
          sliderBig->setMaximum(maxvol);
          sliderBig->setPageStep(maxvol/10);
          sliderBig->setValue(maxvol - m_mixdevice->getVolume( chid ));
@@ -839,7 +839,7 @@ void MDWSlider::showContextMenu()
 		}
 	}
 
-	KAction *a = _mdwActions->action(  "hide" );
+	QAction *a = _mdwActions->action(  "hide" );
 	if ( a )
 		menu->addAction( a );
 

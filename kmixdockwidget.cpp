@@ -87,7 +87,7 @@ void KMixDockWidget::createActions()
   // Put "Mute" selector in context menu
   KToggleAction *action = new KToggleAction( i18n( "M&ute" ), actionCollection(), "dock_mute" );
   connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
-  KAction *a = actionCollection()->action( "dock_mute" );
+  QAction *a = actionCollection()->action( "dock_mute" );
   QMenu *menu = contextMenu();
   if ( a ) menu->addAction( a );
 
@@ -95,7 +95,7 @@ void KMixDockWidget::createActions()
   if ( m_mixer != 0 ) {
   KAction *action = new KAction( i18n("Select Master Channel..."), actionCollection(), "select_master");
   connect(action, SIGNAL(triggered(bool) ), SLOT(selectMaster()));
-  KAction *a2 = actionCollection()->action( "select_master" );
+  QAction *a2 = actionCollection()->action( "select_master" );
   if (a2) menu->addAction( a2 );
   }
 
@@ -375,7 +375,7 @@ KMixDockWidget::dockMute()
 void
 KMixDockWidget::contextMenuAboutToShow( KMenu* /* menu */ )
 {
-    KAction* showAction = actionCollection()->action("minimizeRestore");
+    QAction* showAction = actionCollection()->action("minimizeRestore");
     if ( parentWidget() && showAction )
     {
         if ( parentWidget()->isVisible() )
