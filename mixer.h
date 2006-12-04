@@ -124,8 +124,11 @@ class Mixer : public QObject, virtual public MixerIface
       virtual int masterVolume();
 
       virtual void setMute( int deviceidx, bool on );
+      virtual void setMasterMute( bool on );
       virtual bool mute( int deviceidx );
+      virtual bool masterMute();
       virtual void toggleMute( int deviceidx );
+      virtual void toggleMasterMute();
       virtual bool isRecordSource( int deviceidx );
 
       virtual bool isAvailableDevice( int deviceidx );

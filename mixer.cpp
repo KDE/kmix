@@ -33,6 +33,11 @@
 #include "kmix-platforms.cpp"
 #include "volume.h"
 
+//#define MIXER_MASTER_DEBUG
+
+#ifdef MIXER_MASTER_DEBUG
+#warning MIXER_MASTER_DEBUG is enabled. DO NOT SHIP KMIX LIKE THIS !!!
+#endif
 
 /**
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
@@ -264,6 +269,11 @@ void Mixer::readSetFromHWforceUpdate() const {
 */
 void Mixer::readSetFromHW()
 {
+  if ( ! _mixerBackend->isOpen() ) {
+     // bail out immediately, if the mixer is not open.
+     // This can happen currently only, if the user executes the DCOP close() call.
+     return;
+  }
   bool updated = _mixerBackend->prepareUpdateFromHW();
   if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
     // Some drivers (ALSA) are smart. We don't need to run the following
@@ -363,12 +373,19 @@ void Mixer::setMasterCard(QString& ref_id)
 Mixer* Mixer::masterCard()
 {
   Mixer *mixer = 0;
+  kdDebug(67100) << "Mixer::masterCard() searching for id=" << _masterCard << "\n";
   for (mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next())
   {
      if ( mixer->id() == _masterCard ) {
+#ifdef MIXER_MASTER_DEBUG
+        kdDebug(67100) << "Mixer::masterCard() found id=" << mixer->id() << "\n";
+#endif
         break;
      }
   }
+#ifdef MIXER_MASTER_DEBUG
+  if ( mixer == 0) kdDebug(67100) << "Mixer::masterCard() found no Mixer* mixer \n";
+#endif
   return mixer;
 }
 
@@ -379,6 +396,9 @@ void Mixer::setMasterCardDevice(QString& ref_id)
   // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
   // and before actually constructing the Mixer instances (hint: this mehtod is static!).
   _masterCardDevice = ref_id;
+#ifdef MIXER_MASTER_DEBUG
+   kdDebug(67100) << "Mixer::setMasterCardDevice(\"" << ref_id << "\")\n";
+#endif
 }
 
 MixDevice* Mixer::masterCardDevice()
@@ -387,15 +407,24 @@ MixDevice* Mixer::masterCardDevice()
   Mixer *mixer = masterCard();
   if ( mixer != 0 ) {
      for( md = mixer->_mixerBackend->m_mixDevices.first(); md != 0; md = mixer->_mixerBackend->m_mixDevices.next() ) {
-/*
-     	kdDebug(67100) << "Mixer::masterCardDevice() getPK()="
-     		<< md->getPK() << " , _masterCardDevice="
-     		<< _masterCardDevice << "\n";
-*/
+
+
        if ( md->getPK() == _masterCardDevice )
+        {
+#ifdef MIXER_MASTER_DEBUG
+         kdDebug(67100) << "Mixer::masterCardDevice() getPK()="
+         << md->getPK() << " , _masterCardDevice="
+         << _masterCardDevice << "\n";
+#endif
           break;
+        }
      }
   }
+
+#ifdef MIXER_MASTER_DEBUG
+  if ( md == 0) kdDebug(67100) << "Mixer::masterCardDevice() found no MixDevice* md" "\n";
+#endif
+
   return md;
 }
 
@@ -643,6 +672,16 @@ void Mixer::setMute( int deviceidx, bool on )
   _mixerBackend->writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
 
+// @dcop only
+void Mixer::setMasterMute( bool on )
+{
+  MixDevice *master = masterDevice();
+  if (master != 0 ) {
+    setMute( master->num(), on );
+  }
+}
+
+
 // @dcop
 void Mixer::toggleMute( int deviceidx )
 {
@@ -656,6 +695,16 @@ void Mixer::toggleMute( int deviceidx )
   _mixerBackend->writeVolumeToHW(deviceidx, mixdev->getVolume() );
 }
 
+// @dcop only
+void Mixer::toggleMasterMute()
+{
+  MixDevice *master = masterDevice();
+  if (master != 0 ) {
+    toggleMute( master->num() );
+  }
+}
+
+
 // @dcop
 bool Mixer::mute( int deviceidx )
 {
@@ -664,6 +713,17 @@ bool Mixer::mute( int deviceidx )
 
   return mixdev->isMuted();
 }
+
+// @dcop only
+bool Mixer::masterMute()
+{
+  MixDevice *master = masterDevice();
+  if (master != 0 ) {
+    return mute( master->num() );
+  }
+  return true;
+}
+
 
 bool Mixer::isRecordSource( int deviceidx )
 {

@@ -62,14 +62,27 @@ k_dcop:
     */
    virtual void setMute( int deviceidx, bool on )=0;
    /**
+    Mutes or unmutes the master device.
+    */
+   virtual void setMasterMute( bool on )=0;
+   /**
     Toggles mute-state for the given device.
     */
    virtual void toggleMute( int deviceidx )=0;
+   /**
+    Toggles mute-state for the master device.
+    */
+   virtual void toggleMasterMute()=0;
    /**
     Returns if the given device is muted or not. If the device is not
     available in this mixer, it is reported as muted.
     */
    virtual bool mute( int deviceidx )=0;
+   /**
+    Returns if the master device is muted or not. If the device is not
+    available in this mixer, it is reported as muted.
+    */
+   virtual bool masterMute()=0;
    
    /**
     Makes the given device a record source.
@@ -97,6 +110,20 @@ k_dcop:
     Returns the name of the mixer.
     */
    virtual QString mixerName()=0;
+
+    /**
+     * Open/grab the mixer for further intraction
+     * You should use this method after a prior call of close(). See close() for usage directions.
+     */
+    virtual int open()=0;
+
+    /**
+     * Close/release the mixer
+     * This method SHOULD NOT be used via DCOP. You MAY use it if you really need to close the mixer device,
+     * for example when a software suspend action (ACPI) takes place, and the soundcard driver
+     * doesn't handle this situation gracefully.
+     */
+    virtual int close()=0;
 
 };
 
