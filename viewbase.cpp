@@ -141,7 +141,7 @@ KMenu* ViewBase::getPopup()
 
 void ViewBase::popupReset()
 {
-    KAction *a;
+    QAction *a;
 
     _popMenu = new KMenu( this );
     _popMenu->addTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
