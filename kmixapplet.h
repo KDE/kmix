@@ -80,8 +80,8 @@ class KMixApplet : public KPanelApplet
    Q_OBJECT
 
 public:
-   KMixApplet( const QString& configFile, Plasma::Type t = Plasma::Normal,
-	       QWidget *parent = 0, const char *name = 0 );
+   KMixApplet( const QString& configFile, Plasma::Type t,
+	       QWidget *parent, const char *name );
    virtual ~KMixApplet();
 
    struct Colors {

@@ -159,9 +159,9 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     MixSet& mset = const_cast<MixSet&>(mixset);
     for( int i=0; i< mset.count(); ++i )
     {
-        MixDevice* md = mset[i];
+        MixDevice* md = mset[i]; // @todo How to deal with playback and capture
         // Create a RadioButton for each MixDevice (excluding Enum's)
-        if ( md->isEnum() && ! md->isSwitch() ) {
+        if ( md->playbackVolume().hasVolume() || md->captureVolume().hasVolume() ) {
             //kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb" << endl;
             QString mdName = md->name();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator

@@ -388,8 +388,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       }
       
       
-      KMixerWidget *mw = new KMixerWidget( mixer,
-                                          MixDevice::ALL, this, "KMixerWidget", vflags );
+      KMixerWidget *mw = new KMixerWidget( mixer, this, "KMixerWidget", vflags );
       
       // Add to WidgetStack
       /* A newly added mixer will automatically added at the top

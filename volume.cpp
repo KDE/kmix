@@ -27,55 +27,62 @@
 #include "volume.h"
 
 
-int Volume::_channelMaskEnum[10] =
+int Volume::_channelMaskEnum[8] =
     { MLEFT, MRIGHT, MCENTER,
-      MREARLEFT, MREARRIGHT, MWOOFER,
-      MLEFTREC , MRIGHTREC ,
-      MCUSTOM1, MCUSTOM2
+      MWOOFER,
+      MSURROUNDLEFT, MSURROUNDRIGHT,
+      MREARLEFT, MREARRIGHT,
     };
 
-Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool isCapture  )
+Volume::Volume()
 {
-  init(chmask, maxVolume, minVolume, isCapture);
+    init( Volume::MNONE, 0, 0, false, false);
+}
+
+Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture  )
+{
+    init(chmask, maxVolume, minVolume, hasSwitch, isCapture );
 }
 
 
-// @ compatibility constructor
+// @ compatibility constructor  @todo remove it
 Volume::Volume( int channels, long maxVolume ) {
    if (channels == 1 ) {
-       init(Volume::MLEFT, maxVolume, 0, false);
+       init(Volume::MLEFT, maxVolume, 0, false, false);
    }
    else if (channels == 2) {
-      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false );
+      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false, false );
    }
    else {
-     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false );
+     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false, false );
      kError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
    }
 }
 
 Volume::Volume( const Volume &v )
 {
-    _chmask     = v._chmask;
-    _maxVolume  = v._maxVolume;
-    _minVolume  = v._minVolume;
-    _muted      = v._muted;
-    _isCapture  = v._isCapture;
+    _chmask          = v._chmask;
+    _maxVolume       = v._maxVolume;
+    _minVolume       = v._minVolume;
+    _hasSwitch       = v._hasSwitch;
+    _switchActivated = v._switchActivated;
+    _isCapture       = v._isCapture;
     setVolume(v, (ChannelMask)v._chmask);
-
     //    kDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
 }
 
-void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool isCapture )
+void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-	_volumes[i] = 0;
+        _volumes[i] = 0;
     }
-    _chmask     = chmask;
-    _maxVolume  = maxVolume;
-    _minVolume  = minVolume;
-    _isCapture = isCapture;
-    _muted      = false;
+    _chmask          = chmask;
+    _maxVolume       = maxVolume;
+    _minVolume       = minVolume;
+    _hasSwitch       = hasSwitch;
+    _isCapture       = isCapture;
+    _muted           = false;
+    _switchActivated = false;
 }
 
 // @ compatibility

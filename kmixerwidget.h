@@ -61,7 +61,6 @@ class KMixerWidget : public QWidget
 
   public:
    KMixerWidget( Mixer *mixer,
-                 MixDevice::DeviceCategory categoryMask = MixDevice::ALL ,
                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
    ~KMixerWidget();
 	
@@ -108,7 +107,6 @@ class KMixerWidget : public QWidget
    bool _iconsEnabled;
    bool _labelsEnabled;
    bool _ticksEnabled;
-   MixDevice::DeviceCategory m_categoryMask;
 
    void createLayout(ViewBase::ViewFlags vflags);
    void possiblyAddView(ViewBase* vbase);

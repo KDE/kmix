@@ -33,8 +33,8 @@ public:
   virtual ~Mixer_OSS();
 
   virtual QString errorText(int mixer_error);
-  virtual int readVolumeFromHW( const QString& id, Volume &vol );
-  virtual int writeVolumeToHW( const QString& id, Volume &vol );
+  virtual int readVolumeFromHW( const QString& id, Volume &vol, Volume& );
+  virtual int writeVolumeToHW ( const QString& id, Volume &vol, Volume& );
 
   virtual QString getDriverName();
 

@@ -61,7 +61,6 @@
    (b2) A label containing the mixer name
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
-                            MixDevice::DeviceCategory categoryMask,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
    : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0),
@@ -69,7 +68,6 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
 
 {
    setObjectName(name);
-   m_categoryMask = categoryMask;
 
    if ( _mixer )
    {

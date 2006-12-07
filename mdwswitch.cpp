@@ -191,7 +191,7 @@ void MDWSwitch::toggleSwitch() {
 
 void MDWSwitch::setSwitch(bool value)
 {
-	if (  m_mixdevice->isSwitch() ) {
+	if (  m_mixdevice->playbackVolume().hasSwitch() ) {
 		if ( m_mixdevice->isRecordable() ) {
 			m_mixer->setRecordSource( m_mixdevice->id(), value );
 		}

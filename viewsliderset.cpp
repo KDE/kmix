@@ -59,7 +59,7 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
 				 << " ; control->id=="
 				 << control->id << "\n";
 			if (	md->id() == control->id  &&      // name matches
-				! md->isSwitch() && ! md->isEnum()  // and is applicable
+				( md->captureVolume().hasVolume() || md->playbackVolume().hasVolume() )  // and is applicable
 			)
 			{
 			    // OK, this control is handable by this View.

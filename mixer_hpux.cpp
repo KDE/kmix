@@ -150,7 +150,7 @@ bool Mixer_HPUX::isRecsrcHW( int devnum )
     return false;
 }
 
-int Mixer_HPUX::readVolumeFromHW( int devnum, Volume &vol )
+int Mixer_HPUX::readVolumeFromHW( int devnum, Volume &vol, Volume & )
 {
     long Gain;
     long error = 0;
@@ -186,7 +186,7 @@ printf("READ - Devnum: %d, Left: %d, Right: %d\n", devnum, vl, vr );
 	AChType                	=     ACTMono, ACTLeft, ACTRight
 */
 
-int Mixer_HPUX::writeVolumeToHW( int devnum, Volume& vol )
+int Mixer_HPUX::writeVolumeToHW( int devnum, Volume& vol, Volume & )
 {
     long Gain;
     long error = 0;

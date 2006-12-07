@@ -181,29 +181,37 @@ KMixDockWidget::setVolumeTip()
     if ( md == 0 )
     {
         tip = i18n("Mixer cannot be found"); // !! text could be reworked
-	newToolTipValue = -2;
+        newToolTipValue = -2;
     }
     else
     {
-        long val = -1;
-        if ( md->maxVolume() != 0 ) {
-	    val = (md->getVolume().getAvgVolume(Volume::MMAIN)*100 )/( md->maxVolume() );
+        // Playback volume will be used for the DockIcon if available.
+        // This heuristic is "good enough" for the DockIcon for now.
+        long val = 0;
+        Volume& volMute   = md->playbackVolume();
+
+        Volume& vol       = md->playbackVolume();
+        if (! vol.hasVolume() ) {
+           vol = md->captureVolume();
         }
-	newToolTipValue = val + 10000*md->isMuted();
-	if ( _oldToolTipValue != newToolTipValue ) {
-	    tip = i18n( "Volume at %1%", val );
-	    if ( md->isMuted() ) {
-		tip += i18n( " (Muted)" );
-	    }
-	}
-	// create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
-	newToolTipValue = val + 10000*md->isMuted();
+        if ( vol.hasVolume() && vol.maxVolume() != 0 ) {
+            val = (vol.getAvgVolume(Volume::MMAIN)*100 )/( vol.maxVolume() );
+        }
+
+        // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
+        newToolTipValue = val + 10000*volMute.isSwitchActivated();
+        if ( _oldToolTipValue != newToolTipValue ) {
+            tip = i18n( "Volume at %1%", val );
+            if ( volMute.isSwitchActivated() ) {
+                tip += i18n( " (Muted)" );
+            }
+        }
     }
 
     // The actual updating is only done when the "toolTipValue" was changed
     if ( newToolTipValue != _oldToolTipValue ) {
-	// changed (or completely new tooltip)
-	this->setToolTip( tip);
+        // changed (or completely new tooltip)
+        this->setToolTip(tip);
     }
     _oldToolTipValue = newToolTipValue;
 }
@@ -211,26 +219,30 @@ KMixDockWidget::setVolumeTip()
 void
 KMixDockWidget::updatePixmap()
 {
-   MixDevice *md = 0;
-   if ( _dockAreaPopup != 0 ) {
-      md = _dockAreaPopup->dockDevice();
-   }
-   char newPixmapType;
-   if ( md == 0 )
-   {
-      newPixmapType = 'e';
-   }
-   else if ( md->isMuted() )
-   {
-      newPixmapType = 'm';
-   }
-   else
-   {
-      long absoluteVolume    = md->getVolume().getAvgVolume(Volume::MPLAYBACK);
-      int percentage         = md->getVolume().percentage(absoluteVolume);
-      if      ( percentage < 25 ) newPixmapType = '1';  // Hint: also negative-values
-      else if ( percentage < 75 ) newPixmapType = '2';
-      else                        newPixmapType = '3';
+    MixDevice *md = 0;
+    if ( _dockAreaPopup != 0 ) {
+        md = _dockAreaPopup->dockDevice();
+    }
+    char newPixmapType;
+    if ( md == 0 )
+    {
+        newPixmapType = 'e';
+    }
+    else if ( md->isMuted() )
+    {
+        newPixmapType = 'm';
+    }
+    else
+    {
+        Volume& vol = md->playbackVolume();
+        if (! vol.hasVolume() ) {
+            vol = md->captureVolume();
+        }
+        long absoluteVolume    = vol.getAvgVolume(Volume::MALL);
+        int percentage         = vol.percentage(absoluteVolume);
+        if      ( percentage < 25 ) newPixmapType = '1';  // Hint: also negative-values
+        else if ( percentage < 75 ) newPixmapType = '2';
+        else                        newPixmapType = '3';
    }
 
 

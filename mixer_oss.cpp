@@ -126,15 +126,15 @@ int Mixer_OSS::open()
             {
               if( devmask & ( 1 << idx ) ) // device active?
                 {
+                  // recmask & ( 1 << idx ), true,
                   Volume vol( stereodevs & ( 1 << idx ) ? 2 : 1, maxVolume);
-                  //readVolumeFromHW( idx, vol );
+                  Volume volCapture;
                   QString id;
                   id.setNum(idx);
                   MixDevice* md =
-                    new MixDevice( id, vol, recmask & ( 1 << idx ), true,
+                    new MixDevice( id, vol, volCapture,
                                    i18n(MixerDevNames[idx]),
                                    MixerChannelTypes[idx]);
-                  //md->setRecSource( isRecsrcHW( idx ) );
                   m_mixDevices.append( md );
                 }
               idx++;
@@ -254,10 +254,10 @@ bool Mixer_OSS::isRecsrcHW( const QString& id )
    return isRecsrc;
 }
 
-int Mixer_OSS::readVolumeFromHW( const QString& id, Volume &vol )
+int Mixer_OSS::readVolumeFromHW( const QString& id, Volume &vol, Volume& )
 {
 #warning This is bad, as it will use wrong volume levels on saving volume
-   if( vol.isMuted() ) return 0; // Don't alter volume when muted
+   if( vol.isSwitchActivated() ) return 0; // Don't alter volume when muted @todo Check
 
    int volume;
    int devnum = id2num(id);
@@ -278,13 +278,13 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, Volume &vol )
 
 
 
-int Mixer_OSS::writeVolumeToHW( const QString& id, Volume &vol )
+int Mixer_OSS::writeVolumeToHW( const QString& id, Volume &vol, Volume &)
 {
    int volume;
    int devnum = id2num(id);
 
-   if( vol.isMuted() )
-      volume = 0;
+   if( vol.isSwitchActivated() )
+      volume = 0;  // @todo Might lead to badly saved sound volumes in OSS backend
    else
    {
       if ( vol.count() > 1 )

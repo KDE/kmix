@@ -41,13 +41,13 @@ ViewOutput::~ViewOutput() {
 
 void ViewOutput::setMixSet(MixSet *mixset)
 {
-    for ( int i=0; i<mixset->count(); i++ ) {
-	MixDevice *md = (*mixset)[i];
-	if ( ! md->isRecordable() &&  ! md->isSwitch() && ! md->isEnum()) {
-	    _mixSet->append(md);
-	}
-	else {
-	}
+    for ( int i=0; i<mixset->count(); i++ )
+    {
+        MixDevice *md = (*mixset)[i];
+        if ( md->playbackVolume().hasVolume() )
+        {
+            _mixSet->append(md);
+        }
     }
 }
 

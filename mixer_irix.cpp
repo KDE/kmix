@@ -76,7 +76,7 @@ int Mixer_IRIX::close()
   return 0;
 }
 
-int Mixer_IRIX::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
+int Mixer_IRIX::readVolumeFromHW( int devnumi, Volume &vol, Volume & )
 {
   long in_buf[4];
   switch( devnum() ) {
@@ -102,7 +102,7 @@ int Mixer_IRIX::readVolumeFromHW( int devnum, int *VolLeft, int *VolRight )
   return 0;
 }
 
-int Mixer_IRIX::writeVolumeToHW( int devnum, int volLeft, int volRight )
+int Mixer_IRIX::writeVolumeToHW( int devnum, Volume &vol, Volume & )
 {
   // Set volume (right&left)
   long out_buf[4] =

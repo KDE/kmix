@@ -67,7 +67,7 @@ void ViewSurround::setMixSet(MixSet *mixset)
 {
     for ( int i=0; i<mixset->count(); i++ ) {
 	MixDevice *md = (*mixset)[i];
-	if ( ! md->isSwitch() ) {
+	if ( /*! md->isSwitch() */  true ) {   // @todo redo it
 	    switch ( md->type() ) {
 	    case MixDevice::VOLUME:
 	    case MixDevice::SURROUND:

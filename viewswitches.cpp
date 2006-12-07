@@ -61,13 +61,16 @@ ViewSwitches::~ViewSwitches() {
 
 void ViewSwitches::setMixSet(MixSet *mixset)
 {
-    for ( int i=0; i<mixset->count(); i++ ) {
-	MixDevice *md = (*mixset)[i];
-	if ( md->isSwitch() || md->isEnum() ) {
-	    _mixSet->append(md);
-	}
-	else {
-	}
+    for ( int i=0; i<mixset->count(); i++ )
+    {
+        MixDevice *md = (*mixset)[i];
+        if (    md->captureVolume().hasSwitch()  && ! md->captureVolume().hasVolume()
+             || md->playbackVolume().hasSwitch() && ! md->playbackVolume().hasVolume()
+             || md->isEnum()
+           )
+        {
+            _mixSet->append(md);
+        }
     }
 }
 

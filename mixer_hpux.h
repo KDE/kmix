@@ -38,8 +38,8 @@ public:
 
   virtual QString errorText(int mixer_error);
 
-  virtual int readVolumeFromHW( int devnum, Volume &vol );
-  virtual int writeVolumeToHW( int devnum, Volume &vol );
+  virtual int readVolumeFromHW( int devnum, Volume &vol, Volume& );
+  virtual int writeVolumeToHW ( int devnum, Volume &vol, Volume& );
 
   virtual QString getDriverName();
 

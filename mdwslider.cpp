@@ -2,7 +2,7 @@
  * KMix -- KDE's full featured mini mixer
  *
  *
- * Copyright (C) 1996-2004 Christian Esken <esken@kde.org>
+ * Copyright (C) 1996-2007 Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -117,11 +117,10 @@ QSizePolicy MDWSlider::sizePolicy() const
 
 
 /**
- * Creates up to 4 widgets - Icon, Mute-Button, Slider and Record-Button.
+ * Creates all widgets - Icon/Mute-Button, Slider(s) and Record-Button.
  *
  * Those widgets are placed into
-
-*/
+ */
 void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 {
    // !! remove the "showMuteLED" parameter (or let it apply to the icons)
@@ -209,61 +208,19 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 
 
     // --- SLIDERS ---------------------------
-   QBoxLayout *volLayout;
-   if ( _orientation == Qt::Vertical ) {
-      volLayout = new QHBoxLayout( );
-      volLayout->setAlignment(Qt::AlignVCenter);
-   }
-   else {
-      volLayout = new QVBoxLayout(  );
-      volLayout->setAlignment(Qt::AlignHCenter);
-   }
-   sliLayout->addItem( volLayout );
+    QBoxLayout *volLayout;
+    if ( _orientation == Qt::Vertical ) {
+        volLayout = new QHBoxLayout( );
+        volLayout->setAlignment(Qt::AlignVCenter);
+    }
+    else {
+        volLayout = new QVBoxLayout(  );
+        volLayout->setAlignment(Qt::AlignHCenter);
+    }
+    sliLayout->addItem( volLayout );
 
-
-   // Sliders
-   for( int i = 0; i < m_mixdevice->getVolume().count(); i++ )
-   {
-      Volume::ChannelID chid = Volume::ChannelID(i);
-      // @todo !!! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
-      // We should look up the mapping here, but for now, we simply assume "chid == i".
-
-      int maxvol = m_mixdevice->getVolume().maxVolume();
-      int minvol = m_mixdevice->getVolume().minVolume();
-
-      QWidget* slider;
-      if ( m_small ) {
-         slider = new KSmallSlider( minvol, maxvol, maxvol/10,
-         m_mixdevice->getVolume( chid ), _orientation, this );
-         slider->setObjectName(m_mixdevice->name());
-      } // small
-      else	{
-         QSlider* sliderBig = new QSlider( _orientation, this );
-         slider = sliderBig;
-         sliderBig->setMinimum(0); //
-         sliderBig->setMaximum(maxvol);
-         sliderBig->setPageStep(maxvol/10);
-         sliderBig->setValue(maxvol - m_mixdevice->getVolume( chid ));
-         sliderBig->setObjectName(m_mixdevice->name());
-         if ( _orientation == Qt::Vertical ) {
-            static_cast<QSlider*>(sliderBig)->setInvertedAppearance(true);
-            static_cast<QSlider*>(sliderBig)->setInvertedControls(true);
-         }
-      } // not small
-
-      slider->installEventFilter( this );
-      slider->setToolTip( m_mixdevice->name() );
-
-      if( i>0 && isStereoLinked() ) {
-         // show only one (the first) slider, when the user wants it so
-         slider->hide();
-      }
-      volLayout->addWidget( slider );  // add to layout
-      m_sliders.append ( slider );   // add to list
-      _slidersChids.append(chid);        // Remember slider-chid association
-      connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
-   } // for all channels of this device
-
+    addSliders( volLayout, m_mixdevice->playbackVolume() , "Playback" );
+    addSliders( volLayout, m_mixdevice->captureVolume()  , "Capture");
 
    // --- RECORD SOURCE LED --------------------------
    sliLayout->addSpacing( 3 );
@@ -306,6 +263,62 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
    } // showRecordLED
 
    layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
+}
+
+
+void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, const char* debug_text)
+{
+   if ( _orientation == Qt::Vertical ) {
+      m_label = new VerticalText( this, debug_text );
+   }
+   else {
+      m_label = new QLabel(this);
+      static_cast<QLabel*>(m_label)->setText(debug_text);
+   }
+   volLayout->addWidget( m_label );
+   m_label->installEventFilter( this );
+
+    for( int i = 0; i < vol.count(); i++ )
+    {
+        Volume::ChannelID chid = Volume::ChannelID(i);
+        // @todo !!! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
+        // We should look up the mapping here, but for now, we simply assume "chid == i".
+
+        long minvol = vol.minVolume();
+        long maxvol = vol.maxVolume();
+
+        QWidget* slider;
+        if ( m_small ) {
+            slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @ todo User definable steps
+            vol.getVolume( chid ), _orientation, this );
+            slider->setObjectName(m_mixdevice->name());
+        } // small
+        else  {
+            QSlider* sliderBig = new QSlider( _orientation, this );
+            slider = sliderBig;
+            sliderBig->setMinimum(0);
+            sliderBig->setMaximum(maxvol);
+            sliderBig->setPageStep(maxvol/10);
+            sliderBig->setValue(maxvol - vol.getVolume( chid ));
+            //sliderBig->setObjectName(m_mixdevice->name());
+            if ( _orientation == Qt::Vertical ) {
+                static_cast<QSlider*>(sliderBig)->setInvertedAppearance(true);
+                static_cast<QSlider*>(sliderBig)->setInvertedControls(true);
+            }
+        } // not small
+    
+        slider->installEventFilter( this );
+        slider->setToolTip( m_mixdevice->name() );
+
+        if( i>0 && isStereoLinked() ) {
+            // show only one (the first) slider, when the user wants it so
+            slider->hide();
+        }
+        volLayout->addWidget( slider );  // add to layout
+        m_sliders.append ( slider );   // add to list
+        _slidersChids.append(chid);        // Remember slider-chid association  // @todo !!! How should this work, when you got a control with pvolume AND cvolume
+        connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
+    } // for all channels of this device
 }
 
 
@@ -361,7 +374,7 @@ MDWSlider::setIcon( int icontype )
    {
       m_iconLabel = new QToolButton(this); //!!! TODO
       m_iconLabel->setCheckable(true);
-      if( m_mixdevice->hasMute() ) {
+      if( m_mixdevice->playbackVolume().hasSwitch() ) {
         connect ( m_iconLabel, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
       }
       installEventFilter( m_iconLabel );
@@ -557,7 +570,8 @@ void MDWSlider::volumeChange( int )
    if (m_sliders.count() == 0) return;
 
    // --- Step 1: Get a REFERENCE of the volume Object ---
-   Volume& vol = m_mixdevice->getVolume();
+#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+   Volume& vol = m_mixdevice->playbackVolume();
 
    // --- Step 2: Change the volumes directly in the Volume object to reflect the Sliders ---
    if ( isStereoLinked() )
@@ -654,24 +668,25 @@ void MDWSlider::toggleMuted() {
 
 void MDWSlider::setMuted(bool value)
 {
-    if (  m_mixdevice->hasMute() ) {
-	m_mixdevice->setMuted( value );
-	m_mixer->commitVolumeChange(m_mixdevice);
+    if (  m_mixdevice->playbackVolume().hasSwitch() ) {
+        m_mixdevice->playbackVolume().setSwitch( value );
+        m_mixer->commitVolumeChange(m_mixdevice);
     }
 }
 
 
 void MDWSlider::setDisabled()
 {
-	setDisabled( true );
+    setDisabled( true );
 }
 
 void MDWSlider::setDisabled( bool value )
 {
-	if ( m_disabled!=value)	{
-		value ? hide() : show();
-		m_disabled = value;
-	}
+    if ( m_disabled!=value)
+    {
+        value ? hide() : show();
+        m_disabled = value;
+    }
 }
 
 
@@ -681,15 +696,16 @@ void MDWSlider::setDisabled( bool value )
 */
 void MDWSlider::increaseVolume()
 {
-	Volume vol = m_mixdevice->getVolume();
-	long inc = vol.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < vol.count(); i++ ) {
-		long newVal = (vol[i]) + inc;
-		m_mixdevice->setVolume( i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
-	}
-	m_mixer->commitVolumeChange(m_mixdevice);
+#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+   Volume& vol = m_mixdevice->playbackVolume();
+    long inc = vol.maxVolume() / 20;
+    if ( inc == 0 )
+        inc = 1;
+    for ( int i = 0; i < vol.count(); i++ ) {
+        long newVal = (vol[i]) + inc;
+        vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
+    }
+    m_mixer->commitVolumeChange(m_mixdevice);
 }
 
 /**
@@ -698,15 +714,16 @@ void MDWSlider::increaseVolume()
 */
 void MDWSlider::decreaseVolume()
 {
-	Volume vol = m_mixdevice->getVolume();
-	long inc = vol.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < vol.count(); i++ ) {
-		long newVal = (vol[i]) - inc;
-		m_mixdevice->setVolume( i, newVal > 0 ? newVal : 0 );
-	}
-	m_mixer->commitVolumeChange(m_mixdevice);
+#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+    Volume& vol = m_mixdevice->playbackVolume();
+    long inc = vol.maxVolume() / 20;
+    if ( inc == 0 )
+        inc = 1;
+    for ( int i = 0; i < vol.count(); i++ ) {
+        long newVal = (vol[i]) - inc;
+        vol.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
+    }
+    m_mixer->commitVolumeChange(m_mixdevice);
 }
 
 
@@ -719,7 +736,8 @@ void MDWSlider::update()
    if (m_sliders.count() == 0) return;
 
 	// update volumes
-	Volume vol = m_mixdevice->getVolume();
+#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+   Volume& vol = m_mixdevice->playbackVolume();
 	if( isStereoLinked() )
 	{
 		QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
@@ -795,18 +813,18 @@ void MDWSlider::update()
 	} // more than 1 slider
 
 
-        if( m_mixdevice->hasMute() ) {
+     if( m_mixdevice->playbackVolume().hasSwitch() ) {
            m_iconLabel->blockSignals( true );
-           m_iconLabel->setChecked( m_mixdevice->isMuted() ? false : true );
+           m_iconLabel->setChecked( m_mixdevice->playbackVolume().isSwitchActivated() ? false : true );
            m_iconLabel->blockSignals( false );
         }
 
-	// update recsrc
-	if( m_recordLED ) {
-		m_recordLED->blockSignals( true );
-		m_recordLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
-		m_recordLED->blockSignals( false );
-	}
+    // update recsrc
+    if( m_recordLED ) {
+        m_recordLED->blockSignals( true );
+        m_recordLED->setState( m_mixdevice->playbackVolume().isSwitchActivated() ? KLed::On : KLed::Off );
+        m_recordLED->blockSignals( false );
+    }
 }
 
 void MDWSlider::showContextMenu()
@@ -831,7 +849,7 @@ void MDWSlider::showContextMenu()
 		menu->addAction( ta );
 	}
 
-	if ( m_mixdevice->hasMute() ) {
+	if ( m_mixdevice->playbackVolume().hasSwitch() ) {
 		ta = ( KToggleAction* )_mdwActions->action( "mute" );
 		if ( ta ) {
 			ta->setChecked( m_mixdevice->isMuted() );
@@ -847,7 +865,6 @@ void MDWSlider::showContextMenu()
 	if ( a ) {
 		KSeparatorAction sep( _mdwActions );
 		menu->addAction( &sep );
-		menu->addAction( a );
 	}
 
 	QPoint pos = QCursor::pos();

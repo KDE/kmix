@@ -175,10 +175,10 @@ int Mixer_SUN::open()
          for ( int idx = 0; idx < numDevs; idx++ )
          {
             Volume vol( 2, AUDIO_MAX_GAIN );
+            Volume volCapture;
             QString id;
             id.setNum(idx);
-            //readVolumeFromHW( idx, vol );
-            MixDevice* md = new MixDevice( id, vol, false, true,
+            MixDevice* md = new MixDevice( id, vol, volCapture, 
                QString(MixerDevNames[idx]), MixerChannelTypes[idx]);
 				md->setRecSource( isRecsrcHW( idx ) );
             m_mixDevices.append( md );
@@ -226,10 +226,10 @@ QString Mixer_SUN::errorText( int mixer_error )
 
 
 //======================================================================
-// FUNCTION    : Mixer::readVolumeFrmoHW
+// FUNCTION    : Mixer::readVolumeFromHW
 // DESCRIPTION : Read the audio information from the driver.
 //======================================================================
-int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume )
+int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume, Volume& )
 {
    audio_info_t audioinfo;
    uint_t devMask = MixerSunPortMasks[devnum];

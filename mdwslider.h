@@ -106,6 +106,7 @@ private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
     void createWidgets( bool showMuteLED, bool showRecordLED );
+    void addSliders( QBoxLayout *volLayout, Volume& vol, const char* debug_text);
 
     bool m_linked;
     QToolButton *m_iconLabel;

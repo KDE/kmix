@@ -34,8 +34,8 @@ public:
   virtual ~Mixer_SUN();
 
   virtual QString errorText(int mixer_error);
-  virtual int readVolumeFromHW( const QString& id, Volume& volume );
-  virtual int writeVolumeToHW ( const QString& id, Volume& volume );
+  virtual int readVolumeFromHW( const QString& id, Volume& volume, Volume& );
+  virtual int writeVolumeToHW ( const QString& id, Volume& volume, Volume& );
   bool setRecsrcHW              ( const QString& id, bool on );
   bool isRecsrcHW               ( const QString& id );
 

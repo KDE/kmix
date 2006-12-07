@@ -71,10 +71,10 @@ ViewApplet::~ViewApplet() {
 void ViewApplet::setMixSet(MixSet *mixset)
 {
     for ( int i=0; i<mixset->count(); i++ ) {
-	MixDevice *md = (*mixset)[i];
-	if ( (! md->isSwitch()) && ( ! md->isEnum() ) ) {
-	    _mixSet->append(md);
-	}
+        MixDevice *md = (*mixset)[i];
+        if ( md->playbackVolume().hasVolume() || md->captureVolume().hasVolume() ) {
+            _mixSet->append(md);
+        }
     }
 }
 

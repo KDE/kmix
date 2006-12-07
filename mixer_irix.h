@@ -33,8 +33,8 @@ public:
   virtual ~Mixer_IRIX();
 
   virtual void setRecsrc(unsigned int newRecsrc);
-  virtual int readVolumeFromHW( int devnum, int *VolLeft, int *VolRight );
-  virtual int writeVolumeToHW( int devnum, int volLeft, int volRight );
+  virtual int readVolumeFromHW( int devnum, Volume&, Volume& );
+  virtual int writeVolumeToHW ( int devnum, Volume&, Volume& );
 
   virtual QString getDriverName();
 

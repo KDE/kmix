@@ -66,9 +66,9 @@ protected:
   virtual bool prepareUpdateFromHW();
 
   /// Volume Read
-  virtual int readVolumeFromHW( const QString& id, Volume &vol ) = 0;
+  virtual int readVolumeFromHW( const QString& id, Volume &vol, Volume& ) = 0;
   /// Volume Write
-  virtual int writeVolumeToHW( const QString& id, Volume &volume ) = 0;
+  virtual int writeVolumeToHW( const QString& id, Volume &volume, Volume& ) = 0;
 
   /// Enums
   virtual void setEnumIdHW(const QString& id, unsigned int);
