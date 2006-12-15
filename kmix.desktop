@@ -15,4 +15,4 @@ Name=KMix
 Name[x-test]=xxKMixxx
 X-KDE-StartupNotify=true
 X-DBUS-StartupType=Unique
-Categories=Qt;KDE;AudioVideo;AudioMixer;
+Categories=Qt;KDE;AudioVideo;Audio;Mixer;
