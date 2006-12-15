@@ -83,4 +83,4 @@ Name[ven]=U tanganisa ha K
 Name[zh_TW]=KMix 混音器
 X-KDE-StartupNotify=true
 X-DCOP-ServiceType=Unique
-Categories=Qt;KDE;AudioVideo;AudioMixer;
+Categories=Qt;KDE;AudioVideo;Audio;Mixer;
