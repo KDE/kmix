@@ -29,7 +29,7 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kdebug.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 // KMix
 #include "mdwslider.h"
 #include "mixer.h"
@@ -38,8 +38,8 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase
     : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
-    //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-    _actions->remove( KStdAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
+    //KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
+    _actions->remove( KStandardAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
 
 
     if ( position == Plasma::Left || position == Plasma::Right ) {

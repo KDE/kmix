@@ -55,7 +55,7 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
 {
     // create actions (on _mdwActions, see MixDeviceWidget)
 
-    // KStdAction::showMenubar() is in MixDeviceWidget now
+    // KStandardAction::showMenubar() is in MixDeviceWidget now
     KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
     connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
     KAction *b = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );

@@ -33,7 +33,7 @@
 #include <kiconloader.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 // KMix
 #include "dialogviewconfiguration.h"
 #include "mixdevicewidget.h"
@@ -56,7 +56,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
 
     // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
     if ( vflags & ViewBase::HasMenuBar ) {
-	KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
+	KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
 	if ( vflags & ViewBase::MenuBarVisible ) {
 	    m->setChecked(true);
 	}

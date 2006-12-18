@@ -40,7 +40,7 @@
 #include <kconfig.h>
 #include <kaction.h>
 #include <kapplication.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kmenu.h>
 #include <khelpmenu.h>
 #include <kdebug.h>
@@ -96,12 +96,12 @@ KMixWindow::~KMixWindow()
 void KMixWindow::initActions()
 {
    // file menu
-   KStdAction::quit( this, SLOT(quit()), actionCollection());
+   KStandardAction::quit( this, SLOT(quit()), actionCollection());
    
    // settings menu
-   KStdAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
-   KStdAction::preferences( this, SLOT(showSettings()), actionCollection());
-   KStdAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
+   KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
+   KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
    
    KAction *action = new KAction( i18n( "Hardware &Information" ), actionCollection(), "hwinfo" );
    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
