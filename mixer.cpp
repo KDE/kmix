@@ -72,7 +72,6 @@ Mixer::Mixer( int driver, int device )
 {
    (void)new KMixAdaptor(this);
    QDBusConnection::sessionBus().registerObject(QLatin1String("/Mixer"), this);
-   QDBusConnection::sessionBus().registerService("org.kde.kmixer");
    _pollingTimer = 0;
 
    _mixerBackend = 0;
