@@ -248,6 +248,12 @@ bool Mixer::isValid() {
   return _mixerBackend->isValid();
 }
 
+bool Mixer::isOpen() const {
+    if ( _mixerBackend == 0 )
+        return false;
+    else
+        return _mixerBackend->isOpen();
+}
 
 /* ------- WRAPPER METHODS. END -------------------------------- */
 

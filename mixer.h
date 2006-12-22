@@ -63,6 +63,7 @@ class Mixer : public QObject, virtual public MixerIface
       unsigned int size() const;
       
       bool isValid();
+      bool isOpen() const;
       
       /// Returns a pointer to the mix device with the given number
       MixDevice* operator[](int val_i_num);

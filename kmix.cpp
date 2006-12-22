@@ -273,9 +273,12 @@ KMixWindow::saveConfig()
    // save mixer widgets
    for ( KMixerWidget *mw = m_mixerWidgets.first(); mw != 0; mw = m_mixerWidgets.next() )
    {
+	if ( mw->mixer()->isOpen() )
+	{ // protect from unplugged devices (better do *not* save them)
 		QString grp;
 		grp.sprintf( "%i", mw->id() );
 		mw->saveConfig( config, grp );
+	}
    }
 
    config->setGroup(0);
@@ -478,7 +481,9 @@ KMixWindow::saveVolumes()
     KConfig *cfg = new KConfig( "kmixctrlrc", false );
     for (Mixer *mixer=Mixer::mixers().first(); mixer!=0; mixer=Mixer::mixers().next()) {
 	//kdDebug(67100) << "KMixWindow::saveConfig()" << endl;
-	mixer->volumeSave( cfg );
+	if ( mixer->isOpen() ) { // protect from unplugged devices (better do *not* save them)
+		mixer->volumeSave( cfg );
+	}
     }
     delete cfg;
 }

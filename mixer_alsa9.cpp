@@ -423,6 +423,20 @@ void Mixer_ALSA::prepareSignalling( Mixer *mixer )
     }
 }
 
+void Mixer_ALSA::removeSignalling()
+{
+  if ( m_fds )
+      free( m_fds );
+  m_fds = 0;
+
+  if ( m_sns )
+  {
+      for ( int i = 0; i < m_count; i++ )
+          delete m_sns[i];
+      delete [] m_sns;
+      m_sns = 0;
+  }
+}
 
 int
 Mixer_ALSA::close()
@@ -453,17 +467,7 @@ Mixer_ALSA::close()
   mixer_sid_list.clear();
   m_mixDevices.clear();
 
-  if ( m_fds )
-      free( m_fds );
-  m_fds = 0;
-
-  if ( m_sns )
-  {
-      for ( int i = 0; i < m_count; i++ )
-          delete m_sns[i];
-      delete [] m_sns;
-      m_sns = 0;
-  }
+  removeSignalling();
 
   return ret;
 }
@@ -471,6 +475,8 @@ Mixer_ALSA::close()
 
 snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 	snd_mixer_elem_t* elem = 0;
+	if ( ! m_isOpen ) return elem; // unplugging guard
+
 	if ( int( mixer_sid_list.count() ) > devnum ) {
 		snd_mixer_selem_id_t * sid = mixer_sid_list[ devnum ];
 		// The next line (hopefully) only finds selem's, not elem's.
@@ -496,7 +502,7 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int devnum) {
 
 bool Mixer_ALSA::prepareUpdateFromHW()
 {
-    if ( !m_fds )
+    if ( !m_fds || !m_isOpen )
 	return false;
 
     //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 1\n";
@@ -518,7 +524,10 @@ bool Mixer_ALSA::prepareUpdateFromHW()
             //kdDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
 
 	    if (revents & POLLNVAL) {
+		/* Bug 127294 shows, that we receieve POLLNVAL when the user
+		 unplugs an USB soundcard. Lets close the card. */
 		kdDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
+		close();  // Card was unplugged (unplug, driver unloaded)
 		return false;
 	    }
 	    if (revents & POLLERR) {

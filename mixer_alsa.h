@@ -33,6 +33,7 @@ class Mixer_ALSA : public Mixer_Backend
 	private:
 		int identify( snd_mixer_selem_id_t *sid );
 		snd_mixer_elem_t* getMixerElem(int devnum);
+		void removeSignalling();
 
 		virtual QString errorText(int mixer_error);
 		typedef QValueList<snd_mixer_selem_id_t *>AlsaMixerSidList;
