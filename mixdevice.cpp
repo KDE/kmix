@@ -77,21 +77,6 @@ Volume& MixDevice::captureVolume()
     return _captureVolume;
 }
 
-/*
-long MixDevice::getVolume(Volume::ChannelID chid) {
-   return _volume.getVolume(chid);
-}
-
-long MixDevice::maxVolume() {
-   return _volume.maxVolume();
-}
-
-
-long MixDevice::minVolume() {
-   return _volume.minVolume();
-}
-*/
-
 
 void MixDevice::setEnumId(int enumId)
 {

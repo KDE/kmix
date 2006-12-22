@@ -60,6 +60,7 @@ private:
     void addEnumerated(snd_mixer_elem_t *elem, QList<QString*>&);
     Volume* addVolume(snd_mixer_elem_t *elem, bool capture);
     int setupAlsaPolling();
+    void deinitAlsaPolling();
 
     int identify( snd_mixer_selem_id_t *sid );
     snd_mixer_elem_t* getMixerElem(int devnum);

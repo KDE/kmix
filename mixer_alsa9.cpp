@@ -386,6 +386,20 @@ void Mixer_ALSA::prepareSignalling( Mixer *mixer )
     }
 }
 
+void Mixer_ALSA::deinitAlsaPolling()
+{
+  if ( m_fds )
+      free( m_fds );
+  m_fds = 0;
+
+  if ( m_sns )
+  {
+      for ( int i = 0; i < m_count; i++ )
+          delete m_sns[i];
+      delete [] m_sns;
+      m_sns = 0;
+  }
+}
 
 int
 Mixer_ALSA::close()
@@ -417,17 +431,7 @@ Mixer_ALSA::close()
   m_mixDevices.clear();
   m_id2numHash.clear();
 
-  if ( m_fds )
-      free( m_fds );
-  m_fds = 0;
-
-  if ( m_sns )
-  {
-      for ( int i = 0; i < m_count; i++ )
-          delete m_sns[i];
-      delete [] m_sns;
-      m_sns = 0;
-  }
+  deinitAlsaPolling();
 
   return ret;
 }
@@ -439,6 +443,8 @@ Mixer_ALSA::close()
  */
 snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
 	snd_mixer_elem_t* elem = 0;
+        if ( ! m_isOpen ) return elem; // unplugging guard
+
 	if ( idx == -1 ) {
 		return elem;
 	}
@@ -476,7 +482,7 @@ int Mixer_ALSA::id2num(const QString& id) {
 }
 
 bool Mixer_ALSA::prepareUpdateFromHW() {
-    if ( !m_fds )
+    if ( !m_fds || !m_isOpen )
         return false;
 
     // Poll on fds with 10ms timeout
@@ -495,7 +501,10 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
     //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
 
 	    if (revents & POLLNVAL) {
+                /* Bug 127294 shows, that we receieve POLLNVAL when the user
+                 unplugs an USB soundcard. Lets close the card. */
 		kDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
+                close();  // Card was unplugged (unplug, driver unloaded)
 		return false;
 	    }
 	    if (revents & POLLERR) {

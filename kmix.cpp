@@ -217,8 +217,11 @@ void KMixWindow::saveViewConfig()
       QWidget *w = m_wsMixers->widget(i);
       if ( w->inherits("KMixerWidget") ) {
          KMixerWidget* mw = (KMixerWidget*)w;
-         QString grp (mw->id());
-         mw->saveConfig( config, grp );
+         if ( mw->mixer()->isOpen() )
+         { // protect from unplugged devices (better do *not* save them)
+             QString grp (mw->id());
+             mw->saveConfig( config, grp );
+         }
       }
    }
 }
@@ -234,7 +237,9 @@ void KMixWindow::saveVolumes()
    for ( int i=0; i<Mixer::mixers().count(); ++i)
    {
       Mixer *mixer = (Mixer::mixers())[i];
-      mixer->volumeSave( cfg );
+      if ( mixer->isOpen() ) { // protect from unplugged devices (better do *not* save them)
+          mixer->volumeSave( cfg );
+      }
    }
    delete cfg;
 }

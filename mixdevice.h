@@ -94,12 +94,7 @@ public:
 
     Volume& playbackVolume();
     Volume& captureVolume();
-/*
-    void setVolume( int channel, int volume );
-    long getVolume(Volume::ChannelID chid);
-    long maxVolume();
-    long minVolume();
-*/
+
     void setEnumId(int);
     unsigned int enumId();
     QList<QString>& enumValues();
