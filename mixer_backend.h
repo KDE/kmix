@@ -24,11 +24,13 @@
 
 #include "mixer.h"
 
-class Mixer_Backend
+class Mixer_Backend : public QObject
 {
-// The Mixer Backend's may only be accessed from the Mixer class.
+      Q_OBJECT
+
 friend class Mixer;
 
+// The Mixer Backend's may only be accessed from the Mixer class.
 protected:
   Mixer_Backend(int devnum);
   virtual ~Mixer_Backend();
@@ -64,27 +66,23 @@ protected:
   bool isOpen();
   
   virtual bool prepareUpdateFromHW();
+  void readSetFromHWforceUpdate() const;
 
   /// Volume Read
-  virtual int readVolumeFromHW( const QString& id, Volume &vol, Volume& ) = 0;
+  virtual int readVolumeFromHW( const QString& id, MixDevice * ) = 0;
   /// Volume Write
-  virtual int writeVolumeToHW( const QString& id, Volume &volume, Volume& ) = 0;
+  virtual int writeVolumeToHW( const QString& id, MixDevice * ) = 0;
 
   /// Enums
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
 
   /// Recording Switches
-  virtual bool setRecsrcHW( const QString& id, bool on) = 0;
-  virtual bool isRecsrcHW( const QString& id ) = 0;
+  virtual void setRecsrcHW( const QString& id, bool on) = 0;
+  //virtual bool isRecsrcHW( const QString& id ) = 0;
 
   /// Overwrite in the backend if the backend can see changes without polling
   virtual bool needsPolling() { return true; }
-
-  /** overwrite this if you need to connect to slots in the mixer (e.g. readSetFromHW)
-      this called in the very beginning and only if !needsPolling
-  */
-  virtual void prepareSignalling( Mixer * ) {}
 
   MixDevice* recommendedMaster();
 
@@ -100,11 +98,12 @@ protected:
    /// Translate ID to internal device number
    virtual int id2num(const QString& id);
 
+
   int m_devnum;
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
   /// gives you a usable name, use that name.
   QString m_mixerName;
-  // All mix devices of this phyisical device.
+  // All controls of this card
   MixSet m_mixDevices;
 
   /******************************************************************************************
@@ -114,6 +113,16 @@ protected:
   bool m_isOpen;
   // The MixDevice that would qualify best as MasterDevice (according to the taste of the Backend developer)
   MixDevice* m_recommendedMaster;
+  QTimer* _pollingTimer;
+
+  mutable bool _readSetFromHWforceUpdate;
+
+signals:
+  void controlChanged( void );
+
+protected slots:
+  virtual void readSetFromHW();
+
 };
 
 #endif

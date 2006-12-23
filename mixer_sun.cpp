@@ -197,6 +197,7 @@ int Mixer_SUN::open()
 //======================================================================
 int Mixer_SUN::close()
 {
+   _pollingTimer->stop();
    m_isOpen = false;
    int l_i_ret = ::close( fd );
    m_mixDevices.clear();
@@ -229,11 +230,12 @@ QString Mixer_SUN::errorText( int mixer_error )
 // FUNCTION    : Mixer::readVolumeFromHW
 // DESCRIPTION : Read the audio information from the driver.
 //======================================================================
-int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume, Volume& )
+int Mixer_SUN::readVolumeFromHW( const QString& id, MixDevice *md )
 {
    audio_info_t audioinfo;
    uint_t devMask = MixerSunPortMasks[devnum];
 
+   Volume& volume = md->playbackVolume();
    int devnum = id2num(id);
    //
    // Read the current audio information from the driver
@@ -250,21 +252,21 @@ int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume, Volume& )
       switch ( devnum )
       {
          case MIXERDEV_MASTER_VOLUME :
-            volume.setMuted( audioinfo.output_muted );
+            volume.setSwitchActivated( audioinfo.output_muted );
             GainBalanceToVolume( audioinfo.play.gain,
                                  audioinfo.play.balance,
                                  volume );
             break;
 
          case MIXERDEV_RECORD_MONITOR :
-            volume.setMuted(false);
+            volume.setSwitchActivated(false);
             volume.setAllVolumes( audioinfo.monitor_gain );
             break;
 
          case MIXERDEV_INTERNAL_SPEAKER :
          case MIXERDEV_HEADPHONE :
          case MIXERDEV_LINE_OUT :
-            volume.setMuted( (audioinfo.play.port & devMask) ? false : true );
+            volume.setSwitchActivated( (audioinfo.play.port & devMask) ? false : true );
             GainBalanceToVolume( audioinfo.play.gain,
                                  audioinfo.play.balance,
                                  volume );
@@ -273,7 +275,7 @@ int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume, Volume& )
          case MIXERDEV_MICROPHONE :
          case MIXERDEV_LINE_IN :
          case MIXERDEV_CD :
-            volume.setMuted( (audioinfo.record.port & devMask) ? false : true );
+            volume.setSwitchActivated( (audioinfo.record.port & devMask) ? false : true );
             GainBalanceToVolume( audioinfo.record.gain,
                                  audioinfo.record.balance,
                                  volume );
@@ -290,18 +292,19 @@ int Mixer_SUN::readVolumeFromHW( const QString& id, Volume& volume, Volume& )
 // FUNCTION    : Mixer::writeVolumeToHW
 // DESCRIPTION : Write the specified audio settings to the hardware.
 //======================================================================
-int Mixer_SUN::writeVolumeToHW( const QString& id, Volume &volume )
+int Mixer_SUN::writeVolumeToHW( const QString& id, MixDevice *md )
 {
    uint_t gain;
    uchar_t balance;
    uchar_t mute;
 
+   Volume& volume = md->playbackVolume();
    int devnum = id2num(id);
    //
    // Convert the Volume(left vol, right vol) to the Gain/Balance Sun uses
    //
    VolumeToGainBalance( volume, gain, balance );
-   mute = volume.isMuted() ? 1 : 0;
+   mute = volume.isSwitchActivated() ? 1 : 0;
 
    //
    // Read the current audio settings from the hardware
@@ -373,9 +376,9 @@ int Mixer_SUN::writeVolumeToHW( const QString& id, Volume &volume )
 // FUNCTION    : Mixer::setRecsrcHW
 // DESCRIPTION :
 //======================================================================
-bool Mixer_SUN::setRecsrcHW( const QString& /*id*/, bool /* on */ )
+void Mixer_SUN::setRecsrcHW( const QString& /*id*/, bool /* on */ )
 {
-   return false;
+   return;
 }
 
 //======================================================================

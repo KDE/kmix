@@ -26,28 +26,40 @@
 
 Mixer_Backend::Mixer_Backend(int device) :
    m_devnum (device) , m_isOpen(false), m_recommendedMaster(0)
+
 {
-// autoDelete is discontinued in Qt4. See the destructor for the new impl.
-//  m_mixDevices.setAutoDelete( true );
+    _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
+    connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
 }
 
 Mixer_Backend::~Mixer_Backend()
 {
-	qDeleteAll(m_mixDevices);
-	m_mixDevices.clear();
+    delete _pollingTimer;
+    qDeleteAll(m_mixDevices);
+    m_mixDevices.clear();
 }
 
 
 bool Mixer_Backend::openIfValid() {
-	bool valid = false;
-	int ret = open();
-	if ( ret == 0  && m_mixDevices.count() > 0) {
-	  valid = true;
-	}
+    bool valid = false;
+    int ret = open();
+    if ( ret == 0  && m_mixDevices.count() > 0) {
+        valid = true;
+        // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
+        // but we want a somehow usable fallback just in case.
+    
+        if ( needsPolling() ) {
+            _pollingTimer->start(50);
+        }
         else {
-	   close();
-	}
-	return valid;
+            // The initial state must be read manually
+            QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
+        }
+    } // cold be opened
+    else {
+        close();
+    }
+    return valid;
 }
 
 bool Mixer_Backend::isOpen() {
@@ -61,6 +73,51 @@ bool Mixer_Backend::isOpen() {
  */
 bool Mixer_Backend::prepareUpdateFromHW() {
   return true;
+}
+
+
+/**
+ * After calling this, readSetFromHW() will do a complete update. This will
+ * trigger emitting the appropriate signals like newVolumeLevels().
+ *
+ * This method is useful, if you need to get a "refresh signal" - used at:
+ * 1) Start of KMix - so that we can be sure an initial signal is emitted
+ * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
+ */
+void Mixer_Backend::readSetFromHWforceUpdate() const {
+   _readSetFromHWforceUpdate = true;
+}
+
+
+/**
+   You can call this to retrieve the freshest information from the mixer HW.
+   This method is also called regulary by the mixer timer.
+*/
+void Mixer_Backend::readSetFromHW()
+{
+    bool updated = prepareUpdateFromHW();
+    if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
+        // Some drivers (ALSA) are smart. We don't need to run the following
+        // time-consuming update loop if there was no change
+        kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick" << endl;
+        return;
+    }
+    _readSetFromHWforceUpdate = false;
+
+    int mdCount = m_mixDevices.count();
+    for(int i=0; i<mdCount  ; ++i )
+    {
+        MixDevice *md = m_mixDevices[i];
+        readVolumeFromHW( md->id(), md );
+        if (md->isEnum() ) {
+            /* @todo Move the enum stuff to (ALSA) backend:
+             * Plan: Read everything (incuding enum's) in readVolumeFromHW().
+             * readVolumeFromHW() should then be rernamed to readHW().
+             */
+            md->setEnumId( enumIdHW(md->id()) ); 
+        }
+    }
+    emit controlChanged();
 }
 
 /**
@@ -140,3 +197,4 @@ QString Mixer_Backend::errorText(int mixer_error)
   return l_s_errmsg;
 }
 
+#include "mixer_backend.moc"

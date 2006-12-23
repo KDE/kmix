@@ -157,10 +157,11 @@ int Mixer_OSS::open()
 
 int Mixer_OSS::close()
 {
-  m_isOpen = false;
-  int l_i_ret = ::close(m_fd);
-  m_mixDevices.clear();
-  return l_i_ret;
+    _pollingTimer->stop();
+    m_isOpen = false;
+    int l_i_ret = ::close(m_fd);
+    m_mixDevices.clear();
+    return l_i_ret;
 }
 
 
@@ -214,32 +215,7 @@ QString Mixer_OSS::errorText(int mixer_error)
   return l_s_errmsg;
 }
 
-
-bool Mixer_OSS::setRecsrcHW( const QString& id, bool on )
-{
-   int i_recsrc, oldrecsrc;
-   int devnum = id2num(id);
-   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
-      errormsg(Mixer::ERR_READ);
-
-   oldrecsrc = i_recsrc = on ?
-             (i_recsrc | (1 << devnum )) :
-             (i_recsrc & ~(1 << devnum ));
-
-   // Change status of record source(s)
-   if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
-      errormsg (Mixer::ERR_WRITE);
-   // Re-read status of record source(s). Just in case, OSS does not like
-   // my settings. And with this line mix->recsrc gets its new value. :-)
-   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
-      errormsg(Mixer::ERR_READ);
-
-   // PORTING: Hint: Do not forget to set i_recsrc to the new valid
-   //                record source mask.
-
-   return i_recsrc == oldrecsrc;
-}
-
+/*
 bool Mixer_OSS::isRecsrcHW( const QString& id )
 {
    int devnum = id2num(id);
@@ -253,50 +229,104 @@ bool Mixer_OSS::isRecsrcHW( const QString& id )
    }
    return isRecsrc;
 }
+*/
 
-int Mixer_OSS::readVolumeFromHW( const QString& id, Volume &vol, Volume& )
+
+void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
 {
-#warning This is bad, as it will use wrong volume levels on saving volume
-   if( vol.isSwitchActivated() ) return 0; // Don't alter volume when muted @todo Check
+    int i_recsrc, oldrecsrc;
+    int devnum = id2num(id);
+    if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
+        errormsg(Mixer::ERR_READ);
 
-   int volume;
-   int devnum = id2num(id);
-  if (ioctl(m_fd, MIXER_READ( devnum ), &volume) == -1)
+    oldrecsrc = i_recsrc = on ?
+             (i_recsrc | (1 << devnum )) :
+             (i_recsrc & ~(1 << devnum ));
+
+    // Change status of record source(s)
+    if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
     {
-      /* Oops, can't read mixer */
-      return(Mixer::ERR_READ);
+        errormsg (Mixer::ERR_WRITE);
     }
-  else
-    {
-      vol.setVolume( Volume::LEFT, (volume & 0x7f));
-      if( vol.count() > 1 )
-        vol.setVolume( Volume::RIGHT, ((volume>>8) & 0x7f));
-      //fprintf(stderr, "Mixer_OSS::readVolumeFromHW(%i,vol) set vol %i %i\n", devnum,  vol.getVolume(Volume::LEFT), vol.getVolume(Volume::RIGHT));
-	return 0;
+    else {
+        // Re-read status of record source(s). Just in case the hardware/driver has
+        // some limitaton (like exclusive switches)
+        int recsrcMask;
+        if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
+            errormsg(Mixer::ERR_READ);
+        else
+        {
+            for(int i=0; i< m_mixDevices.count() ; i++ )
+            {
+                MixDevice *md = m_mixDevices[i];
+                bool isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
+                md->captureVolume().setSwitch(isRecsrc);
+            } // for all controls
+        } // reading newrecsrcmask is OK
     }
+    
+}
+
+
+int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
+{
+    int ret = 0;
+
+    // --- VOLUME ---
+    Volume& vol = md->playbackVolume();
+    int devnum = id2num(id);
+
+    if ( vol.hasVolume() ) {
+        int volume;
+         if (ioctl(m_fd, MIXER_READ( devnum ), &volume) == -1)
+        {
+            /* Oops, can't read mixer */
+            ret = Mixer::ERR_READ;
+        }
+        else
+        {
+            vol.setVolume( Volume::LEFT, (volume & 0x7f));
+            if( vol.count() > 1 )
+                vol.setVolume( Volume::RIGHT, ((volume>>8) & 0x7f));
+        }
+    }
+
+
+    // --- RECORD SWITCH ---
+    int recsrcMask;
+    if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
+        ret = Mixer::ERR_READ;
+    else {
+        // test if device bit is set in record bit mask
+        bool isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
+        md->captureVolume().setSwitch(isRecsrc);
+    }
+
+    return ret;
 }
 
 
 
-int Mixer_OSS::writeVolumeToHW( const QString& id, Volume &vol, Volume &)
+int Mixer_OSS::writeVolumeToHW( const QString& id, MixDevice *md)
 {
-   int volume;
-   int devnum = id2num(id);
+    int volume;
+    int devnum = id2num(id);
 
-   if( vol.isSwitchActivated() )
-      volume = 0;  // @todo Might lead to badly saved sound volumes in OSS backend
-   else
-   {
-      if ( vol.count() > 1 )
-         volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
-      else
-         volume = vol[ Volume::LEFT ];
-   }
+    Volume& vol = md->playbackVolume();
+    if( vol.isSwitchActivated() )
+       volume = 0;
+    else
+    {
+        if ( vol.count() > 1 )
+            volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
+        else
+            volume = vol[ Volume::LEFT ];
+    }
+    
+    if (ioctl(m_fd, MIXER_WRITE( devnum ), &volume) == -1)
+        return Mixer::ERR_WRITE;
 
-   if (ioctl(m_fd, MIXER_WRITE( devnum ), &volume) == -1)
-      return Mixer::ERR_WRITE;
-
-  return 0;
+    return 0;
 }
 
 QString OSS_getDriverName() {

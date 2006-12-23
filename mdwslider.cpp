@@ -663,13 +663,14 @@ void MDWSlider::setRecsrc(bool value )
     associated KAction like the context menu.
 */
 void MDWSlider::toggleMuted() {
-    setMuted( !m_mixdevice->isMuted() );
+    setMuted( ! m_mixdevice->playbackVolume().isSwitchActivated() );
 }
 
 void MDWSlider::setMuted(bool value)
 {
-    if (  m_mixdevice->playbackVolume().hasSwitch() ) {
-        m_mixdevice->playbackVolume().setSwitch( value );
+    Volume& vol = m_mixdevice->playbackVolume();
+    if (  vol.hasSwitch() ) {
+        vol.setSwitch( value );
         m_mixer->commitVolumeChange(m_mixdevice);
     }
 }

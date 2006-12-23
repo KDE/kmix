@@ -37,16 +37,15 @@ public:
     Mixer_ALSA( int device = -1 );
     ~Mixer_ALSA();
 
-    virtual int  readVolumeFromHW( const QString& id, Volume &vol, Volume& );
-    virtual int  writeVolumeToHW ( const QString& id, Volume &vol, Volume& );
-    virtual bool setRecsrcHW( const QString& id, bool on);
+    virtual int  readVolumeFromHW( const QString& id, MixDevice *md );
+    virtual int  writeVolumeToHW ( const QString& id, MixDevice *md );
+    virtual void setRecsrcHW( const QString& id, bool on);
     virtual bool isRecsrcHW( const QString& id );
     virtual void setEnumIdHW( const QString& id, unsigned int);
     virtual unsigned int enumIdHW(const QString& id);
     virtual bool prepareUpdateFromHW();
 
     virtual bool needsPolling() { return false; }
-    virtual void prepareSignalling( Mixer *mixer );
     virtual QString getDriverName();
 
 protected:

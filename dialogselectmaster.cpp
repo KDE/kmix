@@ -23,9 +23,9 @@
 #include <QLayout>
 #include <QLabel>
 #include <qradiobutton.h>
-#include <q3scrollview.h>
+#include <qscrollarea.h>
 #include <QToolTip>
-#include <q3vbox.h>
+//#include <q3vbox.h>
 
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -103,7 +103,8 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), m_mainFrame );
     _layout->addWidget(qlbl);
 
-    m_scrollableChannelSelector = new Q3ScrollView(m_mainFrame, "scrollableChannelSelector");
+    m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
+    m_scrollableChannelSelector->setObjectName("scrollableChannelSelector");
     m_scrollableChannelSelector->viewport()->setBackgroundRole(QPalette::Background);
     _layout->addWidget(m_scrollableChannelSelector);
 
@@ -149,7 +150,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     /** Reset page end -------------------------------------------------- */
 
     m_vboxForScrollView = new KVBox(m_scrollableChannelSelector->viewport());
-    m_scrollableChannelSelector->addChild(m_vboxForScrollView);
+    m_scrollableChannelSelector->setWidget(m_vboxForScrollView);
 
     QString masterKey = "----noMaster---";  // Use a non-matching name as default
     MixDevice* master = mixer->masterDevice();

@@ -72,7 +72,6 @@ Mixer::Mixer( int driver, int device )
 {
    (void)new KMixAdaptor(this);
    QDBusConnection::sessionBus().registerObject(QLatin1String("/Mixer"), this);
-   _pollingTimer = 0;
 
    _mixerBackend = 0;
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
@@ -84,8 +83,6 @@ Mixer::Mixer( int driver, int device )
 
   m_balance = 0;
 
-  _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
-  connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
 #warning "kde4 port it to dbus"
 #if 0
   DCOPCString objid;
@@ -104,13 +101,12 @@ Mixer::Mixer( int driver, int device )
 Mixer::~Mixer() {
    // Close the mixer. This might also free memory, depending on the called backend method
    close();
-   delete _pollingTimer;
 }
 
 void Mixer::volumeSave( KConfig *config )
 {
     //    kDebug(67100) << "Mixer::volumeSave()" << endl;
-    readSetFromHW();
+    _mixerBackend->readSetFromHW();
     QString grp("Mixer");
     grp.append(id());
     _mixerBackend->m_mixDevices.write( config, grp );
@@ -134,11 +130,8 @@ void Mixer::volumeLoad( KConfig *config )
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
        MixDevice *md = _mixerBackend->m_mixDevices[i];
-       // kDebug(67100) << "Mixer::volumeLoad() writeVolumeToHW(" << md->id() << ", "<< md->getVolume() << ")" << endl;
-       // !! @todo Restore record source
-       //setRecordSource( md->id(), md->isRecSource() );
        _mixerBackend->setRecsrcHW( md->id(), md->isRecSource() );
-       _mixerBackend->writeVolumeToHW( md->id(), md->playbackVolume(), md->captureVolume() );
+       _mixerBackend->writeVolumeToHW( md->id(), md );
        if ( md->isEnum() ) _mixerBackend->setEnumIdHW( md->id(), md->enumId() );
    }
 }
@@ -151,36 +144,30 @@ void Mixer::volumeLoad( KConfig *config )
  * @return 0, if OK. An Mixer::ERR_ error code otherwise
  */
 bool Mixer::openIfValid() {
-   bool ok = _mixerBackend->openIfValid();
-   if ( ok ) {
-      // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
-      // but we want a somehow usable fallback just in case.
-      _id = baseName();
+    bool ok = _mixerBackend->openIfValid();
+    if ( ok ) {
+        _id = baseName();
+        MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
+        if ( recommendedMaster != 0 ) {
+            setMasterDevice(recommendedMaster->id() );
+            kDebug() << "Mixer::open() detected master: " << recommendedMaster->id() << endl;
+        }
+        else {
+            kError(67100) << "Mixer::open() no master detected." << endl;
+            QString noMaster = "---no-master-detected---";
+            setMasterDevice(noMaster); // no master
+        }
+        connect( _mixerBackend, SIGNAL(controlChanged()), SLOT(controlChangedForwarder()) );
+    }
 
-      MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
-      if ( recommendedMaster != 0 ) {
-         setMasterDevice(recommendedMaster->id() );
-         kDebug() << "Mixer::open() detected master: " << recommendedMaster->id() << endl;
-      }
-      else {
-         kError(67100) << "Mixer::open() no master detected." << endl;
-         QString noMaster = "---no-master-detected---";
-         setMasterDevice(noMaster); // no master
-      }
-
-      if ( _mixerBackend->needsPolling() ) {
-           _pollingTimer->start(50);
-       }
-       else {
-           _mixerBackend->prepareSignalling(this);
-           // poll once to give the GUI a chance to rebuild it's info
-           QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
-       }
-   } // cold be opened
-
-   return ok;
+    return ok;
 }
 
+void Mixer::controlChangedForwarder()
+{
+    emit newVolumeLevels();
+    emit newRecsrc(); // cheap, but works
+}
 
 /**
  * Closes the mixer.
@@ -190,7 +177,6 @@ bool Mixer::openIfValid() {
  */
 int Mixer::close()
 {
-  _pollingTimer->stop();
   return _mixerBackend->close();
 }
 
@@ -231,56 +217,19 @@ bool Mixer::isOpen() const {
         return _mixerBackend->isOpen();
 }
 
+void Mixer::readSetFromHWforceUpdate() const {
+   _mixerBackend->readSetFromHWforceUpdate();
+}
+
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
-/**
- * After calling this, readSetFromHW() will do a complete update. This will
- * trigger emitting the appropriate signals like newVolumeLevels().
- *
- * This method is useful, if you need to get a "refresh signal" - used at:
- * 1) Start of KMix - so that we can be sure an initial signal is emitted
- * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
- */
-void Mixer::readSetFromHWforceUpdate() const {
-   _readSetFromHWforceUpdate = true;
-}
 
-/**
-   You can call this to retrieve the freshest information from the mixer HW.
-   This method is also called regulary by the mixer timer.
-*/
-void Mixer::readSetFromHW()
-{
-    bool updated = _mixerBackend->prepareUpdateFromHW();
-    if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
-        // Some drivers (ALSA) are smart. We don't need to run the following
-        // time-consuming update loop if there was no change
-        kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick" << endl;
-        return;
-    }
-    _readSetFromHWforceUpdate = false;
-    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
-    {
-        MixDevice *md = _mixerBackend->m_mixDevices[i];
-        Volume& volP = md->playbackVolume();
-        Volume& volC = md->captureVolume();
-        _mixerBackend->readVolumeFromHW( md->id(), volP, volC );
-        md->setRecSource( _mixerBackend->isRecsrcHW( md->id() ) );
-        if (md->isEnum() ) {
-            md->setEnumId( _mixerBackend->enumIdHW(md->id()) );
-        }
-    }
-    // Trivial implementation. Without looking at the devices
-    //kDebug(67100) << "Mixer::readSetFromHW(): emit newVolumeLevels()" << endl;
-    emit newVolumeLevels();
-    emit newRecsrc(); // cheap, but works
-}
 
 
 void Mixer::setBalance(int balance)
 {
   // !! BAD, because balance only works on the master device. If you have not Master, the slider is a NOP
-  // @todo This is hardocded to playback. This setBalance() method MUST be redone in a reasonabvle manner
+  // @todo This is hardocded to playback. This setBalance() method MUST be redone in a reasonable manner
   if( balance == m_balance ) {
       // balance unchanged => return
       return;
@@ -296,7 +245,7 @@ void Mixer::setBalance(int balance)
 
     Volume& volP = master->playbackVolume();
     Volume& volC = master->captureVolume();
-    _mixerBackend->readVolumeFromHW( master->id(), volP, volC );
+    _mixerBackend->readVolumeFromHW( master->id(), master );
 
     int left = volP[ Volume::LEFT ];
     int right = volP[ Volume::RIGHT ];
@@ -312,7 +261,7 @@ void Mixer::setBalance(int balance)
         volP.setVolume( Volume::RIGHT,  refvol);
     }
 
-    _mixerBackend->writeVolumeToHW( master->id(), volP, volC );
+    _mixerBackend->writeVolumeToHW( master->id(), master );
 
   emit newBalance( volP );
 }
@@ -404,35 +353,11 @@ MixDevice* Mixer::masterCardDevice()
 
 
 /**
-   Used internally by the Mixer class and as DCOP method
+   Used internally by KMix and as DBUS method
 */
 void Mixer::setRecordSource( const QString& mixdeviceID, bool on )
 {
-   if( !_mixerBackend->setRecsrcHW( mixdeviceID, on ) ) // others have to be updated
-   {
-      for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
-      {
-         MixDevice *md = _mixerBackend->m_mixDevices[i];
-         bool isRecsrc =  _mixerBackend->isRecsrcHW( md->id() );
-         // kDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc << endl;
-         md->setRecSource( isRecsrc );
-      }
-      // emitting is done after read
-      //emit newRecsrc(); // like "emit newVolumeLevels()", but for record source
-  }
-   else {
-      // just the actual mixdevice
-      for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
-      {
-         MixDevice *md = _mixerBackend->m_mixDevices[i];
-         if( md->id() == mixdeviceID ) {
-            bool isRecsrc =  _mixerBackend->isRecsrcHW( md->id() );
-            md->setRecSource( isRecsrc );
-         }
-      }
-      // emitting is done after read
-      //emit newRecsrc(); // like "emit newVolumeLevels()", but for record source
-   }
+   _mixerBackend->setRecsrcHW( mixdeviceID, on );
 }
 
 
@@ -475,16 +400,16 @@ MixDevice* Mixer::getMixdeviceById( const QString& mixdeviceID )
 // Used also by the setMasterVolume() method.
 void Mixer::setVolume( const QString& mixdeviceID, int percentage )
 {
-    MixDevice *mixdev = getMixdeviceById( mixdeviceID );
-    if (!mixdev) return;
+    MixDevice *md = getMixdeviceById( mixdeviceID );
+    if (!md) return;
 
-    Volume& volP = mixdev->playbackVolume();
-    Volume& volC = mixdev->captureVolume();
+    Volume& volP = md->playbackVolume();
+    Volume& volC = md->captureVolume();
 
     // @todo The next call doesn't handle negative volumes correctly.
     volP.setAllVolumes( (percentage*volP.maxVolume())/100 );
     volC.setAllVolumes( (percentage*volC.maxVolume())/100 );
-    _mixerBackend->writeVolumeToHW(mixdeviceID, volP, volC);
+    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 }
 
 /**
@@ -496,8 +421,8 @@ void Mixer::setVolume( const QString& mixdeviceID, int percentage )
    - It is easy to understand ( read - modify - commit )
 */
 void Mixer::commitVolumeChange( MixDevice* md ) {
-  _mixerBackend->writeVolumeToHW(md->id(), md->playbackVolume(), md->captureVolume() );
-  _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
+  _mixerBackend->writeVolumeToHW(md->id(), md );
+  if (md->isEnum()) _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
 }
 
 // @dcop only
@@ -512,10 +437,10 @@ void Mixer::setMasterVolume( int percentage )
 // @dcop
 int Mixer::volume( const QString& mixdeviceID )
 {
-  MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-  if (!mixdev) return 0;
+  MixDevice *md= getMixdeviceById( mixdeviceID );
+  if (!md) return 0;
 
-  Volume vol=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+  Volume vol=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
   // @todo This will not work, if minVolume != 0      !!!
   //       e.g.: minVolume=5 or minVolume=-10
   // The solution is to check two cases:
@@ -539,22 +464,22 @@ int Mixer::volume( const QString& mixdeviceID )
 
 // @dcop , especially for use in KMilo
 void Mixer::setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume ) {
-    MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-    if (!mixdev) return;
+    MixDevice *md= getMixdeviceById( mixdeviceID );
+    if (!md) return;
 
-    Volume& volP=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-    Volume& volC=mixdev->captureVolume();
+    Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+    Volume& volC=md->captureVolume();
     volP.setAllVolumes( absoluteVolume );
-    _mixerBackend->writeVolumeToHW(mixdeviceID, volP, volC);
+    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 }
 
 // @dcop , especially for use in KMilo
 long Mixer::absoluteVolume( const QString& mixdeviceID )
 {
-    MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-    if (!mixdev) return 0;
+    MixDevice *md = getMixdeviceById( mixdeviceID );
+    if (!md) return 0;
 
-    Volume& volP=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+    Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
     long avgVolume=volP.getAvgVolume((Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT));
     return avgVolume;
 }
@@ -562,10 +487,10 @@ long Mixer::absoluteVolume( const QString& mixdeviceID )
 // @dcop , especially for use in KMilo
 long Mixer::absoluteVolumeMax( const QString& mixdeviceID )
 {
-   MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-   if (!mixdev) return 0;
+   MixDevice *md= getMixdeviceById( mixdeviceID );
+   if (!md) return 0;
 
-   Volume vol=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+   Volume vol=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
    long maxVolume=vol.maxVolume();
    return maxVolume;
 }
@@ -573,10 +498,10 @@ long Mixer::absoluteVolumeMax( const QString& mixdeviceID )
 // @dcop , especially for use in KMilo
 long Mixer::absoluteVolumeMin( const QString& mixdeviceID )
 {
-   MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-   if (!mixdev) return 0;
+   MixDevice *md= getMixdeviceById( mixdeviceID );
+   if (!md) return 0;
 
-   Volume vol=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+   Volume vol=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
    long minVolume=vol.minVolume();
    return minVolume;
 }
@@ -595,10 +520,10 @@ int Mixer::masterVolume()
 // @dcop
 void Mixer::increaseVolume( const QString& mixdeviceID )
 {
-    MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-    if (mixdev != 0) {
-        Volume& volP=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-        Volume& volC=mixdev->captureVolume();
+    MixDevice *md= getMixdeviceById( mixdeviceID );
+    if (md != 0) {
+        Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+        Volume& volC=md->captureVolume();
         double fivePercent = (volP.maxVolume()-volP.minVolume()+1) / 20;
         for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++)
         {
@@ -607,7 +532,7 @@ void Mixer::increaseVolume( const QString& mixdeviceID )
                 volToChange += (int)fivePercent;
             volP.setVolume((Volume::ChannelID)i, volToChange);
         }
-        _mixerBackend->writeVolumeToHW(mixdeviceID, volP, volC);
+        _mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
 
   /* see comment at the end of decreaseVolume()
@@ -619,10 +544,10 @@ void Mixer::increaseVolume( const QString& mixdeviceID )
 // @dcop
 void Mixer::decreaseVolume( const QString& mixdeviceID )
 {
-    MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-    if (mixdev != 0) {
-        Volume& volP=mixdev->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-        Volume& volC=mixdev->captureVolume();
+    MixDevice *md= getMixdeviceById( mixdeviceID );
+    if (md != 0) {
+        Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+        Volume& volC=md->captureVolume();
         double fivePercent = (volP.maxVolume()-volP.minVolume()+1) / 20;
         for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++) {
             int volToChange = volP.getVolume((Volume::ChannelID)i);
@@ -630,7 +555,7 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
                 volToChange -= (int)fivePercent;
             volP.setVolume((Volume::ChannelID)i, volToChange);
         } // for
-        _mixerBackend->writeVolumeToHW(mixdeviceID, volP, volC);
+        _mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
 
     /************************************************************
@@ -645,42 +570,40 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
 // @dcop
 void Mixer::setMute( const QString& mixdeviceID, bool on )
 {
-  MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-  if (!mixdev) return;
+  MixDevice *md= getMixdeviceById( mixdeviceID );
+  if (!md) return;
 
-  mixdev->setMuted( on );
+  md->setMuted( on );
 
-     _mixerBackend->writeVolumeToHW(mixdeviceID, mixdev->playbackVolume(), mixdev->captureVolume());
+     _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 }
 
 // @dcop
 void Mixer::toggleMute( const QString& mixdeviceID )
 {
-  MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-  if (!mixdev) return;
+    MixDevice *md= getMixdeviceById( mixdeviceID );
+    if (!md) return;
 
-  bool previousState= mixdev->isMuted();
-
-  mixdev->setMuted( !previousState );
-
-     _mixerBackend->writeVolumeToHW(mixdeviceID, mixdev->playbackVolume(), mixdev->captureVolume());
+    bool previousState= md->playbackVolume().isSwitchActivated();
+    md->setMuted( !previousState );
+    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 }
 
 // @dcop
 bool Mixer::mute( const QString& mixdeviceID )
 {
-  MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-  if (!mixdev) return true;
+  MixDevice *md= getMixdeviceById( mixdeviceID );
+  if (!md) return true;
 
-  return mixdev->isMuted();
+  return md->isMuted();
 }
 
 bool Mixer::isRecordSource( const QString& mixdeviceID )
 {
-  MixDevice *mixdev= getMixdeviceById( mixdeviceID );
-  if (!mixdev) return false;
+  MixDevice *md= getMixdeviceById( mixdeviceID );
+  if (!md) return false;
 
-  return mixdev->isRecSource();
+  return md->isRecSource();
 }
 
 /// @DCOP    WHAT DOES THIS METHOD?!?!?

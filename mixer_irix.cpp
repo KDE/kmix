@@ -69,6 +69,7 @@ int Mixer_IRIX::open()
 
 int Mixer_IRIX::close()
 {
+  _pollingTimer->stop();
   m_isOpen = false;
   ALfreeconfig(m_config);
   ALcloseport(m_port);

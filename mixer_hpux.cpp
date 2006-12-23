@@ -128,6 +128,7 @@ int Mixer_HPUX::open()
 
 int Mixer_HPUX::close()
 {
+  _pollingTimer->stop();
   m_isOpen = false;
   m_mixDevices.clear();
   return 0;

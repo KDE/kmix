@@ -24,8 +24,7 @@
 class QButtonGroup;
 class KComboBox;
 #include <qradiobutton.h>
-class Q3ScrollView;
-//#include <qstringlist.h>
+class QScrollArea;
 #include <kvbox.h>
 class QVBoxLayout;
 
@@ -51,7 +50,7 @@ class DialogSelectMaster : public KDialog
     void createPage(Mixer*);
     QVBoxLayout* _layout;
     KComboBox* m_cMixer;
-    Q3ScrollView* m_scrollableChannelSelector;
+    QScrollArea* m_scrollableChannelSelector;
     KVBox *m_vboxForScrollView;
     QButtonGroup *m_buttonGroupForScrollView;
     //QStringList m_mixerPKs;

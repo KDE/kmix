@@ -176,7 +176,7 @@ int Mixer_ALSA::open()
                 mdID,
                 *volPlay,
                 *volCapture,
-               snd_mixer_selem_id_get_name( sid ),
+                snd_mixer_selem_id_get_name( sid ),
                 ct );
 
         m_mixDevices.append( md );
@@ -207,8 +207,7 @@ int Mixer_ALSA::open()
 
     m_isOpen = true; // return with success
 
-    setupAlsaPolling();
-
+    setupAlsaPolling();  // For updates
     return 0;
 }
 
@@ -283,6 +282,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 /* setup for select on stdin and the mixer fd */
 int Mixer_ALSA::setupAlsaPolling()
 {
+    assert( !m_sns );
+
+    // --- Step 1: Retrieve FD's from ALSALIB
     int err;
     if ((m_count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
         kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  m_count << "\n";
@@ -304,6 +306,17 @@ int Mixer_ALSA::setupAlsaPolling()
         kDebug(67100) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  m_count << "\n";
         return Mixer::ERR_OPEN;
     }
+
+
+    // --- Step 2: Create QSocketNotifier's for the FD's
+    m_sns = new QSocketNotifier*[m_count];
+    for ( int i = 0; i < m_count; ++i )
+    {
+        kDebug(67100) << "socket " << i << endl;
+        m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+        connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()));
+    }
+
     return 0;
 }
 
@@ -373,18 +386,6 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
     return vol;
 }
 
-void Mixer_ALSA::prepareSignalling( Mixer *mixer )
-{
-    assert( !m_sns );
-
-    m_sns = new QSocketNotifier*[m_count];
-    for ( int i = 0; i < m_count; ++i )
-    {
-        kDebug(67100) << "socket " << i << endl;
-        m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
-        mixer->connect(m_sns[i], SIGNAL(activated(int)), mixer, SLOT(readSetFromHW()));
-    }
-}
 
 void Mixer_ALSA::deinitAlsaPolling()
 {
@@ -523,8 +524,7 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
     return updated;
 }
 
-bool
-Mixer_ALSA::isRecsrcHW( const QString& id )
+bool Mixer_ALSA::isRecsrcHW( const QString& id )
 {
     int devnum = id2num(id);
     bool isCurrentlyRecSrc = false;
@@ -570,8 +570,7 @@ Mixer_ALSA::isRecsrcHW( const QString& id )
     return isCurrentlyRecSrc;
 }
 
-bool
-Mixer_ALSA::setRecsrcHW( const QString& id, bool on )
+void Mixer_ALSA::setRecsrcHW( const QString& id, bool on )
 {
     int devnum = id2num(id);
     int sw = 0;
@@ -579,49 +578,20 @@ Mixer_ALSA::setRecsrcHW( const QString& id, bool on )
         sw = !sw;
     
     snd_mixer_elem_t *elem = getMixerElem( devnum );
-    if ( !elem )
+    if ( elem != 0 )
     {
-        return 0;
+        snd_mixer_selem_set_capture_switch_all( elem, sw );
+        // Refresh the capture switch information of *all* controls of this card.
+        // Doing it for all is neccesary, because enabling one record source often
+        // automatically disables another record source (due to the hardware design)
+        for(int i=0; i< m_mixDevices.count() ; i++ )
+        {
+            MixDevice *md = m_mixDevices[i];
+            bool isRecsrc =  isRecsrcHW( md->id() );
+            // kDebug(67100) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc << endl;
+            md->setRecSource( isRecsrc );
+        }
     }
-
-    // the following 2 lines are food enough
-    snd_mixer_selem_set_capture_switch_all( elem, sw );
-    return false;
-/*
-    if (snd_mixer_selem_has_capture_switch_joined( elem ) )
-    {
-#ifdef ALSA_SWITCH_DEBUG
-        int ret =
-#endif
-            snd_mixer_selem_set_capture_switch_all( elem, sw );
-#ifdef ALSA_SWITCH_DEBUG
-        if ( ret != 0 ) kDebug(67100) << "snd_mixer_selem_set_capture_switch_all() failed 2: errno=" << ret << "\n";
-#endif
-
-    } // capture_switch_joined
-    else
-    {
-#ifdef ALSA_SWITCH_DEBUG
-        kDebug(67100) << "Mixer_ALSA::setRecsrcHW LEFT\n";
-#endif
-        snd_mixer_selem_set_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, sw );
-#ifdef ALSA_SWITCH_DEBUG
-        kDebug(67100) << "Mixer_ALSA::setRecsrcHW RIGHT\n";
-#endif
-        snd_mixer_selem_set_capture_switch(elem, SND_MIXER_SCHN_FRONT_RIGHT, sw);
-    }
-
-#ifdef ALSA_SWITCH_DEBUG
-    kDebug(67100) << "EXIT Mixer_ALSA::setRecsrcHW(" << devnum << "," << on <<  ")\n";
-#endif
-    return false; // we should always return false, so that other devnum's get updated
-    // The ALSA polling has been implemented some time ago. So it should be safe to
-    // return "true" here.
-    // The other devnum's Rec-Sources won't get update by KMix code, but ALSA will send
-    // us an event, if necessary. But OTOH it is possibly better not to trust alsalib fully,
-    // because the old code is working also well (just takes more processing time).
-    // return true;
-*/
 }
 
 /**
@@ -668,8 +638,10 @@ unsigned int Mixer_ALSA::enumIdHW(const QString& id) {
 
 
 int
-Mixer_ALSA::readVolumeFromHW( const QString& id, Volume &volumePlayback, Volume &volumeCapture )
+Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
 {
+    Volume& volumePlayback = md->playbackVolume();
+    Volume& volumeCapture  = md->captureVolume();
     int devnum = id2num(id);
     int elem_sw;
     long left, right;
@@ -734,8 +706,11 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, Volume &volumePlayback, Volume 
 }
 
 int
-Mixer_ALSA::writeVolumeToHW( const QString& id, Volume& volumePlayback, Volume &volumeCapture )
+Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
 {
+    Volume& volumePlayback = md->playbackVolume();
+    Volume& volumeCapture  = md->captureVolume();
+
     int devnum = id2num(id);
     int left, right;
     
@@ -755,7 +730,8 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, Volume& volumePlayback, Volume &
     }
 
     // --- playback switch
-    if ( snd_mixer_selem_has_playback_switch( elem ) )
+    if ( snd_mixer_selem_has_playback_switch( elem ) ||
+         snd_mixer_selem_has_common_switch  ( elem )   )
     {
         int sw = 0;
         if (! volumePlayback.isSwitchActivated())
@@ -766,7 +742,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, Volume& volumePlayback, Volume &
     // --- capture volume
     left  = volumeCapture[ Volume::LEFT ];
     right = volumeCapture[ Volume::RIGHT ];
-    if ( snd_mixer_selem_has_capture_volume( elem ) ) {
+    if ( snd_mixer_selem_has_capture_volume( elem )) {
         snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, left );
         if ( ! snd_mixer_selem_is_playback_mono ( elem ) )
             snd_mixer_selem_set_capture_volume ( elem, SND_MIXER_SCHN_FRONT_RIGHT, right );
@@ -774,7 +750,10 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, Volume& volumePlayback, Volume &
 
     // --- capture switch
     if ( snd_mixer_selem_has_capture_switch( elem ) ) {
-         int sw = 0;
+        //  Hint: snd_mixer_selem_has_common_switch() is already covered in the playback .
+        //     switch. This is probably enough. It would be helpful, if the ALSA project would
+        //     write documentation. Until then, I need to continue guessing semantics.
+        int sw = 0;
         if (! volumeCapture.isSwitchActivated())
             sw = !sw; // invert all bits
         snd_mixer_selem_set_capture_switch_all( elem, sw );

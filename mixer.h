@@ -141,7 +141,6 @@ class Mixer : public QObject
       void commitVolumeChange( MixDevice* md );
 
    public slots:
-      virtual void readSetFromHW();
       void readSetFromHWforceUpdate() const;
       virtual void setRecordSource( const QString& controlID, bool on );
 
@@ -153,18 +152,17 @@ class Mixer : public QObject
       void newVolumeLevels(void);
 
    protected:
-      QTimer* _pollingTimer;
-
       int m_balance; // from -100 (just left) to 100 (just right)
-
       static QList<Mixer *> s_mixers;
+
+   private slots:
+      void controlChangedForwarder();
 
    public:
       static QList<Mixer *>& mixers();
 
    private:
-     Mixer_Backend *_mixerBackend;
-      mutable bool _readSetFromHWforceUpdate;
+      Mixer_Backend *_mixerBackend;
       static int _dcopID;
       QString _id;
       QString _masterDevicePK;
