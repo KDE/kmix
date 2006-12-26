@@ -168,7 +168,7 @@ install( FILES kmix.desktop  DESTINATION  ${XDG_APPS_DIR} )
 install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-
+install( FILES org.kde.KMix.xml DESTINATION ${DBUS_INTERFACES_DIR} )
 
 ########### next target ###############
 if(KDE4_BUILD_TESTS)
