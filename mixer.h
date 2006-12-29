@@ -73,7 +73,7 @@ class Mixer : public QObject
       /// Open/grab the mixer for further intraction
       bool openIfValid();
 
-      /// Returns wheter the card is open/operational
+      /// Returns whether the card is open/operational
       bool isOpen() const;
 
       /// Close/release the mixer
