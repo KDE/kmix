@@ -220,17 +220,17 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 {
     int err;
     snd_ctl_t *ctl_handle;
-    
+
     QString probeMessage;
     probeMessage += "Trying ALSA Device '" + devName + "': ";
-    
+
     if ( ( err = snd_ctl_open ( &ctl_handle, devName.toAscii().data(), 0 ) ) < 0 )
     {
         kDebug(67100) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err) << endl;
         return Mixer::ERR_OPEN;
     }
-    
-    
+
+
     // Mixer name
     snd_ctl_card_info_t *hw_info;
     snd_ctl_card_info_alloca(&hw_info);
@@ -243,9 +243,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
     }
     const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
     m_mixerName = mixer_card_name;
-    
+
     snd_ctl_close( ctl_handle );
-    
+
     /* open mixer device */
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
@@ -259,20 +259,20 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
         kDebug(67100) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err) << endl;
         return Mixer::ERR_OPEN;
     }
-    
+
     if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
     {
         kDebug(67100) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err) << endl;
         return Mixer::ERR_READ;
     }
-    
+
     if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
     {
         kDebug(67100) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err) << endl;
         close();
         return Mixer::ERR_READ;
     }
-    
+
     kDebug(67100) << probeMessage << "found" << endl;
 
     return 0;
@@ -350,7 +350,7 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
     // --- Regular control (not enumerated) ---
     Volume::ChannelMask chn = Volume::MNONE;
     Volume::ChannelMask chnTmp;
-    
+
     bool hasVolume = capture
         ? snd_mixer_selem_has_capture_volume(elem)
         : snd_mixer_selem_has_playback_volume(elem);
@@ -494,30 +494,30 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
     bool updated = false;
 
     if (finished > 0) {
-    //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
+        //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 5\n";
 
-    unsigned short revents;
+        unsigned short revents;
 
-    if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_count, &revents) >= 0) {
-    //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
+        if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_count, &revents) >= 0) {
+        //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 6\n";
 
-	    if (revents & POLLNVAL) {
-                /* Bug 127294 shows, that we receieve POLLNVAL when the user
-                 unplugs an USB soundcard. Lets close the card. */
-		kDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
+            if (revents & POLLNVAL) {
+                /* Bug 127294 shows, that we receive POLLNVAL when the user
+                    unplugs an USB soundcard. Lets close the card. */
+                kDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
                 close();  // Card was unplugged (unplug, driver unloaded)
-		return false;
-	    }
-	    if (revents & POLLERR) {
-		kDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLERR\n";
-		return false;
-	    }
-	    if (revents & POLLIN) {
+                return false;
+            }
+            if (revents & POLLERR) {
+                kDebug(67100) << "Mixer_ALSA::poll() , Error: poll() returns POLLERR\n";
+                return false;
+            }
+            if (revents & POLLIN) {
                 //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 7\n";
-		snd_mixer_handle_events(_handle);
+                snd_mixer_handle_events(_handle);
                 updated = true;
-	    }
-	}
+            }
+        }
     }
 
     //kDebug(67100) << "Mixer_ALSA::prepareUpdate() 8\n";
@@ -576,13 +576,13 @@ void Mixer_ALSA::setRecsrcHW( const QString& id, bool on )
     int sw = 0;
     if (on)
         sw = !sw;
-    
+
     snd_mixer_elem_t *elem = getMixerElem( devnum );
     if ( elem != 0 )
     {
         snd_mixer_selem_set_capture_switch_all( elem, sw );
         // Refresh the capture switch information of *all* controls of this card.
-        // Doing it for all is neccesary, because enabling one record source often
+        // Doing it for all is necessary, because enabling one record source often
         // automatically disables another record source (due to the hardware design)
         for(int i=0; i< m_mixDevices.count() ; i++ )
         {
@@ -645,13 +645,13 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     int devnum = id2num(id);
     int elem_sw;
     long left, right;
-    
+
     snd_mixer_elem_t *elem = getMixerElem( devnum );
     if ( !elem )
     {
         return 0;
     }
-    
+
 
     // --- playback volume
     if ( snd_mixer_selem_has_playback_volume( elem ) )
@@ -713,13 +713,13 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
 
     int devnum = id2num(id);
     int left, right;
-    
+
     snd_mixer_elem_t *elem = getMixerElem( devnum );
     if ( !elem )
     {
         return 0;
     }
-    
+
     // --- playback volume
     left  = volumePlayback[ Volume::LEFT ];
     right = volumePlayback[ Volume::RIGHT ];
