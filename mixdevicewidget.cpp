@@ -66,7 +66,7 @@ MixDeviceWidget::MixDeviceWidget(Mixer* mixer, MixDevice* md,
    setObjectName(md->name());
    _mdwActions = new KActionCollection( this );
 
-   /* @todo Fancy Background 
+   /* @todo Fancy Background
    setBackgroundMode(Qt::X11ParentRelative);
     */
 }
@@ -77,7 +77,7 @@ MixDeviceWidget::~MixDeviceWidget()
 
 void MixDeviceWidget::addActionToPopup( KAction *action )
 {
-	_mdwActions->insert( action );
+   _mdwActions->addAction( action->objectName(), action );
 }
 
 bool MixDeviceWidget::isDisabled() const

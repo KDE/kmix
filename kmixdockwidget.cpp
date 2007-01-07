@@ -85,7 +85,8 @@ KMixDockWidget::~KMixDockWidget()
 void KMixDockWidget::createActions()
 {
   // Put "Mute" selector in context menu
-  KToggleAction *action = new KToggleAction( i18n( "M&ute" ), actionCollection(), "dock_mute" );
+  KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
+  action->setText( i18n( "M&ute" ) );
   connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
   QAction *a = actionCollection()->action( "dock_mute" );
   QMenu *menu = contextMenu();
@@ -93,7 +94,8 @@ void KMixDockWidget::createActions()
 
   // Put "Select Master Channel" dialog in context menu
   if ( m_mixer != 0 ) {
-  KAction *action = new KAction( i18n("Select Master Channel..."), actionCollection(), "select_master");
+  QAction *action = actionCollection()->addAction( "select_master" );
+  action->setText( i18n("Select Master Channel...") );
   connect(action, SIGNAL(triggered(bool) ), SLOT(selectMaster()));
   QAction *a2 = actionCollection()->action( "select_master" );
   if (a2) menu->addAction( a2 );

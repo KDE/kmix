@@ -64,7 +64,8 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
 	    m->setChecked(false);
 	}
     }
-    KAction *action = new KAction(i18n("&Channels"), _actions, "toggle_channels");
+    QAction *action = _actions->addAction("toggle_channels");
+    action->setText(i18n("&Channels"));
     connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
     connect ( _mixer, SIGNAL(newVolumeLevels()), this, SLOT(refreshVolumeLevels()) );
 }

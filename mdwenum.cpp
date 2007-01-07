@@ -30,6 +30,7 @@
 #include <kconfig.h>
 #include <kcombobox.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kmenu.h>
 
 #include <kglobalaccel.h>
@@ -55,16 +56,19 @@ MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
     // create actions (on _mdwActions, see MixDeviceWidget)
 
     // KStandardAction::showMenubar() is in MixDeviceWidget now
-    KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
+    KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
+    action->setText( i18n("&Hide") );
     connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
-    KAction *c = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+    QAction *c = _mdwActions->addAction( "keys" );
+    c->setText( i18n("C&onfigure Shortcuts...") );
     connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
     // create widgets
     createWidgets();
 
     /* !!! remove this for production version */
-    KAction *a = new KAction(i18n( "Next Value" ), _mdwActions, "Next Value" );
+    QAction *a = _mdwActions->addAction( "Next Value" );
+    c->setText( i18n( "Next Value" ) );
     connect(a, SIGNAL(triggered(bool) ), SLOT( nextEnumId() ));
 
     installEventFilter( this ); // filter for popup
@@ -86,7 +90,7 @@ void MDWEnum::createWidgets()
 		_layout->setAlignment(Qt::AlignVCenter);
 	}
 	this->setToolTip( m_mixdevice->name() );
-	
+
         //this->setStretchFactor( _layout, 0 );
         //QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
         //_layout->setSizePolicy(qsp);
@@ -106,7 +110,7 @@ void MDWEnum::createWidgets()
         _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
         connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
         _enumCombo->setToolTip( m_mixdevice->name() );
-	
+
 	//_layout->addSpacing( 4 );
 }
 
@@ -118,7 +122,7 @@ void MDWEnum::update()
   }
   else {
     kError(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped" << endl;
-  }	
+  }
 }
 
 void MDWEnum::showContextMenu()

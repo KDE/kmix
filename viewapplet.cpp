@@ -39,7 +39,7 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-    _actions->remove( KStandardAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
+    _actions->removeAction( KStandardAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
 
 
     if ( position == Plasma::Left || position == Plasma::Right ) {
@@ -80,7 +80,7 @@ void ViewApplet::setMixSet(MixSet *mixset)
 
 int ViewApplet::count()
 {
-    return ( _mixSet->count() );	
+    return ( _mixSet->count() );
 }
 
 int ViewApplet::advice() {
@@ -106,7 +106,7 @@ QWidget* ViewApplet::add(MixDevice *md)
 	sliderOrientation = Qt::Vertical;
     else
 	sliderOrientation = Qt::Horizontal;
-	
+
     //    kDebug(67100) << "ViewApplet::add()\n";
     MixDeviceWidget *mdw =
 	new MDWSlider(
