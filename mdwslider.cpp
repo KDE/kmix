@@ -29,7 +29,6 @@
 #include <kkeydialog.h>
 #include <kdebug.h>
 #include <kactioncollection.h>
-#include <kseparatoraction.h>
 #include <ktoggleaction.h>
 
 #include <qicon.h>
@@ -70,33 +69,41 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
 
-	KToggleAction *action = new KToggleAction( i18n("&Split Channels"), _mdwActions, "stereo" );
+	KToggleAction *action = _mdwActions->add<KToggleAction>( "stereo" );
+	action->setText( i18n("&Split Channels") );
 	connect(action, SIGNAL(triggered(bool) ), SLOT(toggleStereoLinked()));
-	action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
+	action = _mdwActions->add<KToggleAction>( "hide" );
+        action->setText( i18n("&Hide") );
 	connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
 
-	KToggleAction *a = new KToggleAction(i18n("&Muted"), _mdwActions, "mute" );
+	KToggleAction *a = _mdwActions->add<KToggleAction>( "mute" );
+        a->setText( i18n("&Muted") );
 	connect( a, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
 
 	if( m_mixdevice->isRecordable() ) {
-		a = new KToggleAction( i18n("Set &Record Source"), _mdwActions, "recsrc" );
+		a = _mdwActions->add<KToggleAction>( "recsrc" );
+		a->setText( i18n("Set &Record Source") );
 		connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
 	}
 
-	KAction *c = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+	QAction *c = _mdwActions->addAction( "keys" );
+        c->setText( i18n("C&onfigure Shortcuts...") );
 	connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
 	// create widgets
 	createWidgets( showMuteLED, showRecordLED );
 
-	KAction *b;
-	b = new KAction( i18n( "Increase Volume" ), _mdwActions, "Increase volume" );
+	QAction *b;
+	b = _mdwActions->addAction( "Increase volume" );
+        b->setText( i18n( "Increase Volume" ) );
 	connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
 
-	b = new KAction( i18n( "Decrease Volume" ), _mdwActions, "Decrease volume" );
+	b = _mdwActions->addAction( "Decrease volume" );
+        b->setText( i18n( "Decrease Volume" ) );
 	connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
 
-	b = new KAction( i18n( "Toggle mute" ), _mdwActions, "Toggle mute" );
+	b = _mdwActions->addAction( "Toggle mute" );
+        b->setText( i18n( "Toggle mute" ) );
 	connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
 
 	installEventFilter( this ); // filter for popup
@@ -306,7 +313,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, const char* debu
                 static_cast<QSlider*>(sliderBig)->setInvertedControls(true);
             }
         } // not small
-    
+
         slider->installEventFilter( this );
         slider->setToolTip( m_mixdevice->name() );
 
@@ -864,7 +871,8 @@ void MDWSlider::showContextMenu()
 
 	a = _mdwActions->action( "keys" );
 	if ( a ) {
-		KSeparatorAction sep( _mdwActions );
+		QAction sep( _mdwActions );
+                sep.setSeparator( true );
 		menu->addAction( &sep );
 	}
 

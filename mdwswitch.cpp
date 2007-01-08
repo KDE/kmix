@@ -35,6 +35,7 @@
 #include <kkeydialog.h>
 #include <kdebug.h>
 #include <ktoggleaction.h>
+#include <kactioncollection.h>
 
 #include "kledbutton.h"
 #include "mdwswitch.h"
@@ -56,15 +57,18 @@ MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
     // create actions (on _mdwActions, see MixDeviceWidget)
 
     // KStandardAction::showMenubar() is in MixDeviceWidget now
-    KToggleAction *action = new KToggleAction( i18n("&Hide"), _mdwActions, "hide" );
+    KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
+    action->setText( i18n("&Hide") );
     connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
-    KAction *b = new KAction( i18n("C&onfigure Shortcuts..."), _mdwActions, "keys" );
+    QAction *b = _mdwActions->addAction( "keys" );
+    b->setText( i18n("C&onfigure Shortcuts...") );
     connect(b, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
     // create widgets
     createWidgets();
 
-    KAction *a = new KAction(i18n( "Toggle Switch" ), _mdwActions, "Toggle switch" );
+    QAction *a = _mdwActions->addAction( "Toggle switch" );
+    a->setText( i18n( "Toggle Switch" ) );
     connect(a, SIGNAL(triggered(bool) ), SLOT( toggleSwitch() ));
 
     // The accel keys are loaded in KMixerWidget::loadConfig, see kmixtoolbox.cpp

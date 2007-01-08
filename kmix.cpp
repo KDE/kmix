@@ -97,15 +97,17 @@ void KMixWindow::initActions()
 {
    // file menu
    KStandardAction::quit( this, SLOT(quit()), actionCollection());
-   
+
    // settings menu
    KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
    KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
    KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
-   
-   KAction *action = new KAction( i18n( "Hardware &Information" ), actionCollection(), "hwinfo" );
+
+   QAction *action = actionCollection()->addAction( "hwinfo" );
+   action->setText( i18n( "Hardware &Information" ) );
    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
-   action = new KAction( i18n( "Hide Mixer Window" ), actionCollection(), "hide_kmixwindow" );
+   action = actionCollection()->addAction( "hide_kmixwindow" );
+   action->setText( i18n( "Hide Mixer Window" ) );
    connect(action, SIGNAL(triggered(bool) ), SLOT(hide()));
    action->setShortcut(QKeySequence(Qt::Key_Escape));
    createGUI( "kmixui.rc" );
@@ -391,10 +393,10 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       else {
             vflags |= ViewBase::Horizontal;
       }
-      
-      
+
+
       KMixerWidget *mw = new KMixerWidget( mixer, this, "KMixerWidget", vflags );
-      
+
       // Add to WidgetStack
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
@@ -402,10 +404,10 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       m_wsMixers->setCurrentWidget(mw);
       setWindowTitle( mw->mixer()->readableName() );
       connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
-      
+
       QString grp(mw->id());
       mw->loadConfig( KGlobal::config(), grp );
-      
+
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
       mw->mixer()->readSetFromHWforceUpdate();
