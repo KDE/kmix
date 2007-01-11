@@ -45,7 +45,9 @@ KMixApp::newInstance()
 	if ( m_kmix )
 	{	// There already exists an instance/window
 		kDebug(67100) <<  "KMixApp::newInstance() Instance exists" << endl;
+#ifdef __GNUC__
 #warning Have to find another way for KUniqueApplication::isRestored()
+#endif
 		if ( ! _keepVisibility /*&& ! isRestored()*/ ) {
 			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=false" << endl;
 			// Default case: If KMix is running and the *USER*

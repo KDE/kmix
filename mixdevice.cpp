@@ -184,7 +184,9 @@ void MixDevice::write( KConfig *config, const QString& grp )
 
 void MixDevice::writePlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
 {
+#ifdef __GNUC__
 #warning Must remove the two (int) casts, once KConfig can write long in writeEntry() again
+#endif
     Volume& volume = capture ? captureVolume() : playbackVolume();
 
     config->writeEntry(nameLeftVolume , (int)volume.getVolume( Volume::LEFT ) );

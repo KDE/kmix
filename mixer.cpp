@@ -83,7 +83,9 @@ Mixer::Mixer( int driver, int device )
 
   m_balance = 0;
 
+#ifdef __GNUC__
 #warning "kde4 port it to dbus"
+#endif
 #if 0
   DCOPCString objid;
 #ifndef KMIX_DCOP_OBJID_TEST

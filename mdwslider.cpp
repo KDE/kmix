@@ -577,7 +577,9 @@ void MDWSlider::volumeChange( int )
    if (m_sliders.count() == 0) return;
 
    // --- Step 1: Get a REFERENCE of the volume Object ---
+#ifdef __GNUC__
 #warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+#endif
    Volume& vol = m_mixdevice->playbackVolume();
 
    // --- Step 2: Change the volumes directly in the Volume object to reflect the Sliders ---
@@ -704,7 +706,9 @@ void MDWSlider::setDisabled( bool value )
 */
 void MDWSlider::increaseVolume()
 {
+#ifdef __GNUC__
 #warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+#endif
    Volume& vol = m_mixdevice->playbackVolume();
     long inc = vol.maxVolume() / 20;
     if ( inc == 0 )
@@ -722,7 +726,9 @@ void MDWSlider::increaseVolume()
 */
 void MDWSlider::decreaseVolume()
 {
+#ifdef __GNUC__
 #warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+#endif
     Volume& vol = m_mixdevice->playbackVolume();
     long inc = vol.maxVolume() / 20;
     if ( inc == 0 )
@@ -744,7 +750,9 @@ void MDWSlider::update()
    if (m_sliders.count() == 0) return;
 
 	// update volumes
+#ifdef __GNUC__
 #warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
+#endif
    Volume& vol = m_mixdevice->playbackVolume();
 	if( isStereoLinked() )
 	{

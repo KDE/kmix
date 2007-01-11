@@ -265,7 +265,9 @@ KMixDockWidget::updatePixmap()
 void
 KMixDockWidget::mousePressEvent(QMouseEvent * /*me*/)
 {
+#ifdef __GNUC__
 #warning FIXME: ksystemtray is no longer a widget
+#endif
 #if 0
 	if ( _dockAreaPopup == 0 ) {
 		return KSystemTrayIcon::mousePressEvent(me);
@@ -338,7 +340,9 @@ KMixDockWidget::mouseReleaseEvent( QMouseEvent * /*me*/ )
 void
 KMixDockWidget::wheelEvent(QWheelEvent * /*e*/ )
 {
+#ifdef __GNUC__
 #warning ksystemtray is no widget and cannot wheel events
+#endif
 #if 0
   MixDevice *md = 0;
   if ( _dockAreaPopup != 0 ) {
