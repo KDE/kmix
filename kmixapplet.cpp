@@ -99,6 +99,8 @@ AppletConfigDialog::AppletConfigDialog( QWidget * parent, const char * name )
    colorWidget = new ColorWidget(page);
    topLayout->addWidget(colorWidget);
    setUseCustomColors(false);
+   connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
+   connect(this,SIGNAL(applyClicked()),this,SLOT(slotApply()));
 }
 
 void AppletConfigDialog::slotOk()
