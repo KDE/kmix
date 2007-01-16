@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Plugin
 Name=Sound Mixer
+Name[el]=Μείκτης ήχου
 Name[fr]=Console de mixage
 Name[x-test]=xxSound Mixerxx
 

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Restore Mixer Settings
+Name[el]=Αποκατάσταση ρυθμίσεων μείκτη
 Name[fr]=Restaurer la configuration du mixage
 Name[x-test]=xxRestore Mixer Settingsxx
 Exec=kmixctrl --restore

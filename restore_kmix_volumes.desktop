@@ -6,6 +6,7 @@ Type=Application
 Exec=kmixctrl --restore
 OnlyShowIn=KDE;
 Name=Restore Mixer Volumes
+Name[el]=Επαναφορά των εντάσεων του μείκτη
 Name[fr]=Restaurer les volumes du mixage
 Name[x-test]=xxRestore Mixer Volumesxx
 
