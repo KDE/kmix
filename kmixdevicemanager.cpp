@@ -51,7 +51,7 @@ kdm::kdm()
 
     std::cerr << "--- before dm.allDevices() ---\n";
 //  Solid::DeviceList dl = dm.allDevices();
-  Solid::DeviceList dl = dm.findDevicesFromQuery(QString(), Solid::Capability::AudioHw );
+  Solid::DeviceList dl = dm.findDevicesFromQuery( Solid::Capability::AudioHw );
 
    foreach ( Solid::Device device, dl )
    {
