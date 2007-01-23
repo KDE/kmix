@@ -31,7 +31,7 @@
 #include "mixer_backend.h"
 #include "kmix-platforms.cpp"
 #include "volume.h"
-#include "mixeradaptor.h"
+#include "kmixadaptor.h"
 #include <QtDBus>
 
 /**

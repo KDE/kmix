@@ -9,11 +9,11 @@ add_subdirectory( pics )
 add_subdirectory( profiles ) 
 
 
-
+set(kmix_adaptor_SRCS)
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
 ########### next target ###############
 
-set(kmix_KDEINIT_SRCS
-   mixeradaptor.cpp	
+set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    main.cpp 
    kmix.cpp 
    kmixdockwidget.cpp 
@@ -46,6 +46,7 @@ set(kmix_KDEINIT_SRCS
    dialogselectmaster.cpp 
    guiprofile.cpp )
 
+
 kde4_automoc(${kmix_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
@@ -63,8 +64,7 @@ install(TARGETS kmix  DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
 
-set(kmixctrl_KDEINIT_SRCS
-   mixeradaptor.cpp
+set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    kmixctrl.cpp 
    mixer.cpp 
    mixset.cpp 
@@ -118,8 +118,7 @@ install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
 if(Q_WS_X11)
 if(KICKER_INCLUDE_DIR)
 
-set(kmix_panelapplet_PART_SRCS
-   mixeradaptor.cpp
+set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
    kmixapplet.cpp 
    viewbase.cpp 
    viewapplet.cpp 
@@ -178,7 +177,7 @@ kde4_automoc(${profiletest_SRCS})
 
 kde4_add_executable(profiletest ${profiletest_SRCS} 
     guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp mixer_backend.cpp mixset.cpp
-    mixeradaptor.cpp )
+    ${kmix_adaptor_SRCS} )
 
 target_link_libraries(profiletest  ${KDE4_KDECORE_LIBS} )
 
