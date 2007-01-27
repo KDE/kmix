@@ -222,7 +222,7 @@ void KMixWindow::saveViewConfig()
          if ( mw->mixer()->isOpen() )
          { // protect from unplugged devices (better do *not* save them)
              QString grp (mw->id());
-             mw->saveConfig( config, grp );
+             mw->saveConfig( config.data(), grp );
          }
       }
    }
@@ -406,7 +406,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
       QString grp(mw->id());
-      mw->loadConfig( KGlobal::config(), grp );
+      mw->loadConfig( KGlobal::config().data(), grp );
 
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );

@@ -73,7 +73,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
-         mixer->volumeLoad( KGlobal::config() );
+         mixer->volumeLoad( KGlobal::config().data() );
       }
    }
 
@@ -82,7 +82,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
-         mixer->volumeSave( KGlobal::config() );
+         mixer->volumeSave( KGlobal::config().data() );
       }
    }
 
