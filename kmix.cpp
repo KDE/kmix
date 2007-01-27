@@ -178,7 +178,7 @@ void KMixWindow::saveConfig()
 
 void KMixWindow::saveBaseConfig()
 {
-   KConfig *config = KGlobal::config();
+   KSharedConfig::Ptr config = KGlobal::config();
    config->setGroup(0);
 
    config->writeEntry( "Size", size() );
@@ -210,7 +210,7 @@ void KMixWindow::saveBaseConfig()
 
 void KMixWindow::saveViewConfig()
 {
-   KConfig *config = KGlobal::config();
+   KSharedConfig::Ptr config = KGlobal::config();
    config->setGroup(0);
 
    // Save Views
@@ -257,7 +257,7 @@ void KMixWindow::loadConfig()
 
 void KMixWindow::loadBaseConfig()
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup(0);
 
    m_showDockWidget = config->readEntry("AllowDocking", true);
