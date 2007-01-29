@@ -178,7 +178,7 @@ void KMixWindow::saveConfig()
 
 void KMixWindow::saveBaseConfig()
 {
-   KConfig *config = KGlobal::config();
+   KSharedConfig::Ptr config = KGlobal::config();
    config->setGroup(0);
 
    config->writeEntry( "Size", size() );
@@ -210,7 +210,7 @@ void KMixWindow::saveBaseConfig()
 
 void KMixWindow::saveViewConfig()
 {
-   KConfig *config = KGlobal::config();
+   KSharedConfig::Ptr config = KGlobal::config();
    config->setGroup(0);
 
    // Save Views
@@ -222,7 +222,7 @@ void KMixWindow::saveViewConfig()
          if ( mw->mixer()->isOpen() )
          { // protect from unplugged devices (better do *not* save them)
              QString grp (mw->id());
-             mw->saveConfig( config, grp );
+             mw->saveConfig( config.data(), grp );
          }
       }
    }
@@ -257,7 +257,7 @@ void KMixWindow::loadConfig()
 
 void KMixWindow::loadBaseConfig()
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup(0);
 
    m_showDockWidget = config->readEntry("AllowDocking", true);
@@ -406,7 +406,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
       QString grp(mw->id());
-      mw->loadConfig( KGlobal::config(), grp );
+      mw->loadConfig( KGlobal::config().data(), grp );
 
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
