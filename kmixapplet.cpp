@@ -36,7 +36,7 @@
 
 
 // KDE
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
@@ -348,7 +348,7 @@ void KMixApplet::selectMixer()
 
 void KMixApplet::about()
 {
-    KAboutApplication aboutDlg(&m_aboutData);
+    KAboutApplicationDialog aboutDlg(&m_aboutData);
     aboutDlg.exec();
 }
 
