@@ -51,7 +51,7 @@ kde4_automoc(${kmix_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KUTILS_LIBS} phononcore ${KDE4_SOLID_LIBS} )
+target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KUTILS_LIBS} ${KDE4_PHONONCORE_LIBS} ${KDE4_SOLID_LIBS} )
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
