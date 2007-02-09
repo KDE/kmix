@@ -444,12 +444,12 @@ MDWSlider::setStereoLinked(bool value)
     ***********************************************************/
    int firstSliderValue = 0;
    bool firstSliderValueValid = false;
-   if (slider->metaObject()->className() == "QSlider") {
+   if (::qobject_cast<QSlider*>(slider)) {
       QSlider *sld = static_cast<QSlider*>(slider);
       firstSliderValue = sld->value();
       firstSliderValueValid = true;
    }
-   else if ( slider->metaObject()->className()=="KSmallSlider")  {
+   else if ( ::qobject_cast<KSmallSlider*>(slider))  {
       KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
       firstSliderValue = sld->value();
       firstSliderValueValid = true;
@@ -470,11 +470,11 @@ MDWSlider::setStereoLinked(bool value)
          if ( firstSliderValueValid ) {
             // Remark: firstSlider== 0 could happen, if the static_cast<QRangeControl*> above fails.
             //         It's a safety measure, if we got other Slider types in the future.
-            if (slider->metaObject()->className()=="QSlider")  {
+            if (::qobject_cast<QSlider*>(slider))  {
                QSlider *sld = static_cast<QSlider*>(slider);
                sld->setValue( firstSliderValue );
             }
-            if (slider->metaObject()->className()=="KSmallSlider")  {
+            if (::qobject_cast<KSmallSlider*>(slider))  {
                KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
                sld->setValue( firstSliderValue );
             }
