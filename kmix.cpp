@@ -178,40 +178,38 @@ void KMixWindow::saveConfig()
 
 void KMixWindow::saveBaseConfig()
 {
-   KSharedConfig::Ptr config = KGlobal::config();
-   config->setGroup(0);
+   KConfigGroup config(KGlobal::config(), 0);
 
-   config->writeEntry( "Size", size() );
-   config->writeEntry( "Position", pos() );
+   config.writeEntry( "Size", size() );
+   config.writeEntry( "Position", pos() );
    // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
    // (Please note that the problem was only there when quitting via Systray - esken).
-   config->writeEntry( "Visible", m_isVisible );
-   config->writeEntry( "Menubar", m_showMenubar );
-   config->writeEntry( "AllowDocking", m_showDockWidget );
-   config->writeEntry( "TrayVolumeControl", m_volumeWidget );
-   config->writeEntry( "Tickmarks", m_showTicks );
-   config->writeEntry( "Labels", m_showLabels );
-   config->writeEntry( "startkdeRestore", m_onLogin );
+   config.writeEntry( "Visible", m_isVisible );
+   config.writeEntry( "Menubar", m_showMenubar );
+   config.writeEntry( "AllowDocking", m_showDockWidget );
+   config.writeEntry( "TrayVolumeControl", m_volumeWidget );
+   config.writeEntry( "Tickmarks", m_showTicks );
+   config.writeEntry( "Labels", m_showLabels );
+   config.writeEntry( "startkdeRestore", m_onLogin );
    Mixer* mixerMasterCard = Mixer::masterCard();
    if ( mixerMasterCard != 0 ) {
-      config->writeEntry( "MasterMixer", mixerMasterCard->id() );
+      config.writeEntry( "MasterMixer", mixerMasterCard->id() );
    }
    MixDevice* mdMaster = Mixer::masterCardDevice();
    if ( mdMaster != 0 ) {
-      config->writeEntry( "MasterMixerDevice", mdMaster->id() );
+      config.writeEntry( "MasterMixerDevice", mdMaster->id() );
    }
 
    // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
    if ( m_toplevelOrientation  == Qt::Vertical )
-      config->writeEntry( "Orientation","Vertical" );
+      config.writeEntry( "Orientation","Vertical" );
    else
-      config->writeEntry( "Orientation","Horizontal" );
+      config.writeEntry( "Orientation","Horizontal" );
 }
 
 void KMixWindow::saveViewConfig()
 {
-   KSharedConfig::Ptr config = KGlobal::config();
-   config->setGroup(0);
+   KConfigGroup config(KGlobal::config(), 0);
 
    // Save Views
    for ( int i=0; i<m_wsMixers->count() ; ++i )
@@ -257,25 +255,24 @@ void KMixWindow::loadConfig()
 
 void KMixWindow::loadBaseConfig()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup(0);
+    KConfigGroup config(KGlobal::config(), 0);
 
-   m_showDockWidget = config->readEntry("AllowDocking", true);
-   m_volumeWidget = config->readEntry("TrayVolumeControl", true);
+   m_showDockWidget = config.readEntry("AllowDocking", true);
+   m_volumeWidget = config.readEntry("TrayVolumeControl", true);
    //hide on close has to stay true for usability. KMixPrefDlg option commented out. nolden
-   m_hideOnClose = config->readEntry("HideOnClose", true);
-   m_showTicks = config->readEntry("Tickmarks", true);
-   m_showLabels = config->readEntry("Labels", true);
-   m_onLogin = config->readEntry("startkdeRestore", true );
-   m_startVisible = config->readEntry("Visible", true);
+   m_hideOnClose = config.readEntry("HideOnClose", true);
+   m_showTicks = config.readEntry("Tickmarks", true);
+   m_showLabels = config.readEntry("Labels", true);
+   m_onLogin = config.readEntry("startkdeRestore", true );
+   m_startVisible = config.readEntry("Visible", true);
    kDebug(67100) << "MultiDriver a = " << m_multiDriverMode << endl;
-   m_multiDriverMode = config->readEntry("MultiDriver", false);
+   m_multiDriverMode = config.readEntry("MultiDriver", false);
    kDebug(67100) << "MultiDriver b = " << m_multiDriverMode << endl;
-   m_surroundView    = config->readEntry("Experimental-ViewSurround", false );
-   m_gridView    = config->readEntry("Experimental-ViewGrid", false );
-   const QString& orientationString = config->readEntry("Orientation", "Horizontal");
-   QString mixerMasterCard = config->readEntry( "MasterMixer", "" );
-   QString masterDev = config->readEntry( "MasterMixerDevice", "" );
+   m_surroundView    = config.readEntry("Experimental-ViewSurround", false );
+   m_gridView    = config.readEntry("Experimental-ViewGrid", false );
+   const QString& orientationString = config.readEntry("Orientation", "Horizontal");
+   QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
+   QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    Mixer::setGlobalMaster(mixerMasterCard, masterDev);
 
 
@@ -285,7 +282,7 @@ void KMixWindow::loadBaseConfig()
        m_toplevelOrientation = Qt::Horizontal;
 
    // show/hide menu bar
-   m_showMenubar = config->readEntry("Menubar", true);
+   m_showMenubar = config.readEntry("Menubar", true);
 
    KToggleAction *a = static_cast<KToggleAction*>(actionCollection()->action("options_show_menubar"));
    if (a) a->setChecked( m_showMenubar );
@@ -294,11 +291,11 @@ void KMixWindow::loadBaseConfig()
    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
    {
       QSize defSize( minimumWidth(), height() );
-      QSize size = config->readEntry("Size", defSize );
+      QSize size = config.readEntry("Size", defSize );
       if(!size.isEmpty()) resize(size);
 
       QPoint defPos = pos();
-      QPoint pos = config->readEntry("Position", defPos);
+      QPoint pos = config.readEntry("Position", defPos);
       move(pos);
    }
 }
