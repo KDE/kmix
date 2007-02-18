@@ -60,8 +60,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    KApplication app( false );
 
    // get maximum values
-   KConfig *config= new KConfig( "kmixrc", KConfig::NoGlobals );
-   config->setGroup("Misc");
+   KConfigGroup config(new KConfig( "kmixrc", KConfig::NoGlobals ), "Misc");
    delete config;
 
    // create mixers
