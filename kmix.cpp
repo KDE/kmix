@@ -209,8 +209,6 @@ void KMixWindow::saveBaseConfig()
 
 void KMixWindow::saveViewConfig()
 {
-   KConfigGroup config(KGlobal::config(), 0);
-
    // Save Views
    for ( int i=0; i<m_wsMixers->count() ; ++i )
    {
@@ -219,8 +217,7 @@ void KMixWindow::saveViewConfig()
          KMixerWidget* mw = (KMixerWidget*)w;
          if ( mw->mixer()->isOpen() )
          { // protect from unplugged devices (better do *not* save them)
-             QString grp (mw->id());
-             mw->saveConfig( config.data(), grp );
+             mw->saveConfig( KGlobal::config().data(), mw->id() );
          }
       }
    }
@@ -233,7 +230,7 @@ void KMixWindow::saveViewConfig()
  */
 void KMixWindow::saveVolumes()
 {
-   KConfig *cfg = new KConfig( "kmixctrlrc", false );
+   KConfig *cfg = new KConfig( "kmixctrlrc" );
    for ( int i=0; i<Mixer::mixers().count(); ++i)
    {
       Mixer *mixer = (Mixer::mixers())[i];
@@ -402,8 +399,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       setWindowTitle( mw->mixer()->readableName() );
       connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
-      QString grp(mw->id());
-      mw->loadConfig( KGlobal::config().data(), grp );
+      mw->loadConfig( KGlobal::config().data(), mw->id() );
 
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );

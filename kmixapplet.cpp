@@ -279,7 +279,7 @@ void KMixApplet::loadConfig()
     _colors.mutedLow = cfg.readEntry("ColorMutedLow", mutedLowColor);
     _colors.mutedBack = cfg.readEntry("ColorMutedBack", mutedBackColor);
 
-    loadConfig( cfg, "Widget");
+    loadConfig( this->config(), "Widget");
 }
 
 
