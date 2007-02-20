@@ -59,11 +59,6 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    KApplication app( false );
 
-   // get maximum values
-   KConfig *config= new KConfig("kmixrc", true, false);
-   config->setGroup("Misc");
-   delete config;
-
    // create mixers
    QString dummyStringHwinfo;
    MixerToolBox::instance()->initMixer(false, dummyStringHwinfo);

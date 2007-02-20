@@ -264,23 +264,22 @@ void KMixApplet::saveConfig()
 void KMixApplet::loadConfig()
 {
     kDebug(67100) << "KMixApplet::loadConfig()" << endl;
-    KConfig *cfg = this->config();
-    cfg->setGroup(0);
+    KConfigGroup cfg(this->config(), 0);
 
-    _mixerId = cfg->readEntry( "Mixer", "undef" );
-    _mixerName = cfg->readEntry( "MixerName", QString());
+    _mixerId = cfg.readEntry( "Mixer", "undef" );
+    _mixerName = cfg.readEntry( "MixerName", QString());
 
-    _customColors = cfg->readEntry( "ColorCustom", false );
+    _customColors = cfg.readEntry( "ColorCustom", false );
 
-    _colors.high = cfg->readEntry("ColorHigh", highColor);
-    _colors.low = cfg->readEntry("ColorLow", lowColor);
-    _colors.back = cfg->readEntry("ColorBack", backColor);
+    _colors.high = cfg.readEntry("ColorHigh", highColor);
+    _colors.low = cfg.readEntry("ColorLow", lowColor);
+    _colors.back = cfg.readEntry("ColorBack", backColor);
 
-    _colors.mutedHigh = cfg->readEntry("ColorMutedHigh", mutedHighColor);
-    _colors.mutedLow = cfg->readEntry("ColorMutedLow", mutedLowColor);
-    _colors.mutedBack = cfg->readEntry("ColorMutedBack", mutedBackColor);
+    _colors.mutedHigh = cfg.readEntry("ColorMutedHigh", mutedHighColor);
+    _colors.mutedLow = cfg.readEntry("ColorMutedLow", mutedLowColor);
+    _colors.mutedBack = cfg.readEntry("ColorMutedBack", mutedBackColor);
 
-    loadConfig( cfg, "Widget");
+    loadConfig( this->config(), "Widget");
 }
 
 
