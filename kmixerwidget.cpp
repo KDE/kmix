@@ -118,7 +118,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
    QToolButton* m_profileButton = new QToolButton( m_ioTab );
    m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
-   m_profileButton->setIconSet( SmallIcon( "tab_new" ) );
+   m_profileButton->setIconSet( SmallIcon( "tab-new" ) );
    m_profileButton->adjustSize();
    // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
    connect(m_profileButton, SIGNAL(clicked()), SLOT(nextLayout()));
@@ -126,7 +126,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
    QToolButton* m_closeButton = new QToolButton( m_ioTab );
    m_closeButton->setToolTip(i18n("Close Tab"));
-   m_closeButton->setIconSet( SmallIcon( "tab_remove" ) );
+   m_closeButton->setIconSet( SmallIcon( "tab-remove" ) );
    m_closeButton->adjustSize();
    connect(m_closeButton, SIGNAL(clicked()), SLOT(removeSession()));
    m_ioTab->setCornerWidget( m_closeButton, Qt::TopRightCorner );
