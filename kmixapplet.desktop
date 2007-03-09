@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Plugin
 Name=Sound Mixer
+Name[bg]=Аудио миксер
 Name[br]=Mesker ar Son
 Name[ca]=Mesclador de so
 Name[cs]=Zvukový směšovač
