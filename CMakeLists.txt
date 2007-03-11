@@ -104,7 +104,7 @@ kde4_add_kdeinit_executable( kmixd ${kmixd_KMIXD_SRCS})
 target_link_libraries(kdeinit_kmixd  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS})
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmixd ${ASOUND_LIBRARY} solid)
+    target_link_libraries(kdeinit_kmixd ${ASOUND_LIBRARY} ${KDE4_SOLID_LIBS})
 endif (HAVE_LIBASOUND2)
 
 install(TARGETS kdeinit_kmixd DESTINATION ${LIB_INSTALL_DIR} )
