@@ -77,9 +77,8 @@ Mixer::Mixer( int driver, int device )
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
    if( f!=0 ) {
      _mixerBackend = f( device );
+     readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
    }
-
-  readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
 
   m_balance = 0;
 
