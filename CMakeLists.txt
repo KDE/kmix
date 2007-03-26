@@ -1,9 +1,6 @@
 project(kmix)
 
-FIND_PATH( KICKER_INCLUDE_DIR plasma/kpanelapplet.h
-  ${KDE4_INCLUDE_DIR}
-)
-
+find_package(Plasma)
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
@@ -116,7 +113,7 @@ install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
 ########### next target ###############
 
 if(Q_WS_X11)
-if(KICKER_INCLUDE_DIR)
+if(PLASMA_FOUND)
 
 set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
    kmixapplet.cpp 
@@ -158,7 +155,7 @@ install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 else(KICKER_INCLUDE_DIR)
 MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
-endif(KICKER_INCLUDE_DIR)
+endif(PLASMA_FOUND)
 endif(Q_WS_X11)
 
 ########### install files ###############
