@@ -34,7 +34,6 @@
 #include <kmenu.h>
 
 #include <kglobalaccel.h>
-#include <kkeydialog.h>
 #include <ktoggleaction.h>
 
 #include <kdebug.h>

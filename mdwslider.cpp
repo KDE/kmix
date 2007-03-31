@@ -26,7 +26,6 @@
 #include <kaction.h>
 #include <kmenu.h>
 #include <kglobalaccel.h>
-#include <kkeydialog.h>
 #include <kdebug.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>

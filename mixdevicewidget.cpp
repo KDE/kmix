@@ -26,7 +26,7 @@
 #include <kaction.h>
 #include <kmenu.h>
 #include <kglobalaccel.h>
-#include <kkeydialog.h>
+#include <kshortcutsdialog.h>
 #include <kdebug.h>
 
 #include <QObject>
@@ -87,7 +87,7 @@ bool MixDeviceWidget::isDisabled() const
 
 void MixDeviceWidget::defineKeys()
 {
-   KKeyDialog::configure(_mdwActions);
+   KShortcutsDialog::configure(_mdwActions);
 }
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
