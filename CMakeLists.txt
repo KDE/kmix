@@ -49,7 +49,7 @@ kde4_automoc(${kmix_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KUTILS_LIBS} ${KDE4_PHONONCORE_LIBS} ${KDE4_SOLID_LIBS} )
+target_link_libraries(kdeinit_kmix  ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KUTILS_LIBS} ${KDE4_PHONONCORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QT3SUPPORT_LIBRARY} )
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
@@ -77,7 +77,7 @@ kde4_automoc(${kmixctrl_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmixctrl  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS})
+target_link_libraries(kdeinit_kmixctrl  ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
@@ -99,7 +99,7 @@ kde4_automoc(${kmixd_KMIXD_SRCS})
 
 kde4_add_kdeinit_executable( kmixd ${kmixd_KMIXD_SRCS})
 
-target_link_libraries(kdeinit_kmixd  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS})
+target_link_libraries(kdeinit_kmixd  ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixd ${ASOUND_LIBRARY} ${KDE4_SOLID_LIBS})

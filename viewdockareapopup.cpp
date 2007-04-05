@@ -75,7 +75,7 @@ void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
        Why it does not work, I do not know: this->isPopup() returns "true", so Qt should
        properly take care of it in QWidget.
     */
-    if ( ! this->hasMouse() ) {
+    if ( !testAttribute(Qt::WA_UnderMouse) ) {
         _hideTimer->start();
         hide(); // needed!
     }
@@ -145,7 +145,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 	 _showPanelBox = new QPushButton( i18n("Mixer"), _frame );
          _showPanelBox->setObjectName("MixerPanel");
 	 connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
-    _layoutMDW->addMultiCellWidget( _showPanelBox, 1, 1, 0, 2 );
+    _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
 
     return _mdw;
 }
