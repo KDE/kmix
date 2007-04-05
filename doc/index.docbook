@@ -16,7 +16,7 @@
 <firstname>Matt</firstname>
 <surname>Johnston</surname>
 <affiliation>
-<address><email>mattj@flashmail.com</email></address>
+<address>&Matt.Johnston.mail;</address>
 </affiliation>
 </author>
 
@@ -45,7 +45,7 @@
 <othercredit role="reviewer">
 <firstname>Lauri</firstname>
 <surname>Watts</surname>
-<affiliation><address><email>lauri@kde.org</email></address></affiliation>
+<affiliation><address>&Lauri.Watts.mail;</address></affiliation>
 <contrib>Reviewer</contrib>
 </othercredit>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
@@ -53,13 +53,13 @@
 
 <copyright>
 <year>1996</year><year>2005</year>
-<holder>Christian Esken &amp; Matt Johnston</holder>
+<holder>Christian Esken &amp; &Matt.Johnston;</holder>
 </copyright>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2005-02-08</date>
-<releaseinfo>2.2</releaseinfo>
+<date>2007-01-05</date>
+<releaseinfo>2.6.1</releaseinfo>
 
 <abstract><para>&kmix; is an application to allow you to change the volume of
 your sound card.</para></abstract>
@@ -93,7 +93,7 @@ are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <listitem><para> &HP-UX; based machines.</para></listitem>
 </itemizedlist>
 
-<para>If you have both ALSA and Open Sound System drivers installed, KMix will use the ALSA driver.</para>
+<para>If you have both ALSA and Open Sound System drivers installed, &kmix; will use the ALSA driver.</para>
 
 </chapter>
 
@@ -103,9 +103,9 @@ are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <sect1 id="basic-usage">
 <title>Basics</title>
 
-<para>&kmix; usage is straightforward. Every mixer device that your
-soundcard provides is represented by a volume slider. Mono devices
-have a single slider, stereo devices can have either one or two
+<para>&kmix; usage is straightforward. Every mixer control that your
+soundcard provides is represented by a volume slider. Mono controls
+have a single slider, stereo controls can have either one or two
 sliders, depending on your choice.  Additionally there is a panning
 slider at the bottom of the &kmix; window. If you have more than one soundcard, a list will be displayed on the top of the window, where you can choose between your soundcards.
 
@@ -121,95 +121,120 @@ slider at the bottom of the &kmix; window. If you have more than one soundcard, 
 </para>
 
 
-<para>The Window has three sections with soundcard controls:
+<para>The Window can have up to three sections with different soundcard controls: 
+<guilabel>Output</guilabel>, <guilabel>Input</guilabel> and <guilabel>Switches</guilabel>.
+Those sections contain volume sliders, switches for enabling/disabling record or playback, and multiple-choice selectors.
+
 <simplelist>
-<member>Output: This holds the controls that are most likely playback related, like the "Master" volume control.</member>
-<member>Input: This holds all controls that are most likely record related, like "Capture".</member>
-<member>Switches: This holds all controls, that allows only to switch some functionality ON or OFF (like "Mic Boost (+20dB)"), and multiple-choice controls (like "Microphone Select: Mic1 or Mic2").</member>
+<member><guilabel>Output</guilabel>: This holds the controls that are most likely playback related, like the <guilabel>Master</guilabel> volume control.</member>
+<member><guilabel>Input</guilabel>: This holds all controls that are most likely record related, like <guilabel>Capture</guilabel>.</member>
+<member><guilabel>Switches</guilabel>: This holds all controls, that allows only to switch some functionality ON or OFF (like "Mic Boost (+20dB)"), and multiple-choice controls (like <guilabel>Mic Select</guilabel>: <guilabel>Mic1</guilabel> or <guilabel>Mic2</guilabel>).</member>
 </simplelist>
 </para>
 
-<para>Besides volumes controls, KMix also features LED's. The general coloring rule is:</para>
+<para>Besides volumes controls, &kmix; also features LED's. The general coloring rule is:</para>
 <simplelist>
 <member>Green: A LED dealing with playback</member>
 <member>Red: A LED dealing with recording</member>
 <member>Yellow: A LED dealing with special soundcard capabilities</member>
 </simplelist>
+<para>These 3 colors come in two flavours: A lit LED means ON, a non-lit LED means OFF.</para>
 </sect1>
 
 <sect1 id="volume-sliders">
 <title>Volume controls</title>
 
-<para>The volume controls in section "Output" and "Input" consist of (top to bottom):
+<para>The volume controls in section <guilabel>Output</guilabel> and <guilabel>Input</guilabel> consist of (top to bottom):
 <screenshot>
-<screeninfo>Volume control ("Input" Section)</screeninfo>
+<screeninfo>Volume control (<guilabel>Input</guilabel> Section)</screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="kmix-channel-playback.png" format="PNG"/></imageobject>
-<textobject><phrase>Volume control ("Input" Section)</phrase></textobject>
+<textobject><phrase>Volume control (<guilabel>Input</guilabel> Section)</phrase></textobject>
 </mediaobject>
 </screenshot>
 
 <simplelist>
 <member>An icon, representing the function of the control.</member>
+<member>A volume value indicator (optional).</member>
 <member>A Green Mute LED, that allows you to mute a control (light goes off/gets dark) or unmute it again (light goes on/gets bright).</member>
 <member>A slider, for volume control (Hint: You can hide the label on the slider, for example if the mixer takes too much of your screen space).</member>
 <member>If a control supports recording, there will be a red Record LED. If the LED is lit (bright red), the control is selected for recording. If it is not lit (dark red), the control is NOT selected for recording.</member>
 </simplelist>
 
 <screenshot>
-<screeninfo>Volume control with Recording Switchi ("Output"Section)</screeninfo>
+<screeninfo>Volume control with Recording Switch (<guilabel>Output</guilabel> Section)</screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="kmix-channel-record.png" format="PNG"/></imageobject>
-<textobject><phrase>Volume control with Recording Switchi ("Output"Section)</phrase></textobject>
+<textobject><phrase>Volume control with Recording Switch (<guilabel>Output</guilabel> Section)</phrase></textobject>
 </mediaobject>
 </screenshot>
 
-
 </para>
 
-<para>The controls in section "Switches" consist of a LED and a short label describing the function. Please remember, red LED's are for recording issues, yellow LED's are for special soundcard features. If you are uncertain about the meaning of a control, please ask your soundcard driver supplier (for most current Linux distributions this is ALSA from http://www.alsa-project.org).</para>
 
-<para>The volume sliders have a context menu, accessible by right clicking on
-the slider or device icon (at the top). Several entries are possible, but only
-those applicable are shown.</para>
+<para>
+Most of these controls have a context menu, accessible by right clicking on the control or device icon. Several entries are possible in the context menu, but only those applicable are shown.
+</para>
 
 <variablelist>
-
 <varlistentry>
-<term><guilabel>Split Channels</guilabel></term>
+<term><guimenuitem>Split Channels</guimenuitem></term>
 <listitem><para>Show either one or two sliders. This is only applicable to
 stereo devices. The right slider controls right side volume, and the left
 controls left side volume.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Muted</guilabel></term>
+<term><guimenuitem>Muted</guimenuitem></term>
 <listitem><para>Mute or unmute the device</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Hide</guilabel></term>
-<listitem><para>If you are not interested in regulating this device you can hide it with this option. If you want to show it again, you can only do this by selecting the <guilabel>Channels</guilabel> option (see below)</para></listitem>
+<term><guimenuitem>Hide</guimenuitem></term>
+<listitem><para>If you are not interested in regulating this device you can hide it with this option. If you want to show it again, you can only do this by selecting the <guimenuitem>Channels</guimenuitem> option (see below)</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Configure Shortcuts</guilabel></term>
-<listitem><para>You can control a device with your keyboard. Use this menu option to show the KDE <guilabel>Configure Shortcuts</guilabel> dialog. Here you can define keys for increasing and decreasing volume and for muting the device. The keys are global and operate also when &kmix; is iconified or docked.</para></listitem>
+<term><guimenuitem>Configure Global Shortcuts...</guimenuitem></term>
+<listitem><para>You can control a device with your keyboard. Use this menu option to show the &kde; <guilabel>Configure Shortcuts</guilabel> dialog. Here you can define keys for increasing and decreasing volume and for muting the device. The keys are global and operate also when &kmix; is iconified or docked.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Channels</guilabel></term>
-<listitem><para>You will get a dialog box where you can configure per section (Output, Input, Switches), which channels you want to see.</para></listitem>
+<term><guimenuitem>Channels</guimenuitem></term>
+<listitem><para>You will get a dialog box where you can configure per section (<guilabel>Output</guilabel>, <guilabel>Input</guilabel>, <guilabel>Switches</guilabel>), which channels you want to see.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Show Menubar</guilabel></term>
-<listitem><para>This option is not device specific, but affects the mixer window. You can hide and show the menu bar with this option. You can also do this by pressing the Shortcut (usually CTRL-m)</para></listitem>
+<term><guimenuitem>Show/Hide Menubar</guimenuitem></term>
+<listitem><para>This option is not device specific, but affects the mixer window. You can hide and show the menubar with this option. You can also do this by pressing the shortcut (usually <keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>)</para></listitem>
 </varlistentry>
 
 </variablelist>
+</sect1>
+
+<sect1 id="switches">
+<title>Switches and Multiple-Choice selectors</title>
+
+<para>The controls in the section <guilabel>Switches</guilabel> consist of a LED and a short label describing the function. The <guilabel>Switches</guilabel> section can also contain Multiple-Choice selectors. Please note that these controls are often very special and usually don't need to be changed by the average user. The context menu contains the <guimenuitem>Channels</guimenuitem> and <guimenuitem>Show/Hide Menubar</guimenuitem> entries already described.
+
+<screenshot>
+<screeninfo>Switches and Multiple-Choice selectors (<guilabel>Switches</guilabel> Section)</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-channel-switches.png" format="PNG"/></imageobject>
+<textobject><phrase>Switches and Multiple-Choice selectors (<guilabel>Switches</guilabel> Section)</phrase></textobject>
+</mediaobject>
+</screenshot>
+
+Please remember, red LED's are recording related, yellow LED's control special soundcard capabilities.
+
+The screenshot above shows from left to right an unlit <guilabel>IEC958 Output</guilabel> LED (yellow = special control), a lit <guilabel>Mix</guilabel> LED (red = Recording related), an unlit recording related LED, a lit special control and one multiple-choice selector (<guilabel>PCM Out Path &amp; Mute</guilabel>).
+
+If you are uncertain about the meaning of a control, please ask your soundcard driver supplier (for most current &Linux; distributions this is <ulink url="http://www.alsa-project.org">ALSA</ulink>).
+</para>
+
 </sect1>
 
 <sect1 id="panning-slider">
@@ -221,18 +246,17 @@ The middle position is the default. Dragging
 the slider to the left lowers the volume of the right speaker, dragging it to
 the right vice versa. Of course, these might be swapped if your speakers aren't
 positioned correctly.</para>
-<para>For Surround Systems please be aware that the Master device often regulates only the Front Speakers. This is a limitation of your Soundcard driver.
-if your soundcard has 
-</para> 
-<para>If your soundcard has no Master device, some other device might get picked by KMix - for most people this is the Wave (or PCM) control.</para>
+<para>For Surround Systems please be aware that the <guilabel>Master</guilabel> device often regulates only the Front Speakers. 
+This is a limitation of your Soundcard driver.</para> 
+<para>If your soundcard has no <guilabel>Master</guilabel> device, some other device might get picked by &kmix; - for most people this is the <guilabel>Wave</guilabel> (or <guilabel>PCM</guilabel>) control.</para>
 
 </sect1>
 
 <sect1 id="configuration-options">
 <title>Configuration options</title>
 
-<para>Use <guilabel>Menubar -> Settings -> Configure KMix...</guilabel>
-to choose preferences. These items are:</para>
+<para>Use <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure &kmix;...</guimenuitem></menuchoice>
+from the menubar to choose preferences. These items are:</para>
 
 <variablelist>
 <varlistentry>
@@ -241,7 +265,7 @@ to choose preferences. These items are:</para>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Enable system tray volume control</guilabel></term>
-<listitem><para>If enabled, a left-clicking the KMix dock icon will show a popup window with a volume control for the preferred device (Hint: currently you cannot change this device - it is selected by KMix instead). If the option is disabled, the KMix Main Window will be shown on a left-click on the KMix dock icon.</para></listitem>
+<listitem><para>If enabled, a left-clicking the &kmix; dock icon will show a popup window with a volume control for the preferred device (Hint: currently you cannot change this device - it is selected by &kmix; instead). If the option is disabled, the &kmix; Main Window will be shown on a left-click on the &kmix; dock icon.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Show tickmarks</guilabel></term>
@@ -254,7 +278,15 @@ is checked or not, by holding the mouse over the icon for each device, you can s
 </varlistentry>
 <varlistentry>
 <term><guilabel>Restore volumes on login</guilabel></term>
-<listitem><para>Let KDE restore the volumes when you Login: This restores your personal volume levels, stored when you last logged out. If your Operating System saves the volume levels,  you might not need this option (but on a computer with multiple users it is still needed).</para></listitem>
+<listitem><para>Let &kde; restore the volumes when you Login: This restores your personal volume levels, stored when you last logged out. If your Operating System saves the volume levels,  you might not need this option (but on a computer with multiple users it is still needed).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Volume Values:</guilabel></term>
+<listitem><para>Select if and how volume values are displayed: <guilabel>None</guilabel>, <guilabel>Absolute</guilabel> or <guilabel>Relative</guilabel>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Slider Orientation</guilabel></term>
+<listitem><para>With this option you can turn the &kmix; main window content by 90 degrees. Sliders, texts and everything else (if applicable) is rotated. There are some exclusions to this rule, most notably the menubar, the mixer selector (if shown at all), the panning slider and the multiple-choice selectors.</para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -269,7 +301,8 @@ is checked or not, by holding the mouse over the icon for each device, you can s
 
 <para>
 The &kmix; panel applet is an alternative interface to &kmix;.
-You can add it to the KDE panel by using the panel menu (<guilabel>Panel Menu</guilabel> -> <guilabel>Add</guilabel> -> <guilabel>Applet</guilabel> -> <guilabel>KMix Applet</guilabel>).
+You can add it to the &kde; panel by selecting <guimenuitem>Add Applet to Panel...</guimenuitem> in the <guimenu>Panel Menu</guimenu> or context menu.
+Choose <guilabel>Sound Mixer</guilabel> and click the <guibutton>Add to Panel</guibutton> or double click <guilabel>Sound Mixer</guilabel>.
 </para>
 
 <para>
@@ -279,11 +312,12 @@ Due to the limited space in the panel there are differences:
 <simplelist>
 <member>No main menu available.</member>
 <member>If you have multiple soundcards, you cannot change the selected mixer after the initial selection.</member>
-<member>No dock icon. If you want to use the dock item you must additionally start &kmix; from the K-Menu (usually installed under <guilabel>K-Menu</guilabel> -> <guilabel>Multimedia</guilabel> -> <guilabel>Sound Mixer</guilabel>).</member>
+<member>No dock icon. If you want to use the dock item you must additionally start &kmix; with
+<menuchoice><guimenu>K-Menu</guimenu><guisubmenu>Multimedia</guisubmenu><guimenuitem>&kmix; Sound Mixer</guimenuitem></menuchoice>.</member>
 <member>Icons only available when panel is big enough.</member>
 <member>No device name labels available.</member>
 <member>Configuration is done via panel menu - you can configure colors and slider direction there.</member>
-<member>No automatic volume saving. If you want your volumes saved when you logout for later restauration, you must also start KMix from the K-Menu.</member>
+<member>No automatic volume saving. If you want your volumes saved when you logout for later restauration, you must also start &kmix; from the K-Menu.</member>
 </simplelist>
 
 </para>
@@ -291,91 +325,81 @@ Due to the limited space in the panel there are differences:
 
 
 <chapter id="advanced-kmix">
-<title>Advanced KMix features</title>
-
-
+<title>Advanced &kmix; features</title>
 
 <warning><para>This chapter describes &kmix; functionality that is targeted at the experienced user. Most users will never have a need for this functionality, so you can safely skip this chapter</para></warning>
 
-
 <sect1 id="dcop-overview">
-<title>The DCOP Interface</title>
+<title>The &DCOP; Interface</title>
 
 <para>
 Sometimes you want to do specialized things.
 Things like controlling the mixer from another application or muting the master device every day at 10pm.
-&kmix; has a DCOP interface that allows you to achieve much with minimal work.
-You can start a shell and type <guilabel>dcop kmix</guilabel> to start exploring the &kmix; DCOP interface.
+&kmix; has a &DCOP; interface that allows you to achieve much with minimal work.
+You can start a shell and type <userinput><command>dcop kmix</command></userinput> to start exploring the &kmix; &DCOP; interface.
 The &kmix; specific interfaces are:</para>
 
 <variablelist>
 <varlistentry>
-<term><guilabel>Mixer0</guilabel></term>
-<listitem><para>Allows manipulating the first mixer. You can set volume levels, mute the device, change balance, retrieve the mixer name and much more. Type <guilabel>dcop kmix Mixer0</guilabel> if you want to explore all the features. There are more entries like <guilabel>Mixer1</guilabel> in case multiple soundcards are installed.</para></listitem>
+<term><userinput><command>Mixer0</command></userinput></term>
+<listitem><para>Allows manipulating the first mixer. You can set volume levels, mute the device, change balance, retrieve the mixer name and much more. Type <userinput><command>dcop kmix Mixer0</command></userinput> if you want to explore all the features. There are more entries like <userinput><command>Mixer1</command></userinput> in case multiple soundcards are installed.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>kmix-mainwindow#1</guilabel></term>
-<listitem><para>The GUI window can be controlled with this command. You can hide and show the window, resize it and much more. Type <guilabel>dcop kmix kmix-mainwindow#1</guilabel> if you want to explore all the features.</para></listitem>
+<term><userinput><command>kmix-mainwindow#1</command></userinput></term>
+<listitem><para>The &GUI; window can be controlled with this command. You can hide and show the window, resize it and much more. Type <userinput><command>dcop kmix kmix-mainwindow#1</command></userinput> if you want to explore all the features.</para></listitem>
 </varlistentry>
 </variablelist>
 
 </sect1>
 
 
-
-
-
 <sect1 id="dcop-examples">
-<title>DCOP Examples</title>
+<title>&DCOP; Examples</title>
 
 <variablelist>
 <varlistentry>
-<term><guilabel>dcop kmix kmix-mainwindow#1 hide</guilabel></term>
-<listitem><para>Hides the GUI window. Use <guilabel>dcop kmix kmix-mainwindow#1 show</guilabel> or the dock icon to show it again.</para></listitem>
+<term><userinput><command>dcop kmix kmix-mainwindow#1 hide</command></userinput></term>
+<listitem><para>Hides the &GUI; window. Use <userinput><command>dcop kmix kmix-mainwindow#1 show</command></userinput> or the dock icon to show it again.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>dcop kmix kmix-mainwindow#1 resize 1 1</guilabel></term>
-<listitem><para>Resizes the GUI window to the smallest size possible. This is the size so that all sliders (and other GUI elements) will fit into the window.</para></listitem>
+<term><userinput><command>dcop kmix kmix-mainwindow#1 resize 1 1</command></userinput></term>
+<listitem><para>Resizes the &GUI; window to the smallest size possible. This is the size so that all sliders (and other &GUI; elements) will fit into the window.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>dcop kmix Mixer0 mixerName</guilabel></term>
-<listitem><para>Tells the name of the first Mixer, for example <guilabel>Sound Fusion CS46xx</guilabel></para></listitem>
+<term><userinput><command>dcop kmix Mixer0 mixerName</command></userinput></term>
+<listitem><para>Tells the name of the first Mixer, for example <computeroutput>Sound Fusion CS46xx</computeroutput>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>dcop kmix Mixer1 setVolume 0 10</guilabel></term>
-<listitem><para>Sets the volume on the second mixer, device 0 to 10 percent. Device 0 is often the master device, but not always. If you want to quiet down the (first) master device on your second soundcard, you can use <guilabel>dcop kmix Mixer1 setMasterVolume 0</guilabel></para></listitem>
+<term><userinput><command>dcop kmix Mixer1 setVolume 0 10</command></userinput></term>
+<listitem><para>Sets the volume on the second mixer, device 0 to 10 percent. Device 0 is often the master device, but not always. If you want to quiet down the (first) master device on your second soundcard, you can use <userinput><command>dcop kmix Mixer1 setMasterVolume 0</command></userinput></para></listitem>
 </varlistentry>
 </variablelist>
 
-<para>                                                                          You can directly execute these commands from a shell that you started from inside KDE. If you need to execute dcop commands from somewhere else, for example from a crontab script, you need to define the <guilabel>DCOPSERVER</guilabel> environment variable (as seen in the first line of your ~/.DCOPserver_hostname_:0 file), for example:                      </para>
-                                                                         <!-- Don't know a better way to format code - esken -->
-<simplelist>
-<member>#!/bin/sh</member>
-<member>DCOPSERVER=`cat /home/yourhome/.DCOPserver_yourhostname_:0 | grep local`</member>
-<member>export DCOPSERVER</member>
-<member>dcop kmix Mixer0 setMasterVolume 0</member>
-</simplelist>
+<para>You can directly execute these commands from a shell that you started from inside &kde;. If you need to execute dcop commands from somewhere else, for example from a crontab script, you need to define the <envar>DCOPSERVER</envar> environment variable (as seen in the first line of your <filename>~/.DCOPserver_hostname_:0</filename> file), for example:</para>
 
+<programlisting>
+#!/bin/sh
+DCOPSERVER=`cat /home/yourhome/.DCOPserver_yourhostname_:0 | grep local`
+export DCOPSERVER
+dcop kmix Mixer0 setMasterVolume 0
+</programlisting>
 </sect1>
 
 <sect1 id="tips-and-tricks">
 <title>Tips and Tricks</title>
+<sect2>
+<title>Using ALSA and OSS driver at the same time</title>
+<para>&kmix; on &Linux; can use either the ALSA driver or the OSS driver, not both. If you really need to use both drivers at the same time (a very rare situation), you can do it as follows: Quit &kmix; and add the following line to your <filename>kmixrc</filename> file in the global configuration section.</para>
+<programlisting>MultiDriver=true</programlisting>
+<para>Start &kmix; again. If you click <menuchoice><guimenu>Help</guimenu><guimenuitem>Hardware Information</guimenuitem></menuchoice> you should see <guilabel>Sound drivers used: ALSA0.9 + OSS</guilabel> and <guilabel>Experimental multiple-Driver mode activated</guilabel>.</para>
 
-<variablelist>
-<varlistentry>
-<term><guilabel>Using ALSA and OSS driver at the same time></guilabel></term>
-<listitem>
-<para>KMix on Linux can use either the ALSA driver or the OSS driver, not both. If you really need to use both drivers at the same time (a very rare situation), you can do it as follows: Quit KMix and add the following line to your <guilabel>kmixrc</guilabel> file in the global configuration section.</para>
-<para><guilabel>MultiDriver=true</guilabel></para>
-<para>Start KMix again. If you click <guilabel>Help->Hardware Information</guilabel> you should see "<guilabel>Sound drivers used: ALSA0.9 + OSS</guilabel>" and "<guilabel>Experimental multiple-Driver mode activated</guilabel>"</para>
-<warning><para>Warning: You will probably see all of your mixers doubled.</para><para>There is no support for this kind of configuration.</para></warning>
-</listitem>
-</varlistentry>
-</variablelist>
+<warning><para>You will probably see all of your mixers doubled.</para>
+<para>There is no support for this kind of configuration.</para></warning>
+</sect2>
 
 </sect1>
 
@@ -397,22 +421,22 @@ The &kmix; specific interfaces are:</para>
 <itemizedlist>
 <listitem><para>Christian Esken <email>esken@kde.org</email></para></listitem>
 <listitem><para>Stefan Schimanski <email>1Stein@gmx.de</email></para></listitem>
-<listitem><para>Paul Kendall <email>paul@orion.co.nz</email> - SGI
+<listitem><para>Paul Kendall <email>paul@orion.co.nz</email> - &SGI;
 Port</para></listitem>
 <listitem><para>Sebestyen Zoltan <email>szoli@digo.inf.elte.hu</email> - FreeBSD
 Fixes</para></listitem>
-<listitem><para>Faraut Jean-Louis <email>jlf@essi.fr</email> - Solaris
+<listitem><para>Faraut Jean-Louis <email>jlf@essi.fr</email> - &Solaris;
 Fixes</para></listitem>
 <listitem><para>Nick Lopez <email>kimo_sabe@usa.net</email> - ALSA
 Port</para></listitem>
-<listitem><para>Helge Deller <email>deller@gmx.de</email> - HP-UX
+<listitem><para>&Helge.Deller; <email>deller@gmx.de</email> - &HP;-UX
 Port</para></listitem>
 <listitem><para>Lennart Augustsson <email>augustss@cs.chalmers.se</email> - *BSD
 Fixes</para></listitem>
 </itemizedlist>
 
-<para>Documentation copyright 2000 Matt Johnston
-<email>mattj@flashmail.com</email></para>
+<para>Documentation copyright 2000 &Matt.Johnston;
+&Matt.Johnston.mail;</para>
 
 <para>Updated 2003 to match &kmix; V1.91 by Christian Esken
 <email>esken@kde.org</email></para>
@@ -420,6 +444,8 @@ Fixes</para></listitem>
 <para>Updated 2005 to match &kmix; V2.2 by Christian Esken
 <email>esken@kde.org</email></para>
 
+<para>Updated 7/2005 to match &kmix; V2.6 by Christian Esken
+<email>esken@kde.org</email></para>
 
 <para>Based on documentation by Christian Esken
 <email>esken@kde.org</email></para>
