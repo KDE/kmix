@@ -327,7 +327,7 @@ void KMixApplet::selectMixer()
 					lst, 1, false, &ok, this );
    if ( ok )
    {
-      Mixer *mixer = Mixer::mixers().at( lst.findIndex( res ) );
+      Mixer *mixer = Mixer::mixers().at( lst.indexOf( res ) );
       if (!mixer)
          KMessageBox::sorry( this, i18n("Invalid mixer entered.") );
       else

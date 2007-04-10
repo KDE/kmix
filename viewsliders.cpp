@@ -40,7 +40,7 @@
  * See ViewInput and ViewOutput for "real" implementations.
  */
 ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
+      : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof)
 {
     if ( _vflags & ViewBase::Vertical ) {
         _layoutMDW = new QVBoxLayout(this);

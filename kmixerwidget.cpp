@@ -268,7 +268,7 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase)
 #ifdef __GNUC__
 #warning Using name() here is a bad idea. Use an ID instead for proper i18n
 #endif
-      m_ioTab->addTab( vbase , i18n(vbase->name()) );
+      m_ioTab->addTab( vbase , i18n(vbase->objectName().toLatin1()) );
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
    }
 }

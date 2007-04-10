@@ -40,7 +40,7 @@
  * Not really usable right now.
  */
 ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
+      : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof)
 {
     _mdSurroundFront = 0;
     _mdSurroundBack  = 0;

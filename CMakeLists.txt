@@ -5,8 +5,6 @@ find_package(Plasma)
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 set(kmix_adaptor_SRCS)
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
 ########### next target ###############

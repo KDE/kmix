@@ -35,7 +35,7 @@
 #include "mixer.h"
 
 ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, Plasma::Position position )
-    : ViewBase(parent, name, mixer, Qt::WStyle_Customize|Qt::WStyle_NoBorder, vflags, guiprof)
+    : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));

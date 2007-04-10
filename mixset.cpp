@@ -42,8 +42,8 @@ void MixSet::clone( MixSet &set )
 void MixSet::read( KConfig *config, const QString& grp )
 {
    kDebug(67100) << "MixSet::read() of group " << grp << endl;
-   config->setGroup(grp);
-   m_name = config->readEntry( "name", m_name );
+   KConfigGroup group = config->group(grp);
+   m_name = group.readEntry( "name", m_name );
 
    for(int i=0; i < count() ; i++ )
    {
@@ -55,8 +55,8 @@ void MixSet::read( KConfig *config, const QString& grp )
 void MixSet::write( KConfig *config, const QString& grp )
 {
    kDebug(67100) << "MixSet::write() of group " << grp << endl;    
-   config->setGroup(grp);
-   config->writeEntry( "name", m_name );
+   KConfigGroup conf = config->group(grp);
+   conf.writeEntry( "name", m_name );
 
    for(int i=0; i < count() ; i++ )
    {
