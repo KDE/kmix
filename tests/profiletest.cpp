@@ -17,10 +17,10 @@ int main(int argc, char* argv[]) {
 		
 	bool ok = guiprof->readProfile(fileName);
 	if ( !ok ) {
-		std::cerr << "Error: GuiProfile '" << fileName.ascii() << "' is NOT ok" << std::endl;
+		std::cerr << "Error: GuiProfile '" << fileName.toAscii().constData() << "' is NOT ok" << std::endl;
 	}
 	else {
-		std::cout << "GuiProfile '" << fileName.ascii() << "' read succesfully:\n----------------------\n";
+		std::cout << "GuiProfile '" << fileName.toAscii().constData() << "' read succesfully:\n----------------------\n";
 		std::cout << (*guiprof) ;
 		std::cout << "----------------------\n";
 	}
