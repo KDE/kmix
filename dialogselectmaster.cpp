@@ -25,7 +25,6 @@
 #include <qradiobutton.h>
 #include <qscrollarea.h>
 #include <QToolTip>
-//#include <q3vbox.h>
 
 #include <kcombobox.h>
 #include <kdebug.h>
