@@ -36,7 +36,7 @@ class QHBox;
 class QStackedWidget;
 
 // include files for KDE
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 
 class KAccel;
 class KComboBox;
@@ -50,8 +50,8 @@ class Mixer;
 #include "mixer.h"
 
 
-class 
-KMixWindow : public KMainWindow
+class
+KMixWindow : public KXmlGuiWindow
 {
    Q_OBJECT
 
@@ -107,7 +107,7 @@ KMixWindow : public KMainWindow
    bool m_showMenubar;
    bool m_isVisible;
    bool m_visibilityUpdateAllowed;
-   bool m_multiDriverMode;         // Not officially supported. 
+   bool m_multiDriverMode;         // Not officially supported.
    bool m_surroundView;            // Experimental. Off by defualt
    bool m_gridView;                // Experimental. Off by default
    Qt::Orientation m_toplevelOrientation;
