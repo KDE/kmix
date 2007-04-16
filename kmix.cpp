@@ -62,7 +62,7 @@
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow()
-   : KMainWindow(0),
+   : KXmlGuiWindow(0),
    m_showTicks( true ),
    m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
    m_visibilityUpdateAllowed( true ),
