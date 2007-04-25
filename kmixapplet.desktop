@@ -56,6 +56,7 @@ Comment=Shows and let you control sound volumes
 Comment[es]=Muestra y le deja controlar el volumen del sonido
 Comment[sv]=Visar och låter dig ändra ljudvolym
 Comment[x-test]=xxShows and let you control sound volumesxx
+Comment[zh_TW]=顯示並讓您控制音量
 
 Icon=kmix
 X-KDE-Library=kmix_panelapplet
