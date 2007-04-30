@@ -30,7 +30,7 @@
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <qapplication.h>
@@ -315,7 +315,7 @@ KMixDockWidget::mousePressEvent(QMouseEvent * /*me*/)
 		// the above stuff could also be implemented vertically
 
 		_dockAreaPopup->show();
-		KWM::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
+		KWindowSystem::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 
 		QWidget::mousePressEvent(me); // KSystemTrayIcon's shouldn't do the default action for this
 		return;
