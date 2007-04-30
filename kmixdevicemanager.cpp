@@ -32,8 +32,7 @@
 #include <klocale.h>
 
 #include <solid/device.h>
-#include <solid/devicemanager.h>
-#include <solid/capability.h>
+#include <solid/devicenotifier.h>
 #include <solid/audiohw.h>
 
 #include "kmixd.h"
@@ -46,17 +45,16 @@ I18N_NOOP("kmixd - Soundcard Mixer Device Manager");
 kdm::kdm()
 {
   std::cerr << "--- before getting dm ---\n";
-  Solid::DeviceManager& dm = Solid::DeviceManager::self();
-  connect (&dm, SIGNAL(deviceAdded(const QString&)), SLOT(plugged(const QString&)) );
+  connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(plugged(const QString&)) );
 
     std::cerr << "--- before dm.allDevices() ---\n";
-//  Solid::DeviceList dl = dm.allDevices();
-  Solid::DeviceList dl = dm.findDevicesFromQuery( Solid::Capability::AudioHw );
+//  QList<Solid::Device> dl = Solid::Device::allDevices();
+    QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioHw);
 
    foreach ( Solid::Device device, dl )
    {
       std::cout << "udi = '" << device.udi().toUtf8().data() << "'\n";
-      QMap<QString,QVariant> properties = device.allProperties();
+      //QMap<QString,QVariant> properties = device.allProperties();
       //std::cout << properties << "\n";
    }
 
