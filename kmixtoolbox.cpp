@@ -117,8 +117,13 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
             kDebug(67100) << "KMixToolBox::loadKeys() load Keys " << devgrpkeys << endl;
 
             // please see KMixToolBox::saveKeys() for some rambling about saving/loading Keys
-            keys->setConfigGroup(devgrpkeys);
-            keys->readSettings(config);
+
+            //Note to maintainer: this should be correct [you cannot choose the group anymore!],
+            //and if you really need groups, I recommend prepending group names to the action
+            //names. -- ahartmetz
+
+            //keys->setConfigGroup(devgrpkeys);
+            keys->readSettings();
          } // MDW has keys
       } // is a MixDeviceWidget
    } // for all widgets
@@ -183,8 +188,9 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
             devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
             kDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys << endl;
 
-            keys->setConfigGroup(devgrpkeys);
-            keys->writeSettings(config);
+            //See note in loadKeys! -- ahartmetz
+            //keys->setConfigGroup(devgrpkeys);
+            keys->writeSettings();
          } // MDW has keys
       } // is a MixDeviceWidget
    } // for all widgets
