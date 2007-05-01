@@ -33,7 +33,7 @@
 
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
-#include <solid/audiohw.h>
+#include <solid/audiointerface.h>
 
 #include "kmixd.h"
 #include "version.h"
@@ -49,7 +49,7 @@ kdm::kdm()
 
     std::cerr << "--- before dm.allDevices() ---\n";
 //  QList<Solid::Device> dl = Solid::Device::allDevices();
-    QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioHw);
+    QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
 
    foreach ( Solid::Device device, dl )
    {
