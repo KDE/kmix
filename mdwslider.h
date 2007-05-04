@@ -63,7 +63,7 @@ public:
 
     void addActionToPopup( KAction *action );
 
-    bool isStereoLinked() const { return m_linked; };
+    bool isStereoLinked() const { return m_linked; }
     bool isLabeled() const;
 
     void setStereoLinked( bool value );

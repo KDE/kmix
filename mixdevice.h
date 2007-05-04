@@ -72,7 +72,7 @@ public:
     /** 
      * Returns the name of the control.
      */
-    QString   name()         { return _name; };
+    QString   name()         { return _name; }
     /**
     * Returns an unique ID of this MixDevice. By default the number
     * 'num' from the constructor is returned. It is recommended that
@@ -83,14 +83,14 @@ public:
 
     // @todo Should I remove the following 4 methods: isRecordable(), ...
     bool isMuteable()               { return _playbackVolume.hasSwitch(); }
-    bool isMuted()                  { return ! _playbackVolume.isSwitchActivated(); };
-    bool isRecordable()             { return _captureVolume.hasSwitch(); };
-    bool isRecSource()              { return _captureVolume.isSwitchActivated(); };
+    bool isMuted()                  { return ! _playbackVolume.isSwitchActivated(); }
+    bool isRecordable()             { return _captureVolume.hasSwitch(); }
+    bool isRecSource()              { return _captureVolume.isSwitchActivated(); }
 
     bool isEnum()                   { return ( ! _enumValues.empty() ); }
 
-    void setMuted(bool value)       { _playbackVolume.setSwitch( value ); };
-    void setRecSource(bool value)   { _captureVolume.setSwitch( value ); };
+    void setMuted(bool value)       { _playbackVolume.setSwitch( value ); }
+    void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 
     Volume& playbackVolume();
     Volume& captureVolume();
@@ -102,8 +102,8 @@ public:
     void read( KConfig *config, const QString& grp );
     void write( KConfig *config, const QString& grp );
 
-    void setType( ChannelType channeltype ) { _type = channeltype; };
-    ChannelType type() { return _type; };
+    void setType( ChannelType channeltype ) { _type = channeltype; }
+    ChannelType type() { return _type; }
 
 signals:
     void newVolume( int num, Volume volume );

@@ -60,17 +60,17 @@ public:
     void addActionToPopup( KAction *action );
 
     virtual bool isDisabled() const;
-    MixDevice* mixDevice() { return m_mixdevice; };
+    MixDevice* mixDevice() { return m_mixdevice; }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
     virtual void setMutedColors( QColor high, QColor low, QColor back );
 
-    virtual bool isStereoLinked() const { return false; };
+    virtual bool isStereoLinked() const { return false; }
     //virtual bool isLabeled() const { return false; };
-    virtual void setStereoLinked( bool ) {};
+    virtual void setStereoLinked( bool ) {}
     virtual void setLabeled( bool );
-    virtual void setTicks( bool ) {};
+    virtual void setTicks( bool ) {}
 
 public slots:
     virtual void setDisabled( bool value );

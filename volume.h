@@ -90,11 +90,11 @@ class Volume
     int  percentage(long );
     int  count();
     
-    void setSwitch( bool val ) { _switchActivated = val; };
-    bool hasSwitch()           { return _hasSwitch; };
-    bool isSwitchActivated()   { return _switchActivated && _hasSwitch; };
-    bool hasVolume()           { return (_maxVolume != _minVolume); };
-    bool isCapture()           { return _isCapture; };
+    void setSwitch( bool val ) { _switchActivated = val; }
+    bool hasSwitch()           { return _hasSwitch; }
+    bool isSwitchActivated()   { return _switchActivated && _hasSwitch; }
+    bool hasVolume()           { return (_maxVolume != _minVolume); }
+    bool isCapture()           { return _isCapture; }
     
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend kdbgstream& operator<<(kdbgstream& os, const Volume& vol);

@@ -33,7 +33,7 @@ class MixSet : public QList<MixDevice *>
 
       void clone( MixSet &orig );
 
-      QString name() { return m_name; };
+      QString name() { return m_name; }
       void setName( const QString &name );
 
    private:
