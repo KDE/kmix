@@ -24,7 +24,7 @@
         </widget>
       </item>
       <item>
-        <widget class="Q3GroupBox" name="activeColors" >
+        <widget class="QGroupBox" name="activeColors" >
           <property name="enabled" >
             <bool>true</bool>
           </property>
@@ -125,7 +125,7 @@
         </widget>
       </item>
       <item>
-        <widget class="Q3GroupBox" name="mutedColors" >
+        <widget class="QGroupBox" name="mutedColors" >
           <property name="enabled" >
             <bool>true</bool>
           </property>
