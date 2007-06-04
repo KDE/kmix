@@ -29,20 +29,12 @@
 #include "volume.h"
 #include <qpixmap.h>
 
-class QBoxLayout;
-class QLabel;
-class QPopupMenu;
-class QSlider;
 
 class KLed;
-class KLedButton;
 class KAction;
 class KActionCollection;
-class KSmallSlider;
-class KGlobalAccel;
 
 class MixDevice;
-class VerticalText;
 class Mixer;
 class ViewBase;
 

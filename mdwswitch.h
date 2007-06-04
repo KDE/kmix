@@ -29,14 +29,9 @@
 
 class QBoxLayout;
 class QLabel;
-class QPopupMenu;
-class QSlider;
 
 class KLedButton;
 class KAction;
-class KActionCollection;
-class KSmallSlider;
-class KGlobalAccel;
 
 class MixDevice;
 class VerticalText;

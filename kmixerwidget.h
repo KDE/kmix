@@ -26,9 +26,7 @@
 
 #include <QWidget>
 class QString;
-class QGridLayout;
 
-class KMenu;
 
 #include "mixer.h"
 #include "mixdevicewidget.h"
@@ -47,12 +45,7 @@ class KTabWidget;
 class GUIProfile;
 class Mixer;
 #include "viewbase.h"
-class ViewInput;
-class ViewOutput;
-class ViewSwitches;
 // KMix experimental
-class ViewGrid;
-class ViewSurround;
 
 
 class KMixerWidget : public QWidget  

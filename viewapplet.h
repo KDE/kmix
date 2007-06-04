@@ -25,7 +25,6 @@
 #include <plasma/kpanelapplet.h>     // ??? plasma/
 
 class QBoxLayout;
-class QHBox;
 class Mixer;
 
 class ViewApplet : public ViewBase

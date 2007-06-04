@@ -29,9 +29,7 @@
 class QBoxLayout;
 
 class KAction;
-class KActionCollection;
 class KComboBox;
-class KGlobalAccel;
 
 class MixDevice;
 class Mixer;

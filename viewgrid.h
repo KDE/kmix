@@ -21,7 +21,6 @@
 #ifndef ViewGrid_h
 #define ViewGrid_h
 
-class QBoxLayout;
 #include "qsize.h"
 class QWidget;
 

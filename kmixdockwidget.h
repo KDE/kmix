@@ -23,14 +23,11 @@
 #ifndef KMIXDOCKWIDGET_H
 #define KMIXDOCKWIDGET_H
 
-class QFrame;
 class QString;
 #include <QWidget>
 
 #include <ksystemtrayicon.h>
 
-class KAudioPlayer;
-class MixDeviceWidget;
 class Mixer;
 class ViewDockAreaPopup;
 class Volume;

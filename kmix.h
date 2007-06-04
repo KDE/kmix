@@ -32,16 +32,12 @@ class QLabel;
 #include <QMap>
 #include <qlist.h>
 #include <QVBoxLayout>
-class QHBox;
 class QStackedWidget;
 
 // include files for KDE
 #include <kxmlguiwindow.h>
 
 class KAccel;
-class KComboBox;
-class KMixerWidget;
-class KMixerPrefWidget;
 class KMixPrefDlg;
 class KMixDockWidget;
 class KMixWindow;
