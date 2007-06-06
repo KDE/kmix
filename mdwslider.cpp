@@ -911,7 +911,8 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 	}
     }
     // Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
-    else if ( (e->type() == QEvent::Wheel) && ! (obj->metaObject()->className()=="KSmallSlider") )  {
+    else if ( (e->type() == QEvent::Wheel) 
+            && strcmp(obj->metaObject()->className(),"KSmallSlider") != 0)  {
 	QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
 	if (qwe->delta() > 0) {
 	    increaseVolume();
