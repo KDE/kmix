@@ -178,7 +178,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
     s_instCount++;
     kDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
 
-    KGlobal::dirs()->addResourceType( "appicon", KStandardDirs::kde_default("data") + "kmix/pics" );
+    KGlobal::dirs()->addResourceType( "appicon", "data", "kmix/pics" );
 
     loadConfig();
 
