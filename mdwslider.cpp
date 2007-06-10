@@ -225,8 +225,10 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
     }
     sliLayout->addItem( volLayout );
 
-    addSliders( volLayout, m_mixdevice->playbackVolume() , "Playback" );
-    addSliders( volLayout, m_mixdevice->captureVolume()  , "Capture");
+    if ( m_mixdevice->playbackVolume().count() > 0 )
+       addSliders( volLayout, m_mixdevice->playbackVolume() , _slidersChidsPlayback, m_slidersPlayback, "Playback" );
+    if ( m_mixdevice->captureVolume().count() > 0 )
+       addSliders( volLayout, m_mixdevice->captureVolume()  , _slidersChidsCapture , m_slidersCapture, "Capture");
 
    // --- RECORD SOURCE LED --------------------------
    sliLayout->addSpacing( 3 );
@@ -272,7 +274,7 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 }
 
 
-void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, const char* debug_text)
+void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_sliders, const char* debug_text)
 {
    if ( _orientation == Qt::Vertical ) {
       m_label = new VerticalText( this, debug_text );
@@ -307,10 +309,12 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, const char* debu
             sliderBig->setPageStep(maxvol/10);
             sliderBig->setValue(maxvol - vol.getVolume( chid ));
             //sliderBig->setObjectName(m_mixdevice->name());
+/*
             if ( _orientation == Qt::Vertical ) {
                 static_cast<QSlider*>(sliderBig)->setInvertedAppearance(true);
                 static_cast<QSlider*>(sliderBig)->setInvertedControls(true);
             }
+*/
         } // not small
 
         slider->installEventFilter( this );
@@ -321,8 +325,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, const char* debu
             slider->hide();
         }
         volLayout->addWidget( slider );  // add to layout
-        m_sliders.append ( slider );   // add to list
-        _slidersChids.append(chid);        // Remember slider-chid association  // @todo !!! How should this work, when you got a control with pvolume AND cvolume
+        ref_sliders.append ( slider );   // add to list
+        ref_slidersChids.append(chid);
         connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
     } // for all channels of this device
 }
@@ -432,10 +436,15 @@ MDWSlider::toggleStereoLinked()
 void
 MDWSlider::setStereoLinked(bool value)
 {
-   if (m_sliders.count() == 0) return;
    m_linked = value;
+   if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback);
+   if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture);
+}
 
-   QWidget *slider = m_sliders[0];
+void
+MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders)
+{
+   QWidget *slider = ref_sliders[0];
 
    /***********************************************************
       Remember value of first slider, so that it can be copied
@@ -454,8 +463,8 @@ MDWSlider::setStereoLinked(bool value)
       firstSliderValueValid = true;
    }
 
-   for( int i=1; i<m_sliders.count(); ++i ) {
-      slider = m_sliders[i];
+   for( int i=1; i<ref_sliders.count(); ++i ) {
+      slider = ref_sliders[i];
       if ( slider == 0 ) {
          continue;
       }
@@ -483,7 +492,7 @@ MDWSlider::setStereoLinked(bool value)
    }
 
    // Add tickmarks to last slider in the slider list
-   slider = m_sliders.last();
+   slider = ref_sliders.last();
    if( slider && static_cast<QSlider *>(slider)->tickPosition() )  // @todo How does this work?
       setTicks( true );
 
@@ -506,11 +515,16 @@ MDWSlider::setLabeled(bool value)
 }
 
 void
-MDWSlider::setTicks( bool ticks )
+MDWSlider::setTicks( bool value )
 {
-   if (m_sliders.count() == 0) return;
+   if (m_slidersPlayback.count() != 0) setTicksInternal(m_slidersPlayback, value);
+   if (m_slidersCapture.count() != 0) setTicksInternal(m_slidersCapture, value);
+}
 
-   QWidget* slider = m_sliders[0];
+void
+MDWSlider::setTicksInternal(QList<QWidget *>& ref_sliders, bool ticks)
+{
+  QWidget* slider = ref_sliders[0];
 
 	if ( slider->inherits( "QSlider" ) )
 	{
@@ -520,13 +534,13 @@ MDWSlider::setTicks( bool ticks )
 			else
 			{
 				static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-				slider = m_sliders.last();
+				slider = ref_sliders.last();
 				static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksAbove );
 			}
 		else
 		{
 			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-			slider = m_sliders.last();
+			slider = ref_sliders.last();
 			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
 		}
 	}
@@ -552,8 +566,13 @@ MDWSlider::setIcons(bool value)
 void
 MDWSlider::setColors( QColor high, QColor low, QColor back )
 {
-    for( int i=0; i<m_sliders.count(); ++i ) {
-        QWidget *slider = m_sliders[i];
+    for( int i=0; i<m_slidersPlayback.count(); ++i ) {
+        QWidget *slider = m_slidersPlayback[i];
+        KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
+        if ( smallSlider ) smallSlider->setColors( high, low, back );
+    }
+    for( int i=0; i<m_slidersCapture.count(); ++i ) {
+        QWidget *slider = m_slidersCapture[i];
         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
         if ( smallSlider ) smallSlider->setColors( high, low, back );
     }
@@ -562,87 +581,68 @@ MDWSlider::setColors( QColor high, QColor low, QColor back )
 void
 MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
 {
-    for( int i=0; i<m_sliders.count(); ++i ) {
-        QWidget *slider = m_sliders[i];
+    for( int i=0; i<m_slidersPlayback.count(); ++i ) {
+        QWidget *slider = m_slidersPlayback[i];
+        KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
+        if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
+    }
+    for( int i=0; i<m_slidersCapture.count(); ++i ) {
+        QWidget *slider = m_slidersCapture[i];
         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
         if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
     }
 }
 
 
-/** This slot is called, when a user has changed the volume via the KMix Slider */
+/** This slot is called, when a user has changed the volume via the KMix Slider. !!! it is totally broken in the "splitted" case, as I do not know which slider was activated */
 void MDWSlider::volumeChange( int )
 {
-   if (m_sliders.count() == 0) return;
+   if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), _slidersChidsPlayback, m_slidersPlayback);
+   if (m_slidersCapture.count()  > 0) volumeChangeInternal(m_mixdevice->captureVolume() , _slidersChidsCapture, m_slidersCapture);
+}
 
-   // --- Step 1: Get a REFERENCE of the volume Object ---
-#ifdef __GNUC__
-#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
-#endif
-   Volume& vol = m_mixdevice->playbackVolume();
+void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_sliders  )
+{
 
    // --- Step 2: Change the volumes directly in the Volume object to reflect the Sliders ---
    if ( isStereoLinked() )
    {
-      QWidget *slider = m_sliders.first();
-      Volume::ChannelID chid  = _slidersChids.first();
-
-      int sliderValue = 0;
-      if ( slider->inherits( "KSmallSlider" ) )
+      long firstVolume = 0;
+      if ( ref_sliders.first()->inherits( "KSmallSlider" ) )
       {
-         KSmallSlider *slider = dynamic_cast<KSmallSlider *>(m_sliders.first());
-         if (slider) {
-	    sliderValue= slider->value();
-	 }
+         KSmallSlider *slider = dynamic_cast<KSmallSlider *>(ref_sliders.first());
+         if (slider != 0 ) firstVolume = slider->value();
       }
-      else {
-         QSlider *slider = dynamic_cast<QSlider *>(m_sliders.first());
-         if (slider) {
-				if ( _orientation == Qt::Vertical )
-					sliderValue= slider->maximum() - slider->value();
-				else
-					sliderValue= slider->value();
+      else
+      {
+         QSlider *slider = dynamic_cast<QSlider *>(ref_sliders.first());
+/*        if ( _orientation == Qt::Vertical )
+            sliderValue= slider->maximum() - slider->value();
+         else
+ */
+         if (slider != 0 ) firstVolume = slider->value();
+      }
+      vol.setAllVolumes(firstVolume);
+    } // stereoLinked()
 
-         }
-      }
+    else {
+        QList<Volume::ChannelID>::Iterator it = ref_slidersChids.begin();
+        for( int i=0; i<ref_sliders.count(); i++, ++it ) {
+            Volume::ChannelID chid = *it;
+            QWidget *sliderWidget = ref_sliders[i];
 
-		// With balance proper working, we must change relative volumes,
-		// not absolute, which leads a make some difference calc related
-		// to new sliders position against the top volume on channels
-		long volumeDif =  sliderValue - vol.getTopStereoVolume( Volume::MMAIN );
-
-      if ( chid == Volume::LEFT ) {
-			vol.setVolume( Volume::LEFT , vol.getVolume( Volume::LEFT ) + volumeDif );
-			vol.setVolume( Volume::RIGHT, vol.getVolume( Volume::RIGHT ) + volumeDif );
-      }
-      else {
-         kDebug(67100) << "MDWSlider::volumeChange(), unknown chid " << chid << endl;
-      }
-   } // joined
-   else {
-      int n = 0;
-      QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-      for( int i=0; i<m_sliders.count(); ++i ) {
-          QWidget *slider = m_sliders[i];
-          Volume::ChannelID chid = *it;
-	  if ( slider->inherits( "KSmallSlider" ) )
-	  {
-	      KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-	      if (smallSlider)
-		  vol.setVolume( chid, smallSlider->value() );
-	  }
-	  else
-	  {
-	      QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-	      if (bigSlider)
-				if ( _orientation == Qt::Vertical )
-					vol.setVolume( chid, bigSlider->maximum() - bigSlider->value() );
-				else
-					vol.setVolume( chid, bigSlider->value() );
-	  }
-	  n++;
-      }
-   }
+            if ( sliderWidget->inherits( "KSmallSlider" ) )
+            {
+                KSmallSlider *slider = dynamic_cast<KSmallSlider *>(sliderWidget);
+                if (slider) vol.setVolume( chid, slider->value() );
+            }
+            else
+            {
+                QSlider *slider = dynamic_cast<QSlider *>(sliderWidget);
+                if (slider) vol.setVolume( chid, slider->value() );
+            }
+      } // iterate over all sliders
+   } // !stereoLinked()
 
    // --- Step 3: Write back the new volumes to the HW ---
    m_mixer->commitVolumeChange(m_mixdevice);
@@ -705,16 +705,22 @@ void MDWSlider::setDisabled( bool value )
 */
 void MDWSlider::increaseVolume()
 {
-#ifdef __GNUC__
-#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
-#endif
-   Volume& vol = m_mixdevice->playbackVolume();
-    long inc = vol.maxVolume() / 20;
+   Volume& volP = m_mixdevice->playbackVolume();
+    long inc = volP.maxVolume() / 20;
     if ( inc == 0 )
         inc = 1;
-    for ( int i = 0; i < vol.count(); i++ ) {
-        long newVal = (vol[i]) + inc;
-        vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
+    for ( int i = 0; i < volP.count(); i++ ) {
+        long newVal = (volP[i]) + inc;
+        volP.setVolume( (Volume::ChannelID)i, newVal < volP.maxVolume() ? newVal : volP.maxVolume() );
+    }
+
+    Volume& volC = m_mixdevice->captureVolume();
+    inc = volC.maxVolume() / 20;
+    if ( inc == 0 )
+        inc = 1;
+    for ( int i = 0; i < volC.count(); i++ ) {
+        long newVal = (volC[i]) + inc;
+        volC.setVolume( (Volume::ChannelID)i, newVal < volC.maxVolume() ? newVal : volC.maxVolume() );
     }
     m_mixer->commitVolumeChange(m_mixdevice);
 }
@@ -725,16 +731,22 @@ void MDWSlider::increaseVolume()
 */
 void MDWSlider::decreaseVolume()
 {
-#ifdef __GNUC__
-#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
-#endif
-    Volume& vol = m_mixdevice->playbackVolume();
-    long inc = vol.maxVolume() / 20;
+    Volume& volP = m_mixdevice->playbackVolume();
+    long inc = volP.maxVolume() / 20;
     if ( inc == 0 )
         inc = 1;
-    for ( int i = 0; i < vol.count(); i++ ) {
-        long newVal = (vol[i]) - inc;
-        vol.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
+    for ( int i = 0; i < volP.count(); i++ ) {
+        long newVal = (volP[i]) - inc;
+        volP.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
+    }
+
+    Volume& volC = m_mixdevice->captureVolume();
+     inc = volC.maxVolume() / 20;
+    if ( inc == 0 )
+        inc = 1;
+    for ( int i = 0; i < volC.count(); i++ ) {
+        long newVal = (volC[i]) - inc;
+        volC.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
     }
     m_mixer->commitVolumeChange(m_mixdevice);
 }
@@ -746,68 +758,31 @@ void MDWSlider::decreaseVolume()
 */
 void MDWSlider::update()
 {
-   if (m_sliders.count() == 0) return;
+   if (m_slidersPlayback.count() != 0) updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, _slidersChidsPlayback);
+   if (m_slidersCapture.count()  != 0) updateInternal(m_mixdevice->captureVolume(), m_slidersCapture , _slidersChidsCapture );
+}
 
-	// update volumes
-#ifdef __GNUC__
-#warning This is broken for EVERY capture channel. NEVER EVER SHIP THIS TO END-USERS (esken)
-#endif
-   Volume& vol = m_mixdevice->playbackVolume();
-	if( isStereoLinked() )
-	{
-		QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
+void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids)
+{
+    // update volumes
+    long useVolume = vol.getAvgVolume( Volume::MMAIN );
 
-		long avgVol = vol.getAvgVolume( Volume::MMAIN );
 
-		QWidget *slider =  m_sliders.first();
-		if ( slider == 0 ) {
-			return;
-		}
-		slider->blockSignals( true );
-		if ( slider->inherits( "KSmallSlider" ) )
-		{
-			KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-			if (smallSlider) {
-				smallSlider->setValue( avgVol );
-				smallSlider->setGray( m_mixdevice->isMuted() );
-			}
-		} // small slider
-		else {
-			QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-			if (bigSlider)
-			{
-				// In case of stereo linked and single slider, slider must
-				// show the top of both volumes, and not strangely low down
-				// the main volume by half
+		QList<Volume::ChannelID>::Iterator it = ref_slidersChids.begin();
+		for( int i=0; i<ref_sliders.count(); i++, ++it ) {
+         if( ! isStereoLinked() ) {
+             Volume::ChannelID chid = *it;
+             useVolume = vol[chid];
+         }
+			QWidget *slider = ref_sliders.at( i );
 
-				if ( _orientation == Qt::Vertical )
-					bigSlider->setValue( vol.maxVolume() - vol.getTopStereoVolume( Volume::MMAIN ) );
-				else
-					bigSlider->setValue( vol.getTopStereoVolume( Volume::MMAIN ) );
-			}
-		} // big slider
-
-		slider->blockSignals( false );
-	} // only 1 slider (stereo-linked)
-	else {
-		QList<Volume::ChannelID>::Iterator it = _slidersChids.begin();
-		for( int i=0; i<vol.count(); i++, ++it ) {
-			QWidget *slider = m_sliders.at( i );
-			Volume::ChannelID chid = *it;
-			if (slider == 0) {
-				// !! The CHID thing should be done preperly
-				// not implemented: happens if there are record and playback
-				// sliders in the same device. Or if you only show
-				// the right slider (or any other fancy occasion)
-				continue;
-			}
 			slider->blockSignals( true );
 
 			if ( slider->inherits( "KSmallSlider" ) )
 			{
 				KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
 				if (smallSlider) {
-					smallSlider->setValue( vol[chid] );
+					smallSlider->setValue( useVolume );
 					smallSlider->setGray( m_mixdevice->isMuted() );
 				}
 			}
@@ -815,17 +790,18 @@ void MDWSlider::update()
 			{
 				QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
 				if (bigSlider)
+/*
 					if ( _orientation == Qt::Vertical ) {
-						bigSlider->setValue( vol.maxVolume() - vol[i] );
+						bigSlider->setValue( vol.maxVolume() - useVolume );
 					}
 					else {
-						bigSlider->setValue( vol[i] );
-				}
+*/
+						bigSlider->setValue( useVolume );
+//				}
 			}
 
 			slider->blockSignals( false );
 		} // for all sliders
-	} // more than 1 slider
 
 
      if( m_mixdevice->playbackVolume().hasSwitch() ) {
@@ -850,7 +826,7 @@ void MDWSlider::showContextMenu()
 	KMenu *menu = m_mixerwidget->getPopup();
 	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
 
-	if ( m_sliders.count()>1 ) {
+	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
 		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
 		if ( stereo ) {
 			stereo->setChecked( !isStereoLinked() );

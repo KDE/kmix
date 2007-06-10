@@ -73,6 +73,7 @@ int ViewSliders::count()
 
 QWidget* ViewSliders::add(MixDevice *md)
 {
+/*
     // Mockup Hack
     static int num = 0;
     {
@@ -106,6 +107,7 @@ QWidget* ViewSliders::add(MixDevice *md)
         _layoutMDW->addStretch(10);
      } // if category label shall be inserted
     }
+*/
 
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
     MixDeviceWidget *mdw =

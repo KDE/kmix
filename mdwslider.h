@@ -101,15 +101,24 @@ private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
     void createWidgets( bool showMuteLED, bool showRecordLED );
-    void addSliders( QBoxLayout *volLayout, Volume& vol, const char* debug_text);
+    void addSliders( QBoxLayout *volLayout, Volume& vol, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& sliders, const char* debug_text);
+
+    // Methods that are called two times from a wrapper. Once for playabck, once for capture
+    void setStereoLinkedInternal( QList<QWidget *>& ref_sliders );
+    void setTicksInternal( QList<QWidget *>& ref_sliders,  bool ticks );
+    void volumeChangeInternal(Volume& vol, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_sliders );
+    void updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& slidersChids);
+
 
     bool m_linked;
     QToolButton *m_iconLabel;
     KLedButton *m_recordLED;
     QWidget *m_label; // is either QLabel or VerticalText
     QBoxLayout *_layout;
-    QList<QWidget *> m_sliders;
-    QList<Volume::ChannelID> _slidersChids;
+    QList<QWidget *> m_slidersPlayback;
+    QList<QWidget *> m_slidersCapture;
+    QList<Volume::ChannelID> _slidersChidsPlayback;
+    QList<Volume::ChannelID> _slidersChidsCapture;
 };
 
 #endif
