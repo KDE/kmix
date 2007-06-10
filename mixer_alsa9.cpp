@@ -136,7 +136,7 @@ int Mixer_ALSA::open()
         /* --- Create basic control structures: snd_mixer_selem_id_t*, ID, ... --------- */
         // snd_mixer_selem_id_t*
         // I believe we must malloc it ourself (just guessing due to missing ALSA documentation)
-        sid = (snd_mixer_selem_id_t*)malloc(snd_mixer_selem_id_sizeof());
+        snd_mixer_selem_id_malloc ( &sid ); // !! Return code should be checked. Ressoure must be freed when unplugging card
         snd_mixer_selem_get_id( elem, sid );
         // Generate ID
         QString mdID("%1:%2");

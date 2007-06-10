@@ -79,7 +79,9 @@ public:
     * a better ID is set directly after constructing the MixDevice using
     * the setUniqueID().
     */
-    QString& id();
+    const QString& id() const;
+    // operator==() is used currently only for duplicate detection with QList's contains() method
+    bool operator==(const MixDevice& other) const;
 
     // @todo Should I remove the following 4 methods: isRecordable(), ...
     bool isMuteable()               { return _playbackVolume.hasSwitch(); }

@@ -69,7 +69,8 @@ KMixDockWidget::KMixDockWidget(QWidget *parent, const char *name, bool volumePop
 
     MixDevice* mdMaster = Mixer::masterCardDevice();
     if ( mdMaster != 0 ) {
-       m_mixer->setMasterDevice(mdMaster->id()); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
+       QString mdMasterStr = mdMaster->id();
+       m_mixer->setMasterDevice(mdMasterStr); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
        createMasterVolWidget();
     }
     createActions();

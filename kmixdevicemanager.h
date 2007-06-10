@@ -32,6 +32,8 @@ public:
 
 public slots:
    void plugged(const QString&);
+   void unplugged(const QString&);
+
    void tick();
 };
 

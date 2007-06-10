@@ -290,7 +290,7 @@ bool GUIProfileParser::startElement( const QString& ,
 				// skip unknown top-level nodes
 				std::cerr << "Ignoring unsupported element '" << qName.toUtf8().constData() << "'" << std::endl;
 			}
-			// we are accepting <soundcard> and <tab>
+			// we are accepting <soundcard> only
 		break;
 
 		case GUIProfileParser::SOUNDCARD:
@@ -375,7 +375,7 @@ void GUIProfileParser::addTab(const QXmlAttributes& attributes) {
 	if ( !name.isNull() && !type.isNull() ) {
 		// If you define a Tab, you must set its Type
 		// It is either "Input", "Output", "Switches" or "Surround"
-		// These names are case sensitive and correspond 1:1 to the View-Names 1:1 .
+		// These names are case sensitive and correspond 1:1 to the View-Names.
 		// This could make it possible in the (far) future to have Views as Plugins.
 		ProfTab* tab = new ProfTab();
 		tab->name = name;

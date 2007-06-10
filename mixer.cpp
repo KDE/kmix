@@ -150,7 +150,8 @@ bool Mixer::openIfValid() {
         _id = baseName();
         MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
         if ( recommendedMaster != 0 ) {
-            setMasterDevice(recommendedMaster->id() );
+            QString recommendedMasterStr = recommendedMaster->id();
+            setMasterDevice( recommendedMasterStr );
             kDebug() << "Mixer::open() detected master: " << recommendedMaster->id() << endl;
         }
         else {

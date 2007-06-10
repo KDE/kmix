@@ -94,15 +94,14 @@ QList<QString>& MixDevice::enumValues() {
    return _enumValues;
 }
 
-/* // @todo Used only at mixdevicewidget.cpp:625 . Replace that ASAP  !!!
-void MixDevice::setVolume( int channel, int volume )
-{
-   _volume.setVolume( (Volume::ChannelID)channel , volume ); 
-}
-*/
 
-QString& MixDevice::id() {
+const QString& MixDevice::id() const {
    return _id;
+}
+
+bool MixDevice::operator==(const MixDevice& other) const
+{
+   return ( _id == other._id );
 }
 
 /**

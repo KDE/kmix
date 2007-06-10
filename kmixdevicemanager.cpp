@@ -46,8 +46,15 @@ kdm::kdm()
 {
   std::cerr << "--- before getting dm ---\n";
   connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(plugged(const QString&)) );
+//  connect (&dm, SIGNAL(deviceRemoved(const QString&)), SLOT(unplugged(const QString&)) ); // !! @todo
 
     std::cerr << "--- before dm.allDevices() ---\n";
+
+/*<<<<<<< .mine
+  Solid::DeviceList dl = dm.allDevices();
+//  Solid::DeviceList dl = dm.findDevicesFromQuery(QString(), Solid::Capability::AudioHw );
+=======
+*/
 //  QList<Solid::Device> dl = Solid::Device::allDevices();
     QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
 
@@ -64,6 +71,10 @@ kdm::kdm()
 
 void kdm::plugged(const QString& udi) {
    std::cout << "Plugged udi='" <<  udi.toUtf8().data() << "'\n";
+}
+
+void kdm::unplugged(const QString& udi) {
+   std::cout << "Unplugged udi='" <<  udi.toUtf8().data() << "'\n";
 }
 
 void kdm::tick()
