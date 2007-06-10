@@ -155,20 +155,6 @@ int ViewDockAreaPopup::count()
     return ( _mixSet->count() );
 }
 
-int ViewDockAreaPopup::advice() {
-    if ( _dockDevice != 0 ) {
-        // I could also evaluate whether we have a "sensible" device available.
-        // For example
-        // 100 : "master volume"
-        // 100 : "PCM"
-	// 50  : "CD"
-        // 0   : all other devices
-        return 100;
-    }
-    else {
-        return 0;
-    }
-}
 
 QSize ViewDockAreaPopup::sizeHint() const {
     //    kDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";

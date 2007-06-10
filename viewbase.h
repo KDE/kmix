@@ -72,12 +72,6 @@ public:
 
     QString viewId() const;
 
-    // returns an advice about whether this view should be used at all. The returned
-    // value is a percentage (0-100). A view without accepted devices would return 0,
-    // a "3D sound View" would return 75, if all vital but some optional devices are
-    // not available.
-    virtual int advice() = 0;
-
     // This method is called by ViewBase at the end of createDeviceWidgets(). The default
     // implementation does nothing. Subclasses can override this method for doing final
     // touches. This is very much like polish(), but called at an exactly well-known time.

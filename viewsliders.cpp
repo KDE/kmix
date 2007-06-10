@@ -71,16 +71,6 @@ int ViewSliders::count()
     return ( _mixSet->count() );	
 }
 
-int ViewSliders::advice() {
-    if (  _mixSet->count() > 0 ) {
-        // The standard input and output views are always advised, if there are devices in it
-        return 100;
-    }
-    else {
-        return 0;
-    }
-}
-
 QWidget* ViewSliders::add(MixDevice *md)
 {
     // Mockup Hack

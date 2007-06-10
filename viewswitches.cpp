@@ -80,15 +80,6 @@ int ViewSwitches::count()
     return ( _mixSet->count() );
 }
 
-int ViewSwitches::advice() {
-    if (  _mixSet->count() > 0 ) {
-        // The Switch Views is always advised, if there are devices in it
-        return 100;
-    }
-    else {
-        return 0;
-    }
-}
 
 QWidget* ViewSwitches::add(MixDevice *md)
 {

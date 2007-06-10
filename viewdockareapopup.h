@@ -44,7 +44,6 @@ public:
     MixDevice* dockDevice();
 
     virtual int count();
-    virtual int advice();
     virtual void setMixSet(MixSet *mixset);
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
