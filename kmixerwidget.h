@@ -102,7 +102,7 @@ class KMixerWidget : public QWidget
    bool _ticksEnabled;
 
    void createLayout(ViewBase::ViewFlags vflags);
-   void possiblyAddView(ViewBase* vbase);
+   void possiblyAddView(ViewBase* vbase, QString tabName);
    void createViewsByProfile(Mixer* mixer, GUIProfile* guiprof, ViewBase::ViewFlags vflags);
 };
 

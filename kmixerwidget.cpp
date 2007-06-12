@@ -56,9 +56,8 @@
 /**
    This widget is embedded in the KMix Main window. Each Hardware Card is visualized by one KMixerWidget.
    KMixerWidget contains
-   (a)  A Tab with 2-4 Tabs (containing View's with sliders, switches and other GUI elements visualizing the Mixer)
-   (b1) A balancing slider
-   (b2) A label containing the mixer name
+   (a)  A TabBar with n Tabs (at least one per soundcard). These contain View's with sliders, switches and other GUI elements visualizing the Mixer)
+   (b) A balancing slider : This will be moved to ViewSliders.
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
@@ -120,7 +119,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
    m_profileButton->setIcon( KIcon( "tab-new" ) );
    m_profileButton->adjustSize();
-   // !!! m_profileButton->setPopup( m_tabbarSessionsCommands );
+   // !! m_profileButton->setPopup( m_tabbarSessionsCommands );
    connect(m_profileButton, SIGNAL(clicked()), SLOT(nextLayout()));
    m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
 
@@ -150,11 +149,11 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    else
    {
       // Fallback, if no GUI Profile could be found
-      possiblyAddView(new ViewOutput   ( m_ioTab, "Output" , _mixer, vflags, 0 ) );
-      possiblyAddView(new ViewInput    ( m_ioTab, "Input"  , _mixer, vflags, 0 ) );
-      possiblyAddView(new ViewSwitches ( m_ioTab, "Switches" , _mixer, vflags, 0 ) );
+      possiblyAddView(new ViewOutput   ( m_ioTab, "Output" , _mixer, vflags, 0 ), * new QString("Output") );
+      possiblyAddView(new ViewInput    ( m_ioTab, "Input"  , _mixer, vflags, 0 ), * new QString("Input") );
+      possiblyAddView(new ViewSwitches ( m_ioTab, "Switches" , _mixer, vflags, 0 ), * new QString("Switches") );
       if ( vflags & ViewBase::Experimental_SurroundView )
-         possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ) );
+         possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ), * new QString("Surround"));
       //!!if ( vflags & ViewBase::Experimental_GridView )
       //!!	possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
    }
@@ -179,15 +178,17 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
    m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
 
+/*
    QLabel *mixerName = new QLabel(this );
    mixerName->setObjectName("mixerName");
    mixerName->setText( _mixer->readableName() );
    mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+*/
 
    // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
    balanceAndDetail->addSpacing( 10 );
    balanceAndDetail->addWidget( m_balanceSlider );
-   balanceAndDetail->addWidget( mixerName );
+//   balanceAndDetail->addWidget( mixerName );
    balanceAndDetail->addSpacing( 10 );
 
    connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
@@ -203,28 +204,24 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    } // for all Views
    */
 
-   // --- "MenuBar" toggling from the various View's ---
-
-
-
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
 
 const QString& KMixerWidget::id() const {
-	return m_id;
+   return m_id;
 }
 
 void KMixerWidget::nextLayout() {
-	kDebug(67100) << "KMixerWidget::nextLayout()\n";
-        emit activateNextlayout();  // this a quick hack for replacing the ComboBox
+   kDebug(67100) << "KMixerWidget::nextLayout()\n";
+   emit activateNextlayout();  // this a quick hack for replacing the ComboBox
 }
 
 /**
  * Creates all the Views for the Tabs described in the GUIProfile
  */
-void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags) // !!! Impl. pending
+void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
 {
    /*** How it works:
    * A loop is done over all tabs.
@@ -240,11 +237,11 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << "name="<<profTab->name.toUtf8() << "\n";
       if ( profTab->type == "SliderSet" ) {
          ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toAscii(), mixer, vflags, guiprof );
-         possiblyAddView(view);
+         possiblyAddView(view, profTab->name);
       }
       else if ( profTab->type == "Surround" ) {
          ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toAscii(), mixer, vflags, guiprof );
-         possiblyAddView(view);
+         possiblyAddView(view, profTab->name);
       }
       /*
       else if ( profTab->type == "Switches" ) {
@@ -258,17 +255,18 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
    } // for all tabs
 }
 
-void KMixerWidget::possiblyAddView(ViewBase* vbase)
+void KMixerWidget::possiblyAddView(ViewBase* vbase, QString tabName)
 {
    if ( vbase->count() == 0 )
       delete vbase;
    else {
       _views.push_back(vbase);
       vbase ->createDeviceWidgets();
-#ifdef __GNUC__
-#warning Using name() here is a bad idea. Use an ID instead for proper i18n
-#endif
-      m_ioTab->addTab( vbase , i18n(vbase->objectName().toLatin1()) );
+
+      QString finalTabName;
+      finalTabName = i18n(tabName.toAscii());  // This is a dynamic i18n(). Usual texts are "Play", "Record", and "Switches"
+      finalTabName += " (" + _mixer->readableName() + ")";
+      m_ioTab->addTab( vbase , finalTabName );
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
    }
 }

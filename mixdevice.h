@@ -29,12 +29,9 @@
 
 // ! @todo : CONSIDER MERGING OF MixDevice and Volume classes:
 //           Not easy possible, because Volume is used in the driver backends
-// !!!       But a lot of stuff MUST still be moved in the Volume class. Especially
-//           the Switch management (reason: there might a capture and an playback switch, and
-//           they just belong to their corresponding volumes.
-
+//
 // !!! This SHOULD be subclassed (MixDeviceVolume, MixDeviceEnum).
-//     The DeviceCategory stuff worked out OK as a workaround, but it is actually insane
+//     The isEnum() works out OK as a workaround, but it is insane
 //     in the long run.
 //     Additionally there might be Implementations for virtual MixDevice's, e.g.
 //     MixDeviceRecselector, MixDeviceCrossfader.
@@ -114,13 +111,6 @@ protected:
     Volume _playbackVolume;
     Volume _captureVolume;
     ChannelType _type;
-/*
-    // The 2 or 4 following items MUST be moved to _volumePlay / _volumeCapture
-      bool _recordable; // Can it be recorded?  !!! move to _volumeCapture
-      bool _mute; // Available mute option
-    // This MIGHT remain in the class
-      bool _recSource; // Current rec status
-*/
 
     QString _name;   // Channel name
     QString _id;     // Primary key, used as part in config file keys
