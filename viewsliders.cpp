@@ -66,10 +66,6 @@ void ViewSliders::setMixSet(MixSet *)
 	// no need to implement. Class may not be instanciated after all.
 }
 
-int ViewSliders::count()
-{
-    return ( _mixSet->count() );	
-}
 
 QWidget* ViewSliders::add(MixDevice *md)
 {

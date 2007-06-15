@@ -86,10 +86,6 @@ void ViewSurround::setMixSet(MixSet *mixset)
     } // for
 }
 
-int ViewSurround::count()
-{
-    return ( _mixSet->count() );
-}
 
 
 QWidget* ViewSurround::add(MixDevice *md)

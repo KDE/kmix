@@ -31,6 +31,7 @@
 #include <kdebug.h>
 #include <kstandardaction.h>
 // KMix
+#include "kmixtoolbox.h"
 #include "mdwslider.h"
 #include "mixer.h"
 
@@ -76,11 +77,6 @@ void ViewApplet::setMixSet(MixSet *mixset)
             _mixSet->append(md);
         }
     }
-}
-
-int ViewApplet::count()
-{
-    return ( _mixSet->count() );
 }
 
 
@@ -154,18 +150,7 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
            showIcons = true;
        }
     }
-    for ( int i=0; i < _mdws.count(); ++i ) {
-        QWidget *mdw = _mdws[i];
-	if ( mdw == 0 ) {
-	    kError(67100) << "ViewApplet::resizeEvent(): mdw == 0\n";
-	    break; // sanity check (normally the lists are set up correctly)
-	}
-	else {
-	    if ( mdw->inherits("MDWSlider")) {
-		static_cast<MDWSlider*>(mdw)->setIcons(showIcons);
-	    }
-	}
-    }
+    KMixToolBox::setIcons(_mdws, showIcons);
 
     //    kDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
     // resizing changes our own sizeHint(), because we must take the new PanelSize in account.

@@ -39,7 +39,7 @@ class QSlider;
 class KActionCollection;
 class KActionMenu;
 class KConfig;
-class KTabWidget;
+//class KTabWidget;
 
 // KMix
 class GUIProfile;
@@ -91,7 +91,7 @@ class KMixerWidget : public QWidget
    QSlider *m_balanceSlider;
    QVBoxLayout *m_topLayout; // contains the Card selector, TabWidget and balance slider
 
-   KTabWidget* m_ioTab;
+   //KTabWidget* m_ioTab;
 
 	std::vector<ViewBase*> _views;
 

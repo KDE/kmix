@@ -34,7 +34,6 @@ public:
     ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, Plasma::Position position);
     ~ViewApplet();
 
-    virtual int count();
     virtual void setMixSet(MixSet *mixset);
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();

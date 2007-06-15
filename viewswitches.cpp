@@ -75,10 +75,6 @@ void ViewSwitches::setMixSet(MixSet *mixset)
 }
 
 
-int ViewSwitches::count()
-{
-    return ( _mixSet->count() );
-}
 
 
 QWidget* ViewSwitches::add(MixDevice *md)

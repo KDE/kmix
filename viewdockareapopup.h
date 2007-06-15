@@ -43,7 +43,6 @@ public:
     ~ViewDockAreaPopup();
     MixDevice* dockDevice();
 
-    virtual int count();
     virtual void setMixSet(MixSet *mixset);
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();

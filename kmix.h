@@ -32,7 +32,7 @@ class QLabel;
 #include <QMap>
 #include <qlist.h>
 #include <QVBoxLayout>
-class QStackedWidget;
+class KTabWidget;
 
 // include files for KDE
 #include <kxmlguiwindow.h>
@@ -68,7 +68,7 @@ KMixWindow : public KXmlGuiWindow
    void initActions();
    void recreateGUI();
    void initWidgets();
-   void initMixerWidgets();
+   void setErrorMixerWidget();
 
    bool updateDocking();
    void clearMixerWidgets();
@@ -105,10 +105,9 @@ KMixWindow : public KXmlGuiWindow
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
    bool m_surroundView;            // Experimental. Off by defualt
-   bool m_gridView;                // Experimental. Off by default
    Qt::Orientation m_toplevelOrientation;
 
-   QStackedWidget *m_wsMixers;
+   KTabWidget *m_wsMixers;
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QString m_hwInfoString;

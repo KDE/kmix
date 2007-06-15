@@ -49,7 +49,6 @@
 #include "viewsliderset.h"
 #include "viewswitches.h"
 // KMix experimental
-//#include "viewgrid.h"
 #include "viewsurround.h"
 
 
@@ -110,10 +109,10 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_topLayout->setSpacing( 3 );
    m_topLayout->setObjectName( "m_topLayout" );
 
+/*
    // Create tabs of input + output + [...]
    m_ioTab = new KTabWidget( this);
    m_ioTab->setObjectName( "ioTab" );
-
 
    QToolButton* m_profileButton = new QToolButton( m_ioTab );
    m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
@@ -133,6 +132,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
    m_profileButton->installEventFilter(this);
    m_topLayout->addWidget( m_ioTab );
+*/
 
 
    /*******************************************************************
@@ -149,13 +149,11 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    else
    {
       // Fallback, if no GUI Profile could be found
-      possiblyAddView(new ViewOutput   ( m_ioTab, "Output" , _mixer, vflags, 0 ), * new QString("Output") );
-      possiblyAddView(new ViewInput    ( m_ioTab, "Input"  , _mixer, vflags, 0 ), * new QString("Input") );
-      possiblyAddView(new ViewSwitches ( m_ioTab, "Switches" , _mixer, vflags, 0 ), * new QString("Switches") );
+      possiblyAddView(new ViewOutput   ( this, "Output" , _mixer, vflags, 0 ), * new QString("Output") );
+      possiblyAddView(new ViewInput    ( this, "Input"  , _mixer, vflags, 0 ), * new QString("Input") );
+      possiblyAddView(new ViewSwitches ( this, "Switches" , _mixer, vflags, 0 ), * new QString("Switches") );
       if ( vflags & ViewBase::Experimental_SurroundView )
-         possiblyAddView( new ViewSurround( m_ioTab, "Surround", _mixer, vflags, 0 ), * new QString("Surround"));
-      //!!if ( vflags & ViewBase::Experimental_GridView )
-      //!!	possiblyAddView( new ViewGrid( m_ioTab, "Grid", _mixer, vflags, 0 ) );
+         possiblyAddView( new ViewSurround( this, "Surround", _mixer, vflags, 0 ), * new QString("Surround"));
    }
 
 
@@ -234,18 +232,18 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       // The i18n() in the next line will only produce a translated version, if the text is known.
       // This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
       // It is possible that the Profile author puts arbitrary names in it.
-      kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << "name="<<profTab->name.toUtf8() << "\n";
+      kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << " name="<<profTab->name.toUtf8() << "\n";
       if ( profTab->type == "SliderSet" ) {
-         ViewSliderSet* view = new ViewSliderSet  ( m_ioTab, profTab->name.toAscii(), mixer, vflags, guiprof );
+         ViewSliderSet* view = new ViewSliderSet  ( this, profTab->name.toAscii(), mixer, vflags, guiprof );
          possiblyAddView(view, profTab->name);
       }
       else if ( profTab->type == "Surround" ) {
-         ViewSurround* view = new ViewSurround (m_ioTab, profTab->name.toAscii(), mixer, vflags, guiprof );
+         ViewSurround* view = new ViewSurround ( this, profTab->name.toAscii(), mixer, vflags, guiprof );
          possiblyAddView(view, profTab->name);
       }
       /*
       else if ( profTab->type == "Switches" ) {
-         ViewSliderSet* view = new ViewSwitchSet  ( m_ioTab, profTab->name.toAscii(), _mixer, vflags, guiprof );
+         ViewSliderSet* view = new ViewSwitchSet  ( this, profTab->name.toAscii(), _mixer, vflags, guiprof );
          possiblyAddView(view);
       }
       */
@@ -257,16 +255,20 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 
 void KMixerWidget::possiblyAddView(ViewBase* vbase, QString tabName)
 {
-   if ( vbase->count() == 0 )
+      vbase->createDeviceWidgets();
+   if ( ! vbase->isValid()  )
       delete vbase;
    else {
-      _views.push_back(vbase);
-      vbase ->createDeviceWidgets();
+      vbase->createDeviceWidgets();
+      //vbase->show();
+      m_topLayout->addWidget(vbase);
 
+/*
       QString finalTabName;
       finalTabName = i18n(tabName.toAscii());  // This is a dynamic i18n(). Usual texts are "Play", "Record", and "Switches"
       finalTabName += " (" + _mixer->readableName() + ")";
-      m_ioTab->addTab( vbase , finalTabName );
+      //m_ioTab->addTab( vbase , finalTabName ); //  @todo move to class KMix
+*/
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
    }
 }
@@ -276,7 +278,7 @@ void KMixerWidget::setIcons( bool on )
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 		ViewBase* mixerWidget = *it;
-		KMixToolBox::setIcons(mixerWidget->_mdws, on);
+		mixerWidget->setIcons(on);
     } // for all tabs
 }
 
@@ -288,7 +290,7 @@ void KMixerWidget::setLabels( bool on )
 		const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 		for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 			ViewBase* mixerWidget = *it;
-			KMixToolBox::setLabels(mixerWidget->_mdws, on);
+			mixerWidget->setLabels(on);
 	    } // for all tabs
     }
 }
@@ -301,7 +303,7 @@ void KMixerWidget::setTicks( bool on )
 		const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 		for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
 			ViewBase* mixerWidget = *it;
-		    KMixToolBox::setTicks(mixerWidget->_mdws, on);
+		    mixerWidget->setTicks(on);
 		} // for all tabs
     }
 }

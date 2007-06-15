@@ -41,19 +41,21 @@ class GUIProfile;
 class ViewBase : public QWidget
 {
     Q_OBJECT
+
+friend class KMixToolBox;  // the toolbox is everybodys friend :-)
+
 public:
 
-    typedef uint ViewFlags;
-    enum ViewFlagsEnum {
-	// Regular flags
-        HasMenuBar     = 0x0001,
-        MenuBarVisible = 0x0002,
-        Horizontal     = 0x0004,
-        Vertical       = 0x0008,
-	// Experimental flags
-	Experimental_SurroundView = 0x1000,
-	Experimental_GridView = 0x2000
-    };
+   typedef uint ViewFlags;
+   enum ViewFlagsEnum {
+      // Regular flags
+      HasMenuBar     = 0x0001,
+      MenuBarVisible = 0x0002,
+      Horizontal     = 0x0004,
+      Vertical       = 0x0008,
+      // Experimental flags
+      Experimental_SurroundView = 0x1000,
+   };
 
     ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
     virtual ~ViewBase();
@@ -64,11 +66,6 @@ public:
     // After that the subclass must be prepared for
     // being fed MixDevice's via the add() method.
     virtual void setMixSet(MixSet *mixset);
-
-    // Returns the number of accepted MixDevice's from setMixerSet(). This is
-    // normally smaller that mixset->count(), except when the class creates virtual
-    // devices
-    virtual int count() = 0;
 
     QString viewId() const;
 
@@ -102,7 +99,11 @@ public:
     virtual void popupReset();
     virtual void showContextMenu();
 
-    Mixer* getMixer();
+    virtual bool isValid() const;
+
+   void setIcons(bool on);
+   void setLabels(bool on);
+   void setTicks(bool on);
 
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
@@ -110,9 +111,11 @@ public:
      * Hint: !! The new ViewSurround class shows that a 1:1 relationship does not work in a general scenario.
      *       I actually DID expect this. The solution is unclear yet, probably there will be a virtual mapper method.
      */
-    QList<QWidget *> _mdws; // this obsoletes the former Channel class
+    QList<QWidget *> _mdws;
 
 protected:
+
+    Mixer* getMixer();
     void init();
 
     Mixer *_mixer;

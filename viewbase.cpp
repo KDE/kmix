@@ -36,6 +36,7 @@
 #include <kstandardaction.h>
 // KMix
 #include "dialogviewconfiguration.h"
+#include "kmixtoolbox.h"
 #include "mixdevicewidget.h"
 #include "mixer.h"
 
@@ -101,6 +102,15 @@ void ViewBase::configurationUpdate() {
 QString ViewBase::viewId() const {
     return m_viewId;
 }
+
+bool ViewBase::isValid() const
+{
+   return (_mixSet->count() > 0 );
+}
+
+void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
+void ViewBase::setLabels(bool on) { KMixToolBox::setLabels(_mdws, on ); }
+void ViewBase::setTicks (bool on) { KMixToolBox::setTicks (_mdws, on ); }
 
 /**
  * Create all widgets.

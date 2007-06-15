@@ -150,12 +150,6 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
     return _mdw;
 }
 
-int ViewDockAreaPopup::count()
-{
-    return ( _mixSet->count() );
-}
-
-
 QSize ViewDockAreaPopup::sizeHint() const {
     //    kDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
     return( _mdw->sizeHint() );
