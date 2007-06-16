@@ -66,46 +66,57 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
     MixDeviceWidget(mixer,md,small,orientation,parent,mw),
     m_linked(true), m_iconLabel( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
-	// create actions (on _mdwActions, see MixDeviceWidget)
+   // create actions (on _mdwActions, see MixDeviceWidget)
 
-	KToggleAction *action = _mdwActions->add<KToggleAction>( "stereo" );
-	action->setText( i18n("&Split Channels") );
-	connect(action, SIGNAL(triggered(bool) ), SLOT(toggleStereoLinked()));
-	action = _mdwActions->add<KToggleAction>( "hide" );
-        action->setText( i18n("&Hide") );
-	connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
+   KToggleAction *action = _mdwActions->add<KToggleAction>( "stereo" );
+   action->setText( i18n("&Split Channels") );
+   connect(action, SIGNAL(triggered(bool) ), SLOT(toggleStereoLinked()));
+   action = _mdwActions->add<KToggleAction>( "hide" );
+   action->setText( i18n("&Hide") );
+   connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
 
-	KToggleAction *a = _mdwActions->add<KToggleAction>( "mute" );
-        a->setText( i18n("&Muted") );
-	connect( a, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
+   if( m_mixdevice->playbackVolume().hasSwitch() ) {
+      KToggleAction *a = _mdwActions->add<KToggleAction>( "mute" );
+      a->setText( i18n("&Muted") );
+      connect( a, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
+   }
 
-	if( m_mixdevice->isRecordable() ) {
-		a = _mdwActions->add<KToggleAction>( "recsrc" );
-		a->setText( i18n("Set &Record Source") );
-		connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
-	}
+   if( m_mixdevice->captureVolume().hasSwitch() ) {
+      KToggleAction *a = _mdwActions->add<KToggleAction>( "recsrc" );
+      a->setText( i18n("Set &Record Source") );
+      connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
+   }
 
-	QAction *c = _mdwActions->addAction( "keys" );
-        c->setText( i18n("C&onfigure Shortcuts...") );
-	connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+   QAction *c = _mdwActions->addAction( "keys" );
+   c->setText( i18n("C&onfigure Shortcuts...") );
+   connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
-	// create widgets
-	createWidgets( showMuteLED, showRecordLED );
+   // create widgets
+   createWidgets( showMuteLED, showRecordLED );
+   
+   QAction *b;
+   b = _mdwActions->addAction( "Increase volume" );
+   b->setText( i18n( "Increase Volume" ) );
+   connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
+   
+   b = _mdwActions->addAction( "Decrease volume" );
+   b->setText( i18n( "Decrease Volume" ) );
+   connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
+   
+/* 2007-06-16 esken This looks like a dup now.
+   Formerly the "b" Actions were used for the keyboard shortcuts.
+   Looks like that stuff got merged in KDE4.
+   Or ist this toggled(bool) vs triggered(bool)
 
-	QAction *b;
-	b = _mdwActions->addAction( "Increase volume" );
-        b->setText( i18n( "Increase Volume" ) );
-	connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
+   b = _mdwActions->addAction( "Toggle mute" );
+   b->setText( i18n( "Toggle mute" ) );
+   connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
 
-	b = _mdwActions->addAction( "Decrease volume" );
-        b->setText( i18n( "Decrease Volume" ) );
-	connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
-
-	b = _mdwActions->addAction( "Toggle mute" );
-        b->setText( i18n( "Toggle mute" ) );
-	connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
-
-	installEventFilter( this ); // filter for popup
+   b = _mdwActions->addAction( "Set Record Source" );
+   b->setText( i18n( "Set Record Source" ) );
+   connect(b, SIGNAL(triggered(bool) ), SLOT( toggleRecsrc() ));
+*/ 
+   installEventFilter( this ); // filter for popup
 
         update();
 }
@@ -127,7 +138,7 @@ QSizePolicy MDWSlider::sizePolicy() const
  *
  * Those widgets are placed into
  */
-void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
+void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 {
    // !! remove the "showMuteLED" parameter (or let it apply to the icons)
    if ( _orientation == Qt::Vertical ) {
@@ -204,13 +215,22 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
    iconLayout->setSizeConstraint(QLayout::SetFixedSize);
 
    m_iconLabel = 0L;
-   setIcon( m_mixdevice->type() );
-   iconLayout->addWidget( m_iconLabel );
-   m_iconLabel->installEventFilter( this );
-   QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
-   m_iconLabel->setToolTip( muteTip );
+   if ( showMuteLED ) {
+      setIcon( m_mixdevice->type() );
+      iconLayout->addWidget( m_iconLabel );
+      m_iconLabel->installEventFilter( this );
+      if ( m_mixdevice->playbackVolume().hasSwitch() ) {
+         QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
+         m_iconLabel->setToolTip( muteTip );
+      } // can be muted
+      else {
+         QString muteTip( m_mixdevice->name() );
+         m_iconLabel->setToolTip( muteTip );
+      } // cannot be muted
 
-   sliLayout->addSpacing( 3 );
+      sliLayout->addSpacing( 3 );
+   }
+
 
 
     // --- SLIDERS ---------------------------
@@ -226,14 +246,14 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
     sliLayout->addItem( volLayout );
 
     if ( m_mixdevice->playbackVolume().count() > 0 )
-       addSliders( volLayout, m_mixdevice->playbackVolume() , _slidersChidsPlayback, m_slidersPlayback, "Playback" );
+       addSliders( volLayout, 'p' );
     if ( m_mixdevice->captureVolume().count() > 0 )
-       addSliders( volLayout, m_mixdevice->captureVolume()  , _slidersChidsCapture , m_slidersCapture, "Capture");
+       addSliders( volLayout, 'c' );
 
    // --- RECORD SOURCE LED --------------------------
-   sliLayout->addSpacing( 3 );
    if ( showRecordLED )
    {
+      sliLayout->addSpacing( 3 );
       // --- LED LAYOUT TO CENTER ---
       QBoxLayout *reclayout;
       if ( _orientation == Qt::Vertical ) {
@@ -248,10 +268,10 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
       reclayout->setSizeConstraint(QLayout::SetFixedSize);
 
       sliLayout->addSpacing( 3 );
-      if( m_mixdevice->isRecordable() ) {
+      if( m_mixdevice->captureVolume().hasSwitch() ) {
          m_recordLED = new KLedButton( Qt::red,
-         m_mixdevice->isRecSource()?KLed::On:KLed::Off,
-         KLed::Sunken, KLed::Circular, this, "RecordLED" );
+            m_mixdevice->isRecSource()?KLed::On:KLed::Off,
+            KLed::Sunken, KLed::Circular, this, "RecordLED" );
          m_recordLED->setFixedSize( QSize(16, 16) );
          reclayout->addWidget( m_recordLED );
          connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
@@ -274,14 +294,40 @@ void MDWSlider::createWidgets( bool /*showMuteLED*/, bool showRecordLED )
 }
 
 
-void MDWSlider::addSliders( QBoxLayout *volLayout, Volume& vol, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_sliders, const char* debug_text)
+void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
 {
+   Volume* volP;
+   QList<Volume::ChannelID>* ref_slidersChidsP;
+   QList<QWidget *>* ref_slidersP;
+
+   if ( type == 'c' ) { // capture
+      volP              = & m_mixdevice->captureVolume();
+      ref_slidersChidsP = & _slidersChidsCapture;
+      ref_slidersP      = & m_slidersCapture;
+   }
+   else { // playback
+      volP              = & m_mixdevice->playbackVolume();
+      ref_slidersChidsP = & _slidersChidsPlayback;
+      ref_slidersP      = & m_slidersPlayback;
+   }
+
+   Volume& vol = *volP;
+   QList<Volume::ChannelID>& ref_slidersChids = *ref_slidersChidsP;
+   QList<QWidget *>& ref_sliders = *ref_slidersP;
+
+
+   static QString capture = i18n("(capture)");
+   QString sliderDescription = m_mixdevice->name();
+   if ( type == 'c' ) { // capture
+      sliderDescription += " " + capture;
+   }
+
    if ( _orientation == Qt::Vertical ) {
-      m_label = new VerticalText( this, debug_text );
+      m_label = new VerticalText( this, sliderDescription );
    }
    else {
       m_label = new QLabel(this);
-      static_cast<QLabel*>(m_label)->setText(debug_text);
+      static_cast<QLabel*>(m_label)->setText(sliderDescription);
    }
    volLayout->addWidget( m_label );
    m_label->installEventFilter( this );
@@ -654,15 +700,17 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref
     associated KAction like the context menu.
 */
 void MDWSlider::toggleRecsrc() {
-    setRecsrc( !m_mixdevice->isRecSource() );
+   setRecsrc( !m_mixdevice->isRecSource() );
 }
 
 
 void MDWSlider::setRecsrc(bool value )
 {
-	if (  m_mixdevice->isRecordable() ) {
-		m_mixer->setRecordSource( m_mixdevice->id(), value );
-	}
+    Volume& vol = m_mixdevice->captureVolume();
+   if (  vol.hasSwitch() ) {
+      vol.setSwitch( value );
+      m_mixer->commitVolumeChange( m_mixdevice );
+   }
 }
 
 
@@ -804,7 +852,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 		} // for all sliders
 
 
-     if( m_mixdevice->playbackVolume().hasSwitch() ) {
+     if( m_iconLabel != 0 && m_mixdevice->playbackVolume().hasSwitch() ) {
            m_iconLabel->blockSignals( true );
            m_iconLabel->setChecked( m_mixdevice->playbackVolume().isSwitchActivated() ? false : true );
            m_iconLabel->blockSignals( false );
@@ -820,47 +868,49 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 
 void MDWSlider::showContextMenu()
 {
-	if( m_mixerwidget == NULL )
-		return;
+   if( m_mixerwidget == NULL )
+      return;
+   
+   KMenu *menu = m_mixerwidget->getPopup();
+   menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
+   
+   if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
+      KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
+      if ( stereo ) {
+         stereo->setChecked( !isStereoLinked() );
+         menu->addAction( stereo );
+      }
+   }
+   
+   if ( m_mixdevice->captureVolume().hasSwitch() ) {
+      KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
+      if ( ta ) {
+         ta->setChecked( m_mixdevice->isRecSource() );
+         menu->addAction( ta );
+      }
+   }
+   
+   if ( m_mixdevice->playbackVolume().hasSwitch() ) {
+      KToggleAction *ta = ( KToggleAction* )_mdwActions->action( "mute" );
+      if ( ta ) {
+         ta->setChecked( m_mixdevice->isMuted() );
+         menu->addAction( ta );
+      }
+   }
 
-	KMenu *menu = m_mixerwidget->getPopup();
-	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
-
-	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
-		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
-		if ( stereo ) {
-			stereo->setChecked( !isStereoLinked() );
-			menu->addAction( stereo );
-		}
-	}
-
-	KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
-	if ( ta ) {
-		ta->setChecked( m_mixdevice->isRecSource() );
-		menu->addAction( ta );
-	}
-
-	if ( m_mixdevice->playbackVolume().hasSwitch() ) {
-		ta = ( KToggleAction* )_mdwActions->action( "mute" );
-		if ( ta ) {
-			ta->setChecked( m_mixdevice->isMuted() );
-			menu->addAction( ta );
-		}
-	}
-
-	QAction *a = _mdwActions->action(  "hide" );
-	if ( a )
-		menu->addAction( a );
-
-	a = _mdwActions->action( "keys" );
-	if ( a ) {
-		QAction sep( _mdwActions );
-                sep.setSeparator( true );
-		menu->addAction( &sep );
-	}
-
-	QPoint pos = QCursor::pos();
-	menu->popup( pos );
+   QAction *a = _mdwActions->action(  "hide" );
+   if ( a )
+      menu->addAction( a );
+   
+   a = _mdwActions->action( "keys" );
+   if ( a ) {
+      QAction sep( _mdwActions );
+      sep.setSeparator( true );
+      menu->addAction( &sep );
+   }
+   
+   QPoint pos = QCursor::pos();
+   menu->popup( pos );
 }
 
 QSize MDWSlider::sizeHint() const {

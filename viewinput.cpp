@@ -34,7 +34,6 @@ ViewInput::ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::
       : ViewSliders(parent, name, mixer, vflags, guiprof)
 {
     init();
-    connect ( _mixer, SIGNAL(newRecsrc())      , this, SLOT(refreshVolumeLevels()) ); // only the input widget has record sources
 }
 
 ViewInput::~ViewInput() {

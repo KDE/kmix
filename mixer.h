@@ -148,7 +148,6 @@ class Mixer : public QObject
 
    signals:
       void newBalance( Volume& );
-      void newRecsrc( void );
       void newVolumeLevels(void);
 
    protected:

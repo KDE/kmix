@@ -255,7 +255,6 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 
 void KMixerWidget::possiblyAddView(ViewBase* vbase, QString tabName)
 {
-      vbase->createDeviceWidgets();
    if ( ! vbase->isValid()  )
       delete vbase;
    else {

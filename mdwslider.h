@@ -86,7 +86,6 @@ signals:
     void newVolume( int num, Volume volume );
     void newMasterVolume( Volume volume );
     void masterMuted( bool );
-    void newRecsrc( int num, bool on );
     void toggleMenuBar(bool value);
 
 private slots:
@@ -101,7 +100,7 @@ private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
     void createWidgets( bool showMuteLED, bool showRecordLED );
-    void addSliders( QBoxLayout *volLayout, Volume& vol, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& sliders, const char* debug_text);
+    void addSliders( QBoxLayout *volLayout, char type);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList<QWidget *>& ref_sliders );

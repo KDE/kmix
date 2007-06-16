@@ -168,7 +168,6 @@ bool Mixer::openIfValid() {
 void Mixer::controlChangedForwarder()
 {
     emit newVolumeLevels();
-    emit newRecsrc(); // cheap, but works
 }
 
 /**

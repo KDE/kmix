@@ -96,7 +96,7 @@ void MDWSwitch::createWidgets()
 	_layout->addSpacing( 4 );
 	// --- LEDS --------------------------
 	if ( _orientation == Qt::Vertical ) {
-		if( m_mixdevice->isRecordable() )
+		if( m_mixdevice->captureVolume().hasSwitch() )
 		 _switchLED = new KLedButton( Qt::red,
 				 m_mixdevice->isRecSource()?KLed::On:KLed::Off,
 				 KLed::Sunken, KLed::Circular, this, "RecordLED" );
@@ -114,7 +114,7 @@ void MDWSwitch::createWidgets()
 	 }
 	 else
 	 {
-		if( m_mixdevice->isRecordable() )
+		if( m_mixdevice->captureVolume().hasSwitch() )
 			_switchLED = new KLedButton( Qt::red,
 					m_mixdevice->isRecSource()?KLed::On:KLed::Off,
 					KLed::Sunken, KLed::Circular, this, "RecordLED" );
@@ -138,7 +138,7 @@ void MDWSwitch::update()
 {
 	if ( _switchLED != 0 ) {
 		_switchLED->blockSignals( true );
-		if( m_mixdevice->isRecordable() )
+		if( m_mixdevice->captureVolume().hasSwitch() )
 			_switchLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
 		else
 			_switchLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
@@ -186,7 +186,7 @@ QSize MDWSwitch::sizeHint() const {
     associated KAction like the context menu.
 */
 void MDWSwitch::toggleSwitch() {
-	if( m_mixdevice->isRecordable() )
+	if( m_mixdevice->captureVolume().hasSwitch() )   // !!! @todo Support combination of "cswitch pswitch"
 		setSwitch( !m_mixdevice->isRecSource() );
 	else
 		setSwitch( !m_mixdevice->isMuted() );
@@ -194,8 +194,8 @@ void MDWSwitch::toggleSwitch() {
 
 void MDWSwitch::setSwitch(bool value)
 {
-	if (  m_mixdevice->playbackVolume().hasSwitch() ) {
-		if ( m_mixdevice->isRecordable() ) {
+	if (  m_mixdevice->playbackVolume().hasSwitch() ) {   // !!! @todo Support combination of "cswitch pswitch"
+		if ( m_mixdevice->captureVolume().hasSwitch() ) {
 			m_mixer->setRecordSource( m_mixdevice->id(), value );
 		}
 		else {

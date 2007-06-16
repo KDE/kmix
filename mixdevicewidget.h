@@ -74,7 +74,6 @@ signals:
     void newVolume( int num, Volume volume );
     void newMasterVolume( Volume volume );
     void masterMuted( bool );
-    void newRecsrc( int num, bool on );
 
 protected slots:
     void volumeChange( int );

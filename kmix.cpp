@@ -391,9 +391,12 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
 
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
+      bool isFirstTab = m_wsMixers->count() == 0;
       m_wsMixers->addTab( mw, mw->id() );
-      m_wsMixers->setCurrentWidget(mw);
-      setWindowTitle( mw->mixer()->readableName() );
+      if (isFirstTab) {
+         m_wsMixers->setCurrentWidget(mw);
+         setWindowTitle( mw->mixer()->readableName() );
+      }
       connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
       mw->loadConfig( KGlobal::config().data(), mw->id() );

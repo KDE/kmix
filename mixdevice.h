@@ -27,9 +27,6 @@
 #include <QObject>
 #include <qlist.h>
 
-// ! @todo : CONSIDER MERGING OF MixDevice and Volume classes:
-//           Not easy possible, because Volume is used in the driver backends
-//
 // !!! This SHOULD be subclassed (MixDeviceVolume, MixDeviceEnum).
 //     The isEnum() works out OK as a workaround, but it is insane
 //     in the long run.
@@ -41,6 +38,10 @@
  * This is the abstraction of a single control of a sound card, e.g. the PCM control. A control
  * can contain the 5 following subcontrols: playback-volume, capture-volume, playback-switch,
  * capture-switch and enumeration.
+
+   Design hint: In the past I (esken) considered merging the MixDevice and Volume classes.
+                I finally decided against it, as it seems better to have the MixDevice being the container
+                for the embedded control(s). These could be either Volume, Enum or some virtual MixDevice.
  */
 class MixDevice : public QObject
 {
@@ -80,16 +81,14 @@ public:
     // operator==() is used currently only for duplicate detection with QList's contains() method
     bool operator==(const MixDevice& other) const;
 
-    // @todo Should I remove the following 4 methods: isRecordable(), ...
-    bool isMuteable()               { return _playbackVolume.hasSwitch(); }
+    // @todo possibly remove the following 4 methods: isMuted(), ...
     bool isMuted()                  { return ! _playbackVolume.isSwitchActivated(); }
-    bool isRecordable()             { return _captureVolume.hasSwitch(); }
+    void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
     bool isRecSource()              { return _captureVolume.isSwitchActivated(); }
+    void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 
     bool isEnum()                   { return ( ! _enumValues.empty() ); }
 
-    void setMuted(bool value)       { _playbackVolume.setSwitch( value ); }
-    void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 
     Volume& playbackVolume();
     Volume& captureVolume();
