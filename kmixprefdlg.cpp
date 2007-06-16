@@ -60,9 +60,9 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    l = new QHBoxLayout();
    layout->addItem( l );
       l->addSpacing(10);
-      m_dockingChk = new QCheckBox( i18n("&Dock into panel"), m_generalTab );
+      m_dockingChk = new QCheckBox( i18n("&Dock in system tray"), m_generalTab );
       l->addWidget( m_dockingChk );
-      m_dockingChk->setWhatsThis( i18n("Docks the mixer into the KDE panel"));
+      m_dockingChk->setWhatsThis( i18n("Docks the mixer into the KDE system tray"));
 
       l = new QHBoxLayout();
       layout->addItem( l );
