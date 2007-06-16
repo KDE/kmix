@@ -88,7 +88,7 @@ KMixWindow : public KXmlGuiWindow
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void stopVisibilityUpdates();
 
-   void showNextMixer();
+   void newMixerShown(int tabIndex);
 
   private:
    KAccel *m_keyAccel;

@@ -163,7 +163,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
         // Create a RadioButton for each MixDevice (excluding Enum's)
         if ( md->playbackVolume().hasVolume() || md->captureVolume().hasVolume() ) {
             //kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb" << endl;
-            QString mdName = md->name();
+            QString mdName = md->readableName();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
 	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
        qrb->setObjectName(md->id());  // The object name is used as ID here: see apply()

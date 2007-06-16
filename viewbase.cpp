@@ -79,11 +79,6 @@ ViewBase::~ViewBase() {
  * Dummy implementation for add().
  */
 QWidget* ViewBase::add(MixDevice* mdw) {
-    QWidget* label = new QLabel( mdw->name(), this );
-    label->setObjectName( mdw->name() );
-    label->move(0, _dummyImplPos*12);
-    ++_dummyImplPos;
-    return label;
 }
 
 void ViewBase::configurationUpdate() {

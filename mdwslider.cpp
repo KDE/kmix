@@ -177,11 +177,11 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
       labelLayout->setAlignment(Qt::AlignVCenter);
    }
    if ( _orientation == Qt::Vertical ) {
-      m_label = new VerticalText( this, m_mixdevice->name().toUtf8().data() );
+      m_label = new VerticalText( this, m_mixdevice->readableName().toUtf8().data() );
    }
    else {
       m_label = new QLabel(this);
-      static_cast<QLabel*>(m_label) ->setText(m_mixdevice->name());
+      static_cast<QLabel*>(m_label) ->setText(m_mixdevice->readableName());
    }
 
    m_label->hide();
@@ -221,11 +221,11 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
       QWidget* theLabel = m_iconLabel!=0 ? (QWidget*)m_iconLabel : (QWidget*)m_iconLabelSimple;
       iconLayout->addWidget( theLabel );
       if ( m_mixdevice->playbackVolume().hasSwitch() ) {
-         QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
+         QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
          theLabel->setToolTip( muteTip );
       } // can be muted
       else {
-         QString muteTip( m_mixdevice->name() );
+         QString muteTip( m_mixdevice->readableName() );
          theLabel->setToolTip( muteTip );
       } // cannot be muted
 
@@ -318,7 +318,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
 
 
    static QString capture = i18n("(capture)");
-   QString sliderDescription = m_mixdevice->name();
+   QString sliderDescription = m_mixdevice->readableName();
    if ( type == 'c' ) { // capture
       sliderDescription += " " + capture;
    }
@@ -344,7 +344,6 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
         if ( m_small ) {
             slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
             vol.getVolume( chid ), _orientation, this );
-            slider->setObjectName(m_mixdevice->name());
         } // small
         else  {
             QSlider* sliderBig = new QSlider( _orientation, this );
@@ -356,7 +355,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
         } // not small
 
         slider->installEventFilter( this );
-        slider->setToolTip( m_mixdevice->name() );
+        slider->setToolTip( m_mixdevice->readableName() );
 
         if( i>0 && isStereoLinked() ) {
             // show only one (the first) slider, when the user wants it so
@@ -852,7 +851,7 @@ void MDWSlider::showContextMenu()
       return;
    
    KMenu *menu = m_mixerwidget->getPopup();
-   menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->name() );
+   menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->readableName() );
    
    if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
       KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );

@@ -109,32 +109,6 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_topLayout->setSpacing( 3 );
    m_topLayout->setObjectName( "m_topLayout" );
 
-/*
-   // Create tabs of input + output + [...]
-   m_ioTab = new KTabWidget( this);
-   m_ioTab->setObjectName( "ioTab" );
-
-   QToolButton* m_profileButton = new QToolButton( m_ioTab );
-   m_profileButton->setToolTip(i18n("Click for selecting the next profile.\nClick and hold for profile menu."));
-   m_profileButton->setIcon( KIcon( "tab-new" ) );
-   m_profileButton->adjustSize();
-   // !! m_profileButton->setPopup( m_tabbarSessionsCommands );
-   connect(m_profileButton, SIGNAL(clicked()), SLOT(nextLayout()));
-   m_ioTab->setCornerWidget( m_profileButton, Qt::BottomLeftCorner );
-
-   QToolButton* m_closeButton = new QToolButton( m_ioTab );
-   m_closeButton->setToolTip(i18n("Close Tab"));
-   m_closeButton->setIcon( KIcon( "tab-remove" ) );
-   m_closeButton->adjustSize();
-   connect(m_closeButton, SIGNAL(clicked()), SLOT(removeSession()));
-   m_ioTab->setCornerWidget( m_closeButton, Qt::TopRightCorner );
-
-
-   m_profileButton->installEventFilter(this);
-   m_topLayout->addWidget( m_ioTab );
-*/
-
-
    /*******************************************************************
    *  Now the main GUI is created.
    * 1) Select a (GUI) profile,  which defines  which controls to show on which Tab
@@ -209,11 +183,6 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
 const QString& KMixerWidget::id() const {
    return m_id;
-}
-
-void KMixerWidget::nextLayout() {
-   kDebug(67100) << "KMixerWidget::nextLayout()\n";
-   emit activateNextlayout();  // this a quick hack for replacing the ComboBox
 }
 
 /**

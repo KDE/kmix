@@ -67,10 +67,11 @@ public:
     ~MixDevice();
 
 
-    /** 
-     * Returns the name of the control.
-     */
-    QString   name()         { return _name; }
+    // Returns a user readable name of the control.
+    QString   readableName()         { return _name; }
+    // Sets a user readable name for the control.
+    void      setReadableName(QString& name)      { _name = name; }
+
     /**
     * Returns an unique ID of this MixDevice. By default the number
     * 'num' from the constructor is returned. It is recommended that

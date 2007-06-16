@@ -21,7 +21,6 @@
 #ifndef ViewSliderSet_h
 #define ViewSliderSet_h
 
-class GUIProfile;
 #include "viewsliders.h"
 
 class QWidget;
@@ -35,9 +34,6 @@ public:
     ~ViewSliderSet();
 
     virtual void setMixSet();
-
-private:
-    GUIProfile* _guiprof;
 };
 
 #endif

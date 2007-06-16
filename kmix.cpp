@@ -134,6 +134,8 @@ void KMixWindow::initWidgets()
 
 
    m_wsMixers = new KTabWidget( centralWidget() );
+   connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
+
    m_widgetsLayout->addWidget(m_wsMixers);
 
    menuBar()->setVisible(m_showMenubar);
@@ -397,7 +399,6 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
          m_wsMixers->setCurrentWidget(mw);
          setWindowTitle( mw->mixer()->readableName() );
       }
-      connect(mw, SIGNAL(activateNextlayout()), SLOT(showNextMixer()) );
 
       mw->loadConfig( KGlobal::config().data(), mw->id() );
 
@@ -503,7 +504,6 @@ void KMixWindow::showEvent( QShowEvent * )
 {
    if ( m_visibilityUpdateAllowed )
       m_isVisible = isVisible();
-      // !! could possibly start polling now (idea: use someting like ref() and unref() on Mixer instance
 }
 
 void KMixWindow::hideEvent( QHideEvent * )
@@ -512,9 +512,6 @@ void KMixWindow::hideEvent( QHideEvent * )
    {
       m_isVisible = isVisible();
    }
-   // !! could possibly stop polling now (idea: use someting like ref() and unref() on Mixer instance
-   //    Update: This is a stupid idea, because now the views are responsible for updating. So it will be done in the Views.
-   //    But the dock icon is currently no View, so that must be done first.
 }
 
 
@@ -530,18 +527,12 @@ void KMixWindow::slotHWInfo()
 
 
 
-void KMixWindow::showNextMixer() {
-   int nextIndex = m_wsMixers->currentIndex() + 1;
-   if ( nextIndex >= m_wsMixers->count() ) {
-      nextIndex = 1; // Attention: index 0 is the "dummy widget", so lets skip it.
-   }
-   m_wsMixers->setCurrentIndex(nextIndex);
+void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
    Mixer* mixer = mw->mixer();
    setWindowTitle( mixer->readableName() );
-   bool dockingSucceded = updateDocking();
-   if( !dockingSucceded )
-      show(); // avoid invisible and unaccessible main window
+   // As switching the tab does NOT mean switching the mixer, we do not need to update docing here.
+   // It would lead to unnecesary flickering of the (complete) dock area.
 }
 
 #include "kmix.moc"

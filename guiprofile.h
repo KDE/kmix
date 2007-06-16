@@ -57,6 +57,10 @@ struct ProfControl
 	// Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
 	// Because the name is visible, some kind of i18n() will be used.
 	QString name;
+   // Pattern (REGEXP) for matching the control names.
+   // If you set no pattern, the name will be used instead.
+   // If you use a pattern, you normnally should not define a name, as it will apply to all matching controls
+   QString regexp;
 	// show or hide (contains the GUI type: simple, extended, full)
 	QString show;
 };

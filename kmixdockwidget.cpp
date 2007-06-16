@@ -140,7 +140,6 @@ KMixDockWidget::createMasterVolWidget()
      * Refreshig the _dockAreaPopup (not anymore necessary, because ViewBase already does it)
      * Refreshing the Tooltip
      * Refreshing the Icon
-     *
      */
     //    connect( m_mixer, SIGNAL(newVolumeLevels()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
     connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(setVolumeTip() ) );

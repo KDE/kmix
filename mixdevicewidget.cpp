@@ -63,7 +63,6 @@ MixDeviceWidget::MixDeviceWidget(Mixer* mixer, MixDevice* md,
    QWidget( parent ), m_mixdevice( md ), m_mixer(mixer), m_mixerwidget( mw ),
    m_disabled( false ), _orientation( orientation ), m_small( small )
 {
-   setObjectName(md->name());
    _mdwActions = new KActionCollection( this );
 
    /* @todo Fancy Background

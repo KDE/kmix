@@ -48,8 +48,8 @@
  * be "small"  (uses KSmallSlider instead of QSlider then).
  */
 MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
-                                 bool small, Qt::Orientation orientation,
-                                 QWidget* parent, ViewBase* mw) :
+                     bool small, Qt::Orientation orientation,
+                     QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(mixer,md,small,orientation,parent,mw),
     _label(0) , _labelV(0) , _switchLED(0), _layout(0)
 {
@@ -82,87 +82,87 @@ MDWSwitch::~MDWSwitch()
 
 void MDWSwitch::createWidgets()
 {
-	if ( _orientation == Qt::Vertical ) {
-		_layout = new QVBoxLayout( this );
-		_layout->setAlignment(Qt::AlignHCenter);
-	}
-	else {
-		_layout = new QHBoxLayout( this );
-		_layout->setAlignment(Qt::AlignVCenter);
-	}
-	this->setToolTip( m_mixdevice->name() );
+   if ( _orientation == Qt::Vertical ) {
+      _layout = new QVBoxLayout( this );
+      _layout->setAlignment(Qt::AlignHCenter);
+   }
+   else {
+      _layout = new QHBoxLayout( this );
+      _layout->setAlignment(Qt::AlignVCenter);
+   }
+   this->setToolTip( m_mixdevice->readableName() );
 
 
-	_layout->addSpacing( 4 );
-	// --- LEDS --------------------------
-	if ( _orientation == Qt::Vertical ) {
-		if( m_mixdevice->captureVolume().hasSwitch() )
-		 _switchLED = new KLedButton( Qt::red,
-				 m_mixdevice->isRecSource()?KLed::On:KLed::Off,
-				 KLed::Sunken, KLed::Circular, this, "RecordLED" );
-		else
-		 _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
-		 _switchLED->setFixedSize(16,16);
-		 _labelV = new VerticalText( this, m_mixdevice->name().toUtf8().data() );
+   _layout->addSpacing( 4 );
+   // --- LEDS --------------------------
+   if ( _orientation == Qt::Vertical ) {
+      if( m_mixdevice->captureVolume().hasSwitch() )
+         _switchLED = new KLedButton( Qt::red,
+               m_mixdevice->isRecSource()?KLed::On:KLed::Off,
+               KLed::Sunken, KLed::Circular, this, "RecordLED" );
+      else
+         _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
+         _switchLED->setFixedSize(16,16);
+         _labelV = new VerticalText( this, m_mixdevice->readableName().toUtf8().data() );
 
-		 _layout->addWidget( _switchLED );
-		 _layout->addSpacing( 2 );
-		 _layout->addWidget( _labelV );
+         _layout->addWidget( _switchLED );
+         _layout->addSpacing( 2 );
+         _layout->addWidget( _labelV );
 
-		 _switchLED->installEventFilter( this );
-		 _labelV->installEventFilter( this );
-	 }
-	 else
-	 {
-		if( m_mixdevice->captureVolume().hasSwitch() )
-			_switchLED = new KLedButton( Qt::red,
-					m_mixdevice->isRecSource()?KLed::On:KLed::Off,
-					KLed::Sunken, KLed::Circular, this, "RecordLED" );
-		else
-		 _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
-		 _switchLED->setFixedSize(16,16);
-		 _label  = new QLabel(m_mixdevice->name(), this );
-                 _label->setObjectName("SwitchName");
+         _switchLED->installEventFilter( this );
+         _labelV->installEventFilter( this );
+      }
+      else
+      {
+      if( m_mixdevice->captureVolume().hasSwitch() )
+         _switchLED = new KLedButton( Qt::red,
+               m_mixdevice->isRecSource()?KLed::On:KLed::Off,
+               KLed::Sunken, KLed::Circular, this, "RecordLED" );
+      else
+         _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
+         _switchLED->setFixedSize(16,16);
+         _label  = new QLabel(m_mixdevice->readableName(), this );
+         _label->setObjectName("SwitchName");
 
-		 _layout->addWidget( _switchLED );
-		 _layout->addSpacing( 1 );
-		 _layout->addWidget( _label );
-		 _switchLED->installEventFilter( this );
-		 _label->installEventFilter( this );
-	 }
-    connect( _switchLED, SIGNAL(stateChanged(bool)), this, SLOT(toggleSwitch()) );
-    _layout->addSpacing( 4 );
+         _layout->addWidget( _switchLED );
+         _layout->addSpacing( 1 );
+         _layout->addWidget( _label );
+         _switchLED->installEventFilter( this );
+         _label->installEventFilter( this );
+      }
+      connect( _switchLED, SIGNAL(stateChanged(bool)), this, SLOT(toggleSwitch()) );
+      _layout->addSpacing( 4 );
 }
 
 void MDWSwitch::update()
 {
-	if ( _switchLED != 0 ) {
-		_switchLED->blockSignals( true );
-		if( m_mixdevice->captureVolume().hasSwitch() )
-			_switchLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
-		else
-			_switchLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
+   if ( _switchLED != 0 ) {
+      _switchLED->blockSignals( true );
+      if( m_mixdevice->captureVolume().hasSwitch() )
+         _switchLED->setState( m_mixdevice->isRecSource() ? KLed::On : KLed::Off );
+      else
+         _switchLED->setState( m_mixdevice->isMuted() ? KLed::Off : KLed::On );
 
-		_switchLED->blockSignals( false );
-	}
+      _switchLED->blockSignals( false );
+   }
 }
 
 void MDWSwitch::setBackgroundRole(QPalette::ColorRole m)
 {
-    if ( _label != 0 ){
-	_label->setBackgroundRole(m);
-    }
-    if ( _labelV != 0 ){
-	_labelV->setBackgroundRole(m);
-    }
-    _switchLED->setBackgroundRole(m);
-    MixDeviceWidget::setBackgroundRole(m);
+   if ( _label != 0 ){
+      _label->setBackgroundRole(m);
+   }
+   if ( _labelV != 0 ){
+      _labelV->setBackgroundRole(m);
+   }
+   _switchLED->setBackgroundRole(m);
+   MixDeviceWidget::setBackgroundRole(m);
 }
 
 void MDWSwitch::showContextMenu()
 {
-    if( m_mixerwidget == NULL )
-	return;
+   if( m_mixerwidget == NULL )
+   return;
 
     KMenu *menu = m_mixerwidget->getPopup();
 
@@ -171,13 +171,13 @@ void MDWSwitch::showContextMenu()
 }
 
 QSize MDWSwitch::sizeHint() const {
-    if ( _layout != 0 ) {
-	return _layout->sizeHint();
-    }
-    else {
-	// layout not (yet) created
-	return QWidget::sizeHint();
-    }
+   if ( _layout != 0 ) {
+      return _layout->sizeHint();
+   }
+   else {
+   // layout not (yet) created
+   return QWidget::sizeHint();
+   }
 }
 
 
@@ -186,36 +186,36 @@ QSize MDWSwitch::sizeHint() const {
     associated KAction like the context menu.
 */
 void MDWSwitch::toggleSwitch() {
-	if( m_mixdevice->captureVolume().hasSwitch() )   // !!! @todo Support combination of "cswitch pswitch"
-		setSwitch( !m_mixdevice->isRecSource() );
-	else
-		setSwitch( !m_mixdevice->isMuted() );
+   if( m_mixdevice->captureVolume().hasSwitch() )   // !!! @todo Support combination of "cswitch pswitch"
+      setSwitch( !m_mixdevice->isRecSource() );
+   else
+      setSwitch( !m_mixdevice->isMuted() );
 }
 
 void MDWSwitch::setSwitch(bool value)
 {
-	if (  m_mixdevice->playbackVolume().hasSwitch() ) {   // !!! @todo Support combination of "cswitch pswitch"
-		if ( m_mixdevice->captureVolume().hasSwitch() ) {
-			m_mixer->setRecordSource( m_mixdevice->id(), value );
-		}
-		else {
-			m_mixdevice->setMuted( value );
-			m_mixer->commitVolumeChange( m_mixdevice );
-		}
-	}
+   if (  m_mixdevice->playbackVolume().hasSwitch() ) {   // !!! @todo Support combination of "cswitch pswitch"
+      if ( m_mixdevice->captureVolume().hasSwitch() ) {
+         m_mixer->setRecordSource( m_mixdevice->id(), value );
+      }
+      else {
+         m_mixdevice->setMuted( value );
+         m_mixer->commitVolumeChange( m_mixdevice );
+      }
+   }
 }
 
 void MDWSwitch::setDisabled()
 {
-    setDisabled( true );
+   setDisabled( true );
 }
 
 void MDWSwitch::setDisabled( bool value ) {
-    if ( m_disabled!=value)
-    {
-	value ? hide() : show();
-	m_disabled = value;
-    }
+   if ( m_disabled!=value)
+   {
+      value ? hide() : show();
+      m_disabled = value;
+   }
 }
 
 /**
@@ -224,14 +224,14 @@ void MDWSwitch::setDisabled( bool value ) {
  */
 bool MDWSwitch::eventFilter( QObject* obj, QEvent* e )
 {
-    if (e->type() == QEvent::MouseButtonPress) {
-	QMouseEvent *qme = static_cast<QMouseEvent*>(e);
-	if (qme->button() == Qt::RightButton) {
-	    showContextMenu();
-	    return true;
-	}
-    }
-    return QWidget::eventFilter(obj,e);
+   if (e->type() == QEvent::MouseButtonPress) {
+      QMouseEvent *qme = static_cast<QMouseEvent*>(e);
+      if (qme->button() == Qt::RightButton) {
+            showContextMenu();
+            return true;
+      }
+   }
+   return QWidget::eventFilter(obj,e);
 }
 
 #include "mdwswitch.moc"

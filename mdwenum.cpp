@@ -47,30 +47,30 @@
  * The orientation (horizontal, vertical) is ignored
  */
 MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
-                                 Qt::Orientation orientation,
-                                 QWidget* parent, ViewBase* mw) :
-    MixDeviceWidget(mixer,md,false,orientation,parent,mw),
-     _label(0), _enumCombo(0), _layout(0)
+                 Qt::Orientation orientation,
+                 QWidget* parent, ViewBase* mw) :
+   MixDeviceWidget(mixer,md,false,orientation,parent,mw),
+   _label(0), _enumCombo(0), _layout(0)
 {
-    // create actions (on _mdwActions, see MixDeviceWidget)
+   // create actions (on _mdwActions, see MixDeviceWidget)
 
-    // KStandardAction::showMenubar() is in MixDeviceWidget now
-    KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
-    action->setText( i18n("&Hide") );
-    connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
-    QAction *c = _mdwActions->addAction( "keys" );
-    c->setText( i18n("C&onfigure Shortcuts...") );
-    connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+   // KStandardAction::showMenubar() is in MixDeviceWidget now
+   KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
+   action->setText( i18n("&Hide") );
+   connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
+   QAction *c = _mdwActions->addAction( "keys" );
+   c->setText( i18n("C&onfigure Shortcuts...") );
+   connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
-    // create widgets
-    createWidgets();
+   // create widgets
+   createWidgets();
 
-    /* !!! remove this for production version */
-    QAction *a = _mdwActions->addAction( "Next Value" );
-    c->setText( i18n( "Next Value" ) );
-    connect(a, SIGNAL(triggered(bool) ), SLOT( nextEnumId() ));
+   /* !!! remove this for production version */
+   QAction *a = _mdwActions->addAction( "Next Value" );
+   c->setText( i18n( "Next Value" ) );
+   connect(a, SIGNAL(triggered(bool) ), SLOT( nextEnumId() ));
 
-    installEventFilter( this ); // filter for popup
+   installEventFilter( this ); // filter for popup
 }
 
 MDWEnum::~MDWEnum()
@@ -80,37 +80,30 @@ MDWEnum::~MDWEnum()
 
 void MDWEnum::createWidgets()
 {
-	if ( _orientation == Qt::Vertical ) {
-		_layout = new QVBoxLayout( this );
-		_layout->setAlignment(Qt::AlignHCenter);
-	}
-	else {
-		_layout = new QHBoxLayout( this );
-		_layout->setAlignment(Qt::AlignVCenter);
-	}
-	this->setToolTip( m_mixdevice->name() );
+   if ( _orientation == Qt::Vertical ) {
+      _layout = new QVBoxLayout( this );
+      _layout->setAlignment(Qt::AlignHCenter);
+   }
+   else {
+      _layout = new QHBoxLayout( this );
+      _layout->setAlignment(Qt::AlignVCenter);
+   }
+   //this->setToolTip( m_mixdevice->readableName() );
 
-        //this->setStretchFactor( _layout, 0 );
-        //QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
-        //_layout->setSizePolicy(qsp);
-        //_layout->setSpacing(KDialog::spacingHint());
-        _label = new QLabel( m_mixdevice->name(), this);
-	_layout->addWidget(_label);
-        _label->setFixedHeight(_label->sizeHint().height());
-        _enumCombo = new KComboBox( false, this);
-		_enumCombo->setObjectName( "mixerCombo" );
-	// ------------ fill ComboBox start ------------
-	int maxEnumId= m_mixdevice->enumValues().count();
-	for (int i=0; i<maxEnumId; i++ ) {
-	  _enumCombo->addItem( m_mixdevice->enumValues().at(i));
-	}
-	// ------------ fill ComboBox end --------------
-	_layout->addWidget(_enumCombo);
-        _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
-        connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
-        _enumCombo->setToolTip( m_mixdevice->name() );
-
-	//_layout->addSpacing( 4 );
+   _label = new QLabel( m_mixdevice->readableName(), this);
+   _layout->addWidget(_label);
+   _label->setFixedHeight(_label->sizeHint().height());
+   _enumCombo = new KComboBox( false, this);
+   // ------------ fill ComboBox start ------------
+   int maxEnumId= m_mixdevice->enumValues().count();
+   for (int i=0; i<maxEnumId; i++ ) {
+      _enumCombo->addItem( m_mixdevice->enumValues().at(i));
+   }
+   // ------------ fill ComboBox end --------------
+   _layout->addWidget(_enumCombo);
+   _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
+   connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
+   _enumCombo->setToolTip( m_mixdevice->readableName() );
 }
 
 void MDWEnum::update()
@@ -126,23 +119,23 @@ void MDWEnum::update()
 
 void MDWEnum::showContextMenu()
 {
-    if( m_mixerwidget == NULL )
-	return;
+   if( m_mixerwidget == NULL )
+      return;
 
-    KMenu *menu = m_mixerwidget->getPopup();
+   KMenu *menu = m_mixerwidget->getPopup();
 
-    QPoint pos = QCursor::pos();
-    menu->popup( pos );
+   QPoint pos = QCursor::pos();
+   menu->popup( pos );
 }
 
 QSize MDWEnum::sizeHint() const {
-    if ( _layout != 0 ) {
-	return _layout->sizeHint();
-    }
-    else {
-	// layout not (yet) created
-	return QWidget::sizeHint();
-    }
+   if ( _layout != 0 ) {
+      return _layout->sizeHint();
+   }
+   else {
+      // layout not (yet) created
+      return QWidget::sizeHint();
+   }
 }
 
 
@@ -151,48 +144,48 @@ QSize MDWEnum::sizeHint() const {
     associated KAction like the context menu.
 */
 void MDWEnum::nextEnumId() {
-  if( m_mixdevice->isEnum() ) {
-    int curEnum = enumId();
-    if ( curEnum < m_mixdevice->enumValues().count() ) {
-      // next enum value
-      setEnumId(curEnum+1);
-    }
-    else {
-      // wrap around
-      setEnumId(0);
-    }
-  } // isEnum
+   if( m_mixdevice->isEnum() ) {
+      int curEnum = enumId();
+      if ( curEnum < m_mixdevice->enumValues().count() ) {
+         // next enum value
+         setEnumId(curEnum+1);
+      }
+      else {
+         // wrap around
+         setEnumId(0);
+      }
+   } // isEnum
 }
 
 void MDWEnum::setEnumId(int value)
 {
-	if (  m_mixdevice->isEnum() ) {
-		m_mixdevice->setEnumId( value );
-		m_mixer->commitVolumeChange( m_mixdevice );
-	}
+   if (  m_mixdevice->isEnum() ) {
+      m_mixdevice->setEnumId( value );
+      m_mixer->commitVolumeChange( m_mixdevice );
+   }
 }
 
 int MDWEnum::enumId()
 {
-	if (  m_mixdevice->isEnum() ) {
-		return m_mixdevice->enumId();
-	}
-	else {
-		return 0;
-	}
+   if (  m_mixdevice->isEnum() ) {
+      return m_mixdevice->enumId();
+   }
+   else {
+      return 0;
+   }
 }
 
 void MDWEnum::setDisabled()
 {
-    setDisabled( true );
+   setDisabled( true );
 }
 
 void MDWEnum::setDisabled( bool value ) {
-    if ( m_disabled!=value)
-    {
-	value ? hide() : show();
-	m_disabled = value;
-    }
+   if ( m_disabled!=value)
+   {
+      value ? hide() : show();
+      m_disabled = value;
+   }
 }
 
 /**
@@ -201,13 +194,13 @@ void MDWEnum::setDisabled( bool value ) {
  */
 bool MDWEnum::eventFilter( QObject* obj, QEvent* e )
 {
-    if (e->type() == QEvent::MouseButtonPress) {
-	QMouseEvent *qme = static_cast<QMouseEvent*>(e);
-	if (qme->button() == Qt::RightButton) {
-	    showContextMenu();
-	    return true;
-	}
-    }
+   if (e->type() == QEvent::MouseButtonPress) {
+      QMouseEvent *qme = static_cast<QMouseEvent*>(e);
+      if (qme->button() == Qt::RightButton) {
+         showContextMenu();
+         return true;
+      }
+   }
     return QWidget::eventFilter(obj,e);
 }
 

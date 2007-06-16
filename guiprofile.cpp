@@ -245,7 +245,7 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 	{
 		ProfControl* profControl = *it;
 		os << "Control:\n  ID=" << profControl->id.toUtf8().constData() << std::endl;
-		if ( profControl->name != profControl->id ) {
+		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
 		os << "  Subcontrols=" << profControl->subcontrols.toUtf8().constData() << std::endl;
@@ -415,6 +415,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	QString subcontrols = attributes.value("controls");
 	QString tab = attributes.value("tab");
 	QString name = attributes.value("name");
+   QString regexp = attributes.value("pattern");
 	QString show = attributes.value("show");
 	if ( !id.isNull() ) {
 		// We need at least an "id". We can set defaults for the rest, if undefined.
@@ -426,9 +427,12 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 			// Ignore this for the moment. We will put it on the first existing Tab at the end of parsing
 		}
 		if ( name.isNull() ) {
-			// !! should do a dictonary lookup here, and i18n(). For now, just take over "id"
-			name = id;
+         // ignore. isNull() will be checked by all users.
 		}
+      if ( regexp.isNull() ) {
+         // !! should do a dictonary lookup here, and i18n(). For now, just take over "id"
+         regexp = !name.isNull() ? name : id;
+      }
 
 		profControl->id = id;
 		profControl->name = name;

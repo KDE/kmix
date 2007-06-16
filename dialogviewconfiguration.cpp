@@ -36,35 +36,35 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
     : KDialog(  0),
       _view(view)
 {
-    setCaption( i18n( "Configure" ) );
-    setButtons( Ok|Cancel );
-    setDefaultButton( Ok );
-    QList<QWidget *> &mdws = view._mdws;
-    QFrame * frame = new QFrame( this );
-    setMainWidget( frame );
-    _layout = new QVBoxLayout(frame );
-    _layout->setObjectName( "_layout" );
+   setCaption( i18n( "Configure" ) );
+   setButtons( Ok|Cancel );
+   setDefaultButton( Ok );
+   QList<QWidget *> &mdws = view._mdws;
+   QFrame * frame = new QFrame( this );
+   setMainWidget( frame );
+   _layout = new QVBoxLayout(frame );
+   _layout->setObjectName( "_layout" );
 
-    //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
-    QLabel* qlb = new QLabel( i18n("Configure"), frame );
-    //QLabel* qlb = new QLabel( i18n("Show"), plainPage() );
-    _layout->addWidget(qlb);
+   //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
+   QLabel* qlb = new QLabel( i18n("Configure"), frame );
+   //QLabel* qlb = new QLabel( i18n("Show"), plainPage() );
+   _layout->addWidget(qlb);
 
-    for ( int i=0; i<mdws.count(); ++i ) {
-	   QWidget *qw = mdws[i];
-	if ( qw->inherits("MixDeviceWidget") ) {
-	    MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
-	    QString mdName = mdw->mixDevice()->name();
+   for ( int i=0; i<mdws.count(); ++i ) {
+      QWidget *qw = mdws[i];
+      if ( qw->inherits("MixDeviceWidget") ) {
+         MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
+         QString mdName = mdw->mixDevice()->readableName();
             mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
-	    QCheckBox* cb = new QCheckBox( mdName, frame );
-	    _qEnabledCB.append(cb);
-	    cb->setChecked( !mdw->isDisabled() ); //mdw->isVisible() );
-	    _layout->addWidget(cb);
-	}
-    }
-    _layout->activate();
-    resize(_layout->sizeHint() );
-    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+         QCheckBox* cb = new QCheckBox( mdName, frame );
+         _qEnabledCB.append(cb);
+         cb->setChecked( !mdw->isDisabled() ); //mdw->isVisible() );
+         _layout->addWidget(cb);
+      }
+   } // for all MDW's
+   _layout->activate();
+   resize(_layout->sizeHint() );
+   connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
 }
 
 DialogViewConfiguration::~DialogViewConfiguration()
@@ -73,33 +73,32 @@ DialogViewConfiguration::~DialogViewConfiguration()
 
 void DialogViewConfiguration::apply()
 {
-    QList<QWidget *> &mdws = _view._mdws;
+   QList<QWidget *> &mdws = _view._mdws;
 
-    // --- 2-Step Apply ---
+   // --- 2-Step Apply ---
 
-    // --- Step 1: Show and Hide Widgets ---
-    for ( int i=0; i<mdws.count(); ++i ) {
-	   QWidget *qw = mdws[i];
-		QCheckBox *cb = _qEnabledCB[i];
-	if ( qw->inherits("MixDeviceWidget") ) {
-	    MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
-	    if ( cb->isChecked() ) {
-		mdw->setDisabled(false);
-	    }
-	    else {
-		mdw->setDisabled(true);
-	    }
+   // --- Step 1: Show and Hide Widgets ---
+   for ( int i=0; i<mdws.count(); ++i ) {
+      QWidget *qw = mdws[i];
+      QCheckBox *cb = _qEnabledCB[i];
+      if ( qw->inherits("MixDeviceWidget") ) {
+         MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
+         if ( cb->isChecked() ) {
+            mdw->setDisabled(false);
+         }
+         else {
+            mdw->setDisabled(true);
+         }
+      }
+   } // for all MDW's
 
-	}
-    }
-
-    // --- Step 2: Tell the view, that it has changed (probably it needs some "polishing" ---
-    _view.configurationUpdate();
+   // --- Step 2: Tell the view, that it has changed (probably it needs some "polishing" ---
+   _view.configurationUpdate();
 }
 
 QSize DialogViewConfiguration::sizeHint() const {
     //    kDebug(67100) << "DialogViewConfiguration::sizeHint() is (100,500)\n";
-    return _layout->sizeHint();
+   return _layout->sizeHint();
 }
 
 #include "dialogviewconfiguration.moc"

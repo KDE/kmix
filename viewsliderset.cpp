@@ -29,7 +29,6 @@
 ViewSliderSet::ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
       : ViewSliders(parent, name, mixer, vflags, guiprof)
 {
-   _guiprof = guiprof;
     setMixSet();
 }
 
@@ -67,6 +66,10 @@ void ViewSliderSet::setMixSet()
                   << control->id << "\n";
                // OK, this control is handable by this View. Lets do a duplicate check
                if ( ! _mixSet->contains( md ) ) {
+                  if ( !control->name.isNull() ) {
+                     // Apply the custom name from the profile
+                     md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
+                  }
                   _mixSet->append(md);
                   isUsed = true;
                   // We use no "break;" ,as multiple devices could match

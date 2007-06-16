@@ -64,26 +64,24 @@ class KMixerWidget : public QWidget
 */
   const QString& id() const;
    KActionCollection* getActionCollection() const { return 0; /* m_actions; */ }
-	
+
   signals:
    void masterMuted( bool );
    void newMasterVolume(Volume vol);
    void toggleMenuBar();
-   void activateNextlayout();
 
   public slots:
    void setTicks( bool on );
    void setLabels( bool on );
    void setIcons( bool on );
    void toggleMenuBarSlot();
-   void nextLayout();
 
    void saveConfig( KConfig *config, const QString &grp );
    void loadConfig( KConfig *config, const QString &grp );
 
   private slots:
-      //void updateBalance();
-      void balanceChanged(int balance);
+   //void updateBalance();
+   void balanceChanged(int balance);
 
   private:
    Mixer *_mixer;
@@ -91,9 +89,7 @@ class KMixerWidget : public QWidget
    QSlider *m_balanceSlider;
    QVBoxLayout *m_topLayout; // contains the Card selector, TabWidget and balance slider
 
-   //KTabWidget* m_ioTab;
-
-	std::vector<ViewBase*> _views;
+   std::vector<ViewBase*> _views;
 
    KActionMenu *m_toggleMixerChannels;
 
