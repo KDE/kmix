@@ -58,7 +58,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _layoutMDW->setMargin( 2 );
     _layoutMDW->setObjectName( "KmixPopupLayout" );
     _hideTimer = new QTime();
-    init();
+    setMixSet();
 }
 
 ViewDockAreaPopup::~ViewDockAreaPopup() {
@@ -107,83 +107,78 @@ void ViewDockAreaPopup::showContextMenu()
 }
 
 
-void ViewDockAreaPopup::setMixSet(MixSet *)
+void ViewDockAreaPopup::setMixSet()
 {
-    //    kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
-    // This implementation of setMixSet() is a bit "exotic". But I will leave it like this, until I implement
-    // a configuration option for "what device to show on the dock area"
-    _dockDevice = _mixer->masterDevice();
-    if ( _dockDevice == 0 ) {
-        // If we have no dock device yet, we will take the first available mixer device
-        if ( _mixer->size() > 0) {
-           _dockDevice = (*_mixer)[0];
-        }
-    }
-    if ( _dockDevice != 0 ) {
-       _mixSet->append(_dockDevice);
-    }
+   // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
+   _dockDevice = _mixer->masterDevice();
+   if ( _dockDevice == 0 ) {
+      // If we have no dock device yet, we will take the first available mixer device
+      if ( _mixer->size() > 0) {
+         _dockDevice = (*_mixer)[0];
+      }
+   }
+   if ( _dockDevice != 0 ) {
+      _mixSet->append(_dockDevice);
+   }
 }
 
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
 {
-    _mdw =
-	new MDWSlider(
-			    _mixer,       // the mixer for this device
-			    md,		  // only 1 device. This is actually _dockDevice
-			    true,         // Show Mute LED
-			    false,        // Show Record LED
-                            false,        // Small
-			    Qt::Vertical, // Direction: only 1 device, so doesn't matter
-			    _frame,       // parent
-			    0             // Is "NULL", so that there is no RMB-popup
-			    );
-	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
-	 _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 0 );
-    _layoutMDW->addWidget( _mdw, 0, 1 );
+   _mdw = new MDWSlider(
+      _mixer,       // the mixer for this device
+      md,		  // only 1 device. This is actually _dockDevice
+      true,         // Show Mute LED
+      false,        // Show Record LED
+                     false,        // Small
+      Qt::Vertical, // Direction: only 1 device, so doesn't matter
+      _frame,       // parent
+      0             // Is "NULL", so that there is no RMB-popup
+   );
+   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
+   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 0 );
+   _layoutMDW->addWidget( _mdw, 0, 1 );
 
-	 // Add button to show main panel
-	 _showPanelBox = new QPushButton( i18n("Mixer"), _frame );
-         _showPanelBox->setObjectName("MixerPanel");
-	 connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
-    _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
-
-    return _mdw;
+   // Add button to show main panel
+   _showPanelBox = new QPushButton( i18n("Mixer"), _frame );
+   _showPanelBox->setObjectName("MixerPanel");
+   connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
+   _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
+   
+   return _mdw;
 }
 
 QSize ViewDockAreaPopup::sizeHint() const {
-    //    kDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
-    return( _mdw->sizeHint() );
+   //    kDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
+   return( _mdw->sizeHint() );
 }
 
 void ViewDockAreaPopup::constructionFinished() {
-    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
-
-    if (_mdw != 0) {
-    _mdw->move(0,0);
-    _mdw->show();
-    _mdw->resize(_mdw->sizeHint() );
-    }
-    resize(sizeHint());
-
+   //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
+   if (_mdw != 0) {
+      _mdw->move(0,0);
+      _mdw->show();
+      _mdw->resize(_mdw->sizeHint() );
+   }
+   resize(sizeHint());
 }
 
 
 void ViewDockAreaPopup::refreshVolumeLevels() {
-    //    kDebug(67100) << "ViewDockAreaPopup::refreshVolumeLevels()\n";
-    QWidget* mdw = _mdws.first();
-    if ( mdw == 0 ) {
-	kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw == 0\n";
-	// sanity check (normally the lists are set up correctly)
-    }
-    else {
-	if ( mdw->inherits("MDWSlider")) {
-	    static_cast<MDWSlider*>(mdw)->update();
-	}
-	else {
-	    kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw is not slider\n";
-	    // no slider. Cannot happen in theory => skip it
-	}
-    }
+   //    kDebug(67100) << "ViewDockAreaPopup::refreshVolumeLevels()\n";
+   QWidget* mdw = _mdws.first();
+   if ( mdw == 0 ) {
+      kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw == 0\n";
+      // sanity check (normally the lists are set up correctly)
+   }
+   else {
+      if ( mdw->inherits("MDWSlider")) { // sanity check
+            static_cast<MDWSlider*>(mdw)->update();
+      }
+      else {
+         kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw is not slider\n";
+         // no slider. Cannot happen in theory => skip it
+      }
+   }
 }
 
 void ViewDockAreaPopup::showPanelSlot() {

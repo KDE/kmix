@@ -674,7 +674,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     if ( snd_mixer_selem_has_playback_switch( elem ) )
     {
         snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-        volumePlayback.setSwitch( elem_sw == 0 );
+        md->setMuted( elem_sw == 0 );
     }
 
     // --- capture volume
@@ -699,7 +699,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     if ( snd_mixer_selem_has_capture_switch( elem ) )
     {
         snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
-        volumeCapture.setSwitch( elem_sw == 0 );
+        md->setRecSource( elem_sw == 1 );
     }
 
     return 0;
@@ -734,7 +734,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
          snd_mixer_selem_has_common_switch  ( elem )   )
     {
         int sw = 0;
-        if (! volumePlayback.isSwitchActivated())
+        if ( ! md->isMuted() )
             sw = !sw; // invert all bits
         snd_mixer_selem_set_playback_switch_all(elem, sw);
     }
@@ -754,7 +754,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
         //     switch. This is probably enough. It would be helpful, if the ALSA project would
         //     write documentation. Until then, I need to continue guessing semantics.
         int sw = 0;
-        if (! volumeCapture.isSwitchActivated())
+        if ( md->isRecSource())
             sw = !sw; // invert all bits
         snd_mixer_selem_set_capture_switch_all( elem, sw );
     }

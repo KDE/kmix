@@ -380,10 +380,10 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
             vflags |= ViewBase::Experimental_SurroundView;
       }
       if ( m_toplevelOrientation == Qt::Vertical ) {
-            vflags |= ViewBase::Vertical;
+            vflags |= ViewBase::Horizontal;
       }
       else {
-            vflags |= ViewBase::Horizontal;
+            vflags |= ViewBase::Vertical;
       }
 
 

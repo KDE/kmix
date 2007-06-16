@@ -64,7 +64,7 @@ MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(mixer,md,small,orientation,parent,mw),
-    m_linked(true), m_iconLabel( 0 ), m_recordLED( 0 ), m_label( 0 ), _layout(0)
+    m_linked(true), m_iconLabel( 0 ), m_iconLabelSimple(0), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
@@ -214,18 +214,19 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    sliLayout->addItem( iconLayout );
    iconLayout->setSizeConstraint(QLayout::SetFixedSize);
 
-   m_iconLabel = 0L;
+   m_iconLabel = 0;
+   m_iconLabelSimple = 0L;
    if ( showMuteLED ) {
       setIcon( m_mixdevice->type() );
-      iconLayout->addWidget( m_iconLabel );
-      m_iconLabel->installEventFilter( this );
+      QWidget* theLabel = m_iconLabel!=0 ? (QWidget*)m_iconLabel : (QWidget*)m_iconLabelSimple;
+      iconLayout->addWidget( theLabel );
       if ( m_mixdevice->playbackVolume().hasSwitch() ) {
          QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->name() ) );
-         m_iconLabel->setToolTip( muteTip );
+         theLabel->setToolTip( muteTip );
       } // can be muted
       else {
          QString muteTip( m_mixdevice->name() );
-         m_iconLabel->setToolTip( muteTip );
+         theLabel->setToolTip( muteTip );
       } // cannot be muted
 
       sliLayout->addSpacing( 3 );
@@ -335,15 +336,13 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
     for( int i = 0; i < vol.count(); i++ )
     {
         Volume::ChannelID chid = Volume::ChannelID(i);
-        // @todo !!! Normally the mixdevicewidget SHOULD know, which slider represents which channel.
-        // We should look up the mapping here, but for now, we simply assume "chid == i".
 
         long minvol = vol.minVolume();
         long maxvol = vol.maxVolume();
 
         QWidget* slider;
         if ( m_small ) {
-            slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @ todo User definable steps
+            slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
             vol.getVolume( chid ), _orientation, this );
             slider->setObjectName(m_mixdevice->name());
         } // small
@@ -354,13 +353,6 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
             sliderBig->setMaximum(maxvol);
             sliderBig->setPageStep(maxvol/10);
             sliderBig->setValue(maxvol - vol.getVolume( chid ));
-            //sliderBig->setObjectName(m_mixdevice->name());
-/*
-            if ( _orientation == Qt::Vertical ) {
-                static_cast<QSlider*>(sliderBig)->setInvertedAppearance(true);
-                static_cast<QSlider*>(sliderBig)->setInvertedControls(true);
-            }
-*/
         } // not small
 
         slider->installEventFilter( this );
@@ -426,15 +418,24 @@ QPixmap MDWSlider::icon( int icontype )
 void
 MDWSlider::setIcon( int icontype )
 {
-   if( !m_iconLabel )
-   {
-      m_iconLabel = new QToolButton(this); //!!! TODO
-      m_iconLabel->setCheckable(true);
-      if( m_mixdevice->playbackVolume().hasSwitch() ) {
-        connect ( m_iconLabel, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
+   if( m_mixdevice->playbackVolume().hasSwitch() ) {
+      if( !m_iconLabel )
+      {
+         m_iconLabel = new QToolButton(this);
+         connect ( m_iconLabel, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
+         m_iconLabel->setCheckable(true);
+         installEventFilter( m_iconLabel );
       }
-      installEventFilter( m_iconLabel );
+   } // has playback switch
+   else {
+      if( !m_iconLabelSimple )
+      {
+         m_iconLabelSimple = new QLabel(this);
+         installEventFilter( m_iconLabelSimple );
+      }
    }
+
+
 
    QPixmap miniDevPM = icon( icontype );
    if ( !miniDevPM.isNull() )
@@ -444,17 +445,27 @@ MDWSlider::setIcon( int icontype )
          // scale icon
          QMatrix t;
          t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
-         // setIcon(QIcon(pixmap))
-         m_iconLabel->setIcon( miniDevPM.transformed( t ) );
-         m_iconLabel->resize( 10, 10 );
+         if ( m_iconLabel ) {
+            m_iconLabel->setIcon( miniDevPM.transformed( t ) );
+            m_iconLabel->resize( 10, 10 );
+         }
+         else{
+            m_iconLabelSimple->setPixmap( miniDevPM.transformed( t ) );
+            m_iconLabelSimple->resize( 10, 10 );
+         }
       } // small size
       else
       {
-         QIcon icon(miniDevPM);
-         icon.addPixmap( miniDevPM, QIcon::Normal, QIcon::On ) ;
-         QPixmap pixmapOff = icon.pixmap(miniDevPM.size(), QIcon::Disabled, QIcon::Off);
-         icon.addPixmap( pixmapOff, QIcon::Normal, QIcon::Off );
-         m_iconLabel->setIcon( icon );
+         if ( m_iconLabel ) {
+            QIcon icon(miniDevPM);
+            icon.addPixmap( miniDevPM, QIcon::Normal, QIcon::On ) ;
+            QPixmap pixmapOff = icon.pixmap(miniDevPM.size(), QIcon::Disabled, QIcon::Off);
+            icon.addPixmap( pixmapOff, QIcon::Normal, QIcon::Off );
+            m_iconLabel->setIcon( icon );
+         }
+         else {
+            m_iconLabelSimple->setPixmap( miniDevPM );
+         }
       } // normal size
    } else
    {
@@ -464,14 +475,6 @@ MDWSlider::setIcon( int icontype )
    layout()->activate();
 }
 
-bool
-MDWSlider::isLabeled() const
-{
-    if ( m_label == 0 )
-	return false;
-    else
-	return !m_label->isHidden();
-}
 
 void
 MDWSlider::toggleStereoLinked()
@@ -485,6 +488,7 @@ MDWSlider::setStereoLinked(bool value)
    m_linked = value;
    if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback);
    if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture);
+   update(); // Call update(), so that the sliders can adjust EITHER to the individual values OR the average value.
 }
 
 void
@@ -518,39 +522,27 @@ MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders)
          slider->hide();
       }
       else {
-         // When splitting, make the next sliders show the same value as the first.
-         // This might not be entirely true, but better than showing the random value
-         // that was used to be shown before hot-fixing this. !! must be revised
-         if ( firstSliderValueValid ) {
-            // Remark: firstSlider== 0 could happen, if the static_cast<QRangeControl*> above fails.
-            //         It's a safety measure, if we got other Slider types in the future.
-            if (::qobject_cast<QSlider*>(slider))  {
-               QSlider *sld = static_cast<QSlider*>(slider);
-               sld->setValue( firstSliderValue );
-            }
-            if (::qobject_cast<KSmallSlider*>(slider))  {
-               KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
-               sld->setValue( firstSliderValue );
-            }
-         }
          slider->show();
       }
    }
 
-   // Add tickmarks to last slider in the slider list
+   // Redo the tickmarks to last slider in the slider list.
+   // The implementation is not obvious, so lets explain:
+   // We ALWAYS have tickmarks on the LAST slider. Sometimes the slider is not shown, and then we just don't bother.
+   // a) So, if the last slider has tickmarks, we can always call setTicks( true ).
+   // b) if the last slider has NO tickmarks, there ae no tickmarks at all, and we don't need to redo the tickmarks.
    slider = ref_sliders.last();
-   if( slider && static_cast<QSlider *>(slider)->tickPosition() )  // @todo How does this work?
+   if( slider && ( static_cast<QSlider *>(slider)->tickPosition() != QSlider::NoTicks) )
       setTicks( true );
 
-   layout()->activate();
 }
 
 
 void
 MDWSlider::setLabeled(bool value)
 {
-    if ( m_label == 0 )
-	return;
+   if ( m_label == 0 )
+      return;
 
    if (value )
       m_label->show();
@@ -572,40 +564,39 @@ MDWSlider::setTicksInternal(QList<QWidget *>& ref_sliders, bool ticks)
 {
   QWidget* slider = ref_sliders[0];
 
-	if ( slider->inherits( "QSlider" ) )
-	{
-		if( ticks )
-			if( isStereoLinked() )
-				static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksRight );
-			else
-			{
-				static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-				slider = ref_sliders.last();
-				static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksAbove );
-			}
-		else
-		{
-			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-			slider = ref_sliders.last();
-			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-		}
-	}
-
-	layout()->activate();
+   if ( slider->inherits( "QSlider" ) )
+   {
+      if( ticks )
+         if( isStereoLinked() )
+            static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksRight );
+         else
+         {
+            static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
+            slider = ref_sliders.last();
+            static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksLeft );
+         }
+      else
+      {
+         static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
+         slider = ref_sliders.last();
+         static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
+      }
+   }
 }
 
 void
 MDWSlider::setIcons(bool value)
 {
-    if ( m_iconLabel != 0 ) {
-	if ( ( !m_iconLabel->isHidden()) !=value ) {
-	    if (value)
-		m_iconLabel->show();
-	    else
-		m_iconLabel->hide();
+   QWidget* theLabel = m_iconLabel!=0 ? (QWidget*)m_iconLabel : (QWidget*)m_iconLabelSimple;
+   if ( theLabel != 0 ) {
+      if ( ( !theLabel->isHidden()) !=value ) {
+         if (value)
+            theLabel->show();
+         else
+            theLabel->hide();
 
-	    layout()->activate();
-	}
+         layout()->activate();
+      }
     } // if it has an icon
 }
 
@@ -640,7 +631,7 @@ MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
 }
 
 
-/** This slot is called, when a user has changed the volume via the KMix Slider. !!! it is totally broken in the "splitted" case, as I do not know which slider was activated */
+/** This slot is called, when a user has changed the volume via the KMix Slider. */
 void MDWSlider::volumeChange( int )
 {
    if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), _slidersChidsPlayback, m_slidersPlayback);
@@ -662,10 +653,6 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref
       else
       {
          QSlider *slider = dynamic_cast<QSlider *>(ref_sliders.first());
-/*        if ( _orientation == Qt::Vertical )
-            sliderValue= slider->maximum() - slider->value();
-         else
- */
          if (slider != 0 ) firstVolume = slider->value();
       }
       vol.setAllVolumes(firstVolume);
@@ -706,9 +693,8 @@ void MDWSlider::toggleRecsrc() {
 
 void MDWSlider::setRecsrc(bool value )
 {
-    Volume& vol = m_mixdevice->captureVolume();
-   if (  vol.hasSwitch() ) {
-      vol.setSwitch( value );
+   if (  m_mixdevice->captureVolume().hasSwitch() ) {
+      m_mixdevice->setRecSource( value );
       m_mixer->commitVolumeChange( m_mixdevice );
    }
 }
@@ -719,15 +705,14 @@ void MDWSlider::setRecsrc(bool value )
     associated KAction like the context menu.
 */
 void MDWSlider::toggleMuted() {
-    setMuted( ! m_mixdevice->playbackVolume().isSwitchActivated() );
+    setMuted( ! m_mixdevice->isMuted() );
 }
 
 void MDWSlider::setMuted(bool value)
 {
-    Volume& vol = m_mixdevice->playbackVolume();
-    if (  vol.hasSwitch() ) {
-        vol.setSwitch( value );
-        m_mixer->commitVolumeChange(m_mixdevice);
+     if (  m_mixdevice->playbackVolume().hasSwitch() ) {
+      m_mixdevice->setMuted( value );
+      m_mixer->commitVolumeChange(m_mixdevice);
     }
 }
 
@@ -812,58 +797,53 @@ void MDWSlider::update()
 
 void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids)
 {
-    // update volumes
-    long useVolume = vol.getAvgVolume( Volume::MMAIN );
+   // update volumes
+   long useVolume = vol.getAvgVolume( Volume::MMAIN );
 
 
-		QList<Volume::ChannelID>::Iterator it = ref_slidersChids.begin();
-		for( int i=0; i<ref_sliders.count(); i++, ++it ) {
-         if( ! isStereoLinked() ) {
-             Volume::ChannelID chid = *it;
-             useVolume = vol[chid];
+   QList<Volume::ChannelID>::Iterator it = ref_slidersChids.begin();
+   for( int i=0; i<ref_sliders.count(); i++, ++it ) {
+      if( ! isStereoLinked() ) {
+         Volume::ChannelID chid = *it;
+         useVolume = vol[chid];
+      }
+      QWidget *slider = ref_sliders.at( i );
+
+      slider->blockSignals( true );
+
+      if ( slider->inherits( "KSmallSlider" ) )
+      {
+         KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
+         if (smallSlider) {
+            smallSlider->setValue( useVolume );
+            smallSlider->setGray( m_mixdevice->isMuted() );
          }
-			QWidget *slider = ref_sliders.at( i );
+      }
+      else
+      {
+         QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
+         if (bigSlider)
+               bigSlider->setValue( useVolume );
+      }
 
-			slider->blockSignals( true );
-
-			if ( slider->inherits( "KSmallSlider" ) )
-			{
-				KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-				if (smallSlider) {
-					smallSlider->setValue( useVolume );
-					smallSlider->setGray( m_mixdevice->isMuted() );
-				}
-			}
-			else
-			{
-				QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-				if (bigSlider)
-/*
-					if ( _orientation == Qt::Vertical ) {
-						bigSlider->setValue( vol.maxVolume() - useVolume );
-					}
-					else {
-*/
-						bigSlider->setValue( useVolume );
-//				}
-			}
-
-			slider->blockSignals( false );
-		} // for all sliders
+      slider->blockSignals( false );
+   } // for all sliders
 
 
-     if( m_iconLabel != 0 && m_mixdevice->playbackVolume().hasSwitch() ) {
-           m_iconLabel->blockSignals( true );
-           m_iconLabel->setChecked( m_mixdevice->playbackVolume().isSwitchActivated() ? false : true );
-           m_iconLabel->blockSignals( false );
-        }
+   // update mute
+   if( m_iconLabel != 0 ) {
+      m_iconLabel->blockSignals( true );
+      m_iconLabel->setChecked( !m_mixdevice->isMuted() );
+      m_iconLabel->blockSignals( false );
+   }
 
-    // update recsrc
-    if( m_recordLED ) {
-        m_recordLED->blockSignals( true );
-        m_recordLED->setState( m_mixdevice->playbackVolume().isSwitchActivated() ? KLed::On : KLed::Off );
-        m_recordLED->blockSignals( false );
-    }
+   // update recsrc
+   if( m_recordLED ) {
+      m_recordLED->blockSignals( true );
+      bool stateToShow = m_mixdevice->isRecSource();
+      m_recordLED->setState( stateToShow ? KLed::On : KLed::Off );
+      m_recordLED->blockSignals( false );
+   }
 }
 
 void MDWSlider::showContextMenu()

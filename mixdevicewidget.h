@@ -59,7 +59,6 @@ public:
     virtual void setMutedColors( QColor high, QColor low, QColor back );
 
     virtual bool isStereoLinked() const { return false; }
-    //virtual bool isLabeled() const { return false; };
     virtual void setStereoLinked( bool ) {}
     virtual void setLabeled( bool );
     virtual void setTicks( bool ) {}

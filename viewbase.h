@@ -60,13 +60,6 @@ public:
     ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
     virtual ~ViewBase();
 
-    // Subclasses must define this method. It is called by the ViewBase() constuctor.
-    // The view class must initialize here the _mixSet. This will normally be a subset
-    // of the passed mixset.
-    // After that the subclass must be prepared for
-    // being fed MixDevice's via the add() method.
-    virtual void setMixSet(MixSet *mixset);
-
     QString viewId() const;
 
     // This method is called by ViewBase at the end of createDeviceWidgets(). The default
@@ -116,7 +109,6 @@ public:
 protected:
 
     Mixer* getMixer();
-    void init();
 
     Mixer *_mixer;
     MixSet *_mixSet;

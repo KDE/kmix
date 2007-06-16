@@ -59,7 +59,6 @@ public:
     void addActionToPopup( KAction *action );
 
     bool isStereoLinked() const { return m_linked; }
-    bool isLabeled() const;
 
     void setStereoLinked( bool value );
     void setLabeled( bool value );
@@ -111,6 +110,7 @@ private:
 
     bool m_linked;
     QToolButton *m_iconLabel;
+    QLabel      *m_iconLabelSimple;
     KLedButton *m_recordLED;
     QWidget *m_label; // is either QLabel or VerticalText
     QBoxLayout *_layout;

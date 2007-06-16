@@ -42,117 +42,117 @@
 ViewSurround::ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
       : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof)
 {
-    _mdSurroundFront = 0;
-    _mdSurroundBack  = 0;
-    _layoutMDW = new QHBoxLayout(this);
-    _layoutMDW->setMargin(8);
-    // Create switch buttonGroup
-    if ( _vflags & ViewBase::Vertical ) {
-        _layoutSliders = new QVBoxLayout();
-    }
-    else {
-        _layoutSliders = new QHBoxLayout();
-    }
-    _layoutMDW->addItem( _layoutSliders );
-    _layoutSurround = new QGridLayout();
-    _layoutMDW->addItem( _layoutSurround );
-    //    _layoutMDW->setMargin(8);
-    init();
+   _mdSurroundFront = 0;
+   _mdSurroundBack  = 0;
+   _layoutMDW = new QHBoxLayout(this);
+   _layoutMDW->setMargin(8);
+   // Create switch buttonGroup
+   if ( _vflags & ViewBase::Vertical ) {
+      _layoutSliders = new QVBoxLayout();
+   }
+   else {
+      _layoutSliders = new QHBoxLayout();
+   }
+   _layoutMDW->addItem( _layoutSliders );
+   _layoutSurround = new QGridLayout();
+   _layoutMDW->addItem( _layoutSurround );
+   //    _layoutMDW->setMargin(8);
+   setMixSet();
 }
 
 ViewSurround::~ViewSurround() {
 }
 
-void ViewSurround::setMixSet(MixSet *mixset)
+void ViewSurround::setMixSet()
 {
-    for ( int i=0; i<mixset->count(); i++ ) {
-	MixDevice *md = (*mixset)[i];
-	if ( /*! md->isSwitch() */  true ) {   // @todo redo it
-	    switch ( md->type() ) {
-	    case MixDevice::VOLUME:
-	    case MixDevice::SURROUND:
-	    case MixDevice::SURROUND_BACK:
-	    case MixDevice::SURROUND_LFE:
-	    case MixDevice::SURROUND_CENTERFRONT:
-	    case MixDevice::SURROUND_CENTERBACK:
-	    case MixDevice::AC97:
-		_mixSet->append(md);
-		break;
-	    default:
-		// we are not interested in other channels
-		break;
-	    } // switch(type)
-	} // !is_switch()
-    } // for
+   const MixSet& mixset = _mixer->getMixSet();
+   for ( int i=0; i<mixset.count(); i++ ) {
+      MixDevice *md = mixset[i];
+      if ( /*! md->isSwitch() */  true ) {   // @todo redo it
+         switch ( md->type() ) {
+            case MixDevice::VOLUME:
+            case MixDevice::SURROUND:
+            case MixDevice::SURROUND_BACK:
+            case MixDevice::SURROUND_LFE:
+            case MixDevice::SURROUND_CENTERFRONT:
+            case MixDevice::SURROUND_CENTERBACK:
+            case MixDevice::AC97:
+         _mixSet->append(md);
+            break;
+         default:
+            // we are not interested in other channels
+            break;
+         } // switch(type)
+      } // !is_switch()
+   } // for
 }
 
 
 
 QWidget* ViewSurround::add(MixDevice *md)
 {
-    bool small = false;
-    Qt::Orientation orientation = Qt::Vertical;
-    switch ( md->type() ) {
-    case MixDevice::VOLUME:
-	_mdSurroundFront = md;
-	small = true;
-	break;
-    case MixDevice::SURROUND_BACK:
-	_mdSurroundBack = md;
-	small = true;
-	break;
-    case MixDevice::SURROUND_LFE:
-	orientation = Qt::Horizontal;
-	small = true;
-	break;
-    case MixDevice::SURROUND_CENTERFRONT:
-	orientation = Qt::Horizontal;
-	small = true;
-	break;
-    case MixDevice::SURROUND_CENTERBACK:
-	orientation = Qt::Horizontal;
-	small = true;
-	break;
+   bool small = false;
+   Qt::Orientation orientation = Qt::Vertical;
+   switch ( md->type() ) {
+      case MixDevice::VOLUME:
+         _mdSurroundFront = md;
+         small = true;
+         break;
+      case MixDevice::SURROUND_BACK:
+         _mdSurroundBack = md;
+         small = true;
+         break;
+      case MixDevice::SURROUND_LFE:
+         orientation = Qt::Horizontal;
+         small = true;
+         break;
+      case MixDevice::SURROUND_CENTERFRONT:
+         orientation = Qt::Horizontal;
+         small = true;
+         break;
+      case MixDevice::SURROUND_CENTERBACK:
+         orientation = Qt::Horizontal;
+         small = true;
+         break;
+   
+      default:
+         small= false;
+         // these are the sliders on the left side of the surround View
+         orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
+   } // switch(type)
 
-    default:
-	small       = false;
-	// these are the sliders on the left side of the surround View
-	orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
-    } // switch(type)
+   MixDeviceWidget *mdw = createMDW(md, small, orientation);
 
-    MixDeviceWidget *mdw = createMDW(md, small, orientation);
+   switch ( md->type() ) {
+      case MixDevice::VOLUME:
+         _layoutSurround->addWidget(mdw ,0,0, Qt::AlignBottom | Qt::AlignLeft);
+         break;
 
-    switch ( md->type() ) {
-    case MixDevice::VOLUME:
-	_layoutSurround->addWidget(mdw ,0,0, Qt::AlignBottom | Qt::AlignLeft);
-	break;
-
-    case MixDevice::SURROUND_BACK:
-	_layoutSurround->addWidget(mdw ,2,0, Qt::AlignTop | Qt::AlignLeft);
-	break;
-    case MixDevice::SURROUND_LFE:
-	_layoutSurround->addWidget(mdw,1,3,  Qt::AlignVCenter | Qt::AlignRight ); break;
-	break;
-    case MixDevice::SURROUND_CENTERFRONT:
-	_layoutSurround->addWidget(mdw,0,2,  Qt::AlignTop | Qt::AlignHCenter); break;
-	break;
-    case MixDevice::SURROUND_CENTERBACK:
-	_layoutSurround->addWidget(mdw,2,2,  Qt::AlignBottom | Qt::AlignHCenter); break;
-	break;
-
-    case MixDevice::SURROUND:
-    case MixDevice::AC97:
-    default:
-	// Add as slider to the layout on the left side
-	_layoutSliders->addWidget(mdw);
-	break;
-    } // switch(type)
+      case MixDevice::SURROUND_BACK:
+         _layoutSurround->addWidget(mdw ,2,0, Qt::AlignTop | Qt::AlignLeft);
+         break;
+      case MixDevice::SURROUND_LFE:
+         _layoutSurround->addWidget(mdw,1,3,  Qt::AlignVCenter | Qt::AlignRight ); break;
+         break;
+      case MixDevice::SURROUND_CENTERFRONT:
+         _layoutSurround->addWidget(mdw,0,2,  Qt::AlignTop | Qt::AlignHCenter); break;
+         break;
+      case MixDevice::SURROUND_CENTERBACK:
+         _layoutSurround->addWidget(mdw,2,2,  Qt::AlignBottom | Qt::AlignHCenter); break;
+         break;
+      case MixDevice::SURROUND:
+      case MixDevice::AC97:
+      default:
+         // Add as slider to the layout on the left side
+         _layoutSliders->addWidget(mdw);
+         break;
+   } // switch(type)
 
     return mdw;
 }
 
 QSize ViewSurround::sizeHint() const {
-    //    kDebug(67100) << "ViewSurround::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
+    // kDebug(67100) << "ViewSurround::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
     return( _layoutMDW->sizeHint() );
 }
 

@@ -259,14 +259,14 @@ int Mixer_SUN::readVolumeFromHW( const QString& id, MixDevice *md )
             break;
 
          case MIXERDEV_RECORD_MONITOR :
-            volume.setSwitchActivated(false);
+            md->setMuted(false);
             volume.setAllVolumes( audioinfo.monitor_gain );
             break;
 
          case MIXERDEV_INTERNAL_SPEAKER :
          case MIXERDEV_HEADPHONE :
          case MIXERDEV_LINE_OUT :
-            volume.setSwitchActivated( (audioinfo.play.port & devMask) ? false : true );
+            md->setMuted( (audioinfo.play.port & devMask) ? false : true );
             GainBalanceToVolume( audioinfo.play.gain,
                                  audioinfo.play.balance,
                                  volume );
@@ -275,7 +275,7 @@ int Mixer_SUN::readVolumeFromHW( const QString& id, MixDevice *md )
          case MIXERDEV_MICROPHONE :
          case MIXERDEV_LINE_IN :
          case MIXERDEV_CD :
-            volume.setSwitchActivated( (audioinfo.record.port & devMask) ? false : true );
+            md->setMuted( (audioinfo.record.port & devMask) ? false : true );
             GainBalanceToVolume( audioinfo.record.gain,
                                  audioinfo.record.balance,
                                  volume );
@@ -304,7 +304,7 @@ int Mixer_SUN::writeVolumeToHW( const QString& id, MixDevice *md )
    // Convert the Volume(left vol, right vol) to the Gain/Balance Sun uses
    //
    VolumeToGainBalance( volume, gain, balance );
-   mute = volume.isSwitchActivated() ? 1 : 0;
+   mute = md->isMuted() ? 1 : 0;
 
    //
    // Read the current audio settings from the hardware

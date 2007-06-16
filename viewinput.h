@@ -32,7 +32,7 @@ public:
     ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof=0);
     ~ViewInput();
 
-    virtual void setMixSet(MixSet *mixset);
+    virtual void setMixSet();
 };
 
 #endif

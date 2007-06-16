@@ -75,16 +75,6 @@ ViewBase::~ViewBase() {
     delete _mixSet;
 }
 
-void ViewBase::init() {
-    const MixSet& mixset = _mixer->getMixSet();
-    setMixSet( const_cast<MixSet*>(&mixset)); // const_cast<>
-}
-
-void ViewBase::setMixSet(MixSet *)
-{
-   // do nothing. Subclasses can do something if they feel like it
-}
-
 /**
  * Dummy implementation for add().
  */

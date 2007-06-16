@@ -82,9 +82,9 @@ public:
     bool operator==(const MixDevice& other) const;
 
     // @todo possibly remove the following 4 methods: isMuted(), ...
-    bool isMuted()                  { return ! _playbackVolume.isSwitchActivated(); }
+    bool isMuted()                  { return ( ! _playbackVolume.hasSwitch() || ! _playbackVolume.isSwitchActivated() ); }
     void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
-    bool isRecSource()              { return _captureVolume.isSwitchActivated(); }
+    bool isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
     void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 
     bool isEnum()                   { return ( ! _enumValues.empty() ); }

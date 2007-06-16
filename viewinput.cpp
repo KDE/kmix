@@ -33,17 +33,18 @@
 ViewInput::ViewInput(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
       : ViewSliders(parent, name, mixer, vflags, guiprof)
 {
-    init();
+    setMixSet();
 }
 
 ViewInput::~ViewInput() {
 }
 
-void ViewInput::setMixSet(MixSet *mixset)
+void ViewInput::setMixSet()
 {
-    for ( int i=0; i<mixset->count(); i++ )
+    const MixSet& mixset = _mixer->getMixSet();
+    for ( int i=0; i<mixset.count(); i++ )
     {
-        MixDevice *md = (*mixset)[i];
+        MixDevice *md = mixset[i];
         if ( md->captureVolume().hasVolume() )
         {
             _mixSet->append(md);

@@ -37,7 +37,7 @@ public:
     ViewSurround(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
     ~ViewSurround();
 
-    virtual void setMixSet(MixSet *mixset);
+    virtual void setMixSet();
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
 

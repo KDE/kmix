@@ -63,16 +63,18 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase
 
 
     //_layoutMDW->setResizeMode(QLayout::Fixed);
-    init();
+    setMixSet();
 }
 
 ViewApplet::~ViewApplet() {
 }
 
-void ViewApplet::setMixSet(MixSet *mixset)
+void ViewApplet::setMixSet()
 {
-    for ( int i=0; i<mixset->count(); i++ ) {
-        MixDevice *md = (*mixset)[i];
+    const MixSet& mixset = _mixer->getMixSet();
+    for ( int i=0; i<mixset.count(); i++ )
+    {
+        MixDevice *md = mixset[i];
         if ( md->playbackVolume().hasVolume() || md->captureVolume().hasVolume() ) {
             _mixSet->append(md);
         }

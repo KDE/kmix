@@ -34,7 +34,7 @@ public:
     ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
     ~ViewSliderSet();
 
-    virtual void setMixSet(MixSet *mixset);
+    virtual void setMixSet();
 
 private:
     GUIProfile* _guiprof;

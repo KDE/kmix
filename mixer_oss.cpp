@@ -260,7 +260,7 @@ void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
             {
                 MixDevice *md = m_mixDevices[i];
                 bool isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
-                md->captureVolume().setSwitch(isRecsrc);
+                md->setRecSource(isRecsrc);
             } // for all controls
         } // reading newrecsrcmask is OK
     }
@@ -299,7 +299,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
     else {
         // test if device bit is set in record bit mask
         bool isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
-        md->captureVolume().setSwitch(isRecsrc);
+        md->setRecSource(isRecsrc);
     }
 
     return ret;
@@ -313,7 +313,7 @@ int Mixer_OSS::writeVolumeToHW( const QString& id, MixDevice *md)
     int devnum = id2num(id);
 
     Volume& vol = md->playbackVolume();
-    if( vol.isSwitchActivated() )
+    if( md->isMuted() )
        volume = 0;
     else
     {

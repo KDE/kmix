@@ -191,8 +191,6 @@ KMixDockWidget::setVolumeTip()
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
         long val = 0;
-        Volume& volMute   = md->playbackVolume();
-
         Volume& vol       = md->playbackVolume();
         if (! vol.hasVolume() ) {
            vol = md->captureVolume();
@@ -202,10 +200,11 @@ KMixDockWidget::setVolumeTip()
         }
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
-        newToolTipValue = val + 10000*volMute.isSwitchActivated();
+        newToolTipValue = val;
+        if ( ! md->isMuted() ) newToolTipValue += 10000;
         if ( _oldToolTipValue != newToolTipValue ) {
             tip = i18n( "Volume at %1%", val );
-            if ( volMute.isSwitchActivated() ) {
+            if ( md->isMuted() ) {
                 tip += i18n( " (Muted)" );
             }
         }

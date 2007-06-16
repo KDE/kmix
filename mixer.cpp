@@ -585,8 +585,7 @@ void Mixer::toggleMute( const QString& mixdeviceID )
     MixDevice *md= getMixdeviceById( mixdeviceID );
     if (!md) return;
 
-    bool previousState= md->playbackVolume().isSwitchActivated();
-    md->setMuted( !previousState );
+    md->setMuted( ! md->isMuted() );
     _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 }
 

@@ -30,14 +30,17 @@ ViewSliderSet::ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, Vi
       : ViewSliders(parent, name, mixer, vflags, guiprof)
 {
    _guiprof = guiprof;
-   init();
+    setMixSet();
 }
 
 ViewSliderSet::~ViewSliderSet() {
 }
 
-void ViewSliderSet::setMixSet(MixSet *mixset)
+void ViewSliderSet::setMixSet()
 {
+    const MixSet& mixset = _mixer->getMixSet();
+
+
    // This method iterates the controls from the Profile
    // Each control is checked, whether it is also contained in the mixset, and
    // applicable for this kind of View. If yes, the control is accepted and inserted.
@@ -53,8 +56,8 @@ void ViewSliderSet::setMixSet(MixSet *mixset)
          QRegExp idRegexp(control->id);
          kDebug(67100) << "ViewSliderSet::setMixSet(): Check GUIProfile id==" << control->id << "\n";
          // The following for-loop could be simplified by using a std::find_if
-         for ( int i=0; i<mixset->count(); i++ ) {
-            MixDevice *md = (*mixset)[i];
+         for ( int i=0; i<mixset.count(); i++ ) {
+            MixDevice *md = mixset[i];
             if ( md->id().contains(idRegexp) &&      // name matches
                ( md->captureVolume().hasVolume() || md->playbackVolume().hasVolume() )  )  // and is applicable
             {

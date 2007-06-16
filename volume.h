@@ -27,6 +27,9 @@
 
 class Volume
 {
+
+friend class MixDevice;
+
  public:
     // Channel definition:
     // For example a 2.0 system just has MLEFT and MRIGHT.
@@ -90,9 +93,7 @@ class Volume
     int  percentage(long );
     int  count();
     
-    void setSwitch( bool val ) { _switchActivated = val; }
     bool hasSwitch()           { return _hasSwitch; }
-    bool isSwitchActivated()   { return _switchActivated && _hasSwitch; }
     bool hasVolume()           { return (_maxVolume != _minVolume); }
     bool isCapture()           { return _isCapture; }
     
@@ -107,6 +108,14 @@ class Volume
     long          _volumes[CHIDMAX+1];
     long          _maxVolume;
     long          _minVolume;
+
+
+protected:
+   // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
+   // these functions. Our friend class MixDevice will handle that gracefully for us.
+   void setSwitch( bool val ) { _switchActivated = val; }
+   bool isSwitchActivated()   { return _switchActivated && _hasSwitch; }
+
 
 private:
     void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
