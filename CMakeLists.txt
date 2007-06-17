@@ -166,12 +166,11 @@ install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES org.kde.KMix.xml DESTINATION ${DBUS_INTERFACES_DIR} )
 
 ########### next target ###############
-if(KDE4_BUILD_TESTS)
 set(profiletest_SRCS tests/profiletest.cpp )
 
 kde4_automoc(${profiletest_SRCS})
 
-kde4_add_executable(profiletest ${profiletest_SRCS} 
+kde4_add_test_executable(profiletest ${profiletest_SRCS} 
     guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp mixer_backend.cpp mixset.cpp
     ${kmix_adaptor_SRCS} )
 
@@ -183,5 +182,4 @@ endif (HAVE_LIBASOUND2)
 
 
 
-endif(KDE4_BUILD_TESTS)
 
