@@ -152,7 +152,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     m_scrollableChannelSelector->setWidget(m_vboxForScrollView);
 
     QString masterKey = "----noMaster---";  // Use a non-matching name as default
-    MixDevice* master = mixer->masterDevice();
+    MixDevice* master = mixer->getLocalMasterMD();
     if ( master != 0 ) masterKey = master->id();
 
     const MixSet& mixset = mixer->getMixSet();
@@ -200,7 +200,8 @@ void DialogSelectMaster::apply()
          return; // can not happen
       }
       else {
-         mixer->setMasterDevice( channel_id );
+         mixer->setLocalMasterMD( channel_id );
+         Mixer::setGlobalMaster(mixer->id(), channel_id);
          emit newMasterSelected( soundcard_id, channel_id );
       }
    }

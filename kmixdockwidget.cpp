@@ -47,7 +47,7 @@
 #include "kmixdockwidget.h"
 #include "viewdockareapopup.h"
 
-KMixDockWidget::KMixDockWidget(QWidget *parent, const char *name, bool volumePopup )
+KMixDockWidget::KMixDockWidget(QWidget *parent, const char *, bool volumePopup )
     : KSystemTrayIcon( parent ),
       _dockAreaPopup(0L),
       _audioPlayer(0L),
@@ -56,25 +56,10 @@ KMixDockWidget::KMixDockWidget(QWidget *parent, const char *name, bool volumePop
       _oldPixmapType('-'),
       _volumePopup(volumePopup)
 {
-    setObjectName(name);
-    Mixer* preferredMasterMixer = Mixer::masterCard();
-    if ( preferredMasterMixer != 0 ) {
-       m_mixer = preferredMasterMixer;
-    }
-    else {
-      if ( Mixer::mixers().count() > 0 ) {
-         m_mixer = (Mixer::mixers())[0];
-      }
-    }
-
-    MixDevice* mdMaster = Mixer::masterCardDevice();
-    if ( mdMaster != 0 ) {
-       QString mdMasterStr = mdMaster->id();
-       m_mixer->setMasterDevice(mdMasterStr); //  !! using both Mixer::masterCard() and m_mixer->masterDevice() is nonsense !!
-       createMasterVolWidget();
-    }
-    createActions();
-    connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
+   m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
+   createMasterVolWidget();
+   createActions();
+   connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -116,7 +101,7 @@ KMixDockWidget::createMasterVolWidget()
      _oldToolTipValue = -1;
      _oldPixmapType   = '-';
 
-    if (m_mixer == 0) {
+    if (Mixer::getGlobalMasterMD() == 0) {
         // In case that there is no mixer installed, there will be no newVolumeLevels() signal's
         // Thus we prepare the dock areas manually
         setVolumeTip();
@@ -158,28 +143,25 @@ void KMixDockWidget::selectMaster()
 
 void KMixDockWidget::handleNewMaster(int soundcard_id, QString& control_id)
 {
-  //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id << endl;
-  Mixer *mixer = Mixer::mixers().at(soundcard_id);
-  if ( mixer == 0 ) {
-    kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
-    return; // can not happen
-  }
-  m_mixer = mixer;
-  Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
-  createMasterVolWidget();
+   //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id << endl;
+   Mixer *mixer = Mixer::mixers().at(soundcard_id);
+   if ( mixer == 0 ) {
+      kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
+      return; // can not happen
+   }
+   m_mixer = mixer;
+   Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
+   createMasterVolWidget();
 }
 
 
 void
 KMixDockWidget::setVolumeTip()
 {
-    MixDevice *md = 0;
-    if ( _dockAreaPopup != 0 ) {
-        md = _dockAreaPopup->dockDevice();
-    }
+    MixDevice *md = Mixer::getGlobalMasterMD();
     QString tip = "";
-
     int newToolTipValue = 0;
+
     if ( md == 0 )
     {
         tip = i18n("Mixer cannot be found"); // !! text could be reworked
@@ -220,10 +202,8 @@ KMixDockWidget::setVolumeTip()
 void
 KMixDockWidget::updatePixmap()
 {
-    MixDevice *md = 0;
-    if ( _dockAreaPopup != 0 ) {
-        md = _dockAreaPopup->dockDevice();
-    }
+    MixDevice *md = Mixer::getGlobalMasterMD();
+
     char newPixmapType;
     if ( md == 0 )
     {

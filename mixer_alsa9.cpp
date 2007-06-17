@@ -147,7 +147,7 @@ int Mixer_ALSA::open()
         MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
 
         m_id2numHash[mdID] = idx;
-        kDebug(67100) << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx << endl;
+        //kDebug(67100) << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx << endl;
         mixer_elem_list.append( elem );
         mixer_sid_list.append( sid );
         idx++;
@@ -192,8 +192,14 @@ int Mixer_ALSA::open()
         }
 
         // --- Recommended master ----------------------------------------
-        if (!masterChosen && ct==MixDevice::VOLUME) {
+        if ( mdID == "PCM:0" ) {
+            kDebug(67100) << "Setting m_recommendedMaster to " << mdID << endl;
+            m_recommendedMaster = md;
+            masterChosen = true;
+        }
+        else if (!masterChosen && ct==MixDevice::VOLUME) {
             // Determine a nicer MasterVolume
+            kDebug(67100) << "Setting m_recommendedMaster to " << mdID << endl;
             m_recommendedMaster = md;
             masterChosen = true;
         }

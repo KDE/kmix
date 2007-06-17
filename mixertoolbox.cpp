@@ -110,7 +110,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 	    // The "19" below is just a "silly" number:
 	    // (Old: The loop will break as soon as an error is detected - e.g. on 3rd loop when 2 soundcards are installed)
 	    // New: We don't try be that clever anymore. We now blindly scan 20 cards, as the clever
-	    // approach doesn't work for the one or other user.
+	    // approach doesn't work for the one or other user (e.g. hotpluging might create holes in the list of soundcards).
 	    int devNumMax = 19;
 	    for( int dev=0; dev<=devNumMax; dev++ )
 	    {
@@ -198,6 +198,16 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
                break;
             }
 	} // loop over soundcard drivers
+
+   if ( Mixer::getGlobalMasterMixer() == 0 ) {
+      // We have no master card yet. This actually only happens when there was
+      // not one defined in the kmixrc.
+      // So lets just set the first card as master card.
+      if ( Mixer::mixers().count() > 0 ) {
+         QString controlId = Mixer::mixers().first()->getLocalMasterMD()->id();
+         Mixer::setGlobalMaster( Mixer::mixers().first()->id(), controlId);
+      }
+   }
 
 	ref_hwInfoString = i18n("Sound drivers supported:");
 	ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);

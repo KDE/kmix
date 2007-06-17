@@ -110,7 +110,7 @@ void ViewDockAreaPopup::showContextMenu()
 void ViewDockAreaPopup::setMixSet()
 {
    // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
-   _dockDevice = _mixer->masterDevice();
+   _dockDevice = Mixer::getGlobalMasterMD();
    if ( _dockDevice == 0 ) {
       // If we have no dock device yet, we will take the first available mixer device
       if ( _mixer->size() > 0) {

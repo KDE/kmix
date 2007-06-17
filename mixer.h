@@ -100,22 +100,24 @@ class Mixer : public QObject
       /// the user, but can be used for referencing configuration items and such.
       void setID(QString& ref_id);
 
-      /// The KMix global master card. Please note that KMix and KMixPanelApplet can have a
-      /// different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
-      /// At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
+      /******************************************
+        The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
+        different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
+        At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
+       ******************************************/
       static void setGlobalMaster(QString& ref_card, QString& ref_control);
-      static Mixer* masterCard();
-      /// The global Master Device inside the current MasterCard (as returned by masterCard()).
-      static MixDevice* masterCardDevice();
+      static MixDevice* getGlobalMasterMD();
+      static Mixer* getGlobalMasterMixer();
 
+      /******************************************
+        The recommended master of this Mixer.
+       ******************************************/
+      MixDevice* getLocalMasterMD();
+      void setLocalMasterMD(QString&);
 
       /// get the actual MixSet
       MixSet getMixSet();
 
-      /// Returns the master volume device (doesn't work out :-(. See masterCard() and masterCardDevice() instead)
-      MixDevice* masterDevice();
-      /// Sets the master volume device (doesn't work out :-(. See setMasterCard() and setMasterCardDevice() instead)
-      void setMasterDevice(QString&);
 
       /// DCOP oriented methods (look at mixerIface.h for the descriptions)
       virtual void setVolume( const QString& mixdeviceID, int percentage );

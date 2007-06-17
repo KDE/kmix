@@ -53,17 +53,17 @@ void ViewSliderSet::setMixSet()
          bool isUsed = false;
    
          QRegExp idRegexp(control->id);
-         kDebug(67100) << "ViewSliderSet::setMixSet(): Check GUIProfile id==" << control->id << "\n";
+         //kDebug(67100) << "ViewSliderSet::setMixSet(): Check GUIProfile id==" << control->id << "\n";
          // The following for-loop could be simplified by using a std::find_if
          for ( int i=0; i<mixset.count(); i++ ) {
             MixDevice *md = mixset[i];
             if ( md->id().contains(idRegexp) &&      // name matches
                ( md->captureVolume().hasVolume() || md->playbackVolume().hasVolume() )  )  // and is applicable
             {
-               kDebug(67100) << "     ViewSliderSet::setMixSet(): match found for md->id()==" <<
+               /*kDebug(67100) << "     ViewSliderSet::setMixSet(): match found for md->id()==" <<
                md->id()
                   << " ; control->id=="
-                  << control->id << "\n";
+                  << control->id << "\n"; */
                // OK, this control is handable by this View. Lets do a duplicate check
                if ( ! _mixSet->contains( md ) ) {
                   if ( !control->name.isNull() ) {
@@ -76,7 +76,7 @@ void ViewSliderSet::setMixSet()
                   //break;
                }
                else {
-                  kDebug(67100) << "        But it is a duplicate and was not added\n";
+                  //kDebug(67100) << "        But it is a duplicate and was not added\n";
                }
             } // name matches
          } // loop for finding a suitable MixDevice

@@ -192,11 +192,11 @@ void KMixWindow::saveBaseConfig()
    config.writeEntry( "Tickmarks", m_showTicks );
    config.writeEntry( "Labels", m_showLabels );
    config.writeEntry( "startkdeRestore", m_onLogin );
-   Mixer* mixerMasterCard = Mixer::masterCard();
+   Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
    if ( mixerMasterCard != 0 ) {
       config.writeEntry( "MasterMixer", mixerMasterCard->id() );
    }
-   MixDevice* mdMaster = Mixer::masterCardDevice();
+   MixDevice* mdMaster = Mixer::getGlobalMasterMD();
    if ( mdMaster != 0 ) {
       config.writeEntry( "MasterMixerDevice", mdMaster->id() );
    }

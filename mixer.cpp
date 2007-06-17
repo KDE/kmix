@@ -151,13 +151,13 @@ bool Mixer::openIfValid() {
         MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
         if ( recommendedMaster != 0 ) {
             QString recommendedMasterStr = recommendedMaster->id();
-            setMasterDevice( recommendedMasterStr );
+            setLocalMasterMD( recommendedMasterStr );
             kDebug() << "Mixer::open() detected master: " << recommendedMaster->id() << endl;
         }
         else {
             kError(67100) << "Mixer::open() no master detected." << endl;
             QString noMaster = "---no-master-detected---";
-            setMasterDevice(noMaster); // no master
+            setLocalMasterMD(noMaster); // no master
         }
         connect( _mixerBackend, SIGNAL(controlChanged()), SLOT(controlChangedForwarder()) );
     }
@@ -238,7 +238,7 @@ void Mixer::setBalance(int balance)
 
   m_balance = balance;
 
-  MixDevice* master = masterDevice();
+  MixDevice* master = Mixer::getGlobalMasterMD();
   if ( master == 0 ) {
       // no master device available => return
       return;
@@ -318,38 +318,64 @@ void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
   kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control << endl;
 }
 
-Mixer* Mixer::masterCard()
+Mixer* Mixer::getGlobalMasterMixer()
 {
-  Mixer *mixer = 0;
-  for (int i=0; i< Mixer::mixers().count(); ++i )
-  {
-     mixer = Mixer::mixers()[i];
-     if ( mixer != 0 && mixer->id() == _masterCard ) {
-        kDebug() << "Mixer::masterCard() found " << _masterCard << endl;
-        break;
-     }
-  }
-  kDebug() << "Mixer::masterCard() returns " << mixer << endl;
-  return mixer;
-}
-
-MixDevice* Mixer::masterCardDevice()
-{
-  MixDevice* md = 0;
-  Mixer *mixer = masterCard();
-  if ( mixer != 0 ) {
-   for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
+   Mixer *mixer = 0;
+   for (int i=0; i< Mixer::mixers().count(); ++i )
    {
-       md = mixer->_mixerBackend->m_mixDevices[i];
-       if ( md->id() == _masterCardDevice )
-          kDebug() << "Mixer::masterCardDevice() found " << _masterCardDevice << endl;
-          break;
-     }
-  }
-  kDebug() << "Mixer::masterCardDevice() returns " << md << endl;
-  return md;
+      mixer = Mixer::mixers()[i];
+      if ( mixer != 0 && mixer->id() == _masterCard ) {
+         kDebug() << "Mixer::masterCard() found " << _masterCard << endl;
+         break;
+      }
+   }
+   if ( mixer == 0 && Mixer::mixers().count() > 0 ) {
+      // produce fallback
+      mixer = Mixer::mixers()[0];
+      _masterCard = mixer->id();
+      kDebug() << "Mixer::masterCard() fallback to  " << mixer->id() << "," << _masterCard << endl;
+   }
+   kDebug() << "Mixer::masterCard() returns " << mixer->id() << endl;
+   return mixer;
 }
 
+MixDevice* Mixer::getGlobalMasterMD()
+{
+   MixDevice* md = 0;
+   Mixer *mixer = Mixer::getGlobalMasterMixer();
+   if ( mixer != 0 ) {
+      for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
+      {
+         md = mixer->_mixerBackend->m_mixDevices[i];
+         if ( md->id() == _masterCardDevice )
+            kDebug() << "Mixer::masterCardDevice() found " << _masterCardDevice << endl;
+            break;
+      }
+
+      if ( _masterCardDevice == 0 && mixer->_mixerBackend->m_mixDevices.count() > 0 ) {
+         // produce fallback
+         md = mixer->_mixerBackend->m_mixDevices[0];
+         _masterCardDevice = md->id();
+         kDebug() << "Mixer::masterCardDevice() fallback to  " << _masterCardDevice << endl;
+      }
+   }
+
+   kDebug() << "Mixer::masterCardDevice() returns " << md->id() << endl;
+   return md;
+}
+
+
+
+
+MixDevice* Mixer::getLocalMasterMD()
+{
+  return find( _masterDevicePK );
+}
+
+void Mixer::setLocalMasterMD(QString &devPK)
+{
+    _masterDevicePK = devPK;
+}
 
 
 
@@ -362,15 +388,7 @@ void Mixer::setRecordSource( const QString& mixdeviceID, bool on )
 }
 
 
-MixDevice* Mixer::masterDevice()
-{
-  return find( _masterDevicePK );
-}
 
-void Mixer::setMasterDevice(QString &devPK)
-{
-    _masterDevicePK = devPK;
-}
 
 
 MixDevice* Mixer::find(const QString& mixdeviceID)
@@ -429,7 +447,7 @@ void Mixer::commitVolumeChange( MixDevice* md ) {
 // @dcop only
 void Mixer::setMasterVolume( int percentage )
 {
-  MixDevice *master = masterDevice();
+  MixDevice *master = getLocalMasterMD();
   if (master != 0 ) {
     setVolume( master->id(), percentage );
   }
@@ -511,7 +529,7 @@ long Mixer::absoluteVolumeMin( const QString& mixdeviceID )
 int Mixer::masterVolume()
 {
   int vol = 0;
-  MixDevice *master = masterDevice();
+  MixDevice *master = getLocalMasterMD();
   if (master != 0 ) {
     vol = volume( master->id() );
   }
