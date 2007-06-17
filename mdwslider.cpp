@@ -234,22 +234,36 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
 
 
-    // --- SLIDERS ---------------------------
-    QBoxLayout *volLayout;
-    if ( _orientation == Qt::Vertical ) {
-        volLayout = new QHBoxLayout( );
-        volLayout->setAlignment(Qt::AlignVCenter);
-    }
-    else {
-        volLayout = new QVBoxLayout(  );
-        volLayout->setAlignment(Qt::AlignHCenter);
-    }
-    sliLayout->addItem( volLayout );
+   // --- SLIDERS ---------------------------
+   QBoxLayout *volLayout;
+   if ( _orientation == Qt::Vertical ) {
+      volLayout = new QHBoxLayout( );
+      volLayout->setAlignment(Qt::AlignVCenter);
+   }
+   else {
+      volLayout = new QVBoxLayout(  );
+      volLayout->setAlignment(Qt::AlignHCenter);
+   }
+   sliLayout->addItem( volLayout );
 
-    if ( m_mixdevice->playbackVolume().count() > 0 )
-       addSliders( volLayout, 'p' );
-    if ( m_mixdevice->captureVolume().count() > 0 )
+   if ( m_mixdevice->playbackVolume().count() > 0 )
+      addSliders( volLayout, 'p' );
+   if ( m_mixdevice->captureVolume().count() > 0 )
        addSliders( volLayout, 'c' );
+   if ( m_mixdevice->playbackVolume().count() == 0 && m_mixdevice->captureVolume().count() == 0 )
+   {  // no siders => put a label with the name.
+      // But I won't add " (capture)" as on the sliders, because there is only one "column"
+      if ( _orientation == Qt::Vertical ) {
+         m_label = new VerticalText( this, m_mixdevice->readableName() );
+      }
+      else {
+         m_label = new QLabel(this);
+         static_cast<QLabel*>(m_label)->setText(m_mixdevice->readableName());
+      }
+      volLayout->addWidget( m_label );
+      m_label->installEventFilter( this );
+      m_label->setToolTip( m_mixdevice->readableName() );  // @todo: Whatsthis, explaining the device
+   }
 
    // --- RECORD SOURCE LED --------------------------
    if ( showRecordLED )
@@ -277,7 +291,8 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
          reclayout->addWidget( m_recordLED );
          connect(m_recordLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
          m_recordLED->installEventFilter( this );
-         m_recordLED->setToolTip( i18n( "Record" ) );
+         QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
+         m_recordLED->setToolTip( muteTip );  // @todo: Whatsthis, explaining the device
       } // has Record LED
       else
       {
