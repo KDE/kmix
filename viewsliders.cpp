@@ -30,6 +30,7 @@
 #include <kdebug.h>
 
 // KMix
+#include "mdwenum.h"
 #include "mdwslider.h"
 #include "mixer.h"
 #include "verticaltext.h"
@@ -58,17 +59,32 @@ ViewSliders::~ViewSliders() {
 
 QWidget* ViewSliders::add(MixDevice *md)
 {
-
+   MixDeviceWidget *mdw;
    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
-   MixDeviceWidget *mdw = new MDWSlider(
-                  _mixer,       // the mixer for this device
-                  md,           // MixDevice (parameter)
-                  true,         // Show Mute LED
-                  true,         // Show Record LED
-                  false,        // Small
-                  orientation,  // Orientation
-                  this,         // parent
-                  this       ); // View widget
+
+   /* Hint: We allow to put Enum's in the same View as sliders and switches.
+            Normally you won't do this, but the creator of the Profile is at least free to do so if he wishes. */
+   if ( md->isEnum() ) {
+      mdw = new MDWEnum(
+               _mixer,       // the mixer for this device
+               md,           // MixDevice (parameter)
+               orientation,  // Orientation
+               this,         // parent
+               this          // View widget
+      );
+      _layoutMDW->addWidget(mdw);
+   } // an enum
+   else {
+      mdw = new MDWSlider(
+               _mixer,       // the mixer for this device
+               md,           // MixDevice (parameter)
+               true,         // Show Mute LED
+               true,         // Show Record LED
+               false,        // Small
+               orientation,  // Orientation
+               this,         // parent
+               this       ); // View widget
+   }
    _layoutMDW->addWidget(mdw);
    return mdw;
 }
@@ -92,11 +108,11 @@ void ViewSliders::refreshVolumeLevels() {
          break; // sanity check (normally the lists are set up correctly)
       }
       else {
-         if ( mdw->inherits("MDWSlider")) { // sanity check
-            static_cast<MDWSlider*>(mdw)->update();
+         if ( mdw->inherits("MixDeviceWidget")) { // sanity check
+            static_cast<MixDeviceWidget*>(mdw)->update();
          }
          else {
-            kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not slider\n";
+            kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
             // no slider. Cannot happen in theory => skip it
          }
       }

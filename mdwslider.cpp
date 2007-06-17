@@ -790,8 +790,10 @@ void MDWSlider::decreaseVolume()
 */
 void MDWSlider::update()
 {
-   if (m_slidersPlayback.count() != 0) updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, _slidersChidsPlayback);
-   if (m_slidersCapture.count()  != 0) updateInternal(m_mixdevice->captureVolume(), m_slidersCapture , _slidersChidsCapture );
+   if (m_slidersPlayback.count() != 0 || m_mixdevice->playbackVolume().hasSwitch())
+      updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, _slidersChidsPlayback);
+   if (m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch())
+      updateInternal(m_mixdevice->captureVolume(), m_slidersCapture , _slidersChidsCapture );
 }
 
 void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids)

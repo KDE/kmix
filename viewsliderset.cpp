@@ -57,8 +57,7 @@ void ViewSliderSet::setMixSet()
          // The following for-loop could be simplified by using a std::find_if
          for ( int i=0; i<mixset.count(); i++ ) {
             MixDevice *md = mixset[i];
-            if ( md->id().contains(idRegexp) &&      // name matches
-               ( md->captureVolume().hasVolume() || md->playbackVolume().hasVolume() )  )  // and is applicable
+            if ( md->id().contains(idRegexp) )
             {
                /*kDebug(67100) << "     ViewSliderSet::setMixSet(): match found for md->id()==" <<
                md->id()

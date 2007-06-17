@@ -441,7 +441,18 @@ void Mixer::setVolume( const QString& mixdeviceID, int percentage )
 */
 void Mixer::commitVolumeChange( MixDevice* md ) {
   _mixerBackend->writeVolumeToHW(md->id(), md );
-  if (md->isEnum()) _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
+   if (md->isEnum()) _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
+   if ( md->captureVolume().hasSwitch() ) {
+      // Make sure to re-read the harware, because seting capture might have failed.
+      // This is due to exclusive capture groups.
+      // If we wouldn't do this, KMix might show a Capture Switch disabled, but
+      // in reality the capture switch is still on.
+      //
+      // We also cannot rely on a notification from the driver (SocketNotifier), because
+      // nothing has changed, and so there s nothing to notify.
+      _mixerBackend->readSetFromHWforceUpdate();
+      _mixerBackend->readSetFromHW();
+   }
 }
 
 // @dcop only

@@ -79,6 +79,7 @@
 
 <control id="CD:1"     controls="*" tab="Play" show="extended" />
 
+<control id="^.*$" tab="All" show="extended" />
 
 
 <!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted -->
