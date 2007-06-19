@@ -83,7 +83,7 @@ public:
      * Creates a suitable representation for the given MixDevice.
      * The default implementation creates a label
      */
-    virtual QWidget* add(MixDevice *);
+    virtual QWidget* add(MixDevice *) = 0;
 
     /**
      * Popup stuff

@@ -21,7 +21,7 @@
 #ifndef MixSet_h
 #define MixSet_h
 
-#include <qlist.h>
+#include <QList>
 
 #include "mixdevice.h"
 
@@ -30,8 +30,6 @@ class MixSet : public QList<MixDevice *>
    public:
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
-
-      void clone( MixSet &orig );
 
       QString name() { return m_name; }
       void setName( const QString &name );

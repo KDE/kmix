@@ -30,7 +30,7 @@
 #include <stdlib.h>
 
 #include "mixer_sun.h"
-
+#include "mixer.h"
 
 //======================================================================
 // CONSTANT/ENUM DEFINITIONS
@@ -113,10 +113,10 @@ const uint_t MixerSunPortMasks[] =
 // FUNCTION    : SUN_getMixer
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
-Mixer_Backend* SUN_getMixer( int devnum )
+Mixer_Backend* SUN_getMixer( Mixer *mixer, int devnum )
 {
    Mixer_Backend *l_mixer;
-   l_mixer = new Mixer_SUN( devnum );
+   l_mixer = new Mixer_SUN( mixer, devnum );
    return l_mixer;
 }
 
@@ -125,7 +125,7 @@ Mixer_Backend* SUN_getMixer( int devnum )
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class constructor.
 //======================================================================
-Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(devnum)
+Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(mixer, evnum)
 {
    if ( devnum == -1 )
       m_devnum = 0;
@@ -175,12 +175,12 @@ int Mixer_SUN::open()
          for ( int idx = 0; idx < numDevs; idx++ )
          {
             Volume vol( 2, AUDIO_MAX_GAIN );
-            Volume volCapture;
             QString id;
             id.setNum(idx);
-            MixDevice* md = new MixDevice( id, vol, volCapture, 
+            MixDevice* md = new MixDevice( _mixer, id,
                QString(MixerDevNames[idx]), MixerChannelTypes[idx]);
-				md->setRecSource( isRecsrcHW( idx ) );
+            md->addPlaybackVolume(vol);
+            md->setRecSource( isRecsrcHW( idx ) );
             m_mixDevices.append( md );
          }
 

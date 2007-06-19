@@ -48,11 +48,6 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
     m_viewId = id;
     _mixer = mixer;
     _mixSet = new MixSet();
-
-    /* Can't use the following construct:
-       setMixSet( & mixer->getMixSet());
-       C++ does not use overloaded methods like getMixSet() as long as the constructor has not completed :-(((
-    */
     _actions = new KActionCollection( this );
 
     // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
@@ -75,11 +70,6 @@ ViewBase::~ViewBase() {
     delete _mixSet;
 }
 
-/**
- * Dummy implementation for add().
- */
-QWidget* ViewBase::add(MixDevice* mdw) {
-}
 
 void ViewBase::configurationUpdate() {
 }
@@ -145,8 +135,8 @@ void ViewBase::popupReset()
     a = _actions->action( "toggle_channels" );
     if ( a ) _popMenu->addAction(a);
 
-    a = _actions->action( "options_show_menubar" );
-    if ( a ) _popMenu->addAction(a);
+    QAction *b = _actions->action( "options_show_menubar" );
+    if ( b ) _popMenu->addAction(b);
 }
 
 

@@ -26,14 +26,18 @@
 #include <QWidget>
 #include "volume.h"
 
-class QBoxLayout;
-
-class KAction;
-class KComboBox;
-
+// KMix
 class MixDevice;
 class Mixer;
 class ViewBase;
+
+// KDE
+class KAction;
+class KComboBox;
+
+// Qt
+class QBoxLayout;
+class QLabel;
 
 #include "mixdevicewidget.h"
 

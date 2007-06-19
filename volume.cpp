@@ -206,16 +206,6 @@ long Volume::getAvgVolume(ChannelMask chmask) {
     return (long)sumOfActiveVolumes;
 }
 
-long Volume::getTopStereoVolume(ChannelMask chmask) {
-    long long topVolumeCount = 0;
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( (_channelMaskEnum[i] & _chmask) & (int)chmask ) {
-			  if ( topVolumeCount < _volumes[i] )
-				  topVolumeCount = _volumes[i];
-        }
-    }
-    return (long)topVolumeCount;
-}
 
 int Volume::count() {
     int counter = 0;

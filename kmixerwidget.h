@@ -80,14 +80,13 @@ class KMixerWidget : public QWidget
    void loadConfig( KConfig *config, const QString &grp );
 
   private slots:
-   //void updateBalance();
    void balanceChanged(int balance);
 
   private:
    Mixer *_mixer;
    QString m_id;
    QSlider *m_balanceSlider;
-   QVBoxLayout *m_topLayout; // contains the Card selector, TabWidget and balance slider
+   QVBoxLayout *m_topLayout; // contains TabWidget and balance slider
 
    std::vector<ViewBase*> _views;
 
@@ -98,7 +97,7 @@ class KMixerWidget : public QWidget
    bool _ticksEnabled;
 
    void createLayout(ViewBase::ViewFlags vflags);
-   void possiblyAddView(ViewBase* vbase, QString tabName);
+   void possiblyAddView(ViewBase* vbase, QString& tabName);
    void createViewsByProfile(Mixer* mixer, GUIProfile* guiprof, ViewBase::ViewFlags vflags);
 };
 

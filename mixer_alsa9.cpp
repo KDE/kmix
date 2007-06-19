@@ -22,6 +22,19 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
+// KMix
+#include "mixer_alsa.h"
+#include "mixer.h"
+#include "volume.h"
+
+// KDE
+#include <kdebug.h>
+#include <klocale.h>
+
+// Qt
+#include <QList>
+
 // STD Headers
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,36 +42,24 @@
 #include <assert.h>
 #include <qsocketnotifier.h>
 
-
-extern "C"
-{
-	#include <alsa/asoundlib.h>
-}
-
-// QT
-#include <qlist.h>
-
-// KDE Headers
-#include <klocale.h>
-#include <kdebug.h>
-
-// Local Headers
-#include "mixer_alsa.h"
 //#include "mixer.h"
-#include "volume.h"
+//class Mixer;
+
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
 Mixer_Backend*
-ALSA_getMixer( int device )
+ALSA_getMixer(Mixer *mixer, int device )
 {
+
    Mixer_Backend *l_mixer;
-   l_mixer = new Mixer_ALSA( device );
+
+   l_mixer = new Mixer_ALSA(mixer,  device );
    return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( int device ) : Mixer_Backend( device )
+Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  device )
 {
    m_fds = 0;
    m_sns = 0;
@@ -166,30 +167,17 @@ int Mixer_ALSA::open()
             volCapture = addVolume(elem, true );
         } // is ordinary mixer element (NOT an enum)
 
-        // Set dummy volumes in case there are no real volume(s)
-        // (This is a very common case, especially with volCapture).
-        if ( volPlay    == 0 ) volPlay    = new Volume();
-        if ( volCapture == 0 ) volCapture = new Volume();
-
 
         MixDevice* md = new MixDevice(
+                _mixer,
                 mdID,
-                *volPlay,
-                *volCapture,
                 snd_mixer_selem_id_get_name( sid ),
                 ct );
+         if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
+         if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
+         if ( enumList.count() > 0 ) md->addEnums(enumList);
 
         m_mixDevices.append( md );
-        // --- Enums ------------------------------------------------------
-        if ( enumList.count() > 0 ) {
-            int maxEnumId= enumList.count();
-            QList<QString>& enumValuesRef = md->enumValues(); // retrieve a ref
-            for (int i=0; i<maxEnumId; i++ ) {
-                // we have an enum. Lets set the names of the enum items in the MixDevice
-                // the enum names are assumed to be static!
-                enumValuesRef.append( *(enumList.at(i)) );
-            }
-        }
 
         // --- Recommended master ----------------------------------------
         if ( mdID == "PCM:0" ) {

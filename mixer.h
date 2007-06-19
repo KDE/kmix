@@ -23,8 +23,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MIXER_H
-#define MIXER_H
+#ifndef RANDOMPREFIX_MIXER_H
+#define RANDOMPREFIX_MIXER_H
 
 #include <QString>
 #include <QTimer>

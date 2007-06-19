@@ -31,10 +31,15 @@ class QSocketNotifier;
 
 #include "mixer_backend.h"
 
+extern "C"
+{
+   #include <alsa/asoundlib.h>
+}
+
 class Mixer_ALSA : public Mixer_Backend
 {
 public:
-    Mixer_ALSA( int device = -1 );
+    Mixer_ALSA(Mixer *mixer, int device = -1 );
     ~Mixer_ALSA();
 
     virtual int  readVolumeFromHW( const QString& id, MixDevice *md );

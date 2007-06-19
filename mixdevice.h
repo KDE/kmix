@@ -21,11 +21,18 @@
 #ifndef MixDevice_h
 #define MixDevice_h
 
+//KMix
+class Mixer;
 #include "volume.h"
-#include <QString>
+
+// KDE
 #include <kconfig.h>
+
+// Qt
+#include <QList>
 #include <QObject>
-#include <qlist.h>
+#include <QString>
+
 
 // !!! This SHOULD be subclassed (MixDeviceVolume, MixDeviceEnum).
 //     The isEnum() works out OK as a workaround, but it is insane
@@ -39,9 +46,11 @@
  * can contain the 5 following subcontrols: playback-volume, capture-volume, playback-switch,
  * capture-switch and enumeration.
 
+   The class is called MixDevice for historical reasons. Today it is just the the Synonym for "Control".
+
    Design hint: In the past I (esken) considered merging the MixDevice and Volume classes.
                 I finally decided against it, as it seems better to have the MixDevice being the container
-                for the embedded control(s). These could be either Volume, Enum or some virtual MixDevice.
+                for the embedded subcontrol(s). These could be either Volume, Enum or some virtual MixDevice.
  */
 class MixDevice : public QObject
 {
@@ -55,72 +64,85 @@ public:
                         SURROUND_BACK, SURROUND_LFE, SURROUND_CENTERFRONT, SURROUND_CENTERBACK };
 
 
-    /**
-     * Constructor:
-     * @par id  Defines the ID, e.g. used in looking up the keys in kmixrc.
-     *          It is advised to set a nice name, like
-     *          'PCM:2', which would mean "2nd PCM device of the sound card".
-     *          The ID's may NOT contain whitespace
-     */
-    MixDevice(const QString& id, Volume &playbackVol, Volume &captureVol, const QString& name, ChannelType type = UNKNOWN );
-    MixDevice(const MixDevice &md);
-    ~MixDevice();
-
-
-    // Returns a user readable name of the control.
-    QString   readableName()         { return _name; }
-    // Sets a user readable name for the control.
-    void      setReadableName(QString& name)      { _name = name; }
-
-    /**
-    * Returns an unique ID of this MixDevice. By default the number
-    * 'num' from the constructor is returned. It is recommended that
-    * a better ID is set directly after constructing the MixDevice using
-    * the setUniqueID().
+   /**
+    * Constructor:
+    * @par mixer The mixer this control belongs to
+    * @par id  Defines the ID, e.g. used in looking up the keys in kmixrc. Also it is used heavily inside KMix as unique key. 
+    *      It is advised to set a nice name, like 'PCM:2', which would  mean 
+    *      "2nd PCM device of the sound card". The ID's may NOT contain whitespace.
+    *       The Creator (normally the backend) MUST pass distinct ID's for each MixDevices of one card.
+    *
+    *      Virtual Controls (controls not created by a backend) are prefixed with "KMix::", e.g.
+    *      "KMix::RecSelector:0"
+    *  @par name is the readable name. This one is presented to the user in the GUI
+    *  @par type The control type. It is only used to find an appropriate icon
     */
-    const QString& id() const;
-    // operator==() is used currently only for duplicate detection with QList's contains() method
-    bool operator==(const MixDevice& other) const;
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type = UNKNOWN );
+   ~MixDevice();
 
-    // @todo possibly remove the following 4 methods: isMuted(), ...
-    bool isMuted()                  { return ( ! _playbackVolume.hasSwitch() || ! _playbackVolume.isSwitchActivated() ); }
-    void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
-    bool isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
-    void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
+   void addPlaybackVolume(Volume &playbackVol);
+   void addCaptureVolume (Volume &captureVol);
+   void addEnums (QList<QString*>& ref_enumList);
 
-    bool isEnum()                   { return ( ! _enumValues.empty() ); }
+   // Returns a user readable name of the control.
+   QString   readableName()         { return _name; }
+   // Sets a user readable name for the control.
+   void      setReadableName(QString& name)      { _name = name; }
+
+   /**
+   * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) MUST ensure that
+   * all MixDevices's of one card have unique ID's.
+   * The 
+   */
+   const QString& id() const;
+
+   // Returns the associated mixer
+   Mixer* mixer() { return _mixer; }
+
+   // operator==() is used currently only for duplicate detection with QList's contains() method
+   bool operator==(const MixDevice& other) const;
+
+   // @todo possibly remove the following 4 methods: isMuted(), ...
+   bool isMuted()                  { return ( ! _playbackVolume.hasSwitch() || ! _playbackVolume.isSwitchActivated() ); }
+   void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
+   bool isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
+   void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
+
+   bool isEnum()                   { return ( ! _enumValues.empty() ); }
 
 
-    Volume& playbackVolume();
-    Volume& captureVolume();
+   Volume& playbackVolume();
+   Volume& captureVolume();
 
-    void setEnumId(int);
-    unsigned int enumId();
-    QList<QString>& enumValues();
+   void setEnumId(int);
+   unsigned int enumId();
+   QList<QString>& enumValues();
 
-    void read( KConfig *config, const QString& grp );
-    void write( KConfig *config, const QString& grp );
+   virtual void read( KConfig *config, const QString& grp );
+   virtual void write( KConfig *config, const QString& grp );
 
-    void setType( ChannelType channeltype ) { _type = channeltype; }
-    ChannelType type() { return _type; }
+   void setType( ChannelType channeltype ) { _type = channeltype; }
+   ChannelType type() { return _type; }
 
 signals:
     void newVolume( int num, Volume volume );
 
-protected:
-    Volume _playbackVolume;
-    Volume _captureVolume;
-    ChannelType _type;
+private:
+   Mixer *_mixer;
+   Volume _playbackVolume;
+   Volume _captureVolume;
+   int _enumCurrentId;
+   QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
-    QString _name;   // Channel name
-    QString _id;     // Primary key, used as part in config file keys
-    // A MixDevice, that is an ENUM, has these _enumValues
-    QList<QString> _enumValues;
-    int _enumCurrentId;
+   ChannelType _type;
+
+   QString _name;   // Channel name
+   QString _id;     // Primary key, used as part in config file keys
+
 
 private:
-    void readPlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
-    void writePlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
+   void readPlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
+   void writePlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
 
 };
 

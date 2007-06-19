@@ -25,10 +25,12 @@
 #include <config.h>
 #include <config-alsa.h>
 
+#include "mixer_backend.h"
+#include "mixer.h"
 
 #include <QString>
 
-#include "mixer_backend.h"
+
 
 #if defined(sun) || defined(__sun__)
 #define SUN_MIXER
@@ -84,7 +86,7 @@
 #endif
 
 
-typedef Mixer_Backend *getMixerFunc( int device );
+typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );
 typedef QString getDriverNameFunc( );
 
 struct MixerFactory {

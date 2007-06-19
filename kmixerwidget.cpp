@@ -210,19 +210,13 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
          ViewSurround* view = new ViewSurround ( this, profTab->name.toAscii(), mixer, vflags, guiprof );
          possiblyAddView(view, profTab->name);
       }
-      /*
-      else if ( profTab->type == "Switches" ) {
-         ViewSliderSet* view = new ViewSwitchSet  ( this, profTab->name.toAscii(), _mixer, vflags, guiprof );
-         possiblyAddView(view);
-      }
-      */
       else {
          kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
       }
    } // for all tabs
 }
 
-void KMixerWidget::possiblyAddView(ViewBase* vbase, QString tabName)
+void KMixerWidget::possiblyAddView(ViewBase* vbase, QString& tabName)
 {
    if ( ! vbase->isValid()  )
       delete vbase;

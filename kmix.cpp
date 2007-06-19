@@ -496,7 +496,7 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 
 void KMixWindow::toggleMenuBar()
 {
-   m_showMenubar = !m_showMenubar;
+   m_showMenubar = !menuBar()->isVisible();
    menuBar()->setVisible(m_showMenubar);
 }
 
@@ -531,7 +531,7 @@ void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
    Mixer* mixer = mw->mixer();
    setWindowTitle( mixer->readableName() );
-   // As switching the tab does NOT mean switching the mixer, we do not need to update docing here.
+   // As switching the tab does NOT mean switching the mixer, we do not need to update dock icon here.
    // It would lead to unnecesary flickering of the (complete) dock area.
 }
 

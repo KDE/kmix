@@ -65,10 +65,11 @@ ViewSurround::~ViewSurround() {
 
 void ViewSurround::setMixSet()
 {
-   const MixSet& mixset = _mixer->getMixSet();
+/*
+   This won't work out in all cases. And it's experimental. So lets just disable it for now   const MixSet& mixset = _mixer->getMixSet();
    for ( int i=0; i<mixset.count(); i++ ) {
       MixDevice *md = mixset[i];
-      if ( /*! md->isSwitch() */  true ) {   // @todo redo it
+      if (  true ) {   // @todo redo it
          switch ( md->type() ) {
             case MixDevice::VOLUME:
             case MixDevice::SURROUND:
@@ -85,6 +86,7 @@ void ViewSurround::setMixSet()
          } // switch(type)
       } // !is_switch()
    } // for
+*/
 }
 
 
@@ -93,6 +95,8 @@ QWidget* ViewSurround::add(MixDevice *md)
 {
    bool small = false;
    Qt::Orientation orientation = Qt::Vertical;
+/*
+   This won't work out in all cases. And it's experimental. So lets just disable it for now
    switch ( md->type() ) {
       case MixDevice::VOLUME:
          _mdSurroundFront = md;
@@ -147,8 +151,8 @@ QWidget* ViewSurround::add(MixDevice *md)
          _layoutSliders->addWidget(mdw);
          break;
    } // switch(type)
-
-    return mdw;
+*/
+    return 0; //mdw;
 }
 
 QSize ViewSurround::sizeHint() const {

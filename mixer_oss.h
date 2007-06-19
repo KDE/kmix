@@ -29,7 +29,7 @@
 class Mixer_OSS : public Mixer_Backend
 {
 public:
-  Mixer_OSS(int device = -1);
+  Mixer_OSS(Mixer *mixer, int device);
   virtual ~Mixer_OSS();
 
   virtual QString errorText(int mixer_error);

@@ -86,7 +86,6 @@ friend class MixDevice;
     
     long getVolume(ChannelID chid);
     long getAvgVolume(ChannelMask chmask);
-    long getTopStereoVolume(ChannelMask chmask);
     long operator[](int);
     long maxVolume();
     long minVolume();

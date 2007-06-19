@@ -19,6 +19,9 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_oss.h"
+#include "mixer.h"
+
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
@@ -33,7 +36,7 @@
 	#include <soundcard.h>
 #endif
 
-#include "mixer_oss.h"
+
 #include <klocale.h>
 
 /*
@@ -73,14 +76,14 @@ const MixDevice::ChannelType MixerChannelTypes[32] = {
   MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,   MixDevice::UNKNOWN,
   MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
 
-Mixer_Backend* OSS_getMixer( int device )
+Mixer_Backend* OSS_getMixer( Mixer* mixer, int device )
 {
   Mixer_Backend *l_mixer;
-  l_mixer = new Mixer_OSS( device );
+  l_mixer = new Mixer_OSS( mixer, device );
   return l_mixer;
 }
 
-Mixer_OSS::Mixer_OSS(int device) : Mixer_Backend(device)
+Mixer_OSS::Mixer_OSS( Mixer* mixer, int device) : Mixer_Backend(mixer, device)
 {
   if( device == -1 ) m_devnum = 0;
 }
@@ -128,13 +131,15 @@ int Mixer_OSS::open()
                 {
                   // recmask & ( 1 << idx ), true,
                   Volume vol( stereodevs & ( 1 << idx ) ? 2 : 1, maxVolume);
-                  Volume volCapture;
                   QString id;
                   id.setNum(idx);
                   MixDevice* md =
-                    new MixDevice( id, vol, volCapture,
+                    new MixDevice(
+                                   _mixer,
+                                   id,
                                    i18n(MixerDevNames[idx]),
                                    MixerChannelTypes[idx]);
+                  md->addPlaybackVolume(vol);
                   m_mixDevices.append( md );
                 }
               idx++;

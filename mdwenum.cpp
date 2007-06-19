@@ -19,28 +19,31 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qcursor.h>
+
+// KMix
+#include "mdwenum.h"
+#include "mixer.h"
+#include "viewbase.h"
+
+// KDE
+#include <kaction.h>
+#include <kactioncollection.h>
+#include <kconfig.h>
+#include <kcombobox.h>
+#include <kdebug.h>
+#include <kglobalaccel.h>
+#include <klocale.h>
+#include <kmenu.h>
+#include <ktoggleaction.h>
+
+// Qt
+#include <QCursor>
 #include <QLabel>
 #include <QLayout>
 #include <QMouseEvent>
 #include <QObject>
 #include <QToolTip>
 
-#include <klocale.h>
-#include <kconfig.h>
-#include <kcombobox.h>
-#include <kaction.h>
-#include <kactioncollection.h>
-#include <kmenu.h>
-
-#include <kglobalaccel.h>
-#include <ktoggleaction.h>
-
-#include <kdebug.h>
-
-#include "mdwenum.h"
-#include "mixer.h"
-#include "viewbase.h"
 
 /**
  * Class that represents an Enum element (a select one-from-many selector)

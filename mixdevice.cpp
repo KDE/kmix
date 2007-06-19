@@ -35,10 +35,9 @@
  * Hints: Meaning of "category" has changed. In future the MixDevice might contain two
  * Volume objects, one for Output (Playback volume) and one for Input (Record volume).
  */
-MixDevice::MixDevice( const QString& id, Volume &playbackVol, Volume &captureVol, const QString& name, ChannelType type ) :
-    _playbackVolume( playbackVol ), _captureVolume(captureVol), _type( type ), _id( id )
+MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type ) :
+    _mixer(mixer), _type( type ), _id( id )
 {
-    // Hint: "_volume" gets COPIED from "vol" due to the fact that the copy-constructor actually copies the volume levels.
     if( name.isEmpty() )
         _name = i18n("unknown");
     else
@@ -50,21 +49,32 @@ MixDevice::MixDevice( const QString& id, Volume &playbackVol, Volume &captureVol
     }
 }
 
-MixDevice::MixDevice(const MixDevice &md) : QObject()
+void MixDevice::addPlaybackVolume(Volume &playbackVol)
 {
-    _name           = md._name;
-    _playbackVolume = md._playbackVolume;
-    _captureVolume  = md._captureVolume;
-    _type           = md._type;
-    _id             = md._id;
-    _enumValues     = md._enumValues;
+   // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
+   _playbackVolume = playbackVol;
 }
 
+void MixDevice::addCaptureVolume (Volume &captureVol)
+{
+   _captureVolume = captureVol;
+}
+
+void MixDevice::addEnums(QList<QString*>& ref_enumList)
+{
+   if ( ref_enumList.count() > 0 ) {
+      int maxEnumId = ref_enumList.count();
+      for (int i=0; i<maxEnumId; i++ ) {
+            // we have an enum. Lets set the names of the enum items in the MixDevice
+            // the enum names are assumed to be static!
+            _enumValues.append( *(ref_enumList.at(i)) );
+      }
+   }
+}
+
+
 MixDevice::~MixDevice() {
-    // Clear MixDevices enum Strings (switch on auto-delete, so the QString's inside will be cleared)
-    // Not needed anymore, as we store QString's, not pointers
-    //_enumValues.setAutoDelete(true);
-    _enumValues.clear();
+    _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
 }
 
 Volume& MixDevice::playbackVolume()

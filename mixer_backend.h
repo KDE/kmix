@@ -32,7 +32,7 @@ friend class Mixer;
 
 // The Mixer Backend's may only be accessed from the Mixer class.
 protected:
-  Mixer_Backend(int devnum);
+  Mixer_Backend(Mixer *mixer, int devnum);
   virtual ~Mixer_Backend();
 
   /// Derived classes MUST implement this to open the mixer. Returns a KMix error code (O=OK).
@@ -113,6 +113,12 @@ protected:
   bool m_isOpen;
   // The MixDevice that would qualify best as MasterDevice (according to the taste of the Backend developer)
   MixDevice* m_recommendedMaster;
+   // The Mixer is sored her only for one reason: The backend creates the MixDevice's, and it has shown
+   // that it is helpful if the MixDevice's know their corespondig Mixer. KMix lived 10 years without that,
+   // but just believe me. It's *reaaly* better, for examle, you can put controls of different soundcards in
+   // one View. That is very cool! Also the MDW doesn't need to store the Mixer any longer (it's a GUI element,
+   // so that was 'wrong' anyhow
+   Mixer* _mixer;
   QTimer* _pollingTimer;
 
   mutable bool _readSetFromHWforceUpdate;

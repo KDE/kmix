@@ -335,7 +335,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
    static QString capture = i18n("(capture)");
    QString sliderDescription = m_mixdevice->readableName();
    if ( type == 'c' ) { // capture
-      sliderDescription += " " + capture;
+      sliderDescription += ' ' + capture;
    }
 
    if ( _orientation == Qt::Vertical ) {

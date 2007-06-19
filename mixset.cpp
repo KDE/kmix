@@ -20,24 +20,18 @@
  */
 
 
-#include <QString>
+//KMix
+#include "mixset.h"
+#include "mixdevice.h"
 
+// KDE
 #include <kdebug.h>
 #include <kconfig.h>
 
-#include "mixdevice.h"
-#include "mixset.h"
+// Qt
+#include <QString>
 
-void MixSet::clone( MixSet &set )
-{
-   clear();
 
-   for(int i=0; i < set.count() ; i++ )
-   {
-       MixDevice *md = set[i];
-       append( new MixDevice( *md ) );
-   }
-}
 
 void MixSet::read( KConfig *config, const QString& grp )
 {

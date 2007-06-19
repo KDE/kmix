@@ -24,12 +24,14 @@
 // for the "ERR_" declartions, #include mixer.h
 #include "mixer.h"
 
-Mixer_Backend::Mixer_Backend(int device) :
-   m_devnum (device) , m_isOpen(false), m_recommendedMaster(0)
+Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
+   m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer)
 
 {
-    _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
-    connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
+   // In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
+   // like ::select() is possible (as in ALSA).
+   _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
+   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
 }
 
 Mixer_Backend::~Mixer_Backend()
