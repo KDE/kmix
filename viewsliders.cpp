@@ -66,7 +66,6 @@ QWidget* ViewSliders::add(MixDevice *md)
             Normally you won't do this, but the creator of the Profile is at least free to do so if he wishes. */
    if ( md->isEnum() ) {
       mdw = new MDWEnum(
-               _mixer,       // the mixer for this device
                md,           // MixDevice (parameter)
                orientation,  // Orientation
                this,         // parent
@@ -76,7 +75,6 @@ QWidget* ViewSliders::add(MixDevice *md)
    } // an enum
    else {
       mdw = new MDWSlider(
-               _mixer,       // the mixer for this device
                md,           // MixDevice (parameter)
                true,         // Show Mute LED
                true,         // Show Record LED

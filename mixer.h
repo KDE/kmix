@@ -150,7 +150,7 @@ class Mixer : public QObject
 
    signals:
       void newBalance( Volume& );
-      void newVolumeLevels(void);
+      void controlChanged(void);
 
    protected:
       int m_balance; // from -100 (just left) to 100 (just right)
@@ -163,12 +163,13 @@ class Mixer : public QObject
       static QList<Mixer *>& mixers();
 
    private:
+      void setBalanceInternal(Volume& vol);
       Mixer_Backend *_mixerBackend;
       static int _dcopID;
       QString _id;
       QString _masterDevicePK;
-      static QString _masterCard;
-      static QString _masterCardDevice;
+      static QString _globalMasterCard;
+      static QString _globalMasterCardDevice;
 };
 
 #endif

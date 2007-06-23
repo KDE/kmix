@@ -80,7 +80,7 @@ bool Mixer_Backend::prepareUpdateFromHW() {
 
 /**
  * After calling this, readSetFromHW() will do a complete update. This will
- * trigger emitting the appropriate signals like newVolumeLevels().
+ * trigger emitting the appropriate signals like controlChanged().
  *
  * This method is useful, if you need to get a "refresh signal" - used at:
  * 1) Start of KMix - so that we can be sure an initial signal is emitted
@@ -128,16 +128,17 @@ void Mixer_Backend::readSetFromHW()
  * The users preference is NOT returned by this method - see the Mixer class for that.
  */
 MixDevice* Mixer_Backend::recommendedMaster() {
-   MixDevice* recommendedMixDevice = 0;
    if ( m_recommendedMaster != 0 ) {
-      recommendedMixDevice = m_recommendedMaster;
+      return m_recommendedMaster;   // Backend has set a recommended master. Thats fine.
    } // recommendation from Backend
+   else if ( m_mixDevices.count() > 0 ) {
+      return m_mixDevices.at(0);  // Backend has NOT set a recommended master. Evil backend => lets help out.
+   } //first device (if exists)
    else {
-      if ( m_mixDevices.count() > 0 ) {
-         recommendedMixDevice = m_mixDevices.at(0);
-      } //first device (if exists)
+      // This should never ever happen, as KMix doe NOT accept soundcards without controls
+      kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
+      return (MixDevice*)0;
    }
-   return recommendedMixDevice;
 }
 
 /**

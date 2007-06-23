@@ -245,7 +245,6 @@ void ViewSurround::refreshVolumeLevels() {
 MixDeviceWidget* ViewSurround::createMDW(MixDevice *md, bool small, Qt::Orientation orientation)
 {
     MixDeviceWidget* mdw = new MDWSlider(
-			    _mixer,       // the mixer for this device
 			    md,           // MixDevice (parameter)
 			    false,         // Show Mute LED
 			    false,        // Show Record LED

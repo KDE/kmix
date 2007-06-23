@@ -44,7 +44,7 @@ class MixDeviceWidget
       Q_OBJECT
 
 public:
-    MixDeviceWidget( Mixer *mixer, MixDevice* md,
+    MixDeviceWidget( MixDevice* md,
                      bool small, Qt::Orientation orientation,
                      QWidget* parent = 0, ViewBase* mw = 0 );
     ~MixDeviceWidget();
@@ -81,7 +81,6 @@ protected slots:
 
 protected:
       MixDevice*           m_mixdevice;
-      Mixer*               m_mixer; // !!! This MUST go into the MixDevice class !!!
       KActionCollection*   _mdwActions;
       ViewBase*            m_mixerwidget;
       bool                 m_disabled;

@@ -45,35 +45,35 @@ class MDWSwitch : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWSwitch( Mixer *mixer, MixDevice* md,
-	       bool small, Qt::Orientation orientation,
-	       QWidget* parent = 0, ViewBase* mw = 0);
-    ~MDWSwitch();
+   MDWSwitch( MixDevice* md,
+   bool small, Qt::Orientation orientation,
+   QWidget* parent = 0, ViewBase* mw = 0);
+   ~MDWSwitch();
 
-    void addActionToPopup( KAction *action );
-    QSize sizeHint() const;
-    void setBackgroundRole(QPalette::ColorRole m);
-    bool eventFilter( QObject* obj, QEvent* e );
+   void addActionToPopup( KAction *action );
+   QSize sizeHint() const;
+   void setBackgroundRole(QPalette::ColorRole m);
+   bool eventFilter( QObject* obj, QEvent* e );
 
 public slots:
-    // GUI hide and show
-    void setDisabled();
-    void setDisabled(bool);
+   // GUI hide and show
+   void setDisabled();
+   void setDisabled(bool);
 
-    // Switch on/off
-    void toggleSwitch();
-    void setSwitch(bool value);
+   // Switch on/off
+   void toggleSwitch();
+   void setSwitch(bool value);
 
-    void update();
-    virtual void showContextMenu();
+   void update();
+   virtual void showContextMenu();
 
 private:
-    void createWidgets();
+   void createWidgets();
 
-    QLabel        *_label;
-    VerticalText  *_labelV;
-    KLedButton    *_switchLED;
-    QBoxLayout    *_layout;
+   QLabel        *_label;
+   VerticalText  *_labelV;
+   KLedButton    *_switchLED;
+   QBoxLayout    *_layout;
 };
 
 #endif

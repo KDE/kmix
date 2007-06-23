@@ -50,7 +50,7 @@ class MDWSlider : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWSlider( Mixer *mixer, MixDevice* md,
+    MDWSlider( MixDevice* md,
 	       bool showMuteLED, bool showRecordLED,
 	       bool small, Qt::Orientation,
 	       QWidget* parent = 0, ViewBase* mw = 0);

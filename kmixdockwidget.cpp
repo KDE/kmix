@@ -102,7 +102,7 @@ KMixDockWidget::createMasterVolWidget()
      _oldPixmapType   = '-';
 
     if (Mixer::getGlobalMasterMD() == 0) {
-        // In case that there is no mixer installed, there will be no newVolumeLevels() signal's
+        // In case that there is no mixer installed, there will be no controlChanged() signal's
         // Thus we prepare the dock areas manually
         setVolumeTip();
         updatePixmap();
@@ -126,9 +126,9 @@ KMixDockWidget::createMasterVolWidget()
      * Refreshing the Tooltip
      * Refreshing the Icon
      */
-    //    connect( m_mixer, SIGNAL(newVolumeLevels()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
-    connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(setVolumeTip() ) );
-    connect( m_mixer, SIGNAL(newVolumeLevels()), this, SLOT(updatePixmap() ) );
+    //    connect( m_mixer, SIGNAL(controlChanged()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
+    connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip() ) );
+    connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap() ) );
 }
 
 

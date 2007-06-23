@@ -94,7 +94,7 @@ friend class MixDevice;
     
     bool hasSwitch()           { return _hasSwitch; }
     bool hasVolume()           { return (_maxVolume != _minVolume); }
-    bool isCapture()           { return _isCapture; }
+    bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
     
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend kdbgstream& operator<<(kdbgstream& os, const Volume& vol);

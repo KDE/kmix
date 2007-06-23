@@ -1,9 +1,9 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kmix" version="4">
+<kpartgui name="kmix" version="5">
 
 <ActionProperties>
     <Action name="hide_kmixwindow" icon="window"/>
-    <Action name="options_show_menubar" icon="window"/>
+<!--    <Action name="options_show_menubar" icon="window"/> -->
 </ActionProperties>
 
 <MenuBar>
@@ -11,7 +11,7 @@
   <Action name="file_new_tab"/>
   <Action name="file_close_tab"/>
   <Action name="hide_kmixwindow"/>
-  <Action name="options_show_menubar"/>
+<!--  <Action name="options_show_menubar"/> -->
  </Menu>
  <Menu name="help" append="about_merge"><text>&amp;Help</text>
   <Action name="hwinfo"/>

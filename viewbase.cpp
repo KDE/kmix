@@ -44,26 +44,27 @@
 ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
     : QWidget(parent, f), _vflags(vflags), _guiprof(guiprof)
 {
-    setObjectName(id);
-    m_viewId = id;
-    _mixer = mixer;
-    _mixSet = new MixSet();
-    _actions = new KActionCollection( this );
+   setObjectName(id);
+   m_viewId = id;
+   _mixer = mixer;
+   _mixSet = new MixSet();
+   _actions = new KActionCollection( this );
 
-    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
-    if ( vflags & ViewBase::HasMenuBar ) {
-	KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-	if ( vflags & ViewBase::MenuBarVisible ) {
-	    m->setChecked(true);
-	}
-	else {
-	    m->setChecked(false);
-	}
-    }
-    QAction *action = _actions->addAction("toggle_channels");
-    action->setText(i18n("&Channels"));
-    connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
-    connect ( _mixer, SIGNAL(newVolumeLevels()), this, SLOT(refreshVolumeLevels()) );
+   // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
+   if ( vflags & ViewBase::HasMenuBar ) {
+      KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
+      _actions->addAction( m->objectName(), m );
+      if ( vflags & ViewBase::MenuBarVisible ) {
+         m->setChecked(true);
+      }
+      else {
+         m->setChecked(false);
+      }
+   }
+   QAction *action = _actions->addAction("toggle_channels");
+   action->setText(i18n("&Channels"));
+   connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
+   connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
 }
 
 ViewBase::~ViewBase() {

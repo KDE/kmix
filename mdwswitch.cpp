@@ -47,10 +47,10 @@
  * The orientation (horizontal, vertical) can be configured and whether it should
  * be "small"  (uses KSmallSlider instead of QSlider then).
  */
-MDWSwitch::MDWSwitch(Mixer *mixer, MixDevice* md,
+MDWSwitch::MDWSwitch(MixDevice* md,
                      bool small, Qt::Orientation orientation,
                      QWidget* parent, ViewBase* mw) :
-    MixDeviceWidget(mixer,md,small,orientation,parent,mw),
+    MixDeviceWidget(md,small,orientation,parent,mw),
     _label(0) , _labelV(0) , _switchLED(0), _layout(0)
 {
     // create actions (on _mdwActions, see MixDeviceWidget)
@@ -196,11 +196,11 @@ void MDWSwitch::setSwitch(bool value)
 {
    if (  m_mixdevice->playbackVolume().hasSwitch() ) {   // !!! @todo Support combination of "cswitch pswitch"
       if ( m_mixdevice->captureVolume().hasSwitch() ) {
-         m_mixer->setRecordSource( m_mixdevice->id(), value );
+         m_mixdevice->mixer()->setRecordSource( m_mixdevice->id(), value );
       }
       else {
          m_mixdevice->setMuted( value );
-         m_mixer->commitVolumeChange( m_mixdevice );
+         m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
       }
    }
 }

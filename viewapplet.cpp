@@ -98,7 +98,6 @@ QWidget* ViewApplet::add(MixDevice *md)
     //    kDebug(67100) << "ViewApplet::add()\n";
     MixDeviceWidget *mdw =
 	new MDWSlider(
-			    _mixer,       // the mixer for this device
 			    md,           // MixDevice (parameter)
 			    false,        // Show Mute LED
 			    false,        // Show Record LED

@@ -125,7 +125,6 @@ void ViewDockAreaPopup::setMixSet()
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
 {
    _mdw = new MDWSlider(
-      _mixer,       // the mixer for this device
       md,		  // only 1 device. This is actually _dockDevice
       true,         // Show Mute LED
       false,        // Show Record LED

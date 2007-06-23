@@ -59,11 +59,11 @@
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(Mixer *mixer, MixDevice* md,
+MDWSlider::MDWSlider(MixDevice* md,
                                  bool showMuteLED, bool showRecordLED,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
-    MixDeviceWidget(mixer,md,small,orientation,parent,mw),
+    MixDeviceWidget(md,small,orientation,parent,mw),
     m_linked(true), m_iconLabel( 0 ), m_iconLabelSimple(0), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
@@ -692,7 +692,7 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref
    } // !stereoLinked()
 
    // --- Step 3: Write back the new volumes to the HW ---
-   m_mixer->commitVolumeChange(m_mixdevice);
+   m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
 
@@ -709,7 +709,7 @@ void MDWSlider::setRecsrc(bool value )
 {
    if (  m_mixdevice->captureVolume().hasSwitch() ) {
       m_mixdevice->setRecSource( value );
-      m_mixer->commitVolumeChange( m_mixdevice );
+      m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
    }
 }
 
@@ -726,7 +726,7 @@ void MDWSlider::setMuted(bool value)
 {
      if (  m_mixdevice->playbackVolume().hasSwitch() ) {
       m_mixdevice->setMuted( value );
-      m_mixer->commitVolumeChange(m_mixdevice);
+      m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
     }
 }
 
@@ -769,7 +769,7 @@ void MDWSlider::increaseVolume()
         long newVal = (volC[i]) + inc;
         volC.setVolume( (Volume::ChannelID)i, newVal < volC.maxVolume() ? newVal : volC.maxVolume() );
     }
-    m_mixer->commitVolumeChange(m_mixdevice);
+    m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
 /**
@@ -795,7 +795,7 @@ void MDWSlider::decreaseVolume()
         long newVal = (volC[i]) - inc;
         volC.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
     }
-    m_mixer->commitVolumeChange(m_mixdevice);
+    m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
 

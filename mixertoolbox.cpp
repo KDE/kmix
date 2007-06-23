@@ -66,139 +66,141 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 {
    //kDebug(67100) << "IN MixerToolBox::initMixer()"<<endl;
 
-    // Find all mixers and initialize them
-    QMap<QString,int> mixerNums;
-    int drvNum = Mixer::numDrivers();
+   // Find all mixers and initialize them
+   QMap<QString,int> mixerNums;
+   int drvNum = Mixer::numDrivers();
 
-    int driverWithMixer = -1;
-    bool multipleDriversActive = false;
+   int driverWithMixer = -1;
+   bool multipleDriversActive = false;
 
-    QString driverInfo = "";
-    QString driverInfoUsed = "";
+   QString driverInfo = "";
+   QString driverInfoUsed = "";
 
-    for( int drv1=0; drv1<drvNum; drv1++ )
-    {
+   for( int drv1=0; drv1<drvNum; drv1++ )
+   {
       QString driverName = Mixer::driverName(drv1);
-      if ( driverInfo.length() > 0 )
-	driverInfo += " + ";
+      if ( driverInfo.length() > 0 ) {
+         driverInfo += " + ";
+      }
       driverInfo += driverName;
-    }
-	/* Run a loop over all drivers. The loop will terminate after the first driver which
-	   has mixers. And here is the reason:
-	   - If you run ALSA with ALSA-OSS-Emulation enabled, mixers will show up twice: once
-	     as native ALSA mixer, once as OSS mixer (emulated by ALSA). This is bad and WILL
-	     confuse users. So it is a design decision that we can compile in multiple drivers
-	     but we can run only one driver.
-	   - For special usage scenarios, people will still want to run both drivers at the
-	     same time. We allow them to hack their Config-File, where they can enable a
-	     multi-driver mode.
-	   - Another remark: For KMix3.0 or so, we should allow multiple-driver, for allowing
-	     addition of special-use drivers, e.g. an Jack-Mixer-Backend, or a CD-Rom volume Backend.
-	 */
-
-    bool autodetectionFinished = false;
-    for( int drv=0; drv<drvNum; drv++ )
-    {
-	  QString driverName = Mixer::driverName(drv);
-
-	  if ( autodetectionFinished ) {
-		// sane exit from loop
-		break;
-	    }
-
-	    bool drvInfoAppended = false;
-	    // The "19" below is just a "silly" number:
-	    // (Old: The loop will break as soon as an error is detected - e.g. on 3rd loop when 2 soundcards are installed)
-	    // New: We don't try be that clever anymore. We now blindly scan 20 cards, as the clever
-	    // approach doesn't work for the one or other user (e.g. hotpluging might create holes in the list of soundcards).
-	    int devNumMax = 19;
-	    for( int dev=0; dev<=devNumMax; dev++ )
-	    {
-		Mixer *mixer = new Mixer( drv, dev );
-		if ( mixer->openIfValid() ) {
-			Mixer::mixers().append( mixer );
-			// Count mixer nums for every mixer name to identify mixers with equal names.
-			// This is for creating persistent (reusable) primary keys, which can safely
-			// be referenced (especially for config file access, so it is meant to be persistent!).
-			mixerNums[mixer->baseName()]++;
-			// Create a useful PK
-			/* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
-			 * contain it.
-			 * %1, the driver name is from the KMix backends, it does not contain colons.
-			 * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
-			 * %3, the mixer number, is a number: it does not contain colons.
-			 */
-			QString mixerName = mixer->baseName();
-			mixerName.replace(":","_");
-			QString primaryKeyOfMixer = QString("%1::%2:%3")
-			    .arg(driverName)
-			    .arg(mixerName)
-			    .arg(mixerNums[mixer->baseName()]);
-			// The following 3 replaces are for not messing up the config file
-			primaryKeyOfMixer.replace("]","_");
-			primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
-			primaryKeyOfMixer.replace(" ","_");
-			primaryKeyOfMixer.replace("=","_");
-			
-			mixer->setID(primaryKeyOfMixer);
-			emit mixerAdded(primaryKeyOfMixer);
-		} // valid
-		else
-		{
-			delete mixer;
-			mixer = 0;
-		} // invalid
-
-		/* Lets decide if the autoprobing shall continue: */
-		if ( multiDriverMode ) {
-			// trivial case: In multiDriverMode, we scan ALL 20 devs of ALL drivers
-			// so we have to do "nothing" in this case
-		} // multiDriver
-		else {
-			// In No-multiDriver-mode we only need to check after we reached devNumMax
-			if ( dev == devNumMax ) {
-			   if ( Mixer::mixers().count() != 0 ) {
-				// highest device number of driver and a Mixer => finished
-				autodetectionFinished = true;	
-			   }
-			}
-		} // !multiDriver
-
-		// append driverName (used drivers)
-		if ( !drvInfoAppended )
-                {
-		    drvInfoAppended = true;
-		    QString driverName = Mixer::driverName(drv);
-		    if (  Mixer::mixers().count() > 1) {
-			driverInfoUsed += " + ";
-		    }
-		    driverInfoUsed += driverName;
-		}
-
-		// Check whether there are mixers in different drivers, so that the user can be warned
-		if (!multipleDriversActive)
-		{
-		    if ( driverWithMixer == -1 )
-		    {
-			// Aha, this is the very first detected device
-			driverWithMixer = drv;
-		    }
-		    else
-		    {
-			if ( driverWithMixer != drv )
-			{
-			    // Got him: There are mixers in different drivers
-			    multipleDriversActive = true;
-			}
-		    }
-		} //  !multipleDriversActive
-		
-	    } // loop over sound card devices of current driver
-            if (autodetectionFinished) {
-               break;
+   }
+   /* Run a loop over all drivers. The loop will terminate after the first driver which
+      has mixers. And here is the reason:
+      - If you run ALSA with ALSA-OSS-Emulation enabled, mixers will show up twice: once
+         as native ALSA mixer, once as OSS mixer (emulated by ALSA). This is bad and WILL
+         confuse users. So it is a design decision that we can compile in multiple drivers
+         but we can run only one driver.
+      - For special usage scenarios, people will still want to run both drivers at the
+         same time. We allow them to hack their Config-File, where they can enable a
+         multi-driver mode.
+      - Another remark: For KMix3.0 or so, we should allow multiple-driver, for allowing
+         addition of special-use drivers, e.g. an Jack-Mixer-Backend, or a CD-Rom volume Backend.
+      */
+   
+   bool autodetectionFinished = false;
+   for( int drv=0; drv<drvNum; drv++ )
+   {
+      QString driverName = Mixer::driverName(drv);
+   
+      if ( autodetectionFinished ) {
+         // inner loop indicates that we are finished => sane exit from outer loop
+         break;
+      }
+   
+      bool drvInfoAppended = false;
+      // The "19" below is just a "silly" number:
+      // (Old: The loop will break as soon as an error is detected - e.g. on 3rd loop when 2 soundcards are installed)
+      // New: We don't try be that clever anymore. We now blindly scan 20 cards, as the clever
+      // approach doesn't work for the one or other user (e.g. hotplugging might create holes in the list of soundcards).
+      int devNumMax = 19;
+      for( int dev=0; dev<=devNumMax; dev++ )
+      {
+         Mixer *mixer = new Mixer( drv, dev );
+         if ( mixer->openIfValid() ) {
+            Mixer::mixers().append( mixer );
+            // Count mixer nums for every mixer name to identify mixers with equal names.
+            // This is for creating persistent (reusable) primary keys, which can safely
+            // be referenced (especially for config file access, so it is meant to be persistent!).
+            mixerNums[mixer->baseName()]++;
+            // Create a useful PK
+            /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
+               * contain it.
+               * %1, the driver name is from the KMix backends, it does not contain colons.
+               * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
+               * %3, the mixer number, is a number: it does not contain colons.
+               */
+            QString mixerName = mixer->baseName();
+            mixerName.replace(":","_");
+            QString primaryKeyOfMixer = QString("%1::%2:%3")
+                  .arg(driverName)
+                  .arg(mixerName)
+                  .arg(mixerNums[mixer->baseName()]);
+            // The following 3 replaces are for not messing up the config file
+            primaryKeyOfMixer.replace("]","_");
+            primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
+            primaryKeyOfMixer.replace(" ","_");
+            primaryKeyOfMixer.replace("=","_");
+            
+            mixer->setID(primaryKeyOfMixer);
+            emit mixerAdded(primaryKeyOfMixer);
+         } // valid
+         else
+         {
+            delete mixer;
+            mixer = 0;
+         } // invalid
+   
+         /* Lets decide if the autoprobing shall continue: */
+         if ( multiDriverMode ) {
+            // trivial case: In multiDriverMode, we scan ALL 20 devs of ALL drivers
+            // so we have to do "nothing" in this case
+         } // multiDriver
+         else {
+            // In No-multiDriver-mode we only need to check after we reached devNumMax
+            if ( dev == devNumMax ) {
+               if ( Mixer::mixers().count() != 0 ) {
+               // highest device number of driver and a Mixer => finished
+               autodetectionFinished = true;	
+               }
             }
-	} // loop over soundcard drivers
+         } // !multiDriver
+      
+         // append driverName (used drivers)
+         if ( !drvInfoAppended )
+         {
+            drvInfoAppended = true;
+            QString driverName = Mixer::driverName(drv);
+            if (  Mixer::mixers().count() > 1) {
+               driverInfoUsed += " + ";
+            }
+            driverInfoUsed += driverName;
+         }
+      
+         // Check whether there are mixers in different drivers, so that the user can be warned
+         if (!multipleDriversActive)
+         {
+            if ( driverWithMixer == -1 )
+            {
+               // Aha, this is the very first detected device
+               driverWithMixer = drv;
+            }
+            else
+            {
+               if ( driverWithMixer != drv )
+               {
+                  // Got him: There are mixers in different drivers
+                  multipleDriversActive = true;
+               }
+            }
+         } //  !multipleDriversActive
+      
+      } // loop over sound card devices of current driver
 
+      if (autodetectionFinished) {
+         break;
+      }
+   } // loop over soundcard drivers
+   
    if ( Mixer::getGlobalMasterMixer() == 0 ) {
       // We have no master card yet. This actually only happens when there was
       // not one defined in the kmixrc.
@@ -209,16 +211,16 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
       }
    }
 
-	ref_hwInfoString = i18n("Sound drivers supported:");
-	ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
+   ref_hwInfoString = i18n("Sound drivers supported:");
+   ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
 
-	if ( multipleDriversActive )
-	{
-	    // this will only be possible by hacking the config-file, as it will not be officially supported
-	    ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
-	}
+   if ( multipleDriversActive )
+   {
+      // this will only be possible by hacking the config-file, as it will not be officially supported
+      ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
+   }
 
-	kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count() << endl;
+   kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count() << endl;
    //kDebug(67100) << "OUT MixerToolBox::initMixer()"<<endl;
 
 }

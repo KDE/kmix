@@ -57,10 +57,10 @@
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */
-MixDeviceWidget::MixDeviceWidget(Mixer* mixer, MixDevice* md,
+MixDeviceWidget::MixDeviceWidget(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
-   QWidget( parent ), m_mixdevice( md ), m_mixer(mixer), m_mixerwidget( mw ),
+   QWidget( parent ), m_mixdevice( md ), m_mixerwidget( mw ),
    m_disabled( false ), _orientation( orientation ), m_small( small )
 {
    _mdwActions = new KActionCollection( this );

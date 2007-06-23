@@ -49,10 +49,10 @@
  * Class that represents an Enum element (a select one-from-many selector)
  * The orientation (horizontal, vertical) is ignored
  */
-MDWEnum::MDWEnum(Mixer *mixer, MixDevice* md,
+MDWEnum::MDWEnum( MixDevice* md,
                  Qt::Orientation orientation,
                  QWidget* parent, ViewBase* mw) :
-   MixDeviceWidget(mixer,md,false,orientation,parent,mw),
+   MixDeviceWidget(md,false,orientation,parent,mw),
    _label(0), _enumCombo(0), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
@@ -164,7 +164,7 @@ void MDWEnum::setEnumId(int value)
 {
    if (  m_mixdevice->isEnum() ) {
       m_mixdevice->setEnumId( value );
-      m_mixer->commitVolumeChange( m_mixdevice );
+      m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
    }
 }
 

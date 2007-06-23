@@ -43,8 +43,8 @@
 int Mixer::_dcopID = 0;
 
 QList<Mixer *> Mixer::s_mixers;
-QString Mixer::_masterCard;
-QString Mixer::_masterCardDevice;
+QString Mixer::_globalMasterCard;
+QString Mixer::_globalMasterCardDevice;
 
 int Mixer::numDrivers()
 {
@@ -167,7 +167,7 @@ bool Mixer::openIfValid() {
 
 void Mixer::controlChangedForwarder()
 {
-    emit newVolumeLevels();
+    emit controlChanged();
 }
 
 /**
@@ -229,42 +229,45 @@ void Mixer::readSetFromHWforceUpdate() const {
 
 void Mixer::setBalance(int balance)
 {
-  // !! BAD, because balance only works on the master device. If you have not Master, the slider is a NOP
-  // @todo This is hardocded to playback. This setBalance() method MUST be redone in a reasonable manner
-  if( balance == m_balance ) {
+   if( balance == m_balance ) {
       // balance unchanged => return
       return;
-  }
+   }
 
-  m_balance = balance;
+   m_balance = balance;
 
-  MixDevice* master = Mixer::getGlobalMasterMD();
-  if ( master == 0 ) {
+   MixDevice* master = Mixer::getLocalMasterMD();
+   if ( master == 0 ) {
       // no master device available => return
       return;
-  }
+   }
 
-    Volume& volP = master->playbackVolume();
-    Volume& volC = master->captureVolume();
-    _mixerBackend->readVolumeFromHW( master->id(), master );
+   Volume& volP = master->playbackVolume();
+   setBalanceInternal(volP);
+   Volume& volC = master->captureVolume();
+   setBalanceInternal(volC);
 
-    int left = volP[ Volume::LEFT ];
-    int right = volP[ Volume::RIGHT ];
-    int refvol = left > right ? left : right;
-    if( balance < 0 ) // balance left
-    {
-        volP.setVolume( Volume::LEFT,  refvol);
-        volP.setVolume( Volume::RIGHT, (balance * refvol) / 100 + refvol );
-    }
-    else
-    {
-        volP.setVolume( Volume::LEFT, -(balance * refvol) / 100 + refvol );
-        volP.setVolume( Volume::RIGHT,  refvol);
-    }
+   _mixerBackend->writeVolumeToHW( master->id(), master );
+   emit newBalance( volP );
+}
 
-    _mixerBackend->writeVolumeToHW( master->id(), master );
+void Mixer::setBalanceInternal(Volume& vol)
+{
+   //_mixerBackend->readVolumeFromHW( master->id(), master );
 
-  emit newBalance( volP );
+   int left = vol[ Volume::LEFT ];
+   int right = vol[ Volume::RIGHT ];
+   int refvol = left > right ? left : right;
+   if( m_balance < 0 ) // balance left
+   {
+      vol.setVolume( Volume::LEFT,  refvol);
+      vol.setVolume( Volume::RIGHT, (m_balance * refvol) / 100 + refvol );
+   }
+   else
+   {
+      vol.setVolume( Volume::LEFT, -(m_balance * refvol) / 100 + refvol );
+      vol.setVolume( Volume::RIGHT,  refvol);
+   }
 }
 
 QString Mixer::baseName()
@@ -313,8 +316,8 @@ void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
   // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
   // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
   // and before actually constructing the Mixer instances (hint: this mehtod is static!).
-  _masterCard       = ref_card;
-  _masterCardDevice = ref_control;
+  _globalMasterCard       = ref_card;
+  _globalMasterCardDevice = ref_control;
   kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control << endl;
 }
 
@@ -324,16 +327,16 @@ Mixer* Mixer::getGlobalMasterMixer()
    for (int i=0; i< Mixer::mixers().count(); ++i )
    {
       mixer = Mixer::mixers()[i];
-      if ( mixer != 0 && mixer->id() == _masterCard ) {
-         kDebug() << "Mixer::masterCard() found " << _masterCard << endl;
+      if ( mixer != 0 && mixer->id() == _globalMasterCard ) {
+         kDebug() << "Mixer::masterCard() found " << _globalMasterCard << endl;
          break;
       }
    }
    if ( mixer == 0 && Mixer::mixers().count() > 0 ) {
       // produce fallback
       mixer = Mixer::mixers()[0];
-      _masterCard = mixer->id();
-      kDebug() << "Mixer::masterCard() fallback to  " << mixer->id() << "," << _masterCard << endl;
+      _globalMasterCard = mixer->id();
+      kDebug() << "Mixer::masterCard() fallback to  " << _globalMasterCard << endl;
    }
    kDebug() << "Mixer::masterCard() returns " << mixer->id() << endl;
    return mixer;
@@ -347,16 +350,9 @@ MixDevice* Mixer::getGlobalMasterMD()
       for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
       {
          md = mixer->_mixerBackend->m_mixDevices[i];
-         if ( md->id() == _masterCardDevice )
-            kDebug() << "Mixer::masterCardDevice() found " << _masterCardDevice << endl;
+         if ( md->id() == _globalMasterCardDevice )
+            kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice << endl;
             break;
-      }
-
-      if ( _masterCardDevice == 0 && mixer->_mixerBackend->m_mixDevices.count() > 0 ) {
-         // produce fallback
-         md = mixer->_mixerBackend->m_mixDevices[0];
-         _masterCardDevice = md->id();
-         kDebug() << "Mixer::masterCardDevice() fallback to  " << _masterCardDevice << endl;
       }
    }
 
@@ -497,9 +493,10 @@ void Mixer::setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume )
     MixDevice *md= getMixdeviceById( mixdeviceID );
     if (!md) return;
 
-    Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+    Volume& volP=md->playbackVolume();
     Volume& volC=md->captureVolume();
     volP.setAllVolumes( absoluteVolume );
+    volC.setAllVolumes( absoluteVolume );
     _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 }
 

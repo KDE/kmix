@@ -122,15 +122,16 @@ int Mixer_OSS::open()
       if (ioctl(m_fd, SOUND_MIXER_READ_STEREODEVS, &stereodevs) == -1)
         return Mixer::ERR_READ;
 
-      int maxVolume =100;
-
           int idx = 0;
           while( devmask && idx < MAX_MIXDEVS )
             {
               if( devmask & ( 1 << idx ) ) // device active?
                 {
-                  // recmask & ( 1 << idx ), true,
-                  Volume vol( stereodevs & ( 1 << idx ) ? 2 : 1, maxVolume);
+                  Volume::ChannelMask chnmask = Volume::MLEFT;
+                  if ( stereodevs & ( 1 << idx ) ) chnmask = (Volume::ChannelMask)(chnmask|Volume::MRIGHT);
+
+                  Volume playbackVol( chnmask, 100, 1, true, false );
+
                   QString id;
                   id.setNum(idx);
                   MixDevice* md =
@@ -139,7 +140,16 @@ int Mixer_OSS::open()
                                    id,
                                    i18n(MixerDevNames[idx]),
                                    MixerChannelTypes[idx]);
-                  md->addPlaybackVolume(vol);
+                  md->addPlaybackVolume(playbackVol);
+
+                  // Tutorial: Howto add a simple capture switch
+                  if ( recmask & ( 1 << idx ) ) {
+                     // can be captured => add capture volume, with no capture volume
+                     chnmask = Volume::MNONE;
+                     Volume captureVol( chnmask, 100, 1, true, true );
+                     md->addCaptureVolume(captureVol);
+                 }
+
                   m_mixDevices.append( md );
                 }
               idx++;
@@ -290,14 +300,24 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
         }
         else
         {
-            vol.setVolume( Volume::LEFT, (volume & 0x7f));
-            if( vol.count() > 1 )
-                vol.setVolume( Volume::RIGHT, ((volume>>8) & 0x7f));
+
+            int volLeft  = (volume & 0x7f);
+            int volRight = ((volume>>8) & 0x7f);
+            bool isMuted = volLeft==0 && ( vol.count() < 2 || volRight==0 ); // muted is "left and right muted" or "left muted when mono"
+            md->setMuted( isMuted );
+            if ( ! isMuted ) {
+               // Muted is represented in OSS by value 0. We don't want to write the value 0 as a volume,
+               // but instead we onlm mark it muted (see setMuted() above).
+               vol.setVolume( Volume::LEFT, volLeft);
+               if( vol.count() > 1 )
+                  vol.setVolume( Volume::RIGHT, volRight);
+            }
         }
     }
 
 
     // --- RECORD SWITCH ---
+    //Volume& captureVol = md->captureVolume();
     int recsrcMask;
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
         ret = Mixer::ERR_READ;

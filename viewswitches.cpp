@@ -86,7 +86,6 @@ QWidget* ViewSwitches::add(MixDevice *md)
   if ( md->isEnum() ) {
      Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
      mdw = new MDWEnum(
-		      _mixer,       // the mixer for this device
                       md,           // MixDevice (parameter)
                       orientation,  // Orientation
                       this,         // parent
@@ -99,7 +98,6 @@ QWidget* ViewSwitches::add(MixDevice *md)
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
     mdw =
 	new MDWSwitch(
-		      _mixer,       // the mixer for this device
 		      md,           // MixDevice (parameter)
 		      false,        // Small
 		      orientation,  // Orientation

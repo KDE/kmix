@@ -102,7 +102,9 @@ public:
    // operator==() is used currently only for duplicate detection with QList's contains() method
    bool operator==(const MixDevice& other) const;
 
-   // @todo possibly remove the following 4 methods: isMuted(), ...
+   // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
+   // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
+   // "mute on", or does it mean "playback on".
    bool isMuted()                  { return ( ! _playbackVolume.hasSwitch() || ! _playbackVolume.isSwitchActivated() ); }
    void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
    bool isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }

@@ -384,7 +384,7 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	//setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	//kDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
 	m_appletView->show();
-	//connect( _mixer, SIGNAL(newVolumeLevels()), m_appletView, SLOT(refreshVolumeLevels()) );
+	//connect( _mixer, SIGNAL(controlChanged()), m_appletView, SLOT(refreshVolumeLevels()) );
     }
 }
 

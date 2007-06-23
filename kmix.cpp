@@ -97,7 +97,8 @@ void KMixWindow::initActions()
    KStandardAction::quit( this, SLOT(quit()), actionCollection());
 
    // settings menu
-   KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   KAction *a = KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   //actionCollection()->addAction( a->objectName(), a );
    KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
    KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
