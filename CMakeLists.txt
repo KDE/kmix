@@ -4,6 +4,7 @@ find_package(Plasma)
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
+add_subdirectory( tests ) 
 
 set(kmix_adaptor_SRCS)
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
@@ -165,20 +166,6 @@ install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES org.kde.KMix.xml DESTINATION ${DBUS_INTERFACES_DIR} )
 
-########### next target ###############
-set(profiletest_SRCS tests/profiletest.cpp )
-
-kde4_automoc(${profiletest_SRCS})
-
-kde4_add_test_executable(profiletest ${profiletest_SRCS} 
-    guiprofile.cpp mixer.cpp mixdevice.cpp volume.cpp mixer_backend.cpp mixset.cpp
-    ${kmix_adaptor_SRCS} )
-
-target_link_libraries(profiletest  ${KDE4_KDECORE_LIBS} )
-
-if (HAVE_LIBASOUND2)
-    target_link_libraries(profiletest ${ASOUND_LIBRARY})
-endif (HAVE_LIBASOUND2)
 
 
 
