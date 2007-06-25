@@ -26,7 +26,7 @@
 #include <config.h>
 #endif
 
-// include files for Qt
+// Qt
 #include <QString>
 class QLabel;
 #include <QMap>
@@ -34,10 +34,12 @@ class QLabel;
 #include <QVBoxLayout>
 class KTabWidget;
 
-// include files for KDE
+// KDE
+class KAccel;
+class KAction;
 #include <kxmlguiwindow.h>
 
-class KAccel;
+// KMix
 class KMixPrefDlg;
 class KMixDockWidget;
 class KMixWindow;
@@ -68,7 +70,7 @@ KMixWindow : public KXmlGuiWindow
    void initActions();
    void recreateGUI();
    void initWidgets();
-   void setErrorMixerWidget();
+   //void setErrorMixerWidget();
 
    bool updateDocking();
    void clearMixerWidgets();
@@ -92,6 +94,7 @@ KMixWindow : public KXmlGuiWindow
 
   private:
    KAccel *m_keyAccel;
+   KAction* _actionShowMenubar;
 
    bool m_showDockWidget;
    bool m_volumeWidget;

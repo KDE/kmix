@@ -10,22 +10,24 @@ set(kmix_adaptor_SRCS)
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
 ########### next target ###############
 
+# Cleanup
+#   viewsurround.cpp for now
+#   mdwswitch.cpp 
+#   viewoutput.cpp 
+#   viewinput.cpp 
+#   viewswitches.cpp 
+#   viewsliderset.cpp 
+
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    main.cpp 
    kmix.cpp 
    kmixdockwidget.cpp 
    kmixprefdlg.cpp 
    viewbase.cpp 
-   viewoutput.cpp 
-   viewinput.cpp 
-   viewswitches.cpp 
-   viewsurround.cpp 
    viewdockareapopup.cpp 
    viewsliders.cpp 
-   viewsliderset.cpp 
    mixdevicewidget.cpp 
    mdwslider.cpp 
-   mdwswitch.cpp 
    mdwenum.cpp 
    kmixerwidget.cpp 
    mixer.cpp 

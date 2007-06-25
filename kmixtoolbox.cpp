@@ -29,7 +29,6 @@
 #include <klocale.h>
 
 #include "mdwslider.h"
-#include "mdwswitch.h"
 #include "mixdevicewidget.h"
 #include "mixdevice.h"
 #include "mixer.h"

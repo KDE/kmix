@@ -44,12 +44,9 @@
 #include "mixdevicewidget.h"
 #include "mixer.h"
 #include "mixertoolbox.h"
-#include "viewinput.h"
-#include "viewoutput.h"
-#include "viewsliderset.h"
-#include "viewswitches.h"
+#include "viewsliders.h"
 // KMix experimental
-#include "viewsurround.h"
+//#include "viewsurround.h"
 
 
 /**
@@ -59,9 +56,9 @@
    (b) A balancing slider : This will be moved to ViewSliders.
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
-                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags )
+                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags, KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0),
+     m_topLayout(0), _actionCollection(actionCollection), 
      _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false )
 
 {
@@ -117,19 +114,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2c) Add Views to Tab
    ********************************************************************/
    GUIProfile* guiprof = MixerToolBox::instance()->selectProfile(_mixer);
-   if ( guiprof != 0 ) {
-      createViewsByProfile(_mixer, guiprof, vflags);
-   }
-   else
-   {
-      // Fallback, if no GUI Profile could be found
-      possiblyAddView(new ViewOutput   ( this, "Output" , _mixer, vflags, 0 ), * new QString("Output") );
-      possiblyAddView(new ViewInput    ( this, "Input"  , _mixer, vflags, 0 ), * new QString("Input") );
-      possiblyAddView(new ViewSwitches ( this, "Switches" , _mixer, vflags, 0 ), * new QString("Switches") );
-      if ( vflags & ViewBase::Experimental_SurroundView )
-         possiblyAddView( new ViewSurround( this, "Surround", _mixer, vflags, 0 ), * new QString("Surround"));
-   }
-
+   createViewsByProfile(_mixer, guiprof, vflags);
 
 
    // *** Lower part: Slider and Mixer Name ************************************************
@@ -192,7 +177,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
 {
    /*** How it works:
    * A loop is done over all tabs.
-   * For each Tab a View (e.g. ViewSliderSet) is instanciated and added to the list of Views
+   * For each Tab a View (e.g. ViewSliders) is instanciated and added to the list of Views
    */
    std::vector<ProfTab*>::const_iterator itEnd = guiprof->_tabs.end();
    for ( std::vector<ProfTab*>::const_iterator it = guiprof->_tabs.begin(); it != itEnd; ++it) {
@@ -202,14 +187,16 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       // This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
       // It is possible that the Profile author puts arbitrary names in it.
       kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << " name="<<profTab->name.toUtf8() << "\n";
-      if ( profTab->type == "SliderSet" ) {
-         ViewSliderSet* view = new ViewSliderSet  ( this, profTab->name.toAscii(), mixer, vflags, guiprof );
+      if ( profTab->type == "Sliders" ) {
+         ViewSliders* view = new ViewSliders( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
          possiblyAddView(view, profTab->name);
       }
-      else if ( profTab->type == "Surround" ) {
-         ViewSurround* view = new ViewSurround ( this, profTab->name.toAscii(), mixer, vflags, guiprof );
-         possiblyAddView(view, profTab->name);
-      }
+// Disable this View until the rest is done for KDE4
+//      else if ( profTab->type == "Surround" ) {
+//         ViewSurround* view = new ViewSurround ( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
+//         possiblyAddView(view, profTab->name);
+//      }
+
       else {
          kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
       }

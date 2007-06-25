@@ -54,7 +54,7 @@ class KMixerWidget : public QWidget
 
   public:
    KMixerWidget( Mixer *mixer,
-                 QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0 );
+                 QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, KActionCollection* coll = 0 );
    ~KMixerWidget();
 	
    Mixer *mixer() const { return _mixer; }
@@ -90,6 +90,7 @@ class KMixerWidget : public QWidget
 
    std::vector<ViewBase*> _views;
 
+   KActionCollection* _actionCollection;  // -<- applciations wide action collection
    KActionMenu *m_toggleMixerChannels;
 
    bool _iconsEnabled;

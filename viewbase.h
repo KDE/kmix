@@ -26,7 +26,7 @@
 #include <qlist.h>
 
 // KDE
-class KActionCollection;
+#include <KActionCollection>
 class KMenu;
 class MixSet;
 class Mixer;
@@ -57,7 +57,7 @@ public:
       Experimental_SurroundView = 0x1000
    };
 
-    ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0);
+    ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
     QString viewId() const;
@@ -113,7 +113,8 @@ protected:
     Mixer *_mixer;
     MixSet *_mixSet;
     KMenu *_popMenu;
-    KActionCollection* _actions;
+    KActionCollection* _actions; // -<- applciations wide action collection
+
     ViewFlags _vflags;
     GUIProfile* _guiprof;
 

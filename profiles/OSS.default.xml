@@ -68,10 +68,13 @@
      or
      show="simple:Play,extended:Various,full:Play"
 -->
-<control id="0" controls="*"/>        <!-- Master/Volume -->
-<control id="4" controls="*"/>        <!-- PCM -->
-<control id="8" controls="*"/>        <!-- CD -->
+<control id="^0$" controls="*"/>        <!-- Master/Volume -->
+<control id="^4$" controls="*"/>        <!-- PCM -->
+<control id="^8$" controls="*"/>        <!-- CD -->
 
+
+<!-- Show all controls in the second View -->
+<control id="^.*$" tab="All" show="extended" />
 
 
 

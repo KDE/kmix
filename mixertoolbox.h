@@ -51,6 +51,7 @@ class MixerToolBox : public QObject
 
    private:
       static MixerToolBox* s_instance;
+      static GUIProfile*   s_fallbackProfile;
 };
 
 #endif

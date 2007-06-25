@@ -92,6 +92,19 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 
         //std::cout << "Raw Profile: " << *this;
 	if ( ok ) {
+      ok = finalizeProfile();
+   } // Read OK
+   else {
+      // !! this error message about faulty profiles should probably be surrounded with i18n()
+      kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
+   }
+
+   return ok;
+}
+
+bool GUIProfile::finalizeProfile()
+{
+   bool ok = true;
 		// Reading is OK => now make the profile consistent
 
 		// (1) Make sure the _tabs are complete (add any missing Tabs)
@@ -115,7 +128,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 					// no such Tab yet => insert it
 					ProfTab* tab = new ProfTab();
 					tab->name = tabnameOfControl;
-					tab->type = "SliderSet";  //  as long as we don't know better
+					tab->type = "Sliders";  //  as long as we don't know better
 					_tabs.push_back(tab);
 				} // tab does not exist yet => insert new tab
 			} // Control contains a TabName
@@ -125,7 +138,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 		if ( _tabs.size() == 0) {
 			ProfTab* tab = new ProfTab();
 			tab->name = "Controls"; // !! A better name should be used. What about i18n() ?
-			tab->type = "SliderSet";  //  as long as we don't know better
+			tab->type = "Sliders";  //  as long as we don't know better
 			_tabs.push_back(tab);
 		} // Step (2)
 
@@ -142,13 +155,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 		} // Step (3)
 		//std::cout << "Consistent Profile: " << *this;
 
-	} // Read OK
-	else {
-		// !! this error message about faulty profiles should probably be surrounded with i18n()
-		kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
-	}
-
-	return ok;
+   return ok;
 }
 
 /**
@@ -421,7 +428,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		// We need at least an "id". We can set defaults for the rest, if undefined.
 		ProfControl *profControl = new ProfControl();
 		if ( subcontrols.isNull() ) {
-			subcontrols = "*";
+			subcontrols = ".*";
 		}
 		if ( tab.isNull() ) {
 			// Ignore this for the moment. We will put it on the first existing Tab at the end of parsing

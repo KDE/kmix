@@ -23,14 +23,17 @@
 
 #include "viewsliders.h"
 
-class QWidget;
 class Mixer;
+
+class KActionCollection;
+
+class QWidget;
 
 class ViewSliderSet : public ViewSliders
 {
     Q_OBJECT
 public:
-    ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof);
+    ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection* actionCollection);
     ~ViewSliderSet();
 
     virtual void setMixSet();

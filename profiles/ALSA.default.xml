@@ -68,6 +68,8 @@
      or
      show="simple:Play,extended:Various,full:Play"
 -->
+
+<!-- remove the test entries, so that we have somewhat sensible defaults for KDE4 alpha2
 <control id="Master:0" controls="*" tab="Play" name="Lautstärke" show="simple" />
 <control id="Master:1" controls="*" tab="Play" name="Lautstärke 2" show="extended" />
 <control id="PCM:0"    controls="*" tab="Huhu" name="Welle" show="simple" />
@@ -78,6 +80,16 @@
 <control id="^C.*:0"    controls="*" tab="Play" show="extended" />
 
 <control id="CD:1"     controls="*" tab="Play" show="extended" />
+-->
+
+<control id="^Master:0$"      tab="Base" name="Front"/>
+<control id="^Surround:0$"    tab="Base" />
+<control id="^Center:0$"      tab="Base" />
+<control id="^LFE:0$"         tab="Base" />
+<control id="^PCM:0$"         tab="Base" />
+<control id="^CD:0$"          tab="Base" />
+<control id="^Headphone:0$"   tab="Base" />
+<control id="^DAC:0$"         tab="Base" />
 
 <control id="^.*$" tab="All" show="extended" />
 

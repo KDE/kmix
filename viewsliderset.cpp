@@ -20,14 +20,17 @@
  */
 
 #include "viewsliderset.h"
-#include <QWidget>
-
 #include "guiprofile.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 
-ViewSliderSet::ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewSliders(parent, name, mixer, vflags, guiprof)
+#include <KActionCollection>
+
+#include <QWidget>
+
+
+ViewSliderSet::ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection* actionCollection)
+      : ViewSliders(parent, name, mixer, vflags, guiprof, actionCollection)
 {
     setMixSet();
 }

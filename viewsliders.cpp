@@ -19,29 +19,32 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+// KMix
 #include "viewsliders.h"
+#include "guiprofile.h"
+#include "mdwenum.h"
+#include "mdwslider.h"
+#include "mixer.h"
+#include "verticaltext.h"
+
+// KDE
+#include <kdebug.h>
 
 // Qt
 #include <QLabel>
 #include <QLayout>
 #include <QWidget>
 
-// KDE
-#include <kdebug.h>
 
-// KMix
-#include "mdwenum.h"
-#include "mdwslider.h"
-#include "mixer.h"
-#include "verticaltext.h"
+
 
 /**
  * Don't instanciate objects of this class directly. It won't work
  * correctly because init() does not get called.
  * See ViewInput and ViewOutput for "real" implementations.
  */
-ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-      : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof)
+ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
+      : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof, actColl)
 {
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
@@ -50,6 +53,7 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
       _layoutMDW = new QHBoxLayout(this);
    }
    _layoutMDW->setSpacing(0);
+    setMixSet();
 }
 
 ViewSliders::~ViewSliders() {
@@ -86,6 +90,63 @@ QWidget* ViewSliders::add(MixDevice *md)
    _layoutMDW->addWidget(mdw);
    return mdw;
 }
+
+
+void ViewSliders::setMixSet()
+{
+    const MixSet& mixset = _mixer->getMixSet();
+
+
+   // This method iterates the controls from the Profile
+   // Each control is checked, whether it is also contained in the mixset, and
+   // applicable for this kind of View. If yes, the control is accepted and inserted.
+   
+   std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
+   for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
+   {
+      ProfControl* control = *it;
+      if ( control->tab == viewId() ) {
+         // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
+         bool isUsed = false;
+   
+         QRegExp idRegexp(control->id);
+         //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
+         // The following for-loop could be simplified by using a std::find_if
+         for ( int i=0; i<mixset.count(); i++ ) {
+            MixDevice *md = mixset[i];
+            if ( md->id().contains(idRegexp) )
+            {
+               /*kDebug(67100) << "     ViewSliders::setMixSet(): match found for md->id()==" <<
+               md->id()
+                  << " ; control->id=="
+                  << control->id << "\n"; */
+               // OK, this control is handable by this View. Lets do a duplicate check
+               if ( ! _mixSet->contains( md ) ) {
+                  if ( !control->name.isNull() ) {
+                     // Apply the custom name from the profile
+                     md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
+                  }
+                  _mixSet->append(md);
+                  isUsed = true;
+                  // We use no "break;" ,as multiple devices could match
+                  //break;
+               }
+               else {
+                  //kDebug(67100) << "        But it is a duplicate and was not added\n";
+               }
+            } // name matches
+         } // loop for finding a suitable MixDevice
+         if ( ! isUsed ) {
+            // There is something in the Profile, that doesn't correspond to a Mixer control
+            kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
+         }
+      } // Tab name matches
+      else {
+      }  // Tab name doesn't match (=> don't insert)
+   } // iteration over all controls from the Profile
+}
+
+
 
 QSize ViewSliders::sizeHint() const {
    //    kDebug(67100) << "ViewSliders::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";

@@ -71,8 +71,8 @@ KMixWindow::KMixWindow()
 {
    setObjectName("KMixWindow");
 
+   initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
-   initActions();
    initWidgets();
    initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
@@ -97,7 +97,7 @@ void KMixWindow::initActions()
    KStandardAction::quit( this, SLOT(quit()), actionCollection());
 
    // settings menu
-   KAction *a = KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+   _actionShowMenubar = KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
    //actionCollection()->addAction( a->objectName(), a );
    KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
    KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
@@ -139,7 +139,9 @@ void KMixWindow::initWidgets()
 
    m_widgetsLayout->addWidget(m_wsMixers);
 
-   menuBar()->setVisible(m_showMenubar);
+   // show menubar if the actions says so (or if the action does not exist)
+   menuBar()->setVisible( (_actionShowMenubar==0) || _actionShowMenubar->isChecked());
+      
    m_widgetsLayout->activate();
 }
 
@@ -187,7 +189,7 @@ void KMixWindow::saveBaseConfig()
    // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
    // (Please note that the problem was only there when quitting via Systray - esken).
    config.writeEntry( "Visible", m_isVisible );
-   config.writeEntry( "Menubar", m_showMenubar );
+   config.writeEntry( "Menubar", _actionShowMenubar->isChecked() );
    config.writeEntry( "AllowDocking", m_showDockWidget );
    config.writeEntry( "TrayVolumeControl", m_volumeWidget );
    config.writeEntry( "Tickmarks", m_showTicks );
@@ -280,10 +282,9 @@ void KMixWindow::loadBaseConfig()
        m_toplevelOrientation = Qt::Horizontal;
 
    // show/hide menu bar
-   m_showMenubar = config.readEntry("Menubar", true);
+   bool showMenubar = config.readEntry("Menubar", true);
 
-   KToggleAction *a = static_cast<KToggleAction*>(actionCollection()->action("options_show_menubar"));
-   if (a) a->setChecked( m_showMenubar );
+   if (_actionShowMenubar) _actionShowMenubar->setChecked( showMenubar );
 
    // restore window size and position
    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
@@ -328,24 +329,24 @@ void KMixWindow::recreateGUI()
 {
    saveViewConfig();  // save the state before recreating
    clearMixerWidgets();
-   for (int i=0; i<Mixer::mixers().count(); ++i) {
-      Mixer *mixer = (Mixer::mixers())[i];
-      addMixerWidget(mixer->id());
+   if ( Mixer::mixers().count() > 0 ) {
+      for (int i=0; i<Mixer::mixers().count(); ++i) {
+         Mixer *mixer = (Mixer::mixers())[i];
+         addMixerWidget(mixer->id());
+      }
+      bool dockingSucceded = updateDocking();
+      if( !dockingSucceded )
+         show(); // avoid invisible and unaccessible main window
    }
-   if ( m_wsMixers->count() == 0 )
-   {
-     setErrorMixerWidget();
+   else {
+      // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
    }
-   bool dockingSucceded = updateDocking();
-   if( !dockingSucceded )
-      show(); // avoid invisible and unaccessible main window
 }
 
 
 /**
  * Create a widget with an error message
  * This widget shows an error message like "no mixers detected.
- */
 void KMixWindow::setErrorMixerWidget()
 {
    QString s = i18n("Please plug in your soundcard.No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
@@ -355,6 +356,7 @@ void KMixWindow::setErrorMixerWidget()
    m_errorLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    m_wsMixers->addTab( m_errorLabel, i18n("No soundcard found") );
 }
+ */
 
 void KMixWindow::clearMixerWidgets()
 {
@@ -390,7 +392,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       }
 
 
-      KMixerWidget *mw = new KMixerWidget( mixer, this, "KMixerWidget", vflags );
+      KMixerWidget *mw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, actionCollection() );
 
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
@@ -497,8 +499,7 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 
 void KMixWindow::toggleMenuBar()
 {
-   m_showMenubar = !menuBar()->isVisible();
-   menuBar()->setVisible(m_showMenubar);
+   menuBar()->setVisible(_actionShowMenubar->isChecked());
 }
 
 void KMixWindow::showEvent( QShowEvent * )

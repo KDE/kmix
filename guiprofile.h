@@ -59,7 +59,7 @@ struct ProfControl
 	QString name;
    // Pattern (REGEXP) for matching the control names.
    // If you set no pattern, the name will be used instead.
-   // If you use a pattern, you normnally should not define a name, as it will apply to all matching controls
+   // If you use a pattern, you normally should not define a name, as it will apply to all matching controls
    QString regexp;
 	// show or hide (contains the GUI type: simple, extended, full)
 	QString show;
@@ -85,6 +85,7 @@ public:
 	virtual ~GUIProfile();
 
 	bool readProfile(QString& ref_fileNamestring);
+   bool finalizeProfile();
 	unsigned long match(Mixer* mixer);
 	friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
  
@@ -93,7 +94,7 @@ public:
 	typedef std::set<ProfProduct*, ProductComparator> ProductSet;
 	typedef std::vector<ProfControl*> ControlSet;
 	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringSet;
-	typedef std::map<std::string, std::string> StringMap;
+	//typedef std::map<std::string, std::string> StringMap;
 	ControlSet _controls;
 	std::vector<ProfTab*> _tabs;        // shouldn't be sorted
 	ProductSet _products;

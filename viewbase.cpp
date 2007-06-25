@@ -12,7 +12,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+//  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
@@ -41,24 +41,34 @@
 #include "mixer.h"
 
 
-ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof)
-    : QWidget(parent, f), _vflags(vflags), _guiprof(guiprof)
+ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
+    : QWidget(parent, f), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
 {
    setObjectName(id);
    m_viewId = id;
    _mixer = mixer;
    _mixSet = new MixSet();
-   _actions = new KActionCollection( this );
+
+   if ( _actions == 0 ) {
+      // We create our own action collection, if the actionColletion was 0.
+      // This is currently done for the ViewDockAreaPopup, but only because it has not been converted to use the app-wide
+      // actionCollection(). This is a @todo.
+      _actions = new KActionCollection( this );
+   }
 
    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
    if ( vflags & ViewBase::HasMenuBar ) {
-      KToggleAction *m = static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-      _actions->addAction( m->objectName(), m );
-      if ( vflags & ViewBase::MenuBarVisible ) {
-         m->setChecked(true);
-      }
-      else {
-         m->setChecked(false);
+      KToggleAction *m = static_cast<KToggleAction*>(  _actions->action( name(KStandardAction::ShowMenubar) ) ) ;
+
+      //static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
+      //_actions->addAction( m->objectName(), m );
+      if ( m != 0 ) {
+         if ( vflags & ViewBase::MenuBarVisible ) {
+            m->setChecked(true);
+         }
+         else {
+            m->setChecked(false);
+         }
       }
    }
    QAction *action = _actions->addAction("toggle_channels");
