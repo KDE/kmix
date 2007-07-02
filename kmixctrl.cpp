@@ -35,26 +35,22 @@
 static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
 
-static KCmdLineOptions options[] =
-{
-   { "s", 0, 0 },
-   { "save", I18N_NOOP("Save current volumes as default"), 0 },
-   { "r", 0, 0 },
-   { "restore", I18N_NOOP("Restore default volumes"), 0 },
-   KCmdLineLastOption
-   // INSERT YOUR COMMANDLINE OPTIONS HERE
-};
-
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
    KLocale::setMainCatalog("kmix");
-   KAboutData aboutData( "kmixctrl", I18N_NOOP("KMixCtrl"),
-			 APP_VERSION, description, KAboutData::License_GPL,
-			 "(c) 2000 by Stefan Schimanski");
+   KAboutData aboutData( "kmixctrl", 0, ki18n("KMixCtrl"),
+			 APP_VERSION, ki18n(description), KAboutData::License_GPL,
+			 ki18n("(c) 2000 by Stefan Schimanski"));
 
-   aboutData.addAuthor("Stefan Schimanski", 0, "1Stein@gmx.de");
+   aboutData.addAuthor(ki18n("Stefan Schimanski"), KLocalizedString(), "1Stein@gmx.de");
 
    KCmdLineArgs::init( argc, argv, &aboutData );
+
+   KCmdLineOptions options;
+   options.add("s");
+   options.add("save", ki18n("Save current volumes as default"));
+   options.add("r");
+   options.add("restore", ki18n("Restore default volumes"));
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    KApplication app( false );

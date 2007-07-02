@@ -84,9 +84,9 @@ void kdm::tick()
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-  KAboutData aboutData( "kmixd", I18N_NOOP("Soundcard Mixer Device Manager"),
-                         APP_VERSION, description, KAboutData::License_GPL,
-                         "(c) 2007 by Christian Esken");
+  KAboutData aboutData( "kmixd", 0, ki18n("Soundcard Mixer Device Manager"),
+                         APP_VERSION, ki18n(description), KAboutData::License_GPL,
+                         ki18n("(c) 2007 by Christian Esken"));
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   //KApplication app( false );

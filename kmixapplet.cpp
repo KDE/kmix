@@ -160,9 +160,9 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
 
    : KPanelApplet( configFile, t, Plasma::Preferences | Plasma::ReportBug | Plasma::About, parent ),
      m_appletView(0), m_errorLabel(0), m_pref(0),
-     m_aboutData( "kmix", I18N_NOOP("KMix Panel Applet"),
-                         APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
-                         I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
+     m_aboutData( "kmix", 0, ki18n("KMix Panel Applet"),
+                         APP_VERSION, ki18n("Mini Sound Mixer Applet"), KAboutData::License_GPL,
+                         ki18n( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
    setObjectName(name);
     kDebug(67100) << "KMixApplet::KMixApplet instancing Applet. Old s_instCount="<< s_instCount << " configfile=" << configFile << endl;
@@ -215,7 +215,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
 	// We know which mixer to use: Call positionChange(), which does all the creating
 	positionChange(position());
     }
-    m_aboutData.addCredit( I18N_NOOP( "For detailed credits, please refer to the About information of the KMix program" ) );
+    m_aboutData.addCredit( ki18n( "For detailed credits, please refer to the About information of the KMix program" ) );
 }
 
 KMixApplet::~KMixApplet()

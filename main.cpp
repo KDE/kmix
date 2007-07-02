@@ -31,34 +31,30 @@
 static const char description[] =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
 
-static KCmdLineOptions options[] =
-{
-   { "keepvisibility", I18N_NOOP("Inhibits the unhiding of the KMix main window, if KMix is already running."), 0 },
-   KCmdLineLastOption
-   // INSERT YOUR COMMANDLINE OPTIONS HERE
-};
-
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-   KAboutData aboutData( "kmix", I18N_NOOP("KMix"),
-                         APP_VERSION, description, KAboutData::License_GPL,
-                         I18N_NOOP("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski\n(c) 2002-2005 Christian Esken, Helio Chissini de Castro"));
+   KAboutData aboutData( "kmix", 0, ki18n("KMix"),
+                         APP_VERSION, ki18n(description), KAboutData::License_GPL,
+                         ki18n("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski\n(c) 2002-2005 Christian Esken, Helio Chissini de Castro"));
 
-   aboutData.addAuthor("Christian Esken", "Current maintainer", "esken@kde.org");
-   aboutData.addAuthor("Helio Chissini de Castro", I18N_NOOP("Co-maintainer, Alsa 0.9x port"), "helio@kde.org" );
-   aboutData.addAuthor("Brian Hanson"      , I18N_NOOP("Solaris port"), "bhanson@hotmail.com");
+   aboutData.addAuthor(ki18n("Christian Esken"), ki18n("Current maintainer"), "esken@kde.org");
+   aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("Co-maintainer, Alsa 0.9x port"), "helio@kde.org" );
+   aboutData.addAuthor(ki18n("Brian Hanson")      , ki18n("Solaris port"), "bhanson@hotmail.com");
 /* The SGI and HP/UX ports are not maintained anymore, and no official part of KMix anymore
-   aboutData.addAuthor("Paul Kendall"      , I18N_NOOP("SGI Port"), "paul@orion.co.nz");
-   aboutData.addAuthor("Helge Deller"      , I18N_NOOP("HP/UX port"), "deller@gmx.de");
+   aboutData.addAuthor(ki18n("Paul Kendall")      , ki18n("SGI Port"), "paul@orion.co.nz");
+   aboutData.addAuthor(ki18n("Helge Deller")      , ki18n("HP/UX port"), "deller@gmx.de");
 */
-   aboutData.addCredit("Stefan Schimanski" , I18N_NOOP("Temporary maintainer"), "schimmi@kde.org");
-   aboutData.addCredit("Erwin Mascher"     , I18N_NOOP("Improving support for emu10k1 based soundcards"), "");
-   aboutData.addCredit("Sebestyen Zoltan"  , I18N_NOOP("*BSD fixes"), "szoli@digo.inf.elte.hu");
-   aboutData.addCredit("Lennart Augustsson", I18N_NOOP("*BSD fixes"), "augustss@cs.chalmers.se");
-   aboutData.addCredit("Nick Lopez"        , I18N_NOOP("ALSA port"), "kimo_sabe@usa.net");
-   aboutData.addCredit("Nadeem Hasan"      , I18N_NOOP("Mute and volume preview, other fixes"), "nhasan@kde.org");
+   aboutData.addCredit(ki18n("Stefan Schimanski") , ki18n("Temporary maintainer"), "schimmi@kde.org");
+   aboutData.addCredit(ki18n("Erwin Mascher")     , ki18n("Improving support for emu10k1 based soundcards"));
+   aboutData.addCredit(ki18n("Sebestyen Zoltan")  , ki18n("*BSD fixes"), "szoli@digo.inf.elte.hu");
+   aboutData.addCredit(ki18n("Lennart Augustsson"), ki18n("*BSD fixes"), "augustss@cs.chalmers.se");
+   aboutData.addCredit(ki18n("Nick Lopez")        , ki18n("ALSA port"), "kimo_sabe@usa.net");
+   aboutData.addCredit(ki18n("Nadeem Hasan")      , ki18n("Mute and volume preview, other fixes"), "nhasan@kde.org");
 
    KCmdLineArgs::init( argc, argv, &aboutData );
+
+   KCmdLineOptions options;
+   options.add("keepvisibility", ki18n("Inhibits the unhiding of the KMix main window, if KMix is already running."));
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KUniqueApplication::addCmdLineOptions();
 
