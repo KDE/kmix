@@ -46,7 +46,6 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    guiprofile.cpp )
 
 
-kde4_automoc(${kmix_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
@@ -73,7 +72,6 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    mixer_backend.cpp 
    guiprofile.cpp )
 
-kde4_automoc(${kmixctrl_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
@@ -95,7 +93,6 @@ set(kmixd_KMIXD_SRCS
    kmixd.cpp
    kmixdevicemanager.cpp )
 
-kde4_automoc(${kmixd_KMIXD_SRCS})
 
 
 kde4_add_kdeinit_executable( kmixd ${kmixd_KMIXD_SRCS})
@@ -137,7 +134,6 @@ set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
    dialogselectmaster.cpp 
    guiprofile.cpp )
 
-kde4_automoc(${kmix_panelapplet_PART_SRCS})
 
 kde4_add_ui_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
 

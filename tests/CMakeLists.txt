@@ -8,7 +8,6 @@ qt4_add_dbus_adaptor( kmix_adaptor_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../org.kde.K
 ########### next target ###############
 set(profiletest_SRCS profiletest.cpp )
 
-kde4_automoc(${profiletest_SRCS})
 
 kde4_add_test_executable(profiletest ${profiletest_SRCS} 
     ${CMAKE_CURRENT_SOURCE_DIR}/../guiprofile.cpp 
