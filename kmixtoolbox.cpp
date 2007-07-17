@@ -122,7 +122,11 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
             //names. -- ahartmetz
 
             //keys->setConfigGroup(devgrpkeys);
-            keys->readSettings();
+#ifdef __GNUC__
+#warning port me - it's probably safe to just remove this line as *global* shortcut setttings
+#warning are now loaded automatically by default.
+#endif
+            //keys->readSettings();
          } // MDW has keys
       } // is a MixDeviceWidget
    } // for all widgets
