@@ -123,7 +123,7 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
 
             //keys->setConfigGroup(devgrpkeys);
 #ifdef __GNUC__
-#warning port me - it's probably safe to just remove this line as *global* shortcut setttings
+#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
 #warning are now saved and loaded automatically by default.
 #endif
             //keys->readSettings();
@@ -194,7 +194,7 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
             //See note in loadKeys! -- ahartmetz
             //keys->setConfigGroup(devgrpkeys);
 #ifdef __GNUC__
-#warning port me - it's probably safe to just remove this line as *global* shortcut setttings
+#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
 #warning are now saved and loaded automatically by default.
 #endif
             //keys->writeSettings();
