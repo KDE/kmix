@@ -35,7 +35,7 @@
 
 void MixSet::read( KConfig *config, const QString& grp )
 {
-   kDebug(67100) << "MixSet::read() of group " << grp << endl;
+   kDebug(67100) << "MixSet::read() of group " << grp;
    KConfigGroup group = config->group(grp);
    m_name = group.readEntry( "name", m_name );
 
@@ -48,7 +48,7 @@ void MixSet::read( KConfig *config, const QString& grp )
 
 void MixSet::write( KConfig *config, const QString& grp )
 {
-   kDebug(67100) << "MixSet::write() of group " << grp << endl;    
+   kDebug(67100) << "MixSet::write() of group " << grp;    
    KConfigGroup conf = config->group(grp);
    conf.writeEntry( "name", m_name );
 

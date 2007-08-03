@@ -120,7 +120,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
  */
 void DialogSelectMaster::createPageByID(int mixerId)
 {
-  //kDebug(67100) << "DialogSelectMaster::createPage()" << endl;
+  //kDebug(67100) << "DialogSelectMaster::createPage()";
   for( int i =0; i<Mixer::mixers().count(); i++ )
   {
     Mixer *mixer = (Mixer::mixers())[i];
@@ -162,7 +162,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
         MixDevice* md = mset[i]; // @todo How to deal with playback and capture
         // Create a RadioButton for each MixDevice (excluding Enum's)
         if ( md->playbackVolume().hasVolume() || md->captureVolume().hasVolume() ) {
-            //kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb" << endl;
+            //kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb";
             QString mdName = md->readableName();
 	    mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
 	    QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
@@ -193,7 +193,7 @@ void DialogSelectMaster::apply()
    if ( button != 0 ) {
       QString channel_id = button->objectName();
       // A channel was selected by the user => emit the "newMasterSelected()" signal
-      //kDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id << endl;
+      //kDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id;
       Mixer *mixer = Mixer::mixers().at(soundcard_id);
       if ( mixer == 0 ) {
          kError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixerID=" << soundcard_id << ")" << endl;

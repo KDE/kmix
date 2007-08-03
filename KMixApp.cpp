@@ -41,15 +41,15 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
-	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility << endl;
+	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
 	if ( m_kmix )
 	{	// There already exists an instance/window
-		kDebug(67100) <<  "KMixApp::newInstance() Instance exists" << endl;
+		kDebug(67100) <<  "KMixApp::newInstance() Instance exists";
 #ifdef __GNUC__
 #warning Have to find another way for KUniqueApplication::isRestored()
 #endif
 		if ( ! _keepVisibility /*&& ! isRestored()*/ ) {
-			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=false" << endl;
+			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=false";
 			// Default case: If KMix is running and the *USER*
                         // starts it again, the KMix main window will be shown.
 			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
@@ -57,7 +57,7 @@ KMixApp::newInstance()
 			m_kmix->show();
 		}
 		else {
-			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=true || isRestored()=true" << endl;
+			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=true || isRestored()=true";
 			// Special case: Command line arg --keepVisibility was used:
 			// We don't want to change the visibiliy, thus we don't call show() here.
 			//
@@ -69,7 +69,7 @@ KMixApp::newInstance()
 	}
 	else
 	{
-		//kDebug(67100) <<  "KMixApp::newInstance() !m_kmix" << endl;
+		//kDebug(67100) <<  "KMixApp::newInstance() !m_kmix";
 		m_kmix = new KMixWindow;
 		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
@@ -83,7 +83,7 @@ KMixApp::newInstance()
 
 
 void KMixApp::keepVisibility(bool val_keepVisibility) {
-   //kDebug(67100) <<  "KMixApp::keepVisibility()" << endl;
+   //kDebug(67100) <<  "KMixApp::keepVisibility()";
    _keepVisibility = val_keepVisibility;
 }
 

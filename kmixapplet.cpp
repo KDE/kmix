@@ -165,8 +165,8 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
                          ki18n( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
    setObjectName(name);
-    kDebug(67100) << "KMixApplet::KMixApplet instancing Applet. Old s_instCount="<< s_instCount << " configfile=" << configFile << endl;
-    //kDebug(67100) << "KMixApplet::KMixApplet()" << endl;
+    kDebug(67100) << "KMixApplet::KMixApplet instancing Applet. Old s_instCount="<< s_instCount << " configfile=" << configFile;
+    //kDebug(67100) << "KMixApplet::KMixApplet()";
     _layout = new QHBoxLayout(this); // it will always only be one item in it, so we don't care whether it is HBox or VBox
 
     // init static vars
@@ -176,7 +176,7 @@ KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
 	MixerToolBox::instance()->initMixer(false, dummyStringHwinfo);
     }
     s_instCount++;
-    kDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount << endl;
+    kDebug(67100) << "KMixApplet::KMixApplet instancing Applet, s_instCount="<< s_instCount;
 
     KGlobal::dirs()->addResourceType( "appicon", "data", "kmix/pics" );
 
@@ -234,11 +234,11 @@ KMixApplet::~KMixApplet()
 
 void KMixApplet::saveConfig()
 {
-    kDebug(67100) << "KMixApplet::saveConfig()" << endl;
+    kDebug(67100) << "KMixApplet::saveConfig()";
     if ( m_appletView != 0) {
-	//kDebug(67100) << "KMixApplet::saveConfig() save" << endl;
+	//kDebug(67100) << "KMixApplet::saveConfig() save";
         KConfig *cfg = this->config();
-	//kDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg << endl;
+	//kDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg;
         cfg->setGroup( 0 );
         cfg->writeEntry( "Mixer", _mixer->id() );
         cfg->writeEntry( "MixerName", _mixer->id() );
@@ -263,7 +263,7 @@ void KMixApplet::saveConfig()
 
 void KMixApplet::loadConfig()
 {
-    kDebug(67100) << "KMixApplet::loadConfig()" << endl;
+    kDebug(67100) << "KMixApplet::loadConfig()";
     KConfigGroup cfg(this->config(), 0);
 
     _mixerId = cfg.readEntry( "Mixer", "undef" );
@@ -382,7 +382,7 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	m_appletView->setGeometry( 0, 0, panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	resize( panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
 	//setFixedSize(panelAppletConstrainedSize.width(), panelAppletConstrainedSize.height() );
-	//kDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize << endl;
+	//kDebug(67100) << "KMixApplet::positionChange(). New MDW is at " << panelAppletConstrainedSize;
 	m_appletView->show();
 	//connect( _mixer, SIGNAL(controlChanged()), m_appletView, SLOT(refreshVolumeLevels()) );
     }
@@ -392,7 +392,7 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 /************* GEOMETRY STUFF START ********************************/
 void KMixApplet::resizeEvent(QResizeEvent *e)
 {
-    //kDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size() << endl;
+    //kDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size();
 
     if ( position() == Plasma::Left || position() == Plasma::Right ) {
         if ( m_appletView ) m_appletView->resize(e->size().width(),m_appletView->height());
@@ -406,9 +406,9 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
 
     // resizing changes our own sizeHint(), because we must take the new PanelSize in account.
     // So updateGeometry() is amust for us.
-    //kDebug(67100) << "KMixApplet::resizeEvent(). UPDATE GEOMETRY" << endl;
+    //kDebug(67100) << "KMixApplet::resizeEvent(). UPDATE GEOMETRY";
     updateGeometry();
-    //kDebug(67100) << "KMixApplet::resizeEvent(). EMIT UPDATE LAYOUT" << endl;
+    //kDebug(67100) << "KMixApplet::resizeEvent(). EMIT UPDATE LAYOUT";
     emit updateLayout();
 }
 
@@ -440,11 +440,11 @@ QSize KMixApplet::sizeHint() const {
    using this method. Actually we ignore the passed paramater and just return our preferred size.
 */
 int KMixApplet::widthForHeight(int) const {
-    //kDebug(67100) << "KMixApplet::widthForHeight() = " << sizeHint().width() << endl;
+    //kDebug(67100) << "KMixApplet::widthForHeight() = " << sizeHint().width();
     return sizeHint().width();
 }
 int KMixApplet::heightForWidth(int) const {
-    //kDebug(67100) << "KMixApplet::heightForWidth() = " << sizeHint().height() << endl;
+    //kDebug(67100) << "KMixApplet::heightForWidth() = " << sizeHint().height();
     return sizeHint().height();
 }
 

@@ -222,7 +222,7 @@ QColor interpolate( QColor low, QColor high, int percent ) {
 
 void KSmallSlider::paintEvent( QPaintEvent * )
 {
-//    kDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height() << endl;
+//    kDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height();
    QPainter p( this );
 
    int sliderPos = positionFromValue( QAbstractSlider::value() );
@@ -238,7 +238,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    {
        if (  orientation() == Qt::Horizontal ) {
          QRect outer = QRect( 1, 1, sliderPos, height() - 2 );
-//	 kDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer << endl;
+//	 kDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer;
 
          if ( grayed )
              gradient( p, true, outer, grayLow,
@@ -308,12 +308,12 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 /*
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
-//    kDebug(67100) << "KSmallslider::wheelEvent()" << endl;
+//    kDebug(67100) << "KSmallslider::wheelEvent()";
     int inc = ( maximum() - minimum() ) / 20;
     if ( inc < 1)
 	inc = 1;
 
-    //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta() << endl;
+    //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta();
     if ( e->delta() > 0 ) {
        setValue( QAbstractSlider::value() + inc );
     }

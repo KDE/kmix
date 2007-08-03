@@ -126,7 +126,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
     QString devgrp;
     devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
     config->setGroup( devgrp );
-    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp << endl;
+    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
     readPlaybackOrCapture(config, "volumeL"       , "volumeR"       , false);
     readPlaybackOrCapture(config, "volumeLCapture", "volumeRCapture", true );
@@ -185,7 +185,7 @@ void MixDevice::write( KConfig *config, const QString& grp )
    QString devgrp;
    devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
    config->setGroup(devgrp);
-   // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp << endl;
+   // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
     writePlaybackOrCapture(config, "volumeL"       , "volumeR"       , false);
     writePlaybackOrCapture(config, "volumeLCapture", "volumeRCapture", true );

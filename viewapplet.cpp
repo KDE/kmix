@@ -153,7 +153,7 @@ void ViewApplet::resizeEvent(QResizeEvent *qre)
     }
     KMixToolBox::setIcons(_mdws, showIcons);
 
-    //    kDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size() << endl;
+    //    kDebug(67100) << "ViewApplet::resizeEvent(). SHOULD resize _layoutMDW to " << qre->size();
     // resizing changes our own sizeHint(), because we must take the new PanelSize in account.
     // So updateGeometry() is a must for us.
     updateGeometry();
@@ -187,7 +187,7 @@ void ViewApplet::configurationUpdate() {
     updateGeometry();
     _layoutMDW->activate();
     emit appletContentChanged();
-    kDebug(67100) << "ViewApplet::configurationUpdate()" << endl;
+    kDebug(67100) << "ViewApplet::configurationUpdate()";
     // the following "emit" is only here to be picked up by KMixApplet, because it has to
     // - make sure the panel is informed about the size change
     // - save the new configuration

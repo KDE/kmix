@@ -266,9 +266,9 @@ void KMixWindow::loadBaseConfig()
    m_showLabels = config.readEntry("Labels", true);
    m_onLogin = config.readEntry("startkdeRestore", true );
    m_startVisible = config.readEntry("Visible", true);
-   kDebug(67100) << "MultiDriver a = " << m_multiDriverMode << endl;
+   kDebug(67100) << "MultiDriver a = " << m_multiDriverMode;
    m_multiDriverMode = config.readEntry("MultiDriver", false);
-   kDebug(67100) << "MultiDriver b = " << m_multiDriverMode << endl;
+   kDebug(67100) << "MultiDriver b = " << m_multiDriverMode;
    m_surroundView    = config.readEntry("Experimental-ViewSurround", false );
    const QString& orientationString = config.readEntry("Orientation", "Horizontal");
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
@@ -372,11 +372,11 @@ void KMixWindow::clearMixerWidgets()
 
 void KMixWindow::addMixerWidget(const QString& mixer_ID)
 {
-   kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << endl;
+   kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
    Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
    if ( mixer != 0 )
    {
-      kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added" << endl;
+      kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
       ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
       if ( m_showMenubar ) {
             vflags |= ViewBase::MenuBarVisible;

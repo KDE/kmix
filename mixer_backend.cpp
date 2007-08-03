@@ -101,7 +101,7 @@ void Mixer_Backend::readSetFromHW()
     if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
         // Some drivers (ALSA) are smart. We don't need to run the following
         // time-consuming update loop if there was no change
-        kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick" << endl;
+        kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick";
         return;
     }
     _readSetFromHWforceUpdate = false;

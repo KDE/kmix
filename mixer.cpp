@@ -106,7 +106,7 @@ Mixer::~Mixer() {
 
 void Mixer::volumeSave( KConfig *config )
 {
-    //    kDebug(67100) << "Mixer::volumeSave()" << endl;
+    //    kDebug(67100) << "Mixer::volumeSave()";
     _mixerBackend->readSetFromHW();
     QString grp("Mixer");
     grp.append(id());
@@ -152,7 +152,7 @@ bool Mixer::openIfValid() {
         if ( recommendedMaster != 0 ) {
             QString recommendedMasterStr = recommendedMaster->id();
             setLocalMasterMD( recommendedMasterStr );
-            kDebug() << "Mixer::open() detected master: " << recommendedMaster->id() << endl;
+            kDebug() << "Mixer::open() detected master: " << recommendedMaster->id();
         }
         else {
             kError(67100) << "Mixer::open() no master detected." << endl;
@@ -318,7 +318,7 @@ void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
   // and before actually constructing the Mixer instances (hint: this mehtod is static!).
   _globalMasterCard       = ref_card;
   _globalMasterCardDevice = ref_control;
-  kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control << endl;
+  kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
 }
 
 Mixer* Mixer::getGlobalMasterMixer()
@@ -328,7 +328,7 @@ Mixer* Mixer::getGlobalMasterMixer()
    {
       mixer = Mixer::mixers()[i];
       if ( mixer != 0 && mixer->id() == _globalMasterCard ) {
-         kDebug() << "Mixer::masterCard() found " << _globalMasterCard << endl;
+         kDebug() << "Mixer::masterCard() found " << _globalMasterCard;
          break;
       }
    }
@@ -336,9 +336,9 @@ Mixer* Mixer::getGlobalMasterMixer()
       // produce fallback
       mixer = Mixer::mixers()[0];
       _globalMasterCard = mixer->id();
-      kDebug() << "Mixer::masterCard() fallback to  " << _globalMasterCard << endl;
+      kDebug() << "Mixer::masterCard() fallback to  " << _globalMasterCard;
    }
-   kDebug() << "Mixer::masterCard() returns " << mixer->id() << endl;
+   kDebug() << "Mixer::masterCard() returns " << mixer->id();
    return mixer;
 }
 
@@ -351,12 +351,12 @@ MixDevice* Mixer::getGlobalMasterMD()
       {
          md = mixer->_mixerBackend->m_mixDevices[i];
          if ( md->id() == _globalMasterCardDevice )
-            kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice << endl;
+            kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice;
             break;
       }
    }
 
-   kDebug() << "Mixer::masterCardDevice() returns " << md->id() << endl;
+   kDebug() << "Mixer::masterCardDevice() returns " << md->id();
    return md;
 }
 

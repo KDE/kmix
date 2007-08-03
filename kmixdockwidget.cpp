@@ -143,7 +143,7 @@ void KMixDockWidget::selectMaster()
 
 void KMixDockWidget::handleNewMaster(int soundcard_id, QString& control_id)
 {
-   //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id << endl;
+   //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id;
    Mixer *mixer = Mixer::mixers().at(soundcard_id);
    if ( mixer == 0 ) {
       kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
@@ -391,7 +391,7 @@ KMixDockWidget::contextMenuAboutToShow( KMenu* /* menu */ )
     {
         md = _dockAreaPopup->dockDevice();
         KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
-	//kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted() << endl;
+	//kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
         if ( md != 0 && dockMuteAction != 0 ) {
            dockMuteAction->setChecked( md->isMuted() );
         }

@@ -158,7 +158,7 @@ void ViewBase::popupReset()
 */
 void ViewBase::showContextMenu()
 {
-    //kDebug(67100) << "ViewBase::showContextMenu()" << endl;
+    //kDebug(67100) << "ViewBase::showContextMenu()";
     popupReset();
 
     QPoint pos = QCursor::pos();

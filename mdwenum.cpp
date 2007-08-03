@@ -112,7 +112,7 @@ void MDWEnum::createWidgets()
 void MDWEnum::update()
 {
   if ( m_mixdevice->isEnum() ) {
-    //kDebug(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << endl;
+    //kDebug(67100) << "MDWEnum::update() enumID=" << m_mixdevice->enumId();
     _enumCombo->setCurrentIndex( m_mixdevice->enumId() );
   }
   else {
