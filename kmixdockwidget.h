@@ -34,7 +34,7 @@ class Volume;
 
 namespace Phonon
 {
-       class AudioPlayer;
+       class MediaObject;
 }
 
 class KMixDockWidget : public KSystemTrayIcon  {
@@ -52,7 +52,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
 
    Mixer *m_mixer;
    ViewDockAreaPopup *_dockAreaPopup;
-   Phonon::AudioPlayer *_audioPlayer;
+   Phonon::MediaObject *_audioPlayer;
 
  public slots:
    void setVolumeTip();

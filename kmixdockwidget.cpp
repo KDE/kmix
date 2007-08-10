@@ -39,7 +39,7 @@
 #include <QToolTip>
 #include <QMouseEvent>
 #include <fixx11h.h>
-#include <phonon/audioplayer.h>
+#include <Phonon/MediaObject>
 
 #include "dialogselectmaster.h"
 #include "mixer.h"
@@ -89,7 +89,8 @@ void KMixDockWidget::createActions()
 
    // Setup volume preview
   if ( _playBeepOnVolumeChange ) {
-    _audioPlayer = new Phonon::AudioPlayer(Phonon::MusicCategory, this);
+    _audioPlayer = Phonon::createPlayer(Phonon::MusicCategory);
+    _audioPlayer->setParent(this);
   }
 }
 
@@ -341,7 +342,8 @@ KMixDockWidget::wheelEvent(QWheelEvent * /*e*/ )
     }
 
     if ( _playBeepOnVolumeChange ) {
-        _audioPlayer->play(KUrl("KDE_Beep_Digital_1.ogg"));
+        _audioPlayer->setCurrentSource("KDE_Beep_Digital_1.ogg");
+        _audioPlayer->play();
     }
     md->getVolume().setVolume(vol);
     m_mixer->commitVolumeChange(md);
