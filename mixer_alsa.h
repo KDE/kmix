@@ -39,7 +39,7 @@ extern "C"
 class Mixer_ALSA : public Mixer_Backend
 {
 public:
-    Mixer_ALSA(Mixer *mixer, int device = -1 );
+    explicit Mixer_ALSA(Mixer *mixer, int device = -1 );
     ~Mixer_ALSA();
 
     virtual int  readVolumeFromHW( const QString& id, MixDevice *md );

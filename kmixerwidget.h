@@ -53,10 +53,10 @@ class KMixerWidget : public QWidget
    Q_OBJECT
 
   public:
-   KMixerWidget( Mixer *mixer,
-                 QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, KActionCollection* coll = 0 );
+   explicit KMixerWidget( Mixer *mixer,
+                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, KActionCollection* coll = 0 );
    ~KMixerWidget();
-	
+
    Mixer *mixer() const { return _mixer; }
 
 /* !!! This id() is rubbish. It is not guaranteed, that it is the same on every KMix start.

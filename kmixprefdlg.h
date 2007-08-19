@@ -19,8 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KPREFDLG_H
-#define KPREFDLG_H
+#ifndef KMIXPREFDLG_H
+#define KMIXPREFDLG_H
 
 #include <kdialog.h>
 
@@ -62,4 +62,4 @@ KMixPrefDlg : public KDialog
    QRadioButton *_rbHorizontal;
 };
 
-#endif
+#endif // KMIXPREFDLG_H

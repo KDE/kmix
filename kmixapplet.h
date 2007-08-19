@@ -52,7 +52,7 @@ class AppletConfigDialog : public KDialog
 {
   Q_OBJECT
   public:
-   AppletConfigDialog( QWidget * parent=0, const char * name=0 );
+   explicit AppletConfigDialog( QWidget * parent=0, const char * name=0 );
    virtual ~AppletConfigDialog() {};
 
    void setActiveColors(const QColor& high, const QColor& low, const QColor& back);
