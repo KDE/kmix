@@ -142,7 +142,7 @@ kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
 
 
 
-target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} kickermain ${QT_QTXML_LIBRARY} )
+target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} ${QT_QTXML_LIBRARY} )
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
