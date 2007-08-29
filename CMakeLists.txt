@@ -111,6 +111,7 @@ install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
 
+if(false)
 if(Q_WS_X11)
 if(PLASMA_FOUND)
 
@@ -151,10 +152,11 @@ endif (HAVE_LIBASOUND2)
 install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
-else(KICKER_INCLUDE_DIR)
+else(PLASMA_FOUND)
 MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
 endif(PLASMA_FOUND)
 endif(Q_WS_X11)
+endif(false)
 
 ########### install files ###############
 
