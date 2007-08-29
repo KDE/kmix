@@ -22,7 +22,7 @@
 #define ViewApplet_h
 
 #include "viewbase.h"
-#include <plasma/kpanelapplet.h>     // ??? plasma/
+#include <k3panelapplet.h>
 
 class QBoxLayout;
 class Mixer;
@@ -31,7 +31,8 @@ class ViewApplet : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, Plasma::Position position);
+    ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags,
+            GUIProfile *guiprof, K3PanelApplet::Position position);
     ~ViewApplet();
 
     virtual void setMixSet();

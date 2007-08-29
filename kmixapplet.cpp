@@ -66,10 +66,10 @@
 
 extern "C"
 {
-  KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
+  KDE_EXPORT K3PanelApplet* init(QWidget *parent, const QString& configFile)
   {
      KGlobal::locale()->insertCatalog("kmix");
-     return new KMixApplet(configFile, Plasma::Normal,
+     return new KMixApplet(configFile, K3PanelApplet::Normal,
                            parent, "kmixapplet");
   }
 }
@@ -155,10 +155,10 @@ bool AppletConfigDialog::useCustomColors() const
 }
 
 
-KMixApplet::KMixApplet( const QString& configFile, Plasma::Type t,
+KMixApplet::KMixApplet( const QString& configFile, K3PanelApplet::Type t,
                         QWidget *parent, const char *name )
 
-   : KPanelApplet( configFile, t, Plasma::Preferences | Plasma::ReportBug | Plasma::About, parent ),
+   : K3PanelApplet( configFile, t, K3PanelApplet::Preferences | K3PanelApplet::ReportBug | K3PanelApplet::About, parent ),
      m_appletView(0), m_errorLabel(0), m_pref(0),
      m_aboutData( "kmix", 0, ki18n("KMix Panel Applet"),
                          APP_VERSION, ki18n("Mini Sound Mixer Applet"), KAboutData::License_GPL,
@@ -356,10 +356,10 @@ void KMixApplet::help()
 }
 
 
-void KMixApplet::positionChange(Plasma::Position pos) {
+void KMixApplet::positionChange(K3PanelApplet::Position pos) {
     orientationChange( orientation() );
-    QResizeEvent e( size(), size() ); // from KPanelApplet::positionChange
-    resizeEvent( &e ); // from KPanelApplet::positionChange
+    QResizeEvent e( size(), size() ); // from K3PanelApplet::positionChange
+    resizeEvent( &e ); // from K3PanelApplet::positionChange
 
     if ( m_errorLabel == 0) {
 	// do this only after we deleted the error label
@@ -369,7 +369,8 @@ void KMixApplet::positionChange(Plasma::Position pos) {
 	    delete m_appletView;
 	}
  	/**@todo Add View stuff to KMixApplet / ViewApplet */
-	m_appletView = new ViewApplet( this, _mixer->id().toAscii().data(), _mixer, 0, (GUIProfile*)0, pos );
+	m_appletView = new ViewApplet( this, _mixer->id().toAscii().data(), _mixer, 0,
+                (GUIProfile*)0, pos );
 	connect ( m_appletView, SIGNAL(appletContentChanged()), this, SLOT(updateGeometrySlot()) );
 	m_appletView->createDeviceWidgets();
 	_layout->addWidget(m_appletView);
@@ -394,7 +395,7 @@ void KMixApplet::resizeEvent(QResizeEvent *e)
 {
     //kDebug(67100) << "KMixApplet::resizeEvent(). New MDW is at " << e->size();
 
-    if ( position() == Plasma::Left || position() == Plasma::Right ) {
+    if ( position() == K3PanelApplet::Left || position() == K3PanelApplet::Right ) {
         if ( m_appletView ) m_appletView->resize(e->size().width(),m_appletView->height());
         if ( m_errorLabel  ) m_errorLabel ->resize(e->size().width(),m_errorLabel ->height());
     }
@@ -436,7 +437,7 @@ QSize KMixApplet::sizeHint() const {
 }
 
 /**
-   We need widthForHeight() and heigthForWidth() only because KPanelApplet::updateLayout does relayouts
+   We need widthForHeight() and heigthForWidth() only because K3PanelApplet::updateLayout does relayouts
    using this method. Actually we ignore the passed paramater and just return our preferred size.
 */
 int KMixApplet::widthForHeight(int) const {

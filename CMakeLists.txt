@@ -111,7 +111,6 @@ install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
 
-if(false)
 if(Q_WS_X11)
 if(PLASMA_FOUND)
 
@@ -156,7 +155,6 @@ else(PLASMA_FOUND)
 MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
 endif(PLASMA_FOUND)
 endif(Q_WS_X11)
-endif(false)
 
 ########### install files ###############
 

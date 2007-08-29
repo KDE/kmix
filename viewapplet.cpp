@@ -35,7 +35,7 @@
 #include "mdwslider.h"
 #include "mixer.h"
 
-ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, Plasma::Position position )
+ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, K3PanelApplet::Position position )
     : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof)
 {
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
@@ -43,7 +43,7 @@ ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase
     _actions->removeAction( KStandardAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
 
 
-    if ( position == Plasma::Left || position == Plasma::Right ) {
+    if ( position == K3PanelApplet::Left || position == K3PanelApplet::Right ) {
       //kDebug(67100) << "ViewApplet() isVertical" << "\n";
       _viewOrientation = Qt::Vertical;
     }

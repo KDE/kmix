@@ -29,7 +29,7 @@
 // KDE
 #include <kaboutdata.h>
 #include <kdialog.h>
-#include <plasma/kpanelapplet.h>   // ?? Why plasma/
+#include <k3panelapplet.h>
 
 //KMix
 #include "viewapplet.h"
@@ -75,12 +75,12 @@ class AppletConfigDialog : public KDialog
 };
 
 
-class KMixApplet : public KPanelApplet
+class KMixApplet : public K3PanelApplet
 {
    Q_OBJECT
 
 public:
-   KMixApplet( const QString& configFile, Plasma::Type t,
+   KMixApplet( const QString& configFile, K3PanelApplet::Type t,
 	       QWidget *parent, const char *name );
    virtual ~KMixApplet();
 
@@ -113,7 +113,7 @@ protected:
    void loadConfig( KConfig *config, const QString &grp );
 
 private:
-   void positionChange(Plasma::Position);
+   void positionChange(K3PanelApplet::Position);
    void setColors();
    void setColors( const Colors &color );
 
