@@ -46,7 +46,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kglobalaccel.h>
-#include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -77,8 +77,8 @@ extern "C"
 int KMixApplet::s_instCount = 0;
 //<Mixer> KMixApplet::Mixer::mixers();
 
-static const QColor highColor = KGlobalSettings::baseColor();
-static const QColor lowColor = KGlobalSettings::highlightColor();
+static const QColor highColor = KColorScheme(QPalette::Active, KColorScheme::View).background().color();
+static const QColor lowColor = KColorScheme(QPalette::Active, KColorScheme::Selection).background().color();
 static const QColor backColor = "#000000";
 static const QColor mutedHighColor = "#FFFFFF";
 static const QColor mutedLowColor = "#808080";
@@ -525,9 +525,9 @@ void KMixApplet::applyPreferences()
 void KMixApplet::paletteChange ( const QPalette &) {
     if ( ! _customColors ) {
 	// We take over Colors from paletteChange(), if the user has not set custom colors.
-	// ignore the given QPalette and use the values from KGlobalSettings instead
-	_colors.high = KGlobalSettings::highlightColor();
-	_colors.low  = KGlobalSettings::baseColor();
+	// ignore the given QPalette and use the values from KColorScheme instead
+	_colors.high = KColorScheme(QPalette::Active, KColorScheme::Selection).background().color();
+	_colors.low  = KColorScheme(QPalette::Active, KColorScheme::View).background().color();
 	_colors.back = backColor;
 	setColors( _colors );
     }
