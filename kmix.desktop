@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kmix -caption "%c" %i
-DocPath=kmix/index.html
+X-DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Path=
 Type=Application
