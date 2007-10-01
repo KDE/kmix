@@ -324,6 +324,10 @@ void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
 Mixer* Mixer::getGlobalMasterMixer()
 {
    Mixer *mixer = 0;
+
+   if(Mixer::mixers().count() == 0)
+      return mixer;
+
    for (int i=0; i< Mixer::mixers().count(); ++i )
    {
       mixer = Mixer::mixers()[i];
