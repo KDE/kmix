@@ -38,10 +38,6 @@
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
  */
 
-// !! Warning: Don't commit with "KMIX_DCOP_OBJID_TEST" #define'd (cesken)
-#undef KMIX_DCOP_OBJID_TEST
-int Mixer::_dcopID = 0;
-
 QList<Mixer *> Mixer::s_mixers;
 QString Mixer::_globalMasterCard;
 QString Mixer::_globalMasterCardDevice;
@@ -67,11 +63,11 @@ QList<Mixer *>& Mixer::mixers()
   return s_mixers;
 }
 
-
 Mixer::Mixer( int driver, int device )
 {
    (void)new KMixAdaptor(this);
-   QDBusConnection::sessionBus().registerObject(QLatin1String("/Mixer"), this);
+   QString dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
+   QDBusConnection::sessionBus().registerObject(dbusName, this);
 
    _mixerBackend = 0;
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
@@ -81,22 +77,6 @@ Mixer::Mixer( int driver, int device )
    }
 
   m_balance = 0;
-
-#ifdef __GNUC__
-#warning "kde4 port it to dbus"
-#endif
-#if 0
-  DCOPCString objid;
-#ifndef KMIX_DCOP_OBJID_TEST
-  objid.setNum(_mixerBackend->m_devnum);
-#else
-// should use a nice name like the Unique-Card-ID instead !!
-  objid.setNum(Mixer::_dcopID);
-  Mixer::_dcopID ++;
-#endif
-  objid.prepend("Mixer");
-  DCOPObject::setObjId( objid );
-#endif
 }
 
 Mixer::~Mixer() {
@@ -324,7 +304,6 @@ void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
 Mixer* Mixer::getGlobalMasterMixer()
 {
    Mixer *mixer = 0;
-
    if(Mixer::mixers().count() == 0)
       return mixer;
 

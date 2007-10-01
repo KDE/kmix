@@ -165,7 +165,6 @@ class Mixer : public QObject
    private:
       void setBalanceInternal(Volume& vol);
       Mixer_Backend *_mixerBackend;
-      static int _dcopID;
       QString _id;
       QString _masterDevicePK;
       static QString _globalMasterCard;
