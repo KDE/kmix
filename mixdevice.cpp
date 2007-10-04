@@ -125,21 +125,21 @@ void MixDevice::read( KConfig *config, const QString& grp )
 {
     QString devgrp;
     devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
-    config->setGroup( devgrp );
+    KConfigGroup cg = config->group( devgrp );
     //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
-    readPlaybackOrCapture(config, "volumeL"       , "volumeR"       , false);
-    readPlaybackOrCapture(config, "volumeLCapture", "volumeRCapture", true );
+    readPlaybackOrCapture(cg, "volumeL"       , "volumeR"       , false);
+    readPlaybackOrCapture(cg, "volumeLCapture", "volumeRCapture", true );
 }
 
-void MixDevice::readPlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
+void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
 {
     Volume::ChannelMask chMask = Volume::MNONE;
-    int vl = config->readEntry(nameLeftVolume, -1);
+    int vl = config.readEntry(nameLeftVolume, -1);
     if (vl!=-1) {
         chMask = (Volume::ChannelMask)(chMask | Volume::MLEFT);
     }
-    int vr = config->readEntry(nameRightVolume, -1);
+    int vr = config.readEntry(nameRightVolume, -1);
     if (vr!=-1) {
         chMask = (Volume::ChannelMask)(chMask | Volume::MRIGHT);
     }
@@ -161,17 +161,17 @@ void MixDevice::readPlaybackOrCapture(KConfig *config, const char* nameLeftVolum
     //volume.setVolume(*volFromConfig); 
     //delete volFromConfig;
     
-    int mute = config->readEntry("is_muted", -1);
+    int mute = config.readEntry("is_muted", -1);
     if ( mute!=-1 ) {
         setMuted( mute!=0 );
     }
     
-    int recsrc = config->readEntry("is_recsrc", -1);
+    int recsrc = config.readEntry("is_recsrc", -1);
     if ( recsrc!=-1 ) {
         setRecSource( recsrc!=0 );
     }
     
-    int enumId = config->readEntry("enum_id", -1);
+    int enumId = config.readEntry("enum_id", -1);
     if ( enumId != -1 ) {
         setEnumId( enumId );
     }
@@ -184,28 +184,28 @@ void MixDevice::write( KConfig *config, const QString& grp )
 {
    QString devgrp;
    devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
-   config->setGroup(devgrp);
+   KConfigGroup cg = config->group(devgrp);
    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
-    writePlaybackOrCapture(config, "volumeL"       , "volumeR"       , false);
-    writePlaybackOrCapture(config, "volumeLCapture", "volumeRCapture", true );
+    writePlaybackOrCapture(cg, "volumeL"       , "volumeR"       , false);
+    writePlaybackOrCapture(cg, "volumeLCapture", "volumeRCapture", true );
 }
 
-void MixDevice::writePlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
+void MixDevice::writePlaybackOrCapture(KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
 {
 #ifdef __GNUC__
 #warning Must remove the two (int) casts, once KConfig can write long in writeEntry() again
 #endif
     Volume& volume = capture ? captureVolume() : playbackVolume();
 
-    config->writeEntry(nameLeftVolume , (int)volume.getVolume( Volume::LEFT ) );
-    config->writeEntry(nameRightVolume, (int)volume.getVolume( Volume::RIGHT ) );
+    config.writeEntry(nameLeftVolume , (int)volume.getVolume( Volume::LEFT ) );
+    config.writeEntry(nameRightVolume, (int)volume.getVolume( Volume::RIGHT ) );
 
-    config->writeEntry("is_muted" , (int)isMuted() );
-    config->writeEntry("is_recsrc", (int)isRecSource() );
-    config->writeEntry("name", _name);
+    config.writeEntry("is_muted" , (int)isMuted() );
+    config.writeEntry("is_recsrc", (int)isRecSource() );
+    config.writeEntry("name", _name);
     if ( isEnum() ) {
-        config->writeEntry("enum_id", enumId() );
+        config.writeEntry("enum_id", enumId() );
     }
 }
 

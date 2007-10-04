@@ -43,6 +43,7 @@
 #include <kbugreport.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kglobalaccel.h>
@@ -237,26 +238,25 @@ void KMixApplet::saveConfig()
     kDebug(67100) << "KMixApplet::saveConfig()";
     if ( m_appletView != 0) {
 	//kDebug(67100) << "KMixApplet::saveConfig() save";
-        KConfig *cfg = this->config();
 	//kDebug(67100) << "KMixApplet::saveConfig() save cfg=" << cfg;
-        cfg->setGroup( 0 );
-        cfg->writeEntry( "Mixer", _mixer->id() );
-        cfg->writeEntry( "MixerName", _mixer->id() );
+        KConfigGroup grp( this->config(), "<default>");
+        grp.writeEntry( "Mixer", _mixer->id() );
+        grp.writeEntry( "MixerName", _mixer->id() );
 
-        cfg->writeEntry( "ColorCustom", _customColors );
+        grp.writeEntry( "ColorCustom", _customColors );
 
-        cfg->writeEntry( "ColorHigh", _colors.high.name() );
-        cfg->writeEntry( "ColorLow", _colors.low.name() );
-        cfg->writeEntry( "ColorBack", _colors.back.name() );
+        grp.writeEntry( "ColorHigh", _colors.high.name() );
+        grp.writeEntry( "ColorLow", _colors.low.name() );
+        grp.writeEntry( "ColorBack", _colors.back.name() );
 
-        cfg->writeEntry( "ColorMutedHigh", _colors.mutedHigh.name() );
-        cfg->writeEntry( "ColorMutedLow", _colors.mutedLow.name() );
-        cfg->writeEntry( "ColorMutedBack", _colors.mutedBack.name() );
+        grp.writeEntry( "ColorMutedHigh", _colors.mutedHigh.name() );
+        grp.writeEntry( "ColorMutedLow", _colors.mutedLow.name() );
+        grp.writeEntry( "ColorMutedBack", _colors.mutedBack.name() );
 
         //cfg->writeEntry( "ReversedDirection", reversedDir );
 
-        saveConfig( cfg, "Widget" );
-        cfg->sync();
+        saveConfig( config(), "Widget" );
+        config()->sync();
     }
 }
 
@@ -264,7 +264,7 @@ void KMixApplet::saveConfig()
 void KMixApplet::loadConfig()
 {
     kDebug(67100) << "KMixApplet::loadConfig()";
-    KConfigGroup cfg(this->config(), 0);
+    KConfigGroup cfg(this->config(), "<default>");
 
     _mixerId = cfg.readEntry( "Mixer", "undef" );
     _mixerName = cfg.readEntry( "MixerName", QString());
@@ -297,8 +297,8 @@ void KMixApplet::saveConfig( KConfig *config, const QString &grp )
     if ( m_appletView ) {
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
-	config->setGroup( grp );
-	config->writeEntry("Mixer_Name_Key", _mixer->id());
+	KConfigGroup cg(config, grp );
+	cg.writeEntry("Mixer_Name_Key", _mixer->id());
 
 	KMixToolBox::saveView(m_appletView, config );
 	KMixToolBox::saveKeys(m_appletView, config );

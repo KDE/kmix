@@ -27,6 +27,7 @@
 // KDE
 #include <kdebug.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 // Qt
 #include <QString>

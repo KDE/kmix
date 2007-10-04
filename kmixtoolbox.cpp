@@ -75,7 +75,7 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
 {
    QString grp = "View.";
    grp += view->objectName();
-   config->setGroup( grp );
+   KConfigGroup cg = config->group( grp );
    kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.toAscii();
 
    for (int i=0; i < view->_mdws.count(); ++i ){
@@ -85,15 +85,15 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
          QString devgrp;
          devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
-         config->setGroup( devgrp );
+         KConfigGroup devcg  = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
          {
             // only sliders have the ability to split apart in mutliple channels
-            bool splitChannels = config->readEntry("Split", false);
+            bool splitChannels = devcg.readEntry("Split", false);
             mdw->setStereoLinked( !splitChannels );
          }
-         mdw->setDisabled( !config->readEntry("Show", true) );
+         mdw->setDisabled( !devcg.readEntry("Show", true) );
 
       } // inherits MixDeviceWidget
    } // for all MDW's
@@ -139,7 +139,7 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
 {
    QString grp = "View.";
    grp += view->objectName();
-   config->setGroup( grp );
+   KConfigGroup cg = config->group( grp );
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp.toAscii();
 
    for (int i=0; i < view->_mdws.count(); ++i ){
@@ -154,14 +154,14 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
 
          QString devgrp;
          devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
-         config->setGroup( devgrp );
+         KConfigGroup devcg = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
          {
             // only sliders have the ability to split apart in mutliple channels
-            config->writeEntry( "Split", ! mdw->isStereoLinked() );
+            devcg.writeEntry( "Split", ! mdw->isStereoLinked() );
          }
-         config->writeEntry( "Show" , ! mdw->isDisabled() );
+         devcg.writeEntry( "Show" , ! mdw->isDisabled() );
       } // inherits MixDeviceWidget
    } // for all MDW's
 }
