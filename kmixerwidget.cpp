@@ -31,6 +31,7 @@
 
 // KDE
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kicon.h>
@@ -278,10 +279,9 @@ void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 
 void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 {
-	config->setGroup( grp );
 	// Write mixer name. It cannot be changed in the Mixer instance,
 	// it is only saved for diagnostical purposes (analyzing the config file).
-	config->writeEntry("Mixer_Name_Key", _mixer->id());
+	config->group( grp ).writeEntry("Mixer_Name_Key", _mixer->id());
 
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {

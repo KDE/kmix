@@ -27,6 +27,7 @@ class Mixer;
 
 // KDE
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 // Qt
 #include <QList>
@@ -143,8 +144,8 @@ private:
 
 
 private:
-   void readPlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
-   void writePlaybackOrCapture(KConfig *config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
+   void readPlaybackOrCapture(const KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
+   void writePlaybackOrCapture(KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
 
 };
 
