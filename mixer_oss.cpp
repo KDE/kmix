@@ -243,6 +243,30 @@ bool Mixer_OSS::setRecsrcHW( int devnum, bool on )
   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
     errormsg(Mixer::ERR_READ);
 
+  /* The following if {} patch was submitted by Tim McCormick <tim@pcbsd.org>. */
+  /*   Comment (cesken): This patch fixes an issue with mutual exclusive recording sources.
+       Actually the kernel soundcard driver *could* "do the right thing" by examining the change
+       (old-recsrc XOR new-recsrc), and knowing which sources are mutual exclusive.
+       The OSS v3 API docs indicate that the behaviour is undefined for this case, and it is not
+       clearly documented how and whether SOUND_MIXER_CAP_EXCL_INPUT is evaluated in the OSS driver.
+       Evaluating that in the application (KMix) could help, but the patch will work independent
+       on whether SOUND_MIXER_CAP_EXCL_INPUT ist set or not.
+
+       In any case this patch is a superb workaround for a shortcoming of the OSS v3 API.
+   */
+  // If the record source is supposed to be on, but wasn't set, explicitly
+  // set the record source. Not all cards support multiple record sources.
+  // As a result, we also need to do the read & write again.
+  if (((i_recsrc & ( 1<<devnum)) == 0) && on)
+  {
+     // Setting the new device failed => Try to enable it *exclusively*
+     oldrecsrc = i_recsrc = 1 << devnum;
+     if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
+       errormsg (Mixer::ERR_WRITE);
+     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
+       errormsg(Mixer::ERR_READ);
+  }
+
   // PORTING: Hint: Do not forget to set i_recsrc to the new valid
   //                record source mask.
 
