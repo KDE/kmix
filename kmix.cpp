@@ -63,6 +63,7 @@
 KMixWindow::KMixWindow()
    : KXmlGuiWindow(0),
    m_showTicks( true ),
+   m_showMenubar(true),
    m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
    m_visibilityUpdateAllowed( true ),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
@@ -141,7 +142,7 @@ void KMixWindow::initWidgets()
 
    // show menubar if the actions says so (or if the action does not exist)
    menuBar()->setVisible( (_actionShowMenubar==0) || _actionShowMenubar->isChecked());
-      
+
    m_widgetsLayout->activate();
 }
 

@@ -64,10 +64,9 @@ QList<Mixer *>& Mixer::mixers()
 }
 
 Mixer::Mixer( int driver, int device )
+  : _mixerBackend(0L)
 {
    (void)new KMixAdaptor(this);
-   QString dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
-   QDBusConnection::sessionBus().registerObject(dbusName, this);
 
    _mixerBackend = 0;
    getMixerFunc *f = g_mixerFactories[driver].getMixer;
@@ -77,6 +76,11 @@ Mixer::Mixer( int driver, int device )
    }
 
   m_balance = 0;
+
+   if (_mixerBackend) {
+     QString dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
+     QDBusConnection::sessionBus().registerObject(dbusName, this);
+   }
 }
 
 Mixer::~Mixer() {
