@@ -264,7 +264,10 @@ void KMixerWidget::setTicks( bool on )
  */
 void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
-        config->setGroup( grp );
+#ifdef __GNUC__
+#warning port to KConfigGroup. see also comments in KMixToolBox   --ossi
+#endif
+//        config->setGroup( grp );
 
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
