@@ -235,7 +235,7 @@ KMixDockWidget::updatePixmap()
          case 'm': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;
          case '1': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;  // @todo
          case '2': setIcon( loadIcon( "kmixdocked_error" ) ); break;  // @todo
-         case '3': setIcon( loadIcon( "kmixdocked"       ) ); break;
+         case '3': setIcon( loadIcon( "audio-volume-high"       ) ); break;
       }
    }
 
