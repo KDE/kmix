@@ -34,6 +34,7 @@
 #include <qtoolbutton.h>
 #include <QObject>
 #include <qcursor.h>
+#include <QCheckBox>
 #include <QMouseEvent>
 #include <qslider.h>
 #include <QLabel>
@@ -64,7 +65,7 @@ MDWSlider::MDWSlider(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(md,small,orientation,parent,mw),
-    m_linked(true), m_iconLabel( 0 ), m_iconLabelSimple(0), m_recordLED( 0 ), m_label( 0 ), _layout(0)
+    m_linked(true), m_iconLabel( 0 ), m_iconLabelSimple(0), m_qcb(0), m_recordLED( 0 ), m_label( 0 ), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
@@ -202,31 +203,40 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
    slidersLayout->addItem( sliLayout );
    // --- ICON  ----------------------------
-   QBoxLayout *iconLayout;
+   QBoxLayout *iconLayout, *iconInternalLayout;
    if ( _orientation == Qt::Vertical ) {
       iconLayout = new QVBoxLayout( );
-      iconLayout->setAlignment(Qt::AlignCenter);
+      iconInternalLayout = new QHBoxLayout( );
    }
    else {
       iconLayout = new QHBoxLayout( );
-      iconLayout->setAlignment(Qt::AlignCenter);
+      iconInternalLayout = new QVBoxLayout( );
    }
+   iconLayout->setAlignment(Qt::AlignCenter);
+   iconInternalLayout->setAlignment(Qt::AlignCenter);
+   iconLayout->addItem(iconInternalLayout);
    sliLayout->addItem( iconLayout );
-   iconLayout->setSizeConstraint(QLayout::SetFixedSize);
+   //iconLayout->setSizeConstraint(QLayout::SetFixedSize);
 
    m_iconLabel = 0;
    m_iconLabelSimple = 0L;
    if ( showMuteLED ) {
+      kDebug(67100) << ">>> MixDevice " << m_mixdevice->readableName() << " icon calculation:" << endl;
       setIcon( m_mixdevice->type() );
       QWidget* theLabel = m_iconLabel!=0 ? (QWidget*)m_iconLabel : (QWidget*)m_iconLabelSimple;
-      iconLayout->addWidget( theLabel );
+      iconInternalLayout->addWidget( theLabel );
+      QString muteTip( m_mixdevice->readableName() );
+      theLabel->setToolTip( muteTip );
       if ( m_mixdevice->playbackVolume().hasSwitch() ) {
-         QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
-         theLabel->setToolTip( muteTip );
+         m_qcb =  new QCheckBox(this);
+         iconInternalLayout->addWidget( m_qcb );
+         m_qcb->installEventFilter(this);
+         connect ( m_qcb, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
+         QString muteTip2( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
+         m_qcb->setToolTip( muteTip2 );
       } // can be muted
       else {
-         QString muteTip( m_mixdevice->readableName() );
-         theLabel->setToolTip( muteTip );
+         //
       } // cannot be muted
 
       sliLayout->addSpacing( 3 );
@@ -251,7 +261,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    if ( m_mixdevice->captureVolume().count() > 0 )
        addSliders( volLayout, 'c' );
    if ( m_mixdevice->playbackVolume().count() == 0 && m_mixdevice->captureVolume().count() == 0 )
-   {  // no siders => put a label with the name.
+   {  // no sliders => put a label with the name.
       // But I won't add " (capture)" as on the sliders, because there is only one "column"
       if ( _orientation == Qt::Vertical ) {
          m_label = new VerticalText( this, m_mixdevice->readableName() );
@@ -300,8 +310,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
          // !! possibly not necessary any more (we are layouted)
          QWidget *qw = new QWidget(this );
          qw->setObjectName( "Spacer" );
-         qw->setFixedSize( QSize(16, 16) );
-         reclayout->addWidget(qw);
+         qw->setFixedSize( QSize(16, 16) );         reclayout->addWidget(qw);
          qw->installEventFilter( this );
       } // has no Record LED
    } // showRecordLED
@@ -389,16 +398,16 @@ QPixmap MDWSlider::icon( int icontype )
    QPixmap miniDevPM;
    switch (icontype) {
       case MixDevice::AUDIO:
-         miniDevPM = UserIcon("mix_audio"); break;
+         miniDevPM = KIconLoader::global()->loadIcon( "mix_audio", KIconLoader::Small, KIconLoader::SizeSmallMedium ); break;
       case MixDevice::BASS:
       case MixDevice::SURROUND_LFE:  // "LFE" SHOULD have an own icon
          miniDevPM = UserIcon("mix_bass"); break;
       case MixDevice::CD:
          miniDevPM = UserIcon("mix_cd"); break;
       case MixDevice::EXTERNAL:
-         miniDevPM = UserIcon("mix_ext"); break;
+         miniDevPM = KIconLoader::global()->loadIcon( "audio-input-line", KIconLoader::Small, KIconLoader::SizeMedium ); break;
       case MixDevice::MICROPHONE:
-         miniDevPM = UserIcon("mix_microphone");break;
+         miniDevPM = UserIcon("audio-input-microphone");break;
       case MixDevice::MIDI:
          miniDevPM = UserIcon("mix_midi"); break;
       case MixDevice::RECMONITOR:
@@ -417,7 +426,7 @@ QPixmap MDWSlider::icon( int icontype )
       case MixDevice::SURROUND_CENTERBACK:
          miniDevPM = UserIcon("mix_surround"); break;
       case MixDevice::HEADPHONE:
-         miniDevPM = UserIcon( "mix_headphone" ); break;
+         miniDevPM = UserIcon( "audio-headset" ); break;
       case MixDevice::DIGITAL:
          miniDevPM = UserIcon( "mix_digital" ); break;
       case MixDevice::AC97:
@@ -449,8 +458,6 @@ MDWSlider::setIcon( int icontype )
       }
    }
 
-
-
    QPixmap miniDevPM = icon( icontype );
    if ( !miniDevPM.isNull() )
    {
@@ -476,9 +483,11 @@ MDWSlider::setIcon( int icontype )
             QPixmap pixmapOff = icon.pixmap(miniDevPM.size(), QIcon::Disabled, QIcon::Off);
             icon.addPixmap( pixmapOff, QIcon::Normal, QIcon::Off );
             m_iconLabel->setIcon( icon );
+	    kDebug(67100) << " > button > icontype=" <<icontype<< "size=" << miniDevPM.size() << endl;
          }
          else {
             m_iconLabelSimple->setPixmap( miniDevPM );
+	    kDebug(67100) << " > simple > icontype=" <<icontype<< "size=" << miniDevPM.size() << endl;
          }
       } // normal size
    } else
@@ -851,6 +860,9 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
       m_iconLabel->blockSignals( true );
       m_iconLabel->setChecked( !m_mixdevice->isMuted() );
       m_iconLabel->blockSignals( false );
+      m_qcb->blockSignals( true );
+      m_qcb->setChecked( m_mixdevice->isMuted() );
+      m_qcb->blockSignals( false );
    }
 
    // update recsrc

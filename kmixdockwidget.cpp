@@ -232,9 +232,9 @@ KMixDockWidget::updatePixmap()
       // Pixmap must be changed => do so
       switch ( newPixmapType ) {
          case 'e': setIcon( loadIcon( "kmixdocked_error" ) ); break;
-         case 'm': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;
-         case '1': setIcon( loadIcon( "kmixdocked_mute"  ) ); break;  // @todo
-         case '2': setIcon( loadIcon( "kmixdocked_error" ) ); break;  // @todo
+         case 'm': setIcon( loadIcon( "audio-volume-muted"  ) ); break;
+         case '1': setIcon( loadIcon( "audio-volume-low"  ) ); break;  // @todo
+         case '2': setIcon( loadIcon( "audio-volume-medium" ) ); break;  // @todo
          case '3': setIcon( loadIcon( "audio-volume-high"       ) ); break;
       }
    }

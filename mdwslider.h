@@ -23,6 +23,7 @@
 #ifndef MDWSLIDER_H
 #define MDWSLIDER_H
 
+#include <QCheckBox>
 #include <QList>
 #include <QWidget>
 #include <qlist.h>
@@ -114,6 +115,7 @@ private:
     KLedButton *m_recordLED;
     QWidget *m_label; // is either QLabel or VerticalText
     QBoxLayout *_layout;
+    QCheckBox* m_qcb;
     QList<QWidget *> m_slidersPlayback;
     QList<QWidget *> m_slidersCapture;
     QList<Volume::ChannelID> _slidersChidsPlayback;
