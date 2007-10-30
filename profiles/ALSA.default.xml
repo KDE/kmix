@@ -6,7 +6,7 @@
 	   version="*:*"
 	   name="*"
 	   type="*"
-	   generation="1"
+	   generation="2"
 >
 <!-- Example from above:
      Driver     : ALSA, Versions 1.2.5 and newer.
@@ -82,17 +82,20 @@
 <control id="CD:1"     controls="*" tab="Play" show="extended" />
 -->
 
-<control id="^Master:0$"      tab="Base" name="Front"/>
-<control id="^Surround:0$"    tab="Base" />
-<control id="^Center:0$"      tab="Base" />
-<control id="^LFE:0$"         tab="Base" />
-<control id="^PCM:0$"         tab="Base" />
-<control id="^CD:0$"          tab="Base" />
-<control id="^Headphone:0$"   tab="Base" />
-<control id="^DAC:0$"         tab="Base" />
+<control id="^Master:0$"      tab="Base" name="Front" show="simple" />
+<control id="^Surround:0$"    tab="Base" show="simple"/>
+<control id="^Center:0$"      tab="Base" show="simple"/>
+<control id="^LFE:0$"         tab="Base" show="simple"/>
+<control id="^PCM:0$"         tab="Base" show="simple"/>
+<control id="^CD:0$"          tab="Base" show="simple"/>
+<control id="^Headphone:0$"   tab="Base" show="simple"/>
+<control id="^DAC:0$"         tab="Base" show="simple"/>
+<control id="^ADC:0$"         tab="Base" show="simple"/>
 
-<control id="^.*$" tab="All" show="extended" />
 
+<!--
+<control id="^.*$" tab="Base" show="extended" />
+-->
 
 <!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted -->
 <!--
