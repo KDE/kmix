@@ -52,7 +52,7 @@ public:
       HasMenuBar     = 0x0001,
       MenuBarVisible = 0x0002,
       Horizontal     = 0x0004,
-      Vertical       = 0x0008,
+      Vertical       = 0x0008
    };
 
     ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
