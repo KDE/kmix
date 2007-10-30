@@ -107,7 +107,6 @@ KMixWindow : public KXmlGuiWindow
    bool m_isVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
-   bool m_surroundView;            // Experimental. Off by defualt
    Qt::Orientation m_toplevelOrientation;
 
    KTabWidget *m_wsMixers;

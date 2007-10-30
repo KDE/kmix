@@ -58,7 +58,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
             mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
          QCheckBox* cb = new QCheckBox( mdName, frame );
          _qEnabledCB.append(cb);
-         cb->setChecked( !mdw->isDisabled() ); //mdw->isVisible() );
+         cb->setChecked( mdw->isVisible() );
          _layout->addWidget(cb);
       }
    } // for all MDW's
@@ -84,10 +84,10 @@ void DialogViewConfiguration::apply()
       if ( qw->inherits("MixDeviceWidget") ) {
          MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
          if ( cb->isChecked() ) {
-            mdw->setDisabled(false);
+            mdw->show();
          }
          else {
-            mdw->setDisabled(true);
+            mdw->hide();
          }
       }
    } // for all MDW's

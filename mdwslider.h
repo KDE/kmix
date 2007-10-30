@@ -110,7 +110,6 @@ private:
 
 
     bool m_linked;
-    QToolButton *m_iconLabel;
     QLabel      *m_iconLabelSimple;
     KLedButton *m_recordLED;
     QWidget *m_label; // is either QLabel or VerticalText

@@ -35,7 +35,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", 0, ki18n("KMix"),
                          APP_VERSION, ki18n(description), KAboutData::License_GPL,
-                         ki18n("(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski\n(c) 2002-2005 Christian Esken, Helio Chissini de Castro"));
+                         ki18n("(c) 1996-2007 Christian Esken\n(c) 2000-2003 Stefan Schimanski\n(c) 2002-2005 Helio Chissini de Castro"));
 
    aboutData.addAuthor(ki18n("Christian Esken"), ki18n("Current maintainer"), "esken@kde.org");
    aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("Co-maintainer, Alsa 0.9x port"), "helio@kde.org" );

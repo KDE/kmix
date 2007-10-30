@@ -67,7 +67,6 @@ KMixWindow::KMixWindow()
    m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
    m_visibilityUpdateAllowed( true ),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
-   m_surroundView (false), // -<- Also the experimental surround View (3D)
    m_dockWidget()
 {
    setObjectName("KMixWindow");
@@ -206,10 +205,10 @@ void KMixWindow::saveBaseConfig()
    }
 
    // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
-   if ( m_toplevelOrientation  == Qt::Vertical )
-      config.writeEntry( "Orientation","Vertical" );
-   else
+   if ( m_toplevelOrientation  == Qt::Horizontal )
       config.writeEntry( "Orientation","Horizontal" );
+   else
+      config.writeEntry( "Orientation","Vertical" );
 }
 
 void KMixWindow::saveViewConfig()
@@ -270,17 +269,16 @@ void KMixWindow::loadBaseConfig()
    kDebug(67100) << "MultiDriver a = " << m_multiDriverMode;
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    kDebug(67100) << "MultiDriver b = " << m_multiDriverMode;
-   m_surroundView    = config.readEntry("Experimental-ViewSurround", false );
-   const QString& orientationString = config.readEntry("Orientation", "Horizontal");
+   const QString& orientationString = config.readEntry("Orientation", "Vertical");
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    Mixer::setGlobalMaster(mixerMasterCard, masterDev);
 
 
-   if ( orientationString == "Vertical" )
-       m_toplevelOrientation  = Qt::Vertical;
+   if ( orientationString == "Horizontal" )
+       m_toplevelOrientation  = Qt::Horizontal;
    else
-       m_toplevelOrientation = Qt::Horizontal;
+       m_toplevelOrientation = Qt::Vertical;
 
    // show/hide menu bar
    bool showMenubar = config.readEntry("Menubar", true);
@@ -336,7 +334,7 @@ void KMixWindow::recreateGUI()
          addMixerWidget(mixer->id());
       }
       bool dockingSucceded = updateDocking();
-      if( !dockingSucceded )
+      if( !dockingSucceded && Mixer::mixers().count() > 0 )
          show(); // avoid invisible and unaccessible main window
    }
    else {
@@ -381,9 +379,6 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
       if ( m_showMenubar ) {
             vflags |= ViewBase::MenuBarVisible;
-      }
-      if (  m_surroundView ) {
-            vflags |= ViewBase::Experimental_SurroundView;
       }
       if ( m_toplevelOrientation == Qt::Vertical ) {
             vflags |= ViewBase::Horizontal;

@@ -53,8 +53,6 @@ public:
       MenuBarVisible = 0x0002,
       Horizontal     = 0x0004,
       Vertical       = 0x0008,
-      // Experimental flags
-      Experimental_SurroundView = 0x1000
    };
 
     ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
@@ -97,6 +95,7 @@ public:
    void setIcons(bool on);
    void setLabels(bool on);
    void setTicks(bool on);
+   GUIProfile* guiProfile() { return _guiprof; };
 
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:

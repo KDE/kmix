@@ -29,6 +29,7 @@
 #include <QWidget>
 
 
+// Obsolete. See class ViewSliders instead.
 ViewSliderSet::ViewSliderSet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection* actionCollection)
       : ViewSliders(parent, name, mixer, vflags, guiprof, actionCollection)
 {

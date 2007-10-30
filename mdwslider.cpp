@@ -65,7 +65,7 @@ MDWSlider::MDWSlider(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(md,small,orientation,parent,mw),
-    m_linked(true), m_iconLabel( 0 ), m_iconLabelSimple(0), m_qcb(0), m_recordLED( 0 ), m_label( 0 ), _layout(0)
+    m_linked(true), m_iconLabelSimple(0), m_recordLED( 0 ), m_label( 0 ), _layout(0), m_qcb(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
@@ -169,22 +169,16 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    QBoxLayout *labelLayout;
    if ( _orientation == Qt::Vertical ) {
       labelLayout = new QVBoxLayout( );
-      slidersLayout->addItem( labelLayout );
       labelLayout->setAlignment(Qt::AlignHCenter);
-   }
-   else {
-      labelLayout = new QHBoxLayout();
-      slidersLayout->addItem( labelLayout );
-      labelLayout->setAlignment(Qt::AlignVCenter);
-   }
-   if ( _orientation == Qt::Vertical ) {
       m_label = new VerticalText( this, m_mixdevice->readableName().toUtf8().data() );
    }
    else {
+      labelLayout = new QHBoxLayout();
+      labelLayout->setAlignment(Qt::AlignVCenter);
       m_label = new QLabel(this);
       static_cast<QLabel*>(m_label) ->setText(m_mixdevice->readableName());
    }
-
+   slidersLayout->addItem( labelLayout );
    m_label->hide();
 
    labelLayout->addWidget( m_label );
@@ -205,12 +199,12 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    // --- ICON  ----------------------------
    QBoxLayout *iconLayout, *iconInternalLayout;
    if ( _orientation == Qt::Vertical ) {
-      iconLayout = new QVBoxLayout( );
-      iconInternalLayout = new QHBoxLayout( );
-   }
-   else {
       iconLayout = new QHBoxLayout( );
       iconInternalLayout = new QVBoxLayout( );
+   }
+   else {
+      iconLayout = new QVBoxLayout( );
+      iconInternalLayout = new QHBoxLayout( );
    }
    iconLayout->setAlignment(Qt::AlignCenter);
    iconInternalLayout->setAlignment(Qt::AlignCenter);
@@ -218,16 +212,15 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    sliLayout->addItem( iconLayout );
    //iconLayout->setSizeConstraint(QLayout::SetFixedSize);
 
-   m_iconLabel = 0;
    m_iconLabelSimple = 0L;
    if ( showMuteLED ) {
       kDebug(67100) << ">>> MixDevice " << m_mixdevice->readableName() << " icon calculation:" << endl;
       setIcon( m_mixdevice->type() );
-      QWidget* theLabel = m_iconLabel!=0 ? (QWidget*)m_iconLabel : (QWidget*)m_iconLabelSimple;
-      iconInternalLayout->addWidget( theLabel );
+      iconInternalLayout->addWidget( m_iconLabelSimple );
       QString muteTip( m_mixdevice->readableName() );
-      theLabel->setToolTip( muteTip );
+      m_iconLabelSimple->setToolTip( muteTip );
       if ( m_mixdevice->playbackVolume().hasSwitch() ) {
+         iconInternalLayout->addSpacing( 3 );
          m_qcb =  new QCheckBox(this);
          iconInternalLayout->addWidget( m_qcb );
          m_qcb->installEventFilter(this);
@@ -426,7 +419,7 @@ QPixmap MDWSlider::icon( int icontype )
       case MixDevice::SURROUND_CENTERBACK:
          miniDevPM = UserIcon("mix_surround"); break;
       case MixDevice::HEADPHONE:
-         miniDevPM = UserIcon( "audio-headset" ); break;
+         miniDevPM = KIconLoader::global()->loadIcon( "audio-headset", KIconLoader::Small, KIconLoader::SizeSmallMedium ); break;
       case MixDevice::DIGITAL:
          miniDevPM = UserIcon( "mix_digital" ); break;
       case MixDevice::AC97:
@@ -441,21 +434,10 @@ QPixmap MDWSlider::icon( int icontype )
 void
 MDWSlider::setIcon( int icontype )
 {
-   if( m_mixdevice->playbackVolume().hasSwitch() ) {
-      if( !m_iconLabel )
-      {
-         m_iconLabel = new QToolButton(this);
-         connect ( m_iconLabel, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
-         m_iconLabel->setCheckable(true);
-         installEventFilter( m_iconLabel );
-      }
-   } // has playback switch
-   else {
-      if( !m_iconLabelSimple )
-      {
+   if( !m_iconLabelSimple )
+   {
          m_iconLabelSimple = new QLabel(this);
          installEventFilter( m_iconLabelSimple );
-      }
    }
 
    QPixmap miniDevPM = icon( icontype );
@@ -466,31 +448,16 @@ MDWSlider::setIcon( int icontype )
          // scale icon
          QMatrix t;
          t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
-         if ( m_iconLabel ) {
-            m_iconLabel->setIcon( miniDevPM.transformed( t ) );
-            m_iconLabel->resize( 10, 10 );
-         }
-         else{
-            m_iconLabelSimple->setPixmap( miniDevPM.transformed( t ) );
-            m_iconLabelSimple->resize( 10, 10 );
-         }
+         m_iconLabelSimple->setPixmap( miniDevPM.transformed( t ) );
+         m_iconLabelSimple->resize( 10, 10 );
       } // small size
       else
       {
-         if ( m_iconLabel ) {
-            QIcon icon(miniDevPM);
-            icon.addPixmap( miniDevPM, QIcon::Normal, QIcon::On ) ;
-            QPixmap pixmapOff = icon.pixmap(miniDevPM.size(), QIcon::Disabled, QIcon::Off);
-            icon.addPixmap( pixmapOff, QIcon::Normal, QIcon::Off );
-            m_iconLabel->setIcon( icon );
-	    kDebug(67100) << " > button > icontype=" <<icontype<< "size=" << miniDevPM.size() << endl;
-         }
-         else {
             m_iconLabelSimple->setPixmap( miniDevPM );
 	    kDebug(67100) << " > simple > icontype=" <<icontype<< "size=" << miniDevPM.size() << endl;
-         }
       } // normal size
-   } else
+   }
+   else
    {
       kError(67100) << "Pixmap missing." << endl;
    }
@@ -610,13 +577,12 @@ MDWSlider::setTicksInternal(QList<QWidget *>& ref_sliders, bool ticks)
 void
 MDWSlider::setIcons(bool value)
 {
-   QWidget* theLabel = m_iconLabel!=0 ? (QWidget*)m_iconLabel : (QWidget*)m_iconLabelSimple;
-   if ( theLabel != 0 ) {
-      if ( ( !theLabel->isHidden()) !=value ) {
+   if ( m_iconLabelSimple != 0 ) {
+      if ( ( ! m_iconLabelSimple->isHidden()) !=value ) {
          if (value)
-            theLabel->show();
+            m_iconLabelSimple->show();
          else
-            theLabel->hide();
+            m_iconLabelSimple->hide();
 
          layout()->activate();
       }
@@ -856,10 +822,13 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 
 
    // update mute
-   if( m_iconLabel != 0 ) {
-      m_iconLabel->blockSignals( true );
-      m_iconLabel->setChecked( !m_mixdevice->isMuted() );
-      m_iconLabel->blockSignals( false );
+
+   if( m_iconLabelSimple != 0 ) {
+/*
+      m_iconLabelSimple->blockSignals( true );
+      m_iconLabelSimple->setChecked( !m_mixdevice->isMuted() );
+      m_iconLabelSimple->blockSignals( false );
+*/
       m_qcb->blockSignals( true );
       m_qcb->setChecked( m_mixdevice->isMuted() );
       m_qcb->blockSignals( false );

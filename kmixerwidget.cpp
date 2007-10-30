@@ -23,6 +23,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <qpixmap.h>
+#include <QRegExp>
 #include <qslider.h>
 #include <QString>
 #include <qtoolbutton.h>
@@ -118,7 +119,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    createViewsByProfile(_mixer, guiprof, vflags);
 
 
-   // *** Lower part: Slider and Mixer Name ************************************************
+   // *** Lower part: Balance s ************************************************
    QHBoxLayout *balanceAndDetail = new QHBoxLayout();
    m_topLayout->addItem( balanceAndDetail );
    balanceAndDetail->setObjectName( "balanceAndDetail" );
@@ -136,31 +137,13 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
    m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
 
-/*
-   QLabel *mixerName = new QLabel(this );
-   mixerName->setObjectName("mixerName");
-   mixerName->setText( _mixer->readableName() );
-   mixerName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-*/
-
    // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
    balanceAndDetail->addSpacing( 10 );
    balanceAndDetail->addWidget( m_balanceSlider );
-//   balanceAndDetail->addWidget( mixerName );
    balanceAndDetail->addSpacing( 10 );
 
    connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
    m_balanceSlider->setToolTip( i18n("Left/Right balancing") );
-
-   /* @todo : update all Background Pixmaps
-   const QPixmap bgPixmap = UserIcon("bg_speaker");
-   setBackgroundPixmap ( bgPixmap );
-   const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-   for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-         ViewBase* view = *it;
-         view->setBackgroundPixmap ( bgPixmap );
-   } // for all Views
-   */
 
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
@@ -212,6 +195,7 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase, QString& tabName)
       vbase->createDeviceWidgets();
       //vbase->show();
       m_topLayout->addWidget(vbase);
+      _views.push_back(vbase);
 
 /*
       QString finalTabName;
@@ -264,6 +248,7 @@ void KMixerWidget::setTicks( bool on )
  */
 void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 {
+   kDebug(67100) << "KMixToolBox::loadConfig()";
 #ifdef __GNUC__
 #warning port to KConfigGroup. see also comments in KMixToolBox   --ossi
 #endif
@@ -271,6 +256,7 @@ void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+   kDebug(67100) << "KMixToolBox::loadConfig() view";
 		ViewBase* view = *it;
 		KMixToolBox::loadView(view,config);
 		KMixToolBox::loadKeys(view,config);

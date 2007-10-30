@@ -471,7 +471,7 @@ void GUIProfileParser::splitPair(const QString& pairString, std::pair<QString,QS
 	}
 	else {
 		// delimiter found
-		result.first  = pairString.mid(0,delimPos);      // check this !!!
+		result.first  = pairString.mid(0,delimPos);
 		result.second = pairString.left(delimPos+1);
 	}
 }

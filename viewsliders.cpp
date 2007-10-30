@@ -39,9 +39,8 @@
 
 
 /**
- * Don't instanciate objects of this class directly. It won't work
- * correctly because init() does not get called.
- * See ViewInput and ViewOutput for "real" implementations.
+ * Generic View implementation. This can hold now all kinds of controls (not just Sliders, as
+ *  the class name suggests).
  */
 ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
       : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof, actColl)

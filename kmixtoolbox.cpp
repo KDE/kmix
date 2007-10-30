@@ -28,6 +28,7 @@
 #include <kglobalaccel.h>
 #include <klocale.h>
 
+#include "guiprofile.h"
 #include "mdwslider.h"
 #include "mixdevicewidget.h"
 #include "mixdevice.h"
@@ -93,7 +94,35 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
             bool splitChannels = devcg.readEntry("Split", false);
             mdw->setStereoLinked( !splitChannels );
          }
-         mdw->setDisabled( !devcg.readEntry("Show", true) );
+
+         bool mdwEnabled = false;
+         if ( devcg.hasKey("Show") ) 
+         {
+            mdwEnabled = ( true == devcg.readEntry("Show", true) );
+            kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from config-file: mdwEnabled==" << mdwEnabled;
+         }
+         else
+         {
+            // if not configured in config file, use the default from the profile
+             GUIProfile::ControlSet cset = (view->guiProfile()->_controls);
+             for ( std::vector<ProfControl*>::const_iterator it = cset.begin(); it != cset.end(); ++it)
+             {
+                ProfControl* pControl = *it;
+                QRegExp idRegExp(pControl->id);
+                kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
+                if ( mdw->mixDevice()->id().contains(idRegExp) ) {
+                   if ( pControl->show == "simple" )
+                   {
+                      mdwEnabled = true;
+                      kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from profile: mdwEnabled==" << mdwEnabled;
+                   }
+                   break;
+                }
+             }
+         }
+         kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "FINAL: mdwEnabled==" << mdwEnabled;
+         //mdw->setEnabled(mdwEnabled);  // I have no idea why dialogselectmaster works with "enabled" instead of "visible"
+         if (!mdwEnabled) { mdw->hide(); } else { mdw->show(); }
 
       } // inherits MixDeviceWidget
    } // for all MDW's
