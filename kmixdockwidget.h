@@ -76,7 +76,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
  private slots:
    void dockMute();
    void selectMaster();
-   void handleNewMaster(int soundcard_id, QString& channel_id);
+   void handleNewMaster(QString& soundcard_id, QString& channel_id);
 };
 
 #endif

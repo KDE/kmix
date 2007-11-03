@@ -40,7 +40,7 @@ class DialogSelectMaster : public KDialog
     ~DialogSelectMaster();
 
  signals:
-    void newMasterSelected(int, QString& );
+     void newMasterSelected(QString&, QString& );
 
  public slots:
     void apply();
@@ -54,6 +54,7 @@ class DialogSelectMaster : public KDialog
     KVBox *m_vboxForScrollView;
     QButtonGroup *m_buttonGroupForScrollView;
     //QStringList m_mixerPKs;
+    QFrame *m_mainFrame;
 
  private slots:
    void createPageByID(int mixerId);

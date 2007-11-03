@@ -136,22 +136,31 @@ KMixDockWidget::createMasterVolWidget()
 void KMixDockWidget::selectMaster()
 {
    DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
-   connect ( dsm, SIGNAL(newMasterSelected(int, QString&)), SLOT( handleNewMaster(int,QString&)) );
+   connect ( dsm, SIGNAL(newMasterSelected(QString&, QString&)), SLOT( handleNewMaster(QString&, QString&)) );
    dsm->show();
     // !! The dialog is modal. Does it delete itself?
 }
 
 
-void KMixDockWidget::handleNewMaster(int soundcard_id, QString& control_id)
+void KMixDockWidget::handleNewMaster(QString& mixerID, QString& /*control_id*/)
 {
    //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id;
-   Mixer *mixer = Mixer::mixers().at(soundcard_id);
+   Mixer *mixer = 0;
+   for( int i =0; i<Mixer::mixers().count(); i++ )
+   {
+       mixer = (Mixer::mixers())[i];
+       if ( mixer->id() == mixerID ) {
+           mixer = (Mixer::mixers())[i];
+           break;
+       }
+   }
+
    if ( mixer == 0 ) {
-      kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (soundcard_id=" << soundcard_id << ")" << endl;
+       kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (mixerID=" << mixerID << ")" << endl;
       return; // can not happen
    }
    m_mixer = mixer;
-   Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
+   //Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
    createMasterVolWidget();
 }
 
@@ -183,10 +192,10 @@ KMixDockWidget::setVolumeTip()
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
         newToolTipValue = val;
-        if ( ! md->isMuted() ) newToolTipValue += 10000;
+        if ( md->isMuted() ) newToolTipValue += 10000;
         if ( _oldToolTipValue != newToolTipValue ) {
             tip = i18n( "Volume at %1%", val );
-            if ( md->isMuted() ) {
+            if ( md->playbackVolume().hasSwitch() && md->isMuted() ) {
                 tip += i18n( " (Muted)" );
             }
         }
@@ -210,7 +219,7 @@ KMixDockWidget::updatePixmap()
     {
         newPixmapType = 'e';
     }
-    else if ( md->isMuted() )
+    else if ( md->playbackVolume().hasSwitch() && md->isMuted() )
     {
         newPixmapType = 'm';
     }

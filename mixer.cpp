@@ -220,7 +220,7 @@ void Mixer::setBalance(int balance)
 
    m_balance = balance;
 
-   MixDevice* master = Mixer::getLocalMasterMD();
+   MixDevice* master = getLocalMasterMD();
    if ( master == 0 ) {
       // no master device available => return
       return;
@@ -337,9 +337,10 @@ MixDevice* Mixer::getGlobalMasterMD()
       for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
       {
          md = mixer->_mixerBackend->m_mixDevices[i];
-         if ( md->id() == _globalMasterCardDevice )
+         if ( md->id() == _globalMasterCardDevice ) {
             kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice;
             break;
+         }
       }
    }
 
