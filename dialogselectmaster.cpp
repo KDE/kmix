@@ -68,9 +68,6 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
       // Mixer widget line
       QHBoxLayout* mixerNameLayout = new QHBoxLayout();
       _layout->addItem( mixerNameLayout );
-      //widgetsLayout->setStretchFactor( mixerNameLayout, 0 );
-      //QSizePolicy qsp( QSizePolicy::Ignored, QSizePolicy::Maximum);
-      //mixerNameLayout->setSizePolicy(qsp);
       mixerNameLayout->setSpacing(KDialog::spacingHint());
 
       QLabel *qlbl = new QLabel( i18n("Current Mixer"), m_mainFrame );

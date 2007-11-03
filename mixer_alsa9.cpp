@@ -78,6 +78,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 
    if ( name.indexOf( "master"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
    if ( name.indexOf( "master mono", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
+   if ( name.indexOf( "front"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
    if ( name.indexOf( "pc speaker" , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
    if ( name.indexOf( "capture"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::RECMONITOR;
    if ( name.indexOf( "music"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
@@ -168,10 +169,19 @@ int Mixer_ALSA::open()
         } // is ordinary mixer element (NOT an enum)
 
 
+        QString readableName;
+        readableName = snd_mixer_selem_id_get_name( sid );
+        int idx = snd_mixer_selem_id_get_index( sid );
+        if ( idx > 0 ) {
+            QString idxString;
+            idxString.setNum(1+idx);
+            readableName += " ";
+            readableName += idxString;
+        }
         MixDevice* md = new MixDevice(
                 _mixer,
                 mdID,
-                snd_mixer_selem_id_get_name( sid ),
+                readableName,
                 ct );
          if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
          if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);

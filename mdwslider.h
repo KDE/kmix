@@ -67,7 +67,7 @@ public:
     void setIcons( bool value );
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
-    QSize sizeHint() const;
+//    QSize sizeHint() const;
     bool eventFilter( QObject* obj, QEvent* e );
     QSizePolicy sizePolicy() const;
 
@@ -99,8 +99,9 @@ private slots:
 private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
+    QPixmap loadIcon( char* const filename );
     void createWidgets( bool showMuteLED, bool showRecordLED );
-    void addSliders( QBoxLayout *volLayout, char type);
+    void addSliders( QBoxLayout *volLayout, char type, bool addLabel);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList<QWidget *>& ref_sliders );

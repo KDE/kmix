@@ -55,6 +55,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
       // actionCollection(). This is a @todo.
       _actions = new KActionCollection( this );
    }
+   _localActionColletion = new KActionCollection( this );
 
    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
    if ( vflags & ViewBase::HasMenuBar ) {
@@ -71,7 +72,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
          }
       }
    }
-   QAction *action = _actions->addAction("toggle_channels");
+   QAction *action = _localActionColletion->addAction("toggle_channels");
    action->setText(i18n("&Channels"));
    connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
    connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
@@ -143,7 +144,7 @@ void ViewBase::popupReset()
     _popMenu = new KMenu( this );
     _popMenu->addTitle( SmallIcon( "kmix" ), i18n("Device Settings") );
 
-    a = _actions->action( "toggle_channels" );
+    a = _localActionColletion->action( "toggle_channels" );
     if ( a ) _popMenu->addAction(a);
 
     QAction *b = _actions->action( "options_show_menubar" );

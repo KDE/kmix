@@ -432,7 +432,6 @@ QSize KMixApplet::sizeHint() const {
 	// Return something that should resemble our former sizeHint().
 	qsz = size();
     }
-    //kDebug(67100) << "KMixApplet::sizeHint() leftright =" << qsz << "\n";
     return qsz;
 }
 
@@ -441,11 +440,9 @@ QSize KMixApplet::sizeHint() const {
    using this method. Actually we ignore the passed paramater and just return our preferred size.
 */
 int KMixApplet::widthForHeight(int) const {
-    //kDebug(67100) << "KMixApplet::widthForHeight() = " << sizeHint().width();
     return sizeHint().width();
 }
 int KMixApplet::heightForWidth(int) const {
-    //kDebug(67100) << "KMixApplet::heightForWidth() = " << sizeHint().height();
     return sizeHint().height();
 }
 
@@ -453,13 +450,10 @@ int KMixApplet::heightForWidth(int) const {
 
 
 QSizePolicy KMixApplet::sizePolicy() const {
-    //    return QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
     if ( orientation() == Qt::Vertical ) {
-	//kDebug(67100) << "KMixApplet::sizePolicy=(Ignored,Fixed)\n";
         return QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     }
     else {
-	//kDebug(67100) << "KMixApplet::sizePolicy=(Fixed,Ignored)\n";
         return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
    }
 }

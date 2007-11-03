@@ -116,7 +116,7 @@ protected:
 
     ViewFlags _vflags;
     GUIProfile* _guiprof;
-
+   KActionCollection *_localActionColletion;
 public slots:
    virtual void refreshVolumeLevels();
    virtual void configureView(); 

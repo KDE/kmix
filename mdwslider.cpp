@@ -125,12 +125,12 @@ MDWSlider::MDWSlider(MixDevice* md,
 
 QSizePolicy MDWSlider::sizePolicy() const
 {
-	if ( _orientation == Qt::Vertical ) {
-		return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
-	}
-	else {
-		return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
-	}
+    if ( _orientation == Qt::Vertical ) {
+        return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum );
+    }
+    else {
+        return QSizePolicy(  QSizePolicy::Minimum, QSizePolicy::Expanding );
+    }
 }
 
 
@@ -165,24 +165,45 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    }
    _layout->addItem( slidersLayout );
 
-   // -- LABEL LAYOUT TO POSITION
+   
+   
+   
+   
+   /*
+   // --- LABEL -----------------------------------------------
+   if ( !useLabelForCaptureANDPlayback )
+   {  // no sliders on capture or playback (this is the usual case) => put a label with the name.
+      // But I won't add " (capture)" as on the sliders, because there is only one "column"
+       if ( _orientation == Qt::Vertical ) {
+           m_label = new VerticalText( this, m_mixdevice->readableName() );
+       }
+       else {
+           m_label = new QLabel(this);
+           static_cast<QLabel*>(m_label)->setText(m_mixdevice->readableName());
+       }
+       volLayout->addWidget( m_label );
+       m_label->installEventFilter( this );
+   }
+   */
+   
+   
+   // --- LABEL -----------------------------------------------
    QBoxLayout *labelLayout;
    if ( _orientation == Qt::Vertical ) {
       labelLayout = new QVBoxLayout( );
-      labelLayout->setAlignment(Qt::AlignHCenter);
-      m_label = new VerticalText( this, m_mixdevice->readableName().toUtf8().data() );
+      labelLayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
+      m_label = new VerticalText( this, m_mixdevice->readableName() ); // .toUtf8().data()
    }
    else {
       labelLayout = new QHBoxLayout();
-      labelLayout->setAlignment(Qt::AlignVCenter);
+      labelLayout->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
       m_label = new QLabel(this);
       static_cast<QLabel*>(m_label) ->setText(m_mixdevice->readableName());
    }
-   slidersLayout->addItem( labelLayout );
-   m_label->hide();
-
-   labelLayout->addWidget( m_label );
+   m_label->setToolTip( m_mixdevice->readableName() );  // @todo: Whatsthis, explaining the device
    m_label->installEventFilter( this );
+   slidersLayout->addItem( labelLayout );
+   labelLayout->addWidget( m_label );
 
    // -- SLIDERS, LEDS AND ICON
    QBoxLayout *sliLayout;
@@ -194,8 +215,9 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
       sliLayout = new QHBoxLayout();
       sliLayout->setAlignment(Qt::AlignVCenter);
    }
-
    slidersLayout->addItem( sliLayout );
+   
+   
    // --- ICON  ----------------------------
    QBoxLayout *iconLayout, *iconInternalLayout;
    if ( _orientation == Qt::Vertical ) {
@@ -219,21 +241,25 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
       iconInternalLayout->addWidget( m_iconLabelSimple );
       QString muteTip( m_mixdevice->readableName() );
       m_iconLabelSimple->setToolTip( muteTip );
-      if ( m_mixdevice->playbackVolume().hasSwitch() ) {
          iconInternalLayout->addSpacing( 3 );
          m_qcb =  new QCheckBox(this);
          iconInternalLayout->addWidget( m_qcb );
-         m_qcb->installEventFilter(this);
-         connect ( m_qcb, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
-         QString muteTip2( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
-         m_qcb->setToolTip( muteTip2 );
-      } // can be muted
+         if ( m_mixdevice->playbackVolume().hasSwitch() ) {
+            m_qcb->installEventFilter(this);
+            connect ( m_qcb, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
+            QString muteTip2( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
+            m_qcb->setToolTip( muteTip2 );
+         } // can be muted
+          else {
+              m_qcb->hide();
+              m_qcb = 0; // "forget" the hidden switch
+          } // can not be muted
+      }
       else {
          //
-      } // cannot be muted
+      } // don't show it
 
       sliLayout->addSpacing( 3 );
-   }
 
 
 
@@ -241,33 +267,24 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    QBoxLayout *volLayout;
    if ( _orientation == Qt::Vertical ) {
       volLayout = new QHBoxLayout( );
-      volLayout->setAlignment(Qt::AlignVCenter);
+      volLayout->setAlignment(Qt::AlignTop);
    }
    else {
       volLayout = new QVBoxLayout(  );
-      volLayout->setAlignment(Qt::AlignHCenter);
+      volLayout->setAlignment(Qt::AlignLeft);
    }
    sliLayout->addItem( volLayout );
 
-   if ( m_mixdevice->playbackVolume().count() > 0 )
-      addSliders( volLayout, 'p' );
-   if ( m_mixdevice->captureVolume().count() > 0 )
-       addSliders( volLayout, 'c' );
-   if ( m_mixdevice->playbackVolume().count() == 0 && m_mixdevice->captureVolume().count() == 0 )
-   {  // no sliders => put a label with the name.
-      // But I won't add " (capture)" as on the sliders, because there is only one "column"
-      if ( _orientation == Qt::Vertical ) {
-         m_label = new VerticalText( this, m_mixdevice->readableName() );
-      }
-      else {
-         m_label = new QLabel(this);
-         static_cast<QLabel*>(m_label)->setText(m_mixdevice->readableName());
-      }
-      volLayout->addWidget( m_label );
-      m_label->installEventFilter( this );
-      m_label->setToolTip( m_mixdevice->readableName() );  // @todo: Whatsthis, explaining the device
-   }
+   bool bothCaptureANDPlaybackExist = ( m_mixdevice->playbackVolume().count() > 0 && m_mixdevice->captureVolume().count() > 0 );
+    
 
+    // --- SLIDERS -----------------------------------------------
+   if ( m_mixdevice->playbackVolume().count() > 0 )
+       addSliders( volLayout, 'p', false );
+   if ( m_mixdevice->captureVolume().count() > 0 )
+       addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
+
+   
    // --- RECORD SOURCE LED --------------------------
    if ( showRecordLED )
    {
@@ -312,7 +329,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 }
 
 
-void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
+void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 {
    Volume* volP;
    QList<Volume::ChannelID>* ref_slidersChidsP;
@@ -334,21 +351,25 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type)
    QList<QWidget *>& ref_sliders = *ref_slidersP;
 
 
-   static QString capture = i18n("(capture)");
-   QString sliderDescription = m_mixdevice->readableName();
-   if ( type == 'c' ) { // capture
-      sliderDescription += ' ' + capture;
+   if (addLabel)
+   {
+        static QString capture = i18n("(capture)");
+        QString sliderDescription = m_mixdevice->readableName();
+        if ( type == 'c' ) { // capture
+        sliderDescription += ' ' + capture;
+        }
+        
+        QWidget *label;
+        if ( _orientation == Qt::Vertical ) {
+            label = new VerticalText( this, sliderDescription );
+        }
+        else {
+            label = new QLabel(this);
+            static_cast<QLabel*>(m_label)->setText(sliderDescription);
+        }
+        volLayout->addWidget( label );
+        label->installEventFilter( this );
    }
-
-   if ( _orientation == Qt::Vertical ) {
-      m_label = new VerticalText( this, sliderDescription );
-   }
-   else {
-      m_label = new QLabel(this);
-      static_cast<QLabel*>(m_label)->setText(sliderDescription);
-   }
-   volLayout->addWidget( m_label );
-   m_label->installEventFilter( this );
 
     for( int i = 0; i < vol.count(); i++ )
     {
@@ -391,44 +412,49 @@ QPixmap MDWSlider::icon( int icontype )
    QPixmap miniDevPM;
    switch (icontype) {
       case MixDevice::AUDIO:
-         miniDevPM = KIconLoader::global()->loadIcon( "mix_audio", KIconLoader::Small, KIconLoader::SizeSmallMedium ); break;
+         miniDevPM = loadIcon( "mix_audio"); break;
       case MixDevice::BASS:
       case MixDevice::SURROUND_LFE:  // "LFE" SHOULD have an own icon
-         miniDevPM = UserIcon("mix_bass"); break;
+          miniDevPM = loadIcon("mix_bass"); break;
       case MixDevice::CD:
-         miniDevPM = UserIcon("mix_cd"); break;
+          miniDevPM = loadIcon("mix_cd"); break;
       case MixDevice::EXTERNAL:
-         miniDevPM = KIconLoader::global()->loadIcon( "audio-input-line", KIconLoader::Small, KIconLoader::SizeMedium ); break;
+         miniDevPM = loadIcon( "audio-input-line"); break;
       case MixDevice::MICROPHONE:
-         miniDevPM = UserIcon("audio-input-microphone");break;
+          miniDevPM = loadIcon("audio-input-microphone");break;
       case MixDevice::MIDI:
-         miniDevPM = UserIcon("mix_midi"); break;
+          miniDevPM = loadIcon("mix_midi"); break;
       case MixDevice::RECMONITOR:
-         miniDevPM = UserIcon("mix_recmon"); break;
+          miniDevPM = loadIcon("mix_recmon"); break;
       case MixDevice::TREBLE:
-         miniDevPM = UserIcon("mix_treble"); break;
+          miniDevPM = loadIcon("mix_treble"); break;
       case MixDevice::UNKNOWN:
-         miniDevPM = UserIcon("mix_unknown"); break;
+          miniDevPM = loadIcon("mix_unknown"); break;
       case MixDevice::VOLUME:
-         miniDevPM = UserIcon("mix_volume"); break;
+          miniDevPM = loadIcon("mix_volume"); break;
       case MixDevice::VIDEO:
-         miniDevPM = UserIcon("mix_video"); break;
+          miniDevPM = loadIcon("mix_video"); break;
       case MixDevice::SURROUND:
       case MixDevice::SURROUND_BACK:
       case MixDevice::SURROUND_CENTERFRONT:
       case MixDevice::SURROUND_CENTERBACK:
-         miniDevPM = UserIcon("mix_surround"); break;
+          miniDevPM = loadIcon("mix_surround"); break;
       case MixDevice::HEADPHONE:
-         miniDevPM = KIconLoader::global()->loadIcon( "audio-headset", KIconLoader::Small, KIconLoader::SizeSmallMedium ); break;
+         miniDevPM = loadIcon( "audio-headset" ); break;
       case MixDevice::DIGITAL:
-         miniDevPM = UserIcon( "mix_digital" ); break;
+          miniDevPM = loadIcon( "mix_digital" ); break;
       case MixDevice::AC97:
-         miniDevPM = UserIcon( "mix_ac97" ); break;
+          miniDevPM = loadIcon( "mix_ac97" ); break;
       default:
-         miniDevPM = UserIcon("mix_unknown"); break;
+          miniDevPM = loadIcon("mix_unknown"); break;
    }
 
    return miniDevPM;
+}
+
+QPixmap MDWSlider::loadIcon( char* const filename )
+{
+    return  KIconLoader::global()->loadIcon( filename, KIconLoader::Small, KIconLoader::SizeSmallMedium );
 }
 
 void
@@ -890,6 +916,7 @@ void MDWSlider::showContextMenu()
    menu->popup( pos );
 }
 
+/*
 QSize MDWSlider::sizeHint() const {
 	if ( _layout != 0 ) {
 		return _layout->sizeHint();
@@ -899,6 +926,7 @@ QSize MDWSlider::sizeHint() const {
 		return QWidget::sizeHint();
 	}
 }
+*/
 
 /**
  * An event filter for the various QWidgets. We watch for Mouse press Events, so

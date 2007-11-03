@@ -47,8 +47,6 @@
 #include "mixer.h"
 #include "mixertoolbox.h"
 #include "viewsliders.h"
-// KMix experimental
-//#include "viewsurround.h"
 
 
 /**
@@ -137,7 +135,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
    m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
 
-   // 10 Pixels at the front; Balance-Slider; Mixer-Name; 10 Pixels at the end
+   // 10 Pixels at the front; Balance-Slider; 10 Pixels at the end
    balanceAndDetail->addSpacing( 10 );
    balanceAndDetail->addWidget( m_balanceSlider );
    balanceAndDetail->addSpacing( 10 );
@@ -170,17 +168,10 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       // The i18n() in the next line will only produce a translated version, if the text is known.
       // This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
       // It is possible that the Profile author puts arbitrary names in it.
-      kDebug(67100) << "KMixerWidget::createViewsByProfile() add " << profTab->type.toUtf8() << " name="<<profTab->name.toUtf8() << "\n";
       if ( profTab->type == "Sliders" ) {
          ViewSliders* view = new ViewSliders( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
          possiblyAddView(view, profTab->name);
       }
-// Disable this View until the rest is done for KDE4
-//      else if ( profTab->type == "Surround" ) {
-//         ViewSurround* view = new ViewSurround ( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
-//         possiblyAddView(view, profTab->name);
-//      }
-
       else {
          kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
       }
@@ -193,16 +184,8 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase, QString& tabName)
       delete vbase;
    else {
       vbase->createDeviceWidgets();
-      //vbase->show();
       m_topLayout->addWidget(vbase);
       _views.push_back(vbase);
-
-/*
-      QString finalTabName;
-      finalTabName = i18n(tabName.toAscii());  // This is a dynamic i18n(). Usual texts are "Play", "Record", and "Switches"
-      finalTabName += " (" + _mixer->readableName() + ")";
-      //m_ioTab->addTab( vbase , finalTabName ); //  @todo move to class KMix
-*/
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
    }
 }

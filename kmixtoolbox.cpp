@@ -190,7 +190,7 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
             // only sliders have the ability to split apart in mutliple channels
             devcg.writeEntry( "Split", ! mdw->isStereoLinked() );
          }
-         devcg.writeEntry( "Show" , ! mdw->isDisabled() );
+         devcg.writeEntry( "Show" , mdw->isVisible() );
       } // inherits MixDeviceWidget
    } // for all MDW's
 }

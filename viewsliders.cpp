@@ -47,9 +47,21 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 {
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
+      _layoutSliders = new QVBoxLayout();
+      _layoutMDW->addItem( _layoutSliders );
+      _layoutEnum = new QVBoxLayout(); // always vertical!
+      _layoutMDW->addItem( _layoutEnum );
    }
    else {
       _layoutMDW = new QHBoxLayout(this);
+      _layoutSliders = new QHBoxLayout();
+      _layoutMDW->addItem( _layoutSliders );
+      // Place enums right from the sliders: This is done, so that there will be no
+      // ugly space on the left side, when no Switch is shown.
+      // Actually it is not really clear yet, why there is empty space at all: There are 0 items in
+      // the _layoutEnum, so it might be a sizeHint() or some other subtle layout issue.
+      _layoutEnum = new QVBoxLayout();
+      _layoutMDW->addItem( _layoutEnum );
    }
    _layoutMDW->setSpacing(0);
     setMixSet();
@@ -74,7 +86,7 @@ QWidget* ViewSliders::add(MixDevice *md)
                this,         // parent
                this          // View widget
       );
-      _layoutMDW->addWidget(mdw);
+      _layoutEnum->addWidget(mdw);
    } // an enum
    else {
       mdw = new MDWSlider(
@@ -85,8 +97,8 @@ QWidget* ViewSliders::add(MixDevice *md)
                orientation,  // Orientation
                this,         // parent
                this       ); // View widget
+      _layoutSliders->addWidget(mdw);
    }
-   _layoutMDW->addWidget(mdw);
    return mdw;
 }
 
@@ -152,6 +164,7 @@ QSize ViewSliders::sizeHint() const {
    return( _layoutMDW->sizeHint() );
 }
 
+
 void ViewSliders::constructionFinished() {
    _layoutMDW->activate();
 }
@@ -176,41 +189,5 @@ void ViewSliders::refreshVolumeLevels() {
       }
    }
 }
-
-/*
-    // Mockup Hack
-    static int num = 0;
-    {
-     QString labeltext;
-     switch (num) {
-        case 0:  labeltext = "Desktop"; break;
-        case 2:  labeltext = "Music and Video"; break;
-        case 5:  labeltext = "Desktop"; break;
-        default: labeltext = ""; break;
-     }
-     num++;
-     if ( !labeltext.isEmpty() ) {
-        _layoutMDW->addStretch(10);
-        if (_vflags & ViewBase::Vertical) { 
-          QLabel* lbl = new QLabel(labeltext, this);
-          //lbl->setBackgroundRole( QPalette::Dark );
-          //lbl->setForegroundRole( QPalette::Midlight );
-          lbl->setFrameShape( QFrame::Panel );
-          lbl->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Fixed );
-          //lbl->setBackgroundRole( QPalette::Base );
-          _layoutMDW->addWidget(lbl);
-        }
-        else {
-          VerticalText* lbl = new VerticalText(this, labeltext.toUtf8().data());
-          //lbl->setBackgroundRole( QPalette::Background );
-          lbl->setBackgroundRole( QPalette::AlternateBase );
-          lbl->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Preferred );
-          //lbl->setBackgroundRole( QPalette::Base );
-          _layoutMDW->addWidget(lbl);
-        }
-        _layoutMDW->addStretch(10);
-     } // if category label shall be inserted
-    }
-*/
 
 #include "viewsliders.moc"
