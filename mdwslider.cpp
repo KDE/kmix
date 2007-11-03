@@ -126,10 +126,10 @@ MDWSlider::MDWSlider(MixDevice* md,
 QSizePolicy MDWSlider::sizePolicy() const
 {
     if ( _orientation == Qt::Vertical ) {
-        return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum );
+        return QSizePolicy(  QSizePolicy::Minimum, QSizePolicy::MinimumExpanding );
     }
     else {
-        return QSizePolicy(  QSizePolicy::Minimum, QSizePolicy::Expanding );
+        return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Minimum );
     }
 }
 
@@ -452,7 +452,7 @@ QPixmap MDWSlider::icon( int icontype )
    return miniDevPM;
 }
 
-QPixmap MDWSlider::loadIcon( char* const filename )
+QPixmap MDWSlider::loadIcon( const char*  filename )
 {
     return  KIconLoader::global()->loadIcon( filename, KIconLoader::Small, KIconLoader::SizeSmallMedium );
 }

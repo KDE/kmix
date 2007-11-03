@@ -166,7 +166,7 @@ QSize ViewSliders::sizeHint() const {
 
 
 void ViewSliders::constructionFinished() {
-   _layoutMDW->activate();
+    _layoutMDW->activate();
 }
 
 void ViewSliders::refreshVolumeLevels() {

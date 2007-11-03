@@ -170,7 +170,7 @@ void MDWSwitch::showContextMenu()
     menu->popup( pos );
 }
 
-QSize MDWSwitch::sizeHint() const {
+/* QSize MDWSwitch::sizeHint() const {
    if ( _layout != 0 ) {
       return _layout->sizeHint();
    }
@@ -179,7 +179,12 @@ QSize MDWSwitch::sizeHint() const {
    return QWidget::sizeHint();
    }
 }
+*/
 
+QSizePolicy MDWSwitch::sizePolicy() const
+{
+    return QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+}
 
 /**
    This slot is called, when a user has clicked the mute button. Also it is called by any other

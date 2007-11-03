@@ -116,12 +116,10 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    GUIProfile* guiprof = MixerToolBox::instance()->selectProfile(_mixer);
    createViewsByProfile(_mixer, guiprof, vflags);
 
-
+/*
    // *** Lower part: Balance s ************************************************
    QHBoxLayout *balanceAndDetail = new QHBoxLayout();
    m_topLayout->addItem( balanceAndDetail );
-   balanceAndDetail->setObjectName( "balanceAndDetail" );
-   balanceAndDetail->setSpacing( 8 );
    // Create the left-right-slider
    m_balanceSlider = new QSlider( Qt::Horizontal, this );
    m_balanceSlider->setMinimum(-100);
@@ -133,7 +131,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_balanceSlider->setTickPosition( QSlider::TicksBelow );
    m_balanceSlider->setTickInterval( 25 );
    m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
-   m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
+//   m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
 
    // 10 Pixels at the front; Balance-Slider; 10 Pixels at the end
    balanceAndDetail->addSpacing( 10 );
@@ -142,6 +140,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 
    connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
    m_balanceSlider->setToolTip( i18n("Left/Right balancing") );
+*/
 
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
@@ -251,8 +250,7 @@ void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
 
 void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
 {
-	// Write mixer name. It cannot be changed in the Mixer instance,
-	// it is only saved for diagnostical purposes (analyzing the config file).
+	// Write mixer name. Only saved for diagnostical purposes (analyzing the config file).
 	config->group( grp ).writeEntry("Mixer_Name_Key", _mixer->id());
 
 	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();

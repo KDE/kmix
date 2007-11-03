@@ -99,7 +99,7 @@ private slots:
 private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
-    QPixmap loadIcon( char* const filename );
+    QPixmap loadIcon( const char* filename );
     void createWidgets( bool showMuteLED, bool showRecordLED );
     void addSliders( QBoxLayout *volLayout, char type, bool addLabel);
 

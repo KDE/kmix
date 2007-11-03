@@ -131,7 +131,7 @@ void MDWEnum::showContextMenu()
    menu->popup( pos );
 }
 
-QSize MDWEnum::sizeHint() const {
+/* QSize MDWEnum::sizeHint() const {
    if ( _layout != 0 ) {
       return _layout->sizeHint();
    }
@@ -139,6 +139,12 @@ QSize MDWEnum::sizeHint() const {
       // layout not (yet) created
       return QWidget::sizeHint();
    }
+}
+*/
+
+QSizePolicy MDWEnum::sizePolicy() const
+{
+    return QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
 }
 
 

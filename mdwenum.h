@@ -52,7 +52,8 @@ public:
     ~MDWEnum();
 
     void addActionToPopup( KAction *action );
-    QSize sizeHint() const;
+//   QSize sizeHint() const;
+    QSizePolicy sizePolicy() const;
     bool eventFilter( QObject* obj, QEvent* e );
 
 public slots:
