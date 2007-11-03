@@ -178,11 +178,12 @@ void KMixWindow::saveConfig()
    saveBaseConfig();
    saveViewConfig();
    saveVolumes();
+   KGlobal::config()->sync();
 }
 
 void KMixWindow::saveBaseConfig()
 {
-   KConfigGroup config(KGlobal::config(), 0);
+   KConfigGroup config(KGlobal::config(), "Global");
 
    config.writeEntry( "Size", size() );
    config.writeEntry( "Position", pos() );
@@ -256,7 +257,7 @@ void KMixWindow::loadConfig()
 
 void KMixWindow::loadBaseConfig()
 {
-    KConfigGroup config(KGlobal::config(), 0);
+    KConfigGroup config(KGlobal::config(), "Global");
 
    m_showDockWidget = config.readEntry("AllowDocking", true);
    m_volumeWidget = config.readEntry("TrayVolumeControl", true);
