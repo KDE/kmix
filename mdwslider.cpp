@@ -823,7 +823,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 
    // update mute
 
-   if( m_iconLabelSimple != 0 ) {
+   if( m_qcb != 0 ) {
 /*
       m_iconLabelSimple->blockSignals( true );
       m_iconLabelSimple->setChecked( !m_mixdevice->isMuted() );
