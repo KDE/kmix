@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--  WARNING: THIS FILE IS UNDER WORK, AND NO GOOD START FOR CREATING YOUR OWN PROFILES -->
-
 <soundcard driver="OSS"
-	   version="*:*"
-	   name="*"
-	   type="*"
-	   generation="1"
+           version="*:*"
+           name="*"
+           type="*"
+           generation="1"
 >
 <!-- Example from above:
      Driver     : ALSA, Versions 1.2.5 and newer.
@@ -23,35 +21,21 @@
    Hint: The product stuff is only used in the GUI. It is NOT refeferenced otherwise in the code,
             and especially nothing of it is used as primary key.
  -->
-  <product vendor="Hercules" name="Game Theater 7.1 XP" />
-  <product vendor="Foo-Venodor" name="Bar-Productname" release="6/2005 and newer" comment="Products sold before 6/2005 contain a different chipset." />
-  <product vendor="Hercules" name="Game Theater 6.1 XP" />
-  <product vendor="ABC Cardmakers" name="Zypressen Audio 3-" release="new" />
-  <product vendor="ABC Cardmakers" name="Zypressen Audio 3-" />
-  <product vendor="ABC Cardmakers" name="Zypressen Audio 3-" release="old" />
-  <product vendor="ABC Cardmakers" name="Apfelsinen Audio 2+" release="old" />
-
-
+  <product vendor="Any Vendor" name="Generic OSS Soundcard" />
 
 <!--
     Control definitions:
     ********************
 
-    *** comment from cesken, 13.8.2005 ***
-    It is probably possible, that only soundcard specific changes against the default profile
-    needs be put in a profile file. This approach has advantages and disadvantaged. This needs
-    some discussion. !
-    **************************************
-
-  'id' is the controls' primary key as defined by the KMix driver backend.
+- 'id' is the controls' primary key as defined by the KMix driver backend.
        This can either be a name or an id, complemeted by an optional index.
        (this is "control_name:index" or "control_id:index" or "control_id")
-  'name' == What name to show to the user. (DEFAULT: Name as returned by the driver backend).
-  'name_CC' is the i18n() name for country CC, e.g. "name_de" or "name_pt_BR"
-             It is VERY questionable, whether we want i18n() in this XML file. It should probably better
-	     be "outsourced" as every driver tends to have a limited (and well defined) set of
-	     control names. This is also true for ALSA, but there we must ALWAYS be prepared for
-	     new control names.
+- 'name' defines what name is shown to the user. (DEFAULT: Name as returned by the driver backend).
+         If defined at all, you should use english text, to allow i18n(). i18n() will be introduced
+         in later versions of KMix, and the translations should then
+	 be "outsourced", as every driver tends to have a limited (and well defined) set of
+	 control names. This is also true for ALSA, but there we must ALWAYS be prepared for
+	 new control names.
 - 'controls' is an enumeration of the (sub)controls of this control, e.g "playvol:1" or
              "recvol:1-2,4-6" or "2:*,playswitch,recswitch" or ...
 	     DEFAULT: "*,switches"     (* = recvol:* playvol:*   switches=playswitch recswitch genericswitch
@@ -61,26 +45,40 @@
              extended = Show on the mildly more complex GUI (all "simple" controls plus Recording & Surround stuff).
              full     = Show (only) on the full GUI (all controls)
              default is "full"
-- HINT: I will probably merge "tab" and "show", like this:
-     show="guitype:tabname" or show="guitype1:tabname1,guitype2:tabname2"
+- Future directions: Extended "merged" syntax of "tab" and "show", like this:
+     show="guitype:tabname" or show="guitype1:tabname1,guitype2:tabname2,..."
      For example:
      show="*:Play"
      or
      show="simple:Play,extended:Various,full:Play"
 -->
-<control id="^0$" controls="*"/>        <!-- Master/Volume -->
-<control id="^4$" controls="*"/>        <!-- PCM -->
-<control id="^8$" controls="*"/>        <!-- CD -->
 
 
-<!-- Show all controls in the second View -->
-<control id="^.*$" tab="All" show="extended" />
+<!-- In OSS the controls are simple numbers, starting with 0.
+    Volume, Bass, Treble,
+    Synth, Pcm, Speaker,
+    Line, Microphone, CD,
+    Mix, Pcm2, RecMon,
+    IGain, OGain, Line1,
+    Line2, Line3, Digital1,
+    Digital2, Digital3, PhoneIn,
+    PhoneOut, Video, Radio,
+    Monitor, 3D-depth, 3D-center,
+    unknown, unknown, unknown,
+    unknown , unused };
+-->
+<control id="^0$"  tab="Base" name="Front" show="simple" />  <!-- Volume -->
+<control id="^4$"  tab="Base" show="simple" />               <!-- PCM -->
+<control id="^8$"  tab="Base" show="simple"/>                <!-- CD -->
 
-
+<control id="^.*$" tab="Base" show="extended" />
 
 <!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted -->
 <!--
-<tab name="Record" type="SliderSet"/>
+<tab name="Record" type="Sliders"/>
+<tab name="Play" type="Sliders"/>
+<tab name="Switches" type="Switches"/>
+<tab name="Cool-Layout" type="Themed"/>
 -->
 
 </soundcard>
