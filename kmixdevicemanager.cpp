@@ -23,65 +23,148 @@
 #include <iostream>
 
 #include <QString>
-#include <QTimer>
 #include <QObject>
 
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <klocale.h>
 
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
 #include <solid/audiointerface.h>
 
-#include "kmixd.h"
+/*
+#include <kaboutdata.h>
+#include <kapplication.h>
+#include <kcmdlineargs.h>
+#include <klocale.h>
+
 #include "version.h"
 
 static const char description[] =
 I18N_NOOP("kmixd - Soundcard Mixer Device Manager");
-
-
-kdm::kdm()
-{
-  std::cerr << "--- before getting dm ---\n";
-  connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(plugged(const QString&)) );
-//  connect (&dm, SIGNAL(deviceRemoved(const QString&)), SLOT(unplugged(const QString&)) ); // !! @todo
-
-    std::cerr << "--- before dm.allDevices() ---\n";
-
-/*<<<<<<< .mine
-  Solid::DeviceList dl = dm.allDevices();
-//  Solid::DeviceList dl = dm.findDevicesFromQuery(QString(), Solid::Capability::AudioHw );
-=======
 */
-//  QList<Solid::Device> dl = Solid::Device::allDevices();
+KMixDeviceManager* KMixDeviceManager::s_KMixDeviceManager = 0;
+
+KMixDeviceManager::KMixDeviceManager()
+{
+}
+
+KMixDeviceManager::~KMixDeviceManager()
+{
+}
+
+KMixDeviceManager* KMixDeviceManager::instance()
+{
+    if ( s_KMixDeviceManager == 0 ) {
+        s_KMixDeviceManager = new KMixDeviceManager();
+    }
+    return s_KMixDeviceManager;
+}
+
+void KMixDeviceManager::initHotplug()
+{
+    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(plugged(const QString&)) );
+    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(unplugged(const QString&)) );
+}
+
+QString KMixDeviceManager::getUDI_ALSA(int num)
+{
     QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
 
-   foreach ( Solid::Device device, dl )
-   {
-      std::cout << "udi = '" << device.udi().toUtf8().data() << "'\n";
-      //QMap<QString,QVariant> properties = device.allProperties();
-      //std::cout << properties << "\n";
-   }
-
-  QTimer* tim = new QTimer();
-  connect(tim, SIGNAL(timeout()), SLOT(tick()));
+    QString numString;
+    numString.setNum(num);
+    bool found = false;
+    QString udi;
+    foreach ( Solid::Device device, dl )
+    {
+        std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
+        Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+        if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
+            switch (audiohw->driver()) {
+                case Solid::AudioInterface::Alsa:
+                    udi = audiohw->driverHandle().toList().first().toString();
+                    std::cout << ">>> Coldplugged ALSA ='" <<  udi.toUtf8().data() << "'\n";
+                    if ( numString == udi ) {
+                        found = true;
+                        std::cout << ">>> Match!!! Coldplugged ALSA ='" <<  udi.toUtf8().data() << "'\n";
+                    }
+                    break;
+                default:
+                    break;
+            } // driver type
+        } // is an audio control
+        if ( found) break;
+    } // foreach
+    return udi;
 }
 
-void kdm::plugged(const QString& udi) {
-   std::cout << "Plugged udi='" <<  udi.toUtf8().data() << "'\n";
-}
-
-void kdm::unplugged(const QString& udi) {
-   std::cout << "Unplugged udi='" <<  udi.toUtf8().data() << "'\n";
-}
-
-void kdm::tick()
+QString KMixDeviceManager::getUDI_OSS(QString& devname)
 {
-  std::cout << "kdm::tick()\n";
+    QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
+
+    bool found = false;
+    QString udi;
+    foreach ( Solid::Device device, dl )
+    {
+        std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
+        Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+        if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
+            switch (audiohw->driver()) {
+                case Solid::AudioInterface::OpenSoundSystem:
+                    udi = audiohw->driverHandle().toString();
+                    std::cout << ">>> Coldplugged OSS ='" <<  udi.toUtf8().data() << "'\n";
+                    if ( devname == udi ) {
+                        found = true;
+                        std::cout << ">>> Match!!! Coldplugged OSS ='" <<  udi.toUtf8().data() << "'\n";
+                    }
+                     break;
+                default:
+                    break;
+            } // driver type
+        } // is an audio control
+        if ( found) break;
+    } // foreach
+    return udi;
 }
 
+void KMixDeviceManager::plugged(const QString& udi) {
+   std::cout << "Plugged udi='" <<  udi.toUtf8().data() << "'\n";
+   Solid::Device device(udi);
+   Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+   if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
+       switch (audiohw->driver()) {
+           case Solid::AudioInterface::Alsa:
+               std::cout << ">>> Plugged ALSA ='" <<  audiohw->driverHandle().toList().first().toString().toUtf8().data() << "'\n";
+               break;
+           case Solid::AudioInterface::OpenSoundSystem:
+               std::cout << ">>> Plugged OSS ='" <<  audiohw->driverHandle().toString().toUtf8().data() << "'\n";
+               break;
+           default:
+               std::cout << ">>> Plugged UNKNOWN \n";
+               break;
+       }
+    }
+}
+
+void KMixDeviceManager::unplugged(const QString& udi) {
+   std::cout << "Unplugged udi='" <<  udi.toUtf8().data() << "'\n";
+   Solid::Device device(udi);
+   Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+   if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
+       switch (audiohw->driver()) {
+           case Solid::AudioInterface::Alsa:
+               std::cout << ">>> Unplugged ALSA ='" <<  audiohw->driverHandle().toList().first().toString().toUtf8().data() << "'\n";
+               break;
+           case Solid::AudioInterface::OpenSoundSystem:
+               std::cout << ">>> Unplugged OSS ='" <<  audiohw->driverHandle().toString().toUtf8().data() << "'\n";
+               break;
+           default:
+               std::cout << ">>> Unplugged UNKNOWN \n";
+               break;
+       }
+    }
+}
+
+
+/*
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
   KAboutData aboutData( "kmixd", 0, ki18n("Soundcard Mixer Device Manager"),
@@ -97,6 +180,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
   return ret;
 }
+*/
 
 #include "kmixdevicemanager.moc"
 

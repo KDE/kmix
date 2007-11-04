@@ -23,18 +23,25 @@
 
 #include <QObject>
 
-class kdm : public QObject
+class KMixDeviceManager : public QObject
 {
   Q_OBJECT
 
 public:
-   kdm();
-
+    static KMixDeviceManager* instance();
+    void initHotplug();
+    QString getUDI_ALSA(int num);
+    QString getUDI_OSS(QString& devname);
+            
+private:
+    KMixDeviceManager();
+    ~KMixDeviceManager();
 public slots:
    void plugged(const QString&);
    void unplugged(const QString&);
-
-   void tick();
+   
+private:
+    static KMixDeviceManager* s_KMixDeviceManager;
 };
 
 #endif

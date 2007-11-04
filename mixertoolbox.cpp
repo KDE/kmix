@@ -58,6 +58,11 @@ MixerToolBox* MixerToolBox::instance()
  * Scan for Mixers in the System. This is the method that implicitely fills the
  * list of Mixer's, which is accessible via the static Mixer::mixer() method.
  *
+ * This is run only once during the initilization phase of KMix. It has the following tasks:
+ * 1) Coldplug scan, to fill the initial mixer list
+* 2) Rember UDI's, to match them when unplugging a device
+* 3) Find out, which Backend to use (plugin events of other Backends are ignored).
+ *
  * @par multiDriverMode Whether the Mixer scan should try more all backendends.
  *          'true' means to scan all backends. 'false' means: After scanning the
  *          current backend the next backend is only scanned if no Mixers were found yet.

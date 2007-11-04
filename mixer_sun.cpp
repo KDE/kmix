@@ -125,7 +125,7 @@ Mixer_Backend* SUN_getMixer( Mixer *mixer, int devnum )
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class constructor.
 //======================================================================
-Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(mixer, evnum)
+Mixer_SUN::Mixer_SUN(int devnum) : Mixer_Backend(mixer, devnum)
 {
    if ( devnum == -1 )
       m_devnum = 0;
@@ -159,6 +159,7 @@ int Mixer_SUN::open()
    if(audiodev.isNull())
      audiodev = "/dev/audio";
    audiodev += "ctl";
+   _udi = audiodev; // use device name as UDI. Doesn't matter as we only use it for hotplugging/unplugging.
    if ( ( fd = ::open( audiodev.data(), O_RDWR ) ) < 0 )
    {
       if ( errno == EACCES )

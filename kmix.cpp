@@ -51,6 +51,7 @@
 // KMix
 #include "mixertoolbox.h"
 #include "kmix.h"
+#include "kmixdevicemanager.h"
 #include "kmixerwidget.h"
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
@@ -76,6 +77,7 @@ KMixWindow::KMixWindow()
    initWidgets();
    initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
+   KMixDeviceManager::instance()->initHotplug();
    recreateGUI();
    if ( m_startVisible )
       show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it

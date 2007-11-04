@@ -21,6 +21,7 @@
 
 #include "mixer_oss.h"
 #include "mixer.h"
+#include "kmixdevicemanager.h"
 
 #include <fcntl.h>
 #include <errno.h>
@@ -95,22 +96,31 @@ Mixer_OSS::~Mixer_OSS()
 
 int Mixer_OSS::open()
 {
-  if ((m_fd= ::open( deviceName( m_devnum ).toAscii().data(), O_RDWR)) < 0)
+    QString finalDeviceName;
+    finalDeviceName = deviceName( m_devnum );
+    if ((m_fd= ::open( finalDeviceName.toAscii().data(), O_RDWR)) < 0)
     {
-      if ( errno == EACCES )
+        if ( errno == EACCES )
         return Mixer::ERR_PERM;
-      else {
-		  if ((m_fd= ::open( deviceNameDevfs( m_devnum ).toAscii().data(),
-						  O_RDWR)) < 0)
-		    {
-      			if ( errno == EACCES )
-        			return Mixer::ERR_PERM;
-				else
-					return Mixer::ERR_OPEN;
-		    }
-	  }
+        else {
+            finalDeviceName = deviceNameDevfs( m_devnum );
+            if ((m_fd= ::open( finalDeviceName.toAscii().data(), O_RDWR)) < 0)
+            {
+                if ( errno == EACCES )
+                    return Mixer::ERR_PERM;
+                    else
+                return Mixer::ERR_OPEN;
+            }
+        }
     }
 
+    _udi = KMixDeviceManager::instance()->getUDI_OSS(finalDeviceName);
+    if ( _udi.isEmpty() ) {
+        QString msg("No UDI found for '");
+        msg += finalDeviceName;
+        msg += "'. Hotplugging not possible";
+        kDebug(67100) << msg << endl;
+    }
       int devmask, recmask, i_recsrc, stereodevs;
       // Mixer is open. Now define properties
       if (ioctl(m_fd, SOUND_MIXER_READ_DEVMASK, &devmask) == -1)

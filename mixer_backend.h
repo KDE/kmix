@@ -98,6 +98,8 @@ protected:
    /// Translate ID to internal device number
    virtual int id2num(const QString& id);
 
+   // Return an Universal Device Identification (suitable for the OS, especially for Hotplug and Unplug events)
+   virtual QString udi() { return _udi; };
 
   int m_devnum;
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
@@ -120,7 +122,8 @@ protected:
    // so that was 'wrong' anyhow
    Mixer* _mixer;
   QTimer* _pollingTimer;
-
+  QString _udi;  // Universal Device Identification
+  
   mutable bool _readSetFromHWforceUpdate;
 
 signals:
@@ -128,7 +131,6 @@ signals:
 
 protected slots:
   virtual void readSetFromHW();
-
 };
 
 #endif

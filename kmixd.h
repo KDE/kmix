@@ -23,6 +23,8 @@
 
 #include <kapplication.h>
 
+// !!! to  be removed
+
 class KMixD;
 
 class KMixD : public KApplication

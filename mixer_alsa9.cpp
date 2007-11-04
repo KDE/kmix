@@ -25,6 +25,7 @@
 
 // KMix
 #include "mixer_alsa.h"
+#include "kmixdevicemanager.h"
 #include "mixer.h"
 #include "volume.h"
 
@@ -126,6 +127,13 @@ int Mixer_ALSA::open()
         return err;
     }
 
+    _udi = KMixDeviceManager::instance()->getUDI_ALSA(m_devnum);
+    if ( _udi.isEmpty() ) {
+        QString msg("No UDI found for '");
+        msg += devName;
+        msg += "'. Hotplugging not possible";
+        kDebug(67100) << msg << endl;
+    }
     // Run a loop over all controls of the card
     unsigned int idx = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ) )

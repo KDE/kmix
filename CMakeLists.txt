@@ -43,6 +43,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    dialogviewconfiguration.cpp 
    KMixApp.cpp 
    dialogselectmaster.cpp 
+   kmixdevicemanager.cpp 
    guiprofile.cpp )
 
 
@@ -70,6 +71,7 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    volume.cpp 
    mixertoolbox.cpp 
    mixer_backend.cpp 
+   kmixdevicemanager.cpp 
    guiprofile.cpp )
 
 
@@ -86,27 +88,6 @@ install(TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )
 install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
-
-########### next target ###############
-
-set(kmixd_KMIXD_SRCS
-   kmixd.cpp
-   kmixdevicemanager.cpp )
-
-
-
-kde4_add_kdeinit_executable( kmixd ${kmixd_KMIXD_SRCS})
-
-target_link_libraries(kdeinit_kmixd  ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} ${QT_QT3SUPPORT_LIBRARY})
-
-if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmixd ${ASOUND_LIBRARY} ${KDE4_SOLID_LIBS})
-endif (HAVE_LIBASOUND2)
-
-install(TARGETS kdeinit_kmixd DESTINATION ${LIB_INSTALL_DIR} )
-
-target_link_libraries( kmixd kdeinit_kmixd )
-install(TARGETS kmixd DESTINATION ${BIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -132,6 +113,7 @@ set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
    kmixtoolbox.cpp 
    mixertoolbox.cpp 
    dialogselectmaster.cpp 
+   kmixdevicemanager.cpp 
    guiprofile.cpp )
 
 
@@ -142,7 +124,7 @@ kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
 
 
 
-target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} ${QT_QTXML_LIBRARY} )
+target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} )
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
