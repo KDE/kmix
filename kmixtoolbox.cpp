@@ -99,7 +99,7 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
          if ( devcg.hasKey("Show") ) 
          {
             mdwEnabled = ( true == devcg.readEntry("Show", true) );
-            kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from config-file: mdwEnabled==" << mdwEnabled;
+            //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from config-file: mdwEnabled==" << mdwEnabled;
          }
          else
          {
@@ -109,18 +109,18 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
              {
                 ProfControl* pControl = *it;
                 QRegExp idRegExp(pControl->id);
-                kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
+                //kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
                 if ( mdw->mixDevice()->id().contains(idRegExp) ) {
                    if ( pControl->show == "simple" )
                    {
                       mdwEnabled = true;
-                      kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from profile: mdwEnabled==" << mdwEnabled;
+                      //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from profile: mdwEnabled==" << mdwEnabled;
                    }
                    break;
                 }
              }
          }
-         kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "FINAL: mdwEnabled==" << mdwEnabled;
+         //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "FINAL: mdwEnabled==" << mdwEnabled;
          //mdw->setEnabled(mdwEnabled);  // I have no idea why dialogselectmaster works with "enabled" instead of "visible"
          if (!mdwEnabled) { mdw->hide(); } else { mdw->show(); }
 
@@ -142,7 +142,7 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
          {
             QString devgrpkeys;
             devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
-            kDebug(67100) << "KMixToolBox::loadKeys() load Keys " << devgrpkeys;
+            //kDebug(67100) << "KMixToolBox::loadKeys() load Keys " << devgrpkeys;
 
             // please see KMixToolBox::saveKeys() for some rambling about saving/loading Keys
 
@@ -177,9 +177,9 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
 
-         kDebug(67100) << "  grp=" << grp.toAscii();
-         kDebug(67100) << "  mixer=" << view->getMixer()->id().toAscii();
-         kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
+         //kDebug(67100) << "  grp=" << grp.toAscii();
+         //kDebug(67100) << "  mixer=" << view->getMixer()->id().toAscii();
+         //kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
          QString devgrp;
          devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
@@ -218,7 +218,7 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
          {
             QString devgrpkeys;
             devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
-            kDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys;
+            //kDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys;
 
             //See note in loadKeys! -- ahartmetz
             //keys->setConfigGroup(devgrpkeys);

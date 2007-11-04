@@ -158,12 +158,12 @@ void ViewSliders::setMixSet()
 }
 
 
-
+/*
 QSize ViewSliders::sizeHint() const {
    //    kDebug(67100) << "ViewSliders::sizeHint(): NewSize is " << _layoutMDW->sizeHint() << "\n";
    return( _layoutMDW->sizeHint() );
 }
-
+*/
 
 void ViewSliders::constructionFinished() {
     _layoutMDW->activate();

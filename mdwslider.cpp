@@ -216,7 +216,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 
    m_iconLabelSimple = 0L;
    if ( showMuteLED ) {
-      kDebug(67100) << ">>> MixDevice " << m_mixdevice->readableName() << " icon calculation:" << endl;
+      //kDebug(67100) << ">>> MixDevice " << m_mixdevice->readableName() << " icon calculation:" << endl;
       setIcon( m_mixdevice->type() );
       iconInternalLayout->addWidget( m_iconLabelSimple );
       QString muteTip( m_mixdevice->readableName() );
@@ -460,7 +460,7 @@ MDWSlider::setIcon( int icontype )
       else
       {
             m_iconLabelSimple->setPixmap( miniDevPM );
-	    kDebug(67100) << " > simple > icontype=" <<icontype<< "size=" << miniDevPM.size() << endl;
+	    //kDebug(67100) << " > simple > icontype=" <<icontype<< "size=" << miniDevPM.size() << endl;
       } // normal size
    }
    else

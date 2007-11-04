@@ -38,7 +38,7 @@ public:
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
 
-    QSize sizeHint() const;
+//    QSize sizeHint() const;
 
 public slots:
     virtual void refreshVolumeLevels();
