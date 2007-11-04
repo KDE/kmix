@@ -631,6 +631,7 @@ void MDWSlider::volumeChange( int )
 {
    if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), _slidersChidsPlayback, m_slidersPlayback);
    if (m_slidersCapture.count()  > 0) volumeChangeInternal(m_mixdevice->captureVolume() , _slidersChidsCapture, m_slidersCapture);
+   m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
 void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_sliders  )
@@ -673,7 +674,6 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref
    } // !stereoLinked()
 
    // --- Step 3: Write back the new volumes to the HW ---
-   m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
 
