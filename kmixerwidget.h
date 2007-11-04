@@ -58,16 +58,9 @@ class KMixerWidget : public QWidget
    ~KMixerWidget();
 
    Mixer *mixer() const { return _mixer; }
-
-/* !!! This id() is rubbish. It is not guaranteed, that it is the same on every KMix start.
-   !!! Still it is used for constructing config file group names :-(((
-*/
-  const QString& id() const;
-   KActionCollection* getActionCollection() const { return 0; /* m_actions; */ }
-
+   ViewBase* currentView();
+   
   signals:
-   void masterMuted( bool );
-   void newMasterVolume(Volume vol);
    void toggleMenuBar();
 
   public slots:
@@ -76,8 +69,8 @@ class KMixerWidget : public QWidget
    void setIcons( bool on );
    void toggleMenuBarSlot();
 
-   void saveConfig( KConfig *config, const QString &grp );
-   void loadConfig( KConfig *config, const QString &grp );
+   void saveConfig( KConfig *config );
+   void loadConfig( KConfig *config );
 
   private slots:
    void balanceChanged(int balance);
@@ -89,16 +82,10 @@ class KMixerWidget : public QWidget
    QVBoxLayout *m_topLayout; // contains TabWidget and balance slider
 
    std::vector<ViewBase*> _views;
-
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
-   KActionMenu *m_toggleMixerChannels;
-
-   bool _iconsEnabled;
-   bool _labelsEnabled;
-   bool _ticksEnabled;
 
    void createLayout(ViewBase::ViewFlags vflags);
-   void possiblyAddView(ViewBase* vbase, QString& tabName);
+   void possiblyAddView(ViewBase* vbase);
    void createViewsByProfile(Mixer* mixer, GUIProfile* guiprof, ViewBase::ViewFlags vflags);
 };
 

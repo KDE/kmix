@@ -58,9 +58,7 @@
 KMixerWidget::KMixerWidget( Mixer *mixer,
                             QWidget * parent, const char * name, ViewBase::ViewFlags vflags, KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0), _actionCollection(actionCollection), 
-     _iconsEnabled( true ), _labelsEnabled( false ), _ticksEnabled( false )
-
+     m_topLayout(0), _actionCollection(actionCollection)
 {
    setObjectName(name);
 
@@ -147,10 +145,6 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 }
 
 
-const QString& KMixerWidget::id() const {
-   return m_id;
-}
-
 /**
  * Creates all the Views for the Tabs described in the GUIProfile
  */
@@ -169,7 +163,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       // It is possible that the Profile author puts arbitrary names in it.
       if ( profTab->type == "Sliders" ) {
          ViewSliders* view = new ViewSliders( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
-         possiblyAddView(view, profTab->name);
+         possiblyAddView(view);
       }
       else {
          kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
@@ -177,7 +171,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
    } // for all tabs
 }
 
-void KMixerWidget::possiblyAddView(ViewBase* vbase, QString& tabName)
+void KMixerWidget::possiblyAddView(ViewBase* vbase)
 {
    if ( ! vbase->isValid()  )
       delete vbase;
@@ -189,76 +183,78 @@ void KMixerWidget::possiblyAddView(ViewBase* vbase, QString& tabName)
    }
 }
 
+/**
+ * Returns the current View. Normally we have only one View, so we always return the first view.
+ * This method is only here for one reason: We can plug in an action in the main menu, so that
+ * 99% of all users will be well served. Those who hack their own XML Profile to contain more than one view
+  must  use the context menu for configuring the additional views.
+ */
+ViewBase* KMixerWidget::currentView()
+{
+    ViewBase* view = 0;
+    if ( _views.size() > 0 ) {
+        view = _views[0];
+    }
+}
+
+
 void KMixerWidget::setIcons( bool on )
 {
-	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-		ViewBase* mixerWidget = *it;
-		mixerWidget->setIcons(on);
+const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+        ViewBase* mixerWidget = *it;
+        mixerWidget->setIcons(on);
     } // for all tabs
 }
 
 void KMixerWidget::setLabels( bool on )
 {
-    if ( _labelsEnabled!=on ) {
-		// value was changed
-		_labelsEnabled = on;
-		const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-		for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-			ViewBase* mixerWidget = *it;
-			mixerWidget->setLabels(on);
-	    } // for all tabs
-    }
+    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+        ViewBase* mixerWidget = *it;
+        mixerWidget->setLabels(on);
+    } // for all tabs
+//    }
 }
 
 void KMixerWidget::setTicks( bool on )
 {
-    if ( _ticksEnabled!=on ) {
-		// value was changed
-		_ticksEnabled = on;
-		const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-		for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-			ViewBase* mixerWidget = *it;
-		    mixerWidget->setTicks(on);
-		} // for all tabs
-    }
+    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+        ViewBase* mixerWidget = *it;
+        mixerWidget->setTicks(on);
+    } // for all tabs
 }
 
 
 /**
  *  @todo : Is the view list already filled, when loadConfig() is called?
  */
-void KMixerWidget::loadConfig( KConfig *config, const QString &grp )
+void KMixerWidget::loadConfig( KConfig *config )
 {
-   kDebug(67100) << "KMixToolBox::loadConfig()";
-#ifdef __GNUC__
-#warning port to KConfigGroup. see also comments in KMixToolBox   --ossi
-#endif
-//        config->setGroup( grp );
-
-	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-   kDebug(67100) << "KMixToolBox::loadConfig() view";
-		ViewBase* view = *it;
-		KMixToolBox::loadView(view,config);
-		KMixToolBox::loadKeys(view,config);
-		view->configurationUpdate();
-	} // for all tabs
+   kDebug(67100) << "KMixerWidget::loadConfig()";
+    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+        ViewBase* view = *it;
+        kDebug(67100) << "KMixerWidget::loadConfig()" << view->viewId();
+        KMixToolBox::loadView(view,config);
+        KMixToolBox::loadKeys(view,config);
+        view->configurationUpdate();
+    } // for all tabs
 }
 
 
 
-void KMixerWidget::saveConfig( KConfig *config, const QString &grp )
+void KMixerWidget::saveConfig( KConfig *config )
 {
-	// Write mixer name. Only saved for diagnostical purposes (analyzing the config file).
-	config->group( grp ).writeEntry("Mixer_Name_Key", _mixer->id());
-
-	const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-	for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-		ViewBase* view = *it;
-		KMixToolBox::saveView(view,config);
-		KMixToolBox::saveKeys(view,config);
-	} // for all tabs
+   kDebug(67100) << "KMixerWidget::saveConfig()";
+    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
+    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
+        ViewBase* view = *it;
+        kDebug(67100) << "KMixerWidget::saveConfig()" << view->viewId();
+        KMixToolBox::saveView(view,config);
+        KMixToolBox::saveKeys(view,config);
+    } // for all tabs
 }
 
 

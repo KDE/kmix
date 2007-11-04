@@ -109,6 +109,9 @@ void KMixWindow::initActions()
    action->setText( i18n( "Hide Mixer Window" ) );
    connect(action, SIGNAL(triggered(bool) ), SLOT(hide()));
    action->setShortcut(QKeySequence(Qt::Key_Escape));
+   action = actionCollection()->addAction("toggle_channels_currentview");
+   action->setText(i18n("Configure &Channels"));
+   connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
    createGUI( "kmixui.rc" );
 }
 
@@ -222,7 +225,7 @@ void KMixWindow::saveViewConfig()
          KMixerWidget* mw = (KMixerWidget*)w;
          if ( mw->mixer()->isOpen() )
          { // protect from unplugged devices (better do *not* save them)
-             mw->saveConfig( KGlobal::config().data(), mw->id() );
+             mw->saveConfig( KGlobal::config().data() );
          }
       }
    }
@@ -394,13 +397,13 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
       bool isFirstTab = m_wsMixers->count() == 0;
-      m_wsMixers->addTab( mw, mw->id() );
+      m_wsMixers->addTab( mw, mw->mixer()->readableName() );
       if (isFirstTab) {
          m_wsMixers->setCurrentWidget(mw);
          setWindowTitle( mw->mixer()->readableName() );
       }
 
-      mw->loadConfig( KGlobal::config().data(), mw->id() );
+      mw->loadConfig( KGlobal::config().data() );
 
       mw->setTicks( m_showTicks );
       mw->setLabels( m_showLabels );
@@ -524,7 +527,13 @@ void KMixWindow::slotHWInfo()
    KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
 }
 
-
+void KMixWindow::slotConfigureCurrentView()
+{
+    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
+    ViewBase* view = 0;
+    if (mw) view = mw->currentView();
+    if (view) view->configureView();
+}
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();

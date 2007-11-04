@@ -83,9 +83,9 @@ public slots:
 
 
 signals:
-    void newVolume( int num, Volume volume );
-    void newMasterVolume( Volume volume );
-    void masterMuted( bool );
+//    void newVolume( int num, Volume volume );
+//    void newMasterVolume( Volume volume );
+//    void masterMuted( bool );
     void toggleMenuBar(bool value);
 
 private slots:

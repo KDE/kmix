@@ -118,6 +118,7 @@ KMixWindow : public KXmlGuiWindow
 
   private slots:
    void slotHWInfo();
+   void slotConfigureCurrentView();
    void addMixerWidget(const QString&);
 };
 

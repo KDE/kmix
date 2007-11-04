@@ -69,11 +69,6 @@ public slots:
     virtual void update();
     virtual void showContextMenu();
 
-signals:
-    void newVolume( int num, Volume volume );
-    void newMasterVolume( Volume volume );
-    void masterMuted( bool );
-
 protected slots:
     void volumeChange( int );
     virtual void setVolume( int channel, int volume );

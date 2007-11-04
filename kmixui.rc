@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kmix" version="5">
+<kpartgui name="kmix" version="6">
 
 <ActionProperties>
     <Action name="hide_kmixwindow" icon="window"/>
@@ -12,6 +12,9 @@
   <Action name="file_close_tab"/>
   <Action name="hide_kmixwindow"/>
 <!--  <Action name="options_show_menubar"/> -->
+ </Menu>
+ <Menu name="settings">
+     <Action name="toggle_channels_currentview" append="save_merge"/>
  </Menu>
  <Menu name="help" append="about_merge"><text>&amp;Help</text>
   <Action name="hwinfo"/>

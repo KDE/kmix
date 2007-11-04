@@ -127,9 +127,6 @@ public:
    void setType( ChannelType channeltype ) { _type = channeltype; }
    ChannelType type() { return _type; }
 
-signals:
-    void newVolume( int num, Volume volume );
-
 private:
    Mixer *_mixer;
    Volume _playbackVolume;
@@ -142,8 +139,6 @@ private:
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
 
-
-private:
    void readPlaybackOrCapture(const KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
 
