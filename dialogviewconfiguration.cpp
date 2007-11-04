@@ -20,12 +20,14 @@
  */
 
 #include <QCheckBox>
-#include <QLayout>
 #include <QLabel>
+#include <QLayout>
+#include <QScrollArea>
 
 #include <kdebug.h>
 #include <kdialog.h>
 #include <klocale.h>
+#include <kvbox.h>
 
 #include "dialogviewconfiguration.h"
 #include "mixdevicewidget.h"
@@ -40,30 +42,87 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    setButtons( Ok|Cancel );
    setDefaultButton( Ok );
    QList<QWidget *> &mdws = view._mdws;
-   QFrame * frame = new QFrame( this );
+   QWidget * frame = new QWidget( this );
+   frame->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+   
    setMainWidget( frame );
+   
+   // The _layout will hold two items: The title and the scrollarea
    _layout = new QVBoxLayout(frame );
-   _layout->setObjectName( "_layout" );
-
+   
+   // --- HEADER ---
    //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
-   QLabel* qlb = new QLabel( i18n("Configure"), frame );
-   //QLabel* qlb = new QLabel( i18n("Show"), plainPage() );
+   qlb = new QLabel( i18n("Configuration of the channels."), frame );
    _layout->addWidget(qlb);
+   
+   QScrollArea* scrollArea = new QScrollArea(frame);
+   //scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+   scrollArea->setWidgetResizable(true); // avoid unnecesary scrollbars
+   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+   _layout->addSpacing(KDialog::spacingHint());
+   _layout->addWidget(scrollArea);
+   
+   vboxForScrollView = new QWidget();
+   vboxForScrollView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+   QGridLayout* grid = new QGridLayout(vboxForScrollView);
+   grid->setHorizontalSpacing(KDialog::spacingHint());
+   grid->setVerticalSpacing(0);
+   scrollArea->setWidget(vboxForScrollView);
 
-   for ( int i=0; i<mdws.count(); ++i ) {
+   qlb = new QLabel( i18n("Show/Hide") );
+   grid->addWidget(qlb,0,0);
+   qlb = new QLabel( i18n("Split"), vboxForScrollView );
+   grid->addWidget(qlb,0,1);
+   /*
+   qlb = new QLabel( i18n("Limit"), vboxForScrollView );
+   grid->addWidget(qlb,0,2);
+   */
+   int i;
+    // --- CONTROLS IN THE GRID --- 
+   QPalette::ColorRole bgRole;
+   for ( i=0; i<mdws.count(); ++i ) {
+       if ( i%2 == 0) bgRole = QPalette::Base; else bgRole = QPalette::AlternateBase;
       QWidget *qw = mdws[i];
       if ( qw->inherits("MixDeviceWidget") ) {
-         MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
-         QString mdName = mdw->mixDevice()->readableName();
+            MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
+            MixDevice *md = mdw->mixDevice();
+            QString mdName = md->readableName();
             mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
-         QCheckBox* cb = new QCheckBox( mdName, frame );
-         _qEnabledCB.append(cb);
-         cb->setChecked( mdw->isVisible() );
-         _layout->addWidget(cb);
+            QCheckBox* cb = new QCheckBox( mdName, vboxForScrollView ); // enable/disable
+            cb->setBackgroundRole(bgRole);
+            cb->setAutoFillBackground(true);
+            _qEnabledCB.append(cb);
+            cb->setChecked( mdw->isVisible() );
+            grid->addWidget(cb,1+i,0);
+
+            if ( ! md->isEnum() && ( ( md->playbackVolume().count() > 1) || ( md->captureVolume().count() > 1) ) ) {
+                cb = new QCheckBox( "", vboxForScrollView ); // split
+                cb->setBackgroundRole(bgRole);
+                cb->setAutoFillBackground(true);
+                _qSplitCB.append(cb);
+                cb->setChecked( ! mdw->isStereoLinked() );
+                grid->addWidget(cb,1+i,1);
+            }
+            else {
+                _qSplitCB.append(0);
+            }
+            /*
+            if ( ! md->isEnum() && ( md->playbackVolume().count() + md->captureVolume().count() >0 ) ) {
+                cb = new QCheckBox( "", vboxForScrollView ); // limit
+                cb->setBackgroundRole(bgRole);
+                cb->setAutoFillBackground(true);
+                _qLimitCB.append(cb);
+                grid->addWidget(cb,1+i,2);
+            }
+            else {
+            */
+                _qLimitCB.append(0);
+            /*}*/
       }
    } // for all MDW's
-   _layout->activate();
-   resize(_layout->sizeHint() );
+
+   scrollArea->updateGeometry();
+   updateGeometry();
    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
 }
 
@@ -73,32 +132,47 @@ DialogViewConfiguration::~DialogViewConfiguration()
 
 void DialogViewConfiguration::apply()
 {
-   QList<QWidget *> &mdws = _view._mdws;
+    QList<QWidget *> &mdws = _view._mdws;
 
-   // --- 2-Step Apply ---
+    // --- 2-Step Apply ---
 
-   // --- Step 1: Show and Hide Widgets ---
-   for ( int i=0; i<mdws.count(); ++i ) {
-      QWidget *qw = mdws[i];
-      QCheckBox *cb = _qEnabledCB[i];
-      if ( qw->inherits("MixDeviceWidget") ) {
-         MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
-         if ( cb->isChecked() ) {
-            mdw->show();
-         }
-         else {
-            mdw->hide();
-         }
-      }
+    // --- Step 1: Show and Hide Widgets ---
+    for ( int i=0; i<mdws.count(); ++i ) {
+        QWidget *qw = mdws[i];
+        MixDeviceWidget *mdw;
+      
+        if ( qw->inherits("MixDeviceWidget") ) {
+            mdw = static_cast<MixDeviceWidget*>(qw);
+        }
+        else {
+            continue;
+        }
+       
+        QCheckBox *cb = _qEnabledCB[i];
+        if ( cb != 0 ) {
+            mdw->setVisible( cb->isChecked());
+        } // show-hide
+
+        cb = _qSplitCB[i];
+        if ( cb != 0 ) {
+            mdw->setStereoLinked( ! cb->isChecked() );
+        } // split
+        
    } // for all MDW's
 
    // --- Step 2: Tell the view, that it has changed (probably it needs some "polishing" ---
    _view.configurationUpdate();
 }
 
+
 QSize DialogViewConfiguration::sizeHint() const {
     //    kDebug(67100) << "DialogViewConfiguration::sizeHint() is (100,500)\n";
-   return _layout->sizeHint();
+    QSize size = vboxForScrollView->sizeHint();
+    // The +50 is a workaround, because KDialog does not handle our case correctly (using a QScrollarea)
+    size.rwidth() += 50;
+    size.rheight() += KDialog::spacingHint();
+    size.rheight() += qlb->height();
+    return size;
 }
 
 #include "dialogviewconfiguration.moc"

@@ -165,27 +165,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
    }
    _layout->addItem( slidersLayout );
 
-   
-   
-   
-   
-   /*
-   // --- LABEL -----------------------------------------------
-   if ( !useLabelForCaptureANDPlayback )
-   {  // no sliders on capture or playback (this is the usual case) => put a label with the name.
-      // But I won't add " (capture)" as on the sliders, because there is only one "column"
-       if ( _orientation == Qt::Vertical ) {
-           m_label = new VerticalText( this, m_mixdevice->readableName() );
-       }
-       else {
-           m_label = new QLabel(this);
-           static_cast<QLabel*>(m_label)->setText(m_mixdevice->readableName());
-       }
-       volLayout->addWidget( m_label );
-       m_label->installEventFilter( this );
-   }
-   */
-   
+
    
    // --- LABEL -----------------------------------------------
    QBoxLayout *labelLayout;

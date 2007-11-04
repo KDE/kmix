@@ -44,7 +44,11 @@ class DialogViewConfiguration : public KDialog
  private:
     QVBoxLayout* _layout;
     ViewBase&    _view;
+    QWidget* vboxForScrollView;
+    QLabel* qlb;
     QList<QCheckBox *>  _qEnabledCB;
+    QList<QCheckBox *>  _qSplitCB;
+    QList<QCheckBox *>  _qLimitCB;
 };
 
 #endif
