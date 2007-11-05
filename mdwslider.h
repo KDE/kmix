@@ -114,6 +114,7 @@ private:
     QLabel      *m_iconLabelSimple;
     KLedButton *m_recordLED;
     QWidget *m_label; // is either QLabel or VerticalText
+    QWidget *m_extraCaptureLabel; // extra capture label (if you got playback AND capture on the same control)
     QBoxLayout *_layout;
     QCheckBox* m_qcb;
     QList<QWidget *> m_slidersPlayback;

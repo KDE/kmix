@@ -65,7 +65,7 @@ MDWSlider::MDWSlider(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(md,small,orientation,parent,mw),
-    m_linked(true), m_iconLabelSimple(0), m_recordLED( 0 ), m_label( 0 ), _layout(0), m_qcb(0)
+                    m_linked(true), m_iconLabelSimple(0), m_recordLED( 0 ), m_label( 0 ), m_extraCaptureLabel( 0 ),_layout(0), m_qcb(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
@@ -336,7 +336,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
         static QString capture = i18n("(capture)");
         QString sliderDescription = m_mixdevice->readableName();
         if ( type == 'c' ) { // capture
-        sliderDescription += ' ' + capture;
+            sliderDescription += ' ' + capture;
         }
         
         QWidget *label;
@@ -348,6 +348,10 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
             static_cast<QLabel*>(m_label)->setText(sliderDescription);
         }
         volLayout->addWidget( label );
+        label->installEventFilter( this );
+        if ( type == 'c' ) { // capture
+            m_extraCaptureLabel = label;
+        }
         label->installEventFilter( this );
    }
 
@@ -373,8 +377,14 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
         } // not small
 
         slider->installEventFilter( this );
-        slider->setToolTip( m_mixdevice->readableName() );
-
+        if ( type == 'p' ) {
+            slider->setToolTip( m_mixdevice->readableName() );
+        }
+        else {
+            QString captureTip( i18n( "%1 (capture)", m_mixdevice->readableName() ) );
+            slider->setToolTip( captureTip );
+        }
+        
         if( i>0 && isStereoLinked() ) {
             // show only one (the first) slider, when the user wants it so
             slider->hide();
@@ -537,14 +547,17 @@ MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders)
 void
 MDWSlider::setLabeled(bool value)
 {
-   if ( m_label == 0 )
+    if ( m_label == 0  && m_extraCaptureLabel == 0 )
       return;
 
-   if (value )
-      m_label->show();
-   else
-      m_label->hide();
-
+   if (value ) {
+       if ( m_label != 0) m_label->show();
+       if ( m_extraCaptureLabel != 0) m_extraCaptureLabel->show();
+   }
+   else {
+       if ( m_label != 0) m_label->hide();
+       if ( m_extraCaptureLabel != 0) m_extraCaptureLabel->hide();
+   }
    layout()->activate();
 }
 
