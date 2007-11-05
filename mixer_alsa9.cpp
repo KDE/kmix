@@ -181,6 +181,7 @@ int Mixer_ALSA::open()
         readableName = snd_mixer_selem_id_get_name( sid );
         int idx = snd_mixer_selem_id_get_index( sid );
         if ( idx > 0 ) {
+            // Add a number to the control name, like "PCM 2", when the index is > 0
             QString idxString;
             idxString.setNum(1+idx);
             readableName += " ";

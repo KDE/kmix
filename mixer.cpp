@@ -294,6 +294,9 @@ QString& Mixer::id()
   return _id;
 }
 
+QString& Mixer::udi(){
+    return _mixerBackend->udi();
+}
 void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
 {
   // The value is taken over without checking on existence. This allows the User to define

@@ -77,8 +77,11 @@ KMixWindow::KMixWindow()
    initWidgets();
    initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
-   KMixDeviceManager::instance()->initHotplug();
+   KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
    recreateGUI();
+   theKMixDeviceManager->initHotplug();
+   connect(theKMixDeviceManager, SIGNAL( plugged( char*, const QString&, QString&)), SLOT (plugged( char*, const QString&, QString&) ) );
+   connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
    if ( m_startVisible )
       show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it
 
@@ -346,6 +349,28 @@ void KMixWindow::recreateGUI()
    else {
       // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
    }
+}
+
+void KMixWindow::plugged( char* driverName, const QString& udi, QString& dev)
+{
+    kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
+    recreateGUI();
+}
+
+void KMixWindow::unplugged( const QString& udi)
+{
+    kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
+    for (int i=0; i<Mixer::mixers().count(); ++i) {
+        Mixer *mixer = (Mixer::mixers())[i];
+        kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
+        if (mixer->udi() == udi ) {
+            kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
+            Mixer::mixers().removeAt(i);
+            recreateGUI();
+            break;
+        }
+    }
+
 }
 
 

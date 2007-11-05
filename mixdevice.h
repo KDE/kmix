@@ -91,9 +91,9 @@ public:
    void      setReadableName(QString& name)      { _name = name; }
 
    /**
-   * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) MUST ensure that
-   * all MixDevices's of one card have unique ID's.
-   * The 
+   * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) 
+    * MUST ensure that all MixDevices's of one card have unique ID's.
+   * The ID is used through the whole KMix appplication (including the config file) for identifying controls.
    */
    const QString& id() const;
 
@@ -124,7 +124,6 @@ public:
    virtual void read( KConfig *config, const QString& grp );
    virtual void write( KConfig *config, const QString& grp );
 
-   void setType( ChannelType channeltype ) { _type = channeltype; }
    ChannelType type() { return _type; }
 
 private:

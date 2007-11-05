@@ -99,7 +99,7 @@ protected:
    virtual int id2num(const QString& id);
 
    // Return an Universal Device Identification (suitable for the OS, especially for Hotplug and Unplug events)
-   virtual QString udi() { return _udi; };
+   virtual QString& udi() { return _udi; };
 
   int m_devnum;
   /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API

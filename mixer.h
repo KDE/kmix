@@ -96,6 +96,15 @@ class Mixer : public QObject
 
       /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>:<hw_number>@<driver>"
       QString& id();
+      
+      /// Returns an Universal Device Identifaction of the Mixer. This is an ID that relates to the underlying operating system.
+      // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
+      // Examples:
+      // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
+      // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
+      // Solaris: /dev/audio
+      QString& udi();
+      
       /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
       /// the user, but can be used for referencing configuration items and such.
       void setID(QString& ref_id);

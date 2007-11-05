@@ -120,6 +120,8 @@ KMixWindow : public KXmlGuiWindow
    void slotHWInfo();
    void slotConfigureCurrentView();
    void addMixerWidget(const QString&);
+   void plugged( char* driverName, const QString& udi, QString& dev);
+   void unplugged( const QString& udi);
 };
 
 #endif // KMIX_H

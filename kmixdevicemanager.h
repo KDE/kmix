@@ -27,21 +27,25 @@ class KMixDeviceManager : public QObject
 {
   Q_OBJECT
 
-public:
-    static KMixDeviceManager* instance();
-    void initHotplug();
-    QString getUDI_ALSA(int num);
-    QString getUDI_OSS(QString& devname);
-            
-private:
-    KMixDeviceManager();
-    ~KMixDeviceManager();
-public slots:
-   void plugged(const QString&);
-   void unplugged(const QString&);
-   
-private:
-    static KMixDeviceManager* s_KMixDeviceManager;
+    public:
+        static KMixDeviceManager* instance();
+        void initHotplug();
+        QString getUDI_ALSA(int num);
+        QString getUDI_OSS(QString& devname);
+
+    signals:
+        void plugged( const char* driverName, const QString& udi, QString& dev);
+        void unplugged( const QString& udi);
+
+    private:
+        KMixDeviceManager();
+        ~KMixDeviceManager();
+    private slots:
+        void pluggedSlot(const QString&);
+        void unpluggedSlot(const QString&);
+
+    private:
+        static KMixDeviceManager* s_KMixDeviceManager;
 };
 
 #endif
