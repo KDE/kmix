@@ -366,6 +366,16 @@ void KMixWindow::unplugged( const QString& udi)
         if (mixer->udi() == udi ) {
             kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
             Mixer::mixers().removeAt(i);
+            // Check whether the Global Master disappeared, and select a new one if neccesary
+            MixDevice* md = Mixer::getGlobalMasterMD();
+            if ( md == 0 ) {
+                // We don't know what the global master should be now.
+                // So lets play stupid, and just select the recommendended master of the first device
+                if ( Mixer::mixers().count() > 0 ) {
+                    QString localMaster = ((Mixer::mixers())[0])->getLocalMasterMD()->id();
+                    Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster);
+                }
+            }
             recreateGUI();
             break;
         }

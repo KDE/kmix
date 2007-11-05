@@ -347,7 +347,10 @@ MixDevice* Mixer::getGlobalMasterMD()
       }
    }
 
-   kDebug() << "Mixer::masterCardDevice() returns " << md->id();
+    if ( md ) 
+        kDebug() << "Mixer::masterCardDevice() returns " << md->id();
+    else 
+        kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
    return md;
 }
 
