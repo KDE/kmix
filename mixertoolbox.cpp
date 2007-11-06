@@ -247,7 +247,7 @@ void MixerToolBox::setMixerIgnoreExpression(QString& ignoreExpr)
 QString MixerToolBox::mixerIgnoreExpression()
 {
      return s_ignoreMixerExpression.pattern( );
-};
+}
 
 void MixerToolBox::removeMixer(Mixer *par_mixer)
 {
