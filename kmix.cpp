@@ -481,14 +481,17 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
 
 bool KMixWindow::queryClose ( )
 {
+    kDebug(67100) << "queryClose ";
     if ( m_showDockWidget && !kapp->sessionSaving() )
     {
+        kDebug(67100) << "don't close";
         // Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
         hide();
         return false;
     }
     else {
         // Accept the close in all situations, when the user has disabled docking
+        kDebug(67100) << "close";
         return true;
     }
 }
@@ -496,7 +499,8 @@ bool KMixWindow::queryClose ( )
 
 void KMixWindow::quit()
 {
-   kapp->quit();
+    kDebug(67100) << "quit";
+    kapp->quit();
 }
 
 

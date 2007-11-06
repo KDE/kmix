@@ -29,6 +29,13 @@ bool KMixApp::_keepVisibility = false;
 KMixApp::KMixApp()
     : KUniqueApplication(), m_kmix( 0 )
 {
+    // We must disable QuitOnLastWindowClosed. Rationale:
+    // 1) The normal state of KMix is to only have the dock icon shown.
+    // 2a) The dock icon gets reconstructed, whenever a soundcard is hotplugged or unplugged.
+    // 2b) The dock icon gets reconstructed, when the user selects a new master.
+    // 3) During the reconstruction, it can easily happen that no window is present => KMix would quit
+    // => disable QuitOnLastWindowClosed
+    setQuitOnLastWindowClosed ( false );
 }
 
 
@@ -94,6 +101,7 @@ KMixApp::quitExtended()
     // This method is here to quit hold from the dock icon: When directly calling
     // quit(), the main window will be hidden before saving the configuration.
     // isVisible() would return on quit always false (which would be bad).
+    kDebug(67100) <<  "quitExtended ENTER";
     emit stopUpdatesOnVisibility();
     quit();
 }

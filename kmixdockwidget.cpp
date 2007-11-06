@@ -44,6 +44,7 @@
 #include "dialogselectmaster.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
+#include "mixertoolbox.h"
 #include "kmixdockwidget.h"
 #include "viewdockareapopup.h"
 
@@ -144,20 +145,10 @@ void KMixDockWidget::selectMaster()
 
 void KMixDockWidget::handleNewMaster(QString& mixerID, QString& /*control_id*/)
 {
-   //kDebug(67100) << "KMixDockWidget::handleNewMaster() soundcard_id=" << soundcard_id << " , control_id=" << control_id;
-   Mixer *mixer = 0;
-   for( int i =0; i<Mixer::mixers().count(); i++ )
-   {
-       mixer = (Mixer::mixers())[i];
-       if ( mixer->id() == mixerID ) {
-           mixer = (Mixer::mixers())[i];
-           break;
-       }
-   }
-
-   if ( mixer == 0 ) {
-       kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (mixerID=" << mixerID << ")" << endl;
-      return; // can not happen
+    Mixer *mixer = MixerToolBox::instance()->find(mixerID);
+    if ( mixer == 0 ) {
+        kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (mixerID=" << mixerID << ")" << endl;
+        return; // can not happen
    }
    m_mixer = mixer;
    //Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
