@@ -36,6 +36,7 @@
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
 GUIProfile*   MixerToolBox::s_fallbackProfile = 0;
+QRegExp MixerToolBox::s_ignoreMixerExpression("Modem");
 
 /***********************************************************************************
  Attention:
@@ -49,6 +50,8 @@ MixerToolBox* MixerToolBox::instance()
 {
    if ( s_instance == 0 ) {
       s_instance = new MixerToolBox();
+//      if ( s_ignoreMixerExpression.isEmpty() )
+//          s_ignoreMixerExpression.setPattern("Modem");
    }
    return s_instance;
 }
@@ -193,6 +196,12 @@ void MixerToolBox::possiblyAddMixer(Mixer *mixer)
 {
     if ( mixer->openIfValid() )
     {
+        if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) ) {
+            // This Mixer should be ignored (default expression is "Modem").
+            delete mixer;
+            mixer = 0;
+            return;
+        }
         Mixer::mixers().append( mixer );
         // Count mixer nums for every mixer name to identify mixers with equal names.
         // This is for creating persistent (reusable) primary keys, which can safely
@@ -227,6 +236,18 @@ void MixerToolBox::possiblyAddMixer(Mixer *mixer)
         mixer = 0;
     } // invalid
 }
+
+/* This allows to set an expression form Mixers that should be ignored.
+  The default is "Modem", because most people don't want to control the modem volume. */
+void MixerToolBox::setMixerIgnoreExpression(QString& ignoreExpr)
+{
+    s_ignoreMixerExpression.setPattern(ignoreExpr);
+}
+
+QString MixerToolBox::mixerIgnoreExpression()
+{
+     return s_ignoreMixerExpression.pattern( );
+};
 
 void MixerToolBox::removeMixer(Mixer *par_mixer)
 {

@@ -212,7 +212,9 @@ void KMixWindow::saveBaseConfig()
    if ( mdMaster != 0 ) {
       config.writeEntry( "MasterMixerDevice", mdMaster->id() );
    }
-
+   QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
+   config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
+   
    // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
    if ( m_toplevelOrientation  == Qt::Horizontal )
       config.writeEntry( "Orientation","Horizontal" );
@@ -280,7 +282,8 @@ void KMixWindow::loadBaseConfig()
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    Mixer::setGlobalMaster(mixerMasterCard, masterDev);
-
+   QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
+   MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 
    if ( orientationString == "Horizontal" )
        m_toplevelOrientation  = Qt::Horizontal;

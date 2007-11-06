@@ -24,6 +24,7 @@
 #include <qobject.h>
 #include <qlist.h>
 #include <QMap>
+#include <QRegExp>
 #include <QString>
 
 class GUIProfile;
@@ -45,6 +46,8 @@ class MixerToolBox : public QObject
       void deinitMixer();
       void possiblyAddMixer(Mixer *mixer);
       void removeMixer(Mixer *mixer);
+      void setMixerIgnoreExpression(QString& ignoreExpr);
+      QString mixerIgnoreExpression();
       
       Mixer* find( const QString& mixer_id);
       GUIProfile* selectProfile(Mixer*);
@@ -56,6 +59,7 @@ class MixerToolBox : public QObject
       static MixerToolBox* s_instance;
       static GUIProfile*   s_fallbackProfile;
       QMap<QString,int> s_mixerNums;
+      static QRegExp s_ignoreMixerExpression;
 };
 
 #endif
