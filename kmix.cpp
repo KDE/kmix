@@ -402,7 +402,6 @@ void KMixWindow::unplugged( const QString& udi)
             if ( Mixer::mixers().count() == 0 ) {
                 QString text;
                 text = i18n("The last soundcard was unplugged.");
-                text.arg(((Mixer::mixers())[0])->getLocalMasterMD()->readableName()).arg( ((Mixer::mixers())[0])->readableName() ) ;
                 KMixToolBox::notification("MasterFallback", text);
             }
             recreateGUI();
