@@ -98,7 +98,6 @@ KMixWindow : public KXmlGuiWindow
 
    bool m_showDockWidget;
    bool m_volumeWidget;
-   bool m_hideOnClose;
    bool m_showTicks;
    bool m_showLabels;
    bool m_onLogin;
@@ -120,7 +119,7 @@ KMixWindow : public KXmlGuiWindow
    void slotHWInfo();
    void slotConfigureCurrentView();
    void addMixerWidget(const QString&);
-   void plugged( char* driverName, const QString& udi, QString& dev);
+   void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
 };
 

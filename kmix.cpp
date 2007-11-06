@@ -80,7 +80,7 @@ KMixWindow::KMixWindow()
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
    recreateGUI();
    theKMixDeviceManager->initHotplug();
-   connect(theKMixDeviceManager, SIGNAL( plugged( char*, const QString&, QString&)), SLOT (plugged( char*, const QString&, QString&) ) );
+   connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
    connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
    if ( m_startVisible )
       show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it
@@ -269,8 +269,6 @@ void KMixWindow::loadBaseConfig()
 
    m_showDockWidget = config.readEntry("AllowDocking", true);
    m_volumeWidget = config.readEntry("TrayVolumeControl", true);
-   //hide on close has to stay true for usability. KMixPrefDlg option commented out. nolden
-   m_hideOnClose = config.readEntry("HideOnClose", true);
    m_showTicks = config.readEntry("Tickmarks", true);
    m_showLabels = config.readEntry("Labels", true);
    m_onLogin = config.readEntry("startkdeRestore", true );
@@ -348,13 +346,26 @@ void KMixWindow::recreateGUI()
    }
    else {
       // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
+       hide();
    }
 }
 
-void KMixWindow::plugged( char* driverName, const QString& udi, QString& dev)
+void KMixWindow::plugged( const char* driverName, const QString& udi, QString& dev)
 {
     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
-    recreateGUI();
+    QString driverNameString; driverNameString = driverName;
+    if ( driverNameString == "ALSA"  ) {
+        int devNum = dev.toInt();
+        kDebug(67100) << "Plugged: devNum=" << devNum << "\n";
+        Mixer *mixer = new Mixer( driverNameString, devNum );
+        MixerToolBox::instance()->possiblyAddMixer(mixer);
+        recreateGUI();
+    }
+    else if ( driverNameString ==  "OSS" ) {
+    }
+    else {
+        // Unknown driver
+    }
 }
 
 void KMixWindow::unplugged( const QString& udi)
@@ -365,16 +376,31 @@ void KMixWindow::unplugged( const QString& udi)
         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
         if (mixer->udi() == udi ) {
             kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
-            Mixer::mixers().removeAt(i);
+            //KMixToolBox::notification("MasterFallback", "aaa");
+            bool globalMasterMixerDestroyed = ( mixer == Mixer::getGlobalMasterMixer() );
+            MixerToolBox::instance()->removeMixer(mixer);
             // Check whether the Global Master disappeared, and select a new one if neccesary
             MixDevice* md = Mixer::getGlobalMasterMD();
-            if ( md == 0 ) {
+            if ( globalMasterMixerDestroyed || md == 0 ) {
                 // We don't know what the global master should be now.
                 // So lets play stupid, and just select the recommendended master of the first device
                 if ( Mixer::mixers().count() > 0 ) {
                     QString localMaster = ((Mixer::mixers())[0])->getLocalMasterMD()->id();
                     Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster);
+                    
+                    QString text;
+                    text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2", 
+                            ((Mixer::mixers())[0])->getLocalMasterMD()->readableName(),
+                            ((Mixer::mixers())[0])->readableName()
+                                );
+                    KMixToolBox::notification("MasterFallback", text);
                 }
+            }
+            if ( Mixer::mixers().count() == 0 ) {
+                QString text;
+                text = i18n("The last soundcard was unplugged.");
+                text.arg(((Mixer::mixers())[0])->getLocalMasterMD()->readableName()).arg( ((Mixer::mixers())[0])->readableName() ) ;
+                KMixToolBox::notification("MasterFallback", text);
             }
             recreateGUI();
             break;
@@ -454,11 +480,14 @@ bool KMixWindow::queryClose ( )
 {
     if ( m_showDockWidget && !kapp->sessionSaving() )
     {
-      // @todo check this code. What does it do?
+        // Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
         hide();
         return false;
     }
-    return true;
+    else {
+        // Accept the close in all situations, when the user has disabled docking
+        return true;
+    }
 }
 
 

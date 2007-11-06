@@ -63,25 +63,33 @@ QList<Mixer *>& Mixer::mixers()
   return s_mixers;
 }
 
-Mixer::Mixer( int driver, int device )
-  : _mixerBackend(0L)
+Mixer::Mixer( QString& ref_driverName, int device )
+    : m_balance(0), _mixerBackend(0L)
 {
    (void)new KMixAdaptor(this);
 
-   _mixerBackend = 0;
-   getMixerFunc *f = g_mixerFactories[driver].getMixer;
-   if( f!=0 ) {
-     _mixerBackend = f( this, device );
-     readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
-   }
-
-  m_balance = 0;
+    _mixerBackend = 0;
+    int driverCount = numDrivers();
+    for (int driver=0; driver<driverCount; driver++ ) {
+        QString driverName = Mixer::driverName(driver);
+        if ( driverName == ref_driverName ) {
+            // driver found => retrieve Mixer factory for that driver
+            getMixerFunc *f = g_mixerFactories[driver].getMixer;
+            if( f!=0 ) {
+                _mixerBackend = f( this, device );
+                readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
+            }
+            break;
+        }
+    }
 
    if (_mixerBackend) {
      QString dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
      QDBusConnection::sessionBus().registerObject(dbusName, this);
    }
 }
+
+
 
 Mixer::~Mixer() {
    // Close the mixer. This might also free memory, depending on the called backend method

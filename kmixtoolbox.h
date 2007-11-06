@@ -43,7 +43,8 @@ class KMixToolBox {
     static void saveView(ViewBase *view, KConfig *config);
     static void loadKeys(ViewBase *view, KConfig *config);
     static void saveKeys(ViewBase *view, KConfig *config);
-};
     
+    static void notification(const char *notificationName, const QString &text, const QStringList &actions = QStringList(), QObject *receiver = 0, const char *actionSlot = 0);
+};
 
 #endif

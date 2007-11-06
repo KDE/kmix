@@ -54,7 +54,6 @@ KMixPrefDlg : public KDialog
 
    QCheckBox *m_dockingChk;
    QCheckBox *m_volumeChk;
-   QCheckBox *m_hideOnCloseChk;
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;
    QCheckBox *m_onLogin;

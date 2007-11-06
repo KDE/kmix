@@ -23,6 +23,7 @@
 
 #include <qobject.h>
 #include <qlist.h>
+#include <QMap>
 #include <QString>
 
 class GUIProfile;
@@ -42,8 +43,10 @@ class MixerToolBox : public QObject
       static MixerToolBox* instance();
       void initMixer(bool, QString&);
       void deinitMixer();
+      void possiblyAddMixer(Mixer *mixer);
+      void removeMixer(Mixer *mixer);
+      
       Mixer* find( const QString& mixer_id);
-
       GUIProfile* selectProfile(Mixer*);
 
    signals:
@@ -52,6 +55,7 @@ class MixerToolBox : public QObject
    private:
       static MixerToolBox* s_instance;
       static GUIProfile*   s_fallbackProfile;
+      QMap<QString,int> s_mixerNums;
 };
 
 #endif

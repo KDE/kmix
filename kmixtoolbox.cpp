@@ -27,6 +27,7 @@
 //#include <kdebug.h>
 #include <kglobalaccel.h>
 #include <klocale.h>
+#include <knotification.h>
 
 #include "guiprofile.h"
 #include "mdwslider.h"
@@ -230,4 +231,20 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
          } // MDW has keys
       } // is a MixDeviceWidget
    } // for all widgets
+}
+
+void KMixToolBox::notification(const char *notificationName, const QString &text,
+                                const QStringList &actions, QObject *receiver,
+                                const char *actionSlot)
+{
+    KNotification *notification = new KNotification(notificationName);
+    //notification->setComponentData(componentData());
+    notification->setText(text);
+    //notification->setPixmap(...);
+    notification->addContext(QLatin1String("Application"), KGlobal::mainComponent().componentName());
+    if (!actions.isEmpty() && receiver && actionSlot) {
+        notification->setActions(actions);
+        QObject::connect(notification, SIGNAL(activated(unsigned int)), receiver, actionSlot);
+    }
+    notification->sendEvent();
 }

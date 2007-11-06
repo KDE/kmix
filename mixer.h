@@ -47,7 +47,7 @@ class Mixer : public QObject
       enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ,
 			ERR_OPEN, ERR_LASTERR };
 
-      Mixer( int driver, int device );
+      Mixer( QString& ref_driverName, int device );
       virtual ~Mixer();
 
       static int numDrivers();

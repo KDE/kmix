@@ -73,7 +73,6 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
    //kDebug(67100) << "IN MixerToolBox::initMixer()";
 
    // Find all mixers and initialize them
-   QMap<QString,int> mixerNums;
    int drvNum = Mixer::numDrivers();
 
    int driverWithMixer = -1;
@@ -121,55 +120,15 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
       int devNumMax = 19;
       for( int dev=0; dev<=devNumMax; dev++ )
       {
-         Mixer *mixer = new Mixer( drv, dev );
-         if ( mixer->openIfValid() ) {
-            Mixer::mixers().append( mixer );
-            // Count mixer nums for every mixer name to identify mixers with equal names.
-            // This is for creating persistent (reusable) primary keys, which can safely
-            // be referenced (especially for config file access, so it is meant to be persistent!).
-            mixerNums[mixer->baseName()]++;
-            // Create a useful PK
-            /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
-               * contain it.
-               * %1, the driver name is from the KMix backends, it does not contain colons.
-               * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
-               * %3, the mixer number, is a number: it does not contain colons.
-               */
-            QString mixerName = mixer->baseName();
-            mixerName.replace(":","_");
-            QString primaryKeyOfMixer = QString("%1::%2:%3")
-                  .arg(driverName)
-                  .arg(mixerName)
-                  .arg(mixerNums[mixer->baseName()]);
-            // The following 3 replaces are for not messing up the config file
-            primaryKeyOfMixer.replace("]","_");
-            primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
-            primaryKeyOfMixer.replace(" ","_");
-            primaryKeyOfMixer.replace("=","_");
-            
-            mixer->setID(primaryKeyOfMixer);
-            emit mixerAdded(primaryKeyOfMixer);
-         } // valid
-         else
-         {
-            delete mixer;
-            mixer = 0;
-         } // invalid
+         Mixer *mixer = new Mixer( driverName, dev );
+         possiblyAddMixer(mixer);
    
-         /* Lets decide if the autoprobing shall continue: */
-         if ( multiDriverMode ) {
-            // trivial case: In multiDriverMode, we scan ALL 20 devs of ALL drivers
-            // so we have to do "nothing" in this case
-         } // multiDriver
-         else {
-            // In No-multiDriver-mode we only need to check after we reached devNumMax
-            if ( dev == devNumMax ) {
-               if ( Mixer::mixers().count() != 0 ) {
-               // highest device number of driver and a Mixer => finished
-               autodetectionFinished = true;	
-               }
-            }
-         } // !multiDriver
+         /* Lets decide if the autoprobing shall end (BTW: In multiDriver mode we scan all devices, so no check is neccesary) */
+         if ( ! multiDriverMode ) {
+            // In Single-Driver-mode we only need to check after we reached devNumMax
+            if ( dev == devNumMax && Mixer::mixers().count() != 0 )
+                autodetectionFinished = true; // highest device number of driver and a Mixer => finished
+        }
       
          // append driverName (used drivers)
          if ( !drvInfoAppended )
@@ -190,13 +149,10 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
                // Aha, this is the very first detected device
                driverWithMixer = drv;
             }
-            else
+            else if ( driverWithMixer != drv )
             {
-               if ( driverWithMixer != drv )
-               {
-                  // Got him: There are mixers in different drivers
-                  multipleDriversActive = true;
-               }
+                // Got him: There are mixers in different drivers
+                multipleDriversActive = true;
             }
          } //  !multipleDriversActive
       
@@ -206,7 +162,9 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
          break;
       }
    } // loop over soundcard drivers
+
    
+    // Add a master device (if we haven't defined one yet)
    if ( Mixer::getGlobalMasterMixer() == 0 ) {
       // We have no master card yet. This actually only happens when there was
       // not one defined in the kmixrc.
@@ -230,6 +188,58 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
    //kDebug(67100) << "OUT MixerToolBox::initMixer()";
 
 }
+
+void MixerToolBox::possiblyAddMixer(Mixer *mixer)
+{
+    if ( mixer->openIfValid() )
+    {
+        Mixer::mixers().append( mixer );
+        // Count mixer nums for every mixer name to identify mixers with equal names.
+        // This is for creating persistent (reusable) primary keys, which can safely
+        // be referenced (especially for config file access, so it is meant to be persistent!).
+        s_mixerNums[mixer->baseName()]++;
+        kDebug(67100) << "mixerNums entry of added mixer is now: " <<  s_mixerNums[mixer->baseName()];
+        // Create a useful PK
+        /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
+         * contain it.
+         * %1, the driver name is from the KMix backends, it does not contain colons.
+         * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
+         * %3, the mixer number, is a number: it does not contain colons.
+         */
+        QString mixerName = mixer->baseName();
+        mixerName.replace(":","_");
+        QString primaryKeyOfMixer = QString("%1::%2:%3")
+                .arg(mixer->getDriverName())
+                .arg(mixerName)
+                .arg(s_mixerNums[mixer->baseName()]);
+        // The following 3 replaces are for not messing up the config file
+        primaryKeyOfMixer.replace("]","_");
+        primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
+        primaryKeyOfMixer.replace(" ","_");
+        primaryKeyOfMixer.replace("=","_");
+    
+        mixer->setID(primaryKeyOfMixer);
+        emit mixerAdded(primaryKeyOfMixer);
+    } // valid
+    else
+    {
+        delete mixer;
+        mixer = 0;
+    } // invalid
+}
+
+void MixerToolBox::removeMixer(Mixer *par_mixer)
+{
+    for (int i=0; i<Mixer::mixers().count(); ++i) {
+        Mixer *mixer = (Mixer::mixers())[i];
+        if ( mixer == par_mixer ) {
+            s_mixerNums[mixer->baseName()]--;
+            kDebug(67100) << "mixerNums entry of removed mixer is now: " <<  s_mixerNums[mixer->baseName()];
+            Mixer::mixers().removeAt(i);
+        }
+    }
+}
+
 
 
 /*

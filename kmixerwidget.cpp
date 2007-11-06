@@ -195,6 +195,7 @@ ViewBase* KMixerWidget::currentView()
     if ( _views.size() > 0 ) {
         view = _views[0];
     }
+    return view;
 }
 
 
