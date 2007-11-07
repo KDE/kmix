@@ -146,19 +146,20 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
    return _mdw;
 }
 
+/*
 QSize ViewDockAreaPopup::sizeHint() const {
    //    kDebug(67100) << "ViewDockAreaPopup::sizeHint(): NewSize is " << _mdw->sizeHint() << "\n";
    return( _mdw->sizeHint() );
 }
-
+*/
 void ViewDockAreaPopup::constructionFinished() {
    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
    if (_mdw != 0) {
       _mdw->move(0,0);
       _mdw->show();
-      _mdw->resize(_mdw->sizeHint() );
+      //_mdw->resize(_mdw->sizeHint() );
    }
-   resize(sizeHint());
+   //resize(sizeHint());
 }
 
 

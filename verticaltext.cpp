@@ -20,15 +20,22 @@
  */
 
 #include "verticaltext.h"
-#include <qpainter.h>
+#include <QPainter>
 #include <kdebug.h>
+
 
 
 VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WFlags f) : QWidget(parent,f)
 {
    m_labelText = text;
-   resize(20,100 /*parent->height() */ );
-   setMinimumSize(20,10); // necessary for smooth integration into layouts (we only care for the widths).
+
+   QPainter paint(this);
+   QFontMetrics fontMetrics ( paint.font()  );
+   m_width = fontMetrics.width(m_labelText);
+   m_height = fontMetrics.height();
+   
+   //resize(20,100 /*parent->height() */ );
+   //setMinimumSize(20,10); // necessary for smooth integration into layouts (we only care for the widths).
 }
 
 VerticalText::~VerticalText() {
@@ -36,23 +43,28 @@ VerticalText::~VerticalText() {
 
 
 void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
+    QPainter paint(this);
+    paint.rotate(270);
+    paint.translate(0,-4); // Silly "solution" to make underlengths work
    //kDebug(67100) << "paintEvent(). height()=" <<  height() << "\n";
-   QPainter paint(this);
-   paint.rotate(270);
-   paint.translate(0,-4); // Silly "solution" to make underlengths work
 
    // Fix for bug 72520
    //-       paint.drawText(-height()+2,width(),name());
    //+       paint.drawText( -height()+2, width(), QString::fromUtf8(name()) );
-   paint.drawText( -height()+2, width(), m_labelText );
+   int posX =  -height()+2;
+   int posY = width();
+   paint.drawText( posX, posY, m_labelText );
 }
 
 QSize VerticalText::sizeHint() const {
-   return QSize(20,100); // !! UGLY. Should be reworked
+    kDebug(67100) << "QSize VerticalText::sizeHint() height=" << m_height << "width=" << m_width << "\n";
+    return QSize( m_height, m_width+2);
+    //return QSize(m_boundingRectangle.width(), m_boundingRectangle.height());
+    
 }
 
 QSizePolicy VerticalText::sizePolicy () const
 {
-   return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    return QSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 }
 

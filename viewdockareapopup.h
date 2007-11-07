@@ -49,7 +49,7 @@ public:
     virtual void refreshVolumeLevels();
     virtual void showContextMenu();
 
-    QSize sizeHint() const;
+    //QSize sizeHint() const;
     bool justHidden();
 
 protected:

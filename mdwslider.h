@@ -67,7 +67,6 @@ public:
     void setIcons( bool value );
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
-//    QSize sizeHint() const;
     bool eventFilter( QObject* obj, QEvent* e );
     QSizePolicy sizePolicy() const;
 

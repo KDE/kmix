@@ -95,7 +95,7 @@ void MDWEnum::createWidgets()
 
    _label = new QLabel( m_mixdevice->readableName(), this);
    _layout->addWidget(_label);
-   _label->setFixedHeight(_label->sizeHint().height());
+   //_label->setFixedHeight(_label->sizeHint().height());
    _enumCombo = new KComboBox( false, this);
    // ------------ fill ComboBox start ------------
    int maxEnumId= m_mixdevice->enumValues().count();
@@ -104,7 +104,7 @@ void MDWEnum::createWidgets()
    }
    // ------------ fill ComboBox end --------------
    _layout->addWidget(_enumCombo);
-   _enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
+   //_enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
    connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
    _enumCombo->setToolTip( m_mixdevice->readableName() );
 }
@@ -144,9 +144,8 @@ void MDWEnum::showContextMenu()
 
 QSizePolicy MDWEnum::sizePolicy() const
 {
-    return QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+    return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Fixed );
 }
-
 
 /**
    This slot is called, when a user has clicked the mute button. Also it is called by any other

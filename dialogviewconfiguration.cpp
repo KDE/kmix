@@ -56,7 +56,6 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    _layout->addWidget(qlb);
    
    QScrollArea* scrollArea = new QScrollArea(frame);
-   //scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
    scrollArea->setWidgetResizable(true); // avoid unnecesary scrollbars
    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
    _layout->addSpacing(KDialog::spacingHint());
@@ -166,7 +165,6 @@ void DialogViewConfiguration::apply()
 
 
 QSize DialogViewConfiguration::sizeHint() const {
-    //    kDebug(67100) << "DialogViewConfiguration::sizeHint() is (100,500)\n";
     QSize size = vboxForScrollView->sizeHint();
     // The +50 is a workaround, because KDialog does not handle our case correctly (using a QScrollarea)
     size.rwidth() += 50;

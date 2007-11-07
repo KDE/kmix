@@ -126,10 +126,10 @@ MDWSlider::MDWSlider(MixDevice* md,
 QSizePolicy MDWSlider::sizePolicy() const
 {
     if ( _orientation == Qt::Vertical ) {
-        return QSizePolicy(  QSizePolicy::Minimum, QSizePolicy::MinimumExpanding );
+        return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::MinimumExpanding );
     }
     else {
-        return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Minimum );
+        return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Fixed );
     }
 }
 
@@ -909,17 +909,6 @@ void MDWSlider::showContextMenu()
    menu->popup( pos );
 }
 
-/*
-QSize MDWSlider::sizeHint() const {
-	if ( _layout != 0 ) {
-		return _layout->sizeHint();
-	}
-	else {
-		// layout not (yet) created
-		return QWidget::sizeHint();
-	}
-}
-*/
 
 /**
  * An event filter for the various QWidgets. We watch for Mouse press Events, so

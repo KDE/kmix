@@ -38,6 +38,8 @@ class VerticalText : public QWidget
 
    private:
       QString m_labelText;
+      int m_height;
+      int m_width;
 };
 
 #endif

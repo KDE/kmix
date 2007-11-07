@@ -183,7 +183,12 @@ void MDWSwitch::showContextMenu()
 
 QSizePolicy MDWSwitch::sizePolicy() const
 {
-    return QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+    if ( _orientation == Qt::Vertical ) {
+        return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::MinimumExpanding );
+    }
+    else {
+        return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Fixed );
+    }
 }
 
 /**

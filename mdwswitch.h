@@ -51,7 +51,6 @@ public:
    ~MDWSwitch();
 
    void addActionToPopup( KAction *action );
-//   QSize sizeHint() const;
    QSizePolicy sizePolicy() const;
    void setBackgroundRole(QPalette::ColorRole m);
    bool eventFilter( QObject* obj, QEvent* e );

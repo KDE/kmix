@@ -457,22 +457,22 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       }
 
 
-      KMixerWidget *mw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, actionCollection() );
+      KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, actionCollection() );
 
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
       bool isFirstTab = m_wsMixers->count() == 0;
-      m_wsMixers->addTab( mw, mw->mixer()->readableName() );
+      m_wsMixers->addTab( kmw, kmw->mixer()->readableName() );
       if (isFirstTab) {
-         m_wsMixers->setCurrentWidget(mw);
-         setWindowTitle( mw->mixer()->readableName() );
+         m_wsMixers->setCurrentWidget(kmw);
+         setWindowTitle( kmw->mixer()->readableName() );
       }
 
-      mw->loadConfig( KGlobal::config().data() );
+      kmw->loadConfig( KGlobal::config().data() );
 
-      mw->setTicks( m_showTicks );
-      mw->setLabels( m_showLabels );
-      mw->mixer()->readSetFromHWforceUpdate();
+      kmw->setTicks( m_showTicks );
+      kmw->setLabels( m_showLabels );
+      kmw->mixer()->readSetFromHWforceUpdate();
    } // given mixer exist really
 }
 
