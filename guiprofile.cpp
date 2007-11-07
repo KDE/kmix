@@ -231,7 +231,7 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 			<< "  Card-Type=" << guiprof._soundcardType.toUtf8().constData() << std::endl
 			<< "  Profile-Generation="  << guiprof._generation
 			<< std::endl;
-	for ( std::set<ProfProduct*>::iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
+	for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
 	{
 		ProfProduct* prd = *it;
 		os << "Product:\n  Vendor=" << prd->vendor.toUtf8().constData() << std::endl << "  Name=" << prd->productName.toUtf8().constData() << std::endl;
