@@ -37,7 +37,6 @@ class QSlider;
 
 // KDE
 class KActionCollection;
-class KActionMenu;
 class KConfig;
 //class KTabWidget;
 

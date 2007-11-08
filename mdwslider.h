@@ -30,7 +30,6 @@
 #include <qpixmap.h>
 
 class QBoxLayout;
-class QToolButton;
 class QLabel;
 
 class KLed;
@@ -39,7 +38,6 @@ class KAction;
 
 class MixDevice;
 class VerticalText;
-class Mixer;
 class ViewBase;
 
 #include "mixdevicewidget.h"

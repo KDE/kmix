@@ -30,12 +30,10 @@
 #include <qpixmap.h>
 
 
-class KLed;
 class KAction;
 class KActionCollection;
 
 class MixDevice;
-class Mixer;
 class ViewBase;
 
 class MixDeviceWidget
