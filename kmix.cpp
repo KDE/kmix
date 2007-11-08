@@ -70,7 +70,10 @@ KMixWindow::KMixWindow()
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_dockWidget()
 {
-   setObjectName("KMixWindow");
+    kDebug(67100)  << "Qt::WA_DeleteOnClose= " << testAttribute(Qt::WA_DeleteOnClose) << "\n";
+    setObjectName("KMixWindow");
+    setAttribute(Qt::WA_DeleteOnClose, false);
+    kDebug(67100)  << "Qt::WA_DeleteOnClose= " << testAttribute(Qt::WA_DeleteOnClose) << "\n";
 
    initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
@@ -112,7 +115,7 @@ void KMixWindow::initActions()
    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
    action = actionCollection()->addAction( "hide_kmixwindow" );
    action->setText( i18n( "Hide Mixer Window" ) );
-   connect(action, SIGNAL(triggered(bool) ), SLOT(hide()));
+   connect(action, SIGNAL(triggered(bool) ), SLOT(hideOrClose()));
    action->setShortcut(QKeySequence(Qt::Key_Escape));
    action = actionCollection()->addAction("toggle_channels_currentview");
    action->setText(i18n("Configure &Channels"));
@@ -161,6 +164,10 @@ void KMixWindow::initWidgets()
  */
 bool KMixWindow::updateDocking()
 {
+    if (m_showDockWidget == false) {
+        return false; // docking is disabled
+    }
+
    // delete old dock widget
    if (m_dockWidget)
    {
@@ -172,13 +179,10 @@ bool KMixWindow::updateDocking()
       return false;
    }
 
-   if (m_showDockWidget)
-   {
-      // create dock widget
-      m_dockWidget = new KMixDockWidget( this, "mainDockWidget", m_volumeWidget );
-      m_dockWidget->show();
-   }
-   return true;
+    // create dock widget
+    m_dockWidget = new KMixDockWidget( this, "mainDockWidget", m_volumeWidget );
+    m_dockWidget->show();
+    return true;
 }
 
 void KMixWindow::saveConfig()
@@ -495,6 +499,17 @@ bool KMixWindow::queryClose ( )
     }
 }
 
+void KMixWindow::hideOrClose ( )
+{
+    if ( m_showDockWidget  && m_dockWidget != 0) {
+        // we can hide if there is a dock widget
+        hide();
+    }
+    else {
+        //  if there is no dock widget, we will quit
+        quit();
+    }
+}
 
 void KMixWindow::quit()
 {

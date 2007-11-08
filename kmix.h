@@ -121,6 +121,7 @@ KMixWindow : public KXmlGuiWindow
    void addMixerWidget(const QString&);
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
+   void hideOrClose();
 };
 
 #endif // KMIX_H
