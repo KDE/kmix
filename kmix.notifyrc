@@ -1,9 +1,18 @@
 [Global]
 IconName=kmix
 Comment=Sound Mixer
+Comment[el]=Μείκτης ήχου
+Comment[pt]=Mistura de Som
+Comment[pt_BR]=Mistura de Som
 
 [Event/MasterFallback]
 Name=Audio Device Fallback
+Name[el]=Αναπληρωματική συσκευή ήχου
+Name[pt]=Dispositivo Alternativo de Áudio:
+Name[pt_BR]=Dispositivo Alternativo de Áudio:
 Comment=Notification on automatic fallback if the preferred devices in unavailable
+Comment[el]=Ειδοποίηση αυτόματης χρήσης της αναπληρωματικής συσκευής ήχου, αν η προκαθορισμένη δεν είναι διαθέσιμη
+Comment[pt]=Notificação de última instância se os dispositivos preferidos estiverem indisponíveis
+Comment[pt_BR]=Notificação de última instância se os dispositivos preferidos estiverem indisponíveis
 Contexts=Application
 Action=Popup
