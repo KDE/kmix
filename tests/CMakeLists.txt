@@ -35,6 +35,6 @@ set(dialogtest_KDEINIT_SRCS dialogtest.cpp )
 kde4_add_kdeinit_executable( dialogtest ${dialogtest_KDEINIT_SRCS}
     )
     
-target_link_libraries(kdeinit_dialogtest  ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kdeinit_dialogtest  ${KDE4_KDEUI_LIBS} )
 
 
