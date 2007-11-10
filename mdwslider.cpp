@@ -327,18 +327,18 @@ void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
         reclayout->setSizeConstraint(QLayout::SetFixedSize);
 
         layout->addSpacing( 3 );
-        if( m_mixdevice->captureVolume().hasSwitch() ) {
-            m_captureLED =  new QCheckBox(this);
-            
-          
+        if( m_mixdevice->captureVolume().hasSwitch() )
+        {
             /*
             m_captureLED = new KLedButton( Qt::red,
             m_mixdevice->isRecSource()?KLed::On:KLed::Off,
             KLed::Sunken, KLed::Circular, this, "RecordLED" );
             m_captureLED->setFixedSize( QSize(16, 16) );
-            */
-            reclayout->addWidget( m_captureLED );
             connect(m_captureLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
+            */
+            m_captureLED =  new QCheckBox(this);
+            reclayout->addWidget( m_captureLED );
+            connect(m_captureLED, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)));
             m_captureLED->installEventFilter( this );
             QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
             m_captureLED->setToolTip( muteTip );  // @todo: Whatsthis, explaining the device
@@ -752,9 +752,8 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref
     associated KAction like the context menu.
 */
 void MDWSlider::toggleRecsrc() {
-   setRecsrc( !m_mixdevice->isRecSource() );
+   setRecsrc( m_mixdevice->isRecSource() );
 }
-
 
 void MDWSlider::setRecsrc(bool value )
 {
