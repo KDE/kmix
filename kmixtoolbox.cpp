@@ -86,7 +86,7 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
          QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
          KConfigGroup devcg  = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
@@ -142,7 +142,7 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
          if ( keys )
          {
             QString devgrpkeys;
-            devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+            devgrpkeys.sprintf( "Keys.%s.%s", view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
             //kDebug(67100) << "KMixToolBox::loadKeys() load Keys " << devgrpkeys;
 
             // please see KMixToolBox::saveKeys() for some rambling about saving/loading Keys
@@ -179,11 +179,11 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
 
          //kDebug(67100) << "  grp=" << grp.toAscii();
-         //kDebug(67100) << "  mixer=" << view->getMixer()->id().toAscii();
+         //kDebug(67100) << "  mixer=" << view->id().toAscii();
          //kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
          QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
          KConfigGroup devcg = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
@@ -218,7 +218,7 @@ void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
          if ( keys )
          {
             QString devgrpkeys;
-            devgrpkeys.sprintf( "Keys.%s.%s", view->getMixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+            devgrpkeys.sprintf( "Keys.%s.%s", view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
             //kDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys;
 
             //See note in loadKeys! -- ahartmetz

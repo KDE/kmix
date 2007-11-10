@@ -58,7 +58,7 @@ public:
     ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
-    QString viewId() const;
+    QString id() const;
 
     // This method is called by ViewBase at the end of createDeviceWidgets(). The default
     // implementation does nothing. Subclasses can override this method for doing final

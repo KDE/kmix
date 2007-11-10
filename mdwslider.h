@@ -30,6 +30,7 @@
 #include <qpixmap.h>
 
 class QBoxLayout;
+class QToolButton;
 class QLabel;
 
 class KLed;
@@ -38,6 +39,7 @@ class KAction;
 
 class MixDevice;
 class VerticalText;
+class Mixer;
 class ViewBase;
 
 #include "mixdevicewidget.h"
@@ -57,17 +59,23 @@ public:
 
     void addActionToPopup( KAction *action );
 
+    // GUI
     bool isStereoLinked() const { return m_linked; }
-
     void setStereoLinked( bool value );
     void setLabeled( bool value );
     void setTicks( bool ticks );
     void setIcons( bool value );
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
+    
     bool eventFilter( QObject* obj, QEvent* e );
+    
+    // Layout
     QSizePolicy sizePolicy() const;
+    int playbackExtentHint() const;
+    void setPlaybackExtent(int extent);
 
+    
 public slots:
     void toggleRecsrc();
     void toggleMuted();
@@ -97,7 +105,9 @@ private:
     QPixmap icon( int icontype );
     void setIcon( int icontype );
     QPixmap loadIcon( const char* filename );
-    void createWidgets( bool showMuteLED, bool showRecordLED );
+    void createWidgets( bool showMuteLED, bool showCaptureLED );
+    void createWidgetsTopPart(QBoxLayout *, bool showMuteLED);
+    void createWidgetsBottomPart(QBoxLayout *, bool showCaptureLED);
     void addSliders( QBoxLayout *volLayout, char type, bool addLabel);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
@@ -108,16 +118,31 @@ private:
 
 
     bool m_linked;
+    
+    // GUI: Top portion ( Icon + Mute)
     QLabel      *m_iconLabelSimple;
-    KLedButton *m_recordLED;
-    QWidget *m_label; // is either QLabel or VerticalText
-    QWidget *m_extraCaptureLabel; // extra capture label (if you got playback AND capture on the same control)
-    QBoxLayout *_layout;
     QCheckBox* m_qcb;
+    QLabel* m_muteText;
+    QBoxLayout *m_iconLayout;
+    QWidget *m_playbackSpacer;
+        
+    // GUI: Middle portion (Sliders , including labels)
+    QBoxLayout *_layout;
+    QWidget *m_extraCaptureLabel; // extra capture label (if you got playback AND capture on the same control)
+    //KLedButton *m_recordLED;
+    QWidget *m_label; // is either QLabel or VerticalText
+    
+     // GUI: Lower portion (Capture)
+    QCheckBox* m_captureLED;
+    QLabel* m_captureText;
+    QWidget *m_captureSpacer;
+
+
     QList<QWidget *> m_slidersPlayback;
     QList<QWidget *> m_slidersCapture;
     QList<Volume::ChannelID> _slidersChidsPlayback;
     QList<Volume::ChannelID> _slidersChidsCapture;
+
 };
 
 #endif

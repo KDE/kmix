@@ -237,7 +237,7 @@ void KMixerWidget::loadConfig( KConfig *config )
     const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
     for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
         ViewBase* view = *it;
-        kDebug(67100) << "KMixerWidget::loadConfig()" << view->viewId();
+        kDebug(67100) << "KMixerWidget::loadConfig()" << view->id();
         KMixToolBox::loadView(view,config);
         KMixToolBox::loadKeys(view,config);
         view->configurationUpdate();
@@ -252,7 +252,7 @@ void KMixerWidget::saveConfig( KConfig *config )
     const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
     for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
         ViewBase* view = *it;
-        kDebug(67100) << "KMixerWidget::saveConfig()" << view->viewId();
+        kDebug(67100) << "KMixerWidget::saveConfig()" << view->id();
         KMixToolBox::saveView(view,config);
         KMixToolBox::saveKeys(view,config);
     } // for all tabs

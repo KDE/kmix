@@ -116,7 +116,7 @@ void ViewSliders::setMixSet()
    for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
    {
       ProfControl* control = *it;
-      if ( control->tab == viewId() ) {
+      if ( control->tab == id() ) {
          // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
          bool isUsed = false;
    

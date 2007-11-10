@@ -86,7 +86,7 @@ ViewBase::~ViewBase() {
 void ViewBase::configurationUpdate() {
 }
 
-QString ViewBase::viewId() const {
+QString ViewBase::id() const {
     return m_viewId;
 }
 

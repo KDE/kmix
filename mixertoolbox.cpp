@@ -247,7 +247,7 @@ void MixerToolBox::setMixerIgnoreExpression(QString& ignoreExpr)
 QString MixerToolBox::mixerIgnoreExpression()
 {
      return s_ignoreMixerExpression.pattern( );
-}
+};
 
 void MixerToolBox::removeMixer(Mixer *par_mixer)
 {
@@ -257,6 +257,7 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
             s_mixerNums[mixer->baseName()]--;
             kDebug(67100) << "mixerNums entry of removed mixer is now: " <<  s_mixerNums[mixer->baseName()];
             Mixer::mixers().removeAt(i);
+            delete mixer;
         }
     }
 }

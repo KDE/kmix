@@ -160,37 +160,12 @@ void KMixDeviceManager::unpluggedSlot(const QString& udi) {
     Solid::Device device(udi);
     // At this point the device has already been unplugged by the user. Solid doesn't know anything about the
     // device except the UDI (not even device.as<Solid::AudioInterface>() is possible). Thus I'll forward any
-    // unplugging action (could e.g. also be HID or mass storage). Tne receiver of the signal as to deal with it,
+    // unplugging action (could e.g. also be HID or mass storage). The receiver of the signal as to deal with it,
     // but a simple UDI matching is enough.
     emit unplugged(udi);
-    /*
-    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
-    if ( ! audiohw ) {
-        // this is *always* true, due to the reasons outlined above
-        std::cout << ">>> Unplugged an unknown device\n";
-        emit unplugged(udi)
-    }
-    */
+
 }
 
-
-/*
-extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
-{
-  KAboutData aboutData( "kmixd", 0, ki18n("Soundcard Mixer Device Manager"),
-                         APP_VERSION, ki18n(description), KAboutData::License_GPL,
-                         ki18n("(c) 2007 by Christian Esken"));
-
-  KCmdLineArgs::init( argc, argv, &aboutData );
-  //KApplication app( false );
-
-  KMixD *app = new KMixD();
-  int ret = app->exec();
-  delete app;
-
-  return ret;
-}
-*/
 
 #include "kmixdevicemanager.moc"
 

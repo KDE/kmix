@@ -70,10 +70,9 @@ KMixWindow::KMixWindow()
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_dockWidget()
 {
-    kDebug(67100)  << "Qt::WA_DeleteOnClose= " << testAttribute(Qt::WA_DeleteOnClose) << "\n";
     setObjectName("KMixWindow");
+    // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
-    kDebug(67100)  << "Qt::WA_DeleteOnClose= " << testAttribute(Qt::WA_DeleteOnClose) << "\n";
 
    initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
@@ -228,18 +227,17 @@ void KMixWindow::saveBaseConfig()
 
 void KMixWindow::saveViewConfig()
 {
-   // Save Views
-   for ( int i=0; i<m_wsMixers->count() ; ++i )
-   {
-      QWidget *w = m_wsMixers->widget(i);
-      if ( w->inherits("KMixerWidget") ) {
-         KMixerWidget* mw = (KMixerWidget*)w;
-         if ( mw->mixer()->isOpen() )
-         { // protect from unplugged devices (better do *not* save them)
-             mw->saveConfig( KGlobal::config().data() );
-         }
-      }
-   }
+    // Save Views
+    for ( int i=0; i<m_wsMixers->count() ; ++i )
+    {
+        QWidget *w = m_wsMixers->widget(i);
+        if ( w->inherits("KMixerWidget") ) {
+            KMixerWidget* mw = (KMixerWidget*)w;
+            // Here also Views are saved. even for Mixers that are closed. This is neccesary when unplugging cards.
+            // Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
+            mw->saveConfig( KGlobal::config().data() );
+        }
+    }
 }
 
 
@@ -353,6 +351,7 @@ void KMixWindow::recreateGUI()
    }
    else {
       // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
+       updateDocking();  // -<- removes the DockIcon
        hide();
    }
 }
@@ -385,6 +384,18 @@ void KMixWindow::unplugged( const QString& udi)
             kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
             //KMixToolBox::notification("MasterFallback", "aaa");
             bool globalMasterMixerDestroyed = ( mixer == Mixer::getGlobalMasterMixer() );
+            // Part 1) Remove Tab
+            for ( int i=0; i<m_wsMixers->count() ; ++i )
+            {
+                QWidget *w = m_wsMixers->widget(i);
+                KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
+                if ( kmw && kmw->mixer() ==  mixer ) {
+                    kmw->saveConfig( KGlobal::config().data() );
+                    m_wsMixers->removeTab(i);
+                    delete kmw;
+                    i= -1; // Restart loop from scratch (indices are most likeliy invalidated at removeTab() )
+                }
+            }
             MixerToolBox::instance()->removeMixer(mixer);
             // Check whether the Global Master disappeared, and select a new one if neccesary
             MixDevice* md = Mixer::getGlobalMasterMD();
@@ -469,7 +480,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       m_wsMixers->addTab( kmw, kmw->mixer()->readableName() );
       if (isFirstTab) {
          m_wsMixers->setCurrentWidget(kmw);
-         setWindowTitle( kmw->mixer()->readableName() );
+         //setWindowTitle( kmw->mixer()->readableName() );
       }
 
       kmw->loadConfig( KGlobal::config().data() );

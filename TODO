@@ -4,18 +4,17 @@ KDE4
 1) Remove ComboBox and replace it by a TabBar "corner widget" (like the konsole session menu)
 Status: OK (you can "cycle" through your soundcards now)
 
-2) Replace "confusing green LED"
-Status: OK (icon can be clicked now)
+2) Replace "confusing green LED" (Under work. 90% done)
+Uses now a checkbox. Open issue: Add a label to the left, telling the user this is a mute button)
 
-3) Replace "confusing red LED"
-Status: Pending
+3) Replace "confusing red LED" (Pending)
 
 4) Change "id" of capture controls in mixer_alsa9.cpp.
 Rationale: We need this, so that no control id conflicts arise.
 e.g. if there is a "PCM play" and a "PCM capture", everything will work strange.
 Especially saving and restoring will fail. But there can also be a lot of runtime issues,
 at ANY place that uses mixer ID's (and there are a lot!)
-Status: Pending
+Status: OK
 
 5) Move balance slider out of bottom and make it a virtual control.
 Status: Pending
@@ -25,9 +24,15 @@ Status: Pending
    The devices/slider/controllable-thingy is now called: Control
 Status: pending
 
-7) Several bug reports, including the Audigy stuff.
-Status: Always pending, but ongoing
+7) Several bug reports, including the Audigy stuff. (DONE)
 
+8) Resolve show issue after starting KMix (Pending)
+
+9) Get Global Keyboard Shurtcuts work again (Pending)
+
+10) Layout: KMix can be made so small that Labels are partially hidden (Pending)
+
+11) Layout: MDWSwitch layout has to be redone
 
 ------------------------------------------------------------------------------------
 

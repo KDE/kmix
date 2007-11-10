@@ -178,6 +178,8 @@ class Mixer : public QObject
       QString _masterDevicePK;
       static QString _globalMasterCard;
       static QString _globalMasterCardDevice;
+      
+      QString m_dbusName;
 };
 
 #endif
