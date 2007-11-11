@@ -266,36 +266,29 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
 /* Creates the top part: Icon, PlaybackSwitch (Switch + Text) */
 void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
 {
-   QBoxLayout *iconInternalLayout;
-   
-   if ( _orientation == Qt::Vertical ) {
-       m_iconLayout = new QHBoxLayout( );
-       iconInternalLayout = new QVBoxLayout( );
+    if ( _orientation == Qt::Vertical ) {
+        m_iconLayout = new QVBoxLayout( );
    }
    else {
-       m_iconLayout = new QVBoxLayout( );
-       iconInternalLayout = new QHBoxLayout( );
+       m_iconLayout = new QHBoxLayout( );
    }
    m_iconLayout->setAlignment(Qt::AlignCenter);
-   iconInternalLayout->setAlignment(Qt::AlignCenter);
-   m_iconLayout->addItem(iconInternalLayout);
-   layout->addItem( m_iconLayout );
-   //m_iconLayout->setSizeConstraint(QLayout::SetFixedSize);
+   layout->addItem(m_iconLayout);
 
    m_iconLabelSimple = 0L;
    if ( showMuteLED ) {
         //kDebug(67100) << ">>> MixDevice " << m_mixdevice->readableName() << " icon calculation:" << endl;
        setIcon( m_mixdevice->type() );
-       iconInternalLayout->addWidget( m_iconLabelSimple );
+       m_iconLayout->addWidget( m_iconLabelSimple );
        QString muteTip( m_mixdevice->readableName() );
        m_iconLabelSimple->setToolTip( muteTip );
-       iconInternalLayout->addSpacing( 3 );
+       m_iconLayout->addSpacing( 3 );
        if ( m_mixdevice->playbackVolume().hasSwitch() ) {
            m_qcb =  new QCheckBox(this);
-           iconInternalLayout->addWidget( m_qcb );
+           m_iconLayout->addWidget( m_qcb );
            m_qcb->installEventFilter(this);
            m_muteText = new QLabel("Mute", this);
-           iconInternalLayout->addWidget( m_muteText );
+           m_iconLayout->addWidget( m_muteText );
            m_muteText->installEventFilter(this);
            connect ( m_qcb, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
            QString muteTip2( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
@@ -303,7 +296,7 @@ void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
        } // can be muted
    }
    m_playbackSpacer = new QWidget(this);
-   iconInternalLayout->addWidget( m_playbackSpacer );
+   m_iconLayout->addWidget( m_playbackSpacer );
    m_playbackSpacer->installEventFilter(this);
 }
 
@@ -317,16 +310,14 @@ void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
         QBoxLayout *reclayout;
         if ( _orientation == Qt::Vertical ) {
             reclayout = new QVBoxLayout( );
-            reclayout->setAlignment(Qt::AlignVCenter);
         }
         else {
             reclayout = new QHBoxLayout( );
-            reclayout->setAlignment(Qt::AlignHCenter);
         }
+        reclayout->setAlignment(Qt::AlignCenter);
         layout->addItem( reclayout );
         reclayout->setSizeConstraint(QLayout::SetFixedSize);
 
-        layout->addSpacing( 3 );
         if( m_mixdevice->captureVolume().hasSwitch() )
         {
             /*

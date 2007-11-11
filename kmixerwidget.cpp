@@ -128,8 +128,6 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    m_balanceSlider->setObjectName("RightLeft"); 
    m_balanceSlider->setTickPosition( QSlider::TicksBelow );
    m_balanceSlider->setTickInterval( 25 );
-   m_balanceSlider->setMinimumSize( m_balanceSlider->sizeHint() );
-//   m_balanceSlider->setFixedHeight( m_balanceSlider->sizeHint().height() );
 
    // 10 Pixels at the front; Balance-Slider; 10 Pixels at the end
    balanceAndDetail->addSpacing( 10 );

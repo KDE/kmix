@@ -142,7 +142,6 @@ private:
     QList<QWidget *> m_slidersCapture;
     QList<Volume::ChannelID> _slidersChidsPlayback;
     QList<Volume::ChannelID> _slidersChidsCapture;
-
 };
 
 #endif

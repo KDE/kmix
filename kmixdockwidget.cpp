@@ -78,6 +78,8 @@ void KMixDockWidget::createActions()
   QAction *a = actionCollection()->action( "dock_mute" );
   QMenu *menu = contextMenu();
   if ( a ) menu->addAction( a );
+  
+  connect ( this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(kmixSystrayAction(QSystemTrayIcon::ActivationReason) ) );
 
   // Put "Select Master Channel" dialog in context menu
   if ( m_mixer != 0 ) {
@@ -369,6 +371,15 @@ KMixDockWidget::dockMute()
         		m_mixer->commitVolumeChange( md );
 		}
 	}
+}
+
+
+void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
+{
+    kDebug(67100) << "Systray action !!! Reason=" << reason;
+    if ( reason == QSystemTrayIcon::MiddleClick ) {
+        dockMute();
+    }
 }
 
 void

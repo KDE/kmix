@@ -56,10 +56,7 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
       _layoutMDW = new QHBoxLayout(this);
       _layoutSliders = new QHBoxLayout();
       _layoutMDW->addItem( _layoutSliders );
-      // Place enums right from the sliders: This is done, so that there will be no
-      // ugly space on the left side, when no Switch is shown.
-      // Actually it is not really clear yet, why there is empty space at all: There are 0 items in
-      // the _layoutEnum, so it might be a sizeHint() or some other subtle layout issue.
+      // Place enums in an own box right from the sliders.
       _layoutEnum = new QVBoxLayout();
       _layoutMDW->addItem( _layoutEnum );
    }

@@ -75,6 +75,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    bool _volumePopup;
  private slots:
    void dockMute();
+   void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
 };

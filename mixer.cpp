@@ -82,18 +82,14 @@ Mixer::Mixer( QString& ref_driverName, int device )
             break;
         }
     }
-
-   if (_mixerBackend) {
-     m_dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
-     QDBusConnection::sessionBus().registerObject(m_dbusName, this);
-   }
 }
 
 
 
 Mixer::~Mixer() {
    // Close the mixer. This might also free memory, depending on the called backend method
-    kDebug() << "=> Please Unregister DBUS object " << m_dbusName;
+    if ( ! m_dbusName.isEmpty() )
+        kDebug() << "=> Check Unregister DBUS object " << m_dbusName;
     //QDBusConnection::sessionBus().unregisterObject(m_dbusName);
    close();
 }
@@ -154,6 +150,9 @@ bool Mixer::openIfValid() {
             setLocalMasterMD(noMaster); // no master
         }
         connect( _mixerBackend, SIGNAL(controlChanged()), SLOT(controlChangedForwarder()) );
+        
+        m_dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
+        QDBusConnection::sessionBus().registerObject(m_dbusName, this);
     }
 
     return ok;

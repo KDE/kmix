@@ -40,6 +40,7 @@ class VerticalText : public QWidget
       QString m_labelText;
       int m_height;
       int m_width;
+      bool cachedSizeValid;
 };
 
 #endif

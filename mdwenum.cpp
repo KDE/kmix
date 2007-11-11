@@ -91,11 +91,9 @@ void MDWEnum::createWidgets()
       _layout = new QHBoxLayout( this );
       _layout->setAlignment(Qt::AlignVCenter);
    }
-   //this->setToolTip( m_mixdevice->readableName() );
 
    _label = new QLabel( m_mixdevice->readableName(), this);
    _layout->addWidget(_label);
-   //_label->setFixedHeight(_label->sizeHint().height());
    _enumCombo = new KComboBox( false, this);
    // ------------ fill ComboBox start ------------
    int maxEnumId= m_mixdevice->enumValues().count();
@@ -104,7 +102,6 @@ void MDWEnum::createWidgets()
    }
    // ------------ fill ComboBox end --------------
    _layout->addWidget(_enumCombo);
-   //_enumCombo->setFixedHeight(_enumCombo->sizeHint().height());
    connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
    _enumCombo->setToolTip( m_mixdevice->readableName() );
 }
@@ -131,16 +128,6 @@ void MDWEnum::showContextMenu()
    menu->popup( pos );
 }
 
-/* QSize MDWEnum::sizeHint() const {
-   if ( _layout != 0 ) {
-      return _layout->sizeHint();
-   }
-   else {
-      // layout not (yet) created
-      return QWidget::sizeHint();
-   }
-}
-*/
 
 QSizePolicy MDWEnum::sizePolicy() const
 {
