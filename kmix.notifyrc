@@ -1,27 +1,39 @@
 [Global]
 IconName=kmix
 Comment=Sound Mixer
+Comment[de]=Lautstärkeregler
 Comment[el]=Μείκτης ήχου
 Comment[ga]=Meascthóir Fuaime
 Comment[ja]=サウンドミキサー
+Comment[nds]=Klangmischer
+Comment[nl]=Geluidsmixer
 Comment[pt]=Mistura de Som
 Comment[pt_BR]=Mistura de Som
+Comment[sv]=Ljudmixer
 Comment[zh_TW]=音效混音器
 
 [Event/MasterFallback]
 Name=Audio Device Fallback
+Name[de]=Sicherungs-Audiogerät
 Name[el]=Αναπληρωματική συσκευή ήχου
 Name[ga]=Gléas Fuaime Tacachumais
 Name[ja]=オーディオデバイスのフォールバック
+Name[nds]=Klang-Opbackreedschap
+Name[nl]=Terugvalapparaat voor geluid
 Name[pt]=Dispositivo Alternativo de Áudio:
 Name[pt_BR]=Dispositivo Alternativo de Áudio:
+Name[sv]=Reservljudenhet
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred devices in unavailable
+Comment[de]=Benachrichtigung bei automatischem Wechsel zu der Sicherung, wenn das bevorzugte Gerät nicht verfügbar ist
 Comment[el]=Ειδοποίηση αυτόματης χρήσης της αναπληρωματικής συσκευής ήχου, αν η προκαθορισμένη δεν είναι διαθέσιμη
 Comment[ga]=Fógairt nuair nach bhfuil na gléasanna tosaíochta ar fáil agus úsáidtear gléas tacachumais
 Comment[ja]=優先デバイスが利用できないために自動的にフォールバックしたときの通知
+Comment[nds]=Bescheed, wenn de vörtrocken Reedschap nich verföögbor is un de Opbackreedschap bruukt warrt
+Comment[nl]=Melding van automatische terugval als het apparaat van voorkeur niet beschikbaar is
 Comment[pt]=Notificação de última instância se os dispositivos preferidos estiverem indisponíveis
 Comment[pt_BR]=Notificação de última instância se os dispositivos preferidos estiverem indisponíveis
+Comment[sv]=Underrättelse vid automatisk återgång om önskade enheter inte är tillgängliga
 Comment[zh_TW]=若是選用的裝置無法使用時，通知會自動使用預設的裝置
 Contexts=Application
 Action=Popup
