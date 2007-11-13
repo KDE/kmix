@@ -65,7 +65,7 @@ MDWSlider::MDWSlider(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(md,small,orientation,parent,mw),
-            m_linked(true), m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
+            m_linked(true), m_defaultLabelSpacer(0), m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
             m_iconLayout(0), m_playbackSpacer(0), _layout(0), m_extraCaptureLabel( 0 ), m_label( 0 ),
             m_captureLED( 0 ), m_captureText(0), m_captureSpacer(0)
 {
@@ -140,33 +140,83 @@ QSizePolicy MDWSlider::sizePolicy() const
  */
 int MDWSlider::playbackExtentHint() const
 {
-    if ( _orientation == Qt::Vertical ) {
-        return m_iconLayout->sizeHint().height();
-    }
-    else {
-        return m_iconLayout->sizeHint().width();
-    }
-}
-
-void MDWSlider::setPlaybackExtent(int extent) {
     int currentExtent = 0;
     if ( _orientation == Qt::Vertical ) {
         if ( m_qcb ) currentExtent += m_qcb->height();
         if ( m_muteText ) currentExtent += m_muteText->height();
-        if ( currentExtent > extent )
-        {
-            m_playbackSpacer->setFixedHeight(currentExtent);
-        }
     }
     else {
         if ( m_qcb ) currentExtent += m_qcb->width();
         if ( m_muteText ) currentExtent += m_muteText->width();
-        if ( currentExtent > extent )
-        {
-            m_playbackSpacer->setFixedWidth(currentExtent);
-        }
-    } 
+    }
+    return currentExtent;
 }
+
+void MDWSlider::setPlaybackExtent(int extent) {
+    if ( playbackExtentHint() < extent ) {
+        if ( _orientation == Qt::Vertical )
+            m_playbackSpacer->setFixedHeight(extent-playbackExtentHint());
+        else
+            m_playbackSpacer->setFixedWidth(extent-playbackExtentHint());
+    }
+}
+
+/* This method is a helper for users of this class who would like to show multiple MDWSlider, and align the sliders.
+ * It returns the "height" (if Vertical) or width (of Horizontal) of the "capture portion" (e.g. Label, QCheckBox)
+ */
+int MDWSlider::captureExtentHint() const
+{
+    int currentExtent = 0;
+    if ( _orientation == Qt::Vertical ) {
+        if ( m_captureLED ) currentExtent += m_captureLED->height();
+        if ( m_captureText ) currentExtent += m_captureText->height();
+    }
+    else {
+        if ( m_captureLED ) currentExtent += m_captureLED->width();
+        if ( m_captureText ) currentExtent += m_captureText->width();
+    }
+    return currentExtent;
+}
+
+void MDWSlider::setCaptureExtent(int extent) {
+
+    if ( _orientation == Qt::Vertical ) {
+        m_defaultLabelSpacer->setFixedHeight(extent);
+        if ( captureExtentHint() < extent )
+            m_captureSpacer->setFixedHeight(extent-captureExtentHint());
+    }
+    else {
+        m_defaultLabelSpacer->setFixedWidth(extent);
+        if ( captureExtentHint() < extent )
+            m_captureSpacer->setFixedWidth(extent-captureExtentHint());
+    }
+}
+
+
+void MDWSlider::addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation)
+{
+    QBoxLayout *labelLayout;
+    if ( orientation == Qt::Vertical ) {
+        labelLayout = new QVBoxLayout( );
+        labelLayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
+        m_label = new VerticalText( this, m_mixdevice->readableName() ); // .toUtf8().data()
+    }
+    else {
+        labelLayout = new QHBoxLayout();
+        labelLayout->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+        m_label = new QLabel(this);
+        static_cast<QLabel*>(m_label) ->setText(m_mixdevice->readableName());
+    }
+    //m_label->setToolTip( m_mixdevice->readableName() );  // @todo: Whatsthis, explaining the device
+    m_label->installEventFilter( this );
+    labelLayout->addWidget( m_label );
+    layout->addItem( labelLayout );
+    
+    m_defaultLabelSpacer = new QWidget(this);
+    labelLayout->addWidget( m_defaultLabelSpacer );
+    m_defaultLabelSpacer->installEventFilter(this);
+}
+
 
 /**
  * Creates all widgets - Icon/Mute-Button, Slider(s) and capture-Button.
@@ -175,66 +225,42 @@ void MDWSlider::setPlaybackExtent(int extent) {
  */
 void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
 {
-   // !! remove the "showMuteLED" parameter (or let it apply to the icons)
+    // Base layout with two items: Left the Label, and Right the Sliders
    if ( _orientation == Qt::Vertical ) {
-      _layout = new QVBoxLayout( this );
-      _layout->setAlignment(Qt::AlignCenter);
+       _layout = new QHBoxLayout( this );
    }
    else {
-      _layout = new QHBoxLayout( this );
-      _layout->setAlignment(Qt::AlignCenter);
+       _layout = new QVBoxLayout( this );
    }
+   _layout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
    _layout->setSpacing(0);
    _layout->setMargin(0);
 
-   // -- MAIN SLIDERS LAYOUT  ---
-   QBoxLayout *slidersLayout;
-   if ( _orientation == Qt::Vertical ) {
-      slidersLayout = new QHBoxLayout( );
-      slidersLayout->setAlignment(Qt::AlignVCenter);
-   }
-   else {
-      slidersLayout = new QVBoxLayout();
-      slidersLayout->setAlignment(Qt::AlignHCenter);
-   }
-   _layout->addItem( slidersLayout);
-
-
+   bool hasVolumeSliders =  ( m_mixdevice->playbackVolume().count() + m_mixdevice->captureVolume().count() > 0 );
    
    // --- LABEL -----------------------------------------------
-   QBoxLayout *labelLayout;
-   if ( _orientation == Qt::Vertical ) {
-      labelLayout = new QVBoxLayout( );
-      labelLayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
-      m_label = new VerticalText( this, m_mixdevice->readableName() ); // .toUtf8().data()
-   }
-   else {
-      labelLayout = new QHBoxLayout();
-      labelLayout->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-      m_label = new QLabel(this);
-      static_cast<QLabel*>(m_label) ->setText(m_mixdevice->readableName());
-   }
-   m_label->setToolTip( m_mixdevice->readableName() );  // @todo: Whatsthis, explaining the device
-   m_label->installEventFilter( this );
-   slidersLayout->addItem( labelLayout );
-   labelLayout->addWidget( m_label );
+    if ( hasVolumeSliders ) {
+        // When we have volume sliders, we but the label left of them (in an own layout). Otherwise see below
+        kDebug(67100) << ">>> Adding the Default label at _layout (standard)";
+        addDefaultLabel( _layout, _orientation);
+    }
 
-   // -- SLIDERS, LEDS AND ICON
-   QBoxLayout *sliLayout;
-   if ( _orientation == Qt::Vertical ) {
-      sliLayout = new QVBoxLayout();
-      sliLayout->setAlignment(Qt::AlignHCenter);
-   }
-   else {
-      sliLayout = new QHBoxLayout();
-      sliLayout->setAlignment(Qt::AlignVCenter);
-   }
-   slidersLayout->addItem( sliLayout );
+    // The controlLayout holds three items: TopPart (Icon + MuteCheckBox + Label) ; MiddlePart (Sliders); Lower Part (CaptureCheckBox + Label)
+    QBoxLayout *controlLayout;
+    if ( _orientation == Qt::Vertical ) {
+        controlLayout = new QVBoxLayout();
+        controlLayout->setAlignment(Qt::AlignHCenter);
+    }
+    else {
+        controlLayout = new QHBoxLayout();
+        controlLayout->setAlignment(Qt::AlignVCenter);
+    }
+    _layout->addItem( controlLayout );
 
    // --- ICON + Mute Switch  ----------------------------
-   createWidgetsTopPart(sliLayout, showMuteLED);
+    createWidgetsTopPart(controlLayout, showMuteLED);
 
-    sliLayout->addSpacing( 3 );
+    controlLayout->addSpacing( 3 );
 
     // --- SLIDERS ---------------------------
     QBoxLayout *volLayout;
@@ -246,22 +272,29 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
         volLayout = new QVBoxLayout(  );
         volLayout->setAlignment(Qt::AlignLeft);
     }
-    sliLayout->addItem( volLayout );
+    controlLayout->addItem( volLayout );
 
-   bool bothCaptureANDPlaybackExist = ( m_mixdevice->playbackVolume().count() > 0 && m_mixdevice->captureVolume().count() > 0 );
-    
 
-    // --- SLIDERS -----------------------------------------------
-   if ( m_mixdevice->playbackVolume().count() > 0 )
-       addSliders( volLayout, 'p', false );
-   if ( m_mixdevice->captureVolume().count() > 0 )
-       addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
-
+   // -- SLIDERS, LEDS AND ICON
+   if ( ! hasVolumeSliders ) {
+        // When we don't have volume sliders, we but the label left of them (in an own layout). Otherwise see below
+       kDebug(67100) << ">>> Adding the Default label at volLayout (Switch!)";
+       addDefaultLabel( volLayout, _orientation );
+   }
+    else {
+        bool bothCaptureANDPlaybackExist = ( m_mixdevice->playbackVolume().count() > 0 && m_mixdevice->captureVolume().count() > 0 );
+        // --- SLIDERS -----------------------------------------------
+        if ( m_mixdevice->playbackVolume().count() > 0 )
+            addSliders( volLayout, 'p', false );
+        if ( m_mixdevice->captureVolume().count() > 0 )
+            addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
+    }
    
-   createWidgetsBottomPart(sliLayout, showCaptureLED);
+    createWidgetsBottomPart(controlLayout, showCaptureLED);
 
    layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
 }
+
 
 /* Creates the top part: Icon, PlaybackSwitch (Switch + Text) */
 void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
@@ -303,10 +336,14 @@ void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
 void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
 {
        // --- capture SOURCE LED --------------------------
+
+    
     if ( showCaptureLED )
     {
         layout->addSpacing( 3 );
-      // --- LED LAYOUT TO CENTER ---
+
+              
+        // --- LED LAYOUT TO CENTER ---
         QBoxLayout *reclayout;
         if ( _orientation == Qt::Vertical ) {
             reclayout = new QVBoxLayout( );
@@ -317,6 +354,11 @@ void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
         reclayout->setAlignment(Qt::AlignCenter);
         layout->addItem( reclayout );
         reclayout->setSizeConstraint(QLayout::SetFixedSize);
+        
+        m_captureSpacer = new QWidget(this);
+        reclayout->addWidget( m_captureSpacer );
+        m_captureSpacer->installEventFilter(this);
+        
 
         if( m_mixdevice->captureVolume().hasSwitch() )
         {
@@ -338,17 +380,7 @@ void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
             reclayout->addWidget( m_captureText );
             m_captureText->installEventFilter(this);
         } // has capture LED
-        else
-        {
-         // we don't have a capture LED. We create a dummy widget
-         // !! possibly not necessary any more (we are layouted)
 
-            QWidget *qw = new QWidget(this );
-            qw->setObjectName( "Spacer" );
-            qw->setFixedSize( QSize(16, 16) );
-            reclayout->addWidget(qw);
-            qw->installEventFilter( this );
-        } // has no capture LED
     } // showCaptureLED
 
 }

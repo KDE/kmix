@@ -47,14 +47,18 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 {
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
+      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QVBoxLayout();
+      _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
       _layoutMDW->addItem( _layoutSliders );
       _layoutEnum = new QVBoxLayout(); // always vertical!
       _layoutMDW->addItem( _layoutEnum );
    }
    else {
       _layoutMDW = new QHBoxLayout(this);
+      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QHBoxLayout();
+      _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
       _layoutMDW->addItem( _layoutSliders );
       // Place enums in an own box right from the sliders.
       _layoutEnum = new QVBoxLayout();
@@ -86,6 +90,9 @@ QWidget* ViewSliders::add(MixDevice *md)
       _layoutEnum->addWidget(mdw);
    } // an enum
    else {
+       QFrame *_frm = new QFrame(this);
+       _frm->setFrameStyle(QFrame::VLine | QFrame::Raised);
+       _layoutSliders->addWidget(_frm);
       mdw = new MDWSlider(
                md,           // MixDevice (parameter)
                true,         // Show Mute LED
@@ -156,10 +163,24 @@ void ViewSliders::setMixSet()
 
 
 void ViewSliders::constructionFinished() {
-    _layoutMDW->activate();
+    configurationUpdate();
 }
 
 void ViewSliders::configurationUpdate() {
+    // Adjust height of top part by setting it to the maximum of all mdw's
+    int topPartExtent = 0;
+    int bottomPartExtent = 0;
+    for ( int i=0; i<_mdws.count(); i++ ) {
+        MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+        if ( mdw && mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
+        if ( mdw && mdw->playbackExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->playbackExtentHint();
+    }
+    kDebug(67100) << "topPartExtent is " << topPartExtent;
+    for ( int i=0; i<_mdws.count(); i++ ) {
+        MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+        if ( mdw ) mdw->setPlaybackExtent(topPartExtent);
+        if ( mdw ) mdw->setCaptureExtent(bottomPartExtent);
+    }
     _layoutMDW->activate();
 }
 

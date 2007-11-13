@@ -74,6 +74,8 @@ public:
     QSizePolicy sizePolicy() const;
     int playbackExtentHint() const;
     void setPlaybackExtent(int extent);
+    int captureExtentHint() const;
+    void setCaptureExtent(int extent);
 
     
 public slots:
@@ -109,6 +111,7 @@ private:
     void createWidgetsTopPart(QBoxLayout *, bool showMuteLED);
     void createWidgetsBottomPart(QBoxLayout *, bool showCaptureLED);
     void addSliders( QBoxLayout *volLayout, char type, bool addLabel);
+    void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList<QWidget *>& ref_sliders );
@@ -119,6 +122,8 @@ private:
 
     bool m_linked;
     
+    QWidget *m_defaultLabelSpacer;
+
     // GUI: Top portion ( Icon + Mute)
     QLabel      *m_iconLabelSimple;
     QCheckBox* m_qcb;
