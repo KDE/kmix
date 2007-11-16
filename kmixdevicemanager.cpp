@@ -19,28 +19,19 @@
  */
 
 #include "kmixdevicemanager.h"
+#include <kdebug.h>
 
 #include <iostream>
 
-#include <QString>
 #include <QObject>
+#include <QRegExp>
+#include <QString>
 
 
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
 #include <solid/audiointerface.h>
 
-/*
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <klocale.h>
-
-#include "version.h"
-
-static const char description[] =
-I18N_NOOP("kmixd - Soundcard Mixer Device Manager");
-*/
 KMixDeviceManager* KMixDeviceManager::s_KMixDeviceManager = 0;
 
 KMixDeviceManager::KMixDeviceManager()
@@ -136,19 +127,24 @@ void KMixDeviceManager::pluggedSlot(const QString& udi) {
    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
    if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
        QString dev;
-               switch (audiohw->driver()) {
+       QRegExp devExpr("^\\D+(\\d+)$");
+        switch (audiohw->driver()) {
            case Solid::AudioInterface::Alsa:
                dev = audiohw->driverHandle().toList().first().toString();
-               std::cout << ">>> Plugged ALSA ='" <<  udi.toUtf8().data() << "'\n";
                emit plugged("ALSA", udi, dev);
                break;
            case Solid::AudioInterface::OpenSoundSystem:
                dev = audiohw->driverHandle().toString();
-               std::cout << ">>> Plugged OSS ='" <<  udi.toUtf8().data() << "'\n";
-               emit plugged("OSS", udi, dev);
+               if ( devExpr.indexIn(dev) > -1 ) {
+                   dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
+               }
+               else {
+                   dev = "0"; // "/dev/mixer" or "/dev/sound/mixer"
+               }
+               //emit plugged("OSS", udi, dev);
                 break;
            default:
-               std::cout << ">>> Plugged UNKNOWN (ignored)\n";
+               kError(67100) <<  "Plugged UNKNOWN Audio device (ignored)";
                break;
        }
     }

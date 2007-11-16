@@ -359,18 +359,14 @@ void KMixWindow::recreateGUI()
 void KMixWindow::plugged( const char* driverName, const QString& udi, QString& dev)
 {
     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
-    QString driverNameString; driverNameString = driverName;
-    if ( driverNameString == "ALSA"  ) {
-        int devNum = dev.toInt();
-        kDebug(67100) << "Plugged: devNum=" << devNum << "\n";
-        Mixer *mixer = new Mixer( driverNameString, devNum );
+    QString driverNameString;
+    driverNameString = driverName;
+    int devNum = dev.toInt();
+    Mixer *mixer = new Mixer( driverNameString, devNum );
+    if ( mixer != 0 ) {
+        kDebug(67100) << "Plugged: dev=" << dev << "\n";
         MixerToolBox::instance()->possiblyAddMixer(mixer);
         recreateGUI();
-    }
-    else if ( driverNameString ==  "OSS" ) {
-    }
-    else {
-        // Unknown driver
     }
 }
 
