@@ -240,7 +240,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
    
    // --- LABEL -----------------------------------------------
     if ( hasVolumeSliders ) {
-        // When we have volume sliders, we but the label left of them (in an own layout). Otherwise see below
+        // When we have volume sliders, we put the label left of them (in an own layout). Otherwise see below at "if ( ! hasVolumeSliders )"
         kDebug(67100) << ">>> Adding the Default label at _layout (standard)";
         addDefaultLabel( _layout, _orientation);
     }
@@ -320,7 +320,7 @@ void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
            m_qcb =  new QCheckBox(this);
            m_iconLayout->addWidget( m_qcb );
            m_qcb->installEventFilter(this);
-           m_muteText = new QLabel("Mute", this);
+           m_muteText = new QLabel(i18n( "Mute"), this);
            m_iconLayout->addWidget( m_muteText );
            m_muteText->installEventFilter(this);
            connect ( m_qcb, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
@@ -376,7 +376,7 @@ void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
             QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
             m_captureLED->setToolTip( muteTip );  // @todo: Whatsthis, explaining the device
           
-            m_captureText = new QLabel("Capture", this);
+            m_captureText = new QLabel(i18n("Capture"), this);
             reclayout->addWidget( m_captureText );
             m_captureText->installEventFilter(this);
         } // has capture LED
