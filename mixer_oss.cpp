@@ -119,7 +119,7 @@ int Mixer_OSS::open()
         QString msg("No UDI found for '");
         msg += finalDeviceName;
         msg += "'. Hotplugging not possible";
-        kDebug(67100) << msg << endl;
+        kDebug(67100) << msg;
     }
       int devmask, recmask, i_recsrc, stereodevs;
       // Mixer is open. Now define properties

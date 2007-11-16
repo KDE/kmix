@@ -132,7 +132,7 @@ int Mixer_ALSA::open()
         QString msg("No UDI found for '");
         msg += devName;
         msg += "'. Hotplugging not possible";
-        kDebug(67100) << msg << endl;
+        kDebug(67100) << msg;
     }
     // Run a loop over all controls of the card
     unsigned int idx = 0;
