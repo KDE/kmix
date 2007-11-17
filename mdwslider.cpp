@@ -241,7 +241,6 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
    // --- LABEL -----------------------------------------------
     if ( hasVolumeSliders ) {
         // When we have volume sliders, we put the label left of them (in an own layout). Otherwise see below at "if ( ! hasVolumeSliders )"
-        kDebug(67100) << ">>> Adding the Default label at _layout (standard)";
         addDefaultLabel( _layout, _orientation);
     }
 
@@ -278,7 +277,6 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
    // -- SLIDERS, LEDS AND ICON
    if ( ! hasVolumeSliders ) {
         // When we don't have volume sliders, we but the label left of them (in an own layout). Otherwise see below
-       kDebug(67100) << ">>> Adding the Default label at volLayout (Switch!)";
        addDefaultLabel( volLayout, _orientation );
    }
     else {

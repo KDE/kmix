@@ -25,7 +25,7 @@
 #include "mixer.h"
 
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
-   m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer)
+        m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer), _pollingTimer(0)
 
 {
    // In all cases create a QTimer. We will use it once as a singleShot(), even if something smart

@@ -195,8 +195,10 @@ int Mixer_ALSA::open()
          if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
          if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
          if ( enumList.count() > 0 ) md->addEnums(enumList);
-
-        m_mixDevices.append( md );
+         
+         m_mixDevices.append( md );
+         
+         qDeleteAll(enumList); // clear temporary list
 
         // --- Recommended master ----------------------------------------
         if ( mdID == "PCM:0" ) {
@@ -344,7 +346,7 @@ void Mixer_ALSA::addEnumerated(snd_mixer_elem_t *elem, QList<QString*>& enumList
          int ret = snd_mixer_selem_get_enum_item_name(elem, iEnum, 99, buffer);
          buffer[99] = 0; // protect from overflow
          if ( ret == 0 ) {
-            QString* enumName = new QString(buffer);
+            QString* enumName = new QString(buffer); // these QString* items are deleted above (search fo "clear temporary list")
             enumList.append( enumName);
          } // enumName could be read successfully
       } // for all enum items of this device

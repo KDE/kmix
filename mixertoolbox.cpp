@@ -28,6 +28,7 @@
 #include <kstandarddirs.h>
 
 #include "guiprofile.h"
+#include "kmixdevicemanager.h"
 #include "mixdevice.h"
 #include "mixer.h"
 
@@ -185,6 +186,11 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
    {
       // this will only be possible by hacking the config-file, as it will not be officially supported
       ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
+      QString allDrivermatch("*");
+      KMixDeviceManager::instance()->setHotpluggingBackends(allDrivermatch);
+   }
+   else {
+       KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
    }
 
    kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count();

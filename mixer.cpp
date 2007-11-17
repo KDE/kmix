@@ -92,6 +92,7 @@ Mixer::~Mixer() {
         kDebug() << "=> Check Unregister DBUS object " << m_dbusName;
     //QDBusConnection::sessionBus().unregisterObject(m_dbusName);
    close();
+   delete _mixerBackend;
 }
 
 void Mixer::volumeSave( KConfig *config )

@@ -75,8 +75,9 @@ GUIProfile::GUIProfile()
 
 GUIProfile::~GUIProfile()
 {
-	// !!! must delete all   std::map and std::set  content and instances here.
-	//    QString content is reference counted and probably doesn't need to be deleted explicitly.
+    qDeleteAll(_controls);
+    qDeleteAll(_tabs);
+    qDeleteAll(_products);
 }
 
 bool GUIProfile::readProfile(QString& ref_fileName)
@@ -89,6 +90,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 	xmlReader->setContentHandler(gpp);
 	bool ok = xmlReader->parse( source );
 	delete gpp;
+        delete xmlReader;
 
         //std::cout << "Raw Profile: " << *this;
 	if ( ok ) {

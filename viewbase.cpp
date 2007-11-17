@@ -36,6 +36,7 @@
 #include <kstandardaction.h>
 // KMix
 #include "dialogviewconfiguration.h"
+#include "guiprofile.h"
 #include "kmixtoolbox.h"
 #include "mixdevicewidget.h"
 #include "mixer.h"
@@ -80,6 +81,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
 
 ViewBase::~ViewBase() {
     delete _mixSet;
+    delete _guiprof;
 }
 
 

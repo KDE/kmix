@@ -130,18 +130,22 @@ void KMixDeviceManager::pluggedSlot(const QString& udi) {
        QRegExp devExpr("^\\D+(\\d+)$");
         switch (audiohw->driver()) {
            case Solid::AudioInterface::Alsa:
-               dev = audiohw->driverHandle().toList().first().toString();
-               emit plugged("ALSA", udi, dev);
+               if ( _hotpluggingBackend == "ALSA" || _hotpluggingBackend == "*" ) {
+                    dev = audiohw->driverHandle().toList().first().toString();
+                    emit plugged("ALSA", udi, dev);
+               }
                break;
            case Solid::AudioInterface::OpenSoundSystem:
-               dev = audiohw->driverHandle().toString();
-               if ( devExpr.indexIn(dev) > -1 ) {
-                   dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
-               }
-               else {
-                   dev = "0"; // "/dev/mixer" or "/dev/sound/mixer"
-               }
-               //emit plugged("OSS", udi, dev);
+                if ( _hotpluggingBackend == "OSS" || _hotpluggingBackend == "*" ) {
+                    dev = audiohw->driverHandle().toString();
+                    if ( devExpr.indexIn(dev) > -1 ) {
+                        dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
+                    }
+                    else {
+                        dev = "0"; // "/dev/mixer" or "/dev/sound/mixer"
+                    }
+                    emit plugged("OSS", udi, dev);
+                }
                 break;
            default:
                kError(67100) <<  "Plugged UNKNOWN Audio device (ignored)";
