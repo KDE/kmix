@@ -76,8 +76,6 @@ KMixWindow : public KXmlGuiWindow
    void clearMixerWidgets();
 
    virtual bool queryClose();
-   void showEvent( QShowEvent * );
-   void hideEvent( QHideEvent * );
 
   public slots:
    void quit();
@@ -88,7 +86,10 @@ KMixWindow : public KXmlGuiWindow
    //void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
-   void stopVisibilityUpdates();
+   
+   //void stopVisibilityUpdates();
+   //void showEvent( QShowEvent * );
+   //void hideEvent( QHideEvent * );
 
    void newMixerShown(int tabIndex);
 
@@ -103,7 +104,7 @@ KMixWindow : public KXmlGuiWindow
    bool m_onLogin;
    bool m_startVisible;
    bool m_showMenubar;
-   bool m_isVisible;
+//   bool m_isVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
    Qt::Orientation m_toplevelOrientation;

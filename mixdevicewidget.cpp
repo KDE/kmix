@@ -60,7 +60,7 @@
 MixDeviceWidget::MixDeviceWidget(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* mw) :
-   QWidget( parent ), m_mixdevice( md ), m_mixerwidget( mw ),
+   QWidget( parent ), m_mixdevice( md ), m_view( mw ),
    m_disabled( false ), _orientation( orientation ), m_small( small )
 {
    _mdwActions = new KActionCollection( this );

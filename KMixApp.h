@@ -34,12 +34,12 @@ Q_OBJECT
     int newInstance ();
 
     public slots:
-    void quitExtended();  // For a hack on visibility()
+    //void quitExtended();  // For a hack on visibility()
     static void keepVisibility(bool);
-
+/*
  signals:
     void stopUpdatesOnVisibility();
-
+*/
  private:
     KMixWindow *m_kmix;
     static bool _keepVisibility;

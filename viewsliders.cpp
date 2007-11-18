@@ -69,6 +69,7 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 }
 
 ViewSliders::~ViewSliders() {
+  qDeleteAll(_separators);
 }
 
 
@@ -78,8 +79,8 @@ QWidget* ViewSliders::add(MixDevice *md)
    MixDeviceWidget *mdw;
    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
 
-   /* Hint: We allow to put Enum's in the same View as sliders and switches.
-            Normally you won't do this, but the creator of the Profile is at least free to do so if he wishes. */
+
+
    if ( md->isEnum() ) {
       mdw = new MDWEnum(
                md,           // MixDevice (parameter)
@@ -90,9 +91,14 @@ QWidget* ViewSliders::add(MixDevice *md)
       _layoutEnum->addWidget(mdw);
    } // an enum
    else {
-       QFrame *_frm = new QFrame(this);
-       _frm->setFrameStyle(QFrame::VLine | QFrame::Raised);
-       _layoutSliders->addWidget(_frm);
+      // add a separator before the device
+      QFrame *_frm = new QFrame(this);
+      if ( orientation == Qt::Vertical)
+         _frm->setFrameStyle(QFrame::VLine | QFrame::Raised);
+      else
+         _frm->setFrameStyle(QFrame::HLine | QFrame::Raised);
+      _separators.insert(md->id(),_frm);
+      _layoutSliders->addWidget(_frm);
       mdw = new MDWSlider(
                md,           // MixDevice (parameter)
                true,         // Show Mute LED
@@ -103,6 +109,8 @@ QWidget* ViewSliders::add(MixDevice *md)
                this       ); // View widget
       _layoutSliders->addWidget(mdw);
    }
+
+
    return mdw;
 }
 
@@ -167,20 +175,30 @@ void ViewSliders::constructionFinished() {
 }
 
 void ViewSliders::configurationUpdate() {
-    // Adjust height of top part by setting it to the maximum of all mdw's
-    int topPartExtent = 0;
-    int bottomPartExtent = 0;
-    for ( int i=0; i<_mdws.count(); i++ ) {
-        MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
-        if ( mdw && mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
-        if ( mdw && mdw->playbackExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->playbackExtentHint();
-    }
-    kDebug(67100) << "topPartExtent is " << topPartExtent;
-    for ( int i=0; i<_mdws.count(); i++ ) {
-        MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
-        if ( mdw ) mdw->setPlaybackExtent(topPartExtent);
-        if ( mdw ) mdw->setCaptureExtent(bottomPartExtent);
-    }
+   // Adjust height of top part by setting it to the maximum of all mdw's
+   int topPartExtent = 0;
+   int bottomPartExtent = 0;
+   for ( int i=0; i<_mdws.count(); i++ ) {
+      MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+      if ( mdw && mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
+      if ( mdw && mdw->playbackExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->playbackExtentHint();
+   }
+   kDebug(67100) << "topPartExtent is " << topPartExtent;
+   bool firstVisibleControlFound = false;
+   for ( int i=0; i<_mdws.count(); i++ ) {
+      MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+      if ( mdw ) {
+         mdw->setPlaybackExtent(topPartExtent);
+         mdw->setCaptureExtent(bottomPartExtent);
+         bool thisControlIsVisible = mdw->isVisibleTo(this);
+         bool showSeparator = ( firstVisibleControlFound && thisControlIsVisible);
+         if ( _separators.contains( mdw->mixDevice()->id() )) {
+            QFrame* sep = _separators[mdw->mixDevice()->id()];
+            sep->setVisible(showSeparator);
+         }
+         if ( thisControlIsVisible ) firstVisibleControlFound=true;
+      }
+    } // for all  MDW's
     _layoutMDW->activate();
 }
 

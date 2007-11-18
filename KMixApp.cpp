@@ -78,7 +78,7 @@ KMixApp::newInstance()
 	{
 		//kDebug(67100) <<  "KMixApp::newInstance() !m_kmix";
 		m_kmix = new KMixWindow;
-		connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
+		//connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
 		{
 			m_kmix->restore(0, false);
@@ -94,7 +94,7 @@ void KMixApp::keepVisibility(bool val_keepVisibility) {
    _keepVisibility = val_keepVisibility;
 }
 
-
+/*
 void
 KMixApp::quitExtended()
 {
@@ -105,5 +105,6 @@ KMixApp::quitExtended()
     emit stopUpdatesOnVisibility();
     quit();
 }
+*/
 
 #include "KMixApp.moc"

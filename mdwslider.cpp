@@ -813,6 +813,7 @@ void MDWSlider::setDisabled( bool value )
     {
         value ? hide() : show();
         m_disabled = value;
+         m_view->configurationUpdate();
     }
 }
 
@@ -942,10 +943,10 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 
 void MDWSlider::showContextMenu()
 {
-   if( m_mixerwidget == NULL )
+   if( m_view == 0 )
       return;
    
-   KMenu *menu = m_mixerwidget->getPopup();
+   KMenu *menu = m_view->getPopup();
    menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->readableName() );
    
    if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {

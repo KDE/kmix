@@ -56,6 +56,7 @@
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
 #include "kmixtoolbox.h"
+//#include "osd.h" // Postponed to KDE4.1
 
 
 /* KMixWindow
@@ -65,8 +66,8 @@ KMixWindow::KMixWindow()
    : KXmlGuiWindow(0),
    m_showTicks( true ),
    m_showMenubar(true),
-   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
-   m_visibilityUpdateAllowed( true ),
+//   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
+//   m_visibilityUpdateAllowed( true ),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_dockWidget()
 {
@@ -189,6 +190,9 @@ void KMixWindow::saveConfig()
    saveBaseConfig();
    saveViewConfig();
    saveVolumes();
+#ifdef __GNUC_
+#warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
+#endif
    KGlobal::config()->sync();
 }
 
@@ -200,7 +204,8 @@ void KMixWindow::saveBaseConfig()
    config.writeEntry( "Position", pos() );
    // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
    // (Please note that the problem was only there when quitting via Systray - esken).
-   config.writeEntry( "Visible", m_isVisible );
+   // Using it again, as internal behaviour has changed with KDE4
+   config.writeEntry( "Visible", isVisible() );
    config.writeEntry( "Menubar", _actionShowMenubar->isChecked() );
    config.writeEntry( "AllowDocking", m_showDockWidget );
    config.writeEntry( "TrayVolumeControl", m_volumeWidget );
@@ -368,6 +373,11 @@ void KMixWindow::plugged( const char* driverName, const QString& udi, QString& d
         MixerToolBox::instance()->possiblyAddMixer(mixer);
         recreateGUI();
     }
+
+// Test code for OSD. But OSD is postponed to KDE4.1
+//    OSDWidget* osd = new OSDWidget(0);
+//    osd->volChanged(70, true);
+
 }
 
 void KMixWindow::unplugged( const QString& udi)
@@ -596,6 +606,7 @@ void KMixWindow::toggleMenuBar()
    menuBar()->setVisible(_actionShowMenubar->isChecked());
 }
 
+/*
 void KMixWindow::showEvent( QShowEvent * )
 {
    if ( m_visibilityUpdateAllowed )
@@ -610,11 +621,11 @@ void KMixWindow::hideEvent( QHideEvent * )
    }
 }
 
-
 void KMixWindow::stopVisibilityUpdates()
 {
    m_visibilityUpdateAllowed = false;
 }
+*/
 
 void KMixWindow::slotHWInfo()
 {

@@ -22,6 +22,8 @@
 #define ViewSliders_h
 
 class QBoxLayout;
+#include <QFrame>
+#include <QHash>
 class QWidget;
 
 class Mixer;
@@ -46,6 +48,7 @@ private:
     QBoxLayout* _layoutMDW;
     QLayout* _layoutSliders;
     QLayout* _layoutEnum;
+    QHash<QString,QFrame*> _separators;
 };
 
 #endif

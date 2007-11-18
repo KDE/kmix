@@ -119,10 +119,10 @@ void MDWEnum::update()
 
 void MDWEnum::showContextMenu()
 {
-   if( m_mixerwidget == NULL )
+   if( m_view == 0 )
       return;
 
-   KMenu *menu = m_mixerwidget->getPopup();
+   KMenu *menu = m_view->getPopup();
 
    QPoint pos = QCursor::pos();
    menu->popup( pos );

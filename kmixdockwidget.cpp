@@ -60,7 +60,7 @@ KMixDockWidget::KMixDockWidget(QWidget *parent, const char *, bool volumePopup )
    m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
    createMasterVolWidget();
    createActions();
-   connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
+   //connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
 }
 
 KMixDockWidget::~KMixDockWidget()

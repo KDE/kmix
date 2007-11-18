@@ -77,7 +77,7 @@ protected slots:
 protected:
       MixDevice*           m_mixdevice;
       KActionCollection*   _mdwActions;
-      ViewBase*            m_mixerwidget;
+      ViewBase*            m_view;
       bool                 m_disabled;
       Qt::Orientation      _orientation;
       bool                 m_small;
