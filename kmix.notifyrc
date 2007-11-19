@@ -1,6 +1,7 @@
 [Global]
 IconName=kmix
 Comment=Sound Mixer
+Comment[ca]=Mesclador de so
 Comment[de]=Lautstärkeregler
 Comment[el]=Μείκτης ήχου
 Comment[es]=Mezclador de sonido
@@ -19,6 +20,7 @@ Comment[zh_TW]=音效混音器
 
 [Event/MasterFallback]
 Name=Audio Device Fallback
+Name[ca]=Dispositiu d'àudio alternatiu
 Name[de]=Sicherungs-Audiogerät
 Name[el]=Αναπληρωματική συσκευή ήχου
 Name[es]=Dispositivo de audio alternativo
@@ -35,6 +37,7 @@ Name[sv]=Reservljudenhet
 Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred devices in unavailable
+Comment[ca]=Notificació del funcionament automàtic del de reserva si els dispositius preferits no estan disponibles
 Comment[de]=Benachrichtigung bei automatischem Wechsel zu der Sicherung, wenn das bevorzugte Gerät nicht verfügbar ist
 Comment[el]=Ειδοποίηση αυτόματης χρήσης της αναπληρωματικής συσκευής ήχου, αν η προκαθορισμένη δεν είναι διαθέσιμη
 Comment[es]=Notificación sobre la selección automática de un dispositivo de audio alternativo si no está disponible el dispositivo preferido
