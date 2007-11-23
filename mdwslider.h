@@ -128,7 +128,6 @@ private:
     QLabel      *m_iconLabelSimple;
     QCheckBox* m_qcb;
     QLabel* m_muteText;
-    QBoxLayout *m_iconLayout;
     QWidget *m_playbackSpacer;
         
     // GUI: Middle portion (Sliders , including labels)

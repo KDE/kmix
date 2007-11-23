@@ -66,7 +66,7 @@ MDWSlider::MDWSlider(MixDevice* md,
                                  QWidget* parent, ViewBase* mw) :
     MixDeviceWidget(md,small,orientation,parent,mw),
             m_linked(true), m_defaultLabelSpacer(0), m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
-            m_iconLayout(0), m_playbackSpacer(0), _layout(0), m_extraCaptureLabel( 0 ), m_label( 0 ),
+            m_playbackSpacer(0), _layout(0), m_extraCaptureLabel( 0 ), m_label( 0 ),
             m_captureLED( 0 ), m_captureText(0), m_captureSpacer(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
@@ -155,9 +155,11 @@ int MDWSlider::playbackExtentHint() const
 void MDWSlider::setPlaybackExtent(int extent) {
     if ( playbackExtentHint() < extent ) {
         if ( _orientation == Qt::Vertical )
-            m_playbackSpacer->setFixedHeight(extent-playbackExtentHint());
+             if ( playbackExtentHint() < extent )
+               m_playbackSpacer->setFixedHeight(extent-playbackExtentHint());
         else
-            m_playbackSpacer->setFixedWidth(extent-playbackExtentHint());
+            if ( playbackExtentHint() < extent )
+               m_playbackSpacer->setFixedWidth(extent-playbackExtentHint());
     }
 }
 
@@ -248,11 +250,11 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
     QBoxLayout *controlLayout;
     if ( _orientation == Qt::Vertical ) {
         controlLayout = new QVBoxLayout();
-        controlLayout->setAlignment(Qt::AlignHCenter);
+        controlLayout->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
     }
     else {
         controlLayout = new QHBoxLayout();
-        controlLayout->setAlignment(Qt::AlignVCenter);
+        controlLayout->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
     }
     _layout->addItem( controlLayout );
 
@@ -265,11 +267,12 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
     QBoxLayout *volLayout;
     if ( _orientation == Qt::Vertical ) {
         volLayout = new QHBoxLayout( );
-        volLayout->setAlignment(Qt::AlignTop);
+       // we use AlignBottom, so that Switches will be aligned with the bottom of the sliders
+        volLayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
     }
     else {
         volLayout = new QVBoxLayout(  );
-        volLayout->setAlignment(Qt::AlignLeft);
+        volLayout->setAlignment(Qt::AlignVCenter|Qt::AlignRight);
     }
     controlLayout->addItem( volLayout );
 
@@ -297,13 +300,15 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showCaptureLED )
 /* Creates the top part: Icon, PlaybackSwitch (Switch + Text) */
 void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
 {
-    if ( _orientation == Qt::Vertical ) {
-        m_iconLayout = new QVBoxLayout( );
+   QBoxLayout *m_iconLayout;
+   if ( _orientation == Qt::Vertical ) {
+      m_iconLayout = new QVBoxLayout( );
+      m_iconLayout->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
    }
    else {
-       m_iconLayout = new QHBoxLayout( );
+      m_iconLayout = new QHBoxLayout( );
+      m_iconLayout->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
    }
-   m_iconLayout->setAlignment(Qt::AlignCenter);
    layout->addItem(m_iconLayout);
 
    m_iconLabelSimple = 0L;
@@ -315,15 +320,16 @@ void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
        m_iconLabelSimple->setToolTip( muteTip );
        m_iconLayout->addSpacing( 3 );
        if ( m_mixdevice->playbackVolume().hasSwitch() ) {
-           m_qcb =  new QCheckBox(this);
-           m_iconLayout->addWidget( m_qcb );
-           m_qcb->installEventFilter(this);
            m_muteText = new QLabel(i18n( "Mute"), this);
            m_iconLayout->addWidget( m_muteText );
            m_muteText->installEventFilter(this);
+
+           m_qcb =  new QCheckBox(this);
+           m_iconLayout->addWidget( m_qcb );
+           m_qcb->installEventFilter(this);
            connect ( m_qcb, SIGNAL( toggled(bool) ), this, SLOT(toggleMuted() ) );
-           QString muteTip2( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
-           m_qcb->setToolTip( muteTip2 );
+           QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
+           m_qcb->setToolTip( muteTip );
        } // can be muted
    }
    m_playbackSpacer = new QWidget(this);
@@ -334,53 +340,38 @@ void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
 void MDWSlider::createWidgetsBottomPart(QBoxLayout *layout, bool showCaptureLED)
 {
        // --- capture SOURCE LED --------------------------
+   if ( showCaptureLED ) {
+      layout->addSpacing( 3 );
+   }
 
-    
-    if ( showCaptureLED )
-    {
-        layout->addSpacing( 3 );
+      QBoxLayout *reclayout;
+      if ( _orientation == Qt::Vertical ) {
+         reclayout = new QVBoxLayout( );
+         reclayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
+      }
+      else {
+         reclayout = new QHBoxLayout( );
+         reclayout->setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+      }
+      layout->addItem( reclayout );
 
-              
-        // --- LED LAYOUT TO CENTER ---
-        QBoxLayout *reclayout;
-        if ( _orientation == Qt::Vertical ) {
-            reclayout = new QVBoxLayout( );
-        }
-        else {
-            reclayout = new QHBoxLayout( );
-        }
-        reclayout->setAlignment(Qt::AlignCenter);
-        layout->addItem( reclayout );
-        reclayout->setSizeConstraint(QLayout::SetFixedSize);
+      m_captureSpacer = new QWidget(this);
+      reclayout->addWidget( m_captureSpacer );
+      m_captureSpacer->installEventFilter(this);
         
-        m_captureSpacer = new QWidget(this);
-        reclayout->addWidget( m_captureSpacer );
-        m_captureSpacer->installEventFilter(this);
-        
-
-        if( m_mixdevice->captureVolume().hasSwitch() )
-        {
-            /*
-            m_captureLED = new KLedButton( Qt::red,
-            m_mixdevice->isRecSource()?KLed::On:KLed::Off,
-            KLed::Sunken, KLed::Circular, this, "RecordLED" );
-            m_captureLED->setFixedSize( QSize(16, 16) );
-            connect(m_captureLED, SIGNAL(stateChanged(bool)), this, SLOT(setRecsrc(bool)));
-            */
-            m_captureLED =  new QCheckBox(this);
-            reclayout->addWidget( m_captureLED );
-            connect(m_captureLED, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)));
-            m_captureLED->installEventFilter( this );
-            QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
-            m_captureLED->setToolTip( muteTip );  // @todo: Whatsthis, explaining the device
-          
-            m_captureText = new QLabel(i18n("Capture"), this);
-            reclayout->addWidget( m_captureText );
-            m_captureText->installEventFilter(this);
-        } // has capture LED
-
-    } // showCaptureLED
-
+   if ( showCaptureLED  && m_mixdevice->captureVolume().hasSwitch() )
+   {
+      m_captureLED =  new QCheckBox(this);
+      reclayout->addWidget( m_captureLED );
+      m_captureLED->installEventFilter( this );
+      connect(m_captureLED, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)));
+      QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
+      m_captureLED->setToolTip( muteTip );  // @todo: Whatsthis, explaining the device
+      
+      m_captureText = new QLabel(i18n("Capture"), this);
+      reclayout->addWidget( m_captureText );
+      m_captureText->installEventFilter(this);
+   } // has capture LED
 }
    
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
