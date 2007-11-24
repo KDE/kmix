@@ -44,7 +44,7 @@ class KMixPrefDlg;
 class KMixDockWidget;
 class KMixWindow;
 class Mixer;
-
+class ViewDockAreaPopup;
 #include "mixer.h"
 
 
@@ -115,6 +115,7 @@ KMixWindow : public KXmlGuiWindow
    QString m_hwInfoString;
    QVBoxLayout *m_widgetsLayout;
    QLabel      *m_errorLabel;
+   ViewDockAreaPopup *_dockAreaPopup;
 
   private slots:
    void slotHWInfo();

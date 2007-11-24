@@ -29,7 +29,7 @@ class QString;
 #include <ksystemtrayicon.h>
 
 class Mixer;
-class ViewDockAreaPopup;
+//class ViewDockAreaPopup;
 class Volume;
 
 namespace Phonon
@@ -48,10 +48,9 @@ class KMixDockWidget : public KSystemTrayIcon  {
 
    void setErrorPixmap();
    void ignoreNextEvent();
-   ViewDockAreaPopup* getDockAreaPopup();
+   //ViewDockAreaPopup* getDockAreaPopup();
 
    Mixer *m_mixer;
-   ViewDockAreaPopup *_dockAreaPopup;
    Phonon::MediaObject *_audioPlayer;
 
  public slots:
@@ -61,8 +60,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
  protected:
    void createMasterVolWidget();
    void createActions();
-   void mousePressEvent(QMouseEvent *);
-   void mouseReleaseEvent(QMouseEvent *);
+   void moveVolumePopoup();
    void wheelEvent(QWheelEvent *);
    void contextMenuAboutToShow( KMenu* menu );
    void toggleMinimizeRestore();

@@ -426,6 +426,8 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	QString name = attributes.value("name");
    QString regexp = attributes.value("pattern");
 	QString show = attributes.value("show");
+	QString background = attributes.value("background");
+	QString switchtype = attributes.value("switchtype");
 	if ( !id.isNull() ) {
 		// We need at least an "id". We can set defaults for the rest, if undefined.
 		ProfControl *profControl = new ProfControl();
@@ -438,6 +440,12 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		if ( name.isNull() ) {
          // ignore. isNull() will be checked by all users.
 		}
+               if ( !background.isNull() ) {
+            // ignore. isNull() will be checked by all users.
+       }
+              if ( !switchtype.isNull() ) {
+            // ignore. isNull() will be checked by all users.
+       }
       if ( regexp.isNull() ) {
          // !! should do a dictonary lookup here, and i18n(). For now, just take over "id"
          regexp = !name.isNull() ? name : id;
@@ -450,6 +458,8 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		profControl->tab = tab;
 		if ( show.isNull() ) { show = "*"; }
 		profControl->show = show;
+		profControl->backgroundColor.setNamedColor (background);
+		profControl->switchtype = switchtype;
 		_guiProfile._controls.push_back(profControl);
 	} // id != null
 }

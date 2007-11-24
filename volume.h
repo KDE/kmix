@@ -96,6 +96,14 @@ friend class MixDevice;
     bool hasVolume()           { return (_maxVolume != _minVolume); }
     bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
     
+   // Some playback switches control playback, and some are special.
+   // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
+   // It is only used for GUI things, like showing a "Mute" text or tooltip
+   // Capture is not really used, and has only been added for completeness and future extensibility.
+   enum SwitchType { PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
+    void setSwitchType(SwitchType type) { _switchType = type; }
+   Volume::SwitchType switchType() { return _switchType; }
+
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend kdbgstream& operator<<(kdbgstream& os, const Volume& vol);
 
@@ -107,7 +115,6 @@ friend class MixDevice;
     long          _volumes[CHIDMAX+1];
     long          _maxVolume;
     long          _minVolume;
-
 
 protected:
    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
@@ -124,6 +131,7 @@ private:
 
     bool _hasSwitch;
     bool _switchActivated;
+    SwitchType _switchType;
     bool _isCapture;
 };
 

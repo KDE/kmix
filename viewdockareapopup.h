@@ -24,22 +24,22 @@
 #include "viewbase.h"
 
 class QMouseEvent;
+class QFrame;
 class QGridLayout;
-class QWidget;
 class QPushButton;
+class QTime;
+class QWidget;
 
 class Mixer;
-class KMixDockWidget;
 class MixDeviceWidget;
 class MixDevice;
-class QFrame;
-class QTime;
+class KMixWindow;
 
 class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixDockWidget *dockW);
+    ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW);
     ~ViewDockAreaPopup();
     MixDevice* dockDevice();
 
@@ -54,7 +54,7 @@ public:
 
 protected:
     MixDeviceWidget *_mdw;
-    KMixDockWidget  *_dock;
+    KMixWindow  *_dock;
     MixDevice       *_dockDevice;
     QPushButton     *_showPanelBox;
 

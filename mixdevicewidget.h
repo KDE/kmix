@@ -63,6 +63,7 @@ public:
     virtual void setLabeled( bool );
     virtual void setTicks( bool ) {}
 
+
 public slots:
     virtual void setDisabled( bool value );
     virtual void defineKeys();

@@ -23,7 +23,7 @@
 #include <klocale.h>
 
 #include "mixdevice.h"
-
+#include "volume.h"
 
 /**
  * Constructs a MixDevice. A MixDevice represents one channel or control of
@@ -53,11 +53,13 @@ void MixDevice::addPlaybackVolume(Volume &playbackVol)
 {
    // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
    _playbackVolume = playbackVol;
+   _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
 }
 
 void MixDevice::addCaptureVolume (Volume &captureVol)
 {
    _captureVolume = captureVol;
+   _captureVolume.setSwitchType(Volume::CaptureSwitch);
 }
 
 void MixDevice::addEnums(QList<QString*>& ref_enumList)

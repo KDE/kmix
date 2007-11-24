@@ -50,7 +50,6 @@
 
 KMixDockWidget::KMixDockWidget(QWidget *parent, const char *, bool volumePopup )
     : KSystemTrayIcon( parent ),
-      _dockAreaPopup(0L),
       _audioPlayer(0L),
       _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
       _oldToolTipValue(-1),
@@ -66,7 +65,6 @@ KMixDockWidget::KMixDockWidget(QWidget *parent, const char *, bool volumePopup )
 KMixDockWidget::~KMixDockWidget()
 {
     delete _audioPlayer;
-    delete _dockAreaPopup;
 }
 
 void KMixDockWidget::createActions()
@@ -114,9 +112,6 @@ KMixDockWidget::createMasterVolWidget()
     }
     // create devices
 
-    /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
-    _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", m_mixer, 0, (GUIProfile*)0, this);
-    _dockAreaPopup->createDeviceWidgets();
     m_mixer->readSetFromHWforceUpdate();  // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     /* With the recently introduced QSocketNotifier stuff, we can't rely on regular timer updates
        any longer. Also the readSetFromHWforceUpdate() won't be enough. As a workaround, we trigger
@@ -244,79 +239,55 @@ KMixDockWidget::updatePixmap()
    _oldPixmapType = newPixmapType;
 }
 
-void
-KMixDockWidget::mousePressEvent(QMouseEvent * /*me*/)
+
+void KMixDockWidget::moveVolumePopoup()
 {
-#ifdef __GNUC__
-#warning FIXME: ksystemtray is no longer a widget
-#endif
-#if 0
-	if ( _dockAreaPopup == 0 ) {
-		return KSystemTrayIcon::mousePressEvent(me);
-	}
+   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
+   if ( dockAreaPopup == 0  ) {
+      // If the associated parent os the MainWindow (and not the ViewDockAreaPopup), we return.
+      return;
+   }
 
-        // esken: Due to overwhelming request, LeftButton shows the ViewDockAreaPopup, if configured
-        //        to do so. Otherwise the main window will be shown.
-	if ( me->button() == Qt::LeftButton )
-	{
-		if ( ! _volumePopup ) {
-                    // Case 1: User wants to show main window => This is the KSystemTrayIcon default action
-		    return KSystemTrayIcon::mousePressEvent(me);
-		}
+/*
+   if ( dockAreaPopup->justHidden() )
+            return;
 
-                // Case 2: User wants to show volume popup
-		if ( _dockAreaPopup->justHidden() )
-			return;
+   if ( dockAreaPopup->isVisible() )
+   {
+//            dockAreaPopup->hide();
+            return;
+   }
+*/
 
-		if ( _dockAreaPopup->isVisible() )
-		{
-			_dockAreaPopup->hide();
-			return;
-		}
+   int h = dockAreaPopup->height();
+   int x = geometry().x() - geometry().width()/2 - dockAreaPopup->width()/2;
+   int y = geometry().y() - h;
 
-		int h = _dockAreaPopup->height();
-		int x = this->mapToGlobal( QPoint( 0, 0 ) ).x() - this->width()/2 - _dockAreaPopup->width()/2;
-		int y = this->mapToGlobal( QPoint( 0, 0 ) ).y() - h;
-		if ( y < 0 )
-			y = y + h + this->height();
+  // kDebug() << "h="<<h<< " x="<<x << " y="<<y<< "gx="<< geometry().x() << "gy="<< geometry().y();
 
-		_dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
+   if ( y < 0 )
+            y = y + h + geometry().height();
 
-		// Now handle Multihead displays. And also make sure that the dialog is not
-		// moved out-of-the screen on the right (see Bug 101742).
-		const QDesktopWidget* vdesktop = QApplication::desktop();
-		const QRect& vScreenSize = vdesktop->screenGeometry(_dockAreaPopup);
-//const QRect screenGeometry(const QWidget *widget) const
-		if ( (x+_dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
-			// move horizontally, so that it is completely visible
-			_dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - _dockAreaPopup->width() -1 , y);
-		} // horizontally out-of bound
-		else if ( x < vScreenSize.x() ) {
-			_dockAreaPopup->move(vScreenSize.x(), y);
-		}
-		// the above stuff could also be implemented vertically
+   dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
 
-		_dockAreaPopup->show();
-		KWindowSystem::setState(_dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
+   // Now handle Multihead displays. And also make sure that the dialog is not
+   // moved out-of-the screen on the right (see Bug 101742).
+   const QDesktopWidget* vdesktop = QApplication::desktop();
+   const QRect& vScreenSize = vdesktop->screenGeometry(dockAreaPopup);
+   //const QRect screenGeometry(const QWidget *widget) const
+   if ( (x+dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
+            // move horizontally, so that it is completely visible
+            dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() -1 , y);
+   } // horizontally out-of bound
+   else if ( x < vScreenSize.x() ) {
+            dockAreaPopup->move(vScreenSize.x(), y);
+   }
+   // the above stuff could also be implemented vertically
 
-		QWidget::mousePressEvent(me); // KSystemTrayIcon's shouldn't do the default action for this
-		return;
-	} // LeftMouseButton pressed
-	else if ( me->button() ==  Qt::MidButton ) {
-		toggleActive();
-		return;
-	}
-	else {
-		KSystemTrayIcon::mousePressEvent(me);
-	} // Other MouseButton pressed
-#endif
-}
+//   dockAreaPopup->show();
+   KWindowSystem::setState(dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 
-void
-KMixDockWidget::mouseReleaseEvent( QMouseEvent * /*me*/ )
-{
-
-    // KSystemTrayIcon::mouseReleaseEvent(me);
+   return;
 }
 
 void
@@ -362,15 +333,11 @@ KMixDockWidget::wheelEvent(QWheelEvent * /*e*/ )
 void
 KMixDockWidget::dockMute()
 {
-	MixDevice *md = 0;
-	if ( _dockAreaPopup != 0 )
-	{
-		md = _dockAreaPopup->dockDevice();
-		if ( md != 0 ) {
-        		md->setMuted( !md->isMuted() );
-        		m_mixer->commitVolumeChange( md );
-		}
-	}
+   MixDevice *md = Mixer::getGlobalMasterMD();
+   if ( md != 0 ) {
+      md->setMuted( !md->isMuted() );
+      md->mixer()->commitVolumeChange( md );
+   }
 }
 
 
@@ -378,8 +345,13 @@ void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
 {
     kDebug(67100) << "Systray action !!! Reason=" << reason;
     if ( reason == QSystemTrayIcon::MiddleClick ) {
-        dockMute();
+         dockMute();
     }
+   else if ( reason == QSystemTrayIcon::Trigger ) {
+         // Move the popup to a suitable place
+         if (_volumePopup)
+            moveVolumePopoup();
+   }
 }
 
 void
@@ -399,10 +371,9 @@ KMixDockWidget::contextMenuAboutToShow( KMenu* /* menu */ )
     }
 
     // Enable/Disable "Muted" menu item
-    MixDevice *md = 0;
-    if ( _dockAreaPopup != 0 )
-    {
-        md = _dockAreaPopup->dockDevice();
+   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
+   if ( dockAreaPopup != 0  ) {
+        MixDevice* md = dockAreaPopup->dockDevice();
         KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
 	//kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
         if ( md != 0 && dockMuteAction != 0 ) {

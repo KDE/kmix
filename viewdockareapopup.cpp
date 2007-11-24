@@ -38,12 +38,12 @@
 // KMix
 #include "mdwslider.h"
 #include "mixer.h"
-#include "kmixdockwidget.h"
+#include "kmix.h"
 
 // !! Do NOT remove or mask out "WType_Popup"
 //    Users will not be able to close the Popup without opening the KMix main window then.
 //    See Bug #93443, #96332 and #96404 for further details. -- esken
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixDockWidget *dockW )
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
     : ViewBase(parent, name, mixer, Qt::Popup | Qt::MSWindowsFixedSizeDialogHint , vflags, guiprof), _mdw(0), _dock(dockW), _hideTimer(0)
 {
     QBoxLayout *layout = new QHBoxLayout( this );
@@ -54,6 +54,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _frame->setLineWidth( 1 );
 
     _layoutMDW = new QGridLayout( _frame );
+//     layout->addLayout(_layoutMDW);
     _layoutMDW->setSpacing( 1 );
     _layoutMDW->setMargin( 2 );
     _layoutMDW->setObjectName( "KmixPopupLayout" );
@@ -175,8 +176,8 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 }
 
 void ViewDockAreaPopup::showPanelSlot() {
-	_dock->toggleActive();
-	_dock->_dockAreaPopup->hide();
+	_dock->setVisible(_dock->isHidden());
+	hide();
 }
 
 #include "viewdockareapopup.moc"

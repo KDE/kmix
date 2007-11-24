@@ -24,6 +24,7 @@
 class Mixer;
 
 #include <qxml.h>
+#include <QColor>
 #include <QString>
 #include <string>
 #include <map>
@@ -63,6 +64,10 @@ struct ProfControl
    QString regexp;
 	// show or hide (contains the GUI type: simple, extended, full)
 	QString show;
+      // For applying custom colors
+      QColor backgroundColor;
+      // For defining the switch type when it is not a standard palyback or capture switch
+      QString switchtype;
 };
 
 struct ProfTab

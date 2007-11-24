@@ -108,6 +108,11 @@ QWidget* ViewSliders::add(MixDevice *md)
                this,         // parent
                this       ); // View widget
       _layoutSliders->addWidget(mdw);
+      QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
+      if ( lay )
+         lay->addSpacing(2);
+      else
+         qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
    }
 
 
@@ -148,6 +153,12 @@ void ViewSliders::setMixSet()
                   if ( !control->name.isNull() ) {
                      // Apply the custom name from the profile
                      md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
+                  }
+                  if ( !control->switchtype.isNull() ) {
+                     if ( control->switchtype == "On"  )
+                       md->playbackVolume().setSwitchType(Volume::OnSwitch);
+                     else if ( control->switchtype == "Off"  )
+                       md->playbackVolume().setSwitchType(Volume::OffSwitch);
                   }
                   _mixSet->append(md);
                   isUsed = true;

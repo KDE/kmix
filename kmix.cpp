@@ -56,6 +56,7 @@
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
 #include "kmixtoolbox.h"
+#include "viewdockareapopup.h"
 //#include "osd.h" // Postponed to KDE4.1
 
 
@@ -70,6 +71,7 @@ KMixWindow::KMixWindow()
 //   m_visibilityUpdateAllowed( true ),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_dockWidget()
+   , _dockAreaPopup(0)
 {
     setObjectName("KMixWindow");
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
@@ -164,7 +166,7 @@ void KMixWindow::initWidgets()
  */
 bool KMixWindow::updateDocking()
 {
-    if (m_showDockWidget == false) {
+   if (m_showDockWidget == false) {
         return false; // docking is disabled
     }
 
@@ -174,13 +176,24 @@ bool KMixWindow::updateDocking()
       delete m_dockWidget;
       m_dockWidget = 0L;
    }
+   if ( _dockAreaPopup ) {
+      delete _dockAreaPopup;
+      _dockAreaPopup = 0L;
+   }
 
    if ( Mixer::mixers().count() == 0 ) {
       return false;
    }
 
-    // create dock widget
-    m_dockWidget = new KMixDockWidget( this, "mainDockWidget", m_volumeWidget );
+    // create dock widget and the corresponding popup
+    /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
+   QWidget* referenceWidgetForSystray = this;
+     if ( m_volumeWidget ) {
+      _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);
+      _dockAreaPopup->createDeviceWidgets();
+      referenceWidgetForSystray = _dockAreaPopup;
+    }
+    m_dockWidget = new KMixDockWidget( referenceWidgetForSystray, "mainDockWidget", _dockAreaPopup );
     m_dockWidget->show();
     return true;
 }
@@ -575,6 +588,7 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    bool labelsHasChanged = m_showLabels ^ prefDlg->m_showLabels->isChecked();
    bool ticksHasChanged = m_showTicks ^ prefDlg->m_showTicks->isChecked();
    bool dockwidgetHasChanged = m_showDockWidget ^ prefDlg->m_dockingChk->isChecked();
+   bool systrayPopupHasChanged = m_volumeWidget ^ prefDlg->m_volumeChk->isChecked();
    bool toplevelOrientationHasChanged =
         ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
      || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
@@ -591,7 +605,7 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
       m_toplevelOrientation = Qt::Horizontal;
    }
 
-   if ( labelsHasChanged || ticksHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged ) {
+   if ( labelsHasChanged || ticksHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged || systrayPopupHasChanged) {
       recreateGUI();
    }
 
@@ -647,5 +661,7 @@ void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
    // As switching the tab does NOT mean switching the mixer, we do not need to update dock icon here.
    // It would lead to unnecesary flickering of the (complete) dock area.
 }
+
+
 
 #include "kmix.moc"

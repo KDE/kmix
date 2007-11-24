@@ -328,7 +328,7 @@ Mixer* Mixer::getGlobalMasterMixer()
    {
       mixer = Mixer::mixers()[i];
       if ( mixer != 0 && mixer->id() == _globalMasterCard ) {
-         kDebug() << "Mixer::masterCard() found " << _globalMasterCard;
+         //kDebug() << "Mixer::masterCard() found " << _globalMasterCard;
          break;
       }
    }
@@ -338,7 +338,7 @@ Mixer* Mixer::getGlobalMasterMixer()
       _globalMasterCard = mixer->id();
       kDebug() << "Mixer::masterCard() fallback to  " << _globalMasterCard;
    }
-   kDebug() << "Mixer::masterCard() returns " << mixer->id();
+   //kDebug() << "Mixer::masterCard() returns " << mixer->id();
    return mixer;
 }
 
@@ -351,15 +351,12 @@ MixDevice* Mixer::getGlobalMasterMD()
       {
          md = mixer->_mixerBackend->m_mixDevices[i];
          if ( md->id() == _globalMasterCardDevice ) {
-            kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice;
+            //kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice;
             break;
          }
       }
    }
-
-    if ( md ) 
-        kDebug() << "Mixer::masterCardDevice() returns " << md->id();
-    else 
+   if ( ! md ) 
         kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
    return md;
 }

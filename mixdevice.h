@@ -64,6 +64,7 @@ public:
                         VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97,
                         SURROUND_BACK, SURROUND_LFE, SURROUND_CENTERFRONT, SURROUND_CENTERBACK };
 
+   enum SwitchType { OnOff, Mute, Capture, Activator };
 
    /**
     * Constructor:
