@@ -36,7 +36,6 @@
 #include <qapplication.h>
 #include <qcursor.h>
 #include <QDesktopWidget>
-#include <QToolTip>
 #include <QMouseEvent>
 #include <fixx11h.h>
 #include <Phonon/MediaObject>

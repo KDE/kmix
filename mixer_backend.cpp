@@ -23,7 +23,7 @@
 #include "mixer_backend.h"
 // for the "ERR_" declartions, #include mixer.h
 #include "mixer.h"
-
+#include <QTimer>
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
         m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer), _pollingTimer(0)
 

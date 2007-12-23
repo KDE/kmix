@@ -27,7 +27,6 @@
 // Qt
 #include <QString>
 class QLabel;
-#include <QMap>
 #include <qlist.h>
 #include <QVBoxLayout>
 class KTabWidget;

@@ -23,7 +23,6 @@
 
 #include <iostream>
 
-#include <QObject>
 #include <QRegExp>
 #include <QString>
 

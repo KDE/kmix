@@ -20,7 +20,6 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QTimer>
 
 #include <klocale.h>
 #include <kconfig.h>
@@ -32,7 +31,6 @@
 #include "kmix-platforms.cpp"
 #include "volume.h"
 #include "kmixadaptor.h"
-#include <QtDBus>
 
 /**
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume

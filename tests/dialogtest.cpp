@@ -1,7 +1,8 @@
 #include <QCheckBox>
 #include <QLabel>
-#include <QLayout>
 #include <QScrollArea>
+#include <QVBoxLayout>
+#include <QDialog>
 
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>

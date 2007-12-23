@@ -28,7 +28,7 @@ class QVBoxLayout;
 #include <kdialog.h>
 
 #include "viewbase.h"
-
+class QLabel;
 
 class DialogViewConfiguration : public KDialog
 {

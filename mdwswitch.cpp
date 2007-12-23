@@ -21,11 +21,9 @@
 
 #include <qcursor.h>
 #include <QLabel>
-#include <QLayout>
 #include <QMouseEvent>
 #include <QObject>
 #include <qslider.h>
-#include <QToolTip>
 
 #include <klocale.h>
 #include <kconfig.h>

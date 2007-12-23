@@ -21,14 +21,12 @@
 
 // Qt
 #include <QLabel>
-#include <QLayout>
 #include <qpixmap.h>
-#include <QRegExp>
 #include <qslider.h>
 #include <QString>
 #include <qtoolbutton.h>
-#include <QToolTip>
 #include <qapplication.h> // for QApplication::revsreseLayout()
+#include <QVBoxLayout>
 
 // KDE
 #include <kconfig.h>

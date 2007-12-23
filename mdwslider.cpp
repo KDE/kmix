@@ -38,10 +38,9 @@
 #include <QMouseEvent>
 #include <qslider.h>
 #include <QLabel>
-#include <QLayout>
 #include <qpixmap.h>
-#include <QToolTip>
 #include <qwmatrix.h>
+#include <QBoxLayout>
 
 #include "mdwslider.h"
 #include "mixer.h"

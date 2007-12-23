@@ -39,11 +39,9 @@
 // Qt
 #include <QCursor>
 #include <QLabel>
-#include <QLayout>
 #include <QMouseEvent>
 #include <QObject>
-#include <QToolTip>
-
+#include <QBoxLayout>
 
 /**
  * Class that represents an Enum element (a select one-from-many selector)

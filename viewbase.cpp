@@ -23,7 +23,6 @@
 
 // QT
 #include <qcursor.h>
-#include <QLabel>
 #include <QMouseEvent>
 
 // KDE

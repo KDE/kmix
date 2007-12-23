@@ -24,10 +24,8 @@
 // Qt
 #include <QWidget>
 #include <qevent.h>
-#include <QLayout>
 #include <qframe.h>
 #include <QPushButton>
-#include <QDateTime>
 
 // KDE
 #include <kdebug.h>

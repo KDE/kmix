@@ -24,11 +24,8 @@
 // include files for QT
 #include <QCheckBox>
 #include <QLabel>
-#include <QLayout>
-#include <QMap>
 #include <qradiobutton.h>
 #include <KTabWidget>
-#include <QToolTip>
 
 // include files for KDE
 #include <kcombobox.h>

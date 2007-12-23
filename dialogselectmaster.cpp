@@ -20,11 +20,11 @@
  */
 
 #include <qbuttongroup.h>
-#include <QLayout>
 #include <QLabel>
 #include <qradiobutton.h>
 #include <qscrollarea.h>
-#include <QToolTip>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kcombobox.h>
 #include <kdebug.h>

@@ -26,8 +26,6 @@
 // QT
 #include <qgroupbox.h>
 #include <QCheckBox>
-#include <QLabel>
-#include <QLayout>
 #include <qpixmap.h>
 #include <QPushButton>
 #include <qradiobutton.h>

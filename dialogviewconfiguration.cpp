@@ -21,8 +21,9 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QLayout>
 #include <QScrollArea>
+#include <QVBoxLayout>
+#include <QGridLayout>
 
 #include <kdebug.h>
 #include <kdialog.h>

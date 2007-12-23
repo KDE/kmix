@@ -21,7 +21,6 @@
  */
 
 #include <qbuttongroup.h>
-#include <QLayout>
 #include <qwhatsthis.h>
 #include <QCheckBox>
 #include <QLabel>

@@ -31,10 +31,9 @@
 #include <kdebug.h>
 
 // Qt
-#include <QLabel>
-#include <QLayout>
 #include <QWidget>
-
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 
 

@@ -27,7 +27,6 @@
 #define RANDOMPREFIX_MIXER_H
 
 #include <QString>
-#include <QTimer>
 #include <QObject>
 #include <qlist.h>
 

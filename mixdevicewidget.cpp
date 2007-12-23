@@ -29,14 +29,10 @@
 #include <kshortcutsdialog.h>
 #include <kdebug.h>
 
-#include <QObject>
 #include <qcursor.h>
 #include <qslider.h>
-#include <QLabel>
-#include <QLayout>
 #include <QMouseEvent>
 #include <qpixmap.h>
-#include <QToolTip>
 #include <qwmatrix.h>
 
 #include <kactioncollection.h>

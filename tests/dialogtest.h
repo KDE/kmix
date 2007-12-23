@@ -2,12 +2,8 @@
 #define DIALOGTEST_H
 
 #include <QCheckBox>
-#include <QLabel>
-#include <QLayout>
-#include <QScrollArea>
 
 #include <KApplication>
-#include <KDialog>
 
 
 class App : public KApplication

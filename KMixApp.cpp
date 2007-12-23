@@ -107,4 +107,3 @@ KMixApp::quitExtended()
 }
 */
 
-#include "KMixApp.moc"
