@@ -96,7 +96,7 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {
 
 MixDevice* ViewDockAreaPopup::dockDevice()
 {
-    return _dockDevice;
+    return _mdw->mixDevice();
 }
 
 
@@ -110,15 +110,15 @@ void ViewDockAreaPopup::showContextMenu()
 void ViewDockAreaPopup::setMixSet()
 {
    // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
-   _dockDevice = Mixer::getGlobalMasterMD();
-   if ( _dockDevice == 0 ) {
+   MixDevice *dockMD = Mixer::getGlobalMasterMD();
+   if ( dockMD == 0 ) {
       // If we have no dock device yet, we will take the first available mixer device
       if ( _mixer->size() > 0) {
-         _dockDevice = (*_mixer)[0];
+         dockMD = (*_mixer)[0];
       }
    }
-   if ( _dockDevice != 0 ) {
-      _mixSet->append(_dockDevice);
+   if ( dockMD != 0 ) {
+      _mixSet->append(dockMD);
    }
 }
 
@@ -128,7 +128,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
       md,		  // only 1 device. This is actually _dockDevice
       true,         // Show Mute LED
       false,        // Show Record LED
-                     false,        // Small
+      false,        // Small
       Qt::Vertical, // Direction: only 1 device, so doesn't matter
       _frame,       // parent
       0             // Is "NULL", so that there is no RMB-popup

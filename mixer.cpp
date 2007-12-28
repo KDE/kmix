@@ -324,9 +324,10 @@ Mixer* Mixer::getGlobalMasterMixer()
 
    for (int i=0; i< Mixer::mixers().count(); ++i )
    {
-      mixer = Mixer::mixers()[i];
-      if ( mixer != 0 && mixer->id() == _globalMasterCard ) {
+      Mixer* mixerTmp = Mixer::mixers()[i];
+      if ( mixerTmp != 0 && mixerTmp->id() == _globalMasterCard ) {
          //kDebug() << "Mixer::masterCard() found " << _globalMasterCard;
+         mixer = mixerTmp;
          break;
       }
    }

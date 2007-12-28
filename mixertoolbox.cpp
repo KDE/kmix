@@ -178,6 +178,11 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
          Mixer::setGlobalMaster( Mixer::mixers().first()->id(), controlId);
       }
    }
+   else {
+      Mixer* mixer = Mixer::getGlobalMasterMixer();
+      QString mdID = mixer->getLocalMasterMD()->id();
+      Mixer::setGlobalMaster( mixer->id(), mdID );
+   }
 
    ref_hwInfoString = i18n("Sound drivers supported:");
    ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);

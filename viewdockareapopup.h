@@ -55,7 +55,7 @@ public:
 protected:
     MixDeviceWidget *_mdw;
     KMixWindow  *_dock;
-    MixDevice       *_dockDevice;
+    //MixDevice       *_dockDevice;
     QPushButton     *_showPanelBox;
 
     void mousePressEvent(QMouseEvent *e);

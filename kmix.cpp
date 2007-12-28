@@ -298,7 +298,9 @@ void KMixWindow::loadBaseConfig()
    const QString& orientationString = config.readEntry("Orientation", "Vertical");
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
-   Mixer::setGlobalMaster(mixerMasterCard, masterDev);
+   //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
+      Mixer::setGlobalMaster(mixerMasterCard, masterDev);
+   //}
    QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
    MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 

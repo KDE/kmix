@@ -229,8 +229,8 @@ KMixDockWidget::updatePixmap()
       switch ( newPixmapType ) {
          case 'e': setIcon( loadIcon( "kmixdocked_error" ) ); break;
          case 'm': setIcon( loadIcon( "audio-volume-muted"  ) ); break;
-         case '1': setIcon( loadIcon( "audio-volume-low"  ) ); break;  // @todo
-         case '2': setIcon( loadIcon( "audio-volume-medium" ) ); break;  // @todo
+         case '1': setIcon( loadIcon( "audio-volume-low"  ) ); break;
+         case '2': setIcon( loadIcon( "audio-volume-medium" ) ); break;
          case '3': setIcon( loadIcon( "audio-volume-high"       ) ); break;
       }
    }
@@ -246,17 +246,6 @@ void KMixDockWidget::moveVolumePopoup()
       // If the associated parent os the MainWindow (and not the ViewDockAreaPopup), we return.
       return;
    }
-
-/*
-   if ( dockAreaPopup->justHidden() )
-            return;
-
-   if ( dockAreaPopup->isVisible() )
-   {
-//            dockAreaPopup->hide();
-            return;
-   }
-*/
 
    int h = dockAreaPopup->height();
    int x = geometry().x() - geometry().width()/2 - dockAreaPopup->width()/2;
