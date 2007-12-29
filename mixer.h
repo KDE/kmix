@@ -123,6 +123,7 @@ class Mixer : public QObject, virtual public MixerIface
       virtual long absoluteVolumeMax( int deviceidx );
       virtual int volume( int deviceidx );
       virtual int masterVolume();
+      virtual int masterDeviceIndex();
 
       virtual void setMute( int deviceidx, bool on );
       virtual void setMasterMute( bool on );

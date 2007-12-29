@@ -85,6 +85,11 @@ k_dcop:
    virtual bool masterMute()=0;
    
    /**
+    Returns the index of the master device
+    */
+   virtual int masterDeviceIndex()=0;
+
+   /**
     Makes the given device a record source.
     */
    virtual void setRecordSource( int deviceidx, bool on )=0;

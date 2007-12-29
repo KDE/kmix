@@ -730,6 +730,11 @@ bool Mixer::masterMute()
   return true;
 }
 
+// @dcop only
+int Mixer::masterDeviceIndex()
+{
+  return masterDevice()->num();
+}
 
 bool Mixer::isRecordSource( int deviceidx )
 {
