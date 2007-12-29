@@ -141,7 +141,7 @@ void KMixDockWidget::selectMaster()
 }
 
 
-void KMixDockWidget::handleNewMaster(QString& mixerID, QString& /*control_id*/)
+void KMixDockWidget::handleNewMaster(QString& /*mixerID*/, QString& /*control_id*/)
 {
    /* When a new master is selected, we will need to destroy *this instance of KMixDockWidget.
       Reason: This widget is a KSystemTrayIcon, and needs an associated QWidget. This is in
@@ -289,23 +289,29 @@ void KMixDockWidget::moveVolumePopoup()
    return;
 }
 
-void
-KMixDockWidget::wheelEvent(QWheelEvent * /*e*/ )
+bool KMixDockWidget::event( QEvent * event )
 {
-#ifdef __GNUC__
-#warning ksystemtray is no widget and cannot wheel events
-#endif
-#if 0
-  MixDevice *md = 0;
-  if ( _dockAreaPopup != 0 ) {
-      md = _dockAreaPopup->dockDevice();
-  }
+   if (event->type() == QEvent::Wheel ) {
+      trayWheelEvent((QWheelEvent*)event);
+      event->accept();
+      return true;
+   }
+}
+void
+KMixDockWidget::trayWheelEvent(QWheelEvent *e )
+{
+  MixDevice *md = Mixer::getGlobalMasterMD();
   if ( md != 0 )
   {
-    Volume vol = md->getVolume();
-    int inc = vol.maxVolume() / 20;
+      Volume vol = md->playbackVolume();
+      if ( md->playbackVolume().hasVolume() )
+         vol = md->playbackVolume();
+      else
+         vol = md->captureVolume();
 
-    if ( inc == 0 ) inc = 1;
+      int inc = vol.maxVolume() / 20;
+
+    if ( inc < 1 ) inc = 1;
 
     for ( int i = 0; i < vol.count(); i++ ) {
         int newVal = vol[i] + (inc * (e->delta() / 120));
@@ -313,20 +319,24 @@ KMixDockWidget::wheelEvent(QWheelEvent * /*e*/ )
         vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
 
+/*
     if ( _playBeepOnVolumeChange ) {
         _audioPlayer->setCurrentSource("KDE_Beep_Digital_1.ogg");
         _audioPlayer->play();
     }
-    md->getVolume().setVolume(vol);
-    m_mixer->commitVolumeChange(md);
+*/
+      if ( md->playbackVolume().hasVolume() )
+         md->playbackVolume().setVolume(vol);
+      else
+         md->captureVolume().setVolume(vol);
+      m_mixer->commitVolumeChange(md);
     // refresh the toolTip (Qt removes it on a MouseWheel event)
     // Mhhh, it doesn't work. Qt does not show it again.
     setVolumeTip();
     // Simulate a mouse move to make Qt show the tooltip again
-    QApplication::postEvent( this, new QMouseEvent( QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton ) );
+    //QApplication::postEvent( this, new QMouseEvent( QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton ) );
 
   }
-#endif
 }
 
 void

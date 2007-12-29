@@ -62,9 +62,10 @@ class KMixDockWidget : public KSystemTrayIcon  {
    void createMasterVolWidget();
    void createActions();
    void moveVolumePopoup();
-   void wheelEvent(QWheelEvent *);
+   void trayWheelEvent(QWheelEvent *);
    void contextMenuAboutToShow( KMenu* menu );
    void toggleMinimizeRestore();
+   bool event( QEvent *);
 
  private:
    bool _playBeepOnVolumeChange;
