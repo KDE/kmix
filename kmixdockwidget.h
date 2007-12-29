@@ -63,6 +63,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    void createActions();
    void moveVolumePopoup();
    void trayWheelEvent(QWheelEvent *);
+//    void trayToolTipEvent(QHelpEvent *e );
    void contextMenuAboutToShow( KMenu* menu );
    void toggleMinimizeRestore();
    bool event( QEvent *);

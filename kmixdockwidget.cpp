@@ -296,7 +296,21 @@ bool KMixDockWidget::event( QEvent * event )
       event->accept();
       return true;
    }
+//    else if (event->type() == QEvent::ToolTip ) {
+//       trayToolTipEvent((QHelpEvent*)event);
+//       event->accept();
+//       return true;
+//    }
+   return false;
 }
+
+
+// void
+// KMixDockWidget::trayToolTipEvent(QHelpEvent *e ) {
+//    kDebug(67100) << "trayToolTipEvent" ;
+//    setVolumeTip();
+// }
+
 void
 KMixDockWidget::trayWheelEvent(QWheelEvent *e )
 {
@@ -352,7 +366,7 @@ KMixDockWidget::dockMute()
 
 void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
 {
-    kDebug(67100) << "Systray action !!! Reason=" << reason;
+    //kDebug(67100) << "Systray action !!! Reason=" << reason;
     if ( reason == QSystemTrayIcon::MiddleClick ) {
          dockMute();
     }
