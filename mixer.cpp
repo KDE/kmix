@@ -86,9 +86,10 @@ Mixer::Mixer( QString& ref_driverName, int device )
 
 Mixer::~Mixer() {
    // Close the mixer. This might also free memory, depending on the called backend method
-    if ( ! m_dbusName.isEmpty() )
-        kDebug() << "=> Check Unregister DBUS object " << m_dbusName;
+    if ( ! m_dbusName.isEmpty() ) {
+        kDebug(67100) << "Auto-unregistering DBUS object " << m_dbusName;
     //QDBusConnection::sessionBus().unregisterObject(m_dbusName);
+   }
    close();
    delete _mixerBackend;
 }
@@ -316,7 +317,7 @@ void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
   kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
 }
 
-Mixer* Mixer::getGlobalMasterMixer()
+Mixer* Mixer::getGlobalMasterMixerNoFalback()
 {
    Mixer *mixer = 0;
    if(Mixer::mixers().count() == 0)
@@ -331,6 +332,12 @@ Mixer* Mixer::getGlobalMasterMixer()
          break;
       }
    }
+   return mixer;
+}
+
+Mixer* Mixer::getGlobalMasterMixer()
+{
+   Mixer *mixer = getGlobalMasterMixerNoFalback();
    if ( mixer == 0 && Mixer::mixers().count() > 0 ) {
       // produce fallback
       mixer = Mixer::mixers()[0];
@@ -343,8 +350,17 @@ Mixer* Mixer::getGlobalMasterMixer()
 
 MixDevice* Mixer::getGlobalMasterMD()
 {
+   getGlobalMasterMD(true);
+}
+
+MixDevice* Mixer::getGlobalMasterMD(bool fallbackAllowed)
+{
    MixDevice* md = 0;
-   Mixer *mixer = Mixer::getGlobalMasterMixer();
+   Mixer *mixer;
+   if ( fallbackAllowed)
+      mixer = Mixer::getGlobalMasterMixer();
+   else
+      mixer = Mixer::getGlobalMasterMixerNoFalback();
    if ( mixer != 0 ) {
       for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
       {

@@ -57,14 +57,14 @@ MDWSwitch::MDWSwitch(MixDevice* md,
     KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
     action->setText( i18n("&Hide") );
     connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
-    QAction *b = _mdwActions->addAction( "keys" );
+    KAction *b = _mdwActions->addAction( "keys" );
     b->setText( i18n("C&onfigure Shortcuts...") );
     connect(b, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
     // create widgets
     createWidgets();
 
-    QAction *a = _mdwActions->addAction( "Toggle switch" );
+    KAction *a = _mdwActions->addAction( "Toggle switch" );
     a->setText( i18n( "Toggle Switch" ) );
     connect(a, SIGNAL(triggered(bool) ), SLOT( toggleSwitch() ));
 
@@ -184,7 +184,7 @@ QSizePolicy MDWSwitch::sizePolicy() const
     associated KAction like the context menu.
 */
 void MDWSwitch::toggleSwitch() {
-   if( m_mixdevice->captureVolume().hasSwitch() )   // !!! @todo Support combination of "cswitch pswitch"
+   if( m_mixdevice->captureVolume().hasSwitch() )
       setSwitch( !m_mixdevice->isRecSource() );
    else
       setSwitch( !m_mixdevice->isMuted() );
@@ -192,7 +192,7 @@ void MDWSwitch::toggleSwitch() {
 
 void MDWSwitch::setSwitch(bool value)
 {
-   if (  m_mixdevice->playbackVolume().hasSwitch() ) {   // !!! @todo Support combination of "cswitch pswitch"
+   if (  m_mixdevice->playbackVolume().hasSwitch() ) {
       if ( m_mixdevice->captureVolume().hasSwitch() ) {
          m_mixdevice->mixer()->setRecordSource( m_mixdevice->id(), value );
       }

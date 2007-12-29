@@ -225,7 +225,6 @@ void KMixerWidget::setTicks( bool on )
 
 
 /**
- *  @todo : Is the view list already filled, when loadConfig() is called?
  */
 void KMixerWidget::loadConfig( KConfig *config )
 {

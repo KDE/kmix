@@ -66,10 +66,11 @@ MDWEnum::MDWEnum( MixDevice* md,
    // create widgets
    createWidgets();
 
-   /* !!! remove this for production version */
-   QAction *a = _mdwActions->addAction( "Next Value" );
-   c->setText( i18n( "Next Value" ) );
-   connect(a, SIGNAL(triggered(bool) ), SLOT( nextEnumId() ));
+   /* remove this for production version
+     QAction *a = _mdwActions->addAction( "Next Value" );
+     c->setText( i18n( "Next Value" ) );
+     connect(a, SIGNAL(triggered(bool) ), SLOT( nextEnumId() ));
+   */
 
    installEventFilter( this ); // filter for popup
 }

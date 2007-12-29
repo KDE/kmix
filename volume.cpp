@@ -45,7 +45,7 @@ Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwit
 }
 
 
-// @ compatibility constructor  @todo remove it
+/* // @ compatibility constructor  @todo remove it
 Volume::Volume( int channels, long maxVolume ) {
    if (channels == 1 ) {
        init(Volume::MLEFT, maxVolume, 0, false, false);
@@ -58,6 +58,7 @@ Volume::Volume( int channels, long maxVolume ) {
      kError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
    }
 }
+*/
 
 Volume::Volume( const Volume &v )
 {

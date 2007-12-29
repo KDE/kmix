@@ -169,7 +169,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 
    
     // Add a master device (if we haven't defined one yet)
-   if ( Mixer::getGlobalMasterMD() == 0 ) {
+   if ( Mixer::getGlobalMasterMD(false) == 0 ) {
       // We have no master card yet. This actually only happens when there was
       // not one defined in the kmixrc.
       // So lets just set the first card as master card.
@@ -334,9 +334,9 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
    GUIProfile* guiprofBest = new GUIProfile();
    QString fileNamePrefix = "profiles/" + mixer->getDriverName() + '.';
    QString fileName = fileNamePrefix + "default.xml";
-   kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName;
+   //kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName;
    fileName = KStandardDirs::locate("appdata", fileName );
-   kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName;
+   //kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName;
    unsigned long matchValueBest = 0;
    if ( !fileName.isNull() && guiprofBest->readProfile(fileName) ) {
       // Profile exists and was successfully read
@@ -352,7 +352,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
       guiprofBest = 0;
    }
    
-   kDebug(67100) << "Cur Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+   //kDebug(67100) << "Cur Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
    
    // (2) Evaluate the soundcard specific profile  (the code is quite similar to the upper one
    // Here we could also start a while loop over all matching filenames, e.g.: "<driverName>.<cardName>*.xml"
@@ -360,9 +360,9 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
    QString mixerNameSpacesToUnderscores = mixer->baseName();
    mixerNameSpacesToUnderscores.replace(" ","_");
    fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
-   kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName;
+//    kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName;
    fileName = KStandardDirs::locate("appdata", fileName );
-   kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName;
+//    kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName;
    
    GUIProfile* guiprofCardSpecific = new GUIProfile();
    unsigned long matchValueCardSpecific = 0;
@@ -415,7 +415,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
       }
       guiprofBest = s_fallbackProfile;
    }
-   kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+//    kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
 
    return guiprofBest;
 }

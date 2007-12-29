@@ -70,7 +70,7 @@ friend class MixDevice;
     // regular constructor
     Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     // compatibility constructor
-    Volume( int channels, long maxVolume );
+    // Volume( int channels, long maxVolume );
     // copy constructor
     Volume( const Volume &v );
     // constructor for dummy volumes

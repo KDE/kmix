@@ -115,7 +115,9 @@ class Mixer : public QObject
        ******************************************/
       static void setGlobalMaster(QString& ref_card, QString& ref_control);
       static MixDevice* getGlobalMasterMD();
+      static MixDevice* getGlobalMasterMD(bool fallbackAllowed);
       static Mixer* getGlobalMasterMixer();
+      static Mixer* getGlobalMasterMixerNoFalback();
 
       /******************************************
         The recommended master of this Mixer.

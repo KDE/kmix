@@ -366,7 +366,6 @@ KMixDockWidget::dockMute()
 
 void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
 {
-    //kDebug(67100) << "Systray action !!! Reason=" << reason;
     if ( reason == QSystemTrayIcon::MiddleClick ) {
          dockMute();
     }

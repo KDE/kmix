@@ -1,3 +1,4 @@
+
 /*
  * KMix -- KDE's full featured mini mixer
  *
@@ -290,9 +291,7 @@ void KMixWindow::loadBaseConfig()
    m_showLabels = config.readEntry("Labels", true);
    m_onLogin = config.readEntry("startkdeRestore", true );
    m_startVisible = config.readEntry("Visible", true);
-   kDebug(67100) << "MultiDriver a = " << m_multiDriverMode;
    m_multiDriverMode = config.readEntry("MultiDriver", false);
-   kDebug(67100) << "MultiDriver b = " << m_multiDriverMode;
    const QString& orientationString = config.readEntry("Orientation", "Vertical");
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
@@ -371,9 +370,9 @@ void KMixWindow::recreateGUI()
    }
 }
 
-void KMixWindow::plugged( const char* driverName, const QString& udi, QString& dev)
+void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QString& dev)
 {
-    kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
+//     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
     QString driverNameString;
     driverNameString = driverName;
     int devNum = dev.toInt();
@@ -392,10 +391,10 @@ void KMixWindow::plugged( const char* driverName, const QString& udi, QString& d
 
 void KMixWindow::unplugged( const QString& udi)
 {
-    kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
+//     kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
-        kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
+//         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
         if (mixer->udi() == udi ) {
             kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
             //KMixToolBox::notification("MasterFallback", "aaa");
@@ -471,11 +470,11 @@ void KMixWindow::clearMixerWidgets()
 
 void KMixWindow::addMixerWidget(const QString& mixer_ID)
 {
-   kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
+//    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
    Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
    if ( mixer != 0 )
    {
-      kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
+//       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
       ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
       if ( m_showMenubar ) {
             vflags |= ViewBase::MenuBarVisible;
@@ -511,17 +510,17 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
 
 bool KMixWindow::queryClose ( )
 {
-    kDebug(67100) << "queryClose ";
+//     kDebug(67100) << "queryClose ";
     if ( m_showDockWidget && !kapp->sessionSaving() )
     {
-        kDebug(67100) << "don't close";
+//         kDebug(67100) << "don't close";
         // Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
         hide();
         return false;
     }
     else {
         // Accept the close in all situations, when the user has disabled docking
-        kDebug(67100) << "close";
+//         kDebug(67100) << "close";
         return true;
     }
 }
@@ -540,7 +539,7 @@ void KMixWindow::hideOrClose ( )
 
 void KMixWindow::quit()
 {
-    kDebug(67100) << "quit";
+//     kDebug(67100) << "quit";
     kapp->quit();
 }
 

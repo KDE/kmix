@@ -60,10 +60,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md,
    m_disabled( false ), _orientation( orientation ), m_small( small )
 {
    _mdwActions = new KActionCollection( this );
-
-   /* @todo Fancy Background
-   setBackgroundMode(Qt::X11ParentRelative);
-    */
+   _mdwPopupActions = new KActionCollection( this );
 }
 
 MixDeviceWidget::~MixDeviceWidget()
@@ -82,7 +79,7 @@ bool MixDeviceWidget::isDisabled() const
 
 void MixDeviceWidget::defineKeys()
 {
-   KShortcutsDialog::configure(_mdwActions);
+   KShortcutsDialog::configure(_mdwPopupActions, KShortcutsEditor::LetterShortcutsAllowed, this);
 }
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }

@@ -171,7 +171,7 @@ void ViewSliders::setMixSet()
          } // loop for finding a suitable MixDevice
          if ( ! isUsed ) {
             // There is something in the Profile, that doesn't correspond to a Mixer control
-            kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
+            //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
          }
       } // Tab name matches
       else {
@@ -193,7 +193,7 @@ void ViewSliders::configurationUpdate() {
       if ( mdw && mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
       if ( mdw && mdw->playbackExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->playbackExtentHint();
    }
-   kDebug(67100) << "topPartExtent is " << topPartExtent;
+   //kDebug(67100) << "topPartExtent is " << topPartExtent;
    bool firstVisibleControlFound = false;
    for ( int i=0; i<_mdws.count(); i++ ) {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);

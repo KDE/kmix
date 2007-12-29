@@ -112,9 +112,10 @@ void Mixer_Backend::readSetFromHW()
         MixDevice *md = m_mixDevices[i];
         readVolumeFromHW( md->id(), md );
         if (md->isEnum() ) {
-            /* @todo Move the enum stuff to (ALSA) backend:
+            /*
+             * This could be reworked:
              * Plan: Read everything (incuding enum's) in readVolumeFromHW().
-             * readVolumeFromHW() should then be rernamed to readHW().
+             * readVolumeFromHW() should then be renamed to readHW().
              */
             md->setEnumId( enumIdHW(md->id()) ); 
         }

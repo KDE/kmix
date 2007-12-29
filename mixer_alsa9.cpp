@@ -327,7 +327,7 @@ int Mixer_ALSA::setupAlsaPolling()
     m_sns = new QSocketNotifier*[m_count];
     for ( int i = 0; i < m_count; ++i )
     {
-        kDebug(67100) << "socket " << i;
+        //kDebug(67100) << "socket " << i;
         m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
         connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()));
     }

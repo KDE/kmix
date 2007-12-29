@@ -89,31 +89,27 @@ MDWSlider::MDWSlider(MixDevice* md,
       connect( a, SIGNAL(toggled(bool)), SLOT( toggleRecsrc()) );
    }
 
-   QAction *c = _mdwActions->addAction( "keys" );
+   KAction *c = _mdwActions->addAction( "keys" );
    c->setText( i18n("C&onfigure Shortcuts...") );
    connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
 
    // create widgets
    createWidgets( showMuteLED, showCaptureLED );
    
-   QAction *b;
-   b = _mdwActions->addAction( "Increase volume" );
+   // The following actions are for the "Configure Shortcuts" dialog
+   KAction *b;
+   b = _mdwPopupActions->addAction( "Increase volume" );
    b->setText( i18n( "Increase Volume" ) );
    connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
    
-   b = _mdwActions->addAction( "Decrease volume" );
+   b = _mdwPopupActions->addAction( "Decrease volume" );
    b->setText( i18n( "Decrease Volume" ) );
    connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
    
-/* 2007-06-16 esken This looks like a dup now.
-   Formerly the "b" Actions were used for the keyboard shortcuts.
-   Looks like that stuff got merged in KDE4.
-   Or ist this toggled(bool) vs triggered(bool)
-
-   b = _mdwActions->addAction( "Toggle mute" );
+   b = _mdwPopupActions->addAction( "Toggle mute" );
    b->setText( i18n( "Toggle mute" ) );
    connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
-
+/*
    b = _mdwActions->addAction( "Set Record Source" );
    b->setText( i18n( "Set Record Source" ) );
    connect(b, SIGNAL(triggered(bool) ), SLOT( toggleRecsrc() ));
@@ -975,11 +971,12 @@ void MDWSlider::showContextMenu()
    if ( a )
       menu->addAction( a );
    
-   a = _mdwActions->action( "keys" );
-   if ( a ) {
-      QAction sep( _mdwActions );
-      sep.setSeparator( true );
-      menu->addAction( &sep );
+   QAction *b = _mdwActions->action( "keys" );
+   if ( b ) {
+//       QAction sep( _mdwPopupActions );
+//       sep.setSeparator( true );
+//       menu->addAction( &sep );
+      menu->addAction( b );
    }
    
    QPoint pos = QCursor::pos();

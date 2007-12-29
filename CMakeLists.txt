@@ -92,51 +92,54 @@ install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### next target ###############
 
-if(Q_WS_X11)
-if(PLASMA_FOUND)
+# There is no such thing as a panel applet at the moment
+# It might be re-introduced with KDE4.1 or later - esken
 
-set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
-   kmixapplet.cpp 
-   viewbase.cpp 
-   viewapplet.cpp 
-   mixdevicewidget.cpp 
-   mdwslider.cpp 
-   mixer.cpp 
-   mixset.cpp 
-   mixdevice.cpp 
-   mixer_backend.cpp 
-   ksmallslider.cpp 
-   volume.cpp 
-   kledbutton.cpp 
-   verticaltext.cpp 
-   dialogviewconfiguration.cpp 
-   kmixtoolbox.cpp 
-   mixertoolbox.cpp 
-   dialogselectmaster.cpp 
-   kmixdevicemanager.cpp 
-   guiprofile.cpp )
-
-
-kde4_add_ui_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
-
-
-kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
-
-
-
-target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} )
-
-if (HAVE_LIBASOUND2)
-    target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
-endif (HAVE_LIBASOUND2)
-
-install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
-
-install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
-else(PLASMA_FOUND)
-MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
-endif(PLASMA_FOUND)
-endif(Q_WS_X11)
+#if(Q_WS_X11)
+#if(PLASMA_FOUND)
+#
+#set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
+#   kmixapplet.cpp 
+#   viewbase.cpp 
+#   viewapplet.cpp 
+#   mixdevicewidget.cpp 
+#   mdwslider.cpp 
+#   mixer.cpp 
+#   mixset.cpp 
+#   mixdevice.cpp 
+#   mixer_backend.cpp 
+#   ksmallslider.cpp 
+#   volume.cpp 
+#   kledbutton.cpp 
+#   verticaltext.cpp 
+#   dialogviewconfiguration.cpp 
+#   kmixtoolbox.cpp 
+#   mixertoolbox.cpp 
+#   dialogselectmaster.cpp 
+#   kmixdevicemanager.cpp 
+#   guiprofile.cpp )
+#
+#
+#kde4_add_ui_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
+#
+#
+#kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
+#
+#
+#
+#target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} )
+#
+#if (HAVE_LIBASOUND2)
+#    target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
+#endif (HAVE_LIBASOUND2)
+#
+#install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
+#
+#install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
+#else(PLASMA_FOUND)
+#MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
+#endif(PLASMA_FOUND)
+#endif(Q_WS_X11)
 
 ########### install files ###############
 
