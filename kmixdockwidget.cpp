@@ -41,19 +41,21 @@
 #include <Phonon/MediaObject>
 
 #include "dialogselectmaster.h"
+#include "kmix.h"
+#include "kmixdockwidget.h"
 #include "mixer.h"
 #include "mixdevicewidget.h"
 #include "mixertoolbox.h"
-#include "kmixdockwidget.h"
 #include "viewdockareapopup.h"
 
-KMixDockWidget::KMixDockWidget(QWidget *parent, const char *, bool volumePopup )
-    : KSystemTrayIcon( parent ),
+KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup )
+    : KSystemTrayIcon( referenceWidget ),
       _audioPlayer(0L),
       _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
       _oldToolTipValue(-1),
       _oldPixmapType('-'),
       _volumePopup(volumePopup)
+      , _kmixMainWindow(parent)
 {
    m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
    createMasterVolWidget();
@@ -141,6 +143,14 @@ void KMixDockWidget::selectMaster()
 
 void KMixDockWidget::handleNewMaster(QString& mixerID, QString& /*control_id*/)
 {
+   /* When a new master is selected, we will need to destroy *this instance of KMixDockWidget.
+      Reason: This widget is a KSystemTrayIcon, and needs an associated QWidget. This is in
+      our case the ViewDockAreaPopup instance. As that is recreated, we need to recrate ourself as well.
+      The only chance to do so is outside, in fact it is done by KMixWindow::updateDocking(). This needs to
+      use deleteLater(), as we are executing in a SLOT currently.
+    */
+   _kmixMainWindow->updateDocking();
+/*
     Mixer *mixer = MixerToolBox::instance()->find(mixerID);
     if ( mixer == 0 ) {
         kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (mixerID=" << mixerID << ")" << endl;
@@ -149,6 +159,7 @@ void KMixDockWidget::handleNewMaster(QString& mixerID, QString& /*control_id*/)
    m_mixer = mixer;
    //Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
    createMasterVolWidget();
+*/
 }
 
 

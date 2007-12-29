@@ -163,22 +163,20 @@ void KMixWindow::initWidgets()
  */
 bool KMixWindow::updateDocking()
 {
-   if (m_showDockWidget == false) {
-        return false; // docking is disabled
-    }
-
    // delete old dock widget
    if (m_dockWidget)
    {
-      delete m_dockWidget;
+      // If this is called during a master control change, the dock widget is currently active, so we use deleteLater().
+      m_dockWidget->deleteLater();
       m_dockWidget = 0L;
    }
    if ( _dockAreaPopup ) {
-      delete _dockAreaPopup;
+      // If this is called during a master control change, we rather play safe by using deleteLater().
+      _dockAreaPopup->deleteLater();
       _dockAreaPopup = 0L;
    }
 
-   if ( Mixer::mixers().count() == 0 ) {
+   if ( m_showDockWidget == false || Mixer::mixers().count() == 0 ) {
       return false;
    }
 
@@ -190,7 +188,7 @@ bool KMixWindow::updateDocking()
       _dockAreaPopup->createDeviceWidgets();
       referenceWidgetForSystray = _dockAreaPopup;
     }
-    m_dockWidget = new KMixDockWidget( referenceWidgetForSystray, "mainDockWidget", _dockAreaPopup );
+    m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
     m_dockWidget->show();
     return true;
 }

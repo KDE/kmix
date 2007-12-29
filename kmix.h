@@ -54,8 +54,7 @@ KMixWindow : public KXmlGuiWindow
    KMixWindow();
    ~KMixWindow();
 
-  private slots:
-   void saveConfig();
+   bool updateDocking();
 
   private:
    void saveBaseConfig();
@@ -69,7 +68,6 @@ KMixWindow : public KXmlGuiWindow
    void initWidgets();
    //void setErrorMixerWidget();
 
-   bool updateDocking();
    void clearMixerWidgets();
 
    virtual bool queryClose();
@@ -115,6 +113,7 @@ KMixWindow : public KXmlGuiWindow
    ViewDockAreaPopup *_dockAreaPopup;
 
   private slots:
+   void saveConfig();
    void slotHWInfo();
    void slotConfigureCurrentView();
    void addMixerWidget(const QString&);

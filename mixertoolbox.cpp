@@ -169,7 +169,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 
    
     // Add a master device (if we haven't defined one yet)
-   if ( Mixer::getGlobalMasterMixer() == 0 ) {
+   if ( Mixer::getGlobalMasterMD() == 0 ) {
       // We have no master card yet. This actually only happens when there was
       // not one defined in the kmixrc.
       // So lets just set the first card as master card.
@@ -179,9 +179,11 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
       }
    }
    else {
-      Mixer* mixer = Mixer::getGlobalMasterMixer();
-      QString mdID = mixer->getLocalMasterMD()->id();
-      Mixer::setGlobalMaster( mixer->id(), mdID );
+      // setGlobalMaster was already set after reading the configuration.
+      // So we must make the local master consistent
+      MixDevice* md = Mixer::getGlobalMasterMD();
+      QString mdID = md->id();
+      md->mixer()->setLocalMasterMD(mdID);
    }
 
    ref_hwInfoString = i18n("Sound drivers supported:");

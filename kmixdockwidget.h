@@ -28,6 +28,7 @@ class QString;
 
 #include <ksystemtrayicon.h>
 
+class KMixWindow;
 class Mixer;
 //class ViewDockAreaPopup;
 class Volume;
@@ -43,7 +44,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    friend class KMixWindow;
 
  public:
-   explicit KMixDockWidget(QWidget *parent=0, const char *name=0, bool volumePopup=true);
+   explicit KMixDockWidget(KMixWindow *parent, QWidget *referenceWidget, bool volumePopup);
    ~KMixDockWidget();
 
    void setErrorPixmap();
@@ -71,6 +72,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    int  _oldToolTipValue;
    char _oldPixmapType;
    bool _volumePopup;
+   KMixWindow* _kmixMainWindow;
  private slots:
    void dockMute();
    void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
