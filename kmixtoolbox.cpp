@@ -79,6 +79,10 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
    KConfigGroup cg = config->group( grp );
    kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.toAscii();
 
+   static char guiComplexity[3][20] = { "simple", "extended", "all" };
+   for ( int tries = 0; tries < 3; tries++ )
+   {
+   bool atLeastOneControlIsShown = false;
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
@@ -111,24 +115,28 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
                 QRegExp idRegExp(pControl->id);
                 //kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
                 if ( mdw->mixDevice()->id().contains(idRegExp) ) {
-                   if ( pControl->show == "simple" )
+                   if ( pControl->show == guiComplexity[tries] )
                    {
                       mdwEnabled = true;
+                      atLeastOneControlIsShown = true;
                       //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from profile: mdwEnabled==" << mdwEnabled;
                    }
                    break;
                 }
-             }
+             } // iterate over all ProfControl entries
          }
-         //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "FINAL: mdwEnabled==" << mdwEnabled;
          //mdw->setEnabled(mdwEnabled);  // I have no idea why dialogselectmaster works with "enabled" instead of "visible"
          if (!mdwEnabled) { mdw->hide(); } else { mdw->show(); }
 
       } // inherits MixDeviceWidget
    } // for all MDW's
+   if ( atLeastOneControlIsShown ) {
+      break;   // If there were controls in this complexity level, don't try more
+   }
+   } // for try = 0 ... 1         //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "FINAL: mdwEnabled==" << mdwEnabled;
 }
 
-void KMixToolBox::loadKeys(ViewBase *view, KConfig *config)
+void KMixToolBox::loadKeys(ViewBase *view, KConfig */*config*/)
 // !!! this must be moved out of the views into the kmixd
 {
    kDebug(67100) << "KMixToolBox::loadKeys()";
@@ -197,7 +205,7 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
 
 
 // Save key bindings
-void KMixToolBox::saveKeys(ViewBase *view, KConfig *config)
+void KMixToolBox::saveKeys(ViewBase *view, KConfig */*config*/)
 // !!! this must be moved out of the views into the kmixd
 {
    /*
