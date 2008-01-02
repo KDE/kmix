@@ -97,18 +97,36 @@ MDWSlider::MDWSlider(MixDevice* md,
    createWidgets( showMuteLED, showCaptureLED );
    
    // The following actions are for the "Configure Shortcuts" dialog
+   /* PLEASE NOTE THAT global shortcuts are saved with the name as set with setName(), instead of their action name.
+      This is a bug according to the thread "Global shortcuts are saved with their text-name and not their action-name - Bug?" on kcd.
+      I work around this by using a text with setText() that is unique, but still readable to the user.
+
+      Also, please note that the action is placed in two collections: The collection for the shortcut dialog, AND the
+      global collcetion. Without the latter the actions are saved, but not properly loaded.
+    */
+   //QString actionSuffix  = QString("%1@%2").arg(mixDevice()->id()).arg(mixDevice()->mixer()->id());
+   QString actionSuffix  = QString(" - %1, %2").arg(mixDevice()->readableName()).arg(mixDevice()->mixer()->readableName());
    KAction *b;
-   b = _mdwPopupActions->addAction( "Increase volume" );
-   b->setText( i18n( "Increase Volume" ) );
+   b = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );
+   //if (mw) mw->actionCollection()->addAction( QString("Increase volume %1").arg( actionSuffix ), b );
+   QString increaseVolumeName = i18n( "Increase Volume" );
+   increaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
+   b->setText( increaseVolumeName  );
    connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
-   
-   b = _mdwPopupActions->addAction( "Decrease volume" );
-   b->setText( i18n( "Decrease Volume" ) );
+
+   b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
+   //if (mw) mw->actionCollection()->addAction( QString("Decrease volume %1").arg( actionSuffix ), b );
+   QString decreaseVolumeName = i18n( "Decrease Volume" );
+   decreaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
+   b->setText( decreaseVolumeName );
    connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
-   
-   b = _mdwPopupActions->addAction( "Toggle mute" );
-   b->setText( i18n( "Toggle mute" ) );
+
+   b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
+   QString muteVolumeName = i18n( "Toggle mute" );
+   muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
+   b->setText( muteVolumeName );
    connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
+   if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
 /*
    b = _mdwActions->addAction( "Set Record Source" );
    b->setText( i18n( "Set Record Source" ) );

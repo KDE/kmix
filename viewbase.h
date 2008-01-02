@@ -96,6 +96,7 @@ public:
    void setLabels(bool on);
    void setTicks(bool on);
    GUIProfile* guiProfile() { return _guiprof; };
+   KActionCollection* actionCollection() { return _actions; };
 
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:

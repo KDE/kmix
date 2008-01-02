@@ -79,7 +79,7 @@ bool MixDeviceWidget::isDisabled() const
 
 void MixDeviceWidget::defineKeys()
 {
-   KShortcutsDialog::configure(_mdwPopupActions, KShortcutsEditor::LetterShortcutsAllowed, this);
+   KShortcutsDialog::configure(_mdwPopupActions ); // , KShortcutsEditor::LetterShortcutsAllowed, this);
 }
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
