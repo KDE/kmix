@@ -20,5 +20,5 @@
  */
 
 #ifndef APP_VERSION
-#define APP_VERSION "2.6"
+#define APP_VERSION "3.0"
 #endif // APP_VERSION
