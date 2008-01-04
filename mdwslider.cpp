@@ -120,10 +120,11 @@ MDWSlider::MDWSlider(MixDevice* md,
    connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
 
    b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
-   QString muteVolumeName = i18n( "Toggle mute" );
+   QString muteVolumeName = i18n( "Toggle Mute" );
    muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( muteVolumeName );
    b->setGlobalShortcutAllowed(true);
+
    connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
    if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
 /*

@@ -118,7 +118,7 @@ void KMixWindow::initActions()
    connect(action, SIGNAL(triggered(bool) ), SLOT(hideOrClose()));
    action->setShortcut(QKeySequence(Qt::Key_Escape));
    action = actionCollection()->addAction("toggle_channels_currentview");
-   action->setText(i18n("Configure &Channels"));
+   action->setText(i18n("Configure &Channels..."));
    connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
    createGUI( "kmixui.rc" );
 }
