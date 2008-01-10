@@ -201,11 +201,15 @@ void MDWSlider::setCaptureExtent(int extent) {
         m_defaultLabelSpacer->setFixedHeight(extent);
         if ( captureExtentHint() < extent )
             m_captureSpacer->setFixedHeight(extent-captureExtentHint());
+        else
+            m_captureSpacer->setFixedHeight(0);
     }
     else {
         m_defaultLabelSpacer->setFixedWidth(extent);
         if ( captureExtentHint() < extent )
             m_captureSpacer->setFixedWidth(extent-captureExtentHint());
+        else
+            m_captureSpacer->setFixedHeight(0);
     }
 }
 
