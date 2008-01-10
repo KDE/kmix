@@ -47,6 +47,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    setMainWidget( m_generalTab );
 
    QBoxLayout *layout = new QVBoxLayout( m_generalTab );
+   layout->setMargin( 0 );
    layout->setSpacing( KDialog::spacingHint() );
 
 // -----------------------------------------------------------

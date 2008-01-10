@@ -62,6 +62,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     m_mainFrame = new QFrame( this );
     setMainWidget( m_mainFrame );
     _layout = new QVBoxLayout(m_mainFrame);
+    _layout->setMargin(0);
 
     if ( Mixer::mixers().count() > 1 ) {
         // More than one Mixer => show Combo-Box to select Mixer
