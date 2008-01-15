@@ -190,8 +190,10 @@ void ViewSliders::configurationUpdate() {
    int bottomPartExtent = 0;
    for ( int i=0; i<_mdws.count(); i++ ) {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
-      if ( mdw && mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
-      if ( mdw && mdw->playbackExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->playbackExtentHint();
+      if ( mdw && mdw->isVisible() ) {
+         if ( mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
+         if ( mdw->captureExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->captureExtentHint();
+      }
    }
    //kDebug(67100) << "topPartExtent is " << topPartExtent;
    bool firstVisibleControlFound = false;
