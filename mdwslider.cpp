@@ -49,6 +49,8 @@
 #include "ksmallslider.h"
 #include "verticaltext.h"
 
+static const int MIN_SLIDER_SIZE = 150;
+
 /**
  * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
  *
@@ -459,6 +461,13 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
             sliderBig->setMaximum(maxvol);
             sliderBig->setPageStep(maxvol/10);
             sliderBig->setValue(maxvol - vol.getVolume( chid ));
+
+            if ( _orientation == Qt::Vertical ) {
+                sliderBig->setMinimumHeight( MIN_SLIDER_SIZE );
+            }
+            else {
+                sliderBig->setMinimumWidth( MIN_SLIDER_SIZE );
+            }
         } // not small
 
         slider->installEventFilter( this );
