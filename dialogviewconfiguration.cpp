@@ -50,6 +50,8 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    
    // The _layout will hold two items: The title and the scrollarea
    _layout = new QVBoxLayout(frame );
+   _layout->setMargin( 0 );
+   _layout->setSpacing(KDialog::spacingHint());
    
    // --- HEADER ---
    //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
@@ -59,7 +61,6 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    QScrollArea* scrollArea = new QScrollArea(frame);
    scrollArea->setWidgetResizable(true); // avoid unnecesary scrollbars
    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-   _layout->addSpacing(KDialog::spacingHint());
    _layout->addWidget(scrollArea);
    
    vboxForScrollView = new QWidget();
