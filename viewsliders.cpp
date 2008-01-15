@@ -93,9 +93,9 @@ QWidget* ViewSliders::add(MixDevice *md)
       // add a separator before the device
       QFrame *_frm = new QFrame(this);
       if ( orientation == Qt::Vertical)
-         _frm->setFrameStyle(QFrame::VLine | QFrame::Raised);
+         _frm->setFrameStyle(QFrame::VLine | QFrame::Sunken);
       else
-         _frm->setFrameStyle(QFrame::HLine | QFrame::Raised);
+         _frm->setFrameStyle(QFrame::HLine | QFrame::Sunken);
       _separators.insert(md->id(),_frm);
       _layoutSliders->addWidget(_frm);
       mdw = new MDWSlider(
