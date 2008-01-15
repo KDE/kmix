@@ -172,9 +172,13 @@ void MDWSlider::setPlaybackExtent(int extent) {
         if ( _orientation == Qt::Vertical )
              if ( playbackExtentHint() < extent )
                m_playbackSpacer->setFixedHeight(extent-playbackExtentHint());
+             else
+               m_playbackSpacer->setFixedHeight(0);
         else
             if ( playbackExtentHint() < extent )
                m_playbackSpacer->setFixedWidth(extent-playbackExtentHint());
+             else
+               m_playbackSpacer->setFixedWidth(0);
     }
 }
 
