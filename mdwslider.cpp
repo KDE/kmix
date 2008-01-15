@@ -208,7 +208,7 @@ void MDWSlider::setCaptureExtent(int extent) {
         if ( captureExtentHint() < extent )
             m_captureSpacer->setFixedWidth(extent-captureExtentHint());
         else
-            m_captureSpacer->setFixedHeight(0);
+            m_captureSpacer->setFixedWidth(0);
     }
 }
 
