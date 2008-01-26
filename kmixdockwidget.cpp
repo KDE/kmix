@@ -37,7 +37,11 @@
 #include <qcursor.h>
 #include <QDesktopWidget>
 #include <QMouseEvent>
+
+#ifdef Q_WS_X11
 #include <fixx11h.h>
+#endif
+
 #include <Phonon/MediaObject>
 
 #include "dialogselectmaster.h"
