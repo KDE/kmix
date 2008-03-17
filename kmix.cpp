@@ -652,8 +652,8 @@ void KMixWindow::slotConfigureCurrentView()
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
-   Mixer* mixer = mw->mixer();
-   setWindowTitle( mixer->readableName() );
+   if (mw)
+       setWindowTitle( mw->mixer()->readableName() );
    // As switching the tab does NOT mean switching the mixer, we do not need to update dock icon here.
    // It would lead to unnecesary flickering of the (complete) dock area.
 }
