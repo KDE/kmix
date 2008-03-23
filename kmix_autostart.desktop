@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kmix --autostart
+DocPath=kmix/index.html
+OnlyShowIn=KDE;
+Type=Application
+MimeType=
+Terminal=false
+X-KDE-autostart-after=panel
+X-KDE-StartupNotify=false
+X-DBUS-StartupType=Unique
+X-KDE-autostart-condition=kmixrc:Global:AutoStart:true
+Icon=kmix
+GenericName=Sound Mixer
+Name=KMix
+Categories=Qt;KDE;AudioVideo;Mixer;

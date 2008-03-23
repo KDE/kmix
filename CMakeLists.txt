@@ -145,11 +145,7 @@ install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
 
 install( FILES kmix.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
+install( FILES kmix_autostart.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES org.kde.KMix.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
-
-
-
-
-

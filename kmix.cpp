@@ -290,7 +290,7 @@ void KMixWindow::loadBaseConfig()
    m_showTicks = config.readEntry("Tickmarks", true);
    m_showLabels = config.readEntry("Labels", true);
    m_onLogin = config.readEntry("startkdeRestore", true );
-   m_startVisible = config.readEntry("Visible", true);
+   m_startVisible = config.readEntry("Visible", false);
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    const QString& orientationString = config.readEntry("Orientation", "Vertical");
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
