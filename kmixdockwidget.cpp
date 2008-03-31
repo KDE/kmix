@@ -296,12 +296,7 @@ bool KMixDockWidget::event( QEvent * event )
       event->accept();
       return true;
    }
-//    else if (event->type() == QEvent::ToolTip ) {
-//       trayToolTipEvent((QHelpEvent*)event);
-//       event->accept();
-//       return true;
-//    }
-   return false;
+   return QSystemTrayIcon::event(event);
 }
 
 
@@ -344,12 +339,10 @@ KMixDockWidget::trayWheelEvent(QWheelEvent *e )
       else
          md->captureVolume().setVolume(vol);
       m_mixer->commitVolumeChange(md);
-    // refresh the toolTip (Qt removes it on a MouseWheel event)
-    // Mhhh, it doesn't work. Qt does not show it again.
     setVolumeTip();
     // Simulate a mouse move to make Qt show the tooltip again
-    //QApplication::postEvent( this, new QMouseEvent( QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton ) );
-
+    // (Qt removes it on a MouseWheel event)
+    QApplication::postEvent( this, new QHelpEvent ( QEvent::ToolTip, e->pos(), e->globalPos() ) );
   }
 }
 
