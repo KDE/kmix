@@ -47,7 +47,7 @@ class Mixer;
 // KMix experimental
 
 
-class KMixerWidget : public QWidget  
+class KMixerWidget : public QWidget
 {
    Q_OBJECT
 
@@ -56,7 +56,7 @@ class KMixerWidget : public QWidget
                   QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, KActionCollection* coll = 0 );
    ~KMixerWidget();
 
-   Mixer *mixer() const { return _mixer; }
+   Mixer *mixer() { return _mixer; }
    ViewBase* currentView();
    
   signals:
