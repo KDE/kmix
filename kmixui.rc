@@ -1,8 +1,8 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kmix" version="6">
+<kpartgui name="kmix" version="7">
 
 <ActionProperties>
-    <Action name="hide_kmixwindow" icon="window"/>
+    <Action name="hide_kmixwindow" icon="dialog-close"/>
 <!--    <Action name="options_show_menubar" icon="window"/> -->
 </ActionProperties>
 

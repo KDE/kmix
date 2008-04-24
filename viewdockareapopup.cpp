@@ -22,7 +22,6 @@
 #include "viewdockareapopup.h"
 
 // Qt
-#include <QWidget>
 #include <qevent.h>
 #include <qframe.h>
 #include <QPushButton>
@@ -32,6 +31,7 @@
 #include <kaction.h>
 #include <kapplication.h>
 #include <klocale.h>
+#include <kdialog.h>
 
 // KMix
 #include "mdwslider.h"
@@ -45,16 +45,15 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     : ViewBase(parent, name, mixer, Qt::Popup | Qt::MSWindowsFixedSizeDialogHint , vflags, guiprof), _mdw(0), _dock(dockW), _hideTimer(0)
 {
     QBoxLayout *layout = new QHBoxLayout( this );
+    layout->setMargin( 0 );
     _frame = new QFrame( this );
     layout->addWidget( _frame );
 
     _frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
-    _frame->setLineWidth( 1 );
 
     _layoutMDW = new QGridLayout( _frame );
-//     layout->addLayout(_layoutMDW);
-    _layoutMDW->setSpacing( 1 );
-    _layoutMDW->setMargin( 2 );
+    _layoutMDW->setSpacing( KDialog::spacingHint() );
+    _layoutMDW->setMargin( KDialog::marginHint() );
     _layoutMDW->setObjectName( "KmixPopupLayout" );
     _hideTimer = new QTime();
     setMixSet();

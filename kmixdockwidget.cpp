@@ -300,7 +300,7 @@ bool KMixDockWidget::event( QEvent * event )
       event->accept();
       return true;
    }
-   return QSystemTrayIcon::event(event);
+   return KSystemTrayIcon::event(event);
 }
 
 
