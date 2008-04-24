@@ -111,21 +111,18 @@ MDWSlider::MDWSlider(MixDevice* md,
    QString increaseVolumeName = i18n( "Increase Volume" );
    increaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( increaseVolumeName  );
-   b->setGlobalShortcutAllowed(true);
    connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
 
    b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
    QString decreaseVolumeName = i18n( "Decrease Volume" );
    decreaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( decreaseVolumeName );
-   b->setGlobalShortcutAllowed(true);
    connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
 
    b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
    QString muteVolumeName = i18n( "Toggle Mute" );
    muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( muteVolumeName );
-   b->setGlobalShortcutAllowed(true);
 
    connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
    if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );

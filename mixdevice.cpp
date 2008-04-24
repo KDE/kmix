@@ -195,16 +195,13 @@ void MixDevice::write( KConfig *config, const QString& grp )
 
 void MixDevice::writePlaybackOrCapture(KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
 {
-#ifdef __GNUC__
-#warning Must remove the two (int) casts, once KConfig can write long in writeEntry() again
-#endif
     Volume& volume = capture ? captureVolume() : playbackVolume();
 
     config.writeEntry(nameLeftVolume , (int)volume.getVolume( Volume::LEFT ) );
     config.writeEntry(nameRightVolume, (int)volume.getVolume( Volume::RIGHT ) );
 
-    config.writeEntry("is_muted" , (int)isMuted() );
-    config.writeEntry("is_recsrc", (int)isRecSource() );
+    config.writeEntry("is_muted" , isMuted() );
+    config.writeEntry("is_recsrc", isRecSource() );
     config.writeEntry("name", _name);
     if ( isEnum() ) {
         config.writeEntry("enum_id", enumId() );
