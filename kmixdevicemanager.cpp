@@ -64,10 +64,10 @@ QString KMixDeviceManager::getUDI_ALSA(int num)
     bool found = false;
     QString udi;
     QString devHandle;
-    foreach ( Solid::Device device, dl )
+    foreach ( const Solid::Device &device, dl )
     {
 //        std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
-        Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+        const Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
         if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
             switch (audiohw->driver()) {
                 case Solid::AudioInterface::Alsa:
@@ -95,10 +95,10 @@ QString KMixDeviceManager::getUDI_OSS(QString& devname)
     bool found = false;
     QString udi;
     QString devHandle;
-    foreach ( Solid::Device device, dl )
+    foreach ( const Solid::Device &device, dl )
     {
 //        std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
-        Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+        const Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
         if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
             switch (audiohw->driver()) {
                 case Solid::AudioInterface::OpenSoundSystem:
