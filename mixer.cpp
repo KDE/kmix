@@ -350,7 +350,7 @@ Mixer* Mixer::getGlobalMasterMixer()
 
 MixDevice* Mixer::getGlobalMasterMD()
 {
-   getGlobalMasterMD(true);
+   return getGlobalMasterMD(true);
 }
 
 MixDevice* Mixer::getGlobalMasterMD(bool fallbackAllowed)
