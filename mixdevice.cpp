@@ -163,15 +163,11 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, const char* na
     //volume.setVolume(*volFromConfig); 
     //delete volFromConfig;
     
-    int mute = config.readEntry("is_muted", -1);
-    if ( mute!=-1 ) {
-        setMuted( mute!=0 );
-    }
+    bool mute = config.readEntry("is_muted", false);
+    setMuted( mute );
     
-    int recsrc = config.readEntry("is_recsrc", -1);
-    if ( recsrc!=-1 ) {
-        setRecSource( recsrc!=0 );
-    }
+    bool recsrc = config.readEntry("is_recsrc", false);
+    setRecSource( recsrc );
     
     int enumId = config.readEntry("enum_id", -1);
     if ( enumId != -1 ) {
