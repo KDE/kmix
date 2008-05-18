@@ -108,6 +108,8 @@ KMixWindow : public KXmlGuiWindow
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QString m_hwInfoString;
+   QString m_defaultCardOnStart;
+   bool m_dontSetDefaultCardOnStart;
    QVBoxLayout *m_widgetsLayout;
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;

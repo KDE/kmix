@@ -221,6 +221,7 @@ void KMixWindow::saveBaseConfig()
    config.writeEntry( "Tickmarks", m_showTicks );
    config.writeEntry( "Labels", m_showLabels );
    config.writeEntry( "startkdeRestore", m_onLogin );
+   config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
    if ( mixerMasterCard != 0 ) {
       config.writeEntry( "MasterMixer", mixerMasterCard->id() );
@@ -293,6 +294,7 @@ void KMixWindow::loadBaseConfig()
    m_startVisible = config.readEntry("Visible", false);
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    const QString& orientationString = config.readEntry("Orientation", "Vertical");
+   m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
@@ -493,9 +495,12 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       * and thus the window title is also set appropriately */
       bool isFirstTab = m_wsMixers->count() == 0;
       m_wsMixers->addTab( kmw, kmw->mixer()->readableName() );
-      if (isFirstTab) {
+      if (isFirstTab || kmw->mixer()->id() == m_defaultCardOnStart ) {
+         m_dontSetDefaultCardOnStart = true; // inhipbit implicit stting of m_defaultCardOnStart
          m_wsMixers->setCurrentWidget(kmw);
-         //setWindowTitle( kmw->mixer()->readableName() );
+         m_dontSetDefaultCardOnStart = false;
+         if ( m_defaultCardOnStart.isEmpty() )
+            m_defaultCardOnStart = kmw->mixer()->id(); // If there was noc configuration file entry
       }
 
       kmw->loadConfig( KGlobal::config().data() );
@@ -652,10 +657,13 @@ void KMixWindow::slotConfigureCurrentView()
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
-   if (mw)
+   if (mw) {
        setWindowTitle( mw->mixer()->readableName() );
-   // As switching the tab does NOT mean switching the mixer, we do not need to update dock icon here.
-   // It would lead to unnecesary flickering of the (complete) dock area.
+       if ( ! m_dontSetDefaultCardOnStart )
+           m_defaultCardOnStart = mw->mixer()->id();
+       // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
+       // It would lead to unnecesary flickering of the (complete) dock area.
+   }
 }
 
 
