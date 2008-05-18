@@ -234,7 +234,6 @@ void KMixerWidget::loadConfig( KConfig *config )
         ViewBase* view = *it;
         kDebug(67100) << "KMixerWidget::loadConfig()" << view->id();
         KMixToolBox::loadView(view,config);
-        KMixToolBox::loadKeys(view,config);
         view->configurationUpdate();
     } // for all tabs
 }
@@ -249,7 +248,6 @@ void KMixerWidget::saveConfig( KConfig *config )
         ViewBase* view = *it;
         kDebug(67100) << "KMixerWidget::saveConfig()" << view->id();
         KMixToolBox::saveView(view,config);
-        KMixToolBox::saveKeys(view,config);
     } // for all tabs
 }
 

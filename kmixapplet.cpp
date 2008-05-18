@@ -285,7 +285,6 @@ void KMixApplet::loadConfig( KConfig *config, const QString& /*grp*/ )
 {
     if ( m_appletView ) {
 	KMixToolBox::loadView(m_appletView, config );
-	KMixToolBox::loadKeys(m_appletView, config );
     }
 }
 
@@ -299,7 +298,6 @@ void KMixApplet::saveConfig( KConfig *config, const QString &grp )
 	cg.writeEntry("Mixer_Name_Key", _mixer->id());
 
 	KMixToolBox::saveView(m_appletView, config );
-	KMixToolBox::saveKeys(m_appletView, config );
     }
 }
 

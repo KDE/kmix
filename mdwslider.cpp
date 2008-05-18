@@ -49,8 +49,7 @@
 #include "ksmallslider.h"
 #include "verticaltext.h"
 
-static const int MIN_SLIDER_SIZE = 150;
-
+static const int MIN_SLIDER_SIZE = 50;
 /**
  * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
  *
