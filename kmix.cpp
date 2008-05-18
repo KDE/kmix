@@ -54,6 +54,7 @@
 #include "kmixprefdlg.h"
 #include "kmixdockwidget.h"
 #include "kmixtoolbox.h"
+#include "version.h"
 #include "viewdockareapopup.h"
 //#include "osd.h" // Postponed to KDE4.1
 
@@ -82,6 +83,7 @@ KMixWindow::KMixWindow()
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
    recreateGUI();
+   fixConfigAfterRead();
    theKMixDeviceManager->initHotplug();
    connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
    connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
@@ -222,6 +224,7 @@ void KMixWindow::saveBaseConfig()
    config.writeEntry( "Labels", m_showLabels );
    config.writeEntry( "startkdeRestore", m_onLogin );
    config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
+   config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
    if ( mixerMasterCard != 0 ) {
       config.writeEntry( "MasterMixer", mixerMasterCard->id() );
@@ -295,6 +298,9 @@ void KMixWindow::loadBaseConfig()
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    const QString& orientationString = config.readEntry("Orientation", "Vertical");
    m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
+   m_configVersion = config.readEntry( "ConfigVersion", 0 );
+   // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
+   // evaluated. Better only write that in saveBaseConfig()
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
@@ -370,6 +376,28 @@ void KMixWindow::recreateGUI()
        updateDocking();  // -<- removes the DockIcon
        hide();
    }
+}
+
+
+void KMixWindow::fixConfigAfterRead()
+{
+   KConfigGroup grp(KGlobal::config(), "Global");
+   unsigned int configVersion = grp.readEntry( "ConfigVersion", 0 );
+   if ( configVersion < 3 ) {
+       // Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
+       // The group has been copied over by KMixToolBox::loadView() for all soundcards, so
+       // we should be fine now
+       QStringList cfgGroups = KGlobal::config()->groupList();
+       QStringListIterator it(cfgGroups);
+       while ( it.hasNext() ) {
+          QString groupName = it.next();
+          if ( groupName.indexOf("View.Base.Base" ) == 0 ) {
+               kDebug(67100) << "Fixing group " << groupName;
+               KConfigGroup buggyDevgrpCG = KGlobal::config()->group( groupName );
+               buggyDevgrpCG.deleteGroup();
+          } // remove buggy group
+       } // for all groups
+   } // if config version < 3
 }
 
 void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QString& dev)

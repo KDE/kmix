@@ -75,8 +75,8 @@ void KMixToolBox::setTicks(QList<QWidget *> &mdws, bool on ) {
 void KMixToolBox::loadView(ViewBase *view, KConfig *config)
 {
    QString grp = "View.";
-   grp += view->objectName();
-   KConfigGroup cg = config->group( grp );
+   grp += view->id();
+   //KConfigGroup cg = config->group( grp );
    kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.toAscii();
 
    static char guiComplexity[3][20] = { "simple", "extended", "all" };
@@ -87,10 +87,23 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
       {
+         /* Workaround for a bug. KMix in KDE4.0 wrote group names like "[View.Base.Base.Front:0]", with
+          a duplicated "Base" which *should* have been Soundcard ID,like in "[View.Base.ALSA::HDA_NVidia:1.Front:0]".
+
+           Workaround: If found, write back correct group name.
+        */
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
          QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), mdw->mixDevice()->mixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
          KConfigGroup devcg  = config->group( devgrp );
+
+         QString buggyDevgrp;
+         buggyDevgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         KConfigGroup buggyDevgrpCG = config->group( buggyDevgrp );
+         if ( buggyDevgrpCG.exists() ) {
+            buggyDevgrpCG.copyTo(&devcg);
+            // Group will be deleted in KMixerWidget::fixConfigAfterRead()
+         }
 
          if ( mdw->inherits("MDWSlider") )
          {
@@ -136,38 +149,6 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
    } // for try = 0 ... 1         //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "FINAL: mdwEnabled==" << mdwEnabled;
 }
 
-void KMixToolBox::loadKeys(ViewBase *view, KConfig */*config*/)
-// !!! this must be moved out of the views into the kmixd
-{
-   kDebug(67100) << "KMixToolBox::loadKeys()";
-   for (int i=0; i < view->_mdws.count(); ++i ){
-      QWidget *qmdw = view->_mdws[i];
-      if ( qmdw->inherits("MixDeviceWidget") )
-      {
-         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         KGlobalAccel *keys = KGlobalAccel::self();
-         if ( keys )
-         {
-            QString devgrpkeys;
-            devgrpkeys.sprintf( "Keys.%s.%s", view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
-            //kDebug(67100) << "KMixToolBox::loadKeys() load Keys " << devgrpkeys;
-
-            // please see KMixToolBox::saveKeys() for some rambling about saving/loading Keys
-
-            //Note to maintainer: this should be correct [you cannot choose the group anymore!],
-            //and if you really need groups, I recommend prepending group names to the action
-            //names. -- ahartmetz
-
-            //keys->setConfigGroup(devgrpkeys);
-#ifdef __GNUC__
-#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
-#warning are now saved and loaded automatically by default.
-#endif
-            //keys->readSettings();
-         } // MDW has keys
-      } // is a MixDeviceWidget
-   } // for all widgets
-}
 
 /*
  * Saves the View configuration
@@ -175,8 +156,8 @@ void KMixToolBox::loadKeys(ViewBase *view, KConfig */*config*/)
 void KMixToolBox::saveView(ViewBase *view, KConfig *config)
 {
    QString grp = "View.";
-   grp += view->objectName();
-   KConfigGroup cg = config->group( grp );
+   grp += view->id();
+//   KConfigGroup cg = config->group( grp );
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp.toAscii();
 
    for (int i=0; i < view->_mdws.count(); ++i ){
@@ -190,7 +171,7 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
          //kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
          QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), mdw->mixDevice()->mixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
          KConfigGroup devcg = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
@@ -203,42 +184,6 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
    } // for all MDW's
 }
 
-
-// Save key bindings
-void KMixToolBox::saveKeys(ViewBase *view, KConfig */*config*/)
-// !!! this must be moved out of the views into the kmixd
-{
-   /*
-       Implementation hint: Conceptually keys SHOULD be bound to the actual hardware, and not
-       to one GUI representation. Both work, but it COULD confuse users, if we have multiple
-       GUI representations (e.g. "Dock Icon" and "Main Window").
-       If you think about this aspect more deeply, you will find out that this is the case already
-       today with "kmixapplet" and "kmix main application". It would really nice to rework this.
-    */
-   kDebug(67100) << "KMixToolBox::saveKeys()";
-   for (int i=0; i < view->_mdws.count(); ++i ){
-      QWidget *qmdw = view->_mdws[i];
-      if ( qmdw->inherits("MixDeviceWidget") )
-      {
-         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         KGlobalAccel *keys = KGlobalAccel::self();
-         if ( keys )
-         {
-            QString devgrpkeys;
-            devgrpkeys.sprintf( "Keys.%s.%s", view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
-            //kDebug(67100) << "KMixToolBox::saveKeys() : " << devgrpkeys;
-
-            //See note in loadKeys! -- ahartmetz
-            //keys->setConfigGroup(devgrpkeys);
-#ifdef __GNUC__
-#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
-#warning are now saved and loaded automatically by default.
-#endif
-            //keys->writeSettings();
-         } // MDW has keys
-      } // is a MixDeviceWidget
-   } // for all widgets
-}
 
 void KMixToolBox::notification(const char *notificationName, const QString &text,
                                 const QStringList &actions, QObject *receiver,

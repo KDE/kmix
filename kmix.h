@@ -69,6 +69,7 @@ KMixWindow : public KXmlGuiWindow
    //void setErrorMixerWidget();
 
    void clearMixerWidgets();
+   void fixConfigAfterRead();
 
    virtual bool queryClose();
 
@@ -113,6 +114,7 @@ KMixWindow : public KXmlGuiWindow
    QVBoxLayout *m_widgetsLayout;
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;
+   unsigned int m_configVersion;
 
   private slots:
    void saveConfig();
