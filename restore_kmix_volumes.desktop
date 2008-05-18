@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 X-KDE-autostart-phase=1
-X-KDE-autostart-condition=kmixrc::startkdeRestore:true
+X-KDE-autostart-condition=kmixrc:Global:startkdeRestore:true
 Type=Application
 Exec=kmixctrl --restore
 OnlyShowIn=KDE;
