@@ -143,6 +143,8 @@ class Mixer : public QObject
       virtual int volume( const QString& mixdeviceID );
       virtual int masterVolume();
 
+      virtual const QString& masterDeviceIndex();
+
       virtual void setMute( const QString& mixdeviceID, bool on );
       virtual bool mute( const QString& mixdeviceID );
       virtual void toggleMute( const QString& mixdeviceID );

@@ -560,6 +560,18 @@ int Mixer::masterVolume()
   return vol;
 }
 
+// @dbus
+const QString& Mixer::masterDeviceIndex()
+{
+  MixDevice *master = getLocalMasterMD();
+  if (master == 0){
+    QString tempQString = QString();
+    return tempQString;
+  }
+  return master->id();
+}
+
+
 // @dcop
 void Mixer::increaseVolume( const QString& mixdeviceID )
 {

@@ -22,6 +22,9 @@
     <method name="masterVolume">
       <arg type="i" direction="out"/>
     </method>
+    <method name="masterDeviceIndex">
+      <arg type="s" direction="out"/>
+    </method>
     <method name="setAbsoluteVolume">
       <arg name="deviceidx" type="s" direction="in"/>
       <arg name="absoluteVolume" type="x" direction="in"/>
