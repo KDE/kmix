@@ -59,7 +59,7 @@ endif (HAVE_LIBASOUND2)
 install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmix kdeinit_kmix )
-install(TARGETS kmix  DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### next target ###############
 
@@ -87,7 +87,7 @@ endif (HAVE_LIBASOUND2)
 install(TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )
-install(TARGETS kmixctrl DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 
 ########### next target ###############
