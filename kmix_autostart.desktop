@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kmix --autostart
+Exec=kmix
 DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Type=Application
