@@ -50,6 +50,7 @@
 #include "verticaltext.h"
 
 static const int MIN_SLIDER_SIZE = 50;
+KShortcut MDWSlider::dummyShortcut;
 /**
  * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
  *
@@ -110,18 +111,33 @@ MDWSlider::MDWSlider(MixDevice* md,
    QString increaseVolumeName = i18n( "Increase Volume" );
    increaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( increaseVolumeName  );
+#ifdef __GNUC__
+#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been commited
+#endif
+   b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+//   b->enableGlobalShortcut();
    connect(b, SIGNAL(triggered(bool) ), SLOT(increaseVolume()));
 
    b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
    QString decreaseVolumeName = i18n( "Decrease Volume" );
    decreaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( decreaseVolumeName );
+#ifdef __GNUC__
+#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been commited
+#endif
+   b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+//   b->enableGlobalShortcut();
    connect(b, SIGNAL(triggered(bool) ), SLOT( decreaseVolume() ));
 
    b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
    QString muteVolumeName = i18n( "Toggle Mute" );
    muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( muteVolumeName );
+#ifdef __GNUC__
+#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been commited
+#endif
+   b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+//   b->enableGlobalShortcut();
 
    connect(b, SIGNAL(triggered(bool) ), SLOT( toggleMuted() ));
    if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
