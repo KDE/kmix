@@ -23,6 +23,7 @@
 #ifndef MDWSLIDER_H
 #define MDWSLIDER_H
 
+#include <KShortcut>
 #include <QCheckBox>
 #include <QList>
 #include <QWidget>
@@ -104,6 +105,7 @@ private slots:
     void decreaseVolume();
 
 private:
+    KShortcut dummyShortcut;
     QPixmap icon( int icontype );
     void setIcon( int icontype );
     QPixmap loadIcon( const char* filename );

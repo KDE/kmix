@@ -50,7 +50,7 @@
 #include "verticaltext.h"
 
 static const int MIN_SLIDER_SIZE = 50;
-KShortcut MDWSlider::dummyShortcut;
+
 /**
  * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
  *
