@@ -356,10 +356,10 @@ void MDWSlider::createWidgetsTopPart(QBoxLayout *layout, bool showMuteLED)
        m_iconLayout->addSpacing( 3 );
        if ( m_mixdevice->playbackVolume().hasSwitch() ) {
             if ( m_mixdevice->playbackVolume().switchType() == Volume::OnSwitch ) {
-               m_muteText = new QLabel("On", this); // l10n() this AFTER KDE4.0 !!
+               m_muteText = new QLabel(i18n("On"), this); 
             }
             else if ( m_mixdevice->playbackVolume().switchType() == Volume::OffSwitch ) {
-               m_muteText = new QLabel( "Off", this); // l10n() this AFTER KDE4.0 !!
+               m_muteText = new QLabel( i18n("Off"), this); 
             }
            else {
                m_muteText = new QLabel(i18n( "Mute"), this);
