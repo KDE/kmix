@@ -78,6 +78,21 @@
 
 #if defined(OSS_MIXER)
 #include "mixer_oss.cpp"
+
+#if !defined(__NetBSD__) && !defined(__OpenBSD__)
+#include <sys/soundcard.h>
+#else
+#include <soundcard.h>
+#endif
+#if SOUND_VERSION >= 0x040000
+#define OSS4_MIXER
+#undef OSS_MIXER
+#endif
+
+#endif
+
+#if defined(OSS4_MIXER)
+#include "mixer_oss4.cpp"
 #endif
 
 #if defined(HPUX_MIXER)
@@ -116,6 +131,10 @@ MixerFactory g_mixerFactories[] = {
 
 #if defined(ALSA_MIXER)
     { ALSA_getMixer, ALSA_getDriverName },
+#endif
+
+#if defined(OSS4_MIXER)
+    { OSS4_getMixer, OSS4_getDriverName },
 #endif
 
 #if defined(OSS_MIXER)
