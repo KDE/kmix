@@ -61,6 +61,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
    createMasterVolWidget();
    createActions();
    //connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
+   connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -370,7 +371,7 @@ void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
 }
 
 void
-KMixDockWidget::contextMenuAboutToShow( KMenu* /* menu */ )
+KMixDockWidget::contextMenuAboutToShow()
 {
     QAction* showAction = actionCollection()->action("minimizeRestore");
     if ( parentWidget() && showAction )
