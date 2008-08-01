@@ -64,7 +64,6 @@ class KMixDockWidget : public KSystemTrayIcon  {
    void moveVolumePopoup();
    void trayWheelEvent(QWheelEvent *);
 //    void trayToolTipEvent(QHelpEvent *e );
-   void contextMenuAboutToShow( KMenu* menu );
    void toggleMinimizeRestore();
    bool event( QEvent *);
 
@@ -80,6 +79,7 @@ class KMixDockWidget : public KSystemTrayIcon  {
    void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
+   void contextMenuAboutToShow();
 };
 
 #endif
