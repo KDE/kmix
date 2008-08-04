@@ -391,14 +391,13 @@ KMixDockWidget::contextMenuAboutToShow()
     }
 
     // Enable/Disable "Muted" menu item
-   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
-   if ( dockAreaPopup != 0  ) {
-        MixDevice* md = dockAreaPopup->dockDevice();
-        KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
-	//kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
-        if ( md != 0 && dockMuteAction != 0 ) {
-           dockMuteAction->setChecked( md->isMuted() );
-        }
+    MixDevice* md = Mixer::getGlobalMasterMD();
+    KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
+    //kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
+    if ( md != 0 && dockMuteAction != 0 ) {
+        bool hasSwitch = md->playbackVolume().hasSwitch();
+        dockMuteAction->setEnabled( hasSwitch );
+        dockMuteAction->setChecked( hasSwitch && md->isMuted() );
     }
 }
 
