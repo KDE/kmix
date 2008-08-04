@@ -66,6 +66,10 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
    createActions();
    //connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+
+   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(referenceWidget);
+   if ( _volumePopup && dockAreaPopup != 0 )
+      dockAreaPopup->installEventFilter(this);
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -136,6 +140,16 @@ KMixDockWidget::createMasterVolWidget()
     connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap() ) );
 }
 
+bool KMixDockWidget::eventFilter(QObject * obj, QEvent * e)
+{
+   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
+    if ( obj == dockAreaPopup && e->type() == QEvent::Show)
+    {
+        moveVolumePopoup();
+    }
+
+    return false;
+}
 
 void KMixDockWidget::selectMaster()
 {
@@ -367,11 +381,6 @@ void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
     if ( reason == QSystemTrayIcon::MiddleClick ) {
          dockMute();
     }
-   else if ( reason == QSystemTrayIcon::Trigger ) {
-         // Move the popup to a suitable place
-         if (_volumePopup)
-            moveVolumePopoup();
-   }
 }
 
 void

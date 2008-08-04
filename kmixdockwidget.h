@@ -47,6 +47,8 @@ class KMixDockWidget : public KSystemTrayIcon  {
    explicit KMixDockWidget(KMixWindow *parent, QWidget *referenceWidget, bool volumePopup);
    ~KMixDockWidget();
 
+   bool eventFilter(QObject * obj, QEvent * e);
+
    void setErrorPixmap();
    void ignoreNextEvent();
    //ViewDockAreaPopup* getDockAreaPopup();
