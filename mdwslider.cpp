@@ -305,6 +305,7 @@ void MDWSlider::createWidgets( bool showMuteLED, bool showRecordLED )
 			 slider->setMinimumSize( slider->sizeHint() );
 		 }
 
+		 slider->setBackgroundOrigin(AncestorOrigin);
 		 slider->installEventFilter( this );
 		 QToolTip::add( slider, m_mixdevice->name() );
 
@@ -415,6 +416,7 @@ MDWSlider::setIcon( int icontype )
    if( !m_iconLabel )
    {
       m_iconLabel = new QLabel(this);
+      m_iconLabel->setBackgroundOrigin(AncestorOrigin);
       installEventFilter( m_iconLabel );
    }
 

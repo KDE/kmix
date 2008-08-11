@@ -39,6 +39,7 @@
 ViewApplet::ViewApplet(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, KPanelApplet::Position position )
     : ViewBase(parent, name, QString::null, mixer, WStyle_Customize|WStyle_NoBorder, vflags)
 {
+    setBackgroundOrigin(AncestorOrigin);
     // remove the menu bar action, that is put by the "ViewBase" constructor in _actions.
     //KToggleAction *m = static_cast<KToggleAction*>(KStdAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
     _actions->remove( KStdAction::showMenubar(this, SLOT(toggleMenuBarSlot()), _actions) );
@@ -105,23 +106,25 @@ QWidget* ViewApplet::add(MixDevice *md)
     */
     Qt::Orientation sliderOrientation;
     if (_viewOrientation == Qt::Horizontal )
-	sliderOrientation = Qt::Vertical;
+        sliderOrientation = Qt::Vertical;
     else
-	sliderOrientation = Qt::Horizontal;
+        sliderOrientation = Qt::Horizontal;
 	
     //    kdDebug(67100) << "ViewApplet::add()\n";
     MixDeviceWidget *mdw =
-	new MDWSlider(
-			    _mixer,       // the mixer for this device
-			    md,           // MixDevice (parameter)
-			    false,        // Show Mute LED
-			    false,        // Show Record LED
-			    true,         // Small
-			    sliderOrientation, // Orientation
-			    this,         // parent
-			    this,         // View widget
-			    md->name().latin1()
-			    );
+        new MDWSlider(
+                _mixer,       // the mixer for this device
+                md,           // MixDevice (parameter)
+                false,        // Show Mute LED
+                false,        // Show Record LED
+                true,         // Small
+                sliderOrientation, // Orientation
+                this,         // parent
+                this,         // View widget
+                md->name().latin1()
+                );
+    mdw->setBackgroundOrigin(AncestorOrigin);
+    
     static_cast<MDWSlider*>(mdw)->setValueStyle(MixDeviceWidget::NNONE);
     static_cast<MDWSlider*>(mdw)->setIcons(shouldShowIcons( size()) ); // !!! This should use the panel size
     _layoutMDW->add(mdw);

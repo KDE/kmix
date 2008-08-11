@@ -158,6 +158,7 @@ KMixApplet::KMixApplet( const QString& configFile, Type t,
                          APP_VERSION, "Mini Sound Mixer Applet", KAboutData::License_GPL,
                          I18N_NOOP( "(c) 1996-2000 Christian Esken\n(c) 2000-2003 Christian Esken, Stefan Schimanski") )
 {
+    setBackgroundOrigin(AncestorOrigin);
     kdDebug(67100) << "KMixApplet::KMixApplet instancing Applet. Old s_instCount="<< s_instCount << " configfile=" << configFile << endl;
     //kdDebug(67100) << "KMixApplet::KMixApplet()" << endl;
     _layout = new QHBoxLayout(this); // it will always only be one item in it, so we don't care whether it is HBox or VBox
