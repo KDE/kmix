@@ -33,10 +33,10 @@ protected:
   virtual int close();
   virtual bool needsPolling() { return true; };
 
+  int     m_ossVersion;
   int     m_fd;
-  int	  m_numExtensions;
+  int     m_numExtensions;
+  int     m_numMixers;
   QString m_deviceName;
-
-  oss_sysinfo m_backendSysinfo;
 };
 #endif
