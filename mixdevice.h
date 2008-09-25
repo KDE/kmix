@@ -47,7 +47,7 @@ class Mixer;
  * can contain the 5 following subcontrols: playback-volume, capture-volume, playback-switch,
  * capture-switch and enumeration.
 
-   The class is called MixDevice for historical reasons. Today it is just the the Synonym for "Control".
+   The class is called MixDevice for historical reasons. Today it is just the Synonym for "Control".
 
    Design hint: In the past I (esken) considered merging the MixDevice and Volume classes.
                 I finally decided against it, as it seems better to have the MixDevice being the container
