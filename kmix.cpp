@@ -112,7 +112,7 @@ void KMixWindow::initActions()
    KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
    KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
-   QAction *action = actionCollection()->addAction( "hwinfo" );
+   KAction *action = actionCollection()->addAction( "hwinfo" );
    action->setText( i18n( "Hardware &Information" ) );
    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
    action = actionCollection()->addAction( "hide_kmixwindow" );
