@@ -112,7 +112,7 @@ MDWSlider::MDWSlider(MixDevice* md,
    increaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( increaseVolumeName  );
 #ifdef __GNUC__
-#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been commited
+#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
 #endif
    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
 //   b->enableGlobalShortcut();
@@ -123,7 +123,7 @@ MDWSlider::MDWSlider(MixDevice* md,
    decreaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( decreaseVolumeName );
 #ifdef __GNUC__
-#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been commited
+#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
 #endif
    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
 //   b->enableGlobalShortcut();
@@ -134,7 +134,7 @@ MDWSlider::MDWSlider(MixDevice* md,
    muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
    b->setText( muteVolumeName );
 #ifdef __GNUC__
-#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been commited
+#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
 #endif
    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
 //   b->enableGlobalShortcut();

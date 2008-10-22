@@ -251,7 +251,7 @@ void KMixWindow::saveViewConfig()
         QWidget *w = m_wsMixers->widget(i);
         if ( w->inherits("KMixerWidget") ) {
             KMixerWidget* mw = (KMixerWidget*)w;
-            // Here also Views are saved. even for Mixers that are closed. This is neccesary when unplugging cards.
+            // Here also Views are saved. even for Mixers that are closed. This is necessary when unplugging cards.
             // Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
             mw->saveConfig( KGlobal::config().data() );
         }
@@ -442,7 +442,7 @@ void KMixWindow::unplugged( const QString& udi)
                 }
             }
             MixerToolBox::instance()->removeMixer(mixer);
-            // Check whether the Global Master disappeared, and select a new one if neccesary
+            // Check whether the Global Master disappeared, and select a new one if necessary
             MixDevice* md = Mixer::getGlobalMasterMD();
             if ( globalMasterMixerDestroyed || md == 0 ) {
                 // We don't know what the global master should be now.

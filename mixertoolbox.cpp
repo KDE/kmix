@@ -62,7 +62,7 @@ MixerToolBox* MixerToolBox::instance()
  * Scan for Mixers in the System. This is the method that implicitely fills the
  * list of Mixer's, which is accessible via the static Mixer::mixer() method.
  *
- * This is run only once during the initilization phase of KMix. It has the following tasks:
+ * This is run only once during the initialization phase of KMix. It has the following tasks:
  * 1) Coldplug scan, to fill the initial mixer list
 * 2) Rember UDI's, to match them when unplugging a device
 * 3) Find out, which Backend to use (plugin events of other Backends are ignored).
@@ -127,7 +127,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
          Mixer *mixer = new Mixer( driverName, dev );
          possiblyAddMixer(mixer);
    
-         /* Lets decide if the autoprobing shall end (BTW: In multiDriver mode we scan all devices, so no check is neccesary) */
+         /* Lets decide if the autoprobing shall end (BTW: In multiDriver mode we scan all devices, so no check is necessary) */
          if ( ! multiDriverMode ) {
             // In Single-Driver-mode we only need to check after we reached devNumMax
             if ( dev == devNumMax && Mixer::mixers().count() != 0 )
@@ -388,7 +388,7 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
    }
    
    if ( guiprofBest == 0 ) {
-      // Still no profile found. This should usualy not happen. This means one of the fllowng things:
+      // Still no profile found. This should usually not happen. This means one of the following things:
       // a) The KMix installation is not OK
       // b) The user has a defective profile in ~/.kde/share/apps/kmix/profiles/
       // c) It is a Backend that ships no default profile (currently this is only Mixer_SUN)

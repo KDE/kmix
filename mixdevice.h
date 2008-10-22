@@ -94,7 +94,7 @@ public:
    /**
    * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) 
     * MUST ensure that all MixDevices's of one card have unique ID's.
-   * The ID is used through the whole KMix appplication (including the config file) for identifying controls.
+   * The ID is used through the whole KMix application (including the config file) for identifying controls.
    */
    const QString& id() const;
 
