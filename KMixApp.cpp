@@ -48,21 +48,24 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
+        // There are 3 cases for a new instance
+
 	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
 	if ( m_kmix )
 	{	// There already exists an instance/window
 		kDebug(67100) <<  "KMixApp::newInstance() Instance exists";
 
 		if ( ! _keepVisibility && !isSessionRestored() ) {
-			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=false";
-			// Default case: If KMix is running and the *USER*
+			kDebug(67100) <<  "KMixApp::newInstance() SHOW WINDOW (_keepVisibility=" << _keepVisibility << ", isSessionRestored=" << isSessionRestored();
+			// CASE 1: If KMix is running AND the *USER*
                         // starts it again, the KMix main window will be shown.
 			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
 			// explicitly be shown.
 			m_kmix->show();
 		}
 		else {
-			//kDebug(67100) <<  "KMixApp::newInstance() _keepVisibility=true || isRestored()=true";
+                        // CASE 2: If KMix is running, AND  ( session gets restored OR keepvisibilty command line switch )
+			kDebug(67100) <<  "KMixApp::newInstance() REGULAR_START _keepVisibility=" << _keepVisibility;
 			// Special case: Command line arg --keepVisibility was used:
 			// We don't want to change the visibiliy, thus we don't call show() here.
 			//
@@ -74,8 +77,9 @@ KMixApp::newInstance()
 	}
 	else
 	{
+                // CASE 3: KMix was not running yet => instanciate a new one
 		//kDebug(67100) <<  "KMixApp::newInstance() !m_kmix";
-		m_kmix = new KMixWindow;
+		m_kmix = new KMixWindow(_keepVisibility);
 		//connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
 		{

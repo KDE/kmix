@@ -83,6 +83,9 @@ friend class MixDevice;
     // Set volumes as specified by the channel mask
     void setVolume( const Volume &vol, ChannelMask chmask);
     void setVolume( ChannelID chid, long volume);
+
+    // Increase or decrease all volumes by step
+    void changeAllVolumes( long step );
     
     long getVolume(ChannelID chid);
     long getAvgVolume(ChannelMask chmask);

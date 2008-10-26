@@ -58,6 +58,7 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md,
                                  QWidget* parent, ViewBase* mw) :
    QWidget( parent ), m_mixdevice( md ), m_view( mw ),
    m_disabled( false ), _orientation( orientation ), m_small( small )
+   , m_shortcutsDialog(0)
 {
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );
@@ -79,7 +80,12 @@ bool MixDeviceWidget::isDisabled() const
 
 void MixDeviceWidget::defineKeys()
 {
-   KShortcutsDialog::configure(_mdwPopupActions ); // , KShortcutsEditor::LetterShortcutsAllowed, this);
+   // Dialog for *global* shortcuts of this MDW
+   if ( m_shortcutsDialog == 0 ) {
+      m_shortcutsDialog = new KShortcutsDialog( KShortcutsEditor::GlobalAction );
+      m_shortcutsDialog->addCollection(_mdwPopupActions);
+   }
+   m_shortcutsDialog->configure();
 }
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }

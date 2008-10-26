@@ -573,16 +573,20 @@ void Mixer::increaseVolume( const QString& mixdeviceID )
 {
     MixDevice *md= getMixdeviceById( mixdeviceID );
     if (md != 0) {
-        Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-        Volume& volC=md->captureVolume();
-        double fivePercent = (volP.maxVolume()-volP.minVolume()+1) / 20;
-        for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++)
-        {
-            int volToChange = volP.getVolume((Volume::ChannelID)i);
-            if ( fivePercent < 1 ) fivePercent = 1;
-                volToChange += (int)fivePercent;
-            volP.setVolume((Volume::ChannelID)i, volToChange);
+        Volume& volP=md->playbackVolume();
+        if ( volP.hasVolume() ) {
+           double step = (volP.maxVolume()-volP.minVolume()+1) / 20;
+           if ( step < 1 ) step = 1;
+           volP.changeAllVolumes(step);
         }
+        
+        Volume& volC=md->captureVolume();
+        if ( volC.hasVolume() ) {
+           double step = (volC.maxVolume()-volC.minVolume()+1) / 20;
+           if ( step < 1 ) step = 1;
+           volC.changeAllVolumes(step);
+        }
+
         _mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
 
@@ -597,17 +601,22 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
 {
     MixDevice *md= getMixdeviceById( mixdeviceID );
     if (md != 0) {
-        Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
+        Volume& volP=md->playbackVolume();
+        if ( volP.hasVolume() ) {
+           double step = (volP.maxVolume()-volP.minVolume()+1) / 20;
+           if ( step < 1 ) step = 1;
+           volP.changeAllVolumes(-step);
+        }
+        
         Volume& volC=md->captureVolume();
-        double fivePercent = (volP.maxVolume()-volP.minVolume()+1) / 20;
-        for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++) {
-            int volToChange = volP.getVolume((Volume::ChannelID)i);
-            if ( fivePercent < 1 ) fivePercent = 1;
-                volToChange -= (int)fivePercent;
-            volP.setVolume((Volume::ChannelID)i, volToChange);
-        } // for
-        _mixerBackend->writeVolumeToHW(mixdeviceID, md);
+        if ( volC.hasVolume() ) {
+           double step = (volC.maxVolume()-volC.minVolume()+1) / 20;
+           if ( step < 1 ) step = 1;
+           volC.changeAllVolumes(-step);
+        }
     }
+
+    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
 
     /************************************************************
         It is important, not to implement this method like this:

@@ -25,6 +25,7 @@
 // include files for QT
 #include <QCheckBox>
 #include <QLabel>
+#include <QDesktopWidget>
 #include <qradiobutton.h>
 #include <KTabWidget>
 
@@ -62,7 +63,7 @@
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
-KMixWindow::KMixWindow()
+KMixWindow::KMixWindow(bool invisible)
    : KXmlGuiWindow(0),
    m_showTicks( true ),
    m_showMenubar(true),
@@ -87,7 +88,7 @@ KMixWindow::KMixWindow()
    theKMixDeviceManager->initHotplug();
    connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
    connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
-   if ( m_startVisible )
+   if ( m_startVisible && ! invisible)
       show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it
 
    connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()) );
@@ -122,6 +123,32 @@ void KMixWindow::initActions()
    action = actionCollection()->addAction("toggle_channels_currentview");
    action->setText(i18n("Configure &Channels..."));
    connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
+
+   KAction* globalAction = actionCollection()->addAction("increase_volume");
+   globalAction->setText(i18n("Increase Volume"));
+   globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
+   connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
+
+   globalAction = actionCollection()->addAction("decrease_volume");
+   globalAction->setText(i18n("Decrease Volume"));
+   globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
+   connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
+
+   globalAction = actionCollection()->addAction("mute");
+   globalAction->setText(i18n("Mute"));
+   globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
+   connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
+
+   volumeDisplay = new QProgressBar();
+   volumeDisplay->setWindowFlags(Qt::X11BypassWindowManagerHint);
+   QDesktopWidget* desktop = KApplication::kApplication()->desktop();
+   QRect rect = desktop->screenGeometry();
+   int width = (rect.width()/2) - (volumeDisplay->width()/2);
+   int height = (rect.height()/2) - (volumeDisplay->height()/2);
+   volumeDisplay->move(width, height);
+   volumeDisplayTimer = new QTimer(this);
+   connect(volumeDisplayTimer, SIGNAL(timeout()), this, SLOT(slotHideVolumeDisplay()));
+
    createGUI( "kmixui.rc" );
 }
 
@@ -552,7 +579,9 @@ bool KMixWindow::queryClose ( )
         return false;
     }
     else {
-        // Accept the close in all situations, when the user has disabled docking
+        // Accept the close, if:
+        //     The user has disabled docking
+        // or  SessionSaving() is running
 //         kDebug(67100) << "close";
         return true;
     }
@@ -568,6 +597,57 @@ void KMixWindow::hideOrClose ( )
         //  if there is no dock widget, we will quit
         quit();
     }
+}
+
+void KMixWindow::slotIncreaseVolume()
+{
+  Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
+  MixDevice *md = Mixer::getGlobalMasterMD();
+  md->setMuted(false);
+  mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
+  // md->playbackVolume().increase(); // not yet implemented
+  showVolumeDisplay();
+}
+
+void KMixWindow::slotDecreaseVolume()
+{
+  Mixer* mixer = Mixer::getGlobalMasterMixer();
+  mixer->setMute("Master:0", false);
+  mixer->decreaseVolume("PCM:0");
+  showVolumeDisplay();
+}
+
+void KMixWindow::showVolumeDisplay()
+{
+  Mixer* mixer = Mixer::getGlobalMasterMixer();
+  int currentVolume = mixer->masterVolume();
+  volumeDisplay->setValue(currentVolume);
+  if (mixer->mute("Master:0")) {
+    volumeDisplay->setValue(0);
+  }
+  volumeDisplay->show();
+
+  //FIXME, how to get this to work before it is displayed for the first time?
+  QDesktopWidget* desktop = KApplication::kApplication()->desktop();
+  QRect rect = desktop->screenGeometry();
+  int width = (rect.width()/2) - (volumeDisplay->width()/2);
+  int height = (rect.height()/2) - (volumeDisplay->height()/2);
+  volumeDisplay->move(width, height);
+
+  volumeDisplayTimer->setInterval(2000);
+  volumeDisplayTimer->start();
+}
+
+void KMixWindow::slotHideVolumeDisplay()
+{
+  volumeDisplay->hide();
+}
+
+void KMixWindow::slotMute()
+{
+  Mixer* mixer = Mixer::getGlobalMasterMixer();
+  mixer->toggleMute("Master:0");
+  showVolumeDisplay();
 }
 
 void KMixWindow::quit()

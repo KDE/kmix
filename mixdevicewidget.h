@@ -33,6 +33,7 @@
 class KLed;
 class KAction;
 class KActionCollection;
+class KShortcutsDialog;
 
 class MixDevice;
 class Mixer;
@@ -83,6 +84,7 @@ protected:
       bool                 m_disabled;
       Qt::Orientation      _orientation;
       bool                 m_small;
+      KShortcutsDialog*    m_shortcutsDialog;
 
 private:
       void mousePressEvent( QMouseEvent *e );

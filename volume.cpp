@@ -97,6 +97,17 @@ void Volume::setAllVolumes(long vol)
     }
 }
 
+void Volume::changeAllVolumes( long step )
+{
+        for (unsigned int i=Volume::CHIDMIN; i <= Volume::CHIDMAX; i++)
+        {
+            int volToChange = getVolume((Volume::ChannelID)i);
+            volToChange += (int)step;
+            setVolume((Volume::ChannelID)i, volToChange);
+        }
+}
+
+
 // @ compatibility
 void Volume::setVolume( ChannelID chid, long vol)
 {

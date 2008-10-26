@@ -29,6 +29,8 @@
 class QLabel;
 #include <qlist.h>
 #include <QVBoxLayout>
+#include <QProgressBar>
+#include <QTimer>
 class KTabWidget;
 
 // KDE
@@ -51,7 +53,7 @@ KMixWindow : public KXmlGuiWindow
    Q_OBJECT
 
   public:
-   KMixWindow();
+   KMixWindow(bool invisible);
    ~KMixWindow();
 
    bool updateDocking();
@@ -115,6 +117,9 @@ KMixWindow : public KXmlGuiWindow
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;
    unsigned int m_configVersion;
+   QProgressBar* volumeDisplay;
+   QTimer* volumeDisplayTimer;
+   void showVolumeDisplay();
 
   private slots:
    void saveConfig();
@@ -124,6 +129,10 @@ KMixWindow : public KXmlGuiWindow
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
    void hideOrClose();
+   void slotIncreaseVolume();
+   void slotDecreaseVolume();
+   void slotHideVolumeDisplay();
+   void slotMute();
 };
 
 #endif // KMIX_H

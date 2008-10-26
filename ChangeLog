@@ -8,3 +8,9 @@ V1.91
   in the panel applet to show only important devices initally.
 - Much nicer "New Mixer Tab..." dialog
 
+v3.0
+- KDE 4 version
+
+
+TODO:
+ Reenable OSD (osd.cpp, cpp.h)

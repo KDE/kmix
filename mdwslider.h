@@ -37,6 +37,7 @@ class QLabel;
 class KLed;
 class KLedButton;
 class KAction;
+#include <kshortcut.h>
 
 class MixDevice;
 class VerticalText;
@@ -142,6 +143,7 @@ private:
     QCheckBox* m_captureLED;
     QLabel* m_captureText;
     QWidget *m_captureSpacer;
+//    static KShortcut dummyShortcut;
 
 
     QList<QWidget *> m_slidersPlayback;
