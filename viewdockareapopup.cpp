@@ -53,7 +53,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
 
     _layoutMDW = new QGridLayout( _frame );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
-    _layoutMDW->setMargin( KDialog::marginHint() );
+    //_layoutMDW->setMargin( KDialog::marginHint() );
     _layoutMDW->setObjectName( "KmixPopupLayout" );
     _hideTimer = new QTime();
     setMixSet();
