@@ -58,6 +58,7 @@
      In rare cases ALSA has a real device that is called "Front" (like on HDA_Nvidia)
      Thus we use both here. -->
 <control id="^Master:0$"      tab="Base" name="Front" show="simple" />
+<control id="^Master:0$"      tab="Base" show="simple" />
 <control id="^Front:0$"       tab="Base" show="simple" />
 <control id="^Surround:0$"    tab="Base" show="simple"/>
 <control id="^Center:0$"      tab="Base" show="simple"/>
@@ -69,10 +70,14 @@
 <control id="^DAC:0$"         tab="Base" show="simple"/>
 <control id="^ADC:0$"         tab="Base" show="simple"/>
 
+<!-- This is an example how to rename controls
+<control id="^Master:0$"      tab="Base" name="Front" show="simple" />
+-->
 
 <control id="^.*$" tab="Base" show="extended" />
 
-<!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted -->
+<!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted
+     Not used yet. -->
 <!--
 <tab name="Record" type="Sliders"/>
 <tab name="Play" type="Sliders"/>
