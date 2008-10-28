@@ -120,6 +120,7 @@ KMixWindow : public KXmlGuiWindow
    QProgressBar* volumeDisplay;
    QTimer* volumeDisplayTimer;
    void showVolumeDisplay();
+   void increaseOrDecreaseVolume(bool increase);
 
   private slots:
    void saveConfig();

@@ -599,22 +599,28 @@ void KMixWindow::hideOrClose ( )
     }
 }
 
-void KMixWindow::slotIncreaseVolume()
+// internal helper to prevent code duplication in slotIncreaseVolume and slotDecreaseVolume
+void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
   MixDevice *md = Mixer::getGlobalMasterMD();
   md->setMuted(false);
-  mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
+  if (increase)
+    mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
+  else
+    mixer->decreaseVolume(md->id());
   // md->playbackVolume().increase(); // not yet implemented
   showVolumeDisplay();
 }
 
+void KMixWindow::slotIncreaseVolume()
+{
+  increaseOrDecreaseVolume(true);
+}
+
 void KMixWindow::slotDecreaseVolume()
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer();
-  mixer->setMute("Master:0", false);
-  mixer->decreaseVolume("PCM:0");
-  showVolumeDisplay();
+  increaseOrDecreaseVolume(false);
 }
 
 void KMixWindow::showVolumeDisplay()
