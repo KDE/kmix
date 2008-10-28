@@ -626,11 +626,12 @@ void KMixWindow::slotDecreaseVolume()
 void KMixWindow::showVolumeDisplay()
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer();
-  int currentVolume = mixer->masterVolume();
-  volumeDisplay->setValue(currentVolume);
-  if (mixer->mute("Master:0")) {
-    volumeDisplay->setValue(0);
+  MixDevice *md = Mixer::getGlobalMasterMD();
+  int currentVolume = mixer->volume(md->id());
+  if (md->isMuted()) {
+    currentVolume = 0;
   }
+  volumeDisplay->setValue(currentVolume);
   volumeDisplay->show();
 
   //FIXME, how to get this to work before it is displayed for the first time?
@@ -652,7 +653,8 @@ void KMixWindow::slotHideVolumeDisplay()
 void KMixWindow::slotMute()
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer();
-  mixer->toggleMute("Master:0");
+  MixDevice *md = Mixer::getGlobalMasterMD();
+  mixer->toggleMute(md->id());
   showVolumeDisplay();
 }
 
