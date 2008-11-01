@@ -53,6 +53,19 @@ KMixApp::newInstance()
 	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
 	if ( m_kmix )
 	{	// There already exists an instance/window
+ 
+                /* !!! @bug : _keepVisibilty has the wrong value here.
+                    It is supposed to have the value set by the command line
+                    arg, and the keepVisibilty() method.
+                    All looks fine, BUT(!!!) THIS code is NEVER entered in
+                    the just started process.
+                    KDE IPC (DBUS) has instead notified the already running
+                    KMix process, about a newInstance(). So _keepVisibilty
+                    has always the value of the first started KMix process.
+                    This is a bug in KMix and  must be fixed.
+                    cesken, 2008-11-01
+                 */
+                 
 		kDebug(67100) <<  "KMixApp::newInstance() Instance exists";
 
 		if ( ! _keepVisibility && !isSessionRestored() ) {
@@ -78,7 +91,7 @@ KMixApp::newInstance()
 	else
 	{
                 // CASE 3: KMix was not running yet => instanciate a new one
-		//kDebug(67100) <<  "KMixApp::newInstance() !m_kmix";
+		//kDebug(67100) <<  "KMixApp::newInstance() Instanciate: _keepVisibility=" << _keepVisibility ;
 		m_kmix = new KMixWindow(_keepVisibility);
 		//connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
@@ -90,9 +103,7 @@ KMixApp::newInstance()
 	return 0;
 }
 
-
 void KMixApp::keepVisibility(bool val_keepVisibility) {
-   //kDebug(67100) <<  "KMixApp::keepVisibility()";
    _keepVisibility = val_keepVisibility;
 }
 
