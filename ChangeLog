@@ -11,6 +11,19 @@ V1.91
 v3.0
 - KDE 4 version
 
+v3.5
+- This is the KDE 4.2 head version
+- Wish 132330: On-screen display of volume level
+- Wish 157701: Smaller neater dockarea popup
+- Bug  161393: kmix does not associate hotplugged USB HID volume control
+- Bug  168658: kmix - master channel missing
+- Bug  172958: OSD doesn't update when volume is changed using keyboard
+- Feature    : Automatically grab XF86VolumeUp, XF86VolumeDown and XF86VolumeMute (done)
 
-TODO:
- Reenable OSD (osd.cpp, cpp.h)
+TODO
+  Remove KMix interface from KMilo
+  Remove grabbing of XF86VolumeUp, XF86VolumeDown and XF86VolumeMute from KMiloA
+
+Posssible issues:
+i001: When the user redefines the automatially grabbed XF86Volume* keys, he doesn't have an easy possibilty to get them back, because they are now marked as "no shortcut" in the global shortcut registry. The user must go the KDE system settings module "global shortcuts" and reset them to their default. No user will wfind that!!! So this should be possible inside KMix (ShortcutsDialog or a button "reset volume keys" in the configuration dialog).
+

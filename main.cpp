@@ -61,7 +61,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    bool hasArgKeepvisibility = args->isSet("keepvisibility");
-   kDebug(67100) <<  "hasArgKeepvisibility=" << hasArgKeepvisibility;
+   //kDebug(67100) <<  "hasArgKeepvisibility=" << hasArgKeepvisibility;
    KMixApp::keepVisibility(hasArgKeepvisibility);
 
    if (!KMixApp::start())
