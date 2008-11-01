@@ -57,7 +57,7 @@
 <!-- Please note that when an ALSA is labeled as "Master", it is actually "Front".
      In rare cases ALSA has a real device that is called "Front" (like on HDA_Nvidia)
      Thus we use both here. -->
-<control id="^Master:0$"      tab="Base" name="Front" show="simple" />
+<control id="^Master:0$"      tab="Base" show="simple" />
 <control id="^Master:0$"      tab="Base" show="simple" />
 <control id="^Front:0$"       tab="Base" show="simple" />
 <control id="^Surround:0$"    tab="Base" show="simple"/>
