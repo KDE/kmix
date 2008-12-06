@@ -107,7 +107,7 @@ public:
    // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
    // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
    // "mute on", or does it mean "playback on".
-   bool isMuted()                  { return ( ! _playbackVolume.hasSwitch() || ! _playbackVolume.isSwitchActivated() ); }
+   bool isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
    void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
    bool isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
    void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
