@@ -86,7 +86,6 @@
 #endif
 #if SOUND_VERSION >= 0x040000
 #define OSS4_MIXER
-#undef OSS_MIXER
 #endif
 
 #endif
