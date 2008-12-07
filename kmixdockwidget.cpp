@@ -79,13 +79,17 @@ KMixDockWidget::~KMixDockWidget()
 
 void KMixDockWidget::createActions()
 {
-  // Put "Mute" selector in context menu
-  KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
-  action->setText( i18n( "M&ute" ) );
-  connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
-  QAction *a = actionCollection()->action( "dock_mute" );
-  QMenu *menu = contextMenu();
-  if ( a ) menu->addAction( a );
+   QMenu *menu = contextMenu();
+
+   MixDevice* md = Mixer::getGlobalMasterMD();
+  if ( md != 0 && md->playbackVolume().hasSwitch() ) {
+    // Put "Mute" selector in context menu
+    KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
+    action->setText( i18n( "M&ute" ) );
+    connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
+    QAction *a = actionCollection()->action( "dock_mute" );
+    if ( a ) menu->addAction( a );
+}
   
   connect ( this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(kmixSystrayAction(QSystemTrayIcon::ActivationReason) ) );
 
