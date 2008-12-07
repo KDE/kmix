@@ -95,7 +95,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    if ( name.indexOf( "surround"   , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_BACK;
    if ( name.indexOf( "center"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_CENTERFRONT;
    if ( name.indexOf( "ac97"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AC97;
-   if ( name.indexOf( "coaxial "   , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
+   if ( name.indexOf( "coaxial"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
    if ( name.indexOf( "optical"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
    if ( name.indexOf( "iec958"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
    if ( name.indexOf( "mic"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MICROPHONE;
@@ -108,7 +108,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 
 int Mixer_ALSA::open()
 {
-    bool masterChosen = false;
+    int masterChosenQuality = 0;
     int err;
 
     snd_mixer_elem_t *elem;
@@ -201,21 +201,43 @@ int Mixer_ALSA::open()
          qDeleteAll(enumList); // clear temporary list
 
         // --- Recommended master ----------------------------------------
-        if ( mdID == "PCM:0" ) {
-            kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
-            m_recommendedMaster = md;
-            masterChosen = true;
-        }
-        else if (!masterChosen && ct==MixDevice::VOLUME) {
-            // Determine a nicer MasterVolume
-            kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
-            m_recommendedMaster = md;
-            masterChosen = true;
-        }
+        if ( md->playbackVolume().hasVolume() )
+        {
+          if ( mdID == "PCM:0" && masterChosenQuality < 100 ) {
+              kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
+              m_recommendedMaster = md;
+              masterChosenQuality = 100;
+          }
+          else if ( mdID == "Master:0" && masterChosenQuality < 80) {
+              kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
+              m_recommendedMaster = md;
+              masterChosenQuality = 80;
+          }
+          else if ( mdID == "Front:0" && masterChosenQuality < 60) {
+              kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
+              m_recommendedMaster = md;
+              masterChosenQuality = 60;
+          }
+          else if ( mdID == "DAC:0" && masterChosenQuality < 50) {
+              kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
+              m_recommendedMaster = md;
+              masterChosenQuality = 50;
+          }
+          else if ( mdID == "Headphone:0" && masterChosenQuality < 40) {
+              kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
+              m_recommendedMaster = md;
+              masterChosenQuality = 40;
+          }
+          else if ( mdID == "Master Mono:0" && masterChosenQuality < 30) {
+              kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
+              m_recommendedMaster = md;
+              masterChosenQuality = 30;
+          }
 
-        //kDebug(67100) << "ALSA create MDW, vol= " << *vol;
-        delete volPlay;
-        delete volCapture;
+          //kDebug(67100) << "ALSA create MDW, vol= " << *vol;
+          delete volPlay;
+          delete volCapture;
+        }
     } // for all elems
 
 
