@@ -228,10 +228,11 @@ int Mixer_OSS4::open()
 
 				//skip vmix volume controls and mute controls
 				if ( (name.find("vmix") > -1 && name.find( "pcm") > -1) ||
-				     name.find("mute") > -1 )
+				     name.find("mute") > -1
 #ifdef MIXT_MUTE
-				|| (ext.flags & MIXT_MUTE)
+				|| (ext.type == MIXT_MUTE)
 #endif
+				)
 				{
 					continue;
 				}
