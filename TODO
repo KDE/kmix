@@ -1,5 +1,15 @@
 TODO list
 
+KDE4.3
+1) Add feature list to KDE site
+
+2) Add Icon and text to the OSD (optional/config?)
+
+3) Show OSD for every global key assignment (optional/config?)
+
+4) Warn about standard shortcuts (XF86AudioVolume*) assigned to something else (another App, or another Control in KMix).
+
+
 KDE4
 1) Remove ComboBox and replace it by a TabBar "corner widget" (Postponed: Not for KDE4.0)
 (like the konsole session menu)
@@ -26,7 +36,10 @@ Status: pending
 
 8) Resolve show issue after starting KMix (DONE)
 
-9) Get Global Keyboard Shurtcuts work again (Pending)
+9) Get Global Keyboard Shurtcuts work again (Check below pending)
+        Check, whether ALL controls now have a global shortcut
+        entry in the global KDE shortcuts "kcm" module :
+        ... they should NOT, but instead only those who have actually been assigned one)
 
 10) Layout: KMix can be made so small that Labels are partially hidden (DONE)
 
@@ -35,7 +48,7 @@ Status: pending
 ------------------------------------------------------------------------------------
 
 Bug2 in KMix2.1pre:
-- Keys not saved/restored (pending)
+- Keys not saved/restored (DONE)
 - DockApplet shows "show/hide menubar" (DONE)
 - "reversed" in panelapplet is broken. Remove it for now (DONE)
 - Initial paint of sliders in KMixApplet is broken. (DONE)
