@@ -21,7 +21,7 @@ kde4_add_executable(profiletest ${profiletest_SRCS}
     ${kmix_adaptor_SRCS}
     )
 
-target_link_libraries(profiletest  ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS})
+target_link_libraries(profiletest  ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} )
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(profiletest ${ASOUND_LIBRARY})
