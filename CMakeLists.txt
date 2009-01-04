@@ -1,7 +1,5 @@
 project(kmix)
 
-find_package(Plasma)
-
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
 add_subdirectory( tests ) 
@@ -96,7 +94,6 @@ install(TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
 # It might be re-introduced with KDE4.1 or later - esken
 
 #if(Q_WS_X11)
-#if(PLASMA_FOUND)
 #
 #set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
 #   kmixapplet.cpp 
@@ -136,9 +133,6 @@ install(TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
 #install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 #
 #install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
-#else(PLASMA_FOUND)
-#MESSAGE(STATUS "kmix applet will not compile. Install kdebase before")
-#endif(PLASMA_FOUND)
 #endif(Q_WS_X11)
 
 ########### install files ###############
