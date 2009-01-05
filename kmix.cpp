@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QDesktopWidget>
 #include <qradiobutton.h>
+#include <QCursor>
 #include <KTabWidget>
 
 // include files for KDE
@@ -142,9 +143,12 @@ void KMixWindow::initActions()
    volumeDisplay = new QProgressBar();
    volumeDisplay->setWindowFlags(Qt::X11BypassWindowManagerHint);
    QDesktopWidget* desktop = KApplication::kApplication()->desktop();
-   QRect rect = desktop->screenGeometry();
+   //Getting QRect of the screen where cursor is positioned
+   QRect rect = desktop->screenGeometry(QCursor::pos());
    int width = (rect.width()/2) - (volumeDisplay->width()/2);
    int height = (rect.height()/2) - (volumeDisplay->height()/2);
+   width += rect.x();
+   height += rect.y();
    volumeDisplay->move(width, height);
    volumeDisplayTimer = new QTimer(this);
    connect(volumeDisplayTimer, SIGNAL(timeout()), this, SLOT(slotHideVolumeDisplay()));
@@ -636,9 +640,12 @@ void KMixWindow::showVolumeDisplay()
 
   //FIXME, how to get this to work before it is displayed for the first time?
   QDesktopWidget* desktop = KApplication::kApplication()->desktop();
-  QRect rect = desktop->screenGeometry();
+  //Getting QRect of the screen where cursor is positioned
+  QRect rect = desktop->screenGeometry(QCursor::pos());
   int width = (rect.width()/2) - (volumeDisplay->width()/2);
   int height = (rect.height()/2) - (volumeDisplay->height()/2);
+  width += rect.x();
+  height += rect.y();
   volumeDisplay->move(width, height);
 
   volumeDisplayTimer->setInterval(2000);
