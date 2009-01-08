@@ -47,6 +47,10 @@
 #define ALSA_MIXER
 #endif
 
+#ifdef HAVE_PULSE
+#define PULSE_MIXER
+#endif
+
 #define OSS_MIXER
 #endif
 
@@ -75,6 +79,11 @@
 // Alsa API's 
 #if defined(ALSA_MIXER)
 #include "mixer_alsa9.cpp"
+#endif
+
+// Pulse API
+#if defined(PULSE_MIXER)
+#include "mixer_pulse.cpp"
 #endif
 
 #if defined(OSS_MIXER)
@@ -114,6 +123,10 @@ MixerFactory g_mixerFactories[] = {
 
 #if defined(HPUX_MIXER)
     { HPUX_getMixer, HPUX_getDriverName },
+#endif
+
+#if defined(PULSE_MIXER)
+    { PULSE_getMixer, PULSE_getDriverName },
 #endif
 
     { 0, 0 }

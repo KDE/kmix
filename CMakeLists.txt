@@ -1,20 +1,13 @@
 project(kmix)
 
+include_directories( ${GLIB2_INCLUDE_DIR} )
+
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
 add_subdirectory( tests ) 
 
 set(kmix_adaptor_SRCS)
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
-########### next target ###############
-
-# Cleanup
-#   viewsurround.cpp for now
-#   mdwswitch.cpp 
-#   viewoutput.cpp 
-#   viewinput.cpp 
-#   viewswitches.cpp 
-#   viewsliderset.cpp 
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    main.cpp 
@@ -45,7 +38,6 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    guiprofile.cpp )
 
 
-
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
@@ -53,6 +45,11 @@ target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} ${KDE
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
+
+if (HAVE_PULSE)
+    target_link_libraries(kdeinit_kmix ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+endif (HAVE_PULSE)
+
 
 install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -82,60 +79,15 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-install(TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
+if (HAVE_PULSE)
+    target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+endif (HAVE_PULSE)
+
+install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )
 install(TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-
-########### next target ###############
-
-# There is no such thing as a panel applet at the moment
-# It might be re-introduced with KDE4.1 or later - esken
-
-#if(Q_WS_X11)
-#
-#set(kmix_panelapplet_PART_SRCS ${kmix_adaptor_SRCS}
-#   kmixapplet.cpp 
-#   viewbase.cpp 
-#   viewapplet.cpp 
-#   mixdevicewidget.cpp 
-#   mdwslider.cpp 
-#   mixer.cpp 
-#   mixset.cpp 
-#   mixdevice.cpp 
-#   mixer_backend.cpp 
-#   ksmallslider.cpp 
-#   volume.cpp 
-#   kledbutton.cpp 
-#   verticaltext.cpp 
-#   dialogviewconfiguration.cpp 
-#   kmixtoolbox.cpp 
-#   mixertoolbox.cpp 
-#   dialogselectmaster.cpp 
-#   kmixdevicemanager.cpp 
-#   guiprofile.cpp )
-#
-#
-#kde4_add_ui_files(kmix_panelapplet_PART_SRCS colorwidget.ui )
-#
-#
-#kde4_add_plugin(kmix_panelapplet ${kmix_panelapplet_PART_SRCS})
-#
-#
-#
-#target_link_libraries(kmix_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} )
-#
-#if (HAVE_LIBASOUND2)
-#    target_link_libraries(kmix_panelapplet ${ASOUND_LIBRARY})
-#endif (HAVE_LIBASOUND2)
-#
-#install(TARGETS kmix_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
-#
-#install( FILES kmixapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
-#endif(Q_WS_X11)
-
-########### install files ###############
 
 install( FILES kmix.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
