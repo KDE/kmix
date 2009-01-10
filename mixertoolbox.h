@@ -44,7 +44,7 @@ class MixerToolBox : public QObject
       static MixerToolBox* instance();
       void initMixer(bool, QString&);
       void deinitMixer();
-      void possiblyAddMixer(Mixer *mixer);
+      bool possiblyAddMixer(Mixer *mixer);
       void removeMixer(Mixer *mixer);
       void setMixerIgnoreExpression(QString& ignoreExpr);
       QString mixerIgnoreExpression();

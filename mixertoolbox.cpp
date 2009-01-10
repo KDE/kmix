@@ -125,7 +125,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
       for( int dev=0; dev<=devNumMax; dev++ )
       {
          Mixer *mixer = new Mixer( driverName, dev );
-         possiblyAddMixer(mixer);
+         bool mixerAccepted = possiblyAddMixer(mixer);
    
          /* Lets decide if the autoprobing shall end (BTW: In multiDriver mode we scan all devices, so no check is necessary) */
          if ( ! multiDriverMode ) {
@@ -135,7 +135,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
         }
       
          // append driverName (used drivers)
-         if ( !drvInfoAppended )
+         if ( mixerAccepted && !drvInfoAppended )
          {
             drvInfoAppended = true;
             QString driverName = Mixer::driverName(drv);
@@ -146,7 +146,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
          }
       
          // Check whether there are mixers in different drivers, so that the user can be warned
-         if (!multipleDriversActive)
+         if (mixerAccepted && !multipleDriversActive)
          {
             if ( driverWithMixer == -1 )
             {
@@ -186,6 +186,15 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
       md->mixer()->setLocalMasterMD(mdID);
    }
 
+
+
+   if ( Mixer::mixers().count() == 0 )
+   {
+      // If there was no mixer found, we assume, that hotplugging will take place
+       // on the preferred driver (this is always the first in the backend list).
+      driverInfoUsed = Mixer::driverName(0);
+   }
+
    ref_hwInfoString = i18n("Sound drivers supported:");
    ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
 
@@ -205,7 +214,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 
 }
 
-void MixerToolBox::possiblyAddMixer(Mixer *mixer)
+bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 {
     if ( mixer->openIfValid() )
     {
@@ -213,7 +222,7 @@ void MixerToolBox::possiblyAddMixer(Mixer *mixer)
             // This Mixer should be ignored (default expression is "Modem").
             delete mixer;
             mixer = 0;
-            return;
+            return false;
         }
         Mixer::mixers().append( mixer );
         // Count mixer nums for every mixer name to identify mixers with equal names.
@@ -242,11 +251,13 @@ void MixerToolBox::possiblyAddMixer(Mixer *mixer)
     
         mixer->setID(primaryKeyOfMixer);
         emit mixerAdded(primaryKeyOfMixer);
+        return true;
     } // valid
     else
     {
         delete mixer;
         mixer = 0;
+        return false;
     } // invalid
 }
 
