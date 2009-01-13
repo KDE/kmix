@@ -280,7 +280,7 @@ void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
          The OSS v3 API docs indicate that the behaviour is undefined for this case, and it is not
          clearly documented how and whether SOUND_MIXER_CAP_EXCL_INPUT is evaluated in the OSS driver.
          Evaluating that in the application (KMix) could help, but the patch will work independent
-         on whether SOUND_MIXER_CAP_EXCL_INPUT ist set or not.
+         on whether SOUND_MIXER_CAP_EXCL_INPUT is set or not.
 
          In any case this patch is a superb workaround for a shortcoming of the OSS v3 API.
      */
