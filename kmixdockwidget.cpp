@@ -351,12 +351,11 @@ KMixDockWidget::trayWheelEvent(QWheelEvent *e )
         vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
 
-/*
     if ( _playBeepOnVolumeChange ) {
-        _audioPlayer->setCurrentSource("KDE_Beep_Digital_1.ogg");
+        QString fileName("KDE_Beep_Digital_1.ogg");
+        _audioPlayer->setCurrentSource(fileName);
         _audioPlayer->play();
     }
-*/
       if ( md->playbackVolume().hasVolume() )
          md->playbackVolume().setVolume(vol);
       else
