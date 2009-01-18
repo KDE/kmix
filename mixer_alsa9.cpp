@@ -386,29 +386,39 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
 
     // --- Regular control (not enumerated) ---
     Volume::ChannelMask chn = Volume::MNONE;
-    Volume::ChannelMask chnTmp;
 
-    bool hasVolume = capture
-        ? snd_mixer_selem_has_capture_volume(elem)
-        : snd_mixer_selem_has_playback_volume(elem);
-    if ( hasVolume ) {
-        //kDebug(67100) << "has_xyz_volume()";
-        // @todo looks like this supports only 2 channels here
-        bool mono = capture
-            ? snd_mixer_selem_is_capture_mono(elem)
-            : snd_mixer_selem_is_playback_mono(elem);
-        chnTmp = mono
-            ? Volume::MLEFT
-            : (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
-        chn = (Volume::ChannelMask) (chn | chnTmp);
-        if ( capture) {
-            snd_mixer_selem_get_capture_volume_range( elem, &minVolume, &maxVolume );
-        }
-        else  {
-            snd_mixer_selem_get_playback_volume_range( elem, &minVolume, &maxVolume );
-        }
+
+    // Add volumes
+    if ( !capture && snd_mixer_selem_has_playback_volume(elem) ) {
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_FRONT_LEFT  )) chn = (Volume::ChannelMask)( chn | Volume::MLEFT);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_FRONT_RIGHT )) chn = (Volume::ChannelMask)( chn | Volume::MRIGHT);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_FRONT_CENTER)) chn = (Volume::ChannelMask)( chn | Volume::MCENTER);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_REAR_LEFT   )) chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDLEFT);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_REAR_RIGHT  )) chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDRIGHT);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_REAR_CENTER )) chn = (Volume::ChannelMask)( chn | Volume::MREARCENTER);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_WOOFER      )) chn = (Volume::ChannelMask)( chn | Volume::MWOOFER);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_SIDE_LEFT   )) chn = (Volume::ChannelMask)( chn | Volume::MREARSIDELEFT);
+        if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_SIDE_RIGHT  )) chn = (Volume::ChannelMask)( chn | Volume::MREARSIDERIGHT);
+        snd_mixer_selem_get_playback_volume_range( elem, &minVolume, &maxVolume );
+    }
+    else if ( capture && snd_mixer_selem_has_capture_volume(elem) ) {
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_FRONT_LEFT  )) chn = (Volume::ChannelMask)( chn | Volume::MLEFT);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_FRONT_RIGHT )) chn = (Volume::ChannelMask)( chn | Volume::MRIGHT);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_FRONT_CENTER)) chn = (Volume::ChannelMask)( chn | Volume::MCENTER);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_REAR_LEFT   )) chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDLEFT);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_REAR_RIGHT  )) chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDRIGHT);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_REAR_CENTER )) chn = (Volume::ChannelMask)( chn | Volume::MREARCENTER);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_WOOFER      )) chn = (Volume::ChannelMask)( chn | Volume::MWOOFER);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_SIDE_LEFT   )) chn = (Volume::ChannelMask)( chn | Volume::MREARSIDELEFT);
+        if ( snd_mixer_selem_has_capture_channel(elem,SND_MIXER_SCHN_SIDE_RIGHT  )) chn = (Volume::ChannelMask)( chn | Volume::MREARSIDERIGHT);
+        snd_mixer_selem_get_capture_volume_range( elem, &minVolume, &maxVolume );
     }
 
+
+    // Chek if this control has at least one volume control
+    bool hasVolume = (chn != Volume::MNONE);
+
+    // Chek if a appropriate switch is present (appropriate means, based o nthe "capture" parameer)
     bool hasCommonSwitch = snd_mixer_selem_has_common_switch ( elem );
 
     bool hasSwitch = hasCommonSwitch |
@@ -417,6 +427,7 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
         : snd_mixer_selem_has_playback_switch ( elem );
 
     if ( hasVolume || hasSwitch ) {
+        //kDebug() << "Add somthing with chn=" << chn << ", capture=" << capture;
         vol = new Volume( chn, maxVolume, minVolume, hasSwitch, capture);
     }
 
@@ -681,7 +692,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     Volume& volumeCapture  = md->captureVolume();
     int devnum = id2num(id);
     int elem_sw;
-    long left, right;
+    long vol;
 
     snd_mixer_elem_t *elem = getMixerElem( devnum );
     if ( !elem )
@@ -691,21 +702,29 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
 
 
     // --- playback volume
-    if ( snd_mixer_selem_has_playback_volume( elem ) )
-    {
-        int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
-        if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [has_playback_volume,R] failed, errno=" << ret;
-        if ( snd_mixer_selem_is_playback_mono ( elem )) {
-            volumePlayback.setVolume( Volume::LEFT , left );
-            volumePlayback.setVolume( Volume::RIGHT, left );
-        }
-        else {
-            int ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-        if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [has_playback_volume,R] failed, errno=" << ret;
-            volumePlayback.setVolume( Volume::LEFT , left );
-            volumePlayback.setVolume( Volume::RIGHT, right );
-        }
-    }
+    if ( snd_mixer_selem_has_playback_volume( elem ) ) {
+        for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+           if ( volumePlayback._chmask & Volume::_channelMaskEnum[i] ) {
+
+               int ret;
+               switch(i) {
+                   case Volume::LEFT         : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , &vol); break;
+                   case Volume::RIGHT        : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , &vol); break;
+                   case Volume::CENTER       : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, &vol); break;
+                   case Volume::SURROUNDLEFT : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_REAR_LEFT   , &vol); break;
+                   case Volume::SURROUNDRIGHT: ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_REAR_RIGHT  , &vol); break;
+                   case Volume::REARCENTER   : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_REAR_CENTER , &vol); break;
+                   case Volume::WOOFER       : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_WOOFER      , &vol); break;
+                   case Volume::REARSIDELEFT : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , &vol); break;
+                   case Volume::REARSIDERIGHT: ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , &vol); break;
+                   default: kDebug() << "FATAL: Unknown channel type << " << i << " ... please report this";  break;
+              }
+              if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [get_playback_volume] failed, errno=" << ret;
+              else volumePlayback.setVolume( (Volume::ChannelID)i, vol);
+              if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << i << ", vol=" << vol; }
+          }
+       }
+    } // has playback volume
 
     // --- playback switch
     if ( snd_mixer_selem_has_playback_switch( elem ) )
@@ -717,20 +736,26 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     // --- capture volume
     if ( snd_mixer_selem_has_capture_volume ( elem ) )
     {
-        int ret = snd_mixer_selem_get_capture_volume ( elem, SND_MIXER_SCHN_FRONT_LEFT, &left );
-        if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [get_capture_volume,L] failed, errno=" << ret;
-        if ( snd_mixer_selem_is_capture_mono  ( elem )) {
-            volumeCapture.setVolume( Volume::LEFT , left );
-            volumeCapture.setVolume( Volume::RIGHT, left );
-        }
-        else
-        {
-            int ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT, &right );
-            if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [has_capture_volume,R] failed, errno=" << ret;
-            volumeCapture.setVolume( Volume::LEFT , left );
-            volumeCapture.setVolume( Volume::RIGHT, right );
-        }
-    }
+        for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+           if ( volumeCapture._chmask && Volume::_channelMaskEnum[i] ) {
+
+               int ret;
+               switch(i) {
+                   case Volume::MLEFT         : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , &vol); break;
+                   case Volume::MRIGHT        : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , &vol); break;
+                   case Volume::MCENTER       : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, &vol); break;
+                   case Volume::MSURROUNDLEFT : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_REAR_LEFT   , &vol); break;
+                   case Volume::MSURROUNDRIGHT: ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_REAR_RIGHT  , &vol); break;
+                   case Volume::MREARCENTER   : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_REAR_CENTER , &vol); break;
+                   case Volume::MWOOFER       : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_WOOFER      , &vol); break;
+                   case Volume::MREARSIDELEFT : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , &vol); break;
+                   case Volume::MREARSIDERIGHT: ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , &vol); break;
+              }
+              if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [get_capture_volume] failed, errno=" << ret;
+              volumeCapture.setVolume( (Volume::ChannelID)i, vol);
+          }
+       }
+    } // has capture volume
 
     // --- capture switch
     if ( snd_mixer_selem_has_capture_switch( elem ) )

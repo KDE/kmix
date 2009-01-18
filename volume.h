@@ -44,13 +44,15 @@ friend class MixDevice;
 
                      // SURROUND (4.0 or 4.1 or in higher - like 5.1)
                      MSURROUNDLEFT = 0x10, MSURROUNDRIGHT = 0x20,
+                     // MSURROUND
                      MSURROUND     = 0x30,
 
-                     // REAR (Usually only in 6.1 and 7.1)
-                     // We use MREARLEFT (but not MREARRIGHT) for 6.1
-                     //   (that would actually be a MREARCENTER).
-                     MREARLEFT     = 0x40, MREARRIGHT     = 0x80,
-                     MREAR         = 0xF8,
+                     // REARSIDE (Usually only in 7.1)
+                     MREARSIDELEFT = 0x40, MREARSIDERIGHT = 0x80,
+                     // REARCENTER (Usually only in 6.1)
+                     MREARCENTER   = 0x100,
+                     // MREAR
+                     MREAR         = 0x1C0,
 
                      MALL=0xFFFF };
 
@@ -62,8 +64,11 @@ friend class MixDevice;
 
                   SURROUNDLEFT = 4, SURROUNDRIGHT = 5,
 
-                  REARLEFT     = 6, REARRIGHT     = 7,
-                  CHIDMAX      = 7 };
+                  REARSIDELEFT = 6, REARSIDERIGHT = 7,
+
+                  REARCENTER   = 8,
+
+                  CHIDMAX      = 8 };
 
 
 
@@ -112,7 +117,7 @@ friend class MixDevice;
 
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
-    static int    _channelMaskEnum[8];
+    static int    _channelMaskEnum[9];
     bool          _muted;
     long          _chmask;
     long          _volumes[CHIDMAX+1];

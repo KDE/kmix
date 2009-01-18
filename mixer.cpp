@@ -421,7 +421,7 @@ MixDevice* Mixer::getMixdeviceById( const QString& mixdeviceID )
 {
    MixDevice* md = 0;
    int num = _mixerBackend->id2num(mixdeviceID);
-   if ( num!=-1 && num < size() ) {
+   if ( num!=-1 && num < (int)size() ) {
       md = (*this)[num];
    }
    return md;

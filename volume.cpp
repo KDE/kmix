@@ -27,11 +27,12 @@
 #include "volume.h"
 
 
-int Volume::_channelMaskEnum[8] =
+int Volume::_channelMaskEnum[9] =
     { MLEFT, MRIGHT, MCENTER,
       MWOOFER,
       MSURROUNDLEFT, MSURROUNDRIGHT,
-      MREARLEFT, MREARRIGHT,
+      MREARSIDELEFT, MREARSIDERIGHT,
+      MREARCENTER
     };
 
 Volume::Volume()
@@ -45,21 +46,7 @@ Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwit
 }
 
 
-/* // @ compatibility constructor  @todo remove it
-Volume::Volume( int channels, long maxVolume ) {
-   if (channels == 1 ) {
-       init(Volume::MLEFT, maxVolume, 0, false, false);
-   }
-   else if (channels == 2) {
-      init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false, false );
-   }
-   else {
-     init(ChannelMask(Volume::MLEFT|Volume::MRIGHT), maxVolume, 0, false, false );
-     kError(67100) << "Warning: Multi-channel Volume object created with old constructor - this will not work fully\n";
-   }
-}
-*/
-
+// copy constructor
 Volume::Volume( const Volume &v )
 {
     _chmask          = v._chmask;
