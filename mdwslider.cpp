@@ -463,8 +463,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
         label->installEventFilter( this );
    }
 
-    for( int i = 0; i < vol.count(); i++ )
-    {
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+     if ( vol._chmask & Volume::_channelMaskEnum[i] ) {
         Volume::ChannelID chid = Volume::ChannelID(i);
 
         long minvol = vol.minVolume();
@@ -508,6 +508,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
         ref_sliders.append ( slider );   // add to list
         ref_slidersChids.append(chid);
         connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
+     } //if channel is present
     } // for all channels of this device
 }
 
