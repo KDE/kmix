@@ -83,7 +83,7 @@ if (HAVE_PULSE)
     target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (HAVE_PULSE)
 
-install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
+install(TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )
 install(TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
