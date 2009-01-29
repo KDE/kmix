@@ -71,8 +71,9 @@ KMixWindow::KMixWindow(bool invisible)
 //   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
 //   m_visibilityUpdateAllowed( true ),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
-   m_dockWidget()
-   , _dockAreaPopup(0)
+   m_dockWidget(),
+   m_dontSetDefaultCardOnStart (false),
+   _dockAreaPopup(0)
 {
     setObjectName("KMixWindow");
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
