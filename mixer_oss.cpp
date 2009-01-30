@@ -165,7 +165,7 @@ int Mixer_OSS::open()
               idx++;
             }
 
-#if !defined(__FreeBSD__)
+#if defined(SOUND_MIXER_INFO)
       struct mixer_info l_mix_info;
       if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1)
         {
