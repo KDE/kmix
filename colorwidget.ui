@@ -244,8 +244,7 @@
     </layout>
   </widget>
   <layoutdefault spacing="6" margin="11" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <tabstops>
+    <tabstops>
     <tabstop>customColors</tabstop>
     <tabstop>activeHigh</tabstop>
     <tabstop>activeLow</tabstop>
