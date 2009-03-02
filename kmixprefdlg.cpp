@@ -53,7 +53,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
 // -----------------------------------------------------------
 
    QLabel *label;
-   label = new QLabel( i18n("Behaviour"), m_generalTab );
+   label = new QLabel( i18n("Behavior"), m_generalTab );
    layout->addWidget(label);
 
    QBoxLayout *l;

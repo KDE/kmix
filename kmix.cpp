@@ -484,7 +484,7 @@ void KMixWindow::unplugged( const QString& udi)
                     Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster);
                     
                     QString text;
-                    text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2", 
+                    text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.", 
                             ((Mixer::mixers())[0])->getLocalMasterMD()->readableName(),
                             ((Mixer::mixers())[0])->readableName()
                                 );
