@@ -224,6 +224,7 @@ bool KMixWindow::updateDocking()
     }
     m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
     m_dockWidget->show();
+    connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()) );
     return true;
 }
 

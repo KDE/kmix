@@ -56,6 +56,9 @@ class KMixDockWidget : public KSystemTrayIcon  {
    Mixer *m_mixer;
    Phonon::MediaObject *_audioPlayer;
 
+ signals:
+   void newMasterSelected();
+
  public slots:
    void setVolumeTip();
    void updatePixmap();
