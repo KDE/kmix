@@ -101,6 +101,7 @@ Comment=Notification on automatic fallback if the preferred device is unavailabl
 Comment[es]=Notificación sobre la selección automática de un dispositivo de audio alternativo si el dispositivo preferido no está disponibles
 Comment[et]=Automaatne varuvariant, kui eelistatud seade pole saadaval
 Comment[ga]=Fógairt nuair nach bhfuil do rogha ghléas ar fáil agus úsáidtear gléas tacachumais
+Comment[ja]=優先デバイスが利用できないために自動的にフォールバックしたときの通知
 Comment[nds]=Bescheed, wenn de vörtrocken Reedschap nich verföögbor is un ansteed de Opbackreedschap bruukt warrt
 Comment[pt]=Notificação de contingência se o dispositivo preferido estiver indisponível
 Comment[pt_BR]=Notificação de alternativa automática se os dispositivos preferidos estiverem indisponíveis
