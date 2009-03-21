@@ -105,6 +105,7 @@ Comment[ja]=優先デバイスが利用できないために自動的にフォ�
 Comment[nds]=Bescheed, wenn de vörtrocken Reedschap nich verföögbor is un ansteed de Opbackreedschap bruukt warrt
 Comment[pt]=Notificação de contingência se o dispositivo preferido estiver indisponível
 Comment[pt_BR]=Notificação de alternativa automática se os dispositivos preferidos estiverem indisponíveis
+Comment[ru]=Уведомление о недоступности звукового устройства по умолчанию
 Comment[sv]=Underrättelse vid automatisk återgång om önskad enhet inte är tillgängliga
 Comment[tr]=Tercih edilen aygıt erişilemez ise otomatik olarak yeni aygıta geçme bildirimi
 Comment[uk]=Повідомлення про автоматичне повернення до типового пристрою, якщо бажаний пристрій недоступний
