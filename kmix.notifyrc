@@ -102,6 +102,7 @@ Comment[es]=Notificación sobre la selección automática de un dispositivo de a
 Comment[et]=Automaatne varuvariant, kui eelistatud seade pole saadaval
 Comment[ga]=Fógairt nuair nach bhfuil do rogha ghléas ar fáil agus úsáidtear gléas tacachumais
 Comment[ja]=優先デバイスが利用できないために自動的にフォールバックしたときの通知
+Comment[ko]=선호하는 장치를 사용할 수 없을 때 자동 폴백 알림
 Comment[nds]=Bescheed, wenn de vörtrocken Reedschap nich verföögbor is un ansteed de Opbackreedschap bruukt warrt
 Comment[pt]=Notificação de contingência se o dispositivo preferido estiver indisponível
 Comment[pt_BR]=Notificação de alternativa automática se os dispositivos preferidos estiverem indisponíveis
