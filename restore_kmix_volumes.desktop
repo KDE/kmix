@@ -5,6 +5,7 @@ Type=Application
 Exec=kmixctrl --restore
 OnlyShowIn=KDE;
 Name=Restore Mixer Volumes
+Name[af]=Herstel Menger Volumes
 Name[ar]=استعادة أصوات المازج
 Name[bg]=Възстановяване на стойностите на миксера
 Name[bn]=মিক্সার ভলিউম পুনঃস্থাপন করে
