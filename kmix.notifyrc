@@ -1,6 +1,7 @@
 [Global]
 IconName=kmix
 Comment=Sound Mixer
+Comment[af]=Klank Menger
 Comment[ar]=مازج الصوت
 Comment[bg]=Аудио миксер
 Comment[ca]=Mesclador de so
