@@ -27,11 +27,12 @@
 #include <QPushButton>
 
 // KDE
-#include <kdebug.h>
 #include <kaction.h>
 #include <kapplication.h>
-#include <klocale.h>
+#include <kdebug.h>
 #include <kdialog.h>
+#include <klocale.h>
+#include <kwindowsystem.h>
 
 // KMix
 #include "mdwslider.h"
@@ -173,8 +174,10 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 }
 
 void ViewDockAreaPopup::showPanelSlot() {
-	_dock->setVisible(_dock->isHidden());
-	hide();
+    _dock->setVisible(true);
+    KWindowSystem::setOnDesktop(_dock->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(_dock->winId());
+    hide();
 }
 
 #include "viewdockareapopup.moc"
