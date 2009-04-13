@@ -2,9 +2,7 @@
 Exec=kmix -caption "%c" %i
 X-DocPath=kmix/index.html
 OnlyShowIn=KDE;
-Path=
 Type=Application
-MimeType=
 Terminal=false
 Icon=kmix
 GenericName=Sound Mixer
