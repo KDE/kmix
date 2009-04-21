@@ -1,7 +1,5 @@
 <ui version="4.0" stdsetdef="1" >
   <author>Stefan Schimanski &lt;1Stein@gmx.de></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
   <class>ColorWidget</class>
   <widget class="QWidget" name="ColorWidget" >
     <property name="geometry" >
@@ -243,7 +241,6 @@
       </item>
     </layout>
   </widget>
-  <layoutdefault spacing="6" margin="11" />
     <tabstops>
     <tabstop>customColors</tabstop>
     <tabstop>activeHigh</tabstop>
