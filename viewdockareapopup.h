@@ -58,6 +58,7 @@ protected:
     //MixDevice       *_dockDevice;
     QPushButton     *_showPanelBox;
 
+    bool event(QEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void wheelEvent ( QWheelEvent * e );
 

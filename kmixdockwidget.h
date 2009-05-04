@@ -26,7 +26,7 @@
 class QString;
 #include <QWidget>
 
-#include <ksystemtrayicon.h>
+#include <knotificationitem-1/knotificationitem.h>
 
 class KMixWindow;
 class Mixer;
@@ -35,10 +35,13 @@ class Volume;
 
 namespace Phonon
 {
-       class MediaObject;
+    class MediaObject;
 }
 
-class KMixDockWidget : public KSystemTrayIcon  {
+using namespace Experimental;
+
+class KMixDockWidget : public KNotificationItem
+{
    Q_OBJECT
 
    friend class KMixWindow;
@@ -47,7 +50,6 @@ class KMixDockWidget : public KSystemTrayIcon  {
    explicit KMixDockWidget(KMixWindow *parent, QWidget *referenceWidget, bool volumePopup);
    ~KMixDockWidget();
 
-   bool eventFilter(QObject * obj, QEvent * e);
 
    void setErrorPixmap();
    void ignoreNextEvent();
@@ -66,11 +68,8 @@ class KMixDockWidget : public KSystemTrayIcon  {
  protected:
    void createMasterVolWidget();
    void createActions();
-   void moveVolumePopoup();
-   void trayWheelEvent(QWheelEvent *);
 //    void trayToolTipEvent(QHelpEvent *e );
    void toggleMinimizeRestore();
-   bool event( QEvent *);
 
  private:
    bool _playBeepOnVolumeChange;
@@ -81,7 +80,9 @@ class KMixDockWidget : public KSystemTrayIcon  {
    KMixWindow* _kmixMainWindow;
  private slots:
    void dockMute();
-   void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
+   void trayWheelEvent(int delta);
+   void moveVolumePopup(bool activated, const QPoint &pos);
+   //void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
    void contextMenuAboutToShow();

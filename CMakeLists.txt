@@ -4,7 +4,9 @@ include_directories( ${GLIB2_INCLUDE_DIR} )
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
-add_subdirectory( tests ) 
+add_subdirectory( tests )
+
+find_package(LibKNotificationItem-1 REQUIRED)
 
 set(kmix_adaptor_SRCS)
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
@@ -35,12 +37,11 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    KMixApp.cpp 
    dialogselectmaster.cpp 
    kmixdevicemanager.cpp 
-   guiprofile.cpp )
-
+   guiprofile.cpp)
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} knotificationitem-1)
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})

@@ -53,7 +53,7 @@
 #include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup )
-    : KSystemTrayIcon( referenceWidget ),
+    : KNotificationItem( referenceWidget ),
       _audioPlayer(0L),
       _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
       _oldToolTipValue(-1),
@@ -61,15 +61,21 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
       _volumePopup(volumePopup)
       , _kmixMainWindow(parent)
 {
+   setToolTipIcon("kmix");
+   setCategory(Hardware);
+   setStatus(Active);
    m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
    createMasterVolWidget();
    createActions();
-   //connect(this, SIGNAL(quitSelected()), kapp, SLOT(quitExtended()));
+   connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
+   connect(this, SIGNAL(activateRequested(bool,QPoint)), this, SLOT(moveVolumePopup(bool,QPoint)));
+   connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
    ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(referenceWidget);
-   if ( _volumePopup && dockAreaPopup != 0 )
-      dockAreaPopup->installEventFilter(this);
+   if ( dockAreaPopup ) {
+       KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
+   }
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -90,8 +96,6 @@ void KMixDockWidget::createActions()
     QAction *a = actionCollection()->action( "dock_mute" );
     if ( a ) menu->addAction( a );
 }
-  
-  connect ( this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(kmixSystrayAction(QSystemTrayIcon::ActivationReason) ) );
 
   // Put "Select Master Channel" dialog in context menu
   if ( m_mixer != 0 ) {
@@ -142,17 +146,6 @@ KMixDockWidget::createMasterVolWidget()
     //    connect( m_mixer, SIGNAL(controlChanged()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
     connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip() ) );
     connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap() ) );
-}
-
-bool KMixDockWidget::eventFilter(QObject * obj, QEvent * e)
-{
-   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
-    if ( obj == dockAreaPopup && e->type() == QEvent::Show)
-    {
-        moveVolumePopoup();
-    }
-
-    return false;
 }
 
 void KMixDockWidget::selectMaster()
@@ -226,7 +219,7 @@ KMixDockWidget::setVolumeTip()
     // The actual updating is only done when the "toolTipValue" was changed
     if ( newToolTipValue != _oldToolTipValue ) {
         // changed (or completely new tooltip)
-        this->setToolTip(tip);
+        setToolTipTitle(tip);
     }
     _oldToolTipValue = newToolTipValue;
 }
@@ -262,11 +255,11 @@ KMixDockWidget::updatePixmap()
    if ( newPixmapType != _oldPixmapType ) {
       // Pixmap must be changed => do so
       switch ( newPixmapType ) {
-         case 'e': setIcon( loadIcon( "kmixdocked_error" ) ); break;
-         case 'm': setIcon( loadIcon( "audio-volume-muted"  ) ); break;
-         case '1': setIcon( loadIcon( "audio-volume-low"  ) ); break;
-         case '2': setIcon( loadIcon( "audio-volume-medium" ) ); break;
-         case '3': setIcon( loadIcon( "audio-volume-high"       ) ); break;
+         case 'e': setIcon( "kmixdocked_error" ); break;
+         case 'm': setIcon( "audio-volume-muted"  ); break;
+         case '1': setIcon( "audio-volume-low"  ); break;
+         case '2': setIcon( "audio-volume-medium" ); break;
+         case '3': setIcon( "audio-volume-high" ); break;
       }
    }
 
@@ -274,24 +267,27 @@ KMixDockWidget::updatePixmap()
 }
 
 
-void KMixDockWidget::moveVolumePopoup()
+void KMixDockWidget::moveVolumePopup(bool activated, const QPoint &pos)
 {
    ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
-   if ( dockAreaPopup == 0  ) {
+   if ( !dockAreaPopup || !activated ) {
       // If the associated parent os the MainWindow (and not the ViewDockAreaPopup), we return.
       return;
    }
 
+   dockAreaPopup->adjustSize();
    int h = dockAreaPopup->height();
-   int x = geometry().x() - geometry().width()/2 - dockAreaPopup->width()/2;
-   int y = geometry().y() - h;
+   int x = pos.x() - dockAreaPopup->width()/2;
+   int y = pos.y() - h;
 
   // kDebug() << "h="<<h<< " x="<<x << " y="<<y<< "gx="<< geometry().x() << "gy="<< geometry().y();
 
-   if ( y < 0 )
-            y = y + h + geometry().height();
+   if ( y < 0 ) {
+       y = pos.y();
+   }
 
    dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
+   kDebug() << "moving to" << dockAreaPopup->size() << x << y;
 
    // Now handle Multihead displays. And also make sure that the dialog is not
    // moved out-of-the screen on the right (see Bug 101742).
@@ -299,30 +295,17 @@ void KMixDockWidget::moveVolumePopoup()
    const QRect& vScreenSize = vdesktop->screenGeometry(dockAreaPopup);
    //const QRect screenGeometry(const QWidget *widget) const
    if ( (x+dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
-            // move horizontally, so that it is completely visible
-            dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() -1 , y);
-   } // horizontally out-of bound
+       // move horizontally, so that it is completely visible
+       dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() -1 , y);
+   }
    else if ( x < vScreenSize.x() ) {
-            dockAreaPopup->move(vScreenSize.x(), y);
+       // horizontally out-of bound
+       dockAreaPopup->move(vScreenSize.x(), y);
    }
    // the above stuff could also be implemented vertically
 
-//   dockAreaPopup->show();
-   KWindowSystem::setState(dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-
-   return;
+   KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 }
-
-bool KMixDockWidget::event( QEvent * event )
-{
-   if (event->type() == QEvent::Wheel ) {
-      trayWheelEvent((QWheelEvent*)event);
-      event->accept();
-      return true;
-   }
-   return KSystemTrayIcon::event(event);
-}
-
 
 // void
 // KMixDockWidget::trayToolTipEvent(QHelpEvent *e ) {
@@ -331,7 +314,7 @@ bool KMixDockWidget::event( QEvent * event )
 // }
 
 void
-KMixDockWidget::trayWheelEvent(QWheelEvent *e )
+KMixDockWidget::trayWheelEvent(int delta)
 {
   MixDevice *md = Mixer::getGlobalMasterMD();
   if ( md != 0 )
@@ -347,7 +330,7 @@ KMixDockWidget::trayWheelEvent(QWheelEvent *e )
     if ( inc < 1 ) inc = 1;
 
     for ( int i = 0; i < vol.count(); i++ ) {
-        int newVal = vol[i] + (inc * (e->delta() / 120));
+        int newVal = vol[i] + (inc * (delta / 120));
         if( newVal < 0 ) newVal = 0;
         vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
@@ -363,9 +346,6 @@ KMixDockWidget::trayWheelEvent(QWheelEvent *e )
          md->captureVolume().setVolume(vol);
       m_mixer->commitVolumeChange(md);
     setVolumeTip();
-    // Simulate a mouse move to make Qt show the tooltip again
-    // (Qt removes it on a MouseWheel event)
-    QApplication::postEvent( this, new QHelpEvent ( QEvent::ToolTip, e->pos(), e->globalPos() ) );
   }
 }
 
@@ -379,21 +359,13 @@ KMixDockWidget::dockMute()
    }
 }
 
-
-void KMixDockWidget::kmixSystrayAction(QSystemTrayIcon::ActivationReason reason)
-{
-    if ( reason == QSystemTrayIcon::MiddleClick ) {
-         dockMute();
-    }
-}
-
 void
 KMixDockWidget::contextMenuAboutToShow()
 {
     QAction* showAction = actionCollection()->action("minimizeRestore");
-    if ( parentWidget() && showAction )
+    if ( associatedWidget() && showAction )
     {
-        if ( parentWidget()->isVisible() )
+        if ( associatedWidget()->isVisible() )
         {
             showAction->setText( i18n("Hide Mixer Window") );
         }

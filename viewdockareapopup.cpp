@@ -43,7 +43,7 @@
 //    Users will not be able to close the Popup without opening the KMix main window then.
 //    See Bug #93443, #96332 and #96404 for further details. -- esken
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
-    : ViewBase(parent, name, mixer, Qt::Popup | Qt::MSWindowsFixedSizeDialogHint , vflags, guiprof), _mdw(0), _dock(dockW), _hideTimer(0)
+    : ViewBase(parent, name, mixer, Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint, vflags, guiprof), _mdw(0), _dock(dockW), _hideTimer(0)
 {
     QBoxLayout *layout = new QHBoxLayout( this );
     layout->setMargin( 0 );
@@ -65,6 +65,14 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 }
 
 
+bool ViewDockAreaPopup::event(QEvent *e)
+{
+    if (e->type() == QEvent::WindowDeactivate) {
+        hide();
+    }
+
+    return ViewBase::event(e);
+}
 
 void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
 {
