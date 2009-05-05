@@ -203,12 +203,12 @@ int Mixer_ALSA::open()
         // --- Recommended master ----------------------------------------
         if ( md->playbackVolume().hasVolume() )
         {
-          if ( mdID == "PCM:0" && masterChosenQuality < 100 ) {
+          if ( mdID == "Master:0" && masterChosenQuality < 100 ) {
               kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 100;
           }
-          else if ( mdID == "Master:0" && masterChosenQuality < 80) {
+          else if ( mdID == "PCM:0" && masterChosenQuality < 80) {
               kDebug(67100) << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 80;
