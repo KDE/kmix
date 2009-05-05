@@ -71,7 +71,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
         _layout->addItem( mixerNameLayout );
         mixerNameLayout->setSpacing(KDialog::spacingHint());
     
-        QLabel *qlbl = new QLabel( i18n("Current Mixer"), m_mainFrame );
+        QLabel *qlbl = new QLabel( i18n("Current mixer:"), m_mainFrame );
         mixerNameLayout->addWidget(qlbl);
         qlbl->setFixedHeight(qlbl->sizeHint().height());
     
