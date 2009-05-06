@@ -1,6 +1,6 @@
 project(kmix)
 
-include_directories( ${GLIB2_INCLUDE_DIR} )
+include_directories( ${GLIB2_INCLUDE_DIR} ${KNOTIFICATIONITEM_INCLUDE_DIR} )
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
