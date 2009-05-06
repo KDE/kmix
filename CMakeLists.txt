@@ -6,8 +6,6 @@ add_subdirectory( pics )
 add_subdirectory( profiles ) 
 add_subdirectory( tests )
 
-find_package(LibKNotificationItem-1 REQUIRED)
-
 set(kmix_adaptor_SRCS)
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
 
