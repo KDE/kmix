@@ -146,6 +146,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
       }
       return 0;
    }*/
+   return 0;
 }
 
 int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
@@ -226,6 +227,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
    {
       return 0;
    }*/
+   return 0;
 }
 
 void Mixer_PULSE::setRecsrcHW( const QString& /*id*/, bool /* on */ )
@@ -246,6 +248,7 @@ bool Mixer_PULSE::isRecsrcHW( const QString& id )
       default :
          return false;
    }*/
+   return false;
 }
 
 
