@@ -61,7 +61,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
       _volumePopup(volumePopup)
       , _kmixMainWindow(parent)
 {
-   setToolTipIcon("kmix");
+   setToolTipIconByName("kmix");
    setCategory(Hardware);
    setStatus(Active);
    m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
@@ -255,11 +255,11 @@ KMixDockWidget::updatePixmap()
    if ( newPixmapType != _oldPixmapType ) {
       // Pixmap must be changed => do so
       switch ( newPixmapType ) {
-         case 'e': setIcon( "kmixdocked_error" ); break;
-         case 'm': setIcon( "audio-volume-muted"  ); break;
-         case '1': setIcon( "audio-volume-low"  ); break;
-         case '2': setIcon( "audio-volume-medium" ); break;
-         case '3': setIcon( "audio-volume-high" ); break;
+         case 'e': setIconByName( "kmixdocked_error" ); break;
+         case 'm': setIconByName( "audio-volume-muted"  ); break;
+         case '1': setIconByName( "audio-volume-low"  ); break;
+         case '2': setIconByName( "audio-volume-medium" ); break;
+         case '3': setIconByName( "audio-volume-high" ); break;
       }
    }
 
