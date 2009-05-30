@@ -2,7 +2,7 @@
 Type=Plugin
 Name=Sound Mixer
 Name[ar]=مازج الصوت
-Name[bg]=Аудио миксер
+Name[bg]=Звуков смесител
 Name[br]=Mesker ar Son
 Name[ca]=Mesclador de so
 Name[cs]=Zvukový směšovač
@@ -66,7 +66,7 @@ Name[zh_TW]=音效混音器
 
 Comment=Shows and let you control sound volumes
 Comment[ar]=تعرض مستوى الصوت وتدعك تتحكم به
-Comment[bg]=Показва панела на аудио миксера
+Comment[bg]=Показване панела на звуковия смесител
 Comment[ca]=Mostra i us permet controlar el volum dels sons
 Comment[cs]=Zobrazuje a umožňuje měnit hlasitost
 Comment[da]=Viser og giver dig mulighed for at styre lydstyrker
