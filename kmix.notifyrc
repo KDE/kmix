@@ -106,6 +106,7 @@ Comment[el]=Ειδοποίηση αυτόματης χρήσης της αναπ
 Comment[es]=Notificación sobre la selección automática de un dispositivo de audio alternativo si el dispositivo preferido no está disponibles
 Comment[et]=Automaatne varuvariant, kui eelistatud seade pole saadaval
 Comment[eu]=Jakinarazi atzera automatikoki itzultzean hobetsitako gailua erabilgarria ez badago
+Comment[fr]=Notification sur le repli automatique si les périphériques préférés ne sont pas disponibles
 Comment[ga]=Fógairt nuair nach bhfuil do rogha ghléas ar fáil agus úsáidtear gléas tacachumais
 Comment[is]=Láta vita ef varakort er tekið í notkun ef valið tæki er óaðgengilegt
 Comment[ja]=優先デバイスが利用できないために自動的にフォールバックしたときの通知
