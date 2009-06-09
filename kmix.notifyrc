@@ -108,6 +108,7 @@ Comment[et]=Automaatne varuvariant, kui eelistatud seade pole saadaval
 Comment[eu]=Jakinarazi atzera automatikoki itzultzean hobetsitako gailua erabilgarria ez badago
 Comment[fr]=Notification sur le repli automatique si les périphériques préférés ne sont pas disponibles
 Comment[ga]=Fógairt nuair nach bhfuil do rogha ghléas ar fáil agus úsáidtear gléas tacachumais
+Comment[gl]=Notificación sobre a selección automática dun dispositivo de audio alternativo se o dispositivo preferido no está dispoñible
 Comment[is]=Láta vita ef varakort er tekið í notkun ef valið tæki er óaðgengilegt
 Comment[ja]=優先デバイスが利用できないために自動的にフォールバックしたときの通知
 Comment[km]=ការ​ជូនដំណឹង​លើ fallback ស្វ័យប្រវត្តិ ប្រសិន​បើ​ឧបករណ៍​ដែល​ចូលចិត្ត​មិន​អាច​ប្រើ​បាន
