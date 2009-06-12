@@ -64,7 +64,6 @@ protected:
 
 private:
     QGridLayout* _layoutMDW;
-    QFrame *_frame;
     QTime *_hideTimer;
 
 private slots:

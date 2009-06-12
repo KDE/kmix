@@ -215,18 +215,23 @@ bool KMixWindow::updateDocking()
       return false;
    }
 
-    // create dock widget and the corresponding popup
-    /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
+   // create dock widget and the corresponding popup
+   /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
    QWidget* referenceWidgetForSystray = this;
-     if ( m_volumeWidget ) {
+   if ( m_volumeWidget ) {
       _dockAreaPopup = new ViewDockAreaPopup(0, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);
       _dockAreaPopup->createDeviceWidgets();
-      referenceWidgetForSystray = _dockAreaPopup;
-    }
-    m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
-    //m_dockWidget->show();
-    connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()) );
-    return true;
+
+      KMenu *volMenu = new KMenu(this);
+      QWidgetAction *volWA = new QWidgetAction(volMenu);
+      volWA->setDefaultWidget(_dockAreaPopup);
+      volMenu->addAction(volWA);
+      referenceWidgetForSystray = volMenu;
+   }
+   m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
+   //m_dockWidget->show();
+   connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()) );
+   return true;
 }
 
 void KMixWindow::saveConfig()
@@ -268,7 +273,7 @@ void KMixWindow::saveBaseConfig()
    }
    QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
    config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
-   
+
    // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
    if ( m_toplevelOrientation  == Qt::Horizontal )
       config.writeEntry( "Orientation","Horizontal" );

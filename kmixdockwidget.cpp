@@ -72,10 +72,11 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
    connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
-   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(referenceWidget);
-   if ( dockAreaPopup ) {
-       KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-   }
+// TODO remove this, as in a KMenu it does not need window tricks
+//    ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(referenceWidget);
+//    if ( dockAreaPopup ) {
+//        KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
+//    }
 }
 
 KMixDockWidget::~KMixDockWidget()
@@ -269,7 +270,10 @@ KMixDockWidget::updatePixmap()
 
 void KMixDockWidget::moveVolumePopup(bool activated, const QPoint &pos)
 {
-   ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(parent());
+   // Make sure this will work
+   // It is a KMenu now, and this check is a bit weird,
+   // i believe this should not rely on parent()
+   KMenu* dockAreaPopup = qobject_cast<KMenu*>(parent());
    if ( !dockAreaPopup || !activated ) {
       // If the associated parent os the MainWindow (and not the ViewDockAreaPopup), we return.
       return;

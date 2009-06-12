@@ -39,22 +39,17 @@
 #include "mixer.h"
 #include "kmix.h"
 
+// TODO Check if we shouldn't really remove
+// all these window flags as it's in KMenu now
 // !! Do NOT remove or mask out "WType_Popup"
 //    Users will not be able to close the Popup without opening the KMix main window then.
 //    See Bug #93443, #96332 and #96404 for further details. -- esken
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
     : ViewBase(parent, name, mixer, Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint, vflags, guiprof), _mdw(0), _dock(dockW), _hideTimer(0)
 {
-    QBoxLayout *layout = new QHBoxLayout( this );
-    layout->setMargin( 0 );
-    _frame = new QFrame( this );
-    layout->addWidget( _frame );
-
-    _frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
-
-    _layoutMDW = new QGridLayout( _frame );
+    _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
-    //_layoutMDW->setMargin( KDialog::marginHint() );
+    _layoutMDW->setMargin(0);
     _layoutMDW->setObjectName( "KmixPopupLayout" );
     _hideTimer = new QTime();
     setMixSet();
@@ -138,7 +133,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
       false,        // Show Record LED
       false,        // Small
       Qt::Vertical, // Direction: only 1 device, so doesn't matter
-      _frame,       // parent
+      this,         // parent
       0             // Is "NULL", so that there is no RMB-popup
    );
    _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
@@ -146,11 +141,11 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
    _layoutMDW->addWidget( _mdw, 0, 1 );
 
    // Add button to show main panel
-   _showPanelBox = new QPushButton( i18n("Mixer"), _frame );
+   _showPanelBox = new QPushButton( i18n("Mixer"), this );
    _showPanelBox->setObjectName("MixerPanel");
    connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
    _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
-   
+
    return _mdw;
 }
 
@@ -189,4 +184,3 @@ void ViewDockAreaPopup::showPanelSlot() {
 }
 
 #include "viewdockareapopup.moc"
-
