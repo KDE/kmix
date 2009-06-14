@@ -50,7 +50,6 @@ public:
     virtual void showContextMenu();
 
     //QSize sizeHint() const;
-    bool justHidden();
 
 protected:
     MixDeviceWidget *_mdw;
@@ -58,16 +57,13 @@ protected:
     //MixDevice       *_dockDevice;
     QPushButton     *_showPanelBox;
 
-    bool event(QEvent *e);
-    void mousePressEvent(QMouseEvent *e);
     void wheelEvent ( QWheelEvent * e );
 
 private:
     QGridLayout* _layoutMDW;
-    QTime *_hideTimer;
 
 private slots:
-	 void showPanelSlot();
+    void showPanelSlot();
 
 };
 

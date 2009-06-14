@@ -45,50 +45,18 @@
 //    Users will not be able to close the Popup without opening the KMix main window then.
 //    See Bug #93443, #96332 and #96404 for further details. -- esken
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
-    : ViewBase(parent, name, mixer, Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint, vflags, guiprof), _mdw(0), _dock(dockW), _hideTimer(0)
+    : ViewBase(parent, name, mixer, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _mdw(0), _dock(dockW)
 {
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
     _layoutMDW->setMargin(0);
     _layoutMDW->setObjectName( "KmixPopupLayout" );
-    _hideTimer = new QTime();
     setMixSet();
 }
 
 ViewDockAreaPopup::~ViewDockAreaPopup() {
-    delete _hideTimer;
 }
 
-
-bool ViewDockAreaPopup::event(QEvent *e)
-{
-    if (e->type() == QEvent::WindowDeactivate) {
-        hide();
-    }
-
-    return ViewBase::event(e);
-}
-
-void ViewDockAreaPopup::mousePressEvent(QMouseEvent *)
-{
-    /**
-       Hide the popup:
-       This should work automatically, when the user clicks outside the bounds of this popup:
-       Alas - it does not work.
-       Why it does not work, I do not know: this->isPopup() returns "true", so Qt should
-       properly take care of it in QWidget.
-    */
-    if ( !testAttribute(Qt::WA_UnderMouse) ) {
-        _hideTimer->start();
-        hide(); // needed!
-    }
-    return;
-}
-
-bool ViewDockAreaPopup::justHidden()
-{
-    return _hideTimer->elapsed() < 300;
-}
 
 void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {
    // Pass wheel event from "border widget" to child
@@ -180,7 +148,8 @@ void ViewDockAreaPopup::showPanelSlot() {
     _dock->setVisible(true);
     KWindowSystem::setOnDesktop(_dock->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::activateWindow(_dock->winId());
-    hide();
+    // This is only needed when the window is already visible.
+    static_cast<QWidget*>(parent())->hide();
 }
 
 #include "viewdockareapopup.moc"

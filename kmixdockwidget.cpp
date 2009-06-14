@@ -391,4 +391,3 @@ KMixDockWidget::contextMenuAboutToShow()
 }
 
 #include "kmixdockwidget.moc"
-
