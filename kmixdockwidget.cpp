@@ -52,15 +52,15 @@
 #include "mixertoolbox.h"
 #include "viewdockareapopup.h"
 
-KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup )
-    : KNotificationItem( parent ),
-      _referenceWidget(referenceWidget),
-      _audioPlayer(0L),
-      _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
-      _oldToolTipValue(-1),
-      _oldPixmapType('-'),
-      _volumePopup(volumePopup)
-      , _kmixMainWindow(parent)
+KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup)
+    : KNotificationItem(parent)
+    , _referenceWidget(referenceWidget)
+    , _audioPlayer(0L)
+    , _playBeepOnVolumeChange(false) // disabled due to triggering a "Bug"
+    , _oldToolTipValue(-1)
+    , _oldPixmapType('-')
+    , _volumePopup(volumePopup)
+    , _kmixMainWindow(parent)
 {
    setToolTipIconByName("kmix");
    setCategory(Hardware);
@@ -69,7 +69,6 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
    createMasterVolWidget();
    createActions();
    connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
-   connect(this, SIGNAL(activateRequested(bool,QPoint)), this, SLOT(moveVolumePopup(bool,QPoint)));
    connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 

@@ -50,13 +50,9 @@ class KMixDockWidget : public KNotificationItem
    explicit KMixDockWidget(KMixWindow *parent, QWidget *referenceWidget, bool volumePopup);
    ~KMixDockWidget();
 
-
    void setErrorPixmap();
    void ignoreNextEvent();
    //ViewDockAreaPopup* getDockAreaPopup();
-
-   Mixer *m_mixer;
-   Phonon::MediaObject *_audioPlayer;
 
  signals:
    void newMasterSelected();
@@ -73,13 +69,16 @@ class KMixDockWidget : public KNotificationItem
    void toggleMinimizeRestore();
 
  private:
-   bool _playBeepOnVolumeChange;
    QWidget *_referenceWidget;
+   Phonon::MediaObject *_audioPlayer;
+   bool _playBeepOnVolumeChange;
    bool _ignoreNextEvent;
    int  _oldToolTipValue;
    char _oldPixmapType;
    bool _volumePopup;
    KMixWindow* _kmixMainWindow;
+   Mixer *m_mixer;
+
  private slots:
    void dockMute();
    void trayWheelEvent(int delta);
