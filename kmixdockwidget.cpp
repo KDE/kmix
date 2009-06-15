@@ -53,7 +53,8 @@
 #include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup )
-    : KNotificationItem( referenceWidget ),
+    : KNotificationItem( parent ),
+      _referenceWidget(referenceWidget),
       _audioPlayer(0L),
       _playBeepOnVolumeChange(false), // disabled due to triggering a "Bug"
       _oldToolTipValue(-1),
@@ -268,12 +269,14 @@ KMixDockWidget::updatePixmap()
 }
 
 
-void KMixDockWidget::moveVolumePopup(bool activated, const QPoint &pos)
+
+void KMixDockWidget::activate(const QPoint &pos)
 {
    // Make sure this will work
    // It is a KMenu now, and this check is a bit weird,
    // i believe this should not rely on parent()
-   KMenu* dockAreaPopup = qobject_cast<KMenu*>(parent());
+   KMenu* dockAreaPopup = qobject_cast<KMenu*>(_referenceWidget);
+   const bool activated = (dockAreaPopup && !dockAreaPopup->isVisible());
    if ( !dockAreaPopup || !activated ) {
       // If the associated parent os the MainWindow (and not the ViewDockAreaPopup), we return.
       return;
@@ -292,6 +295,8 @@ void KMixDockWidget::moveVolumePopup(bool activated, const QPoint &pos)
 
    dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
    kDebug() << "moving to" << dockAreaPopup->size() << x << y;
+
+   dockAreaPopup->setVisible(activated);
 
    // Now handle Multihead displays. And also make sure that the dialog is not
    // moved out-of-the screen on the right (see Bug 101742).

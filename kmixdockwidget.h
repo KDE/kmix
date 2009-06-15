@@ -64,6 +64,7 @@ class KMixDockWidget : public KNotificationItem
  public slots:
    void setVolumeTip();
    void updatePixmap();
+   void activate(const QPoint &pos);
 
  protected:
    void createMasterVolWidget();
@@ -73,6 +74,7 @@ class KMixDockWidget : public KNotificationItem
 
  private:
    bool _playBeepOnVolumeChange;
+   QWidget *_referenceWidget;
    bool _ignoreNextEvent;
    int  _oldToolTipValue;
    char _oldPixmapType;
@@ -81,7 +83,6 @@ class KMixDockWidget : public KNotificationItem
  private slots:
    void dockMute();
    void trayWheelEvent(int delta);
-   void moveVolumePopup(bool activated, const QPoint &pos);
    //void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
