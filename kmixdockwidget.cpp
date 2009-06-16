@@ -281,6 +281,10 @@ void KMixDockWidget::activate(const QPoint &pos)
       return;
    }
 
+   if (contextMenu()->isVisible()) {
+        contextMenu()->hide();
+    }
+
    dockAreaPopup->adjustSize();
    int h = dockAreaPopup->height();
    int x = pos.x() - dockAreaPopup->width()/2;
