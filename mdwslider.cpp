@@ -518,42 +518,44 @@ QPixmap MDWSlider::icon( int icontype )
    QPixmap miniDevPM;
    switch (icontype) {
       case MixDevice::AUDIO:
-          miniDevPM = loadIcon("kmix-pcm"); break;
+          miniDevPM = loadIcon("mixer-pcm"); break;
       case MixDevice::BASS:
       case MixDevice::SURROUND_LFE:
-          miniDevPM = loadIcon("kmix-lfe"); break;
+          miniDevPM = loadIcon("mixer-lfe"); break;
       case MixDevice::CD:
-          miniDevPM = loadIcon("kmix-cd"); break;
+          miniDevPM = loadIcon("mixer-cd"); break;
       case MixDevice::EXTERNAL:
-          miniDevPM = loadIcon("kmix-line"); break;
+          miniDevPM = loadIcon("mixer-line"); break;
       case MixDevice::MICROPHONE:
-          miniDevPM = loadIcon("kmix-microphone");break;
+          miniDevPM = loadIcon("mixer-microphone");break;
       case MixDevice::MIDI:
-          miniDevPM = loadIcon("kmix-midi"); break;//TODO check if oxygem made this one
+          miniDevPM = loadIcon("mixer-midi"); break;//TODO check if oxygem made this one
       case MixDevice::RECMONITOR:
-          miniDevPM = loadIcon("kmix-capture"); break;
+          miniDevPM = loadIcon("mixer-capture"); break;
       case MixDevice::TREBLE:
-          miniDevPM = loadIcon("kmix-pcm-defoult"); break;
+          miniDevPM = loadIcon("mixer-pcm-defoult"); break;
       case MixDevice::UNKNOWN:
-          miniDevPM = loadIcon("kmix-front"); break;
+          miniDevPM = loadIcon("mixer-front"); break;
       case MixDevice::VOLUME:
-          miniDevPM = loadIcon("kmix-master"); break;
+          miniDevPM = loadIcon("mixer-master"); break;
       case MixDevice::VIDEO:
-          miniDevPM = loadIcon("kmix-video"); break;
+          miniDevPM = loadIcon("mixer-video"); break;
       case MixDevice::SURROUND:
       case MixDevice::SURROUND_BACK:
-          miniDevPM = loadIcon("kmix-surround"); break;
+          miniDevPM = loadIcon("mixer-surround"); break;
       case MixDevice::SURROUND_CENTERFRONT:
       case MixDevice::SURROUND_CENTERBACK:
-          miniDevPM = loadIcon("kmix-surround-center"); break;
+          miniDevPM = loadIcon("mixer-surround-center"); break;
       case MixDevice::HEADPHONE:
-          miniDevPM = loadIcon("kmix-headset"); break;
+          miniDevPM = loadIcon("mixer-headset"); break;
       case MixDevice::DIGITAL:
-          miniDevPM = loadIcon("kmix-digital"); break;
+          miniDevPM = loadIcon("mixer-digital"); break;
       case MixDevice::AC97:
-          miniDevPM = loadIcon("kmix-ac97"); break;//TODO check if oxygem made this one
+          miniDevPM = loadIcon("mixer-ac97"); break;//TODO check if oxygem made this one
+      case MixDevice::SPEAKER:
+          miniDevPM = loadIcon("mixer-pc-speaker"); break;
       default:
-          miniDevPM = loadIcon("kmix-front"); break;
+          miniDevPM = loadIcon("mixer-front"); break;
    }
 
    return miniDevPM;

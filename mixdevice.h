@@ -77,7 +77,8 @@ public:
                        SURROUND_BACK,
                        SURROUND_LFE,
                        SURROUND_CENTERFRONT,
-                       SURROUND_CENTERBACK
+                       SURROUND_CENTERBACK,
+                       SPEAKER
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };

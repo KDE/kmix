@@ -79,7 +79,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 
    if ( name.indexOf( "master"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
    if ( name.indexOf( "master mono", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
-   if ( name.indexOf( "front"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
+   if ( name.indexOf( "front"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
    if ( name.indexOf( "pc speaker" , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
    if ( name.indexOf( "capture"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::RECMONITOR;
    if ( name.indexOf( "music"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;

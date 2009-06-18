@@ -55,27 +55,30 @@
 #define MAX_MIXDEVS 32
 
 const char* MixerDevNames[32]={
-    I18N_NOOP("Volume"), I18N_NOOP("Bass"), I18N_NOOP("Treble"),
-    I18N_NOOP("Synth"), I18N_NOOP("Pcm"), I18N_NOOP("Speaker"),
-    I18N_NOOP("Line"), I18N_NOOP("Microphone"), I18N_NOOP("CD"),
-    I18N_NOOP("Mix"), I18N_NOOP("Pcm2"), I18N_NOOP("RecMon"),
-    I18N_NOOP("IGain"), I18N_NOOP("OGain"), I18N_NOOP("Line1"),
-    I18N_NOOP("Line2"), I18N_NOOP("Line3"), I18N_NOOP("Digital1"),
-    I18N_NOOP("Digital2"), I18N_NOOP("Digital3"), I18N_NOOP("PhoneIn"),
-    I18N_NOOP("PhoneOut"), I18N_NOOP("Video"), I18N_NOOP("Radio"),
-    I18N_NOOP("Monitor"), I18N_NOOP("3D-depth"), I18N_NOOP("3D-center"),
-    I18N_NOOP("unknown"), I18N_NOOP("unknown"), I18N_NOOP("unknown"),
+    I18N_NOOP("Volume"),   I18N_NOOP("Bass"),       I18N_NOOP("Treble"),
+    I18N_NOOP("Synth"),    I18N_NOOP("Pcm"),        I18N_NOOP("Speaker"),
+    I18N_NOOP("Line"),     I18N_NOOP("Microphone"), I18N_NOOP("CD"),
+    I18N_NOOP("Mix"),      I18N_NOOP("Pcm2"),       I18N_NOOP("RecMon"),
+    I18N_NOOP("IGain"),    I18N_NOOP("OGain"),      I18N_NOOP("Line1"),
+    I18N_NOOP("Line2"),    I18N_NOOP("Line3"),      I18N_NOOP("Digital1"),
+    I18N_NOOP("Digital2"), I18N_NOOP("Digital3"),   I18N_NOOP("PhoneIn"),
+    I18N_NOOP("PhoneOut"), I18N_NOOP("Video"),      I18N_NOOP("Radio"),
+    I18N_NOOP("Monitor"),  I18N_NOOP("3D-depth"),   I18N_NOOP("3D-center"),
+    I18N_NOOP("unknown"),  I18N_NOOP("unknown"),    I18N_NOOP("unknown"),
     I18N_NOOP("unknown") , I18N_NOOP("unused") };
 
 const MixDevice::ChannelType MixerChannelTypes[32] = {
-  MixDevice::VOLUME,   MixDevice::BASS,       MixDevice::TREBLE,   MixDevice::MIDI,
-  MixDevice::AUDIO,    MixDevice::EXTERNAL,   MixDevice::EXTERNAL, MixDevice::MICROPHONE,
-  MixDevice::CD,       MixDevice::VOLUME,     MixDevice::AUDIO,    MixDevice::RECMONITOR,
-  MixDevice::VOLUME,   MixDevice::RECMONITOR, MixDevice::EXTERNAL, MixDevice::EXTERNAL,
-  MixDevice::EXTERNAL, MixDevice::AUDIO,      MixDevice::AUDIO,    MixDevice::AUDIO,
-  MixDevice::EXTERNAL, MixDevice::EXTERNAL,   MixDevice::EXTERNAL, MixDevice::EXTERNAL,
-  MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,   MixDevice::UNKNOWN,
-  MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
+    MixDevice::VOLUME,   MixDevice::BASS,       MixDevice::TREBLE,
+    MixDevice::MIDI,     MixDevice::AUDIO,      MixDevice::SPEAKER,
+    MixDevice::EXTERNAL, MixDevice::MICROPHONE, MixDevice::CD,
+    MixDevice::VOLUME,   MixDevice::AUDIO,      MixDevice::RECMONITOR,
+    MixDevice::VOLUME,   MixDevice::RECMONITOR, MixDevice::EXTERNAL,
+    MixDevice::EXTERNAL, MixDevice::EXTERNAL,   MixDevice::DIGITAL,
+    MixDevice::DIGITAL,  MixDevice::DIGITAL,    MixDevice::EXTERNAL,
+    MixDevice::EXTERNAL, MixDevice::VIDEO,      MixDevice::EXTERNAL,
+    MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,
+    MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,
+    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
 
 Mixer_Backend* OSS_getMixer( Mixer* mixer, int device )
 {
