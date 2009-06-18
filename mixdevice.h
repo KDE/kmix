@@ -59,10 +59,26 @@ Q_OBJECT
 
 public:
     // For each ChannelType a special icon exists
-    enum ChannelType {AUDIO = 1, BASS, CD, EXTERNAL, MICROPHONE,
-                        MIDI, RECMONITOR, TREBLE, UNKNOWN, VOLUME,
-                        VIDEO, SURROUND, HEADPHONE, DIGITAL, AC97,
-                        SURROUND_BACK, SURROUND_LFE, SURROUND_CENTERFRONT, SURROUND_CENTERBACK };
+    enum ChannelType { AUDIO = 1,
+                       BASS,
+                       CD,
+                       EXTERNAL,
+                       MICROPHONE,
+                       MIDI,
+                       RECMONITOR,
+                       TREBLE,
+                       UNKNOWN,
+                       VOLUME,
+                       VIDEO,
+                       SURROUND,
+                       HEADPHONE,
+                       DIGITAL,
+                       AC97,
+                       SURROUND_BACK,
+                       SURROUND_LFE,
+                       SURROUND_CENTERFRONT,
+                       SURROUND_CENTERBACK
+                     };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };
 
