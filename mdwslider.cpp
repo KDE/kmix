@@ -533,7 +533,7 @@ QPixmap MDWSlider::icon( int icontype )
       case MixDevice::RECMONITOR:
           miniDevPM = loadIcon("mixer-capture"); break;
       case MixDevice::TREBLE:
-          miniDevPM = loadIcon("mixer-pcm-defoult"); break;
+          miniDevPM = loadIcon("mixer-pcm-default"); break;
       case MixDevice::UNKNOWN:
           miniDevPM = loadIcon("mixer-front"); break;
       case MixDevice::VOLUME:
