@@ -81,7 +81,7 @@ public:
                        SPEAKER,
                        MICROPHONE_BOOST,
                        MICROPHONE_FRONT_BOOST,
-                       MICROPHONE_FRONT,
+                       MICROPHONE_FRONT
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };
