@@ -76,7 +76,7 @@ Mixer_ALSA::~Mixer_ALSA()
 int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
    QString name = snd_mixer_selem_id_get_name( sid );
-// kDebug() << name;
+ kDebug() << name;
    if (name.contains("master"     , Qt::CaseInsensitive)) return MixDevice::VOLUME;
    if (name.contains("master mono", Qt::CaseInsensitive)) return MixDevice::VOLUME;
    if (name.contains("front"      , Qt::CaseInsensitive) &&
@@ -99,6 +99,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    if (name.contains("coaxial"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
    if (name.contains("optical"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
    if (name.contains("iec958"     , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
+   if (name.contains("digital"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
    if (name.contains("mic boost"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_BOOST;
    if (name.contains("Mic Front"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_FRONT;
    if (name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::MICROPHONE;
