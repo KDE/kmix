@@ -102,6 +102,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    if (name.contains("digital"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
    if (name.contains("mic boost"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_BOOST;
    if (name.contains("Mic Front"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_FRONT;
+   if (name.contains("Front Mic"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_FRONT;
    if (name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::MICROPHONE;
    if (name.contains("lfe"        , Qt::CaseInsensitive)) return MixDevice::SURROUND_LFE;
    if (name.contains("monitor"    , Qt::CaseInsensitive)) return MixDevice::RECMONITOR;
