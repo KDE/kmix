@@ -76,32 +76,35 @@ Mixer_ALSA::~Mixer_ALSA()
 int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
    QString name = snd_mixer_selem_id_get_name( sid );
-
-   if ( name.indexOf( "master"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
-   if ( name.indexOf( "master mono", 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
-   if ( name.indexOf( "front"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
-   if ( name.indexOf( "pc speaker" , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VOLUME;
-   if ( name.indexOf( "capture"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::RECMONITOR;
-   if ( name.indexOf( "music"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
-   if ( name.indexOf( "Synth"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
-   if ( name.indexOf( "FM"         , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MIDI;
-   if ( name.indexOf( "headphone"  , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::HEADPHONE;
-   if ( name.indexOf( "bass"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::BASS;
-   if ( name.indexOf( "treble"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::TREBLE;
-   if ( name.indexOf( "cd"         , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::CD;
-   if ( name.indexOf( "video"      , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::VIDEO;
-   if ( name.indexOf( "pcm"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AUDIO;
-   if ( name.indexOf( "Wave"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AUDIO;
-   if ( name.indexOf( "surround"   , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_BACK;
-   if ( name.indexOf( "center"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_CENTERFRONT;
-   if ( name.indexOf( "ac97"       , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::AC97;
-   if ( name.indexOf( "coaxial"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
-   if ( name.indexOf( "optical"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
-   if ( name.indexOf( "iec958"     , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::DIGITAL;
-   if ( name.indexOf( "mic"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::MICROPHONE;
-   if ( name.indexOf( "lfe"        , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND_LFE;
-   if ( name.indexOf( "monitor"    , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::RECMONITOR;
-   if ( name.indexOf( "3d"         , 0, Qt::CaseInsensitive ) != -1 ) return MixDevice::SURROUND;  // Should be probably some own icon
+// kDebug() << name;
+   if (name.contains("master"     , Qt::CaseInsensitive)) return MixDevice::VOLUME;
+   if (name.contains("master mono", Qt::CaseInsensitive)) return MixDevice::VOLUME;
+   if (name.contains("front"      , Qt::CaseInsensitive) &&
+      !name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::VOLUME;
+   if (name.contains("pc speaker" , Qt::CaseInsensitive)) return MixDevice::SPEAKER;
+   if (name.contains("capture"    , Qt::CaseInsensitive)) return MixDevice::RECMONITOR;
+   if (name.contains("music"      , Qt::CaseInsensitive)) return MixDevice::MIDI;
+   if (name.contains("Synth"      , Qt::CaseInsensitive)) return MixDevice::MIDI;
+   if (name.contains("FM"         , Qt::CaseInsensitive)) return MixDevice::MIDI;
+   if (name.contains("headphone"  , Qt::CaseInsensitive)) return MixDevice::HEADPHONE;
+   if (name.contains("bass"       , Qt::CaseInsensitive)) return MixDevice::BASS;
+   if (name.contains("treble"     , Qt::CaseInsensitive)) return MixDevice::TREBLE;
+   if (name.contains("cd"         , Qt::CaseInsensitive)) return MixDevice::CD;
+   if (name.contains("video"      , Qt::CaseInsensitive)) return MixDevice::VIDEO;
+   if (name.contains("pcm"        , Qt::CaseInsensitive)) return MixDevice::AUDIO;
+   if (name.contains("Wave"       , Qt::CaseInsensitive)) return MixDevice::AUDIO;
+   if (name.contains("surround"   , Qt::CaseInsensitive)) return MixDevice::SURROUND_BACK;
+   if (name.contains("center"     , Qt::CaseInsensitive)) return MixDevice::SURROUND_CENTERFRONT;
+   if (name.contains("ac97"       , Qt::CaseInsensitive)) return MixDevice::AC97;
+   if (name.contains("coaxial"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
+   if (name.contains("optical"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
+   if (name.contains("iec958"     , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
+   if (name.contains("mic boost"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_BOOST;
+   if (name.contains("Mic Front"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_FRONT;
+   if (name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::MICROPHONE;
+   if (name.contains("lfe"        , Qt::CaseInsensitive)) return MixDevice::SURROUND_LFE;
+   if (name.contains("monitor"    , Qt::CaseInsensitive)) return MixDevice::RECMONITOR;
+   if (name.contains("3d"         , Qt::CaseInsensitive)) return MixDevice::SURROUND;  // Should be probably some own icon
 
    return MixDevice::EXTERNAL;
 }

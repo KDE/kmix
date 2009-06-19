@@ -529,7 +529,7 @@ QPixmap MDWSlider::icon( int icontype )
       case MixDevice::MICROPHONE:
           miniDevPM = loadIcon("mixer-microphone");break;
       case MixDevice::MIDI:
-          miniDevPM = loadIcon("mixer-midi"); break;//TODO check if oxygem made this one
+          miniDevPM = loadIcon("mixer-midi"); break;
       case MixDevice::RECMONITOR:
           miniDevPM = loadIcon("mixer-capture"); break;
       case MixDevice::TREBLE:
@@ -554,6 +554,12 @@ QPixmap MDWSlider::icon( int icontype )
           miniDevPM = loadIcon("mixer-ac97"); break;//TODO check if oxygem made this one
       case MixDevice::SPEAKER:
           miniDevPM = loadIcon("mixer-pc-speaker"); break;
+      case MixDevice::MICROPHONE_BOOST:
+          miniDevPM = loadIcon("mixer-microphone-boost"); break;
+      case MixDevice::MICROPHONE_FRONT_BOOST:
+          miniDevPM = loadIcon("mixer-microphone-front-boost"); break;
+      case MixDevice::MICROPHONE_FRONT:
+          miniDevPM = loadIcon("mixer-microphone-front"); break;
       default:
           miniDevPM = loadIcon("mixer-front"); break;
    }
