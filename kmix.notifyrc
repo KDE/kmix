@@ -52,7 +52,7 @@ Comment[zh_TW]=音效混音器
 
 [Event/MasterFallback]
 Name=Audio Device Fallback
-Name[ar]=صوت اﻷداة اﻹحتياطى
+Name[ar]=صوت الأداة الإحتياطى
 Name[bg]=Стандартно звуково устройство
 Name[ca]=Dispositiu d'àudio alternatiu
 Name[cs]=Náhradní zvukové zařízení
