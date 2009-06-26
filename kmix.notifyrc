@@ -122,6 +122,7 @@ Comment[nl]=Melding bij automatische terugval als het apparaat van voorkeur niet
 Comment[nn]=Varsling om automatisk reserveeining om den føretrekte eininga ikkje er tilgjengeleg
 Comment[pt]=Notificação de contingência se o dispositivo preferido estiver indisponível
 Comment[pt_BR]=Notificação de alternativa automática se os dispositivos preferidos estiverem indisponíveis
+Comment[ro]=Notificare la comutarea pe rezervă dacă dispozitivul preferat nu este disponibil
 Comment[ru]=Уведомление о недоступности звукового устройства по умолчанию
 Comment[sv]=Underrättelse vid automatisk återgång om önskad enhet inte är tillgängliga
 Comment[tr]=Tercih edilen aygıt erişilemez ise otomatik olarak yeni aygıta geçme bildirimi
