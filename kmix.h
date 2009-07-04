@@ -84,7 +84,10 @@ KMixWindow : public KXmlGuiWindow
    //void loadVolumes();
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
-   
+   void recreateGUI(bool saveView);
+   void recreateGUIwithoutSavingView();
+      
+      
    //void stopVisibilityUpdates();
    //void showEvent( QShowEvent * );
    //void hideEvent( QHideEvent * );
@@ -126,6 +129,7 @@ KMixWindow : public KXmlGuiWindow
    void saveConfig();
    void slotHWInfo();
    void slotConfigureCurrentView();
+   void slotSelectMaster();
    void addMixerWidget(const QString&);
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);

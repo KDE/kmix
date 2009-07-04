@@ -184,6 +184,7 @@ void ViewSliders::constructionFinished() {
     configurationUpdate();
 }
 
+
 void ViewSliders::configurationUpdate() {
    // Adjust height of top part by setting it to the maximum of all mdw's
    int topPartExtent = 0;

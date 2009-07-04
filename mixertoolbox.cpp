@@ -20,8 +20,9 @@
  */
 
 
-#include "qwidget.h"
-#include "qstring.h"
+#include <QDir>
+#include <QWidget>
+#include <QString>
 
 //#include <kdebug.h>
 #include <klocale.h>
@@ -336,68 +337,66 @@ Mixer* MixerToolBox::find( const QString& mixer_id)
 GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
 {
    /** This is a two-step process *****************************************
-      * (1) Evaluate the default profile
-      * (2) Evaluate the soundcard specific profile
-      * (3) Find out who's best
+      * (1) Build a list of all files we want to check
+      * (2) Evaluate all files and keep the best
       ***********************************************************************/
-   
-   // (1) Evaluate the default profile
-   GUIProfile* guiprofBest = new GUIProfile();
-   QString fileNamePrefix = "profiles/" + mixer->getDriverName() + '.';
-   QString fileName = fileNamePrefix + "default.xml";
-   //kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName;
-   fileName = KStandardDirs::locate("appdata", fileName );
-   //kDebug(67100) << "MixerToolBox::selectProfile() defaultFileName=" << fileName;
+ 
+   GUIProfile* guiprofBest = 0;
    unsigned long matchValueBest = 0;
-   if ( !fileName.isNull() && guiprofBest->readProfile(fileName) ) {
-      // Profile exists and was successfully read
-      matchValueBest = guiprofBest->match(mixer);
-      if ( matchValueBest == 0 ) {
-         delete guiprofBest;
-         guiprofBest = 0;
-      }
-   }
-   else {
-      // No default profile => bad
-      delete guiprofBest;
-      guiprofBest = 0;
-   }
+   unsigned long matchValueTemp = 0;
    
-   //kDebug(67100) << "Cur Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
-   
-   // (2) Evaluate the soundcard specific profile  (the code is quite similar to the upper one
-   // Here we could also start a while loop over all matching filenames, e.g.: "<driverName>.<cardName>*.xml"
-   // But for now we will just check one filename: "<driverName>.<cardName>.xml" (note the missing '*')
+   QString userProfileDir = KStandardDirs::locateLocal("appdata", "profiles/" );
+
+   // (1) User profile Directory
+   QDir dir(userProfileDir);
+   dir.setFilter(QDir::Files);
+   QFileInfoList fileList = dir.entryInfoList();
+
+   QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
+
+   // (2) Default profile for Soundcard Driver (usually from system Directory)
+   QString fileName = fileNamePrefix + "default.xml";
+   QString fileNameFQ;
+   fileNameFQ = KStandardDirs::locate("appdata", fileName );
+kDebug() << fileName << "; fnfq1=" << fileNameFQ;
+   QFileInfo qfi1(fileNameFQ);
+   fileList.insert(0, qfi1);
+
+   // (3) Soundcard specific profile (usually from system Directory)
    QString mixerNameSpacesToUnderscores = mixer->baseName();
    mixerNameSpacesToUnderscores.replace(" ","_");
    fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
-//    kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName;
-   fileName = KStandardDirs::locate("appdata", fileName );
-//    kDebug(67100) << "MixerToolBox::selectProfile() cardSpecificFileName=" << fileName;
-   
-   GUIProfile* guiprofCardSpecific = new GUIProfile();
-   unsigned long matchValueCardSpecific = 0;
-   if ( !fileName.isNull() && guiprofCardSpecific->readProfile(fileName) ) {
-      matchValueCardSpecific = guiprofCardSpecific->match(mixer);
-   }
-   
-   // (3) Find out who's best (and discard the other one)
-      
-   if ( matchValueCardSpecific !=0 && matchValueCardSpecific >= matchValueBest ) {
-      // Current profile is better than the default Profile
-      // => Discard old best Profile, and make the Current Profile best
-      matchValueBest = matchValueCardSpecific;
-      delete guiprofBest;
-      guiprofBest = guiprofCardSpecific;
-      guiprofCardSpecific =  0;
-   }
-   else {
-      // Current "best" profile is better than current card specific Profile
-      // => Discard current Profile
-      delete guiprofCardSpecific;
-      guiprofCardSpecific =  0;
-   }
-   
+   fileNameFQ = KStandardDirs::locate("appdata", fileName );
+kDebug() << fileName << "; fnfq2=" << fileNameFQ;
+   QFileInfo qfi2(fileNameFQ);
+   fileList.insert(0, qfi2);  
+
+
+
+	for (int i = 0; i < fileList.size(); ++i) {
+		QFileInfo fileInfo = fileList.at(i);
+		kDebug() << i << ": Check user profile " << fileInfo.fileName() ;
+		if ( QDir::match( "*.xml", fileInfo.fileName() ) ) {
+			QString fileNameAbs = fileInfo.absoluteFilePath();
+			QString fileNameRelToProfile = "profiles/" + fileInfo.fileName();
+			kDebug() << i << ": Try user profile " << fileNameAbs;
+			GUIProfile* guiprofTemp = new GUIProfile();
+			if ( guiprofTemp->readProfile(fileNameAbs, fileNameRelToProfile) ) {
+				matchValueTemp = guiprofTemp->match(mixer);
+				if ( matchValueTemp < matchValueBest ) {
+					delete guiprofTemp;
+					guiprofTemp = 0;
+					matchValueTemp = 0;
+				}
+				else {
+					guiprofBest = guiprofTemp;
+					matchValueBest = matchValueTemp;
+				}
+			}
+		}
+	}
+
+
    if ( guiprofBest == 0 ) {
       // Still no profile found. This should usually not happen. This means one of the following things:
       // a) The KMix installation is not OK

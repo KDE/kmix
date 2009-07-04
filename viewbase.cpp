@@ -80,7 +80,15 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
 
 ViewBase::~ViewBase() {
     delete _mixSet;
-    delete _guiprof;
+    // A GUI profile can be shared by different views
+    // Starting with 5/2009 it is shared by the "tabs" of one card.
+    // So we have to make sure to delete it after all users are gone;
+    if ( _guiprof != 0 ) {
+	_guiprof->decreaseRefcount();
+	if ( _guiprof->refcount() == 0 )
+	       delete _guiprof;
+               _guiprof = 0;
+    }
 }
 
 
@@ -120,6 +128,34 @@ void ViewBase::createDeviceWidgets()
     // allow view to "polish" itself
     constructionFinished();
 }
+
+/*
+ * Rebuild the View from the (existing) Profile.
+ *
+ * Hint: this method signature might be extended in the future by a GUIProfile* paramater.
+ */
+void ViewBase::rebuildFromProfile()
+{
+   emit rebuildGUI();
+/*
+   // Redo everything from scratch, as visibility and the order of the controls might have changed.
+
+   // As the order of the controls is stored in the profile, we need
+   // to rebuild the _mixSet 
+kDebug() << "rebuild 1";
+   _mixSet->clear();
+kDebug() << "rebuild 2";
+   _mdws.clear();
+kDebug() << "rebuild 3";
+   setMixSet();
+kDebug() << "rebuild 4";
+   createDeviceWidgets();
+kDebug() << "rebuild 5";
+   constructionFinished();
+kDebug() << "rebuild 6";
+*/
+}
+
 
 // ---------- Popup stuff START ---------------------
 void ViewBase::mousePressEvent( QMouseEvent *e )

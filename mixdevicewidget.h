@@ -63,6 +63,7 @@ public:
     virtual void setStereoLinked( bool ) {}
     virtual void setLabeled( bool );
     virtual void setTicks( bool ) {}
+    const QString& iconName() const;
 
 
 public slots:
@@ -85,6 +86,7 @@ protected:
       Qt::Orientation      _orientation;
       bool                 m_small;
       KShortcutsDialog*    m_shortcutsDialog;
+      QString _iconName;
 
 private:
       void mousePressEvent( QMouseEvent *e );

@@ -19,7 +19,10 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <algorithm>
+
 #include <QCheckBox>
+#include <QPushButton>
 #include <QLabel>
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -31,9 +34,116 @@
 #include <kvbox.h>
 
 #include "dialogviewconfiguration.h"
+#include "guiprofile.h"
 #include "mixdevicewidget.h"
 #include "mixdevice.h"
+#include "mixer.h"
 
+DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent) :
+  QListWidgetItem(parent)
+{
+   kDebug() << "DialogViewConfigurationItem() default constructor";
+   refreshItem();
+}
+
+
+
+DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, QString id, bool shown, QString name, int splitted, const QString& iconName) :
+   QListWidgetItem(parent), _id(id), _shown(shown), _name(name), _splitted(splitted), _iconName(iconName)
+{
+  refreshItem();
+}
+
+void DialogViewConfigurationItem::refreshItem()
+{
+  setFlags((flags() | Qt::ItemIsDragEnabled) &  ~Qt::ItemIsDropEnabled);
+  setText(_name);
+  setIcon(KIconLoader::global()->loadIcon( _iconName, KIconLoader::Small, KIconLoader::SizeSmallMedium ) );
+  setData(Qt::ToolTipRole, _id);  // a hack. I am giving up to do it right
+  setData(Qt::DisplayRole, _name);
+}
+
+static QDataStream & operator<< ( QDataStream & s, const DialogViewConfigurationItem & item ) {
+    s << item._id;
+    s << item._shown;
+    s << item._name;
+    s << item._splitted;
+    s << item._iconName;
+ //kDebug() << "<< unserialize << " << s;
+    return s;
+}
+static QDataStream & operator>> ( QDataStream & s, DialogViewConfigurationItem & item ) {
+  QString id;
+  s >> id;
+  item._id = id;
+  bool shown;
+  s >> shown;
+  item._shown = shown;
+  QString name;
+  s >> name;
+  item._name = name;
+  int splitted;
+  s >> splitted;
+  item._splitted = splitted;
+  QString iconName;
+  s >> iconName;
+  item._iconName = iconName;
+ //kDebug() << ">> serialize >> " << id << name << iconName;
+  return s;
+}
+
+DialogViewConfigurationWidget::DialogViewConfigurationWidget(QWidget *parent)
+    : QListWidget(parent),
+      m_activeList(true)
+{
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDropIndicatorShown(true);
+    setAcceptDrops(true);
+setSelectionMode(QAbstractItemView::SingleSelection);
+setDragEnabled(true);
+viewport()->setAcceptDrops(true);
+setAlternatingRowColors(true);
+
+}
+
+
+
+QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*> items) const
+{
+    if (items.isEmpty())
+        return 0;
+    QMimeData* mimedata = new QMimeData();
+
+    DialogViewConfigurationItem* item = 0;
+    QByteArray data;
+    {
+        QDataStream stream(&data, QIODevice::WriteOnly);
+        // we only support single selection
+        item = static_cast<DialogViewConfigurationItem *>(items.first());
+        stream << *item;
+    }
+
+    bool active = isActiveList();
+    mimedata->setData("application/x-kde-action-list", data);
+    mimedata->setData("application/x-kde-source-treewidget", active ? "active" : "inactive");
+
+    return mimedata;
+}
+
+bool DialogViewConfigurationWidget::dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction action)
+{
+    const QByteArray data = mimeData->data("application/x-kde-action-list");
+    if (data.isEmpty())
+        return false;
+    QDataStream stream(data);
+    const bool sourceIsActiveList = mimeData->data("application/x-kde-source-treewidget") == "active";
+
+    DialogViewConfigurationItem* item = new DialogViewConfigurationItem(0); // needs parent, use this temporarily
+    stream >> *item;
+    item->refreshItem();
+    emit dropped(this, index, item, sourceIsActiveList);
+    return true;
+}
 
 DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
     : KDialog(  0),
@@ -42,8 +152,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    setCaption( i18n( "Configure" ) );
    setButtons( Ok|Cancel );
    setDefaultButton( Ok );
-   QList<QWidget *> &mdws = view._mdws;
-   QWidget * frame = new QWidget( this );
+   frame = new QWidget( this );
    frame->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
    
    setMainWidget( frame );
@@ -58,44 +167,110 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    qlb = new QLabel( i18n("Configuration of the channels."), frame );
    _layout->addWidget(qlb);
    
-   QScrollArea* scrollArea = new QScrollArea(frame);
-   scrollArea->setWidgetResizable(true); // avoid unnecesary scrollbars
-   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-   _layout->addWidget(scrollArea);
-   
-   vboxForScrollView = new QWidget();
-   vboxForScrollView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-   QGridLayout* grid = new QGridLayout(vboxForScrollView);
-   grid->setHorizontalSpacing(KDialog::spacingHint());
-   grid->setVerticalSpacing(0);
-   scrollArea->setWidget(vboxForScrollView);
+//    _hlayout = new QHBoxLayout();
+//    _layout->addLayout(_hlayout);
+   _glayout = new QGridLayout();
+   _layout->addLayout(_glayout);
 
-   qlb = new QLabel( i18n("Show/Hide") );
-   grid->addWidget(qlb,0,0);
-   qlb = new QLabel( i18n("Split"), vboxForScrollView );
-   grid->addWidget(qlb,0,1);
-   /*
-   qlb = new QLabel( i18n("Limit"), vboxForScrollView );
-   grid->addWidget(qlb,0,2);
-   */
+   _qlw = 0;
+   _qlwInactive = 0;
+   createPage();
+}
+
+
+
+void DialogViewConfiguration::slotDropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList )
+{
+    //kDebug() << "slotDropped: active=" << sourceIsActiveList;
+//kDebug() << "dropped item (index" << index << "): " << item->_id << item->_shown << item->_name << item->_splitted << item->_iconName;
+
+    if (list == _qlw) {
+        //DialogViewConfigurationItem* after = index > 0 ? static_cast<DialogViewConfigurationItem *>(list->item(index-1)) : 0;
+	
+        //kDebug() << "after" << after->text() << after->internalTag();
+        if (sourceIsActiveList) {
+            // has been dragged within the active list (moved).
+kDebug() << "dragged within the active list (moved)";
+	    _qlw->insertItem(index, item);
+            //moveActive(item, after);
+        } else {
+            // dragged from the inactive list to the active list
+kDebug() << "dragged from the inactive list to the active list";
+	    _qlw->insertItem(index, item);
+            //insertActive(item, after, true);
+        }
+    } else if (list == _qlwInactive) {
+        // has been dragged to the inactive list -> remove from the active list.
+kDebug() << "dragged from active to the inactive list";
+        //removeActive(item);
+	    _qlwInactive->insertItem(index, item);
+    }
+    else {
+//kDebug() << "Ignoring drop: unknown widget";
+    }
+
+    //delete item; // not needed anymore. must be deleted before slotToolBarSelected clears the lists
+
+    // we're modified, so let this change
+    //emit m_widget->enableOk(true);
+
+    //slotToolBarSelected( m_toolbarCombo->currentIndex() );
+}
+
+
+/**
+ * Create basic widgets of the Dialog.
+ */
+void DialogViewConfiguration::createPage()
+{
+   QList<QWidget *> &mdws = _view._mdws;
+
+   QLabel *l1 = new QLabel( i18n("Verfügbare Kanäle") );
+   _glayout->addWidget(l1,0,0);
+   QWidget *dummy = new QWidget(); dummy->setFixedWidth(16);
+   _glayout->addWidget(dummy,0,1);
+   QLabel *l2 = new QLabel( i18n("Angezeigte Kanäle") );
+   _glayout->addWidget(l2,0,2);
+
+   _qlwInactive = new DialogViewConfigurationWidget(frame);
+   _qlwInactive->setDragDropMode(QAbstractItemView::DragDrop);
+   _qlwInactive->setActiveList(false);
+   _glayout->addWidget(_qlwInactive,1,0);
+   connect(_qlwInactive, SIGNAL(dropped    (DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)),
+           this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)));
+
+
+   _qlw = new DialogViewConfigurationWidget(frame);
+   _glayout->addWidget(_qlw,1,2);
+    connect(_qlw  ,     SIGNAL(dropped    (DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)),
+            this  ,       SLOT(slotDropped(DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)));
+
+
    int i;
     // --- CONTROLS IN THE GRID --- 
-   QPalette::ColorRole bgRole;
+   //QPalette::ColorRole bgRole;
    for ( i=0; i<mdws.count(); ++i ) {
-       if ( i%2 == 0) bgRole = QPalette::Base; else bgRole = QPalette::AlternateBase;
+       //if ( i%2 == 0) bgRole = QPalette::Base; else bgRole = QPalette::AlternateBase;
       QWidget *qw = mdws[i];
       if ( qw->inherits("MixDeviceWidget") ) {
             MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
             MixDevice *md = mdw->mixDevice();
             QString mdName = md->readableName();
-            mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
-            QCheckBox* cb = new QCheckBox( mdName, vboxForScrollView ); // enable/disable
-            cb->setBackgroundRole(bgRole);
-            cb->setAutoFillBackground(true);
-            _qEnabledCB.append(cb);
-            cb->setChecked( mdw->isVisible() );
-            grid->addWidget(cb,1+i,0);
 
+            int splitted = -1;
+            if ( ! md->isEnum() ) {
+               splitted =  ( md->playbackVolume().count() > 1) || ( md->captureVolume().count() > 1 ) ;
+            }
+
+            //qDebug()  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
+            if ( mdw->isVisible() ) {
+              new DialogViewConfigurationItem(_qlw, md->id(), mdw->isVisible(), mdName, splitted, mdw->iconName());
+            }
+            else {
+              new DialogViewConfigurationItem(_qlwInactive, md->id(), mdw->isVisible(), mdName, splitted, mdw->iconName());
+            }
+
+/*
             if ( ! md->isEnum() && ( ( md->playbackVolume().count() > 1) || ( md->captureVolume().count() > 1) ) ) {
                 cb = new QCheckBox( "", vboxForScrollView ); // split
                 cb->setBackgroundRole(bgRole);
@@ -107,6 +282,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
             else {
                 _qSplitCB.append(0);
             }
+*/
             /*
             if ( ! md->isEnum() && ( md->playbackVolume().count() + md->captureVolume().count() >0 ) ) {
                 cb = new QCheckBox( "", vboxForScrollView ); // limit
@@ -117,12 +293,12 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
             }
             else {
             */
-                _qLimitCB.append(0);
+                //_qLimitCB.append(0);
             /*}*/
-      }
+      } // is not enum
    } // for all MDW's
 
-   scrollArea->updateGeometry();
+//   scrollArea->updateGeometry();
    updateGeometry();
    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
 }
@@ -131,49 +307,156 @@ DialogViewConfiguration::~DialogViewConfiguration()
 {
 }
 
+
 void DialogViewConfiguration::apply()
 {
-    QList<QWidget *> &mdws = _view._mdws;
 
-    // --- 2-Step Apply ---
+    // --- 3-Step Apply ---
 
-    // --- Step 1: Show and Hide Widgets ---
-    for ( int i=0; i<mdws.count(); ++i ) {
-        QWidget *qw = mdws[i];
-        MixDeviceWidget *mdw;
-      
-        if ( qw->inherits("MixDeviceWidget") ) {
-            mdw = static_cast<MixDeviceWidget*>(qw);
-        }
-        else {
-            continue;
-        }
-       
-        QCheckBox *cb = _qEnabledCB[i];
-        if ( cb != 0 ) {
-            mdw->setVisible( cb->isChecked());
-        } // show-hide
 
-        cb = _qSplitCB[i];
-        if ( cb != 0 ) {
-            mdw->setStereoLinked( ! cb->isChecked() );
-        } // split
-        
-   } // for all MDW's
+    // --- Step 1: Update view and profile ---
+   GUIProfile* prof = _view.guiProfile();
+   GUIProfile::ControlSet& oldControlset = prof->_controls;
+   GUIProfile::ControlSet newControlset;
 
-   // --- Step 2: Tell the view, that it has changed (probably it needs some "polishing" ---
-   _view.configurationUpdate();
+   QAbstractItemModel* model;
+   model = _qlw->model();
+   prepareControls(model, true, oldControlset, newControlset);
+   model = _qlwInactive->model();
+   prepareControls(model, false, oldControlset, newControlset);
+
+	// --- Step 2: Copy controls
+	oldControlset.clear();
+	std::vector<ProfControl*>::const_iterator itEnd = newControlset.end();
+	for ( std::vector<ProfControl*>::const_iterator it = newControlset.begin(); it != itEnd; ++it)
+	{
+	  ProfControl* control = *it;
+	  kDebug() << "Add control " << control->id;
+          oldControlset.push_back(control);
+	}
+	QString profileName;
+	Mixer* mixer = _view.getMixer();
+	profileName =  mixer->id() + "."  + _view.id();
+	prof->writeProfile(profileName);  // at the moment it would only be really neccessary on "order change" of the controls
+
+   // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
+
+   _view.rebuildFromProfile();
+//    // _view.configurationUpdate();  // old: update "light"
+}
+
+void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)
+{
+   int numRows = model->rowCount();
+
+  for (int row = 0; row < numRows; ++row) {
+         // 1) Extract the value from the model
+         QModelIndex index = model->index(row, 0);
+         QVariant vdci;
+         vdci = model->data(index, Qt::ToolTipRole);   // TooltipRole stores the ID (well, thats not really clean design, but it works)
+          QString ctlId = vdci.toString();
+//         qDebug() << row << ":" << text;
+
+          // 2) Find the mdw, und update it
+		MixDeviceWidget *mdw = 0;
+          QList<QWidget *> &mdws = _view._mdws;
+          for ( int i=0; i<mdws.count(); ++i ) {
+	    QWidget *qw = mdws[i];
+	    if ( ! qw->inherits("MixDeviceWidget") ) {
+                break;
+            }
+            else {
+		mdw = static_cast<MixDeviceWidget*>(qw);
+                if ( mdw->mixDevice()->id() == ctlId ) {
+                  // found
+		  mdw->setVisible(isActiveView);
+		  break;
+		}
+	    }
+         }  // find mdw
+
+         // 3) Insert it in the new ControlSet
+// 	ProfControl* newCtl = new ProfControl(*control);
+// 	newCtl->id = ctlId;
+// 	if ( isActiveView )
+// 		newCtl->show = "simple";
+// 	else
+// 		newCtl->show = "extended";
+// 
+// 	// @todo: The rest of the properties
+// 	newCtlSet.push_back(newCtl);
+
+	  kDebug() << "Should add to new ControlSet: " << ctlId;
+        std::vector<ProfControl*>::const_iterator itEnd = oldCtlSet.end();
+	for ( std::vector<ProfControl*>::const_iterator it = oldCtlSet.begin(); it != itEnd; ++it)
+	{
+	  ProfControl* control = *it;
+          //kDebug() << " checking " << control->id;
+          QRegExp idRegexp(control->id);
+	  if ( ctlId.contains(idRegexp) ) {
+             // found. Create a copy
+             ProfControl* newCtl = new ProfControl(*control);
+             newCtl->id = ctlId; // Exchange the (possible) regexp by the actual ID
+             if ( isActiveView ) {
+                newCtl->show = "simple";
+             }
+             else {
+                newCtl->show = "extended";
+             }
+             newCtlSet.push_back(newCtl);
+             kDebug() << "Should add to new ControlSet (done): " << ctlId;
+             break;
+          }
+	}
+
+  }
 }
 
 
-QSize DialogViewConfiguration::sizeHint() const {
-    QSize size = vboxForScrollView->sizeHint();
-    // The +50 is a workaround, because KDialog does not handle our case correctly (using a QScrollarea)
-    size.rwidth() += 50;
-    size.rheight() += KDialog::spacingHint();
-    size.rheight() += qlb->height();
-    return size;
-}
+// 	std::vector<ProfControl*>::const_iterator itEnd = oldControls.end();
+// 	for ( std::vector<ProfControl*>::const_iterator it = oldControls.begin(); it != itEnd; ++it)
+// 	{
+// 	  ProfControl* control = *it;
+// 	  if ( control
+// 	}
+// 	ProfControl* ctl = new ProfControl();
+// 
+// 
+//     std::vector<ProfControl*>::const_iterator itEnd = oldControls.end();
+//     for ( std::vector<ProfControl*>::const_iterator it = oldControls.begin(); it != itEnd; ++it)
+//     {
+// 	ProfControl* control = *it;
+//     }
+// //        if (oldControls.contains(text))
+// 	GUIProfile::ControlSet::iterator it =
+//  std::find(oldControls.begin(), oldControls.end(), text);
+//         //if(it != oldControls.end())
+//                 qDebug << "Found!\n";
+//           //oldControls.find(text);
+//   }
+// 
+//  
+//   //newControls
+//    std::vector<ProfControl*>::const_iterator itEnd = oldControls.end();
+//     for ( std::vector<ProfControl*>::const_iterator it = oldControls.begin(); it != itEnd; ++it)
+//     {
+// ProfControl* control = *it;
+//     }
+// 
+// QSize DialogViewConfiguration::sizeHint() const {
+//     QSize size = this->sizeHint(); // !!!
+//     return size;
+//     QSize size = vboxForScrollView->sizeHint();
+//     // The +50 is a workaround, because KDialog does not handle our case correctly (using a QScrollarea)
+//     size.rwidth() += 50;
+//     size.rheight() += KDialog::spacingHint();
+//     size.rheight() += qlb->height();
+//     return size;
+// }
+// 
+
+
+
 
 #include "dialogviewconfiguration.moc"
 

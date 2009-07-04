@@ -58,6 +58,7 @@
 #include "kmixtoolbox.h"
 #include "version.h"
 #include "viewdockareapopup.h"
+#include "dialogselectmaster.h"
 //#include "osd.h" // Postponed to KDE4.1
 
 
@@ -85,7 +86,7 @@ KMixWindow::KMixWindow(bool invisible)
    initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
-   recreateGUI();
+   recreateGUI(false);
    fixConfigAfterRead();
    theKMixDeviceManager->initHotplug();
    connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
@@ -125,6 +126,9 @@ void KMixWindow::initActions()
    action = actionCollection()->addAction("toggle_channels_currentview");
    action->setText(i18n("Configure &Channels..."));
    connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
+   action = actionCollection()->addAction( "select_master" );
+   action->setText( i18n("Select Master Channel...") );
+   connect(action, SIGNAL(triggered(bool) ), SLOT(slotSelectMaster()));
 
    KAction* globalAction = actionCollection()->addAction("increase_volume");
    globalAction->setText(i18n("Increase Volume"));
@@ -393,10 +397,16 @@ KMixWindow::loadVolumes()
 
 
 
+void KMixWindow::recreateGUIwithoutSavingView()
+{
+	recreateGUI(false);
+}
+
+
 /**
  * Create or recreate the Mixer GUI elements
  */
-void KMixWindow::recreateGUI()
+void KMixWindow::recreateGUI(bool saveConfig)
 {
    saveViewConfig();  // save the state before recreating
    clearMixerWidgets();
@@ -448,7 +458,7 @@ void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QStrin
     if ( mixer != 0 ) {
         kDebug(67100) << "Plugged: dev=" << dev << "\n";
         MixerToolBox::instance()->possiblyAddMixer(mixer);
-        recreateGUI();
+        recreateGUI(true);
     }
 
 // Test code for OSD. But OSD is postponed to KDE4.1
@@ -502,7 +512,7 @@ void KMixWindow::unplugged( const QString& udi)
                 text = i18n("The last soundcard was unplugged.");
                 KMixToolBox::notification("MasterFallback", text);
             }
-            recreateGUI();
+            recreateGUI(true);
             break;
         }
     }
@@ -614,7 +624,9 @@ void KMixWindow::hideOrClose ( )
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
+  if ( mixer == 0 ) return; 
   MixDevice *md = Mixer::getGlobalMasterMD();
+  if ( md == 0 ) return;
   md->setMuted(false);
   if (increase)
     mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
@@ -737,7 +749,7 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
    }
 
    if ( labelsHasChanged || ticksHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged || systrayPopupHasChanged) {
-      recreateGUI();
+      recreateGUI(true);
    }
 
    this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
@@ -783,6 +795,12 @@ void KMixWindow::slotConfigureCurrentView()
     ViewBase* view = 0;
     if (mw) view = mw->currentView();
     if (view) view->configureView();
+}
+
+void KMixWindow::slotSelectMaster()
+{
+   DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
+   if (dsm) dsm->show();
 }
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {

@@ -66,16 +66,26 @@ public:
     // Also I do not want Views to interfere with polish()
     virtual void constructionFinished() = 0;
 
+    // This method is called after a configuration update (show/hide controls, split/unsplit).
+    // More complicated changes (e.g. order of controls) need a GUI rebuild - please use 
+    // rebuildFromProfile() then.
+    // The default implementation does nothing.
+    virtual void configurationUpdate();
+
     // This method is called after a configuration update (in other words: after the user
     // has clicked "OK" on the "show/hide" configuration dialog. The default implementation
     // does nothing.
-    virtual void configurationUpdate();
+    virtual void rebuildFromProfile();
 
     /**
      * Creates the widgets for all supported devices. The default implementation loops
      * over the supported MixDevice's and calls add() for each of it.
      */
     virtual void createDeviceWidgets();
+
+    virtual void setMixSet() = 0;
+    
+    Mixer* getMixer();
 
     /**
      * Creates a suitable representation for the given MixDevice.
@@ -100,18 +110,19 @@ public:
 
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
-     * _mdws[i] is the Widget for the MixDevice _mixSet[i].
+     * _mdws[i] is the Widget for the MixDevice _mixSet[i] - please see ViewBase::createDeviceWidgets().
      * Hint: !! The new ViewSurround class shows that a 1:1 relationship does not work in a general scenario.
      *       I actually DID expect this. The solution is unclear yet, probably there will be a virtual mapper method.
      */
     QList<QWidget *> _mdws;
 
+signals:
+    void rebuildGUI();
+
+
 protected:
-
-    Mixer* getMixer();
-
-    Mixer *_mixer;
     MixSet *_mixSet;
+    Mixer *_mixer;
     KMenu *_popMenu;
     KActionCollection* _actions; // -<- applciations wide action collection
 

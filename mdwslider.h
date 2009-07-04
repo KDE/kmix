@@ -71,7 +71,7 @@ public:
     void setMutedColors( QColor high, QColor low, QColor back );
     
     bool eventFilter( QObject* obj, QEvent* e );
-    
+    const QString& iconName() const { return _iconName; }
     // Layout
     QSizePolicy sizePolicy() const;
     int playbackExtentHint() const;
@@ -109,7 +109,7 @@ private:
     KShortcut dummyShortcut;
     QPixmap icon( int icontype );
     void setIcon( int icontype );
-    QPixmap loadIcon( const char* filename );
+    QPixmap loadIcon( QString& filename );
     void createWidgets( bool showMuteLED, bool showCaptureLED );
     void createWidgetsTopPart(QBoxLayout *, bool showMuteLED);
     void createWidgetsBottomPart(QBoxLayout *, bool showCaptureLED);
@@ -144,7 +144,6 @@ private:
     QLabel* m_captureText;
     QWidget *m_captureSpacer;
 //    static KShortcut dummyShortcut;
-
 
     QList<QWidget *> m_slidersPlayback;
     QList<QWidget *> m_slidersCapture;

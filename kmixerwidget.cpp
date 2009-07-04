@@ -159,7 +159,9 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
       // It is possible that the Profile author puts arbitrary names in it.
       if ( profTab->type == "Sliders" ) {
          ViewSliders* view = new ViewSliders( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
-         possiblyAddView(view);
+         if ( possiblyAddView(view) ) {
+              guiprof->increaseRefcount();
+         }
       }
       else {
          kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
@@ -167,15 +169,20 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
    } // for all tabs
 }
 
-void KMixerWidget::possiblyAddView(ViewBase* vbase)
+bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 {
-   if ( ! vbase->isValid()  )
+   if ( ! vbase->isValid()  ) {
       delete vbase;
+      return false;
+   }
    else {
       vbase->createDeviceWidgets();
       m_topLayout->addWidget(vbase);
       _views.push_back(vbase);
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
+      // *this will be deleted on rebuildGUI(), so lets queue the signal
+      connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithoutSavingView()), Qt::QueuedConnection );
+      return true;
    }
 }
 

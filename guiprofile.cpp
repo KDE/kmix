@@ -30,6 +30,7 @@
 
 // KDE
 #include <kdebug.h>
+#include <kstandarddirs.h>
 
 // KMix
 #include "mixer.h"
@@ -69,7 +70,8 @@ bool ProductComparator::operator()(const ProfProduct* p1, const ProfProduct* p2)
 	}
 }
 
-GUIProfile::GUIProfile()
+GUIProfile::GUIProfile() :
+  _refcount(0)
 {
 }
 
@@ -80,9 +82,17 @@ GUIProfile::~GUIProfile()
     qDeleteAll(_products);
 }
 
-bool GUIProfile::readProfile(QString& ref_fileName)
+/*
+ * ref_fileName: Full qualified filename (with path)
+ * ref_fileNameWithoutFullPath: Filename with "local path" only, typically "profiles/ALSA.default.xml"
+ */
+bool GUIProfile::readProfile(QString& ref_fileName, QString ref_fileNameWithoutFullPath)
 {
 	QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
+	_fileNameWithoutFullPath = ref_fileNameWithoutFullPath;
+	_fileNameWithoutFullPath.replace("::", ".");
+	_fileNameWithoutFullPath.replace(":", ".");
+   kDebug() << "Read profile:" << _fileNameWithoutFullPath << " => "  << ref_fileName ;
 
 	QFile xmlFile( ref_fileName );
 	QXmlInputSource source( &xmlFile );
@@ -102,6 +112,27 @@ bool GUIProfile::readProfile(QString& ref_fileName)
    }
 
    return ok;
+}
+
+
+bool GUIProfile::writeProfile(QString& fname)
+{
+   QString fileNameFQ;
+   _fileNameWithoutFullPath = "profiles/" + fname + ".xml";
+   _fileNameWithoutFullPath.replace("::", ".");
+   _fileNameWithoutFullPath.replace(":", ".");
+   fileNameFQ = KStandardDirs::locateLocal("appdata", _fileNameWithoutFullPath, true );
+//    fileNameFQ = KStandardDirs::locateLocal("appdata", _fileNameWithoutFullPath, true );
+
+   kDebug() << "Write profile:" << _fileNameWithoutFullPath << " => "  << fileNameFQ ;
+   QFile f(fileNameFQ);
+   f.open(QIODevice::WriteOnly | QFile::Truncate);
+   QTextStream out(&f);
+
+   //std::cout << *this;
+   out << *this;
+   f.close();
+
 }
 
 bool GUIProfile::finalizeProfile()
@@ -224,6 +255,76 @@ unsigned long GUIProfile::match(Mixer* mixer) {
 	return matchValue;
 }
 
+QString xmlify(QString raw);
+
+QString xmlify(QString raw)
+{
+// 	kDebug() << "Before: " << raw;
+	raw = raw.replace("&", "&amp;");
+	raw = raw.replace("<", "&lt;");
+	raw = raw.replace(">", "&gt;");
+	raw = raw.replace("'", "&apos;");
+	raw = raw.replace("\"", "&quot;");
+// 	kDebug() << "After : " << raw;
+	return raw;
+}
+
+
+QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
+{
+// kDebug() << "ENTER QTextStream& operator<<";
+   os << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+   os << endl << endl;
+
+   os << "<soundcard driver=\"" << xmlify(guiprof._soundcardDriver).toUtf8().constData() << "\""
+      << " version = \"" << guiprof._driverVersionMin << ":" << guiprof._driverVersionMax  << "\"" << endl
+      << " name = \"" << xmlify(guiprof._soundcardName).toUtf8().constData() << "\"" << endl
+      << " type = \"" << xmlify(guiprof._soundcardType).toUtf8().constData() << "\"" << endl
+      << " generation = \"" << guiprof._generation << "\"" << endl
+      << ">" << endl << endl ;
+
+	for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
+	{
+		ProfProduct* prd = *it;
+		os << "<product vendor=\"" << xmlify(prd->vendor).toUtf8().constData() << "\" name=\"" << xmlify(prd->productName).toUtf8().constData() << "\"";
+		if ( ! prd->productRelease.isNull() ) {
+			os << " release=\"" << xmlify(prd->productRelease).toUtf8().constData() << "\"";
+		}
+		if ( ! prd->comment.isNull() ) {
+			os << " comment=\"" << xmlify(prd->comment).toUtf8().constData() << "\"";
+		}
+		os << " />" << endl;
+	} // for all products
+	os << endl;
+
+	for ( std::vector<ProfControl*>::const_iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
+	{
+		ProfControl* profControl = *it;
+		os << "<control id=\"" << xmlify(profControl->id).toUtf8().constData() << "\"" ;
+		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
+		 	os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
+		}
+		os << " subcontrols=\"" << xmlify(profControl->subcontrols).toUtf8().constData() << "\"" ;
+		if ( ! profControl->tab.isNull() ) {
+			os << " tab=\"" << xmlify(profControl->tab).toUtf8().constData() << "\"" ;
+		}
+		os << " show=\"" << xmlify(profControl->show).toUtf8().constData() << "\"" ;
+		os << " />" << endl;
+	} // for all controls
+	os << endl;
+
+	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
+		ProfTab* profTab = *it;
+		os << "<tab name=\"" << xmlify(profTab->name).toUtf8().constData() << "\" type=\"" << xmlify(profTab->type).toUtf8().constData() << "\"";
+                os << " />" << endl;
+	} // for all tabs
+	os << endl;
+
+	os << "</soundcard>" << endl;
+// kDebug() << "EXIT  QTextStream& operator<<";
+	return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 	os  << "Soundcard:" << std::endl
 			<< "  Driver=" << guiprof._soundcardDriver.toUtf8().constData() << std::endl
@@ -233,6 +334,7 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 			<< "  Card-Type=" << guiprof._soundcardType.toUtf8().constData() << std::endl
 			<< "  Profile-Generation="  << guiprof._generation
 			<< std::endl;
+
 	for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
 	{
 		ProfProduct* prd = *it;
@@ -244,11 +346,6 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 			os << "  Comment = " << prd->comment.toUtf8().constData() << std::endl;
 		}
 	} // for all products
-
-	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
-		ProfTab* profTab = *it;
-		os << "Tab: " << std::endl << "  " << profTab->name.toUtf8().constData() << " (" << profTab->type.toUtf8().constData() << ")" << std::endl;
-	} // for all tabs
 
 	for ( std::vector<ProfControl*>::const_iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
 	{
@@ -264,10 +361,29 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		os << "  Shown-On=" << profControl->show.toUtf8().constData() << std::endl;
 	} // for all controls
 
+	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
+		ProfTab* profTab = *it;
+		os << "Tab: " << std::endl << "  " << profTab->name.toUtf8().constData() << " (" << profTab->type.toUtf8().constData() << ")" << std::endl;
+	} // for all tabs
+
 	return os;
 }
 
 
+ProfControl::ProfControl(){
+}
+
+ProfControl::ProfControl(const ProfControl &profControl){
+
+		id = profControl.id;
+		name = profControl.name;
+		subcontrols = profControl.subcontrols;
+		name = profControl.name;
+		tab = profControl.tab;
+		show = profControl.show;
+		backgroundColor = profControl.backgroundColor;
+		switchtype = profControl.switchtype;
+}
 
 
 // ### PARSER START ################################################

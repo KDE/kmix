@@ -61,7 +61,8 @@ class KMixerWidget : public QWidget
    
   signals:
    void toggleMenuBar();
-
+   void rebuildGUI();
+    
   public slots:
    void setTicks( bool on );
    void setLabels( bool on );
@@ -84,7 +85,7 @@ class KMixerWidget : public QWidget
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
 
    void createLayout(ViewBase::ViewFlags vflags);
-   void possiblyAddView(ViewBase* vbase);
+   bool possiblyAddView(ViewBase* vbase);
    void createViewsByProfile(Mixer* mixer, GUIProfile* guiprof, ViewBase::ViewFlags vflags);
 };
 

@@ -25,11 +25,15 @@ class Mixer;
 
 #include <qxml.h>
 #include <QColor>
+#include <QTextStream>
 #include <QString>
+
 #include <string>
 #include <map>
 #include <set>
 #include <vector>
+
+#include <KDebug>
 
 struct SortedStringComparator
 {
@@ -46,9 +50,29 @@ struct ProfProduct
 	QString comment;
 };
 
-struct ProfControl
+class ProfControl
 {
+public:
+        ProfControl(); // default constructor
+        ProfControl(const ProfControl &ctl); // copy constructor
 	// ID as returned by the Mixer Backend, e.g. Master:0
+
+/*
+        bool operator==(QString& other ) const
+        {
+                return other == id;
+        }
+
+        bool operator==(QString other ) const
+        {
+                return other == id;
+        }
+
+        bool operator==(const QString& other ) const
+        {
+                return other == id;
+        }
+*/
 	QString id;
 	// List of controls, e.g: "rec:1-2,recswitch"
 	// When we start using it, it might be changed into a std::vector in the future.
@@ -62,7 +86,7 @@ struct ProfControl
    // If you set no pattern, the name will be used instead.
    // If you use a pattern, you normally should not define a name, as it will apply to all matching controls
    QString regexp;
-	// show or hide (contains the GUI type: simple, extended, full)
+	// show or hide (contains the GUI type: simple, extended, all)
 	QString show;
       // For applying custom colors
       QColor backgroundColor;
@@ -89,10 +113,16 @@ public:
 	GUIProfile();
 	virtual ~GUIProfile();
 
-	bool readProfile(QString& ref_fileNamestring);
-   bool finalizeProfile();
+	void increaseRefcount() { ++_refcount; } ;
+	void decreaseRefcount() { if (_refcount > 0) --_refcount; else kError() << "_refcount already 0"; } ;
+	unsigned int refcount() {return _refcount; } ;
+
+	bool readProfile(QString& ref_fileNamestring, QString ref_fileNameWithoutFullPath);
+	bool finalizeProfile();
+	bool writeProfile(QString& fname);
 	unsigned long match(Mixer* mixer);
 	friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
+	friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
  
 	// key, value, comparator
 	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringMap;
@@ -112,9 +142,13 @@ public:
 	QString _soundcardName;
 	QString _soundcardType;
 	unsigned long _generation;
+private:
+	QString _fileNameWithoutFullPath;
+	unsigned int _refcount;
 };
 
 std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
+QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 
 class GUIProfileParser : public QXmlDefaultHandler
 {

@@ -1,6 +1,6 @@
 project(kmix)
 
-include_directories( ${GLIB2_INCLUDE_DIR} ${LIBKNOTIFICATIONITEM-1_INCLUDE_DIR} )
+include_directories( ${GLIB2_INCLUDE_DIR} ${LIBKNOTIFICATIONITEM-1_INCLUDE_DIR} /usr/lib/oss/include)
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 

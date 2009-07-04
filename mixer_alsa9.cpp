@@ -843,7 +843,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
                    default: kDebug() << "FATAL: Unknown channel type for capture << " << i << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug(67100) << "writeVolumeToHW(" << devnum << ") [set_capture_volume] failed, errno=" << ret;
-              if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumecapture control=" << id << ", chid=" << i << ", vol=" << volumeCapture[i]; }
+              //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumecapture control=" << id << ", chid=" << i << ", vol=" << volumeCapture[i]; }
           }
        }
     } // has capture volume

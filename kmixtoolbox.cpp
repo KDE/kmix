@@ -116,6 +116,7 @@ void KMixToolBox::loadView(ViewBase *view, KConfig *config)
          if ( devcg.hasKey("Show") ) 
          {
             mdwEnabled = ( true == devcg.readEntry("Show", true) );
+	    //kDebug() << "Load devgrp" << devgrp << "show=" << mdwEnabled;
             //kDebug(67100) << "KMixToolBox::loadView() for" << devgrp << "from config-file: mdwEnabled==" << mdwEnabled;
          }
          else
@@ -180,6 +181,8 @@ void KMixToolBox::saveView(ViewBase *view, KConfig *config)
             devcg.writeEntry( "Split", ! mdw->isStereoLinked() );
          }
          devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
+kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+
       } // inherits MixDeviceWidget
    } // for all MDW's
 }
