@@ -225,11 +225,11 @@ void DialogViewConfiguration::createPage()
 {
    QList<QWidget *> &mdws = _view._mdws;
 
-   QLabel *l1 = new QLabel( i18n("Verfügbare Kanäle") );
+   QLabel *l1 = new QLabel( i18n("Available channels") );
    _glayout->addWidget(l1,0,0);
    QWidget *dummy = new QWidget(); dummy->setFixedWidth(16);
    _glayout->addWidget(dummy,0,1);
-   QLabel *l2 = new QLabel( i18n("Angezeigte Kanäle") );
+   QLabel *l2 = new QLabel( i18n("Visible channels") );
    _glayout->addWidget(l2,0,2);
 
    _qlwInactive = new DialogViewConfigurationWidget(frame);
