@@ -115,7 +115,7 @@ bool GUIProfile::readProfile(QString& ref_fileName, QString ref_fileNameWithoutF
 }
 
 
-bool GUIProfile::writeProfile(QString& fname)
+void GUIProfile::writeProfile(QString& fname)
 {
    QString fileNameFQ;
    _fileNameWithoutFullPath = "profiles/" + fname + ".xml";
