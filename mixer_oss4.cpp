@@ -162,6 +162,10 @@ int Mixer_OSS4::open()
 	{
 		return Mixer::ERR_OPEN;
 	}
+	if (m_ossVersion < 0x040000)
+	{
+		return Mixer::ERR_OPEN;
+	}
 
 	wrapIoctl( ioctl (m_fd, SNDCTL_MIX_NRMIX, &m_numMixers) );
 
