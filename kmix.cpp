@@ -679,8 +679,10 @@ void KMixWindow::slotHideVolumeDisplay()
 void KMixWindow::slotMute()
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer();
+  if ( mixer == 0 ) return; // e.g. when no soundcard is available
   MixDevice *md = Mixer::getGlobalMasterMD();
-  mixer->toggleMute(md->id());
+  if ( md == 0 ) return; // shouldn't happen, but lets play safe
+  mixer->toggleMute(md->id()); 
   showVolumeDisplay();
 }
 
