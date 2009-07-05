@@ -614,7 +614,9 @@ void KMixWindow::hideOrClose ( )
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
+  if ( mixer == 0 ) return; // e.g. when no soundcard is available
   MixDevice *md = Mixer::getGlobalMasterMD();
+  if ( md == 0 ) return; // shouldn't happen, but lets play safe
   md->setMuted(false);
   if (increase)
     mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
@@ -667,7 +669,9 @@ void KMixWindow::slotHideVolumeDisplay()
 void KMixWindow::slotMute()
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer();
+  if ( mixer == 0 ) return; // e.g. when no soundcard is available
   MixDevice *md = Mixer::getGlobalMasterMD();
+  if ( md == 0 ) return; // shouldn't happen, but lets play safe
   mixer->toggleMute(md->id());
   showVolumeDisplay();
 }
