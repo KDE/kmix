@@ -23,7 +23,6 @@ install( FILES
     kmixdocked.png
     kmixdocked_mute.png
     kmixdocked_error.png
-    mix_record.png
     DESTINATION  ${DATA_INSTALL_DIR}/kmix/pics )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
