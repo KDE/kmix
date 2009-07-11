@@ -98,6 +98,7 @@ Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_CN]=基本声音设备
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
+Comment[ar]=التنبيه عن اللجوء التلقائي إذا كانت اﻷدوات المفضلة غير متوافرة
 Comment[bg]=Уведомяване при връщане към стандартното устройство, ако избраното е недостъпно
 Comment[ca]=Notificació del canvi automàtic al dispositiu l'alternatiu si el dispositiu preferit no està disponible
 Comment[cs]=Upozornění na automatickou náhradu, pokud je preferované zařízení nedostupné
