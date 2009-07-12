@@ -67,7 +67,7 @@
     unknown, unknown, unknown,
     unknown , unused };
 -->
-<control id="^0$"  tab="Base" name="Front" show="simple" />  <!-- Volume -->
+<control id="^0$"  tab="Base" show="simple" />  <!-- Volume -->
 <control id="^4$"  tab="Base" show="simple" />               <!-- PCM -->
 <control id="^8$"  tab="Base" show="simple"/>                <!-- CD -->
 
