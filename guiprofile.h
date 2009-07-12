@@ -119,7 +119,7 @@ public:
 
 	bool readProfile(QString& ref_fileNamestring, QString ref_fileNameWithoutFullPath);
 	bool finalizeProfile();
-	void writeProfile(QString& fname);
+	bool writeProfile(QString& fname);
 	unsigned long match(Mixer* mixer);
 	friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
 	friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);

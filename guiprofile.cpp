@@ -115,8 +115,9 @@ bool GUIProfile::readProfile(QString& ref_fileName, QString ref_fileNameWithoutF
 }
 
 
-void GUIProfile::writeProfile(QString& fname)
+bool GUIProfile::writeProfile(QString& fname)
 {
+   bool ret = false;
    QString fileNameFQ;
    _fileNameWithoutFullPath = "profiles/" + fname + ".xml";
    _fileNameWithoutFullPath.replace("::", ".");
@@ -126,13 +127,15 @@ void GUIProfile::writeProfile(QString& fname)
 
    kDebug() << "Write profile:" << _fileNameWithoutFullPath << " => "  << fileNameFQ ;
    QFile f(fileNameFQ);
-   f.open(QIODevice::WriteOnly | QFile::Truncate);
-   QTextStream out(&f);
+   if ( f.open(QIODevice::WriteOnly | QFile::Truncate) )
+   { 
+      QTextStream out(&f);
+      out << *this;
+      f.close();
+      ret = true;
+   }
 
-   //std::cout << *this;
-   out << *this;
-   f.close();
-
+   return ret;
 }
 
 bool GUIProfile::finalizeProfile()
