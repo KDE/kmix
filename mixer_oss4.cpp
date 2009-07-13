@@ -162,7 +162,7 @@ int Mixer_OSS4::open()
 	{
 		return Mixer::ERR_OPEN;
 	}
-	if (m_ossVersion < 0x040000)
+	if (m_ossversion < 0x040000)
 	{
 		return Mixer::ERR_OPEN;
 	}
