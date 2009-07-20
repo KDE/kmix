@@ -113,6 +113,7 @@ Comment[ga]=Fógairt nuair nach bhfuil do rogha ghléas ar fáil agus úsáidtea
 Comment[gl]=Notificación sobre a selección automática dun dispositivo de audio alternativo se o dispositivo preferido no está dispoñible
 Comment[hu]=Értesítés, ha automatikus váltás történik a másodlagos eszközre, mert az elsődleges nem elérhető
 Comment[is]=Láta vita ef varakort er tekið í notkun ef valið tæki er óaðgengilegt
+Comment[it]=Notifica sul ripiego automatico se il dispositivo preferito non è disponibile
 Comment[ja]=優先デバイスが利用できないために自動的にフォールバックしたときの通知
 Comment[km]=ការ​ជូនដំណឹង​លើ fallback ស្វ័យប្រវត្តិ ប្រសិន​បើ​ឧបករណ៍​ដែល​ចូលចិត្ត​មិន​អាច​ប្រើ​បាន
 Comment[ko]=선호하는 장치를 사용할 수 없을 때 자동 폴백 알림
