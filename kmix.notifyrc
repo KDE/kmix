@@ -124,6 +124,7 @@ Comment[pt]=Notificação de contingência se o dispositivo preferido estiver in
 Comment[pt_BR]=Notificação de alternativa automática se os dispositivos preferidos estiverem indisponíveis
 Comment[ro]=Notificare la comutarea pe rezervă dacă dispozitivul preferat nu este disponibil
 Comment[ru]=Уведомление о недоступности звукового устройства по умолчанию
+Comment[sl]=Obvestilo ob preklopu na zasilno napravo, ko želena naprava ni na voljo
 Comment[sr]=Обавештење о аутоматском спадању ако жељени уређај није доступан
 Comment[sr@latin]=Obaveštenje o automatskom spadanju ako željeni uređaj nije dostupan
 Comment[sv]=Underrättelse vid automatisk återgång om önskad enhet inte är tillgängliga
