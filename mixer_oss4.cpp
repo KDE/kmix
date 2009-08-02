@@ -28,13 +28,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-// Since we're guaranteed an OSS setup here, let's make life easier
-#if !defined(__NetBSD__) && !defined(__OpenBSD__)
-#include <sys/soundcard.h>
-#else
-#include <soundcard.h>
-#endif
-
+/* We're getting soundcard.h via mixer_oss4.h */
 #include "mixer_oss4.h"
 #include <klocale.h>
 #include <QLinkedList>
@@ -51,6 +45,19 @@ Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : Mixer_Backend(mixer, device)
 {
 	if ( device == -1 ) m_devnum = 0;
 	m_numExtensions = 0;
+	m_fd = -1;
+	m_ossVersion = 0;
+	m_modifyCounter = -1;
+}
+
+bool Mixer_OSS4::CheckCapture(oss_mixext *ext)
+{
+	QString name = ext->extname;
+	if ( ext->flags & MIXF_RECVOL || name.split(".").contains("in") )
+	{
+		return true;
+	}
+	return false;
 }
 
 Mixer_OSS4::~Mixer_OSS4()
@@ -137,6 +144,36 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 			QCharRef ref = (*it)[0];
 			ref = ref.toUpper();
 			cType = MixDevice::VOLUME;
+		} else
+		if ( (*it).contains("speaker") )
+		{
+			QCharRef ref = (*it)[0];
+			ref = ref.toUpper();
+			cType = MixDevice::SPEAKER;	
+		} else
+		if ( (*it).contains("center") && (*it).contains("lfe"))
+		{
+			QCharRef ref = (*it)[0];
+			ref = ref.toUpper();
+			cType = MixDevice::SURROUND_LFE;
+		} else
+		if ( (*it).contains("rear") )
+		{
+			QCharRef ref = (*it)[0];
+			ref = ref.toUpper();
+			cType = MixDevice::SURROUND_CENTERBACK;
+		} else
+		if ( (*it).contains("front") )
+		{
+			QCharRef ref = (*it)[0];
+			ref = ref.toUpper();
+			cType = MixDevice::SURROUND_CENTERFRONT;
+		} else
+		if ( (*it).contains("headphone") )
+		{
+			QCharRef ref = (*it)[0];
+			ref = ref.toUpper();
+			cType = MixDevice::HEADPHONE;
 		}
 		else
 		{
@@ -158,11 +195,15 @@ int Mixer_OSS4::open()
 			return Mixer::ERR_OPEN;
 	}
 
-	if( wrapIoctl( ioctl (m_fd, OSS_GETVERSION, &m_ossversion) ) < 0)
+	/*
+	 * Intentionally not wrapped - some systems may not support this ioctl, and therefore
+	 * aren't OSSv4. No need to throw needless error messages at the user in that case.
+	 */
+	if( ::ioctl (m_fd, OSS_GETVERSION, &m_ossVersion) < 0)
 	{
 		return Mixer::ERR_OPEN;
 	}
-	if (m_ossversion < 0x040000)
+	if (m_ossVersion < 0x040000)
 	{
 		return Mixer::ERR_OPEN;
 	}
@@ -175,8 +216,31 @@ int Mixer_OSS4::open()
 		{
 			m_numExtensions = m_devnum;
 			bool masterChosen = false;
+			bool masterHeuristicAvailable = false;
+			bool saveAsMasterHeuristc = false;
+			MixDevice *masterHeuristic = NULL;
+
 			oss_mixext ext;
 			ext.dev = m_devnum;
+			oss_mixerinfo mi;
+
+			mi.dev = m_devnum;
+			if ( wrapIoctl( ioctl (m_fd, SNDCTL_MIXERINFO, &mi) ) < 0 )
+			{
+				return Mixer::ERR_READ;
+			}
+
+			/* Mixer is disabled - this can happen, e.g. disconnected USB device */
+			if (!mi.enabled)
+			{
+				return Mixer::ERR_READ;
+			}
+
+			::close(m_fd);
+			if ( (m_fd= ::open(mi.devnode, O_RDWR)) < 0 )
+			{
+				return Mixer::ERR_OPEN;
+			}
 
 			if ( wrapIoctl( ioctl (m_fd, SNDCTL_MIX_NREXT, &m_numExtensions) ) < 0 )
 			{
@@ -215,16 +279,30 @@ int Mixer_OSS4::open()
 
 				QString name = ext.extname;
 
-				//skip vmix volume controls and mute controls
-				if ( (name.indexOf("vmix") > -1 && name.indexOf( "pcm") > -1) ||
-				     name.indexOf("mute") > -1
+				//skip unreadable controls
+				if ( ext.flags & MIXF_READABLE 
+					&& (name.contains("mute") 
 #ifdef MIXT_MUTE
-				     || (ext.type == MIXT_MUTE)
+					|| ext.flags == MIXT_MUTE)
 #endif
 				   )
 				{
 					continue;
 				}
+				//skip all vmix controls with the exception of outvol
+				else if ( name.contains("vmix") && ! name.contains("enable") )
+				{
+					//some heuristic in case we got no exported main volume control
+					if( name.contains("outvol") && ext.type != MIXT_ONOFF )
+					{
+						saveAsMasterHeuristc = true;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
 
 				//fix for old legacy names, according to Hannu's suggestions
 				if ( name.contains('_') )
@@ -232,22 +310,17 @@ int Mixer_OSS4::open()
 					name = name.section('_',1,1).toLower();
 				}
 
-				if ( ext.flags & MIXF_RECVOL || ext.flags & MIXF_MONVOL
-					|| name.indexOf(".in") > -1  )
-				{
-					isCapture = true;
-				}
-
+				isCapture = CheckCapture (&ext);
 				Volume::ChannelMask chMask = Volume::MNONE;
 
 				MixDevice::ChannelType cType = classifyAndRename(name, ext.flags);
 
-				if ( ext.type == MIXT_STEREOSLIDER16 ||
-				        ext.type == MIXT_STEREOSLIDER   ||
-				        ext.type == MIXT_MONOSLIDER16   ||
-				        ext.type == MIXT_MONOSLIDER     ||
-				        ext.type == MIXT_SLIDER
-				   )
+				if ( (ext.type == MIXT_STEREOSLIDER16 ||
+				      ext.type == MIXT_STEREOSLIDER   ||
+				      ext.type == MIXT_MONOSLIDER16   ||
+				      ext.type == MIXT_MONOSLIDER     ||
+				      ext.type == MIXT_SLIDER 
+				      ) 				   )
 				{
 					if ( ext.type == MIXT_STEREOSLIDER16 ||
 					        ext.type == MIXT_STEREOSLIDER
@@ -263,33 +336,88 @@ int Mixer_OSS4::open()
 					Volume vol (chMask, ext.maxvalue, ext.minvalue, false, isCapture);
 
 					MixDevice* md =	new MixDevice(_mixer,
-												  QString::number(i),
-												  name,
-												  cType);
+									QString::number(i),
+									name,
+									cType);
 					
 					if(isCapture)
+					{
 						md->addCaptureVolume(vol);
+					}
 					else
+					{
 						md->addPlaybackVolume(vol);
+					}
+
+					if( saveAsMasterHeuristc && ! masterHeuristicAvailable )
+					{
+						masterHeuristic = md;
+						masterHeuristicAvailable = true;
+					}
 					
 					if ( !masterChosen && ext.flags & MIXF_MAINVOL )
 					{
 						m_recommendedMaster = md;
 						masterChosen = true;
 					}
+
 					m_mixDevices.append(md);
 				}
-				else if ( ext.type == MIXT_ONOFF )
+				else if ( ext.type == MIXT_HEXVALUE )
+				{
+					chMask = Volume::ChannelMask(Volume::MLEFT);
+					Volume vol (chMask, ext.maxvalue, ext.minvalue, false, isCapture);
+
+					MixDevice* md =	new MixDevice(_mixer,
+								      QString::number(i),
+								      name,
+								      cType);
+					
+					if(isCapture)
+					{
+						md->addCaptureVolume(vol);
+					}
+					else
+					{
+						md->addPlaybackVolume(vol);
+					}
+					
+					if ( !masterChosen && ext.flags & MIXF_MAINVOL )
+					{
+						m_recommendedMaster = md;
+						masterChosen = true;
+					}
+
+					m_mixDevices.append(md);
+				}
+				else if ( ext.type == MIXT_ONOFF 
+#ifdef MIXT_MUTE
+					|| ext.type == MIXT_MUTE
+#endif
+					)
 				{
 					Volume vol(Volume::MNONE, 1, 0, true, isCapture);
+					
+					if (isCapture)
+						 vol.setSwitchType (Volume::CaptureSwitch);
+					else if (ext.type == MIXT_ONOFF)
+					{
+						 vol.setSwitchType (Volume::SpecialSwitch);
+					}
+					
 					MixDevice* md = new MixDevice(_mixer,
-												  QString::number(i),
-												  name,
-												  cType);
+								      QString::number(i),
+							 	      name,
+								      cType);
 					if(isCapture)
+					{
 						md->addCaptureVolume(vol);
+					}
 					else
+					{
 						md->addPlaybackVolume(vol);
+					}
+
 					m_mixDevices.append(md);
 				}
 				else if ( ext.type == MIXT_ENUM )
@@ -305,24 +433,31 @@ int Mixer_OSS4::open()
 
 						MixDevice* md = new MixDevice (_mixer,
 						                               QString::number(i),
-										name,
+									       name,
 						                               cType);
 
-						QList<QString> enumValuesRef = md->enumValues();
+						QList<QString*> enumValuesRef;
 						QString thisElement;
 
-						for ( int i = 0; i < ei.nvalues; i++ )
+						for ( int j = 0; j < ei.nvalues; j++ )
 						{
-							thisElement = &ei.strings[ ei.strindex[i] ];
+							thisElement = &ei.strings[ ei.strindex[j] ];
 
 							if ( thisElement.isEmpty() )
 							{
-								thisElement = QString::number(i);
+								thisElement = QString::number(j);
 							}
-							enumValuesRef.append( QString(thisElement) );
+							enumValuesRef.append( new QString(thisElement) );
 						}
+						md->addEnums(enumValuesRef);
+
 						m_mixDevices.append(md);
 					}
+				}
+
+				if ( ! masterChosen && masterHeuristicAvailable )
+				{
+					m_recommendedMaster = masterHeuristic;
 				}
 			}
 		}
@@ -340,6 +475,7 @@ int Mixer_OSS4::close()
 	m_isOpen = false;
 	int l_i_ret = ::close(m_fd);
 	m_mixDevices.clear();
+	m_recommendedMaster = NULL;
 	return l_i_ret;
 }
 
@@ -366,10 +502,31 @@ QString Mixer_OSS4::errorText(int mixer_error)
 	return l_s_errmsg;
 }
 
+bool Mixer_OSS4::prepareUpdateFromHW()
+{
+	oss_mixerinfo minfo;
+
+	minfo.dev = -1;
+	if ( wrapIoctl( ioctl(m_fd, SNDCTL_MIXERINFO, &minfo) ) < 0 )
+	{
+		kDebug(67100) << "Can't get mixerinfo from card!\n" << endl;
+		return false;
+	}
+
+	if (!minfo.enabled)
+	{
+		// Mixer is disabled. Probably disconnected USB device or card is unavailable;
+		kDebug(67100) << "Mixer for card is disabled!\n" << endl;
+		close();
+		return false;
+	}
+	if (minfo.modify_counter == m_modifyCounter) return false;
+	else m_modifyCounter = minfo.modify_counter;
+	return true;
+}
+
 int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 {
-
-	Volume& vol = md->playbackVolume();
 	oss_mixext extinfo;
 	oss_mixer_value mv;
 
@@ -382,6 +539,7 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 		return Mixer::ERR_READ;
 	}
 
+	Volume &vol = (CheckCapture (&extinfo)) ? md->captureVolume() : md->playbackVolume();
 	mv.dev = extinfo.dev;
 	mv.ctrl = extinfo.ctrl;
 	mv.timestamp = extinfo.timestamp;
@@ -400,8 +558,11 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 		
 		switch ( extinfo.type )
 		{
+#ifdef MIXT_MUTE		  
+			case MIXT_MUTE:
+#endif			  
 			case MIXT_ONOFF:
-				md->setMuted(mv.value != extinfo.maxvalue);
+				md->setMuted(mv.value != extinfo.minvalue);
 				break;
 
 			case MIXT_MONOSLIDER:
@@ -433,7 +594,6 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 int Mixer_OSS4::writeVolumeToHW(const QString& id, MixDevice *md)
 {
 	int volume = 0;
-	Volume& vol = md->playbackVolume();
 
 	oss_mixext extinfo;
 	oss_mixer_value mv;
@@ -448,49 +608,48 @@ int Mixer_OSS4::writeVolumeToHW(const QString& id, MixDevice *md)
 		return Mixer::ERR_READ;
 	}
 
-	if ( md->isMuted() && extinfo.type != MIXT_ONOFF )
+	Volume &vol = (CheckCapture (&extinfo)) ? md->captureVolume() : md->playbackVolume();
+
+	switch ( extinfo.type )
 	{
-		volume = 0;
-	}
-	else
-	{
-		switch ( extinfo.type )
-		{
-			case MIXT_ONOFF:
-				volume = (md->isMuted()) ? (extinfo.minvalue) : (extinfo.maxvalue);
-				break;
-			case MIXT_MONOSLIDER:
-				volume = vol[Volume::LEFT];
-				break;
+#ifdef MIXT_MUTE
+		case MIXT_MUTE:
+#endif	    
+		case MIXT_ONOFF:
+			volume = (md->isMuted()) ? (extinfo.maxvalue) : (extinfo.minvalue);
+			break;
 
-			case MIXT_STEREOSLIDER:
-				volume = vol[Volume::LEFT] | ( vol[Volume::RIGHT] << 8 );
-				break;
+		case MIXT_MONOSLIDER:
+			volume = vol[Volume::LEFT];
+			break;
 
-			case MIXT_SLIDER:
-				volume = vol[Volume::LEFT];
-				break;
+		case MIXT_STEREOSLIDER:
+			volume = vol[Volume::LEFT] | ( vol[Volume::RIGHT] << 8 );
+			break;
 
-			case MIXT_MONOSLIDER16:
-				volume = vol[Volume::LEFT];
-				break;
+		case MIXT_SLIDER:
+			volume = vol[Volume::LEFT];
+			break;
 
-			case MIXT_STEREOSLIDER16:
-				volume = vol[Volume::LEFT] | ( vol[Volume::RIGHT] << 16 );
-				break;
-			default:
-				return -1;
-		}
+		case MIXT_MONOSLIDER16:
+			volume = vol[Volume::LEFT];
+			break;
+
+		case MIXT_STEREOSLIDER16:
+			volume = vol[Volume::LEFT] | ( vol[Volume::RIGHT] << 16 );
+			break;
+		default:
+			return -1;
 	}
 
 	mv.dev = extinfo.dev;
 	mv.ctrl = extinfo.ctrl;
 	mv.timestamp = extinfo.timestamp;
-	mv.value = volume;
+	mv.value = volume - extinfo.minvalue;
 
 	if ( wrapIoctl ( ioctl (m_fd, SNDCTL_MIX_WRITE, &mv) ) < 0 )
 	{
-		kDebug ( 67100 ) << "error writing: " << endl;
+		kDebug ( 67100 ) << "error writing to control" << extinfo.extname << endl;
 		return Mixer::ERR_WRITE;
 	}
 	return 0;
@@ -540,7 +699,7 @@ void Mixer_OSS4::setEnumIdHW(const QString& id, unsigned int idx)
 	if ( wrapIoctl ( ioctl (m_fd, SNDCTL_MIX_WRITE, &mv) ) < 0 )
 	{
 		/* Oops, can't write to mixer */
-		kDebug ( 67100 ) << "error writing: " << endl;
+		kDebug ( 67100 ) << "error writing to control" << extinfo.extname << endl;
 	}
 }
 
