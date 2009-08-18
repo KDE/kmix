@@ -27,6 +27,8 @@
 #include <QRegExp>
 #include <QString>
 
+#include <KLocale>
+
 class GUIProfile;
 class Mixer;
 
@@ -51,7 +53,8 @@ class MixerToolBox : public QObject
       
       Mixer* find( const QString& mixer_id);
       GUIProfile* selectProfile(Mixer*);
-
+      static KLocale* whatsthisControlLocale();
+      
    signals:
       void mixerAdded(QString mixerID);
 
@@ -60,6 +63,8 @@ class MixerToolBox : public QObject
       static GUIProfile*   s_fallbackProfile;
       QMap<QString,int> s_mixerNums;
       static QRegExp s_ignoreMixerExpression;
+      
+      static KLocale* s_whatsthisLocale;
 };
 
 #endif

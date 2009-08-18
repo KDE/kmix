@@ -22,9 +22,10 @@ v3.5
 
 v3.6
 - This is the KDE 4.4 version
-- Wish 166591: Integrate OSS4 support.
-- Wish  57946: horizontally movable kmix controls. Added GUI for ordering (w/o GUI it was possible since 2006-02-21)
-- Wish 172883: Working on it. Some issues left: Most important: Controls might "disappear" in the written XML GUIProfile (duplicate handling)-
+- Wish 166591: "Integrate OSS4 support".
+- Wish  70042: "What's this help documentation on channels (aka Tooltip)"
+- Wish  57946: "horizontally movable kmix controls". Added GUI for ordering (w/o GUI it was possible since 2006-02-21)
+- Wish 172883: "recording tab is gone". Working on it. Some issues left. most important: Controls might "disappear" in the written XML GUIProfile (duplicate handling)-
 
 i001: When the user redefines the automatially grabbed XF86Volume* keys, he doesn't have an easy possibilty to get them back, because they are now marked as "no shortcut" in the global shortcut registry. The user must go the KDE system settings module "global shortcuts" and reset them to their default. No user will wfind that!!! So this should be possible inside KMix (ShortcutsDialog or a button "reset volume keys" in the configuration dialog).
 

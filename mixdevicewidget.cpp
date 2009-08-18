@@ -39,6 +39,7 @@
 
 #include "mixer.h"
 #include "mixdevicewidget.h"
+#include "mixertoolbox.h"
 #include "viewbase.h"
 #include "kledbutton.h"
 #include "ksmallslider.h"
@@ -62,6 +63,12 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md,
 {
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );
+   
+   QString whatsthis (md->readableName());
+   char* whatsThisChar = whatsthis.toUtf8().data();
+   QString w;
+   w = ki18n(whatsThisChar).toString(MixerToolBox::whatsthisControlLocale() );
+   this->setWhatsThis(w);
 }
 
 MixDeviceWidget::~MixDeviceWidget()

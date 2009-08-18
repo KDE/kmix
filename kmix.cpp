@@ -66,7 +66,7 @@
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow(bool invisible)
-   : KXmlGuiWindow(0),
+   : KXmlGuiWindow(0, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) ),
    m_showTicks( true ),
    m_showMenubar(true),
 //   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
@@ -624,9 +624,9 @@ void KMixWindow::hideOrClose ( )
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
-  if ( mixer == 0 ) return; 
+  if ( mixer == 0 ) return; // e.g. when no soundcard is available
   MixDevice *md = Mixer::getGlobalMasterMD();
-  if ( md == 0 ) return;
+  if ( md == 0 ) return; // shouldn't happen, but lets play safe
   md->setMuted(false);
   if (increase)
     mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
