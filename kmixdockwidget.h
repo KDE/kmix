@@ -26,7 +26,7 @@
 class QString;
 #include <QWidget>
 
-#include <knotificationitem-1/knotificationitem.h>
+#include <knotificationitem.h>
 
 class KMixWindow;
 class Mixer;
@@ -37,8 +37,6 @@ namespace Phonon
 {
     class MediaObject;
 }
-
-using namespace Experimental;
 
 class KMixDockWidget : public KNotificationItem
 {

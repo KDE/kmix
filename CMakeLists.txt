@@ -1,6 +1,6 @@
 project(kmix)
 
-include_directories( ${GLIB2_INCLUDE_DIR} ${LIBKNOTIFICATIONITEM-1_INCLUDE_DIR} /usr/lib/oss/include)
+include_directories( ${GLIB2_INCLUDE_DIR} /usr/lib/oss/include)
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
@@ -39,7 +39,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix ${LIBKNOTIFICATIONITEM-1_LIBRARIES} ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
