@@ -62,7 +62,11 @@
 <releaseinfo>2.6.1</releaseinfo>
 
 <abstract><para>&kmix; is an application to allow you to change the volume of
-your sound card.</para></abstract>
+your sound card.</para>
+<para>Warning: This handbook contains the documentation for an older version of &kmix;,
+namely the version that ships with &kde; 3.5.
+</para>
+</abstract>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -77,6 +81,10 @@ your sound card.</para></abstract>
 
 <chapter id="introduction">
 <title>Introduction</title>
+
+<para>Warning: This handbook contains the documentation for an older version of &kmix;,
+namely the version that ships with &kde; 3.5.
+</para>
 
 <para>&kmix; is &kde;'s soundcard mixer program. Though small, it is
 full-featured. The program should give controls for each of your
