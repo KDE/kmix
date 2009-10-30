@@ -53,7 +53,7 @@
 #include "viewdockareapopup.h"
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup)
-    : KNotificationItem(parent)
+    : KStatusNotifierItem(parent)
     , _referenceWidget(referenceWidget)
     , _audioPlayer(0L)
     , _playBeepOnVolumeChange(false) // disabled due to triggering a "Bug"

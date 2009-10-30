@@ -26,7 +26,7 @@
 class QString;
 #include <QWidget>
 
-#include <knotificationitem.h>
+#include <kstatusnotifieritem.h>
 
 class KMixWindow;
 class Mixer;
@@ -38,7 +38,7 @@ namespace Phonon
     class MediaObject;
 }
 
-class KMixDockWidget : public KNotificationItem
+class KMixDockWidget : public KStatusNotifierItem
 {
    Q_OBJECT
 
