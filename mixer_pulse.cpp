@@ -85,8 +85,16 @@ int Mixer_PULSE::open()
 
 int Mixer_PULSE::close()
 {
-    pa_context_unref(context);
-    pa_glib_mainloop_free(mainloop);
+    if (context)
+    {
+        pa_context_unref(context);
+        context = NULL;
+    }
+    if (mainloop)
+    {
+        pa_glib_mainloop_free(mainloop);
+        mainloop = NULL;
+    }
     return 1;
 }
 
