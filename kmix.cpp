@@ -59,7 +59,8 @@
 #include "version.h"
 #include "viewdockareapopup.h"
 #include "dialogselectmaster.h"
-//#include "osd.h" // Postponed to KDE4.1
+
+#include "osdwidget.h"
 
 
 /* KMixWindow
@@ -82,6 +83,7 @@ KMixWindow::KMixWindow(bool invisible)
 
    initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
+   KGlobal::locale()->insertCatalog("kmix-controls");
    initWidgets();
    initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
@@ -145,18 +147,7 @@ void KMixWindow::initActions()
    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
 
-   volumeDisplay = new QProgressBar();
-   volumeDisplay->setWindowFlags(Qt::X11BypassWindowManagerHint);
-   QDesktopWidget* desktop = KApplication::kApplication()->desktop();
-   //Getting QRect of the screen where cursor is positioned
-   QRect rect = desktop->screenGeometry(QCursor::pos());
-   int width = (rect.width()/2) - (volumeDisplay->width()/2);
-   int height = (rect.height()/2) - (volumeDisplay->height()/2);
-   width += rect.x();
-   height += rect.y();
-   volumeDisplay->move(width, height);
-   volumeDisplayTimer = new QTimer(this);
-   connect(volumeDisplayTimer, SIGNAL(timeout()), this, SLOT(slotHideVolumeDisplay()));
+   osdWidget = new OSDWidget();
 
    createGUI( "kmixui.rc" );
 }
@@ -651,29 +642,9 @@ void KMixWindow::showVolumeDisplay()
   Mixer* mixer = Mixer::getGlobalMasterMixer();
   MixDevice *md = Mixer::getGlobalMasterMD();
   int currentVolume = mixer->volume(md->id());
-  if (md->isMuted()) {
-    currentVolume = 0;
-  }
-  volumeDisplay->setValue(currentVolume);
-  volumeDisplay->show();
-
-  //FIXME, how to get this to work before it is displayed for the first time?
-  QDesktopWidget* desktop = KApplication::kApplication()->desktop();
-  //Getting QRect of the screen where cursor is positioned
-  QRect rect = desktop->screenGeometry(QCursor::pos());
-  int width = (rect.width()/2) - (volumeDisplay->width()/2);
-  int height = (rect.height()/2) - (volumeDisplay->height()/2);
-  width += rect.x();
-  height += rect.y();
-  volumeDisplay->move(width, height);
-
-  volumeDisplayTimer->setInterval(2000);
-  volumeDisplayTimer->start();
-}
-
-void KMixWindow::slotHideVolumeDisplay()
-{
-  volumeDisplay->hide();
+  
+  osdWidget->setCurrentVolume(currentVolume, md->isMuted());
+  osdWidget->showOSD();
 }
 
 void KMixWindow::slotMute()

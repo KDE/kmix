@@ -95,6 +95,9 @@ protected:
   void errormsg(int mixer_error);
 
 
+  /// Returns translated WhatsThis messages for a control.Translates from 
+  virtual QString translateKernelToWhatsthis(const QString &kernelName);
+  
    /// Translate ID to internal device number
    virtual int id2num(const QString& id);
 
@@ -115,12 +118,12 @@ protected:
   bool m_isOpen;
   // The MixDevice that would qualify best as MasterDevice (according to the taste of the Backend developer)
   MixDevice* m_recommendedMaster;
-   // The Mixer is sored her only for one reason: The backend creates the MixDevice's, and it has shown
-   // that it is helpful if the MixDevice's know their corespondig Mixer. KMix lived 10 years without that,
-   // but just believe me. It's *reaaly* better, for examle, you can put controls of different soundcards in
-   // one View. That is very cool! Also the MDW doesn't need to store the Mixer any longer (it's a GUI element,
+   // The Mixer is stored her only for one reason: The backend creates the MixDevice's, and it has shown
+   // that it is helpful if the MixDevice's know their correspondig Mixer. KMix lived 10 years without that,
+   // but just believe me. It's *really* better, for example, you can put controls of different soundcards in
+   // one View. That is very cool! Also the MDW doesn't need to store the Mixer any longer (MDW is a GUI element,
    // so that was 'wrong' anyhow
-   Mixer* _mixer;
+  Mixer* _mixer;
   QTimer* _pollingTimer;
   QString _udi;  // Universal Device Identification
   

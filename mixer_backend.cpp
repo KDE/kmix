@@ -24,6 +24,9 @@
 // for the "ERR_" declartions, #include mixer.h
 #include "mixer.h"
 #include <QTimer>
+
+#include "mixer_backend_i18n.cpp"
+
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
         m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer), _pollingTimer(0)
 
@@ -200,5 +203,8 @@ QString Mixer_Backend::errorText(int mixer_error)
   }
   return l_s_errmsg;
 }
+
+
+
 
 #include "mixer_backend.moc"

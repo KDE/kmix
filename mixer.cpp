@@ -215,6 +215,12 @@ void Mixer::readSetFromHWforceUpdate() const {
    _mixerBackend->readSetFromHWforceUpdate();
 }
 
+  /// Returns translated WhatsThis messages for a control.Translates from 
+QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
+{
+   return _mixerBackend->translateKernelToWhatsthis(kernelName);
+}
+
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
 

@@ -39,7 +39,7 @@
 MixerToolBox* MixerToolBox::s_instance      = 0;
 GUIProfile*   MixerToolBox::s_fallbackProfile = 0;
 QRegExp MixerToolBox::s_ignoreMixerExpression("Modem");
-KLocale* MixerToolBox::s_whatsthisLocale = 0;
+//KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
 /***********************************************************************************
  Attention:
@@ -331,7 +331,7 @@ Mixer* MixerToolBox::find( const QString& mixer_id)
    // kDebug(67100) << "OUT MixerToolBox::find()";
 }
 
-
+/*
 KLocale* MixerToolBox::whatsthisControlLocale()
 {
    if ( s_whatsthisLocale == 0 ) {
@@ -339,6 +339,7 @@ KLocale* MixerToolBox::whatsthisControlLocale()
    }
    return s_whatsthisLocale;
 }
+*/
 
 /**
    Returns a GUI Profile

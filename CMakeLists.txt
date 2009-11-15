@@ -24,7 +24,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    mixer.cpp 
    mixset.cpp 
    mixdevice.cpp 
-   mixer_backend.cpp 
+   mixer_backend.cpp
    ksmallslider.cpp 
    volume.cpp 
    kledbutton.cpp 
@@ -35,7 +35,8 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    KMixApp.cpp 
    dialogselectmaster.cpp 
    kmixdevicemanager.cpp 
-   guiprofile.cpp)
+   guiprofile.cpp
+   osdwidget.cpp)
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 

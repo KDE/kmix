@@ -46,6 +46,7 @@ class Mixer;
 class ViewDockAreaPopup;
 #include "mixer.h"
 
+class OSDWidget;
 
 class
 KMixWindow : public KXmlGuiWindow
@@ -120,11 +121,11 @@ KMixWindow : public KXmlGuiWindow
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;
    unsigned int m_configVersion;
-   QProgressBar* volumeDisplay;
-   QTimer* volumeDisplayTimer;
    void showVolumeDisplay();
    void increaseOrDecreaseVolume(bool increase);
 
+   OSDWidget* osdWidget;
+   
   private slots:
    void saveConfig();
    void slotHWInfo();
@@ -136,7 +137,6 @@ KMixWindow : public KXmlGuiWindow
    void hideOrClose();
    void slotIncreaseVolume();
    void slotDecreaseVolume();
-   void slotHideVolumeDisplay();
    void slotMute();
 };
 

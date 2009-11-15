@@ -87,6 +87,9 @@ class Mixer : public QObject
       /// mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
       virtual QString baseName();
 
+      /// Wrapper to Mixer_Backend
+      QString translateKernelToWhatsthis(const QString &kernelName);
+
       /// Return the name of the card/chip/hardware, which is suitable for humans
       virtual QString readableName();
 

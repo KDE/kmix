@@ -64,11 +64,16 @@ MixDeviceWidget::MixDeviceWidget(MixDevice* md,
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );
    
-   QString whatsthis (md->readableName());
-   char* whatsThisChar = whatsthis.toUtf8().data();
+   QString name (md->id());
+  /* char* whatsThisChar = whatsthis.toUtf8().data();
    QString w;
    w = ki18n(whatsThisChar).toString(MixerToolBox::whatsthisControlLocale() );
    this->setWhatsThis(w);
+   */
+   QString whatsthisText = mixDevice()->mixer()->translateKernelToWhatsthis(name);
+   if ( whatsthisText != "---") {
+      setWhatsThis(whatsthisText);
+   }
 }
 
 MixDeviceWidget::~MixDeviceWidget()
