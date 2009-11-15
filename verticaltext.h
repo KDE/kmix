@@ -32,15 +32,12 @@ class VerticalText : public QWidget
 
       QSize sizeHint() const;
       QSizePolicy sizePolicy () const;
-
+      QSize minimumSizeHint() const;
    protected:
       void paintEvent ( QPaintEvent * event );
 
    private:
       QString m_labelText;
-      int m_height;
-      int m_width;
-      bool cachedSizeValid;
 };
 
 #endif

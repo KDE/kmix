@@ -25,8 +25,7 @@
 
 
 
-VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WFlags f) : QWidget(parent,f),
-                           m_height(8), m_width(20), cachedSizeValid(false)
+VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WFlags f) : QWidget(parent,f)
 {
    m_labelText = text;
 }
@@ -39,19 +38,8 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
     QPainter paint(this);
     paint.rotate(270);
     paint.translate(0,-4); // Silly "solution" to make underlengths work
-    
-    
-    if ( ! cachedSizeValid ) {
-        QFontMetrics fontMetrics ( paint.font()  );
-        m_width = fontMetrics.width(m_labelText);
-        m_height = fontMetrics.height();
-        resize(m_height, m_width+2);
-        setFixedWidth(m_height);  // horizontal size policy fixed doesn't work for whatever reason => using setFixedWidth() fixes it
-        updateGeometry();
-        cachedSizeValid = true;
-    }
-    
-   // Fix for bug 72520
+
+    // Fix for bug 72520
    //-       paint.drawText(-height()+2,width(),name());
    //+       paint.drawText( -height()+2, width(), QString::fromUtf8(name()) );
    int posX =  -height();
@@ -60,8 +48,18 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
 }
 
 QSize VerticalText::sizeHint() const {
-    return QSize( m_height, m_width+2);
-    
+    const QFontMetrics& fontMetr = fontMetrics();
+    QSize textSize(fontMetr.width(m_labelText), fontMetr.height());
+    textSize.transpose();
+    return textSize;
+}
+
+QSize VerticalText::minimumSizeHint() const
+{
+    const QFontMetrics& fontMetr = fontMetrics();
+    QSize textSize(fontMetr.width("MMMM"), fontMetr.height());
+    textSize.transpose();
+    return textSize;
 }
 
 QSizePolicy VerticalText::sizePolicy () const
