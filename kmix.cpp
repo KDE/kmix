@@ -640,7 +640,9 @@ void KMixWindow::slotDecreaseVolume()
 void KMixWindow::showVolumeDisplay()
 {
   Mixer* mixer = Mixer::getGlobalMasterMixer();
+  if ( mixer == 0 ) return; // e.g. when no soundcard is available
   MixDevice *md = Mixer::getGlobalMasterMD();
+  if ( md == 0 ) return; // shouldn't happen, but lets play safe
   int currentVolume = mixer->volume(md->id());
   
   osdWidget->setCurrentVolume(currentVolume, md->isMuted());
