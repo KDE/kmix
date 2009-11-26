@@ -269,13 +269,15 @@ KMixDockWidget::updatePixmap()
 
 void KMixDockWidget::activate(const QPoint &pos)
 {
-   // Make sure this will work
-   // It is a KMenu now, and this check is a bit weird,
-   // i believe this should not rely on parent()
    KMenu* dockAreaPopup = qobject_cast<KMenu*>(_referenceWidget);
-   const bool activated = (dockAreaPopup && !dockAreaPopup->isVisible());
-   if ( !dockAreaPopup || !activated ) {
-      // If the associated parent os the MainWindow (and not the ViewDockAreaPopup), we return.
+   if ( !dockAreaPopup ) {
+      // Use default KStatusNotifierItem behavior if we are not using the
+      // dockAreaPopup
+      KStatusNotifierItem::activate(pos);
+      return;
+   }
+   if ( dockAreaPopup->isVisible() ) {
+      dockAreaPopup->hide();
       return;
    }
 
@@ -297,7 +299,7 @@ void KMixDockWidget::activate(const QPoint &pos)
    dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
    kDebug() << "moving to" << dockAreaPopup->size() << x << y;
 
-   dockAreaPopup->setVisible(activated);
+   dockAreaPopup->show();
 
    // Now handle Multihead displays. And also make sure that the dialog is not
    // moved out-of-the screen on the right (see Bug 101742).
