@@ -1,6 +1,8 @@
 /*******************************************************************
 * osdwidget.h
+* Copyright  2009    Aurélien Gâteau <agateau@kde.org>
 * Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
+* Copyright  2009    Christian Esken <christian.esken@arcor.de>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -20,34 +22,48 @@
 #ifndef OSDWIDGET__H
 #define OSDWIDGET__H
 
-#include <QWidget>
+#include <QGraphicsView>
 
 #include <QPixmap>
 
-class QProgressBar;
 class QTimer;
-class QLabel;
+class QGraphicsWidget;
 
-class OSDWidget : public QWidget
+namespace Plasma
+{
+class FrameSvg;
+class Label;
+class Meter;
+}
+
+class OSDWidget : public QGraphicsView
 {
 Q_OBJECT
 public:
     OSDWidget(QWidget * parent = 0);
-    
+
     void setCurrentVolume(int volumeLevel, bool muted);
-    
-    void showOSD();
-    
+    void activateOSD();
+
+    virtual QSize sizeHint() const;
+
+protected:
+    virtual void drawBackground(QPainter *painter, const QRectF &rectF);
+    virtual void resizeEvent(QResizeEvent *);
+
 private:
-    QProgressBar    *m_progressBar;
-    QLabel          *m_iconLabel;
-    
-    QTimer          *m_hideTimer;
-    
-    QPixmap         m_pixmapVolumeMute;
-    QPixmap         m_pixmapVolumeLow;
-    QPixmap         m_pixmapVolumeMed;
-    QPixmap         m_pixmapVolumeHigh;
+    Plasma::FrameSvg *m_background;
+    QGraphicsScene *m_scene;
+    QGraphicsWidget *m_container;
+    Plasma::Label *m_iconLabel;
+    Plasma::Label *m_volumeLabel;
+    Plasma::Meter *m_meter;
+    QTimer *m_hideTimer;
+
+    QPixmap volumeHighIconPixmap;
+    QPixmap volumeMediumIconPixmap;
+    QPixmap volumeLowIconPixmap;
+    QPixmap volumeMutedIconPixmap;
 };
 
 #endif

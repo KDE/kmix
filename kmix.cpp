@@ -646,7 +646,15 @@ void KMixWindow::showVolumeDisplay()
   int currentVolume = mixer->volume(md->id());
   
   osdWidget->setCurrentVolume(currentVolume, md->isMuted());
-  osdWidget->showOSD();
+  osdWidget->show();
+  osdWidget->activateOSD(); //Enable the hide timer
+
+  //Center the OSD
+  QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
+  QSize size = osdWidget->sizeHint();
+  int posX = rect.x() + (rect.width() - size.width()) / 2;
+  int posY = rect.y() + (rect.height() - size.height()) / 2;
+  osdWidget->setGeometry(posX, posY, size.width(), size.height());
 }
 
 void KMixWindow::slotMute()
