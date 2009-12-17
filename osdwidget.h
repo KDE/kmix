@@ -60,10 +60,10 @@ private:
     Plasma::Meter *m_meter;
     QTimer *m_hideTimer;
 
-    QPixmap volumeHighIconPixmap;
-    QPixmap volumeMediumIconPixmap;
-    QPixmap volumeLowIconPixmap;
-    QPixmap volumeMutedIconPixmap;
+    QPixmap m_volumeHighPixmap;
+    QPixmap m_volumeMediumPixmap;
+    QPixmap m_volumeLowPixmap;
+    QPixmap m_volumeMutedPixmap;
 };
 
 #endif

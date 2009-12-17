@@ -54,15 +54,15 @@ OSDWidget::OSDWidget(QWidget * parent)
 
     //Cache the icon pixmaps
     QSize iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    volumeHighIconPixmap = KIcon("audio-volume-high").pixmap(iconSize);
-    volumeMediumIconPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
-    volumeLowIconPixmap = KIcon("audio-volume-low").pixmap(iconSize);
-    volumeMutedIconPixmap = KIcon("audio-volume-muted").pixmap(iconSize);
+    m_volumeHighPixmap = KIcon("audio-volume-high").pixmap(iconSize);
+    m_volumeMediumPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
+    m_volumeLowPixmap = KIcon("audio-volume-low").pixmap(iconSize);
+    m_volumeMutedPixmap = KIcon("audio-volume-muted").pixmap(iconSize);
 
     //Setup the widgets
     m_background->setImagePath("widgets/tooltip");
 
-    m_iconLabel->nativeWidget()->setPixmap(volumeHighIconPixmap);
+    m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
     m_iconLabel->nativeWidget()->setFixedSize(iconSize);
 
     m_meter->setMeterType(Plasma::Meter::BarMeterHorizontal);
@@ -95,14 +95,14 @@ void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
 
     if (!muted) {
         if (volumeLevel < 25) {
-            m_iconLabel->nativeWidget()->setPixmap(volumeLowIconPixmap);
+            m_iconLabel->nativeWidget()->setPixmap(m_volumeLowPixmap);
         } else if (volumeLevel < 75) {
-            m_iconLabel->nativeWidget()->setPixmap(volumeMediumIconPixmap);
+            m_iconLabel->nativeWidget()->setPixmap(m_volumeMediumPixmap);
         } else {
-            m_iconLabel->nativeWidget()->setPixmap(volumeHighIconPixmap);
+            m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
         }
     } else {
-        m_iconLabel->nativeWidget()->setPixmap(volumeMutedIconPixmap);
+        m_iconLabel->nativeWidget()->setPixmap(m_volumeMutedPixmap);
     }
 
     //Show the volume %
