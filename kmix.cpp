@@ -653,7 +653,7 @@ void KMixWindow::showVolumeDisplay()
   QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
   QSize size = osdWidget->sizeHint();
   int posX = rect.x() + (rect.width() - size.width()) / 2;
-  int posY = rect.y() + (rect.height() - size.height()) / 2;
+  int posY = rect.y() + 4 * rect.height() / 5;
   osdWidget->setGeometry(posX, posY, size.width(), size.height());
 }
 
