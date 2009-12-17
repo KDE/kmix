@@ -53,7 +53,7 @@ OSDWidget::OSDWidget(QWidget * parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     //Cache the icon pixmaps
-    QSize iconSize = QSize(25, 25);
+    QSize iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
     volumeHighIconPixmap = KIcon("audio-volume-high").pixmap(iconSize);
     volumeMediumIconPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
     volumeLowIconPixmap = KIcon("audio-volume-low").pixmap(iconSize);
