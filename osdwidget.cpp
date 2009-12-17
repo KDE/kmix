@@ -131,7 +131,7 @@ void OSDWidget::resizeEvent(QResizeEvent*)
 {
     m_background->resizeFrame(size());
     m_container->setGeometry(0, 0, width(), height());
-    m_meter->setMaximumHeight(m_iconLabel->geometry().height());
+    m_meter->setMaximumHeight(m_iconLabel->nativeWidget()->pixmap()->height());
     qreal left, top, right, bottom;
     m_background->getMargins(left, top, right, bottom);
     m_container->layout()->setContentsMargins(left, top, right, bottom);
