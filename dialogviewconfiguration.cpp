@@ -331,9 +331,17 @@ void DialogViewConfiguration::apply()
 	for ( std::vector<ProfControl*>::const_iterator it = newControlset.begin(); it != itEnd; ++it)
 	{
 	  ProfControl* control = *it;
+	  control->id = "^" + control->id + "$";   // Create a regexp from the control name
 	  kDebug() << "Add control " << control->id;
           oldControlset.push_back(control);
 	}
+	ProfControl* fallbackMatchAllControl = new ProfControl;
+	fallbackMatchAllControl->id   = "^.*$";
+	fallbackMatchAllControl->subcontrols  = ".*";
+	fallbackMatchAllControl->tab  = "Base";
+	fallbackMatchAllControl->show = "extended";
+	oldControlset.push_back(fallbackMatchAllControl);
+	
 	QString profileName;
 	Mixer* mixer = _view.getMixer();
 	profileName =  mixer->id() + "."  + _view.id();

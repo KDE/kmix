@@ -53,7 +53,7 @@ OSDWidget::OSDWidget(QWidget * parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     //Cache the icon pixmaps
-    QSize iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+    QSize iconSize = QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
     m_volumeHighPixmap = KIcon("audio-volume-high").pixmap(iconSize);
     m_volumeMediumPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
     m_volumeLowPixmap = KIcon("audio-volume-low").pixmap(iconSize);
@@ -64,6 +64,7 @@ OSDWidget::OSDWidget(QWidget * parent)
 
     m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
     m_iconLabel->nativeWidget()->setFixedSize(iconSize);
+    //qDebug() << "OSD icon size is: " << iconSize;
 
     m_meter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_meter->setMaximum(100);
