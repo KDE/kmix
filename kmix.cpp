@@ -83,6 +83,7 @@ KMixWindow::KMixWindow(bool invisible)
 
    initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
+   initActionsLate(); // init actions that require a loaded config
    KGlobal::locale()->insertCatalog("kmix-controls");
    initWidgets();
    initPrefDlg();
@@ -132,24 +133,29 @@ void KMixWindow::initActions()
    action->setText( i18n("Select Master Channel...") );
    connect(action, SIGNAL(triggered(bool) ), SLOT(slotSelectMaster()));
 
-   KAction* globalAction = actionCollection()->addAction("increase_volume");
-   globalAction->setText(i18n("Increase Volume"));
-   globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
-   connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
-
-   globalAction = actionCollection()->addAction("decrease_volume");
-   globalAction->setText(i18n("Decrease Volume"));
-   globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
-   connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
-
-   globalAction = actionCollection()->addAction("mute");
-   globalAction->setText(i18n("Mute"));
-   globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
-   connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
-
    osdWidget = new OSDWidget();
 
    createGUI( "kmixui.rc" );
+}
+
+void KMixWindow::initActionsLate()
+{
+  if ( m_autouseMultimediaKeys ) {
+    KAction* globalAction = actionCollection()->addAction("increase_volume");
+    globalAction->setText(i18n("Increase Volume"));
+    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp), ( KAction::ShortcutTypes)( KAction::ActiveShortcut |  KAction::DefaultShortcut),  KAction::NoAutoloading);
+    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
+
+    globalAction = actionCollection()->addAction("decrease_volume");
+    globalAction->setText(i18n("Decrease Volume"));
+    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
+    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
+
+    globalAction = actionCollection()->addAction("mute");
+    globalAction->setText(i18n("Mute"));
+    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
+    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
+  }
 }
 
 
@@ -258,6 +264,7 @@ void KMixWindow::saveBaseConfig()
    config.writeEntry( "startkdeRestore", m_onLogin );
    config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
    config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
+   config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
    if ( mixerMasterCard != 0 ) {
       config.writeEntry( "MasterMixer", mixerMasterCard->id() );
@@ -334,6 +341,7 @@ void KMixWindow::loadBaseConfig()
    m_configVersion = config.readEntry( "ConfigVersion", 0 );
    // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
    // evaluated. Better only write that in saveBaseConfig()
+   m_autouseMultimediaKeys = config.readEntry( "AutoUseMultimediaKeys", true );
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
