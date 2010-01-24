@@ -32,6 +32,7 @@ class Mixer;
 #include <map>
 #include <set>
 #include <vector>
+#include <ostream>
 
 #include <KDebug>
 
