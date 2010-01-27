@@ -64,9 +64,12 @@ OSDWidget::OSDWidget(QWidget * parent)
 
     m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
     m_iconLabel->nativeWidget()->setFixedSize(iconSize);
+    m_iconLabel->setMinimumSize(iconSize);
+    m_iconLabel->setMaximumSize(iconSize);
 
     m_meter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_meter->setMaximum(100);
+    m_meter->setMaximumHeight(iconSize.height());
 
     m_volumeLabel->setAlignment(Qt::AlignCenter);
 
@@ -131,7 +134,6 @@ void OSDWidget::resizeEvent(QResizeEvent*)
 {
     m_background->resizeFrame(size());
     m_container->setGeometry(0, 0, width(), height());
-    m_meter->setMaximumHeight(m_iconLabel->nativeWidget()->pixmap()->height());
     qreal left, top, right, bottom;
     m_background->getMargins(left, top, right, bottom);
     m_container->layout()->setContentsMargins(left, top, right, bottom);
