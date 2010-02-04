@@ -74,10 +74,14 @@ public:
     const QString& iconName() const { return _iconName; }
     // Layout
     QSizePolicy sizePolicy() const;
-    int playbackExtentHint() const;
-    void setPlaybackExtent(int extent);
-    int captureExtentHint() const;
-    void setCaptureExtent(int extent);
+	QSize sizeHint() const;
+	int labelExtentHint() const;
+	void setLabelExtent(int extent);
+	bool hasMuteButton() const;
+	void setMuteButtonSpace(bool);
+	void setCaptureLEDSpace(bool);
+	bool hasCaptureLED() const;
+
 
     
 public slots:
@@ -109,10 +113,8 @@ private:
     KShortcut dummyShortcut;
     QPixmap icon( int icontype );
     void setIcon( int icontype );
-    QPixmap loadIcon( QString& filename );
+    QPixmap loadIcon( QString filename );
     void createWidgets( bool showMuteLED, bool showCaptureLED );
-    void createWidgetsTopPart(QBoxLayout *, bool showMuteLED);
-    void createWidgetsBottomPart(QBoxLayout *, bool showCaptureLED);
     void addSliders( QBoxLayout *volLayout, char type, bool addLabel);
     void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
@@ -125,25 +127,25 @@ private:
 
     bool m_linked;
     
-    QWidget *m_defaultLabelSpacer;
+	QWidget *muteButtonSpacer;
+	QWidget *captureSpacer;
+	QWidget *labelSpacer;
 
     // GUI: Top portion ( Icon + Mute)
-    QLabel      *m_iconLabelSimple;
-    QCheckBox* m_qcb;
-    QLabel* m_muteText;
-    QWidget *m_playbackSpacer;
+	QLabel      *m_iconLabelSimple;
+	QToolButton* m_qcb;
+	QLabel* m_muteText;
         
-    // GUI: Middle portion (Sliders , including labels)
-    QBoxLayout *_layout;
     QWidget *m_extraCaptureLabel; // extra capture label (if you got playback AND capture on the same control)
-    //KLedButton *m_recordLED;
-    QWidget *m_label; // is either QLabel or VerticalText
+	QLabel *m_label; // is either QLabel or VerticalText
     
-     // GUI: Lower portion (Capture)
-    QCheckBox* m_captureLED;
+//	KLedButton* m_captureLED;
+	QCheckBox* m_captureCheckbox;
     QLabel* m_captureText;
-    QWidget *m_captureSpacer;
-//    static KShortcut dummyShortcut;
+
+	int labelSpacing;
+	bool muteButtonSpacing;
+	bool captureLEDSpacing;
 
     QList<QWidget *> m_slidersPlayback;
     QList<QWidget *> m_slidersCapture;

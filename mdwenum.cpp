@@ -84,11 +84,11 @@ void MDWEnum::createWidgets()
 {
    if ( _orientation == Qt::Vertical ) {
       _layout = new QVBoxLayout( this );
-      _layout->setAlignment(Qt::AlignHCenter);
+	  _layout->setAlignment(Qt::AlignLeft);
    }
    else {
       _layout = new QHBoxLayout( this );
-      _layout->setAlignment(Qt::AlignVCenter);
+	  _layout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
    }
 
    _label = new QLabel( m_mixdevice->readableName(), this);
@@ -103,6 +103,7 @@ void MDWEnum::createWidgets()
    _layout->addWidget(_enumCombo);
    connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
    _enumCombo->setToolTip( m_mixdevice->readableName() );
+	_layout->addStretch(1);
 }
 
 void MDWEnum::update()

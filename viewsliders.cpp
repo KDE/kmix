@@ -34,6 +34,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QFormLayout>
 
 
 
@@ -50,24 +51,25 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
       _layoutSliders = new QVBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
       _layoutMDW->addItem( _layoutSliders );
-      _layoutEnum = new QVBoxLayout(); // always vertical!
-      _layoutMDW->addItem( _layoutEnum );
    }
-   else {
+   else
+   {
       _layoutMDW = new QHBoxLayout(this);
       _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QHBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
       _layoutMDW->addItem( _layoutSliders );
       // Place enums in an own box right from the sliders.
-      _layoutEnum = new QVBoxLayout();
-      _layoutMDW->addItem( _layoutEnum );
    }
+  _layoutEnum = new QFormLayout();
+  _layoutMDW->addItem( _layoutEnum );
+
    _layoutMDW->setSpacing(0);
     setMixSet();
 }
 
-ViewSliders::~ViewSliders() {
+ViewSliders::~ViewSliders()
+{
   qDeleteAll(_separators);
 }
 
@@ -87,7 +89,7 @@ QWidget* ViewSliders::add(MixDevice *md)
                this,         // parent
                this          // View widget
       );
-      _layoutEnum->addWidget(mdw);
+	  _layoutEnum->addWidget(mdw);
    } // an enum
    else {
       // add a separator before the device
@@ -187,13 +189,15 @@ void ViewSliders::constructionFinished() {
 
 void ViewSliders::configurationUpdate() {
    // Adjust height of top part by setting it to the maximum of all mdw's
-   int topPartExtent = 0;
-   int bottomPartExtent = 0;
+   bool haveCaptureLEDs = false;
+   int labelExtent = 0;
+   bool haveMuteButtons = false;
    for ( int i=0; i<_mdws.count(); i++ ) {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
       if ( mdw && mdw->isVisibleTo(this) ) {
-         if ( mdw->playbackExtentHint() > topPartExtent ) topPartExtent = mdw->playbackExtentHint();
-         if ( mdw->captureExtentHint() > bottomPartExtent ) bottomPartExtent = mdw->captureExtentHint();
+		 if ( mdw->labelExtentHint() > labelExtent ) labelExtent = mdw->labelExtentHint();
+		 haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
+		 haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
       }
    }
    //kDebug(67100) << "topPartExtent is " << topPartExtent;
@@ -201,8 +205,9 @@ void ViewSliders::configurationUpdate() {
    for ( int i=0; i<_mdws.count(); i++ ) {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
       if ( mdw ) {
-         mdw->setPlaybackExtent(topPartExtent);
-         mdw->setCaptureExtent(bottomPartExtent);
+		 mdw->setLabelExtent(labelExtent);
+		 mdw->setMuteButtonSpace(haveMuteButtons);
+		 mdw->setCaptureLEDSpace(haveCaptureLEDs);
          bool thisControlIsVisible = mdw->isVisibleTo(this);
          bool showSeparator = ( firstVisibleControlFound && thisControlIsVisible);
          if ( _separators.contains( mdw->mixDevice()->id() )) {

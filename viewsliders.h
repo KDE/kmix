@@ -22,6 +22,7 @@
 #define ViewSliders_h
 
 class QBoxLayout;
+class QFormLayout;
 #include <QFrame>
 #include <QHash>
 class QWidget;
@@ -47,7 +48,7 @@ public slots:
 private:
     QBoxLayout* _layoutMDW;
     QLayout* _layoutSliders;
-    QLayout* _layoutEnum;
+	QFormLayout* _layoutEnum;
     QHash<QString,QFrame*> _separators;
 };
 
