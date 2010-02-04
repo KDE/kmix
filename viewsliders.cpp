@@ -34,7 +34,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QFormLayout>
+//#include <QFormLayout>
 
 
 
@@ -61,8 +61,8 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
       _layoutMDW->addItem( _layoutSliders );
       // Place enums in an own box right from the sliders.
    }
-  _layoutEnum = new QFormLayout();
-  _layoutMDW->addItem( _layoutEnum );
+  _layoutEnum = new QVBoxLayout(); // new QFormLayout();
+  _layoutMDW->addLayout( _layoutEnum );
 
    _layoutMDW->setSpacing(0);
     setMixSet();
