@@ -64,10 +64,11 @@ static const int MIN_SLIDER_SIZE = 50;
 MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
                      bool small, Qt::Orientation orientation, QWidget* parent, ViewBase* mw) :
 	MixDeviceWidget(md,small,orientation,parent,mw),
-	m_linked(true),	labelSpacer(0), m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
+	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
+	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
-	muteButtonSpacer(0), m_captureCheckbox(0), captureSpacer(0), m_captureText(0),
-	captureLEDSpacing(false), muteButtonSpacing(false), labelSpacing(0)
+	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
+	muteButtonSpacing(false), captureLEDSpacing(false)
 {
 	// create actions (on _mdwActions, see MixDeviceWidget)
 
