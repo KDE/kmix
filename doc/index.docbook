@@ -54,7 +54,7 @@
 <releaseinfo>3.0</releaseinfo>
 
 <abstract>
-<para>&kmix; is an application which allows you to change the volume of your sound card.</para>
+<para>&kmix; is an application that allows you to change the volume of your sound card.</para>
 </abstract>
 
 <keywordset>
@@ -76,7 +76,7 @@
 full-featured. The program should give controls for each of your
 soundcards.</para>-->
 
-<para>&kmix; supports several platforms and sound drivers:</para>
+<para>&kmix; supports several platforms and sound drivers.</para>
 
 <!--<itemizedlist>
 <listitem><para> The ALSA soundcard driver.</para></listitem>
@@ -109,7 +109,7 @@ soundcards.</para>-->
 <chapter id="Main_Window">
 <title>Main Window</title>
 
-<para>Overview of &kmix;'s Main Window</para>
+<para>Overview of &kmix; Main Window</para>
 <screenshot>
   <screeninfo>Screenshot of &kmix;</screeninfo>
 	<mediaobject>
@@ -174,7 +174,7 @@ soundcards.</para>-->
 <guimenu>File</guimenu>
 <guimenuitem>Configure Channels...</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Configure the Various &kmix; options</action></para></listitem>
+<listitem><para><action>Configure audio channels</action></para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -192,7 +192,7 @@ soundcards.</para>-->
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para> Select the &kmix; channels you want. </para>
+<para>Select the &kmix; channels you want to be used for output or input audio information.</para>
 </sect2>
 
 <sect2 id='Master_Channels'>
@@ -208,7 +208,7 @@ soundcards.</para>-->
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para> Scelect your &kmix; master channel. </para>
+<para>Select your &kmix; master channel.</para>
 </sect2>
 
 <sect2 id='Configure'>
@@ -224,15 +224,15 @@ soundcards.</para>-->
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para> Configure various &kmix; parameters </para>
+<para>Configure various &kmix; parameters.</para>
 
 <variablelist>
 <varlistentry>
 <term><menuchoice>
 <guimenu>Behavior</guimenu>
-<guimenuitem>Dock in system try</guimenuitem>
+<guimenuitem>Dock in system tray</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to dock &kmix; in System try</action></para></listitem>
+<listitem><para><action>Check this box to dock &kmix; in system tray.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -240,7 +240,7 @@ soundcards.</para>-->
 <guimenu>Behavior</guimenu>
 <guimenuitem>Enable system tray volume control</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to enable the volume control from system tray </action></para></listitem>
+<listitem><para><action>Check this box to enable the volume control from system tray.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -248,7 +248,7 @@ soundcards.</para>-->
 <guimenu>Behavior</guimenu>
 <guimenuitem>Restore Volumes on login</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to enable the volume control from system tray </action></para></listitem>
+<listitem><para><action>Check this box to enable volume restoration on login.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -256,7 +256,7 @@ soundcards.</para>-->
 <guimenu>Visual</guimenu>
 <guimenuitem>Show tickmarks</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to show tickmarks</action></para></listitem>
+<listitem><para><action>Check this box to show tickmarks on controls.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -264,7 +264,7 @@ soundcards.</para>-->
 <guimenu>Visual</guimenu>
 <guimenuitem>Show labels</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to show labels.</action></para></listitem>
+<listitem><para><action>Check this box to show labels of controls.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -272,7 +272,7 @@ soundcards.</para>-->
 <guimenu>Slider orientation</guimenu>
 <guimenuitem>Horizontal</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this radio button, to orientate the slider Horizonally</action></para></listitem>
+<listitem><para><action>Check this radio button to orientate the control slider horizontally.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -280,7 +280,7 @@ soundcards.</para>-->
 <guimenu>Slider orientation</guimenu>
 <guimenuitem>Vertical</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this radio button, to orientate the slider Vertically</action></para></listitem>
+<listitem><para><action>Check this radio button to orientate the control slider vertically.</action></para></listitem>
 </varlistentry>
 
 </variablelist>
