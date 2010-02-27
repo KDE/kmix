@@ -130,49 +130,38 @@ void MixDevice::read( KConfig *config, const QString& grp )
     KConfigGroup cg = config->group( devgrp );
     //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
-    readPlaybackOrCapture(cg, "volumeL"       , "volumeR"       , false);
-    readPlaybackOrCapture(cg, "volumeLCapture", "volumeRCapture", true );
-}
-
-void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
-{
-    Volume::ChannelMask chMask = Volume::MNONE;
-    int vl = config.readEntry(nameLeftVolume, -1);
-    if (vl!=-1) {
-        chMask = (Volume::ChannelMask)(chMask | Volume::MLEFT);
-    }
-    int vr = config.readEntry(nameRightVolume, -1);
-    if (vr!=-1) {
-        chMask = (Volume::ChannelMask)(chMask | Volume::MRIGHT);
-    }
-
-    Volume& volume = capture ? captureVolume() : playbackVolume();
-    /*
-     * Now start construction a temporary Volume object.
-     * We take the maxvol and minvol values from _volume, which is already constructed.
-     * Otherwise we would have to wildly guess those values
-     */
-    //Volume *volFromConfig = new Volume(chMask, volume.maxVolume(), volume.minVolume() );
-    if (vl!=-1) {
-        volume.setVolume(Volume::LEFT , vl);
-    }
-    if (vr!=-1) {
-        volume.setVolume(Volume::RIGHT, vr);
-    }
-    // commit the read config
-    //volume.setVolume(*volFromConfig); 
-    //delete volFromConfig;
+    readPlaybackOrCapture(cg, false);
+    readPlaybackOrCapture(cg, true );
     
-    bool mute = config.readEntry("is_muted", false);
+    bool mute = cg.readEntry("is_muted", false);
     setMuted( mute );
     
-    bool recsrc = config.readEntry("is_recsrc", false);
+    bool recsrc = cg.readEntry("is_recsrc", false);
     setRecSource( recsrc );
     
-    int enumId = config.readEntry("enum_id", -1);
+    int enumId = cg.readEntry("enum_id", -1);
     if ( enumId != -1 ) {
         setEnumId( enumId );
     }
+}
+
+void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
+{
+    //Volume::ChannelMask chMask = Volume::MNONE;
+    
+    Volume& volume = capture ? captureVolume() : playbackVolume();
+
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+       Volume::ChannelID chid = (Volume::ChannelID)i;
+       QString volstr (Volume::ChannelNameForPersistence[ chid ]);
+       if ( capture ) volstr += "Capture";
+       if ( config.hasKey(volstr) ) {
+          long volCfg = config.readEntry(volstr, 0);
+          //chMask |= _channelMaskEnum[i];
+
+          volume.setVolume(chid, volCfg);
+       } // if saved channel exists
+    } // for all channels    
 }
 
 /**
@@ -185,23 +174,32 @@ void MixDevice::write( KConfig *config, const QString& grp )
    KConfigGroup cg = config->group(devgrp);
    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
-    writePlaybackOrCapture(cg, "volumeL"       , "volumeR"       , false);
-    writePlaybackOrCapture(cg, "volumeLCapture", "volumeRCapture", true );
+    writePlaybackOrCapture(cg, false);
+    writePlaybackOrCapture(cg, true );
+
+    cg.writeEntry("is_muted" , isMuted() );
+    cg.writeEntry("is_recsrc", isRecSource() );
+    cg.writeEntry("name", _name);
+    if ( isEnum() ) {
+        cg.writeEntry("enum_id", enumId() );
+    }    
 }
 
-void MixDevice::writePlaybackOrCapture(KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture)
+void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
 
-    config.writeEntry(nameLeftVolume , (int)volume.getVolume( Volume::LEFT ) );
-    config.writeEntry(nameRightVolume, (int)volume.getVolume( Volume::RIGHT ) );
+    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
+       if ( volume._chmask & Volume::_channelMaskEnum[i] ) {
+           Volume::ChannelID chid = (Volume::ChannelID)i;
 
-    config.writeEntry("is_muted" , isMuted() );
-    config.writeEntry("is_recsrc", isRecSource() );
-    config.writeEntry("name", _name);
-    if ( isEnum() ) {
-        config.writeEntry("enum_id", enumId() );
-    }
+           volume.getVolume( chid );
+	   QString volstr (Volume::ChannelNameForPersistence[ chid ]);
+	   if ( capture ) volstr += "Capture";
+	   config.writeEntry(volstr , (int)volume.getVolume( chid ) );
+       } // if supported channel
+    } // for all channels
+
 }
 
 

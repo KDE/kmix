@@ -130,7 +130,7 @@ QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*>
     return mimedata;
 }
 
-bool DialogViewConfigurationWidget::dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction action)
+bool DialogViewConfigurationWidget::dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction /*action*/)
 {
     const QByteArray data = mimeData->data("application/x-kde-action-list");
     if (data.isEmpty())

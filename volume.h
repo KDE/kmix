@@ -71,6 +71,7 @@ friend class MixDevice;
                   CHIDMAX      = 8 };
 
 
+    static char ChannelNameForPersistence[9][30];
 
     // regular constructor
     Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );

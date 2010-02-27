@@ -159,8 +159,8 @@ private:
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
 
-   void readPlaybackOrCapture(const KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
-   void writePlaybackOrCapture(KConfigGroup& config, const char* nameLeftVolume, const char* nameRightVolume, bool capture);
+   void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
+   void writePlaybackOrCapture(KConfigGroup& config, bool capture);
 
 };
 

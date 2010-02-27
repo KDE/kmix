@@ -35,6 +35,14 @@ int Volume::_channelMaskEnum[9] =
       MREARCENTER
     };
 
+    char Volume::ChannelNameForPersistence[9][30] = {
+      "volumeL", "volumeR",
+      "volumeCenter", "volumeWoofer",
+      "volumeSurroundL", "volumeSurroundR",
+      "volumeSideL", "volumeSideR",
+      "volumeRearCenter"
+    };
+    
 Volume::Volume()
 {
     init( Volume::MNONE, 0, 0, false, false);
