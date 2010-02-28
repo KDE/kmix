@@ -106,7 +106,8 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    if (name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::MICROPHONE;
    if (name.contains("lfe"        , Qt::CaseInsensitive)) return MixDevice::SURROUND_LFE;
    if (name.contains("monitor"    , Qt::CaseInsensitive)) return MixDevice::RECMONITOR;
-   if (name.contains("3d"         , Qt::CaseInsensitive)) return MixDevice::SURROUND;  // Should be probably some own icon
+   if (name.contains("3d"         , Qt::CaseInsensitive)) return MixDevice::SURROUND;
+   if (name.contains("side"       , Qt::CaseInsensitive)) return MixDevice::SURROUND_BACK;
 
    return MixDevice::EXTERNAL;
 }
