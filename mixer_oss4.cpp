@@ -281,9 +281,11 @@ int Mixer_OSS4::open()
 
 				//skip unreadable controls
 				if ( ext.flags & MIXF_READABLE 
-					&& (name.contains("mute") 
+#ifndef MIXT_MUTE
+					&& (name.contains("mute"))
+#endif
 #ifdef MIXT_MUTE
-					|| ext.flags == MIXT_MUTE)
+					&& (name.contains("mute") || ext.flags == MIXT_MUTE)
 #endif
 				   )
 				{
