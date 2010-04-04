@@ -83,7 +83,7 @@ public:
      */
     virtual void createDeviceWidgets();
 
-    virtual void setMixSet() = 0;
+    void setMixSet();
     
     Mixer* getMixer();
 
@@ -130,6 +130,9 @@ protected:
     ViewFlags _vflags;
     GUIProfile* _guiprof;
    KActionCollection *_localActionColletion;
+
+    virtual void _setMixSet() = 0;
+
 public slots:
    virtual void controlsReconfigured( const QString& mixer_ID );
    virtual void refreshVolumeLevels();

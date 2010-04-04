@@ -121,14 +121,11 @@ QWidget* ViewSliders::add(MixDevice *md)
 }
 
 
-void ViewSliders::setMixSet()
+void ViewSliders::_setMixSet()
 {
    const MixSet& mixset = _mixer->getMixSet();
 
    if ( _mixer->dynamic() ) {
-      // Clean up our _mixSet so we can reapply our GUIProfile
-      _mixSet->clear();
-
       // We will be recreating our sliders, so make sure we trash all the separators too.
       qDeleteAll(_separators);
       _separators.clear();

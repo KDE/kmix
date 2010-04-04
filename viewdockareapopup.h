@@ -43,7 +43,6 @@ public:
     ~ViewDockAreaPopup();
     MixDevice* dockDevice();
 
-    virtual void setMixSet();
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
     virtual void refreshVolumeLevels();
@@ -58,6 +57,7 @@ protected:
     QPushButton     *_showPanelBox;
 
     void wheelEvent ( QWheelEvent * e );
+    virtual void _setMixSet();
 
 private:
     QGridLayout* _layoutMDW;

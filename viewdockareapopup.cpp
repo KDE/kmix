@@ -81,14 +81,11 @@ void ViewDockAreaPopup::showContextMenu()
 }
 
 
-void ViewDockAreaPopup::setMixSet()
+void ViewDockAreaPopup::_setMixSet()
 {
    // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
 
-   // Clean up any md's in _mixSet no longer present in mixset.
    if ( _mixer->dynamic() ) {
-      _mixSet->clear();
-
       // Our _layoutMDW now should only contain spacer widgets from the QSpacerItems's in add() below.
       // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
       QLayoutItem *li;

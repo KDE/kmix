@@ -37,13 +37,15 @@ public:
     ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl);
     ~ViewSliders();
 
-    virtual void setMixSet();
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
     virtual void configurationUpdate();
 
 public slots:
     virtual void refreshVolumeLevels();
+
+protected:
+    virtual void _setMixSet();
 
 private:
     QBoxLayout* _layoutMDW;
