@@ -51,6 +51,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    aboutData.addCredit(ki18n("Lennart Augustsson"), ki18n("*BSD fixes"), "augustss@cs.chalmers.se");
    aboutData.addCredit(ki18n("Nick Lopez")        , ki18n("ALSA port"), "kimo_sabe@usa.net");
    aboutData.addCredit(ki18n("Nadeem Hasan")      , ki18n("Mute and volume preview, other fixes"), "nhasan@kde.org");
+   aboutData.addCredit(ki18n("Colin Guthrie")     , ki18n("PulseAudio support"), "cguthrie@mandriva.org");
 
    KCmdLineArgs::init( argc, argv, &aboutData );
 
