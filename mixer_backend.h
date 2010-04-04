@@ -135,6 +135,9 @@ signals:
   void controlChanged( void );
   void controlsReconfigured( const QString& mixer_ID );
 
+public slots:
+  virtual void reinit() {};
+
 protected slots:
   virtual void readSetFromHW();
 };
