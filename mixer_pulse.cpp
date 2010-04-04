@@ -161,7 +161,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     translateMasksAndMaps(s);
 
-    bool is_new = outputDevices.contains(s.index);
+    bool is_new = !outputDevices.contains(s.index);
     outputDevices[s.index] = s;
     kDebug(67100) << "Got some info about sink: " << s.description;
 
@@ -205,7 +205,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     translateMasksAndMaps(s);
 
-    bool is_new = captureDevices.contains(s.index);
+    bool is_new = !captureDevices.contains(s.index);
     captureDevices[s.index] = s;
     kDebug(67100) << "Got some info about source: " << s.description;
 
