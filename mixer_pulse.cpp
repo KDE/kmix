@@ -661,7 +661,7 @@ void Mixer_PULSE::removeWidget(int index)
 void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
 {
     if (dev.chanMask != Volume::MNONE) {
-        Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, capture);
+        Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, !capture/*mute switch*/, capture);
         setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description);
         if (capture)
