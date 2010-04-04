@@ -33,7 +33,7 @@ VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WFlags f) 
 VerticalText::~VerticalText() {
 }
 
-void VerticalText::setText(QString text) {
+void VerticalText::setText(const QString& text) {
     if (m_labelText != text) {
         m_labelText = text;
         updateGeometry();

@@ -30,7 +30,7 @@ class VerticalText : public QWidget
       VerticalText(QWidget * parent, const QString&, Qt::WFlags f = 0);
       ~VerticalText();
 
-      void setText(QString text);
+      void setText(const QString& text);
       QSize sizeHint() const;
       QSizePolicy sizePolicy () const;
       QSize minimumSizeHint() const;
