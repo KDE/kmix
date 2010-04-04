@@ -48,7 +48,7 @@ Mixer_Backend::~Mixer_Backend()
 bool Mixer_Backend::openIfValid() {
     bool valid = false;
     int ret = open();
-    if ( ret == 0  && m_mixDevices.count() > 0) {
+    if ( ret == 0  && (m_mixDevices.count() > 0 || _mixer->dynamic())) {
         valid = true;
         // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
         // but we want a somehow usable fallback just in case.
