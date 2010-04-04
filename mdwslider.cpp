@@ -75,23 +75,23 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 
 	// create actions (on _mdwActions, see MixDeviceWidget)
 
-	KToggleAction *action = _mdwActions->add<KToggleAction>( "stereo" );
-	action->setText( i18n("&Split Channels") );
-	connect( action, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
-	action = _mdwActions->add<KToggleAction>( "hide" );
+	KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
+	taction->setText( i18n("&Split Channels") );
+	connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
+	KAction *action = _mdwActions->add<KToggleAction>( "hide" );
 	action->setText( i18n("&Hide") );
 	connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
 
 	if( m_mixdevice->playbackVolume().hasSwitch() ) {
-		KToggleAction *a = _mdwActions->add<KToggleAction>( "mute" );
-		a->setText( i18n("&Muted") );
-		connect( a, SIGNAL( toggled(bool) ), SLOT( toggleMuted() ) );
+		taction = _mdwActions->add<KToggleAction>( "mute" );
+		taction->setText( i18n("&Muted") );
+		connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleMuted() ) );
 	}
 
 	if( m_mixdevice->captureVolume().hasSwitch() ) {
-		KToggleAction *a = _mdwActions->add<KToggleAction>( "recsrc" );
-		a->setText( i18n("Set &Record Source") );
-		connect( a, SIGNAL( toggled(bool) ), SLOT( toggleRecsrc() ) );
+		taction = _mdwActions->add<KToggleAction>( "recsrc" );
+		taction->setText( i18n("Set &Record Source") );
+		connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleRecsrc() ) );
 	}
 
 	if( m_mixdevice->isMovable() ) {
@@ -99,9 +99,9 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 		connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT( showMoveMenu()) );
 	}
 
-	KAction *c = _mdwActions->addAction( "keys" );
-	c->setText( i18n("C&onfigure Shortcuts...") );
-	connect( c, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
+	action = _mdwActions->addAction( "keys" );
+	action->setText( i18n("C&onfigure Shortcuts...") );
+	connect( action, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
 
 	// create widgets
 	createWidgets( showMuteLED, showCaptureLED );
