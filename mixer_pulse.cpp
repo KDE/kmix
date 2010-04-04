@@ -342,7 +342,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     kDebug(67100) << "Got some info about source output (capture stream): " << s.description;
 
     if (is_new && s_Mixers.contains(KMIXPA_APP_CAPTURE))
-        s_Mixers[KMIXPA_APP_CAPTURE]->newOutputStream(s.index);
+        s_Mixers[KMIXPA_APP_CAPTURE]->newCaptureStream(s.index);
 }
 
 
