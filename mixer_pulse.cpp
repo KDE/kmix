@@ -136,6 +136,36 @@ static void translateMasksAndMaps(devinfo& dev)
     }
 }
 
+static QString getIconNameFromProplist(pa_proplist *l) {
+    const char *t;
+
+    if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ICON_NAME)))
+        return t;
+
+    if ((t = pa_proplist_gets(l, PA_PROP_WINDOW_ICON_NAME)))
+        return t;
+
+    if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_ICON_NAME)))
+        return t;
+
+    if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ROLE))) {
+
+        if (strcmp(t, "video") == 0 || strcmp(t, "phone") == 0)
+            return t;
+
+        if (strcmp(t, "music") == 0)
+            return "audio";
+
+        if (strcmp(t, "game") == 0)
+            return "applications-games";
+
+        if (strcmp(t, "event") == 0)
+            return "dialog-information";
+    }
+
+    return "";
+}
+
 static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     Q_ASSERT(c == context);
@@ -161,6 +191,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     s.restore.device = "";
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
+    s.icon_name = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -207,6 +238,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     s.restore.device = "";
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
+    s.icon_name = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -280,6 +312,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     s.restore.device = "";
     s.description = prefix + i->name;
     s.name = QString("stream:") + QString(s.description).replace(' ', '_');
+    s.icon_name = getIconNameFromProplist(i->proplist);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -330,6 +363,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     s.restore.device = "";
     s.description = prefix + i->name;
     s.name = QString("stream:") + QString(s.description).replace(' ', '_');
+    s.icon_name = getIconNameFromProplist(i->proplist);
     //s.volume = i->volume;
     s.volume = captureDevices[i->source].volume;
     s.channel_map = i->channel_map;
@@ -382,6 +416,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
     s.restore.device = i->device;
     s.description = i18n("Event Sounds");
     s.name = QString("restore:") + i->name;
+    s.icon_name = "dialog-information";
     s.volume = volume;
     s.channel_map = channel_map;
     s.mute = !!i->mute;
@@ -663,7 +698,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
     if (dev.chanMask != Volume::MNONE) {
         Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, !capture/*mute switch*/, capture);
         setVolumeFromPulse(v, dev);
-        MixDevice* md = new MixDevice( _mixer, dev.name, dev.description);
+        MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name);
         if (capture)
             md->addCaptureVolume(v);
         else

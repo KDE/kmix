@@ -33,6 +33,7 @@ typedef struct {
     int device_index;
     QString name;
     QString description;
+    QString icon_name;
     pa_cvolume volume;
     pa_channel_map channel_map;
     bool mute;
