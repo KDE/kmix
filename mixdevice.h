@@ -100,9 +100,11 @@ public:
     *  @par type The control type. It is only used to find an appropriate icon
     */
    MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type = UNKNOWN );
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName );
    ~MixDevice();
 
-   QString iconName();
+   const QString& iconName() const { return _iconName; }
+
    void addPlaybackVolume(Volume &playbackVol);
    void addCaptureVolume (Volume &captureVol);
    void addEnums (QList<QString*>& ref_enumList);
@@ -153,12 +155,12 @@ private:
    int _enumCurrentId;
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
-   ChannelType _type;
    QString _iconName;
 
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
 
+   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName );
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
 

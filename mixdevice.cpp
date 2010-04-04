@@ -25,6 +25,57 @@
 #include "mixdevice.h"
 #include "volume.h"
 
+static const QString channelTypeToIconName( MixDevice::ChannelType type )
+{
+    switch (type) {
+        case MixDevice::AUDIO:
+            return "mixer-pcm";
+        case MixDevice::BASS:
+        case MixDevice::SURROUND_LFE: // "LFE" SHOULD have an own icon
+            return "mixer-lfe";
+        case MixDevice::CD:
+            return "mixer-cd";
+        case MixDevice::EXTERNAL:
+            return "mixer-line";
+        case MixDevice::MICROPHONE:
+            return "mixer-microphone";
+        case MixDevice::MIDI:
+            return "mixer-midi";
+        case MixDevice::RECMONITOR:
+            return "mixer-capture";
+        case MixDevice::TREBLE:
+            return "mixer-pcm-default";
+        case MixDevice::UNKNOWN:
+            return "mixer-front";
+        case MixDevice::VOLUME:
+            return "mixer-master";
+        case MixDevice::VIDEO:
+            return "mixer-video";
+        case MixDevice::SURROUND:
+        case MixDevice::SURROUND_BACK:
+            return "mixer-surround";
+        case MixDevice::SURROUND_CENTERFRONT:
+        case MixDevice::SURROUND_CENTERBACK:
+            return "mixer-surround-center";
+        case MixDevice::HEADPHONE:
+            return "mixer-headset";
+        case MixDevice::DIGITAL:
+            return "mixer-digital";
+        case MixDevice::AC97:
+            return "mixer-ac97";
+        case MixDevice::SPEAKER:
+            return "mixer-pc-speaker";
+        case MixDevice::MICROPHONE_BOOST:
+            return "mixer-microphone-boost";
+        case MixDevice::MICROPHONE_FRONT_BOOST:
+            return "mixer-microphone-front-boost";
+        case MixDevice::MICROPHONE_FRONT:
+            return "mixer-microphone-front";
+    }
+    return "mixer-front";
+}
+
+
 /**
  * Constructs a MixDevice. A MixDevice represents one channel or control of
  * the mixer hardware. A MixDevice has a type (e.g. PCM), a descriptive name
@@ -35,9 +86,21 @@
  * Hints: Meaning of "category" has changed. In future the MixDevice might contain two
  * Volume objects, one for Output (Playback volume) and one for Input (Record volume).
  */
-MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type ) :
-    _mixer(mixer), _type( type ), _id( id )
+MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
 {
+    init(mixer, id, name, channelTypeToIconName(type));
+}
+
+MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName )
+{
+   init(mixer, id, name, iconName);
+}
+
+void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName )
+{
+    _mixer = mixer;
+    _id = id;
+    _iconName = iconName;
     if( name.isEmpty() )
         _name = i18n("unknown");
     else
@@ -114,62 +177,6 @@ const QString& MixDevice::id() const {
 bool MixDevice::operator==(const MixDevice& other) const
 {
    return ( _id == other._id );
-}
-
-
-QString MixDevice::iconName()
-{
-    if (!_iconName.isEmpty())
-        return _iconName;
-
-    switch (_type) {
-        case MixDevice::AUDIO:
-            _iconName = "mixer-pcm"; break;
-        case MixDevice::BASS:
-        case MixDevice::SURROUND_LFE: // "LFE" SHOULD have an own icon
-            _iconName ="mixer-lfe"; break;
-        case MixDevice::CD:
-            _iconName ="mixer-cd"; break;
-        case MixDevice::EXTERNAL:
-            _iconName = "mixer-line"; break;
-        case MixDevice::MICROPHONE:
-            _iconName ="mixer-microphone"; break;
-        case MixDevice::MIDI:
-            _iconName ="mixer-midi"; break;
-        case MixDevice::RECMONITOR:
-            _iconName ="mixer-capture"; break;
-        case MixDevice::TREBLE:
-            _iconName ="mixer-pcm-default"; break;
-        case MixDevice::UNKNOWN:
-            _iconName ="mixer-front"; break;
-        case MixDevice::VOLUME:
-            _iconName ="mixer-master"; break;
-        case MixDevice::VIDEO:
-            _iconName ="mixer-video"; break;
-        case MixDevice::SURROUND:
-        case MixDevice::SURROUND_BACK:
-            _iconName = "mixer-surround"; break;
-        case MixDevice::SURROUND_CENTERFRONT:
-        case MixDevice::SURROUND_CENTERBACK:
-            _iconName ="mixer-surround-center"; break;
-        case MixDevice::HEADPHONE:
-            _iconName = "mixer-headset"; break;
-        case MixDevice::DIGITAL:
-            _iconName = "mixer-digital"; break;
-        case MixDevice::AC97:
-            _iconName = "mixer-ac97"; break;
-        case MixDevice::SPEAKER:
-            _iconName = "mixer-pc-speaker"; break;
-        case MixDevice::MICROPHONE_BOOST:
-            _iconName = "mixer-microphone-boost"; break;
-        case MixDevice::MICROPHONE_FRONT_BOOST:
-            _iconName = "mixer-microphone-front-boost"; break;
-        case MixDevice::MICROPHONE_FRONT:
-            _iconName = "mixer-microphone-front"; break;
-        default:
-            _iconName ="mixer-front"; break;
-    }
-    return _iconName;
 }
 
 
