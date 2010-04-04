@@ -155,6 +155,10 @@ class Mixer : public QObject
 
       virtual bool isAvailableDevice( const QString& mixdeviceID );
 
+      /// Says if we are dynamic (e.g. widgets can come and go)
+      virtual void setDynamic( bool dynamic = true );
+      virtual bool dynamic();
+
       void commitVolumeChange( MixDevice* md );
 
    public slots:
@@ -188,6 +192,7 @@ class Mixer : public QObject
       static QString _globalMasterCardDevice;
       
       QString m_dbusName;
+      bool m_dynamic;
 };
 
 #endif

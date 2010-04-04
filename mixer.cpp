@@ -62,7 +62,7 @@ QList<Mixer *>& Mixer::mixers()
 }
 
 Mixer::Mixer( QString& ref_driverName, int device )
-    : m_balance(0), _mixerBackend(0L)
+    : m_balance(0), _mixerBackend(0L), m_dynamic(false)
 {
    (void)new KMixAdaptor(this);
 
@@ -681,6 +681,16 @@ bool Mixer::isRecordSource( const QString& mixdeviceID )
 bool Mixer::isAvailableDevice( const QString& mixdeviceID )
 {
   return getMixdeviceById( mixdeviceID );
+}
+
+void Mixer::setDynamic ( bool dynamic )
+{
+    m_dynamic = dynamic;
+}
+
+bool Mixer::dynamic()
+{
+    return m_dynamic;
 }
 
 #include "mixer.moc"
