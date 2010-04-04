@@ -88,15 +88,15 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  */
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
 {
-    init(mixer, id, name, channelTypeToIconName(type));
+    init(mixer, id, name, channelTypeToIconName(type), false);
 }
 
-MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName )
+MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore )
 {
-   init(mixer, id, name, iconName);
+   init(mixer, id, name, iconName, doNotRestore);
 }
 
-void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName )
+void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore )
 {
     _mixer = mixer;
     _id = id;
@@ -108,6 +108,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         _iconName = "mixer-front";
     else
         _iconName = iconName;
+    _doNotRestore = doNotRestore;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. It MUST NOT contain spaces
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
@@ -192,23 +193,27 @@ bool MixDevice::operator==(const MixDevice& other) const
  */
 void MixDevice::read( KConfig *config, const QString& grp )
 {
-    QString devgrp;
-    devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
-    KConfigGroup cg = config->group( devgrp );
-    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
+    if (_doNotRestore) {
+        kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
+    } else {
+        QString devgrp;
+        devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
+        KConfigGroup cg = config->group( devgrp );
+        //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
-    readPlaybackOrCapture(cg, false);
-    readPlaybackOrCapture(cg, true );
-    
-    bool mute = cg.readEntry("is_muted", false);
-    setMuted( mute );
-    
-    bool recsrc = cg.readEntry("is_recsrc", false);
-    setRecSource( recsrc );
-    
-    int enumId = cg.readEntry("enum_id", -1);
-    if ( enumId != -1 ) {
-        setEnumId( enumId );
+        readPlaybackOrCapture(cg, false);
+        readPlaybackOrCapture(cg, true );
+
+        bool mute = cg.readEntry("is_muted", false);
+        setMuted( mute );
+
+        bool recsrc = cg.readEntry("is_recsrc", false);
+        setRecSource( recsrc );
+
+        int enumId = cg.readEntry("enum_id", -1);
+        if ( enumId != -1 ) {
+            setEnumId( enumId );
+        }
     }
 }
 
@@ -236,20 +241,24 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
  */
 void MixDevice::write( KConfig *config, const QString& grp )
 {
-   QString devgrp;
-   devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
-   KConfigGroup cg = config->group(devgrp);
-   // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
+    if (_doNotRestore) {
+        kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
+    } else {
+        QString devgrp;
+        devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
+        KConfigGroup cg = config->group(devgrp);
+        // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
-    writePlaybackOrCapture(cg, false);
-    writePlaybackOrCapture(cg, true );
+        writePlaybackOrCapture(cg, false);
+        writePlaybackOrCapture(cg, true );
 
-    cg.writeEntry("is_muted" , isMuted() );
-    cg.writeEntry("is_recsrc", isRecSource() );
-    cg.writeEntry("name", _name);
-    if ( isEnum() ) {
-        cg.writeEntry("enum_id", enumId() );
-    }    
+        cg.writeEntry("is_muted" , isMuted() );
+        cg.writeEntry("is_recsrc", isRecSource() );
+        cg.writeEntry("name", _name);
+        if ( isEnum() ) {
+            cg.writeEntry("enum_id", enumId() );
+        }
+    }
 }
 
 void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
