@@ -686,6 +686,10 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
    if ( devnum == -1 )
       m_devnum = 0;
 
+   QString pulseenv = qgetenv("KMIX_PULSEAUDIO_DISABLE");
+   if (pulseenv.toInt())
+       s_pulseActive = INACTIVE;
+
    ++refcount;
    if (INACTIVE != s_pulseActive && 1 == refcount)
    {
@@ -722,8 +726,15 @@ Mixer_PULSE::~Mixer_PULSE()
         --refcount;
         if (0 == refcount)
         {
-            pa_context_unref(context);
-            pa_glib_mainloop_free(mainloop);
+            if (context) {
+                pa_context_unref(context);
+                context = NULL;
+            }
+
+            if (mainloop) {
+                pa_glib_mainloop_free(mainloop);
+                mainloop = NULL;
+            }
         }
     }
 }
