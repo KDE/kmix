@@ -111,6 +111,7 @@ private slots:
     void increaseVolume();
     void decreaseVolume();
 
+    void moveStreamAutomatic();
     void moveStream( QString destId );
 
 private:

@@ -905,6 +905,11 @@ void MDWSlider::decreaseVolume()
 }
 
 
+void MDWSlider::moveStreamAutomatic()
+{
+    m_mixdevice->mixer()->moveStream(m_mixdevice->id(), "");
+}
+
 void MDWSlider::moveStream(QString destId)
 {
     m_mixdevice->mixer()->moveStream(m_mixdevice->id(), destId);
@@ -1047,11 +1052,23 @@ void MDWSlider::showMoveMenu()
     _mdwMoveActions->clear();
     m_moveMenu->clear();
 
+    // Default
+    KAction *a = new KAction(_mdwMoveActions);
+    a->setText( i18n("Automatic") );
+    _mdwMoveActions->addAction( QString("moveautomatic"), a);
+    connect(a, SIGNAL(triggered(bool)), SLOT(moveStreamAutomatic()));
+    m_moveMenu->addAction( a );
+
+    a = new KAction(_mdwMoveActions);
+    a->setSeparator(true);
+    _mdwMoveActions->addAction( QString("-"), a);
+
+    m_moveMenu->addAction( a );
     for (int i = 0; i < ms->count(); ++i) {
         MixDevice* md = (*ms)[i];
-        KAction *a = new MDWMoveAction(md, _mdwMoveActions);
+        a = new MDWMoveAction(md, _mdwMoveActions);
         _mdwMoveActions->addAction( QString("moveto") + md->id(), a);
-        connect(a, SIGNAL(moveRequest(QString) ), SLOT(moveStream(QString)));
+        connect(a, SIGNAL(moveRequest(QString)), SLOT(moveStream(QString)));
         m_moveMenu->addAction( a );
     }
 }
