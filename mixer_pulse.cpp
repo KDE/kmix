@@ -691,7 +691,7 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     return cvol;
 }
 
-static devmap* get_widget_map(int type)
+static devmap* get_widget_map(int type, QString id = "")
 {
     Q_ASSERT(type >= 0 && type <= KMIXPA_WIDGET_MAX);
 
@@ -699,22 +699,26 @@ static devmap* get_widget_map(int type)
         return &outputDevices;
     else if (KMIXPA_CAPTURE == type)
         return &captureDevices;
-    else if (KMIXPA_APP_PLAYBACK == type)
+    else if (KMIXPA_APP_PLAYBACK == type) {
+        if (id.startsWith("restore:"))
+            return &outputRoles;
         return &outputStreams;
-    else if (KMIXPA_APP_CAPTURE == type)
+    } else if (KMIXPA_APP_CAPTURE == type)
         return &captureStreams;
 
     Q_ASSERT(0);
     return NULL;
 }
+static devmap* get_widget_map(int type, int index)
+{
+    if (PA_INVALID_INDEX == (uint32_t)index)
+        return get_widget_map(type, "restore:");
+    return get_widget_map(type);
+}
 
 void Mixer_PULSE::addWidget(int index)
 {
-    devmap* map;
-    if (KMIXPA_APP_PLAYBACK == m_devnum && PA_INVALID_INDEX == (uint32_t)index)
-        map = &outputRoles;
-    else
-        map = get_widget_map(m_devnum);
+    devmap* map = get_widget_map(m_devnum, index);
 
     if (!map->contains(index)) {
         kWarning(67100) <<  "New " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
@@ -938,11 +942,7 @@ int Mixer_PULSE::id2num(const QString& id) {
 
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
-    devmap *map;
-    if (KMIXPA_APP_PLAYBACK == m_devnum && id.startsWith("restore:"))
-        map = &outputRoles;
-    else
-        map = get_widget_map(m_devnum);
+    devmap *map = get_widget_map(m_devnum, id);
 
     devmap::iterator iter;
     for (iter = map->begin(); iter != map->end(); ++iter)
