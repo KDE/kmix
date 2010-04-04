@@ -583,7 +583,7 @@ static void setVolumeFromPulse(Volume& volume, const devinfo& dev)
     chanIDMap::const_iterator iter;
     for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
-        //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
+        //kDebug(67100) <<  "Setting volume for channel " << iter.value() << " to " << (long)dev.volume.values[iter.key()] << " (" << ((100*(long)dev.volume.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
         volume.setVolume(iter.value(), (long)dev.volume.values[iter.key()]);
     }
 }
@@ -596,7 +596,7 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
         cvol.values[iter.key()] = (uint32_t)volume.getVolume(iter.value());
-        //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
+        //kDebug(67100) <<  "Setting volume for channel " << iter.value() << " to " << cvol.values[iter.key()] << " (" << ((100*cvol.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
     }
     return cvol;
 }
@@ -751,9 +751,9 @@ int Mixer_PULSE::open()
         {
             m_mixerName = i18n("Playback Streams");
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
-                addDevice(*iter, true);
+                addDevice(*iter, false);
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
-                addDevice(*iter, true);
+                addDevice(*iter, false);
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
