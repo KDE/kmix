@@ -100,11 +100,14 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
 {
     _mixer = mixer;
     _id = id;
-    _iconName = iconName;
     if( name.isEmpty() )
         _name = i18n("unknown");
     else
         _name = name;
+    if ( iconName.isEmpty() )
+        _iconName = "mixer-front";
+    else
+        _iconName = iconName;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. It MUST NOT contain spaces
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;

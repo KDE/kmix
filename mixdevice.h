@@ -99,8 +99,8 @@ public:
     *  @par name is the readable name. This one is presented to the user in the GUI
     *  @par type The control type. It is only used to find an appropriate icon
     */
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type = UNKNOWN );
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName );
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type );
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "" );
    ~MixDevice();
 
    const QString& iconName() const { return _iconName; }
