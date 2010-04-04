@@ -832,7 +832,7 @@ int Mixer_PULSE::open()
 }
 
 bool Mixer_PULSE::openIfValid() {
-    if (m_devnum < 0 || m_devnum > KMIXPA_WIDGET_MAX)
+    if (ACTIVE != s_pulseActive || m_devnum < 0 || m_devnum > KMIXPA_WIDGET_MAX)
         return false;
 
     bool valid = false;
