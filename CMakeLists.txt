@@ -18,6 +18,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    viewdockareapopup.cpp 
    viewsliders.cpp 
    mixdevicewidget.cpp 
+   mdwmoveaction.cpp
    mdwslider.cpp 
    mdwenum.cpp 
    kmixerwidget.cpp 
