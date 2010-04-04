@@ -407,9 +407,9 @@ Mixer_PULSE::~Mixer_PULSE()
 
 int Mixer_PULSE::open()
 {
-    kDebug(67100) <<  "Trying Pulse sink";
+    //kDebug(67100) <<  "Trying Pulse sink";
 
-    if (ACTIVE == s_pulseActive)
+    if (ACTIVE == s_pulseActive && m_devnum <= KMIXPA_APP_CAPTURE)
     {
         devmap::iterator iter;
         if (KMIXPA_PLAYBACK == m_devnum)
@@ -427,15 +427,18 @@ int Mixer_PULSE::open()
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
             // TODO: "Applications (Playback)".
+            m_mixerName = "Playback Streams";
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
             // TODO: "Applications (Capture)".
+            m_mixerName = "Capture Streams";
         }
+
+        kDebug(67100) <<  "Using PulseAudio for mixer: " << m_mixerName;
+        m_isOpen = true;
     }
  
-    m_isOpen = true;
-
     return 0;
 }
 
