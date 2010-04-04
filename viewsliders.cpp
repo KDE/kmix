@@ -123,8 +123,21 @@ QWidget* ViewSliders::add(MixDevice *md)
 
 void ViewSliders::setMixSet()
 {
-    const MixSet& mixset = _mixer->getMixSet();
+   const MixSet& mixset = _mixer->getMixSet();
 
+   if ( _mixer->dynamic() ) {
+      // Clean up our _mixSet so we can reapply our GUIProfile
+      _mixSet->clear();
+
+      // We will be recreating our sliders, so make sure we trash all the separators too.
+      qDeleteAll(_separators);
+      _separators.clear();
+      // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
+      // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
+      QLayoutItem *li;
+      while ( ( li = _layoutSliders->takeAt(0) ) )
+         delete li;
+   }
 
    // This method iterates the controls from the Profile
    // Each control is checked, whether it is also contained in the mixset, and
@@ -137,25 +150,6 @@ void ViewSliders::setMixSet()
       if ( control->tab == id() ) {
          // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
          bool isUsed = false;
-
-         // Clean up any md's in _mixSet no longer present in mixset.
-         if ( _mixer->dynamic() ) {
-             for (int i=0; i<_mixSet->count(); i++) {
-                 MixDevice *md = (*_mixSet)[i];
-                 if ( ! mixset.contains( md ) ) {
-                     // This MixDevice is now gone. We shouldn't access it any more.
-                     _mixSet->removeAll(md);
-                 }
-             }
-             // We will be recreating our sliders, so make sure we trash all the separators too.
-             qDeleteAll(_separators);
-             _separators.clear();
-             // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
-             // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
-             QLayoutItem *li;
-             while ( ( li = _layoutSliders->takeAt(0) ) )
-                 delete li;
-         }
 
          QRegExp idRegexp(control->id);
          //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
