@@ -25,7 +25,6 @@
 #include <kdialog.h>
 
 class KMixPrefWidget;
-class KMixApp;
 class QCheckBox;
 class QRadioButton;
 
@@ -49,7 +48,6 @@ KMixPrefDlg : public KDialog
 
   private:
    QFrame *m_generalTab;
-   KMixApp *m_mixApp;
    KMixPrefWidget *m_mixPrefTab;
 
    QCheckBox *m_dockingChk;
