@@ -414,6 +414,8 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 // Todo: Remove our cache of this sink (of 'index')
                 outputDevices.remove(index);
+                if (s_Mixers.contains(KMIXPA_PLAYBACK))
+                    s_Mixers[KMIXPA_PLAYBACK]->redrawGUI();
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_sink_info_by_index(c, index, sink_cb, NULL))) {
@@ -428,6 +430,8 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 // Todo: Remove our cache of this source (of 'index')
                 captureDevices.remove(index);
+                if (s_Mixers.contains(KMIXPA_CAPTURE))
+                    s_Mixers[KMIXPA_CAPTURE]->redrawGUI();
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_source_info_by_index(c, index, source_cb, NULL))) {
@@ -439,9 +443,11 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             break;
 
         case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
-            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE)
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 outputStreams.remove(index);
-            else {
+                if (s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+                    s_Mixers[KMIXPA_APP_PLAYBACK]->redrawGUI();
+            } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_sink_input_info(c, index, sink_input_cb, NULL))) {
                     kWarning(67100) << "pa_context_get_sink_input_info() failed";
@@ -452,9 +458,11 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             break;
 
         case PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT:
-            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE)
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 captureStreams.remove(index);
-            else {
+                if (s_Mixers.contains(KMIXPA_APP_CAPTURE))
+                    s_Mixers[KMIXPA_APP_CAPTURE]->redrawGUI();
+            } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_source_output_info(c, index, source_output_cb, NULL))) {
                     kWarning(67100) << "pa_context_get_sink_input_info() failed";
@@ -598,24 +606,49 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     return cvol;
 }
 
+void Mixer_PULSE::redrawGUI()
+{
+    emit controlsReconfigured();
+}
+
 void Mixer_PULSE::newOutputDevice(int index)
 {
-    Q_UNUSED(index);
+    if (!outputDevices.contains(index)) {
+        kWarning(67100) <<  "New output device notified for index " << index << " but I cannot find it in my list :s";
+        return;
+    }
+    addDevice(outputDevices[index], false);
+    redrawGUI();
 }
 
 void Mixer_PULSE::newCaptureDevice(int index)
 {
-    Q_UNUSED(index);
+    if (!captureDevices.contains(index)) {
+        kWarning(67100) <<  "New capture device notified for index " << index << " but I cannot find it in my list :s";
+        return;
+    }
+    addDevice(captureDevices[index], true);
+    redrawGUI();
 }
 
 void Mixer_PULSE::newOutputStream(int index)
 {
-    Q_UNUSED(index);
+    if (!outputStreams.contains(index)) {
+        kWarning(67100) <<  "New output stream notified for index " << index << " but I cannot find it in my list :s";
+        return;
+    }
+    addDevice(outputStreams[index], false);
+    redrawGUI();
 }
 
 void Mixer_PULSE::newCaptureStream(int index)
 {
-    Q_UNUSED(index);
+    if (!captureStreams.contains(index)) {
+        kWarning(67100) <<  "New capture stream notified for index " << index << " but I cannot find it in my list :s";
+        return;
+    }
+    addDevice(captureStreams[index], true);
+    redrawGUI();
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool capture)

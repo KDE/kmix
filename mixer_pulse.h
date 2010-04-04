@@ -61,6 +61,7 @@ class Mixer_PULSE : public Mixer_Backend
         virtual bool needsPolling() { return false; }
 
         void triggerUpdate();
+        void redrawGUI();
         void newOutputDevice(int index);
         void newCaptureDevice(int index);
         void newOutputStream(int index);
