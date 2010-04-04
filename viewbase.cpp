@@ -123,8 +123,24 @@ void ViewBase::createDeviceWidgets()
     {
         MixDevice *mixDevice;
         mixDevice = (*_mixSet)[i];
-	QWidget* mdw = add(mixDevice);
-	_mdws.append(mdw);
+        QWidget* mdw = add(mixDevice);
+        _mdws.append(mdw);
+    }
+
+
+    // Now we are done processing the _mixSet which is what our GUIProfile says
+    // are valid for display. However a dyanmic mixer may contain more device than this...
+    // We also create widgets for these but make sure they are not visible.
+    if ( _mixer->dynamic() ) {
+       const MixSet& mixset = _mixer->getMixSet();
+       for ( int i=0; i<mixset.count(); i++ ) {
+          MixDevice *mixDevice = mixset[i];
+          if ( ! _mixSet->contains(mixDevice) ) {
+              QWidget* mdw = add(mixDevice);
+              mdw->setVisible(false);
+              _mdws.append(mdw);
+          }
+       }
     }
     // allow view to "polish" itself
     constructionFinished();
