@@ -206,7 +206,23 @@ void ViewBase::showContextMenu()
 
 void ViewBase::controlsReconfigured( const QString& mixer_ID )
 {
-    emit redrawMixer(mixer_ID);
+    if ( _mixer->id() == mixer_ID )
+    {
+        kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet->count() << ")";
+        // We need to delete the current MixDeviceWidgets so we can redraw them
+        while (!_mdws.isEmpty()) {
+            QWidget* mdw = _mdws.last();
+            _mdws.pop_back();
+            delete mdw;
+        }
+        setMixSet();
+        kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet->count() << ")";
+        createDeviceWidgets();
+
+        // We've done the low level stuff our selves but let elements
+        // above know what has happened so they can reload config etc.
+        emit redrawMixer(mixer_ID);
+    }
 }
 
 void ViewBase::refreshVolumeLevels()

@@ -109,11 +109,13 @@ QWidget* ViewSliders::add(MixDevice *md)
                this,         // parent
                this       ); // View widget
       _layoutSliders->addWidget(mdw);
+      kDebug(67100) << "ViewSliders::add(): We now have " << _separators.count() << " separators with " << _layoutSliders->count() << " widgets";
       QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
       if ( lay )
          lay->addSpacing(2);
       else
          qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
+      kDebug(67100) << "ViewSliders::add(): (and now we have " << _layoutSliders->count() << " widgets";
    }
 
 
@@ -137,7 +139,23 @@ void ViewSliders::setMixSet()
       if ( control->tab == id() ) {
          // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
          bool isUsed = false;
-   
+
+         // Clean up any md's in _mixSet no longer present in mixset.
+         if ( _mixer->dynamic() ) {
+             for (int i=0; i<_mixSet->count(); i++) {
+                 MixDevice *md = (*_mixSet)[i];
+                 if ( ! mixset.contains( md ) ) {
+                     // This MixDevice is now gone. We shouldn't access it any more.
+                     _mixSet->removeAll(md);
+                 }
+             }
+             // We will be recreating our sliders, so make sure we trash all the separators too.
+             qDeleteAll(_separators);
+             _separators.clear();
+             // Todo: Our _layoutSliders now should only contain spacer widgets from ::add() above.
+             // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
+         }
+
          QRegExp idRegexp(control->id);
          //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
          // The following for-loop could be simplified by using a std::find_if

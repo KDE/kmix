@@ -450,8 +450,27 @@ void KMixWindow::recreateGUI(bool saveConfig)
 */
 void KMixWindow::redrawMixer( const QString& mixer_ID )
 {
-    Q_UNUSED(mixer_ID);
-    recreateGUI(false);
+    for ( int i=0; i<m_wsMixers->count() ; ++i )
+    {
+        QWidget *w = m_wsMixers->widget(i);
+        if ( w->inherits("KMixerWidget") )
+        {
+            KMixerWidget* kmw = (KMixerWidget*)w;
+            if ( kmw->mixer()->id() == mixer_ID )
+            {
+                kDebug(67100) << "KMixWindow::redrawMixer() " << mixer_ID << " is being redrawn";
+                kmw->loadConfig( KGlobal::config().data() );
+
+                // Is the below needed? It is done on startup so copied it here...
+                kmw->setTicks( m_showTicks );
+                kmw->setLabels( m_showLabels );
+
+                return;
+            }
+        }
+    }
+
+    kWarning(67100) << "KMixWindow::redrawMixer() Requested to redraw " << mixer_ID << " but I cannot find it :s";
 }
 
 
