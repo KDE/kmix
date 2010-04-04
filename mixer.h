@@ -159,6 +159,8 @@ class Mixer : public QObject
       virtual void setDynamic( bool dynamic = true );
       virtual bool dynamic();
 
+      virtual bool moveStream( const QString id, const QString& destId );
+
       void commitVolumeChange( MixDevice* md );
 
    public slots:

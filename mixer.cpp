@@ -694,4 +694,10 @@ bool Mixer::dynamic()
     return m_dynamic;
 }
 
+bool Mixer::moveStream( const QString id, const QString& destId )
+{
+    // We should really check that id is within our md's....
+    return _mixerBackend->moveStream( id, destId );
+}
+
 #include "mixer.moc"
