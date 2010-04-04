@@ -360,9 +360,13 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
    
    QString userProfileDir = KStandardDirs::locateLocal("appdata", "profiles/" );
 
+   QString mixerNameSpacesToUnderscores = mixer->baseName();
+   mixerNameSpacesToUnderscores.replace(" ","_");
+
    // (1) User profile Directory
    QDir dir(userProfileDir);
    dir.setFilter(QDir::Files);
+   dir.setNameFilters(QStringList(mixer->getDriverName() + "." + mixerNameSpacesToUnderscores + "*.xml"));
    QFileInfoList fileList = dir.entryInfoList();
 
    QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
@@ -376,8 +380,6 @@ kDebug() << fileName << "; fnfq1=" << fileNameFQ;
        fileList.insert(0, QFileInfo(fileNameFQ));
 
    // (3) Soundcard specific profile (usually from system Directory)
-   QString mixerNameSpacesToUnderscores = mixer->baseName();
-   mixerNameSpacesToUnderscores.replace(" ","_");
    fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
    fileNameFQ = KStandardDirs::locate("appdata", fileName );
 kDebug() << fileName << "; fnfq2=" << fileNameFQ;
@@ -388,23 +390,20 @@ kDebug() << fileName << "; fnfq2=" << fileNameFQ;
 
 	for (int i = 0; i < fileList.size(); ++i) {
 		QFileInfo fileInfo = fileList.at(i);
-		kDebug() << i << ": Check user profile " << fileInfo.fileName() ;
-		if ( QDir::match( "*.xml", fileInfo.fileName() ) ) {
-			QString fileNameAbs = fileInfo.absoluteFilePath();
-			QString fileNameRelToProfile = "profiles/" + fileInfo.fileName();
-			kDebug() << i << ": Try user profile " << fileNameAbs;
-			GUIProfile* guiprofTemp = new GUIProfile();
-			if ( guiprofTemp->readProfile(fileNameAbs, fileNameRelToProfile) ) {
-				matchValueTemp = guiprofTemp->match(mixer);
-				if ( matchValueTemp < matchValueBest ) {
-					delete guiprofTemp;
-					guiprofTemp = 0;
-					matchValueTemp = 0;
-				}
-				else {
-					guiprofBest = guiprofTemp;
-					matchValueBest = matchValueTemp;
-				}
+		QString fileNameAbs = fileInfo.absoluteFilePath();
+		QString fileNameRelToProfile = "profiles/" + fileInfo.fileName();
+		kDebug() << i << ": Try user profile " << fileNameAbs;
+		GUIProfile* guiprofTemp = new GUIProfile();
+		if ( guiprofTemp->readProfile(fileNameAbs, fileNameRelToProfile) ) {
+			matchValueTemp = guiprofTemp->match(mixer);
+			if ( matchValueTemp < matchValueBest ) {
+				delete guiprofTemp;
+				guiprofTemp = 0;
+				matchValueTemp = 0;
+			}
+			else {
+				guiprofBest = guiprofTemp;
+				matchValueBest = matchValueTemp;
 			}
 		}
 	}
