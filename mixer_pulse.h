@@ -58,6 +58,8 @@ class Mixer_PULSE : public Mixer_Backend
         void setRecsrcHW              ( const QString& id, bool on );
         bool isRecsrcHW               ( const QString& id );
 
+        virtual bool moveStream( const QString& id, const QString& destId );
+
         virtual QString getDriverName();
         virtual bool needsPolling() { return false; }
 

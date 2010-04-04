@@ -1011,6 +1011,47 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
     return 0;
 }
 
+/**
+* Move the stream to a new destination
+*/
+bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
+    Q_ASSERT(KMIXPA_APP_PLAYBACK == m_devnum || KMIXPA_APP_CAPTURE == m_devnum);
+
+    kDebug(67100) <<  "Mixer_PULSE::moveStream(): Move Stream Requested - Stream: " << id << ", Destination: " << destId;
+
+    // Lookup the stream index.
+    uint32_t stream_index = PA_INVALID_INDEX;
+    devmap::iterator iter;
+    devmap *map = get_widget_map(m_devnum);
+    for (iter = map->begin(); iter != map->end(); ++iter) {
+        if (iter->name == id) {
+            stream_index = iter->index;
+            break;
+        }
+    }
+
+    if (PA_INVALID_INDEX == stream_index) {
+        kError(67100) <<  "Mixer_PULSE::moveStream(): Cannot find stream index";
+        return false;
+    }
+
+    pa_operation* o;
+    if (KMIXPA_APP_PLAYBACK == m_devnum) {
+        if (!(o = pa_context_move_sink_input_by_name(context, stream_index, destId.toLatin1().constData(), NULL, NULL))) {
+            kWarning(67100) <<  "pa_context_move_sink_input_by_name() failed";
+            return false;
+        }
+    } else {
+        if (!(o = pa_context_move_source_output_by_name(context, stream_index, destId.toLatin1().constData(), NULL, NULL))) {
+            kWarning(67100) <<  "pa_context_move_source_output_by_name() failed";
+            return false;
+        }
+    }
+
+    pa_operation_unref(o);
+    return true;
+}
+
 void Mixer_PULSE::triggerUpdate()
 {
     readSetFromHWforceUpdate();
