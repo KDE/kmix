@@ -499,44 +499,7 @@ int Mixer_PULSE::open()
     kDebug(67100) <<  "Trying Pulse sink";
 
     Volume *v;
-    if (ACTIVE == s_pulseActive && false)
-    {
-        // Check to see if we have a "card" for m_devnum
-        if (s_Cards.contains(m_devnum))
-        {
-            kDebug(67100) <<  "Found PulseAudio 'card' " << m_devnum;
-            cardinfo *card = &s_Cards[m_devnum];
-
-            m_mixerName = card->description;
-
-            devmap::iterator iter;
-            for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
-            {
-                if ((v = addVolume(iter->channel_map, false)))
-                {
-                    pulse_cvolume_to_Volume(iter->volume, v);
-                    MixDevice* md = new MixDevice( _mixer, iter->name, QString("Playback: %1").arg(iter->description));
-                    md->addPlaybackVolume(*v);
-                    md->setMuted(iter->mute);
-                    m_mixDevices.append(md);
-                    delete v;
-                }
-            }
-            for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
-            {
-                if ((v = addVolume(iter->channel_map, true)))
-                {
-                    pulse_cvolume_to_Volume(iter->volume, v);
-                    MixDevice* md = new MixDevice( _mixer, iter->name, QString("Capture: %1").arg(iter->description));
-                    md->addCaptureVolume(*v);
-                    md->setMuted(iter->mute);
-                    m_mixDevices.append(md);
-                    delete v;
-                }
-            }
-        }
-    }
-    else if (ACTIVE == s_pulseActive)
+    if (ACTIVE == s_pulseActive)
     {
         QMap<int,cardinfo>::iterator citer;
         devmap::iterator iter;
