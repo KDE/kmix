@@ -257,7 +257,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 
 		//add device icon
 		m_iconLabelSimple = 0L;
-		setIcon( m_mixdevice->type() );
+		setIcon( m_mixdevice->iconName() );
 		m_iconLabelSimple->setToolTip( m_mixdevice->readableName() );
 		controlLayout->addWidget( m_iconLabelSimple, 0, Qt::AlignHCenter );
 
@@ -399,7 +399,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 
 
 		m_iconLabelSimple = 0L;
-		setIcon( m_mixdevice->type() );
+		setIcon( m_mixdevice->iconName() );
 		QString toolTip( m_mixdevice->readableName() );
 		m_iconLabelSimple->setToolTip( toolTip );
 		row2->addWidget( m_iconLabelSimple );
@@ -539,69 +539,12 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 	} // for all channels of this device
 }
 
-
-QPixmap MDWSlider::icon( int icontype )
-{
-	QPixmap miniDevPM;
-
-	switch (icontype) {
-	case MixDevice::AUDIO:
-		miniDevPM = _iconName = "mixer-pcm"; break;
-	case MixDevice::BASS:
-	case MixDevice::SURROUND_LFE: // "LFE" SHOULD have an own icon
-		miniDevPM = _iconName ="mixer-lfe"; break;
-	case MixDevice::CD:
-		miniDevPM = _iconName ="mixer-cd"; break;
-	case MixDevice::EXTERNAL:
-		miniDevPM = _iconName = "mixer-line"; break;
-	case MixDevice::MICROPHONE:
-		miniDevPM = _iconName ="mixer-microphone"; break;
-	case MixDevice::MIDI:
-		miniDevPM = _iconName ="mixer-midi"; break;
-	case MixDevice::RECMONITOR:
-		miniDevPM = _iconName ="mixer-capture"; break;
-	case MixDevice::TREBLE:
-		miniDevPM = _iconName ="mixer-pcm-default"; break;
-	case MixDevice::UNKNOWN:
-		miniDevPM = _iconName ="mixer-front"; break;
-	case MixDevice::VOLUME:
-		miniDevPM = _iconName ="mixer-master"; break;
-	case MixDevice::VIDEO:
-		miniDevPM = _iconName ="mixer-video"; break;
-	case MixDevice::SURROUND:
-	case MixDevice::SURROUND_BACK:
-		miniDevPM = _iconName = "mixer-surround"; break;
-	case MixDevice::SURROUND_CENTERFRONT:
-	case MixDevice::SURROUND_CENTERBACK:
-		miniDevPM = _iconName ="mixer-surround-center"; break;
-	case MixDevice::HEADPHONE:
-		miniDevPM = _iconName = "mixer-headset"; break;
-	case MixDevice::DIGITAL:
-		miniDevPM = _iconName = "mixer-digital"; break;
-	case MixDevice::AC97:
-		miniDevPM = _iconName = "mixer-ac97"; break;
-	case MixDevice::SPEAKER:
-		miniDevPM = _iconName = "mixer-pc-speaker"; break;
-	case MixDevice::MICROPHONE_BOOST:
-		miniDevPM = _iconName = "mixer-microphone-boost"; break;
-	case MixDevice::MICROPHONE_FRONT_BOOST:
-		miniDevPM = _iconName = "mixer-microphone-front-boost"; break;
-	case MixDevice::MICROPHONE_FRONT:
-		miniDevPM = _iconName = "mixer-microphone-front"; break;
-	default:
-		miniDevPM = _iconName ="mixer-front"; break;
-	}
-
-	miniDevPM = loadIcon(_iconName);
-	return miniDevPM;
-}
-
 QPixmap MDWSlider::loadIcon( QString filename )
 {
 	return KIconLoader::global()->loadIcon( filename, KIconLoader::Small, KIconLoader::SizeSmallMedium );
 }
 
-void MDWSlider::setIcon( int icontype )
+void MDWSlider::setIcon( QString filename )
 {
 	if( !m_iconLabelSimple )
 	{
@@ -609,7 +552,7 @@ void MDWSlider::setIcon( int icontype )
 		installEventFilter( m_iconLabelSimple );
 	}
 
-	QPixmap miniDevPM = icon( icontype );
+	QPixmap miniDevPM = loadIcon( filename );
 	if ( !miniDevPM.isNull() )
 	{
 		if ( m_small )
@@ -634,6 +577,10 @@ void MDWSlider::setIcon( int icontype )
 	}
 }
 
+QString MDWSlider::iconName()
+{
+    return m_mixdevice->iconName();
+}
 
 void
 MDWSlider::toggleStereoLinked()

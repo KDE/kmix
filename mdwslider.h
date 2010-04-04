@@ -71,7 +71,7 @@ public:
     void setMutedColors( QColor high, QColor low, QColor back );
     
     bool eventFilter( QObject* obj, QEvent* e );
-    const QString& iconName() const { return _iconName; }
+    QString iconName();
     // Layout
     QSizePolicy sizePolicy() const;
 	QSize sizeHint() const;
@@ -111,8 +111,7 @@ private slots:
 
 private:
     KShortcut dummyShortcut;
-    QPixmap icon( int icontype );
-    void setIcon( int icontype );
+    void setIcon( QString iconname );
     QPixmap loadIcon( QString filename );
     void createWidgets( bool showMuteLED, bool showCaptureLED );
     void addSliders( QBoxLayout *volLayout, char type, bool addLabel);

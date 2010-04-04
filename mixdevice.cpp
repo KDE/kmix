@@ -116,6 +116,63 @@ bool MixDevice::operator==(const MixDevice& other) const
    return ( _id == other._id );
 }
 
+
+QString MixDevice::iconName()
+{
+    if (!_iconName.isEmpty())
+        return _iconName;
+
+    switch (_type) {
+        case MixDevice::AUDIO:
+            _iconName = "mixer-pcm"; break;
+        case MixDevice::BASS:
+        case MixDevice::SURROUND_LFE: // "LFE" SHOULD have an own icon
+            _iconName ="mixer-lfe"; break;
+        case MixDevice::CD:
+            _iconName ="mixer-cd"; break;
+        case MixDevice::EXTERNAL:
+            _iconName = "mixer-line"; break;
+        case MixDevice::MICROPHONE:
+            _iconName ="mixer-microphone"; break;
+        case MixDevice::MIDI:
+            _iconName ="mixer-midi"; break;
+        case MixDevice::RECMONITOR:
+            _iconName ="mixer-capture"; break;
+        case MixDevice::TREBLE:
+            _iconName ="mixer-pcm-default"; break;
+        case MixDevice::UNKNOWN:
+            _iconName ="mixer-front"; break;
+        case MixDevice::VOLUME:
+            _iconName ="mixer-master"; break;
+        case MixDevice::VIDEO:
+            _iconName ="mixer-video"; break;
+        case MixDevice::SURROUND:
+        case MixDevice::SURROUND_BACK:
+            _iconName = "mixer-surround"; break;
+        case MixDevice::SURROUND_CENTERFRONT:
+        case MixDevice::SURROUND_CENTERBACK:
+            _iconName ="mixer-surround-center"; break;
+        case MixDevice::HEADPHONE:
+            _iconName = "mixer-headset"; break;
+        case MixDevice::DIGITAL:
+            _iconName = "mixer-digital"; break;
+        case MixDevice::AC97:
+            _iconName = "mixer-ac97"; break;
+        case MixDevice::SPEAKER:
+            _iconName = "mixer-pc-speaker"; break;
+        case MixDevice::MICROPHONE_BOOST:
+            _iconName = "mixer-microphone-boost"; break;
+        case MixDevice::MICROPHONE_FRONT_BOOST:
+            _iconName = "mixer-microphone-front-boost"; break;
+        case MixDevice::MICROPHONE_FRONT:
+            _iconName = "mixer-microphone-front"; break;
+        default:
+            _iconName ="mixer-front"; break;
+    }
+    return _iconName;
+}
+
+
 /**
  * This methhod is currently only called on "kmixctrl --restore"
  *

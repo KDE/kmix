@@ -102,6 +102,7 @@ public:
    MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type = UNKNOWN );
    ~MixDevice();
 
+   QString iconName();
    void addPlaybackVolume(Volume &playbackVol);
    void addCaptureVolume (Volume &captureVol);
    void addEnums (QList<QString*>& ref_enumList);
@@ -145,8 +146,6 @@ public:
    virtual void read( KConfig *config, const QString& grp );
    virtual void write( KConfig *config, const QString& grp );
 
-   ChannelType type() { return _type; }
-
 private:
    Mixer *_mixer;
    Volume _playbackVolume;
@@ -155,6 +154,7 @@ private:
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
    ChannelType _type;
+   QString _iconName;
 
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
