@@ -24,10 +24,6 @@
 
 #include <QString>
 
-#include <pulse/pulseaudio.h>
-#include <pulse/glib-mainloop.h>
-#include <pulse/ext-stream-restore.h>
-
 #include "mixer_backend.h"
 
 class Mixer_PULSE : public Mixer_Backend

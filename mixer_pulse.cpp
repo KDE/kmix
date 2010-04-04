@@ -24,6 +24,10 @@
 #include "mixer_pulse.h"
 #include "mixer.h"
 
+#include <pulse/pulseaudio.h>
+#include <pulse/glib-mainloop.h>
+#include <pulse/ext-stream-restore.h>
+
 static pa_context *context = NULL;
 static pa_glib_mainloop *mainloop = NULL;
 
