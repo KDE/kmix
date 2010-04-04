@@ -670,13 +670,12 @@ static devmap* get_widget_map(int type)
 void Mixer_PULSE::addWidget(int index)
 {
     devmap* map = get_widget_map(m_devnum);
-    bool capture = (KMIXPA_CAPTURE == m_devnum || KMIXPA_APP_CAPTURE == m_devnum);
 
     if (!map->contains(index)) {
         kWarning(67100) <<  "New " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
         return;
     }
-    addDevice((*map)[index], capture);
+    addDevice((*map)[index]);
     emit controlsReconfigured(m_devnum);
 }
 
@@ -707,16 +706,13 @@ void Mixer_PULSE::removeWidget(int index)
     }
 }
 
-void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
+void Mixer_PULSE::addDevice(devinfo& dev)
 {
     if (dev.chanMask != Volume::MNONE) {
-        Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, !capture/*mute switch*/, capture);
+        Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, true, false);
         setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, true);
-        if (capture)
-            md->addCaptureVolume(v);
-        else
-            md->addPlaybackVolume(v);
+        md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md);
     }
@@ -801,27 +797,27 @@ int Mixer_PULSE::open()
         {
             m_mixerName = i18n("Playback Devices");
             for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
-                addDevice(*iter, false);
+                addDevice(*iter);
         }
         else if (KMIXPA_CAPTURE == m_devnum)
         {
             m_mixerName = i18n("Capture Devices");
             for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
-                addDevice(*iter, true);
+                addDevice(*iter);
         }
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
             m_mixerName = i18n("Playback Streams");
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
-                addDevice(*iter, false);
+                addDevice(*iter);
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
-                addDevice(*iter, false);
+                addDevice(*iter);
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
             m_mixerName = i18n("Capture Streams");
             for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
-                addDevice(*iter, true);
+                addDevice(*iter);
         }
 
         kDebug(67100) <<  "Using PulseAudio for mixer: " << m_mixerName;
@@ -838,35 +834,14 @@ int Mixer_PULSE::close()
 
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
-    devmap *map = NULL;
-    Volume *vol = NULL;
-
-    if (KMIXPA_PLAYBACK == m_devnum) {
-        map = &outputDevices;
-        vol = &md->playbackVolume();
-    } else if (KMIXPA_CAPTURE == m_devnum) {
-        map = &captureDevices;
-        vol = &md->captureVolume();
-    } else if (KMIXPA_APP_PLAYBACK == m_devnum) {
-        if (id.startsWith("stream:"))
-            map = &outputStreams;
-        else if (id.startsWith("restore:"))
-            map = &outputRoles;
-        vol = &md->playbackVolume();
-    } else if (KMIXPA_APP_CAPTURE == m_devnum) {
-        map = &captureStreams;
-        vol = &md->captureVolume();
-    }
-
-    Q_ASSERT(map);
-    Q_ASSERT(vol);
+    devmap *map = get_widget_map(m_devnum);
 
     devmap::iterator iter;
     for (iter = map->begin(); iter != map->end(); ++iter)
     {
         if (iter->name == id)
         {
-            setVolumeFromPulse(*vol, *iter);
+            setVolumeFromPulse(md->playbackVolume(), *iter);
             md->setMuted(iter->mute);
             break;
         }
@@ -911,7 +886,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             {
                 pa_operation *o;
 
-                pa_cvolume volume = genVolumeForPulse(*iter, md->captureVolume());
+                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_source_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
                     kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
                     return Mixer::ERR_READ;
@@ -989,7 +964,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                 pa_operation *o;
 
                 // NB Note that this is different from APP_PLAYBACK in that we set the volume on the source itself.
-                pa_cvolume volume = genVolumeForPulse(*iter, md->captureVolume());
+                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_source_volume_by_index(context, iter->device_index, &volume, NULL, NULL))) {
                     kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
                     return Mixer::ERR_READ;

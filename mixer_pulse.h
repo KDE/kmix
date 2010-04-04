@@ -72,7 +72,7 @@ class Mixer_PULSE : public Mixer_Backend
         int fd;
 
     private:
-        void addDevice(devinfo& dev, bool capture);
+        void addDevice(devinfo& dev);
 
 };
 
