@@ -49,6 +49,7 @@
 #include <ktoggleaction.h>
 
 // KMix
+#include "guiprofile.h"
 #include "mixertoolbox.h"
 #include "kmix.h"
 #include "kmixdevicemanager.h"
@@ -408,10 +409,18 @@ void KMixWindow::recreateGUIwithoutSavingView()
 void KMixWindow::recreateGUI(bool saveConfig)
 {
    saveViewConfig();  // save the state before recreating
+
+   // Before clearing the mixer widgets, we must increase the refcount on the guiprof to save it deleting the ViewBase object.
+   if ( Mixer::mixers().count() > 0 )
+      for (int i=0; i<Mixer::mixers().count(); ++i)
+         MixerToolBox::instance()->selectProfile((Mixer::mixers())[i])->increaseRefcount();
    clearMixerWidgets();
+
    if ( Mixer::mixers().count() > 0 ) {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
+         // We've increased the refcount before clearing, so remember and decrease it again.
+         MixerToolBox::instance()->selectProfile(mixer)->decreaseRefcount();
          addMixerWidget(mixer->id());
       }
       bool dockingSucceded = updateDocking();
