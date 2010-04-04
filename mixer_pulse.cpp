@@ -42,8 +42,10 @@ static int s_OutstandingRequests = 0;
 
 typedef struct {
     int index;
+    QString name;
     QString description;
     pa_cvolume volume;
+    pa_channel_map channel_map;
     bool mute;
 } devinfo;
 
@@ -133,8 +135,10 @@ void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     devinfo s;
     s.index = i->index;
+    s.name = i->name;
     s.description = i->description;
     s.volume = i->volume;
+    s.channel_map = i->channel_map;
     s.mute = !!i->mute;
 
     devmap* p_devmap = NULL;
@@ -198,8 +202,10 @@ void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     devinfo s;
     s.index = i->index;
+    s.name = i->name;
     s.description = i->description;
     s.volume = i->volume;
+    s.channel_map = i->channel_map;
     s.mute = !!i->mute;
 
     devmap* p_devmap = NULL;
@@ -392,39 +398,84 @@ int Mixer_PULSE::open()
 {
     kDebug(67100) <<  "Trying Pulse sink";
 
-    // Check to see if we have a "card" for m_devnum
-    if (s_Cards.contains(m_devnum))
+    if (ACTIVE == s_pulseActive && false)
     {
-        kDebug(67100) <<  "Found PulseAudio 'card' " << m_devnum;
-        cardinfo *card = &s_Cards[m_devnum];
-
-        m_mixerName = card->description;
-
-        devmap::iterator iter;
-        int idx = 0;
-        for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+        // Check to see if we have a "card" for m_devnum
+        if (s_Cards.contains(m_devnum))
         {
-            // *iter->volume.channels
-            // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
-            Volume::ChannelMask chmask = Volume::MMAIN;
-            Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, false);
-            QString id;
-            id.setNum(idx++);
-            MixDevice* md = new MixDevice( _mixer, id, QString("Playback: %1").arg(iter->description));
-            md->addPlaybackVolume(vol);
-            m_mixDevices.append( md );
+            kDebug(67100) <<  "Found PulseAudio 'card' " << m_devnum;
+            cardinfo *card = &s_Cards[m_devnum];
+
+            m_mixerName = card->description;
+
+            devmap::iterator iter;
+            for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+            {
+                // *iter->volume.channels
+                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+                Volume::ChannelMask chmask = Volume::MMAIN;
+                Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, false);
+                MixDevice* md = new MixDevice( _mixer, iter->name, QString("Playback: %1").arg(iter->description));
+                md->addPlaybackVolume(vol);
+                m_mixDevices.append( md );
+            }
+            for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+            {
+                // *iter->volume.channels
+                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+                Volume::ChannelMask chmask = Volume::MMAIN;
+                Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, true);
+                MixDevice* md = new MixDevice( _mixer, iter->name, QString("Capture: %1").arg(iter->description));
+                md->addCaptureVolume(vol);
+                m_mixDevices.append( md );
+            }
         }
-        for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+    }
+    else if (ACTIVE == s_pulseActive)
+    {
+        QMap<int,cardinfo>::iterator citer;
+        devmap::iterator iter;
+        if (0 == m_devnum)
         {
-            // *iter->volume.channels
-            // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
-            Volume::ChannelMask chmask = Volume::MMAIN;
-            Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, true);
-            QString id;
-            id.setNum(idx++);
-            MixDevice* md = new MixDevice( _mixer, id, QString("Capture: %1").arg(iter->description));
-            md->addCaptureVolume(vol);
-            m_mixDevices.append( md );
+            m_mixerName = "Playback Devices";
+            for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
+            {
+                cardinfo *card = &(*citer);
+                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+                for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+                {
+                    // *iter->volume.channels
+                    // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+                    Volume::ChannelMask chmask = Volume::MMAIN;
+                    Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, false);
+                    MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
+                    md->addPlaybackVolume(vol);
+                    m_mixDevices.append( md );
+                }
+            }
+        }
+        else if (1 == m_devnum)
+        {
+            m_mixerName = "Capture Devices";
+            for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
+            {
+                cardinfo *card = &(*citer);
+                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+                for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+                {
+                    // *iter->volume.channels
+                    // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+                    Volume::ChannelMask chmask = Volume::MMAIN;
+                    Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, true);
+                    MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
+                    md->addCaptureVolume(vol);
+                    m_mixDevices.append( md );
+                }
+            }
+        }
+        else if (2 == m_devnum)
+        {
+            // TODO: "Applications".
         }
     }
  
