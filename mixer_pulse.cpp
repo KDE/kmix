@@ -636,7 +636,8 @@ void Mixer_PULSE::removeWidget(int index)
     devmap* map = get_widget_map(m_devnum);
 
     if (!map->contains(index)) {
-        kWarning(67100) <<  "Removing " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
+        //kWarning(67100) <<  "Removing " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
+        // Sometimes we ignore things (e.g. event sounds) so don't be too noisy here.
         return;
     }
 
