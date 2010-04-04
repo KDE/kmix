@@ -88,7 +88,7 @@ KMixWindow : public KXmlGuiWindow
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void recreateGUI(bool saveView);
    void recreateGUIwithoutSavingView();
-   void redrawMixer(int mixerTabIndex);
+   void redrawMixer( const QString& mixer_ID );
       
       
    //void stopVisibilityUpdates();

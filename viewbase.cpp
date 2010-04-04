@@ -76,7 +76,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
    action->setText(i18n("&Channels"));
    connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
    connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-   connect ( _mixer, SIGNAL(controlsReconfigured(int)), this, SLOT(controlsReconfigured(int)) );
+   connect ( _mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );
 }
 
 ViewBase::~ViewBase() {
@@ -204,9 +204,9 @@ void ViewBase::showContextMenu()
     _popMenu->popup( pos );
 }
 
-void ViewBase::controlsReconfigured(int mixerTabIndex)
+void ViewBase::controlsReconfigured( const QString& mixer_ID )
 {
-    emit redrawMixer(mixerTabIndex);
+    emit redrawMixer(mixer_ID);
 }
 
 void ViewBase::refreshVolumeLevels()

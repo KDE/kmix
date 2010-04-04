@@ -118,7 +118,7 @@ public:
 
 signals:
     void rebuildGUI();
-    void redrawMixer(int mixerTabIndex);
+    void redrawMixer( const QString& mixer_ID );
 
 
 protected:
@@ -131,7 +131,7 @@ protected:
     GUIProfile* _guiprof;
    KActionCollection *_localActionColletion;
 public slots:
-   virtual void controlsReconfigured(int mixerTabIndex);
+   virtual void controlsReconfigured( const QString& mixer_ID );
    virtual void refreshVolumeLevels();
    virtual void configureView(); 
    void toggleMenuBarSlot();

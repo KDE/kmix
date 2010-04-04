@@ -448,10 +448,10 @@ void KMixWindow::recreateGUI(bool saveConfig)
 /**
 * Create or recreate the Mixer GUI elements
 */
-void KMixWindow::redrawMixer(int mixerTabIndex)
+void KMixWindow::redrawMixer( const QString& mixer_ID )
 {
-    Q_UNUSED(mixerTabIndex);
-    recreateGUIwithoutSavingView();
+    Q_UNUSED(mixer_ID);
+    recreateGUI(false);
 }
 
 

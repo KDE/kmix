@@ -62,7 +62,7 @@ class KMixerWidget : public QWidget
   signals:
    void toggleMenuBar();
    void rebuildGUI();
-   void redrawMixer(int mixerTabIndex);
+   void redrawMixer( const QString& mixer_ID );
     
   public slots:
    void setTicks( bool on );

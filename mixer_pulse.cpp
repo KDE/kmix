@@ -677,7 +677,7 @@ void Mixer_PULSE::addWidget(int index)
         return;
     }
     addDevice((*map)[index]);
-    emit controlsReconfigured(m_devnum);
+    emit controlsReconfigured(_mixer->id());
 }
 
 void Mixer_PULSE::removeWidget(int index)
@@ -701,7 +701,7 @@ void Mixer_PULSE::removeWidget(int index)
         {
             delete *iter;
             m_mixDevices.erase(iter);
-            emit controlsReconfigured(m_devnum);
+            emit controlsReconfigured(_mixer->id());
             return;
         }
     }

@@ -150,7 +150,7 @@ bool Mixer::openIfValid() {
             setLocalMasterMD(noMaster); // no master
         }
         connect( _mixerBackend, SIGNAL(controlChanged()), SLOT(controlChangedForwarder()) );
-        connect( _mixerBackend, SIGNAL(controlsReconfigured(int)), SLOT(controlsReconfiguredForwarder(int)) );
+        connect( _mixerBackend, SIGNAL(controlsReconfigured(const QString&)), SLOT(controlsReconfiguredForwarder(const QString&)) );
         
         m_dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
         QDBusConnection::sessionBus().registerObject(m_dbusName, this);
@@ -164,9 +164,9 @@ void Mixer::controlChangedForwarder()
     emit controlChanged();
 }
 
-void Mixer::controlsReconfiguredForwarder(int mixerTabIndex)
+void Mixer::controlsReconfiguredForwarder( const QString& mixer_ID )
 {
-    emit controlsReconfigured(mixerTabIndex);
+    emit controlsReconfigured(mixer_ID);
 }
 
 /**

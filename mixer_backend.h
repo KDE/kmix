@@ -131,7 +131,7 @@ protected:
 
 signals:
   void controlChanged( void );
-  void controlsReconfigured( int mixerTabIndex );
+  void controlsReconfigured( const QString& mixer_ID );
 
 protected slots:
   virtual void readSetFromHW();
