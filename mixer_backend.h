@@ -60,7 +60,7 @@ protected:
    * The implementation calls open(), checks the return code and whether the number of
    * supported channels is > 0. The device remains opened if it is valid, otherwise a close() is done.
    */
-  virtual bool openIfValid();
+  bool openIfValid();
 
   /** @return true, if the Mixer is open (and thus can be operated) */
   bool isOpen();
