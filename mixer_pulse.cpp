@@ -592,7 +592,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
     for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
     {
         cardinfo *card = &(*citer);
-        if (!md->isRecSource())
+        if (md->playbackVolume().hasVolume())
         {
             for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
             {
