@@ -963,10 +963,10 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                 if (iter->name == id)
                 {
                     pa_ext_stream_restore_info info;
-                    info.name = iter->restore.name.toLatin1().constData();
+                    info.name = iter->restore.name.toAscii().constData();
                     info.channel_map = iter->channel_map;
                     info.volume = genVolumeForPulse(*iter, md->playbackVolume());
-                    info.device = iter->restore.device.isEmpty() ? NULL : iter->restore.device.toLatin1().constData();
+                    info.device = iter->restore.device.isEmpty() ? NULL : iter->restore.device.toAscii().constData();
                     info.mute = (md->isMuted() ? 1 : 0);
 
                     pa_operation* o;
@@ -1037,12 +1037,12 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
 
     pa_operation* o;
     if (KMIXPA_APP_PLAYBACK == m_devnum) {
-        if (!(o = pa_context_move_sink_input_by_name(context, stream_index, destId.toLatin1().constData(), NULL, NULL))) {
+        if (!(o = pa_context_move_sink_input_by_name(context, stream_index, destId.toAscii().constData(), NULL, NULL))) {
             kWarning(67100) <<  "pa_context_move_sink_input_by_name() failed";
             return false;
         }
     } else {
-        if (!(o = pa_context_move_source_output_by_name(context, stream_index, destId.toLatin1().constData(), NULL, NULL))) {
+        if (!(o = pa_context_move_source_output_by_name(context, stream_index, destId.toAscii().constData(), NULL, NULL))) {
             kWarning(67100) <<  "pa_context_move_source_output_by_name() failed";
             return false;
         }
