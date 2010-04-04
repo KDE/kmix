@@ -268,7 +268,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
         }
     }
 
-    QString prefix = "Unknown Application: ";
+    QString prefix = QString("%1: ").arg(i18n("Unknown Application"));
     if (clients.contains(i->client))
         prefix = QString("%1: ").arg(clients[i->client]);
 
@@ -318,7 +318,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
         return;
     }
 
-    QString prefix = "Unknown Application: ";
+    QString prefix = QString("%1: ").arg(i18n("Unknown Application"));
     if (clients.contains(i->client))
         prefix = QString("%1: ").arg(clients[i->client]);
 
@@ -379,7 +379,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
     s.index = s.device_index = PA_INVALID_INDEX;
     s.restore.name = i->name;
     s.restore.device = i->device;
-    s.description = "Event Sounds";
+    s.description = i18n("Event Sounds");
     s.name = QString("restore:") + i->name;
     s.volume = volume;
     s.channel_map = channel_map;
@@ -694,19 +694,19 @@ int Mixer_PULSE::open()
         devmap::iterator iter;
         if (KMIXPA_PLAYBACK == m_devnum)
         {
-            m_mixerName = "Playback Devices";
+            m_mixerName = i18n("Playback Devices");
             for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
                 addDevice(*iter, false);
         }
         else if (KMIXPA_CAPTURE == m_devnum)
         {
-            m_mixerName = "Capture Devices";
+            m_mixerName = i18n("Capture Devices");
             for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
                 addDevice(*iter, true);
         }
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
-            m_mixerName = "Playback Streams";
+            m_mixerName = i18n("Playback Streams");
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
                 addDevice(*iter, true);
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
@@ -714,7 +714,7 @@ int Mixer_PULSE::open()
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
-            m_mixerName = "Capture Streams";
+            m_mixerName = i18n("Capture Streams");
             for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
                 addDevice(*iter, true);
         }
