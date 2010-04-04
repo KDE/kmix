@@ -112,7 +112,8 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
    for( int drv=0; drv<drvNum; drv++ )
    {
       QString driverName = Mixer::driverName(drv);
-   
+      kDebug(67100) << "Looking for mixers with the : " << driverName << " driver";
+
       if ( autodetectionFinished ) {
          // inner loop indicates that we are finished => sane exit from outer loop
          break;
@@ -136,30 +137,33 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
                 autodetectionFinished = true; // highest device number of driver and a Mixer => finished
         }
       
-         // append driverName (used drivers)
-         if ( mixerAccepted && !drvInfoAppended )
+         if ( mixerAccepted )
          {
-            drvInfoAppended = true;
-            if (  Mixer::mixers().count() > 1) {
-               driverInfoUsed += " + ";
-            }
-            driverInfoUsed += driverName;
-         }
-      
-         // Check whether there are mixers in different drivers, so that the user can be warned
-         if (mixerAccepted && !multipleDriversActive)
-         {
-            if ( driverWithMixer == -1 )
+            kDebug(67100) << "Success! Found a mixer with the : " << driverName << " driver";
+            // append driverName (used drivers)
+            if ( !drvInfoAppended )
             {
-               // Aha, this is the very first detected device
-               driverWithMixer = drv;
+               drvInfoAppended = true;
+               if (  Mixer::mixers().count() > 1)
+                  driverInfoUsed += " + ";
+               driverInfoUsed += driverName;
             }
-            else if ( driverWithMixer != drv )
+
+            // Check whether there are mixers in different drivers, so that the user can be warned
+            if ( !multipleDriversActive )
             {
-                // Got him: There are mixers in different drivers
-                multipleDriversActive = true;
-            }
-         } //  !multipleDriversActive
+               if ( driverWithMixer == -1 )
+               {
+                  // Aha, this is the very first detected device
+                  driverWithMixer = drv;
+               }
+               else if ( driverWithMixer != drv )
+               {
+                   // Got him: There are mixers in different drivers
+                   multipleDriversActive = true;
+               }
+            } //  !multipleDriversActive
+         } // mixerAccepted
       
       } // loop over sound card devices of current driver
 
