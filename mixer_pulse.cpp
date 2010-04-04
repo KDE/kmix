@@ -639,9 +639,22 @@ void Mixer_PULSE::removeWidget(int index)
         kWarning(67100) <<  "Removing " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
         return;
     }
-    // @todo Remove the MixDevice itself
+
+    QString id = (*map)[index].name;
     map->remove(index);
-    emit controlsReconfigured();
+
+    // We need to find the MixDevice that goes with this widget and remove it.
+    MixSet::iterator iter;
+    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
+    {
+        if ((*iter)->id() == id)
+        {
+            delete *iter;
+            m_mixDevices.erase(iter);
+            emit controlsReconfigured();
+            return;
+        }
+    }
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
