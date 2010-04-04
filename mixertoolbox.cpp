@@ -372,8 +372,8 @@ GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
    QString fileNameFQ;
    fileNameFQ = KStandardDirs::locate("appdata", fileName );
 kDebug() << fileName << "; fnfq1=" << fileNameFQ;
-   QFileInfo qfi1(fileNameFQ);
-   fileList.insert(0, qfi1);
+   if (!fileNameFQ.isEmpty())
+       fileList.insert(0, QFileInfo(fileNameFQ));
 
    // (3) Soundcard specific profile (usually from system Directory)
    QString mixerNameSpacesToUnderscores = mixer->baseName();
@@ -381,8 +381,8 @@ kDebug() << fileName << "; fnfq1=" << fileNameFQ;
    fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
    fileNameFQ = KStandardDirs::locate("appdata", fileName );
 kDebug() << fileName << "; fnfq2=" << fileNameFQ;
-   QFileInfo qfi2(fileNameFQ);
-   fileList.insert(0, qfi2);  
+   if (!fileNameFQ.isEmpty())
+      fileList.insert(0, QFileInfo(fileNameFQ));
 
 
 
