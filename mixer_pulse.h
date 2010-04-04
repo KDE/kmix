@@ -64,6 +64,7 @@ class Mixer_PULSE : public Mixer_Backend
         void triggerUpdate();
         void addWidget(int index);
         void removeWidget(int index);
+        MixSet *getMixSet() { return &m_mixDevices; }
 
     protected:
         virtual int open();

@@ -48,6 +48,7 @@
 #include "kledbutton.h"
 #include "ksmallslider.h"
 #include "verticaltext.h"
+#include "mdwmoveaction.h"
 
 static const int MIN_SLIDER_SIZE = 50;
 
@@ -68,8 +69,10 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
-	muteButtonSpacing(false), captureLEDSpacing(false)
+       muteButtonSpacing(false), captureLEDSpacing(false), m_moveMenu(0)
 {
+    _mdwMoveActions = new KActionCollection( this );
+
 	// create actions (on _mdwActions, see MixDeviceWidget)
 
 	KToggleAction *action = _mdwActions->add<KToggleAction>( "stereo" );
@@ -92,9 +95,8 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 	}
 
 	if( m_mixdevice->isMovable() ) {
-		KAction *c = _mdwActions->addAction( "move" );
-		c->setText( i18n("Mo&ve...") );
-		connect( c, SIGNAL(triggered(bool)), SLOT(moveStream()) );
+		m_moveMenu = new KMenu( i18n("Mo&ve"), this);
+		connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT( showMoveMenu()) );
 	}
 
 	KAction *c = _mdwActions->addAction( "keys" );
@@ -903,6 +905,11 @@ void MDWSlider::decreaseVolume()
 }
 
 
+void MDWSlider::moveStream(QString destId)
+{
+    m_mixdevice->mixer()->moveStream(m_mixdevice->id(), destId);
+}
+
 /**
    This is called whenever there are volume updates pending from the hardware for this MDW.
    At the moment it is called regulary via a QTimer (implicitely).
@@ -983,9 +990,13 @@ void MDWSlider::showContextMenu()
 	KMenu *menu = m_view->getPopup();
 	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->readableName() );
 
-	a = _mdwActions->action(  "move" );
-	if ( a )
-		menu->addAction( a );
+	if (m_moveMenu) {
+		MixSet *ms = m_mixdevice->getMoveDestinationMixSet();
+		Q_ASSERT(ms);
+
+		m_moveMenu->setEnabled((ms->count() > 1));
+		menu->addMenu( m_moveMenu );
+	}
 
 	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
 		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
@@ -1027,6 +1038,23 @@ void MDWSlider::showContextMenu()
 	menu->popup( pos );
 }
 
+
+void MDWSlider::showMoveMenu()
+{
+    MixSet *ms = m_mixdevice->getMoveDestinationMixSet();
+    Q_ASSERT(ms);
+
+    _mdwMoveActions->clear();
+    m_moveMenu->clear();
+
+    for (int i = 0; i < ms->count(); ++i) {
+        MixDevice* md = (*ms)[i];
+        KAction *a = new MDWMoveAction(md, _mdwMoveActions);
+        _mdwMoveActions->addAction( QString("moveto") + md->id(), a);
+        connect(a, SIGNAL(moveRequest(QString) ), SLOT(moveStream(QString)));
+        m_moveMenu->addAction( a );
+    }
+}
 
 /**
  * An event filter for the various QWidgets. We watch for Mouse press Events, so

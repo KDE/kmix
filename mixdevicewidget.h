@@ -68,7 +68,6 @@ public:
 public slots:
     virtual void setDisabled( bool value );
     virtual void defineKeys();
-    virtual void moveStream();
     virtual void update();
     virtual void showContextMenu();
 

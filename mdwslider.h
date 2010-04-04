@@ -37,6 +37,7 @@ class QLabel;
 class KLed;
 class KLedButton;
 class KAction;
+class KMenu;
 #include <kshortcut.h>
 
 class MixDevice;
@@ -57,7 +58,7 @@ public:
 	       bool showMuteLED, bool showRecordLED,
 	       bool small, Qt::Orientation,
 	       QWidget* parent = 0, ViewBase* mw = 0);
-    ~MDWSlider() {}
+    ~MDWSlider() { }
 
     void addActionToPopup( KAction *action );
 
@@ -92,6 +93,7 @@ public slots:
     void setDisabled();
     void setDisabled( bool value );
     void update();
+    void showMoveMenu();
     virtual void showContextMenu();
 
 
@@ -108,6 +110,8 @@ private slots:
 
     void increaseVolume();
     void decreaseVolume();
+
+    void moveStream( QString destId );
 
 private:
     KShortcut dummyShortcut;
@@ -147,6 +151,8 @@ private:
 	bool captureLEDSpacing;
 
     QList<QWidget *> m_slidersPlayback;
+    KActionCollection*   _mdwMoveActions;
+    KMenu *m_moveMenu;
     QList<QWidget *> m_slidersCapture;
     QList<Volume::ChannelID> _slidersChidsPlayback;
     QList<Volume::ChannelID> _slidersChidsCapture;
