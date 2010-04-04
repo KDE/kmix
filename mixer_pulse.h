@@ -38,8 +38,8 @@ typedef struct {
     bool mute;
 
     struct {
-        const char* name;
-        const char* device;
+        QString name;
+        QString device;
     } restore;
 
     Volume::ChannelMask chanMask;

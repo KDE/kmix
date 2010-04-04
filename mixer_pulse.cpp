@@ -158,7 +158,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     devinfo s;
     s.index = s.device_index = i->index;
     s.restore.name = i->name;
-    s.restore.device = NULL;
+    s.restore.device = "";
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.volume = i->volume;
@@ -204,7 +204,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     devinfo s;
     s.index = s.device_index = i->index;
     s.restore.name = i->name;
-    s.restore.device = NULL;
+    s.restore.device = "";
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.volume = i->volume;
@@ -277,7 +277,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     s.index = i->index;
     s.device_index = i->sink;
     s.restore.name = i->name;
-    s.restore.device = NULL;
+    s.restore.device = "";
     s.description = prefix + i->name;
     s.name = QString("stream:") + QString(s.description).replace(' ', '_');
     s.volume = i->volume;
@@ -327,7 +327,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     s.index = i->index;
     s.device_index = i->source;
     s.restore.name = i->name;
-    s.restore.device = NULL;
+    s.restore.device = "";
     s.description = prefix + i->name;
     s.name = QString("stream:") + QString(s.description).replace(' ', '_');
     //s.volume = i->volume;
@@ -900,15 +900,15 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                 if (iter->name == id)
                 {
                     pa_ext_stream_restore_info info;
-                    info.name = iter->restore.name;
+                    info.name = iter->restore.name.toLatin1().constData();
                     info.channel_map = iter->channel_map;
                     info.volume = genVolumeForPulse(*iter, md->playbackVolume());
-                    info.device = iter->restore.device;
+                    info.device = iter->restore.device.isEmpty() ? NULL : iter->restore.device.toLatin1().constData();
                     info.mute = (md->isMuted() ? 1 : 0);
 
                     pa_operation* o;
                     if (!(o = pa_ext_stream_restore_write(context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
-                        kWarning(67100) <<  "pa_ext_stream_restore_write() failed";
+                        kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                         return Mixer::ERR_READ;
                     }
                     pa_operation_unref(o);
