@@ -411,9 +411,10 @@ void KMixWindow::recreateGUI(bool saveConfig)
    // Find out which of the tabs is currently selected for restoration
    int current_tab = -1;
    if (m_wsMixers)
-       current_tab = m_wsMixers->currentIndex();
+      current_tab = m_wsMixers->currentIndex();
 
-   saveViewConfig();  // save the state before recreating
+   if (saveConfig)
+      saveViewConfig();  // save the state before recreating
 
    // Before clearing the mixer widgets, we must increase the refcount on the guiprof to save it deleting the ViewBase object.
    if ( Mixer::mixers().count() > 0 )
