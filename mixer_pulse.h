@@ -30,6 +30,7 @@
 typedef QMap<uint8_t,Volume::ChannelID> chanIDMap;
 typedef struct {
     int index;
+    int device_index;
     QString name;
     QString description;
     pa_cvolume volume;
@@ -57,6 +58,8 @@ class Mixer_PULSE : public Mixer_Backend
         void triggerUpdate();
         void newOutputDevice(int index);
         void newCaptureDevice(int index);
+        void newOutputStream(int index);
+        void newCaptureStream(int index);
 
     protected:
         virtual int open();

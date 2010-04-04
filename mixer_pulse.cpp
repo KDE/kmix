@@ -46,6 +46,9 @@ QMap<int,Mixer_PULSE*> s_Mixers;
 typedef QMap<int,devinfo> devmap;
 static devmap outputDevices;
 static devmap captureDevices;
+static QMap<int,QString> clients;
+static devmap outputStreams;
+static devmap captureStreams;
 
 
 static void dec_outstanding() {
@@ -152,7 +155,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     }
 
     devinfo s;
-    s.index = i->index;
+    s.index = s.device_index = i->index;
     s.name = i->name;
     s.description = i->description;
     s.volume = i->volume;
@@ -196,7 +199,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     }
 
     devinfo s;
-    s.index = i->index;
+    s.index = s.device_index = i->index;
     s.name = i->name;
     s.description = i->description;
     s.volume = i->volume;
@@ -211,6 +214,127 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     if (is_new && s_Mixers.contains(KMIXPA_CAPTURE))
         s_Mixers[KMIXPA_CAPTURE]->newCaptureDevice(s.index);
+}
+
+static void client_cb(pa_context *c, const pa_client_info *i, int eol, void *) {
+
+    Q_ASSERT(c == context);
+
+    if (eol < 0) {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+            return;
+
+        kWarning(67100) << "Client callback failure";
+        return;
+    }
+
+    if (eol > 0) {
+        dec_outstanding();
+        return;
+    }
+
+    clients[i->index] = i->name;
+    kDebug(67100) << "Got some info about client: " << i->name;
+}
+
+static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, void *) {
+
+    Q_ASSERT(c == context);
+
+    if (eol < 0) {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+            return;
+
+        kWarning(67100) << "Sink Input callback failure";
+        return;
+    }
+
+    if (eol > 0) {
+        dec_outstanding();
+        if (s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+            s_Mixers[KMIXPA_APP_PLAYBACK]->triggerUpdate();
+        return;
+    }
+
+    const char *t;
+    if ((t = pa_proplist_gets(i->proplist, "module-stream-restore.id"))) {
+        if (strcmp(t, "sink-input-by-media-role:event") == 0) {
+            kWarning(67100) << "Ignoring sink-input due to it being designated as an event and thus handled by the Event slider";
+            return;
+        }
+    }
+
+    QString prefix = "Unknown Application: ";
+    if (clients.contains(i->client))
+        prefix = QString("%1: ").arg(clients[i->client]);
+
+    devinfo s;
+    s.index = i->index;
+    s.device_index = i->sink;
+    s.name = i->name;
+    s.description = prefix + i->name;
+    s.volume = i->volume;
+    s.channel_map = i->channel_map;
+    s.mute = !!i->mute;
+
+    translateMasksAndMaps(s);
+
+    bool is_new = !outputStreams.contains(s.index);
+    outputStreams[s.index] = s;
+    kDebug(67100) << "Got some info about sink input (playback stream): " << s.description;
+
+    if (is_new && s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+        s_Mixers[KMIXPA_APP_PLAYBACK]->newOutputStream(s.index);
+}
+
+static void source_output_cb(pa_context *c, const pa_source_output_info *i, int eol, void *) {
+
+    Q_ASSERT(c == context);
+
+    if (eol < 0) {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+            return;
+
+        kWarning(67100) << "Source Output callback failure";
+        return;
+    }
+
+    if (eol > 0) {
+        dec_outstanding();
+        if (s_Mixers.contains(KMIXPA_APP_CAPTURE))
+            s_Mixers[KMIXPA_APP_CAPTURE]->triggerUpdate();
+        return;
+    }
+
+    /* NB Until Source Outputs support volumes, we just use the volume of the source itself */
+    if (!captureDevices.contains(i->source)) {
+        kWarning(67100) << "Source Output refers to a Source we don't have any info for :s";
+        return;
+    }
+
+    QString prefix = "Unknown Application: ";
+    if (clients.contains(i->client))
+        prefix = QString("%1: ").arg(clients[i->client]);
+
+    devinfo s;
+    s.index = i->index;
+    s.device_index = i->source;
+    s.name = i->name;
+    s.description = i->name;
+    //s.volume = i->volume;
+    s.volume = captureDevices[i->source].volume;
+    s.channel_map = i->channel_map;
+    //s.mute = !!i->mute;
+    s.mute = captureDevices[i->source].mute;
+
+    translateMasksAndMaps(s);
+
+    bool is_new = !captureStreams.contains(s.index);
+    captureStreams[s.index] = s;
+    kDebug(67100) << "Got some info about source output (capture stream): " << s.description;
+
+    if (is_new && s_Mixers.contains(KMIXPA_APP_CAPTURE))
+        s_Mixers[KMIXPA_APP_CAPTURE]->newOutputStream(s.index);
 }
 
 static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
@@ -246,6 +370,45 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             }
             break;
 
+        case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE)
+                outputStreams.remove(index);
+            else {
+                pa_operation *o;
+                if (!(o = pa_context_get_sink_input_info(c, index, sink_input_cb, NULL))) {
+                    kWarning(67100) << "pa_context_get_sink_input_info() failed";
+                    return;
+                }
+                pa_operation_unref(o);
+            }
+            break;
+
+        case PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT:
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE)
+                captureStreams.remove(index);
+            else {
+                pa_operation *o;
+                if (!(o = pa_context_get_source_output_info(c, index, source_output_cb, NULL))) {
+                    kWarning(67100) << "pa_context_get_sink_input_info() failed";
+                    return;
+                }
+                pa_operation_unref(o);
+            }
+            break;
+
+        case PA_SUBSCRIPTION_EVENT_CLIENT:
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+                clients.remove(index);
+            } else {
+                pa_operation *o;
+                if (!(o = pa_context_get_client_info(c, index, client_cb, NULL))) {
+                    kWarning(67100) << "pa_context_get_client_info() failed";
+                    return;
+                }
+                pa_operation_unref(o);
+            }
+            break;
+
     }
 }
 
@@ -269,7 +432,10 @@ static void context_state_callback(pa_context *c, void *)
 
             if (!(o = pa_context_subscribe(c, (pa_subscription_mask_t)
                                            (PA_SUBSCRIPTION_MASK_SINK|
-                                            PA_SUBSCRIPTION_MASK_SOURCE), NULL, NULL))) {
+                                            PA_SUBSCRIPTION_MASK_SOURCE|
+                                            PA_SUBSCRIPTION_MASK_CLIENT|
+                                            PA_SUBSCRIPTION_MASK_SINK_INPUT|
+                                            PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT), NULL, NULL))) {
                 kWarning(67100) << "pa_context_subscribe() failed";
                 return;
             }
@@ -288,6 +454,40 @@ static void context_state_callback(pa_context *c, void *)
             }
             pa_operation_unref(o);
             s_OutstandingRequests++;
+
+
+            if (!(o = pa_context_get_client_info_list(c, client_cb, NULL))) {
+                kWarning(67100) << "pa_context_client_info_list() failed";
+                return;
+            }
+            pa_operation_unref(o);
+            s_OutstandingRequests++;
+
+            if (!(o = pa_context_get_sink_input_info_list(c, sink_input_cb, NULL))) {
+                kWarning(67100) << "pa_context_get_sink_input_info_list() failed";
+                return;
+            }
+            pa_operation_unref(o);
+            s_OutstandingRequests++;
+
+            if (!(o = pa_context_get_source_output_info_list(c, source_output_cb, NULL))) {
+                kWarning(67100) << "pa_context_get_source_output_info_list() failed";
+                return;
+            }
+            pa_operation_unref(o);
+            s_OutstandingRequests++;
+
+            /* These calls are not always supported */
+            /*if ((o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, w))) {
+                pa_operation_unref(o);
+                s_OutstandingRequests++;
+
+                pa_ext_stream_restore_set_subscribe_cb(c, ext_stream_restore_subscribe_cb, w);
+
+                if ((o = pa_ext_stream_restore_subscribe(c, 1, NULL, NULL)))
+                    pa_operation_unref(o);
+            } else
+                kWarning(67100) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(context));*/
 
             break;
 
@@ -332,10 +532,22 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
 
 void Mixer_PULSE::newOutputDevice(int index)
 {
+    Q_UNUSED(index);
 }
 
 void Mixer_PULSE::newCaptureDevice(int index)
 {
+    Q_UNUSED(index);
+}
+
+void Mixer_PULSE::newOutputStream(int index)
+{
+    Q_UNUSED(index);
+}
+
+void Mixer_PULSE::newCaptureStream(int index)
+{
+    Q_UNUSED(index);
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
@@ -426,13 +638,16 @@ int Mixer_PULSE::open()
         }
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
-            // TODO: "Applications (Playback)".
             m_mixerName = "Playback Streams";
+            /// @todo Add support for "events sounds" fixed slider
+            for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
+                addDevice(*iter, true);
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
-            // TODO: "Applications (Capture)".
             m_mixerName = "Capture Streams";
+            for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
+                addDevice(*iter, true);
         }
 
         kDebug(67100) <<  "Using PulseAudio for mixer: " << m_mixerName;
@@ -449,39 +664,44 @@ int Mixer_PULSE::close()
 
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
-    // TODO Work out a way to prevent polling and push it instead...
+    devmap *map = NULL;
+    Volume *vol = NULL;
+
+    if (KMIXPA_PLAYBACK == m_devnum) {
+        map = &outputDevices;
+        vol = &md->playbackVolume();
+    } else if (KMIXPA_CAPTURE == m_devnum) {
+        map = &captureDevices;
+        vol = &md->captureVolume();
+    } else if (KMIXPA_APP_PLAYBACK == m_devnum) {
+        map = &outputStreams;
+        vol = &md->playbackVolume();
+    } else if (KMIXPA_APP_CAPTURE == m_devnum) {
+        map = &captureStreams;
+        vol = &md->captureVolume();
+    }
+
+    Q_ASSERT(map);
+    Q_ASSERT(vol);
+
     devmap::iterator iter;
-    if (!md->isRecSource())
+    for (iter = map->begin(); iter != map->end(); ++iter)
     {
-        for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
+        if (iter->name == id)
         {
-            if (iter->name == id)
-            {
-                setVolumeFromPulse(md->playbackVolume(), *iter);
-                md->setMuted(iter->mute);
-                return 0;
-            }
+            setVolumeFromPulse(*vol, *iter);
+            md->setMuted(iter->mute);
+            break;
         }
     }
-    else
-    {
-        for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
-        {
-            if (iter->name == id)
-            {
-                setVolumeFromPulse(md->captureVolume(), *iter);
-                md->setMuted(iter->mute);
-                return 0;
-            }
-        }
-    }
+
     return 0;
 }
 
 int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
 {
     devmap::iterator iter;
-    if (md->playbackVolume().hasVolume())
+    if (KMIXPA_PLAYBACK == m_devnum)
     {
         for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
         {
@@ -506,7 +726,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             }
         }
     }
-    else
+    else if (KMIXPA_CAPTURE == m_devnum)
     {
         for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
         {
@@ -531,6 +751,58 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             }
         }
     }
+    else if (KMIXPA_APP_PLAYBACK == m_devnum)
+    {
+        for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
+        {
+            if (iter->name == id)
+            {
+                pa_operation *o;
+
+                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
+                if (!(o = pa_context_set_sink_input_volume(context, iter->index, &volume, NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_sink_input_volume() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                if (!(o = pa_context_set_sink_input_mute(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_sink_input_mute() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                return 0;
+            }
+        }
+    }
+    else if (KMIXPA_APP_CAPTURE == m_devnum)
+    {
+        for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
+        {
+            if (iter->name == id)
+            {
+                pa_operation *o;
+
+                // NB Note that this is different from APP_PLAYBACK in that we set the volume on the source itself.
+                pa_cvolume volume = genVolumeForPulse(*iter, md->captureVolume());
+                if (!(o = pa_context_set_source_volume_by_index(context, iter->device_index, &volume, NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                if (!(o = pa_context_set_source_mute_by_index(context, iter->device_index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_source_mute_by_index() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                return 0;
+            }
+        }
+    }
+
     return 0;
 }
 
@@ -545,7 +817,7 @@ void Mixer_PULSE::setRecsrcHW( const QString& /*id*/, bool /* on */ )
    return;
 }
 
-bool Mixer_PULSE::isRecsrcHW( const QString& id )
+bool Mixer_PULSE::isRecsrcHW( const QString& /*id*/ )
 {
    return false;
 }
