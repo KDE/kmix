@@ -793,6 +793,9 @@ int Mixer_PULSE::open()
 
     if (ACTIVE == s_pulseActive && m_devnum <= KMIXPA_APP_CAPTURE)
     {
+        // Make sure the GUI layers know we are dynamic so as to always paint us
+        _mixer->setDynamic();
+
         devmap::iterator iter;
         if (KMIXPA_PLAYBACK == m_devnum)
         {
