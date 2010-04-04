@@ -66,7 +66,71 @@ static void dec_outstanding() {
     }
 }
 
-void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
+static void translateMasksAndMaps(devinfo& dev)
+{
+    dev.chanMask = Volume::MNONE;
+    dev.chanIDs.clear();
+
+    if (dev.channel_map.channels != dev.volume.channels) {
+        kError() << "Hiddeous Channel mixup map says " << dev.channel_map.channels << ", volume says: " << dev.volume.channels;
+        return;
+    }
+    if (1 == dev.channel_map.channels && PA_CHANNEL_POSITION_MONO == dev.channel_map.map[0]) {
+        // We just use the left channel to represent this.
+        dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MLEFT);
+        dev.chanIDs[0] = Volume::LEFT;
+    } else {
+        for (uint8_t i = 0; i < dev.channel_map.channels; ++i) {
+            switch (dev.channel_map.map[i]) {
+                case PA_CHANNEL_POSITION_MONO:
+                    kWarning(67100) << "Channel Map contains a MONO element but has >1 channel - we can't handle this.";
+                    return;
+
+                case PA_CHANNEL_POSITION_FRONT_LEFT:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MLEFT);
+                    dev.chanIDs[i] = Volume::LEFT;
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_RIGHT:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MRIGHT);
+                    dev.chanIDs[i] = Volume::RIGHT;
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_CENTER:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MCENTER);
+                    dev.chanIDs[i] = Volume::CENTER;
+                    break;
+                case PA_CHANNEL_POSITION_REAR_CENTER:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARCENTER);
+                    dev.chanIDs[i] = Volume::REARCENTER;
+                    break;
+                case PA_CHANNEL_POSITION_REAR_LEFT:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MSURROUNDLEFT);
+                    dev.chanIDs[i] = Volume::SURROUNDLEFT;
+                    break;
+                case PA_CHANNEL_POSITION_REAR_RIGHT:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MSURROUNDRIGHT);
+                    dev.chanIDs[i] = Volume::SURROUNDRIGHT;
+                    break;
+                case PA_CHANNEL_POSITION_LFE:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MWOOFER);
+                    dev.chanIDs[i] = Volume::WOOFER;
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDELEFT);
+                    dev.chanIDs[i] = Volume::REARSIDELEFT;
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER:
+                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDERIGHT);
+                    dev.chanIDs[i] = Volume::REARSIDERIGHT;
+                    break;
+                default:
+                    kWarning(67100) << "Channel Map contains a pa_channel_position we cannot handle " << dev.channel_map.map[i];
+                    break;
+            }
+        }
+    }
+}
+
+static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     Q_ASSERT(c == context);
 
@@ -91,11 +155,13 @@ void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
 
+    translateMasksAndMaps(s);
+
     outputDevices[s.index] = s;
     kDebug(67100) << "Got some info about sink: " << s.description;
 }
 
-void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
+static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     Q_ASSERT(c == context);
 
@@ -127,11 +193,13 @@ void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
 
+    translateMasksAndMaps(s);
+
     captureDevices[s.index] = s;
     kDebug(67100) << "Got some info about source: " << s.description;
 }
 
-void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
+static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
 
     Q_ASSERT(c == context);
 
@@ -225,114 +293,41 @@ static void context_state_callback(pa_context *c, void *)
     }
 }
 
-static void pulse_cvolume_to_Volume(pa_cvolume& cvolume, Volume* volume)
+static void setVolumeFromPulse(Volume& volume, const devinfo& dev)
 {
-    Q_ASSERT(volume);
-
-    if (cvolume.channels < 1 || cvolume.channels > 3)
-    {
-        kWarning(67100) <<  "Unable to set volume for a " << cvolume.channels << " channel device";
-        return;
-    }
-
-    for (int i=0; i < cvolume.channels; ++i)
+    chanIDMap::const_iterator iter;
+    for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
         //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
-        volume->setVolume((Volume::ChannelID)i, (long)cvolume.values[i]);
+        volume.setVolume(iter.value(), (long)dev.volume.values[iter.key()]);
     }
 }
 
-static pa_cvolume pulse_Volume_to_cvolume(Volume& volume, pa_cvolume cvolume)
+static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
 {
-    if (cvolume.channels < 1 || cvolume.channels > 3)
-    {
-        kWarning(67100) <<  "Unable to set volume for a " << cvolume.channels << " channel device";
-        return cvolume;
-    }
+    pa_cvolume cvol = dev.volume;
 
-    for (int i=0; i < cvolume.channels; ++i)
+    chanIDMap::const_iterator iter;
+    for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
-        cvolume.values[i] = (uint32_t)volume.getVolume((Volume::ChannelID)i);
+        cvol.values[iter.key()] = (uint32_t)volume.getVolume(iter.value());
         //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
     }
-    return cvolume;
+    return cvol;
 }
 
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
 {
-    Volume *v;
-    if ((v = addVolume(dev.channel_map, capture)))
-    {
-        pulse_cvolume_to_Volume(dev.volume, v);
+    if (dev.chanMask != Volume::MNONE) {
+        Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, capture);
+        setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description);
-        md->addPlaybackVolume(*v);
+        md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md);
-        delete v;
     }
 }
-
-Volume* Mixer_PULSE::addVolume(pa_channel_map& cmap, bool capture)
-{
-    Volume* vol = 0;
-
-    // --- Regular control (not enumerated) ---
-    Volume::ChannelMask chn = Volume::MNONE;
-
-    // Special case - mono
-    if (1 == cmap.channels && PA_CHANNEL_POSITION_MONO == cmap.map[0]) {
-        // We just use the left channel to represent this.
-        chn = (Volume::ChannelMask)( chn | Volume::MLEFT);
-    } else {
-        for (uint8_t i = 0; i < cmap.channels; ++i) {
-            switch (cmap.map[i]) {
-                case PA_CHANNEL_POSITION_MONO:
-                    kWarning(67100) << "Channel Map contains a MONO element but has >1 channel - we can't handle this.";
-                    return vol;
-
-                case PA_CHANNEL_POSITION_FRONT_LEFT:
-                    chn = (Volume::ChannelMask)( chn | Volume::MLEFT);
-                    break;
-                case PA_CHANNEL_POSITION_FRONT_RIGHT:
-                    chn = (Volume::ChannelMask)( chn | Volume::MRIGHT);
-                    break;
-                case PA_CHANNEL_POSITION_FRONT_CENTER:
-                    chn = (Volume::ChannelMask)( chn | Volume::MCENTER);
-                    break;
-                case PA_CHANNEL_POSITION_REAR_CENTER:
-                    chn = (Volume::ChannelMask)( chn | Volume::MREARCENTER);
-                    break;
-                case PA_CHANNEL_POSITION_REAR_LEFT:
-                    chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDLEFT);
-                    break;
-                case PA_CHANNEL_POSITION_REAR_RIGHT:
-                    chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDRIGHT);
-                    break;
-                case PA_CHANNEL_POSITION_LFE:
-                    chn = (Volume::ChannelMask)( chn | Volume::MWOOFER);
-                    break;
-                case PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER:
-                    chn = (Volume::ChannelMask)( chn | Volume::MREARSIDELEFT);
-                    break;
-                case PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER:
-                    chn = (Volume::ChannelMask)( chn | Volume::MREARSIDERIGHT);
-                    break;
-                default:
-                    kWarning(67100) << "Channel Map contains a pa_channel_position we cannot handle " << cmap.map[i];
-                    break;
-            }
-        }
-    }
-
-    if (chn != Volume::MNONE) {
-        //kDebug() << "Add somthing with chn=" << chn << ", capture=" << capture;
-        vol = new Volume( chn, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, capture);
-    }
-
-    return vol;
-}
-
 
 Mixer_Backend* PULSE_getMixer( Mixer *mixer, int devnum )
 {
@@ -434,7 +429,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
         {
             if (iter->name == id)
             {
-                pulse_cvolume_to_Volume(iter->volume, &md->playbackVolume());
+                setVolumeFromPulse(md->playbackVolume(), *iter);
                 md->setMuted(iter->mute);
                 return 0;
             }
@@ -446,7 +441,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
         {
             if (iter->name == id)
             {
-                pulse_cvolume_to_Volume(iter->volume, &md->captureVolume());
+                setVolumeFromPulse(md->captureVolume(), *iter);
                 md->setMuted(iter->mute);
                 return 0;
             }
@@ -466,7 +461,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             {
                 pa_operation *o;
 
-                pa_cvolume volume = pulse_Volume_to_cvolume(md->playbackVolume(), iter->volume);
+                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_sink_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
                     kWarning(67100) <<  "pa_context_set_sink_volume_by_index() failed";
                     return Mixer::ERR_READ;
@@ -491,7 +486,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             {
                 pa_operation *o;
 
-                pa_cvolume volume = pulse_Volume_to_cvolume(md->captureVolume(), iter->volume);
+                pa_cvolume volume = genVolumeForPulse(*iter, md->captureVolume());
                 if (!(o = pa_context_set_source_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
                     kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
                     return Mixer::ERR_READ;

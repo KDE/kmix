@@ -27,6 +27,7 @@
 #include "mixer_backend.h"
 #include <pulse/pulseaudio.h>
 
+typedef QMap<uint8_t,Volume::ChannelID> chanIDMap;
 typedef struct {
     int index;
     QString name;
@@ -34,30 +35,32 @@ typedef struct {
     pa_cvolume volume;
     pa_channel_map channel_map;
     bool mute;
+
+    Volume::ChannelMask chanMask;
+    chanIDMap chanIDs;
 } devinfo;
 
 class Mixer_PULSE : public Mixer_Backend
 {
-public:
-  Mixer_PULSE(Mixer *mixer, int devnum);
-  virtual ~Mixer_PULSE();
+    public:
+        Mixer_PULSE(Mixer *mixer, int devnum);
+        virtual ~Mixer_PULSE();
 
-  virtual int readVolumeFromHW( const QString& id, MixDevice *md  );
-  virtual int writeVolumeToHW ( const QString& id, MixDevice *md  );
-  void setRecsrcHW              ( const QString& id, bool on );
-  bool isRecsrcHW               ( const QString& id );
+        virtual int readVolumeFromHW( const QString& id, MixDevice *md  );
+        virtual int writeVolumeToHW ( const QString& id, MixDevice *md  );
+        void setRecsrcHW              ( const QString& id, bool on );
+        bool isRecsrcHW               ( const QString& id );
 
-  virtual QString getDriverName();
+        virtual QString getDriverName();
 
-protected:
-  virtual int open();
-  virtual int close();
+    protected:
+        virtual int open();
+        virtual int close();
 
-  int fd;
+        int fd;
 
-private:
-    void addDevice(devinfo& dev, bool capture);
-    Volume* addVolume(pa_channel_map& cmap, bool capture);
+    private:
+        void addDevice(devinfo& dev, bool capture);
 
 };
 
