@@ -167,6 +167,15 @@ unsigned int Mixer_Backend::enumIdHW(const QString& ) {
   return 0;
 }
 
+/**
+ * Move the stream to a new destination
+ */
+bool Mixer_Backend::moveStream( const QString& id, const QString& destId ) {
+  Q_UNUSED(id);
+  Q_UNUSED(destId);
+  return false;
+}
+
 void Mixer_Backend::errormsg(int mixer_error)
 {
   QString l_s_errText;
