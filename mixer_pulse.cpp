@@ -446,7 +446,7 @@ int Mixer_PULSE::open()
 {
     kDebug(67100) <<  "Trying Pulse sink";
 
-    if (ACTIVE == s_pulseActive && false)
+    if (ACTIVE == s_pulseActive && true)
     {
         // Check to see if we have a "card" for m_devnum
         if (s_Cards.contains(m_devnum))
