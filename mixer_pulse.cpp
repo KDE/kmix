@@ -938,7 +938,11 @@ int Mixer_PULSE::id2num(const QString& id) {
 
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
-    devmap *map = get_widget_map(m_devnum);
+    devmap *map;
+    if (KMIXPA_APP_PLAYBACK == m_devnum && id.startsWith("restore:"))
+        map = &outputRoles;
+    else
+        map = get_widget_map(m_devnum);
 
     devmap::iterator iter;
     for (iter = map->begin(); iter != map->end(); ++iter)
