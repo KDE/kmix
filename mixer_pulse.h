@@ -37,6 +37,11 @@ typedef struct {
     pa_channel_map channel_map;
     bool mute;
 
+    struct {
+        const char* name;
+        const char* device;
+    } restore;
+
     Volume::ChannelMask chanMask;
     chanIDMap chanIDs;
 } devinfo;

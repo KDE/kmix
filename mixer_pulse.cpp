@@ -49,7 +49,7 @@ static devmap captureDevices;
 static QMap<int,QString> clients;
 static devmap outputStreams;
 static devmap captureStreams;
-
+static devmap outputRoles;
 
 static void dec_outstanding() {
     if (s_OutstandingRequests <= 0)
@@ -156,6 +156,8 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     devinfo s;
     s.index = s.device_index = i->index;
+    s.restore.name = i->name;
+    s.restore.device = NULL;
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.volume = i->volume;
@@ -200,6 +202,8 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     devinfo s;
     s.index = s.device_index = i->index;
+    s.restore.name = i->name;
+    s.restore.device = NULL;
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.volume = i->volume;
@@ -271,8 +275,10 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     devinfo s;
     s.index = i->index;
     s.device_index = i->sink;
+    s.restore.name = i->name;
+    s.restore.device = NULL;
     s.description = prefix + i->name;
-    s.name = QString(s.description).replace(' ', '_');
+    s.name = QString("stream:") + QString(s.description).replace(' ', '_');
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -319,8 +325,10 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     devinfo s;
     s.index = i->index;
     s.device_index = i->source;
+    s.restore.name = i->name;
+    s.restore.device = NULL;
     s.description = prefix + i->name;
-    s.name = QString(s.description).replace(' ', '_');
+    s.name = QString("stream:") + QString(s.description).replace(' ', '_');
     //s.volume = i->volume;
     s.volume = captureDevices[i->source].volume;
     s.channel_map = i->channel_map;
@@ -336,6 +344,66 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     if (is_new && s_Mixers.contains(KMIXPA_APP_CAPTURE))
         s_Mixers[KMIXPA_APP_CAPTURE]->newOutputStream(s.index);
 }
+
+
+void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info *i, int eol, void *) {
+
+    Q_ASSERT(c == context);
+
+    if (eol < 0) {
+        dec_outstanding();
+        kWarning(67100) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(context));
+        return;
+    }
+
+    if (eol > 0) {
+        dec_outstanding();
+        if (s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+            s_Mixers[KMIXPA_APP_PLAYBACK]->triggerUpdate();
+        return;
+    }
+
+    // We only want to know about Sound Events for now...
+    if (strcmp(i->name, "sink-input-by-media-role:event") != 0)
+        return;
+
+    // Fake a Mono Device/Volume
+    pa_cvolume volume;
+    volume.channels = 1;
+    volume.values[0] = pa_cvolume_max(&i->volume);
+    pa_channel_map channel_map;
+    channel_map.channels = 1;
+    channel_map.map[0] = PA_CHANNEL_POSITION_MONO;
+
+    devinfo s;
+    s.index = s.device_index = PA_INVALID_INDEX;
+    s.restore.name = i->name;
+    s.restore.device = i->device;
+    s.description = "Event Sounds";
+    s.name = QString("restore:") + i->name;
+    s.volume = volume;
+    s.channel_map = channel_map;
+    s.mute = !!i->mute;
+
+    translateMasksAndMaps(s);
+
+    outputRoles[s.index] = s;
+    kDebug(67100) << "Got some info about restore rule: " << s.description;
+}
+
+static void ext_stream_restore_subscribe_cb(pa_context *c, void *) {
+
+    Q_ASSERT(c == context);
+
+    pa_operation *o;
+    if (!(o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL))) {
+        kWarning(67100) << "pa_ext_stream_restore_read() failed";
+        return;
+    }
+
+    pa_operation_unref(o);
+}
+
 
 static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
 
@@ -478,16 +546,16 @@ static void context_state_callback(pa_context *c, void *)
             s_OutstandingRequests++;
 
             /* These calls are not always supported */
-            /*if ((o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, w))) {
+            if ((o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL))) {
                 pa_operation_unref(o);
                 s_OutstandingRequests++;
 
-                pa_ext_stream_restore_set_subscribe_cb(c, ext_stream_restore_subscribe_cb, w);
+                pa_ext_stream_restore_set_subscribe_cb(c, ext_stream_restore_subscribe_cb, NULL);
 
                 if ((o = pa_ext_stream_restore_subscribe(c, 1, NULL, NULL)))
                     pa_operation_unref(o);
             } else
-                kWarning(67100) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(context));*/
+                kWarning(67100) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(context));
 
             break;
 
@@ -639,7 +707,8 @@ int Mixer_PULSE::open()
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
             m_mixerName = "Playback Streams";
-            /// @todo Add support for "events sounds" fixed slider
+            for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
+                addDevice(*iter, true);
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
                 addDevice(*iter, true);
         }
@@ -674,7 +743,10 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
         map = &captureDevices;
         vol = &md->captureVolume();
     } else if (KMIXPA_APP_PLAYBACK == m_devnum) {
-        map = &outputStreams;
+        if (id.startsWith("stream:"))
+            map = &outputStreams;
+        else if (id.startsWith("restore:"))
+            map = &outputRoles;
         vol = &md->playbackVolume();
     } else if (KMIXPA_APP_CAPTURE == m_devnum) {
         map = &captureStreams;
@@ -753,26 +825,53 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
     }
     else if (KMIXPA_APP_PLAYBACK == m_devnum)
     {
-        for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
+        if (id.startsWith("stream:"))
         {
-            if (iter->name == id)
+            for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
             {
-                pa_operation *o;
+                if (iter->name == id)
+                {
+                    pa_operation *o;
 
-                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
-                if (!(o = pa_context_set_sink_input_volume(context, iter->index, &volume, NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_sink_input_volume() failed";
-                    return Mixer::ERR_READ;
+                    pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
+                    if (!(o = pa_context_set_sink_input_volume(context, iter->index, &volume, NULL, NULL))) {
+                        kWarning(67100) <<  "pa_context_set_sink_input_volume() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
+
+                    if (!(o = pa_context_set_sink_input_mute(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                        kWarning(67100) <<  "pa_context_set_sink_input_mute() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
+
+                    return 0;
                 }
-                pa_operation_unref(o);
+            }
+        }
+        else if (id.startsWith("restore:"))
+        {
+            for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
+            {
+                if (iter->name == id)
+                {
+                    pa_ext_stream_restore_info info;
+                    info.name = iter->restore.name;
+                    info.channel_map = iter->channel_map;
+                    info.volume = genVolumeForPulse(*iter, md->playbackVolume());
+                    info.device = iter->restore.device;
+                    info.mute = (md->isMuted() ? 1 : 0);
 
-                if (!(o = pa_context_set_sink_input_mute(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_sink_input_mute() failed";
-                    return Mixer::ERR_READ;
+                    pa_operation* o;
+                    if (!(o = pa_ext_stream_restore_write(context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
+                        kWarning(67100) <<  "pa_ext_stream_restore_write() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
+
+                    return 0;
                 }
-                pa_operation_unref(o);
-
-                return 0;
             }
         }
     }
