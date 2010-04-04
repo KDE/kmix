@@ -37,8 +37,8 @@
 #define KMIXPA_WIDGET_MAX KMIXPA_APP_CAPTURE
 
 static unsigned int refcount = 0;
-static pa_context *context = NULL;
 static pa_glib_mainloop *mainloop = NULL;
+static pa_context *context = NULL;
 static QEventLoop *s_connectionEventloop = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_OutstandingRequests = 0;
@@ -57,7 +57,7 @@ static void dec_outstanding() {
     if (s_OutstandingRequests <= 0)
         return;
 
-    if (--s_OutstandingRequests <= 0)
+    if (--s_OutstandingRequests == 0)
     {
         s_pulseActive = ACTIVE;
         if (s_connectionEventloop) {
@@ -67,8 +67,10 @@ static void dec_outstanding() {
             // If we have no devices then we consider PA to be 'INACTIVE'
             if (outputDevices.isEmpty() && captureDevices.isEmpty())
                 s_pulseActive = INACTIVE;
-            else
+            else {
                 s_pulseActive = ACTIVE;
+                kDebug(67100) <<  "PulseAudio status: [Re]connected \\o/";
+            }
         }
     }
 }
@@ -613,17 +615,24 @@ static void context_state_callback(pa_context *c, void *)
             break;
 
         case PA_CONTEXT_FAILED:
+        case PA_CONTEXT_TERMINATED: {
+            int paerrno = pa_context_errno(context);
+            if (ACTIVE == s_pulseActive && PA_ERR_CONNECTIONTERMINATED == paerrno) {
+                //kWarning(67100) << "Connection to PulseAudio daemon closed. Attempting reconnection.";
+                //s_pulseActive = UNKNOWN;
+                //break;
+            }
+
             s_pulseActive = INACTIVE;
+            pa_context_unref(context);
+            context = NULL;
             if (s_connectionEventloop) {
                 s_connectionEventloop->exit(0);
                 s_connectionEventloop = NULL;
             }
-            break;
-
-        case PA_CONTEXT_TERMINATED:
+        }
         default:
             s_pulseActive = INACTIVE;
-            /// @todo Deal with reconnection...
             break;
     }
 }
@@ -732,6 +741,30 @@ Mixer_Backend* PULSE_getMixer( Mixer *mixer, int devnum )
    return l_mixer;
 }
 
+bool Mixer_PULSE::connectToDaemon(bool nofail)
+{
+    Q_ASSERT(NULL == context);
+
+    kDebug(67100) <<  "Attempting connection to PulseAudio sound daemon";
+    pa_mainloop_api *api = pa_glib_mainloop_get_api(mainloop);
+    g_assert(api);
+
+    context = pa_context_new(api, "KMix KDE 4");
+    g_assert(context);
+
+    // (cg) Convert to PA_CONTEXT_NOFLAGS when PulseAudio 0.9.19 is required
+    pa_context_flags_t flags = static_cast<pa_context_flags_t>(0);
+    if (nofail) flags = PA_CONTEXT_NOFAIL;
+
+    if (pa_context_connect(context, NULL, flags, 0) < 0) {
+        pa_context_unref(context);
+        context = NULL;
+        return false;
+    }
+    pa_context_set_state_callback(context, &context_state_callback, NULL);
+    return true;
+}
+
 
 Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum)
 {
@@ -748,23 +781,16 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
        mainloop = pa_glib_mainloop_new(g_main_context_default());
        g_assert(mainloop);
 
-       pa_mainloop_api *api = pa_glib_mainloop_get_api(mainloop);
-       g_assert(api);
 
-       context = pa_context_new(api, "KMix KDE 4");
-       g_assert(context);
+       if (connectToDaemon(false)) {
+           // We create a simple event loop to allow the glib loop
+           // to iterate until we've connected or not to the server.
+           s_connectionEventloop = new QEventLoop;
 
-       // We create a simple event loop to allow the glib loop
-       // to iterate until we've connected or not to the server.
-       s_connectionEventloop = new QEventLoop;
-
-       kDebug(67100) <<  "Attempting connection to PulseAudio sound daemon";
-       // (cg) Convert to PA_CONTEXT_NOFLAGS when PulseAudio 0.9.19 is required
-       if (pa_context_connect(context, NULL, static_cast<pa_context_flags_t>(0), 0) >= 0) {
-           pa_context_set_state_callback(context, &context_state_callback, s_connectionEventloop);
            // Now we block until we connect or otherwise...
            s_connectionEventloop->exec();
        }
+
        kDebug(67100) <<  "PulseAudio status: " << (s_pulseActive==UNKNOWN ? "Unknown (bug)" : (s_pulseActive==ACTIVE ? "Active" : "Inactive"));
    }
 

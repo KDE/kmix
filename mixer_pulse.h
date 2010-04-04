@@ -77,6 +77,7 @@ class Mixer_PULSE : public Mixer_Backend
 
     private:
         void addDevice(devinfo& dev);
+        bool connectToDaemon(bool nofail);
 
 };
 
