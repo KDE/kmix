@@ -51,7 +51,8 @@ KMixApp::newInstance()
         // There are 3 cases for a new instance
 
 	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
-	if ( m_kmix )
+	static bool first = true;
+	if ( !first )
 	{	// There already exists an instance/window
  
                 /* !!! @bug : _keepVisibilty has the wrong value here.
@@ -74,7 +75,11 @@ KMixApp::newInstance()
                         // starts it again, the KMix main window will be shown.
 			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
 			// explicitly be shown.
-			m_kmix->show();
+			if ( !m_kmix ) {
+				m_kmix->show();
+			} else {
+				kWarning(67100) << "KMixApp::newInstance() Window has not finished constructing yet so ignoring the show() request.";
+			}
 		}
 		else {
                         // CASE 2: If KMix is running, AND  ( session gets restored OR keepvisibilty command line switch )
@@ -92,6 +97,11 @@ KMixApp::newInstance()
 	{
                 // CASE 3: KMix was not running yet => instanciate a new one
 		//kDebug(67100) <<  "KMixApp::newInstance() Instanciate: _keepVisibility=" << _keepVisibility ;
+		first = false;	// NB See https://qa.mandriva.com/show_bug.cgi?id=56893#c3
+				// It is important to track this via a separate variable and not
+				// based on m_kmix to handle this race condition.
+				// Specific protection for the activation-prior-to-full-construction
+				// case exists above in the 'already running case'
 		m_kmix = new KMixWindow(_keepVisibility);
 		//connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
 		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
