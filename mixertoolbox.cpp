@@ -140,7 +140,6 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
          if ( mixerAccepted && !drvInfoAppended )
          {
             drvInfoAppended = true;
-            QString driverName = Mixer::driverName(drv);
             if (  Mixer::mixers().count() > 1) {
                driverInfoUsed += " + ";
             }
