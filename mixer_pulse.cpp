@@ -445,7 +445,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
         return;
     }
 
-    kDebug(67100) << "Got some info about restore rule: " << i->name;
+    kDebug(67100) << "Got some info about restore rule: " << i->name << i->device;
     restoreRule rule;
     rule.channel_map = i->channel_map;
     rule.volume = i->volume;
@@ -1100,11 +1100,13 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
 
     // Lookup the stream index.
     uint32_t stream_index = PA_INVALID_INDEX;
+    const char* stream_restore_rule = NULL;
     devmap::iterator iter;
     devmap *map = get_widget_map(m_devnum);
     for (iter = map->begin(); iter != map->end(); ++iter) {
         if (iter->name == id) {
             stream_index = iter->index;
+            stream_restore_rule = iter->stream_restore_rule.isEmpty() ? NULL : iter->stream_restore_rule.toAscii().constData();
             break;
         }
     }
@@ -1114,20 +1116,42 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
         return false;
     }
 
-    pa_operation* o;
-    if (KMIXPA_APP_PLAYBACK == m_devnum) {
-        if (!(o = pa_context_move_sink_input_by_name(context, stream_index, destId.toAscii().constData(), NULL, NULL))) {
-            kWarning(67100) <<  "pa_context_move_sink_input_by_name() failed";
-            return false;
+    if (destId.isEmpty()) {
+        // We want to remove any specific device in the stream restore rule.
+        if (!stream_restore_rule || !s_RestoreRules.contains(stream_restore_rule)) {
+            kWarning(67100) <<  "Mixer_PULSE::moveStream(): Trying to set Automatic on a stream with no rule";
+        } else {
+            restoreRule &rule = s_RestoreRules[stream_restore_rule];
+            pa_ext_stream_restore_info info;
+            info.name = stream_restore_rule;
+            info.channel_map = rule.channel_map;
+            info.volume = rule.volume;
+            info.device = NULL;
+            info.mute = rule.mute ? 1 : 0;
+
+            pa_operation* o;
+            if (!(o = pa_ext_stream_restore_write(context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
+                kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
+                return Mixer::ERR_READ;
+            }
+            pa_operation_unref(o);
         }
     } else {
-        if (!(o = pa_context_move_source_output_by_name(context, stream_index, destId.toAscii().constData(), NULL, NULL))) {
-            kWarning(67100) <<  "pa_context_move_source_output_by_name() failed";
-            return false;
+        pa_operation* o;
+        if (KMIXPA_APP_PLAYBACK == m_devnum) {
+            if (!(o = pa_context_move_sink_input_by_name(context, stream_index, destId.toAscii().constData(), NULL, NULL))) {
+                kWarning(67100) <<  "pa_context_move_sink_input_by_name() failed";
+                return false;
+            }
+        } else {
+            if (!(o = pa_context_move_source_output_by_name(context, stream_index, destId.toAscii().constData(), NULL, NULL))) {
+                kWarning(67100) <<  "pa_context_move_source_output_by_name() failed";
+                return false;
+            }
         }
+        pa_operation_unref(o);
     }
 
-    pa_operation_unref(o);
     return true;
 }
 
