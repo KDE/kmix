@@ -39,6 +39,7 @@
 #include "kmixtoolbox.h"
 #include "mixdevicewidget.h"
 #include "mixer.h"
+#include "mixertoolbox.h"
 
 
 ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
@@ -125,22 +126,6 @@ void ViewBase::createDeviceWidgets()
         mixDevice = (*_mixSet)[i];
         QWidget* mdw = add(mixDevice);
         _mdws.append(mdw);
-    }
-
-
-    // Now we are done processing the _mixSet which is what our GUIProfile says
-    // are valid for display. However a dyanmic mixer may contain more device than this...
-    // We also create widgets for these but make sure they are not visible.
-    if ( _mixer->dynamic() ) {
-       const MixSet& mixset = _mixer->getMixSet();
-       for ( int i=0; i<mixset.count(); i++ ) {
-          MixDevice *mixDevice = mixset[i];
-          if ( ! _mixSet->contains(mixDevice) ) {
-              QWidget* mdw = add(mixDevice);
-              mdw->setVisible(false);
-              _mdws.append(mdw);
-          }
-       }
     }
     // allow view to "polish" itself
     constructionFinished();
@@ -248,6 +233,35 @@ Mixer* ViewBase::getMixer()
 void ViewBase::setMixSet()
 {
     if ( _mixer->dynamic()) {
+
+        // Check the guiprofile... if it is not the fallback GUIProfile, then
+        // make sure that we add a specific entry for any devices not present.
+        if ( 0 != _guiprof && MixerToolBox::instance()->fallbackProfile(_mixer) != _guiprof ) {
+            kDebug(67100) << "Dynamic mixer " << _mixer->id() << " is NOT using Fallback GUIProfile. Checking to see if new controls are present";
+
+            QList<QString> new_mix_devices;
+            MixSet ms = _mixer->getMixSet();
+            for (int i=0; i < ms.count(); ++i)
+                new_mix_devices.append(ms[i]->id());
+            std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
+            for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
+                new_mix_devices.removeAll((*it)->id);
+
+            if ( new_mix_devices.count() > 0 ) {
+                kDebug(67100) << "Found " << new_mix_devices.count() << " new controls. Adding to GUIProfile";
+                while ( new_mix_devices.count() > 0 ) {
+                    ProfControl* ctl = new ProfControl();
+                    ctl->id = new_mix_devices.takeAt(0);
+                    ctl->subcontrols = ".*";
+                    ctl->tab = _guiprof->_tabs[0]->name; // Use the first tab... not ideal but should work most of the time;
+                    ctl->show = "simple";
+                    _guiprof->_controls.push_back(ctl);
+                }
+                QString profileName;
+                profileName =  _mixer->id() + "." + id();
+                _guiprof->writeProfile(profileName);
+            }
+        }
 
         // We need to delete the current MixDeviceWidgets so we can redraw them
         while (!_mdws.isEmpty()) {
