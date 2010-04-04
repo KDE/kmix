@@ -750,7 +750,7 @@ void Mixer_PULSE::removeAllWidgets()
         delete *iter;
         m_mixDevices.erase(iter);
     }
-    //emit controlsReconfigured(_mixer->id());
+    emit controlsReconfigured(_mixer->id());
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev)
