@@ -130,6 +130,7 @@ protected:
     GUIProfile* _guiprof;
    KActionCollection *_localActionColletion;
 public slots:
+   virtual void controlsReconfigured();
    virtual void refreshVolumeLevels();
    virtual void configureView(); 
    void toggleMenuBarSlot();

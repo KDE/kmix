@@ -131,6 +131,7 @@ protected:
 
 signals:
   void controlChanged( void );
+  void controlsReconfigured( void );
 
 protected slots:
   virtual void readSetFromHW();

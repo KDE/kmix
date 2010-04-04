@@ -166,6 +166,7 @@ class Mixer : public QObject
    signals:
       void newBalance( Volume& );
       void controlChanged(void);
+      void controlsReconfigured(void);
 
    protected:
       int m_balance; // from -100 (just left) to 100 (just right)
@@ -173,6 +174,7 @@ class Mixer : public QObject
 
    private slots:
       void controlChangedForwarder();
+      void controlsReconfiguredForwarder();
 
    public:
       static QList<Mixer *>& mixers();
