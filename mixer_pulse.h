@@ -64,11 +64,11 @@ class Mixer_PULSE : public Mixer_Backend
         void removeWidget(int index);
         void removeAllWidgets();
         MixSet *getMixSet() { return &m_mixDevices; }
+        int id2num(const QString& id);
 
     protected:
         virtual int open();
         virtual int close();
-        int id2num(const QString& id);
 
         int fd;
 

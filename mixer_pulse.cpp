@@ -212,8 +212,17 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     outputDevices[s.index] = s;
     kDebug(67100) << "Got some info about sink: " << s.description;
 
-    if (is_new && s_Mixers.contains(KMIXPA_PLAYBACK))
-        s_Mixers[KMIXPA_PLAYBACK]->addWidget(s.index);
+    if (s_Mixers.contains(KMIXPA_PLAYBACK)) {
+        if (is_new)
+            s_Mixers[KMIXPA_PLAYBACK]->addWidget(s.index);
+        else {
+            int mid = s_Mixers[KMIXPA_PLAYBACK]->id2num(s.name);
+            if (mid >= 0) {
+                MixSet *ms = s_Mixers[KMIXPA_PLAYBACK]->getMixSet();
+                (*ms)[mid]->setReadableName(s.description);
+            }
+        }
+    }
 }
 
 static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
@@ -258,8 +267,17 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     captureDevices[s.index] = s;
     kDebug(67100) << "Got some info about source: " << s.description;
 
-    if (is_new && s_Mixers.contains(KMIXPA_CAPTURE))
-        s_Mixers[KMIXPA_CAPTURE]->addWidget(s.index);
+    if (s_Mixers.contains(KMIXPA_CAPTURE)) {
+        if (is_new)
+            s_Mixers[KMIXPA_CAPTURE]->addWidget(s.index);
+        else {
+            int mid = s_Mixers[KMIXPA_CAPTURE]->id2num(s.name);
+            if (mid >= 0) {
+                MixSet *ms = s_Mixers[KMIXPA_CAPTURE]->getMixSet();
+                (*ms)[mid]->setReadableName(s.description);
+            }
+        }
+    }
 }
 
 static void client_cb(pa_context *c, const pa_client_info *i, int eol, void *) {
@@ -318,7 +336,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     s.index = i->index;
     s.device_index = i->sink;
     s.description = prefix + i->name;
-    s.name = QString("stream:") + QString(s.description).replace(' ', '_');
+    s.name = QString("stream:") + i->index;
     s.icon_name = getIconNameFromProplist(i->proplist);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
@@ -331,8 +349,17 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     outputStreams[s.index] = s;
     kDebug(67100) << "Got some info about sink input (playback stream): " << s.description;
 
-    if (is_new && s_Mixers.contains(KMIXPA_APP_PLAYBACK))
-        s_Mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+    if (s_Mixers.contains(KMIXPA_APP_PLAYBACK)) {
+        if (is_new)
+            s_Mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+        else {
+            int mid = s_Mixers[KMIXPA_APP_PLAYBACK]->id2num(s.name);
+            if (mid >= 0) {
+                MixSet *ms = s_Mixers[KMIXPA_APP_PLAYBACK]->getMixSet();
+                (*ms)[mid]->setReadableName(s.description);
+            }
+        }
+    }
 }
 
 static void source_output_cb(pa_context *c, const pa_source_output_info *i, int eol, void *) {
@@ -368,7 +395,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     s.index = i->index;
     s.device_index = i->source;
     s.description = prefix + i->name;
-    s.name = QString("stream:") + QString(s.description).replace(' ', '_');
+    s.name = QString("stream:") + i->index;
     s.icon_name = getIconNameFromProplist(i->proplist);
     //s.volume = i->volume;
     s.volume = captureDevices[i->source].volume;
@@ -383,8 +410,17 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     captureStreams[s.index] = s;
     kDebug(67100) << "Got some info about source output (capture stream): " << s.description;
 
-    if (is_new && s_Mixers.contains(KMIXPA_APP_CAPTURE))
-        s_Mixers[KMIXPA_APP_CAPTURE]->addWidget(s.index);
+    if (s_Mixers.contains(KMIXPA_APP_CAPTURE)) {
+        if (is_new)
+            s_Mixers[KMIXPA_APP_CAPTURE]->addWidget(s.index);
+        else {
+            int mid = s_Mixers[KMIXPA_APP_CAPTURE]->id2num(s.name);
+            if (mid >= 0) {
+                MixSet *ms = s_Mixers[KMIXPA_APP_CAPTURE]->getMixSet();
+                (*ms)[mid]->setReadableName(s.description);
+            }
+        }
+    }
 }
 
 
