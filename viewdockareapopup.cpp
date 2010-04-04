@@ -46,7 +46,7 @@
 //    Users will not be able to close the Popup without opening the KMix main window then.
 //    See Bug #93443, #96332 and #96404 for further details. -- esken
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
-    : ViewBase(parent, name, mixer, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _mdw(0), _dock(dockW)
+    : ViewBase(parent, name, mixer, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _dock(dockW)
 {
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
@@ -63,14 +63,23 @@ ViewDockAreaPopup::~ViewDockAreaPopup() {
 
 void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {
    // Pass wheel event from "border widget" to child
-   if ( _mdw != 0 ) {
-      QApplication::sendEvent( _mdw, e);
-   }
+   QWidget* mdw = 0;
+   if ( !_mdws.isEmpty() )
+      mdw = _mdws.first();
+
+   if ( mdw != 0 )
+      QApplication::sendEvent( mdw, e);
 }
 
 MixDevice* ViewDockAreaPopup::dockDevice()
 {
-    return _mdw->mixDevice();
+   MixDeviceWidget* mdw = 0;
+   if ( !_mdws.isEmpty() )
+      mdw = (MixDeviceWidget*)_mdws.first();
+
+   if ( mdw != 0 )
+      return mdw->mixDevice();
+   return (MixDevice*)(0);
 }
 
 
@@ -107,7 +116,7 @@ void ViewDockAreaPopup::_setMixSet()
 
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
 {
-   _mdw = new MDWSlider(
+    MixDeviceWidget *mdw = new MDWSlider(
       md,		  // only 1 device. This is actually _dockDevice
       true,         // Show Mute LED
       false,        // Show Record LED
@@ -118,7 +127,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
    );
    _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
    _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 0 );
-   _layoutMDW->addWidget( _mdw, 0, 1 );
+   _layoutMDW->addWidget( mdw, 0, 1 );
 
    // Add button to show main panel
    _showPanelBox = new QPushButton( i18n("Mixer"), this );
@@ -126,21 +135,28 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
    connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
    _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
 
-   return _mdw;
+   return mdw;
 }
 
 void ViewDockAreaPopup::constructionFinished() {
    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
-   if (_mdw != 0) {
-      _mdw->move(0,0);
-      _mdw->show();
+   QWidget* mdw = 0;
+   if ( !_mdws.isEmpty() )
+      mdw = _mdws.first();
+
+   if ( mdw != 0 ) {
+      mdw->move(0,0);
+      mdw->show();
    }
 }
 
 
 void ViewDockAreaPopup::refreshVolumeLevels() {
    //    kDebug(67100) << "ViewDockAreaPopup::refreshVolumeLevels()\n";
-   QWidget* mdw = _mdws.first();
+   QWidget* mdw = 0;
+   if ( !_mdws.isEmpty() )
+      mdw = _mdws.first();
+
    if ( mdw == 0 ) {
       kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw == 0\n";
       // sanity check (normally the lists are set up correctly)

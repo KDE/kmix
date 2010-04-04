@@ -51,7 +51,6 @@ public:
     //QSize sizeHint() const;
 
 protected:
-    MixDeviceWidget *_mdw;
     KMixWindow  *_dock;
     //MixDevice       *_dockDevice;
     QPushButton     *_showPanelBox;
