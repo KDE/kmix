@@ -110,7 +110,6 @@ void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ }
 void MixDeviceWidget::setIcons( bool ) { /* is virtual */ }
 void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ }
 void MixDeviceWidget::setMutedColors( QColor , QColor , QColor ) { /* is virtual */ }
-const QString& MixDeviceWidget::iconName() const { return _iconName; /* is virtual */}
 
 
 
