@@ -66,6 +66,7 @@ class Mixer_PULSE : public Mixer_Backend
         void triggerUpdate();
         void addWidget(int index);
         void removeWidget(int index);
+        void removeAllWidgets();
         MixSet *getMixSet() { return &m_mixDevices; }
 
     protected:
@@ -79,6 +80,9 @@ class Mixer_PULSE : public Mixer_Backend
         void addDevice(devinfo& dev);
         bool connectToDaemon(bool nofail);
 
+    public slots:
+        void reinit();
+
 };
 
-#endif 
+#endif

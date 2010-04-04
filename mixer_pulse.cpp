@@ -440,8 +440,12 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
         return;
 
     devinfo s = create_role_devinfo(i->name, i->device, pa_cvolume_max(&i->volume), i->mute);
+    bool is_new = !outputRoles.contains(s.index);
     outputRoles[s.index] = s;
     kDebug(67100) << "Got some info about restore rule: " << s.description;
+
+    if (is_new && s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+        s_Mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
 }
 
 static void ext_stream_restore_subscribe_cb(pa_context *c, void *) {
@@ -616,16 +620,27 @@ static void context_state_callback(pa_context *c, void *)
 
         case PA_CONTEXT_FAILED:
         case PA_CONTEXT_TERMINATED: {
+
             int paerrno = pa_context_errno(context);
-            if (ACTIVE == s_pulseActive && PA_ERR_CONNECTIONTERMINATED == paerrno) {
-                //kWarning(67100) << "Connection to PulseAudio daemon closed. Attempting reconnection.";
-                //s_pulseActive = UNKNOWN;
-                //break;
+            pa_context_unref(context);
+            context = NULL;
+
+            // Remove all GUI elements
+            QMap<int,Mixer_PULSE*>::iterator it;
+            for (it = s_Mixers.begin(); it != s_Mixers.end(); ++it) {
+                (*it)->removeAllWidgets();
+            }
+            // This one is not handled above.
+            clients.clear();
+
+            if (ACTIVE == s_pulseActive && PA_ERR_CONNECTIONTERMINATED == paerrno && s_Mixers.contains(KMIXPA_PLAYBACK)) {
+                kWarning(67100) << "Connection to PulseAudio daemon closed. Attempting reconnection.";
+                s_pulseActive = UNKNOWN;
+                QTimer::singleShot(50, s_Mixers[KMIXPA_PLAYBACK], SLOT(reinit()));
+                break;
             }
 
             s_pulseActive = INACTIVE;
-            pa_context_unref(context);
-            context = NULL;
             if (s_connectionEventloop) {
                 s_connectionEventloop->exit(0);
                 s_connectionEventloop = NULL;
@@ -679,7 +694,11 @@ static devmap* get_widget_map(int type)
 
 void Mixer_PULSE::addWidget(int index)
 {
-    devmap* map = get_widget_map(m_devnum);
+    devmap* map;
+    if (KMIXPA_APP_PLAYBACK == m_devnum && PA_INVALID_INDEX == (uint32_t)index)
+        map = &outputRoles;
+    else
+        map = get_widget_map(m_devnum);
 
     if (!map->contains(index)) {
         kWarning(67100) <<  "New " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
@@ -714,6 +733,24 @@ void Mixer_PULSE::removeWidget(int index)
             return;
         }
     }
+}
+
+void Mixer_PULSE::removeAllWidgets()
+{
+    devmap* map = get_widget_map(m_devnum);
+    map->clear();
+
+    // Special case
+    if (KMIXPA_APP_PLAYBACK == m_devnum)
+        outputRoles.clear();
+
+    MixSet::iterator iter;
+    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
+    {
+        delete *iter;
+        m_mixDevices.erase(iter);
+    }
+    //emit controlsReconfigured(_mixer->id());
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev)
@@ -1076,6 +1113,13 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
 
     pa_operation_unref(o);
     return true;
+}
+
+void Mixer_PULSE::reinit()
+{
+    // We only support reinit on our primary mixer.
+    Q_ASSERT(KMIXPA_PLAYBACK == m_devnum);
+    connectToDaemon(true);
 }
 
 void Mixer_PULSE::triggerUpdate()
