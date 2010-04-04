@@ -25,6 +25,9 @@
 #include "mixer_pulse.h"
 #include "mixer.h"
 
+// (cg) I've not yet worked out why this is not defined.....
+# define UINT32_MAX     (4294967295U)
+
 #include <pulse/pulseaudio.h>
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
@@ -36,6 +39,26 @@ static QEventLoop *s_connectionEventloop = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_OutstandingRequests = 0;
 
+
+typedef struct {
+    int index;
+    QString description;
+    pa_cvolume volume;
+    bool mute;
+} devinfo;
+
+typedef QMap<int,devinfo> devmap;
+
+typedef struct {
+    QString description;
+    devmap outputDevices;
+    devmap captureDevices;
+} cardinfo;
+
+static QMap<int,cardinfo> s_Cards;
+static QMap<int,int> s_CardIndexMap; // pa card idx => our card idx
+static int s_CardCounter = 0;
+
 static void dec_outstanding() {
     if (s_OutstandingRequests <= 0)
         return;
@@ -46,8 +69,49 @@ static void dec_outstanding() {
         if (s_connectionEventloop) {
             s_connectionEventloop->exit(0);
             s_connectionEventloop = NULL;
+
+            // If we have no devices then we consider PA to be 'INACTIVE'
+            if (!s_CardCounter)
+                s_pulseActive = INACTIVE;
+            else
+                s_pulseActive = ACTIVE;
         }
     }
+}
+
+void card_cb(pa_context *c, const pa_card_info *i, int eol, void *) {
+
+    Q_ASSERT(c == context);
+
+    if (eol < 0) {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+            return;
+
+        kWarning(67100) << "Card callback failure";
+        return;
+    }
+
+    if (eol > 0) {
+        dec_outstanding();
+        return;
+    }
+
+    // Do we have this card already?
+    int idx;
+    if (s_CardIndexMap.contains(i->index))
+        idx = s_CardIndexMap[i->index];
+    else
+        idx = s_CardIndexMap[i->index] = s_CardCounter++;
+
+    /*if (!s_Cards.contains(idx))
+    {
+        cardinfo card;
+        s_Cards[idx] = card;
+    }*/
+
+    s_Cards[idx].description = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_DESCRIPTION);
+
+    kDebug(67100) << "Got some info about card: " << s_Cards[idx].description;
 }
 
 void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
@@ -67,8 +131,45 @@ void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
         return;
     }
 
-    // Do something....
-    kDebug(67100) << "Got some info about sink: " << i->name;
+    devinfo s;
+    s.index = i->index;
+    s.description = i->description;
+    s.volume = i->volume;
+    s.mute = !!i->mute;
+
+    devmap* p_devmap = NULL;
+    if (PA_INVALID_INDEX == i->card) {
+        // Check to see if we have this device already in any card
+        QMap<int,cardinfo>::iterator iter;
+        for (iter = s_Cards.begin(); iter != s_Cards.end(); ++iter)
+        {
+            if (iter->outputDevices.contains(i->index))
+            {
+                p_devmap = &iter->outputDevices;
+                break;
+            }
+        }
+        if (!p_devmap)
+        {
+            // We need to create a new virtual card for our sink
+            int cardidx = s_CardCounter++;
+            s_Cards[cardidx].description = QString("Fake Card for %1").arg(i->description);
+            p_devmap = &s_Cards[cardidx].outputDevices;
+        }
+    }
+    else
+    {
+        if (!s_CardIndexMap.contains(i->card))
+        {
+            kError(67100) << "Got info about a sink attached to a card I know nothing about.";
+            return;
+        }
+        int cardidx = s_CardIndexMap[i->card];
+        p_devmap = &s_Cards[cardidx].outputDevices;
+    }
+
+    (*p_devmap)[s.index] = s;
+    kDebug(67100) << "Got some info about sink: " << s.description;
 }
 
 void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
@@ -89,7 +190,51 @@ void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     }
 
     // Do something....
-    kDebug(67100) << "Got some info about source: " << i->name;
+    if (PA_INVALID_INDEX != i->monitor_of_sink)
+    {
+        kDebug(67100) << "Ignoring Monitor Source: " << i->description;
+        return;
+    }
+
+    devinfo s;
+    s.index = i->index;
+    s.description = i->description;
+    s.volume = i->volume;
+    s.mute = !!i->mute;
+
+    devmap* p_devmap = NULL;
+    if (PA_INVALID_INDEX == i->card) {
+        // Check to see if we have this device already in any card
+        QMap<int,cardinfo>::iterator iter;
+        for (iter = s_Cards.begin(); iter != s_Cards.end(); ++iter)
+        {
+            if (iter->captureDevices.contains(i->index))
+            {
+                p_devmap = &iter->captureDevices;
+                break;
+            }
+        }
+        if (!p_devmap)
+        {
+            // We need to create a new virtual card for our sink
+            int cardidx = s_CardCounter++;
+            s_Cards[cardidx].description = QString("Fake Card for %1").arg(i->description);
+            p_devmap = &s_Cards[cardidx].captureDevices;
+        }
+    }
+    else
+    {
+        if (!s_CardIndexMap.contains(i->card))
+        {
+            kError(67100) << "Got info about a source attached to a card I know nothing about.";
+            return;
+        }
+        int cardidx = s_CardIndexMap[i->card];
+        p_devmap = &s_Cards[cardidx].captureDevices;
+    }
+
+    (*p_devmap)[s.index] = s;
+    kDebug(67100) << "Got some info about source: " << s.description;
 }
 
 void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
@@ -152,6 +297,13 @@ static void context_state_callback(pa_context *c, void *)
             }
             pa_operation_unref(o);
 
+            if (!(o = pa_context_get_card_info_list(c, card_cb, NULL))) {
+                kWarning(67100) << "pa_context_get_card_info_list() failed";
+                return;
+            }
+            pa_operation_unref(o);
+            s_OutstandingRequests++;
+
             if (!(o = pa_context_get_sink_info_list(c, sink_cb, NULL))) {
                 kWarning(67100) << "pa_context_get_sink_info_list() failed";
                 return;
@@ -198,10 +350,9 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
    if ( devnum == -1 )
       m_devnum = 0;
 
-   if (INACTIVE != s_pulseActive && 0 == refcount)
+   ++refcount;
+   if (INACTIVE != s_pulseActive && 1 == refcount)
    {
-       ++refcount;
-
        mainloop = pa_glib_mainloop_new(g_main_context_default());
        g_assert(mainloop);
 
@@ -228,7 +379,8 @@ Mixer_PULSE::~Mixer_PULSE()
 {
     if (refcount > 0)
     {
-        if (0 == --refcount)
+        --refcount;
+        if (0 == refcount)
         {
             pa_context_unref(context);
             pa_glib_mainloop_free(mainloop);
@@ -239,7 +391,42 @@ Mixer_PULSE::~Mixer_PULSE()
 int Mixer_PULSE::open()
 {
     kDebug(67100) <<  "Trying Pulse sink";
-      //return Mixer::ERR_OPEN;
+
+    // Check to see if we have a "card" for m_devnum
+    if (s_Cards.contains(m_devnum))
+    {
+        kDebug(67100) <<  "Found PulseAudio 'card' " << m_devnum;
+        cardinfo *card = &s_Cards[m_devnum];
+
+        m_mixerName = card->description;
+
+        devmap::iterator iter;
+        int idx = 0;
+        for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+        {
+            // *iter->volume.channels
+            // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+            Volume::ChannelMask chmask = Volume::MMAIN;
+            Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, false);
+            QString id;
+            id.setNum(idx++);
+            MixDevice* md = new MixDevice( _mixer, id, QString("Playback: %1").arg(iter->description));
+            md->addPlaybackVolume(vol);
+            m_mixDevices.append( md );
+        }
+        for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+        {
+            // *iter->volume.channels
+            // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
+            Volume::ChannelMask chmask = Volume::MMAIN;
+            Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, true);
+            QString id;
+            id.setNum(idx++);
+            MixDevice* md = new MixDevice( _mixer, id, QString("Capture: %1").arg(iter->description));
+            md->addCaptureVolume(vol);
+            m_mixDevices.append( md );
+        }
+    }
  
 /* 
       //
@@ -258,8 +445,6 @@ int Mixer_PULSE::open()
             m_mixDevices.append( md );
          }
 */
-
-    m_mixerName = "PULSE Audio Mixer";
 
     m_isOpen = true;
 
