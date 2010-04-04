@@ -741,12 +741,14 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
        // to iterate until we've connected or not to the server.
        s_connectionEventloop = new QEventLoop;
 
+       kDebug(67100) <<  "Attempting connection to PulseAudio sound daemon";
        // (cg) Convert to PA_CONTEXT_NOFLAGS when PulseAudio 0.9.19 is required
        if (pa_context_connect(context, NULL, static_cast<pa_context_flags_t>(0), 0) >= 0) {
            pa_context_set_state_callback(context, &context_state_callback, s_connectionEventloop);
            // Now we block until we connect or otherwise...
            s_connectionEventloop->exec();
        }
+       kDebug(67100) <<  "PulseAudio status: " << (s_pulseActive==UNKNOWN ? "Unknown (bug)" : (s_pulseActive==ACTIVE ? "Active" : "Inactive"));
    }
 
    s_Mixers[m_devnum] = this;
