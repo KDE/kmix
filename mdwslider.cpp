@@ -1054,7 +1054,7 @@ void MDWSlider::showMoveMenu()
 
     // Default
     KAction *a = new KAction(_mdwMoveActions);
-    a->setText( i18n("Automatic") );
+    a->setText( i18n("Automatic According to Category") );
     _mdwMoveActions->addAction( QString("moveautomatic"), a);
     connect(a, SIGNAL(triggered(bool)), SLOT(moveStreamAutomatic()));
     m_moveMenu->addAction( a );
