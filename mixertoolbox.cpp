@@ -37,7 +37,7 @@
 
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
-GUIProfile*   MixerToolBox::s_fallbackProfile = 0;
+QMap<Mixer*,GUIProfile*> MixerToolBox::s_fallbackProfiles;
 QRegExp MixerToolBox::s_ignoreMixerExpression("Modem");
 //KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
@@ -413,33 +413,40 @@ kDebug() << fileName << "; fnfq2=" << fileNameFQ;
       // Still no profile found. This should usually not happen. This means one of the following things:
       // a) The KMix installation is not OK
       // b) The user has a defective profile in ~/.kde/share/apps/kmix/profiles/
-      // c) It is a Backend that ships no default profile (currently this is only Mixer_SUN)
-      if ( s_fallbackProfile == 0 ) {
-         s_fallbackProfile = new GUIProfile();
-
-         ProfProduct* prd = new ProfProduct();
-         prd->vendor         = mixer->getDriverName();
-         prd->productName    = mixer->readableName();
-         prd->productRelease = "1.0";
-         s_fallbackProfile->_products.insert(prd);
-
-         ProfControl* ctl = new ProfControl();
-         ctl->id          = ".*";
-         ctl->regexp      = ".*";   // make sure id matches the regexp
-         ctl->subcontrols = ".*";
-         ctl->show        = "simple";
-         s_fallbackProfile->_controls.push_back(ctl);
-
-         s_fallbackProfile->_soundcardDriver = mixer->getDriverName();
-         s_fallbackProfile->_soundcardName   = mixer->readableName();
-
-         s_fallbackProfile->finalizeProfile();
-      }
-      guiprofBest = s_fallbackProfile;
+      // c) It is a Backend that ships no default profile (currently this is only Mixer_SUN and Mixer_PULSE)
+      guiprofBest = fallbackProfile(mixer);
    }
 //    kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
 
    return guiprofBest;
+}
+
+
+GUIProfile* MixerToolBox::fallbackProfile(Mixer *mixer)
+{
+   if ( ! s_fallbackProfiles.contains(mixer) ) {
+      GUIProfile *fallback = new GUIProfile();
+
+      ProfProduct* prd = new ProfProduct();
+      prd->vendor         = mixer->getDriverName();
+      prd->productName    = mixer->readableName();
+      prd->productRelease = "1.0";
+      fallback->_products.insert(prd);
+
+      ProfControl* ctl = new ProfControl();
+      ctl->id          = ".*";
+      ctl->regexp      = ".*";   // make sure id matches the regexp
+      ctl->subcontrols = ".*";
+      ctl->show        = "simple";
+      fallback->_controls.push_back(ctl);
+
+      fallback->_soundcardDriver = mixer->getDriverName();
+      fallback->_soundcardName   = mixer->readableName();
+
+      fallback->finalizeProfile();
+      s_fallbackProfiles[mixer] = fallback;
+   }
+   return s_fallbackProfiles[mixer];
 }
 
 #include "mixertoolbox.moc"
