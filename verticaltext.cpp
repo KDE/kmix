@@ -33,6 +33,13 @@ VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WFlags f) 
 VerticalText::~VerticalText() {
 }
 
+void VerticalText::setText(QString text) {
+    if (m_labelText != text) {
+        m_labelText = text;
+        updateGeometry();
+    }
+}
+
 
 void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
     QPainter paint(this);
