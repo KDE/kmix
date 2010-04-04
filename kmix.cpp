@@ -408,6 +408,11 @@ void KMixWindow::recreateGUIwithoutSavingView()
  */
 void KMixWindow::recreateGUI(bool saveConfig)
 {
+   // Find out which of the tabs is currently selected for restoration
+   int current_tab = -1;
+   if (m_wsMixers)
+       current_tab = m_wsMixers->currentIndex();
+
    saveViewConfig();  // save the state before recreating
 
    // Before clearing the mixer widgets, we must increase the refcount on the guiprof to save it deleting the ViewBase object.
@@ -431,6 +436,10 @@ void KMixWindow::recreateGUI(bool saveConfig)
       // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
        updateDocking();  // -<- removes the DockIcon
        hide();
+   }
+
+   if (current_tab >= 0) {
+      m_wsMixers->setCurrentIndex(current_tab);
    }
 }
 
