@@ -102,7 +102,7 @@ QString ViewBase::id() const {
 
 bool ViewBase::isValid() const
 {
-   return (_mixSet->count() > 0 );
+   return ( _mixSet->count() > 0 || _mixer->dynamic() );
 }
 
 void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
