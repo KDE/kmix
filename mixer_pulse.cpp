@@ -33,7 +33,7 @@ static unsigned int refcount = 0;
 static pa_context *context = NULL;
 static pa_glib_mainloop *mainloop = NULL;
 static QEventLoop *s_connectionEventloop = NULL;
-static bool s_pulseActive = true;
+static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_OutstandingRequests = 0;
 
 static void dec_outstanding() {
@@ -42,6 +42,7 @@ static void dec_outstanding() {
 
     if (--s_OutstandingRequests <= 0)
     {
+        s_pulseActive = ACTIVE;
         if (s_connectionEventloop) {
             s_connectionEventloop->exit(0);
             s_connectionEventloop = NULL;
@@ -168,7 +169,7 @@ static void context_state_callback(pa_context *c, void *)
             break;
 
         case PA_CONTEXT_FAILED:
-            s_pulseActive = false;
+            s_pulseActive = INACTIVE;
             if (s_connectionEventloop) {
                 s_connectionEventloop->exit(0);
                 s_connectionEventloop = NULL;
@@ -177,7 +178,7 @@ static void context_state_callback(pa_context *c, void *)
 
         case PA_CONTEXT_TERMINATED:
         default:
-            s_pulseActive = false;
+            s_pulseActive = INACTIVE;
             /// @todo Deal with reconnection...
             break;
     }
@@ -197,8 +198,10 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
    if ( devnum == -1 )
       m_devnum = 0;
 
-   if (0 == refcount++)
+   if (INACTIVE != s_pulseActive && 0 == refcount)
    {
+       ++refcount;
+
        mainloop = pa_glib_mainloop_new(g_main_context_default());
        g_assert(mainloop);
 
@@ -223,10 +226,13 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
 
 Mixer_PULSE::~Mixer_PULSE()
 {
-    if (0 == --refcount)
+    if (refcount > 0)
     {
-        pa_context_unref(context);
-        pa_glib_mainloop_free(mainloop);
+        if (0 == --refcount)
+        {
+            pa_context_unref(context);
+            pa_glib_mainloop_free(mainloop);
+        }
     }
 }
 
