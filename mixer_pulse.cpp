@@ -42,16 +42,9 @@ static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_OutstandingRequests = 0;
 
 typedef QMap<int,devinfo> devmap;
+static devmap outputDevices;
+static devmap captureDevices;
 
-typedef struct {
-    QString description;
-    devmap outputDevices;
-    devmap captureDevices;
-} cardinfo;
-
-static QMap<int,cardinfo> s_Cards;
-static QMap<int,int> s_CardIndexMap; // pa card idx => our card idx
-static int s_CardCounter = 0;
 
 static void dec_outstanding() {
     if (s_OutstandingRequests <= 0)
@@ -65,47 +58,12 @@ static void dec_outstanding() {
             s_connectionEventloop = NULL;
 
             // If we have no devices then we consider PA to be 'INACTIVE'
-            if (!s_CardCounter)
+            if (outputDevices.isEmpty() && captureDevices.isEmpty())
                 s_pulseActive = INACTIVE;
             else
                 s_pulseActive = ACTIVE;
         }
     }
-}
-
-void card_cb(pa_context *c, const pa_card_info *i, int eol, void *) {
-
-    Q_ASSERT(c == context);
-
-    if (eol < 0) {
-        if (pa_context_errno(c) == PA_ERR_NOENTITY)
-            return;
-
-        kWarning(67100) << "Card callback failure";
-        return;
-    }
-
-    if (eol > 0) {
-        dec_outstanding();
-        return;
-    }
-
-    // Do we have this card already?
-    int idx;
-    if (s_CardIndexMap.contains(i->index))
-        idx = s_CardIndexMap[i->index];
-    else
-        idx = s_CardIndexMap[i->index] = s_CardCounter++;
-
-    /*if (!s_Cards.contains(idx))
-    {
-        cardinfo card;
-        s_Cards[idx] = card;
-    }*/
-
-    s_Cards[idx].description = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_DESCRIPTION);
-
-    kDebug(67100) << "Got some info about card: " << s_Cards[idx].description;
 }
 
 void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
@@ -133,38 +91,7 @@ void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
 
-    devmap* p_devmap = NULL;
-    if (PA_INVALID_INDEX == i->card) {
-        // Check to see if we have this device already in any card
-        QMap<int,cardinfo>::iterator iter;
-        for (iter = s_Cards.begin(); iter != s_Cards.end(); ++iter)
-        {
-            if (iter->outputDevices.contains(i->index))
-            {
-                p_devmap = &iter->outputDevices;
-                break;
-            }
-        }
-        if (!p_devmap)
-        {
-            // We need to create a new virtual card for our sink
-            int cardidx = s_CardCounter++;
-            s_Cards[cardidx].description = QString("Fake Card for %1").arg(i->description);
-            p_devmap = &s_Cards[cardidx].outputDevices;
-        }
-    }
-    else
-    {
-        if (!s_CardIndexMap.contains(i->card))
-        {
-            kError(67100) << "Got info about a sink attached to a card I know nothing about.";
-            return;
-        }
-        int cardidx = s_CardIndexMap[i->card];
-        p_devmap = &s_Cards[cardidx].outputDevices;
-    }
-
-    (*p_devmap)[s.index] = s;
+    outputDevices[s.index] = s;
     kDebug(67100) << "Got some info about sink: " << s.description;
 }
 
@@ -200,38 +127,7 @@ void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
 
-    devmap* p_devmap = NULL;
-    if (PA_INVALID_INDEX == i->card) {
-        // Check to see if we have this device already in any card
-        QMap<int,cardinfo>::iterator iter;
-        for (iter = s_Cards.begin(); iter != s_Cards.end(); ++iter)
-        {
-            if (iter->captureDevices.contains(i->index))
-            {
-                p_devmap = &iter->captureDevices;
-                break;
-            }
-        }
-        if (!p_devmap)
-        {
-            // We need to create a new virtual card for our sink
-            int cardidx = s_CardCounter++;
-            s_Cards[cardidx].description = QString("Fake Card for %1").arg(i->description);
-            p_devmap = &s_Cards[cardidx].captureDevices;
-        }
-    }
-    else
-    {
-        if (!s_CardIndexMap.contains(i->card))
-        {
-            kError(67100) << "Got info about a source attached to a card I know nothing about.";
-            return;
-        }
-        int cardidx = s_CardIndexMap[i->card];
-        p_devmap = &s_Cards[cardidx].captureDevices;
-    }
-
-    (*p_devmap)[s.index] = s;
+    captureDevices[s.index] = s;
     kDebug(67100) << "Got some info about source: " << s.description;
 }
 
@@ -243,6 +139,7 @@ void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index,
         case PA_SUBSCRIPTION_EVENT_SINK:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 // Todo: Remove our cache of this sink (of 'index')
+                outputDevices.remove(index);
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_sink_info_by_index(c, index, sink_cb, NULL))) {
@@ -256,6 +153,7 @@ void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index,
         case PA_SUBSCRIPTION_EVENT_SOURCE:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 // Todo: Remove our cache of this source (of 'index')
+                captureDevices.remove(index);
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_source_info_by_index(c, index, source_cb, NULL))) {
@@ -294,13 +192,6 @@ static void context_state_callback(pa_context *c, void *)
                 return;
             }
             pa_operation_unref(o);
-
-            if (!(o = pa_context_get_card_info_list(c, card_cb, NULL))) {
-                kWarning(67100) << "pa_context_get_card_info_list() failed";
-                return;
-            }
-            pa_operation_unref(o);
-            s_OutstandingRequests++;
 
             if (!(o = pa_context_get_sink_info_list(c, sink_cb, NULL))) {
                 kWarning(67100) << "pa_context_get_sink_info_list() failed";
@@ -498,30 +389,20 @@ int Mixer_PULSE::open()
 {
     kDebug(67100) <<  "Trying Pulse sink";
 
-    Volume *v;
     if (ACTIVE == s_pulseActive)
     {
-        QMap<int,cardinfo>::iterator citer;
         devmap::iterator iter;
         if (KMIXPA_PLAYBACK == m_devnum)
         {
             m_mixerName = "Playback Devices";
-            for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
-            {
-                cardinfo *card = &(*citer);
-                for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
-                    addDevice(*iter, false);
-            }
+            for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
+                addDevice(*iter, false);
         }
         else if (KMIXPA_CAPTURE == m_devnum)
         {
             m_mixerName = "Capture Devices";
-            for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
-            {
-                cardinfo *card = &(*citer);
-                for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
-                    addDevice(*iter, true);
-            }
+            for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
+                addDevice(*iter, true);
         }
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
@@ -546,33 +427,28 @@ int Mixer_PULSE::close()
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
     // TODO Work out a way to prevent polling and push it instead...
-    QMap<int,cardinfo>::iterator citer;
     devmap::iterator iter;
-    for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
+    if (!md->isRecSource())
     {
-        cardinfo *card = &(*citer);
-        if (!md->isRecSource())
+        for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
         {
-            for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+            if (iter->name == id)
             {
-                if (iter->name == id)
-                {
-                    pulse_cvolume_to_Volume(iter->volume, &md->playbackVolume());
-                    md->setMuted(iter->mute);
-                    return 0;
-                }
+                pulse_cvolume_to_Volume(iter->volume, &md->playbackVolume());
+                md->setMuted(iter->mute);
+                return 0;
             }
         }
-        else
+    }
+    else
+    {
+        for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
         {
-            for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+            if (iter->name == id)
             {
-                if (iter->name == id)
-                {
-                    pulse_cvolume_to_Volume(iter->volume, &md->captureVolume());
-                    md->setMuted(iter->mute);
-                    return 0;
-                }
+                pulse_cvolume_to_Volume(iter->volume, &md->captureVolume());
+                md->setMuted(iter->mute);
+                return 0;
             }
         }
     }
@@ -581,59 +457,54 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 
 int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
 {
-    QMap<int,cardinfo>::iterator citer;
     devmap::iterator iter;
-    for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
+    if (md->playbackVolume().hasVolume())
     {
-        cardinfo *card = &(*citer);
-        if (md->playbackVolume().hasVolume())
+        for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
         {
-            for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+            if (iter->name == id)
             {
-                if (iter->name == id)
-                {
-                    pa_operation *o;
+                pa_operation *o;
 
-                    pa_cvolume volume = pulse_Volume_to_cvolume(md->playbackVolume(), iter->volume);
-                    if (!(o = pa_context_set_sink_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
-                        kWarning(67100) <<  "pa_context_set_sink_volume_by_index() failed";
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
-
-                    if (!(o = pa_context_set_sink_mute_by_index(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                        kWarning(67100) <<  "pa_context_set_sink_mute_by_index() failed";
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
-
-                    return 0;
+                pa_cvolume volume = pulse_Volume_to_cvolume(md->playbackVolume(), iter->volume);
+                if (!(o = pa_context_set_sink_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_sink_volume_by_index() failed";
+                    return Mixer::ERR_READ;
                 }
+                pa_operation_unref(o);
+
+                if (!(o = pa_context_set_sink_mute_by_index(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_sink_mute_by_index() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                return 0;
             }
         }
-        else
+    }
+    else
+    {
+        for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
         {
-            for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+            if (iter->name == id)
             {
-                if (iter->name == id)
-                {
-                    pa_operation *o;
+                pa_operation *o;
 
-                    pa_cvolume volume = pulse_Volume_to_cvolume(md->captureVolume(), iter->volume);
-                    if (!(o = pa_context_set_source_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
-                        kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
-
-                    if (!(o = pa_context_set_source_mute_by_index(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                        kWarning(67100) <<  "pa_context_set_source_mute_by_index() failed";
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
-
-                    return 0;
+                pa_cvolume volume = pulse_Volume_to_cvolume(md->captureVolume(), iter->volume);
+                if (!(o = pa_context_set_source_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
+                    return Mixer::ERR_READ;
                 }
+                pa_operation_unref(o);
+
+                if (!(o = pa_context_set_source_mute_by_index(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_source_mute_by_index() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                return 0;
             }
         }
     }
