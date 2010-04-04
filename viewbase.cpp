@@ -206,8 +206,7 @@ void ViewBase::showContextMenu()
 
 void ViewBase::controlsReconfigured(int mixerTabIndex)
 {
-    Q_UNUSED(mixerTabIndex);
-    emit rebuildGUI();
+    emit redrawMixer(mixerTabIndex);
 }
 
 void ViewBase::refreshVolumeLevels()

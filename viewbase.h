@@ -118,6 +118,7 @@ public:
 
 signals:
     void rebuildGUI();
+    void redrawMixer(int mixerTabIndex);
 
 
 protected:

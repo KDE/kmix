@@ -445,6 +445,16 @@ void KMixWindow::recreateGUI(bool saveConfig)
 }
 
 
+/**
+* Create or recreate the Mixer GUI elements
+*/
+void KMixWindow::redrawMixer(int mixerTabIndex)
+{
+    Q_UNUSED(mixerTabIndex);
+    recreateGUIwithoutSavingView();
+}
+
+
 void KMixWindow::fixConfigAfterRead()
 {
    KConfigGroup grp(KGlobal::config(), "Global");
