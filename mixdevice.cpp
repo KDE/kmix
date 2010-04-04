@@ -88,15 +88,15 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  */
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
 {
-    init(mixer, id, name, channelTypeToIconName(type), false);
+    init(mixer, id, name, channelTypeToIconName(type), false, false);
 }
 
-MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore )
+MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, bool movable )
 {
-   init(mixer, id, name, iconName, doNotRestore);
+   init(mixer, id, name, iconName, doNotRestore, movable);
 }
 
-void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore )
+void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, bool movable )
 {
     _mixer = mixer;
     _id = id;
@@ -109,6 +109,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     else
         _iconName = iconName;
     _doNotRestore = doNotRestore;
+    _movable = movable;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. It MUST NOT contain spaces
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;

@@ -100,7 +100,7 @@ public:
     *  @par type The control type. It is only used to find an appropriate icon
     */
    MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type );
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false );
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, bool movable = false );
    ~MixDevice();
 
    const QString& iconName() const { return _iconName; }
@@ -137,6 +137,7 @@ public:
 
    bool isEnum()                   { return ( ! _enumValues.empty() ); }
 
+   bool isMovable()                { return _movable; }
 
    Volume& playbackVolume();
    Volume& captureVolume();
@@ -156,12 +157,13 @@ private:
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
    bool _doNotRestore;
+   bool _movable;
    QString _iconName;
 
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
 
-   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore );
+   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, bool movable );
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
 

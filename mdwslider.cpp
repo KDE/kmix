@@ -91,6 +91,12 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 		connect( a, SIGNAL( toggled(bool) ), SLOT( toggleRecsrc() ) );
 	}
 
+	if( m_mixdevice->isMovable() ) {
+		KAction *c = _mdwActions->addAction( "move" );
+		c->setText( i18n("Mo&ve...") );
+		connect( c, SIGNAL(triggered(bool)), SLOT(moveStream()) );
+	}
+
 	KAction *c = _mdwActions->addAction( "keys" );
 	c->setText( i18n("C&onfigure Shortcuts...") );
 	connect( c, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
@@ -976,6 +982,10 @@ void MDWSlider::showContextMenu()
 
 	KMenu *menu = m_view->getPopup();
 	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->readableName() );
+
+	a = _mdwActions->action(  "move" );
+	if ( a )
+		menu->addAction( a );
 
 	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
 		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );

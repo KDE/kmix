@@ -100,6 +100,10 @@ void MixDeviceWidget::defineKeys()
    m_shortcutsDialog->configure();
 }
 
+void MixDeviceWidget::moveStream()
+{
+}
+
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
 void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
 void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ }
