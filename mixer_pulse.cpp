@@ -664,7 +664,10 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
         Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, capture);
         setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description);
-        md->addPlaybackVolume(v);
+        if (capture)
+            md->addCaptureVolume(v);
+        else
+            md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md);
     }
