@@ -342,6 +342,54 @@ static void context_state_callback(pa_context *c, void *)
     }
 }
 
+static Volume::ChannelMask pulse_channel_map_to_ChannelMask(pa_channel_map& channel_map)
+{
+    switch (channel_map.channels)
+    {
+        case 2:
+            return Volume::MMAIN;
+        case 3:
+            return Volume::MFRONT;
+    }
+    // We cannot create a ChannelMask that represents other styles... seems very inflexible?
+    // We would have to split this into different mixer devices to represent this correctly :(
+    kWarning(67100) <<  "Unable to represent a " << channel_map.channels << " channel device";
+
+    return Volume::MNONE;
+}
+
+
+static void pulse_cvolume_to_Volume(pa_cvolume& cvolume, Volume& volume)
+{
+    if (cvolume.channels < 1 || cvolume.channels > 3)
+    {
+        kWarning(67100) <<  "Unable to set volume for a " << cvolume.channels << " channel device";
+        return;
+    }
+
+    for (int i=0; i < cvolume.channels; ++i)
+    {
+        //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
+        volume.setVolume((Volume::ChannelID)i, (long)cvolume.values[i]);
+    }
+}
+
+static pa_cvolume pulse_Volume_to_cvolume(Volume& volume, pa_cvolume cvolume)
+{
+    if (cvolume.channels < 1 || cvolume.channels > 3)
+    {
+        kWarning(67100) <<  "Unable to set volume for a " << cvolume.channels << " channel device";
+        return cvolume;
+    }
+
+    for (int i=0; i < cvolume.channels; ++i)
+    {
+        cvolume.values[i] = (uint32_t)volume.getVolume((Volume::ChannelID)i);
+        //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
+    }
+    return cvolume;
+}
+
 
 Mixer_Backend* PULSE_getMixer( Mixer *mixer, int devnum )
 {
@@ -411,23 +459,29 @@ int Mixer_PULSE::open()
             devmap::iterator iter;
             for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
             {
-                // *iter->volume.channels
-                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
-                Volume::ChannelMask chmask = Volume::MMAIN;
-                Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, false);
-                MixDevice* md = new MixDevice( _mixer, iter->name, QString("Playback: %1").arg(iter->description));
-                md->addPlaybackVolume(vol);
-                m_mixDevices.append( md );
+                Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
+                if (Volume::MNONE != chmask)
+                {
+                    Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, false);
+                    pulse_cvolume_to_Volume(iter->volume, vol);
+                    MixDevice* md = new MixDevice( _mixer, iter->name, QString("Playback: %1").arg(iter->description));
+                    md->addPlaybackVolume(vol);
+                    md->setMuted(iter->mute);
+                    m_mixDevices.append( md );
+                }
             }
             for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
             {
-                // *iter->volume.channels
-                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
-                Volume::ChannelMask chmask = Volume::MMAIN;
-                Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, true);
-                MixDevice* md = new MixDevice( _mixer, iter->name, QString("Capture: %1").arg(iter->description));
-                md->addCaptureVolume(vol);
-                m_mixDevices.append( md );
+                Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
+                if (Volume::MNONE != chmask)
+                {
+                    Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, true);
+                    pulse_cvolume_to_Volume(iter->volume, vol);
+                    MixDevice* md = new MixDevice( _mixer, iter->name, QString("Capture: %1").arg(iter->description));
+                    md->addCaptureVolume(vol);
+                    md->setMuted(iter->mute);
+                    m_mixDevices.append( md );
+                }
             }
         }
     }
@@ -444,13 +498,16 @@ int Mixer_PULSE::open()
                 // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
                 for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
                 {
-                    // *iter->volume.channels
-                    // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
-                    Volume::ChannelMask chmask = Volume::MMAIN;
-                    Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, false);
-                    MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
-                    md->addPlaybackVolume(vol);
-                    m_mixDevices.append( md );
+                    Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
+                    if (Volume::MNONE != chmask)
+                    {
+                        Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, false);
+                        pulse_cvolume_to_Volume(iter->volume, vol);
+                        MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
+                        md->addPlaybackVolume(vol);
+                        md->setMuted(iter->mute);
+                        m_mixDevices.append( md );
+                    }
                 }
             }
         }
@@ -463,13 +520,16 @@ int Mixer_PULSE::open()
                 // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
                 for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
                 {
-                    // *iter->volume.channels
-                    // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
-                    Volume::ChannelMask chmask = Volume::MMAIN;
-                    Volume vol(chmask, PA_VOLUME_MAX, PA_VOLUME_MUTED, false, true);
-                    MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
-                    md->addCaptureVolume(vol);
-                    m_mixDevices.append( md );
+                    Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
+                    if (Volume::MNONE != chmask)
+                    {
+                        Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, true);
+                        pulse_cvolume_to_Volume(iter->volume, vol);
+                        MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
+                        md->addCaptureVolume(vol);
+                        md->setMuted(iter->mute);
+                        m_mixDevices.append( md );
+                    }
                 }
             }
         }
@@ -479,24 +539,6 @@ int Mixer_PULSE::open()
         }
     }
  
-/* 
-      //
-      // Mixer is open. Now define all of the mix devices.
-      //
-
-         for ( int idx = 0; idx < numDevs; idx++ )
-         {
-            Volume vol( 2, AUDIO_MAX_GAIN );
-            QString id;
-            id.setNum(idx);
-            MixDevice* md = new MixDevice( _mixer, id,
-               QString(MixerDevNames[idx]), MixerChannelTypes[idx]);
-            md->addPlaybackVolume(vol);
-            md->setRecSource( isRecsrcHW( idx ) );
-            m_mixDevices.append( md );
-         }
-*/
-
     m_isOpen = true;
 
     return 0;
@@ -509,142 +551,99 @@ int Mixer_PULSE::close()
 
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
-/*   audio_info_t audioinfo;
-   uint_t devMask = MixerSunPortMasks[devnum];
-
-   Volume& volume = md->playbackVolume();
-   int devnum = id2num(id);
-   //
-   // Read the current audio information from the driver
-   //
-   if ( ioctl( fd, AUDIO_GETINFO, &audioinfo ) < 0 )
-   {
-      return( Mixer::ERR_READ );
-   }
-   else
-   {
-      //
-      // Extract the appropriate fields based on the requested device
-      //
-      switch ( devnum )
-      {
-         case MIXERDEV_MASTER_VOLUME :
-            volume.setSwitchActivated( audioinfo.output_muted );
-            GainBalanceToVolume( audioinfo.play.gain,
-                                 audioinfo.play.balance,
-                                 volume );
-            break;
-
-         case MIXERDEV_RECORD_MONITOR :
-            md->setMuted(false);
-            volume.setAllVolumes( audioinfo.monitor_gain );
-            break;
-
-         case MIXERDEV_INTERNAL_SPEAKER :
-         case MIXERDEV_HEADPHONE :
-         case MIXERDEV_LINE_OUT :
-            md->setMuted( (audioinfo.play.port & devMask) ? false : true );
-            GainBalanceToVolume( audioinfo.play.gain,
-                                 audioinfo.play.balance,
-                                 volume );
-            break;
-
-         case MIXERDEV_MICROPHONE :
-         case MIXERDEV_LINE_IN :
-         case MIXERDEV_CD :
-            md->setMuted( (audioinfo.record.port & devMask) ? false : true );
-            GainBalanceToVolume( audioinfo.record.gain,
-                                 audioinfo.record.balance,
-                                 volume );
-            break;
-
-         default :
-            return Mixer::ERR_READ;
-      }
-      return 0;
-   }*/
-   return 0;
+    // TODO Work out a way to prevent polling and push it instead...
+    QMap<int,cardinfo>::iterator citer;
+    devmap::iterator iter;
+    for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
+    {
+        cardinfo *card = &(*citer);
+        if (!md->isRecSource())
+        {
+            for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+            {
+                if (iter->name == id)
+                {
+                    pulse_cvolume_to_Volume(iter->volume, md->playbackVolume());
+                    md->setMuted(iter->mute);
+                    return 0;
+                }
+            }
+        }
+        else
+        {
+            for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+            {
+                if (iter->name == id)
+                {
+                    pulse_cvolume_to_Volume(iter->volume, md->captureVolume());
+                    md->setMuted(iter->mute);
+                    return 0;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
 {
-/*   uint_t gain;
-   uchar_t balance;
-   uchar_t mute;
+    QMap<int,cardinfo>::iterator citer;
+    devmap::iterator iter;
+    for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
+    {
+        cardinfo *card = &(*citer);
+        if (!md->isRecSource())
+        {
+            for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
+            {
+                if (iter->name == id)
+                {
+                    pa_operation *o;
 
-   Volume& volume = md->playbackVolume();
-   int devnum = id2num(id);
-   //
-   // Convert the Volume(left vol, right vol) to the Gain/Balance Sun uses
-   //
-   VolumeToGainBalance( volume, gain, balance );
-   mute = md->isMuted() ? 1 : 0;
+                    pa_cvolume volume = pulse_Volume_to_cvolume(md->playbackVolume(), iter->volume);
+                    if (!(o = pa_context_set_sink_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
+                        kWarning(67100) <<  "pa_context_set_sink_volume_by_index() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
 
-   //
-   // Read the current audio settings from the hardware
-   //
-   audio_info_t audioinfo;
-   if ( ioctl( fd, AUDIO_GETINFO, &audioinfo ) < 0 )
-   {
-      return( Mixer::ERR_READ );
-   }
+                    if (!(o = pa_context_set_sink_mute_by_index(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                        kWarning(67100) <<  "pa_context_set_sink_mute_by_index() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
 
-   //
-   // Now, based on the devnum that we are writing to, update the appropriate
-   // volume field and twiddle the appropriate bitmask to enable/mute the
-   // device as necessary.
-   //
-   switch ( devnum )
-   {
-      case MIXERDEV_MASTER_VOLUME :
-         audioinfo.play.gain = gain;
-         audioinfo.play.balance = balance;
-         audioinfo.output_muted = mute;
-         break;
+                    return 0;
+                }
+            }
+        }
+        else
+        {
+            for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
+            {
+                if (iter->name == id)
+                {
+                    pa_operation *o;
 
-      case MIXERDEV_RECORD_MONITOR :
-         audioinfo.monitor_gain = gain;
-         // no mute or balance for record monitor
-         break;
+                    pa_cvolume volume = pulse_Volume_to_cvolume(md->captureVolume(), iter->volume);
+                    if (!(o = pa_context_set_source_volume_by_index(context, iter->index, &volume, NULL, NULL))) {
+                        kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
 
-      case MIXERDEV_INTERNAL_SPEAKER :
-      case MIXERDEV_HEADPHONE :
-      case MIXERDEV_LINE_OUT :
-         audioinfo.play.gain = gain;
-         audioinfo.play.balance = balance;
-         if ( mute )
-            audioinfo.play.port &= ~MixerSunPortMasks[devnum];
-         else
-            audioinfo.play.port |= MixerSunPortMasks[devnum];
-         break;
+                    if (!(o = pa_context_set_source_mute_by_index(context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                        kWarning(67100) <<  "pa_context_set_source_mute_by_index() failed";
+                        return Mixer::ERR_READ;
+                    }
+                    pa_operation_unref(o);
 
-      case MIXERDEV_MICROPHONE :
-      case MIXERDEV_LINE_IN :
-      case MIXERDEV_CD :
-         audioinfo.record.gain = gain;
-         audioinfo.record.balance = balance;
-         if ( mute )
-            audioinfo.record.port &= ~MixerSunPortMasks[devnum];
-         else
-            audioinfo.record.port |= MixerSunPortMasks[devnum];
-         break;
-
-      default :
-         return Mixer::ERR_READ;
-   }
-
-   //
-   // Now that we've updated the audioinfo struct, write it back to the hardware
-   //
-   if ( ioctl( fd, AUDIO_SETINFO, &audioinfo ) < 0 )
-   {
-      return( Mixer::ERR_WRITE );
-   }
-   else
-   {
-      return 0;
-   }*/
-   return 0;
+                    return 0;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 void Mixer_PULSE::setRecsrcHW( const QString& /*id*/, bool /* on */ )
