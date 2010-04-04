@@ -67,6 +67,7 @@ class Mixer_PULSE : public Mixer_Backend
 
     protected:
         virtual int open();
+        virtual bool openIfValid();
         virtual int close();
 
         int fd;
