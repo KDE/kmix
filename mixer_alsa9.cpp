@@ -421,10 +421,10 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
     }
 
 
-    // Chek if this control has at least one volume control
+    // Check if this control has at least one volume control
     bool hasVolume = (chn != Volume::MNONE);
 
-    // Chek if a appropriate switch is present (appropriate means, based o nthe "capture" parameer)
+    // Check if a appropriate switch is present (appropriate means, based o nthe "capture" parameer)
     bool hasCommonSwitch = snd_mixer_selem_has_common_switch ( elem );
 
     bool hasSwitch = hasCommonSwitch |
