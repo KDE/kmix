@@ -900,22 +900,6 @@ int Mixer_PULSE::open()
     return 0;
 }
 
-bool Mixer_PULSE::openIfValid() {
-    if (ACTIVE != s_pulseActive || m_devnum < 0 || m_devnum > KMIXPA_WIDGET_MAX)
-        return false;
-
-    bool valid = false;
-    if ( open() == 0) {
-        valid = true;
-        // The initial state must be read manually
-        QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
-    } // cold be opened
-    else {
-        close();
-    }
-    return valid;
-}
-
 int Mixer_PULSE::close()
 {
     return 1;
