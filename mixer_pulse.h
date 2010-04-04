@@ -52,6 +52,11 @@ class Mixer_PULSE : public Mixer_Backend
         bool isRecsrcHW               ( const QString& id );
 
         virtual QString getDriverName();
+        virtual bool needsPolling() { return false; }
+
+        void triggerUpdate();
+        void newOutputDevice(int index);
+        void newCaptureDevice(int index);
 
     protected:
         virtual int open();

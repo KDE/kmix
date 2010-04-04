@@ -41,6 +41,8 @@ static QEventLoop *s_connectionEventloop = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_OutstandingRequests = 0;
 
+QMap<int,Mixer_PULSE*> s_Mixers;
+
 typedef QMap<int,devinfo> devmap;
 static devmap outputDevices;
 static devmap captureDevices;
@@ -144,6 +146,8 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     if (eol > 0) {
         dec_outstanding();
+        if (s_Mixers.contains(KMIXPA_PLAYBACK))
+            s_Mixers[KMIXPA_PLAYBACK]->triggerUpdate();
         return;
     }
 
@@ -157,8 +161,12 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     translateMasksAndMaps(s);
 
+    bool is_new = outputDevices.contains(s.index);
     outputDevices[s.index] = s;
     kDebug(67100) << "Got some info about sink: " << s.description;
+
+    if (is_new && s_Mixers.contains(KMIXPA_PLAYBACK))
+        s_Mixers[KMIXPA_PLAYBACK]->newOutputDevice(s.index);
 }
 
 static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
@@ -175,6 +183,8 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     if (eol > 0) {
         dec_outstanding();
+        if (s_Mixers.contains(KMIXPA_CAPTURE))
+            s_Mixers[KMIXPA_CAPTURE]->triggerUpdate();
         return;
     }
 
@@ -195,8 +205,12 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     translateMasksAndMaps(s);
 
+    bool is_new = captureDevices.contains(s.index);
     captureDevices[s.index] = s;
     kDebug(67100) << "Got some info about source: " << s.description;
+
+    if (is_new && s_Mixers.contains(KMIXPA_CAPTURE))
+        s_Mixers[KMIXPA_CAPTURE]->newCaptureDevice(s.index);
 }
 
 static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
@@ -316,6 +330,13 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     return cvol;
 }
 
+void Mixer_PULSE::newOutputDevice(int index)
+{
+}
+
+void Mixer_PULSE::newCaptureDevice(int index)
+{
+}
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
 {
@@ -365,10 +386,14 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
            s_connectionEventloop->exec();
        }
    }
+
+   s_Mixers[m_devnum] = this;
 }
 
 Mixer_PULSE::~Mixer_PULSE()
 {
+    s_Mixers.remove(m_devnum);
+
     if (refcount > 0)
     {
         --refcount;
@@ -506,6 +531,12 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
     return 0;
 }
 
+void Mixer_PULSE::triggerUpdate()
+{
+    readSetFromHWforceUpdate();
+    readSetFromHW();
+}
+
 void Mixer_PULSE::setRecsrcHW( const QString& /*id*/, bool /* on */ )
 {
    return;
@@ -513,17 +544,6 @@ void Mixer_PULSE::setRecsrcHW( const QString& /*id*/, bool /* on */ )
 
 bool Mixer_PULSE::isRecsrcHW( const QString& id )
 {
-/*   int devnum = id2num(id);
-   switch ( devnum )
-   {
-      case MIXERDEV_MICROPHONE :
-      case MIXERDEV_LINE_IN :
-      case MIXERDEV_CD :
-         return true;
-
-      default :
-         return false;
-   }*/
    return false;
 }
 
