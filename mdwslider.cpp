@@ -925,6 +925,14 @@ void MDWSlider::update()
 		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, _slidersChidsPlayback);
 	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
 		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, _slidersChidsCapture );
+	if (m_label) {
+		QLabel *l;
+		VerticalText *v;
+		if ((l = dynamic_cast<QLabel*>(m_label)))
+			l->setText(m_mixdevice->readableName());
+		else if ((v = dynamic_cast<VerticalText*>(m_label)))
+			v->setText(m_mixdevice->readableName());
+	}
 }
 
 void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids)
