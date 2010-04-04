@@ -129,6 +129,10 @@ MixerFactory g_mixerFactories[] = {
     { IRIX_getMixer, IRIX_getDriverName },
 #endif
 
+#if defined(PULSE_MIXER)
+    { PULSE_getMixer, PULSE_getDriverName },
+#endif
+
 #if defined(ALSA_MIXER)
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
@@ -143,10 +147,6 @@ MixerFactory g_mixerFactories[] = {
 
 #if defined(HPUX_MIXER)
     { HPUX_getMixer, HPUX_getDriverName },
-#endif
-
-#if defined(PULSE_MIXER)
-    { PULSE_getMixer, PULSE_getDriverName },
 #endif
 
     { 0, 0 }
