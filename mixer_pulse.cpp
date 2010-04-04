@@ -710,9 +710,15 @@ void Mixer_PULSE::removeWidget(int index)
 void Mixer_PULSE::addDevice(devinfo& dev)
 {
     if (dev.chanMask != Volume::MNONE) {
+        MixSet *ms = 0;
+        if (m_devnum == KMIXPA_APP_PLAYBACK && s_Mixers.contains(KMIXPA_PLAYBACK))
+            ms = s_Mixers[KMIXPA_PLAYBACK]->getMixSet();
+        else if (m_devnum == KMIXPA_APP_CAPTURE && s_Mixers.contains(KMIXPA_CAPTURE))
+            ms = s_Mixers[KMIXPA_CAPTURE]->getMixSet();
+
         Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, true, false);
         setVolumeFromPulse(v, dev);
-        MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, true);
+        MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, true, ms);
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md);

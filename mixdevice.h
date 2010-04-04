@@ -23,6 +23,7 @@
 
 //KMix
 class Mixer;
+class MixSet;
 #include "volume.h"
 
 // KDE
@@ -100,7 +101,7 @@ public:
     *  @par type The control type. It is only used to find an appropriate icon
     */
    MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type );
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, bool movable = false );
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, MixSet* moveDestinationMixSet = 0 );
    ~MixDevice();
 
    const QString& iconName() const { return _iconName; }
@@ -137,7 +138,8 @@ public:
 
    bool isEnum()                   { return ( ! _enumValues.empty() ); }
 
-   bool isMovable()                { return _movable; }
+   bool isMovable()                { return (0 != _moveDestinationMixSet); }
+   MixSet *getMoveDestinationMixSet() { return _moveDestinationMixSet; }
 
    Volume& playbackVolume();
    Volume& captureVolume();
@@ -157,13 +159,13 @@ private:
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
    bool _doNotRestore;
-   bool _movable;
+   MixSet *_moveDestinationMixSet;
    QString _iconName;
 
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
 
-   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, bool movable );
+   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet );
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
 
