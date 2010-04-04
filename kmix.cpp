@@ -413,8 +413,13 @@ void KMixWindow::recreateGUI(bool saveConfig)
    if (m_wsMixers)
       current_tab = m_wsMixers->currentIndex();
 
-   if (saveConfig)
-      saveViewConfig();  // save the state before recreating
+   // NOTE (coling) This is a bug but I don't have time to find the source.
+   // When returning from "Configure Mixers..." we MUST save, but the
+   // flag comes through as false, presumably due to the rebuildGUI() signal
+   // being tied to the recreateGUIwithoutSavingView() slot.
+   // This should really be fixed :s
+   Q_UNUSED(saveConfig);
+   saveViewConfig();  // save the state before recreating
 
    // Before clearing the mixer widgets, we must increase the refcount on the guiprof to save it deleting the ViewBase object.
    if ( Mixer::mixers().count() > 0 )
