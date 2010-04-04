@@ -53,6 +53,14 @@ static devmap outputStreams;
 static devmap captureStreams;
 static devmap outputRoles;
 
+typedef struct {
+    pa_channel_map channel_map;
+    pa_cvolume volume;
+    bool mute;
+    QString device;
+} restoreRule;
+static QMap<QString,restoreRule> s_RestoreRules;
+
 static void dec_outstanding() {
     if (s_OutstandingRequests <= 0)
         return;
@@ -190,14 +198,13 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     devinfo s;
     s.index = s.device_index = i->index;
-    s.restore.name = i->name;
-    s.restore.device = "";
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.icon_name = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
+    s.stream_restore_rule = "";
 
     translateMasksAndMaps(s);
 
@@ -237,14 +244,13 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     devinfo s;
     s.index = s.device_index = i->index;
-    s.restore.name = i->name;
-    s.restore.device = "";
     s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.icon_name = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
+    s.stream_restore_rule = "";
 
     translateMasksAndMaps(s);
 
@@ -311,14 +317,13 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     devinfo s;
     s.index = i->index;
     s.device_index = i->sink;
-    s.restore.name = i->name;
-    s.restore.device = "";
     s.description = prefix + i->name;
     s.name = QString("stream:") + QString(s.description).replace(' ', '_');
     s.icon_name = getIconNameFromProplist(i->proplist);
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
+    s.stream_restore_rule = t;
 
     translateMasksAndMaps(s);
 
@@ -362,8 +367,6 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     devinfo s;
     s.index = i->index;
     s.device_index = i->source;
-    s.restore.name = i->name;
-    s.restore.device = "";
     s.description = prefix + i->name;
     s.name = QString("stream:") + QString(s.description).replace(' ', '_');
     s.icon_name = getIconNameFromProplist(i->proplist);
@@ -372,6 +375,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     s.channel_map = i->channel_map;
     //s.mute = !!i->mute;
     s.mute = captureDevices[i->source].mute;
+    s.stream_restore_rule = pa_proplist_gets(i->proplist, "module-stream-restore.id");
 
     translateMasksAndMaps(s);
 
@@ -384,26 +388,19 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 }
 
 
-static devinfo create_role_devinfo(const char* name, const char* device, const pa_volume_t vol, int mute) {
+static devinfo create_role_devinfo(const char* name) {
 
-    // Fake a Mono Device/Volume
-    pa_cvolume volume;
-    volume.channels = 1;
-    volume.values[0] = vol;
-    pa_channel_map channel_map;
-    channel_map.channels = 1;
-    channel_map.map[0] = PA_CHANNEL_POSITION_MONO;
+    Q_ASSERT(s_RestoreRules.contains(name));
 
     devinfo s;
     s.index = s.device_index = PA_INVALID_INDEX;
-    s.restore.name = name;
-    s.restore.device = device;
     s.description = i18n("Event Sounds");
     s.name = QString("restore:") + name;
     s.icon_name = "dialog-information";
-    s.volume = volume;
-    s.channel_map = channel_map;
-    s.mute = !!mute;
+    s.channel_map = s_RestoreRules[name].channel_map;
+    s.volume = s_RestoreRules[name].volume;
+    s.mute = s_RestoreRules[name].mute;
+    s.stream_restore_rule = name;
 
     translateMasksAndMaps(s);
     return s;
@@ -425,9 +422,22 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
         // Special case: ensure that our media events exists.
         // On first login by a new users, this wont be in our database so we should create it.
         if (!outputRoles.contains(PA_INVALID_INDEX)) {
-            devinfo s = create_role_devinfo("sink-input-by-media-role:event", NULL, PA_VOLUME_NORM, 0);
+            // Create a fake rule
+            restoreRule rule;
+            rule.channel_map.channels = 1;
+            rule.channel_map.map[0] = PA_CHANNEL_POSITION_MONO;
+            rule.volume.channels = 1;
+            rule.volume.values[0] = PA_VOLUME_NORM;
+            rule.mute = false;
+            rule.device = "";
+            s_RestoreRules["sink-input-by-media-role:event"] = rule;
+
+            devinfo s = create_role_devinfo("sink-input-by-media-role:event");
             outputRoles[s.index] = s;
             kDebug(67100) << "Initialising restore rule for new user: " << s.description;
+
+            if (s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+                s_Mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
         }
 
         if (s_Mixers.contains(KMIXPA_APP_PLAYBACK))
@@ -435,17 +445,23 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
         return;
     }
 
+    kDebug(67100) << "Got some info about restore rule: " << i->name;
+    restoreRule rule;
+    rule.channel_map = i->channel_map;
+    rule.volume = i->volume;
+    rule.mute = !!i->mute;
+    rule.device = i->device;
+    s_RestoreRules[i->name] = rule;
+
     // We only want to know about Sound Events for now...
-    if (strcmp(i->name, "sink-input-by-media-role:event") != 0)
-        return;
+    if (strcmp(i->name, "sink-input-by-media-role:event") == 0) {
+        devinfo s = create_role_devinfo(i->name);
+        bool is_new = !outputRoles.contains(s.index);
+        outputRoles[s.index] = s;
 
-    devinfo s = create_role_devinfo(i->name, i->device, pa_cvolume_max(&i->volume), i->mute);
-    bool is_new = !outputRoles.contains(s.index);
-    outputRoles[s.index] = s;
-    kDebug(67100) << "Got some info about restore rule: " << s.description;
-
-    if (is_new && s_Mixers.contains(KMIXPA_APP_PLAYBACK))
-        s_Mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+        if (is_new && s_Mixers.contains(KMIXPA_APP_PLAYBACK))
+            s_Mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+    }
 }
 
 static void ext_stream_restore_subscribe_cb(pa_context *c, void *) {
@@ -1024,11 +1040,12 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             {
                 if (iter->name == id)
                 {
+                    restoreRule &rule = s_RestoreRules[iter->stream_restore_rule];
                     pa_ext_stream_restore_info info;
-                    info.name = iter->restore.name.toAscii().constData();
-                    info.channel_map = iter->channel_map;
+                    info.name = iter->stream_restore_rule.toAscii().constData();
+                    info.channel_map = rule.channel_map;
                     info.volume = genVolumeForPulse(*iter, md->playbackVolume());
-                    info.device = iter->restore.device.isEmpty() ? NULL : iter->restore.device.toAscii().constData();
+                    info.device = rule.device.isEmpty() ? NULL : rule.device.toAscii().constData();
                     info.mute = (md->isMuted() ? 1 : 0);
 
                     pa_operation* o;

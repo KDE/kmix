@@ -37,11 +37,7 @@ typedef struct {
     pa_cvolume volume;
     pa_channel_map channel_map;
     bool mute;
-
-    struct {
-        QString name;
-        QString device;
-    } restore;
+    QString stream_restore_rule;
 
     Volume::ChannelMask chanMask;
     chanIDMap chanIDs;
