@@ -156,7 +156,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     devinfo s;
     s.index = s.device_index = i->index;
-    s.name = i->name;
+    s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.volume = i->volume;
     s.channel_map = i->channel_map;
@@ -200,7 +200,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     devinfo s;
     s.index = s.device_index = i->index;
-    s.name = i->name;
+    s.name = QString(i->name).replace(' ', '_');
     s.description = i->description;
     s.volume = i->volume;
     s.channel_map = i->channel_map;
@@ -271,8 +271,8 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     devinfo s;
     s.index = i->index;
     s.device_index = i->sink;
-    s.name = i->name;
     s.description = prefix + i->name;
+    s.name = QString(s.description).replace(' ', '_');
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -319,8 +319,8 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     devinfo s;
     s.index = i->index;
     s.device_index = i->source;
-    s.name = i->name;
-    s.description = i->name;
+    s.description = prefix + i->name;
+    s.name = QString(s.description).replace(' ', '_');
     //s.volume = i->volume;
     s.volume = captureDevices[i->source].volume;
     s.channel_map = i->channel_map;
