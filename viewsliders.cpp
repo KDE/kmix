@@ -109,13 +109,11 @@ QWidget* ViewSliders::add(MixDevice *md)
                this,         // parent
                this       ); // View widget
       _layoutSliders->addWidget(mdw);
-      kDebug(67100) << "ViewSliders::add(): We now have " << _separators.count() << " separators with " << _layoutSliders->count() << " widgets";
       QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
       if ( lay )
          lay->addSpacing(2);
       else
          qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
-      kDebug(67100) << "ViewSliders::add(): (and now we have " << _layoutSliders->count() << " widgets";
    }
 
 
@@ -152,8 +150,11 @@ void ViewSliders::setMixSet()
              // We will be recreating our sliders, so make sure we trash all the separators too.
              qDeleteAll(_separators);
              _separators.clear();
-             // Todo: Our _layoutSliders now should only contain spacer widgets from ::add() above.
+             // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
              // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
+             QLayoutItem *li;
+             while ( ( li = _layoutSliders->takeAt(0) ) )
+                 delete li;
          }
 
          QRegExp idRegexp(control->id);
