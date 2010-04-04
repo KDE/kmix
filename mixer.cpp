@@ -145,7 +145,8 @@ bool Mixer::openIfValid() {
             kDebug() << "Mixer::open() detected master: " << recommendedMaster->id();
         }
         else {
-            kError(67100) << "Mixer::open() no master detected." << endl;
+            if ( !m_dynamic )
+                kError(67100) << "Mixer::open() no master detected." << endl;
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
