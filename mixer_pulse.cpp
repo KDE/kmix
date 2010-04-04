@@ -381,6 +381,32 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 }
 
 
+static devinfo create_role_devinfo(const char* name, const char* device, const pa_volume_t vol, int mute) {
+
+    // Fake a Mono Device/Volume
+    pa_cvolume volume;
+    volume.channels = 1;
+    volume.values[0] = vol;
+    pa_channel_map channel_map;
+    channel_map.channels = 1;
+    channel_map.map[0] = PA_CHANNEL_POSITION_MONO;
+
+    devinfo s;
+    s.index = s.device_index = PA_INVALID_INDEX;
+    s.restore.name = name;
+    s.restore.device = device;
+    s.description = i18n("Event Sounds");
+    s.name = QString("restore:") + name;
+    s.icon_name = "dialog-information";
+    s.volume = volume;
+    s.channel_map = channel_map;
+    s.mute = !!mute;
+
+    translateMasksAndMaps(s);
+    return s;
+}
+
+
 void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info *i, int eol, void *) {
 
     Q_ASSERT(c == context);
@@ -393,6 +419,14 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
 
     if (eol > 0) {
         dec_outstanding();
+        // Special case: ensure that our media events exists.
+        // On first login by a new users, this wont be in our database so we should create it.
+        if (!outputRoles.contains(PA_INVALID_INDEX)) {
+            devinfo s = create_role_devinfo("sink-input-by-media-role:event", NULL, PA_VOLUME_NORM, 0);
+            outputRoles[s.index] = s;
+            kDebug(67100) << "Initialising restore rule for new user: " << s.description;
+        }
+
         if (s_Mixers.contains(KMIXPA_APP_PLAYBACK))
             s_Mixers[KMIXPA_APP_PLAYBACK]->triggerUpdate();
         return;
@@ -402,27 +436,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
     if (strcmp(i->name, "sink-input-by-media-role:event") != 0)
         return;
 
-    // Fake a Mono Device/Volume
-    pa_cvolume volume;
-    volume.channels = 1;
-    volume.values[0] = pa_cvolume_max(&i->volume);
-    pa_channel_map channel_map;
-    channel_map.channels = 1;
-    channel_map.map[0] = PA_CHANNEL_POSITION_MONO;
-
-    devinfo s;
-    s.index = s.device_index = PA_INVALID_INDEX;
-    s.restore.name = i->name;
-    s.restore.device = i->device;
-    s.description = i18n("Event Sounds");
-    s.name = QString("restore:") + i->name;
-    s.icon_name = "dialog-information";
-    s.volume = volume;
-    s.channel_map = channel_map;
-    s.mute = !!i->mute;
-
-    translateMasksAndMaps(s);
-
+    devinfo s = create_role_devinfo(i->name, i->device, pa_cvolume_max(&i->volume), i->mute);
     outputRoles[s.index] = s;
     kDebug(67100) << "Got some info about restore rule: " << s.description;
 }
