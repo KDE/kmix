@@ -25,12 +25,14 @@
 #include "mixer_pulse.h"
 #include "mixer.h"
 
-// (cg) I've not yet worked out why this is not defined.....
-# define UINT32_MAX     (4294967295U)
-
-#include <pulse/pulseaudio.h>
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
+
+
+#define KMIXPA_PLAYBACK     0
+#define KMIXPA_CAPTURE      1
+#define KMIXPA_APP_PLAYBACK 2
+#define KMIXPA_APP_CAPTURE  3
 
 static unsigned int refcount = 0;
 static pa_context *context = NULL;
@@ -38,16 +40,6 @@ static pa_glib_mainloop *mainloop = NULL;
 static QEventLoop *s_connectionEventloop = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_OutstandingRequests = 0;
-
-
-typedef struct {
-    int index;
-    QString name;
-    QString description;
-    pa_cvolume volume;
-    pa_channel_map channel_map;
-    bool mute;
-} devinfo;
 
 typedef QMap<int,devinfo> devmap;
 
@@ -342,25 +334,10 @@ static void context_state_callback(pa_context *c, void *)
     }
 }
 
-static Volume::ChannelMask pulse_channel_map_to_ChannelMask(pa_channel_map& channel_map)
+static void pulse_cvolume_to_Volume(pa_cvolume& cvolume, Volume* volume)
 {
-    switch (channel_map.channels)
-    {
-        case 2:
-            return Volume::MMAIN;
-        case 3:
-            return Volume::MFRONT;
-    }
-    // We cannot create a ChannelMask that represents other styles... seems very inflexible?
-    // We would have to split this into different mixer devices to represent this correctly :(
-    kWarning(67100) <<  "Unable to represent a " << channel_map.channels << " channel device";
+    Q_ASSERT(volume);
 
-    return Volume::MNONE;
-}
-
-
-static void pulse_cvolume_to_Volume(pa_cvolume& cvolume, Volume& volume)
-{
     if (cvolume.channels < 1 || cvolume.channels > 3)
     {
         kWarning(67100) <<  "Unable to set volume for a " << cvolume.channels << " channel device";
@@ -370,7 +347,7 @@ static void pulse_cvolume_to_Volume(pa_cvolume& cvolume, Volume& volume)
     for (int i=0; i < cvolume.channels; ++i)
     {
         //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
-        volume.setVolume((Volume::ChannelID)i, (long)cvolume.values[i]);
+        volume->setVolume((Volume::ChannelID)i, (long)cvolume.values[i]);
     }
 }
 
@@ -388,6 +365,81 @@ static pa_cvolume pulse_Volume_to_cvolume(Volume& volume, pa_cvolume cvolume)
         //kDebug(67100) <<  "Setting volume for channel " << i << " to " << cvolume.values[i] << " (" << ((100*cvolume.values[i]) / PA_VOLUME_NORM) << "%)";
     }
     return cvolume;
+}
+
+
+void Mixer_PULSE::addDevice(devinfo& dev, bool capture)
+{
+    Volume *v;
+    if ((v = addVolume(dev.channel_map, capture)))
+    {
+        pulse_cvolume_to_Volume(dev.volume, v);
+        MixDevice* md = new MixDevice( _mixer, dev.name, dev.description);
+        md->addPlaybackVolume(*v);
+        md->setMuted(dev.mute);
+        m_mixDevices.append(md);
+        delete v;
+    }
+}
+
+Volume* Mixer_PULSE::addVolume(pa_channel_map& cmap, bool capture)
+{
+    Volume* vol = 0;
+
+    // --- Regular control (not enumerated) ---
+    Volume::ChannelMask chn = Volume::MNONE;
+
+    // Special case - mono
+    if (1 == cmap.channels && PA_CHANNEL_POSITION_MONO == cmap.map[0]) {
+        // We just use the left channel to represent this.
+        chn = (Volume::ChannelMask)( chn | Volume::MLEFT);
+    } else {
+        for (uint8_t i = 0; i < cmap.channels; ++i) {
+            switch (cmap.map[i]) {
+                case PA_CHANNEL_POSITION_MONO:
+                    kWarning(67100) << "Channel Map contains a MONO element but has >1 channel - we can't handle this.";
+                    return vol;
+
+                case PA_CHANNEL_POSITION_FRONT_LEFT:
+                    chn = (Volume::ChannelMask)( chn | Volume::MLEFT);
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_RIGHT:
+                    chn = (Volume::ChannelMask)( chn | Volume::MRIGHT);
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_CENTER:
+                    chn = (Volume::ChannelMask)( chn | Volume::MCENTER);
+                    break;
+                case PA_CHANNEL_POSITION_REAR_CENTER:
+                    chn = (Volume::ChannelMask)( chn | Volume::MREARCENTER);
+                    break;
+                case PA_CHANNEL_POSITION_REAR_LEFT:
+                    chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDLEFT);
+                    break;
+                case PA_CHANNEL_POSITION_REAR_RIGHT:
+                    chn = (Volume::ChannelMask)( chn | Volume::MSURROUNDRIGHT);
+                    break;
+                case PA_CHANNEL_POSITION_LFE:
+                    chn = (Volume::ChannelMask)( chn | Volume::MWOOFER);
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER:
+                    chn = (Volume::ChannelMask)( chn | Volume::MREARSIDELEFT);
+                    break;
+                case PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER:
+                    chn = (Volume::ChannelMask)( chn | Volume::MREARSIDERIGHT);
+                    break;
+                default:
+                    kWarning(67100) << "Channel Map contains a pa_channel_position we cannot handle " << cmap.map[i];
+                    break;
+            }
+        }
+    }
+
+    if (chn != Volume::MNONE) {
+        //kDebug() << "Add somthing with chn=" << chn << ", capture=" << capture;
+        vol = new Volume( chn, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, capture);
+    }
+
+    return vol;
 }
 
 
@@ -446,7 +498,8 @@ int Mixer_PULSE::open()
 {
     kDebug(67100) <<  "Trying Pulse sink";
 
-    if (ACTIVE == s_pulseActive && true)
+    Volume *v;
+    if (ACTIVE == s_pulseActive && false)
     {
         // Check to see if we have a "card" for m_devnum
         if (s_Cards.contains(m_devnum))
@@ -459,28 +512,26 @@ int Mixer_PULSE::open()
             devmap::iterator iter;
             for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
             {
-                Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
-                if (Volume::MNONE != chmask)
+                if ((v = addVolume(iter->channel_map, false)))
                 {
-                    Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, false);
-                    pulse_cvolume_to_Volume(iter->volume, vol);
+                    pulse_cvolume_to_Volume(iter->volume, v);
                     MixDevice* md = new MixDevice( _mixer, iter->name, QString("Playback: %1").arg(iter->description));
-                    md->addPlaybackVolume(vol);
+                    md->addPlaybackVolume(*v);
                     md->setMuted(iter->mute);
-                    m_mixDevices.append( md );
+                    m_mixDevices.append(md);
+                    delete v;
                 }
             }
             for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
             {
-                Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
-                if (Volume::MNONE != chmask)
+                if ((v = addVolume(iter->channel_map, true)))
                 {
-                    Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, true);
-                    pulse_cvolume_to_Volume(iter->volume, vol);
+                    pulse_cvolume_to_Volume(iter->volume, v);
                     MixDevice* md = new MixDevice( _mixer, iter->name, QString("Capture: %1").arg(iter->description));
-                    md->addCaptureVolume(vol);
+                    md->addCaptureVolume(*v);
                     md->setMuted(iter->mute);
-                    m_mixDevices.append( md );
+                    m_mixDevices.append(md);
+                    delete v;
                 }
             }
         }
@@ -489,53 +540,33 @@ int Mixer_PULSE::open()
     {
         QMap<int,cardinfo>::iterator citer;
         devmap::iterator iter;
-        if (0 == m_devnum)
+        if (KMIXPA_PLAYBACK == m_devnum)
         {
             m_mixerName = "Playback Devices";
             for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
             {
                 cardinfo *card = &(*citer);
-                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
                 for (iter = card->outputDevices.begin(); iter != card->outputDevices.end(); ++iter)
-                {
-                    Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
-                    if (Volume::MNONE != chmask)
-                    {
-                        Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, false);
-                        pulse_cvolume_to_Volume(iter->volume, vol);
-                        MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
-                        md->addPlaybackVolume(vol);
-                        md->setMuted(iter->mute);
-                        m_mixDevices.append( md );
-                    }
-                }
+                    addDevice(*iter, false);
             }
         }
-        else if (1 == m_devnum)
+        else if (KMIXPA_CAPTURE == m_devnum)
         {
             m_mixerName = "Capture Devices";
             for (citer = s_Cards.begin(); citer != s_Cards.end(); ++citer)
             {
                 cardinfo *card = &(*citer);
-                // Fix me: Map the channels to the ChanMask... maybe we need the sink/source channel_map for this...
                 for (iter = card->captureDevices.begin(); iter != card->captureDevices.end(); ++iter)
-                {
-                    Volume::ChannelMask chmask = pulse_channel_map_to_ChannelMask(iter->channel_map);
-                    if (Volume::MNONE != chmask)
-                    {
-                        Volume vol(chmask, PA_VOLUME_NORM, PA_VOLUME_MUTED, false, true);
-                        pulse_cvolume_to_Volume(iter->volume, vol);
-                        MixDevice* md = new MixDevice( _mixer, iter->name, iter->description);
-                        md->addCaptureVolume(vol);
-                        md->setMuted(iter->mute);
-                        m_mixDevices.append( md );
-                    }
-                }
+                    addDevice(*iter, true);
             }
         }
-        else if (2 == m_devnum)
+        else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
-            // TODO: "Applications".
+            // TODO: "Applications (Playback)".
+        }
+        else if (KMIXPA_APP_CAPTURE == m_devnum)
+        {
+            // TODO: "Applications (Capture)".
         }
     }
  
@@ -563,7 +594,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
             {
                 if (iter->name == id)
                 {
-                    pulse_cvolume_to_Volume(iter->volume, md->playbackVolume());
+                    pulse_cvolume_to_Volume(iter->volume, &md->playbackVolume());
                     md->setMuted(iter->mute);
                     return 0;
                 }
@@ -575,7 +606,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
             {
                 if (iter->name == id)
                 {
-                    pulse_cvolume_to_Volume(iter->volume, md->captureVolume());
+                    pulse_cvolume_to_Volume(iter->volume, &md->captureVolume());
                     md->setMuted(iter->mute);
                     return 0;
                 }

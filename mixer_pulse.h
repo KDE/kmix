@@ -25,6 +25,16 @@
 #include <QString>
 
 #include "mixer_backend.h"
+#include <pulse/pulseaudio.h>
+
+typedef struct {
+    int index;
+    QString name;
+    QString description;
+    pa_cvolume volume;
+    pa_channel_map channel_map;
+    bool mute;
+} devinfo;
 
 class Mixer_PULSE : public Mixer_Backend
 {
@@ -44,6 +54,11 @@ protected:
   virtual int close();
 
   int fd;
+
+private:
+    void addDevice(devinfo& dev, bool capture);
+    Volume* addVolume(pa_channel_map& cmap, bool capture);
+
 };
 
 #endif 
