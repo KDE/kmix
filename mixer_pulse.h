@@ -72,6 +72,7 @@ class Mixer_PULSE : public Mixer_Backend
     protected:
         virtual int open();
         virtual int close();
+        int id2num(const QString& id);
 
         int fd;
 

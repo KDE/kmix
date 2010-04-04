@@ -905,6 +905,21 @@ int Mixer_PULSE::close()
     return 1;
 }
 
+int Mixer_PULSE::id2num(const QString& id) {
+    //kDebug(67100) << "id2num() id=" << id;
+    int num = -1;
+    // todo: Store this in a hash or similar
+    int i;
+    for (i = 0; i < m_mixDevices.size(); ++i) {
+        if (m_mixDevices[i]->id() == id) {
+            num = i;
+            break;
+        }
+    }
+    //kDebug(67100) << "id2num() num=" << num;
+    return num;
+}
+
 int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
 {
     devmap *map = get_widget_map(m_devnum);
