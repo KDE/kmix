@@ -34,6 +34,7 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Label>
 #include <Plasma/Meter>
+#include <Plasma/Theme>
 #include <Plasma/WindowEffects>
 
 OSDWidget::OSDWidget(QWidget * parent)
@@ -56,10 +57,22 @@ OSDWidget::OSDWidget(QWidget * parent)
 
     //Cache the icon pixmaps
     QSize iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    m_volumeHighPixmap = KIcon("audio-volume-high").pixmap(iconSize);
-    m_volumeMediumPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
-    m_volumeLowPixmap = KIcon("audio-volume-low").pixmap(iconSize);
-    m_volumeMutedPixmap = KIcon("audio-volume-muted").pixmap(iconSize);
+
+    if (!Plasma::Theme::defaultTheme()->imagePath("icons/audio").isEmpty()) {
+        Plasma::Svg *svgIcon = new Plasma::Svg(this);
+        svgIcon->setImagePath("icons/audio");
+        svgIcon->setContainsMultipleImages(true);
+        svgIcon->resize(iconSize);
+        m_volumeHighPixmap = svgIcon->pixmap("audio-volume-high");
+        m_volumeMediumPixmap = svgIcon->pixmap("audio-volume-medium");
+        m_volumeLowPixmap = svgIcon->pixmap("audio-volume-low");
+        m_volumeMutedPixmap = svgIcon->pixmap("audio-volume-muted");
+    } else {
+        m_volumeHighPixmap = KIcon("audio-volume-high").pixmap(iconSize);
+        m_volumeMediumPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
+        m_volumeLowPixmap = KIcon("audio-volume-low").pixmap(iconSize);
+        m_volumeMutedPixmap = KIcon("audio-volume-muted").pixmap(iconSize);
+    }
 
     //Setup the widgets
     m_background->setImagePath("widgets/tooltip");
