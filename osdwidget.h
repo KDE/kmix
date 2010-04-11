@@ -50,6 +50,7 @@ public:
 protected:
     virtual void drawBackground(QPainter *painter, const QRectF &rectF);
     virtual void resizeEvent(QResizeEvent *);
+    void showEvent(QShowEvent *event);
 
 private:
     Plasma::FrameSvg *m_background;

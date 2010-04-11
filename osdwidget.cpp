@@ -30,9 +30,11 @@
 // KDE
 #include <KIcon>
 #include <KDialog>
+#include <KWindowSystem>
 #include <Plasma/FrameSvg>
 #include <Plasma/Label>
 #include <Plasma/Meter>
+#include <Plasma/WindowEffects>
 
 OSDWidget::OSDWidget(QWidget * parent)
     : QGraphicsView(parent),
@@ -139,7 +141,14 @@ void OSDWidget::resizeEvent(QResizeEvent*)
     m_container->layout()->setContentsMargins(left, top, right, bottom);
 
     m_scene->setSceneRect(0, 0, width(), height());
-    setMask(m_background->mask());
+    if (!KWindowSystem::compositingActive()) {
+        setMask(m_background->mask());
+    }
+}
+
+void OSDWidget::showEvent(QShowEvent *event)
+{
+    Plasma::WindowEffects::overrideShadow(winId(), true);
 }
 
 #include "osdwidget.moc"
