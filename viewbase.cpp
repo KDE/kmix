@@ -242,7 +242,7 @@ void ViewBase::setMixSet()
             QList<QString> new_mix_devices;
             MixSet ms = _mixer->getMixSet();
             for (int i=0; i < ms.count(); ++i)
-                new_mix_devices.append(ms[i]->id());
+                new_mix_devices.append("^" + ms[i]->id() + "$");
             std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
             for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
                 new_mix_devices.removeAll((*it)->id);
