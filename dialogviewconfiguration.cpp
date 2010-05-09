@@ -326,19 +326,22 @@ void DialogViewConfiguration::apply()
    prepareControls(model, false, oldControlset, newControlset);
 
 	// --- Step 2: Copy controls
+	QString tabName = "Base";
 	oldControlset.clear();
 	std::vector<ProfControl*>::const_iterator itEnd = newControlset.end();
 	for ( std::vector<ProfControl*>::const_iterator it = newControlset.begin(); it != itEnd; ++it)
 	{
 	  ProfControl* control = *it;
 	  control->id = "^" + control->id + "$";   // Create a regexp from the control name
+	  if ( ! control->tab.isEmpty() )
+	      tabName = control->tab;
 	  kDebug() << "Add control " << control->id;
           oldControlset.push_back(control);
 	}
 	ProfControl* fallbackMatchAllControl = new ProfControl;
 	fallbackMatchAllControl->id   = "^.*$";
 	fallbackMatchAllControl->subcontrols  = ".*";
-	fallbackMatchAllControl->tab  = "Base";
+	fallbackMatchAllControl->tab  = tabName;
 	fallbackMatchAllControl->show = "extended";
 	oldControlset.push_back(fallbackMatchAllControl);
 	
