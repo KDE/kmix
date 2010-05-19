@@ -733,6 +733,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     } // has playback volume
 
     // --- playback switch
+    // TODO: What about has_common_switch()
     if ( snd_mixer_selem_has_playback_switch( elem ) )
     {
         snd_mixer_selem_get_playback_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );
@@ -766,6 +767,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
     } // has capture volume
 
     // --- capture switch
+    // TODO: What about has_common_switch()
     if ( snd_mixer_selem_has_capture_switch( elem ) )
     {
         snd_mixer_selem_get_capture_switch( elem, SND_MIXER_SCHN_FRONT_LEFT, &elem_sw );

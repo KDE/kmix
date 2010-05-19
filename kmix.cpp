@@ -238,17 +238,22 @@ bool KMixWindow::updateDocking()
 
 void KMixWindow::saveConfig()
 {
+   kDebug() << "About to save config";
    saveBaseConfig();
    saveViewConfig();
    saveVolumes();
 #ifdef __GNUC_
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
+
+   kDebug() << "Saved config ... now syncing explicitely";
    KGlobal::config()->sync();
+   kDebug() << "Saved config ... sync finished";
 }
 
 void KMixWindow::saveBaseConfig()
 {
+   kDebug() << "About to save config (Base)";
    KConfigGroup config(KGlobal::config(), "Global");
 
    config.writeEntry( "Size", size() );
@@ -282,10 +287,13 @@ void KMixWindow::saveBaseConfig()
       config.writeEntry( "Orientation","Horizontal" );
    else
       config.writeEntry( "Orientation","Vertical" );
+
+   kDebug() << "Config (Base) saving done";
 }
 
 void KMixWindow::saveViewConfig()
 {
+    kDebug() << "About to save config (View)";
     // Save Views
     for ( int i=0; i<m_wsMixers->count() ; ++i )
     {
@@ -297,6 +305,7 @@ void KMixWindow::saveViewConfig()
             mw->saveConfig( KGlobal::config().data() );
         }
     }
+   kDebug() << "Config (View) saving done";
 }
 
 
@@ -306,6 +315,7 @@ void KMixWindow::saveViewConfig()
  */
 void KMixWindow::saveVolumes()
 {
+   kDebug() << "About to save config (Volume)";
    KConfig *cfg = new KConfig( "kmixctrlrc" );
    for ( int i=0; i<Mixer::mixers().count(); ++i)
    {
@@ -315,6 +325,7 @@ void KMixWindow::saveVolumes()
       }
    }
    delete cfg;
+   kDebug() << "Config (Volume) saving done";
 }
 
 
