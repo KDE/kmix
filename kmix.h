@@ -107,7 +107,6 @@ KMixWindow : public KXmlGuiWindow
    bool m_showLabels;
    bool m_onLogin;
    bool m_startVisible;
-   bool m_showMenubar;
 //   bool m_isVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.

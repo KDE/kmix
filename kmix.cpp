@@ -70,7 +70,6 @@
 KMixWindow::KMixWindow(bool invisible)
    : KXmlGuiWindow(0, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) ),
    m_showTicks( true ),
-   m_showMenubar(true),
 //   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
 //   m_visibilityUpdateAllowed( true ),
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
@@ -617,7 +616,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
    {
 //       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
       ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-      if ( m_showMenubar ) {
+      if ( (_actionShowMenubar==0) || _actionShowMenubar->isChecked() ) {
             vflags |= ViewBase::MenuBarVisible;
       }
       if ( m_toplevelOrientation == Qt::Vertical ) {
