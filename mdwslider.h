@@ -56,6 +56,7 @@ class MDWSlider : public MixDeviceWidget
 public:
     MDWSlider( MixDevice* md,
 	       bool showMuteLED, bool showRecordLED,
+	       bool includePlayback, bool includeCapture,
 	       bool small, Qt::Orientation,
 	       QWidget* parent = 0, ViewBase* mw = 0);
     ~MDWSlider() { }
@@ -118,7 +119,7 @@ private:
     KShortcut dummyShortcut;
     void setIcon( QString iconname );
     QPixmap loadIcon( QString filename );
-    void createWidgets( bool showMuteLED, bool showCaptureLED );
+    void createWidgets( bool showMuteLED, bool showCaptureLED, bool includePlayback, bool includeCapture );
     void addSliders( QBoxLayout *volLayout, char type, bool addLabel);
     void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 

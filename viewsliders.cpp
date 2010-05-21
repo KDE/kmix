@@ -104,6 +104,8 @@ QWidget* ViewSliders::add(MixDevice *md)
                md,           // MixDevice (parameter)
                true,         // Show Mute LED
                true,         // Show Record LED
+	       false, // include plaback sliders
+               true, // include capture sliders
                false,        // Small
                orientation,  // Orientation
                this,         // parent

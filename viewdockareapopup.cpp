@@ -121,6 +121,8 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
       true,         // Show Mute LED
       false,        // Show Record LED
       false,        // Small
+					 true, // include plaback sliders
+					 true, // include capture sliders
       Qt::Vertical, // Direction: only 1 device, so doesn't matter
       this,         // parent
       0             // Is "NULL", so that there is no RMB-popup

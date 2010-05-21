@@ -59,6 +59,45 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### next target ###############
 
+ set(kded_kmixd_SRCS ${kmix_adaptor_SRCS}
+    kmixd.cpp 
+    mixer.cpp 
+    mixset.cpp 
+    mixdevice.cpp 
+    volume.cpp
+    mixertoolbox.cpp 
+    mixer_backend.cpp 
+    kmixdevicemanager.cpp
+    guiprofile.cpp
+    )
+# 
+# # guiprofile.cpp should NOT be in kmixd. !!!
+# # guiprofile stuff must be moved from mixertoolbox to kmixtoolbox!!! 
+
+#qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
+ 
+kde4_add_plugin(kded_kmixd ${kded_kmixd_SRCS})
+
+
+target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY})
+
+if (HAVE_LIBASOUND2)
+    target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
+endif (HAVE_LIBASOUND2)
+
+if (HAVE_PULSE)
+    target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+endif (HAVE_PULSE)
+
+install(TARGETS kded_kmixd DESTINATION ${PLUGIN_INSTALL_DIR})
+
+#target_link_libraries( kmixd kded_kmixd )
+#install(TARGETS kmixd DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+install( FILES kmixd.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded )
+
+########### next target ###############
+
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    kmixctrl.cpp 
    mixer.cpp 
