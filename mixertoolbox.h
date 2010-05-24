@@ -52,8 +52,6 @@ class MixerToolBox : public QObject
       QString mixerIgnoreExpression();
       
       Mixer* find( const QString& mixer_id);
-      GUIProfile* selectProfile(Mixer*);
-      GUIProfile* fallbackProfile(Mixer*);
       //static KLocale* whatsthisControlLocale();
       
    signals:
@@ -61,7 +59,6 @@ class MixerToolBox : public QObject
 
    private:
       static MixerToolBox* s_instance;
-      static QMap<Mixer*,GUIProfile*> s_fallbackProfiles;
       QMap<QString,int> s_mixerNums;
       static QRegExp s_ignoreMixerExpression;
       

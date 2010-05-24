@@ -340,7 +340,7 @@ void DialogViewConfiguration::apply()
 	}
 	ProfControl* fallbackMatchAllControl = new ProfControl;
 	fallbackMatchAllControl->id   = "^.*$";
-	fallbackMatchAllControl->subcontrols  = ".*";
+	fallbackMatchAllControl->setSubcontrols("*");
 	fallbackMatchAllControl->tab  = tabName;
 	fallbackMatchAllControl->show = "extended";
 	oldControlset.push_back(fallbackMatchAllControl);

@@ -37,7 +37,6 @@
 
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
-QMap<Mixer*,GUIProfile*> MixerToolBox::s_fallbackProfiles;
 QRegExp MixerToolBox::s_ignoreMixerExpression("Modem");
 //KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
@@ -344,109 +343,5 @@ KLocale* MixerToolBox::whatsthisControlLocale()
 }
 */
 
-/**
-   Returns a GUI Profile
-  */
-GUIProfile* MixerToolBox::selectProfile(Mixer* mixer)
-{
-   /** This is a two-step process *****************************************
-      * (1) Build a list of all files we want to check
-      * (2) Evaluate all files and keep the best
-      ***********************************************************************/
- 
-   GUIProfile* guiprofBest = 0;
-   unsigned long matchValueBest = 0;
-   unsigned long matchValueTemp = 0;
-   
-   QString userProfileDir = KStandardDirs::locateLocal("appdata", "profiles/" );
-
-   QString mixerNameSpacesToUnderscores = mixer->baseName();
-   mixerNameSpacesToUnderscores.replace(" ","_");
-
-   // (1) User profile Directory
-   QDir dir(userProfileDir);
-   dir.setFilter(QDir::Files);
-   dir.setNameFilters(QStringList(mixer->getDriverName() + "." + mixerNameSpacesToUnderscores + "*.xml"));
-   QFileInfoList fileList = dir.entryInfoList();
-
-   QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
-
-   // (2) Default profile for Soundcard Driver (usually from system Directory)
-   QString fileName = fileNamePrefix + "default.xml";
-   QString fileNameFQ;
-   fileNameFQ = KStandardDirs::locate("appdata", fileName );
-kDebug() << fileName << "; fnfq1=" << fileNameFQ;
-   if (!fileNameFQ.isEmpty())
-       fileList.insert(0, QFileInfo(fileNameFQ));
-
-   // (3) Soundcard specific profile (usually from system Directory)
-   fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
-   fileNameFQ = KStandardDirs::locate("appdata", fileName );
-kDebug() << fileName << "; fnfq2=" << fileNameFQ;
-   if (!fileNameFQ.isEmpty())
-      fileList.insert(0, QFileInfo(fileNameFQ));
-
-
-
-	for (int i = 0; i < fileList.size(); ++i) {
-		QFileInfo fileInfo = fileList.at(i);
-		QString fileNameAbs = fileInfo.absoluteFilePath();
-		QString fileNameRelToProfile = "profiles/" + fileInfo.fileName();
-		kDebug() << i << ": Try user profile " << fileNameAbs;
-		GUIProfile* guiprofTemp = new GUIProfile();
-		if ( guiprofTemp->readProfile(fileNameAbs, fileNameRelToProfile) ) {
-			matchValueTemp = guiprofTemp->match(mixer);
-			if ( matchValueTemp < matchValueBest ) {
-				delete guiprofTemp;
-				guiprofTemp = 0;
-				matchValueTemp = 0;
-			}
-			else {
-				guiprofBest = guiprofTemp;
-				matchValueBest = matchValueTemp;
-			}
-		}
-	}
-
-
-   if ( guiprofBest == 0 ) {
-      // Still no profile found. This should usually not happen. This means one of the following things:
-      // a) The KMix installation is not OK
-      // b) The user has a defective profile in ~/.kde/share/apps/kmix/profiles/
-      // c) It is a Backend that ships no default profile (currently this is only Mixer_SUN and Mixer_PULSE)
-      guiprofBest = fallbackProfile(mixer);
-   }
-//    kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
-
-   return guiprofBest;
-}
-
-
-GUIProfile* MixerToolBox::fallbackProfile(Mixer *mixer)
-{
-   if ( ! s_fallbackProfiles.contains(mixer) ) {
-      GUIProfile *fallback = new GUIProfile();
-
-      ProfProduct* prd = new ProfProduct();
-      prd->vendor         = mixer->getDriverName();
-      prd->productName    = mixer->readableName();
-      prd->productRelease = "1.0";
-      fallback->_products.insert(prd);
-
-      ProfControl* ctl = new ProfControl();
-      ctl->id          = ".*";
-      ctl->regexp      = ".*";   // make sure id matches the regexp
-      ctl->subcontrols = ".*";
-      ctl->show        = "simple";
-      fallback->_controls.push_back(ctl);
-
-      fallback->_soundcardDriver = mixer->getDriverName();
-      fallback->_soundcardName   = mixer->readableName();
-
-      fallback->finalizeProfile();
-      s_fallbackProfiles[mixer] = fallback;
-   }
-   return s_fallbackProfiles[mixer];
-}
 
 #include "mixertoolbox.moc"

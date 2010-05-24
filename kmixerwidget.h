@@ -53,11 +53,15 @@ class KMixerWidget : public QWidget
 
   public:
    explicit KMixerWidget( Mixer *mixer,
-                  QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, KActionCollection* coll = 0 );
+                          QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, GUIProfile* guiprof=0, ProfTab* tab = 0, KActionCollection* coll = 0 );
    ~KMixerWidget();
 
    Mixer *mixer() { return _mixer; }
    ViewBase* currentView();
+   bool generationIsOutdated();
+   static void increaseGeneration();
+   QString id() { return m_id; }
+
    
   signals:
    void toggleMenuBar();
@@ -81,13 +85,17 @@ class KMixerWidget : public QWidget
    QString m_id;
    QSlider *m_balanceSlider;
    QVBoxLayout *m_topLayout; // contains TabWidget and balance slider
-
+   GUIProfile* _guiprof;
+   ProfTab* _tab;
    std::vector<ViewBase*> _views;
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
 
+   int _generation;
+   static int _currentGeneration;
+   
    void createLayout(ViewBase::ViewFlags vflags);
    bool possiblyAddView(ViewBase* vbase);
-   void createViewsByProfile(Mixer* mixer, GUIProfile* guiprof, ViewBase::ViewFlags vflags);
+   void createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, QString tabId, ViewBase::ViewFlags vflags);
 };
 
 #endif

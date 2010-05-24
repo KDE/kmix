@@ -75,9 +75,14 @@ public:
         }
 */
 	QString id;
-	// List of controls, e.g: "rec:1-2,recswitch"
-	// When we start using it, it might be changed into a std::vector in the future.
-	QString subcontrols;
+	
+	void setSubcontrols(QString sctls);
+	bool useSubcontrolPlayback() {return _useSubcontrolPlayback;};
+	bool useSubcontrolCapture() {return _useSubcontrolCapture;};
+	bool useSubcontrolPlaybackSwitch() {return _useSubcontrolPlaybackSwitch;};
+	bool useSubcontrolCaptureSwitch() {return _useSubcontrolCaptureSwitch;};
+	bool useSubcontrolEnum() {return _useSubcontrolEnum;};
+	
 	// In case the vendor ships different products under the same productName
 	QString tab;
 	// Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
@@ -93,14 +98,40 @@ public:
       QColor backgroundColor;
       // For defining the switch type when it is not a standard palyback or capture switch
       QString switchtype;
+
+  private:
+    // List of controls, e.g: "rec:1-2,recswitch"
+    // When we start using it, it might be changed into a std::vector in the future.
+    // THIS IS RAW DATA AS LOADED FROM THE PROFILE. DO NOT USE IT, except for debugging.
+    QString _subcontrols;
+    // The follwoing are the deserialized values of _subcontrols
+    bool _useSubcontrolPlayback;
+    bool _useSubcontrolCapture;
+    bool _useSubcontrolPlaybackSwitch;
+    bool _useSubcontrolCaptureSwitch;
+    bool _useSubcontrolEnum;
+
 };
 
-struct ProfTab
+class ProfTab
 {
-	// Name of the Tab, in english
-	QString name;
-	// Type of the Tab, either "play", "record" or "switches"
-	QString type;
+    public:
+        ProfTab();
+    // Name of the Tab, in english
+    QString name() { return _name; }
+    // ID of the Tab
+    QString id() { return _id; }
+    // Type of the Tab, either "play", "record" or "switches"
+    QString type() { return _type; }
+ 
+    void setName(QString name) { _name = name; _id = name; }  // until we explicitely use ID, lets assign ID the same value as NAME
+    void setId(QString id) { _id = id; }
+    void setType(QString typ) { _type = typ; }
+    
+    private:
+        QString _id;
+        QString _name;
+        QString _type;
 };
 
 struct ProductComparator
@@ -113,10 +144,6 @@ class GUIProfile
 public:
 	GUIProfile();
 	virtual ~GUIProfile();
-
-	void increaseRefcount() { ++_refcount; } ;
-	void decreaseRefcount() { if (_refcount > 0) --_refcount; else kError() << "_refcount already 0"; } ;
-	unsigned int refcount() {return _refcount; } ;
 
 	bool readProfile(QString& ref_fileNamestring, QString ref_fileNameWithoutFullPath);
 	bool finalizeProfile();
@@ -132,9 +159,15 @@ public:
 	//typedef std::map<std::string, std::string, SortedStringComparator> SortedStringSet;
 	//typedef std::map<std::string, std::string> StringMap;
 	ControlSet _controls;
-	std::vector<ProfTab*> _tabs;        // shouldn't be sorted
+	
+    QList<ProfTab*>& tabs() { return _tabs; };
+    QList<ProfTab*> tabs() const { return _tabs; };
 	ProductSet _products;
 
+    static GUIProfile* find(Mixer* mixer, QString preferredProfile);
+    static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
+    static GUIProfile* fallbackProfile(Mixer*);
+    
 	// The values from the <soundcard> tag
 	QString _soundcardDriver;
 	// The driver version: 1000*1000*MAJOR + 1000*MINOR + PATCHLEVEL
@@ -145,7 +178,8 @@ public:
 	unsigned long _generation;
 private:
 	QString _fileNameWithoutFullPath;
-	unsigned int _refcount;
+	QList<ProfTab*> _tabs;        // shouldn't be sorted
+	static QMap<Mixer*,GUIProfile*> s_fallbackProfiles;
 };
 
 std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
@@ -154,7 +188,7 @@ QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 class GUIProfileParser : public QXmlDefaultHandler
 {
 public:
-		GUIProfileParser(GUIProfile& ref_gp);
+		GUIProfileParser(GUIProfile* ref_gp);
 		// Enumeration for the scope
 		enum ProfileScope { NONE, SOUNDCARD };
 		
@@ -171,7 +205,7 @@ private:
 		void splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim);
 
 		ProfileScope _scope;
-		GUIProfile& _guiProfile;
+		GUIProfile* _guiProfile;
 };
 
 #endif //_GUIPROFILE_H_
