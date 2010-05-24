@@ -23,6 +23,7 @@
 #include <klocale.h>
 
 #include "mixdevice.h"
+#include "guiprofile.h"
 #include "volume.h"
 
 static const QString channelTypeToIconName( MixDevice::ChannelType type )
@@ -184,6 +185,14 @@ bool MixDevice::operator==(const MixDevice& other) const
    return ( _id == other._id );
 }
 
+void MixDevice::setControlProfile(ProfControl* control)
+{
+    _profControl = control;
+}
+
+ProfControl* MixDevice::controlProfile() {
+    return _profControl;
+}
 
 /**
  * This methhod is currently only called on "kmixctrl --restore"
