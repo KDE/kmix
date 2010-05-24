@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Service
+Icon=preferences-desktop-keyboard
+Exec=kmixd
+Name=KMixD
+Comment=KMixD Mixer Service
+#X-KDE-autostart-phase=1
+#X-DBUS-StartupType=Unique
+#X-KDE-ServiceTypes=
+#X-KDE-StartupNotify=false
+
+# KDED registration
+X-KDE-ServiceTypes=KDEDModule
+X-KDE-Library=kmixd
+X-KDE-DBus-ModuleName=kmixd
+X-KDE-DBUS-ModuleName=kmixd
+X-KDE-Kded-autoload=true
+OnlyShowIn=KDE;

@@ -68,7 +68,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     mixertoolbox.cpp 
     mixer_backend.cpp 
     kmixdevicemanager.cpp
-    guiprofile.cpp
+#    guiprofile.cpp
     )
 # 
 # # guiprofile.cpp should NOT be in kmixd. !!!
