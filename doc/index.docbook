@@ -51,7 +51,7 @@
 <legalnotice>&FDLNotice;</legalnotice>
 
 <date>2010-02-18</date>
-<releaseinfo>3.0</releaseinfo>
+<releaseinfo>3.7</releaseinfo>
 
 <abstract>
 <para>&kmix; is an application that allows you to change the volume of your sound card.</para>
@@ -140,7 +140,7 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <shortcut>
-<keycombo action="simul">&Alt;<keycap>F</keycap></keycombo>
+<keycombo action="simul">&Esc;</keycombo>
 </shortcut>
 <guimenu>File</guimenu>
 <guimenuitem>Hide Mixer Window</guimenuitem>
@@ -168,10 +168,7 @@ soundcards.</para>-->
 <variablelist>
 <varlistentry>
 <term><menuchoice>
-<shortcut>
-<keycombo action="simul">&Alt;<keycap>S</keycap></keycombo>
-</shortcut>
-<guimenu>File</guimenu>
+<guimenu>Settings</guimenu>
 <guimenuitem>Configure Channels...</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Configure audio channels</action></para></listitem>
