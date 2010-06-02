@@ -143,7 +143,7 @@ void KMixWindow::initActionsLate()
   if ( m_autouseMultimediaKeys ) {
     KAction* globalAction = actionCollection()->addAction("increase_volume");
     globalAction->setText(i18n("Increase Volume"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp), ( KAction::ShortcutTypes)( KAction::ActiveShortcut |  KAction::DefaultShortcut),  KAction::NoAutoloading);
+    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
     connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
 
     globalAction = actionCollection()->addAction("decrease_volume");
