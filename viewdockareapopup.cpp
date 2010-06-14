@@ -119,10 +119,10 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
     MixDeviceWidget *mdw = new MDWSlider(
       md,		  // only 1 device. This is actually _dockDevice
       true,         // Show Mute LED
-      false,        // Show Record LED
-      false,        // Small
+      false,         // Show Record LED
 					 true, // include plaback sliders
-					 true, // include capture sliders
+					 false, // include capture sliders
+      false,        // Small
       Qt::Vertical, // Direction: only 1 device, so doesn't matter
       this,         // parent
       0             // Is "NULL", so that there is no RMB-popup

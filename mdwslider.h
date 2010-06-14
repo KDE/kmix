@@ -58,11 +58,13 @@ public:
 	       bool showMuteLED, bool showRecordLED,
 	       bool includePlayback, bool includeCapture,
 	       bool small, Qt::Orientation,
-	       QWidget* parent = 0, ViewBase* mw = 0);
+	       QWidget* parent = 0, ViewBase* view = 0);
     ~MDWSlider() { }
 
     void addActionToPopup( KAction *action );
-
+    void createActions();
+    void createShortcutActions(ViewBase* view = 0);
+    
     // GUI
     bool isStereoLinked() const { return m_linked; }
     void setStereoLinked( bool value );

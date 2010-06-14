@@ -433,7 +433,7 @@ void KMixWindow::recreateGUI(bool saveConfig)
    if (saveConfig)
       saveViewConfig();  // save the state before recreating
 
-      // Start a new generation now. This shows whether we alteady have recreated the
+    // Start a new generation now. This shows whether we already have recreated the
    // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
    KMixerWidget::increaseGeneration();
 
@@ -445,13 +445,14 @@ void KMixWindow::recreateGUI(bool saveConfig)
             // FUTURE DIRECTIONS: This could return a list of profiles per Card
             QString profileStr = config.readEntry(mixerProfileKey, "default");
             qDebug() << "Now searching for profile: " << profileStr;
-            GUIProfile* guiprof = GUIProfile::find(mixer, profileStr);
+            // FUTURE DIRECTIONS: If working with a list, use "false" as last arg (except in the last loop iteration as last resort)
+            GUIProfile* guiprof = GUIProfile::find(mixer, profileStr, true);
 
             QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
             for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it)
             {
                 ProfTab* tab = *it;
-                KMixerWidget* kmw = findKMWforTab(tab->id());
+                KMixerWidget* kmw = findKMWforTab(guiprof->getId());
                 if ( kmw == 0 ) {
                     // does not yet exist => create
                     addMixerWidget(mixer->id(), guiprof, tab, -1);

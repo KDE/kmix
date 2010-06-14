@@ -36,8 +36,8 @@
 // KMix
 #include "mixer.h"
 
-QMap<Mixer*,GUIProfile*> GUIProfile::s_fallbackProfiles;
-
+//QMap<Mixer*,GUIProfile*> GUIProfile::s_fallbackProfiles;
+QMap<QString, GUIProfile*> GUIProfile::s_profiles;
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
     return ( s1 < s2 );
@@ -73,106 +73,158 @@ bool ProductComparator::operator()(const ProfProduct* p1, const ProfProduct* p2)
 	}
 }
 
-GUIProfile::GUIProfile() 
+GUIProfile::GUIProfile()
 {
+    _dirty = false;
 }
 
 GUIProfile::~GUIProfile()
 {
+    kError() << "Thou shalt not delete any GUI profile. This message is only OK, when quitting KMix"; 
     qDeleteAll(_controls);
     qDeleteAll(_tabs);
     qDeleteAll(_products);
 }
 
 
-GUIProfile* GUIProfile::find(Mixer* mixer, QString preferredProfile)
+void GUIProfile::setId(QString id)
 {
-    // @todo First search in internal list
-    //       If not found, load from disk via selectProfileFromXMLfiles(), and store in internal list.
-    return selectProfileFromXMLfiles(mixer, preferredProfile);
+    _id = id;
+}
+
+QString GUIProfile::getId()
+{
+    return _id;
+}
+
+bool GUIProfile::isDirty() {
+    return _dirty;
 }
 
 /**
-Returns a GUI Profile
-*/
-GUIProfile* GUIProfile::selectProfileFromXMLfiles(Mixer* mixer, QString preferredProfile)
+ * Build a profile name. Suitable to use as primary key and to build filenames.
+ * @par driverName The driver name of the backend, e.g. "ALSA" or "OSS"
+ * @par cardName    The card name as delivered by the driver. Use the String "any" for the standard (card-unspecific) profile
+ */
+QString GUIProfile::buildProfileName(QString driverName, QString cardName, QString profileName)
 {
-    /** This is a two-step process *****************************************
-    * (1) Build a list of all files we want to check
-    * (2) Evaluate all files and keep the best
-    ***********************************************************************/
-    
-    GUIProfile* guiprofBest = 0;
-    unsigned long matchValueBest = 0;
-    unsigned long matchValueTemp = 0;
-    
-    QString userProfileDir = KStandardDirs::locateLocal("appdata", "profiles/" );
-    
-    QString mixerNameSpacesToUnderscores = mixer->baseName();
-    mixerNameSpacesToUnderscores.replace(" ","_");
-    
-    // (1) User profile Directory
-    QDir dir(userProfileDir);
-    dir.setFilter(QDir::Files);
-    dir.setNameFilters(QStringList(mixer->getDriverName() + "." + mixerNameSpacesToUnderscores + "*.xml"));
-    QFileInfoList fileList = dir.entryInfoList();
-    
-    QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
-    
-    // (2) Default profile for Soundcard Driver (usually from system Directory)
-    QString fileName = fileNamePrefix + "default.xml";
-    QString fileNameFQ;
-    fileNameFQ = KStandardDirs::locate("appdata", fileName );
-    kDebug() << fileName << "; fnfq1=" << fileNameFQ;
-    if (!fileNameFQ.isEmpty())
-        fileList.insert(0, QFileInfo(fileNameFQ));
-    
-    // (3) Soundcard specific profile (usually from system Directory)
-    fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
-    fileNameFQ = KStandardDirs::locate("appdata", fileName );
-    kDebug() << fileName << "; fnfq2=" << fileNameFQ;
-    if (!fileNameFQ.isEmpty())
-        fileList.insert(0, QFileInfo(fileNameFQ));
-    
-    
-    
-    for (int i = 0; i < fileList.size(); ++i) {
-        QFileInfo fileInfo = fileList.at(i);
-        QString fileNameAbs = fileInfo.absoluteFilePath();
-        QString fileNameRelToProfile = "profiles/" + fileInfo.fileName();
-        kDebug() << ": Read profile #" << i << ": " << fileNameAbs;
-        GUIProfile* guiprofTemp = new GUIProfile();
-        if ( guiprofTemp->readProfile(fileNameAbs, fileNameRelToProfile) ) {
-            matchValueTemp = guiprofTemp->match(mixer);
-            if ( matchValueTemp < matchValueBest ) {
-                //delete guiprofTemp;
-                guiprofTemp = 0;
-                matchValueTemp = 0;
+    QString fname(driverName);
+    fname += "." + cardName + "." + profileName;
+    fname.replace(" ","_");
+    return fname;
+}
+
+/**
+ * Finds the correct profile for the given mixer.
+ * If already loaded from disk, returns the cached version.
+ * Otherwise load profile from disk.
+ *
+ * @arg mixer         The mixer
+ * @arg profileName   The profile name (e.g. "capture", "playback", "my-cool-profile", or "any"
+ * @arg allowFallback If set to true, a Fallback profile will be generated if no matchibg profile could be found
+ * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
+ */
+GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallback)
+{
+    GUIProfile* guiprof = 0;
+    QString requestedProfileName = buildProfileName(mixer->getDriverName(), mixer->id(), profileName);
+    if ( s_profiles.contains(requestedProfileName) ) {
+        guiprof = s_profiles.value(requestedProfileName);  // Cached
+    }
+    else {
+        guiprof = loadProfileFromXMLfiles(mixer, profileName);  // Load from XML
+        if ( guiprof != 0 ) {
+            // OK, loaded
+        }
+        else
+        {
+            if ( allowFallback ) {
+                guiprof = fallbackProfile(mixer);
+                kDebug() << "Generate fallback profile:" << guiprof;
             }
-            else {
-                guiprofBest = guiprofTemp;
-                matchValueBest = matchValueTemp;
+        }
+        
+        if ( guiprof != 0 ) {
+            if ( guiprof->getId().isEmpty() ) {
+                guiprof->setId(requestedProfileName);
             }
+            addProfile(guiprof);
         }
     }
     
+
     
-    if ( guiprofBest == 0 ) {
-        // Still no profile found. This should usually not happen. This means one of the following things:
-        // a) The KMix installation is not OK
-        // b) The user has a defective profile in ~/.kde/share/apps/kmix/profiles/
-        // c) It is a Backend that ships no default profile (currently this is only Mixer_SUN and Mixer_PULSE)
-        guiprofBest = fallbackProfile(mixer);
-    }
-    //    kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+    return guiprof;
+}
+
+/*
+ * Add the profile to the internal list of profiles (Profile caching).
+ * As this means that the profile is new, the "dirty" flag gets cleared.
+ */
+void GUIProfile::addProfile(GUIProfile* guiprof)
+{
+    guiprof->_dirty = false;
+    s_profiles[guiprof->getId()] = guiprof;
+    kDebug() << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
     
-    return guiprofBest;
 }
 
 
+
+
+/**
+ * Loads a GUI Profile from disk (xml profile file).
+ * It tries to load the Soundcard specific file first (a).
+ * If it doesn't exist, it will load the default profile corresponding to the soundcard driver (b).
+ */
+GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileName)
+{
+    GUIProfile* guiprof = 0;
+    QString fileName, fileNameFQ, guiProfID;
+    
+    // (a) Soundcard specific profile
+    guiProfID = buildProfileName(mixer->getDriverName(), mixer->id(), profileName) ;
+    fileName = "profiles/" + guiProfID + ".xml";
+    fileNameFQ = KStandardDirs::locate("appdata", fileName );
+    kDebug() << "fileName=" <<fileName<< "fileNameFQ=" <<fileNameFQ;
+    guiprof = tryLoadProfileFromXMLfile(fileNameFQ, mixer);
+    
+    if ( guiprof == 0 ) {
+        // (b) Default profile
+        guiProfID = buildProfileName(mixer->getDriverName(),"any", profileName);
+        fileName = "profiles/" + guiProfID + ".xml";
+        fileNameFQ = KStandardDirs::locate("appdata", fileName );
+        kDebug() << "fileName=" <<fileName<< "fileNameFQ=" <<fileNameFQ;
+        guiprof = tryLoadProfileFromXMLfile(fileNameFQ, mixer);
+    }
+    
+    if ( guiprof != 0 ) {
+        guiprof->setId(guiProfID);
+    }
+    return guiprof;
+}
+
+
+/**
+ * Internal helper for GUIProfile::loadProfileFromXMLfiles()
+ */
+GUIProfile* GUIProfile::tryLoadProfileFromXMLfile(QString fname, Mixer *mixer)
+{
+    kDebug() << ": Read profile #" << fname;
+    GUIProfile *guiprof = new GUIProfile();
+    if ( guiprof->readProfile(fname) && ( guiprof->match(mixer) > 0) ) {
+        // loaded
+    }
+    else {
+        delete guiprof; // not good (e.g. Parsing error => drop this profile silently)
+        guiprof = 0;
+    }
+    
+    return guiprof;
+}
+
 GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
 {
-    if ( ! s_fallbackProfiles.contains(mixer) ) {
         GUIProfile *fallback = new GUIProfile();
         
         ProfProduct* prd = new ProfProduct();
@@ -193,56 +245,49 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
         fallback->_soundcardName   = mixer->readableName();
         
         fallback->finalizeProfile();
-        s_fallbackProfiles[mixer] = fallback;
-    }
-    return s_fallbackProfiles[mixer];
+        return fallback;
 }
 
 
-/*
- * ref_fileName: Full qualified filename (with path)
- * ref_fileNameWithoutFullPath: Filename with "local path" only, typically "profiles/ALSA.default.xml"
+/**
+ * Fill the profile with the data from the given XML profile file.
+ * @par  ref_fileName: Full qualified filename (with path).
+ * @return bool True, if the profile was succesfully created. False if not (e.g. parsing error).
  */
-bool GUIProfile::readProfile(QString& ref_fileName, QString ref_fileNameWithoutFullPath)
+bool GUIProfile::readProfile(QString& ref_fileName)
 {
-	QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-	_fileNameWithoutFullPath = ref_fileNameWithoutFullPath;
-	_fileNameWithoutFullPath.replace("::", ".");
-	_fileNameWithoutFullPath.replace(":", ".");
-   kDebug() << "Read profile:" << _fileNameWithoutFullPath << " => "  << ref_fileName ;
+    QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
+    kDebug() << "Read profile:" << ref_fileName ;
+    QFile xmlFile( ref_fileName );
+    QXmlInputSource source( &xmlFile );
+    GUIProfileParser* gpp = new GUIProfileParser(this);
+    xmlReader->setContentHandler(gpp);
+    bool ok = xmlReader->parse( source );
 
-	QFile xmlFile( ref_fileName );
-	QXmlInputSource source( &xmlFile );
-	GUIProfileParser* gpp = new GUIProfileParser(this);
-	xmlReader->setContentHandler(gpp);
-	bool ok = xmlReader->parse( source );
-
-        //std::cout << "Raw Profile: " << *this;
-	if ( ok ) {
-      ok = finalizeProfile();
-   } // Read OK
-   else {
-      // !! this error message about faulty profiles should probably be surrounded with i18n()
-      kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
-   }
-   delete gpp;
-   delete xmlReader;
+    //std::cout << "Raw Profile: " << *this;
+    if ( ok ) {
+        ok = finalizeProfile();
+    } // Read OK
+    else {
+        // !! this error message about faulty profiles should probably be surrounded with i18n()
+        kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
+    }
+    delete gpp;
+    delete xmlReader;
    
-   return ok;
+    return ok;
 }
 
 
 bool GUIProfile::writeProfile(QString& fname)
 {
    bool ret = false;
-   QString fileNameFQ;
-   _fileNameWithoutFullPath = "profiles/" + fname + ".xml";
-   _fileNameWithoutFullPath.replace("::", ".");
-   _fileNameWithoutFullPath.replace(":", ".");
-   fileNameFQ = KStandardDirs::locateLocal("appdata", _fileNameWithoutFullPath, true );
-//    fileNameFQ = KStandardDirs::locateLocal("appdata", _fileNameWithoutFullPath, true );
+   QString fileName, fileNameFQ;
+   fileName = "profiles/" + getId() + ".xml";
+   fileName.replace(":", ".");
+   fileNameFQ = KStandardDirs::locateLocal("appdata", fileName, true );
 
-   kDebug() << "Write profile:" << _fileNameWithoutFullPath << " => "  << fileNameFQ ;
+   kDebug() << "Write profile:" << fileNameFQ ;
    QFile f(fileNameFQ);
    if ( f.open(QIODevice::WriteOnly | QFile::Truncate) )
    { 
@@ -437,6 +482,7 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 	} // for all controls
 	os << endl;
 
+    /*
         QList<ProfTab*>::const_iterator it = guiprof.tabs().begin();
 	for ( ; it != guiprof.tabs().end(); ++it) {
 		ProfTab* profTab = *it;
@@ -444,7 +490,7 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
                 os << " />" << endl;
 	} // for all tabs
 	os << endl;
-
+*/
 	os << "</soundcard>" << endl;
 // kDebug() << "EXIT  QTextStream& operator<<";
 	return os;

@@ -5,6 +5,7 @@
 	   name="*"
 	   type="*"
 	   generation="2"
+	   id="default"
 >
 <!-- Example from above:
      Driver     : ALSA, Versions 1.2.5 and newer.

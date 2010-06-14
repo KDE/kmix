@@ -64,99 +64,100 @@ static const int MIN_SLIDER_SIZE = 50;
  */
 MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 		     bool includePlayback, bool includeCapture, 
-                     bool small, Qt::Orientation orientation, QWidget* parent, ViewBase* mw) :
-	MixDeviceWidget(md,small,orientation,parent,mw),
+                     bool small, Qt::Orientation orientation, QWidget* parent, ViewBase* view) :
+	MixDeviceWidget(md,small,orientation,parent,view),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
        muteButtonSpacing(false), captureLEDSpacing(false), m_moveMenu(0)
 {
-    _mdwMoveActions = new KActionCollection( this );
+    createActions();
+    createWidgets( showMuteLED, showCaptureLED, includePlayback, includeCapture );
+    createShortcutActions(view);
+    installEventFilter( this ); // filter for popup
+    update();
+}
 
-	// create actions (on _mdwActions, see MixDeviceWidget)
 
-	KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
-	taction->setText( i18n("&Split Channels") );
-	connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
-	KAction *action = _mdwActions->add<KToggleAction>( "hide" );
-	action->setText( i18n("&Hide") );
-	connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
+void MDWSlider::createActions()
+{
+    // create actions (on _mdwActions, see MixDeviceWidget)
+    KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
+    taction->setText( i18n("&Split Channels") );
+    connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
+    KAction *action = _mdwActions->add<KToggleAction>( "hide" );
+    action->setText( i18n("&Hide") );
+    connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
 
-	if( m_mixdevice->playbackVolume().hasSwitch() ) {
-		taction = _mdwActions->add<KToggleAction>( "mute" );
-		taction->setText( i18n("&Muted") );
-		connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleMuted() ) );
-	}
+    if( m_mixdevice->playbackVolume().hasSwitch() ) {
+        taction = _mdwActions->add<KToggleAction>( "mute" );
+        taction->setText( i18n("&Muted") );
+        connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleMuted() ) );
+    }
 
-	if( m_mixdevice->captureVolume().hasSwitch() ) {
-		taction = _mdwActions->add<KToggleAction>( "recsrc" );
-		taction->setText( i18n("Set &Record Source") );
-		connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleRecsrc() ) );
-	}
+    if( m_mixdevice->captureVolume().hasSwitch() ) {
+        taction = _mdwActions->add<KToggleAction>( "recsrc" );
+        taction->setText( i18n("Set &Record Source") );
+        connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleRecsrc() ) );
+    }
 
-	if( m_mixdevice->isMovable() ) {
-		m_moveMenu = new KMenu( i18n("Mo&ve"), this);
-		connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT( showMoveMenu()) );
-	}
+    if( m_mixdevice->isMovable() ) {
+        m_moveMenu = new KMenu( i18n("Mo&ve"), this);
+        connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT( showMoveMenu()) );
+    }
 
-	action = _mdwActions->addAction( "keys" );
-	action->setText( i18n("C&onfigure Shortcuts...") );
-	connect( action, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
+    action = _mdwActions->addAction( "keys" );
+    action->setText( i18n("C&onfigure Shortcuts...") );
+    connect( action, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
+}
 
-	// create widgets
-	createWidgets( showMuteLED, showCaptureLED, includePlayback, includeCapture );
+void MDWSlider::createShortcutActions(ViewBase* view)
+{
+    // The following actions are for the "Configure Shortcuts" dialog
+    /* PLEASE NOTE THAT global shortcuts are saved with the name as set with setName(), instead of their action name.
+        This is a bug according to the thread "Global shortcuts are saved with their text-name and not their action-name - Bug?" on kcd.
+        I work around this by using a text with setText() that is unique, but still readable to the user.
+    */
+    QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName() ).arg( mixDevice()->mixer()->readableName() );
+    KAction *b;
 
-	// The following actions are for the "Configure Shortcuts" dialog
-	/* PLEASE NOTE THAT global shortcuts are saved with the name as set with setName(), instead of their action name.
-	   This is a bug according to the thread "Global shortcuts are saved with their text-name and not their action-name - Bug?" on kcd.
-	   I work around this by using a text with setText() that is unique, but still readable to the user.
-	 */
-	QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName() ).arg( mixDevice()->mixer()->readableName() );
-	KAction *b;
+    b = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );
+    QString increaseVolumeName = i18n( "Increase Volume" );
+    increaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
+    b->setText( increaseVolumeName  );
+    #ifdef __GNUC__
+    #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
+    #endif
+    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+    //   b->enableGlobalShortcut();
+    connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
 
-	b = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );
-	QString increaseVolumeName = i18n( "Increase Volume" );
-	increaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
-	b->setText( increaseVolumeName  );
-#ifdef __GNUC__
-#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
-#endif
-	b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
-	//   b->enableGlobalShortcut();
-	connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
+    b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
+    QString decreaseVolumeName = i18n( "Decrease Volume" );
+    decreaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
+    b->setText( decreaseVolumeName );
+    #ifdef __GNUC__
+    #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
+    #endif
+    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+    //   b->enableGlobalShortcut();
+    connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
 
-	b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
-	QString decreaseVolumeName = i18n( "Decrease Volume" );
-	decreaseVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
-	b->setText( decreaseVolumeName );
-#ifdef __GNUC__
-#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
-#endif
-	b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
-	//   b->enableGlobalShortcut();
-	connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
-
-	b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
-	QString muteVolumeName = i18n( "Toggle Mute" );
-	muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
-	b->setText( muteVolumeName );
-#ifdef __GNUC__
-#warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
-#endif
-	b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
-	//   b->enableGlobalShortcut();
-
-	connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );
-	if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
-	/*
-	   b = _mdwActions->addAction( "Set Record Source" );
-	   b->setText( i18n( "Set Record Source" ) );
-	   connect(b, SIGNAL(triggered(bool) ), SLOT( toggleRecsrc() ));
-	 */
-	installEventFilter( this ); // filter for popup
-
-	update();
+    b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
+    QString muteVolumeName = i18n( "Toggle Mute" );
+    muteVolumeName += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
+    b->setText( muteVolumeName );
+    #ifdef __GNUC__
+    #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
+    #endif
+    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+    //   b->enableGlobalShortcut();
+    connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );
+    
+    // @todo: The following has been added for an unknown reason. Have to check this. - cesken
+    //        Is there a reason why it is only done for Mute and not Volume Up/down?
+    if (view) view->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
 }
 
 
@@ -476,6 +477,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 		ref_slidersP      = &m_slidersCapture;
 	}
 	else { // playback
+	  
 		volP              = &m_mixdevice->playbackVolume();
 		ref_slidersChidsP = &_slidersChidsPlayback;
 		ref_slidersP      = &m_slidersPlayback;
