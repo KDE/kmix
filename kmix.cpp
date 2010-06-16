@@ -436,48 +436,72 @@ void KMixWindow::recreateGUI(bool saveConfig)
     // Start a new generation now. This shows whether we already have recreated the
    // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
    KMixerWidget::increaseGeneration();
+   Mixer::increaseGeneration();
+   
+    // *** RECREATE THE ALREADY EXISTING TABS **********************************
+    
+    
+    
+    QMap<QString, GUIProfile*>::const_iterator itEnd = GUIProfile::getProfiles().end();
+    
+    
+    
+    QMap<QString, GUIProfile*>::const_iterator it    = GUIProfile::getProfiles().begin();
+    
+    
+    
+    for (  ; it != itEnd; ++it)
+    {
+        const QString& guiprofKey = it.key();
+        GUIProfile* guiprof = it.value();
+        KMixerWidget* kmw = findKMWforTab(guiprof->getId());
+        Mixer *mixer =  MixerToolBox::instance()->find( guiprof->getMixerId() );
+        if ( mixer == 0 ) {
+            kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
+            continue;
+        }
+        if ( kmw == 0 ) {
+            // does not yet exist => create
+            addMixerWidget(mixer->id(), guiprof, -1);
+            mixer->updateGeneration();
+        }
+        else {
+            if ( kmw->generationIsOutdated() ) {
+                // not yet regenerated => regenerate
+                int indexOfTab =  m_wsMixers->indexOf(kmw);
+                if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
+                delete kmw;
+                addMixerWidget(mixer->id(), guiprof, indexOfTab);
+                mixer->updateGeneration();
+            }
+        }
+    } // Loop over all GUIProfile's
 
-    if ( Mixer::mixers().count() > 0 ) {
-        for (int i=0; i<Mixer::mixers().count(); ++i) {
-            Mixer *mixer = (Mixer::mixers())[i];
-            KConfigGroup config(KGlobal::config(), "Profiles");
+
+    // *** ADD TABS FOR Mixer instances that have no tab yet **********************************
+    KConfigGroup pconfig(KGlobal::config(), "Profiles");
+    for (int i=0; i<Mixer::mixers().count(); ++i) {
+        Mixer *mixer = (Mixer::mixers())[i];
+        if ( mixer->generationIsOutdated() ) {
+            mixer->updateGeneration();
+            // No TAB YET => Either KMix is just started, or the user has added another GUIProfile
             QString mixerProfileKey(mixer->id());
             // FUTURE DIRECTIONS: This could return a list of profiles per Card
-            QString profileStr = config.readEntry(mixerProfileKey, "default");
+            QString profileStr = pconfig.readEntry(mixerProfileKey, "default");
             qDebug() << "Now searching for profile: " << profileStr;
             // FUTURE DIRECTIONS: If working with a list, use "false" as last arg (except in the last loop iteration as last resort)
             GUIProfile* guiprof = GUIProfile::find(mixer, profileStr, true);
-
-            QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
-            for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it)
-            {
-                ProfTab* tab = *it;
-                KMixerWidget* kmw = findKMWforTab(guiprof->getId());
-                if ( kmw == 0 ) {
-                    // does not yet exist => create
-                    addMixerWidget(mixer->id(), guiprof, tab, -1);
-                }
-                else {
-                    if ( kmw->generationIsOutdated() ) {
-                        // not yet regenerated => regenerate
-                        int indexOfTab =  m_wsMixers->indexOf(kmw);
-                        if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
-                        delete kmw;
-                        addMixerWidget(mixer->id(), guiprof, tab, indexOfTab);
-                    }
-                    else {
-                        kError() << "Multiple profiles during recreateGUI() are NOT supported yet";
-                    }
-                }
-            } // iterate tabs of profile
-	} // iterate Mixers
-	
+            addMixerWidget(mixer->id(), guiprof, -1);
+        } // outdated means, that it does not have a tab yet
+    }
 
     bool dockingSucceded = updateDocking();
     if ( !dockingSucceded && Mixer::mixers().count() > 0 )
+    {
         show(); // avoid invisible and unaccessible main window
     }
-    else {
+    else
+    {
         // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.   
         updateDocking();  // -<- removes the DockIcon
         hide();
@@ -650,7 +674,8 @@ void KMixWindow::clearMixerWidgets()
 
 
 
-void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition)
+//void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition)
+void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition)
 {
 //    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
    Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
@@ -669,14 +694,17 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, Pr
       }
 
 
-      KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, profileTab, actionCollection() );
-
+        //KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, profileTab, actionCollection() );
+        KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, actionCollection() );
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
       bool isFirstTab = m_wsMixers->count() == 0;
+      
       QString tabLabel(kmw->mixer()->readableName());
       tabLabel += ": ";
-      tabLabel += profileTab->name();
+      tabLabel += guiprof->getId(); // @todo This shoud be a readable name !!! Also this name is possibly ad when using Pulesaudio => Check with Colin
+      
+      
       if ( insertPosition == -1 )
           m_wsMixers->addTab( kmw, tabLabel );
       else
