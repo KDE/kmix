@@ -45,7 +45,6 @@
 #include "mdwslider.h"
 #include "mixer.h"
 #include "viewbase.h"
-#include "kledbutton.h"
 #include "ksmallslider.h"
 #include "verticaltext.h"
 #include "mdwmoveaction.h"
@@ -321,21 +320,12 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 		//capture button
 		if ( showCaptureLED  && m_mixdevice->captureVolume().hasSwitch() )
 		{
-//			m_captureLED =  new KLedButton(Qt::red,this);
-//			m_captureLED->setFixedSize(16, 16 );
-//			m_captureLED->installEventFilter( this );
-//			controlLayout->addWidget( m_captureLED, 0, Qt::AlignHCenter );
-//			connect( m_captureLED, SIGNAL( stateChanged(bool) ), this, SLOT( setRecsrc(bool) ) );
-//			QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
-//			m_captureLED->setToolTip( muteTip );
-
 			m_captureCheckbox = new QCheckBox( i18n("capture") , this);
 			m_captureCheckbox->installEventFilter( this );
 			controlLayout->addWidget( m_captureCheckbox, 0, Qt::AlignHCenter );
 			connect( m_captureCheckbox, SIGNAL( toggled(bool)), this, SLOT( setRecsrc(bool) ) );
 			QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
 			m_captureCheckbox->setToolTip( muteTip );
-
 		}
 
 		// spacer which is shown when no capture button present
@@ -385,15 +375,6 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 
 		if ( showCaptureLED  && m_mixdevice->captureVolume().hasSwitch() )
 		{
-
-//			m_captureLED =  new KLedButton(Qt::red,this);
-//			m_captureLED->setFixedSize(16, 16 );
-//			controlLayout->addWidget( m_captureLED );
-//			m_captureLED->installEventFilter( this );
-//			connect( m_captureLED, SIGNAL( stateChanged(bool) ), this, SLOT( setRecsrc(bool) ) );
-//			QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
-//			m_captureLED->setToolTip( muteTip );  // @todo: Whatsthis, explaining the device
-
 			m_captureCheckbox = new QCheckBox( i18n("capture") , this);
 			m_captureCheckbox->installEventFilter( this );
 			row1->addWidget( m_captureCheckbox);

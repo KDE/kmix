@@ -41,7 +41,6 @@
 #include "mixdevicewidget.h"
 #include "mixertoolbox.h"
 #include "viewbase.h"
-#include "kledbutton.h"
 #include "ksmallslider.h"
 #include "verticaltext.h"
 

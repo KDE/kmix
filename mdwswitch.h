@@ -30,7 +30,7 @@
 class QBoxLayout;
 class QLabel;
 
-class KLedButton;
+class QCheckBox;
 class KAction;
 
 class MixDevice;
@@ -72,7 +72,7 @@ private:
 
    QLabel        *_label;
    VerticalText  *_labelV;
-   KLedButton    *_switchLED;
+   QCheckBox    *_switchLED;
    QBoxLayout    *_layout;
 };
 

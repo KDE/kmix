@@ -34,7 +34,6 @@
 #include <ktoggleaction.h>
 #include <kactioncollection.h>
 
-#include "kledbutton.h"
 #include "mdwswitch.h"
 #include "mixer.h"
 #include "viewbase.h"
@@ -95,11 +94,11 @@ void MDWSwitch::createWidgets()
    // --- LEDS --------------------------
    if ( _orientation == Qt::Vertical ) {
       if( m_mixdevice->captureVolume().hasSwitch() )
-         _switchLED = new KLedButton( Qt::red,
+         _switchLED = new QCheckBox( Qt::red,
                m_mixdevice->isRecSource()?KLed::On:KLed::Off,
                KLed::Sunken, KLed::Circular, this, "RecordLED" );
       else
-         _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
+         _switchLED = new QCheckBox( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
          _switchLED->setFixedSize(16,16);
          _labelV = new VerticalText( this, m_mixdevice->readableName().toUtf8().data() );
 
@@ -113,11 +112,11 @@ void MDWSwitch::createWidgets()
       else
       {
       if( m_mixdevice->captureVolume().hasSwitch() )
-         _switchLED = new KLedButton( Qt::red,
+         _switchLED = new QCheckBox( Qt::red,
                m_mixdevice->isRecSource()?KLed::On:KLed::Off,
                KLed::Sunken, KLed::Circular, this, "RecordLED" );
       else
-         _switchLED = new KLedButton( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
+         _switchLED = new QCheckBox( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
          _switchLED->setFixedSize(16,16);
          _label  = new QLabel(m_mixdevice->readableName(), this );
          _label->setObjectName("SwitchName");

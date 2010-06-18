@@ -34,8 +34,6 @@ class QBoxLayout;
 class QToolButton;
 class QLabel;
 
-class KLed;
-class KLedButton;
 class KAction;
 class KMenu;
 #include <kshortcut.h>
@@ -146,7 +144,6 @@ private:
     QWidget *m_extraCaptureLabel; // extra capture label (if you got playback AND capture on the same control)
 	QLabel *m_label; // is either QLabel or VerticalText
     
-//	KLedButton* m_captureLED;
 	QCheckBox* m_captureCheckbox;
     QLabel* m_captureText;
 
