@@ -56,15 +56,13 @@ int KMixerWidget::_currentGeneration = 1;
    (b) A balancing slider : This will be moved to ViewSliders.
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
-                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags, GUIProfile* guiprof,
-                            //ProfTab* tab,
+                            QWidget * parent, ViewBase::ViewFlags vflags, GUIProfile* guiprof,
                             KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
      m_topLayout(0), _guiprof(guiprof),
      //_tab(tab), 
      _actionCollection(actionCollection)
 {
-   setObjectName(name);
    m_id = guiprof->getId();
 //   _guiprof = 0;
    _generation = _currentGeneration;

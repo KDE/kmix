@@ -53,7 +53,7 @@ class KMixerWidget : public QWidget
 
   public:
    explicit KMixerWidget( Mixer *mixer,
-                          QWidget *parent=0, const char *name=0, ViewBase::ViewFlags vflags=0, GUIProfile* guiprof=0, KActionCollection* coll = 0 );
+                          QWidget *parent=0, ViewBase::ViewFlags vflags=0, GUIProfile* guiprof=0, KActionCollection* coll = 0 );
    ~KMixerWidget();
 
    Mixer *mixer() { return _mixer; }

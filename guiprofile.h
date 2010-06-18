@@ -158,7 +158,17 @@ class GUIProfile
     static GUIProfile* find(Mixer* mixer, QString profileName, bool allowFallback);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
-    
+
+    QString getName() const
+    {
+        return _name;
+    }
+
+    void setName(QString _name)
+    {
+        this->_name = _name;
+    }
+
     // The values from the <soundcard> tag
     QString _soundcardDriver;
     // The driver version: 1000*1000*MAJOR + 1000*MINOR + PATCHLEVEL
@@ -178,6 +188,7 @@ private:
     static QMap<QString, GUIProfile*> s_profiles;
     
     QString _id;
+    QString _name;
     QString _mixerId;
     bool _dirty;
 };

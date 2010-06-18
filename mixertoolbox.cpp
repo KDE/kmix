@@ -311,27 +311,6 @@ void MixerToolBox::deinitMixer()
    // kDebug(67100) << "OUT MixerToolBox::deinitMixer()";
 }
 
-/*
- * Find a Mixer. If there is no mixer with the given id, 0 is returned
- */
-Mixer* MixerToolBox::find( const QString& mixer_id)
-{
-   //kDebug(67100) << "IN MixerToolBox::find()";
-
-   Mixer* mixer = 0;
-   int mixerCount = Mixer::mixers().count();
-   for ( int i=0; i<mixerCount; ++i)
-   {
-      if ( ((Mixer::mixers())[i])->id() == mixer_id )
-      {
-         mixer = (Mixer::mixers())[i];
-         break;
-      }
-   }
-
-   return mixer;
-   // kDebug(67100) << "OUT MixerToolBox::find()";
-}
 
 /*
 KLocale* MixerToolBox::whatsthisControlLocale()

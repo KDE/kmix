@@ -67,101 +67,101 @@
  * Constructs a mixer window (KMix main window)
  */
 KMixWindow::KMixWindow(bool invisible)
-   : KXmlGuiWindow(0, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) ),
-   m_showTicks( true ),
-//   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
-//   m_visibilityUpdateAllowed( true ),
-   m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
-   m_dockWidget(),
-   m_dontSetDefaultCardOnStart (false),
-   _dockAreaPopup(0)
+: KXmlGuiWindow(0, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) ),
+  m_showTicks( true ),
+  //   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
+  //   m_visibilityUpdateAllowed( true ),
+  m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
+  m_dockWidget(),
+  m_dontSetDefaultCardOnStart (false),
+  _dockAreaPopup(0)
 {
     setObjectName("KMixWindow");
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
 
-   initActions(); // init actions first, so we can use them in the loadConfig() already
-   loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
-   initActionsLate(); // init actions that require a loaded config
-   KGlobal::locale()->insertCatalog("kmix-controls");
-   initWidgets();
-   initPrefDlg();
-   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
-   KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
-   recreateGUI(false);
-   fixConfigAfterRead();
-   theKMixDeviceManager->initHotplug();
-   connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
-   connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
-   if ( m_startVisible && ! invisible)
-      show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it
+    initActions(); // init actions first, so we can use them in the loadConfig() already
+    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
+    initActionsLate(); // init actions that require a loaded config
+    KGlobal::locale()->insertCatalog("kmix-controls");
+    initWidgets();
+    initPrefDlg();
+    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
+    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
+    recreateGUI(false);
+    fixConfigAfterRead();
+    theKMixDeviceManager->initHotplug();
+    connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
+    connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
+    if ( m_startVisible && ! invisible)
+        show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it
 
-   connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()) );
+    connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()) );
 }
 
 
 KMixWindow::~KMixWindow()
 {
-   clearMixerWidgets();
-   MixerToolBox::instance()->deinitMixer();
+    clearMixerWidgets();
+    MixerToolBox::instance()->deinitMixer();
 }
 
 
 void KMixWindow::initActions()
 {
-   // file menu
-   KStandardAction::quit( this, SLOT(quit()), actionCollection());
+    // file menu
+    KStandardAction::quit( this, SLOT(quit()), actionCollection());
 
-   // settings menu
-   _actionShowMenubar = KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
-   //actionCollection()->addAction( a->objectName(), a );
-   KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
-   KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
+    // settings menu
+    _actionShowMenubar = KStandardAction::showMenubar( this, SLOT(toggleMenuBar()), actionCollection());
+    //actionCollection()->addAction( a->objectName(), a );
+    KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
+    KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
-   KAction *action = actionCollection()->addAction( "hwinfo" );
-   action->setText( i18n( "Hardware &Information" ) );
-   connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
-   action = actionCollection()->addAction( "hide_kmixwindow" );
-   action->setText( i18n( "Hide Mixer Window" ) );
-   connect(action, SIGNAL(triggered(bool) ), SLOT(hideOrClose()));
-   action->setShortcut(QKeySequence(Qt::Key_Escape));
-   action = actionCollection()->addAction("toggle_channels_currentview");
-   action->setText(i18n("Configure &Channels..."));
-   connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
-   action = actionCollection()->addAction( "select_master" );
-   action->setText( i18n("Select Master Channel...") );
-   connect(action, SIGNAL(triggered(bool) ), SLOT(slotSelectMaster()));
+    KAction *action = actionCollection()->addAction( "hwinfo" );
+    action->setText( i18n( "Hardware &Information" ) );
+    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
+    action = actionCollection()->addAction( "hide_kmixwindow" );
+    action->setText( i18n( "Hide Mixer Window" ) );
+    connect(action, SIGNAL(triggered(bool) ), SLOT(hideOrClose()));
+    action->setShortcut(QKeySequence(Qt::Key_Escape));
+    action = actionCollection()->addAction("toggle_channels_currentview");
+    action->setText(i18n("Configure &Channels..."));
+    connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
+    action = actionCollection()->addAction( "select_master" );
+    action->setText( i18n("Select Master Channel...") );
+    connect(action, SIGNAL(triggered(bool) ), SLOT(slotSelectMaster()));
 
-   osdWidget = new OSDWidget();
+    osdWidget = new OSDWidget();
 
-   createGUI( "kmixui.rc" );
+    createGUI( "kmixui.rc" );
 }
 
 void KMixWindow::initActionsLate()
 {
-  if ( m_autouseMultimediaKeys ) {
-    KAction* globalAction = actionCollection()->addAction("increase_volume");
-    globalAction->setText(i18n("Increase Volume"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp), ( KAction::ShortcutTypes)( KAction::ActiveShortcut |  KAction::DefaultShortcut),  KAction::NoAutoloading);
-    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
+    if ( m_autouseMultimediaKeys ) {
+        KAction* globalAction = actionCollection()->addAction("increase_volume");
+        globalAction->setText(i18n("Increase Volume"));
+        globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp), ( KAction::ShortcutTypes)( KAction::ActiveShortcut |  KAction::DefaultShortcut),  KAction::NoAutoloading);
+        connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
 
-    globalAction = actionCollection()->addAction("decrease_volume");
-    globalAction->setText(i18n("Decrease Volume"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
-    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
+        globalAction = actionCollection()->addAction("decrease_volume");
+        globalAction->setText(i18n("Decrease Volume"));
+        globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
+        connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
 
-    globalAction = actionCollection()->addAction("mute");
-    globalAction->setText(i18n("Mute"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
-    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
-  }
+        globalAction = actionCollection()->addAction("mute");
+        globalAction->setText(i18n("Mute"));
+        globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
+        connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
+    }
 }
 
 
 void KMixWindow::initPrefDlg()
 {
-   m_prefDlg = new KMixPrefDlg( this );
-   connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)), SLOT(applyPrefs(KMixPrefDlg *)) );
+    m_prefDlg = new KMixPrefDlg( this );
+    connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)), SLOT(applyPrefs(KMixPrefDlg *)) );
 }
 
 
@@ -169,25 +169,25 @@ void KMixWindow::initPrefDlg()
 
 void KMixWindow::initWidgets()
 {
-   // Main widget and layout
-   setCentralWidget( new QWidget( this ) );
+    // Main widget and layout
+    setCentralWidget( new QWidget( this ) );
 
-   // Widgets layout
-   m_widgetsLayout = new QVBoxLayout(   centralWidget()   );
-   m_widgetsLayout->setObjectName(   "m_widgetsLayout"   );
-   m_widgetsLayout->setSpacing(   0   );
-   m_widgetsLayout->setMargin (   0   );
+    // Widgets layout
+    m_widgetsLayout = new QVBoxLayout(   centralWidget()   );
+    m_widgetsLayout->setObjectName(   "m_widgetsLayout"   );
+    m_widgetsLayout->setSpacing(   0   );
+    m_widgetsLayout->setMargin (   0   );
 
 
-   m_wsMixers = new KTabWidget( centralWidget() );
-   connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
+    m_wsMixers = new KTabWidget( centralWidget() );
+    connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
 
-   m_widgetsLayout->addWidget(m_wsMixers);
+    m_widgetsLayout->addWidget(m_wsMixers);
 
-   // show menubar if the actions says so (or if the action does not exist)
-   menuBar()->setVisible( (_actionShowMenubar==0) || _actionShowMenubar->isChecked());
+    // show menubar if the actions says so (or if the action does not exist)
+    menuBar()->setVisible( (_actionShowMenubar==0) || _actionShowMenubar->isChecked());
 
-   m_widgetsLayout->activate();
+    m_widgetsLayout->activate();
 }
 
 
@@ -198,95 +198,95 @@ void KMixWindow::initWidgets()
  */
 bool KMixWindow::updateDocking()
 {
-   // delete old dock widget
-   if (m_dockWidget)
-   {
-      // If this is called during a master control change, the dock widget is currently active, so we use deleteLater().
-      m_dockWidget->deleteLater();
-      m_dockWidget = 0L;
-   }
-   if ( _dockAreaPopup ) {
-      // If this is called during a master control change, we rather play safe by using deleteLater().
-      _dockAreaPopup->deleteLater();
-      _dockAreaPopup = 0L;
-   }
+    // delete old dock widget
+    if (m_dockWidget)
+    {
+        // If this is called during a master control change, the dock widget is currently active, so we use deleteLater().
+        m_dockWidget->deleteLater();
+        m_dockWidget = 0L;
+    }
+    if ( _dockAreaPopup ) {
+        // If this is called during a master control change, we rather play safe by using deleteLater().
+        _dockAreaPopup->deleteLater();
+        _dockAreaPopup = 0L;
+    }
 
-   if ( m_showDockWidget == false || Mixer::mixers().count() == 0 ) {
-      return false;
-   }
+    if ( m_showDockWidget == false || Mixer::mixers().count() == 0 ) {
+        return false;
+    }
 
-   // create dock widget and the corresponding popup
-   /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
-   QWidget* referenceWidgetForSystray = this;
-   if ( m_volumeWidget ) {
-      KMenu *volMenu = new KMenu(this);
-      _dockAreaPopup = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);
-      _dockAreaPopup->createDeviceWidgets();
+    // create dock widget and the corresponding popup
+    /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
+    QWidget* referenceWidgetForSystray = this;
+    if ( m_volumeWidget ) {
+        KMenu *volMenu = new KMenu(this);
+        _dockAreaPopup = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);
+        _dockAreaPopup->createDeviceWidgets();
 
-      QWidgetAction *volWA = new QWidgetAction(volMenu);
-      volWA->setDefaultWidget(_dockAreaPopup);
-      volMenu->addAction(volWA);
-      referenceWidgetForSystray = volMenu;
-   }
-   m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
-   //m_dockWidget->show();
-   connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()) );
-   return true;
+        QWidgetAction *volWA = new QWidgetAction(volMenu);
+        volWA->setDefaultWidget(_dockAreaPopup);
+        volMenu->addAction(volWA);
+        referenceWidgetForSystray = volMenu;
+    }
+    m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
+    //m_dockWidget->show();
+    connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()) );
+    return true;
 }
 
 void KMixWindow::saveConfig()
 {
-   kDebug() << "About to save config";
-   saveBaseConfig();
-   saveViewConfig();
-   saveVolumes();
+    kDebug() << "About to save config";
+    saveBaseConfig();
+    saveViewConfig();
+    saveVolumes();
 #ifdef __GNUC_
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
 
-   kDebug() << "Saved config ... now syncing explicitely";
-   KGlobal::config()->sync();
-   kDebug() << "Saved config ... sync finished";
+    kDebug() << "Saved config ... now syncing explicitely";
+    KGlobal::config()->sync();
+    kDebug() << "Saved config ... sync finished";
 }
 
 void KMixWindow::saveBaseConfig()
 {
-   kDebug() << "About to save config (Base)";
-   KConfigGroup config(KGlobal::config(), "Global");
+    kDebug() << "About to save config (Base)";
+    KConfigGroup config(KGlobal::config(), "Global");
 
-   config.writeEntry( "Size", size() );
-   config.writeEntry( "Position", pos() );
-   // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
-   // (Please note that the problem was only there when quitting via Systray - esken).
-   // Using it again, as internal behaviour has changed with KDE4
-   config.writeEntry( "Visible", isVisible() );
-   config.writeEntry( "Menubar", _actionShowMenubar->isChecked() );
-   config.writeEntry( "AllowDocking", m_showDockWidget );
-   config.writeEntry( "TrayVolumeControl", m_volumeWidget );
-   config.writeEntry( "Tickmarks", m_showTicks );
-   config.writeEntry( "Labels", m_showLabels );
-   config.writeEntry( "startkdeRestore", m_onLogin );
-   config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
-   config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
-   config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
-   Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
-   if ( mixerMasterCard != 0 ) {
-      config.writeEntry( "MasterMixer", mixerMasterCard->id() );
-   }
-   MixDevice* mdMaster = Mixer::getGlobalMasterMD();
-   if ( mdMaster != 0 ) {
-      config.writeEntry( "MasterMixerDevice", mdMaster->id() );
-   }
-   QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
-   config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
+    config.writeEntry( "Size", size() );
+    config.writeEntry( "Position", pos() );
+    // Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
+    // (Please note that the problem was only there when quitting via Systray - esken).
+    // Using it again, as internal behaviour has changed with KDE4
+    config.writeEntry( "Visible", isVisible() );
+    config.writeEntry( "Menubar", _actionShowMenubar->isChecked() );
+    config.writeEntry( "AllowDocking", m_showDockWidget );
+    config.writeEntry( "TrayVolumeControl", m_volumeWidget );
+    config.writeEntry( "Tickmarks", m_showTicks );
+    config.writeEntry( "Labels", m_showLabels );
+    config.writeEntry( "startkdeRestore", m_onLogin );
+    config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
+    config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
+    config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
+    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
+    if ( mixerMasterCard != 0 ) {
+        config.writeEntry( "MasterMixer", mixerMasterCard->id() );
+    }
+    MixDevice* mdMaster = Mixer::getGlobalMasterMD();
+    if ( mdMaster != 0 ) {
+        config.writeEntry( "MasterMixerDevice", mdMaster->id() );
+    }
+    QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
+    config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
 
-   // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
-   if ( m_toplevelOrientation  == Qt::Horizontal )
-      config.writeEntry( "Orientation","Horizontal" );
-   else
-      config.writeEntry( "Orientation","Vertical" );
+    // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
+    if ( m_toplevelOrientation  == Qt::Horizontal )
+        config.writeEntry( "Orientation","Horizontal" );
+    else
+        config.writeEntry( "Orientation","Vertical" );
 
-   kDebug() << "Config (Base) saving done";
+    kDebug() << "Config (Base) saving done";
 }
 
 void KMixWindow::saveViewConfig()
@@ -303,7 +303,7 @@ void KMixWindow::saveViewConfig()
             mw->saveConfig( KGlobal::config().data() );
         }
     }
-   kDebug() << "Config (View) saving done";
+    kDebug() << "Config (View) saving done";
 }
 
 
@@ -313,74 +313,74 @@ void KMixWindow::saveViewConfig()
  */
 void KMixWindow::saveVolumes()
 {
-   kDebug() << "About to save config (Volume)";
-   KConfig *cfg = new KConfig( "kmixctrlrc" );
-   for ( int i=0; i<Mixer::mixers().count(); ++i)
-   {
-      Mixer *mixer = (Mixer::mixers())[i];
-      if ( mixer->isOpen() ) { // protect from unplugged devices (better do *not* save them)
-          mixer->volumeSave( cfg );
-      }
-   }
-   delete cfg;
-   kDebug() << "Config (Volume) saving done";
+    kDebug() << "About to save config (Volume)";
+    KConfig *cfg = new KConfig( "kmixctrlrc" );
+    for ( int i=0; i<Mixer::mixers().count(); ++i)
+    {
+        Mixer *mixer = (Mixer::mixers())[i];
+        if ( mixer->isOpen() ) { // protect from unplugged devices (better do *not* save them)
+            mixer->volumeSave( cfg );
+        }
+    }
+    delete cfg;
+    kDebug() << "Config (Volume) saving done";
 }
 
 
 
 void KMixWindow::loadConfig()
 {
-   loadBaseConfig();
-   //loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
-   //loadVolumes(); // not in use
+    loadBaseConfig();
+    //loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
+    //loadVolumes(); // not in use
 }
 
 void KMixWindow::loadBaseConfig()
 {
     KConfigGroup config(KGlobal::config(), "Global");
 
-   m_showDockWidget = config.readEntry("AllowDocking", true);
-   m_volumeWidget = config.readEntry("TrayVolumeControl", true);
-   m_showTicks = config.readEntry("Tickmarks", true);
-   m_showLabels = config.readEntry("Labels", true);
-   m_onLogin = config.readEntry("startkdeRestore", true );
-   m_startVisible = config.readEntry("Visible", false);
-   m_multiDriverMode = config.readEntry("MultiDriver", false);
-   const QString& orientationString = config.readEntry("Orientation", "Vertical");
-   m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
-   m_configVersion = config.readEntry( "ConfigVersion", 0 );
-   // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
-   // evaluated. Better only write that in saveBaseConfig()
-   m_autouseMultimediaKeys = config.readEntry( "AutoUseMultimediaKeys", true );
-   QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
-   QString masterDev = config.readEntry( "MasterMixerDevice", "" );
-   //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
-      Mixer::setGlobalMaster(mixerMasterCard, masterDev);
-   //}
-   QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
-   MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
+    m_showDockWidget = config.readEntry("AllowDocking", true);
+    m_volumeWidget = config.readEntry("TrayVolumeControl", true);
+    m_showTicks = config.readEntry("Tickmarks", true);
+    m_showLabels = config.readEntry("Labels", true);
+    m_onLogin = config.readEntry("startkdeRestore", true );
+    m_startVisible = config.readEntry("Visible", false);
+    m_multiDriverMode = config.readEntry("MultiDriver", false);
+    const QString& orientationString = config.readEntry("Orientation", "Vertical");
+    m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
+    m_configVersion = config.readEntry( "ConfigVersion", 0 );
+    // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
+    // evaluated. Better only write that in saveBaseConfig()
+    m_autouseMultimediaKeys = config.readEntry( "AutoUseMultimediaKeys", true );
+    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
+    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
+    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
+    Mixer::setGlobalMaster(mixerMasterCard, masterDev);
+    //}
+    QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
+    MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 
-   if ( orientationString == "Horizontal" )
-       m_toplevelOrientation  = Qt::Horizontal;
-   else
-       m_toplevelOrientation = Qt::Vertical;
+    if ( orientationString == "Horizontal" )
+        m_toplevelOrientation  = Qt::Horizontal;
+    else
+        m_toplevelOrientation = Qt::Vertical;
 
-   // show/hide menu bar
-   bool showMenubar = config.readEntry("Menubar", true);
+    // show/hide menu bar
+    bool showMenubar = config.readEntry("Menubar", true);
 
-   if (_actionShowMenubar) _actionShowMenubar->setChecked( showMenubar );
+    if (_actionShowMenubar) _actionShowMenubar->setChecked( showMenubar );
 
-   // restore window size and position
-   if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
-   {
-      QSize defSize( minimumWidth(), height() );
-      QSize size = config.readEntry("Size", defSize );
-      if(!size.isEmpty()) resize(size);
+    // restore window size and position
+    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
+    {
+        QSize defSize( minimumWidth(), height() );
+        QSize size = config.readEntry("Size", defSize );
+        if(!size.isEmpty()) resize(size);
 
-      QPoint defPos = pos();
-      QPoint pos = config.readEntry("Position", defPos);
-      move(pos);
-   }
+        QPoint defPos = pos();
+        QPoint pos = config.readEntry("Position", defPos);
+        move(pos);
+    }
 }
 
 /**
@@ -401,20 +401,20 @@ KMixWindow::loadVolumes()
     }
     delete cfg;
 }
-*/
+ */
 
 
 
 
 void KMixWindow::recreateGUIwithoutSavingView()
 {
-	recreateGUI(false);
+    recreateGUI(false);
 }
 
 
 void KMixWindow::recreateGUIwithSavingView()
 {
-	recreateGUI(true);
+    recreateGUI(true);
 }
 
 /**
@@ -422,48 +422,38 @@ void KMixWindow::recreateGUIwithSavingView()
  */
 void KMixWindow::recreateGUI(bool saveConfig)
 {
-   // Find out which of the tabs is currently selected for restoration
-   int current_tab = -1;
-   if (m_wsMixers)
-      current_tab = m_wsMixers->currentIndex();
+    // Find out which of the tabs is currently selected for restoration
+    int current_tab = -1;
+    if (m_wsMixers)
+        current_tab = m_wsMixers->currentIndex();
 
-   KConfigGroup config(KGlobal::config(), "Global");
-   m_showDockWidget = config.readEntry("Profile", true);
-   
-   if (saveConfig)
-      saveViewConfig();  // save the state before recreating
+    KConfigGroup config(KGlobal::config(), "Global");
+    m_showDockWidget = config.readEntry("Profile", true);
+
+    if (saveConfig)
+        saveViewConfig();  // save the state before recreating
 
     // Start a new generation now. This shows whether we already have recreated the
-   // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
-   KMixerWidget::increaseGeneration();
-   Mixer::increaseGeneration();
-   
+    // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
+    KMixerWidget::increaseGeneration();
+
     // *** RECREATE THE ALREADY EXISTING TABS **********************************
-    
-    
-    
+    QMap<Mixer*, bool> mixerHasProfile; //
+
     QMap<QString, GUIProfile*>::const_iterator itEnd = GUIProfile::getProfiles().end();
-    
-    
-    
-    QMap<QString, GUIProfile*>::const_iterator it    = GUIProfile::getProfiles().begin();
-    
-    
-    
-    for (  ; it != itEnd; ++it)
+    for ( QMap<QString, GUIProfile*>::const_iterator it    = GUIProfile::getProfiles().begin(); it != itEnd; ++it)
     {
-        const QString& guiprofKey = it.key();
         GUIProfile* guiprof = it.value();
         KMixerWidget* kmw = findKMWforTab(guiprof->getId());
-        Mixer *mixer =  MixerToolBox::instance()->find( guiprof->getMixerId() );
+        Mixer *mixer =  Mixer::findMixer( guiprof->getMixerId() );
         if ( mixer == 0 ) {
             kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
             continue;
         }
+        mixerHasProfile[mixer] = true;
         if ( kmw == 0 ) {
             // does not yet exist => create
             addMixerWidget(mixer->id(), guiprof, -1);
-            mixer->updateGeneration();
         }
         else {
             if ( kmw->generationIsOutdated() ) {
@@ -472,7 +462,6 @@ void KMixWindow::recreateGUI(bool saveConfig)
                 if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
                 delete kmw;
                 addMixerWidget(mixer->id(), guiprof, indexOfTab);
-                mixer->updateGeneration();
             }
         }
     } // Loop over all GUIProfile's
@@ -482,18 +471,19 @@ void KMixWindow::recreateGUI(bool saveConfig)
     KConfigGroup pconfig(KGlobal::config(), "Profiles");
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
-        if ( mixer->generationIsOutdated() ) {
-            mixer->updateGeneration();
-            // No TAB YET => Either KMix is just started, or the user has added another GUIProfile
-            QString mixerProfileKey(mixer->id());
-            // FUTURE DIRECTIONS: This could return a list of profiles per Card
-            QString profileStr = pconfig.readEntry(mixerProfileKey, "default");
-            qDebug() << "Now searching for profile: " << profileStr;
-            // FUTURE DIRECTIONS: If working with a list, use "false" as last arg (except in the last loop iteration as last resort)
-            GUIProfile* guiprof = GUIProfile::find(mixer, profileStr, true);
-            addMixerWidget(mixer->id(), guiprof, -1);
-        } // outdated means, that it does not have a tab yet
+        if ( mixerHasProfile.contains(mixer)) {
+            continue;
+        }
+        // No TAB YET => This should mean KMix is just started, or the user has added another GUIProfile
+        QString mixerProfileKey(mixer->id());
+        // FUTURE DIRECTIONS: This could return a list of profiles per Card
+        QString profileStr = pconfig.readEntry(mixerProfileKey, "default");
+        kDebug() << "Now searching for profile: " << profileStr;
+        // FUTURE DIRECTIONS: If working with a list, use "false" as last arg (except in the last loop iteration as last resort)
+        GUIProfile* guiprof = GUIProfile::find(mixer, profileStr, true);
+        addMixerWidget(mixer->id(), guiprof, -1);
     }
+    mixerHasProfile.clear();
 
     bool dockingSucceded = updateDocking();
     if ( !dockingSucceded && Mixer::mixers().count() > 0 )
@@ -507,9 +497,9 @@ void KMixWindow::recreateGUI(bool saveConfig)
         hide();
     }
 
-   if (current_tab >= 0) {
-      m_wsMixers->setCurrentIndex(current_tab);
-   }
+    if (current_tab >= 0) {
+        m_wsMixers->setCurrentIndex(current_tab);
+    }
 }
 
 KMixerWidget* KMixWindow::findKMWforTab( QString tabId )
@@ -527,8 +517,8 @@ KMixerWidget* KMixWindow::findKMWforTab( QString tabId )
 }
 
 /**
-* Create or recreate the Mixer GUI elements
-*/
+ * Create or recreate the Mixer GUI elements
+ */
 void KMixWindow::redrawMixer( const QString& mixer_ID )
 {
     for ( int i=0; i<m_wsMixers->count() ; ++i )
@@ -557,28 +547,28 @@ void KMixWindow::redrawMixer( const QString& mixer_ID )
 
 void KMixWindow::fixConfigAfterRead()
 {
-   KConfigGroup grp(KGlobal::config(), "Global");
-   unsigned int configVersion = grp.readEntry( "ConfigVersion", 0 );
-   if ( configVersion < 3 ) {
-       // Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
-       // The group has been copied over by KMixToolBox::loadView() for all soundcards, so
-       // we should be fine now
-       QStringList cfgGroups = KGlobal::config()->groupList();
-       QStringListIterator it(cfgGroups);
-       while ( it.hasNext() ) {
-          QString groupName = it.next();
-          if ( groupName.indexOf("View.Base.Base" ) == 0 ) {
-               kDebug(67100) << "Fixing group " << groupName;
-               KConfigGroup buggyDevgrpCG = KGlobal::config()->group( groupName );
-               buggyDevgrpCG.deleteGroup();
-          } // remove buggy group
-       } // for all groups
-   } // if config version < 3
+    KConfigGroup grp(KGlobal::config(), "Global");
+    unsigned int configVersion = grp.readEntry( "ConfigVersion", 0 );
+    if ( configVersion < 3 ) {
+        // Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
+        // The group has been copied over by KMixToolBox::loadView() for all soundcards, so
+        // we should be fine now
+        QStringList cfgGroups = KGlobal::config()->groupList();
+        QStringListIterator it(cfgGroups);
+        while ( it.hasNext() ) {
+            QString groupName = it.next();
+            if ( groupName.indexOf("View.Base.Base" ) == 0 ) {
+                kDebug(67100) << "Fixing group " << groupName;
+                KConfigGroup buggyDevgrpCG = KGlobal::config()->group( groupName );
+                buggyDevgrpCG.deleteGroup();
+            } // remove buggy group
+        } // for all groups
+    } // if config version < 3
 }
 
 void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QString& dev)
 {
-//     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
+    //     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
     QString driverNameString;
     driverNameString = driverName;
     int devNum = dev.toInt();
@@ -589,18 +579,18 @@ void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QStrin
         recreateGUI(true);
     }
 
-// Test code for OSD. But OSD is postponed to KDE4.1
-//    OSDWidget* osd = new OSDWidget(0);
-//    osd->volChanged(70, true);
+    // Test code for OSD. But OSD is postponed to KDE4.1
+    //    OSDWidget* osd = new OSDWidget(0);
+    //    osd->volChanged(70, true);
 
 }
 
 void KMixWindow::unplugged( const QString& udi)
 {
-//     kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
+    //     kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
-//         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
+        //         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
         if (mixer->udi() == udi ) {
             kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
             //KMixToolBox::notification("MasterFallback", "aaa");
@@ -626,12 +616,12 @@ void KMixWindow::unplugged( const QString& udi)
                 if ( Mixer::mixers().count() > 0 ) {
                     QString localMaster = ((Mixer::mixers())[0])->getLocalMasterMD()->id();
                     Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster);
-                    
+
                     QString text;
                     text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.", 
                             ((Mixer::mixers())[0])->getLocalMasterMD()->readableName(),
                             ((Mixer::mixers())[0])->readableName()
-                                );
+                    );
                     KMixToolBox::notification("MasterFallback", text);
                 }
             }
@@ -664,12 +654,12 @@ void KMixWindow::setErrorMixerWidget()
 
 void KMixWindow::clearMixerWidgets()
 {
-   while ( m_wsMixers->count() != 0 )
-   {
-      QWidget *mw = m_wsMixers->widget(0);
-      m_wsMixers->removeTab(0);
-      delete mw;
-   }
+    while ( m_wsMixers->count() != 0 )
+    {
+        QWidget *mw = m_wsMixers->widget(0);
+        m_wsMixers->removeTab(0);
+        delete mw;
+    }
 }
 
 
@@ -677,63 +667,65 @@ void KMixWindow::clearMixerWidgets()
 //void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition)
 void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition)
 {
-//    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
-   Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
-   if ( mixer != 0 )
-   {
-//       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
-      ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-      if ( (_actionShowMenubar==0) || _actionShowMenubar->isChecked() ) {
+    //    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
+    Mixer *mixer = Mixer::findMixer(mixer_ID);
+    if ( mixer != 0 )
+    {
+        //       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
+        ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
+        if ( (_actionShowMenubar==0) || _actionShowMenubar->isChecked() ) {
             vflags |= ViewBase::MenuBarVisible;
-      }
-      if ( m_toplevelOrientation == Qt::Vertical ) {
+        }
+        if ( m_toplevelOrientation == Qt::Vertical ) {
             vflags |= ViewBase::Horizontal;
-      }
-      else {
+        }
+        else {
             vflags |= ViewBase::Vertical;
-      }
+        }
 
 
         //KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, profileTab, actionCollection() );
-        KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, actionCollection() );
-      /* A newly added mixer will automatically added at the top
-      * and thus the window title is also set appropriately */
-      bool isFirstTab = m_wsMixers->count() == 0;
-      
-      QString tabLabel(kmw->mixer()->readableName());
-      tabLabel += ": ";
-      tabLabel += guiprof->getId(); // @todo This shoud be a readable name !!! Also this name is possibly ad when using Pulesaudio => Check with Colin
-      
-      
-      if ( insertPosition == -1 )
-          m_wsMixers->addTab( kmw, tabLabel );
-      else
-          m_wsMixers->insertTab( insertPosition, kmw, tabLabel );
+        KMixerWidget *kmw = new KMixerWidget( mixer, this, vflags, guiprof, actionCollection() );
+        /* A newly added mixer will automatically added at the top
+         * and thus the window title is also set appropriately */
+        bool isFirstTab = m_wsMixers->count() == 0;
 
-      if (isFirstTab || kmw->mixer()->id() == m_defaultCardOnStart ) {
-         m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
-         m_wsMixers->setCurrentWidget(kmw);
-         m_dontSetDefaultCardOnStart = false;
-         if ( m_defaultCardOnStart.isEmpty() )
-            m_defaultCardOnStart = kmw->mixer()->id(); // If there was no configuration file entry
-      }
+        QString tabLabel(kmw->mixer()->readableName());
+        if ( ! guiprof->getName().isEmpty() ) {
+            tabLabel += ": ";
+            tabLabel += guiprof->getName(); // @todo This name is possibly ad when using Pulesaudio => Check with Colin
+        }
 
-      kmw->loadConfig( KGlobal::config().data() );
 
-      kmw->setTicks( m_showTicks );
-      kmw->setLabels( m_showLabels );
-      kmw->mixer()->readSetFromHWforceUpdate();
-   } // given mixer exist really
+        if ( insertPosition == -1 )
+            m_wsMixers->addTab( kmw, tabLabel );
+        else
+            m_wsMixers->insertTab( insertPosition, kmw, tabLabel );
+
+        if (isFirstTab || kmw->mixer()->id() == m_defaultCardOnStart ) {
+            m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
+            m_wsMixers->setCurrentWidget(kmw);
+            m_dontSetDefaultCardOnStart = false;
+            if ( m_defaultCardOnStart.isEmpty() )
+                m_defaultCardOnStart = kmw->mixer()->id(); // If there was no configuration file entry
+        }
+
+        kmw->loadConfig( KGlobal::config().data() );
+
+        kmw->setTicks( m_showTicks );
+        kmw->setLabels( m_showLabels );
+        kmw->mixer()->readSetFromHWforceUpdate();
+    } // given mixer exist really
 }
 
 
 
 bool KMixWindow::queryClose ( )
 {
-//     kDebug(67100) << "queryClose ";
+    //     kDebug(67100) << "queryClose ";
     if ( m_showDockWidget && !kapp->sessionSaving() )
     {
-//         kDebug(67100) << "don't close";
+        //         kDebug(67100) << "don't close";
         // Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
         hide();
         return false;
@@ -742,7 +734,7 @@ bool KMixWindow::queryClose ( )
         // Accept the close, if:
         //     The user has disabled docking
         // or  SessionSaving() is running
-//         kDebug(67100) << "close";
+        //         kDebug(67100) << "close";
         return true;
     }
 }
@@ -762,136 +754,136 @@ void KMixWindow::hideOrClose ( )
 // internal helper to prevent code duplication in slotIncreaseVolume and slotDecreaseVolume
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
-  if ( mixer == 0 ) return; // e.g. when no soundcard is available
-  MixDevice *md = Mixer::getGlobalMasterMD();
-  if ( md == 0 ) return; // shouldn't happen, but lets play safe
-  md->setMuted(false);
-  if (increase)
-    mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
-  else
-    mixer->decreaseVolume(md->id());
-  // md->playbackVolume().increase(); // not yet implemented
-  showVolumeDisplay();
+    Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
+    if ( mixer == 0 ) return; // e.g. when no soundcard is available
+    MixDevice *md = Mixer::getGlobalMasterMD();
+    if ( md == 0 ) return; // shouldn't happen, but lets play safe
+    md->setMuted(false);
+    if (increase)
+        mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
+    else
+        mixer->decreaseVolume(md->id());
+    // md->playbackVolume().increase(); // not yet implemented
+    showVolumeDisplay();
 }
 
 void KMixWindow::slotIncreaseVolume()
 {
-  increaseOrDecreaseVolume(true);
+    increaseOrDecreaseVolume(true);
 }
 
 void KMixWindow::slotDecreaseVolume()
 {
-  increaseOrDecreaseVolume(false);
+    increaseOrDecreaseVolume(false);
 }
 
 void KMixWindow::showVolumeDisplay()
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer();
-  if ( mixer == 0 ) return; // e.g. when no soundcard is available
-  MixDevice *md = Mixer::getGlobalMasterMD();
-  if ( md == 0 ) return; // shouldn't happen, but lets play safe
-  int currentVolume = mixer->volume(md->id());
-  
-  osdWidget->setCurrentVolume(currentVolume, md->isMuted());
-  osdWidget->show();
-  osdWidget->activateOSD(); //Enable the hide timer
+    Mixer* mixer = Mixer::getGlobalMasterMixer();
+    if ( mixer == 0 ) return; // e.g. when no soundcard is available
+    MixDevice *md = Mixer::getGlobalMasterMD();
+    if ( md == 0 ) return; // shouldn't happen, but lets play safe
+    int currentVolume = mixer->volume(md->id());
 
-  //Center the OSD
-  QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
-  QSize size = osdWidget->sizeHint();
-  int posX = rect.x() + (rect.width() - size.width()) / 2;
-  int posY = rect.y() + 4 * rect.height() / 5;
-  osdWidget->setGeometry(posX, posY, size.width(), size.height());
+    osdWidget->setCurrentVolume(currentVolume, md->isMuted());
+    osdWidget->show();
+    osdWidget->activateOSD(); //Enable the hide timer
+
+    //Center the OSD
+    QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
+    QSize size = osdWidget->sizeHint();
+    int posX = rect.x() + (rect.width() - size.width()) / 2;
+    int posY = rect.y() + 4 * rect.height() / 5;
+    osdWidget->setGeometry(posX, posY, size.width(), size.height());
 }
 
 void KMixWindow::slotMute()
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer();
-  if ( mixer == 0 ) return; // e.g. when no soundcard is available
-  MixDevice *md = Mixer::getGlobalMasterMD();
-  if ( md == 0 ) return; // shouldn't happen, but lets play safe
-  mixer->toggleMute(md->id()); 
-  showVolumeDisplay();
+    Mixer* mixer = Mixer::getGlobalMasterMixer();
+    if ( mixer == 0 ) return; // e.g. when no soundcard is available
+    MixDevice *md = Mixer::getGlobalMasterMD();
+    if ( md == 0 ) return; // shouldn't happen, but lets play safe
+    mixer->toggleMute(md->id());
+    showVolumeDisplay();
 }
 
 void KMixWindow::quit()
 {
-//     kDebug(67100) << "quit";
+    //     kDebug(67100) << "quit";
     kapp->quit();
 }
 
 
 void KMixWindow::showSettings()
 {
-   if (!m_prefDlg->isVisible())
-   {
-      // copy actual values to dialog
-      m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
-      m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
-      m_prefDlg->m_volumeChk->setEnabled( m_showDockWidget );
-      m_prefDlg->m_onLogin->setChecked( m_onLogin );
+    if (!m_prefDlg->isVisible())
+    {
+        // copy actual values to dialog
+        m_prefDlg->m_dockingChk->setChecked( m_showDockWidget );
+        m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
+        m_prefDlg->m_volumeChk->setEnabled( m_showDockWidget );
+        m_prefDlg->m_onLogin->setChecked( m_onLogin );
 
-      m_prefDlg->m_showTicks->setChecked( m_showTicks );
-      m_prefDlg->m_showLabels->setChecked( m_showLabels );
-      m_prefDlg->_rbVertical  ->setChecked( m_toplevelOrientation == Qt::Vertical );
-      m_prefDlg->_rbHorizontal->setChecked( m_toplevelOrientation == Qt::Horizontal );
+        m_prefDlg->m_showTicks->setChecked( m_showTicks );
+        m_prefDlg->m_showLabels->setChecked( m_showLabels );
+        m_prefDlg->_rbVertical  ->setChecked( m_toplevelOrientation == Qt::Vertical );
+        m_prefDlg->_rbHorizontal->setChecked( m_toplevelOrientation == Qt::Horizontal );
 
-      // show dialog
-      m_prefDlg->show();
-   }
+        // show dialog
+        m_prefDlg->show();
+    }
 }
 
 
 void KMixWindow::showHelp()
 {
-   actionCollection()->action( "help_contents" )->trigger();
+    actionCollection()->action( "help_contents" )->trigger();
 }
 
 
 void
 KMixWindow::showAbout()
 {
-   actionCollection()->action( "help_about_app" )->trigger();
+    actionCollection()->action( "help_about_app" )->trigger();
 }
 
 
 
 void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
 {
-   bool labelsHasChanged = m_showLabels ^ prefDlg->m_showLabels->isChecked();
-   bool ticksHasChanged = m_showTicks ^ prefDlg->m_showTicks->isChecked();
-   bool dockwidgetHasChanged = m_showDockWidget ^ prefDlg->m_dockingChk->isChecked();
-   bool systrayPopupHasChanged = m_volumeWidget ^ prefDlg->m_volumeChk->isChecked();
-   bool toplevelOrientationHasChanged =
-        ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
-     || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
+    bool labelsHasChanged = m_showLabels ^ prefDlg->m_showLabels->isChecked();
+    bool ticksHasChanged = m_showTicks ^ prefDlg->m_showTicks->isChecked();
+    bool dockwidgetHasChanged = m_showDockWidget ^ prefDlg->m_dockingChk->isChecked();
+    bool systrayPopupHasChanged = m_volumeWidget ^ prefDlg->m_volumeChk->isChecked();
+    bool toplevelOrientationHasChanged =
+            ( prefDlg->_rbVertical->isChecked()   && m_toplevelOrientation == Qt::Horizontal )
+            || ( prefDlg->_rbHorizontal->isChecked() && m_toplevelOrientation == Qt::Vertical   );
 
-   m_showLabels = prefDlg->m_showLabels->isChecked();
-   m_showTicks = prefDlg->m_showTicks->isChecked();
-   m_showDockWidget = prefDlg->m_dockingChk->isChecked();
-   m_volumeWidget = prefDlg->m_volumeChk->isChecked();
-   m_onLogin = prefDlg->m_onLogin->isChecked();
-   if ( prefDlg->_rbVertical->isChecked() ) {
-      m_toplevelOrientation = Qt::Vertical;
-   }
-   else if ( prefDlg->_rbHorizontal->isChecked() ) {
-      m_toplevelOrientation = Qt::Horizontal;
-   }
+    m_showLabels = prefDlg->m_showLabels->isChecked();
+    m_showTicks = prefDlg->m_showTicks->isChecked();
+    m_showDockWidget = prefDlg->m_dockingChk->isChecked();
+    m_volumeWidget = prefDlg->m_volumeChk->isChecked();
+    m_onLogin = prefDlg->m_onLogin->isChecked();
+    if ( prefDlg->_rbVertical->isChecked() ) {
+        m_toplevelOrientation = Qt::Vertical;
+    }
+    else if ( prefDlg->_rbHorizontal->isChecked() ) {
+        m_toplevelOrientation = Qt::Horizontal;
+    }
 
-   if ( labelsHasChanged || ticksHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged || systrayPopupHasChanged) {
-      recreateGUI(true);
-   }
+    if ( labelsHasChanged || ticksHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged || systrayPopupHasChanged) {
+        recreateGUI(true);
+    }
 
-   this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
-   kapp->processEvents();
-   saveConfig();
+    this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
+    kapp->processEvents();
+    saveConfig();
 }
 
 
 void KMixWindow::toggleMenuBar()
 {
-   menuBar()->setVisible(_actionShowMenubar->isChecked());
+    menuBar()->setVisible(_actionShowMenubar->isChecked());
 }
 
 /*
@@ -913,11 +905,11 @@ void KMixWindow::stopVisibilityUpdates()
 {
    m_visibilityUpdateAllowed = false;
 }
-*/
+ */
 
 void KMixWindow::slotHWInfo()
 {
-   KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
+    KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
 }
 
 void KMixWindow::slotConfigureCurrentView()
@@ -930,19 +922,19 @@ void KMixWindow::slotConfigureCurrentView()
 
 void KMixWindow::slotSelectMaster()
 {
-   DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
-   if (dsm) dsm->show();
+    DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
+    if (dsm) dsm->show();
 }
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
-   KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
-   if (mw) {
-       setWindowTitle( mw->mixer()->readableName() );
-       if ( ! m_dontSetDefaultCardOnStart )
-           m_defaultCardOnStart = mw->mixer()->id();
-       // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
-       // It would lead to unnecesary flickering of the (complete) dock area.
-   }
+    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
+    if (mw) {
+        setWindowTitle( mw->mixer()->readableName() );
+        if ( ! m_dontSetDefaultCardOnStart )
+            m_defaultCardOnStart = mw->mixer()->id();
+        // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
+        // It would lead to unnecesary flickering of the (complete) dock area.
+    }
 }
 
 
