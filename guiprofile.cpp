@@ -480,7 +480,7 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 	os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
 		}
-// @todoe		os << " subcontrols=\"" << xmlify(profControl->subcontrols).toUtf8().constData() << "\"" ;
+		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
 		if ( ! profControl->tab.isNull() ) {
 			os << " tab=\"" << xmlify(profControl->tab).toUtf8().constData() << "\"" ;
 		}
@@ -532,7 +532,7 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
-// @todo		os << "  Subcontrols=" << profControl->subcontrols.toUtf8().constData() << std::endl;
+		os << "  Subcontrols=" << profControl->renderSubcontrols().toUtf8().constData() << std::endl;
 		if ( ! profControl->tab.isNull() ) {
 			os << "  Tab=" << profControl->tab.toUtf8().constData() << std::endl;
 		}
@@ -600,8 +600,37 @@ void ProfControl::setSubcontrols(QString sctls)
        }
        else kWarning() << "Ignoring unknown subcontrol type '" << sctl << "' in profile";
   }
-  
 }
+
+QString ProfControl::renderSubcontrols()
+{
+    QString sctlString;
+    if ( _useSubcontrolPlayback && _useSubcontrolCapture && _useSubcontrolCapture && _useSubcontrolCaptureSwitch && _useSubcontrolEnum ) {
+        return QString("*");
+    }
+    else {
+        if ( _useSubcontrolPlayback ) {
+            sctlString += "pvolume,";
+        }
+        if ( _useSubcontrolCapture ) {
+            sctlString += "cvolume,";
+        }
+        if ( _useSubcontrolPlaybackSwitch ) {
+            sctlString += "pswitch,";
+        }
+        if ( _useSubcontrolCaptureSwitch ) {
+            sctlString += "cswitch,";
+        }
+        if ( _useSubcontrolEnum ) {
+            sctlString += "enum,";
+        }
+        if ( sctlString.length() > 0 ) {
+            sctlString.chop(1);
+        }
+        return sctlString;
+    }
+}
+
 
 // ### PARSER START ################################################
 

@@ -65,6 +65,7 @@ public:
     bool useSubcontrolPlaybackSwitch() {return _useSubcontrolPlaybackSwitch;};
     bool useSubcontrolCaptureSwitch() {return _useSubcontrolCaptureSwitch;};
     bool useSubcontrolEnum() {return _useSubcontrolEnum;};
+    QString renderSubcontrols();
 
     // In case the vendor ships different products under the same productName
     QString tab;
