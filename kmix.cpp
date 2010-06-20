@@ -73,8 +73,8 @@ KMixWindow::KMixWindow(bool invisible)
   //   m_visibilityUpdateAllowed( true ),
   m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
   m_dockWidget(),
-  m_dontSetDefaultCardOnStart (false),
-  _dockAreaPopup(0)
+  m_dontSetDefaultCardOnStart (false)
+  //, _dockAreaPopup(0)
 {
     setObjectName("KMixWindow");
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
@@ -205,31 +205,12 @@ bool KMixWindow::updateDocking()
         m_dockWidget->deleteLater();
         m_dockWidget = 0L;
     }
-    if ( _dockAreaPopup ) {
-        // If this is called during a master control change, we rather play safe by using deleteLater().
-        _dockAreaPopup->deleteLater();
-        _dockAreaPopup = 0L;
-    }
 
     if ( m_showDockWidget == false || Mixer::mixers().count() == 0 ) {
         return false;
     }
 
-    // create dock widget and the corresponding popup
-    /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
-    QWidget* referenceWidgetForSystray = 0;  // this
-    if ( m_volumeWidget ) {
-        KMenu *volMenu = new KMenu(this);
-        _dockAreaPopup = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);
-        _dockAreaPopup->createDeviceWidgets();
-
-        QWidgetAction *volWA = new QWidgetAction(volMenu);
-        volWA->setDefaultWidget(_dockAreaPopup);
-        volMenu->addAction(volWA);
-        referenceWidgetForSystray = volMenu;
-    }
-    m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
-    //m_dockWidget->show();
+    m_dockWidget = new KMixDockWidget( this, m_volumeWidget );  // Could be optimized, by refreshing instead of recreating.
     connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()) );
     return true;
 }
@@ -428,7 +409,6 @@ void KMixWindow::recreateGUI(bool saveConfig)
         current_tab = m_wsMixers->currentIndex();
 
     KConfigGroup config(KGlobal::config(), "Global");
-    m_showDockWidget = config.readEntry("Profile", true);
 
     if (saveConfig)
         saveViewConfig();  // save the state before recreating
@@ -687,7 +667,6 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         KMixerWidget *kmw = new KMixerWidget( mixer, this, vflags, guiprof, actionCollection() );
         /* A newly added mixer will automatically added at the top
          * and thus the window title is also set appropriately */
-        bool isFirstTab = m_wsMixers->count() == 0;
 
         QString tabLabel(kmw->mixer()->readableName());
         if ( ! guiprof->getName().isEmpty() ) {

@@ -173,6 +173,7 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
 }
 
 void ViewDockAreaPopup::showPanelSlot() {
+    kDebug() << "Check when this is called";
     _dock->setVisible(true);
     KWindowSystem::setOnDesktop(_dock->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::activateWindow(_dock->winId());
