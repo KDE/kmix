@@ -485,30 +485,31 @@ void KMixWindow::recreateGUI(bool saveConfig)
     }
     mixerHasProfile.clear();
 
-    bool dockingSucceded = updateDocking();
-    if ( !dockingSucceded && Mixer::mixers().count() > 0 )
-    {
-        show(); // avoid invisible and unaccessible main window
+    if (m_wsMixers->count() > 0) {
+        if (current_tab >= 0) {
+            m_wsMixers->setCurrentIndex(current_tab);
+        }
+        bool dockingSucceded = updateDocking();
+        if ( !dockingSucceded && Mixer::mixers().count() > 0 )
+        {
+            show(); // avoid invisible and unaccessible main window
+        }
     }
-    else
-    {
+    else {
         // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.   
         updateDocking();  // -<- removes the DockIcon
         hide();
     }
 
-    if (current_tab >= 0) {
-        m_wsMixers->setCurrentIndex(current_tab);
-    }
 }
 
-KMixerWidget* KMixWindow::findKMWforTab( QString tabId )
+KMixerWidget* KMixWindow::findKMWforTab( QString kmwId )
 {
     KMixerWidget* kmw = 0;
     for (int i=0; i< m_wsMixers->count(); ++i)
     {
         KMixerWidget* kmwTmp = (KMixerWidget*)m_wsMixers->widget(i);
-        if ( kmwTmp->id() == tabId ) {
+        if ( kmwTmp->getGuiprof()->getId() == kmwId ) {
             kmw = kmwTmp;
             break;
         }
@@ -664,7 +665,6 @@ void KMixWindow::clearMixerWidgets()
 
 
 
-//void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition)
 void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition)
 {
     //    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
@@ -684,7 +684,6 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         }
 
 
-        //KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, profileTab, actionCollection() );
         KMixerWidget *kmw = new KMixerWidget( mixer, this, vflags, guiprof, actionCollection() );
         /* A newly added mixer will automatically added at the top
          * and thus the window title is also set appropriately */
@@ -693,22 +692,22 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         QString tabLabel(kmw->mixer()->readableName());
         if ( ! guiprof->getName().isEmpty() ) {
             tabLabel += ": ";
-            tabLabel += guiprof->getName(); // @todo This name is possibly ad when using Pulesaudio => Check with Colin
+            tabLabel += guiprof->getName(); // @todo This name is possibly bad when using Pulesaudio => Check with Colin
         }
 
+        m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
 
         if ( insertPosition == -1 )
             m_wsMixers->addTab( kmw, tabLabel );
         else
             m_wsMixers->insertTab( insertPosition, kmw, tabLabel );
 
-        if (isFirstTab || kmw->mixer()->id() == m_defaultCardOnStart ) {
-            m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
+        if ( kmw->getGuiprof()->getId() == m_defaultCardOnStart ) {
             m_wsMixers->setCurrentWidget(kmw);
-            m_dontSetDefaultCardOnStart = false;
-            if ( m_defaultCardOnStart.isEmpty() )
-                m_defaultCardOnStart = kmw->mixer()->id(); // If there was no configuration file entry
         }
+
+        m_dontSetDefaultCardOnStart = false;
+
 
         kmw->loadConfig( KGlobal::config().data() );
 
@@ -927,11 +926,11 @@ void KMixWindow::slotSelectMaster()
 }
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
-    KMixerWidget* mw = (KMixerWidget*)m_wsMixers->currentWidget();
-    if (mw) {
-        setWindowTitle( mw->mixer()->readableName() );
+    KMixerWidget* kmw = (KMixerWidget*)m_wsMixers->currentWidget();
+    if (kmw) {
+        setWindowTitle( kmw->mixer()->readableName() );
         if ( ! m_dontSetDefaultCardOnStart )
-            m_defaultCardOnStart = mw->mixer()->id();
+            m_defaultCardOnStart = kmw->getGuiprof()->getId();
         // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
         // It would lead to unnecesary flickering of the (complete) dock area.
     }

@@ -26,9 +26,9 @@
 #ifndef RANDOMPREFIX_MIXER_H
 #define RANDOMPREFIX_MIXER_H
 
-#include <QString>
+#include <QList>
 #include <QObject>
-#include <qlist.h>
+#include <QString>
 
 #include "volume.h"
 class Mixer_Backend;
@@ -42,160 +42,166 @@ class Mixer : public QObject
 {
       Q_OBJECT
 
-   public:
-      enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ,
-			ERR_OPEN, ERR_LASTERR };
+public:
+    enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ,
+        ERR_OPEN, ERR_LASTERR };
 
-      Mixer( QString& ref_driverName, int device );
-      virtual ~Mixer();
+    Mixer( QString& ref_driverName, int device );
+    virtual ~Mixer();
 
-      static int numDrivers();
-      QString getDriverName();
+    static int numDrivers();
+    QString getDriverName();
 
-      MixDevice* find(const QString& devPK);
-      static Mixer* findMixer( const QString& mixer_id);
+    MixDevice* find(const QString& devPK);
+    static Mixer* findMixer( const QString& mixer_id);
 
-      void volumeSave( KConfig *config );
-      void volumeLoad( KConfig *config );
+    void volumeSave( KConfig *config );
+    void volumeLoad( KConfig *config );
 
-       /// Tells the number of the mixing devices
-      unsigned int size() const;
-
-
-      /// Returns a pointer to the mix device with the given number
-      MixDevice* operator[](int val_i_num);
-
-      /// Returns a pointer to the mix device whose type matches the value
-      /// given by the parameter and the array MixerDevNames given in
-      /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
-      MixDevice *getMixdeviceById( const QString& deviceID );
-
-      /// Open/grab the mixer for further intraction
-      bool openIfValid();
-
-      /// Returns whether the card is open/operational
-      bool isOpen() const;
-
-      /// Close/release the mixer
-      virtual int close();
-
-      /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
-      QString& stateMessage() const;
-
-      /// Returns the name of the card/chip/hardware, as given by the driver. The name is NOT instance specific,
-      /// so if you install two identical soundcards, two of them will deliver the same mixerName().
-      /// Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
-      /// mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
-      virtual QString baseName();
-
-      /// Wrapper to Mixer_Backend
-      QString translateKernelToWhatsthis(const QString &kernelName);
-
-      /// Return the name of the card/chip/hardware, which is suitable for humans
-      virtual QString readableName();
-
-      // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
-      static QString driverName(int num);
-
-      /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>:<hw_number>@<driver>"
-      QString& id();
-      
-      /// Returns an Universal Device Identifaction of the Mixer. This is an ID that relates to the underlying operating system.
-      // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
-      // Examples:
-      // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
-      // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
-      // Solaris: /dev/audio
-      QString& udi();
-      
-      /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
-      /// the user, but can be used for referencing configuration items and such.
-      void setID(QString& ref_id);
-
-      /******************************************
-        The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
-        different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
-        At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
-       ******************************************/
-      static void setGlobalMaster(QString& ref_card, QString& ref_control);
-      static MixDevice* getGlobalMasterMD();
-      static MixDevice* getGlobalMasterMD(bool fallbackAllowed);
-      static Mixer* getGlobalMasterMixer();
-      static Mixer* getGlobalMasterMixerNoFalback();
-
-      /******************************************
-        The recommended master of this Mixer.
-       ******************************************/
-      MixDevice* getLocalMasterMD();
-      void setLocalMasterMD(QString&);
-
-      /// get the actual MixSet
-      MixSet getMixSet();
+    /// Tells the number of the mixing devices
+    unsigned int size() const;
 
 
-      /// DCOP oriented methods (look at mixerIface.h for the descriptions)
-      virtual void setVolume( const QString& mixdeviceID, int percentage );
-      virtual void setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume );
-      virtual void setMasterVolume( int percentage );
+    /// Returns a pointer to the mix device with the given number
+    MixDevice* operator[](int val_i_num);
 
-      virtual void increaseVolume( const QString& mixdeviceID );
-      virtual void decreaseVolume( const QString& mixdeviceID );
+    /// Returns a pointer to the mix device whose type matches the value
+    /// given by the parameter and the array MixerDevNames given in
+    /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
+    MixDevice *getMixdeviceById( const QString& deviceID );
 
-      virtual long absoluteVolume( const QString& mixdeviceID );
-      virtual long absoluteVolumeMin( const QString& mixdeviceID );
-      virtual long absoluteVolumeMax( const QString& mixdeviceID );
-      virtual int volume( const QString& mixdeviceID );
-      virtual int masterVolume();
+    /// Open/grab the mixer for further intraction
+    bool openIfValid();
 
-      virtual QString masterDeviceIndex();
+    /// Returns whether the card is open/operational
+    bool isOpen() const;
 
-      virtual void setMute( const QString& mixdeviceID, bool on );
-      virtual bool mute( const QString& mixdeviceID );
-      virtual void toggleMute( const QString& mixdeviceID );
-      virtual bool isRecordSource( const QString& mixdeviceID );
+    /// Close/release the mixer
+    virtual int close();
 
-      virtual bool isAvailableDevice( const QString& mixdeviceID );
+    /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
+    QString& stateMessage() const;
 
-      /// Says if we are dynamic (e.g. widgets can come and go)
-      virtual void setDynamic( bool dynamic = true );
-      virtual bool dynamic();
+    /// Returns the name of the card/chip/hardware, as given by the driver. The name is NOT instance specific,
+    /// so if you install two identical soundcards, two of them will deliver the same mixerName().
+    /// Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
+    /// mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
+    virtual QString getBaseName();
 
-      virtual bool moveStream( const QString id, const QString& destId );
+    /// Wrapper to Mixer_Backend
+    QString translateKernelToWhatsthis(const QString &kernelName);
 
-      void commitVolumeChange( MixDevice* md );
+    /// Return the name of the card/chip/hardware, which is suitable for humans
+    virtual QString readableName();
 
-   public slots:
-      void readSetFromHWforceUpdate() const;
-      virtual void setRecordSource( const QString& controlID, bool on );
+    // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
+    static QString driverName(int num);
 
-      virtual void setBalance(int balance); // sets the m_balance (see there)
+    /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
+    QString& id();
+    /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
+    /// the user, but can be used for referencing configuration items and such.
 
-   signals:
-      void newBalance( Volume& );
-      void controlChanged(void);
-      void controlsReconfigured( const QString& mixer_ID );
+    void setCardInstance(int cardInstance);
+    int getCardInstance() const      {          return _cardInstance;      }
 
-   protected:
-      int m_balance; // from -100 (just left) to 100 (just right)
-      static QList<Mixer *> s_mixers;
+    //void setID(QString& ref_id);
 
-   private slots:
-      void controlChangedForwarder();
-      void controlsReconfiguredForwarder( const QString& mixer_ID );
 
-   public:
-      static QList<Mixer *>& mixers();
+    /// Returns an Universal Device Identifaction of the Mixer. This is an ID that relates to the underlying operating system.
+    // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
+    // Examples:
+    // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
+    // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
+    // Solaris: /dev/audio
+    QString& udi();
 
-   private:
-      void setBalanceInternal(Volume& vol);
-      Mixer_Backend *_mixerBackend;
-      QString _id;
-      QString _masterDevicePK;
-      static QString _globalMasterCard;
-      static QString _globalMasterCardDevice;
-      
-      QString m_dbusName;
-      bool m_dynamic;
+    static QList<Mixer*> & mixers();
+
+    /******************************************
+    The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
+    different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
+    At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
+    ******************************************/
+    static void setGlobalMaster(QString& ref_card, QString& ref_control);
+    static MixDevice* getGlobalMasterMD();
+    static MixDevice* getGlobalMasterMD(bool fallbackAllowed);
+    static Mixer* getGlobalMasterMixer();
+    static Mixer* getGlobalMasterMixerNoFalback();
+
+    /******************************************
+    The recommended master of this Mixer.
+    ******************************************/
+    MixDevice* getLocalMasterMD();
+    void setLocalMasterMD(QString&);
+
+    /// get the actual MixSet
+    MixSet getMixSet();
+
+
+    /// DCOP oriented methods (look at mixerIface.h for the descriptions)
+    virtual void setVolume( const QString& mixdeviceID, int percentage );
+    virtual void setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume );
+    virtual void setMasterVolume( int percentage );
+
+    virtual void increaseVolume( const QString& mixdeviceID );
+    virtual void decreaseVolume( const QString& mixdeviceID );
+
+    virtual long absoluteVolume( const QString& mixdeviceID );
+    virtual long absoluteVolumeMin( const QString& mixdeviceID );
+    virtual long absoluteVolumeMax( const QString& mixdeviceID );
+    virtual int volume( const QString& mixdeviceID );
+    virtual int masterVolume();
+
+    virtual QString masterDeviceIndex();
+
+    virtual void setMute( const QString& mixdeviceID, bool on );
+    virtual bool mute( const QString& mixdeviceID );
+    virtual void toggleMute( const QString& mixdeviceID );
+    virtual bool isRecordSource( const QString& mixdeviceID );
+
+    virtual bool isAvailableDevice( const QString& mixdeviceID );
+
+    /// Says if we are dynamic (e.g. widgets can come and go)
+    virtual void setDynamic( bool dynamic = true );
+    virtual bool dynamic();
+
+    virtual bool moveStream( const QString id, const QString& destId );
+
+    void commitVolumeChange( MixDevice* md );
+
+public slots:
+    void readSetFromHWforceUpdate() const;
+    virtual void setRecordSource(const QString & controlID, bool on);
+    virtual void setBalance(int balance); // sets the m_balance (see there)
+    
+signals:
+    void newBalance(Volume& );
+    void controlChanged(void);
+    void controlsReconfigured(const QString & mixer_ID);
+
+protected:
+    int m_balance; // from -100 (just left) to 100 (just right)
+    static QList<Mixer*> s_mixers;
+
+private slots:
+    void controlChangedForwarder();
+    void controlsReconfiguredForwarder(const QString & mixer_ID);
+
+private:
+    void setBalanceInternal(Volume& vol);
+    void recreateId();
+
+
+    Mixer_Backend *_mixerBackend;
+    QString _id;
+    QString _masterDevicePK;
+    int    _cardInstance;
+    static QString _globalMasterCard;
+    static QString _globalMasterCardDevice;
+
+    QString m_dbusName;
+    bool m_dynamic;
 };
 
 #endif

@@ -252,9 +252,7 @@ void ViewBase::setMixSet()
                     ctl->show = "simple";
                     _guiprof->_controls.push_back(ctl);
                 }
-                QString profileName;
-                profileName =  _mixer->id() + "." + id();
-                _guiprof->writeProfile(profileName);
+                _guiprof->writeProfile();
             }
         }
 

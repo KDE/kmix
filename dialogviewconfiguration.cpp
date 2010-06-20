@@ -345,11 +345,8 @@ void DialogViewConfiguration::apply()
 	fallbackMatchAllControl->show = "extended";
 	oldControlset.push_back(fallbackMatchAllControl);
 	
-	QString profileName;
-	Mixer* mixer = _view.getMixer();
-	profileName =  mixer->id() + "."  + _view.id();
     prof->finalizeProfile();
-	prof->writeProfile(profileName);  // at the moment it would only be really neccessary on "order change" of the controls
+	prof->writeProfile();  // at the moment it would only be really neccessary on "order change" of the controls
 
    // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
 

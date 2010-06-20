@@ -101,18 +101,54 @@ Mixer::~Mixer() {
  */
 Mixer* Mixer::findMixer( const QString& mixer_id)
 {
-   Mixer* mixer = 0;
-   int mixerCount = Mixer::mixers().count();
-   for ( int i=0; i<mixerCount; ++i)
-   {
-      if ( ((Mixer::mixers())[i])->id() == mixer_id )
-      {
-         mixer = (Mixer::mixers())[i];
-         break;
-      }
-   }
-   return mixer;
+    Mixer *mixer = 0;
+    int mixerCount = Mixer::mixers().count();
+    for ( int i=0; i<mixerCount; ++i)
+    {
+        if ( ((Mixer::mixers())[i])->id() == mixer_id )
+        {
+            mixer = (Mixer::mixers())[i];
+            break;
+        }
+    }
+    return mixer;
 }
+
+
+/**
+ * Set the card instance. Usually this will be 1, but if there is
+ * more than one card with the same name install, then you need
+ * to use 2, 3, ...
+ */
+void Mixer::setCardInstance(int cardInstance)
+{
+    _cardInstance = cardInstance;
+    recreateId();
+}
+
+void Mixer::recreateId()
+{
+    /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
+     * contain it.
+     * %1, the driver name is from the KMix backends, it does not contain colons.
+     * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
+     * %3, the mixer number, is a number: it does not contain colons.
+     */
+    QString mixerName = getBaseName();
+    mixerName.replace(":","_");
+    QString primaryKeyOfMixer = QString("%1::%2:%3")
+            .arg(getDriverName())
+            .arg(mixerName)
+            .arg(_cardInstance);
+    // The following 3 replaces are for not messing up the config file
+    primaryKeyOfMixer.replace("]","_");
+    primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
+    primaryKeyOfMixer.replace(" ","_");
+    primaryKeyOfMixer.replace("=","_");
+    _id = primaryKeyOfMixer;
+}
+
+
 
 
 void Mixer::volumeSave( KConfig *config )
@@ -158,7 +194,7 @@ void Mixer::volumeLoad( KConfig *config )
 bool Mixer::openIfValid() {
     bool ok = _mixerBackend->openIfValid();
     if ( ok ) {
-        _id = baseName();
+        recreateId(); // Fallback call. Actually recreateId() is supposed to be called later again, via setCardInstance()
         MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
         if ( recommendedMaster != 0 ) {
             QString recommendedMasterStr = recommendedMaster->id();
@@ -299,11 +335,6 @@ void Mixer::setBalanceInternal(Volume& vol)
    }
 }
 
-QString Mixer::baseName()
-{
-  return _mixerBackend->m_mixerName;
-}
-
 // should return a name suitable for a human user to read (on a label, ...)
 QString Mixer::readableName()
 {
@@ -314,6 +345,10 @@ QString Mixer::readableName()
 }
 
 
+QString Mixer::getBaseName()
+{
+  return _mixerBackend->m_mixerName;
+}
 
 /**
  * Queries the Driver Factory for a driver.
@@ -328,11 +363,12 @@ QString Mixer::driverName( int driver )
         return "unknown";
 }
 
+/* obsoleted by setInstance()
 void Mixer::setID(QString& ref_id)
 {
   _id = ref_id;
 }
-
+*/
 
 QString& Mixer::id()
 {
