@@ -346,7 +346,8 @@ void DialogViewConfiguration::apply()
 	oldControlset.push_back(fallbackMatchAllControl);
 	
     prof->finalizeProfile();
-	prof->writeProfile();  // at the moment it would only be really neccessary on "order change" of the controls
+    prof->setDirty();
+//	prof->writeProfile();  // at the moment it would only be really necessary on an "order change" of the controls
 
    // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
 

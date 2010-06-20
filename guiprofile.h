@@ -133,6 +133,7 @@ class GUIProfile
     bool writeProfile();
     
     bool isDirty();
+    void setDirty();
     
     void setId(QString id);
     QString getId();
@@ -144,31 +145,19 @@ class GUIProfile
     friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
     friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 
-    // key, value, comparator
-    //typedef std::map<std::string, std::string, SortedStringComparator> SortedStringMap;
     typedef std::set<ProfProduct*, ProductComparator> ProductSet;
     typedef std::vector<ProfControl*> ControlSet;
-    //typedef std::map<std::string, std::string, SortedStringComparator> SortedStringSet;
-    //typedef std::map<std::string, std::string> StringMap;
     ControlSet _controls;
 
     QList<ProfTab*>& tabs() { return _tabs; };
-    //QList<ProfTab*> tabs() const { return _tabs; };
     ProductSet _products;
 
     static GUIProfile* find(Mixer* mixer, QString profileName, bool allowFallback);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
 
-    QString getName() const
-    {
-        return _name;
-    }
-
-    void setName(QString _name)
-    {
-        this->_name = _name;
-    }
+    QString getName() const    {        return _name;    }
+    void setName(QString _name)    {        this->_name = _name;    }
 
     // The values from the <soundcard> tag
     QString _soundcardDriver;

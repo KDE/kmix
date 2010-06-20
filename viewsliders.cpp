@@ -155,6 +155,7 @@ void ViewSliders::_setMixSet()
             bool isUsed = false;
 
             QRegExp idRegexp(control->id);
+            bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
             //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
             // The following for-loop could be simplified by using a std::find_if
             for ( int i=0; i<mixset.count(); i++ ) {
@@ -185,6 +186,7 @@ void ViewSliders::_setMixSet()
                     _mixSet->append(md);
                     isUsed = true;
                     // We use no "break;" ,as multiple devices could match
+                    if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
                 } // name matches
             } // loop for finding a suitable MixDevice
             if ( ! isUsed ) {
