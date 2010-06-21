@@ -25,6 +25,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QDesktopWidget>
+#include <QPushButton>
 #include <qradiobutton.h>
 #include <QCursor>
 #include <KTabWidget>
@@ -69,13 +70,13 @@
 KMixWindow::KMixWindow(bool invisible)
 : KXmlGuiWindow(0, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) ),
   m_showTicks( true ),
-  //   m_isVisible (false),    // initialize, as we don't trigger a hideEvent()
-  //   m_visibilityUpdateAllowed( true ),
   m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
   m_dockWidget(),
   m_dontSetDefaultCardOnStart (false)
-  //, _dockAreaPopup(0)
 {
+    _cornerLabelClose = 0;
+    _cornerLabelNew = 0;
+
     setObjectName("KMixWindow");
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
@@ -94,7 +95,7 @@ KMixWindow::KMixWindow(bool invisible)
     connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
     connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
     if ( m_startVisible && ! invisible)
-        show(); // Started visible: We don't do "m_isVisible = true;", as the showEvent() already does it
+        show(); // Started visible
 
     connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()) );
 }
@@ -102,7 +103,14 @@ KMixWindow::KMixWindow(bool invisible)
 
 KMixWindow::~KMixWindow()
 {
-    clearMixerWidgets();
+    // -1- Cleanup Memory: clearMixerWidgets
+    while ( m_wsMixers->count() != 0 )
+    {
+        QWidget *mw = m_wsMixers->widget(0);
+        m_wsMixers->removeTab(0);
+        delete mw;
+    }
+    // -2- Mixer HW
     MixerToolBox::instance()->deinitMixer();
 }
 
@@ -180,6 +188,22 @@ void KMixWindow::initWidgets()
 
 
     m_wsMixers = new KTabWidget( centralWidget() );
+
+//    QPixmap cornerClosePM = KIconLoader::global()->loadIcon( "tab-close", KIconLoader::Toolbar, KIconLoader::SizeSmall );
+//    _cornerLabelClose = new QPushButton();
+//    _cornerLabelClose->setIcon(cornerClosePM);
+//    m_wsMixers->setCornerWidget(_cornerLabelClose, Qt::TopRightCorner);
+//    connect ( _cornerLabelClose, SIGNAL( clicked() ), SLOT (closeView() ) );
+    m_wsMixers->setTabsClosable(true);
+    connect (m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(closeView(int)) );
+
+    QPixmap cornerNewPM = KIconLoader::global()->loadIcon( "tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall );
+    _cornerLabelNew = new QPushButton();
+    _cornerLabelNew->setIcon(cornerNewPM);
+    //cornerLabelNew->setSizePolicy(QSizePolicy());
+    m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
+    connect ( _cornerLabelNew, SIGNAL( clicked() ), SLOT (newView() ) );
+
     connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
 
     m_widgetsLayout->addWidget(m_wsMixers);
@@ -276,6 +300,14 @@ void KMixWindow::saveViewConfig()
     // Save Views
 
     QMap<QString, QStringList> mixerViews;
+    
+    // The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
+    // Otherwise we would not save the Meta information (step -2- below for that mixer.
+    QListIterator<Mixer*> it(Mixer::mixers());
+    while ( it.hasNext()) {
+        Mixer* mixer = it.next();
+        mixerViews[mixer->id()];
+	}
 
     // -1- Save the views themselves
     for ( int i=0; i<m_wsMixers->count() ; ++i )
@@ -480,6 +512,10 @@ void KMixWindow::recreateGUI(bool saveConfig)
             kDebug() << "Now searching for profile: " << profileList.at(i);
             bool allowDefault = (i == (profileList.count() - 1)); // In the last loop iteration, allow the fallback as last resort.
             GUIProfile* guiprof = GUIProfile::find(mixer, profileList.at(i), allowDefault);
+            if ( guiprof == 0 ) {
+                kError() << "Cannot load profile " << profileList.at(i) << " . It was removed by the user, or the KMix config file is defective.";
+                continue;
+            }
             addMixerWidget(mixer->id(), guiprof, -1);
         }
     }
@@ -515,6 +551,67 @@ KMixerWidget* KMixWindow::findKMWforTab( QString kmwId )
         }
     }
     return kmw;
+}
+
+
+void KMixWindow::newView()
+{
+    kDebug() << "Enter";
+
+    if ( Mixer::mixers().count()  < 1 ) {
+        kError() << "Trying to create a View, but no Mixer exists";
+        return; // should never happen
+    }
+
+    Mixer* mixer = Mixer::mixers()[0];
+
+    bool allowDefault = false;
+
+    static int dummyToggler = false;
+    dummyToggler = !dummyToggler;
+    GUIProfile* guiprof;
+    if ( dummyToggler ) {
+        guiprof = GUIProfile::find(mixer, "playback", allowDefault);
+    }
+    else {
+        guiprof = GUIProfile::find(mixer, "capture", allowDefault);
+    }
+
+    if ( guiprof == 0 ) {
+        kError() << "Cannot add view - GUIProfile is invalid";
+    }
+    else  {
+        addMixerWidget(mixer->id(), guiprof, -1);
+    }
+
+    kDebug() << "Exit";
+}
+
+void KMixWindow::closeView(int idx)
+{
+    kDebug() << "Enter";
+    QWidget *w = m_wsMixers->widget(idx);
+    KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
+    if ( kmw ) {
+        saveAndCloseView(kmw, idx);
+    }
+    kDebug() << "Exit";
+}
+
+/**
+ * Save the view and close it
+ * @arg kmw The KMixerWidget to close
+ * @arg idx The index in the TabWidget
+ */
+void KMixWindow::saveAndCloseView(KMixerWidget *kmw, int idx)
+{
+    kmw->saveConfig( KGlobal::config().data() );
+    m_wsMixers->removeTab(idx);
+    delete kmw;
+
+    if ( m_wsMixers->count() < 2 ) {
+        m_wsMixers->setTabsClosable(false);
+    }
 }
 
 /**
@@ -602,10 +699,8 @@ void KMixWindow::unplugged( const QString& udi)
                 QWidget *w = m_wsMixers->widget(i);
                 KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
                 if ( kmw && kmw->mixer() ==  mixer ) {
-                    kmw->saveConfig( KGlobal::config().data() );
-                    m_wsMixers->removeTab(i);
-                    delete kmw;
-                    i= -1; // Restart loop from scratch (indices are most likeliy invalidated at removeTab() )
+                    saveAndCloseView(kmw,i);
+                    i= -1; // Restart loop from scratch (indices are most likely invalidated at removeTab() )
                 }
             }
             MixerToolBox::instance()->removeMixer(mixer);
@@ -653,18 +748,6 @@ void KMixWindow::setErrorMixerWidget()
 }
  */
 
-void KMixWindow::clearMixerWidgets()
-{
-    while ( m_wsMixers->count() != 0 )
-    {
-        QWidget *mw = m_wsMixers->widget(0);
-        m_wsMixers->removeTab(0);
-        delete mw;
-    }
-}
-
-
-
 void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition)
 {
     //    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
@@ -704,7 +787,9 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         if ( kmw->getGuiprof()->getId() == m_defaultCardOnStart ) {
             m_wsMixers->setCurrentWidget(kmw);
         }
-
+        if ( m_wsMixers->count() > 1 ) {
+            m_wsMixers->setTabsClosable(true);
+        }
         m_dontSetDefaultCardOnStart = false;
 
 
@@ -884,26 +969,6 @@ void KMixWindow::toggleMenuBar()
     menuBar()->setVisible(_actionShowMenubar->isChecked());
 }
 
-/*
-void KMixWindow::showEvent( QShowEvent * )
-{
-   if ( m_visibilityUpdateAllowed )
-      m_isVisible = isVisible();
-}
-
-void KMixWindow::hideEvent( QHideEvent * )
-{
-   if ( m_visibilityUpdateAllowed )
-   {
-      m_isVisible = isVisible();
-   }
-}
-
-void KMixWindow::stopVisibilityUpdates()
-{
-   m_visibilityUpdateAllowed = false;
-}
- */
 
 void KMixWindow::slotHWInfo()
 {

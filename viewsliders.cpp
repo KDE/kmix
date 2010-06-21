@@ -76,54 +76,54 @@ ViewSliders::~ViewSliders()
 
 QWidget* ViewSliders::add(MixDevice *md)
 {
-   MixDeviceWidget *mdw;
-   Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
+    MixDeviceWidget *mdw;
+    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
 
 
 
-   if ( md->isEnum() ) {
-      mdw = new MDWEnum(
-               md,           // MixDevice (parameter)
-               orientation,  // Orientation
-               this,         // parent
-               this          // View widget
-      );
-      if ( _layoutEnum == 0 ) {
-	// lazily creation of Layout for the first enum
-        _layoutEnum = new QVBoxLayout(); // new QFormLayout();
-        _layoutMDW->addLayout( _layoutEnum );
-      }
-      _layoutEnum->addWidget(mdw);
-   } // an enum
-   else {
-      // add a separator before the device
-      QFrame *_frm = new QFrame(this);
-      if ( orientation == Qt::Vertical)
-         _frm->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-      else
-         _frm->setFrameStyle(QFrame::HLine | QFrame::Sunken);
-      _separators.insert(md->id(),_frm);
-      _layoutSliders->addWidget(_frm);
-      mdw = new MDWSlider(
-               md,           // MixDevice (parameter)
-               true,         // Show Mute LED
-               true,         // Show Record LED
-                          md->controlProfile()->useSubcontrolPlayback(), // include plaback sliders
-                          md->controlProfile()->useSubcontrolCapture(), // include capture sliders
-               false,        // Small
-               orientation,  // Orientation
-               this,         // parent
-               this       ); // View widget
-      _layoutSliders->addWidget(mdw);
-      QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
-      if ( lay )
-         lay->addSpacing(2);
-      else
-         qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
-   }
+    if ( md->isEnum() ) {
+        mdw = new MDWEnum(
+                md,           // MixDevice (parameter)
+                orientation,  // Orientation
+                this,         // parent
+                this          // View widget
+        );
+        if ( _layoutEnum == 0 ) {
+            // lazily creation of Layout for the first enum
+            _layoutEnum = new QVBoxLayout(); // new QFormLayout();
+            _layoutMDW->addLayout( _layoutEnum );
+        }
+        _layoutEnum->addWidget(mdw);
+    } // an enum
+    else {
+        // add a separator before the device
+        QFrame *_frm = new QFrame(this);
+        if ( orientation == Qt::Vertical)
+            _frm->setFrameStyle(QFrame::VLine | QFrame::Sunken);
+        else
+            _frm->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+        _separators.insert(md->id(),_frm);
+        _layoutSliders->addWidget(_frm);
+        mdw = new MDWSlider(
+                md,           // MixDevice (parameter)
+                true,         // Show Mute LED
+                true,         // Show Record LED
+                md->controlProfile()->useSubcontrolPlayback(), // include playback sliders
+                md->controlProfile()->useSubcontrolCapture(), // include capture sliders
+                false,        // Small
+                orientation,  // Orientation
+                this,         // parent
+                this       ); // View widget
+        _layoutSliders->addWidget(mdw);
+        QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
+        if ( lay )
+            lay->addSpacing(2);
+        else
+            qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
+    }
 
 
-   return mdw;
+    return mdw;
 }
 
 
@@ -155,7 +155,8 @@ void ViewSliders::_setMixSet()
             bool isUsed = false;
 
             QRegExp idRegexp(control->id);
-            bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
+            //bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
+            //isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
             //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
             // The following for-loop could be simplified by using a std::find_if
             for ( int i=0; i<mixset.count(); i++ ) {
@@ -163,14 +164,15 @@ void ViewSliders::_setMixSet()
                 if ( md->id().contains(idRegexp) )
                 {
                     // Match found (by name)
-                    // Now check wheter subcontrols match
+                    if ( _mixSet->contains( md ) ) continue; // dup check
+
+                    // Now check whether subcontrols match
                     bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
                     bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
                     bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
                     bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
                     
                     if ( !subcontrolWanted ) continue;
-                    if ( _mixSet->contains( md ) ) continue; // dup check
 
                     md->setControlProfile(control);
                     if ( !control->name.isNull() ) {
@@ -186,7 +188,7 @@ void ViewSliders::_setMixSet()
                     _mixSet->append(md);
                     isUsed = true;
                     // We use no "break;" ,as multiple devices could match
-                    if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
+                    //if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
                 } // name matches
             } // loop for finding a suitable MixDevice
             if ( ! isUsed ) {

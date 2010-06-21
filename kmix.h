@@ -29,7 +29,7 @@
 class QLabel;
 #include <qlist.h>
 #include <QVBoxLayout>
-#include <QProgressBar>
+class QPushButton;
 #include <QTimer>
 class KTabWidget;
 
@@ -75,7 +75,6 @@ KMixWindow : public KXmlGuiWindow
    void initWidgets();
    //void setErrorMixerWidget();
 
-   void clearMixerWidgets();
    void fixConfigAfterRead();
 
    virtual bool queryClose();
@@ -93,16 +92,11 @@ KMixWindow : public KXmlGuiWindow
    void recreateGUIwithSavingView();
    void recreateGUIwithoutSavingView();
    void redrawMixer( const QString& mixer_ID );
-      
-      
-   //void stopVisibilityUpdates();
-   //void showEvent( QShowEvent * );
-   //void hideEvent( QHideEvent * );
-
    void newMixerShown(int tabIndex);
 
     private:
         KMixerWidget* findKMWforTab( QString tabId );
+        void saveAndCloseView(KMixerWidget *kmw, int idx);
 
    KAccel *m_keyAccel;
    KAction* _actionShowMenubar;
@@ -113,13 +107,15 @@ KMixWindow : public KXmlGuiWindow
    bool m_showLabels;
    bool m_onLogin;
    bool m_startVisible;
-//   bool m_isVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
    Qt::Orientation m_toplevelOrientation;
 
    KTabWidget *m_wsMixers;
+   QPushButton* _cornerLabelNew;
+   QPushButton* _cornerLabelClose;
+
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QString m_hwInfoString;
@@ -146,6 +142,9 @@ KMixWindow : public KXmlGuiWindow
    void slotIncreaseVolume();
    void slotDecreaseVolume();
    void slotMute();
+
+   void newView();
+   void closeView(int);
 };
 
 #endif // KMIX_H
