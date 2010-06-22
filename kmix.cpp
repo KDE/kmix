@@ -74,7 +74,6 @@ KMixWindow::KMixWindow(bool invisible)
   m_dockWidget(),
   m_dontSetDefaultCardOnStart (false)
 {
-    _cornerLabelClose = 0;
     _cornerLabelNew = 0;
 
     setObjectName("KMixWindow");
@@ -186,14 +185,7 @@ void KMixWindow::initWidgets()
     m_widgetsLayout->setSpacing(   0   );
     m_widgetsLayout->setMargin (   0   );
 
-
     m_wsMixers = new KTabWidget( centralWidget() );
-
-//    QPixmap cornerClosePM = KIconLoader::global()->loadIcon( "tab-close", KIconLoader::Toolbar, KIconLoader::SizeSmall );
-//    _cornerLabelClose = new QPushButton();
-//    _cornerLabelClose->setIcon(cornerClosePM);
-//    m_wsMixers->setCornerWidget(_cornerLabelClose, Qt::TopRightCorner);
-//    connect ( _cornerLabelClose, SIGNAL( clicked() ), SLOT (closeView() ) );
     m_wsMixers->setTabsClosable(true);
     connect (m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(closeView(int)) );
 

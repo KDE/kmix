@@ -24,6 +24,7 @@
 #include "guiprofile.h"
 #include "mdwenum.h"
 #include "mdwslider.h"
+#include "mixdevicecomposite.h"
 #include "mixer.h"
 #include "verticaltext.h"
 
@@ -142,6 +143,9 @@ void ViewSliders::_setMixSet()
             delete li;
     }
 
+
+    QList<MixDevice*> mds;  // @todo For temporary test
+
     // This method iterates the controls from the Profile
     // Each control is checked, whether it is also contained in the mixset, and
     // applicable for this kind of View. If yes, the control is accepted and inserted.
@@ -186,6 +190,9 @@ void ViewSliders::_setMixSet()
                             md->playbackVolume().setSwitchType(Volume::OffSwitch);
                     }
                     _mixSet->append(md);
+
+                    if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // @todo For temporary test
+
                     isUsed = true;
                     // We use no "break;" ,as multiple devices could match
                     //if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
@@ -199,6 +206,13 @@ void ViewSliders::_setMixSet()
       else {
       }  // Tab name doesn't match (=> don't insert)
    } // iteration over all controls from the Profile
+
+
+    MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
+    ProfControl* pctl = new ProfControl();
+    pctl->setSubcontrols("*");
+    mdc->setControlProfile(pctl);
+    _mixSet->append(mdc);
 }
 
 

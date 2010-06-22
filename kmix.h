@@ -114,7 +114,6 @@ KMixWindow : public KXmlGuiWindow
 
    KTabWidget *m_wsMixers;
    QPushButton* _cornerLabelNew;
-   QPushButton* _cornerLabelClose;
 
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
