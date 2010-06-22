@@ -144,18 +144,18 @@ static QString getIconNameFromProplist(pa_proplist *l) {
     const char *t;
 
     if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ICON_NAME)))
-        return t;
+        return QString::fromUtf8(t);
 
     if ((t = pa_proplist_gets(l, PA_PROP_WINDOW_ICON_NAME)))
-        return t;
+        return QString::fromUtf8(t);
 
     if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_ICON_NAME)))
-        return t;
+        return QString::fromUtf8(t);
 
     if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ROLE))) {
 
         if (strcmp(t, "video") == 0 || strcmp(t, "phone") == 0)
-            return t;
+            return QString::fromUtf8(t);
 
         if (strcmp(t, "music") == 0)
             return "audio";
@@ -190,8 +190,8 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     devinfo s;
     s.index = s.device_index = i->index;
     s.name = QString(i->name).replace(' ', '_');
-    s.description = i->description;
-    s.icon_name = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME);
+    s.description = QString::fromUtf8(i->description);
+    s.icon_name = QString::fromUtf8(pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME));
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -243,8 +243,8 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     devinfo s;
     s.index = s.device_index = i->index;
     s.name = QString(i->name).replace(' ', '_');
-    s.description = i->description;
-    s.icon_name = pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME);
+    s.description = QString::fromUtf8(i->description);
+    s.icon_name = QString::fromUtf8(pa_proplist_gets(i->proplist, PA_PROP_DEVICE_ICON_NAME));
     s.volume = i->volume;
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
@@ -284,8 +284,8 @@ static void client_cb(pa_context *c, const pa_client_info *i, int eol, void *) {
         return;
     }
 
-    clients[i->index] = i->name;
-    kDebug(67100) << "Got some info about client: " << i->name;
+    clients[i->index] = QString::fromUtf8(i->name);
+    kDebug(67100) << "Got some info about client: " << clients[i->index];
 }
 
 static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, void *) {
@@ -320,7 +320,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     devinfo s;
     s.index = i->index;
     s.device_index = i->sink;
-    s.description = prefix + i->name;
+    s.description = prefix + QString::fromUtf8(i->name);
     s.name = QString("stream:") + i->index;
     s.icon_name = getIconNameFromProplist(i->proplist);
     s.volume = i->volume;
@@ -377,7 +377,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     devinfo s;
     s.index = i->index;
     s.device_index = i->source;
-    s.description = prefix + i->name;
+    s.description = prefix + QString::fromUtf8(i->name);
     s.name = QString("stream:") + i->index;
     s.icon_name = getIconNameFromProplist(i->proplist);
     //s.volume = i->volume;
