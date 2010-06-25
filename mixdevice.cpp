@@ -186,7 +186,7 @@ bool MixDevice::operator==(const MixDevice& other) const
 
 
 /**
- * This methhod is currently only called on "kmixctrl --restore"
+ * This method is currently only called on "kmixctrl --restore"
  *
  * Normally we have a working _volume object already, which is very important,
  * because we need to read the minimum and maximum volume levels.
