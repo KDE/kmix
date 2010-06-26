@@ -31,6 +31,7 @@ class QLabel;
 #include <QVBoxLayout>
 #include <QProgressBar>
 #include <QTimer>
+class QWidgetAction;
 class KTabWidget;
 
 // KDE
@@ -89,8 +90,8 @@ KMixWindow : public KXmlGuiWindow
    void recreateGUI(bool saveView);
    void recreateGUIwithoutSavingView();
    void redrawMixer( const QString& mixer_ID );
-      
-      
+
+
    //void stopVisibilityUpdates();
    //void showEvent( QShowEvent * );
    //void hideEvent( QHideEvent * );
@@ -122,12 +123,13 @@ KMixWindow : public KXmlGuiWindow
    QVBoxLayout *m_widgetsLayout;
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;
+   QWidgetAction *_volWA;
    unsigned int m_configVersion;
    void showVolumeDisplay();
    void increaseOrDecreaseVolume(bool increase);
 
    OSDWidget* osdWidget;
-   
+
   private slots:
    void saveConfig();
    void slotHWInfo();

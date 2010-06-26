@@ -75,7 +75,8 @@ KMixWindow::KMixWindow(bool invisible)
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_dockWidget(),
    m_dontSetDefaultCardOnStart (false),
-   _dockAreaPopup(0)
+   _dockAreaPopup(0),
+   _volWA(0)
 {
     setObjectName("KMixWindow");
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
@@ -206,9 +207,12 @@ bool KMixWindow::updateDocking()
       m_dockWidget->deleteLater();
       m_dockWidget = 0L;
    }
-   if ( _dockAreaPopup ) {
+   if ( _volWA ) {
       // If this is called during a master control change, we rather play safe by using deleteLater().
-      _dockAreaPopup->deleteLater();
+      // Note: deleting _volWA also deletes its associated _dockAreaPopup and prevents the action to be left
+      // with a dangling pointer.
+      _volWA->deleteLater();
+      _volWA = 0L;
       _dockAreaPopup = 0L;
    }
 
@@ -224,9 +228,9 @@ bool KMixWindow::updateDocking()
       _dockAreaPopup = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);
       _dockAreaPopup->createDeviceWidgets();
 
-      QWidgetAction *volWA = new QWidgetAction(volMenu);
-      volWA->setDefaultWidget(_dockAreaPopup);
-      volMenu->addAction(volWA);
+      _volWA = new QWidgetAction(volMenu);
+      _volWA->setDefaultWidget(_dockAreaPopup);
+      volMenu->addAction(_volWA);
       referenceWidgetForSystray = volMenu;
    }
    m_dockWidget = new KMixDockWidget( this, referenceWidgetForSystray, _dockAreaPopup );
