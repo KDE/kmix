@@ -154,7 +154,7 @@ void ViewSliders::_setMixSet()
     for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
     {
         ProfControl* control = *it;
-        if ( control->tab == id() ) {
+        if ( true /*control->tab == id() */ ) {
             // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
             bool isUsed = false;
 
@@ -213,8 +213,9 @@ void ViewSliders::_setMixSet()
     Volume::ChannelMask chn = Volume::MMAIN;
     Volume* vol = new Volume( chn, 0, 100, true, true);
     mdc->addPlaybackVolume(*vol);
-    ProfControl* pctl = new ProfControl();
-    pctl->setSubcontrols("*");
+    QString ctlId("Composite_Test");
+    QString ctlMatchAll("*");
+    ProfControl* pctl = new ProfControl(ctlId, ctlMatchAll);
     mdc->setControlProfile(pctl);
     _mixSet->append(mdc);
 }

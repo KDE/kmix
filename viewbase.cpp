@@ -245,11 +245,13 @@ void ViewBase::setMixSet()
             if ( new_mix_devices.count() > 0 ) {
                 kDebug(67100) << "Found " << new_mix_devices.count() << " new controls. Adding to GUIProfile";
                 while ( new_mix_devices.count() > 0 ) {
-                    ProfControl* ctl = new ProfControl();
-                    ctl->id = new_mix_devices.takeAt(0);
-                    ctl->setSubcontrols(QString("*"));
-                    ctl->tab  = (_guiprof->tabs())[0]->name(); // Use the first tab... not ideal but should work most of the time;
-                    ctl->show = "simple";
+                    QString sctlMatchAll("*");
+                    QString new_mix_devices0 = new_mix_devices.takeAt(0);
+                    ProfControl* ctl = new ProfControl(new_mix_devices0, sctlMatchAll);
+//                    ctl->id = new_mix_devices.takeAt(0);
+//                    ctl->setSubcontrols(QString("*"));
+//                    ctl->tab  = (_guiprof->tabs())[0]->name(); // Use the first tab... not ideal but should work most of the time;
+//                    ctl->show = "simple";
                     _guiprof->_controls.push_back(ctl);
                 }
                 _guiprof->setDirty();
