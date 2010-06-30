@@ -5,7 +5,7 @@ This is not yet integrated into the KDE build / install.
 For testing, you can install it like this:
 
 loc=de; m=kmix-controls-$loc ; msgfmt -o ${m}.mo ${m}.po
-cp $m /usr/share/locale/$loc/LC_MESSAGES/kmix-controls.mo
+cp $m.mo /usr/share/locale/$loc/LC_MESSAGES/kmix-controls.mo
 
 You can also do it with loc=en
 

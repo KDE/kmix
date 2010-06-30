@@ -90,15 +90,22 @@ public:
    virtual void setRecSource(bool value);
    virtual bool isEnum();
 
+   // Refresh the composite from its components
+   void update();
+
    virtual Volume& playbackVolume();
    virtual Volume& captureVolume();
 
 private:
+   long calculateVolume(Volume::VolumeType vt);
+
    Mixer *_mixer;
    QList<MixDevice*> _mds;
 
-   Volume _compositePlaybackVolume;
-   Volume _compositeCaptureVolume;
+   static const long VolMax;
+
+   Volume* _compositePlaybackVolume;
+   Volume* _compositeCaptureVolume;
 };
 
 #endif

@@ -73,6 +73,8 @@ friend class MixDevice;
 
     static char ChannelNameForPersistence[9][30];
 
+    enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
+
     // regular constructor
     Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     // compatibility constructor

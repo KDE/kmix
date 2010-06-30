@@ -66,7 +66,7 @@ Mixer::Mixer( QString& ref_driverName, int device )
     : m_balance(0), _mixerBackend(0L), m_dynamic(false)
 {
    (void)new KMixAdaptor(this);
-
+    _cardInstance = 0;
     _mixerBackend = 0;
     int driverCount = numDrivers();
     for (int driver=0; driver<driverCount; driver++ ) {
