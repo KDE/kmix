@@ -56,9 +56,11 @@ OSDWidget::OSDWidget(QWidget * parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     //Cache the icon pixmaps
-    QSize iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+    QSize iconSize;
 
     if (!Plasma::Theme::defaultTheme()->imagePath("icons/audio").isEmpty()) {
+        // Icons from plasma theme are 24x24 pixel
+        iconSize = QSize(24, 24);
         Plasma::Svg *svgIcon = new Plasma::Svg(this);
         svgIcon->setImagePath("icons/audio");
         svgIcon->setContainsMultipleImages(true);
@@ -68,6 +70,7 @@ OSDWidget::OSDWidget(QWidget * parent)
         m_volumeLowPixmap = svgIcon->pixmap("audio-volume-low");
         m_volumeMutedPixmap = svgIcon->pixmap("audio-volume-muted");
     } else {
+        iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
         m_volumeHighPixmap = KIcon("audio-volume-high").pixmap(iconSize);
         m_volumeMediumPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
         m_volumeLowPixmap = KIcon("audio-volume-low").pixmap(iconSize);
