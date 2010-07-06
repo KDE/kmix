@@ -49,8 +49,8 @@
  */
 MDWEnum::MDWEnum( MixDevice* md,
                  Qt::Orientation orientation,
-                 QWidget* parent, ViewBase* mw) :
-   MixDeviceWidget(md,false,orientation,parent,mw),
+                 QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
+   MixDeviceWidget(md, false, orientation, parent, view, par_pctl),
    _label(0), _enumCombo(0), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)

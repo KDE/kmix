@@ -88,6 +88,7 @@ QWidget* ViewSliders::add(MixDevice *md)
                 orientation,  // Orientation
                 this,         // parent
                 this          // View widget
+                , md->controlProfile()
         );
         if ( _layoutEnum == 0 ) {
             // lazily creation of Layout for the first enum
@@ -109,12 +110,12 @@ QWidget* ViewSliders::add(MixDevice *md)
                 md,           // MixDevice (parameter)
                 true,         // Show Mute LED
                 true,         // Show Record LED
-                md->controlProfile()->useSubcontrolPlayback(), // include playback sliders
-                md->controlProfile()->useSubcontrolCapture(), // include capture sliders
                 false,        // Small
                 orientation,  // Orientation
                 this,         // parent
-                this       ); // View widget
+                this
+                , md->controlProfile()
+        ); // View widget
         _layoutSliders->addWidget(mdw);
         QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
         if ( lay )
@@ -183,10 +184,10 @@ void ViewSliders::_setMixSet()
                         // Apply the custom name from the profile
                         md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
                     }
-                    if ( !control->switchtype.isNull() ) {
-                        if ( control->switchtype == "On"  )
+                    if ( !control->getSwitchtype().isNull() ) {
+                        if ( control->getSwitchtype() == "On"  )
                             md->playbackVolume().setSwitchType(Volume::OnSwitch);
-                        else if ( control->switchtype == "Off"  )
+                        else if ( control->getSwitchtype() == "Off"  )
                             md->playbackVolume().setSwitchType(Volume::OffSwitch);
                     }
                     _mixSet->append(md);

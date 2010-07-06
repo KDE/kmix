@@ -41,6 +41,7 @@
 #include <qwmatrix.h>
 #include <QBoxLayout>
 
+#include "guiprofile.h"
 #include "mdwslider.h"
 #include "mixer.h"
 #include "viewbase.h"
@@ -61,17 +62,19 @@ static const int MIN_SLIDER_SIZE = 50;
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
 MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
-		     bool includePlayback, bool includeCapture, 
-                     bool small, Qt::Orientation orientation, QWidget* parent, ViewBase* view) :
-	MixDeviceWidget(md,small,orientation,parent,view),
+        bool small, Qt::Orientation orientation, QWidget* parent
+        , ViewBase* view
+        , ProfControl* par_pctl
+        ) :
+	MixDeviceWidget(md,small,orientation,parent,view, par_pctl),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
-       muteButtonSpacing(false), captureLEDSpacing(false), m_moveMenu(0)
+	muteButtonSpacing(false), captureLEDSpacing(false), m_moveMenu(0)
 {
     createActions();
-    createWidgets( showMuteLED, showCaptureLED, includePlayback, includeCapture );
+    createWidgets( showMuteLED, showCaptureLED );
     createShortcutActions(view);
     installEventFilter( this ); // filter for popup
     update();
@@ -251,8 +254,10 @@ void MDWSlider::setCaptureLEDSpace(bool value)
 /**
  * Creates all widgets : Icon, Label, Mute-Button, Slider(s) and Capture-Button.
  */
-void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool includePlayback, bool includeCapture )
+void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 {
+    bool includePlayback = pctl->useSubcontrolPlayback();
+    bool includeCapture = pctl->useSubcontrolCapture();
     bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
     bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
 	bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
@@ -506,6 +511,13 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 				}
 				else {
 					sliderBig->setMinimumWidth( MIN_SLIDER_SIZE );
+				}
+				if ( ! pctl->getBackgroundColor().isEmpty() ) {
+				    QString bcolor(pctl->getBackgroundColor());
+				    QColor qcol(bcolor);
+				    QPalette qpal = sliderBig->palette();
+				    qpal.setColor(QPalette::Window, qcol);
+				    sliderBig->setPalette(qpal);
 				}
 			} // not small
 
