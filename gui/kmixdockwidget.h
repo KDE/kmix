@@ -84,6 +84,7 @@ class KMixDockWidget : public KStatusNotifierItem
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
    void contextMenuAboutToShow();
+   void activateMenuOrWindow(bool, const QPoint &);
 };
 
 #endif

@@ -54,6 +54,7 @@
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     : KStatusNotifierItem(parent)
+  //  : KStatusNotifierItem(0)
     , _audioPlayer(0L)
     , _playBeepOnVolumeChange(false) // disabled due to triggering a "Bug"
     , _oldToolTipValue(-1)
@@ -69,7 +70,13 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     createActions();
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
+    connect(this, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(activateMenuOrWindow(bool, QPoint)));
     connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+
+#ifdef _GNU_SOURCE
+// TODO minimizeRestore usage is currently VERY broken
+#warning minimizeRestore usage is currently VERY broken in KMIx. This must be fixed before doing a release.
+#endif
 
     if (_volumePopup) {
         KMenu *volMenu = new KMenu(parent);
@@ -80,7 +87,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         volWA->setDefaultWidget(_referenceWidget);
         volMenu->addAction(volWA);
 
-        setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
+        //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
     }
 }
 
@@ -273,6 +280,12 @@ KMixDockWidget::updatePixmap()
 
 
 
+void KMixDockWidget::activateMenuOrWindow(bool val, const QPoint &pos)
+{
+    kDebug() << "activateMenuOrWindow: " << val << "," << pos;
+}
+
+
 void KMixDockWidget::activate(const QPoint &pos)
 {
     kDebug() << "Activate at " << pos;
@@ -289,14 +302,16 @@ void KMixDockWidget::activate(const QPoint &pos)
 
 
            Bug 191477 -  Show Mixer Window doesn't show the mixer window
+           */
 
 
         // Use default KStatusNotifierItem behavior if we are not using the
         // dockAreaPopup
         KStatusNotifierItem::activate(pos);
         return;
-*/
 
+
+        /*
         QWidget* p = (QWidget*)parent();
         if ( p->isVisible()) {
             p->hide();
@@ -304,6 +319,7 @@ void KMixDockWidget::activate(const QPoint &pos)
         else {
             p->show();
         }
+        */
 
         return;
     }
@@ -407,10 +423,14 @@ KMixDockWidget::dockMute()
 void
 KMixDockWidget::contextMenuAboutToShow()
 {
+   // KStatusNotifierItem::contextMenuAboutToShow();
+    /*
+    kDebug() << "<<< mm 1";
     QAction* showAction = actionCollection()->action("minimizeRestore");
+    kDebug() << "<<< mm 2";
     if ( parent() && showAction )
     {
-        if ( ((QWidget*)parent())->isVisible() )
+        if ( ((QWidget*)parent())->isVisible() ) // TODO isVisible() is not good enough here
         {
             showAction->setText( i18n("Hide Mixer Window") );
         }
@@ -418,7 +438,11 @@ KMixDockWidget::contextMenuAboutToShow()
         {
             showAction->setText( i18n("Show Mixer Window") );
         }
+        kDebug() << "<<< mm 3";
+        //disconnect(showAction, 0, 0, 0);
+        //connect(showAction, SIGNAL(triggered(bool), this, hideOrShowMainWindow() );
     }
+    */
 
     // Enable/Disable "Muted" menu item
     MixDevice* md = Mixer::getGlobalMasterMD();
