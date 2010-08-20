@@ -269,6 +269,8 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		QVBoxLayout *controlLayout = new QVBoxLayout(this);
 		controlLayout->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
 		setLayout(controlLayout);
+        controlLayout->setContentsMargins(0,0,0,0);
+        controlLayout->setSpacing(0);
 
 		//add device icon
 		m_iconLabelSimple = 0L;
@@ -277,7 +279,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		controlLayout->addWidget( m_iconLabelSimple, 0, Qt::AlignHCenter );
 
 		//5px space
-		controlLayout->addSpacing( 5 );
+		//controlLayout->addSpacing( 5 );
 
 		//the device label
 		m_label = new QLabel( m_mixdevice->readableName(), this);
@@ -301,13 +303,13 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		controlLayout->addWidget( labelSpacer );
 		labelSpacer->installEventFilter(this);
 
-		controlLayout->addSpacing( 3 );
+		//controlLayout->addSpacing( 3 );
 
 
 		// sliders
 		QHBoxLayout *volLayout = new QHBoxLayout( );
 		volLayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
-		volLayout->setSpacing(5);
+		//volLayout->setSpacing(5);
 		controlLayout->addItem( volLayout );
 
 		if ( hasVolumeSliders )
@@ -373,7 +375,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		row1->addWidget( m_label );
 		row1->setAlignment(m_label, Qt::AlignVCenter);
 
-		row1->addStretch();
+		//row1->addStretch();
 
 		if ( showCaptureLED && includeCapture && m_mixdevice->captureVolume().hasSwitch() )
 		{
@@ -405,7 +407,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 //		controlLayout->addWidget( captureSpacer );
 //		captureSpacer->installEventFilter(this);
 
-		row2->addSpacing( 10 );
+		//row2->addSpacing( 10 );
 
 		// --- SLIDERS ---------------------------
 		QBoxLayout *volLayout;
@@ -422,12 +424,12 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		}
 		else
 		{
-			row2->addStretch(1);
+			//row2->addStretch(1);
 		}
 
 		if ( showMuteButton && includePlayback && m_mixdevice->playbackVolume().hasSwitch() )
 		{
-			row2->addSpacing( 3 );
+			//row2->addSpacing( 3 );
 			m_qcb =  new QToolButton(this);
 			m_qcb->setAutoRaise(true);
 			m_qcb->setCheckable(false);

@@ -20,6 +20,6 @@
  */
 
 #ifndef APP_VERSION
-#define APP_VERSION "3.7"
+#define APP_VERSION "3.8-alpha"
 #define KMIX_CONFIG_VERSION 3
 #endif // APP_VERSION
