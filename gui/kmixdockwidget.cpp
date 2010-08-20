@@ -83,9 +83,9 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _referenceWidget = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, parent);
         _referenceWidget->createDeviceWidgets();
 
-        QWidgetAction *volWA = new QWidgetAction(volMenu);
-        volWA->setDefaultWidget(_referenceWidget);
-        volMenu->addAction(volWA);
+        _volWA = new QWidgetAction(volMenu);
+        _volWA->setDefaultWidget(_referenceWidget);
+        volMenu->addAction(_volWA);
 
         //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
     }
@@ -95,6 +95,11 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 KMixDockWidget::~KMixDockWidget()
 {
     delete _audioPlayer;
+    // Note: deleting _volWA also deletes its associated ViewDockAreaPopup (_referenceWidget) and prevents the
+    //       action to be left with a dangling pointer.
+    //       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix 
+    delete _volWA;
+
 }
 
 void KMixDockWidget::createActions()
