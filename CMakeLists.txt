@@ -29,37 +29,38 @@ add_subdirectory( profiles )
 add_subdirectory( tests )
 
 set(kmix_adaptor_SRCS)
-qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml mixer.h Mixer)
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml core/mixer.h Mixer)
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
-   main.cpp 
-   kmix.cpp 
-   kmixdockwidget.cpp 
-   kmixprefdlg.cpp 
-   viewbase.cpp 
-   viewdockareapopup.cpp 
-   viewsliders.cpp 
-   mixdevicewidget.cpp 
-   mdwmoveaction.cpp
-   mdwslider.cpp 
-   mdwenum.cpp 
-   kmixerwidget.cpp 
-   mixer.cpp 
-   mixset.cpp 
-   mixdevice.cpp 
-   mixdevicecomposite.cpp 
-   mixer_backend.cpp
-   ksmallslider.cpp 
-   volume.cpp
-   verticaltext.cpp 
-   kmixtoolbox.cpp 
-   mixertoolbox.cpp 
-   dialogviewconfiguration.cpp 
-   KMixApp.cpp 
-   dialogselectmaster.cpp 
-   kmixdevicemanager.cpp 
-   guiprofile.cpp
-   osdwidget.cpp)
+   apps/main.cpp 
+   apps/kmix.cpp 
+   apps/KMixApp.cpp
+   gui/kmixdockwidget.cpp 
+   gui/kmixprefdlg.cpp 
+   gui/viewbase.cpp 
+   gui/viewdockareapopup.cpp 
+   gui/viewsliders.cpp 
+   gui/mixdevicewidget.cpp 
+   gui/mdwmoveaction.cpp
+   gui/mdwslider.cpp 
+   gui/mdwenum.cpp 
+   gui/kmixerwidget.cpp 
+   gui/ksmallslider.cpp
+   gui/verticaltext.cpp
+   gui/kmixtoolbox.cpp 
+   gui/dialogviewconfiguration.cpp 
+   gui/dialogselectmaster.cpp 
+   gui/guiprofile.cpp
+   gui/osdwidget.cpp
+   core/mixertoolbox.cpp
+   core/kmixdevicemanager.cpp
+   core/mixer.cpp
+   core/mixset.cpp
+   core/mixdevice.cpp
+   core/mixdevicecomposite.cpp
+   core/volume.cpp
+   backends/mixer_backend.cpp
+   )
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
@@ -82,14 +83,14 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 ########### next target ###############
 
  set(kded_kmixd_SRCS ${kmix_adaptor_SRCS}
-    kmixd.cpp 
-    mixer.cpp 
-    mixset.cpp 
-    mixdevice.cpp 
-    volume.cpp
-    mixertoolbox.cpp 
-    mixer_backend.cpp 
-    kmixdevicemanager.cpp
+    apps/kmixd.cpp 
+    core/mixer.cpp 
+    core/mixset.cpp 
+    core/mixdevice.cpp 
+    core/volume.cpp
+    core/mixertoolbox.cpp 
+    core/kmixdevicemanager.cpp
+    backends/mixer_backend.cpp 
     )
 
 #qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
@@ -117,16 +118,17 @@ install( FILES kmixd.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 ########### next target ###############
 
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
-   kmixctrl.cpp 
-   mixer.cpp 
-   mixset.cpp 
-   mixdevice.cpp 
-   volume.cpp 
-   mixertoolbox.cpp 
-   mixer_backend.cpp 
-   kmixdevicemanager.cpp 
-   guiprofile.cpp )
+   apps/kmixctrl.cpp 
+   core/mixer.cpp 
+   core/mixset.cpp 
+   core/mixdevice.cpp 
+   core/volume.cpp 
+   core/mixertoolbox.cpp 
+   core/kmixdevicemanager.cpp 
+   backends/mixer_backend.cpp
+   )
 
+# gui/guiprofile.cpp
 
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
