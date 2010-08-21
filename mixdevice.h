@@ -141,6 +141,8 @@ public:
    bool isMovable()                { return (0 != _moveDestinationMixSet); }
    MixSet *getMoveDestinationMixSet() { return _moveDestinationMixSet; }
 
+   bool getDoNotCreateShortcut() { return _doNotRestore; }  // temporary solution for bug 245737 -  kmix with pulseaudio-support messes up global shortcut setting
+
    Volume& playbackVolume();
    Volume& captureVolume();
 

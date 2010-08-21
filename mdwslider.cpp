@@ -121,9 +121,11 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 #ifdef __GNUC__
 #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
 #endif
+	if (! m_mixdevice->getDoNotCreateShortcut() ) {
 	b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
 	//   b->enableGlobalShortcut();
 	connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
+	}
 
 	b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
 	QString decreaseVolumeName = i18n( "Decrease Volume" );
@@ -132,9 +134,11 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 #ifdef __GNUC__
 #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
 #endif
+        if (! m_mixdevice->getDoNotCreateShortcut() ) {
 	b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
 	//   b->enableGlobalShortcut();
 	connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
+	}
 
 	b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
 	QString muteVolumeName = i18n( "Toggle Mute" );
@@ -143,11 +147,13 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 #ifdef __GNUC__
 #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
 #endif
+        if (! m_mixdevice->getDoNotCreateShortcut() ) {
 	b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
 	//   b->enableGlobalShortcut();
-
 	connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );
-	if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
+	}
+
+	//if (mw) mw->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
 	/*
 	   b = _mdwActions->addAction( "Set Record Source" );
 	   b->setText( i18n( "Set Record Source" ) );
