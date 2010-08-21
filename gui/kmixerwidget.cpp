@@ -136,7 +136,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
            if ( profTab->name() == 0 || profTab->name().isNull() )
             {
                 kError() << "TAB NAME IS NULL";
-                profTab->name() = "ThisWasNull"; // @todo
+                profTab->name() = "Undefined";
             }
             kDebug() << ">>> TAB NAME = " << profTab->name();
            QByteArray qba = profTab->name().toAscii();

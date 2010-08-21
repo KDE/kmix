@@ -91,16 +91,19 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  */
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
 {
-    init(mixer, id, name, channelTypeToIconName(type), false, 0);
+    init(mixer, id, name, channelTypeToIconName(type), (MixSet*)0);
 }
 
-MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet )
+MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
-    init(mixer, id, name, iconName, doNotRestore, moveDestinationMixSet);
+    // doNotRestore is superseded by the more generic concepts isEthereal(), isArtificial()
+    init(mixer, id, name, iconName, moveDestinationMixSet);
 }
 
-void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet )
+void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
+    _artificial = false;
+    _ethereal   = false;
     _mixer = mixer;
     _id = id;
     if( name.isEmpty() )
@@ -111,7 +114,6 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         _iconName = "mixer-front";
     else
         _iconName = iconName;
-    _doNotRestore = doNotRestore;
     _moveDestinationMixSet = moveDestinationMixSet;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. It MUST NOT contain spaces
@@ -214,7 +216,7 @@ ProfControl* MixDevice::controlProfile() {
  */
 void MixDevice::read( KConfig *config, const QString& grp )
 {
-    if (_doNotRestore) {
+    if ( isEthereal() || isArtificial() ) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
         QString devgrp;
@@ -262,7 +264,7 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
  */
 void MixDevice::write( KConfig *config, const QString& grp )
 {
-    if (_doNotRestore) {
+    if (isEthereal() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
         QString devgrp;
