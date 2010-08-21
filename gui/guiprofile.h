@@ -158,10 +158,9 @@ class GUIProfile
     QList<ProfTab*>& tabs() { return _tabs; };
     ProductSet _products;
 
-    static GUIProfile* find(Mixer* mixer, QString profileName, bool allowFallback);
+    static GUIProfile* find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
-    static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
 
     QString getName() const    {        return _name;    }
     void setName(QString _name)    {        this->_name = _name;    }
@@ -176,8 +175,12 @@ class GUIProfile
     unsigned long _generation;
 private:
     QList<ProfTab*> _tabs;        // shouldn't be sorted
+
     
     // Loading
+    static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
+    static QString buildReadableProfileName(Mixer* mixer, QString profileName);
+
     static GUIProfile* loadProfileFromXMLfiles(Mixer* mixer, QString profileName);
     static void addProfile(GUIProfile* guiprof);
     static QMap<QString, GUIProfile*> s_profiles;
@@ -207,6 +210,7 @@ private:
     void addProduct(const QXmlAttributes& attributes);
     void addSoundcard(const QXmlAttributes& attributes);
     void addTab(const QXmlAttributes& attributes);
+    void addProfileInfo(const QXmlAttributes& attributes);
     void printAttributes(const QXmlAttributes& attributes);
     void splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim);
 

@@ -36,7 +36,6 @@
 // KMix
 #include "core/mixer.h"
 
-//QMap<Mixer*,GUIProfile*> GUIProfile::s_fallbackProfiles;
 QMap<QString, GUIProfile*> GUIProfile::s_profiles;
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
@@ -113,7 +112,8 @@ void GUIProfile::setDirty() {
  */
 QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard)
 {
-    QString fname(mixer->getDriverName());
+    QString fname;
+    fname += mixer->getDriverName();
     if (!ignoreCard) {
         fname += ".%1.%2";
         fname = fname.arg(mixer->getBaseName()).arg(mixer->getCardInstance());
@@ -121,6 +121,24 @@ QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ign
     fname += "." + profileName;
 
     fname.replace(" ","_");
+    return fname;
+}
+
+/**
+ * Generate a readable profile name (for presenting to the user).
+ * Hint: Currently used as Tab label.
+ */
+QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
+{
+    QString fname;
+    fname += mixer->getBaseName();
+    if ( mixer->getCardInstance() > 1 ) {
+        fname += " " + mixer->getCardInstance();
+    }
+    if ( profileName != "default" ) {
+        fname += " " + profileName;
+    }
+
     return fname;
 }
 
@@ -135,35 +153,48 @@ QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ign
  * @arg allowFallback If set to true, a Fallback profile will be generated if no matching profile could be found
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
  */
-GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallback)
+GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
 {
     GUIProfile* guiprof = 0;
+
+    if ( mixer == 0 || profileName.isEmpty() ) {
+        return 0;
+    }
+
+    QString requestedProfileName;
     QString fullQualifiedProfileName;
-    if ( profileName.isEmpty() ) {
-        fullQualifiedProfileName = buildProfileName(mixer, profileName, false);  // 1st run of KMix (empty [Profiles] section
+    if ( profileNameIsFullyQualified ) {
+        requestedProfileName     = profileName;
+        fullQualifiedProfileName = profileName;
     }
     else {
-        fullQualifiedProfileName = profileName;
+        requestedProfileName     = buildProfileName(mixer, profileName, ignoreCardName);
+        fullQualifiedProfileName = buildProfileName(mixer, profileName, false);
     }
 
     if ( s_profiles.contains(fullQualifiedProfileName) ) {
         guiprof = s_profiles.value(fullQualifiedProfileName);  // Cached
     }
     else {
-        guiprof = loadProfileFromXMLfiles(mixer, fullQualifiedProfileName);  // Load from XML ###Card specific profile###
-        if ( (guiprof == 0) && allowFallback ) {
-            // We need to change the profile name on fallback, so when displaying, or saving the actual card name is used.
-            guiprof = fallbackProfile(mixer);
-            fullQualifiedProfileName = buildProfileName(mixer, "default", false);
-            if ( guiprof != 0 ) guiprof->_dirty = true; // Profile was generated => dirty
-            kDebug() << "Generate fallback profile:" << fullQualifiedProfileName;
-        }
-        
+        guiprof = loadProfileFromXMLfiles(mixer, requestedProfileName);  // Load from XML ###Card specific profile###
         if ( guiprof != 0 ) {
             guiprof->_mixerId = mixer->id();
-            guiprof->setId(fullQualifiedProfileName);
+            guiprof->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
+
             if ( guiprof->getName().isEmpty() ) {
-                guiprof->setName(profileName);
+                // If the profile didn't contain a name then lets define one
+                guiprof->setName(buildReadableProfileName(mixer,profileName)); // The caller can rename this if he likes
+                guiprof->setDirty();
+            }
+
+            if ( requestedProfileName != fullQualifiedProfileName) {
+                // This is very important!
+                // When the final profileName (fullQualifiedProfileName) is different from
+                // what we have loaded (requestedProfileName, e.g. "default"), we MUST
+                // set the profile dirty, so it gets saved. Otherwise we would write the
+                // fullQualifiedProfileName in the kmixrc, and will not find it on the next
+                // start of KMix.
+                guiprof->setDirty();
             }
             addProfile(guiprof);
         }
@@ -174,11 +205,9 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
 
 /*
  * Add the profile to the internal list of profiles (Profile caching).
- * As this means that the profile is new, the "dirty" flag gets cleared.
  */
 void GUIProfile::addProfile(GUIProfile* guiprof)
 {
-    guiprof->_dirty = false;
     s_profiles[guiprof->getId()] = guiprof;
     kDebug() << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
     
@@ -216,8 +245,13 @@ GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileNam
     return guiprof;
 }
 
+/**
+ * This is for all backends that ship no profile files
+ */
 GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
 {
+    QString fullQualifiedProfileName = buildProfileName(mixer, QString("default"), false);
+
         GUIProfile *fallback = new GUIProfile();
         
         ProfProduct* prd = new ProfProduct();
@@ -236,6 +270,13 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
         fallback->_soundcardName   = mixer->readableName();
         
         fallback->finalizeProfile();
+
+        fallback->_mixerId = mixer->id();
+        fallback->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
+        fallback->setName(buildReadableProfileName(mixer, QString("default"))); // The caller can rename this if he likes
+        fallback->setDirty();
+        addProfile(fallback);
+
         return fallback;
 }
 
@@ -403,7 +444,9 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
       << " generation = \"" << guiprof._generation << "\"" << endl
       << ">" << endl << endl ;
 
-	for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
+   os << "<profile id=\"" << xmlify(guiprof._id) << "\" name=\"" << xmlify(guiprof._name) << "\"/>" << endl;
+
+   for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
 	{
 		ProfProduct* prd = *it;
 		os << "<product vendor=\"" << xmlify(prd->vendor).toUtf8().constData() << "\" name=\"" << xmlify(prd->productName).toUtf8().constData() << "\"";
@@ -456,6 +499,10 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 			<< "  Card-Type=" << guiprof._soundcardType.toUtf8().constData() << std::endl
 			<< "  Profile-Generation="  << guiprof._generation
 			<< std::endl;
+
+    os << "Profile:" << std::endl
+            << "    Id=" << guiprof._id.toUtf8().constData() << std::endl
+            << "  Name=" << guiprof._name.toUtf8().constData() << std::endl;
 
 	for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
 	{
@@ -622,6 +669,9 @@ bool GUIProfileParser::startElement( const QString& ,
 			else if ( qName.toLower() == "tab" ) {
 				addTab(attributes);
 			}
+            else if ( qName.toLower() == "profile" ) {
+                addProfileInfo(attributes);
+            }
 			else {
 				std::cerr << "Ignoring unsupported element '" << qName.toUtf8().constData() << "'" << std::endl;
 			}
@@ -703,6 +753,14 @@ void GUIProfileParser::addTab(const QXmlAttributes& attributes) {
 
 		_guiProfile->tabs().push_back(tab);
 	}
+}
+
+void GUIProfileParser::addProfileInfo(const QXmlAttributes& attributes) {
+    QString name = attributes.value("name");
+    QString id   = attributes.value("id");
+
+    _guiProfile->setId(id);
+    _guiProfile->setName(name);
 }
 
 void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
