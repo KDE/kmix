@@ -90,6 +90,7 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void recreateGUI(bool saveView);
+   void recreateGUI(bool saveConfig, QString mixerId, bool forceNewTab);
    void recreateGUIwithSavingView();
    void recreateGUIwithoutSavingView();
    void redrawMixer( const QString& mixer_ID );
@@ -97,7 +98,6 @@ KMixWindow : public KXmlGuiWindow
 
     private:
         KMixerWidget* findKMWforTab( QString tabId );
-        void saveAndCloseView(KMixerWidget *kmw, int idx);
 
         void forkExec(QStringList& args);
         void errorPopup(QString msg);
@@ -150,7 +150,7 @@ KMixWindow : public KXmlGuiWindow
    void slotMute();
 
    void newView();
-   void closeView(int);
+   void saveAndCloseView(int);
 };
 
 #endif // KMIX_H
