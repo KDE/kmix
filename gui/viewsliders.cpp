@@ -166,63 +166,58 @@ void ViewSliders::_setMixSet()
     // Each control is checked, whether it is also contained in the mixset, and
     // applicable for this kind of View. If yes, the control is accepted and inserted.
    
-    std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
-    for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
+    foreach ( ProfControl* control, _guiprof->getControls() )
     {
-        ProfControl* control = *it;
-        if ( true /*control->tab == id() */ ) {
-            // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-            bool isUsed = false;
+        //ProfControl* control = *it;
+        // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
+        bool isUsed = false;
 
-            QRegExp idRegexp(control->id);
-            //bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
-            //isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
-            //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
-            // The following for-loop could be simplified by using a std::find_if
-            for ( int i=0; i<mixset.count(); i++ ) {
-                MixDevice *md = mixset[i];
-                if ( md->id().contains(idRegexp) )
-                {
-                    // Match found (by name)
-                    if ( _mixSet->contains( md ) ) continue; // dup check
+        QRegExp idRegexp(control->id);
+        //bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
+        //isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
+        //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
+        // The following for-loop could be simplified by using a std::find_if
+        for ( int i=0; i<mixset.count(); i++ ) {
+            MixDevice *md = mixset[i];
+            if ( md->id().contains(idRegexp) )
+            {
+                // Match found (by name)
+                if ( _mixSet->contains( md ) ) continue; // dup check
 
-                    // Now check whether subcontrols match
-                    bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
-                    bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
-                    bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
-                    bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
-                    
-                    if ( !subcontrolWanted ) continue;
+                // Now check whether subcontrols match
+                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
+                bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
+                bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
+                bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
 
-                    md->setControlProfile(control);
-                    if ( !control->name.isNull() ) {
-                        // Apply the custom name from the profile
-                        md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
-                    }
-                    if ( !control->getSwitchtype().isNull() ) {
-                        if ( control->getSwitchtype() == "On"  )
-                            md->playbackVolume().setSwitchType(Volume::OnSwitch);
-                        else if ( control->getSwitchtype() == "Off"  )
-                            md->playbackVolume().setSwitchType(Volume::OffSwitch);
-                    }
-                    _mixSet->append(md);
+                if ( !subcontrolWanted ) continue;
+
+                md->setControlProfile(control);
+                if ( !control->name.isNull() ) {
+                    // Apply the custom name from the profile
+                    md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
+                }
+                if ( !control->getSwitchtype().isNull() ) {
+                    if ( control->getSwitchtype() == "On"  )
+                        md->playbackVolume().setSwitchType(Volume::OnSwitch);
+                    else if ( control->getSwitchtype() == "Off"  )
+                        md->playbackVolume().setSwitchType(Volume::OffSwitch);
+                }
+                _mixSet->append(md);
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-                    if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // @todo For temporary test
+                if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // @todo For temporary test
 #endif
 
-                    isUsed = true;
-                    // We use no "break;" ,as multiple devices could match
-                    //if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
-                } // name matches
-            } // loop for finding a suitable MixDevice
-            if ( ! isUsed ) {
-                // There is something in the Profile, that doesn't correspond to a Mixer control
-                //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
-            }
-      } // Tab name matches
-      else {
-      }  // Tab name doesn't match (=> don't insert)
+                isUsed = true;
+                // We use no "break;" ,as multiple devices could match
+                //if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
+            } // name matches
+        } // loop for finding a suitable MixDevice
+        if ( ! isUsed ) {
+            // There is something in the Profile, that doesn't correspond to a Mixer control
+            //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
+        }
    } // iteration over all controls from the Profile
 
 #ifdef TEST_MIXDEVICE_COMPOSITE

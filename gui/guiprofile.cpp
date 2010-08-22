@@ -81,7 +81,6 @@ GUIProfile::~GUIProfile()
 {
     kError() << "Thou shalt not delete any GUI profile. This message is only OK, when quitting KMix"; 
     qDeleteAll(_controls);
-    qDeleteAll(_tabs);
     qDeleteAll(_products);
 }
 
@@ -335,22 +334,19 @@ bool GUIProfile::writeProfile()
    return ret;
 }
 
+/** This is now empty. It can be removed */
 bool GUIProfile::finalizeProfile()
 {
     bool ok = true;
-    // Reading is OK => now make the profile consistent
-
-    // (2) Make sure that there is at least one Tab
-    if ( _tabs.size() == 0) {
-        ProfTab* tab = new ProfTab();
-        tab->setName("Controls"); // !! A better name should be used. What about i18n() ?
-        tab->setId("Controls"); // !! A better name should be used. What about i18n() ?
-        tab->setType("Sliders");  //  as long as we don't know better
-        _tabs.push_back(tab);
-    } // Step (2)
-
-   return ok;
+    return ok;
 }
+
+void GUIProfile::setControls(ControlSet& newControlSet)
+{
+    qDeleteAll(_controls);
+    _controls = newControlSet;
+}
+
 
 /**
  * Returns how good the given Mixer matches this GUIProfile.
@@ -460,31 +456,18 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 	} // for all products
 	os << endl;
 
-	for ( std::vector<ProfControl*>::const_iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
+    foreach ( ProfControl* profControl, guiprof.getControls() )
 	{
-		ProfControl* profControl = *it;
 		os << "<control id=\"" << xmlify(profControl->id).toUtf8().constData() << "\"" ;
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 	os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
 		}
 		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
-//		if ( ! profControl->tab.isNull() ) {
-//			os << " tab=\"" << xmlify(profControl->tab).toUtf8().constData() << "\"" ;
-//		}
 		os << " show=\"" << xmlify(profControl->show).toUtf8().constData() << "\"" ;
 		os << " />" << endl;
 	} // for all controls
 	os << endl;
 
-    /*
-        QList<ProfTab*>::const_iterator it = guiprof.tabs().begin();
-	for ( ; it != guiprof.tabs().end(); ++it) {
-		ProfTab* profTab = *it;
-        os << "<tab name=\"" << xmlify(profTab->name()).toUtf8().constData() << "\" id=\"" << xmlify(profTab->id()).toUtf8().constData() << "\" type=\"" << xmlify(profTab->type()).toUtf8().constData() << "\"";
-                os << " />" << endl;
-	} // for all tabs
-	os << endl;
-*/
 	os << "</soundcard>" << endl;
 // kDebug() << "EXIT  QTextStream& operator<<";
 	return os;
@@ -516,35 +499,17 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		}
 	} // for all products
 
-	for ( std::vector<ProfControl*>::const_iterator it = guiprof._controls.begin(); it != guiprof._controls.end(); ++it)
+    foreach ( ProfControl* profControl, guiprof.getControls() )
 	{
-		ProfControl* profControl = *it;
+//		ProfControl* profControl = *it;
 		os << "Control:\n  ID=" << profControl->id.toUtf8().constData() << std::endl;
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
 		os << "  Subcontrols=" << profControl->renderSubcontrols().toUtf8().constData() << std::endl;
-//		if ( ! profControl->tab.isNull() ) {
-//			os << "  Tab=" << profControl->tab.toUtf8().constData() << std::endl;
-//		}
-//		os << "  Shown-On=" << profControl->show.toUtf8().constData() << std::endl;
 	} // for all controls
 
-/*
-    QList<ProfTab*>::const_iterator it = guiprof.tabs().begin();
-	for ( ; it != guiprof.tabs().end(); ++it) {
-		ProfTab* profTab = *it;
-        os << "Tab: " << std::endl << "  ID: " << profTab->id().toUtf8().constData() << " :" << profTab->name().toUtf8().constData() << " (" << profTab->type().toUtf8().constData() << ")" << std::endl;
-	} // for all tabs
-*/
 	return os;
-}
-
-ProfTab::ProfTab()
-{
-    _id = "";
-    _name = "";
-    _type = "";
 }
 
 ProfControl::ProfControl(QString& id, QString& subcontrols ){
@@ -560,7 +525,6 @@ ProfControl::ProfControl(const ProfControl &profControl){
 		QString origSctls = profControl._subcontrols;
 		setSubcontrols(origSctls);
 		name = profControl.name;
-//		tab = profControl.tab;
 		show = profControl.show;
 		backgroundColor = profControl.backgroundColor;
 		switchtype = profControl.switchtype;
@@ -666,9 +630,6 @@ bool GUIProfileParser::startElement( const QString& ,
 			else if ( qName.toLower() == "control" ) {
 				addControl(attributes);
 			}
-			else if ( qName.toLower() == "tab" ) {
-				addTab(attributes);
-			}
             else if ( qName.toLower() == "profile" ) {
                 addProfileInfo(attributes);
             }
@@ -733,27 +694,6 @@ void GUIProfileParser::addSoundcard(const QXmlAttributes& attributes) {
 }
 
 
-void GUIProfileParser::addTab(const QXmlAttributes& attributes) {
-/*
-	    	std::cout  << "Tab: ";
-	    	printAttributes(attributes);
-*/
-	QString name = attributes.value("name");
-    QString type    = attributes.value("type");
-    QString id      = attributes.value("id");
-    if ( !name.isNull() && !type.isNull() ) {
-		// If you define a Tab, you must set its Type
-		// It is either "Input", "Output", "Switches" or "Surround"
-		// These names are case sensitive and correspond 1:1 to the View-Names.
-		// This could make it possible in the (far) future to have Views as Plugins.
-		ProfTab* tab = new ProfTab();
-		tab->setName(name);
-        if (id.isNull()) tab->setId(name); else tab->setId(id);
-		tab->setType(type);
-
-		_guiProfile->tabs().push_back(tab);
-	}
-}
 
 void GUIProfileParser::addProfileInfo(const QXmlAttributes& attributes) {
     QString name = attributes.value("name");
@@ -827,7 +767,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		profControl->show = show;
 		profControl->setBackgroundColor( background );
 		profControl->setSwitchtype(switchtype);
-		_guiProfile->_controls.push_back(profControl);
+		_guiProfile->getControls().push_back(profControl);
 	} // id != null
 }
 

@@ -28,7 +28,6 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 
-#include "gui/guiprofile.h"
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
 #include "core/mixer.h"

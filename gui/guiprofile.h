@@ -102,26 +102,6 @@ private:
     QString switchtype;
 };
 
-class ProfTab
-{
-public:
-    ProfTab();
-    // Name of the Tab, in English
-    QString name() { return _name; }
-    // ID of the Tab
-    QString id() { return _id; }
-    // Type of the Tab, either "play", "record" or "switches"
-    QString type() { return _type; }
- 
-    void setName(QString name) { _name = name; _id = name; }  // until we explicitely use ID, lets assign ID the same value as NAME
-    void setId(QString id) { _id = id; }
-    void setType(QString typ) { _type = typ; }
-
-private:
-    QString _id;
-    QString _name;
-    QString _type;
-};
 
 struct ProductComparator
 {
@@ -152,15 +132,26 @@ class GUIProfile
     friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 
     typedef std::set<ProfProduct*, ProductComparator> ProductSet;
-    typedef std::vector<ProfControl*> ControlSet;
-    ControlSet _controls;
 
-    QList<ProfTab*>& tabs() { return _tabs; };
+
     ProductSet _products;
 
     static GUIProfile* find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
+
+    typedef QList<ProfControl*> ControlSet;
+
+    const ControlSet& getControls() const
+    {
+        return _controls;
+    }
+    ControlSet& getControls()
+    {
+        return _controls;
+    }
+    void setControls(ControlSet& newControlSet);
+
 
     QString getName() const    {        return _name;    }
     void setName(QString _name)    {        this->_name = _name;    }
@@ -174,8 +165,7 @@ class GUIProfile
     QString _soundcardType;
     unsigned long _generation;
 private:
-    QList<ProfTab*> _tabs;        // shouldn't be sorted
-
+    ControlSet _controls;
     
     // Loading
     static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
@@ -209,7 +199,6 @@ private:
     void addControl(const QXmlAttributes& attributes);
     void addProduct(const QXmlAttributes& attributes);
     void addSoundcard(const QXmlAttributes& attributes);
-    void addTab(const QXmlAttributes& attributes);
     void addProfileInfo(const QXmlAttributes& attributes);
     void printAttributes(const QXmlAttributes& attributes);
     void splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim);
