@@ -160,7 +160,7 @@ void ViewSliders::_setMixSet()
 
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-    QList<MixDevice*> mds;  // @todo For temporary test
+    QList<MixDevice*> mds;  // For temporary test
 #endif
 
     // This method iterates the controls from the Profile
@@ -207,7 +207,7 @@ void ViewSliders::_setMixSet()
                 _mixSet->append(md);
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-                if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // @todo For temporary test
+                if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // For temporary test
 #endif
 
                 isUsed = true;
@@ -222,7 +222,7 @@ void ViewSliders::_setMixSet()
    } // iteration over all controls from the Profile
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-    // @todo: This is currently hardcoded, and instead must be read as usual from the Profile
+    // This is currently hardcoded, and instead must be read as usual from the Profile
     MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
     QString ctlId("Composite_Test");
     QString ctlMatchAll("*");
@@ -284,7 +284,8 @@ void ViewSliders::refreshVolumeLevels() {
             MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(mdwx);
             if ( mdw != 0 ) { // sanity check
 
-                // --- start --- @todo: The following 4 code lines should be moved to a more
+#ifdef TEST_MIXDEVICE_COMPOSITE
+                // --- start --- The following 4 code lines should be moved to a more
                 //                      generic place, as it only works in this View. But it
                 //                      should also work in the ViewDockareaPopup and everywhere else.
                 MixDeviceComposite* mdc = ::qobject_cast<MixDeviceComposite*>(mdw->mixDevice());
@@ -292,6 +293,7 @@ void ViewSliders::refreshVolumeLevels() {
                     mdc->update();
                 }
                 // --- end ---
+#endif
 
                 mdw->update();
             }

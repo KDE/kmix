@@ -48,6 +48,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    gui/ksmallslider.cpp
    gui/verticaltext.cpp
    gui/kmixtoolbox.cpp 
+   gui/dialogaddview.cpp 
    gui/dialogviewconfiguration.cpp 
    gui/dialogselectmaster.cpp 
    gui/guiprofile.cpp

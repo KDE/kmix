@@ -40,11 +40,7 @@
 #include "core/mixer.h"
 #include "apps/kmix.h"
 
-// TODO Check if we shouldn't really remove
-// all these window flags as it's in KMenu now
-// !! Do NOT remove or mask out "WType_Popup"
-//    Users will not be able to close the Popup without opening the KMix main window then.
-//    See Bug #93443, #96332 and #96404 for further details. -- esken
+
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
     : ViewBase(parent, name, mixer, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _dock(dockW)
 {

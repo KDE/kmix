@@ -28,7 +28,8 @@
 #include <QPushButton>
 #include <qradiobutton.h>
 #include <QCursor>
-#include <KTabWidget>
+#include <QString>
+
 
 // include files for KDE
 #include <kcombobox.h>
@@ -48,6 +49,7 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <KProcess>
+#include <KTabWidget>
 
 // KMix
 #include "gui/guiprofile.h"
@@ -60,6 +62,7 @@
 #include "gui/kmixtoolbox.h"
 #include "core/version.h"
 #include "gui/viewdockareapopup.h"
+#include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 
 #include "gui/osdwidget.h"
@@ -172,6 +175,7 @@ void KMixWindow::initActionsLate()
 
 void KMixWindow::initActionsAfterInitMixer()
 {
+    // Add "launch_pavucontrol" to menu, if Pulseaudio backend is in use
     foreach( Mixer* mixer, Mixer::mixers() )
     {
         if ( mixer->getDriverName() == "PulseAudio") {
@@ -470,10 +474,6 @@ void KMixWindow::recreateGUI(bool saveConfig)
     if (saveConfig)
         saveViewConfig();  // save the state before recreating
 
-    // Start a new generation now. This shows whether we already have recreated the
-    // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
-    //KMixerWidget::increaseGeneration(); // @todo:Generation stuff should be obsolete now => Remove it
-
 
     // -2- RECREATE THE ALREADY EXISTING TABS **********************************
     QMap<Mixer*, bool> mixerHasProfile;
@@ -594,33 +594,35 @@ void KMixWindow::newView()
         return; // should never happen
     }
 
-    Mixer* mixer = Mixer::mixers()[0];
+    Mixer *mixer = Mixer::mixers()[0];
+    DialogAddView* dav = new DialogAddView(this, mixer);
+    if (dav) {
+        int ret = dav->exec();
 
+        if ( QDialog::Accepted == ret ) {
+            QString profileName = dav->getresultViewName();
+            QString mixerId = dav->getresultMixerId();
+            mixer = Mixer::findMixer(mixerId);
+            kDebug() << ">>> mixer = " << mixerId << " -> " << mixer;
 
-    /* THE FOLLOWING IS ONLY TEST/DEMO CODE *******************/
-    static int dummyToggler = false;
-    dummyToggler = !dummyToggler;
-    GUIProfile* guiprof;
-    QString profileName;
+            GUIProfile*guiprof = GUIProfile::find(mixer, profileName, false, false);
+            if ( guiprof == 0 ) {
+                guiprof = GUIProfile::find(mixer, profileName, false, true);
+            }
 
-    if ( dummyToggler ) {
-        guiprof = GUIProfile::find(mixer, QString("playback"), false, false);
-        if ( guiprof == 0 ) {
-            guiprof = GUIProfile::find(mixer, QString("playback"), false, true);
+            if ( guiprof == 0 ) {
+                static const QString msg (i18n("Cannot add view - GUIProfile is invalid."));
+                errorPopup(msg);
+            }
+            else  {
+                bool ret = addMixerWidget(mixer->id(), guiprof, -1);
+                if ( ret == false ) {
+                    errorPopup(i18n("View already exists. Cannot add View."));
+                }
+            }
         }
-    }
-    else {
-        guiprof = GUIProfile::find(mixer, QString("capture"), false, false);
-        if ( guiprof == 0 ) {
-            guiprof = GUIProfile::find(mixer, QString("capture"), false, true);
-        }
-    }
 
-    if ( guiprof == 0 ) {
-        kError() << "Cannot add view - GUIProfile is invalid";
-    }
-    else  {
-        addMixerWidget(mixer->id(), guiprof, -1);
+        delete dav;
     }
 
     kDebug() << "Exit";
@@ -787,8 +789,22 @@ void KMixWindow::setErrorMixerWidget()
 }
  */
 
-void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition)
+bool KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition)
 {
+    bool ret = true;
+    // First check whether we already have this profile
+    for ( int i=0; i<m_wsMixers->count() ; ++i ) {
+        KMixerWidget *kmw = dynamic_cast<KMixerWidget*> (m_wsMixers->widget(i) );
+        if ( kmw ) {
+            if ( kmw->getGuiprof()->getId() == guiprof->getId() )
+            {
+                return false;  // There is already a tab for this Profile => Cannot add.
+            }
+        }
+
+    }
+
+
     //    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
     Mixer *mixer = Mixer::findMixer(mixer_ID);
     if ( mixer != 0 )
@@ -812,7 +828,7 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
 
         QString tabLabel;
         if ( ! guiprof->getName().isEmpty() ) {
-            tabLabel = guiprof->getName(); // @todo This name is possibly bad when using Pulesaudio => Check with Colin
+            tabLabel = guiprof->getName();
         }
         else {
             tabLabel = kmw->mixer()->readableName();
@@ -840,6 +856,8 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         kmw->setLabels( m_showLabels );
         kmw->mixer()->readSetFromHWforceUpdate();
     } // given mixer exist really
+
+    return ret;
 }
 
 
@@ -1019,22 +1037,41 @@ void KMixWindow::slotHWInfo()
 void KMixWindow::slotPavucontrolExec()
 {
     QStringList args("pavucontrol");
-    int pid = KProcess::startDetached(args);
-    if ( pid == 0 ) {
-        kWarning() << i18n("Could not start Pulseaudio setup (pavucontrol)");  // TODO dialog box here
-    }
+    forkExec(args);
 }
 
 void KMixWindow::slotKdeAudioSetupExec()
 {
     QStringList args;
     args << "kcmshell4" << "kcm_phonon";
-    int pid = KProcess::startDetached(args);
-    if ( pid == 0 ) {
-        kWarning() << i18n("Could not start KDE Audio setup");  // TODO dialog box here
-    }
+    forkExec(args);
 }
 
+void KMixWindow::forkExec(QStringList& args)
+{
+    int pid = KProcess::startDetached(args);
+    if ( pid == 0 ) {
+        static const QString startErrorMessage (i18n("The helper application is either not installed or not working."));
+        QString msg;
+        msg += startErrorMessage;
+        msg += "\n(";
+        msg +=  args.join(" ");
+        msg += ")";
+        errorPopup(msg);
+    }
+
+}
+
+void KMixWindow::errorPopup(QString msg)
+{
+    KDialog* dialog = new KDialog(this);
+    dialog->setButtons(KDialog::Ok);
+    dialog->setCaption("Error");
+    QLabel* qlbl = new QLabel(msg);
+    dialog->setMainWidget(qlbl);
+    dialog->exec();
+    kWarning() << msg;
+}
 
 void KMixWindow::slotConfigureCurrentView()
 {

@@ -51,15 +51,12 @@ MixDeviceComposite::~MixDeviceComposite()
 }
 
 
-// @todo: Make sure the composite is updated, when the enclosed  MixDevice's change
-//        Recalculating it on each call is highly inefficient
+
 Volume& MixDeviceComposite::playbackVolume()
 {
     return *_compositePlaybackVolume;
 }
 
-// @todo: Make sure the composite is updated, when the enclosed  MixDevice's change
-//        Recalculating it on each call is highly inefficient
 Volume& MixDeviceComposite::captureVolume()
 {
     return *_compositeCaptureVolume;

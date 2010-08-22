@@ -336,21 +336,13 @@ void DialogViewConfiguration::apply()
 
        }
    }
-//	QString sctlMatchAll("*");
-//	QString pctlId("^.*$") ;
-//	ProfControl* fallbackMatchAllControl = new ProfControl(pctlId, sctlMatchAll);
-//	fallbackMatchAllControl->show = "extended";
-//	newControlset.push_back(fallbackMatchAllControl);
 	
 	prof->setControls(newControlset);
     prof->finalizeProfile();
     prof->setDirty();
-//	prof->writeProfile();  // at the moment it would only be really necessary on an "order change" of the controls
 
    // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
-
    _view.rebuildFromProfile();
-//    // _view.configurationUpdate();  // old: update "light"
 }
 
 void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)

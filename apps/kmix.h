@@ -99,6 +99,9 @@ KMixWindow : public KXmlGuiWindow
         KMixerWidget* findKMWforTab( QString tabId );
         void saveAndCloseView(KMixerWidget *kmw, int idx);
 
+        void forkExec(QStringList& args);
+        void errorPopup(QString msg);
+
    KAccel *m_keyAccel;
    KAction* _actionShowMenubar;
 
@@ -129,6 +132,8 @@ KMixWindow : public KXmlGuiWindow
    void increaseOrDecreaseVolume(bool increase);
 
    OSDWidget* osdWidget;
+   bool addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);
+
    
   private slots:
    void saveConfig();
@@ -137,7 +142,6 @@ KMixWindow : public KXmlGuiWindow
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
    void slotSelectMaster();
-   void addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
    void hideOrClose();

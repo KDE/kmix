@@ -59,9 +59,6 @@ class KMixerWidget : public QWidget
 
    Mixer *mixer() { return _mixer; }
    ViewBase* currentView();
-   bool generationIsOutdated();
-   static void increaseGeneration();
-   //QString id() { return m_id; }
    GUIProfile* getGuiprof() { return _guiprof; };
 
    
@@ -92,8 +89,6 @@ class KMixerWidget : public QWidget
    std::vector<ViewBase*> _views;
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
 
-   int _generation;
-   static int _currentGeneration;
    
    void createLayout(ViewBase::ViewFlags vflags);
    bool possiblyAddView(ViewBase* vbase);

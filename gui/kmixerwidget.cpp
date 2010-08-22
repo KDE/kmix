@@ -47,8 +47,6 @@
 #include "viewsliders.h"
 
 
-int KMixerWidget::_currentGeneration = 1;
-
 /**
    This widget is embedded in the KMix Main window. Each Hardware Card is visualized by one KMixerWidget.
    KMixerWidget contains
@@ -63,8 +61,6 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
      //_tab(tab), 
      _actionCollection(actionCollection)
 {
-   _generation = _currentGeneration;
-
    if ( _mixer )
    {
       createLayout(vflags);
@@ -175,14 +171,6 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 }
 
 
-bool KMixerWidget::generationIsOutdated() {
-   return ( _generation < _currentGeneration );
-}
-
-void KMixerWidget::increaseGeneration()
-{
-  _currentGeneration++;
-}
 
 /**
  * Returns the current View. Normally we have only one View, so we always return the first view.
