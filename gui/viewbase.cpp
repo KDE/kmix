@@ -82,10 +82,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
 
 ViewBase::~ViewBase() {
     delete _mixSet;
-    // A GUI profile can be shared by different views
-    // Starting with 5/2009 it is shared by the "tabs" of one card.
-    // So we have to make sure to delete it after all users are gone;
-//	       delete _guiprof;
+    // Hint: The GUI profile will not be removed, as it is pooled and might be applied to a new View.
 }
 
 
@@ -242,6 +239,7 @@ void ViewBase::setMixSet()
 //            std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
 //            for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
 //                new_mix_devices.removeAll((*it)->id);
+              // TODO Please check this change, Colin
               foreach ( ProfControl* pctl, _guiprof->getControls() ) {
                   new_mix_devices.removeAll(pctl->id);
               }

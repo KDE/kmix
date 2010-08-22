@@ -71,6 +71,7 @@ KMixWindow : public KXmlGuiWindow
    void initPrefDlg();
    void initActions();
    void initActionsLate();
+   void initActionsAfterInitMixer();
    //void recreateGUI();
    void initWidgets();
    //void setErrorMixerWidget();
@@ -132,6 +133,8 @@ KMixWindow : public KXmlGuiWindow
   private slots:
    void saveConfig();
    void slotHWInfo();
+   void slotPavucontrolExec();
+   void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
    void slotSelectMaster();
    void addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);

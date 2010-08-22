@@ -8,6 +8,6 @@
 
 <product vendor="Any Vendor" name="Generic Soundcard" />
 
-<control id="^.*$" subcontrols="cvolume,cswitch" show="simple" />
+<control id="^.*$" subcontrols="cvolume,cswitch" show="simple" mandatory="true" />
 
 </soundcard>

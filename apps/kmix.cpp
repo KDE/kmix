@@ -47,6 +47,7 @@
 #include <kglobal.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
+#include <KProcess>
 
 // KMix
 #include "gui/guiprofile.h"
@@ -88,6 +89,8 @@ KMixWindow::KMixWindow(bool invisible)
     initPrefDlg();
     MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
     KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
+    initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
+
     recreateGUI(false);
     fixConfigAfterRead();
     theKMixDeviceManager->initHotplug();
@@ -124,8 +127,11 @@ void KMixWindow::initActions()
     //actionCollection()->addAction( a->objectName(), a );
     KStandardAction::preferences( this, SLOT(showSettings()), actionCollection());
     KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
+    KAction* action = actionCollection()->addAction( "launch_kdesoundsetup" );
+    action->setText( i18n( "Audio Setup" ) );
+    connect(action, SIGNAL(triggered(bool) ), SLOT( slotKdeAudioSetupExec() ));
 
-    KAction *action = actionCollection()->addAction( "hwinfo" );
+    action = actionCollection()->addAction( "hwinfo" );
     action->setText( i18n( "Hardware &Information" ) );
     connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
     action = actionCollection()->addAction( "hide_kmixwindow" );
@@ -164,6 +170,18 @@ void KMixWindow::initActionsLate()
     }
 }
 
+void KMixWindow::initActionsAfterInitMixer()
+{
+    foreach( Mixer* mixer, Mixer::mixers() )
+    {
+        if ( mixer->getDriverName() == "PulseAudio") {
+            KAction* action = actionCollection()->addAction( "launch_pavucontrol" );
+            action->setText( i18n( "Audio setup (&Pulseaudio)" ) );
+            connect(action, SIGNAL(triggered(bool) ), SLOT( slotPavucontrolExec() ));
+            break;
+        }
+    }
+}
 
 void KMixWindow::initPrefDlg()
 {
@@ -997,6 +1015,26 @@ void KMixWindow::slotHWInfo()
 {
     KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
 }
+
+void KMixWindow::slotPavucontrolExec()
+{
+    QStringList args("pavucontrol");
+    int pid = KProcess::startDetached(args);
+    if ( pid == 0 ) {
+        kWarning() << i18n("Could not start Pulseaudio setup (pavucontrol)");  // TODO dialog box here
+    }
+}
+
+void KMixWindow::slotKdeAudioSetupExec()
+{
+    QStringList args;
+    args << "kcmshell4" << "kcm_phonon";
+    int pid = KProcess::startDetached(args);
+    if ( pid == 0 ) {
+        kWarning() << i18n("Could not start KDE Audio setup");  // TODO dialog box here
+    }
+}
+
 
 void KMixWindow::slotConfigureCurrentView()
 {

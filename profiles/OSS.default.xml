@@ -68,19 +68,12 @@
     unknown, unknown, unknown,
     unknown , unused };
 -->
-<control id="^0$"  tab="Base" show="simple" />  <!-- Volume -->
-<control id="^4$"  tab="Base" show="simple" />               <!-- PCM -->
-<control id="^8$"  tab="Base" show="simple"/>                <!-- CD -->
+<control id="^0$" show="simple" />  <!-- Volume -->
+<control id="^4$" show="simple" />  <!-- PCM -->
+<control id="^8$" show="simple"/>   <!-- CD -->
 
-<control id="^.*$" tab="Base" show="extended" />
+<control id="^.*$" tab="Base" show="extended" mandatory="true" />
 
-<!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted -->
-<!--
-<tab name="Record" type="Sliders"/>
-<tab name="Play" type="Sliders"/>
-<tab name="Switches" type="Switches"/>
-<tab name="Cool-Layout" type="Themed"/>
--->
 
 </soundcard>
 

@@ -40,51 +40,37 @@
 - 'controls' is an enumeration of the (sub)controls of this control, e.g "playvol:1" or
              "recvol:1-2,4-6" or "2:*,playswitch,recswitch" or ...
 	     DEFAULT: "*,switches"     (* = recvol:* playvol:*   switches=playswitch recswitch genericswitch
-- 'tab' is a definable tab name (DEFAULT: "Main")
 - 'show' defines, on which GUI types the control will be shown.
              simple   = Show on the simple GUI (typically only 1 Tab: Master, PCM, CDROM, Microphone)
              extended = Show on the mildly more complex GUI (all "simple" controls plus Recording & Surround stuff).
              full     = Show (only) on the full GUI (all controls)
              default is "full"
-- Future directions: Extended "merged" syntax of "tab" and "show", like this:
-     show="guitype:tabname" or show="guitype1:tabname1,guitype2:tabname2,..."
-     For example:
-     show="*:Play"
-     or
-     show="simple:Play,extended:Various,full:Play"
+- 'mandatory' If set to "true", this entry will be included in all normal copies (useful for catch-all controls like "^.*$"). 
 -->
 
 
 <!-- Please note that when an ALSA is labeled as "Master", it is actually "Front".
      In rare cases ALSA has a real device that is called "Front" (like on HDA_Nvidia)
      Thus we use both here. -->
-<control id="^Master:0$"      tab="Base" show="simple" />
-<control id="^Front:0$"       tab="Base" show="simple" />
-<control id="^Surround:0$"    tab="Base" show="simple"/>
-<control id="^Center:0$"      tab="Base" show="simple"/>
-<control id="^LFE:0$"         tab="Base" show="simple"/>
-<control id="^PCM:0$"         tab="Base" show="simple"/>
-<control id="^CD:0$"          tab="Base" show="simple"/>
-<control id="^Headphone:0$"   tab="Base" show="simple"/>
-<control id="^Mic.*:0$"       tab="Base" show="simple"/>
+<control id="^Master:0$"      show="simple" />
+<control id="^Front:0$"       show="simple" />
+<control id="^Surround:0$"    show="simple"/>
+<control id="^Center:0$"      show="simple"/>
+<control id="^LFE:0$"         show="simple"/>
+<control id="^PCM:0$"         show="simple"/>
+<control id="^CD:0$"          show="simple"/>
+<control id="^Headphone:0$"   show="simple"/>
+<control id="^Mic.*:0$"       show="simple"/>
 <!-- We show ADC and DAC, as they control the actual "output sockets" -->
-<control id="^DAC:0$"         tab="Base" show="simple"/>
-<control id="^ADC:0$"         tab="Base" show="simple"/>
+<control id="^DAC:0$"         show="simple"/>
+<control id="^ADC:0$"         show="simple"/>
 
 <!-- This is an example how to rename controls
 <control id="^Master:0$"      tab="Base" name="Front" show="simple" />
 -->
 
-<control id="^.*$" tab="Base" show="extended" />
+<control id="^.*$" tab="Base" show="extended" mandatory="true" />
 
-<!-- Define the type of the used tabs: We need this, for knowing how the controls should be layouted
-     Not used yet. -->
-<!--
-<tab name="Record" type="Sliders"/>
-<tab name="Play" type="Sliders"/>
-<tab name="Switches" type="Switches"/>
-<tab name="Cool-Layout" type="Themed"/>
--->
 
 </soundcard>
 
