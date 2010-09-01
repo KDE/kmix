@@ -52,9 +52,8 @@
 #include "mixertoolbox.h"
 #include "viewdockareapopup.h"
 
-KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, bool volumePopup)
+KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     : KStatusNotifierItem(parent)
-    , _referenceWidget(referenceWidget)
     , _audioPlayer(0L)
     , _playBeepOnVolumeChange(false) // disabled due to triggering a "Bug"
     , _oldToolTipValue(-1)
@@ -62,25 +61,29 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
     , _volumePopup(volumePopup)
     , _kmixMainWindow(parent)
 {
-   setToolTipIconByName("kmix");
-   setCategory(Hardware);
-   setStatus(Active);
-   m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
-   createMasterVolWidget();
-   createActions();
-   connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
-   connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
-   connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+    setToolTipIconByName("kmix");
+    setCategory(Hardware);
+    setStatus(Active);
+    m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
+    createMasterVolWidget();
+    createActions();
+    connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
+    connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
+    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
-   if (_referenceWidget)
-       setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
+    if (_volumePopup) {
+        KMenu *volMenu = new KMenu(parent);
+        _referenceWidget = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, parent);
+        _referenceWidget->createDeviceWidgets();
 
-// TODO remove this, as in a KMenu it does not need window tricks
-//    ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(referenceWidget);
-//    if ( dockAreaPopup ) {
-//        KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-//    }
+        QWidgetAction *volWA = new QWidgetAction(volMenu);
+        volWA->setDefaultWidget(_referenceWidget);
+        volMenu->addAction(volWA);
+
+        setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
+    }
 }
+
 
 KMixDockWidget::~KMixDockWidget()
 {

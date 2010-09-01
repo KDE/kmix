@@ -30,7 +30,7 @@ class QString;
 
 class KMixWindow;
 class Mixer;
-//class ViewDockAreaPopup;
+class ViewDockAreaPopup;
 class Volume;
 
 namespace Phonon
@@ -45,7 +45,7 @@ class KMixDockWidget : public KStatusNotifierItem
    friend class KMixWindow;
 
  public:
-   explicit KMixDockWidget(KMixWindow *parent, QWidget *referenceWidget, bool volumePopup);
+   explicit KMixDockWidget(KMixWindow *parent,bool volumePopup);
    ~KMixDockWidget();
 
    void setErrorPixmap();
@@ -67,7 +67,7 @@ class KMixDockWidget : public KStatusNotifierItem
    void toggleMinimizeRestore();
 
  private:
-   QWidget *_referenceWidget;
+   ViewDockAreaPopup *_referenceWidget;
    Phonon::MediaObject *_audioPlayer;
    bool _playBeepOnVolumeChange;
    bool _ignoreNextEvent;
