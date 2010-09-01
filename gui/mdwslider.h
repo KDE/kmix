@@ -60,7 +60,7 @@ public:
 
     void addActionToPopup( KAction *action );
     void createActions();
-    void createShortcutActions(ViewBase* view = 0);
+    void createShortcutActions();
     
     // GUI
     bool isStereoLinked() const { return m_linked; }

@@ -277,7 +277,6 @@ void KMixWindow::saveBaseConfig()
     QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
     config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
 
-    // @todo basically this should be moved in the views later (e.g. KDE4.2 ?)
     if ( m_toplevelOrientation  == Qt::Horizontal )
         config.writeEntry( "Orientation","Horizontal" );
     else
@@ -295,15 +294,14 @@ void KMixWindow::saveViewConfig()
     
     // The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
     // Otherwise we would not save the Meta information (step -2- below for that mixer.
-    QListIterator<Mixer*> it(Mixer::mixers());
-    while ( it.hasNext()) {
-        Mixer* mixer = it.next();
+ //   QListIterator<Mixer*> it(Mixer::mixers());
+    foreach ( Mixer* mixer, Mixer::mixers() ) {
+//        Mixer* mixer = it.next();
         mixerViews[mixer->id()]; // just insert a map entry
 	}
 
     // -1- Save the views themselves
-    for ( int i=0; i<m_wsMixers->count() ; ++i )
-    {
+    for ( int i=0; i<m_wsMixers->count() ; ++i ) {
         QWidget *w = m_wsMixers->widget(i);
         if ( w->inherits("KMixerWidget") ) {
             KMixerWidget* mw = (KMixerWidget*)w;
@@ -446,27 +444,23 @@ void KMixWindow::recreateGUIwithSavingView()
  */
 void KMixWindow::recreateGUI(bool saveConfig)
 {
-    // Find out which of the tabs is currently selected for restoration
+    // -1- Find out which of the tabs is currently selected for restoration
     int current_tab = -1;
     if (m_wsMixers)
         current_tab = m_wsMixers->currentIndex();
-
-    KConfigGroup config(KGlobal::config(), "Global");
 
     if (saveConfig)
         saveViewConfig();  // save the state before recreating
 
     // Start a new generation now. This shows whether we already have recreated the
     // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
-    KMixerWidget::increaseGeneration(); // @todo:Generation stuff should be obsolete now => Remove it
+    //KMixerWidget::increaseGeneration(); // @todo:Generation stuff should be obsolete now => Remove it
 
-    // *** RECREATE THE ALREADY EXISTING TABS **********************************
-    QMap<Mixer*, bool> mixerHasProfile; //
 
-    QMap<QString, GUIProfile*>::const_iterator itEnd = GUIProfile::getProfiles().end();
-    for ( QMap<QString, GUIProfile*>::const_iterator it    = GUIProfile::getProfiles().begin(); it != itEnd; ++it)
+    // -2- RECREATE THE ALREADY EXISTING TABS **********************************
+    QMap<Mixer*, bool> mixerHasProfile;
+    foreach( GUIProfile* guiprof, GUIProfile::getProfiles())
     {
-        GUIProfile* guiprof = it.value();
         KMixerWidget* kmw = findKMWforTab(guiprof->getId());
         Mixer *mixer =  Mixer::findMixer( guiprof->getMixerId() );
         if ( mixer == 0 ) {
@@ -479,49 +473,67 @@ void KMixWindow::recreateGUI(bool saveConfig)
             addMixerWidget(mixer->id(), guiprof, -1);
         }
         else {
-            if ( kmw->generationIsOutdated() ) {
-                // not yet regenerated => regenerate
-                int indexOfTab =  m_wsMixers->indexOf(kmw);
-                if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
-                delete kmw;
-                addMixerWidget(mixer->id(), guiprof, indexOfTab);
-            }
+            int indexOfTab =  m_wsMixers->indexOf(kmw);
+            if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
+            delete kmw;
+            addMixerWidget(mixer->id(), guiprof, indexOfTab);
         }
     } // Loop over all GUIProfile's
 
 
-    // *** ADD TABS FOR Mixer instances that have no tab yet **********************************
+    // -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
     KConfigGroup pconfig(KGlobal::config(), "Profiles");
-    for (int i=0; i<Mixer::mixers().count(); ++i) {
-        Mixer *mixer = (Mixer::mixers())[i];
+    foreach ( Mixer *mixer, Mixer::mixers())
+    {
         if ( mixerHasProfile.contains(mixer)) {
-            continue;
+            continue;  // OK, this mixer already has a profile => skip it
         }
-        // No TAB YET => This should mean KMix is just started, or the user has added another GUIProfile
-        QString mixerProfileKey(mixer->id());
-        QStringList profileList = pconfig.readEntry( mixerProfileKey, QStringList("") ); // Hint: Default is a list with ONE entry (an empty string). Important for GUIProfile::find()
-        for ( int i=0; i<profileList.count(); i++ ) {
-            kDebug() << "Now searching for profile: " << profileList.at(i);
-            bool allowDefault = (i == (profileList.count() - 1)); // In the last loop iteration, allow the fallback as last resort.
-            GUIProfile* guiprof = GUIProfile::find(mixer, profileList.at(i), allowDefault);
-            if ( guiprof == 0 ) {
-                QString fullQualifiedProfileNameWithoutCardname = GUIProfile::buildProfileName(mixer, profileList.at(i), true);
-                guiprof = GUIProfile::find(mixer, fullQualifiedProfileNameWithoutCardname, allowDefault);  // Load from XML ### Card unspecific profile ###
-                if ( guiprof != 0 ) {
-                    guiprof->setDirty();  // loaded from unspecific file => dirty
-                }
-            }
-            if ( guiprof == 0 ) {
-                kError() << "Cannot load profile " << profileList.at(i) << " . It was removed by the user, or the KMix config file is defective.";
-                continue;
-            }
-            else
+        // No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
+        QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() ); // Hint: Default is a list with ONE entry (an empty string). Important for GUIProfile::find()
 
-            addMixerWidget(mixer->id(), guiprof, -1);
+        bool aProfileWasAddedSucesufully = false;
+        foreach ( QString profileId, profileList)
+        {
+            // This handles the profileList form the kmixrc
+            kDebug() << "Now searching for profile: " << profileId  ;
+            GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false); // ### Card specific profile ###
+            if ( guiprof != 0 ) {
+                addMixerWidget(mixer->id(), guiprof, -1);
+                aProfileWasAddedSucesufully = true;
+            }
+            else {
+                kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+            }
+        }
+
+        if ( ! aProfileWasAddedSucesufully ) {
+            // The profileList was empty or nothing could be loaded
+            // Lets try a bunch of fallback strategies:
+            GUIProfile* guiprof = 0;
+                guiprof = GUIProfile::find(mixer, QString("default"), false, false);  // ### Card specific profile ###
+            if ( guiprof == 0 ) {
+                guiprof = GUIProfile::find(mixer, QString("default"), false, true);  // ### Card unspecific profile ###
+            }
+            if ( guiprof == 0) {
+                // This means there is neither card specific nor card unspecific profile
+                // This is the case for some backends (as they don't ship profiles).
+                guiprof = GUIProfile::fallbackProfile(mixer);
+            }
+
+            if ( guiprof != 0 ) {
+                guiprof->setDirty();  // All fallback => dirty
+                addMixerWidget(mixer->id(), guiprof, -1);
+            }
+            else {
+                kError() << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
+            }
+
         }
     }
     mixerHasProfile.clear();
 
+
+    // -4- FINALIZE **********************************
     if (m_wsMixers->count() > 0) {
         if (current_tab >= 0) {
             m_wsMixers->setCurrentIndex(current_tab);
@@ -566,27 +578,23 @@ void KMixWindow::newView()
 
     Mixer* mixer = Mixer::mixers()[0];
 
-    bool allowDefault = false;
 
+    /* THE FOLLOWING IS ONLY TEST/DEMO CODE *******************/
     static int dummyToggler = false;
     dummyToggler = !dummyToggler;
     GUIProfile* guiprof;
     QString profileName;
 
     if ( dummyToggler ) {
-        profileName = GUIProfile::buildProfileName(mixer, QString("playback"), false);
-        guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+        guiprof = GUIProfile::find(mixer, QString("playback"), false, false);
         if ( guiprof == 0 ) {
-            profileName = GUIProfile::buildProfileName(mixer, QString("playback"), true);
-            guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+            guiprof = GUIProfile::find(mixer, QString("playback"), false, true);
         }
     }
     else {
-        profileName = GUIProfile::buildProfileName(mixer, QString("capture"), false);
-        guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+        guiprof = GUIProfile::find(mixer, QString("capture"), false, false);
         if ( guiprof == 0 ) {
-            profileName = GUIProfile::buildProfileName(mixer, QString("capture"), true);
-            guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+            guiprof = GUIProfile::find(mixer, QString("capture"), false, true);
         }
     }
 
@@ -784,10 +792,12 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         /* A newly added mixer will automatically added at the top
          * and thus the window title is also set appropriately */
 
-        QString tabLabel(kmw->mixer()->readableName());
+        QString tabLabel;
         if ( ! guiprof->getName().isEmpty() ) {
-            tabLabel += ": ";
-            tabLabel += guiprof->getName(); // @todo This name is possibly bad when using Pulesaudio => Check with Colin
+            tabLabel = guiprof->getName(); // @todo This name is possibly bad when using Pulesaudio => Check with Colin
+        }
+        else {
+            tabLabel = kmw->mixer()->readableName();
         }
 
         m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart

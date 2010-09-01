@@ -75,7 +75,7 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 {
     createActions();
     createWidgets( showMuteLED, showCaptureLED );
-    createShortcutActions(view);
+    createShortcutActions();
     installEventFilter( this ); // filter for popup
     update();
 }
@@ -113,7 +113,7 @@ void MDWSlider::createActions()
     connect( action, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
 }
 
-void MDWSlider::createShortcutActions(ViewBase* view)
+void MDWSlider::createShortcutActions()
 {
     // The following actions are for the "Configure Shortcuts" dialog
     /* PLEASE NOTE THAT global shortcuts are saved with the name as set with setName(), instead of their action name.
