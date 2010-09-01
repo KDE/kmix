@@ -1,4 +1,4 @@
-#include "../guiprofile.h"
+#include "../gui/guiprofile.h"
 
 #include <iostream>
 
