@@ -47,6 +47,8 @@
 #include "viewsliders.h"
 
 
+int KMixerWidget::_currentGeneration = 1;
+
 /**
    This widget is embedded in the KMix Main window. Each Hardware Card is visualized by one KMixerWidget.
    KMixerWidget contains
@@ -54,11 +56,13 @@
    (b) A balancing slider : This will be moved to ViewSliders.
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
-                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags, KActionCollection* actionCollection )
+                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags, GUIProfile* guiprof, ProfTab* tab, KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0), _actionCollection(actionCollection)
+     m_topLayout(0), _guiprof(guiprof), _tab(tab), _actionCollection(actionCollection)
 {
    setObjectName(name);
+//   _guiprof = 0;
+   _generation = _currentGeneration;
 
    if ( _mixer )
    {
@@ -110,65 +114,46 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2b) Create device widgets
    * 2c) Add Views to Tab
    ********************************************************************/
-   GUIProfile* guiprof = MixerToolBox::instance()->selectProfile(_mixer);
-   createViewsByProfile(_mixer, guiprof, vflags);
-
-/*
-   // *** Lower part: Balance s ************************************************
-   QHBoxLayout *balanceAndDetail = new QHBoxLayout();
-   m_topLayout->addItem( balanceAndDetail );
-   // Create the left-right-slider
-   m_balanceSlider = new QSlider( Qt::Horizontal, this );
-   m_balanceSlider->setMinimum(-100);
-   m_balanceSlider->setMaximum(100);
-   m_balanceSlider->setPageStep(25);
-   m_balanceSlider->setValue(0);
-
-   m_balanceSlider->setObjectName("RightLeft"); 
-   m_balanceSlider->setTickPosition( QSlider::TicksBelow );
-   m_balanceSlider->setTickInterval( 25 );
-
-   // 10 Pixels at the front; Balance-Slider; 10 Pixels at the end
-   balanceAndDetail->addSpacing( 10 );
-   balanceAndDetail->addWidget( m_balanceSlider );
-   balanceAndDetail->addSpacing( 10 );
-
-   connect( m_balanceSlider, SIGNAL(valueChanged(int)), this, SLOT(balanceChanged(int)) );
-   m_balanceSlider->setToolTip( i18n("Left/Right balancing") );
-*/
-
+   createViewsByProfile(_mixer, _guiprof, _tab->id(), vflags);
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
 
 /**
- * Creates all the Views for the Tabs described in the GUIProfile
+* Creates the View based on the GUIProfile, for the Tab tabId
  */
-void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
+void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, QString tabId, ViewBase::ViewFlags vflags)
 {
    /*** How it works:
    * A loop is done over all tabs.
    * For each Tab a View (e.g. ViewSliders) is instanciated and added to the list of Views
    */
-   std::vector<ProfTab*>::const_iterator itEnd = guiprof->_tabs.end();
-   for ( std::vector<ProfTab*>::const_iterator it = guiprof->_tabs.begin(); it != itEnd; ++it) {
-      ProfTab* profTab = *it;
-
-      // The i18n() in the next line will only produce a translated version, if the text is known.
-      // This cannot be guaranteed, as we have no *.po-file, and the value is taken from the XML Profile.
-      // It is possible that the Profile author puts arbitrary names in it.
-      if ( profTab->type == "Sliders" ) {
-         ViewSliders* view = new ViewSliders( this, profTab->name.toAscii(), mixer, vflags, guiprof, _actionCollection );
-         if ( possiblyAddView(view) ) {
-              guiprof->increaseRefcount();
-         }
-      }
-      else {
-         kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type << "'\n";
-      }
-   } // for all tabs
+   QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
+   for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it) {
+       ProfTab* profTab = *it;
+       if ( profTab->id() != tabId) {
+            continue; // no match
+       }
+       // else
+       if ( profTab->type() == "Sliders" ) {
+           if ( profTab->name() == 0 || profTab->name().isNull() )
+            {
+                kError() << "TAB NAME IS NULL";
+                profTab->name() = "ThisWasNull"; // @todo
+            }
+            kDebug() << ">>> TAB NAME = " << profTab->name();
+           QByteArray qba = profTab->name().toAscii();
+            ViewSliders* view = new ViewSliders( this, qba, mixer, vflags, guiprof, _actionCollection );
+            possiblyAddView(view);
+            break;
+        }
+        else {
+            kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type() << "'\n";
+        }
+    } // search for correct tab
 }
+
 
 bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 {
@@ -182,10 +167,20 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       _views.push_back(vbase);
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
       // *this will be deleted on rebuildGUI(), so lets queue the signal
-      connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithoutSavingView()), Qt::QueuedConnection );
+      connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithSavingView()), Qt::QueuedConnection );
       connect( vbase, SIGNAL(redrawMixer(const QString&)), parentWidget(), SLOT(redrawMixer(const QString&)), Qt::QueuedConnection );
       return true;
    }
+}
+
+
+bool KMixerWidget::generationIsOutdated() {
+   return ( _generation < _currentGeneration );
+}
+
+void KMixerWidget::increaseGeneration()
+{
+  _currentGeneration++;
 }
 
 /**

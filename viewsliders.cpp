@@ -44,6 +44,7 @@
  */
 ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
       : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof, actColl)
+      , _layoutEnum(0)
 {
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
@@ -61,8 +62,6 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
       _layoutMDW->addItem( _layoutSliders );
       // Place enums in an own box right from the sliders.
    }
-  _layoutEnum = new QVBoxLayout(); // new QFormLayout();
-  _layoutMDW->addLayout( _layoutEnum );
 
    _layoutMDW->setSpacing(0);
     setMixSet();
@@ -89,7 +88,12 @@ QWidget* ViewSliders::add(MixDevice *md)
                this,         // parent
                this          // View widget
       );
-	  _layoutEnum->addWidget(mdw);
+      if ( _layoutEnum == 0 ) {
+	// lazily creation of Layout for the first enum
+        _layoutEnum = new QVBoxLayout(); // new QFormLayout();
+        _layoutMDW->addLayout( _layoutEnum );
+      }
+      _layoutEnum->addWidget(mdw);
    } // an enum
    else {
       // add a separator before the device
@@ -104,7 +108,7 @@ QWidget* ViewSliders::add(MixDevice *md)
                md,           // MixDevice (parameter)
                true,         // Show Mute LED
                true,         // Show Record LED
-	       false, // include plaback sliders
+	       true, // include plaback sliders
                true, // include capture sliders
                false,        // Small
                orientation,  // Orientation
@@ -157,12 +161,25 @@ void ViewSliders::_setMixSet()
             MixDevice *md = mixset[i];
             if ( md->id().contains(idRegexp) )
             {
+	      // Match found (by name)
+	      
+	      // Now check wheter subcontrols match
+	      bool subcontrolWanted = false;
+	      subcontrolWanted |=  (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
+	      subcontrolWanted |=  (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
+	      subcontrolWanted |=  (control->useSubcontrolPlaybackSwitch() && md->playbackVolume().hasSwitch());
+	      subcontrolWanted |=  (control->useSubcontrolCaptureSwitch() && md->captureVolume().hasSwitch());
+	      subcontrolWanted |=  (control->useSubcontrolEnum() && md->isEnum());
+		
                /*kDebug(67100) << "     ViewSliders::setMixSet(): match found for md->id()==" <<
                md->id()
                   << " ; control->id=="
                   << control->id << "\n"; */
                // OK, this control is handable by this View. Lets do a duplicate check
-               if ( ! _mixSet->contains( md ) ) {
+	       
+	       if ( !subcontrolWanted ) continue;
+	       
+               if ( ! _mixSet->contains( md ) ) { // dup check
                   if ( !control->name.isNull() ) {
                      // Apply the custom name from the profile
                      md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
@@ -178,9 +195,7 @@ void ViewSliders::_setMixSet()
                   // We use no "break;" ,as multiple devices could match
                   //break;
                }
-               else {
-                  //kDebug(67100) << "        But it is a duplicate and was not added\n";
-               }
+               // else { kDebug(67100) << "        But it is a duplicate and was not added\n"; }
             } // name matches
          } // loop for finding a suitable MixDevice
          if ( ! isUsed ) {

@@ -85,12 +85,7 @@ ViewBase::~ViewBase() {
     // A GUI profile can be shared by different views
     // Starting with 5/2009 it is shared by the "tabs" of one card.
     // So we have to make sure to delete it after all users are gone;
-    if ( _guiprof != 0 ) {
-	_guiprof->decreaseRefcount();
-	if ( _guiprof->refcount() == 0 )
-	       delete _guiprof;
-               _guiprof = 0;
-    }
+//	       delete _guiprof;
 }
 
 
@@ -236,7 +231,7 @@ void ViewBase::setMixSet()
 
         // Check the guiprofile... if it is not the fallback GUIProfile, then
         // make sure that we add a specific entry for any devices not present.
-        if ( 0 != _guiprof && MixerToolBox::instance()->fallbackProfile(_mixer) != _guiprof ) {
+        if ( 0 != _guiprof && GUIProfile::fallbackProfile(_mixer) != _guiprof ) {
             kDebug(67100) << "Dynamic mixer " << _mixer->id() << " is NOT using Fallback GUIProfile. Checking to see if new controls are present";
 
             QList<QString> new_mix_devices;
@@ -252,8 +247,8 @@ void ViewBase::setMixSet()
                 while ( new_mix_devices.count() > 0 ) {
                     ProfControl* ctl = new ProfControl();
                     ctl->id = new_mix_devices.takeAt(0);
-                    ctl->subcontrols = ".*";
-                    ctl->tab = _guiprof->_tabs[0]->name; // Use the first tab... not ideal but should work most of the time;
+                    ctl->setSubcontrols(QString("*"));
+                    ctl->tab  = (_guiprof->tabs())[0]->name(); // Use the first tab... not ideal but should work most of the time;
                     ctl->show = "simple";
                     _guiprof->_controls.push_back(ctl);
                 }

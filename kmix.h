@@ -40,8 +40,11 @@ class KAction;
 #include <kxmlguiwindow.h>
 
 // KMix
+class GUIProfile;
+class ProfTab;
 class KMixPrefDlg;
 class KMixDockWidget;
+class KMixerWidget;
 class KMixWindow;
 class Mixer;
 class ViewDockAreaPopup;
@@ -69,7 +72,7 @@ KMixWindow : public KXmlGuiWindow
    void initPrefDlg();
    void initActions();
    void initActionsLate();
-   void recreateGUI();
+   //void recreateGUI();
    void initWidgets();
    //void setErrorMixerWidget();
 
@@ -88,6 +91,7 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void recreateGUI(bool saveView);
+   void recreateGUIwithSavingView();
    void recreateGUIwithoutSavingView();
    void redrawMixer( const QString& mixer_ID );
 
@@ -98,7 +102,9 @@ KMixWindow : public KXmlGuiWindow
 
    void newMixerShown(int tabIndex);
 
-  private:
+    private:
+        KMixerWidget* findKMWforTab( QString tabId );
+
    KAccel *m_keyAccel;
    KAction* _actionShowMenubar;
 
@@ -135,7 +141,7 @@ KMixWindow : public KXmlGuiWindow
    void slotHWInfo();
    void slotConfigureCurrentView();
    void slotSelectMaster();
-   void addMixerWidget(const QString&);
+   void addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition);
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
    void hideOrClose();

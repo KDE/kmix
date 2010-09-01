@@ -21,6 +21,7 @@
 #include "guiprofile.h"
 
 // Qt
+#include <QDir>
 #include <qxml.h>
 #include <QString>
 
@@ -34,6 +35,8 @@
 
 // KMix
 #include "mixer.h"
+
+QMap<Mixer*,GUIProfile*> GUIProfile::s_fallbackProfiles;
 
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
@@ -70,8 +73,7 @@ bool ProductComparator::operator()(const ProfProduct* p1, const ProfProduct* p2)
 	}
 }
 
-GUIProfile::GUIProfile() :
-  _refcount(0)
+GUIProfile::GUIProfile() 
 {
 }
 
@@ -81,6 +83,121 @@ GUIProfile::~GUIProfile()
     qDeleteAll(_tabs);
     qDeleteAll(_products);
 }
+
+
+GUIProfile* GUIProfile::find(Mixer* mixer, QString preferredProfile)
+{
+    // @todo First search in internal list
+    //       If not found, load from disk via selectProfileFromXMLfiles(), and store in internal list.
+    return selectProfileFromXMLfiles(mixer, preferredProfile);
+}
+
+/**
+Returns a GUI Profile
+*/
+GUIProfile* GUIProfile::selectProfileFromXMLfiles(Mixer* mixer, QString preferredProfile)
+{
+    /** This is a two-step process *****************************************
+    * (1) Build a list of all files we want to check
+    * (2) Evaluate all files and keep the best
+    ***********************************************************************/
+    
+    GUIProfile* guiprofBest = 0;
+    unsigned long matchValueBest = 0;
+    unsigned long matchValueTemp = 0;
+    
+    QString userProfileDir = KStandardDirs::locateLocal("appdata", "profiles/" );
+    
+    QString mixerNameSpacesToUnderscores = mixer->baseName();
+    mixerNameSpacesToUnderscores.replace(" ","_");
+    
+    // (1) User profile Directory
+    QDir dir(userProfileDir);
+    dir.setFilter(QDir::Files);
+    dir.setNameFilters(QStringList(mixer->getDriverName() + "." + mixerNameSpacesToUnderscores + "*.xml"));
+    QFileInfoList fileList = dir.entryInfoList();
+    
+    QString fileNamePrefix = "profiles/" + mixer->getDriverName() + ".";
+    
+    // (2) Default profile for Soundcard Driver (usually from system Directory)
+    QString fileName = fileNamePrefix + "default.xml";
+    QString fileNameFQ;
+    fileNameFQ = KStandardDirs::locate("appdata", fileName );
+    kDebug() << fileName << "; fnfq1=" << fileNameFQ;
+    if (!fileNameFQ.isEmpty())
+        fileList.insert(0, QFileInfo(fileNameFQ));
+    
+    // (3) Soundcard specific profile (usually from system Directory)
+    fileName = fileNamePrefix + mixerNameSpacesToUnderscores + ".xml";
+    fileNameFQ = KStandardDirs::locate("appdata", fileName );
+    kDebug() << fileName << "; fnfq2=" << fileNameFQ;
+    if (!fileNameFQ.isEmpty())
+        fileList.insert(0, QFileInfo(fileNameFQ));
+    
+    
+    
+    for (int i = 0; i < fileList.size(); ++i) {
+        QFileInfo fileInfo = fileList.at(i);
+        QString fileNameAbs = fileInfo.absoluteFilePath();
+        QString fileNameRelToProfile = "profiles/" + fileInfo.fileName();
+        kDebug() << ": Read profile #" << i << ": " << fileNameAbs;
+        GUIProfile* guiprofTemp = new GUIProfile();
+        if ( guiprofTemp->readProfile(fileNameAbs, fileNameRelToProfile) ) {
+            matchValueTemp = guiprofTemp->match(mixer);
+            if ( matchValueTemp < matchValueBest ) {
+                //delete guiprofTemp;
+                guiprofTemp = 0;
+                matchValueTemp = 0;
+            }
+            else {
+                guiprofBest = guiprofTemp;
+                matchValueBest = matchValueTemp;
+            }
+        }
+    }
+    
+    
+    if ( guiprofBest == 0 ) {
+        // Still no profile found. This should usually not happen. This means one of the following things:
+        // a) The KMix installation is not OK
+        // b) The user has a defective profile in ~/.kde/share/apps/kmix/profiles/
+        // c) It is a Backend that ships no default profile (currently this is only Mixer_SUN and Mixer_PULSE)
+        guiprofBest = fallbackProfile(mixer);
+    }
+    //    kDebug(67100) << "New Best    =" << matchValueBest << " pointer=" << guiprofBest << "\n";
+    
+    return guiprofBest;
+}
+
+
+GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
+{
+    if ( ! s_fallbackProfiles.contains(mixer) ) {
+        GUIProfile *fallback = new GUIProfile();
+        
+        ProfProduct* prd = new ProfProduct();
+        prd->vendor         = mixer->getDriverName();
+        prd->productName    = mixer->readableName();
+        prd->productRelease = "1.0";
+        fallback->_products.insert(prd);
+        
+        ProfControl* ctl = new ProfControl();
+        static QString matchAll(".*");
+        ctl->id          = matchAll;
+        ctl->regexp      = matchAll;   // make sure id matches the regexp
+        ctl->setSubcontrols(matchAll);
+        ctl->show        = "simple";
+        fallback->_controls.push_back(ctl);
+        
+        fallback->_soundcardDriver = mixer->getDriverName();
+        fallback->_soundcardName   = mixer->readableName();
+        
+        fallback->finalizeProfile();
+        s_fallbackProfiles[mixer] = fallback;
+    }
+    return s_fallbackProfiles[mixer];
+}
+
 
 /*
  * ref_fileName: Full qualified filename (with path)
@@ -96,11 +213,9 @@ bool GUIProfile::readProfile(QString& ref_fileName, QString ref_fileNameWithoutF
 
 	QFile xmlFile( ref_fileName );
 	QXmlInputSource source( &xmlFile );
-	GUIProfileParser* gpp = new GUIProfileParser(*this);
+	GUIProfileParser* gpp = new GUIProfileParser(this);
 	xmlReader->setContentHandler(gpp);
 	bool ok = xmlReader->parse( source );
-	delete gpp;
-        delete xmlReader;
 
         //std::cout << "Raw Profile: " << *this;
 	if ( ok ) {
@@ -110,7 +225,9 @@ bool GUIProfile::readProfile(QString& ref_fileName, QString ref_fileNameWithoutF
       // !! this error message about faulty profiles should probably be surrounded with i18n()
       kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
    }
-
+   delete gpp;
+   delete xmlReader;
+   
    return ok;
 }
 
@@ -150,34 +267,37 @@ bool GUIProfile::finalizeProfile()
 			ProfControl* control = *it;
 			QString tabnameOfControl = control->tab;
 			if ( tabnameOfControl.isNull() ) {
-				// OK, it has no TabName defined. We will assign a TabName in step (3).
+			  tabnameOfControl = "Controls";
+			  control->tab = "Controls";
 			}
-			else {
 				// check, whether we have this Tab yet.
 				//std::vector<ProfTab*>::iterator tabRef = std::find(_tabs.begin(), _tabs.end(), tabnameOfControl);
-				std::vector<ProfTab*>::const_iterator itTEnd = _tabs.end();
-				std::vector<ProfTab*>::const_iterator itT = _tabs.begin();
+				QList<ProfTab*>::const_iterator itTEnd = _tabs.end();
+                QList<ProfTab*>::const_iterator itT = _tabs.begin();
 				for ( ; itT != itTEnd; ++itT) {
-				    if ( (*itT)->name == tabnameOfControl ) break;
+				    if ( (*itT)->name() == tabnameOfControl ) break;
 				}
 				if ( itT == itTEnd ) {
 					// no such Tab yet => insert it
 					ProfTab* tab = new ProfTab();
-					tab->name = tabnameOfControl;
-					tab->type = "Sliders";  //  as long as we don't know better
+					tab->setName(tabnameOfControl);
+					tab->setType("Sliders");  //  as long as we don't know better
+					if ( tab->id().isNull() ) tab->setId( tab->name() );;
 					_tabs.push_back(tab);
 				} // tab does not exist yet => insert new tab
-			} // Control contains a TabName
 		} // Step (1)
 
 		// (2) Make sure that there is at least one Tab
 		if ( _tabs.size() == 0) {
 			ProfTab* tab = new ProfTab();
-			tab->name = "Controls"; // !! A better name should be used. What about i18n() ?
-			tab->type = "Sliders";  //  as long as we don't know better
+            tab->setName("Controls"); // !! A better name should be used. What about i18n() ?
+            tab->setId("Controls"); // !! A better name should be used. What about i18n() ?
+            tab->setType("Sliders");  //  as long as we don't know better
 			_tabs.push_back(tab);
 		} // Step (2)
 
+
+/*
 		// (3) Assign a Tab Name to all controls that have no defined Tab Name yet.
 		ProfTab* tab = _tabs.front();
 		itEnd = _controls.end();		for ( std::vector<ProfControl*>::const_iterator it = _controls.begin(); it != itEnd; ++it)
@@ -190,6 +310,7 @@ bool GUIProfile::finalizeProfile()
 			}
 		} // Step (3)
 		//std::cout << "Consistent Profile: " << *this;
+*/
 
    return ok;
 }
@@ -307,7 +428,7 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 	os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
 		}
-		os << " subcontrols=\"" << xmlify(profControl->subcontrols).toUtf8().constData() << "\"" ;
+// @todoe		os << " subcontrols=\"" << xmlify(profControl->subcontrols).toUtf8().constData() << "\"" ;
 		if ( ! profControl->tab.isNull() ) {
 			os << " tab=\"" << xmlify(profControl->tab).toUtf8().constData() << "\"" ;
 		}
@@ -316,9 +437,10 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 	} // for all controls
 	os << endl;
 
-	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
+        QList<ProfTab*>::const_iterator it = guiprof.tabs().begin();
+	for ( ; it != guiprof.tabs().end(); ++it) {
 		ProfTab* profTab = *it;
-		os << "<tab name=\"" << xmlify(profTab->name).toUtf8().constData() << "\" type=\"" << xmlify(profTab->type).toUtf8().constData() << "\"";
+        os << "<tab name=\"" << xmlify(profTab->name()).toUtf8().constData() << "\" id=\"" << xmlify(profTab->id()).toUtf8().constData() << "\" type=\"" << xmlify(profTab->type()).toUtf8().constData() << "\"";
                 os << " />" << endl;
 	} // for all tabs
 	os << endl;
@@ -357,21 +479,28 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
-		os << "  Subcontrols=" << profControl->subcontrols.toUtf8().constData() << std::endl;
+// @todo		os << "  Subcontrols=" << profControl->subcontrols.toUtf8().constData() << std::endl;
 		if ( ! profControl->tab.isNull() ) {
 			os << "  Tab=" << profControl->tab.toUtf8().constData() << std::endl;
 		}
 		os << "  Shown-On=" << profControl->show.toUtf8().constData() << std::endl;
 	} // for all controls
 
-	for ( std::vector<ProfTab*>::const_iterator it = guiprof._tabs.begin(); it != guiprof._tabs.end(); ++it) {
+    QList<ProfTab*>::const_iterator it = guiprof.tabs().begin();
+	for ( ; it != guiprof.tabs().end(); ++it) {
 		ProfTab* profTab = *it;
-		os << "Tab: " << std::endl << "  " << profTab->name.toUtf8().constData() << " (" << profTab->type.toUtf8().constData() << ")" << std::endl;
+        os << "Tab: " << std::endl << "  ID: " << profTab->id().toUtf8().constData() << " :" << profTab->name().toUtf8().constData() << " (" << profTab->type().toUtf8().constData() << ")" << std::endl;
 	} // for all tabs
 
 	return os;
 }
 
+ProfTab::ProfTab()
+{
+    _id = "";
+    _name = "";
+    _type = "";
+}
 
 ProfControl::ProfControl(){
 }
@@ -380,7 +509,8 @@ ProfControl::ProfControl(const ProfControl &profControl){
 
 		id = profControl.id;
 		name = profControl.name;
-		subcontrols = profControl.subcontrols;
+		QString origSctls = profControl._subcontrols;
+		setSubcontrols(origSctls); // @todo. Copy the 5 fields instead???
 		name = profControl.name;
 		tab = profControl.tab;
 		show = profControl.show;
@@ -389,10 +519,39 @@ ProfControl::ProfControl(const ProfControl &profControl){
 }
 
 
+void ProfControl::setSubcontrols(QString sctls)
+{
+  _useSubcontrolPlayback = false;
+  _useSubcontrolCapture = false;
+  _useSubcontrolPlaybackSwitch = false;
+  _useSubcontrolCaptureSwitch = false;
+  _useSubcontrolEnum = false;
+
+  QStringList qsl = sctls.split( ',',  QString::SkipEmptyParts, Qt::CaseInsensitive);
+  QStringListIterator qslIt(qsl);
+  while (qslIt.hasNext()) {
+    QString sctl = qslIt.next();
+       kDebug() << "setSubcontrols found: " << sctl.toLocal8Bit().constData() << endl;
+       if ( sctl == "pvolume" ) _useSubcontrolPlayback = true;
+       else if ( sctl == "cvolume" ) _useSubcontrolCapture = true;
+       else if ( sctl == "pswitch" ) _useSubcontrolPlaybackSwitch = true;
+       else if ( sctl == "cswitch" ) _useSubcontrolCaptureSwitch = true;
+       else if ( sctl == "enum" ) _useSubcontrolEnum = true;
+       else if ( sctl == "*" || sctl == ".*") {
+	 _useSubcontrolCapture = true;
+	 _useSubcontrolCaptureSwitch = true;
+	 _useSubcontrolPlayback = true;
+	 _useSubcontrolPlaybackSwitch = true;
+	 _useSubcontrolEnum = true;
+       }
+       else kWarning() << "Ignoring unknown subcontrol type '" << sctl << "' in profile";
+  }
+}
+
 // ### PARSER START ################################################
 
 
-GUIProfileParser::GUIProfileParser(GUIProfile& ref_gp) : _guiProfile(ref_gp)
+GUIProfileParser::GUIProfileParser(GUIProfile* ref_gp) : _guiProfile(ref_gp)
 {
 }
 
@@ -462,31 +621,31 @@ void GUIProfileParser::addSoundcard(const QXmlAttributes& attributes) {
 	QString type	= attributes.value("type");
 	QString generation = attributes.value("generation");
 	if ( !driver.isNull() && !name.isNull() ) {
-		_guiProfile._soundcardDriver = driver;
-		_guiProfile._soundcardName = name;
+		_guiProfile->_soundcardDriver = driver;
+		_guiProfile->_soundcardName = name;
 		if ( type.isNull() ) {
-			_guiProfile._soundcardType = "";
+			_guiProfile->_soundcardType = "";
 		}
 		else {
-			_guiProfile._soundcardType = type;
+			_guiProfile->_soundcardType = type;
 		}
 		if ( version.isNull() ) {
-			_guiProfile._driverVersionMin = 0;
-			_guiProfile._driverVersionMax = 0;
+			_guiProfile->_driverVersionMin = 0;
+			_guiProfile->_driverVersionMax = 0;
 		}
 		else {
 			std::pair<QString,QString> versionMinMax;
 			splitPair(version, versionMinMax, ':');
-			_guiProfile._driverVersionMin = versionMinMax.first.toULong();
-			_guiProfile._driverVersionMax = versionMinMax.second.toULong();
+			_guiProfile->_driverVersionMin = versionMinMax.first.toULong();
+			_guiProfile->_driverVersionMax = versionMinMax.second.toULong();
 		}
 		if ( type.isNull() ) { type = ""; };
 		if ( generation.isNull() ) {
-			_guiProfile._generation = 0;
+			_guiProfile->_generation = 0;
 		}
 		else {
 			// Hint: If the conversion fails, _generation will be assigned 0 (which is fine)
-			_guiProfile._generation = generation.toUInt();
+			_guiProfile->_generation = generation.toUInt();
 		}
 	}
 
@@ -499,17 +658,19 @@ void GUIProfileParser::addTab(const QXmlAttributes& attributes) {
 	    	printAttributes(attributes);
 */
 	QString name = attributes.value("name");
-	QString type	= attributes.value("type");
-	if ( !name.isNull() && !type.isNull() ) {
+    QString type    = attributes.value("type");
+    QString id      = attributes.value("id");
+    if ( !name.isNull() && !type.isNull() ) {
 		// If you define a Tab, you must set its Type
 		// It is either "Input", "Output", "Switches" or "Surround"
 		// These names are case sensitive and correspond 1:1 to the View-Names.
 		// This could make it possible in the (far) future to have Views as Plugins.
 		ProfTab* tab = new ProfTab();
-		tab->name = name;
-		tab->type = type;
+		tab->setName(name);
+        if (id.isNull()) tab->setId(name); else tab->setId(id);
+		tab->setType(type);
 
-		_guiProfile._tabs.push_back(tab);
+		_guiProfile->tabs().push_back(tab);
 	}
 }
 
@@ -530,7 +691,7 @@ void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
 		prd->productRelease = release;
 		prd->comment = comment;
 
-		_guiProfile._products.insert(prd);
+		_guiProfile->_products.insert(prd);
 	}
 }
 
@@ -540,10 +701,10 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	printAttributes(attributes);
 	*/
 	QString id = attributes.value("id");
-	QString subcontrols = attributes.value("controls");
+    QString subcontrols = attributes.value("subcontrols");
 	QString tab = attributes.value("tab");
 	QString name = attributes.value("name");
-   QString regexp = attributes.value("pattern");
+	QString regexp = attributes.value("pattern");
 	QString show = attributes.value("show");
 	QString background = attributes.value("background");
 	QString switchtype = attributes.value("switchtype");
@@ -570,16 +731,17 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
          regexp = !name.isNull() ? name : id;
       }
 
+     if ( show.isNull() ) { show = "*"; }
+
 		profControl->id = id;
 		profControl->name = name;
-		profControl->subcontrols = subcontrols;
+		profControl->setSubcontrols(subcontrols);
 		profControl->name = name;
 		profControl->tab = tab;
-		if ( show.isNull() ) { show = "*"; }
 		profControl->show = show;
 		profControl->backgroundColor.setNamedColor (background);
 		profControl->switchtype = switchtype;
-		_guiProfile._controls.push_back(profControl);
+		_guiProfile->_controls.push_back(profControl);
 	} // id != null
 }
 

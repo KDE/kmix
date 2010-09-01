@@ -416,6 +416,11 @@ void KMixWindow::recreateGUIwithoutSavingView()
 }
 
 
+void KMixWindow::recreateGUIwithSavingView()
+{
+	recreateGUI(true);
+}
+
 /**
  * Create or recreate the Mixer GUI elements
  */
@@ -426,42 +431,79 @@ void KMixWindow::recreateGUI(bool saveConfig)
    if (m_wsMixers)
       current_tab = m_wsMixers->currentIndex();
 
-   // NOTE (coling) This is a bug but I don't have time to find the source.
-   // When returning from "Configure Mixers..." we MUST save, but the
-   // flag comes through as false, presumably due to the rebuildGUI() signal
-   // being tied to the recreateGUIwithoutSavingView() slot.
-   // This should really be fixed :s
-   Q_UNUSED(saveConfig);
-   saveViewConfig();  // save the state before recreating
+   KConfigGroup config(KGlobal::config(), "Global");
+   m_showDockWidget = config.readEntry("Profile", true);
+   
+   if (saveConfig)
+      saveViewConfig();  // save the state before recreating
 
-   // Before clearing the mixer widgets, we must increase the refcount on the guiprof to save it deleting the ViewBase object.
-   if ( Mixer::mixers().count() > 0 )
-      for (int i=0; i<Mixer::mixers().count(); ++i)
-         MixerToolBox::instance()->selectProfile((Mixer::mixers())[i])->increaseRefcount();
-   clearMixerWidgets();
+      // Start a new generation now. This shows whether we alteady have recreated the
+   // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
+   KMixerWidget::increaseGeneration();
 
-   if ( Mixer::mixers().count() > 0 ) {
-      for (int i=0; i<Mixer::mixers().count(); ++i) {
-         Mixer *mixer = (Mixer::mixers())[i];
-         // We've increased the refcount before clearing, so remember and decrease it again.
-         MixerToolBox::instance()->selectProfile(mixer)->decreaseRefcount();
-         addMixerWidget(mixer->id());
-      }
-      bool dockingSucceded = updateDocking();
-      if( !dockingSucceded && Mixer::mixers().count() > 0 )
-         show(); // avoid invisible and unaccessible main window
-   }
-   else {
-      // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
-       updateDocking();  // -<- removes the DockIcon
-       hide();
-   }
+    if ( Mixer::mixers().count() > 0 ) {
+        for (int i=0; i<Mixer::mixers().count(); ++i) {
+            Mixer *mixer = (Mixer::mixers())[i];
+            KConfigGroup config(KGlobal::config(), "Profiles");
+            QString mixerProfileKey(mixer->id());
+            // FUTURE DIRECTIONS: This could return a list of profiles per Card
+            QString profileStr = config.readEntry(mixerProfileKey, "default");
+            qDebug() << "Now searching for profile: " << profileStr;
+            GUIProfile* guiprof = GUIProfile::find(mixer, profileStr);
+
+            QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
+            for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it)
+            {
+                ProfTab* tab = *it;
+                KMixerWidget* kmw = findKMWforTab(tab->id());
+                if ( kmw == 0 ) {
+                    // does not yet exist => create
+                    addMixerWidget(mixer->id(), guiprof, tab, -1);
+                }
+                else {
+                    if ( kmw->generationIsOutdated() ) {
+                        // not yet regenerated => regenerate
+                        int indexOfTab =  m_wsMixers->indexOf(kmw);
+                        if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
+                        delete kmw;
+                        addMixerWidget(mixer->id(), guiprof, tab, indexOfTab);
+                    }
+                    else {
+                        kError() << "Multiple profiles during recreateGUI() are NOT supported yet";
+                    }
+                }
+            } // iterate tabs of profile
+	} // iterate Mixers
+	
+
+    bool dockingSucceded = updateDocking();
+    if ( !dockingSucceded && Mixer::mixers().count() > 0 )
+        show(); // avoid invisible and unaccessible main window
+    }
+    else {
+        // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.   
+        updateDocking();  // -<- removes the DockIcon
+        hide();
+    }
 
    if (current_tab >= 0) {
       m_wsMixers->setCurrentIndex(current_tab);
    }
 }
 
+KMixerWidget* KMixWindow::findKMWforTab( QString tabId )
+{
+    KMixerWidget* kmw = 0;
+    for (int i=0; i< m_wsMixers->count(); ++i)
+    {
+        KMixerWidget* kmwTmp = (KMixerWidget*)m_wsMixers->widget(i);
+        if ( kmwTmp->id() == tabId ) {
+            kmw = kmwTmp;
+            break;
+        }
+    }
+    return kmw;
+}
 
 /**
 * Create or recreate the Mixer GUI elements
@@ -611,7 +653,7 @@ void KMixWindow::clearMixerWidgets()
 
 
 
-void KMixWindow::addMixerWidget(const QString& mixer_ID)
+void KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition)
 {
 //    kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID;
    Mixer *mixer = MixerToolBox::instance()->find(mixer_ID);
@@ -630,18 +672,25 @@ void KMixWindow::addMixerWidget(const QString& mixer_ID)
       }
 
 
-      KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, actionCollection() );
+      KMixerWidget *kmw = new KMixerWidget( mixer, this, "KMixerWidget", vflags, guiprof, profileTab, actionCollection() );
 
       /* A newly added mixer will automatically added at the top
       * and thus the window title is also set appropriately */
       bool isFirstTab = m_wsMixers->count() == 0;
-      m_wsMixers->addTab( kmw, kmw->mixer()->readableName() );
+      QString tabLabel(kmw->mixer()->readableName());
+      tabLabel += ": ";
+      tabLabel += profileTab->name();
+      if ( insertPosition == -1 )
+          m_wsMixers->addTab( kmw, tabLabel );
+      else
+          m_wsMixers->insertTab( insertPosition, kmw, tabLabel );
+
       if (isFirstTab || kmw->mixer()->id() == m_defaultCardOnStart ) {
-         m_dontSetDefaultCardOnStart = true; // inhipbit implicit stting of m_defaultCardOnStart
+         m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
          m_wsMixers->setCurrentWidget(kmw);
          m_dontSetDefaultCardOnStart = false;
          if ( m_defaultCardOnStart.isEmpty() )
-            m_defaultCardOnStart = kmw->mixer()->id(); // If there was noc configuration file entry
+            m_defaultCardOnStart = kmw->mixer()->id(); // If there was no configuration file entry
       }
 
       kmw->loadConfig( KGlobal::config().data() );
