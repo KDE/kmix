@@ -66,6 +66,7 @@
 <control id="^PCM:0$"         tab="Base" show="simple"/>
 <control id="^CD:0$"          tab="Base" show="simple"/>
 <control id="^Headphone:0$"   tab="Base" show="simple"/>
+<control id="^Mic.*:0$"       tab="Base" show="simple"/>
 <!-- We show ADC and DAC, as they control the actual "output sockets" -->
 <control id="^DAC:0$"         tab="Base" show="simple"/>
 <control id="^ADC:0$"         tab="Base" show="simple"/>
