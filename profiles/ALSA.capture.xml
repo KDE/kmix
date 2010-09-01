@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<soundcard driver="ALSA" version = "0:0"
+ name = "*"
+ type = "*"
+ generation = "2"
+>
+
+<product vendor="Any Vendor" name="Generic Soundcard" />
+
+<control id="^.*$" subcontrols="cvolume,cswitch" show="simple" />
+
+</soundcard>
