@@ -103,7 +103,7 @@ public:
     *  @par type The control type. It is only used to find an appropriate icon
     */
    MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type );
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, MixSet* moveDestinationMixSet = 0 );
+   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = 0 );
    ~MixDevice();
 
    const QString& iconName() const { return _iconName; }
@@ -130,17 +130,41 @@ public:
    // operator==() is used currently only for duplicate detection with QList's contains() method
    bool operator==(const MixDevice& other) const;
 
-   // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
-   // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
-   // "mute on", or does it mean "playback on".
+   // Methods for handling the switches. This methods are useful, because the Switch in the Volume object
+   // is an abstract concept. It places no interpretation on the meaning of the switch (e.g. does "switch set" mean
+   // "mute on", or does it mean "playback on", or "Capture active", or ...
    virtual bool isMuted();
    virtual void setMuted(bool value);
    virtual bool isRecSource();
    virtual void setRecSource(bool value);
    virtual bool isEnum();
 
-   bool isMovable()                { return (0 != _moveDestinationMixSet); }
-   MixSet *getMoveDestinationMixSet() { return _moveDestinationMixSet; }
+   bool isMovable() const
+   {
+       return (0 != _moveDestinationMixSet);
+   }
+   MixSet *getMoveDestinationMixSet() const
+   {
+       return _moveDestinationMixSet;
+   }
+
+   bool isArtificial()  const
+   {
+       return _artificial;
+   }
+   void setArtificial(bool artificial)
+   {
+       _artificial = artificial;
+   }
+
+   bool isEthereal() const
+   {
+       return _ethereal;
+   }
+   void setEthereal(bool _ethereal)
+   {
+       this->_ethereal = _ethereal;
+   }
 
    void setControlProfile(ProfControl* control);
    ProfControl* controlProfile();
@@ -155,8 +179,10 @@ public:
    virtual void read( KConfig *config, const QString& grp );
    virtual void write( KConfig *config, const QString& grp );
 
+
+
 protected:
-   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet );
+   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet );
 
 private:
    Mixer *_mixer;
@@ -165,7 +191,14 @@ private:
    int _enumCurrentId;
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
-   bool _doNotRestore;
+   //bool _doNotRestore;
+   // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
+   // Actually we discriminate those "virtual" controls in artificial controls and ethereal controls:
+   // Type        Shortcut  Restore
+   // Artificial:    yes       no    Virtual::GlobalMaster or Virtual::CaptureGroup_3   (controls that are constructed artificially from other controls)
+   // Ethereal  :     no       no    Controls that come and go, like Pulse Stream controls
+   bool _artificial;
+   bool _ethereal;
    MixSet *_moveDestinationMixSet;
    QString _iconName;
 

@@ -28,6 +28,7 @@ const long MixDeviceComposite::VolMax = 10000;
 MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<MixDevice*>& mds, const QString& name, ChannelType type ) :
    MixDevice( mixer, id, name, type )  // this will use doNotRestore == true
 {
+    setArtificial(true);
     Volume::ChannelMask chn = Volume::MMAIN;
     _compositePlaybackVolume = new Volume( chn, MixDeviceComposite::VolMax, 0, true, false);
     _compositeCaptureVolume  = new Volume();
@@ -37,7 +38,6 @@ MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<
         MixDevice* md = it.next();
         _mds.append(md);
     }
-    init(mixer, id, name, "mixer-line", true, 0);
 }
 
 

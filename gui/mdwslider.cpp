@@ -130,9 +130,12 @@ void MDWSlider::createShortcutActions(ViewBase* view)
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
-    //   b->enableGlobalShortcut();
-    connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
+    if ( ! mixDevice()->isEthereal() ) {
+        // virtual / ethereal controls won't get shortcuts
+        b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+        //   b->enableGlobalShortcut();
+        connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
+    }
 
     b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
     QString decreaseVolumeName = i18n( "Decrease Volume" );
@@ -141,9 +144,12 @@ void MDWSlider::createShortcutActions(ViewBase* view)
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
-    //   b->enableGlobalShortcut();
-    connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
+    if ( ! mixDevice()->isEthereal() ) {
+        // virtual / ethereal controls won't get shortcuts
+        b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+        //   b->enableGlobalShortcut();
+        connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
+    }
 
     b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
     QString muteVolumeName = i18n( "Toggle Mute" );
@@ -152,9 +158,12 @@ void MDWSlider::createShortcutActions(ViewBase* view)
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
-    //   b->enableGlobalShortcut();
-    connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );
+    if ( ! mixDevice()->isEthereal() ) {
+        // virtual / ethereal controls won't get shortcuts
+        b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
+        //   b->enableGlobalShortcut();
+        connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );
+    }
     
     // @todo: The following has been added for an unknown reason. Have to check this. - cesken
     //        Is there a reason why it is only done for Mute and not Volume Up/down?
