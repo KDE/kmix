@@ -141,7 +141,7 @@ KMixWindow : public KXmlGuiWindow
    void slotHWInfo();
    void slotConfigureCurrentView();
    void slotSelectMaster();
-   void addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, ProfTab *profileTab, int insertPosition);
+   void addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
    void hideOrClose();

@@ -145,6 +145,7 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
         }
         
         if ( guiprof != 0 ) {
+            guiprof->_mixerId = mixer->id();
             if ( guiprof->getId().isEmpty() ) {
                 guiprof->setId(requestedProfileName);
             }
@@ -532,12 +533,13 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		os << "  Shown-On=" << profControl->show.toUtf8().constData() << std::endl;
 	} // for all controls
 
+/*
     QList<ProfTab*>::const_iterator it = guiprof.tabs().begin();
 	for ( ; it != guiprof.tabs().end(); ++it) {
 		ProfTab* profTab = *it;
         os << "Tab: " << std::endl << "  ID: " << profTab->id().toUtf8().constData() << " :" << profTab->name().toUtf8().constData() << " (" << profTab->type().toUtf8().constData() << ")" << std::endl;
 	} // for all tabs
-
+*/
 	return os;
 }
 

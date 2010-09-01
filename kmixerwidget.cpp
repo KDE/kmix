@@ -56,11 +56,16 @@ int KMixerWidget::_currentGeneration = 1;
    (b) A balancing slider : This will be moved to ViewSliders.
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
-                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags, GUIProfile* guiprof, ProfTab* tab, KActionCollection* actionCollection )
+                            QWidget * parent, const char * name, ViewBase::ViewFlags vflags, GUIProfile* guiprof,
+                            //ProfTab* tab,
+                            KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
-     m_topLayout(0), _guiprof(guiprof), _tab(tab), _actionCollection(actionCollection)
+     m_topLayout(0), _guiprof(guiprof),
+     //_tab(tab), 
+     _actionCollection(actionCollection)
 {
    setObjectName(name);
+   m_id = guiprof->getId();
 //   _guiprof = 0;
    _generation = _currentGeneration;
 
@@ -114,7 +119,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2b) Create device widgets
    * 2c) Add Views to Tab
    ********************************************************************/
-   createViewsByProfile(_mixer, _guiprof, _tab->id(), vflags);
+   createViewsByProfile(_mixer, _guiprof, QString("") /*_tab->id()*/, vflags);
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
@@ -132,9 +137,11 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, QStri
    QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
    for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it) {
        ProfTab* profTab = *it;
+       /*
        if ( profTab->id() != tabId) {
             continue; // no match
        }
+       */
        // else
        if ( profTab->type() == "Sliders" ) {
            if ( profTab->name() == 0 || profTab->name().isNull() )

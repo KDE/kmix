@@ -135,6 +135,9 @@ class GUIProfile
     
     void setId(QString id);
     QString getId();
+    QString getMixerId() { return _mixerId; }
+    
+    static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }
     
     unsigned long match(Mixer* mixer);
     friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
@@ -149,7 +152,7 @@ class GUIProfile
     ControlSet _controls;
 
     QList<ProfTab*>& tabs() { return _tabs; };
-    QList<ProfTab*> tabs() const { return _tabs; };
+    //QList<ProfTab*> tabs() const { return _tabs; };
     ProductSet _products;
 
     static GUIProfile* find(Mixer* mixer, QString profileName, bool allowFallback);
@@ -175,6 +178,7 @@ private:
     static QMap<QString, GUIProfile*> s_profiles;
     
     QString _id;
+    QString _mixerId;
     bool _dirty;
 };
 

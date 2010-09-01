@@ -40,6 +40,8 @@ QList<Mixer *> Mixer::s_mixers;
 QString Mixer::_globalMasterCard;
 QString Mixer::_globalMasterCardDevice;
 
+int Mixer::_currentGeneration = 1;
+
 int Mixer::numDrivers()
 {
     MixerFactory *factory = g_mixerFactories;
@@ -66,6 +68,7 @@ Mixer::Mixer( QString& ref_driverName, int device )
 {
    (void)new KMixAdaptor(this);
 
+    _generation = _currentGeneration;
     _mixerBackend = 0;
     int driverCount = numDrivers();
     for (int driver=0; driver<driverCount; driver++ ) {
@@ -93,6 +96,18 @@ Mixer::~Mixer() {
    close();
    delete _mixerBackend;
 }
+
+
+// The "generation" thing is a bit hacky. as it is faciliated by the GUI part (so it shouldn't be in this non-GUI class).
+bool Mixer::generationIsOutdated() {
+    return ( _generation < _currentGeneration );
+}
+
+void Mixer::increaseGeneration()
+{
+    _currentGeneration++;
+}
+
 
 void Mixer::volumeSave( KConfig *config )
 {
