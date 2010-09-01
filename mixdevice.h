@@ -83,7 +83,8 @@ public:
                        SPEAKER,
                        MICROPHONE_BOOST,
                        MICROPHONE_FRONT_BOOST,
-                       MICROPHONE_FRONT
+                       MICROPHONE_FRONT,
+                       KMIX_COMPOSITE
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };
@@ -132,12 +133,11 @@ public:
    // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
    // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
    // "mute on", or does it mean "playback on".
-   bool isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
-   void setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
-   bool isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
-   void setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
-
-   bool isEnum()                   { return ( ! _enumValues.empty() ); }
+   virtual bool isMuted();
+   virtual void setMuted(bool value);
+   virtual bool isRecSource();
+   virtual void setRecSource(bool value);
+   virtual bool isEnum();
 
    bool isMovable()                { return (0 != _moveDestinationMixSet); }
    MixSet *getMoveDestinationMixSet() { return _moveDestinationMixSet; }
@@ -145,8 +145,8 @@ public:
    void setControlProfile(ProfControl* control);
    ProfControl* controlProfile();
    
-   Volume& playbackVolume();
-   Volume& captureVolume();
+   virtual Volume& playbackVolume();
+   virtual Volume& captureVolume();
 
    void setEnumId(int);
    unsigned int enumId();
@@ -154,6 +154,9 @@ public:
 
    virtual void read( KConfig *config, const QString& grp );
    virtual void write( KConfig *config, const QString& grp );
+
+protected:
+   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet );
 
 private:
    Mixer *_mixer;
@@ -170,7 +173,6 @@ private:
    QString _id;     // Primary key, used as part in config file keys
    ProfControl *_profControl;
 
-   void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet );
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
 

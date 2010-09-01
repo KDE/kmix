@@ -180,6 +180,15 @@ const QString& MixDevice::id() const {
    return _id;
 }
 
+
+bool MixDevice::isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
+void MixDevice::setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
+bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
+void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
+bool MixDevice::isEnum()                   { return ( ! _enumValues.empty() ); }
+
+
+
 bool MixDevice::operator==(const MixDevice& other) const
 {
    return ( _id == other._id );

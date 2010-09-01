@@ -47,6 +47,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    mixer.cpp 
    mixset.cpp 
    mixdevice.cpp 
+   mixdevicecomposite.cpp 
    mixer_backend.cpp
    ksmallslider.cpp 
    volume.cpp
@@ -89,11 +90,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     mixertoolbox.cpp 
     mixer_backend.cpp 
     kmixdevicemanager.cpp
-#    guiprofile.cpp
     )
-# 
-# # guiprofile.cpp should NOT be in kmixd. !!!
-# # guiprofile stuff must be moved from mixertoolbox to kmixtoolbox!!! 
 
 #qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
  
