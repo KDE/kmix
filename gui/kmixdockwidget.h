@@ -68,6 +68,7 @@ class KMixDockWidget : public KStatusNotifierItem
 
  private:
    ViewDockAreaPopup *_referenceWidget;
+   QWidgetAction *_volWA;
    Phonon::MediaObject *_audioPlayer;
    bool _playBeepOnVolumeChange;
    bool _ignoreNextEvent;
