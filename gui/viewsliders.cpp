@@ -19,6 +19,18 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#define TEST_MIXDEVICE_COMPOSITE
+
+#ifdef TEST_MIXDEVICE_COMPOSITE
+#ifdef __GNUC__
+#warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#warning !!! MIXDEVICE COMPOSITE TESTING IS ACTIVATED   !!!
+#warning !!! THIS IS PRE-ALPHA CODE!                    !!!
+#warning !!! DO NOT SHIP KMIX IN THIS STATE             !!!
+#warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#endif
+#endif
+
 // KMix
 #include "viewsliders.h"
 #include "gui/guiprofile.h"
@@ -49,22 +61,23 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 {
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
-      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QVBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-      _layoutMDW->addItem( _layoutSliders );
    }
    else
    {
       _layoutMDW = new QHBoxLayout(this);
-      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QHBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-      _layoutMDW->addItem( _layoutSliders );
       // Place enums in an own box right from the sliders.
    }
-
+   _layoutSliders->setContentsMargins(0,0,0,0);
+   _layoutSliders->setSpacing(0);
+   _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+   _layoutMDW->setContentsMargins(0,0,0,0);
    _layoutMDW->setSpacing(0);
+   _layoutMDW->addItem( _layoutSliders );
+
     setMixSet();
 }
 
@@ -117,11 +130,11 @@ QWidget* ViewSliders::add(MixDevice *md)
                 , md->controlProfile()
         ); // View widget
         _layoutSliders->addWidget(mdw);
-        QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
-        if ( lay )
-            lay->addSpacing(2);
-        else
-            qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
+//        QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
+//        if ( lay )
+//            lay->addSpacing(2);
+//        else
+//            qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
     }
 
 
@@ -145,7 +158,9 @@ void ViewSliders::_setMixSet()
     }
 
 
+#ifdef TEST_MIXDEVICE_COMPOSITE
     QList<MixDevice*> mds;  // @todo For temporary test
+#endif
 
     // This method iterates the controls from the Profile
     // Each control is checked, whether it is also contained in the mixset, and
@@ -192,7 +207,9 @@ void ViewSliders::_setMixSet()
                     }
                     _mixSet->append(md);
 
+#ifdef TEST_MIXDEVICE_COMPOSITE
                     if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // @todo For temporary test
+#endif
 
                     isUsed = true;
                     // We use no "break;" ,as multiple devices could match
@@ -208,7 +225,7 @@ void ViewSliders::_setMixSet()
       }  // Tab name doesn't match (=> don't insert)
    } // iteration over all controls from the Profile
 
-
+#ifdef TEST_MIXDEVICE_COMPOSITE
     // @todo: This is currently hardcoded, and instead must be read as usual from the Profile
     MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
     QString ctlId("Composite_Test");
@@ -216,6 +233,7 @@ void ViewSliders::_setMixSet()
     ProfControl* pctl = new ProfControl(ctlId, ctlMatchAll);
     mdc->setControlProfile(pctl);
     _mixSet->append(mdc);
+#endif
 }
 
 
