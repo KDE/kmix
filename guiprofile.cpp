@@ -101,6 +101,10 @@ bool GUIProfile::isDirty() {
     return _dirty;
 }
 
+void GUIProfile::setDirty() {
+    _dirty = true;
+}
+
 /**
  * Build a profile name. Suitable to use as primary key and to build filenames.
  * @arg mixer         The mixer
@@ -126,14 +130,22 @@ QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ign
  * Otherwise load profile from disk: Priority: Card specific profile, Card unspecific profile
  *
  * @arg mixer         The mixer
- * @arg profileName   The profile name (e.g. "capture", "playback", "my-cool-profile", or "any"
+ * @arg profileName   The profile name (e.g. "ALSA.X-Fi.default", or "OSS.intel-cha51.playback")
+ *                    A special case is "", which means that a card specific name should be generated.
  * @arg allowFallback If set to true, a Fallback profile will be generated if no matching profile could be found
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
  */
 GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallback)
 {
     GUIProfile* guiprof = 0;
-    QString fullQualifiedProfileName = buildProfileName(mixer, profileName, false);
+    QString fullQualifiedProfileName;
+    if ( profileName.isEmpty() ) {
+        fullQualifiedProfileName = buildProfileName(mixer, profileName, false);  // 1st run of KMix (empty [Profiles] section
+    }
+    else {
+        fullQualifiedProfileName = profileName;
+    }
+
     if ( s_profiles.contains(fullQualifiedProfileName) ) {
         guiprof = s_profiles.value(fullQualifiedProfileName);  // Cached
     }
@@ -142,13 +154,15 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
         if ( guiprof == 0 ) {
             QString fullQualifiedProfileNameWithoutCardname = buildProfileName(mixer, profileName, true);
                 guiprof = loadProfileFromXMLfiles(mixer, fullQualifiedProfileNameWithoutCardname);  // Load from XML ### Card unspecific profile ###
+                if ( guiprof != 0 ) guiprof->_dirty = true; // Profile was loaded from unspecific config => dirty
             }
 
             if ( (guiprof == 0) && allowFallback ) {
-                // We don't change the profile name on fallback, so when displaying, or saving the actually reqauested name is used.
-                //fullQualifiedProfileName = buildProfileName(mixer, "default"); // commented out: see above
+                // We need to change the profile name on fallback, so when displaying, or saving the actual card name is used.
                 guiprof = fallbackProfile(mixer);
-                kDebug() << "Generate fallback profile:" << guiprof;
+                fullQualifiedProfileName = buildProfileName(mixer, "default", false);
+                if ( guiprof != 0 ) guiprof->_dirty = true; // Profile was generated => dirty
+                kDebug() << "Generate fallback profile:" << fullQualifiedProfileName;
             }
         }
         
@@ -282,6 +296,9 @@ bool GUIProfile::writeProfile()
       ret = true;
    }
 
+   if ( ret ) {
+       _dirty = false;
+   }
    return ret;
 }
 
@@ -773,8 +790,8 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	if ( !id.isNull() ) {
 		// We need at least an "id". We can set defaults for the rest, if undefined.
 		ProfControl *profControl = new ProfControl();
-		if ( subcontrols.isNull() ) {
-			subcontrols = ".*";
+		if ( subcontrols.isNull() || subcontrols.isEmpty() ) {
+			subcontrols = "*";  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
 		}
 		if ( tab.isNull() ) {
 			// Ignore this for the moment. We will put it on the first existing Tab at the end of parsing

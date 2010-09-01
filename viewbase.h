@@ -77,6 +77,10 @@ public:
     // does nothing.
     virtual void rebuildFromProfile();
 
+
+    void load(KConfig *config);
+    void save(KConfig *config);
+
     /**
      * Creates the widgets for all supported devices. The default implementation loops
      * over the supported MixDevice's and calls add() for each of it.

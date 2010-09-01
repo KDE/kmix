@@ -274,6 +274,10 @@ void KMixWindow::saveViewConfig()
 {
     kDebug() << "About to save config (View)";
     // Save Views
+
+    QMap<QString, QStringList> mixerViews;
+
+    // -1- Save the views themselves
     for ( int i=0; i<m_wsMixers->count() ; ++i )
     {
         QWidget *w = m_wsMixers->widget(i);
@@ -282,8 +286,23 @@ void KMixWindow::saveViewConfig()
             // Here also Views are saved. even for Mixers that are closed. This is necessary when unplugging cards.
             // Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
             mw->saveConfig( KGlobal::config().data() );
+            // add the view to the corresponding mixer list, so we can save a views-per-mixer list below
+            QStringList& qsl = mixerViews[mw->mixer()->id()];
+            qsl.append(mw->getGuiprof()->getId());
         }
     }
+
+    // -2- Save Meta-Information (which views, and in which order). views-per-mixer list
+    KConfigGroup pconfig(KGlobal::config(), "Profiles");
+    QMap<QString, QStringList>::const_iterator itEnd = mixerViews.end();
+    for ( QMap<QString, QStringList>::const_iterator it=mixerViews.begin(); it != itEnd; ++it )
+    {
+        const QString& mixerProfileKey = it.key();   // this is actually some mixer->id()
+        const QStringList& qslProfiles = it.value();
+        pconfig.writeEntry( mixerProfileKey, qslProfiles );
+        kDebug() << "Save Profile List for " << mixerProfileKey << ", number of views is " << qslProfiles.count();
+    }
+
     kDebug() << "Config (View) saving done";
 }
 
@@ -415,7 +434,7 @@ void KMixWindow::recreateGUI(bool saveConfig)
 
     // Start a new generation now. This shows whether we already have recreated the
     // KMixerWidget/Tab for the CURRENTLY STARTED recreation phase.
-    KMixerWidget::increaseGeneration();
+    KMixerWidget::increaseGeneration(); // @todo:Generation stuff should be obsolete now => Remove it
 
     // *** RECREATE THE ALREADY EXISTING TABS **********************************
     QMap<Mixer*, bool> mixerHasProfile; //
@@ -456,12 +475,13 @@ void KMixWindow::recreateGUI(bool saveConfig)
         }
         // No TAB YET => This should mean KMix is just started, or the user has added another GUIProfile
         QString mixerProfileKey(mixer->id());
-        // FUTURE DIRECTIONS: This could return a list of profiles per Card
-        QString profileStr = pconfig.readEntry(mixerProfileKey, "default");
-        kDebug() << "Now searching for profile: " << profileStr;
-        // FUTURE DIRECTIONS: If working with a list, use "false" as last arg (except in the last loop iteration as last resort)
-        GUIProfile* guiprof = GUIProfile::find(mixer, profileStr, true);
-        addMixerWidget(mixer->id(), guiprof, -1);
+        QStringList profileList = pconfig.readEntry( mixerProfileKey, QStringList("") ); // Hint: Default is a list with ONE entry (an empty string). Important for GUIProfile::find()
+        for ( int i=0; i<profileList.count(); i++ ) {
+            kDebug() << "Now searching for profile: " << profileList.at(i);
+            bool allowDefault = (i == (profileList.count() - 1)); // In the last loop iteration, allow the fallback as last resort.
+            GUIProfile* guiprof = GUIProfile::find(mixer, profileList.at(i), allowDefault);
+            addMixerWidget(mixer->id(), guiprof, -1);
+        }
     }
     mixerHasProfile.clear();
 
