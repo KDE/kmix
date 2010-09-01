@@ -130,7 +130,7 @@ class GUIProfile
 
     bool readProfile(QString& ref_fileNamestring);
     bool finalizeProfile();
-    bool writeProfile(QString& fname);
+    bool writeProfile();
     
     bool isDirty();
     
@@ -183,8 +183,7 @@ private:
     
     // Loading
     static GUIProfile* loadProfileFromXMLfiles(Mixer* mixer, QString profileName);
-    static GUIProfile* tryLoadProfileFromXMLfile(QString fname, Mixer *mixer);
-    static QString buildProfileName(QString driverName, QString cardName, QString profileName);
+    static QString buildProfileName(Mixer* mixer, QString profileName, bool allowFallback);
     static void addProfile(GUIProfile* guiprof);
     static QMap<QString, GUIProfile*> s_profiles;
     

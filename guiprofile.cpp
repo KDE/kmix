@@ -103,16 +103,19 @@ bool GUIProfile::isDirty() {
 
 /**
  * Build a profile name. Suitable to use as primary key and to build filenames.
- * @par driverName The driver name of the backend, e.g. "ALSA" or "OSS"
- * @par cardName    The card name as delivered by the driver. Use the String "any" for the standard (card-unspecific) profile
+ * @arg mixer         The mixer
+ * @arg profileName   The profile name (e.g. "capture", "playback", "my-cool-profile", or "any"
+ * @return            The profile name
  */
-QString GUIProfile::buildProfileName(QString driverName, QString mixerId, QString profileName)
+QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard)
 {
-    //QString fname(driverName);
-    //fname += "." + mixerId + "." + profileName;
-    //fname.replace(" ","_");
-    QString fname(mixerId);
+    QString fname(mixer->getDriverName());
+    if (!ignoreCard) {
+        fname += ".%1.%2";
+        fname = fname.arg(mixer->getBaseName()).arg(mixer->getCardInstance());
+    }
     fname += "." + profileName;
+
     fname.replace(" ","_");
     return fname;
 }
@@ -120,28 +123,30 @@ QString GUIProfile::buildProfileName(QString driverName, QString mixerId, QStrin
 /**
  * Finds the correct profile for the given mixer.
  * If already loaded from disk, returns the cached version.
- * Otherwise load profile from disk.
+ * Otherwise load profile from disk: Priority: Card specific profile, Card unspecific profile
  *
  * @arg mixer         The mixer
  * @arg profileName   The profile name (e.g. "capture", "playback", "my-cool-profile", or "any"
- * @arg allowFallback If set to true, a Fallback profile will be generated if no matchibg profile could be found
+ * @arg allowFallback If set to true, a Fallback profile will be generated if no matching profile could be found
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
  */
 GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallback)
 {
     GUIProfile* guiprof = 0;
-    QString requestedProfileName = buildProfileName(mixer->getDriverName(), mixer->id(), profileName);
-    if ( s_profiles.contains(requestedProfileName) ) {
-        guiprof = s_profiles.value(requestedProfileName);  // Cached
+    QString fullQualifiedProfileName = buildProfileName(mixer, profileName, false);
+    if ( s_profiles.contains(fullQualifiedProfileName) ) {
+        guiprof = s_profiles.value(fullQualifiedProfileName);  // Cached
     }
     else {
-        guiprof = loadProfileFromXMLfiles(mixer, profileName);  // Load from XML
-        if ( guiprof != 0 ) {
-            // OK, loaded
-        }
-        else
-        {
-            if ( allowFallback ) {
+        guiprof = loadProfileFromXMLfiles(mixer, fullQualifiedProfileName);  // Load from XML ###Card specific profile###
+        if ( guiprof == 0 ) {
+            QString fullQualifiedProfileNameWithoutCardname = buildProfileName(mixer, profileName, true);
+                guiprof = loadProfileFromXMLfiles(mixer, fullQualifiedProfileNameWithoutCardname);  // Load from XML ### Card unspecific profile ###
+            }
+
+            if ( (guiprof == 0) && allowFallback ) {
+                // We don't change the profile name on fallback, so when displaying, or saving the actually reqauested name is used.
+                //fullQualifiedProfileName = buildProfileName(mixer, "default"); // commented out: see above
                 guiprof = fallbackProfile(mixer);
                 kDebug() << "Generate fallback profile:" << guiprof;
             }
@@ -149,17 +154,12 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
         
         if ( guiprof != 0 ) {
             guiprof->_mixerId = mixer->id();
-            if ( guiprof->getId().isEmpty() ) {
-                guiprof->setId(requestedProfileName);
-            }
+            guiprof->setId(fullQualifiedProfileName);
             if ( guiprof->getName().isEmpty() ) {
                 guiprof->setName(profileName);
             }
             addProfile(guiprof);
         }
-    }
-    
-
     
     return guiprof;
 }
@@ -187,46 +187,24 @@ void GUIProfile::addProfile(GUIProfile* guiprof)
 GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileName)
 {
     GUIProfile* guiprof = 0;
-    QString fileName, fileNameFQ, guiProfID;
-    
-    // (a) Soundcard specific profile
-    guiProfID = buildProfileName(mixer->getDriverName(), mixer->id(), profileName) ;
-    fileName = "profiles/" + guiProfID + ".xml";
+    QString fileName, fileNameFQ;
+
+    fileName = "profiles/" + profileName + ".xml";
     fileNameFQ = KStandardDirs::locate("appdata", fileName );
-    kDebug() << "fileName=" <<fileName<< "fileNameFQ=" <<fileNameFQ;
-    guiprof = tryLoadProfileFromXMLfile(fileNameFQ, mixer);
-    
-    if ( guiprof == 0 ) {
-        // (b) Default profile
-        guiProfID = buildProfileName(mixer->getDriverName(),"any", profileName);
-        fileName = "profiles/" + guiProfID + ".xml";
-        fileNameFQ = KStandardDirs::locate("appdata", fileName );
-        kDebug() << "fileName=" <<fileName<< "fileNameFQ=" <<fileNameFQ;
-        guiprof = tryLoadProfileFromXMLfile(fileNameFQ, mixer);
-    }
-    
-    if ( guiprof != 0 ) {
-        guiprof->setId(guiProfID);
-    }
-    return guiprof;
-}
 
-
-/**
- * Internal helper for GUIProfile::loadProfileFromXMLfiles()
- */
-GUIProfile* GUIProfile::tryLoadProfileFromXMLfile(QString fname, Mixer *mixer)
-{
-    kDebug() << ": Read profile #" << fname;
-    GUIProfile *guiprof = new GUIProfile();
-    if ( guiprof->readProfile(fname) && ( guiprof->match(mixer) > 0) ) {
-        // loaded
+    if ( ! fileNameFQ.isEmpty() ) {
+        guiprof = new GUIProfile();
+        if ( guiprof->readProfile(fileNameFQ) && ( guiprof->match(mixer) > 0) ) {
+            // loaded
+        }
+        else {
+            delete guiprof; // not good (e.g. Parsing error => drop this profile silently)
+            guiprof = 0;
+        }
     }
     else {
-        delete guiprof; // not good (e.g. Parsing error => drop this profile silently)
-        guiprof = 0;
+        kDebug() << "Ignore file " <<fileName<< " (does not exist)";
     }
-    
     return guiprof;
 }
 
@@ -286,7 +264,7 @@ bool GUIProfile::readProfile(QString& ref_fileName)
 }
 
 
-bool GUIProfile::writeProfile(QString& fname)
+bool GUIProfile::writeProfile()
 {
    bool ret = false;
    QString fileName, fileNameFQ;
@@ -412,7 +390,7 @@ unsigned long GUIProfile::match(Mixer* mixer) {
 	if ( _soundcardName == "*" ) {
 		matchValue += 1;
 	}
-	else if ( _soundcardName != mixer->baseName() ) {
+	else if ( _soundcardName != mixer->getBaseName() ) {
 		return 0; // card name does not match
 	}
 	else {

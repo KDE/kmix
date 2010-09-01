@@ -63,13 +63,10 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
      //_tab(tab), 
      _actionCollection(actionCollection)
 {
-   m_id = guiprof->getId();
-//   _guiprof = 0;
    _generation = _currentGeneration;
 
    if ( _mixer )
    {
-      m_id = _mixer->id();
       createLayout(vflags);
    }
    else
@@ -117,7 +114,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2b) Create device widgets
    * 2c) Add Views to Tab
    ********************************************************************/
-   createViewsByProfile(_mixer, _guiprof, QString("") /*_tab->id()*/, vflags);
+   createViewsByProfile(_mixer, _guiprof, vflags);
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
@@ -126,7 +123,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 /**
 * Creates the View based on the GUIProfile, for the Tab tabId
  */
-void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, QString tabId, ViewBase::ViewFlags vflags)
+void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
 {
    /*** How it works:
    * A loop is done over all tabs.
@@ -135,12 +132,6 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, QStri
    QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
    for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it) {
        ProfTab* profTab = *it;
-       /*
-       if ( profTab->id() != tabId) {
-            continue; // no match
-       }
-       */
-       // else
        if ( profTab->type() == "Sliders" ) {
            if ( profTab->name() == 0 || profTab->name().isNull() )
             {

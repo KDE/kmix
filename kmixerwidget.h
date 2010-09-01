@@ -60,7 +60,7 @@ class KMixerWidget : public QWidget
    ViewBase* currentView();
    bool generationIsOutdated();
    static void increaseGeneration();
-   QString id() { return m_id; }
+   //QString id() { return m_id; }
    GUIProfile* getGuiprof() { return _guiprof; };
 
    
@@ -83,7 +83,7 @@ class KMixerWidget : public QWidget
 
   private:
    Mixer *_mixer;
-   QString m_id;
+   //QString m_id;
    QSlider *m_balanceSlider;
    QVBoxLayout *m_topLayout; // contains TabWidget and balance slider
    GUIProfile* _guiprof;
@@ -96,7 +96,7 @@ class KMixerWidget : public QWidget
    
    void createLayout(ViewBase::ViewFlags vflags);
    bool possiblyAddView(ViewBase* vbase);
-   void createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, QString tabId, ViewBase::ViewFlags vflags);
+   void createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags);
 };
 
 #endif

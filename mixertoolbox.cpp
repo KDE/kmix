@@ -228,33 +228,17 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
             mixer = 0;
             return false;
         }
-        Mixer::mixers().append( mixer );
         // Count mixer nums for every mixer name to identify mixers with equal names.
         // This is for creating persistent (reusable) primary keys, which can safely
         // be referenced (especially for config file access, so it is meant to be persistent!).
-        s_mixerNums[mixer->baseName()]++;
-        kDebug(67100) << "mixerNums entry of added mixer is now: " <<  s_mixerNums[mixer->baseName()];
-        // Create a useful PK
-        /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
-         * contain it.
-         * %1, the driver name is from the KMix backends, it does not contain colons.
-         * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
-         * %3, the mixer number, is a number: it does not contain colons.
-         */
-        QString mixerName = mixer->baseName();
-        mixerName.replace(":","_");
-        QString primaryKeyOfMixer = QString("%1::%2:%3")
-                .arg(mixer->getDriverName())
-                .arg(mixerName)
-                .arg(s_mixerNums[mixer->baseName()]);
-        // The following 3 replaces are for not messing up the config file
-        primaryKeyOfMixer.replace("]","_");
-        primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
-        primaryKeyOfMixer.replace(" ","_");
-        primaryKeyOfMixer.replace("=","_");
+        /*int newCardInstanceNum = */ s_mixerNums[mixer->getBaseName()]++;
+        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]);
+
+        Mixer::mixers().append( mixer );
+        kDebug(67100) << "Added card " << mixer->id();
     
-        mixer->setID(primaryKeyOfMixer);
-        emit mixerAdded(primaryKeyOfMixer);
+
+        emit mixerAdded(mixer->id());
         return true;
     } // valid
     else
@@ -282,8 +266,8 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
         if ( mixer == par_mixer ) {
-            s_mixerNums[mixer->baseName()]--;
-            kDebug(67100) << "mixerNums entry of removed mixer is now: " <<  s_mixerNums[mixer->baseName()];
+            kDebug(67100) << "Removing card " << mixer->id();
+            s_mixerNums[mixer->getBaseName()]--;
             Mixer::mixers().removeAt(i);
             delete mixer;
         }
