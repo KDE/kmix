@@ -18,7 +18,6 @@ if(MSVC)
     include_directories( ${TAGLIB_INCLUDES} )
 endif(MSVC)
 
-include (ConfigureChecks.cmake)
 configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 macro_display_feature_log()
