@@ -546,6 +546,7 @@ void ProfControl::setSubcontrols(QString sctls)
        }
        else kWarning() << "Ignoring unknown subcontrol type '" << sctl << "' in profile";
   }
+  
 }
 
 // ### PARSER START ################################################

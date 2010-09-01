@@ -24,6 +24,7 @@
 //KMix
 class Mixer;
 class MixSet;
+class ProfControl;
 #include "volume.h"
 
 // KDE
@@ -141,6 +142,9 @@ public:
    bool isMovable()                { return (0 != _moveDestinationMixSet); }
    MixSet *getMoveDestinationMixSet() { return _moveDestinationMixSet; }
 
+   void setControlProfile(ProfControl* control);
+   ProfControl* controlProfile();
+   
    Volume& playbackVolume();
    Volume& captureVolume();
 
@@ -164,6 +168,7 @@ private:
 
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys
+   ProfControl *_profControl;
 
    void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, bool doNotRestore, MixSet* moveDestinationMixSet );
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);

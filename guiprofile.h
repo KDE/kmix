@@ -76,6 +76,8 @@ public:
 */
 	QString id;
 	
+    
+    
 	void setSubcontrols(QString sctls);
 	bool useSubcontrolPlayback() {return _useSubcontrolPlayback;};
 	bool useSubcontrolCapture() {return _useSubcontrolCapture;};

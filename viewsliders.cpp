@@ -108,8 +108,8 @@ QWidget* ViewSliders::add(MixDevice *md)
                md,           // MixDevice (parameter)
                true,         // Show Mute LED
                true,         // Show Record LED
-	       true, // include plaback sliders
-               true, // include capture sliders
+                          md->controlProfile()->useSubcontrolPlayback(), // include plaback sliders
+                          md->controlProfile()->useSubcontrolCapture(), // include capture sliders
                false,        // Small
                orientation,  // Orientation
                this,         // parent
@@ -129,79 +129,68 @@ QWidget* ViewSliders::add(MixDevice *md)
 
 void ViewSliders::_setMixSet()
 {
-   const MixSet& mixset = _mixer->getMixSet();
+    const MixSet& mixset = _mixer->getMixSet();
 
-   if ( _mixer->dynamic() ) {
-      // We will be recreating our sliders, so make sure we trash all the separators too.
-      qDeleteAll(_separators);
-      _separators.clear();
-      // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
-      // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
-      QLayoutItem *li;
-      while ( ( li = _layoutSliders->takeAt(0) ) )
-         delete li;
-   }
+    if ( _mixer->dynamic() ) {
+        // We will be recreating our sliders, so make sure we trash all the separators too.
+        qDeleteAll(_separators);
+        _separators.clear();
+        // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
+        // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
+        QLayoutItem *li;
+        while ( ( li = _layoutSliders->takeAt(0) ) )
+            delete li;
+    }
 
-   // This method iterates the controls from the Profile
-   // Each control is checked, whether it is also contained in the mixset, and
-   // applicable for this kind of View. If yes, the control is accepted and inserted.
+    // This method iterates the controls from the Profile
+    // Each control is checked, whether it is also contained in the mixset, and
+    // applicable for this kind of View. If yes, the control is accepted and inserted.
    
-   std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
-   for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
-   {
-      ProfControl* control = *it;
-      if ( control->tab == id() ) {
-         // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-         bool isUsed = false;
+    std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
+    for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
+    {
+        ProfControl* control = *it;
+        if ( control->tab == id() ) {
+            // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
+            bool isUsed = false;
 
-         QRegExp idRegexp(control->id);
-         //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
-         // The following for-loop could be simplified by using a std::find_if
-         for ( int i=0; i<mixset.count(); i++ ) {
-            MixDevice *md = mixset[i];
-            if ( md->id().contains(idRegexp) )
-            {
-	      // Match found (by name)
-	      
-	      // Now check wheter subcontrols match
-	      bool subcontrolWanted = false;
-	      subcontrolWanted |=  (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
-	      subcontrolWanted |=  (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
-	      subcontrolWanted |=  (control->useSubcontrolPlaybackSwitch() && md->playbackVolume().hasSwitch());
-	      subcontrolWanted |=  (control->useSubcontrolCaptureSwitch() && md->captureVolume().hasSwitch());
-	      subcontrolWanted |=  (control->useSubcontrolEnum() && md->isEnum());
-		
-               /*kDebug(67100) << "     ViewSliders::setMixSet(): match found for md->id()==" <<
-               md->id()
-                  << " ; control->id=="
-                  << control->id << "\n"; */
-               // OK, this control is handable by this View. Lets do a duplicate check
-	       
-	       if ( !subcontrolWanted ) continue;
-	       
-               if ( ! _mixSet->contains( md ) ) { // dup check
-                  if ( !control->name.isNull() ) {
-                     // Apply the custom name from the profile
-                     md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
-                  }
-                  if ( !control->switchtype.isNull() ) {
-                     if ( control->switchtype == "On"  )
-                       md->playbackVolume().setSwitchType(Volume::OnSwitch);
-                     else if ( control->switchtype == "Off"  )
-                       md->playbackVolume().setSwitchType(Volume::OffSwitch);
-                  }
-                  _mixSet->append(md);
-                  isUsed = true;
-                  // We use no "break;" ,as multiple devices could match
-                  //break;
-               }
-               // else { kDebug(67100) << "        But it is a duplicate and was not added\n"; }
-            } // name matches
-         } // loop for finding a suitable MixDevice
-         if ( ! isUsed ) {
-            // There is something in the Profile, that doesn't correspond to a Mixer control
-            //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
-         }
+            QRegExp idRegexp(control->id);
+            //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
+            // The following for-loop could be simplified by using a std::find_if
+            for ( int i=0; i<mixset.count(); i++ ) {
+                MixDevice *md = mixset[i];
+                if ( md->id().contains(idRegexp) )
+                {
+                    // Match found (by name)
+                    // Now check wheter subcontrols match
+                    bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
+                    bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
+                    bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
+                    bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
+                    
+                    if ( !subcontrolWanted ) continue;
+                    if ( _mixSet->contains( md ) ) continue; // dup check
+
+                    md->setControlProfile(control);
+                    if ( !control->name.isNull() ) {
+                        // Apply the custom name from the profile
+                        md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
+                    }
+                    if ( !control->switchtype.isNull() ) {
+                        if ( control->switchtype == "On"  )
+                            md->playbackVolume().setSwitchType(Volume::OnSwitch);
+                        else if ( control->switchtype == "Off"  )
+                            md->playbackVolume().setSwitchType(Volume::OffSwitch);
+                    }
+                    _mixSet->append(md);
+                    isUsed = true;
+                    // We use no "break;" ,as multiple devices could match
+                } // name matches
+            } // loop for finding a suitable MixDevice
+            if ( ! isUsed ) {
+                // There is something in the Profile, that doesn't correspond to a Mixer control
+                //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
+            }
       } // Tab name matches
       else {
       }  // Tab name doesn't match (=> don't insert)
