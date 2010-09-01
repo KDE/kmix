@@ -75,7 +75,7 @@ public:
     *  @par name is the readable name. This one is presented to the user in the GUI
     *  @par type The control type. It is only used to find an appropriate icon
     */
-   MixDeviceComposite( Mixer* mixer,  const QString& id, QList<MixDevice*> mds, const QString& name, ChannelType type );
+   MixDeviceComposite( Mixer* mixer,  const QString& id, QList<MixDevice*>& mds, const QString& name, ChannelType type );
 //   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, MixSet* moveDestinationMixSet = 0 );
    ~MixDeviceComposite();
 

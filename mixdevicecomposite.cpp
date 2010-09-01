@@ -24,7 +24,7 @@
 
 
 
-MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<MixDevice*> mds, const QString& name, ChannelType type ) :
+MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<MixDevice*>& mds, const QString& name, ChannelType type ) :
    MixDevice( mixer, id, name, type )
 {
     // use a standard init(), but as this is a Composite Control, use doNotRestore == true

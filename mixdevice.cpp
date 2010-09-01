@@ -72,6 +72,8 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
             return "mixer-microphone-front-boost";
         case MixDevice::MICROPHONE_FRONT:
             return "mixer-microphone-front";
+        case MixDevice::KMIX_COMPOSITE:
+            return "mixer-line";
     }
     return "mixer-front";
 }

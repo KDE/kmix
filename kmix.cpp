@@ -298,7 +298,7 @@ void KMixWindow::saveViewConfig()
     QListIterator<Mixer*> it(Mixer::mixers());
     while ( it.hasNext()) {
         Mixer* mixer = it.next();
-        mixerViews[mixer->id()];
+        mixerViews[mixer->id()]; // just insert a map entry
 	}
 
     // -1- Save the views themselves
@@ -562,11 +562,15 @@ void KMixWindow::newView()
     static int dummyToggler = false;
     dummyToggler = !dummyToggler;
     GUIProfile* guiprof;
+    QString profileName;
+
     if ( dummyToggler ) {
-        guiprof = GUIProfile::find(mixer, "playback", allowDefault);
+        profileName = GUIProfile::buildProfileName(mixer, QString("playback"), false);
+        guiprof = GUIProfile::find(mixer, profileName, allowDefault);
     }
     else {
-        guiprof = GUIProfile::find(mixer, "capture", allowDefault);
+        profileName = GUIProfile::buildProfileName(mixer, QString("capture"), false);
+        guiprof = GUIProfile::find(mixer, profileName, allowDefault);
     }
 
     if ( guiprof == 0 ) {

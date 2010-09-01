@@ -54,7 +54,7 @@ struct ProfProduct
 class ProfControl
 {
 public:
-    ProfControl(); // default constructor
+    ProfControl(QString& id, QString& subcontrols);
     ProfControl(const ProfControl &ctl); // copy constructor
     // ID as returned by the Mixer Backend, e.g. Master:0
     QString id;
@@ -67,8 +67,7 @@ public:
     bool useSubcontrolEnum() {return _useSubcontrolEnum;};
     QString renderSubcontrols();
 
-    // In case the vendor ships different products under the same productName
-    QString tab;
+    //QString tab;
     // Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
     // Because the name is visible, some kind of i18n() will be used.
     QString name;
@@ -88,7 +87,7 @@ private:
     // When we start using it, it might be changed into a std::vector in the future.
     // THIS IS RAW DATA AS LOADED FROM THE PROFILE. DO NOT USE IT, except for debugging.
     QString _subcontrols;
-    // The follwoing are the deserialized values of _subcontrols
+    // The following are the deserialized values of _subcontrols
     bool _useSubcontrolPlayback;
     bool _useSubcontrolCapture;
     bool _useSubcontrolPlaybackSwitch;
@@ -100,7 +99,7 @@ class ProfTab
 {
 public:
     ProfTab();
-    // Name of the Tab, in english
+    // Name of the Tab, in English
     QString name() { return _name; }
     // ID of the Tab
     QString id() { return _id; }
@@ -155,6 +154,7 @@ class GUIProfile
     static GUIProfile* find(Mixer* mixer, QString profileName, bool allowFallback);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
+    static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
 
     QString getName() const    {        return _name;    }
     void setName(QString _name)    {        this->_name = _name;    }
@@ -172,7 +172,6 @@ private:
     
     // Loading
     static GUIProfile* loadProfileFromXMLfiles(Mixer* mixer, QString profileName);
-    static QString buildProfileName(Mixer* mixer, QString profileName, bool allowFallback);
     static void addProfile(GUIProfile* guiprof);
     static QMap<QString, GUIProfile*> s_profiles;
     

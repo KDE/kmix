@@ -232,12 +232,10 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
         prd->productRelease = "1.0";
         fallback->_products.insert(prd);
         
-        ProfControl* ctl = new ProfControl();
         static QString matchAll(".*");
-        ctl->id          = matchAll;
+        static QString matchAllSctl(".*");
+        ProfControl* ctl = new ProfControl(matchAll, matchAllSctl);
         ctl->regexp      = matchAll;   // make sure id matches the regexp
-        ctl->setSubcontrols(matchAll);
-        ctl->show        = "simple";
         fallback->_controls.push_back(ctl);
         
         fallback->_soundcardDriver = mixer->getDriverName();
@@ -304,60 +302,17 @@ bool GUIProfile::writeProfile()
 
 bool GUIProfile::finalizeProfile()
 {
-   bool ok = true;
-		// Reading is OK => now make the profile consistent
+    bool ok = true;
+    // Reading is OK => now make the profile consistent
 
-		// (1) Make sure the _tabs are complete (add any missing Tabs)
-		std::vector<ProfControl*>::const_iterator itEnd = _controls.end();
-		for ( std::vector<ProfControl*>::const_iterator it = _controls.begin(); it != itEnd; ++it)
-		{
-			ProfControl* control = *it;
-			QString tabnameOfControl = control->tab;
-			if ( tabnameOfControl.isNull() ) {
-			  tabnameOfControl = "Controls";
-			  control->tab = "Controls";
-			}
-				// check, whether we have this Tab yet.
-				//std::vector<ProfTab*>::iterator tabRef = std::find(_tabs.begin(), _tabs.end(), tabnameOfControl);
-				QList<ProfTab*>::const_iterator itTEnd = _tabs.end();
-                QList<ProfTab*>::const_iterator itT = _tabs.begin();
-				for ( ; itT != itTEnd; ++itT) {
-				    if ( (*itT)->name() == tabnameOfControl ) break;
-				}
-				if ( itT == itTEnd ) {
-					// no such Tab yet => insert it
-					ProfTab* tab = new ProfTab();
-					tab->setName(tabnameOfControl);
-					tab->setType("Sliders");  //  as long as we don't know better
-					if ( tab->id().isNull() ) tab->setId( tab->name() );;
-					_tabs.push_back(tab);
-				} // tab does not exist yet => insert new tab
-		} // Step (1)
-
-		// (2) Make sure that there is at least one Tab
-		if ( _tabs.size() == 0) {
-			ProfTab* tab = new ProfTab();
-            tab->setName("Controls"); // !! A better name should be used. What about i18n() ?
-            tab->setId("Controls"); // !! A better name should be used. What about i18n() ?
-            tab->setType("Sliders");  //  as long as we don't know better
-			_tabs.push_back(tab);
-		} // Step (2)
-
-
-/*
-		// (3) Assign a Tab Name to all controls that have no defined Tab Name yet.
-		ProfTab* tab = _tabs.front();
-		itEnd = _controls.end();		for ( std::vector<ProfControl*>::const_iterator it = _controls.begin(); it != itEnd; ++it)
-		{
-			ProfControl* control = *it;
-			QString& tabnameOfControl = control->tab;
-			if ( tabnameOfControl.isNull() ) {
-				// OK, it has no TabName defined. We will assign a TabName in step (3).
-				control->tab = tab->name;
-			}
-		} // Step (3)
-		//std::cout << "Consistent Profile: " << *this;
-*/
+    // (2) Make sure that there is at least one Tab
+    if ( _tabs.size() == 0) {
+        ProfTab* tab = new ProfTab();
+        tab->setName("Controls"); // !! A better name should be used. What about i18n() ?
+        tab->setId("Controls"); // !! A better name should be used. What about i18n() ?
+        tab->setType("Sliders");  //  as long as we don't know better
+        _tabs.push_back(tab);
+    } // Step (2)
 
    return ok;
 }
@@ -476,9 +431,9 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 		 	os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
 		}
 		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
-		if ( ! profControl->tab.isNull() ) {
-			os << " tab=\"" << xmlify(profControl->tab).toUtf8().constData() << "\"" ;
-		}
+//		if ( ! profControl->tab.isNull() ) {
+//			os << " tab=\"" << xmlify(profControl->tab).toUtf8().constData() << "\"" ;
+//		}
 		os << " show=\"" << xmlify(profControl->show).toUtf8().constData() << "\"" ;
 		os << " />" << endl;
 	} // for all controls
@@ -528,10 +483,10 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
 		os << "  Subcontrols=" << profControl->renderSubcontrols().toUtf8().constData() << std::endl;
-		if ( ! profControl->tab.isNull() ) {
-			os << "  Tab=" << profControl->tab.toUtf8().constData() << std::endl;
-		}
-		os << "  Shown-On=" << profControl->show.toUtf8().constData() << std::endl;
+//		if ( ! profControl->tab.isNull() ) {
+//			os << "  Tab=" << profControl->tab.toUtf8().constData() << std::endl;
+//		}
+//		os << "  Shown-On=" << profControl->show.toUtf8().constData() << std::endl;
 	} // for all controls
 
 /*
@@ -551,7 +506,10 @@ ProfTab::ProfTab()
     _type = "";
 }
 
-ProfControl::ProfControl(){
+ProfControl::ProfControl(QString& id, QString& subcontrols ){
+    this->show = "simple";
+    this->id = id;
+    setSubcontrols(subcontrols);
 }
 
 ProfControl::ProfControl(const ProfControl &profControl){
@@ -561,7 +519,7 @@ ProfControl::ProfControl(const ProfControl &profControl){
 		QString origSctls = profControl._subcontrols;
 		setSubcontrols(origSctls);
 		name = profControl.name;
-		tab = profControl.tab;
+//		tab = profControl.tab;
 		show = profControl.show;
 		backgroundColor = profControl.backgroundColor;
 		switchtype = profControl.switchtype;
@@ -789,13 +747,12 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	QString switchtype = attributes.value("switchtype");
 	if ( !id.isNull() ) {
 		// We need at least an "id". We can set defaults for the rest, if undefined.
-		ProfControl *profControl = new ProfControl();
 		if ( subcontrols.isNull() || subcontrols.isEmpty() ) {
 			subcontrols = "*";  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
 		}
-		if ( tab.isNull() ) {
-			// Ignore this for the moment. We will put it on the first existing Tab at the end of parsing
-		}
+//		if ( tab.isNull() ) {
+//			// Ignore this for the moment. We will put it on the first existing Tab at the end of parsing
+//		}
 		if ( name.isNull() ) {
          // ignore. isNull() will be checked by all users.
 		}
@@ -810,13 +767,11 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
          regexp = !name.isNull() ? name : id;
       }
 
+      ProfControl *profControl = new ProfControl(id, subcontrols);
      if ( show.isNull() ) { show = "*"; }
 
-		profControl->id = id;
 		profControl->name = name;
-		profControl->setSubcontrols(subcontrols);
-		profControl->name = name;
-		profControl->tab = tab;
+//		profControl->tab = tab;
 		profControl->show = show;
 		profControl->backgroundColor.setNamedColor (background);
 		profControl->switchtype = switchtype;
