@@ -30,7 +30,6 @@
 #include <qpixmap.h>
 
 
-class KLed;
 class KAction;
 class KActionCollection;
 class KShortcutsDialog;

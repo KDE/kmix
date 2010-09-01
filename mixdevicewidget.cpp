@@ -20,7 +20,6 @@
  */
 
 #include <klocale.h>
-#include <kled.h>
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kaction.h>
