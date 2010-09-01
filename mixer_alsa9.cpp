@@ -727,7 +727,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
               }
               if ( ret != 0 ) kDebug(67100) << "readVolumeFromHW(" << devnum << ") [get_playback_volume] failed, errno=" << ret;
               else volumePlayback.setVolume( (Volume::ChannelID)i, vol);
-              if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << i << ", vol=" << vol; }
+              //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << i << ", vol=" << vol; }
           }
        }
     } // has playback volume

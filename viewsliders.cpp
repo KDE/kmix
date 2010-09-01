@@ -210,9 +210,6 @@ void ViewSliders::_setMixSet()
 
     // @todo: This is currently hardcoded, and instead must be read as usual from the Profile
     MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
-    Volume::ChannelMask chn = Volume::MMAIN;
-    Volume* vol = new Volume( chn, 0, 100, true, true);
-    mdc->addPlaybackVolume(*vol);
     QString ctlId("Composite_Test");
     QString ctlMatchAll("*");
     ProfControl* pctl = new ProfControl(ctlId, ctlMatchAll);
@@ -260,24 +257,35 @@ void ViewSliders::configurationUpdate() {
 }
 
 void ViewSliders::refreshVolumeLevels() {
-   //     kDebug(67100) << "ViewSliders::refreshVolumeLevels()\n";
+    //     kDebug(67100) << "ViewSliders::refreshVolumeLevels()\n";
 
-   for ( int i=0; i<_mdws.count(); i++ ) {
-      QWidget *mdw = _mdws[i];
-      if ( mdw == 0 ) {
-         kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw == 0\n";
-         break; // sanity check (normally the lists are set up correctly)
-      }
-      else {
-         if ( mdw->inherits("MixDeviceWidget")) { // sanity check
-            static_cast<MixDeviceWidget*>(mdw)->update();
-         }
-         else {
-            kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
-            // no slider. Cannot happen in theory => skip it
-         }
-      }
-   }
+    for ( int i=0; i<_mdws.count(); i++ ) {
+        QWidget *mdwx = _mdws[i];
+        if ( mdwx == 0 ) {
+            kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw == 0\n";
+            break; // sanity check (normally the lists are set up correctly)
+        }
+        else {
+            MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(mdwx);
+            if ( mdw != 0 ) { // sanity check
+
+                // --- start --- @todo: The following 4 code lines should be moved to a more
+                //                      generic place, as it only works in this View. But it
+                //                      should also work in the ViewDockareaPopup and everywhere else.
+                MixDeviceComposite* mdc = ::qobject_cast<MixDeviceComposite*>(mdw->mixDevice());
+                if (mdc != 0) {
+                    mdc->update();
+                }
+                // --- end ---
+
+                mdw->update();
+            }
+            else {
+                kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
+                // no slider. Cannot happen in theory => skip it
+            }
+        }
+    }
 }
 
 #include "viewsliders.moc"

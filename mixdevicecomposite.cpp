@@ -23,11 +23,15 @@
 
 
 
+const long MixDeviceComposite::VolMax = 10000;
 
 MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<MixDevice*>& mds, const QString& name, ChannelType type ) :
-   MixDevice( mixer, id, name, type )
+   MixDevice( mixer, id, name, type )  // this will use doNotRestore == true
 {
-    // use a standard init(), but as this is a Composite Control, use doNotRestore == true
+    Volume::ChannelMask chn = Volume::MMAIN;
+    _compositePlaybackVolume = new Volume( chn, MixDeviceComposite::VolMax, 0, true, false);
+    _compositeCaptureVolume  = new Volume();
+
     QListIterator<MixDevice*> it(mds);
     while ( it.hasNext()) {
         MixDevice* md = it.next();
@@ -42,6 +46,8 @@ MixDeviceComposite::~MixDeviceComposite()
     while ( ! _mds.empty() ) {
         _mds.removeAt(0);
     }
+    delete _compositePlaybackVolume;
+    delete _compositeCaptureVolume;
 }
 
 
@@ -49,29 +55,50 @@ MixDeviceComposite::~MixDeviceComposite()
 //        Recalculating it on each call is highly inefficient
 Volume& MixDeviceComposite::playbackVolume()
 {
-    QListIterator<MixDevice*> it(_mds);
-    long volSum = 0;
-    while ( it.hasNext()) {
-        MixDevice* md = it.next();
-        volSum += md->playbackVolume().getAvgVolume(Volume::MALL);
-    }
-    _compositePlaybackVolume.setAllVolumes(volSum/_mds.count());
-    return _compositePlaybackVolume;
+    return *_compositePlaybackVolume;
 }
 
 // @todo: Make sure the composite is updated, when the enclosed  MixDevice's change
 //        Recalculating it on each call is highly inefficient
 Volume& MixDeviceComposite::captureVolume()
 {
+    return *_compositeCaptureVolume;
+}
+
+
+void MixDeviceComposite::update()
+{
+    long volAvg;
+    volAvg = calculateVolume( Volume::PlaybackVT  );
+    _compositePlaybackVolume->setAllVolumes(volAvg);
+    volAvg = calculateVolume( Volume::CaptureVT );
+    _compositeCaptureVolume->setAllVolumes(volAvg);
+
+}
+
+long MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
+{
     QListIterator<MixDevice*> it(_mds);
     long volSum = 0;
+    int  volCount = 0;
     while ( it.hasNext()) {
         MixDevice* md = it.next();
-        volSum += md->captureVolume().getAvgVolume(Volume::MALL);
+
+        Volume& vol =  ( vt == Volume::CaptureVT ) ? md->captureVolume() : md->playbackVolume();
+        if (vol.hasVolume() && (vol.maxVolume() != 0) ) {
+            long normalizedVolume =
+                      ( vol.getAvgVolume(Volume::MALL) * MixDeviceComposite::VolMax )
+                    /   vol.maxVolume();
+            volSum += normalizedVolume;
+            ++volCount;
+        }
     }
-    _compositeCaptureVolume.setAllVolumes(volSum/_mds.count());
-    return _compositeCaptureVolume;
+    if ( volCount == 0 )
+        return 0;
+    else
+        return (volSum/volCount);
 }
+
 
 bool MixDeviceComposite::isMuted()
 {

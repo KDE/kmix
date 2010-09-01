@@ -4,19 +4,20 @@
 # Copyright (C)2009 This_file_is_part_of_KDE
 # This file is distributed under the same license as the kmix package.
 #
-# Christian Esken <esken@kde.org>, 2009.
+# Christian Esken <esken@kde.org>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix-controls-en\n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2009-08-18 19:09+0200\n"
-"PO-Revision-Date: 2009-08-18 22:04+0200\n"
-"Last-Translator: Christian Esken <esken@kde.org>\n"
-"Language-Team:  <de@li.org>\n"
+"PO-Revision-Date: 2010-06-29 20:55+0200\n"
+"Last-Translator: \n"
+"Language-Team: German <kde-i18n-de@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: Master:1
 msgid "Master"
@@ -30,7 +31,86 @@ msgstr "Most media like MP3 or Videos are played back using PCM. For playControl
 msgid "Mic"
 msgstr "Recording level of the microphone input."
 
+#: Mic_Boost:1
+msgid "Mic_Boost"
+msgstr "Volume level boost of the microphone input."
+
+#: Front_Mic:1
+msgid "Front_Mic"
+msgstr "Recording level of the front microphone input."
+
+#: Front_Mic_Boost:1
+msgid "Front_Mic_Boost"
+msgstr "Volume level boost of the front microphone input."
+
 #: Headphone:1
 msgid "Headphone"
 msgstr "Controls the headphone volume. Some soundcards include a switch that must be manually activated to enable the headphone output."
+
+#: Beep:1
+msgid "Beep"
+msgstr "Controls the built in speaker volume."
+
+#: Capture:1
+msgid "Capture"
+msgstr ""
+"This is the overall volume for recording (or capturing). When recording please also look for other controls that can influence the result, like a capture switch or specific capture volumes. For recording usual audio files, many soundcards have a PCM "
+"capture volume, and S/PDIF or IEC958 for capturing digital Inputs."
+
+#: Front:1
+msgid "Front"
+msgstr "Controls the volume of the Front speakers."
+
+#: Center:1
+msgid "Center"
+msgstr "Controls the volume of the Center speaker."
+
+#: LFE:1
+msgid "LFE"
+msgstr "Controls the volume of the LFE speaker."
+
+#: Surround:1
+msgid "Surround"
+msgstr "Controls the volume of the Surround (rear) speakers."
+
+#: Side:1
+msgid "Side"
+msgstr "Controls the volume of the Side speakers."
+
+#: Center/LFE:1
+msgid "Center/LFE"
+msgstr "Controls the volume of the Center and LFE speakers. KMix allows splitting the control for soundcards that support  to separately control the Center and LFE volumes."
+
+#: Digital:1
+msgid "Digital"
+msgstr "Digital input or output."
+
+#: IEC958:1
+msgid "IEC958"
+msgstr "Digital input or output."
+
+#: S/PDIF-in:1
+msgid "S/PDIF-in"
+msgstr "Controls the volume of the digital input."
+
+#: S/PDIF-out:1
+msgid "S/PDIF-out"
+msgstr "Controls the volume of the digital output."
+
+#: IEC958_Default_PCM:1, unknown meaning
+msgid "IEC958_Default_PCM"
+msgstr ""
+
+#: Input_Source:1
+msgid "Input_Source"
+msgstr "Allows the selction of the input source. The sources are soundcard specific."
+
+#: Line:1
+msgid "Line"
+msgstr "Controls the volume of the line output"
+
+#: Line-in:1
+msgid "Line-in"
+msgstr "Controls the volume of the line input"
+
 
