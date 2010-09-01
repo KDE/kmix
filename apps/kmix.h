@@ -31,7 +31,6 @@ class QLabel;
 #include <QVBoxLayout>
 class QPushButton;
 #include <QTimer>
-class QWidgetAction;
 class KTabWidget;
 
 // KDE
@@ -128,7 +127,6 @@ KMixWindow : public KXmlGuiWindow
    QVBoxLayout *m_widgetsLayout;
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;
-   QWidgetAction *_volWA;
    unsigned int m_configVersion;
    void showVolumeDisplay();
    void increaseOrDecreaseVolume(bool increase);
