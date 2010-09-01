@@ -49,8 +49,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    mixdevice.cpp 
    mixer_backend.cpp
    ksmallslider.cpp 
-   volume.cpp 
-   kledbutton.cpp 
+   volume.cpp
    verticaltext.cpp 
    kmixtoolbox.cpp 
    mixertoolbox.cpp 
