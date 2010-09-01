@@ -254,7 +254,7 @@ void MDWSlider::setCaptureLEDSpace(bool value)
 void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool includePlayback, bool includeCapture )
 {
     bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
-    bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->playbackVolume().count() > 0 );
+    bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
 	bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
 	bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
 	
@@ -353,8 +353,6 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 		muteButtonSpacer = new QWidget(this);
 		controlLayout->addWidget( muteButtonSpacer );
 		muteButtonSpacer->installEventFilter(this);
-
-
 
 	}
 	else
