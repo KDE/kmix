@@ -209,7 +209,7 @@ void KMixWindow::initWidgets()
 
     m_wsMixers = new KTabWidget( centralWidget() );
     m_wsMixers->setTabsClosable(true);
-    connect (m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(closeView(int)) );
+    connect (m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(saveAndCloseView(int)) );
 
     QPixmap cornerNewPM = KIconLoader::global()->loadIcon( "tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall );
     _cornerLabelNew = new QPushButton();
@@ -316,11 +316,8 @@ void KMixWindow::saveViewConfig()
     
     // The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
     // Otherwise we would not save the Meta information (step -2- below for that mixer.
- //   QListIterator<Mixer*> it(Mixer::mixers());
-    foreach ( Mixer* mixer, Mixer::mixers() ) {
-//        Mixer* mixer = it.next();
+    foreach ( Mixer* mixer, Mixer::mixers() )
         mixerViews[mixer->id()]; // just insert a map entry
-	}
 
     // -1- Save the views themselves
     for ( int i=0; i<m_wsMixers->count() ; ++i ) {
@@ -461,10 +458,19 @@ void KMixWindow::recreateGUIwithSavingView()
     recreateGUI(true);
 }
 
+void KMixWindow::recreateGUI(bool saveConfig)
+{
+    recreateGUI(saveConfig, QString(), false);
+}
+
 /**
  * Create or recreate the Mixer GUI elements
+ *
+ * @param saveConfig  Whether to save all View configurations before recreating
+ * @param forceNewTab To enforce opening a new tab, even when the profileList in the kmixrc is empty.
+ *                    It should only be set to "true" in case of a Hotplug (because then the user definitely expects a new Tab to show).
  */
-void KMixWindow::recreateGUI(bool saveConfig)
+void KMixWindow::recreateGUI(bool saveConfig, QString mixerId, bool forceNewTab)
 {
     // -1- Find out which of the tabs is currently selected for restoration
     int current_tab = -1;
@@ -477,7 +483,21 @@ void KMixWindow::recreateGUI(bool saveConfig)
 
     // -2- RECREATE THE ALREADY EXISTING TABS **********************************
     QMap<Mixer*, bool> mixerHasProfile;
-    foreach( GUIProfile* guiprof, GUIProfile::getProfiles())
+
+    // -2a- Build a list of all active profiles in the main window (that means: from all tabs)
+    QList<GUIProfile*> activeGuiProfiles;
+    for (int i=0; i< m_wsMixers->count(); ++i)
+    {
+        KMixerWidget* kmw = dynamic_cast<KMixerWidget*>(m_wsMixers->widget(i));
+        if ( kmw ) {
+            activeGuiProfiles.append(kmw->getGuiprof());
+        }
+    }
+
+    // TODO The following loop is a bit buggy, as it iterates over all cached Profiles. But that is wrong for Tabs that got closed.
+    //       I need to loop over something else, e.g. a  profile list built from the currently open Tabs.
+    //       Or (if it that is easier) I might discard the Profile from the cache on "close-tab" (but that must also include unplug actions).
+    foreach( GUIProfile* guiprof, activeGuiProfiles)
     {
         KMixerWidget* kmw = findKMWforTab(guiprof->getId());
         Mixer *mixer =  Mixer::findMixer( guiprof->getMixerId() );
@@ -507,6 +527,7 @@ void KMixWindow::recreateGUI(bool saveConfig)
             continue;  // OK, this mixer already has a profile => skip it
         }
         // No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
+        bool profileListHasKey = pconfig.hasKey( mixer->id() ); // <<< SHOULD be before the following line
         QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() ); // Hint: Default is a list with ONE entry (an empty string). Important for GUIProfile::find()
 
         bool aProfileWasAddedSucesufully = false;
@@ -524,8 +545,15 @@ void KMixWindow::recreateGUI(bool saveConfig)
             }
         }
 
-        if ( ! aProfileWasAddedSucesufully ) {
+        // The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
+        bool we_need_a_fallback = !aProfileWasAddedSucesufully;  // we *possibly* want a fallback, if we couldn't add one
+        bool thisMixerShouldBeForced = forceNewTab && ( mixer->id() == mixerId  );
+        we_need_a_fallback = we_need_a_fallback && ( thisMixerShouldBeForced || !profileListHasKey ); // Additional requirement: "forced-tab-for-this-mixer" OR "no key stored in kmixrc yet"
+        if ( we_need_a_fallback )
+        {
             // The profileList was empty or nothing could be loaded
+            //     (Hint: This means the user cannot hide a device completely
+
             // Lets try a bunch of fallback strategies:
             GUIProfile* guiprof = 0;
                 guiprof = GUIProfile::find(mixer, QString("default"), false, false);  // ### Card specific profile ###
@@ -628,32 +656,29 @@ void KMixWindow::newView()
     kDebug() << "Exit";
 }
 
-void KMixWindow::closeView(int idx)
+/**
+ * Save the view and close it
+ *
+ * @arg idx The index in the TabWidget
+ */
+void KMixWindow::saveAndCloseView(int idx)
 {
     kDebug() << "Enter";
     QWidget *w = m_wsMixers->widget(idx);
     KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
     if ( kmw ) {
-        saveAndCloseView(kmw, idx);
+        kmw->saveConfig( KGlobal::config().data() );  // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
+        m_wsMixers->removeTab(idx);
+        delete kmw;
+
+        if ( m_wsMixers->count() < 2 ) {
+            m_wsMixers->setTabsClosable(false);
+        }
+        saveViewConfig();
     }
     kDebug() << "Exit";
 }
 
-/**
- * Save the view and close it
- * @arg kmw The KMixerWidget to close
- * @arg idx The index in the TabWidget
- */
-void KMixWindow::saveAndCloseView(KMixerWidget *kmw, int idx)
-{
-    kmw->saveConfig( KGlobal::config().data() );
-    m_wsMixers->removeTab(idx);
-    delete kmw;
-
-    if ( m_wsMixers->count() < 2 ) {
-        m_wsMixers->setTabsClosable(false);
-    }
-}
 
 /**
  * Create or recreate the Mixer GUI elements
@@ -715,7 +740,7 @@ void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QStrin
     if ( mixer != 0 ) {
         kDebug(67100) << "Plugged: dev=" << dev << "\n";
         MixerToolBox::instance()->possiblyAddMixer(mixer);
-        recreateGUI(true);
+        recreateGUI(true, mixer->id(), true);
     }
 
     // Test code for OSD. But OSD is postponed to KDE4.1
@@ -740,7 +765,7 @@ void KMixWindow::unplugged( const QString& udi)
                 QWidget *w = m_wsMixers->widget(i);
                 KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
                 if ( kmw && kmw->mixer() ==  mixer ) {
-                    saveAndCloseView(kmw,i);
+                    saveAndCloseView(i);
                     i= -1; // Restart loop from scratch (indices are most likely invalidated at removeTab() )
                 }
             }
