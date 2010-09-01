@@ -38,7 +38,11 @@ DialogSelectMaster::DialogSelectMaster( Mixer *mixer  )
   : KDialog(  0 )
 {
     setCaption( i18n( "Select Master Channel" ) );
-    setButtons( Ok|Cancel );
+    if ( Mixer::mixers().count() > 0 )
+        setButtons( Ok|Cancel );
+    else {
+        setButtons( Cancel );
+    }
     setDefaultButton( Ok );
    _layout = 0;
    m_vboxForScrollView = 0;
@@ -96,12 +100,17 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     } // end if (more_than_1_Mixer)
 
     
+    if ( Mixer::mixers().count() > 0 ) {
+        QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), m_mainFrame );
+        _layout->addWidget(qlbl);
     
-    QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), m_mainFrame );
-    _layout->addWidget(qlbl);
-
-    createPage(ptr_mixer);
-    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+        createPage(ptr_mixer);
+        connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+    }
+    else {
+        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), m_mainFrame );
+        _layout->addWidget(qlbl);
+    }
 }
 
 /**
