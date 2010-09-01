@@ -251,32 +251,33 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
 {
     QString fullQualifiedProfileName = buildProfileName(mixer, QString("default"), false);
 
-        GUIProfile *fallback = new GUIProfile();
-        
-        ProfProduct* prd = new ProfProduct();
-        prd->vendor         = mixer->getDriverName();
-        prd->productName    = mixer->readableName();
-        prd->productRelease = "1.0";
-        fallback->_products.insert(prd);
-        
-        static QString matchAll(".*");
-        static QString matchAllSctl(".*");
-        ProfControl* ctl = new ProfControl(matchAll, matchAllSctl);
-        ctl->regexp      = matchAll;   // make sure id matches the regexp
-        fallback->_controls.push_back(ctl);
-        
-        fallback->_soundcardDriver = mixer->getDriverName();
-        fallback->_soundcardName   = mixer->readableName();
-        
-        fallback->finalizeProfile();
+    GUIProfile *fallback = new GUIProfile();
 
-        fallback->_mixerId = mixer->id();
-        fallback->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
-        fallback->setName(buildReadableProfileName(mixer, QString("default"))); // The caller can rename this if he likes
-        fallback->setDirty();
-        addProfile(fallback);
+    ProfProduct* prd = new ProfProduct();
+    prd->vendor         = mixer->getDriverName();
+    prd->productName    = mixer->readableName();
+    prd->productRelease = "1.0";
+    fallback->_products.insert(prd);
 
-        return fallback;
+    static QString matchAll(".*");
+    static QString matchAllSctl(".*");
+    ProfControl* ctl = new ProfControl(matchAll, matchAllSctl);
+    //ctl->regexp      = matchAll;   // make sure id matches the regexp
+    ctl->setMandatory(true);
+    fallback->_controls.push_back(ctl);
+
+    fallback->_soundcardDriver = mixer->getDriverName();
+    fallback->_soundcardName   = mixer->readableName();
+
+    fallback->finalizeProfile();
+
+    fallback->_mixerId = mixer->id();
+    fallback->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
+    fallback->setName(buildReadableProfileName(mixer, QString("default"))); // The caller can rename this if he likes
+    fallback->setDirty();
+    addProfile(fallback);
+
+    return fallback;
 }
 
 
@@ -464,6 +465,9 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 		}
 		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
 		os << " show=\"" << xmlify(profControl->show).toUtf8().constData() << "\"" ;
+		if ( profControl->isMandatory() ) {
+		    os << " mandatory=\"true\"";
+		}
 		os << " />" << endl;
 	} // for all controls
 	os << endl;
@@ -507,32 +511,48 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
 		os << "  Subcontrols=" << profControl->renderSubcontrols().toUtf8().constData() << std::endl;
+        if ( profControl->isMandatory() ) {
+            os << " mandatory=\"true\"" << std::endl;
+        }
 	} // for all controls
 
 	return os;
 }
 
 ProfControl::ProfControl(QString& id, QString& subcontrols ){
+    d = new ProfControlPrivate();
     this->show = "simple";
     this->id = id;
     setSubcontrols(subcontrols);
 }
 
 ProfControl::ProfControl(const ProfControl &profControl){
+    d = new ProfControlPrivate();
+    id = profControl.id;
+    name = profControl.name;
 
-		id = profControl.id;
-		name = profControl.name;
-		QString origSctls = profControl._subcontrols;
-		setSubcontrols(origSctls);
-		name = profControl.name;
-		show = profControl.show;
-		backgroundColor = profControl.backgroundColor;
-		switchtype = profControl.switchtype;
+    _useSubcontrolPlayback = profControl._useSubcontrolPlayback;
+    _useSubcontrolCapture = profControl._useSubcontrolCapture;
+    _useSubcontrolPlaybackSwitch = profControl._useSubcontrolPlaybackSwitch;
+    _useSubcontrolCaptureSwitch = profControl._useSubcontrolCaptureSwitch;
+    _useSubcontrolEnum = profControl._useSubcontrolEnum;
+    d->subcontrols = profControl.d->subcontrols;
+
+    name = profControl.name;
+    show = profControl.show;
+    backgroundColor = profControl.backgroundColor;
+    switchtype = profControl.switchtype;
+    _mandatory = profControl._mandatory;
 }
 
+ProfControl::~ProfControl() {
+    delete d;
+}
 
 void ProfControl::setSubcontrols(QString sctls)
 {
+    d->subcontrols = sctls;
+
   _useSubcontrolPlayback = false;
   _useSubcontrolCapture = false;
   _useSubcontrolPlaybackSwitch = false;
@@ -731,42 +751,39 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 	*/
 	QString id = attributes.value("id");
     QString subcontrols = attributes.value("subcontrols");
-	QString tab = attributes.value("tab");
 	QString name = attributes.value("name");
-	QString regexp = attributes.value("pattern");
 	QString show = attributes.value("show");
 	QString background = attributes.value("background");
 	QString switchtype = attributes.value("switchtype");
-	if ( !id.isNull() ) {
-		// We need at least an "id". We can set defaults for the rest, if undefined.
-		if ( subcontrols.isNull() || subcontrols.isEmpty() ) {
-			subcontrols = "*";  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
-		}
-//		if ( tab.isNull() ) {
-//			// Ignore this for the moment. We will put it on the first existing Tab at the end of parsing
-//		}
-		if ( name.isNull() ) {
-         // ignore. isNull() will be checked by all users.
-		}
-               if ( !background.isNull() ) {
-            // ignore. isNull() will be checked by all users.
-       }
-              if ( !switchtype.isNull() ) {
-            // ignore. isNull() will be checked by all users.
-       }
-      if ( regexp.isNull() ) {
-         // !! should do a dictonary lookup here, and i18n(). For now, just take over "id"
-         regexp = !name.isNull() ? name : id;
-      }
+    QString mandatory = attributes.value("mandatory");
+    bool isMandatory = false;
 
-      ProfControl *profControl = new ProfControl(id, subcontrols);
-     if ( show.isNull() ) { show = "*"; }
+    if ( !id.isNull() ) {
+        // We need at least an "id". We can set defaults for the rest, if undefined.
+        if ( subcontrols.isNull() || subcontrols.isEmpty() ) {
+            subcontrols = "*";  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
+        }
+        if ( name.isNull() ) {
+            // ignore. isNull() will be checked by all users.
+        }
+        if ( ! mandatory.isNull() && mandatory == "true" ) {
+            isMandatory = true;
+        }
+        if ( !background.isNull() ) {
+            // ignore. isNull() will be checked by all users.
+        }
+        if ( !switchtype.isNull() ) {
+            // ignore. isNull() will be checked by all users.
+        }
+
+        ProfControl *profControl = new ProfControl(id, subcontrols);
+        if ( show.isNull() ) { show = "*"; }
 
 		profControl->name = name;
-//		profControl->tab = tab;
 		profControl->show = show;
 		profControl->setBackgroundColor( background );
 		profControl->setSwitchtype(switchtype);
+		profControl->setMandatory(isMandatory);
 		_guiProfile->getControls().push_back(profControl);
 	} // id != null
 }

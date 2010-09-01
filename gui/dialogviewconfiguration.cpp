@@ -314,7 +314,7 @@ void DialogViewConfiguration::apply()
     // --- 3-Step Apply ---
 
 
-    // --- Step 1: Update view and profile ---
+    // -1- Update view and profile *****************************************
    GUIProfile* prof = _view.guiProfile();
    GUIProfile::ControlSet& oldControlset = prof->getControls();
    GUIProfile::ControlSet newControlset;
@@ -325,12 +325,22 @@ void DialogViewConfiguration::apply()
    model = _qlwInactive->model();
    prepareControls(model, false, oldControlset, newControlset);
 
-	// --- Step 2: Add default matcher
-	QString sctlMatchAll("*");
-	QString pctlId("^.*$") ;
-	ProfControl* fallbackMatchAllControl = new ProfControl(pctlId, sctlMatchAll);
-	fallbackMatchAllControl->show = "extended";
-	newControlset.push_back(fallbackMatchAllControl);
+   // -2- Copy all mandatory "catch-all" controls form the old to the new ControlSet  *******
+   foreach ( ProfControl* pctl, oldControlset)
+   {
+       if ( pctl->isMandatory() ) {
+           ProfControl* newCtl = new ProfControl(*pctl);
+           newCtl->show = "full"; // The user has selected controls => mandatory controls are now only neccesary in extended or full mode
+           newControlset.push_back(newCtl);
+           kDebug() << "Added a MANDATORY control to new ControlSet: " << newCtl->id;
+
+       }
+   }
+//	QString sctlMatchAll("*");
+//	QString pctlId("^.*$") ;
+//	ProfControl* fallbackMatchAllControl = new ProfControl(pctlId, sctlMatchAll);
+//	fallbackMatchAllControl->show = "extended";
+//	newControlset.push_back(fallbackMatchAllControl);
 	
 	prof->setControls(newControlset);
     prof->finalizeProfile();
@@ -379,6 +389,8 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
                 // found. Create a copy
                 ProfControl* newCtl = new ProfControl(*control);
                 newCtl->id =  "^" + ctlId + "$"; // Replace the (possible generic) regexp by the actual ID
+                // We have made this an an actual control. As it is derived (from e.g. ".*") it is NOT mandatory.
+                newCtl->setMandatory(false);
                 if ( isActiveView ) {
                     newCtl->show = "simple";
                 }
@@ -386,12 +398,12 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
                     newCtl->show = "extended";
                 }
                 newCtlSet.push_back(newCtl);
-                kDebug() << "Aded to new ControlSet (done): " << newCtl->id;
+                kDebug() << "Added to new ControlSet (done): " << newCtl->id;
                 break;
             }
         }
-
     }
+
 }
 
 

@@ -51,11 +51,21 @@ struct ProfProduct
     QString comment;
 };
 
+class ProfControlPrivate
+{
+public:
+    // List of controls, e.g: "rec:1-2,recswitch"
+    // THIS IS RAW DATA AS LOADED FROM THE PROFILE. DO NOT USE IT, except for debugging.
+    QString subcontrols;
+
+};
+
 class ProfControl
 {
 public:
     ProfControl(QString& id, QString& subcontrols);
     ProfControl(const ProfControl &ctl); // copy constructor
+    ~ProfControl();
     // ID as returned by the Mixer Backend, e.g. Master:0
     QString id;
 
@@ -72,23 +82,23 @@ public:
     QString getSwitchtype() const    {        return switchtype;    }
     void setSwitchtype(QString switchtype)    {        this->switchtype = switchtype;    }
 
-    //QString tab;
     // Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
-    // Because the name is visible, some kind of i18n() will be used.
+    // Because the name is visible, some kind of i18n() should be used.
     QString name;
-    // Pattern (REGEXP) for matching the control names.
-    // If you set no pattern, the name will be used instead.
-    // If you use a pattern, you normally should not define a name, as it will apply to all matching controls
-    QString regexp;
     // show or hide (contains the GUI type: simple, extended, all)
     QString show;
 
+    bool isMandatory() const
+    {
+        return _mandatory;
+    }
+
+    void setMandatory(bool _mandatory)
+    {
+        this->_mandatory = _mandatory;
+    }
 
 private:
-    // List of controls, e.g: "rec:1-2,recswitch"
-    // When we start using it, it might be changed into a std::vector in the future.
-    // THIS IS RAW DATA AS LOADED FROM THE PROFILE. DO NOT USE IT, except for debugging.
-    QString _subcontrols;
     // The following are the deserialized values of _subcontrols
     bool _useSubcontrolPlayback;
     bool _useSubcontrolCapture;
@@ -100,6 +110,10 @@ private:
     QString backgroundColor;
     // For defining the switch type when it is not a standard palyback or capture switch
     QString switchtype;
+
+    bool _mandatory; // A mandatory control must be included in all GUIProfile copies
+
+    ProfControlPrivate *d;
 };
 
 
@@ -151,7 +165,6 @@ class GUIProfile
         return _controls;
     }
     void setControls(ControlSet& newControlSet);
-
 
     QString getName() const    {        return _name;    }
     void setName(QString _name)    {        this->_name = _name;    }

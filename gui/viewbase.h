@@ -150,7 +150,6 @@ signals:
    void toggleMenuBar();
 
 private:
-   unsigned int _dummyImplPos;
    QString      m_viewId;
 };
 

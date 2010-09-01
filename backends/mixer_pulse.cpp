@@ -1231,6 +1231,7 @@ bool Mixer_PULSE::isRecsrcHW( const QString& /*id*/ )
    return false;
 }
 
+// Please see KMixWindow::initActionsAfterInitMixer(), it uses the driverName
 
 QString PULSE_getDriverName() {
         return "PulseAudio";
