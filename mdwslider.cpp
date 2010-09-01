@@ -317,7 +317,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 		}
 
 		//capture button
-		if ( showCaptureLED  && m_mixdevice->captureVolume().hasSwitch() )
+		if ( showCaptureLED && includeCapture && m_mixdevice->captureVolume().hasSwitch() )
 		{
 			m_captureCheckbox = new QCheckBox( i18n("capture") , this);
 			m_captureCheckbox->installEventFilter( this );
@@ -334,7 +334,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 
 
 		//mute button
-		if ( showMuteButton && m_mixdevice->playbackVolume().hasSwitch() )
+		if ( showMuteButton && includePlayback && m_mixdevice->playbackVolume().hasSwitch() )
 		{
 			m_qcb =  new QToolButton(this);
 			m_qcb->setAutoRaise(true);
@@ -372,7 +372,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 
 		row1->addStretch();
 
-		if ( showCaptureLED  && m_mixdevice->captureVolume().hasSwitch() )
+		if ( showCaptureLED && includeCapture && m_mixdevice->captureVolume().hasSwitch() )
 		{
 			m_captureCheckbox = new QCheckBox( i18n("capture") , this);
 			m_captureCheckbox->installEventFilter( this );
@@ -412,9 +412,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 
 		if ( hasVolumeSliders )
 		{
-			if ( m_mixdevice->playbackVolume().count() > 0 )
+			if ( wantsPlaybackSliders && m_mixdevice->playbackVolume().count() > 0 )
 				addSliders( volLayout, 'p', false );
-			if ( m_mixdevice->captureVolume().count() > 0 )
+			if ( wantsCaptureSliders && m_mixdevice->captureVolume().count() > 0 )
 				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
 		}
 		else
@@ -422,7 +422,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 			row2->addStretch(1);
 		}
 
-		if ( showMuteButton && m_mixdevice->playbackVolume().hasSwitch() )
+		if ( showMuteButton && includePlayback && m_mixdevice->playbackVolume().hasSwitch() )
 		{
 			row2->addSpacing( 3 );
 			m_qcb =  new QToolButton(this);
