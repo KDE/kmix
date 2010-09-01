@@ -48,7 +48,7 @@ class MDWEnum : public MixDeviceWidget
 public:
     MDWEnum( MixDevice* md,
 	       Qt::Orientation orientation,
-	       QWidget* parent = 0, ViewBase* mw = 0);
+	       QWidget* parent, ViewBase* view, ProfControl* pctl);
     ~MDWEnum();
 
     void addActionToPopup( KAction *action );

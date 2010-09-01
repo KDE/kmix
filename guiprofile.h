@@ -67,6 +67,11 @@ public:
     bool useSubcontrolEnum() {return _useSubcontrolEnum;};
     QString renderSubcontrols();
 
+    QString getBackgroundColor() const    {        return backgroundColor;    }
+    void setBackgroundColor(QString& backgroundColor)    {        this->backgroundColor = backgroundColor;    }
+    QString getSwitchtype() const    {        return switchtype;    }
+    void setSwitchtype(QString switchtype)    {        this->switchtype = switchtype;    }
+
     //QString tab;
     // Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
     // Because the name is visible, some kind of i18n() will be used.
@@ -77,10 +82,7 @@ public:
     QString regexp;
     // show or hide (contains the GUI type: simple, extended, all)
     QString show;
-    // For applying custom colors
-    QColor backgroundColor;
-    // For defining the switch type when it is not a standard palyback or capture switch
-    QString switchtype;
+
 
 private:
     // List of controls, e.g: "rec:1-2,recswitch"
@@ -93,6 +95,11 @@ private:
     bool _useSubcontrolPlaybackSwitch;
     bool _useSubcontrolCaptureSwitch;
     bool _useSubcontrolEnum;
+
+    // For applying custom colors
+    QString backgroundColor;
+    // For defining the switch type when it is not a standard palyback or capture switch
+    QString switchtype;
 };
 
 class ProfTab

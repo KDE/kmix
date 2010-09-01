@@ -151,19 +151,12 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
     }
     else {
         guiprof = loadProfileFromXMLfiles(mixer, fullQualifiedProfileName);  // Load from XML ###Card specific profile###
-        if ( guiprof == 0 ) {
-            QString fullQualifiedProfileNameWithoutCardname = buildProfileName(mixer, profileName, true);
-                guiprof = loadProfileFromXMLfiles(mixer, fullQualifiedProfileNameWithoutCardname);  // Load from XML ### Card unspecific profile ###
-                if ( guiprof != 0 ) guiprof->_dirty = true; // Profile was loaded from unspecific config => dirty
-            }
-
-            if ( (guiprof == 0) && allowFallback ) {
-                // We need to change the profile name on fallback, so when displaying, or saving the actual card name is used.
-                guiprof = fallbackProfile(mixer);
-                fullQualifiedProfileName = buildProfileName(mixer, "default", false);
-                if ( guiprof != 0 ) guiprof->_dirty = true; // Profile was generated => dirty
-                kDebug() << "Generate fallback profile:" << fullQualifiedProfileName;
-            }
+        if ( (guiprof == 0) && allowFallback ) {
+            // We need to change the profile name on fallback, so when displaying, or saving the actual card name is used.
+            guiprof = fallbackProfile(mixer);
+            fullQualifiedProfileName = buildProfileName(mixer, "default", false);
+            if ( guiprof != 0 ) guiprof->_dirty = true; // Profile was generated => dirty
+            kDebug() << "Generate fallback profile:" << fullQualifiedProfileName;
         }
         
         if ( guiprof != 0 ) {
@@ -174,6 +167,7 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
             }
             addProfile(guiprof);
         }
+    }
     
     return guiprof;
 }
@@ -773,8 +767,8 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
 		profControl->name = name;
 //		profControl->tab = tab;
 		profControl->show = show;
-		profControl->backgroundColor.setNamedColor (background);
-		profControl->switchtype = switchtype;
+		profControl->setBackgroundColor( background );
+		profControl->setSwitchtype(switchtype);
 		_guiProfile->_controls.push_back(profControl);
 	} // id != null
 }

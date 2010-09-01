@@ -505,9 +505,18 @@ void KMixWindow::recreateGUI(bool saveConfig)
             bool allowDefault = (i == (profileList.count() - 1)); // In the last loop iteration, allow the fallback as last resort.
             GUIProfile* guiprof = GUIProfile::find(mixer, profileList.at(i), allowDefault);
             if ( guiprof == 0 ) {
+                QString fullQualifiedProfileNameWithoutCardname = GUIProfile::buildProfileName(mixer, profileList.at(i), true);
+                guiprof = GUIProfile::find(mixer, fullQualifiedProfileNameWithoutCardname, allowDefault);  // Load from XML ### Card unspecific profile ###
+                if ( guiprof != 0 ) {
+                    guiprof->setDirty();  // loaded from unspecific file => dirty
+                }
+            }
+            if ( guiprof == 0 ) {
                 kError() << "Cannot load profile " << profileList.at(i) << " . It was removed by the user, or the KMix config file is defective.";
                 continue;
             }
+            else
+
             addMixerWidget(mixer->id(), guiprof, -1);
         }
     }
@@ -567,10 +576,18 @@ void KMixWindow::newView()
     if ( dummyToggler ) {
         profileName = GUIProfile::buildProfileName(mixer, QString("playback"), false);
         guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+        if ( guiprof == 0 ) {
+            profileName = GUIProfile::buildProfileName(mixer, QString("playback"), true);
+            guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+        }
     }
     else {
         profileName = GUIProfile::buildProfileName(mixer, QString("capture"), false);
         guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+        if ( guiprof == 0 ) {
+            profileName = GUIProfile::buildProfileName(mixer, QString("capture"), true);
+            guiprof = GUIProfile::find(mixer, profileName, allowDefault);
+        }
     }
 
     if ( guiprof == 0 ) {

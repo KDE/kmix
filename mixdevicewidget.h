@@ -36,6 +36,7 @@ class KShortcutsDialog;
 
 class MixDevice;
 class Mixer;
+class ProfControl;
 class ViewBase;
 
 class MixDeviceWidget
@@ -46,7 +47,7 @@ class MixDeviceWidget
 public:
     MixDeviceWidget( MixDevice* md,
                      bool small, Qt::Orientation orientation,
-                     QWidget* parent = 0, ViewBase* mw = 0 );
+                     QWidget* parent, ViewBase*, ProfControl * );
     ~MixDeviceWidget();
 
     void addActionToPopup( KAction *action );
@@ -76,10 +77,12 @@ protected slots:
     virtual void setVolume( Volume volume );
 
 protected:
+
       MixDevice*           m_mixdevice;
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
+      ProfControl*         pctl;
       bool                 m_disabled;
       Qt::Orientation      _orientation;
       bool                 m_small;
