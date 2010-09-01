@@ -53,6 +53,7 @@ class Mixer : public QObject
       QString getDriverName();
 
       MixDevice* find(const QString& devPK);
+      static Mixer* findMixer( const QString& mixer_id);
 
       void volumeSave( KConfig *config );
       void volumeLoad( KConfig *config );
@@ -153,11 +154,6 @@ class Mixer : public QObject
       virtual void toggleMute( const QString& mixdeviceID );
       virtual bool isRecordSource( const QString& mixdeviceID );
 
-      // For recreating (to find out whether we have all Mixers). Actually only used while (re-)creating  the Views
-      bool generationIsOutdated();
-      void updateGeneration() { _generation = _currentGeneration; }
-      static void increaseGeneration();
-      
       virtual bool isAvailableDevice( const QString& mixdeviceID );
 
       /// Says if we are dynamic (e.g. widgets can come and go)
@@ -197,9 +193,6 @@ class Mixer : public QObject
       QString _masterDevicePK;
       static QString _globalMasterCard;
       static QString _globalMasterCardDevice;
-      
-      int _generation;
-      static int _currentGeneration;
       
       QString m_dbusName;
       bool m_dynamic;

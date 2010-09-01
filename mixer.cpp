@@ -40,7 +40,6 @@ QList<Mixer *> Mixer::s_mixers;
 QString Mixer::_globalMasterCard;
 QString Mixer::_globalMasterCardDevice;
 
-int Mixer::_currentGeneration = 1;
 
 int Mixer::numDrivers()
 {
@@ -60,7 +59,7 @@ int Mixer::numDrivers()
  */
 QList<Mixer *>& Mixer::mixers()
 {
-  return s_mixers;
+    return s_mixers;
 }
 
 Mixer::Mixer( QString& ref_driverName, int device )
@@ -68,7 +67,6 @@ Mixer::Mixer( QString& ref_driverName, int device )
 {
    (void)new KMixAdaptor(this);
 
-    _generation = _currentGeneration;
     _mixerBackend = 0;
     int driverCount = numDrivers();
     for (int driver=0; driver<driverCount; driver++ ) {
@@ -98,14 +96,22 @@ Mixer::~Mixer() {
 }
 
 
-// The "generation" thing is a bit hacky. as it is faciliated by the GUI part (so it shouldn't be in this non-GUI class).
-bool Mixer::generationIsOutdated() {
-    return ( _generation < _currentGeneration );
-}
-
-void Mixer::increaseGeneration()
+/*
+ * Find a Mixer. If there is no mixer with the given id, 0 is returned
+ */
+Mixer* Mixer::findMixer( const QString& mixer_id)
 {
-    _currentGeneration++;
+   Mixer* mixer = 0;
+   int mixerCount = Mixer::mixers().count();
+   for ( int i=0; i<mixerCount; ++i)
+   {
+      if ( ((Mixer::mixers())[i])->id() == mixer_id )
+      {
+         mixer = (Mixer::mixers())[i];
+         break;
+      }
+   }
+   return mixer;
 }
 
 

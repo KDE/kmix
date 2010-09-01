@@ -106,10 +106,13 @@ bool GUIProfile::isDirty() {
  * @par driverName The driver name of the backend, e.g. "ALSA" or "OSS"
  * @par cardName    The card name as delivered by the driver. Use the String "any" for the standard (card-unspecific) profile
  */
-QString GUIProfile::buildProfileName(QString driverName, QString cardName, QString profileName)
+QString GUIProfile::buildProfileName(QString driverName, QString mixerId, QString profileName)
 {
-    QString fname(driverName);
-    fname += "." + cardName + "." + profileName;
+    //QString fname(driverName);
+    //fname += "." + mixerId + "." + profileName;
+    //fname.replace(" ","_");
+    QString fname(mixerId);
+    fname += "." + profileName;
     fname.replace(" ","_");
     return fname;
 }
@@ -148,6 +151,9 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool allowFallba
             guiprof->_mixerId = mixer->id();
             if ( guiprof->getId().isEmpty() ) {
                 guiprof->setId(requestedProfileName);
+            }
+            if ( guiprof->getName().isEmpty() ) {
+                guiprof->setName(profileName);
             }
             addProfile(guiprof);
         }

@@ -51,7 +51,6 @@ class MixerToolBox : public QObject
       void setMixerIgnoreExpression(QString& ignoreExpr);
       QString mixerIgnoreExpression();
       
-      Mixer* find( const QString& mixer_id);
       //static KLocale* whatsthisControlLocale();
       
    signals:
