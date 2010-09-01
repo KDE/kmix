@@ -28,8 +28,6 @@
 #include <QString>
 
 //#include <KLocale>
-
-class GUIProfile;
 class Mixer;
 
 /**

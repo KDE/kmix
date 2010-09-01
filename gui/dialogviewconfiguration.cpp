@@ -316,7 +316,7 @@ void DialogViewConfiguration::apply()
 
     // --- Step 1: Update view and profile ---
    GUIProfile* prof = _view.guiProfile();
-   GUIProfile::ControlSet& oldControlset = prof->_controls;
+   GUIProfile::ControlSet& oldControlset = prof->getControls();
    GUIProfile::ControlSet newControlset;
 
    QAbstractItemModel* model;
@@ -325,26 +325,14 @@ void DialogViewConfiguration::apply()
    model = _qlwInactive->model();
    prepareControls(model, false, oldControlset, newControlset);
 
-	// --- Step 2: Copy controls
-	//QString tabName = "Base";
-	oldControlset.clear();
-	std::vector<ProfControl*>::const_iterator itEnd = newControlset.end();
-	for ( std::vector<ProfControl*>::const_iterator it = newControlset.begin(); it != itEnd; ++it)
-	{
-	  ProfControl* control = *it;
-	  control->id = "^" + control->id + "$";   // Create a regexp from the control name
-//	  if ( ! control->tab.isEmpty() )
-//	      tabName = control->tab;
-	  kDebug() << "Add control " << control->id;
-          oldControlset.push_back(control);
-	}
+	// --- Step 2: Add default matcher
 	QString sctlMatchAll("*");
 	QString pctlId("^.*$") ;
 	ProfControl* fallbackMatchAllControl = new ProfControl(pctlId, sctlMatchAll);
-//	fallbackMatchAllControl->tab  = tabName;
 	fallbackMatchAllControl->show = "extended";
-	oldControlset.push_back(fallbackMatchAllControl);
+	newControlset.push_back(fallbackMatchAllControl);
 	
+	prof->setControls(newControlset);
     prof->finalizeProfile();
     prof->setDirty();
 //	prof->writeProfile();  // at the moment it would only be really necessary on an "order change" of the controls
@@ -357,69 +345,53 @@ void DialogViewConfiguration::apply()
 
 void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)
 {
-   int numRows = model->rowCount();
+    int numRows = model->rowCount();
+    for (int row = 0; row < numRows; ++row) {
+        // -1- Extract the value from the model ***************************
+        QModelIndex index = model->index(row, 0);
+        QVariant vdci;
+        vdci = model->data(index, Qt::ToolTipRole);   // TooltipRole stores the ID (well, thats not really clean design, but it works)
+        QString ctlId = vdci.toString();
 
-  for (int row = 0; row < numRows; ++row) {
-         // 1) Extract the value from the model
-         QModelIndex index = model->index(row, 0);
-         QVariant vdci;
-         vdci = model->data(index, Qt::ToolTipRole);   // TooltipRole stores the ID (well, thats not really clean design, but it works)
-          QString ctlId = vdci.toString();
-//         qDebug() << row << ":" << text;
 
-          // 2) Find the mdw, und update it
-		MixDeviceWidget *mdw = 0;
-          QList<QWidget *> &mdws = _view._mdws;
-          for ( int i=0; i<mdws.count(); ++i ) {
-	    QWidget *qw = mdws[i];
-	    if ( ! qw->inherits("MixDeviceWidget") ) {
+        // -2- Find the mdw, und update it **************************
+        foreach ( QWidget *qw, _view._mdws )
+        {
+            MixDeviceWidget *mdw = dynamic_cast<MixDeviceWidget*>(qw);
+            if ( !mdw ) {
+                continue;
+            }
+
+            if ( mdw->mixDevice()->id() == ctlId ) {
+                mdw->setVisible(isActiveView);
+                break;
+            } // mdw was found
+        }  // find mdw
+
+
+         // -3- Insert it in the new ControlSet **************************
+        kDebug() << "Should add to new ControlSet: " << ctlId;
+        foreach ( ProfControl* control, oldCtlSet)
+        {
+            //kDebug() << " checking " << control->id;
+            QRegExp idRegexp(control->id);
+            if ( ctlId.contains(idRegexp) ) {
+                // found. Create a copy
+                ProfControl* newCtl = new ProfControl(*control);
+                newCtl->id =  "^" + ctlId + "$"; // Replace the (possible generic) regexp by the actual ID
+                if ( isActiveView ) {
+                    newCtl->show = "simple";
+                }
+                else {
+                    newCtl->show = "extended";
+                }
+                newCtlSet.push_back(newCtl);
+                kDebug() << "Aded to new ControlSet (done): " << newCtl->id;
                 break;
             }
-            else {
-		mdw = static_cast<MixDeviceWidget*>(qw);
-                if ( mdw->mixDevice()->id() == ctlId ) {
-                  // found
-		  mdw->setVisible(isActiveView);
-		  break;
-		}
-	    }
-         }  // find mdw
+        }
 
-         // 3) Insert it in the new ControlSet
-// 	ProfControl* newCtl = new ProfControl(*control);
-// 	newCtl->id = ctlId;
-// 	if ( isActiveView )
-// 		newCtl->show = "simple";
-// 	else
-// 		newCtl->show = "extended";
-// 
-// 	// @todo: The rest of the properties
-// 	newCtlSet.push_back(newCtl);
-
-	  kDebug() << "Should add to new ControlSet: " << ctlId;
-        std::vector<ProfControl*>::const_iterator itEnd = oldCtlSet.end();
-	for ( std::vector<ProfControl*>::const_iterator it = oldCtlSet.begin(); it != itEnd; ++it)
-	{
-	  ProfControl* control = *it;
-          //kDebug() << " checking " << control->id;
-          QRegExp idRegexp(control->id);
-	  if ( ctlId.contains(idRegexp) ) {
-             // found. Create a copy
-             ProfControl* newCtl = new ProfControl(*control);
-             newCtl->id = ctlId; // Exchange the (possible) regexp by the actual ID
-             if ( isActiveView ) {
-                newCtl->show = "simple";
-             }
-             else {
-                newCtl->show = "extended";
-             }
-             newCtlSet.push_back(newCtl);
-             kDebug() << "Should add to new ControlSet (done): " << ctlId;
-             break;
-          }
-	}
-
-  }
+    }
 }
 
 

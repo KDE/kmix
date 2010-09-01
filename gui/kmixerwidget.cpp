@@ -125,6 +125,10 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
  */
 void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
 {
+    ViewSliders* view = new ViewSliders( this, "", mixer, vflags, guiprof, _actionCollection );
+    possiblyAddView(view);
+
+#if 0
    /*** How it works:
    * A loop is done over all tabs.
    * For each Tab a View (e.g. ViewSliders) is instanciated and added to the list of Views
@@ -148,6 +152,7 @@ void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewB
             kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type() << "'\n";
         }
     } // search for correct tab
+#endif
 }
 
 

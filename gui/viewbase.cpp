@@ -238,9 +238,14 @@ void ViewBase::setMixSet()
             MixSet ms = _mixer->getMixSet();
             for (int i=0; i < ms.count(); ++i)
                 new_mix_devices.append("^" + ms[i]->id() + "$");
-            std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
-            for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
-                new_mix_devices.removeAll((*it)->id);
+
+//            std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
+//            for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
+//                new_mix_devices.removeAll((*it)->id);
+              foreach ( ProfControl* pctl, _guiprof->getControls() ) {
+                  new_mix_devices.removeAll(pctl->id);
+              }
+
 
             if ( new_mix_devices.count() > 0 ) {
                 kDebug(67100) << "Found " << new_mix_devices.count() << " new controls. Adding to GUIProfile";
@@ -252,7 +257,7 @@ void ViewBase::setMixSet()
 //                    ctl->setSubcontrols(QString("*"));
 //                    ctl->tab  = (_guiprof->tabs())[0]->name(); // Use the first tab... not ideal but should work most of the time;
 //                    ctl->show = "simple";
-                    _guiprof->_controls.push_back(ctl);
+                    _guiprof->getControls().push_back(ctl);
                 }
                 _guiprof->setDirty();
             }
@@ -342,10 +347,10 @@ void ViewBase::load(KConfig *config)
          else
          {
             // if not configured in config file, use the default from the profile
-             GUIProfile::ControlSet cset = (view->guiProfile()->_controls);
-             for ( std::vector<ProfControl*>::const_iterator it = cset.begin(); it != cset.end(); ++it)
+             //GUIProfile::ControlSet cset = (view->guiProfile()->getControls());
+             foreach ( ProfControl* pControl, view->guiProfile()->getControls() )
              {
-                ProfControl* pControl = *it;
+                //ProfControl* pControl = *it;
                 QRegExp idRegExp(pControl->id);
                 //kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
                 if ( mdw->mixDevice()->id().contains(idRegExp) ) {
