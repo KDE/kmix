@@ -217,7 +217,7 @@ bool KMixWindow::updateDocking()
 
     // create dock widget and the corresponding popup
     /* A GUIProfile does not make sense for the DockAreaPopup => Using (GUIProfile*)0 */
-    QWidget* referenceWidgetForSystray = this;
+    QWidget* referenceWidgetForSystray = 0;  // this
     if ( m_volumeWidget ) {
         KMenu *volMenu = new KMenu(this);
         _dockAreaPopup = new ViewDockAreaPopup(volMenu, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, this);

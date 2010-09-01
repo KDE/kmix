@@ -542,7 +542,7 @@ ProfControl::ProfControl(const ProfControl &profControl){
 		id = profControl.id;
 		name = profControl.name;
 		QString origSctls = profControl._subcontrols;
-		setSubcontrols(origSctls); // @todo. Copy the 5 fields instead???
+		setSubcontrols(origSctls);
 		name = profControl.name;
 		tab = profControl.tab;
 		show = profControl.show;

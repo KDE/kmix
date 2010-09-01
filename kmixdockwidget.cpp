@@ -72,6 +72,9 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, QWidget *referenceWidget, boo
    connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
+   if (_referenceWidget)
+       setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
+
 // TODO remove this, as in a KMenu it does not need window tricks
 //    ViewDockAreaPopup* dockAreaPopup = qobject_cast<ViewDockAreaPopup*>(referenceWidget);
 //    if ( dockAreaPopup ) {
@@ -269,54 +272,81 @@ KMixDockWidget::updatePixmap()
 
 void KMixDockWidget::activate(const QPoint &pos)
 {
-   KMenu* dockAreaPopup = qobject_cast<KMenu*>(_referenceWidget);
-   if ( !dockAreaPopup ) {
-      // Use default KStatusNotifierItem behavior if we are not using the
-      // dockAreaPopup
-      KStatusNotifierItem::activate(pos);
-      return;
-   }
-   if ( dockAreaPopup->isVisible() ) {
-      dockAreaPopup->hide();
-      return;
-   }
+    kDebug() << "Activate at " << pos;
+    KMenu* dockAreaPopup = qobject_cast<KMenu*>(_referenceWidget);
+    if ( _referenceWidget != 0 ) {
+        kDebug() << "Use default KStatusNotifierItem behavior";
+        if ( contextMenu()->isVisible() ) {
+            kDebug() << "ContextMenu was visible";
+        }
+        /*
+           The following code is plain wrong. In the menu, we ALWAYS want to use the main window.
+           See
 
-   if (contextMenu()->isVisible()) {
+
+
+           Bug 191477 -  Show Mixer Window doesn't show the mixer window
+
+
+        // Use default KStatusNotifierItem behavior if we are not using the
+        // dockAreaPopup
+        KStatusNotifierItem::activate(pos);
+        return;
+*/
+
+        QWidget* p = (QWidget*)parent();
+        if ( p->isVisible()) {
+            p->hide();
+        }
+        else {
+            p->show();
+        }
+
+        return;
+    }
+
+    kDebug() << "Skip default KStatusNotifierItem behavior";
+    if ( dockAreaPopup->isVisible() ) {
+        dockAreaPopup->hide();
+        return;
+    }
+
+    if (contextMenu()->isVisible()) {
         contextMenu()->hide();
     }
 
-   dockAreaPopup->adjustSize();
-   int h = dockAreaPopup->height();
-   int x = pos.x() - dockAreaPopup->width()/2;
-   int y = pos.y() - h;
+    dockAreaPopup->adjustSize();
+    int h = dockAreaPopup->height();
+    int x = pos.x() - dockAreaPopup->width()/2;
+    int y = pos.y() - h;
 
-  // kDebug() << "h="<<h<< " x="<<x << " y="<<y<< "gx="<< geometry().x() << "gy="<< geometry().y();
+    // kDebug() << "h="<<h<< " x="<<x << " y="<<y<< "gx="<< geometry().x() << "gy="<< geometry().y();
 
-   if ( y < 0 ) {
-       y = pos.y();
-   }
+    if ( y < 0 ) {
+        y = pos.y();
+    }
 
-   dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
-   kDebug() << "moving to" << dockAreaPopup->size() << x << y;
+    dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
+    kDebug() << "moving to" << dockAreaPopup->size() << x << y;
 
-   dockAreaPopup->show();
+    dockAreaPopup->show();
 
-   // Now handle Multihead displays. And also make sure that the dialog is not
-   // moved out-of-the screen on the right (see Bug 101742).
-   const QDesktopWidget* vdesktop = QApplication::desktop();
-   const QRect& vScreenSize = vdesktop->screenGeometry(dockAreaPopup);
-   //const QRect screenGeometry(const QWidget *widget) const
-   if ( (x+dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
-       // move horizontally, so that it is completely visible
-       dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() -1 , y);
-   }
-   else if ( x < vScreenSize.x() ) {
-       // horizontally out-of bound
-       dockAreaPopup->move(vScreenSize.x(), y);
-   }
-   // the above stuff could also be implemented vertically
+    // Now handle Multihead displays. And also make sure that the dialog is not
+    // moved out-of-the screen on the right (see Bug 101742).
+    const QDesktopWidget* vdesktop = QApplication::desktop();
+    const QRect& vScreenSize = vdesktop->screenGeometry(dockAreaPopup);
+    //const QRect screenGeometry(const QWidget *widget) const
+    if ( (x+dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
+        // move horizontally, so that it is completely visible
+        dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() -1 , y);
+    }
+    else if ( x < vScreenSize.x() ) {
+        // horizontally out-of bound
+        dockAreaPopup->move(vScreenSize.x(), y);
+    }
+    // the above stuff could also be implemented vertically
 
-   KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
+    KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
 }
 
 // void
@@ -356,7 +386,7 @@ KMixDockWidget::trayWheelEvent(int delta)
          md->playbackVolume().setVolume(vol);
       else
          md->captureVolume().setVolume(vol);
-      m_mixer->commitVolumeChange(md);
+    m_mixer->commitVolumeChange(md);
     setVolumeTip();
   }
 }
@@ -375,9 +405,9 @@ void
 KMixDockWidget::contextMenuAboutToShow()
 {
     QAction* showAction = actionCollection()->action("minimizeRestore");
-    if ( associatedWidget() && showAction )
+    if ( parent() && showAction )
     {
-        if ( associatedWidget()->isVisible() )
+        if ( ((QWidget*)parent())->isVisible() )
         {
             showAction->setText( i18n("Hide Mixer Window") );
         }

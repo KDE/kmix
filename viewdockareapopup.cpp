@@ -53,11 +53,9 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _layoutMDW->setMargin(0);
     _layoutMDW->setObjectName( "KmixPopupLayout" );
     setMixSet();
-    //_guiprof->increaseRefcount();
 }
 
 ViewDockAreaPopup::~ViewDockAreaPopup() {
-    //_guiprof->decreaseRefcount();
 }
 
 
