@@ -63,6 +63,7 @@ static const int MIN_SLIDER_SIZE = 50;
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
 MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
+		     bool includePlayback, bool includeCapture, 
                      bool small, Qt::Orientation orientation, QWidget* parent, ViewBase* mw) :
 	MixDeviceWidget(md,small,orientation,parent,mw),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
@@ -104,7 +105,7 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 	connect( action, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
 
 	// create widgets
-	createWidgets( showMuteLED, showCaptureLED );
+	createWidgets( showMuteLED, showCaptureLED, includePlayback, includeCapture );
 
 	// The following actions are for the "Configure Shortcuts" dialog
 	/* PLEASE NOTE THAT global shortcuts are saved with the name as set with setName(), instead of their action name.
@@ -251,11 +252,13 @@ void MDWSlider::setCaptureLEDSpace(bool value)
 /**
  * Creates all widgets : Icon, Label, Mute-Button, Slider(s) and Capture-Button.
  */
-void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
+void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool includePlayback, bool includeCapture )
 {
-	bool hasVolumeSliders =  ( m_mixdevice->playbackVolume().count() + m_mixdevice->captureVolume().count() > 0 );
-	bool bothCaptureANDPlaybackExist = ( m_mixdevice->playbackVolume().count() > 0 && m_mixdevice->captureVolume().count() > 0 );
-
+    bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
+    bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->playbackVolume().count() > 0 );
+	bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
+	bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
+	
 	// case of vertical sliders:
 	if ( _orientation == Qt::Vertical )
 	{
@@ -305,9 +308,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 
 		if ( hasVolumeSliders )
 		{
-			if ( m_mixdevice->playbackVolume().count() > 0 )
+			if ( wantsPlaybackSliders )
 				addSliders( volLayout, 'p', false );
-			if ( m_mixdevice->captureVolume().count() > 0 )
+			if ( wantsCaptureSliders )
 				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
 			controlLayout->addSpacing( 3 );
 		} else {

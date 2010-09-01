@@ -154,7 +154,9 @@ bool Mixer::openIfValid() {
         connect( _mixerBackend, SIGNAL(controlsReconfigured(const QString&)), SLOT(controlsReconfiguredForwarder(const QString&)) );
         
         m_dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
-        QDBusConnection::sessionBus().registerObject(m_dbusName, this);
+	kDebug() << "Registering DBUS object " << m_dbusName;
+        bool regResult = QDBusConnection::sessionBus().registerObject(m_dbusName, this);
+	kDebug() << "Registering DBUS object " << m_dbusName << " returns " << regResult;
     }
 
     return ok;

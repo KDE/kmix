@@ -1,4 +1,3 @@
-
 /*
  * KMix -- KDE's full featured mini mixer
  *
