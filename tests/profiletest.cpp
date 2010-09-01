@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 		fileName = dummyFilename;
 	}
 		
-	bool ok = guiprof->readProfile(fileName, fileName);
+	bool ok = guiprof->readProfile(fileName);
 	if ( !ok ) {
 		std::cerr << "Error: GuiProfile '" << qPrintable(fileName) << "' is NOT ok" << std::endl;
 	}
