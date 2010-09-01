@@ -123,10 +123,8 @@ void ViewBase::createDeviceWidgets()
     constructionFinished();
 }
 
-/*
+/**
  * Rebuild the View from the (existing) Profile.
- *
- * Hint: this method signature might be extended in the future by a GUIProfile* paramater.
  */
 void ViewBase::rebuildFromProfile()
 {

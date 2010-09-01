@@ -562,7 +562,7 @@ int Mixer::volume( const QString& mixdeviceID )
   //     volume > 0 => use maxVolume for volumeRange
   //     If chosen volumeRange==0 => return 0
   // As this is potentially used often (Sliders, ...), it
-  // should beimplemented in the Volume class.
+  // should be implemented in the Volume class.
 
   // For now we go with "maxVolume()", like in the rest of KMix.
   long volumeRange = vol.maxVolume(); // -vol.minVolume() ;
