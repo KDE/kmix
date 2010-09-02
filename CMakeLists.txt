@@ -1,9 +1,6 @@
 project(kmix)
 
 # search packages used by KDE
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
-include(MacroLibrary)
 find_package(Alsa)
 
 set(PULSEAUDIO_MINIMUM_VERSION "0.9.12")
