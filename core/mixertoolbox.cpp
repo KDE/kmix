@@ -217,7 +217,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
 
 }
 
-bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
+bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
     if ( mixer->openIfValid() )
     {
@@ -250,12 +250,12 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 
 /* This allows to set an expression form Mixers that should be ignored.
   The default is "Modem", because most people don't want to control the modem volume. */
-void MixerToolBox::setMixerIgnoreExpression(QString& ignoreExpr)
+void MixerToolBox::setMixerIgnoreExpression(const QString& ignoreExpr)
 {
     s_ignoreMixerExpression.setPattern(ignoreExpr);
 }
 
-QString MixerToolBox::mixerIgnoreExpression()
+QString MixerToolBox::mixerIgnoreExpression() const 
 {
      return s_ignoreMixerExpression.pattern( );
 }

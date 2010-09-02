@@ -46,8 +46,8 @@ class MixerToolBox : public QObject
       void deinitMixer();
       bool possiblyAddMixer(Mixer *mixer);
       void removeMixer(Mixer *mixer);
-      void setMixerIgnoreExpression(QString& ignoreExpr);
-      QString mixerIgnoreExpression();
+      void setMixerIgnoreExpression(const QString& ignoreExpr);
+      QString mixerIgnoreExpression() const;
       
       //static KLocale* whatsthisControlLocale();
       
