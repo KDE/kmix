@@ -209,7 +209,7 @@ void gradient( QPainter &p, bool hor, const QRect &rect, const QColor &ca, const
    }
 }
 
-QColor interpolate( QColor low, QColor high, int percent ) {
+QColor interpolate( const QColor& low, const QColor& high, int percent ) {
     if ( percent<=0 ) return low; else
     if ( percent>=100 ) return high; else
     return QColor(
