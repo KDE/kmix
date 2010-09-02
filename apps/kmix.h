@@ -89,7 +89,7 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void recreateGUI(bool saveView);
-   void recreateGUI(bool saveConfig, QString mixerId, bool forceNewTab);
+   void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
    void recreateGUIwithSavingView();
    void recreateGUIwithoutSavingView();
    void redrawMixer( const QString& mixer_ID );

@@ -470,7 +470,7 @@ void KMixWindow::recreateGUI(bool saveConfig)
  * @param forceNewTab To enforce opening a new tab, even when the profileList in the kmixrc is empty.
  *                    It should only be set to "true" in case of a Hotplug (because then the user definitely expects a new Tab to show).
  */
-void KMixWindow::recreateGUI(bool saveConfig, QString mixerId, bool forceNewTab)
+void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab)
 {
     // -1- Find out which of the tabs is currently selected for restoration
     int current_tab = -1;
