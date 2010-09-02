@@ -1091,7 +1091,7 @@ void KMixWindow::errorPopup(QString msg)
 {
     KDialog* dialog = new KDialog(this);
     dialog->setButtons(KDialog::Ok);
-    dialog->setCaption("Error");
+    dialog->setCaption(i18n("Error"));
     QLabel* qlbl = new QLabel(msg);
     dialog->setMainWidget(qlbl);
     dialog->exec();
