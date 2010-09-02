@@ -25,7 +25,6 @@
 class Mixer;
 class MixSet;
 #include "core/mixdevice.h"
-class ProfControl;
 #include "core/volume.h"
 
 // KDE

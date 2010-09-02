@@ -40,7 +40,6 @@ class KMenu;
 
 class MixDevice;
 class VerticalText;
-class Mixer;
 class ViewBase;
 
 #include "gui/mixdevicewidget.h"

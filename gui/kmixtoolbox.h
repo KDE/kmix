@@ -24,9 +24,7 @@
 #include "qlist.h"
 #include "qwidget.h"
 
-class ViewBase;
 
-class KConfig;
 
 /**
  * This toolbox contains various static methods that are shared throughout KMix.

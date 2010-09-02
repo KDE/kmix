@@ -28,7 +28,6 @@
 #include <QString>
 #include <QtDBus/QtDBus> 
 
-class QLabel;
 #include <qlist.h>
 #include <QTimer>
 
@@ -42,7 +41,6 @@ class KAction;
 //class KMixPrefDlg;
 //class KMixDockWidget;
 //class KMixWindow;
-class Mixer;
 //class ViewDockAreaPopup;
 #include "core/mixer.h"
 

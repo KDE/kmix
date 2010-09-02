@@ -28,7 +28,6 @@
 
 // KMix
 class MixDevice;
-class Mixer;
 class ViewBase;
 
 // KDE

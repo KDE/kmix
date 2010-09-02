@@ -35,7 +35,6 @@ class KActionCollection;
 class KShortcutsDialog;
 
 class MixDevice;
-class Mixer;
 class ProfControl;
 class ViewBase;
 

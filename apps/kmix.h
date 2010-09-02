@@ -40,7 +40,6 @@ class KAction;
 
 // KMix
 class GUIProfile;
-class ProfTab;
 class KMixPrefDlg;
 class KMixDockWidget;
 class KMixerWidget;

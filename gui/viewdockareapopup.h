@@ -23,15 +23,11 @@
 
 #include "viewbase.h"
 
-class QMouseEvent;
-class QFrame;
 class QGridLayout;
 class QPushButton;
-class QTime;
 class QWidget;
 
 class Mixer;
-class MixDeviceWidget;
 class MixDevice;
 class KMixWindow;
 

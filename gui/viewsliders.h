@@ -28,7 +28,6 @@ class QBoxLayout;
 class QWidget;
 
 class Mixer;
-class ProfControl;
 #include "viewbase.h"
 
 class ViewSliders : public ViewBase
