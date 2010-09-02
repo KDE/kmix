@@ -1087,7 +1087,7 @@ void KMixWindow::forkExec(QStringList& args)
 
 }
 
-void KMixWindow::errorPopup(QString msg)
+void KMixWindow::errorPopup(const QString& msg)
 {
     KDialog* dialog = new KDialog(this);
     dialog->setButtons(KDialog::Ok);
@@ -1095,6 +1095,7 @@ void KMixWindow::errorPopup(QString msg)
     QLabel* qlbl = new QLabel(msg);
     dialog->setMainWidget(qlbl);
     dialog->exec();
+    delete dialog;
     kWarning() << msg;
 }
 
