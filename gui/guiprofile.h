@@ -128,16 +128,16 @@ class GUIProfile
     GUIProfile();
     virtual ~GUIProfile();
 
-    bool readProfile(QString& ref_fileNamestring);
-    bool finalizeProfile();
+    bool readProfile(const QString& ref_fileNamestring);
+    bool finalizeProfile() const;
     bool writeProfile();
     
-    bool isDirty();
+    bool isDirty() const;
     void setDirty();
     
-    void setId(QString id);
-    QString getId();
-    QString getMixerId() { return _mixerId; }
+    void setId(const QString& id);
+    QString getId() const;
+    QString getMixerId() const { return _mixerId; }
     
     static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }
     

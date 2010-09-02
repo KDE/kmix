@@ -85,17 +85,17 @@ GUIProfile::~GUIProfile()
 }
 
 
-void GUIProfile::setId(QString id)
+void GUIProfile::setId(const QString& id)
 {
     _id = id;
 }
 
-QString GUIProfile::getId()
+QString GUIProfile::getId() const
 {
     return _id;
 }
 
-bool GUIProfile::isDirty() {
+bool GUIProfile::isDirty()  const {
     return _dirty;
 }
 
@@ -286,7 +286,7 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
  * @par  ref_fileName: Full qualified filename (with path).
  * @return bool True, if the profile was succesfully created. False if not (e.g. parsing error).
  */
-bool GUIProfile::readProfile(QString& ref_fileName)
+bool GUIProfile::readProfile(const QString& ref_fileName)
 {
     QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
     kDebug() << "Read profile:" << ref_fileName ;
@@ -336,7 +336,7 @@ bool GUIProfile::writeProfile()
 }
 
 /** This is now empty. It can be removed */
-bool GUIProfile::finalizeProfile()
+bool GUIProfile::finalizeProfile() const
 {
     bool ok = true;
     return ok;
