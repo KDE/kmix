@@ -335,8 +335,8 @@ void KMixWindow::saveViewConfig()
 
     // -2- Save Meta-Information (which views, and in which order). views-per-mixer list
     KConfigGroup pconfig(KGlobal::config(), "Profiles");
-    QMap<QString, QStringList>::const_iterator itEnd = mixerViews.end();
-    for ( QMap<QString, QStringList>::const_iterator it=mixerViews.begin(); it != itEnd; ++it )
+    QMap<QString, QStringList>::const_iterator itEnd = mixerViews.constEnd();
+    for ( QMap<QString, QStringList>::const_iterator it=mixerViews.constBegin(); it != itEnd; ++it )
     {
         const QString& mixerProfileKey = it.key();   // this is actually some mixer->id()
         const QStringList& qslProfiles = it.value();
