@@ -598,7 +598,7 @@ void KMixWindow::recreateGUI(bool saveConfig, QString mixerId, bool forceNewTab)
 
 }
 
-KMixerWidget* KMixWindow::findKMWforTab( QString kmwId )
+KMixerWidget* KMixWindow::findKMWforTab( const QString& kmwId )
 {
     KMixerWidget* kmw = 0;
     for (int i=0; i< m_wsMixers->count(); ++i)
@@ -1072,7 +1072,7 @@ void KMixWindow::slotKdeAudioSetupExec()
     forkExec(args);
 }
 
-void KMixWindow::forkExec(QStringList& args)
+void KMixWindow::forkExec(const QStringList& args)
 {
     int pid = KProcess::startDetached(args);
     if ( pid == 0 ) {

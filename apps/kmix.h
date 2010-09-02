@@ -96,9 +96,9 @@ KMixWindow : public KXmlGuiWindow
    void newMixerShown(int tabIndex);
 
     private:
-        KMixerWidget* findKMWforTab( QString tabId );
+        KMixerWidget* findKMWforTab( const QString& tabId );
 
-        void forkExec(QStringList& args);
+        void forkExec(const QStringList& args);
         void errorPopup(const QString& msg);
 
    KAccel *m_keyAccel;
