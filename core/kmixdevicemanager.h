@@ -30,9 +30,9 @@ class KMixDeviceManager : public QObject
     public:
         static KMixDeviceManager* instance();
         void initHotplug();
-        void setHotpluggingBackends(QString& backendName) { _hotpluggingBackend = backendName; } ;
+        void setHotpluggingBackends(const QString& backendName) { _hotpluggingBackend = backendName; } ;
         QString getUDI_ALSA(int num);
-        QString getUDI_OSS(QString& devname);
+        QString getUDI_OSS(const QString& devname);
 
     signals:
         void plugged( const char* driverName, const QString& udi, QString& dev);

@@ -88,7 +88,7 @@ QString KMixDeviceManager::getUDI_ALSA(int num)
     return udi;
 }
 
-QString KMixDeviceManager::getUDI_OSS(QString& devname)
+QString KMixDeviceManager::getUDI_OSS(const QString& devname)
 {
     QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
 
