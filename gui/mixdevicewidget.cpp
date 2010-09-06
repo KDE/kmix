@@ -55,7 +55,7 @@
 MixDeviceWidget::MixDeviceWidget(MixDevice* md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
-   QWidget( parent ), m_mixdevice( md ), m_view( view ), pctl(par_pctl),
+   QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),
    m_disabled( false ), _orientation( orientation ), m_small( small )
    , m_shortcutsDialog(0)
 {

@@ -64,9 +64,9 @@ static const int MIN_SLIDER_SIZE = 50;
 MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
         bool small, Qt::Orientation orientation, QWidget* parent
         , ViewBase* view
-        , ProfControl* par_pctl
+        , ProfControl* par_ctl
         ) :
-	MixDeviceWidget(md,small,orientation,parent,view, par_pctl),
+	MixDeviceWidget(md,small,orientation,parent,view, par_ctl),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
@@ -266,12 +266,12 @@ void MDWSlider::setCaptureLEDSpace(bool value)
  */
 void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 {
-    bool includePlayback = pctl->useSubcontrolPlayback();
-    bool includeCapture = pctl->useSubcontrolCapture();
+    bool includePlayback = _pctl->useSubcontrolPlayback();
+    bool includeCapture = _pctl->useSubcontrolCapture();
     bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
     bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
-	bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
-	bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
+      bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
+      bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
 	
 	// case of vertical sliders:
 	if ( _orientation == Qt::Vertical )
@@ -456,6 +456,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		muteButtonSpacer->installEventFilter(this);
 	}
 
+	bool stereoLinked = !_pctl->isSplit();
+	setStereoLinked( stereoLinked );
+	
 	layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
 }
 
@@ -524,8 +527,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 				else {
 					sliderBig->setMinimumWidth( MIN_SLIDER_SIZE );
 				}
-				if ( ! pctl->getBackgroundColor().isEmpty() ) {
-				    QString bcolor(pctl->getBackgroundColor());
+				if ( ! _pctl->getBackgroundColor().isEmpty() ) {
+				    QString bcolor(_pctl->getBackgroundColor());
 				    QColor qcol(bcolor);
 				    QPalette qpal = sliderBig->palette();
 				    qpal.setColor(QPalette::Window, qcol);

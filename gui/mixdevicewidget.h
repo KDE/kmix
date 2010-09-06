@@ -81,7 +81,7 @@ protected:
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
-      ProfControl*         pctl;
+      ProfControl*         _pctl;
       bool                 m_disabled;
       Qt::Orientation      _orientation;
       bool                 m_small;

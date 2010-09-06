@@ -97,6 +97,12 @@ public:
     {
         this->_mandatory = _mandatory;
     }
+    void setSplit ( bool split ) {
+      _split = split;
+    }
+    bool isSplit() const { 
+      return _split;
+    }
 
 private:
     // The following are the deserialized values of _subcontrols
@@ -114,6 +120,7 @@ private:
     bool _mandatory; // A mandatory control must be included in all GUIProfile copies
 
     ProfControlPrivate *d;
+    bool _split; // true if this widget is to show two sliders
 };
 
 

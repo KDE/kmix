@@ -35,6 +35,7 @@
 
 // KMix
 #include "core/mixer.h"
+#include <QtCore/qstring.h>
 
 QMap<QString, GUIProfile*> GUIProfile::s_profiles;
 
@@ -151,6 +152,7 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
  *                    A special case is "", which means that a card specific name should be generated.
  * @arg allowFallback If set to true, a Fallback profile will be generated if no matching profile could be found
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
+ * FIXME: redocument this methods parameters
  */
 GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
 {
@@ -461,12 +463,15 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 	{
 		os << "<control id=\"" << xmlify(profControl->id).toUtf8().constData() << "\"" ;
 		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
-		 	os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
+		  os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
 		}
 		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
 		os << " show=\"" << xmlify(profControl->show).toUtf8().constData() << "\"" ;
 		if ( profControl->isMandatory() ) {
-		    os << " mandatory=\"true\"";
+		  os << " mandatory=\"true\"";
+		}
+		if ( profControl->isSplit() ) {
+		  os << " split=\"true\"";
 		}
 		os << " />" << endl;
 	} // for all controls
@@ -511,22 +516,27 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
 		}
 		os << "  Subcontrols=" << profControl->renderSubcontrols().toUtf8().constData() << std::endl;
-        if ( profControl->isMandatory() ) {
-            os << " mandatory=\"true\"" << std::endl;
-        }
+		if ( profControl->isMandatory() ) {
+		    os << " mandatory=\"true\"" << std::endl;
+		}
+		if ( profControl->isSplit() ) {
+		    os << " split=\"true\"" << std::endl;
+		}
 	} // for all controls
 
 	return os;
 }
 
-ProfControl::ProfControl(QString& id, QString& subcontrols ){
+ProfControl::ProfControl(QString& id, QString& subcontrols ) :
+	  _mandatory(false), _split(false) {
     d = new ProfControlPrivate();
     this->show = "simple";
     this->id = id;
     setSubcontrols(subcontrols);
 }
 
-ProfControl::ProfControl(const ProfControl &profControl){
+ProfControl::ProfControl(const ProfControl &profControl) :
+	  _mandatory(false), _split(false) {
     d = new ProfControlPrivate();
     id = profControl.id;
     name = profControl.name;
@@ -543,6 +553,7 @@ ProfControl::ProfControl(const ProfControl &profControl){
     backgroundColor = profControl.backgroundColor;
     switchtype = profControl.switchtype;
     _mandatory = profControl._mandatory;
+    _split = profControl._split;
 }
 
 ProfControl::~ProfControl() {
@@ -745,17 +756,18 @@ void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
 }
 
 void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
-	/*
-	std::cout  << "Control: ";
-	printAttributes(attributes);
-	*/
-	QString id = attributes.value("id");
+    /*
+    std::cout  << "Control: ";
+    printAttributes(attributes);
+    */
+    QString id = attributes.value("id");
     QString subcontrols = attributes.value("subcontrols");
-	QString name = attributes.value("name");
-	QString show = attributes.value("show");
-	QString background = attributes.value("background");
-	QString switchtype = attributes.value("switchtype");
+    QString name = attributes.value("name");
+    QString show = attributes.value("show");
+    QString background = attributes.value("background");
+    QString switchtype = attributes.value("switchtype");
     QString mandatory = attributes.value("mandatory");
+    QString split = attributes.value("split");
     bool isMandatory = false;
 
     if ( !id.isNull() ) {
@@ -779,13 +791,17 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
         ProfControl *profControl = new ProfControl(id, subcontrols);
         if ( show.isNull() ) { show = "*"; }
 
-		profControl->name = name;
-		profControl->show = show;
-		profControl->setBackgroundColor( background );
-		profControl->setSwitchtype(switchtype);
-		profControl->setMandatory(isMandatory);
-		_guiProfile->getControls().push_back(profControl);
-	} // id != null
+	profControl->name = name;
+	profControl->show = show;
+	profControl->setBackgroundColor( background );
+	profControl->setSwitchtype(switchtype);
+	profControl->setMandatory(isMandatory);
+	
+        if ( !split.isNull() && split=="true") {
+	    profControl->setSplit(true);
+	}
+	_guiProfile->getControls().push_back(profControl);
+  } // id != null
 }
 
 void GUIProfileParser::printAttributes(const QXmlAttributes& attributes) {

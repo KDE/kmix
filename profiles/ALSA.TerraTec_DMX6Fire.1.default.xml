@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<soundcard driver="ALSA" version = "0:0"
+ name = "*"
+ type = "*"
+ generation = "2"
+>
+
+<profile id="ALSA.TerraTec_DMX6Fire.1.default" name="TerraTec DMX6Fire"/>
+<product vendor="Any Vendor" name="Generic Soundcard" />
+
+<control id="^DAC:0$" subcontrols="*" show="simple" />
+<control id="^ADC:0$" subcontrols="*" show="simple" />
+<control id="^Multi:0$" subcontrols="*" show="simple" name="PCM1 L" split="true" />
+<control id="^Multi:1$" subcontrols="*" show="simple" name="PCM1 R" split="true"  />
+<control id="^Multi:2$" subcontrols="*" show="simple" name="PCM2 L" split="true" />
+<control id="^Multi:3$" subcontrols="*" show="simple" name="PCM2 R" split="true" />
+<control id="^Multi:4$" subcontrols="*" show="simple" name="PCM3 L" split="true" />
+<control id="^Multi:5$" subcontrols="*" show="simple" name="PCM3 R" split="true" />
+<control id="^Multi:6$" subcontrols="*" show="simple" name="PCM4 L" split="true" />
+<control id="^Multi:7$" subcontrols="*" show="simple" name="PCM4 R" split="true" />
+<control id="^Multi:8$" subcontrols="*" show="simple" name="PCM5 L" split="true" />
+<control id="^Multi:9$" subcontrols="*" show="simple" name="PCM5 R" split="true" />
+<control id="^IEC958:0$" subcontrols="*" show="extended" />
+<control id="^IEC958:1$" subcontrols="*" show="extended" />
+<control id="^ADC:1$" subcontrols="*" show="extended" />
+<control id="^ADC:2$" subcontrols="*" show="extended" />
+<control id="^ADC:3$" subcontrols="*" show="extended" />
+<control id="^ADC:4$" subcontrols="*" show="extended" />
+<control id="^ADC:5$" subcontrols="*" show="extended" />
+<control id="^Analog_Input_Select:0$" subcontrols="*" show="extended" />
+<control id="^DAC:1$" subcontrols="*" show="extended" />
+<control id="^DAC:2$" subcontrols="*" show="extended" />
+<control id="^DAC:3$" subcontrols="*" show="extended" />
+<control id="^DAC:4$" subcontrols="*" show="extended" />
+<control id="^DAC:5$" subcontrols="*" show="extended" />
+<control id="^Deemphasis:0$" subcontrols="*" show="extended" />
+<control id="^Deemphasis:1$" subcontrols="*" show="extended" />
+<control id="^Deemphasis:2$" subcontrols="*" show="extended" />
+<control id="^H/W:0$" subcontrols="*" show="extended" />
+<control id="^H/W:1$" subcontrols="*" show="extended" />
+<control id="^H/W:2$" subcontrols="*" show="extended" />
+<control id="^H/W:3$" subcontrols="*" show="extended" />
+<control id="^H/W:4$" subcontrols="*" show="extended" />
+<control id="^H/W:5$" subcontrols="*" show="extended" />
+<control id="^IEC958_Multi:0$" subcontrols="*" show="simple" name="Digital In L" split="true" />
+<control id="^IEC958_Multi:1$" subcontrols="*" show="simple" name="Digital In R" split="true" />
+<control id="^H/W_Multi:0$" subcontrols="*" show="simple" name="CD In L" split="true" />
+<control id="^H/W_Multi:1$" subcontrols="*" show="simple" name="CD In R" split="true" />
+<control id="^H/W_Multi:2$" subcontrols="*" show="simple" name="Line In L" split="true" />
+<control id="^H/W_Multi:3$" subcontrols="*" show="simple" name="Line In R" split="true" />
+<control id="^H/W_Multi:4$" subcontrols="*" show="simple" name="Phono/Mic L" split="true" />
+<control id="^H/W_Multi:5$" subcontrols="*" show="simple" name="Phone/Mic R" split="true"/>
+<control id="^Multi_Track_Internal_Clock:0$" subcontrols="*" show="extended" />
+<control id="^Multi_Track_Internal_Clock_Default:0$" subcontrols="*" show="extended" />
+<control id="^Multi_Track_Volume_Rate:0$" subcontrols="*" show="extended" />
+<control id="^.*$" subcontrols="*" show="full" mandatory="true" />
+
+</soundcard>

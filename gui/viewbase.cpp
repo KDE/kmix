@@ -329,7 +329,7 @@ void ViewBase::load(KConfig *config)
          if ( mdw->inherits("MDWSlider") )
          {
             // only sliders have the ability to split apart in mutliple channels
-            bool splitChannels = devcg.readEntry("Split", false);
+            bool splitChannels = devcg.readEntry("Split", !mdw->isStereoLinked());
             mdw->setStereoLinked( !splitChannels );
          }
 
