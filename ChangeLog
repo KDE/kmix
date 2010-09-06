@@ -30,3 +30,5 @@ v3.6
 
 i001: When the user redefines the automatially grabbed XF86Volume* keys, he doesn't have an easy possibilty to get them back, because they are now marked as "no shortcut" in the global shortcut registry. The user must go the KDE system settings module "global shortcuts" and reset them to their default. No user will wfind that!!! So this should be possible inside KMix (ShortcutsDialog or a button "reset volume keys" in the configuration dialog).
 
+v3.8
+- Feature : KMix has now a profile for TerraTec DMX6Fire cards and is able to handle it's weird volume controls
