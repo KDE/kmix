@@ -47,7 +47,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
     _layoutMDW->setMargin(0);
-    _layoutMDW->setObjectName( "KmixPopupLayout" );
+    _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
     setMixSet();
 }
 
@@ -129,7 +129,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
 
    // Add button to show main panel
    _showPanelBox = new QPushButton( i18n("Mixer"), this );
-   _showPanelBox->setObjectName("MixerPanel");
+   _showPanelBox->setObjectName( QLatin1String("MixerPanel" ));
    connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
    _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
 

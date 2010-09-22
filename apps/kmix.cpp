@@ -80,7 +80,7 @@ KMixWindow::KMixWindow(bool invisible)
 {
     _cornerLabelNew = 0;
 
-    setObjectName("KMixWindow");
+    setObjectName( QLatin1String("KMixWindow" ));
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
 
@@ -203,7 +203,7 @@ void KMixWindow::initWidgets()
 
     // Widgets layout
     m_widgetsLayout = new QVBoxLayout(   centralWidget()   );
-    m_widgetsLayout->setObjectName(   "m_widgetsLayout"   );
+    m_widgetsLayout->setObjectName( QLatin1String(   "m_widgetsLayout" )   );
     m_widgetsLayout->setSpacing(   0   );
     m_widgetsLayout->setMargin (   0   );
 

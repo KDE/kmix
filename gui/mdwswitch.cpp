@@ -119,7 +119,7 @@
 //         _switchLED = new QCheckBox( Qt::yellow, KLed::On, KLed::Sunken, KLed::Circular, this, "SwitchLED" );
 //         _switchLED->setFixedSize(16,16);
 //         _label  = new QLabel(m_mixdevice->readableName(), this );
-//         _label->setObjectName("SwitchName");
+//         _label->setObjectName( QLatin1String("SwitchName" ));
 //
 //         _layout->addWidget( _switchLED );
 //         _layout->addSpacing( 1 );

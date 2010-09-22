@@ -90,7 +90,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
    m_dontSetDefaultCardOnStart (false)
 {
-    setObjectName("KMixD");
+    setObjectName( QLatin1String("KMixD" ));
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     //setAttribute(Qt::WA_DeleteOnClose, false);
 

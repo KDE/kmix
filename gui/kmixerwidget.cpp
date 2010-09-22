@@ -101,7 +101,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    // create main layout
    m_topLayout = new QVBoxLayout( this );
    m_topLayout->setSpacing( 3 );
-   m_topLayout->setObjectName( "m_topLayout" );
+   m_topLayout->setObjectName( QLatin1String( "m_topLayout" ) );
 
    /*******************************************************************
    *  Now the main GUI is created.
