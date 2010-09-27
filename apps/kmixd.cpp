@@ -97,7 +97,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
    //initActionsLate(); // init actions that require a loaded config
-   //KGlobal::locale()->insertCatalog("kmix-controls");
+   //KGlobal::locale()->insertCatalog( QLatin1String( "kmix-controls" ));
    //initWidgets();
    //initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);

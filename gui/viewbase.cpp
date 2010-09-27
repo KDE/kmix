@@ -171,7 +171,7 @@ void ViewBase::popupReset()
     QAction *a;
 
     _popMenu = new KMenu( this );
-    _popMenu->addTitle( KIcon( "kmix" ), i18n("Device Settings") );
+    _popMenu->addTitle( KIcon( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
 
     a = _localActionColletion->action( "toggle_channels" );
     if ( a ) _popMenu->addAction(a);

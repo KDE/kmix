@@ -71,10 +71,10 @@ OSDWidget::OSDWidget(QWidget * parent)
         m_volumeMutedPixmap = svgIcon->pixmap("audio-volume-muted");
     } else {
         iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        m_volumeHighPixmap = KIcon("audio-volume-high").pixmap(iconSize);
-        m_volumeMediumPixmap = KIcon("audio-volume-medium").pixmap(iconSize);
-        m_volumeLowPixmap = KIcon("audio-volume-low").pixmap(iconSize);
-        m_volumeMutedPixmap = KIcon("audio-volume-muted").pixmap(iconSize);
+        m_volumeHighPixmap = KIcon( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
+        m_volumeMediumPixmap = KIcon( QLatin1String( "audio-volume-medium" )).pixmap(iconSize);
+        m_volumeLowPixmap = KIcon( QLatin1String( "audio-volume-low" )).pixmap(iconSize);
+        m_volumeMutedPixmap = KIcon( QLatin1String( "audio-volume-muted" )).pixmap(iconSize);
     }
 
     //Setup the widgets

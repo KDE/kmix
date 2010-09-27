@@ -181,7 +181,7 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 			ref = ref.toUpper();
 		}
 	}
-	name = classes.join( " ");
+	name = classes.join( QLatin1String(  " " ));
 	return cType;
 }
 
