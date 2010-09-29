@@ -36,7 +36,7 @@
 
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
-QRegExp MixerToolBox::s_ignoreMixerExpression("Modem");
+QRegExp MixerToolBox::s_ignoreMixerExpression( QLatin1String( "Modem" ));
 //KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
 /***********************************************************************************

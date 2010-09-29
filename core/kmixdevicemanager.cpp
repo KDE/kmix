@@ -126,7 +126,7 @@ void KMixDeviceManager::pluggedSlot(const QString& udi) {
    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
    if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
        QString dev;
-       QRegExp devExpr("^\\D+(\\d+)$");
+       QRegExp devExpr( QLatin1String( "^\\D+(\\d+)$" ));
         switch (audiohw->driver()) {
            case Solid::AudioInterface::Alsa:
                if ( _hotpluggingBackend == "ALSA" || _hotpluggingBackend == "*" ) {

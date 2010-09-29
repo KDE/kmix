@@ -73,7 +73,7 @@ void Mixer_OSS4::setRecsrcHW(const QString& id, bool on)
 MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 {
 	MixDevice::ChannelType cType = MixDevice::UNKNOWN;
-	QStringList classes = name.split (QRegExp( "[-,.]" ));
+	QStringList classes = name.split (QRegExp( QLatin1String(  "[-,.]" ) ));
 
 
 	if ( flags & MIXF_PCMVOL  ||

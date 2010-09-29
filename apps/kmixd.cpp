@@ -184,7 +184,7 @@ void KMixD::saveBaseConfig()
 void KMixD::saveVolumes()
 {
    kDebug() << "About to save config (Volume)";
-   KConfig *cfg = new KConfig( "kmixctrlrc" );
+   KConfig *cfg = new KConfig( QLatin1String(  "kmixctrlrc" ) );
    for ( int i=0; i<Mixer::mixers().count(); ++i)
    {
       Mixer *mixer = (Mixer::mixers())[i];
@@ -235,7 +235,7 @@ void KMixD::loadBaseConfig()
 void
 KMixD::loadVolumes()
 {
-    KConfig *cfg = new KConfig( "kmixctrlrc", true );
+    KConfig *cfg = new KConfig( QLatin1String(  "kmixctrlrc" ), true );
     for ( int i=0; i<Mixer::mixers().count(); ++i)
     {
         Mixer *mixer = (Mixer::mixers())[i];
