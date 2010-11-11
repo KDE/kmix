@@ -193,7 +193,7 @@ soundcards.</para>-->
 </sect2>
 
 <sect2 id='Master_Channels'>
-<title>Select Master Channels</title>
+<title>Select Master Channel</title>
 <screenshot>
   <screeninfo>&kmix; Master Channel</screeninfo>
 	<mediaobject>
