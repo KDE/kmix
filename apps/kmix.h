@@ -123,7 +123,6 @@ KMixWindow : public KXmlGuiWindow
    QString m_hwInfoString;
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
-   QVBoxLayout *m_widgetsLayout;
    QLabel      *m_errorLabel;
    ViewDockAreaPopup *_dockAreaPopup;
    unsigned int m_configVersion;
@@ -133,6 +132,7 @@ KMixWindow : public KXmlGuiWindow
    OSDWidget* osdWidget;
 
    bool addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);
+   void setInitialSize();
 
   private slots:
    void saveConfig();

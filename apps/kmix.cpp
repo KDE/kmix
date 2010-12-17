@@ -95,6 +95,10 @@ KMixWindow::KMixWindow(bool invisible)
     initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
     recreateGUI(false);
+
+    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
+        setInitialSize();
+
     fixConfigAfterRead();
     theKMixDeviceManager->initHotplug();
     connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
@@ -198,16 +202,9 @@ void KMixWindow::initPrefDlg()
 
 void KMixWindow::initWidgets()
 {
-    // Main widget and layout
-    setCentralWidget( new QWidget( this ) );
-
-    // Widgets layout
-    m_widgetsLayout = new QVBoxLayout(   centralWidget()   );
-    m_widgetsLayout->setObjectName( QLatin1String(   "m_widgetsLayout" )   );
-    m_widgetsLayout->setSpacing(   0   );
-    m_widgetsLayout->setMargin (   0   );
-
-    m_wsMixers = new KTabWidget( centralWidget() );
+    m_wsMixers = new KTabWidget();
+    m_wsMixers->setDocumentMode(true);
+    setCentralWidget(m_wsMixers);
     m_wsMixers->setTabsClosable(true);
     connect (m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(saveAndCloseView(int)) );
 
@@ -220,12 +217,27 @@ void KMixWindow::initWidgets()
 
     connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
 
-    m_widgetsLayout->addWidget(m_wsMixers);
-
     // show menubar if the actions says so (or if the action does not exist)
     menuBar()->setVisible( (_actionShowMenubar==0) || _actionShowMenubar->isChecked());
+}
 
-    m_widgetsLayout->activate();
+
+void KMixWindow::setInitialSize()
+{
+    KConfigGroup config(KGlobal::config(), "Global");
+
+    // HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
+    // are disabled, so we disable them, get a decent sizehint and enable them
+    // back
+    m_wsMixers->setUsesScrollButtons(false);
+    QSize defSize = sizeHint();
+    m_wsMixers->setUsesScrollButtons(true);
+    QSize size = config.readEntry("Size", defSize );
+    if(!size.isEmpty()) resize(size);
+
+    QPoint defPos = pos();
+    QPoint pos = config.readEntry("Position", defPos);
+    move(pos);
 }
 
 
@@ -410,18 +422,6 @@ void KMixWindow::loadBaseConfig()
     bool showMenubar = config.readEntry("Menubar", true);
 
     if (_actionShowMenubar) _actionShowMenubar->setChecked( showMenubar );
-
-    // restore window size and position
-    if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
-    {
-        QSize defSize( minimumWidth(), height() );
-        QSize size = config.readEntry("Size", defSize );
-        if(!size.isEmpty()) resize(size);
-
-        QPoint defPos = pos();
-        QPoint pos = config.readEntry("Position", defPos);
-        move(pos);
-    }
 }
 
 /**

@@ -49,7 +49,6 @@
 #include "verticaltext.h"
 #include "mdwmoveaction.h"
 
-static const int MIN_SLIDER_SIZE = 50;
 
 /**
  * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
@@ -280,7 +279,6 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		controlLayout->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
 		setLayout(controlLayout);
         controlLayout->setContentsMargins(0,0,0,0);
-        controlLayout->setSpacing(0);
 
 		//add device icon
 		m_iconLabelSimple = 0L;
@@ -501,6 +499,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 
 	}
 
+	const int minSliderSize = fontMetrics().height() * 10;
 	for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
 		if ( vol._chmask & Volume::_channelMaskEnum[i] ) {
 			Volume::ChannelID chid = Volume::ChannelID(i);
@@ -522,10 +521,10 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 				sliderBig->setValue( maxvol - vol.getVolume( chid ) );
 
 				if ( _orientation == Qt::Vertical ) {
-					sliderBig->setMinimumHeight( MIN_SLIDER_SIZE );
+					sliderBig->setMinimumHeight( minSliderSize );
 				}
 				else {
-					sliderBig->setMinimumWidth( MIN_SLIDER_SIZE );
+					sliderBig->setMinimumWidth( minSliderSize );
 				}
 				if ( ! _pctl->getBackgroundColor().isEmpty() ) {
 				    QString bcolor(_pctl->getBackgroundColor());
