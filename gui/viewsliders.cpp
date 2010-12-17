@@ -62,19 +62,20 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 {
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
+      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QVBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
    }
    else
    {
       _layoutMDW = new QHBoxLayout(this);
+      _layoutMDW->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
       _layoutSliders = new QHBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
       // Place enums in an own box right from the sliders.
    }
    _layoutSliders->setContentsMargins(0,0,0,0);
    _layoutSliders->setSpacing(0);
-   _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
    _layoutMDW->setContentsMargins(0,0,0,0);
    _layoutMDW->setSpacing(0);
    _layoutMDW->addItem( _layoutSliders );
