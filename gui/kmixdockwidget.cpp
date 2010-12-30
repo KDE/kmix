@@ -89,6 +89,9 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 
         //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
     }
+    else {
+        _volWA = 0;
+    }
 }
 
 
