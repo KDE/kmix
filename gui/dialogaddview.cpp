@@ -229,9 +229,6 @@ void DialogAddView::apply()
          return; // can not happen
       }
       else {
-          //mixer->setLocalMasterMD( control_id );
-          //Mixer::setGlobalMaster(mixer->id(), control_id);
-          //emit newMasterSelected( mixer->id(), control_id );
           kDebug() << "We should now create a new view " << viewName << " for mixer " << mixer->id();
           resultMixerId = mixer->id();
           resultViewName = viewName;

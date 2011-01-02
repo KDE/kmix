@@ -12,6 +12,7 @@ set(profiletest_SRCS profiletest.cpp )
 
 kde4_add_executable(profiletest ${profiletest_SRCS} 
     ${CMAKE_CURRENT_SOURCE_DIR}/../gui/guiprofile.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../core/MasterControl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../core/mixer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../core/mixdevice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../core/volume.cpp

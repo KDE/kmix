@@ -223,7 +223,7 @@ void DialogSelectMaster::apply()
       }
       else {
           mixer->setLocalMasterMD( control_id );
-          Mixer::setGlobalMaster(mixer->id(), control_id);
+          Mixer::setGlobalMaster(mixer->id(), control_id, true);
           emit newMasterSelected( mixer->id(), control_id );
       }
    }

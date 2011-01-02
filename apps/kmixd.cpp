@@ -219,7 +219,7 @@ void KMixD::loadBaseConfig()
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
-      Mixer::setGlobalMaster(mixerMasterCard, masterDev);
+      Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
    //}
    QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
    MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
@@ -299,17 +299,20 @@ void KMixD::unplugged( const QString& udi)
             MixDevice* md = Mixer::getGlobalMasterMD();
             if ( globalMasterMixerDestroyed || md == 0 ) {
                 // We don't know what the global master should be now.
-                // So lets play stupid, and just select the recommendended master of the first device
+                // So lets play stupid, and just select the recommended master of the first device
                 if ( Mixer::mixers().count() > 0 ) {
-                    QString localMaster = ((Mixer::mixers())[0])->getLocalMasterMD()->id();
-                    Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster);
-                    
-                    QString text;
-                    text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.", 
-                            ((Mixer::mixers())[0])->getLocalMasterMD()->readableName(),
-                            ((Mixer::mixers())[0])->readableName()
-                                );
-//                    KMixToolBox::notification("MasterFallback", text);
+                    MixDevice *master = ((Mixer::mixers())[0])->getLocalMasterMD();
+                    if ( md != 0 ) {
+                        QString localMaster = master->id();
+                        Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster, false);
+
+                        QString text;
+                        text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
+                                master->readableName(),
+                                ((Mixer::mixers())[0])->readableName()
+                        );
+//                        KMixToolBox::notification("MasterFallback", text);
+                    }
                 }
             }
             if ( Mixer::mixers().count() == 0 ) {

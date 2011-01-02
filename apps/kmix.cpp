@@ -53,6 +53,7 @@
 
 // KMix
 #include "gui/guiprofile.h"
+#include "core/MasterControl.h"
 #include "core/mixertoolbox.h"
 #include "apps/kmix.h"
 #include "core/kmixdevicemanager.h"
@@ -300,13 +301,11 @@ void KMixWindow::saveBaseConfig()
     config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
     config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
     config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
-    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
-    if ( mixerMasterCard != 0 ) {
-        config.writeEntry( "MasterMixer", mixerMasterCard->id() );
-    }
-    MixDevice* mdMaster = Mixer::getGlobalMasterMD();
-    if ( mdMaster != 0 ) {
-        config.writeEntry( "MasterMixerDevice", mdMaster->id() );
+
+    MasterControl& master = Mixer::getGlobalMasterPreferred();
+    if ( master.isValid()) {
+        config.writeEntry( "MasterMixer", master.getCard() );
+        config.writeEntry( "MasterMixerDevice", master.getControl() );
     }
     QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
     config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
@@ -408,7 +407,7 @@ void KMixWindow::loadBaseConfig()
     QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
     QString masterDev = config.readEntry( "MasterMixerDevice", "" );
     //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
-    Mixer::setGlobalMaster(mixerMasterCard, masterDev);
+    Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
     //}
     QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
     MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
@@ -730,15 +729,15 @@ void KMixWindow::fixConfigAfterRead()
     } // if config version < 3
 }
 
-void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QString& dev)
+void KMixWindow::plugged( const char* driverName, const QString& udi, QString& dev)
 {
-    //     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
+    kDebug() << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
     QString driverNameString;
     driverNameString = driverName;
     int devNum = dev.toInt();
     Mixer *mixer = new Mixer( driverNameString, devNum );
     if ( mixer != 0 ) {
-        kDebug(67100) << "Plugged: dev=" << dev << "\n";
+        kDebug() << "Plugged: dev=" << dev << "\n";
         MixerToolBox::instance()->possiblyAddMixer(mixer);
         recreateGUI(true, mixer->id(), true);
     }
@@ -751,12 +750,12 @@ void KMixWindow::plugged( const char* driverName, const QString& /*udi*/, QStrin
 
 void KMixWindow::unplugged( const QString& udi)
 {
-    //     kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
+    kDebug() << "Unplugged: udi=" <<udi << "\n";
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
         //         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
         if (mixer->udi() == udi ) {
-            kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
+            kDebug() << "Unplugged Match: Removing udi=" <<udi << "\n";
             //KMixToolBox::notification("MasterFallback", "aaa");
             bool globalMasterMixerDestroyed = ( mixer == Mixer::getGlobalMasterMixer() );
             // Part 1) Remove Tab
@@ -774,17 +773,20 @@ void KMixWindow::unplugged( const QString& udi)
             MixDevice* md = Mixer::getGlobalMasterMD();
             if ( globalMasterMixerDestroyed || md == 0 ) {
                 // We don't know what the global master should be now.
-                // So lets play stupid, and just select the recommendended master of the first device
+                // So lets play stupid, and just select the recommended master of the first device
                 if ( Mixer::mixers().count() > 0 ) {
-                    QString localMaster = ((Mixer::mixers())[0])->getLocalMasterMD()->id();
-                    Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster);
+                    MixDevice *master = ((Mixer::mixers())[0])->getLocalMasterMD();
+                    if ( md != 0 ) {
+                        QString localMaster = master->id();
+                        Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster, false);
 
-                    QString text;
-                    text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.", 
-                            ((Mixer::mixers())[0])->getLocalMasterMD()->readableName(),
-                            ((Mixer::mixers())[0])->readableName()
-                    );
-                    KMixToolBox::notification("MasterFallback", text);
+                        QString text;
+                        text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
+                                master->readableName(),
+                                ((Mixer::mixers())[0])->readableName()
+                        );
+                        KMixToolBox::notification("MasterFallback", text);
+                    }
                 }
             }
             if ( Mixer::mixers().count() == 0 ) {

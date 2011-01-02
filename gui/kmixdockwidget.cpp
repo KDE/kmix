@@ -191,16 +191,6 @@ void KMixDockWidget::handleNewMaster(QString& /*mixerID*/, QString& /*control_id
       use deleteLater(), as we are executing in a SLOT currently.
     */
    _kmixMainWindow->updateDocking();
-/*
-    Mixer *mixer = MixerToolBox::instance()->find(mixerID);
-    if ( mixer == 0 ) {
-        kError(67100) << "KMixDockWidget::createPage(): Invalid Mixer (mixerID=" << mixerID << ")" << endl;
-        return; // can not happen
-   }
-   m_mixer = mixer;
-   //Mixer::setGlobalMaster(mixer->id(), control_id); // We must save this information "somewhere".
-   createMasterVolWidget();
-*/
 }
 
 

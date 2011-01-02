@@ -32,6 +32,7 @@
 
 #include "core/volume.h"
 class Mixer_Backend;
+#include "core/MasterControl.h"
 #include "mixset.h"
 #include "core/mixdevice.h"
 
@@ -123,11 +124,12 @@ public:
     different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
     At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
     ******************************************/
-    static void setGlobalMaster(QString& ref_card, QString& ref_control);
+    static void setGlobalMaster(QString ref_card, QString ref_control, bool preferred);
     static MixDevice* getGlobalMasterMD();
     static MixDevice* getGlobalMasterMD(bool fallbackAllowed);
     static Mixer* getGlobalMasterMixer();
     static Mixer* getGlobalMasterMixerNoFalback();
+    static MasterControl& getGlobalMasterPreferred();
 
     /******************************************
     The recommended master of this Mixer.
@@ -197,8 +199,8 @@ private:
     QString _id;
     QString _masterDevicePK;
     int    _cardInstance;
-    static QString _globalMasterCard;
-    static QString _globalMasterCardDevice;
+    static MasterControl _globalMasterCurrent;
+    static MasterControl _globalMasterPreferred;
 
     QString m_dbusName;
     bool m_dynamic;

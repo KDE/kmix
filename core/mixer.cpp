@@ -37,8 +37,8 @@
  */
 
 QList<Mixer *> Mixer::s_mixers;
-QString Mixer::_globalMasterCard;
-QString Mixer::_globalMasterCardDevice;
+MasterControl Mixer::_globalMasterCurrent;
+MasterControl Mixer::_globalMasterPreferred;
 
 
 int Mixer::numDrivers()
@@ -378,52 +378,73 @@ QString& Mixer::id()
 QString& Mixer::udi(){
     return _mixerBackend->udi();
 }
-void Mixer::setGlobalMaster(QString& ref_card, QString& ref_control)
+
+/**
+ * Set the global master, which is shown in the dock area and which is accesible via the
+ * DBUS masterVolume() method.
+ *
+ * The parameters are taken over as-is, this means without checking for validity.
+ * This allows the User to define a master card that is not always available
+ * (e.g. it is an USB hotplugging device). Also you can set the master at any time you
+ * like, e.g. after reading the KMix configuration file and before actually constructing
+ * the Mixer instances (hint: this method is static!).
+ *
+ * @param ref_card The card id
+ * @param ref_control The control id. The corresponding control must be present in the card.
+ * @param preferred Whether this is the preferred master (auto-selected on coldplug and hotplug).
+ */
+void Mixer::setGlobalMaster(QString ref_card, QString ref_control, bool preferred)
 {
-  // The value is taken over without checking on existence. This allows the User to define
-  // a MasterCard that is not always available (e.g. it is an USB hotplugging device).
-  // Also you can set the master at any time you like, e.g. after reading the KMix configuration file
-  // and before actually constructing the Mixer instances (hint: this mehtod is static!).
-  _globalMasterCard       = ref_card;
-  _globalMasterCardDevice = ref_control;
-  kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
+    kDebug() << "ref_card=" << ref_card << ", ref_control=" << ref_control << ", preferred=" << preferred;
+    _globalMasterCurrent.set(ref_card, ref_control);
+    if ( preferred )
+        _globalMasterPreferred.set(ref_card, ref_control);
+    kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
 }
 
 Mixer* Mixer::getGlobalMasterMixerNoFalback()
 {
-   Mixer *mixer = 0;
-   if(Mixer::mixers().count() == 0)
-      return mixer;
-
-   for (int i=0; i< Mixer::mixers().count(); ++i )
+   foreach ( Mixer* mixer, Mixer::mixers())
    {
-      Mixer* mixerTmp = Mixer::mixers()[i];
-      if ( mixerTmp != 0 && mixerTmp->id() == _globalMasterCard ) {
-         //kDebug() << "Mixer::masterCard() found " << _globalMasterCard;
-         mixer = mixerTmp;
-         break;
-      }
+      if ( mixer != 0 && mixer->id() == _globalMasterCurrent.getCard() )
+         return mixer;
    }
-   return mixer;
+   return 0;
 }
 
 Mixer* Mixer::getGlobalMasterMixer()
 {
    Mixer *mixer = getGlobalMasterMixerNoFalback();
    if ( mixer == 0 && Mixer::mixers().count() > 0 ) {
-      // produce fallback
-      mixer = Mixer::mixers()[0];
-      _globalMasterCard = mixer->id();
-      kDebug() << "Mixer::masterCard() fallback to  " << _globalMasterCard;
+      mixer = Mixer::mixers()[0];       // produce fallback
    }
    //kDebug() << "Mixer::masterCard() returns " << mixer->id();
    return mixer;
 }
 
+
+/**
+ * Return the preferred global master.
+ * If there is no preferred global master, returns the current master instead.
+ */
+MasterControl& Mixer::getGlobalMasterPreferred()
+{
+    if ( _globalMasterPreferred.isValid() ) {
+        kDebug() << "Returning preferred master";
+        return _globalMasterPreferred;
+    }
+    else {
+        kDebug() << "Returning current master";
+        return _globalMasterCurrent;
+    }
+}
+
+
 MixDevice* Mixer::getGlobalMasterMD()
 {
    return getGlobalMasterMD(true);
 }
+
 
 MixDevice* Mixer::getGlobalMasterMD(bool fallbackAllowed)
 {
@@ -437,7 +458,7 @@ MixDevice* Mixer::getGlobalMasterMD(bool fallbackAllowed)
       for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
       {
          md = mixer->_mixerBackend->m_mixDevices[i];
-         if ( md->id() == _globalMasterCardDevice ) {
+         if ( md->id() == _globalMasterCurrent.getControl() ) {
             //kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice;
             break;
          }

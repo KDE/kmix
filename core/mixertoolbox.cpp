@@ -177,8 +177,11 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
       // not one defined in the kmixrc.
       // So lets just set the first card as master card.
       if ( Mixer::mixers().count() > 0 ) {
-         QString controlId = Mixer::mixers().first()->getLocalMasterMD()->id();
-         Mixer::setGlobalMaster( Mixer::mixers().first()->id(), controlId);
+         MixDevice* master = Mixer::mixers().first()->getLocalMasterMD();
+         if ( master != 0 ) {
+             QString controlId = master->id();
+             Mixer::setGlobalMaster( Mixer::mixers().first()->id(), controlId, true);
+         }
       }
    }
    else {
