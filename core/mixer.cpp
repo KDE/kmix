@@ -338,8 +338,11 @@ void Mixer::setBalanceInternal(Volume& vol)
 // should return a name suitable for a human user to read (on a label, ...)
 QString Mixer::readableName()
 {
-  if ( _mixerBackend->m_mixerName.endsWith(":0"))
-     return _mixerBackend->m_mixerName.left(_mixerBackend->m_mixerName.length() - 2);
+  if ( _mixerBackend->m_mixerName.endsWith(":0")) {
+      QString finalName = _mixerBackend->m_mixerName.left(_mixerBackend->m_mixerName.length() - 2);
+      finalName = finalName.append(' ').arg(getCardInstance());
+      return finalName;
+  }
   else
      return _mixerBackend->m_mixerName;
 }
