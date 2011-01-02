@@ -67,7 +67,8 @@ class KMixDockWidget : public KStatusNotifierItem
    void toggleMinimizeRestore();
 
  private:
-   ViewDockAreaPopup *_referenceWidget;
+   //ViewDockAreaPopup *_referenceWidget;
+   KMenu *_referenceWidget;
    QWidgetAction *_volWA;
    Phonon::MediaObject *_audioPlayer;
    bool _playBeepOnVolumeChange;
@@ -77,6 +78,9 @@ class KMixDockWidget : public KStatusNotifierItem
    bool _volumePopup;
    KMixWindow* _kmixMainWindow;
    Mixer *m_mixer;
+
+   bool _contextMenuWasOpen;
+
 
  private slots:
    void dockMute();

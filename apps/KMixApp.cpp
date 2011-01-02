@@ -75,11 +75,12 @@ KMixApp::newInstance()
                         // starts it again, the KMix main window will be shown.
 			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
 			// explicitly be shown.
-			if ( !m_kmix ) {
-				m_kmix->show();
-			} else {
-				kWarning(67100) << "KMixApp::newInstance() Window has not finished constructing yet so ignoring the show() request.";
-			}
+			KUniqueApplication::newInstance();
+//			if ( !m_kmix ) {
+//				m_kmix->show();
+//			} else {
+//				kWarning(67100) << "KMixApp::newInstance() Window has not finished constructing yet so ignoring the show() request.";
+//			}
 		}
 		else {
                         // CASE 2: If KMix is running, AND  ( session gets restored OR keepvisibilty command line switch )
