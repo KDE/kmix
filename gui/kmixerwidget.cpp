@@ -90,13 +90,9 @@ KMixerWidget::~KMixerWidget()
 void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 {
    // delete old objects
-   if( m_balanceSlider ) {
-      delete m_balanceSlider;
-      m_balanceSlider = 0;
-   }
-   if( m_topLayout ) {
-      delete m_topLayout;
-   }
+   delete m_balanceSlider;
+   m_balanceSlider = 0;
+   delete m_topLayout;
 
    // create main layout
    m_topLayout = new QVBoxLayout( this );
