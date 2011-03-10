@@ -116,7 +116,6 @@ KMixWindow : public KXmlGuiWindow
    Qt::Orientation m_toplevelOrientation;
 
    KTabWidget *m_wsMixers;
-   QPushButton* _cornerLabelNew;
 
    KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;

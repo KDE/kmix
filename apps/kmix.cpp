@@ -79,8 +79,6 @@ KMixWindow::KMixWindow(bool invisible)
   m_dockWidget(),
   m_dontSetDefaultCardOnStart (false)
 {
-    _cornerLabelNew = 0;
-
     setObjectName( QLatin1String("KMixWindow" ));
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
@@ -185,15 +183,28 @@ void KMixWindow::initActionsLate()
 
 void KMixWindow::initActionsAfterInitMixer()
 {
+    bool isPulseAudio = false;
     // Add "launch_pavucontrol" to menu, if Pulseaudio backend is in use
     foreach( Mixer* mixer, Mixer::mixers() )
     {
-        if ( mixer->getDriverName() == "PulseAudio") {
+        if ( mixer->getDriverName() == "PulseAudio")
+        {
+            isPulseAudio = true;
             KAction* action = actionCollection()->addAction( "launch_pavucontrol" );
             action->setText( i18n( "Audio setup (&Pulseaudio)" ) );
             connect(action, SIGNAL(triggered(bool) ), SLOT( slotPavucontrolExec() ));
             break;
         }
+    }
+
+    if (! isPulseAudio )
+    {
+       QPixmap cornerNewPM = KIconLoader::global()->loadIcon( "tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall );
+       QPushButton* _cornerLabelNew = new QPushButton();
+       _cornerLabelNew->setIcon(cornerNewPM);
+       //cornerLabelNew->setSizePolicy(QSizePolicy());
+       m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
+       connect ( _cornerLabelNew, SIGNAL( clicked() ), SLOT (newView() ) );
     }
 }
 
@@ -211,15 +222,10 @@ void KMixWindow::initWidgets()
     m_wsMixers = new KTabWidget();
     m_wsMixers->setDocumentMode(true);
     setCentralWidget(m_wsMixers);
-    m_wsMixers->setTabsClosable(true);
+    m_wsMixers->setTabsClosable(false);
     connect (m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(saveAndCloseView(int)) );
 
     QPixmap cornerNewPM = KIconLoader::global()->loadIcon( "tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall );
-    _cornerLabelNew = new QPushButton();
-    _cornerLabelNew->setIcon(cornerNewPM);
-    //cornerLabelNew->setSizePolicy(QSizePolicy());
-    m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
-    connect ( _cornerLabelNew, SIGNAL( clicked() ), SLOT (newView() ) );
 
     connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
 
@@ -515,6 +521,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
             addMixerWidget(mixer->id(), guiprof, -1);
         }
         else {
+            // did exist => remove and insert new guiprof at old position
             int indexOfTab =  m_wsMixers->indexOf(kmw);
             if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
             delete kmw;
@@ -675,9 +682,9 @@ void KMixWindow::saveAndCloseView(int idx)
         m_wsMixers->removeTab(idx);
         delete kmw;
 
-        if ( m_wsMixers->count() < 2 ) {
-            m_wsMixers->setTabsClosable(false);
-        }
+        bool isPulseAudio =  kmw->mixer()->getDriverName() == "PulseAudio";
+        m_wsMixers->setTabsClosable(!isPulseAudio && m_wsMixers->count() > 1);
+
         saveViewConfig();
     }
     kDebug() << "Exit";
@@ -876,9 +883,9 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
         if ( kmw->getGuiprof()->getId() == m_defaultCardOnStart ) {
             m_wsMixers->setCurrentWidget(kmw);
         }
-        if ( m_wsMixers->count() > 1 ) {
-            m_wsMixers->setTabsClosable(true);
-        }
+
+        bool isPulseAudio =  mixer->getDriverName() == "PulseAudio";
+        m_wsMixers->setTabsClosable(!isPulseAudio && m_wsMixers->count() > 1);
         m_dontSetDefaultCardOnStart = false;
 
 
