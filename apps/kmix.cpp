@@ -96,6 +96,11 @@ KMixWindow::KMixWindow(bool invisible)
     initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
     recreateGUI(false);
+    if ( m_wsMixers->count()  < 1 )
+    {
+        // Something is wrong. Perhaps a hardware or driver or backend change. Let KMix search harder
+        recreateGUI(false, QString(), true);
+    }
 
     if ( !kapp->isSessionRestored() ) // done by the session manager otherwise
         setInitialSize();
@@ -527,7 +532,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
         }
         // No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
         bool profileListHasKey = pconfig.hasKey( mixer->id() ); // <<< SHOULD be before the following line
-        QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() ); // Hint: Default is a list with ONE entry (an empty string). Important for GUIProfile::find()
+        QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() );
 
         bool aProfileWasAddedSucesufully = false;
         foreach ( QString profileId, profileList)
@@ -546,7 +551,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
         // The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
         bool we_need_a_fallback = !aProfileWasAddedSucesufully;  // we *possibly* want a fallback, if we couldn't add one
-        bool thisMixerShouldBeForced = forceNewTab && ( mixer->id() == mixerId  );
+        bool thisMixerShouldBeForced = forceNewTab && ( mixerId.isEmpty() || (mixer->id() == mixerId) );
         we_need_a_fallback = we_need_a_fallback && ( thisMixerShouldBeForced || !profileListHasKey ); // Additional requirement: "forced-tab-for-this-mixer" OR "no key stored in kmixrc yet"
         if ( we_need_a_fallback )
         {
