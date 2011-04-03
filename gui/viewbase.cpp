@@ -227,42 +227,6 @@ void ViewBase::setMixSet()
 {
     if ( _mixer->dynamic() ) {
 
-        // Check the guiprofile... if it is not the fallback GUIProfile, then
-        // make sure that we add a specific entry for any devices not present.
-        if ( 0 != _guiprof && GUIProfile::fallbackProfile(_mixer) != _guiprof ) // TODO colin/cesken IMO calling GUIProfile::fallbackProfile(_mixer) is wrong, as it ALWAYS creates a new Object. fallbackProfile() would need to cache the created fallback profiles so this should make any sense.
-        {
-            kDebug(67100) << "Dynamic mixer " << _mixer->id() << " is NOT using Fallback GUIProfile. Checking to see if new controls are present";
-
-            QList<QString> new_mix_devices;
-            MixSet ms = _mixer->getMixSet();
-            for (int i=0; i < ms.count(); ++i)
-            {
-                new_mix_devices.append("^" + ms[i]->id() + "$");
-                kDebug(67100) << "new_mix_devices.append => " << ms[i]->id();
-            }
-
-            GUIProfile::ControlSet& ctlSet = _guiprof->getControls();
-
-//            std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
-//            for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
-//                new_mix_devices.removeAll((*it)->id);
-              // TODO Please check this change, Colin
-              foreach ( ProfControl* pctl, ctlSet ) {
-                  new_mix_devices.removeAll(pctl->id);
-              }
-
-
-            if ( new_mix_devices.count() > 0 ) {
-                kDebug(67100) << "Found " << new_mix_devices.count() << " new controls. Adding to GUIProfile";
-                QString sctlMatchAll("*");
-                while ( new_mix_devices.count() > 0 ) {
-                    QString new_mix_devices0 = new_mix_devices.takeAt(0);
-                    ctlSet.push_back(new ProfControl(new_mix_devices0, sctlMatchAll));
-                }
-                _guiprof->setDirty();
-            }
-        }
-
         // We need to delete the current MixDeviceWidgets so we can redraw them
         while (!_mdws.isEmpty()) {
             QWidget* mdw = _mdws.last();
