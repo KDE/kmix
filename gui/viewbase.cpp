@@ -33,6 +33,7 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kstandardaction.h>
+#include <kmessagebox.h>
 // KMix
 #include "dialogviewconfiguration.h"
 #include "gui/guiprofile.h"
@@ -73,9 +74,11 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
          }
       }
    }
-   QAction *action = _localActionColletion->addAction("toggle_channels");
-   action->setText(i18n("&Channels"));
-   connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
+   if ( !_mixer->dynamic() ) {
+      QAction *action = _localActionColletion->addAction("toggle_channels");
+      action->setText(i18n("&Channels"));
+      connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
+   }
    connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
    connect ( _mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );
 }
@@ -222,7 +225,7 @@ Mixer* ViewBase::getMixer()
 
 void ViewBase::setMixSet()
 {
-    if ( _mixer->dynamic()) {
+    if ( _mixer->dynamic() ) {
 
         // Check the guiprofile... if it is not the fallback GUIProfile, then
         // make sure that we add a specific entry for any devices not present.
@@ -280,6 +283,8 @@ void ViewBase::setMixSet()
  */
 void ViewBase::configureView() {
 
+    Q_ASSERT( !_mixer->dynamic() );
+    
     DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
     dvc->show();
     // !! The dialog is modal. Does it delete itself?

@@ -1135,6 +1135,12 @@ void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
             m_defaultCardOnStart = kmw->getGuiprof()->getId();
         // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
         // It would lead to unnecesary flickering of the (complete) dock area.
+
+        // We only show the "Configure Channels..." menu item if the mixer is not dynamic
+        ViewBase* view = kmw->currentView();
+        QAction* action = actionCollection()->action( "toggle_channels_currentview" );
+        if (view && action)
+            action->setVisible( !view->getMixer()->dynamic() );
     }
 }
 
