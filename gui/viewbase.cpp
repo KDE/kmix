@@ -74,7 +74,7 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
          }
       }
    }
-   if ( !_mixer->dynamic() ) {
+   if ( !_mixer->isDynamic() ) {
       QAction *action = _localActionColletion->addAction("toggle_channels");
       action->setText(i18n("&Channels"));
       connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
@@ -98,7 +98,7 @@ QString ViewBase::id() const {
 
 bool ViewBase::isValid() const
 {
-   return ( _mixSet->count() > 0 || _mixer->dynamic() );
+   return ( _mixSet->count() > 0 || _mixer->isDynamic() );
 }
 
 void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
@@ -225,7 +225,7 @@ Mixer* ViewBase::getMixer()
 
 void ViewBase::setMixSet()
 {
-    if ( _mixer->dynamic() ) {
+    if ( _mixer->isDynamic() ) {
 
         // We need to delete the current MixDeviceWidgets so we can redraw them
         while (!_mdws.isEmpty()) {
@@ -247,7 +247,7 @@ void ViewBase::setMixSet()
  */
 void ViewBase::configureView() {
 
-    Q_ASSERT( !_mixer->dynamic() );
+    Q_ASSERT( !_mixer->isDynamic() );
     
     DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
     dvc->show();
@@ -273,7 +273,7 @@ void ViewBase::load(KConfig *config)
    static char guiComplexity[3][20] = { "simple", "extended", "all" };
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = _mixer->dynamic();
+   bool dynamic = _mixer->isDynamic();
 
    for ( int tries = 0; tries < 3; tries++ )
    {
@@ -358,7 +358,7 @@ void ViewBase::save(KConfig *config)
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = _mixer->dynamic();
+   bool dynamic = _mixer->isDynamic();
 
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];

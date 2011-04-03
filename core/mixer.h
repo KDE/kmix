@@ -166,7 +166,7 @@ public:
 
     /// Says if we are dynamic (e.g. widgets can come and go)
     virtual void setDynamic( bool dynamic = true );
-    virtual bool dynamic();
+    virtual bool isDynamic();
 
     virtual bool moveStream( const QString id, const QString& destId );
 

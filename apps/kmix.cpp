@@ -189,7 +189,7 @@ void KMixWindow::initActionsAfterInitMixer()
     bool allDynamic = true;
     foreach( Mixer* mixer, Mixer::mixers() )
     {
-        if ( !mixer->dynamic() )
+        if ( !mixer->isDynamic() )
         {
             allDynamic = false;
             break;
@@ -339,7 +339,7 @@ void KMixWindow::saveViewConfig()
     // Otherwise we would not save the Meta information (step -2- below for that mixer.
     // We also do not save dynamic mixers (e.g. PulseAudio)
     foreach ( Mixer* mixer, Mixer::mixers() ) {
-        if ( !mixer->dynamic() )
+        if ( !mixer->isDynamic() )
             mixerViews[mixer->id()]; // just insert a map entry
     }
 
@@ -352,7 +352,7 @@ void KMixWindow::saveViewConfig()
             // Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
             mw->saveConfig( KGlobal::config().data() );
             // add the view to the corresponding mixer list, so we can save a views-per-mixer list below
-            if ( !mw->mixer()->dynamic() ) {
+            if ( !mw->mixer()->isDynamic() ) {
                 QStringList& qsl = mixerViews[mw->mixer()->id()];
                 qsl.append(mw->getGuiprof()->getId());
             }
@@ -546,7 +546,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
         QStringList profileList;
         bool aProfileWasAddedSucesufully = false;
 
-        if ( !mixer->dynamic() ) {
+        if ( !mixer->isDynamic() ) {
             // We do not support save profiles for dynamic mixers (i.e. PulseAudio)
 
             profileListHasKey = pconfig.hasKey( mixer->id() ); // <<< SHOULD be before the following line
@@ -578,7 +578,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
             // Lets try a bunch of fallback strategies:
             GUIProfile* guiprof = 0;
-            if ( !mixer->dynamic() ) {
+            if ( !mixer->isDynamic() ) {
                 // We know that GUIProfile::find() will return 0 if the mixer is dynamic, so don't bother checking.
                 kDebug() << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
                 guiprof = GUIProfile::find(mixer, QString("default"), false, false);  // ### Card specific profile ###
@@ -699,7 +699,7 @@ void KMixWindow::saveAndCloseView(int idx)
         m_wsMixers->removeTab(idx);
         delete kmw;
 
-        m_wsMixers->setTabsClosable(!kmw->mixer()->dynamic() && m_wsMixers->count() > 1);
+        m_wsMixers->setTabsClosable(!kmw->mixer()->isDynamic() && m_wsMixers->count() > 1);
 
         saveViewConfig();
     }
@@ -900,7 +900,7 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
             m_wsMixers->setCurrentWidget(kmw);
         }
 
-        m_wsMixers->setTabsClosable(!mixer->dynamic() && m_wsMixers->count() > 1);
+        m_wsMixers->setTabsClosable(!mixer->isDynamic() && m_wsMixers->count() > 1);
         m_dontSetDefaultCardOnStart = false;
 
 
@@ -1149,7 +1149,7 @@ void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
         ViewBase* view = kmw->currentView();
         QAction* action = actionCollection()->action( "toggle_channels_currentview" );
         if (view && action)
-            action->setVisible( !view->getMixer()->dynamic() );
+            action->setVisible( !view->getMixer()->isDynamic() );
     }
 }
 

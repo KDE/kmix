@@ -88,7 +88,7 @@ void MDWSlider::createActions()
     connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
 
     KAction *action;
-    if ( ! m_mixdevice->mixer()->dynamic() ) {
+    if ( ! m_mixdevice->mixer()->isDynamic() ) {
         action = _mdwActions->add<KToggleAction>( "hide" );
         action->setText( i18n("&Hide") );
         connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
@@ -133,7 +133,7 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->mixer()->dynamic() ) {
+    if ( ! mixDevice()->mixer()->isDynamic() ) {
         // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
@@ -147,7 +147,7 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->mixer()->dynamic() ) {
+    if ( ! mixDevice()->mixer()->isDynamic() ) {
         // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
@@ -161,7 +161,7 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->mixer()->dynamic() ) {
+    if ( ! mixDevice()->mixer()->isDynamic() ) {
         // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();

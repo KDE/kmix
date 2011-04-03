@@ -148,7 +148,7 @@ void ViewSliders::_setMixSet()
 {
     const MixSet& mixset = _mixer->getMixSet();
 
-    if ( _mixer->dynamic() ) {
+    if ( _mixer->isDynamic() ) {
         // We will be recreating our sliders, so make sure we trash all the separators too.
         qDeleteAll(_separators);
         _separators.clear();

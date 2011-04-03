@@ -216,7 +216,7 @@ ProfControl* MixDevice::controlProfile() {
  */
 void MixDevice::read( KConfig *config, const QString& grp )
 {
-    if ( _mixer->dynamic() || isArtificial() ) {
+    if ( _mixer->isDynamic() || isArtificial() ) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
         QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
@@ -263,7 +263,7 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
  */
 void MixDevice::write( KConfig *config, const QString& grp )
 {
-    if (_mixer->dynamic() || isArtificial()) {
+    if (_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
         QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
