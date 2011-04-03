@@ -136,7 +136,6 @@ KMixWindow : public KXmlGuiWindow
   private slots:
    void saveConfig();
    void slotHWInfo();
-   void slotPavucontrolExec();
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
    void slotSelectMaster();

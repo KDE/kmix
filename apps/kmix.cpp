@@ -183,21 +183,20 @@ void KMixWindow::initActionsLate()
 
 void KMixWindow::initActionsAfterInitMixer()
 {
-    bool isPulseAudio = false;
-    // Add "launch_pavucontrol" to menu, if Pulseaudio backend is in use
+    // Only show the new tab widget if some of the mixers are not Dynamic.
+    // The GUI that then pops up could then make a new mixer from a dynamic one,
+    // if mixed dynamic and non-dynamic mixers were allowed, but this is generally not the case.
+    bool allDynamic = true;
     foreach( Mixer* mixer, Mixer::mixers() )
     {
-        if ( mixer->getDriverName() == "PulseAudio")
+        if ( !mixer->dynamic() )
         {
-            isPulseAudio = true;
-            KAction* action = actionCollection()->addAction( "launch_pavucontrol" );
-            action->setText( i18n( "Audio setup (&Pulseaudio)" ) );
-            connect(action, SIGNAL(triggered(bool) ), SLOT( slotPavucontrolExec() ));
+            allDynamic = false;
             break;
         }
     }
 
-    if (! isPulseAudio )
+    if (! allDynamic )
     {
        QPixmap cornerNewPM = KIconLoader::global()->loadIcon( "tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall );
        QPushButton* _cornerLabelNew = new QPushButton();
@@ -700,8 +699,7 @@ void KMixWindow::saveAndCloseView(int idx)
         m_wsMixers->removeTab(idx);
         delete kmw;
 
-        bool isPulseAudio =  kmw->mixer()->getDriverName() == "PulseAudio";
-        m_wsMixers->setTabsClosable(!isPulseAudio && m_wsMixers->count() > 1);
+        m_wsMixers->setTabsClosable(!kmw->mixer()->dynamic() && m_wsMixers->count() > 1);
 
         saveViewConfig();
     }
@@ -902,8 +900,7 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, in
             m_wsMixers->setCurrentWidget(kmw);
         }
 
-        bool isPulseAudio =  mixer->getDriverName() == "PulseAudio";
-        m_wsMixers->setTabsClosable(!isPulseAudio && m_wsMixers->count() > 1);
+        m_wsMixers->setTabsClosable(!mixer->dynamic() && m_wsMixers->count() > 1);
         m_dontSetDefaultCardOnStart = false;
 
 
@@ -1089,12 +1086,6 @@ void KMixWindow::toggleMenuBar()
 void KMixWindow::slotHWInfo()
 {
     KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
-}
-
-void KMixWindow::slotPavucontrolExec()
-{
-    QStringList args("pavucontrol");
-    forkExec(args);
 }
 
 void KMixWindow::slotKdeAudioSetupExec()
