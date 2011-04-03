@@ -36,6 +36,8 @@
 #define KMIXPA_APP_CAPTURE  3
 #define KMIXPA_WIDGET_MAX KMIXPA_APP_CAPTURE
 
+#define KMIXPA_EVENT_KEY "sink-input-by-media-role:event"
+
 static unsigned int refcount = 0;
 static pa_glib_mainloop *s_mainloop = NULL;
 static pa_context *s_context = NULL;
@@ -307,7 +309,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
 
     const char *t;
     if ((t = pa_proplist_gets(i->proplist, "module-stream-restore.id"))) {
-        if (strcmp(t, "sink-input-by-media-role:event") == 0) {
+        if (strcmp(t, KMIXPA_EVENT_KEY) == 0) {
             kWarning(67100) << "Ignoring sink-input due to it being designated as an event and thus handled by the Event slider";
             return;
         }
@@ -440,9 +442,10 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
 
     if (eol > 0) {
         dec_outstanding(c);
+
         // Special case: ensure that our media events exists.
         // On first login by a new users, this wont be in our database so we should create it.
-        if (!outputRoles.contains(PA_INVALID_INDEX)) {
+        if (!s_RestoreRules.contains(KMIXPA_EVENT_KEY)) {
             // Create a fake rule
             restoreRule rule;
             rule.channel_map.channels = 1;
@@ -451,20 +454,26 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
             rule.volume.values[0] = PA_VOLUME_NORM;
             rule.mute = false;
             rule.device = "";
-            s_RestoreRules["sink-input-by-media-role:event"] = rule;
-
-            devinfo s = create_role_devinfo("sink-input-by-media-role:event");
-            outputRoles[s.index] = s;
-            kDebug(67100) << "Initialising restore rule for new user: " << s.description;
-
-            if (s_mixers.contains(KMIXPA_APP_PLAYBACK))
-                s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+            s_RestoreRules[KMIXPA_EVENT_KEY] = rule;
+            kDebug(67100) << "Initialising restore rule for new user: " << i18n("Event Sounds");
         }
 
-        if (s_mixers.contains(KMIXPA_APP_PLAYBACK))
+        if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
+            // If we have rules, it will be created below... but if no rules
+            // then we add it here.
+            if (!outputRoles.contains(PA_INVALID_INDEX)) {
+                devinfo s = create_role_devinfo(KMIXPA_EVENT_KEY);
+                outputRoles[s.index] = s;
+
+                s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+            }
+
             s_mixers[KMIXPA_APP_PLAYBACK]->triggerUpdate();
+        }
+
         return;
     }
+
 
     QString name = QString::fromUtf8(i->name);
     kDebug(67100) << QString("Got some info about restore rule: '%1' (Device: %2)").arg(name).arg(i->device ? i->device : "None");
@@ -473,16 +482,28 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
     rule.volume = i->volume;
     rule.mute = !!i->mute;
     rule.device = i->device;
+
+    if (rule.channel_map.channels < 1 && name == KMIXPA_EVENT_KEY) {
+        // Stream restore rules may not have valid volumes/channel maps (as these are optional)
+        // but we need a valid volume+channelmap for our events sounds so fix it up.
+        rule.channel_map.channels = 1;
+        rule.channel_map.map[0] = PA_CHANNEL_POSITION_MONO;
+        rule.volume.channels = 1;
+        rule.volume.values[0] = PA_VOLUME_NORM;
+    }
+
     s_RestoreRules[name] = rule;
 
-    // We only want to know about Sound Events for now...
-    if (name == "sink-input-by-media-role:event") {
-        devinfo s = create_role_devinfo(name);
-        bool is_new = !outputRoles.contains(s.index);
-        outputRoles[s.index] = s;
+    if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
+        // We only want to know about Sound Events for now...
+        if (name == KMIXPA_EVENT_KEY) {
+            devinfo s = create_role_devinfo(name);
+            bool is_new = !outputRoles.contains(s.index);
+            outputRoles[s.index] = s;
 
-        if (is_new && s_mixers.contains(KMIXPA_APP_PLAYBACK))
-            s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+            if (is_new)
+                s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+        }
     }
 }
 
