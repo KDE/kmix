@@ -89,7 +89,7 @@ void ViewDockAreaPopup::_setMixSet()
    // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
 
    if ( _mixer->isDynamic() ) {
-      // Our _layoutMDW now should only contain spacer widgets from the QSpacerItems's in add() below.
+      // Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
       // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
       QLayoutItem *li;
       while ( ( li = _layoutMDW->takeAt(0) ) )
@@ -114,9 +114,9 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
     QString matchAllPlaybackAndTheCswitch("pvolume,pswitch,cswitch");
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
     MixDeviceWidget *mdw = new MDWSlider(
-      md,		  // only 1 device. This is actually _dockDevice
+      md,           // only 1 device.
       true,         // Show Mute LED
-      false,         // Show Record LED
+      false,        // Show Record LED
       false,        // Small
       Qt::Vertical, // Direction: only 1 device, so doesn't matter
       this,         // parent
@@ -128,10 +128,10 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
    _layoutMDW->addWidget( mdw, 0, 1 );
 
    // Add button to show main panel
-   _showPanelBox = new QPushButton( i18n("Mixer"), this );
-   _showPanelBox->setObjectName( QLatin1String("MixerPanel" ));
-   connect ( _showPanelBox, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
-   _layoutMDW->addWidget( _showPanelBox, 1, 0, 1, 3 );
+   QPushButton *pb = new QPushButton( i18n("Mixer"), this );
+   pb->setObjectName( QLatin1String("MixerPanel" ));
+   connect ( pb, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
+   _layoutMDW->addWidget( pb, 1, 0, 1, 3 );
 
    return mdw;
 }

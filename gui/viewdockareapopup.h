@@ -24,7 +24,6 @@
 #include "viewbase.h"
 
 class QGridLayout;
-class QPushButton;
 class QWidget;
 
 class Mixer;
@@ -48,8 +47,6 @@ public:
 
 protected:
     KMixWindow  *_dock;
-    //MixDevice       *_dockDevice;
-    QPushButton     *_showPanelBox;
 
     void wheelEvent ( QWheelEvent * e );
     virtual void _setMixSet();
