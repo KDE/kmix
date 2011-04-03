@@ -86,9 +86,13 @@ void MDWSlider::createActions()
     KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
     taction->setText( i18n("&Split Channels") );
     connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
-    KAction *action = _mdwActions->add<KToggleAction>( "hide" );
-    action->setText( i18n("&Hide") );
-    connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
+
+    KAction *action;
+    if ( ! m_mixdevice->mixer()->dynamic() ) {
+        action = _mdwActions->add<KToggleAction>( "hide" );
+        action->setText( i18n("&Hide") );
+        connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
+    }
 
     if( m_mixdevice->playbackVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "mute" );
