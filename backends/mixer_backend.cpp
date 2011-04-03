@@ -48,7 +48,7 @@ Mixer_Backend::~Mixer_Backend()
 bool Mixer_Backend::openIfValid() {
     bool valid = false;
     int ret = open();
-    if ( ret == 0  && (m_mixDevices.count() > 0 || _mixer->dynamic())) {
+    if ( ret == 0  && (m_mixDevices.count() > 0 || _mixer->isDynamic())) {
         valid = true;
         // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
         // but we want a somehow usable fallback just in case.
@@ -139,7 +139,7 @@ MixDevice* Mixer_Backend::recommendedMaster() {
       return m_mixDevices.at(0);  // Backend has NOT set a recommended master. Evil backend => lets help out.
    } //first device (if exists)
    else {
-      if ( !_mixer->dynamic()) {
+      if ( !_mixer->isDynamic()) {
          // This should never ever happen, as KMix doe NOT accept soundcards without controls
          kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
       }

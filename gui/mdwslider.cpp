@@ -86,9 +86,13 @@ void MDWSlider::createActions()
     KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
     taction->setText( i18n("&Split Channels") );
     connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
-    KAction *action = _mdwActions->add<KToggleAction>( "hide" );
-    action->setText( i18n("&Hide") );
-    connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
+
+    KAction *action;
+    if ( ! m_mixdevice->mixer()->isDynamic() ) {
+        action = _mdwActions->add<KToggleAction>( "hide" );
+        action->setText( i18n("&Hide") );
+        connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
+    }
 
     if( m_mixdevice->playbackVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "mute" );
@@ -129,8 +133,8 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->isEthereal() ) {
-        // virtual / ethereal controls won't get shortcuts
+    if ( ! mixDevice()->mixer()->isDynamic() ) {
+        // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
@@ -143,8 +147,8 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->isEthereal() ) {
-        // virtual / ethereal controls won't get shortcuts
+    if ( ! mixDevice()->mixer()->isDynamic() ) {
+        // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
@@ -157,8 +161,8 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->isEthereal() ) {
-        // virtual / ethereal controls won't get shortcuts
+    if ( ! mixDevice()->mixer()->isDynamic() ) {
+        // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );

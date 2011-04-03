@@ -748,7 +748,7 @@ void Mixer::setDynamic ( bool dynamic )
     m_dynamic = dynamic;
 }
 
-bool Mixer::dynamic()
+bool Mixer::isDynamic()
 {
     return m_dynamic;
 }

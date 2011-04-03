@@ -133,7 +133,7 @@ protected:
 
     ViewFlags _vflags;
     GUIProfile* _guiprof;
-   KActionCollection *_localActionColletion;
+    KActionCollection *_localActionColletion;
 
     virtual void _setMixSet() = 0;
 

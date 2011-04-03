@@ -33,6 +33,7 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kstandardaction.h>
+#include <kmessagebox.h>
 // KMix
 #include "dialogviewconfiguration.h"
 #include "gui/guiprofile.h"
@@ -43,7 +44,7 @@
 
 
 ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
-    : QWidget(parent, f), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
+    : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
 {
    setObjectName(id);
    m_viewId = id;
@@ -73,9 +74,11 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
          }
       }
    }
-   QAction *action = _localActionColletion->addAction("toggle_channels");
-   action->setText(i18n("&Channels"));
-   connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
+   if ( !_mixer->isDynamic() ) {
+      QAction *action = _localActionColletion->addAction("toggle_channels");
+      action->setText(i18n("&Channels"));
+      connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
+   }
    connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
    connect ( _mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );
 }
@@ -95,7 +98,7 @@ QString ViewBase::id() const {
 
 bool ViewBase::isValid() const
 {
-   return ( _mixSet->count() > 0 || _mixer->dynamic() );
+   return ( _mixSet->count() > 0 || _mixer->isDynamic() );
 }
 
 void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
@@ -170,6 +173,8 @@ void ViewBase::popupReset()
 {
     QAction *a;
 
+    if ( _popMenu )
+        delete _popMenu;
     _popMenu = new KMenu( this );
     _popMenu->addTitle( KIcon( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
 
@@ -222,43 +227,7 @@ Mixer* ViewBase::getMixer()
 
 void ViewBase::setMixSet()
 {
-    if ( _mixer->dynamic()) {
-
-        // Check the guiprofile... if it is not the fallback GUIProfile, then
-        // make sure that we add a specific entry for any devices not present.
-        if ( 0 != _guiprof && GUIProfile::fallbackProfile(_mixer) != _guiprof ) // TODO colin/cesken IMO calling GUIProfile::fallbackProfile(_mixer) is wrong, as it ALWAYS creates a new Object. fallbackProfile() would need to cache the created fallback profiles so this should make any sense.
-        {
-            kDebug(67100) << "Dynamic mixer " << _mixer->id() << " is NOT using Fallback GUIProfile. Checking to see if new controls are present";
-
-            QList<QString> new_mix_devices;
-            MixSet ms = _mixer->getMixSet();
-            for (int i=0; i < ms.count(); ++i)
-            {
-                new_mix_devices.append("^" + ms[i]->id() + "$");
-                kDebug(67100) << "new_mix_devices.append => " << ms[i]->id();
-            }
-
-            GUIProfile::ControlSet& ctlSet = _guiprof->getControls();
-
-//            std::vector<ProfControl*>::const_iterator itEnd = _guiprof->_controls.end();
-//            for ( std::vector<ProfControl*>::const_iterator it = _guiprof->_controls.begin(); it != itEnd; ++it)
-//                new_mix_devices.removeAll((*it)->id);
-              // TODO Please check this change, Colin
-              foreach ( ProfControl* pctl, ctlSet ) {
-                  new_mix_devices.removeAll(pctl->id);
-              }
-
-
-            if ( new_mix_devices.count() > 0 ) {
-                kDebug(67100) << "Found " << new_mix_devices.count() << " new controls. Adding to GUIProfile";
-                QString sctlMatchAll("*");
-                while ( new_mix_devices.count() > 0 ) {
-                    QString new_mix_devices0 = new_mix_devices.takeAt(0);
-                    ctlSet.push_back(new ProfControl(new_mix_devices0, sctlMatchAll));
-                }
-                _guiprof->setDirty();
-            }
-        }
+    if ( _mixer->isDynamic() ) {
 
         // We need to delete the current MixDeviceWidgets so we can redraw them
         while (!_mdws.isEmpty()) {
@@ -280,6 +249,8 @@ void ViewBase::setMixSet()
  */
 void ViewBase::configureView() {
 
+    Q_ASSERT( !_mixer->isDynamic() );
+    
     DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
     dvc->show();
     // !! The dialog is modal. Does it delete itself?
@@ -302,6 +273,10 @@ void ViewBase::load(KConfig *config)
    kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.toAscii();
 
    static char guiComplexity[3][20] = { "simple", "extended", "all" };
+
+   // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
+   bool dynamic = _mixer->isDynamic();
+
    for ( int tries = 0; tries < 3; tries++ )
    {
    bool atLeastOneControlIsShown = false;
@@ -315,12 +290,12 @@ void ViewBase::load(KConfig *config)
            Workaround: If found, write back correct group name.
         */
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), mdw->mixDevice()->mixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         MixDevice* md = mdw->mixDevice();
+
+         QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
          KConfigGroup devcg  = config->group( devgrp );
 
-         QString buggyDevgrp;
-         buggyDevgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         QString buggyDevgrp = QString("%1.%2.%3").arg(grp).arg(view->id()).arg(md->id());
          KConfigGroup buggyDevgrpCG = config->group( buggyDevgrp );
          if ( buggyDevgrpCG.exists() ) {
             buggyDevgrpCG.copyTo(&devcg);
@@ -335,7 +310,7 @@ void ViewBase::load(KConfig *config)
          }
 
          bool mdwEnabled = false;
-         if ( devcg.hasKey("Show") )
+         if ( !dynamic && devcg.hasKey("Show") )
          {
             mdwEnabled = ( true == devcg.readEntry("Show", true) );
         //kDebug() << "Load devgrp" << devgrp << "show=" << mdwEnabled;
@@ -382,20 +357,23 @@ void ViewBase::save(KConfig *config)
    QString grp = "View.";
    grp += view->id();
 //   KConfigGroup cg = config->group( grp );
-   kDebug(67100) << "KMixToolBox::saveView() grp=" << grp.toAscii();
+   kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
+
+   // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
+   bool dynamic = _mixer->isDynamic();
 
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+         MixDevice* md = mdw->mixDevice();
 
          //kDebug(67100) << "  grp=" << grp.toAscii();
          //kDebug(67100) << "  mixer=" << view->id().toAscii();
          //kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
-         QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), mdw->mixDevice()->mixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
          KConfigGroup devcg = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
@@ -403,15 +381,19 @@ void ViewBase::save(KConfig *config)
             // only sliders have the ability to split apart in mutliple channels
             devcg.writeEntry( "Split", ! mdw->isStereoLinked() );
          }
-         devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
-kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+         if ( !dynamic ) {
+            devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
+            kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+         }
 
       } // inherits MixDeviceWidget
    } // for all MDW's
 
-   kDebug(67100) << "GUIProfile is dirty: " << guiProfile()->isDirty();
-   if ( guiProfile()->isDirty() ) {
-       guiProfile()->writeProfile();
+   if ( !dynamic ) {
+        // We do not save GUIProfiles (as they cannot be customised) for dynamic mixers (e.g. PulseAudio)
+        kDebug(67100) << "GUIProfile is dirty: " << guiProfile()->isDirty();
+        if ( guiProfile()->isDirty() )
+            guiProfile()->writeProfile();
    }
 }
 

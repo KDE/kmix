@@ -158,7 +158,11 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileName
 {
     GUIProfile* guiprof = 0;
 
-    if ( mixer == 0 || profileName.isEmpty() ) {
+    if ( mixer == 0 || profileName.isEmpty() )
+        return 0;
+
+    if ( mixer->isDynamic() ) {
+        kDebug(67100) << "GUIProfile::find() Not loading GUIProfile for Dynamic Mixer (e.g. PulseAudio)";
         return 0;
     }
 

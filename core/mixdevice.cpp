@@ -23,6 +23,7 @@
 #include <klocale.h>
 
 #include "core/mixdevice.h"
+#include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "core/volume.h"
 
@@ -96,14 +97,12 @@ MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, Cha
 
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
-    // doNotRestore is superseded by the more generic concepts isEthereal(), isArtificial()
     init(mixer, id, name, iconName, moveDestinationMixSet);
 }
 
 void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
     _artificial = false;
-    _ethereal   = false;
     _mixer = mixer;
     _id = id;
     if( name.isEmpty() )
@@ -117,9 +116,10 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     _moveDestinationMixSet = moveDestinationMixSet;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. It MUST NOT contain spaces
-        kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
+        kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
     }
+    kDebug(67100) << "MixDevice::init() _id=" << _id;
 }
 
 void MixDevice::addPlaybackVolume(Volume &playbackVol)
@@ -216,11 +216,10 @@ ProfControl* MixDevice::controlProfile() {
  */
 void MixDevice::read( KConfig *config, const QString& grp )
 {
-    if ( isEthereal() || isArtificial() ) {
+    if ( _mixer->isDynamic() || isArtificial() ) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
-        QString devgrp;
-        devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
+        QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
         KConfigGroup cg = config->group( devgrp );
         //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
@@ -264,11 +263,10 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
  */
 void MixDevice::write( KConfig *config, const QString& grp )
 {
-    if (isEthereal() || isArtificial()) {
+    if (_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
-        QString devgrp;
-        devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
+        QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
         KConfigGroup cg = config->group(devgrp);
         // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 

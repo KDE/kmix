@@ -157,15 +157,6 @@ public:
        _artificial = artificial;
    }
 
-   bool isEthereal() const
-   {
-       return _ethereal;
-   }
-   void setEthereal(bool _ethereal)
-   {
-       this->_ethereal = _ethereal;
-   }
-
    void setControlProfile(ProfControl* control);
    ProfControl* controlProfile();
    
@@ -191,14 +182,12 @@ private:
    int _enumCurrentId;
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
-   //bool _doNotRestore;
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
-   // Actually we discriminate those "virtual" controls in artificial controls and ethereal controls:
+   // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:
    // Type        Shortcut  Restore
    // Artificial:    yes       no    Virtual::GlobalMaster or Virtual::CaptureGroup_3   (controls that are constructed artificially from other controls)
-   // Ethereal  :     no       no    Controls that come and go, like Pulse Stream controls
+   // Dynamic   :     no       no    Controls that come and go, like Pulse Stream controls
    bool _artificial;
-   bool _ethereal;
    MixSet *_moveDestinationMixSet;
    QString _iconName;
 
