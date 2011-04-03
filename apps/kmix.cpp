@@ -338,8 +338,11 @@ void KMixWindow::saveViewConfig()
     
     // The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
     // Otherwise we would not save the Meta information (step -2- below for that mixer.
-    foreach ( Mixer* mixer, Mixer::mixers() )
-        mixerViews[mixer->id()]; // just insert a map entry
+    // We also do not save dynamic mixers (e.g. PulseAudio)
+    foreach ( Mixer* mixer, Mixer::mixers() ) {
+        if ( !mixer->dynamic() )
+            mixerViews[mixer->id()]; // just insert a map entry
+    }
 
     // -1- Save the views themselves
     for ( int i=0; i<m_wsMixers->count() ; ++i ) {
@@ -350,8 +353,10 @@ void KMixWindow::saveViewConfig()
             // Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
             mw->saveConfig( KGlobal::config().data() );
             // add the view to the corresponding mixer list, so we can save a views-per-mixer list below
-            QStringList& qsl = mixerViews[mw->mixer()->id()];
-            qsl.append(mw->getGuiprof()->getId());
+            if ( !mw->mixer()->dynamic() ) {
+                QStringList& qsl = mixerViews[mw->mixer()->id()];
+                qsl.append(mw->getGuiprof()->getId());
+            }
         }
     }
 
@@ -538,21 +543,28 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
             continue;  // OK, this mixer already has a profile => skip it
         }
         // No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
-        bool profileListHasKey = pconfig.hasKey( mixer->id() ); // <<< SHOULD be before the following line
-        QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() );
-
+        bool profileListHasKey = false;
+        QStringList profileList;
         bool aProfileWasAddedSucesufully = false;
-        foreach ( QString profileId, profileList)
-        {
-            // This handles the profileList form the kmixrc
-            kDebug() << "Now searching for profile: " << profileId  ;
-            GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false); // ### Card specific profile ###
-            if ( guiprof != 0 ) {
-                addMixerWidget(mixer->id(), guiprof, -1);
-                aProfileWasAddedSucesufully = true;
-            }
-            else {
-                kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+
+        if ( !mixer->dynamic() ) {
+            // We do not support save profiles for dynamic mixers (i.e. PulseAudio)
+
+            profileListHasKey = pconfig.hasKey( mixer->id() ); // <<< SHOULD be before the following line
+            profileList = pconfig.readEntry( mixer->id(), QStringList() );
+
+            foreach ( QString profileId, profileList)
+            {
+                // This handles the profileList form the kmixrc
+                kDebug() << "Now searching for profile: " << profileId  ;
+                GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false); // ### Card specific profile ###
+                if ( guiprof != 0 ) {
+                    addMixerWidget(mixer->id(), guiprof, -1);
+                    aProfileWasAddedSucesufully = true;
+                }
+                else {
+                    kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+                }
             }
         }
 
@@ -567,11 +579,17 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
             // Lets try a bunch of fallback strategies:
             GUIProfile* guiprof = 0;
+            if ( !mixer->dynamic() ) {
+                // We know that GUIProfile::find() will return 0 if the mixer is dynamic, so don't bother checking.
+                kDebug() << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
                 guiprof = GUIProfile::find(mixer, QString("default"), false, false);  // ### Card specific profile ###
-            if ( guiprof == 0 ) {
-                guiprof = GUIProfile::find(mixer, QString("default"), false, true);  // ### Card unspecific profile ###
+                if ( guiprof == 0 ) {
+                    kDebug() << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
+                    guiprof = GUIProfile::find(mixer, QString("default"), false, true);  // ### Card unspecific profile ###
+                }
             }
             if ( guiprof == 0) {
+                kDebug() << "Using fallback GUI Profile for the mixer " << mixer->id();
                 // This means there is neither card specific nor card unspecific profile
                 // This is the case for some backends (as they don't ship profiles).
                 guiprof = GUIProfile::fallbackProfile(mixer);

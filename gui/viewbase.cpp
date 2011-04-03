@@ -307,6 +307,10 @@ void ViewBase::load(KConfig *config)
    kDebug(67100) << "KMixToolBox::loadView() grp=" << grp.toAscii();
 
    static char guiComplexity[3][20] = { "simple", "extended", "all" };
+
+   // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
+   bool dynamic = _mixer->dynamic();
+
    for ( int tries = 0; tries < 3; tries++ )
    {
    bool atLeastOneControlIsShown = false;
@@ -340,7 +344,7 @@ void ViewBase::load(KConfig *config)
          }
 
          bool mdwEnabled = false;
-         if ( devcg.hasKey("Show") )
+         if ( !dynamic && devcg.hasKey("Show") )
          {
             mdwEnabled = ( true == devcg.readEntry("Show", true) );
         //kDebug() << "Load devgrp" << devgrp << "show=" << mdwEnabled;
@@ -389,6 +393,9 @@ void ViewBase::save(KConfig *config)
 //   KConfigGroup cg = config->group( grp );
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
 
+   // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
+   bool dynamic = _mixer->dynamic();
+
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
@@ -408,15 +415,19 @@ void ViewBase::save(KConfig *config)
             // only sliders have the ability to split apart in mutliple channels
             devcg.writeEntry( "Split", ! mdw->isStereoLinked() );
          }
-         devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
-kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+         if ( !dynamic ) {
+            devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
+            kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+         }
 
       } // inherits MixDeviceWidget
    } // for all MDW's
 
-   kDebug(67100) << "GUIProfile is dirty: " << guiProfile()->isDirty();
-   if ( guiProfile()->isDirty() ) {
-       guiProfile()->writeProfile();
+   if ( !dynamic ) {
+        // We do not save GUIProfiles (as they cannot be customised) for dynamic mixers (e.g. PulseAudio)
+        kDebug(67100) << "GUIProfile is dirty: " << guiProfile()->isDirty();
+        if ( guiProfile()->isDirty() )
+            guiProfile()->writeProfile();
    }
 }
 
