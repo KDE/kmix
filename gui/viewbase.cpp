@@ -44,7 +44,7 @@
 
 
 ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
-    : QWidget(parent, f), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
+    : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
 {
    setObjectName(id);
    m_viewId = id;
@@ -173,6 +173,8 @@ void ViewBase::popupReset()
 {
     QAction *a;
 
+    if ( _popMenu )
+        delete _popMenu;
     _popMenu = new KMenu( this );
     _popMenu->addTitle( KIcon( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
 
