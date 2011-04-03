@@ -320,12 +320,12 @@ void ViewBase::load(KConfig *config)
            Workaround: If found, write back correct group name.
         */
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), mdw->mixDevice()->mixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         MixDevice* md = mdw->mixDevice();
+
+         QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
          KConfigGroup devcg  = config->group( devgrp );
 
-         QString buggyDevgrp;
-         buggyDevgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), view->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         QString buggyDevgrp = QString("%1.%2.%3").arg(grp).arg(view->id()).arg(md->id());
          KConfigGroup buggyDevgrpCG = config->group( buggyDevgrp );
          if ( buggyDevgrpCG.exists() ) {
             buggyDevgrpCG.copyTo(&devcg);
@@ -387,20 +387,20 @@ void ViewBase::save(KConfig *config)
    QString grp = "View.";
    grp += view->id();
 //   KConfigGroup cg = config->group( grp );
-   kDebug(67100) << "KMixToolBox::saveView() grp=" << grp.toAscii();
+   kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
 
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+         MixDevice* md = mdw->mixDevice();
 
          //kDebug(67100) << "  grp=" << grp.toAscii();
          //kDebug(67100) << "  mixer=" << view->id().toAscii();
          //kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
-         QString devgrp;
-         devgrp.sprintf( "%s.%s.%s", grp.toAscii().data(), mdw->mixDevice()->mixer()->id().toAscii().data(), mdw->mixDevice()->id().toAscii().data() );
+         QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
          KConfigGroup devcg = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )

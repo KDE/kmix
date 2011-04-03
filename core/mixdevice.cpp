@@ -120,6 +120,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
         _id.replace(' ', '_');
     }
+    kDebug(67100) << "MixDevice::init() _id=" << _id;
 }
 
 void MixDevice::addPlaybackVolume(Volume &playbackVol)
@@ -219,8 +220,7 @@ void MixDevice::read( KConfig *config, const QString& grp )
     if ( isEthereal() || isArtificial() ) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
-        QString devgrp;
-        devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
+        QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
         KConfigGroup cg = config->group( devgrp );
         //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
@@ -267,8 +267,7 @@ void MixDevice::write( KConfig *config, const QString& grp )
     if (isEthereal() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
-        QString devgrp;
-        devgrp.sprintf( "%s.Dev%s", grp.toAscii().data(), _id.toAscii().data() );
+        QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
         KConfigGroup cg = config->group(devgrp);
         // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
