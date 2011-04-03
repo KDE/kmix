@@ -133,8 +133,8 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->isEthereal() ) {
-        // virtual / ethereal controls won't get shortcuts
+    if ( ! mixDevice()->mixer()->dynamic() ) {
+        // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
@@ -147,8 +147,8 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->isEthereal() ) {
-        // virtual / ethereal controls won't get shortcuts
+    if ( ! mixDevice()->mixer()->dynamic() ) {
+        // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
@@ -161,8 +161,8 @@ void MDWSlider::createShortcutActions()
     #ifdef __GNUC__
     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
     #endif
-    if ( ! mixDevice()->isEthereal() ) {
-        // virtual / ethereal controls won't get shortcuts
+    if ( ! mixDevice()->mixer()->dynamic() ) {
+        // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );

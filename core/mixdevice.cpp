@@ -23,6 +23,7 @@
 #include <klocale.h>
 
 #include "core/mixdevice.h"
+#include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "core/volume.h"
 
@@ -96,14 +97,12 @@ MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, Cha
 
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
-    // doNotRestore is superseded by the more generic concepts isEthereal(), isArtificial()
     init(mixer, id, name, iconName, moveDestinationMixSet);
 }
 
 void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
     _artificial = false;
-    _ethereal   = false;
     _mixer = mixer;
     _id = id;
     if( name.isEmpty() )
@@ -217,7 +216,7 @@ ProfControl* MixDevice::controlProfile() {
  */
 void MixDevice::read( KConfig *config, const QString& grp )
 {
-    if ( isEthereal() || isArtificial() ) {
+    if ( _mixer->dynamic() || isArtificial() ) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
         QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
@@ -264,7 +263,7 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
  */
 void MixDevice::write( KConfig *config, const QString& grp )
 {
-    if (isEthereal() || isArtificial()) {
+    if (_mixer->dynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
     } else {
         QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
