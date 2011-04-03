@@ -117,7 +117,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     _moveDestinationMixSet = moveDestinationMixSet;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. It MUST NOT contain spaces
-        kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it might not contain spaces" << endl;
+        kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
     }
     kDebug(67100) << "MixDevice::init() _id=" << _id;
