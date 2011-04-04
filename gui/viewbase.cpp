@@ -171,18 +171,17 @@ KMenu* ViewBase::getPopup()
 
 void ViewBase::popupReset()
 {
-    QAction *a;
+    QAction *act;
 
-    if ( _popMenu )
-        delete _popMenu;
+    delete _popMenu;
     _popMenu = new KMenu( this );
     _popMenu->addTitle( KIcon( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
 
-    a = _localActionColletion->action( "toggle_channels" );
-    if ( a ) _popMenu->addAction(a);
+    act = _localActionColletion->action( "toggle_channels" );
+    if ( act ) _popMenu->addAction(act);
 
-    QAction *b = _actions->action( "options_show_menubar" );
-    if ( b ) _popMenu->addAction(b);
+    act = _actions->action( "options_show_menubar" );
+    if ( act ) _popMenu->addAction(act);
 }
 
 
