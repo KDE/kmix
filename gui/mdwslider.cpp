@@ -70,7 +70,7 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
-	muteButtonSpacing(false), captureLEDSpacing(false), m_moveMenu(0), _mdwMoveActions(new KActionCollection(this))
+	muteButtonSpacing(false), captureLEDSpacing(false), _mdwMoveActions(new KActionCollection(this)), m_moveMenu(0)
 {
     createActions();
     createWidgets( showMuteLED, showCaptureLED );
