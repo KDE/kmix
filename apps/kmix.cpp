@@ -1133,7 +1133,8 @@ void KMixWindow::slotConfigureCurrentView()
 void KMixWindow::slotSelectMaster()
 {
     DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
-    if (dsm) dsm->show();
+    dsm->setAttribute(Qt::WA_DeleteOnClose, true);
+    dsm->show();
 }
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {

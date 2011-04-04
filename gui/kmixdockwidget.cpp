@@ -175,10 +175,10 @@ KMixDockWidget::createMasterVolWidget()
 void KMixDockWidget::selectMaster()
 {
    DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
+   dsm->setAttribute(Qt::WA_DeleteOnClose, true);
    connect ( dsm, SIGNAL(newMasterSelected(QString&, QString&)), SLOT( handleNewMaster(QString&, QString&)) );
    connect ( dsm, SIGNAL(newMasterSelected(QString&, QString&)), SIGNAL( newMasterSelected()) );
    dsm->show();
-    // !! The dialog is modal. Does it delete itself?
 }
 
 
