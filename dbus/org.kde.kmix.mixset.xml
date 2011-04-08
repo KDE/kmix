@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.KMix.MixSet">
+    <property access="read" type="as" name="mixers"/>
+    <property access="read" type="s" name="currentMasterMixer"/>
+    <property access="read" type="s" name="currentMasterControl"/>
+    <property access="read" type="s" name="preferredMasterMixer"/>
+    <property access="read" type="s" name="preferredMasterControl"/>
+    <method name="setCurrentMaster">
+      <arg name="mixer" type="s" direction="in"/>
+      <arg name="control" type="s" direction="in"/>
+    </method>
+    <method name="setPreferredMaster">
+      <arg name="mixer" type="s" direction="in"/>
+      <arg name="control" type="s" direction="in"/>
+    </method>
+    <signal name="mixersChanged"/>
+  </interface>
+</node>

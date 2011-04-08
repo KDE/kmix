@@ -118,11 +118,17 @@ public:
    void      setReadableName(QString& name)      { _name = name; }
 
    /**
-   * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) 
+    * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) 
     * MUST ensure that all MixDevices's of one card have unique ID's.
-   * The ID is used through the whole KMix application (including the config file) for identifying controls.
-   */
+    * The ID is used through the whole KMix application (including the config file) for identifying controls.
+    */
+ 
    const QString& id() const;
+
+   /**
+    * Returns the DBus path for this MixDevice
+    */
+   const QString dbusPath();
 
    // Returns the associated mixer
    Mixer* mixer() { return _mixer; }
@@ -135,6 +141,7 @@ public:
    // "mute on", or does it mean "playback on", or "Capture active", or ...
    virtual bool isMuted();
    virtual void setMuted(bool value);
+   virtual void toggleMute();
    virtual bool isRecSource();
    virtual void setRecSource(bool value);
    virtual bool isEnum();

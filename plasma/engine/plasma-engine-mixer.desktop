@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Mixer DataEngine
+X-KDE-ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=kmix
+X-KDE-Library=plasma_engine_mixer
+X-KDE-PluginInfo-Name=mixer

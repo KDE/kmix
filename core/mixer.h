@@ -35,6 +35,7 @@ class Mixer_Backend;
 #include "core/MasterControl.h"
 #include "mixset.h"
 #include "core/mixdevice.h"
+#include "dbus/dbusmixerwrapper.h"
 
 class Volume;
 class KConfig;
@@ -62,7 +63,6 @@ public:
     /// Tells the number of the mixing devices
     unsigned int size() const;
 
-
     /// Returns a pointer to the mix device with the given number
     MixDevice* operator[](int val_i_num);
 
@@ -79,6 +79,9 @@ public:
 
     /// Close/release the mixer
     virtual int close();
+
+    /// Reads balance
+    int balance() const;
 
     /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
     QString& stateMessage() const;
@@ -117,6 +120,10 @@ public:
     // Solaris: /dev/audio
     QString& udi();
 
+    // Returns a DBus path for this mixer
+    // Used also by MixDevice to bind to this path
+    const QString dbusPath();
+
     static QList<Mixer*> & mixers();
 
     /******************************************
@@ -141,28 +148,9 @@ public:
     MixSet getMixSet();
 
 
-    /// DCOP oriented methods (look at mixerIface.h for the descriptions)
-    virtual void setVolume( const QString& mixdeviceID, int percentage );
-    virtual void setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume );
-    virtual void setMasterVolume( int percentage );
-
+    /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );
     virtual void decreaseVolume( const QString& mixdeviceID );
-
-    virtual long absoluteVolume( const QString& mixdeviceID );
-    virtual long absoluteVolumeMin( const QString& mixdeviceID );
-    virtual long absoluteVolumeMax( const QString& mixdeviceID );
-    virtual int volume( const QString& mixdeviceID );
-    virtual int masterVolume();
-
-    virtual QString masterDeviceIndex();
-
-    virtual void setMute( const QString& mixdeviceID, bool on );
-    virtual bool mute( const QString& mixdeviceID );
-    virtual void toggleMute( const QString& mixdeviceID );
-    virtual bool isRecordSource( const QString& mixdeviceID );
-
-    virtual bool isAvailableDevice( const QString& mixdeviceID );
 
     /// Says if we are dynamic (e.g. widgets can come and go)
     virtual void setDynamic( bool dynamic = true );
@@ -186,10 +174,6 @@ protected:
     int m_balance; // from -100 (just left) to 100 (just right)
     static QList<Mixer*> s_mixers;
 
-private slots:
-    void controlChangedForwarder();
-    void controlsReconfiguredForwarder(const QString & mixer_ID);
-
 private:
     void setBalanceInternal(Volume& vol);
     void recreateId();
@@ -202,7 +186,6 @@ private:
     static MasterControl _globalMasterCurrent;
     static MasterControl _globalMasterPreferred;
 
-    QString m_dbusName;
     bool m_dynamic;
 };
 

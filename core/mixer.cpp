@@ -30,7 +30,6 @@
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
 #include "core/volume.h"
-#include "kmixadaptor.h"
 
 /**
  * Some general design hints. Hierachy is Mixer->MixDevice->Volume
@@ -65,7 +64,6 @@ QList<Mixer *>& Mixer::mixers()
 Mixer::Mixer( QString& ref_driverName, int device )
     : m_balance(0), _mixerBackend(0L), m_dynamic(false)
 {
-   (void)new KMixAdaptor(this);
     _cardInstance = 0;
     _mixerBackend = 0;
     int driverCount = numDrivers();
@@ -87,10 +85,6 @@ Mixer::Mixer( QString& ref_driverName, int device )
 
 Mixer::~Mixer() {
    // Close the mixer. This might also free memory, depending on the called backend method
-    if ( ! m_dbusName.isEmpty() ) {
-        kDebug(67100) << "Auto-unregistering DBUS object " << m_dbusName;
-    //QDBusConnection::sessionBus().unregisterObject(m_dbusName);
-   }
    close();
    delete _mixerBackend;
 }
@@ -148,8 +142,9 @@ void Mixer::recreateId()
     _id = primaryKeyOfMixer;
 }
 
-
-
+const QString Mixer::dbusPath() {
+    return "/Mixers/" + QString::number( _mixerBackend->m_devnum );
+}
 
 void Mixer::volumeSave( KConfig *config )
 {
@@ -207,26 +202,13 @@ bool Mixer::openIfValid() {
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
-        connect( _mixerBackend, SIGNAL(controlChanged()), SLOT(controlChangedForwarder()) );
-        connect( _mixerBackend, SIGNAL(controlsReconfigured(const QString&)), SLOT(controlsReconfiguredForwarder(const QString&)) );
-        
-        m_dbusName = "/Mixer" + QString::number(_mixerBackend->m_devnum);
-	kDebug() << "Registering DBUS object " << m_dbusName;
-        bool regResult = QDBusConnection::sessionBus().registerObject(m_dbusName, this);
-	kDebug() << "Registering DBUS object " << m_dbusName << " returns " << regResult;
+        connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
+        connect( _mixerBackend, SIGNAL(controlsReconfigured(const QString&)), SIGNAL(controlsReconfigured(const QString&)) );
+    
+        new DBusMixerWrapper(this, dbusPath());
     }
 
     return ok;
-}
-
-void Mixer::controlChangedForwarder()
-{
-    emit controlChanged();
-}
-
-void Mixer::controlsReconfiguredForwarder( const QString& mixer_ID )
-{
-    emit controlsReconfigured(mixer_ID);
 }
 
 /**
@@ -290,7 +272,9 @@ QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
 
-
+int Mixer::balance() const {
+    return m_balance;
+}
 
 void Mixer::setBalance(int balance)
 {
@@ -523,22 +507,6 @@ MixDevice* Mixer::getMixdeviceById( const QString& mixdeviceID )
    return md;
 }
 
-// @dcop
-// Used also by the setMasterVolume() method.
-void Mixer::setVolume( const QString& mixdeviceID, int percentage )
-{
-    MixDevice *md = getMixdeviceById( mixdeviceID );
-    if (!md) return;
-
-    Volume& volP = md->playbackVolume();
-    Volume& volC = md->captureVolume();
-
-    // @todo The next call doesn't handle negative volumes correctly.
-    volP.setAllVolumes( (percentage*volP.maxVolume())/100 );
-    volC.setAllVolumes( (percentage*volC.maxVolume())/100 );
-    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
-}
-
 /**
    Call this if you have a *reference* to a Volume object and have modified that locally.
    Pass the MixDevice associated to that Volume to this method for writing back
@@ -563,108 +531,7 @@ void Mixer::commitVolumeChange( MixDevice* md ) {
    }
 }
 
-// @dcop only
-void Mixer::setMasterVolume( int percentage )
-{
-  MixDevice *master = getLocalMasterMD();
-  if (master != 0 ) {
-    setVolume( master->id(), percentage );
-  }
-}
-
-// @dcop
-int Mixer::volume( const QString& mixdeviceID )
-{
-  MixDevice *md= getMixdeviceById( mixdeviceID );
-  if (!md) return 0;
-
-  Volume vol=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-  // @todo This will not work, if minVolume != 0      !!!
-  //       e.g.: minVolume=5 or minVolume=-10
-  // The solution is to check two cases:
-  //     volume < 0 => use minVolume for volumeRange
-  //     volume > 0 => use maxVolume for volumeRange
-  //     If chosen volumeRange==0 => return 0
-  // As this is potentially used often (Sliders, ...), it
-  // should be implemented in the Volume class.
-
-  // For now we go with "maxVolume()", like in the rest of KMix.
-  long volumeRange = vol.maxVolume(); // -vol.minVolume() ;
-  if ( volumeRange == 0 )
-  {
-    return 0;
-  }
-  else
-  {
-     return ( vol.getVolume( Volume::LEFT )*100) / volumeRange ;
-  }
-}
-
-// @dcop , especially for use in KMilo
-void Mixer::setAbsoluteVolume( const QString& mixdeviceID, long absoluteVolume ) {
-    MixDevice *md= getMixdeviceById( mixdeviceID );
-    if (!md) return;
-
-    Volume& volP=md->playbackVolume();
-    Volume& volC=md->captureVolume();
-    volP.setAllVolumes( absoluteVolume );
-    volC.setAllVolumes( absoluteVolume );
-    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
-}
-
-// @dcop , especially for use in KMilo
-long Mixer::absoluteVolume( const QString& mixdeviceID )
-{
-    MixDevice *md = getMixdeviceById( mixdeviceID );
-    if (!md) return 0;
-
-    Volume& volP=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-    long avgVolume=volP.getAvgVolume((Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT));
-    return avgVolume;
-}
-
-// @dcop , especially for use in KMilo
-long Mixer::absoluteVolumeMax( const QString& mixdeviceID )
-{
-   MixDevice *md= getMixdeviceById( mixdeviceID );
-   if (!md) return 0;
-
-   Volume vol=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-   long maxVolume=vol.maxVolume();
-   return maxVolume;
-}
-
-// @dcop , especially for use in KMilo
-long Mixer::absoluteVolumeMin( const QString& mixdeviceID )
-{
-   MixDevice *md= getMixdeviceById( mixdeviceID );
-   if (!md) return 0;
-
-   Volume vol=md->playbackVolume();  // @todo Is hardcoded to PlaybackVolume
-   long minVolume=vol.minVolume();
-   return minVolume;
-}
-
-// @dcop
-int Mixer::masterVolume()
-{
-  int vol = 0;
-  MixDevice *master = getLocalMasterMD();
-  if (master != 0 ) {
-    vol = volume( master->id() );
-  }
-  return vol;
-}
-
-// @dbus
-QString Mixer::masterDeviceIndex()
-{
-  MixDevice *master = getLocalMasterMD();
-  return master ? master->id() : QString();
-}
-
-
-// @dcop
+// @dbus, used also in kmix app
 void Mixer::increaseVolume( const QString& mixdeviceID )
 {
     MixDevice *md= getMixdeviceById( mixdeviceID );
@@ -692,7 +559,7 @@ void Mixer::increaseVolume( const QString& mixdeviceID )
   */
 }
 
-// @dcop
+// @dbus
 void Mixer::decreaseVolume( const QString& mixdeviceID )
 {
     MixDevice *md= getMixdeviceById( mixdeviceID );
@@ -721,50 +588,6 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
         It creates too big rounding errors. If you don't beleive me, then
         do a decreaseVolume() and increaseVolume() with "vol.maxVolume() == 31".
     ***********************************************************/
-}
-
-// @dcop
-void Mixer::setMute( const QString& mixdeviceID, bool on )
-{
-  MixDevice *md= getMixdeviceById( mixdeviceID );
-  if (!md) return;
-
-  md->setMuted( on );
-
-     _mixerBackend->writeVolumeToHW(mixdeviceID, md);
-}
-
-// @dcop
-void Mixer::toggleMute( const QString& mixdeviceID )
-{
-    MixDevice *md= getMixdeviceById( mixdeviceID );
-    if (!md) return;
-
-    md->setMuted( ! md->isMuted() );
-    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
-}
-
-// @dcop
-bool Mixer::mute( const QString& mixdeviceID )
-{
-  MixDevice *md= getMixdeviceById( mixdeviceID );
-  if (!md) return true;
-
-  return md->isMuted();
-}
-
-bool Mixer::isRecordSource( const QString& mixdeviceID )
-{
-  MixDevice *md= getMixdeviceById( mixdeviceID );
-  if (!md) return false;
-
-  return md->isRecSource();
-}
-
-/// @DCOP    WHAT DOES THIS METHOD?!?!?
-bool Mixer::isAvailableDevice( const QString& mixdeviceID )
-{
-  return getMixdeviceById( mixdeviceID );
 }
 
 void Mixer::setDynamic ( bool dynamic )

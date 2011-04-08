@@ -1,0 +1,16 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.KMix.Mixer">
+    <property access="read" type="s" name="driverName"/>
+    <property access="read" type="s" name="masterControl"/>
+    <property access="read" type="b" name="opened"/>
+    <property access="read" type="s" name="readableName"/>
+    <property access="read" type="s" name="id"/>
+    <property access="read" type="s" name="udi"/>
+    <property access="readwrite" type="i" name="balance"/>
+    <property access="read" type="as" name="controls"/>
+    <signal name="controlChanged"/>
+    <signal name="changed"/>
+  </interface>
+</node>

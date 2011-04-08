@@ -65,7 +65,7 @@
 #include "gui/viewdockareapopup.h"
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
-
+#include "dbus/dbusmixsetwrapper.h"
 #include "gui/osdwidget.h"
 
 
@@ -111,6 +111,14 @@ KMixWindow::KMixWindow(bool invisible)
         show(); // Started visible
 
     connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()) );
+
+	// Creating a dbus interface
+	DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers" );
+	// these signals should be emitted right after the mixer device is added
+	connect( theKMixDeviceManager, SIGNAL(plugged( const char*, const QString&, QString&)),
+			wrapper, SLOT(devicePlugged( const char*, const QString&, QString&)) );
+	connect( theKMixDeviceManager, SIGNAL(unplugged( const QString& ) ),
+			wrapper, SLOT(deviceUnplugged( const QString& )) );
 }
 
 
@@ -979,7 +987,11 @@ void KMixWindow::showVolumeDisplay()
     if ( mixer == 0 ) return; // e.g. when no soundcard is available
     MixDevice *md = Mixer::getGlobalMasterMD();
     if ( md == 0 ) return; // shouldn't happen, but lets play safe
-    int currentVolume = mixer->volume(md->id());
+    // Current volume
+    Volume vol = md->playbackVolume();
+    int currentVolume = vol.maxVolume()
+                ? vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) * 100 / vol.maxVolume()
+                : 0;
 
     osdWidget->setCurrentVolume(currentVolume, md->isMuted());
     osdWidget->show();
@@ -999,7 +1011,8 @@ void KMixWindow::slotMute()
     if ( mixer == 0 ) return; // e.g. when no soundcard is available
     MixDevice *md = Mixer::getGlobalMasterMD();
     if ( md == 0 ) return; // shouldn't happen, but lets play safe
-    mixer->toggleMute(md->id());
+	md->toggleMute();
+    mixer->commitVolumeChange( md );
     showVolumeDisplay();
 }
 

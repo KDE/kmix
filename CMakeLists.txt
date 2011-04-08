@@ -23,10 +23,18 @@ include_directories( ${GLIB2_INCLUDE_DIR} /usr/lib/oss/include)
 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
-add_subdirectory( tests )
+#add_subdirectory( tests )
 
-set(kmix_adaptor_SRCS)
-qt4_add_dbus_adaptor( kmix_adaptor_SRCS org.kde.KMix.xml core/mixer.h Mixer)
+set(kmix_adaptor_SRCS
+	dbus/dbusmixerwrapper.cpp
+	dbus/dbusmixsetwrapper.cpp
+	dbus/dbuscontrolwrapper.cpp)
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
+	dbus/dbuscontrolwrapper.h DBusControlWrapper )
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
+	dbus/dbusmixerwrapper.h DBusMixerWrapper )
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
+	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    apps/main.cpp 
@@ -144,15 +152,19 @@ if (HAVE_PULSE)
     target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (HAVE_PULSE)
 
-install(TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
+########### next target ###############
+add_subdirectory( plasma )
+
+install( TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )
-install(TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
-
+install( TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( PROGRAMS kmix.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmix_autostart.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-install( FILES org.kde.KMix.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES dbus/org.kde.kmix.control.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES dbus/org.kde.kmix.mixer.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

@@ -408,8 +408,8 @@ void
 KMixDockWidget::dockMute()
 {
    MixDevice *md = Mixer::getGlobalMasterMD();
-   if ( md != 0 ) {
-      md->setMuted( !md->isMuted() );
+   if ( md ) {
+      md->toggleMute();
       md->mixer()->commitVolumeChange( md );
    }
 }

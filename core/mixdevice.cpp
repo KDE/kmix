@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <qregexp.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -26,6 +28,7 @@
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "core/volume.h"
+#include "dbus/dbuscontrolwrapper.h"
 
 static const QString channelTypeToIconName( MixDevice::ChannelType type )
 {
@@ -120,6 +123,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         _id.replace(' ', '_');
     }
     kDebug(67100) << "MixDevice::init() _id=" << _id;
+    new DBusControlWrapper( this, dbusPath() );
 }
 
 void MixDevice::addPlaybackVolume(Volume &playbackVol)
@@ -184,9 +188,16 @@ const QString& MixDevice::id() const {
    return _id;
 }
 
+const QString MixDevice::dbusPath() {
+	QString controlPath = _id;
+	controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+	return _mixer->dbusPath() + "/" + controlPath;
+}
+
 
 bool MixDevice::isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
 void MixDevice::setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
+void MixDevice::toggleMute()               { setMuted( !isMuted() ); }
 bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
 void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 bool MixDevice::isEnum()                   { return ( ! _enumValues.empty() ); }
@@ -291,9 +302,9 @@ void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
            Volume::ChannelID chid = (Volume::ChannelID)i;
 
            volume.getVolume( chid );
-	   QString volstr (Volume::ChannelNameForPersistence[ chid ]);
-	   if ( capture ) volstr += "Capture";
-	   config.writeEntry(volstr , (int)volume.getVolume( chid ) );
+       QString volstr (Volume::ChannelNameForPersistence[ chid ]);
+       if ( capture ) volstr += "Capture";
+       config.writeEntry(volstr , (int)volume.getVolume( chid ) );
        } // if supported channel
     } // for all channels
 
