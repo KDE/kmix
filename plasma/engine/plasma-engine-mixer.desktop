@@ -1,5 +1,11 @@
 [Desktop Entry]
 Name=Mixer DataEngine
+Name[ca]=Motor de dades del mesclador
+Name[nl]=Gegevensengine voor mixer
+Name[pt_BR]=Mecanismo de dados do mixer
+Name[sv]=Datagränssnitt för mixer
+Name[uk]=Рушій даних мікшера
+Name[x-test]=xxMixer DataEnginexx
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=kmix
