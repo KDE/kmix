@@ -114,7 +114,7 @@ void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
 {
     m_meter->setValue(volumeLevel);
 
-    if (!muted) {
+    if (!muted && (volumeLevel > 0)) {
         if (volumeLevel < 25) {
             m_iconLabel->nativeWidget()->setPixmap(m_volumeLowPixmap);
         } else if (volumeLevel < 75) {
