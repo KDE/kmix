@@ -260,7 +260,8 @@ KMixDockWidget::updatePixmap()
         }
         long absoluteVolume    = vol.getAvgVolume(Volume::MALL);
         int percentage         = vol.percentage(absoluteVolume);
-        if      ( percentage < 25 ) newPixmapType = '1';  // Hint: also negative-values
+        if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
+        else if ( percentage < 25 ) newPixmapType = '1';
         else if ( percentage < 75 ) newPixmapType = '2';
         else                        newPixmapType = '3';
    }
@@ -270,7 +271,8 @@ KMixDockWidget::updatePixmap()
       // Pixmap must be changed => do so
       switch ( newPixmapType ) {
          case 'e': setIconByName( "kmixdocked_error" ); break;
-         case 'm': setIconByName( "audio-volume-muted"  ); break;
+         case 'm': 
+         case '0': setIconByName( "audio-volume-muted"  ); break;
          case '1': setIconByName( "audio-volume-low"  ); break;
          case '2': setIconByName( "audio-volume-medium" ); break;
          case '3': setIconByName( "audio-volume-high" ); break;
