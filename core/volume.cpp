@@ -265,7 +265,7 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
     return os;
 }
 
-kdbgstream& operator<<(kdbgstream &os, const Volume& vol) {
+QDebug operator<<(QDebug os, const Volume& vol) {
     os << "(";
     for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
 	if ( i != 0 ) {

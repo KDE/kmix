@@ -116,7 +116,7 @@ friend class MixDevice;
    Volume::SwitchType switchType() { return _switchType; }
 
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
-    friend kdbgstream& operator<<(kdbgstream& os, const Volume& vol);
+    friend QDebug operator<<(QDebug os, const Volume& vol);
 
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
@@ -147,7 +147,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);
-kdbgstream& operator<<(kdbgstream &os, const Volume& vol);
+QDebug operator<<(QDebug os, const Volume& vol);
 
 #endif // VOLUME
 
