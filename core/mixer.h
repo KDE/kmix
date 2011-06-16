@@ -45,8 +45,19 @@ class Mixer : public QObject
       Q_OBJECT
 
 public:
-    enum MixerError { ERR_PERM=1, ERR_WRITE, ERR_READ,
-        ERR_OPEN, ERR_LASTERR };
+	/**
+	 * Status for Mixer operations.
+	 * 
+	 * OK_UNCHANGED is a apecial variant of OK. It must be implemented by
+	 * backends that use needsPolling() == true. See Mixer_OSS.cpp for an
+	 * example. Rationale is that we need a proper change check: Otherwise
+	 * the DBUS Session Bus is massively spammed. Also quite likely the Mixer
+	 * GUI might get updated all the time.
+	 * 
+	 */
+    enum MixerError { OK=0, ERR_PERM=1, ERR_WRITE, ERR_READ,
+        ERR_OPEN, ERR_LASTERR, OK_UNCHANGED };
+
 
     Mixer( QString& ref_driverName, int device );
     virtual ~Mixer();

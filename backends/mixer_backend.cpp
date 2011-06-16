@@ -109,11 +109,13 @@ void Mixer_Backend::readSetFromHW()
     }
     _readSetFromHWforceUpdate = false;
 
+	int ret = Mixer::OK;
+
     int mdCount = m_mixDevices.count();
     for(int i=0; i<mdCount  ; ++i )
     {
         MixDevice *md = m_mixDevices[i];
-        readVolumeFromHW( md->id(), md );
+        ret = readVolumeFromHW( md->id(), md );
         if (md->isEnum() ) {
             /*
              * This could be reworked:
@@ -123,7 +125,12 @@ void Mixer_Backend::readSetFromHW()
             md->setEnumId( enumIdHW(md->id()) ); 
         }
     }
-    emit controlChanged();
+    
+    if ( ret == Mixer::OK )
+	{
+		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
+		emit controlChanged();
+	}
 }
 
 /**

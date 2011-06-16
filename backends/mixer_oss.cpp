@@ -325,6 +325,9 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
     // --- VOLUME ---
     Volume& vol = md->playbackVolume();
     int devnum = id2num(id);
+    
+
+    bool controlChanged = false;
 
     if ( vol.hasVolume() ) {
         int volume;
@@ -343,9 +346,17 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
             if ( ! isMuted ) {
                // Muted is represented in OSS by value 0. We don't want to write the value 0 as a volume,
                // but instead we onlm mark it muted (see setMuted() above).
-               vol.setVolume( Volume::LEFT, volLeft);
+               int volLeftOld = vol.getVolume(Volume::LEFT);
+	       vol.setVolume( Volume::LEFT, volLeft);
+	       if ( volLeftOld != volLeft )
+		 controlChanged = true;
                if( vol.count() > 1 )
+	       {
+		  int volRightOld = vol.getVolume(Volume::RIGHT);
                   vol.setVolume( Volume::RIGHT, volRight);
+		  if ( volRightOld != volRight )
+		    controlChanged = true;
+	       }
             }
         }
     }
@@ -356,13 +367,28 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
     int recsrcMask;
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
         ret = Mixer::ERR_READ;
-    else {
+    else
+	{
+		bool isRecsrcOld = md->isRecSource();
         // test if device bit is set in record bit mask
         bool isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
         md->setRecSource(isRecsrc);
+		if ( isRecsrcOld != isRecsrc )
+			controlChanged = true;
+		
     }
 
-    return ret;
+	if ( ret== 0)
+	{
+		if ( controlChanged )
+			return 0;
+		else
+			return Mixer::OK_UNCHANGED;
+	}
+	else
+	{
+		return ret;
+	}
 }
 
 
