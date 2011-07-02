@@ -30,14 +30,14 @@
 class DBusMixerWrapper : public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(QString driverName READ driverName);
-	Q_PROPERTY(QString masterControl READ masterControl);
-	Q_PROPERTY(QString readableName READ readableName);
-	Q_PROPERTY(bool opened READ isOpened);
-	Q_PROPERTY(QString id READ id);
-	Q_PROPERTY(QString udi READ udi);
-	Q_PROPERTY(int balance READ balance WRITE setBalance);
-	Q_PROPERTY(QStringList controls READ controls);
+	Q_PROPERTY(QString driverName READ driverName)
+	Q_PROPERTY(QString masterControl READ masterControl)
+	Q_PROPERTY(QString readableName READ readableName)
+	Q_PROPERTY(bool opened READ isOpened)
+	Q_PROPERTY(QString id READ id)
+	Q_PROPERTY(QString udi READ udi)
+	Q_PROPERTY(int balance READ balance WRITE setBalance)
+	Q_PROPERTY(QStringList controls READ controls)
 
 	public:
 		DBusMixerWrapper(Mixer* parent, QString path);
