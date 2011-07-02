@@ -27,7 +27,7 @@
 class DBusMixSetWrapper : public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(QStringList mixers READ mixers);
+	Q_PROPERTY(QStringList mixers READ mixers)
 	Q_PROPERTY(QString currentMasterMixer READ currentMasterMixer)
 	Q_PROPERTY(QString currentMasterControl READ currentMasterControl)
 	Q_PROPERTY(QString preferredMasterMixer READ preferredMasterMixer)

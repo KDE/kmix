@@ -28,16 +28,16 @@
 class DBusControlWrapper : public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(QString id READ id);
-	Q_PROPERTY(QString readableName READ readableName);
-	Q_PROPERTY(QString iconName READ iconName);
-	Q_PROPERTY(int volume READ volume WRITE setVolume);
-	Q_PROPERTY(long absoluteVolume READ absoluteVolume WRITE setAbsoluteVolume);
-	Q_PROPERTY(long absoluteVolumeMin READ absoluteVolumeMin);
-	Q_PROPERTY(long absoluteVolumeMax READ absoluteVolumeMax);
-	Q_PROPERTY(bool mute READ isMuted WRITE setMute);
-	Q_PROPERTY(bool recordSource READ isRecordSource WRITE setRecordSource);
-	Q_PROPERTY(bool canMute READ canMute);
+	Q_PROPERTY(QString id READ id)
+	Q_PROPERTY(QString readableName READ readableName)
+	Q_PROPERTY(QString iconName READ iconName)
+	Q_PROPERTY(int volume READ volume WRITE setVolume)
+	Q_PROPERTY(long absoluteVolume READ absoluteVolume WRITE setAbsoluteVolume)
+	Q_PROPERTY(long absoluteVolumeMin READ absoluteVolumeMin)
+	Q_PROPERTY(long absoluteVolumeMax READ absoluteVolumeMax)
+	Q_PROPERTY(bool mute READ isMuted WRITE setMute)
+	Q_PROPERTY(bool recordSource READ isRecordSource WRITE setRecordSource)
+	Q_PROPERTY(bool canMute READ canMute)
 
 	public:
 		DBusControlWrapper(MixDevice* parent, QString path);
