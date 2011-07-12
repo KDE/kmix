@@ -754,7 +754,12 @@ void Mixer_PULSE::addWidget(int index)
         return;
     }
     addDevice((*map)[index]);
-    emit controlsReconfigured(_mixer->id());
+    // Do not emit directly to ensure all connected slots are executed
+    // in their own event loop.
+    QMetaObject::invokeMethod(this,
+                              "controlsReconfigured",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, _mixer->id()));
 }
 
 void Mixer_PULSE::removeWidget(int index)
@@ -778,7 +783,12 @@ void Mixer_PULSE::removeWidget(int index)
         {
             delete *iter;
             m_mixDevices.erase(iter);
-            emit controlsReconfigured(_mixer->id());
+            // Do not emit directly to ensure all connected slots are executed
+            // in their own event loop.
+            QMetaObject::invokeMethod(this,
+                                      "controlsReconfigured",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, _mixer->id()));
             return;
         }
     }
@@ -799,7 +809,12 @@ void Mixer_PULSE::removeAllWidgets()
         delete *iter;
         m_mixDevices.erase(iter);
     }
-    emit controlsReconfigured(_mixer->id());
+    // Do not emit directly to ensure all connected slots are executed
+    // in their own event loop.
+    QMetaObject::invokeMethod(this,
+                              "controlsReconfigured",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, _mixer->id()));
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev)
@@ -990,7 +1005,7 @@ int Mixer_PULSE::open()
         kDebug(67100) <<  "Using PulseAudio for mixer: " << m_mixerName;
         m_isOpen = true;
     }
- 
+
     return 0;
 }
 
