@@ -94,6 +94,7 @@ public slots:
     void update();
     void showMoveMenu();
     virtual void showContextMenu();
+    void increaseOrDecreaseVolume(bool arg1);
     //void getSubcontrolTranslation(Volume::ChannelID arg1);
 
 

@@ -25,6 +25,11 @@
 
 #include <kdebug.h>
 
+#include <QList>
+
+class VolumeChannel;
+
+
 class Volume
 {
 
@@ -75,14 +80,20 @@ friend class MixDevice;
 
     enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
 
+    // regular constructor (old, deprecsted)
+    //Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     // regular constructor
-    Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
+    Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
+    void addVolumeChannel(VolumeChannel ch);
     // compatibility constructor
     // Volume( int channels, long maxVolume );
     // copy constructor
     Volume( const Volume &v );
     // constructor for dummy volumes
     Volume();
+    
+    /// @Deprecated
+    void addVolumeChannels(ChannelMask chmask);
     
     // Set all volumes as given by vol
     void setAllVolumes(long vol);
@@ -97,7 +108,7 @@ friend class MixDevice;
     
     long getVolume(ChannelID chid);
     long getAvgVolume(ChannelMask chmask);
-    long operator[](int);
+    //long operator[](int);
     long maxVolume();
     long minVolume();
     int  percentage(long );
@@ -121,13 +132,15 @@ friend class MixDevice;
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
     static int    _channelMaskEnum[9];
-    bool          _muted;
+    QMap<Volume::ChannelID, VolumeChannel> getVolumes();
+    
+protected:
     long          _chmask;
     long          _volumes[CHIDMAX+1];
-    long          _maxVolume;
-    long          _minVolume;
+    QMap<Volume::ChannelID, VolumeChannel> _volumesL;
 
-protected:
+    long          _minVolume;
+    long          _maxVolume;
    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
    // these functions. Our friend class MixDevice will handle that gracefully for us.
    void setSwitch( bool val ) { _switchActivated = val; }
@@ -138,12 +151,19 @@ private:
     void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
     long volrange( int vol );
-    long volrangeRec( int vol );
 
     bool _hasSwitch;
     bool _switchActivated;
     SwitchType _switchType;
     bool _isCapture;
+};
+
+class VolumeChannel
+{
+public:
+  VolumeChannel(Volume::ChannelID chid) { volume =0; this->chid = chid; }
+  long volume;
+  Volume::ChannelID chid;
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);

@@ -498,21 +498,22 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 		m_extraCaptureLabel = createLabel(this, capture, volLayout, false);
 	}
 
+
+//	vol._volumes.
+
 	const int minSliderSize = fontMetrics().height() * 10;
-	for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-		if ( vol._chmask & Volume::_channelMaskEnum[i] ) {
-			Volume::ChannelID chid = Volume::ChannelID(i);
+	long minvol = vol.minVolume();
+	long maxvol = vol.maxVolume();
 
-			long minvol = vol.minVolume();
-			long maxvol = vol.maxVolume();
-
-// 			if (addLabel)
-// 			{
-			  kDebug(67100) << "Add label to " << chid << ": " <<  Volume::ChannelNameReadable[chid];
-			    QString subcontrolTranslation = Volume::ChannelNameReadable[chid]; //Volume::getSubcontrolTranslation(chid);
+	bool first = true;
+	QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
+	foreach (VolumeChannel vc, vols )
+	{
+			  kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
+			    QString subcontrolTranslation = Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
 			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 			ref_labels.append ( subcontrolLabel ); // add to list
-			if( i>0 && isStereoLinked() ) {
+			if( first && isStereoLinked() ) {
 				// show only one (the first) slider, when the user wants it so
 				subcontrolLabel->hide();
 			}			  
@@ -521,7 +522,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 			QWidget* slider;
 			if ( m_small ) {
 				slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
-				                           vol.getVolume( chid ), _orientation, this );
+				                           vol.getVolume( vc.chid ), _orientation, this );
 			} // small
 			else  {
 				QSlider* sliderBig = new QSlider( _orientation, this );
@@ -529,7 +530,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 				sliderBig->setMinimum(0);
 				sliderBig->setMaximum(maxvol);
 				sliderBig->setPageStep(maxvol/10);
-				sliderBig->setValue( maxvol - vol.getVolume( chid ) );
+				sliderBig->setValue( maxvol - vol.getVolume( vc.chid ) );
 
 				if ( _orientation == Qt::Vertical ) {
 					sliderBig->setMinimumHeight( minSliderSize );
@@ -555,15 +556,16 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 				slider->setToolTip( captureTip );
 			}
 
-			if( i>0 && isStereoLinked() ) {
+			if( first && isStereoLinked() ) {
 				// show only one (the first) slider, when the user wants it so
 				slider->hide();
 			}
 			volLayout->addWidget( slider ); // add to layout
 			ref_sliders.append ( slider ); // add to list
-			ref_slidersChids.append(chid);
+			ref_slidersChids.append(vc.chid);
 			connect( slider, SIGNAL( valueChanged(int) ), SLOT( volumeChange(int) ) );
-		} //if channel is present
+		
+		first = false;
 	} // for all channels of this device
 }
 
@@ -884,23 +886,23 @@ void MDWSlider::setDisabled( bool value )
  */
 void MDWSlider::increaseVolume()
 {
+  increaseOrDecreaseVolume(false);
+}
+
+void MDWSlider::increaseOrDecreaseVolume(bool decrease)
+{
 	Volume& volP = m_mixdevice->playbackVolume();
 	long inc = volP.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < volP.count(); i++ ) {
-		long newVal = (volP[i]) + inc;
-		volP.setVolume( (Volume::ChannelID)i, newVal < volP.maxVolume() ? newVal : volP.maxVolume() );
-	}
+	if ( inc == 0 )	inc = 1;
+	if ( decrease ) inc *= -1;
+	volP.changeAllVolumes(inc);
 
 	Volume& volC = m_mixdevice->captureVolume();
 	inc = volC.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < volC.count(); i++ ) {
-		long newVal = (volC[i]) + inc;
-		volC.setVolume( (Volume::ChannelID)i, newVal < volC.maxVolume() ? newVal : volC.maxVolume() );
-	}
+	if ( inc == 0 ) inc = 1;
+	if ( decrease ) inc *= -1;
+	volC.changeAllVolumes(inc);
+
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
@@ -910,24 +912,7 @@ void MDWSlider::increaseVolume()
  */
 void MDWSlider::decreaseVolume()
 {
-	Volume& volP = m_mixdevice->playbackVolume();
-	long inc = volP.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < volP.count(); i++ ) {
-		long newVal = (volP[i]) - inc;
-		volP.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
-	}
-
-	Volume& volC = m_mixdevice->captureVolume();
-	inc = volC.maxVolume() / 20;
-	if ( inc == 0 )
-		inc = 1;
-	for ( int i = 0; i < volC.count(); i++ ) {
-		long newVal = (volC[i]) - inc;
-		volC.setVolume( (Volume::ChannelID)i, newVal > 0 ? newVal : 0 );
-	}
-	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+  increaseOrDecreaseVolume(true);
 }
 
 
@@ -971,7 +956,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 	for( int i=0; i<ref_sliders.count(); i++, ++it ) {
 		if( !isStereoLinked() ) {
 			Volume::ChannelID chid = *it;
-			useVolume = vol[chid];
+			useVolume = vol.getVolume(chid);
 		}
 		QWidget *slider = ref_sliders.at( i );
 //		QWidget *labelAtSlider = ref_labels.at( i ); // TODO hide labels

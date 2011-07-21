@@ -304,8 +304,8 @@ void Mixer::setBalanceInternal(Volume& vol)
 {
    //_mixerBackend->readVolumeFromHW( master->id(), master );
 
-   int left = vol[ Volume::LEFT ];
-   int right = vol[ Volume::RIGHT ];
+   int left = vol.getVolume(Volume::LEFT);
+   int right = vol.getVolume( Volume::RIGHT );
    int refvol = left > right ? left : right;
    if( m_balance < 0 ) // balance left
    {

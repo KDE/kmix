@@ -335,7 +335,8 @@ int Mixer_OSS4::open()
 						chMask = Volume::MLEFT;
 					}
 
-					Volume vol (chMask, ext.maxvalue, ext.minvalue, false, isCapture);
+					Volume vol (ext.maxvalue, ext.minvalue, false, isCapture);
+					vol.addVolumeChannels(chMask);
 
 					MixDevice* md =	new MixDevice(_mixer,
 									QString::number(i),
@@ -368,7 +369,8 @@ int Mixer_OSS4::open()
 				else if ( ext.type == MIXT_HEXVALUE )
 				{
 					chMask = Volume::ChannelMask(Volume::MLEFT);
-					Volume vol (chMask, ext.maxvalue, ext.minvalue, false, isCapture);
+					Volume vol (ext.maxvalue, ext.minvalue, false, isCapture);
+					vol.addVolumeChannels(chMask);
 
 					MixDevice* md =	new MixDevice(_mixer,
 								      QString::number(i),
@@ -398,7 +400,7 @@ int Mixer_OSS4::open()
 #endif
 					)
 				{
-					Volume vol(Volume::MNONE, 1, 0, true, isCapture);
+					Volume vol(1, 0, true, isCapture);
 					
 					if (isCapture)
 						 vol.setSwitchType (Volume::CaptureSwitch);
@@ -430,8 +432,9 @@ int Mixer_OSS4::open()
 
 					if ( wrapIoctl( ioctl (m_fd, SNDCTL_MIX_ENUMINFO, &ei) ) != -1 )
 					{
-						Volume vol(Volume::MLEFT, ext.maxvalue, ext.minvalue,
+						Volume vol(ext.maxvalue, ext.minvalue,
 									false, isCapture);
+						vol.addVolumeChannels(VolumeChannel(Volume::MLEFT));
 
 						MixDevice* md = new MixDevice (_mixer,
 						                               QString::number(i),
@@ -622,23 +625,23 @@ int Mixer_OSS4::writeVolumeToHW(const QString& id, MixDevice *md)
 			break;
 
 		case MIXT_MONOSLIDER:
-			volume = vol[Volume::LEFT];
+			volume = vol.getVolume(Volume::LEFT);
 			break;
 
 		case MIXT_STEREOSLIDER:
-			volume = vol[Volume::LEFT] | ( vol[Volume::RIGHT] << 8 );
+			volume = vol.getVolume(Volume::LEFT) | ( vol.getVolume(Volume::RIGHT) << 8 );
 			break;
 
 		case MIXT_SLIDER:
-			volume = vol[Volume::LEFT];
+			volume = vol.getVolume(Volume::LEFT);
 			break;
 
 		case MIXT_MONOSLIDER16:
-			volume = vol[Volume::LEFT];
+			volume = vol.getVolume(Volume::LEFT);
 			break;
 
 		case MIXT_STEREOSLIDER16:
-			volume = vol[Volume::LEFT] | ( vol[Volume::RIGHT] << 16 );
+			volume = vol.getVolume(Volume::LEFT) | ( vol.getVolume(Volume::RIGHT) << 16 );
 			break;
 		default:
 			return -1;

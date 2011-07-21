@@ -145,9 +145,10 @@ qDebug() << "Get control of " << busDestination;
 	
 	qDebug() << "REPLY " << result2.type() << ": " << readableName;
 	
-	Volume::ChannelMask chn = (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
 	MixDevice* md = new MixDevice(_mixer, readableName, readableName, MixDevice::VOLUME);
-	Volume* vol = new Volume( chn, 100, 0, true, false);
+	Volume* vol = new Volume( 100, 0, true, false);
+	vol->addVolumeChannel(VolumeChannel(Volume::LEFT));
+	vol->addVolumeChannel(VolumeChannel(Volume::RIGHT));
 	md->setApplicationStream(true);
 	md->addPlaybackVolume(*vol);
 	m_mixDevices.append( md );

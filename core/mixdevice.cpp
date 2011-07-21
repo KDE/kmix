@@ -253,20 +253,16 @@ void MixDevice::read( KConfig *config, const QString& grp )
 
 void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 {
-    //Volume::ChannelMask chMask = Volume::MNONE;
-    
     Volume& volume = capture ? captureVolume() : playbackVolume();
-
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-       Volume::ChannelID chid = (Volume::ChannelID)i;
-       QString volstr (Volume::ChannelNameForPersistence[ chid ]);
+    
+    for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
+    {
+      QString volstr = getVolString(chid,capture);
        if ( capture ) volstr += "Capture";
        if ( config.hasKey(volstr) ) {
-          long volCfg = config.readEntry(volstr, 0);
-          //chMask |= _channelMaskEnum[i];
-
-          volume.setVolume(chid, volCfg);
+          volume.setVolume(chid, config.readEntry(volstr, 0));
        } // if saved channel exists
+       chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
     } // for all channels    
 }
 
@@ -297,20 +293,19 @@ void MixDevice::write( KConfig *config, const QString& grp )
 void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
-
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-       if ( volume._chmask & Volume::_channelMaskEnum[i] ) {
-           Volume::ChannelID chid = (Volume::ChannelID)i;
-
-           volume.getVolume( chid );
-       QString volstr (Volume::ChannelNameForPersistence[ chid ]);
-       if ( capture ) volstr += "Capture";
-       config.writeEntry(volstr , (int)volume.getVolume( chid ) );
-       } // if supported channel
+    foreach (VolumeChannel vc, volume.getVolumes() )
+    {
+       config.writeEntry(getVolString(vc.chid,capture) , (int)vc.volume);
     } // for all channels
 
 }
 
+QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)
+{
+       QString volstr (Volume::ChannelNameForPersistence[chid]);
+       if ( capture ) volstr += "Capture";
+       return volstr;
+}
 
 #include "mixdevice.moc"
 

@@ -140,10 +140,10 @@ int Mixer_OSS::open()
             {
               if( devmask & ( 1 << idx ) ) // device active?
                 {
-                  Volume::ChannelMask chnmask = Volume::MLEFT;
-                  if ( stereodevs & ( 1 << idx ) ) chnmask = (Volume::ChannelMask)(chnmask|Volume::MRIGHT);
-
-                  Volume playbackVol( chnmask, 100, 1, true, false );
+                  Volume playbackVol( 100, 1, true, false );
+		  playbackVol.addVolumeChannel(VolumeChannel(Volume::LEFT));
+		  if ( stereodevs & ( 1 << idx ) )
+		    playbackVol.addVolumeChannel(VolumeChannel(Volume::RIGHT));
 
                   QString id;
                   id.setNum(idx);
@@ -158,8 +158,7 @@ int Mixer_OSS::open()
                   // Tutorial: Howto add a simple capture switch
                   if ( recmask & ( 1 << idx ) ) {
                      // can be captured => add capture volume, with no capture volume
-                     chnmask = Volume::MNONE;
-                     Volume captureVol( chnmask, 100, 1, true, true );
+                     Volume captureVol( 100, 1, true, true );
                      md->addCaptureVolume(captureVol);
                  }
 
@@ -403,10 +402,10 @@ int Mixer_OSS::writeVolumeToHW( const QString& id, MixDevice *md)
        volume = 0;
     else
     {
-        if ( vol.count() > 1 )
-            volume = (vol[ Volume::LEFT ]) + ((vol[ Volume::RIGHT ])<<8);
+        if ( vol.getVolumes().count() > 1 )
+            volume = (vol.getVolume(Volume::LEFT) + (vol.getVolume(Volume::RIGHT)<<8));
         else
-            volume = vol[ Volume::LEFT ];
+            volume = vol.getVolume(Volume::LEFT);
     }
     
     if (ioctl(m_fd, MIXER_WRITE( devnum ), &volume) == -1)

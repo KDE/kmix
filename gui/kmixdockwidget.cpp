@@ -397,11 +397,13 @@ KMixDockWidget::trayWheelEvent(int delta)
 
     if ( inc < 1 ) inc = 1;
 
-    for ( int i = 0; i < vol.count(); i++ ) {
+    vol.changeAllVolumes( (inc * delta) / 120 );
+/*    for ( int i = 0; i < vol.count(); i++ ) {
         int newVal = vol[i] + (inc * (delta / 120));
         if( newVal < 0 ) newVal = 0;
         vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
     }
+    */
 
     if ( _playBeepOnVolumeChange ) {
         QString fileName("KDE_Beep_Digital_1.ogg");

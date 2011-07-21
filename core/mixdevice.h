@@ -191,6 +191,7 @@ protected:
    void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet );
 
 private:
+  QString getVolString(Volume::ChannelID chid, bool capture);
    Mixer *_mixer;
    Volume _playbackVolume;
    Volume _captureVolume;

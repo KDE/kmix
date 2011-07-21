@@ -29,8 +29,8 @@ MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<
    MixDevice( mixer, id, name, type )  // this will use doNotRestore == true
 {
     setArtificial(true);
-    Volume::ChannelMask chn = Volume::MMAIN;
-    _compositePlaybackVolume = new Volume( chn, MixDeviceComposite::VolMax, 0, true, false);
+    _compositePlaybackVolume = new Volume( MixDeviceComposite::VolMax, 0, true, false);
+    _compositePlaybackVolume->addVolumeChannels(Volume::MMAIN);
     _compositeCaptureVolume  = new Volume();
 
     QListIterator<MixDevice*> it(mds);
