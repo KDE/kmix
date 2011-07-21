@@ -70,6 +70,8 @@
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
+#include "backends/mixer_mpris2.cpp"
+
 #if defined(SUN_MIXER)
 #include "backends/mixer_sun.cpp"
 #endif
@@ -111,6 +113,9 @@
 #endif
 
 
+
+
+
 typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );
 typedef QString getDriverNameFunc( );
 
@@ -125,6 +130,8 @@ MixerFactory g_mixerFactories[] = {
     { SUN_getMixer, SUN_getDriverName },
 #endif
 
+    { MPRIS2_getMixer, MPRIS2_getDriverName },
+    
 #if defined(IRIX_MIXER)
     { IRIX_getMixer, IRIX_getDriverName },
 #endif

@@ -106,6 +106,13 @@ void ViewDockAreaPopup::_setMixSet()
    if ( dockMD != 0 ) {
       _mixSet->append(dockMD);
    }
+   
+   MixDevice *md;
+   foreach ( md, _mixer->getMixSet() )
+   {
+     _mixSet->append(md);
+   }
+   
 }
 
 QWidget* ViewDockAreaPopup::add(MixDevice *md)

@@ -7,33 +7,74 @@
 #include "mixer_mpris2.h"
 
 //#include <QtCore/QCoreApplication>
-#include <QtCore/QDebug>
-#include <QtCore/QStringList>
+#include <QDebug>
+#include <QStringList>
 #include <QDBusReply>
  
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QAction>
 
+#include <QString>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
 
-QString Mixer_MPRIS2::MPRIS_IFC2 = "org.mpris.MediaPlayer2";
+QString Mixer_MPRIS2::MPRIS_IFC2; // = "org.mpris.MediaPlayer2";
 
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device )
 {
 
    Mixer_Backend *l_mixer;
 
-   l_mixer = new MPRIS2(mixer,  device );
+   l_mixer = new Mixer_MPRIS2(mixer,  device );
    return l_mixer;
 }
 
-Mixer_MPRIS2(Mixer *mixer, int device = -1 ) : Mixer_Backend(mixer,  device )
+Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  device )
 {
-	run();
+//	run();
 }
+
+
+  int Mixer_MPRIS2::open()
+  {
+    if ( m_devnum !=  0 )
+      return Mixer::ERR_OPEN;
+    
+    run();
+    return 0;
+  }
+
+  int Mixer_MPRIS2::close()
+  {
+    return 0;    
+  }
+
+  int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * )
+  {
+    return 0;    
+  }
+
+  int Mixer_MPRIS2::writeVolumeToHW( const QString& id, MixDevice * )
+  {
+    return 0;    
+  }
+  
+  void Mixer_MPRIS2::setEnumIdHW(const QString& id, unsigned int)
+  {
+  }
+  
+  unsigned int Mixer_MPRIS2::enumIdHW(const QString& id)
+  {
+    return 0;    
+  }
+  
+  void Mixer_MPRIS2::setRecsrcHW( const QString& id, bool on)
+  {
+  }
+  
+  bool Mixer_MPRIS2::moveStream( const QString& id, const QString& destId )
+  {
+    return false;
+  }
+
 
 /**
  * @brief Test method
@@ -42,20 +83,22 @@ Mixer_MPRIS2(Mixer *mixer, int device = -1 ) : Mixer_Backend(mixer,  device )
  **/
 int Mixer_MPRIS2::run()
 {
+  kDebug(67100) << "--- A ---------------------------------";
        if (!QDBusConnection::sessionBus().isConnected()) {
-         qDebug() <<  "Cannot connect to the D-Bus session bus.\n"
+         kDebug() <<  "Cannot connect to the D-Bus session bus.\n"
                  << "To start it, run:\n"
                   <<"\teval `dbus-launch --auto-syntax`\n";
      }
      
-     /**
-      * @brief ...
-      **/
+  kDebug(67100) << "--- B ---------------------------------";
      QDBusConnection dbusConn = QDBusConnection::sessionBus();
      QDBusReply<QStringList> repl = dbusConn.interface()->registeredServiceNames();
      
+  kDebug(67100) << "--- C ---------------------------------";
      if ( repl.isValid() )
      {
+         kDebug(67100) << "--- D ---------------------------------";
+
 	QStringList result = repl.value();
 	QString s;
 	foreach (  s , result )
@@ -67,6 +110,9 @@ int Mixer_MPRIS2::run()
 	  }
 	}
      }
+
+  
+  return 0;
 }
 
 
@@ -98,6 +144,12 @@ qDebug() << "Get control of " << busDestination;
 	QString readableName = result2.toString();
 	
 	qDebug() << "REPLY " << result2.type() << ": " << readableName;
+	
+	Volume::ChannelMask chn = (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
+	MixDevice* md = new MixDevice(_mixer, readableName, readableName, MixDevice::VOLUME);
+	Volume* vol = new Volume( chn, 100, 0, true, false);
+	md->addPlaybackVolume(*vol);
+	m_mixDevices.append( md );
     }
   }
   else
@@ -115,4 +167,14 @@ Mixer_MPRIS2::~Mixer_MPRIS2()
 }
 
 
-#include "Mixer_MPRIS2.moc"
+QString Mixer_MPRIS2::getDriverName()
+{
+	return "MPRIS2";
+}
+
+QString MPRIS2_getDriverName()
+{
+	return "MPRIS2";
+}
+
+//#include "Mixer_MPRIS2.moc"
