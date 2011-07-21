@@ -111,6 +111,14 @@ public:
    void addPlaybackVolume(Volume &playbackVol);
    void addCaptureVolume (Volume &captureVol);
    void addEnums (QList<QString*>& ref_enumList);
+   
+   // Media controls. New for KMix 4.0
+   void addMediaPlayControl() { mediaPlayControl = true; };
+   void addMediaNextControl() { mediaNextControl = true; };
+   void addMediaPrevControl() { mediaPrevControl = true; };
+   bool hasMediaPlayControl() { return mediaPlayControl; };
+   bool hasMediaNextControl() { return mediaNextControl; };
+   bool hasMediaPrevControl() { return mediaPrevControl; };
 
    // Returns a user readable name of the control.
    QString   readableName()         { return _name; }
@@ -214,6 +222,10 @@ private:
 
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
+
+   bool mediaPlayControl;
+   bool mediaNextControl;
+   bool mediaPrevControl;
 
 };
 

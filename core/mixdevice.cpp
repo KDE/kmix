@@ -106,6 +106,9 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     _applicationStream = false;
     _mixer = mixer;
     _id = id;
+    mediaPlayControl = false;
+    mediaNextControl = false;
+    mediaPrevControl = false;
     if( name.isEmpty() )
         _name = i18n("unknown");
     else

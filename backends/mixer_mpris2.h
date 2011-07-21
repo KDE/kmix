@@ -19,11 +19,11 @@ public:
   QDBusInterface* propertyIfc;
 
 public slots:
-  void volumeChangedIncoming(QString ifc, QList<QVariant> msg);
+//  void volumeChangedIncoming(QString ifc, QList<QVariant> msg);
   void volumeChangedIncoming(QString,QVariantMap,QStringList);
   
 signals:
-  void volumeChanged(MPrisAppdata* mad, QString ifc, QList<QVariant> msg);
+  void volumeChanged(MPrisAppdata* mad, double);
 };
 
 class Mixer_MPRIS2 : public Mixer_Backend
@@ -46,7 +46,7 @@ public:
   virtual bool needsPolling() { return false; }
 
 public slots:
-  void volumeChanged(MPrisAppdata* mad, QString ifc, QList<QVariant> qvl);
+  void volumeChanged(MPrisAppdata* mad, double);
 
 private:
   int run();
@@ -57,10 +57,6 @@ private:
   
   QMap<QString,MPrisAppdata*> apps;
 };
-
-
-
-
 
 #endif
 

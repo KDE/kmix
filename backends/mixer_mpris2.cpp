@@ -56,7 +56,7 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
   int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * md)
   {
 
-       int volInt = 0;
+  int volInt = 0;
     
   QList<QVariant> arg;
   arg.append(QString("org.mpris.MediaPlayer2.Player"));
@@ -75,8 +75,9 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
 	volInt = result2.toFloat() *100;
 	
 	Volume& vol = md->playbackVolume();
+	md->setMuted(volInt == 0);
 	vol.setVolume( Volume::LEFT, volInt);
-	kDebug(67100) << "REPLY " << result2.type() << ": " << volInt << ": "<< vol;
+	kDebug(67100) << "REPLY " << qv.type() << ": " << volInt << ": "<< vol;
     }
   else
   {
@@ -92,8 +93,12 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
   {
 
     Volume& vol = md->playbackVolume();
-    int volInt = vol.getVolume(Volume::LEFT);
-    double volFloat = volInt/100.0;
+    double volFloat = 0;
+    if ( ! md->isMuted() )
+    {
+          int volInt = vol.getVolume(Volume::LEFT); 
+          volFloat = volInt/100.0;
+    }
 
     QList<QVariant> arg;
     arg.append(QString("org.mpris.MediaPlayer2.Player"));
@@ -178,10 +183,6 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
   int lastDot = busDestination.lastIndexOf('.');
   QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1); 
   kDebug(67100) << "Get control of " << busDestination << "id=" << id;
-
-//  QDBusMessage query1 = QDBusMessage::createMethodCall(QString(busDestination), QString("/org/mpris/MediaPlayer2"), MPRIS_IFC2, QString("Raise"));
-//  conn.call(query1, QDBus::NoBlock);
-
   QDBusInterface *qdbiProps = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
   
   MPrisAppdata* mad = new MPrisAppdata();
@@ -205,7 +206,7 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 	// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
 	QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
 	QVariant result2 = dbusVariant.variant();
-	QString readableName = result2.typeName();
+	QString readableName = result2.toString();
 	
 	qDebug() << "REPLY " << result2.type() << ": " << readableName;
 	
@@ -213,15 +214,16 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 	Volume* vol = new Volume( 100, 0, true, false);
 	vol->addVolumeChannel(VolumeChannel(Volume::LEFT));
 	vol->addVolumeChannel(VolumeChannel(Volume::RIGHT));
+	md->addMediaPlayControl();
+	md->addMediaNextControl();
+	md->addMediaPrevControl();
 	md->setApplicationStream(true);
 	md->addPlaybackVolume(*vol);
 	m_mixDevices.append( md );
 	
-	conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString, QList<QVariant>)) );
-	connect(mad, SIGNAL(volumeChanged(MPrisAppdata* ,QString, QList<QVariant>)), this, SLOT(volumeChanged(MPrisAppdata* ,QString, QList<QVariant>)) );
-
-      
+//	conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString, QList<QVariant>)) );
 	conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QVariantMap,QStringList)) );
+	connect(mad, SIGNAL(volumeChanged(MPrisAppdata* ,double)), this, SLOT(volumeChanged(MPrisAppdata*, double)) );
 	
     }
   }
@@ -235,46 +237,28 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 /**
  * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
  */
-void MPrisAppdata::volumeChangedIncoming(QString ifc, QList< QVariant > msg)
-{
- // emit volumeChanged( this, ifc, msg);
-}
-
   void MPrisAppdata::volumeChangedIncoming(QString ifc,QVariantMap msg ,QStringList sl)
   {
-    kDebug() << "ZZZ " << ifc << "\nZZZ" << msg << "\nZZZ" << sl;
     QMap<QString, QVariant>::iterator v = msg.find("Volume");
     if (v != msg.end() )
     {
-      kDebug() << "ZZZ=" << v.value();
+      double volDouble = v.value().toDouble();
+      emit volumeChanged( this, volDouble);
     }
   }
 
 
 
-void Mixer_MPRIS2::volumeChanged(MPrisAppdata* mad, QString ifc, QList<QVariant> msg)
+void Mixer_MPRIS2::volumeChanged(MPrisAppdata* mad, double newVolume)
 {
-  kDebug(67100) << "volumeChanged: " << mad->id << ": " << ifc << " (#" << msg.count()  << ")" << msg;
-    if ( ! msg.isEmpty() )
-    {
-      QVariant qv = msg.at(0);
-	// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
-	QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
-	QVariant result2 = dbusVariant.variant();
-	QMap<QString,QVariant> qvm = result2.toMap();
-	kDebug() << "variant: " << qv.typeName() << "," << dbusVariant.variant().type() << "," << result2.typeName();
-	QVariant qvv = qvm["Volume"];
-	
-	
-	int volInt = qvv.toFloat() *100;
-
-	MixDevice * md = m_mixDevices.get(mad->id);
-	Volume& vol = md->playbackVolume();
-	vol.setVolume( Volume::LEFT, volInt);
-	md->playbackVolume().setVolume(vol);
-	kDebug(67100) << "REPLY " << qv << ":\n" << result2 << ":\n" << volInt << ":\n"<< vol;
-    }
-
+  int volInt = newVolume *100;
+  kDebug(67100) << "volumeChanged: " << mad->id << ": " << volInt;
+  MixDevice * md = m_mixDevices.get(mad->id);
+  Volume& vol = md->playbackVolume();
+  vol.setVolume( Volume::LEFT, volInt);
+  md->setMuted(volInt == 0);
+  emit controlChanged();
+//  md->playbackVolume().setVolume(vol);
 }
 
 /*

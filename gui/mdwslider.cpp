@@ -279,7 +279,12 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
       bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
       bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
 	
-	// case of vertical sliders:
+      bool wantsMediaControls = ( m_mixdevice->hasMediaNextControl() || m_mixdevice->hasMediaPlayControl() || m_mixdevice->hasMediaPrevControl() );
+      if ( wantsMediaControls )
+      {
+	kDebug() << "Bla";
+      }
+      // case of vertical sliders:
 	if ( _orientation == Qt::Vertical )
 	{
 		QVBoxLayout *controlLayout = new QVBoxLayout(this);
@@ -333,6 +338,8 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 				addSliders( volLayout, 'p', false );
 			if ( wantsCaptureSliders )
 				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
+			if ( wantsMediaControls )
+				addMediaControls( volLayout );
 			controlLayout->addSpacing( 3 );
 		} else {
 			controlLayout->addStretch(1);
@@ -436,6 +443,8 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 				addSliders( volLayout, 'p', false );
 			if ( wantsCaptureSliders && m_mixdevice->captureVolume().count() > 0 )
 				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
+			if ( wantsMediaControls )
+				addMediaControls( volLayout );
 		}
 		else
 		{
@@ -467,6 +476,34 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 	layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
 }
 
+    void MDWSlider::addMediaControls(QBoxLayout* volLayout)
+    {
+      QBoxLayout *mediaLayout;
+      if ( _orientation == Qt::Vertical )
+	mediaLayout = new QVBoxLayout();
+      else
+	mediaLayout = new QHBoxLayout();
+
+      if ( mixDevice()->hasMediaPlayControl())
+      {
+        QLabel* prev = 0; //new QLabel("<", this);
+	setIcon("media-skip-backward", &prev);
+	mediaLayout->addWidget(prev);
+      }
+      if ( mixDevice()->hasMediaPlayControl())
+      {
+	QLabel* play = 0; //new QLabel("P", this);
+	setIcon("media-playback-start", &play);
+	mediaLayout->addWidget(play);
+      }
+      if ( mixDevice()->hasMediaPlayControl())
+      {
+        QLabel* next = 0; //new QLabel(">, this");
+	setIcon("media-skip-forward", &next);
+	mediaLayout->addWidget(next);
+      }
+      volLayout->addLayout(mediaLayout);
+    }
 
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 {
@@ -616,10 +653,15 @@ QPixmap MDWSlider::loadIcon( QString filename )
 
 void MDWSlider::setIcon( QString filename )
 {
-	if( !m_iconLabelSimple )
+  setIcon(filename, &m_iconLabelSimple);
+}
+
+void MDWSlider::setIcon( QString filename, QLabel** label )
+{
+	if( (*label) == 0 )
 	{
-		m_iconLabelSimple = new QLabel(this);
-		installEventFilter( m_iconLabelSimple );
+		*label = new QLabel(this);
+		installEventFilter( *label );
 	}
 
 	QPixmap miniDevPM = loadIcon( filename );
@@ -630,16 +672,16 @@ void MDWSlider::setIcon( QString filename )
 			// scale icon
 			QMatrix t;
 			t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
-			m_iconLabelSimple->setPixmap( miniDevPM.transformed( t ) );
-			m_iconLabelSimple->resize( 10, 10 );
+			(*label)->setPixmap( miniDevPM.transformed( t ) );
+			(*label)->resize( 10, 10 );
 		} // small size
 		else
 		{
-			m_iconLabelSimple->setPixmap( miniDevPM );
+			(*label)->setPixmap( miniDevPM );
 		} // normal size
 
-		m_iconLabelSimple->setMinimumSize(22,22);
-		m_iconLabelSimple->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+		(*label)->setMinimumSize(22,22);
+		(*label)->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
 	}
 	else
 	{

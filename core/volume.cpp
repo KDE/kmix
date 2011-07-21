@@ -52,8 +52,15 @@ int Volume::_channelMaskEnum[9] =
       "volumeRearCenter"
     };
     
-    // Forbidden/private. Only here because QMap requires it. 
-Volume::Volume() {}
+    // Forbidden/private. Only here because if there is no CaptureVolume we need the values initialized
+    // And also QMap requires it. 
+Volume::Volume()
+{
+  _minVolume = 0;
+  _maxVolume = 0;
+  _hasSwitch = false;
+}
+
 VolumeChannel::VolumeChannel() {}
 
 // @Deprecated  use method without chmask
@@ -168,10 +175,10 @@ void Volume::setVolume(const Volume &v, ChannelMask chmask)
   foreach (VolumeChannel vc, _volumesL )
   {
     ChannelID chid = vc.chid;
-    if ( v.getVolumes().contains(chid) && (Volume::_channelMaskEnum[chid] & chmask) )
-    {
+/*    if ( v.getVolumes().contains(chid) && (Volume::_channelMaskEnum[chid] & chmask) )
+    {*/
       v.getVolumes()[chid].volume = vc.volume;
-    }
+//    }  // TODO Check whether this is OK. If yes, then _chmask can be removed
   }
 }
 

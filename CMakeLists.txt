@@ -103,6 +103,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     core/volume.cpp
     core/mixertoolbox.cpp 
     core/kmixdevicemanager.cpp
+    backends/mixer_mpris2.cpp
     backends/mixer_backend.cpp 
     )
 
@@ -139,6 +140,7 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    core/volume.cpp 
    core/mixertoolbox.cpp 
    core/kmixdevicemanager.cpp 
+   backends/mixer_mpris2.cpp
    backends/mixer_backend.cpp
    )
 

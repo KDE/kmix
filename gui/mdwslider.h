@@ -68,6 +68,7 @@ public:
     void setLabeled( bool value );
     void setTicks( bool ticks );
     void setIcons( bool value );
+    void setIcon( QString filename, QLabel** label );
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
     
@@ -99,6 +100,7 @@ public slots:
     virtual void showContextMenu();
     void increaseOrDecreaseVolume(bool arg1);
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
+    void addMediaControls(QBoxLayout* arg1);
 
 
 signals:
