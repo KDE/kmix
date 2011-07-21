@@ -12,3 +12,4 @@ Mixer_MPRIS2 : public Mixer_Backend
 }
 
 #endif
+
