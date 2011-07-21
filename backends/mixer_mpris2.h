@@ -17,6 +17,7 @@ public:
   ~MPrisAppdata();
   QString id;
   QDBusInterface* propertyIfc;
+  QDBusInterface* playerIfc;
 
 public slots:
 //  void volumeChangedIncoming(QString ifc, QList<QVariant> msg);
@@ -44,6 +45,11 @@ public:
   virtual void setRecsrcHW( const QString& id, bool on);
   virtual bool moveStream( const QString& id, const QString& destId );
   virtual bool needsPolling() { return false; }
+
+  virtual int mediaPlay(QString id);
+  virtual int mediaPrev(QString id);
+  virtual int mediaNext(QString id);
+  virtual int mediaControl(QString id, QString command);
 
 public slots:
   void volumeChanged(MPrisAppdata* mad, double);

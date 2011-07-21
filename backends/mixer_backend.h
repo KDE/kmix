@@ -22,7 +22,10 @@
 #ifndef MIXER_BACKEND_H
 #define MIXER_BACKEND_H
 
-#include "core/mixer.h"
+//#include "core/mixer.h"
+#include "core/mixdevice.h"
+#include "core/mixset.h"
+class Mixer;
 
 class Mixer_Backend : public QObject
 {
@@ -82,6 +85,10 @@ protected:
   //virtual bool isRecsrcHW( const QString& id ) = 0;
 
   virtual bool moveStream( const QString& id, const QString& destId );
+
+  virtual int mediaPlay(QString ) { return 0; }; // implement in the backend if it supports it
+  virtual int mediaPrev(QString ) { return 0; }; // implement in the backend if it supports it
+  virtual int mediaNext(QString ) { return 0;}; // implement in the backend if it supports it
 
   /// Overwrite in the backend if the backend can see changes without polling
   virtual bool needsPolling() { return true; }

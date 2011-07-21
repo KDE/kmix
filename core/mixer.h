@@ -31,7 +31,7 @@
 #include <QString>
 
 #include "core/volume.h"
-class Mixer_Backend;
+#include "backends/mixer_backend.h"
 #include "core/MasterControl.h"
 #include "mixset.h"
 #include "core/mixdevice.h"
@@ -169,6 +169,11 @@ public:
 
     virtual bool moveStream( const QString id, const QString& destId );
 
+   virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); };
+   virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); };
+   virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); };
+
+    
     void commitVolumeChange( MixDevice* md );
 
 public slots:

@@ -5,6 +5,7 @@
 
 
 #include "mixer_mpris2.h"
+#include "core/mixer.h"
 
 //#include <QtCore/QCoreApplication>
 #include <QDebug>
@@ -15,8 +16,6 @@
 #include <QString>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
-
-QString Mixer_MPRIS2::MPRIS_IFC2; // = "org.mpris.MediaPlayer2";
 
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device )
 {
@@ -51,6 +50,40 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
   QString Mixer_MPRIS2::getBusDestination(const QString& id)
   {
       return QString("org.mpris.MediaPlayer2.").append(id);
+  }
+
+
+
+  int Mixer_MPRIS2::mediaPlay(QString id)
+  {
+    return mediaControl(id, "PlayPause");
+  }
+  
+  int Mixer_MPRIS2::mediaPrev(QString id)
+  {
+    return mediaControl(id, "Previous");
+  }
+
+  int Mixer_MPRIS2::mediaNext(QString id)
+  {
+    return mediaControl(id, "Next");
+  }
+
+  int Mixer_MPRIS2::mediaControl(QString id, QString commandName)
+  {
+    kDebug() << commandName << " " << id;
+    QList<QVariant> arg;
+//     arg.append(QString("org.mpris.MediaPlayer2.Player"));
+//     arg.append(QString("PlayPause"));
+
+    MPrisAppdata* mad = apps.value(id);
+    QDBusMessage msg = mad->playerIfc->callWithArgumentList(QDBus::NoBlock, commandName, arg);
+    if ( msg.type() == QDBusMessage::ErrorMessage )
+    {
+      kError(67100) << "ERROR SET " << id << ": " << msg;
+      return Mixer::ERR_WRITE;
+    }
+    return 0;  
   }
 
 
@@ -116,23 +149,25 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
     return 0;  
   }
   
-  void Mixer_MPRIS2::setEnumIdHW(const QString& id, unsigned int)
+  void Mixer_MPRIS2::setEnumIdHW(const QString&, unsigned int)
   {
     // no enums in MPRIS
   }
   
-  unsigned int Mixer_MPRIS2::enumIdHW(const QString& id)
+  unsigned int Mixer_MPRIS2::enumIdHW(const QString&)
   {
     // no enums in MPRIS
     return 0;    
   }
   
-  void Mixer_MPRIS2::setRecsrcHW( const QString& id, bool on)
+  void Mixer_MPRIS2::setRecsrcHW( const QString& , bool )
   {
+    // not supported in MPRIS
   }
   
-  bool Mixer_MPRIS2::moveStream( const QString& id, const QString& destId )
+  bool Mixer_MPRIS2::moveStream( const QString&, const QString&  )
   {
+    // not supported in MPRIS
     return false;
   }
 
@@ -184,18 +219,20 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
   int lastDot = busDestination.lastIndexOf('.');
   QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1); 
   kDebug(67100) << "Get control of " << busDestination << "id=" << id;
-  QDBusInterface *qdbiProps = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
+  QDBusInterface *qdbiProps  = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
+  QDBusInterface *qdbiPlayer = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.mpris.MediaPlayer2.Player", conn, this);
   
   MPrisAppdata* mad = new MPrisAppdata();
   mad->id = id;
   mad->propertyIfc = qdbiProps;
+  mad->playerIfc = qdbiPlayer;
   
   apps.insert(id, mad);
   
   QList<QVariant> arg;
   arg.append(QString("org.mpris.MediaPlayer2"));
   arg.append(QString("Identity"));
-  QDBusMessage msg = qdbiProps->callWithArgumentList(QDBus::Block, "Get", arg);
+  QDBusMessage msg = mad->propertyIfc->callWithArgumentList(QDBus::Block, "Get", arg);
 
   //msg = conn.call(query, QDBus::Block, 5);
   if ( msg.type() == QDBusMessage::ReplyMessage )

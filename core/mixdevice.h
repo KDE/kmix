@@ -125,6 +125,9 @@ public:
    bool hasMediaPlayControl() { return mediaPlayControl; };
    bool hasMediaNextControl() { return mediaNextControl; };
    bool hasMediaPrevControl() { return mediaPrevControl; };
+   int mediaPlay();
+   int mediaPrev();
+   int mediaNext();
 
    // Returns a user readable name of the control.
    QString   readableName()         { return _name; }

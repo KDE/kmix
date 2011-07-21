@@ -514,16 +514,19 @@ QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout)
 void MDWSlider::mediaPrev(bool)
 {
   kDebug() << "ZZZZZZZ";
+  mixDevice()->mediaPrev();
 }
 
 void MDWSlider::mediaNext(bool)
 {
   kDebug() << "ZZZZZZZ";
+  mixDevice()->mediaNext();
 }
 
 void MDWSlider::mediaPlay(bool)
 {
   kDebug() << "ZZZZZZZ";
+  mixDevice()->mediaPlay();
 }
 
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
