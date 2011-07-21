@@ -64,17 +64,29 @@ MixerToolBox* MixerToolBox::instance()
  *
  * This is run only once during the initialization phase of KMix. It has the following tasks:
  * 1) Coldplug scan, to fill the initial mixer list
-* 2) Rember UDI's, to match them when unplugging a device
-* 3) Find out, which Backend to use (plugin events of other Backends are ignored).
+ * 2) Rember UDI's, to match them when unplugging a device
+ * 3) Find out, which Backend to use (plugin events of other Backends are ignored).
  *
  * @par multiDriverMode Whether the Mixer scan should try more all backendends.
  *          'true' means to scan all backends. 'false' means: After scanning the
  *          current backend the next backend is only scanned if no Mixers were found yet.
+ * @par backendList Activated backends (typically a value from the kmixrc or a default)
  * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
  */
-void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
+void MixerToolBox::initMixer(bool multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
 {
-   //kDebug(67100) << "IN MixerToolBox::initMixer()";
+    initMixerInternal(multiDriverMode, backendList, ref_hwInfoString);
+    if ( Mixer::mixers().isEmpty() )
+      initMixerInternal(multiDriverMode, QList<QString>(), ref_hwInfoString);  // try again without filter
+}
+
+
+/**
+ * 
+ */
+void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+{  
+   bool useBackendFilter = ( ! backendList.isEmpty() );
 
    // Find all mixers and initialize them
    int drvNum = Mixer::numDrivers();
@@ -111,6 +123,12 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
    {
       QString driverName = Mixer::driverName(drv);
       kDebug(67100) << "Looking for mixers with the : " << driverName << " driver";
+      if ( useBackendFilter && ! backendList.contains(driverName) )
+      {
+	  kDebug() << "Skipping " << driverName << " (filtered)";
+	  continue;
+      }
+      
 
       if ( autodetectionFinished ) {
          // inner loop indicates that we are finished => sane exit from outer loop
@@ -129,7 +147,7 @@ void MixerToolBox::initMixer(bool multiDriverMode, QString& ref_hwInfoString)
          bool mixerAccepted = possiblyAddMixer(mixer);
    
          /* Lets decide if the autoprobing shall end (BTW: In multiDriver mode we scan all devices, so no check is necessary) */
-         if ( ! multiDriverMode ) {
+         if ( (! multiDriverMode) && ( ! useBackendFilter) ) {
             // In Single-Driver-mode we only need to check after we reached devNumMax
             if ( dev == devNumMax && Mixer::mixers().count() != 0 )
                 autodetectionFinished = true; // highest device number of driver and a Mixer => finished

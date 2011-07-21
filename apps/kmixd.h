@@ -84,6 +84,7 @@ KMixD : public KDEDModule, protected QDBusContext
    bool m_dontSetDefaultCardOnStart;
    unsigned int m_configVersion;
    //void increaseOrDecreaseVolume(bool increase);
+   QList<QString> m_backendFilter;
 
   private slots:
    void saveConfig();

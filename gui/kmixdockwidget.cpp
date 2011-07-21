@@ -387,17 +387,15 @@ KMixDockWidget::trayWheelEvent(int delta)
   MixDevice *md = Mixer::getGlobalMasterMD();
   if ( md != 0 )
   {
-      Volume vol = md->playbackVolume();
-      if ( md->playbackVolume().hasVolume() )
-         vol = md->playbackVolume();
-      else
-         vol = md->captureVolume();
-
+      Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
       int inc = vol.maxVolume() / 20;
 
     if ( inc < 1 ) inc = 1;
 
-    vol.changeAllVolumes( (inc * delta) / 120 );
+    long int cv = inc * (delta / 120 );
+    kDebug() << "twe: " << cv << " : " << vol;
+    vol.changeAllVolumes(cv);
+    kDebug() << "twe: " << cv << " : " << vol;
 /*    for ( int i = 0; i < vol.count(); i++ ) {
         int newVal = vol[i] + (inc * (delta / 120));
         if( newVal < 0 ) newVal = 0;
@@ -410,11 +408,11 @@ KMixDockWidget::trayWheelEvent(int delta)
         _audioPlayer->setCurrentSource(fileName);
         _audioPlayer->play();
     }
-      if ( md->playbackVolume().hasVolume() )
+/*      if ( md->playbackVolume().hasVolume() )
          md->playbackVolume().setVolume(vol);
       else
-         md->captureVolume().setVolume(vol);
-    m_mixer->commitVolumeChange(md);
+         md->captureVolume().setVolume(vol);;*/
+    md->mixer()->commitVolumeChange(md);
     setVolumeTip();
   }
 }

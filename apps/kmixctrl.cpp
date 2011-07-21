@@ -57,7 +57,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    // create mixers
    QString dummyStringHwinfo;
-   MixerToolBox::instance()->initMixer(false, dummyStringHwinfo);
+   MixerToolBox::instance()->initMixer(false, QList<QString>(), dummyStringHwinfo);
 
    // load volumes
    if ( args->isSet("restore") )

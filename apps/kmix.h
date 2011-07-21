@@ -123,6 +123,7 @@ KMixWindow : public KXmlGuiWindow
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
    QLabel      *m_errorLabel;
+   QList<QString> m_backendFilter;
    ViewDockAreaPopup *_dockAreaPopup;
    unsigned int m_configVersion;
    void showVolumeDisplay();

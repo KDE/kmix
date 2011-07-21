@@ -89,7 +89,7 @@ KMixWindow::KMixWindow(bool invisible)
     KGlobal::locale()->insertCatalog( QLatin1String( "kmix-controls" ));
     initWidgets();
     initPrefDlg();
-    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
+    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString);
     KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
     initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
@@ -413,7 +413,7 @@ void KMixWindow::loadConfig()
 void KMixWindow::loadBaseConfig()
 {
     KConfigGroup config(KGlobal::config(), "Global");
-
+  
     m_showDockWidget = config.readEntry("AllowDocking", true);
     m_volumeWidget = config.readEntry("TrayVolumeControl", true);
     m_showTicks = config.readEntry("Tickmarks", true);
@@ -434,6 +434,7 @@ void KMixWindow::loadBaseConfig()
     //}
     QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
     MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
+    m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
 
     if ( orientationString == "Horizontal" )
         m_toplevelOrientation  = Qt::Horizontal;

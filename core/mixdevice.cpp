@@ -212,9 +212,9 @@ bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch()
 void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 bool MixDevice::isEnum()                   { return ( ! _enumValues.empty() ); }
 
-int MixDevice::mediaPlay() { mixer()->mediaPlay(_id); }
-int MixDevice::mediaPrev() { mixer()->mediaPrev(_id); }
-int MixDevice::mediaNext() { mixer()->mediaNext(_id); }
+int MixDevice::mediaPlay() { return mixer()->mediaPlay(_id); }
+int MixDevice::mediaPrev() { return mixer()->mediaPrev(_id); }
+int MixDevice::mediaNext() { return mixer()->mediaNext(_id); }
 
 bool MixDevice::operator==(const MixDevice& other) const
 {

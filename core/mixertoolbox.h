@@ -42,7 +42,8 @@ class MixerToolBox : public QObject
 
    public:
       static MixerToolBox* instance();
-      void initMixer(bool, QString&);
+      void initMixer(bool, QList<QString> backendList, QString&);
+      void initMixerInternal(bool, QList<QString> backendList, QString&);
       void deinitMixer();
       bool possiblyAddMixer(Mixer *mixer);
       void removeMixer(Mixer *mixer);

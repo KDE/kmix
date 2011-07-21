@@ -100,7 +100,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    //KGlobal::locale()->insertCatalog( QLatin1String( "kmix-controls" ));
    //initWidgets();
    //initPrefDlg();
-   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_hwInfoString);
+   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString);
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
    //recreateGUI(false);
    fixConfigAfterRead();
@@ -222,6 +222,7 @@ void KMixD::loadBaseConfig()
       Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
    //}
    QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
+   m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
    MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 }
 
