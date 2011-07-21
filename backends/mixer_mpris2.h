@@ -4,8 +4,17 @@
 #include <QString>
 #include <QMainWindow>
 #include <QtDBus>
+#include <QDBusInterface>
+#include <QMap>
 
 #include "mixer_backend.h"
+
+class MPrisAppdata
+{
+public:
+  QString id;
+  QDBusInterface* propertyIfc;
+};
 
 class Mixer_MPRIS2 : public Mixer_Backend
 {
@@ -32,7 +41,13 @@ private:
   static QString MPRIS_IFC2;
   
   static QString getBusDestination(const QString& id);
+  
+  QMap<QString,MPrisAppdata> apps;
 };
+
+
+
+
 
 #endif
 

@@ -56,20 +56,13 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
   int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * md)
   {
 
+       int volInt = 0;
     
-    
-  QDBusMessage query = QDBusMessage::createMethodCall(getBusDestination(id), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", QString("Get"));
   QList<QVariant> arg;
   arg.append(QString("org.mpris.MediaPlayer2.Player"));
   arg.append(QString("Volume"));
-  query.setArguments(arg);
-  
-  int volInt = 0;
-  //msg = conn.call(query, QDBus::Block, 5);
-   kDebug(67100) << "QUERY " << getBusDestination(id);
-   QDBusConnection dbusConn = QDBusConnection::sessionBus();
-
-  QDBusMessage msg = dbusConn.call(query, QDBus::Block, 1500);
+  MPrisAppdata mad = apps.value(id);
+  QDBusMessage msg = mad.propertyIfc->callWithArgumentList(QDBus::Block, "Get", arg);
   if ( msg.type() == QDBusMessage::ReplyMessage )
   {
     QList<QVariant> repl = msg.arguments();
@@ -79,13 +72,11 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
 	// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
 	QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
 	QVariant result2 = dbusVariant.variant();
-	float volFloat = result2.toFloat();
-	volInt = volFloat *100;
+	volInt = result2.toFloat() *100;
 	
-	volInt = volFloat; // TODO Amarok delivers values 0-100 instead of 0.0 - 1.0
 	Volume& vol = md->playbackVolume();
 	vol.setVolume( Volume::LEFT, volInt);
-	kDebug(67100) << "REPLY " << result2.type() << ": " << volFloat << ": "<< vol;
+	kDebug(67100) << "REPLY " << result2.type() << ": " << volInt << ": "<< vol;
     }
   else
   {
@@ -101,22 +92,16 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
   {
 
     Volume& vol = md->playbackVolume();
-	int volInt = vol.getVolume(Volume::LEFT);
-	double volFloat = volInt;
+    int volInt = vol.getVolume(Volume::LEFT);
+    double volFloat = volInt/100.0;
 
-    
-  QDBusMessage query = QDBusMessage::createMethodCall(getBusDestination(id), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", QString("Set"));
   QList<QVariant> arg;
   arg.append(QString("org.mpris.MediaPlayer2.Player"));
   arg.append(QString("Volume"));
-  arg << QVariant(volFloat);
-  query.setArguments(arg);
-  
-  //msg = conn.call(query, QDBus::Block, 5);
-   kDebug(67100) << "SET " << getBusDestination(id);
-   QDBusConnection dbusConn = QDBusConnection::sessionBus();
+  arg << QVariant::fromValue(QDBusVariant(volFloat));
 
-  QDBusMessage msg = dbusConn.call(query, QDBus::Block, 1500);
+  MPrisAppdata mad = apps.value(id);
+  QDBusMessage msg = mad.propertyIfc->callWithArgumentList(QDBus::NoBlock, "Set", arg);
   if ( msg.type() == QDBusMessage::ReplyMessage )
   {
     QList<QVariant> repl = msg.arguments();
@@ -165,6 +150,7 @@ int Mixer_MPRIS2::run()
          kDebug() <<  "Cannot connect to the D-Bus session bus.\n"
                  << "To start it, run:\n"
                   <<"\teval `dbus-launch --auto-syntax`\n";
+		  return Mixer::ERR_OPEN;
      }
      
   kDebug(67100) << "--- B ---------------------------------";
@@ -196,7 +182,6 @@ int Mixer_MPRIS2::run()
 
 void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination)
 {
-  //QString id = 
   int lastDot = busDestination.lastIndexOf('.');
   QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1); 
   kDebug(67100) << "Get control of " << busDestination;
@@ -204,14 +189,24 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 //  QDBusMessage query1 = QDBusMessage::createMethodCall(QString(busDestination), QString("/org/mpris/MediaPlayer2"), MPRIS_IFC2, QString("Raise"));
 //  conn.call(query1, QDBus::NoBlock);
 
-  QDBusMessage query = QDBusMessage::createMethodCall(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", QString("Get"));
+  QDBusInterface *qdbiProps = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
+  
+  MPrisAppdata* app = new MPrisAppdata();
+  app->id = id;
+  app->propertyIfc = qdbiProps;
+  
+  apps.insert(id, *app);
+  
   QList<QVariant> arg;
   arg.append(QString("org.mpris.MediaPlayer2"));
   arg.append(QString("Identity"));
-  query.setArguments(arg);
-  
+//  QDBusMessage query = QDBusMessage::createMethodCall(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", QString("Get"));
+//  query.setArguments(arg);
+//   QDBusMessage msg = conn.call(query, QDBus::Block, 1500);
+
+  QDBusMessage msg = qdbiProps->callWithArgumentList(QDBus::Block, "Get", arg);
+
   //msg = conn.call(query, QDBus::Block, 5);
-  QDBusMessage msg = conn.call(query, QDBus::Block, 1500);
   if ( msg.type() == QDBusMessage::ReplyMessage )
   {
     QList<QVariant> repl = msg.arguments();
