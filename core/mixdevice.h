@@ -84,7 +84,13 @@ public:
                        MICROPHONE_BOOST,
                        MICROPHONE_FRONT_BOOST,
                        MICROPHONE_FRONT,
-                       KMIX_COMPOSITE
+                       KMIX_COMPOSITE,
+		       
+		       APPLICATION_STREAM,
+		       // Some specific applications
+		       APPLICATION_AMAROK,
+		       APPLICATION_BANSHEE,
+		       APPLICATION_XMM2,
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };

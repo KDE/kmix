@@ -22,8 +22,9 @@
 #define ViewBase_h
 
 // QT
+#include <QSet>
 #include <QWidget>
-#include <qlist.h>
+#include <QList>
 
 // KDE
 #include <KActionCollection>
@@ -89,7 +90,7 @@ public:
 
     void setMixSet();
     
-    Mixer* getMixer();
+    bool isDynamic() const;
 
     /**
      * Creates a suitable representation for the given MixDevice.
@@ -128,6 +129,7 @@ signals:
 protected:
     MixSet *_mixSet;
     Mixer *_mixer;
+    QSet<Mixer*> _mixers; // this might deprecate _mixer in the future. Currently only in use by ViewDockAreaPopup
     KMenu *_popMenu;
     KActionCollection* _actions; // -<- applciations wide action collection
 

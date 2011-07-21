@@ -36,14 +36,11 @@ class ViewDockAreaPopup : public ViewBase
 public:
     ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW);
     ~ViewDockAreaPopup();
-    MixDevice* dockDevice();
 
     virtual QWidget* add(MixDevice *mdw);
     virtual void constructionFinished();
     virtual void refreshVolumeLevels();
     virtual void showContextMenu();
-
-    //QSize sizeHint() const;
 
 protected:
     KMixWindow  *_dock;
@@ -53,7 +50,7 @@ protected:
 
 private:
   QLayout* _layoutControls;
-    QGridLayout* _layoutMDW;
+  QGridLayout* _layoutMDW;
 
 private slots:
     void showPanelSlot();

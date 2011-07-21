@@ -38,6 +38,7 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
     if ( m_devnum !=  0 )
       return Mixer::ERR_OPEN;
     
+    _mixer->setDynamic();
     run();
     return 0;
   }
@@ -210,8 +211,21 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 	
 	qDebug() << "REPLY " << result2.type() << ": " << readableName;
 	
-	MixDevice* md = new MixDevice(_mixer, id, readableName, MixDevice::VOLUME);
-	Volume* vol = new Volume( 100, 0, true, false);
+	MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
+	if (id.startsWith("amarok")) {
+	  ct = MixDevice::APPLICATION_AMAROK;
+	}
+	else if (id.startsWith("banshee")) {
+	  ct = MixDevice::APPLICATION_BANSHEE;
+	}
+	else if (id.startsWith("xmms")) {
+	  ct = MixDevice::APPLICATION_XMM2;
+	}
+	
+	MixDevice* md = new MixDevice(_mixer, id, readableName, ct);
+	// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
+	// Thus we won't add the playback switch
+	Volume* vol = new Volume( 100, 0, false, false);
 	vol->addVolumeChannel(VolumeChannel(Volume::LEFT));
 	vol->addVolumeChannel(VolumeChannel(Volume::RIGHT));
 	md->addMediaPlayControl();

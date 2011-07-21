@@ -74,13 +74,13 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
          }
       }
    }
-   if ( !_mixer->isDynamic() ) {
+   if ( !isDynamic() ) {
       QAction *action = _localActionColletion->addAction("toggle_channels");
       action->setText(i18n("&Channels"));
       connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
    }
-   connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-   connect ( _mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );
+/*   connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
+   connect ( _mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );*/
 }
 
 ViewBase::~ViewBase() {
@@ -98,7 +98,7 @@ QString ViewBase::id() const {
 
 bool ViewBase::isValid() const
 {
-   return ( _mixSet->count() > 0 || _mixer->isDynamic() );
+   return ( _mixSet->count() > 0 || isDynamic() );
 }
 
 void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
@@ -122,6 +122,16 @@ void ViewBase::createDeviceWidgets()
     }
     // allow view to "polish" itself
     constructionFinished();
+
+   kDebug() << "CONNECT ViewBase count " << _mixers.size();
+  foreach ( Mixer* mixer, _mixers )
+  {
+    kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id(); 
+   connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
+   connect ( mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );
+  }
+
+    
 }
 
 /**
@@ -199,6 +209,7 @@ void ViewBase::showContextMenu()
 
 void ViewBase::controlsReconfigured( const QString& mixer_ID )
 {
+  // TODO Search _mixers for the correct Mixer*. After that, remove _mixer instance variable
     if ( _mixer->id() == mixer_ID )
     {
         kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet->count() << ")";
@@ -216,15 +227,26 @@ void ViewBase::refreshVolumeLevels()
 {
     // is virtual
 }
-
-Mixer* ViewBase::getMixer()
+/**
+ * Check all Mixer instances of this view.
+ * If at least on is dynamic, return true.
+ * Please note that usually there is only one Mixer instance per View.
+ * The only exception as of today (June 2011) is the Tray Popup, which
+ * can contain controls from e.g. ALSA and  MPRIS2 backends.
+ */
+bool ViewBase::isDynamic() const
 {
-    return _mixer;
+  foreach (Mixer* mixer , _mixers )
+  {
+    if ( mixer->isDynamic() )
+      return true;
+  }
+  return false;
 }
 
 void ViewBase::setMixSet()
 {
-    if ( _mixer->isDynamic() ) {
+    if ( isDynamic() ) {
 
         // We need to delete the current MixDeviceWidgets so we can redraw them
         while (!_mdws.isEmpty()) {
@@ -237,6 +259,14 @@ void ViewBase::setMixSet()
         _mixSet->clear();
     }
     _setMixSet();
+    
+    _mixers.clear();
+    foreach ( MixDevice* md, *_mixSet )
+    {
+      kDebug() << "VVV Add to " << md->mixer()->id(); 
+//      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
+      _mixers.insert(md->mixer());
+    }
 }
 
 
@@ -246,7 +276,7 @@ void ViewBase::setMixSet()
  */
 void ViewBase::configureView() {
 
-    Q_ASSERT( !_mixer->isDynamic() );
+    Q_ASSERT( !isDynamic() );
     
     DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
     dvc->show();
@@ -272,7 +302,7 @@ void ViewBase::load(KConfig *config)
    static char guiComplexity[3][20] = { "simple", "extended", "all" };
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = _mixer->isDynamic();
+   bool dynamic = isDynamic();
 
    for ( int tries = 0; tries < 3; tries++ )
    {
@@ -357,7 +387,7 @@ void ViewBase::save(KConfig *config)
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = _mixer->isDynamic();
+   bool dynamic = isDynamic();
 
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];

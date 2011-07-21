@@ -67,17 +67,6 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {
       QApplication::sendEvent( mdw, e);
 }
 
-MixDevice* ViewDockAreaPopup::dockDevice()
-{
-   MixDeviceWidget* mdw = 0;
-   if ( !_mdws.isEmpty() )
-      mdw = (MixDeviceWidget*)_mdws.first();
-
-   if ( mdw != 0 )
-      return mdw->mixDevice();
-   return (MixDevice*)(0);
-}
-
 
 void ViewDockAreaPopup::showContextMenu()
 {
@@ -90,6 +79,7 @@ void ViewDockAreaPopup::_setMixSet()
 {
    // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
 
+  // -- remove controls
    if ( _mixer->isDynamic() ) {
       // Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
       // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
@@ -158,37 +148,16 @@ void ViewDockAreaPopup::constructionFinished() {
    pb->setObjectName( QLatin1String("MixerPanel" ));
    connect ( pb, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
    _layoutMDW->addWidget( pb, sliderColumn+1, 0, 1, 1 );
-/*
-QWidget* mdw = 0;
-   if ( !_mdws.isEmpty() )
-      mdw = _mdws.first();
-
-   if ( mdw != 0 ) {
-      mdw->move(0,0);
-      mdw->show();
-   }*/
 }
 
 
 void ViewDockAreaPopup::refreshVolumeLevels() {
-   //    kDebug(67100) << "ViewDockAreaPopup::refreshVolumeLevels()\n";
-   QWidget* mdw = 0;
-   if ( !_mdws.isEmpty() )
-      mdw = _mdws.first();
-
-   if ( mdw == 0 ) {
-      kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw == 0\n";
-      // sanity check (normally the lists are set up correctly)
-   }
-   else {
-      if ( mdw->inherits("MDWSlider")) { // sanity check
-            static_cast<MDWSlider*>(mdw)->update();
-      }
-      else {
-         kError(67100) << "ViewDockAreaPopup::refreshVolumeLevels(): mdw is not slider\n";
-         // no slider. Cannot happen in theory => skip it
-      }
-   }
+  foreach ( QWidget* qw, _mdws )
+  {
+    kDebug() << "rvl: " << qw;
+    MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
+    if ( mdw != 0 ) mdw->update();
+  }
 }
 
 void ViewDockAreaPopup::showPanelSlot() {

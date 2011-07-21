@@ -78,6 +78,15 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
             return "mixer-microphone-front";
         case MixDevice::KMIX_COMPOSITE:
             return "mixer-line";
+        case MixDevice::APPLICATION_AMAROK:
+            return "amarok";
+        case MixDevice::APPLICATION_BANSHEE:
+            return "media-player-banshee";
+        case MixDevice::APPLICATION_XMM2:
+            return "xmms";
+        case MixDevice::APPLICATION_STREAM:
+            return "mixer-pcm";
+      
     }
     return "mixer-front";
 }

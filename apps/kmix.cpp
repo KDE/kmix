@@ -1159,7 +1159,7 @@ void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
         ViewBase* view = kmw->currentView();
         QAction* action = actionCollection()->action( "toggle_channels_currentview" );
         if (view && action)
-            action->setVisible( !view->getMixer()->isDynamic() );
+            action->setVisible( !view->isDynamic() );
     }
 }
 
