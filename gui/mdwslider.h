@@ -123,7 +123,7 @@ private:
     //void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
-    void setStereoLinkedInternal( QList<QWidget *>& ref_sliders );
+    void setStereoLinkedInternal( QList<QWidget *>& ref_sliders, QList<QWidget *>& ref_labels );
     void setTicksInternal( QList<QWidget *>& ref_sliders,  bool ticks );
     void volumeChangeInternal(Volume& vol, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_slidesr );
     void updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_labels);

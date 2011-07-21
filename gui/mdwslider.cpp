@@ -512,7 +512,10 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 			    QString subcontrolTranslation = Volume::ChannelNameReadable[chid]; //Volume::getSubcontrolTranslation(chid);
 			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 			ref_labels.append ( subcontrolLabel ); // add to list
-			  
+			if( i>0 && isStereoLinked() ) {
+				// show only one (the first) slider, when the user wants it so
+				subcontrolLabel->hide();
+			}			  
 // 			}
 
 			QWidget* slider;
@@ -640,52 +643,54 @@ void
 MDWSlider::setStereoLinked(bool value)
 {
 	m_linked = value;
-	if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback);
-	if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture);
+	if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback, m_labelsPlayback);
+	if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture, m_labelsCapture);
 	update(); // Call update(), so that the sliders can adjust EITHER to the individual values OR the average value.
 }
 
 void
-MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders)
+MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders, QList<QWidget *>& ref_labels)
 {
-	QWidget *slider = ref_sliders[0];
+// 	QWidget *slider = ref_sliders[0];
+// 
+// 	/***********************************************************
+// 	   Remember value of first slider, so that it can be copied
+// 	   to the other sliders.
+// 	***********************************************************/
+// 	int firstSliderValue = 0;
+// 	bool firstSliderValueValid = false;
+// 	if ( ::qobject_cast<QSlider*>(slider) ) {
+// 		QSlider *sld = static_cast<QSlider*>(slider);
+// 		firstSliderValue = sld->value();
+// 		firstSliderValueValid = true;
+// 	}
+// 	else if ( ::qobject_cast<KSmallSlider*>(slider) )  {
+// 		KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
+// 		firstSliderValue = sld->value();
+// 		firstSliderValueValid = true;
+// 	}
 
-	/***********************************************************
-	   Remember value of first slider, so that it can be copied
-	   to the other sliders.
-	***********************************************************/
-	int firstSliderValue = 0;
-	bool firstSliderValueValid = false;
-	if ( ::qobject_cast<QSlider*>(slider) ) {
-		QSlider *sld = static_cast<QSlider*>(slider);
-		firstSliderValue = sld->value();
-		firstSliderValueValid = true;
+	bool first = true;
+	foreach ( QWidget* slider1, ref_sliders )
+	{
+		if ( first ) first = false;
+		else if ( slider1 != 0 ) slider1->setHidden(m_linked);
 	}
-	else if ( ::qobject_cast<KSmallSlider*>(slider) )  {
-		KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
-		firstSliderValue = sld->value();
-		firstSliderValueValid = true;
+	
+	first = true;
+	foreach ( QWidget* label1, ref_labels )
+	{
+		if ( first ) first = false;
+		else if ( label1 != 0 ) label1->setHidden(m_linked);
 	}
 
-	for( int i=1; i<ref_sliders.count(); ++i ) {
-		slider = ref_sliders[i];
-		if ( slider == 0 ) {
-			continue;
-		}
-		if ( m_linked ) {
-			slider->hide();
-		}
-		else {
-			slider->show();
-		}
-	}
 
 	// Redo the tickmarks to last slider in the slider list.
 	// The implementation is not obvious, so lets explain:
 	// We ALWAYS have tickmarks on the LAST slider. Sometimes the slider is not shown, and then we just don't bother.
 	// a) So, if the last slider has tickmarks, we can always call setTicks( true ).
 	// b) if the last slider has NO tickmarks, there ae no tickmarks at all, and we don't need to redo the tickmarks.
-	slider = ref_sliders.last();
+	QWidget* slider = ref_sliders.last();
 	if( slider && ( static_cast<QSlider *>(slider)->tickPosition() != QSlider::NoTicks) )
 		setTicks( true );
 

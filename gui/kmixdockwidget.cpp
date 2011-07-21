@@ -71,8 +71,18 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     createActions();
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
-    connect(this, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(activateMenuOrWindow(bool, QPoint)));
-    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+
+    bool NO_MENU_ANYMORE = true; 
+    
+    if ( NO_MENU_ANYMORE )
+    {
+      connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(activateMenuOrWindow(bool, QPoint)));
+    }
+    else
+    {
+      connect(this, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(activateMenuOrWindow(bool, QPoint)));
+      connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+    }
 
 #ifdef _GNU_SOURCE
 // TODO minimizeRestore usage is currently VERY broken
@@ -91,6 +101,8 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 
         //setAssociatedWidget(_referenceWidget);
         //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
+	
+	//setContextMenu(_referenceWidget2);
     }
     else {
         _volWA = 0;
@@ -112,7 +124,7 @@ KMixDockWidget::~KMixDockWidget()
 void KMixDockWidget::createActions()
 {
    QMenu *menu = contextMenu();
-
+   
    MixDevice* md = Mixer::getGlobalMasterMD();
   if ( md != 0 && md->playbackVolume().hasSwitch() ) {
     // Put "Mute" selector in context menu
