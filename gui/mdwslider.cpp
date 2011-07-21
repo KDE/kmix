@@ -71,7 +71,7 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
 //	MixDeviceWidget(md,true,orientation,parent,view, par_ctl),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
-	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
+	m_label( 0 ), /*m_captureLED( 0 ),*/
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
 	muteButtonSpacing(false), captureLEDSpacing(false), _mdwMoveActions(new KActionCollection(this)), m_moveMenu(0)
 {
@@ -280,10 +280,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
       bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
 	
       bool wantsMediaControls = ( m_mixdevice->hasMediaNextControl() || m_mixdevice->hasMediaPlayControl() || m_mixdevice->hasMediaPrevControl() );
-      if ( wantsMediaControls )
-      {
-	kDebug() << "Bla";
-      }
+
       // case of vertical sliders:
 	if ( _orientation == Qt::Vertical )
 	{
@@ -339,7 +336,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 			if ( wantsCaptureSliders )
 				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
 			if ( wantsMediaControls )
-				addMediaControls( volLayout );
+				addMediaControls( volLayout ); // Please note that the addmediaControls() is in the hasVolumeSliders check onyl because it was easier to integrate
 			controlLayout->addSpacing( 3 );
 		} else {
 			controlLayout->addStretch(1);
@@ -396,8 +393,6 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		m_label->installEventFilter( this );
 		row1->addWidget( m_label );
 		row1->setAlignment(m_label, Qt::AlignVCenter);
-
-		//row1->addStretch();
 
 		if ( showCaptureLED && includeCapture && m_mixdevice->captureVolume().hasSwitch() )
 		{
@@ -486,60 +481,83 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 
       if ( mixDevice()->hasMediaPlayControl())
       {
-        QLabel* prev = 0; //new QLabel("<", this);
-	setIcon("media-skip-backward", &prev);
-	mediaLayout->addWidget(prev);
+	QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout);
+	connect(lbl, SIGNAL( clicked(bool) ), this, SLOT( mediaPrev(bool) ) ); 
       }
       if ( mixDevice()->hasMediaPlayControl())
       {
-	QLabel* play = 0; //new QLabel("P", this);
-	setIcon("media-playback-start", &play);
-	mediaLayout->addWidget(play);
+	QToolButton *lbl = addMediaButton("media-playback-start", mediaLayout);
+	connect(lbl, SIGNAL( clicked(bool) ), this, SLOT( mediaPlay(bool) ) ); 
       }
       if ( mixDevice()->hasMediaPlayControl())
       {
-        QLabel* next = 0; //new QLabel(">, this");
-	setIcon("media-skip-forward", &next);
-	mediaLayout->addWidget(next);
+	QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout);
+	connect(lbl, SIGNAL( clicked(bool) ), this, SLOT( mediaNext(bool) ) ); 
       }
       volLayout->addLayout(mediaLayout);
     }
 
+
+QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout)
+{
+	QToolButton *lbl = new QToolButton(this);
+	lbl->setIconSize(QSize(22,22));
+	lbl->setAutoRaise(true);
+	lbl->setCheckable(false);
+	
+	setIcon(iconName, lbl);
+	layout->addWidget(lbl);
+
+	return lbl;
+}
+
+void MDWSlider::mediaPrev(bool)
+{
+  kDebug() << "ZZZZZZZ";
+}
+
+void MDWSlider::mediaNext(bool)
+{
+  kDebug() << "ZZZZZZZ";
+}
+
+void MDWSlider::mediaPlay(bool)
+{
+  kDebug() << "ZZZZZZZ";
+}
+
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 {
 	Volume* volP;
-// 	QList<Volume::ChannelID>* ref_slidersChidsP;
 	QList<QAbstractSlider *>* ref_slidersP;
 	QList<QWidget *>* ref_labelsP;
 
 	if ( type == 'c' ) { // capture
 		volP              = &m_mixdevice->captureVolume();
-// 		ref_slidersChidsP = &_slidersChidsCapture;
 		ref_slidersP      = &m_slidersCapture;
 		ref_labelsP       = &m_labelsCapture;
 	}
 	else { // playback
 	  
 		volP              = &m_mixdevice->playbackVolume();
-// 		ref_slidersChidsP = &_slidersChidsPlayback;
 		ref_slidersP      = &m_slidersPlayback;
 		ref_labelsP       = &m_labelsPlayback;
 	}
 
 	Volume& vol = *volP;
-// 	QList<Volume::ChannelID>& ref_slidersChids = *ref_slidersChidsP;
 	QList<QAbstractSlider *>& ref_sliders = *ref_slidersP;
 	QList<QWidget *>& ref_labels = *ref_labelsP;
 
-
+	LabelType labelType = LT_NONE;
 	if (addLabel && type == 'c')
 	{
-		static QString capture = i18n("capture");
-		m_extraCaptureLabel = createLabel(this, capture, volLayout, false);
+	  labelType = LT_FIRST_CAPTURE;
+	}
+	if ( vol.count() > 2 && ! isStereoLinked())
+	{
+	  labelType = LT_ALL;
 	}
 
-
-//	vol._volumes.
 
 	const int minSliderSize = fontMetrics().height() * 10;
 	long minvol = vol.minVolume();
@@ -547,22 +565,22 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 
 	bool first = true;
 	QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
-	bool suppressAllSubcontrolLables = (vols.count() < 2);
+
 	foreach (VolumeChannel vc, vols )
 	{
-			  kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
-			    QString subcontrolTranslation = Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
-			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
-			ref_labels.append ( subcontrolLabel ); // add to list
-			if( suppressAllSubcontrolLables || (!first && isStereoLinked())  ) {
-				// show only one (the first) slider, when the user wants it so
-				subcontrolLabel->hide();
-			}			  
-// 			}
+		kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
+		QString subcontrolTranslation = Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
+		QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+		ref_labels.append ( subcontrolLabel ); // add to list
 
-			QAbstractSlider* slider;
-			if ( m_small ) {
-				slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
+		if( labelType == LT_NONE ) subcontrolLabel->hide();
+		else if ( labelType == LT_FIRST_CAPTURE && !first ) subcontrolLabel->hide();
+		else subcontrolLabel->show();
+		
+		QAbstractSlider* slider;
+		if ( m_small )
+		{
+			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
 				                           vol.getVolume( vc.chid ), _orientation, this );
 			} // small
 			else  {
@@ -663,7 +681,11 @@ void MDWSlider::setIcon( QString filename, QLabel** label )
 		*label = new QLabel(this);
 		installEventFilter( *label );
 	}
+	setIcon(filename, *label);
+}
 
+void MDWSlider::setIcon( QString filename, QWidget* label )
+{
 	QPixmap miniDevPM = loadIcon( filename );
 	if ( !miniDevPM.isNull() )
 	{
@@ -672,16 +694,31 @@ void MDWSlider::setIcon( QString filename, QLabel** label )
 			// scale icon
 			QMatrix t;
 			t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
-			(*label)->setPixmap( miniDevPM.transformed( t ) );
-			(*label)->resize( 10, 10 );
+			miniDevPM = miniDevPM.transformed( t );
+			label->resize( 10, 10 );
 		} // small size
+		label->setMinimumSize(22,22);
+		
+		QLabel* lbl = qobject_cast<QLabel*>(label);
+		if ( lbl != 0 )
+		{
+		  lbl->setPixmap( miniDevPM );
+		  lbl->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+		} // QLabel
 		else
 		{
-			(*label)->setPixmap( miniDevPM );
-		} // normal size
-
-		(*label)->setMinimumSize(22,22);
-		(*label)->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+		  QToolButton* tbt = qobject_cast<QToolButton*>(label);
+		  if ( tbt != 0 )
+		  {
+/*		  QIcon ic(miniDevPM);
+		  lbl->setIcon(ic);*/
+		    tbt->setIcon( miniDevPM );
+//		    tbt->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+		  } // QToolButton 
+		  else {
+		    kError() << "Invalid widget type ... cannot set icon";
+		  }
+		}
 	}
 	else
 	{
@@ -742,18 +779,16 @@ MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, QList<
 void
 MDWSlider::setLabeled(bool value)
 {
-	if ( m_label == 0  && m_extraCaptureLabel == 0 )
+	if ( m_label == 0  )
 		return;
 
 	if (value ) {
 		if ( m_label != 0) m_label->show();
-		if ( m_extraCaptureLabel != 0) m_extraCaptureLabel->show();
 		if ( m_muteText != 0) m_muteText->show();
 		if ( m_captureText != 0) m_captureText->show();
 	}
 	else {
 		if ( m_label != 0) m_label->hide();
-		if ( m_extraCaptureLabel != 0) m_extraCaptureLabel->hide();
 		if ( m_muteText != 0) m_muteText->hide();
 		if ( m_captureText != 0) m_captureText->hide();
 	}

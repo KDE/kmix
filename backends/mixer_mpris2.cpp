@@ -226,8 +226,7 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 	// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
 	// Thus we won't add the playback switch
 	Volume* vol = new Volume( 100, 0, false, false);
-	vol->addVolumeChannel(VolumeChannel(Volume::LEFT));
-	vol->addVolumeChannel(VolumeChannel(Volume::RIGHT));
+	vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
 	md->addMediaPlayControl();
 	md->addMediaNextControl();
 	md->addMediaPrevControl();

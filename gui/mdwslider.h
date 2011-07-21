@@ -58,6 +58,7 @@ public:
 	       QWidget* parent, ViewBase* view, ProfControl *pctl);
     ~MDWSlider() { }
 
+    enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };
     void addActionToPopup( KAction *action );
     void createActions();
     void createShortcutActions();
@@ -69,6 +70,8 @@ public:
     void setTicks( bool ticks );
     void setIcons( bool value );
     void setIcon( QString filename, QLabel** label );
+    void setIcon( QString filename, QWidget* label );
+    QToolButton* addMediaButton(QString iconName, QLayout* layout);
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
     
@@ -117,6 +120,10 @@ private slots:
     void moveStreamAutomatic();
     void moveStream( QString destId );
 
+    void mediaPlay(bool);
+    void mediaNext(bool);
+    void mediaPrev(bool);
+
 private:
     KShortcut dummyShortcut;
     void setIcon( QString iconname );
@@ -144,7 +151,6 @@ private:
 	QToolButton* m_qcb;
 	QLabel* m_muteText;
         
-    QWidget *m_extraCaptureLabel; // extra capture label (if you got playback AND capture on the same control)
 	QLabel *m_label; // is either QLabel or VerticalText
     
 	QCheckBox* m_captureCheckbox;
