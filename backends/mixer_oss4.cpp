@@ -434,7 +434,7 @@ int Mixer_OSS4::open()
 					{
 						Volume vol(ext.maxvalue, ext.minvalue,
 									false, isCapture);
-						vol.addVolumeChannels(VolumeChannel(Volume::MLEFT));
+						vol.addVolumeChannel(VolumeChannel(Volume::MLEFT));
 
 						MixDevice* md = new MixDevice (_mixer,
 						                               QString::number(i),

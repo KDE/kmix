@@ -9,11 +9,21 @@
 
 #include "mixer_backend.h"
 
-class MPrisAppdata
+class MPrisAppdata : public QObject
 {
+  Q_OBJECT 
 public:
+  MPrisAppdata();
+  ~MPrisAppdata();
   QString id;
   QDBusInterface* propertyIfc;
+
+public slots:
+  void volumeChangedIncoming(QString ifc, QList<QVariant> msg);
+  void volumeChangedIncoming(QString,QVariantMap,QStringList);
+  
+signals:
+  void volumeChanged(MPrisAppdata* mad, QString ifc, QList<QVariant> msg);
 };
 
 class Mixer_MPRIS2 : public Mixer_Backend
@@ -36,7 +46,7 @@ public:
   virtual bool needsPolling() { return false; }
 
 public slots:
-  void volumeChanged(QString ifc, QList<QVariant> qvl) { kDebug(67100) << "volumeChanged: " << ifc << " : " << qvl; };
+  void volumeChanged(MPrisAppdata* mad, QString ifc, QList<QVariant> qvl);
 
 private:
   int run();
@@ -45,7 +55,7 @@ private:
   
   static QString getBusDestination(const QString& id);
   
-  QMap<QString,MPrisAppdata> apps;
+  QMap<QString,MPrisAppdata*> apps;
 };
 
 

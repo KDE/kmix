@@ -115,12 +115,10 @@ void ViewBase::setTicks (bool on) { KMixToolBox::setTicks (_mdws, on ); }
 void ViewBase::createDeviceWidgets()
 {
     // create devices
-    for ( int i=0; i<_mixSet->count(); i++ )
+    foreach ( MixDevice* md, *_mixSet ) 
     {
-        MixDevice *mixDevice;
-        mixDevice = (*_mixSet)[i];
-        QWidget* mdw = add(mixDevice);
-        _mdws.append(mdw);
+        QWidget* mdw = add(md); // a) Let the View implementation do its work
+        _mdws.append(mdw); // b) Add it to the local list
     }
     // allow view to "polish" itself
     constructionFinished();

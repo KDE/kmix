@@ -125,7 +125,7 @@ struct MixerFactory {
     getDriverNameFunc *getDriverName;
 };
 
-// TODO encapsualte by #ifdef HAVE_DBUS
+// Possibly encapsualte by #ifdef HAVE_DBUS
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device );
 QString MPRIS2_getDriverName();
 
@@ -148,7 +148,7 @@ MixerFactory g_mixerFactories[] = {
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
 
-    // TODO encapsualte by #ifdef HAVE_DBUS
+    // Possibly encapsualte by #ifdef HAVE_DBUS
     { MPRIS2_getMixer, MPRIS2_getDriverName },
 
 #if defined(OSS_MIXER)

@@ -10,10 +10,13 @@ alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
 
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
+
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 if(MSVC)
     include_directories( ${TAGLIB_INCLUDES} )
 endif(MSVC)
+
 
 configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 

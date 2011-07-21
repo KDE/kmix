@@ -72,8 +72,8 @@ public slots:
 
 protected slots:
     void volumeChange( int );
-    virtual void setVolume( int channel, int volume );
-    virtual void setVolume( Volume volume );
+//    virtual void setVolume( int channel, int volume );
+//    virtual void setVolume( Volume volume );
 
 protected:
 

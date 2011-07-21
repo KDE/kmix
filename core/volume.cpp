@@ -142,12 +142,10 @@ void Volume::changeAllVolumes( long step )
 // @ compatibility
 void Volume::setVolume( ChannelID chid, long vol)
 {
-  if ( _volumesL.contains(chid))
+  QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
+  if ( it != _volumesL.end())
   {
-    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
-//   kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
-  it.value().volume = vol;
-//   kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
+    it.value().volume = vol;
   }
 }
 

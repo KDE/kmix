@@ -21,11 +21,11 @@
 #ifndef MixSet_h
 #define MixSet_h
 
-#include <QList>
+#include <QSet>
 
 #include "core/mixdevice.h"
 
-class MixSet : public QList<MixDevice *>
+class MixSet : public QList <MixDevice *>
 {
    public:
       void read( KConfig *config, const QString& grp );
@@ -33,6 +33,8 @@ class MixSet : public QList<MixDevice *>
 
       QString name() { return m_name; }
       void setName( const QString &name );
+      
+      MixDevice* get(QString id);
 
    private:
       QString m_name;

@@ -51,8 +51,10 @@ QString DBusMixerWrapper::driverName()
 QStringList DBusMixerWrapper::controls()
 {
 	QStringList result;
-	for ( int i = 0; i < m_mixer->getMixSet().count(); i++ )
-		result.append( m_mixer->getMixSet()[i]->dbusPath() );
+	foreach ( MixDevice* md, m_mixer->getMixSet() )
+	{
+		result.append( md->dbusPath() );
+	}
 	return result;
 }
 

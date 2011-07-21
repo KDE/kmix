@@ -30,8 +30,8 @@ MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<
 {
     setArtificial(true);
     _compositePlaybackVolume = new Volume( MixDeviceComposite::VolMax, 0, true, false);
-    _compositePlaybackVolume->addVolumeChannels(Volume::MMAIN);
-//    _compositeCaptureVolume  = new Volume();
+    _compositePlaybackVolume->addVolumeChannel(Volume::LEFT);
+    _compositePlaybackVolume->addVolumeChannel(Volume::RIGHT);
 
     QListIterator<MixDevice*> it(mds);
     while ( it.hasNext()) {

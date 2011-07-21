@@ -65,3 +65,14 @@ void MixSet::setName( const QString &name )
     m_name = name;
 }
 
+MixDevice* MixSet::get(QString id)
+{
+  MixDevice* md = 0;
+  for(int i=0; i < count() ; i++ )
+  {
+    md = operator[](i);
+    if ( md->id() == id )
+      break;
+  }
+  return md;
+}
