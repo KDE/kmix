@@ -130,7 +130,6 @@ MixerFactory g_mixerFactories[] = {
     { SUN_getMixer, SUN_getDriverName },
 #endif
 
-    { MPRIS2_getMixer, MPRIS2_getDriverName },
     
 #if defined(IRIX_MIXER)
     { IRIX_getMixer, IRIX_getDriverName },
@@ -143,6 +142,8 @@ MixerFactory g_mixerFactories[] = {
 #if defined(ALSA_MIXER)
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
+
+        { MPRIS2_getMixer, MPRIS2_getDriverName },
 
 #if defined(OSS_MIXER)
     { OSS_getMixer, OSS_getDriverName },

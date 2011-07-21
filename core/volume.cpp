@@ -120,9 +120,11 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasS
 void Volume::setAllVolumes(long vol)
 {
   long int finalVol = volrange(vol);
-  foreach (VolumeChannel vc, _volumesL )
+  QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
+  while (it != _volumesL.end())
   {
-    vc.volume = finalVol;
+    it.value().volume = finalVol;
+    ++it;
   }
 }
 
@@ -133,21 +135,20 @@ void Volume::changeAllVolumes( long step )
   {
     it.value().volume = volrange(it.value().volume + step);
     ++it;
-    //VolumeChannel &vc = it.value();
   }
-/*  foreach (const VolumeChannel& vc, _volumesL )
-  {
-    kDebug(67100) << &vc << " : " ; 
-    vc.volume = volrange(vc.volume + step);
-    kDebug(67100) << &vc << " : " ; 
-  }*/
 }
 
 
 // @ compatibility
 void Volume::setVolume( ChannelID chid, long vol)
 {
-  _volumesL[chid].volume = vol;
+  if ( _volumesL.contains(chid))
+  {
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
+  kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
+  it.value().volume = vol;
+  kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
+  }
 }
 
 /**
