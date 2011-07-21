@@ -101,6 +101,7 @@ int Mixer_OSS::open()
 {
     QString finalDeviceName;
     finalDeviceName = deviceName( m_devnum );
+  kDebug() << "OSS open() " << finalDeviceName;
     if ((m_fd= ::open( finalDeviceName.toAscii().data(), O_RDWR)) < 0)
     {
         if ( errno == EACCES )
@@ -258,14 +259,30 @@ bool Mixer_OSS::isRecsrcHW( const QString& id )
 }
 */
 
+void print_recsrc(int recsrc)
+{
+	int i;
 
+	QString msg;
+	for (i = 0; i < SOUND_MIXER_NRDEVICES; i++)
+	{
+		if ((1 << i) & recsrc) 
+		  msg += '+';
+		else
+		  msg += '.';
+	}	
+	kDebug() << msg;
+}
 void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
 {
+    kDebug() << "Auslesen 1:"; 
     int i_recsrc, oldrecsrc;
     int devnum = id2num(id);
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
         errormsg(Mixer::ERR_READ);
 
+    kDebug() << "Auslesen 2:"; print_recsrc(i_recsrc);
+     
     oldrecsrc = i_recsrc = on ?
              (i_recsrc | (1 << devnum )) :
              (i_recsrc & ~(1 << devnum ));
@@ -315,6 +332,8 @@ void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
     } // reading newrecsrcmask is OK
     
 }
+
+
 
 
 int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )

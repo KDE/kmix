@@ -133,10 +133,10 @@ private:
     //void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
-    void setStereoLinkedInternal( QList< QAbstractSlider* >& ref_sliders, QList< QWidget* >& ref_labels );
+    void setStereoLinkedInternal( QList< QAbstractSlider* >& ref_sliders);
     void setTicksInternal( QList< QAbstractSlider* >& ref_sliders, bool ticks );
     void volumeChangeInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders );
-    void updateInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders, QList< QWidget* >& ref_labels);
+    void updateInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders);
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 
 
@@ -166,8 +166,8 @@ private:
     QList<QAbstractSlider *> m_slidersPlayback;
     QList<QAbstractSlider *> m_slidersCapture;
 
-    QList<QWidget *> m_labelsPlayback;
-    QList<QWidget *> m_labelsCapture;
+//    QList<QWidget *> m_labelsPlayback;
+//    QList<QWidget *> m_labelsCapture;
 };
 
 #endif

@@ -435,6 +435,7 @@ void KMixWindow::loadBaseConfig()
     QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
     MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
     m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
+    kDebug() << "Backends: " << m_backendFilter;
 
     if ( orientationString == "Horizontal" )
         m_toplevelOrientation  = Qt::Horizontal;

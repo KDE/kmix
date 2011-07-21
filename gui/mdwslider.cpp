@@ -332,7 +332,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		if ( hasVolumeSliders )
 		{
 			if ( wantsPlaybackSliders )
-				addSliders( volLayout, 'p', false );
+				addSliders( volLayout, 'p', bothCaptureANDPlaybackExist );
 			if ( wantsCaptureSliders )
 				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
 			if ( wantsMediaControls )
@@ -529,38 +529,37 @@ void MDWSlider::mediaPlay(bool)
   mixDevice()->mediaPlay();
 }
 
-void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
+void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureLabel)
 {
 	Volume* volP;
 	QList<QAbstractSlider *>* ref_slidersP;
-	QList<QWidget *>* ref_labelsP;
 
 	if ( type == 'c' ) { // capture
 		volP              = &m_mixdevice->captureVolume();
 		ref_slidersP      = &m_slidersCapture;
-		ref_labelsP       = &m_labelsCapture;
 	}
 	else { // playback
 	  
 		volP              = &m_mixdevice->playbackVolume();
 		ref_slidersP      = &m_slidersPlayback;
-		ref_labelsP       = &m_labelsPlayback;
 	}
 
 	Volume& vol = *volP;
 	QList<QAbstractSlider *>& ref_sliders = *ref_slidersP;
-	QList<QWidget *>& ref_labels = *ref_labelsP;
 
 	LabelType labelType = LT_NONE;
-	if (addLabel && type == 'c')
-	{
-	  labelType = LT_FIRST_CAPTURE;
-	}
-	if ( vol.count() > 2 && ! isStereoLinked())
+	
+	if ( vol.count() >= 2  && ! isStereoLinked() )
 	{
 	  labelType = LT_ALL;
 	}
+	else if (forceCaptureLabel && type == 'c')
+	{
+		if (isStereoLinked()) labelType = LT_ALL;
+		else labelType = LT_FIRST_CAPTURE;
+	}
 
+kDebug() << "------------ volcount=" << vol.count() << " labelType=" << labelType;
 
 	const int minSliderSize = fontMetrics().height() * 10;
 	long minvol = vol.minVolume();
@@ -572,60 +571,74 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 	foreach (VolumeChannel vc, vols )
 	{
 		kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
-		QString subcontrolTranslation = Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
-		QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
-		ref_labels.append ( subcontrolLabel ); // add to list
-
-		if( labelType == LT_NONE ) subcontrolLabel->hide();
-		else if ( labelType == LT_FIRST_CAPTURE && !first ) subcontrolLabel->hide();
+		QWidget *subcontrolLabel;
+		if ( labelType == LT_FIRST_CAPTURE && type == 'c' && first )
+		{
+			QString subcontrolTranslation = i18n("Capture"); // Put a simple "Capture" label
+			subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+		}
+		else
+		{
+			QString subcontrolTranslation;
+			if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + " ";
+			subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
+			subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+		}
+		
+		bool show = true;
+		if( labelType == LT_NONE ) show = false;
+		else if ( labelType == LT_FIRST_CAPTURE && !first ) show = false;
 		else subcontrolLabel->show();
+		subcontrolLabel->setVisible(show);
+		kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid] << " show=" << show;
 		
 		QAbstractSlider* slider;
 		if ( m_small )
 		{
 			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
 				                           vol.getVolume( vc.chid ), _orientation, this );
-			} // small
-			else  {
-				slider = new VolumeSlider( _orientation, this );
-				slider->setMinimum(0);
-				slider->setMaximum(maxvol);
-				slider->setPageStep(maxvol/10);
-				slider->setValue( maxvol - vol.getVolume( vc.chid ) );
+		} // small
+		else  {
+			slider = new VolumeSlider( _orientation, this );
+			slider->setMinimum(0);
+			slider->setMaximum(maxvol);
+			slider->setPageStep(maxvol/10);
+			slider->setValue( maxvol - vol.getVolume( vc.chid ) );
+			extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
-				if ( _orientation == Qt::Vertical ) {
-					slider->setMinimumHeight( minSliderSize );
-				}
-				else {
-					slider->setMinimumWidth( minSliderSize );
-				}
-				if ( ! _pctl->getBackgroundColor().isEmpty() ) {
-				    QString bcolor(_pctl->getBackgroundColor());
-				    QColor qcol(bcolor);
-				    QPalette qpal = slider->palette();
-				    qpal.setColor(QPalette::Window, qcol);
-				    slider->setPalette(qpal);
-				}
-			} // not small
-
-			extraData(slider).setChid(vc.chid);
-			slider->installEventFilter( this );
-			if ( type == 'p' ) {
-				slider->setToolTip( m_mixdevice->readableName() );
+			if ( _orientation == Qt::Vertical ) {
+				slider->setMinimumHeight( minSliderSize );
 			}
 			else {
-				QString captureTip( i18n( "%1 (capture)", m_mixdevice->readableName() ) );
-				slider->setToolTip( captureTip );
+				slider->setMinimumWidth( minSliderSize );
 			}
+			if ( ! _pctl->getBackgroundColor().isEmpty() ) {
+				QString bcolor(_pctl->getBackgroundColor());
+				QColor qcol(bcolor);
+				QPalette qpal = slider->palette();
+				qpal.setColor(QPalette::Window, qcol);
+				slider->setPalette(qpal);
+			}
+		} // not small
 
-			if( !first && isStereoLinked() ) {
-				// show only one (the first) slider, when the user wants it so
-				slider->hide();
-			}
-			volLayout->addWidget( slider ); // add to layout
-			ref_sliders.append ( slider ); // add to list
-			//ref_slidersChids.append(vc.chid);
-			connect( slider, SIGNAL( valueChanged(int) ), SLOT( volumeChange(int) ) );
+		extraData(slider).setChid(vc.chid);
+		slider->installEventFilter( this );
+		if ( type == 'p' ) {
+			slider->setToolTip( m_mixdevice->readableName() );
+		}
+		else {
+			QString captureTip( i18n( "%1 (capture)", m_mixdevice->readableName() ) );
+			slider->setToolTip( captureTip );
+		}
+
+		if( !first && isStereoLinked() ) {
+			// show only one (the first) slider, when the user wants it so
+			slider->hide();
+		}
+		volLayout->addWidget( slider ); // add to layout
+		ref_sliders.append ( slider ); // add to list
+		//ref_slidersChids.append(vc.chid);
+		connect( slider, SIGNAL( valueChanged(int) ), SLOT( volumeChange(int) ) );
 		
 		first = false;
 	} // for all channels of this device
@@ -744,27 +757,24 @@ void
 MDWSlider::setStereoLinked(bool value)
 {
 	m_linked = value;
-	if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback, m_labelsPlayback);
-	if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture, m_labelsCapture);
+	if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback);
+	if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture);
 	update(); // Call update(), so that the sliders can adjust EITHER to the individual values OR the average value.
 }
 
 void
-MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, QList<QWidget *>& ref_labels)
+MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders)
 {
 	bool first = true;
-	foreach ( QWidget* slider1, ref_sliders )
+	foreach ( QAbstractSlider* slider1, ref_sliders )
 	{
 		if ( first ) first = false;
-		else if ( slider1 != 0 ) slider1->setHidden(m_linked);
+		else if ( slider1 != 0 ) {
+			slider1->setHidden(m_linked);
+		}
+		extraData(slider1).getSubcontrolLabel()->setHidden(false);
 	}
-	
-	first = true;
-	foreach ( QWidget* label1, ref_labels )
-	{
-		if ( first ) first = false;
-		else if ( label1 != 0 ) label1->setHidden(m_linked);
-	}
+
 
 
 	// Redo the tickmarks to last slider in the slider list.
@@ -1027,9 +1037,9 @@ void MDWSlider::moveStream(QString destId)
 void MDWSlider::update()
 {
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->playbackVolume().hasSwitch() )
-		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_labelsPlayback);
+		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
 	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
-		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, m_labelsCapture );
+		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture);
 	if (m_label) {
 		QLabel *l;
 		VerticalText *v;
@@ -1040,21 +1050,13 @@ void MDWSlider::update()
 	}
 }
 
-void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, QList<QWidget *>& ref_labels)
+void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
 {
-
-// 	QList<Volume::ChannelID>::Iterator it = ref_slidersChids.begin();
 	for( int i=0; i<ref_sliders.count(); i++ ) {
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
 		long useVolume = vol.getVolume(chid);
-//		QWidget *labelAtSlider = ref_labels.at( i ); // TODO hide labels
 
-/*		if ( i==0 )
-		{
-		  kDebug(67100) << "XXXX -------------------------";
-		}
-		  kDebug(67100) << "XXXX " << chid << " now at " << useVolume;*/
 		slider->blockSignals( true );
 		slider->setValue( useVolume );
 		if ( slider->inherits( "KSmallSlider" ) )

@@ -64,6 +64,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     , _contextMenuWasOpen(false)
 {
     setToolTipIconByName("kmix");
+    setTitle(i18n( "Volume Control"));
     setCategory(Hardware);
     setStatus(Active);
     m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
