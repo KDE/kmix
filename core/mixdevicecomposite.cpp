@@ -31,7 +31,7 @@ MixDeviceComposite::MixDeviceComposite( Mixer* mixer,  const QString& id, QList<
     setArtificial(true);
     _compositePlaybackVolume = new Volume( MixDeviceComposite::VolMax, 0, true, false);
     _compositePlaybackVolume->addVolumeChannels(Volume::MMAIN);
-    _compositeCaptureVolume  = new Volume();
+//    _compositeCaptureVolume  = new Volume();
 
     QListIterator<MixDevice*> it(mds);
     while ( it.hasNext()) {
@@ -47,7 +47,7 @@ MixDeviceComposite::~MixDeviceComposite()
         _mds.removeAt(0);
     }
     delete _compositePlaybackVolume;
-    delete _compositeCaptureVolume;
+//    delete _compositeCaptureVolume;
 }
 
 
@@ -57,10 +57,10 @@ Volume& MixDeviceComposite::playbackVolume()
     return *_compositePlaybackVolume;
 }
 
-Volume& MixDeviceComposite::captureVolume()
-{
-    return *_compositeCaptureVolume;
-}
+// Volume& MixDeviceComposite::captureVolume()
+// {
+//     return *_compositeCaptureVolume;
+// }
 
 
 void MixDeviceComposite::update()
@@ -69,7 +69,7 @@ void MixDeviceComposite::update()
     volAvg = calculateVolume( Volume::PlaybackVT  );
     _compositePlaybackVolume->setAllVolumes(volAvg);
     volAvg = calculateVolume( Volume::CaptureVT );
-    _compositeCaptureVolume->setAllVolumes(volAvg);
+//     _compositeCaptureVolume->setAllVolumes(volAvg);
 
 }
 

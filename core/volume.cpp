@@ -52,10 +52,9 @@ int Volume::_channelMaskEnum[9] =
       "volumeRearCenter"
     };
     
-Volume::Volume()
-{
-    init( Volume::MNONE, 0, 0, false, false);
-}
+    // Forbidden/private. Only here because QMap requires it. 
+Volume::Volume() {}
+VolumeChannel::VolumeChannel() {}
 
 // @Deprecated  use method without chmask
 // Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture  )
@@ -112,7 +111,7 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasS
     _switchActivated = false;
 }
 
-    QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes()
+    QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
     {
       return _volumesL;
     }
@@ -129,22 +128,26 @@ void Volume::setAllVolumes(long vol)
 
 void Volume::changeAllVolumes( long step )
 {
-  foreach (VolumeChannel vc, _volumesL )
+  QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
+  while (it != _volumesL.end())
   {
-    vc.volume = volrange(vc.volume + step);
+    it.value().volume = volrange(it.value().volume + step);
+    ++it;
+    //VolumeChannel &vc = it.value();
   }
+/*  foreach (const VolumeChannel& vc, _volumesL )
+  {
+    kDebug(67100) << &vc << " : " ; 
+    vc.volume = volrange(vc.volume + step);
+    kDebug(67100) << &vc << " : " ; 
+  }*/
 }
 
 
 // @ compatibility
 void Volume::setVolume( ChannelID chid, long vol)
 {
-    if ( chid>=0 && chid<=Volume::CHIDMAX ) {
-        // accepted. we don't care if we support the channel,
-        // because there is NO good action we could take.
-        // Anyway: getVolume() on an unsupported channel will return 0 all the time
-        _volumes[chid] = volrange(vol);
-    }
+  _volumesL[chid].volume = vol;
 }
 
 /**
@@ -161,18 +164,16 @@ void Volume::setVolume(const Volume &v)
  * Only those elments are copied, that are supported in BOTH Volume objects
  * and match the ChannelMask given by chmask.
  */
-void Volume::setVolume(const Volume &v, ChannelMask chmask) {
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( _channelMaskEnum[i] & _chmask & (int)chmask ) {
-            // we are supposed to copy it
-            _volumes[i] = volrange(v._volumes[i]);
-        }
-	else {
-	    // Safety first! Lets play safe here and put sane values in
-	    _volumes[i] = 0;
-	}
+void Volume::setVolume(const Volume &v, ChannelMask chmask)
+{
+  foreach (VolumeChannel vc, _volumesL )
+  {
+    ChannelID chid = vc.chid;
+    if ( v.getVolumes().contains(chid) && (Volume::_channelMaskEnum[chid] & chmask) )
+    {
+      v.getVolumes()[chid].volume = vc.volume;
     }
-
+  }
 }
 
 long Volume::maxVolume() {
@@ -201,60 +202,32 @@ int Volume::percentage(long absoluteVolume)
    return relativeVolume;
 }
 
-
-// @ compatibility
-// long Volume::operator[](int id) {
-//   return getVolume( (Volume::ChannelID) id );
-// }
-
 long Volume::getVolume(ChannelID chid) {
-  long vol = 0;
-
-  if ( chid < 0 || chid > (Volume::CHIDMAX) ) {
-    // should throw exception here. I will return 0 instead
-  }
-  else {
-    // check if channel is supported
-    int chmask = _channelMaskEnum[chid];
-    if ( (chmask & _chmask) != 0 ) {
-       // channel is supported
-      vol = _volumes[chid];
-    }
-    else {
-      // should throw exception here. I will return 0 instead
-    }
-  }
-
-  return vol;
+  return _volumesL.value(chid).volume;
 }
 
-long Volume::getAvgVolume(ChannelMask chmask) {
-    int avgVolumeCounter = 0;
-    long long sumOfActiveVolumes = 0;
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( (_channelMaskEnum[i] & _chmask) & (int)chmask ) {
-            avgVolumeCounter++;
-            sumOfActiveVolumes += _volumes[i];
-        }
+long Volume::getAvgVolume(ChannelMask chmask)
+{
+  int avgVolumeCounter = 0;
+  long long sumOfActiveVolumes = _volumesL.size();
+  foreach (VolumeChannel vc, _volumesL )
+  {
+    if (Volume::_channelMaskEnum[vc.chid] & chmask )
+    {
+      sumOfActiveVolumes += vc.volume;
+      ++avgVolumeCounter;
     }
+  }
     if (avgVolumeCounter != 0) {
         sumOfActiveVolumes /= avgVolumeCounter;
     }
-    else {
-        // just return 0;
-    }
+    // else: just return 0;
     return (long)sumOfActiveVolumes;
 }
 
 
 int Volume::count() {
-    int counter = 0;
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-        if ( _channelMaskEnum[i] & _chmask ) {
-            counter++;
-        }
-    }
-    return counter;
+  return getVolumes().count();
 }
 
 /**
@@ -277,18 +250,13 @@ long Volume::volrange( int vol )
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol) {
     os << "(";
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-	if ( i != 0 ) {
-	    os << ",";
-	}
-	if ( Volume::_channelMaskEnum[i] & vol._chmask ) {
-	    // supported channel: Print Volume
-	    os << vol._volumes[i];
-	}
-	else {
-	    // unsupported channel: Print "x"
-	    os << "x";
-	}
+
+    bool first = true;
+    foreach ( const VolumeChannel vc, vol.getVolumes() )
+    {
+	if ( !first )  os << ",";
+	else first = false;
+        os << vc.volume;
     } // all channels
     os << ")";
 
@@ -300,24 +268,17 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
 
 QDebug operator<<(QDebug os, const Volume& vol) {
     os << "(";
-    for ( int i=0; i<= Volume::CHIDMAX; i++ ) {
-	if ( i != 0 ) {
-	    os << ",";
-	}
-	if ( Volume::_channelMaskEnum[i] & vol._chmask ) {
-	    // supported channel: Print Volume
-	    os << vol._volumes[i];
-	}
-	else {
-	    // unsupported channel: Print "x"
-	    os << "x";
-	}
+    bool first = true;
+    foreach ( VolumeChannel vc, vol.getVolumes() )
+    {
+	if ( !first )  os << ",";
+	else first = false;
+        os << vc.volume;
     } // all channels
     os << ")";
 
     os << " [" << vol._minVolume << "-" << vol._maxVolume;
     if ( vol._switchActivated ) { os << " : switch active ]"; } else { os << " : switch inactive ]"; }
-//     if ( vol._muted ) { os << " : muted ]"; } else { os << " : playing ]"; }
 
     return os;
 }

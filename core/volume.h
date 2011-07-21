@@ -89,9 +89,11 @@ friend class MixDevice;
     // Volume( int channels, long maxVolume );
     // copy constructor
     Volume( const Volume &v );
+private:
     // constructor for dummy volumes
     Volume();
-    
+
+public:
     /// @Deprecated
     void addVolumeChannels(ChannelMask chmask);
     
@@ -123,7 +125,7 @@ friend class MixDevice;
    // It is only used for GUI things, like showing a "Mute" text or tooltip
    // Capture is not really used, and has only been added for completeness and future extensibility.
    enum SwitchType { PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
-    void setSwitchType(SwitchType type) { _switchType = type; }
+   void setSwitchType(SwitchType type) { _switchType = type; }
    Volume::SwitchType switchType() { return _switchType; }
 
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
@@ -132,11 +134,10 @@ friend class MixDevice;
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
     static int    _channelMaskEnum[9];
-    QMap<Volume::ChannelID, VolumeChannel> getVolumes();
+    QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
     
 protected:
     long          _chmask;
-    long          _volumes[CHIDMAX+1];
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
 
     long          _minVolume;
@@ -159,11 +160,16 @@ private:
 };
 
 class VolumeChannel
-{
+{  
 public:
   VolumeChannel(Volume::ChannelID chid) { volume =0; this->chid = chid; }
   long volume;
   Volume::ChannelID chid;
+  
+// protected:
+//   friend class Volume;
+//   friend class MixDevice;
+  VolumeChannel(); // Only required for QMap
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);

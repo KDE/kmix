@@ -390,10 +390,6 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
     Volume* vol = 0;
     long maxVolume = 0, minVolume = 0;
 
-    // --- Regular control (not enumerated) ---
-    Volume::ChannelMask chn = Volume::MNONE;
-
-
     // Add volumes
     if ( !capture && snd_mixer_selem_has_playback_volume(elem) ) {
         snd_mixer_selem_get_playback_volume_range( elem, &minVolume, &maxVolume );

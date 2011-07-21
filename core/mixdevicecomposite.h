@@ -93,7 +93,7 @@ public:
    void update();
 
    virtual Volume& playbackVolume();
-   virtual Volume& captureVolume();
+   //virtual Volume& captureVolume();
 
 private:
    long calculateVolume(Volume::VolumeType vt);
@@ -104,7 +104,7 @@ private:
    static const long VolMax;
 
    Volume* _compositePlaybackVolume;
-   Volume* _compositeCaptureVolume;
+ //  Volume* _compositeCaptureVolume;
 };
 
 #endif

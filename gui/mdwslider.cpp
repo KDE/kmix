@@ -513,7 +513,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 			    QString subcontrolTranslation = Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
 			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 			ref_labels.append ( subcontrolLabel ); // add to list
-			if( first && isStereoLinked() ) {
+			if( !first && isStereoLinked() ) {
 				// show only one (the first) slider, when the user wants it so
 				subcontrolLabel->hide();
 			}			  
@@ -556,7 +556,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 				slider->setToolTip( captureTip );
 			}
 
-			if( first && isStereoLinked() ) {
+			if( !first && isStereoLinked() ) {
 				// show only one (the first) slider, when the user wants it so
 				slider->hide();
 			}
@@ -895,7 +895,9 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	long inc = volP.maxVolume() / 20;
 	if ( inc == 0 )	inc = 1;
 	if ( decrease ) inc *= -1;
+	kDebug(67100) << &volP << " Before. decrease=" <<decrease << ": " << volP;
 	volP.changeAllVolumes(inc);
+	kDebug(67100) << &volP << "After . decrease=" <<decrease << ": " << volP;
 
 	Volume& volC = m_mixdevice->captureVolume();
 	inc = volC.maxVolume() / 20;
@@ -904,6 +906,7 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	volC.changeAllVolumes(inc);
 
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+	kDebug(67100) << &volP << "Commit. decrease=" <<decrease << ": " << volP;
 }
 
 /**

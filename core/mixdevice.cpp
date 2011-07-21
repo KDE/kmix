@@ -88,10 +88,7 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  * the mixer hardware. A MixDevice has a type (e.g. PCM), a descriptive name
  * (for example "Master" or "Headphone" or "IEC 958 Output"),
  * can have a volume level (2 when stereo), can be recordable and muted.
- * The category tells which kind of control the MixDevice is.
- *
- * Hints: Meaning of "category" has changed. In future the MixDevice might contain two
- * Volume objects, one for Output (Playback volume) and one for Input (Record volume).
+ * The ChannelType tells which kind of control the MixDevice is.
  */
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
 {
