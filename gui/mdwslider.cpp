@@ -65,7 +65,8 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
         , ViewBase* view
         , ProfControl* par_ctl
         ) :
-	MixDeviceWidget(md,small,orientation,parent,view, par_ctl),
+//	MixDeviceWidget(md,small,orientation,parent,view, par_ctl),
+	MixDeviceWidget(md,true,orientation,parent,view, par_ctl),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_extraCaptureLabel( 0 ), m_label( 0 ), /*m_captureLED( 0 ),*/
@@ -469,7 +470,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 {
 	Volume* volP;
 	QList<Volume::ChannelID>* ref_slidersChidsP;
-	QList<QWidget *>* ref_slidersP;
+	QList<QAbstractSlider *>* ref_slidersP;
 	QList<QWidget *>* ref_labelsP;
 
 	if ( type == 'c' ) { // capture
@@ -488,7 +489,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 
 	Volume& vol = *volP;
 	QList<Volume::ChannelID>& ref_slidersChids = *ref_slidersChidsP;
-	QList<QWidget *>& ref_sliders = *ref_slidersP;
+	QList<QAbstractSlider *>& ref_sliders = *ref_slidersP;
 	QList<QWidget *>& ref_labels = *ref_labelsP;
 
 
@@ -507,43 +508,44 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 
 	bool first = true;
 	QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
+	bool suppressAllSubcontrolLables = (vols.count() < 2);
 	foreach (VolumeChannel vc, vols )
 	{
 			  kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
 			    QString subcontrolTranslation = Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
 			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 			ref_labels.append ( subcontrolLabel ); // add to list
-			if( !first && isStereoLinked() ) {
+			if( suppressAllSubcontrolLables || (!first && isStereoLinked())  ) {
 				// show only one (the first) slider, when the user wants it so
 				subcontrolLabel->hide();
 			}			  
 // 			}
 
-			QWidget* slider;
+			QAbstractSlider* slider;
 			if ( m_small ) {
 				slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
 				                           vol.getVolume( vc.chid ), _orientation, this );
+				((KSmallSlider*)slider)->setChid(vc.chid);
 			} // small
 			else  {
-				QSlider* sliderBig = new QSlider( _orientation, this );
-				slider = sliderBig;
-				sliderBig->setMinimum(0);
-				sliderBig->setMaximum(maxvol);
-				sliderBig->setPageStep(maxvol/10);
-				sliderBig->setValue( maxvol - vol.getVolume( vc.chid ) );
+				slider = new QSlider( _orientation, this );
+				slider->setMinimum(0);
+				slider->setMaximum(maxvol);
+				slider->setPageStep(maxvol/10);
+				slider->setValue( maxvol - vol.getVolume( vc.chid ) );
 
 				if ( _orientation == Qt::Vertical ) {
-					sliderBig->setMinimumHeight( minSliderSize );
+					slider->setMinimumHeight( minSliderSize );
 				}
 				else {
-					sliderBig->setMinimumWidth( minSliderSize );
+					slider->setMinimumWidth( minSliderSize );
 				}
 				if ( ! _pctl->getBackgroundColor().isEmpty() ) {
 				    QString bcolor(_pctl->getBackgroundColor());
 				    QColor qcol(bcolor);
-				    QPalette qpal = sliderBig->palette();
+				    QPalette qpal = slider->palette();
 				    qpal.setColor(QPalette::Window, qcol);
-				    sliderBig->setPalette(qpal);
+				    slider->setPalette(qpal);
 				}
 			} // not small
 
@@ -651,7 +653,7 @@ MDWSlider::setStereoLinked(bool value)
 }
 
 void
-MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders, QList<QWidget *>& ref_labels)
+MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, QList<QWidget *>& ref_labels)
 {
 	bool first = true;
 	foreach ( QWidget* slider1, ref_sliders )
@@ -709,27 +711,25 @@ MDWSlider::setTicks( bool value )
 }
 
 void
-MDWSlider::setTicksInternal(QList<QWidget *>& ref_sliders, bool ticks)
+MDWSlider::setTicksInternal(QList<QAbstractSlider *>& ref_sliders, bool ticks)
 {
-	QWidget* slider = ref_sliders[0];
-
-	if ( slider->inherits( "QSlider" ) )
-	{
-		if( ticks )
-			if( isStereoLinked() )
-				static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksRight );
-			else
-			{
-				static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-				slider = ref_sliders.last();
-				static_cast<QSlider *>(slider)->setTickPosition( QSlider::TicksLeft );
-			}
+	QSlider* slider = qobject_cast<QSlider*>( ref_sliders[0]);
+	if (slider == 0 ) return; // For KSmallslider
+	
+	if( ticks )
+		if( isStereoLinked() )
+			slider->setTickPosition( QSlider::TicksRight );
 		else
 		{
-			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
-			slider = ref_sliders.last();
-			static_cast<QSlider *>(slider)->setTickPosition( QSlider::NoTicks );
+			slider->setTickPosition( QSlider::NoTicks );
+			slider = qobject_cast<QSlider*>(ref_sliders.last());
+			slider->setTickPosition( QSlider::TicksLeft );
 		}
+	else
+	{
+		slider->setTickPosition( QSlider::NoTicks );
+		slider = qobject_cast<QSlider*>(ref_sliders.last());
+		slider->setTickPosition( QSlider::NoTicks );
 	}
 }
 
@@ -787,23 +787,15 @@ void MDWSlider::volumeChange( int )
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 }
 
-void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_sliders  )
+void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref_slidersChids, QList<QAbstractSlider *>& ref_sliders  )
 {
 
 	// --- Step 2: Change the volumes directly in the Volume object to reflect the Sliders ---
 	if ( isStereoLinked() )
 	{
-		long firstVolume = 0;
-		if ( ref_sliders.first()->inherits( "KSmallSlider" ) )
-		{
-			KSmallSlider *slider = dynamic_cast<KSmallSlider *>( ref_sliders.first() );
-			if (slider != 0 ) firstVolume = slider->value();
-		}
-		else
-		{
-			QSlider *slider = dynamic_cast<QSlider *>( ref_sliders.first() );
-			if (slider != 0 ) firstVolume = slider->value();
-		}
+		QAbstractSlider* firstSlider = ref_sliders.first();
+		long firstVolume = firstSlider->value();
+		kDebug(67100) << "firstVolume=" <<firstVolume;
 		vol.setAllVolumes(firstVolume);
 	} // stereoLinked()
 
@@ -811,12 +803,12 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<Volume::ChannelID>& ref
 		QList<Volume::ChannelID>::Iterator it = ref_slidersChids.begin();
 		for( int i=0; i<ref_sliders.count(); i++, ++it ) {
 			Volume::ChannelID chid = *it;
-			QWidget *sliderWidget = ref_sliders[i];
+			QAbstractSlider *sliderWidget = ref_sliders[i];
 
 			if ( sliderWidget->inherits( "KSmallSlider" ) )
 			{
 				KSmallSlider *slider = dynamic_cast<KSmallSlider *>(sliderWidget);
-				if (slider) vol.setVolume( chid, slider->value() );
+				if (slider) vol.setVolume( slider->getChid(), slider->value() );
 			}
 			else
 			{
@@ -895,9 +887,7 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	long inc = volP.maxVolume() / 20;
 	if ( inc == 0 )	inc = 1;
 	if ( decrease ) inc *= -1;
-	kDebug(67100) << &volP << " Before. decrease=" <<decrease << ": " << volP;
 	volP.changeAllVolumes(inc);
-	kDebug(67100) << &volP << "After . decrease=" <<decrease << ": " << volP;
 
 	Volume& volC = m_mixdevice->captureVolume();
 	inc = volC.maxVolume() / 20;
@@ -906,7 +896,6 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	volC.changeAllVolumes(inc);
 
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-	kDebug(67100) << &volP << "Commit. decrease=" <<decrease << ": " << volP;
 }
 
 /**
@@ -949,7 +938,7 @@ void MDWSlider::update()
 	}
 }
 
-void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_labels)
+void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_labels)
 {
 	// update volumes
 	long useVolume = vol.getAvgVolume( Volume::MMAIN );
@@ -961,26 +950,15 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 			Volume::ChannelID chid = *it;
 			useVolume = vol.getVolume(chid);
 		}
-		QWidget *slider = ref_sliders.at( i );
+		QAbstractSlider *slider = ref_sliders.at( i );
 //		QWidget *labelAtSlider = ref_labels.at( i ); // TODO hide labels
 
 		slider->blockSignals( true );
-
+		slider->setValue( useVolume );
 		if ( slider->inherits( "KSmallSlider" ) )
 		{
-			KSmallSlider *smallSlider = dynamic_cast<KSmallSlider *>(slider);
-			if (smallSlider) {
-				smallSlider->setValue( useVolume );
-				smallSlider->setGray( m_mixdevice->isMuted() );
-			}
+			((KSmallSlider*)slider)->setGray( m_mixdevice->isMuted() );
 		}
-		else
-		{
-			QSlider *bigSlider = dynamic_cast<QSlider *>(slider);
-			if (bigSlider)
-				bigSlider->setValue( useVolume );
-		}
-
 		slider->blockSignals( false );
 	} // for all sliders
 

@@ -338,6 +338,7 @@ void KSmallSlider::moveSlider( int pos )
 
     if ( newVal != value() ) {
         setValue( newVal );
+	emit valueChanged(newVal);
         // probably done by Qt: emit valueChanged( value() ); //  Only for external use
         // probably we need update() here
     }
