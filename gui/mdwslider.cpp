@@ -651,25 +651,6 @@ MDWSlider::setStereoLinked(bool value)
 void
 MDWSlider::setStereoLinkedInternal(QList<QWidget *>& ref_sliders, QList<QWidget *>& ref_labels)
 {
-// 	QWidget *slider = ref_sliders[0];
-// 
-// 	/***********************************************************
-// 	   Remember value of first slider, so that it can be copied
-// 	   to the other sliders.
-// 	***********************************************************/
-// 	int firstSliderValue = 0;
-// 	bool firstSliderValueValid = false;
-// 	if ( ::qobject_cast<QSlider*>(slider) ) {
-// 		QSlider *sld = static_cast<QSlider*>(slider);
-// 		firstSliderValue = sld->value();
-// 		firstSliderValueValid = true;
-// 	}
-// 	else if ( ::qobject_cast<KSmallSlider*>(slider) )  {
-// 		KSmallSlider *sld = static_cast<KSmallSlider*>(slider);
-// 		firstSliderValue = sld->value();
-// 		firstSliderValueValid = true;
-// 	}
-
 	bool first = true;
 	foreach ( QWidget* slider1, ref_sliders )
 	{

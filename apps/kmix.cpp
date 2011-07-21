@@ -621,7 +621,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
             m_wsMixers->setCurrentIndex(current_tab);
         }
         bool dockingSucceded = updateDocking();
-        if ( !dockingSucceded && Mixer::mixers().count() > 0 )
+        if ( !dockingSucceded && !Mixer::mixers().empty() )
         {
             show(); // avoid invisible and unaccessible main window
         }
@@ -636,24 +636,20 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 KMixerWidget* KMixWindow::findKMWforTab( const QString& kmwId )
 {
-    KMixerWidget* kmw = 0;
     for (int i=0; i< m_wsMixers->count(); ++i)
     {
-        KMixerWidget* kmwTmp = (KMixerWidget*)m_wsMixers->widget(i);
-        if ( kmwTmp->getGuiprof()->getId() == kmwId ) {
-            kmw = kmwTmp;
-            break;
+        KMixerWidget* kmw = (KMixerWidget*)m_wsMixers->widget(i);
+        if ( kmw->getGuiprof()->getId() == kmwId ) {
+            return kmw;
         }
     }
-    return kmw;
+    return 0;
 }
 
 
 void KMixWindow::newView()
 {
-    kDebug() << "Enter";
-
-    if ( Mixer::mixers().count()  < 1 ) {
+    if ( Mixer::mixers().empty() ) {
         kError() << "Trying to create a View, but no Mixer exists";
         return; // should never happen
     }
