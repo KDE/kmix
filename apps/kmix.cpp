@@ -493,12 +493,7 @@ void KMixWindow::recreateGUI(bool saveConfig)
  *                    It should only be set to "true" in case of a Hotplug (because then the user definitely expects a new Tab to show).
  */
 void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab)
-{
-  kDebug(67100) << "new dockarea with popup";
-  ViewBase::ViewFlags vf1 = (ViewBase::ViewFlags)0;
-  ViewDockAreaPopup* vdap = new ViewDockAreaPopup(0, "New Dockarea Popup with Apps", Mixer::mixers().at(0), vf1, 0, 0 );
-  vdap->show();
-  
+{  
     // -1- Find out which of the tabs is currently selected for restoration
     int current_tab = -1;
     if (m_wsMixers)

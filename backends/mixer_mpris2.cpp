@@ -148,6 +148,7 @@ qDebug() << "Get control of " << busDestination;
 	Volume::ChannelMask chn = (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT);
 	MixDevice* md = new MixDevice(_mixer, readableName, readableName, MixDevice::VOLUME);
 	Volume* vol = new Volume( chn, 100, 0, true, false);
+	md->setApplicationStream(true);
 	md->addPlaybackVolume(*vol);
 	m_mixDevices.append( md );
     }

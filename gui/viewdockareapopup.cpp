@@ -44,10 +44,12 @@
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
     : ViewBase(parent, name, mixer, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _dock(dockW)
 {
+    //_layoutControls = new QHBoxLayout(this);
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
     _layoutMDW->setMargin(0);
     _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
+    //_layoutMDW->addItem(_layoutControls);
     setMixSet();
 }
 
@@ -107,11 +109,19 @@ void ViewDockAreaPopup::_setMixSet()
       _mixSet->append(dockMD);
    }
    
-   MixDevice *md;
-   foreach ( md, _mixer->getMixSet() )
+   Mixer* mixer2;
+   foreach ( mixer2 , Mixer::mixers() )
    {
-     _mixSet->append(md);
+   MixDevice *md;
+   foreach ( md, mixer2->getMixSet() )
+   {
+     if (md->isApplicationStream())
+     {
+      _mixSet->append(md);
+      kDebug(67100) << "Add to tray popup: " << md->id();
+     }
    }
+}
    
 }
 
@@ -125,34 +135,38 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
       true,         // Show Mute LED
       false,        // Show Record LED
       false,        // Small
-      Qt::Vertical, // Direction: only 1 device, so doesn't matter
+      Qt::Horizontal, // Direction: only 1 device, so doesn't matter
       this,         // parent
       0             // Is "NULL", so that there is no RMB-popup
       , pctl
    );
-   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 2 );
-   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, 0 );
-   _layoutMDW->addWidget( mdw, 0, 1 );
+   int sliderColumn = _layoutMDW->rowCount();
+   if (sliderColumn == 1 ) sliderColumn =0;
+   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
+   _layoutMDW->addWidget( mdw, sliderColumn+1,0 );
 
-   // Add button to show main panel
-   QPushButton *pb = new QPushButton( i18n("Mixer"), this );
-   pb->setObjectName( QLatin1String("MixerPanel" ));
-   connect ( pb, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
-   _layoutMDW->addWidget( pb, 1, 0, 1, 3 );
-
+   kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
    return mdw;
 }
 
 void ViewDockAreaPopup::constructionFinished() {
    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
-   QWidget* mdw = 0;
+
+   int sliderColumn = _layoutMDW->rowCount();
+  _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn, 0 ); // TODO add this on "polish()"
+   QPushButton *pb = new QPushButton( i18n("Mixer"), this );
+   pb->setObjectName( QLatin1String("MixerPanel" ));
+   connect ( pb, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
+   _layoutMDW->addWidget( pb, sliderColumn+1, 0, 1, 1 );
+/*
+QWidget* mdw = 0;
    if ( !_mdws.isEmpty() )
       mdw = _mdws.first();
 
    if ( mdw != 0 ) {
       mdw->move(0,0);
       mdw->show();
-   }
+   }*/
 }
 
 

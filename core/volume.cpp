@@ -35,6 +35,15 @@ int Volume::_channelMaskEnum[9] =
       MREARCENTER
     };
 
+    QString Volume::ChannelNameReadable[9] =
+    {
+      "Left", "Right",
+      "Center", "Subwoofer",
+      "Surround Left", "Surround Right",
+      "Side Left", "Side Right",
+      "Rear Center"
+    };
+    
     char Volume::ChannelNameForPersistence[9][30] = {
       "volumeL", "volumeR",
       "volumeCenter", "volumeWoofer",

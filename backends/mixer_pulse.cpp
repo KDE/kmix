@@ -819,6 +819,11 @@ void Mixer_PULSE::removeAllWidgets()
 
 void Mixer_PULSE::addDevice(devinfo& dev)
 {
+  addDevice(dev, false);
+}
+  
+void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
+{
     if (dev.chanMask != Volume::MNONE) {
         MixSet *ms = 0;
         if (m_devnum == KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
@@ -829,6 +834,9 @@ void Mixer_PULSE::addDevice(devinfo& dev)
         Volume v(dev.chanMask, PA_VOLUME_NORM, PA_VOLUME_MUTED, true, false);
         setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
+	if (isAppStream) 
+	  md->setApplicationStream(true);
+	
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md);
@@ -991,9 +999,9 @@ int Mixer_PULSE::open()
         {
             m_mixerName = i18n("Playback Streams");
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
-                addDevice(*iter);
+                addDevice(*iter, true);
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
-                addDevice(*iter);
+                addDevice(*iter, true);
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {

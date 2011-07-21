@@ -145,7 +145,15 @@ public:
    virtual bool isRecSource();
    virtual void setRecSource(bool value);
    virtual bool isEnum();
-
+   /**
+    * Returns whether this is an application stream.
+    */
+   virtual bool isApplicationStream() const { return _applicationStream; };
+   /**
+    * Mark this MixDevice as application stream
+    */
+    void setApplicationStream(bool applicationStream) { _applicationStream = applicationStream; }
+   
    bool isMovable() const
    {
        return (0 != _moveDestinationMixSet);
@@ -197,6 +205,7 @@ private:
    bool _artificial;
    MixSet *_moveDestinationMixSet;
    QString _iconName;
+   bool _applicationStream;
 
    QString _name;   // Channel name
    QString _id;     // Primary key, used as part in config file keys

@@ -70,8 +70,8 @@ friend class MixDevice;
 
                   CHIDMAX      = 8 };
 
-
     static char ChannelNameForPersistence[9][30];
+    static QString ChannelNameReadable[9];
 
     enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
 

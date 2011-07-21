@@ -488,19 +488,10 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 	QList<QWidget *>& ref_sliders = *ref_slidersP;
 
 
-	if (addLabel)
+	if (addLabel && type == 'c')
 	{
 		static QString capture = i18n("capture");
-
-		if ( type == 'c' ) { // capture
-			if (_orientation == Qt::Horizontal)
-				m_extraCaptureLabel = new QLabel(capture, this);
-			else
-				m_extraCaptureLabel = new VerticalText(this, capture);
-		}
-		m_extraCaptureLabel->installEventFilter( this );
-		volLayout->addWidget(m_extraCaptureLabel);
-
+		m_extraCaptureLabel = createLabel(this, capture, volLayout, false);
 	}
 
 	const int minSliderSize = fontMetrics().height() * 10;
@@ -510,6 +501,14 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 
 			long minvol = vol.minVolume();
 			long maxvol = vol.maxVolume();
+
+// 			if (addLabel)
+// 			{
+			  kDebug(67100) << "Add label to " << chid << ": " <<  Volume::ChannelNameReadable[chid];
+			    QString subcontrolTranslation = Volume::ChannelNameReadable[chid]; //Volume::getSubcontrolTranslation(chid);
+			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+			  
+// 			}
 
 			QWidget* slider;
 			if ( m_small ) {
@@ -559,6 +558,29 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 		} //if channel is present
 	} // for all channels of this device
 }
+
+QWidget* MDWSlider::createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool small)
+{
+  QFont qf;
+  qf.setPointSize(8);
+
+  QWidget* labelWidget;
+	if (_orientation == Qt::Horizontal)
+	{
+		labelWidget = new QLabel(label, parent);
+		if ( small ) ((QLabel*)labelWidget)->setFont(qf);
+	}
+	else {
+		labelWidget = new VerticalText(parent, label);
+		if ( small ) ((VerticalText*)labelWidget)->setFont(qf);
+	}
+	
+	labelWidget->installEventFilter( parent );
+	layout->addWidget(labelWidget);
+
+	return labelWidget;
+}
+
 
 QPixmap MDWSlider::loadIcon( QString filename )
 {

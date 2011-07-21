@@ -106,6 +106,7 @@ MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, con
 void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
     _artificial = false;
+    _applicationStream = false;
     _mixer = mixer;
     _id = id;
     if( name.isEmpty() )
