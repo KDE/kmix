@@ -18,6 +18,7 @@ public:
 
 class Mixer_MPRIS2 : public Mixer_Backend
 {
+  Q_OBJECT
 public:
   explicit Mixer_MPRIS2(Mixer *mixer, int device = -1 );
     ~Mixer_MPRIS2();
@@ -34,6 +35,8 @@ public:
   virtual bool moveStream( const QString& id, const QString& destId );
   virtual bool needsPolling() { return false; }
 
+public slots:
+  void volumeChanged(QString ifc, QList<QVariant> qvl) { kDebug(67100) << "volumeChanged: " << ifc << " : " << qvl; };
 
 private:
   int run();

@@ -70,7 +70,8 @@
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
 
-#include "backends/mixer_mpris2.cpp"
+// Compiled by its own!
+//#include "backends/mixer_mpris2.cpp"
 
 #if defined(SUN_MIXER)
 #include "backends/mixer_sun.cpp"
@@ -124,6 +125,10 @@ struct MixerFactory {
     getDriverNameFunc *getDriverName;
 };
 
+// TODO encapsualte by #ifdef HAVE_DBUS
+Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device );
+QString MPRIS2_getDriverName();
+
 MixerFactory g_mixerFactories[] = {
 
 #if defined(SUN_MIXER)
@@ -143,7 +148,8 @@ MixerFactory g_mixerFactories[] = {
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
 
-        { MPRIS2_getMixer, MPRIS2_getDriverName },
+    // TODO encapsualte by #ifdef HAVE_DBUS
+    { MPRIS2_getMixer, MPRIS2_getDriverName },
 
 #if defined(OSS_MIXER)
     { OSS_getMixer, OSS_getDriverName },

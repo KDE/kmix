@@ -67,6 +67,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    core/mixdevice.cpp
    core/mixdevicecomposite.cpp
    core/volume.cpp
+   backends/mixer_mpris2.cpp
    backends/mixer_backend.cpp
    )
 

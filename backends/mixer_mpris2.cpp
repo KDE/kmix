@@ -227,6 +227,8 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 	md->setApplicationStream(true);
 	md->addPlaybackVolume(*vol);
 	m_mixDevices.append( md );
+	
+	conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", this, SLOT(volumeChanged(QString, QList<QVariant>)) );
     }
   }
   else
@@ -235,6 +237,20 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
   }
 }
 
+/*
+
+signal sender=:1.125 -> dest=(null destination) serial=503 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "Volume"
+         variant             double 0.81
+      )
+   ]
+   array [
+   ]
+
+*/
 
 Mixer_MPRIS2::~Mixer_MPRIS2()
 {

@@ -970,11 +970,13 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 		long useVolume = vol.getVolume(chid);
 //		QWidget *labelAtSlider = ref_labels.at( i ); // TODO hide labels
 
+/*
 		if ( i==0 )
 		{
 		  kDebug(67100) << "XXXX -------------------------";
 		}
 		  kDebug(67100) << "XXXX " << chid << " now at " << useVolume;
+*/
 		slider->blockSignals( true );
 		slider->setValue( useVolume );
 		if ( slider->inherits( "KSmallSlider" ) )
