@@ -125,8 +125,8 @@ private:
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList<QWidget *>& ref_sliders );
     void setTicksInternal( QList<QWidget *>& ref_sliders,  bool ticks );
-    void volumeChangeInternal(Volume& vol, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_sliders );
-    void updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& slidersChids);
+    void volumeChangeInternal(Volume& vol, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_slidesr );
+    void updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_labels);
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 
 
@@ -151,10 +151,15 @@ private:
 	bool muteButtonSpacing;
 	bool captureLEDSpacing;
 
-    QList<QWidget *> m_slidersPlayback;
     KActionCollection*   _mdwMoveActions;
     KMenu *m_moveMenu;
+
+    QList<QWidget *> m_slidersPlayback;
     QList<QWidget *> m_slidersCapture;
+
+    QList<QWidget *> m_labelsPlayback;
+    QList<QWidget *> m_labelsCapture;
+
     QList<Volume::ChannelID> _slidersChidsPlayback;
     QList<Volume::ChannelID> _slidersChidsCapture;
 };

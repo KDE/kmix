@@ -470,22 +470,26 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 	Volume* volP;
 	QList<Volume::ChannelID>* ref_slidersChidsP;
 	QList<QWidget *>* ref_slidersP;
+	QList<QWidget *>* ref_labelsP;
 
 	if ( type == 'c' ) { // capture
 		volP              = &m_mixdevice->captureVolume();
 		ref_slidersChidsP = &_slidersChidsCapture;
 		ref_slidersP      = &m_slidersCapture;
+		ref_labelsP       = &m_labelsCapture;
 	}
 	else { // playback
 	  
 		volP              = &m_mixdevice->playbackVolume();
 		ref_slidersChidsP = &_slidersChidsPlayback;
 		ref_slidersP      = &m_slidersPlayback;
+		ref_labelsP       = &m_labelsPlayback;
 	}
 
 	Volume& vol = *volP;
 	QList<Volume::ChannelID>& ref_slidersChids = *ref_slidersChidsP;
 	QList<QWidget *>& ref_sliders = *ref_slidersP;
+	QList<QWidget *>& ref_labels = *ref_labelsP;
 
 
 	if (addLabel && type == 'c')
@@ -507,6 +511,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool addLabel)
 			  kDebug(67100) << "Add label to " << chid << ": " <<  Volume::ChannelNameReadable[chid];
 			    QString subcontrolTranslation = Volume::ChannelNameReadable[chid]; //Volume::getSubcontrolTranslation(chid);
 			    QWidget *subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+			ref_labels.append ( subcontrolLabel ); // add to list
 			  
 // 			}
 
@@ -957,9 +962,9 @@ void MDWSlider::moveStream(QString destId)
 void MDWSlider::update()
 {
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->playbackVolume().hasSwitch() )
-		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, _slidersChidsPlayback);
+		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, _slidersChidsPlayback, m_labelsPlayback);
 	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
-		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, _slidersChidsCapture );
+		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, _slidersChidsCapture, m_labelsCapture );
 	if (m_label) {
 		QLabel *l;
 		VerticalText *v;
@@ -970,7 +975,7 @@ void MDWSlider::update()
 	}
 }
 
-void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids)
+void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList<Volume::ChannelID>& ref_slidersChids, QList<QWidget *>& ref_labels)
 {
 	// update volumes
 	long useVolume = vol.getAvgVolume( Volume::MMAIN );
@@ -983,6 +988,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QWidget *>& ref_sliders, QList
 			useVolume = vol[chid];
 		}
 		QWidget *slider = ref_sliders.at( i );
+//		QWidget *labelAtSlider = ref_labels.at( i ); // TODO hide labels
 
 		slider->blockSignals( true );
 
