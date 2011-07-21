@@ -305,7 +305,7 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
     moveSlider( pos );
 }
 
-/*
+
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
 //    kDebug(67100) << "KSmallslider::wheelEvent()";
@@ -314,17 +314,20 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
 	inc = 1;
 
     //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta();
+	int newVal;
     if ( e->delta() > 0 ) {
-       setValue( QAbstractSlider::value() + inc );
+       newVal = QAbstractSlider::value() + inc;
     }
     else {
-       setValue( QAbstractSlider::value() - inc );
+       newVal = QAbstractSlider::value() - inc;
     }
+    setValue( newVal );
+    emit valueChanged(newVal);
     e->accept(); // Accept the event
 
     // Hint: Qt autmatically triggers a valueChange() when we do setValue()
 }
-*/
+
 
 
 /*

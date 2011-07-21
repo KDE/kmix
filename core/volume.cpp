@@ -145,9 +145,9 @@ void Volume::setVolume( ChannelID chid, long vol)
   if ( _volumesL.contains(chid))
   {
     QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
-  kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
+//   kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
   it.value().volume = vol;
-  kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
+//   kDebug(67100) << "sv; " << chid << " " <<  &(it.value()) << " at " << it.value().volume;
   }
 }
 

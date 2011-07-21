@@ -24,7 +24,7 @@
 #define MDWSLIDER_H
 
 #include <KShortcut>
-#include <QAbstractSlider>
+#include "volumeslider.h"
 #include <QCheckBox>
 #include <QList>
 #include <QWidget>
@@ -83,7 +83,9 @@ public:
 	void setCaptureLEDSpace(bool);
 	bool hasCaptureLED() const;
 
-
+	static VolumeSliderExtraData DummVolumeSliderExtraData;
+	static bool debugMe;
+    
     
 public slots:
     void toggleRecsrc();
@@ -96,13 +98,10 @@ public slots:
     void showMoveMenu();
     virtual void showContextMenu();
     void increaseOrDecreaseVolume(bool arg1);
-    //void getSubcontrolTranslation(Volume::ChannelID arg1);
+    VolumeSliderExtraData& extraData(QAbstractSlider *slider);
 
 
 signals:
-//    void newVolume( int num, Volume volume );
-//    void newMasterVolume( Volume volume );
-//    void masterMuted( bool );
     void toggleMenuBar(bool value);
 
 private slots:
@@ -127,8 +126,8 @@ private:
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList< QAbstractSlider* >& ref_sliders, QList< QWidget* >& ref_labels );
     void setTicksInternal( QList< QAbstractSlider* >& ref_sliders, bool ticks );
-    void volumeChangeInternal(Volume& vol, QList< Volume::ChannelID >& ref_slidersChids, QList< QAbstractSlider* >& ref_sliders );
-    void updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, QList<Volume::ChannelID>& slidersChids, QList<QWidget *>& ref_labels);
+    void volumeChangeInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders );
+    void updateInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders, QList< QWidget* >& ref_labels);
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 
 
@@ -161,9 +160,6 @@ private:
 
     QList<QWidget *> m_labelsPlayback;
     QList<QWidget *> m_labelsCapture;
-
-    QList<Volume::ChannelID> _slidersChidsPlayback;
-    QList<Volume::ChannelID> _slidersChidsCapture;
 };
 
 #endif

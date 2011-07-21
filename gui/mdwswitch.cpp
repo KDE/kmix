@@ -23,7 +23,6 @@
 //#include <QLabel>
 //#include <QMouseEvent>
 //#include <QObject>
-//#include <qslider.h>
 //
 //#include <klocale.h>
 //#include <kconfig.h>
@@ -41,8 +40,7 @@
 //
 ///**
 // * Class that represents a single Switch
-// * The orientation (horizontal, vertical) can be configured and whether it should
-// * be "small"  (uses KSmallSlider instead of QSlider then).
+// * The orientation (horizontal, vertical) can be configured
 // */
 //MDWSwitch::MDWSwitch(MixDevice* md,
 //                     bool small, Qt::Orientation orientation,

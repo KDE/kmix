@@ -52,6 +52,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    gui/kmixerwidget.cpp 
    gui/ksmallslider.cpp
    gui/verticaltext.cpp
+   gui/volumeslider.cpp 
    gui/kmixtoolbox.cpp 
    gui/dialogaddview.cpp 
    gui/dialogviewconfiguration.cpp 

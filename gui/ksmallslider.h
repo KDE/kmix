@@ -26,7 +26,8 @@
 #include <qabstractslider.h>
 #include <qpixmap.h>
 
-#include <core/volume.h>
+#include "core/volume.h"
+#include "volumesliderextradata.h"
 
 class KSmallSlider : public QAbstractSlider
 {
@@ -36,8 +37,8 @@ class KSmallSlider : public QAbstractSlider
       KSmallSlider( int minValue, int maxValue, int pageStep, int value,
         Qt::Orientation, QWidget *parent, const char *name=0 );
 
-      void setChid(Volume::ChannelID chid) { this->chid = chid; };
-      Volume::ChannelID getChid() { return chid; };
+/*      void setChid(Volume::ChannelID chid) { this->chid = chid; };
+      Volume::ChannelID getChid() { return chid; };*/
       
       QSize sizeHint() const;
       QSizePolicy sizePolicy() const;
@@ -45,6 +46,8 @@ class KSmallSlider : public QAbstractSlider
 
       bool gray() const;
 
+      VolumeSliderExtraData extraData;
+      
 public slots:
       void setGray( bool value );
       void setColors( QColor high, QColor low, QColor back );
@@ -59,7 +62,7 @@ public slots:
 
       void mousePressEvent( QMouseEvent * );
       void mouseMoveEvent( QMouseEvent * );
-//      void wheelEvent( QWheelEvent * );
+      void wheelEvent( QWheelEvent * );
 
       void valueChange();
 
@@ -79,7 +82,7 @@ public slots:
       QColor colHigh, colLow, colBack;
       QColor grayHigh, grayLow, grayBack;
 
-      Volume::ChannelID chid;
+//      Volume::ChannelID chid;
 };
 
 #endif

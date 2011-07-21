@@ -47,22 +47,99 @@ Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  dev
     return 0;    
   }
 
-  int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * )
+  QString Mixer_MPRIS2::getBusDestination(const QString& id)
   {
+      return QString("org.mpris.MediaPlayer2.").append(id);
+  }
+
+
+  int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * md)
+  {
+
+    
+    
+  QDBusMessage query = QDBusMessage::createMethodCall(getBusDestination(id), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", QString("Get"));
+  QList<QVariant> arg;
+  arg.append(QString("org.mpris.MediaPlayer2.Player"));
+  arg.append(QString("Volume"));
+  query.setArguments(arg);
+  
+  int volInt = 0;
+  //msg = conn.call(query, QDBus::Block, 5);
+   kDebug(67100) << "QUERY " << getBusDestination(id);
+   QDBusConnection dbusConn = QDBusConnection::sessionBus();
+
+  QDBusMessage msg = dbusConn.call(query, QDBus::Block, 1500);
+  if ( msg.type() == QDBusMessage::ReplyMessage )
+  {
+    QList<QVariant> repl = msg.arguments();
+    if ( ! repl.isEmpty() )
+    {
+      QVariant qv = repl.at(0);
+	// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
+	QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
+	QVariant result2 = dbusVariant.variant();
+	float volFloat = result2.toFloat();
+	volInt = volFloat *100;
+	
+	volInt = volFloat; // TODO Amarok delivers values 0-100 instead of 0.0 - 1.0
+	Volume& vol = md->playbackVolume();
+	vol.setVolume( Volume::LEFT, volInt);
+	kDebug(67100) << "REPLY " << result2.type() << ": " << volFloat << ": "<< vol;
+    }
+  else
+  {
+    kError(67100) << "ERROR GET " << id;
+    return Mixer::ERR_READ;
+  }
+    
+  }
     return 0;    
   }
 
-  int Mixer_MPRIS2::writeVolumeToHW( const QString& id, MixDevice * )
+  int Mixer_MPRIS2::writeVolumeToHW( const QString& id, MixDevice *md )
   {
-    return 0;    
+
+    Volume& vol = md->playbackVolume();
+	int volInt = vol.getVolume(Volume::LEFT);
+	double volFloat = volInt;
+
+    
+  QDBusMessage query = QDBusMessage::createMethodCall(getBusDestination(id), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", QString("Set"));
+  QList<QVariant> arg;
+  arg.append(QString("org.mpris.MediaPlayer2.Player"));
+  arg.append(QString("Volume"));
+  arg << QVariant(volFloat);
+  query.setArguments(arg);
+  
+  //msg = conn.call(query, QDBus::Block, 5);
+   kDebug(67100) << "SET " << getBusDestination(id);
+   QDBusConnection dbusConn = QDBusConnection::sessionBus();
+
+  QDBusMessage msg = dbusConn.call(query, QDBus::Block, 1500);
+  if ( msg.type() == QDBusMessage::ReplyMessage )
+  {
+    QList<QVariant> repl = msg.arguments();
+    if ( ! repl.isEmpty() )
+    {
+    }
+  }
+  else
+  {
+    kError(67100) << "ERROR SET " << id << ": " << msg;
+    return Mixer::ERR_WRITE;
+  }
+    return 0;  
   }
   
   void Mixer_MPRIS2::setEnumIdHW(const QString& id, unsigned int)
   {
+    // no enums in MPRIS
   }
   
   unsigned int Mixer_MPRIS2::enumIdHW(const QString& id)
   {
+    // no enums in MPRIS
     return 0;    
   }
   
@@ -119,7 +196,10 @@ int Mixer_MPRIS2::run()
 
 void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination)
 {
-qDebug() << "Get control of " << busDestination;
+  //QString id = 
+  int lastDot = busDestination.lastIndexOf('.');
+  QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1); 
+  kDebug(67100) << "Get control of " << busDestination;
 
 //  QDBusMessage query1 = QDBusMessage::createMethodCall(QString(busDestination), QString("/org/mpris/MediaPlayer2"), MPRIS_IFC2, QString("Raise"));
 //  conn.call(query1, QDBus::NoBlock);
@@ -145,7 +225,7 @@ qDebug() << "Get control of " << busDestination;
 	
 	qDebug() << "REPLY " << result2.type() << ": " << readableName;
 	
-	MixDevice* md = new MixDevice(_mixer, readableName, readableName, MixDevice::VOLUME);
+	MixDevice* md = new MixDevice(_mixer, id, readableName, MixDevice::VOLUME);
 	Volume* vol = new Volume( 100, 0, true, false);
 	vol->addVolumeChannel(VolumeChannel(Volume::LEFT));
 	vol->addVolumeChannel(VolumeChannel(Volume::RIGHT));

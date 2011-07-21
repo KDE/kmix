@@ -30,6 +30,8 @@ private:
   int run();
 //  static char MPRIS_IFC2[40];
   static QString MPRIS_IFC2;
+  
+  static QString getBusDestination(const QString& id);
 };
 
 #endif

@@ -29,7 +29,6 @@
 #include <kdebug.h>
 
 #include <qcursor.h>
-#include <qslider.h>
 #include <QMouseEvent>
 #include <qpixmap.h>
 #include <qwmatrix.h>
@@ -48,7 +47,7 @@
  * The mix device can be a real (hardware bound) MixDevice or a virtual mix device.
  *
  * The direction (horizontal, vertical) can be configured and whether it should
- * be "small"  (uses KSmallSlider instead of QSlider then). The actual implementations
+ * be "small"  (uses KSmallSlider instead of a normal slider widget). The actual implementations
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */

@@ -32,7 +32,6 @@ class QString;
 #include "gui/mixdevicewidget.h"
 
 // QT
-class QSlider;
 #include <QVBoxLayout>
 
 // KDE
@@ -76,14 +75,9 @@ class KMixerWidget : public QWidget
    void saveConfig( KConfig *config );
    void loadConfig( KConfig *config );
 
-  private slots:
-   void balanceChanged(int balance);
-
   private:
    Mixer *_mixer;
-   //QString m_id;
-   QSlider *m_balanceSlider;
-   QVBoxLayout *m_topLayout; // contains TabWidget and balance slider
+   QVBoxLayout *m_topLayout; // contains TabWidget
    GUIProfile* _guiprof;
    ProfTab* _tab;
    std::vector<ViewBase*> _views;

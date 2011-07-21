@@ -22,7 +22,6 @@
 // Qt
 #include <QLabel>
 #include <qpixmap.h>
-#include <qslider.h>
 #include <QString>
 #include <qtoolbutton.h>
 #include <qapplication.h> // for QApplication::revsreseLayout()
@@ -50,15 +49,13 @@
 /**
    This widget is embedded in the KMix Main window. Each Hardware Card is visualized by one KMixerWidget.
    KMixerWidget contains
-   (a)  A TabBar with n Tabs (at least one per soundcard). These contain View's with sliders, switches and other GUI elements visualizing the Mixer)
-   (b) A balancing slider : This will be moved to ViewSliders.
+   a TabBar with n Tabs (at least one per soundcard). These contain View's with sliders, switches and other GUI elements visualizing the Mixer)
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
                             QWidget * parent, ViewBase::ViewFlags vflags, GUIProfile* guiprof,
                             KActionCollection* actionCollection )
-   : QWidget( parent ), _mixer(mixer), m_balanceSlider(0),
+   : QWidget( parent ), _mixer(mixer),
      m_topLayout(0), _guiprof(guiprof),
-     //_tab(tab), 
      _actionCollection(actionCollection)
 {
    if ( _mixer )
@@ -90,8 +87,6 @@ KMixerWidget::~KMixerWidget()
 void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 {
    // delete old objects
-   delete m_balanceSlider;
-   m_balanceSlider = 0;
    delete m_topLayout;
 
    // create main layout
@@ -245,6 +240,7 @@ void KMixerWidget::toggleMenuBarSlot() {
     emit toggleMenuBar();
 }
 
+/*
 // in RTL mode, the slider is reversed, we cannot just connect the signal to setBalance()
 // hack around it before calling _mixer->setBalance()
 void KMixerWidget::balanceChanged(int balance)
@@ -254,5 +250,6 @@ void KMixerWidget::balanceChanged(int balance)
 
     _mixer->setBalance( balance );
 }
+*/
 
 #include "kmixerwidget.moc"
