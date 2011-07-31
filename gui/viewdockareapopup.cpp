@@ -146,7 +146,7 @@ void ViewDockAreaPopup::constructionFinished() {
   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn, 0 ); // TODO add this on "polish()"
    QPushButton *pb = new QPushButton( i18n("Mixer"), this );
    pb->setObjectName( QLatin1String("MixerPanel" ));
-   connect ( pb, SIGNAL( clicked() ), SLOT( showPanelSlot() ) );
+   connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );
    _layoutMDW->addWidget( pb, sliderColumn+1, 0, 1, 1 );
 }
 

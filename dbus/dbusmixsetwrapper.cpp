@@ -29,10 +29,10 @@ DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, QString path)
 	new MixSetAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( m_dbusPath, this );
 
-/*    connect( Mixer::getGlobalMasterPreferred(), SIGNAL( changed() ),
-        this, SLOT( slotPreferredMasterChanged() ) );
-    connect( Mixer::getGlobalMasterCurrent(), SIGNAL( changed() ),
-  		this, SLOT( slotCurrentMasterChanged() ) );*/
+/*    connect( Mixer::getGlobalMasterPreferred(), SIGNAL(changed()),
+        this, SLOT(slotPreferredMasterChanged()) );
+    connect( Mixer::getGlobalMasterCurrent(), SIGNAL(changed()),
+  		this, SLOT(slotCurrentMasterChanged()) );*/
 }
 
 DBusMixSetWrapper::~DBusMixSetWrapper()

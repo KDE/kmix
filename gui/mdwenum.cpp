@@ -58,10 +58,10 @@ MDWEnum::MDWEnum( MixDevice* md,
    // KStandardAction::showMenubar() is in MixDeviceWidget now
    KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
    action->setText( i18n("&Hide") );
-   connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
+   connect(action, SIGNAL(triggered(bool)), SLOT(setDisabled()));
    QAction *c = _mdwActions->addAction( "keys" );
    c->setText( i18n("C&onfigure Shortcuts...") );
-   connect(c, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+   connect(c, SIGNAL(triggered(bool)), SLOT(defineKeys()));
 
    // create widgets
    createWidgets();
@@ -69,7 +69,7 @@ MDWEnum::MDWEnum( MixDevice* md,
    /* remove this for production version
      QAction *a = _mdwActions->addAction( "Next Value" );
      c->setText( i18n( "Next Value" ) );
-     connect(a, SIGNAL(triggered(bool) ), SLOT( nextEnumId() ));
+     connect(a, SIGNAL(triggered(bool)), SLOT(nextEnumId()));
    */
 
    installEventFilter( this ); // filter for popup
@@ -101,7 +101,7 @@ void MDWEnum::createWidgets()
    }
    // ------------ fill ComboBox end --------------
    _layout->addWidget(_enumCombo);
-   connect( _enumCombo, SIGNAL( activated( int ) ), this, SLOT( setEnumId( int ) ) );
+   connect( _enumCombo, SIGNAL(activated(int)), this, SLOT(setEnumId(int)) );
    _enumCombo->setToolTip( m_mixdevice->readableName() );
 	_layout->addStretch(1);
 }

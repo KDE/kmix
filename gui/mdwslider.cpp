@@ -88,35 +88,35 @@ void MDWSlider::createActions()
     // create actions (on _mdwActions, see MixDeviceWidget)
     KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
     taction->setText( i18n("&Split Channels") );
-    connect( taction, SIGNAL( triggered(bool) ), SLOT( toggleStereoLinked() ) );
+    connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
     KAction *action;
     if ( ! m_mixdevice->mixer()->isDynamic() ) {
         action = _mdwActions->add<KToggleAction>( "hide" );
         action->setText( i18n("&Hide") );
-        connect( action, SIGNAL( triggered(bool) ), SLOT( setDisabled() ) );
+        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled()) );
     }
 
     if( m_mixdevice->playbackVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "mute" );
         taction->setText( i18n("&Muted") );
-        connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleMuted() ) );
+        connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
     }
 
     if( m_mixdevice->captureVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "recsrc" );
         taction->setText( i18n("Set &Record Source") );
-        connect( taction, SIGNAL( toggled(bool) ), SLOT( toggleRecsrc() ) );
+        connect( taction, SIGNAL(toggled(bool)), SLOT(toggleRecsrc()) );
     }
 
     if( m_mixdevice->isMovable() ) {
         m_moveMenu = new KMenu( i18n("Mo&ve"), this);
-        connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT( showMoveMenu()) );
+        connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
 
     action = _mdwActions->addAction( "keys" );
     action->setText( i18n("C&onfigure Shortcuts...") );
-    connect( action, SIGNAL( triggered(bool) ), SLOT( defineKeys() ) );
+    connect( action, SIGNAL(triggered(bool)), SLOT(defineKeys()) );
 }
 
 void MDWSlider::createShortcutActions()
@@ -140,7 +140,7 @@ void MDWSlider::createShortcutActions()
         // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
-        connect( b, SIGNAL( triggered(bool) ), SLOT( increaseVolume() ) );
+        connect( b, SIGNAL(triggered(bool)), SLOT(increaseVolume()) );
     }
 
     b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
@@ -154,7 +154,7 @@ void MDWSlider::createShortcutActions()
         // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
-        connect( b, SIGNAL( triggered(bool) ), SLOT( decreaseVolume() ) );
+        connect( b, SIGNAL(triggered(bool)), SLOT(decreaseVolume()) );
     }
 
     b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
@@ -168,7 +168,7 @@ void MDWSlider::createShortcutActions()
         // virtual / dynamic controls won't get shortcuts
         b->setGlobalShortcut(dummyShortcut);  // -<- enableGlobalShortcut() is not there => use workaround
         //   b->enableGlobalShortcut();
-        connect( b, SIGNAL( triggered(bool) ), SLOT( toggleMuted() ) );
+        connect( b, SIGNAL(triggered(bool)), SLOT(toggleMuted()) );
     }
     
     // @todo: The following has been added for an unknown reason. Have to check this. - cesken
@@ -348,7 +348,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 			m_captureCheckbox = new QCheckBox( i18n("capture") , this);
 			m_captureCheckbox->installEventFilter( this );
 			controlLayout->addWidget( m_captureCheckbox, 0, Qt::AlignHCenter );
-			connect( m_captureCheckbox, SIGNAL( toggled(bool)), this, SLOT( setRecsrc(bool) ) );
+			connect( m_captureCheckbox, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
 			QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
 			m_captureCheckbox->setToolTip( muteTip );
 		}
@@ -370,7 +370,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 
 			controlLayout->addWidget( m_qcb , 0, Qt::AlignHCenter);
 			m_qcb->installEventFilter(this);
-			connect ( m_qcb, SIGNAL( clicked(bool) ), this, SLOT( toggleMuted() ) );
+			connect ( m_qcb, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()) );
 			QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
 			m_qcb->setToolTip( muteTip );
 		}
@@ -400,7 +400,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 			m_captureCheckbox->installEventFilter( this );
 			row1->addWidget( m_captureCheckbox);
 			row1->setAlignment(m_captureCheckbox, Qt::AlignRight);
-			connect( m_captureCheckbox, SIGNAL( toggled(bool)), this, SLOT( setRecsrc(bool) ) );
+			connect( m_captureCheckbox, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)) );
 			QString muteTip( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
 			m_captureCheckbox->setToolTip( muteTip );
 		}
@@ -455,7 +455,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 			m_qcb->setIcon( QIcon( loadIcon("audio-volume-muted") ) );
 			row2->addWidget( m_qcb );
 			m_qcb->installEventFilter(this);
-			connect ( m_qcb, SIGNAL( clicked(bool) ), this, SLOT( toggleMuted() ) );
+			connect ( m_qcb, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()) );
 			QString muteTip( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
 			m_qcb->setToolTip( muteTip );
 		}
@@ -482,17 +482,17 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
       if ( mixDevice()->hasMediaPlayControl())
       {
 	QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout);
-	connect(lbl, SIGNAL( clicked(bool) ), this, SLOT( mediaPrev(bool) ) ); 
+	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPrev(bool)) ); 
       }
       if ( mixDevice()->hasMediaPlayControl())
       {
 	QToolButton *lbl = addMediaButton("media-playback-start", mediaLayout);
-	connect(lbl, SIGNAL( clicked(bool) ), this, SLOT( mediaPlay(bool) ) ); 
+	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)) ); 
       }
       if ( mixDevice()->hasMediaPlayControl())
       {
 	QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout);
-	connect(lbl, SIGNAL( clicked(bool) ), this, SLOT( mediaNext(bool) ) ); 
+	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaNext(bool)) ); 
       }
       volLayout->addLayout(mediaLayout);
     }
@@ -638,7 +638,7 @@ kDebug() << "------------ volcount=" << vol.count() << " labelType=" << labelTyp
 		volLayout->addWidget( slider ); // add to layout
 		ref_sliders.append ( slider ); // add to list
 		//ref_slidersChids.append(vc.chid);
-		connect( slider, SIGNAL( valueChanged(int) ), SLOT( volumeChange(int) ) );
+		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
 		
 		first = false;
 	} // for all channels of this device

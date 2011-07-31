@@ -82,7 +82,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
         m_cMixer = new KComboBox( false, m_mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-        connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPageByID( int ) ) );
+        connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );
 
         for( int i =0; i<Mixer::mixers().count(); i++ )
         {

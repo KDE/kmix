@@ -53,17 +53,17 @@
 //    // KStandardAction::showMenubar() is in MixDeviceWidget now
 //    KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
 //    action->setText( i18n("&Hide") );
-//    connect(action, SIGNAL(triggered(bool) ), SLOT(setDisabled()));
+//    connect(action, SIGNAL(triggered(bool)), SLOT(setDisabled()));
 //    KAction *b = _mdwActions->addAction( "keys" );
 //    b->setText( i18n("C&onfigure Shortcuts...") );
-//    connect(b, SIGNAL(triggered(bool) ), SLOT(defineKeys()));
+//    connect(b, SIGNAL(triggered(bool)), SLOT(defineKeys()));
 //
 //    // create widgets
 //    createWidgets();
 //
 //    KAction *a = _mdwActions->addAction( "Toggle switch" );
 //    a->setText( i18n( "Toggle Switch" ) );
-//    connect(a, SIGNAL(triggered(bool) ), SLOT( toggleSwitch() ));
+//    connect(a, SIGNAL(triggered(bool)), SLOT(toggleSwitch()));
 //
 //    // The accel keys are loaded in KMixerWidget::loadConfig, see kmixtoolbox.cpp
 //

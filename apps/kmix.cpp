@@ -105,20 +105,20 @@ KMixWindow::KMixWindow(bool invisible)
 
     fixConfigAfterRead();
     theKMixDeviceManager->initHotplug();
-    connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
-    connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
+    connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );
+    connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT (unplugged(QString)) );
     if ( m_startVisible && ! invisible)
         show(); // Started visible
 
-    connect( kapp, SIGNAL( aboutToQuit()), SLOT( saveConfig()) );
+    connect( kapp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
 	// Creating a dbus interface
 	DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers" );
 	// these signals should be emitted right after the mixer device is added
-	connect( theKMixDeviceManager, SIGNAL(plugged( const char*, const QString&, QString&)),
-			wrapper, SLOT(devicePlugged( const char*, const QString&, QString&)) );
-	connect( theKMixDeviceManager, SIGNAL(unplugged( const QString& ) ),
-			wrapper, SLOT(deviceUnplugged( const QString& )) );
+	connect( theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
+			wrapper, SLOT(devicePlugged(const char*,QString,QString&)) );
+	connect( theKMixDeviceManager, SIGNAL(unplugged(QString)),
+			wrapper, SLOT(deviceUnplugged(QString)) );
 }
 
 
@@ -148,21 +148,21 @@ void KMixWindow::initActions()
     KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
     KAction* action = actionCollection()->addAction( "launch_kdesoundsetup" );
     action->setText( i18n( "Audio Setup" ) );
-    connect(action, SIGNAL(triggered(bool) ), SLOT( slotKdeAudioSetupExec() ));
+    connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
 
     action = actionCollection()->addAction( "hwinfo" );
     action->setText( i18n( "Hardware &Information" ) );
-    connect(action, SIGNAL(triggered(bool) ), SLOT( slotHWInfo() ));
+    connect(action, SIGNAL(triggered(bool)), SLOT(slotHWInfo()));
     action = actionCollection()->addAction( "hide_kmixwindow" );
     action->setText( i18n( "Hide Mixer Window" ) );
-    connect(action, SIGNAL(triggered(bool) ), SLOT(hideOrClose()));
+    connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
     action->setShortcut(QKeySequence(Qt::Key_Escape));
     action = actionCollection()->addAction("toggle_channels_currentview");
     action->setText(i18n("Configure &Channels..."));
-    connect(action, SIGNAL(triggered(bool) ), SLOT(slotConfigureCurrentView()));
+    connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureCurrentView()));
     action = actionCollection()->addAction( "select_master" );
     action->setText( i18n("Select Master Channel...") );
-    connect(action, SIGNAL(triggered(bool) ), SLOT(slotSelectMaster()));
+    connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
 
     osdWidget = new OSDWidget();
 
@@ -175,17 +175,17 @@ void KMixWindow::initActionsLate()
         KAction* globalAction = actionCollection()->addAction("increase_volume");
         globalAction->setText(i18n("Increase Volume"));
         globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
-        connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
+        connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
 
         globalAction = actionCollection()->addAction("decrease_volume");
         globalAction->setText(i18n("Decrease Volume"));
         globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
-        connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
+        connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
         globalAction = actionCollection()->addAction("mute");
         globalAction->setText(i18n("Mute"));
         globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
-        connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
+        connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
     }
 }
 
@@ -211,14 +211,14 @@ void KMixWindow::initActionsAfterInitMixer()
        _cornerLabelNew->setIcon(cornerNewPM);
        //cornerLabelNew->setSizePolicy(QSizePolicy());
        m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
-       connect ( _cornerLabelNew, SIGNAL( clicked() ), SLOT (newView() ) );
+       connect ( _cornerLabelNew, SIGNAL(clicked()), SLOT (newView()) );
     }
 }
 
 void KMixWindow::initPrefDlg()
 {
     m_prefDlg = new KMixPrefDlg( this );
-    connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg *)), SLOT(applyPrefs(KMixPrefDlg *)) );
+    connect( m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg*)), SLOT(applyPrefs(KMixPrefDlg*)) );
 }
 
 
@@ -234,7 +234,7 @@ void KMixWindow::initWidgets()
 
     QPixmap cornerNewPM = KIconLoader::global()->loadIcon( "tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall );
 
-    connect( m_wsMixers, SIGNAL( currentChanged ( int ) ), SLOT( newMixerShown(int)) );
+    connect( m_wsMixers, SIGNAL(currentChanged(int)), SLOT(newMixerShown(int)) );
 
     // show menubar if the actions says so (or if the action does not exist)
     menuBar()->setVisible( (_actionShowMenubar==0) || _actionShowMenubar->isChecked());

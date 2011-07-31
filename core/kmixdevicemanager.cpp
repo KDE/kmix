@@ -51,8 +51,8 @@ KMixDeviceManager* KMixDeviceManager::instance()
 
 void KMixDeviceManager::initHotplug()
 {
-    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(pluggedSlot(const QString&)) );
-    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(unpluggedSlot(const QString&)) );
+    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(pluggedSlot(QString)) );
+    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(unpluggedSlot(QString)) );
 }
 
 QString KMixDeviceManager::getUDI_ALSA(int num)

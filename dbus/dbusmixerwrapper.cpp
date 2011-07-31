@@ -33,10 +33,10 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, QString path)
 	m_mixer = parent;
 	new MixerAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( path, this );
-	connect( parent, SIGNAL( controlsReconfigured(const QString&) ),
-		this, SLOT( slotControlsReconfigured() ) );
-	connect( parent, SIGNAL( controlChanged() ),
-		this, SLOT( slotControlChanged() ) );
+	connect( parent, SIGNAL(controlsReconfigured(QString)),
+		this, SLOT(slotControlsReconfigured()) );
+	connect( parent, SIGNAL(controlChanged()),
+		this, SLOT(slotControlChanged()) );
 }
 
 DBusMixerWrapper::~DBusMixerWrapper()

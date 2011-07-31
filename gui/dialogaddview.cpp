@@ -98,7 +98,7 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
         m_cMixer = new KComboBox( false, m_mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-        connect( m_cMixer, SIGNAL( activated( int ) ), this, SLOT( createPageByID( int ) ) );
+        connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );
 
         for( int i =0; i<Mixer::mixers().count(); i++ )
         {
@@ -181,7 +181,7 @@ void DialogAddView::createPage(Mixer* mixer)
         QString name = viewNames.at(i);
         name.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
         QRadioButton* qrb = new QRadioButton( name, m_vboxForScrollView);
-        connect( qrb, SIGNAL( toggled( bool ) ), this, SLOT( profileRbtoggled( bool ) ) );
+        connect( qrb, SIGNAL(toggled(bool)), this, SLOT(profileRbtoggled(bool)) );
 
         qrb->setObjectName(viewIds.at(i));  // The object name is used as ID here: see apply()
         m_buttonGroupForScrollView->addButton(qrb);

@@ -77,11 +77,11 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     
     if ( NO_MENU_ANYMORE )
     {
-      connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(activateMenuOrWindow(bool, QPoint)));
+      connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(activateMenuOrWindow(bool,QPoint)));
     }
     else
     {
-      connect(this, SIGNAL(activateRequested(bool, QPoint)), this, SLOT(activateMenuOrWindow(bool, QPoint)));
+      connect(this, SIGNAL(activateRequested(bool,QPoint)), this, SLOT(activateMenuOrWindow(bool,QPoint)));
       connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
     }
 
@@ -131,7 +131,7 @@ void KMixDockWidget::createActions()
     // Put "Mute" selector in context menu
     KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
     action->setText( i18n( "M&ute" ) );
-    connect(action, SIGNAL(triggered(bool) ), SLOT( dockMute() ));
+    connect(action, SIGNAL(triggered(bool)), SLOT(dockMute()));
     menu->addAction( action );
 }
 
@@ -139,7 +139,7 @@ void KMixDockWidget::createActions()
   if ( m_mixer != 0 ) {
   QAction *action = actionCollection()->addAction( "select_master" );
   action->setText( i18n("Select Master Channel...") );
-  connect(action, SIGNAL(triggered(bool) ), SLOT(selectMaster()));
+  connect(action, SIGNAL(triggered(bool)), SLOT(selectMaster()));
   menu->addAction( action );
   }
 
@@ -181,16 +181,16 @@ KMixDockWidget::createMasterVolWidget()
      * Refreshing the Icon
      */
     //    connect( m_mixer, SIGNAL(controlChanged()), _dockAreaPopup, SLOT(refreshVolumeLevels()) );
-    connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip() ) );
-    connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap() ) );
+    connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip()) );
+    connect( m_mixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap()) );
 }
 
 void KMixDockWidget::selectMaster()
 {
    DialogSelectMaster* dsm = new DialogSelectMaster(m_mixer);
    dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-   connect ( dsm, SIGNAL(newMasterSelected(QString&, QString&)), SLOT( handleNewMaster(QString&, QString&)) );
-   connect ( dsm, SIGNAL(newMasterSelected(QString&, QString&)), SIGNAL( newMasterSelected()) );
+   connect ( dsm, SIGNAL(newMasterSelected(QString&,QString&)), SLOT(handleNewMaster(QString&,QString&)) );
+   connect ( dsm, SIGNAL(newMasterSelected(QString&,QString&)), SIGNAL(newMasterSelected()) );
    dsm->show();
 }
 
@@ -449,7 +449,7 @@ KMixDockWidget::contextMenuAboutToShow()
         }
         kDebug() << "<<< mm 3";
         //disconnect(showAction, 0, 0, 0);
-        //connect(showAction, SIGNAL(triggered(bool), this, hideOrShowMainWindow() );
+        //connect(showAction, SIGNAL(triggered(bool),this,hideOrShowMainWindow());
     }
     */
 

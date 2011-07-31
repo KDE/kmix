@@ -34,7 +34,7 @@ MDWMoveAction::MDWMoveAction(MixDevice* md, QObject *parent)
 
    setText(m_mixDevice->readableName());
    setIcon(KIcon(m_mixDevice->iconName()));
-   connect(this, SIGNAL(triggered(bool) ), SLOT(triggered(bool)));
+   connect(this, SIGNAL(triggered(bool)), SLOT(triggered(bool)));
 }
 
 MDWMoveAction::~MDWMoveAction()

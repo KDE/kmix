@@ -83,7 +83,7 @@ void KMixToolBox::notification(const char *notificationName, const QString &text
     notification->addContext(QLatin1String("Application"), KGlobal::mainComponent().componentName());
     if (!actions.isEmpty() && receiver && actionSlot) {
         notification->setActions(actions);
-        QObject::connect(notification, SIGNAL(activated(unsigned int)), receiver, actionSlot);
+        QObject::connect(notification, SIGNAL(activated(uint)), receiver, actionSlot);
     }
     notification->sendEvent();
 }

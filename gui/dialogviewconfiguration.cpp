@@ -236,14 +236,14 @@ void DialogViewConfiguration::createPage()
    _qlwInactive->setDragDropMode(QAbstractItemView::DragDrop);
    _qlwInactive->setActiveList(false);
    _glayout->addWidget(_qlwInactive,1,0);
-   connect(_qlwInactive, SIGNAL(dropped    (DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)),
-           this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)));
+   connect(_qlwInactive, SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
+           this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
 
 
    _qlw = new DialogViewConfigurationWidget(frame);
    _glayout->addWidget(_qlw,1,2);
-    connect(_qlw  ,     SIGNAL(dropped    (DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)),
-            this  ,       SLOT(slotDropped(DialogViewConfigurationWidget*, int, DialogViewConfigurationItem*, bool)));
+    connect(_qlw  ,     SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
+            this  ,       SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
 
 
    int i;

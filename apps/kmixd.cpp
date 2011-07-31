@@ -105,8 +105,8 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    //recreateGUI(false);
    fixConfigAfterRead();
    theKMixDeviceManager->initHotplug();
-   connect(theKMixDeviceManager, SIGNAL( plugged( const char*, const QString&, QString&)), SLOT (plugged( const char*, const QString&, QString&) ) );
-   connect(theKMixDeviceManager, SIGNAL( unplugged( const QString&)), SLOT (unplugged( const QString&) ) );
+   connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );
+   connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT (unplugged(QString)) );
 }
 
 
@@ -124,17 +124,17 @@ void KMixD::initActionsLate()
     KAction* globalAction = actionCollection()->addAction("increase_volume");
     globalAction->setText(i18n("Increase Volume"));
     globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp), ( KAction::ShortcutTypes)( KAction::ActiveShortcut |  KAction::DefaultShortcut),  KAction::NoAutoloading);
-    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotIncreaseVolume()));
+    connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
 
     globalAction = actionCollection()->addAction("decrease_volume");
     globalAction->setText(i18n("Decrease Volume"));
     globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
-    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotDecreaseVolume()));
+    connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
     globalAction = actionCollection()->addAction("mute");
     globalAction->setText(i18n("Mute"));
     globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
-    connect(globalAction, SIGNAL(triggered(bool) ), SLOT(slotMute()));
+    connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
   }
 }
 */

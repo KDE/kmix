@@ -156,7 +156,7 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
       // *this will be deleted on rebuildGUI(), so lets queue the signal
       connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithSavingView()), Qt::QueuedConnection );
-      connect( vbase, SIGNAL(redrawMixer(const QString&)), parentWidget(), SLOT(redrawMixer(const QString&)), Qt::QueuedConnection );
+      connect( vbase, SIGNAL(redrawMixer(QString)), parentWidget(), SLOT(redrawMixer(QString)), Qt::QueuedConnection );
       return true;
    }
 }

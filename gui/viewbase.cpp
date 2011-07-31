@@ -77,10 +77,10 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
    if ( !isDynamic() ) {
       QAction *action = _localActionColletion->addAction("toggle_channels");
       action->setText(i18n("&Channels"));
-      connect(action, SIGNAL(triggered(bool) ), SLOT(configureView()));
+      connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
    }
 /*   connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-   connect ( _mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );*/
+   connect ( _mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );*/
 }
 
 ViewBase::~ViewBase() {
@@ -128,7 +128,7 @@ void ViewBase::createDeviceWidgets()
   {
     kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id(); 
    connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-   connect ( mixer, SIGNAL(controlsReconfigured(const QString&)), this, SLOT(controlsReconfigured(const QString&)) );
+   connect ( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
   }
 
     

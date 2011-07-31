@@ -58,7 +58,7 @@ bool Mixer_Backend::openIfValid() {
         }
         else {
             // The initial state must be read manually
-            QTimer::singleShot( 50, this, SLOT( readSetFromHW() ) );
+            QTimer::singleShot( 50, this, SLOT(readSetFromHW()) );
         }
     } // cold be opened
     else {
