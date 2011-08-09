@@ -434,6 +434,15 @@ void KMixWindow::loadBaseConfig()
     //}
     QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
     MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
+
+    QString volumePercentageStepString = config.readEntry( "VolumePercentageStep" );
+    if ( ! volumePercentageStepString.isNull())
+    {
+    	float volumePercentageStep = volumePercentageStepString.toFloat();
+    	if ( volumePercentageStep > 0 && volumePercentageStep <= 100)
+    		Mixer::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
+    }
+
     m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
     kDebug() << "Backends: " << m_backendFilter;
 

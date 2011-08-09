@@ -158,6 +158,7 @@ public:
     /// get the actual MixSet
     MixSet getMixSet();
 
+    static float VOLUME_STEP_DIVISOR;
 
     /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );

@@ -991,7 +991,7 @@ void MDWSlider::increaseVolume()
 void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 {
 	Volume& volP = m_mixdevice->playbackVolume();
-	long inc = volP.maxVolume() / 20;
+	long inc = volP.maxVolume() / Mixer::VOLUME_STEP_DIVISOR;
 	if ( inc == 0 )	inc = 1;
 	if ( decrease ) inc *= -1;
 	if ( mixDevice()->id() == "Headphone:0" )
@@ -1007,7 +1007,7 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	    volP.changeAllVolumes(inc);
 
 	Volume& volC = m_mixdevice->captureVolume();
-	inc = volC.maxVolume() / 20;
+	inc = volC.maxVolume() / Mixer::VOLUME_STEP_DIVISOR;
 	if ( inc == 0 ) inc = 1;
 	if ( decrease ) inc *= -1;
 	volC.changeAllVolumes(inc);

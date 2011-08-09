@@ -34,6 +34,7 @@
 
 #include "kglobalsettings.h"
 #include "ksmallslider.h"
+#include "core/mixer.h"
 
 KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,
                   int value, Qt::Orientation orientation,
@@ -309,7 +310,7 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 void KSmallSlider::wheelEvent( QWheelEvent * e)
 {
 //    kDebug(67100) << "KSmallslider::wheelEvent()";
-    int inc = ( maximum() - minimum() ) / 20;
+    int inc = ( maximum() - minimum() ) / Mixer::VOLUME_STEP_DIVISOR;
     if ( inc < 1)
 	inc = 1;
 

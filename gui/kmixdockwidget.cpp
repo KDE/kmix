@@ -389,7 +389,7 @@ KMixDockWidget::trayWheelEvent(int delta)
   if ( md != 0 )
   {
       Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
-      int inc = vol.maxVolume() / 20;
+      int inc = vol.maxVolume() / Mixer::VOLUME_STEP_DIVISOR;
 
     if ( inc < 1 ) inc = 1;
 

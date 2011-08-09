@@ -38,6 +38,7 @@
 QList<Mixer *> Mixer::s_mixers;
 MasterControl Mixer::_globalMasterCurrent;
 MasterControl Mixer::_globalMasterPreferred;
+float Mixer::VOLUME_STEP_DIVISOR = 20;
 
 
 int Mixer::numDrivers()
@@ -538,14 +539,14 @@ void Mixer::increaseVolume( const QString& mixdeviceID )
     if (md != 0) {
         Volume& volP=md->playbackVolume();
         if ( volP.hasVolume() ) {
-           double step = (volP.maxVolume()-volP.minVolume()+1) / 20;
+           double step = (volP.maxVolume()-volP.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
            volP.changeAllVolumes(step);
         }
         
         Volume& volC=md->captureVolume();
         if ( volC.hasVolume() ) {
-           double step = (volC.maxVolume()-volC.minVolume()+1) / 20;
+           double step = (volC.maxVolume()-volC.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
            volC.changeAllVolumes(step);
         }
@@ -566,14 +567,14 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
     if (md != 0) {
         Volume& volP=md->playbackVolume();
         if ( volP.hasVolume() ) {
-           double step = (volP.maxVolume()-volP.minVolume()+1) / 20;
+           double step = (volP.maxVolume()-volP.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
            volP.changeAllVolumes(-step);
         }
         
         Volume& volC=md->captureVolume();
         if ( volC.hasVolume() ) {
-           double step = (volC.maxVolume()-volC.minVolume()+1) / 20;
+           double step = (volC.maxVolume()-volC.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
            volC.changeAllVolumes(-step);
         }
