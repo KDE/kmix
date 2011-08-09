@@ -136,7 +136,7 @@ private:
     void setStereoLinkedInternal( QList< QAbstractSlider* >& ref_sliders);
     void setTicksInternal( QList< QAbstractSlider* >& ref_sliders, bool ticks );
     void volumeChangeInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders );
-    void updateInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders);
+    void updateInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders, bool muted);
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 
 

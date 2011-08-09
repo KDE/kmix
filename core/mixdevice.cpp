@@ -208,7 +208,8 @@ const QString MixDevice::dbusPath() {
 bool MixDevice::isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
 void MixDevice::setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
 void MixDevice::toggleMute()               { setMuted( !isMuted() ); }
-bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated() ); }
+bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() &&  _captureVolume.isSwitchActivated() ); }
+bool MixDevice::isNotRecSource()           { return ( _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated() ); }
 void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
 bool MixDevice::isEnum()                   { return ( ! _enumValues.empty() ); }
 

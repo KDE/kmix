@@ -160,6 +160,7 @@ public:
    virtual void setMuted(bool value);
    virtual void toggleMute();
    virtual bool isRecSource();
+   virtual bool isNotRecSource();
    virtual void setRecSource(bool value);
    virtual bool isEnum();
    /**

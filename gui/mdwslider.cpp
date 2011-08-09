@@ -68,7 +68,6 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
         , ProfControl* par_ctl
         ) :
 	MixDeviceWidget(md,small,orientation,parent,view, par_ctl),
-//	MixDeviceWidget(md,true,orientation,parent,view, par_ctl),
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_label( 0 ), /*m_captureLED( 0 ),*/
@@ -999,7 +998,13 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	  debugMe =true;
 	if (debugMe)
 	  kDebug(67100) << ( decrease ? "decrease by " : "increase by " ) << inc ;
-	volP.changeAllVolumes(inc);
+	if ( !decrease && m_mixdevice->isMuted())
+	{   // increasing form muted state: unmute and start with a low volume level
+	    m_mixdevice->setMuted(false);
+	    volP.setAllVolumes(inc);
+	}
+	else
+	    volP.changeAllVolumes(inc);
 
 	Volume& volC = m_mixdevice->captureVolume();
 	inc = volC.maxVolume() / 20;
@@ -1036,10 +1041,11 @@ void MDWSlider::moveStream(QString destId)
  */
 void MDWSlider::update()
 {
+
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->playbackVolume().hasSwitch() )
-		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
+		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
 	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
-		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture);
+		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, m_mixdevice->isNotRecSource() );
 	if (m_label) {
 		QLabel *l;
 		VerticalText *v;
@@ -1050,12 +1056,16 @@ void MDWSlider::update()
 	}
 }
 
-void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
+void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, bool muted)
 {
 	for( int i=0; i<ref_sliders.count(); i++ ) {
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
-		long useVolume = vol.getVolume(chid);
+		long useVolume;
+		if ( muted )
+		    useVolume = 0;
+        else
+            useVolume = vol.getVolume(chid);
 
 		slider->blockSignals( true );
 		slider->setValue( useVolume );
