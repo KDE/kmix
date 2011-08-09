@@ -22,6 +22,7 @@
 #ifndef MIXER_BACKEND_H
 #define MIXER_BACKEND_H
 
+#include <QTime>
 //#include "core/mixer.h"
 #include "core/mixdevice.h"
 #include "core/mixset.h"
@@ -147,6 +148,8 @@ public slots:
 
 protected slots:
   virtual void readSetFromHW();
+private:
+  QTime _fastPollingEndsAt;
 };
 
 #endif

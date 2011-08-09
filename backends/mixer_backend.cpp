@@ -54,7 +54,7 @@ bool Mixer_Backend::openIfValid() {
         // but we want a somehow usable fallback just in case.
     
         if ( needsPolling() ) {
-            _pollingTimer->start(50);
+            _pollingTimer->start(500);
         }
         else {
             // The initial state must be read manually
@@ -107,15 +107,17 @@ void Mixer_Backend::readSetFromHW()
         kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick";
         return;
     }
+
+    //kDebug() << "---tick---" << QTime::currentTime();
     _readSetFromHWforceUpdate = false;
 
-	int ret = Mixer::OK;
+	int ret = Mixer::OK_UNCHANGED;
 
     int mdCount = m_mixDevices.count();
     for(int i=0; i<mdCount  ; ++i )
     {
         MixDevice *md = m_mixDevices[i];
-        ret = readVolumeFromHW( md->id(), md );
+        int retLoop = readVolumeFromHW( md->id(), md );
         if (md->isEnum() ) {
             /*
              * This could be reworked:
@@ -124,13 +126,41 @@ void Mixer_Backend::readSetFromHW()
              */
             md->setEnumId( enumIdHW(md->id()) ); 
         }
+	if ( retLoop == Mixer::OK && ret == Mixer::OK_UNCHANGED )
+	{
+		ret = Mixer::OK;
+	}
+	else if ( retLoop != Mixer::OK && retLoop != Mixer::OK_UNCHANGED )
+	{
+		ret = retLoop;
+	}
     }
     
     if ( ret == Mixer::OK )
 	{
 		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
+		_pollingTimer->setInterval(50);
+		QTime fastPollingEndsAt = QTime::currentTime ();
+		fastPollingEndsAt = fastPollingEndsAt.addSecs(5);
+		_fastPollingEndsAt = fastPollingEndsAt;
+		//_fastPollingEndsAt = fastPollingEndsAt;
+		kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
 		emit controlChanged();
 	}
+
+    else
+    {
+    	// This code path is entered on Mixer::OK_UNCHANGED and ERROR
+	    if ( !_fastPollingEndsAt.isNull() )
+	    {
+		if( _fastPollingEndsAt < QTime::currentTime () )
+	    	{
+		    kDebug() << "End fast polling";
+		    _fastPollingEndsAt = QTime();
+		    _pollingTimer->setInterval(500);
+		}
+	    }
+    }
 }
 
 /**
