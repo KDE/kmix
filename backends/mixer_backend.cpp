@@ -28,47 +28,47 @@
 #include "mixer_backend_i18n.cpp"
 
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
-        m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer), _pollingTimer(0)
+m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer), _pollingTimer(0)
 
 {
-   // In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
-   // like ::select() is possible (as in ALSA).
-   _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
-   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
+	// In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
+	// like ::select() is possible (as in ALSA).
+	_pollingTimer = new QTimer(); // will be started on open() and stopped on close()
+	connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
 }
 
 Mixer_Backend::~Mixer_Backend()
 {
-    delete _pollingTimer;
-    qDeleteAll(m_mixDevices);
-    m_mixDevices.clear();
+	delete _pollingTimer;
+	qDeleteAll(m_mixDevices);
+	m_mixDevices.clear();
 }
 
 
 bool Mixer_Backend::openIfValid() {
-    bool valid = false;
-    int ret = open();
-    if ( ret == 0  && (m_mixDevices.count() > 0 || _mixer->isDynamic())) {
-        valid = true;
-        // A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
-        // but we want a somehow usable fallback just in case.
-    
-        if ( needsPolling() ) {
-            _pollingTimer->start(500);
-        }
-        else {
-            // The initial state must be read manually
-            QTimer::singleShot( 50, this, SLOT(readSetFromHW()) );
-        }
-    } // cold be opened
-    else {
-        close();
-    }
-    return valid;
+	bool valid = false;
+	int ret = open();
+	if ( ret == 0  && (m_mixDevices.count() > 0 || _mixer->isDynamic())) {
+		valid = true;
+		// A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
+		// but we want a somehow usable fallback just in case.
+
+		if ( needsPolling() ) {
+			_pollingTimer->start(500);
+		}
+		else {
+			// The initial state must be read manually
+			QTimer::singleShot( 50, this, SLOT(readSetFromHW()) );
+		}
+	} // cold be opened
+	else {
+		close();
+	}
+	return valid;
 }
 
 bool Mixer_Backend::isOpen() {
-  return m_isOpen;
+	return m_isOpen;
 }
 
 /**
@@ -77,7 +77,7 @@ bool Mixer_Backend::isOpen() {
  * @return true, if there are changes. Otherwise false is returned.
  */
 bool Mixer_Backend::prepareUpdateFromHW() {
-  return true;
+	return true;
 }
 
 
@@ -90,53 +90,53 @@ bool Mixer_Backend::prepareUpdateFromHW() {
  * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
  */
 void Mixer_Backend::readSetFromHWforceUpdate() const {
-   _readSetFromHWforceUpdate = true;
+	_readSetFromHWforceUpdate = true;
 }
 
 
 /**
    You can call this to retrieve the freshest information from the mixer HW.
    This method is also called regulary by the mixer timer.
-*/
+ */
 void Mixer_Backend::readSetFromHW()
 {
-    bool updated = prepareUpdateFromHW();
-    if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
-        // Some drivers (ALSA) are smart. We don't need to run the following
-        // time-consuming update loop if there was no change
-        kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick";
-        return;
-    }
+	bool updated = prepareUpdateFromHW();
+	if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
+		// Some drivers (ALSA) are smart. We don't need to run the following
+		// time-consuming update loop if there was no change
+		kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick";
+		return;
+	}
 
-    //kDebug() << "---tick---" << QTime::currentTime();
-    _readSetFromHWforceUpdate = false;
+	//kDebug() << "---tick---" << QTime::currentTime();
+	_readSetFromHWforceUpdate = false;
 
 	int ret = Mixer::OK_UNCHANGED;
 
-    int mdCount = m_mixDevices.count();
-    for(int i=0; i<mdCount  ; ++i )
-    {
-        MixDevice *md = m_mixDevices[i];
-        int retLoop = readVolumeFromHW( md->id(), md );
-        if (md->isEnum() ) {
-            /*
-             * This could be reworked:
-             * Plan: Read everything (incuding enum's) in readVolumeFromHW().
-             * readVolumeFromHW() should then be renamed to readHW().
-             */
-            md->setEnumId( enumIdHW(md->id()) ); 
-        }
-	if ( retLoop == Mixer::OK && ret == Mixer::OK_UNCHANGED )
+	int mdCount = m_mixDevices.count();
+	for(int i=0; i<mdCount  ; ++i )
 	{
-		ret = Mixer::OK;
+		MixDevice *md = m_mixDevices[i];
+		int retLoop = readVolumeFromHW( md->id(), md );
+		if (md->isEnum() ) {
+			/*
+			 * This could be reworked:
+			 * Plan: Read everything (incuding enum's) in readVolumeFromHW().
+			 * readVolumeFromHW() should then be renamed to readHW().
+			 */
+			md->setEnumId( enumIdHW(md->id()) );
+		}
+		if ( retLoop == Mixer::OK && ret == Mixer::OK_UNCHANGED )
+		{
+			ret = Mixer::OK;
+		}
+		else if ( retLoop != Mixer::OK && retLoop != Mixer::OK_UNCHANGED )
+		{
+			ret = retLoop;
+		}
 	}
-	else if ( retLoop != Mixer::OK && retLoop != Mixer::OK_UNCHANGED )
-	{
-		ret = retLoop;
-	}
-    }
-    
-    if ( ret == Mixer::OK )
+
+	if ( ret == Mixer::OK )
 	{
 		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
 		_pollingTimer->setInterval(50);
@@ -148,19 +148,19 @@ void Mixer_Backend::readSetFromHW()
 		emit controlChanged();
 	}
 
-    else
-    {
-    	// This code path is entered on Mixer::OK_UNCHANGED and ERROR
-	    if ( !_fastPollingEndsAt.isNull() )
-	    {
-		if( _fastPollingEndsAt < QTime::currentTime () )
-	    	{
-		    kDebug() << "End fast polling";
-		    _fastPollingEndsAt = QTime();
-		    _pollingTimer->setInterval(500);
+	else
+	{
+		// This code path is entered on Mixer::OK_UNCHANGED and ERROR
+		if ( !_fastPollingEndsAt.isNull() )
+		{
+			if( _fastPollingEndsAt < QTime::currentTime () )
+			{
+				kDebug() << "End fast polling";
+				_fastPollingEndsAt = QTime();
+				_pollingTimer->setInterval(500);
+			}
 		}
-	    }
-    }
+	}
 }
 
 /**
@@ -169,19 +169,19 @@ void Mixer_Backend::readSetFromHW()
  * The users preference is NOT returned by this method - see the Mixer class for that.
  */
 MixDevice* Mixer_Backend::recommendedMaster() {
-   if ( m_recommendedMaster != 0 ) {
-      return m_recommendedMaster;   // Backend has set a recommended master. Thats fine.
-   } // recommendation from Backend
-   else if ( m_mixDevices.count() > 0 ) {
-      return m_mixDevices.at(0);  // Backend has NOT set a recommended master. Evil backend => lets help out.
-   } //first device (if exists)
-   else {
-      if ( !_mixer->isDynamic()) {
-         // This should never ever happen, as KMix doe NOT accept soundcards without controls
-         kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
-      }
-      return (MixDevice*)0;
-   }
+	if ( m_recommendedMaster != 0 ) {
+		return m_recommendedMaster;   // Backend has set a recommended master. Thats fine.
+	} // recommendation from Backend
+	else if ( m_mixDevices.count() > 0 ) {
+		return m_mixDevices.at(0);  // Backend has NOT set a recommended master. Evil backend => lets help out.
+	} //first device (if exists)
+	else {
+		if ( !_mixer->isDynamic()) {
+			// This should never ever happen, as KMix doe NOT accept soundcards without controls
+			kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
+		}
+		return (MixDevice*)0;
+	}
 }
 
 /**
@@ -191,7 +191,7 @@ MixDevice* Mixer_Backend::recommendedMaster() {
  * code in its subclass (see Mixer_ALSA.cpp for an example).
  */
 void Mixer_Backend::setEnumIdHW(const QString& , unsigned int) {
-  return;
+	return;
 }
 
 /**
@@ -201,55 +201,55 @@ void Mixer_Backend::setEnumIdHW(const QString& , unsigned int) {
  * code in its subclass (see Mixer_ALSA.cpp for an example).
  */
 unsigned int Mixer_Backend::enumIdHW(const QString& ) {
-  return 0;
+	return 0;
 }
 
 /**
  * Move the stream to a new destination
  */
 bool Mixer_Backend::moveStream( const QString& id, const QString& destId ) {
-  Q_UNUSED(id);
-  Q_UNUSED(destId);
-  return false;
+	Q_UNUSED(id);
+	Q_UNUSED(destId);
+	return false;
 }
 
 void Mixer_Backend::errormsg(int mixer_error)
 {
-  QString l_s_errText;
-  l_s_errText = errorText(mixer_error);
-  kError() << l_s_errText << "\n";
+	QString l_s_errText;
+	l_s_errText = errorText(mixer_error);
+	kError() << l_s_errText << "\n";
 }
 
 int Mixer_Backend::id2num(const QString& id)
 {
-   return id.toInt();
+	return id.toInt();
 }
 
 QString Mixer_Backend::errorText(int mixer_error)
 {
-  QString l_s_errmsg;
-  switch (mixer_error)
-  {
-    case Mixer::ERR_PERM:
-      l_s_errmsg = i18n("kmix:You do not have permission to access the mixer device.\n" \
-	  "Please check your operating systems manual to allow the access.");
-      break;
-    case Mixer::ERR_WRITE:
-      l_s_errmsg = i18n("kmix: Could not write to mixer.");
-      break;
-    case Mixer::ERR_READ:
-      l_s_errmsg = i18n("kmix: Could not read from mixer.");
-      break;
-    case Mixer::ERR_OPEN:
-      l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
-	  "Please check that the soundcard is installed and that\n" \
-	  "the soundcard driver is loaded.\n");
-      break;
-    default:
-      l_s_errmsg = i18n("kmix: Unknown error. Please report how you produced this error.");
-      break;
-  }
-  return l_s_errmsg;
+	QString l_s_errmsg;
+	switch (mixer_error)
+	{
+	case Mixer::ERR_PERM:
+		l_s_errmsg = i18n("kmix:You do not have permission to access the mixer device.\n" \
+				"Please check your operating systems manual to allow the access.");
+		break;
+	case Mixer::ERR_WRITE:
+		l_s_errmsg = i18n("kmix: Could not write to mixer.");
+		break;
+	case Mixer::ERR_READ:
+		l_s_errmsg = i18n("kmix: Could not read from mixer.");
+		break;
+	case Mixer::ERR_OPEN:
+		l_s_errmsg = i18n("kmix: Mixer cannot be found.\n" \
+				"Please check that the soundcard is installed and that\n" \
+				"the soundcard driver is loaded.\n");
+		break;
+	default:
+		l_s_errmsg = i18n("kmix: Unknown error. Please report how you produced this error.");
+		break;
+	}
+	return l_s_errmsg;
 }
 
 
