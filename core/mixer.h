@@ -158,7 +158,8 @@ public:
     /// get the actual MixSet
     MixSet getMixSet();
 
-    static float VOLUME_STEP_DIVISOR;
+    static float VOLUME_STEP_DIVISOR;     // The divisor for defining volume control steps (for mouse-wheel, DBUS and Normal step for Sliders )
+    static float VOLUME_PAGESTEP_DIVISOR; // The divisor for defining volume control steps (page-step for sliders)
 
     /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );

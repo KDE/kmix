@@ -331,9 +331,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		if ( hasVolumeSliders )
 		{
 			if ( wantsPlaybackSliders )
-				addSliders( volLayout, 'p', bothCaptureANDPlaybackExist );
+				addSliders( volLayout, 'p', bothCaptureANDPlaybackExist, m_mixdevice->playbackVolume(), m_slidersPlayback);
 			if ( wantsCaptureSliders )
-				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
+				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist, m_mixdevice->captureVolume() , m_slidersCapture );
 			if ( wantsMediaControls )
 				addMediaControls( volLayout ); // Please note that the addmediaControls() is in the hasVolumeSliders check onyl because it was easier to integrate
 			controlLayout->addSpacing( 3 );
@@ -434,9 +434,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		if ( hasVolumeSliders )
 		{
 			if ( wantsPlaybackSliders && m_mixdevice->playbackVolume().count() > 0 )
-				addSliders( volLayout, 'p', false );
+				addSliders( volLayout, 'p', false, m_mixdevice->playbackVolume(), m_slidersPlayback );
 			if ( wantsCaptureSliders && m_mixdevice->captureVolume().count() > 0 )
-				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist );
+				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist, m_mixdevice->captureVolume() , m_slidersCapture );
 			if ( wantsMediaControls )
 				addMediaControls( volLayout );
 		}
@@ -512,40 +512,21 @@ QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout)
 
 void MDWSlider::mediaPrev(bool)
 {
-  kDebug() << "ZZZZZZZ";
   mixDevice()->mediaPrev();
 }
 
 void MDWSlider::mediaNext(bool)
 {
-  kDebug() << "ZZZZZZZ";
   mixDevice()->mediaNext();
 }
 
 void MDWSlider::mediaPlay(bool)
 {
-  kDebug() << "ZZZZZZZ";
   mixDevice()->mediaPlay();
 }
 
-void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureLabel)
+void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureLabel, Volume& vol, QList<QAbstractSlider *>& ref_sliders)
 {
-	Volume* volP;
-	QList<QAbstractSlider *>* ref_slidersP;
-
-	if ( type == 'c' ) { // capture
-		volP              = &m_mixdevice->captureVolume();
-		ref_slidersP      = &m_slidersCapture;
-	}
-	else { // playback
-	  
-		volP              = &m_mixdevice->playbackVolume();
-		ref_slidersP      = &m_slidersPlayback;
-	}
-
-	Volume& vol = *volP;
-	QList<QAbstractSlider *>& ref_sliders = *ref_slidersP;
-
 	LabelType labelType = LT_NONE;
 	
 	if ( vol.count() >= 2  && ! isStereoLinked() )
@@ -594,14 +575,14 @@ kDebug() << "------------ volcount=" << vol.count() << " labelType=" << labelTyp
 		QAbstractSlider* slider;
 		if ( m_small )
 		{
-			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol)/10, // @todo !! User definable steps
+			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol) / Mixer::VOLUME_PAGESTEP_DIVISOR,
 				                           vol.getVolume( vc.chid ), _orientation, this );
 		} // small
 		else  {
 			slider = new VolumeSlider( _orientation, this );
 			slider->setMinimum(0);
 			slider->setMaximum(maxvol);
-			slider->setPageStep(maxvol/10);
+			slider->setPageStep(maxvol / Mixer::VOLUME_PAGESTEP_DIVISOR);
 			slider->setValue( maxvol - vol.getVolume( vc.chid ) );
 			extraData(slider).setSubcontrolLabel(subcontrolLabel);
 

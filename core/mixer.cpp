@@ -39,7 +39,7 @@ QList<Mixer *> Mixer::s_mixers;
 MasterControl Mixer::_globalMasterCurrent;
 MasterControl Mixer::_globalMasterPreferred;
 float Mixer::VOLUME_STEP_DIVISOR = 20;
-
+float Mixer::VOLUME_PAGESTEP_DIVISOR = 10;
 
 int Mixer::numDrivers()
 {

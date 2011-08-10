@@ -86,8 +86,8 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     }
 
 #ifdef _GNU_SOURCE
-// TODO minimizeRestore usage is currently VERY broken
-#warning minimizeRestore usage is currently VERY broken in KMIx. This must be fixed before doing a release.
+// TODO minimizeRestore usage is currently a bit broken. It only works by chance
+#warning minimizeRestore usage is currently slightly broken in KMIx. This should be fixed before doing a release.
 #endif
 
     if (_volumePopup) {
@@ -394,25 +394,23 @@ KMixDockWidget::trayWheelEvent(int delta)
     if ( inc < 1 ) inc = 1;
 
     long int cv = inc * (delta / 120 );
-    kDebug() << "twe: " << cv << " : " << vol;
-    vol.changeAllVolumes(cv);
-    kDebug() << "twe: " << cv << " : " << vol;
-/*    for ( int i = 0; i < vol.count(); i++ ) {
-        int newVal = vol[i] + (inc * (delta / 120));
-        if( newVal < 0 ) newVal = 0;
-        vol.setVolume( (Volume::ChannelID)i, newVal < vol.maxVolume() ? newVal : vol.maxVolume() );
-    }
-    */
+//    kDebug() << "twe: " << cv << " : " << vol;
+	if ( cv > 0 && md->isMuted())
+	{   // increasing form muted state: unmute and start with a low volume level
+	    md->setMuted(false);
+	    vol.setAllVolumes(cv);
+	}
+	else
+	    vol.changeAllVolumes(cv);
+
+//	kDebug() << "twe: " << cv << " : " << vol;
 
     if ( _playBeepOnVolumeChange ) {
         QString fileName("KDE_Beep_Digital_1.ogg");
         _audioPlayer->setCurrentSource(fileName);
         _audioPlayer->play();
     }
-/*      if ( md->playbackVolume().hasVolume() )
-         md->playbackVolume().setVolume(vol);
-      else
-         md->captureVolume().setVolume(vol);;*/
+
     md->mixer()->commitVolumeChange(md);
     setVolumeTip();
   }
