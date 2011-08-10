@@ -41,8 +41,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    aboutData.addAuthor(ki18n("Christian Esken"), ki18n("Current maintainer"), "esken@kde.org");
    aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("Co-maintainer, Alsa 0.9x port"), "helio@kde.org" );
    aboutData.addAuthor(ki18n("Brian Hanson")      , ki18n("Solaris port"), "bhanson@hotmail.com");
-/* The SGI and HP/UX ports are not maintained anymore, and no official part of KMix anymore
-   aboutData.addAuthor(ki18n("Paul Kendall")      , ki18n("SGI Port"), "paul@orion.co.nz");
+/* The HP/UX port is not maintained anymore, and no official part of KMix anymore
    aboutData.addAuthor(ki18n("Helge Deller")      , ki18n("HP/UX port"), "deller@gmx.de");
 */
    aboutData.addCredit(ki18n("Stefan Schimanski") , ki18n("Temporary maintainer"), "schimmi@kde.org");

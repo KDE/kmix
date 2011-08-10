@@ -82,7 +82,6 @@ soundcards.</para>-->
 <listitem><para> The ALSA soundcard driver.</para></listitem>
 <listitem><para> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <listitem><para> &Solaris; based machines.</para></listitem>
-<listitem><para> &IRIX; based machines.</para></listitem>
 <listitem><para> &HP-UX; based machines.</para></listitem>
 </itemizedlist>-->
 

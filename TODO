@@ -82,9 +82,6 @@ OK
 OK
 
 
-14.6.2004 Christian Esken
-I believe Mixer_IRIX is broken.
-This is due to the old "writeVolumeToHW" and "readVolumeFromHW" interface.
 
 14 december 2002 - Helio Chissini de Castro
 - Figure out devices like SBLive with external Live Drives and their multiple in/outs. As a sample, using headphone output from live drive, mute switch not work as they must, but we need mutting the headphone lfe and center channel to really mute headphone output.

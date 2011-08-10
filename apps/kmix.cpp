@@ -1,7 +1,7 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * Copyright 1996-2000 Christian Esken <esken@kde.org>
+ * Copyright 1996-2011 Christian Esken <esken@kde.org>
  * Copyright 2000-2003 Christian Esken <esken@kde.org>, Stefan Schimanski <1Stein@gmx.de>
  * Copyright 2002-2007 Christian Esken <esken@kde.org>, Helio Chissini de Castro <helio@conectiva.com.br>
  *

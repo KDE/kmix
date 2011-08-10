@@ -36,11 +36,6 @@
 #define SUN_MIXER
 #endif
 
-#ifdef sgi
-#include <sys/fcntl.h>
-#define IRIX_MIXER
-#endif
-
 #ifdef __linux__
 
 #ifdef HAVE_LIBASOUND2
@@ -75,10 +70,6 @@
 
 #if defined(SUN_MIXER)
 #include "backends/mixer_sun.cpp"
-#endif
-
-#if defined(IRIX_MIXER)
-#include "backends/mixer_irix.cpp"
 #endif
 
 // Alsa API's 
@@ -133,11 +124,6 @@ MixerFactory g_mixerFactories[] = {
 
 #if defined(SUN_MIXER)
     { SUN_getMixer, SUN_getDriverName },
-#endif
-
-    
-#if defined(IRIX_MIXER)
-    { IRIX_getMixer, IRIX_getDriverName },
 #endif
 
 #if defined(PULSE_MIXER)

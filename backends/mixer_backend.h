@@ -115,8 +115,9 @@ protected:
    virtual QString& udi() { return _udi; };
 
   int m_devnum;
-  /// User friendly name of the Mixer (e.g. "IRIX Audio Mixer"). If your mixer API
-  /// gives you a usable name, use that name.
+  /**
+   * User friendly name of the Mixer (e.g. "USB 7.1 Surround System"). If your mixer API gives you a usable name, use that name.
+   */
   QString m_mixerName;
   // All controls of this card
   MixSet m_mixDevices;
