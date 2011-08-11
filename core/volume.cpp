@@ -215,7 +215,7 @@ long Volume::getVolume(ChannelID chid) {
 long Volume::getAvgVolume(ChannelMask chmask)
 {
   int avgVolumeCounter = 0;
-  long long sumOfActiveVolumes = _volumesL.size();
+  long long sumOfActiveVolumes = 0;
   foreach (VolumeChannel vc, _volumesL )
   {
     if (Volume::_channelMaskEnum[vc.chid] & chmask )
