@@ -88,7 +88,7 @@ friend class MixDevice;
     // compatibility constructor
     // Volume( int channels, long maxVolume );
     // copy constructor
-    Volume( const Volume &v );
+    //Volume( const Volume &v );
 private:
     // constructor for dummy volumes
     Volume();

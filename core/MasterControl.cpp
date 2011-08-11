@@ -9,13 +9,10 @@
 
 MasterControl::MasterControl()
 {
-    // TODO Auto-generated constructor stub
-
 }
 
 MasterControl::~MasterControl()
 {
-    // TODO Auto-generated destructor stub
 }
 
 QString MasterControl::getCard() const

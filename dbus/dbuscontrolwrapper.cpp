@@ -76,7 +76,7 @@ void DBusControlWrapper::setVolume(int percentage)
 
 int DBusControlWrapper::volume()
 {
-	Volume vol = m_md->playbackVolume();
+	Volume& vol = m_md->playbackVolume();
 	return vol.maxVolume()
 		? vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) * 100 / vol.maxVolume()
 		: 0;
@@ -116,7 +116,7 @@ void DBusControlWrapper::setAbsoluteVolume(long absoluteVolume)
 long DBusControlWrapper::absoluteVolume()
 {
 	// @todo hardcoded
-	Volume vol = m_md->playbackVolume();
+	Volume& vol = m_md->playbackVolume();
 	return ( vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) );
 }
 

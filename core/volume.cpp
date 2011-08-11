@@ -94,18 +94,18 @@ VolumeChannel::VolumeChannel() {}
       _volumesL.insert(ch.chid, ch);
     }
 
-// copy constructor
-Volume::Volume( const Volume &v )
-{
-    _chmask          = v._chmask;
-    _maxVolume       = v._maxVolume;
-    _minVolume       = v._minVolume;
-    _hasSwitch       = v._hasSwitch;
-    _switchActivated = v._switchActivated;
-    _isCapture       = v._isCapture;
-    setVolume(v, (ChannelMask)v._chmask);
-    //    kDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
-}
+//// copy constructor
+//Volume::Volume( const Volume &v )
+//{
+//    _chmask          = v._chmask;
+//    _maxVolume       = v._maxVolume;
+//    _minVolume       = v._minVolume;
+//    _hasSwitch       = v._hasSwitch;
+//    _switchActivated = v._switchActivated;
+//    _isCapture       = v._isCapture;
+//    setVolume(v, (ChannelMask)v._chmask);
+//    //    kDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
+//}
 
 void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
