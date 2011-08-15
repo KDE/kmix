@@ -85,8 +85,10 @@ KMixWindow : public KXmlGuiWindow
    void showHelp();
    void showAbout();
    void toggleMenuBar();
-   //void loadVolumes();
+   void loadVolumes();
+   void loadVolumes(QString postfix);
    void saveVolumes();
+   void saveVolumes(QString postfix);
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void recreateGUI(bool saveView);
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
@@ -134,6 +136,8 @@ KMixWindow : public KXmlGuiWindow
    bool addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);
    void setInitialSize();
 
+    private:
+   static QString getKmixctrlRcFilename(QString postfix);
   private slots:
    void saveConfig();
    void slotHWInfo();
@@ -149,6 +153,17 @@ KMixWindow : public KXmlGuiWindow
 
    void newView();
    void saveAndCloseView(int);
+
+   void loadVolumes1() { loadVolumes(QString("1")); }
+   void loadVolumes2() { loadVolumes(QString("2")); }
+   void loadVolumes3() { loadVolumes(QString("3")); }
+   void loadVolumes4() { loadVolumes(QString("4")); }
+
+   void saveVolumes1() { saveVolumes(QString("1")); }
+   void saveVolumes2() { saveVolumes(QString("2")); }
+   void saveVolumes3() { saveVolumes(QString("3")); }
+   void saveVolumes4() { saveVolumes(QString("4")); }
+;
 };
 
 #endif // KMIX_H

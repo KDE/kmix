@@ -164,6 +164,46 @@ void KMixWindow::initActions()
     action->setText( i18n("Select Master Channel...") );
     connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
 
+    action = actionCollection()->addAction( "save_1" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1));
+    action->setText( i18n("Save volume profile 1") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes1()));
+
+    action = actionCollection()->addAction( "save_2" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_2));
+    action->setText( i18n("Save volume profile 2") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes2()));
+
+    action = actionCollection()->addAction( "save_3" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_3));
+    action->setText( i18n("Save volume profile 3") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes3()));
+
+    action = actionCollection()->addAction( "save_4" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_4));
+    action->setText( i18n("Save volume profile 4") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes4()));
+
+    action = actionCollection()->addAction( "load_1" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_1));
+    action->setText( i18n("Load volume profile 1") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes1()));
+
+    action = actionCollection()->addAction( "load_2" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_2));
+    action->setText( i18n("Load volume profile 2") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes2()));
+
+    action = actionCollection()->addAction( "load_3" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_3));
+    action->setText( i18n("Load volume profile 3") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes3()));
+
+    action = actionCollection()->addAction( "load_4" );
+    action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_4));
+    action->setText( i18n("Load volume profile 4") );
+    connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
+
     osdWidget = new OSDWidget();
 
     createGUI( QLatin1String(  "kmixui.rc" ) );
@@ -294,6 +334,7 @@ void KMixWindow::saveConfig()
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
 
+    // TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
     kDebug() << "Saved config ... now syncing explicitely";
     KGlobal::config()->sync();
     kDebug() << "Saved config ... sync finished";
@@ -388,8 +429,14 @@ void KMixWindow::saveViewConfig()
  */
 void KMixWindow::saveVolumes()
 {
+	saveVolumes(QString());
+}
+
+void KMixWindow::saveVolumes(QString postfix)
+{
     kDebug() << "About to save config (Volume)";
-    KConfig *cfg = new KConfig( QLatin1String(  "kmixctrlrc" ) );
+    const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
+    KConfig *cfg = new KConfig( kmixctrlRcFilename );
     for ( int i=0; i<Mixer::mixers().count(); ++i)
     {
         Mixer *mixer = (Mixer::mixers())[i];
@@ -399,6 +446,16 @@ void KMixWindow::saveVolumes()
     }
     delete cfg;
     kDebug() << "Config (Volume) saving done";
+}
+
+QString KMixWindow::getKmixctrlRcFilename(QString postfix)
+{
+	QString kmixctrlRcFilename("kmixctrlrc");
+	if ( !postfix.isEmpty() )
+	{
+		kmixctrlRcFilename.append(".").append(postfix);
+	}
+	return kmixctrlRcFilename;
 }
 
 
@@ -463,11 +520,19 @@ void KMixWindow::loadBaseConfig()
  * Restores the default voumes as stored via saveVolumes() or the
  * execution of "kmixctrl --save"
  */
-/* Currently this is not in use
-void
-KMixWindow::loadVolumes()
+
+
+void KMixWindow::loadVolumes()
 {
-    KConfig *cfg = new KConfig( QLatin1String(  "kmixctrlrc" ), true );
+	loadVolumes(QString());
+}
+
+void KMixWindow::loadVolumes(QString postfix)
+{
+    kDebug() << "About to load config (Volume)";
+    const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
+
+    KConfig *cfg = new KConfig( kmixctrlRcFilename );
     for ( int i=0; i<Mixer::mixers().count(); ++i)
     {
         Mixer *mixer = (Mixer::mixers())[i];
@@ -475,7 +540,7 @@ KMixWindow::loadVolumes()
     }
     delete cfg;
 }
- */
+
 
 
 
