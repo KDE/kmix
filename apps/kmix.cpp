@@ -988,7 +988,7 @@ void KMixWindow::showVolumeDisplay()
     MixDevice *md = Mixer::getGlobalMasterMD();
     if ( md == 0 ) return; // shouldn't happen, but lets play safe
     // Current volume
-    Volume vol = md->playbackVolume();
+    Volume& vol = md->playbackVolume();
     int currentVolume = vol.maxVolume()
                 ? vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) * 100 / vol.maxVolume()
                 : 0;

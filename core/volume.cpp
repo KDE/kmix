@@ -55,6 +55,7 @@ Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwit
 
 
 // copy constructor
+/*
 Volume::Volume( const Volume &v )
 {
     _chmask          = v._chmask;
@@ -66,6 +67,7 @@ Volume::Volume( const Volume &v )
     setVolume(v, (ChannelMask)v._chmask);
     //    kDebug(67100) << "Volume::copy-constructor initialized " << v << "\n";
 }
+*/
 
 void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
