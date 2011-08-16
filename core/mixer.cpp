@@ -174,7 +174,6 @@ void Mixer::volumeLoad( KConfig *config )
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
        MixDevice *md = _mixerBackend->m_mixDevices[i];
-       _mixerBackend->setRecsrcHW( md->id(), md->isRecSource() );
        _mixerBackend->writeVolumeToHW( md->id(), md );
        if ( md->isEnum() ) _mixerBackend->setEnumIdHW( md->id(), md->enumId() );
    }
@@ -469,19 +468,6 @@ void Mixer::setLocalMasterMD(QString &devPK)
 {
     _masterDevicePK = devPK;
 }
-
-
-
-/**
-   Used internally by KMix and as DBUS method
-*/
-void Mixer::setRecordSource( const QString& mixdeviceID, bool on )
-{
-   _mixerBackend->setRecsrcHW( mixdeviceID, on );
-}
-
-
-
 
 
 MixDevice* Mixer::find(const QString& mixdeviceID)

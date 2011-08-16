@@ -180,7 +180,6 @@ public:
 
 public slots:
     void readSetFromHWforceUpdate() const;
-    virtual void setRecordSource(const QString & controlID, bool on);
     virtual void setBalance(int balance); // sets the m_balance (see there)
     
 signals:

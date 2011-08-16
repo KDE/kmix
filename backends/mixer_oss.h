@@ -39,16 +39,19 @@ public:
   virtual QString getDriverName();
 
 protected:
-  virtual void setRecsrcHW( const QString& id, bool on );
-  //virtual bool isRecsrcHW( const QString& id );
 
   virtual int open();
   virtual int close();
 
   virtual QString deviceName( int );
   virtual QString deviceNameDevfs( int );
+
+private:
   int     m_fd;
   QString m_deviceName;
+
+  int setRecsrcToOSS( const QString& id, bool on );
+
 };
 
 #endif

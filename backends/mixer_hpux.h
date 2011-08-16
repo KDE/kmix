@@ -44,9 +44,6 @@ public:
   virtual QString getDriverName();
 
 protected:
-  virtual void setRecsrcHW( int devnum, bool on = true );
-  virtual bool isRecsrcHW( int devnum );
-
   virtual int open();
   virtual int close();
 

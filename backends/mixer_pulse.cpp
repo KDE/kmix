@@ -1270,16 +1270,6 @@ void Mixer_PULSE::triggerUpdate()
     readSetFromHW();
 }
 
-void Mixer_PULSE::setRecsrcHW( const QString& /*id*/, bool /* on */ )
-{
-   return;
-}
-
-bool Mixer_PULSE::isRecsrcHW( const QString& /*id*/ )
-{
-   return false;
-}
-
 // Please see KMixWindow::initActionsAfterInitMixer(), it uses the driverName
 
 QString PULSE_getDriverName() {

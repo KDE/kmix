@@ -393,33 +393,28 @@ int Mixer_SUN::writeVolumeToHW( const QString& id, MixDevice *md )
    }
 }
 
-//======================================================================
-// FUNCTION    : Mixer::setRecsrcHW
-// DESCRIPTION :
-//======================================================================
-void Mixer_SUN::setRecsrcHW( const QString& /*id*/, bool /* on */ )
-{
-   return;
-}
 
 //======================================================================
 // FUNCTION    : Mixer::isRecsrcHW
 // DESCRIPTION : Returns true if the specified device is a record source.
 //======================================================================
-bool Mixer_SUN::isRecsrcHW( const QString& id )
-{
-   int devnum = id2num(id);
-   switch ( devnum )
-   {
-      case MIXERDEV_MICROPHONE :
-      case MIXERDEV_LINE_IN :
-      case MIXERDEV_CD :
-         return true;
 
-      default :
-         return false;
-   }
-}
+// isRecsrcHW() is not supported any longer. You must set the state in the MixDevice in readVolumeFromHW() or writeVolumeFromHW() appropriately
+
+//bool Mixer_SUN::isRecsrcHW( isRecsrcHW(const QString& id )
+//{
+//   int devnum = id2num(id);
+//   switch ( devnum )
+//   {
+//      case MIXERDEV_MICROPHONE :
+//      case MIXERDEV_LINE_IN :
+//      case MIXERDEV_CD :
+//         return true;
+//
+//      default :
+//         return false;
+//   }
+//}
 
 //======================================================================
 // FUNCTION    : Mixer::VolumeToGainBalance

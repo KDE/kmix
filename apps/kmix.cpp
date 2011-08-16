@@ -1061,9 +1061,10 @@ void KMixWindow::showVolumeDisplay()
     if ( md == 0 ) return; // shouldn't happen, but lets play safe
     // Current volume
     Volume& vol = md->playbackVolume();
-    int currentVolume = vol.maxVolume()
-                ? vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) * 100 / vol.maxVolume()
-                : 0;
+    int currentVolume = 0;
+    if ( vol.hasVolume() && vol.maxVolume() != 0 ) {
+    	currentVolume = (vol.getAvgVolume(Volume::MMAIN)*100 )/( vol.maxVolume() );
+    }
 
     osdWidget->setCurrentVolume(currentVolume, md->isMuted());
     osdWidget->show();

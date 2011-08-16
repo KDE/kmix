@@ -65,10 +65,6 @@ Mixer_OSS4::~Mixer_OSS4()
 	close();
 }
 
-void Mixer_OSS4::setRecsrcHW(const QString& id, bool on)
-{
-}
-
 //classifies mixexts according to their name, last classification wins
 MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 {

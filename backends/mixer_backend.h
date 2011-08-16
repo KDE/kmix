@@ -81,10 +81,6 @@ protected:
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
 
-  /// Recording Switches
-  virtual void setRecsrcHW( const QString& id, bool on) = 0;
-  //virtual bool isRecsrcHW( const QString& id ) = 0;
-
   virtual bool moveStream( const QString& id, const QString& destId );
 
   virtual int mediaPlay(QString ) { return 0; }; // implement in the backend if it supports it

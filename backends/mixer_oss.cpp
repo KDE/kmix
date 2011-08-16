@@ -243,21 +243,6 @@ QString Mixer_OSS::errorText(int mixer_error)
   return l_s_errmsg;
 }
 
-/*
-bool Mixer_OSS::isRecsrcHW( const QString& id )
-{
-   int devnum = id2num(id);
-   bool isRecsrc = false;
-   int recsrcMask;
-   if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
-      errormsg(Mixer::ERR_READ);
-   else {
-      // test if device bit is set in record bit mask
-      isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
-   }
-   return isRecsrc;
-}
-*/
 
 void print_recsrc(int recsrc)
 {
@@ -273,13 +258,17 @@ void print_recsrc(int recsrc)
 	}	
 	kDebug() << msg;
 }
-void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
+
+int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
 {
     kDebug() << "Auslesen 1:"; 
     int i_recsrc, oldrecsrc;
     int devnum = id2num(id);
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
+    {
         errormsg(Mixer::ERR_READ);
+        return Mixer::ERR_READ;
+    }
 
     kDebug() << "Auslesen 2:"; print_recsrc(i_recsrc);
      
@@ -291,7 +280,9 @@ void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
     if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
     {
         errormsg (Mixer::ERR_WRITE);
+        // don't return here. It is much better to re-read the capture switch states.
     }
+
     /* The following if {} patch was submitted by Tim McCormick <tim@pcbsd.org>. */
     /*   Comment (cesken): This patch fixes an issue with mutual exclusive recording sources.
          Actually the kernel soundcard driver *could* "do the right thing" by examining the change
@@ -331,6 +322,8 @@ void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
         } // for all controls
     } // reading newrecsrcmask is OK
     
+    return Mixer::OK;
+
 }
 
 
@@ -338,46 +331,66 @@ void Mixer_OSS::setRecsrcHW( const QString& id, bool on )
 
 int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
 {
-    int ret = 0;
+	int ret = 0;
 
-    // --- VOLUME ---
-    Volume& vol = md->playbackVolume();
-    int devnum = id2num(id);
-    
+	// --- VOLUME ---
+	Volume& vol = md->playbackVolume();
+	int devnum = id2num(id);
 
-    bool controlChanged = false;
 
-    if ( vol.hasVolume() ) {
-        int volume;
-         if (ioctl(m_fd, MIXER_READ( devnum ), &volume) == -1)
-        {
-            /* Oops, can't read mixer */
-            ret = Mixer::ERR_READ;
-        }
-        else
-        {
+	bool controlChanged = false;
 
-            int volLeft  = (volume & 0x7f);
-            int volRight = ((volume>>8) & 0x7f);
-            bool isMuted = volLeft==0 && ( vol.count() < 2 || volRight==0 ); // muted is "left and right muted" or "left muted when mono"
-            md->setMuted( isMuted );
-            if ( ! isMuted ) {
-               // Muted is represented in OSS by value 0. We don't want to write the value 0 as a volume,
-               // but instead we onlm mark it muted (see setMuted() above).
-               int volLeftOld = vol.getVolume(Volume::LEFT);
-	       vol.setVolume( Volume::LEFT, volLeft);
-	       if ( volLeftOld != volLeft )
-		 controlChanged = true;
-               if( vol.count() > 1 )
-	       {
-		  int volRightOld = vol.getVolume(Volume::RIGHT);
-                  vol.setVolume( Volume::RIGHT, volRight);
-		  if ( volRightOld != volRight )
-		    controlChanged = true;
-	       }
-            }
-        }
-    }
+	if ( vol.hasVolume() ) {
+		int volume;
+		if (ioctl(m_fd, MIXER_READ( devnum ), &volume) == -1)
+		{
+			/* Oops, can't read mixer */
+			errormsg(Mixer::ERR_READ);
+			ret = Mixer::ERR_READ;
+		}
+		else
+		{
+
+			int volLeft  = (volume & 0x7f);
+			int volRight = ((volume>>8) & 0x7f);
+//
+//			if ( md->id() == "0" )
+//				kDebug() << md->id() << ": " << "volLeft=" << volLeft << ", volRight" << volRight;
+
+			bool isMuted = volLeft==0 && ( vol.count() < 2 || volRight==0 ); // muted is "left and right muted" or "left muted when mono"
+			md->setMuted( isMuted );
+			if ( ! isMuted ) {
+				// Muted is represented in OSS by value 0. We don't want to write the value 0 as a volume,
+				// but instead we only mark it muted (see setMuted() above).
+
+		        foreach (VolumeChannel vc, vol.getVolumes() )
+		        {
+		               long volOld = 0;
+		               long volNew = 0;
+		               switch(vc.chid) {
+	                   case Volume::LEFT:
+	                	   volOld =  vol.getVolume(Volume::LEFT);
+	                	   volNew  = volLeft;
+	                	   vol.setVolume( Volume::LEFT, volNew );
+	                	   break;
+	                   case Volume::RIGHT:
+	                	   volOld =  vol.getVolume(Volume::RIGHT);
+	                	   volNew  = volRight;
+	                	   vol.setVolume( Volume::RIGHT, volNew );
+	                	   break;
+					   default:
+						   // not supported by OSSv3
+						   break;
+		               }
+
+		               if ( volOld != volNew ) {
+		            	   controlChanged = true;
+		            	   //if ( md->id() == "0" ) kDebug() << "changed";
+		               }
+		        } // foreach
+			} // muted
+		}
+	}
 
 
     // --- RECORD SWITCH ---
@@ -396,15 +409,22 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
 		
     }
 
+    kDebug() << "Helo " << ret << "," << controlChanged;
 	if ( ret== 0)
 	{
 		if ( controlChanged )
-			return 0;
+		{
+			kDebug() << "FINE! " << ret;
+			return Mixer::OK;
+		}
 		else
+		{
 			return Mixer::OK_UNCHANGED;
+		}
 	}
 	else
 	{
+		kDebug() << "SHIT! " << ret;
 		return ret;
 	}
 }
@@ -429,6 +449,9 @@ int Mixer_OSS::writeVolumeToHW( const QString& id, MixDevice *md)
     
     if (ioctl(m_fd, MIXER_WRITE( devnum ), &volume) == -1)
         return Mixer::ERR_WRITE;
+
+    setRecsrcToOSS( id, md->isRecSource() );
+
 
     return 0;
 }

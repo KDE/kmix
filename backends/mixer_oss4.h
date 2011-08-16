@@ -20,7 +20,6 @@ public:
   virtual int writeVolumeToHW(const QString& id, MixDevice *md );
   virtual void setEnumIdHW(const QString& id, unsigned int idx);
   virtual unsigned int enumIdHW(const QString& id);
-  virtual void setRecsrcHW(const QString& id, bool on);
 
 protected:
 

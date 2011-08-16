@@ -209,6 +209,7 @@ void KMixD::loadBaseConfig()
 {
     KConfigGroup config(KGlobal::config(), "Global");
 
+    // TODO cesken Should we save this configuration items in kmixd at all?
    m_onLogin = config.readEntry("startkdeRestore", true );
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );

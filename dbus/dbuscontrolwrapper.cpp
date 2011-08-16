@@ -78,7 +78,7 @@ int DBusControlWrapper::volume()
 {
 	Volume& vol = m_md->playbackVolume();
 	return vol.maxVolume()
-		? vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) * 100 / vol.maxVolume()
+		? vol.getAvgVolume( Volume::MMAIN ) * 100 / vol.maxVolume()
 		: 0;
 }
 
@@ -117,7 +117,7 @@ long DBusControlWrapper::absoluteVolume()
 {
 	// @todo hardcoded
 	Volume& vol = m_md->playbackVolume();
-	return ( vol.getAvgVolume( (Volume::ChannelMask)(Volume::MLEFT | Volume::MRIGHT) ) );
+	return vol.getAvgVolume( Volume::MMAIN );
 }
 
 void DBusControlWrapper::setMute(bool muted)
@@ -149,5 +149,8 @@ bool DBusControlWrapper::isRecordSource()
 
 void DBusControlWrapper::setRecordSource(bool on)
 {
-	m_md->mixer()->setRecordSource( m_md->id(), on );
+	MixDevice* md = m_md->mixer()->getMixdeviceById(m_md->id());
+	if ( md != 0 )
+		md->setRecSource(on);
+	m_md->mixer()->commitVolumeChange( m_md );
 }

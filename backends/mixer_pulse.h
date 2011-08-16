@@ -51,8 +51,6 @@ class Mixer_PULSE : public Mixer_Backend
 
         virtual int readVolumeFromHW( const QString& id, MixDevice *md  );
         virtual int writeVolumeToHW ( const QString& id, MixDevice *md  );
-        void setRecsrcHW              ( const QString& id, bool on );
-        bool isRecsrcHW               ( const QString& id );
 
         virtual bool moveStream( const QString& id, const QString& destId );
 

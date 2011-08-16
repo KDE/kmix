@@ -228,7 +228,7 @@ KMixDockWidget::setVolumeTip()
         if (! vol.hasVolume() ) {
            vol = md->captureVolume();
         }
-        if ( vol.hasVolume() && vol.maxVolume() != 0 ) {
+        if ( vol.hasVolume() ) {
             val = (vol.getAvgVolume(Volume::MMAIN)*100 )/( vol.maxVolume() );
         }
 

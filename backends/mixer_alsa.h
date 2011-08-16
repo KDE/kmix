@@ -44,8 +44,6 @@ public:
 
     virtual int  readVolumeFromHW( const QString& id, MixDevice *md );
     virtual int  writeVolumeToHW ( const QString& id, MixDevice *md );
-    virtual void setRecsrcHW( const QString& id, bool on);
-    virtual bool isRecsrcHW( const QString& id );
     virtual void setEnumIdHW( const QString& id, unsigned int);
     virtual unsigned int enumIdHW(const QString& id);
     virtual bool prepareUpdateFromHW();
@@ -66,6 +64,7 @@ private:
     int setupAlsaPolling();
     void deinitAlsaPolling();
 
+    virtual bool isRecsrcHW( const QString& id );
     int identify( snd_mixer_selem_id_t *sid );
     snd_mixer_elem_t* getMixerElem(int devnum);
 
