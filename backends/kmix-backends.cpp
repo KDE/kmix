@@ -134,9 +134,6 @@ MixerFactory g_mixerFactories[] = {
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
 
-    // Possibly encapsualte by #ifdef HAVE_DBUS
-    { MPRIS2_getMixer, MPRIS2_getDriverName },
-
 #if defined(OSS_MIXER)
     { OSS_getMixer, OSS_getDriverName },
 #endif
@@ -144,6 +141,9 @@ MixerFactory g_mixerFactories[] = {
 #if defined(OSS4_MIXER)
     { OSS4_getMixer, OSS4_getDriverName },
 #endif
+
+    // Possibly encapsualte by #ifdef HAVE_DBUS
+    { MPRIS2_getMixer, MPRIS2_getDriverName },
 
 #if defined(HPUX_MIXER)
     { HPUX_getMixer, HPUX_getDriverName },
