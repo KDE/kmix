@@ -287,13 +287,13 @@ soundcards.</para>-->
 <chapter id="advanced">
 <title>Advanced usage</title>
 <sect1>
-<title>Remote controlling and scripting via DBUS</title>
+<title>Remote controlling and scripting via &DBus;</title>
 <para>
-You can control KMix via DBUS. This is for advanced users who want to achive special tasks, like muting the PC every day at 10 pm, or for any other scripting task. 
+You can control &kmix; via &DBus;. This is for advanced users who want to achive special tasks, like muting the PC every day at 10 pm, or for any other scripting task.
 </para>
 
 <para>
-List all KMix related DBUS methods and properties
+List all &kmix; related &DBus; methods and properties
 <programlisting>qdbus org.kde.kmix</programlisting>
 </para>
 
@@ -303,7 +303,8 @@ Getting volume level (0-100%):
 </para>
 
 <para>
-<programlisting>Setting volume level (0-100%): qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+Setting volume level (0-100%):
+<programlisting>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
 </para>
 
 </sect1>
