@@ -289,7 +289,7 @@ soundcards.</para>-->
 <sect1>
 <title>Remote controlling and scripting via &DBus;</title>
 <para>
-You can control &kmix; via &DBus;. This is for advanced users who want to achive special tasks, like muting the PC every day at 10 pm, or for any other scripting task.
+You can control &kmix; via &DBus;. This is for advanced users who want to achieve special tasks, like muting the PC every day at 10 pm, or for any other scripting task.
 </para>
 
 <para>
