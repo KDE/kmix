@@ -444,6 +444,7 @@ void KMixWindow::saveVolumes(QString postfix)
             mixer->volumeSave( cfg );
         }
     }
+    cfg->sync();
     delete cfg;
     kDebug() << "Config (Volume) saving done";
 }
