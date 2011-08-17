@@ -27,7 +27,7 @@
 //#include "core/mixer.h"
 #include "core/mixdevice.h"
 #include "core/mixset.h"
-#include "core/mixer.h"
+class Mixer;
 
 class Mixer_Backend : public QObject
 {
