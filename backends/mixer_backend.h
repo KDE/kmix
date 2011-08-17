@@ -22,11 +22,12 @@
 #ifndef MIXER_BACKEND_H
 #define MIXER_BACKEND_H
 
+#include <QString>
 #include <QTime>
 //#include "core/mixer.h"
 #include "core/mixdevice.h"
 #include "core/mixset.h"
-class Mixer;
+#include "core/mixer.h"
 
 class Mixer_Backend : public QObject
 {
@@ -48,7 +49,7 @@ protected:
    * driver name on instanciated objects.
    *
    * Please note, that there is also a static implementation of the driverName
-   * (Because there is no "virtual static" in C++, I need the method twice). 
+   * (Because there is no "virtual static" in C++, I need the method twice).
    * The static implementation is for the Mixer Factory (who needs it *before* instanciating an object).
    * While it is not a member function, its implementation can still be found in the corresponding
    * Backend implementation. For example in mixer_oss.cpp there is a global function called OSS_getDriverName().
@@ -68,7 +69,7 @@ protected:
 
   /** @return true, if the Mixer is open (and thus can be operated) */
   bool isOpen();
-  
+
   virtual bool prepareUpdateFromHW();
   void readSetFromHWforceUpdate() const;
 
@@ -101,9 +102,9 @@ protected:
   void errormsg(int mixer_error);
 
 
-  /// Returns translated WhatsThis messages for a control.Translates from 
+  /// Returns translated WhatsThis messages for a control.Translates from
   virtual QString translateKernelToWhatsthis(const QString &kernelName);
-  
+
    /// Translate ID to internal device number
    virtual int id2num(const QString& id);
 
@@ -133,7 +134,7 @@ protected:
   Mixer* _mixer;
   QTimer* _pollingTimer;
   QString _udi;  // Universal Device Identification
-  
+
   mutable bool _readSetFromHWforceUpdate;
 
 signals:

@@ -240,7 +240,7 @@ int Mixer_OSS4::open()
 
 			if ( wrapIoctl( ioctl (m_fd, SNDCTL_MIX_NREXT, &m_numExtensions) ) < 0 )
 			{
-				//TODO: more specific error handling here
+				//TO DO: more specific error handling here
 				return Mixer::ERR_READ;
 			}
 
@@ -536,7 +536,7 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 
 	if ( wrapIoctl( ioctl(m_fd, SNDCTL_MIX_EXTINFO, &extinfo) ) < 0 )
 	{
-		//TODO: more specific error handling
+		//TO DO: more specific error handling
 		return Mixer::ERR_READ;
 	}
 
@@ -604,7 +604,7 @@ int Mixer_OSS4::writeVolumeToHW(const QString& id, MixDevice *md)
 
 	if ( wrapIoctl( ioctl(m_fd, SNDCTL_MIX_EXTINFO, &extinfo) ) < 0 )
 	{
-		//TODO: more specific error handling
+		//TO DO: more specific error handling
 		kDebug ( 67100 ) << "failed to read info for control " << id2num(id) << endl;
 		return Mixer::ERR_READ;
 	}
@@ -666,7 +666,7 @@ void Mixer_OSS4::setEnumIdHW(const QString& id, unsigned int idx)
 
 	if ( wrapIoctl ( ioctl(m_fd, SNDCTL_MIX_EXTINFO, &extinfo) ) < 0 )
 	{
-		//TODO: more specific error handling
+		//TO DO: more specific error handling
 		kDebug ( 67100 ) << "failed to read info for control " << id2num(id) << endl;
 		return;
 	}
@@ -714,8 +714,8 @@ unsigned int Mixer_OSS4::enumIdHW(const QString& id)
 
 	if ( wrapIoctl ( ioctl(m_fd, SNDCTL_MIX_EXTINFO, &extinfo) ) < 0 )
 	{
-		//TODO: more specific error handling
-		//TODO: check whether those return values are actually possible
+		//TO DO: more specific error handling
+		//TO DO: check whether those return values are actually possible
 		return Mixer::ERR_READ;
 	}
 

@@ -169,11 +169,7 @@ void MDWSlider::createShortcutActions()
         //   b->enableGlobalShortcut();
         connect( b, SIGNAL(triggered(bool)), SLOT(toggleMuted()) );
     }
-    
-    // @todo: The following has been added for an unknown reason. Have to check this. - cesken
-    //        Is there a reason why it is only done for Mute and not Volume Up/down?
-    // 2010-08-20: I found it out: It's a bug ( Bug 209901 -  Volume Up and Volume Down buttons mapped to wrong audio channel)
-    //if (view) view->actionCollection()->addAction( QString("Toggle mute %1").arg( actionSuffix ), b );
+
 }
 
 
