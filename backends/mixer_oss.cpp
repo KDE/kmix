@@ -261,7 +261,6 @@ void print_recsrc(int recsrc)
 
 int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
 {
-    kDebug() << "Auslesen 1:"; 
     int i_recsrc, oldrecsrc;
     int devnum = id2num(id);
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
@@ -270,7 +269,7 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
         return Mixer::ERR_READ;
     }
 
-    kDebug() << "Auslesen 2:"; print_recsrc(i_recsrc);
+//    kDebug() << "Auslesen 2:"; print_recsrc(i_recsrc);
      
     oldrecsrc = i_recsrc = on ?
              (i_recsrc | (1 << devnum )) :
@@ -409,12 +408,11 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
 		
     }
 
-    kDebug() << "Helo " << ret << "," << controlChanged;
 	if ( ret== 0)
 	{
 		if ( controlChanged )
 		{
-			kDebug() << "FINE! " << ret;
+			//kDebug() << "FINE! " << ret;
 			return Mixer::OK;
 		}
 		else
@@ -424,7 +422,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
 	}
 	else
 	{
-		kDebug() << "SHIT! " << ret;
+		//kDebug() << "SHIT! " << ret;
 		return ret;
 	}
 }

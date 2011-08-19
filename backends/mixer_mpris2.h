@@ -53,7 +53,7 @@ class Mixer_MPRIS2 : public Mixer_Backend
   Q_OBJECT
 public:
   explicit Mixer_MPRIS2(Mixer *mixer, int device = -1 );
-    ~Mixer_MPRIS2();
+    virtual ~Mixer_MPRIS2();
     void getMprisControl(QDBusConnection& conn, QString arg1);
     QString getDriverName();
 
