@@ -56,7 +56,7 @@ public:
 	 * 
 	 */
     enum MixerError { OK=0, ERR_PERM=1, ERR_WRITE, ERR_READ,
-        ERR_OPEN, ERR_LASTERR, OK_UNCHANGED };
+        ERR_OPEN, OK_UNCHANGED };
 
 
     Mixer( QString& ref_driverName, int device );

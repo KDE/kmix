@@ -140,12 +140,14 @@ void Mixer_Backend::readSetFromHW()
 	{
 		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
 		if ( needsPolling() )
+		{
 			_pollingTimer->setInterval(50);
-		QTime fastPollingEndsAt = QTime::currentTime ();
-		fastPollingEndsAt = fastPollingEndsAt.addSecs(5);
-		_fastPollingEndsAt = fastPollingEndsAt;
-		//_fastPollingEndsAt = fastPollingEndsAt;
-		kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
+			QTime fastPollingEndsAt = QTime::currentTime ();
+			fastPollingEndsAt = fastPollingEndsAt.addSecs(5);
+			_fastPollingEndsAt = fastPollingEndsAt;
+			//_fastPollingEndsAt = fastPollingEndsAt;
+			kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
+		}
 		emit controlChanged();
 	}
 
