@@ -577,9 +577,9 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
            if ( step < 1 ) step = 1;
            volC.changeAllVolumes(-step);
         }
-    }
 
-    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
+    	_mixerBackend->writeVolumeToHW(mixdeviceID, md);
+    }
 
     /************************************************************
         It is important, not to implement this method like this:
