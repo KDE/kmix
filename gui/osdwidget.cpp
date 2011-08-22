@@ -165,6 +165,7 @@ void OSDWidget::resizeEvent(QResizeEvent*)
 void OSDWidget::showEvent(QShowEvent *event)
 {
     Plasma::WindowEffects::overrideShadow(winId(), true);
+    Plasma::WindowEffects::enableBlurBehind(winId(), true, m_background->mask());
 }
 
 #include "osdwidget.moc"
