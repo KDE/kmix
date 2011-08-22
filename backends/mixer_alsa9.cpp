@@ -63,7 +63,7 @@ ALSA_getMixer(Mixer *mixer, int device )
 Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  device )
 {
    m_fds = 0;
-   m_sns = 0;
+//   m_sns = 0;
    _handle = 0;
    _initialUpdate = true;
 }
@@ -325,42 +325,51 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 /* setup for select on stdin and the mixer fd */
 int Mixer_ALSA::setupAlsaPolling()
 {
-    assert( !m_sns );
+	//    assert( !m_sns );
 
-    // --- Step 1: Retrieve FD's from ALSALIB
-    int err;
-    if ((m_count = snd_mixer_poll_descriptors_count(_handle)) < 0) {
-        kDebug() << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  m_count << "\n";
-        return Mixer::ERR_OPEN;
-    }
+	// --- Step 1: Retrieve FD's from ALSALIB
+	int err;
+	int countNew = 0;
+	if ((countNew = snd_mixer_poll_descriptors_count(_handle)) < 0) {
+		kDebug() << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  countNew << "\n";
+		return Mixer::ERR_OPEN;
+	}
 
-    m_fds = (struct pollfd*)calloc(m_count, sizeof(struct pollfd));
-    if (m_fds == NULL) {
-        kDebug() << "Mixer_ALSA::poll() , calloc() = null" << "\n";
-        return Mixer::ERR_OPEN;
-    }
-
-    m_fds->events = POLLIN;
-    if ((err = snd_mixer_poll_descriptors(_handle, m_fds, m_count)) < 0) {
-        kDebug() << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
-        return Mixer::ERR_OPEN;
-    }
-    if (err != m_count) {
-        kDebug() << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  m_count << "\n";
-        return Mixer::ERR_OPEN;
-    }
+	if ( countNew != m_sns.size() )
+	{
+		// Redo everything if count of FD's have changed (emulating alsamixer behaviour here)
+		 while (!m_sns.isEmpty())
+		     delete m_sns.takeFirst();
 
 
-    // --- Step 2: Create QSocketNotifier's for the FD's
-    m_sns = new QSocketNotifier*[m_count];
-    for ( int i = 0; i < m_count; ++i )
-    {
-        //kDebug() << "socket " << i;
-        m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
-        connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()));
-    }
+		m_fds = (struct pollfd*)calloc(countNew, sizeof(struct pollfd));
+		if (m_fds == NULL) {
+			kDebug() << "Mixer_ALSA::poll() , calloc() = null" << "\n";
+			return Mixer::ERR_OPEN;
+		}
 
-    return 0;
+
+		if ((err = snd_mixer_poll_descriptors(_handle, m_fds, countNew)) < 0) {
+			kDebug() << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  err << "\n";
+			return Mixer::ERR_OPEN;
+		}
+		if (err != countNew) {
+			kDebug() << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" << err << " m_count=" <<  countNew << "\n";
+			return Mixer::ERR_OPEN;
+		}
+
+
+		// --- Step 2: Create QSocketNotifier's for the FD's
+		//m_sns = new QSocketNotifier*[m_count];
+		for ( int i = 0; i < countNew; ++i )
+		{
+			//kDebug() << "socket " << i;
+			m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+			connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()));
+		}
+	}
+
+	return 0;
 }
 
 void Mixer_ALSA::addEnumerated(snd_mixer_elem_t *elem, QList<QString*>& enumList)
@@ -445,17 +454,12 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
 
 void Mixer_ALSA::deinitAlsaPolling()
 {
-  if ( m_fds )
-      free( m_fds );
-  m_fds = 0;
+	if ( m_fds )
+		free( m_fds );
+	m_fds = 0;
 
-  if ( m_sns )
-  {
-      for ( int i = 0; i < m_count; i++ )
-          delete m_sns[i];
-      delete [] m_sns;
-      m_sns = 0;
-  }
+	while (!m_sns.isEmpty())
+		delete m_sns.takeFirst();
 }
 
 int
@@ -542,10 +546,11 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
     if ( !m_fds || !m_isOpen )
         return false;
 
+    setupAlsaPolling();
     // Poll on fds with 10ms timeout
     // Hint: alsamixer has an infinite timeout, but we cannot do this because we would block
     // the X11 event handling (Qt event loop) with this.
-    int finished = poll(m_fds, m_count, 10);
+    int finished = poll(m_fds, m_sns.size(), 10);
 
     bool updated = false;
 
@@ -554,7 +559,8 @@ bool Mixer_ALSA::prepareUpdateFromHW() {
 
         unsigned short revents;
 
-        if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_count, &revents) >= 0) {
+        if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_sns.size(), &revents) >= 0)
+        {
         //kDebug() << "Mixer_ALSA::prepareUpdate() 6\n";
 
             if (revents & POLLNVAL) {
