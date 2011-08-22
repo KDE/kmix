@@ -194,7 +194,7 @@ protected:
 private:
     void setBalanceInternal(Volume& vol);
     void recreateId();
-
+    void increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease );
 
     Mixer_Backend *_mixerBackend;
     QString _id;

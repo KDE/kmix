@@ -521,12 +521,25 @@ void Mixer::commitVolumeChange( MixDevice* md ) {
 // @dbus, used also in kmix app
 void Mixer::increaseVolume( const QString& mixdeviceID )
 {
+	increaseOrDecreaseVolume(mixdeviceID, false);
+}
+
+// @dbus
+void Mixer::decreaseVolume( const QString& mixdeviceID )
+{
+	increaseOrDecreaseVolume(mixdeviceID, true);
+}
+
+void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease )
+{
+
     MixDevice *md= getMixdeviceById( mixdeviceID );
     if (md != 0) {
         Volume& volP=md->playbackVolume();
         if ( volP.hasVolume() ) {
            double step = (volP.maxVolume()-volP.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
+           if ( decrease ) step = -step;
            volP.changeAllVolumes(step);
         }
         
@@ -534,48 +547,22 @@ void Mixer::increaseVolume( const QString& mixdeviceID )
         if ( volC.hasVolume() ) {
            double step = (volC.maxVolume()-volC.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
+           if ( decrease ) step = -step;
            volC.changeAllVolumes(step);
         }
 
         _mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
 
-  /* see comment at the end of decreaseVolume()
-  int vol=volume(mixdeviceID);
-  setVolume(mixdeviceID, vol+5);
-  */
-}
-
-// @dbus
-void Mixer::decreaseVolume( const QString& mixdeviceID )
-{
-    MixDevice *md= getMixdeviceById( mixdeviceID );
-    if (md != 0) {
-        Volume& volP=md->playbackVolume();
-        if ( volP.hasVolume() ) {
-           double step = (volP.maxVolume()-volP.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
-           if ( step < 1 ) step = 1;
-           volP.changeAllVolumes(-step);
-        }
-        
-        Volume& volC=md->captureVolume();
-        if ( volC.hasVolume() ) {
-           double step = (volC.maxVolume()-volC.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
-           if ( step < 1 ) step = 1;
-           volC.changeAllVolumes(-step);
-        }
-    }
-
-    _mixerBackend->writeVolumeToHW(mixdeviceID, md);
-
     /************************************************************
         It is important, not to implement this method like this:
     int vol=volume(mixdeviceID);
     setVolume(mixdeviceID, vol-5);
-        It creates too big rounding errors. If you don't beleive me, then
+        It creates too big rounding errors. If you don't believe me, then
         do a decreaseVolume() and increaseVolume() with "vol.maxVolume() == 31".
     ***********************************************************/
 }
+
 
 void Mixer::setDynamic ( bool dynamic )
 {
