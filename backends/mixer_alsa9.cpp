@@ -342,7 +342,7 @@ int Mixer_ALSA::setupAlsaPolling()
 		     delete m_sns.takeFirst();
 
 
-		 delete m_fds;
+		free m_fds;
 		m_fds = (struct pollfd*)calloc(countNew, sizeof(struct pollfd));
 		if (m_fds == NULL) {
 			kDebug() << "Mixer_ALSA::poll() , calloc() = null" << "\n";
