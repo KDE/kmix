@@ -342,6 +342,7 @@ int Mixer_ALSA::setupAlsaPolling()
 		     delete m_sns.takeFirst();
 
 
+		 delete m_fds;
 		m_fds = (struct pollfd*)calloc(countNew, sizeof(struct pollfd));
 		if (m_fds == NULL) {
 			kDebug() << "Mixer_ALSA::poll() , calloc() = null" << "\n";
@@ -364,7 +365,8 @@ int Mixer_ALSA::setupAlsaPolling()
 		for ( int i = 0; i < countNew; ++i )
 		{
 			//kDebug() << "socket " << i;
-			m_sns[i] = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+			QSocketNotifier* qsn = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+			m_sns.append(qsn);
 			connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()));
 		}
 	}
