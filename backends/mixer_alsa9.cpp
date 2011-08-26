@@ -335,7 +335,8 @@ int Mixer_ALSA::setupAlsaPolling()
 		return Mixer::ERR_OPEN;
 	}
 
-	if ( countNew != m_sns.size() )
+	//if ( countNew != m_sns.size() )
+	if (true)
 	{
 		// Redo everything if count of FD's have changed (emulating alsamixer behaviour here)
 		 while (!m_sns.isEmpty())
