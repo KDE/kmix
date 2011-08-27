@@ -25,6 +25,10 @@
 #include "core/mixer.h"
 #include <QTimer>
 
+#define POLL_OSS_RATE_SLOW 1500
+#define POLL_OSS_RATE_FAST 50
+
+
 #include "mixer_backend_i18n.cpp"
 
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
@@ -54,11 +58,11 @@ bool Mixer_Backend::openIfValid() {
 		// but we want a somehow usable fallback just in case.
 
 		if ( needsPolling() ) {
-			_pollingTimer->start(500);
+			_pollingTimer->start(POLL_OSS_RATE_FAST);
 		}
 		else {
 			// The initial state must be read manually
-			QTimer::singleShot( 50, this, SLOT(readSetFromHW()) );
+			QTimer::singleShot( POLL_OSS_RATE_FAST, this, SLOT(readSetFromHW()) );
 		}
 	} // cold be opened
 	else {
@@ -141,7 +145,7 @@ void Mixer_Backend::readSetFromHW()
 		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
 		if ( needsPolling() )
 		{
-			_pollingTimer->setInterval(50);
+			_pollingTimer->setInterval(POLL_OSS_RATE_FAST);
 			QTime fastPollingEndsAt = QTime::currentTime ();
 			fastPollingEndsAt = fastPollingEndsAt.addSecs(5);
 			_fastPollingEndsAt = fastPollingEndsAt;
@@ -161,7 +165,7 @@ void Mixer_Backend::readSetFromHW()
 				kDebug() << "End fast polling";
 				_fastPollingEndsAt = QTime();
 				if ( needsPolling() )
-					_pollingTimer->setInterval(500);
+					_pollingTimer->setInterval(POLL_OSS_RATE_SLOW);
 			}
 		}
 	}
