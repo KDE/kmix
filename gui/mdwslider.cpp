@@ -523,51 +523,22 @@ void MDWSlider::mediaPlay(bool)
 
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureLabel, Volume& vol, QList<QAbstractSlider *>& ref_sliders)
 {
-	LabelType labelType = LT_NONE;
-	
-	if ( vol.count() >= 2  && ! isStereoLinked() )
-	{
-	  labelType = LT_ALL;
-	}
-	else if (forceCaptureLabel && type == 'c')
-	{
-		if (isStereoLinked()) labelType = LT_ALL;
-		else labelType = LT_FIRST_CAPTURE;
-	}
-
-kDebug() << "------------ volcount=" << vol.count() << " labelType=" << labelType;
-
 	const int minSliderSize = fontMetrics().height() * 10;
 	long minvol = vol.minVolume();
 	long maxvol = vol.maxVolume();
 
-	bool first = true;
 	QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
 
 	foreach (VolumeChannel vc, vols )
 	{
 		kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
 		QWidget *subcontrolLabel;
-		if ( labelType == LT_FIRST_CAPTURE && type == 'c' && first )
-		{
-			QString subcontrolTranslation = i18n("Capture"); // Put a simple "Capture" label
-			subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
-		}
-		else
-		{
-			QString subcontrolTranslation;
-			if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + " ";
-			subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
-			subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
-		}
-		
-		bool show = true;
-		if( labelType == LT_NONE ) show = false;
-		else if ( labelType == LT_FIRST_CAPTURE && !first ) show = false;
-		else subcontrolLabel->show();
-		subcontrolLabel->setVisible(show);
-		kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid] << " show=" << show;
-		
+
+		QString subcontrolTranslation;
+		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + " ";
+		subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
+		subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+
 		QAbstractSlider* slider;
 		if ( m_small )
 		{
@@ -607,16 +578,11 @@ kDebug() << "------------ volcount=" << vol.count() << " labelType=" << labelTyp
 			slider->setToolTip( captureTip );
 		}
 
-		if( !first && isStereoLinked() ) {
-			// show only one (the first) slider, when the user wants it so
-			slider->hide();
-		}
 		volLayout->addWidget( slider ); // add to layout
 		ref_sliders.append ( slider ); // add to list
 		//ref_slidersChids.append(vc.chid);
 		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
 		
-		first = false;
 	} // for all channels of this device
 }
 
@@ -733,22 +699,37 @@ void
 MDWSlider::setStereoLinked(bool value)
 {
 	m_linked = value;
-	if (m_slidersPlayback.count() != 0) setStereoLinkedInternal(m_slidersPlayback);
-	if (m_slidersCapture.count() != 0) setStereoLinkedInternal(m_slidersCapture);
+
+	int overallSlidersToShow = 0;
+	if ( ! m_slidersPlayback.isEmpty() ) overallSlidersToShow += ( m_linked ? 1 : m_slidersPlayback.count() );
+	if ( ! m_slidersCapture.isEmpty()  ) overallSlidersToShow += ( m_linked ? 1 : m_slidersCapture.count() );
+
+	bool showSubcontrolLabels = (overallSlidersToShow >= 2);
+	setStereoLinkedInternal(m_slidersPlayback, showSubcontrolLabels);
+	setStereoLinkedInternal(m_slidersCapture  , showSubcontrolLabels);
 	update(); // Call update(), so that the sliders can adjust EITHER to the individual values OR the average value.
 }
 
 void
-MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders)
+MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool showSubcontrolLabels)
 {
+	if ( ref_sliders.isEmpty()) return;
+	kDebug() << "m_linked=" << m_linked << "showSubcontrolLabels" << showSubcontrolLabels;
+
 	bool first = true;
 	foreach ( QAbstractSlider* slider1, ref_sliders )
 	{
-		if ( first ) first = false;
-		else if ( slider1 != 0 ) {
-			slider1->setHidden(m_linked);
-		}
-		extraData(slider1).getSubcontrolLabel()->setHidden(false);
+		slider1->setVisible(!m_linked || first); // One slider (the 1st) is always shown
+		extraData(slider1).getSubcontrolLabel()->setVisible(!m_linked && showSubcontrolLabels); // (*)
+		first = false;
+		/* (*) cesken: I have excluded the "|| first" check because the text would not be nice:
+		 *     It would be "Left" or "Capture Left", while it should be "Playback" and "Capture" in the "linked" case.
+		 *
+		 *     But the only affected situation is when we have playback AND capture on the same control, where we show no label.
+		 *     It would be nice to put at least a "Capture" label on the capture subcontrol instead.
+		 *     To achieve this we would need to exchange the Text on the first capture subcontrol dynamically. This can
+		 *     be done, but I'll leave this open for now.
+		 */
 	}
 
 
@@ -768,19 +749,9 @@ MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders)
 void
 MDWSlider::setLabeled(bool value)
 {
-	if ( m_label == 0  )
-		return;
-
-	if (value ) {
-		if ( m_label != 0) m_label->show();
-		if ( m_muteText != 0) m_muteText->show();
-		if ( m_captureText != 0) m_captureText->show();
-	}
-	else {
-		if ( m_label != 0) m_label->hide();
-		if ( m_muteText != 0) m_muteText->hide();
-		if ( m_captureText != 0) m_captureText->hide();
-	}
+	if ( m_label != 0) m_label->setVisible(value);
+	if ( m_muteText != 0) m_muteText->setVisible(value);
+	if ( m_captureText != 0) m_captureText->setVisible(value);
 	layout()->activate();
 }
 
