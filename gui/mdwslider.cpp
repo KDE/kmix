@@ -560,11 +560,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureL
 				slider->setMinimumWidth( minSliderSize );
 			}
 			if ( ! _pctl->getBackgroundColor().isEmpty() ) {
-				QString bcolor(_pctl->getBackgroundColor());
-				QColor qcol(bcolor);
-				QPalette qpal = slider->palette();
-				qpal.setColor(QPalette::Window, qcol);
-				slider->setPalette(qpal);
+				slider->setStyleSheet("QSlider { background-color: " + _pctl->getBackgroundColor() + " }");
 			}
 		} // not small
 
