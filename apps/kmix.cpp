@@ -1062,12 +1062,8 @@ void KMixWindow::showVolumeDisplay()
     if ( md == 0 ) return; // shouldn't happen, but lets play safe
     // Current volume
     Volume& vol = md->playbackVolume();
-    int currentVolume = 0;
-    if ( vol.hasVolume() && vol.maxVolume() != 0 ) {
-    	currentVolume = (vol.getAvgVolume(Volume::MMAIN)*100 )/( vol.maxVolume() );
-    }
 
-    osdWidget->setCurrentVolume(currentVolume, md->isMuted());
+    osdWidget->setCurrentVolume(vol.getAvgVolumePercent(Volume::MALL), md->isMuted());
     osdWidget->show();
     osdWidget->activateOSD(); //Enable the hide timer
 

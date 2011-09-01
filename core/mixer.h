@@ -97,10 +97,12 @@ public:
     /// Returns a detailed state message after errors. Only for diagnostic purposes, no i18n.
     QString& stateMessage() const;
 
-    /// Returns the name of the card/chip/hardware, as given by the driver. The name is NOT instance specific,
-    /// so if you install two identical soundcards, two of them will deliver the same mixerName().
-    /// Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
-    /// mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
+    /**
+     * Returns the name of the card/chip/hardware, as given by the driver. The name is NOT instance specific,
+     * so if you install two identical soundcards, two of them will deliver the same mixerName().
+     * Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
+     * mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
+     */
     virtual QString getBaseName();
 
     /// Wrapper to Mixer_Backend
@@ -114,6 +116,9 @@ public:
 
     /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
     QString& id();
+
+    // TODO nontranslated mixer names
+
     /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
     /// the user, but can be used for referencing configuration items and such.
 

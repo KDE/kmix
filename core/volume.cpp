@@ -176,6 +176,11 @@ long Volume::minVolume() {
 	return _minVolume;
 }
 
+long Volume::volumeSpan() {
+	return _maxVolume - _minVolume + 1;
+}
+
+
 int Volume::percentage(long absoluteVolume)
 {
 	int relativeVolume = 0;
@@ -218,6 +223,18 @@ long Volume::getAvgVolume(ChannelMask chmask)
 }
 
 
+int Volume::getAvgVolumePercent(ChannelMask chmask)
+{
+	long volume = getAvgVolume(chmask);
+	// min=-100, max=200 => volSpane = 300
+	// volume = -50 =>  volumePoistive = -50+min = 50
+	long volSpan = volumeSpan();
+	long volShiftedToPositive = volume + _minVolume;
+	int percent = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToPositive ) / volSpan;
+
+	return percent;
+}
+
 int Volume::count() {
 	return getVolumes().count();
 }
@@ -226,7 +243,7 @@ int Volume::count() {
  * returns a "sane" volume level. This means, it is a volume level inside the
  * valid bounds
  */
-long Volume::volrange( int vol )
+long Volume::volrange( long vol )
 {
 	if ( vol < _minVolume ) {
 		return _minVolume;

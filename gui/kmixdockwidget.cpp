@@ -229,7 +229,7 @@ KMixDockWidget::setVolumeTip()
            vol = md->captureVolume();
         }
         if ( vol.hasVolume() ) {
-            val = (vol.getAvgVolume(Volume::MMAIN)*100 )/( vol.maxVolume() );
+            val = vol.getAvgVolumePercent(Volume::MALL);
         }
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
@@ -389,7 +389,7 @@ KMixDockWidget::trayWheelEvent(int delta)
   if ( md != 0 )
   {
       Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
-      int inc = vol.maxVolume() / Mixer::VOLUME_STEP_DIVISOR;
+      int inc = vol.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
 
     if ( inc < 1 ) inc = 1;
 

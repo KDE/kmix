@@ -537,7 +537,8 @@ void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease 
     if (md != 0) {
         Volume& volP=md->playbackVolume();
         if ( volP.hasVolume() ) {
-           double step = (volP.maxVolume()-volP.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
+        	long volSpan = volP.volumeSpan();
+           double step = volSpan / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
            if ( decrease ) step = -step;
            volP.changeAllVolumes(step);
@@ -545,7 +546,8 @@ void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease 
         
         Volume& volC=md->captureVolume();
         if ( volC.hasVolume() ) {
-           double step = (volC.maxVolume()-volC.minVolume()+1) / Mixer::VOLUME_STEP_DIVISOR;
+        	long volSpan = volC.volumeSpan();
+           double step = volSpan / Mixer::VOLUME_STEP_DIVISOR;
            if ( step < 1 ) step = 1;
            if ( decrease ) step = -step;
            volC.changeAllVolumes(step);

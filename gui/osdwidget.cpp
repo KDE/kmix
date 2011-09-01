@@ -110,6 +110,9 @@ void OSDWidget::activateOSD()
     m_hideTimer->start();
 }
 
+/**
+ * Set volume level in percent
+ */
 void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
 {
     m_meter->setValue(volumeLevel);

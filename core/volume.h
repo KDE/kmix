@@ -110,13 +110,20 @@ public:
     
     long getVolume(ChannelID chid);
     long getAvgVolume(ChannelMask chmask);
+    int getAvgVolumePercent(ChannelMask chmask);
+
     //long operator[](int);
     long maxVolume();
     long minVolume();
+    /**
+     * The number of valid volume levels, mathematically: maxVolume - minVolume + 1
+     */
+    long volumeSpan();
+
     int  percentage(long );
     int  count();
     
-    bool hasSwitch()           { return _hasSwitch; }
+    bool hasSwitch()           { return _hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
     bool hasVolume()           { return (_maxVolume != _minVolume); }
     bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
     
@@ -151,7 +158,7 @@ protected:
 private:
     void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
-    long volrange( int vol );
+    long volrange( long vol );
 
     bool _hasSwitch;
     bool _switchActivated;

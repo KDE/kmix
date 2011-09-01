@@ -69,17 +69,14 @@ void DBusControlWrapper::setVolume(int percentage)
 	//  - esken
 	Volume& volP = m_md->playbackVolume();
 	Volume& volC = m_md->captureVolume();
-	volP.setAllVolumes( (percentage * volP.maxVolume()) / 100 );
-	volC.setAllVolumes( (percentage * volP.maxVolume()) / 100 );
+	volP.setAllVolumes( volP.minVolume() + ((percentage * volP.volumeSpan()) / 100) );
+	volC.setAllVolumes( volC.minVolume() + ((percentage * volC.volumeSpan()) / 100) );
 	m_md->mixer()->commitVolumeChange( m_md );
 }
 
 int DBusControlWrapper::volume()
 {
-	Volume& vol = m_md->playbackVolume();
-	return vol.maxVolume()
-		? vol.getAvgVolume( Volume::MMAIN ) * 100 / vol.maxVolume()
-		: 0;
+	return m_md->playbackVolume().getAvgVolumePercent(Volume::MALL);
 }
 
 void DBusControlWrapper::increaseVolume()

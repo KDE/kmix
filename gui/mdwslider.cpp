@@ -542,12 +542,12 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureL
 		QAbstractSlider* slider;
 		if ( m_small )
 		{
-			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol) / Mixer::VOLUME_PAGESTEP_DIVISOR,
+			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Mixer::VOLUME_PAGESTEP_DIVISOR,
 				                           vol.getVolume( vc.chid ), _orientation, this );
 		} // small
 		else  {
 			slider = new VolumeSlider( _orientation, this );
-			slider->setMinimum(0);
+			slider->setMinimum(minvol);
 			slider->setMaximum(maxvol);
 			slider->setPageStep(maxvol / Mixer::VOLUME_PAGESTEP_DIVISOR);
 			slider->setValue( maxvol - vol.getVolume( vc.chid ) );
@@ -935,7 +935,7 @@ void MDWSlider::increaseVolume()
 void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 {
 	Volume& volP = m_mixdevice->playbackVolume();
-	long inc = volP.maxVolume() / Mixer::VOLUME_STEP_DIVISOR;
+	long inc = volP.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
 	if ( inc == 0 )	inc = 1;
 	if ( decrease ) inc *= -1;
 	if ( mixDevice()->id() == "Headphone:0" )
@@ -951,7 +951,7 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	    volP.changeAllVolumes(inc);
 
 	Volume& volC = m_mixdevice->captureVolume();
-	inc = volC.maxVolume() / Mixer::VOLUME_STEP_DIVISOR;
+	inc = volC.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
 	if ( inc == 0 ) inc = 1;
 	if ( decrease ) inc *= -1;
 	volC.changeAllVolumes(inc);
