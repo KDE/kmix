@@ -119,8 +119,6 @@ public:
      * The number of valid volume levels, mathematically: maxVolume - minVolume + 1
      */
     long volumeSpan();
-
-    int  percentage(long );
     int  count();
     
     bool hasSwitch()           { return _hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.

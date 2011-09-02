@@ -223,7 +223,7 @@ KMixDockWidget::setVolumeTip()
     {
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
-        long val = 0;
+        int val = 0;
         Volume& vol       = md->playbackVolume();
         if (! vol.hasVolume() ) {
            vol = md->captureVolume();
@@ -271,8 +271,7 @@ KMixDockWidget::updatePixmap()
         if (! vol.hasVolume() ) {
             vol = md->captureVolume();
         }
-        long absoluteVolume    = vol.getAvgVolume(Volume::MALL);
-        int percentage         = vol.percentage(absoluteVolume);
+        int percentage         = vol.getAvgVolumePercent(Volume::MALL);
         if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
         else if ( percentage < 25 ) newPixmapType = '1';
         else if ( percentage < 75 ) newPixmapType = '2';
@@ -396,7 +395,7 @@ KMixDockWidget::trayWheelEvent(int delta)
     long int cv = inc * (delta / 120 );
 //    kDebug() << "twe: " << cv << " : " << vol;
 	if ( cv > 0 && md->isMuted())
-	{   // increasing form muted state: unmute and start with a low volume level
+	{   // increasing from muted state: unmute and start with a low volume level
 	    md->setMuted(false);
 	    vol.setAllVolumes(cv);
 	}

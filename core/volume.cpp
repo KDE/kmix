@@ -180,25 +180,6 @@ long Volume::volumeSpan() {
 	return _maxVolume - _minVolume + 1;
 }
 
-
-int Volume::percentage(long absoluteVolume)
-{
-	int relativeVolume = 0;
-	if ( _maxVolume == 0 )
-		return 0;
-
-	if ( absoluteVolume > _maxVolume )
-		relativeVolume = 100;
-	else if ( absoluteVolume < _minVolume )
-		relativeVolume = -100;
-	else if ( absoluteVolume > 0 )
-		relativeVolume = ( 100*absoluteVolume) / _maxVolume;
-	else if ( absoluteVolume < 0 )
-		relativeVolume = ( 100*absoluteVolume) / _minVolume;
-
-	return relativeVolume;
-}
-
 long Volume::getVolume(ChannelID chid) {
 	return _volumesL.value(chid).volume;
 }
@@ -226,11 +207,12 @@ long Volume::getAvgVolume(ChannelMask chmask)
 int Volume::getAvgVolumePercent(ChannelMask chmask)
 {
 	long volume = getAvgVolume(chmask);
-	// min=-100, max=200 => volSpane = 300
-	// volume = -50 =>  volumePoistive = -50+min = 50
+	// min=-100, max=200 => volSpan = 301
+	// volume = -50 =>  volShiftedToZero = -50+min = 50
 	long volSpan = volumeSpan();
-	long volShiftedToPositive = volume + _minVolume;
-	int percent = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToPositive ) / volSpan;
+	long volShiftedToZero = volume - _minVolume;
+	int percent = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToZero ) / ( volSpan - 1);
+	kDebug() << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
 
 	return percent;
 }
