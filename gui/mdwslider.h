@@ -129,7 +129,7 @@ private:
     void setIcon( QString iconname );
     QPixmap loadIcon( QString filename );
     void createWidgets( bool showMuteLED, bool showCaptureLED );
-    void addSliders( QBoxLayout *volLayout, char type, bool addLabel, Volume& vol, QList<QAbstractSlider *>& ref_sliders);
+    void addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList<QAbstractSlider *>& ref_sliders);
     //void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture

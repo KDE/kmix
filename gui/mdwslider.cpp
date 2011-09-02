@@ -272,7 +272,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
     bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
     bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
       bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
-      bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
+     // bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
 	
       bool wantsMediaControls = ( m_mixdevice->hasMediaNextControl() || m_mixdevice->hasMediaPlayControl() || m_mixdevice->hasMediaPrevControl() );
 
@@ -327,9 +327,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		if ( hasVolumeSliders )
 		{
 			if ( wantsPlaybackSliders )
-				addSliders( volLayout, 'p', bothCaptureANDPlaybackExist, m_mixdevice->playbackVolume(), m_slidersPlayback);
+				addSliders( volLayout, 'p', m_mixdevice->playbackVolume(), m_slidersPlayback);
 			if ( wantsCaptureSliders )
-				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist, m_mixdevice->captureVolume() , m_slidersCapture );
+				addSliders( volLayout, 'c', m_mixdevice->captureVolume() , m_slidersCapture );
 			if ( wantsMediaControls )
 				addMediaControls( volLayout ); // Please note that the addmediaControls() is in the hasVolumeSliders check onyl because it was easier to integrate
 			controlLayout->addSpacing( 3 );
@@ -430,9 +430,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		if ( hasVolumeSliders )
 		{
 			if ( wantsPlaybackSliders && m_mixdevice->playbackVolume().count() > 0 )
-				addSliders( volLayout, 'p', false, m_mixdevice->playbackVolume(), m_slidersPlayback );
+				addSliders( volLayout, 'p', m_mixdevice->playbackVolume(), m_slidersPlayback );
 			if ( wantsCaptureSliders && m_mixdevice->captureVolume().count() > 0 )
-				addSliders( volLayout, 'c', bothCaptureANDPlaybackExist, m_mixdevice->captureVolume() , m_slidersCapture );
+				addSliders( volLayout, 'c', m_mixdevice->captureVolume() , m_slidersCapture );
 			if ( wantsMediaControls )
 				addMediaControls( volLayout );
 		}
@@ -521,7 +521,7 @@ void MDWSlider::mediaPlay(bool)
   mixDevice()->mediaPlay();
 }
 
-void MDWSlider::addSliders( QBoxLayout *volLayout, char type, bool forceCaptureLabel, Volume& vol, QList<QAbstractSlider *>& ref_sliders)
+void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList<QAbstractSlider *>& ref_sliders)
 {
 	const int minSliderSize = fontMetrics().height() * 10;
 	long minvol = vol.minVolume();
