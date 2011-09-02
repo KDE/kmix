@@ -732,37 +732,35 @@ void KMixWindow::newView()
     }
 
     Mixer *mixer = Mixer::mixers()[0];
-    DialogAddView* dav = new DialogAddView(this, mixer);
-    if (dav) {
-        int ret = dav->exec();
+    QPointer<DialogAddView> dav = new DialogAddView(this, mixer);
+	int ret = dav->exec();
 
-        if ( QDialog::Accepted == ret ) {
-            QString profileName = dav->getresultViewName();
-            QString mixerId = dav->getresultMixerId();
-            mixer = Mixer::findMixer(mixerId);
-            kDebug() << ">>> mixer = " << mixerId << " -> " << mixer;
+	if ( QDialog::Accepted == ret ) {
+		QString profileName = dav->getresultViewName();
+		QString mixerId = dav->getresultMixerId();
+		mixer = Mixer::findMixer(mixerId);
+		kDebug() << ">>> mixer = " << mixerId << " -> " << mixer;
 
-            GUIProfile*guiprof = GUIProfile::find(mixer, profileName, false, false);
-            if ( guiprof == 0 ) {
-                guiprof = GUIProfile::find(mixer, profileName, false, true);
-            }
+		GUIProfile*guiprof = GUIProfile::find(mixer, profileName, false, false);
+		if ( guiprof == 0 ) {
+			guiprof = GUIProfile::find(mixer, profileName, false, true);
+		}
 
-            if ( guiprof == 0 ) {
-                static const QString msg (i18n("Cannot add view - GUIProfile is invalid."));
-                errorPopup(msg);
-            }
-            else  {
-                bool ret = addMixerWidget(mixer->id(), guiprof, -1);
-                if ( ret == false ) {
-                    errorPopup(i18n("View already exists. Cannot add View."));
-                }
-            }
-        }
+		if ( guiprof == 0 ) {
+			static const QString msg (i18n("Cannot add view - GUIProfile is invalid."));
+			errorPopup(msg);
+		}
+		else  {
+			bool ret = addMixerWidget(mixer->id(), guiprof, -1);
+			if ( ret == false ) {
+				errorPopup(i18n("View already exists. Cannot add View."));
+			}
+		}
 
         delete dav;
     }
 
-    kDebug() << "Exit";
+    //kDebug() << "Exit";
 }
 
 /**
@@ -1195,7 +1193,7 @@ void KMixWindow::forkExec(const QStringList& args)
 
 void KMixWindow::errorPopup(const QString& msg)
 {
-    KDialog* dialog = new KDialog(this);
+	QPointer<KDialog> dialog = new KDialog(this);
     dialog->setButtons(KDialog::Ok);
     dialog->setCaption(i18n("Error"));
     QLabel* qlbl = new QLabel(msg);
