@@ -224,8 +224,11 @@ void ViewSliders::_setMixSet()
    } // iteration over all controls from the Profile
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-    // This is currently hardcoded, and instead must be read as usual from the Profile
+	// @todo: This is currently hardcoded, and instead must be read as usual from the Profile
     MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
+    Volume::ChannelMask chn = Volume::MMAIN;
+    Volume* vol = new Volume( chn, 0, 100, true, true);
+	mdc->addPlaybackVolume(*vol);
     QString ctlId("Composite_Test");
     QString ctlMatchAll("*");
     ProfControl* pctl = new ProfControl(ctlId, ctlMatchAll);
