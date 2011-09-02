@@ -39,7 +39,22 @@ qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
 	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
 
-set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
+set(kmix_backend_SRCS
+   backends/mixer_backend.cpp
+   backends/mixer_mpris2.cpp
+   )
+
+if (HAVE_LIBASOUND2)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS}
+      backends/mixer_alsa9.cpp )
+endif (HAVE_LIBASOUND2)
+
+if (HAVE_PULSE)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS}
+      backends/mixer_pulse.cpp )
+endif (HAVE_PULSE)
+
+set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/main.cpp 
    apps/kmix.cpp 
    apps/KMixApp.cpp
@@ -70,8 +85,6 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    core/mixdevice.cpp
    core/mixdevicecomposite.cpp
    core/volume.cpp
-   backends/mixer_mpris2.cpp
-   backends/mixer_backend.cpp
    )
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
@@ -95,7 +108,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### next target ###############
 
- set(kded_kmixd_SRCS ${kmix_adaptor_SRCS}
+ set(kded_kmixd_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
     apps/kmixd.cpp 
     core/MasterControl.cpp
     core/mixer.cpp 
@@ -132,7 +145,7 @@ install( FILES kmixd.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 
 ########### next target ###############
 
-set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
+set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/kmixctrl.cpp 
    core/MasterControl.cpp
    core/mixer.cpp 
@@ -140,9 +153,7 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS}
    core/mixdevice.cpp 
    core/volume.cpp 
    core/mixertoolbox.cpp 
-   core/kmixdevicemanager.cpp 
-   backends/mixer_mpris2.cpp
-   backends/mixer_backend.cpp
+   core/kmixdevicemanager.cpp
    )
 
 # gui/guiprofile.cpp

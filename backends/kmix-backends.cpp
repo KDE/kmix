@@ -26,6 +26,7 @@
 #include <config-alsa.h>
 
 #include "mixer_backend.h"
+#include "mixer_alsa.h"
 #include "core/mixer.h"
 
 #include <QString>
@@ -37,14 +38,6 @@
 #endif
 
 #ifdef __linux__
-
-#ifdef HAVE_LIBASOUND2
-#define ALSA_MIXER
-#endif
-
-#ifdef HAVE_PULSE
-#define PULSE_MIXER
-#endif
 
 #define OSS_MIXER
 #endif
@@ -70,16 +63,6 @@
 
 #if defined(SUN_MIXER)
 #include "backends/mixer_sun.cpp"
-#endif
-
-// Alsa API's 
-#if defined(ALSA_MIXER)
-#include "backends/mixer_alsa9.cpp"
-#endif
-
-// Pulse API
-#if defined(PULSE_MIXER)
-#include "backends/mixer_pulse.cpp"
 #endif
 
 // OSS 3 / 4
@@ -120,17 +103,27 @@ struct MixerFactory {
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device );
 QString MPRIS2_getDriverName();
 
+Mixer_Backend* ALSA_getMixer(Mixer *mixer, int device );
+QString ALSA_getDriverName();
+
+Mixer_Backend* PULSE_getMixer(Mixer *mixer, int device );
+QString PULSE_getDriverName();
+
+Mixer_Backend* FOO_getMixer(Mixer *mixer, int device );
+QString FOO_getDriverName();
+
+
 MixerFactory g_mixerFactories[] = {
 
 #if defined(SUN_MIXER)
     { SUN_getMixer, SUN_getDriverName },
 #endif
 
-#if defined(PULSE_MIXER)
+#if defined(HAVE_PULSE)
     { PULSE_getMixer, PULSE_getDriverName },
 #endif
 
-#if defined(ALSA_MIXER)
+#if defined(HAVE_LIBASOUND2)
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
 

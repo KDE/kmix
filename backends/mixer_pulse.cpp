@@ -23,6 +23,8 @@
 #include <QtCore/QAbstractEventDispatcher>
 #include <QTimer>
 
+#include <klocale.h>
+
 #include "mixer_pulse.h"
 #include "core/mixer.h"
 
