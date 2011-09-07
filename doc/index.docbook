@@ -75,14 +75,17 @@
 <!--<para>&kmix; is &kde;'s soundcard mixer program. Though small, it is
 full-featured. The program should give controls for each of your
 soundcards.</para>-->
-
+<!--
+For quick volume change, you can either
+1) use the keyboard keys meant for that (if you have those)
+2) scroll the mouse on top of kmix icon
+-->
 <para>&kmix; supports several platforms and sound drivers.</para>
 
 <!--<itemizedlist>
 <listitem><para> The ALSA soundcard driver.</para></listitem>
 <listitem><para> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
 <listitem><para> &Solaris; based machines.</para></listitem>
-<listitem><para> &IRIX; based machines.</para></listitem>
 <listitem><para> &HP-UX; based machines.</para></listitem>
 </itemizedlist>-->
 
@@ -282,6 +285,32 @@ soundcards.</para>-->
 
 </variablelist>
 </sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title>Advanced usage</title>
+<sect1>
+<title>Remote controlling and scripting via &DBus;</title>
+<para>
+You can control &kmix; via &DBus;. This is for advanced users who want to achieve special tasks, like muting the PC every day at 10 pm, or for any other scripting task.
+</para>
+
+<para>
+List all &kmix; related &DBus; methods and properties
+<programlisting>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para>
+Getting volume level (0-100%):
+<programlisting>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para>
+Setting volume level (0-100%):
+<programlisting>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
 </sect1>
 </chapter>
 
