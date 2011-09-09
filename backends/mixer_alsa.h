@@ -81,8 +81,8 @@ private:
     snd_mixer_t *_handle;
     QString devName;
     struct pollfd  *m_fds;
-    QSocketNotifier **m_sns;
-    int m_count;
+    QList<QSocketNotifier*> m_sns;
+    //int m_count;
 };
 
 #endif
