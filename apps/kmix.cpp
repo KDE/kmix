@@ -20,6 +20,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "apps/kmix.h"
 
 // include files for QT
 #include <QCheckBox>
@@ -55,7 +56,6 @@
 #include "gui/guiprofile.h"
 #include "core/MasterControl.h"
 #include "core/mixertoolbox.h"
-#include "apps/kmix.h"
 #include "core/kmixdevicemanager.h"
 #include "gui/kmixerwidget.h"
 #include "gui/kmixprefdlg.h"
@@ -1213,9 +1213,18 @@ void KMixWindow::slotConfigureCurrentView()
 
 void KMixWindow::slotSelectMaster()
 {
-    DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
-    dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-    dsm->show();
+	Mixer *mixer = Mixer::getGlobalMasterMixer();
+	if ( mixer != 0)
+	{
+		QPointer<DialogSelectMaster> dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
+		dsm->setAttribute(Qt::WA_DeleteOnClose, true);
+		dsm->show();
+	}
+	else
+	{
+
+		KMessageBox::error(0, i18n("No sound card is installed or currently plugged in."));
+	}
 }
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
