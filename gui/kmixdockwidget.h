@@ -84,7 +84,7 @@ class KMixDockWidget : public KStatusNotifierItem
 
  private slots:
    void dockMute();
-   void trayWheelEvent(int delta);
+   void trayWheelEvent(int delta,Qt::Orientation);
    //void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);

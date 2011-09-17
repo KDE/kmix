@@ -307,7 +307,7 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 }
 
 
-void KSmallSlider::wheelEvent( QWheelEvent * e)
+void KSmallSlider::wheelEvent( QWheelEvent * qwe)
 {
 //    kDebug(67100) << "KSmallslider::wheelEvent()";
     int inc = ( maximum() - minimum() ) / Mixer::VOLUME_STEP_DIVISOR;
@@ -316,7 +316,12 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
 
     //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta();
 	int newVal;
-    if ( e->delta() > 0 ) {
+
+	bool increase = (qwe->delta() > 0);
+	if (qwe->orientation() == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
+		increase = !increase;
+
+    if ( increase > 0 ) {
        newVal = QAbstractSlider::value() + inc;
     }
     else {
@@ -324,7 +329,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * e)
     }
     setValue( newVal );
     emit valueChanged(newVal);
-    e->accept(); // Accept the event
+    qwe->accept(); // Accept the event
 
     // Hint: Qt autmatically triggers a valueChange() when we do setValue()
 }

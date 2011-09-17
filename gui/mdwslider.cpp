@@ -1143,7 +1143,12 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 	else if ( (e->type() == QEvent::Wheel)
 	         && strcmp(obj->metaObject()->className(),"KSmallSlider") != 0 )  {
 		QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
-		if (qwe->delta() > 0) {
+
+		bool increase = (qwe->delta() > 0);
+		if (qwe->orientation() == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
+			increase = !increase;
+
+		if (increase) {
 			increaseVolume();
 		}
 		else {

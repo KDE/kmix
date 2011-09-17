@@ -70,7 +70,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     m_mixer = Mixer::getGlobalMasterMixer();  // ugly, but we'll live with that for now
     createMasterVolWidget();
     createActions();
-    connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int)));
+    connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
     bool NO_MENU_ANYMORE = true; 
@@ -382,7 +382,7 @@ void KMixDockWidget::activate(const QPoint &pos)
 // }
 
 void
-KMixDockWidget::trayWheelEvent(int delta)
+KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 {
   MixDevice *md = Mixer::getGlobalMasterMD();
   if ( md != 0 )
@@ -391,6 +391,9 @@ KMixDockWidget::trayWheelEvent(int delta)
       int inc = vol.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
 
     if ( inc < 1 ) inc = 1;
+
+    if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
+    	delta = -delta;
 
     long int cv = inc * (delta / 120 );
 //    kDebug() << "twe: " << cv << " : " << vol;
