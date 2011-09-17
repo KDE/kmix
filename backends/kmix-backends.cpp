@@ -97,7 +97,7 @@
 #else
 #include <soundcard.h>
 #endif
-#if !defined(__FreeBSD__) && SOUND_VERSION >= 0x040000
+#if !defined(__FreeBSD__) && (SOUND_VERSION >= 0x040000)
 #define OSS4_MIXER
 #endif
 #endif
