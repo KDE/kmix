@@ -147,25 +147,14 @@ void Volume::setVolume( ChannelID chid, long vol)
 
 /**
  * Copy the volume elements contained in v to this Volume object.
- * Only those elments are copied, that are supported in BOTH Volume objects.
  */
 void Volume::setVolume(const Volume &v)
 {
-	setVolume(v, (ChannelMask)(v._chmask&_chmask) );
-}
-
-/**
- * Copy the volume elements contained in v to this Volume object.
- * Only those elments are copied, that are supported in BOTH Volume objects
- * and match the ChannelMask given by chmask.
- */
-void Volume::setVolume(const Volume &v, ChannelMask chmask)
-{
 	foreach (VolumeChannel vc, _volumesL )
-		  {
+	{
 		ChannelID chid = vc.chid;
 		v.getVolumes()[chid].volume = vc.volume;
-		  }
+	}
 }
 
 long Volume::maxVolume() {
@@ -184,7 +173,7 @@ long Volume::getVolume(ChannelID chid) {
 	return _volumesL.value(chid).volume;
 }
 
-long Volume::getAvgVolume(ChannelMask chmask)
+qreal Volume::getAvgVolume(ChannelMask chmask)
 {
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
@@ -197,21 +186,24 @@ long Volume::getAvgVolume(ChannelMask chmask)
 		}
 	}
 	if (avgVolumeCounter != 0) {
-		sumOfActiveVolumes /= avgVolumeCounter;
+		qreal sumOfActiveVolumesQreal = sumOfActiveVolumes;
+		sumOfActiveVolumesQreal /= avgVolumeCounter;
+		return sumOfActiveVolumesQreal;
 	}
-	// else: just return 0;
-	return (long)sumOfActiveVolumes;
+	else
+		return 0;
 }
 
 
 int Volume::getAvgVolumePercent(ChannelMask chmask)
 {
-	long volume = getAvgVolume(chmask);
+	qreal volume = getAvgVolume(chmask);
 	// min=-100, max=200 => volSpan = 301
 	// volume = -50 =>  volShiftedToZero = -50+min = 50
-	long volSpan = volumeSpan();
-	long volShiftedToZero = volume - _minVolume;
-	int percent = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToZero ) / ( volSpan - 1);
+	qreal volSpan = volumeSpan();
+	qreal volShiftedToZero = volume - _minVolume;
+	qreal percentReal = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToZero ) / ( volSpan - 1);
+	int percent = qRound(percentReal);
 	kDebug() << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
 
 	return percent;

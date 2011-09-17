@@ -114,7 +114,9 @@ long DBusControlWrapper::absoluteVolume()
 {
 	// @todo hardcoded
 	Volume& vol = m_md->playbackVolume();
-	return vol.getAvgVolume( Volume::MMAIN );
+	qreal avgVol= vol.getAvgVolume( Volume::MMAIN );
+	long avgVolRounded = avgVol <0 ? avgVol-.5 : avgVol+.5;
+	return avgVolRounded;
 }
 
 void DBusControlWrapper::setMute(bool muted)
