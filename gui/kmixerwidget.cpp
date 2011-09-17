@@ -113,7 +113,20 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
 {
     ViewSliders* view = new ViewSliders( this, "", mixer, vflags, guiprof, _actionCollection );
-    possiblyAddView(view);
+    bool added = possiblyAddView(view);
+    if ( added && view->visibleControls() == 0)
+    {
+        QString driverName = mixer->getDriverName();
+        QBoxLayout *lay = new QHBoxLayout(view);
+        //lay->setSizeConstraint(QLayout::SetNoConstraint);
+        lay->setAlignment(Qt::AlignCenter);
+        QLabel* lbl = new QLabel();
+        lbl->setAlignment(Qt::AlignCenter);
+        lbl->setWordWrap( true );
+        lbl->setText("Empty: " + driverName);
+        lay->addWidget(lbl);
+        //m_topLayout->addLayout(lay);
+    }
 
 #if 0
    /*** How it works:

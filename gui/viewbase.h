@@ -89,6 +89,7 @@ public:
     virtual void createDeviceWidgets();
 
     void setMixSet();
+    int visibleControls();
     
     bool isDynamic() const;
 

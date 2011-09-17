@@ -247,16 +247,11 @@ bool ViewBase::isDynamic() const
 void ViewBase::setMixSet()
 {
     if ( isDynamic() ) {
-
         // We need to delete the current MixDeviceWidgets so we can redraw them
-        while (!_mdws.isEmpty()) {
-            QWidget* mdw = _mdws.last();
-            _mdws.pop_back();
-            delete mdw;
-        }
+        while (!_mdws.isEmpty())
+        	delete _mdws.takeFirst();
 
-        // Clean up our _mixSet so we can reapply our GUIProfile
-        _mixSet->clear();
+        _mixSet->clear(); // Clean up our _mixSet so we can reapply our GUIProfile
     }
     _setMixSet();
     
@@ -269,6 +264,16 @@ void ViewBase::setMixSet()
     }
 }
 
+int ViewBase::visibleControls()
+{
+	int visibleCount = 0;
+	foreach (QWidget* qw, _mdws)
+	{
+		if (qw->isVisible())
+			++ visibleCount;
+	}
+	return visibleCount;
+}
 
 /**
  * Open the View configuration dialog. The user can select which channels he wants
