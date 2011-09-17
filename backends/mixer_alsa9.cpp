@@ -368,7 +368,7 @@ int Mixer_ALSA::setupAlsaPolling()
 			//kDebug() << "socket " << i;
 			QSocketNotifier* qsn = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
 			m_sns.append(qsn);
-			connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()));
+			connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()), Qt::QueuedConnection);
 		}
 	}
 
