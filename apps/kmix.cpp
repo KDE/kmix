@@ -390,6 +390,7 @@ void KMixWindow::saveVolumes()
             mixer->volumeSave( cfg );
         }
     }
+    cfg->sync();
     delete cfg;
     kDebug() << "Config (Volume) saving done";
 }
