@@ -34,7 +34,7 @@ Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
    // In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
    // like ::select() is possible (as in ALSA).
    _pollingTimer = new QTimer(); // will be started on open() and stopped on close()
-   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()));
+   connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()), Qt::QueuedConnection);
 }
 
 Mixer_Backend::~Mixer_Backend()
