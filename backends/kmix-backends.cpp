@@ -26,7 +26,11 @@
 #include <config-alsa.h>
 
 #include "mixer_backend.h"
+
+#if defined(HAVE_LIBASOUND2)
 #include "mixer_alsa.h"
+#endif
+
 #include "core/mixer.h"
 
 #include <QString>
