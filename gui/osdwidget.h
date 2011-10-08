@@ -65,6 +65,9 @@ private:
     QPixmap m_volumeMediumPixmap;
     QPixmap m_volumeLowPixmap;
     QPixmap m_volumeMutedPixmap;
+
+private slots:
+	void themeUpdated();
 };
 
 #endif

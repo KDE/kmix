@@ -90,6 +90,15 @@ OSDWidget::OSDWidget(QWidget * parent)
     m_meter->setMaximumHeight(iconSize.height());
 
     m_volumeLabel->setAlignment(Qt::AlignCenter);
+    m_volumeLabel->setMinimumHeight(iconSize.height());
+    m_volumeLabel->setMaximumHeight(iconSize.height());
+    m_volumeLabel->nativeWidget()->setFixedHeight(iconSize.height());
+    m_volumeLabel->setWordWrap(false);
+
+    //Set a fixed width for the volume label. To do that we need the text with the maximum width
+    //(this is true if the volume is at 100%). We simply achieve that by calling "setCurrentVolume".
+    setCurrentVolume(100, false);
+    themeUpdated();
 
     //Setup the auto-hide timer
     m_hideTimer->setInterval(2000);
@@ -100,8 +109,12 @@ OSDWidget::OSDWidget(QWidget * parent)
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(m_container);
     layout->addItem(m_iconLabel);
     layout->addItem(m_meter);
+    layout->addItem(m_volumeLabel);
 
     m_scene->addItem(m_container);
+
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated())); // e.g. for updating font
+
     setScene(m_scene);
 }
 
@@ -109,6 +122,33 @@ void OSDWidget::activateOSD()
 {
     m_hideTimer->start();
 }
+
+void OSDWidget::themeUpdated()
+{
+    //Set a font which makes the text appear as big (height-wise) as the meter.
+    //QFont font = QFont(m_volumeLabel->nativeWidget()->font());
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+
+
+    QPalette palette = m_volumeLabel->palette();
+    palette.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
+    m_volumeLabel->setPalette(palette);
+
+    QFont font = theme->font(Plasma::Theme::DefaultFont);
+    font.setPointSize(15);
+    m_volumeLabel->setFont(font);
+    QFontMetrics qfm(font);
+    QRect textSize = qfm.boundingRect("100 %  ");
+
+    int widthHint = textSize.width();
+    int heightHint = textSize.height();
+    //setCurrentVolume(100,false);
+    m_volumeLabel->setMinimumWidth(widthHint);
+    m_volumeLabel->setMaximumWidth(widthHint);
+    m_volumeLabel->nativeWidget()->setFixedWidth(widthHint);
+//    m_volumeLabel->setText(oldText);
+}
+
 
 /**
  * Set volume level in percent
@@ -130,7 +170,7 @@ void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
     }
 
     //Show the volume %
-    //m_meter->setLabel(0, QString::number(volumeLevel) + " %");
+    m_volumeLabel->setText(QString::number(volumeLevel) + " %"); // if you change the text, please adjust textSize in themeUpdated()
 }
 
 void OSDWidget::drawBackground(QPainter *painter, const QRectF &/*rectF*/)
@@ -144,11 +184,12 @@ void OSDWidget::drawBackground(QPainter *painter, const QRectF &/*rectF*/)
 QSize OSDWidget::sizeHint() const
 {
     int iconSize = m_iconLabel->nativeWidget()->pixmap()->height();
+    int labelWidth = m_volumeLabel->nativeWidget()->size().width();
     int meterHeight = iconSize;
     int meterWidth = iconSize * 12;
     qreal left, top, right, bottom;
     m_background->getMargins(left, top, right, bottom);
-    return QSize(meterWidth + iconSize + left + right, meterHeight + top + bottom);
+    return QSize(meterWidth + labelWidth + iconSize + left + right, meterHeight + top + bottom);
 }
 
 void OSDWidget::resizeEvent(QResizeEvent*)
@@ -165,7 +206,7 @@ void OSDWidget::resizeEvent(QResizeEvent*)
     }
 }
 
-void OSDWidget::showEvent(QShowEvent *event)
+void OSDWidget::showEvent(QShowEvent *)
 {
     Plasma::WindowEffects::overrideShadow(winId(), true);
     Plasma::WindowEffects::enableBlurBehind(winId(), true, m_background->mask());
