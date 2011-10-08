@@ -1132,7 +1132,8 @@ void MDWSlider::showMoveMenu()
  */
 bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 {
-	if (e->type() == QEvent::MouseButtonPress) {
+	QEvent::Type eventType = e->type();
+	if (eventType == QEvent::MouseButtonPress) {
 		QMouseEvent *qme = static_cast<QMouseEvent*>(e);
 		if (qme->button() == Qt::RightButton) {
 			showContextMenu();
@@ -1140,8 +1141,9 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 		}
 	}
 	// Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
-	else if ( (e->type() == QEvent::Wheel)
-	         && strcmp(obj->metaObject()->className(),"KSmallSlider") != 0 )  {
+	else if ( (eventType == QEvent::Wheel) )
+//	         && strcmp(obj->metaObject()->className(),"KSmallSlider") != 0 )  {  // Remove the KSmallSlider check. If KSmallSlider comes back, use a cheaper type check - e.g. a boolean value.
+	{
 		QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
 
 		bool increase = (qwe->delta() > 0);
