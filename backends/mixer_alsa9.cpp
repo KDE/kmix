@@ -805,7 +805,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
                    default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.chid << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug() << "writeVolumeToHW(" << devnum << ") [set_playback_volume] failed, errno=" << ret;
-              if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << vc.chid << ", vol=" << vc.volume; }
+              //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << vc.chid << ", vol=" << vc.volume; }
           }
     } // has playback volume
 

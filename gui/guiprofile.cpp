@@ -578,7 +578,7 @@ void ProfControl::setSubcontrols(QString sctls)
   QStringListIterator qslIt(qsl);
   while (qslIt.hasNext()) {
     QString sctl = qslIt.next();
-       kDebug() << "setSubcontrols found: " << sctl.toLocal8Bit().constData() << endl;
+       //kDebug() << "setSubcontrols found: " << sctl.toLocal8Bit().constData() << endl;
        if ( sctl == "pvolume" ) _useSubcontrolPlayback = true;
        else if ( sctl == "cvolume" ) _useSubcontrolCapture = true;
        else if ( sctl == "pswitch" ) _useSubcontrolPlaybackSwitch = true;

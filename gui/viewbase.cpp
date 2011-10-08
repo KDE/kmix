@@ -258,7 +258,7 @@ void ViewBase::setMixSet()
     _mixers.clear();
     foreach ( MixDevice* md, *_mixSet )
     {
-      kDebug() << "VVV Add to " << md->mixer()->id(); 
+//      kDebug() << "VVV Add to " << md->mixer()->id();
 //      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
       _mixers.insert(md->mixer());
     }

@@ -531,7 +531,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 
 	foreach (VolumeChannel vc, vols )
 	{
-		kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
+		//kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
 		QWidget *subcontrolLabel;
 
 		QString subcontrolTranslation;
@@ -710,7 +710,7 @@ void
 MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool showSubcontrolLabels)
 {
 	if ( ref_sliders.isEmpty()) return;
-	kDebug() << "m_linked=" << m_linked << "showSubcontrolLabels" << showSubcontrolLabels;
+	// kDebug() << "m_linked=" << m_linked << "showSubcontrolLabels" << showSubcontrolLabels;
 
 	bool first = true;
 	foreach ( QAbstractSlider* slider1, ref_sliders )
@@ -836,10 +836,10 @@ MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
 /** This slot is called, when a user has changed the volume via the KMix Slider. */
 void MDWSlider::volumeChange( int )
 {
-  if ( mixDevice()->id() == "Headphone:0" )
-  {
-    kDebug(67100) << "headphone bug";
-  }
+//  if ( mixDevice()->id() == "Headphone:0" )
+//  {
+//    kDebug(67100) << "headphone bug";
+//  }
 	if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
 	if (m_slidersCapture.count()  > 0) volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
@@ -853,7 +853,7 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
 		long firstVolume = firstSlider->value();
-		kDebug(67100) << "firstVolume=" <<firstVolume;
+		//kDebug(67100) << "firstVolume=" <<firstVolume;
 		vol.setAllVolumes(firstVolume);
 	} // stereoLinked()
 
@@ -861,7 +861,7 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref
 
 	  	QAbstractSlider* firstSlider = ref_sliders.first();
 		long firstVolume = firstSlider->value();
-		kDebug(67100) << "firstVolume=" <<firstVolume;
+		//kDebug(67100) << "firstVolume=" <<firstVolume;
 	  
 		for( int i=0; i<ref_sliders.count(); i++ ) {
 			QAbstractSlider *sliderWidget = ref_sliders[i];
@@ -938,10 +938,10 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	long inc = volP.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
 	if ( inc == 0 )	inc = 1;
 	if ( decrease ) inc *= -1;
-	if ( mixDevice()->id() == "Headphone:0" )
-	  debugMe =true;
-	if (debugMe)
-	  kDebug(67100) << ( decrease ? "decrease by " : "increase by " ) << inc ;
+//	if ( mixDevice()->id() == "Headphone:0" )
+//	  debugMe =true;
+//	if (debugMe)
+//	  kDebug(67100) << ( decrease ? "decrease by " : "increase by " ) << inc ;
 	if ( !decrease && m_mixdevice->isMuted())
 	{   // increasing form muted state: unmute and start with a low volume level
 	    m_mixdevice->setMuted(false);

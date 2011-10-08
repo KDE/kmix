@@ -85,15 +85,6 @@ friend class MixDevice;
     // regular constructor
     Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     void addVolumeChannel(VolumeChannel ch);
-    // compatibility constructor
-    // Volume( int channels, long maxVolume );
-    // copy constructor
-    //Volume( const Volume &v );
-private:
-    // constructor for dummy volumes
-    Volume();
-
-public:
     /// @Deprecated
     void addVolumeChannels(ChannelMask chmask);
     
@@ -154,6 +145,9 @@ protected:
 
 
 private:
+    // constructor for dummy volumes
+    Volume();
+
     void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
     long volrange( long vol );

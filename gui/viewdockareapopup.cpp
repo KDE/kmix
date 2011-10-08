@@ -135,7 +135,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
    _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
    _layoutMDW->addWidget( mdw, sliderColumn+1,0 );
 
-   kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
+   //kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
    return mdw;
 }
 
@@ -154,7 +154,7 @@ void ViewDockAreaPopup::constructionFinished() {
 void ViewDockAreaPopup::refreshVolumeLevels() {
   foreach ( QWidget* qw, _mdws )
   {
-    kDebug() << "rvl: " << qw;
+    //kDebug() << "rvl: " << qw;
     MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
     if ( mdw != 0 ) mdw->update();
   }
