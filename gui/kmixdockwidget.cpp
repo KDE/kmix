@@ -314,7 +314,8 @@ void KMixDockWidget::activate(const QPoint &pos)
         // Use default KStatusNotifierItem behavior if we are not using the dockAreaPopup
         kDebug() << "Use default KStatusNotifierItem behavior";
         setAssociatedWidget(_kmixMainWindow);
-        KStatusNotifierItem::activate(pos);
+//        KStatusNotifierItem::activate(pos);
+	KStatusNotifierItem::activate();
         return;
     }
 
