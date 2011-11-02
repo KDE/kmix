@@ -89,10 +89,11 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _volWA->setDefaultWidget(_referenceWidget2);
         _referenceWidget->addAction(_volWA);
 
-        //setAssociatedWidget(_referenceWidget);
-        //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
+        //setAssociatedWidget(0);
+        setAssociatedWidget(_kmixMainWindow);  // If you use the popup, associate that instead of the MainWindow
     }
     else {
+        //setAssociatedWidget(0);
         _volWA = 0;
         _referenceWidget = 0;
     }
@@ -298,19 +299,31 @@ void KMixDockWidget::activateMenuOrWindow(bool val, const QPoint &pos)
 }
 
 
-void KMixDockWidget::activate(const QPoint &pos)
+void KMixDockWidget::activate(const QPoint &posRef)
 {
-    kDebug() << "Activate at " << pos;
+    kDebug() << "Activate at " << posRef;
 
     bool showHideMainWindow = false;
     showHideMainWindow |= (_referenceWidget == 0);
-    showHideMainWindow |= (pos.x() == 0  && pos.y() == 0);  // HACK. When the action comes from the context menu, the pos is (0,0)
+    QPoint pos;
+    if ( posRef.x() == 0  && posRef.y() == 0) {
+        // HACK. When the action comes from the context menu, the pos is (0,0)
+        pos.setX(QCursor::pos().x());
+        pos.setY(QCursor::pos().y());
+    }
+    else {
+        pos.setX(posRef.x());
+        pos.setY(posRef.y());
+    }
 
-    if ( showHideMainWindow ) {
+    if ( _contextMenuWasOpen ) {
+        _contextMenuWasOpen = false;
         // Use default KStatusNotifierItem behavior if we are not using the dockAreaPopup
         kDebug() << "Use default KStatusNotifierItem behavior";
         setAssociatedWidget(_kmixMainWindow);
-        KStatusNotifierItem::activate(pos);
+        //KStatusNotifierItem::activate(pos);
+	KStatusNotifierItem::activate();
+        setAssociatedWidget(_referenceWidget);
         return;
     }
 
