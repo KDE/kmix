@@ -51,6 +51,11 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
    _mixer = mixer;
    _mixSet = new MixSet();
 
+   // This must be populated now otherwise bad things happen (circular dependancies etc
+   // This is due to the fact that setMixSet() calls isDynamic() which in turn needs a populated
+   // _mixers array to ensure that this is the case....
+   _mixers.insert(_mixer);
+
    if ( _actions == 0 ) {
       // We create our own action collection, if the actionColletion was 0.
       // This is currently done for the ViewDockAreaPopup, but only because it has not been converted to use the app-wide
@@ -256,6 +261,7 @@ void ViewBase::setMixSet()
     _setMixSet();
     
     _mixers.clear();
+    _mixers.insert(_mixer);
     foreach ( MixDevice* md, *_mixSet )
     {
 //      kDebug() << "VVV Add to " << md->mixer()->id();
