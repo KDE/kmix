@@ -31,6 +31,7 @@
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
 
+#define HAVE_SOURCE_OUTPUT_VOLUMES PA_CHECK_VERSION(1,0,0)
 
 #define KMIXPA_PLAYBACK     0
 #define KMIXPA_CAPTURE      1
@@ -329,8 +330,8 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     s.description = prefix + QString::fromUtf8(i->name);
     s.name = QString("stream:") + QString::number(i->index); //appname.replace(' ', '_').toLower();
     s.icon_name = getIconNameFromProplist(i->proplist);
-    s.volume = i->volume;
     s.channel_map = i->channel_map;
+    s.volume = i->volume;
     s.mute = !!i->mute;
     s.stream_restore_rule = QString::fromUtf8(t);
 
@@ -388,11 +389,14 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
     s.description = prefix + QString::fromUtf8(i->name);
     s.name = QString("stream:") + QString::number(i->index); //appname.replace(' ', '_').toLower();
     s.icon_name = getIconNameFromProplist(i->proplist);
-    //s.volume = i->volume;
-    s.volume = captureDevices[i->source].volume;
     s.channel_map = i->channel_map;
-    //s.mute = !!i->mute;
+#if HAVE_SOURCE_OUTPUT_VOLUMES
+    s.volume = i->volume;
+    s.mute = !!i->mute;
+#else
+    s.volume = captureDevices[i->source].volume;
     s.mute = captureDevices[i->source].mute;
+#endif
     s.stream_restore_rule = QString::fromUtf8(pa_proplist_gets(i->proplist, "module-stream-restore.id"));
 
     translateMasksAndMaps(s);
@@ -1167,6 +1171,20 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
             {
                 pa_operation *o;
 
+#if HAVE_SOURCE_OUTPUT_VOLUMES
+                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
+                if (!(o = pa_context_set_source_output_volume(s_context, iter->index, &volume, NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_source_output_volume_by_index() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+
+                if (!(o = pa_context_set_source_output_mute(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
+                    kWarning(67100) <<  "pa_context_set_source_output_mute_by_index() failed";
+                    return Mixer::ERR_READ;
+                }
+                pa_operation_unref(o);
+#else                
                 // NB Note that this is different from APP_PLAYBACK in that we set the volume on the source itself.
                 pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_source_volume_by_index(s_context, iter->device_index, &volume, NULL, NULL))) {
@@ -1180,6 +1198,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
+#endif
 
                 return 0;
             }
