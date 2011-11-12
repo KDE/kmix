@@ -819,11 +819,6 @@ void Mixer_PULSE::removeAllWidgets()
                               Q_ARG(QString, _mixer->id()));
 }
 
-void Mixer_PULSE::addDevice(devinfo& dev)
-{
-  addDevice(dev, false);
-}
-  
 void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 {
     if (dev.chanMask != Volume::MNONE) {
