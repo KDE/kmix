@@ -829,12 +829,12 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
             ms = s_mixers[KMIXPA_CAPTURE]->getMixSet();
 
         Volume v(PA_VOLUME_NORM, PA_VOLUME_MUTED, true, false);
-	v.addVolumeChannels(dev.chanMask);
+        v.addVolumeChannels(dev.chanMask);
         setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
-	if (isAppStream) 
-	  md->setApplicationStream(true);
-	
+        if (isAppStream)
+            md->setApplicationStream(true);
+
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md);
