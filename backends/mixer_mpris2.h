@@ -41,12 +41,14 @@ public:
   QDBusInterface* playerIfc;
 
 public slots:
-//  void volumeChangedIncoming(QString ifc, QList<QVariant> msg);
+  void trackChangedIncoming(QVariantMap msg);
   void volumeChangedIncoming(QString,QVariantMap,QStringList);
   
 signals:
   void volumeChanged(MPrisAppdata* mad, double);
 };
+
+
 
 class Mixer_MPRIS2 : public Mixer_Backend
 {
@@ -73,14 +75,13 @@ public:
 
 public slots:
   void volumeChanged(MPrisAppdata* mad, double);
+  void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
 
 private:
   int run();
-//  static char MPRIS_IFC2[40];
+
+  QDBusConnection* dbusConnPtr;
   static QString MPRIS_IFC2;
-  
-  static QString getBusDestination(const QString& id);
-  
   QMap<QString,MPrisAppdata*> apps;
 };
 

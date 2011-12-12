@@ -63,12 +63,6 @@ Volume::Volume()
 
 VolumeChannel::VolumeChannel() {}
 
-// @Deprecated  use method without chmask
-// Volume::Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture  )
-// {
-//     init(chmask, maxVolume, minVolume, hasSwitch, isCapture );
-// }
-
 Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
 	init((ChannelMask)0, maxVolume, minVolume, hasSwitch, isCapture );

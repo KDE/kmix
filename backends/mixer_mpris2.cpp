@@ -62,13 +62,6 @@ int Mixer_MPRIS2::close()
 	return 0;
 }
 
-QString Mixer_MPRIS2::getBusDestination(const QString& id)
-{
-	return QString("org.mpris.MediaPlayer2.").append(id);
-}
-
-
-
 int Mixer_MPRIS2::mediaPlay(QString id)
 {
 	return mediaControl(id, "PlayPause");
@@ -141,6 +134,7 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * md)
 int Mixer_MPRIS2::writeVolumeToHW( const QString& id, MixDevice *md )
 {
 
+	qDebug() << "Shall send updated volume to MPRIS Player for " << id;
 	Volume& vol = md->playbackVolume();
 	double volFloat = 0;
 	if ( ! md->isMuted() )
@@ -198,26 +192,23 @@ int Mixer_MPRIS2::run()
 		return Mixer::ERR_OPEN;
 	}
 
-	kDebug(67100) << "--- B ---------------------------------";
+	this->dbusConnPtr = &dbusConn;
+
 	QDBusReply<QStringList> repl = dbusConn.interface()->registeredServiceNames();
 
-	kDebug(67100) << "--- C ---------------------------------";
 	if ( repl.isValid() )
 	{
-		kDebug(67100) << "--- D ---------------------------------";
-
 		QStringList result = repl.value();
 		QString s;
 		foreach (  s , result )
 		{
 			if ( s.startsWith("org.mpris.MediaPlayer2") )
-			{
 				getMprisControl(dbusConn, s);
-
-			}
 		}
 	}
 
+	// Start listening for new Mediaplayers
+	dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
 
 	return 0;
 }
@@ -282,9 +273,10 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 			m_mixDevices.append( md );
 
 			//	conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QList<QVariant>)) );
-			conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QVariantMap,QStringList)) );
+			conn.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QVariantMap,QStringList)) );
 			connect(mad, SIGNAL(volumeChanged(MPrisAppdata*,double)), this, SLOT(volumeChanged(MPrisAppdata*,double)) );
 
+			conn.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mad, SLOT(trackChangedIncoming(QVariantMap)) );
 		}
 	}
 	else
@@ -294,6 +286,45 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 }
 
 
+
+/**
+ * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
+ */
+void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwner)
+{
+	if (dbusConnPtr == 0)
+	{
+		kError() << "We see a new application is registering on DBUS, but we have no DBUS connection. This is most definitely weird.";
+		return; // No DBUS connection. We should never enter this SLOT at all
+	}
+
+	if ( name.startsWith("org.mpris.MediaPlayer2") )
+	{
+		kDebug() << "DO SOMETHING: " << name << "," << oldOwner << "," << newOwner;
+		if ( oldOwner.isEmpty() && !newOwner.isEmpty())
+		{
+			kDebug() << "Mediaplayer registers: " << name;
+			QDBusConnection dbusConn = QDBusConnection::sessionBus();
+			getMprisControl(dbusConn, name);
+		    QMetaObject::invokeMethod(this,
+		                              "controlsReconfigured",
+		                              Qt::QueuedConnection,
+		                              Q_ARG(QString, _mixer->id()));
+		}
+		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
+			kDebug() << "Mediaplayer unregisters: " << name;
+	}
+
+}
+
+/**
+ * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
+ */
+void MPrisAppdata::trackChangedIncoming(QVariantMap msg)
+{
+	kDebug() << "Track changed";
+}
+
 /**
  * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
  */
@@ -302,8 +333,17 @@ void MPrisAppdata::volumeChangedIncoming(QString ifc,QVariantMap msg ,QStringLis
 	QMap<QString, QVariant>::iterator v = msg.find("Volume");
 	if (v != msg.end() )
 	{
+		kDebug(67100) << "volumeChanged incoming: !!!!!!!!!" ;
 		double volDouble = v.value().toDouble();
 		emit volumeChanged( this, volDouble);
+	}
+
+	v = msg.find("PlaybackStatus");
+	if (v != msg.end() )
+	{
+		QString playbackStatus = v.value().toString();
+		// "Stopped", "Playing", "Paused"
+		kDebug() << "PlaybackStatus is now " << playbackStatus;
 	}
 }
 
