@@ -36,6 +36,8 @@ class MixSet : public QList <MixDevice *>
       
       MixDevice* get(QString id);
 
+      void removeById(QString id);
+
    private:
       QString m_name;
 };

@@ -76,3 +76,17 @@ MixDevice* MixSet::get(QString id)
   }
   return md;
 }
+
+void MixSet::removeById(QString id)
+{
+	for (int i=0; i < count() ; i++ )
+	{
+		MixDevice* md = operator[](i);
+	    if ( md->id() == id )
+	    {
+	    	removeAt(i);
+	    	break;
+	    }
+	}
+}
+

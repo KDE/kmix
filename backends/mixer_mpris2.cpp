@@ -312,7 +312,21 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 		                              Q_ARG(QString, _mixer->id()));
 		}
 		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
+		{
 			kDebug() << "Mediaplayer unregisters: " << name;
+			int lastDot = name.lastIndexOf('.');
+			QString id = ( lastDot == -1 ) ? name : name.mid(lastDot+1);
+			apps.remove(id);
+			m_mixDevices.removeById(id);
+		    QMetaObject::invokeMethod(this,
+		                              "controlsReconfigured",
+		                              Qt::QueuedConnection,
+		                              Q_ARG(QString, _mixer->id()));
+		}
+		else
+		{
+			kWarning() << "Mediaplayer has registered under a new name. This is currently not supported by KMix";
+		}
 	}
 
 }
