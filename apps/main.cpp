@@ -36,21 +36,25 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", 0, ki18n("KMix"),
                          APP_VERSION, ki18n(description), KAboutData::License_GPL,
-                         ki18n("(c) 1996-2007 Christian Esken\n(c) 2000-2003 Stefan Schimanski\n(c) 2002-2005 Helio Chissini de Castro"));
+                         ki18n("(c) 1996-2012 The KMix Authors"));
 
-   aboutData.addAuthor(ki18n("Christian Esken"), ki18n("Current maintainer"), "esken@kde.org");
-   aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("Co-maintainer, Alsa 0.9x port"), "helio@kde.org" );
-   aboutData.addAuthor(ki18n("Brian Hanson")      , ki18n("Solaris port"), "bhanson@hotmail.com");
-/* The HP/UX port is not maintained anymore, and no official part of KMix anymore
-   aboutData.addAuthor(ki18n("Helge Deller")      , ki18n("HP/UX port"), "deller@gmx.de");
-*/
+   // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.
+   aboutData.addAuthor(ki18n("Christian Esken")   , ki18n("Original author and current maintainer"), "esken@kde.org");
+   aboutData.addAuthor(ki18n("Colin Guthrie")     , ki18n("PulseAudio support"), "cguthrie@mandriva.org");
+   aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("ALSA 0.9x port"), "helio@kde.org" );
+   aboutData.addAuthor(ki18n("Brian Hanson")      , ki18n("Solaris support"), "bhanson@hotmail.com");
+// The HP/UX port is not maintained anymore, and no official part of KMix anymore
+// aboutData.addAuthor(ki18n("Helge Deller")      , ki18n("HP/UX port"), "deller@gmx.de");
+// The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+// aboutData.addAuthor(ki18n("Nick Lopez")        , ki18n("Initial ALSA port"), "kimo_sabe@usa.net");
+
+   // Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+   aboutData.addCredit(ki18n("Igor Poboiko")      , ki18n("Plasma Dataengine"), "igor.poboiko@gmail.com");
    aboutData.addCredit(ki18n("Stefan Schimanski") , ki18n("Temporary maintainer"), "schimmi@kde.org");
-   aboutData.addCredit(ki18n("Erwin Mascher")     , ki18n("Improving support for emu10k1 based soundcards"));
    aboutData.addCredit(ki18n("Sebestyen Zoltan")  , ki18n("*BSD fixes"), "szoli@digo.inf.elte.hu");
    aboutData.addCredit(ki18n("Lennart Augustsson"), ki18n("*BSD fixes"), "augustss@cs.chalmers.se");
-   aboutData.addCredit(ki18n("Nick Lopez")        , ki18n("ALSA port"), "kimo_sabe@usa.net");
    aboutData.addCredit(ki18n("Nadeem Hasan")      , ki18n("Mute and volume preview, other fixes"), "nhasan@kde.org");
-   aboutData.addCredit(ki18n("Colin Guthrie")     , ki18n("PulseAudio support"), "cguthrie@mandriva.org");
+   aboutData.addCredit(ki18n("Erwin Mascher")     , ki18n("Improving support for emu10k1 based soundcards"));
    aboutData.addCredit(ki18n("Valentin Rusu")     , ki18n("TerraTec DMX6Fire support"), "kde@rusu.info");
 
    KCmdLineArgs::init( argc, argv, &aboutData );
