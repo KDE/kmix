@@ -56,7 +56,7 @@ class Mixer_MPRIS2 : public Mixer_Backend
 public:
   explicit Mixer_MPRIS2(Mixer *mixer, int device = -1 );
     virtual ~Mixer_MPRIS2();
-    void getMprisControl(QDBusConnection& conn, QString arg1);
+    void addMprisControl(QDBusConnection& conn, QString arg1);
     QString getDriverName();
 
   virtual int open();
@@ -74,14 +74,12 @@ public:
   virtual int mediaControl(QString id, QString command);
 
 public slots:
-  void volumeChanged(MPrisAppdata* mad, double);
-  void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
-
+    void volumeChanged(MPrisAppdata *mad, double);
+    void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
 private:
-  int run();
-
-  QDBusConnection* dbusConnPtr;
-  static QString MPRIS_IFC2;
+    int addAllRunningPlayersAndInitHotplug();
+    void notifyToReconfigureControls();
+    
   QMap<QString,MPrisAppdata*> apps;
 };
 

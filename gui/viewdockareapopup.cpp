@@ -115,6 +115,15 @@ void ViewDockAreaPopup::_setMixSet()
    
 }
 
+
+void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
+{
+	kDebug(67100) << "RECONFIGURE AND RECREATE DOCK";
+	ViewBase::controlsReconfigured(mixer_ID);
+	emit recreateMe();
+}
+
+
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
 {
     QString dummyMatchAll("*");

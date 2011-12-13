@@ -95,6 +95,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _referenceWidget = new KMenu(parent);
         ViewDockAreaPopup* _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, parent);
         _referenceWidget2->createDeviceWidgets();
+        connect(_referenceWidget2, SIGNAL(recreateMe()), _kmixMainWindow, SLOT(recreateDockWidget()));
 
         _volWA = new QWidgetAction(_referenceWidget);
         _volWA->setDefaultWidget(_referenceWidget2);

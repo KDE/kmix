@@ -94,6 +94,7 @@ KMixWindow : public KXmlGuiWindow
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
    void recreateGUIwithSavingView();
    void recreateGUIwithoutSavingView();
+   void recreateDockWidget();
    void redrawMixer( const QString& mixer_ID );
    void newMixerShown(int tabIndex);
 
@@ -138,6 +139,7 @@ KMixWindow : public KXmlGuiWindow
 
     private:
    static QString getKmixctrlRcFilename(QString postfix);
+
   private slots:
    void saveConfig();
    void slotHWInfo();

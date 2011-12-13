@@ -52,8 +52,14 @@ private:
   QLayout* _layoutControls;
   QGridLayout* _layoutMDW;
 
+public slots:
+   virtual void controlsReconfigured( const QString& mixer_ID );
 private slots:
     void showPanelSlot();
+signals:
+    void recreateMe();
+
+
 
 };
 

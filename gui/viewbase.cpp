@@ -145,23 +145,6 @@ void ViewBase::createDeviceWidgets()
 void ViewBase::rebuildFromProfile()
 {
    emit rebuildGUI();
-/*
-   // Redo everything from scratch, as visibility and the order of the controls might have changed.
-
-   // As the order of the controls is stored in the profile, we need
-   // to rebuild the _mixSet 
-kDebug() << "rebuild 1";
-   _mixSet->clear();
-kDebug() << "rebuild 2";
-   _mdws.clear();
-kDebug() << "rebuild 3";
-   setMixSet();
-kDebug() << "rebuild 4";
-   createDeviceWidgets();
-kDebug() << "rebuild 5";
-   constructionFinished();
-kDebug() << "rebuild 6";
-*/
 }
 
 
@@ -214,18 +197,31 @@ void ViewBase::showContextMenu()
 
 void ViewBase::controlsReconfigured( const QString& mixer_ID )
 {
-  // TODO Search _mixers for the correct Mixer*. After that, remove _mixer instance variable
-    if ( _mixer->id() == mixer_ID )
-    {
-        kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet->count() << ")";
-        setMixSet();
-        kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet->count() << ")";
-        createDeviceWidgets();
+	// TODO Search _mixers for the correct Mixer*. After that, remove _mixer instance variable
+	bool isRelevantMixer = (_mixer->id() == mixer_ID );
+	//    if (!isRelevantMixer)
+	//    {
+	//    	foreach ( Mixer* mixer , _mixers)
+	//   		{
+	//    		if ( mixer->id() == mixer_ID )
+	//    		{
+	//    			isRelevantMixer = true;
+	//    			break;
+	//    		}
+	//   		}
+	//    }
 
-        // We've done the low level stuff our selves but let elements
-        // above know what has happened so they can reload config etc.
-        emit redrawMixer(mixer_ID);
-    }
+	if (isRelevantMixer)
+	{
+		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet->count() << ")";
+		setMixSet();
+		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet->count() << ")";
+		createDeviceWidgets();
+
+		// We've done the low level stuff our selves but let elements
+		// above know what has happened so they can reload config etc.
+		emit redrawMixer(mixer_ID);
+	}
 }
 
 void ViewBase::refreshVolumeLevels()

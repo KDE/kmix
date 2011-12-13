@@ -300,6 +300,12 @@ void KMixWindow::setInitialSize()
 }
 
 
+void KMixWindow::recreateDockWidget()
+{
+//	kDebug() << "recreate dock urgently requested";
+	updateDocking();
+}
+
 /**
  * Updates the docking icon by recreating it.
  * @returns Whether the docking succeeded. Failure usually means that there

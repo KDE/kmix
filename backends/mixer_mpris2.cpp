@@ -43,7 +43,6 @@ Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device )
 
 Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  device )
 {
-	//	run();
 }
 
 
@@ -53,7 +52,7 @@ int Mixer_MPRIS2::open()
 		return Mixer::ERR_OPEN;
 
 	_mixer->setDynamic();
-	run();
+	addAllRunningPlayersAndInitHotplug();
 	return 0;
 }
 
@@ -77,18 +76,22 @@ int Mixer_MPRIS2::mediaNext(QString id)
 	return mediaControl(id, "Next");
 }
 
-int Mixer_MPRIS2::mediaControl(QString id, QString commandName)
+/**
+ * Sends a media control command to the given application.
+ * @param applicationId The MPRIS applicationId
+ */
+int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 {
-	kDebug() << commandName << " " << id;
+	kDebug() << commandName << " " << applicationId;
 	QList<QVariant> arg;
 	//     arg.append(QString("org.mpris.MediaPlayer2.Player"));
 	//     arg.append(QString("PlayPause"));
 
-	MPrisAppdata* mad = apps.value(id);
+	MPrisAppdata* mad = apps.value(applicationId);
 	QDBusMessage msg = mad->playerIfc->callWithArgumentList(QDBus::NoBlock, commandName, arg);
 	if ( msg.type() == QDBusMessage::ErrorMessage )
 	{
-		kError(67100) << "ERROR SET " << id << ": " << msg;
+		kError(67100) << "ERROR SET " << applicationId << ": " << msg;
 		return Mixer::ERR_WRITE;
 	}
 	return 0;
@@ -177,11 +180,12 @@ bool Mixer_MPRIS2::moveStream( const QString&, const QString&  )
 
 
 /**
- * @brief Test method
+ * Adds all currently running players and then starts listening
+ * for changes (new players, and disappearing players).<br>
  *
  * @return int
  **/
-int Mixer_MPRIS2::run()
+int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 {
 	QDBusConnection dbusConn = QDBusConnection::sessionBus();
 	if (! dbusConn.isConnected() )
@@ -192,30 +196,42 @@ int Mixer_MPRIS2::run()
 		return Mixer::ERR_OPEN;
 	}
 
-	this->dbusConnPtr = &dbusConn;
+	// Start listening for new Mediaplayers
+	bool ret = dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
+	kDebug() << "Start listening for new Mediaplayers: "  << ret;
 
+	/* Here is a small concurrency issue.
+	 * If new players appear between registeredServiceNames() below and the connect() above these players *might* show up doubled in KMix.
+	 * There is no simple solution (reversing could have the problem of not-adding), so we live for now with it.
+	 */
+	 
 	QDBusReply<QStringList> repl = dbusConn.interface()->registeredServiceNames();
 
 	if ( repl.isValid() )
 	{
 		QStringList result = repl.value();
 		QString s;
-		foreach (  s , result )
+		foreach ( s , result )
 		{
 			if ( s.startsWith("org.mpris.MediaPlayer2") )
-				getMprisControl(dbusConn, s);
+				addMprisControl(dbusConn, s);
 		}
 	}
 
-	// Start listening for new Mediaplayers
-	dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
 
 	return 0;
 }
 
 
 
-void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination)
+/**
+ * Add the MPRIS control designated by the DBUS busDestination
+ * to the internal apps list.
+ *
+ * @param conn An open connection to the DBUS Session Bus
+ * @param busDestination The DBUS busDestination, e.g. "org.mpris.MediaPlayer2.amarok"
+ */
+void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination)
 {
 	int lastDot = busDestination.lastIndexOf('.');
 	QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1);
@@ -287,29 +303,27 @@ void Mixer_MPRIS2::getMprisControl(QDBusConnection& conn, QString busDestination
 
 
 
+void Mixer_MPRIS2::notifyToReconfigureControls()
+{
+    QMetaObject::invokeMethod(this,
+		                              "controlsReconfigured",
+		                              Qt::QueuedConnection,
+		                              Q_ARG(QString, _mixer->id()));
+}
+
 /**
- * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
+ * Handles the hotplug of new MPRIS2 enabled Media Players
  */
 void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwner)
 {
-	if (dbusConnPtr == 0)
-	{
-		kError() << "We see a new application is registering on DBUS, but we have no DBUS connection. This is most definitely weird.";
-		return; // No DBUS connection. We should never enter this SLOT at all
-	}
-
 	if ( name.startsWith("org.mpris.MediaPlayer2") )
 	{
-		kDebug() << "DO SOMETHING: " << name << "," << oldOwner << "," << newOwner;
 		if ( oldOwner.isEmpty() && !newOwner.isEmpty())
 		{
 			kDebug() << "Mediaplayer registers: " << name;
 			QDBusConnection dbusConn = QDBusConnection::sessionBus();
-			getMprisControl(dbusConn, name);
-		    QMetaObject::invokeMethod(this,
-		                              "controlsReconfigured",
-		                              Qt::QueuedConnection,
-		                              Q_ARG(QString, _mixer->id()));
+			addMprisControl(dbusConn, name);
+		    notifyToReconfigureControls();
 		}
 		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
 		{
@@ -318,10 +332,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 			QString id = ( lastDot == -1 ) ? name : name.mid(lastDot+1);
 			apps.remove(id);
 			m_mixDevices.removeById(id);
-		    QMetaObject::invokeMethod(this,
-		                              "controlsReconfigured",
-		                              Qt::QueuedConnection,
-		                              Q_ARG(QString, _mixer->id()));
+		    notifyToReconfigureControls();
 		}
 		else
 		{
