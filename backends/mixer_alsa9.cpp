@@ -177,14 +177,17 @@ int Mixer_ALSA::open()
             // --- Enumerated ---
             addEnumerated(elem, enumList);
         }
-        else {
-            volPlay    = addVolume(elem, false);
-            volCapture = addVolume(elem, true );
-        } // is ordinary mixer element (NOT an enum)
+		volPlay    = addVolume(elem, false);
+        volCapture = addVolume(elem, true );
 
 
         QString readableName;
         readableName = snd_mixer_selem_id_get_name( sid );
+//        if ( readableName == "Front")
+//        {
+//        	qDebug("Front!");
+//        }
+
         int idx = snd_mixer_selem_id_get_index( sid );
         if ( idx > 0 ) {
             // Add a number to the control name, like "PCM 2", when the index is > 0
@@ -193,18 +196,22 @@ int Mixer_ALSA::open()
             readableName += " ";
             readableName += idxString;
         }
-        MixDevice* md = new MixDevice(
-                _mixer,
-                mdID,
-                readableName,
-                ct );
-         if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
-         if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
-         if ( enumList.count() > 0 ) md->addEnums(enumList);
+        MixDevice* md = new MixDevice(_mixer, mdID, readableName, ct );
+        bool hasVolume = volPlay != 0 || volCapture != 0;
+        bool hasEnum   = enumList.count() > 0;
+
+        // If we have sliders and an enum, KMix needs two MixDevice instances (a MixDevice is EITHER a VolumeControl OR an ENUM, but never both)
+        MixDevice* mdForEnum = ( hasVolume && hasEnum )
+        		             ? new MixDevice(_mixer,mdID + ".enum", readableName,ct)  // For identifying/saving it needs a distinct ID. We add a ".enum"
+        					 : md;   // It is a simple ENUM (no volume control)
+
+        if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
+        if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
+       	if ( hasEnum              ) mdForEnum->addEnums(enumList);
          
-         m_mixDevices.append( md );
+        m_mixDevices.append( md );
          
-         qDeleteAll(enumList); // clear temporary list
+        qDeleteAll(enumList); // clear temporary list
 
         // --- Recommended master ----------------------------------------
         if ( md->playbackVolume().hasVolume() )
