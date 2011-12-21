@@ -26,9 +26,9 @@
 #include <QDebug>
 #include <QStringList>
 #include <QDBusReply>
-
-
 #include <QString>
+
+#include <KLocale>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
 
@@ -51,6 +51,7 @@ int Mixer_MPRIS2::open()
 	if ( m_devnum !=  0 )
 		return Mixer::ERR_OPEN;
 
+	m_mixerName = i18n("Playback Streams");
 	_mixer->setDynamic();
 	addAllRunningPlayersAndInitHotplug();
 	return 0;
