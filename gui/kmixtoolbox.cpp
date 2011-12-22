@@ -37,6 +37,9 @@
 
 #include "gui/kmixtoolbox.h"
 
+// TODO KMixToolbox is rather superfluous today, as there is no "KMix Applet" any more, and it was probably always bad style.
+//      I only have to think what to do with KMixToolBox::notification()
+
 /***********************************************************************************
  KMixToolbox contains several GUI relevant methods that are shared between the 
  KMix Main Program, and the KMix Applet.
