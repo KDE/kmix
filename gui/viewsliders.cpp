@@ -85,7 +85,9 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
 
     QString driverName = _mixer->getDriverName();
 
-    kDebug() <<"       ----------- Viewme          -----------:" << name;
+
+    // Hint: This text comparison is not a clean solution, but one that will work for quite a while.
+    // TODO cesken Revise this "text comparison" thingy when I change the View constructor to take an "id" and a "readableName"
     QString viewName(name);
     if (viewName.contains(".Capture_Streams."))
     	emptyStreamHint = new QLabel(i18n("Capture Streams"));
@@ -118,8 +120,6 @@ QWidget* ViewSliders::add(MixDevice *md)
     MixDeviceWidget *mdw;
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
 
-
-
     if ( md->isEnum() ) {
         mdw = new MDWEnum(
                 md,           // MixDevice (parameter)
@@ -144,6 +144,7 @@ QWidget* ViewSliders::add(MixDevice *md)
             _frm->setFrameStyle(QFrame::HLine | QFrame::Sunken);
         _separators.insert(md->id(),_frm);
         _layoutSliders->addWidget(_frm);
+
         mdw = new MDWSlider(
                 md,           // MixDevice (parameter)
                 true,         // Show Mute LED
@@ -204,14 +205,15 @@ void ViewSliders::_setMixSet()
         // The following for-loop could be simplified by using a std::find_if
         for ( int i=0; i<mixset.count(); i++ ) {
             MixDevice *md = mixset[i];
+
             if ( md->id().contains(idRegexp) )
             {
                 // Match found (by name)
                 if ( _mixSet->contains( md ) ) continue; // dup check
 
                 // Now check whether subcontrols match
-                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
-                bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
+                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->playbackVolume().hasSwitch()) );
+                bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
                 bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
                 bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
 		bool splitWanted = control->isSplit();

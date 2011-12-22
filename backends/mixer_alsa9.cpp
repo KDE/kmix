@@ -177,17 +177,15 @@ int Mixer_ALSA::open()
             // --- Enumerated ---
             addEnumerated(elem, enumList);
         }
-		volPlay    = addVolume(elem, false);
-        volCapture = addVolume(elem, true );
+        else
+        {
+			volPlay    = addVolume(elem, false);
+			volCapture = addVolume(elem, true );
+        }
 
 
         QString readableName;
         readableName = snd_mixer_selem_id_get_name( sid );
-//        if ( readableName == "Front")
-//        {
-//        	qDebug("Front!");
-//        }
-
         int idx = snd_mixer_selem_id_get_index( sid );
         if ( idx > 0 ) {
             // Add a number to the control name, like "PCM 2", when the index is > 0
@@ -196,18 +194,16 @@ int Mixer_ALSA::open()
             readableName += " ";
             readableName += idxString;
         }
-        MixDevice* md = new MixDevice(_mixer, mdID, readableName, ct );
-        bool hasVolume = volPlay != 0 || volCapture != 0;
-        bool hasEnum   = enumList.count() > 0;
 
-        // If we have sliders and an enum, KMix needs two MixDevice instances (a MixDevice is EITHER a VolumeControl OR an ENUM, but never both)
-        MixDevice* mdForEnum = ( hasVolume && hasEnum )
-        		             ? new MixDevice(_mixer,mdID + ".enum", readableName,ct)  // For identifying/saving it needs a distinct ID. We add a ".enum"
-        					 : md;   // It is a simple ENUM (no volume control)
+		// There can be an Enum-Control with the same name as a regular control. So we append a ".enum" prefix to always create a unique ID
+        QString finalMixdeviceID = enumList.isEmpty() ? mdID : mdID + ".enum";
+        if ( readableName == "IEC958" ) kDebug() << "IEC958! id=" << finalMixdeviceID << "readableName=" << readableName;
+
+        MixDevice* md = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
 
         if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
         if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
-       	if ( hasEnum              ) mdForEnum->addEnums(enumList);
+       	if ( !enumList.isEmpty()  ) md->addEnums(enumList);
          
         m_mixDevices.append( md );
          
