@@ -86,7 +86,6 @@ class KMixerWidget : public QWidget
    
    void createLayout(ViewBase::ViewFlags vflags);
    bool possiblyAddView(ViewBase* vbase);
-   void createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags);
 };
 
 #endif

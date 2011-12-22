@@ -101,63 +101,18 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2b) Create device widgets
    * 2c) Add Views to Tab
    ********************************************************************/
-   createViewsByProfile(_mixer, _guiprof, vflags);
+   ViewSliders* view = new ViewSliders( this, _guiprof->getId().toLatin1(), _mixer, vflags, _guiprof, _actionCollection );
+   bool added = possiblyAddView(view);
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
 
 /**
-* Creates the View based on the GUIProfile, for the Tab tabId
+ * Add the given view, if it is valid - it must have controls or at least have the chance to gain some (dynamic views)
+ * @param vbase
+ * @return true, if the view was added
  */
-void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
-{
-    ViewSliders* view = new ViewSliders( this, guiprof->getId().toLatin1(), mixer, vflags, guiprof, _actionCollection );
-    bool added = possiblyAddView(view);
-
-    // TODO remove all following code of this method
-    if ( added && view->visibleControls() == 0)
-    {
-        QString driverName = mixer->getDriverName();
-        QBoxLayout *lay = new QHBoxLayout(view);
-        //lay->setSizeConstraint(QLayout::SetNoConstraint);
-        lay->setAlignment(Qt::AlignCenter);
-        QLabel* lbl = new QLabel();
-        lbl->setAlignment(Qt::AlignCenter);
-        lbl->setWordWrap( true );
-        lbl->setText("Empty: " + driverName);
-        lay->addWidget(lbl);
-        //m_topLayout->addLayout(lay);
-    }
-
-#if 0
-   /*** How it works:
-   * A loop is done over all tabs.
-   * For each Tab a View (e.g. ViewSliders) is instanciated and added to the list of Views
-   */
-   QList<ProfTab*>::const_iterator itEnd = guiprof->tabs().end();
-   for ( QList<ProfTab*>::const_iterator it = guiprof->tabs().begin(); it != itEnd; ++it) {
-       ProfTab* profTab = *it;
-       if ( profTab->type() == "Sliders" ) {
-           if ( profTab->name() == 0 || profTab->name().isNull() )
-            {
-                kError() << "TAB NAME IS NULL";
-                profTab->name() = "Undefined";
-            }
-            kDebug() << ">>> TAB NAME = " << profTab->name();
-           QByteArray qba = profTab->name().toAscii();
-            ViewSliders* view = new ViewSliders( this, qba, mixer, vflags, guiprof, _actionCollection );
-            possiblyAddView(view);
-            break;
-        }
-        else {
-            kDebug(67100) << "KMixerWidget::createViewsByProfile(): Unknown Tab type '" << profTab->type() << "'\n";
-        }
-    } // search for correct tab
-#endif
-}
-
-
 bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 {
    if ( ! vbase->isValid()  ) {
@@ -186,11 +141,7 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
  */
 ViewBase* KMixerWidget::currentView()
 {
-    ViewBase* view = 0;
-    if ( _views.size() > 0 ) {
-        view = _views[0];
-    }
-    return view;
+	return _views.empty() ? 0 : _views[0];
 }
 
 
