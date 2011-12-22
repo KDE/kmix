@@ -112,8 +112,10 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
  */
 void KMixerWidget::createViewsByProfile(Mixer* mixer, GUIProfile *guiprof, ViewBase::ViewFlags vflags)
 {
-    ViewSliders* view = new ViewSliders( this, "", mixer, vflags, guiprof, _actionCollection );
+    ViewSliders* view = new ViewSliders( this, guiprof->getId().toLatin1(), mixer, vflags, guiprof, _actionCollection );
     bool added = possiblyAddView(view);
+
+    // TODO remove all following code of this method
     if ( added && view->visibleControls() == 0)
     {
         QString driverName = mixer->getDriverName();
