@@ -43,8 +43,10 @@
 
 // KDE
 #include <kdebug.h>
+#include <KLocale>
 
 // Qt
+#include <QLabel>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -55,6 +57,7 @@
 /**
  * Generic View implementation. This can hold now all kinds of controls (not just Sliders, as
  *  the class name suggests).
+ *  TODO change "const char*" parameter to QString
  */
 ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
       : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof, actColl)
@@ -79,6 +82,26 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
    _layoutMDW->setContentsMargins(0,0,0,0);
    _layoutMDW->setSpacing(0);
    _layoutMDW->addItem( _layoutSliders );
+
+    QString driverName = _mixer->getDriverName();
+
+    kDebug() <<"       ----------- Viewme          -----------:" << name;
+    QString viewName(name);
+    if (viewName.contains(".Capture_Streams."))
+    	emptyStreamHint = new QLabel(i18n("Capture Streams"));
+    else if (viewName.contains(".Playback_Streams."))
+    	emptyStreamHint = new QLabel(i18n("Playback Streams"));
+    else if (viewName.contains(".Capture_Devices."))
+    	emptyStreamHint = new QLabel(i18n("Capture Devices"));
+    else if (viewName.contains(".Playback_Devices."))
+    	emptyStreamHint = new QLabel(i18n("Playback Devices"));
+    else
+    	emptyStreamHint = new QLabel(i18n("Playback Streams")); // Fallback. Assume Playback stream
+
+    emptyStreamHint->setAlignment(Qt::AlignCenter);
+    emptyStreamHint->setWordWrap( true );
+    emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    _layoutMDW->addWidget(emptyStreamHint);
 
     setMixSet();
 }
@@ -223,6 +246,10 @@ void ViewSliders::_setMixSet()
         }
    } // iteration over all controls from the Profile
 
+	emptyStreamHint->setVisible(  _mixSet->isEmpty() && isDynamic() ); // show a hint why a tab is empty (dynamic controls!!!)
+	//  visibleControls() == 0 could be used for the !isDynamic() case
+
+
 #ifdef TEST_MIXDEVICE_COMPOSITE
 	// @todo: This is currently hardcoded, and instead must be read as usual from the Profile
     MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
@@ -240,6 +267,7 @@ void ViewSliders::_setMixSet()
 
 void ViewSliders::constructionFinished() {
     configurationUpdate();
+    // TODO Add a "show more" / "configure this view" button
 }
 
 
@@ -273,6 +301,7 @@ void ViewSliders::configurationUpdate() {
          if ( thisControlIsVisible ) firstVisibleControlFound=true;
       }
     } // for all  MDW's
+
     _layoutMDW->activate();
 }
 

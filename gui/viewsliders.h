@@ -25,6 +25,7 @@ class QBoxLayout;
 //class QFormLayout;
 #include <QFrame>
 #include <QHash>
+class QLabel;
 class QWidget;
 
 class Mixer;
@@ -52,6 +53,7 @@ private:
     QLayout* _layoutSliders;
 	QLayout* _layoutEnum;
     QHash<QString,QFrame*> _separators;
+    QLabel* emptyStreamHint;
 };
 
 #endif
