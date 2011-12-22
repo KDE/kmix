@@ -53,7 +53,7 @@
 VolumeSliderExtraData MDWSlider::DummVolumeSliderExtraData;
 bool MDWSlider::debugMe = false;
  /**
- * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
+ * MixDeviceWidget that represents a single mix device, including PopUp, muteLED, ...
  *
  * Used in KMix main window and DockWidget and PanelApplet.
  * It can be configured to include or exclude the captureLED and the muteLED.
