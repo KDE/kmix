@@ -162,11 +162,6 @@ int Mixer_ALSA::open()
 
         MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
 
-        m_id2numHash[mdID] = idx;
-        //kDebug() << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx;
-        mixer_elem_list.append( elem );
-        mixer_sid_list.append( sid );
-        idx++;
         /* ------------------------------------------------------------------------------- */
 
         Volume* volPlay    = 0;
@@ -186,18 +181,32 @@ int Mixer_ALSA::open()
 
         QString readableName;
         readableName = snd_mixer_selem_id_get_name( sid );
-        int idx = snd_mixer_selem_id_get_index( sid );
-        if ( idx > 0 ) {
+        int controlInstanceIndex = snd_mixer_selem_id_get_index( sid );
+        if ( controlInstanceIndex > 0 ) {
             // Add a number to the control name, like "PCM 2", when the index is > 0
             QString idxString;
-            idxString.setNum(1+idx);
+            idxString.setNum(1+controlInstanceIndex);
             readableName += " ";
             readableName += idxString;
         }
 
-		// There can be an Enum-Control with the same name as a regular control. So we append a ".enum" prefix to always create a unique ID
-        QString finalMixdeviceID = enumList.isEmpty() ? mdID : mdID + ".enum";
-        if ( readableName == "IEC958" ) kDebug() << "IEC958! id=" << finalMixdeviceID << "readableName=" << readableName;
+		// There can be an Enum-Control with the same name as a regular control. So we append a ".[cp]enum" prefix to always create a unique ID
+        QString finalMixdeviceID = mdID;
+        if ( ! enumList.isEmpty() )
+        {
+        	if (snd_mixer_selem_is_enum_capture ( elem ) )
+        		finalMixdeviceID = mdID + ".cenum"; // capture enum
+        	else
+        		finalMixdeviceID = mdID + ".penum"; // playback enum
+        }
+        if ( true || readableName.startsWith("Input Source") ) kDebug() << "Input Source! id=" << finalMixdeviceID << "readableName=" << readableName << ", idx=" << idx;
+
+        m_id2numHash[finalMixdeviceID] = idx;
+        //kDebug() << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx;
+        mixer_elem_list.append( elem );
+        mixer_sid_list.append( sid );
+        idx++;
+
 
         MixDevice* md = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
 
@@ -649,12 +658,16 @@ void Mixer_ALSA::setEnumIdHW(const QString& id, unsigned int idx) {
     //kDebug() << "Mixer_ALSA::setEnumIdHW() id=" << id << " , idx=" << idx << ") 1\n";
     int devnum = id2num(id);
     snd_mixer_elem_t *elem = getMixerElem( devnum );
-    int ret = snd_mixer_selem_set_enum_item(elem,SND_MIXER_SCHN_FRONT_LEFT,idx);
-    if (ret < 0) {
-        kError() << "Mixer_ALSA::setEnumIdHW(" << devnum << "), errno=" << ret << "\n";
-    }
-    snd_mixer_selem_set_enum_item(elem,SND_MIXER_SCHN_FRONT_RIGHT,idx);
-    // we don't care about possible error codes on channel 1
+
+    for (int i = 0; i <= SND_MIXER_SCHN_LAST; ++i)
+    {
+		int ret = snd_mixer_selem_set_enum_item(elem, (snd_mixer_selem_channel_id_t)i,idx);
+		if (ret < 0 && i == 0)
+		{
+			// Log errors only for one channel. This should be enough, and another reason is that I also do not check which channels are supported at all.
+			kError() << "Mixer_ALSA::setEnumIdHW(" << devnum << "), errno=" << ret << "\n";
+		}
+	}
 
     return;
 }
