@@ -75,6 +75,10 @@ class KMixerWidget : public QWidget
    void saveConfig( KConfig *config );
    void loadConfig( KConfig *config );
 
+  private slots:
+    void controlsReconfiguredToplevel(QString mixerId);
+    void refreshVolumeLevelsToplevel();
+
   private:
    Mixer *_mixer;
    QVBoxLayout *m_topLayout; // contains TabWidget
@@ -82,6 +86,7 @@ class KMixerWidget : public QWidget
    ProfTab* _tab;
    std::vector<ViewBase*> _views;
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
+   QWidget* _mainWindow;
 
    
    void createLayout(ViewBase::ViewFlags vflags);

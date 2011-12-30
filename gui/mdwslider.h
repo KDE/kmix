@@ -56,7 +56,7 @@ public:
 	       bool includePlayback, bool includeCapture,
 	       bool small, Qt::Orientation,
 	       QWidget* parent, ViewBase* view, ProfControl *pctl);
-    ~MDWSlider() { }
+    virtual ~MDWSlider();
 
     enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };
     void addActionToPopup( KAction *action );

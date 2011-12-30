@@ -81,6 +81,24 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
     update();
 }
 
+MDWSlider::~MDWSlider()
+{
+	foreach( QAbstractSlider* slider, m_slidersPlayback)
+	{
+		delete slider;
+	}
+	foreach( QAbstractSlider* slider, m_slidersCapture)
+	{
+		delete slider;
+	}
+
+	/*
+	static int destructorCalls = 1;
+	kDebug() << "Destroying id=" << this->mixDevice()->id() << "desctructorCalls=" << destructorCalls;
+	++destructorCalls;
+	*/
+
+}
 
 void MDWSlider::createActions()
 {

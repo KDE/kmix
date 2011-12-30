@@ -113,6 +113,8 @@ public:
    GUIProfile* guiProfile() { return _guiprof; };
    KActionCollection* actionCollection() { return _actions; };
 
+   QSet<Mixer*>& getMixers() { return _mixers; };
+
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
      * _mdws[i] is the Widget for the MixDevice _mixSet[i] - please see ViewBase::createDeviceWidgets().
@@ -123,7 +125,7 @@ public:
 
 signals:
     void rebuildGUI();
-    void redrawMixer( const QString& mixer_ID );
+    //void redrawMixer( const QString& mixer_ID );
 
 
 protected:
