@@ -782,11 +782,11 @@ void KMixWindow::saveAndCloseView(int idx)
     if ( kmw ) {
         kmw->saveConfig( KGlobal::config().data() );  // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
         m_wsMixers->removeTab(idx);
-        delete kmw;
-
-        m_wsMixers->setTabsClosable(!kmw->mixer()->isDynamic() && m_wsMixers->count() > 1);
+        m_wsMixers->setTabsClosable(!kmw->mixer()->isDynamic() && m_wsMixers->count() > 1); // This does not work properly in (experimental) multi-driver-mode
 
         saveViewConfig();
+
+        delete kmw;
     }
     kDebug() << "Exit";
 }
