@@ -21,6 +21,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/kmixdockwidget.h"
+
 #include <kaction.h>
 #include <klocale.h>
 #include <kapplication.h>
@@ -46,7 +48,6 @@
 
 #include "gui/dialogselectmaster.h"
 #include "apps/kmix.h"
-#include "gui/kmixdockwidget.h"
 #include "core/mixer.h"
 #include "gui/mixdevicewidget.h"
 #include "core/mixertoolbox.h"
@@ -224,14 +225,8 @@ KMixDockWidget::setVolumeTip()
     {
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
-        int val = 0;
-        Volume& vol       = md->playbackVolume();
-        if (! vol.hasVolume() ) {
-           vol = md->captureVolume();
-        }
-        if ( vol.hasVolume() ) {
-            val = vol.getAvgVolumePercent(Volume::MALL);
-        }
+        Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
+       	int val = vol.getAvgVolumePercent(Volume::MALL);
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
         newToolTipValue = val;
@@ -262,23 +257,23 @@ KMixDockWidget::updatePixmap()
     {
         newPixmapType = 'e';
     }
-    else if ( md->playbackVolume().hasSwitch() && md->isMuted() )
-    {
-        newPixmapType = 'm';
-    }
     else
     {
-        Volume& vol = md->playbackVolume();
-        if (! vol.hasVolume() ) {
-            vol = md->captureVolume();
-        }
-        int percentage         = vol.getAvgVolumePercent(Volume::MALL);
-        if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
-        else if ( percentage < 25 ) newPixmapType = '1';
-        else if ( percentage < 75 ) newPixmapType = '2';
-        else                        newPixmapType = '3';
-   }
-
+    	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
+    	bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
+		if ( isInactive )
+		{
+			newPixmapType = 'm';
+		}
+		else
+		{
+			int percentage         = vol.getAvgVolumePercent(Volume::MALL);
+			if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
+			else if ( percentage < 25 ) newPixmapType = '1';
+			else if ( percentage < 75 ) newPixmapType = '2';
+			else                        newPixmapType = '3';
+	   }
+    }
 
    if ( newPixmapType != _oldPixmapType ) {
       // Pixmap must be changed => do so
@@ -377,11 +372,6 @@ void KMixDockWidget::activate(const QPoint &pos)
     }
 }
 
-// void
-// KMixDockWidget::trayToolTipEvent(QHelpEvent *e ) {
-//    kDebug(67100) << "trayToolTipEvent" ;
-//    setVolumeTip();
-// }
 
 void
 KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
@@ -399,10 +389,15 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 
     long int cv = inc * (delta / 120 );
 //    kDebug() << "twe: " << cv << " : " << vol;
-	if ( cv > 0 && md->isMuted())
+    bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
+    kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
+	if ( cv > 0 && isInactive)
 	{   // increasing from muted state: unmute and start with a low volume level
-	    md->setMuted(false);
-	    vol.setAllVolumes(cv);
+		if ( vol.isCapture())
+			md->setRecSource(true);
+		else
+			md->setMuted(false);
+		vol.setAllVolumes(cv);
 	}
 	else
 	    vol.changeAllVolumes(cv);
@@ -460,9 +455,11 @@ KMixDockWidget::contextMenuAboutToShow()
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
     //kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
     if ( md != 0 && dockMuteAction != 0 ) {
-        bool hasSwitch = md->playbackVolume().hasSwitch();
+    	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
+    	bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
+        bool hasSwitch = vol.hasSwitch();
         dockMuteAction->setEnabled( hasSwitch );
-        dockMuteAction->setChecked( hasSwitch && md->isMuted() );
+        dockMuteAction->setChecked( hasSwitch && !isInactive );
     }
     _contextMenuWasOpen = true;
 }
