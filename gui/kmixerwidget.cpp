@@ -37,6 +37,7 @@
 #include <ktabwidget.h>
 
 // KMix
+#include "apps/kmix.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixerwidget.h"
 #include "gui/kmixtoolbox.h"
@@ -58,6 +59,8 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
      m_topLayout(0), _guiprof(guiprof),
      _actionCollection(actionCollection)
 {
+	_mainWindow = parent;
+	//kDebug() << "kmixWindow created: parent=" << parent << ", parentWidget()=" << parentWidget();
    if ( _mixer )
    {
       createLayout(vflags);
@@ -169,11 +172,40 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
       // *this will be deleted on rebuildGUI(), so lets queue the signal
       connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithSavingView()), Qt::QueuedConnection );
-      connect( vbase, SIGNAL(redrawMixer(QString)), parentWidget(), SLOT(redrawMixer(QString)), Qt::QueuedConnection );
+      //connect( vbase, SIGNAL(redrawMixer(QString)), parentWidget(), SLOT(redrawMixer(QString)), Qt::QueuedConnection );
+
+      kDebug() << "CONNECT ViewBase count " << vbase->getMixers().size();
+	  foreach ( Mixer* mixer, vbase->getMixers() )
+	  {
+	    kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id();
+	   connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevelsToplevel()) );
+	   connect ( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfiguredToplevel(QString)) );
+	  }
       return true;
    }
 }
 
+void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
+{
+	foreach ( ViewBase* vbase, _views)
+	{
+		vbase->controlsReconfigured(mixerId);
+	}
+	KMixWindow* kmixWindow = qobject_cast<KMixWindow*>(_mainWindow);
+	kDebug() << "kmixWindow to redraw: " << kmixWindow << ", not-casted=" << _mainWindow;
+	if (kmixWindow != 0)
+	{
+		kmixWindow->redrawMixer(mixerId);
+	}
+}
+
+void KMixerWidget::refreshVolumeLevelsToplevel()
+{
+	foreach ( ViewBase* vbase, _views)
+	{
+		vbase->refreshVolumeLevels();
+	}
+}
 
 
 /**

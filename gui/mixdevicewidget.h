@@ -47,7 +47,7 @@ public:
     MixDeviceWidget( MixDevice* md,
                      bool small, Qt::Orientation orientation,
                      QWidget* parent, ViewBase*, ProfControl * );
-    ~MixDeviceWidget();
+    virtual ~MixDeviceWidget();
 
     void addActionToPopup( KAction *action );
 

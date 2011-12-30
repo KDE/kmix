@@ -128,13 +128,14 @@ void ViewBase::createDeviceWidgets()
     // allow view to "polish" itself
     constructionFinished();
 
-   kDebug() << "CONNECT ViewBase count " << _mixers.size();
-  foreach ( Mixer* mixer, _mixers )
-  {
-    kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id(); 
-   connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-   connect ( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
-  }
+// Moved the following up one Level to KMixerWidget
+//   kDebug() << "CONNECT ViewBase count " << _mixers.size();
+//  foreach ( Mixer* mixer, _mixers )
+//  {
+//    kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id();
+//   connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
+//   connect ( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
+//  }
 
     
 }
@@ -217,10 +218,6 @@ void ViewBase::controlsReconfigured( const QString& mixer_ID )
 		setMixSet();
 		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet->count() << ")";
 		createDeviceWidgets();
-
-		// We've done the low level stuff our selves but let elements
-		// above know what has happened so they can reload config etc.
-		emit redrawMixer(mixer_ID);
 	}
 }
 

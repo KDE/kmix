@@ -81,6 +81,17 @@ MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
     update();
 }
 
+MDWSlider::~MDWSlider()
+{
+	foreach( QAbstractSlider* slider, m_slidersPlayback)
+	{
+		delete slider;
+	}
+	foreach( QAbstractSlider* slider, m_slidersCapture)
+	{
+		delete slider;
+	}
+}
 
 void MDWSlider::createActions()
 {
