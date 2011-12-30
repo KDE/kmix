@@ -18,9 +18,10 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_backend.h"
+
 #include <klocale.h>
 
-#include "mixer_backend.h"
 // for the "ERR_" declartions, #include mixer.h
 #include "core/mixer.h"
 #include <QTimer>

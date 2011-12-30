@@ -18,8 +18,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef DBUS_KMIX_WRAPPER_H
-#define DBUS_KMIX_WRAPPER_H
+#ifndef DBUSMIXSETWRAPPER_H
+#define DBUSMIXSETWRAPPER_H
 
 #include <QStringList>
 #include "core/mixer.h"
@@ -55,4 +55,4 @@ class DBusMixSetWrapper : public QObject
         
 };
 
-#endif /* DBUS_KMIX_WRAPPER_H */
+#endif /* DBUSMIXSETWRAPPER_H */

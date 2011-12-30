@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/mdwslider.h"
+
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
@@ -40,14 +42,13 @@
 #include <qwmatrix.h>
 #include <QBoxLayout>
 
-#include "gui/guiprofile.h"
-#include "mdwslider.h"
-#include "volumeslider.h"
 #include "core/mixer.h"
-#include "viewbase.h"
-#include "ksmallslider.h"
-#include "verticaltext.h"
-#include "mdwmoveaction.h"
+#include "gui/guiprofile.h"
+#include "gui/volumeslider.h"
+#include "gui/viewbase.h"
+#include "gui/ksmallslider.h"
+#include "gui/verticaltext.h"
+#include "gui/mdwmoveaction.h"
 
 
 VolumeSliderExtraData MDWSlider::DummVolumeSliderExtraData;

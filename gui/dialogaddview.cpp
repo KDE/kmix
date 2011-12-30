@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/dialogaddview.h"
+
 #include <qbuttongroup.h>
 #include <QLabel>
 #include <qradiobutton.h>
@@ -30,7 +32,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "gui/dialogaddview.h"
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 

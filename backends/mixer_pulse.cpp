@@ -19,13 +19,14 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_pulse.h"
+
 #include <cstdlib>
 #include <QtCore/QAbstractEventDispatcher>
 #include <QTimer>
 
 #include <klocale.h>
 
-#include "mixer_pulse.h"
 #include "core/mixer.h"
 
 #include <pulse/glib-mainloop.h>

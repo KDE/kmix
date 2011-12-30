@@ -19,8 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef DBUS_MIXER_WRAPPER_H
-#define DBUS_MIXER_WRAPPER_H
+#ifndef DBUSMIXERWRAPPER_H
+#define DBUSMIXERWRAPPER_H
 
 #include <QObject>
 #include <QStringList>
@@ -62,4 +62,4 @@ class DBusMixerWrapper : public QObject
 		void slotControlsReconfigured();
 };
 
-#endif /* DBUS_MIXER_WRAPPER_H */
+#endif /* DBUSMIXERWRAPPER_H */

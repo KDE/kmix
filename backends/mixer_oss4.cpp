@@ -21,6 +21,9 @@
 
 //OSS4 mixer backend for KMix by Yoper Team released under GPL v2 or later
 
+/* We're getting soundcard.h via mixer_oss4.h */
+#include "mixer_oss4.h"
+
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
@@ -28,8 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/* We're getting soundcard.h via mixer_oss4.h */
-#include "mixer_oss4.h"
 #include <klocale.h>
 #include <QLinkedList>
 #include <QRegExp>

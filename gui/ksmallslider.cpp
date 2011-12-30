@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/ksmallslider.h"
+
 // For INT_MAX
 #include <limits.h>
 
@@ -33,7 +35,6 @@
 #include <QStyleOptionSlider>
 
 #include "kglobalsettings.h"
-#include "ksmallslider.h"
 #include "core/mixer.h"
 
 KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,

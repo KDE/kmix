@@ -19,6 +19,9 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/mixdevicewidget.h"
+
+#include <kactioncollection.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
@@ -33,10 +36,7 @@
 #include <qpixmap.h>
 #include <qwmatrix.h>
 
-#include <kactioncollection.h>
-
 #include "core/mixer.h"
-#include "gui/mixdevicewidget.h"
 #include "core/mixertoolbox.h"
 #include "viewbase.h"
 #include "ksmallslider.h"

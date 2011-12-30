@@ -20,6 +20,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "kmixd.h"
+
 #include <kaboutdata.h> 
 #include <kcmdlineargs.h>
 
@@ -27,9 +29,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
-//#include <kapplication.h>
 #include <kstandardaction.h>
-//#include <kmenu.h>
 #include <kdebug.h>
 #include <kxmlguifactory.h>
 #include <kglobal.h>
@@ -40,19 +40,9 @@
 #include <kpluginloader.h> 
 
 // KMix
-//#include "gui/guiprofile.h"
 #include "core/mixertoolbox.h"
-#include "kmixd.h"
 #include "core/kmixdevicemanager.h"
-//#include "gui/kmixerwidget.h"
-//#include "gui/kmixprefdlg.h"
-//#include "gui/kmixdockwidget.h"
-//#include "gui/kmixtoolbox.h"
 #include "core/version.h"
-//#include "gui/viewdockareapopup.h"
-//#include "gui/dialogselectmaster.h"
-
-//#include "gui/osdwidget.h"
 
 K_PLUGIN_FACTORY(KMixDFactory,
                  registerPlugin<KMixD>();

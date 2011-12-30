@@ -20,6 +20,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_sun.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -29,7 +31,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "mixer_sun.h"
 #include "core/mixer.h"
 #include <sys/soundcard.h>
 #include <QTimer>

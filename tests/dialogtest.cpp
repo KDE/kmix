@@ -1,3 +1,5 @@
+#include <dialogtest.h>
+
 #include <QCheckBox>
 #include <QLabel>
 #include <QScrollArea>
@@ -7,8 +9,6 @@
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <kglobal.h>
-
-#include <dialogtest.h>
 
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])

@@ -25,7 +25,7 @@
 
 class QString;
 #include <QWidget>
-
+class QWidgetAction;
 #include <kstatusnotifieritem.h>
 
 class KMixWindow;
@@ -46,7 +46,7 @@ class KMixDockWidget : public KStatusNotifierItem
 
  public:
    explicit KMixDockWidget(KMixWindow *parent,bool volumePopup);
-   ~KMixDockWidget();
+   virtual ~KMixDockWidget();
 
    void setErrorPixmap();
    void ignoreNextEvent();

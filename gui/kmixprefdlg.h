@@ -26,6 +26,7 @@
 
 class KMixPrefWidget;
 class QCheckBox;
+class QFrame;
 class QRadioButton;
 
 class 
@@ -37,7 +38,7 @@ KMixPrefDlg : public KDialog
 
   public: 
    KMixPrefDlg( QWidget *parent );
-   ~KMixPrefDlg();
+   virtual ~KMixPrefDlg();
 
   signals:
    void signalApplied( KMixPrefDlg *prefDlg );

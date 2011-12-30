@@ -19,12 +19,13 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "core/mixdevice.h"
+
 #include <qregexp.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "core/mixdevice.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "core/volume.h"

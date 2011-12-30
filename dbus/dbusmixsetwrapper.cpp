@@ -18,8 +18,9 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "core/mixdevice.h"
 #include "dbusmixsetwrapper.h"
+
+#include "core/mixdevice.h"
 #include "mixsetadaptor.h"
 
 DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, QString path)

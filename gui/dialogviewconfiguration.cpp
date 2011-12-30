@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "dialogviewconfiguration.h"
+
 #include <algorithm>
 
 #include <QCheckBox>
@@ -33,7 +35,6 @@
 #include <klocale.h>
 #include <kvbox.h>
 
-#include "dialogviewconfiguration.h"
 #include "gui/guiprofile.h"
 #include "gui/mixdevicewidget.h"
 #include "core/mixdevice.h"

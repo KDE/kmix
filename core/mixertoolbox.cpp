@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "core/mixer.h"
 
 #include <QDir>
 #include <QWidget>
@@ -30,7 +31,6 @@
 
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
-#include "core/mixer.h"
 
 #include "core/mixertoolbox.h"
 

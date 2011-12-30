@@ -127,12 +127,12 @@ void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
 QWidget* ViewDockAreaPopup::add(MixDevice *md)
 {
     QString dummyMatchAll("*");
-    QString matchAllPlaybackAndTheCswitch("pvolume,pswitch,cswitch");
+    QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
     MixDeviceWidget *mdw = new MDWSlider(
       md,           // only 1 device.
       true,         // Show Mute LED
-      false,        // Show Record LED
+      true,        // Show Record LED
       false,        // Small
       Qt::Horizontal, // Direction: only 1 device, so doesn't matter
       this,         // parent

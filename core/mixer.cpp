@@ -20,13 +20,13 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "core/mixer.h"
 
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
 
-#include "core/mixer.h"
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
 #include "core/volume.h"

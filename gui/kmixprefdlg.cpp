@@ -20,18 +20,17 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/kmixprefdlg.h"
+
 #include <qbuttongroup.h>
 #include <qwhatsthis.h>
 #include <QCheckBox>
 #include <QLabel>
 #include <qradiobutton.h>
 
-#include <klocale.h>
-// For "kapp"
 #include <kapplication.h>
+#include <klocale.h>
 
-//#include "apps/kmix.h"
-#include "gui/kmixprefdlg.h"
 #include "gui/kmixerwidget.h"
 
 

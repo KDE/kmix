@@ -18,6 +18,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/kmixerwidget.h"
 
 // Qt
 #include <QLabel>
@@ -39,12 +40,11 @@
 // KMix
 #include "apps/kmix.h"
 #include "gui/guiprofile.h"
-#include "gui/kmixerwidget.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
+#include "gui/viewsliders.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
-#include "viewsliders.h"
 
 
 /**

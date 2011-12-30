@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/kmixtoolbox.h"
 
 #include <QWidget>
 #include <QString>
@@ -34,8 +35,6 @@
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 #include "viewbase.h"
-
-#include "gui/kmixtoolbox.h"
 
 // TODO KMixToolbox is rather superfluous today, as there is no "KMix Applet" any more, and it was probably always bad style.
 //      I only have to think what to do with KMixToolBox::notification()
