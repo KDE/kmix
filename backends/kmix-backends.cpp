@@ -46,13 +46,7 @@
 #endif
 
 #if defined(hpux)
-# if defined(HAVE_ALIB_H)
-#  define HPUX_MIXER
-# else
-#ifdef __GNUC__
-#  warning ** YOU NEED to have libAlib installed to use the HP-UX-Mixer **
-#endif
-# endif // HAVE_ALIB_H
+#error "The HP/UX port is not maintained anymore, an no official part of KMix / KDE at this point of time! Please contact the current KMix maintainer if you would like to maintain the port."
 #endif // hpux
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
@@ -81,13 +75,6 @@
 #if defined(OSS4_MIXER)
 #include "backends/mixer_oss4.cpp"
 #endif
-
-#if defined(HPUX_MIXER)
-#include "backends/mixer_hpux.cpp"
-#endif
-
-
-
 
 
 typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );
@@ -136,10 +123,6 @@ MixerFactory g_mixerFactories[] = {
 
     // Possibly encapsualte by #ifdef HAVE_DBUS
     { MPRIS2_getMixer, MPRIS2_getDriverName },
-
-#if defined(HPUX_MIXER)
-    { HPUX_getMixer, HPUX_getDriverName },
-#endif
 
     { 0, 0 }
 };
