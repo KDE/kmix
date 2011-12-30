@@ -56,17 +56,6 @@ QString DBusControlWrapper::iconName()
 
 void DBusControlWrapper::setVolume(int percentage)
 {
-    // @todo Is hardcoded to PlaybackVolume
-    // @todo This will not work, if minVolume != 0      !!!
-	//       e.g.: minVolume=5 or minVolume=-10
-	// The solution is to check two cases:
-	//     volume < 0 => use minVolume for volumeRange
-	//     volume > 0 => use maxVolume for volumeRange
-	//     If chosen volumeRange==0 => return 0
-	// As this is potentially used often (Sliders, ...), it
-	// should be implemented in the Volume class.
-	// For now we go with "maxVolume()", like in the rest of KMix.
-	//  - esken
 	Volume& volP = m_md->playbackVolume();
 	Volume& volC = m_md->captureVolume();
 	volP.setAllVolumes( volP.minVolume() + ((percentage * volP.volumeSpan()) / 100) );
