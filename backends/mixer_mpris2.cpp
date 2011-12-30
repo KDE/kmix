@@ -356,12 +356,12 @@ void MPrisAppdata::trackChangedIncoming(QVariantMap msg)
 /**
  * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
  */
-void MPrisAppdata::volumeChangedIncoming(QString ifc,QVariantMap msg ,QStringList sl)
+void MPrisAppdata::volumeChangedIncoming(QString /*ifc*/,QVariantMap msg ,QStringList /*sl*/)
 {
 	QMap<QString, QVariant>::iterator v = msg.find("Volume");
 	if (v != msg.end() )
 	{
-		kDebug(67100) << "volumeChanged incoming: !!!!!!!!!" ;
+//		kDebug(67100) << "volumeChanged incoming: !!!!!!!!!" ;
 		double volDouble = v.value().toDouble();
 		emit volumeChanged( this, volDouble);
 	}

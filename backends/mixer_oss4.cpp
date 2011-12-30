@@ -54,7 +54,7 @@ Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : Mixer_Backend(mixer, device)
 bool Mixer_OSS4::CheckCapture(oss_mixext *ext)
 {
 	QString name = ext->extname;
-	if ( ext->flags & MIXF_RECVOL || name.split(".").contains("in") )
+	if ( ext->flags & MIXF_RECVOL || name.split('.').contains("in") )
 	{
 		return true;
 	}

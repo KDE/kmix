@@ -133,7 +133,7 @@ void MixerEngine::clearInternalData(bool removeSources)
 	Q_FOREACH( ControlInfo* ci, m_controls )
 	{
 		if ( removeSources )
-			removeSource( ci->mixerId + "/" + ci->id );
+			removeSource( ci->mixerId + '/' + ci->id );
 		delete ci->iface;
 		delete ci;
 	}
@@ -266,7 +266,7 @@ void MixerEngine::slotControlChanged()
 	Q_FOREACH( ControlInfo* ci, m_controls.values( curmi->id ) )
 		if ( ci->updateRequired )
 		{
-			QString source = ci->mixerId + "/" + ci->id;
+			QString source = ci->mixerId + '/' + ci->id;
 			setData( source, "Can Be Muted", ci->iface->canMute() );
 			setData( source, "Volume", ci->iface->volume() );
 			setData( source, "Mute", ci->iface->mute() );
@@ -344,7 +344,7 @@ void MixerEngine::updateInternalMixersData()
 			Q_FOREACH( ControlInfo* ci, m_controls.values( mi->id ) )
 			{
 				m_controls.remove( mi->id, ci );
-				removeSource( ci->mixerId + "/" + ci->id );
+				removeSource( ci->mixerId + '/' + ci->id );
 				delete ci->iface;
 				delete ci;
 			}

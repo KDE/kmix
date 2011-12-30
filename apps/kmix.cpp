@@ -1191,7 +1191,7 @@ void KMixWindow::forkExec(const QStringList& args)
         msg += startErrorMessage;
         msg += "\n(";
         msg +=  args.join( QLatin1String( " " ));
-        msg += ")";
+        msg += ')';
         errorPopup(msg);
     }
 

@@ -105,7 +105,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2c) Add Views to Tab
    ********************************************************************/
    ViewSliders* view = new ViewSliders( this, _guiprof->getId().toLatin1(), _mixer, vflags, _guiprof, _actionCollection );
-   bool added = possiblyAddView(view);
+   possiblyAddView(view);
    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }

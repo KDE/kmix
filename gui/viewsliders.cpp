@@ -216,7 +216,6 @@ void ViewSliders::_setMixSet()
                 bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
                 bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
                 bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
-		bool splitWanted = control->isSplit();
 
                 if ( !subcontrolWanted ) continue;
 

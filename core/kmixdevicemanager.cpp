@@ -141,7 +141,7 @@ void KMixDeviceManager::pluggedSlot(const QString& udi) {
                         dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
                     }
                     else {
-                        dev = "0"; // "/dev/mixer" or "/dev/sound/mixer"
+                        dev = '0'; // "/dev/mixer" or "/dev/sound/mixer"
                     }
                     emit plugged("OSS", udi, dev);
                 }

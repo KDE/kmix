@@ -554,7 +554,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 		QWidget *subcontrolLabel;
 
 		QString subcontrolTranslation;
-		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + " ";
+		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + ' ';
 		subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
 		subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 
@@ -866,29 +866,19 @@ void MDWSlider::volumeChange( int )
 
 void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref_sliders  )
 {
-
-	// --- Step 2: Change the volumes directly in the Volume object to reflect the Sliders ---
 	if ( isStereoLinked() )
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
-		long firstVolume = firstSlider->value();
-		//kDebug(67100) << "firstVolume=" <<firstVolume;
-		vol.setAllVolumes(firstVolume);
-	} // stereoLinked()
-
-	else {
-
-	  	QAbstractSlider* firstSlider = ref_sliders.first();
-		long firstVolume = firstSlider->value();
-		//kDebug(67100) << "firstVolume=" <<firstVolume;
-	  
-		for( int i=0; i<ref_sliders.count(); i++ ) {
+		vol.setAllVolumes(firstSlider->value());
+	}
+	else
+	{
+		for( int i=0; i<ref_sliders.count(); i++ )
+		{
 			QAbstractSlider *sliderWidget = ref_sliders[i];
 			vol.setVolume( extraData(sliderWidget).getChid() ,sliderWidget->value());
 		} // iterate over all sliders
-	} // !stereoLinked()
-
-	// --- Step 3: Write back the new volumes to the HW ---
+	}
 }
 
 
@@ -896,13 +886,15 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref
    This slot is called, when a user has clicked the recsrc button. Also it is called by any other
     associated KAction like the context menu.
  */
-void MDWSlider::toggleRecsrc() {
+void MDWSlider::toggleRecsrc()
+{
 	setRecsrc( m_mixdevice->isRecSource() );
 }
 
 void MDWSlider::setRecsrc(bool value )
 {
-	if ( m_mixdevice->captureVolume().hasSwitch() ) {
+	if ( m_mixdevice->captureVolume().hasSwitch() )
+	{
 		m_mixdevice->setRecSource( value );
 		m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
 	}
@@ -913,7 +905,8 @@ void MDWSlider::setRecsrc(bool value )
    This slot is called, when a user has clicked the mute button. Also it is called by any other
     associated KAction like the context menu.
  */
-void MDWSlider::toggleMuted() {
+void MDWSlider::toggleMuted()
+{
 	setMuted( !m_mixdevice->isMuted() );
 }
 

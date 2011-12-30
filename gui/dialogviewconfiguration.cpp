@@ -381,7 +381,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
             if ( ctlId.contains(idRegexp) ) {
                 // found. Create a copy
                 ProfControl* newCtl = new ProfControl(*control);
-                newCtl->id =  "^" + ctlId + "$"; // Replace the (possible generic) regexp by the actual ID
+                newCtl->id =  '^' + ctlId + '$'; // Replace the (possible generic) regexp by the actual ID
                 // We have made this an an actual control. As it is derived (from e.g. ".*") it is NOT mandatory.
                 newCtl->setMandatory(false);
                 if ( isActiveView ) {

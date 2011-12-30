@@ -118,9 +118,9 @@ QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ign
         fname += ".%1.%2";
         fname = fname.arg(mixer->getBaseName()).arg(mixer->getCardInstance());
     }
-    fname += "." + profileName;
+    fname += '.' + profileName;
 
-    fname.replace(" ","_");
+    fname.replace(' ','_');
     return fname;
 }
 
@@ -133,10 +133,10 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
     QString fname;
     fname += mixer->getBaseName();
     if ( mixer->getCardInstance() > 1 ) {
-        fname += " " + mixer->getCardInstance();
+        fname += ' ' + mixer->getCardInstance();
     }
     if ( profileName != "default" ) {
-        fname += " " + profileName;
+        fname += ' ' + profileName;
     }
 
     return fname;
@@ -322,7 +322,7 @@ bool GUIProfile::writeProfile()
    bool ret = false;
    QString fileName, fileNameFQ;
    fileName = "profiles/" + getId() + ".xml";
-   fileName.replace(":", ".");
+   fileName.replace(':', '.');
    fileNameFQ = KStandardDirs::locateLocal("appdata", fileName, true );
 
    kDebug() << "Write profile:" << fileNameFQ ;
@@ -424,9 +424,9 @@ QString xmlify(QString raw);
 QString xmlify(QString raw)
 {
 // 	kDebug() << "Before: " << raw;
-	raw = raw.replace("&", "&amp;");
-	raw = raw.replace("<", "&lt;");
-	raw = raw.replace(">", "&gt;");
+	raw = raw.replace('&', "&amp;");
+	raw = raw.replace('<', "&lt;");
+	raw = raw.replace('>', "&gt;");
 	raw = raw.replace("'", "&apos;");
 	raw = raw.replace("\"", "&quot;");
 // 	kDebug() << "After : " << raw;
@@ -777,7 +777,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
     if ( !id.isNull() ) {
         // We need at least an "id". We can set defaults for the rest, if undefined.
         if ( subcontrols.isNull() || subcontrols.isEmpty() ) {
-            subcontrols = "*";  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
+            subcontrols = '*';  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
         }
         if ( name.isNull() ) {
             // ignore. isNull() will be checked by all users.
@@ -793,7 +793,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
         }
 
         ProfControl *profControl = new ProfControl(id, subcontrols);
-        if ( show.isNull() ) { show = "*"; }
+        if ( show.isNull() ) { show = '*'; }
 
 	profControl->name = name;
 	profControl->show = show;

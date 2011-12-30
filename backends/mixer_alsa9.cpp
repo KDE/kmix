@@ -158,7 +158,7 @@ int Mixer_ALSA::open()
         QString mdID("%1:%2");
         mdID = mdID.arg(snd_mixer_selem_id_get_name ( sid ) )
                     .arg(snd_mixer_selem_id_get_index( sid ) );
-        mdID.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
+        mdID.replace(' ','_'); // Any key/ID we use, must not uses spaces (rule)
 
         MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
 
@@ -186,7 +186,7 @@ int Mixer_ALSA::open()
             // Add a number to the control name, like "PCM 2", when the index is > 0
             QString idxString;
             idxString.setNum(1+controlInstanceIndex);
-            readableName += " ";
+            readableName += ' ';
             readableName += idxString;
         }
 

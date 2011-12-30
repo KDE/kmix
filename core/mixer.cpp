@@ -130,16 +130,16 @@ void Mixer::recreateId()
      * %3, the mixer number, is a number: it does not contain colons.
      */
     QString mixerName = getBaseName();
-    mixerName.replace(":","_");
+    mixerName.replace(':','_');
     QString primaryKeyOfMixer = QString("%1::%2:%3")
             .arg(getDriverName())
             .arg(mixerName)
             .arg(_cardInstance);
     // The following 3 replaces are for not messing up the config file
-    primaryKeyOfMixer.replace("]","_");
-    primaryKeyOfMixer.replace("[","_"); // not strictly necessary, but lets play safe
-    primaryKeyOfMixer.replace(" ","_");
-    primaryKeyOfMixer.replace("=","_");
+    primaryKeyOfMixer.replace(']','_');
+    primaryKeyOfMixer.replace('[','_'); // not strictly necessary, but lets play safe
+    primaryKeyOfMixer.replace(' ','_');
+    primaryKeyOfMixer.replace('=','_');
     _id = primaryKeyOfMixer;
 }
 
