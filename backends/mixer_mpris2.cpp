@@ -59,7 +59,9 @@ int Mixer_MPRIS2::open()
 
 int Mixer_MPRIS2::close()
 {
-	return 0;
+	  m_isOpen = false;
+	  m_mixDevices.clear();
+	 return 0;
 }
 
 int Mixer_MPRIS2::mediaPlay(QString id)
