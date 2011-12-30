@@ -181,14 +181,15 @@ void ViewSliders::_setMixSet()
         // The following for-loop could be simplified by using a std::find_if
         for ( int i=0; i<mixset.count(); i++ ) {
             MixDevice *md = mixset[i];
+
             if ( md->id().contains(idRegexp) )
             {
                 // Match found (by name)
                 if ( _mixSet->contains( md ) ) continue; // dup check
 
                 // Now check whether subcontrols match
-                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && md->playbackVolume().hasVolume());
-                bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && md->captureVolume().hasVolume());
+                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->playbackVolume().hasSwitch()) );
+                bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
                 bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
                 bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
 		bool splitWanted = control->isSplit();
