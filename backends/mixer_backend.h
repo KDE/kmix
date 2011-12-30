@@ -121,13 +121,13 @@ protected:
 
   /******************************************************************************************
    * Please don't access the next vars from the Mixer class (even though Mixer is a friend).
-   * There are proper accesor methods for them.
+   * There are proper access methods for them.
    ******************************************************************************************/
   bool m_isOpen;
   // The MixDevice that would qualify best as MasterDevice (according to the taste of the Backend developer)
   MixDevice* m_recommendedMaster;
    // The Mixer is stored her only for one reason: The backend creates the MixDevice's, and it has shown
-   // that it is helpful if the MixDevice's know their correspondig Mixer. KMix lived 10 years without that,
+   // that it is helpful if the MixDevice's know their corresponding Mixer. KMix lived 10 years without that,
    // but just believe me. It's *really* better, for example, you can put controls of different soundcards in
    // one View. That is very cool! Also the MDW doesn't need to store the Mixer any longer (MDW is a GUI element,
    // so that was 'wrong' anyhow

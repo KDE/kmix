@@ -160,6 +160,7 @@ void Mixer_Backend::readSetFromHW()
 		// This code path is entered on Mixer::OK_UNCHANGED and ERROR
 		if ( !_fastPollingEndsAt.isNull() )
 		{
+			// Fast polling is currently active
 			if( _fastPollingEndsAt < QTime::currentTime () )
 			{
 				kDebug() << "End fast polling";
