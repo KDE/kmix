@@ -1150,7 +1150,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                     info.mute = (md->isMuted() ? 1 : 0);
 
                     pa_operation* o;
-                    if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
+                    if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
                         kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                         return Mixer::ERR_READ;
                     }
@@ -1246,7 +1246,7 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
             info.mute = rule.mute ? 1 : 0;
 
             pa_operation* o;
-            if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
+            if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
                 kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                 return Mixer::ERR_READ;
             }
