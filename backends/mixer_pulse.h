@@ -73,8 +73,8 @@ class Mixer_PULSE : public Mixer_Backend
     private:
         void addDevice(devinfo& dev, bool = false);
         bool connectToDaemon();
-
-    public slots:
+        void emitControlsReconfigured();
+public:
         void reinit();
 
 };

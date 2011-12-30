@@ -751,6 +751,18 @@ static devmap* get_widget_map(int type, int index)
     return get_widget_map(type);
 }
 
+void Mixer_PULSE::emitControlsReconfigured()
+{
+    // Do not emit directly to ensure all connected slots are executed
+    // in their own event loop.
+	kDebug() << "PULSE emitControlsReconfigured: mixerId=" << _mixer->id();
+//	emit controlsReconfigured(_mixer->id());
+    QMetaObject::invokeMethod(this,
+                              "controlsReconfigured",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, _mixer->id()));
+}
+
 void Mixer_PULSE::addWidget(int index)
 {
     devmap* map = get_widget_map(m_devnum, index);
@@ -760,12 +772,7 @@ void Mixer_PULSE::addWidget(int index)
         return;
     }
     addDevice((*map)[index]);
-    // Do not emit directly to ensure all connected slots are executed
-    // in their own event loop.
-    QMetaObject::invokeMethod(this,
-                              "controlsReconfigured",
-                              Qt::QueuedConnection,
-                              Q_ARG(QString, _mixer->id()));
+    emitControlsReconfigured();
 }
 
 void Mixer_PULSE::removeWidget(int index)
@@ -789,12 +796,7 @@ void Mixer_PULSE::removeWidget(int index)
         {
             delete *iter;
             m_mixDevices.erase(iter);
-            // Do not emit directly to ensure all connected slots are executed
-            // in their own event loop.
-            QMetaObject::invokeMethod(this,
-                                      "controlsReconfigured",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(QString, _mixer->id()));
+            emitControlsReconfigured();
             return;
         }
     }
@@ -815,12 +817,7 @@ void Mixer_PULSE::removeAllWidgets()
         delete *iter;
         m_mixDevices.erase(iter);
     }
-    // Do not emit directly to ensure all connected slots are executed
-    // in their own event loop.
-    QMetaObject::invokeMethod(this,
-                              "controlsReconfigured",
-                              Qt::QueuedConnection,
-                              Q_ARG(QString, _mixer->id()));
+    emitControlsReconfigured();
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
