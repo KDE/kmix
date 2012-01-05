@@ -21,6 +21,17 @@ add_subdirectory( pics )
 add_subdirectory( profiles ) 
 #add_subdirectory( tests )
 
+if (HAVE_PULSE)
+  include_directories(${PULSEAUDIO_INCLUDE_DIR})
+endif (HAVE_PULSE)
+
+if (CANBERRA_FOUND)
+  add_definitions(-DHAVE_CANBERRA)
+
+  include_directories(${CANBERRA_INCLUDE_DIRS})
+endif (CANBERRA_FOUND)
+
+
 set(kmix_adaptor_SRCS
 	dbus/dbusmixerwrapper.cpp
 	dbus/dbusmixsetwrapper.cpp
@@ -93,6 +104,9 @@ if (HAVE_PULSE)
     target_link_libraries(kdeinit_kmix ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (HAVE_PULSE)
 
+if (CANBERRA_FOUND)
+  target_link_libraries(kdeinit_kmix ${CANBERRA_LIBRARIES})
+endif (CANBERRA_FOUND)
 
 install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -129,6 +143,10 @@ if (HAVE_PULSE)
     target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (HAVE_PULSE)
 
+if (CANBERRA_FOUND)
+  target_link_libraries(kded_kmixd ${CANBERRA_LIBRARIES})
+endif (CANBERRA_FOUND)
+
 install(TARGETS kded_kmixd DESTINATION ${PLUGIN_INSTALL_DIR})
 
 #target_link_libraries( kmixd kded_kmixd )
@@ -163,6 +181,10 @@ endif (HAVE_LIBASOUND2)
 if (HAVE_PULSE)
     target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (HAVE_PULSE)
+
+if (CANBERRA_FOUND)
+  target_link_libraries(kdeinit_kmixctrl ${CANBERRA_LIBRARIES})
+endif (CANBERRA_FOUND)
 
 ########### next target ###############
 add_subdirectory( plasma )
