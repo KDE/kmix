@@ -137,11 +137,11 @@ static void translateMasksAndMaps(devinfo& dev)
                     dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MWOOFER);
                     dev.chanIDs[i] = Volume::WOOFER;
                     break;
-                case PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER:
+                case PA_CHANNEL_POSITION_SIDE_LEFT:
                     dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDELEFT);
                     dev.chanIDs[i] = Volume::REARSIDELEFT;
                     break;
-                case PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER:
+                case PA_CHANNEL_POSITION_SIDE_RIGHT:
                     dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDERIGHT);
                     dev.chanIDs[i] = Volume::REARSIDERIGHT;
                     break;
