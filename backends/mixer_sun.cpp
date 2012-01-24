@@ -190,7 +190,7 @@ int Mixer_SUN::open()
 	    Volume::ChannelMask chnmask = Volume::MLEFT;
             if ( stereodevs & ( 1 << idx ) ) chnmask = (Volume::ChannelMask)(chnmask|Volume::MRIGHT);
 
-            Volume playbackVol( chnmask, 100, 1, true, false );
+            Volume playbackVol( 100, 1, true, false );
 	    QString id;
             id.setNum(idx);
             MixDevice* md = new MixDevice( _mixer, id,
@@ -200,7 +200,7 @@ int Mixer_SUN::open()
                   if ( recmask & ( 1 << idx ) ) {
                      // can be captured => add capture volume, with no capture volume
                      chnmask = Volume::MNONE;
-                     Volume captureVol( chnmask, 100, 1, true, true );
+                     Volume captureVol( 100, 1, true, true );
                      md->addCaptureVolume(captureVol);
                  }
             m_mixDevices.append( md );
@@ -425,26 +425,26 @@ int Mixer_SUN::writeVolumeToHW( const QString& id, MixDevice *md )
 void Mixer_SUN::VolumeToGainBalance( Volume& volume, uint_t& gain, uchar_t& balance )
 {
    if ( ( volume.count() == 1 ) ||
-        ( volume[Volume::LEFT] == volume[Volume::RIGHT] ) )
+        ( volume.getVolume(Volume::LEFT) == volume.getVolume(Volume::RIGHT) ) )
    {
-      gain = volume[Volume::LEFT];
+      gain = volume.getVolume(Volume::LEFT);
       balance = AUDIO_MID_BALANCE;
    }
    else
    {
-      if ( volume[Volume::LEFT] > volume[Volume::RIGHT] )
+      if ( volume.getVolume(Volume::LEFT) > volume.getVolume(Volume::RIGHT) )
       {
-         gain = volume[Volume::LEFT];
+         gain = volume.getVolume(Volume::LEFT);
          balance = AUDIO_LEFT_BALANCE +
            ( AUDIO_MID_BALANCE - AUDIO_LEFT_BALANCE ) *
-           volume[Volume::RIGHT] / volume[Volume::LEFT];
+           volume.getVolume(Volume::RIGHT) / volume.getVolume(Volume::LEFT);
       }
       else
       {
-         gain = volume[Volume::RIGHT];
+         gain = volume.getVolume(Volume::RIGHT);
          balance = AUDIO_RIGHT_BALANCE -
            ( AUDIO_RIGHT_BALANCE - AUDIO_MID_BALANCE ) *
-           volume[Volume::LEFT] / volume[Volume::RIGHT];
+           volume.getVolume(Volume::LEFT) / volume.getVolume(Volume::RIGHT);
       }
    }
 }
