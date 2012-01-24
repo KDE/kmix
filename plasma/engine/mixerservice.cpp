@@ -60,7 +60,11 @@ void MixerJob::start()
 		setResult( res );
 		return;
 	}
-
+	else if ( operation == "setRecordSource" ) {
+		bool res = m_service->iface()->setProperty( "recordSource", parameters().value("recordSource").toBool() );
+		setResult( res );
+		return;
+	}
 }
 
 #include "mixerservice.moc"

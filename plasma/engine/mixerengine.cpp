@@ -118,6 +118,8 @@ void MixerEngine::getInternalData()
 		Q_FOREACH( QString controlPath, curmi->iface->controls() )
 			createControlInfo( curmi->id, controlPath );
 	}
+	// Update "Mixers" source
+	getMixersData();
 }
 
 void MixerEngine::clearInternalData(bool removeSources)
@@ -162,7 +164,6 @@ bool MixerEngine::getMixersData()
 	QStringList mixerIds;
 	if ( interface->isServiceRegistered( KMIX_DBUS_SERVICE ) )
 	{
-		// 'Unused' flag is used for cleanup
 		Q_FOREACH( MixerInfo* mi, m_mixers )
 			mixerIds.append( mi->id );
 		setData( "Mixers", "Mixers", mixerIds );
@@ -234,13 +235,22 @@ bool MixerEngine::getControlData( const QString &source )
 		return false;
 	// Setting data
 	curci->updateRequired = true;
-	setData( source, "Can Be Muted", curci->iface->canMute() );
-	setData( source, "Volume", curci->iface->volume() );
-	setData( source, "Mute", curci->iface->mute() );
-	setData( source, "Readable Name", curci->iface->readableName() );
-	setData( source, "Icon", KIcon(curci->iface->iconName()) );
+	setControlData( curci );
 	return true;
 }
+
+void MixerEngine::setControlData(ControlInfo* ci)
+{
+	QString source = ci->mixerId + '/' + ci->id;
+	setData( source, "Volume", ci->iface->volume() );
+	setData( source, "Mute", ci->iface->mute() );
+	setData( source, "Can Be Muted", ci->iface->canMute() );
+	setData( source, "Readable Name", ci->iface->readableName() );
+	setData( source, "Icon", KIcon(ci->iface->iconName()) );
+	setData( source, "Record Source", ci->iface->recordSource() );
+	setData( source, "Has Capture Switch", ci->iface->hasCaptureSwitch() );
+}
+
 
 void MixerEngine::slotServiceRegistered( const QString &serviceName)
 {
@@ -253,7 +263,8 @@ void MixerEngine::slotServiceUnregistered( const QString &serviceName)
 {
 	if ( serviceName == KMIX_DBUS_SERVICE )
 		clearInternalData(true);
-	removeData( "Mixers", "Mixers" );
+	// Updating 'Mixers' source
+	getMixersData();
 }
 
 void MixerEngine::slotControlChanged()
@@ -265,13 +276,7 @@ void MixerEngine::slotControlChanged()
 	// Updating all controls that might change
 	Q_FOREACH( ControlInfo* ci, m_controls.values( curmi->id ) )
 		if ( ci->updateRequired )
-		{
-			QString source = ci->mixerId + '/' + ci->id;
-			setData( source, "Can Be Muted", ci->iface->canMute() );
-			setData( source, "Volume", ci->iface->volume() );
-			setData( source, "Mute", ci->iface->mute() );
-			setData( source, "Readable Name", ci->iface->readableName() );
-		}
+			setControlData( ci );
 }
 
 void MixerEngine::slotControlsReconfigured()
@@ -312,9 +317,8 @@ void MixerEngine::slotControlsReconfigured()
 		}
 	if ( curmi->updateRequired )
 	{
-		QString source = curmi->id;
-		setData( source, "Controls", controlIds );
-		setData( source, "Controls Readable Names", controlReadableNames );
+		setData( curmi->id, "Controls", controlIds );
+		setData( curmi->id, "Controls Readable Names", controlReadableNames );
 	}
 }
 

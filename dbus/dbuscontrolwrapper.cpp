@@ -24,8 +24,6 @@
 #include "core/mixer.h"
 #include "core/volume.h"
 
-#include <QDebug>
-
 DBusControlWrapper::DBusControlWrapper(MixDevice* parent, QString path)
 	: QObject(parent)
 	, m_dbusPath(path)
@@ -65,7 +63,8 @@ void DBusControlWrapper::setVolume(int percentage)
 
 int DBusControlWrapper::volume()
 {
-	return m_md->playbackVolume().getAvgVolumePercent(Volume::MALL);
+	Volume &useVolume = (m_md->playbackVolume().count() != 0) ? m_md->playbackVolume() : m_md->captureVolume();
+	return useVolume.getAvgVolumePercent(Volume::MALL);
 }
 
 void DBusControlWrapper::increaseVolume()
@@ -80,30 +79,27 @@ void DBusControlWrapper::decreaseVolume()
 
 long DBusControlWrapper::absoluteVolumeMin()
 {
-	// @todo Is hardcoded do playbackVolume
-	return m_md->playbackVolume().minVolume();
+	Volume &useVolume = (m_md->playbackVolume().count() != 0) ? m_md->playbackVolume() : m_md->captureVolume();
+	return useVolume.minVolume();
 }
 
 long DBusControlWrapper::absoluteVolumeMax()
 {
-	// @todo Is hardcoded do playbackVolume
-	return m_md->playbackVolume().maxVolume();
+	Volume &useVolume = (m_md->playbackVolume().count() != 0) ? m_md->playbackVolume() : m_md->captureVolume();
+	return useVolume.maxVolume();
 }
 
 void DBusControlWrapper::setAbsoluteVolume(long absoluteVolume)
 {
-	Volume& volP = m_md->playbackVolume();
-	Volume& volC = m_md->captureVolume();
-	volP.setAllVolumes( absoluteVolume );
-	volC.setAllVolumes( absoluteVolume );
+	m_md->playbackVolume().setAllVolumes( absoluteVolume );
+	m_md->captureVolume().setAllVolumes( absoluteVolume );
 	m_md->mixer()->commitVolumeChange( m_md );
 }
 
 long DBusControlWrapper::absoluteVolume()
 {
-	// @todo hardcoded
-	Volume& vol = m_md->playbackVolume();
-	qreal avgVol= vol.getAvgVolume( Volume::MMAIN );
+	Volume &useVolume = (m_md->playbackVolume().count() != 0) ? m_md->playbackVolume() : m_md->captureVolume();
+	qreal avgVol= useVolume.getAvgVolume( Volume::MALL );
 	long avgVolRounded = avgVol <0 ? avgVol-.5 : avgVol+.5;
 	return avgVolRounded;
 }
@@ -122,7 +118,7 @@ void DBusControlWrapper::toggleMute()
 
 bool DBusControlWrapper::canMute()
 {
-    return m_md->playbackVolume().hasSwitch();
+	return m_md->playbackVolume().hasSwitch();
 }
 
 bool DBusControlWrapper::isMuted()
@@ -137,8 +133,11 @@ bool DBusControlWrapper::isRecordSource()
 
 void DBusControlWrapper::setRecordSource(bool on)
 {
-	MixDevice* md = m_md->mixer()->getMixdeviceById(m_md->id());
-	if ( md != 0 )
-		md->setRecSource(on);
+	m_md->setRecSource(on);
 	m_md->mixer()->commitVolumeChange( m_md );
+}
+
+bool DBusControlWrapper::hasCaptureSwitch()
+{
+	return m_md->captureVolume().hasSwitch();
 }

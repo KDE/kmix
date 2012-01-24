@@ -87,6 +87,7 @@ private:
 	bool getMixersData();
 	bool getMixerData( const QString &source );
 	bool getControlData( const QString &source );
+	void setControlData( ControlInfo *ci );
 private slots:
 	void getInternalData();
 	void updateInternalMixersData();
