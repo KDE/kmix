@@ -40,7 +40,7 @@ class DBusMixerWrapper : public QObject
 	Q_PROPERTY(QStringList controls READ controls)
 
 	public:
-		DBusMixerWrapper(Mixer* parent, QString path);
+		DBusMixerWrapper(Mixer* parent, const QString& path);
 		~DBusMixerWrapper();
 		QString driverName();
 

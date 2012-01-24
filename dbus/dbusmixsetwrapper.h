@@ -33,7 +33,7 @@ class DBusMixSetWrapper : public QObject
 	Q_PROPERTY(QString preferredMasterMixer READ preferredMasterMixer)
 	Q_PROPERTY(QString preferredMasterControl READ preferredMasterControl)
 	public:
-		DBusMixSetWrapper(QObject* parent, QString path);
+		DBusMixSetWrapper(QObject* parent, const QString& path);
 		~DBusMixSetWrapper();
 	public slots:
 		QStringList mixers() const;

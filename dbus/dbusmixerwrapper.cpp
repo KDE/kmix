@@ -27,7 +27,7 @@
 #include "core/volume.h"
 #include "mixeradaptor.h"
 
-DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, QString path)
+DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	: QObject(parent)
 	, m_dbusPath(path)
 {

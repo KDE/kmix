@@ -24,9 +24,8 @@
 #include "core/mixer.h"
 #include "core/volume.h"
 
-DBusControlWrapper::DBusControlWrapper(MixDevice* parent, QString path)
+DBusControlWrapper::DBusControlWrapper(MixDevice* parent, const QString& path)
 	: QObject(parent)
-	, m_dbusPath(path)
 {
 	m_md = parent;
 	new ControlAdaptor( this );

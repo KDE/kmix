@@ -41,7 +41,7 @@ class DBusControlWrapper : public QObject
 	Q_PROPERTY(bool hasCaptureSwitch READ hasCaptureSwitch)
 
 	public:
-		DBusControlWrapper(MixDevice* parent, QString path);
+		DBusControlWrapper(MixDevice* parent, const QString& path);
 		~DBusControlWrapper();
 
 		void increaseVolume();
@@ -49,7 +49,7 @@ class DBusControlWrapper : public QObject
 		void toggleMute();
 	private:
 		MixDevice *m_md;
-		QString m_dbusPath;
+		
 		QString id();
 		QString readableName();
 		QString iconName();

@@ -23,7 +23,7 @@
 #include "core/mixdevice.h"
 #include "mixsetadaptor.h"
 
-DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, QString path)
+DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 	: QObject(parent)
 	, m_dbusPath( path )
 {

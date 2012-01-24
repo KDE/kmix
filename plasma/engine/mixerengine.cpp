@@ -68,7 +68,7 @@ void MixerEngine::init()
 	getInternalData();
 }
 
-MixerInfo* MixerEngine::createMixerInfo( QString dbusPath )
+MixerInfo* MixerEngine::createMixerInfo( const QString& dbusPath )
 {
 	MixerInfo* curmi = new MixerInfo;
 	curmi->iface = new OrgKdeKMixMixerInterface( KMIX_DBUS_SERVICE, dbusPath,
@@ -85,7 +85,7 @@ MixerInfo* MixerEngine::createMixerInfo( QString dbusPath )
 	return curmi;
 }
 
-ControlInfo* MixerEngine::createControlInfo( QString mixerId, QString dbusPath )
+ControlInfo* MixerEngine::createControlInfo( const QString& mixerId, const QString& dbusPath )
 {
 	ControlInfo* curci = new ControlInfo;
 	curci->iface = new OrgKdeKMixControlInterface( KMIX_DBUS_SERVICE, dbusPath,
@@ -112,10 +112,10 @@ void MixerEngine::getInternalData()
 				"org.kde.KMix.MixSet", "changed",
 				this, SLOT(slotMixersChanged()) );
 	}
-	Q_FOREACH( QString path, m_kmix->mixers() )
+	Q_FOREACH( const QString& path, m_kmix->mixers() )
 	{
 		MixerInfo* curmi = createMixerInfo( path );
-		Q_FOREACH( QString controlPath, curmi->iface->controls() )
+		Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
 			createControlInfo( curmi->id, controlPath );
 	}
 	// Update "Mixers" source
@@ -291,7 +291,7 @@ void MixerEngine::slotControlsReconfigured()
 	QStringList controlReadableNames;
 	Q_FOREACH( ControlInfo* ci, controlsForMixer )
 		ci->unused = true;
-	Q_FOREACH( QString controlPath, curmi->iface->controls() )
+	Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
 	{
 		ControlInfo* curci = 0;
 		Q_FOREACH( ControlInfo* ci, controlsForMixer )
@@ -327,7 +327,7 @@ void MixerEngine::updateInternalMixersData()
 	// Some mixer added or removed
 	Q_FOREACH( MixerInfo* mi, m_mixers )
 		mi->unused = true;
-	Q_FOREACH( QString mixerPath, m_kmix->mixers() )
+	Q_FOREACH( const QString& mixerPath, m_kmix->mixers() )
 	{
 		MixerInfo* curmi = m_mixers.value( mixerPath, 0 );
 		// if mixer was added, we need to add one to m_mixers
@@ -335,7 +335,7 @@ void MixerEngine::updateInternalMixersData()
 		if ( !curmi )
 		{
 			curmi = createMixerInfo( mixerPath );
-			Q_FOREACH( QString controlPath, curmi->iface->controls() )
+			Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
 				createControlInfo( curmi->id, controlPath );
 		}
 		curmi->unused = false;
