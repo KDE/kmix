@@ -166,10 +166,22 @@ bool MixerEngine::getMixersData()
 	{
 		Q_FOREACH( MixerInfo* mi, m_mixers )
 			mixerIds.append( mi->id );
+		/* FIXME: this is used to know whether kmix isn't running or
+		 * it can't find any audio device; also it works as a strange 
+		 * workaround: without it there is no dataUpdated() call sometimes
+		 * when it is updated here */
+		setData( "Mixers", "Running", true );
 		setData( "Mixers", "Mixers", mixerIds );
+		setData( "Mixers", "Current Master Mixer", m_kmix->currentMasterMixer() );
+		setData( "Mixers", "Current Master Control", m_kmix->currentMasterControl() );
 	}
 	else
+	{
+		setData( "Mixers", "Running", false );
 		removeData( "Mixers", "Mixers" );
+		removeData( "Mixers", "Current Master Mixer" );
+		removeData( "Mixers", "Current Master Control" );
+	}
 	return true;
 }
 
@@ -289,6 +301,7 @@ void MixerEngine::slotControlsReconfigured()
 	QList<ControlInfo*> controlsForMixer = m_controls.values( curmi->id );
 	QStringList controlIds;
 	QStringList controlReadableNames;
+	QStringList controlIconNames;
 	Q_FOREACH( ControlInfo* ci, controlsForMixer )
 		ci->unused = true;
 	Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
@@ -306,6 +319,7 @@ void MixerEngine::slotControlsReconfigured()
 		curci->unused = false;
 		controlIds.append( curci->id );
 		controlReadableNames.append( curci->iface->readableName() );
+		controlIconNames.append( curci->iface->iconName() );
 	}
 	// If control is unused then we should remove it
 	Q_FOREACH( ControlInfo* ci, controlsForMixer )
@@ -319,6 +333,7 @@ void MixerEngine::slotControlsReconfigured()
 	{
 		setData( curmi->id, "Controls", controlIds );
 		setData( curmi->id, "Controls Readable Names", controlReadableNames );
+		setData( curmi->id, "Control Icons Names", controlIconNames );
 	}
 }
 
