@@ -78,7 +78,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     
     if ( NO_MENU_ANYMORE )
     {
-      connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(activateMenuOrWindow(bool,QPoint)));
+      connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
     }
     else
     {
