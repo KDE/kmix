@@ -333,7 +333,7 @@ void MixerEngine::slotControlsReconfigured()
 	{
 		setData( curmi->id, "Controls", controlIds );
 		setData( curmi->id, "Controls Readable Names", controlReadableNames );
-		setData( curmi->id, "Control Icons Names", controlIconNames );
+		setData( curmi->id, "Controls Icons Names", controlIconNames );
 	}
 }
 
