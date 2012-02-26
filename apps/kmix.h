@@ -60,6 +60,7 @@ KMixWindow : public KXmlGuiWindow
    ~KMixWindow();
 
    bool updateDocking();
+   Qt::Orientation toplevelOrientation() { return m_toplevelOrientation; }
 
   private:
    void saveBaseConfig();

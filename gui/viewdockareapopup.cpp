@@ -134,7 +134,7 @@ QWidget* ViewDockAreaPopup::add(MixDevice *md)
       true,         // Show Mute LED
       false,        // Show Record LED
       false,        // Small
-      Qt::Horizontal, // Direction: only 1 device, so doesn't matter
+      _dock->toplevelOrientation(), // Direction: only 1 device, so doesn't matter
       this,         // parent
       0             // Is "NULL", so that there is no RMB-popup
       , pctl
