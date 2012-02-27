@@ -101,6 +101,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _volWA->setDefaultWidget(_referenceWidget2);
         _referenceWidget->addAction(_volWA);
 
+        connect( m_mixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(refreshVolumeLevels()) );
         //setAssociatedWidget(_referenceWidget);
         //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
 	
@@ -273,6 +274,9 @@ KMixDockWidget::updatePixmap()
             vol = md->captureVolume();
         }
         int percentage         = vol.getAvgVolumePercent(Volume::MALL);
+
+       // kDebug() << "TrayVol id=" << md->id() << " vol=" << vol.getAvgVolumePercent(Volume::MALL);
+
         if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
         else if ( percentage < 25 ) newPixmapType = '1';
         else if ( percentage < 75 ) newPixmapType = '2';
