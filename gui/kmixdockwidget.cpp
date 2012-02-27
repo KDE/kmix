@@ -86,10 +86,10 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
       connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
     }
 
-#ifdef _GNU_SOURCE
-// TODO minimizeRestore usage is currently a bit broken. It only works by chance
+#ifdef __GNUC__
 #warning minimizeRestore usage is currently slightly broken in KMIx. This should be fixed before doing a release.
 #endif
+    // TODO minimizeRestore usage is currently a bit broken. It only works by chance
 
     if (_volumePopup) {
         kDebug() << "Construct the ViewDockAreaPopup and actions";
@@ -260,7 +260,7 @@ KMixDockWidget::updatePixmap()
     else
     {
     	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
-    	bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
+    	bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
 		if ( isInactive )
 		{
 			newPixmapType = 'm';
