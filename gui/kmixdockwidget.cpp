@@ -102,6 +102,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _volWA->setDefaultWidget(_referenceWidget2);
         _referenceWidget->addAction(_volWA);
 
+        connect( m_mixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(refreshVolumeLevels()) );
         //setAssociatedWidget(_referenceWidget);
         //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
 	
@@ -389,7 +390,7 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 
     long int cv = inc * (delta / 120 );
 //    kDebug() << "twe: " << cv << " : " << vol;
-    bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
+    bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
     kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
 	if ( cv > 0 && isInactive)
 	{   // increasing from muted state: unmute and start with a low volume level
