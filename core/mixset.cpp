@@ -33,6 +33,10 @@
 #include <QString>
 
 
+MixSet::~MixSet()
+{
+	clear();
+}
 
 void MixSet::read( KConfig *config, const QString& grp )
 {

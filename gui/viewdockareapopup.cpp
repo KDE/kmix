@@ -96,7 +96,7 @@ void ViewDockAreaPopup::_setMixSet()
 		}
 	}
 	if ( dockMD != 0 ) {
-		_mixSet->append(dockMD);
+		_mixSet.append(dockMD);
 	}
 
 	foreach ( Mixer* mixer2 , Mixer::mixers() )
@@ -105,7 +105,7 @@ void ViewDockAreaPopup::_setMixSet()
 		{
 			if (md->isApplicationStream())
 			{
-				_mixSet->append(md);
+				_mixSet.append(md);
 				kDebug(67100) << "Add to tray popup: " << md->id();
 			}
 		}

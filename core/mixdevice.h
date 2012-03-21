@@ -31,6 +31,7 @@ class Mixer;
 class MixSet;
 class ProfControl;
 #include "core/volume.h"
+class DBusControlWrapper;
 
 // KDE
 #include <kconfig.h>
@@ -226,6 +227,8 @@ private:
    Volume _captureVolume;
    int _enumCurrentId;
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
+
+   DBusControlWrapper *_dbusControlWrapper;
 
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
    // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:

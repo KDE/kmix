@@ -40,10 +40,12 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 	// like ::select() is possible (as in ALSA).
 	_pollingTimer = new QTimer(); // will be started on open() and stopped on close()
 	connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()), Qt::QueuedConnection);
+
 }
 
 Mixer_Backend::~Mixer_Backend()
 {
+	qDebug() << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
 	//qDeleteAll(m_mixDevices); // TODO cesken Leak check the removed qDeleteAll()
 	m_mixDevices.clear();

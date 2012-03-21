@@ -28,9 +28,9 @@
 
 #include "core/ControlPool.h"
 #include "core/mixer.h"
+#include "dbus/dbuscontrolwrapper.h"
 #include "gui/guiprofile.h"
 #include "core/volume.h"
-#include "dbus/dbuscontrolwrapper.h"
 
 static const QString channelTypeToIconName( MixDevice::ChannelType type )
 {
@@ -115,6 +115,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
 {
     _artificial = false;
     _applicationStream = false;
+    _dbusControlWrapper = 0; // will be set in addToPool()
     _mixer = mixer;
     _id = id;
     mediaPlayControl = false;
@@ -130,7 +131,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         _iconName = iconName;
     _moveDestinationMixSet = moveDestinationMixSet;
     if ( _id.contains(' ') ) {
-        // The key is used in the config file. It MUST NOT contain spaces
+        // The key is used in the config file. IdbusControlWrappert MUST NOT contain spaces
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
     }
@@ -142,8 +143,9 @@ shared_ptr<MixDevice> MixDevice::addToPool()
     const QString& fullyQualifiedId = getFullyQualifiedId();
     kDebug() << "MixDevice::init() id=" << fullyQualifiedId;
 
-    shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
-    new DBusControlWrapper( thisSharedPtr, dbusPath() );
+    shared_ptr<MixDevice> thisSharedPtr(this);
+    //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
+    _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
 	return thisSharedPtr;
 }
 
@@ -182,6 +184,7 @@ void MixDevice::addEnums(QList<QString*>& ref_enumList)
 
 MixDevice::~MixDevice() {
     _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
+    delete _dbusControlWrapper;
 }
 
 Volume& MixDevice::playbackVolume()

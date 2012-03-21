@@ -240,7 +240,7 @@ shared_ptr<MixDevice> Mixer::operator[](int num)
 	return md;
 }
 
-MixSet Mixer::getMixSet()
+MixSet& Mixer::getMixSet()
 {
   return _mixerBackend->m_mixDevices;
 }

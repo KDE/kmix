@@ -65,11 +65,13 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
    m_fds = 0;
 //   m_sns = 0;
    _handle = 0;
+   ctl_handle = 0;
    _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
 {
+	qDebug() << "Running Mixer_ALSA destructor";
    close();
 }
 
@@ -215,7 +217,7 @@ int Mixer_ALSA::open()
        	if ( !enumList.isEmpty()  ) mdNew->addEnums(enumList);
 
        	shared_ptr<MixDevice> md = mdNew->addToPool();
-        m_mixDevices.append( md->addToPool() );
+        m_mixDevices.append( md );
          
         qDeleteAll(enumList); // clear temporary list
 
@@ -275,7 +277,6 @@ int Mixer_ALSA::open()
 int Mixer_ALSA::openAlsaDevice(const QString& devName)
 {
     int err;
-    snd_ctl_t *ctl_handle;
 
     QString probeMessage;
     probeMessage += "Trying ALSA Device '" + devName + "': ";
@@ -483,6 +484,13 @@ Mixer_ALSA::close()
 {
   int ret=0;
   m_isOpen = false;
+
+  if ( ctl_handle != 0)
+  {
+	  //snd_ctl_close( ctl_handle );
+	  ctl_handle = 0;
+  }
+
   if ( _handle != 0 )
   {
     //kDebug() << "IN  Mixer_ALSA::close()";

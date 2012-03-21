@@ -32,14 +32,15 @@
 #endif
 #endif
 
+#include "gui/viewsliders.h"
+
 // KMix
-#include "viewsliders.h"
-#include "gui/guiprofile.h"
-#include "mdwenum.h"
-#include "mdwslider.h"
 #include "core/mixdevicecomposite.h"
 #include "core/mixer.h"
-#include "verticaltext.h"
+#include "gui/guiprofile.h"
+#include "gui/mdwenum.h"
+#include "gui/mdwslider.h"
+#include "gui/verticaltext.h"
 
 // KDE
 #include <kdebug.h>
@@ -116,6 +117,7 @@ ViewSliders::~ViewSliders()
 
 
 QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
+
 {
     MixDeviceWidget *mdw;
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
@@ -209,7 +211,7 @@ void ViewSliders::_setMixSet()
             if ( md->id().contains(idRegexp) )
             {
                 // Match found (by name)
-                if ( _mixSet->contains( md ) ) continue; // dup check
+                if ( _mixSet.contains( md ) ) continue; // dup check
 
                 // Now check whether subcontrols match
                 bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->playbackVolume().hasSwitch()) );
@@ -230,7 +232,7 @@ void ViewSliders::_setMixSet()
                     else if ( control->getSwitchtype() == "Off"  )
                         md->playbackVolume().setSwitchType(Volume::OffSwitch);
                 }
-                _mixSet->append(md);
+                _mixSet.append(md);
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
                 if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // For temporary test
@@ -247,7 +249,7 @@ void ViewSliders::_setMixSet()
         }
    } // iteration over all controls from the Profile
 
-	emptyStreamHint->setVisible(  _mixSet->isEmpty() && isDynamic() ); // show a hint why a tab is empty (dynamic controls!!!)
+	emptyStreamHint->setVisible(  _mixSet.isEmpty() && isDynamic() ); // show a hint why a tab is empty (dynamic controls!!!)
 	//  visibleControls() == 0 could be used for the !isDynamic() case
 
 

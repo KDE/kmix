@@ -78,6 +78,8 @@ private:
 
     bool _initialUpdate;
     snd_mixer_t *_handle;
+    snd_ctl_t *ctl_handle;
+
     QString devName;
     struct pollfd  *m_fds;
     QList<QSocketNotifier*> m_sns;

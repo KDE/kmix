@@ -29,13 +29,14 @@
 // KDE
 #include <KActionCollection>
 class KMenu;
-class MixSet;
+
 class Mixer;
 class MixDevice;
 
 // KMix
 class GUIProfile;
 #include "core/mixdevice.h"
+#include "core/mixset.h"
 
 /**
   * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
@@ -130,7 +131,7 @@ signals:
 
 
 protected:
-    MixSet *_mixSet;
+    MixSet _mixSet;
     Mixer *_mixer;
     QSet<Mixer*> _mixers; // this might deprecate _mixer in the future. Currently only in use by ViewDockAreaPopup
     KMenu *_popMenu;

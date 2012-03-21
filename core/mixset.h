@@ -28,6 +28,8 @@
 class MixSet : public QList <shared_ptr<MixDevice> >
 {
    public:
+	~MixSet();
+
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
 
