@@ -120,7 +120,7 @@ void ViewBase::setTicks (bool on) { KMixToolBox::setTicks (_mdws, on ); }
 void ViewBase::createDeviceWidgets()
 {
     // create devices
-    foreach ( MixDevice* md, *_mixSet ) 
+    foreach ( shared_ptr<MixDevice> md, *_mixSet )
     {
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
@@ -255,7 +255,7 @@ void ViewBase::setMixSet()
     
     _mixers.clear();
     _mixers.insert(_mixer);
-    foreach ( MixDevice* md, *_mixSet )
+    foreach ( shared_ptr<MixDevice> md, *_mixSet )
     {
 //      kDebug() << "VVV Add to " << md->mixer()->id();
 //      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
@@ -321,7 +321,7 @@ void ViewBase::load(KConfig *config)
            Workaround: If found, write back correct group name.
         */
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         MixDevice* md = mdw->mixDevice();
+         shared_ptr<MixDevice> md = mdw->mixDevice();
 
          QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
          KConfigGroup devcg  = config->group( devgrp );
@@ -398,7 +398,7 @@ void ViewBase::save(KConfig *config)
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         MixDevice* md = mdw->mixDevice();
+         shared_ptr<MixDevice> md = mdw->mixDevice();
 
          //kDebug(67100) << "  grp=" << grp.toAscii();
          //kDebug(67100) << "  mixer=" << view->id().toAscii();

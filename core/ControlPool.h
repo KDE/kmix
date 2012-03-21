@@ -1,8 +1,8 @@
-//-*-C++-*-
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * Copyright Christian Esken <esken@kde.org>
+ *
+ * Copyright (c) The KMix Authors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,28 +18,36 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef MixSet_h
-#define MixSet_h
 
-#include <QSet>
+#ifndef CONTROL_POOL_H
+#define CONTROL_POOL_H
+
+
+// std::shared_ptr
+#include <memory>
+#include <tr1/memory>
+
+using namespace ::std::tr1;
 
 #include "core/mixdevice.h"
 
-class MixSet : public QList <shared_ptr<MixDevice> >
+class ControlPool
 {
-   public:
-      void read( KConfig *config, const QString& grp );
-      void write( KConfig *config, const QString& grp );
 
-      QString name() { return m_name; }
-      void setName( const QString &name );
-      
-      shared_ptr<MixDevice> get(QString id);
+public:
+	static ControlPool* instance();
+	shared_ptr<MixDevice> add(const QString& key, MixDevice* mixDevice);
+	shared_ptr<MixDevice> get(const QString& key);
 
-      void removeById(QString id);
 
-   private:
-      QString m_name;
+private:
+	ControlPool();
+	virtual ~ControlPool() {};
+
+
+	QMap<QString, shared_ptr<MixDevice> > *pool;
+	static ControlPool* _instance;
+	static shared_ptr<MixDevice> TheEmptyDevice;
 };
 
 #endif

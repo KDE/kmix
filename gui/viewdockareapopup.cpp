@@ -77,42 +77,40 @@ void ViewDockAreaPopup::showContextMenu()
 
 void ViewDockAreaPopup::_setMixSet()
 {
-   // kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
+	// kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
 
-  // -- remove controls
-   if ( _mixer->isDynamic() ) {
-      // Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
-      // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
-      QLayoutItem *li;
-      while ( ( li = _layoutMDW->takeAt(0) ) )
-         delete li;
-   }
+	// -- remove controls
+	if ( _mixer->isDynamic() ) {
+		// Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
+		// We need to trash those too otherwise all sliders gradually migrate away from the edge :p
+		QLayoutItem *li;
+		while ( ( li = _layoutMDW->takeAt(0) ) )
+			delete li;
+	}
 
-   MixDevice *dockMD = Mixer::getGlobalMasterMD();
-   if ( dockMD == 0 ) {
-      // If we have no dock device yet, we will take the first available mixer device
-      if ( _mixer->size() > 0) {
-         dockMD = (*_mixer)[0];
-      }
-   }
-   if ( dockMD != 0 ) {
-      _mixSet->append(dockMD);
-   }
-   
-   Mixer* mixer2;
-   foreach ( mixer2 , Mixer::mixers() )
-   {
-   MixDevice *md;
-   foreach ( md, mixer2->getMixSet() )
-   {
-     if (md->isApplicationStream())
-     {
-      _mixSet->append(md);
-      kDebug(67100) << "Add to tray popup: " << md->id();
-     }
-   }
-}
-   
+	shared_ptr<MixDevice>dockMD = Mixer::getGlobalMasterMD();
+	if ( dockMD == 0 ) {
+		// If we have no dock device yet, we will take the first available mixer device
+		if ( _mixer->size() > 0) {
+			dockMD = (*_mixer)[0];
+		}
+	}
+	if ( dockMD != 0 ) {
+		_mixSet->append(dockMD);
+	}
+
+	foreach ( Mixer* mixer2 , Mixer::mixers() )
+	{
+		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
+		{
+			if (md->isApplicationStream())
+			{
+				_mixSet->append(md);
+				kDebug(67100) << "Add to tray popup: " << md->id();
+			}
+		}
+	}
+
 }
 
 
@@ -124,7 +122,7 @@ void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
 }
 
 
-QWidget* ViewDockAreaPopup::add(MixDevice *md)
+QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");

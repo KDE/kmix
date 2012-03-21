@@ -215,7 +215,7 @@ int Mixer_OSS4::open()
 			bool masterChosen = false;
 			bool masterHeuristicAvailable = false;
 			bool saveAsMasterHeuristc = false;
-			MixDevice *masterHeuristic = NULL;
+			shared_ptr<MixDevice> masterHeuristic;
 
 			oss_mixext ext;
 			ext.dev = m_devnum;
@@ -361,7 +361,7 @@ int Mixer_OSS4::open()
 						masterChosen = true;
 					}
 
-					m_mixDevices.append(md);
+					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_HEXVALUE )
 				{
@@ -389,7 +389,7 @@ int Mixer_OSS4::open()
 						masterChosen = true;
 					}
 
-					m_mixDevices.append(md);
+					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_ONOFF 
 #ifdef MIXT_MUTE
@@ -419,7 +419,7 @@ int Mixer_OSS4::open()
 						md->addPlaybackVolume(vol);
 					}
 
-					m_mixDevices.append(md);
+					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_ENUM )
 				{
@@ -453,7 +453,7 @@ int Mixer_OSS4::open()
 						}
 						md->addEnums(enumValuesRef);
 
-						m_mixDevices.append(md);
+						m_mixDevices.append(md->addToPool());
 					}
 				}
 
@@ -527,7 +527,7 @@ bool Mixer_OSS4::prepareUpdateFromHW()
 	return true;
 }
 
-int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
+int Mixer_OSS4::readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md)
 {
 	oss_mixext extinfo;
 	oss_mixer_value mv;
@@ -593,7 +593,7 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 	return 0;
 }
 
-int Mixer_OSS4::writeVolumeToHW(const QString& id, MixDevice *md)
+int Mixer_OSS4::writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md)
 {
 	int volume = 0;
 

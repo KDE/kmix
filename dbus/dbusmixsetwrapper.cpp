@@ -56,7 +56,7 @@ QString DBusMixSetWrapper::currentMasterMixer() const
 
 QString DBusMixSetWrapper::currentMasterControl() const
 {
-    MixDevice* masterControl = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> masterControl = Mixer::getGlobalMasterMD();
     return masterControl ? masterControl->id() : QString();
 }
 

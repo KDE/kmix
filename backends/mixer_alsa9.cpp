@@ -208,13 +208,14 @@ int Mixer_ALSA::open()
         idx++;
 
 
-        MixDevice* md = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
+        MixDevice* mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
 
-        if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
-        if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
-       	if ( !enumList.isEmpty()  ) md->addEnums(enumList);
-         
-        m_mixDevices.append( md );
+        if ( volPlay    != 0      ) mdNew->addPlaybackVolume(*volPlay);
+        if ( volCapture != 0      ) mdNew->addCaptureVolume (*volCapture);
+       	if ( !enumList.isEmpty()  ) mdNew->addEnums(enumList);
+
+       	shared_ptr<MixDevice> md = mdNew->addToPool();
+        m_mixDevices.append( md->addToPool() );
          
         qDeleteAll(enumList); // clear temporary list
 
@@ -696,7 +697,7 @@ unsigned int Mixer_ALSA::enumIdHW(const QString& id) {
 
 
 int
-Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
+Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 {
     Volume& volumePlayback = md->playbackVolume();
     Volume& volumeCapture  = md->captureVolume();
@@ -776,9 +777,8 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
         // Refresh the capture switch information of *all* controls of this card.
         // Doing it for all is necessary, because enabling one record source often
         // automatically disables another record source (due to the hardware design)
-        for(int i=0; i< m_mixDevices.count() ; i++ )
+        foreach ( shared_ptr<MixDevice> md, m_mixDevices )
         {
-            MixDevice *md = m_mixDevices[i];
             bool isRecsrc =  isRecsrcHW( md->id() );
             // kDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc;
             md->setRecSource( isRecsrc );
@@ -790,7 +790,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
 }
 
 int
-Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
+Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
     Volume& volumePlayback = md->playbackVolume();
     Volume& volumeCapture  = md->captureVolume();

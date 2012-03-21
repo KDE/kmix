@@ -26,6 +26,7 @@
 #define MIXDEVICEWIDGET_H
 
 #include <QWidget>
+#include "core/mixdevice.h"
 #include "core/volume.h"
 #include <qpixmap.h>
 
@@ -44,7 +45,7 @@ class MixDeviceWidget
       Q_OBJECT
 
 public:
-    MixDeviceWidget( MixDevice* md,
+    MixDeviceWidget( shared_ptr<MixDevice> md,
                      bool small, Qt::Orientation orientation,
                      QWidget* parent, ViewBase*, ProfControl * );
     virtual ~MixDeviceWidget();
@@ -52,7 +53,7 @@ public:
     void addActionToPopup( KAction *action );
 
     virtual bool isDisabled() const;
-    MixDevice* mixDevice() { return m_mixdevice; }
+    shared_ptr<MixDevice> mixDevice() { return m_mixdevice; }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
@@ -77,7 +78,7 @@ protected slots:
 
 protected:
 
-      MixDevice*           m_mixdevice;
+      shared_ptr<MixDevice>  m_mixdevice;
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;

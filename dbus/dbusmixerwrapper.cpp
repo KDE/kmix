@@ -52,7 +52,7 @@ QString DBusMixerWrapper::driverName()
 QStringList DBusMixerWrapper::controls()
 {
 	QStringList result;
-	foreach ( MixDevice* md, m_mixer->getMixSet() )
+	foreach ( shared_ptr<MixDevice> md, m_mixer->getMixSet() )
 	{
 		result.append( md->dbusPath() );
 	}
@@ -61,7 +61,7 @@ QStringList DBusMixerWrapper::controls()
 
 QString DBusMixerWrapper::masterControl()
 {
-	MixDevice* md = m_mixer->getLocalMasterMD();
+	shared_ptr<MixDevice> md = m_mixer->getLocalMasterMD();
 	// XXX: Since empty object path is invalid, using "/"
 	return md ? md->dbusPath() : QString("/");
 }

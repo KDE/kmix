@@ -42,8 +42,8 @@ public:
     explicit Mixer_ALSA(Mixer *mixer, int device = -1 );
     ~Mixer_ALSA();
 
-    virtual int  readVolumeFromHW( const QString& id, MixDevice *md );
-    virtual int  writeVolumeToHW ( const QString& id, MixDevice *md );
+    virtual int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md );
+    virtual int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md );
     virtual void setEnumIdHW( const QString& id, unsigned int);
     virtual unsigned int enumIdHW(const QString& id);
     virtual bool prepareUpdateFromHW();

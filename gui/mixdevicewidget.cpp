@@ -51,7 +51,7 @@
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */
-MixDeviceWidget::MixDeviceWidget(MixDevice* md,
+MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
    QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),

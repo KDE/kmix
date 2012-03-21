@@ -10,6 +10,11 @@
 
 #include <QString>
 
+// std::shared_ptr
+#include <memory>
+#include <tr1/memory>
+using namespace ::std::tr1;
+
 class MasterControl
 {
 public:

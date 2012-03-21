@@ -24,8 +24,10 @@
 #include "core/mixer.h"
 #include "core/volume.h"
 
-DBusControlWrapper::DBusControlWrapper(MixDevice* parent, const QString& path)
-	: QObject(parent)
+DBusControlWrapper::DBusControlWrapper(shared_ptr<MixDevice> parent, const QString& path)
+	: QObject(0)
+// TODO cesken I might need to look into memory leak issues here, as it was required to remove the MixDevice from being parent()
+//      I am not about leaking m_md, but the whole DBusControlWrapper instance
 {
 	m_md = parent;
 	new ControlAdaptor( this );

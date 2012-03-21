@@ -129,8 +129,9 @@ void KMixDockWidget::createActions()
 {
    QMenu *menu = contextMenu();
    
-   MixDevice* md = Mixer::getGlobalMasterMD();
-  if ( md != 0 && md->playbackVolume().hasSwitch() ) {
+   shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+  if ( md.get() != 0 && md->playbackVolume().hasSwitch() )
+  {
     // Put "Mute" selector in context menu
     KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
     action->setText( i18n( "M&ute" ) );
@@ -213,11 +214,11 @@ void KMixDockWidget::handleNewMaster(QString& /*mixerID*/, QString& /*control_id
 void
 KMixDockWidget::setVolumeTip()
 {
-    MixDevice *md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     QString tip = "";
     int newToolTipValue = 0;
 
-    if ( md == 0 )
+    if ( md.get() == 0 )
     {
         tip = i18n("Mixer cannot be found"); // !! text could be reworked
         newToolTipValue = -2;
@@ -251,7 +252,7 @@ KMixDockWidget::setVolumeTip()
 void
 KMixDockWidget::updatePixmap()
 {
-    MixDevice *md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
 
     char newPixmapType;
     if ( md == 0 )
@@ -377,9 +378,11 @@ void KMixDockWidget::activate(const QPoint &pos)
 void
 KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 {
-  MixDevice *md = Mixer::getGlobalMasterMD();
-  if ( md != 0 )
-  {
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	if ( md.get() == 0 )
+		return;
+
+
       Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
       int inc = vol.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
 
@@ -413,15 +416,15 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 
     md->mixer()->commitVolumeChange(md);
     setVolumeTip();
-  }
 }
 
 
 void
 KMixDockWidget::dockMute()
 {
-   MixDevice *md = Mixer::getGlobalMasterMD();
-   if ( md ) {
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	if ( md )
+   {
       md->toggleMute();
       md->mixer()->commitVolumeChange( md );
    }
@@ -452,7 +455,7 @@ KMixDockWidget::contextMenuAboutToShow()
     */
 
     // Enable/Disable "Muted" menu item
-    MixDevice* md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
     //kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
     if ( md != 0 && dockMuteAction != 0 ) {

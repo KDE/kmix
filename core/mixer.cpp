@@ -170,10 +170,12 @@ void Mixer::volumeLoad( KConfig *config )
    _mixerBackend->m_mixDevices.read( config, grp );
 
    // set new settings
-   //QListIterator<MixDevice*> it( _mixerBackend->m_mixDevices );
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
    {
-       MixDevice *md = _mixerBackend->m_mixDevices[i];
+	   shared_ptr<MixDevice> md = _mixerBackend->m_mixDevices[i];
+	   if ( md.get() == 0 )
+		   continue;
+
        _mixerBackend->writeVolumeToHW( md->id(), md );
        if ( md->isEnum() ) _mixerBackend->setEnumIdHW( md->id(), md->enumId() );
    }
@@ -188,15 +190,18 @@ void Mixer::volumeLoad( KConfig *config )
  */
 bool Mixer::openIfValid() {
     bool ok = _mixerBackend->openIfValid();
-    if ( ok ) {
-        recreateId(); // Fallback call. Actually recreateId() is supposed to be called later again, via setCardInstance()
-        MixDevice* recommendedMaster = _mixerBackend->recommendedMaster();
-        if ( recommendedMaster != 0 ) {
+    if ( ok )
+    {
+        recreateId(); // TODO NOW : We actually cannot postpone it to here, due to ControlPool. Move to Mixer !!!. Actually recreateId() is supposed to be called later again, via setCardInstance()
+        shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
+        if ( recommendedMaster.get() != 0 )
+        {
             QString recommendedMasterStr = recommendedMaster->id();
             setLocalMasterMD( recommendedMasterStr );
             kDebug() << "Mixer::open() detected master: " << recommendedMaster->id();
         }
-        else {
+        else
+        {
             if ( !m_dynamic )
                 kError(67100) << "Mixer::open() no master detected." << endl;
             QString noMaster = "---no-master-detected---";
@@ -229,11 +234,10 @@ unsigned int Mixer::size() const
   return _mixerBackend->m_mixDevices.count();
 }
 
-MixDevice* Mixer::operator[](int num)
+shared_ptr<MixDevice> Mixer::operator[](int num)
 {
-  MixDevice* md =  _mixerBackend->m_mixDevices.at( num );
-  Q_ASSERT( md );
-  return md;
+	shared_ptr<MixDevice> md =  _mixerBackend->m_mixDevices.at( num );
+	return md;
 }
 
 MixSet Mixer::getMixSet()
@@ -285,8 +289,9 @@ void Mixer::setBalance(int balance)
 
    m_balance = balance;
 
-   MixDevice* master = getLocalMasterMD();
-   if ( master == 0 ) {
+   shared_ptr<MixDevice> master = getLocalMasterMD();
+   if ( master.get() == 0 )
+   {
       // no master device available => return
       return;
    }
@@ -427,39 +432,41 @@ MasterControl& Mixer::getGlobalMasterPreferred()
 }
 
 
-MixDevice* Mixer::getGlobalMasterMD()
+shared_ptr<MixDevice> Mixer::getGlobalMasterMD()
 {
    return getGlobalMasterMD(true);
 }
 
 
-MixDevice* Mixer::getGlobalMasterMD(bool fallbackAllowed)
+shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 {
-   MixDevice* md = 0;
-   Mixer *mixer;
-   if ( fallbackAllowed)
-      mixer = Mixer::getGlobalMasterMixer();
-   else
-      mixer = Mixer::getGlobalMasterMixerNoFalback();
-   if ( mixer != 0 ) {
-      for(int i=0; i < mixer->_mixerBackend->m_mixDevices.count() ; i++ )
-      {
-         md = mixer->_mixerBackend->m_mixDevices[i];
-         if ( md->id() == _globalMasterCurrent.getControl() ) {
-            //kDebug() << "Mixer::masterCardDevice() found " << _globalMasterCardDevice;
-            break;
-         }
-      }
-   }
-   if ( ! md ) 
-        kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
-   return md;
+	shared_ptr<MixDevice> mdRet;
+	Mixer *mixer = fallbackAllowed ?
+		   Mixer::getGlobalMasterMixer() : Mixer::getGlobalMasterMixerNoFalback();
+
+	if ( mixer == 0 )
+		return mdRet;
+
+	foreach (shared_ptr<MixDevice> md, mixer->_mixerBackend->m_mixDevices )
+	{
+		if ( md.get() == 0 )
+			continue; // invalid
+		if ( md->id() == _globalMasterCurrent.getControl() )
+		{
+			mdRet = md;
+			break; // found
+		}
+	}
+	if ( mdRet.get() == 0 )
+		kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
+
+	return mdRet;
 }
 
 
 
 
-MixDevice* Mixer::getLocalMasterMD()
+shared_ptr<MixDevice> Mixer::getLocalMasterMD()
 {
   return find( _masterDevicePK );
 }
@@ -470,25 +477,32 @@ void Mixer::setLocalMasterMD(QString &devPK)
 }
 
 
-MixDevice* Mixer::find(const QString& mixdeviceID)
+shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID)
 {
-   MixDevice *md = 0;
-   for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )
-   {
-       md = _mixerBackend->m_mixDevices[i];
-       if( mixdeviceID == md->id() ) {
-           break;
-       }
-    }
-    return md;
+
+	shared_ptr<MixDevice> mdRet;
+
+	foreach (shared_ptr<MixDevice> md, _mixerBackend->m_mixDevices )
+	{
+		if ( md.get() == 0 )
+			continue; // invalid
+		if ( md->id() == mixdeviceID )
+		{
+			mdRet = md;
+			break; // found
+		}
+	}
+
+    return mdRet;
 }
 
 
-MixDevice* Mixer::getMixdeviceById( const QString& mixdeviceID )
+shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID )
 {
-   MixDevice* md = 0;
+	shared_ptr<MixDevice> md;
    int num = _mixerBackend->id2num(mixdeviceID);
-   if ( num!=-1 && num < (int)size() ) {
+   if ( num!=-1 && num < (int)size() )
+   {
       md = (*this)[num];
    }
    return md;
@@ -502,7 +516,8 @@ MixDevice* Mixer::getMixdeviceById( const QString& mixdeviceID )
    - It is fast               (no copying of Volume objects required)
    - It is easy to understand ( read - modify - commit )
 */
-void Mixer::commitVolumeChange( MixDevice* md ) {
+void Mixer::commitVolumeChange( shared_ptr<MixDevice> md )
+{
   _mixerBackend->writeVolumeToHW(md->id(), md );
    if (md->isEnum()) _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
    if ( md->captureVolume().hasSwitch() ) {
@@ -533,8 +548,9 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
 void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease )
 {
 
-    MixDevice *md= getMixdeviceById( mixdeviceID );
-    if (md != 0) {
+	shared_ptr<MixDevice> md= getMixdeviceById( mixdeviceID );
+    if (md.get() != 0)
+    {
         Volume& volP=md->playbackVolume();
         if ( volP.hasVolume() ) {
         	long volSpan = volP.volumeSpan();

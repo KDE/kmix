@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#include "core/ControlPool.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "core/volume.h"
@@ -134,7 +135,23 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         _id.replace(' ', '_');
     }
     kDebug(67100) << "MixDevice::init() _id=" << _id;
-    new DBusControlWrapper( this, dbusPath() );
+}
+
+shared_ptr<MixDevice> MixDevice::addToPool()
+{
+    const QString& fullyQualifiedId = getFullyQualifiedId();
+    kDebug() << "MixDevice::init() id=" << fullyQualifiedId;
+
+    shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
+    new DBusControlWrapper( thisSharedPtr, dbusPath() );
+	return thisSharedPtr;
+}
+
+
+QString MixDevice::getFullyQualifiedId()
+{
+	QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());
+	return fqId;
 }
 
 void MixDevice::addPlaybackVolume(Volume &playbackVol)

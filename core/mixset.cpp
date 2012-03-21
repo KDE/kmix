@@ -40,9 +40,8 @@ void MixSet::read( KConfig *config, const QString& grp )
    KConfigGroup group = config->group(grp);
    m_name = group.readEntry( "name", m_name );
 
-   for(int i=0; i < count() ; i++ )
+   foreach ( shared_ptr<MixDevice> md, *this)
    {
-       MixDevice *md = operator[](i);
        md->read( config, grp );
    }
 }
@@ -53,9 +52,8 @@ void MixSet::write( KConfig *config, const QString& grp )
    KConfigGroup conf = config->group(grp);
    conf.writeEntry( "name", m_name );
 
-   for(int i=0; i < count() ; i++ )
+   foreach ( shared_ptr<MixDevice> md, *this)
    {
-       MixDevice *md = operator[](i);
        md->write( config, grp );
    }
 }
@@ -65,23 +63,26 @@ void MixSet::setName( const QString &name )
     m_name = name;
 }
 
-MixDevice* MixSet::get(QString id)
+shared_ptr<MixDevice> MixSet::get(QString id)
 {
-  MixDevice* md = 0;
-  for(int i=0; i < count() ; i++ )
-  {
-    md = operator[](i);
-    if ( md->id() == id )
-      break;
-  }
-  return md;
+	shared_ptr<MixDevice> mdRet;
+
+	foreach ( shared_ptr<MixDevice> md, *this)
+	{
+		if ( md->id() == id )
+		{
+			mdRet = md;
+			break;
+		}
+	}
+	return mdRet;
 }
 
 void MixSet::removeById(QString id)
 {
 	for (int i=0; i < count() ; i++ )
 	{
-		MixDevice* md = operator[](i);
+		shared_ptr<MixDevice> md = operator[](i);
 	    if ( md->id() == id )
 	    {
 	    	removeAt(i);

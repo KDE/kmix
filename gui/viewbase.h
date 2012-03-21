@@ -35,6 +35,7 @@ class MixDevice;
 
 // KMix
 class GUIProfile;
+#include "core/mixdevice.h"
 
 /**
   * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
@@ -96,7 +97,7 @@ public:
     /**
      * Creates a suitable representation for the given MixDevice.
      */
-    virtual QWidget* add(MixDevice *) = 0;
+    virtual QWidget* add(shared_ptr<MixDevice>) = 0;
 
     /**
      * Popup stuff

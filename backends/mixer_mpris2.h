@@ -61,8 +61,8 @@ public:
 
   virtual int open();
   virtual int close();
-  virtual int readVolumeFromHW( const QString& id, MixDevice * );
-  virtual int writeVolumeToHW( const QString& id, MixDevice * );
+  virtual int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> );
+  virtual int writeVolumeToHW( const QString& id, shared_ptr<MixDevice> );
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
   virtual bool moveStream( const QString& id, const QString& destId );

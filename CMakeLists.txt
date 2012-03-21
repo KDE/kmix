@@ -83,6 +83,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    gui/osdwidget.cpp
    core/mixertoolbox.cpp
    core/kmixdevicemanager.cpp
+   core/ControlPool.cpp
    core/MasterControl.cpp
    core/mixer.cpp
    core/mixset.cpp
@@ -117,6 +118,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
  set(kded_kmixd_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
     apps/kmixd.cpp 
+    core/ControlPool.cpp
     core/MasterControl.cpp
     core/mixer.cpp 
     core/mixset.cpp 
@@ -158,6 +160,7 @@ install( FILES kmixd.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/kmixctrl.cpp 
+   core/ControlPool.cpp
    core/MasterControl.cpp
    core/mixer.cpp 
    core/mixset.cpp 

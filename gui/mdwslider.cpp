@@ -63,7 +63,7 @@ bool MDWSlider::debugMe = false;
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
+MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptureLED,
         bool small, Qt::Orientation orientation, QWidget* parent
         , ViewBase* view
         , ProfControl* par_ctl
@@ -1129,8 +1129,8 @@ void MDWSlider::showMoveMenu()
     _mdwMoveActions->addAction( QString("-"), a);
 
     m_moveMenu->addAction( a );
-    for (int i = 0; i < ms->count(); ++i) {
-        MixDevice* md = (*ms)[i];
+    foreach (shared_ptr<MixDevice> md, *ms)
+    {
         a = new MDWMoveAction(md, _mdwMoveActions);
         _mdwMoveActions->addAction( QString("moveto") + md->id(), a);
         connect(a, SIGNAL(moveRequest(QString)), SLOT(moveStream(QString)));

@@ -36,9 +36,9 @@ class ViewSliders : public ViewBase
     Q_OBJECT
 public:
     ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl);
-    ~ViewSliders();
+    virtual ~ViewSliders();
 
-    virtual QWidget* add(MixDevice *mdw);
+    virtual QWidget* add(shared_ptr<MixDevice>);
     virtual void constructionFinished();
     virtual void configurationUpdate();
 

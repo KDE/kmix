@@ -16,8 +16,8 @@ public:
   virtual QString getDriverName();
   virtual bool CheckCapture(oss_mixext *ext);
   virtual bool prepareUpdateFromHW();
-  virtual int readVolumeFromHW(const QString& id, MixDevice *md);
-  virtual int writeVolumeToHW(const QString& id, MixDevice *md );
+  virtual int readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md);
+  virtual int writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md );
   virtual void setEnumIdHW(const QString& id, unsigned int idx);
   virtual unsigned int enumIdHW(const QString& id);
 

@@ -49,8 +49,8 @@ class Mixer_PULSE : public Mixer_Backend
         Mixer_PULSE(Mixer *mixer, int devnum);
         virtual ~Mixer_PULSE();
 
-        virtual int readVolumeFromHW( const QString& id, MixDevice *md  );
-        virtual int writeVolumeToHW ( const QString& id, MixDevice *md  );
+        virtual int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> );
+        virtual int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> );
 
         virtual bool moveStream( const QString& id, const QString& destId );
 

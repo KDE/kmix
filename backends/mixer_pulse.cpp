@@ -802,7 +802,7 @@ void Mixer_PULSE::removeWidget(int index)
     {
         if ((*iter)->id() == id)
         {
-            delete *iter;
+//            delete *iter;  // TODO cesken LET-THIS-CHECK  Delete should not be required after migration to shared_ptr
             m_mixDevices.erase(iter);
             emitControlsReconfigured();
             return;
@@ -819,12 +819,15 @@ void Mixer_PULSE::removeAllWidgets()
     if (KMIXPA_APP_PLAYBACK == m_devnum)
         outputRoles.clear();
 
-    MixSet::iterator iter;
-    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
-    {
-        delete *iter;
-        m_mixDevices.erase(iter);
-    }
+    m_mixDevices.clear();
+
+    // TODO cesken LET-THIS-CHECK  Delete should not be required after migration to shared_ptr
+//    MixSet::iterator iter;
+//    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
+//    {
+//        delete *iter;
+//        m_mixDevices.erase(iter);
+//    }
     emitControlsReconfigured();
 }
 
@@ -846,7 +849,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
-        m_mixDevices.append(md);
+        m_mixDevices.append(md->addToPool());
     }
 }
 
@@ -1060,7 +1063,7 @@ int Mixer_PULSE::id2num(const QString& id) {
     return num;
 }
 
-int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
+int Mixer_PULSE::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 {
     devmap *map = get_widget_map(m_devnum, id);
 
@@ -1078,7 +1081,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
     return 0;
 }
 
-int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
+int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
     devmap::iterator iter;
     if (KMIXPA_PLAYBACK == m_devnum)

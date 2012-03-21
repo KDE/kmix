@@ -34,8 +34,8 @@ public:
   virtual ~Mixer_SUN();
 
   virtual QString errorText(int mixer_error);
-  virtual int readVolumeFromHW( const QString& id, MixDevice *md  );
-  virtual int writeVolumeToHW ( const QString& id, MixDevice *md  );
+  virtual int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> );
+  virtual int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> );
 
   virtual QString getDriverName();
 
