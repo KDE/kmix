@@ -1,5 +1,11 @@
 project(kmix)
 
+find_package(KDE4 REQUIRED)
+include(KDE4Defaults)
+include(MacroLibrary)
+
+find_package(Alsa)
+
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
 
 
