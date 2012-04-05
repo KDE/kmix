@@ -30,9 +30,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(profiletest ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-if (HAVE_PULSE)
+if (PULSEAUDIO_FOUND)
     target_link_libraries(profiletest ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (HAVE_PULSE)
+endif (PULSEAUDIO_FOUND)
 
 ########### next target ###############
 set(dialogtest_KDEINIT_SRCS dialogtest.cpp )

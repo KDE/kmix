@@ -9,8 +9,6 @@ set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
 
 macro_bool_to_01(OGGVORBIS_FOUND HAVE_VORBIS)
 
-macro_bool_to_01(PULSEAUDIO_FOUND HAVE_PULSE)
-
 #now check for dlfcn.h using the cmake supplied CHECK_include_FILE() macro
 # If definitions like -D_GNU_SOURCE are needed for these checks they
 # should be added to _KDE4_PLATFORM_DEFINITIONS when it is originally

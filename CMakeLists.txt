@@ -6,6 +6,12 @@ include(MacroLibrary)
 
 find_package(Alsa)
 
+macro_optional_find_package(PulseAudio "0.9.12")
+macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server" "http://www.pulseaudio.org/" FALSE "0.9.12" "libpulse is needed to let KMix control PulseAudio")
+find_package(GLIB2)
+pkg_check_modules(CANBERRA libcanberra)
+macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library" "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
+
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
 
 
@@ -27,9 +33,11 @@ add_subdirectory( pics )
 add_subdirectory( profiles ) 
 #add_subdirectory( tests )
 
-if (HAVE_PULSE)
+if (PULSEAUDIO_FOUND)
+  add_definitions(-DHAVE_PULSE)
+
   include_directories(${PULSEAUDIO_INCLUDE_DIR})
-endif (HAVE_PULSE)
+endif (PULSEAUDIO_FOUND)
 
 if (CANBERRA_FOUND)
   add_definitions(-DHAVE_CANBERRA)
@@ -59,10 +67,10 @@ if (HAVE_LIBASOUND2)
       backends/mixer_alsa9.cpp )
 endif (HAVE_LIBASOUND2)
 
-if (HAVE_PULSE)
+if (PULSEAUDIO_FOUND)
   set(kmix_backend_SRCS ${kmix_backend_SRCS}
       backends/mixer_pulse.cpp )
-endif (HAVE_PULSE)
+endif (PULSEAUDIO_FOUND)
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/main.cpp 
@@ -107,9 +115,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-if (HAVE_PULSE)
+if (PULSEAUDIO_FOUND)
     target_link_libraries(kdeinit_kmix ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (HAVE_PULSE)
+endif (PULSEAUDIO_FOUND)
 
 if (CANBERRA_FOUND)
   target_link_libraries(kdeinit_kmix ${CANBERRA_LIBRARIES})
@@ -147,9 +155,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-if (HAVE_PULSE)
+if (PULSEAUDIO_FOUND)
     target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (HAVE_PULSE)
+endif (PULSEAUDIO_FOUND)
 
 if (CANBERRA_FOUND)
   target_link_libraries(kded_kmixd ${CANBERRA_LIBRARIES})
@@ -187,9 +195,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-if (HAVE_PULSE)
+if (PULSEAUDIO_FOUND)
     target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (HAVE_PULSE)
+endif (PULSEAUDIO_FOUND)
 
 if (CANBERRA_FOUND)
   target_link_libraries(kdeinit_kmixctrl ${CANBERRA_LIBRARIES})
