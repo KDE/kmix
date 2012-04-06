@@ -40,7 +40,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.
    aboutData.addAuthor(ki18n("Christian Esken")   , ki18n("Original author and current maintainer"), "esken@kde.org");
-   aboutData.addAuthor(ki18n("Colin Guthrie")     , ki18n("PulseAudio support"), "cguthrie@mandriva.org");
+   aboutData.addAuthor(ki18n("Colin Guthrie")     , ki18n("PulseAudio support"), "colin@mageia.org");
    aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("ALSA 0.9x port"), "helio@kde.org" );
    aboutData.addAuthor(ki18n("Brian Hanson")      , ki18n("Solaris support"), "bhanson@hotmail.com");
 // The HP/UX port is not maintained anymore, and no official part of KMix anymore
