@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/mdwslider.h"
+
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
@@ -40,20 +42,19 @@
 #include <qwmatrix.h>
 #include <QBoxLayout>
 
-#include "gui/guiprofile.h"
-#include "mdwslider.h"
-#include "volumeslider.h"
 #include "core/mixer.h"
-#include "viewbase.h"
-#include "ksmallslider.h"
-#include "verticaltext.h"
-#include "mdwmoveaction.h"
+#include "gui/guiprofile.h"
+#include "gui/volumeslider.h"
+#include "gui/viewbase.h"
+#include "gui/ksmallslider.h"
+#include "gui/verticaltext.h"
+#include "gui/mdwmoveaction.h"
 
 
 VolumeSliderExtraData MDWSlider::DummVolumeSliderExtraData;
 bool MDWSlider::debugMe = false;
  /**
- * MixDeviceWidget that represents a single mix device, inlcuding PopUp, muteLED, ...
+ * MixDeviceWidget that represents a single mix device, including PopUp, muteLED, ...
  *
  * Used in KMix main window and DockWidget and PanelApplet.
  * It can be configured to include or exclude the captureLED and the muteLED.
@@ -62,7 +63,7 @@ bool MDWSlider::debugMe = false;
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(MixDevice* md, bool showMuteLED, bool showCaptureLED,
+MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptureLED,
         bool small, Qt::Orientation orientation, QWidget* parent
         , ViewBase* view
         , ProfControl* par_ctl
@@ -91,6 +92,13 @@ MDWSlider::~MDWSlider()
 	{
 		delete slider;
 	}
+
+	/*
+	static int destructorCalls = 1;
+	kDebug() << "Destroying id=" << this->mixDevice()->id() << "desctructorCalls=" << destructorCalls;
+	++destructorCalls;
+	*/
+
 }
 
 void MDWSlider::createActions()
@@ -546,7 +554,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 		QWidget *subcontrolLabel;
 
 		QString subcontrolTranslation;
-		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + " ";
+		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + ' ';
 		subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
 		subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 
@@ -858,29 +866,19 @@ void MDWSlider::volumeChange( int )
 
 void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref_sliders  )
 {
-
-	// --- Step 2: Change the volumes directly in the Volume object to reflect the Sliders ---
 	if ( isStereoLinked() )
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
-		long firstVolume = firstSlider->value();
-		//kDebug(67100) << "firstVolume=" <<firstVolume;
-		vol.setAllVolumes(firstVolume);
-	} // stereoLinked()
-
-	else {
-
-	  	QAbstractSlider* firstSlider = ref_sliders.first();
-		long firstVolume = firstSlider->value();
-		//kDebug(67100) << "firstVolume=" <<firstVolume;
-	  
-		for( int i=0; i<ref_sliders.count(); i++ ) {
+		vol.setAllVolumes(firstSlider->value());
+	}
+	else
+	{
+		for( int i=0; i<ref_sliders.count(); i++ )
+		{
 			QAbstractSlider *sliderWidget = ref_sliders[i];
 			vol.setVolume( extraData(sliderWidget).getChid() ,sliderWidget->value());
 		} // iterate over all sliders
-	} // !stereoLinked()
-
-	// --- Step 3: Write back the new volumes to the HW ---
+	}
 }
 
 
@@ -888,13 +886,15 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref
    This slot is called, when a user has clicked the recsrc button. Also it is called by any other
     associated KAction like the context menu.
  */
-void MDWSlider::toggleRecsrc() {
+void MDWSlider::toggleRecsrc()
+{
 	setRecsrc( m_mixdevice->isRecSource() );
 }
 
 void MDWSlider::setRecsrc(bool value )
 {
-	if ( m_mixdevice->captureVolume().hasSwitch() ) {
+	if ( m_mixdevice->captureVolume().hasSwitch() )
+	{
 		m_mixdevice->setRecSource( value );
 		m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
 	}
@@ -905,7 +905,8 @@ void MDWSlider::setRecsrc(bool value )
    This slot is called, when a user has clicked the mute button. Also it is called by any other
     associated KAction like the context menu.
  */
-void MDWSlider::toggleMuted() {
+void MDWSlider::toggleMuted()
+{
 	setMuted( !m_mixdevice->isMuted() );
 }
 
@@ -1128,8 +1129,8 @@ void MDWSlider::showMoveMenu()
     _mdwMoveActions->addAction( QString("-"), a);
 
     m_moveMenu->addAction( a );
-    for (int i = 0; i < ms->count(); ++i) {
-        MixDevice* md = (*ms)[i];
+    foreach (shared_ptr<MixDevice> md, *ms)
+    {
         a = new MDWMoveAction(md, _mdwMoveActions);
         _mdwMoveActions->addAction( QString("moveto") + md->id(), a);
         connect(a, SIGNAL(moveRequest(QString)), SLOT(moveStream(QString)));

@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "gui/dialogselectmaster.h"
+
 #include <qbuttongroup.h>
 #include <QLabel>
 #include <qradiobutton.h>
@@ -30,7 +32,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "gui/dialogselectmaster.h"
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
@@ -159,16 +160,18 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     m_vboxForScrollView = new KVBox(); //m_scrollableChannelSelector->viewport()
 
     QString masterKey = "----noMaster---";  // Use a non-matching name as default
-    MixDevice* master = mixer->getLocalMasterMD();
-    if ( master != 0 ) masterKey = master->id();
+    shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
+    if ( master.get() != 0 )
+    	masterKey = master->id();
 
     const MixSet& mixset = mixer->getMixSet();
     MixSet& mset = const_cast<MixSet&>(mixset);
     for( int i=0; i< mset.count(); ++i )
     {
-        MixDevice* md = mset[i];
+    	shared_ptr<MixDevice> md = mset[i];
         // Create a RadioButton for each MixDevice (excluding Enum's)
-        if ( md->playbackVolume().hasVolume() ) {
+        if ( md->playbackVolume().hasVolume() )
+        {
 //            kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb";
             QString mdName = md->readableName();
             mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator

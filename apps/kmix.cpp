@@ -883,13 +883,13 @@ void KMixWindow::unplugged( const QString& udi)
             }
             MixerToolBox::instance()->removeMixer(mixer);
             // Check whether the Global Master disappeared, and select a new one if necessary
-            MixDevice* md = Mixer::getGlobalMasterMD();
-            if ( globalMasterMixerDestroyed || md == 0 ) {
+            shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+            if ( globalMasterMixerDestroyed || md.get() == 0 ) {
                 // We don't know what the global master should be now.
                 // So lets play stupid, and just select the recommended master of the first device
                 if ( Mixer::mixers().count() > 0 ) {
-                    MixDevice *master = ((Mixer::mixers())[0])->getLocalMasterMD();
-                    if ( md != 0 ) {
+                	shared_ptr<MixDevice> master = ((Mixer::mixers())[0])->getLocalMasterMD();
+                    if ( master.get() != 0 ) {
                         QString localMaster = master->id();
                         Mixer::setGlobalMaster( ((Mixer::mixers())[0])->id(), localMaster, false);
 
@@ -1036,9 +1036,12 @@ void KMixWindow::hideOrClose ( )
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
     Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
-    if ( mixer == 0 ) return; // e.g. when no soundcard is available
-    MixDevice *md = Mixer::getGlobalMasterMD();
-    if ( md == 0 ) return; // shouldn't happen, but lets play safe
+    if ( mixer == 0 )
+    	return; // e.g. when no soundcard is available
+    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    if ( md.get() == 0 )
+    	return; // shouldn't happen, but lets play safe
+
     md->setMuted(false);
     if (increase)
         mixer->increaseVolume(md->id());    // this is awkward. Better move the increaseVolume impl to the Volume class.
@@ -1061,9 +1064,11 @@ void KMixWindow::slotDecreaseVolume()
 void KMixWindow::showVolumeDisplay()
 {
     Mixer* mixer = Mixer::getGlobalMasterMixer();
-    if ( mixer == 0 ) return; // e.g. when no soundcard is available
-    MixDevice *md = Mixer::getGlobalMasterMD();
-    if ( md == 0 ) return; // shouldn't happen, but lets play safe
+    if ( mixer == 0 )
+    	return; // e.g. when no soundcard is available
+    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    if ( md.get() == 0 )
+    	return; // shouldn't happen, but lets play safe
     // Current volume
     Volume& vol = md->playbackVolume();
 
@@ -1082,9 +1087,11 @@ void KMixWindow::showVolumeDisplay()
 void KMixWindow::slotMute()
 {
     Mixer* mixer = Mixer::getGlobalMasterMixer();
-    if ( mixer == 0 ) return; // e.g. when no soundcard is available
-    MixDevice *md = Mixer::getGlobalMasterMD();
-    if ( md == 0 ) return; // shouldn't happen, but lets play safe
+    if ( mixer == 0 )
+    	return; // e.g. when no soundcard is available
+    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    if ( md.get() == 0 )
+    	return; // shouldn't happen, but lets play safe
 	md->toggleMute();
     mixer->commitVolumeChange( md );
     showVolumeDisplay();
@@ -1191,7 +1198,7 @@ void KMixWindow::forkExec(const QStringList& args)
         msg += startErrorMessage;
         msg += "\n(";
         msg +=  args.join( QLatin1String( " " ));
-        msg += ")";
+        msg += ')';
         errorPopup(msg);
     }
 

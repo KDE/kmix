@@ -148,8 +148,7 @@ int Mixer_OSS::open()
 
                   QString id;
                   id.setNum(idx);
-                  MixDevice* md =
-                    new MixDevice(
+                  MixDevice* md = new MixDevice(
                                    _mixer,
                                    id,
                                    i18n(MixerDevNames[idx]),
@@ -163,7 +162,7 @@ int Mixer_OSS::open()
                      md->addCaptureVolume(captureVol);
                  }
 
-                  m_mixDevices.append( md );
+                  m_mixDevices.append( md->addToPool() );
                 }
               idx++;
             }
@@ -315,7 +314,7 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
     {
         for(int i=0; i< m_mixDevices.count() ; i++ )
         {
-            MixDevice *md = m_mixDevices[i];
+        	shared_ptr<MixDevice> md = m_mixDevices[i];
             bool isRecsrc =  ( (recsrcMask & ( 1<<devnum)) != 0 );
             md->setRecSource(isRecsrc);
         } // for all controls
@@ -328,7 +327,7 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
 
 
 
-int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
+int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 {
 	int ret = 0;
 
@@ -429,7 +428,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, MixDevice* md )
 
 
 
-int Mixer_OSS::writeVolumeToHW( const QString& id, MixDevice *md)
+int Mixer_OSS::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md)
 {
     int volume;
     int devnum = id2num(id);

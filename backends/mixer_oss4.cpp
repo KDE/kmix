@@ -21,6 +21,9 @@
 
 //OSS4 mixer backend for KMix by Yoper Team released under GPL v2 or later
 
+/* We're getting soundcard.h via mixer_oss4.h */
+#include "mixer_oss4.h"
+
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
@@ -28,8 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/* We're getting soundcard.h via mixer_oss4.h */
-#include "mixer_oss4.h"
 #include <klocale.h>
 #include <QLinkedList>
 #include <QRegExp>
@@ -53,7 +54,7 @@ Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : Mixer_Backend(mixer, device)
 bool Mixer_OSS4::CheckCapture(oss_mixext *ext)
 {
 	QString name = ext->extname;
-	if ( ext->flags & MIXF_RECVOL || name.split(".").contains("in") )
+	if ( ext->flags & MIXF_RECVOL || name.split('.').contains("in") )
 	{
 		return true;
 	}
@@ -214,7 +215,7 @@ int Mixer_OSS4::open()
 			bool masterChosen = false;
 			bool masterHeuristicAvailable = false;
 			bool saveAsMasterHeuristc = false;
-			MixDevice *masterHeuristic = NULL;
+			shared_ptr<MixDevice> masterHeuristic;
 
 			oss_mixext ext;
 			ext.dev = m_devnum;
@@ -360,7 +361,7 @@ int Mixer_OSS4::open()
 						masterChosen = true;
 					}
 
-					m_mixDevices.append(md);
+					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_HEXVALUE )
 				{
@@ -388,7 +389,7 @@ int Mixer_OSS4::open()
 						masterChosen = true;
 					}
 
-					m_mixDevices.append(md);
+					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_ONOFF 
 #ifdef MIXT_MUTE
@@ -418,7 +419,7 @@ int Mixer_OSS4::open()
 						md->addPlaybackVolume(vol);
 					}
 
-					m_mixDevices.append(md);
+					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_ENUM )
 				{
@@ -452,7 +453,7 @@ int Mixer_OSS4::open()
 						}
 						md->addEnums(enumValuesRef);
 
-						m_mixDevices.append(md);
+						m_mixDevices.append(md->addToPool());
 					}
 				}
 
@@ -526,7 +527,7 @@ bool Mixer_OSS4::prepareUpdateFromHW()
 	return true;
 }
 
-int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
+int Mixer_OSS4::readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md)
 {
 	oss_mixext extinfo;
 	oss_mixer_value mv;
@@ -592,7 +593,7 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, MixDevice *md)
 	return 0;
 }
 
-int Mixer_OSS4::writeVolumeToHW(const QString& id, MixDevice *md)
+int Mixer_OSS4::writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md)
 {
 	int volume = 0;
 

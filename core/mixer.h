@@ -65,7 +65,7 @@ public:
     static int numDrivers();
     QString getDriverName();
 
-    MixDevice* find(const QString& devPK);
+    shared_ptr<MixDevice>  find(const QString& devPK);
     static Mixer* findMixer( const QString& mixer_id);
 
     void volumeSave( KConfig *config );
@@ -75,12 +75,12 @@ public:
     unsigned int size() const;
 
     /// Returns a pointer to the mix device with the given number
-    MixDevice* operator[](int val_i_num);
+    shared_ptr<MixDevice> operator[](int val_i_num);
 
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
     /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
-    MixDevice *getMixdeviceById( const QString& deviceID );
+    shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID );
 
     /// Open/grab the mixer for further intraction
     bool openIfValid();
@@ -148,8 +148,8 @@ public:
     At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
     ******************************************/
     static void setGlobalMaster(QString ref_card, QString ref_control, bool preferred);
-    static MixDevice* getGlobalMasterMD();
-    static MixDevice* getGlobalMasterMD(bool fallbackAllowed);
+    static shared_ptr<MixDevice> getGlobalMasterMD();
+    static shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed);
     static Mixer* getGlobalMasterMixer();
     static Mixer* getGlobalMasterMixerNoFalback();
     static MasterControl& getGlobalMasterPreferred();
@@ -157,11 +157,11 @@ public:
     /******************************************
     The recommended master of this Mixer.
     ******************************************/
-    MixDevice* getLocalMasterMD();
+    shared_ptr<MixDevice> getLocalMasterMD();
     void setLocalMasterMD(QString&);
 
     /// get the actual MixSet
-    MixSet getMixSet();
+    MixSet& getMixSet();
 
     static float VOLUME_STEP_DIVISOR;     // The divisor for defining volume control steps (for mouse-wheel, DBUS and Normal step for Sliders )
     static float VOLUME_PAGESTEP_DIVISOR; // The divisor for defining volume control steps (page-step for sliders)
@@ -181,7 +181,7 @@ public:
    virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); };
 
     
-    void commitVolumeChange( MixDevice* md );
+    void commitVolumeChange( shared_ptr<MixDevice> md );
 
 public slots:
     void readSetFromHWforceUpdate() const;

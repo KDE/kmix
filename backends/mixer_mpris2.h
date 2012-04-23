@@ -54,15 +54,15 @@ class Mixer_MPRIS2 : public Mixer_Backend
 {
   Q_OBJECT
 public:
-  explicit Mixer_MPRIS2(Mixer *mixer, int device = -1 );
+   Mixer_MPRIS2(Mixer *mixer, int device);
     virtual ~Mixer_MPRIS2();
     void addMprisControl(QDBusConnection& conn, QString arg1);
     QString getDriverName();
 
   virtual int open();
   virtual int close();
-  virtual int readVolumeFromHW( const QString& id, MixDevice * );
-  virtual int writeVolumeToHW( const QString& id, MixDevice * );
+  virtual int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> );
+  virtual int writeVolumeToHW( const QString& id, shared_ptr<MixDevice> );
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
   virtual bool moveStream( const QString& id, const QString& destId );

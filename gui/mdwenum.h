@@ -45,7 +45,7 @@ class MDWEnum : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWEnum( MixDevice* md,
+    MDWEnum( shared_ptr<MixDevice> md,
 	       Qt::Orientation orientation,
 	       QWidget* parent, ViewBase* view, ProfControl* pctl);
     ~MDWEnum();

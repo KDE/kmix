@@ -52,7 +52,7 @@ class MDWSlider : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWSlider( MixDevice* md,
+    MDWSlider( shared_ptr<MixDevice> md,
 	       bool includePlayback, bool includeCapture,
 	       bool small, Qt::Orientation,
 	       QWidget* parent, ViewBase* view, ProfControl *pctl);

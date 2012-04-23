@@ -38,17 +38,18 @@ class DBusControlWrapper : public QObject
 	Q_PROPERTY(bool mute READ isMuted WRITE setMute)
 	Q_PROPERTY(bool recordSource READ isRecordSource WRITE setRecordSource)
 	Q_PROPERTY(bool canMute READ canMute)
+	Q_PROPERTY(bool hasCaptureSwitch READ hasCaptureSwitch)
 
 	public:
-		DBusControlWrapper(MixDevice* parent, QString path);
+		DBusControlWrapper(shared_ptr<MixDevice> parent, const QString& path);
 		~DBusControlWrapper();
 
 		void increaseVolume();
 		void decreaseVolume();
 		void toggleMute();
 	private:
-		MixDevice *m_md;
-		QString m_dbusPath;
+		shared_ptr<MixDevice> m_md;
+		
 		QString id();
 		QString readableName();
 		QString iconName();
@@ -61,10 +62,11 @@ class DBusControlWrapper : public QObject
 		long absoluteVolumeMax();
 		long absoluteVolume();
 
-        bool canMute();
+		bool canMute();
 		void setMute(bool muted);
 		bool isMuted();
 
+		bool hasCaptureSwitch();
 		void setRecordSource(bool on);
 		bool isRecordSource();
 };

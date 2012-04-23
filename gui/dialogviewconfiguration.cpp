@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "dialogviewconfiguration.h"
+
 #include <algorithm>
 
 #include <QCheckBox>
@@ -33,7 +35,6 @@
 #include <klocale.h>
 #include <kvbox.h>
 
-#include "dialogviewconfiguration.h"
 #include "gui/guiprofile.h"
 #include "gui/mixdevicewidget.h"
 #include "core/mixdevice.h"
@@ -254,7 +255,7 @@ void DialogViewConfiguration::createPage()
       QWidget *qw = mdws[i];
       if ( qw->inherits("MixDeviceWidget") ) {
             MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
-            MixDevice *md = mdw->mixDevice();
+            shared_ptr<MixDevice> md = mdw->mixDevice();
             QString mdName = md->readableName();
 
             int splitted = -1;
@@ -380,7 +381,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
             if ( ctlId.contains(idRegexp) ) {
                 // found. Create a copy
                 ProfControl* newCtl = new ProfControl(*control);
-                newCtl->id =  "^" + ctlId + "$"; // Replace the (possible generic) regexp by the actual ID
+                newCtl->id =  '^' + ctlId + '$'; // Replace the (possible generic) regexp by the actual ID
                 // We have made this an an actual control. As it is derived (from e.g. ".*") it is NOT mandatory.
                 newCtl->setMandatory(false);
                 if ( isActiveView ) {

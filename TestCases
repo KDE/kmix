@@ -14,6 +14,7 @@ They should be tested before a new KDE version is being shipped.
 11: kmixctrl --restore  (with existing .kmixctrlrc) must restore volumes
 12: kmixctrl --restore  (without existing .kmixctrlrc) must NOT change volumes
 13: "Switch-only" controls are available and work (e.g: IEC958': Capabilities: pswitch pswitch-joined cswitch cswitch-joined)
+14: Rapid stream creation/deletion works properly (KMix shows and hides the controls, no crash). for i in 1 2 3 4 5 6 7 8 9 10; do paplay  /Multimedia/Kennedy_berliner.ogg& done
  
 
 

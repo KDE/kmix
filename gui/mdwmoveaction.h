@@ -23,14 +23,14 @@
 
 #include <KAction>
 
-class MixDevice;
+#include "core/mixdevice.h"
 
 class MDWMoveAction : public KAction
 {
     Q_OBJECT
 
     public:
-        MDWMoveAction(MixDevice* md, QObject *parent);
+        MDWMoveAction(shared_ptr<MixDevice> md, QObject *parent);
         ~MDWMoveAction();
 
     signals:
@@ -40,7 +40,7 @@ class MDWMoveAction : public KAction
         void triggered(bool checked);
 
    private:
-        MixDevice *m_mixDevice;
+        shared_ptr<MixDevice> m_mixDevice;
 };
 
 #endif

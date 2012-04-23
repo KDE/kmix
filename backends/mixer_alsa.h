@@ -42,8 +42,8 @@ public:
     explicit Mixer_ALSA(Mixer *mixer, int device = -1 );
     ~Mixer_ALSA();
 
-    virtual int  readVolumeFromHW( const QString& id, MixDevice *md );
-    virtual int  writeVolumeToHW ( const QString& id, MixDevice *md );
+    virtual int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md );
+    virtual int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md );
     virtual void setEnumIdHW( const QString& id, unsigned int);
     virtual unsigned int enumIdHW(const QString& id);
     virtual bool prepareUpdateFromHW();
@@ -78,6 +78,8 @@ private:
 
     bool _initialUpdate;
     snd_mixer_t *_handle;
+    snd_ctl_t *ctl_handle;
+
     QString devName;
     struct pollfd  *m_fds;
     QList<QSocketNotifier*> m_sns;

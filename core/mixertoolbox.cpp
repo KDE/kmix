@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "core/mixer.h"
 
 #include <QDir>
 #include <QWidget>
@@ -30,7 +31,6 @@
 
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
-#include "core/mixer.h"
 
 #include "core/mixertoolbox.h"
 
@@ -195,7 +195,7 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
       // not one defined in the kmixrc.
       // So lets just set the first card as master card.
       if ( Mixer::mixers().count() > 0 ) {
-         MixDevice* master = Mixer::mixers().first()->getLocalMasterMD();
+    	  shared_ptr<MixDevice> master = Mixer::mixers().first()->getLocalMasterMD();
          if ( master != 0 ) {
              QString controlId = master->id();
              Mixer::setGlobalMaster( Mixer::mixers().first()->id(), controlId, true);
@@ -205,7 +205,7 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
    else {
       // setGlobalMaster was already set after reading the configuration.
       // So we must make the local master consistent
-      MixDevice* md = Mixer::getGlobalMasterMD();
+	  shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
       QString mdID = md->id();
       md->mixer()->setLocalMasterMD(mdID);
    }

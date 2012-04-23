@@ -25,16 +25,18 @@
 
 #include "core/mixdevice.h"
 
-class MixSet : public QList <MixDevice *>
+class MixSet : public QList <shared_ptr<MixDevice> >
 {
    public:
+	~MixSet();
+
       void read( KConfig *config, const QString& grp );
       void write( KConfig *config, const QString& grp );
 
       QString name() { return m_name; }
       void setName( const QString &name );
       
-      MixDevice* get(QString id);
+      shared_ptr<MixDevice> get(QString id);
 
       void removeById(QString id);
 

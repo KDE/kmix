@@ -21,11 +21,17 @@
 #ifndef MixDevice_h
 #define MixDevice_h
 
+// std::shared_ptr
+#include <memory>
+#include <tr1/memory>
+using namespace ::std::tr1;
+
 //KMix
 class Mixer;
 class MixSet;
 class ProfControl;
 #include "core/volume.h"
+class DBusControlWrapper;
 
 // KDE
 #include <kconfig.h>
@@ -96,7 +102,10 @@ public:
    enum SwitchType { OnOff, Mute, Capture, Activator };
 
    /**
-    * Constructor:
+    * Constructor for a MixDevice.
+    * After having constructed a MixDevice, you <b>must</b> add it to the ControlPool
+    * by calling addToPool(). You may then <b>not</b> delete this object.
+    *
     * @par mixer The mixer this control belongs to
     * @par id  Defines the ID, e.g. used in looking up the keys in kmixrc. Also it is used heavily inside KMix as unique key. 
     *      It is advised to set a nice name, like 'PCM:2', which would  mean 
@@ -111,6 +120,8 @@ public:
    MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type );
    MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = 0 );
    ~MixDevice();
+
+   shared_ptr<MixDevice> addToPool();
 
    const QString& iconName() const { return _iconName; }
 
@@ -141,6 +152,7 @@ public:
     */
  
    const QString& id() const;
+   QString getFullyQualifiedId();
 
    /**
     * Returns the DBus path for this MixDevice
@@ -215,6 +227,8 @@ private:
    Volume _captureVolume;
    int _enumCurrentId;
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
+
+   DBusControlWrapper *_dbusControlWrapper;
 
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
    // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:

@@ -9,15 +9,15 @@
 class Mixer_OSS4 : public Mixer_Backend
 {
 public:
-  Mixer_OSS4(Mixer* mixer, int device = -1);
+  Mixer_OSS4(Mixer* mixer, int device);
   virtual ~Mixer_OSS4();
 
   virtual QString errorText(int mixer_error);
   virtual QString getDriverName();
   virtual bool CheckCapture(oss_mixext *ext);
   virtual bool prepareUpdateFromHW();
-  virtual int readVolumeFromHW(const QString& id, MixDevice *md);
-  virtual int writeVolumeToHW(const QString& id, MixDevice *md );
+  virtual int readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md);
+  virtual int writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md );
   virtual void setEnumIdHW(const QString& id, unsigned int idx);
   virtual unsigned int enumIdHW(const QString& id);
 

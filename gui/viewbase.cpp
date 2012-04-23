@@ -49,7 +49,6 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
    setObjectName(id);
    m_viewId = id;
    _mixer = mixer;
-   _mixSet = new MixSet();
 
    // This must be populated now otherwise bad things happen (circular dependancies etc
    // This is due to the fact that setMixSet() calls isDynamic() which in turn needs a populated
@@ -89,7 +88,6 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
 }
 
 ViewBase::~ViewBase() {
-    delete _mixSet;
     // Hint: The GUI profile will not be removed, as it is pooled and might be applied to a new View.
 }
 
@@ -103,7 +101,7 @@ QString ViewBase::id() const {
 
 bool ViewBase::isValid() const
 {
-   return ( _mixSet->count() > 0 || isDynamic() );
+   return ( !_mixSet.isEmpty() || isDynamic() );
 }
 
 void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
@@ -119,25 +117,13 @@ void ViewBase::setTicks (bool on) { KMixToolBox::setTicks (_mdws, on ); }
  */
 void ViewBase::createDeviceWidgets()
 {
-    // create devices
-    foreach ( MixDevice* md, *_mixSet ) 
+    foreach ( shared_ptr<MixDevice> md, _mixSet )
     {
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
     }
     // allow view to "polish" itself
     constructionFinished();
-
-// Moved the following up one Level to KMixerWidget
-//   kDebug() << "CONNECT ViewBase count " << _mixers.size();
-//  foreach ( Mixer* mixer, _mixers )
-//  {
-//    kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id();
-//   connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-//   connect ( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
-//  }
-
-    
 }
 
 /**
@@ -214,9 +200,9 @@ void ViewBase::controlsReconfigured( const QString& mixer_ID )
 
 	if (isRelevantMixer)
 	{
-		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet->count() << ")";
+		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
 		setMixSet();
-		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet->count() << ")";
+		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
 		createDeviceWidgets();
 	}
 }
@@ -249,13 +235,13 @@ void ViewBase::setMixSet()
         while (!_mdws.isEmpty())
         	delete _mdws.takeFirst();
 
-        _mixSet->clear(); // Clean up our _mixSet so we can reapply our GUIProfile
+        _mixSet.clear(); // Clean up our _mixSet so we can reapply our GUIProfile
     }
     _setMixSet();
     
     _mixers.clear();
     _mixers.insert(_mixer);
-    foreach ( MixDevice* md, *_mixSet )
+    foreach ( shared_ptr<MixDevice> md, _mixSet )
     {
 //      kDebug() << "VVV Add to " << md->mixer()->id();
 //      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
@@ -321,7 +307,7 @@ void ViewBase::load(KConfig *config)
            Workaround: If found, write back correct group name.
         */
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         MixDevice* md = mdw->mixDevice();
+         shared_ptr<MixDevice> md = mdw->mixDevice();
 
          QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
          KConfigGroup devcg  = config->group( devgrp );
@@ -398,7 +384,7 @@ void ViewBase::save(KConfig *config)
       if ( qmdw->inherits("MixDeviceWidget") )
       {
          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         MixDevice* md = mdw->mixDevice();
+         shared_ptr<MixDevice> md = mdw->mixDevice();
 
          //kDebug(67100) << "  grp=" << grp.toAscii();
          //kDebug(67100) << "  mixer=" << view->id().toAscii();

@@ -19,17 +19,21 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_pulse.h"
+
 #include <cstdlib>
 #include <QtCore/QAbstractEventDispatcher>
 #include <QTimer>
 
 #include <klocale.h>
 
-#include "mixer_pulse.h"
 #include "core/mixer.h"
 
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
+#if defined(HAVE_CANBERRA)
+#  include <canberra.h>
+#endif
 
 #define HAVE_SOURCE_OUTPUT_VOLUMES PA_CHECK_VERSION(1,0,0)
 
@@ -46,6 +50,10 @@ static pa_glib_mainloop *s_mainloop = NULL;
 static pa_context *s_context = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_outstandingRequests = 0;
+
+#if defined(HAVE_CANBERRA)
+static ca_context *s_ccontext = NULL;
+#endif
 
 QMap<int,Mixer_PULSE*> s_mixers;
 
@@ -129,11 +137,11 @@ static void translateMasksAndMaps(devinfo& dev)
                     dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MWOOFER);
                     dev.chanIDs[i] = Volume::WOOFER;
                     break;
-                case PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER:
+                case PA_CHANNEL_POSITION_SIDE_LEFT:
                     dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDELEFT);
                     dev.chanIDs[i] = Volume::REARSIDELEFT;
                     break;
-                case PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER:
+                case PA_CHANNEL_POSITION_SIDE_RIGHT:
                     dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDERIGHT);
                     dev.chanIDs[i] = Volume::REARSIDERIGHT;
                     break;
@@ -751,6 +759,18 @@ static devmap* get_widget_map(int type, int index)
     return get_widget_map(type);
 }
 
+void Mixer_PULSE::emitControlsReconfigured()
+{
+    // Do not emit directly to ensure all connected slots are executed
+    // in their own event loop.
+	kDebug() << "PULSE emitControlsReconfigured: mixerId=" << _mixer->id();
+//	emit controlsReconfigured(_mixer->id());
+    QMetaObject::invokeMethod(this,
+                              "controlsReconfigured",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, _mixer->id()));
+}
+
 void Mixer_PULSE::addWidget(int index)
 {
     devmap* map = get_widget_map(m_devnum, index);
@@ -760,12 +780,7 @@ void Mixer_PULSE::addWidget(int index)
         return;
     }
     addDevice((*map)[index]);
-    // Do not emit directly to ensure all connected slots are executed
-    // in their own event loop.
-    QMetaObject::invokeMethod(this,
-                              "controlsReconfigured",
-                              Qt::QueuedConnection,
-                              Q_ARG(QString, _mixer->id()));
+    emitControlsReconfigured();
 }
 
 void Mixer_PULSE::removeWidget(int index)
@@ -787,14 +802,9 @@ void Mixer_PULSE::removeWidget(int index)
     {
         if ((*iter)->id() == id)
         {
-            delete *iter;
+//            delete *iter;  // TODO cesken LET-THIS-CHECK  Delete should not be required after migration to shared_ptr
             m_mixDevices.erase(iter);
-            // Do not emit directly to ensure all connected slots are executed
-            // in their own event loop.
-            QMetaObject::invokeMethod(this,
-                                      "controlsReconfigured",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(QString, _mixer->id()));
+            emitControlsReconfigured();
             return;
         }
     }
@@ -809,18 +819,16 @@ void Mixer_PULSE::removeAllWidgets()
     if (KMIXPA_APP_PLAYBACK == m_devnum)
         outputRoles.clear();
 
-    MixSet::iterator iter;
-    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
-    {
-        delete *iter;
-        m_mixDevices.erase(iter);
-    }
-    // Do not emit directly to ensure all connected slots are executed
-    // in their own event loop.
-    QMetaObject::invokeMethod(this,
-                              "controlsReconfigured",
-                              Qt::QueuedConnection,
-                              Q_ARG(QString, _mixer->id()));
+    m_mixDevices.clear();
+
+    // TODO cesken LET-THIS-CHECK  Delete should not be required after migration to shared_ptr
+//    MixSet::iterator iter;
+//    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
+//    {
+//        delete *iter;
+//        m_mixDevices.erase(iter);
+//    }
+    emitControlsReconfigured();
 }
 
 void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
@@ -841,7 +849,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
-        m_mixDevices.append(md);
+        m_mixDevices.append(md->addToPool());
     }
 }
 
@@ -944,6 +952,15 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
             Q_ASSERT(s_mainloop);
 
             connectToDaemon();
+
+#if defined(HAVE_CANBERRA)
+            int ret = ca_context_create(&s_ccontext);
+            if (ret < 0) {
+                kDebug(67100) << "Disabling Sound Feedback. Canberra context failed.";
+                s_ccontext = NULL;
+            } else
+                ca_context_set_driver(s_ccontext, "pulse");
+#endif
         }
 
         kDebug(67100) <<  "PulseAudio status: " << (s_pulseActive==UNKNOWN ? "Unknown (bug)" : (s_pulseActive==ACTIVE ? "Active" : "Inactive"));
@@ -962,6 +979,13 @@ Mixer_PULSE::~Mixer_PULSE()
         --refcount;
         if (0 == refcount)
         {
+#if defined(HAVE_CANBERRA)
+            if (s_ccontext) {
+                ca_context_destroy(s_ccontext);
+                s_ccontext = NULL;
+            }
+#endif
+
             if (s_context) {
                 pa_context_unref(s_context);
                 s_context = NULL;
@@ -1039,7 +1063,7 @@ int Mixer_PULSE::id2num(const QString& id) {
     return num;
 }
 
-int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
+int Mixer_PULSE::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 {
     devmap *map = get_widget_map(m_devnum, id);
 
@@ -1057,7 +1081,7 @@ int Mixer_PULSE::readVolumeFromHW( const QString& id, MixDevice *md )
     return 0;
 }
 
-int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
+int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
     devmap::iterator iter;
     if (KMIXPA_PLAYBACK == m_devnum)
@@ -1080,6 +1104,44 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
+
+#if defined(HAVE_CANBERRA)
+                if (s_ccontext) {
+                    int playing = 0;
+                    int cindex = 2; // Note "2" is simply the index we've picked. It's somewhat irrelevant.
+
+                    
+                    ca_context_playing(s_ccontext, cindex, &playing);
+
+                    // NB Depending on how this is desired to work, we may want to simply
+                    // skip playing, or cancel the currently playing sound and play our
+                    // new one... for now, let's do the latter.
+                    if (playing) {
+                        ca_context_cancel(s_ccontext, cindex);
+                        playing = 0;
+                    }
+                    
+                    if (!playing) {
+                        char dev[64];
+
+                        snprintf(dev, sizeof(dev), "%lu", (unsigned long) iter->index);
+                        ca_context_change_device(s_ccontext, dev);
+
+                        // Ideally we'd use something like ca_gtk_play_for_widget()...
+                        ca_context_play(
+                            s_ccontext,
+                            cindex,
+                            CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
+                            CA_PROP_EVENT_ID, "audio-volume-change",
+                            CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
+                            CA_PROP_CANBERRA_ENABLE, "1",
+                            NULL
+                        );
+
+                        ca_context_change_device(s_ccontext, NULL);
+                    }
+                }
+#endif
 
                 return 0;
             }
@@ -1152,7 +1214,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, MixDevice *md )
                     info.mute = (md->isMuted() ? 1 : 0);
 
                     pa_operation* o;
-                    if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
+                    if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
                         kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                         return Mixer::ERR_READ;
                     }
@@ -1248,7 +1310,7 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
             info.mute = rule.mute ? 1 : 0;
 
             pa_operation* o;
-            if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, TRUE, NULL, NULL))) {
+            if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
                 kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                 return Mixer::ERR_READ;
             }

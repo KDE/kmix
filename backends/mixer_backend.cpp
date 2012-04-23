@@ -18,9 +18,10 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_backend.h"
+
 #include <klocale.h>
 
-#include "mixer_backend.h"
 // for the "ERR_" declartions, #include mixer.h
 #include "core/mixer.h"
 #include <QTimer>
@@ -32,19 +33,21 @@
 #include "mixer_backend_i18n.cpp"
 
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
-m_devnum (device) , m_isOpen(false), m_recommendedMaster(0), _mixer(mixer), _pollingTimer(0)
+m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _pollingTimer(0)
 
 {
 	// In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
 	// like ::select() is possible (as in ALSA).
 	_pollingTimer = new QTimer(); // will be started on open() and stopped on close()
 	connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()), Qt::QueuedConnection);
+
 }
 
 Mixer_Backend::~Mixer_Backend()
 {
+	qDebug() << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
-	qDeleteAll(m_mixDevices);
+	//qDeleteAll(m_mixDevices); // TODO cesken Leak check the removed qDeleteAll()
 	m_mixDevices.clear();
 }
 
@@ -117,10 +120,8 @@ void Mixer_Backend::readSetFromHW()
 
 	int ret = Mixer::OK_UNCHANGED;
 
-	int mdCount = m_mixDevices.count();
-	for(int i=0; i<mdCount  ; ++i )
+	foreach (shared_ptr<MixDevice> md, m_mixDevices )
 	{
-		MixDevice *md = m_mixDevices[i];
 		int retLoop = readVolumeFromHW( md->id(), md );
 		if (md->isEnum() ) {
 			/*
@@ -160,6 +161,7 @@ void Mixer_Backend::readSetFromHW()
 		// This code path is entered on Mixer::OK_UNCHANGED and ERROR
 		if ( !_fastPollingEndsAt.isNull() )
 		{
+			// Fast polling is currently active
 			if( _fastPollingEndsAt < QTime::currentTime () )
 			{
 				kDebug() << "End fast polling";
@@ -176,20 +178,29 @@ void Mixer_Backend::readSetFromHW()
  * first device in the device list. Backends can override this (i.e. the ALSA Backend does so).
  * The users preference is NOT returned by this method - see the Mixer class for that.
  */
-MixDevice* Mixer_Backend::recommendedMaster() {
-	if ( m_recommendedMaster != 0 ) {
-		return m_recommendedMaster;   // Backend has set a recommended master. Thats fine.
-	} // recommendation from Backend
-	else if ( m_mixDevices.count() > 0 ) {
-		return m_mixDevices.at(0);  // Backend has NOT set a recommended master. Evil backend => lets help out.
-	} //first device (if exists)
-	else {
-		if ( !_mixer->isDynamic()) {
-			// This should never ever happen, as KMix doe NOT accept soundcards without controls
-			kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
-		}
-		return (MixDevice*)0;
+shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
+{
+	if ( m_recommendedMaster != 0 )
+	{
+		// Backend has set a recommended master. Thats fine. Using it.
+		return m_recommendedMaster;
 	}
+	else if ( ! m_mixDevices.isEmpty() )
+	{
+		// Backend has NOT set a recommended master. Evil backend
+		// => lets help out, using the first device (if exists)
+		return m_mixDevices.at(0);
+	}
+	else
+	{
+		if ( !_mixer->isDynamic())
+			// This should never ever happen, as KMix does NOT accept soundcards without controls
+			kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
+	}
+
+	// If we reach this code path, then obiously m_recommendedMaster == 0 (see above)
+	return m_recommendedMaster;
+
 }
 
 /**

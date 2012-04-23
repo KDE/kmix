@@ -68,7 +68,7 @@ void MixerEngine::init()
 	getInternalData();
 }
 
-MixerInfo* MixerEngine::createMixerInfo( QString dbusPath )
+MixerInfo* MixerEngine::createMixerInfo( const QString& dbusPath )
 {
 	MixerInfo* curmi = new MixerInfo;
 	curmi->iface = new OrgKdeKMixMixerInterface( KMIX_DBUS_SERVICE, dbusPath,
@@ -85,7 +85,7 @@ MixerInfo* MixerEngine::createMixerInfo( QString dbusPath )
 	return curmi;
 }
 
-ControlInfo* MixerEngine::createControlInfo( QString mixerId, QString dbusPath )
+ControlInfo* MixerEngine::createControlInfo( const QString& mixerId, const QString& dbusPath )
 {
 	ControlInfo* curci = new ControlInfo;
 	curci->iface = new OrgKdeKMixControlInterface( KMIX_DBUS_SERVICE, dbusPath,
@@ -112,12 +112,14 @@ void MixerEngine::getInternalData()
 				"org.kde.KMix.MixSet", "changed",
 				this, SLOT(slotMixersChanged()) );
 	}
-	Q_FOREACH( QString path, m_kmix->mixers() )
+	Q_FOREACH( const QString& path, m_kmix->mixers() )
 	{
 		MixerInfo* curmi = createMixerInfo( path );
-		Q_FOREACH( QString controlPath, curmi->iface->controls() )
+		Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
 			createControlInfo( curmi->id, controlPath );
 	}
+	// Update "Mixers" source
+	getMixersData();
 }
 
 void MixerEngine::clearInternalData(bool removeSources)
@@ -133,7 +135,7 @@ void MixerEngine::clearInternalData(bool removeSources)
 	Q_FOREACH( ControlInfo* ci, m_controls )
 	{
 		if ( removeSources )
-			removeSource( ci->mixerId + "/" + ci->id );
+			removeSource( ci->mixerId + '/' + ci->id );
 		delete ci->iface;
 		delete ci;
 	}
@@ -162,13 +164,24 @@ bool MixerEngine::getMixersData()
 	QStringList mixerIds;
 	if ( interface->isServiceRegistered( KMIX_DBUS_SERVICE ) )
 	{
-		// 'Unused' flag is used for cleanup
 		Q_FOREACH( MixerInfo* mi, m_mixers )
 			mixerIds.append( mi->id );
+		/* FIXME: this is used to know whether kmix isn't running or
+		 * it can't find any audio device; also it works as a strange 
+		 * workaround: without it there is no dataUpdated() call sometimes
+		 * when it is updated here */
+		setData( "Mixers", "Running", true );
 		setData( "Mixers", "Mixers", mixerIds );
+		setData( "Mixers", "Current Master Mixer", m_kmix->currentMasterMixer() );
+		setData( "Mixers", "Current Master Control", m_kmix->currentMasterControl() );
 	}
 	else
+	{
+		setData( "Mixers", "Running", false );
 		removeData( "Mixers", "Mixers" );
+		removeData( "Mixers", "Current Master Mixer" );
+		removeData( "Mixers", "Current Master Control" );
+	}
 	return true;
 }
 
@@ -234,13 +247,22 @@ bool MixerEngine::getControlData( const QString &source )
 		return false;
 	// Setting data
 	curci->updateRequired = true;
-	setData( source, "Can Be Muted", curci->iface->canMute() );
-	setData( source, "Volume", curci->iface->volume() );
-	setData( source, "Mute", curci->iface->mute() );
-	setData( source, "Readable Name", curci->iface->readableName() );
-	setData( source, "Icon", KIcon(curci->iface->iconName()) );
+	setControlData( curci );
 	return true;
 }
+
+void MixerEngine::setControlData(ControlInfo* ci)
+{
+	QString source = ci->mixerId + '/' + ci->id;
+	setData( source, "Volume", ci->iface->volume() );
+	setData( source, "Mute", ci->iface->mute() );
+	setData( source, "Can Be Muted", ci->iface->canMute() );
+	setData( source, "Readable Name", ci->iface->readableName() );
+	setData( source, "Icon", KIcon(ci->iface->iconName()) );
+	setData( source, "Record Source", ci->iface->recordSource() );
+	setData( source, "Has Capture Switch", ci->iface->hasCaptureSwitch() );
+}
+
 
 void MixerEngine::slotServiceRegistered( const QString &serviceName)
 {
@@ -253,7 +275,8 @@ void MixerEngine::slotServiceUnregistered( const QString &serviceName)
 {
 	if ( serviceName == KMIX_DBUS_SERVICE )
 		clearInternalData(true);
-	removeData( "Mixers", "Mixers" );
+	// Updating 'Mixers' source
+	getMixersData();
 }
 
 void MixerEngine::slotControlChanged()
@@ -265,13 +288,7 @@ void MixerEngine::slotControlChanged()
 	// Updating all controls that might change
 	Q_FOREACH( ControlInfo* ci, m_controls.values( curmi->id ) )
 		if ( ci->updateRequired )
-		{
-			QString source = ci->mixerId + "/" + ci->id;
-			setData( source, "Can Be Muted", ci->iface->canMute() );
-			setData( source, "Volume", ci->iface->volume() );
-			setData( source, "Mute", ci->iface->mute() );
-			setData( source, "Readable Name", ci->iface->readableName() );
-		}
+			setControlData( ci );
 }
 
 void MixerEngine::slotControlsReconfigured()
@@ -284,9 +301,10 @@ void MixerEngine::slotControlsReconfigured()
 	QList<ControlInfo*> controlsForMixer = m_controls.values( curmi->id );
 	QStringList controlIds;
 	QStringList controlReadableNames;
+	QStringList controlIconNames;
 	Q_FOREACH( ControlInfo* ci, controlsForMixer )
 		ci->unused = true;
-	Q_FOREACH( QString controlPath, curmi->iface->controls() )
+	Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
 	{
 		ControlInfo* curci = 0;
 		Q_FOREACH( ControlInfo* ci, controlsForMixer )
@@ -301,6 +319,7 @@ void MixerEngine::slotControlsReconfigured()
 		curci->unused = false;
 		controlIds.append( curci->id );
 		controlReadableNames.append( curci->iface->readableName() );
+		controlIconNames.append( curci->iface->iconName() );
 	}
 	// If control is unused then we should remove it
 	Q_FOREACH( ControlInfo* ci, controlsForMixer )
@@ -312,9 +331,9 @@ void MixerEngine::slotControlsReconfigured()
 		}
 	if ( curmi->updateRequired )
 	{
-		QString source = curmi->id;
-		setData( source, "Controls", controlIds );
-		setData( source, "Controls Readable Names", controlReadableNames );
+		setData( curmi->id, "Controls", controlIds );
+		setData( curmi->id, "Controls Readable Names", controlReadableNames );
+		setData( curmi->id, "Controls Icons Names", controlIconNames );
 	}
 }
 
@@ -323,7 +342,7 @@ void MixerEngine::updateInternalMixersData()
 	// Some mixer added or removed
 	Q_FOREACH( MixerInfo* mi, m_mixers )
 		mi->unused = true;
-	Q_FOREACH( QString mixerPath, m_kmix->mixers() )
+	Q_FOREACH( const QString& mixerPath, m_kmix->mixers() )
 	{
 		MixerInfo* curmi = m_mixers.value( mixerPath, 0 );
 		// if mixer was added, we need to add one to m_mixers
@@ -331,7 +350,7 @@ void MixerEngine::updateInternalMixersData()
 		if ( !curmi )
 		{
 			curmi = createMixerInfo( mixerPath );
-			Q_FOREACH( QString controlPath, curmi->iface->controls() )
+			Q_FOREACH( const QString& controlPath, curmi->iface->controls() )
 				createControlInfo( curmi->id, controlPath );
 		}
 		curmi->unused = false;
@@ -344,7 +363,7 @@ void MixerEngine::updateInternalMixersData()
 			Q_FOREACH( ControlInfo* ci, m_controls.values( mi->id ) )
 			{
 				m_controls.remove( mi->id, ci );
-				removeSource( ci->mixerId + "/" + ci->id );
+				removeSource( ci->mixerId + '/' + ci->id );
 				delete ci->iface;
 				delete ci;
 			}

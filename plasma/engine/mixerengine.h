@@ -80,13 +80,14 @@ private:
 	// Keys are mixerIds for control
 	QMultiHash<QString,ControlInfo*> m_controls;
 
-	MixerInfo* createMixerInfo( QString dbusPath );
-	ControlInfo* createControlInfo( QString mixerId, QString dbusPath );
+	MixerInfo* createMixerInfo( const QString& dbusPath );
+	ControlInfo* createControlInfo( const QString& mixerId, const QString& dbusPath );
 
 	void clearInternalData(bool removeSources);
 	bool getMixersData();
-	bool getMixerData( const QString &source );
-	bool getControlData( const QString &source );
+	bool getMixerData( const QString& source );
+	bool getControlData( const QString& source );
+	void setControlData( ControlInfo *ci );
 private slots:
 	void getInternalData();
 	void updateInternalMixersData();

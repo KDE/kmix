@@ -22,26 +22,21 @@
 #include "mixer_mpris2.h"
 #include "core/mixer.h"
 
-//#include <QtCore/QCoreApplication>
 #include <QDebug>
 #include <QStringList>
 #include <QDBusReply>
-
-
 #include <QString>
+
+#include <KLocale>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
 
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device )
 {
-
-	Mixer_Backend *l_mixer;
-
-	l_mixer = new Mixer_MPRIS2(mixer,  device );
-	return l_mixer;
+	return new Mixer_MPRIS2(mixer, device );
 }
 
-Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer,  device )
+Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer, device )
 {
 }
 
@@ -51,6 +46,7 @@ int Mixer_MPRIS2::open()
 	if ( m_devnum !=  0 )
 		return Mixer::ERR_OPEN;
 
+	m_mixerName = i18n("Playback Streams");
 	_mixer->setDynamic();
 	addAllRunningPlayersAndInitHotplug();
 	return 0;
@@ -58,7 +54,9 @@ int Mixer_MPRIS2::open()
 
 int Mixer_MPRIS2::close()
 {
-	return 0;
+	  m_isOpen = false;
+	  m_mixDevices.clear();
+	 return 0;
 }
 
 int Mixer_MPRIS2::mediaPlay(QString id)
@@ -98,7 +96,7 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 }
 
 
-int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * md)
+int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 {
 
 	int volInt = 0;
@@ -134,7 +132,7 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, MixDevice * md)
 	return 0;
 }
 
-int Mixer_MPRIS2::writeVolumeToHW( const QString& id, MixDevice *md )
+int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
 
 	qDebug() << "Shall send updated volume to MPRIS Player for " << id;
@@ -276,17 +274,18 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 				ct = MixDevice::APPLICATION_XMM2;
 			}
 
-			MixDevice* md = new MixDevice(_mixer, id, readableName, ct);
+			MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
 			// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
 			// Thus we won't add the playback switch
 			Volume* vol = new Volume( 100, 0, false, false);
 			vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
-			md->addMediaPlayControl();
-			md->addMediaNextControl();
-			md->addMediaPrevControl();
-			md->setApplicationStream(true);
-			md->addPlaybackVolume(*vol);
-			m_mixDevices.append( md );
+			mdNew->addMediaPlayControl();
+			mdNew->addMediaNextControl();
+			mdNew->addMediaPrevControl();
+			mdNew->setApplicationStream(true);
+			mdNew->addPlaybackVolume(*vol);
+
+	        m_mixDevices.append( mdNew->addToPool() );
 
 			//	conn.connect("", QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QList<QVariant>)) );
 			conn.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QVariantMap,QStringList)) );
@@ -353,12 +352,12 @@ void MPrisAppdata::trackChangedIncoming(QVariantMap msg)
 /**
  * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
  */
-void MPrisAppdata::volumeChangedIncoming(QString ifc,QVariantMap msg ,QStringList sl)
+void MPrisAppdata::volumeChangedIncoming(QString /*ifc*/,QVariantMap msg ,QStringList /*sl*/)
 {
 	QMap<QString, QVariant>::iterator v = msg.find("Volume");
 	if (v != msg.end() )
 	{
-		kDebug(67100) << "volumeChanged incoming: !!!!!!!!!" ;
+//		kDebug(67100) << "volumeChanged incoming: !!!!!!!!!" ;
 		double volDouble = v.value().toDouble();
 		emit volumeChanged( this, volDouble);
 	}
@@ -378,7 +377,7 @@ void Mixer_MPRIS2::volumeChanged(MPrisAppdata* mad, double newVolume)
 {
 	int volInt = newVolume *100;
 	kDebug(67100) << "volumeChanged: " << mad->id << ": " << volInt;
-	MixDevice * md = m_mixDevices.get(mad->id);
+	shared_ptr<MixDevice> md = m_mixDevices.get(mad->id);
 	Volume& vol = md->playbackVolume();
 	vol.setVolume( Volume::LEFT, volInt);
 	md->setMuted(volInt == 0);

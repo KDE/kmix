@@ -19,14 +19,15 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "dbusmixerwrapper.h"
+
 #include <QStringList>
 
-#include "dbusmixerwrapper.h"
 #include "core/mixdevice.h"
 #include "core/volume.h"
 #include "mixeradaptor.h"
 
-DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, QString path)
+DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	: QObject(parent)
 	, m_dbusPath(path)
 {
@@ -51,7 +52,7 @@ QString DBusMixerWrapper::driverName()
 QStringList DBusMixerWrapper::controls()
 {
 	QStringList result;
-	foreach ( MixDevice* md, m_mixer->getMixSet() )
+	foreach ( shared_ptr<MixDevice> md, m_mixer->getMixSet() )
 	{
 		result.append( md->dbusPath() );
 	}
@@ -60,7 +61,7 @@ QStringList DBusMixerWrapper::controls()
 
 QString DBusMixerWrapper::masterControl()
 {
-	MixDevice* md = m_mixer->getLocalMasterMD();
+	shared_ptr<MixDevice> md = m_mixer->getLocalMasterMD();
 	// XXX: Since empty object path is invalid, using "/"
 	return md ? md->dbusPath() : QString("/");
 }

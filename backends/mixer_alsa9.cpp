@@ -65,11 +65,13 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
    m_fds = 0;
 //   m_sns = 0;
    _handle = 0;
+   ctl_handle = 0;
    _initialUpdate = true;
 }
 
 Mixer_ALSA::~Mixer_ALSA()
 {
+	qDebug() << "Running Mixer_ALSA destructor";
    close();
 }
 
@@ -158,7 +160,7 @@ int Mixer_ALSA::open()
         QString mdID("%1:%2");
         mdID = mdID.arg(snd_mixer_selem_id_get_name ( sid ) )
                     .arg(snd_mixer_selem_id_get_index( sid ) );
-        mdID.replace(" ","_"); // Any key/ID we use, must not uses spaces (rule)
+        mdID.replace(' ','_'); // Any key/ID we use, must not uses spaces (rule)
 
         MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
 
@@ -186,7 +188,7 @@ int Mixer_ALSA::open()
             // Add a number to the control name, like "PCM 2", when the index is > 0
             QString idxString;
             idxString.setNum(1+controlInstanceIndex);
-            readableName += " ";
+            readableName += ' ';
             readableName += idxString;
         }
 
@@ -208,12 +210,13 @@ int Mixer_ALSA::open()
         idx++;
 
 
-        MixDevice* md = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
+        MixDevice* mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
 
-        if ( volPlay    != 0      ) md->addPlaybackVolume(*volPlay);
-        if ( volCapture != 0      ) md->addCaptureVolume (*volCapture);
-       	if ( !enumList.isEmpty()  ) md->addEnums(enumList);
-         
+        if ( volPlay    != 0      ) mdNew->addPlaybackVolume(*volPlay);
+        if ( volCapture != 0      ) mdNew->addCaptureVolume (*volCapture);
+       	if ( !enumList.isEmpty()  ) mdNew->addEnums(enumList);
+
+       	shared_ptr<MixDevice> md = mdNew->addToPool();
         m_mixDevices.append( md );
          
         qDeleteAll(enumList); // clear temporary list
@@ -274,7 +277,6 @@ int Mixer_ALSA::open()
 int Mixer_ALSA::openAlsaDevice(const QString& devName)
 {
     int err;
-    snd_ctl_t *ctl_handle;
 
     QString probeMessage;
     probeMessage += "Trying ALSA Device '" + devName + "': ";
@@ -482,6 +484,13 @@ Mixer_ALSA::close()
 {
   int ret=0;
   m_isOpen = false;
+
+  if ( ctl_handle != 0)
+  {
+	  //snd_ctl_close( ctl_handle );
+	  ctl_handle = 0;
+  }
+
   if ( _handle != 0 )
   {
     //kDebug() << "IN  Mixer_ALSA::close()";
@@ -696,7 +705,7 @@ unsigned int Mixer_ALSA::enumIdHW(const QString& id) {
 
 
 int
-Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
+Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 {
     Volume& volumePlayback = md->playbackVolume();
     Volume& volumeCapture  = md->captureVolume();
@@ -776,9 +785,8 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
         // Refresh the capture switch information of *all* controls of this card.
         // Doing it for all is necessary, because enabling one record source often
         // automatically disables another record source (due to the hardware design)
-        for(int i=0; i< m_mixDevices.count() ; i++ )
+        foreach ( shared_ptr<MixDevice> md, m_mixDevices )
         {
-            MixDevice *md = m_mixDevices[i];
             bool isRecsrc =  isRecsrcHW( md->id() );
             // kDebug() << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc;
             md->setRecSource( isRecsrc );
@@ -790,7 +798,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, MixDevice *md )
 }
 
 int
-Mixer_ALSA::writeVolumeToHW( const QString& id, MixDevice *md )
+Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
     Volume& volumePlayback = md->playbackVolume();
     Volume& volumeCapture  = md->captureVolume();

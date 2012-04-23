@@ -19,12 +19,13 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "core/volume.h"
+
 // for operator<<()
 #include <iostream>
 
 #include <kdebug.h>
 
-#include "core/volume.h"
 
 
 int Volume::_channelMaskEnum[9] =

@@ -18,11 +18,12 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "core/mixdevice.h"
 #include "dbusmixsetwrapper.h"
+
+#include "core/mixdevice.h"
 #include "mixsetadaptor.h"
 
-DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, QString path)
+DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 	: QObject(parent)
 	, m_dbusPath( path )
 {
@@ -55,7 +56,7 @@ QString DBusMixSetWrapper::currentMasterMixer() const
 
 QString DBusMixSetWrapper::currentMasterControl() const
 {
-    MixDevice* masterControl = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> masterControl = Mixer::getGlobalMasterMD();
     return masterControl ? masterControl->id() : QString();
 }
 

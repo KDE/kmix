@@ -20,6 +20,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "mixer_sun.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -29,7 +31,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "mixer_sun.h"
 #include "core/mixer.h"
 #include <sys/soundcard.h>
 #include <QTimer>
@@ -202,7 +203,7 @@ int Mixer_SUN::open()
                      Volume captureVol( 100, 1, true, true );
                      md->addCaptureVolume(captureVol);
                  }
-            m_mixDevices.append( md );
+            m_mixDevices.append( md->addToPool() );
          }
 
      m_mixerName = "SUN Audio Mixer";
@@ -251,7 +252,7 @@ QString Mixer_SUN::errorText( int mixer_error )
 // FUNCTION    : Mixer::readVolumeFromHW
 // DESCRIPTION : Read the audio information from the driver.
 //======================================================================
-int Mixer_SUN::readVolumeFromHW( const QString& id, MixDevice *md )
+int Mixer_SUN::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 {
    audio_info_t audioinfo;
    int devnum = id2num(id);
@@ -313,7 +314,7 @@ int Mixer_SUN::readVolumeFromHW( const QString& id, MixDevice *md )
 // FUNCTION    : Mixer::writeVolumeToHW
 // DESCRIPTION : Write the specified audio settings to the hardware.
 //======================================================================
-int Mixer_SUN::writeVolumeToHW( const QString& id, MixDevice *md )
+int Mixer_SUN::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
    uint_t gain;
    uchar_t balance;
