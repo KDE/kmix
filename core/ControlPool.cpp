@@ -25,9 +25,11 @@
 #include <QMap>
 
 
+shared_ptr<MixDevice> ControlPool::TheEmptyDevice; // = shared_ptr<MixDevice>(ControlPool::TheEmptyDevicePtr);
+
 ControlPool::ControlPool()
 {
-	pool = new QMap<QString, QSharedPointer<MixDevice> >();
+	pool = new QMap<QString, shared_ptr<MixDevice> >();
 }
 
 ControlPool* ControlPool::_instance = 0;
@@ -48,26 +50,24 @@ ControlPool* ControlPool::instance()
  * @param mixDevice
  * @return
  */
-QSharedPointer<MixDevice> ControlPool::add(const QString& key, MixDevice* mixDevice)
+
+shared_ptr<MixDevice> ControlPool::add(const QString& key, MixDevice* md)
 {
-	QSharedPointer<MixDevice> controlFromPool = get(key);
-	if ( !controlFromPool.isNull() )
+	shared_ptr<MixDevice> controlFromPool(get(key));
+	if ( controlFromPool.get() != 0)
 	{
 		kDebug() << "----ControlPool already cached key=" << key;
-		return controlFromPool; // works on duplicates
+		return controlFromPool;
 	}
 
-//	if ( !controlFromPool.isNull() )
-//	{
-//		kDebug() << "----ControlPool replace key=" << key;
-//		pool->remove(key); // will later crash on duplicates !!! Why?!?
-//	}
+	// else: Add the control to the pool
+	kDebug() << "----ControlPool add key=" << key;
+	shared_ptr<MixDevice> mdShared(md);
+	pool->insert(key, mdShared);
+	return mdShared;
 
-	QSharedPointer<MixDevice> mixDeviceShared(mixDevice);
-	pool->insert(key, mixDeviceShared);
-	kDebug() << "----ControlPool add: key=" << key;
-	return mixDeviceShared;
 }
+
 
 /**
  * Retrieves a Control from the pool as QSharedPointer. If the Control is not
@@ -76,8 +76,8 @@ QSharedPointer<MixDevice> ControlPool::add(const QString& key, MixDevice* mixDev
  * @param key
  * @return The Control wrapped in QSharedPointer. If not found, a QSharedPointer that points to null.
  */
-QSharedPointer<MixDevice> ControlPool::get(const QString& key)
+shared_ptr<MixDevice> ControlPool::get(const QString& key)
 {
-	QSharedPointer<MixDevice> mixDeviceShared = pool->value(key);
+	shared_ptr<MixDevice> mixDeviceShared = pool->value(key, TheEmptyDevice);
 	return mixDeviceShared;
 }

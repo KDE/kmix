@@ -22,6 +22,13 @@
 #ifndef CONTROL_POOL_H
 #define CONTROL_POOL_H
 
+
+// std::shared_ptr
+#include <memory>
+#include <tr1/memory>
+
+using namespace ::std::tr1;
+
 #include "core/mixdevice.h"
 
 class ControlPool
@@ -29,8 +36,8 @@ class ControlPool
 
 public:
 	static ControlPool* instance();
-	QSharedPointer<MixDevice> add(const QString&, MixDevice*);
-	QSharedPointer<MixDevice> get(const QString& key);
+	shared_ptr<MixDevice> add(const QString& key, MixDevice* mixDevice);
+	shared_ptr<MixDevice> get(const QString& key);
 
 
 private:
@@ -38,8 +45,9 @@ private:
 	virtual ~ControlPool() {};
 
 
-	QMap<QString, QSharedPointer<MixDevice> > *pool;
+	QMap<QString, shared_ptr<MixDevice> > *pool;
 	static ControlPool* _instance;
+	static shared_ptr<MixDevice> TheEmptyDevice;
 };
 
 #endif
