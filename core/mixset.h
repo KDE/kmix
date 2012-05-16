@@ -30,8 +30,8 @@ class MixSet : public QList <shared_ptr<MixDevice> >
    public:
 	~MixSet();
 
-      void read( KConfig *config, const QString& grp );
-      void write( KConfig *config, const QString& grp );
+      bool read( KConfig *config, const QString& grp );
+      bool write( KConfig *config, const QString& grp );
 
       QString name() { return m_name; }
       void setName( const QString &name );

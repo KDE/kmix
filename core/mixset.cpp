@@ -38,28 +38,38 @@ MixSet::~MixSet()
 	clear();
 }
 
-void MixSet::read( KConfig *config, const QString& grp )
+bool MixSet::read( KConfig *config, const QString& grp )
 {
    kDebug(67100) << "MixSet::read() of group " << grp;
    KConfigGroup group = config->group(grp);
    m_name = group.readEntry( "name", m_name );
 
+   bool have_success = false, have_fail = false;
    foreach ( shared_ptr<MixDevice> md, *this)
    {
-       md->read( config, grp );
+       if ( md->read( config, grp ) )
+           have_success = true;
+       else
+           have_fail = true;
    }
+   return have_success && !have_fail;
 }
 
-void MixSet::write( KConfig *config, const QString& grp )
+bool MixSet::write( KConfig *config, const QString& grp )
 {
    kDebug(67100) << "MixSet::write() of group " << grp;    
    KConfigGroup conf = config->group(grp);
    conf.writeEntry( "name", m_name );
 
+   bool have_success = false, have_fail = false;
    foreach ( shared_ptr<MixDevice> md, *this)
    {
-       md->write( config, grp );
+       if ( md->write( config, grp ) )
+           have_success = true;
+       else
+           have_fail = true;
    }
+   return have_success && !have_fail;
 }
 
 void MixSet::setName( const QString &name )
