@@ -892,9 +892,8 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
         s_pulseActive = INACTIVE;
 
     // We require a glib event loop
-    QLatin1String dispatcher = QLatin1String(QAbstractEventDispatcher::instance()->metaObject()->className());
-    if ("QGuiEventDispatcherGlib" != dispatcher && "QEventDispatcherGlib" != dispatcher) {
-        kDebug(67100) << "Disabling PulseAudio integration for lack of GLib event loop: " << dispatcher;
+    if (!QByteArray(QAbstractEventDispatcher::instance()->metaObject()->className()).contains("EventDispatcherGlib")) {
+        kDebug(67100) << "Disabling PulseAudio integration for lack of GLib event loop";
         s_pulseActive = INACTIVE;
     }
 
