@@ -167,7 +167,11 @@ void Mixer::volumeLoad( KConfig *config )
    }
 
    // else restore the volumes
-   _mixerBackend->m_mixDevices.read( config, grp );
+   if ( ! _mixerBackend->m_mixDevices.read( config, grp ) ) {
+      // Some mixer backends don't support reading the volume into config
+      // files, so bail out early if that's the case.
+      return;
+   }
 
    // set new settings
    for(int i=0; i<_mixerBackend->m_mixDevices.count() ; i++ )

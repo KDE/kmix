@@ -259,29 +259,31 @@ ProfControl* MixDevice::controlProfile() {
  * because we need to read the minimum and maximum volume levels.
  * (Another solution would be to "equip" volFromConfig with maxInt and minInt values).
  */
-void MixDevice::read( KConfig *config, const QString& grp )
+bool MixDevice::read( KConfig *config, const QString& grp )
 {
     if ( _mixer->isDynamic() || isArtificial() ) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
-    } else {
-        QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
-        KConfigGroup cg = config->group( devgrp );
-        //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
-
-        readPlaybackOrCapture(cg, false);
-        readPlaybackOrCapture(cg, true );
-
-        bool mute = cg.readEntry("is_muted", false);
-        setMuted( mute );
-
-        bool recsrc = cg.readEntry("is_recsrc", false);
-        setRecSource( recsrc );
-
-        int enumId = cg.readEntry("enum_id", -1);
-        if ( enumId != -1 ) {
-            setEnumId( enumId );
-        }
+        return false;
     }
+
+    QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
+    KConfigGroup cg = config->group( devgrp );
+    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
+
+    readPlaybackOrCapture(cg, false);
+    readPlaybackOrCapture(cg, true );
+
+    bool mute = cg.readEntry("is_muted", false);
+    setMuted( mute );
+
+    bool recsrc = cg.readEntry("is_recsrc", false);
+    setRecSource( recsrc );
+
+    int enumId = cg.readEntry("enum_id", -1);
+    if ( enumId != -1 ) {
+        setEnumId( enumId );
+    }
+    return true;
 }
 
 void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
@@ -302,25 +304,27 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 /**
  *  called on "kmixctrl --save" and from the GUI's (currently only on exit)
  */
-void MixDevice::write( KConfig *config, const QString& grp )
+bool MixDevice::write( KConfig *config, const QString& grp )
 {
     if (_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
-    } else {
-        QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
-        KConfigGroup cg = config->group(devgrp);
-        // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
-
-        writePlaybackOrCapture(cg, false);
-        writePlaybackOrCapture(cg, true );
-
-        cg.writeEntry("is_muted" , isMuted() );
-        cg.writeEntry("is_recsrc", isRecSource() );
-        cg.writeEntry("name", _name);
-        if ( isEnum() ) {
-            cg.writeEntry("enum_id", enumId() );
-        }
+        return false;
     }
+
+    QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
+    KConfigGroup cg = config->group(devgrp);
+    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
+
+    writePlaybackOrCapture(cg, false);
+    writePlaybackOrCapture(cg, true );
+
+    cg.writeEntry("is_muted" , isMuted() );
+    cg.writeEntry("is_recsrc", isRecSource() );
+    cg.writeEntry("name", _name);
+    if ( isEnum() ) {
+        cg.writeEntry("enum_id", enumId() );
+    }
+    return true;
 }
 
 void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)

@@ -212,8 +212,8 @@ public:
    unsigned int enumId();
    QList<QString>& enumValues();
 
-   virtual void read( KConfig *config, const QString& grp );
-   virtual void write( KConfig *config, const QString& grp );
+   bool read( KConfig *config, const QString& grp );
+   bool write( KConfig *config, const QString& grp );
 
 
 
