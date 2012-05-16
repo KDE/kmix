@@ -381,7 +381,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 
     /* NB Until Source Outputs support volumes, we just use the volume of the source itself */
     if (!captureDevices.contains(i->source)) {
-        kWarning(67100) << "Source Output refers to a Source we don't have any info for :s";
+        kDebug(67100) << "Source Output refers to a Source we don't have any info for (probably just a peak meter or similar)";
         return;
     }
 
