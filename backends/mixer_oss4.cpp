@@ -335,10 +335,13 @@ int Mixer_OSS4::open()
 					Volume vol (ext.maxvalue, ext.minvalue, false, isCapture);
 					vol.addVolumeChannels(chMask);
 
-					MixDevice* md =	new MixDevice(_mixer,
+					MixDevice* md_ptr =	new MixDevice(_mixer,
 									QString::number(i),
 									name,
 									cType);
+                                        
+                                        shared_ptr<MixDevice> md = md_ptr->addToPool();
+                                        m_mixDevices.append(md);
 					
 					if(isCapture)
 					{
@@ -360,8 +363,6 @@ int Mixer_OSS4::open()
 						m_recommendedMaster = md;
 						masterChosen = true;
 					}
-
-					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_HEXVALUE )
 				{
@@ -369,10 +370,13 @@ int Mixer_OSS4::open()
 					Volume vol (ext.maxvalue, ext.minvalue, false, isCapture);
 					vol.addVolumeChannels(chMask);
 
-					MixDevice* md =	new MixDevice(_mixer,
+					MixDevice* md_ptr =	new MixDevice(_mixer,
 								      QString::number(i),
 								      name,
 								      cType);
+                                        
+                                        shared_ptr<MixDevice> md = md_ptr->addToPool();
+                                        m_mixDevices.append(md);
 					
 					if(isCapture)
 					{
@@ -388,8 +392,6 @@ int Mixer_OSS4::open()
 						m_recommendedMaster = md;
 						masterChosen = true;
 					}
-
-					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_ONOFF 
 #ifdef MIXT_MUTE
@@ -406,11 +408,15 @@ int Mixer_OSS4::open()
 						 vol.setSwitchType (Volume::SpecialSwitch);
 					}
 					
-					MixDevice* md = new MixDevice(_mixer,
+					MixDevice* md_ptr = new MixDevice(_mixer,
 								      QString::number(i),
 							 	      name,
 								      cType);
-					if(isCapture)
+                                        
+                                        shared_ptr<MixDevice> md = md_ptr->addToPool();
+                                        m_mixDevices.append(md);
+
+                                        if(isCapture)
 					{
 						md->addCaptureVolume(vol);
 					}
@@ -418,8 +424,6 @@ int Mixer_OSS4::open()
 					{
 						md->addPlaybackVolume(vol);
 					}
-
-					m_mixDevices.append(md->addToPool());
 				}
 				else if ( ext.type == MIXT_ENUM )
 				{
@@ -431,9 +435,9 @@ int Mixer_OSS4::open()
 					{
 						Volume vol(ext.maxvalue, ext.minvalue,
 									false, isCapture);
-						vol.addVolumeChannel(VolumeChannel(Volume::MLEFT));
+						vol.addVolumeChannel(VolumeChannel(Volume::LEFT));
 
-						MixDevice* md = new MixDevice (_mixer,
+						MixDevice* md_ptr = new MixDevice (_mixer,
 						                               QString::number(i),
 									       name,
 						                               cType);
@@ -451,9 +455,10 @@ int Mixer_OSS4::open()
 							}
 							enumValuesRef.append( new QString(thisElement) );
 						}
-						md->addEnums(enumValuesRef);
-
-						m_mixDevices.append(md->addToPool());
+						md_ptr->addEnums(enumValuesRef);
+                                        
+                                                shared_ptr<MixDevice> md = md_ptr->addToPool();
+                                                m_mixDevices.append(md);
 					}
 				}
 
@@ -477,7 +482,7 @@ int Mixer_OSS4::close()
 	m_isOpen = false;
 	int l_i_ret = ::close(m_fd);
 	m_mixDevices.clear();
-	m_recommendedMaster = NULL;
+	m_recommendedMaster.reset();
 	return l_i_ret;
 }
 
