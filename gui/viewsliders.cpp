@@ -91,15 +91,15 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
     // TODO cesken Revise this "text comparison" thingy when I change the View constructor to take an "id" and a "readableName"
     QString viewName(name);
     if (viewName.contains(".Capture_Streams."))
-    	emptyStreamHint = new QLabel(i18n("Capture Streams"));
+       emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
     else if (viewName.contains(".Playback_Streams."))
-    	emptyStreamHint = new QLabel(i18n("Playback Streams"));
+       emptyStreamHint = new QLabel(i18n("Nothing is playing audio."));
     else if (viewName.contains(".Capture_Devices."))
-    	emptyStreamHint = new QLabel(i18n("Capture Devices"));
+       emptyStreamHint = new QLabel(i18n("No capture devices."));
     else if (viewName.contains(".Playback_Devices."))
-    	emptyStreamHint = new QLabel(i18n("Playback Devices"));
+       emptyStreamHint = new QLabel(i18n("No playback devices."));
     else
-    	emptyStreamHint = new QLabel(i18n("Playback Streams")); // Fallback. Assume Playback stream
+       emptyStreamHint = new QLabel(i18n("Nothing is playing audio.")); // Fallback. Assume Playback stream
 
     emptyStreamHint->setAlignment(Qt::AlignCenter);
     emptyStreamHint->setWordWrap( true );
