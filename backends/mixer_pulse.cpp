@@ -32,13 +32,6 @@
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
 
-// Undef'ing HAVE_CANBERRA here, because it should not yet be active
-// in bracnh 4.8 and I cannot get it disabled otherwise.
-// Commenting out pkg_check_modules(CANBERRA libcanberra) in 
-// kmix/CMakeLists.txt doesn't search for canberra, but still
-// HAVE_CANBERRA is defined.
-#undef HAVE_CANBERRA
-
 #if defined(HAVE_CANBERRA)
 #  include <canberra.h>
 #endif

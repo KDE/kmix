@@ -9,8 +9,11 @@ find_package(Alsa)
 macro_optional_find_package(PulseAudio "0.9.12")
 macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server" "http://www.pulseaudio.org/" FALSE "0.9.12" "libpulse is needed to let KMix control PulseAudio")
 find_package(GLIB2)
-pkg_check_modules(CANBERRA libcanberra)
-macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library" "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
+
+# FIXME: Disable libcanberra support in the 4.8 branch because it is
+#        still under development in master.
+# pkg_check_modules(CANBERRA libcanberra)
+# macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library" "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
 
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
 
