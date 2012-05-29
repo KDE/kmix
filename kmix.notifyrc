@@ -46,6 +46,7 @@ Name[sl]=Zasilna zvočna naprava
 Name[sv]=Reservljudenhet
 Name[uk]=Другорядний аудіопристрій
 Name[x-test]=xxAudio Device Fallbackxx
+Name[zh_CN]=备用音频设备
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
 Comment[cs]=Upozornění na automatickou náhradu, pokud je preferované zařízení nedostupné
