@@ -31,6 +31,7 @@ configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 include_directories( ${GLIB2_INCLUDE_DIR} /usr/lib/oss/include)
 
+add_subdirectory( doc )
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
 #add_subdirectory( tests )
