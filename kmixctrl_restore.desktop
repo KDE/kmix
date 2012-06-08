@@ -2,6 +2,7 @@
 Type=Service
 Name=Restore Mixer Settings
 Name[cs]=Obnovit nastavení směšovače
+Name[da]=Genskab mikserindstillinger
 Name[de]=Lautstärkeeinstellungen wiederherstellen
 Name[el]=Επαναφορά ρυθμίσεων μείκτη
 Name[et]=Mikseri seadistuste taastamine

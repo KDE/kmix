@@ -6,6 +6,7 @@ Exec=kmixctrl --restore
 OnlyShowIn=KDE;
 Name=Restore Mixer Volumes
 Name[cs]=Obnovit nastavení hlasitosti
+Name[da]=Genskab mikserlydstyrke
 Name[de]=Lautstärken wiederherstellen
 Name[el]=Επαναφορά εντάσεων μείκτη
 Name[et]=Mikseri helitugevuste taastamine
