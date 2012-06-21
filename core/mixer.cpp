@@ -40,6 +40,7 @@ MasterControl Mixer::_globalMasterCurrent;
 MasterControl Mixer::_globalMasterPreferred;
 float Mixer::VOLUME_STEP_DIVISOR = 20;
 float Mixer::VOLUME_PAGESTEP_DIVISOR = 10;
+bool Mixer::m_beepOnVolumeChange = false;
 
 int Mixer::numDrivers()
 {
@@ -279,6 +280,10 @@ QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
 
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
+void Mixer::setBeepOnVolumeChange(bool beepOnVolumeChange)
+{
+	m_beepOnVolumeChange = beepOnVolumeChange;
+}
 
 int Mixer::balance() const {
     return m_balance;

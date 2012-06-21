@@ -1105,7 +1105,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
                 pa_operation_unref(o);
 
 #if defined(HAVE_CANBERRA)
-                if (s_ccontext) {
+                if (s_ccontext && Mixer::getBeepOnVolumeChange() ) {
                     int playing = 0;
                     int cindex = 2; // Note "2" is simply the index we've picked. It's somewhat irrelevant.
 

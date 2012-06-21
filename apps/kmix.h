@@ -76,6 +76,7 @@ KMixWindow : public KXmlGuiWindow
    void initWidgets();
    //void setErrorMixerWidget();
 
+   void setBeepOnVolumeChange(bool beep);
    void fixConfigAfterRead();
 
    virtual bool queryClose();
@@ -113,6 +114,7 @@ KMixWindow : public KXmlGuiWindow
    bool m_showTicks;
    bool m_showLabels;
    bool m_onLogin;
+   bool m_beepOnVolumeChange;
    bool m_startVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.

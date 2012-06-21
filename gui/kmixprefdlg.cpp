@@ -77,6 +77,14 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
       m_onLogin = new QCheckBox( i18n("Restore volumes on login"), m_generalTab );
       l->addWidget( m_onLogin );
 
+      l = new QHBoxLayout();
+      layout->addItem( l );
+         l->addSpacing(10);
+         m_beepOnVolumeChange = new QCheckBox( i18n("Volume Feedback"), m_generalTab );
+         l->addWidget( m_beepOnVolumeChange );
+
+
+
 // -----------------------------------------------------------
 
    label = new QLabel( i18n("Visual"), m_generalTab );
