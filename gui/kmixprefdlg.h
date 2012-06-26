@@ -56,6 +56,7 @@ KMixPrefDlg : public KDialog
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;
    QCheckBox *m_onLogin;
+   QCheckBox *m_beepOnVolumeChange;
    QRadioButton *_rbVertical;
    QRadioButton *_rbHorizontal;
 };

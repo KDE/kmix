@@ -363,6 +363,7 @@ void KMixWindow::saveBaseConfig()
     config.writeEntry( "Tickmarks", m_showTicks );
     config.writeEntry( "Labels", m_showLabels );
     config.writeEntry( "startkdeRestore", m_onLogin );
+    config.writeEntry( "VolumeFeedback", m_beepOnVolumeChange );
     config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
     config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
     config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
@@ -483,6 +484,7 @@ void KMixWindow::loadBaseConfig()
     m_showTicks = config.readEntry("Tickmarks", true);
     m_showLabels = config.readEntry("Labels", true);
     m_onLogin = config.readEntry("startkdeRestore", true );
+    m_beepOnVolumeChange = config.readEntry("VolumeFeedback", false );
     m_startVisible = config.readEntry("Visible", false);
     m_multiDriverMode = config.readEntry("MultiDriver", false);
     const QString& orientationString = config.readEntry("Orientation", "Vertical");
@@ -1113,6 +1115,7 @@ void KMixWindow::showSettings()
         m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
         m_prefDlg->m_volumeChk->setEnabled( m_showDockWidget );
         m_prefDlg->m_onLogin->setChecked( m_onLogin );
+        m_prefDlg->m_beepOnVolumeChange->setChecked( m_beepOnVolumeChange );
 
         m_prefDlg->m_showTicks->setChecked( m_showTicks );
         m_prefDlg->m_showLabels->setChecked( m_showLabels );
@@ -1154,6 +1157,8 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
     m_showDockWidget = prefDlg->m_dockingChk->isChecked();
     m_volumeWidget = prefDlg->m_volumeChk->isChecked();
     m_onLogin = prefDlg->m_onLogin->isChecked();
+    setBeepOnVolumeChange(prefDlg->m_beepOnVolumeChange->isChecked());
+
     if ( prefDlg->_rbVertical->isChecked() ) {
         m_toplevelOrientation = Qt::Vertical;
     }
@@ -1170,6 +1175,18 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
     saveConfig();
 }
 
+/**
+ * Sets whether a beep on volume change should be done.
+ * This method store the value internally and also propagates
+ * this to the Mixer core.
+ *
+ * @param beep true, if a beep should be changed
+ */
+void KMixWindow::setBeepOnVolumeChange(bool beep)
+{
+	m_beepOnVolumeChange = beep;
+	Mixer::setBeepOnVolumeChange(m_beepOnVolumeChange);
+}
 
 void KMixWindow::toggleMenuBar()
 {
