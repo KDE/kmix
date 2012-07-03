@@ -293,7 +293,6 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
     for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
     {
       QString volstr = getVolString(chid,capture);
-       if ( capture ) volstr += "Capture";
        if ( config.hasKey(volstr) ) {
           volume.setVolume(chid, config.readEntry(volstr, 0));
        } // if saved channel exists
