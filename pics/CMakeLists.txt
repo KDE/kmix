@@ -25,4 +25,3 @@ install( FILES
     kmixdocked_error.png
     DESTINATION  ${DATA_INSTALL_DIR}/kmix/pics )
 
-kde4_install_icons( ${ICON_INSTALL_DIR}   )
