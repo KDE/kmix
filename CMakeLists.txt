@@ -133,48 +133,6 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### next target ###############
 
- set(kded_kmixd_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-    apps/kmixd.cpp 
-    core/ControlPool.cpp
-    core/MasterControl.cpp
-    core/mixer.cpp 
-    core/mixset.cpp 
-    core/mixdevice.cpp 
-    core/volume.cpp
-    core/mixertoolbox.cpp 
-    core/kmixdevicemanager.cpp
-    backends/mixer_mpris2.cpp
-    backends/mixer_backend.cpp 
-    )
-
-#qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
- 
-kde4_add_plugin(kded_kmixd ${kded_kmixd_SRCS})
-
-
-target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY})
-
-if (HAVE_LIBASOUND2)
-    target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
-endif (HAVE_LIBASOUND2)
-
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
-
-if (CANBERRA_FOUND)
-  target_link_libraries(kded_kmixd ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
-
-install(TARGETS kded_kmixd DESTINATION ${PLUGIN_INSTALL_DIR})
-
-#target_link_libraries( kmixd kded_kmixd )
-#install(TARGETS kmixd DESTINATION ${PLUGIN_INSTALL_DIR} )
-
-install( FILES kmixd.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded )
-
-########### next target ###############
-
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/kmixctrl.cpp 
    core/ControlPool.cpp
