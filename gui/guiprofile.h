@@ -136,7 +136,6 @@ class GUIProfile
     virtual ~GUIProfile();
 
     bool readProfile(const QString& ref_fileNamestring);
-    bool finalizeProfile() const;
     bool writeProfile();
     
     bool isDirty() const;

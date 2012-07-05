@@ -275,8 +275,6 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
     fallback->_soundcardDriver = mixer->getDriverName();
     fallback->_soundcardName   = mixer->readableName();
 
-    fallback->finalizeProfile();
-
     fallback->_mixerId = mixer->id();
     fallback->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
     fallback->setName(buildReadableProfileName(mixer, QString("default"))); // The caller can rename this if he likes
@@ -303,10 +301,7 @@ bool GUIProfile::readProfile(const QString& ref_fileName)
     bool ok = xmlReader->parse( source );
 
     //std::cout << "Raw Profile: " << *this;
-    if ( ok ) {
-        ok = finalizeProfile();
-    } // Read OK
-    else {
+    if ( !ok ) {
         // !! this error message about faulty profiles should probably be surrounded with i18n()
         kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
     }
@@ -339,13 +334,6 @@ bool GUIProfile::writeProfile()
        _dirty = false;
    }
    return ret;
-}
-
-/** This is now empty. It can be removed */
-bool GUIProfile::finalizeProfile() const
-{
-    bool ok = true;
-    return ok;
 }
 
 void GUIProfile::setControls(ControlSet& newControlSet)

@@ -339,7 +339,6 @@ void DialogViewConfiguration::apply()
    }
 	
 	prof->setControls(newControlset);
-    prof->finalizeProfile();
     prof->setDirty();
 
    // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
