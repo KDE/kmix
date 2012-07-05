@@ -47,7 +47,7 @@
 #include <Phonon/MediaObject>
 
 #include "gui/dialogselectmaster.h"
-#include "apps/kmix.h"
+#include "kmix.h"
 #include "core/mixer.h"
 #include "gui/mixdevicewidget.h"
 #include "core/mixertoolbox.h"

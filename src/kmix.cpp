@@ -20,7 +20,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "apps/kmix.h"
+#include "kmix.h"
 
 // include files for QT
 #include <QCheckBox>

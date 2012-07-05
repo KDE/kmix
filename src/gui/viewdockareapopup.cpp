@@ -38,7 +38,7 @@
 #include "gui/guiprofile.h"
 #include "mdwslider.h"
 #include "core/mixer.h"
-#include "apps/kmix.h"
+#include "kmix.h"
 
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )

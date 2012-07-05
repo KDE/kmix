@@ -20,7 +20,7 @@ alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
 
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${CMAKE_SOURCE_DIR}/src )
 if(MSVC)
     include_directories( ${TAGLIB_INCLUDES} )
 endif(MSVC)
@@ -51,63 +51,63 @@ endif (CANBERRA_FOUND)
 
 
 set(kmix_adaptor_SRCS
-	dbus/dbusmixerwrapper.cpp
-	dbus/dbusmixsetwrapper.cpp
-	dbus/dbuscontrolwrapper.cpp)
-qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
-	dbus/dbuscontrolwrapper.h DBusControlWrapper )
-qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
-	dbus/dbusmixerwrapper.h DBusMixerWrapper )
-qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
-	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
+	src/dbus/dbusmixerwrapper.cpp
+	src/dbus/dbusmixsetwrapper.cpp
+	src/dbus/dbuscontrolwrapper.cpp)
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS src/dbus/org.kde.kmix.control.xml
+	src/dbus/dbuscontrolwrapper.h DBusControlWrapper )
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS src/dbus/org.kde.kmix.mixer.xml
+	src/dbus/dbusmixerwrapper.h DBusMixerWrapper )
+qt4_add_dbus_adaptor( kmix_adaptor_SRCS src/dbus/org.kde.kmix.mixset.xml
+	src/dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
 
 set(kmix_backend_SRCS
-   backends/mixer_backend.cpp
-   backends/mixer_mpris2.cpp
+   src/backends/mixer_backend.cpp
+   src/backends/mixer_mpris2.cpp
    )
 
 if (HAVE_LIBASOUND2)
   set(kmix_backend_SRCS ${kmix_backend_SRCS}
-      backends/mixer_alsa9.cpp )
+      src/backends/mixer_alsa9.cpp )
 endif (HAVE_LIBASOUND2)
 
 if (PULSEAUDIO_FOUND)
   set(kmix_backend_SRCS ${kmix_backend_SRCS}
-      backends/mixer_pulse.cpp )
+      src/backends/mixer_pulse.cpp )
 endif (PULSEAUDIO_FOUND)
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   apps/main.cpp 
-   apps/kmix.cpp 
-   apps/KMixApp.cpp
-   gui/kmixdockwidget.cpp 
-   gui/kmixprefdlg.cpp 
-   gui/viewbase.cpp 
-   gui/viewdockareapopup.cpp 
-   gui/viewsliders.cpp 
-   gui/mixdevicewidget.cpp 
-   gui/mdwmoveaction.cpp
-   gui/mdwslider.cpp 
-   gui/mdwenum.cpp 
-   gui/kmixerwidget.cpp 
-   gui/ksmallslider.cpp
-   gui/verticaltext.cpp
-   gui/volumeslider.cpp 
-   gui/kmixtoolbox.cpp 
-   gui/dialogaddview.cpp 
-   gui/dialogviewconfiguration.cpp 
-   gui/dialogselectmaster.cpp 
-   gui/guiprofile.cpp
-   gui/osdwidget.cpp
-   core/mixertoolbox.cpp
-   core/kmixdevicemanager.cpp
-   core/ControlPool.cpp
-   core/MasterControl.cpp
-   core/mixer.cpp
-   core/mixset.cpp
-   core/mixdevice.cpp
-   core/mixdevicecomposite.cpp
-   core/volume.cpp
+   src/main.cpp 
+   src/kmix.cpp 
+   src/KMixApp.cpp
+   src/gui/kmixdockwidget.cpp 
+   src/gui/kmixprefdlg.cpp 
+   src/gui/viewbase.cpp 
+   src/gui/viewdockareapopup.cpp 
+   src/gui/viewsliders.cpp 
+   src/gui/mixdevicewidget.cpp 
+   src/gui/mdwmoveaction.cpp
+   src/gui/mdwslider.cpp 
+   src/gui/mdwenum.cpp 
+   src/gui/kmixerwidget.cpp 
+   src/gui/ksmallslider.cpp
+   src/gui/verticaltext.cpp
+   src/gui/volumeslider.cpp 
+   src/gui/kmixtoolbox.cpp 
+   src/gui/dialogaddview.cpp 
+   src/gui/dialogviewconfiguration.cpp 
+   src/gui/dialogselectmaster.cpp 
+   src/gui/guiprofile.cpp
+   src/gui/osdwidget.cpp
+   src/core/mixertoolbox.cpp
+   src/core/kmixdevicemanager.cpp
+   src/core/ControlPool.cpp
+   src/core/MasterControl.cpp
+   src/core/mixer.cpp
+   src/core/mixset.cpp
+   src/core/mixdevice.cpp
+   src/core/mixdevicecomposite.cpp
+   src/core/volume.cpp
    )
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
@@ -135,15 +135,15 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 ########### next target ###############
 
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   apps/kmixctrl.cpp 
-   core/ControlPool.cpp
-   core/MasterControl.cpp
-   core/mixer.cpp 
-   core/mixset.cpp 
-   core/mixdevice.cpp 
-   core/volume.cpp 
-   core/mixertoolbox.cpp 
-   core/kmixdevicemanager.cpp
+   src/kmixctrl.cpp 
+   src/core/ControlPool.cpp
+   src/core/MasterControl.cpp
+   src/core/mixer.cpp 
+   src/core/mixset.cpp 
+   src/core/mixdevice.cpp 
+   src/core/volume.cpp 
+   src/core/mixertoolbox.cpp 
+   src/core/kmixdevicemanager.cpp
    )
 
 # gui/guiprofile.cpp
@@ -166,7 +166,7 @@ if (CANBERRA_FOUND)
 endif (CANBERRA_FOUND)
 
 ########### next target ###############
-add_subdirectory( plasma )
+add_subdirectory( src/plasma )
 
 install( TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -178,8 +178,8 @@ install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR
 install( FILES kmix_autostart.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-install( FILES dbus/org.kde.kmix.control.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
-install( FILES dbus/org.kde.kmix.mixer.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
-install( FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES src/dbus/org.kde.kmix.control.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES src/dbus/org.kde.kmix.mixer.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES src/dbus/org.kde.kmix.mixset.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 
 macro_display_feature_log()

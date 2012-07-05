@@ -20,7 +20,7 @@
  */
 
 #include "KMixApp.h"
-#include "apps/kmix.h"
+#include "kmix.h"
 #include <kdebug.h>
 
 

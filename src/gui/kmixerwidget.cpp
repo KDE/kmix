@@ -38,7 +38,7 @@
 #include <ktabwidget.h>
 
 // KMix
-#include "apps/kmix.h"
+#include "kmix.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
