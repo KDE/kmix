@@ -16,6 +16,7 @@ set(kmixd_SRCS
     ../core/volume.cpp
     ../backends/mixer_alsa9.cpp
     ../backends/mixer_mpris2.cpp
+    ../backends/mixer_pulse.cpp
 )
 
 qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.mixset.xml
@@ -27,4 +28,13 @@ qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.mixer.xml
 
 kde4_add_executable(kmixd ${kmixd_SRCS})
 
-target_link_libraries(kmixd ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${ASOUND_LIBRARY})
+target_link_libraries(kmixd
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTDBUS_LIBRARY}
+    ${KDE4_KDEUI_LIBS}
+    ${KDE4_SOLID_LIBS}
+    ${ASOUND_LIBRARY}
+    ${PULSEAUDIO_LIBRARY}
+    ${PULSEAUDIO_MAINLOOP_LIBRARY}
+    ${GLIB2_LIBRARIES}
+)
