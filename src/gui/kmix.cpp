@@ -65,7 +65,6 @@
 #include "gui/viewdockareapopup.h"
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
-#include "dbus/dbusmixsetwrapper.h"
 #include "gui/osdwidget.h"
 
 
@@ -111,14 +110,6 @@ KMixWindow::KMixWindow(bool invisible)
         show(); // Started visible
 
     connect( kapp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
-
-	// Creating a dbus interface
-	DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers" );
-	// these signals should be emitted right after the mixer device is added
-	connect( theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
-			wrapper, SIGNAL(mixersChanged()) );
-	connect( theKMixDeviceManager, SIGNAL(unplugged(QString)),
-			wrapper, SIGNAL(mixersChanged()) );
 }
 
 
