@@ -132,52 +132,13 @@ install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 target_link_libraries( kmix kdeinit_kmix )
 install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-########### next target ###############
-
-set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   src/kmixctrl.cpp 
-   src/core/ControlPool.cpp
-   src/core/MasterControl.cpp
-   src/core/mixer.cpp 
-   src/core/mixset.cpp 
-   src/core/mixdevice.cpp 
-   src/core/volume.cpp 
-   src/core/mixertoolbox.cpp 
-   src/core/kmixdevicemanager.cpp
-   )
-
-# gui/guiprofile.cpp
-
-
-kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
-
-target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY})
-
-if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
-endif (HAVE_LIBASOUND2)
-
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
-
-if (CANBERRA_FOUND)
-  target_link_libraries(kdeinit_kmixctrl ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
 
 ########### next target ###############
 add_subdirectory( src/plasma )
 
-install( TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
-
-target_link_libraries( kmixctrl kdeinit_kmixctrl )
-install( TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
-
 install( PROGRAMS kmix.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
-install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmix_autostart.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
-install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES src/dbus/org.kde.kmix.control.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 install( FILES src/dbus/org.kde.kmix.mixer.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 install( FILES src/dbus/org.kde.kmix.mixset.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
