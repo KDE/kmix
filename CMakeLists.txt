@@ -78,11 +78,11 @@ if (PULSEAUDIO_FOUND)
 endif (PULSEAUDIO_FOUND)
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   src/main.cpp 
-   src/kmix.cpp 
-   src/KMixApp.cpp
-   src/gui/kmixdockwidget.cpp 
-   src/gui/kmixprefdlg.cpp 
+   src/gui/main.cpp
+   src/gui/kmix.cpp
+   src/gui/KMixApp.cpp
+   src/gui/kmixdockwidget.cpp
+   src/gui/kmixprefdlg.cpp
    src/gui/viewbase.cpp 
    src/gui/viewdockareapopup.cpp 
    src/gui/viewsliders.cpp 

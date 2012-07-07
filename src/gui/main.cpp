@@ -43,6 +43,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    aboutData.addAuthor(ki18n("Colin Guthrie")     , ki18n("PulseAudio support"), "colin@mageia.org");
    aboutData.addAuthor(ki18n("Helio Chissini de Castro"), ki18n("ALSA 0.9x port"), "helio@kde.org" );
    aboutData.addAuthor(ki18n("Brian Hanson")      , ki18n("Solaris support"), "bhanson@hotmail.com");
+   aboutData.addAuthor(ki18n("Trever Fischer")      , ki18n("Major refactoring"), "tdfischer@fedoraproject.org");
 // The HP/UX port is not maintained anymore, and no official part of KMix anymore
 // aboutData.addAuthor(ki18n("Helge Deller")      , ki18n("HP/UX port"), "deller@gmx.de");
 // The initial support was for ALSA 0.5. The new code is not based on it IIRC.
