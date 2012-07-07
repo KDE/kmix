@@ -80,24 +80,6 @@ void DBusMixSetWrapper::setPreferredMaster(const QString &mixer, const QString &
     Mixer::setGlobalMaster(mixer, control, true);
 }
 
-void DBusMixSetWrapper::devicePlugged( const char* driverName, const QString& udi, QString& dev )
-{
-	Q_UNUSED( driverName )
-	Q_UNUSED( udi )
-	Q_UNUSED( dev )
-	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
-			"org.kde.KMix.MixSet", "mixersChanged" );
-	QDBusConnection::sessionBus().send( signal );
-}
-
-void DBusMixSetWrapper::deviceUnplugged( const QString& udi )
-{
-	Q_UNUSED( udi )
-	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
-			"org.kde.KMix.MixSet", "mixersChanged" );
-	QDBusConnection::sessionBus().send( signal );
-}
-
 /*
 void DBusMixSetWrapper::slotPreferredMasterChanged()
 {

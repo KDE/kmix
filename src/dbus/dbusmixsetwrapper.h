@@ -45,11 +45,10 @@ class DBusMixSetWrapper : public QObject
         void setCurrentMaster(const QString &mixer, const QString &control);
         void setPreferredMaster(const QString &mixer, const QString &control);
 
-		void devicePlugged( const char* driverName, const QString& udi, QString& dev );
-		void deviceUnplugged( const QString& udi );
-
 //        void slotCurrentMasterChanged();
 //        void slotPreferredMasterChanged();
+    signals:
+        void mixersChanged();
 	private:
 		QString m_dbusPath;
         

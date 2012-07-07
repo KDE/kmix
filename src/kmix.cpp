@@ -116,9 +116,9 @@ KMixWindow::KMixWindow(bool invisible)
 	DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers" );
 	// these signals should be emitted right after the mixer device is added
 	connect( theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
-			wrapper, SLOT(devicePlugged(const char*,QString,QString&)) );
+			wrapper, SIGNAL(mixersChanged()) );
 	connect( theKMixDeviceManager, SIGNAL(unplugged(QString)),
-			wrapper, SLOT(deviceUnplugged(QString)) );
+			wrapper, SIGNAL(mixersChanged()) );
 }
 
 
