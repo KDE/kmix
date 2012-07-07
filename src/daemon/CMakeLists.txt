@@ -1,3 +1,4 @@
+
 set(kmixd_backend_SRCS
    ../backends/mixer_backend.cpp
    ../backends/mixer_mpris2.cpp
@@ -53,3 +54,10 @@ endif (HAVE_LIBASOUND2)
 if (PULSEAUDIO_FOUND)
     target_link_libraries(kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PULSEAUDIO_FOUND)
+
+install( TARGETS kmixd ${INSTALL_TARGETS_DEFAULT_ARGS} )
+
+configure_file(org.kde.kmix.service.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.kmix.service)
+
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.kmix.service DESTINATION ${DBUS_SERVICES_INSTALL_DIR} )
