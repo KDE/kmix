@@ -20,9 +20,11 @@
 
 #include "KMixDApp.h"
 #include "core/kmixdevicemanager.h"
+#include "core/mixertoolbox.h"
 #include "dbus/dbusmixsetwrapper.h"
 
 #include <QtDBus/QDBusConnection>
+#include <QtCore/QDebug>
 
 KMixDApp::KMixDApp(int &argc, char **argv)
     : QCoreApplication(argc, argv)
@@ -35,8 +37,15 @@ KMixDApp::~KMixDApp()
 
 int KMixDApp::start()
 {
-    DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers");
     if (QDBusConnection::sessionBus().registerService("org.kde.KMix")) {
+        MixerToolBox::instance()->initMixer(false, QList<QString>());
+        KMixDeviceManager *devs = KMixDeviceManager::instance();
+        devs->initHotplug();
+        DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers");
+        connect( devs, SIGNAL(plugged(const char*,QString,QString&)),
+                wrapper, SIGNAL(mixersChanged()) );
+        connect( devs, SIGNAL(unplugged(QString)),
+                wrapper, SIGNAL(mixersChanged()) );
         return exec();
     }
     return 1;
