@@ -73,18 +73,18 @@ MixerToolBox* MixerToolBox::instance()
  * @par backendList Activated backends (typically a value from the kmixrc or a default)
  * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
  */
-void MixerToolBox::initMixer(bool multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+void MixerToolBox::initMixer(bool multiDriverMode, QList<QString> backendList)
 {
-    initMixerInternal(multiDriverMode, backendList, ref_hwInfoString);
+    initMixerInternal(multiDriverMode, backendList);
     if ( Mixer::mixers().isEmpty() )
-      initMixerInternal(multiDriverMode, QList<QString>(), ref_hwInfoString);  // try again without filter
+      initMixerInternal(multiDriverMode, QList<QString>());  // try again without filter
 }
 
 
 /**
  * 
  */
-void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backendList)
 {  
    bool useBackendFilter = ( ! backendList.isEmpty() );
 
@@ -94,16 +94,10 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
    int driverWithMixer = -1;
    bool multipleDriversActive = false;
 
-   QString driverInfo = "";
-   QString driverInfoUsed = "";
-
    for( int drv1=0; drv1<drvNum; drv1++ )
    {
       QString driverName = Mixer::driverName(drv1);
-      if ( driverInfo.length() > 0 ) {
-         driverInfo += " + ";
-      }
-      driverInfo += driverName;
+      m_supportedDrivers << driverName;
    }
    /* Run a loop over all drivers. The loop will terminate after the first driver which
       has mixers. And here is the reason:
@@ -160,9 +154,7 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
             if ( !drvInfoAppended )
             {
                drvInfoAppended = true;
-               if (  Mixer::mixers().count() > 1)
-                  driverInfoUsed += " + ";
-               driverInfoUsed += driverName;
+               m_usedDrivers << driverName;
             }
 
             // Check whether there are mixers in different drivers, so that the user can be warned
@@ -216,24 +208,21 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
    {
       // If there was no mixer found, we assume, that hotplugging will take place
        // on the preferred driver (this is always the first in the backend list).
-      driverInfoUsed = Mixer::driverName(0);
+      m_usedDrivers << Mixer::driverName(0);
    }
-
-   ref_hwInfoString = i18n("Sound drivers supported:");
-   ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
 
    if ( multipleDriversActive )
    {
       // this will only be possible by hacking the config-file, as it will not be officially supported
-      ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
+      kDebug(67100) << "Experimental multiple-Driver mode activated";
       QString allDrivermatch("*");
-      KMixDeviceManager::instance()->setHotpluggingBackends(allDrivermatch);
+      KMixDeviceManager::instance()->setHotpluggingBackends(QStringList() << allDrivermatch);
    }
    else {
-       KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
+       KMixDeviceManager::instance()->setHotpluggingBackends(m_usedDrivers);
    }
 
-   kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count();
+   kDebug(67100) << "Used drivers:" << m_usedDrivers << "Supported drivers:" << m_supportedDrivers << endl << "Total number of detected Mixers: " << Mixer::mixers().count();
    //kDebug(67100) << "OUT MixerToolBox::initMixer()";
 
 }
@@ -313,6 +302,16 @@ void MixerToolBox::deinitMixer()
    }
    Mixer::mixers().clear();
    // kDebug(67100) << "OUT MixerToolBox::deinitMixer()";
+}
+
+QStringList MixerToolBox::usedDrivers() const
+{
+    return m_usedDrivers;
+}
+
+QStringList MixerToolBox::supportedDrivers() const
+{
+    return m_supportedDrivers;
 }
 
 

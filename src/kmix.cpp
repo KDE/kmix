@@ -89,7 +89,7 @@ KMixWindow::KMixWindow(bool invisible)
     KGlobal::locale()->insertCatalog( QLatin1String( "kmix-controls" ));
     initWidgets();
     initPrefDlg();
-    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString);
+    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter);
     KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
     initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
@@ -1196,7 +1196,10 @@ void KMixWindow::toggleMenuBar()
 
 void KMixWindow::slotHWInfo()
 {
-    KMessageBox::information( 0, m_hwInfoString, i18n("Mixer Hardware Information") );
+    QString hwInfoString = i18n("Supported drivers: %1\nUsed drivers: %2")
+        .arg(MixerToolBox::instance()->supportedDrivers().join(", "))
+        .arg(MixerToolBox::instance()->usedDrivers().join(", "));
+    KMessageBox::information( 0, hwInfoString, i18n("Mixer Hardware Information") );
 }
 
 void KMixWindow::slotKdeAudioSetupExec()

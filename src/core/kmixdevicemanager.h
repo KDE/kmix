@@ -22,6 +22,7 @@
 #define kmixdevicemanager_h
 
 #include <QObject>
+#include <QtCore/QStringList>
 
 class KMixDeviceManager : public QObject
 {
@@ -30,7 +31,7 @@ class KMixDeviceManager : public QObject
     public:
         static KMixDeviceManager* instance();
         void initHotplug();
-        void setHotpluggingBackends(const QString& backendName) { _hotpluggingBackend = backendName; } ;
+        void setHotpluggingBackends(const QStringList& backends) { _hotpluggingBackends = backends; } ;
         QString getUDI_ALSA(int num);
         QString getUDI_OSS(const QString& devname);
 
@@ -41,7 +42,7 @@ class KMixDeviceManager : public QObject
     private:
         KMixDeviceManager();
         ~KMixDeviceManager();
-        QString _hotpluggingBackend;
+        QStringList _hotpluggingBackends;
         
     private slots:
         void pluggedSlot(const QString&);

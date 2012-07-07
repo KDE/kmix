@@ -129,13 +129,13 @@ void KMixDeviceManager::pluggedSlot(const QString& udi) {
        QRegExp devExpr( QLatin1String( "^\\D+(\\d+)$" ));
         switch (audiohw->driver()) {
            case Solid::AudioInterface::Alsa:
-               if ( _hotpluggingBackend == "ALSA" || _hotpluggingBackend == "*" ) {
+               if ( _hotpluggingBackends.contains("ALSA") || _hotpluggingBackends.contains("*") ) {
                     dev = audiohw->driverHandle().toList().first().toString();
                     emit plugged("ALSA", udi, dev);
                }
                break;
            case Solid::AudioInterface::OpenSoundSystem:
-                if ( _hotpluggingBackend == "OSS" || _hotpluggingBackend == "*" ) {
+                if ( _hotpluggingBackends.contains("OSS") || _hotpluggingBackends.contains("*") ) {
                     dev = audiohw->driverHandle().toString();
                     if ( devExpr.indexIn(dev) > -1 ) {
                         dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
