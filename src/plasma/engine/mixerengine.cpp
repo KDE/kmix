@@ -27,7 +27,7 @@
 #include <KIcon>
 
 
-const QString MixerEngine::KMIX_DBUS_SERVICE = "org.kde.kmix";
+const QString MixerEngine::KMIX_DBUS_SERVICE = "org.kde.kmixd";
 const QString MixerEngine::KMIX_DBUS_PATH = "/Mixers";
 
 MixerEngine::MixerEngine(QObject *parent, const QVariantList &args)

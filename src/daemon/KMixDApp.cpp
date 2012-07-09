@@ -37,7 +37,7 @@ KMixDApp::~KMixDApp()
 
 int KMixDApp::start()
 {
-    if (QDBusConnection::sessionBus().registerService("org.kde.kmix")) {
+    if (QDBusConnection::sessionBus().registerService("org.kde.kmixd")) {
         MixerToolBox::instance()->initMixer();
         KMixDeviceManager *devs = KMixDeviceManager::instance();
         devs->initHotplug();
