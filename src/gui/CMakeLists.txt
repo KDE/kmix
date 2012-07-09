@@ -39,12 +39,12 @@ set(kmix_KDEINIT_SRCS
    ../backends/mixer_pulse.cpp
 )
 
-qt4_add_dbus_adaptor( kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.control.xml
-	../dbus/dbuscontrolwrapper.h DBusControlWrapper )
-qt4_add_dbus_adaptor( kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixer.xml
-	../dbus/dbusmixerwrapper.h DBusMixerWrapper )
-qt4_add_dbus_adaptor( kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixset.xml
-	../dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixset.xml
+	mixset_interface)
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixer.xml
+	mixer_interface)
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.control.xml
+	control_interface)
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
