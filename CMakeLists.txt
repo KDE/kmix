@@ -60,7 +60,7 @@ qt4_add_dbus_adaptor( kmix_adaptor_SRCS src/dbus/org.kde.kmix.mixer.xml
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS src/dbus/org.kde.kmix.mixset.xml
 	src/dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
 
-add_subdirectory( src/gui )
+add_subdirectory( src/gui2 )
 
 ########### next target ###############
 add_subdirectory( src/plasma )

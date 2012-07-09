@@ -1,0 +1,26 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kmix" version="11">
+
+<ActionProperties>
+    <Action name="hide_kmixwindow" icon="dialog-close"/>
+<!--    <Action name="options_show_menubar" icon="window"/> -->
+</ActionProperties>
+
+<MenuBar>
+ <Menu name="file"><text>&amp;File</text>
+  <Action name="file_new_tab"/>
+  <Action name="file_close_tab"/>
+  <Action name="hide_kmixwindow"/>
+<!--  <Action name="options_show_menubar"/> -->
+ </Menu>
+ <Menu name="settings">
+     <Action name="toggle_channels_currentview" append="save_merge"/>
+     <Action name="select_master" append="save_merge"/>
+     <Action name="launch_kdesoundsetup" append="save_merge"/>     
+ </Menu>
+ <Menu name="help" append="about_merge"><text>&amp;Help</text>
+  <Action name="hwinfo"/>
+ </Menu>
+</MenuBar>
+
+</kpartgui>
