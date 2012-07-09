@@ -24,7 +24,6 @@
 //#define MDWSWITCH_H
 //
 //#include <QWidget>
-//#include "core/volume.h"
 //#include <qpixmap.h>
 //
 //class QBoxLayout;

@@ -24,7 +24,6 @@
 #define MDWENUM_H
 
 #include <QWidget>
-#include "core/volume.h"
 
 // KMix
 class MixDevice;

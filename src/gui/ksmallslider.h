@@ -26,7 +26,6 @@
 #include <qabstractslider.h>
 #include <qpixmap.h>
 
-#include "core/volume.h"
 #include "volumesliderextradata.h"
 
 class KSmallSlider : public QAbstractSlider

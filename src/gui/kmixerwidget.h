@@ -27,8 +27,6 @@
 #include <QWidget>
 class QString;
 
-
-#include "core/mixer.h"
 #include "gui/mixdevicewidget.h"
 
 // QT

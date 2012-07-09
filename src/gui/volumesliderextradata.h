@@ -24,6 +24,7 @@
 #define VOLUMESLIDEREXTRADATA_H
 
 #include <QAbstractSlider>
+
 #include "core/volume.h"
 
 class VolumeSliderExtraData

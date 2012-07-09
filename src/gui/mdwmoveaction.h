@@ -23,7 +23,11 @@
 
 #include <KAction>
 
-#include "core/mixdevice.h"
+#include <tr1/memory>
+
+using namespace std::tr1;
+
+class MixDevice;
 
 class MDWMoveAction : public KAction
 {

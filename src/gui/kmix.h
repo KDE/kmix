@@ -46,7 +46,6 @@ class KMixerWidget;
 class KMixWindow;
 class Mixer;
 class ViewDockAreaPopup;
-#include "core/mixer.h"
 
 class OSDWidget;
 

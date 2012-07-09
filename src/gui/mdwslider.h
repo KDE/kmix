@@ -44,7 +44,6 @@ class VerticalText;
 class ViewBase;
 
 #include "gui/mixdevicewidget.h"
-#include "core/volume.h"
 
 
 class MDWSlider : public MixDeviceWidget

@@ -57,6 +57,7 @@
 #include "core/MasterControl.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
+#include "core/mixer.h"
 #include "gui/kmixerwidget.h"
 #include "gui/kmixprefdlg.h"
 #include "gui/kmixdockwidget.h"

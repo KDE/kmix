@@ -26,18 +26,18 @@
 #define MIXDEVICEWIDGET_H
 
 #include <QWidget>
-#include "core/mixdevice.h"
-#include "core/volume.h"
 #include <qpixmap.h>
+#include <tr1/memory>
 
+using namespace std::tr1;
 
 class KAction;
 class KActionCollection;
 class KShortcutsDialog;
 
-class MixDevice;
 class ProfControl;
 class ViewBase;
+class MixDevice;
 
 class MixDeviceWidget
  : public QWidget

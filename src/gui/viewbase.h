@@ -30,13 +30,13 @@
 #include <KActionCollection>
 class KMenu;
 
+#include "core/mixset.h"
+
 class Mixer;
 class MixDevice;
 
 // KMix
 class GUIProfile;
-#include "core/mixdevice.h"
-#include "core/mixset.h"
 
 /**
   * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
