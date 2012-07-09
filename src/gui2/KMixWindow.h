@@ -46,11 +46,15 @@ KMixWindow : public KXmlGuiWindow
 {
    Q_OBJECT
 
-  public:
-   KMixWindow(bool invisible);
-   ~KMixWindow();
+public:
+    KMixWindow(bool invisible);
+    ~KMixWindow();
 
-    private:
+private slots:
+    void launchPhononConfig();
+
+private:
+    void initActions();
     org::kde::KMix::MixSet *m_mixers;
     KMixDockWidget *m_dockWidget;
 };

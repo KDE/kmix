@@ -27,6 +27,12 @@
 
 
 // include files for KDE
+#include <KDE/KActionCollection>
+#include <KDE/KProcess>
+#include <KDE/KXMLGUIFactory>
+#include <KDE/KAction>
+#include <KDE/KLocale>
+#include <KDE/KApplication>
 
 // KMix
 #include "core/version.h"
@@ -45,12 +51,30 @@ KMixWindow::KMixWindow(bool invisible)
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
     m_mixers = new org::kde::KMix::MixSet(KMIX_DBUS_SERVICE, KMIX_DBUS_PATH, QDBusConnection::sessionBus(), this);
+    initActions();
+    createGUI( QLatin1String( "kmixui.rc" ) );
+    show();
 }
 
 KMixWindow::~KMixWindow()
 {
 }
 
+void KMixWindow::initActions()
+{
+    KStandardAction::quit(kapp, SLOT(quit()), actionCollection());
+    KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
+    KAction* action = actionCollection()->addAction( "launch_kdesoundsetup" );
+    action->setText( i18n( "Audio Setup" ) );
+    connect(action, SIGNAL(triggered(bool)), SLOT(launchPhononConfig()));
+}
+
+void KMixWindow::launchPhononConfig()
+{
+    QStringList args;
+    args << "kcmshell4" << "kcm_phonon";
+    KProcess::startDetached(args);
+}
 
 #include "KMixWindow.moc"
