@@ -110,6 +110,12 @@ MixDevice::MixDevice(Mixer* mixer, const QString& id, const QString& name, const
     init(mixer, id, name, iconName, moveDestinationMixSet);
 }
 
+MixDevice::~MixDevice()
+{
+    _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
+    delete _dbusControlWrapper;
+}
+
 void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet)
 {
     _artificial = false;
@@ -177,12 +183,6 @@ void MixDevice::addEnums(QList<QString*>& ref_enumList)
             _enumValues.append(*(ref_enumList.at(i)));
         }
     }
-}
-
-MixDevice::~MixDevice()
-{
-    _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
-    delete _dbusControlWrapper;
 }
 
 Volume& MixDevice::playbackVolume()
