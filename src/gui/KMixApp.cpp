@@ -23,6 +23,10 @@
 #include "kmix.h"
 #include <kdebug.h>
 
+#include "core/ControlPool.h"
+#include "core/kmixdevicemanager.h"
+#include "core/mixertoolbox.h"
+
 
 bool KMixApp::_keepVisibility = false;
 
@@ -41,6 +45,9 @@ KMixApp::KMixApp()
 
 KMixApp::~KMixApp()
 {
+    MixerToolBox::cleanup();
+    ControlPool::cleanup();
+    KMixDeviceManager::cleanup();
    delete m_kmix;
 }
 

@@ -36,6 +36,7 @@ class ControlPool
 
 public:
     static ControlPool* instance();
+    static void cleanup();
     shared_ptr<MixDevice> add(const QString& key, MixDevice* mixDevice);
     shared_ptr<MixDevice> get(const QString& key);
 

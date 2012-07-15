@@ -57,6 +57,12 @@ MixerToolBox* MixerToolBox::instance()
     return s_instance;
 }
 
+void MixerToolBox::cleanup()
+{
+    delete s_instance;
+    s_instance = NULL;
+}
+
 
 /**
  * Scan for Mixers in the System. This is the method that implicitely fills the

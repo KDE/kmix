@@ -30,6 +30,7 @@ class KMixDeviceManager : public QObject
 
 public:
     static KMixDeviceManager* instance();
+    static void cleanup();
     void initHotplug();
     void setHotpluggingBackends(const QStringList& backends) { m_hotpluggingBackends = backends; }
     QString getUDI_ALSA(int num);

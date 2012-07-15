@@ -42,6 +42,7 @@ class MixerToolBox : public QObject
 
 public:
     static MixerToolBox* instance();
+    static void cleanup();
     void initMixer(bool multiDriverMode = false, QList<QString> backendList = QList<QString>());
     void initMixerInternal(bool, QList<QString> backendList);
     QStringList supportedDrivers() const;

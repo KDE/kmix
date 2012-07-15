@@ -44,6 +44,12 @@ ControlPool* ControlPool::instance()
     return ControlPool::m_instance;
 }
 
+void ControlPool::cleanup()
+{
+    delete m_instance;
+    m_instance = NULL;
+}
+
 /**
  * Adds a Control to the pool, and returns it wrapped in QSharedPointer.
  * if the Control was already in the Pool, the existing Control is returned

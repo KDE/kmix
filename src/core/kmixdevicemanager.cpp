@@ -49,6 +49,12 @@ KMixDeviceManager* KMixDeviceManager::instance()
     return s_KMixDeviceManager;
 }
 
+void KMixDeviceManager::cleanup()
+{
+    delete s_KMixDeviceManager;
+    s_KMixDeviceManager = NULL;
+}
+
 void KMixDeviceManager::initHotplug()
 {
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(pluggedSlot(QString)));

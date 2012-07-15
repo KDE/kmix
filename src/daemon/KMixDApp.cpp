@@ -19,6 +19,7 @@
  */
 
 #include "KMixDApp.h"
+#include "core/ControlPool.h"
 #include "core/kmixdevicemanager.h"
 #include "core/mixertoolbox.h"
 #include "dbus/dbusmixsetwrapper.h"
@@ -37,6 +38,8 @@ KMixDApp::~KMixDApp()
 
 int KMixDApp::start()
 {
+    int ret = 1;
+
     if (QDBusConnection::sessionBus().registerService("org.kde.kmixd")) {
         MixerToolBox::instance()->initMixer();
         KMixDeviceManager *devs = KMixDeviceManager::instance();
@@ -46,7 +49,11 @@ int KMixDApp::start()
                 wrapper, SIGNAL(mixersChanged()) );
         connect( devs, SIGNAL(unplugged(QString)),
                 wrapper, SIGNAL(mixersChanged()) );
-        return exec();
+        ret = exec();
+
+        MixerToolBox::cleanup();
+        ControlPool::cleanup();
+        KMixDeviceManager::cleanup();
     }
-    return 1;
+    return ret;
 }
