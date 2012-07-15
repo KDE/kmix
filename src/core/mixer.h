@@ -132,7 +132,7 @@ public:
     /// the user, but can be used for referencing configuration items and such.
 
     void setCardInstance(int cardInstance);
-    int getCardInstance() const { return _cardInstance; }
+    int getCardInstance() const { return m_cardInstance; }
 
     //void setID(QString& ref_id);
 
@@ -185,9 +185,9 @@ public:
 
     virtual bool moveStream(const QString id, const QString& destId);
 
-    virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); };
-    virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); };
-    virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); };
+    virtual int mediaPlay(QString id) { return m_mixerBackend->mediaPlay(id); };
+    virtual int mediaPrev(QString id) { return m_mixerBackend->mediaPrev(id); };
+    virtual int mediaNext(QString id) { return m_mixerBackend->mediaNext(id); };
 
     void commitVolumeChange(shared_ptr<MixDevice> md);
 
@@ -209,12 +209,12 @@ private:
     void recreateId();
     void increaseOrDecreaseVolume(const QString& mixdeviceID, bool decrease);
 
-    Mixer_Backend *_mixerBackend;
-    QString _id;
-    QString _masterDevicePK;
-    int _cardInstance;
-    static MasterControl _globalMasterCurrent;
-    static MasterControl _globalMasterPreferred;
+    Mixer_Backend *m_mixerBackend;
+    QString m_id;
+    QString m_masterDevicePK;
+    int m_cardInstance;
+    static MasterControl m_globalMasterCurrent;
+    static MasterControl m_globalMasterPreferred;
 
     bool m_dynamic;
 

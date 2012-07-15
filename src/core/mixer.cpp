@@ -36,8 +36,8 @@
  */
 
 QList<Mixer *> Mixer::s_mixers;
-MasterControl Mixer::_globalMasterCurrent;
-MasterControl Mixer::_globalMasterPreferred;
+MasterControl Mixer::m_globalMasterCurrent;
+MasterControl Mixer::m_globalMasterPreferred;
 float Mixer::VOLUME_STEP_DIVISOR = 20;
 float Mixer::VOLUME_PAGESTEP_DIVISOR = 10;
 bool Mixer::m_beepOnVolumeChange = false;
@@ -64,11 +64,11 @@ QList<Mixer *>& Mixer::mixers()
 
 Mixer::Mixer(QString& ref_driverName, int device)
     : m_balance(0)
-    , _mixerBackend(0L)
+    , m_mixerBackend(0L)
     , m_dynamic(false)
 {
-    _cardInstance = 0;
-    _mixerBackend = 0;
+    m_cardInstance = 0;
+    m_mixerBackend = 0;
     int driverCount = numDrivers();
     for (int driver = 0; driver < driverCount; driver++) {
         QString driverName = Mixer::driverName(driver);
@@ -76,7 +76,7 @@ Mixer::Mixer(QString& ref_driverName, int device)
             // driver found => retrieve Mixer factory for that driver
             getMixerFunc *f = g_mixerFactories[driver].getMixer;
             if (f != 0) {
-                _mixerBackend = f(this, device);
+                m_mixerBackend = f(this, device);
                 readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
             }
             break;
@@ -89,7 +89,7 @@ Mixer::~Mixer()
 {
     // Close the mixer. This might also free memory, depending on the called backend method
     close();
-    delete _mixerBackend;
+    delete m_mixerBackend;
 }
 
 
@@ -117,7 +117,7 @@ Mixer* Mixer::findMixer(const QString& mixer_id)
  */
 void Mixer::setCardInstance(int cardInstance)
 {
-    _cardInstance = cardInstance;
+    m_cardInstance = cardInstance;
     recreateId();
 }
 
@@ -134,26 +134,26 @@ void Mixer::recreateId()
     QString primaryKeyOfMixer = QString("%1::%2:%3")
             .arg(getDriverName())
             .arg(mixerName)
-            .arg(_cardInstance);
+            .arg(m_cardInstance);
     // The following 3 replaces are for not messing up the config file
     primaryKeyOfMixer.replace(']','_');
     primaryKeyOfMixer.replace('[','_'); // not strictly necessary, but lets play safe
     primaryKeyOfMixer.replace(' ','_');
     primaryKeyOfMixer.replace('=','_');
-    _id = primaryKeyOfMixer;
+    m_id = primaryKeyOfMixer;
 }
 
 const QString Mixer::dbusPath()
 {
-    return "/Mixers/" + QString::number(_mixerBackend->m_devnum);
+    return "/Mixers/" + QString::number(m_mixerBackend->m_devnum);
 }
 
 void Mixer::volumeSave(KConfig *config)
 {
-    _mixerBackend->readSetFromHW();
+    m_mixerBackend->readSetFromHW();
     QString grp("Mixer");
     grp.append(id());
-    _mixerBackend->m_mixDevices.write(config, grp);
+    m_mixerBackend->m_mixDevices.write(config, grp);
 }
 
 void Mixer::volumeLoad(KConfig *config)
@@ -167,21 +167,21 @@ void Mixer::volumeLoad(KConfig *config)
     }
 
     // else restore the volumes
-    if (!_mixerBackend->m_mixDevices.read(config, grp)) {
+    if (!m_mixerBackend->m_mixDevices.read(config, grp)) {
         // Some mixer backends don't support reading the volume into config
         // files, so bail out early if that's the case.
         return;
     }
 
     // set new settings
-    for (int i = 0; i < _mixerBackend->m_mixDevices.count(); i++) {
-        shared_ptr<MixDevice> md = _mixerBackend->m_mixDevices[i];
+    for (int i = 0; i < m_mixerBackend->m_mixDevices.count(); i++) {
+        shared_ptr<MixDevice> md = m_mixerBackend->m_mixDevices[i];
         if (md.get() == 0)
             continue;
 
-        _mixerBackend->writeVolumeToHW(md->id(), md);
+        m_mixerBackend->writeVolumeToHW(md->id(), md);
         if (md->isEnum())
-            _mixerBackend->setEnumIdHW(md->id(), md->enumId());
+            m_mixerBackend->setEnumIdHW(md->id(), md->enumId());
     }
 }
 
@@ -193,10 +193,10 @@ void Mixer::volumeLoad(KConfig *config)
  * @return 0, if OK. An Mixer::ERR_ error code otherwise
  */
 bool Mixer::openIfValid() {
-    bool ok = _mixerBackend->openIfValid();
+    bool ok = m_mixerBackend->openIfValid();
     if (ok) {
         recreateId(); // TODO NOW : We actually cannot postpone it to here, due to ControlPool. Move to Mixer !!!. Actually recreateId() is supposed to be called later again, via setCardInstance()
-        shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
+        shared_ptr<MixDevice> recommendedMaster = m_mixerBackend->recommendedMaster();
         if (recommendedMaster.get() != 0) {
             QString recommendedMasterStr = recommendedMaster->id();
             setLocalMasterMD(recommendedMasterStr);
@@ -207,8 +207,8 @@ bool Mixer::openIfValid() {
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
-        connect(_mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()));
-        connect(_mixerBackend, SIGNAL(controlsReconfigured(QString)), SIGNAL(controlsReconfigured(QString)));
+        connect(m_mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()));
+        connect(m_mixerBackend, SIGNAL(controlsReconfigured(QString)), SIGNAL(controlsReconfigured(QString)));
 
         new DBusMixerWrapper(this, dbusPath());
     }
@@ -224,25 +224,25 @@ bool Mixer::openIfValid() {
  */
 int Mixer::close()
 {
-    return _mixerBackend->close();
+    return m_mixerBackend->close();
 }
 
 
 /* ------- WRAPPER METHODS. START ------------------------------ */
 unsigned int Mixer::size() const
 {
-    return _mixerBackend->m_mixDevices.count();
+    return m_mixerBackend->m_mixDevices.count();
 }
 
 shared_ptr<MixDevice> Mixer::operator[](int num)
 {
-    shared_ptr<MixDevice> md =  _mixerBackend->m_mixDevices.at(num);
+    shared_ptr<MixDevice> md =  m_mixerBackend->m_mixDevices.at(num);
     return md;
 }
 
 MixSet& Mixer::getMixSet()
 {
-    return _mixerBackend->m_mixDevices;
+    return m_mixerBackend->m_mixDevices;
 }
 
 
@@ -251,27 +251,27 @@ MixSet& Mixer::getMixSet()
  */
 QString Mixer::getDriverName()
 {
-    QString driverName = _mixerBackend->getDriverName();
+    QString driverName = m_mixerBackend->getDriverName();
     return driverName;
 }
 
 bool Mixer::isOpen() const
 {
-    if (_mixerBackend == 0)
+    if (m_mixerBackend == 0)
         return false;
     else
-        return _mixerBackend->isOpen();
+        return m_mixerBackend->isOpen();
 }
 
 void Mixer::readSetFromHWforceUpdate() const
 {
-    _mixerBackend->readSetFromHWforceUpdate();
+    m_mixerBackend->readSetFromHWforceUpdate();
 }
 
   /// Returns translated WhatsThis messages for a control.Translates from 
 QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
 {
-    return _mixerBackend->translateKernelToWhatsthis(kernelName);
+    return m_mixerBackend->translateKernelToWhatsthis(kernelName);
 }
 
 /* ------- WRAPPER METHODS. END -------------------------------- */
@@ -305,7 +305,7 @@ void Mixer::setBalance(int balance)
     Volume& volC = master->captureVolume();
     setBalanceInternal(volC);
 
-    _mixerBackend->writeVolumeToHW(master->id(), master);
+    m_mixerBackend->writeVolumeToHW(master->id(), master);
     emit newBalance(volP);
 }
 
@@ -328,18 +328,18 @@ void Mixer::setBalanceInternal(Volume& vol)
 // should return a name suitable for a human user to read (on a label, ...)
 QString Mixer::readableName()
 {
-    if (_mixerBackend->m_mixerName.endsWith(":0")) {
-        QString finalName = _mixerBackend->m_mixerName.left(_mixerBackend->m_mixerName.length() - 2);
+    if (m_mixerBackend->m_mixerName.endsWith(":0")) {
+        QString finalName = m_mixerBackend->m_mixerName.left(m_mixerBackend->m_mixerName.length() - 2);
         finalName = finalName.append(' ').arg(getCardInstance());
         return finalName;
     } else
-        return _mixerBackend->m_mixerName;
+        return m_mixerBackend->m_mixerName;
 }
 
 
 QString Mixer::getBaseName()
 {
-    return _mixerBackend->m_mixerName;
+    return m_mixerBackend->m_mixerName;
 }
 
 /**
@@ -364,12 +364,12 @@ void Mixer::setID(QString& ref_id)
 
 QString& Mixer::id()
 {
-    return _id;
+    return m_id;
 }
 
 QString& Mixer::udi()
 {
-    return _mixerBackend->udi();
+    return m_mixerBackend->udi();
 }
 
 /**
@@ -389,16 +389,16 @@ QString& Mixer::udi()
 void Mixer::setGlobalMaster(QString ref_card, QString ref_control, bool preferred)
 {
     kDebug(67100) << "ref_card =" << ref_card << ", ref_control =" << ref_control << ", preferred =" << preferred;
-    _globalMasterCurrent.set(ref_card, ref_control);
+    m_globalMasterCurrent.set(ref_card, ref_control);
     if (preferred)
-        _globalMasterPreferred.set(ref_card, ref_control);
+        m_globalMasterPreferred.set(ref_card, ref_control);
     kDebug(67100) << "Mixer::setGlobalMaster() card =" <<ref_card<< " control =" << ref_control;
 }
 
 Mixer* Mixer::getGlobalMasterMixerNoFalback()
 {
     foreach (Mixer* mixer, Mixer::mixers()) {
-        if (mixer != 0 && mixer->id() == _globalMasterCurrent.getCard())
+        if (mixer != 0 && mixer->id() == m_globalMasterCurrent.getCard())
             return mixer;
     }
     return 0;
@@ -420,12 +420,12 @@ Mixer* Mixer::getGlobalMasterMixer()
  */
 MasterControl& Mixer::getGlobalMasterPreferred()
 {
-    if ( _globalMasterPreferred.isValid()) {
+    if ( m_globalMasterPreferred.isValid()) {
         kDebug(67100) << "Returning preferred master";
-        return _globalMasterPreferred;
+        return m_globalMasterPreferred;
     } else {
         kDebug(67100) << "Returning current master";
-        return _globalMasterCurrent;
+        return m_globalMasterCurrent;
     }
 }
 
@@ -445,10 +445,10 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
     if (mixer == 0)
         return mdRet;
 
-    foreach (shared_ptr<MixDevice> md, mixer->_mixerBackend->m_mixDevices) {
+    foreach (shared_ptr<MixDevice> md, mixer->m_mixerBackend->m_mixDevices) {
         if (md.get() == 0)
             continue; // invalid
-        if (md->id() == _globalMasterCurrent.getControl()) {
+        if (md->id() == m_globalMasterCurrent.getControl()) {
             mdRet = md;
             break; // found
         }
@@ -462,12 +462,12 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 
 shared_ptr<MixDevice> Mixer::getLocalMasterMD()
 {
-    return find(_masterDevicePK);
+    return find(m_masterDevicePK);
 }
 
 void Mixer::setLocalMasterMD(QString &devPK)
 {
-    _masterDevicePK = devPK;
+    m_masterDevicePK = devPK;
 }
 
 
@@ -475,7 +475,7 @@ shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID)
 {
     shared_ptr<MixDevice> mdRet;
 
-    foreach (shared_ptr<MixDevice> md, _mixerBackend->m_mixDevices) {
+    foreach (shared_ptr<MixDevice> md, m_mixerBackend->m_mixDevices) {
         if (md.get() == 0)
             continue; // invalid
         if (md->id() == mixdeviceID) {
@@ -491,7 +491,7 @@ shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID)
 shared_ptr<MixDevice> Mixer::getMixdeviceById(const QString& mixdeviceID)
 {
     shared_ptr<MixDevice> md;
-    int num = _mixerBackend->id2num(mixdeviceID);
+    int num = m_mixerBackend->id2num(mixdeviceID);
     if (num != -1 && num < (int)size()) {
         md = (*this)[num];
     }
@@ -508,9 +508,9 @@ shared_ptr<MixDevice> Mixer::getMixdeviceById(const QString& mixdeviceID)
 */
 void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
 {
-    _mixerBackend->writeVolumeToHW(md->id(), md);
+    m_mixerBackend->writeVolumeToHW(md->id(), md);
     if (md->isEnum())
-        _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
+        m_mixerBackend->setEnumIdHW(md->id(), md->enumId() );
     if (md->captureVolume().hasSwitch()) {
         // Make sure to re-read the hardware, because seting capture might have failed.
         // This is due to exclusive capture groups.
@@ -519,8 +519,8 @@ void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
         //
         // We also cannot rely on a notification from the driver (SocketNotifier), because
         // nothing has changed, and so there s nothing to notify.
-        _mixerBackend->readSetFromHWforceUpdate();
-        _mixerBackend->readSetFromHW();
+        m_mixerBackend->readSetFromHWforceUpdate();
+        m_mixerBackend->readSetFromHW();
     }
 }
 
@@ -558,7 +558,7 @@ void Mixer::increaseOrDecreaseVolume(const QString& mixdeviceID, bool decrease)
             volC.changeAllVolumes(step);
         }
 
-        _mixerBackend->writeVolumeToHW(mixdeviceID, md);
+        m_mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
 
     /************************************************************
@@ -583,7 +583,7 @@ bool Mixer::isDynamic()
 bool Mixer::moveStream(const QString id, const QString& destId)
 {
     // We should really check that id is within our md's....
-    return _mixerBackend->moveStream(id, destId);
+    return m_mixerBackend->moveStream(id, destId);
 }
 
 #include "mixer.moc"

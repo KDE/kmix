@@ -31,7 +31,7 @@ class KMixDeviceManager : public QObject
 public:
     static KMixDeviceManager* instance();
     void initHotplug();
-    void setHotpluggingBackends(const QStringList& backends) { _hotpluggingBackends = backends; }
+    void setHotpluggingBackends(const QStringList& backends) { m_hotpluggingBackends = backends; }
     QString getUDI_ALSA(int num);
     QString getUDI_OSS(const QString& devname);
 
@@ -42,7 +42,8 @@ signals:
 private:
     KMixDeviceManager();
     virtual ~KMixDeviceManager();
-    QStringList _hotpluggingBackends;
+
+    QStringList m_hotpluggingBackends;
 
 private slots:
     void pluggedSlot(const QString&);

@@ -27,7 +27,7 @@
 #include <kdebug.h>
 
 
-int Volume::_channelMaskEnum[9] =
+int Volume::m_channelMaskEnum[9] =
 {
     MLEFT, MRIGHT, MCENTER,
     MWOOFER,
@@ -58,9 +58,9 @@ char Volume::ChannelNameForPersistence[9][30] =
 // And also QMap requires it.
 Volume::Volume()
 {
-    _minVolume = 0;
-    _maxVolume = 0;
-    _hasSwitch = false;
+    m_minVolume = 0;
+    m_maxVolume = 0;
+    m_hasSwitch = false;
 }
 
 VolumeChannel::VolumeChannel()
@@ -79,7 +79,7 @@ Volume::Volume(int maxVolume, int minVolume, bool hasSwitch, bool isCapture)
 void Volume::addVolumeChannels(ChannelMask chmask)
 {
     for (Volume::ChannelID chid = Volume::CHIDMIN; chid <= Volume::CHIDMAX;) {
-        if (chmask & Volume::_channelMaskEnum[chid]) {
+        if (chmask & Volume::m_channelMaskEnum[chid]) {
             addVolumeChannel(VolumeChannel(chid));
         }
         chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
@@ -88,41 +88,41 @@ void Volume::addVolumeChannels(ChannelMask chmask)
 
 void Volume::addVolumeChannel(VolumeChannel ch)
 {
-    _volumesL.insert(ch.chid, ch);
+    m_volumesL.insert(ch.m_chid, ch);
 }
 
 void Volume::init(ChannelMask chmask, int maxVolume, int minVolume, bool hasSwitch, bool isCapture)
 {
-    _chmask          = chmask;
-    _maxVolume       = maxVolume;
-    _minVolume       = minVolume;
-    _hasSwitch       = hasSwitch;
-    _isCapture       = isCapture;
+    m_chmask          = chmask;
+    m_maxVolume       = maxVolume;
+    m_minVolume       = minVolume;
+    m_hasSwitch       = hasSwitch;
+    m_isCapture       = isCapture;
     //_muted           = false;
-    _switchActivated = false;
+    m_switchActivated = false;
 }
 
 QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
 {
-    return _volumesL;
+    return m_volumesL;
 }
 
 // @ compatibility
 void Volume::setAllVolumes(int vol)
 {
     int finalVol = volrange(vol);
-    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
-    while (it != _volumesL.end()) {
-        it.value().volume = finalVol;
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = m_volumesL.begin();
+    while (it != m_volumesL.end()) {
+        it.value().m_volume = finalVol;
         ++it;
     }
 }
 
 void Volume::changeAllVolumes(int step)
 {
-    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
-    while (it != _volumesL.end()) {
-        it.value().volume = volrange(it.value().volume + step);
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = m_volumesL.begin();
+    while (it != m_volumesL.end()) {
+        it.value().m_volume = volrange(it.value().m_volume + step);
         ++it;
     }
 }
@@ -131,9 +131,9 @@ void Volume::changeAllVolumes(int step)
 // @ compatibility
 void Volume::setVolume(ChannelID chid, int vol)
 {
-    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
-    if (it != _volumesL.end()) {
-        it.value().volume = vol;
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = m_volumesL.find(chid);
+    if (it != m_volumesL.end()) {
+        it.value().m_volume = vol;
     }
 }
 
@@ -142,39 +142,39 @@ void Volume::setVolume(ChannelID chid, int vol)
  */
 void Volume::setVolume(const Volume &v)
 {
-    foreach (VolumeChannel vc, _volumesL) {
-        ChannelID chid = vc.chid;
-        v.getVolumes()[chid].volume = vc.volume;
+    foreach (VolumeChannel vc, m_volumesL) {
+        ChannelID chid = vc.m_chid;
+        v.getVolumes()[chid].m_volume = vc.m_volume;
     }
 }
 
 int Volume::maxVolume()
 {
-    return _maxVolume;
+    return m_maxVolume;
 }
 
 int Volume::minVolume()
 {
-    return _minVolume;
+    return m_minVolume;
 }
 
 int Volume::volumeSpan()
 {
-    return _maxVolume - _minVolume + 1;
+    return m_maxVolume - m_minVolume + 1;
 }
 
 int Volume::getVolume(ChannelID chid)
 {
-    return _volumesL.value(chid).volume;
+    return m_volumesL.value(chid).m_volume;
 }
 
 qreal Volume::getAvgVolume(ChannelMask chmask)
 {
     int avgVolumeCounter = 0;
     int sumOfActiveVolumes = 0;
-    foreach (VolumeChannel vc, _volumesL) {
-        if (Volume::_channelMaskEnum[vc.chid] & chmask) {
-            sumOfActiveVolumes += vc.volume;
+    foreach (VolumeChannel vc, m_volumesL) {
+        if (Volume::m_channelMaskEnum[vc.m_chid] & chmask) {
+            sumOfActiveVolumes += vc.m_volume;
             ++ avgVolumeCounter;
         }
     }
@@ -194,7 +194,7 @@ int Volume::getAvgVolumePercent(ChannelMask chmask)
     // min=-100, max=200 => volSpan = 301
     // volume = -50 =>  volShiftedToZero = -50+min = 50
     qreal volSpan = volumeSpan();
-    qreal volShiftedToZero = volume - _minVolume;
+    qreal volShiftedToZero = volume - m_minVolume;
     qreal percentReal = volSpan == 0 ? 0 : (100 * volShiftedToZero) / (volSpan - 1);
     int percent = qRound(percentReal);
 
@@ -212,14 +212,14 @@ int Volume::count()
  */
 int Volume::volrange(int vol)
 {
-    if (vol < _minVolume) {
-        return _minVolume;
+    if (vol < m_minVolume) {
+        return m_minVolume;
     }
-    else if (vol < _maxVolume) {
+    else if (vol < m_maxVolume) {
         return vol;
     }
     else {
-        return _maxVolume;
+        return m_maxVolume;
     }
 }
 
@@ -231,12 +231,12 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
     foreach (const VolumeChannel vc, vol.getVolumes()) {
         if ( !first )  os << ",";
         else first = false;
-        os << vc.volume;
+        os << vc.m_volume;
     } // all channels
     os << ")";
 
-    os << " [" << vol._minVolume << "-" << vol._maxVolume;
-    if (vol._switchActivated) {
+    os << " [" << vol.m_minVolume << "-" << vol.m_maxVolume;
+    if (vol.m_switchActivated) {
         os << " : switch active ]";
     } else {
         os << " : switch inactive ]";
@@ -251,12 +251,12 @@ QDebug operator<<(QDebug os, const Volume& vol) {
     foreach (VolumeChannel vc, vol.getVolumes()) {
         if ( !first )  os << ",";
         else first = false;
-        os << vc.volume;
+        os << vc.m_volume;
     } // all channels
     os << ")";
 
-    os << " [" << vol._minVolume << "-" << vol._maxVolume;
-    if ( vol._switchActivated ) {
+    os << " [" << vol.m_minVolume << "-" << vol.m_maxVolume;
+    if ( vol.m_switchActivated ) {
         os << " : switch active ]";
     } else {
         os << " : switch inactive ]";

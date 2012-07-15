@@ -555,21 +555,21 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 
 		QString subcontrolTranslation;
 		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + ' ';
-		subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
+		subcontrolTranslation += Volume::ChannelNameReadable[vc.m_chid]; //Volume::getSubcontrolTranslation(chid);
 		subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 
 		QAbstractSlider* slider;
 		if ( m_small )
 		{
 			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Mixer::VOLUME_PAGESTEP_DIVISOR,
-				                           vol.getVolume( vc.chid ), _orientation, this );
+				                           vol.getVolume( vc.m_chid ), _orientation, this );
 		} // small
 		else  {
 			slider = new VolumeSlider( _orientation, this );
 			slider->setMinimum(minvol);
 			slider->setMaximum(maxvol);
 			slider->setPageStep(maxvol / Mixer::VOLUME_PAGESTEP_DIVISOR);
-			slider->setValue( maxvol - vol.getVolume( vc.chid ) );
+			slider->setValue( maxvol - vol.getVolume( vc.m_chid ) );
 			extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
 			if ( _orientation == Qt::Vertical ) {
@@ -583,7 +583,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 			}
 		} // not small
 
-		extraData(slider).setChid(vc.chid);
+		extraData(slider).setChid(vc.m_chid);
 		slider->installEventFilter( this );
 		if ( type == 'p' ) {
 			slider->setToolTip( m_mixdevice->readableName() );

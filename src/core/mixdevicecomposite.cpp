@@ -22,7 +22,7 @@
 #include "core/mixdevicecomposite.h"
 
 
-const int MixDeviceComposite::VolMax = 10000;
+const int MixDeviceComposite::m_maxVolume = 10000;
 
 MixDeviceComposite::MixDeviceComposite(Mixer* mixer,
                                        const QString& id,
@@ -32,31 +32,31 @@ MixDeviceComposite::MixDeviceComposite(Mixer* mixer,
     : MixDevice(mixer, id, name, type)  // this will use doNotRestore == true
 {
     setArtificial(true);
-    _compositePlaybackVolume = new Volume(MixDeviceComposite::VolMax, 0, true, false);
-    _compositePlaybackVolume->addVolumeChannel(Volume::LEFT);
-    _compositePlaybackVolume->addVolumeChannel(Volume::RIGHT);
+    m_compositePlaybackVolume = new Volume(MixDeviceComposite::m_maxVolume, 0, true, false);
+    m_compositePlaybackVolume->addVolumeChannel(Volume::LEFT);
+    m_compositePlaybackVolume->addVolumeChannel(Volume::RIGHT);
 
     QListIterator<shared_ptr<MixDevice> > it(mds);
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
-        _mds.append(md);
+        m_mds.append(md);
     }
 }
 
 
 MixDeviceComposite::~MixDeviceComposite()
 {
-    while (!_mds.empty()) {
-        _mds.removeAt(0);
+    while (!m_mds.empty()) {
+        m_mds.removeAt(0);
     }
-    delete _compositePlaybackVolume;
+    delete m_compositePlaybackVolume;
 //    delete _compositeCaptureVolume;
 }
 
 
 Volume& MixDeviceComposite::playbackVolume()
 {
-    return *_compositePlaybackVolume;
+    return *m_compositePlaybackVolume;
 }
 
 // Volume& MixDeviceComposite::captureVolume()
@@ -69,14 +69,14 @@ void MixDeviceComposite::update()
 {
     int volAvg;
     volAvg = calculateVolume(Volume::PlaybackVT);
-    _compositePlaybackVolume->setAllVolumes(volAvg);
+    m_compositePlaybackVolume->setAllVolumes(volAvg);
     volAvg = calculateVolume(Volume::CaptureVT);
 //     _compositeCaptureVolume->setAllVolumes(volAvg);
 }
 
 int MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
 {
-    QListIterator<shared_ptr<MixDevice> > it(_mds);
+    QListIterator<shared_ptr<MixDevice> > it(m_mds);
     int volSum = 0;
     int volCount = 0;
     while (it.hasNext()) {
@@ -85,7 +85,7 @@ int MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
         Volume& vol = vt == Volume::CaptureVT ? md->captureVolume() : md->playbackVolume();
         if (vol.hasVolume() && (vol.maxVolume() != 0)) {
             qreal normalizedVolume =
-                      (vol.getAvgVolume(Volume::MALL) * MixDeviceComposite::VolMax)
+                      (vol.getAvgVolume(Volume::MALL) * MixDeviceComposite::m_maxVolume)
                       / vol.maxVolume();
             volSum += normalizedVolume;
             ++ volCount;
@@ -101,7 +101,7 @@ int MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
 bool MixDeviceComposite::isMuted()
 {
     bool isMuted = false;
-    QListIterator<shared_ptr<MixDevice> > it(_mds);
+    QListIterator<shared_ptr<MixDevice> > it(m_mds);
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
         isMuted |= md->isMuted();
@@ -114,7 +114,7 @@ bool MixDeviceComposite::isMuted()
 
 void MixDeviceComposite::setMuted(bool value)
 {
-    QListIterator<shared_ptr<MixDevice> > it(_mds);
+    QListIterator<shared_ptr<MixDevice> > it(m_mds);
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
         md->setMuted(value);
@@ -124,7 +124,7 @@ void MixDeviceComposite::setMuted(bool value)
 bool MixDeviceComposite::isRecSource()
 {
     bool isRecSource = false;
-    QListIterator<shared_ptr<MixDevice> > it(_mds);
+    QListIterator<shared_ptr<MixDevice> > it(m_mds);
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
         isRecSource |= md->isRecSource();
@@ -137,7 +137,7 @@ bool MixDeviceComposite::isRecSource()
 
 void MixDeviceComposite::setRecSource(bool value)
 {
-    QListIterator<shared_ptr<MixDevice> > it(_mds);
+    QListIterator<shared_ptr<MixDevice> > it(m_mds);
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
         md->setRecSource(value);
@@ -148,7 +148,7 @@ void MixDeviceComposite::setRecSource(bool value)
 bool MixDeviceComposite::isEnum()
 {
     bool isEnum = true;
-    QListIterator<shared_ptr<MixDevice> > it(_mds);
+    QListIterator<shared_ptr<MixDevice> > it(m_mds);
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
         isEnum &= md->isEnum();

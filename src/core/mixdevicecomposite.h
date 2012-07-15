@@ -100,12 +100,12 @@ public:
 private:
     int calculateVolume(Volume::VolumeType vt);
 
-    Mixer *_mixer;
-    QList<shared_ptr<MixDevice> > _mds;
+    Mixer *m_mixer;
+    QList<shared_ptr<MixDevice> > m_mds;
 
-    static const int VolMax;
+    static const int m_maxVolume;
 
-    Volume* _compositePlaybackVolume;
+    Volume* m_compositePlaybackVolume;
     //  Volume* _compositeCaptureVolume;
 };
 

@@ -17,23 +17,23 @@ MasterControl::~MasterControl()
 
 QString MasterControl::getCard() const
 {
-    return card;
+    return m_card;
 }
 
 QString MasterControl::getControl() const
 {
-    return control;
+    return m_control;
 }
 
 void MasterControl::set(QString card, QString control)
 {
-    this->card = card;
-    this->control = control;
+    this->m_card = card;
+    this->m_control = control;
 }
 
 bool MasterControl::isValid()
 {
-    if (control.isEmpty() || card.isEmpty())
+    if (m_control.isEmpty() || m_card.isEmpty())
         return false;
 
     return true;

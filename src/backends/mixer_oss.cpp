@@ -365,7 +365,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 		        {
 		               long volOld = 0;
 		               long volNew = 0;
-		               switch(vc.chid) {
+		               switch(vc.m_chid) {
 	                   case Volume::LEFT:
 	                	   volOld =  vol.getVolume(Volume::LEFT);
 	                	   volNew  = volLeft;

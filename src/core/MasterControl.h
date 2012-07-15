@@ -27,8 +27,8 @@ public:
     bool isValid();
 
 private:
-    QString card;
-    QString control;
+    QString m_card;
+    QString m_control;
 
 };
 

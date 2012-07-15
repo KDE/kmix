@@ -725,7 +725,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
         foreach (VolumeChannel vc, volumePlayback.getVolumes() )
         {
                int ret = 0;
-               switch(vc.chid) {
+               switch(vc.m_chid) {
                    case Volume::LEFT         : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , &vol); break;
                    case Volume::RIGHT        : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , &vol); break;
                    case Volume::CENTER       : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, &vol); break;
@@ -735,10 +735,10 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
                    case Volume::WOOFER       : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_WOOFER      , &vol); break;
                    case Volume::REARSIDELEFT : ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , &vol); break;
                    case Volume::REARSIDERIGHT: ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , &vol); break;
-                   default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.chid << " ... please report this";  break;
+                   default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.m_chid << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug() << "readVolumeFromHW(" << devnum << ") [get_playback_volume] failed, errno=" << ret;
-              else volumePlayback.setVolume( vc.chid, vol);
+              else volumePlayback.setVolume( vc.m_chid, vol);
               //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << i << ", vol=" << vol; }
        }
     } // has playback volume
@@ -758,7 +758,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
         foreach (VolumeChannel vc, volumeCapture.getVolumes() )
 		{
                int ret = 0;
-               switch(vc.chid) {
+               switch(vc.m_chid) {
                    case Volume::LEFT         : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , &vol); break;
                    case Volume::RIGHT        : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , &vol); break;
                    case Volume::CENTER       : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, &vol); break;
@@ -768,10 +768,10 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
                    case Volume::WOOFER       : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_WOOFER      , &vol); break;
                    case Volume::REARSIDELEFT : ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , &vol); break;
                    case Volume::REARSIDERIGHT: ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , &vol);     break;
-                   default: kDebug() << "FATAL: Unknown channel type for capture << " << vc.chid << " ... please report this";  break;
+                   default: kDebug() << "FATAL: Unknown channel type for capture << " << vc.m_chid << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug() << "readVolumeFromHW(" << devnum << ") [get_capture_volume] failed, errno=" << ret;
-              volumeCapture.setVolume( vc.chid, vol);
+              volumeCapture.setVolume( vc.m_chid, vol);
        }
     } // has capture volume
 
@@ -816,17 +816,17 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
       foreach (VolumeChannel vc, volumePlayback.getVolumes() )
       {
                int ret = 0;
-               switch(vc.chid) {
-                   case Volume::LEFT         : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , vc.volume); break;
-                   case Volume::RIGHT        : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , vc.volume); break;
-                   case Volume::CENTER       : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, vc.volume); break;
-                   case Volume::SURROUNDLEFT : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_REAR_LEFT   , vc.volume); break;
-                   case Volume::SURROUNDRIGHT: ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_REAR_RIGHT  , vc.volume); break;
-                   case Volume::REARCENTER   : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_REAR_CENTER , vc.volume); break;
-                   case Volume::WOOFER       : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_WOOFER      , vc.volume); break;
-                   case Volume::REARSIDELEFT : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , vc.volume); break;
-                   case Volume::REARSIDERIGHT: ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , vc.volume); break;
-                   default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.chid << " ... please report this";  break;
+               switch(vc.m_chid) {
+                   case Volume::LEFT         : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , vc.m_volume); break;
+                   case Volume::RIGHT        : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , vc.m_volume); break;
+                   case Volume::CENTER       : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, vc.m_volume); break;
+                   case Volume::SURROUNDLEFT : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_REAR_LEFT   , vc.m_volume); break;
+                   case Volume::SURROUNDRIGHT: ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_REAR_RIGHT  , vc.m_volume); break;
+                   case Volume::REARCENTER   : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_REAR_CENTER , vc.m_volume); break;
+                   case Volume::WOOFER       : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_WOOFER      , vc.m_volume); break;
+                   case Volume::REARSIDELEFT : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , vc.m_volume); break;
+                   case Volume::REARSIDERIGHT: ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , vc.m_volume); break;
+                   default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.m_chid << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug() << "writeVolumeToHW(" << devnum << ") [set_playback_volume] failed, errno=" << ret;
               //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << vc.chid << ", vol=" << vc.volume; }
@@ -850,17 +850,17 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
       foreach (VolumeChannel vc, volumeCapture.getVolumes() )
       {
                int ret = 0;
-               switch(vc.chid) {
-                   case Volume::LEFT         : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , vc.volume); break;
-                   case Volume::RIGHT        : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , vc.volume); break;
-                   case Volume::CENTER       : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, vc.volume); break;
-                   case Volume::SURROUNDLEFT : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_REAR_LEFT   , vc.volume); break;
-                   case Volume::SURROUNDRIGHT: ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_REAR_RIGHT  , vc.volume); break;
-                   case Volume::REARCENTER   : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_REAR_CENTER , vc.volume); break;
-                   case Volume::WOOFER       : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_WOOFER      , vc.volume); break;
-                   case Volume::REARSIDELEFT : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , vc.volume); break;
-                   case Volume::REARSIDERIGHT: ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , vc.volume); break;
-                   default: kDebug() << "FATAL: Unknown channel type for capture << " << vc.chid << " ... please report this";  break;
+               switch(vc.m_chid) {
+                   case Volume::LEFT         : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , vc.m_volume); break;
+                   case Volume::RIGHT        : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , vc.m_volume); break;
+                   case Volume::CENTER       : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, vc.m_volume); break;
+                   case Volume::SURROUNDLEFT : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_REAR_LEFT   , vc.m_volume); break;
+                   case Volume::SURROUNDRIGHT: ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_REAR_RIGHT  , vc.m_volume); break;
+                   case Volume::REARCENTER   : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_REAR_CENTER , vc.m_volume); break;
+                   case Volume::WOOFER       : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_WOOFER      , vc.m_volume); break;
+                   case Volume::REARSIDELEFT : ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_SIDE_LEFT   , vc.m_volume); break;
+                   case Volume::REARSIDERIGHT: ret = snd_mixer_selem_set_capture_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , vc.m_volume); break;
+                   default: kDebug() << "FATAL: Unknown channel type for capture << " << vc.m_chid << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug() << "writeVolumeToHW(" << devnum << ") [set_capture_volume] failed, errno=" << ret;
               //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumecapture control=" << id << ", chid=" << i << ", vol=" << vc.volume; }

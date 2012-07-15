@@ -43,9 +43,9 @@ private:
     ControlPool();
     virtual ~ControlPool() {}
 
-    QMap<QString, shared_ptr<MixDevice> > *pool;
-    static ControlPool* _instance;
-    static shared_ptr<MixDevice> TheEmptyDevice;
+    QMap<QString, shared_ptr<MixDevice> > *m_pool;
+    static ControlPool* m_instance;
+    static shared_ptr<MixDevice> m_theEmptyDevice;
 };
 
 #endif

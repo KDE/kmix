@@ -112,35 +112,35 @@ MixDevice::MixDevice(Mixer* mixer, const QString& id, const QString& name, const
 
 MixDevice::~MixDevice()
 {
-    _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
-    delete _dbusControlWrapper;
+    m_enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
+    delete m_dbusControlWrapper;
 }
 
 void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet)
 {
-    _artificial = false;
-    _applicationStream = false;
-    _dbusControlWrapper = 0; // will be set in addToPool()
-    _mixer = mixer;
-    _id = id;
-    mediaPlayControl = false;
-    mediaNextControl = false;
-    mediaPrevControl = false;
+    m_artificial = false;
+    m_applicationStream = false;
+    m_dbusControlWrapper = 0; // will be set in addToPool()
+    m_mixer = mixer;
+    m_id = id;
+    m_mediaPlayControl = false;
+    m_mediaNextControl = false;
+    m_mediaPrevControl = false;
     if (name.isEmpty())
-        _name = i18n("unknown");
+        m_name = i18n("unknown");
     else
-        _name = name;
+        m_name = name;
     if (iconName.isEmpty())
-        _iconName = "mixer-front";
+        m_iconName = "mixer-front";
     else
-        _iconName = iconName;
-    _moveDestinationMixSet = moveDestinationMixSet;
-    if (_id.contains(' ')) {
+        m_iconName = iconName;
+    m_moveDestinationMixSet = moveDestinationMixSet;
+    if (m_id.contains(' ')) {
         // The key is used in the config file. IdbusControlWrappert MUST NOT contain spaces
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
-        _id.replace(' ', '_');
+        m_id.replace(' ', '_');
     }
-    kDebug(67100) << "MixDevice::init() _id =" << _id;
+    kDebug(67100) << "MixDevice::init() _id =" << m_id;
 }
 
 shared_ptr<MixDevice> MixDevice::addToPool()
@@ -150,27 +150,27 @@ shared_ptr<MixDevice> MixDevice::addToPool()
 
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
-    _dbusControlWrapper = new DBusControlWrapper(thisSharedPtr, dbusPath());
+    m_dbusControlWrapper = new DBusControlWrapper(thisSharedPtr, dbusPath());
     return thisSharedPtr;
 }
 
 QString MixDevice::getFullyQualifiedId()
 {
-    QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());
+    QString fqId = QString("%1@%2").arg(m_id).arg(m_mixer->id());
     return fqId;
 }
 
 void MixDevice::addPlaybackVolume(Volume &playbackVol)
 {
     // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
-    _playbackVolume = playbackVol;
-    _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
+    m_playbackVolume = playbackVol;
+    m_playbackVolume.setSwitchType(Volume::PlaybackSwitch);
 }
 
 void MixDevice::addCaptureVolume(Volume &captureVol)
 {
-    _captureVolume = captureVol;
-    _captureVolume.setSwitchType(Volume::CaptureSwitch);
+    m_captureVolume = captureVol;
+    m_captureVolume.setSwitchType(Volume::CaptureSwitch);
 }
 
 void MixDevice::addEnums(QList<QString*>& ref_enumList)
@@ -180,58 +180,58 @@ void MixDevice::addEnums(QList<QString*>& ref_enumList)
         for (int i = 0; i < maxEnumId; i++) {
             // we have an enum. Lets set the names of the enum items in the MixDevice
             // the enum names are assumed to be static!
-            _enumValues.append(*(ref_enumList.at(i)));
+            m_enumValues.append(*(ref_enumList.at(i)));
         }
     }
 }
 
 Volume& MixDevice::playbackVolume()
 {
-    return _playbackVolume;
+    return m_playbackVolume;
 }
 
 Volume& MixDevice::captureVolume()
 {
-    return _captureVolume;
+    return m_captureVolume;
 }
 
 void MixDevice::setEnumId(int enumId)
 {
-    if (enumId < _enumValues.count()) {
-        _enumCurrentId = enumId;
+    if (enumId < m_enumValues.count()) {
+        m_enumCurrentId = enumId;
     }
 }
 
 unsigned int MixDevice::enumId()
 {
-    return _enumCurrentId;
+    return m_enumCurrentId;
 }
 
 QList<QString>& MixDevice::enumValues()
 {
-    return _enumValues;
+    return m_enumValues;
 }
 
 const QString& MixDevice::id() const
 {
-   return _id;
+   return m_id;
 }
 
 const QString MixDevice::dbusPath()
 {
-    QString controlPath = _id;
+    QString controlPath = m_id;
     controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
-    return _mixer->dbusPath() + "/" + controlPath;
+    return m_mixer->dbusPath() + "/" + controlPath;
 }
 
 bool MixDevice::isMuted()
 {
-    return _playbackVolume.hasSwitch() && !_playbackVolume.isSwitchActivated();
+    return m_playbackVolume.hasSwitch() && !m_playbackVolume.isSwitchActivated();
 }
 
 void MixDevice::setMuted(bool value)
 {
-    _playbackVolume.setSwitch(!value);
+    m_playbackVolume.setSwitch(!value);
 }
 
 void MixDevice::toggleMute()
@@ -241,52 +241,52 @@ void MixDevice::toggleMute()
 
 bool MixDevice::isRecSource()
 {
-    return _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated();
+    return m_captureVolume.hasSwitch() && m_captureVolume.isSwitchActivated();
 }
 
 bool MixDevice::isNotRecSource()
 {
-    return _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated();
+    return m_captureVolume.hasSwitch() && !m_captureVolume.isSwitchActivated();
 }
 
 void MixDevice::setRecSource(bool value)
 {
-    _captureVolume.setSwitch(value);
+    m_captureVolume.setSwitch(value);
 }
 
 bool MixDevice::isEnum()
 {
-    return !_enumValues.empty();
+    return !m_enumValues.empty();
 }
 
 int MixDevice::mediaPlay()
 {
-    return mixer()->mediaPlay(_id);
+    return mixer()->mediaPlay(m_id);
 }
 
 int MixDevice::mediaPrev()
 {
-    return mixer()->mediaPrev(_id);
+    return mixer()->mediaPrev(m_id);
 }
 
 int MixDevice::mediaNext()
 {
-    return mixer()->mediaNext(_id);
+    return mixer()->mediaNext(m_id);
 }
 
 bool MixDevice::operator==(const MixDevice& other) const
 {
-    return _id == other._id;
+    return m_id == other.m_id;
 }
 
 void MixDevice::setControlProfile(ProfControl* control)
 {
-    _profControl = control;
+    m_profControl = control;
 }
 
 ProfControl* MixDevice::controlProfile()
 {
-    return _profControl;
+    return m_profControl;
 }
 
 /**
@@ -298,13 +298,13 @@ ProfControl* MixDevice::controlProfile()
  */
 bool MixDevice::read(KConfig *config, const QString& grp)
 {
-    if (_mixer->isDynamic() || isArtificial()) {
+    if (m_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration "
             "(i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
-    QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
+    QString devgrp = QString("%1.Dev%2").arg(grp).arg(m_id);
     KConfigGroup cg = config->group(devgrp);
 
     readPlaybackOrCapture(cg, false);
@@ -341,13 +341,13 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
  */
 bool MixDevice::write(KConfig *config, const QString& grp)
 {
-    if (_mixer->isDynamic() || isArtificial()) {
+    if (m_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving "
             "(i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
-    QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
+    QString devgrp = QString("%1.Dev%2").arg(grp).arg(m_id);
     KConfigGroup cg = config->group(devgrp);
 
     writePlaybackOrCapture(cg, false);
@@ -355,7 +355,7 @@ bool MixDevice::write(KConfig *config, const QString& grp)
 
     cg.writeEntry("is_muted" , isMuted());
     cg.writeEntry("is_recsrc", isRecSource());
-    cg.writeEntry("name", _name);
+    cg.writeEntry("name", m_name);
     if (isEnum()) {
         cg.writeEntry("enum_id", enumId());
     }
@@ -366,7 +366,7 @@ void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
     foreach (VolumeChannel vc, volume.getVolumes()) {
-        config.writeEntry(getVolString(vc.chid,capture) , (int)vc.volume);
+        config.writeEntry(getVolString(vc.m_chid,capture) , (int)vc.m_volume);
     } // for all channels
 }
 

@@ -124,27 +124,27 @@ public:
 
     shared_ptr<MixDevice> addToPool();
 
-    const QString& iconName() const { return _iconName; }
+    const QString& iconName() const { return m_iconName; }
 
     void addPlaybackVolume(Volume &playbackVol);
     void addCaptureVolume (Volume &captureVol);
     void addEnums(QList<QString*>& ref_enumList);
 
     // Media controls. New for KMix 4.0
-    void addMediaPlayControl() { mediaPlayControl = true; };
-    void addMediaNextControl() { mediaNextControl = true; };
-    void addMediaPrevControl() { mediaPrevControl = true; };
-    bool hasMediaPlayControl() { return mediaPlayControl; };
-    bool hasMediaNextControl() { return mediaNextControl; };
-    bool hasMediaPrevControl() { return mediaPrevControl; };
+    void addMediaPlayControl() { m_mediaPlayControl = true; };
+    void addMediaNextControl() { m_mediaNextControl = true; };
+    void addMediaPrevControl() { m_mediaPrevControl = true; };
+    bool hasMediaPlayControl() { return m_mediaPlayControl; };
+    bool hasMediaNextControl() { return m_mediaNextControl; };
+    bool hasMediaPrevControl() { return m_mediaPrevControl; };
     int mediaPlay();
     int mediaPrev();
     int mediaNext();
 
     // Returns a user readable name of the control.
-    QString readableName() { return _name; }
+    QString readableName() { return m_name; }
     // Sets a user readable name for the control.
-    void setReadableName(QString& name) { _name = name; }
+    void setReadableName(QString& name) { m_name = name; }
 
     /**
      * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend)
@@ -160,7 +160,7 @@ public:
     const QString dbusPath();
 
     // Returns the associated mixer
-    Mixer* mixer() { return _mixer; }
+    Mixer* mixer() { return m_mixer; }
 
     // operator==() is used currently only for duplicate detection with QList's contains() method
     bool operator==(const MixDevice& other) const;
@@ -178,28 +178,28 @@ public:
     /**
      * Returns whether this is an application stream.
      */
-    virtual bool isApplicationStream() const { return _applicationStream; };
+    virtual bool isApplicationStream() const { return m_applicationStream; };
     /**
      * Mark this MixDevice as application stream
      */
-    void setApplicationStream(bool applicationStream) { _applicationStream = applicationStream; }
+    void setApplicationStream(bool applicationStream) { m_applicationStream = applicationStream; }
 
     bool isMovable() const
     {
-        return (0 != _moveDestinationMixSet);
+        return (0 != m_moveDestinationMixSet);
     }
     MixSet *getMoveDestinationMixSet() const
     {
-        return _moveDestinationMixSet;
+        return m_moveDestinationMixSet;
     }
 
     bool isArtificial()  const
     {
-        return _artificial;
+        return m_artificial;
     }
     void setArtificial(bool artificial)
     {
-        _artificial = artificial;
+        m_artificial = artificial;
     }
 
     void setControlProfile(ProfControl* control);
@@ -220,34 +220,34 @@ protected:
 
 private:
     QString getVolString(Volume::ChannelID chid, bool capture);
-    Mixer *_mixer;
-    Volume _playbackVolume;
-    Volume _captureVolume;
-    int _enumCurrentId;
-    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
+    Mixer *m_mixer;
+    Volume m_playbackVolume;
+    Volume m_captureVolume;
+    int m_enumCurrentId;
+    QList<QString> m_enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
-    DBusControlWrapper *_dbusControlWrapper;
+    DBusControlWrapper *m_dbusControlWrapper;
 
     // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
     // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:
     // Type        Shortcut  Restore
     // Artificial:    yes       no    Virtual::GlobalMaster or Virtual::CaptureGroup_3   (controls that are constructed artificially from other controls)
     // Dynamic   :     no       no    Controls that come and go, like Pulse Stream controls
-    bool _artificial;
-    MixSet *_moveDestinationMixSet;
-    QString _iconName;
-    bool _applicationStream;
+    bool m_artificial;
+    MixSet *m_moveDestinationMixSet;
+    QString m_iconName;
+    bool m_applicationStream;
 
-    QString _name;   // Channel name
-    QString _id;     // Primary key, used as part in config file keys
-    ProfControl *_profControl;
+    QString m_name;   // Channel name
+    QString m_id;     // Primary key, used as part in config file keys
+    ProfControl *m_profControl;
 
     void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
     void writePlaybackOrCapture(KConfigGroup& config, bool capture);
 
-    bool mediaPlayControl;
-    bool mediaNextControl;
-    bool mediaPrevControl;
+    bool m_mediaPlayControl;
+    bool m_mediaNextControl;
+    bool m_mediaPrevControl;
 
 };
 
