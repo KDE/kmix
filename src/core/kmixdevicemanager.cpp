@@ -61,6 +61,11 @@ void KMixDeviceManager::initHotplug()
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(unpluggedSlot(QString)));
 }
 
+void KMixDeviceManager::setHotpluggingBackends(const QStringList& backends)
+{
+     m_hotpluggingBackends = backends;
+}
+
 QString KMixDeviceManager::getUDI_ALSA(int num)
 {
     QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);

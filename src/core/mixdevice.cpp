@@ -154,6 +154,11 @@ shared_ptr<MixDevice> MixDevice::addToPool()
     return thisSharedPtr;
 }
 
+const QString& MixDevice::iconName() const
+{
+     return m_iconName;
+}
+
 QString MixDevice::getFullyQualifiedId()
 {
     QString fqId = QString("%1@%2").arg(m_id).arg(m_mixer->id());
@@ -183,6 +188,36 @@ void MixDevice::addEnums(QList<QString*>& ref_enumList)
             m_enumValues.append(*(ref_enumList.at(i)));
         }
     }
+}
+
+void MixDevice::addMediaPlayControl()
+{
+     m_mediaPlayControl = true;
+}
+
+void MixDevice::addMediaNextControl()
+{
+     m_mediaNextControl = true;
+}
+
+void MixDevice::addMediaPrevControl()
+{
+     m_mediaPrevControl = true;
+}
+
+bool MixDevice::hasMediaPlayControl()
+{
+     return m_mediaPlayControl;
+}
+
+bool MixDevice::hasMediaNextControl()
+{
+     return m_mediaNextControl;
+}
+
+bool MixDevice::hasMediaPrevControl()
+{
+     return m_mediaPrevControl;
 }
 
 Volume& MixDevice::playbackVolume()
@@ -224,6 +259,11 @@ const QString MixDevice::dbusPath()
     return m_mixer->dbusPath() + "/" + controlPath;
 }
 
+Mixer* MixDevice::mixer()
+{
+     return m_mixer;
+}
+
 bool MixDevice::isMuted()
 {
     return m_playbackVolume.hasSwitch() && !m_playbackVolume.isSwitchActivated();
@@ -259,6 +299,36 @@ bool MixDevice::isEnum()
     return !m_enumValues.empty();
 }
 
+bool MixDevice::isApplicationStream() const
+{
+     return m_applicationStream;
+}
+
+void MixDevice::setApplicationStream(bool applicationStream)
+{
+     m_applicationStream = applicationStream;
+}
+
+bool MixDevice::isMovable() const
+{
+    return m_moveDestinationMixSet;
+}
+
+MixSet* MixDevice::getMoveDestinationMixSet() const
+{
+    return m_moveDestinationMixSet;
+}
+
+bool MixDevice::isArtificial() const
+{
+    return m_artificial;
+}
+
+void MixDevice::setArtificial(bool artificial)
+{
+    m_artificial = artificial;
+}
+
 int MixDevice::mediaPlay()
 {
     return mixer()->mediaPlay(m_id);
@@ -272,6 +342,16 @@ int MixDevice::mediaPrev()
 int MixDevice::mediaNext()
 {
     return mixer()->mediaNext(m_id);
+}
+
+QString MixDevice::readableName() const
+{
+    return m_name;
+}
+
+void MixDevice::setReadableName(const QString& name)
+{
+    m_name = name;
 }
 
 bool MixDevice::operator==(const MixDevice& other) const

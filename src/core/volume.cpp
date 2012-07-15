@@ -63,6 +63,13 @@ Volume::Volume()
     m_hasSwitch = false;
 }
 
+VolumeChannel::VolumeChannel(Volume::ChannelID chid)
+    : m_volume(0)
+    , m_chid(chid)
+{
+
+}
+
 VolumeChannel::VolumeChannel()
 {
 
@@ -105,6 +112,16 @@ void Volume::init(ChannelMask chmask, int maxVolume, int minVolume, bool hasSwit
 QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
 {
     return m_volumesL;
+}
+
+void Volume::setSwitch(bool val)
+{
+     m_switchActivated = val;
+}
+
+bool Volume::isSwitchActivated() const
+{
+     return m_switchActivated && m_hasSwitch;
 }
 
 // @ compatibility
@@ -204,6 +221,33 @@ int Volume::getAvgVolumePercent(ChannelMask chmask)
 int Volume::count()
 {
     return getVolumes().count();
+}
+
+bool Volume::hasSwitch() const
+{
+     return m_hasSwitch;
+     // TODO { return _hasSwitch || hasVolume() ; }
+     // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
+}
+
+bool Volume::hasVolume() const
+{
+     return m_maxVolume != m_minVolume;
+}
+
+bool Volume::isCapture() const
+{
+     return m_isCapture; // -<- Query this, to find out whether this is a capture or a playback volume
+}
+
+void Volume::setSwitchType(Volume::SwitchType type)
+{
+     m_switchType = type;
+}
+
+Volume::SwitchType Volume::switchType() const
+{
+     return m_switchType;
 }
 
 /**

@@ -32,7 +32,7 @@ public:
     static KMixDeviceManager* instance();
     static void cleanup();
     void initHotplug();
-    void setHotpluggingBackends(const QStringList& backends) { m_hotpluggingBackends = backends; }
+    void setHotpluggingBackends(const QStringList& backends);
     QString getUDI_ALSA(int num);
     QString getUDI_OSS(const QString& devname);
 

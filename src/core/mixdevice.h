@@ -124,27 +124,27 @@ public:
 
     shared_ptr<MixDevice> addToPool();
 
-    const QString& iconName() const { return m_iconName; }
+    const QString& iconName() const;
 
     void addPlaybackVolume(Volume &playbackVol);
     void addCaptureVolume (Volume &captureVol);
     void addEnums(QList<QString*>& ref_enumList);
 
     // Media controls. New for KMix 4.0
-    void addMediaPlayControl() { m_mediaPlayControl = true; };
-    void addMediaNextControl() { m_mediaNextControl = true; };
-    void addMediaPrevControl() { m_mediaPrevControl = true; };
-    bool hasMediaPlayControl() { return m_mediaPlayControl; };
-    bool hasMediaNextControl() { return m_mediaNextControl; };
-    bool hasMediaPrevControl() { return m_mediaPrevControl; };
+    void addMediaPlayControl();
+    void addMediaNextControl();
+    void addMediaPrevControl();
+    bool hasMediaPlayControl();
+    bool hasMediaNextControl();
+    bool hasMediaPrevControl();
     int mediaPlay();
     int mediaPrev();
     int mediaNext();
 
     // Returns a user readable name of the control.
-    QString readableName() { return m_name; }
+    QString readableName() const;
     // Sets a user readable name for the control.
-    void setReadableName(QString& name) { m_name = name; }
+    void setReadableName(const QString& name);
 
     /**
      * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend)
@@ -160,7 +160,7 @@ public:
     const QString dbusPath();
 
     // Returns the associated mixer
-    Mixer* mixer() { return m_mixer; }
+    Mixer* mixer();
 
     // operator==() is used currently only for duplicate detection with QList's contains() method
     bool operator==(const MixDevice& other) const;
@@ -178,29 +178,17 @@ public:
     /**
      * Returns whether this is an application stream.
      */
-    virtual bool isApplicationStream() const { return m_applicationStream; };
+    virtual bool isApplicationStream() const;
     /**
      * Mark this MixDevice as application stream
      */
-    void setApplicationStream(bool applicationStream) { m_applicationStream = applicationStream; }
+    void setApplicationStream(bool applicationStream);
 
-    bool isMovable() const
-    {
-        return m_moveDestinationMixSet;
-    }
-    MixSet *getMoveDestinationMixSet() const
-    {
-        return m_moveDestinationMixSet;
-    }
+    bool isMovable() const;
+    MixSet *getMoveDestinationMixSet() const;
 
-    bool isArtificial()  const
-    {
-        return m_artificial;
-    }
-    void setArtificial(bool artificial)
-    {
-        m_artificial = artificial;
-    }
+    bool isArtificial() const;
+    void setArtificial(bool artificial);
 
     void setControlProfile(ProfControl* control);
     ProfControl* controlProfile();

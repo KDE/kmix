@@ -120,6 +120,11 @@ void Mixer::setCardInstance(int cardInstance)
     recreateId();
 }
 
+int Mixer::getCardInstance() const
+{
+     return m_cardInstance;
+}
+
 void Mixer::recreateId()
 {
     /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
@@ -278,6 +283,11 @@ QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
 void Mixer::setBeepOnVolumeChange(bool beepOnVolumeChange)
 {
     m_beepOnVolumeChange = beepOnVolumeChange;
+}
+
+bool Mixer::getBeepOnVolumeChange()
+{
+     return m_beepOnVolumeChange;
 }
 
 int Mixer::balance() const {
@@ -583,6 +593,21 @@ bool Mixer::moveStream(const QString id, const QString& destId)
 {
     // We should really check that id is within our md's....
     return m_mixerBackend->moveStream(id, destId);
+}
+
+int Mixer::mediaPlay(QString id)
+{
+     return m_mixerBackend->mediaPlay(id);
+}
+
+int Mixer::mediaPrev(QString id)
+{
+     return m_mixerBackend->mediaPrev(id);
+}
+
+int Mixer::mediaNext(QString id)
+{
+     return m_mixerBackend->mediaNext(id);
 }
 
 #include "mixer.moc"

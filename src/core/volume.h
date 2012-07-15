@@ -112,9 +112,9 @@ public:
     int volumeSpan();
     int  count();
 
-    bool hasSwitch() { return m_hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
-    bool hasVolume() { return m_maxVolume != m_minVolume; }
-    bool isCapture() { return m_isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
+    bool hasSwitch() const;
+    bool hasVolume() const;
+    bool isCapture() const;
 
     // Some playback switches control playback, and some are special.
     // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
@@ -127,8 +127,8 @@ public:
         OffSwitch,
         SpecialSwitch
     };
-    void setSwitchType(SwitchType type) { m_switchType = type; }
-    Volume::SwitchType switchType() { return m_switchType; }
+    void setSwitchType(SwitchType type);
+    Volume::SwitchType switchType() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend QDebug operator<<(QDebug os, const Volume& vol);
@@ -147,8 +147,8 @@ protected:
 
     // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
     // these functions. Our friend class MixDevice will handle that gracefully for us.
-    void setSwitch(bool val) { m_switchActivated = val; }
-    bool isSwitchActivated() { return m_switchActivated && m_hasSwitch; }
+    void setSwitch(bool val);
+    bool isSwitchActivated() const;
 
 private:
     // constructor for dummy volumes
@@ -167,7 +167,7 @@ private:
 class VolumeChannel
 { 
 public:
-    VolumeChannel(Volume::ChannelID chid) { m_volume = 0; m_chid = chid; }
+    VolumeChannel(Volume::ChannelID chid);
     int m_volume;
     Volume::ChannelID m_chid;
 

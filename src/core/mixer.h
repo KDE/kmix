@@ -121,7 +121,7 @@ public:
     static QString driverName(int num);
 
     static void setBeepOnVolumeChange(bool m_beepOnVolumeChange);
-    static bool getBeepOnVolumeChange() { return m_beepOnVolumeChange; }
+    static bool getBeepOnVolumeChange();
 
     /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
     QString& id();
@@ -132,7 +132,7 @@ public:
     /// the user, but can be used for referencing configuration items and such.
 
     void setCardInstance(int cardInstance);
-    int getCardInstance() const { return m_cardInstance; }
+    int getCardInstance() const;
 
     //void setID(QString& ref_id);
 
@@ -185,9 +185,9 @@ public:
 
     virtual bool moveStream(const QString id, const QString& destId);
 
-    virtual int mediaPlay(QString id) { return m_mixerBackend->mediaPlay(id); };
-    virtual int mediaPrev(QString id) { return m_mixerBackend->mediaPrev(id); };
-    virtual int mediaNext(QString id) { return m_mixerBackend->mediaNext(id); };
+    virtual int mediaPlay(QString id);
+    virtual int mediaPrev(QString id);
+    virtual int mediaNext(QString id);
 
     void commitVolumeChange(shared_ptr<MixDevice> md);
 
