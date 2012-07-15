@@ -31,7 +31,7 @@
 #include <solid/devicenotifier.h>
 #include <solid/audiointerface.h>
 
-KMixDeviceManager* KMixDeviceManager::s_KMixDeviceManager = 0;
+KMixDeviceManager* KMixDeviceManager::s_KMixDeviceManager = NULL;
 
 KMixDeviceManager::KMixDeviceManager()
 {

@@ -64,11 +64,10 @@ QList<Mixer *>& Mixer::mixers()
 
 Mixer::Mixer(QString& ref_driverName, int device)
     : m_balance(0)
-    , m_mixerBackend(0L)
+    , m_mixerBackend(NULL)
     , m_dynamic(false)
 {
     m_cardInstance = 0;
-    m_mixerBackend = 0;
     int driverCount = numDrivers();
     for (int driver = 0; driver < driverCount; driver++) {
         QString driverName = Mixer::driverName(driver);
@@ -98,7 +97,7 @@ Mixer::~Mixer()
  */
 Mixer* Mixer::findMixer(const QString& mixer_id)
 {
-    Mixer *mixer = 0;
+    Mixer *mixer = NULL;
     int mixerCount = Mixer::mixers().count();
     for (int i = 0; i < mixerCount; ++i) {
         if (((Mixer::mixers())[i])->id() == mixer_id) {
