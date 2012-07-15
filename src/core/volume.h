@@ -81,35 +81,35 @@ public:
     };
 
     // regular constructor (old, deprecsted)
-    //Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
+    //Volume( ChannelMask chmask, int maxVolume, int minVolume, bool hasSwitch, bool isCapture );
     // regular constructor
-    Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
+    Volume(int maxVolume, int minVolume, bool hasSwitch, bool isCapture);
     void addVolumeChannel(VolumeChannel ch);
     /// @Deprecated
     void addVolumeChannels(ChannelMask chmask);
 
     // Set all volumes as given by vol
-    void setAllVolumes(long vol);
+    void setAllVolumes(int vol);
     // Set all volumes to the ones given in vol
     void setVolume(const Volume &vol);
     // Set volumes as specified by the channel mask
     //void setVolume( const Volume &vol, ChannelMask chmask);
-    void setVolume(ChannelID chid, long volume);
+    void setVolume(ChannelID chid, int volume);
 
     // Increase or decrease all volumes by step
-    void changeAllVolumes(long step);
+    void changeAllVolumes(int step);
 
-    long getVolume(ChannelID chid);
+    int getVolume(ChannelID chid);
     qreal getAvgVolume(ChannelMask chmask);
     int getAvgVolumePercent(ChannelMask chmask);
 
-    //long operator[](int);
-    long maxVolume();
-    long minVolume();
+    //int operator[](int);
+    int maxVolume();
+    int minVolume();
     /**
      * The number of valid volume levels, mathematically: maxVolume - minVolume + 1
      */
-    long volumeSpan();
+    int volumeSpan();
     int  count();
 
     bool hasSwitch() { return _hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
@@ -139,11 +139,11 @@ public:
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
 
 protected:
-    long _chmask;
+    int _chmask;
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
 
-    long _minVolume;
-    long _maxVolume;
+    int _minVolume;
+    int _maxVolume;
 
     // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
     // these functions. Our friend class MixDevice will handle that gracefully for us.
@@ -154,9 +154,9 @@ private:
     // constructor for dummy volumes
     Volume();
 
-    void init(ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
+    void init(ChannelMask chmask, int maxVolume, int minVolume, bool hasSwitch, bool isCapture);
 
-    long volrange(long vol);
+    int volrange(int vol);
 
     bool _hasSwitch;
     bool _switchActivated;
@@ -168,7 +168,7 @@ class VolumeChannel
 { 
 public:
     VolumeChannel(Volume::ChannelID chid) { volume = 0; this->chid = chid; }
-    long volume;
+    int volume;
     Volume::ChannelID chid;
 
 // protected:

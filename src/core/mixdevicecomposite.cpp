@@ -22,7 +22,7 @@
 #include "core/mixdevicecomposite.h"
 
 
-const long MixDeviceComposite::VolMax = 10000;
+const int MixDeviceComposite::VolMax = 10000;
 
 MixDeviceComposite::MixDeviceComposite(Mixer* mixer,
                                        const QString& id,
@@ -67,18 +67,18 @@ Volume& MixDeviceComposite::playbackVolume()
 
 void MixDeviceComposite::update()
 {
-    long volAvg;
+    int volAvg;
     volAvg = calculateVolume(Volume::PlaybackVT);
     _compositePlaybackVolume->setAllVolumes(volAvg);
     volAvg = calculateVolume(Volume::CaptureVT);
 //     _compositeCaptureVolume->setAllVolumes(volAvg);
 }
 
-long MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
+int MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
 {
     QListIterator<shared_ptr<MixDevice> > it(_mds);
-    long volSum = 0;
-    int  volCount = 0;
+    int volSum = 0;
+    int volCount = 0;
     while (it.hasNext()) {
         shared_ptr<MixDevice> md = it.next();
 

@@ -68,7 +68,7 @@ VolumeChannel::VolumeChannel()
 
 }
 
-Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
+Volume::Volume(int maxVolume, int minVolume, bool hasSwitch, bool isCapture)
 {
     init((ChannelMask) 0, maxVolume, minVolume, hasSwitch, isCapture);
 }
@@ -91,7 +91,7 @@ void Volume::addVolumeChannel(VolumeChannel ch)
     _volumesL.insert(ch.chid, ch);
 }
 
-void Volume::init(ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
+void Volume::init(ChannelMask chmask, int maxVolume, int minVolume, bool hasSwitch, bool isCapture)
 {
     _chmask          = chmask;
     _maxVolume       = maxVolume;
@@ -108,9 +108,9 @@ QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
 }
 
 // @ compatibility
-void Volume::setAllVolumes(long vol)
+void Volume::setAllVolumes(int vol)
 {
-    long int finalVol = volrange(vol);
+    int finalVol = volrange(vol);
     QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
     while (it != _volumesL.end()) {
         it.value().volume = finalVol;
@@ -118,7 +118,7 @@ void Volume::setAllVolumes(long vol)
     }
 }
 
-void Volume::changeAllVolumes(long step)
+void Volume::changeAllVolumes(int step)
 {
     QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
     while (it != _volumesL.end()) {
@@ -129,7 +129,7 @@ void Volume::changeAllVolumes(long step)
 
 
 // @ compatibility
-void Volume::setVolume( ChannelID chid, long vol)
+void Volume::setVolume(ChannelID chid, int vol)
 {
     QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
     if (it != _volumesL.end()) {
@@ -148,22 +148,22 @@ void Volume::setVolume(const Volume &v)
     }
 }
 
-long Volume::maxVolume()
+int Volume::maxVolume()
 {
     return _maxVolume;
 }
 
-long Volume::minVolume()
+int Volume::minVolume()
 {
     return _minVolume;
 }
 
-long Volume::volumeSpan()
+int Volume::volumeSpan()
 {
     return _maxVolume - _minVolume + 1;
 }
 
-long Volume::getVolume(ChannelID chid)
+int Volume::getVolume(ChannelID chid)
 {
     return _volumesL.value(chid).volume;
 }
@@ -171,7 +171,7 @@ long Volume::getVolume(ChannelID chid)
 qreal Volume::getAvgVolume(ChannelMask chmask)
 {
     int avgVolumeCounter = 0;
-    long long sumOfActiveVolumes = 0;
+    int sumOfActiveVolumes = 0;
     foreach (VolumeChannel vc, _volumesL) {
         if (Volume::_channelMaskEnum[vc.chid] & chmask) {
             sumOfActiveVolumes += vc.volume;
@@ -210,7 +210,7 @@ int Volume::count()
  * returns a "sane" volume level. This means, it is a volume level inside the
  * valid bounds
  */
-long Volume::volrange(long vol)
+int Volume::volrange(int vol)
 {
     if (vol < _minVolume) {
         return _minVolume;
