@@ -25,6 +25,7 @@
 #include <QtCore/QAbstractEventDispatcher>
 #include <QTimer>
 
+#include <kdebug.h>
 #include <klocale.h>
 
 #include "core/mixer.h"

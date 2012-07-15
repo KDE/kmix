@@ -22,11 +22,11 @@
 #include "mixer_mpris2.h"
 #include "core/mixer.h"
 
-#include <QDebug>
 #include <QStringList>
 #include <QDBusReply>
 #include <QString>
 
+#include <KDebug>
 #include <KLocale>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
@@ -135,7 +135,7 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
 
-	qDebug() << "Shall send updated volume to MPRIS Player for " << id;
+	kDebug(67100) << "Shall send updated volume to MPRIS Player for " << id;
 	Volume& vol = md->playbackVolume();
 	double volFloat = 0;
 	if ( ! md->isMuted() )
@@ -261,7 +261,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 			QVariant result2 = dbusVariant.variant();
 			QString readableName = result2.toString();
 
-			qDebug() << "REPLY " << result2.type() << ": " << readableName;
+			kDebug(67100) << "REPLY " << result2.type() << ": " << readableName;
 
 			MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
 			if (id.startsWith("amarok")) {

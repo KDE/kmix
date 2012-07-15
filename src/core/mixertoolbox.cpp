@@ -25,7 +25,7 @@
 #include <QWidget>
 #include <QString>
 
-//#include <kdebug.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 
@@ -116,7 +116,7 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
         QString driverName = Mixer::driverName(drv);
         kDebug(67100) << "Looking for mixers with the : " << driverName << " driver";
         if (useBackendFilter && ! backendList.contains(driverName)) {
-            kDebug() << "Skipping " << driverName << " (filtered)";
+            kDebug(67100) << "Skipping " << driverName << " (filtered)";
             continue;
         }
 
@@ -204,8 +204,8 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
         KMixDeviceManager::instance()->setHotpluggingBackends(m_usedDrivers);
     }
 
-    kDebug(67100) << "Used drivers:" << m_usedDrivers << "Supported drivers:" << m_supportedDrivers << endl << "Total number of detected Mixers: " << Mixer::mixers().count();
-    //kDebug(67100) << "OUT MixerToolBox::initMixer()";
+    kDebug(67100) << "Used drivers:" << m_usedDrivers << "Supported drivers:"
+        << m_supportedDrivers << endl << "Total number of detected Mixers: " << Mixer::mixers().count();
 }
 
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
@@ -267,17 +267,13 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
  */
 void MixerToolBox::deinitMixer()
 {
-   //kDebug(67100) << "IN MixerToolBox::deinitMixer()";
-
    int mixerCount = Mixer::mixers().count();
    for (int i = 0; i < mixerCount; ++i) {
       Mixer* mixer = (Mixer::mixers())[i];
-      //kDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer";
       mixer->close();
       delete mixer;
    }
    Mixer::mixers().clear();
-   // kDebug(67100) << "OUT MixerToolBox::deinitMixer()";
 }
 
 QStringList MixerToolBox::usedDrivers() const

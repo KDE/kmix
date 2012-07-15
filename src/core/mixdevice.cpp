@@ -134,13 +134,13 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
     }
-    kDebug(67100) << "MixDevice::init() _id=" << _id;
+    kDebug(67100) << "MixDevice::init() _id =" << _id;
 }
 
 shared_ptr<MixDevice> MixDevice::addToPool()
 {
     const QString& fullyQualifiedId = getFullyQualifiedId();
-    kDebug() << "MixDevice::init() id=" << fullyQualifiedId;
+    kDebug(67100) << "MixDevice::init() id =" << fullyQualifiedId;
 
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
@@ -299,13 +299,13 @@ ProfControl* MixDevice::controlProfile()
 bool MixDevice::read(KConfig *config, const QString& grp)
 {
     if (_mixer->isDynamic() || isArtificial()) {
-        kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
+        kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration "
+            "(i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
     QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
     KConfigGroup cg = config->group(devgrp);
-    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
     readPlaybackOrCapture(cg, false);
     readPlaybackOrCapture(cg, true);
@@ -342,13 +342,13 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 bool MixDevice::write(KConfig *config, const QString& grp)
 {
     if (_mixer->isDynamic() || isArtificial()) {
-        kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
+        kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving "
+            "(i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
     QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
     KConfigGroup cg = config->group(devgrp);
-    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
     writePlaybackOrCapture(cg, false);
     writePlaybackOrCapture(cg, true);

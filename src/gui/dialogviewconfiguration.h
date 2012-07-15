@@ -36,7 +36,6 @@ class QVBoxLayout;
 #include <QMimeData>
 
 // KDE
-#include <kdebug.h>
 #include <kdialog.h>
 
 // KMix

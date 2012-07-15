@@ -150,7 +150,6 @@ const QString Mixer::dbusPath()
 
 void Mixer::volumeSave(KConfig *config)
 {
-    //    kDebug(67100) << "Mixer::volumeSave()";
     _mixerBackend->readSetFromHW();
     QString grp("Mixer");
     grp.append(id());
@@ -201,7 +200,7 @@ bool Mixer::openIfValid() {
         if (recommendedMaster.get() != 0) {
             QString recommendedMasterStr = recommendedMaster->id();
             setLocalMasterMD(recommendedMasterStr);
-            kDebug() << "Mixer::open() detected master: " << recommendedMaster->id();
+            kDebug(67100) << "Mixer::open() detected master: " << recommendedMaster->id();
         } else {
             if (!m_dynamic)
                 kError(67100) << "Mixer::open() no master detected." << endl;
@@ -253,7 +252,6 @@ MixSet& Mixer::getMixSet()
 QString Mixer::getDriverName()
 {
     QString driverName = _mixerBackend->getDriverName();
-//     kDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
     return driverName;
 }
 
@@ -390,11 +388,11 @@ QString& Mixer::udi()
  */
 void Mixer::setGlobalMaster(QString ref_card, QString ref_control, bool preferred)
 {
-    kDebug() << "ref_card=" << ref_card << ", ref_control=" << ref_control << ", preferred=" << preferred;
+    kDebug(67100) << "ref_card =" << ref_card << ", ref_control =" << ref_control << ", preferred =" << preferred;
     _globalMasterCurrent.set(ref_card, ref_control);
     if (preferred)
         _globalMasterPreferred.set(ref_card, ref_control);
-    kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
+    kDebug(67100) << "Mixer::setGlobalMaster() card =" <<ref_card<< " control =" << ref_control;
 }
 
 Mixer* Mixer::getGlobalMasterMixerNoFalback()
@@ -412,7 +410,6 @@ Mixer* Mixer::getGlobalMasterMixer()
     if (mixer == 0 && Mixer::mixers().count() > 0) {
         mixer = Mixer::mixers()[0];       // produce fallback
     }
-    //kDebug() << "Mixer::masterCard() returns " << mixer->id();
     return mixer;
 }
 
@@ -424,10 +421,10 @@ Mixer* Mixer::getGlobalMasterMixer()
 MasterControl& Mixer::getGlobalMasterPreferred()
 {
     if ( _globalMasterPreferred.isValid()) {
-        kDebug() << "Returning preferred master";
+        kDebug(67100) << "Returning preferred master";
         return _globalMasterPreferred;
     } else {
-        kDebug() << "Returning current master";
+        kDebug(67100) << "Returning current master";
         return _globalMasterCurrent;
     }
 }
@@ -457,7 +454,7 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
         }
     }
     if (mdRet.get() == 0)
-        kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
+        kDebug(67100) << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
 
     return mdRet;
 }

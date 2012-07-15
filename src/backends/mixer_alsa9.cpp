@@ -71,7 +71,7 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-	qDebug() << "Running Mixer_ALSA destructor";
+	kDebug(67100) << "Running Mixer_ALSA destructor";
    close();
 }
 

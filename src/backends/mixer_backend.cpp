@@ -20,6 +20,7 @@
 
 #include "mixer_backend.h"
 
+#include <kdebug.h>
 #include <klocale.h>
 
 // for the "ERR_" declartions, #include mixer.h
@@ -45,7 +46,7 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 
 Mixer_Backend::~Mixer_Backend()
 {
-	qDebug() << "Running Mixer_Backend destructor";
+	kDebug(67100) << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
 	//qDeleteAll(m_mixDevices); // TODO cesken Leak check the removed qDeleteAll()
 	m_mixDevices.clear();
