@@ -43,7 +43,7 @@ KMixDeviceManager::~KMixDeviceManager()
 
 KMixDeviceManager* KMixDeviceManager::instance()
 {
-    if (s_KMixDeviceManager == 0) {
+    if (!s_KMixDeviceManager) {
         s_KMixDeviceManager = new KMixDeviceManager;
     }
     return s_KMixDeviceManager;

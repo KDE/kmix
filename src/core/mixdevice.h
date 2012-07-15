@@ -186,7 +186,7 @@ public:
 
     bool isMovable() const
     {
-        return (0 != m_moveDestinationMixSet);
+        return m_moveDestinationMixSet;
     }
     MixSet *getMoveDestinationMixSet() const
     {

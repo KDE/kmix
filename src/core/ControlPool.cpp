@@ -38,7 +38,7 @@ ControlPool* ControlPool::m_instance = 0;
 
 ControlPool* ControlPool::instance()
 {
-    if (m_instance == 0)
+    if (!m_instance)
         ControlPool::m_instance = new ControlPool;
 
     return ControlPool::m_instance;
@@ -56,7 +56,7 @@ ControlPool* ControlPool::instance()
 shared_ptr<MixDevice> ControlPool::add(const QString& key, MixDevice* md)
 {
     shared_ptr<MixDevice> controlFromPool(get(key));
-    if (controlFromPool.get() != 0) {
+    if (controlFromPool.get()) {
         kDebug(67100) << "----ControlPool already cached key =" << key;
         return controlFromPool;
     }
