@@ -120,7 +120,7 @@ public:
      */
     MixDevice(Mixer* mixer, const QString& id, const QString& name, ChannelType type);
     MixDevice(Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = 0);
-    ~MixDevice();
+    virtual ~MixDevice();
 
     shared_ptr<MixDevice> addToPool();
 

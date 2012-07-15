@@ -80,7 +80,7 @@ public:
                        const QString& name,
                        ChannelType type);
     //   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, MixSet* moveDestinationMixSet = 0 );
-    ~MixDeviceComposite();
+    virtual ~MixDeviceComposite();
 
     // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
     // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean

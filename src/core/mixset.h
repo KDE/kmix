@@ -28,7 +28,7 @@
 class MixSet : public QList <shared_ptr<MixDevice> >
 {
 public:
-    ~MixSet();
+    virtual ~MixSet();
 
     bool read(KConfig *config, const QString& grp);
     bool write(KConfig *config, const QString& grp);

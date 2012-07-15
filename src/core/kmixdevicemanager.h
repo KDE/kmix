@@ -41,7 +41,7 @@ signals:
 
 private:
     KMixDeviceManager();
-    ~KMixDeviceManager();
+    virtual ~KMixDeviceManager();
     QStringList _hotpluggingBackends;
 
 private slots:
