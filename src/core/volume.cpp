@@ -27,46 +27,50 @@
 #include <kdebug.h>
 
 
-
 int Volume::_channelMaskEnum[9] =
-{ MLEFT, MRIGHT, MCENTER,
-		MWOOFER,
-		MSURROUNDLEFT, MSURROUNDRIGHT,
-		MREARSIDELEFT, MREARSIDERIGHT,
-		MREARCENTER
+{
+    MLEFT, MRIGHT, MCENTER,
+    MWOOFER,
+    MSURROUNDLEFT, MSURROUNDRIGHT,
+    MREARSIDELEFT, MREARSIDERIGHT,
+    MREARCENTER
 };
 
 QString Volume::ChannelNameReadable[9] =
 {
-		"Left", "Right",
-		"Center", "Subwoofer",
-		"Surround Left", "Surround Right",
-		"Side Left", "Side Right",
-		"Rear Center"
+    "Left", "Right",
+    "Center", "Subwoofer",
+    "Surround Left", "Surround Right",
+    "Side Left", "Side Right",
+    "Rear Center"
 };
 
-char Volume::ChannelNameForPersistence[9][30] = {
-		"volumeL", "volumeR",
-		"volumeCenter", "volumeWoofer",
-		"volumeSurroundL", "volumeSurroundR",
-		"volumeSideL", "volumeSideR",
-		"volumeRearCenter"
+char Volume::ChannelNameForPersistence[9][30] =
+{
+    "volumeL", "volumeR",
+    "volumeCenter", "volumeWoofer",
+    "volumeSurroundL", "volumeSurroundR",
+    "volumeSideL", "volumeSideR",
+    "volumeRearCenter"
 };
 
 // Forbidden/private. Only here because if there is no CaptureVolume we need the values initialized
 // And also QMap requires it.
 Volume::Volume()
 {
-	_minVolume = 0;
-	_maxVolume = 0;
-	_hasSwitch = false;
+    _minVolume = 0;
+    _maxVolume = 0;
+    _hasSwitch = false;
 }
 
-VolumeChannel::VolumeChannel() {}
-
-Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
+VolumeChannel::VolumeChannel()
 {
-	init((ChannelMask)0, maxVolume, minVolume, hasSwitch, isCapture );
+
+}
+
+Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
+{
+    init((ChannelMask) 0, maxVolume, minVolume, hasSwitch, isCapture);
 }
 
 /**
@@ -74,70 +78,63 @@ Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
  */
 void Volume::addVolumeChannels(ChannelMask chmask)
 {
-	for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
-	{
-		if ( chmask & Volume::_channelMaskEnum[chid] )
-		{
-			addVolumeChannel(VolumeChannel(chid));
-		}
-		chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
-	} // for all channels
+    for (Volume::ChannelID chid = Volume::CHIDMIN; chid <= Volume::CHIDMAX;) {
+        if (chmask & Volume::_channelMaskEnum[chid]) {
+            addVolumeChannel(VolumeChannel(chid));
+        }
+        chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
+    } // for all channels
 }
 
 void Volume::addVolumeChannel(VolumeChannel ch)
 {
-	_volumesL.insert(ch.chid, ch);
+    _volumesL.insert(ch.chid, ch);
 }
 
-
-
-void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
+void Volume::init(ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
 {
-	_chmask          = chmask;
-	_maxVolume       = maxVolume;
-	_minVolume       = minVolume;
-	_hasSwitch       = hasSwitch;
-	_isCapture       = isCapture;
-	//_muted           = false;
-	_switchActivated = false;
+    _chmask          = chmask;
+    _maxVolume       = maxVolume;
+    _minVolume       = minVolume;
+    _hasSwitch       = hasSwitch;
+    _isCapture       = isCapture;
+    //_muted           = false;
+    _switchActivated = false;
 }
 
 QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
 {
-	return _volumesL;
+    return _volumesL;
 }
 
 // @ compatibility
 void Volume::setAllVolumes(long vol)
 {
-	long int finalVol = volrange(vol);
-	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
-	while (it != _volumesL.end())
-	{
-		it.value().volume = finalVol;
-		++it;
-	}
+    long int finalVol = volrange(vol);
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
+    while (it != _volumesL.end()) {
+        it.value().volume = finalVol;
+        ++it;
+    }
 }
 
-void Volume::changeAllVolumes( long step )
+void Volume::changeAllVolumes(long step)
 {
-	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
-	while (it != _volumesL.end())
-	{
-		it.value().volume = volrange(it.value().volume + step);
-		++it;
-	}
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
+    while (it != _volumesL.end()) {
+        it.value().volume = volrange(it.value().volume + step);
+        ++it;
+    }
 }
 
 
 // @ compatibility
 void Volume::setVolume( ChannelID chid, long vol)
 {
-	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
-	if ( it != _volumesL.end())
-	{
-		it.value().volume = vol;
-	}
+    QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
+    if (it != _volumesL.end()) {
+        it.value().volume = vol;
+    }
 }
 
 /**
@@ -145,118 +142,126 @@ void Volume::setVolume( ChannelID chid, long vol)
  */
 void Volume::setVolume(const Volume &v)
 {
-	foreach (VolumeChannel vc, _volumesL )
-	{
-		ChannelID chid = vc.chid;
-		v.getVolumes()[chid].volume = vc.volume;
-	}
+    foreach (VolumeChannel vc, _volumesL) {
+        ChannelID chid = vc.chid;
+        v.getVolumes()[chid].volume = vc.volume;
+    }
 }
 
-long Volume::maxVolume() {
-	return _maxVolume;
+long Volume::maxVolume()
+{
+    return _maxVolume;
 }
 
-long Volume::minVolume() {
-	return _minVolume;
+long Volume::minVolume()
+{
+    return _minVolume;
 }
 
-long Volume::volumeSpan() {
-	return _maxVolume - _minVolume + 1;
+long Volume::volumeSpan()
+{
+    return _maxVolume - _minVolume + 1;
 }
 
-long Volume::getVolume(ChannelID chid) {
-	return _volumesL.value(chid).volume;
+long Volume::getVolume(ChannelID chid)
+{
+    return _volumesL.value(chid).volume;
 }
 
 qreal Volume::getAvgVolume(ChannelMask chmask)
 {
-	int avgVolumeCounter = 0;
-	long long sumOfActiveVolumes = 0;
-	foreach (VolumeChannel vc, _volumesL )
-	{
-		if (Volume::_channelMaskEnum[vc.chid] & chmask )
-		{
-			sumOfActiveVolumes += vc.volume;
-			++avgVolumeCounter;
-		}
-	}
-	if (avgVolumeCounter != 0) {
-		qreal sumOfActiveVolumesQreal = sumOfActiveVolumes;
-		sumOfActiveVolumesQreal /= avgVolumeCounter;
-		return sumOfActiveVolumesQreal;
-	}
-	else
-		return 0;
+    int avgVolumeCounter = 0;
+    long long sumOfActiveVolumes = 0;
+    foreach (VolumeChannel vc, _volumesL) {
+        if (Volume::_channelMaskEnum[vc.chid] & chmask) {
+            sumOfActiveVolumes += vc.volume;
+            ++ avgVolumeCounter;
+        }
+    }
+    if (avgVolumeCounter != 0) {
+        qreal sumOfActiveVolumesQreal = sumOfActiveVolumes;
+        sumOfActiveVolumesQreal /= avgVolumeCounter;
+        return sumOfActiveVolumesQreal;
+    }
+    else
+        return 0;
 }
 
 
 int Volume::getAvgVolumePercent(ChannelMask chmask)
 {
-	qreal volume = getAvgVolume(chmask);
-	// min=-100, max=200 => volSpan = 301
-	// volume = -50 =>  volShiftedToZero = -50+min = 50
-	qreal volSpan = volumeSpan();
-	qreal volShiftedToZero = volume - _minVolume;
-	qreal percentReal = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToZero ) / ( volSpan - 1);
-	int percent = qRound(percentReal);
-	//kDebug() << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
+    qreal volume = getAvgVolume(chmask);
+    // min=-100, max=200 => volSpan = 301
+    // volume = -50 =>  volShiftedToZero = -50+min = 50
+    qreal volSpan = volumeSpan();
+    qreal volShiftedToZero = volume - _minVolume;
+    qreal percentReal = volSpan == 0 ? 0 : (100 * volShiftedToZero) / (volSpan - 1);
+    int percent = qRound(percentReal);
+    //kDebug() << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
 
-	return percent;
+    return percent;
 }
 
-int Volume::count() {
-	return getVolumes().count();
+int Volume::count()
+{
+    return getVolumes().count();
 }
 
 /**
  * returns a "sane" volume level. This means, it is a volume level inside the
  * valid bounds
  */
-long Volume::volrange( long vol )
+long Volume::volrange(long vol)
 {
-	if ( vol < _minVolume ) {
-		return _minVolume;
-	}
-	else if ( vol < _maxVolume ) {
-		return vol;
-	}
-	else {
-		return _maxVolume;
-	}
+    if (vol < _minVolume) {
+        return _minVolume;
+    }
+    else if (vol < _maxVolume) {
+        return vol;
+    }
+    else {
+        return _maxVolume;
+    }
 }
 
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol) {
-	os << "(";
+    os << "(";
 
-	bool first = true;
-	foreach ( const VolumeChannel vc, vol.getVolumes() )
-	{
-		if ( !first )  os << ",";
-		else first = false;
-		os << vc.volume;
-	} // all channels
-	os << ")";
+    bool first = true;
+    foreach (const VolumeChannel vc, vol.getVolumes()) {
+        if ( !first )  os << ",";
+        else first = false;
+        os << vc.volume;
+    } // all channels
+    os << ")";
 
-	os << " [" << vol._minVolume << "-" << vol._maxVolume;
-	if ( vol._switchActivated ) { os << " : switch active ]"; } else { os << " : switch inactive ]"; }
+    os << " [" << vol._minVolume << "-" << vol._maxVolume;
+    if (vol._switchActivated) {
+        os << " : switch active ]";
+    } else {
+        os << " : switch inactive ]";
+    }
 
-	return os;
+    return os;
 }
 
 QDebug operator<<(QDebug os, const Volume& vol) {
-	os << "(";
-	bool first = true;
-	foreach ( VolumeChannel vc, vol.getVolumes() )
-	{
-		if ( !first )  os << ",";
-		else first = false;
-		os << vc.volume;
-	} // all channels
-	os << ")";
+    os << "(";
+    bool first = true;
+    foreach (VolumeChannel vc, vol.getVolumes()) {
+        if ( !first )  os << ",";
+        else first = false;
+        os << vc.volume;
+    } // all channels
+    os << ")";
 
-	os << " [" << vol._minVolume << "-" << vol._maxVolume;
-	if ( vol._switchActivated ) { os << " : switch active ]"; } else { os << " : switch inactive ]"; }
+    os << " [" << vol._minVolume << "-" << vol._maxVolume;
+    if ( vol._switchActivated ) {
+        os << " : switch active ]";
+    } else {
+        os << " : switch inactive ]";
+    }
 
-	return os;
+    return os;
 }

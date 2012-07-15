@@ -61,50 +61,52 @@ Q_OBJECT
 
 public:
 
-   /**
-    * Constructor:
-    * @par mixer The mixer this control belongs to
-    * @par id  Defines the ID, e.g. used in looking up the keys in kmixrc. Also it is used heavily inside KMix as unique key. 
-    *      It is advised to set a nice name, like 'PCM:2', which would  mean 
-    *      "2nd PCM device of the sound card". The ID's may NOT contain whitespace.
-    *       The Creator (normally the backend) MUST pass distinct ID's for each MixDevices of one card.
-    *
-    *      Virtual Controls (controls not created by a backend) are prefixed with "KMix::", e.g.
-    *      "KMix::RecSelector:0"
-    *  @par name is the readable name. This one is presented to the user in the GUI
-    *  @par type The control type. It is only used to find an appropriate icon
-    */
-   MixDeviceComposite( Mixer* mixer,  const QString& id, QList<shared_ptr<MixDevice> >& mds, const QString& name, ChannelType type );
-//   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, MixSet* moveDestinationMixSet = 0 );
-   ~MixDeviceComposite();
+    /**
+     * Constructor:
+     * @par mixer The mixer this control belongs to
+     * @par id  Defines the ID, e.g. used in looking up the keys in kmixrc. Also it is used heavily inside KMix as unique key.
+     *      It is advised to set a nice name, like 'PCM:2', which would  mean
+     *      "2nd PCM device of the sound card". The ID's may NOT contain whitespace.
+     *       The Creator (normally the backend) MUST pass distinct ID's for each MixDevices of one card.
+     *
+     *      Virtual Controls (controls not created by a backend) are prefixed with "KMix::", e.g.
+     *      "KMix::RecSelector:0"
+     *  @par name is the readable name. This one is presented to the user in the GUI
+     *  @par type The control type. It is only used to find an appropriate icon
+     */
+    MixDeviceComposite(Mixer* mixer,
+                       const QString& id,
+                       QList<shared_ptr<MixDevice> >& mds,
+                       const QString& name,
+                       ChannelType type);
+    //   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", bool doNotRestore = false, MixSet* moveDestinationMixSet = 0 );
+    ~MixDeviceComposite();
 
+    // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
+    // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
+    // "mute on", or does it mean "playback on".
+    virtual bool isMuted();
+    virtual void setMuted(bool value);
+    virtual bool isRecSource();
+    virtual void setRecSource(bool value);
+    virtual bool isEnum();
 
+    // Refresh the composite from its components
+    void update();
 
-   // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
-   // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
-   // "mute on", or does it mean "playback on".
-   virtual bool isMuted();
-   virtual void setMuted(bool value);
-   virtual bool isRecSource();
-   virtual void setRecSource(bool value);
-   virtual bool isEnum();
-
-   // Refresh the composite from its components
-   void update();
-
-   virtual Volume& playbackVolume();
-   //virtual Volume& captureVolume();
+    virtual Volume& playbackVolume();
+    //virtual Volume& captureVolume();
 
 private:
-   long calculateVolume(Volume::VolumeType vt);
+    long calculateVolume(Volume::VolumeType vt);
 
-   Mixer *_mixer;
-   QList<shared_ptr<MixDevice> > _mds;
+    Mixer *_mixer;
+    QList<shared_ptr<MixDevice> > _mds;
 
-   static const long VolMax;
+    static const long VolMax;
 
-   Volume* _compositePlaybackVolume;
- //  Volume* _compositeCaptureVolume;
+    Volume* _compositePlaybackVolume;
+    //  Volume* _compositeCaptureVolume;
 };
 
 #endif

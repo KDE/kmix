@@ -43,16 +43,16 @@ KMixDeviceManager::~KMixDeviceManager()
 
 KMixDeviceManager* KMixDeviceManager::instance()
 {
-    if ( s_KMixDeviceManager == 0 ) {
-        s_KMixDeviceManager = new KMixDeviceManager();
+    if (s_KMixDeviceManager == 0) {
+        s_KMixDeviceManager = new KMixDeviceManager;
     }
     return s_KMixDeviceManager;
 }
 
 void KMixDeviceManager::initHotplug()
 {
-    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(pluggedSlot(QString)) );
-    connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(unpluggedSlot(QString)) );
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(pluggedSlot(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(unpluggedSlot(QString)));
 }
 
 QString KMixDeviceManager::getUDI_ALSA(int num)
@@ -64,26 +64,26 @@ QString KMixDeviceManager::getUDI_ALSA(int num)
     bool found = false;
     QString udi;
     QString devHandle;
-    foreach ( const Solid::Device &device, dl )
-    {
+    foreach (const Solid::Device &device, dl) {
 //        std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
         const Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
-        if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
+        if (audiohw && (audiohw->deviceType() & Solid::AudioInterface::AudioControl)) {
             switch (audiohw->driver()) {
-                case Solid::AudioInterface::Alsa:
-                    devHandle = audiohw->driverHandle().toList().first().toString();
-//                    std::cout << ">>> Coldplugged ALSA ='" <<  devHandle.toUtf8().data() << "'\n";
-                    if ( numString == devHandle ) {
-                        found = true;
-//                        std::cout << ">>> Match!!! Coldplugged ALSA ='" <<  devHandle.toUtf8().data() << "'\n";
-                        udi = device.udi();
-                    }
-                    break;
-                default:
-                    break;
+            case Solid::AudioInterface::Alsa:
+                devHandle = audiohw->driverHandle().toList().first().toString();
+//              std::cout << ">>> Coldplugged ALSA ='" <<  devHandle.toUtf8().data() << "'\n";
+                if (numString == devHandle) {
+                    found = true;
+//                  std::cout << ">>> Match!!! Coldplugged ALSA ='" <<  devHandle.toUtf8().data() << "'\n";
+                    udi = device.udi();
+                }
+                break;
+            default:
+                break;
             } // driver type
         } // is an audio control
-        if ( found) break;
+        if (found)
+            break;
     } // foreach
     return udi;
 }
@@ -97,64 +97,65 @@ QString KMixDeviceManager::getUDI_OSS(const QString& devname)
     QString devHandle;
     foreach ( const Solid::Device &device, dl )
     {
-//        std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
+//      std::cout << "Coldplug udi = '" << device.udi().toUtf8().data() << "'\n";
         const Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
-        if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
+        if (audiohw && (audiohw->deviceType() &Solid::AudioInterface::AudioControl)) {
             switch (audiohw->driver()) {
-                case Solid::AudioInterface::OpenSoundSystem:
-                    devHandle = audiohw->driverHandle().toString();
-//                    std::cout << ">>> Coldplugged OSS ='" <<  devHandle.toUtf8().data() << "'\n";
-                    if ( devname == devHandle ) {
-                        found = true;
-//                        std::cout << ">>> Match!!! Coldplugged OSS ='" <<  devHandle.toUtf8().data() << "'\n";
-                        udi = device.udi();
-                    }
-                     break;
-                default:
-                    break;
+            case Solid::AudioInterface::OpenSoundSystem:
+                devHandle = audiohw->driverHandle().toString();
+//              std::cout << ">>> Coldplugged OSS ='" <<  devHandle.toUtf8().data() << "'\n";
+                if (devname == devHandle) {
+                    found = true;
+//                  std::cout << ">>> Match!!! Coldplugged OSS ='" <<  devHandle.toUtf8().data() << "'\n";
+                    udi = device.udi();
+                }
+                break;
+            default:
+                break;
             } // driver type
         } // is an audio control
-        if ( found) break;
+        if (found)
+            break;
     } // foreach
     return udi;
 }
 
-
-void KMixDeviceManager::pluggedSlot(const QString& udi) {
+void KMixDeviceManager::pluggedSlot(const QString& udi)
+{
 //   std::cout << "Plugged udi='" <<  udi.toUtf8().data() << "'\n";
-   Solid::Device device(udi);
-   Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
-   if (audiohw && (audiohw->deviceType() & ( Solid::AudioInterface::AudioControl))) {
-       QString dev;
-       QRegExp devExpr( QLatin1String( "^\\D+(\\d+)$" ));
+    Solid::Device device(udi);
+    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
+    if (audiohw && (audiohw->deviceType() & Solid::AudioInterface::AudioControl)) {
+        QString dev;
+        QRegExp devExpr(QLatin1String("^\\D+(\\d+)$"));
+
         switch (audiohw->driver()) {
-           case Solid::AudioInterface::Alsa:
-               if ( _hotpluggingBackends.contains("ALSA") || _hotpluggingBackends.contains("*") ) {
-                    dev = audiohw->driverHandle().toList().first().toString();
-                    emit plugged("ALSA", udi, dev);
-               }
-               break;
-           case Solid::AudioInterface::OpenSoundSystem:
-                if ( _hotpluggingBackends.contains("OSS") || _hotpluggingBackends.contains("*") ) {
-                    dev = audiohw->driverHandle().toString();
-                    if ( devExpr.indexIn(dev) > -1 ) {
-                        dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
-                    }
-                    else {
-                        dev = '0'; // "/dev/mixer" or "/dev/sound/mixer"
-                    }
-                    emit plugged("OSS", udi, dev);
+        case Solid::AudioInterface::Alsa:
+            if (_hotpluggingBackends.contains("ALSA") || _hotpluggingBackends.contains("*")) {
+                dev = audiohw->driverHandle().toList().first().toString();
+                emit plugged("ALSA", udi, dev);
+            }
+            break;
+        case Solid::AudioInterface::OpenSoundSystem:
+            if (_hotpluggingBackends.contains("OSS") || _hotpluggingBackends.contains("*")) {
+                dev = audiohw->driverHandle().toString();
+                if (devExpr.indexIn(dev) > -1) {
+                    dev = devExpr.cap(1); // Get device number from device name (e.g "/dev/mixer1" or "/dev/sound/mixer2")
+                } else {
+                    dev = '0'; // "/dev/mixer" or "/dev/sound/mixer"
                 }
-                break;
-           default:
-               kError(67100) <<  "Plugged UNKNOWN Audio device (ignored)";
-               break;
-       }
+                emit plugged("OSS", udi, dev);
+            }
+            break;
+        default:
+            kError(67100) << "Plugged UNKNOWN Audio device (ignored)";
+            break;
+        }
     }
 }
 
-
-void KMixDeviceManager::unpluggedSlot(const QString& udi) {
+void KMixDeviceManager::unpluggedSlot(const QString& udi)
+{
 //    std::cout << "Unplugged udi='" <<  udi.toUtf8().data() << "'\n";
     Solid::Device device(udi);
     // At this point the device has already been unplugged by the user. Solid doesn't know anything about the
@@ -162,7 +163,6 @@ void KMixDeviceManager::unpluggedSlot(const QString& udi) {
     // unplugging action (could e.g. also be HID or mass storage). The receiver of the signal as to deal with it,
     // but a simple UDI matching is enough.
     emit unplugged(udi);
-
 }
 
 

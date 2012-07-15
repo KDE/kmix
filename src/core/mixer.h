@@ -45,31 +45,37 @@ class Mixer : public QObject
       Q_OBJECT
 
 public:
-	/**
-	 * Status for Mixer operations.
-	 * 
-	 * OK_UNCHANGED is a apecial variant of OK. It must be implemented by
-	 * backends that use needsPolling() == true. See Mixer_OSS.cpp for an
-	 * example. Rationale is that we need a proper change check: Otherwise
-	 * the DBUS Session Bus is massively spammed. Also quite likely the Mixer
-	 * GUI might get updated all the time.
-	 * 
-	 */
-    enum MixerError { OK=0, ERR_PERM=1, ERR_WRITE, ERR_READ,
-        ERR_OPEN, OK_UNCHANGED };
+    /**
+    * Status for Mixer operations.
+    *
+    * OK_UNCHANGED is a apecial variant of OK. It must be implemented by
+    * backends that use needsPolling() == true. See Mixer_OSS.cpp for an
+    * example. Rationale is that we need a proper change check: Otherwise
+    * the DBUS Session Bus is massively spammed. Also quite likely the Mixer
+    * GUI might get updated all the time.
+    *
+    */
+    enum MixerError {
+        OK               = 0,
+        ERR_PERM         = 1,
+        ERR_WRITE,
+        ERR_READ,
+        ERR_OPEN,
+        OK_UNCHANGED
+    };
 
 
-    Mixer( QString& ref_driverName, int device );
+    Mixer(QString& ref_driverName, int device);
     virtual ~Mixer();
 
     static int numDrivers();
     QString getDriverName();
 
-    shared_ptr<MixDevice>  find(const QString& devPK);
-    static Mixer* findMixer( const QString& mixer_id);
+    shared_ptr<MixDevice> find(const QString& devPK);
+    static Mixer* findMixer(const QString& mixer_id);
 
-    void volumeSave( KConfig *config );
-    void volumeLoad( KConfig *config );
+    void volumeSave(KConfig *config);
+    void volumeLoad(KConfig *config);
 
     /// Tells the number of the mixing devices
     unsigned int size() const;
@@ -80,7 +86,7 @@ public:
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
     /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
-    shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID );
+    shared_ptr<MixDevice> getMixdeviceById(const QString& deviceID);
 
     /// Open/grab the mixer for further intraction
     bool openIfValid();
@@ -126,7 +132,7 @@ public:
     /// the user, but can be used for referencing configuration items and such.
 
     void setCardInstance(int cardInstance);
-    int getCardInstance() const      {          return _cardInstance;      }
+    int getCardInstance() const { return _cardInstance; }
 
     //void setID(QString& ref_id);
 
@@ -170,26 +176,25 @@ public:
     static float VOLUME_PAGESTEP_DIVISOR; // The divisor for defining volume control steps (page-step for sliders)
 
     /// DBUS oriented methods
-    virtual void increaseVolume( const QString& mixdeviceID );
-    virtual void decreaseVolume( const QString& mixdeviceID );
+    virtual void increaseVolume(const QString& mixdeviceID);
+    virtual void decreaseVolume(const QString& mixdeviceID);
 
     /// Says if we are dynamic (e.g. widgets can come and go)
-    virtual void setDynamic( bool dynamic = true );
+    virtual void setDynamic(bool dynamic = true);
     virtual bool isDynamic();
 
-    virtual bool moveStream( const QString id, const QString& destId );
+    virtual bool moveStream(const QString id, const QString& destId);
 
-   virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); };
-   virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); };
-   virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); };
+    virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); };
+    virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); };
+    virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); };
 
-    
-    void commitVolumeChange( shared_ptr<MixDevice> md );
+    void commitVolumeChange(shared_ptr<MixDevice> md);
 
 public slots:
     void readSetFromHWforceUpdate() const;
     virtual void setBalance(int balance); // sets the m_balance (see there)
-    
+
 signals:
     void newBalance(Volume& );
     void controlChanged(void);
@@ -202,12 +207,12 @@ protected:
 private:
     void setBalanceInternal(Volume& vol);
     void recreateId();
-    void increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease );
+    void increaseOrDecreaseVolume(const QString& mixdeviceID, bool decrease);
 
     Mixer_Backend *_mixerBackend;
     QString _id;
     QString _masterDevicePK;
-    int    _cardInstance;
+    int _cardInstance;
     static MasterControl _globalMasterCurrent;
     static MasterControl _globalMasterPreferred;
 

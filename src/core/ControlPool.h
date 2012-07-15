@@ -35,19 +35,17 @@ class ControlPool
 {
 
 public:
-	static ControlPool* instance();
-	shared_ptr<MixDevice> add(const QString& key, MixDevice* mixDevice);
-	shared_ptr<MixDevice> get(const QString& key);
-
+    static ControlPool* instance();
+    shared_ptr<MixDevice> add(const QString& key, MixDevice* mixDevice);
+    shared_ptr<MixDevice> get(const QString& key);
 
 private:
-	ControlPool();
-	virtual ~ControlPool() {};
+    ControlPool();
+    virtual ~ControlPool() {}
 
-
-	QMap<QString, shared_ptr<MixDevice> > *pool;
-	static ControlPool* _instance;
-	static shared_ptr<MixDevice> TheEmptyDevice;
+    QMap<QString, shared_ptr<MixDevice> > *pool;
+    static ControlPool* _instance;
+    static shared_ptr<MixDevice> TheEmptyDevice;
 };
 
 #endif

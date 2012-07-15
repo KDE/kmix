@@ -35,60 +35,59 @@
 static const QString channelTypeToIconName( MixDevice::ChannelType type )
 {
     switch (type) {
-        case MixDevice::AUDIO:
-            return "mixer-pcm";
-        case MixDevice::BASS:
-        case MixDevice::SURROUND_LFE: // "LFE" SHOULD have an own icon
-            return "mixer-lfe";
-        case MixDevice::CD:
-            return "mixer-cd";
-        case MixDevice::EXTERNAL:
-            return "mixer-line";
-        case MixDevice::MICROPHONE:
-            return "mixer-microphone";
-        case MixDevice::MIDI:
-            return "mixer-midi";
-        case MixDevice::RECMONITOR:
-            return "mixer-capture";
-        case MixDevice::TREBLE:
-            return "mixer-pcm-default";
-        case MixDevice::UNKNOWN:
-            return "mixer-front";
-        case MixDevice::VOLUME:
-            return "mixer-master";
-        case MixDevice::VIDEO:
-            return "mixer-video";
-        case MixDevice::SURROUND:
-        case MixDevice::SURROUND_BACK:
-            return "mixer-surround";
-        case MixDevice::SURROUND_CENTERFRONT:
-        case MixDevice::SURROUND_CENTERBACK:
-            return "mixer-surround-center";
-        case MixDevice::HEADPHONE:
-            return "mixer-headset";
-        case MixDevice::DIGITAL:
-            return "mixer-digital";
-        case MixDevice::AC97:
-            return "mixer-ac97";
-        case MixDevice::SPEAKER:
-            return "mixer-pc-speaker";
-        case MixDevice::MICROPHONE_BOOST:
-            return "mixer-microphone-boost";
-        case MixDevice::MICROPHONE_FRONT_BOOST:
-            return "mixer-microphone-front-boost";
-        case MixDevice::MICROPHONE_FRONT:
-            return "mixer-microphone-front";
-        case MixDevice::KMIX_COMPOSITE:
-            return "mixer-line";
-        case MixDevice::APPLICATION_AMAROK:
-            return "amarok";
-        case MixDevice::APPLICATION_BANSHEE:
-            return "media-player-banshee";
-        case MixDevice::APPLICATION_XMM2:
-            return "xmms";
-        case MixDevice::APPLICATION_STREAM:
-            return "mixer-pcm";
-      
+    case MixDevice::AUDIO:
+        return "mixer-pcm";
+    case MixDevice::BASS:
+    case MixDevice::SURROUND_LFE: // "LFE" SHOULD have an own icon
+        return "mixer-lfe";
+    case MixDevice::CD:
+        return "mixer-cd";
+    case MixDevice::EXTERNAL:
+        return "mixer-line";
+    case MixDevice::MICROPHONE:
+        return "mixer-microphone";
+    case MixDevice::MIDI:
+        return "mixer-midi";
+    case MixDevice::RECMONITOR:
+        return "mixer-capture";
+    case MixDevice::TREBLE:
+        return "mixer-pcm-default";
+    case MixDevice::UNKNOWN:
+        return "mixer-front";
+    case MixDevice::VOLUME:
+        return "mixer-master";
+    case MixDevice::VIDEO:
+        return "mixer-video";
+    case MixDevice::SURROUND:
+    case MixDevice::SURROUND_BACK:
+        return "mixer-surround";
+    case MixDevice::SURROUND_CENTERFRONT:
+    case MixDevice::SURROUND_CENTERBACK:
+        return "mixer-surround-center";
+    case MixDevice::HEADPHONE:
+        return "mixer-headset";
+    case MixDevice::DIGITAL:
+        return "mixer-digital";
+    case MixDevice::AC97:
+        return "mixer-ac97";
+    case MixDevice::SPEAKER:
+        return "mixer-pc-speaker";
+    case MixDevice::MICROPHONE_BOOST:
+        return "mixer-microphone-boost";
+    case MixDevice::MICROPHONE_FRONT_BOOST:
+        return "mixer-microphone-front-boost";
+    case MixDevice::MICROPHONE_FRONT:
+        return "mixer-microphone-front";
+    case MixDevice::KMIX_COMPOSITE:
+        return "mixer-line";
+    case MixDevice::APPLICATION_AMAROK:
+        return "amarok";
+    case MixDevice::APPLICATION_BANSHEE:
+        return "media-player-banshee";
+    case MixDevice::APPLICATION_XMM2:
+        return "xmms";
+    case MixDevice::APPLICATION_STREAM:
+        return "mixer-pcm";
     }
     return "mixer-front";
 }
@@ -101,17 +100,17 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  * can have a volume level (2 when stereo), can be recordable and muted.
  * The ChannelType tells which kind of control the MixDevice is.
  */
-MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
+MixDevice::MixDevice(Mixer* mixer, const QString& id, const QString& name, ChannelType type)
 {
     init(mixer, id, name, channelTypeToIconName(type), (MixSet*)0);
 }
 
-MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
+MixDevice::MixDevice(Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet)
 {
     init(mixer, id, name, iconName, moveDestinationMixSet);
 }
 
-void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
+void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet)
 {
     _artificial = false;
     _applicationStream = false;
@@ -121,16 +120,16 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     mediaPlayControl = false;
     mediaNextControl = false;
     mediaPrevControl = false;
-    if( name.isEmpty() )
+    if (name.isEmpty())
         _name = i18n("unknown");
     else
         _name = name;
-    if ( iconName.isEmpty() )
+    if (iconName.isEmpty())
         _iconName = "mixer-front";
     else
         _iconName = iconName;
     _moveDestinationMixSet = moveDestinationMixSet;
-    if ( _id.contains(' ') ) {
+    if (_id.contains(' ')) {
         // The key is used in the config file. IdbusControlWrappert MUST NOT contain spaces
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
@@ -145,44 +144,43 @@ shared_ptr<MixDevice> MixDevice::addToPool()
 
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
-    _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
-	return thisSharedPtr;
+    _dbusControlWrapper = new DBusControlWrapper(thisSharedPtr, dbusPath());
+    return thisSharedPtr;
 }
-
 
 QString MixDevice::getFullyQualifiedId()
 {
-	QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());
-	return fqId;
+    QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());
+    return fqId;
 }
 
 void MixDevice::addPlaybackVolume(Volume &playbackVol)
 {
-   // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
-   _playbackVolume = playbackVol;
-   _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
+    // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
+    _playbackVolume = playbackVol;
+    _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
 }
 
-void MixDevice::addCaptureVolume (Volume &captureVol)
+void MixDevice::addCaptureVolume(Volume &captureVol)
 {
-   _captureVolume = captureVol;
-   _captureVolume.setSwitchType(Volume::CaptureSwitch);
+    _captureVolume = captureVol;
+    _captureVolume.setSwitchType(Volume::CaptureSwitch);
 }
 
 void MixDevice::addEnums(QList<QString*>& ref_enumList)
 {
-   if ( ref_enumList.count() > 0 ) {
-      int maxEnumId = ref_enumList.count();
-      for (int i=0; i<maxEnumId; i++ ) {
+    if (ref_enumList.count() > 0) {
+        int maxEnumId = ref_enumList.count();
+        for (int i = 0; i < maxEnumId; i++) {
             // we have an enum. Lets set the names of the enum items in the MixDevice
             // the enum names are assumed to be static!
-            _enumValues.append( *(ref_enumList.at(i)) );
-      }
-   }
+            _enumValues.append(*(ref_enumList.at(i)));
+        }
+    }
 }
 
-
-MixDevice::~MixDevice() {
+MixDevice::~MixDevice()
+{
     _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
     delete _dbusControlWrapper;
 }
@@ -197,50 +195,88 @@ Volume& MixDevice::captureVolume()
     return _captureVolume;
 }
 
-
 void MixDevice::setEnumId(int enumId)
 {
-   if ( enumId < _enumValues.count() ) {
-      _enumCurrentId = enumId;
-   }
+    if (enumId < _enumValues.count()) {
+        _enumCurrentId = enumId;
+    }
 }
 
 unsigned int MixDevice::enumId()
 {
-   return _enumCurrentId;
+    return _enumCurrentId;
 }
 
-QList<QString>& MixDevice::enumValues() {
-   return _enumValues;
+QList<QString>& MixDevice::enumValues()
+{
+    return _enumValues;
 }
 
-
-const QString& MixDevice::id() const {
+const QString& MixDevice::id() const
+{
    return _id;
 }
 
-const QString MixDevice::dbusPath() {
-	QString controlPath = _id;
-	controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
-	return _mixer->dbusPath() + "/" + controlPath;
+const QString MixDevice::dbusPath()
+{
+    QString controlPath = _id;
+    controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+    return _mixer->dbusPath() + "/" + controlPath;
 }
 
+bool MixDevice::isMuted()
+{
+    return _playbackVolume.hasSwitch() && !_playbackVolume.isSwitchActivated();
+}
 
-bool MixDevice::isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
-void MixDevice::setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
-void MixDevice::toggleMute()               { setMuted( !isMuted() ); }
-bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() &&  _captureVolume.isSwitchActivated() ); }
-bool MixDevice::isNotRecSource()           { return ( _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated() ); }
-void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
-bool MixDevice::isEnum()                   { return ( ! _enumValues.empty() ); }
+void MixDevice::setMuted(bool value)
+{
+    _playbackVolume.setSwitch(!value);
+}
 
-int MixDevice::mediaPlay() { return mixer()->mediaPlay(_id); }
-int MixDevice::mediaPrev() { return mixer()->mediaPrev(_id); }
-int MixDevice::mediaNext() { return mixer()->mediaNext(_id); }
+void MixDevice::toggleMute()
+{
+    setMuted(!isMuted());
+}
+
+bool MixDevice::isRecSource()
+{
+    return _captureVolume.hasSwitch() && _captureVolume.isSwitchActivated();
+}
+
+bool MixDevice::isNotRecSource()
+{
+    return _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated();
+}
+
+void MixDevice::setRecSource(bool value)
+{
+    _captureVolume.setSwitch(value);
+}
+
+bool MixDevice::isEnum()
+{
+    return !_enumValues.empty();
+}
+
+int MixDevice::mediaPlay()
+{
+    return mixer()->mediaPlay(_id);
+}
+
+int MixDevice::mediaPrev()
+{
+    return mixer()->mediaPrev(_id);
+}
+
+int MixDevice::mediaNext()
+{
+    return mixer()->mediaNext(_id);
+}
 
 bool MixDevice::operator==(const MixDevice& other) const
 {
-   return ( _id == other._id );
+    return _id == other._id;
 }
 
 void MixDevice::setControlProfile(ProfControl* control)
@@ -248,7 +284,8 @@ void MixDevice::setControlProfile(ProfControl* control)
     _profControl = control;
 }
 
-ProfControl* MixDevice::controlProfile() {
+ProfControl* MixDevice::controlProfile()
+{
     return _profControl;
 }
 
@@ -259,29 +296,29 @@ ProfControl* MixDevice::controlProfile() {
  * because we need to read the minimum and maximum volume levels.
  * (Another solution would be to "equip" volFromConfig with maxInt and minInt values).
  */
-bool MixDevice::read( KConfig *config, const QString& grp )
+bool MixDevice::read(KConfig *config, const QString& grp)
 {
-    if ( _mixer->isDynamic() || isArtificial() ) {
+    if (_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
     QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
-    KConfigGroup cg = config->group( devgrp );
+    KConfigGroup cg = config->group(devgrp);
     //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
 
     readPlaybackOrCapture(cg, false);
-    readPlaybackOrCapture(cg, true );
+    readPlaybackOrCapture(cg, true);
 
     bool mute = cg.readEntry("is_muted", false);
-    setMuted( mute );
+    setMuted(mute);
 
     bool recsrc = cg.readEntry("is_recsrc", false);
-    setRecSource( recsrc );
+    setRecSource(recsrc);
 
     int enumId = cg.readEntry("enum_id", -1);
-    if ( enumId != -1 ) {
-        setEnumId( enumId );
+    if (enumId != -1) {
+        setEnumId(enumId);
     }
     return true;
 }
@@ -289,21 +326,20 @@ bool MixDevice::read( KConfig *config, const QString& grp )
 void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
-    
-    for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
-    {
-      QString volstr = getVolString(chid,capture);
-       if ( config.hasKey(volstr) ) {
-          volume.setVolume(chid, config.readEntry(volstr, 0));
-       } // if saved channel exists
-       chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
+
+    for (Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX; ) {
+        QString volstr = getVolString(chid,capture);
+        if (config.hasKey(volstr)) {
+            volume.setVolume(chid, config.readEntry(volstr, 0));
+        } // if saved channel exists
+        chid = (Volume::ChannelID)(1 + (int)chid); // ugly
     } // for all channels    
 }
 
 /**
  *  called on "kmixctrl --save" and from the GUI's (currently only on exit)
  */
-bool MixDevice::write( KConfig *config, const QString& grp )
+bool MixDevice::write(KConfig *config, const QString& grp)
 {
     if (_mixer->isDynamic() || isArtificial()) {
         kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
@@ -315,13 +351,13 @@ bool MixDevice::write( KConfig *config, const QString& grp )
     // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
 
     writePlaybackOrCapture(cg, false);
-    writePlaybackOrCapture(cg, true );
+    writePlaybackOrCapture(cg, true);
 
-    cg.writeEntry("is_muted" , isMuted() );
-    cg.writeEntry("is_recsrc", isRecSource() );
+    cg.writeEntry("is_muted" , isMuted());
+    cg.writeEntry("is_recsrc", isRecSource());
     cg.writeEntry("name", _name);
-    if ( isEnum() ) {
-        cg.writeEntry("enum_id", enumId() );
+    if (isEnum()) {
+        cg.writeEntry("enum_id", enumId());
     }
     return true;
 }
@@ -329,18 +365,17 @@ bool MixDevice::write( KConfig *config, const QString& grp )
 void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
-    foreach (VolumeChannel vc, volume.getVolumes() )
-    {
-       config.writeEntry(getVolString(vc.chid,capture) , (int)vc.volume);
+    foreach (VolumeChannel vc, volume.getVolumes()) {
+        config.writeEntry(getVolString(vc.chid,capture) , (int)vc.volume);
     } // for all channels
-
 }
 
 QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)
 {
-       QString volstr (Volume::ChannelNameForPersistence[chid]);
-       if ( capture ) volstr += "Capture";
-       return volstr;
+    QString volstr (Volume::ChannelNameForPersistence[chid]);
+    if (capture)
+        volstr += "Capture";
+    return volstr;
 }
 
 #include "mixdevice.moc"

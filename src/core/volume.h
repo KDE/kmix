@@ -32,10 +32,9 @@ class VolumeChannel;
 
 class Volume
 {
+    friend class MixDevice;
 
-friend class MixDevice;
-
- public:
+public:
     // Channel definition:
     // For example a 2.0 system just has MLEFT and MRIGHT.
     // A 5.1 system adds MCENTER, MWOOFER, MSURROUNDLEFT and MSURROUNDRIGHT.
@@ -78,27 +77,30 @@ friend class MixDevice;
     static char ChannelNameForPersistence[9][30];
     static QString ChannelNameReadable[9];
 
-    enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
+    enum VolumeType {
+        PlaybackVT = 0,
+        CaptureVT = 1
+    };
 
     // regular constructor (old, deprecsted)
     //Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     // regular constructor
-    Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
+    Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
     void addVolumeChannel(VolumeChannel ch);
     /// @Deprecated
     void addVolumeChannels(ChannelMask chmask);
-    
+
     // Set all volumes as given by vol
     void setAllVolumes(long vol);
     // Set all volumes to the ones given in vol
-    void setVolume(const Volume &vol );
+    void setVolume(const Volume &vol);
     // Set volumes as specified by the channel mask
     //void setVolume( const Volume &vol, ChannelMask chmask);
-    void setVolume( ChannelID chid, long volume);
+    void setVolume(ChannelID chid, long volume);
 
     // Increase or decrease all volumes by step
-    void changeAllVolumes( long step );
-    
+    void changeAllVolumes(long step);
+
     long getVolume(ChannelID chid);
     qreal getAvgVolume(ChannelMask chmask);
     int getAvgVolumePercent(ChannelMask chmask);
@@ -111,46 +113,52 @@ friend class MixDevice;
      */
     long volumeSpan();
     int  count();
-    
-    bool hasSwitch()           { return _hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
-    bool hasVolume()           { return (_maxVolume != _minVolume); }
-    bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
-    
-   // Some playback switches control playback, and some are special.
-   // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
-   // It is only used for GUI things, like showing a "Mute" text or tooltip
-   // Capture is not really used, and has only been added for completeness and future extensibility.
-   enum SwitchType { PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
-   void setSwitchType(SwitchType type) { _switchType = type; }
-   Volume::SwitchType switchType() { return _switchType; }
+
+    bool hasSwitch() { return _hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
+    bool hasVolume() { return _maxVolume != _minVolume; }
+    bool isCapture() { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
+
+    // Some playback switches control playback, and some are special.
+    // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
+    // It is only used for GUI things, like showing a "Mute" text or tooltip
+    // Capture is not really used, and has only been added for completeness and future extensibility.
+    enum SwitchType {
+        PlaybackSwitch,
+        CaptureSwitch,
+        OnSwitch,
+        OffSwitch,
+        SpecialSwitch
+    };
+    void setSwitchType(SwitchType type) { _switchType = type; }
+    Volume::SwitchType switchType() { return _switchType; }
 
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend QDebug operator<<(QDebug os, const Volume& vol);
 
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
-    static int    _channelMaskEnum[9];
+    static int _channelMaskEnum[9];
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
-    
+
 protected:
-    long          _chmask;
+    long _chmask;
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
 
-    long          _minVolume;
-    long          _maxVolume;
-   // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
-   // these functions. Our friend class MixDevice will handle that gracefully for us.
-   void setSwitch( bool val ) { _switchActivated = val; }
-   bool isSwitchActivated()   { return _switchActivated && _hasSwitch; }
+    long _minVolume;
+    long _maxVolume;
 
+    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
+    // these functions. Our friend class MixDevice will handle that gracefully for us.
+    void setSwitch(bool val) { _switchActivated = val; }
+    bool isSwitchActivated() { return _switchActivated && _hasSwitch; }
 
 private:
     // constructor for dummy volumes
     Volume();
 
-    void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
+    void init(ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
-    long volrange( long vol );
+    long volrange(long vol);
 
     bool _hasSwitch;
     bool _switchActivated;
@@ -159,16 +167,16 @@ private:
 };
 
 class VolumeChannel
-{  
+{ 
 public:
-  VolumeChannel(Volume::ChannelID chid) { volume =0; this->chid = chid; }
-  long volume;
-  Volume::ChannelID chid;
-  
+    VolumeChannel(Volume::ChannelID chid) { volume = 0; this->chid = chid; }
+    long volume;
+    Volume::ChannelID chid;
+
 // protected:
 //   friend class Volume;
 //   friend class MixDevice;
-  VolumeChannel(); // Only required for QMap
+    VolumeChannel(); // Only required for QMap
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);

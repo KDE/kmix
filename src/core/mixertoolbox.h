@@ -40,31 +40,31 @@ class MixerToolBox : public QObject
 {
     Q_OBJECT
 
-   public:
-      static MixerToolBox* instance();
-      void initMixer(bool multiDriverMode = false, QList<QString> backendList = QList<QString>());
-      void initMixerInternal(bool, QList<QString> backendList);
-      QStringList supportedDrivers() const;
-      QStringList usedDrivers() const;
-      void deinitMixer();
-      bool possiblyAddMixer(Mixer *mixer);
-      void removeMixer(Mixer *mixer);
-      void setMixerIgnoreExpression(const QString& ignoreExpr);
-      QString mixerIgnoreExpression() const;
-      
-      //static KLocale* whatsthisControlLocale();
-      
-   signals:
-      void mixerAdded(QString mixerID);
+public:
+    static MixerToolBox* instance();
+    void initMixer(bool multiDriverMode = false, QList<QString> backendList = QList<QString>());
+    void initMixerInternal(bool, QList<QString> backendList);
+    QStringList supportedDrivers() const;
+    QStringList usedDrivers() const;
+    void deinitMixer();
+    bool possiblyAddMixer(Mixer *mixer);
+    void removeMixer(Mixer *mixer);
+    void setMixerIgnoreExpression(const QString& ignoreExpr);
+    QString mixerIgnoreExpression() const;
 
-   private:
-      static MixerToolBox* s_instance;
-      QMap<QString,int> s_mixerNums;
-      static QRegExp s_ignoreMixerExpression;
-      QStringList m_supportedDrivers;
-      QStringList m_usedDrivers;
-      
-      //static KLocale* s_whatsthisLocale;
+    //static KLocale* whatsthisControlLocale();
+
+signals:
+    void mixerAdded(QString mixerID);
+
+private:
+    static MixerToolBox* s_instance;
+    QMap<QString,int> s_mixerNums;
+    static QRegExp s_ignoreMixerExpression;
+    QStringList m_supportedDrivers;
+    QStringList m_usedDrivers;
+
+    //static KLocale* s_whatsthisLocale;
 };
 
 #endif

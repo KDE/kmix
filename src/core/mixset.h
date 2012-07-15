@@ -27,21 +27,21 @@
 
 class MixSet : public QList <shared_ptr<MixDevice> >
 {
-   public:
-	~MixSet();
+public:
+    ~MixSet();
 
-      bool read( KConfig *config, const QString& grp );
-      bool write( KConfig *config, const QString& grp );
+    bool read(KConfig *config, const QString& grp);
+    bool write(KConfig *config, const QString& grp);
 
-      QString name() { return m_name; }
-      void setName( const QString &name );
-      
-      shared_ptr<MixDevice> get(QString id);
+    QString name() { return m_name; }
+    void setName(const QString &name);
 
-      void removeById(QString id);
+    shared_ptr<MixDevice> get(QString id);
 
-   private:
-      QString m_name;
+    void removeById(QString id);
+
+private:
+    QString m_name;
 };
 
 #endif

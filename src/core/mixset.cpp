@@ -20,7 +20,7 @@
  */
 
 
-//KMix
+// KMix
 #include "mixset.h"
 #include "core/mixdevice.h"
 
@@ -35,73 +35,67 @@
 
 MixSet::~MixSet()
 {
-	clear();
+    clear();
 }
 
-bool MixSet::read( KConfig *config, const QString& grp )
+bool MixSet::read(KConfig *config, const QString& grp)
 {
-   kDebug(67100) << "MixSet::read() of group " << grp;
-   KConfigGroup group = config->group(grp);
-   m_name = group.readEntry( "name", m_name );
+    kDebug(67100) << "MixSet::read() of group " << grp;
+    KConfigGroup group = config->group(grp);
+    m_name = group.readEntry("name", m_name);
 
-   bool have_success = false, have_fail = false;
-   foreach ( shared_ptr<MixDevice> md, *this)
-   {
-       if ( md->read( config, grp ) )
-           have_success = true;
-       else
-           have_fail = true;
-   }
-   return have_success && !have_fail;
+    bool have_success = false, have_fail = false;
+    foreach (shared_ptr<MixDevice> md, *this) {
+        if (md->read(config, grp))
+            have_success = true;
+        else
+            have_fail = true;
+    }
+    return have_success && !have_fail;
 }
 
-bool MixSet::write( KConfig *config, const QString& grp )
+bool MixSet::write(KConfig *config, const QString& grp)
 {
-   kDebug(67100) << "MixSet::write() of group " << grp;    
-   KConfigGroup conf = config->group(grp);
-   conf.writeEntry( "name", m_name );
+    kDebug(67100) << "MixSet::write() of group " << grp;
+    KConfigGroup conf = config->group(grp);
+    conf.writeEntry("name", m_name);
 
-   bool have_success = false, have_fail = false;
-   foreach ( shared_ptr<MixDevice> md, *this)
-   {
-       if ( md->write( config, grp ) )
-           have_success = true;
-       else
-           have_fail = true;
-   }
-   return have_success && !have_fail;
+    bool have_success = false, have_fail = false;
+    foreach (shared_ptr<MixDevice> md, *this) {
+        if (md->write(config, grp))
+            have_success = true;
+        else
+            have_fail = true;
+    }
+    return have_success && !have_fail;
 }
 
-void MixSet::setName( const QString &name )
+void MixSet::setName(const QString &name)
 {
     m_name = name;
 }
 
 shared_ptr<MixDevice> MixSet::get(QString id)
 {
-	shared_ptr<MixDevice> mdRet;
+    shared_ptr<MixDevice> mdRet;
 
-	foreach ( shared_ptr<MixDevice> md, *this)
-	{
-		if ( md->id() == id )
-		{
-			mdRet = md;
-			break;
-		}
-	}
-	return mdRet;
+    foreach (shared_ptr<MixDevice> md, *this) {
+        if (md->id() == id) {
+            mdRet = md;
+            break;
+        }
+    }
+    return mdRet;
 }
 
 void MixSet::removeById(QString id)
 {
-	for (int i=0; i < count() ; i++ )
-	{
-		shared_ptr<MixDevice> md = operator[](i);
-	    if ( md->id() == id )
-	    {
-	    	removeAt(i);
-	    	break;
-	    }
-	}
+    for (int i = 0; i < count(); i++) {
+        shared_ptr<MixDevice> md = operator[](i);
+        if (md->id() == id) {
+            removeAt(i);
+            break;
+        }
+    }
 }
 

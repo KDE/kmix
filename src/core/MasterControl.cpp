@@ -33,7 +33,7 @@ void MasterControl::set(QString card, QString control)
 
 bool MasterControl::isValid()
 {
-    if ( control.isEmpty() || card.isEmpty() )
+    if (control.isEmpty() || card.isEmpty())
         return false;
 
     return true;
