@@ -346,6 +346,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
  */
 void MPrisAppdata::trackChangedIncoming(QVariantMap msg)
 {
+    Q_UNUSED(msg)
 	kDebug() << "Track changed";
 }
 

@@ -49,7 +49,7 @@ KMixApp::newInstance()
     if ( m_kmix ) {
         m_kmix->show();
     } else {
-        m_kmix = new KMixWindow(this);
+        m_kmix = new KMixWindow(NULL);
     }
 	return 0;
 }

@@ -45,8 +45,8 @@ const QString KMIX_DBUS_PATH = "/Mixers";
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
-KMixWindow::KMixWindow(bool invisible)
-: KXmlGuiWindow(0, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) )
+KMixWindow::KMixWindow(QWidget* parent)
+    : KXmlGuiWindow(parent, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) )
 {
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);

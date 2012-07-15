@@ -47,7 +47,7 @@ KMixWindow : public KXmlGuiWindow
    Q_OBJECT
 
 public:
-    KMixWindow(bool invisible);
+    KMixWindow(QWidget* parent = 0);
     ~KMixWindow();
 
 private slots:
