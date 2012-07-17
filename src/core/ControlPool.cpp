@@ -34,7 +34,7 @@ ControlPool::ControlPool()
     m_pool = new QMap<QString, shared_ptr<MixDevice> >();
 }
 
-ControlPool* ControlPool::m_instance = NULL;
+ControlPool* ControlPool::m_instance = 0;
 
 ControlPool* ControlPool::instance()
 {

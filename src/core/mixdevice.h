@@ -119,7 +119,7 @@ public:
      *  @par type The control type. It is only used to find an appropriate icon
      */
     MixDevice(Mixer* mixer, const QString& id, const QString& name, ChannelType type);
-    MixDevice(Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = NULL);
+    MixDevice(Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = 0);
     virtual ~MixDevice();
 
     shared_ptr<MixDevice> addToPool();

@@ -102,7 +102,7 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  */
 MixDevice::MixDevice(Mixer* mixer, const QString& id, const QString& name, ChannelType type)
 {
-    init(mixer, id, name, channelTypeToIconName(type), (MixSet*) NULL);
+    init(mixer, id, name, channelTypeToIconName(type), (MixSet*)0);
 }
 
 MixDevice::MixDevice(Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet)
@@ -120,7 +120,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
 {
     m_artificial = false;
     m_applicationStream = false;
-    m_dbusControlWrapper = NULL; // will be set in addToPool()
+    m_dbusControlWrapper = 0; // will be set in addToPool()
     m_mixer = mixer;
     m_id = id;
     m_mediaPlayControl = false;

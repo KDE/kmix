@@ -35,9 +35,9 @@
 #include "core/mixertoolbox.h"
 
 
-MixerToolBox* MixerToolBox::s_instance = NULL;
+MixerToolBox* MixerToolBox::s_instance = 0;
 QRegExp MixerToolBox::s_ignoreMixerExpression(QLatin1String("Modem"));
-//KLocale* MixerToolBox::s_whatsthisLocale = NULL;
+//KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
 /***********************************************************************************
  Attention:
@@ -220,7 +220,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
         if (!s_ignoreMixerExpression.isEmpty() && mixer->id().contains(s_ignoreMixerExpression)) {
             // This Mixer should be ignored (default expression is "Modem").
             delete mixer;
-            mixer = NULL;
+            mixer = 0;
             return false;
         }
         // Count mixer nums for every mixer name to identify mixers with equal names.
@@ -237,7 +237,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
     } // valid
     else {
         delete mixer;
-        mixer = NULL;
+        mixer = 0;
         return false;
     } // invalid
 }
