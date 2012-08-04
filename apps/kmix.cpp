@@ -363,6 +363,7 @@ void KMixWindow::saveBaseConfig()
     config.writeEntry( "Tickmarks", m_showTicks );
     config.writeEntry( "Labels", m_showLabels );
     config.writeEntry( "startkdeRestore", m_onLogin );
+    config.writeEntry( "AutoStart", !m_supressAutostart );
     config.writeEntry( "VolumeFeedback", m_beepOnVolumeChange );
     config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
     config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
@@ -484,6 +485,8 @@ void KMixWindow::loadBaseConfig()
     m_showTicks = config.readEntry("Tickmarks", true);
     m_showLabels = config.readEntry("Labels", true);
     m_onLogin = config.readEntry("startkdeRestore", true );
+    m_supressAutostart = ! config.readEntry( "AutoStart", true );
+
     setBeepOnVolumeChange(config.readEntry("VolumeFeedback", false ));
     m_startVisible = config.readEntry("Visible", false);
     m_multiDriverMode = config.readEntry("MultiDriver", false);
@@ -1115,6 +1118,7 @@ void KMixWindow::showSettings()
         m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
         m_prefDlg->m_volumeChk->setEnabled( m_showDockWidget );
         m_prefDlg->m_onLogin->setChecked( m_onLogin );
+        m_prefDlg->m_supressAutostart->setChecked( m_supressAutostart);
         m_prefDlg->m_beepOnVolumeChange->setChecked( m_beepOnVolumeChange );
 
         m_prefDlg->m_showTicks->setChecked( m_showTicks );
@@ -1157,6 +1161,7 @@ void KMixWindow::applyPrefs( KMixPrefDlg *prefDlg )
     m_showDockWidget = prefDlg->m_dockingChk->isChecked();
     m_volumeWidget = prefDlg->m_volumeChk->isChecked();
     m_onLogin = prefDlg->m_onLogin->isChecked();
+    m_supressAutostart = m_prefDlg->m_supressAutostart->isChecked();
     setBeepOnVolumeChange(prefDlg->m_beepOnVolumeChange->isChecked());
 
     if ( prefDlg->_rbVertical->isChecked() ) {

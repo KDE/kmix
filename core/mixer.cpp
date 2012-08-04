@@ -63,6 +63,31 @@ QList<Mixer *>& Mixer::mixers()
     return s_mixers;
 }
 
+/**
+ * Returns whether there is at least one dynamic mixer active.
+ * @returns true, if at least one dynamic mixer is active
+ */
+bool Mixer::dynamicBackendsPresent()
+{
+  foreach ( Mixer* mixer, Mixer::mixers() )
+  {
+    if ( mixer->isDynamic() )
+      return true;
+  }
+  return false;
+}
+
+bool Mixer::pulseaudioPresent()
+{
+  foreach ( Mixer* mixer, Mixer::mixers() )
+  {
+    if ( mixer->getDriverName() == "PulseAudio" )
+      return true;
+  }
+  return false;
+}
+
+
 Mixer::Mixer( QString& ref_driverName, int device )
     : m_balance(0), _mixerBackend(0L), m_dynamic(false)
 {

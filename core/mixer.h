@@ -177,6 +177,9 @@ public:
     virtual void setDynamic( bool dynamic = true );
     virtual bool isDynamic();
 
+    static bool dynamicBackendsPresent();
+    static bool pulseaudioPresent();
+
     virtual bool moveStream( const QString id, const QString& destId );
 
    virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); };

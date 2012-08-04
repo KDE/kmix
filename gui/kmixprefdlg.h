@@ -27,7 +27,9 @@
 class KMixPrefWidget;
 class QCheckBox;
 class QFrame;
+class QLabel;
 class QRadioButton;
+class QShowEvent;
 
 class 
 KMixPrefDlg : public KDialog
@@ -47,16 +49,22 @@ KMixPrefDlg : public KDialog
       void apply();
       void dockIntoPanelChange(int state);
 
+  protected:
+    void showEvent ( QShowEvent * event );
+
   private:
    QFrame *m_generalTab;
    KMixPrefWidget *m_mixPrefTab;
 
    QCheckBox *m_dockingChk;
    QCheckBox *m_volumeChk;
+   QLabel *dynamicControlsRestoreWarning;
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;
    QCheckBox *m_onLogin;
+   QCheckBox *m_supressAutostart;
    QCheckBox *m_beepOnVolumeChange;
+   QLabel *volumeFeedbackWarning;
    QRadioButton *_rbVertical;
    QRadioButton *_rbHorizontal;
 };
