@@ -146,6 +146,8 @@ void KMixDockWidget::createActions()
   connect(action, SIGNAL(triggered(bool)), SLOT(selectMaster()));
   menu->addAction( action );
   }
+  //Context menu entry to access phonon settings
+  menu->addAction(_kmixMainWindow->actionCollection()->action("launch_kdesoundsetup"));
 
    // Setup volume preview
   if ( _playBeepOnVolumeChange ) {
