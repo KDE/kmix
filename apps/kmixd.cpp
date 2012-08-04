@@ -149,7 +149,6 @@ void KMixD::saveBaseConfig()
    kDebug() << "About to save config (Base)";
    KConfigGroup config(KGlobal::config(), "Global");
 
-   config.writeEntry( "startkdeRestore", m_onLogin );
    config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
    config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
    config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
@@ -201,7 +200,6 @@ void KMixD::loadBaseConfig()
     KConfigGroup config(KGlobal::config(), "Global");
 
     // TODO cesken Should we save this configuration items in kmixd at all?
-   m_onLogin = config.readEntry("startkdeRestore", true );
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
    m_configVersion = config.readEntry( "ConfigVersion", 0 );

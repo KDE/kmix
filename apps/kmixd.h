@@ -75,7 +75,6 @@ KMixD : public KDEDModule, protected QDBusContext
    //KAccel *m_keyAccel;
    //KAction* _actionShowMenubar;
 
-   bool m_onLogin;
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
 
