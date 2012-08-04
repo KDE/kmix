@@ -165,7 +165,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    
    // --- HEADER ---
    //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
-   qlb = new QLabel( i18n("Configuration of the channels."), frame );
+   qlb = new QLabel( i18n("Configuration of the channels. Drag icon to update."), frame );
    _layout->addWidget(qlb);
    
 //    _hlayout = new QHBoxLayout();
