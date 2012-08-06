@@ -450,6 +450,7 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD()
 shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 {
 	shared_ptr<MixDevice> mdRet;
+	shared_ptr<MixDevice> firstDevice;
 	Mixer *mixer = fallbackAllowed ?
 		   Mixer::getGlobalMasterMixer() : Mixer::getGlobalMasterMixerNoFalback();
 
@@ -460,6 +461,7 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 	{
 		if ( md.get() == 0 )
 			continue; // invalid
+			firstDevice=md;
 		if ( md->id() == _globalMasterCurrent.getControl() )
 		{
 			mdRet = md;
@@ -467,7 +469,12 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 		}
 	}
 	if ( mdRet.get() == 0 )
-		kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster)";
+	{
+	  //For some sound cards when using pulseaudio the mixer id is not proper hence returning the first device as master channel device
+	  //This solves the bug id:290177 and problems stated in review #105422
+		kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster), returning the first device";
+		mdRet=firstDevice;
+	}
 
 	return mdRet;
 }
