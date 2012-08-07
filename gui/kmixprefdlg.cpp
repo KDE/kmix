@@ -111,7 +111,7 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    l = new QHBoxLayout();
    layout->addItem( l );
       l->addSpacing(10);
-      m_supressAutostart = new QCheckBox( i18n("Supress KMix Autostart"), m_generalTab );
+      m_supressAutostart = new QCheckBox( i18n("Suppress KMix Autostart"), m_generalTab );
       m_supressAutostart->setToolTip(i18n("Disables the KMix autostart service (kmix_autostart.desktop)"));
       l->addWidget( m_supressAutostart );
 
