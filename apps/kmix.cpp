@@ -1264,8 +1264,12 @@ void KMixWindow::slotSelectMaster()
 
 void KMixWindow::newMixerShown(int /*tabIndex*/ ) {
     KMixerWidget* kmw = (KMixerWidget*)m_wsMixers->currentWidget();
-    if (kmw) {
-        setWindowTitle( kmw->mixer()->readableName() );
+    if (kmw)
+    {
+	// I am using the app name as a PREFIX, as KMix is a single window app, and it is
+	// more helpful to the user to see "KDE Mixer" in a window list than a possibly cryptic
+	// soundcard name like "HDA ATI SB"
+        setWindowTitle( i18n("KDE Mixer") + " - " + kmw->mixer()->readableName() );
         if ( ! m_dontSetDefaultCardOnStart )
             m_defaultCardOnStart = kmw->getGuiprof()->getId();
         // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
