@@ -30,7 +30,9 @@
 
 #include <kapplication.h>
 #include <KConfig>
+#include <KGlobal>
 #include <klocale.h>
+#include <KStandardDirs>
 
 #include "gui/kmixerwidget.h"
 
@@ -114,11 +116,13 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
       l->addSpacing(10);
       allowAutostart = new QCheckBox( i18n("Autostart"), m_generalTab );
       allowAutostart->setToolTip(i18n("Enables the KMix autostart service (kmix_autostart.desktop)"));
-      l->addWidget( allowAutostart );
-      autostartWarning = new QLabel( i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."), m_generalTab );
-      l->addWidget( autostartWarning );
+   l->addWidget( allowAutostart );
 
-// -----------------------------------------------------------
+         l = new QHBoxLayout();
+   l->addSpacing(10);
+   layout->addItem( l );
+      allowAutostartWarning = new QLabel( i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."), m_generalTab );
+      l->addWidget( allowAutostartWarning );
 
    label = new QLabel( i18n("Visual"), m_generalTab );
    layout->addWidget(label);
@@ -174,10 +178,18 @@ void KMixPrefDlg::showEvent ( QShowEvent * event )
   bool volumeFeebackAvailable = Mixer::pulseaudioPresent();
   volumeFeedbackWarning->setVisible(!volumeFeebackAvailable);
   m_beepOnVolumeChange->setDisabled(!volumeFeebackAvailable);
+
+  /*
+//  KConfig* autostartConfig = new KConfig("kmix_autostart", KConfig::FullConfig, "autostart");
+//  kDebug() << "accessMode = " << autostartConfig->accessMode();
+//  bool autostartFileExists =  (autostartConfig->accessMode() == KConfigBase::NoAccess);
+  */
+  QString autostartConfigFilename = KGlobal::dirs()->findResource("autostart",QString("kmix_autostart.desktop"));
+  kDebug() << "autostartConfigFilename = " << autostartConfigFilename;
+  bool autostartFileExists = ! autostartConfigFilename.isNull();
   
-  KConfig* autostartConfig = new KConfig("kmix_autostart", KConfig::FullConfig, "autostart");
-  bool autostartFileExists = ! (autostartConfig->accessMode() == KConfigBase::NoAccess);
-  autostartWarning->setEnabled(autostartFileExists);
+  allowAutostartWarning->setEnabled(autostartFileExists);
+  allowAutostartWarning->setVisible(!autostartFileExists);
   allowAutostart->setEnabled(autostartFileExists);
   
   KDialog::showEvent(event);

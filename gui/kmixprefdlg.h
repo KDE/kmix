@@ -63,10 +63,9 @@ KMixPrefDlg : public KDialog
    QCheckBox *m_showLabels;
    QCheckBox *m_onLogin;
    QCheckBox *allowAutostart;
-   QCheckBox *autostartFileExists;
+   QLabel *allowAutostartWarning;
    QCheckBox *m_beepOnVolumeChange;
    QLabel *volumeFeedbackWarning;
-   QLabel *autostartWarning;
    QRadioButton *_rbVertical;
    QRadioButton *_rbHorizontal;
 };
