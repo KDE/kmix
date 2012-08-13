@@ -114,7 +114,7 @@ KMixWindow : public KXmlGuiWindow
    bool m_showTicks;
    bool m_showLabels;
    bool m_onLogin;
-   bool m_supressAutostart;
+   bool allowAutostart;
    bool m_beepOnVolumeChange;
    bool m_startVisible;
    bool m_visibilityUpdateAllowed;

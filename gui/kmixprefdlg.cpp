@@ -29,6 +29,7 @@
 #include <qradiobutton.h>
 
 #include <kapplication.h>
+#include <KConfig>
 #include <klocale.h>
 
 #include "gui/kmixerwidget.h"
@@ -111,9 +112,11 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
    l = new QHBoxLayout();
    layout->addItem( l );
       l->addSpacing(10);
-      m_supressAutostart = new QCheckBox( i18n("Supress KMix Autostart"), m_generalTab );
-      m_supressAutostart->setToolTip(i18n("Disables the KMix autostart service (kmix_autostart.desktop)"));
-      l->addWidget( m_supressAutostart );
+      allowAutostart = new QCheckBox( i18n("Autostart"), m_generalTab );
+      allowAutostart->setToolTip(i18n("Enables the KMix autostart service (kmix_autostart.desktop)"));
+      l->addWidget( allowAutostart );
+      autostartWarning = new QLabel( i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."), m_generalTab );
+      l->addWidget( autostartWarning );
 
 
 // -----------------------------------------------------------
@@ -172,6 +175,12 @@ void KMixPrefDlg::showEvent ( QShowEvent * event )
   bool volumeFeebackAvailable = Mixer::pulseaudioPresent();
   volumeFeedbackWarning->setVisible(!volumeFeebackAvailable);
   m_beepOnVolumeChange->setDisabled(!volumeFeebackAvailable);
+  
+  KConfig* autostartConfig = new KConfig("kmix_autostart", KConfig::FullConfig, "autostart");
+  bool autostartFileExists = ! (autostartConfig->accessMode() == KConfigBase::NoAccess);
+  autostartWarning->setEnabled(autostartFileExists);
+  allowAutostart->setEnabled(autostartFileExists);
+  
   KDialog::showEvent(event);
 }
 
