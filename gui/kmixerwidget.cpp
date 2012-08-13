@@ -154,6 +154,9 @@ void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
 	{
 		kmixWindow->redrawMixer(mixerId);
 	}
+	//The dock is updated to show the change in the master channel
+	//This solves the bug id:290177 and problems stated in review #105422
+	kmixWindow->updateDocking();
 }
 
 void KMixerWidget::refreshVolumeLevelsToplevel()

@@ -118,7 +118,6 @@ KMixPrefDlg::KMixPrefDlg( QWidget *parent )
       autostartWarning = new QLabel( i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."), m_generalTab );
       l->addWidget( autostartWarning );
 
-
 // -----------------------------------------------------------
 
    label = new QLabel( i18n("Visual"), m_generalTab );

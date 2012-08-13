@@ -55,50 +55,15 @@ OSDWidget::OSDWidget(QWidget * parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    //Cache the icon pixmaps
-    QSize iconSize;
-
-    if (!Plasma::Theme::defaultTheme()->imagePath("icons/audio").isEmpty()) {
-        // Icons from plasma theme are 24x24 pixel
-        iconSize = QSize(24, 24);
-        Plasma::Svg *svgIcon = new Plasma::Svg(this);
-        svgIcon->setImagePath("icons/audio");
-        svgIcon->setContainsMultipleImages(true);
-        svgIcon->resize(iconSize);
-        m_volumeHighPixmap = svgIcon->pixmap("audio-volume-high");
-        m_volumeMediumPixmap = svgIcon->pixmap("audio-volume-medium");
-        m_volumeLowPixmap = svgIcon->pixmap("audio-volume-low");
-        m_volumeMutedPixmap = svgIcon->pixmap("audio-volume-muted");
-    } else {
-        iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-        m_volumeHighPixmap = KIcon( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
-        m_volumeMediumPixmap = KIcon( QLatin1String( "audio-volume-medium" )).pixmap(iconSize);
-        m_volumeLowPixmap = KIcon( QLatin1String( "audio-volume-low" )).pixmap(iconSize);
-        m_volumeMutedPixmap = KIcon( QLatin1String( "audio-volume-muted" )).pixmap(iconSize);
-    }
-
     //Setup the widgets
     m_background->setImagePath("widgets/tooltip");
 
-    m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
-    m_iconLabel->nativeWidget()->setFixedSize(iconSize);
-    m_iconLabel->setMinimumSize(iconSize);
-    m_iconLabel->setMaximumSize(iconSize);
-
     m_meter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_meter->setMaximum(100);
-    m_meter->setMaximumHeight(iconSize.height());
-
-    m_volumeLabel->setAlignment(Qt::AlignCenter);
-    m_volumeLabel->setMinimumHeight(iconSize.height());
-    m_volumeLabel->setMaximumHeight(iconSize.height());
-    m_volumeLabel->nativeWidget()->setFixedHeight(iconSize.height());
-    m_volumeLabel->setWordWrap(false);
 
     //Set a fixed width for the volume label. To do that we need the text with the maximum width
     //(this is true if the volume is at 100%). We simply achieve that by calling "setCurrentVolume".
     setCurrentVolume(100, false);
-    themeUpdated();
 
     //Setup the auto-hide timer
     m_hideTimer->setInterval(2000);
@@ -113,6 +78,7 @@ OSDWidget::OSDWidget(QWidget * parent)
 
     m_scene->addItem(m_container);
 
+    themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated())); // e.g. for updating font
 
     setScene(m_scene);
@@ -144,9 +110,47 @@ void OSDWidget::themeUpdated()
     int heightHint = textSize.height();
     //setCurrentVolume(100,false);
     m_volumeLabel->setMinimumWidth(widthHint);
-    m_volumeLabel->setMaximumWidth(widthHint);
+    m_volumeLabel->setMaximumHeight(heightHint);
     m_volumeLabel->nativeWidget()->setFixedWidth(widthHint);
 //    m_volumeLabel->setText(oldText);
+
+    //Cache the icon pixmaps
+    QSize iconSize;
+
+    if (!Plasma::Theme::defaultTheme()->imagePath("icons/audio").isEmpty()) {
+        QFontMetrics fm(m_volumeLabel->font());
+        iconSize = QSize(fm.height(), fm.height());
+        Plasma::Svg *svgIcon = new Plasma::Svg(this);
+        svgIcon->setImagePath("icons/audio");
+        svgIcon->setContainsMultipleImages(true);
+        svgIcon->resize(iconSize);
+        m_volumeHighPixmap = svgIcon->pixmap("audio-volume-high");
+        m_volumeMediumPixmap = svgIcon->pixmap("audio-volume-medium");
+        m_volumeLowPixmap = svgIcon->pixmap("audio-volume-low");
+        m_volumeMutedPixmap = svgIcon->pixmap("audio-volume-muted");
+    } else {
+        iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+        m_volumeHighPixmap = KIcon( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
+        m_volumeMediumPixmap = KIcon( QLatin1String( "audio-volume-medium" )).pixmap(iconSize);
+        m_volumeLowPixmap = KIcon( QLatin1String( "audio-volume-low" )).pixmap(iconSize);
+        m_volumeMutedPixmap = KIcon( QLatin1String( "audio-volume-muted" )).pixmap(iconSize);
+    }
+
+    m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
+    m_iconLabel->nativeWidget()->setFixedSize(iconSize);
+    m_iconLabel->setMinimumSize(iconSize);
+    m_iconLabel->setMaximumSize(iconSize);
+
+    m_meter->setMaximumHeight(iconSize.height());
+
+    m_volumeLabel->setMinimumHeight(iconSize.height());
+    m_volumeLabel->setMaximumHeight(iconSize.height());
+    m_volumeLabel->nativeWidget()->setFixedHeight(iconSize.height());
+
+    m_volumeLabel->setAlignment(Qt::AlignCenter);
+    m_volumeLabel->setWordWrap(false);
+
+
 }
 
 
