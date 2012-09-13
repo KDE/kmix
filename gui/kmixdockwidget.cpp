@@ -44,8 +44,6 @@
 #include <fixx11h.h>
 #endif
 
-#include <Phonon/MediaObject>
-
 #include "gui/dialogselectmaster.h"
 #include "apps/kmix.h"
 #include "core/mixer.h"
@@ -56,8 +54,6 @@
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     : KStatusNotifierItem(parent)
   //  : KStatusNotifierItem(0)
-    , _audioPlayer(0L)
-    , _playBeepOnVolumeChange(false) // disabled due to triggering a "Bug"
     , _oldToolTipValue(-1)
     , _oldPixmapType('-')
     , _volumePopup(volumePopup)
@@ -117,7 +113,6 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 
 KMixDockWidget::~KMixDockWidget()
 {
-    delete _audioPlayer;
     // Note: deleting _volWA also deletes its associated ViewDockAreaPopup (_referenceWidget) and prevents the
     //       action to be left with a dangling pointer.
     //       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix 
@@ -148,12 +143,6 @@ void KMixDockWidget::createActions()
   }
   //Context menu entry to access phonon settings
   menu->addAction(_kmixMainWindow->actionCollection()->action("launch_kdesoundsetup"));
-
-   // Setup volume preview
-  if ( _playBeepOnVolumeChange ) {
-    _audioPlayer = Phonon::createPlayer(Phonon::MusicCategory);
-    _audioPlayer->setParent(this);
-  }
 }
 
 
@@ -409,12 +398,6 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 	    vol.changeAllVolumes(cv);
 
 //	kDebug() << "twe: " << cv << " : " << vol;
-
-    if ( _playBeepOnVolumeChange ) {
-        QString fileName("KDE_Beep_Digital_1.ogg");
-        _audioPlayer->setCurrentSource(fileName);
-        _audioPlayer->play();
-    }
 
     md->mixer()->commitVolumeChange(md);
     setVolumeTip();

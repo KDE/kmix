@@ -33,11 +33,6 @@ class Mixer;
 class ViewDockAreaPopup;
 class Volume;
 
-namespace Phonon
-{
-    class MediaObject;
-}
-
 class KMixDockWidget : public KStatusNotifierItem
 {
    Q_OBJECT
@@ -50,7 +45,6 @@ class KMixDockWidget : public KStatusNotifierItem
 
    void setErrorPixmap();
    void ignoreNextEvent();
-   //ViewDockAreaPopup* getDockAreaPopup();
 
  signals:
    void newMasterSelected();
@@ -70,8 +64,6 @@ class KMixDockWidget : public KStatusNotifierItem
    //ViewDockAreaPopup *_referenceWidget;
    KMenu *_referenceWidget;
    QWidgetAction *_volWA;
-   Phonon::MediaObject *_audioPlayer;
-   bool _playBeepOnVolumeChange;
    bool _ignoreNextEvent;
    int  _oldToolTipValue;
    char _oldPixmapType;
