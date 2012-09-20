@@ -869,12 +869,17 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref
 	if ( isStereoLinked() )
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
+		m_mixdevice->setMuted(false);
 		vol.setAllVolumes(firstSlider->value());
 	}
 	else
 	{
 		for( int i=0; i<ref_sliders.count(); i++ )
 		{
+		        if ( m_mixdevice->isMuted())
+		        {   // changing from muted state: unmute (the "if" above is actually superfluous)
+				m_mixdevice->setMuted(false);
+			}
 			QAbstractSlider *sliderWidget = ref_sliders[i];
 			vol.setVolume( extraData(sliderWidget).getChid() ,sliderWidget->value());
 		} // iterate over all sliders
