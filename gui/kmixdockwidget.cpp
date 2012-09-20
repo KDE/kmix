@@ -44,6 +44,7 @@ void MetaMixer::reset()
 {
     disconnect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
     m_mixer = Mixer::getGlobalMasterMixer();
+    // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     m_mixer->readSetFromHWforceUpdate();
     connect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
     emit controlChanged(); // Triggers UI updates accordingly
@@ -148,6 +149,11 @@ void KMixDockWidget::createMasterVolWidget()
     setVolumeTip();
     updatePixmap();
 
+    /* With the recently introduced QSocketNotifier stuff, we can't rely on regular timer updates
+       any longer. Also the readSetFromHWforceUpdate() won't be enough. As a workaround, we trigger
+       all "repaints" manually here.
+       The call to m_mixer->readSetFromHWforceUpdate() is most likely superfluous, even if we don't use QSocketNotifier (e.g. in backends OSS, Solaris, ...)
+     */
     connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip()) );
     connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap()) );
 }
