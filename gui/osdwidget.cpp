@@ -159,6 +159,8 @@ void OSDWidget::themeUpdated()
  */
 void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
 {
+	kDebug() << "Meter is visible: " << m_meter->isVisible();
+
     m_meter->setValue(volumeLevel);
 
     if (!muted && (volumeLevel > 0)) {
