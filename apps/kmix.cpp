@@ -83,6 +83,7 @@ KMixWindow::KMixWindow(bool invisible)
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
 
+    kDebug() << "Hello Randa 2012";
     initActions(); // init actions first, so we can use them in the loadConfig() already
     loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
     initActionsLate(); // init actions that require a loaded config
