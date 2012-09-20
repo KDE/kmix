@@ -24,7 +24,6 @@
 #define KMIXDOCKWIDGET_H
 
 class QString;
-#include <QWidget>
 class QWidgetAction;
 #include <kstatusnotifieritem.h>
 
@@ -33,10 +32,34 @@ class Mixer;
 class ViewDockAreaPopup;
 class Volume;
 
-namespace Phonon
+/**
+ * @brief The MetaMixer class provides a solid wrapper around a possible changing mixer.
+ *
+ * The primay use of this class is to provide one instance to connect slots to
+ * while the underlying object that triggers the signals can be changing.
+ * Additionally it nicely hides the rewiring logic that is going on in the back.
+ */
+class MetaMixer : public QObject
 {
-    class MediaObject;
-}
+    Q_OBJECT
+public:
+    MetaMixer() : m_mixer(0) {}
+
+    /**
+     * @brief rewires against current master mixer
+     * @note this also triggers all signals to ensure UI updates are done accordingly
+     */
+    void reset();
+
+    Mixer *mixer() const { return m_mixer; }
+    bool hasMixer() const { return m_mixer; }
+
+signals:
+    void controlChanged();
+
+private:
+    Mixer *m_mixer;
+};
 
 class KMixDockWidget : public KStatusNotifierItem
 {
@@ -50,7 +73,8 @@ class KMixDockWidget : public KStatusNotifierItem
 
    void setErrorPixmap();
    void ignoreNextEvent();
-   //ViewDockAreaPopup* getDockAreaPopup();
+
+   void update();
 
  signals:
    void newMasterSelected();
@@ -70,14 +94,12 @@ class KMixDockWidget : public KStatusNotifierItem
    //ViewDockAreaPopup *_referenceWidget;
    KMenu *_referenceWidget;
    QWidgetAction *_volWA;
-   Phonon::MediaObject *_audioPlayer;
-   bool _playBeepOnVolumeChange;
    bool _ignoreNextEvent;
    int  _oldToolTipValue;
    char _oldPixmapType;
    bool _volumePopup;
    KMixWindow* _kmixMainWindow;
-   Mixer *m_mixer;
+   MetaMixer m_metaMixer;
 
    bool _contextMenuWasOpen;
 
@@ -89,7 +111,6 @@ class KMixDockWidget : public KStatusNotifierItem
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
    void contextMenuAboutToShow();
-   void activateMenuOrWindow(bool, const QPoint &);
 };
 
 #endif
