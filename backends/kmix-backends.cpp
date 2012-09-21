@@ -95,10 +95,6 @@ QString ALSA_getDriverName();
 Mixer_Backend* PULSE_getMixer(Mixer *mixer, int device );
 QString PULSE_getDriverName();
 
-Mixer_Backend* FOO_getMixer(Mixer *mixer, int device );
-QString FOO_getDriverName();
-
-
 MixerFactory g_mixerFactories[] = {
 
 #if defined(SUN_MIXER)

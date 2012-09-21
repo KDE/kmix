@@ -89,7 +89,7 @@ public:
     bool isOpen() const;
 
     /// Close/release the mixer
-    virtual int close();
+    virtual void close();
 
     /// Reads balance
     int balance() const;

@@ -216,9 +216,16 @@ void Mixer::volumeLoad( KConfig *config )
  * Opens the mixer.
  * Also, starts the polling timer, for polling the Volumes from the Mixer.
  *
- * @return 0, if OK. An Mixer::ERR_ error code otherwise
+ * @return true, if Mixer could be opened.
  */
-bool Mixer::openIfValid() {
+bool Mixer::openIfValid()
+{
+	if (_mixerBackend == 0 )
+	{
+		// if we did not instantiate a suitable Backend, then Mixer is invalid
+		return false;
+	}
+
     bool ok = _mixerBackend->openIfValid();
     if ( ok )
     {
@@ -248,13 +255,11 @@ bool Mixer::openIfValid() {
 
 /**
  * Closes the mixer.
- * Also, stops the polling timer.
- *
- * @return 0 (always)
  */
-int Mixer::close()
+void Mixer::close()
 {
-  return _mixerBackend->close();
+	if ( _mixerBackend != 0)
+		_mixerBackend->close();
 }
 
 
