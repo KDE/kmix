@@ -184,42 +184,49 @@ void KMixDockWidget::update()
     actionCollection()->action(QLatin1String("select_master"))->setEnabled(m_metaMixer.hasMixer());
 }
 
+int KMixDockWidget::getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md)
+{
+	bool usePlayback = md->playbackVolume().hasVolume();
+	Volume& vol = usePlayback ? md->playbackVolume() : md->captureVolume();
+	bool isActive = usePlayback ? !md->isMuted() : md->isRecSource();
+	int val = isActive ? vol.getAvgVolumePercent(Volume::MALL) : 0;
+	return val;
+}
+
 void
 KMixDockWidget::setVolumeTip()
 {
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     QString tip = "";
-    int newToolTipValue = 0;
+    int virtualToolTipValue = 0;
 
     if ( md.get() == 0 )
     {
         tip = i18n("Mixer cannot be found"); // !! text could be reworked
-        newToolTipValue = -2;
+        virtualToolTipValue = -2;
     }
     else
     {
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
-        Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
-       	int val = vol.getAvgVolumePercent(Volume::MALL);
+		int val = getUserfriendlyVolumeLevel(md);
+       	tip = i18n( "Volume at %1%", val );
+        if ( md->isMuted() )
+        	tip += i18n( " (Muted)" );
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
-        newToolTipValue = val;
-        if ( md->isMuted() ) newToolTipValue += 10000;
-        if ( _oldToolTipValue != newToolTipValue ) {
-            tip = i18n( "Volume at %1%", val );
-            if ( md->playbackVolume().hasSwitch() && md->isMuted() ) {
-                tip += i18n( " (Muted)" );
-            }
-        }
+        virtualToolTipValue = val;
+        if ( md->isMuted() )
+        	virtualToolTipValue += 10000;
     }
 
-    // The actual updating is only done when the "toolTipValue" was changed
-    if ( newToolTipValue != _oldToolTipValue ) {
+    // The actual updating is only done when the "toolTipValue" was changed (to avoid flicker)
+    if ( virtualToolTipValue != _oldToolTipValue )
+    {
         // changed (or completely new tooltip)
         setToolTipTitle(tip);
     }
-    _oldToolTipValue = newToolTipValue;
+    _oldToolTipValue = virtualToolTipValue;
 }
 
 void
@@ -234,20 +241,11 @@ KMixDockWidget::updatePixmap()
     }
     else
     {
-    	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
-    	bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
-		if ( isInactive )
-		{
-			newPixmapType = 'm';
-		}
-		else
-		{
-			int percentage         = vol.getAvgVolumePercent(Volume::MALL);
-			if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
-			else if ( percentage < 25 ) newPixmapType = '1';
-			else if ( percentage < 75 ) newPixmapType = '2';
-			else                        newPixmapType = '3';
-	   }
+    	int percentage = getUserfriendlyVolumeLevel(md);
+		if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
+		else if ( percentage < 25 ) newPixmapType = '1';
+		else if ( percentage < 75 ) newPixmapType = '2';
+		else                        newPixmapType = '3';
     }
 
    if ( newPixmapType != _oldPixmapType ) {

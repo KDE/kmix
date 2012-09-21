@@ -29,6 +29,7 @@ class QWidgetAction;
 
 class KMixWindow;
 class Mixer;
+#include "core/mixdevice.h"
 class ViewDockAreaPopup;
 class Volume;
 
@@ -111,6 +112,7 @@ class KMixDockWidget : public KStatusNotifierItem
    void selectMaster();
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
    void contextMenuAboutToShow();
+	int getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md);
 };
 
 #endif
