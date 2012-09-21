@@ -88,10 +88,10 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
         for( int i =0; i<Mixer::mixers().count(); i++ )
         {
             Mixer *mixer = (Mixer::mixers())[i];
-            m_cMixer->addItem( mixer->readableName() );
+            m_cMixer->addItem( mixer->readableName(), mixer->id() );
          } // end for all_Mixers
         // Make the current Mixer the current item in the ComboBox
-        int findIndex = m_cMixer->findText( ptr_mixer->readableName() );
+        int findIndex = m_cMixer->findData( ptr_mixer->id() );
         if ( findIndex != -1 ) m_cMixer->setCurrentIndex( findIndex );
         
     
@@ -120,16 +120,11 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
  */
 void DialogSelectMaster::createPageByID(int mixerId)
 {
-  //kDebug(67100) << "DialogSelectMaster::createPage()";
-    QString selectedMixerName = m_cMixer->itemText(mixerId);
-    for( int i =0; i<Mixer::mixers().count(); i++ )
-    {
-        Mixer *mixer = (Mixer::mixers())[i];
-        if ( mixer->readableName() == selectedMixerName ) {
-            createPage(mixer);
-            break;
-        }
-    } // for
+    QString mixer_id = m_cMixer->itemData(mixerId).toString();
+    Mixer * mixer = Mixer::findMixer(mixer_id);
+
+    if ( mixer != NULL )
+        createPage(mixer);
 }
 
 /**
@@ -203,16 +198,9 @@ void DialogSelectMaster::apply()
     }
     else if ( Mixer::mixers().count() > 1 ) {
         // find mixer that is currently active in the ComboBox
-        QString selectedMixerName = m_cMixer->itemText(m_cMixer->currentIndex());
-        
-        for( int i =0; i<Mixer::mixers().count(); i++ )
-        {
-            mixer = (Mixer::mixers())[i];
-            if ( mixer->readableName() == selectedMixerName ) {
-                mixer = (Mixer::mixers())[i];
-                break;
-            }
-        } // for
+        int idx = m_cMixer->currentIndex();
+        QString mixer_id = m_cMixer->itemData(idx).toString();
+        mixer = Mixer::findMixer(mixer_id);
     }
    
     QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
