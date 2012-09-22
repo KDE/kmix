@@ -201,7 +201,7 @@ int Mixer_ALSA::open()
         	else
         		finalMixdeviceID = mdID + ".penum"; // playback enum
         }
-        if ( true || readableName.startsWith("Input Source") ) kDebug() << "Input Source! id=" << finalMixdeviceID << "readableName=" << readableName << ", idx=" << idx;
+        //if ( true || readableName.startsWith("Input Source") ) kDebug() << "Input Source! id=" << finalMixdeviceID << "readableName=" << readableName << ", idx=" << idx;
 
         m_id2numHash[finalMixdeviceID] = idx;
         //kDebug() << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx;
