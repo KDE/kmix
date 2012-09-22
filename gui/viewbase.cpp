@@ -43,17 +43,11 @@
 #include "core/mixertoolbox.h"
 
 
-ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
+ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
     : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
 {
    setObjectName(id);
    m_viewId = id;
-   _mixer = mixer;
-
-   // This must be populated now otherwise bad things happen (circular dependancies etc
-   // This is due to the fact that setMixSet() calls isDynamic() which in turn needs a populated
-   // _mixers array to ensure that this is the case....
-   _mixers.insert(_mixer);
 
    if ( _actions == 0 ) {
       // We create our own action collection, if the actionColletion was 0.
@@ -78,11 +72,6 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags f, 
          }
       }
    }
-   if ( !isDynamic() ) {
-      QAction *action = _localActionColletion->addAction("toggle_channels");
-      action->setText(i18n("&Channels"));
-      connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
-   }
 /*   connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
    connect ( _mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );*/
 }
@@ -91,6 +80,11 @@ ViewBase::~ViewBase() {
     // Hint: The GUI profile will not be removed, as it is pooled and might be applied to a new View.
 }
 
+
+void ViewBase::addMixer(Mixer *mixer)
+{
+  _mixers.append(mixer);
+}
 
 void ViewBase::configurationUpdate() {
 }
@@ -122,8 +116,16 @@ void ViewBase::createDeviceWidgets()
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
     }
-    // allow view to "polish" itself
-    constructionFinished();
+
+    if ( !isDynamic() )
+       {
+      QAction *action = _localActionColletion->addAction("toggle_channels");
+      action->setText(i18n("&Channels"));
+      connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
+   }
+
+        // allow view to "polish" itself
+      constructionFinished();
 }
 
 /**
@@ -182,27 +184,23 @@ void ViewBase::showContextMenu()
     _popMenu->popup( pos );
 }
 
-void ViewBase::controlsReconfigured( const QString& mixer_ID )
+void ViewBase::controlsReconfigured( const QString& mixerId )
 {
-	// TODO Search _mixers for the correct Mixer*. After that, remove _mixer instance variable
-	bool isRelevantMixer = (_mixer->id() == mixer_ID );
-	//    if (!isRelevantMixer)
-	//    {
-	//    	foreach ( Mixer* mixer , _mixers)
-	//   		{
-	//    		if ( mixer->id() == mixer_ID )
-	//    		{
-	//    			isRelevantMixer = true;
-	//    			break;
-	//    		}
-	//   		}
-	//    }
+	bool isRelevantMixer = false;
+	foreach ( Mixer* mixer , _mixers)
+	{
+		  if ( mixer->id() == mixerId )
+		  {
+				isRelevantMixer = true;
+				break;
+		  }
+	}
 
 	if (isRelevantMixer)
 	{
-		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
+		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
 		setMixSet();
-		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixer_ID << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
+		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
 		createDeviceWidgets();
 	}
 }
@@ -239,14 +237,14 @@ void ViewBase::setMixSet()
     }
     _setMixSet();
     
-    _mixers.clear();
-    _mixers.insert(_mixer);
-    foreach ( shared_ptr<MixDevice> md, _mixSet )
-    {
-//      kDebug() << "VVV Add to " << md->mixer()->id();
-//      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
-      _mixers.insert(md->mixer());
-    }
+//     _mixers.clear();
+//     _mixers.insert(mixer);
+//     foreach ( shared_ptr<MixDevice> md, _mixSet )
+//     {
+// //      kDebug() << "VVV Add to " << md->mixer()->id();
+// //      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
+//       _mixers.insert(md->mixer());
+//     }
 }
 
 int ViewBase::visibleControls()

@@ -83,6 +83,7 @@ class KMixDockWidget : public KStatusNotifierItem
  public slots:
    void setVolumeTip();
    void updatePixmap();
+   void updateDockPopup();
    void activate(const QPoint &pos);
 
  protected:
@@ -92,7 +93,7 @@ class KMixDockWidget : public KStatusNotifierItem
    void toggleMinimizeRestore();
 
  private:
-   //ViewDockAreaPopup *_referenceWidget;
+   ViewDockAreaPopup *_referenceWidget2;
    KMenu *_referenceWidget;
    QWidgetAction *_volWA;
    bool _ignoreNextEvent;

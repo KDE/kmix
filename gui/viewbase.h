@@ -22,7 +22,6 @@
 #define ViewBase_h
 
 // QT
-#include <QSet>
 #include <QWidget>
 #include <QList>
 
@@ -58,9 +57,11 @@ public:
       Vertical       = 0x0008
    };
 
-    ViewBase(QWidget* parent, const char* id, Mixer* mixer, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
+    ViewBase(QWidget* parent, const char* id, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
+    void addMixer(Mixer *mixer);
+    
     QString id() const;
 
     // This method is called by ViewBase at the end of createDeviceWidgets(). The default
@@ -115,7 +116,7 @@ public:
    GUIProfile* guiProfile() { return _guiprof; };
    KActionCollection* actionCollection() { return _actions; };
 
-   QSet<Mixer*>& getMixers() { return _mixers; };
+   QList<Mixer*>& getMixers() { return _mixers; };
 
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
@@ -132,8 +133,7 @@ signals:
 
 protected:
     MixSet _mixSet;
-    Mixer *_mixer;
-    QSet<Mixer*> _mixers; // this might deprecate _mixer in the future. Currently only in use by ViewDockAreaPopup
+    QList<Mixer*> _mixers; // this might deprecate _mixer in the future. Currently only in use by ViewDockAreaPopup
     KMenu *_popMenu;
     KActionCollection* _actions; // -<- applciations wide action collection
 

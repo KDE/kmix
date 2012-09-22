@@ -80,7 +80,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     if (_volumePopup) {
         kDebug() << "Construct the ViewDockAreaPopup and actions";
         _referenceWidget = new KMenu(parent);
-        ViewDockAreaPopup* _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", Mixer::getGlobalMasterMixer(), 0, (GUIProfile*)0, parent);
+        _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", 0, (GUIProfile*)0, parent);
         _referenceWidget2->createDeviceWidgets();
         connect(_referenceWidget2, SIGNAL(recreateMe()), _kmixMainWindow, SLOT(recreateDockWidget()));
 
@@ -156,6 +156,7 @@ void KMixDockWidget::createMasterVolWidget()
      */
     connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip()) );
     connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap()) );
+    connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(updateDockPopup()) );
 }
 
 void KMixDockWidget::selectMaster()
@@ -227,6 +228,12 @@ KMixDockWidget::setVolumeTip()
         setToolTipTitle(tip);
     }
     _oldToolTipValue = virtualToolTipValue;
+}
+
+void KMixDockWidget::updateDockPopup()
+{
+//	_referenceWidget2->setMixSet();
+//	_referenceWidget2->constructionFinished();
 }
 
 void

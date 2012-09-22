@@ -41,9 +41,14 @@
 #include "apps/kmix.h"
 
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
-    : ViewBase(parent, name, mixer, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _dock(dockW)
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
+    : ViewBase(parent, name, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _dock(dockW)
 {
+  foreach ( Mixer* mixer, Mixer::mixers() )
+  {
+    // Adding all mixers, as we potentially want to show all master controls
+    addMixer(mixer);
+  }
     //_layoutControls = new QHBoxLayout(this);
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
@@ -53,26 +58,27 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* m
     setMixSet();
 }
 
-ViewDockAreaPopup::~ViewDockAreaPopup() {
-}
-
-
-void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e ) {
-   // Pass wheel event from "border widget" to child
-   QWidget* mdw = 0;
-   if ( !_mdws.isEmpty() )
-      mdw = _mdws.first();
-
-   if ( mdw != 0 )
-      QApplication::sendEvent( mdw, e);
-}
-
-
-void ViewDockAreaPopup::showContextMenu()
+ViewDockAreaPopup::~ViewDockAreaPopup()
 {
-    // no right-button-menu on "dock area popup"
-    return;
+  delete _layoutMDW;
 }
+
+
+void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
+{
+  if ( _mdws.isEmpty() )
+    return;
+  
+   // Pass wheel event from "border widget" to child
+   QApplication::sendEvent( _mdws.first(), e);
+}
+
+
+// void ViewDockAreaPopup::showContextMenu()
+// {
+//     // no right-button-menu on "dock area popup"
+//     return;
+// }
 
 
 void ViewDockAreaPopup::_setMixSet()
@@ -80,24 +86,33 @@ void ViewDockAreaPopup::_setMixSet()
 	// kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
 
 	// -- remove controls
-	if ( _mixer->isDynamic() ) {
+	if ( isDynamic() ) {
 		// Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
 		// We need to trash those too otherwise all sliders gradually migrate away from the edge :p
 		QLayoutItem *li;
 		while ( ( li = _layoutMDW->takeAt(0) ) )
 			delete li;
 	}
+	_mixSet.clear();
 
-	shared_ptr<MixDevice>dockMD = Mixer::getGlobalMasterMD();
-	if ( dockMD == 0 ) {
+	foreach ( Mixer* mixer, _mixers )
+	{
+	shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
+	if ( dockMD == 0 && mixer->size() > 0 )
+	{
 		// If we have no dock device yet, we will take the first available mixer device
-		if ( _mixer->size() > 0) {
-			dockMD = (*_mixer)[0];
-		}
+		dockMD = (*mixer)[0];
 	}
-	if ( dockMD != 0 ) {
+	if ( dockMD != 0 )
+	{
+	  if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume()) 
+	{
+		// don't add application streams here. They are handled below, so
+		// we make sure to not add them twice
 		_mixSet.append(dockMD);
 	}
+	}
+	} // loop over all cards
 
 	foreach ( Mixer* mixer2 , Mixer::mixers() )
 	{
@@ -129,18 +144,18 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
     MixDeviceWidget *mdw = new MDWSlider(
       md,           // only 1 device.
-      true,         // Show Mute LED
+      true,         // Show Mute LE
       true,        // Show Record LED
       false,        // Small
       _dock->toplevelOrientation(), // Direction: only 1 device, so doesn't matter
       this,         // parent
-      0             // Is "NULL", so that there is no RMB-popup
+      this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl
    );
    int sliderColumn = _layoutMDW->rowCount();
-   if (sliderColumn == 1 ) sliderColumn =0;
+   //if (sliderColumn == 1 ) sliderColumn =0;
    _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
-   _layoutMDW->addWidget( mdw, sliderColumn+1,0 );
+   _layoutMDW->addWidget( mdw, 0, sliderColumn+1 );
 
    //kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
    return mdw;
@@ -150,7 +165,7 @@ void ViewDockAreaPopup::constructionFinished() {
    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
    int sliderColumn = _layoutMDW->rowCount();
-  _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn, 0 ); // TODO add this on "polish()"
+  _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderColumn ); // TODO add this on "polish()"
    QPushButton *pb = new QPushButton( i18n("Mixer"), this );
    pb->setObjectName( QLatin1String("MixerPanel" ));
    connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );

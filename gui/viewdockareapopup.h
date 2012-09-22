@@ -34,13 +34,13 @@ class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewDockAreaPopup(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW);
+    ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW);
     virtual ~ViewDockAreaPopup();
 
     virtual QWidget* add(shared_ptr<MixDevice> md);
     virtual void constructionFinished();
     virtual void refreshVolumeLevels();
-    virtual void showContextMenu();
+//     virtual void showContextMenu();
 
 protected:
     KMixWindow  *_dock;

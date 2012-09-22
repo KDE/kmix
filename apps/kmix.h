@@ -169,7 +169,10 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes2() { saveVolumes(QString("2")); }
    void saveVolumes3() { saveVolumes(QString("3")); }
    void saveVolumes4() { saveVolumes(QString("4")); }
-;
+
+	bool profileExists(GUIProfile* guiprof);
+
+	;
 };
 
 #endif // KMIX_H

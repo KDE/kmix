@@ -835,6 +835,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 {
     if (dev.chanMask != Volume::MNONE) {
         MixSet *ms = 0;
+	bool isCapture = (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE);
         if (m_devnum == KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
             ms = s_mixers[KMIXPA_PLAYBACK]->getMixSet();
         else if (m_devnum == KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
@@ -847,7 +848,11 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         if (isAppStream)
             md->setApplicationStream(true);
 
-        md->addPlaybackVolume(v);
+	kDebug() << "Adding Pulse volume " << dev.name << ", isCapture= " << isCapture << ", devnum=" << m_devnum;
+	if ( isCapture )
+	  md->addCaptureVolume(v); // TODO cesken Check with Colin
+	else
+	  md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md->addToPool());
     }

@@ -44,10 +44,13 @@
 
 // KDE
 #include <kdebug.h>
+#include <KIcon>
 #include <KLocale>
 
 // Qt
+#include <QPushButton>
 #include <QLabel>
+#include <QLayoutItem>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -60,10 +63,12 @@
  *  the class name suggests).
  *  TODO change "const char*" parameter to QString
  */
-ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
-      : ViewBase(parent, name, mixer, Qt::FramelessWindowHint, vflags, guiprof, actColl)
+ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
+      : ViewBase(parent, id, Qt::FramelessWindowHint, vflags, guiprof, actColl)
       , _layoutEnum(0)
 {
+  addMixer(mixer);
+  
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
       _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -84,12 +89,9 @@ ViewSliders::ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBa
    _layoutMDW->setSpacing(0);
    _layoutMDW->addItem( _layoutSliders );
 
-    QString driverName = _mixer->getDriverName();
-
-
     // Hint: This text comparison is not a clean solution, but one that will work for quite a while.
     // TODO cesken Revise this "text comparison" thingy when I change the View constructor to take an "id" and a "readableName"
-    QString viewName(name);
+    QString viewName(id);
     if (viewName.contains(".Capture_Streams."))
        emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
     else if (viewName.contains(".Playback_Streams."))
@@ -172,9 +174,7 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 
 void ViewSliders::_setMixSet()
 {
-    const MixSet& mixset = _mixer->getMixSet();
-
-    if ( _mixer->isDynamic() ) {
+    if ( isDynamic() ) {
         // We will be recreating our sliders, so make sure we trash all the separators too.
         qDeleteAll(_separators);
         _separators.clear();
@@ -193,7 +193,11 @@ void ViewSliders::_setMixSet()
     // This method iterates the controls from the Profile
     // Each control is checked, whether it is also contained in the mixset, and
     // applicable for this kind of View. If yes, the control is accepted and inserted.
-   
+ 
+   foreach (Mixer* mixer , _mixers )
+  {
+     const MixSet& mixset = mixer->getMixSet();
+
     foreach ( ProfControl* control, _guiprof->getControls() )
     {
         //ProfControl* control = *it;
@@ -248,6 +252,8 @@ void ViewSliders::_setMixSet()
             //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
         }
    } // iteration over all controls from the Profile
+   
+  } // Iteration over all Mixers
 
 	emptyStreamHint->setVisible(  _mixSet.isEmpty() && isDynamic() ); // show a hint why a tab is empty (dynamic controls!!!)
 	//  visibleControls() == 0 could be used for the !isDynamic() case
@@ -271,6 +277,19 @@ void ViewSliders::_setMixSet()
 void ViewSliders::constructionFinished() {
     configurationUpdate();
     // TODO Add a "show more" / "configure this view" button
+    const KIcon& icon = KIcon( QLatin1String( "audio-volume-muted" ));
+    QPushButton* configureViewButton = new QPushButton(icon, "configure view", this);
+    _layoutSliders->addWidget(configureViewButton);
+    QPushButton* profileButton = new QPushButton("1", this);
+    profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _layoutSliders->addWidget(profileButton);
+    profileButton = new QPushButton("2", this);
+    _layoutSliders->addWidget(profileButton);
+    profileButton = new QPushButton("3", this);
+    _layoutSliders->addWidget(profileButton);
+    profileButton = new QPushButton("4", this);
+    _layoutSliders->addWidget(profileButton);
+
 }
 
 
