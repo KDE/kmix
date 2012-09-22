@@ -491,7 +491,8 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 	{
 		if ( md.get() == 0 )
 			continue; // invalid
-			firstDevice=md;
+
+		firstDevice=md;
 		if ( md->id() == _globalMasterCurrent.getControl() )
 		{
 			mdRet = md;
