@@ -150,9 +150,9 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
  * @arg mixer         The mixer
  * @arg profileName   The profile name (e.g. "ALSA.X-Fi.default", or "OSS.intel-cha51.playback")
  *                    A special case is "", which means that a card specific name should be generated.
- * @arg allowFallback If set to true, a Fallback profile will be generated if no matching profile could be found
+ * @arg profileNameIsFullyQualified If true, an exact match will be searched. Otherwise it is a simple name like "playback" or "capture"
+ * @arg ignoreCardName If profileName not fully qualified, this is used in building the requestedProfileName
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
- * FIXME: redocument this methods parameters
  */
 GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
 {
