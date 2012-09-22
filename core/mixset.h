@@ -21,7 +21,7 @@
 #ifndef MixSet_h
 #define MixSet_h
 
-#include <QSet>
+#include <QList>
 
 #include "core/mixdevice.h"
 
