@@ -200,9 +200,8 @@ QString Mixer_OSS::deviceName(int devnum)
     break;
 
   default:
-    QString devname("/dev/mixer");
-    devname += ('0'+devnum);
-    return devname;
+    QString devname("/dev/mixer%1");
+    return devname.arg(devnum);
   }
 }
 
