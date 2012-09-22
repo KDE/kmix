@@ -63,7 +63,6 @@ ALSA_getMixer(Mixer *mixer, int device )
 Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  device )
 {
    m_fds = 0;
-//   m_sns = 0;
    _handle = 0;
    ctl_handle = 0;
    _initialUpdate = true;
@@ -339,8 +338,6 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 /* setup for select on stdin and the mixer fd */
 int Mixer_ALSA::setupAlsaPolling()
 {
-	//    assert( !m_sns );
-
 	// --- Step 1: Retrieve FD's from ALSALIB
 	int err;
 	int countNew = 0;

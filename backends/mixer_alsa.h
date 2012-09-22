@@ -77,8 +77,8 @@ private:
     Id2numHash m_id2numHash;
 
     bool _initialUpdate;
-    snd_mixer_t *_handle;
-    snd_ctl_t *ctl_handle;
+    snd_mixer_t* _handle;
+    snd_ctl_t* ctl_handle;
 
     QString devName;
     struct pollfd  *m_fds;
