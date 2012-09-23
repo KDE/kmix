@@ -57,6 +57,7 @@ public:
 
 signals:
     void controlChanged();
+    void controlsReconfigured(QString mixerId);
 
 private:
     Mixer *m_mixer;
@@ -114,6 +115,9 @@ class KMixDockWidget : public KStatusNotifierItem
    void handleNewMaster(QString& soundcard_id, QString& channel_id);
    void contextMenuAboutToShow();
 	int getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md);
+	
+	    void controlsReconfigured(QString mixerId);
+
 };
 
 #endif

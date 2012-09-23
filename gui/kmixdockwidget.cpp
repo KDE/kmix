@@ -43,11 +43,16 @@
 void MetaMixer::reset()
 {
   // Connect/reconnect signals coming from the Mixer
+  if ( m_mixer != 0 )
+  {    
     disconnect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
+    disconnect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
+  }
     m_mixer = Mixer::getGlobalMasterMixer();
     // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     m_mixer->readSetFromHWforceUpdate();
     connect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
+    connect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
     emit controlChanged(); // Triggers UI updates accordingly
 }
 
@@ -87,7 +92,10 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _volWA->setDefaultWidget(_referenceWidget2);
         _referenceWidget->addAction(_volWA);
 
-        connect( &m_metaMixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(refreshVolumeLevels()) );
+
+	    
+	    // duplicated connect   
+//        connect( &m_metaMixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(refreshVolumeLevels()) );
         //setAssociatedWidget(_referenceWidget);
         //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
 
@@ -104,6 +112,12 @@ KMixDockWidget::~KMixDockWidget()
     //       action to be left with a dangling pointer.
     //       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix 
     delete _volWA;
+}
+
+void KMixDockWidget::controlsReconfigured(QString mixerId)
+{
+  kDebug() << "Hello";
+  updateDockPopup();
 }
 
 void KMixDockWidget::createActions()
@@ -155,7 +169,7 @@ void KMixDockWidget::createMasterVolWidget()
      */
     connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip()) );
     connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap()) );
-    connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(updateDockPopup()) );
+//     connect( &m_metaMixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(updateDockPopup()) );
 }
 
 void KMixDockWidget::selectMaster()
@@ -182,6 +196,13 @@ void KMixDockWidget::update()
     actionCollection()->action(QLatin1String("select_master"))->setEnabled(m_metaMixer.hasMixer());
 }
 
+/**
+ * Returns the playback volume level in percent. If the volume is muted, 0 is returned.
+ * If the given MixDevice contains no playback volume, the capture volume isd used
+ * instead, and 0 is returned if capturing is disabled for the given MixDevice.
+ * 
+ * @returns The volume level in percent
+ */
 int KMixDockWidget::getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md)
 {
 	bool usePlayback = md->playbackVolume().hasVolume();
@@ -229,8 +250,12 @@ KMixDockWidget::setVolumeTip()
 
 void KMixDockWidget::updateDockPopup()
 {
+  //	    connect( &m_metaMixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
+
+  kDebug() << "KMixDockWidget::updateDockPopup";
+  _referenceWidget2->createDeviceWidgets();
 //	_referenceWidget2->setMixSet();
-//	_referenceWidget2->constructionFinished();
+	_referenceWidget2->constructionFinished();
 }
 
 void

@@ -148,6 +148,7 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 
 void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
 {
+  kDebug() << "Foobar";
 	foreach ( ViewBase* vbase, _views)
 	{
 		vbase->controlsReconfigured(mixerId);

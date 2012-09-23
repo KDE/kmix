@@ -77,6 +77,7 @@ int Mixer_MPRIS2::mediaNext(QString id)
 /**
  * Sends a media control command to the given application.
  * @param applicationId The MPRIS applicationId
+ * @returns Always 0. Hint: Currently nobody uses the return code
  */
 int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 {
@@ -86,6 +87,9 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 	//     arg.append(QString("PlayPause"));
 
 	MPrisAppdata* mad = apps.value(applicationId);
+	if ( mad == 0 )
+	  return 0; // Might have disconnected recently => simply ignore command
+	
 	QDBusMessage msg = mad->playerIfc->callWithArgumentList(QDBus::NoBlock, commandName, arg);
 	if ( msg.type() == QDBusMessage::ErrorMessage )
 	{
@@ -98,7 +102,6 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 
 int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 {
-
 	int volInt = 0;
 
 	QList<QVariant> arg;
@@ -304,6 +307,9 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 
 void Mixer_MPRIS2::notifyToReconfigureControls()
 {
+//  	emit controlChanged();
+
+	// TODO Why do we this controlsReconfigured thing???
     QMetaObject::invokeMethod(this,
 		                              "controlsReconfigured",
 		                              Qt::QueuedConnection,

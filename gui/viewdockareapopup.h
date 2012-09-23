@@ -54,10 +54,11 @@ private:
   QGridLayout* _layoutMDW;
     QPushButton* createRestoreVolumeButton ( int storageSlot );
 
-public slots:
-   virtual void controlsReconfigured( const QString& mixer_ID );
+// public slots:
+//    virtual void controlsReconfigured( const QString& mixer_ID );
 private slots:
     void showPanelSlot();
+//     void controlsReconfigured(QString mixerId);
 };
 
 #endif

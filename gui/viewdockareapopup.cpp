@@ -49,6 +49,8 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
   {
     // Adding all mixers, as we potentially want to show all master controls
     addMixer(mixer);
+    connect( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
+
   }
     //_layoutControls = new QHBoxLayout(this);
     _layoutMDW = new QGridLayout( this );
@@ -58,6 +60,17 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
     createDeviceWidgets();
 
 }
+
+// void ViewDockAreaPopup::controlsReconfigured(QString mixerId)
+// {
+//   //	    connect( &m_metaMixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
+// 
+//   kDebug() << "jiha";
+//   createDeviceWidgets();
+//   constructionFinished();
+// }
+
+
 
 ViewDockAreaPopup::~ViewDockAreaPopup()
 {
@@ -130,11 +143,11 @@ void ViewDockAreaPopup::_setMixSet()
 }
 
 
-void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
-{
-	kDebug(67100) << "RECONFIGURE AND RECREATE DOCK";
-	ViewBase::controlsReconfigured(mixer_ID);
-}
+// void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
+// {
+// 	kDebug(67100) << "RECONFIGURE AND RECREATE DOCK";
+// 	ViewBase::controlsReconfigured(mixer_ID);
+// }
 
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
