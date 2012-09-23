@@ -43,6 +43,10 @@
 #include "core/mixertoolbox.h"
 
 
+/**
+ * Creates an empty View. To populate it with MixDevice instances, you must call
+ * createDeviceWidgets
+ */
 ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
     : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
 {
@@ -58,22 +62,14 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::View
    _localActionColletion = new KActionCollection( this );
 
    // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
-   if ( vflags & ViewBase::HasMenuBar ) {
+   if ( vflags & ViewBase::HasMenuBar )
+   {
       KToggleAction *m = static_cast<KToggleAction*>(  _actions->action( name(KStandardAction::ShowMenubar) ) ) ;
-
-      //static_cast<KToggleAction*>(KStandardAction::showMenubar( this, SLOT(toggleMenuBarSlot()), _actions ));
-      //_actions->addAction( m->objectName(), m );
       if ( m != 0 ) {
-         if ( vflags & ViewBase::MenuBarVisible ) {
-            m->setChecked(true);
-         }
-         else {
-            m->setChecked(false);
-         }
+         bool visible = ( vflags & ViewBase::MenuBarVisible );
+         m->setChecked(visible);
       }
    }
-/*   connect ( _mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevels()) );
-   connect ( _mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );*/
 }
 
 ViewBase::~ViewBase() {
@@ -133,6 +129,10 @@ void ViewBase::createDeviceWidgets()
  */
 void ViewBase::rebuildFromProfile()
 {
+  // TODO Actually this is insane. We ask somebody else to rebuild us.
+  // We should really be able to do it ourselves, as "this" knows the GUIProfile.
+  // Probably we should not store the pointer, but the key, and look it up again to
+  // make sure we retrieve the freshest/modified GUIProfile
    emit rebuildGUI();
 }
 
@@ -196,13 +196,13 @@ void ViewBase::controlsReconfigured( const QString& mixerId )
 		  }
 	}
 
-	if (isRelevantMixer)
-	{
-		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
-		setMixSet();
-		kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
-		createDeviceWidgets();
-	}
+	if (!isRelevantMixer)
+	  return; // View does not include the given Mixer => nothing to do
+	
+	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
+	    _setMixSet();
+	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
+	    createDeviceWidgets();
 }
 
 void ViewBase::refreshVolumeLevels()
@@ -226,26 +226,15 @@ bool ViewBase::isDynamic() const
   return false;
 }
 
-void ViewBase::setMixSet()
+void ViewBase::resetMdws()
 {
-    if ( isDynamic() ) {
-        // We need to delete the current MixDeviceWidgets so we can redraw them
-        while (!_mdws.isEmpty())
-        	delete _mdws.takeFirst();
+      // We need to delete the current MixDeviceWidgets so we can redraw them
+      while (!_mdws.isEmpty())
+	      delete _mdws.takeFirst();
 
-        _mixSet.clear(); // Clean up our _mixSet so we can reapply our GUIProfile
-    }
-    _setMixSet();
-    
-//     _mixers.clear();
-//     _mixers.insert(mixer);
-//     foreach ( shared_ptr<MixDevice> md, _mixSet )
-//     {
-// //      kDebug() << "VVV Add to " << md->mixer()->id();
-// //      MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
-//       _mixers.insert(md->mixer());
-//     }
+      _mixSet.clear(); // Clean up our _mixSet so we can reapply our GUIProfile
 }
+
 
 int ViewBase::visibleControls()
 {

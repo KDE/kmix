@@ -70,11 +70,17 @@ public:
     // Also I do not want Views to interfere with polish()
     virtual void constructionFinished() = 0;
 
+    /**
+     * Creates a suitable representation for the given MixDevice.
+     */
+    virtual QWidget* add(shared_ptr<MixDevice>) = 0;
+
     // This method is called after a configuration update (show/hide controls, split/unsplit).
     // More complicated changes (e.g. order of controls) need a GUI rebuild - please use 
     // rebuildFromProfile() then.
     // The default implementation does nothing.
     virtual void configurationUpdate();
+
 
     // This method is called after a configuration update (in other words: after the user
     // has clicked "OK" on the "show/hide" configuration dialog. The default implementation
@@ -91,15 +97,10 @@ public:
      */
     virtual void createDeviceWidgets();
 
-    void setMixSet();
     int visibleControls();
     
     bool isDynamic() const;
 
-    /**
-     * Creates a suitable representation for the given MixDevice.
-     */
-    virtual QWidget* add(shared_ptr<MixDevice>) = 0;
 
     /**
      * Popup stuff
@@ -142,6 +143,7 @@ protected:
     KActionCollection *_localActionColletion;
 
     virtual void _setMixSet() = 0;
+    void resetMdws();
 
 public slots:
    virtual void controlsReconfigured( const QString& mixer_ID );

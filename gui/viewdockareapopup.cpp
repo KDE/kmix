@@ -24,6 +24,7 @@
 // Qt
 #include <qevent.h>
 #include <qframe.h>
+#include <QLayoutItem>
 #include <QPushButton>
 
 // KDE
@@ -55,7 +56,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
     _layoutMDW->setMargin(0);
     _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
     //_layoutMDW->addItem(_layoutControls);
-    setMixSet();
+    _setMixSet();
 }
 
 ViewDockAreaPopup::~ViewDockAreaPopup()
@@ -83,8 +84,9 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 
 void ViewDockAreaPopup::_setMixSet()
 {
-	// kDebug(67100) << "ViewDockAreaPopup::setMixSet()\n";
+  resetMdws();
 
+// TODO code somewhat similar to ViewSliders => refactor  
 	// -- remove controls
 	if ( isDynamic() ) {
 		// Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
@@ -93,7 +95,6 @@ void ViewDockAreaPopup::_setMixSet()
 		while ( ( li = _layoutMDW->takeAt(0) ) )
 			delete li;
 	}
-	_mixSet.clear();
 
 	foreach ( Mixer* mixer, _mixers )
 	{
@@ -147,15 +148,19 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
       true,         // Show Mute LE
       true,        // Show Record LED
       false,        // Small
-      _dock->toplevelOrientation(), // Direction: only 1 device, so doesn't matter
+      _dock->toplevelOrientation(), // TODO: Why don't we use vflags ??? Direction: only 1 device, so doesn't matter
       this,         // parent
       this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl
    );
    int sliderColumn = _layoutMDW->rowCount();
    //if (sliderColumn == 1 ) sliderColumn =0;
-   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
-   _layoutMDW->addWidget( mdw, 0, sliderColumn+1 );
+   bool vertical = (_vflags & ViewBase::Vertical);
+   int row = vertical ? 0 : sliderColumn;
+   int col = vertical ? sliderColumn : 0;
+   
+   //_layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
+   _layoutMDW->addWidget( mdw, row, col );
 
    //kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
    return mdw;
@@ -164,14 +169,43 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 void ViewDockAreaPopup::constructionFinished() {
    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
+   Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
+   bool vertical = (_vflags & ViewBase::Vertical);
+   
    int sliderColumn = _layoutMDW->rowCount();
   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderColumn ); // TODO add this on "polish()"
    QPushButton *pb = new QPushButton( i18n("Mixer"), this );
    pb->setObjectName( QLatin1String("MixerPanel" ));
    connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );
-   _layoutMDW->addWidget( pb, sliderColumn+1, 0, 1, 1 );
+   //_layoutMDW->addWidget( pb, sliderColumn+1, 0, 1, 1 );
+   
+       const KIcon& icon = KIcon( QLatin1String( "configure" ));
+    QPushButton* configureViewButton = new QPushButton(icon, "", this);
+    configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+   QBoxLayout* optionsLayout;
+   if ( vertical )
+     optionsLayout = new QVBoxLayout(this);
+   else
+     optionsLayout = new QHBoxLayout(this);
+    optionsLayout->addWidget(pb );
+    optionsLayout->addWidget(configureViewButton);
+   optionsLayout->addWidget( createRestoreVolumeButton(1) );
+   optionsLayout->addWidget( createRestoreVolumeButton(2) );
+   optionsLayout->addWidget( createRestoreVolumeButton(3) );
+   optionsLayout->addWidget( createRestoreVolumeButton(4) );
+   
+   _layoutMDW->addLayout(optionsLayout, sliderColumn+1, 0, 1, 1);
 }
 
+    QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
+    {
+	QString buttonText = QString("%1").arg(storageSlot);
+// 	buttonText.arg(storageSlot);
+	QPushButton* profileButton = new QPushButton(buttonText, this);
+	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	return profileButton;
+    }
 
 void ViewDockAreaPopup::refreshVolumeLevels() {
   foreach ( QWidget* qw, _mdws )

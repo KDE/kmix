@@ -24,6 +24,7 @@
 #include "viewbase.h"
 
 class QGridLayout;
+#include <QPushButton>
 class QWidget;
 
 class Mixer;
@@ -51,11 +52,13 @@ protected:
 private:
   QLayout* _layoutControls;
   QGridLayout* _layoutMDW;
+    QPushButton* createRestoreVolumeButton ( int storageSlot );
 
 public slots:
    virtual void controlsReconfigured( const QString& mixer_ID );
 private slots:
     void showPanelSlot();
+    
 signals:
     void recreateMe();
 

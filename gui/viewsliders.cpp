@@ -108,7 +108,7 @@ ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase
     emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     _layoutMDW->addWidget(emptyStreamHint);
 
-    setMixSet();
+    _setMixSet();
 }
 
 ViewSliders::~ViewSliders()
@@ -174,6 +174,7 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 
 void ViewSliders::_setMixSet()
 {
+  resetMdws();
     if ( isDynamic() ) {
         // We will be recreating our sliders, so make sure we trash all the separators too.
         qDeleteAll(_separators);
@@ -202,8 +203,6 @@ void ViewSliders::_setMixSet()
     {
         //ProfControl* control = *it;
         // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-        bool isUsed = false;
-
         QRegExp idRegexp(control->id);
         //bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
         //isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
@@ -241,16 +240,9 @@ void ViewSliders::_setMixSet()
 #ifdef TEST_MIXDEVICE_COMPOSITE
                 if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // For temporary test
 #endif
-
-                isUsed = true;
-                // We use no "break;" ,as multiple devices could match
-                //if ( isExactRegexp ) break;  // Optimize! In this case, we can actually break the loop
+                // We use no "break;" ,as multiple devices could match the regexp (e.g. "^.*$")
             } // name matches
         } // loop for finding a suitable MixDevice
-        if ( ! isUsed ) {
-            // There is something in the Profile, that doesn't correspond to a Mixer control
-            //kDebug(67100) << "ViewSliders::setMixSet(): No such control '" << control->id << "'in the mixer . Please check the GUIProfile\n";
-        }
    } // iteration over all controls from the Profile
    
   } // Iteration over all Mixers
@@ -277,19 +269,10 @@ void ViewSliders::_setMixSet()
 void ViewSliders::constructionFinished() {
     configurationUpdate();
     // TODO Add a "show more" / "configure this view" button
-    const KIcon& icon = KIcon( QLatin1String( "audio-volume-muted" ));
-    QPushButton* configureViewButton = new QPushButton(icon, "configure view", this);
-    _layoutSliders->addWidget(configureViewButton);
-    QPushButton* profileButton = new QPushButton("1", this);
-    profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    _layoutSliders->addWidget(profileButton);
-    profileButton = new QPushButton("2", this);
-    _layoutSliders->addWidget(profileButton);
-    profileButton = new QPushButton("3", this);
-    _layoutSliders->addWidget(profileButton);
-    profileButton = new QPushButton("4", this);
-    _layoutSliders->addWidget(profileButton);
-
+    const KIcon& icon = KIcon( QLatin1String( "configure" ));
+    QPushButton* configureViewButton = new QPushButton(icon, "", this);
+    configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _layoutMDW->addWidget(configureViewButton,0 , Qt::AlignLeft | Qt::AlignTop);
 }
 
 
