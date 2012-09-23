@@ -35,7 +35,7 @@ class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW);
+    ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW);
     virtual ~ViewDockAreaPopup();
 
     virtual QWidget* add(shared_ptr<MixDevice> md);
@@ -58,12 +58,6 @@ public slots:
    virtual void controlsReconfigured( const QString& mixer_ID );
 private slots:
     void showPanelSlot();
-    
-signals:
-    void recreateMe();
-
-
-
 };
 
 #endif

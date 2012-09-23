@@ -33,9 +33,9 @@ class Mixer;
 class MixDevice;
 
 // KMix
-class GUIProfile;
 #include "core/mixdevice.h"
 #include "core/mixset.h"
+#include "gui/guiprofile.h"
 
 /**
   * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
@@ -57,7 +57,7 @@ public:
       Vertical       = 0x0008
    };
 
-    ViewBase(QWidget* parent, const char* id, Qt::WFlags=0, ViewFlags vflags=0, GUIProfile *guiprof=0, KActionCollection* actionCollection = 0);
+    ViewBase(QWidget* parent, const char* id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
     void addMixer(Mixer *mixer);
@@ -114,7 +114,7 @@ public:
    void setIcons(bool on);
    void setLabels(bool on);
    void setTicks(bool on);
-   GUIProfile* guiProfile() { return _guiprof; };
+   GUIProfile* guiProfile() { return GUIProfile::find(_guiProfileId); };
    KActionCollection* actionCollection() { return _actions; };
 
    QList<Mixer*>& getMixers() { return _mixers; };
@@ -139,7 +139,7 @@ protected:
     KActionCollection* _actions; // -<- applciations wide action collection
 
     ViewFlags _vflags;
-    GUIProfile* _guiprof;
+    const QString _guiProfileId;
     KActionCollection *_localActionColletion;
 
     virtual void _setMixSet() = 0;

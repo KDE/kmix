@@ -63,12 +63,13 @@
  *  the class name suggests).
  *  TODO change "const char*" parameter to QString
  */
-ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl)
-      : ViewBase(parent, id, Qt::FramelessWindowHint, vflags, guiprof, actColl)
+ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl)
+      : ViewBase(parent, id, Qt::FramelessWindowHint, vflags, guiProfileId, actColl)
       , _layoutEnum(0)
 {
   addMixer(mixer);
-  
+ 
+_configureViewButton = 0;
    if ( _vflags & ViewBase::Vertical ) {
       _layoutMDW = new QVBoxLayout(this);
       _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
@@ -108,7 +109,8 @@ ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase
     emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     _layoutMDW->addWidget(emptyStreamHint);
 
-    _setMixSet();
+    qDebug() << "Found start 1";
+    createDeviceWidgets();
 }
 
 ViewSliders::~ViewSliders()
@@ -119,12 +121,12 @@ ViewSliders::~ViewSliders()
 
 
 QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
-
 {
     MixDeviceWidget *mdw;
     Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
 
-    if ( md->isEnum() ) {
+    if ( md->isEnum() )
+    {
         mdw = new MDWEnum(
                 md,           // MixDevice (parameter)
                 orientation,  // Orientation
@@ -139,7 +141,8 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
         }
         _layoutEnum->addWidget(mdw);
     } // an enum
-    else {
+    else
+    {
         // add a separator before the device
         QFrame *_frm = new QFrame(this);
         if ( orientation == Qt::Vertical)
@@ -174,8 +177,10 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 
 void ViewSliders::_setMixSet()
 {
+  qDebug() << "Found start";
   resetMdws();
-    if ( isDynamic() ) {
+  delete _configureViewButton;
+//     if ( isDynamic() ) {
         // We will be recreating our sliders, so make sure we trash all the separators too.
         qDeleteAll(_separators);
         _separators.clear();
@@ -184,7 +189,12 @@ void ViewSliders::_setMixSet()
         QLayoutItem *li;
         while ( ( li = _layoutSliders->takeAt(0) ) )
             delete li;
-    }
+	
+	if (_layoutEnum != 0 )
+	{
+	while ( ( li = _layoutEnum->takeAt(0) ) )
+            delete li;
+     }
 
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
@@ -195,11 +205,14 @@ void ViewSliders::_setMixSet()
     // Each control is checked, whether it is also contained in the mixset, and
     // applicable for this kind of View. If yes, the control is accepted and inserted.
  
+     GUIProfile* guiprof = guiProfile();
+     if ( guiprof != 0 )
+     {
    foreach (Mixer* mixer , _mixers )
   {
      const MixSet& mixset = mixer->getMixSet();
 
-    foreach ( ProfControl* control, _guiprof->getControls() )
+    foreach ( ProfControl* control, guiprof->getControls() )
     {
         //ProfControl* control = *it;
         // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
@@ -211,19 +224,29 @@ void ViewSliders::_setMixSet()
         for ( int i=0; i<mixset.count(); i++ ) {
         	shared_ptr<MixDevice> md = mixset[i];
 
+	  kDebug() << "Check whether we want to include control " << control->id << " -> " << md->id();
             if ( md->id().contains(idRegexp) )
             {
                 // Match found (by name)
-                if ( _mixSet.contains( md ) ) continue; // dup check
-
+                if ( _mixSet.contains( md ) )
+		{
+	  kDebug() << "NO (DUP)";
+		  continue; // dup check
+		}
+		
                 // Now check whether subcontrols match
                 bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->playbackVolume().hasSwitch()) );
                 bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
                 bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
                 bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
 
-                if ( !subcontrolWanted ) continue;
+                if ( !subcontrolWanted )
+		{
+	  kDebug() << "NO (Subcontrol not wanted)";
+		  continue;
+		}
 
+	  kDebug() << "YES";
                 md->setControlProfile(control);
                 if ( !control->name.isNull() ) {
                     // Apply the custom name from the profile
@@ -244,7 +267,7 @@ void ViewSliders::_setMixSet()
             } // name matches
         } // loop for finding a suitable MixDevice
    } // iteration over all controls from the Profile
-   
+     } // if there is a profile
   } // Iteration over all Mixers
 
 	emptyStreamHint->setVisible(  _mixSet.isEmpty() && isDynamic() ); // show a hint why a tab is empty (dynamic controls!!!)
@@ -270,9 +293,9 @@ void ViewSliders::constructionFinished() {
     configurationUpdate();
     // TODO Add a "show more" / "configure this view" button
     const KIcon& icon = KIcon( QLatin1String( "configure" ));
-    QPushButton* configureViewButton = new QPushButton(icon, "", this);
-    configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    _layoutMDW->addWidget(configureViewButton,0 , Qt::AlignLeft | Qt::AlignTop);
+    _configureViewButton = new QPushButton(icon, "", this);
+    _configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _layoutMDW->addWidget(_configureViewButton,0 , Qt::AlignLeft | Qt::AlignTop);
 }
 
 

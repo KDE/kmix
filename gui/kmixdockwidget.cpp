@@ -42,6 +42,7 @@
 
 void MetaMixer::reset()
 {
+  // Connect/reconnect signals coming from the Mixer
     disconnect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
     m_mixer = Mixer::getGlobalMasterMixer();
     // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
@@ -80,9 +81,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     if (_volumePopup) {
         kDebug() << "Construct the ViewDockAreaPopup and actions";
         _referenceWidget = new KMenu(parent);
-        _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", 0, (GUIProfile*)0, parent);
-        _referenceWidget2->createDeviceWidgets();
-        connect(_referenceWidget2, SIGNAL(recreateMe()), _kmixMainWindow, SLOT(recreateDockWidget()));
+        _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
 
         _volWA = new QWidgetAction(_referenceWidget);
         _volWA->setDefaultWidget(_referenceWidget2);
@@ -170,13 +169,11 @@ void KMixDockWidget::selectMaster()
 
 void KMixDockWidget::handleNewMaster(QString& /*mixerID*/, QString& /*control_id*/)
 {
-   /* When a new master is selected, we will need to destroy *this instance of KMixDockWidget.
-      Reason: This widget is a KSystemTrayIcon, and needs an associated QWidget. This is in
-      our case the ViewDockAreaPopup instance. As that is recreated, we need to recrate ourself as well.
-      The only chance to do so is outside, in fact it is done by KMixWindow::updateDocking(). This needs to
-      use deleteLater(), as we are executing in a SLOT currently.
-    */
+   // Notify the main window, as it might need to update the visibiliy of the dock icon.
+   // 
    _kmixMainWindow->updateDocking();
+   _kmixMainWindow->saveConfig();
+   update();
 }
 
 void KMixDockWidget::update()

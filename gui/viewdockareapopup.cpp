@@ -42,8 +42,8 @@
 #include "apps/kmix.h"
 
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KMixWindow *dockW )
-    : ViewBase(parent, name, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiprof), _dock(dockW)
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW )
+    : ViewBase(parent, name, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiProfileId), _dock(dockW)
 {
   foreach ( Mixer* mixer, Mixer::mixers() )
   {
@@ -55,8 +55,8 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
     _layoutMDW->setSpacing( KDialog::spacingHint() );
     _layoutMDW->setMargin(0);
     _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
-    //_layoutMDW->addItem(_layoutControls);
-    _setMixSet();
+    createDeviceWidgets();
+
 }
 
 ViewDockAreaPopup::~ViewDockAreaPopup()
@@ -134,12 +134,13 @@ void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
 {
 	kDebug(67100) << "RECONFIGURE AND RECREATE DOCK";
 	ViewBase::controlsReconfigured(mixer_ID);
-	emit recreateMe();
 }
 
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
+  bool vertical = (_dock->toplevelOrientation() == Qt::Vertical); // TODO use vflags instead (and set them when Constructing the object)
+  
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
@@ -153,9 +154,8 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
       this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl
    );
-   int sliderColumn = _layoutMDW->rowCount();
+   int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    //if (sliderColumn == 1 ) sliderColumn =0;
-   bool vertical = (_vflags & ViewBase::Vertical);
    int row = vertical ? 0 : sliderColumn;
    int col = vertical ? sliderColumn : 0;
    
@@ -172,8 +172,8 @@ void ViewDockAreaPopup::constructionFinished() {
    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
    bool vertical = (_vflags & ViewBase::Vertical);
    
-   int sliderColumn = _layoutMDW->rowCount();
-  _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderColumn ); // TODO add this on "polish()"
+   int sliderRow = _layoutMDW->rowCount();
+  _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderRow ); // TODO add this on "polish()"
    QPushButton *pb = new QPushButton( i18n("Mixer"), this );
    pb->setObjectName( QLatin1String("MixerPanel" ));
    connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );
@@ -195,7 +195,7 @@ void ViewDockAreaPopup::constructionFinished() {
    optionsLayout->addWidget( createRestoreVolumeButton(3) );
    optionsLayout->addWidget( createRestoreVolumeButton(4) );
    
-   _layoutMDW->addLayout(optionsLayout, sliderColumn+1, 0, 1, 1);
+   _layoutMDW->addLayout(optionsLayout, sliderRow+1, 0, 1, 1);
 }
 
     QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )

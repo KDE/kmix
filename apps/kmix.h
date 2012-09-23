@@ -39,7 +39,6 @@ class KAction;
 #include <kxmlguiwindow.h>
 
 // KMix
-class GUIProfile;
 class KMixPrefDlg;
 class KMixDockWidget;
 class KMixerWidget;
@@ -91,6 +90,7 @@ KMixWindow : public KXmlGuiWindow
    void loadVolumes(QString postfix);
    void saveVolumes();
    void saveVolumes(QString postfix);
+   void saveConfig();
    virtual void applyPrefs( KMixPrefDlg *prefDlg );
    void recreateGUI(bool saveView);
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
@@ -138,14 +138,13 @@ KMixWindow : public KXmlGuiWindow
 
    OSDWidget* osdWidget;
 
-   bool addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof, int insertPosition);
+   bool addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition);
    void setInitialSize();
 
     private:
    static QString getKmixctrlRcFilename(QString postfix);
 
   private slots:
-   void saveConfig();
    void slotHWInfo();
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
@@ -170,9 +169,8 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes3() { saveVolumes(QString("3")); }
    void saveVolumes4() { saveVolumes(QString("4")); }
 
-	bool profileExists(GUIProfile* guiprof);
+	bool profileExists(QString guiProfileId);
 
-	;
 };
 
 #endif // KMIX_H

@@ -158,6 +158,7 @@ class GUIProfile
     ProductSet _products;
 
     static GUIProfile* find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
+    static GUIProfile* find(QString id);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
 

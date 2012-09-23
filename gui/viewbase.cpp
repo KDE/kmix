@@ -44,15 +44,15 @@
 
 
 /**
- * Creates an empty View. To populate it with MixDevice instances, you must call
- * createDeviceWidgets
+ * Creates an empty View. To populate it with MixDevice instances, you must implement
+ * _setMixSet() in your derived class.
  */
-ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actionColletion)
-    : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiprof(guiprof)
+ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
+    : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiProfileId(guiProfileId)
 {
    setObjectName(id);
    m_viewId = id;
-
+   
    if ( _actions == 0 ) {
       // We create our own action collection, if the actionColletion was 0.
       // This is currently done for the ViewDockAreaPopup, but only because it has not been converted to use the app-wide
@@ -107,10 +107,13 @@ void ViewBase::setTicks (bool on) { KMixToolBox::setTicks (_mdws, on ); }
  */
 void ViewBase::createDeviceWidgets()
 {
+  _setMixSet();
     foreach ( shared_ptr<MixDevice> md, _mixSet )
     {
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
+	mdw->show(); // TODO 000 why here???
+	qDebug() << "Added " << md->id();
     }
 
     if ( !isDynamic() )
@@ -129,11 +132,16 @@ void ViewBase::createDeviceWidgets()
  */
 void ViewBase::rebuildFromProfile()
 {
+  kDebug() << "Rebuild 1";
+  save(KGlobal::config().data());
+  kDebug() << "Rebuild 2";
+  createDeviceWidgets();
   // TODO Actually this is insane. We ask somebody else to rebuild us.
   // We should really be able to do it ourselves, as "this" knows the GUIProfile.
   // Probably we should not store the pointer, but the key, and look it up again to
   // make sure we retrieve the freshest/modified GUIProfile
-   emit rebuildGUI();
+   
+  //emit rebuildGUI();  // TODO 001 remove rebuildGUI() signal
 }
 
 
@@ -200,9 +208,8 @@ void ViewBase::controlsReconfigured( const QString& mixerId )
 	  return; // View does not include the given Mixer => nothing to do
 	
 	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
-	    _setMixSet();
-	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
 	    createDeviceWidgets();
+	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
 }
 
 void ViewBase::refreshVolumeLevels()

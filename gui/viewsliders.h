@@ -26,6 +26,7 @@ class QBoxLayout;
 #include <QFrame>
 #include <QHash>
 class QLabel;
+#include <QPushButton>
 class QWidget;
 
 class Mixer;
@@ -35,7 +36,7 @@ class ViewSliders : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, GUIProfile *guiprof, KActionCollection *actColl);
+    ViewSliders(QWidget* parent, const char* name, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl);
     virtual ~ViewSliders();
 
     virtual QWidget* add(shared_ptr<MixDevice>);
@@ -53,6 +54,7 @@ private:
     QLayout* _layoutSliders;
 	QLayout* _layoutEnum;
     QHash<QString,QFrame*> _separators;
+    QPushButton* _configureViewButton;
     QLabel* emptyStreamHint;
 };
 

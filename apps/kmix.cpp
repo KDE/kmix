@@ -320,19 +320,19 @@ KMixWindow::recreateDockWidget()
 }
 
 /**
- * Updates the docking icon by recreating it.
- * @returns Whether the docking succeeded. Failure usually means that there
+ * Creates or deletes the KMixDockWidget, depending on whether there is a Mixer instance available.
+ * 
+ * @returns true, if the docking succeeded. Failure usually means that there
  *    was no suitable mixer control selected.
  */
 bool
 KMixWindow::updateDocking()
 {
-  kDebug();
-
-  if (m_showDockWidget == false || Mixer::mixers().count() == 0)
+  if (m_showDockWidget == false || Mixer::mixers().isEmpty() )
     {
       if (m_dockWidget)
-        { // Config update: we are not supposed to have one, but we have one.
+        {
+	  // Config update: we are not supposed to have one, but we have one.
           m_dockWidget->deleteLater();
           m_dockWidget = 0;
         }
@@ -341,13 +341,12 @@ KMixWindow::updateDocking()
 
   if (!m_dockWidget)
     {
-      m_dockWidget = new KMixDockWidget(this, m_volumeWidget); // Could be optimized, by refreshing instead of recreating.
-      connect(m_dockWidget, SIGNAL(newMasterSelected()), SLOT(saveConfig()));
+      m_dockWidget = new KMixDockWidget(this, m_volumeWidget);
     }
-  else
-    {
-      m_dockWidget->update();
-    }
+//   else
+//     {
+//       m_dockWidget->update();
+//     }
 
   return true;
 }
@@ -610,6 +609,7 @@ KMixWindow::recreateGUIwithoutSavingView()
 void
 KMixWindow::recreateGUIwithSavingView()
 {
+//  saveViewConfig();
   recreateGUI(true);
 }
 
@@ -665,7 +665,7 @@ KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId,
   if ( kmw == 0 )
     {
       // does not yet exist => create
-      addMixerWidget(mixer->id(), guiprof, -1);
+      addMixerWidget(mixer->id(), guiprof->getId(), -1);
     }
   else
     {
@@ -673,7 +673,7 @@ KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId,
       int indexOfTab = m_wsMixers->indexOf(kmw);
       if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
       delete kmw;
-      addMixerWidget(mixer->id(), guiprof, indexOfTab);
+      addMixerWidget(mixer->id(), guiprof->getId(), indexOfTab);
     }
 } // Loop over all GUIProfile's
 
@@ -703,7 +703,7 @@ KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId,
           GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
           if ( guiprof != 0 )
             {
-              addMixerWidget(mixer->id(), guiprof, -1);
+              addMixerWidget(mixer->id(), guiprof->getId(), -1);
               aProfileWasAddedSucesufully = true;
             }
           else
@@ -746,7 +746,7 @@ KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId,
       if ( guiprof != 0 )
         {
           guiprof->setDirty();  // All fallback => dirty
-          addMixerWidget(mixer->id(), guiprof, -1);
+          addMixerWidget(mixer->id(), guiprof->getId(), -1);
         }
       else
         {
@@ -814,7 +814,7 @@ KMixWindow::newView()
       kDebug()
       << ">>> mixer = " << mixerId << " -> " << mixer;
 
-      GUIProfile*guiprof = GUIProfile::find(mixer, profileName, false, false);
+      GUIProfile* guiprof = GUIProfile::find(mixer, profileName, false, false);
       if (guiprof == 0)
         {
           guiprof = GUIProfile::find(mixer, profileName, false, true);
@@ -828,7 +828,7 @@ KMixWindow::newView()
         }
       else
         {
-          bool ret = addMixerWidget(mixer->id(), guiprof, -1);
+          bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
           if (ret == false)
             {
               errorPopup(i18n("View already exists. Cannot add View."));
@@ -1029,22 +1029,23 @@ KMixWindow::unplugged(const QString& udi)
  *
  */
 bool
-KMixWindow::profileExists(GUIProfile* guiprof)
+KMixWindow::profileExists(QString guiProfileId)
 {
   for (int i = 0; i < m_wsMixers->count(); ++i)
     {
       KMixerWidget* kmw = dynamic_cast<KMixerWidget*>(m_wsMixers->widget(i));
-      if (kmw && kmw->getGuiprof()->getId() == guiprof->getId())
+      if (kmw && kmw->getGuiprof()->getId() == guiProfileId)
         return true;
     }
   return false;
 }
 
 bool
-KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof,
-    int insertPosition)
+KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition)
 {
-  if (profileExists(guiprof))
+  kDebug() << "Add " << guiprofId;
+  GUIProfile* guiprof = GUIProfile::find(guiprofId);
+  if (guiprof != 0 && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
     return false; // already present => don't add again
   Mixer *mixer = Mixer::findMixer(mixer_ID);
   if (mixer == 0)
@@ -1059,7 +1060,7 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, GUIProfile *guiprof,
   else
     vflags |= ViewBase::Vertical;
 
-  KMixerWidget *kmw = new KMixerWidget(mixer, this, vflags, guiprof,
+  KMixerWidget *kmw = new KMixerWidget(mixer, this, vflags, guiprofId,
       actionCollection());
   /* A newly added mixer will automatically added at the top
    * and thus the window title is also set appropriately */

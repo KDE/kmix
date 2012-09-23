@@ -143,6 +143,28 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
 }
 
 /**
+ * Returns the GUIProfile for the given ID (= "fullyQualifiedName").
+ * If not found 0 is returned. There is no try to load it.
+ * 
+ * @returns The loaded GUIProfile for the given ID
+ */
+GUIProfile* GUIProfile::find(QString id)
+{
+  // Not thread safe (due to non-atomic contains()/get()
+  if ( s_profiles.contains(id) )
+  {
+    qDebug() << "Found " << id;
+    return s_profiles[id];
+  }
+  else
+  {
+    qDebug() << "NOT Found " << id;
+    return 0;
+  }
+}
+
+
+/**
  * Finds the correct profile for the given mixer.
  * If already loaded from disk, returns the cached version.
  * Otherwise load profile from disk: Priority: Card specific profile, Card unspecific profile

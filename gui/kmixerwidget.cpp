@@ -53,10 +53,10 @@
    a TabBar with n Tabs (at least one per soundcard). These contain View's with sliders, switches and other GUI elements visualizing the Mixer)
 */
 KMixerWidget::KMixerWidget( Mixer *mixer,
-                            QWidget * parent, ViewBase::ViewFlags vflags, GUIProfile* guiprof,
+                            QWidget * parent, ViewBase::ViewFlags vflags, QString guiprofId,
                             KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer),
-     m_topLayout(0), _guiprof(guiprof),
+     m_topLayout(0), _guiprofId(guiprofId),
      _actionCollection(actionCollection)
 {
 	_mainWindow = parent;
@@ -104,9 +104,14 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2b) Create device widgets
    * 2c) Add Views to Tab
    ********************************************************************/
-   ViewSliders* view = new ViewSliders( this, _guiprof->getId().toLatin1(), _mixer, vflags, _guiprof, _actionCollection );
-   possiblyAddView(view);
-   show();
+   GUIProfile* guiprof = getGuiprof();
+   if ( guiprof != 0 )
+   {
+    kDebug() << "Add a view " << _guiprofId;
+    ViewSliders* view = new ViewSliders( this, guiprof->getName().toLatin1(), _mixer, vflags, _guiprofId, _actionCollection );
+    possiblyAddView(view);
+   }
+    show();
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
@@ -123,7 +128,6 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       return false;
    }
    else {
-      vbase->createDeviceWidgets();
       m_topLayout->addWidget(vbase);
       _views.push_back(vbase);
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );

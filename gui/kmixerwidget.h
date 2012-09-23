@@ -53,12 +53,12 @@ class KMixerWidget : public QWidget
 
   public:
    explicit KMixerWidget( Mixer *mixer,
-                          QWidget *parent=0, ViewBase::ViewFlags vflags=0, GUIProfile* guiprof=0, KActionCollection* coll = 0 );
+                          QWidget *parent, ViewBase::ViewFlags vflags, QString  guiprofId, KActionCollection* coll = 0 );
    ~KMixerWidget();
 
    Mixer *mixer() { return _mixer; }
    ViewBase* currentView();
-   GUIProfile* getGuiprof() { return _guiprof; };
+   GUIProfile* getGuiprof() { return GUIProfile::find(_guiprofId); };
 
    
   signals:
@@ -82,7 +82,7 @@ class KMixerWidget : public QWidget
   private:
    Mixer *_mixer;
    QVBoxLayout *m_topLayout; // contains TabWidget
-   GUIProfile* _guiprof;
+   QString _guiprofId;
    ProfTab* _tab;
    std::vector<ViewBase*> _views;
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
