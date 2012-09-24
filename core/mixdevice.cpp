@@ -227,7 +227,7 @@ const QString MixDevice::dbusPath() {
 
 
 bool MixDevice::isMuted()                  { return ( _playbackVolume.hasSwitch() && ! _playbackVolume.isSwitchActivated() ); }
-void MixDevice::setMuted(bool value)       { _playbackVolume.setSwitch( ! value ); }
+void MixDevice::setMuted(bool mute)       { _playbackVolume.setSwitch( ! mute ); }
 void MixDevice::toggleMute()               { setMuted( !isMuted() ); }
 bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() &&  _captureVolume.isSwitchActivated() ); }
 bool MixDevice::isNotRecSource()           { return ( _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated() ); }

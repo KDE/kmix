@@ -115,6 +115,7 @@ void Volume::setAllVolumes(long vol)
 	while (it != _volumesL.end())
 	{
 		it.value().volume = finalVol;
+		//it.value().unmutedVolume= finalVol;
 		++it;
 	}
 }
@@ -124,33 +125,70 @@ void Volume::changeAllVolumes( long step )
 	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
 	while (it != _volumesL.end())
 	{
-		it.value().volume = volrange(it.value().volume + step);
+		long int finalVol = volrange(it.value().volume + step);
+		it.value().volume = finalVol;
+// 		it.value().unmutedVolume= finalVol;
 		++it;
 	}
 }
 
 
-// @ compatibility
+/**
+ * Sets the volume for the given Channel
+ * @ compatibility
+ */
 void Volume::setVolume( ChannelID chid, long vol)
 {
 	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
 	if ( it != _volumesL.end())
 	{
 		it.value().volume = vol;
+		//it.value().unmutedVolume = vol;
 	}
 }
 
 /**
  * Copy the volume elements contained in v to this Volume object.
  */
-void Volume::setVolume(const Volume &v)
-{
-	foreach (VolumeChannel vc, _volumesL )
-	{
-		ChannelID chid = vc.chid;
-		v.getVolumes()[chid].volume = vc.volume;
-	}
-}
+// void Volume::setVolume(const Volume &v)
+// {
+// 	foreach (VolumeChannel vc, _volumesL )
+// 	{
+// 		ChannelID chid = vc.chid;
+// 		v.getVolumes()[chid].volume = vc.volume;
+// 		//v.getVolumes()[chid].unmutedVolume = vc.volume;
+// 	}
+// }
+
+   void Volume::setSwitch( bool active )
+   {
+     _switchActivated = active;
+
+//      if ( isCapture() )
+//        return;
+//      
+     // for playback volumes we will not only do the switch, but also set the volume to 0
+// 	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.begin();
+//      if ( active )
+//      {
+// 	while (it != _volumesL.end())
+// 	{
+// 	  VolumeChannel& vc = it.value();
+// 	  vc.volume = vc.unmutedVolume;
+// 	  ++it;
+// 	}	
+//      }
+//      else
+//      {
+// 	while (it != _volumesL.end())
+// 	{
+// 	  VolumeChannel& vc = it.value();
+// 	  vc.unmutedVolume = vc.volume;
+// 	  vc.volume = 0;
+// 	  ++it;
+//        }       
+//      }
+  }
 
 long Volume::maxVolume() {
 	return _maxVolume;
@@ -164,12 +202,18 @@ long Volume::volumeSpan() {
 	return _maxVolume - _minVolume + 1;
 }
 
-long Volume::getVolume(ChannelID chid) {
+long Volume::getVolume(ChannelID chid)
+{
 	return _volumesL.value(chid).volume;
 }
 
 qreal Volume::getAvgVolume(ChannelMask chmask)
 {
+#ifdef ZERO_VOLUME_ON_MUTE
+	if ( ! isCapture() && ! isSwitchActivated() )
+	  return 0;
+#endif
+	  
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
 	foreach (VolumeChannel vc, _volumesL )
@@ -192,6 +236,11 @@ qreal Volume::getAvgVolume(ChannelMask chmask)
 
 int Volume::getAvgVolumePercent(ChannelMask chmask)
 {
+#ifdef ZERO_VOLUME_ON_MUTE
+  	if ( ! isCapture() && ! isSwitchActivated() )
+	  return 0;
+#endif
+	  
 	qreal volume = getAvgVolume(chmask);
 	// min=-100, max=200 => volSpan = 301
 	// volume = -50 =>  volShiftedToZero = -50+min = 50

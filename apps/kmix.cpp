@@ -53,6 +53,7 @@
 
 // KMix
 #include "gui/guiprofile.h"
+#include "core/ControlManager.h"
 #include "core/MasterControl.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
@@ -1274,9 +1275,14 @@ KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
       m_toplevelOrientation = Qt::Horizontal;
     }
 
-  if (labelsHasChanged || ticksHasChanged || dockwidgetHasChanged
-      || toplevelOrientationHasChanged || systrayPopupHasChanged)
+    if ( systrayPopupHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged )
     {
+      // These might need a complete relayout => announce a ControlList change to rebuild everything
+         ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("Preferences Dialog"));
+    }
+    else if ( labelsHasChanged || ticksHasChanged || systrayPopupHasChanged)
+    {
+      ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
       recreateGUI(true);
     }
 

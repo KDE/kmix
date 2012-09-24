@@ -60,24 +60,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
      _actionCollection(actionCollection)
 {
 	_mainWindow = parent;
-	//kDebug() << "kmixWindow created: parent=" << parent << ", parentWidget()=" << parentWidget();
-   if ( _mixer )
-   {
-      createLayout(vflags);
-   }
-   else
-   {
-      // No mixer found
-      // This is normally never shown. Only if the application
-      // creates an invalid KMixerWidget (but this would actually be
-      // a programming error).
-      QBoxLayout *layout = new QHBoxLayout( this );
-      QString s = i18n("Invalid mixer");
-      QLabel *errorLabel = new QLabel( s, this );
-      errorLabel->setAlignment( Qt::AlignCenter );
-      errorLabel->setWordWrap( true );
-      layout->addWidget( errorLabel );
-   }
+	createLayout(vflags);
 }
 
 KMixerWidget::~KMixerWidget()
@@ -148,7 +131,6 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 
 void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
 {
-  kDebug() << "Foobar";
 	foreach ( ViewBase* vbase, _views)
 	{
 		vbase->controlsReconfigured(mixerId);
@@ -175,8 +157,8 @@ void KMixerWidget::refreshVolumeLevelsToplevel()
 
 /**
  * Returns the current View. Normally we have only one View, so we always return the first view.
- * This method is only here for one reason: We can plug in an action in the main menu, so that
- * 99% of all users will be well served. Those who hack their own XML Profile to contain more than one view
+ * This method is only here for one reason: We can plug in an action in the main menu for the view, so that
+ * 99,99% of all users will be well served. Those who hack their own XML Profile to contain more than one view
   must  use the context menu for configuring the additional views.
  */
 ViewBase* KMixerWidget::currentView()

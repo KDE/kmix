@@ -53,6 +53,9 @@ private:
   QLayout* _layoutControls;
   QGridLayout* _layoutMDW;
     QPushButton* createRestoreVolumeButton ( int storageSlot );
+    
+    bool separatorBetweenMastersAndStreamsInserted;
+    bool separatorBetweenMastersAndStreamsRequired;
 
 // public slots:
 //    virtual void controlsReconfigured( const QString& mixer_ID );

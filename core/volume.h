@@ -18,8 +18,8 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef VOLUME_H
-#define VOLUME_H
+#ifndef RADOMPREFIX_VOLUME_H
+#define RADOMPREFIX_VOLUME_H
 
 #include <fstream>
 
@@ -91,7 +91,7 @@ friend class MixDevice;
     // Set all volumes as given by vol
     void setAllVolumes(long vol);
     // Set all volumes to the ones given in vol
-    void setVolume(const Volume &vol );
+//     void setVolume(const Volume &vol );
     // Set volumes as specified by the channel mask
     //void setVolume( const Volume &vol, ChannelMask chmask);
     void setVolume( ChannelID chid, long volume);
@@ -112,7 +112,8 @@ friend class MixDevice;
     long volumeSpan();
     int  count();
     
-    bool hasSwitch()           { return _hasSwitch; } // TODO { return _hasSwitch || hasVolume() ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
+    bool hasSwitch()         //  { return _hasSwitch; } // TODO 
+    { return _hasSwitch || (!isCapture() && hasVolume() ) ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
     bool hasVolume()           { return (_maxVolume != _minVolume); }
     bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
     
@@ -140,7 +141,7 @@ protected:
     long          _maxVolume;
    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
    // these functions. Our friend class MixDevice will handle that gracefully for us.
-   void setSwitch( bool val ) { _switchActivated = val; }
+   void setSwitch( bool active );
    bool isSwitchActivated()   { return _switchActivated && _hasSwitch; }
 
 
@@ -163,6 +164,7 @@ class VolumeChannel
 public:
   VolumeChannel(Volume::ChannelID chid) { volume =0; this->chid = chid; }
   long volume;
+ // long unmutedVolume; // TODO I think this is a bad idea. It would possibly be better to do it in the 3 getVolume*() methods
   Volume::ChannelID chid;
   
 // protected:
@@ -174,5 +176,5 @@ public:
 std::ostream& operator<<(std::ostream& os, const Volume& vol);
 QDebug operator<<(QDebug os, const Volume& vol);
 
-#endif // VOLUME
+#endif // RADOMPREFIX_VOLUME
 

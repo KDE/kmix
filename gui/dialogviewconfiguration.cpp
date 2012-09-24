@@ -37,6 +37,7 @@
 
 #include "gui/guiprofile.h"
 #include "gui/mixdevicewidget.h"
+#include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
@@ -343,6 +344,11 @@ void DialogViewConfiguration::apply()
     prof->setDirty();
 
    // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
+    if ( _view.getMixers().size() == 1 )
+      ControlManager::instance().announce(_view.getMixers().first()->id(), ControlChangeType::ControlList, QString("View Configuration Dialog"));
+    else
+      ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("View Configuration Dialog"));
+      
    _view.rebuildFromProfile();
 }
 

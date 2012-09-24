@@ -250,12 +250,8 @@ KMixDockWidget::setVolumeTip()
 
 void KMixDockWidget::updateDockPopup()
 {
-  //	    connect( &m_metaMixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
-
   kDebug() << "KMixDockWidget::updateDockPopup";
   _referenceWidget2->createDeviceWidgets();
-//	_referenceWidget2->setMixSet();
-	_referenceWidget2->constructionFinished();
 }
 
 void

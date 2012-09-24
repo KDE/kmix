@@ -24,6 +24,7 @@
 // Qt
 #include <qevent.h>
 #include <qframe.h>
+#include <QLabel>
 #include <QLayoutItem>
 #include <QPushButton>
 
@@ -61,17 +62,6 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
 
 }
 
-// void ViewDockAreaPopup::controlsReconfigured(QString mixerId)
-// {
-//   //	    connect( &m_metaMixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
-// 
-//   kDebug() << "jiha";
-//   createDeviceWidgets();
-//   constructionFinished();
-// }
-
-
-
 ViewDockAreaPopup::~ViewDockAreaPopup()
 {
   delete _layoutMDW;
@@ -98,17 +88,19 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 void ViewDockAreaPopup::_setMixSet()
 {
   resetMdws();
-
+  separatorBetweenMastersAndStreamsInserted = false;
+  separatorBetweenMastersAndStreamsRequired = false;
 // TODO code somewhat similar to ViewSliders => refactor  
 	// -- remove controls
-	if ( isDynamic() ) {
+// 	if ( isDynamic() ) {
 		// Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
 		// We need to trash those too otherwise all sliders gradually migrate away from the edge :p
 		QLayoutItem *li;
 		while ( ( li = _layoutMDW->takeAt(0) ) )
 			delete li;
-	}
+// 	}
 
+	// A loop that adds the Master controls of each card
 	foreach ( Mixer* mixer, _mixers )
 	{
 	shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
@@ -157,6 +149,29 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
+    
+    if ( !md->isApplicationStream() )
+    {
+      separatorBetweenMastersAndStreamsRequired = true;
+    }
+    if ( !separatorBetweenMastersAndStreamsInserted && separatorBetweenMastersAndStreamsRequired && md->isApplicationStream() )
+    {
+      // First application stream => add separator
+      separatorBetweenMastersAndStreamsInserted = true;
+      QWidget* separator = new QLabel(" ---- App streams start here ------");
+         //_layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
+   int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
+   int row = vertical ? 0 : sliderColumn;
+   int col = vertical ? sliderColumn : 0;
+   QFrame* separator2 = new QFrame();
+   if (vertical)
+     separator2->setFrameStyle(QFrame::VLine);
+   else
+     separator2->setFrameStyle(QFrame::HLine);
+_layoutMDW->addWidget( separator2, row, col );
+//_layoutMDW->addItem( new QSpacerItem( 5, 5 ), row, col );
+    }
+    
     MixDeviceWidget *mdw = new MDWSlider(
       md,           // only 1 device.
       true,         // Show Mute LE
@@ -172,50 +187,45 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
    int row = vertical ? 0 : sliderColumn;
    int col = vertical ? sliderColumn : 0;
    
-   //_layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
    _layoutMDW->addWidget( mdw, row, col );
 
    //kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
    return mdw;
 }
 
-void ViewDockAreaPopup::constructionFinished() {
+void ViewDockAreaPopup::constructionFinished()
+{
    //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
    bool vertical = (_vflags & ViewBase::Vertical);
    
-   int sliderRow = _layoutMDW->rowCount();
-  _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderRow ); // TODO add this on "polish()"
-   QPushButton *pb = new QPushButton( i18n("Mixer"), this );
+//   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderRow ); // TODO add this on "polish()"
+   QPushButton *pb = new QPushButton( i18n("Mixer") );
    pb->setObjectName( QLatin1String("MixerPanel" ));
    connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );
-   //_layoutMDW->addWidget( pb, sliderColumn+1, 0, 1, 1 );
    
-       const KIcon& icon = KIcon( QLatin1String( "configure" ));
-    QPushButton* configureViewButton = new QPushButton(icon, "", this);
+    const KIcon& icon = KIcon( QLatin1String( "configure" ));
+    QPushButton* configureViewButton = new QPushButton(icon, "");
     configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-   QBoxLayout* optionsLayout;
-   if ( vertical )
-     optionsLayout = new QVBoxLayout(this);
-   else
-     optionsLayout = new QHBoxLayout(this);
+   QBoxLayout* optionsLayout = new QHBoxLayout();
     optionsLayout->addWidget(pb );
     optionsLayout->addWidget(configureViewButton);
    optionsLayout->addWidget( createRestoreVolumeButton(1) );
    optionsLayout->addWidget( createRestoreVolumeButton(2) );
    optionsLayout->addWidget( createRestoreVolumeButton(3) );
    optionsLayout->addWidget( createRestoreVolumeButton(4) );
+//    optionsLayout->addWidget( new QWidget(this));
    
-   _layoutMDW->addLayout(optionsLayout, sliderRow+1, 0, 1, 1);
+      int sliderRow = _layoutMDW->rowCount();
+      _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
 }
 
     QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
     {
 	QString buttonText = QString("%1").arg(storageSlot);
-// 	buttonText.arg(storageSlot);
-	QPushButton* profileButton = new QPushButton(buttonText, this);
+	QPushButton* profileButton = new QPushButton(buttonText);
 	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return profileButton;
     }

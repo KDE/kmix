@@ -112,7 +112,7 @@ void ViewBase::createDeviceWidgets()
     {
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
-	mdw->show(); // TODO 000 why here???
+	mdw->show(); // TODO Visibility has to reworked massively. It must be taken consitently from the View here
 	qDebug() << "Added " << md->id();
     }
 

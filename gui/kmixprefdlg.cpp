@@ -201,6 +201,7 @@ void KMixPrefDlg::apply()
    enableButtonOk(false);
    enableButtonCancel(false);
    enableButtonApply(false);
+
    kapp->processEvents();
    emit signalApplied( this );
    // re-enable (in case of "Apply")

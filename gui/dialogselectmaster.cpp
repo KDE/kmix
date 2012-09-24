@@ -32,6 +32,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
@@ -215,6 +216,7 @@ void DialogSelectMaster::apply()
       else {
           mixer->setLocalMasterMD( control_id );
           Mixer::setGlobalMaster(mixer->id(), control_id, true);
+	  ControlManager::instance().announce(mixer->id(), ControlChangeType::MasterChanged, QString("Select Master Dialog"));
           emit newMasterSelected( mixer->id(), control_id );
       }
    }
