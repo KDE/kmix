@@ -43,6 +43,7 @@ public:
     ~ControlSlider();
 private slots:
     void volumeChange(int channel);
+    void updateVolume(int channel);
 private:
     org::kde::KMix::Control *m_control;
     QList<QSlider*> m_sliders;

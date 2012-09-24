@@ -2,6 +2,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QSlider>
+#include <QtCore/QSignalMapper>
 
 #include "control_interface.h"
 
@@ -17,13 +18,16 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
     layout->addWidget(label);
     layout->addWidget(sliderContainer);
     QHBoxLayout *sliderLayout = new QHBoxLayout(sliderContainer);
-    qDebug() << control->channels() << "channels";
-    for(int i = 0;i<2/*control->channels()*/;i++) {
+    QSignalMapper *mapper = new QSignalMapper(this);
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(updateVolume(int)));
+    for(int i = 0;i<control->channels();i++) {
         QSlider *slider = new QSlider(sliderContainer);
         sliderLayout->addWidget(slider);
         slider->setMaximum(65536);
         slider->setValue(control->getVolume(i));
+        mapper->setMapping(slider, i);
         m_sliders << slider;
+        connect(slider, SIGNAL(valueChanged(int)), mapper, SLOT(map()));
     }
     connect(control, SIGNAL(volumeChanged(int)), this, SLOT(volumeChange(int)));
 }
@@ -37,5 +41,11 @@ void ControlSlider::volumeChange(int channel)
     qDebug() << "Updated volume on" << channel << m_control->getVolume(channel);
     m_sliders[channel]->setValue(m_control->getVolume(channel));
 }
+
+void ControlSlider::updateVolume(int channel)
+{
+    m_control->setVolume(channel, m_sliders[channel]->value());
+}
+
 
 #include "ControlSlider.moc"
