@@ -25,6 +25,7 @@
 
 // include files for QT
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QTabWidget>
 
 // include files for KDE
 #include <KDE/KActionCollection>
@@ -39,9 +40,8 @@
 
 #include "kmixd_interface.h"
 #include "controlgroup_interface.h"
-#include "control_interface.h"
 
-#include "ControlSlider.h"
+#include "ControlGroupTab.h"
 
 const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
 const QString KMIX_DBUS_PATH = "/KMixD";
@@ -59,19 +59,12 @@ KMixWindow::KMixWindow(QWidget* parent)
     initActions();
     createGUI( QLatin1String( "kmixui.rc" ) );
     show();
-    QWidget *mainWidget = new QWidget(this);
+    QTabWidget *mainWidget = new QTabWidget(this);
     setCentralWidget(mainWidget);
-    m_layout = new QHBoxLayout(mainWidget);
-    mainWidget->setLayout(m_layout);
     foreach(const QString &groupName, m_daemon->mixerGroups()) {
         org::kde::KMix::ControlGroup *group = new org::kde::KMix::ControlGroup(KMIX_DBUS_SERVICE, groupName, QDBusConnection::sessionBus(), this);
-        qDebug() << "Group:" << groupName << group->displayName();
-        foreach(const QString &controlName, group->controls()) {
-            org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, controlName, QDBusConnection::sessionBus());
-            ControlSlider *slider = new ControlSlider(control, mainWidget);
-            m_layout->addWidget(slider);
-            qDebug() << "Control:" << control->displayName() << control->canMute() << control->mute() << control->getVolume(0);
-        }
+        QWidget *groupWidget = new ControlGroupTab(group, mainWidget);
+        mainWidget->addTab(groupWidget, group->displayName());
     }
 }
 

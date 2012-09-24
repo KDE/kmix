@@ -3,6 +3,7 @@ set(kmix_KDEINIT_SRCS
    KMixWindow.cpp
    KMixApp.cpp
    ControlSlider.cpp
+   ControlGroupTab.cpp
 )
 
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml
