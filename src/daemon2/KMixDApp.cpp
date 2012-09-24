@@ -30,6 +30,8 @@
 KMixDApp::KMixDApp(int &argc, char **argv)
     : QCoreApplication(argc, argv)
 {
+    // One way or another we need to create this to show up on DBus
+    BackendManager::instance();
 }
 
 KMixDApp::~KMixDApp()
