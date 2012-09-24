@@ -61,7 +61,7 @@ KMixWindow::KMixWindow(QWidget* parent)
         qDebug() << mixer->readableName();
         foreach(const QString &controlName, mixer->controls()) {
             org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, controlName, QDBusConnection::sessionBus());
-            qDebug() << control->readableName();
+            qDebug() << control->displayName();
         }
     }
 }
