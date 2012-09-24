@@ -192,31 +192,20 @@ void DialogViewConfiguration::slotDropped(DialogViewConfigurationWidget* list, i
         //kDebug() << "after" << after->text() << after->internalTag();
         if (sourceIsActiveList) {
             // has been dragged within the active list (moved).
-kDebug() << "dragged within the active list (moved)";
 	    _qlw->insertItem(index, item);
             //moveActive(item, after);
         } else {
             // dragged from the inactive list to the active list
-kDebug() << "dragged from the inactive list to the active list";
 	    _qlw->insertItem(index, item);
             //insertActive(item, after, true);
         }
     } else if (list == _qlwInactive) {
         // has been dragged to the inactive list -> remove from the active list.
-kDebug() << "dragged from active to the inactive list";
         //removeActive(item);
 	    _qlwInactive->insertItem(index, item);
     }
     else {
-//kDebug() << "Ignoring drop: unknown widget";
     }
-
-    //delete item; // not needed anymore. must be deleted before slotToolBarSelected clears the lists
-
-    // we're modified, so let this change
-    //emit m_widget->enableOk(true);
-
-    //slotToolBarSelected( m_toolbarCombo->currentIndex() );
 }
 
 
@@ -334,7 +323,7 @@ void DialogViewConfiguration::apply()
            ProfControl* newCtl = new ProfControl(*pctl);
            newCtl->show = "full"; // The user has selected controls => mandatory controls are now only neccesary in extended or full mode
            newControlset.push_back(newCtl);
-           kDebug() << "Added a MANDATORY control to new ControlSet: " << newCtl->id;
+//            kDebug() << "Added a MANDATORY control to new ControlSet: " << newCtl->id;
 
        }
    }
@@ -379,7 +368,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
 
 
          // -3- Insert it in the new ControlSet **************************
-        kDebug() << "Should add to new ControlSet: " << ctlId;
+//         kDebug() << "Should add to new ControlSet: " << ctlId;
         foreach ( ProfControl* control, oldCtlSet)
         {
             //kDebug() << " checking " << control->id;
@@ -397,7 +386,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
                     newCtl->show = "extended";
                 }
                 newCtlSet.push_back(newCtl);
-                kDebug() << "Added to new ControlSet (done): " << newCtl->id;
+//                 kDebug() << "Added to new ControlSet (done): " << newCtl->id;
                 break;
             }
         }

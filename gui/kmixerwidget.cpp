@@ -45,7 +45,6 @@
 #include "gui/viewsliders.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
-#include <core/ControlManager.h>
 
 
 /**
@@ -115,6 +114,12 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
+
+void KMixerWidget::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  kDebug() << "I got it. Yeah! type=" << ControlChangeType::toString(type);
+}
 
 /**
  * Add the given view, if it is valid - it must have controls or at least have the chance to gain some (dynamic views)

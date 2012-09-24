@@ -177,10 +177,8 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 
 void ViewSliders::_setMixSet()
 {
-  qDebug() << "Found start";
   resetMdws();
   delete _configureViewButton;
-//     if ( isDynamic() ) {
         // We will be recreating our sliders, so make sure we trash all the separators too.
         qDeleteAll(_separators);
         _separators.clear();
@@ -224,13 +222,11 @@ void ViewSliders::_setMixSet()
         for ( int i=0; i<mixset.count(); i++ ) {
         	shared_ptr<MixDevice> md = mixset[i];
 
-	  kDebug() << "Check whether we want to include control " << control->id << " -> " << md->id();
             if ( md->id().contains(idRegexp) )
             {
                 // Match found (by name)
                 if ( _mixSet.contains( md ) )
 		{
-	  kDebug() << "NO (DUP)";
 		  continue; // dup check
 		}
 		
@@ -242,11 +238,9 @@ void ViewSliders::_setMixSet()
 
                 if ( !subcontrolWanted )
 		{
-	  kDebug() << "NO (Subcontrol not wanted)";
 		  continue;
 		}
 
-	  kDebug() << "YES";
                 md->setControlProfile(control);
                 if ( !control->name.isNull() ) {
                     // Apply the custom name from the profile

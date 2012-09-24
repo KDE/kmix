@@ -31,14 +31,17 @@
 //   GUI // Visual changes, like "split channel" OR "show labels"    
 //   }; 
 
-class ControlChangeType
+class ControlChangeType : QObject
 {
+  Q_OBJECT
+  
   public:
   enum Type {
-  Volume,  // Volume or Switch change (Mute or Capture Switch, or Enum)
-  ControlList, // Control added or deleted
-  GUI, // Visual changes, like "split channel" OR "show labels"    
-  MasterChanged // Master (global or local) has changed  
+  None = 0,  // 
+  Volume = 1,  // Volume or Switch change (Mute or Capture Switch, or Enum)
+  ControlList = 2, // Control added or deleted
+  GUI = 4, // Visual changes, like "split channel" OR "show labels"    
+  MasterChanged = 8 // Master (global or local) has changed  
   };
   
   static QString toString(Type type)
@@ -52,6 +55,19 @@ class ControlChangeType
       default: return "Invalid";
     }
   };
+  
+    static ControlChangeType::Type fromInt(int type)
+  {
+    switch ( type )
+    {
+      case 1: return Volume;
+      case 2: return ControlList;
+      case 4: return GUI;
+      case 8: return MasterChanged;
+      default: return None;
+    }
+  };
+  
 };
 
 class Listener
@@ -67,6 +83,8 @@ public:
   }
   
   const QString& getMixerId() { return mixerId; };
+    ControlChangeType::Type& getChangeType() { return controlChangeType; };
+    QObject* getTarget() { return target; };
 
 private:
   QString mixerId;

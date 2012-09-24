@@ -28,6 +28,7 @@
 class QString;
 
 
+#include "core/ControlManager.h"
 #include "core/mixer.h"
 #include "gui/mixdevicewidget.h"
 
@@ -74,6 +75,9 @@ class KMixerWidget : public QWidget
 
    void saveConfig( KConfig *config );
    void loadConfig( KConfig *config );
+   
+   void controlsChange(int changeType);
+
 
   private slots:
     void controlsReconfiguredToplevel(QString mixerId);

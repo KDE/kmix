@@ -36,9 +36,17 @@ ControlManager& ControlManager::instance()
     for(it=listeners.begin(); it != listeners.end(); ++it)
     {
       Listener& listener = *it;
-      if (listener.getMixerId() == mixerId )
+//       kDebug() << "Checking listener for " << listener.getMixerId() << " == " << mixerId;
+      if (listener.getMixerId() == mixerId
+	&& listener.getChangeType() == changeType
+      )
       {
-	kDebug() << "Listener might be interested in " << mixerId << ", " << changeType;
+	kDebug() << "Listener is interested in " << mixerId
+	<< ", " << ControlChangeType::toString(changeType);
+	QMetaObject::invokeMethod(listener.getTarget(),
+		                              "controlsChange",
+		                              Qt::QueuedConnection,
+		                              Q_ARG(int, changeType));
       }
     }
     
@@ -65,6 +73,7 @@ ControlManager& ControlManager::instance()
     
     Listener* listener = new Listener(mixerId, changeType, target, sourceId);
     listeners.append(*listener);
+    kDebug() << "We now have" << listeners.size() << "listeners";
   }
 
   /**
@@ -85,4 +94,5 @@ ControlManager& ControlManager::instance()
     }
   }
 
+  #include "ControlManager.moc"
   
