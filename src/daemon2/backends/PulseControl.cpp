@@ -25,10 +25,9 @@
 namespace Backends {
 
 PulseControl::PulseControl(pa_context *cxt, const pa_sink_info *info, QObject *parent)
-    : Control(parent)
+    : Control(Control::HardwareOutput, parent)
     , m_context(cxt)
 {
-    qDebug() << "New control" << displayName() << iconName();
     update(info);
 }
 

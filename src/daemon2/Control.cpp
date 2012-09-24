@@ -23,8 +23,9 @@
 
 QAtomicInt Control::s_id = 0;
 
-Control::Control(QObject *parent)
+Control::Control(Category category, QObject *parent)
     : QObject(parent)
+    , m_category(category)
 {
     new ControlAdaptor(this);
     m_id = s_id.fetchAndAddRelaxed(1);
@@ -34,6 +35,11 @@ Control::Control(QObject *parent)
 int Control::id() const
 {
     return m_id;
+}
+
+Control::Category Control::category() const
+{
+    return m_category;
 }
 
 Control::~Control()

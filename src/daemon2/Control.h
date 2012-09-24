@@ -31,6 +31,7 @@ class Control : public QObject
     Q_PROPERTY(bool mute READ isMuted WRITE setMute NOTIFY muteChanged);
     Q_PROPERTY(bool canMute READ canMute);
     Q_PROPERTY(int channels READ channels);
+    Q_PROPERTY(Category category READ category);
 public:
     typedef enum {
         FrontLeft,
@@ -40,7 +41,13 @@ public:
         RearRight,
         Subwoofer
     } Channel;
-    Control(QObject *parent = 0);
+    typedef enum {
+        OutputStream,
+        InputStream,
+        HardwareInput,
+        HardwareOutput
+    } Category;
+    Control(Category, QObject *parent = 0);
     ~Control();
     virtual QString displayName() const = 0;
     virtual QString iconName() const = 0;
@@ -50,6 +57,7 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMute(bool yes) = 0;
     virtual bool canMute() const = 0;
+    virtual Category category() const;
     int id() const;
 
     int getVolume(int i) const {return getVolume((Channel)i);}
@@ -58,6 +66,7 @@ signals:
     void volumeChanged(int c);
     void muteChanged(bool muted);
 private:
+    Category m_category;
     int m_id;
     static QAtomicInt s_id;
 };

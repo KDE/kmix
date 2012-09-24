@@ -30,7 +30,10 @@ BackendManager *BackendManager::s_instance = 0;
 
 BackendManager::BackendManager()
 {
-    m_groups << new ControlGroup("Test Group");
+    m_groups[Control::OutputStream] = new ControlGroup("Playback");
+    m_groups[Control::InputStream] = new ControlGroup("Recording");
+    m_groups[Control::HardwareInput] = new ControlGroup("Hardware Input");
+    m_groups[Control::HardwareOutput] = new ControlGroup("Hardware Output");
     Backend *pulse = new Backends::PulseAudio(this);
     connect(pulse, SIGNAL(controlAdded(Control *)), this, SLOT(controlAdded(Control *)));
     m_backends << pulse;
@@ -46,12 +49,12 @@ BackendManager *BackendManager::instance()
 
 QList<ControlGroup*> BackendManager::groups() const
 {
-    return m_groups;
+    return m_groups.values();
 }
 
 void BackendManager::controlAdded(Control *control)
 {
-    m_groups[0]->addControl(control);
+    m_groups[control->category()]->addControl(control);
 }
 
 #include "BackendManager.moc"

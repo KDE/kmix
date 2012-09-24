@@ -21,10 +21,11 @@
 #define BACKENDMANAGER_H
 
 #include <QtCore/QObject>
+#include <QtCore/QHash>
+#include "Control.h"
 
 class ControlGroup;
 class Backend;
-class Control;
 
 class BackendManager : public QObject {
     Q_OBJECT
@@ -38,7 +39,7 @@ private:
     BackendManager();
     static BackendManager *s_instance;
     QList<Backend*> m_backends;
-    QList<ControlGroup*> m_groups;
+    QHash<Control::Category, ControlGroup*> m_groups;
 };
 
 #endif //BACKENDMANAGER_H

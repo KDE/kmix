@@ -5,6 +5,7 @@
     <property access="read" name="displayName" type="s"/>
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
+    <property access="read" name="category" type="i"/>
     <signal name="muteChanged">
         <arg name="muted" type="b"/>
     </signal>
