@@ -59,28 +59,16 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
      m_topLayout(0), _guiprofId(guiprofId),
      _actionCollection(actionCollection)
 {
-	_mainWindow = parent;
 	createLayout(vflags);
-	ControlManager::instance().addListener(
-	  mixer->id(),
-	ControlChangeType::GUI,
-	this,
-	QString("KMixerWidget.%1").arg(mixer->id())	  
-	);
-
-  	ControlManager::instance().addListener(
-	  mixer->id(),
-	ControlChangeType::ControlList,
-	this,
-	QString("KMixerWidget.%1").arg(mixer->id())	  
-	);
-
-	
 }
 
 KMixerWidget::~KMixerWidget()
 {
-  ControlManager::instance().removeListener(this, this->metaObject()->className());
+  foreach (ViewBase *view, _views)
+  {
+    delete view;
+  }
+  _views.clear();
 }
 
 /**
@@ -111,25 +99,9 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
     possiblyAddView(view);
    }
     show();
-   //    kDebug(67100) << "KMixerWidget::createLayout(): EXIT\n";
 }
 
 
-void KMixerWidget::controlsChange(int changeType)
-{
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
-  {
-    case  ControlChangeType::ControlList:
-      controlsReconfiguredToplevel(QString());
-      break;
-    case ControlChangeType::GUI:
-        setTicks(GlobalConfig::instance().showTicks);
-	setLabels(GlobalConfig::instance().showLabels);
-      break;
-  }
-    
-}
 
 /**
  * Add the given view, if it is valid - it must have controls or at least have the chance to gain some (dynamic views)
@@ -148,45 +120,11 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
       // *this will be deleted on rebuildGUI(), so lets queue the signal
       connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithSavingView()), Qt::QueuedConnection );
-      //connect( vbase, SIGNAL(redrawMixer(QString)), parentWidget(), SLOT(redrawMixer(QString)), Qt::QueuedConnection );
 
       kDebug() << "CONNECT ViewBase count " << vbase->getMixers().size();
-	  foreach ( Mixer* mixer, vbase->getMixers() )
-	  {
-	    kDebug(67100) << "CONNECT ViewBase controlschanged" << mixer->id();
-	   connect ( mixer, SIGNAL(controlChanged()), this, SLOT(refreshVolumeLevelsToplevel()) );
-	   connect ( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfiguredToplevel(QString)) );
-	  }
       return true;
    }
 }
-
-void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
-{
-	foreach ( ViewBase* vbase, _views)
-	{
-		vbase->controlsReconfigured(mixerId);
-	}
-	KMixWindow* kmixWindow = qobject_cast<KMixWindow*>(_mainWindow);
-	kDebug() << "kmixWindow to redraw: " << kmixWindow << ", not-casted=" << _mainWindow;
-	if (kmixWindow != 0)
-	{
-	  // TODO 002 Check whether we still need this
-		kmixWindow->redrawMixer(mixerId);
-	}
-	//The dock is updated to show the change in the master channel
-	//This solves the bug id:290177 and problems stated in review #105422
-	kmixWindow->updateDocking();
-}
-
-void KMixerWidget::refreshVolumeLevelsToplevel()
-{
-	foreach ( ViewBase* vbase, _views)
-	{
-		vbase->refreshVolumeLevels();
-	}
-}
-
 
 /**
  * Returns the current View. Normally we have only one View, so we always return the first view.
@@ -209,28 +147,7 @@ const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
     } // for all tabs
 }
 
-void KMixerWidget::setLabels( bool on )
-{
-    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-        ViewBase* mixerWidget = *it;
-        mixerWidget->setLabels(on);
-    } // for all tabs
-//    }
-}
 
-void KMixerWidget::setTicks( bool on )
-{
-    const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
-    for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
-        ViewBase* mixerWidget = *it;
-        mixerWidget->setTicks(on);
-    } // for all tabs
-}
-
-
-/**
- */
 void KMixerWidget::loadConfig( KConfig *config )
 {
    kDebug(67100) << "KMixerWidget::loadConfig()";
@@ -260,17 +177,5 @@ void KMixerWidget::saveConfig( KConfig *config )
 void KMixerWidget::toggleMenuBarSlot() {
     emit toggleMenuBar();
 }
-
-/*
-// in RTL mode, the slider is reversed, we cannot just connect the signal to setBalance()
-// hack around it before calling _mixer->setBalance()
-void KMixerWidget::balanceChanged(int balance)
-{
-    if (QApplication::isRightToLeft())
-        balance = -balance;
-
-    _mixer->setBalance( balance );
-}
-*/
 
 #include "kmixerwidget.moc"

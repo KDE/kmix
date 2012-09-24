@@ -83,6 +83,15 @@ ControlManager& ControlManager::instance()
   /**
    * Removes all listeners of the given target.
    * @param target The QObject that was used to register via addListener()
+   */
+  void ControlManager::removeListener(QObject* target)
+  {
+    ControlManager::instance().removeListener(target, target->metaObject()->className());
+  }
+
+  /**
+   * Removes all listeners of the given target.
+   * @param target The QObject that was used to register via addListener()
    * @param sourceId Optional: Only for logging
    */
   void ControlManager::removeListener(QObject* target, QString sourceId)
@@ -96,6 +105,17 @@ ControlManager& ControlManager::instance()
       {
             kDebug() << "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId  << " from " << target;
       }
+    }
+  }
+
+  void ControlManager::shutdownNow()
+  {
+    kDebug() << "Shutting down ControlManager";
+    QList<Listener>::iterator it;
+    for(it=listeners.begin(); it != listeners.end(); ++it)
+    {
+      Listener& listener = *it;
+      kDebug() << "Listener still connected. Closing it. source=" << listener.getSourceId() << "listener=" << listener.getTarget()->metaObject()->className();
     }
   }
 

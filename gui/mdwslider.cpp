@@ -728,8 +728,8 @@ MDWSlider::setStereoLinked(bool value)
 void
 MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool showSubcontrolLabels)
 {
-	if ( ref_sliders.isEmpty()) return;
-	// kDebug() << "m_linked=" << m_linked << "showSubcontrolLabels" << showSubcontrolLabels;
+	if ( ref_sliders.isEmpty())
+	  return;
 
 	bool first = true;
 	foreach ( QAbstractSlider* slider1, ref_sliders )
@@ -926,6 +926,8 @@ void MDWSlider::setMuted(bool value)
 
 void MDWSlider::setDisabled()
 {
+	// We can only hide/disable, because if the slider is not show the user can not
+	// right-click it to show it. Once explained, it is obvious. :-)
 	setDisabled( true );
 }
 

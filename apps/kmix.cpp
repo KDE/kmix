@@ -892,8 +892,8 @@ KMixWindow::redrawMixer(const QString& mixer_ID)
               kmw->loadConfig(KGlobal::config().data());
 
               // Is the below needed? It is done on startup so copied it here...
-              kmw->setTicks(GlobalConfig::instance().showTicks);
-              kmw->setLabels(GlobalConfig::instance().showLabels);
+//               kmw->setTicks(GlobalConfig::instance().showTicks);
+//               kmw->setLabels(GlobalConfig::instance().showLabels);
 
               return;
             }
@@ -1091,8 +1091,8 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
 
   kmw->loadConfig(KGlobal::config().data());
 
-  kmw->setTicks(GlobalConfig::instance().showTicks);
-  kmw->setLabels(GlobalConfig::instance().showLabels);
+//   kmw->setTicks(GlobalConfig::instance().showTicks);
+//   kmw->setLabels(GlobalConfig::instance().showLabels);
   kmw->mixer()->readSetFromHWforceUpdate();
   return true;
 }

@@ -29,6 +29,7 @@
 
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
+#include "core/ControlManager.h"
 #include "core/volume.h"
 
 /**
@@ -566,7 +567,8 @@ shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID )
 void Mixer::commitVolumeChange( shared_ptr<MixDevice> md )
 {
   _mixerBackend->writeVolumeToHW(md->id(), md );
-   if (md->isEnum()) _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
+   if (md->isEnum())
+     _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
    if ( md->captureVolume().hasSwitch() ) {
       // Make sure to re-read the hardware, because seting capture might have failed.
       // This is due to exclusive capture groups.
@@ -578,6 +580,7 @@ void Mixer::commitVolumeChange( shared_ptr<MixDevice> md )
       _mixerBackend->readSetFromHWforceUpdate();
       _mixerBackend->readSetFromHW();
    }
+   ControlManager::instance().announce(md->mixer()->id(), ControlChangeType::Volume, QString("Mixer.commitVolumeChange()"));
 }
 
 // @dbus, used also in kmix app
@@ -618,6 +621,7 @@ void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease 
 
         _mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
+   ControlManager::instance().announce(md->mixer()->id(), ControlChangeType::Volume, QString("Mixer.increaseOrDecreaseVolume()"));
 
     /************************************************************
         It is important, not to implement this method like this:
@@ -642,7 +646,9 @@ bool Mixer::isDynamic()
 bool Mixer::moveStream( const QString id, const QString& destId )
 {
     // We should really check that id is within our md's....
-    return _mixerBackend->moveStream( id, destId );
+    bool ret = _mixerBackend->moveStream( id, destId );
+    ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("Mixer.moveStream()"));
+    return ret;
 }
 
 #include "mixer.moc"

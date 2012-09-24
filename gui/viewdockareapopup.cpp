@@ -51,26 +51,38 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
   {
     // Adding all mixers, as we potentially want to show all master controls
     addMixer(mixer);
-    //connect( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
+  }
 
-    	ControlManager::instance().addListener(
-	  mixer->id(),
+  // Register listeners for all mixers
+      	ControlManager::instance().addListener(
+	  QString(), // all mixers
 	ControlChangeType::GUI,
 	this,
-	QString("ViewDockAreaPopup.%1").arg(mixer->id())	  
+	QString("ViewDockAreaPopup")	  
 	);
 
   	ControlManager::instance().addListener(
-	  mixer->id(),
+	  QString(), // all mixers
 	ControlChangeType::ControlList,
 	this,
-	QString("ViewDockAreaPopup.%1").arg(mixer->id())	  
+	QString("ViewDockAreaPopup")	  
 	);
 
-    
-    
-  }
-    //_layoutControls = new QHBoxLayout(this);
+  	ControlManager::instance().addListener(
+	  QString(), // all mixers
+	ControlChangeType::Volume,
+	this,
+	QString("ViewDockAreaPopup")	  
+	);
+	
+	  	ControlManager::instance().addListener(
+	  QString(), // all mixers
+	ControlChangeType::MasterChanged,
+	this,
+	QString("ViewDockAreaPopup")	  
+	);
+
+  //_layoutControls = new QHBoxLayout(this);
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
     _layoutMDW->setMargin(0);
@@ -79,10 +91,34 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
 
 }
 
+
 ViewDockAreaPopup::~ViewDockAreaPopup()
 {
-  ControlManager::instance().removeListener(this, this->metaObject()->className());
+  ControlManager::instance().removeListener(this);
   delete _layoutMDW;
+}
+
+
+void ViewDockAreaPopup::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  switch (type )
+  {
+    case  ControlChangeType::ControlList:
+    case  ControlChangeType::MasterChanged:
+      createDeviceWidgets();
+      break;
+    case ControlChangeType::GUI:
+        setTicks(GlobalConfig::instance().showTicks);
+	setLabels(GlobalConfig::instance().showLabels);
+      break;
+
+    case ControlChangeType::Volume:
+      refreshVolumeLevels();
+      break;
+
+  }
+    
 }
 
 
@@ -152,23 +188,6 @@ void ViewDockAreaPopup::_setMixSet()
 
 }
 
-void ViewDockAreaPopup::controlsChange(int changeType)
-{
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
-  {
-    case  ControlChangeType::ControlList:
-      createDeviceWidgets();
-      // (QString());
-      break;
-    case ControlChangeType::GUI:
-        setTicks(GlobalConfig::instance().showTicks);
-	setLabels(GlobalConfig::instance().showLabels);
-      break;
-  }
-    
-}
-
 
 // void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
 // {
@@ -193,8 +212,7 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
     {
       // First application stream => add separator
       separatorBetweenMastersAndStreamsInserted = true;
-      QWidget* separator = new QLabel(" ---- App streams start here ------");
-         //_layoutMDW->addItem( new QSpacerItem( 5, 20 ), sliderColumn,0 );
+
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    int row = vertical ? 0 : sliderColumn;
    int col = vertical ? sliderColumn : 0;

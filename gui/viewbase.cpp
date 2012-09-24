@@ -39,6 +39,7 @@
 #include "gui/guiprofile.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
+#include "core/ControlManager.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
 
@@ -70,6 +71,9 @@ ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::View
          m->setChecked(visible);
       }
    }
+   
+
+   
 }
 
 ViewBase::~ViewBase() {

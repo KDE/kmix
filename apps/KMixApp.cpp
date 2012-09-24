@@ -21,6 +21,7 @@
 
 #include "KMixApp.h"
 #include "apps/kmix.h"
+#include <core/ControlManager.h>
 #include <kdebug.h>
 
 
@@ -41,6 +42,7 @@ KMixApp::KMixApp()
 
 KMixApp::~KMixApp()
 {
+   ControlManager::instance().shutdownNow();
    delete m_kmix;
 }
 

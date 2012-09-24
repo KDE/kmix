@@ -338,7 +338,7 @@ void DialogViewConfiguration::apply()
     else
       ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("View Configuration Dialog"));
       
-   _view.rebuildFromProfile();
+   //_view.rebuildFromProfile();
 }
 
 void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)

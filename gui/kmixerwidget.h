@@ -68,20 +68,11 @@ class KMixerWidget : public QWidget
    void redrawMixer( const QString& mixer_ID );
     
   public slots:
-   void setTicks( bool on );
-   void setLabels( bool on );
    void setIcons( bool on );
    void toggleMenuBarSlot();
 
    void saveConfig( KConfig *config );
    void loadConfig( KConfig *config );
-   
-   void controlsChange(int changeType);
-
-
-  private slots:
-    void controlsReconfiguredToplevel(QString mixerId);
-    void refreshVolumeLevelsToplevel();
 
   private:
    Mixer *_mixer;
@@ -90,8 +81,6 @@ class KMixerWidget : public QWidget
    ProfTab* _tab;
    std::vector<ViewBase*> _views;
    KActionCollection* _actionCollection;  // -<- applciations wide action collection
-   QWidget* _mainWindow;
-
    
    void createLayout(ViewBase::ViewFlags vflags);
    bool possiblyAddView(ViewBase* vbase);

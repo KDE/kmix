@@ -103,7 +103,10 @@ public:
   
   void announce(QString mixerId, ControlChangeType::Type changeType, QString sourceId);
   void addListener(QString mixerId, ControlChangeType::Type changeType, QObject* target, QString sourceId);
+  void removeListener(QObject* target);
   void removeListener(QObject* target, QString sourceId);
+  
+  void shutdownNow();
   
 private:
     static ControlManager instanceSingleton;

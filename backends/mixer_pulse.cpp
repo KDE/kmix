@@ -214,7 +214,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     bool is_new = !outputDevices.contains(s.index);
     outputDevices[s.index] = s;
-    kDebug(67100) << "Got some info about sink: " << s.description;
+//     kDebug(67100) << "Got some info about sink: " << s.description;
 
     if (s_mixers.contains(KMIXPA_PLAYBACK)) {
         if (is_new)
@@ -267,7 +267,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     bool is_new = !captureDevices.contains(s.index);
     captureDevices[s.index] = s;
-    kDebug(67100) << "Got some info about source: " << s.description;
+//     kDebug(67100) << "Got some info about source: " << s.description;
 
     if (s_mixers.contains(KMIXPA_CAPTURE)) {
         if (is_new)
@@ -298,7 +298,7 @@ static void client_cb(pa_context *c, const pa_client_info *i, int eol, void *) {
     }
 
     clients[i->index] = QString::fromUtf8(i->name);
-    kDebug(67100) << "Got some info about client: " << clients[i->index];
+    //kDebug(67100) << "Got some info about client: " << clients[i->index];
 }
 
 static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, void *) {
@@ -347,7 +347,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
 
     bool is_new = !outputStreams.contains(s.index);
     outputStreams[s.index] = s;
-    kDebug(67100) << "Got some info about sink input (playback stream): " << s.description;
+//     kDebug(67100) << "Got some info about sink input (playback stream): " << s.description;
 
     if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
         if (is_new)
@@ -411,7 +411,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 
     bool is_new = !captureStreams.contains(s.index);
     captureStreams[s.index] = s;
-    kDebug(67100) << "Got some info about source output (capture stream): " << s.description;
+//     kDebug(67100) << "Got some info about source output (capture stream): " << s.description;
 
     if (s_mixers.contains(KMIXPA_APP_CAPTURE)) {
         if (is_new)
@@ -490,7 +490,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
 
 
     QString name = QString::fromUtf8(i->name);
-    kDebug(67100) << QString("Got some info about restore rule: '%1' (Device: %2)").arg(name).arg(i->device ? i->device : "None");
+//     kDebug(67100) << QString("Got some info about restore rule: '%1' (Device: %2)").arg(name).arg(i->device ? i->device : "None");
     restoreRule rule;
     rule.channel_map = i->channel_map;
     rule.volume = i->volume;

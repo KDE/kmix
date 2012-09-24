@@ -44,7 +44,8 @@ public:
     virtual void configurationUpdate();
 
 public slots:
-    virtual void refreshVolumeLevels();
+    virtual void refreshVolumeLevels(); // TODO migrate to controlsChange()
+    void controlsChange(int changeType);
 
 protected:
     virtual void _setMixSet();

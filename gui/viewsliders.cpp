@@ -35,12 +35,15 @@
 #include "gui/viewsliders.h"
 
 // KMix
+#include "core/ControlManager.h"
 #include "core/mixdevicecomposite.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "gui/mdwenum.h"
 #include "gui/mdwslider.h"
 #include "gui/verticaltext.h"
+// TODO apps/kmix.h only for GlobalConfig. Move that!!!
+#include "apps/kmix.h"   
 
 // KDE
 #include <kdebug.h>
@@ -110,14 +113,57 @@ _configureViewButton = 0;
     _layoutMDW->addWidget(emptyStreamHint);
 
     qDebug() << "Found start 1";
-    createDeviceWidgets();
+    createDeviceWidgets(); // TODO probably instead simply rely on an announce from the main class KMixWindow
+    
+       // Add listener, as all derived classes are interested
+   	ControlManager::instance().addListener(
+	  mixer->id(),
+	ControlChangeType::GUI,
+	this,
+	QString("KMixerWidget.%1").arg(mixer->id())	  
+	);
+
+  	ControlManager::instance().addListener(
+	  mixer->id(),
+	ControlChangeType::ControlList,
+	this,
+	QString("KMixerWidget.%1").arg(mixer->id())	  
+	);
+	
+	ControlManager::instance().addListener(
+	mixer->id(),
+	ControlChangeType::Volume,
+	this,
+	QString("KMixerWidget.%1").arg(mixer->id())	  
+	);
 }
 
 ViewSliders::~ViewSliders()
 {
-  qDeleteAll(_separators);
+    ControlManager::instance().removeListener(this);
+    qDeleteAll(_separators);
 }
 
+
+void ViewSliders::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  switch (type )
+  {
+    case  ControlChangeType::ControlList:
+      createDeviceWidgets();
+      break;
+    case ControlChangeType::GUI:
+        setTicks(GlobalConfig::instance().showTicks);
+	setLabels(GlobalConfig::instance().showLabels);
+      break;
+      
+    case ControlChangeType::Volume:
+      refreshVolumeLevels();
+      break;
+  }
+    
+}
 
 
 QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
