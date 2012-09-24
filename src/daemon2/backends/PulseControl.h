@@ -43,7 +43,12 @@ signals:
 private:
     static void cb_refresh(pa_context *c, int success, void* user_data);
     pa_context *m_context;
-    pa_sink_info m_info;
+
+    int m_idx;
+    QString m_displayName;
+    QString m_iconName;
+    pa_cvolume m_volumes;
+    bool m_muted;
 };
 
 } //namespace Backends

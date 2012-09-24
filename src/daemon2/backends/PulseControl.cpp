@@ -27,53 +27,52 @@ namespace Backends {
 PulseControl::PulseControl(pa_context *cxt, const pa_sink_info *info, QObject *parent)
     : Control(parent)
     , m_context(cxt)
-    , m_info(*info)
 {
+    qDebug() << "New control" << displayName() << iconName();
+    update(info);
 }
 
 QString PulseControl::displayName() const
 {
-    return QString::fromUtf8(m_info.name);
+    return m_displayName;
 }
 
 QString PulseControl::iconName() const
 {
-    return QString::fromUtf8(pa_proplist_gets(m_info.proplist, PA_PROP_DEVICE_ICON_NAME));
+    return m_iconName;
 }
 
 QMap<Control::Channel, int> PulseControl::volumes() const
 {
     QMap<Control::Channel, int> volumes;
-    for (uint8_t i = 0;i<m_info.volume.channels;i++) {
-        volumes[(Channel)i] = m_info.volume.values[i];
+    for (uint8_t i = 0;i<m_volumes.channels;i++) {
+        volumes[(Channel)i] = m_volumes.values[i];
     }
     return volumes;
 }
 
 void PulseControl::setVolume(Channel c, int v)
 {
-    pa_cvolume volume = m_info.volume;
-    volume.values[(int)c] = v;
-    if (!pa_context_set_sink_volume_by_index(m_context, m_info.index, &volume, NULL, NULL)) {
+    m_volumes.values[(int)c] = v;
+    if (!pa_context_set_sink_volume_by_index(m_context, m_idx, &m_volumes, NULL, NULL)) {
         qWarning() << "pa_context_set_sink_volume_by_index() failed";
     }
 }
 
 bool PulseControl::isMuted() const
 {
-    return m_info.mute;
+    return m_muted;
 }
 
 void PulseControl::cb_refresh(pa_context *c, int success, void* user_data)
 {
     PulseControl *that = static_cast<PulseControl*>(user_data);
-    emit that->scheduleRefresh(that->m_info.index);
+    emit that->scheduleRefresh(that->m_idx);
 }
 
 void PulseControl::setMute(bool yes)
 {
-    qDebug() << m_info.index << m_info.name;
-    pa_context_set_sink_mute_by_index(m_context, m_info.index, yes, cb_refresh, this);
+    pa_context_set_sink_mute_by_index(m_context, m_idx, yes, cb_refresh, this);
 }
 
 bool PulseControl::canMute() const
@@ -83,9 +82,11 @@ bool PulseControl::canMute() const
 
 void PulseControl::update(const pa_sink_info *info)
 {
-    //FIXME: Doesn't work!
-    //m_info = info;
-    qDebug() << "Mute:" << m_info.mute;
+    m_idx = info->index;
+    m_displayName = QString::fromUtf8(info->name);
+    m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_DEVICE_ICON_NAME));
+    m_volumes = info->volume;
+    m_muted = info->mute;
 }
 
 } //namespace Backends
