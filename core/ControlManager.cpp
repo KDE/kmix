@@ -37,16 +37,19 @@ ControlManager& ControlManager::instance()
     {
       Listener& listener = *it;
 //       kDebug() << "Checking listener for " << listener.getMixerId() << " == " << mixerId;
-      if (listener.getMixerId() == mixerId
-	&& listener.getChangeType() == changeType
-      )
+      bool mixerIsOfInterest = listener.getMixerId().isEmpty() || mixerId.isEmpty() || listener.getMixerId() == mixerId;
+      if (mixerIsOfInterest && listener.getChangeType() == changeType)
       {
+	bool success = QMetaObject::invokeMethod(listener.getTarget(),
+		                              "controlsChange",
+		                              Qt::DirectConnection,
+		                              Q_ARG(int, changeType));
 	kDebug() << "Listener is interested in " << mixerId
 	<< ", " << ControlChangeType::toString(changeType);
-	QMetaObject::invokeMethod(listener.getTarget(),
-		                              "controlsChange",
-		                              Qt::QueuedConnection,
-		                              Q_ARG(int, changeType));
+	if (!success)
+	{
+	  kError() << "Failed to send to " << listener.getTarget()->staticMetaObject.className();
+	}
       }
     }
     

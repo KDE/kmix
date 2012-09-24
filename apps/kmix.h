@@ -109,10 +109,14 @@ KMixWindow : public KXmlGuiWindow
    KAccel *m_keyAccel;
    KAction* _actionShowMenubar;
 
+   // move many of the following to a central static configuration object
+   // (they come from the KMix config file, so they are really "static".
    bool m_showDockWidget;
    bool m_volumeWidget;
-   bool m_showTicks;
-   bool m_showLabels;
+public:
+   static bool m_showTicks;
+   static bool m_showLabels;
+private:
    bool m_onLogin;
    bool allowAutostart;
    bool m_beepOnVolumeChange;

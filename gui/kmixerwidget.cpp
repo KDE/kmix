@@ -90,7 +90,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 {
    // delete old objects
    delete m_topLayout;
-
+  
    // create main layout
    m_topLayout = new QVBoxLayout( this );
    m_topLayout->setSpacing( 3 );
@@ -119,6 +119,19 @@ void KMixerWidget::controlsChange(int changeType)
 {
   ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
   kDebug() << "I got it. Yeah! type=" << ControlChangeType::toString(type);
+  switch (type )
+  {
+    case  ControlChangeType::ControlList:
+      controlsReconfiguredToplevel(QString());
+      break;
+    case ControlChangeType::GUI:
+        setTicks(KMixWindow::m_showTicks);
+  setLabels(KMixWindow::m_showLabels);
+
+//       controlsReconfiguredToplevel(QString());
+      break;
+  }
+    
 }
 
 /**
@@ -153,6 +166,11 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 
 void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
 {
+  kDebug() << "Listener has called this: ticks=" << KMixWindow::m_showTicks
+  << "labels=" <<KMixWindow::m_showLabels;
+  setTicks(KMixWindow::m_showTicks);
+  setLabels(KMixWindow::m_showLabels);
+
 	foreach ( ViewBase* vbase, _views)
 	{
 		vbase->controlsReconfigured(mixerId);
@@ -161,6 +179,7 @@ void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
 	kDebug() << "kmixWindow to redraw: " << kmixWindow << ", not-casted=" << _mainWindow;
 	if (kmixWindow != 0)
 	{
+	  // TODO 002 Check whether we still need this
 		kmixWindow->redrawMixer(mixerId);
 	}
 	//The dock is updated to show the change in the master channel

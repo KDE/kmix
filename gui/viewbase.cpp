@@ -195,6 +195,11 @@ void ViewBase::showContextMenu()
 void ViewBase::controlsReconfigured( const QString& mixerId )
 {
 	bool isRelevantMixer = false;
+	if ( mixerId.isEmpty() )
+	  isRelevantMixer = true;
+	
+	if ( ! isRelevantMixer )
+	{
 	foreach ( Mixer* mixer , _mixers)
 	{
 		  if ( mixer->id() == mixerId )
@@ -203,7 +208,8 @@ void ViewBase::controlsReconfigured( const QString& mixerId )
 				break;
 		  }
 	}
-
+	}
+	
 	if (!isRelevantMixer)
 	  return; // View does not include the given Mixer => nothing to do
 	

@@ -71,11 +71,13 @@
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
+bool KMixWindow::m_showTicks = true;
+bool KMixWindow::m_showLabels = true;
+
 KMixWindow::KMixWindow(bool invisible) :
     KXmlGuiWindow(0,
         Qt::WindowFlags(
-            KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_showTicks(
-        true), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
+            KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
     m_dockWidget(), m_dontSetDefaultCardOnStart(false)
 {
   setObjectName(QLatin1String("KMixWindow"));
@@ -123,6 +125,9 @@ KMixWindow::KMixWindow(bool invisible) :
       wrapper, SLOT(devicePlugged(const char*,QString,QString&)));
   connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), wrapper,
       SLOT(deviceUnplugged(QString)));
+  
+    //ControlManager::instance().addListener(QString(), ControlChangeType::ControlList, this, "KMix App");
+
 }
 
 KMixWindow::~KMixWindow()
@@ -269,8 +274,7 @@ void
 KMixWindow::initPrefDlg()
 {
   m_prefDlg = new KMixPrefDlg(this);
-  connect(m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg*)),
-      SLOT(applyPrefs(KMixPrefDlg*)));
+   connect(m_prefDlg, SIGNAL(signalApplied(KMixPrefDlg*)), SLOT(applyPrefs(KMixPrefDlg*)));
 }
 
 void
@@ -388,8 +392,8 @@ KMixWindow::saveBaseConfig()
   config.writeEntry("Menubar", _actionShowMenubar->isChecked());
   config.writeEntry("AllowDocking", m_showDockWidget);
   config.writeEntry("TrayVolumeControl", m_volumeWidget);
-  config.writeEntry("Tickmarks", m_showTicks);
-  config.writeEntry("Labels", m_showLabels);
+  config.writeEntry("Tickmarks", KMixWindow::m_showTicks);
+  config.writeEntry("Labels", KMixWindow::m_showLabels);
   config.writeEntry("startkdeRestore", m_onLogin);
   config.writeEntry("AutoStart", allowAutostart);
   config.writeEntry("VolumeFeedback", m_beepOnVolumeChange);
@@ -526,8 +530,8 @@ KMixWindow::loadBaseConfig()
 
   m_showDockWidget = config.readEntry("AllowDocking", true);
   m_volumeWidget = config.readEntry("TrayVolumeControl", true);
-  m_showTicks = config.readEntry("Tickmarks", true);
-  m_showLabels = config.readEntry("Labels", true);
+  KMixWindow::m_showTicks = config.readEntry("Tickmarks", true);
+  KMixWindow::m_showLabels = config.readEntry("Labels", true);
   m_onLogin = config.readEntry("startkdeRestore", true);
   allowAutostart = config.readEntry("AutoStart", true);
 
@@ -888,8 +892,8 @@ KMixWindow::redrawMixer(const QString& mixer_ID)
               kmw->loadConfig(KGlobal::config().data());
 
               // Is the below needed? It is done on startup so copied it here...
-              kmw->setTicks(m_showTicks);
-              kmw->setLabels(m_showLabels);
+              kmw->setTicks(KMixWindow::m_showTicks);
+              kmw->setLabels(KMixWindow::m_showLabels);
 
               return;
             }
@@ -1087,8 +1091,8 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
 
   kmw->loadConfig(KGlobal::config().data());
 
-  kmw->setTicks(m_showTicks);
-  kmw->setLabels(m_showLabels);
+  kmw->setTicks(KMixWindow::m_showTicks);
+  kmw->setLabels(KMixWindow::m_showLabels);
   kmw->mixer()->readSetFromHWforceUpdate();
   return true;
 }
@@ -1221,8 +1225,8 @@ KMixWindow::showSettings()
       m_prefDlg->allowAutostart->setChecked(allowAutostart);
       m_prefDlg->m_beepOnVolumeChange->setChecked(m_beepOnVolumeChange);
 
-      m_prefDlg->m_showTicks->setChecked(m_showTicks);
-      m_prefDlg->m_showLabels->setChecked(m_showLabels);
+      m_prefDlg->m_showTicks->setChecked(KMixWindow::m_showTicks);
+      m_prefDlg->m_showLabels->setChecked(KMixWindow::m_showLabels);
       m_prefDlg->_rbVertical->setChecked(m_toplevelOrientation == Qt::Vertical);
       m_prefDlg->_rbHorizontal->setChecked(
           m_toplevelOrientation == Qt::Horizontal);
@@ -1244,8 +1248,7 @@ KMixWindow::showAbout()
   actionCollection()->action("help_about_app")->trigger();
 }
 
-void
-KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
+void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
 {
   bool labelsHasChanged = m_showLabels ^ prefDlg->m_showLabels->isChecked();
   bool ticksHasChanged = m_showTicks ^ prefDlg->m_showTicks->isChecked();
@@ -1283,7 +1286,7 @@ KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
     else if ( labelsHasChanged || ticksHasChanged || systrayPopupHasChanged)
     {
       ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
-      recreateGUI(true);
+      //recreateGUI(true);
     }
 
   this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
