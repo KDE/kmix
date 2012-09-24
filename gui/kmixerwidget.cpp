@@ -45,6 +45,7 @@
 #include "gui/viewsliders.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
+#include <core/ControlManager.h>
 
 
 /**
@@ -61,10 +62,26 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
 {
 	_mainWindow = parent;
 	createLayout(vflags);
+	ControlManager::instance().addListener(
+	  mixer->id(),
+	ControlChangeType::GUI,
+	this,
+	QString("KMixerWidget.%1").arg(mixer->id())	  
+	);
+
+  	ControlManager::instance().addListener(
+	  mixer->id(),
+	ControlChangeType::ControlList,
+	this,
+	QString("KMixerWidget.%1").arg(mixer->id())	  
+	);
+
+	
 }
 
 KMixerWidget::~KMixerWidget()
 {
+  ControlManager::instance().removeListener(this, this->staticMetaObject.className());
 }
 
 /**

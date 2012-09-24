@@ -32,6 +32,16 @@ ControlManager& ControlManager::instance()
 
   void ControlManager::announce(QString mixerId, ControlChangeType::Type changeType, QString sourceId)
   {
+    QList<Listener>::iterator it;
+    for(it=listeners.begin(); it != listeners.end(); ++it)
+    {
+      Listener& listener = *it;
+      if (listener.getMixerId() == mixerId )
+      {
+	kDebug() << "Listener might be interested in " << mixerId << ", " << changeType;
+      }
+    }
+    
     kDebug() << "Announcing " << ControlChangeType::toString(changeType)
     << " for " << ( mixerId.isEmpty() ? "all cards" : mixerId)
     << " by " << sourceId;
@@ -41,8 +51,38 @@ ControlManager& ControlManager::instance()
    * Adds a listener for the given mixerId and changeType.
    * Listeners are informed about all corresponding changes via a signal.
    * Listeners are not informed about changes that originates from oneself (according to sourceId).
+   * @param mixerId The id of the Mixer you are interested in
+   * @param changetType The changeType of interest
+   * @param target The QObject, where the notification signal is sent to. It must implement the SLOT controlChanged(QString mixerId, ControlChangeType::Type changeType).
+   * @param sourceId Only for logging
    */
   void ControlManager::addListener(QString mixerId, ControlChangeType::Type changeType, QObject* target, QString sourceId)
   {
+        kDebug() << "Listening to " << ControlChangeType::toString(changeType)
+    << " for " << ( mixerId.isEmpty() ? "all cards" : mixerId)
+    << " by " << sourceId
+    << ". Announcements are sent to " << target;
     
+    Listener* listener = new Listener(mixerId, changeType, target, sourceId);
+    listeners.append(*listener);
   }
+
+  /**
+   * Removes all listeners of the given target.
+   * @param target The QObject that was used to register via addListener()
+   * @param sourceId Optional: Only for logging
+   */
+  void ControlManager::removeListener(QObject* target, QString sourceId)
+  {
+            kDebug() << "Stop Listening by " << sourceId
+    << " from " << target;
+    
+        QList<Listener>::iterator it;
+    for(it=listeners.begin(); it != listeners.end(); ++it)
+    {
+      Listener& listener = *it;
+     // if ( listener.
+    }
+  }
+
+  

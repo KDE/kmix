@@ -56,11 +56,7 @@ class ControlChangeType
 
 class Listener
 {
-  QString mixerId;
-  ControlChangeType::Type controlChangeType;
-  QObject* target;
-  QString sourceId;
-  
+public:
   Listener(const QString mixerId, ControlChangeType::Type changeType, QObject* target, QString& sourceId)
   {
     this->mixerId = mixerId;
@@ -68,20 +64,31 @@ class Listener
     // target is  bit dangerous, as it might get deleted.
     this->target = target;
     this->sourceId = sourceId;
-  }  
+  }
+  
+  const QString& getMixerId() { return mixerId; };
+
+private:
+  QString mixerId;
+  ControlChangeType::Type controlChangeType;
+  QObject* target;
+  QString sourceId;
+
+  
 };
 
 class ControlManager
 {
-
 public:
   static ControlManager& instance();
   
   void announce(QString mixerId, ControlChangeType::Type changeType, QString sourceId);
   void addListener(QString mixerId, ControlChangeType::Type changeType, QObject* target, QString sourceId);
-
+  void removeListener(QObject* target, QString sourceId);
+  
 private:
     static ControlManager instanceSingleton;
+    QList<Listener> listeners;
 };
 
 #endif // CONTROLMANAGER_H
