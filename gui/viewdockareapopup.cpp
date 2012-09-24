@@ -47,6 +47,8 @@
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW )
     : ViewBase(parent, name, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiProfileId), _dock(dockW)
 {
+  seperatorBetweenMastersAndStreams = 0;
+  optionsLayout = 0;
   foreach ( Mixer* mixer, Mixer::mixers() )
   {
     // Adding all mixers, as we potentially want to show all master controls
@@ -142,6 +144,7 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 void ViewDockAreaPopup::_setMixSet()
 {
   resetMdws();
+  delete seperatorBetweenMastersAndStreams;
   separatorBetweenMastersAndStreamsInserted = false;
   separatorBetweenMastersAndStreamsRequired = false;
 // TODO code somewhat similar to ViewSliders => refactor  
@@ -216,12 +219,12 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    int row = vertical ? 0 : sliderColumn;
    int col = vertical ? sliderColumn : 0;
-   QFrame* separator2 = new QFrame();
+   seperatorBetweenMastersAndStreams = new QFrame();
    if (vertical)
-     separator2->setFrameStyle(QFrame::VLine);
+     seperatorBetweenMastersAndStreams->setFrameStyle(QFrame::VLine);
    else
-     separator2->setFrameStyle(QFrame::HLine);
-_layoutMDW->addWidget( separator2, row, col );
+     seperatorBetweenMastersAndStreams->setFrameStyle(QFrame::HLine);
+_layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 //_layoutMDW->addItem( new QSpacerItem( 5, 5 ), row, col );
     }
     
@@ -262,7 +265,8 @@ void ViewDockAreaPopup::constructionFinished()
     QPushButton* configureViewButton = new QPushButton(icon, "");
     configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-   QBoxLayout* optionsLayout = new QHBoxLayout();
+    delete optionsLayout;
+   optionsLayout = new QHBoxLayout();
     optionsLayout->addWidget(pb );
     optionsLayout->addWidget(configureViewButton);
    optionsLayout->addWidget( createRestoreVolumeButton(1) );

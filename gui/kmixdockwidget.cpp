@@ -33,27 +33,28 @@
 #include <QDesktopWidget>
 #include <QApplication>
 
-#include "gui/dialogselectmaster.h"
 #include "apps/kmix.h"
+#include "core/ControlManager.h"
 #include "core/mixer.h"
-#include "gui/mixdevicewidget.h"
 #include "core/mixertoolbox.h"
+#include "gui/dialogselectmaster.h"
+#include "gui/mixdevicewidget.h"
 #include "gui/viewdockareapopup.h"
 
 void MetaMixer::reset()
 {
   // Connect/reconnect signals coming from the Mixer
-  if ( m_mixer != 0 )
-  {    
-    disconnect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
-    disconnect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
-  }
+//   if ( m_mixer != 0 )
+//   {    
+//     disconnect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
+//     disconnect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
+//   }
     m_mixer = Mixer::getGlobalMasterMixer();
     // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     m_mixer->readSetFromHWforceUpdate();
-    connect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
-    connect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
-    emit controlChanged(); // Triggers UI updates accordingly
+//     connect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
+//     connect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
+//     emit controlChanged(); // Triggers UI updates accordingly
 }
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
@@ -70,7 +71,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     setStatus(Active);
 
     m_metaMixer.reset();
-    createMasterVolWidget();
+//     createMasterVolWidget();
     createActions();
 
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
@@ -78,12 +79,8 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 
     connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
-#ifdef __GNUC__
-#warning minimizeRestore usage is currently slightly broken in KMIx. This should be fixed before doing a release.
-#endif
-    // TODO minimizeRestore usage is currently a bit broken. It only works by chance
-
-    if (_volumePopup) {
+    if (_volumePopup)
+    {
         kDebug() << "Construct the ViewDockAreaPopup and actions";
         _referenceWidget = new KMenu(parent);
         _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
@@ -91,33 +88,67 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
         _volWA = new QWidgetAction(_referenceWidget);
         _volWA->setDefaultWidget(_referenceWidget2);
         _referenceWidget->addAction(_volWA);
-
-
-	    
-	    // duplicated connect   
-//        connect( &m_metaMixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(refreshVolumeLevels()) );
-        //setAssociatedWidget(_referenceWidget);
-        //setAssociatedWidget(_referenceWidget);  // If you use the popup, associate that instead of the MainWindow
-
-        //setContextMenu(_referenceWidget2);
-    } else {
+    }
+    else
+    {
         _volWA = 0;
         _referenceWidget = 0;
     }
+
+
+  	ControlManager::instance().addListener(
+	  QString(), // All mixers (as the Global master Mixer might change)
+	ControlChangeType::Volume,
+	this,
+	QString("ViewDockAreaPopup")	  
+	);
+	
+	 ControlManager::instance().addListener(
+	  QString(), // All mixers (as the Global master Mixer might change)
+	ControlChangeType::MasterChanged,
+	this,
+	QString("ViewDockAreaPopup")	  
+	);
+	 
+	      // Refresh in all cases. When there is no Golbal Master we still need
+     // to initialize correctly (e.g. for showin 0% or hiding it)
+     refreshVolumeLevels();
 }
 
 KMixDockWidget::~KMixDockWidget()
 {
+  ControlManager::instance().removeListener(this);
     // Note: deleting _volWA also deletes its associated ViewDockAreaPopup (_referenceWidget) and prevents the
     //       action to be left with a dangling pointer.
     //       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix 
     delete _volWA;
 }
 
-void KMixDockWidget::controlsReconfigured(QString mixerId)
+void KMixDockWidget::controlsChange(int changeType)
 {
-  kDebug() << "Hello";
-  updateDockPopup();
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  switch (type )
+  {
+    case  ControlChangeType::MasterChanged:
+      m_metaMixer.reset();
+      // Notify the main window, as it might need to update the visibiliy of the dock icon.
+      _kmixMainWindow->updateDocking();
+      _kmixMainWindow->saveConfig();
+      refreshVolumeLevels();
+      actionCollection()->action(QLatin1String("select_master"))->setEnabled(m_metaMixer.hasMixer());
+      break;
+
+    case ControlChangeType::Volume:
+      refreshVolumeLevels();
+      break;
+
+  }
+}
+
+void KMixDockWidget::refreshVolumeLevels()
+{
+  setVolumeTip();
+  updatePixmap();
 }
 
 void KMixDockWidget::createActions()
@@ -144,56 +175,11 @@ void KMixDockWidget::createActions()
     menu->addAction(_kmixMainWindow->actionCollection()->action("launch_kdesoundsetup"));
 }
 
-void KMixDockWidget::createMasterVolWidget()
-{
-     // Reset flags, so that the dock icon will be reconstructed
-     _oldToolTipValue = -1;
-     _oldPixmapType   = '-';
-
-    if (Mixer::getGlobalMasterMD() == 0) {
-        // In case that there is no mixer installed, there will be no controlChanged() signal's
-        // Thus we prepare the dock areas manually
-        setVolumeTip();
-        updatePixmap();
-        return;
-    }
-    // create devices
-
-    setVolumeTip();
-    updatePixmap();
-
-    /* With the recently introduced QSocketNotifier stuff, we can't rely on regular timer updates
-       any longer. Also the readSetFromHWforceUpdate() won't be enough. As a workaround, we trigger
-       all "repaints" manually here.
-       The call to m_mixer->readSetFromHWforceUpdate() is most likely superfluous, even if we don't use QSocketNotifier (e.g. in backends OSS, Solaris, ...)
-     */
-    connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(setVolumeTip()) );
-    connect( &m_metaMixer, SIGNAL(controlChanged()), this, SLOT(updatePixmap()) );
-//     connect( &m_metaMixer, SIGNAL(controlChanged()), _referenceWidget2, SLOT(updateDockPopup()) );
-}
-
 void KMixDockWidget::selectMaster()
 {
    DialogSelectMaster* dsm = new DialogSelectMaster(m_metaMixer.mixer());
    dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-   connect ( dsm, SIGNAL(newMasterSelected(QString&,QString&)), SLOT(handleNewMaster(QString&,QString&)) );
-   connect ( dsm, SIGNAL(newMasterSelected(QString&,QString&)), SIGNAL(newMasterSelected()) );
    dsm->show();
-}
-
-void KMixDockWidget::handleNewMaster(QString& /*mixerID*/, QString& /*control_id*/)
-{
-   // Notify the main window, as it might need to update the visibiliy of the dock icon.
-   // 
-   _kmixMainWindow->updateDocking();
-   _kmixMainWindow->saveConfig();
-   update();
-}
-
-void KMixDockWidget::update()
-{
-    m_metaMixer.reset();
-    actionCollection()->action(QLatin1String("select_master"))->setEnabled(m_metaMixer.hasMixer());
 }
 
 /**
@@ -248,11 +234,11 @@ KMixDockWidget::setVolumeTip()
     _oldToolTipValue = virtualToolTipValue;
 }
 
-void KMixDockWidget::updateDockPopup()
-{
-  kDebug() << "KMixDockWidget::updateDockPopup";
-  _referenceWidget2->createDeviceWidgets();
-}
+// void KMixDockWidget::updateDockPopup()
+// {
+//   kDebug() << "KMixDockWidget::updateDockPopup";
+//   _referenceWidget2->createDeviceWidgets();
+// }
 
 void
 KMixDockWidget::updatePixmap()
@@ -397,7 +383,7 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 //	kDebug() << "twe: " << cv << " : " << vol;
 
     md->mixer()->commitVolumeChange(md);
-    setVolumeTip();
+    refreshVolumeLevels();
 }
 
 
@@ -409,33 +395,13 @@ KMixDockWidget::dockMute()
     {
         md->toggleMute();
         md->mixer()->commitVolumeChange( md );
+	refreshVolumeLevels();
     }
 }
 
 void
 KMixDockWidget::contextMenuAboutToShow()
 {
-   // KStatusNotifierItem::contextMenuAboutToShow();
-    /*
-    kDebug() << "<<< mm 1";
-    QAction* showAction = actionCollection()->action("minimizeRestore");
-    kDebug() << "<<< mm 2";
-    if ( parent() && showAction )
-    {
-        if ( ((QWidget*)parent())->isVisible() ) // TODO isVisible() is not good enough here
-        {
-            showAction->setText( i18n("Hide Mixer Window") );
-        }
-        else
-        {
-            showAction->setText( i18n("Show Mixer Window") );
-        }
-        kDebug() << "<<< mm 3";
-        //disconnect(showAction, 0, 0, 0);
-        //connect(showAction, SIGNAL(triggered(bool),this,hideOrShowMainWindow());
-    }
-    */
-
     // Enable/Disable "Muted" menu item
 	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));

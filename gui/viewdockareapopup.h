@@ -23,6 +23,8 @@
 
 #include "viewbase.h"
 
+class QBoxLayout;
+class QFrame;
 class QGridLayout;
 #include <QPushButton>
 class QWidget;
@@ -56,6 +58,8 @@ private:
     
     bool separatorBetweenMastersAndStreamsInserted;
     bool separatorBetweenMastersAndStreamsRequired;
+    QFrame* seperatorBetweenMastersAndStreams;
+    QBoxLayout* optionsLayout;
 
 public slots:
        void controlsChange(int changeType);

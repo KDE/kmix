@@ -373,16 +373,12 @@ void ViewSliders::configurationUpdate() {
     _layoutMDW->activate();
 }
 
-void ViewSliders::refreshVolumeLevels() {
-    //     kDebug(67100) << "ViewSliders::refreshVolumeLevels()\n";
-
-    for ( int i=0; i<_mdws.count(); i++ ) {
+void ViewSliders::refreshVolumeLevels()
+{
+    for ( int i=0; i<_mdws.count(); i++ )
+    {
         QWidget *mdwx = _mdws[i];
-        if ( mdwx == 0 ) {
-            kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw == 0\n";
-            break; // sanity check (normally the lists are set up correctly)
-        }
-        else {
+
             MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(mdwx);
             if ( mdw != 0 ) { // sanity check
 
@@ -403,7 +399,6 @@ void ViewSliders::refreshVolumeLevels() {
                 kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
                 // no slider. Cannot happen in theory => skip it
             }
-        }
     }
 }
 
