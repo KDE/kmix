@@ -38,6 +38,8 @@
 #include "core/version.h"
 
 #include "mixset_interface.h"
+#include "mixer_interface.h"
+#include "control_interface.h"
 
 const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
 const QString KMIX_DBUS_PATH = "/Mixers";
@@ -54,6 +56,14 @@ KMixWindow::KMixWindow(QWidget* parent)
     initActions();
     createGUI( QLatin1String( "kmixui.rc" ) );
     show();
+    foreach(const QString &mixerName, m_mixers->mixers()) {
+        org::kde::KMix::Mixer *mixer = new org::kde::KMix::Mixer(KMIX_DBUS_SERVICE, mixerName, QDBusConnection::sessionBus(), this);
+        qDebug() << mixer->readableName();
+        foreach(const QString &controlName, mixer->controls()) {
+            org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, controlName, QDBusConnection::sessionBus());
+            qDebug() << control->readableName();
+        }
+    }
 }
 
 KMixWindow::~KMixWindow()
