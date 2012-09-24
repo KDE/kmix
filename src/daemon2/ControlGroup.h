@@ -29,12 +29,14 @@ class ControlGroup : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString displayName READ displayName);
+    Q_PROPERTY(QStringList controls READ controls);
 public:
     ControlGroup(const QString &displayName, QObject *parent = 0);
     ~ControlGroup();
     QString displayName() const;
     QStringList controls() const;
     Control *getControl(const QString &name) const;
+    int id() const;
 public slots:
     void addControl(Control *control);
 signals:
@@ -42,6 +44,7 @@ signals:
 private:
     QHash<QString, Control*> m_controls;
     QString m_displayName;
+    int m_id;
     static QAtomicInt s_id;
 };
 

@@ -4,10 +4,10 @@ set(kmix_KDEINIT_SRCS
    KMixApp.cpp
 )
 
-qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixset.xml
-	mixset_interface)
-qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixer.xml
-	mixer_interface)
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml
+	kmixd_interface)
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.controlgroup.xml
+	controlgroup_interface)
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.control.xml
 	control_interface)
 

@@ -27,13 +27,17 @@ Control::Control(QObject *parent)
     : QObject(parent)
 {
     new ControlAdaptor(this);
-    QDBusConnection::sessionBus().registerObject(QString("/Controls/%1").arg(s_id), this);
-    s_id.ref();
+    m_id = s_id.fetchAndAddRelaxed(1);
+    QDBusConnection::sessionBus().registerObject(QString("/controls/%1").arg(m_id), this);
+}
+
+int Control::id() const
+{
+    return m_id;
 }
 
 Control::~Control()
 {
-    s_id.deref();
 }
 
 #include "Control.moc"

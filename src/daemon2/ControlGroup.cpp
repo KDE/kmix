@@ -18,6 +18,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "ControlGroup.h"
+#include "controlgroupadaptor.h"
 #include "Control.h"
 #include <QtCore/QStringList>
 #include <QtDBus/QDBusConnection>
@@ -28,13 +29,18 @@ ControlGroup::ControlGroup(const QString &displayName, QObject *parent)
     : QObject(parent)
     , m_displayName(displayName)
 {
-    QDBusConnection::sessionBus().registerObject(QString("/groups/%1").arg(s_id), this);
-    s_id.ref();
+    new ControlGroupAdaptor(this);
+    m_id = s_id.fetchAndAddRelaxed(1);
+    QDBusConnection::sessionBus().registerObject(QString("/groups/%1").arg(m_id), this);
+}
+
+int ControlGroup::id() const
+{
+    return m_id;
 }
 
 ControlGroup::~ControlGroup()
 {
-    s_id.deref();
 }
 
 QString ControlGroup::displayName() const
@@ -44,11 +50,20 @@ QString ControlGroup::displayName() const
 
 QStringList ControlGroup::controls() const
 {
-    return QStringList();
+    QStringList ret;
+    foreach(Control *control, m_controls) {
+        ret << QString("/controls/%1").arg(control->id());
+    }
+    return ret;
 }
 
 void ControlGroup::addControl(Control *control)
 {
     m_controls[control->displayName()] = control;
     emit controlAdded(control->displayName());
+}
+
+Control *ControlGroup::getControl(const QString &name) const
+{
+    return m_controls[name];
 }

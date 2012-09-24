@@ -30,11 +30,11 @@
 #include <kxmlguiwindow.h>
 
 // KMix
-class OrgKdeKMixMixSetInterface;
+class OrgKdeKMixKMixDInterface;
 namespace org {
     namespace kde {
         namespace KMix {
-            typedef ::OrgKdeKMixMixSetInterface MixSet;
+            typedef ::OrgKdeKMixKMixDInterface KMixD;
         }
     }
 }
@@ -55,7 +55,7 @@ private slots:
 
 private:
     void initActions();
-    org::kde::KMix::MixSet *m_mixers;
+    org::kde::KMix::KMixD *m_daemon;
     KMixDockWidget *m_dockWidget;
 };
 

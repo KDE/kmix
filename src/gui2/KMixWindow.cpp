@@ -37,12 +37,12 @@
 // KMix
 #include "core/version.h"
 
-#include "mixset_interface.h"
-#include "mixer_interface.h"
+#include "kmixd_interface.h"
+#include "controlgroup_interface.h"
 #include "control_interface.h"
 
 const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
-const QString KMIX_DBUS_PATH = "/Mixers";
+const QString KMIX_DBUS_PATH = "/KMixD";
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
@@ -51,17 +51,18 @@ KMixWindow::KMixWindow(QWidget* parent)
     : KXmlGuiWindow(parent, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) )
 {
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
+    qDebug() << "construct";
     setAttribute(Qt::WA_DeleteOnClose, false);
-    m_mixers = new org::kde::KMix::MixSet(KMIX_DBUS_SERVICE, KMIX_DBUS_PATH, QDBusConnection::sessionBus(), this);
+    m_daemon = new org::kde::KMix::KMixD(KMIX_DBUS_SERVICE, KMIX_DBUS_PATH, QDBusConnection::sessionBus(), this);
     initActions();
     createGUI( QLatin1String( "kmixui.rc" ) );
     show();
-    foreach(const QString &mixerName, m_mixers->mixers()) {
-        org::kde::KMix::Mixer *mixer = new org::kde::KMix::Mixer(KMIX_DBUS_SERVICE, mixerName, QDBusConnection::sessionBus(), this);
-        qDebug() << mixer->readableName();
-        foreach(const QString &controlName, mixer->controls()) {
+    foreach(const QString &groupName, m_daemon->mixerGroups()) {
+        org::kde::KMix::ControlGroup *group = new org::kde::KMix::ControlGroup(KMIX_DBUS_SERVICE, groupName, QDBusConnection::sessionBus(), this);
+        qDebug() << "Group:" << groupName << group->displayName();
+        foreach(const QString &controlName, group->controls()) {
             org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, controlName, QDBusConnection::sessionBus());
-            qDebug() << control->displayName();
+            qDebug() << "Control:" << control->displayName() << control->canMute() << control->mute();
         }
     }
 }

@@ -30,7 +30,8 @@ class BackendManager : public QObject {
     Q_OBJECT
 public:
     static BackendManager *instance();
-    QStringList groups() const;
+    QList<ControlGroup*> groups() const;
+    ControlGroup *group(const QString &name) const;
 private slots:
     void controlAdded(Control *control);
 private:

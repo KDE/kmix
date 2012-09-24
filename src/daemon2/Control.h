@@ -48,7 +48,9 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMute(bool yes) = 0;
     virtual bool canMute() const = 0;
+    int id() const;
 private:
+    int m_id;
     static QAtomicInt s_id;
 };
 

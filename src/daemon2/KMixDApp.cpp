@@ -41,9 +41,6 @@ int KMixDApp::start()
     if (QDBusConnection::sessionBus().registerService("org.kde.kmixd")) {
         new KMixDAdaptor(this);
         QDBusConnection::sessionBus().registerObject("/KMixD", this);
-        foreach(const QString &groupName, BackendManager::instance()->groups()) {
-            qDebug() << "Group:" << groupName;
-        }
         return exec();
     }
     return 1;
@@ -56,7 +53,12 @@ void KMixDApp::setMaster(const QString &masterID)
 
 QStringList KMixDApp::mixerGroups() const
 {
-    return BackendManager::instance()->groups();
+    QStringList ret;
+    foreach(ControlGroup *group, BackendManager::instance()->groups()) {
+        ret << QString("/groups/%1").arg(group->id());
+    }
+    qDebug() << ret;
+    return ret;
 }
 
 QString KMixDApp::masterControl() const

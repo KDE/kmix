@@ -44,13 +44,9 @@ BackendManager *BackendManager::instance()
     return s_instance;
 }
 
-QStringList BackendManager::groups() const
+QList<ControlGroup*> BackendManager::groups() const
 {
-    QStringList ret;
-    foreach(ControlGroup *group, m_groups) {
-        ret << group->displayName();
-    }
-    return ret;
+    return m_groups;
 }
 
 void BackendManager::controlAdded(Control *control)
