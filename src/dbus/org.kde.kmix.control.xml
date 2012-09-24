@@ -2,12 +2,14 @@
 "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="org.kde.KMix.Control">
-    <property access="read" name="id" type="s"/>
-    <property access="read" name="readableName" type="s"/>
+    <property access="read" name="displayname" type="s"/>
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
     <property access="read" name="canMute" type="b"/>
-    <property access="readwrite" name="recordSource" type="b"/>
+<!--    <property access="read" name="volumes" type="{ii}">
+        <annotation name="org.qtproject.QtDBus.QtTypeName" value="QMap<int, int>"/>
+    </property> -->
+<!--    <property access="readwrite" name="recordSource" type="b"/>
     <property access="read" name="hasCaptureSwitch" type="b"/>
     <property access="readwrite" name="volume" type="i"/>
     <property access="readwrite" name="absoluteVolume" type="i"/>
@@ -15,6 +17,6 @@
     <property access="read" name="absoluteVolumeMax" type="i"/>
     <method name="increaseVolume"/>
     <method name="decreaseVolume"/>
-    <method name="toggleMute"/>
+    <method name="toggleMute"/> -->
   </interface>
 </node>
