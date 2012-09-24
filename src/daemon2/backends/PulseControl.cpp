@@ -96,6 +96,9 @@ void PulseControl::update(const pa_sink_info *info)
         }
     }
     m_volumes = info->volume;
+    if (m_muted != info->mute) {
+        emit muteChanged(info->mute);
+    }
     m_muted = info->mute;
 }
 

@@ -28,7 +28,7 @@ class Control : public QObject
     Q_OBJECT
     Q_PROPERTY(QString displayName READ displayName);
     Q_PROPERTY(QString iconName READ iconName);
-    Q_PROPERTY(bool mute READ isMuted WRITE setMute);
+    Q_PROPERTY(bool mute READ isMuted WRITE setMute NOTIFY muteChanged);
     Q_PROPERTY(bool canMute READ canMute);
     Q_PROPERTY(int channels READ channels);
 public:
@@ -56,6 +56,7 @@ public:
     void setVolume(int c, int v) {setVolume((Channel)c, v);}
 signals:
     void volumeChanged(int c);
+    void muteChanged(bool muted);
 private:
     int m_id;
     static QAtomicInt s_id;

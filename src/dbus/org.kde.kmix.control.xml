@@ -5,6 +5,9 @@
     <property access="read" name="displayName" type="s"/>
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
+    <signal name="muteChanged">
+        <arg name="muted" type="b"/>
+    </signal>
     <property access="read" name="canMute" type="b"/>
     <property access="read" name="channels" type="i"/>
     <method name="getVolume">
