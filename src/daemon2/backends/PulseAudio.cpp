@@ -63,6 +63,7 @@ void PulseAudio::sink_cb(pa_context *cxt, const pa_sink_info *info, int eol, gpo
         that->m_sinks[info->index] = control;
         that->registerControl(control);
     } else {
+        control = that->m_sinks[info->index];
         control->update(info);
     }
 }
