@@ -4,6 +4,7 @@
 #include <QtGui/QSlider>
 #include <QtCore/QSignalMapper>
 #include <KDE/KIcon>
+#include <QtGui/QPushButton>
 
 #include "control_interface.h"
 
@@ -40,10 +41,17 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
         m_sliders << slider;
         connect(slider, SIGNAL(valueChanged(int)), mapper, SLOT(map()));
     }
-    connect(control, SIGNAL(volumeChanged(int)), this, SLOT(volumeChange(int)));
+
+    m_mute = new QPushButton(this);
+    connect(m_mute, SIGNAL(clicked(bool)), this, SLOT(toggleMute()));
 
     layout->addWidget(labelContainer);
     layout->addWidget(sliderContainer);
+    layout->addWidget(m_mute);
+
+    updateMute();
+    connect(control, SIGNAL(volumeChanged(int)), this, SLOT(volumeChange(int)));
+    connect(control, SIGNAL(muteChanged(bool)), this, SLOT(updateMute()));
 }
 
 ControlSlider::~ControlSlider()
@@ -59,6 +67,26 @@ void ControlSlider::volumeChange(int channel)
 void ControlSlider::updateVolume(int channel)
 {
     m_control->setVolume(channel, m_sliders[channel]->value());
+}
+
+void ControlSlider::updateMute()
+{
+    if (m_mute) {
+        KIcon icon;
+        if (m_control->mute()) {
+            icon = KIcon("audio-volume-muted");
+        } else {
+            icon = KIcon("audio-volume-high");
+        }
+        m_mute->setIcon(icon);
+    }
+}
+
+void ControlSlider::toggleMute()
+{
+    if (m_mute) {
+        m_control->setMute(!m_control->mute());
+    }
 }
 
 
