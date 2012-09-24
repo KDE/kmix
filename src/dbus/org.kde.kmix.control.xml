@@ -2,7 +2,7 @@
 "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="org.kde.KMix.Control">
-    <property access="read" name="displayname" type="s"/>
+    <property access="read" name="displayName" type="s"/>
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
     <property access="read" name="canMute" type="b"/>
