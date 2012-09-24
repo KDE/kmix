@@ -30,6 +30,7 @@ class Control : public QObject
     Q_PROPERTY(QString iconName READ iconName);
     Q_PROPERTY(bool mute READ isMuted WRITE setMute);
     Q_PROPERTY(bool canMute READ canMute);
+    Q_PROPERTY(int channels READ channels);
 public:
     typedef enum {
         FrontLeft,
