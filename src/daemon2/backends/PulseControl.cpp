@@ -84,7 +84,7 @@ bool PulseControl::canMute() const
 void PulseControl::update(const pa_sink_info *info)
 {
     m_idx = info->index;
-    m_displayName = QString::fromUtf8(info->name);
+    m_displayName = QString::fromUtf8(info->description);
     m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_DEVICE_ICON_NAME));
     qDebug() << m_volumes.channels << info->volume.channels;
     if (m_volumes.channels == info->volume.channels) {
