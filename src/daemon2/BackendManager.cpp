@@ -51,7 +51,6 @@ QList<ControlGroup*> BackendManager::groups() const
 
 void BackendManager::controlAdded(Control *control)
 {
-    qDebug() << "New control:" << control->displayName() << control->volumes();
     m_groups[0]->addControl(control);
 }
 
