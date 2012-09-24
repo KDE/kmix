@@ -44,11 +44,12 @@ ControlManager& ControlManager::instance()
 		                              "controlsChange",
 		                              Qt::DirectConnection,
 		                              Q_ARG(int, changeType));
-	kDebug() << "Listener is interested in " << mixerId
+	kDebug() << "Listener " << listener.getSourceId() << " is interested in " << mixerId
 	<< ", " << ControlChangeType::toString(changeType);
+
 	if (!success)
 	{
-	  kError() << "Failed to send to " << listener.getTarget()->staticMetaObject.className();
+	  kError() << "Listener Failed to send to " << listener.getTarget()->metaObject()->className();
 	}
       }
     }
@@ -86,14 +87,15 @@ ControlManager& ControlManager::instance()
    */
   void ControlManager::removeListener(QObject* target, QString sourceId)
   {
-            kDebug() << "Stop Listening by " << sourceId
-    << " from " << target;
     
         QList<Listener>::iterator it;
     for(it=listeners.begin(); it != listeners.end(); ++it)
     {
       Listener& listener = *it;
-     // if ( listener.
+      if ( listener.getTarget() == target )
+      {
+            kDebug() << "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId  << " from " << target;
+      }
     }
   }
 

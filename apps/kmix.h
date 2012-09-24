@@ -26,6 +26,8 @@
 
 // Qt
 #include <QString>
+
+class GlobalConfig;
 class QLabel;
 #include <qlist.h>
 #include <QVBoxLayout>
@@ -48,6 +50,26 @@ class ViewDockAreaPopup;
 #include "core/mixer.h"
 
 class OSDWidget;
+
+class GlobalConfig
+{
+public:
+   bool showTicks;
+   bool showLabels;
+   
+   static GlobalConfig& instance() { return instanceObj; };
+   
+private:
+  
+  GlobalConfig()
+  {
+    showTicks = true;
+    showLabels = true;
+  };
+  
+  static GlobalConfig instanceObj;
+};
+
 
 class
 KMixWindow : public KXmlGuiWindow
@@ -113,9 +135,7 @@ KMixWindow : public KXmlGuiWindow
    // (they come from the KMix config file, so they are really "static".
    bool m_showDockWidget;
    bool m_volumeWidget;
-public:
-   static bool m_showTicks;
-   static bool m_showLabels;
+   
 private:
    bool m_onLogin;
    bool allowAutostart;

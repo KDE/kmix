@@ -85,6 +85,7 @@ public:
   const QString& getMixerId() { return mixerId; };
     ControlChangeType::Type& getChangeType() { return controlChangeType; };
     QObject* getTarget() { return target; };
+    const QString& getSourceId() { return sourceId; };
 
 private:
   QString mixerId;

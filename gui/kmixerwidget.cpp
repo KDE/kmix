@@ -80,7 +80,7 @@ KMixerWidget::KMixerWidget( Mixer *mixer,
 
 KMixerWidget::~KMixerWidget()
 {
-  ControlManager::instance().removeListener(this, this->staticMetaObject.className());
+  ControlManager::instance().removeListener(this, this->metaObject()->className());
 }
 
 /**
@@ -118,17 +118,14 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 void KMixerWidget::controlsChange(int changeType)
 {
   ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  kDebug() << "I got it. Yeah! type=" << ControlChangeType::toString(type);
   switch (type )
   {
     case  ControlChangeType::ControlList:
       controlsReconfiguredToplevel(QString());
       break;
     case ControlChangeType::GUI:
-        setTicks(KMixWindow::m_showTicks);
-  setLabels(KMixWindow::m_showLabels);
-
-//       controlsReconfiguredToplevel(QString());
+        setTicks(GlobalConfig::instance().showTicks);
+	setLabels(GlobalConfig::instance().showLabels);
       break;
   }
     
@@ -166,11 +163,6 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
 
 void KMixerWidget::controlsReconfiguredToplevel(QString mixerId)
 {
-  kDebug() << "Listener has called this: ticks=" << KMixWindow::m_showTicks
-  << "labels=" <<KMixWindow::m_showLabels;
-  setTicks(KMixWindow::m_showTicks);
-  setLabels(KMixWindow::m_showLabels);
-
 	foreach ( ViewBase* vbase, _views)
 	{
 		vbase->controlsReconfigured(mixerId);

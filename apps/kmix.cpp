@@ -71,8 +71,8 @@
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
-bool KMixWindow::m_showTicks = true;
-bool KMixWindow::m_showLabels = true;
+
+GlobalConfig GlobalConfig::instanceObj;
 
 KMixWindow::KMixWindow(bool invisible) :
     KXmlGuiWindow(0,
@@ -392,8 +392,8 @@ KMixWindow::saveBaseConfig()
   config.writeEntry("Menubar", _actionShowMenubar->isChecked());
   config.writeEntry("AllowDocking", m_showDockWidget);
   config.writeEntry("TrayVolumeControl", m_volumeWidget);
-  config.writeEntry("Tickmarks", KMixWindow::m_showTicks);
-  config.writeEntry("Labels", KMixWindow::m_showLabels);
+  config.writeEntry("Tickmarks", GlobalConfig::instance().showTicks);
+  config.writeEntry("Labels", GlobalConfig::instance().showLabels);
   config.writeEntry("startkdeRestore", m_onLogin);
   config.writeEntry("AutoStart", allowAutostart);
   config.writeEntry("VolumeFeedback", m_beepOnVolumeChange);
@@ -530,8 +530,8 @@ KMixWindow::loadBaseConfig()
 
   m_showDockWidget = config.readEntry("AllowDocking", true);
   m_volumeWidget = config.readEntry("TrayVolumeControl", true);
-  KMixWindow::m_showTicks = config.readEntry("Tickmarks", true);
-  KMixWindow::m_showLabels = config.readEntry("Labels", true);
+  GlobalConfig::instance().showTicks = config.readEntry("Tickmarks", true);
+  GlobalConfig::instance().showLabels = config.readEntry("Labels", true);
   m_onLogin = config.readEntry("startkdeRestore", true);
   allowAutostart = config.readEntry("AutoStart", true);
 
@@ -892,8 +892,8 @@ KMixWindow::redrawMixer(const QString& mixer_ID)
               kmw->loadConfig(KGlobal::config().data());
 
               // Is the below needed? It is done on startup so copied it here...
-              kmw->setTicks(KMixWindow::m_showTicks);
-              kmw->setLabels(KMixWindow::m_showLabels);
+              kmw->setTicks(GlobalConfig::instance().showTicks);
+              kmw->setLabels(GlobalConfig::instance().showLabels);
 
               return;
             }
@@ -1091,8 +1091,8 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
 
   kmw->loadConfig(KGlobal::config().data());
 
-  kmw->setTicks(KMixWindow::m_showTicks);
-  kmw->setLabels(KMixWindow::m_showLabels);
+  kmw->setTicks(GlobalConfig::instance().showTicks);
+  kmw->setLabels(GlobalConfig::instance().showLabels);
   kmw->mixer()->readSetFromHWforceUpdate();
   return true;
 }
@@ -1225,8 +1225,8 @@ KMixWindow::showSettings()
       m_prefDlg->allowAutostart->setChecked(allowAutostart);
       m_prefDlg->m_beepOnVolumeChange->setChecked(m_beepOnVolumeChange);
 
-      m_prefDlg->m_showTicks->setChecked(KMixWindow::m_showTicks);
-      m_prefDlg->m_showLabels->setChecked(KMixWindow::m_showLabels);
+      m_prefDlg->m_showTicks->setChecked(GlobalConfig::instance().showTicks);
+      m_prefDlg->m_showLabels->setChecked(GlobalConfig::instance().showLabels);
       m_prefDlg->_rbVertical->setChecked(m_toplevelOrientation == Qt::Vertical);
       m_prefDlg->_rbHorizontal->setChecked(
           m_toplevelOrientation == Qt::Horizontal);
@@ -1250,8 +1250,8 @@ KMixWindow::showAbout()
 
 void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
 {
-  bool labelsHasChanged = m_showLabels ^ prefDlg->m_showLabels->isChecked();
-  bool ticksHasChanged = m_showTicks ^ prefDlg->m_showTicks->isChecked();
+  bool labelsHasChanged = GlobalConfig::instance().showLabels ^ prefDlg->m_showLabels->isChecked();
+  bool ticksHasChanged = GlobalConfig::instance().showTicks ^ prefDlg->m_showTicks->isChecked();
   bool dockwidgetHasChanged = m_showDockWidget
       ^ prefDlg->m_dockingChk->isChecked();
   bool systrayPopupHasChanged = m_volumeWidget
@@ -1261,8 +1261,8 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
       || (prefDlg->_rbHorizontal->isChecked()
           && m_toplevelOrientation == Qt::Vertical);
 
-  m_showLabels = prefDlg->m_showLabels->isChecked();
-  m_showTicks = prefDlg->m_showTicks->isChecked();
+  GlobalConfig::instance().showLabels = prefDlg->m_showLabels->isChecked();
+  GlobalConfig::instance().showTicks = prefDlg->m_showTicks->isChecked();
   m_showDockWidget = prefDlg->m_dockingChk->isChecked();
   m_volumeWidget = prefDlg->m_volumeChk->isChecked();
   m_onLogin = prefDlg->m_onLogin->isChecked();

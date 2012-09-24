@@ -40,6 +40,7 @@
 #include "gui/guiprofile.h"
 #include "mdwslider.h"
 #include "core/mixer.h"
+#include "core/ControlManager.h"
 #include "apps/kmix.h"
 
 
@@ -50,8 +51,24 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
   {
     // Adding all mixers, as we potentially want to show all master controls
     addMixer(mixer);
-    connect( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
+    //connect( mixer, SIGNAL(controlsReconfigured(QString)), this, SLOT(controlsReconfigured(QString)) );
 
+    	ControlManager::instance().addListener(
+	  mixer->id(),
+	ControlChangeType::GUI,
+	this,
+	QString("ViewDockAreaPopup.%1").arg(mixer->id())	  
+	);
+
+  	ControlManager::instance().addListener(
+	  mixer->id(),
+	ControlChangeType::ControlList,
+	this,
+	QString("ViewDockAreaPopup.%1").arg(mixer->id())	  
+	);
+
+    
+    
   }
     //_layoutControls = new QHBoxLayout(this);
     _layoutMDW = new QGridLayout( this );
@@ -64,6 +81,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
 
 ViewDockAreaPopup::~ViewDockAreaPopup()
 {
+  ControlManager::instance().removeListener(this, this->metaObject()->className());
   delete _layoutMDW;
 }
 
@@ -132,6 +150,23 @@ void ViewDockAreaPopup::_setMixSet()
 		}
 	}
 
+}
+
+void ViewDockAreaPopup::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  switch (type )
+  {
+    case  ControlChangeType::ControlList:
+      createDeviceWidgets();
+      // (QString());
+      break;
+    case ControlChangeType::GUI:
+        setTicks(GlobalConfig::instance().showTicks);
+	setLabels(GlobalConfig::instance().showLabels);
+      break;
+  }
+    
 }
 
 

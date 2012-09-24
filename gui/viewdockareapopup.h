@@ -57,7 +57,9 @@ private:
     bool separatorBetweenMastersAndStreamsInserted;
     bool separatorBetweenMastersAndStreamsRequired;
 
-// public slots:
+public slots:
+       void controlsChange(int changeType);
+
 //    virtual void controlsReconfigured( const QString& mixer_ID );
 private slots:
     void showPanelSlot();
