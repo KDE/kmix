@@ -18,47 +18,34 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KMIX_H
-#define KMIX_H
+#ifndef CONTROLSLIDER_H
+#define CONTROLSLIDER_H
 
+#include <QtGui/QWidget>
 
-#include <config.h>
-
-// Qt
-
-// KDE
-#include <kxmlguiwindow.h>
-
-// KMix
-class OrgKdeKMixKMixDInterface;
+class OrgKdeKMixControlInterface;
 namespace org {
     namespace kde {
         namespace KMix {
-            typedef ::OrgKdeKMixKMixDInterface KMixD;
+            typedef OrgKdeKMixControlInterface Control;
         }
     }
 }
 
-class KMixDockWidget;
-class QHBoxLayout;
+class QSlider;
 
-class
-KMixWindow : public KXmlGuiWindow
+class ControlSlider : public QWidget
 {
-   Q_OBJECT
+    Q_OBJECT
 
 public:
-    KMixWindow(QWidget* parent = 0);
-    ~KMixWindow();
-
+    ControlSlider(org::kde::KMix::Control *control, QWidget *parent = 0);
+    ~ControlSlider();
 private slots:
-    void launchPhononConfig();
-
+    void volumeChange(int channel);
 private:
-    void initActions();
-    org::kde::KMix::KMixD *m_daemon;
-    KMixDockWidget *m_dockWidget;
-    QHBoxLayout *m_layout;
+    org::kde::KMix::Control *m_control;
+    QList<QSlider*> m_sliders;
 };
 
-#endif // KMIX_H
+#endif // CONTROLSLIDER_H

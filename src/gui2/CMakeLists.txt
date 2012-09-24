@@ -2,6 +2,7 @@ set(kmix_KDEINIT_SRCS
    main.cpp
    KMixWindow.cpp
    KMixApp.cpp
+   ControlSlider.cpp
 )
 
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml
