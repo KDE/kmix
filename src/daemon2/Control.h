@@ -43,12 +43,18 @@ public:
     ~Control();
     virtual QString displayName() const = 0;
     virtual QString iconName() const = 0;
-    virtual QMap<Channel, int> volumes() const = 0;
+    virtual int channels() const = 0;
+    virtual int getVolume(Channel c) const = 0;
     virtual void setVolume(Channel c, int v) = 0;
     virtual bool isMuted() const = 0;
     virtual void setMute(bool yes) = 0;
     virtual bool canMute() const = 0;
     int id() const;
+
+    int getVolume(int i) const {return getVolume((Channel)i);}
+    void setVolume(int c, int v) {setVolume((Channel)c, v);}
+signals:
+    void volumeChanged(int c);
 private:
     int m_id;
     static QAtomicInt s_id;

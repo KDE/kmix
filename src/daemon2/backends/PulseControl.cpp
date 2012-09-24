@@ -42,13 +42,14 @@ QString PulseControl::iconName() const
     return m_iconName;
 }
 
-QMap<Control::Channel, int> PulseControl::volumes() const
+int PulseControl::channels() const
 {
-    QMap<Control::Channel, int> volumes;
-    for (uint8_t i = 0;i<m_volumes.channels;i++) {
-        volumes[(Channel)i] = m_volumes.values[i];
-    }
-    return volumes;
+    return m_volumes.channels;
+}
+
+int PulseControl::getVolume(Channel channel) const
+{
+    return m_volumes.values[(int)channel];
 }
 
 void PulseControl::setVolume(Channel c, int v)
@@ -85,6 +86,15 @@ void PulseControl::update(const pa_sink_info *info)
     m_idx = info->index;
     m_displayName = QString::fromUtf8(info->name);
     m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_DEVICE_ICON_NAME));
+    qDebug() << m_volumes.channels << info->volume.channels;
+    if (m_volumes.channels == info->volume.channels) {
+        for (int channel = 0;channel < info->volume.channels;channel++) {
+            if (m_volumes.values[channel] != info->volume.values[channel]) {
+                qDebug() << "Volume on" << channel << "from" << m_volumes.values[channel] << "to" << info->volume.values[channel];
+                emit volumeChanged((Channel)channel);
+            }
+        }
+    }
     m_volumes = info->volume;
     m_muted = info->mute;
 }

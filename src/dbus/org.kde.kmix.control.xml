@@ -6,6 +6,18 @@
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
     <property access="read" name="canMute" type="b"/>
+    <property access="read" name="channels" type="i"/>
+    <method name="getVolume">
+        <arg name="channel" type="i" direction="in"/>
+        <arg name="result" type="i" direction="out"/>
+    </method>
+    <method name="setVolume">
+        <arg name="channel" type="i" direction="in"/>
+        <arg name="value" type="i" direction="in"/>
+    </method>
+    <signal name="volumeChanged">
+        <arg name="channel" type="i"/>
+    </signal>
 <!--    <property access="read" name="volumes" type="{ii}">
         <annotation name="org.qtproject.QtDBus.QtTypeName" value="QMap<int, int>"/>
     </property> -->

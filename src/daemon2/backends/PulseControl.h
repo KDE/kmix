@@ -32,7 +32,8 @@ public:
     PulseControl(pa_context *cxt, const pa_sink_info *info, QObject *parent = 0);
     QString displayName() const;
     QString iconName() const;
-    QMap<Channel, int> volumes() const;
+    int channels() const;
+    int getVolume(Channel channel) const;
     void setVolume(Channel c, int v);
     bool isMuted() const;
     void setMute(bool yes);
