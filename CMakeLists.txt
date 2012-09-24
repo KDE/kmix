@@ -34,7 +34,7 @@ add_subdirectory( doc )
 add_subdirectory( icons ) 
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
-add_subdirectory( src/daemon )
+add_subdirectory( src/daemon2 )
 #add_subdirectory( tests )
 
 if (PULSEAUDIO_FOUND)
