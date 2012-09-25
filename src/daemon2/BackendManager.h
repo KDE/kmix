@@ -33,9 +33,12 @@ public:
     static BackendManager *instance();
     QList<ControlGroup*> groups() const;
     ControlGroup *group(const QString &name) const;
-private slots:
+signals:
     void controlAdded(Control *control);
     void controlRemoved(Control *control);
+private slots:
+    void handleControlAdded(Control *control);
+    void handleControlRemoved(Control *control);
 
 private:
     BackendManager();

@@ -5,8 +5,12 @@
     <property access="read" type="as" name="mixerGroups"/>
     <property access="read" type="s" name="masterControl"/>
     <method name="setMaster">
-      <arg name="control" type="s" direction="in"/>
+      <arg name="control" type="i" direction="in"/>
     </method>
+    <signal name="masterChanged">
+        <arg name="id" type="s"/>
+    </signal>
+    <signal name="masterVolumeChanged"/>
     <property access="readwrite" name="masterVolume" type="i">
     <signal name="groupAdded">
         <arg name="name" type="s"/>

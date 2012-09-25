@@ -24,6 +24,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStringList>
 
+class Control;
+
 class KMixDApp : public QCoreApplication
 {
     Q_OBJECT
@@ -34,7 +36,7 @@ public:
     KMixDApp(int &argc, char **argv);
     ~KMixDApp();
     int start();
-    void setMaster(const QString &masterID);
+    void setMaster(int masterID);
     QStringList mixerGroups() const;
     QString masterControl() const;
 
@@ -43,6 +45,13 @@ public:
 signals:
     void groupAdded(const QString &name);
     void groupRemoved(const QString &name);
+    void masterChanged(const QString &path);
+    void masterVolumeChanged();
+private slots:
+    void controlAdded(Control *);
+    void controlRemoved(Control *);
+private:
+    Control *m_master;
 };
 
 #endif

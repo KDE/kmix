@@ -29,9 +29,10 @@
 
 KMixDApp::KMixDApp(int &argc, char **argv)
     : QCoreApplication(argc, argv)
+    , m_master(0)
 {
-    // One way or another we need to create this to show up on DBus
-    BackendManager::instance();
+    connect(BackendManager::instance(), SIGNAL(controlAdded(Control*)), this, SLOT(controlAdded(Control*)));
+    connect(BackendManager::instance(), SIGNAL(controlRemoved(Control*)), this, SLOT(controlRemoved(Control*)));
 }
 
 KMixDApp::~KMixDApp()
@@ -48,7 +49,7 @@ int KMixDApp::start()
     return 1;
 }
 
-void KMixDApp::setMaster(const QString &masterID)
+void KMixDApp::setMaster(int id)
 {
     Q_ASSERT(false);
 }
@@ -64,17 +65,44 @@ QStringList KMixDApp::mixerGroups() const
 
 QString KMixDApp::masterControl() const
 {
-    Q_ASSERT(false);
-    return QString();
+    return QString("/controls/%1").arg(m_master->id());
 }
 
 int KMixDApp::masterVolume() const
 {
-    Q_ASSERT(false);
+    if (m_master) {
+        int sum;
+        for(int i = 0;i<m_master->channels();i++) {
+            sum+=m_master->getVolume(i);
+        }
+        return sum/m_master->channels();
+    }
     return 0;
 }
 
 void KMixDApp::setMasterVolume(int v)
 {
-    Q_ASSERT(false);
+    if (m_master) {
+        for(int i = 0;i<m_master->channels();i++) {
+            m_master->setVolume(i, v);
+        }
+    }
+}
+
+void KMixDApp::controlAdded(Control *control)
+{
+    if (control->category() == Control::HardwareOutput) {
+        if (m_master)
+            disconnect(m_master, SIGNAL(volumeChanged(int)), this, SIGNAL(masterVolumeChanged()));
+        m_master = control;
+        emit masterChanged(QString("/controls/%1").arg(m_master->id()));
+        connect(m_master, SIGNAL(volumeChanged(int)), this, SIGNAL(masterVolumeChanged()));
+    }
+}
+
+void KMixDApp::controlRemoved(Control *control)
+{
+    if (control == m_master) {
+        m_master = 0;
+    }
 }
