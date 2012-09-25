@@ -5,7 +5,11 @@
     <property access="read" type="as" name="controls"/>
     <property access="read" type="s" name="displayName"/>
     <property access="read" type="s" name="iconName"/>
-    <signal name="controlAdded"/>
-    <signal name="controlRemoved"/>
+    <signal name="controlAdded">
+        <arg name="control" type="s"/>
+    </signal>
+    <signal name="controlRemoved">
+        <arg name="control" type="s"/>
+    </signal>
   </interface>
 </node>

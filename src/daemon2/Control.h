@@ -65,6 +65,7 @@ public:
 signals:
     void volumeChanged(int c);
     void muteChanged(bool muted);
+    void removed();
 private:
     Category m_category;
     int m_id;

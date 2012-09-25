@@ -51,7 +51,6 @@ PulseAudio::~PulseAudio()
 void PulseAudio::sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, int eol, gpointer user_data)
 {
     PulseAudio *that = static_cast<PulseAudio*>(user_data);
-    qDebug() << "source output" << eol;
     if (eol < 0) {
         if (pa_context_errno(cxt) == PA_ERR_NOENTITY)
             return;
@@ -60,7 +59,6 @@ void PulseAudio::sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, 
         return;
     }
     PulseSinkInputControl *control;
-    qDebug() << "Stream input event for" << info->index;
     if (!that->m_sinkInputs.contains(info->index)) {
         control = new PulseSinkInputControl(cxt, info, that);
         QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSinkInput(int)));
@@ -83,7 +81,6 @@ void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *
         return;
     }
     PulseSourceOutputControl *control;
-    qDebug() << "Stream output event for" << info->index;
     if (!that->m_sourceOutputs.contains(info->index)) {
         control = new PulseSourceOutputControl(cxt, info, that);
         QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSourceOutput(int)));
@@ -106,7 +103,6 @@ void PulseAudio::sink_cb(pa_context *cxt, const pa_sink_info *info, int eol, gpo
         return;
     }
     PulseSinkControl *control;
-    qDebug() << "Event for" << info->index;
     if (!that->m_sinks.contains(info->index)) {
         control = new PulseSinkControl(cxt, info, that);
         QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSink(int)));
@@ -135,10 +131,13 @@ void PulseAudio::refreshSourceOutput(int idx)
 
 void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uint32_t index, gpointer user_data)
 {
+    PulseAudio *that = static_cast<PulseAudio*>(user_data);
     switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
         case PA_SUBSCRIPTION_EVENT_SINK:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
-                //FIXME
+                PulseControl *control = that->m_sinks.take(index);
+                that->deregisterControl(control);
+                control->deleteLater();
             } else {
                 pa_operation *op;
                 if (!(op = pa_context_get_sink_info_by_index(cxt, index, sink_cb, user_data))) {
@@ -150,7 +149,9 @@ void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uin
             break;
         case PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
-                //FIXME
+                PulseControl *control = that->m_sourceOutputs.take(index);
+                that->deregisterControl(control);
+                control->deleteLater();
             } else {
                 pa_operation *op;
                 if (!(op = pa_context_get_source_output_info(cxt, index, source_output_cb, user_data))) {
@@ -162,7 +163,9 @@ void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uin
             break;
         case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
-                //FIXME
+                PulseControl *control = that->m_sinkInputs.take(index);
+                that->deregisterControl(control);
+                control->deleteLater();
             } else {
                 pa_operation *op;
                 if (!(op = pa_context_get_sink_input_info(cxt, index, sink_input_cb, user_data))) {

@@ -36,6 +36,7 @@ BackendManager::BackendManager()
     m_groups[Control::HardwareOutput] = new ControlGroup("Hardware Output");
     Backend *pulse = new Backends::PulseAudio(this);
     connect(pulse, SIGNAL(controlAdded(Control *)), this, SLOT(controlAdded(Control *)));
+    connect(pulse, SIGNAL(controlRemoved(Control *)), this, SLOT(controlRemoved(Control *)));
     m_backends << pulse;
     pulse->open();
 }
@@ -55,6 +56,11 @@ QList<ControlGroup*> BackendManager::groups() const
 void BackendManager::controlAdded(Control *control)
 {
     m_groups[control->category()]->addControl(control);
+}
+
+void BackendManager::controlRemoved(Control *control)
+{
+    m_groups[control->category()]->removeControl(control);
 }
 
 #include "BackendManager.moc"

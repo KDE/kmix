@@ -44,6 +44,7 @@ Control::Category Control::category() const
 
 Control::~Control()
 {
+    emit removed();
 }
 
 #include "Control.moc"

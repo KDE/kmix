@@ -38,13 +38,14 @@ QList<Control*> Backend::controls() const
 
 void Backend::registerControl(Control *control)
 {
+    qDebug() << "New control:" << control->displayName();
     m_controls << control;
     emit controlAdded(control);
-    qDebug() << "New control:" << control->displayName();
 }
 
 void Backend::deregisterControl(Control *control)
 {
+    qDebug() << "Deregistering" << control->displayName();
     m_controls.removeOne(control);
     emit controlRemoved(control);
 }

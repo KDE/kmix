@@ -39,8 +39,10 @@ public:
     int id() const;
 public slots:
     void addControl(Control *control);
+    void removeControl(Control *control);
 signals:
     void controlAdded(const QString &name) const;
+    void controlRemoved(const QString &name) const;
 private:
     QHash<QString, Control*> m_controls;
     QString m_displayName;

@@ -57,10 +57,16 @@ QStringList ControlGroup::controls() const
     return ret;
 }
 
+void ControlGroup::removeControl(Control *control)
+{
+    m_controls.take(control->displayName());
+    emit controlRemoved(QString("/controls/%1").arg(control->id()));
+}
+
 void ControlGroup::addControl(Control *control)
 {
     m_controls[control->displayName()] = control;
-    emit controlAdded(control->displayName());
+    emit controlAdded(QString("/controls/%1").arg(control->id()));
 }
 
 Control *ControlGroup::getControl(const QString &name) const

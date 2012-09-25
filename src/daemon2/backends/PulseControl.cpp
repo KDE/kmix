@@ -68,11 +68,9 @@ bool PulseControl::canMute() const
 
 void PulseControl::updateVolumes(const pa_cvolume &volumes)
 {
-    qDebug() << m_volumes.channels << volumes.channels;
     if (m_volumes.channels == volumes.channels) {
         for (int channel = 0;channel < volumes.channels;channel++) {
             if (m_volumes.values[channel] != volumes.values[channel]) {
-                qDebug() << "Volume on" << channel << "from" << m_volumes.values[channel] << "to" << volumes.values[channel];
                 emit volumeChanged((Channel)channel);
             }
         }

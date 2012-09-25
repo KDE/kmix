@@ -35,6 +35,8 @@ public:
     ControlGroup *group(const QString &name) const;
 private slots:
     void controlAdded(Control *control);
+    void controlRemoved(Control *control);
+
 private:
     BackendManager();
     static BackendManager *s_instance;

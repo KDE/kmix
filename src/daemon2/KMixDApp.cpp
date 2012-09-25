@@ -59,7 +59,6 @@ QStringList KMixDApp::mixerGroups() const
     foreach(ControlGroup *group, BackendManager::instance()->groups()) {
         ret << QString("/groups/%1").arg(group->id());
     }
-    qDebug() << ret;
     return ret;
 }
 

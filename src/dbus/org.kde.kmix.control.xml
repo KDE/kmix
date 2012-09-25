@@ -22,6 +22,7 @@
     <signal name="volumeChanged">
         <arg name="channel" type="i"/>
     </signal>
+    <signal name="removed"/>
 <!--    <property access="read" name="volumes" type="{ii}">
         <annotation name="org.qtproject.QtDBus.QtTypeName" value="QMap<int, int>"/>
     </property> -->
