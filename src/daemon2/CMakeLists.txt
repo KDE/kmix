@@ -25,6 +25,7 @@ set(kmixd_SRCS
     backends/PulseAudio.cpp
     backends/PulseControl.cpp
     backends/PulseSourceOutputControl.cpp
+    backends/PulseSinkInputControl.cpp
     backends/PulseSinkControl.cpp
 )
 

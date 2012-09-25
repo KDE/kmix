@@ -21,6 +21,7 @@
 #include "PulseAudio.h"
 #include "PulseControl.h"
 #include "PulseSourceOutputControl.h"
+#include "PulseSinkInputControl.h"
 #include "PulseSinkControl.h"
 #include <QtCore/QDebug>
 
@@ -46,10 +47,34 @@ PulseAudio::~PulseAudio()
     }
 }
 
-void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *info, int eol, gpointer user_data)
+//FIXME: Lots of copypasta code! WTF!!!
+void PulseAudio::sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, int eol, gpointer user_data)
 {
     PulseAudio *that = static_cast<PulseAudio*>(user_data);
     qDebug() << "source output" << eol;
+    if (eol < 0) {
+        if (pa_context_errno(cxt) == PA_ERR_NOENTITY)
+            return;
+    }
+    if (eol > 0) {
+        return;
+    }
+    PulseSinkInputControl *control;
+    qDebug() << "Stream input event for" << info->index;
+    if (!that->m_sinkInputs.contains(info->index)) {
+        control = new PulseSinkInputControl(cxt, info, that);
+        QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSinkInput(int)));
+        that->m_sinkInputs[info->index] = control;
+        that->registerControl(control);
+    } else {
+        control = that->m_sinkInputs[info->index];
+        control->update(info);
+    }
+}
+
+void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *info, int eol, gpointer user_data)
+{
+    PulseAudio *that = static_cast<PulseAudio*>(user_data);
     if (eol < 0) {
         if (pa_context_errno(cxt) == PA_ERR_NOENTITY)
             return;
@@ -98,6 +123,11 @@ void PulseAudio::refreshSink(int idx)
     pa_context_get_sink_info_by_index(m_context, idx, sink_cb, this);
 }
 
+void PulseAudio::refreshSinkInput(int idx)
+{
+    pa_context_get_sink_input_info(m_context, idx, sink_input_cb, this);
+}
+
 void PulseAudio::refreshSourceOutput(int idx)
 {
     pa_context_get_source_output_info(m_context, idx, source_output_cb, this);
@@ -130,6 +160,18 @@ void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uin
                 pa_operation_unref(op);
             }
             break;
+        case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+                //FIXME
+            } else {
+                pa_operation *op;
+                if (!(op = pa_context_get_sink_input_info(cxt, index, sink_input_cb, user_data))) {
+                    qWarning() << "pa_context_get_sink_input_info failed";
+                    return;
+                }
+                pa_operation_unref(op);
+            }
+            break;
     }
 }
 
@@ -156,6 +198,10 @@ void PulseAudio::context_state_callback(pa_context *cxt, gpointer user_data)
         }
         pa_operation_unref(op);
         if (!(op = pa_context_get_source_output_info_list(cxt, source_output_cb, that))) {
+            return;
+        }
+        pa_operation_unref(op);
+        if (!(op = pa_context_get_sink_input_info_list(cxt, sink_input_cb, that))) {
             return;
         }
         pa_operation_unref(op);
