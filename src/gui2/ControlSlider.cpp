@@ -30,8 +30,14 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
     KIcon icon(control->iconName());
     iconLabel->setPixmap(icon.pixmap(QSize(32, 32)));
 
+    m_channelLock = new QPushButton(labelContainer);
+    m_channelLock->setIcon(KIcon("object-locked"));
+    m_channelLock->setCheckable(true);
+    m_channelLock->setChecked(true);
+
     labelLayout->addWidget(iconLabel);
     labelLayout->addWidget(label);
+    labelLayout->addWidget(m_channelLock);
 
     QWidget *sliderContainer = new QWidget(this);
     QVBoxLayout *sliderLayout = new QVBoxLayout(sliderContainer);
@@ -98,7 +104,16 @@ void ControlSlider::volumeChange(int channel)
 
 void ControlSlider::updateVolume(int channel)
 {
-    m_control->setVolume(channel, m_sliders[channel]->value());
+    int value = m_sliders[channel]->value();
+    if (m_channelLock->isChecked()) {
+        for(int i = 0;i<m_control->channels();i++) {
+            m_control->setVolume(i, value);
+            if (i != channel)
+                m_sliders[i]->setValue(value);
+        }
+    } else {
+        m_control->setVolume(channel, value);
+    }
 }
 
 void ControlSlider::updateMute()

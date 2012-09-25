@@ -55,6 +55,7 @@ private:
     org::kde::KMix::Control *m_control;
     QList<QSlider*> m_sliders;
     QComboBox *m_targetSwitcher;
+    QPushButton *m_channelLock;
 };
 
 #endif // CONTROLSLIDER_H
