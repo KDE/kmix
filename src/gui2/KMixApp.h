@@ -24,6 +24,7 @@
 #include <kuniqueapplication.h>
 
 class KMixWindow;
+class KStatusNotifierItem;
 
 class KMixApp : public KUniqueApplication
 {
@@ -34,6 +35,7 @@ Q_OBJECT
     int newInstance ();
  private:
     KMixWindow *m_kmix;
+    KStatusNotifierItem *m_icon;
 };
 
 #endif

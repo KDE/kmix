@@ -22,6 +22,7 @@
 #include "KMixApp.h"
 #include "KMixWindow.h"
 #include <kdebug.h>
+#include <KDE/KStatusNotifierItem>
 
 
 KMixApp::KMixApp()
@@ -50,6 +51,14 @@ KMixApp::newInstance()
         m_kmix->show();
     } else {
         m_kmix = new KMixWindow(NULL);
+        m_icon = new KStatusNotifierItem("kmix");
+        m_icon->setAssociatedWidget(m_kmix);
+        m_icon->setCategory(KStatusNotifierItem::Hardware);
+        m_icon->setIconByName("kmix");
+        m_icon->setStandardActionsEnabled(true);
+        m_icon->setStatus(KStatusNotifierItem::Passive);
+        m_icon->setTitle("KMix");
+        m_icon->setToolTip("kmix", "KMix", "Volume");
     }
 	return 0;
 }
