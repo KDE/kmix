@@ -223,8 +223,6 @@ void DialogAddView::apply()
     QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
     if ( button != 0 ) {
       QString viewName = button->objectName();
-      // A channel was selected by the user => emit the "newMasterSelected()" signal
-      //kDebug(67100) << "DialogAddView::apply(): card=" << soundcard_id << ", channel=" << channel_id;
       if ( mixer == 0 ) {
          kError(67100) << "DialogAddView::createPage(): Invalid Mixer (mixer=0)" << endl;
          return; // can not happen

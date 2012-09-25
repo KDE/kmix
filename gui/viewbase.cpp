@@ -117,7 +117,7 @@ void ViewBase::createDeviceWidgets()
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
 	mdw->show(); // TODO Visibility has to reworked massively. It must be taken consitently from the View here
-	qDebug() << "Added " << md->id();
+// 	qDebug() << "Added " << md->id();
     }
 
     if ( !isDynamic() )
@@ -130,24 +130,6 @@ void ViewBase::createDeviceWidgets()
         // allow view to "polish" itself
       constructionFinished();
 }
-
-/**
- * Rebuild the View from the (existing) Profile.
- */
-void ViewBase::rebuildFromProfile()
-{
-  kDebug() << "Rebuild 1";
-  save(KGlobal::config().data());
-  kDebug() << "Rebuild 2";
-  createDeviceWidgets();
-  // TODO Actually this is insane. We ask somebody else to rebuild us.
-  // We should really be able to do it ourselves, as "this" knows the GUIProfile.
-  // Probably we should not store the pointer, but the key, and look it up again to
-  // make sure we retrieve the freshest/modified GUIProfile
-   
-  //emit rebuildGUI();  // TODO 001 remove rebuildGUI() signal
-}
-
 
 // ---------- Popup stuff START ---------------------
 void ViewBase::mousePressEvent( QMouseEvent *e )
@@ -194,32 +176,6 @@ void ViewBase::showContextMenu()
 
     QPoint pos = QCursor::pos();
     _popMenu->popup( pos );
-}
-
-void ViewBase::controlsReconfigured( const QString& mixerId )
-{
-	bool isRelevantMixer = false;
-	if ( mixerId.isEmpty() )
-	  isRelevantMixer = true;
-	
-	if ( ! isRelevantMixer )
-	{
-	foreach ( Mixer* mixer , _mixers)
-	{
-		  if ( mixer->id() == mixerId )
-		  {
-				isRelevantMixer = true;
-				break;
-		  }
-	}
-	}
-	
-	if (!isRelevantMixer)
-	  return; // View does not include the given Mixer => nothing to do
-	
-	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << " is being redrawn (mixset contains: " << _mixSet.count() << ")";
-	    createDeviceWidgets();
-	    kDebug(67100) << "ViewBase::controlsReconfigured() " << mixerId << ": Recreating widgets (mixset contains: " << _mixSet.count() << ")";
 }
 
 void ViewBase::refreshVolumeLevels()
@@ -404,7 +360,7 @@ void ViewBase::save(KConfig *config)
          }
          if ( !dynamic ) {
             devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
-            kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+//             kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
          }
 
       } // inherits MixDeviceWidget

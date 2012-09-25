@@ -92,7 +92,6 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    //initPrefDlg();
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString);
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
-   //recreateGUI(false);
    fixConfigAfterRead();
    theKMixDeviceManager->initHotplug();
    connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );

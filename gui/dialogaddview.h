@@ -43,9 +43,6 @@ class DialogAddView : public KDialog
     QString getresultViewName() { return resultViewName; }
     QString getresultMixerId() { return resultMixerId; }
 
- signals:
-     void newMasterSelected(QString&, QString& );
-
  public slots:
     void apply();
 

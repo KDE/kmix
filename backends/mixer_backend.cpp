@@ -24,6 +24,8 @@
 
 // for the "ERR_" declartions, #include mixer.h
 #include "core/mixer.h"
+#include "core/ControlManager.h"
+
 #include <QTimer>
 
 #define POLL_OSS_RATE_SLOW 1500
@@ -45,7 +47,7 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 
 Mixer_Backend::~Mixer_Backend()
 {
-	qDebug() << "Running Mixer_Backend destructor";
+// 	qDebug() << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
 	//qDeleteAll(m_mixDevices); // TODO cesken Leak check the removed qDeleteAll()
 	m_mixDevices.clear();
@@ -153,7 +155,7 @@ void Mixer_Backend::readSetFromHW()
 			//_fastPollingEndsAt = fastPollingEndsAt;
 			kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
 		}
-		emit controlChanged();
+		ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("Mixer.fromHW"));
 	}
 
 	else

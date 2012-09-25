@@ -27,7 +27,6 @@
 // Qt
 #include <QString>
 
-class GlobalConfig;
 class QLabel;
 #include <qlist.h>
 #include <QVBoxLayout>
@@ -50,26 +49,6 @@ class ViewDockAreaPopup;
 #include "core/mixer.h"
 
 class OSDWidget;
-
-class GlobalConfig
-{
-public:
-   bool showTicks;
-   bool showLabels;
-   
-   static GlobalConfig& instance() { return instanceObj; };
-   
-private:
-  
-  GlobalConfig()
-  {
-    showTicks = true;
-    showLabels = true;
-  };
-  
-  static GlobalConfig instanceObj;
-};
-
 
 class
 KMixWindow : public KXmlGuiWindow
@@ -117,9 +96,6 @@ KMixWindow : public KXmlGuiWindow
    void recreateGUI(bool saveView);
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
    void recreateGUIwithSavingView();
-   void recreateGUIwithoutSavingView();
-   void recreateDockWidget();
-   void redrawMixer( const QString& mixer_ID );
    void newMixerShown(int tabIndex);
 
     private:

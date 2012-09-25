@@ -138,8 +138,7 @@ protected:
   mutable bool _readSetFromHWforceUpdate;
 
 signals:
-  void controlChanged( void );
-  void controlsReconfigured( const QString& mixer_ID );
+  void controlChanged( void ); // TODO remove?
 
 public slots:
   virtual void reinit() {};

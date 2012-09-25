@@ -55,10 +55,6 @@ public:
     Mixer *mixer() const { return m_mixer; }
     bool hasMixer() const { return m_mixer; }
 
-// signals:
-//     void controlChanged();
-//     void controlsReconfigured(QString mixerId);
-
 private:
     Mixer *m_mixer;
 };
@@ -75,21 +71,15 @@ class KMixDockWidget : public KStatusNotifierItem
 
    void setErrorPixmap();
    void ignoreNextEvent();
-
    void update();
-
- signals:
-   void newMasterSelected(); // TODO still required? don't think so
 
  public slots:
    void setVolumeTip();
    void updatePixmap();
-//    void updateDockPopup();
    void activate(const QPoint &pos);
    void controlsChange(int changeType);
 
  protected:
-//    void createMasterVolWidget();
    void createActions();
    void toggleMinimizeRestore();
 
@@ -110,14 +100,9 @@ class KMixDockWidget : public KStatusNotifierItem
  private slots:
    void dockMute();
    void trayWheelEvent(int delta,Qt::Orientation);
-   //void kmixSystrayAction(QSystemTrayIcon::ActivationReason);
    void selectMaster();
-//    void handleNewMaster(QString& soundcard_id, QString& channel_id);
    void contextMenuAboutToShow();
-	int getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md);
-	
-// 	    void controlsReconfigured(QString mixerId);
-
+   int getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md);
 };
 
 #endif

@@ -120,19 +120,16 @@ class DialogViewConfiguration : public KDialog
     //void dragEnterEvent(QDragEnterEvent *event);
     void prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet);
     void createPage();
+    void addSpacer(int row, int col);
     QVBoxLayout* _layout;
     ViewBase&    _view;
-    //QWidget* vboxForScrollView;
-    //QGridLayout* grid;
     QWidget * frame;
-    //QHBoxLayout *_hlayout;
     QGridLayout *_glayout;
 
-    //QScrollArea* scrollArea;
     QLabel* qlb;
-//     QList<QCheckBox *>  _qEnabledCB;
-//     QList<QCheckBox *>  _qSplitCB;
-//     QList<QCheckBox *>  _qLimitCB;
+    QPushButton* moveLeftButton;
+    QPushButton* moveRightButton;
+
     DialogViewConfigurationWidget *_qlw;
     DialogViewConfigurationWidget *_qlwInactive;
 };

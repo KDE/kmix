@@ -23,6 +23,7 @@
 
 #include <QStringList>
 
+#include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/volume.h"
 #include "mixeradaptor.h"
@@ -34,15 +35,47 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	m_mixer = parent;
 	new MixerAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( path, this );
-	connect( parent, SIGNAL(controlsReconfigured(QString)),
-		this, SLOT(slotControlsReconfigured()) );
-	connect( parent, SIGNAL(controlChanged()),
-		this, SLOT(slotControlChanged()) );
+	
+	ControlManager::instance().addListener(
+	m_mixer->id(),
+	ControlChangeType::ControlList,
+	this,
+	QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
+	);
+	
+	ControlManager::instance().addListener(
+	m_mixer->id(),
+	ControlChangeType::Volume,
+	this,
+	QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
+	);
 }
 
 DBusMixerWrapper::~DBusMixerWrapper()
 {
+      ControlManager::instance().removeListener(this);
 }
+
+void DBusMixerWrapper::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  switch (type )
+  {
+    case  ControlChangeType::ControlList:
+      createDeviceWidgets();
+      break;
+      
+    case ControlChangeType::Volume:
+      refreshVolumeLevels();
+      break;
+      
+    default:
+      // Other changes are not of interest to us
+      break;
+  }
+    
+}
+
 
 QString DBusMixerWrapper::driverName()
 {
@@ -96,14 +129,14 @@ QString DBusMixerWrapper::udi()
 	return m_mixer->udi();
 }
 
-void DBusMixerWrapper::slotControlChanged()
+void DBusMixerWrapper::refreshVolumeLevels()
 {
 	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
 				"org.kde.KMix.Mixer", "controlChanged" );
 	QDBusConnection::sessionBus().send( signal );
 }
 
-void DBusMixerWrapper::slotControlsReconfigured()
+void DBusMixerWrapper::createDeviceWidgets()
 {
 	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
 				"org.kde.KMix.Mixer", "changed" );

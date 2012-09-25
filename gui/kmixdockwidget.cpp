@@ -43,18 +43,10 @@
 
 void MetaMixer::reset()
 {
-  // Connect/reconnect signals coming from the Mixer
-//   if ( m_mixer != 0 )
-//   {    
-//     disconnect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
-//     disconnect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
-//   }
+  // TOOD remove the MetaMixer
     m_mixer = Mixer::getGlobalMasterMixer();
     // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
     m_mixer->readSetFromHWforceUpdate();
-//     connect(m_mixer, SIGNAL(controlChanged()), this, SIGNAL(controlChanged()));
-//     connect(m_mixer, SIGNAL(controlsReconfigured(QString)), this, SIGNAL(controlsReconfigured(QString)));
-//     emit controlChanged(); // Triggers UI updates accordingly
 }
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)

@@ -195,8 +195,7 @@ public slots:
     
 signals:
     void newBalance(Volume& );
-    void controlChanged(void);
-    void controlsReconfigured(const QString & mixer_ID);
+    void controlChanged(void); // TODO remove?
 
 protected:
     int m_balance; // from -100 (just left) to 100 (just right)

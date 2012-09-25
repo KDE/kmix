@@ -159,18 +159,15 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
    
    setMainWidget( frame );
    
-   // The _layout will hold two items: The title and the scrollarea
+   // The _layout will hold two items: The title and the Drag-n-Drop area
    _layout = new QVBoxLayout(frame );
    _layout->setMargin( 0 );
    _layout->setSpacing(KDialog::spacingHint());
    
    // --- HEADER ---
-   //    kDebug(67100) << "DialogViewConfiguration::DialogViewConfiguration add header" << "\n";
    qlb = new QLabel( i18n("Configuration of the channels. Drag icon to update."), frame );
    _layout->addWidget(qlb);
    
-//    _hlayout = new QHBoxLayout();
-//    _layout->addLayout(_hlayout);
    _glayout = new QGridLayout();
    _layout->addLayout(_glayout);
 
@@ -209,6 +206,13 @@ void DialogViewConfiguration::slotDropped(DialogViewConfigurationWidget* list, i
 }
 
 
+void DialogViewConfiguration::addSpacer(int row, int col)
+{
+	QWidget *dummy = new QWidget();
+	dummy->setFixedWidth(4);
+	_glayout->addWidget(dummy,row,col);
+}
+
 /**
  * Create basic widgets of the Dialog.
  */
@@ -216,23 +220,34 @@ void DialogViewConfiguration::createPage()
 {
    QList<QWidget *> &mdws = _view._mdws;
 
-   QLabel *l1 = new QLabel( i18n("Available channels") );
+   QLabel *l1 = new QLabel( i18n("Visible channels") );
    _glayout->addWidget(l1,0,0);
-   QWidget *dummy = new QWidget(); dummy->setFixedWidth(16);
-   _glayout->addWidget(dummy,0,1);
-   QLabel *l2 = new QLabel( i18n("Visible channels") );
-   _glayout->addWidget(l2,0,2);
+      
+   QLabel *l2 = new QLabel( i18n("Available channels") );
+   _glayout->addWidget(l2,0,6);
 
    _qlwInactive = new DialogViewConfigurationWidget(frame);
    _qlwInactive->setDragDropMode(QAbstractItemView::DragDrop);
    _qlwInactive->setActiveList(false);
-   _glayout->addWidget(_qlwInactive,1,0);
+   _glayout->addWidget(_qlwInactive,1,6);
    connect(_qlwInactive, SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
            this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
 
+   addSpacer(1,1);
+   const KIcon& icon = KIcon( QLatin1String( "arrow-left" ));
+    moveLeftButton = new QPushButton(icon, "");
+    moveLeftButton->setEnabled(false);
+   _glayout->addWidget(moveLeftButton,1,2);
+   addSpacer(1,3);
+
+   const KIcon& icon2 = KIcon( QLatin1String( "arrow-right" ));
+    moveRightButton = new QPushButton(icon2, "");
+    moveRightButton->setEnabled(false);
+   _glayout->addWidget(moveRightButton,1,4);
+   addSpacer(1,5);
 
    _qlw = new DialogViewConfigurationWidget(frame);
-   _glayout->addWidget(_qlw,1,2);
+   _glayout->addWidget(_qlw,1,0);
     connect(_qlw  ,     SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
             this  ,       SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
 
@@ -337,8 +352,6 @@ void DialogViewConfiguration::apply()
       ControlManager::instance().announce(_view.getMixers().first()->id(), ControlChangeType::ControlList, QString("View Configuration Dialog"));
     else
       ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("View Configuration Dialog"));
-      
-   //_view.rebuildFromProfile();
 }
 
 void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)

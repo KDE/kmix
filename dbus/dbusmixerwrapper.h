@@ -54,12 +54,13 @@ class DBusMixerWrapper : public QObject
 
 		int balance();
 		void setBalance(int balance);
+	public slots:
+		void controlsChange(int changeType);
 	private:
+		void createDeviceWidgets();
+		void refreshVolumeLevels();
 		Mixer *m_mixer;
 		QString m_dbusPath;
-	private slots:
-		void slotControlChanged();
-		void slotControlsReconfigured();
 };
 
 #endif /* DBUSMIXERWRAPPER_H */

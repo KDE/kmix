@@ -24,6 +24,7 @@
 // Qt
 #include <qevent.h>
 #include <qframe.h>
+#include <QGridLayout>
 #include <QLabel>
 #include <QLayoutItem>
 #include <QPushButton>
@@ -37,11 +38,12 @@
 #include <kwindowsystem.h>
 
 // KMix
-#include "gui/guiprofile.h"
-#include "mdwslider.h"
+#include "apps/kmix.h"
 #include "core/mixer.h"
 #include "core/ControlManager.h"
-#include "apps/kmix.h"
+#include "core/GlobalConfig.h"
+#include "gui/guiprofile.h"
+#include "gui/mdwslider.h"
 
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW )
@@ -119,6 +121,9 @@ void ViewDockAreaPopup::controlsChange(int changeType)
       refreshVolumeLevels();
       break;
 
+    default:
+      // Other changes are not of interest to us
+      break;
   }
     
 }
@@ -190,14 +195,6 @@ void ViewDockAreaPopup::_setMixSet()
 	}
 
 }
-
-
-// void ViewDockAreaPopup::controlsReconfigured( const QString& mixer_ID )
-// {
-// 	kDebug(67100) << "RECONFIGURE AND RECREATE DOCK";
-// 	ViewBase::controlsReconfigured(mixer_ID);
-// }
-
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {

@@ -76,17 +76,7 @@ public:
     virtual QWidget* add(shared_ptr<MixDevice>) = 0;
 
     // This method is called after a configuration update (show/hide controls, split/unsplit).
-    // More complicated changes (e.g. order of controls) need a GUI rebuild - please use 
-    // rebuildFromProfile() then.
-    // The default implementation does nothing.
-    virtual void configurationUpdate();
-
-
-    // This method is called after a configuration update (in other words: after the user
-    // has clicked "OK" on the "show/hide" configuration dialog. The default implementation
-    // does nothing.
-    virtual void rebuildFromProfile();
-
+    virtual void configurationUpdate(); // TODO remove
 
     void load(KConfig *config);
     void save(KConfig *config);
@@ -127,11 +117,6 @@ public:
      */
     QList<QWidget *> _mdws;
 
-signals:
-    void rebuildGUI();
-    //void redrawMixer( const QString& mixer_ID );
-
-
 protected:
     MixSet _mixSet;
     QList<Mixer*> _mixers; // this might deprecate _mixer in the future. Currently only in use by ViewDockAreaPopup
@@ -146,9 +131,8 @@ protected:
     void resetMdws();
 
 public slots:
-   virtual void controlsReconfigured( const QString& mixer_ID );
-   virtual void refreshVolumeLevels();
-   virtual void configureView(); 
+   virtual void refreshVolumeLevels(); // TODO remove
+   virtual void configureView();  // TODO remove
    void toggleMenuBarSlot();
 
 protected slots:

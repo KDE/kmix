@@ -207,8 +207,6 @@ void DialogSelectMaster::apply()
     QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
     if ( button != 0 ) {
       QString control_id = button->objectName();
-      // A channel was selected by the user => emit the "newMasterSelected()" signal
-      //kDebug(67100) << "DialogSelectMaster::apply(): card=" << soundcard_id << ", channel=" << channel_id;
       if ( mixer == 0 ) {
          kError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixer=0)" << endl;
          return; // can not happen
@@ -217,7 +215,6 @@ void DialogSelectMaster::apply()
           mixer->setLocalMasterMD( control_id );
           Mixer::setGlobalMaster(mixer->id(), control_id, true);
 	  ControlManager::instance().announce(mixer->id(), ControlChangeType::MasterChanged, QString("Select Master Dialog"));
-          emit newMasterSelected( mixer->id(), control_id );
       }
    }
 }

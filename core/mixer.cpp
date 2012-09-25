@@ -246,7 +246,6 @@ bool Mixer::openIfValid()
             setLocalMasterMD(noMaster); // no master
         }
         connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
-        connect( _mixerBackend, SIGNAL(controlsReconfigured(QString)), SIGNAL(controlsReconfigured(QString)) );
     
         new DBusMixerWrapper(this, dbusPath());
     }

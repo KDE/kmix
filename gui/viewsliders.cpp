@@ -36,6 +36,7 @@
 
 // KMix
 #include "core/ControlManager.h"
+#include "core/GlobalConfig.h"
 #include "core/mixdevicecomposite.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
@@ -112,8 +113,7 @@ _configureViewButton = 0;
     emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     _layoutMDW->addWidget(emptyStreamHint);
 
-    qDebug() << "Found start 1";
-    createDeviceWidgets(); // TODO probably instead simply rely on an announce from the main class KMixWindow
+    createDeviceWidgets();
     
        // Add listener, as all derived classes are interested
    	ControlManager::instance().addListener(
@@ -160,6 +160,10 @@ void ViewSliders::controlsChange(int changeType)
       
     case ControlChangeType::Volume:
       refreshVolumeLevels();
+      break;
+      
+    default:
+      // Other changes are not of interest to us
       break;
   }
     

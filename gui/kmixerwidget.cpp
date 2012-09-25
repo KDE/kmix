@@ -118,9 +118,6 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       m_topLayout->addWidget(vbase);
       _views.push_back(vbase);
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
-      // *this will be deleted on rebuildGUI(), so lets queue the signal
-      connect( vbase, SIGNAL(rebuildGUI())   , parentWidget(), SLOT(recreateGUIwithSavingView()), Qt::QueuedConnection );
-
       kDebug() << "CONNECT ViewBase count " << vbase->getMixers().size();
       return true;
    }

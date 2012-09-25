@@ -64,10 +64,8 @@ private:
 public slots:
        void controlsChange(int changeType);
 
-//    virtual void controlsReconfigured( const QString& mixer_ID );
 private slots:
     void showPanelSlot();
-//     void controlsReconfigured(QString mixerId);
 };
 
 #endif

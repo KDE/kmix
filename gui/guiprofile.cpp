@@ -153,12 +153,10 @@ GUIProfile* GUIProfile::find(QString id)
   // Not thread safe (due to non-atomic contains()/get()
   if ( s_profiles.contains(id) )
   {
-    qDebug() << "Found " << id;
     return s_profiles[id];
   }
   else
   {
-    qDebug() << "NOT Found " << id;
     return 0;
   }
 }

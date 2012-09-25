@@ -28,6 +28,7 @@
 #include <klocale.h>
 
 #include "core/mixer.h"
+#include "core/ControlManager.h"
 
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
@@ -761,14 +762,7 @@ static devmap* get_widget_map(int type, int index)
 
 void Mixer_PULSE::emitControlsReconfigured()
 {
-    // Do not emit directly to ensure all connected slots are executed
-    // in their own event loop.
-	kDebug() << "PULSE emitControlsReconfigured: mixerId=" << _mixer->id();
-//	emit controlsReconfigured(_mixer->id());
-    QMetaObject::invokeMethod(this,
-                              "controlsReconfigured",
-                              Qt::QueuedConnection,
-                              Q_ARG(QString, _mixer->id()));
+    ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
 }
 
 void Mixer_PULSE::addWidget(int index)
@@ -820,14 +814,6 @@ void Mixer_PULSE::removeAllWidgets()
         outputRoles.clear();
 
     m_mixDevices.clear();
-
-    // TODO cesken LET-THIS-CHECK  Delete should not be required after migration to shared_ptr
-//    MixSet::iterator iter;
-//    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
-//    {
-//        delete *iter;
-//        m_mixDevices.erase(iter);
-//    }
     emitControlsReconfigured();
 }
 

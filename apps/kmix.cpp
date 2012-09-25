@@ -54,6 +54,7 @@
 // KMix
 #include "gui/guiprofile.h"
 #include "core/ControlManager.h"
+#include "core/GlobalConfig.h"
 #include "core/MasterControl.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
@@ -71,8 +72,6 @@
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
-
-GlobalConfig GlobalConfig::instanceObj;
 
 KMixWindow::KMixWindow(bool invisible) :
     KXmlGuiWindow(0,
@@ -125,9 +124,9 @@ KMixWindow::KMixWindow(bool invisible) :
       wrapper, SLOT(devicePlugged(const char*,QString,QString&)));
   connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), wrapper,
       SLOT(deviceUnplugged(QString)));
-  
-    //ControlManager::instance().addListener(QString(), ControlChangeType::ControlList, this, "KMix App");
-
+ 
+  // Send an initial volume refresh (otherwise all volumes are 0 until the next change)
+  ControlManager::instance().announce(QString(), ControlChangeType::Volume, QString("Startup"));
 }
 
 KMixWindow::~KMixWindow()
@@ -315,13 +314,6 @@ KMixWindow::setInitialSize()
   QPoint defPos = pos();
   QPoint pos = config.readEntry("Position", defPos);
   move(pos);
-}
-
-void
-KMixWindow::recreateDockWidget()
-{
-//	kDebug() << "recreate dock urgently requested";
-  updateDocking();
 }
 
 /**
@@ -605,11 +597,6 @@ KMixWindow::loadVolumes(QString postfix)
   delete cfg;
 }
 
-void
-KMixWindow::recreateGUIwithoutSavingView()
-{
-  recreateGUI(false);
-}
 
 void
 KMixWindow::recreateGUIwithSavingView()
@@ -873,35 +860,6 @@ KMixWindow::saveAndCloseView(int idx)
   << "Exit";
 }
 
-/**
- * Create or recreate the Mixer GUI elements
- */
-void
-KMixWindow::redrawMixer(const QString& mixer_ID)
-{
-  for (int i = 0; i < m_wsMixers->count(); ++i)
-    {
-      QWidget *w = m_wsMixers->widget(i);
-      if (w->inherits("KMixerWidget"))
-        {
-          KMixerWidget* kmw = (KMixerWidget*) w;
-          if (kmw->mixer()->id() == mixer_ID)
-            {
-              kDebug(67100)
-              << "KMixWindow::redrawMixer() " << mixer_ID << " is being redrawn";
-              kmw->loadConfig(KGlobal::config().data());
-
-              // Is the below needed? It is done on startup so copied it here...
-//               kmw->setTicks(GlobalConfig::instance().showTicks);
-//               kmw->setLabels(GlobalConfig::instance().showLabels);
-
-              return;
-            }
-        }
-    }
-
-  kWarning(67100)<< "KMixWindow::redrawMixer() Requested to redraw " << mixer_ID << " but I cannot find it :s";
-}
 
 void
 KMixWindow::fixConfigAfterRead()
@@ -1286,7 +1244,6 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
     else if ( labelsHasChanged || ticksHasChanged || systrayPopupHasChanged)
     {
       ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
-      //recreateGUI(true);
     }
 
   this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)

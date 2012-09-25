@@ -39,9 +39,6 @@ class DialogSelectMaster : public KDialog
     DialogSelectMaster(Mixer * = 0);
     ~DialogSelectMaster();
 
- signals:
-     void newMasterSelected(QString&, QString& );
-
  public slots:
     void apply();
 

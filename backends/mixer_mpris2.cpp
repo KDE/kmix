@@ -21,6 +21,7 @@
 
 #include "mixer_mpris2.h"
 #include "core/mixer.h"
+#include "core/ControlManager.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -307,13 +308,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 
 void Mixer_MPRIS2::notifyToReconfigureControls()
 {
-//  	emit controlChanged();
-
-	// TODO Why do we this controlsReconfigured thing???
-    QMetaObject::invokeMethod(this,
-		                              "controlsReconfigured",
-		                              Qt::QueuedConnection,
-		                              Q_ARG(QString, _mixer->id()));
+    ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
 }
 
 /**
