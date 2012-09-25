@@ -45,6 +45,10 @@ class Control : public QObject
     Q_PROPERTY(int channels READ channels);
     Q_PROPERTY(Category category READ category);
     Q_PROPERTY(bool canMonitor READ canMonitor);
+    Q_PROPERTY(bool canChangeTarget READ canChangeTarget);
+    Q_PROPERTY(QStringList alternateTargets READ alternateTargets);
+    Q_PROPERTY(QString currentTarget READ currentTarget);
+    Q_PROPERTY(int id READ id);
 public:
     typedef enum {
         FrontLeft,
@@ -62,6 +66,7 @@ public:
     } Category;
     Control(Category, QObject *parent = 0);
     ~Control();
+
     virtual QString displayName() const = 0;
     virtual QString iconName() const = 0;
     virtual int channels() const = 0;
@@ -70,21 +75,34 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMute(bool yes) = 0;
     virtual bool canMute() const = 0;
-    virtual bool canMonitor() const = 0;
-    virtual Category category() const;
+    virtual bool canMonitor() const;
+    virtual void changeTarget(Control *t);
+    virtual void stopMonitor();
+    virtual void startMonitor();
+
     int id() const;
+    Category category() const;
 
     int getVolume(int i) const {return getVolume((Channel)i);}
     void setVolume(int c, int v) {setVolume((Channel)c, v);}
     Q_INVOKABLE void subscribeMonitor(const QString &address, const QString &path);
+    Q_INVOKABLE void setTarget(int id);
+
+    QStringList alternateTargets() const;
+    void addAlternateTarget(Control *t);
+    void removeAlternateTarget(Control *t);
+    bool canChangeTarget() const;
+    QString currentTarget() const;
 signals:
     void volumeChanged(int c);
     void muteChanged(bool muted);
     void removed();
+    void currentTargetChanged(const QString &path);
+    void alternateTargetAdded(const QString &path);
+    void alternateTargetRemoved(const QString &path);
 protected:
-    virtual void stopMonitor() = 0;
-    virtual void startMonitor() = 0;
     void levelUpdate(int l);
+    void setCurrentTarget(Control *t);
 private slots:
     void removeMonitor(int);
 private:
@@ -93,6 +111,8 @@ private:
     static QAtomicInt s_id;
     QList<org::kde::KMix::ControlMonitor*> m_monitors;
     QSignalMapper *m_monitorMap;
+    QList<Control*> m_targets;
+    Control *m_currentTarget;
 };
 
 #endif //CONTROL_H

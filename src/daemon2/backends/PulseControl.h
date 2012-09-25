@@ -26,10 +26,13 @@
 
 namespace Backends {
 
+class PulseAudio;
+
 class PulseControl : public Control {
     Q_OBJECT
 public:
-    PulseControl(Category category, pa_context *cxt, QObject *parent = 0);
+    PulseControl(Category category, pa_context *cxt, PulseAudio *parent = 0);
+    PulseAudio *backend() const;
     QString displayName() const;
     QString iconName() const;
     int channels() const;
@@ -37,6 +40,7 @@ public:
     bool isMuted() const;
     bool canMute() const;
     bool canMonitor() const;
+    int pulseIndex() const;
 
 signals:
     void scheduleRefresh(int index);
@@ -51,6 +55,7 @@ protected:
     QString m_iconName;
     pa_cvolume m_volumes;
     bool m_muted;
+    PulseAudio *m_backend;
 };
 
 } //namespace Backends

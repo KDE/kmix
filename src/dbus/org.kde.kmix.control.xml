@@ -7,6 +7,22 @@
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
     <property access="read" name="category" type="i"/>
+    <property access="read" name="canChangeTarget" type="b"/>
+    <property access="read" name="alternateTargets" type="as"/>
+    <property access="read" name="currentTarget" type="s"/>
+    <property access="read" name="id" type="i"/>
+    <signal name="currentTargetChanged">
+        <arg name="path" type="s"/>
+    </signal>
+    <method name="setTarget">
+        <arg name="id" type="i" direction="in"/>
+    </method>
+    <signal name="alternateTargetAdded">
+        <arg name="path" type="s"/>
+    </signal>
+    <signal name="alternateTargetRemoved">
+        <arg name="path" type="s"/>
+    </signal>
     <signal name="muteChanged">
         <arg name="muted" type="b"/>
     </signal>

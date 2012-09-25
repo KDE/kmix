@@ -34,6 +34,7 @@ namespace org {
 
 class QSlider;
 class QPushButton;
+class QComboBox;
 
 class ControlSlider : public QWidget
 {
@@ -47,10 +48,13 @@ private slots:
     void updateVolume(int channel);
     void updateMute();
     void toggleMute();
+    void changeTarget(int idx);
+    void handleTargetChange();
 private:
     QPushButton *m_mute;
     org::kde::KMix::Control *m_control;
     QList<QSlider*> m_sliders;
+    QComboBox *m_targetSwitcher;
 };
 
 #endif // CONTROLSLIDER_H

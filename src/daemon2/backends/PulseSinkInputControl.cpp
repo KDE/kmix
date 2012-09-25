@@ -1,12 +1,15 @@
 #include "PulseSinkInputControl.h"
+#include "PulseSinkControl.h"
+#include "PulseAudio.h"
 
 #include <QtCore/QDebug>
 
 namespace Backends {
 
-PulseSinkInputControl::PulseSinkInputControl(pa_context *cxt, const pa_sink_input_info *info, QObject *parent)
+PulseSinkInputControl::PulseSinkInputControl(pa_context *cxt, const pa_sink_input_info *info, PulseSinkControl *initialSink, PulseAudio *parent)
     : PulseControl(Control::OutputStream, cxt, parent)
 {
+    setCurrentTarget(initialSink);
     update(info);
 }
 
@@ -33,6 +36,19 @@ void PulseSinkInputControl::update(const pa_sink_input_info *info)
         emit muteChanged(info->mute);
     }
     m_muted = info->mute;
+    if (info->sink != m_sinkIdx) {
+        m_sinkIdx = info->sink;
+        setCurrentTarget(backend()->sink(info->sink));
+    }
+}
+
+void PulseSinkInputControl::changeTarget(Control *t)
+{
+    PulseSinkControl *sink = dynamic_cast<PulseSinkControl*>(t);
+    if (sink) {
+        int idx = sink->pulseIndex();
+        pa_context_move_sink_input_by_index(m_context, m_idx, idx, cb_refresh, this);
+    }
 }
 
 }

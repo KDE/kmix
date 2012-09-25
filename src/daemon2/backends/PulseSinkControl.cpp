@@ -1,9 +1,10 @@
 #include "PulseSinkControl.h"
 #include <QtCore/QDebug>
+#include "PulseAudio.h"
 
 namespace Backends {
 
-PulseSinkControl::PulseSinkControl(pa_context *cxt, const pa_sink_info *info, QObject *parent)
+PulseSinkControl::PulseSinkControl(pa_context *cxt, const pa_sink_info *info, PulseAudio *parent)
     : PulseControl(Control::HardwareOutput, cxt, parent)
 {
     update(info);
@@ -33,6 +34,7 @@ void PulseSinkControl::update(const pa_sink_info *info)
     }
     m_muted = info->mute;
 }
+
 }
 
 #include "PulseSinkControl.moc"

@@ -28,6 +28,7 @@ QAtomicInt Control::s_id = 0;
 Control::Control(Category category, QObject *parent)
     : QObject(parent)
     , m_category(category)
+    , m_currentTarget(0)
 {
     new ControlAdaptor(this);
     m_id = s_id.fetchAndAddRelaxed(1);
@@ -72,6 +73,72 @@ void Control::levelUpdate(int l)
 {
     foreach(org::kde::KMix::ControlMonitor *monitor, m_monitors) {
         monitor->levelUpdate(l);
+    }
+}
+
+bool Control::canChangeTarget() const
+{
+    qDebug() << m_targets.size() << "targets";
+    return m_targets.size() > 1;
+}
+
+void Control::addAlternateTarget(Control *target)
+{
+    m_targets << target;
+    qDebug() << "Added alternate target" << m_targets;
+}
+
+void Control::removeAlternateTarget(Control *target)
+{
+    m_targets.removeOne(target);
+}
+
+QStringList Control::alternateTargets() const
+{
+    QStringList ret;
+    foreach(Control *c, m_targets) {
+        ret << QString("/controls/%1").arg(c->id());
+    }
+    return ret;
+}
+
+QString Control::currentTarget() const
+{
+    if (m_currentTarget)
+        return QString("/controls/%1").arg(m_currentTarget->id());
+    return QString();
+}
+
+void Control::setCurrentTarget(Control *t)
+{
+    m_currentTarget = t;
+    emit currentTargetChanged(QString("/controls/%1").arg(t->id()));
+}
+
+void Control::changeTarget(Control *t)
+{
+}
+
+void Control::startMonitor()
+{
+}
+
+void Control::stopMonitor()
+{
+}
+
+bool Control::canMonitor() const
+{
+    return false;
+}
+
+void Control::setTarget(int idx)
+{
+    foreach(Control *target, m_targets) {
+        if (target->id() == idx) {
+            changeTarget(target);
+            return;
+        }
     }
 }
 

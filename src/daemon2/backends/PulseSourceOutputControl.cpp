@@ -4,7 +4,7 @@
 
 namespace Backends {
 
-PulseSourceOutputControl::PulseSourceOutputControl(pa_context *cxt, const pa_source_output_info *info, QObject *parent)
+PulseSourceOutputControl::PulseSourceOutputControl(pa_context *cxt, const pa_source_output_info *info, PulseAudio *parent)
     : PulseControl(Control::InputStream, cxt, parent)
 {
     update(info);

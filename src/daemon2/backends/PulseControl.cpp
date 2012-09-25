@@ -21,12 +21,14 @@
 #include "PulseControl.h"
 #include <QtCore/QMap>
 #include <QtCore/QDebug>
+#include "PulseAudio.h"
 
 namespace Backends {
 
-PulseControl::PulseControl(Category category, pa_context *cxt, QObject *parent)
+PulseControl::PulseControl(Category category, pa_context *cxt, PulseAudio *parent)
     : Control(category, parent)
     , m_context(cxt)
+    , m_backend(parent)
 {
 }
 
@@ -89,6 +91,16 @@ void PulseControl::stopMonitor()
 bool PulseControl::canMonitor() const
 {
     return false;
+}
+
+int PulseControl::pulseIndex() const
+{
+    return m_idx;
+}
+
+PulseAudio *PulseControl::backend() const
+{
+    return m_backend;
 }
 
 } //namespace Backends

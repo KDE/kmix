@@ -7,8 +7,11 @@
 #include <KDE/KIcon>
 #include <QtGui/QPushButton>
 #include <QtGui/QProgressBar>
+#include <QtGui/QComboBox>
 
 #include "control_interface.h"
+
+const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
 
 ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
     : QWidget(parent)
@@ -60,9 +63,27 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
         layout->addWidget(m_mute);
     }
 
+    if (control->canChangeTarget()) {
+        m_targetSwitcher = new QComboBox(this);
+        int i = 0;
+        int currentIdx = 0;
+        foreach(QString path, control->alternateTargets()) {
+            org::kde::KMix::Control target(KMIX_DBUS_SERVICE, path, QDBusConnection::sessionBus());
+            m_targetSwitcher->insertItem(i, target.displayName(), target.id());
+            if (control->currentTarget() == path)
+                currentIdx = i;
+            i++;
+        }
+        m_targetSwitcher->setCurrentIndex(currentIdx);
+        connect(m_targetSwitcher, SIGNAL(currentIndexChanged(int)), this, SLOT(changeTarget(int)));
+        layout->addWidget(m_targetSwitcher);
+    }
+
     updateMute();
     connect(control, SIGNAL(volumeChanged(int)), this, SLOT(volumeChange(int)));
     connect(control, SIGNAL(muteChanged(bool)), this, SLOT(updateMute()));
+    connect(control, SIGNAL(currentTargetChanged(QString)), this, SLOT(handleTargetChange()));
+
 }
 
 ControlSlider::~ControlSlider()
@@ -97,6 +118,29 @@ void ControlSlider::toggleMute()
 {
     if (m_mute) {
         m_control->setMute(!m_control->mute());
+    }
+}
+
+void ControlSlider::changeTarget(int idx)
+{
+    if (m_targetSwitcher) {
+        m_control->setTarget(m_targetSwitcher->itemData(idx).toInt());
+    }
+}
+
+void ControlSlider::handleTargetChange()
+{
+    if (m_targetSwitcher) {
+        QString path = m_control->currentTarget();
+        org::kde::KMix::Control target(KMIX_DBUS_SERVICE, path, QDBusConnection::sessionBus());
+        int current = target.id();
+        qDebug() << "Target changed to" << current;
+        for(int i = 0;i<m_targetSwitcher->count();i++) {
+            if (m_targetSwitcher->itemData(i).toInt() == current) {
+                m_targetSwitcher->setCurrentIndex(i);
+                return;
+            }
+        }
     }
 }
 

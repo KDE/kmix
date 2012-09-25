@@ -60,7 +60,11 @@ void PulseAudio::sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, 
     }
     PulseSinkInputControl *control;
     if (!that->m_sinkInputs.contains(info->index)) {
-        control = new PulseSinkInputControl(cxt, info, that);
+        control = new PulseSinkInputControl(cxt, info, that->m_sinks[info->sink], that);
+        foreach(PulseSinkControl *sink, that->m_sinks) {
+            control->addAlternateTarget(sink);
+        }
+
         QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSinkInput(int)));
         that->m_sinkInputs[info->index] = control;
         that->registerControl(control);
@@ -68,6 +72,13 @@ void PulseAudio::sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, 
         control = that->m_sinkInputs[info->index];
         control->update(info);
     }
+}
+
+PulseSinkControl *PulseAudio::sink(int idx)
+{
+    if (m_sinks.contains(idx))
+        return m_sinks[idx];
+    return 0;
 }
 
 void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *info, int eol, gpointer user_data)

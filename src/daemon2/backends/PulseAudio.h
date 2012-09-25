@@ -35,6 +35,7 @@ public:
     PulseAudio(QObject *parent = 0);
     ~PulseAudio();
     bool open();
+    PulseSinkControl *sink(int idx);
 private slots:
     void refreshSink(int idx);
     void refreshSourceOutput(int idx);
