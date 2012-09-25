@@ -29,22 +29,20 @@ namespace Backends {
 class PulseControl : public Control {
     Q_OBJECT
 public:
-    PulseControl(pa_context *cxt, const pa_sink_info *info, QObject *parent = 0);
+    PulseControl(Category category, pa_context *cxt, QObject *parent = 0);
     QString displayName() const;
     QString iconName() const;
     int channels() const;
     int getVolume(Channel channel) const;
-    void setVolume(Channel c, int v);
     bool isMuted() const;
-    void setMute(bool yes);
     bool canMute() const;
-    void update(const pa_sink_info *info);
+
 signals:
     void scheduleRefresh(int index);
-private:
+protected:
     static void cb_refresh(pa_context *c, int success, void* user_data);
+    void updateVolumes(const pa_cvolume &volumes);
     pa_context *m_context;
-
     int m_idx;
     QString m_displayName;
     QString m_iconName;

@@ -24,6 +24,8 @@ set(kmixd_SRCS
 
     backends/PulseAudio.cpp
     backends/PulseControl.cpp
+    backends/PulseSourceOutputControl.cpp
+    backends/PulseSinkControl.cpp
 )
 
 qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.kmixd.xml

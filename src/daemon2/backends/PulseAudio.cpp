@@ -20,6 +20,8 @@
 
 #include "PulseAudio.h"
 #include "PulseControl.h"
+#include "PulseSourceOutputControl.h"
+#include "PulseSinkControl.h"
 #include <QtCore/QDebug>
 
 namespace Backends {
@@ -44,21 +46,44 @@ PulseAudio::~PulseAudio()
     }
 }
 
-void PulseAudio::sink_cb(pa_context *cxt, const pa_sink_info *info, int eol, gpointer user_data) {
+void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *info, int eol, gpointer user_data)
+{
     PulseAudio *that = static_cast<PulseAudio*>(user_data);
-    qDebug() << eol;
+    qDebug() << "source output" << eol;
     if (eol < 0) {
-        qDebug() << pa_context_errno(cxt);
         if (pa_context_errno(cxt) == PA_ERR_NOENTITY)
             return;
     }
     if (eol > 0) {
         return;
     }
-    PulseControl *control;
+    PulseSourceOutputControl *control;
+    qDebug() << "Stream output event for" << info->index;
+    if (!that->m_sourceOutputs.contains(info->index)) {
+        control = new PulseSourceOutputControl(cxt, info, that);
+        QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSourceOutput(int)));
+        that->m_sourceOutputs[info->index] = control;
+        that->registerControl(control);
+    } else {
+        control = that->m_sourceOutputs[info->index];
+        control->update(info);
+    }
+}
+
+void PulseAudio::sink_cb(pa_context *cxt, const pa_sink_info *info, int eol, gpointer user_data)
+{
+    PulseAudio *that = static_cast<PulseAudio*>(user_data);
+    if (eol < 0) {
+        if (pa_context_errno(cxt) == PA_ERR_NOENTITY)
+            return;
+    }
+    if (eol > 0) {
+        return;
+    }
+    PulseSinkControl *control;
     qDebug() << "Event for" << info->index;
     if (!that->m_sinks.contains(info->index)) {
-        control = new PulseControl(cxt, info, that);
+        control = new PulseSinkControl(cxt, info, that);
         QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSink(int)));
         that->m_sinks[info->index] = control;
         that->registerControl(control);
@@ -70,13 +95,16 @@ void PulseAudio::sink_cb(pa_context *cxt, const pa_sink_info *info, int eol, gpo
 
 void PulseAudio::refreshSink(int idx)
 {
-    qDebug() << "update queued for" << idx;
     pa_context_get_sink_info_by_index(m_context, idx, sink_cb, this);
+}
+
+void PulseAudio::refreshSourceOutput(int idx)
+{
+    pa_context_get_source_output_info(m_context, idx, source_output_cb, this);
 }
 
 void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uint32_t index, gpointer user_data)
 {
-    qDebug() << "subscription" << t;
     switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
         case PA_SUBSCRIPTION_EVENT_SINK:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
@@ -85,6 +113,18 @@ void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uin
                 pa_operation *op;
                 if (!(op = pa_context_get_sink_info_by_index(cxt, index, sink_cb, user_data))) {
                     qWarning() << "pa_context_get_sink_info_by_index failed";
+                    return;
+                }
+                pa_operation_unref(op);
+            }
+            break;
+        case PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT:
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+                //FIXME
+            } else {
+                pa_operation *op;
+                if (!(op = pa_context_get_source_output_info(cxt, index, source_output_cb, user_data))) {
+                    qWarning() << "pa_context_get_source_output_info failed";
                     return;
                 }
                 pa_operation_unref(op);
@@ -112,6 +152,10 @@ void PulseAudio::context_state_callback(pa_context *cxt, gpointer user_data)
         }
         pa_operation_unref(op);
         if (!(op = pa_context_get_sink_info_list(cxt, sink_cb, that))) {
+            return;
+        }
+        pa_operation_unref(op);
+        if (!(op = pa_context_get_source_output_info_list(cxt, source_output_cb, that))) {
             return;
         }
         pa_operation_unref(op);
