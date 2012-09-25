@@ -2,6 +2,10 @@
 #define CONTROLGROUPTAB_H
 
 #include <QtGui/QWidget>
+#include <QtCore/QHash>
+
+class QHBoxLayout;
+class ControlSlider;
 
 class OrgKdeKMixControlGroupInterface;
 namespace org {
@@ -17,8 +21,13 @@ class ControlGroupTab : public QWidget {
 public:
     ControlGroupTab(org::kde::KMix::ControlGroup *group, QWidget *parent);
     ~ControlGroupTab();
+private slots:
+    void controlAdded(const QString &path);
+    void controlRemoved(const QString &path);
 private:
     org::kde::KMix::ControlGroup *m_group;
+    QHBoxLayout *m_layout;
+    QHash<QString, ControlSlider*> m_controls;
 };
 
 #endif // CONTROLGROUPTAB_H

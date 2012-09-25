@@ -12,15 +12,32 @@ ControlGroupTab::ControlGroupTab(org::kde::KMix::ControlGroup *group, QWidget *p
     : QWidget(parent)
     , m_group(group)
 {
-    QHBoxLayout *m_layout = new QHBoxLayout(this);
+    m_layout = new QHBoxLayout(this);
     setLayout(m_layout);
+    connect(group, SIGNAL(controlAdded(QString)), this, SLOT(controlAdded(QString)));
+    connect(group, SIGNAL(controlRemoved(QString)), this, SLOT(controlRemoved(QString)));
     foreach(const QString &controlName, group->controls()) {
-        org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, controlName, QDBusConnection::sessionBus());
-        ControlSlider *slider = new ControlSlider(control, this);
-        m_layout->addWidget(slider);
+        controlAdded(controlName);
     }
 }
 
 ControlGroupTab::~ControlGroupTab()
 {
+}
+
+void ControlGroupTab::controlAdded(const QString &path)
+{
+    qDebug() << "Discovered control" << path;
+    org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, path, QDBusConnection::sessionBus());
+    ControlSlider *slider = new ControlSlider(control, this);
+    m_layout->addWidget(slider);
+    m_controls[path] = slider;
+}
+
+void ControlGroupTab::controlRemoved(const QString &path)
+{
+    qDebug() << "Lost control" << path;
+    ControlSlider *slider = m_controls[path];
+    slider->deleteLater();
+    m_layout->removeWidget(slider);
 }
