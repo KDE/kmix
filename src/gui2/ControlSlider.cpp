@@ -13,6 +13,7 @@
 ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
     : QWidget(parent)
     , m_control(control)
+    , m_mute(0)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     setLayout(layout);
@@ -45,9 +46,6 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
         connect(slider, SIGNAL(valueChanged(int)), mapper, SLOT(map()));
     }
 
-    m_mute = new QPushButton(this);
-    connect(m_mute, SIGNAL(clicked(bool)), this, SLOT(toggleMute()));
-
     layout->addWidget(labelContainer);
     layout->addWidget(sliderContainer);
     if (control->canMonitor()) {
@@ -56,7 +54,11 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
         new ControlMonitor(levelDisplay, control, levelDisplay);
         layout->addWidget(levelDisplay);
     }
-    layout->addWidget(m_mute);
+    if (control->canMute()) {
+        m_mute = new QPushButton(this);
+        connect(m_mute, SIGNAL(clicked(bool)), this, SLOT(toggleMute()));
+        layout->addWidget(m_mute);
+    }
 
     updateMute();
     connect(control, SIGNAL(volumeChanged(int)), this, SLOT(volumeChange(int)));
