@@ -4,6 +4,7 @@ set(kmix_KDEINIT_SRCS
    KMixApp.cpp
    ControlSlider.cpp
    ControlGroupTab.cpp
+   ControlMonitor.cpp
 )
 
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml
@@ -12,6 +13,8 @@ qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.controlgroup.xml
 	controlgroup_interface)
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.control.xml
 	control_interface)
+qt4_add_dbus_adaptor( kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.controlmonitor.xml
+    ControlMonitor.h ControlMonitor)
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 

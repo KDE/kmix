@@ -21,6 +21,8 @@
 #include "controladaptor.h"
 #include <QtDBus/QDBusConnection>
 
+#include "controlmonitor_interface.h"
+
 QAtomicInt Control::s_id = 0;
 
 Control::Control(Category category, QObject *parent)
@@ -30,6 +32,7 @@ Control::Control(Category category, QObject *parent)
     new ControlAdaptor(this);
     m_id = s_id.fetchAndAddRelaxed(1);
     QDBusConnection::sessionBus().registerObject(QString("/controls/%1").arg(m_id), this);
+    m_monitorMap = new QSignalMapper(this);
 }
 
 int Control::id() const
@@ -45,6 +48,31 @@ Control::Category Control::category() const
 Control::~Control()
 {
     emit removed();
+}
+
+void Control::subscribeMonitor(const QString &address, const QString &path)
+{
+    org::kde::KMix::ControlMonitor *monitor = new org::kde::KMix::ControlMonitor(address, path, QDBusConnection::sessionBus());
+    int pos = m_monitors.size();
+    m_monitors << monitor;
+    m_monitorMap->setMapping(monitor, pos);
+    connect(monitor, SIGNAL(removed()), m_monitorMap, SLOT(map()));
+    startMonitor();
+}
+
+void Control::removeMonitor(int pos)
+{
+    m_monitors.removeOne(m_monitors[pos]);
+    if (m_monitors.size() == 0) {
+        stopMonitor();
+    }
+}
+
+void Control::levelUpdate(int l)
+{
+    foreach(org::kde::KMix::ControlMonitor *monitor, m_monitors) {
+        monitor->levelUpdate(l);
+    }
 }
 
 #include "Control.moc"

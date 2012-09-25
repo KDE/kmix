@@ -23,6 +23,18 @@
 #include <QtCore/QObject>
 #include <QtCore/QMap>
 
+class ControlMonitor;
+class QSignalMapper;
+
+class OrgKdeKMixControlMonitorInterface;
+namespace org {
+    namespace kde {
+        namespace KMix {
+            typedef OrgKdeKMixControlMonitorInterface ControlMonitor;
+        }
+    }
+}
+
 class Control : public QObject
 {
     Q_OBJECT
@@ -32,6 +44,7 @@ class Control : public QObject
     Q_PROPERTY(bool canMute READ canMute);
     Q_PROPERTY(int channels READ channels);
     Q_PROPERTY(Category category READ category);
+    Q_PROPERTY(bool canMonitor READ canMonitor);
 public:
     typedef enum {
         FrontLeft,
@@ -57,19 +70,29 @@ public:
     virtual bool isMuted() const = 0;
     virtual void setMute(bool yes) = 0;
     virtual bool canMute() const = 0;
+    virtual bool canMonitor() const = 0;
     virtual Category category() const;
     int id() const;
 
     int getVolume(int i) const {return getVolume((Channel)i);}
     void setVolume(int c, int v) {setVolume((Channel)c, v);}
+    Q_INVOKABLE void subscribeMonitor(const QString &address, const QString &path);
 signals:
     void volumeChanged(int c);
     void muteChanged(bool muted);
     void removed();
+protected:
+    virtual void stopMonitor() = 0;
+    virtual void startMonitor() = 0;
+    void levelUpdate(int l);
+private slots:
+    void removeMonitor(int);
 private:
     Category m_category;
     int m_id;
     static QAtomicInt s_id;
+    QList<org::kde::KMix::ControlMonitor*> m_monitors;
+    QSignalMapper *m_monitorMap;
 };
 
 #endif //CONTROL_H

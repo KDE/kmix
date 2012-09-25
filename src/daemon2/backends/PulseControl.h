@@ -36,12 +36,15 @@ public:
     int getVolume(Channel channel) const;
     bool isMuted() const;
     bool canMute() const;
+    bool canMonitor() const;
 
 signals:
     void scheduleRefresh(int index);
 protected:
     static void cb_refresh(pa_context *c, int success, void* user_data);
     void updateVolumes(const pa_cvolume &volumes);
+    void stopMonitor();
+    void startMonitor();
     pa_context *m_context;
     int m_idx;
     QString m_displayName;

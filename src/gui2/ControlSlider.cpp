@@ -1,10 +1,12 @@
 #include "ControlSlider.h"
+#include "ControlMonitor.h"
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QSlider>
 #include <QtCore/QSignalMapper>
 #include <KDE/KIcon>
 #include <QtGui/QPushButton>
+#include <QtGui/QProgressBar>
 
 #include "control_interface.h"
 
@@ -48,6 +50,12 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
 
     layout->addWidget(labelContainer);
     layout->addWidget(sliderContainer);
+    if (control->canMonitor()) {
+        QProgressBar *levelDisplay = new QProgressBar(this);
+        levelDisplay->setMaximum(65536);
+        new ControlMonitor(levelDisplay, control, levelDisplay);
+        layout->addWidget(levelDisplay);
+    }
     layout->addWidget(m_mute);
 
     updateMute();

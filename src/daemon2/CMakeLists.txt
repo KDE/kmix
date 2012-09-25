@@ -35,6 +35,8 @@ qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.control.xml
     Control.h Control )
 qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.controlgroup.xml
     ControlGroup.h ControlGroup )
+qt4_add_dbus_interface(kmixd_SRCS ../dbus/org.kde.kmix.controlmonitor.xml
+	controlmonitor_interface)
 
 kde4_add_executable(kmixd ${kmixd_SRCS} ${kmixd_backend_SRCS})
 

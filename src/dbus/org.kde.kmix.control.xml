@@ -2,6 +2,7 @@
 "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="org.kde.KMix.Control">
+    <property access="read" name="canMonitor" type="b"/>
     <property access="read" name="displayName" type="s"/>
     <property access="read" name="iconName" type="s"/>
     <property access="readwrite" name="mute" type="b"/>
@@ -23,6 +24,10 @@
         <arg name="channel" type="i"/>
     </signal>
     <signal name="removed"/>
+    <method name="subscribeMonitor">
+        <arg name="address" type="s" direction="in"/>
+        <arg name="path" type="s" direction="in"/>
+    </method>
 <!--    <property access="read" name="volumes" type="{ii}">
         <annotation name="org.qtproject.QtDBus.QtTypeName" value="QMap<int, int>"/>
     </property> -->

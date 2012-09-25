@@ -78,6 +78,22 @@ void PulseControl::updateVolumes(const pa_cvolume &volumes)
     m_volumes = volumes;
 }
 
+void PulseControl::startMonitor()
+{
+    levelUpdate(100);
+    qDebug() << "Starting monitor";
+}
+
+void PulseControl::stopMonitor()
+{
+    qDebug() << "Stopping monitor";
+}
+
+bool PulseControl::canMonitor() const
+{
+    return true;
+}
+
 } //namespace Backends
 
 #include "PulseControl.moc"
