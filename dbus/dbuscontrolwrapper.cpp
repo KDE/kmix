@@ -119,7 +119,7 @@ void DBusControlWrapper::toggleMute()
 
 bool DBusControlWrapper::canMute()
 {
-	return m_md->playbackVolume().hasSwitch();
+	return m_md->hasMuteSwitch();
 }
 
 bool DBusControlWrapper::isMuted()

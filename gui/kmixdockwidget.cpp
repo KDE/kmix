@@ -134,6 +134,8 @@ void KMixDockWidget::controlsChange(int changeType)
       refreshVolumeLevels();
       break;
 
+    default:
+      ControlManager::warnUnexpectedChangeType(type, this);
   }
 }
 
@@ -148,7 +150,7 @@ void KMixDockWidget::createActions()
     QMenu *menu = contextMenu();
 
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    if ( md.get() != 0 && md->playbackVolume().hasSwitch() ) {
+    if ( md.get() != 0 && md->hasMuteSwitch() ) {
         // Put "Mute" selector in context menu
         KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
         action->setText( i18n( "M&ute" ) );
@@ -401,7 +403,7 @@ KMixDockWidget::contextMenuAboutToShow()
     if ( md != 0 && dockMuteAction != 0 ) {
     	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
     	bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
-        bool hasSwitch = vol.hasSwitch();
+        bool hasSwitch = vol.isCapture() ? vol.hasSwitch() : md->hasMuteSwitch();
         dockMuteAction->setEnabled( hasSwitch );
         dockMuteAction->setChecked( hasSwitch && !isInactive );
     }

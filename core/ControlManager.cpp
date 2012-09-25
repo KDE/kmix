@@ -108,6 +108,11 @@ ControlManager& ControlManager::instance()
     }
   }
 
+  void ControlManager::warnUnexpectedChangeType(ControlChangeType::Type type, QObject *obj)
+  {
+    kWarning() << "Unexpected type " << type << " received by " << obj->metaObject()->className();
+  }
+  
   void ControlManager::shutdownNow()
   {
     kDebug() << "Shutting down ControlManager";

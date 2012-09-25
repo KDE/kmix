@@ -364,7 +364,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 
 
 		//mute button
-		if ( showMuteButton && includePlayback && m_mixdevice->playbackVolume().hasSwitch() )
+		if ( showMuteButton && includePlayback && m_mixdevice->hasMuteSwitch() )
 		{
 			m_qcb =  new QToolButton(this);
 			m_qcb->setAutoRaise(true);
@@ -446,7 +446,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 				addMediaControls( volLayout );
 		}
 
-		if ( showMuteButton && includePlayback && m_mixdevice->playbackVolume().hasSwitch() )
+		if ( showMuteButton && includePlayback && m_mixdevice->hasMuteSwitch() )
 		{
 			m_qcb =  new QToolButton(this);
 			m_qcb->setAutoRaise(true);
@@ -905,7 +905,7 @@ void MDWSlider::toggleMuted()
 
 void MDWSlider::setMuted(bool value)
 {
-	if ( m_mixdevice->playbackVolume().hasSwitch() ) {
+	if ( m_mixdevice->hasMuteSwitch() ) {
 		m_mixdevice->setMuted( value );
 		m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 	}
@@ -1017,7 +1017,7 @@ void MDWSlider::update()
 	  if (debugMe) kDebug() << "The update() PCM:0 playback state" << mixDevice()->isMuted()
 	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
 
-	if ( m_slidersPlayback.count() != 0 || m_mixdevice->playbackVolume().hasSwitch() )
+	if ( m_slidersPlayback.count() != 0 || m_mixdevice->hasMuteSwitch() )
 		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
 	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
 		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, m_mixdevice->isNotRecSource() );

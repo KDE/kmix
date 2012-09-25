@@ -160,7 +160,7 @@ void ViewSliders::controlsChange(int changeType)
       break;
       
     default:
-      // Other changes are not of interest to us
+      ControlManager::warnUnexpectedChangeType(type, this);
       break;
   }
     
@@ -278,7 +278,7 @@ void ViewSliders::_setMixSet()
 		}
 		
                 // Now check whether subcontrols match
-                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->playbackVolume().hasSwitch()) );
+                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->hasMuteSwitch()) );
                 bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
                 bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
                 bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;

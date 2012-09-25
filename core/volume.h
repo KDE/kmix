@@ -112,8 +112,26 @@ friend class MixDevice;
     long volumeSpan();
     int  count();
     
-    bool hasSwitch()         //  { return _hasSwitch; } // TODO 
-    { return _hasSwitch || (!isCapture() && hasVolume() ) ; } // "|| hasVolume()", because we simulate a switch, if it is not available as hardware.
+    bool hasSwitch()           
+    {
+      if (isCapture())
+      {
+	return _hasSwitch;
+      }
+      else
+      {
+		if ( disallowSwitchDisallowRead )
+	{
+	  kError() << "hasSwitch() must only be called for capture volumes. I will crash now to retreieve a stacktrace!!!";
+	  QObject* obj = 0;
+	  obj->blockSignals(true);
+	  return _hasSwitch;
+	}
+	else
+	  kDebug() << "Allow playback switch read once";
+      }
+	return _hasSwitch;
+    };
     bool hasVolume()           { return (_maxVolume != _minVolume); }
     bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
     
@@ -132,6 +150,8 @@ friend class MixDevice;
     // access it, when private. Strange, as operator<<() is declared friend.
     static int    _channelMaskEnum[9];
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
+    void hasSwitchDisallowRead() { disallowSwitchDisallowRead = true; };
+    static Volume& zeroPlaybackVolume() { return *zeroPlaybackVolumeInstance; };
     
 protected:
     long          _chmask;
@@ -142,13 +162,33 @@ protected:
    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
    // these functions. Our friend class MixDevice will handle that gracefully for us.
    void setSwitch( bool active );
-   bool isSwitchActivated()   { return _switchActivated && hasSwitch(); }
+   bool isSwitchActivated()
+   {
+      if (isCapture())
+      {
+	return _switchActivated && hasSwitch();
+      }
+      else
+      {
+	if ( disallowSwitchDisallowRead )
+	{
+	  kError() << "isSwitchActivated() must only be called for capture volumes. I will crash now to retreieve a stacktrace!!!";
+	  QObject* obj = 0;
+	  obj->blockSignals(true);
+	  return _switchActivated && hasSwitch();
+	}
+      }
+	  return _switchActivated && hasSwitch();
+
+  };
 
 
 private:
     // constructor for dummy volumes
     Volume();
 
+    static Volume* zeroPlaybackVolumeInstance;
+    
     void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
     long volrange( long vol );
@@ -157,6 +197,7 @@ private:
     bool _switchActivated;
     SwitchType _switchType;
     bool _isCapture;
+  bool disallowSwitchDisallowRead;
 };
 
 class VolumeChannel

@@ -42,14 +42,6 @@ class DBusControlWrapper;
 #include <QObject>
 #include <QString>
 
-
-// !!! This SHOULD be subclassed (MixDeviceVolume, MixDeviceEnum).
-//     The isEnum() works out OK as a workaround, but it is insane
-//     in the long run.
-//     Additionally there might be Implementations for virtual MixDevice's, e.g.
-//     MixDeviceRecselector, MixDeviceCrossfader.
-//     I am not sure if a MixDeviceBalancing would work out.
-
 /**
  * This is the abstraction of a single control of a sound card, e.g. the PCM control. A control
  * can contain the 5 following subcontrols: playback-volume, capture-volume, playback-switch,
@@ -170,6 +162,7 @@ public:
    // "mute on", or does it mean "playback on", or "Capture active", or ...
    virtual bool isMuted();
    virtual void setMuted(bool value);
+   virtual bool hasMuteSwitch();
    virtual void toggleMute();
    virtual bool isRecSource();
    virtual bool isNotRecSource();
@@ -212,6 +205,8 @@ public:
    unsigned int enumId();
    QList<QString>& enumValues();
 
+   bool hasPhysicalMuteSwitch();
+   
    bool read( KConfig *config, const QString& grp );
    bool write( KConfig *config, const QString& grp );
 
@@ -230,6 +225,9 @@ private:
 
    DBusControlWrapper *_dbusControlWrapper;
 
+   bool physicalMuteSwitch;
+   bool muted;
+   
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
    // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:
    // Type        Shortcut  Restore

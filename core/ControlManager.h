@@ -106,6 +106,7 @@ public:
   void removeListener(QObject* target);
   void removeListener(QObject* target, QString sourceId);
   
+  static void warnUnexpectedChangeType(ControlChangeType::Type type, QObject *obj);
   void shutdownNow();
   
 private:

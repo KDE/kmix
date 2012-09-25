@@ -26,7 +26,7 @@
 
 #include <kdebug.h>
 
-
+Volume* Volume::zeroPlaybackVolumeInstance = new Volume(0,0,true,false);
 
 int Volume::_channelMaskEnum[9] =
 { MLEFT, MRIGHT, MCENTER,
@@ -60,6 +60,7 @@ Volume::Volume()
 	_minVolume = 0;
 	_maxVolume = 0;
 	_hasSwitch = false;
+	disallowSwitchDisallowRead = false;
 }
 
 VolumeChannel::VolumeChannel() {}
@@ -100,6 +101,7 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasS
 	_isCapture       = isCapture;
 	//_muted           = false;
 	_switchActivated = false;
+	disallowSwitchDisallowRead = false;
 }
 
 QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const

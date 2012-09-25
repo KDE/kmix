@@ -801,7 +801,8 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 int
 Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
-    Volume& volumePlayback = md->playbackVolume();
+    bool virtualZero = !md->hasPhysicalMuteSwitch() && md->isMuted();
+    Volume& volumePlayback = virtualZero ? Volume::zeroPlaybackVolume() : md->playbackVolume();
     Volume& volumeCapture  = md->captureVolume();
 
     int devnum = id2num(id);

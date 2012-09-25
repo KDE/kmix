@@ -122,7 +122,7 @@ void ViewDockAreaPopup::controlsChange(int changeType)
       break;
 
     default:
-      // Other changes are not of interest to us
+      ControlManager::warnUnexpectedChangeType(type, this);
       break;
   }
     
