@@ -4,7 +4,7 @@
 #include <QtGui/QWidget>
 #include <QtCore/QHash>
 
-class QHBoxLayout;
+class QLayout;
 class ControlSlider;
 
 class OrgKdeKMixControlGroupInterface;
@@ -26,7 +26,7 @@ private slots:
     void controlRemoved(const QString &path);
 private:
     org::kde::KMix::ControlGroup *m_group;
-    QHBoxLayout *m_layout;
+    QLayout *m_layout;
     QHash<QString, ControlSlider*> m_controls;
 };
 

@@ -1,6 +1,6 @@
 #include "ControlGroupTab.h"
 #include "ControlSlider.h"
-#include <QtGui/QHBoxLayout>
+#include <QtGui/QVBoxLayout>
 
 #include "controlgroup_interface.h"
 #include "control_interface.h"
@@ -12,7 +12,7 @@ ControlGroupTab::ControlGroupTab(org::kde::KMix::ControlGroup *group, QWidget *p
     : QWidget(parent)
     , m_group(group)
 {
-    m_layout = new QHBoxLayout(this);
+    m_layout = new QVBoxLayout(this);
     setLayout(m_layout);
     connect(group, SIGNAL(controlAdded(QString)), this, SLOT(controlAdded(QString)));
     connect(group, SIGNAL(controlRemoved(QString)), this, SLOT(controlRemoved(QString)));

@@ -28,7 +28,7 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
     labelLayout->addWidget(label);
 
     QWidget *sliderContainer = new QWidget(this);
-    QHBoxLayout *sliderLayout = new QHBoxLayout(sliderContainer);
+    QVBoxLayout *sliderLayout = new QVBoxLayout(sliderContainer);
 
     QSignalMapper *mapper = new QSignalMapper(this);
     connect(mapper, SIGNAL(mapped(int)), this, SLOT(updateVolume(int)));
@@ -37,6 +37,7 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
         sliderLayout->addWidget(slider);
         slider->setMaximum(65536);
         slider->setValue(control->getVolume(i));
+        slider->setOrientation(Qt::Horizontal);
         mapper->setMapping(slider, i);
         m_sliders << slider;
         connect(slider, SIGNAL(valueChanged(int)), mapper, SLOT(map()));
