@@ -713,7 +713,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
     snd_mixer_elem_t *elem = getMixerElem( devnum );
     if ( !elem )
     {
-        return 0;
+        return Mixer::OK_UNCHANGED;
     }
 
     vol = Volume::MNONE;
@@ -734,8 +734,10 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
                    case Volume::REARSIDERIGHT: ret = snd_mixer_selem_get_playback_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , &vol); break;
                    default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.chid << " ... please report this";  break;
               }
-              if ( ret != 0 ) kDebug() << "readVolumeFromHW(" << devnum << ") [get_playback_volume] failed, errno=" << ret;
-              else volumePlayback.setVolume( vc.chid, vol);
+              if ( ret != 0 )
+		kDebug() << "readVolumeFromHW(" << devnum << ") [get_playback_volume] failed, errno=" << ret;
+              else
+		volumePlayback.setVolume( vc.chid, vol);
               //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << i << ", vol=" << vol; }
        }
     } // has playback volume
@@ -791,7 +793,9 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 
     }
 
-    return 0;
+    // The state Mixer::OK_UNCHANGED is not implemented. It is not strictly required for
+    //  non-pollling backends. 
+    return Mixer::OK;
 }
 
 int

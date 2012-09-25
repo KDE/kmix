@@ -58,9 +58,6 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-//#include <QFormLayout>
-
-
 
 /**
  * Generic View implementation. This can hold now all kinds of controls (not just Sliders, as
@@ -86,7 +83,6 @@ _configureViewButton = 0;
       _layoutMDW->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
       _layoutSliders = new QHBoxLayout();
       _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-      // Place enums in an own box right from the sliders.
    }
    _layoutSliders->setContentsMargins(0,0,0,0);
    _layoutSliders->setSpacing(0);
@@ -159,6 +155,7 @@ void ViewSliders::controlsChange(int changeType)
       break;
       
     case ControlChangeType::Volume:
+      kDebug() << "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
       refreshVolumeLevels();
       break;
       
@@ -396,6 +393,9 @@ void ViewSliders::refreshVolumeLevels()
                 }
                 // --- end ---
 #endif
+	  bool debugMe = (mdw->mixDevice()->id() == "PCM:0" );
+	  if (debugMe) kDebug() << "Old PCM:0 playback state" << mdw->mixDevice()->isMuted()
+	    << ", vol=" << mdw->mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
 
                 mdw->update();
             }

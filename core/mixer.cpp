@@ -577,9 +577,12 @@ void Mixer::commitVolumeChange( shared_ptr<MixDevice> md )
       // We also cannot rely on a notification from the driver (SocketNotifier), because
       // nothing has changed, and so there s nothing to notify.
       _mixerBackend->readSetFromHWforceUpdate();
+      kDebug() << "commiting a control with capture volume, that might announce: " << md->id();
       _mixerBackend->readSetFromHW();
    }
-   ControlManager::instance().announce(md->mixer()->id(), ControlChangeType::Volume, QString("Mixer.commitVolumeChange()"));
+      kDebug() << "commiting announces the change of: " << md->id();
+      // We announce the change we did, so all other parts of KMix can pick up the change
+      ControlManager::instance().announce(md->mixer()->id(), ControlChangeType::Volume, QString("Mixer.commitVolumeChange()"));
 }
 
 // @dbus, used also in kmix app

@@ -178,31 +178,33 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
 
 
 
-void DialogViewConfiguration::slotDropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList )
+/**
+ * Drop an item from one list to the other
+ */
+void DialogViewConfiguration::slotDropped ( DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList )
 {
-    //kDebug() << "slotDropped: active=" << sourceIsActiveList;
 //kDebug() << "dropped item (index" << index << "): " << item->_id << item->_shown << item->_name << item->_splitted << item->_iconName;
 
-    if (list == _qlw) {
+    if ( list == _qlw ) {
         //DialogViewConfigurationItem* after = index > 0 ? static_cast<DialogViewConfigurationItem *>(list->item(index-1)) : 0;
-	
+
         //kDebug() << "after" << after->text() << after->internalTag();
-        if (sourceIsActiveList) {
+        if ( sourceIsActiveList ) {
             // has been dragged within the active list (moved).
-	    _qlw->insertItem(index, item);
+            _qlw->insertItem ( index, item );
             //moveActive(item, after);
         } else {
             // dragged from the inactive list to the active list
-	    _qlw->insertItem(index, item);
+            _qlw->insertItem ( index, item );
             //insertActive(item, after, true);
         }
-    } else if (list == _qlwInactive) {
+    }
+    else if ( list == _qlwInactive ) {
         // has been dragged to the inactive list -> remove from the active list.
         //removeActive(item);
-	    _qlwInactive->insertItem(index, item);
+        _qlwInactive->insertItem ( index, item );
     }
-    else {
-    }
+
 }
 
 
@@ -211,6 +213,49 @@ void DialogViewConfiguration::addSpacer(int row, int col)
 	QWidget *dummy = new QWidget();
 	dummy->setFixedWidth(4);
 	_glayout->addWidget(dummy,row,col);
+}
+
+
+void DialogViewConfiguration::moveSelection(DialogViewConfigurationWidget* from, DialogViewConfigurationWidget* to)
+{
+  kDebug() << "MOVE!!!"; int i=0;
+  foreach ( QListWidgetItem* item, from->selectedItems() )
+  {
+    kDebug() << "MOVE " << ++i << ":" << item;
+    to->addItem ( item );
+    from->removeItemWidget(item);
+    to->repaint();
+  }
+  
+//     QListWidgetItem itemCopy (*(from->selectedItems()[0]));
+//     kDebug() << "MOVE " << ++i << ":" << &itemCopy;
+//     to->addItem ( &itemCopy );
+//     from->removeItemWidget(&itemCopy);
+
+  
+}
+
+void DialogViewConfiguration::moveSelectionToActiveList()
+{
+  moveSelection(_qlwInactive, _qlw);
+}
+
+void DialogViewConfiguration::moveSelectionToInactiveList()
+{
+  moveSelection(_qlw, _qlwInactive);
+}
+
+void DialogViewConfiguration::selectionChangedActive()
+{
+//   bool activeIsNotEmpty = _qlw->selectedItems().isEmpty();
+  moveRightButton->setEnabled(! _qlw->selectedItems().isEmpty());
+  moveLeftButton->setEnabled(false);
+}
+
+void DialogViewConfiguration::selectionChangedInactive()
+{
+  moveLeftButton->setEnabled(! _qlwInactive->selectedItems().isEmpty());
+  moveRightButton->setEnabled(false);
 }
 
 /**
@@ -232,18 +277,20 @@ void DialogViewConfiguration::createPage()
    _glayout->addWidget(_qlwInactive,1,6);
    connect(_qlwInactive, SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
            this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
-
+   
    addSpacer(1,1);
    const KIcon& icon = KIcon( QLatin1String( "arrow-left" ));
     moveLeftButton = new QPushButton(icon, "");
     moveLeftButton->setEnabled(false);
    _glayout->addWidget(moveLeftButton,1,2);
+   connect(moveLeftButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToActiveList()));
    addSpacer(1,3);
 
    const KIcon& icon2 = KIcon( QLatin1String( "arrow-right" ));
     moveRightButton = new QPushButton(icon2, "");
     moveRightButton->setEnabled(false);
    _glayout->addWidget(moveRightButton,1,4);
+   connect(moveRightButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToInactiveList()));
    addSpacer(1,5);
 
    _qlw = new DialogViewConfigurationWidget(frame);
@@ -303,6 +350,12 @@ void DialogViewConfiguration::createPage()
             /*}*/
       } // is not enum
    } // for all MDW's
+
+   
+      connect(_qlwInactive, SIGNAL(itemSelectionChanged()),
+           this  ,         SLOT(selectionChangedInactive()));
+      connect(_qlw, SIGNAL(itemSelectionChanged()),
+           this  ,         SLOT(selectionChangedActive()));
 
 //   scrollArea->updateGeometry();
    updateGeometry();

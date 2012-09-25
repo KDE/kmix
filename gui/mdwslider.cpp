@@ -92,13 +92,6 @@ MDWSlider::~MDWSlider()
 	{
 		delete slider;
 	}
-
-	/*
-	static int destructorCalls = 1;
-	kDebug() << "Destroying id=" << this->mixDevice()->id() << "desctructorCalls=" << destructorCalls;
-	++destructorCalls;
-	*/
-
 }
 
 void MDWSlider::createActions()
@@ -334,9 +327,6 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		controlLayout->addWidget( labelSpacer );
 		labelSpacer->installEventFilter(this);
 
-		//controlLayout->addSpacing( 3 );
-
-
 		// sliders
 		QHBoxLayout *volLayout = new QHBoxLayout( );
 		volLayout->setAlignment(Qt::AlignHCenter|Qt::AlignBottom);
@@ -455,14 +445,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 			if ( wantsMediaControls )
 				addMediaControls( volLayout );
 		}
-		else
-		{
-			//row2->addStretch(1);
-		}
 
 		if ( showMuteButton && includePlayback && m_mixdevice->playbackVolume().hasSwitch() )
 		{
-			//row2->addSpacing( 3 );
 			m_qcb =  new QToolButton(this);
 			m_qcb->setAutoRaise(true);
 			m_qcb->setCheckable(false);
@@ -493,7 +478,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
       else
 	mediaLayout = new QHBoxLayout();
 
-      if ( mixDevice()->hasMediaPlayControl())
+      if ( mixDevice()->hasMediaPrevControl())
       {
 	QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout);
 	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPrev(bool)) ); 
@@ -503,7 +488,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 	QToolButton *lbl = addMediaButton("media-playback-start", mediaLayout);
 	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)) ); 
       }
-      if ( mixDevice()->hasMediaPlayControl())
+      if ( mixDevice()->hasMediaNextControl())
       {
 	QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout);
 	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaNext(bool)) ); 
@@ -861,7 +846,10 @@ void MDWSlider::volumeChange( int )
 //  }
 	if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
 	if (m_slidersCapture.count()  > 0) volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
+
+	bool oldViewBlockSignalState = m_view->blockSignals(true);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+	m_view->blockSignals(oldViewBlockSignalState);
 }
 
 void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref_sliders  )
@@ -951,31 +939,53 @@ void MDWSlider::increaseVolume()
   increaseOrDecreaseVolume(false);
 }
 
+/**
+ * TOOD This should go to the Volume class, so we can use it anywhere,
+ * like mouse wheel, OSD, Keyboard Shortcuts
+ */
+long MDWSlider::calculateStepIncrement ( Volume&vol, bool decrease )
+{
+  	long inc = vol.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
+	if ( inc == 0 )	inc = 1;
+	if ( decrease ) inc *= -1;
+	return inc;
+}
+
 void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 {
 	Volume& volP = m_mixdevice->playbackVolume();
-	long inc = volP.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
-	if ( inc == 0 )	inc = 1;
-	if ( decrease ) inc *= -1;
-//	if ( mixDevice()->id() == "Headphone:0" )
-//	  debugMe =true;
-//	if (debugMe)
-//	  kDebug(67100) << ( decrease ? "decrease by " : "increase by " ) << inc ;
+	long inc = calculateStepIncrement(volP, decrease);
+	
+	if ( mixDevice()->id() == "PCM:0" )
+	  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
+	
 	if ( !decrease && m_mixdevice->isMuted())
 	{   // increasing form muted state: unmute and start with a low volume level
+	if ( mixDevice()->id() == "PCM:0" )
+	  kDebug() << "set all to " << inc << "muted old=" << m_mixdevice->isMuted();
+	    
 	    m_mixdevice->setMuted(false);
+	  kDebug() << "set all to " << inc << "muted between=" << m_mixdevice->isMuted();
 	    volP.setAllVolumes(inc);
+	  kDebug() << "set all to " << inc << "muted after=" << m_mixdevice->isMuted();
 	}
 	else
+	{
 	    volP.changeAllVolumes(inc);
-
+	if ( mixDevice()->id() == "PCM:0" )
+	  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
+	}
+	
 	Volume& volC = m_mixdevice->captureVolume();
-	inc = volC.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
-	if ( inc == 0 ) inc = 1;
-	if ( decrease ) inc *= -1;
-	volC.changeAllVolumes(inc);
+	inc = calculateStepIncrement(volC, decrease);
 
+	// TODO I should possibly not block, as the changes that come back from the Soundcard
+	//      will be ignored (e.g. because of capture groups)
+	kDebug() << "MDWSlider is blocking signals for " << m_view->id();
+	bool oldViewBlockSignalState = m_view->blockSignals(true);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+	kDebug() << "MDWSlider is unblocking signals for " << m_view->id();
+	m_view->blockSignals(oldViewBlockSignalState);
 }
 
 /**
@@ -999,11 +1009,13 @@ void MDWSlider::moveStream(QString destId)
 }
 
 /**
-   This is called whenever there are volume updates pending from the hardware for this MDW.
-   At the moment it is called regulary via a QTimer (implicitely).
+ * This is called whenever there are volume updates pending from the hardware for this MDW.
  */
 void MDWSlider::update()
 {
+	  bool debugMe = (mixDevice()->id() == "PCM:0" );
+	  if (debugMe) kDebug() << "The update() PCM:0 playback state" << mixDevice()->isMuted()
+	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
 
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->playbackVolume().hasSwitch() )
 		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
@@ -1021,40 +1033,46 @@ void MDWSlider::update()
 
 void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, bool muted)
 {
-	for( int i=0; i<ref_sliders.count(); i++ ) {
+  	  bool debugMe = (mixDevice()->id() == "PCM:0" );
+	  if (debugMe)
+	  {
+	    kDebug() << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
+	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
+	  }
+  
+	for( int i=0; i<ref_sliders.count(); i++ )
+	{
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
-		long useVolume;
-		if ( muted )
-		    useVolume = 0;
-        else
-            useVolume = vol.getVolume(chid);
+		long useVolume = muted ? 0 : vol.getVolume(chid);
 
-		slider->blockSignals( true );
+		bool oldBlockState = slider->blockSignals( true );
 		slider->setValue( useVolume );
 		if ( slider->inherits( "KSmallSlider" ) )
 		{
 			((KSmallSlider*)slider)->setGray( m_mixdevice->isMuted() );
 		}
-		slider->blockSignals( false );
+		slider->blockSignals( oldBlockState );
 	} // for all sliders
 
 
 	// update mute
 
-	if( m_qcb != 0 ) {
-		m_qcb->blockSignals( true );
+	if( m_qcb != 0 )
+	{
+		bool oldBlockState = m_qcb->blockSignals( true );
 		if (m_mixdevice->isMuted())
 			m_qcb->setIcon( QIcon( loadIcon("audio-volume-muted") ) );
 		else
 			m_qcb->setIcon( QIcon( loadIcon("audio-volume-high") ) );
-		m_qcb->blockSignals( false );
+		m_qcb->blockSignals( oldBlockState );
 	}
 
-	if( m_captureCheckbox ) {
-		m_captureCheckbox->blockSignals( true );
+	if( m_captureCheckbox )
+	{
+		bool oldBlockState = m_captureCheckbox->blockSignals( true );
 		m_captureCheckbox->setChecked( m_mixdevice->isRecSource() );
-		m_captureCheckbox->blockSignals( false );
+		m_captureCheckbox->blockSignals( oldBlockState );
 	}
 
 }

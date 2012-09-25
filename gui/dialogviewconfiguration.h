@@ -116,11 +116,17 @@ class DialogViewConfiguration : public KDialog
  private slots:
    void slotDropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList );
 
+   void moveSelectionToActiveList();
+   void moveSelectionToInactiveList();
+   void selectionChangedActive();
+   void selectionChangedInactive();
+   
  private:
     //void dragEnterEvent(QDragEnterEvent *event);
     void prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet);
     void createPage();
     void addSpacer(int row, int col);
+    void moveSelection(DialogViewConfigurationWidget* from, DialogViewConfigurationWidget* to);
     QVBoxLayout* _layout;
     ViewBase&    _view;
     QWidget * frame;

@@ -166,8 +166,7 @@ private:
     QList<QAbstractSlider *> m_slidersPlayback;
     QList<QAbstractSlider *> m_slidersCapture;
 
-//    QList<QWidget *> m_labelsPlayback;
-//    QList<QWidget *> m_labelsCapture;
+    long calculateStepIncrement ( Volume&vol, bool decrease );
 };
 
 #endif

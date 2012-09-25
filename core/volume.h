@@ -142,7 +142,7 @@ protected:
    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
    // these functions. Our friend class MixDevice will handle that gracefully for us.
    void setSwitch( bool active );
-   bool isSwitchActivated()   { return _switchActivated && _hasSwitch; }
+   bool isSwitchActivated()   { return _switchActivated && hasSwitch(); }
 
 
 private:

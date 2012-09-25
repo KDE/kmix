@@ -92,14 +92,14 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 	  QString(), // All mixers (as the Global master Mixer might change)
 	ControlChangeType::Volume,
 	this,
-	QString("ViewDockAreaPopup")	  
+	QString("KMixDockWidget")	  
 	);
 	
 	 ControlManager::instance().addListener(
 	  QString(), // All mixers (as the Global master Mixer might change)
 	ControlChangeType::MasterChanged,
 	this,
-	QString("ViewDockAreaPopup")	  
+	QString("KMixDockWidget")	  
 	);
 	 
 	      // Refresh in all cases. When there is no Golbal Master we still need

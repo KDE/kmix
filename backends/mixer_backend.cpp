@@ -124,7 +124,13 @@ void Mixer_Backend::readSetFromHW()
 
 	foreach (shared_ptr<MixDevice> md, m_mixDevices )
 	{
+	  bool debugMe = (md->id() == "PCM:0" );
+	  if (debugMe) kDebug() << "Old PCM:0 playback state" << md->isMuted()
+	    << ", vol=" << md->playbackVolume().getAvgVolume(Volume::MALL);
+	    
 		int retLoop = readVolumeFromHW( md->id(), md );
+	  if (debugMe) kDebug() << "New PCM:0 playback state" << md->isMuted()
+	    << ", vol=" << md->playbackVolume().getAvgVolume(Volume::MALL);
 		if (md->isEnum() ) {
 			/*
 			 * This could be reworked:
@@ -155,6 +161,8 @@ void Mixer_Backend::readSetFromHW()
 			//_fastPollingEndsAt = fastPollingEndsAt;
 			kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
 		}
+
+		kDebug() << "Announcing the readSetFromHW()";
 		ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("Mixer.fromHW"));
 	}
 
