@@ -33,7 +33,6 @@ void PulseSinkControl::update(const pa_sink_info *info)
     }
     m_muted = info->mute;
 }
-
 }
 
 #include "PulseSinkControl.moc"
