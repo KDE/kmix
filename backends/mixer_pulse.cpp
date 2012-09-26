@@ -859,7 +859,7 @@ bool Mixer_PULSE::connectToDaemon()
     pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
     Q_ASSERT(api);
 
-    s_context = pa_context_new(api, "KMix KDE 4");
+    s_context = pa_context_new(api, "KMix");
     Q_ASSERT(s_context);
 
     if (pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0) < 0) {
