@@ -62,9 +62,8 @@
 /**
  * Generic View implementation. This can hold now all kinds of controls (not just Sliders, as
  *  the class name suggests).
- *  TODO change "const char*" parameter to QString
  */
-ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl)
+ViewSliders::ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl)
       : ViewBase(parent, id, Qt::FramelessWindowHint, vflags, guiProfileId, actColl)
       , _layoutEnum(0)
 {
@@ -151,23 +150,13 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
         );
         if ( _layoutEnum == 0 ) {
             // lazily creation of Layout for the first enum
-            _layoutEnum = new QVBoxLayout(); // new QFormLayout();
+            _layoutEnum = new QVBoxLayout();
             _layoutMDW->addLayout( _layoutEnum );
         }
         _layoutEnum->addWidget(mdw);
     } // an enum
     else
     {
-      /*
-        // add a separator before the device
-        QFrame *_frm = new QFrame(this);
-        if ( orientation == Qt::Vertical)
-            _frm->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-        else
-            _frm->setFrameStyle(QFrame::HLine | QFrame::Sunken);
-//         _separators.insert(md->id(),_frm);
-        _layoutSliders->addWidget(_frm);
-*/
         mdw = new MDWSlider(
                 md,           // MixDevice (parameter)
                 true,         // Show Mute LED
@@ -179,13 +168,7 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
                 , md->controlProfile()
         ); // View widget
         _layoutSliders->addWidget(mdw);
-//        QHBoxLayout* lay = ::qobject_cast<QHBoxLayout*>(_layoutSliders);
-//        if ( lay )
-//            lay->addSpacing(2);
-//        else
-//            qobject_cast<QVBoxLayout*>(_layoutSliders)->addSpacing(2);
     }
-
 
     return mdw;
 }
@@ -221,15 +204,13 @@ void ViewSliders::_setMixSet()
   delete _layoutMDW;
   _layoutMDW = 0;
   
-  
-  delete _configureViewButton;
-        // We will be recreating our sliders, so make sure we trash all the separators too.
-        //qDeleteAll(_separators);
-        _separators.clear();
-
-
-
+      delete _configureViewButton;
      _configureViewButton = 0;
+
+     // We will be recreating our sliders, so make sure we trash all the separators too.
+     //qDeleteAll(_separators);
+     _separators.clear();
+
    if (  GlobalConfig::instance().toplevelOrientation == Qt::Horizontal )
    {
       // Horizontal slider => put them vertically
@@ -255,15 +236,14 @@ void ViewSliders::_setMixSet()
    _layoutMDW->addItem( _layoutSliders );
 
     // Hint: This text comparison is not a clean solution, but one that will work for quite a while.
-    // TODO cesken Revise this "text comparison" thingy when I change the View constructor to take an "id" and a "readableName"
-    QString viewName(id());
-    if (viewName.contains(".Capture_Streams."))
+    QString viewId(id());
+    if (viewId.contains(".Capture_Streams."))
        emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
-    else if (viewName.contains(".Playback_Streams."))
+    else if (viewId.contains(".Playback_Streams."))
        emptyStreamHint = new QLabel(i18n("Nothing is playing audio."));
-    else if (viewName.contains(".Capture_Devices."))
+    else if (viewId.contains(".Capture_Devices."))
        emptyStreamHint = new QLabel(i18n("No capture devices."));
-    else if (viewName.contains(".Playback_Devices."))
+    else if (viewId.contains(".Playback_Devices."))
        emptyStreamHint = new QLabel(i18n("No playback devices."));
     else
        emptyStreamHint = new QLabel(i18n("Nothing is playing audio.")); // Fallback. Assume Playback stream
@@ -364,10 +344,10 @@ void ViewSliders::_setMixSet()
 
 void ViewSliders::constructionFinished() {
     configurationUpdate();
-    // TODO Add a "show more" / "configure this view" button
     const KIcon& icon = KIcon( QLatin1String( "configure" ));
     _configureViewButton = new QPushButton(icon, "", this);
     _configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    // TODO implement the "configure" button (show dialog)
     _layoutMDW->addWidget(_configureViewButton,0 , Qt::AlignLeft | Qt::AlignTop);
 }
 
@@ -377,6 +357,8 @@ void ViewSliders::configurationUpdate() {
    bool haveCaptureLEDs = false;
    int labelExtent = 0;
    bool haveMuteButtons = false;
+   
+   // Find out whether any MDWSlider has Switches. If one has, then we need "extents"
    for ( int i=0; i<_mdws.count(); i++ )
    {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
@@ -386,19 +368,34 @@ void ViewSliders::configurationUpdate() {
 		 haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
 		 haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
       }
+      
+      if ( haveCaptureLEDs && haveMuteButtons )
+	break; // We know al we want. Lets break.
    }
    //kDebug(67100) << "topPartExtent is " << topPartExtent;
    bool firstVisibleControlFound = false;
-   for ( int i=0; i<_mdws.count(); i++ ) {
-      MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+   for ( int i=0; i<_mdws.count(); i++ )
+   {
+      MixDeviceWidget* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+      MDWSlider* mdwSlider = ::qobject_cast<MDWSlider*>(_mdws[i]);
       if ( mdw )
       {
-	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), QString("simple")); // TODO Is "simple" enough here, especiall on the very first start of KMix?
+	 // This is a bit hacky. Using "simple" can be wrong on the very first start of KMix (but usually it is not!)
+	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), QString("simple"));
 	mdw->setVisible(matchingControl != 0);
+	if ( mdwSlider == 0 )
+	{
+	  // not a slider => debug output for enums
+	  kDebug() << "Show ENUM " << mdw->mixDevice()->id() << " ?  matchingControl=" << matchingControl;
+	}
 
-		 mdw->setLabelExtent(labelExtent);
-		 mdw->setMuteButtonSpace(haveMuteButtons);
-		 mdw->setCaptureLEDSpace(haveCaptureLEDs);
+	if ( mdwSlider )
+	{
+		  // additional options for sliders
+		 mdwSlider->setLabelExtent(labelExtent);
+		 mdwSlider->setMuteButtonSpace(haveMuteButtons);
+		 mdwSlider->setCaptureLEDSpace(haveCaptureLEDs);
+	}
          bool thisControlIsVisible = mdw->isVisibleTo(this);
          bool showSeparator = ( firstVisibleControlFound && thisControlIsVisible);
          if ( _separators.contains( mdw->mixDevice()->id() ))

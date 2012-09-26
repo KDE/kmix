@@ -95,7 +95,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    if ( guiprof != 0 )
    {
     kDebug() << "Add a view " << _guiprofId;
-    ViewSliders* view = new ViewSliders( this, guiprof->getName().toLatin1(), _mixer, vflags, _guiprofId, _actionCollection );
+    ViewSliders* view = new ViewSliders( this, guiprof->getId(), _mixer, vflags, _guiprofId, _actionCollection );
     possiblyAddView(view);
    }
     show();

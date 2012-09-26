@@ -65,7 +65,7 @@ public:
      ALL = 2
    };
    
-    ViewBase(QWidget* parent, const char* id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
+    ViewBase(QWidget* parent, QString id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
     void addMixer(Mixer *mixer);

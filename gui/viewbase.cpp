@@ -48,7 +48,7 @@
  * Creates an empty View. To populate it with MixDevice instances, you must implement
  * _setMixSet() in your derived class.
  */
-ViewBase::ViewBase(QWidget* parent, const char* id, Qt::WFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
+ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiProfileId(guiProfileId)
 {
    setObjectName(id);
@@ -241,8 +241,6 @@ void ViewBase::toggleMenuBarSlot() {
 
 
 /**
- * Load: Must be done after the mdw's have been created
- * TODO 000 Why? How does creating View, createMixDevices(), load() interact. How make I "setVisibke()" work
  */
 void ViewBase::load(KConfig *config)
 {

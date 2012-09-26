@@ -980,13 +980,13 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	Volume& volC = m_mixdevice->captureVolume();
 	inc = calculateStepIncrement(volC, decrease);
 
-	// TODO I should possibly not block, as the changes that come back from the Soundcard
+	// I should possibly not block, as the changes that come back from the Soundcard
 	//      will be ignored (e.g. because of capture groups)
-	kDebug() << "MDWSlider is blocking signals for " << m_view->id();
-	bool oldViewBlockSignalState = m_view->blockSignals(true);
+// 	kDebug() << "MDWSlider is blocking signals for " << m_view->id();
+// 	bool oldViewBlockSignalState = m_view->blockSignals(true);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-	kDebug() << "MDWSlider is unblocking signals for " << m_view->id();
-	m_view->blockSignals(oldViewBlockSignalState);
+// 	kDebug() << "MDWSlider is unblocking signals for " << m_view->id();
+// 	m_view->blockSignals(oldViewBlockSignalState);
 }
 
 /**

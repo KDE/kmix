@@ -46,8 +46,8 @@
 #include "gui/mdwslider.h"
 
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW )
-    : ViewBase(parent, name, /*Qt::FramelessWindowHint | Qt::MSWindowsFixedSizeDialogHint*/0, vflags, guiProfileId), _dock(dockW)
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW )
+    : ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
 {
   seperatorBetweenMastersAndStreams = 0;
   optionsLayout = 0;

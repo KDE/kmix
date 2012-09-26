@@ -222,9 +222,10 @@ void DialogViewConfiguration::moveSelection(DialogViewConfigurationWidget* from,
   foreach ( QListWidgetItem* item, from->selectedItems() )
   {
     kDebug() << "MOVE " << ++i << ":" << item;
-    to->addItem ( item );
-    from->removeItemWidget(item);
-    to->repaint();
+     QListWidgetItem *clonedItem = item->clone();
+    to->addItem ( clonedItem );
+    to->setCurrentItem(clonedItem);
+    delete item;
   }
   
 //     QListWidgetItem itemCopy (*(from->selectedItems()[0]));
@@ -298,11 +299,10 @@ void DialogViewConfiguration::createPage()
     connect(_qlw  ,     SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
             this  ,       SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
 
-
-   int i;
-    // --- CONTROLS IN THE GRID --- 
+    // --- CONTROLS IN THE GRID ------------------------------------
    //QPalette::ColorRole bgRole;
-   for ( i=0; i<mdws.count(); ++i ) {
+   for ( int i=0; i<mdws.count(); ++i )
+   {
        //if ( i%2 == 0) bgRole = QPalette::Base; else bgRole = QPalette::AlternateBase;
       QWidget *qw = mdws[i];
       if ( qw->inherits("MixDeviceWidget") ) {
@@ -369,9 +369,7 @@ DialogViewConfiguration::~DialogViewConfiguration()
 
 void DialogViewConfiguration::apply()
 {
-
-    // --- 3-Step Apply ---
-
+    // --- We have a 3-Step Apply of the Changes -------------------------------
 
     // -1- Update view and profile *****************************************
    GUIProfile* prof = _view.guiProfile();
@@ -391,8 +389,6 @@ void DialogViewConfiguration::apply()
            ProfControl* newCtl = new ProfControl(*pctl);
            newCtl->show = "full"; // The user has selected controls => mandatory controls are now only neccesary in extended or full mode
            newControlset.push_back(newCtl);
-//            kDebug() << "Added a MANDATORY control to new ControlSet: " << newCtl->id;
-
        }
    }
 	
@@ -459,52 +455,6 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
     }
 
 }
-
-
-// 	std::vector<ProfControl*>::const_iterator itEnd = oldControls.end();
-// 	for ( std::vector<ProfControl*>::const_iterator it = oldControls.begin(); it != itEnd; ++it)
-// 	{
-// 	  ProfControl* control = *it;
-// 	  if ( control
-// 	}
-// 	ProfControl* ctl = new ProfControl();
-// 
-// 
-//     std::vector<ProfControl*>::const_iterator itEnd = oldControls.end();
-//     for ( std::vector<ProfControl*>::const_iterator it = oldControls.begin(); it != itEnd; ++it)
-//     {
-// 	ProfControl* control = *it;
-//     }
-// //        if (oldControls.contains(text))
-// 	GUIProfile::ControlSet::iterator it =
-//  std::find(oldControls.begin(), oldControls.end(), text);
-//         //if(it != oldControls.end())
-//                 qDebug << "Found!\n";
-//           //oldControls.find(text);
-//   }
-// 
-//  
-//   //newControls
-//    std::vector<ProfControl*>::const_iterator itEnd = oldControls.end();
-//     for ( std::vector<ProfControl*>::const_iterator it = oldControls.begin(); it != itEnd; ++it)
-//     {
-// ProfControl* control = *it;
-//     }
-// 
-// QSize DialogViewConfiguration::sizeHint() const {
-//     QSize size = this->sizeHint(); // !!!
-//     return size;
-//     QSize size = vboxForScrollView->sizeHint();
-//     // The +50 is a workaround, because KDialog does not handle our case correctly (using a QScrollarea)
-//     size.rwidth() += 50;
-//     size.rheight() += KDialog::spacingHint();
-//     size.rheight() += qlb->height();
-//     return size;
-// }
-// 
-
-
-
 
 #include "dialogviewconfiguration.moc"
 
