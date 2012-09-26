@@ -362,5 +362,23 @@ QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)
        return volstr;
 }
 
+/**
+ * Returns the playback volume level in percent. If the volume is muted, 0 is returned.
+ * If the given MixDevice contains no playback volume, the capture volume isd used
+ * instead, and 0 is returned if capturing is disabled for the given MixDevice.
+ * 
+ * @returns The volume level in percent
+ */
+int MixDevice::getUserfriendlyVolumeLevel()
+{
+	MixDevice* md = this;
+	bool usePlayback = md->playbackVolume().hasVolume();
+	Volume& vol = usePlayback ? md->playbackVolume() : md->captureVolume();
+	bool isActive = usePlayback ? !md->isMuted() : md->isRecSource();
+	int val = isActive ? vol.getAvgVolumePercent(Volume::MALL) : 0;
+	return val;
+}
+
+
 #include "mixdevice.moc"
 

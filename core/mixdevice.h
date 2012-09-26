@@ -211,6 +211,7 @@ public:
    
    bool read( KConfig *config, const QString& grp );
    bool write( KConfig *config, const QString& grp );
+   int getUserfriendlyVolumeLevel();
 
 
 

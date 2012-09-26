@@ -45,7 +45,7 @@
 #include "gui/viewdockareapopup.h"
 
 
-#define FEATURE_UNITY_POPUP true
+//#define FEATURE_UNITY_POPUP true
 
 void MetaMixer::reset()
 {
@@ -159,6 +159,7 @@ void KMixDockWidget::createActions()
     if ( md.get() != 0 && md->hasMuteSwitch() ) {
         // Put "Mute" selector in context menu
         KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
+	updateDockMuteAction(action);
         action->setText( i18n( "M&ute" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT(dockMute()));
         menu->addAction( action );
@@ -191,11 +192,7 @@ void KMixDockWidget::selectMaster()
  */
 int KMixDockWidget::getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md)
 {
-	bool usePlayback = md->playbackVolume().hasVolume();
-	Volume& vol = usePlayback ? md->playbackVolume() : md->captureVolume();
-	bool isActive = usePlayback ? !md->isMuted() : md->isRecSource();
-	int val = isActive ? vol.getAvgVolumePercent(Volume::MALL) : 0;
-	return val;
+	return md->getUserfriendlyVolumeLevel();
 }
 
 void
@@ -234,14 +231,8 @@ KMixDockWidget::setVolumeTip()
     _oldToolTipValue = virtualToolTipValue;
 }
 
-// void KMixDockWidget::updateDockPopup()
-// {
-//   kDebug() << "KMixDockWidget::updateDockPopup";
-//   _referenceWidget2->createDeviceWidgets();
-// }
 
-void
-KMixDockWidget::updatePixmap()
+void KMixDockWidget::updatePixmap()
 {
 	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
 
@@ -421,18 +412,21 @@ KMixDockWidget::contextMenuAboutToShow()
 #endif
 
     // Enable/Disable "Muted" menu item
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
-    //kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
-    if ( md != 0 && dockMuteAction != 0 )
-    {
-    	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
-    	bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
-        bool hasSwitch = vol.isCapture() ? vol.hasSwitch() : md->hasMuteSwitch();
-        dockMuteAction->setEnabled( hasSwitch );
-        dockMuteAction->setChecked( hasSwitch && !isInactive );
-    }
+    updateDockMuteAction(dockMuteAction);
     _contextMenuWasOpen = true;
 }
 
+void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )
+{  
+    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    if ( md != 0 && dockMuteAction != 0 )
+    {
+    	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
+    	bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
+        bool hasSwitch = vol.isCapture() ? vol.hasSwitch() : md->hasMuteSwitch();
+        dockMuteAction->setEnabled( hasSwitch );
+        dockMuteAction->setChecked( isInactive );
+    }
+}
 #include "kmixdockwidget.moc"

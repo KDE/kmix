@@ -25,6 +25,8 @@
 
 class QString;
 class QWidgetAction;
+
+class KToggleAction;
 #include <kstatusnotifieritem.h>
 
 class KMixWindow;
@@ -96,6 +98,7 @@ class KMixDockWidget : public KStatusNotifierItem
 
    bool _contextMenuWasOpen;
    void refreshVolumeLevels();
+   void updateDockMuteAction ( KToggleAction* dockMuteAction );
 
  private slots:
    void dockMute();
