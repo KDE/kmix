@@ -1,5 +1,5 @@
 #include "ALSA.h"
-#include <alsa/asoundlib.h>
+#include "ALSAControl.h"
 #include <QtCore/QDebug>
 
 namespace Backends {
@@ -11,6 +11,9 @@ ALSA::ALSA(QObject *parent)
 
 ALSA::~ALSA()
 {
+    foreach(snd_mixer_t *mixer, m_mixers) {
+        snd_mixer_close(mixer);
+    }
 }
 
 bool ALSA::open()
@@ -36,13 +39,15 @@ bool ALSA::open()
                 snd_mixer_elem_t *elem;
                 elem = snd_mixer_first_elem(mixer);
                 while (elem) {
+                    qDebug() << "element" << snd_mixer_selem_get_name(elem);
+                    Control *control = new AlsaControl(Control::HardwareOutput, elem, this);
+                    registerControl(control);
                     elem = snd_mixer_elem_next(elem);
                 }
-                snd_mixer_detach(mixer, devName.toAscii().constData());
             } else {
                 qDebug() << "Could not attach mixer to" << devName;
             }
-            snd_mixer_close(mixer);
+            m_mixers << mixer;
         } else {
             qDebug() << "Could not open mixer";
         }
