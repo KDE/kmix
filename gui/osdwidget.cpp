@@ -37,6 +37,9 @@
 #include <Plasma/Theme>
 #include <Plasma/WindowEffects>
 
+#include "core/ControlManager.h"
+#include <core/mixer.h>
+
 OSDWidget::OSDWidget(QWidget * parent)
     : QGraphicsView(parent),
     m_background(new Plasma::FrameSvg(this)),
@@ -65,6 +68,17 @@ OSDWidget::OSDWidget(QWidget * parent)
     //(this is true if the volume is at 100%). We simply achieve that by calling "setCurrentVolume".
     setCurrentVolume(100, false);
 
+    /* We are registering for volume changes of all cards. An alternative
+     * would be to register to volume changes of the global master and additionally
+     * register to MasterChanges. That could be slightly more efficient
+     */
+      	ControlManager::instance().addListener(
+	  QString(), // all mixers
+	ControlChangeType::Volume,
+	this,
+	QString("ViewDockAreaPopup")	  
+	);
+
     //Setup the auto-hide timer
     m_hideTimer->setInterval(2000);
     m_hideTimer->setSingleShot(true);
@@ -84,6 +98,30 @@ OSDWidget::OSDWidget(QWidget * parent)
     setScene(m_scene);
 }
 
+
+OSDWidget::~OSDWidget()
+{
+  ControlManager::instance().removeListener(this);
+}
+void OSDWidget::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+    shared_ptr<MixDevice> master = Mixer::getGlobalMasterMD();
+  switch (type )
+  {
+    case ControlChangeType::Volume:
+      if ( master )
+      {
+	setCurrentVolume(master->playbackVolume().getAvgVolumePercent(Volume::MALL), master->isMuted());
+      }
+      break;
+
+    default:
+      ControlManager::warnUnexpectedChangeType(type, this);
+      break;
+  }
+    
+}
 void OSDWidget::activateOSD()
 {
     m_hideTimer->start();

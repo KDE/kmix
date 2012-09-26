@@ -1132,11 +1132,12 @@ KMixWindow::showVolumeDisplay()
   shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
   if (md.get() == 0)
     return; // shouldn't happen, but lets play safe
-  // Current volume
-  Volume& vol = md->playbackVolume();
-
-  osdWidget->setCurrentVolume(vol.getAvgVolumePercent(Volume::MALL),
-      md->isMuted());
+    
+// Current volume
+ // Setting not required any more, as the OSD updates the volume level itself
+//   Volume& vol = md->playbackVolume();
+//   osdWidget->setCurrentVolume(vol.getAvgVolumePercent(Volume::MALL),
+//       md->isMuted());
   osdWidget->show();
   osdWidget->activateOSD(); //Enable the hide timer
 

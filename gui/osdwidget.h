@@ -41,11 +41,15 @@ class OSDWidget : public QGraphicsView
 Q_OBJECT
 public:
     OSDWidget(QWidget * parent = 0);
+    virtual ~OSDWidget();
 
     void setCurrentVolume(int volumeLevel, bool muted);
     void activateOSD();
 
     virtual QSize sizeHint() const;
+
+    public slots:
+       void controlsChange(int changeType);
 
 protected:
     virtual void drawBackground(QPainter *painter, const QRectF &rectF);
