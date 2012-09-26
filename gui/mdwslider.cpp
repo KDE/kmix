@@ -1110,7 +1110,7 @@ void MDWSlider::showContextMenu()
 		}
 	}
 
-	if ( m_mixdevice->playbackVolume().hasSwitch() ) {
+	if ( m_mixdevice->hasMuteSwitch() ) {
 		KToggleAction *ta = ( KToggleAction* )_mdwActions->action( "mute" );
 		if ( ta ) {
 			ta->setChecked( m_mixdevice->isMuted() );

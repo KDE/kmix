@@ -62,7 +62,14 @@ private:
     bool separatorBetweenMastersAndStreamsRequired;
     QFrame* seperatorBetweenMastersAndStreams;
     QBoxLayout* optionsLayout;
+    QPushButton* configureViewButton;
+    QPushButton *mainWindowButton;
+    QPushButton *restoreVolumeButton1;
+    QPushButton *restoreVolumeButton2;
+    QPushButton *restoreVolumeButton3;
+    QPushButton *restoreVolumeButton4;
     KIcon* configureIcon;
+    KIcon* restoreVolumeIcon;
 
 public slots:
        void controlsChange(int changeType);

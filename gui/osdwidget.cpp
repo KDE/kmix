@@ -76,7 +76,7 @@ OSDWidget::OSDWidget(QWidget * parent)
 	  QString(), // all mixers
 	ControlChangeType::Volume,
 	this,
-	QString("ViewDockAreaPopup")	  
+	QString("OSDWidget")	  
 	);
 
     //Setup the auto-hide timer

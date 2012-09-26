@@ -25,7 +25,6 @@
 #include <qevent.h>
 #include <qframe.h>
 #include <QGridLayout>
-#include <QLabel>
 #include <QLayoutItem>
 #include <QPushButton>
 
@@ -51,10 +50,18 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 {
   seperatorBetweenMastersAndStreams = 0;
   optionsLayout = 0;
+  _layoutMDW = 0;
+  configureViewButton = 0;
+  restoreVolumeButton1 = 0;
+  restoreVolumeButton2 = 0;
+  restoreVolumeButton3 = 0;
+  restoreVolumeButton4 = 0;
+  mainWindowButton = 0;
+  
   foreach ( Mixer* mixer, Mixer::mixers() )
   {
     // Adding all mixers, as we potentially want to show all master controls
-    addMixer(mixer);
+    addMixer(mixer); // TODO Doing it here is incompatible with hotplugging
   }
 
   // Register listeners for all mixers
@@ -87,12 +94,8 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	);
 
         configureIcon = new KIcon( QLatin1String( "configure" ));
-  //_layoutControls = new QHBoxLayout(this);
-    _layoutMDW = new QGridLayout( this );
-    _layoutMDW->setSpacing( KDialog::spacingHint() );
-    _layoutMDW->setMargin(0);
-    _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
-    createDeviceWidgets();
+	restoreVolumeIcon = new KIcon( QLatin1String( "quickopen-file" ));
+	createDeviceWidgets();
 
 }
 
@@ -151,21 +154,32 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 void ViewDockAreaPopup::_setMixSet()
 {
   resetMdws();
+//   if ( _layoutMDW != 0 )
+//   {
+//     QLayoutItem *li;
+//     while ( ( li = _layoutMDW->takeAt(0) ) )
+// 	    delete li;
+//   }
+  
+  delete configureViewButton;
+  delete restoreVolumeButton1;
+  delete restoreVolumeButton2;
+  delete restoreVolumeButton3;
+  delete restoreVolumeButton4;
+
+  delete mainWindowButton;
   delete seperatorBetweenMastersAndStreams;
   separatorBetweenMastersAndStreamsInserted = false;
   separatorBetweenMastersAndStreamsRequired = false;
+  
   delete optionsLayout;
   optionsLayout = 0;
 
-// TODO code somewhat similar to ViewSliders => refactor  
-	// -- remove controls
-// 	if ( isDynamic() ) {
-		// Our _layoutMDW now should only contain spacer widgets from the QSpacerItem's in add() below.
-		// We need to trash those too otherwise all sliders gradually migrate away from the edge :p
-		QLayoutItem *li;
-		while ( ( li = _layoutMDW->takeAt(0) ) )
-			delete li;
-// 	}
+    delete _layoutMDW;
+    _layoutMDW = new QGridLayout( this );
+    _layoutMDW->setSpacing( KDialog::spacingHint() );
+    _layoutMDW->setMargin(0);
+    _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
 
 	// A loop that adds the Master controls of each card
 	foreach ( Mixer* mixer, _mixers )
@@ -254,31 +268,33 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 void ViewDockAreaPopup::constructionFinished()
 {
    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
-   QPushButton *pb = new QPushButton( i18n("Mixer") );
-   pb->setObjectName( QLatin1String("MixerPanel" ));
-   connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );
+      
+   mainWindowButton = new QPushButton( i18n("Mixer") );
+   mainWindowButton->setObjectName( QLatin1String("MixerPanel" ));
+   connect ( mainWindowButton, SIGNAL(clicked()), SLOT(showPanelSlot()) );
    
-    QPushButton* configureViewButton = new QPushButton(*configureIcon, "");
+    configureViewButton = new QPushButton(*configureIcon, "");
     configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
    optionsLayout = new QHBoxLayout();
-    optionsLayout->addWidget(pb );
-    optionsLayout->addWidget(configureViewButton);
-   optionsLayout->addWidget( createRestoreVolumeButton(1) );
-   optionsLayout->addWidget( createRestoreVolumeButton(2) );
-   optionsLayout->addWidget( createRestoreVolumeButton(3) );
-   optionsLayout->addWidget( createRestoreVolumeButton(4) );
+   optionsLayout->addWidget(mainWindowButton );
+   optionsLayout->addWidget(configureViewButton);
+   restoreVolumeButton1 = createRestoreVolumeButton(1);
+   optionsLayout->addWidget( restoreVolumeButton1 );
+//    optionsLayout->addWidget( createRestoreVolumeButton(2) );
+//    optionsLayout->addWidget( createRestoreVolumeButton(3) );
+//    optionsLayout->addWidget( createRestoreVolumeButton(4) );
    
       int sliderRow = _layoutMDW->rowCount();
       _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
-      
       _layoutMDW->activate();
 }
 
     QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
     {
 	QString buttonText = QString("%1").arg(storageSlot);
-	QPushButton* profileButton = new QPushButton(buttonText);
+	QPushButton* profileButton = new QPushButton(*restoreVolumeIcon, buttonText);
+	profileButton->setToolTip(i18n("Load volume profile %1").arg(storageSlot));
 	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return profileButton;
     }
