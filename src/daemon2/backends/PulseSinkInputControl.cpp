@@ -29,8 +29,16 @@ void PulseSinkInputControl::setMute(bool yes)
 void PulseSinkInputControl::update(const pa_sink_input_info *info)
 {
     m_idx = info->index;
-    m_displayName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_NAME));
+    m_displayName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_WINDOW_NAME));
+    if (m_displayName.isEmpty())
+        m_displayName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_NAME));
+    if (m_displayName.isEmpty())
+        m_displayName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_BINARY));
     m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_WINDOW_ICON_NAME));
+    if (m_iconName.isEmpty())
+        m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_ICON_NAME));
+    if (m_iconName.isEmpty())
+        m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_BINARY));
     updateVolumes(info->volume);
     if (m_muted != info->mute) {
         emit muteChanged(info->mute);
