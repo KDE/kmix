@@ -75,50 +75,8 @@ ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase
    _layoutSliders = 0;
    _layoutEnum = 0;
    emptyStreamHint = 0;
- /*  if (  GlobalConfig::instance().toplevelOrientation == Qt::Horizontal )
-   {
-      // Horizontal slider => put them vertically
-      kDebug() << "hor slider => vertical alignment";
-      _layoutMDW = new QVBoxLayout(this);
-      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-      _layoutSliders = new QVBoxLayout();
-      _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-   }
-   else
-   {
-      // Vertical slider => put them horizontally
-      kDebug() << "vert slider => horizontal alignment";
-      _layoutMDW = new QHBoxLayout(this);
-      _layoutMDW->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-      _layoutSliders = new QHBoxLayout();
-      _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-   }
-   _layoutSliders->setContentsMargins(0,0,0,0);
-   _layoutSliders->setSpacing(0);
-   _layoutMDW->setContentsMargins(0,0,0,0);
-   _layoutMDW->setSpacing(0);
-   _layoutMDW->addItem( _layoutSliders );
 
-    // Hint: This text comparison is not a clean solution, but one that will work for quite a while.
-    // TODO cesken Revise this "text comparison" thingy when I change the View constructor to take an "id" and a "readableName"
-    QString viewName(id);
-    if (viewName.contains(".Capture_Streams."))
-       emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
-    else if (viewName.contains(".Playback_Streams."))
-       emptyStreamHint = new QLabel(i18n("Nothing is playing audio."));
-    else if (viewName.contains(".Capture_Devices."))
-       emptyStreamHint = new QLabel(i18n("No capture devices."));
-    else if (viewName.contains(".Playback_Devices."))
-       emptyStreamHint = new QLabel(i18n("No playback devices."));
-    else
-       emptyStreamHint = new QLabel(i18n("Nothing is playing audio.")); // Fallback. Assume Playback stream
-
-    emptyStreamHint->setAlignment(Qt::AlignCenter);
-    emptyStreamHint->setWordWrap( true );
-    emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    _layoutMDW->addWidget(emptyStreamHint);
-*/
-    createDeviceWidgets();
+   createDeviceWidgets();
     
        // Add listener, as all derived classes are interested
    	ControlManager::instance().addListener(
