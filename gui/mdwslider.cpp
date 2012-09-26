@@ -108,7 +108,8 @@ void MDWSlider::createActions()
         connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled()) );
     }
 
-    if( m_mixdevice->playbackVolume().hasSwitch() ) {
+    if( m_mixdevice->hasMuteSwitch() )
+    {
         taction = _mdwActions->add<KToggleAction>( "mute" );
         taction->setText( i18n("&Muted") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );

@@ -403,7 +403,7 @@ KMixWindow::saveBaseConfig()
       MixerToolBox::instance()->mixerIgnoreExpression();
   config.writeEntry("MixerIgnoreExpression", mixerIgnoreExpression);
 
-  if (m_toplevelOrientation == Qt::Horizontal)
+  if (GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
     config.writeEntry("Orientation", "Horizontal");
   else
     config.writeEntry("Orientation", "Vertical");
@@ -557,9 +557,9 @@ KMixWindow::loadBaseConfig()
   << "Backends: " << m_backendFilter;
 
   if (orientationString == "Horizontal")
-    m_toplevelOrientation = Qt::Horizontal;
+    GlobalConfig::instance().toplevelOrientation = Qt::Horizontal;
   else
-    m_toplevelOrientation = Qt::Vertical;
+    GlobalConfig::instance().toplevelOrientation = Qt::Vertical;
 
   // show/hide menu bar
   bool showMenubar = config.readEntry("Menubar", true);
@@ -1018,7 +1018,7 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
   ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
   if ((_actionShowMenubar == 0) || _actionShowMenubar->isChecked())
     vflags |= ViewBase::MenuBarVisible;
-  if (m_toplevelOrientation == Qt::Vertical)
+  if (GlobalConfig::instance().toplevelOrientation == Qt::Vertical)
     vflags |= ViewBase::Horizontal;
   else
     vflags |= ViewBase::Vertical;
@@ -1185,9 +1185,9 @@ KMixWindow::showSettings()
 
       m_prefDlg->m_showTicks->setChecked(GlobalConfig::instance().showTicks);
       m_prefDlg->m_showLabels->setChecked(GlobalConfig::instance().showLabels);
-      m_prefDlg->_rbVertical->setChecked(m_toplevelOrientation == Qt::Vertical);
+      m_prefDlg->_rbVertical->setChecked(GlobalConfig::instance().toplevelOrientation == Qt::Vertical);
       m_prefDlg->_rbHorizontal->setChecked(
-          m_toplevelOrientation == Qt::Horizontal);
+          GlobalConfig::instance().toplevelOrientation == Qt::Horizontal);
 
       // show dialog
       m_prefDlg->show();
@@ -1215,9 +1215,9 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
   bool systrayPopupHasChanged = m_volumeWidget
       ^ prefDlg->m_volumeChk->isChecked();
   bool toplevelOrientationHasChanged = (prefDlg->_rbVertical->isChecked()
-      && m_toplevelOrientation == Qt::Horizontal)
+      && GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
       || (prefDlg->_rbHorizontal->isChecked()
-          && m_toplevelOrientation == Qt::Vertical);
+          && GlobalConfig::instance().toplevelOrientation == Qt::Vertical);
 
   GlobalConfig::instance().showLabels = prefDlg->m_showLabels->isChecked();
   GlobalConfig::instance().showTicks = prefDlg->m_showTicks->isChecked();
@@ -1229,11 +1229,11 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
 
   if (prefDlg->_rbVertical->isChecked())
     {
-      m_toplevelOrientation = Qt::Vertical;
+      GlobalConfig::instance().toplevelOrientation = Qt::Vertical;
     }
   else if (prefDlg->_rbHorizontal->isChecked())
     {
-      m_toplevelOrientation = Qt::Horizontal;
+      GlobalConfig::instance().toplevelOrientation = Qt::Horizontal;
     }
 
     if ( systrayPopupHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged )

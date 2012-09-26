@@ -29,6 +29,8 @@ class QGridLayout;
 #include <QPushButton>
 class QWidget;
 
+class KIcon;
+
 class Mixer;
 class MixDevice;
 class KMixWindow;
@@ -60,6 +62,7 @@ private:
     bool separatorBetweenMastersAndStreamsRequired;
     QFrame* seperatorBetweenMastersAndStreams;
     QBoxLayout* optionsLayout;
+    KIcon* configureIcon;
 
 public slots:
        void controlsChange(int changeType);

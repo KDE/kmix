@@ -21,12 +21,15 @@
 #ifndef GLOBALCONFIG_H
 #define GLOBALCONFIG_H
 
+#include <Qt>
+
 class GlobalConfig
 {
 public:
    bool showTicks;
    bool showLabels;
-   
+   Qt::Orientation toplevelOrientation;
+
    static GlobalConfig& instance() { return instanceObj; };
    
 private:
@@ -35,6 +38,7 @@ private:
   {
     showTicks = true;
     showLabels = true;
+    toplevelOrientation = Qt::Vertical;
   };
   
   static GlobalConfig instanceObj;

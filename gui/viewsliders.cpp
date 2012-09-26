@@ -70,8 +70,15 @@ ViewSliders::ViewSliders(QWidget* parent, const char* id, Mixer* mixer, ViewBase
 {
   addMixer(mixer);
  
-_configureViewButton = 0;
-   if ( _vflags & ViewBase::Vertical ) {
+   _configureViewButton = 0;
+   _layoutMDW = 0;
+   _layoutSliders = 0;
+   _layoutEnum = 0;
+   emptyStreamHint = 0;
+ /*  if (  GlobalConfig::instance().toplevelOrientation == Qt::Horizontal )
+   {
+      // Horizontal slider => put them vertically
+      kDebug() << "hor slider => vertical alignment";
       _layoutMDW = new QVBoxLayout(this);
       _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
       _layoutSliders = new QVBoxLayout();
@@ -79,6 +86,8 @@ _configureViewButton = 0;
    }
    else
    {
+      // Vertical slider => put them horizontally
+      kDebug() << "vert slider => horizontal alignment";
       _layoutMDW = new QHBoxLayout(this);
       _layoutMDW->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
       _layoutSliders = new QHBoxLayout();
@@ -108,7 +117,7 @@ _configureViewButton = 0;
     emptyStreamHint->setWordWrap( true );
     emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     _layoutMDW->addWidget(emptyStreamHint);
-
+*/
     createDeviceWidgets();
     
        // Add listener, as all derived classes are interested
@@ -137,7 +146,8 @@ _configureViewButton = 0;
 ViewSliders::~ViewSliders()
 {
     ControlManager::instance().removeListener(this);
-    qDeleteAll(_separators);
+    delete _layoutMDW;
+//     qDeleteAll(_separators);
 }
 
 
@@ -170,7 +180,7 @@ void ViewSliders::controlsChange(int changeType)
 QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 {
     MixDeviceWidget *mdw;
-    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
+    Qt::Orientation orientation = GlobalConfig::instance().toplevelOrientation;
 
     if ( md->isEnum() )
     {
@@ -190,15 +200,16 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
     } // an enum
     else
     {
+      /*
         // add a separator before the device
         QFrame *_frm = new QFrame(this);
         if ( orientation == Qt::Vertical)
             _frm->setFrameStyle(QFrame::VLine | QFrame::Sunken);
         else
             _frm->setFrameStyle(QFrame::HLine | QFrame::Sunken);
-        _separators.insert(md->id(),_frm);
+//         _separators.insert(md->id(),_frm);
         _layoutSliders->addWidget(_frm);
-
+*/
         mdw = new MDWSlider(
                 md,           // MixDevice (parameter)
                 true,         // Show Mute LED
@@ -225,22 +236,85 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 void ViewSliders::_setMixSet()
 {
   resetMdws();
-  delete _configureViewButton;
-        // We will be recreating our sliders, so make sure we trash all the separators too.
-        qDeleteAll(_separators);
-        _separators.clear();
-        // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
+  
+  delete emptyStreamHint;
+  emptyStreamHint = 0;
+
+  // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
         // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
         QLayoutItem *li;
+	if ( _layoutSliders != 0 )
+	{
         while ( ( li = _layoutSliders->takeAt(0) ) )
             delete li;
-	
+	}	
+	  _layoutSliders = 0;
+  
+	  delete _layoutSliders;
+  _layoutSliders =0;
+  
 	if (_layoutEnum != 0 )
 	{
-	while ( ( li = _layoutEnum->takeAt(0) ) )
-            delete li;
-     }
+        QLayoutItem *li2;
+	while ( ( li2 = _layoutEnum->takeAt(0) ) != 0 )
+            delete li2;
+  _layoutEnum = 0;
+	}
+  delete _layoutMDW;
+  _layoutMDW = 0;
+  
+  
+  delete _configureViewButton;
+        // We will be recreating our sliders, so make sure we trash all the separators too.
+        //qDeleteAll(_separators);
+        _separators.clear();
 
+
+
+     _configureViewButton = 0;
+   if (  GlobalConfig::instance().toplevelOrientation == Qt::Horizontal )
+   {
+      // Horizontal slider => put them vertically
+      kDebug() << "hor slider => vertical alignment";
+      _layoutMDW = new QVBoxLayout(this);
+      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+      _layoutSliders = new QVBoxLayout();
+      _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+   }
+   else
+   {
+      // Vertical slider => put them horizontally
+      kDebug() << "vert slider => horizontal alignment";
+      _layoutMDW = new QHBoxLayout(this);
+      _layoutMDW->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
+      _layoutSliders = new QHBoxLayout();
+      _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
+   }
+   _layoutSliders->setContentsMargins(0,0,0,0);
+   _layoutSliders->setSpacing(0);
+   _layoutMDW->setContentsMargins(0,0,0,0);
+   _layoutMDW->setSpacing(0);
+   _layoutMDW->addItem( _layoutSliders );
+
+    // Hint: This text comparison is not a clean solution, but one that will work for quite a while.
+    // TODO cesken Revise this "text comparison" thingy when I change the View constructor to take an "id" and a "readableName"
+    QString viewName(id());
+    if (viewName.contains(".Capture_Streams."))
+       emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
+    else if (viewName.contains(".Playback_Streams."))
+       emptyStreamHint = new QLabel(i18n("Nothing is playing audio."));
+    else if (viewName.contains(".Capture_Devices."))
+       emptyStreamHint = new QLabel(i18n("No capture devices."));
+    else if (viewName.contains(".Playback_Devices."))
+       emptyStreamHint = new QLabel(i18n("No playback devices."));
+    else
+       emptyStreamHint = new QLabel(i18n("Nothing is playing audio.")); // Fallback. Assume Playback stream
+
+    emptyStreamHint->setAlignment(Qt::AlignCenter);
+    emptyStreamHint->setWordWrap( true );
+    emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    _layoutMDW->addWidget(emptyStreamHint);
+     
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
     QList<shared_ptr<MixDevice> > mds;  // For temporary test

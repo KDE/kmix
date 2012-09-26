@@ -30,6 +30,9 @@
 #include <kwindowsystem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
+
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
 #include <QDesktopWidget>
 #include <QApplication>
 
@@ -40,6 +43,9 @@
 #include "gui/dialogselectmaster.h"
 #include "gui/mixdevicewidget.h"
 #include "gui/viewdockareapopup.h"
+
+
+#define FEATURE_UNITY_POPUP true
 
 void MetaMixer::reset()
 {
@@ -396,11 +402,30 @@ KMixDockWidget::dockMute()
 void
 KMixDockWidget::contextMenuAboutToShow()
 {
+  // TODO Unity / Gnome only support one type of activation (left-click == right-click)
+  //      So we should show here the ViewDockAreaPopup instead of the menu:
+  // Unity: Detect, by finding DBUS Service com.canonical.Unity.Panel.Service
+  // Gnome2: ?
+  // Gnome3: ?
+  
+  QDBusConnection connection = QDBusConnection::sessionBus();
+#ifdef FEATURE_UNITY_POPUP
+    if (connection.interface()->isServiceRegistered("com.canonical.Unity.Panel.Service"))
+    {
+      // This is the wrong place (aboutToShow will definitely ALSO show the menu)
+      QPoint popupPos = QPoint(100,100);
+      activate(popupPos);
+      kError() << "LOOKS LIKE KMix IS RUNNING UNDER Unity ... should show ViewDockAreaPopup instead";
+      return;      
+    }
+#endif
+
     // Enable/Disable "Muted" menu item
 	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
     //kDebug(67100) << "---> md=" << md << "dockMuteAction=" << dockMuteAction << "isMuted=" << md->isMuted();
-    if ( md != 0 && dockMuteAction != 0 ) {
+    if ( md != 0 && dockMuteAction != 0 )
+    {
     	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
     	bool isInactive =  vol.isCapture() ? md->isMuted() : !md->isRecSource();
         bool hasSwitch = vol.isCapture() ? vol.hasSwitch() : md->hasMuteSwitch();

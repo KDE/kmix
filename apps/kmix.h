@@ -60,7 +60,6 @@ KMixWindow : public KXmlGuiWindow
    ~KMixWindow();
 
    bool updateDocking();
-   Qt::Orientation toplevelOrientation() { return m_toplevelOrientation; }
 
   private:
    void saveBaseConfig();
@@ -120,7 +119,6 @@ private:
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
-   Qt::Orientation m_toplevelOrientation;
 
    KTabWidget *m_wsMixers;
 

@@ -86,6 +86,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const char* name, ViewBase
 	QString("ViewDockAreaPopup")	  
 	);
 
+        configureIcon = new KIcon( QLatin1String( "configure" ));
   //_layoutControls = new QHBoxLayout(this);
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
@@ -100,7 +101,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
 {
   ControlManager::instance().removeListener(this);
   delete _layoutMDW;
-  // Hint: optionsLayout and "everything else" is deleted when delete _layoutMDW; cacades down
+  // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cacades down
 }
 
 
@@ -202,7 +203,7 @@ void ViewDockAreaPopup::_setMixSet()
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
-  bool vertical = (_dock->toplevelOrientation() == Qt::Vertical); // TODO use vflags instead (and set them when Constructing the object)
+  bool vertical = (GlobalConfig::instance().toplevelOrientation == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
   
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
@@ -234,7 +235,7 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
       true,         // Show Mute LE
       true,        // Show Record LED
       false,        // Small
-      _dock->toplevelOrientation(), // TODO: Why don't we use vflags ??? Direction: only 1 device, so doesn't matter
+      GlobalConfig::instance().toplevelOrientation, // TODO: Why don't we use vflags ??? Direction: only 1 device, so doesn't matter
       this,         // parent
       this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl
@@ -253,17 +254,11 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 void ViewDockAreaPopup::constructionFinished()
 {
    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
-
-   Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
-   bool vertical = (_vflags & ViewBase::Vertical);
-   
-//   _layoutMDW->addItem( new QSpacerItem( 5, 20 ), 0, sliderRow ); // TODO add this on "polish()"
    QPushButton *pb = new QPushButton( i18n("Mixer") );
    pb->setObjectName( QLatin1String("MixerPanel" ));
    connect ( pb, SIGNAL(clicked()), SLOT(showPanelSlot()) );
    
-    const KIcon& icon = KIcon( QLatin1String( "configure" ));
-    QPushButton* configureViewButton = new QPushButton(icon, "");
+    QPushButton* configureViewButton = new QPushButton(*configureIcon, "");
     configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
    optionsLayout = new QHBoxLayout();
@@ -276,6 +271,8 @@ void ViewDockAreaPopup::constructionFinished()
    
       int sliderRow = _layoutMDW->rowCount();
       _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
+      
+      _layoutMDW->activate();
 }
 
     QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
