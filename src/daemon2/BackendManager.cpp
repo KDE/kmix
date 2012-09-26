@@ -25,6 +25,7 @@
 #include <QtCore/QDebug>
 
 #include "backends/PulseAudio.h"
+#include "backends/ALSA.h"
 
 BackendManager *BackendManager::s_instance = 0;
 
@@ -34,7 +35,7 @@ BackendManager::BackendManager()
     m_groups[Control::InputStream] = new ControlGroup("Recording");
     m_groups[Control::HardwareInput] = new ControlGroup("Hardware Input");
     m_groups[Control::HardwareOutput] = new ControlGroup("Hardware Output");
-    Backend *pulse = new Backends::PulseAudio(this);
+    Backend *pulse = new Backends::ALSA(this);
     connect(pulse, SIGNAL(controlAdded(Control *)), this, SLOT(handleControlAdded(Control *)));
     connect(pulse, SIGNAL(controlRemoved(Control *)), this, SLOT(handleControlRemoved(Control *)));
     m_backends << pulse;

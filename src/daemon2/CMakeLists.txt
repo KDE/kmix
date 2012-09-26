@@ -22,6 +22,8 @@ set(kmixd_SRCS
     ControlGroup.cpp
     Control.cpp
 
+    backends/ALSA.cpp
+
     backends/PulseAudio.cpp
     backends/PulseControl.cpp
     backends/PulseSourceOutputControl.cpp
