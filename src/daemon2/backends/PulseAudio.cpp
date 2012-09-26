@@ -29,10 +29,10 @@ namespace Backends {
 
 PulseAudio::PulseAudio(QObject *parent)
     : Backend(parent)
+    , m_context(0)
 {
     m_loop = pa_glib_mainloop_new(NULL);
     m_loopAPI = pa_glib_mainloop_get_api(m_loop);
-    m_context = pa_context_new(m_loopAPI, "KMix");
 }
 
 PulseAudio::~PulseAudio()
@@ -222,9 +222,27 @@ void PulseAudio::context_state_callback(pa_context *cxt, gpointer user_data)
     }
 }
 
+bool PulseAudio::probe()
+{
+    bool ret;
+    pa_context *context = pa_context_new(m_loopAPI, "KMix");
+    ret = (pa_context_connect(context, NULL, PA_CONTEXT_NOFLAGS, 0));
+    pa_context_disconnect(context);
+    pa_context_unref(context);
+    if (ret == 0)
+        return true;
+    qDebug() << "Could not connect to pulse:" << pa_strerror(ret);
+    return false;
+}
+
 bool PulseAudio::open()
 {
-    if (pa_context_connect(m_context, NULL, PA_CONTEXT_NOFAIL, 0) < 0) {
+    int ret;
+    if (!m_context) {
+        m_context = pa_context_new(m_loopAPI, "KMix");
+    }
+    if ((ret = pa_context_connect(m_context, NULL, PA_CONTEXT_NOFAIL, 0)) < 0) {
+        qDebug() << "Could not connect to pulse:" << pa_strerror(ret);
         pa_context_unref(m_context);
         m_context = NULL;
         return false;

@@ -35,15 +35,23 @@ BackendManager::BackendManager()
     m_groups[Control::InputStream] = new ControlGroup("Recording");
     m_groups[Control::HardwareInput] = new ControlGroup("Hardware Input");
     m_groups[Control::HardwareOutput] = new ControlGroup("Hardware Output");
-    addBackend(new Backends::ALSA(this));
+    if (!addBackend(new Backends::PulseAudio(this))) {
+        qWarning() << "PulseAudio is not working, falling back to ALSA.";
+        addBackend(new Backends::ALSA(this));
+    }
 }
 
-void BackendManager::addBackend(Backend *backend)
+bool BackendManager::addBackend(Backend *backend)
 {
-    connect(backend, SIGNAL(controlAdded(Control *)), this, SLOT(handleControlAdded(Control *)));
-    connect(backend, SIGNAL(controlRemoved(Control *)), this, SLOT(handleControlRemoved(Control *)));
-    m_backends << backend;
-    backend->open();
+    qDebug() << "Probing backend" << backend;
+    if (backend->probe()) {
+        connect(backend, SIGNAL(controlAdded(Control *)), this, SLOT(handleControlAdded(Control *)));
+        connect(backend, SIGNAL(controlRemoved(Control *)), this, SLOT(handleControlRemoved(Control *)));
+        m_backends << backend;
+        qDebug() << "Loaded backend" << backend;
+        return backend->open();
+    }
+    return false;
 }
 
 BackendManager *BackendManager::instance()

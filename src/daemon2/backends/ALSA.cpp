@@ -16,6 +16,12 @@ ALSA::~ALSA()
     }
 }
 
+bool ALSA::probe()
+{
+    int card = -1;
+    return (snd_card_next(&card) == 0 && card > -1);
+}
+
 bool ALSA::open()
 {
     int card = -1;

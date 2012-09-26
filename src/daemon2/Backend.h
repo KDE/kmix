@@ -30,6 +30,7 @@ public:
     ~Backend();
     QList<Control*> controls() const;
     virtual bool open();
+    virtual bool probe() = 0;
 signals:
     void controlAdded(Control *control);
     void controlRemoved(Control *control);

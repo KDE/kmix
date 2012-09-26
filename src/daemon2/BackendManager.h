@@ -33,7 +33,7 @@ public:
     static BackendManager *instance();
     QList<ControlGroup*> groups() const;
     ControlGroup *group(const QString &name) const;
-    void addBackend(Backend *backend);
+    bool addBackend(Backend *backend);
 signals:
     void controlAdded(Control *control);
     void controlRemoved(Control *control);

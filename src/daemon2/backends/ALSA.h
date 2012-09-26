@@ -12,6 +12,7 @@ public:
     ALSA(QObject *parent = 0);
     ~ALSA();
     bool open();
+    bool probe();
 private:
     QList<snd_mixer_t*> m_mixers;
 };
