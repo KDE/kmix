@@ -56,7 +56,11 @@ public:
         Center,
         RearLeft,
         RearRight,
-        Subwoofer
+        Subwoofer,
+        SideLeft,
+        SideRight,
+        RearCenter,
+        Mono
     } Channel;
     typedef enum {
         OutputStream,
