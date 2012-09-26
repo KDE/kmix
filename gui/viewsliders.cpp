@@ -345,9 +345,11 @@ void ViewSliders::configurationUpdate() {
    bool haveCaptureLEDs = false;
    int labelExtent = 0;
    bool haveMuteButtons = false;
-   for ( int i=0; i<_mdws.count(); i++ ) {
+   for ( int i=0; i<_mdws.count(); i++ )
+   {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
-      if ( mdw && mdw->isVisibleTo(this) ) {
+      if ( mdw && mdw->isVisibleTo(this) )
+      {
 		 if ( mdw->labelExtentHint() > labelExtent ) labelExtent = mdw->labelExtentHint();
 		 haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
 		 haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
@@ -357,17 +359,23 @@ void ViewSliders::configurationUpdate() {
    bool firstVisibleControlFound = false;
    for ( int i=0; i<_mdws.count(); i++ ) {
       MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
-      if ( mdw ) {
+      if ( mdw )
+      {
+	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), QString("simple")); // TODO Is "simple" enough here, especiall on the very first start of KMix?
+	mdw->setVisible(matchingControl != 0);
+
 		 mdw->setLabelExtent(labelExtent);
 		 mdw->setMuteButtonSpace(haveMuteButtons);
 		 mdw->setCaptureLEDSpace(haveCaptureLEDs);
          bool thisControlIsVisible = mdw->isVisibleTo(this);
          bool showSeparator = ( firstVisibleControlFound && thisControlIsVisible);
-         if ( _separators.contains( mdw->mixDevice()->id() )) {
+         if ( _separators.contains( mdw->mixDevice()->id() ))
+	 {
             QFrame* sep = _separators[mdw->mixDevice()->id()];
             sep->setVisible(showSeparator);
          }
-         if ( thisControlIsVisible ) firstVisibleControlFound=true;
+         if ( thisControlIsVisible )
+	   firstVisibleControlFound=true;
       }
     } // for all  MDW's
 

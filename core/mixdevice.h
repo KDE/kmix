@@ -137,6 +137,8 @@ public:
    // Sets a user readable name for the control.
    void      setReadableName(QString& name)      { _name = name; }
 
+   QString configGroupName(QString prefix);
+
    /**
     * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) 
     * MUST ensure that all MixDevices's of one card have unique ID's.

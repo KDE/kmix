@@ -151,6 +151,18 @@ shared_ptr<MixDevice> MixDevice::addToPool()
 }
 
 
+/**
+ * Returns the name of the config group
+ * @param Prefix of the group, e.g. "View_ALSA_USB_01"
+ * @returns The config group name in the format "prefix.mixerId,controlId"
+ */
+QString MixDevice::configGroupName(QString prefix)
+{
+         QString devgrp = QString("%1.%2.%3").arg(prefix).arg(mixer()->id()).arg(id());
+	 return devgrp;
+}
+
+
 QString MixDevice::getFullyQualifiedId()
 {
 	QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());

@@ -56,7 +56,15 @@ public:
       Horizontal     = 0x0004,
       Vertical       = 0x0008
    };
-
+   
+   typedef uint GUIComplexity;
+   enum
+   {
+     SIMPLE = 0,
+     EXTENDED = 1,
+     ALL = 2
+   };
+   
     ViewBase(QWidget* parent, const char* id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
@@ -104,7 +112,12 @@ public:
    void setIcons(bool on);
    void setLabels(bool on);
    void setTicks(bool on);
+   
    GUIProfile* guiProfile() { return GUIProfile::find(_guiProfileId); };
+   GUIComplexity getGuiComplexity() { return guiComplexity; };
+   ProfControl* findMdw(const QString& mdwId, QString requestedGuiComplexityName);
+
+   
    KActionCollection* actionCollection() { return _actions; };
 
    QList<Mixer*>& getMixers() { return _mixers; };
@@ -129,6 +142,8 @@ protected:
 
     virtual void _setMixSet() = 0;
     void resetMdws();
+    
+    GUIComplexity guiComplexity;
 
 public slots:
    virtual void refreshVolumeLevels(); // TODO remove

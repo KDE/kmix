@@ -100,6 +100,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
 {
   ControlManager::instance().removeListener(this);
   delete _layoutMDW;
+  // Hint: optionsLayout and "everything else" is deleted when delete _layoutMDW; cacades down
 }
 
 
@@ -152,6 +153,9 @@ void ViewDockAreaPopup::_setMixSet()
   delete seperatorBetweenMastersAndStreams;
   separatorBetweenMastersAndStreamsInserted = false;
   separatorBetweenMastersAndStreamsRequired = false;
+  delete optionsLayout;
+  optionsLayout = 0;
+
 // TODO code somewhat similar to ViewSliders => refactor  
 	// -- remove controls
 // 	if ( isDynamic() ) {
@@ -248,7 +252,7 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 
 void ViewDockAreaPopup::constructionFinished()
 {
-   //    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
+   kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
    Qt::Orientation orientation = (_vflags & ViewBase::Vertical) ? Qt::Horizontal : Qt::Vertical;
    bool vertical = (_vflags & ViewBase::Vertical);
@@ -262,7 +266,6 @@ void ViewDockAreaPopup::constructionFinished()
     QPushButton* configureViewButton = new QPushButton(icon, "");
     configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    delete optionsLayout;
    optionsLayout = new QHBoxLayout();
     optionsLayout->addWidget(pb );
     optionsLayout->addWidget(configureViewButton);
@@ -270,7 +273,6 @@ void ViewDockAreaPopup::constructionFinished()
    optionsLayout->addWidget( createRestoreVolumeButton(2) );
    optionsLayout->addWidget( createRestoreVolumeButton(3) );
    optionsLayout->addWidget( createRestoreVolumeButton(4) );
-//    optionsLayout->addWidget( new QWidget(this));
    
       int sliderRow = _layoutMDW->rowCount();
       _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
