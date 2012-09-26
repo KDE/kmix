@@ -35,11 +35,15 @@ BackendManager::BackendManager()
     m_groups[Control::InputStream] = new ControlGroup("Recording");
     m_groups[Control::HardwareInput] = new ControlGroup("Hardware Input");
     m_groups[Control::HardwareOutput] = new ControlGroup("Hardware Output");
-    Backend *pulse = new Backends::ALSA(this);
-    connect(pulse, SIGNAL(controlAdded(Control *)), this, SLOT(handleControlAdded(Control *)));
-    connect(pulse, SIGNAL(controlRemoved(Control *)), this, SLOT(handleControlRemoved(Control *)));
-    m_backends << pulse;
-    pulse->open();
+    addBackend(new Backends::ALSA(this));
+}
+
+void BackendManager::addBackend(Backend *backend)
+{
+    connect(backend, SIGNAL(controlAdded(Control *)), this, SLOT(handleControlAdded(Control *)));
+    connect(backend, SIGNAL(controlRemoved(Control *)), this, SLOT(handleControlRemoved(Control *)));
+    m_backends << backend;
+    backend->open();
 }
 
 BackendManager *BackendManager::instance()
