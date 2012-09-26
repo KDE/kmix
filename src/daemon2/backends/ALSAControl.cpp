@@ -65,6 +65,8 @@ int AlsaControl::getVolume(Channel c) const
     long min;
     long max;
     long value;
+    if (max == 0)
+        return 0;
     snd_mixer_selem_get_playback_volume_range(m_elem, &min, &max);
     snd_mixer_selem_get_playback_volume(m_elem, alsaChannel(c), &value);
     return ((value+min)/max)*65536;
