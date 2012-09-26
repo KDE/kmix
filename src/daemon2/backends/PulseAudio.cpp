@@ -249,7 +249,13 @@ bool PulseAudio::open()
 {
     int ret;
     if (!m_context) {
-        m_context = pa_context_new(m_loopAPI, "KMix");
+        pa_proplist *props = pa_proplist_new();
+        pa_proplist_sets(props, PA_PROP_APPLICATION_ID, "org.kde.kmixd");
+        pa_proplist_sets(props, PA_PROP_APPLICATION_NAME, "KMix");
+        pa_proplist_sets(props, PA_PROP_APPLICATION_ICON_NAME, "kmix");
+        //TODO
+        //pa_proplist_sets(props, PA_PROP_APPLICATION_VERSION, KMIXD_VERSION);
+        m_context = pa_context_new_with_proplist(m_loopAPI, "KMix", props);
     }
     if ((ret = pa_context_connect(m_context, NULL, PA_CONTEXT_NOFAIL, 0)) < 0) {
         qDebug() << "Could not connect to pulse:" << pa_strerror(ret);
