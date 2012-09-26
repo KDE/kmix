@@ -92,6 +92,16 @@ void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *
         return;
     }
     PulseSourceOutputControl *control;
+    const char *app;
+    if (app = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_ID)) {
+        qDebug() << "recording App ID:" << app;
+        if (strcmp(app, "org.PulseAudio.pavucontrol") == 0)
+            return;
+        if (strcmp(app, "org.kde.kmixd") == 0)
+            return;
+        if (strcmp(app, "org.gnome.VolumeControl") == 0)
+            return;
+    }
     if (!that->m_sourceOutputs.contains(info->index)) {
         control = new PulseSourceOutputControl(cxt, info, that);
         QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSourceOutput(int)));
