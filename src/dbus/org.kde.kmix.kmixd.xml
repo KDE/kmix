@@ -10,7 +10,9 @@
     <signal name="masterChanged">
         <arg name="id" type="s"/>
     </signal>
-    <signal name="masterVolumeChanged"/>
+    <signal name="masterVolumeChanged">
+        <arg name="level" type="d"/>
+    </signal>
     <property access="readwrite" name="masterVolume" type="i">
     <signal name="groupAdded">
         <arg name="name" type="s"/>
