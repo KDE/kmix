@@ -24,6 +24,7 @@
 #include <kuniqueapplication.h>
 
 class KMixWindow;
+class KStatusNotifierItem;
 
 class KMixApp : public KUniqueApplication
 {
@@ -32,17 +33,9 @@ Q_OBJECT
     KMixApp();
     ~KMixApp();
     int newInstance ();
-
-    public slots:
-    //void quitExtended();  // For a hack on visibility()
-    static void keepVisibility(bool);
-/*
- signals:
-    void stopUpdatesOnVisibility();
-*/
  private:
     KMixWindow *m_kmix;
-    static bool _keepVisibility;
+    KStatusNotifierItem *m_icon;
 };
 
 #endif

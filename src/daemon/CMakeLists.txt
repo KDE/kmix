@@ -1,42 +1,37 @@
-
-set(kmixd_backend_SRCS
-   ../backends/mixer_backend.cpp
-   ../backends/mixer_mpris2.cpp
-   )
-
-if (HAVE_LIBASOUND2)
-  set(kmixd_backend_SRCS ${kmixd_backend_SRCS}
-      ../backends/mixer_alsa9.cpp )
-endif (HAVE_LIBASOUND2)
-
-if (PULSEAUDIO_FOUND)
-  set(kmixd_backend_SRCS ${kmixd_backend_SRCS}
-      ../backends/mixer_pulse.cpp )
-endif (PULSEAUDIO_FOUND)
-
 set(kmixd_SRCS
     main.cpp
     KMixDApp.cpp
-	../dbus/dbusmixsetwrapper.cpp
-	../dbus/dbusmixerwrapper.cpp
-	../dbus/dbuscontrolwrapper.cpp
-    ../core/mixertoolbox.cpp
-    ../core/kmixdevicemanager.cpp
-    ../core/ControlPool.cpp
-    ../core/MasterControl.cpp
-    ../core/mixer.cpp
-    ../core/mixset.cpp
-    ../core/mixdevice.cpp
-    ../core/mixdevicecomposite.cpp
-    ../core/volume.cpp
+    Backend.cpp
+    BackendManager.cpp
+    ControlGroup.cpp
+    Control.cpp
 )
 
-qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.mixset.xml
-	../dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
+if (HAVE_LIBASOUND2)
+    set(kmixd_SRCS ${kmixd_SRCS}
+        backends/ALSA.cpp
+        backends/ALSAControl.cpp
+    )
+endif()
+
+if (PULSEAUDIO_FOUND)
+    set(kmixd_SRCS ${kmixd_SRCS}
+        backends/PulseAudio.cpp
+        backends/PulseControl.cpp
+        backends/PulseSourceOutputControl.cpp
+        backends/PulseSinkInputControl.cpp
+        backends/PulseSinkControl.cpp
+    )
+endif()
+
+qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.kmixd.xml
+    KMixDApp.h KMixDApp )
 qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.control.xml
-	../dbus/dbuscontrolwrapper.h DBusControlWrapper )
-qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.mixer.xml
-	../dbus/dbusmixerwrapper.h DBusMixerWrapper )
+    Control.h Control )
+qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.controlgroup.xml
+    ControlGroup.h ControlGroup )
+qt4_add_dbus_interface(kmixd_SRCS ../dbus/org.kde.kmix.controlmonitor.xml
+	controlmonitor_interface)
 
 kde4_add_executable(kmixd ${kmixd_SRCS} ${kmixd_backend_SRCS})
 
@@ -57,7 +52,7 @@ endif (PULSEAUDIO_FOUND)
 
 install( TARGETS kmixd ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-configure_file(org.kde.kmix.service.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.kmix.service)
+configure_file(org.kde.kmixd.service.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.kmixd.service)
 
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.kmix.service DESTINATION ${DBUS_SERVICES_INSTALL_DIR} )
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.kmixd.service DESTINATION ${DBUS_SERVICES_INSTALL_DIR} )

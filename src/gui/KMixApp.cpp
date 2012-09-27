@@ -20,15 +20,10 @@
  */
 
 #include "KMixApp.h"
-#include "kmix.h"
+#include "KMixWindow.h"
 #include <kdebug.h>
+#include <KDE/KStatusNotifierItem>
 
-#include "core/ControlPool.h"
-#include "core/kmixdevicemanager.h"
-#include "core/mixertoolbox.h"
-
-
-bool KMixApp::_keepVisibility = false;
 
 KMixApp::KMixApp()
     : KUniqueApplication(), m_kmix( 0 )
@@ -45,9 +40,6 @@ KMixApp::KMixApp()
 
 KMixApp::~KMixApp()
 {
-    MixerToolBox::cleanup();
-    ControlPool::cleanup();
-    KMixDeviceManager::cleanup();
    delete m_kmix;
 }
 
@@ -55,86 +47,19 @@ KMixApp::~KMixApp()
 int
 KMixApp::newInstance()
 {
-        // There are 3 cases for a new instance
-
-	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
-	static bool first = true;
-	if ( !first )
-	{	// There already exists an instance/window
- 
-                /* !!! @bug : _keepVisibilty has the wrong value here.
-                    It is supposed to have the value set by the command line
-                    arg, and the keepVisibilty() method.
-                    All looks fine, BUT(!!!) THIS code is NEVER entered in
-                    the just started process.
-                    KDE IPC (DBUS) has instead notified the already running
-                    KMix process, about a newInstance(). So _keepVisibilty
-                    has always the value of the first started KMix process.
-                    This is a bug in KMix and  must be fixed.
-                    cesken, 2008-11-01
-                 */
-                 
-		kDebug(67100) <<  "KMixApp::newInstance() Instance exists";
-
-		if ( ! _keepVisibility && !isSessionRestored() ) {
-			kDebug(67100) <<  "KMixApp::newInstance() SHOW WINDOW (_keepVisibility=" << _keepVisibility << ", isSessionRestored=" << isSessionRestored();
-			// CASE 1: If KMix is running AND the *USER*
-                        // starts it again, the KMix main window will be shown.
-			// If KMix is restored by SM or the --keepvisibilty is used, KMix will NOT
-			// explicitly be shown.
-			KUniqueApplication::newInstance();
-//			if ( !m_kmix ) {
-//				m_kmix->show();
-//			} else {
-//				kWarning(67100) << "KMixApp::newInstance() Window has not finished constructing yet so ignoring the show() request.";
-//			}
-		}
-		else {
-                        // CASE 2: If KMix is running, AND  ( session gets restored OR keepvisibilty command line switch )
-			kDebug(67100) <<  "KMixApp::newInstance() REGULAR_START _keepVisibility=" << _keepVisibility;
-			// Special case: Command line arg --keepVisibility was used:
-			// We don't want to change the visibiliy, thus we don't call show() here.
-			//
-			//  Hint: --keepVisibility is a special option for applications that
-			//    want to start a mixer service, but don't need to show the KMix
-			//    GUI (like KMilo , KAlarm, ...).
-			//    See (e.g.) Bug 58901 for deeper insight.
-		}
-	}
-	else
-	{
-                // CASE 3: KMix was not running yet => instanciate a new one
-		//kDebug(67100) <<  "KMixApp::newInstance() Instanciate: _keepVisibility=" << _keepVisibility ;
-		first = false;	// NB See https://qa.mandriva.com/show_bug.cgi?id=56893#c3
-				// It is important to track this via a separate variable and not
-				// based on m_kmix to handle this race condition.
-				// Specific protection for the activation-prior-to-full-construction
-				// case exists above in the 'already running case'
-		m_kmix = new KMixWindow(_keepVisibility);
-		//connect(this, SIGNAL(stopUpdatesOnVisibility()), m_kmix, SLOT(stopVisibilityUpdates()));
-		if ( isSessionRestored() && KMainWindow::canBeRestored(0) )
-		{
-			m_kmix->restore(0, false);
-		}
-	}
-
+    if ( m_kmix ) {
+        m_kmix->show();
+    } else {
+        m_kmix = new KMixWindow(NULL);
+        m_icon = new KStatusNotifierItem("kmix");
+        m_icon->setAssociatedWidget(m_kmix);
+        m_icon->setCategory(KStatusNotifierItem::Hardware);
+        m_icon->setIconByName("kmix");
+        m_icon->setStandardActionsEnabled(true);
+        m_icon->setStatus(KStatusNotifierItem::Passive);
+        m_icon->setTitle("KMix");
+        m_icon->setToolTip("kmix", "KMix", "Volume");
+    }
 	return 0;
 }
-
-void KMixApp::keepVisibility(bool val_keepVisibility) {
-   _keepVisibility = val_keepVisibility;
-}
-
-/*
-void
-KMixApp::quitExtended()
-{
-    // This method is here to quit hold from the dock icon: When directly calling
-    // quit(), the main window will be hidden before saving the configuration.
-    // isVisible() would return on quit always false (which would be bad).
-    kDebug(67100) <<  "quitExtended ENTER";
-    emit stopUpdatesOnVisibility();
-    quit();
-}
-*/
 

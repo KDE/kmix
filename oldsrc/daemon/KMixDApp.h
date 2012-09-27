@@ -22,36 +22,18 @@
 #define KMixApp_h
 
 #include <QtCore/QCoreApplication>
-#include <QtCore/QStringList>
 
-class Control;
+class KMixDeviceManager;
 
 class KMixDApp : public QCoreApplication
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList mixerGroups READ mixerGroups);
-    Q_PROPERTY(QString masterControl READ masterControl);
-    Q_PROPERTY(int masterVolume READ masterVolume WRITE setMasterVolume);
 public:
     KMixDApp(int &argc, char **argv);
     ~KMixDApp();
     int start();
-    void setMaster(int masterID);
-    QStringList mixerGroups() const;
-    QString masterControl() const;
-
-    int masterVolume() const;
-    void setMasterVolume(int v);
-signals:
-    void groupAdded(const QString &name);
-    void groupRemoved(const QString &name);
-    void masterChanged(const QString &path);
-    void masterVolumeChanged();
-private slots:
-    void controlAdded(Control *);
-    void controlRemoved(Control *);
 private:
-    Control *m_master;
+    KMixDeviceManager *m_devManager;
 };
 
 #endif

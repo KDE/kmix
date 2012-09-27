@@ -1,50 +1,20 @@
 set(kmix_KDEINIT_SRCS
    main.cpp
-   kmix.cpp
+   KMixWindow.cpp
    KMixApp.cpp
-   kmixdockwidget.cpp
-   kmixprefdlg.cpp
-   viewbase.cpp 
-   viewdockareapopup.cpp 
-   viewsliders.cpp 
-   mixdevicewidget.cpp 
-   mdwmoveaction.cpp
-   mdwslider.cpp 
-   mdwenum.cpp 
-   kmixerwidget.cpp 
-   ksmallslider.cpp
-   verticaltext.cpp
-   volumeslider.cpp 
-   kmixtoolbox.cpp 
-   dialogaddview.cpp 
-   dialogviewconfiguration.cpp 
-   dialogselectmaster.cpp 
-   guiprofile.cpp
-   osdwidget.cpp
-	../dbus/dbusmixsetwrapper.cpp
-	../dbus/dbusmixerwrapper.cpp
-	../dbus/dbuscontrolwrapper.cpp
-   ../core/mixertoolbox.cpp
-   ../core/kmixdevicemanager.cpp
-   ../core/ControlPool.cpp
-   ../core/MasterControl.cpp
-   ../core/mixer.cpp
-   ../core/mixset.cpp
-   ../core/mixdevice.cpp
-   ../core/mixdevicecomposite.cpp
-   ../core/volume.cpp
-   ../backends/mixer_backend.cpp
-   ../backends/mixer_mpris2.cpp
-   ../backends/mixer_alsa9.cpp
-   ../backends/mixer_pulse.cpp
+   ControlSlider.cpp
+   ControlGroupTab.cpp
+   ControlMonitor.cpp
 )
 
-qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixset.xml
-	mixset_interface)
-qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.mixer.xml
-	mixer_interface)
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml
+	kmixd_interface)
+qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.controlgroup.xml
+	controlgroup_interface)
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.control.xml
 	control_interface)
+qt4_add_dbus_adaptor( kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.controlmonitor.xml
+    ControlMonitor.h ControlMonitor)
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 

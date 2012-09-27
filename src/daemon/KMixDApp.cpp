@@ -19,17 +19,20 @@
  */
 
 #include "KMixDApp.h"
-#include "core/ControlPool.h"
-#include "core/kmixdevicemanager.h"
-#include "core/mixertoolbox.h"
-#include "dbus/dbusmixsetwrapper.h"
+#include "kmixdadaptor.h"
+#include "ControlGroup.h"
+#include "BackendManager.h"
+#include "Control.h"
 
 #include <QtDBus/QDBusConnection>
 #include <QtCore/QDebug>
 
 KMixDApp::KMixDApp(int &argc, char **argv)
     : QCoreApplication(argc, argv)
+    , m_master(0)
 {
+    connect(BackendManager::instance(), SIGNAL(controlAdded(Control*)), this, SLOT(controlAdded(Control*)));
+    connect(BackendManager::instance(), SIGNAL(controlRemoved(Control*)), this, SLOT(controlRemoved(Control*)));
 }
 
 KMixDApp::~KMixDApp()
@@ -38,22 +41,68 @@ KMixDApp::~KMixDApp()
 
 int KMixDApp::start()
 {
-    int ret = 1;
-
     if (QDBusConnection::sessionBus().registerService("org.kde.kmixd")) {
-        MixerToolBox::instance()->initMixer();
-        KMixDeviceManager *devs = KMixDeviceManager::instance();
-        devs->initHotplug();
-        DBusMixSetWrapper *wrapper = new DBusMixSetWrapper( this, "/Mixers");
-        connect( devs, SIGNAL(plugged(const char*,QString,QString&)),
-                wrapper, SIGNAL(mixersChanged()) );
-        connect( devs, SIGNAL(unplugged(QString)),
-                wrapper, SIGNAL(mixersChanged()) );
-        ret = exec();
+        new KMixDAdaptor(this);
+        QDBusConnection::sessionBus().registerObject("/KMixD", this);
+        return exec();
+    }
+    return 1;
+}
 
-        MixerToolBox::cleanup();
-        ControlPool::cleanup();
-        KMixDeviceManager::cleanup();
+void KMixDApp::setMaster(int id)
+{
+    Q_ASSERT(false);
+}
+
+QStringList KMixDApp::mixerGroups() const
+{
+    QStringList ret;
+    foreach(ControlGroup *group, BackendManager::instance()->groups()) {
+        ret << QString("/groups/%1").arg(group->id());
     }
     return ret;
+}
+
+QString KMixDApp::masterControl() const
+{
+    return QString("/controls/%1").arg(m_master->id());
+}
+
+int KMixDApp::masterVolume() const
+{
+    if (m_master) {
+        int sum;
+        for(int i = 0;i<m_master->channels();i++) {
+            sum+=m_master->getVolume(i);
+        }
+        return sum/m_master->channels();
+    }
+    return 0;
+}
+
+void KMixDApp::setMasterVolume(int v)
+{
+    if (m_master) {
+        for(int i = 0;i<m_master->channels();i++) {
+            m_master->setVolume(i, v);
+        }
+    }
+}
+
+void KMixDApp::controlAdded(Control *control)
+{
+    if (control->category() == Control::HardwareOutput) {
+        if (m_master)
+            disconnect(m_master, SIGNAL(volumeChanged(int)), this, SIGNAL(masterVolumeChanged()));
+        m_master = control;
+        emit masterChanged(QString("/controls/%1").arg(m_master->id()));
+        connect(m_master, SIGNAL(volumeChanged(int)), this, SIGNAL(masterVolumeChanged()));
+    }
+}
+
+void KMixDApp::controlRemoved(Control *control)
+{
+    if (control == m_master) {
+        m_master = 0;
+    }
 }

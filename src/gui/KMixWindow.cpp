@@ -36,8 +36,6 @@
 #include <KDE/KApplication>
 
 // KMix
-#include "core/version.h"
-
 #include "kmixd_interface.h"
 #include "controlgroup_interface.h"
 
@@ -53,7 +51,6 @@ KMixWindow::KMixWindow(QWidget* parent)
     : KXmlGuiWindow(parent, Qt::WindowFlags( KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint) )
 {
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
-    qDebug() << "construct";
     setAttribute(Qt::WA_DeleteOnClose, false);
     m_daemon = new org::kde::KMix::KMixD(KMIX_DBUS_SERVICE, KMIX_DBUS_PATH, QDBusConnection::sessionBus(), this);
     initActions();

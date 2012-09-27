@@ -1,7 +1,8 @@
+//-*-C++-*-
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,48 +18,31 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef KMixApp_h
+#define KMixApp_h
 
-#ifndef KMIX_H
-#define KMIX_H
+#include <kuniqueapplication.h>
 
+class KMixWindow;
 
-#include <config.h>
-
-// Qt
-
-// KDE
-#include <kxmlguiwindow.h>
-
-// KMix
-class OrgKdeKMixKMixDInterface;
-namespace org {
-    namespace kde {
-        namespace KMix {
-            typedef ::OrgKdeKMixKMixDInterface KMixD;
-        }
-    }
-}
-
-class KMixDockWidget;
-class QHBoxLayout;
-
-class
-KMixWindow : public KXmlGuiWindow
+class KMixApp : public KUniqueApplication
 {
-   Q_OBJECT
+Q_OBJECT
+ public:
+    KMixApp();
+    ~KMixApp();
+    int newInstance ();
 
-public:
-    KMixWindow(QWidget* parent = 0);
-    ~KMixWindow();
-
-private slots:
-    void launchPhononConfig();
-
-private:
-    void initActions();
-    org::kde::KMix::KMixD *m_daemon;
-    KMixDockWidget *m_dockWidget;
-    QHBoxLayout *m_layout;
+    public slots:
+    //void quitExtended();  // For a hack on visibility()
+    static void keepVisibility(bool);
+/*
+ signals:
+    void stopUpdatesOnVisibility();
+*/
+ private:
+    KMixWindow *m_kmix;
+    static bool _keepVisibility;
 };
 
-#endif // KMIX_H
+#endif

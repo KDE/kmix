@@ -60,7 +60,15 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    KCmdLineArgs::init( argc, argv, &aboutData );
 
+   KCmdLineOptions options;
+   options.add("keepvisibility", ki18n("Inhibits the unhiding of the KMix main window, if KMix is already running."));
+   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KUniqueApplication::addCmdLineOptions();
+
+   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+   bool hasArgKeepvisibility = args->isSet("keepvisibility");
+   //kDebug(67100) <<  "hasArgKeepvisibility=" << hasArgKeepvisibility;
+   KMixApp::keepVisibility(hasArgKeepvisibility);
 
    if (!KMixApp::start())
        return 0;
