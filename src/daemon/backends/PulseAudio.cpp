@@ -114,16 +114,24 @@ void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *
     if (eol > 0) {
         return;
     }
+    if (that->m_excludedSourceOutputs.contains(info->index))
+        return;
     PulseSourceOutputControl *control;
     const char *app;
     if ((app = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_ID))) {
-        qDebug() << "recording App ID:" << app;
+        bool exclude = false;
         if (strcmp(app, "org.PulseAudio.pavucontrol") == 0)
+            exclude = true;
+        else if (strcmp(app, "org.kde.kmixd") == 0)
+            exclude = true;
+        else if (strcmp(app, "org.gnome.VolumeControl") == 0)
+            exclude = true;
+
+        qDebug() << "recording App ID:" << app << exclude;
+        if (exclude) {
+            that->m_excludedSourceOutputs << info->index;
             return;
-        if (strcmp(app, "org.kde.kmixd") == 0)
-            return;
-        if (strcmp(app, "org.gnome.VolumeControl") == 0)
-            return;
+        }
     }
     if (!that->m_sourceOutputs.contains(info->index)) {
         control = new PulseSourceOutputControl(cxt, info, that);
