@@ -21,6 +21,7 @@ if (PULSEAUDIO_FOUND)
         backends/PulseSourceOutputControl.cpp
         backends/PulseSinkInputControl.cpp
         backends/PulseSinkControl.cpp
+        backends/PulseSourceControl.cpp
     )
 endif()
 

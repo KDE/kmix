@@ -31,6 +31,7 @@ class PulseControl;
 class PulseSinkControl;
 class PulseSourceOutputControl;
 class PulseSinkInputControl;
+class PulseSourceControl;
 
 class PulseAudio : public Backend {
     Q_OBJECT
@@ -44,11 +45,13 @@ private slots:
     void refreshSink(int idx);
     void refreshSourceOutput(int idx);
     void refreshSinkInput(int idx);
+    void refreshSource(int idx);
 private:
     static void context_state_callback(pa_context *cxt, gpointer user_data);
     static void sink_cb(pa_context *cxt, const pa_sink_info *info, int eol, gpointer user_data);
     static void source_output_cb(pa_context *cxt, const pa_source_output_info *info, int eol, gpointer user_data);
     static void sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, int eol, gpointer user_data);
+    static void source_cb(pa_context *cxt, const pa_source_info *info, int eol, gpointer user_data);
     static void subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uint32_t index, gpointer user_data);
     pa_glib_mainloop *m_loop;
     pa_mainloop_api *m_loopAPI;
@@ -56,6 +59,8 @@ private:
     QMap<int, PulseSinkControl*> m_sinks;
     QMap<int, PulseSourceOutputControl*> m_sourceOutputs;
     QMap<int, PulseSinkInputControl*> m_sinkInputs;
+    QMap<int, PulseSourceControl*> m_sources;
+    QList<int> m_excludedSourceOutputs;
 };
 
 } //namespace Backends

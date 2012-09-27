@@ -23,6 +23,7 @@
 #include "PulseSourceOutputControl.h"
 #include "PulseSinkInputControl.h"
 #include "PulseSinkControl.h"
+#include "PulseSourceControl.h"
 #include <QtCore/QDebug>
 
 namespace Backends {
@@ -70,6 +71,28 @@ void PulseAudio::sink_input_cb(pa_context *cxt, const pa_sink_input_info *info, 
         that->registerControl(control);
     } else {
         control = that->m_sinkInputs[info->index];
+        control->update(info);
+    }
+}
+
+void PulseAudio::source_cb(pa_context *cxt, const pa_source_info *info, int eol, gpointer user_data)
+{
+    PulseAudio *that = static_cast<PulseAudio*>(user_data);
+    if (eol < 0) {
+        if (pa_context_errno(cxt) == PA_ERR_NOENTITY)
+            return;
+    }
+    if (eol > 0) {
+        return;
+    }
+    PulseSourceControl *control;
+    if (!that->m_sources.contains(info->index)) {
+        control = new PulseSourceControl(cxt, info, that);
+        QObject::connect(control, SIGNAL(scheduleRefresh(int)), that, SLOT(refreshSource(int)));
+        that->m_sources[info->index] = control;
+        that->registerControl(control);
+    } else {
+        control = that->m_sources[info->index];
         control->update(info);
     }
 }
@@ -145,6 +168,11 @@ void PulseAudio::refreshSinkInput(int idx)
     pa_context_get_sink_input_info(m_context, idx, sink_input_cb, this);
 }
 
+void PulseAudio::refreshSource(int idx)
+{
+    pa_context_get_source_info_by_index(m_context, idx, source_cb, this);
+}
+
 void PulseAudio::refreshSourceOutput(int idx)
 {
     pa_context_get_source_output_info(m_context, idx, source_output_cb, this);
@@ -172,6 +200,7 @@ void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uin
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 PulseControl *control = that->m_sourceOutputs.take(index);
                 that->deregisterControl(control);
+                that->m_excludedSourceOutputs.removeOne(control->pulseIndex());
                 control->deleteLater();
             } else {
                 pa_operation *op;
@@ -182,6 +211,19 @@ void PulseAudio::subscribe_cb(pa_context *cxt, pa_subscription_event_type t, uin
                 pa_operation_unref(op);
             }
             break;
+        case PA_SUBSCRIPTION_EVENT_SOURCE:
+            if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
+                PulseControl *control = that->m_sources.take(index);
+                that->deregisterControl(control);
+                control->deleteLater();
+            } else {
+                pa_operation *op;
+                if (!(op = pa_context_get_source_info_by_index(cxt, index, source_cb, user_data))) {
+                    qWarning() << "pa_context_get_source_info_by_index failed";
+                    return;
+                }
+                pa_operation_unref(op);
+            }
         case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 PulseControl *control = that->m_sinkInputs.take(index);
@@ -218,6 +260,10 @@ void PulseAudio::context_state_callback(pa_context *cxt, gpointer user_data)
         }
         pa_operation_unref(op);
         if (!(op = pa_context_get_sink_info_list(cxt, sink_cb, that))) {
+            return;
+        }
+        pa_operation_unref(op);
+        if (!(op = pa_context_get_source_info_list(cxt, source_cb, that))) {
             return;
         }
         pa_operation_unref(op);
