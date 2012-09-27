@@ -98,7 +98,7 @@ public:
     bool canChangeTarget() const;
     QString currentTarget() const;
 signals:
-    void volumeChanged(int c);
+    void volumeChanged(int c, int v);
     void muteChanged(bool muted);
     void removed();
     void currentTargetChanged(const QString &path);

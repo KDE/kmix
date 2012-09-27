@@ -44,7 +44,7 @@ public:
     explicit ControlSlider(org::kde::KMix::Control *control, QWidget *parent = 0);
     ~ControlSlider();
 private slots:
-    void volumeChange(int channel);
+    void volumeChange(int channel, int level);
     void updateVolume(int channel);
     void updateMute();
     void toggleMute();

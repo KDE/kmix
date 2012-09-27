@@ -38,6 +38,7 @@
     </method>
     <signal name="volumeChanged">
         <arg name="channel" type="i"/>
+        <arg name="level" type="i"/>
     </signal>
     <signal name="removed"/>
     <method name="subscribeMonitor">

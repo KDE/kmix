@@ -93,10 +93,10 @@ void KMixDApp::controlAdded(Control *control)
 {
     if (control->category() == Control::HardwareOutput) {
         if (m_master)
-            disconnect(m_master, SIGNAL(volumeChanged(int)), this, SIGNAL(masterVolumeChanged()));
+            disconnect(m_master, SIGNAL(volumeChanged(int, int)), this, SIGNAL(masterVolumeChanged()));
         m_master = control;
         emit masterChanged(QString("/controls/%1").arg(m_master->id()));
-        connect(m_master, SIGNAL(volumeChanged(int)), this, SIGNAL(masterVolumeChanged()));
+        connect(m_master, SIGNAL(volumeChanged(int, int)), this, SIGNAL(masterVolumeChanged()));
     }
 }
 

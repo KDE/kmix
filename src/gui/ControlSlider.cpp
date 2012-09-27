@@ -106,7 +106,7 @@ ControlSlider::ControlSlider(org::kde::KMix::Control *control, QWidget *parent)
     }
 
     updateMute();
-    connect(control, SIGNAL(volumeChanged(int)), this, SLOT(volumeChange(int)));
+    connect(control, SIGNAL(volumeChanged(int, int)), this, SLOT(volumeChange(int, int)));
     connect(control, SIGNAL(muteChanged(bool)), this, SLOT(updateMute()));
     connect(control, SIGNAL(currentTargetChanged(QString)), this, SLOT(handleTargetChange()));
 
@@ -116,10 +116,9 @@ ControlSlider::~ControlSlider()
 {
 }
 
-void ControlSlider::volumeChange(int channel)
+void ControlSlider::volumeChange(int channel, int level)
 {
-    qDebug() << "Updated volume on" << channel << m_control->getVolume(channel);
-    m_sliders[channel]->setValue(m_control->getVolume(channel));
+    m_sliders[channel]->setValue(level);
 }
 
 void ControlSlider::updateVolume(int channel)
