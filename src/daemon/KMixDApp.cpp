@@ -71,7 +71,7 @@ QString KMixDApp::masterControl() const
 int KMixDApp::masterVolume() const
 {
     if (m_master) {
-        int sum;
+        int sum = 0;
         for(int i = 0;i<m_master->channels();i++) {
             sum+=m_master->getVolume(i);
         }

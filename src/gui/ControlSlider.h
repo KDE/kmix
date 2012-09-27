@@ -41,7 +41,7 @@ class ControlSlider : public QWidget
     Q_OBJECT
 
 public:
-    ControlSlider(org::kde::KMix::Control *control, QWidget *parent = 0);
+    explicit ControlSlider(org::kde::KMix::Control *control, QWidget *parent = 0);
     ~ControlSlider();
 private slots:
     void volumeChange(int channel);

@@ -1,6 +1,5 @@
 [Desktop Entry]
 Exec=kmix
-DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Type=Application
 MimeType=
@@ -82,4 +81,4 @@ Name[uk]=KMix
 Name[x-test]=xxKMixxx
 Name[zh_CN]=KMix
 Name[zh_TW]=音效調整_KMix
-Categories=Qt;KDE;AudioVideo;Mixer;
+Categories=Qt;KDE;Audio;Mixer;

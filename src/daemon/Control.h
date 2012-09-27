@@ -68,7 +68,7 @@ public:
         HardwareInput,
         HardwareOutput
     } Category;
-    Control(Category, QObject *parent = 0);
+    explicit Control(Category, QObject *parent = 0);
     ~Control();
 
     virtual QString displayName() const = 0;

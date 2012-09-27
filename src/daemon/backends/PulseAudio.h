@@ -18,6 +18,9 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef PULSEAUDIO_H
+#define PULSEAUDIO_H
+
 #include "Backend.h"
 #include <pulse/pulseaudio.h>
 #include <pulse/glib-mainloop.h>
@@ -56,3 +59,5 @@ private:
 };
 
 } //namespace Backends
+
+#endif // PULSEAUDIO_H

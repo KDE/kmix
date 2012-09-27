@@ -93,7 +93,7 @@ void PulseAudio::source_output_cb(pa_context *cxt, const pa_source_output_info *
     }
     PulseSourceOutputControl *control;
     const char *app;
-    if (app = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_ID)) {
+    if ((app = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_ID))) {
         qDebug() << "recording App ID:" << app;
         if (strcmp(app, "org.PulseAudio.pavucontrol") == 0)
             return;

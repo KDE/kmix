@@ -32,7 +32,7 @@ class ControlGroup : public QObject
     Q_PROPERTY(QString displayName READ displayName);
     Q_PROPERTY(QStringList controls READ controls);
 public:
-    ControlGroup(const QString &displayName, QObject *parent = 0);
+    explicit ControlGroup(const QString &displayName, QObject *parent = 0);
     ~ControlGroup();
     QString displayName() const;
     QStringList controls() const;

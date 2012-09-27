@@ -117,6 +117,7 @@ void Control::setCurrentTarget(Control *t)
 
 void Control::changeTarget(Control *t)
 {
+    Q_UNUSED(t);
 }
 
 void Control::startMonitor()
