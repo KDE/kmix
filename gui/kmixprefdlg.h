@@ -25,11 +25,14 @@
 #include <kdialog.h>
 
 class KMixPrefWidget;
+
+class QBoxLayout;
 class QCheckBox;
 class QFrame;
 class QLabel;
 class QRadioButton;
 class QShowEvent;
+class QWidget;
 
 class 
 KMixPrefDlg : public KDialog
@@ -47,20 +50,22 @@ KMixPrefDlg : public KDialog
 
    private slots:
       void apply();
-      void dockIntoPanelChange(int state);
 
   protected:
     void showEvent ( QShowEvent * event );
 
   private:
-   QFrame *m_generalTab;
-   KMixPrefWidget *m_mixPrefTab;
+    void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString toopTipText);
+
+
+    QFrame *m_generalTab;
 
    QCheckBox *m_dockingChk;
    QCheckBox *m_volumeChk;
    QLabel *dynamicControlsRestoreWarning;
    QCheckBox *m_showTicks;
    QCheckBox *m_showLabels;
+   QCheckBox* m_showOSD;
    QCheckBox *m_onLogin;
    QCheckBox *allowAutostart;
    QLabel *allowAutostartWarning;

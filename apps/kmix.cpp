@@ -83,8 +83,6 @@ KMixWindow::KMixWindow(bool invisible) :
   // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
   setAttribute(Qt::WA_DeleteOnClose, false);
 
-  kDebug()
-  << "Hello Randa 2012";
   initActions(); // init actions first, so we can use them in the loadConfig() already
   loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
   initActionsLate(); // init actions that require a loaded config
@@ -386,6 +384,7 @@ KMixWindow::saveBaseConfig()
   config.writeEntry("TrayVolumeControl", m_volumeWidget);
   config.writeEntry("Tickmarks", GlobalConfig::instance().showTicks);
   config.writeEntry("Labels", GlobalConfig::instance().showLabels);
+  config.writeEntry("showOSD", GlobalConfig::instance().showOSD);
   config.writeEntry("startkdeRestore", m_onLogin);
   config.writeEntry("AutoStart", allowAutostart);
   config.writeEntry("VolumeFeedback", m_beepOnVolumeChange);
@@ -524,6 +523,8 @@ KMixWindow::loadBaseConfig()
   m_volumeWidget = config.readEntry("TrayVolumeControl", true);
   GlobalConfig::instance().showTicks = config.readEntry("Tickmarks", true);
   GlobalConfig::instance().showLabels = config.readEntry("Labels", true);
+  GlobalConfig::instance().showOSD = config.readEntry("showOSD", true);
+
   m_onLogin = config.readEntry("startkdeRestore", true);
   allowAutostart = config.readEntry("AutoStart", true);
 
@@ -903,11 +904,6 @@ KMixWindow::plugged(const char* driverName, const QString& udi, QString& dev)
       MixerToolBox::instance()->possiblyAddMixer(mixer);
       recreateGUI(true, mixer->id(), true);
     }
-
-  // Test code for OSD. But OSD is postponed to KDE4.1
-  //    OSDWidget* osd = new OSDWidget(0);
-  //    osd->volChanged(70, true);
-
 }
 
 void
@@ -1048,9 +1044,6 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
   m_dontSetDefaultCardOnStart = false;
 
   kmw->loadConfig(KGlobal::config().data());
-
-//   kmw->setTicks(GlobalConfig::instance().showTicks);
-//   kmw->setLabels(GlobalConfig::instance().showLabels);
   kmw->mixer()->readSetFromHWforceUpdate();
   return true;
 }
@@ -1138,9 +1131,11 @@ KMixWindow::showVolumeDisplay()
 //   Volume& vol = md->playbackVolume();
 //   osdWidget->setCurrentVolume(vol.getAvgVolumePercent(Volume::MALL),
 //       md->isMuted());
-  osdWidget->show();
-  osdWidget->activateOSD(); //Enable the hide timer
-
+  	if (GlobalConfig::instance().showOSD)
+  	{
+  		osdWidget->show();
+  		osdWidget->activateOSD(); //Enable the hide timer
+	}
   //Center the OSD
   QRect rect = KApplication::kApplication()->desktop()->screenGeometry(
       QCursor::pos());
@@ -1186,6 +1181,7 @@ KMixWindow::showSettings()
 
       m_prefDlg->m_showTicks->setChecked(GlobalConfig::instance().showTicks);
       m_prefDlg->m_showLabels->setChecked(GlobalConfig::instance().showLabels);
+      m_prefDlg->m_showOSD->setChecked(GlobalConfig::instance().showOSD);
       m_prefDlg->_rbVertical->setChecked(GlobalConfig::instance().toplevelOrientation == Qt::Vertical);
       m_prefDlg->_rbHorizontal->setChecked(
           GlobalConfig::instance().toplevelOrientation == Qt::Horizontal);
@@ -1207,6 +1203,10 @@ KMixWindow::showAbout()
   actionCollection()->action("help_about_app")->trigger();
 }
 
+/**
+ * Apply the Preferences from the preferences dialog. Depending on what has been changed,
+ * the corresponding announcemnts are made.
+ */
 void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
 {
   bool labelsHasChanged = GlobalConfig::instance().showLabels ^ prefDlg->m_showLabels->isChecked();
@@ -1222,6 +1222,7 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
 
   GlobalConfig::instance().showLabels = prefDlg->m_showLabels->isChecked();
   GlobalConfig::instance().showTicks = prefDlg->m_showTicks->isChecked();
+  GlobalConfig::instance().showOSD = prefDlg->m_showOSD->isChecked();
   m_showDockWidget = prefDlg->m_dockingChk->isChecked();
   m_volumeWidget = prefDlg->m_volumeChk->isChecked();
   m_onLogin = prefDlg->m_onLogin->isChecked();
@@ -1246,6 +1247,7 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
     {
       ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
     }
+    // showOSD does not require any information. It reads on-the-fly from GlobalConfig.
 
   this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
   kapp->processEvents();

@@ -28,6 +28,7 @@ class GlobalConfig
 public:
    bool showTicks;
    bool showLabels;
+   bool showOSD;
    Qt::Orientation toplevelOrientation;
 
    static GlobalConfig& instance() { return instanceObj; };
@@ -38,6 +39,7 @@ private:
   {
     showTicks = true;
     showLabels = true;
+    showOSD = true;
     toplevelOrientation = Qt::Vertical;
   };
   
