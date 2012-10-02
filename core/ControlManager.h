@@ -31,30 +31,60 @@
 //   GUI // Visual changes, like "split channel" OR "show labels"    
 //   }; 
 
-class ControlChangeType : QObject
+class ControlChangeType: QObject
 {
-  Q_OBJECT
-  
-  public:
-  enum Type {
-  None = 0,  // 
-  Volume = 1,  // Volume or Switch change (Mute or Capture Switch, or Enum)
-  ControlList = 2, // Control added or deleted
-  GUI = 4, // Visual changes, like "split channel" OR "show labels"    
-  MasterChanged = 8 // Master (global or local) has changed  
-  };
-  
-  static QString toString(Type type)
-  {
-    switch ( type )
-    {
-      case Volume: return "Volume";
-      case ControlList: return "ControlList";
-      case GUI: return "GUI";
-      case MasterChanged: return "MasterChange";
-      default: return "Invalid";
-    }
-  };
+Q_OBJECT
+
+public:
+	enum Type
+	{
+		None = 0,  //
+		TypeFirst = 1,
+		Volume = 1,  // Volume or Switch change (Mute or Capture Switch, or Enum)
+		ControlList = 2, // Control added or deleted
+		GUI = 4, // Visual changes, like "split channel" OR "show labels"
+		MasterChanged = 8 // Master (global or local) has changed
+		,
+		TypeLast = 16
+	};
+
+	static QString toString(Type changeType)
+	{
+		QString ret;
+		bool needsSeparator = false;
+		for (ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast; ct =
+			(ControlChangeType::Type) (ct << 1))
+		{
+			if (changeType & ct)
+			{
+				if (needsSeparator)
+					ret.append('|');
+				switch (ct)
+				{
+				case Volume:
+					ret.append("Volume");
+					break;
+				case ControlList:
+					ret.append("ControlList");
+					break;
+				case GUI:
+					ret.append("GUI");
+					break;
+				case MasterChanged:
+					ret.append("MasterChange");
+					break;
+				default:
+					ret.append("Invalid");
+					break;
+				}
+
+				needsSeparator = true;
+			}
+		}
+
+		return ret;
+
+	};
   
     static ControlChangeType::Type fromInt(int type)
   {

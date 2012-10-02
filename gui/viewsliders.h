@@ -22,7 +22,6 @@
 #define ViewSliders_h
 
 class QBoxLayout;
-//class QFormLayout;
 #include <QFrame>
 #include <QHash>
 class QLabel;
@@ -53,10 +52,12 @@ protected:
 private:
     QBoxLayout* _layoutMDW;
     QLayout* _layoutSliders;
-	QLayout* _layoutEnum;
+	QBoxLayout* _layoutEnum;
     QHash<QString,QFrame*> _separators;
     QPushButton* _configureViewButton;
     QLabel* emptyStreamHint;
+
+    void updateGuiOptions();
 };
 
 #endif

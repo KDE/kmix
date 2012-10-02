@@ -82,21 +82,20 @@ class KMixDockWidget : public KStatusNotifierItem
    void controlsChange(int changeType);
 
  protected:
-   void createActions();
+   void createMenuActions();
    void toggleMinimizeRestore();
 
  private:
    ViewDockAreaPopup *_referenceWidget2;
    KMenu *_referenceWidget;
    QWidgetAction *_volWA;
-   bool _ignoreNextEvent;
    int  _oldToolTipValue;
    char _oldPixmapType;
-   bool _volumePopup;
    KMixWindow* _kmixMainWindow;
    MetaMixer m_metaMixer;
 
    bool _contextMenuWasOpen;
+   bool onlyHaveOneMouseButtonAction();
    void refreshVolumeLevels();
    void updateDockMuteAction ( KToggleAction* dockMuteAction );
 
@@ -105,7 +104,6 @@ class KMixDockWidget : public KStatusNotifierItem
    void trayWheelEvent(int delta,Qt::Orientation);
    void selectMaster();
    void contextMenuAboutToShow();
-   int getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md);
 };
 
 #endif

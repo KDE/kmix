@@ -56,8 +56,8 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent) :
 
 	m_dockingChk = new QCheckBox(i18n("&Dock in system tray"), m_generalTab);
 	addWidgetToLayout(m_dockingChk, layout, 10, i18n("Docks the mixer into the KDE system tray"));
+	connect(m_dockingChk, SIGNAL(stateChanged(int)), SLOT(dockIntoPanelChange(int)) );
 
-	QBoxLayout *l;
 	m_volumeChk = new QCheckBox(i18n("Enable system tray &volume control"), m_generalTab);
 	addWidgetToLayout(m_volumeChk, layout, 20, i18n("Allows to control the volume from the system tray"));
 
@@ -175,16 +175,16 @@ void KMixPrefDlg::apply()
 	emit signalApplied(this);
 }
 
-//void KMixPrefDlg::dockIntoPanelChange(int state)
-//{
-//	if (state == Qt::Unchecked)
-//	{
-//		m_volumeChk->setDisabled(true);
-//	}
-//	else
-//	{
-//		m_volumeChk->setEnabled(true);
-//	}
-//}
+void KMixPrefDlg::dockIntoPanelChange(int state)
+{
+	if (state == Qt::Unchecked)
+	{
+		m_volumeChk->setDisabled(true);
+	}
+	else
+	{
+		m_volumeChk->setEnabled(true);
+	}
+}
 
 #include "kmixprefdlg.moc"

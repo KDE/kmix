@@ -29,6 +29,11 @@ ControlManager& ControlManager::instance()
 }
 
 /**
+ * Announce a change for one or all mixers.
+ *
+ * @param mixerId The mixerId. Use an empty QString() to announce a change for all mixers
+ * @param changeType A bit array of ControlChangeType flags
+ * @param sourceId Only for logging
  *
  */
 void ControlManager::announce(QString mixerId, ControlChangeType::Type changeType, QString sourceId)
@@ -74,8 +79,15 @@ void ControlManager::addListener(QString mixerId, ControlChangeType::Type change
 		<< (mixerId.isEmpty() ? "all cards" : mixerId) << " by " << sourceId << ". Announcements are sent to "
 		<< target;
 
-	Listener* listener = new Listener(mixerId, changeType, target, sourceId);
-	listeners.append(*listener);
+	for ( ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast;  ct = (ControlChangeType::Type)(ct << 1))
+	{
+		if ( changeType & ct )
+		{
+			// Add all listeners
+			Listener* listener = new Listener(mixerId, ct, target, sourceId);
+			listeners.append(*listener);
+		}
+	}
 	kDebug()
 	<< "We now have" << listeners.size() << "listeners";
 }

@@ -50,6 +50,7 @@ KMixPrefDlg : public KDialog
 
    private slots:
       void apply();
+      void dockIntoPanelChange(int state);
 
   protected:
     void showEvent ( QShowEvent * event );

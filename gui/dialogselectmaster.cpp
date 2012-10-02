@@ -203,19 +203,17 @@ void DialogSelectMaster::apply()
         QString mixer_id = m_cMixer->itemData(idx).toString();
         mixer = Mixer::findMixer(mixer_id);
     }
+
+    if ( mixer == 0 )
+    	 return; // User must have unplugged everything
    
     QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
-    if ( button != 0 ) {
-      QString control_id = button->objectName();
-      if ( mixer == 0 ) {
-         kError(67100) << "DialogSelectMaster::createPage(): Invalid Mixer (mixer=0)" << endl;
-         return; // can not happen
-      }
-      else {
-          mixer->setLocalMasterMD( control_id );
-          Mixer::setGlobalMaster(mixer->id(), control_id, true);
-	  ControlManager::instance().announce(mixer->id(), ControlChangeType::MasterChanged, QString("Select Master Dialog"));
-      }
+    if ( button != 0 )
+    {
+		QString control_id = button->objectName();
+		mixer->setLocalMasterMD( control_id );
+		Mixer::setGlobalMaster(mixer->id(), control_id, true);
+		ControlManager::instance().announce(mixer->id(), ControlChangeType::MasterChanged, QString("Select Master Dialog"));
    }
 }
 

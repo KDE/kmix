@@ -63,41 +63,24 @@
  * Generic View implementation. This can hold now all kinds of controls (not just Sliders, as
  *  the class name suggests).
  */
-ViewSliders::ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl)
-      : ViewBase(parent, id, Qt::FramelessWindowHint, vflags, guiProfileId, actColl)
-      , _layoutEnum(0)
+ViewSliders::ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId,
+	KActionCollection *actColl) :
+	ViewBase(parent, id, Qt::FramelessWindowHint, vflags, guiProfileId, actColl), _layoutEnum(0)
 {
-  addMixer(mixer);
- 
-   _configureViewButton = 0;
-   _layoutMDW = 0;
-   _layoutSliders = 0;
-   _layoutEnum = 0;
-   emptyStreamHint = 0;
+	addMixer(mixer);
 
-   createDeviceWidgets();
-    
-       // Add listener, as all derived classes are interested
-   	ControlManager::instance().addListener(
-	  mixer->id(),
-	ControlChangeType::GUI,
-	this,
-	QString("KMixerWidget.%1").arg(mixer->id())	  
-	);
+	_configureViewButton = 0;
+	_layoutMDW = 0;
+	_layoutSliders = 0;
+	_layoutEnum = 0;
+	emptyStreamHint = 0;
 
-  	ControlManager::instance().addListener(
-	  mixer->id(),
-	ControlChangeType::ControlList,
-	this,
-	QString("KMixerWidget.%1").arg(mixer->id())	  
-	);
-	
-	ControlManager::instance().addListener(
-	mixer->id(),
-	ControlChangeType::Volume,
-	this,
-	QString("KMixerWidget.%1").arg(mixer->id())	  
-	);
+	createDeviceWidgets();
+
+	ControlManager::instance().addListener(mixer->id(),
+		(ControlChangeType::Type) (ControlChangeType::GUI | ControlChangeType::ControlList | ControlChangeType::Volume),
+		this, QString("ViewSliders.%1").arg(mixer->id()));
+
 }
 
 ViewSliders::~ViewSliders()
@@ -117,8 +100,7 @@ void ViewSliders::controlsChange(int changeType)
       createDeviceWidgets();
       break;
     case ControlChangeType::GUI:
-        setTicks(GlobalConfig::instance().showTicks);
-	setLabels(GlobalConfig::instance().showLabels);
+    	updateGuiOptions();
       break;
       
     case ControlChangeType::Volume:
@@ -148,11 +130,11 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
                 this          // View widget
                 , md->controlProfile()
         );
-        if ( _layoutEnum == 0 ) {
-            // lazily creation of Layout for the first enum
-            _layoutEnum = new QVBoxLayout();
-            _layoutMDW->addLayout( _layoutEnum );
-        }
+//        if ( _layoutEnum == 0 ) {
+//            // lazily creation of Layout for the first enum
+//            _layoutEnum = new QVBoxLayout();
+//            _layoutMDW->addLayout( _layoutEnum );
+//        }
         _layoutEnum->addWidget(mdw);
     } // an enum
     else
@@ -176,168 +158,175 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 
 void ViewSliders::_setMixSet()
 {
-  resetMdws();
-  
-  delete emptyStreamHint;
-  emptyStreamHint = 0;
+	resetMdws();
 
-  // Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
-        // We need to trash those too otherwise all sliders gradually migrate away from the edge :p
-        QLayoutItem *li;
-	if ( _layoutSliders != 0 )
+	delete emptyStreamHint;
+	emptyStreamHint = 0;
+
+	// Our _layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
+	// We need to trash those too otherwise all sliders gradually migrate away from the edge :p
+	if (_layoutSliders != 0)
 	{
-        while ( ( li = _layoutSliders->takeAt(0) ) )
-            delete li;
-	}	
-	  _layoutSliders = 0;
-  
-	  delete _layoutSliders;
-  _layoutSliders =0;
-  
-	if (_layoutEnum != 0 )
-	{
-        QLayoutItem *li2;
-	while ( ( li2 = _layoutEnum->takeAt(0) ) != 0 )
-            delete li2;
-  _layoutEnum = 0;
+		QLayoutItem *li;
+		while ((li = _layoutSliders->takeAt(0)))
+			delete li;
+//		delete _layoutSliders;
+		_layoutSliders = 0;
 	}
-  delete _layoutMDW;
-  _layoutMDW = 0;
-  
-      delete _configureViewButton;
-     _configureViewButton = 0;
 
-     // We will be recreating our sliders, so make sure we trash all the separators too.
-     //qDeleteAll(_separators);
-     _separators.clear();
 
-   if (  GlobalConfig::instance().toplevelOrientation == Qt::Horizontal )
-   {
-      // Horizontal slider => put them vertically
-      kDebug() << "hor slider => vertical alignment";
-      _layoutMDW = new QVBoxLayout(this);
-      _layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-      _layoutSliders = new QVBoxLayout();
-      _layoutSliders->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-   }
-   else
-   {
-      // Vertical slider => put them horizontally
-      kDebug() << "vert slider => horizontal alignment";
-      _layoutMDW = new QHBoxLayout(this);
-      _layoutMDW->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-      _layoutSliders = new QHBoxLayout();
-      _layoutSliders->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-   }
-   _layoutSliders->setContentsMargins(0,0,0,0);
-   _layoutSliders->setSpacing(0);
-   _layoutMDW->setContentsMargins(0,0,0,0);
-   _layoutMDW->setSpacing(0);
-   _layoutMDW->addItem( _layoutSliders );
+	delete _configureViewButton;
+	_configureViewButton = 0;
 
-    // Hint: This text comparison is not a clean solution, but one that will work for quite a while.
-    QString viewId(id());
-    if (viewId.contains(".Capture_Streams."))
-       emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
-    else if (viewId.contains(".Playback_Streams."))
-       emptyStreamHint = new QLabel(i18n("Nothing is playing audio."));
-    else if (viewId.contains(".Capture_Devices."))
-       emptyStreamHint = new QLabel(i18n("No capture devices."));
-    else if (viewId.contains(".Playback_Devices."))
-       emptyStreamHint = new QLabel(i18n("No playback devices."));
-    else
-       emptyStreamHint = new QLabel(i18n("Nothing is playing audio.")); // Fallback. Assume Playback stream
+	if (_layoutEnum != 0)
+	{
+		QLayoutItem *li2;
+		while ((li2 = _layoutEnum->takeAt(0)) != 0)
+			delete li2;
+//		delete _layoutEnum;
+		_layoutEnum = 0;
+	}
 
-    emptyStreamHint->setAlignment(Qt::AlignCenter);
-    emptyStreamHint->setWordWrap( true );
-    emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    _layoutMDW->addWidget(emptyStreamHint);
-     
+	delete _layoutMDW;
+	_layoutMDW = 0;
 
-#ifdef TEST_MIXDEVICE_COMPOSITE
-    QList<shared_ptr<MixDevice> > mds;  // For temporary test
-#endif
+	// We will be recreating our sliders, so make sure we trash all the separators too.
+	//qDeleteAll(_separators);
+	_separators.clear();
 
-    // This method iterates the controls from the Profile
-    // Each control is checked, whether it is also contained in the mixset, and
-    // applicable for this kind of View. If yes, the control is accepted and inserted.
- 
-     GUIProfile* guiprof = guiProfile();
-     if ( guiprof != 0 )
-     {
-   foreach (Mixer* mixer , _mixers )
-  {
-     const MixSet& mixset = mixer->getMixSet();
+	if (GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
+	{
+		// Horizontal slider => put them vertically
+		kDebug()
+		<< "hor slider => vertical alignment";
+		_layoutMDW = new QVBoxLayout(this);
+		_layoutMDW->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+		_layoutSliders = new QVBoxLayout();
+		_layoutSliders->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+	}
+	else
+	{
+		// Vertical slider => put them horizontally
+		kDebug()
+		<< "vert slider => horizontal alignment";
+		_layoutMDW = new QHBoxLayout(this);
+		_layoutMDW->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+		_layoutSliders = new QHBoxLayout();
+		_layoutSliders->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+	}
+	_layoutSliders->setContentsMargins(0, 0, 0, 0);
+	_layoutSliders->setSpacing(0);
+	_layoutMDW->setContentsMargins(0, 0, 0, 0);
+	_layoutMDW->setSpacing(0);
+	_layoutMDW->addItem(_layoutSliders);
 
-    foreach ( ProfControl* control, guiprof->getControls() )
-    {
-        //ProfControl* control = *it;
-        // The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-        QRegExp idRegexp(control->id);
-        //bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
-        //isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
-        //kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
-        // The following for-loop could be simplified by using a std::find_if
-        for ( int i=0; i<mixset.count(); i++ ) {
-        	shared_ptr<MixDevice> md = mixset[i];
+	_layoutEnum = new QVBoxLayout();
+	_layoutMDW->addLayout(_layoutEnum);
 
-            if ( md->id().contains(idRegexp) )
-            {
-                // Match found (by name)
-                if ( _mixSet.contains( md ) )
-		{
-		  continue; // dup check
-		}
-		
-                // Now check whether subcontrols match
-                bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->hasMuteSwitch()) );
-                bool subcontrolCaptureWanted  = (control->useSubcontrolCapture()  && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
-                bool subcontrolEnumWanted  = (control->useSubcontrolEnum() && md->isEnum());
-                bool subcontrolWanted =  subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
+	// Hint: This text comparison is not a clean solution, but one that will work for quite a while.
+	QString viewId(id());
+	if (viewId.contains(".Capture_Streams."))
+		emptyStreamHint = new QLabel(i18n("Nothing is capturing audio."));
+	else if (viewId.contains(".Playback_Streams."))
+		emptyStreamHint = new QLabel(i18n("Nothing is playing audio."));
+	else if (viewId.contains(".Capture_Devices."))
+		emptyStreamHint = new QLabel(i18n("No capture devices."));
+	else if (viewId.contains(".Playback_Devices."))
+		emptyStreamHint = new QLabel(i18n("No playback devices."));
+	else
+		emptyStreamHint = new QLabel(i18n("Nothing is playing audio.")); // Fallback. Assume Playback stream
 
-                if ( !subcontrolWanted )
-		{
-		  continue;
-		}
-
-                md->setControlProfile(control);
-                if ( !control->name.isNull() ) {
-                    // Apply the custom name from the profile
-                    md->setReadableName(control->name);  // @todo: This is the wrong place. It only applies to controls in THIS type of view
-                }
-                if ( !control->getSwitchtype().isNull() ) {
-                    if ( control->getSwitchtype() == "On"  )
-                        md->playbackVolume().setSwitchType(Volume::OnSwitch);
-                    else if ( control->getSwitchtype() == "Off"  )
-                        md->playbackVolume().setSwitchType(Volume::OffSwitch);
-                }
-                _mixSet.append(md);
+	emptyStreamHint->setAlignment(Qt::AlignCenter);
+	emptyStreamHint->setWordWrap(true);
+	emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	_layoutMDW->addWidget(emptyStreamHint);
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-                if ( md->id() == "Front:0" || md->id() == "Surround:0") { mds.append(md); } // For temporary test
+	QList<shared_ptr<MixDevice> > mds;  // For temporary test
 #endif
-                // We use no "break;" ,as multiple devices could match the regexp (e.g. "^.*$")
-            } // name matches
-        } // loop for finding a suitable MixDevice
-   } // iteration over all controls from the Profile
-     } // if there is a profile
-  } // Iteration over all Mixers
 
-	emptyStreamHint->setVisible(  _mixSet.isEmpty() && isDynamic() ); // show a hint why a tab is empty (dynamic controls!!!)
-	//  visibleControls() == 0 could be used for the !isDynamic() case
+	// This method iterates the controls from the Profile
+	// Each control is checked, whether it is also contained in the mixset, and
+	// applicable for this kind of View. If yes, the control is accepted and inserted.
 
+	GUIProfile* guiprof = guiProfile();
+	if (guiprof != 0)
+	{
+		foreach (Mixer* mixer , _mixers ){
+		const MixSet& mixset = mixer->getMixSet();
+
+		foreach ( ProfControl* control, guiprof->getControls() )
+		{
+			//ProfControl* control = *it;
+			// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
+			QRegExp idRegexp(control->id);
+			//bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
+			//isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
+			//kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
+			// The following for-loop could be simplified by using a std::find_if
+			for ( int i=0; i<mixset.count(); i++ )
+			{
+				shared_ptr<MixDevice> md = mixset[i];
+
+				if ( md->id().contains(idRegexp) )
+				{
+					// Match found (by name)
+					if ( _mixSet.contains( md ) )
+					{
+						continue; // dup check
+					}
+
+					// Now check whether subcontrols match
+					bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && ( md->playbackVolume().hasVolume() || md->hasMuteSwitch()) );
+					bool subcontrolCaptureWanted = (control->useSubcontrolCapture() && ( md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()) );
+					bool subcontrolEnumWanted = (control->useSubcontrolEnum() && md->isEnum());
+					bool subcontrolWanted = subcontrolPlaybackWanted | subcontrolCaptureWanted | subcontrolEnumWanted;
+
+					if ( !subcontrolWanted )
+					{
+						continue;
+					}
+
+					md->setControlProfile(control);
+					if ( !control->name.isNull() )
+					{
+						// Apply the custom name from the profile
+						md->setReadableName(control->name);// @todo: This is the wrong place. It only applies to controls in THIS type of view
+					}
+					if ( !control->getSwitchtype().isNull() )
+					{
+						if ( control->getSwitchtype() == "On" )
+						md->playbackVolume().setSwitchType(Volume::OnSwitch);
+						else if ( control->getSwitchtype() == "Off" )
+						md->playbackVolume().setSwitchType(Volume::OffSwitch);
+					}
+					_mixSet.append(md);
+
+#ifdef TEST_MIXDEVICE_COMPOSITE
+					if ( md->id() == "Front:0" || md->id() == "Surround:0")
+					{	mds.append(md);} // For temporary test
+#endif
+					// We use no "break;" ,as multiple devices could match the regexp (e.g. "^.*$")
+				} // name matches
+			} // loop for finding a suitable MixDevice
+		} // iteration over all controls from the Profile
+	} // if there is a profile
+} // Iteration over all Mixers
+
+	emptyStreamHint->setVisible(_mixSet.isEmpty() && isDynamic()); // show a hint why a tab is empty (dynamic controls!!!)
+		//  visibleControls() == 0 could be used for the !isDynamic() case
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
 	// @todo: This is currently hardcoded, and instead must be read as usual from the Profile
-    MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
-    Volume::ChannelMask chn = Volume::MMAIN;
-    Volume* vol = new Volume( chn, 0, 100, true, true);
+	MixDeviceComposite *mdc = new MixDeviceComposite(_mixer, "Composite_Test", mds, "A Composite Control #1", MixDevice::KMIX_COMPOSITE);
+	Volume::ChannelMask chn = Volume::MMAIN;
+	Volume* vol = new Volume( chn, 0, 100, true, true);
 	mdc->addPlaybackVolume(*vol);
-    QString ctlId("Composite_Test");
-    QString ctlMatchAll("*");
-    ProfControl* pctl = new ProfControl(ctlId, ctlMatchAll);
-    mdc->setControlProfile(pctl);
-    _mixSet->append(mdc);
+	QString ctlId("Composite_Test");
+	QString ctlMatchAll("*");
+	ProfControl* pctl = new ProfControl(ctlId, ctlMatchAll);
+	mdc->setControlProfile(pctl);
+	_mixSet->append(mdc);
 #endif
 }
 
@@ -348,9 +337,18 @@ void ViewSliders::constructionFinished() {
     _configureViewButton = new QPushButton(icon, "", this);
     _configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     // TODO implement the "configure" button (show dialog)
-    _layoutMDW->addWidget(_configureViewButton,0 , Qt::AlignLeft | Qt::AlignTop);
+    _layoutEnum->addStretch();
+    _layoutEnum->addWidget(_configureViewButton);
+
+    updateGuiOptions();
 }
 
+
+void ViewSliders::updateGuiOptions()
+{
+    setTicks(GlobalConfig::instance().showTicks);
+    setLabels(GlobalConfig::instance().showLabels);
+}
 
 void ViewSliders::configurationUpdate() {
    // Adjust height of top part by setting it to the maximum of all mdw's

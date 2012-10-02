@@ -45,7 +45,7 @@
 #include "gui/viewdockareapopup.h"
 
 
-//#define FEATURE_UNITY_POPUP true
+#define FEATURE_UNITY_POPUP true
 
 void MetaMixer::reset()
 {
@@ -59,7 +59,6 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     : KStatusNotifierItem(parent)
     , _oldToolTipValue(-1)
     , _oldPixmapType('-')
-    , _volumePopup(volumePopup)
     , _kmixMainWindow(parent)
     , _contextMenuWasOpen(false)
 {
@@ -69,44 +68,55 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     setStatus(Active);
 
     m_metaMixer.reset();
-//     createMasterVolWidget();
-    createActions();
+
+    // TODO Unity / Gnome only support one type of activation (left-click == right-click)
+    //      So we should show here the ViewDockAreaPopup instead of the menu:
+    //bool onlyOneMouseButtonAction = onlyHaveOneMouseButtonAction();
+    bool onlyOneMouseButtonAction = false;
+    if ( onlyOneMouseButtonAction )
+    	setContextMenu(0);
+    else
+    	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+
+    createMenuActions();
 
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
-    connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+	kDebug() << "Construct the ViewDockAreaPopup and actions";
+	_referenceWidget = onlyOneMouseButtonAction ? 0 : new KMenu(parent);
 
-    if (_volumePopup)
-    {
-        kDebug() << "Construct the ViewDockAreaPopup and actions";
-        _referenceWidget = new KMenu(parent);
-        _referenceWidget2 = new ViewDockAreaPopup(_referenceWidget, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
+	QWidget* referenceWindow = onlyOneMouseButtonAction ? 0 : _referenceWidget;
+	_referenceWidget2 = new ViewDockAreaPopup(referenceWindow, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
 
-        _volWA = new QWidgetAction(_referenceWidget);
-        _volWA->setDefaultWidget(_referenceWidget2);
-        _referenceWidget->addAction(_volWA);
-    }
-    else
-    {
-        _volWA = 0;
-        _referenceWidget = 0;
-    }
-
+	if ( onlyOneMouseButtonAction)
+	{
+		// If only 1 mouse button is available, we will use it for the volume popup, and leave out the menu
+		setAssociatedWidget(_referenceWidget2);
+		//setAssociatedWidget(new QWidget());
+		kDebug() << "We are now associated to " << associatedWidget();
+		_volWA = 0;
+	}
+	else
+	{
+		_volWA = new QWidgetAction(_referenceWidget);
+		_volWA->setDefaultWidget(_referenceWidget2);
+		_referenceWidget->addAction(_volWA);
+	}
 
   	ControlManager::instance().addListener(
 	  QString(), // All mixers (as the Global master Mixer might change)
-	ControlChangeType::Volume,
+	(ControlChangeType::Type)(ControlChangeType::Volume | ControlChangeType::MasterChanged),
 	this,
 	QString("KMixDockWidget")	  
 	);
 	
-	 ControlManager::instance().addListener(
-	  QString(), // All mixers (as the Global master Mixer might change)
-	ControlChangeType::MasterChanged,
-	this,
-	QString("KMixDockWidget")	  
-	);
+//	 ControlManager::instance().addListener(
+//	  QString(), // All mixers (as the Global master Mixer might change)
+//	ControlChangeType::MasterChanged,
+//	this,
+//	QString("KMixDockWidget")
+//	);
 	 
 	      // Refresh in all cases. When there is no Golbal Master we still need
      // to initialize correctly (e.g. for showin 0% or hiding it)
@@ -133,7 +143,7 @@ void KMixDockWidget::controlsChange(int changeType)
       _kmixMainWindow->updateDocking();
       _kmixMainWindow->saveConfig();
       refreshVolumeLevels();
-      actionCollection()->action(QLatin1String("select_master"))->setEnabled(m_metaMixer.hasMixer());
+      actionCollection()->action(QLatin1String("select_master"))->setEnabled( Mixer::getGlobalMasterMixer() != 0);
       break;
 
     case ControlChangeType::Volume:
@@ -151,15 +161,17 @@ void KMixDockWidget::refreshVolumeLevels()
   updatePixmap();
 }
 
-void KMixDockWidget::createActions()
+void KMixDockWidget::createMenuActions()
 {
     QMenu *menu = contextMenu();
+    if ( menu == 0)
+    	return; // We do not use a menu
 
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     if ( md.get() != 0 && md->hasMuteSwitch() ) {
         // Put "Mute" selector in context menu
         KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
-	updateDockMuteAction(action);
+        updateDockMuteAction(action);
         action->setText( i18n( "M&ute" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT(dockMute()));
         menu->addAction( action );
@@ -183,17 +195,6 @@ void KMixDockWidget::selectMaster()
    dsm->show();
 }
 
-/**
- * Returns the playback volume level in percent. If the volume is muted, 0 is returned.
- * If the given MixDevice contains no playback volume, the capture volume isd used
- * instead, and 0 is returned if capturing is disabled for the given MixDevice.
- * 
- * @returns The volume level in percent
- */
-int KMixDockWidget::getUserfriendlyVolumeLevel(const shared_ptr<MixDevice>& md)
-{
-	return md->getUserfriendlyVolumeLevel();
-}
 
 void
 KMixDockWidget::setVolumeTip()
@@ -211,7 +212,7 @@ KMixDockWidget::setVolumeTip()
     {
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
-		int val = getUserfriendlyVolumeLevel(md);
+		int val = md->getUserfriendlyVolumeLevel();
        	tip = i18n( "Volume at %1%", val );
         if ( md->isMuted() )
         	tip += i18n( " (Muted)" );
@@ -243,7 +244,7 @@ void KMixDockWidget::updatePixmap()
     }
     else
     {
-    	int percentage = getUserfriendlyVolumeLevel(md);
+    	int percentage = md->getUserfriendlyVolumeLevel();
 		if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
 		else if ( percentage < 25 ) newPixmapType = '1';
 		else if ( percentage < 75 ) newPixmapType = '2';
@@ -273,14 +274,18 @@ void KMixDockWidget::activate(const QPoint &pos)
     showHideMainWindow |= (_referenceWidget == 0);
     showHideMainWindow |= (pos.x() == 0  && pos.y() == 0);  // HACK. When the action comes from the context menu, the pos is (0,0)
 
-    if ( showHideMainWindow ) {
+    if ( showHideMainWindow )
+    {
         // Use default KStatusNotifierItem behavior if we are not using the dockAreaPopup
+    	// (or if the action comes from the context menu)
         kDebug() << "Use default KStatusNotifierItem behavior";
         setAssociatedWidget(_kmixMainWindow);
-//        KStatusNotifierItem::activate(pos);
+        // This code path shows the Main Window (or hides it when it was shown)
         KStatusNotifierItem::activate();
         return;
     }
+
+    // --- When this code path is executed, we want to show the DockAreaPopup)
 
     KMenu* dockAreaPopup =_referenceWidget; // TODO Refactor to use _referenceWidget directly
     kDebug() << "Skip default KStatusNotifierItem behavior";
@@ -357,7 +362,6 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
     	delta = -delta;
 
     long int cv = inc * (delta / 120 );
-//    kDebug() << "twe: " << cv << " : " << vol;
     bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
     kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
 	if ( cv > 0 && isInactive)
@@ -370,8 +374,6 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 	}
 	else
 	    vol.changeAllVolumes(cv);
-
-//	kDebug() << "twe: " << cv << " : " << vol;
 
     md->mixer()->commitVolumeChange(md);
     refreshVolumeLevels();
@@ -386,32 +388,27 @@ KMixDockWidget::dockMute()
     {
         md->toggleMute();
         md->mixer()->commitVolumeChange( md );
-	refreshVolumeLevels();
+        refreshVolumeLevels();
     }
 }
 
-void
-KMixDockWidget::contextMenuAboutToShow()
+/**
+ * Returns whether the running Desktop only supports one Mouse Button
+ * Hint: Unity / Gnome only support one type of activation (left-click == right-click).
+ */
+bool KMixDockWidget::onlyHaveOneMouseButtonAction()
 {
-  // TODO Unity / Gnome only support one type of activation (left-click == right-click)
-  //      So we should show here the ViewDockAreaPopup instead of the menu:
-  // Unity: Detect, by finding DBUS Service com.canonical.Unity.Panel.Service
-  // Gnome2: ?
-  // Gnome3: ?
-  
-  QDBusConnection connection = QDBusConnection::sessionBus();
-#ifdef FEATURE_UNITY_POPUP
-    if (connection.interface()->isServiceRegistered("com.canonical.Unity.Panel.Service"))
-    {
-      // This is the wrong place (aboutToShow will definitely ALSO show the menu)
-      QPoint popupPos = QPoint(100,100);
-      activate(popupPos);
-      kError() << "LOOKS LIKE KMix IS RUNNING UNDER Unity ... should show ViewDockAreaPopup instead";
-      return;      
-    }
-#endif
+	QDBusConnection connection = QDBusConnection::sessionBus();
+    bool unityIsRunnig = (connection.interface()->isServiceRegistered("com.canonical.Unity.Panel.Service"));
+    // Possibly implement other detectors, like for Gnome 3 or Gnome 2
+    return unityIsRunnig;
 
+}
+
+void KMixDockWidget::contextMenuAboutToShow()
+{
     // Enable/Disable "Muted" menu item
+//	kDebug() << "hallo";
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
     updateDockMuteAction(dockMuteAction);
     _contextMenuWasOpen = true;
@@ -429,4 +426,5 @@ void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )
         dockMuteAction->setChecked( isInactive );
     }
 }
+
 #include "kmixdockwidget.moc"
