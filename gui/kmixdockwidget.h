@@ -35,32 +35,6 @@ class Mixer;
 class ViewDockAreaPopup;
 class Volume;
 
-/**
- * @brief The MetaMixer class provides a solid wrapper around a possible changing mixer.
- *
- * The primay use of this class is to provide one instance to connect slots to
- * while the underlying object that triggers the signals can be changing.
- * Additionally it nicely hides the rewiring logic that is going on in the back.
- */
-class MetaMixer : public QObject
-{
-    Q_OBJECT
-public:
-    MetaMixer() : m_mixer(0) {}
-
-    /**
-     * @brief rewires against current master mixer
-     * @note this also triggers all signals to ensure UI updates are done accordingly
-     */
-    void reset();
-
-    Mixer *mixer() const { return m_mixer; }
-    bool hasMixer() const { return m_mixer; }
-
-private:
-    Mixer *m_mixer;
-};
-
 class KMixDockWidget : public KStatusNotifierItem
 {
    Q_OBJECT
@@ -92,7 +66,6 @@ class KMixDockWidget : public KStatusNotifierItem
    int  _oldToolTipValue;
    char _oldPixmapType;
    KMixWindow* _kmixMainWindow;
-   MetaMixer m_metaMixer;
 
    bool _contextMenuWasOpen;
    bool onlyHaveOneMouseButtonAction();

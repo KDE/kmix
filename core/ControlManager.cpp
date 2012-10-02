@@ -32,6 +32,7 @@ ControlManager& ControlManager::instance()
 
 ControlManager::ControlManager()
 {
+	listenersChanged = false;
 }
 
 /**
@@ -54,6 +55,12 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 		for (it = listeners.begin(); it != listeners.end(); ++it)
 		{
 			Listener& listener = *it;
+			if ( &listener == 0 )
+			{
+				kWarning() << "null Listener detected ... skipping";
+				continue;
+			}
+
 			bool mixerIsOfInterest = listener.getMixerId().isEmpty() || mixerId.isEmpty()
 				|| listener.getMixerId() == mixerId;
 
@@ -75,10 +82,11 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 					kError() << "Listener Failed to send to " << listener.getTarget()->metaObject()->className();
 				}
 				processedListeners.insert(&listener);
-				if (!deletedListeners.isEmpty())
+				if (listenersChanged)
 				{
 					// The invokeMethod() above has changed the listeners => my Iterator is invalid => restart loop
 					kDebug() << "Listeners modified => restart loop";
+					listenersChanged = false;
 					listenersModified = true;
 					break; // break inner loop => restart via outer loop
 				}
@@ -116,6 +124,7 @@ void ControlManager::addListener(QString mixerId, ControlChangeType::Type change
 			// Add all listeners
 			Listener* listener = new Listener(mixerId, ct, target, sourceId);
 			listeners.append(*listener);
+			listenersChanged = true;
 		}
 	}
 	kDebug()
@@ -147,7 +156,7 @@ void ControlManager::removeListener(QObject* target, QString sourceId)
 			kDebug()
 			<< "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId << " from " << target;
 			it.remove();
-			deletedListeners.append(&listener); // Remember pointer
+			listenersChanged = true;
 		}
 	}
 }

@@ -143,7 +143,7 @@ private:
     ControlManager();
     static ControlManager instanceSingleton;
     QList<Listener> listeners;
-    QList<Listener*> deletedListeners;
+    bool listenersChanged;
 };
 
 #endif // CONTROLMANAGER_H

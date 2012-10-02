@@ -59,8 +59,6 @@ KMixWindow : public KXmlGuiWindow
    KMixWindow(bool invisible);
    ~KMixWindow();
 
-   bool updateDocking();
-
   private:
    void saveBaseConfig();
    void saveViewConfig();
@@ -110,7 +108,7 @@ KMixWindow : public KXmlGuiWindow
    // move many of the following to a central static configuration object
    // (they come from the KMix config file, so they are really "static".
    bool m_showDockWidget;
-   bool m_volumeWidget;
+   bool trayVolumePopupEnabled;
    
 private:
    bool m_onLogin;
@@ -120,6 +118,8 @@ private:
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
+
+   bool forceNotifierRebuild;
 
    KTabWidget *m_wsMixers;
 
@@ -141,7 +141,10 @@ private:
    void setInitialSize();
 
     private:
-   static QString getKmixctrlRcFilename(QString postfix);
+    static QString getKmixctrlRcFilename(QString postfix);
+	bool profileExists(QString guiProfileId);
+	bool updateDocking();
+	void removeDock();
 
   private slots:
    void slotHWInfo();
@@ -167,9 +170,6 @@ private:
    void saveVolumes2() { saveVolumes(QString("2")); }
    void saveVolumes3() { saveVolumes(QString("3")); }
    void saveVolumes4() { saveVolumes(QString("4")); }
-
-	bool profileExists(QString guiProfileId);
-
 };
 
 #endif // KMIX_H

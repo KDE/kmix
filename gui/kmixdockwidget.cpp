@@ -45,15 +45,7 @@
 #include "gui/viewdockareapopup.h"
 
 
-#define FEATURE_UNITY_POPUP true
-
-void MetaMixer::reset()
-{
-  // TOOD remove the MetaMixer
-    m_mixer = Mixer::getGlobalMasterMixer();
-    // after changing the master device, make sure to re-read (otherwise no "changed()" signals might get sent by the Mixer
-    m_mixer->readSetFromHWforceUpdate();
-}
+//#define FEATURE_UNITY_POPUP true
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     : KStatusNotifierItem(parent)
@@ -67,16 +59,9 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     setCategory(Hardware);
     setStatus(Active);
 
-    m_metaMixer.reset();
-
     // TODO Unity / Gnome only support one type of activation (left-click == right-click)
     //      So we should show here the ViewDockAreaPopup instead of the menu:
     //bool onlyOneMouseButtonAction = onlyHaveOneMouseButtonAction();
-    bool onlyOneMouseButtonAction = false;
-    if ( onlyOneMouseButtonAction )
-    	setContextMenu(0);
-    else
-    	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
     createMenuActions();
 
@@ -84,24 +69,31 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
 	kDebug() << "Construct the ViewDockAreaPopup and actions";
-	_referenceWidget = onlyOneMouseButtonAction ? 0 : new KMenu(parent);
 
-	QWidget* referenceWindow = onlyOneMouseButtonAction ? 0 : _referenceWidget;
-	_referenceWidget2 = new ViewDockAreaPopup(referenceWindow, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
-
+    bool onlyOneMouseButtonAction = !volumePopup;
 	if ( onlyOneMouseButtonAction)
 	{
 		// If only 1 mouse button is available, we will use it for the volume popup, and leave out the menu
-		setAssociatedWidget(_referenceWidget2);
+//		setContextMenu(0);
+		setAssociatedWidget(parent);
 		//setAssociatedWidget(new QWidget());
 		kDebug() << "We are now associated to " << associatedWidget();
 		_volWA = 0;
+		_referenceWidget = 0;
 	}
 	else
 	{
+		_referenceWidget = new KMenu(parent);
+		QWidget* referenceWindow;
+		if ( onlyOneMouseButtonAction )
+			referenceWindow = parent;
+		else
+			referenceWindow = _referenceWidget;
+		_referenceWidget2 = new ViewDockAreaPopup(referenceWindow, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
 		_volWA = new QWidgetAction(_referenceWidget);
 		_volWA->setDefaultWidget(_referenceWidget2);
 		_referenceWidget->addAction(_volWA);
+		connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 	}
 
   	ControlManager::instance().addListener(
@@ -138,12 +130,11 @@ void KMixDockWidget::controlsChange(int changeType)
   switch (type )
   {
     case  ControlChangeType::MasterChanged:
-      m_metaMixer.reset();
       // Notify the main window, as it might need to update the visibiliy of the dock icon.
-      _kmixMainWindow->updateDocking();
-      _kmixMainWindow->saveConfig();
+//      _kmixMainWindow->updateDocking();
+//      _kmixMainWindow->saveConfig();
       refreshVolumeLevels();
-      actionCollection()->action(QLatin1String("select_master"))->setEnabled( Mixer::getGlobalMasterMixer() != 0);
+      actionCollection()->action(QLatin1String("select_master"))->setEnabled(Mixer::getGlobalMasterMixer() != 0);
       break;
 
     case ControlChangeType::Volume:
@@ -180,7 +171,7 @@ void KMixDockWidget::createMenuActions()
     // Put "Select Master Channel" dialog in context menu
     QAction *action = actionCollection()->addAction( "select_master" );
     action->setText( i18n("Select Master Channel...") );
-    action->setEnabled(m_metaMixer.hasMixer());
+    action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
     connect(action, SIGNAL(triggered(bool)), SLOT(selectMaster()));
     menu->addAction( action );
 
@@ -190,7 +181,7 @@ void KMixDockWidget::createMenuActions()
 
 void KMixDockWidget::selectMaster()
 {
-   DialogSelectMaster* dsm = new DialogSelectMaster(m_metaMixer.mixer());
+   DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
    dsm->setAttribute(Qt::WA_DeleteOnClose, true);
    dsm->show();
 }

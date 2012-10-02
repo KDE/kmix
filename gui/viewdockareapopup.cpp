@@ -302,8 +302,11 @@ void ViewDockAreaPopup::refreshVolumeLevels() {
   }
 }
 
-void ViewDockAreaPopup::showPanelSlot() {
-    kDebug() << "Check when this is called";
+/**
+ * This gets activated whne a user clicks the "Mixer" PushButton in this popup.
+ */
+void ViewDockAreaPopup::showPanelSlot()
+{
     _dock->setVisible(true);
     KWindowSystem::setOnDesktop(_dock->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::activateWindow(_dock->winId());

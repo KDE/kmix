@@ -83,6 +83,7 @@ KMixWindow::KMixWindow(bool invisible) :
   // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
   setAttribute(Qt::WA_DeleteOnClose, false);
 
+  forceNotifierRebuild = false;
   initActions(); // init actions first, so we can use them in the loadConfig() already
   loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
   initActionsLate(); // init actions that require a loaded config
@@ -125,7 +126,7 @@ KMixWindow::KMixWindow(bool invisible) :
  
   	 ControlManager::instance().addListener(
   	  QString(), // All mixers (as the Global master Mixer might change)
-  	ControlChangeType::ControlList,
+  	(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::MasterChanged),
   	this,
   	QString("KMixWindow")
   	);
@@ -157,6 +158,7 @@ void KMixWindow::controlsChange(int changeType)
   switch (type )
   {
     case  ControlChangeType::ControlList:
+    case  ControlChangeType::MasterChanged:
     	updateDocking();
       break;
 
@@ -341,38 +343,40 @@ KMixWindow::setInitialSize()
   move(pos);
 }
 
+
+void KMixWindow::removeDock()
+{
+	if (m_dockWidget)
+	{
+		m_dockWidget->deleteLater();
+		m_dockWidget = 0;
+	}
+}
+
 /**
  * Creates or deletes the KMixDockWidget, depending on whether there is a Mixer instance available.
- * 
+ *
  * @returns true, if the docking succeeded. Failure usually means that there
  *    was no suitable mixer control selected.
  */
-bool
-KMixWindow::updateDocking()
+bool KMixWindow::updateDocking()
 {
-  if (m_showDockWidget == false || Mixer::mixers().isEmpty() )
-    {
-      if (m_dockWidget)
-        {
-	  // Config update: we are not supposed to have one, but we have one.
-          m_dockWidget->deleteLater();
-          m_dockWidget = 0;
-        }
-      return false;
-    }
-
-  if (!m_dockWidget)
-    {
-      m_dockWidget = new KMixDockWidget(this, m_volumeWidget);
-    }
-//   else
-//     {
-//       m_dockWidget->update();
-//     }
-
-  return true;
+	if (m_showDockWidget == false || Mixer::mixers().isEmpty())
+	{
+		removeDock();
+		return false;
+	}
+	if (forceNotifierRebuild)
+	{
+		forceNotifierRebuild = false;
+		removeDock();
+	}
+	if (!m_dockWidget)
+	{
+		m_dockWidget = new KMixDockWidget(this, trayVolumePopupEnabled);
+	}
+	return true;
 }
-
 void
 KMixWindow::saveConfig()
 {
@@ -408,7 +412,7 @@ KMixWindow::saveBaseConfig()
   config.writeEntry("Visible", isVisible());
   config.writeEntry("Menubar", _actionShowMenubar->isChecked());
   config.writeEntry("AllowDocking", m_showDockWidget);
-  config.writeEntry("TrayVolumeControl", m_volumeWidget);
+  config.writeEntry("TrayVolumeControl", trayVolumePopupEnabled);
   config.writeEntry("Tickmarks", GlobalConfig::instance().showTicks);
   config.writeEntry("Labels", GlobalConfig::instance().showLabels);
   config.writeEntry("showOSD", GlobalConfig::instance().showOSD);
@@ -547,7 +551,7 @@ KMixWindow::loadBaseConfig()
   KConfigGroup config(KGlobal::config(), "Global");
 
   m_showDockWidget = config.readEntry("AllowDocking", true);
-  m_volumeWidget = config.readEntry("TrayVolumeControl", true);
+  trayVolumePopupEnabled = config.readEntry("TrayVolumeControl", true);
   GlobalConfig::instance().showTicks = config.readEntry("Tickmarks", true);
   GlobalConfig::instance().showLabels = config.readEntry("Labels", true);
   GlobalConfig::instance().showOSD = config.readEntry("showOSD", true);
@@ -1200,7 +1204,7 @@ KMixWindow::showSettings()
     {
       // copy actual values to dialog
       m_prefDlg->m_dockingChk->setChecked(m_showDockWidget);
-      m_prefDlg->m_volumeChk->setChecked(m_volumeWidget);
+      m_prefDlg->m_volumeChk->setChecked(trayVolumePopupEnabled);
       m_prefDlg->m_volumeChk->setEnabled(m_showDockWidget);
       m_prefDlg->m_onLogin->setChecked(m_onLogin);
       m_prefDlg->allowAutostart->setChecked(allowAutostart);
@@ -1240,7 +1244,7 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
   bool ticksHasChanged = GlobalConfig::instance().showTicks ^ prefDlg->m_showTicks->isChecked();
   bool dockwidgetHasChanged = m_showDockWidget
       ^ prefDlg->m_dockingChk->isChecked();
-  bool systrayPopupHasChanged = m_volumeWidget
+  bool systrayPopupHasChanged = trayVolumePopupEnabled
       ^ prefDlg->m_volumeChk->isChecked();
   bool toplevelOrientationHasChanged = (prefDlg->_rbVertical->isChecked()
       && GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
@@ -1251,7 +1255,7 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
   GlobalConfig::instance().showTicks = prefDlg->m_showTicks->isChecked();
   GlobalConfig::instance().showOSD = prefDlg->m_showOSD->isChecked();
   m_showDockWidget = prefDlg->m_dockingChk->isChecked();
-  m_volumeWidget = prefDlg->m_volumeChk->isChecked();
+  trayVolumePopupEnabled = prefDlg->m_volumeChk->isChecked();
   m_onLogin = prefDlg->m_onLogin->isChecked();
   allowAutostart = m_prefDlg->allowAutostart->isChecked();
   setBeepOnVolumeChange(prefDlg->m_beepOnVolumeChange->isChecked());
@@ -1268,9 +1272,15 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
     if ( systrayPopupHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged )
     {
       // These might need a complete relayout => announce a ControlList change to rebuild everything
+    	if ( systrayPopupHasChanged)
+    	{
+    		// if the user has changed the "volume popup" option, the KStatusNotifier requires a new referenceWidget,
+    		// thus we force a reconstruct.
+    		forceNotifierRebuild = true;
+    	}
          ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("Preferences Dialog"));
     }
-    else if ( labelsHasChanged || ticksHasChanged || systrayPopupHasChanged)
+    else if ( labelsHasChanged || ticksHasChanged )
     {
       ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
     }
