@@ -140,8 +140,10 @@ public:
   void shutdownNow();
   
 private:
+    ControlManager();
     static ControlManager instanceSingleton;
     QList<Listener> listeners;
+    QList<Listener*> deletedListeners;
 };
 
 #endif // CONTROLMANAGER_H

@@ -40,6 +40,7 @@
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
 #include "core/ControlManager.h"
+#include "core/GlobalConfig.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
 
@@ -87,7 +88,15 @@ void ViewBase::addMixer(Mixer *mixer)
   _mixers.append(mixer);
 }
 
-void ViewBase::configurationUpdate() {
+void ViewBase::configurationUpdate() { // TODO still in use?!?
+}
+
+
+
+void ViewBase::updateGuiOptions()
+{
+    setTicks(GlobalConfig::instance().showTicks);
+    setLabels(GlobalConfig::instance().showLabels);
 }
 
 QString ViewBase::id() const {

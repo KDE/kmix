@@ -343,13 +343,6 @@ void ViewSliders::constructionFinished() {
     updateGuiOptions();
 }
 
-
-void ViewSliders::updateGuiOptions()
-{
-    setTicks(GlobalConfig::instance().showTicks);
-    setLabels(GlobalConfig::instance().showLabels);
-}
-
 void ViewSliders::configurationUpdate() {
    // Adjust height of top part by setting it to the maximum of all mdw's
    bool haveCaptureLEDs = false;

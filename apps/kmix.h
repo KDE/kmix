@@ -81,6 +81,7 @@ KMixWindow : public KXmlGuiWindow
    virtual bool queryClose();
 
   public slots:
+   void controlsChange(int changeType);
    void quit();
    void showSettings();
    void showHelp();

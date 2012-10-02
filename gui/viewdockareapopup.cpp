@@ -27,6 +27,7 @@
 #include <QGridLayout>
 #include <QLayoutItem>
 #include <QPushButton>
+#include <QSizePolicy>
 
 // KDE
 #include <kaction.h>
@@ -49,6 +50,9 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
     : ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
 {
   seperatorBetweenMastersAndStreams = 0;
+  separatorBetweenMastersAndStreamsInserted = false;
+  separatorBetweenMastersAndStreamsRequired = false;
+
   optionsLayout = 0;
   _layoutMDW = 0;
   configureViewButton = 0;
@@ -58,6 +62,8 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
   restoreVolumeButton4 = 0;
   mainWindowButton = 0;
   
+  setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
   foreach ( Mixer* mixer, Mixer::mixers() )
   {
     // Adding all mixers, as we potentially want to show all master controls
@@ -65,35 +71,15 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
   }
 
   // Register listeners for all mixers
-      	ControlManager::instance().addListener(
+	ControlManager::instance().addListener(
 	  QString(), // all mixers
-	ControlChangeType::GUI,
+	  (ControlChangeType::Type)
+	(ControlChangeType::GUI | ControlChangeType::ControlList | ControlChangeType::Volume | ControlChangeType::MasterChanged),
 	this,
 	QString("ViewDockAreaPopup")	  
 	);
 
-  	ControlManager::instance().addListener(
-	  QString(), // all mixers
-	ControlChangeType::ControlList,
-	this,
-	QString("ViewDockAreaPopup")	  
-	);
-
-  	ControlManager::instance().addListener(
-	  QString(), // all mixers
-	ControlChangeType::Volume,
-	this,
-	QString("ViewDockAreaPopup")	  
-	);
-	
-	  	ControlManager::instance().addListener(
-	  QString(), // all mixers
-	ControlChangeType::MasterChanged,
-	this,
-	QString("ViewDockAreaPopup")	  
-	);
-
-        configureIcon = new KIcon( QLatin1String( "configure" ));
+	configureIcon = new KIcon( QLatin1String( "configure" ));
 	restoreVolumeIcon = new KIcon( QLatin1String( "quickopen-file" ));
 	createDeviceWidgets();
 
@@ -118,8 +104,7 @@ void ViewDockAreaPopup::controlsChange(int changeType)
       createDeviceWidgets();
       break;
     case ControlChangeType::GUI:
-        setTicks(GlobalConfig::instance().showTicks);
-	setLabels(GlobalConfig::instance().showLabels);
+    	updateGuiOptions();
       break;
 
     case ControlChangeType::Volume:
@@ -179,6 +164,7 @@ void ViewDockAreaPopup::_setMixSet()
     _layoutMDW = new QGridLayout( this );
     _layoutMDW->setSpacing( KDialog::spacingHint() );
     _layoutMDW->setMargin(0);
+    _layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
     _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
 
 	// A loop that adds the Master controls of each card
@@ -249,11 +235,12 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
       true,         // Show Mute LE
       true,        // Show Record LED
       false,        // Small
-      GlobalConfig::instance().toplevelOrientation, // TODO: Why don't we use vflags ??? Direction: only 1 device, so doesn't matter
+      GlobalConfig::instance().toplevelOrientation,
       this,         // parent
       this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl
    );
+    mdw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    //if (sliderColumn == 1 ) sliderColumn =0;
    int row = vertical ? 0 : sliderColumn;
@@ -280,13 +267,20 @@ void ViewDockAreaPopup::constructionFinished()
    optionsLayout->addWidget(mainWindowButton );
    optionsLayout->addWidget(configureViewButton);
    restoreVolumeButton1 = createRestoreVolumeButton(1);
-   optionsLayout->addWidget( restoreVolumeButton1 );
+   optionsLayout->addWidget( restoreVolumeButton1 ); // TODO enable only if user has saved a volume profile
 //    optionsLayout->addWidget( createRestoreVolumeButton(2) );
 //    optionsLayout->addWidget( createRestoreVolumeButton(3) );
 //    optionsLayout->addWidget( createRestoreVolumeButton(4) );
    
       int sliderRow = _layoutMDW->rowCount();
       _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
+
+  	updateGuiOptions();
+
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+  	_layoutMDW->invalidate();
+  	_layoutMDW->update();
       _layoutMDW->activate();
 }
 

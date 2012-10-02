@@ -54,7 +54,6 @@ protected:
     virtual void _setMixSet();
 
 private:
-  QLayout* _layoutControls;
   QGridLayout* _layoutMDW;
     QPushButton* createRestoreVolumeButton ( int storageSlot );
     

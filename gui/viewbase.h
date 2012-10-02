@@ -142,6 +142,7 @@ protected:
 
     virtual void _setMixSet() = 0;
     void resetMdws();
+    void updateGuiOptions();
     
     GUIComplexity guiComplexity;
 

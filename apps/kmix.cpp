@@ -123,12 +123,21 @@ KMixWindow::KMixWindow(bool invisible) :
   connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), wrapper,
       SLOT(deviceUnplugged(QString)));
  
+  	 ControlManager::instance().addListener(
+  	  QString(), // All mixers (as the Global master Mixer might change)
+  	ControlChangeType::ControlList,
+  	this,
+  	QString("KMixWindow")
+  	);
+
+
   // Send an initial volume refresh (otherwise all volumes are 0 until the next change)
   ControlManager::instance().announce(QString(), ControlChangeType::Volume, QString("Startup"));
 }
 
 KMixWindow::~KMixWindow()
 {
+  ControlManager::instance().removeListener(this);
   // -1- Cleanup Memory: clearMixerWidgets
   while (m_wsMixers->count() != 0)
     {
@@ -138,6 +147,24 @@ KMixWindow::~KMixWindow()
     }
   // -2- Mixer HW
   MixerToolBox::instance()->deinitMixer();
+}
+
+
+
+void KMixWindow::controlsChange(int changeType)
+{
+  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+  switch (type )
+  {
+    case  ControlChangeType::ControlList:
+    	updateDocking();
+      break;
+
+    default:
+      ControlManager::warnUnexpectedChangeType(type, this);
+      break;
+  }
+
 }
 
 void

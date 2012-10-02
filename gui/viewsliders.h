@@ -56,8 +56,6 @@ private:
     QHash<QString,QFrame*> _separators;
     QPushButton* _configureViewButton;
     QLabel* emptyStreamHint;
-
-    void updateGuiOptions();
 };
 
 #endif

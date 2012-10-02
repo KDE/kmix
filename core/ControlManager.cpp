@@ -19,6 +19,8 @@
 
 #include "ControlManager.h"
 
+#include <QMutableListIterator>
+
 #include <KDebug>
 
 ControlManager ControlManager::instanceSingleton;
@@ -26,6 +28,10 @@ ControlManager ControlManager::instanceSingleton;
 ControlManager& ControlManager::instance()
 {
 	return instanceSingleton;
+}
+
+ControlManager::ControlManager()
+{
 }
 
 /**
@@ -38,15 +44,28 @@ ControlManager& ControlManager::instance()
  */
 void ControlManager::announce(QString mixerId, ControlChangeType::Type changeType, QString sourceId)
 {
-	QList<Listener>::iterator it;
-	for (it = listeners.begin(); it != listeners.end(); ++it)
+
+	bool listenersModified = false;
+	QSet<Listener*> processedListeners;
+	do
 	{
-		Listener& listener = *it;
-		bool mixerIsOfInterest = listener.getMixerId().isEmpty() || mixerId.isEmpty()
-			|| listener.getMixerId() == mixerId;
-		if (mixerIsOfInterest && listener.getChangeType() == changeType)
+		listenersModified = false;
+		QList<Listener>::iterator it;
+		for (it = listeners.begin(); it != listeners.end(); ++it)
 		{
-			bool success = QMetaObject::invokeMethod(listener.getTarget(), "controlsChange", Qt::DirectConnection,
+			Listener& listener = *it;
+			bool mixerIsOfInterest = listener.getMixerId().isEmpty() || mixerId.isEmpty()
+				|| listener.getMixerId() == mixerId;
+
+			bool listenerAlreadyProcesed = processedListeners.contains(&listener);
+			if ( listenerAlreadyProcesed )
+			{
+				kDebug() << "Skipping already processed listener"; // TODO remove the kDebug()
+				continue;
+			}
+			if (mixerIsOfInterest && listener.getChangeType() == changeType)
+			{
+				bool success = QMetaObject::invokeMethod(listener.getTarget(), "controlsChange", Qt::DirectConnection,
 				Q_ARG(int, changeType));
 				kDebug() << "Listener " << listener.getSourceId() <<" is interested in " << mixerId
 				<< ", " << ControlChangeType::toString(changeType);
@@ -55,8 +74,19 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 				{
 					kError() << "Listener Failed to send to " << listener.getTarget()->metaObject()->className();
 				}
+				processedListeners.insert(&listener);
+				if (!deletedListeners.isEmpty())
+				{
+					// The invokeMethod() above has changed the listeners => my Iterator is invalid => restart loop
+					kDebug() << "Listeners modified => restart loop";
+					listenersModified = true;
+					break; // break inner loop => restart via outer loop
+				}
+
 			}
 		}
+	}
+	while ( listenersModified);
 
 	kDebug()
 	<< "Announcing " << ControlChangeType::toString(changeType) << " for "
@@ -108,15 +138,16 @@ void ControlManager::removeListener(QObject* target)
  */
 void ControlManager::removeListener(QObject* target, QString sourceId)
 {
-
-	QList<Listener>::iterator it;
-	for (it = listeners.begin(); it != listeners.end(); ++it)
+	QMutableListIterator<Listener> it(listeners);
+	while ( it.hasNext())
 	{
-		Listener& listener = *it;
+		Listener& listener = it.next();
 		if (listener.getTarget() == target)
 		{
 			kDebug()
 			<< "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId << " from " << target;
+			it.remove();
+			deletedListeners.append(&listener); // Remember pointer
 		}
 	}
 }
