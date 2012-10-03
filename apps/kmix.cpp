@@ -1176,18 +1176,20 @@ KMixWindow::showVolumeDisplay()
   osdWidget->setGeometry(posX, posY, size.width(), size.height());
 }
 
-void
-KMixWindow::slotMute()
+/**
+ * Mutes the global master. (SLOT)
+ */
+void KMixWindow::slotMute()
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer();
-  if (mixer == 0)
-    return; // e.g. when no soundcard is available
-  shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-  if (md.get() == 0)
-    return; // shouldn't happen, but lets play safe
-  md->toggleMute();
-  mixer->commitVolumeChange(md);
-  showVolumeDisplay();
+	Mixer* mixer = Mixer::getGlobalMasterMixer();
+	if (mixer == 0)
+		return; // e.g. when no soundcard is available
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	if (md.get() == 0)
+		return; // shouldn't happen, but lets play safe
+	md->toggleMute();
+	mixer->commitVolumeChange(md);
+	showVolumeDisplay();
 }
 
 void

@@ -43,8 +43,7 @@
 #include "gui/mdwenum.h"
 #include "gui/mdwslider.h"
 #include "gui/verticaltext.h"
-// TODO apps/kmix.h only for GlobalConfig. Move that!!!
-#include "apps/kmix.h"   
+
 
 // KDE
 #include <kdebug.h>
@@ -343,31 +342,33 @@ void ViewSliders::constructionFinished() {
     updateGuiOptions();
 }
 
-void ViewSliders::configurationUpdate() {
-   // Adjust height of top part by setting it to the maximum of all mdw's
-   bool haveCaptureLEDs = false;
-   int labelExtent = 0;
-   bool haveMuteButtons = false;
-   
-   // Find out whether any MDWSlider has Switches. If one has, then we need "extents"
-   for ( int i=0; i<_mdws.count(); i++ )
-   {
-      MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
-      if ( mdw && mdw->isVisibleTo(this) )
-      {
-		 if ( mdw->labelExtentHint() > labelExtent ) labelExtent = mdw->labelExtentHint();
-		 haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
-		 haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
-      }
-      
-      if ( haveCaptureLEDs && haveMuteButtons )
-	break; // We know al we want. Lets break.
-   }
+void ViewSliders::configurationUpdate()
+{
+	// Adjust height of top part by setting it to the maximum of all mdw's
+	bool haveCaptureLEDs = false;
+	int labelExtent = 0;
+	bool haveMuteButtons = false;
+
+	// Find out whether any MDWSlider has Switches. If one has, then we need "extents"
+	for (int i = 0; i < _mdws.count(); i++)
+	{
+		MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+		if (mdw && mdw->isVisibleTo(this))
+		{
+			if (mdw->labelExtentHint() > labelExtent)
+				labelExtent = mdw->labelExtentHint();
+			haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
+			haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
+		}
+
+		if (haveCaptureLEDs && haveMuteButtons)
+			break; // We know all we want. Lets break.
+	}
    //kDebug(67100) << "topPartExtent is " << topPartExtent;
    bool firstVisibleControlFound = false;
    for ( int i=0; i<_mdws.count(); i++ )
    {
-      MixDeviceWidget* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
+      MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(_mdws[i]);
       MDWSlider* mdwSlider = ::qobject_cast<MDWSlider*>(_mdws[i]);
       if ( mdw )
       {

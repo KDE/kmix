@@ -104,8 +104,8 @@ void Mixer_Backend::readSetFromHWforceUpdate() const {
 
 
 /**
-   You can call this to retrieve the freshest information from the mixer HW.
-   This method is also called regulary by the mixer timer.
+ * You can call this to retrieve the freshest information from the mixer HW.
+ * This method is also called regularly by the mixer timer.
  */
 void Mixer_Backend::readSetFromHW()
 {
@@ -117,7 +117,6 @@ void Mixer_Backend::readSetFromHW()
 		return;
 	}
 
-	//kDebug() << "---tick---" << QTime::currentTime();
 	_readSetFromHWforceUpdate = false;
 
 	int ret = Mixer::OK_UNCHANGED;
@@ -131,7 +130,8 @@ void Mixer_Backend::readSetFromHW()
 		int retLoop = readVolumeFromHW( md->id(), md );
 	  if (debugMe) kDebug() << "New PCM:0 playback state" << md->isMuted()
 	    << ", vol=" << md->playbackVolume().getAvgVolume(Volume::MALL);
-		if (md->isEnum() ) {
+		if (md->isEnum() )
+		{
 			/*
 			 * This could be reworked:
 			 * Plan: Read everything (incuding enum's) in readVolumeFromHW().

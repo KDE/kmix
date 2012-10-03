@@ -113,7 +113,6 @@ MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, con
 
 void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
 {
-  physicalMuteSwitch = false;
     _artificial = false;
     _applicationStream = false;
     _dbusControlWrapper = 0; // will be set in addToPool()
@@ -174,9 +173,6 @@ void MixDevice::addPlaybackVolume(Volume &playbackVol)
    // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
    _playbackVolume = playbackVol;
    _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
-    physicalMuteSwitch = playbackVol.hasSwitch();
-    if ( ! physicalMuteSwitch )
-      muted = false; // All virtual controls are On by default (as the backend will not set the muted value for those)
     playbackVol.hasSwitchDisallowRead(); // Only allowed to read once, and only here during migrating the switch back to MixDevice
 }
 
@@ -243,11 +239,11 @@ const QString MixDevice::dbusPath() {
 }
 
 
-bool MixDevice::isMuted()                  { return muted; }
-void MixDevice::setMuted(bool mute)        { muted = mute; }
-void MixDevice::toggleMute()               { setMuted( !isMuted() ); }
-bool MixDevice::hasMuteSwitch()            { return true; }
-bool MixDevice::hasPhysicalMuteSwitch()    { return physicalMuteSwitch; }
+bool MixDevice::isMuted()                  { return ! _playbackVolume.isSwitchActivated(); }
+void MixDevice::setMuted(bool mute)        { _playbackVolume.setSwitch(!mute); }
+void MixDevice::toggleMute()               { setMuted( !_playbackVolume.isSwitchActivated()); }
+bool MixDevice::hasMuteSwitch()            { return playbackVolume().hasVolume() || playbackVolume().hasSwitch(); }
+bool MixDevice::hasPhysicalMuteSwitch()    { return playbackVolume().hasSwitch(); }
 bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() &&  _captureVolume.isSwitchActivated() ); }
 bool MixDevice::isNotRecSource()           { return ( _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated() ); }
 void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }

@@ -208,7 +208,8 @@ void Mixer::volumeLoad( KConfig *config )
 		   continue;
 
        _mixerBackend->writeVolumeToHW( md->id(), md );
-       if ( md->isEnum() ) _mixerBackend->setEnumIdHW( md->id(), md->enumId() );
+       if ( md->isEnum() )
+    	   _mixerBackend->setEnumIdHW( md->id(), md->enumId() );
    }
 }
 

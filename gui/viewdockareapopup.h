@@ -45,7 +45,7 @@ public:
     virtual QWidget* add(shared_ptr<MixDevice> md);
     virtual void constructionFinished();
     virtual void refreshVolumeLevels();
-//     virtual void showContextMenu();
+     virtual void showContextMenu();
 
 protected:
     KMixWindow  *_dock;

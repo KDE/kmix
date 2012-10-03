@@ -67,7 +67,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
   foreach ( Mixer* mixer, Mixer::mixers() )
   {
     // Adding all mixers, as we potentially want to show all master controls
-    addMixer(mixer); // TODO Doing it here is incompatible with hotplugging
+    addMixer(mixer);
   }
 
   // Register listeners for all mixers
@@ -129,77 +129,79 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 }
 
 
-// void ViewDockAreaPopup::showContextMenu()
-// {
-//     // no right-button-menu on "dock area popup"
-//     return;
-// }
+// TODO Currently no right-click, as we have problems to get the ViewDockAreaPopup resized
+ void ViewDockAreaPopup::showContextMenu()
+ {
+     // no right-button-menu on "dock area popup"
+     return;
+ }
 
 
 void ViewDockAreaPopup::_setMixSet()
 {
-  resetMdws();
+	resetMdws();
 //   if ( _layoutMDW != 0 )
 //   {
 //     QLayoutItem *li;
 //     while ( ( li = _layoutMDW->takeAt(0) ) )
 // 	    delete li;
 //   }
-  
-  delete configureViewButton;
-  delete restoreVolumeButton1;
-  restoreVolumeButton1 = 0;
-  delete restoreVolumeButton2;
-  restoreVolumeButton2 = 0;
-  delete restoreVolumeButton3;
-  restoreVolumeButton3 = 0;
-  delete restoreVolumeButton4;
-  restoreVolumeButton4 = 0;
 
-  delete mainWindowButton;
-  delete seperatorBetweenMastersAndStreams;
-  seperatorBetweenMastersAndStreams = 0;
-  separatorBetweenMastersAndStreamsInserted = false;
-  separatorBetweenMastersAndStreamsRequired = false;
-  
-  delete optionsLayout;
-  optionsLayout = 0;
+	delete configureViewButton;
+	delete restoreVolumeButton1;
+	restoreVolumeButton1 = 0;
+	delete restoreVolumeButton2;
+	restoreVolumeButton2 = 0;
+	delete restoreVolumeButton3;
+	restoreVolumeButton3 = 0;
+	delete restoreVolumeButton4;
+	restoreVolumeButton4 = 0;
 
-    delete _layoutMDW;
-    _layoutMDW = new QGridLayout( this );
-    _layoutMDW->setSpacing( KDialog::spacingHint() );
-    _layoutMDW->setMargin(0);
-    _layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
-    _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
+	delete mainWindowButton;
+	delete seperatorBetweenMastersAndStreams;
+	seperatorBetweenMastersAndStreams = 0;
+	separatorBetweenMastersAndStreamsInserted = false;
+	separatorBetweenMastersAndStreamsRequired = false;
 
+	delete optionsLayout;
+	optionsLayout = 0;
 
-    _mixers.clear();
-      foreach ( Mixer* mixer, Mixer::mixers() )
-	        {
-			    // Adding all mixers, as we potentially want to show all master controls
-			    addMixer(mixer); // TODO Doing it here is incompatible with hotplugging
-		 }
+	delete _layoutMDW;
+	_layoutMDW = new QGridLayout(this);
+	_layoutMDW->setSpacing(KDialog::spacingHint());
+	_layoutMDW->setMargin(0);
+	_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
+	_layoutMDW->setObjectName(QLatin1String("KmixPopupLayout"));
 
-	// A loop that adds the Master controls of each card
+	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
+	// we have to redo the list on each _setMixSet() (instead of setting it once in the Constructor)
+	_mixers.clear();
+	foreach ( Mixer* mixer, Mixer::mixers() )
+	{
+		addMixer(mixer);
+	}
+
+	// A loop that adds the Master control of each card
 	foreach ( Mixer* mixer, _mixers )
 	{
-	shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
-	if ( dockMD == 0 && mixer->size() > 0 )
-	{
-		// If we have no dock device yet, we will take the first available mixer device
-		dockMD = (*mixer)[0];
-	}
-	if ( dockMD != 0 )
-	{
-	  if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume()) 
-	{
-		// don't add application streams here. They are handled below, so
-		// we make sure to not add them twice
-		_mixSet.append(dockMD);
-	}
-	}
+		shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
+		if ( dockMD == 0 && mixer->size() > 0 )
+		{
+			// If we have no dock device yet, we will take the first available mixer device.
+			dockMD = (*mixer)[0];
+		}
+		if ( dockMD != 0 )
+		{
+			if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume())
+			{
+				// don't add application streams here. They are handled below, so
+				// we make sure to not add them twice
+				_mixSet.append(dockMD);
+			}
+		}
 	} // loop over all cards
 
+	// Add all application streams
 	foreach ( Mixer* mixer2 , Mixer::mixers() )
 	{
 		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
@@ -292,6 +294,8 @@ void ViewDockAreaPopup::constructionFinished()
 
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
+    // TODO Resizing fails. Why?!?
+    this->resize(1,1);
   	_layoutMDW->invalidate();
   	_layoutMDW->update();
       _layoutMDW->activate();

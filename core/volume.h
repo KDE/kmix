@@ -100,6 +100,7 @@ friend class MixDevice;
     void changeAllVolumes( long step );
     
     long getVolume(ChannelID chid);
+    long getVolumeWhenActive(ChannelID chid);
     qreal getAvgVolume(ChannelMask chmask);
     int getAvgVolumePercent(ChannelMask chmask);
 
@@ -112,7 +113,7 @@ friend class MixDevice;
     long volumeSpan();
     int  count();
     
-    bool hasSwitch()           
+    bool hasSwitch() const
     {
       if (isCapture())
       {
@@ -132,8 +133,8 @@ friend class MixDevice;
       }
 	return _hasSwitch;
     };
-    bool hasVolume()           { return (_maxVolume != _minVolume); }
-    bool isCapture()           { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
+    bool hasVolume() const          { return (_maxVolume != _minVolume); }
+    bool isCapture() const          { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
     
    // Some playback switches control playback, and some are special.
    // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
@@ -150,20 +151,23 @@ friend class MixDevice;
     // access it, when private. Strange, as operator<<() is declared friend.
     static int    _channelMaskEnum[9];
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
+    QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
     void hasSwitchDisallowRead() { disallowSwitchDisallowRead = true; };
-    static Volume& zeroPlaybackVolume() { return *zeroPlaybackVolumeInstance; };
     
 protected:
     long          _chmask;
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
+    QMap<Volume::ChannelID, VolumeChannel> _volumesMuted;
 
     long          _minVolume;
     long          _maxVolume;
    // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
    // these functions. Our friend class MixDevice will handle that gracefully for us.
    void setSwitch( bool active );
-   bool isSwitchActivated()
+   bool isSwitchActivated() const  // TODO rename to isActive()
    {
+	   return _switchActivated;
+
       if (isCapture())
       {
 	return _switchActivated && hasSwitch();
@@ -187,8 +191,6 @@ private:
     // constructor for dummy volumes
     Volume();
 
-    static Volume* zeroPlaybackVolumeInstance;
-    
     void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
     long volrange( long vol );
@@ -205,7 +207,6 @@ class VolumeChannel
 public:
   VolumeChannel(Volume::ChannelID chid) { volume =0; this->chid = chid; }
   long volume;
- // long unmutedVolume; // TODO I think this is a bad idea. It would possibly be better to do it in the 3 getVolume*() methods
   Volume::ChannelID chid;
   
 // protected:

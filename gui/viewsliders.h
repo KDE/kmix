@@ -43,13 +43,14 @@ public:
     virtual void configurationUpdate();
 
 public slots:
-    virtual void refreshVolumeLevels(); // TODO migrate to controlsChange()
     void controlsChange(int changeType);
 
 protected:
     virtual void _setMixSet();
 
 private:
+    virtual void refreshVolumeLevels();
+
     QBoxLayout* _layoutMDW;
     QLayout* _layoutSliders;
 	QBoxLayout* _layoutEnum;

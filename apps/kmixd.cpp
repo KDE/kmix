@@ -198,13 +198,12 @@ void KMixD::loadBaseConfig()
 {
     KConfigGroup config(KGlobal::config(), "Global");
 
-    // TODO cesken Should we save this configuration items in kmixd at all?
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
    m_configVersion = config.readEntry( "ConfigVersion", 0 );
    // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
    // evaluated. Better only write that in saveBaseConfig()
-   m_autouseMultimediaKeys = config.readEntry( "AutoUseMultimediaKeys", true );
+   m_autouseMultimediaKeys = config.readEntry( "AutoUseMultimediaKeys", true ); // currently not in use in kmixd
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {

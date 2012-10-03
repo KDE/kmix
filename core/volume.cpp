@@ -26,8 +26,6 @@
 
 #include <kdebug.h>
 
-Volume* Volume::zeroPlaybackVolumeInstance = new Volume(0,0,true,false);
-
 int Volume::_channelMaskEnum[9] =
 { MLEFT, MRIGHT, MCENTER,
 		MWOOFER,
@@ -85,9 +83,13 @@ void Volume::addVolumeChannels(ChannelMask chmask)
 	} // for all channels
 }
 
-void Volume::addVolumeChannel(VolumeChannel ch)
+void Volume::addVolumeChannel(VolumeChannel vc)
 {
-	_volumesL.insert(ch.chid, ch);
+	_volumesL.insert(vc.chid, vc);
+	// Add the correpsonnding "muted version" of the chnnel.
+	VolumeChannel* zeroChannel = new VolumeChannel(vc.chid);
+	zeroChannel->volume = 0;
+	_volumesMuted.insert(zeroChannel->chid, *zeroChannel);
 }
 
 
@@ -104,9 +106,19 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasS
 	disallowSwitchDisallowRead = false;
 }
 
-QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
+QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumesWhenActive() const
 {
 	return _volumesL;
+}
+
+QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
+{
+	if ( isSwitchActivated() )
+		return _volumesL;
+	else
+	{
+		return _volumesMuted;
+	}
 }
 
 // @ compatibility
@@ -204,17 +216,30 @@ long Volume::volumeSpan() {
 	return _maxVolume - _minVolume + 1;
 }
 
+/**
+ * Returns the volume of the given channel. If the volume is inactive, the volume will be returned that would be set
+ * when this Volume gets activated
+ */
+long Volume::getVolumeWhenActive(ChannelID chid)
+{
+	return _volumesL.value(chid).volume;
+}
+
+/**
+ * Returns the volume of the given channel. If this Volume is inactive (switched off), 0 is returned.
+ */
 long Volume::getVolume(ChannelID chid)
 {
+	if (! isSwitchActivated() )
+		return 0;
+
 	return _volumesL.value(chid).volume;
 }
 
 qreal Volume::getAvgVolume(ChannelMask chmask)
 {
-#ifdef ZERO_VOLUME_ON_MUTE
-	if ( ! isCapture() && ! isSwitchActivated() )
-	  return 0;
-#endif
+	if (! isSwitchActivated() )
+		return 0;
 	  
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
@@ -238,10 +263,8 @@ qreal Volume::getAvgVolume(ChannelMask chmask)
 
 int Volume::getAvgVolumePercent(ChannelMask chmask)
 {
-#ifdef ZERO_VOLUME_ON_MUTE
-  	if ( ! isCapture() && ! isSwitchActivated() )
-	  return 0;
-#endif
+	if (! isSwitchActivated() )
+		return 0;
 	  
 	qreal volume = getAvgVolume(chmask);
 	// min=-100, max=200 => volSpan = 301

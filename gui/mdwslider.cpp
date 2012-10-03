@@ -906,7 +906,8 @@ void MDWSlider::toggleMuted()
 
 void MDWSlider::setMuted(bool value)
 {
-	if ( m_mixdevice->hasMuteSwitch() ) {
+	if ( m_mixdevice->hasMuteSwitch() )
+	{
 		m_mixdevice->setMuted( value );
 		m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
 	}
@@ -915,7 +916,7 @@ void MDWSlider::setMuted(bool value)
 
 void MDWSlider::setDisabled()
 {
-	// We can only hide/disable, because if the slider is not show the user can not
+	// We can only disable, not enable. Because if the slider is not shown the user can not
 	// right-click it to show it. Once explained, it is obvious. :-)
 	setDisabled( true );
 }
@@ -956,15 +957,15 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 {
 	Volume& volP = m_mixdevice->playbackVolume();
 	long inc = calculateStepIncrement(volP, decrease);
-	
+
 	if ( mixDevice()->id() == "PCM:0" )
 	  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
-	
+
 	if ( !decrease && m_mixdevice->isMuted())
 	{   // increasing form muted state: unmute and start with a low volume level
 	if ( mixDevice()->id() == "PCM:0" )
 	  kDebug() << "set all to " << inc << "muted old=" << m_mixdevice->isMuted();
-	    
+
 	    m_mixdevice->setMuted(false);
 	  kDebug() << "set all to " << inc << "muted between=" << m_mixdevice->isMuted();
 	    volP.setAllVolumes(inc);
@@ -976,9 +977,10 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	if ( mixDevice()->id() == "PCM:0" )
 	  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
 	}
-	
+
 	Volume& volC = m_mixdevice->captureVolume();
 	inc = calculateStepIncrement(volC, decrease);
+	volC.changeAllVolumes(inc);
 
 	// I should possibly not block, as the changes that come back from the Soundcard
 	//      will be ignored (e.g. because of capture groups)

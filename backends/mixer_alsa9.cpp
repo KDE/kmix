@@ -801,13 +801,9 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 int
 Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
-  kDebug() << "pMSw=" << md->hasPhysicalMuteSwitch() << ", muted=" << md->isMuted();
-    bool virtualZero = !md->hasPhysicalMuteSwitch() && md->isMuted();
-    Volume& volumePlayback = virtualZero ? Volume::zeroPlaybackVolume() : md->playbackVolume();
+    Volume& volumePlayback = md->playbackVolume();
     Volume& volumeCapture  = md->captureVolume();
 
-    kDebug() << "vz=" << virtualZero << "volPlayback=" << volumePlayback;
-    
     int devnum = id2num(id);
 
     snd_mixer_elem_t *elem = getMixerElem( devnum );
@@ -817,11 +813,13 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
     }
 
     // --- playback volume
-    if ( snd_mixer_selem_has_playback_volume( elem ) ) {
+    if ( snd_mixer_selem_has_playback_volume( elem ) )
+    {
       foreach (VolumeChannel vc, volumePlayback.getVolumes() )
       {
                int ret = 0;
-               switch(vc.chid) {
+               switch(vc.chid)
+               {
                    case Volume::LEFT         : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_LEFT  , vc.volume); break;
                    case Volume::RIGHT        : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_RIGHT , vc.volume); break;
                    case Volume::CENTER       : ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_FRONT_CENTER, vc.volume); break;

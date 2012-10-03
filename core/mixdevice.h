@@ -228,9 +228,6 @@ private:
 
    DBusControlWrapper *_dbusControlWrapper;
 
-   bool physicalMuteSwitch;
-   bool muted;
-   
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
    // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:
    // Type        Shortcut  Restore

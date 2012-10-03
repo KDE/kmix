@@ -836,7 +836,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 
 	kDebug() << "Adding Pulse volume " << dev.name << ", isCapture= " << isCapture << ", devnum=" << m_devnum;
 	if ( isCapture )
-	  md->addCaptureVolume(v); // TODO cesken Check with Colin
+	  md->addCaptureVolume(v);
 	else
 	  md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
