@@ -148,12 +148,17 @@ void ViewDockAreaPopup::_setMixSet()
   
   delete configureViewButton;
   delete restoreVolumeButton1;
+  restoreVolumeButton1 = 0;
   delete restoreVolumeButton2;
+  restoreVolumeButton2 = 0;
   delete restoreVolumeButton3;
+  restoreVolumeButton3 = 0;
   delete restoreVolumeButton4;
+  restoreVolumeButton4 = 0;
 
   delete mainWindowButton;
   delete seperatorBetweenMastersAndStreams;
+  seperatorBetweenMastersAndStreams = 0;
   separatorBetweenMastersAndStreamsInserted = false;
   separatorBetweenMastersAndStreamsRequired = false;
   
@@ -166,6 +171,14 @@ void ViewDockAreaPopup::_setMixSet()
     _layoutMDW->setMargin(0);
     _layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
     _layoutMDW->setObjectName( QLatin1String( "KmixPopupLayout" ) );
+
+
+    _mixers.clear();
+      foreach ( Mixer* mixer, Mixer::mixers() )
+	        {
+			    // Adding all mixers, as we potentially want to show all master controls
+			    addMixer(mixer); // TODO Doing it here is incompatible with hotplugging
+		 }
 
 	// A loop that adds the Master controls of each card
 	foreach ( Mixer* mixer, _mixers )
