@@ -142,3 +142,5 @@ void DBusMixerWrapper::createDeviceWidgets()
 				"org.kde.KMix.Mixer", "changed" );
 	QDBusConnection::sessionBus().send( signal );
 }
+
+#include "dbusmixerwrapper.moc"

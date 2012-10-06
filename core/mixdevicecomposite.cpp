@@ -156,3 +156,4 @@ bool MixDeviceComposite::isEnum()
     return isEnum;
 }
 
+#include "mixdevicecomposite.moc"
