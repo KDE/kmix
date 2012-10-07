@@ -113,3 +113,5 @@ void DBusMixSetWrapper::slotCurrentMasterChanged()
 	QDBusConnection::sessionBus().send( signal );
 }
 */
+
+#include "dbusmixsetwrapper.moc"
