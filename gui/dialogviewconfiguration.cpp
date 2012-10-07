@@ -218,22 +218,13 @@ void DialogViewConfiguration::addSpacer(int row, int col)
 
 void DialogViewConfiguration::moveSelection(DialogViewConfigurationWidget* from, DialogViewConfigurationWidget* to)
 {
-  kDebug() << "MOVE!!!"; int i=0;
   foreach ( QListWidgetItem* item, from->selectedItems() )
   {
-    kDebug() << "MOVE " << ++i << ":" << item;
      QListWidgetItem *clonedItem = item->clone();
     to->addItem ( clonedItem );
     to->setCurrentItem(clonedItem);
     delete item;
   }
-  
-//     QListWidgetItem itemCopy (*(from->selectedItems()[0]));
-//     kDebug() << "MOVE " << ++i << ":" << &itemCopy;
-//     to->addItem ( &itemCopy );
-//     from->removeItemWidget(&itemCopy);
-
-  
 }
 
 void DialogViewConfiguration::moveSelectionToActiveList()
