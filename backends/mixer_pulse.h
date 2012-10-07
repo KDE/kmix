@@ -55,6 +55,8 @@ class Mixer_PULSE : public Mixer_Backend
         virtual bool moveStream( const QString& id, const QString& destId );
 
         virtual QString getDriverName();
+        virtual QString getId() const { return _id; };
+
         virtual bool needsPolling() { return false; }
 
         void triggerUpdate();
@@ -69,6 +71,7 @@ class Mixer_PULSE : public Mixer_Backend
         virtual int close();
 
         int fd;
+        QString _id;
 
     private:
         void addDevice(devinfo& dev, bool = false);

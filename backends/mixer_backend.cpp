@@ -89,6 +89,26 @@ bool Mixer_Backend::prepareUpdateFromHW() {
 	return true;
 }
 
+/**
+ * The name of the Mixer this backend represents.
+ * Often it is just a name/id for the kernel. so name and id are usually identical. Virtual/abstracting backends are
+ * different, as they represent some distinct function like "Application streams" or "Capture Devices". Also backends
+ * that do not have names might can to set ID and name different like i18n("SUN Audio") and "SUNAudio".
+ */
+QString Mixer_Backend::getName() const
+{
+	return m_mixerName;
+}
+
+/**
+ * The id of the Mixer this backend represents. The default implementation simly returns the name.
+ * Often it is just a name/id for the kernel. so name and id are usually identical. See also #Mixer_Backend::getName().
+ * You must override this method if you want to set ID different from name.
+ */
+QString Mixer_Backend::getId() const
+{
+	return m_mixerName; // Backwards compatibility. PulseAudio overrides it.
+}
 
 /**
  * After calling this, readSetFromHW() will do a complete update. This will

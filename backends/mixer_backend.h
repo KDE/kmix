@@ -115,7 +115,9 @@ protected:
   /**
    * User friendly name of the Mixer (e.g. "USB 7.1 Surround System"). If your mixer API gives you a usable name, use that name.
    */
-  QString m_mixerName;
+  virtual QString getName() const;
+  virtual QString getId() const;
+
   // All controls of this card
   MixSet m_mixDevices;
 
@@ -142,6 +144,9 @@ signals:
 
 public slots:
   virtual void reinit() {};
+
+protected:
+  QString m_mixerName;
 
 protected slots:
   virtual void readSetFromHW();

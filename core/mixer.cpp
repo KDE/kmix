@@ -156,7 +156,7 @@ void Mixer::recreateId()
      * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
      * %3, the mixer number, is a number: it does not contain colons.
      */
-    QString mixerName = getBaseName();
+    QString mixerName = _mixerBackend->getId();
     mixerName.replace(':','_');
     QString primaryKeyOfMixer = QString("%1::%2:%3")
             .arg(getDriverName())
@@ -364,22 +364,23 @@ void Mixer::setBalanceInternal(Volume& vol)
    }
 }
 
-// should return a name suitable for a human user to read (on a label, ...)
+/**
+ * Returns a name suitable for a human user to read (on a label, ...)
+ */
 QString Mixer::readableName()
 {
-  if ( _mixerBackend->m_mixerName.endsWith(":0")) {
-      QString finalName = _mixerBackend->m_mixerName.left(_mixerBackend->m_mixerName.length() - 2);
-      finalName = finalName.append(' ').arg(getCardInstance());
-      return finalName;
-  }
-  else
-     return _mixerBackend->m_mixerName;
+	QString finalName = _mixerBackend->getName();
+//	QString finalName = mixerName.left(mixerName.length() - 2);
+	if ( getCardInstance() > 1)
+		finalName = finalName.append(" %1").arg(getCardInstance());
+
+	return finalName;
 }
 
 
 QString Mixer::getBaseName()
 {
-  return _mixerBackend->m_mixerName;
+  return _mixerBackend->getName();
 }
 
 /**

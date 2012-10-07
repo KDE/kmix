@@ -58,6 +58,7 @@ public:
     virtual ~Mixer_MPRIS2();
     void addMprisControl(QDBusConnection& conn, QString arg1);
     QString getDriverName();
+    virtual QString getId() const { return _id; };
 
   virtual int open();
   virtual int close();
@@ -81,6 +82,7 @@ private:
     void notifyToReconfigureControls();
     
   QMap<QString,MPrisAppdata*> apps;
+  QString _id;
 };
 
 #endif

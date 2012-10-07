@@ -48,6 +48,7 @@ int Mixer_MPRIS2::open()
 		return Mixer::ERR_OPEN;
 
 	m_mixerName = i18n("Playback Streams");
+	_id = "Playback Streams";
 	_mixer->setDynamic();
 	addAllRunningPlayersAndInitHotplug();
 	return 0;

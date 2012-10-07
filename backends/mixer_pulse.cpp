@@ -1001,18 +1001,21 @@ int Mixer_PULSE::open()
         devmap::iterator iter;
         if (KMIXPA_PLAYBACK == m_devnum)
         {
+        	_id = "Playback Devices";
             m_mixerName = i18n("Playback Devices");
             for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
                 addDevice(*iter);
         }
         else if (KMIXPA_CAPTURE == m_devnum)
         {
+        	_id = "Capture Devices";
             m_mixerName = i18n("Capture Devices");
             for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
                 addDevice(*iter);
         }
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
+        	_id = "Playback Streams";
             m_mixerName = i18n("Playback Streams");
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
                 addDevice(*iter, true);
@@ -1021,6 +1024,7 @@ int Mixer_PULSE::open()
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
+        	_id = "Capture Streams";
             m_mixerName = i18n("Capture Streams");
             for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
                 addDevice(*iter);
