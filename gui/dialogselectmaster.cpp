@@ -150,6 +150,11 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     //m_buttonGroupForScrollView->hide();
 
     m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
+
+#ifndef QT_NO_ACCESSIBILITY
+    m_scrollableChannelSelector->setAccessibleName( i18n("Master channel selection") );
+#endif
+
 //    m_scrollableChannelSelector->viewport()->setBackgroundRole(QPalette::Background);
     _layout->addWidget(m_scrollableChannelSelector);
 

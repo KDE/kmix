@@ -351,6 +351,13 @@ void DialogViewConfiguration::createPage()
 //   scrollArea->updateGeometry();
    updateGeometry();
    connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+
+#ifndef QT_NO_ACCESSIBILITY
+    moveLeftButton->setAccessibleName( i18n("Show the selected channel") );
+    moveRightButton->setAccessibleName( i18n("Hide the selected channel") );
+    _qlw->setAccessibleName( i18n("Visible channels") );
+    _qlwInactive->setAccessibleName( i18n("Available channels") );
+#endif
 }
 
 DialogViewConfiguration::~DialogViewConfiguration()

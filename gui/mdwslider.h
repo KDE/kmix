@@ -137,6 +137,10 @@ private:
     void setTicksInternal( QList< QAbstractSlider* >& ref_sliders, bool ticks );
     void volumeChangeInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders );
     void updateInternal(Volume& vol, QList< QAbstractSlider* >& ref_sliders, bool muted);
+#ifndef QT_NO_ACCESSIBILITY
+    void updateAccesability();
+#endif
+
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 
 

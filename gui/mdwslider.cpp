@@ -1032,6 +1032,7 @@ void MDWSlider::update()
 		else if ((v = dynamic_cast<VerticalText*>(m_label)))
 			v->setText(m_mixdevice->readableName());
 	}
+	updateAccesability();
 }
 
 void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, bool muted)
@@ -1079,6 +1080,30 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 	}
 
 }
+
+#ifndef QT_NO_ACCESSIBILITY
+void MDWSlider::updateAccesability()
+{
+        if (m_linked) {
+                if (!m_slidersPlayback.isEmpty())
+                        m_slidersPlayback[0]->setAccessibleName(m_slidersPlayback[0]->toolTip());
+                if (!m_slidersCapture.isEmpty())
+                        m_slidersCapture[0]->setAccessibleName(m_slidersCapture[0]->toolTip());
+        } else {
+                QList<VolumeChannel> vols = m_mixdevice->playbackVolume().getVolumes().values();
+                foreach (QAbstractSlider *slider, m_slidersPlayback) {
+                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+")");
+                        vols.pop_front();
+                }
+                vols = m_mixdevice->captureVolume().getVolumes().values();
+                foreach (QAbstractSlider *slider, m_slidersCapture) {
+                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+")");
+                        vols.pop_front();
+                }
+        }
+}
+#endif
+
 
 void MDWSlider::showContextMenu()
 {
