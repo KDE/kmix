@@ -117,7 +117,8 @@ MixerFactory g_mixerFactories[] = {
     { OSS4_getMixer, OSS4_getDriverName },
 #endif
 
-    // Possibly encapsualte by #ifdef HAVE_DBUS
+    // Make sure MPRIS2 is at the end. Implementation of SINGLE_PLUS_MPRIS2 in MixerToolBox is much easier.
+    // And also we make sure, streams are always the last backend, which is important for the default KMix GUI layout.
     { MPRIS2_getMixer, MPRIS2_getDriverName },
 
     { 0, 0 }

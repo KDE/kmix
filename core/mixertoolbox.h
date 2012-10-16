@@ -40,10 +40,13 @@ class MixerToolBox : public QObject
 {
     Q_OBJECT
 
+    enum MultiDriverMode { SINGLE, SINGLE_PLUS_MPRIS2, MULTI };
+
    public:
       static MixerToolBox* instance();
       void initMixer(bool, QList<QString> backendList, QString&);
-      void initMixerInternal(bool, QList<QString> backendList, QString&);
+      void initMixer(MultiDriverMode, QList<QString> backendList, QString&);
+      void initMixerInternal(MultiDriverMode, QList<QString> backendList, QString&);
       void deinitMixer();
       bool possiblyAddMixer(Mixer *mixer);
       void removeMixer(Mixer *mixer);

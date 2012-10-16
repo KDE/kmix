@@ -73,9 +73,16 @@ MixerToolBox* MixerToolBox::instance()
  * @par backendList Activated backends (typically a value from the kmixrc or a default)
  * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
  */
-void MixerToolBox::initMixer(bool multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+// TODO this method has to go away. Migrate to MultiDriverMode enum
+void MixerToolBox::initMixer(bool multiDriverModeBool, QList<QString> backendList, QString& ref_hwInfoString)
 {
-    initMixerInternal(multiDriverMode, backendList, ref_hwInfoString);
+	MultiDriverMode multiDriverMode = multiDriverModeBool ?  MULTI : SINGLE_PLUS_MPRIS2;
+	initMixer(multiDriverMode, backendList, ref_hwInfoString);
+}
+
+void MixerToolBox::initMixer(MultiDriverMode multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+{
+	initMixerInternal(multiDriverMode, backendList, ref_hwInfoString);
     if ( Mixer::mixers().isEmpty() )
       initMixerInternal(multiDriverMode, QList<QString>(), ref_hwInfoString);  // try again without filter
 }
@@ -84,9 +91,11 @@ void MixerToolBox::initMixer(bool multiDriverMode, QList<QString> backendList, Q
 /**
  * 
  */
-void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
 {  
    bool useBackendFilter = ( ! backendList.isEmpty() );
+   bool backendMprisFound = false; // only for SINGLE_PLUS_MPRIS2
+   bool backendOtherFound = false; // only for SINGLE_PLUS_MPRIS2
 
    // Find all mixers and initialize them
    int drvNum = Mixer::numDrivers();
@@ -97,6 +106,7 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
    QString driverInfo = "";
    QString driverInfoUsed = "";
 
+   kDebug() << "Hullo. drvNum=" << drvNum;
    for( int drv1=0; drv1<drvNum; drv1++ )
    {
       QString driverName = Mixer::driverName(drv1);
@@ -146,12 +156,52 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
          Mixer *mixer = new Mixer( driverName, dev );
          bool mixerAccepted = possiblyAddMixer(mixer);
    
-         /* Lets decide if the autoprobing shall end (BTW: In multiDriver mode we scan all devices, so no check is necessary) */
-         if ( (! multiDriverMode) && ( ! useBackendFilter) ) {
-            // In Single-Driver-mode we only need to check after we reached devNumMax
-            if ( dev == devNumMax && Mixer::mixers().count() != 0 )
-                autodetectionFinished = true; // highest device number of driver and a Mixer => finished
-        }
+         /* Lets decide if the autoprobing shall end.
+          * If the user has configured a backend filter, we will use that as a plain list to obey. It overrides the
+          * multiDriverMode.
+          */
+         if ( ! useBackendFilter )
+         {
+			 switch ( multiDriverMode )
+			 {
+			 case SINGLE:
+					// In Single-Driver-mode we only need to check after we reached devNumMax
+					if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
+						autodetectionFinished = true; // highest device number of driver and a Mixer => finished
+					break;
+
+			 case MULTI:
+				 // In multiDriver mode we scan all devices, so we will simply continue
+				 break;
+
+			 case SINGLE_PLUS_MPRIS2:
+				 if ( driverName == "MPRIS2" )
+				 {
+					 backendMprisFound = true;
+				 }
+				 else if ( driverName == "PulseAudio" )
+				 {
+					 // PulseAudio is not useful together with MPRIS2. Treat it as "single"
+					 if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
+						 autodetectionFinished = true;
+				 }
+				 else
+				 {
+					 // same check as in SINGLE
+					 if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
+						 backendOtherFound = true;
+				 }
+
+				 if ( backendMprisFound && backendOtherFound )
+					 autodetectionFinished = true; // highest device number of driver and a Mixer => finished
+				 break;
+			 }
+         }
+         else
+         {
+        	 // Using backend filter. This is a plain list to obey.
+        	 // Simply continue (and filter at the start of the loop).
+         }
       
          if ( mixerAccepted )
          {
@@ -238,12 +288,22 @@ void MixerToolBox::initMixerInternal(bool multiDriverMode, QList<QString> backen
 
 }
 
+/**
+ * Opens and adds a mixer to the KMix wide Mixer array, if the given Mixer is valid.
+ * Otherwise the Mixer is deleted.
+ * This method can be used for adding "static" devices (at program start) and also for hotplugging.
+ *
+ * @arg mixer
+ * @returns true if the Mixer was added
+ */
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
     if ( mixer->openIfValid() )
     {
-        if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) ) {
+        if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) )
+        {
             // This Mixer should be ignored (default expression is "Modem").
+        	// next 3 lines are duplicated code
             delete mixer;
             mixer = 0;
             return false;
@@ -258,7 +318,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
         kDebug(67100) << "Added card " << mixer->id();
     
 
-        emit mixerAdded(mixer->id());
+        emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subcribe notification system?
         return true;
     } // valid
     else
