@@ -103,7 +103,7 @@ void ViewSliders::controlsChange(int changeType)
       break;
       
     case ControlChangeType::Volume:
-      kDebug() << "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
+      kDebug() << "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id(); // TODO RELEASE Remove debug
       refreshVolumeLevels();
       break;
       

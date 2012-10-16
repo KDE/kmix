@@ -128,8 +128,9 @@ void ViewBase::createDeviceWidgets()
         _mdws.append(mdw); // b) Add it to the local list
     }
 
-    if ( !pulseaudioPresent() )
-       {
+    //if ( !pulseaudioPresent() ) // TODO 11 Dynamic view configuration
+    if ( !isDynamic() )
+    {
       QAction *action = _localActionColletion->addAction("toggle_channels");
       action->setText(i18n("&Channels"));
       connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
