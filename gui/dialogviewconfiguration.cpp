@@ -151,7 +151,7 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
     : KDialog(  0),
       _view(view)
 {
-   setCaption( i18n( "Configure" ) );
+   setCaption( i18n( "Configure Channels" ) );
    setButtons( Ok|Cancel );
    setDefaultButton( Ok );
    frame = new QWidget( this );

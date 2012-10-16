@@ -335,7 +335,9 @@ void ViewSliders::constructionFinished() {
     const KIcon& icon = KIcon( QLatin1String( "configure" ));
     _configureViewButton = new QPushButton(icon, "", this);
     _configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    // TODO implement the "configure" button (show dialog)
+    _configureViewButton->setToolTip(i18n( "Configure Channels" ));
+    connect(_configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
+
     _layoutEnum->addStretch();
     _layoutEnum->addWidget(_configureViewButton);
 
