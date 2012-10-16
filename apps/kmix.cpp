@@ -272,22 +272,11 @@ KMixWindow::initActionsLate()
 void
 KMixWindow::initActionsAfterInitMixer()
 {
-  // Only show the new tab widget if some of the mixers are not Dynamic.
-  // The GUI that then pops up could then make a new mixer from a dynamic one,
-  // if mixed dynamic and non-dynamic mixers were allowed, but this is generally not the case.
-  bool allDynamic = true;
-  foreach( Mixer* mixer, Mixer::mixers() ){
-  if ( !mixer->isDynamic() )
+	// Only show the new tab widget if Pulseaudio is not used. Hint: The Pulseaudio backend always
+	// runs with 4 fixed Tabs.
+	if (!Mixer::pulseaudioPresent())
     {
-      allDynamic = false;
-      break;
-    }
-}
-
-  if (!allDynamic)
-    {
-      QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new",
-          KIconLoader::Toolbar, KIconLoader::SizeSmall);
+      QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall);
       QPushButton* _cornerLabelNew = new QPushButton();
       _cornerLabelNew->setIcon(cornerNewPM);
       //cornerLabelNew->setSizePolicy(QSizePolicy());
@@ -881,11 +870,8 @@ KMixWindow::saveAndCloseView(int idx)
     {
       kmw->saveConfig(KGlobal::config().data()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
       m_wsMixers->removeTab(idx);
-      m_wsMixers->setTabsClosable(
-          !kmw->mixer()->isDynamic() && m_wsMixers->count() > 1); // This does not work properly in (experimental) multi-driver-mode
-
+      updateTabsClosable();
       saveViewConfig();
-
       delete kmw;
     }
   kDebug()
@@ -1071,12 +1057,19 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
       m_wsMixers->setCurrentWidget(kmw);
     }
 
-  m_wsMixers->setTabsClosable(!mixer->isDynamic() && m_wsMixers->count() > 1);
+  updateTabsClosable();
   m_dontSetDefaultCardOnStart = false;
 
   kmw->loadConfig(KGlobal::config().data());
   kmw->mixer()->readSetFromHWforceUpdate();
   return true;
+}
+
+void KMixWindow::updateTabsClosable()
+{
+    // Pulseaudio runs with 4 fixed tabs - don't allow to close them.
+    // Also do not allow to close the last view
+    m_wsMixers->setTabsClosable(!Mixer::pulseaudioPresent() && m_wsMixers->count() > 1);
 }
 
 bool

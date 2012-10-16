@@ -145,6 +145,7 @@ private:
 	bool profileExists(QString guiProfileId);
 	bool updateDocking();
 	void removeDock();
+	void updateTabsClosable();
 
   private slots:
    void slotHWInfo();

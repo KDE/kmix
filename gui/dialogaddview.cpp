@@ -43,7 +43,11 @@ QStringList DialogAddView::viewIds;
 DialogAddView::DialogAddView(QWidget* parent, Mixer *mixer  )
   : KDialog( parent )
 {
-    if ( viewNames.isEmpty() ) {
+	// TODO 000 Adding View for MPRIS2 is broken. We need at least a dummy XML GUI Profile. Also the
+	//      fixed list below is plain wrong. Actually we should get the Profile list from either the XML files or
+	//      from the backend. The latter is probably easier for now.
+    if ( viewNames.isEmpty() )
+    {
         // initialize static list. Later this list could be generated from the actually installed profiles
         viewNames.append(i18n("All controls"));
         viewNames.append(i18n("Only playback controls"));
