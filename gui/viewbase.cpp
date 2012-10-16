@@ -128,7 +128,7 @@ void ViewBase::createDeviceWidgets()
         _mdws.append(mdw); // b) Add it to the local list
     }
 
-    if ( !isDynamic() )
+    if ( !pulseaudioPresent() )
        {
       QAction *action = _localActionColletion->addAction("toggle_channels");
       action->setText(i18n("&Channels"));
@@ -207,6 +207,17 @@ bool ViewBase::isDynamic() const
   return false;
 }
 
+bool ViewBase::pulseaudioPresent() const
+{
+  foreach (Mixer* mixer , _mixers )
+  {
+	  if ( mixer->getDriverName() == "PulseAudio" )
+		  return true;
+  }
+  return false;
+}
+
+
 void ViewBase::resetMdws()
 {
       // We need to delete the current MixDeviceWidgets so we can redraw them
@@ -232,13 +243,13 @@ int ViewBase::visibleControls()
  * Open the View configuration dialog. The user can select which channels he wants
  * to see and which not.
  */
-void ViewBase::configureView() {
-
-    Q_ASSERT( !isDynamic() );
+void ViewBase::configureView()
+{
+    Q_ASSERT( !isDynamic() ); // TODO 11 Dynamic view configuration
+    Q_ASSERT( !pulseaudioPresent() );
     
     DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
     dvc->show();
-    // !! The dialog is modal. Does it delete itself?
 }
 
 void ViewBase::toggleMenuBarSlot() {
@@ -262,7 +273,7 @@ void ViewBase::load(KConfig *config)
    static QString guiComplexityNames[3] = { QString("simple"), QString("extended"), QString("all") };
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = isDynamic();
+   bool dynamic = isDynamic(); // TODO 11 Dynamic view configuration
 
    for ( GUIComplexity chosenGuiComplexity = ViewBase::SIMPLE; chosenGuiComplexity <= ViewBase::ALL; ++chosenGuiComplexity )
    {
@@ -360,7 +371,7 @@ void ViewBase::save(KConfig *config)
    kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = isDynamic();
+   bool dynamic = isDynamic();  // TODO 11 Dynamic view configuration
 
    for (int i=0; i < view->_mdws.count(); ++i ){
       QWidget *qmdw = view->_mdws[i];

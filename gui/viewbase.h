@@ -98,7 +98,7 @@ public:
     int visibleControls();
     
     bool isDynamic() const;
-
+    bool pulseaudioPresent() const;
 
     /**
      * Popup stuff

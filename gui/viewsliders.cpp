@@ -333,13 +333,17 @@ void ViewSliders::_setMixSet()
 void ViewSliders::constructionFinished() {
     configurationUpdate();
     const KIcon& icon = KIcon( QLatin1String( "configure" ));
-    _configureViewButton = new QPushButton(icon, "", this);
-    _configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    _configureViewButton->setToolTip(i18n( "Configure Channels" ));
-    connect(_configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
+    //if ( !pulseaudioPresent() ) // TODO 11 Dynamic view configuration
+    if ( !isDynamic() )
+    {
+		_configureViewButton = new QPushButton(icon, "", this);
+		_configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		_configureViewButton->setToolTip(i18n( "Configure Channels" ));
+		connect(_configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
 
-    _layoutEnum->addStretch();
-    _layoutEnum->addWidget(_configureViewButton);
+		_layoutEnum->addStretch();
+		_layoutEnum->addWidget(_configureViewButton);
+    }
 
     updateGuiOptions();
 }
