@@ -1364,23 +1364,19 @@ KMixWindow::slotConfigureCurrentView()
     view->configureView();
 }
 
-void
-KMixWindow::slotSelectMaster()
+void KMixWindow::slotSelectMaster()
 {
-  Mixer *mixer = Mixer::getGlobalMasterMixer();
-  if (mixer != 0)
-    {
-      QPointer<DialogSelectMaster> dsm = new DialogSelectMaster(
-          Mixer::getGlobalMasterMixer());
-      dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-      dsm->show();
-    }
-  else
-    {
-
-      KMessageBox::error(0,
-          i18n("No sound card is installed or currently plugged in."));
-    }
+	Mixer *mixer = Mixer::getGlobalMasterMixer();
+	if (mixer != 0)
+	{
+		QPointer<DialogSelectMaster> dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
+		dsm->setAttribute(Qt::WA_DeleteOnClose, true);
+		dsm->show();
+	}
+	else
+	{
+		KMessageBox::error(0, i18n("No sound card is installed or currently plugged in."));
+	}
 }
 
 void

@@ -55,6 +55,8 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlag
    setObjectName(id);
    m_viewId = id;
    guiComplexity = ViewBase::SIMPLE;
+	configureIcon = new KIcon( QLatin1String( "configure" ));
+
    
    if ( _actions == 0 ) {
       // We create our own action collection, if the actionColletion was 0.
@@ -78,7 +80,9 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlag
    
 }
 
-ViewBase::~ViewBase() {
+ViewBase::~ViewBase()
+{
+	delete configureIcon;
     // Hint: The GUI profile will not be removed, as it is pooled and might be applied to a new View.
 }
 
@@ -92,6 +96,15 @@ void ViewBase::configurationUpdate() { // TODO still in use?!?
 }
 
 
+
+QPushButton* ViewBase::createConfigureViewButton()
+{
+	QPushButton* configureViewButton = new QPushButton(*configureIcon, "", this);
+	configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	configureViewButton->setToolTip(i18n( "Configure Channels" ));
+	connect(configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
+	return configureViewButton;
+}
 
 void ViewBase::updateGuiOptions()
 {

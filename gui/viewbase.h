@@ -24,9 +24,11 @@
 // QT
 #include <QWidget>
 #include <QList>
+#include <QPushButton>
 
 // KDE
 #include <KActionCollection>
+class KIcon;
 class KMenu;
 
 class Mixer;
@@ -140,15 +142,18 @@ protected:
     const QString _guiProfileId;
     KActionCollection *_localActionColletion;
 
+    KIcon* configureIcon;
+
     virtual void _setMixSet() = 0;
     void resetMdws();
     void updateGuiOptions();
-    
+    QPushButton* createConfigureViewButton();
+
     GUIComplexity guiComplexity;
 
 public slots:
    virtual void refreshVolumeLevels(); // TODO remove
-   virtual void configureView();  // TODO remove
+   virtual void configureView();
    void toggleMenuBarSlot();
 
 protected slots:

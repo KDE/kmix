@@ -67,11 +67,11 @@ private:
     QPushButton *restoreVolumeButton2;
     QPushButton *restoreVolumeButton3;
     QPushButton *restoreVolumeButton4;
-    KIcon* configureIcon;
     KIcon* restoreVolumeIcon;
 
 public slots:
        void controlsChange(int changeType);
+       virtual void configureView();
 
 private slots:
     void showPanelSlot();

@@ -42,6 +42,7 @@
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
+#include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/mdwslider.h"
 
@@ -79,7 +80,6 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	QString("ViewDockAreaPopup")	  
 	);
 
-	configureIcon = new KIcon( QLatin1String( "configure" ));
 	restoreVolumeIcon = new KIcon( QLatin1String( "quickopen-file" ));
 	createDeviceWidgets();
 
@@ -90,6 +90,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
 {
   ControlManager::instance().removeListener(this);
   delete _layoutMDW;
+  delete restoreVolumeIcon;
   // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cacades down
 }
 
@@ -275,8 +276,7 @@ void ViewDockAreaPopup::constructionFinished()
    mainWindowButton->setObjectName( QLatin1String("MixerPanel" ));
    connect ( mainWindowButton, SIGNAL(clicked()), SLOT(showPanelSlot()) );
    
-    configureViewButton = new QPushButton(*configureIcon, "");
-    configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    configureViewButton = createConfigureViewButton();
 
    optionsLayout = new QHBoxLayout();
    optionsLayout->addWidget(mainWindowButton );
@@ -310,13 +310,28 @@ void ViewDockAreaPopup::constructionFinished()
 	return profileButton;
     }
 
-void ViewDockAreaPopup::refreshVolumeLevels() {
+void ViewDockAreaPopup::refreshVolumeLevels()
+{
   foreach ( QWidget* qw, _mdws )
   {
     //kDebug() << "rvl: " << qw;
     MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
     if ( mdw != 0 ) mdw->update();
   }
+}
+
+void ViewDockAreaPopup::configureView()
+{
+    Q_ASSERT( !pulseaudioPresent() );
+
+    QSet<QString> currentlyActiveMixersInDockArea;
+	foreach ( Mixer* mixer, Mixer::mixers() )
+	{
+		currentlyActiveMixersInDockArea.insert(mixer->id());
+	}
+
+    DialogChooseBackends* dvc = new DialogChooseBackends(currentlyActiveMixersInDockArea);
+    dvc->show();
 }
 
 /**

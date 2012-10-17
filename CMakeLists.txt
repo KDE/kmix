@@ -96,6 +96,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    gui/dialogaddview.cpp 
    gui/dialogviewconfiguration.cpp 
    gui/dialogselectmaster.cpp 
+   gui/dialogchoosebackends.cpp 
    gui/guiprofile.cpp
    gui/osdwidget.cpp
    core/mixertoolbox.cpp
