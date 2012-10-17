@@ -405,6 +405,7 @@ KMixWindow::saveBaseConfig()
   config.writeEntry("Tickmarks", GlobalConfig::instance().showTicks);
   config.writeEntry("Labels", GlobalConfig::instance().showLabels);
   config.writeEntry("showOSD", GlobalConfig::instance().showOSD);
+  config.writeEntry("Soundmenu.Mixers", GlobalConfig::instance().getMixersForSoundmenu().toList());
   config.writeEntry("startkdeRestore", m_onLogin);
   config.writeEntry("AutoStart", allowAutostart);
   config.writeEntry("VolumeFeedback", m_beepOnVolumeChange);
@@ -544,6 +545,10 @@ KMixWindow::loadBaseConfig()
   GlobalConfig::instance().showTicks = config.readEntry("Tickmarks", true);
   GlobalConfig::instance().showLabels = config.readEntry("Labels", true);
   GlobalConfig::instance().showOSD = config.readEntry("showOSD", true);
+
+  QList<QString> preferredMixersInSoundMenu;
+  preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
+  GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
 
   m_onLogin = config.readEntry("startkdeRestore", true);
   allowAutostart = config.readEntry("AutoStart", true);

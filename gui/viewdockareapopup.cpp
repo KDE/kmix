@@ -47,42 +47,39 @@
 #include "gui/mdwslider.h"
 
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW )
-    : ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
+	KMixWindow *dockW) :
+	ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
 {
-  seperatorBetweenMastersAndStreams = 0;
-  separatorBetweenMastersAndStreamsInserted = false;
-  separatorBetweenMastersAndStreamsRequired = false;
+	seperatorBetweenMastersAndStreams = 0;
+	separatorBetweenMastersAndStreamsInserted = false;
+	separatorBetweenMastersAndStreamsRequired = false;
 
-  optionsLayout = 0;
-  _layoutMDW = 0;
-  configureViewButton = 0;
-  restoreVolumeButton1 = 0;
-  restoreVolumeButton2 = 0;
-  restoreVolumeButton3 = 0;
-  restoreVolumeButton4 = 0;
-  mainWindowButton = 0;
-  
-  setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	optionsLayout = 0;
+	_layoutMDW = 0;
+	configureViewButton = 0;
+	restoreVolumeButton1 = 0;
+	restoreVolumeButton2 = 0;
+	restoreVolumeButton3 = 0;
+	restoreVolumeButton4 = 0;
+	mainWindowButton = 0;
 
-  foreach ( Mixer* mixer, Mixer::mixers() )
-  {
-    // Adding all mixers, as we potentially want to show all master controls
-    addMixer(mixer);
-  }
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-  // Register listeners for all mixers
-	ControlManager::instance().addListener(
-	  QString(), // all mixers
-	  (ControlChangeType::Type)
-	(ControlChangeType::GUI | ControlChangeType::ControlList | ControlChangeType::Volume | ControlChangeType::MasterChanged),
-	this,
-	QString("ViewDockAreaPopup")	  
-	);
+	foreach ( Mixer* mixer, Mixer::mixers() )
+	{
+		// Adding all mixers, as we potentially want to show all master controls
+		addMixer(mixer);
+	}
 
-	restoreVolumeIcon = new KIcon( QLatin1String( "quickopen-file" ));
+	restoreVolumeIcon = new KIcon(QLatin1String("quickopen-file"));
 	createDeviceWidgets();
 
+	// Register listeners for all mixers
+	ControlManager::instance().addListener(
+		QString(), // all mixers
+		(ControlChangeType::Type) (ControlChangeType::GUI | ControlChangeType::ControlList | ControlChangeType::Volume
+			| ControlChangeType::MasterChanged), this, QString("ViewDockAreaPopup"));
 }
 
 
@@ -177,14 +174,32 @@ void ViewDockAreaPopup::_setMixSet()
 	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
 	// we have to redo the list on each _setMixSet() (instead of setting it once in the Constructor)
 	_mixers.clear();
+
+	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
+	kDebug() << "Launch with " << preferredMixersForSoundmenu;
 	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
-		addMixer(mixer);
+		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
+		if (useMixer)
+			addMixer(mixer);
 	}
+
+	// The following loop is for the case when everything gets filtered out. We "reset" to show everything then.
+	// Hint: Filtering everything out can only be an "accident", e.g. when restarting KMix with changed hardware or
+	// backends.
+	if ( _mixers.isEmpty() )
+	{
+		foreach ( Mixer* mixer, Mixer::mixers() )
+		{
+			addMixer(mixer);
+		}
+	}
+
 
 	// A loop that adds the Master control of each card
 	foreach ( Mixer* mixer, _mixers )
 	{
+		kDebug() << "ADD? mixerId=" << mixer->id();
 		shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
 		if ( dockMD == 0 && mixer->size() > 0 )
 		{
@@ -193,8 +208,10 @@ void ViewDockAreaPopup::_setMixSet()
 		}
 		if ( dockMD != 0 )
 		{
+			kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
 			if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume())
 			{
+				kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
 				// don't add application streams here. They are handled below, so
 				// we make sure to not add them twice
 				_mixSet.append(dockMD);
@@ -203,7 +220,7 @@ void ViewDockAreaPopup::_setMixSet()
 	} // loop over all cards
 
 	// Add all application streams
-	foreach ( Mixer* mixer2 , Mixer::mixers() )
+	foreach ( Mixer* mixer2 , _mixers )
 	{
 		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
 		{
@@ -301,14 +318,14 @@ void ViewDockAreaPopup::constructionFinished()
       _layoutMDW->activate();
 }
 
-    QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
-    {
+QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
+{
 	QString buttonText = QString("%1").arg(storageSlot);
 	QPushButton* profileButton = new QPushButton(*restoreVolumeIcon, buttonText);
 	profileButton->setToolTip(i18n("Load volume profile %1").arg(storageSlot));
 	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return profileButton;
-    }
+}
 
 void ViewDockAreaPopup::refreshVolumeLevels()
 {
@@ -322,15 +339,15 @@ void ViewDockAreaPopup::refreshVolumeLevels()
 
 void ViewDockAreaPopup::configureView()
 {
-    Q_ASSERT( !pulseaudioPresent() );
+//    Q_ASSERT( !pulseaudioPresent() );
 
     QSet<QString> currentlyActiveMixersInDockArea;
-	foreach ( Mixer* mixer, Mixer::mixers() )
+	foreach ( Mixer* mixer, _mixers )
 	{
 		currentlyActiveMixersInDockArea.insert(mixer->id());
 	}
 
-    DialogChooseBackends* dvc = new DialogChooseBackends(currentlyActiveMixersInDockArea);
+	DialogChooseBackends* dvc = new DialogChooseBackends(currentlyActiveMixersInDockArea);
     dvc->show();
 }
 

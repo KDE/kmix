@@ -34,6 +34,7 @@
 #include <klocale.h>
 
 #include "core/ControlManager.h"
+#include "core/GlobalConfig.h"
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
@@ -73,7 +74,7 @@ void DialogChooseBackends::createWidgets(QSet<QString>& mixerIds)
 
     if ( !Mixer::mixers().isEmpty() )
     {
-        QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), m_mainFrame );
+        QLabel *qlbl = new QLabel( i18n("Select the Mixers to display in the sound menu"), m_mainFrame );
         _layout->addWidget(qlbl);
     
         createPage(mixerIds);
@@ -134,6 +135,11 @@ void DialogChooseBackends::apply()
     	}
     }
 
+    // Announcing MasterChanged, as the sound menu (aka ViewDockAreaPopup) primarily shows master volume(s).
+    // In any case, ViewDockAreaPopup treats MasterChanged and ControlList the same, so it is better to announce
+    // the "smaller" change.
+    kDebug() << "New list is " << newMixerList;
+    GlobalConfig::instance().setMixersForSoundmenu(newMixerList);
 	ControlManager::instance().announce(QString(), ControlChangeType::MasterChanged, QString("Select Backends Dialog"));
 }
 

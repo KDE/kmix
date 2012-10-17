@@ -22,6 +22,7 @@
 #define GLOBALCONFIG_H
 
 #include <Qt>
+#include <QSet>
 
 class GlobalConfig
 {
@@ -30,11 +31,16 @@ public:
    bool showLabels;
    bool showOSD;
    Qt::Orientation toplevelOrientation;
+   void setMixersForSoundmenu(QSet<QString> mixersForSoundmenu) { this->mixersForSoundmenu = mixersForSoundmenu; };
+   QSet<QString> getMixersForSoundmenu() { return mixersForSoundmenu; };
 
    static GlobalConfig& instance() { return instanceObj; };
    
+protected:
+   QSet<QString> mixersForSoundmenu;
+
 private:
-  
+
   GlobalConfig()
   {
     showTicks = true;
