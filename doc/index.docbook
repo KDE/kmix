@@ -50,8 +50,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2010-02-18</date>
-<releaseinfo>3.7</releaseinfo>
+<date>2012-11-03</date>
+<releaseinfo>4.3</releaseinfo>
 
 <abstract>
 <para>&kmix; is an application that allows you to change the volume of your sound card.</para>
@@ -168,13 +168,14 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Configure Channels...</guimenuitem>
+<guimenuitem>Audio Setup</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Configure audio channels</action></para></listitem>
+<listitem><para><action>Open <ulink url="help:/kcontrol/phonon">Phonon &systemsettings; module</ulink></action> to configure the sound and video device preference and the backends used by &kde; multimedia API, Phonon.</para></listitem>
 </varlistentry>
 </variablelist>
 
 
+<!-- Unavailable for standard PulseAudio configuration
 <sect2 id='Channels'>
 <title>Configure &kmix; Channels</title>
 <screenshot>
@@ -190,6 +191,7 @@ soundcards.</para>-->
 </screenshot>
 <para>Select the &kmix; channels you want to be used for output or input audio information.</para>
 </sect2>
+-->
 
 <sect2 id='Master_Channels'>
 <title>Select Master Channel</title>
@@ -242,10 +244,27 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Behavior</guimenu>
+<guimenuitem>Volume Feedback</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable audible feedback on volume change.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Startup</guimenu>
 <guimenuitem>Restore Volumes on login</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Check this box to enable volume restoration on login.</action></para></listitem>
 </varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Startup</guimenu>
+<guimenuitem>Autostart</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable &kmix; autostrart with desktop environment.</action></para></listitem>
+</varlistentry>
+
 
 <varlistentry>
 <term><menuchoice>
@@ -261,6 +280,14 @@ soundcards.</para>-->
 <guimenuitem>Show labels</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Check this box to show labels of controls.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Visual</guimenu>
+<guimenuitem>Show On Screen Dislpay (OSD)</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable OSD show on hovering &kmix; tray widget.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
