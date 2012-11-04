@@ -262,7 +262,7 @@ soundcards.</para>-->
 <guimenu>Startup</guimenu>
 <guimenuitem>Autostart</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to enable &kmix; autostrart with desktop environment.</action></para></listitem>
+<listitem><para><action>Check this box to enable &kmix; autostart with desktop environment.</action></para></listitem>
 </varlistentry>
 
 
