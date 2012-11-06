@@ -68,7 +68,9 @@
 </keywordset>
 
 </bookinfo>
-
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
 <chapter id="introduction">
 <title>Introduction</title>
 
@@ -285,7 +287,7 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Visual</guimenu>
-<guimenuitem>Show On Screen Dislpay (OSD)</guimenuitem>
+<guimenuitem>Show On Screen Display (OSD)</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Check this box to enable OSD show on hovering &kmix; tray widget.</action></para></listitem>
 </varlistentry>
