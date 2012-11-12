@@ -240,6 +240,13 @@ const QString MixDevice::dbusPath() {
 
 
 bool MixDevice::isMuted()                  { return ! _playbackVolume.isSwitchActivated(); }
+/**
+ * Returns whether this MixDevice is virtually muted. Only MixDevice objects w/o a physical switch can be muted virtually.
+ */
+bool MixDevice::isVirtuallyMuted()
+{
+	return !hasPhysicalMuteSwitch() && isMuted();
+}
 void MixDevice::setMuted(bool mute)        { _playbackVolume.setSwitch(!mute); }
 void MixDevice::toggleMute()               { setMuted( !_playbackVolume.isSwitchActivated()); }
 bool MixDevice::hasMuteSwitch()            { return playbackVolume().hasVolume() || playbackVolume().hasSwitch(); }

@@ -163,6 +163,7 @@ public:
    // is an abstract concept. It places no interpretation on the meaning of the switch (e.g. does "switch set" mean
    // "mute on", or does it mean "playback on", or "Capture active", or ...
    virtual bool isMuted();
+   virtual bool isVirtuallyMuted();
    virtual void setMuted(bool value);
    virtual bool hasMuteSwitch();
    virtual void toggleMute();

@@ -107,7 +107,10 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasS
 	_hasSwitch       = hasSwitch;
 	_isCapture       = isCapture;
 	//_muted           = false;
-	_switchActivated = false;
+	// Presume that the switch is active. This will always work:
+	// a) Physical switches will be updated after start from the hardware.
+	// b) Emulated virtual/switches will not receive updates from the hardware, so they shouldn't disable the channels.
+	_switchActivated = true;
 	disallowSwitchDisallowRead = false;
 }
 

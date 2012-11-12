@@ -717,7 +717,17 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 
     vol = Volume::MNONE;
     // --- playback volume
-    if ( snd_mixer_selem_has_playback_volume( elem ) ) {
+    if ( snd_mixer_selem_has_playback_volume( elem ) )
+    {
+    	if ( md->isVirtuallyMuted() )
+    	{
+    		// Special code path for controls w/o physical mute switch. Doing it in all backends is not perfect,
+    		// but it saves a lot of code and removes a lot of complexity in the Volume and MixDevice classes.
+
+    		// Don't feed back the actual 0 volume back from the device to KMix. Just do nothing!
+    	}
+    	else
+    	{
         foreach (VolumeChannel vc, volumePlayback.getVolumes() )
         {
                int ret = 0;
@@ -739,6 +749,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 		volumePlayback.setVolume( vc.chid, vol);
               //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << i << ", vol=" << vol; }
        }
+    	}
     } // has playback volume
 
     // --- playback switch
@@ -811,9 +822,32 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
         return 0;
     }
 
+
+    // --- playback switch
+    bool hasPlaybackSwitch = snd_mixer_selem_has_playback_switch( elem ) || snd_mixer_selem_has_common_switch  ( elem );
+	if (hasPlaybackSwitch)
+	{
+		int sw = 0;
+		if (!md->isMuted())
+			sw = !sw; // invert all bits
+		snd_mixer_selem_set_playback_switch_all(elem, sw);
+	}
+
+
     // --- playback volume
     if ( snd_mixer_selem_has_playback_volume( elem ) )
     {
+    	kDebug() << "phys=" << md->hasPhysicalMuteSwitch() << ", muted=" << md->isMuted();
+    	if ( md->isVirtuallyMuted() )
+    	{
+    		// Special code path for controls w/o physical mute switch. Doing it in all backends is not perfect,
+    		// but it saves a lot of code and removes a lot of complexity in the Volume and MixDevice classes.
+    		int ret = snd_mixer_selem_set_playback_volume_all( elem, (long)0);
+            if ( ret != 0 )
+          	  kDebug() << "writeVolumeToHW(" << devnum << ") [set_playback_volume] failed, errno=" << ret;
+    	}
+    	else
+    	{
       foreach (VolumeChannel vc, volumePlayback.getVolumes() )
       {
                int ret = 0;
@@ -830,20 +864,13 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
                    case Volume::REARSIDERIGHT: ret = snd_mixer_selem_set_playback_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , vc.volume); break;
                    default: kDebug() << "FATAL: Unknown channel type for playback << " << vc.chid << " ... please report this";  break;
               }
-              if ( ret != 0 ) kDebug() << "writeVolumeToHW(" << devnum << ") [set_playback_volume] failed, errno=" << ret;
+              if ( ret != 0 )
+            	  kDebug() << "writeVolumeToHW(" << devnum << ") [set_playback_volume] failed, errno=" << ret;
               //if (id== "Master:0" || id== "PCM:0" ) { kDebug() << "volumePlayback control=" << id << ", chid=" << vc.chid << ", vol=" << vc.volume; }
           }
+    	}
     } // has playback volume
 
-    // --- playback switch
-    if ( snd_mixer_selem_has_playback_switch( elem ) ||
-         snd_mixer_selem_has_common_switch  ( elem )   )
-    {
-        int sw = 0;
-        if ( ! md->isMuted() )
-            sw = !sw; // invert all bits
-        snd_mixer_selem_set_playback_switch_all(elem, sw);
-    }
 
 
     // --- capture volume

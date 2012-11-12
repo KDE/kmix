@@ -115,26 +115,18 @@ friend class MixDevice;
     
     bool hasSwitch() const
     {
-      if (isCapture())
-      {
-	return _hasSwitch;
-      }
-      else
-      {
-		if ( disallowSwitchDisallowRead )
-	{
-	  kError() << "hasSwitch() must only be called for capture volumes. I will crash now to retreieve a stacktrace!!!";
-	  QObject* obj = 0;
-	  obj->blockSignals(true);
-	  return _hasSwitch;
-	}
-	else
-	  kDebug() << "Allow playback switch read once";
-      }
-	return _hasSwitch;
+    	return _hasSwitch;
     };
     bool hasVolume() const          { return (_maxVolume != _minVolume); }
-    bool isCapture() const          { return _isCapture; } // -<- Query thsi, to find out whether this is a capture or  a playback volume
+    /**
+     * Returns whether this is a playback or capture volume.
+     *
+     * @return true, if it is a capture volume
+     */
+    bool isCapture() const
+    {
+    	return _isCapture;
+    }
     
    // Some playback switches control playback, and some are special.
    // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
@@ -167,24 +159,7 @@ protected:
    bool isSwitchActivated() const  // TODO rename to isActive()
    {
 	   return _switchActivated;
-
-      if (isCapture())
-      {
-	return _switchActivated && hasSwitch();
-      }
-      else
-      {
-	if ( disallowSwitchDisallowRead )
-	{
-	  kError() << "isSwitchActivated() must only be called for capture volumes. I will crash now to retreieve a stacktrace!!!";
-	  QObject* obj = 0;
-	  obj->blockSignals(true);
-	  return _switchActivated && hasSwitch();
-	}
-      }
-	  return _switchActivated && hasSwitch();
-
-  };
+   };
 
 
 private:
