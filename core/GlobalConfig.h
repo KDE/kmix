@@ -37,6 +37,8 @@ public:
 
    static GlobalConfig& instance() { return instanceObj; };
    
+   bool volumeOverdrive; // whether more than recommended volume (typically 0dB) is allowed
+
 protected:
    QSet<QString> mixersForSoundmenu;
 
@@ -49,6 +51,7 @@ private:
     showOSD = true;
     toplevelOrientation = Qt::Vertical;
     traypopupOrientation = Qt::Vertical;
+    volumeOverdrive = false;
   };
   
   static GlobalConfig instanceObj;

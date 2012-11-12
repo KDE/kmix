@@ -29,6 +29,7 @@
 
 #include "core/mixer.h"
 #include "core/ControlManager.h"
+#include "core/GlobalConfig.h"
 
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
@@ -827,7 +828,8 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         else if (m_devnum == KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
             ms = s_mixers[KMIXPA_CAPTURE]->getMixSet();
 
-        Volume v(PA_VOLUME_NORM, PA_VOLUME_MUTED, true, false);
+        int maxVol = GlobalConfig::instance().volumeOverdrive ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
+        Volume v(maxVol, PA_VOLUME_MUTED, true, false);
         v.addVolumeChannels(dev.chanMask);
         setVolumeFromPulse(v, dev);
         MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);

@@ -575,6 +575,7 @@ KMixWindow::loadBaseConfig()
       "Modem");
   MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 
+  // --- Advanced options, without GUI: START -------------------------------------
   QString volumePercentageStepString = config.readEntry("VolumePercentageStep");
   if (!volumePercentageStepString.isNull())
     {
@@ -583,9 +584,12 @@ KMixWindow::loadBaseConfig()
         Mixer::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
     }
 
+
+  GlobalConfig::instance().volumeOverdrive = config.readEntry("VolumeOverdrive", false);
+  // --- Advanced options, without GUI: END -------------------------------------
+
   m_backendFilter = config.readEntry<>("Backends", QList<QString>());
-  kDebug()
-  << "Backends: " << m_backendFilter;
+  kDebug() << "Backends: " << m_backendFilter;
 
   if (orientationString == "Horizontal")
     GlobalConfig::instance().toplevelOrientation = Qt::Horizontal;
