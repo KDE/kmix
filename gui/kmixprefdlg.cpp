@@ -104,8 +104,9 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent) :
 	m_showOSD = new QCheckBox(i18n("Show On Screen Display (&OSD)"), m_generalTab);
 	addWidgetToLayout(m_showOSD, layout, 10, "");
 
+	// Slider orientation (main window)
 	QBoxLayout *orientationLayout = new QHBoxLayout();
-	orientationLayout->addSpacing(10);
+//	orientationLayout->addSpacing(10);
 	layout->addItem(orientationLayout);
 	QButtonGroup* orientationGroup = new QButtonGroup(m_generalTab);
 	orientationGroup->setExclusive(true);
@@ -120,7 +121,26 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent) :
 	orientationLayout->addWidget(_rbVertical);
 
 	orientationLayout->addStretch();
+
+	// Slider orientation (tray popup). We use an extra setting
+	QBoxLayout *orientation2Layout = new QHBoxLayout();
+//	orientation2Layout->addSpacing(10);
+	layout->addItem(orientation2Layout);
+	QButtonGroup* orientation2Group = new QButtonGroup(m_generalTab);
+	orientation2Group->setExclusive(true);
+	QLabel* qlb2 = new QLabel(i18n("Slider orientation (System tray volume control):"), m_generalTab);
+	_rbTraypopupHorizontal = new QRadioButton(i18n("&Horizontal"), m_generalTab);
+	_rbTraypopupVertical = new QRadioButton(i18n("&Vertical"), m_generalTab);
+	orientation2Group->addButton(_rbTraypopupVertical);
+	orientation2Group->addButton(_rbTraypopupHorizontal);
+
+	orientation2Layout->addWidget(qlb2);
+	orientation2Layout->addWidget(_rbTraypopupVertical);
+	orientation2Layout->addWidget(_rbTraypopupHorizontal);
+
+
 	layout->addStretch();
+
 	showButtonSeparator(true);
 
 	connect(this, SIGNAL(applyClicked()), SLOT(apply()));

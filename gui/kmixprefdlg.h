@@ -74,6 +74,8 @@ KMixPrefDlg : public KDialog
    QLabel *volumeFeedbackWarning;
    QRadioButton *_rbVertical;
    QRadioButton *_rbHorizontal;
+   QRadioButton *_rbTraypopupVertical;
+   QRadioButton *_rbTraypopupHorizontal;
 };
 
 #endif // KMIXPREFDLG_H

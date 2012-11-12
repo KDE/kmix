@@ -236,7 +236,7 @@ void ViewDockAreaPopup::_setMixSet()
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
-  bool vertical = (GlobalConfig::instance().toplevelOrientation == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
+  bool vertical = (GlobalConfig::instance().traypopupOrientation == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
   
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
@@ -268,7 +268,7 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
       true,         // Show Mute LE
       true,        // Show Record LED
       false,        // Small
-      GlobalConfig::instance().toplevelOrientation,
+      GlobalConfig::instance().traypopupOrientation,
       this,         // parent
       this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl

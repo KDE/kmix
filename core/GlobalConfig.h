@@ -31,6 +31,7 @@ public:
    bool showLabels;
    bool showOSD;
    Qt::Orientation toplevelOrientation;
+   Qt::Orientation traypopupOrientation;
    void setMixersForSoundmenu(QSet<QString> mixersForSoundmenu) { this->mixersForSoundmenu = mixersForSoundmenu; };
    QSet<QString> getMixersForSoundmenu() { return mixersForSoundmenu; };
 
@@ -47,6 +48,7 @@ private:
     showLabels = true;
     showOSD = true;
     toplevelOrientation = Qt::Vertical;
+    traypopupOrientation = Qt::Vertical;
   };
   
   static GlobalConfig instanceObj;

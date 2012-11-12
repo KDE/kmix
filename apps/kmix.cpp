@@ -428,6 +428,11 @@ KMixWindow::saveBaseConfig()
   else
     config.writeEntry("Orientation", "Vertical");
 
+  if (GlobalConfig::instance().traypopupOrientation == Qt::Horizontal)
+    config.writeEntry("Orientation.TrayPopup", "Horizontal");
+  else
+    config.writeEntry("Orientation.TrayPopup", "Vertical");
+
   kDebug()
   << "Config (Base) saving done";
 }
@@ -556,8 +561,8 @@ KMixWindow::loadBaseConfig()
   setBeepOnVolumeChange(config.readEntry("VolumeFeedback", false));
   m_startVisible = config.readEntry("Visible", false);
   m_multiDriverMode = config.readEntry("MultiDriver", false);
-  const QString& orientationString = config.readEntry("Orientation",
-      "Vertical");
+  const QString& orientationString = config.readEntry("Orientation", "Vertical");
+  const QString& traypopupOrientationString = config.readEntry("Orientation.TrayPopup", "Vertical");
   m_defaultCardOnStart = config.readEntry("DefaultCardOnStart", "");
   m_configVersion = config.readEntry("ConfigVersion", 0);
   // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
@@ -586,6 +591,11 @@ KMixWindow::loadBaseConfig()
     GlobalConfig::instance().toplevelOrientation = Qt::Horizontal;
   else
     GlobalConfig::instance().toplevelOrientation = Qt::Vertical;
+
+  if (traypopupOrientationString == "Horizontal")
+    GlobalConfig::instance().traypopupOrientation = Qt::Horizontal;
+  else
+    GlobalConfig::instance().traypopupOrientation = Qt::Vertical;
 
   // show/hide menu bar
   bool showMenubar = config.readEntry("Menubar", true);
@@ -1213,9 +1223,14 @@ KMixWindow::showSettings()
       m_prefDlg->m_showTicks->setChecked(GlobalConfig::instance().showTicks);
       m_prefDlg->m_showLabels->setChecked(GlobalConfig::instance().showLabels);
       m_prefDlg->m_showOSD->setChecked(GlobalConfig::instance().showOSD);
-      m_prefDlg->_rbVertical->setChecked(GlobalConfig::instance().toplevelOrientation == Qt::Vertical);
-      m_prefDlg->_rbHorizontal->setChecked(
-          GlobalConfig::instance().toplevelOrientation == Qt::Horizontal);
+
+      bool toplevelIsVertical = GlobalConfig::instance().toplevelOrientation == Qt::Vertical;
+      m_prefDlg->_rbVertical->setChecked(toplevelIsVertical);
+      m_prefDlg->_rbHorizontal->setChecked(!toplevelIsVertical);
+
+      bool traypopupIsVertical = GlobalConfig::instance().traypopupOrientation == Qt::Vertical;
+      m_prefDlg->_rbTraypopupVertical->setChecked(traypopupIsVertical);
+      m_prefDlg->_rbTraypopupHorizontal->setChecked(!traypopupIsVertical);
 
       // show dialog
       m_prefDlg->show();
@@ -1242,14 +1257,12 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
 {
   bool labelsHasChanged = GlobalConfig::instance().showLabels ^ prefDlg->m_showLabels->isChecked();
   bool ticksHasChanged = GlobalConfig::instance().showTicks ^ prefDlg->m_showTicks->isChecked();
-  bool dockwidgetHasChanged = m_showDockWidget
-      ^ prefDlg->m_dockingChk->isChecked();
-  bool systrayPopupHasChanged = trayVolumePopupEnabled
-      ^ prefDlg->m_volumeChk->isChecked();
-  bool toplevelOrientationHasChanged = (prefDlg->_rbVertical->isChecked()
-      && GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
-      || (prefDlg->_rbHorizontal->isChecked()
-          && GlobalConfig::instance().toplevelOrientation == Qt::Vertical);
+  bool dockwidgetHasChanged = m_showDockWidget ^ prefDlg->m_dockingChk->isChecked();
+  bool systrayPopupHasChanged = trayVolumePopupEnabled ^ prefDlg->m_volumeChk->isChecked();
+  Qt::Orientation newToplevelOrientation = prefDlg->_rbVertical->isChecked() ? Qt::Vertical : Qt::Horizontal;
+  bool toplevelOrientationHasChanged = newToplevelOrientation != GlobalConfig::instance().toplevelOrientation;
+  Qt::Orientation newTraypopupOrientation = prefDlg->_rbTraypopupVertical->isChecked() ? Qt::Vertical : Qt::Horizontal;
+  bool traypopupOrientationHasChanged = newTraypopupOrientation != GlobalConfig::instance().traypopupOrientation;
 
   GlobalConfig::instance().showLabels = prefDlg->m_showLabels->isChecked();
   GlobalConfig::instance().showTicks = prefDlg->m_showTicks->isChecked();
@@ -1260,24 +1273,18 @@ void KMixWindow::applyPrefs(KMixPrefDlg *prefDlg)
   allowAutostart = m_prefDlg->allowAutostart->isChecked();
   setBeepOnVolumeChange(prefDlg->m_beepOnVolumeChange->isChecked());
 
-  if (prefDlg->_rbVertical->isChecked())
-    {
-      GlobalConfig::instance().toplevelOrientation = Qt::Vertical;
-    }
-  else if (prefDlg->_rbHorizontal->isChecked())
-    {
-      GlobalConfig::instance().toplevelOrientation = Qt::Horizontal;
-    }
+  GlobalConfig::instance().toplevelOrientation = newToplevelOrientation;
+  GlobalConfig::instance().traypopupOrientation = newTraypopupOrientation;
 
-    if ( systrayPopupHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged )
+	if ( systrayPopupHasChanged)
+	{
+		// if the user has changed the "volume popup" option, the KStatusNotifier requires a new referenceWidget,
+		// thus we force a reconstruct.
+		forceNotifierRebuild = true;
+	}
+	if ( systrayPopupHasChanged || dockwidgetHasChanged || toplevelOrientationHasChanged || traypopupOrientationHasChanged)
     {
       // These might need a complete relayout => announce a ControlList change to rebuild everything
-    	if ( systrayPopupHasChanged)
-    	{
-    		// if the user has changed the "volume popup" option, the KStatusNotifier requires a new referenceWidget,
-    		// thus we force a reconstruct.
-    		forceNotifierRebuild = true;
-    	}
          ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("Preferences Dialog"));
     }
     else if ( labelsHasChanged || ticksHasChanged )
