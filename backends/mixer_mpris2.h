@@ -80,6 +80,7 @@ public slots:
 private:
     int addAllRunningPlayersAndInitHotplug();
     void notifyToReconfigureControls();
+    void volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage);
     
   QMap<QString,MPrisAppdata*> apps;
   QString _id;

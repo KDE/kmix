@@ -122,10 +122,8 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 			QVariant result2 = dbusVariant.variant();
 			volInt = result2.toFloat() *100;
 
-			Volume& vol = md->playbackVolume();
-			md->setMuted(volInt == 0);
-			vol.setVolume( Volume::LEFT, volInt);
-			kDebug(67100) << "REPLY " << qv.type() << ": " << volInt << ": "<< vol;
+			volumeChangedInternal(md, volInt);
+//			kDebug(67100) << "REPLY " << qv.type() << ": " << volInt;
 		}
 		else
 		{
@@ -137,10 +135,45 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 	return 0;
 }
 
+
+
+void Mixer_MPRIS2::volumeChanged(MPrisAppdata* mad, double newVolume)
+{
+	shared_ptr<MixDevice> md = m_mixDevices.get(mad->id);
+	int volInt = newVolume *100;
+	volumeChangedInternal(md, volInt);
+}
+
+void Mixer_MPRIS2::volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage)
+{
+	if ( md->isVirtuallyMuted() && volumePercentage == 0)
+	{
+		// Special code path for virtual mute switches. Don't write back the volume if it is muted in the KMix GUI
+		return;
+	}
+
+	Volume& vol = md->playbackVolume();
+	vol.setVolume( Volume::LEFT, volumePercentage);
+	md->setMuted(volumePercentage == 0);
+	emit controlChanged();
+	//  md->playbackVolume().setVolume(vol);
+}
+
+/*
+signal sender=:1.125 -> dest=(null destination) serial=503 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
+   string "org.mpris.MediaPlayer2.Player"
+   array [
+      dict entry(
+         string "Volume"
+         variant             double 0.81
+      )
+   ]
+   array [
+   ]
+ */
+
 int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
-
-	qDebug() << "Shall send updated volume to MPRIS Player for " << id;
 	Volume& vol = md->playbackVolume();
 	double volFloat = 0;
 	if ( ! md->isMuted() )
@@ -238,7 +271,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 {
 	int lastDot = busDestination.lastIndexOf('.');
 	QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1);
-	kDebug(67100) << "Get control of " << busDestination << "id=" << id;
+	//kDebug(67100) << "Get control of " << busDestination << "id=" << id;
 	QDBusInterface *qdbiProps  = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
 	QDBusInterface *qdbiPlayer = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.mpris.MediaPlayer2.Player", conn, this);
 
@@ -268,6 +301,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 
 			qDebug() << "REPLY " << result2.type() << ": " << readableName;
 
+			// TODO This hardcoded application list is a quick hack. It should be generalized.
 			MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
 			if (id.startsWith("amarok")) {
 				ct = MixDevice::APPLICATION_AMAROK;
@@ -282,7 +316,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 			MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
 			// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
 			// Thus we won't add the playback switch
-			Volume* vol = new Volume( 100, 0, true, false);
+			Volume* vol = new Volume( 100, 0, false, false);
 			vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
 			mdNew->addMediaPlayControl();
 			mdNew->addMediaNextControl();
@@ -373,32 +407,6 @@ void MPrisAppdata::volumeChangedIncoming(QString /*ifc*/,QVariantMap msg ,QStrin
 	}
 }
 
-
-
-void Mixer_MPRIS2::volumeChanged(MPrisAppdata* mad, double newVolume)
-{
-	int volInt = newVolume *100;
-	kDebug(67100) << "volumeChanged: " << mad->id << ": " << volInt;
-	shared_ptr<MixDevice> md = m_mixDevices.get(mad->id);
-	Volume& vol = md->playbackVolume();
-	vol.setVolume( Volume::LEFT, volInt);
-	md->setMuted(volInt == 0);
-	emit controlChanged();
-	//  md->playbackVolume().setVolume(vol);
-}
-
-/*
-signal sender=:1.125 -> dest=(null destination) serial=503 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
-   string "org.mpris.MediaPlayer2.Player"
-   array [
-      dict entry(
-         string "Volume"
-         variant             double 0.81
-      )
-   ]
-   array [
-   ]
- */
 
 Mixer_MPRIS2::~Mixer_MPRIS2()
 {
