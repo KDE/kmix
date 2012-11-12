@@ -426,7 +426,7 @@ void ViewSliders::refreshVolumeLevels()
 #endif
 	  bool debugMe = (mdw->mixDevice()->id() == "PCM:0" );
 	  if (debugMe) kDebug() << "Old PCM:0 playback state" << mdw->mixDevice()->isMuted()
-	    << ", vol=" << mdw->mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
+	    << ", vol=" << mdw->mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
                 mdw->update();
             }

@@ -85,7 +85,7 @@ long MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
         Volume& vol =  ( vt == Volume::CaptureVT ) ? md->captureVolume() : md->playbackVolume();
         if (vol.hasVolume() && (vol.maxVolume() != 0) ) {
             qreal normalizedVolume =
-                      ( vol.getAvgVolume(Volume::MALL) * MixDeviceComposite::VolMax )
+                      ( vol.getAvgVolumePercent(Volume::MALL) * MixDeviceComposite::VolMax )
                     /   vol.maxVolume();
             volSum += normalizedVolume;
             ++volCount;

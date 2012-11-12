@@ -961,21 +961,21 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease)
 	if ( mixDevice()->id() == "PCM:0" )
 	  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
 
-	if ( !decrease && m_mixdevice->isMuted())
-	{   // increasing form muted state: unmute and start with a low volume level
-	if ( mixDevice()->id() == "PCM:0" )
-	  kDebug() << "set all to " << inc << "muted old=" << m_mixdevice->isMuted();
+	if (!decrease && m_mixdevice->isMuted())
+	{
+		// increasing from muted state: unmute and start with a low volume level
+		if (mixDevice()->id() == "PCM:0")
+			kDebug() << "set all to " << inc << "muted old=" << m_mixdevice->isMuted();
 
-	    m_mixdevice->setMuted(false);
-	  kDebug() << "set all to " << inc << "muted between=" << m_mixdevice->isMuted();
-	    volP.setAllVolumes(inc);
-	  kDebug() << "set all to " << inc << "muted after=" << m_mixdevice->isMuted();
+		m_mixdevice->setMuted(false);
+		volP.setAllVolumes(inc);
 	}
 	else
 	{
-	    volP.changeAllVolumes(inc);
-	if ( mixDevice()->id() == "PCM:0" )
-	  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
+		volP.changeAllVolumes(inc);
+		if (mixDevice()->id() == "PCM:0")
+			kDebug()
+			<< (decrease ? "decrease by " : "increase by ") << inc;
 	}
 
 	Volume& volC = m_mixdevice->captureVolume();
@@ -1018,7 +1018,7 @@ void MDWSlider::update()
 {
 	  bool debugMe = (mixDevice()->id() == "PCM:0" );
 	  if (debugMe) kDebug() << "The update() PCM:0 playback state" << mixDevice()->isMuted()
-	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
+	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->hasMuteSwitch() )
 		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
@@ -1041,14 +1041,14 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 	  if (debugMe)
 	  {
 	    kDebug() << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
-	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolume(Volume::MALL);
+	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 	  }
   
 	for( int i=0; i<ref_sliders.count(); i++ )
 	{
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
-		long useVolume = muted ? 0 : vol.getVolume(chid);
+		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
 
 		bool oldBlockState = slider->blockSignals( true );
 		slider->setValue( useVolume );

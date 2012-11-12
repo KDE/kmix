@@ -100,7 +100,7 @@ friend class MixDevice;
     void changeAllVolumes( long step );
     
     long getVolume(ChannelID chid);
-    long getVolumeWhenActive(ChannelID chid);
+    long getVolumeForGUI(ChannelID chid);
     qreal getAvgVolume(ChannelMask chmask);
     int getAvgVolumePercent(ChannelMask chmask);
 
@@ -140,7 +140,7 @@ friend class MixDevice;
    // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
    // It is only used for GUI things, like showing a "Mute" text or tooltip
    // Capture is not really used, and has only been added for completeness and future extensibility.
-   enum SwitchType { PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
+   enum SwitchType { None, PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
    void setSwitchType(SwitchType type) { _switchType = type; }
    Volume::SwitchType switchType() { return _switchType; }
 
@@ -157,7 +157,7 @@ friend class MixDevice;
 protected:
     long          _chmask;
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
-    QMap<Volume::ChannelID, VolumeChannel> _volumesMuted;
+//    QMap<Volume::ChannelID, VolumeChannel> _volumesMuted;
 
     long          _minVolume;
     long          _maxVolume;
