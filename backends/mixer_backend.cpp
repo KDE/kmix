@@ -101,7 +101,7 @@ QString Mixer_Backend::getName() const
 }
 
 /**
- * The id of the Mixer this backend represents. The default implementation simly returns the name.
+ * The id of the Mixer this backend represents. The default implementation simply returns the name.
  * Often it is just a name/id for the kernel. so name and id are usually identical. See also #Mixer_Backend::getName().
  * You must override this method if you want to set ID different from name.
  */

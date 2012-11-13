@@ -29,6 +29,7 @@
 #include "core/mixset.h"
 class Mixer;
 
+
 class Mixer_Backend : public QObject
 {
       Q_OBJECT
@@ -153,5 +154,15 @@ protected slots:
 private:
   QTime _fastPollingEndsAt;
 };
+
+typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );
+typedef QString getDriverNameFunc( );
+
+struct MixerFactory
+{
+    getMixerFunc *getMixer;
+    getDriverNameFunc *getDriverName;
+};
+
 
 #endif

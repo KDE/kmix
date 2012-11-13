@@ -34,6 +34,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 {
 	m_mixer = parent;
 	new MixerAdaptor( this );
+	kDebug() << "Create QDBusConnection for object " << path;
 	QDBusConnection::sessionBus().registerObject( path, this );
 	
 	ControlManager::instance().addListener(

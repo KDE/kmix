@@ -77,14 +77,6 @@
 #endif
 
 
-typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );
-typedef QString getDriverNameFunc( );
-
-struct MixerFactory {
-    getMixerFunc *getMixer;
-    getDriverNameFunc *getDriverName;
-};
-
 // Possibly encapsualte by #ifdef HAVE_DBUS
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device );
 QString MPRIS2_getDriverName();

@@ -146,6 +146,8 @@ void Mixer::setCardInstance(int cardInstance)
 {
     _cardInstance = cardInstance;
     recreateId();
+    // DBusMixerWrapper must be called after recreateId(), as it uses the id
+    new DBusMixerWrapper(this, dbusPath());
 }
 
 void Mixer::recreateId()
@@ -168,10 +170,19 @@ void Mixer::recreateId()
     primaryKeyOfMixer.replace(' ','_');
     primaryKeyOfMixer.replace('=','_');
     _id = primaryKeyOfMixer;
+	kDebug() << "Early _id=" << _id;
 }
 
-const QString Mixer::dbusPath() {
-    return "/Mixers/" + QString::number( _mixerBackend->m_devnum );
+const QString Mixer::dbusPath()
+{
+	// This needs to be fixed from the very beginning, as MixDevice::dbusPath() also uses it. So once the first
+	// MixDevice is created,
+
+    //return QString("/Mixers/" + QString::number( _mixerBackend->m_devnum ) );
+    //return QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
+	kDebug() << "Late _id=" << _id;
+	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
+    return QString("/Mixers/" + _id.replace(" ", "x").replace(".", "_") );
 }
 
 void Mixer::volumeSave( KConfig *config )
@@ -220,7 +231,7 @@ void Mixer::volumeLoad( KConfig *config )
  *
  * @return true, if Mixer could be opened.
  */
-bool Mixer::openIfValid()
+bool Mixer::openIfValid() // TODO here we need to pass the cardId!!!
 {
 	if (_mixerBackend == 0 )
 	{
@@ -231,7 +242,7 @@ bool Mixer::openIfValid()
     bool ok = _mixerBackend->openIfValid();
     if ( ok )
     {
-        recreateId(); // TODO NOW : We actually cannot postpone it to here, due to ControlPool. Move to Mixer !!!. Actually recreateId() is supposed to be called later again, via setCardInstance()
+//        recreateId(); // TODO NOW : We actually cannot postpone it to here, due to ControlPool. Move to Mixer !!!. Actually recreateId() is supposed to be called later again, via setCardInstance()
         shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
         if ( recommendedMaster.get() != 0 )
         {
@@ -247,8 +258,6 @@ bool Mixer::openIfValid()
             setLocalMasterMD(noMaster); // no master
         }
         connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
-    
-        new DBusMixerWrapper(this, dbusPath());
     }
 
     return ok;

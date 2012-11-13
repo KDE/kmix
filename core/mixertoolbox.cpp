@@ -95,7 +95,9 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 {  
    bool useBackendFilter = ( ! backendList.isEmpty() );
    bool backendMprisFound = false; // only for SINGLE_PLUS_MPRIS2
-   bool backendOtherFound = false; // only for SINGLE_PLUS_MPRIS2
+   bool regularBackendFound = false; // only for SINGLE_PLUS_MPRIS2
+
+   kDebug() << "multiDriverMode=" << multiDriverMode << ", backendList=" << backendList;
 
    // Find all mixers and initialize them
    int drvNum = Mixer::numDrivers();
@@ -144,6 +146,13 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
          // inner loop indicates that we are finished => sane exit from outer loop
          break;
       }
+
+      bool regularBackend =  driverName != "MPRIS2"  && driverName != "PulseAudio";
+      if (regularBackend && regularBackendFound)
+      {
+    	  // Only accept one regular backend => skip this one
+    	  continue;
+      }
    
       bool drvInfoAppended = false;
       // The "19" below is just a "silly" number:
@@ -189,10 +198,10 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 				 {
 					 // same check as in SINGLE
 					 if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
-						 backendOtherFound = true;
+						 regularBackendFound = true;
 				 }
 
-				 if ( backendMprisFound && backendOtherFound )
+				 if ( backendMprisFound && regularBackendFound )
 					 autodetectionFinished = true; // highest device number of driver and a Mixer => finished
 				 break;
 			 }
@@ -298,7 +307,8 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
  */
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
-    if ( mixer->openIfValid() )
+	int newCardInstanceNum = 1 + s_mixerNums[mixer->getBaseName()];
+    if ( mixer->openIfValid() ) // TODO pass newCardInstanceNum here
     {
         if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) )
         {
@@ -311,8 +321,9 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
         // Count mixer nums for every mixer name to identify mixers with equal names.
         // This is for creating persistent (reusable) primary keys, which can safely
         // be referenced (especially for config file access, so it is meant to be persistent!).
-        /*int newCardInstanceNum = */ s_mixerNums[mixer->getBaseName()]++;
-        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]);
+        //s_mixerNums[mixer->getBaseName()]++;
+        s_mixerNums[mixer->getBaseName()] = newCardInstanceNum;
+        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]); // TODO this code must go in mixer->openIfValid()
 
         Mixer::mixers().append( mixer );
         kDebug(67100) << "Added card " << mixer->id();
