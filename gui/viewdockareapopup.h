@@ -75,6 +75,7 @@ public slots:
 
 private slots:
     void showPanelSlot();
+	void resetRefs();
 };
 
 #endif

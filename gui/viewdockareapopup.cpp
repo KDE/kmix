@@ -51,25 +51,14 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	KMixWindow *dockW) :
 	ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
 {
-	seperatorBetweenMastersAndStreams = 0;
-	separatorBetweenMastersAndStreamsInserted = false;
-	separatorBetweenMastersAndStreamsRequired = false;
-
-	optionsLayout = 0;
-	_layoutMDW = 0;
-	configureViewButton = 0;
-	restoreVolumeButton1 = 0;
-	restoreVolumeButton2 = 0;
-	restoreVolumeButton3 = 0;
-	restoreVolumeButton4 = 0;
-	mainWindowButton = 0;
-
+	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
 	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
 		// Adding all mixers, as we potentially want to show all master controls
 		addMixer(mixer);
+		// The list will be redone in _setMixSet() with the actual Mixer instances to use
 	}
 
 	restoreVolumeIcon = new KIcon(QLatin1String("quickopen-file"));
@@ -88,7 +77,7 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
   ControlManager::instance().removeListener(this);
   delete _layoutMDW;
   delete restoreVolumeIcon;
-  // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cacades down
+  // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cascades down
 }
 
 
@@ -134,37 +123,87 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
      return;
  }
 
+void ViewDockAreaPopup::resetRefs()
+{
+	seperatorBetweenMastersAndStreams = 0;
+	separatorBetweenMastersAndStreamsInserted = false;
+	separatorBetweenMastersAndStreamsRequired = false;
+	configureViewButton = 0;
+	restoreVolumeButton1 = 0;
+	restoreVolumeButton2 = 0;
+	restoreVolumeButton3 = 0;
+	restoreVolumeButton4 = 0;
+	mainWindowButton = 0;
+	optionsLayout = 0;
+	_layoutMDW = 0;
+}
 
 void ViewDockAreaPopup::_setMixSet()
 {
 	resetMdws();
-//   if ( _layoutMDW != 0 )
+
+	   if ( optionsLayout != 0 )
+	   {
+	     QLayoutItem *li2;
+	     while ( ( li2 = optionsLayout->takeAt(0) ) ) // strangely enough, it crashes here
+	 	    delete li2;
+	   }
+
+
+   if ( _layoutMDW != 0 )
+   {
+     QLayoutItem *li;
+     while ( ( li = _layoutMDW->takeAt(0) ) )
+ 	    delete li;
+   }
+
+   /*
+    * Strangely enough, I cannot delete optionsLayout in a loop. I get a strange stacktrace:
+    *
+Application: KMix (kmix), signal: Segmentation fault
+[...]
+#6  0x00007f9c9a282900 in QString::shared_null () from /usr/lib/x86_64-linux-gnu/libQtCore.so.4
+#7  0x00007f9c9d4286b0 in ViewDockAreaPopup::_setMixSet (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:164
+#8  0x00007f9c9d425700 in ViewBase::createDeviceWidgets (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewbase.cpp:137
+#9  0x00007f9c9d42845b in ViewDockAreaPopup::controlsChange (this=0x1272b60, changeType=2) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:91
+    */
+//   if ( optionsLayout != 0 )
 //   {
-//     QLayoutItem *li;
-//     while ( ( li = _layoutMDW->takeAt(0) ) )
-// 	    delete li;
+//     QLayoutItem *li2;
+//     while ( ( li2 = optionsLayout->takeAt(0) ) ) // strangely enough, it crashes here
+// 	    delete li2;
 //   }
 
+   // --- Due to the strange crash, delete everything manually : START ---------------
+   // I am a bit confused why this doesn't crash. I moved the "optionsLayout->takeAt(0) delete" loop at the beginning,
+   // so the obejcts should already be deleted. ...
 	delete configureViewButton;
 	delete restoreVolumeButton1;
-	restoreVolumeButton1 = 0;
 	delete restoreVolumeButton2;
-	restoreVolumeButton2 = 0;
 	delete restoreVolumeButton3;
-	restoreVolumeButton3 = 0;
 	delete restoreVolumeButton4;
-	restoreVolumeButton4 = 0;
 
 	delete mainWindowButton;
 	delete seperatorBetweenMastersAndStreams;
-	seperatorBetweenMastersAndStreams = 0;
-	separatorBetweenMastersAndStreamsInserted = false;
-	separatorBetweenMastersAndStreamsRequired = false;
+	// --- Due to the strange crash, delete everything manually : END ---------------
 
-	delete optionsLayout;
-	optionsLayout = 0;
+	kDebug() << "layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+	// BKO 299754 . Delete _layoutMDW before resetting ref. Otherwise it would be "delete 0;", aka "NOP"
+//	delete _layoutMDW;
+//	delete layout();
+	resetRefs();
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-	delete _layoutMDW;
+	//delete optionsLayout;
+
+	/*
+	 * BKO 299754: Looks like I need to explicitly delete layout(). I have no idea why
+	 *             "delete _layoutMDW" is not enough, as that is supposed to be the layout
+	 *             of this  ViewDockAreaPopup
+	 */
+//	kDebug() << "layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+	delete layout(); // BKO 299754
+//	delete _layoutMDW;
 	_layoutMDW = new QGridLayout(this);
 	_layoutMDW->setSpacing(KDialog::spacingHint());
 	_layoutMDW->setMargin(0);
@@ -254,7 +293,7 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    int row = vertical ? 0 : sliderColumn;
    int col = vertical ? sliderColumn : 0;
-   seperatorBetweenMastersAndStreams = new QFrame();
+   seperatorBetweenMastersAndStreams = new QFrame(this);
    if (vertical)
      seperatorBetweenMastersAndStreams->setFrameStyle(QFrame::VLine);
    else
@@ -289,7 +328,7 @@ void ViewDockAreaPopup::constructionFinished()
 {
    kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
       
-   mainWindowButton = new QPushButton( i18n("Mixer") );
+   mainWindowButton = new QPushButton( i18n("Mixer"), this );
    mainWindowButton->setObjectName( QLatin1String("MixerPanel" ));
    connect ( mainWindowButton, SIGNAL(clicked()), SLOT(showPanelSlot()) );
    
@@ -312,16 +351,18 @@ void ViewDockAreaPopup::constructionFinished()
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     // TODO Resizing fails. Why?!?
-    this->resize(1,1);
+//    this->resize(_layoutMDW->minimumSize());
+        this->resize(1,1);
   	_layoutMDW->invalidate();
   	_layoutMDW->update();
       _layoutMDW->activate();
+      setLayout(_layoutMDW);
 }
 
 QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
 {
 	QString buttonText = QString("%1").arg(storageSlot);
-	QPushButton* profileButton = new QPushButton(*restoreVolumeIcon, buttonText);
+	QPushButton* profileButton = new QPushButton(*restoreVolumeIcon, buttonText, this);
 	profileButton->setToolTip(i18n("Load volume profile %1").arg(storageSlot));
 	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return profileButton;
