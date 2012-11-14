@@ -39,14 +39,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	
 	ControlManager::instance().addListener(
 	m_mixer->id(),
-	ControlChangeType::ControlList,
-	this,
-	QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
-	);
-	
-	ControlManager::instance().addListener(
-	m_mixer->id(),
-	ControlChangeType::Volume,
+	(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::Volume),
 	this,
 	QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
 	);
@@ -55,6 +48,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 DBusMixerWrapper::~DBusMixerWrapper()
 {
       ControlManager::instance().removeListener(this);
+      kDebug() << "Remove QDBusConnection for object " << m_dbusPath;
 }
 
 void DBusMixerWrapper::controlsChange(int changeType)

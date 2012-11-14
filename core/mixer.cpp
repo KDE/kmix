@@ -137,18 +137,18 @@ Mixer* Mixer::findMixer( const QString& mixer_id)
 }
 
 
-/**
- * Set the card instance. Usually this will be 1, but if there is
- * more than one card with the same name install, then you need
- * to use 2, 3, ...
- */
-void Mixer::setCardInstance(int cardInstance)
-{
-    _cardInstance = cardInstance;
-    recreateId();
-    // DBusMixerWrapper must be called after recreateId(), as it uses the id
-    new DBusMixerWrapper(this, dbusPath());
-}
+///**
+// * Set the card instance. Usually this will be 1, but if there is
+// * more than one card with the same name install, then you need
+// * to use 2, 3, ...
+// */
+//void Mixer::setCardInstance(int cardInstance)
+//{
+//    _cardInstance = cardInstance;
+//    recreateId();
+//    // DBusMixerWrapper must be called after recreateId(), as it uses the id
+//    new DBusMixerWrapper(this, dbusPath());
+//}
 
 void Mixer::recreateId()
 {
@@ -182,7 +182,7 @@ const QString Mixer::dbusPath()
     //return QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
 	kDebug() << "Late _id=" << _id;
 	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
-    return QString("/Mixers/" + _id.replace(" ", "x").replace(".", "_") );
+    return QString("/Mixers/" + _id.replace(" ", "x").replace(".", "_").replace(":", "_").replace("-", "_") );
 }
 
 void Mixer::volumeSave( KConfig *config )
@@ -229,9 +229,13 @@ void Mixer::volumeLoad( KConfig *config )
  * Opens the mixer.
  * Also, starts the polling timer, for polling the Volumes from the Mixer.
  *
+ * @param cardId The cardId Usually this will be 1, but if there is
+ * more than one card with the same name install, then you need
+ * to use 2, 3, ...
+ *
  * @return true, if Mixer could be opened.
  */
-bool Mixer::openIfValid() // TODO here we need to pass the cardId!!!
+bool Mixer::openIfValid(int cardId)
 {
 	if (_mixerBackend == 0 )
 	{
@@ -239,10 +243,11 @@ bool Mixer::openIfValid() // TODO here we need to pass the cardId!!!
 		return false;
 	}
 
+	_cardInstance = cardId;
     bool ok = _mixerBackend->openIfValid();
     if ( ok )
     {
-//        recreateId(); // TODO NOW : We actually cannot postpone it to here, due to ControlPool. Move to Mixer !!!. Actually recreateId() is supposed to be called later again, via setCardInstance()
+        recreateId();
         shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
         if ( recommendedMaster.get() != 0 )
         {
@@ -258,6 +263,7 @@ bool Mixer::openIfValid() // TODO here we need to pass the cardId!!!
             setLocalMasterMD(noMaster); // no master
         }
         connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
+        new DBusMixerWrapper(this, dbusPath());
     }
 
     return ok;

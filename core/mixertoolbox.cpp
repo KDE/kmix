@@ -308,7 +308,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
 	int newCardInstanceNum = 1 + s_mixerNums[mixer->getBaseName()];
-    if ( mixer->openIfValid() ) // TODO pass newCardInstanceNum here
+    if ( mixer->openIfValid(newCardInstanceNum) )
     {
         if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) )
         {
@@ -318,19 +318,21 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
             mixer = 0;
             return false;
         }
-        // Count mixer nums for every mixer name to identify mixers with equal names.
-        // This is for creating persistent (reusable) primary keys, which can safely
-        // be referenced (especially for config file access, so it is meant to be persistent!).
-        //s_mixerNums[mixer->getBaseName()]++;
-        s_mixerNums[mixer->getBaseName()] = newCardInstanceNum;
-        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]); // TODO this code must go in mixer->openIfValid()
+        else
+        {
+			// Count mixer nums for every mixer name to identify mixers with equal names.
+			// This is for creating persistent (reusable) primary keys, which can safely
+			// be referenced (especially for config file access, so it is meant to be persistent!).
+			//s_mixerNums[mixer->getBaseName()]++;
+        	s_mixerNums[mixer->getBaseName()] = newCardInstanceNum;
+        	//        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]); // TODO this code must go in mixer->openIfValid()
 
-        Mixer::mixers().append( mixer );
-        kDebug(67100) << "Added card " << mixer->id();
-    
+        	Mixer::mixers().append( mixer );
+        	kDebug(67100) << "Added card " << mixer->id();
 
-        emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subcribe notification system?
-        return true;
+        	emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subcribe notification system?
+        	return true;
+        }
     } // valid
     else
     {

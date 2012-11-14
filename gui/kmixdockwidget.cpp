@@ -310,9 +310,9 @@ void KMixDockWidget::activate(const QPoint &pos)
         }
 
         dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
-        kDebug() << "moving to" << dockAreaPopup->size() << x << y;
 
         dockAreaPopup->show();
+        kDebug() << "moving to" << dockAreaPopup->size() << x << y;
 
         // Now handle Multihead displays. And also make sure that the dialog is not
         // moved out-of-the screen on the right (see Bug 101742).

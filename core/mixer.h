@@ -83,7 +83,7 @@ public:
     shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID );
 
     /// Open/grab the mixer for further intraction
-    bool openIfValid();
+    bool openIfValid(int cardId);
 
     /// Returns whether the card is open/operational
     bool isOpen() const;
@@ -117,15 +117,12 @@ public:
     static void setBeepOnVolumeChange(bool m_beepOnVolumeChange);
     static bool getBeepOnVolumeChange() { return m_beepOnVolumeChange; }
 
-    /// Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
+    /**
+     * Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
+     */
     QString& id();
 
-    // TODO nontranslated mixer names
-
-    /// The owner/creator of the Mixer can set an unique name here. This key should never displayed to
-    /// the user, but can be used for referencing configuration items and such.
-
-    void setCardInstance(int cardInstance);
+//    void setCardInstance(int cardInstance);
     int getCardInstance() const      {          return _cardInstance;      }
 
     //void setID(QString& ref_id);
