@@ -245,7 +245,7 @@ bool MixDevice::isVirtuallyMuted()
 	return !hasPhysicalMuteSwitch() && isMuted();
 }
 void MixDevice::setMuted(bool mute)        { _playbackVolume.setSwitch(!mute); }
-void MixDevice::toggleMute()               { setMuted( !_playbackVolume.isSwitchActivated()); }
+void MixDevice::toggleMute()               { setMuted( _playbackVolume.isSwitchActivated()); }
 bool MixDevice::hasMuteSwitch()            { return playbackVolume().hasVolume() || playbackVolume().hasSwitch(); }
 bool MixDevice::hasPhysicalMuteSwitch()    { return playbackVolume().hasSwitch(); }
 bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() &&  _captureVolume.isSwitchActivated() ); }
