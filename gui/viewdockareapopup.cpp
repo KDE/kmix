@@ -187,7 +187,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	delete seperatorBetweenMastersAndStreams;
 	// --- Due to the strange crash, delete everything manually : END ---------------
 
-	kDebug() << "layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+	kDebug() << "1 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 	// BKO 299754 . Delete _layoutMDW before resetting ref. Otherwise it would be "delete 0;", aka "NOP"
 //	delete _layoutMDW;
 //	delete layout();
@@ -201,14 +201,19 @@ Application: KMix (kmix), signal: Segmentation fault
 	 *             "delete _layoutMDW" is not enough, as that is supposed to be the layout
 	 *             of this  ViewDockAreaPopup
 	 */
-//	kDebug() << "layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+	kDebug() << "2 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 	delete layout(); // BKO 299754
+	kDebug() << "3 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 //	delete _layoutMDW;
 	_layoutMDW = new QGridLayout(this);
+	kDebug() << "4 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 	_layoutMDW->setSpacing(KDialog::spacingHint());
 	_layoutMDW->setMargin(0);
-	_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
+	//_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
+	_layoutMDW->setSizeConstraint(QLayout::SetMaximumSize);
 	_layoutMDW->setObjectName(QLatin1String("KmixPopupLayout"));
+    setLayout(_layoutMDW);
+	kDebug() << "5 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 
 	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
 	// we have to redo the list on each _setMixSet() (instead of setting it once in the Constructor)
@@ -352,11 +357,12 @@ void ViewDockAreaPopup::constructionFinished()
 
     // TODO Resizing fails. Why?!?
 //    this->resize(_layoutMDW->minimumSize());
-        this->resize(1,1);
+//        this->resize(1,1);
   	_layoutMDW->invalidate();
   	_layoutMDW->update();
       _layoutMDW->activate();
-      setLayout(_layoutMDW);
+//      setLayout(_layoutMDW);
+	kDebug() << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 }
 
 QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
