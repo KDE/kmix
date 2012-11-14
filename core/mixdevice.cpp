@@ -135,14 +135,11 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
         kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
     }
-    kDebug(67100) << "MixDevice::init() _id=" << _id;
+//    kDebug(67100) << "MixDevice::init() _id=" << _id;
 }
 
 shared_ptr<MixDevice> MixDevice::addToPool()
 {
-    const QString& fullyQualifiedId = getFullyQualifiedId();
-    kDebug() << "MixDevice::init() id=" << fullyQualifiedId;
-
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
     _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );

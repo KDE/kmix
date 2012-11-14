@@ -104,7 +104,8 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 /**
  * Adds a listener for the given mixerId and changeType.
  * Listeners are informed about all corresponding changes via a signal.
- * Listeners are not informed about changes that originates from oneself (according to sourceId).
+ * Listeners are not informed about changes that originate from oneself (according to sourceId).
+ *
  * @param mixerId The id of the Mixer you are interested in
  * @param changetType The changeType of interest
  * @param target The QObject, where the notification signal is sent to. It must implement the SLOT controlChanged(QString mixerId, ControlChangeType::Type changeType).
@@ -121,7 +122,7 @@ void ControlManager::addListener(QString mixerId, ControlChangeType::Type change
 	{
 		if ( changeType & ct )
 		{
-			// Add all listeners
+			// Add all listeners.
 			Listener* listener = new Listener(mixerId, ct, target, sourceId);
 			listeners.append(*listener);
 			listenersChanged = true;
