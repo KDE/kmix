@@ -76,7 +76,7 @@ Mixer_ALSA::~Mixer_ALSA()
 int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
    QString name = snd_mixer_selem_id_get_name( sid );
- kDebug() << name;
+// kDebug() << name;
    if (name.contains("master"     , Qt::CaseInsensitive)) return MixDevice::VOLUME;
    if (name.contains("master mono", Qt::CaseInsensitive)) return MixDevice::VOLUME;
    if (name.contains("front"      , Qt::CaseInsensitive) &&
