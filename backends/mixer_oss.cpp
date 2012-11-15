@@ -259,7 +259,7 @@ void print_recsrc(int recsrc)
 
 int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
 {
-    int i_recsrc, oldrecsrc;
+    int i_recsrc; //, oldrecsrc;
     int devnum = id2num(id);
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
     {
@@ -267,11 +267,9 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
         return Mixer::ERR_READ;
     }
 
-//    kDebug() << "Auslesen 2:"; print_recsrc(i_recsrc);
-     
-    oldrecsrc = i_recsrc = on ?
-             (i_recsrc | (1 << devnum )) :
-             (i_recsrc & ~(1 << devnum ));
+//    oldrecsrc = i_recsrc = on ?
+//             (i_recsrc | (1 << devnum )) :
+//             (i_recsrc & ~(1 << devnum ));
 
     // Change status of record source(s)
     if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
@@ -297,7 +295,9 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
     if (((i_recsrc & ( 1<<devnum)) == 0) && on)
     {
        // Setting the new device failed => Try to enable it *exclusively*
-       oldrecsrc = i_recsrc = 1 << devnum;
+
+//       oldrecsrc = i_recsrc = 1 << devnum;
+
        if (ioctl(m_fd, SOUND_MIXER_WRITE_RECSRC, &i_recsrc) == -1)
          errormsg (Mixer::ERR_WRITE);
        if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &i_recsrc) == -1)
