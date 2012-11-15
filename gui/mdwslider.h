@@ -113,6 +113,8 @@ private slots:
     void setRecsrc( bool value );
     void setMuted(bool value);
     void volumeChange( int );
+    void sliderPressed();
+    void sliderReleased();
 
     void increaseVolume();
     void decreaseVolume();
@@ -169,6 +171,9 @@ private:
 
     QList<QAbstractSlider *> m_slidersPlayback;
     QList<QAbstractSlider *> m_slidersCapture;
+    bool m_sliderInWork;
+    int m_waitForSoundSetComplete;
+    QList<int> volumeValues;
 
     long calculateStepIncrement ( Volume&vol, bool decrease );
 };

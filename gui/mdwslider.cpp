@@ -73,7 +73,8 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptur
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_label( 0 ), /*m_captureLED( 0 ),*/
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
-	muteButtonSpacing(false), captureLEDSpacing(false), _mdwMoveActions(new KActionCollection(this)), m_moveMenu(0)
+	muteButtonSpacing(false), captureLEDSpacing(false), _mdwMoveActions(new KActionCollection(this)), m_moveMenu(0),
+	m_sliderInWork(0), m_waitForSoundSetComplete(0)
 {
     createActions();
     createWidgets( showMuteLED, showCaptureLED );
@@ -555,7 +556,9 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 			slider->setMinimum(minvol);
 			slider->setMaximum(maxvol);
 			slider->setPageStep(maxvol / Mixer::VOLUME_PAGESTEP_DIVISOR);
-			slider->setValue( maxvol - vol.getVolume( vc.chid ) );
+			slider->setValue(  vol.getVolume( vc.chid ) );
+			volumeValues.push_back( vol.getVolume( vc.chid ) );
+			
 			extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
 			if ( _orientation == Qt::Vertical ) {
@@ -583,6 +586,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 		ref_sliders.append ( slider ); // add to list
 		//ref_slidersChids.append(vc.chid);
 		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
+		connect( slider, SIGNAL(sliderPressed()), SLOT(sliderPressed()) );
+		connect( slider, SIGNAL(sliderReleased()), SLOT(sliderReleased()) );
 		
 	} // for all channels of this device
 }
@@ -599,6 +604,19 @@ VolumeSliderExtraData& MDWSlider::extraData(QAbstractSlider *slider)
   kError(67100) << "Invalid slider";
   return MDWSlider::DummVolumeSliderExtraData;
 }
+
+
+void MDWSlider::sliderPressed()
+{
+  m_sliderInWork = true;
+}
+
+
+void MDWSlider::sliderReleased()
+{
+  m_sliderInWork = false;
+}
+
 
 QWidget* MDWSlider::createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool small)
 {
@@ -845,6 +863,8 @@ void MDWSlider::volumeChange( int )
 //  {
 //    kDebug(67100) << "headphone bug";
 //  }
+	m_waitForSoundSetComplete ++;
+	volumeValues.push_back(m_slidersPlayback.first()->value());
 	if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
 	if (m_slidersCapture.count()  > 0) volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
 
@@ -1035,23 +1055,41 @@ void MDWSlider::update()
 	updateAccesability();
 }
 
+// TODO passing "muted" should not be necessary any longer - due to getVolumeForGUI()
 void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, bool muted)
 {
-  	  bool debugMe = (mixDevice()->id() == "PCM:0" );
-	  if (debugMe)
-	  {
-	    kDebug() << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
-	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
-	  }
+//  	  bool debugMe = (mixDevice()->id() == "PCM:0" );
+//	  if (debugMe)
+//	  {
+//	    kDebug() << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
+//	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
+//	  }
   
 	for( int i=0; i<ref_sliders.count(); i++ )
 	{
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
 		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
+		int volume_index;
 
 		bool oldBlockState = slider->blockSignals( true );
-		slider->setValue( useVolume );
+
+//		slider->setValue( useVolume );
+		// --- Avoid feedback loops START -----------------
+		if((volume_index = volumeValues.indexOf(useVolume)) > -1 && --m_waitForSoundSetComplete < 1)
+		{
+		    m_waitForSoundSetComplete = 0;
+		    volumeValues.removeAt(volume_index);
+
+		    if(!m_sliderInWork)
+			  slider->setValue(useVolume);
+		}
+		else if(!m_sliderInWork && m_waitForSoundSetComplete < 1)
+		{
+			slider->setValue(useVolume);
+		}
+		// --- Avoid feedback loops END -----------------
+
 		if ( slider->inherits( "KSmallSlider" ) )
 		{
 			((KSmallSlider*)slider)->setGray( m_mixdevice->isMuted() );
@@ -1221,6 +1259,9 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 		else {
 			decreaseVolume();
 		}
+		
+		Volume& volP = m_mixdevice->playbackVolume();
+		volumeValues.push_back(volP.getVolume(extraData((QAbstractSlider*)obj).getChid()));
 		return true;
 	}
 	return QWidget::eventFilter(obj,e);
