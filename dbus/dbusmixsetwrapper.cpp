@@ -23,17 +23,26 @@
 #include "core/mixdevice.h"
 #include "mixsetadaptor.h"
 
+DBusMixSetWrapper* DBusMixSetWrapper::instanceSingleton;
+
+void DBusMixSetWrapper::initialize(QObject* parent, const QString& path)
+{
+	/* This should not happen! */
+	if (instanceSingleton)
+		delete instanceSingleton;
+	instanceSingleton = new DBusMixSetWrapper(parent, path);
+}
+
+DBusMixSetWrapper* DBusMixSetWrapper::instance() {
+	return instanceSingleton;
+}
+
 DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 	: QObject(parent)
 	, m_dbusPath( path )
 {
 	new MixSetAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( m_dbusPath, this );
-
-/*    connect( Mixer::getGlobalMasterPreferred(), SIGNAL(changed()),
-        this, SLOT(slotPreferredMasterChanged()) );
-    connect( Mixer::getGlobalMasterCurrent(), SIGNAL(changed()),
-  		this, SLOT(slotCurrentMasterChanged()) );*/
 }
 
 DBusMixSetWrapper::~DBusMixSetWrapper()
@@ -50,68 +59,41 @@ QStringList DBusMixSetWrapper::mixers() const
 
 QString DBusMixSetWrapper::currentMasterMixer() const
 {
-    Mixer* masterMixer = Mixer::getGlobalMasterMixer();
-    return masterMixer ? masterMixer->id() : QString();
+	Mixer* masterMixer = Mixer::getGlobalMasterMixer();
+	return masterMixer ? masterMixer->id() : QString();
 }
 
 QString DBusMixSetWrapper::currentMasterControl() const
 {
 	shared_ptr<MixDevice> masterControl = Mixer::getGlobalMasterMD();
-    return masterControl ? masterControl->id() : QString();
+	return masterControl ? masterControl->id() : QString();
 }
 
 QString DBusMixSetWrapper::preferredMasterMixer() const
 {
-    return Mixer::getGlobalMasterPreferred().getCard();
+	return Mixer::getGlobalMasterPreferred().getCard();
 }
 
 QString DBusMixSetWrapper::preferredMasterControl() const
 {
-    return Mixer::getGlobalMasterPreferred().getControl();
+	return Mixer::getGlobalMasterPreferred().getControl();
 }
 
 void DBusMixSetWrapper::setCurrentMaster(const QString &mixer, const QString &control)
 {
-    Mixer::setGlobalMaster(mixer, control, false);
+	Mixer::setGlobalMaster(mixer, control, false);
 }
 
 void DBusMixSetWrapper::setPreferredMaster(const QString &mixer, const QString &control)
 {
-    Mixer::setGlobalMaster(mixer, control, true);
+	Mixer::setGlobalMaster(mixer, control, true);
 }
 
-void DBusMixSetWrapper::devicePlugged( const char* driverName, const QString& udi, QString& dev )
+void DBusMixSetWrapper::signalMixersChanged()
 {
-	Q_UNUSED( driverName )
-	Q_UNUSED( udi )
-	Q_UNUSED( dev )
 	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
 			"org.kde.KMix.MixSet", "mixersChanged" );
 	QDBusConnection::sessionBus().send( signal );
 }
-
-void DBusMixSetWrapper::deviceUnplugged( const QString& udi )
-{
-	Q_UNUSED( udi )
-	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
-			"org.kde.KMix.MixSet", "mixersChanged" );
-	QDBusConnection::sessionBus().send( signal );
-}
-
-/*
-void DBusMixSetWrapper::slotPreferredMasterChanged()
-{
-	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
-			"org.kde.KMix.MixSet", "preferredMasterChanged" );
-	QDBusConnection::sessionBus().send( signal );
-}
-
-void DBusMixSetWrapper::slotCurrentMasterChanged()
-{
-	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
-			"org.kde.KMix.MixSet", "currentMasterChanged" );
-	QDBusConnection::sessionBus().send( signal );
-}
-*/
 
 #include "dbusmixsetwrapper.moc"

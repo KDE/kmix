@@ -33,8 +33,13 @@ class DBusMixSetWrapper : public QObject
 	Q_PROPERTY(QString preferredMasterMixer READ preferredMasterMixer)
 	Q_PROPERTY(QString preferredMasterControl READ preferredMasterControl)
 	public:
+		static void initialize(QObject* parent, const QString& path);
+		static DBusMixSetWrapper* instance();
+
 		DBusMixSetWrapper(QObject* parent, const QString& path);
 		~DBusMixSetWrapper();
+		
+		void signalMixersChanged();
 	public slots:
 		QStringList mixers() const;
 		
@@ -42,17 +47,12 @@ class DBusMixSetWrapper : public QObject
 		QString currentMasterControl() const;
 		QString preferredMasterMixer() const;
 		QString preferredMasterControl() const;
-        void setCurrentMaster(const QString &mixer, const QString &control);
-        void setPreferredMaster(const QString &mixer, const QString &control);
-
-		void devicePlugged( const char* driverName, const QString& udi, QString& dev );
-		void deviceUnplugged( const QString& udi );
-
-//        void slotCurrentMasterChanged();
-//        void slotPreferredMasterChanged();
+		void setCurrentMaster(const QString &mixer, const QString &control);
+		void setPreferredMaster(const QString &mixer, const QString &control);
 	private:
+		static DBusMixSetWrapper* instanceSingleton;
+
 		QString m_dbusPath;
-        
 };
 
 #endif /* DBUSMIXSETWRAPPER_H */

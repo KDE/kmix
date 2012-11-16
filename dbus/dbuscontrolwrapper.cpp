@@ -27,6 +27,7 @@
 DBusControlWrapper::DBusControlWrapper(shared_ptr<MixDevice> parent, const QString& path)
 	: QObject(0)
 {
+	qDebug() << "QDBusConnection for control created" << path;
 	m_md = parent;
 	new ControlAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( path, this );

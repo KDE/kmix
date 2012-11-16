@@ -90,6 +90,7 @@ KMixWindow::KMixWindow(bool invisible) :
   KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
   initWidgets();
   initPrefDlg();
+  DBusMixSetWrapper::initialize(this, "/Mixers");
   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter,
       m_hwInfoString);
   KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
@@ -116,15 +117,7 @@ KMixWindow::KMixWindow(bool invisible) :
 
   connect(kapp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
-  // Creating a dbus interface
-  DBusMixSetWrapper *wrapper = new DBusMixSetWrapper(this, "/Mixers");
-  // these signals should be emitted right after the mixer device is added
-  connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
-      wrapper, SLOT(devicePlugged(const char*,QString,QString&)));
-  connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), wrapper,
-      SLOT(deviceUnplugged(QString)));
- 
-  	 ControlManager::instance().addListener(
+  ControlManager::instance().addListener(
   	  QString(), // All mixers (as the Global master Mixer might change)
   	(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::MasterChanged),
   	this,

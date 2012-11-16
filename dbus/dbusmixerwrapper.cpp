@@ -26,6 +26,7 @@
 #include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/volume.h"
+#include "dbus/dbusmixsetwrapper.h"
 #include "mixeradaptor.h"
 
 DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
@@ -38,37 +39,38 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	QDBusConnection::sessionBus().registerObject( path, this );
 	
 	ControlManager::instance().addListener(
-	m_mixer->id(),
-	(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::Volume),
-	this,
-	QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
+		m_mixer->id(),
+		(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::Volume),
+		this,
+		QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
 	);
+	DBusMixSetWrapper::instance()->signalMixersChanged();
 }
 
 DBusMixerWrapper::~DBusMixerWrapper()
 {
-      ControlManager::instance().removeListener(this);
-      kDebug() << "Remove QDBusConnection for object " << m_dbusPath;
+	ControlManager::instance().removeListener(this);
+	kDebug() << "Remove QDBusConnection for object " << m_dbusPath;
+	DBusMixSetWrapper::instance()->signalMixersChanged();
 }
 
 void DBusMixerWrapper::controlsChange(int changeType)
 {
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
-  {
-    case  ControlChangeType::ControlList:
-      createDeviceWidgets();
-      break;
-      
-    case ControlChangeType::Volume:
-      refreshVolumeLevels();
-      break;
-      
-    default:
-      ControlManager::warnUnexpectedChangeType(type, this);
-      break;
-  }
-    
+	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+	switch (type )
+	{
+	case  ControlChangeType::ControlList:
+		createDeviceWidgets();
+		break;
+	  
+	case ControlChangeType::Volume:
+		refreshVolumeLevels();
+		break;
+	  
+	default:
+		ControlManager::warnUnexpectedChangeType(type, this);
+		break;
+	}
 }
 
 
