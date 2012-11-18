@@ -44,14 +44,16 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 		this,
 		QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
 	);
-	DBusMixSetWrapper::instance()->signalMixersChanged();
+	if (DBusMixSetWrapper::instance())
+		DBusMixSetWrapper::instance()->signalMixersChanged();
 }
 
 DBusMixerWrapper::~DBusMixerWrapper()
 {
 	ControlManager::instance().removeListener(this);
 	kDebug() << "Remove QDBusConnection for object " << m_dbusPath;
-	DBusMixSetWrapper::instance()->signalMixersChanged();
+	if (DBusMixSetWrapper::instance())
+		DBusMixSetWrapper::instance()->signalMixersChanged();
 }
 
 void DBusMixerWrapper::controlsChange(int changeType)
