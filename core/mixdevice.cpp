@@ -88,7 +88,7 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
             return "xmms";
         case MixDevice::APPLICATION_STREAM:
             return "mixer-pcm";
-      
+
     }
     return "mixer-front";
 }
@@ -230,9 +230,14 @@ const QString& MixDevice::id() const {
 }
 
 const QString MixDevice::dbusPath() {
-	QString controlPath = _id;
-	controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
-	return _mixer->dbusPath() + "/" + controlPath;
+   QString controlPath = _id;
+   controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+
+   if (  _mixer->dbusPath().endsWith( '/' ) ) {
+      return _mixer->dbusPath() + controlPath;
+   } else {
+      return _mixer->dbusPath() + '/' + controlPath;
+   }
 }
 
 
@@ -308,7 +313,7 @@ bool MixDevice::read( KConfig *config, const QString& grp )
 void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
-    
+
     for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
     {
       QString volstr = getVolString(chid,capture);
@@ -316,7 +321,7 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
           volume.setVolume(chid, config.readEntry(volstr, 0));
        } // if saved channel exists
        chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
-    } // for all channels    
+    } // for all channels
 }
 
 /**
@@ -366,7 +371,7 @@ QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)
  * Returns the playback volume level in percent. If the volume is muted, 0 is returned.
  * If the given MixDevice contains no playback volume, the capture volume isd used
  * instead, and 0 is returned if capturing is disabled for the given MixDevice.
- * 
+ *
  * @returns The volume level in percent
  */
 int MixDevice::getUserfriendlyVolumeLevel()
