@@ -1244,7 +1244,7 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 		}
 	}
 	// Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
-	else if ( (eventType == QEvent::Wheel) )
+	else if ( eventType == QEvent::Wheel )
 //	         && strcmp(obj->metaObject()->className(),"KSmallSlider") != 0 )  {  // Remove the KSmallSlider check. If KSmallSlider comes back, use a cheaper type check - e.g. a boolean value.
 	{
 		QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
