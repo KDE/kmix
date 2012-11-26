@@ -322,7 +322,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * qwe)
 	if (qwe->orientation() == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
 		increase = !increase;
 
-    if ( increase > 0 ) {
+    if ( increase ) {
        newVal = QAbstractSlider::value() + inc;
     }
     else {
