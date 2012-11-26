@@ -618,7 +618,7 @@ void ProfControl::setSubcontrols(QString sctls)
 QString ProfControl::renderSubcontrols()
 {
     QString sctlString;
-    if ( _useSubcontrolPlayback && _useSubcontrolCapture && _useSubcontrolCapture && _useSubcontrolCaptureSwitch && _useSubcontrolEnum ) {
+    if ( _useSubcontrolPlayback && _useSubcontrolPlaybackSwitch && _useSubcontrolCapture && _useSubcontrolCaptureSwitch && _useSubcontrolEnum ) {
         return QString("*");
     }
     else {
