@@ -413,6 +413,8 @@ Mixer_MPRIS2::~Mixer_MPRIS2()
 }
 
 MPrisAppdata::MPrisAppdata()
+ : propertyIfc(0)
+ , playerIfc(0)
 {}
 
 MPrisAppdata::~MPrisAppdata()
