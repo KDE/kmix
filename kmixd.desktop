@@ -88,6 +88,5 @@ Comment[zh_TW]=KMixD 混音器服務
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=kmixd
 X-KDE-DBus-ModuleName=kmixd
-X-KDE-DBUS-ModuleName=kmixd
 X-KDE-Kded-autoload=true
 OnlyShowIn=KDE;
