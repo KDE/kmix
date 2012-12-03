@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Service
 Icon=preferences-desktop-keyboard
-Exec=kmixd
 Name=KMixD
 Name[bg]=KMixD
 Name[ca]=KMixD
