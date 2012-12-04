@@ -150,6 +150,18 @@ Mixer* Mixer::findMixer( const QString& mixer_id)
 //    new DBusMixerWrapper(this, dbusPath());
 //}
 
+/**
+ * Set the final ID of this Mixer.
+ * <br>Warning: This method is VERY fragile, because it is requires information that we have very late,
+ * especially the _cardInstance. We only know the _cardInstance, when we know the ID of the _mixerBackend->getId().
+ * OTOH, the Mixer backend needs the _cardInstance during construction of its MixDevice instances.
+ *
+ * This means, we need the _cardInstance during construction of the Mixer, but we only know it after its constructed.
+ * Actually its a design error. The _cardInstance MUST be set and managed by the backend.
+ *
+ * The current solution works but is very hacky - cardInstance is a parameter of openIfValid().
+ *
+ */
 void Mixer::recreateId()
 {
     /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
@@ -175,14 +187,20 @@ void Mixer::recreateId()
 
 const QString Mixer::dbusPath()
 {
-	// This needs to be fixed from the very beginning, as MixDevice::dbusPath() also uses it. So once the first
-	// MixDevice is created,
+	// _id needs to be fixed from the very beginning, as the MixDevice construction uses MixDevice::dbusPath().
+	// So once the first MixDevice is created, this must return the correfct value
+	if (_id.isEmpty())
+	{
+		// Bug 308014: This a rather dirty hack, but it will guarantee that _id is definitely set.
+		// Even the _cardInstance is set at default value during construction of the MixDevice instances
+		recreateId();
+	}
 
     //return QString("/Mixers/" + QString::number( _mixerBackend->m_devnum ) );
     //return QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
 	kDebug() << "Late _id=" << _id;
-	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
-    return QString("/Mixers/" + _id.replace(" ", "x").replace(".", "_").replace(":", "_").replace("-", "_") );
+//	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
+    return QString("/Mixers/" + _id.replace(" ", "_").replace(".", "_").replace(":", "_").replace("-", "_") );
 }
 
 void Mixer::volumeSave( KConfig *config )
