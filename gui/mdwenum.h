@@ -65,7 +65,7 @@ public slots:
     void setEnumId(int value);
 
     void update();
-    virtual void showContextMenu();
+    virtual void showContextMenu(const QPoint& pos = QCursor::pos());
 
 private:
     void createWidgets();

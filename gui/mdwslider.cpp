@@ -1149,7 +1149,7 @@ void MDWSlider::updateAccesability()
 #endif
 
 
-void MDWSlider::showContextMenu()
+void MDWSlider::showContextMenu( const QPoint& pos )
 {
 	if( m_view == 0 )
 		return;
@@ -1201,7 +1201,6 @@ void MDWSlider::showContextMenu()
 		menu->addAction( b );
 	}
 
-	QPoint pos = QCursor::pos();
 	menu->popup( pos );
 }
 
@@ -1248,6 +1247,10 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 			showContextMenu();
 			return true;
 		}
+	} else if (eventType == QEvent::ContextMenu) {
+		QPoint pos = reinterpret_cast<QWidget *>(obj)->mapToGlobal(QPoint(0, 0));
+		showContextMenu(pos);
+		return true;
 	}
 	// Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
 	else if ( eventType == QEvent::Wheel )

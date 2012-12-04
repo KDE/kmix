@@ -69,7 +69,7 @@ public slots:
     virtual void setDisabled( bool value );
     virtual void defineKeys();
     virtual void update();
-    virtual void showContextMenu();
+    virtual void showContextMenu( const QPoint &pos = QCursor::pos() );
 
 protected slots:
     void volumeChange( int );

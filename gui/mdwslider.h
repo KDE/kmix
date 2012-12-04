@@ -100,7 +100,7 @@ public slots:
     void setDisabled( bool value );
     void update();
     void showMoveMenu();
-    virtual void showContextMenu();
+    virtual void showContextMenu( const QPoint &pos = QCursor::pos() );
     void increaseOrDecreaseVolume(bool arg1);
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);

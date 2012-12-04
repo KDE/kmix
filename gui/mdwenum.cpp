@@ -94,6 +94,7 @@ void MDWEnum::createWidgets()
    _label = new QLabel( m_mixdevice->readableName(), this);
    _layout->addWidget(_label);
    _enumCombo = new KComboBox( false, this);
+   _enumCombo->installEventFilter(this);
    // ------------ fill ComboBox start ------------
    int maxEnumId= m_mixdevice->enumValues().count();
    for (int i=0; i<maxEnumId; i++ ) {
@@ -117,14 +118,13 @@ void MDWEnum::update()
   }
 }
 
-void MDWEnum::showContextMenu()
+void MDWEnum::showContextMenu(const QPoint& pos )
 {
    if( m_view == 0 )
       return;
 
    KMenu *menu = m_view->getPopup();
 
-   QPoint pos = QCursor::pos();
    menu->popup( pos );
 }
 
@@ -195,6 +195,10 @@ bool MDWEnum::eventFilter( QObject* obj, QEvent* e )
          showContextMenu();
          return true;
       }
+   } else if (e->type() == QEvent::ContextMenu) {
+      QPoint pos = reinterpret_cast<QWidget *>(obj)->mapToGlobal(QPoint(0, 0));
+      showContextMenu(pos);
+      return true;
    }
     return QWidget::eventFilter(obj,e);
 }
