@@ -70,29 +70,24 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 
 	kDebug() << "Construct the ViewDockAreaPopup and actions";
 
-    bool onlyOneMouseButtonAction = !volumePopup;
-	if ( onlyOneMouseButtonAction)
+	_volWA = 0;
+	_dockAreaPopup = 0;
+	_dockAreaPopupMenuWrapper = 0;
+
+	if (!volumePopup)
 	{
-		// If only 1 mouse button is available, we will use it for the volume popup, and leave out the menu
-//		setContextMenu(0);
+		// No volume popup => Use the KMixWindow as default action of this KStatusNotifierItem
 		setAssociatedWidget(parent);
-		//setAssociatedWidget(new QWidget());
 		kDebug() << "We are now associated to " << associatedWidget();
-		_volWA = 0;
-		_referenceWidget = 0;
 	}
 	else
 	{
-		_referenceWidget = new KMenu(parent);
-		QWidget* referenceWindow;
-		if ( onlyOneMouseButtonAction )
-			referenceWindow = parent;
-		else
-			referenceWindow = _referenceWidget;
-		_referenceWidget2 = new ViewDockAreaPopup(referenceWindow, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
-		_volWA = new QWidgetAction(_referenceWidget);
-		_volWA->setDefaultWidget(_referenceWidget2);
-		_referenceWidget->addAction(_volWA);
+		// For bizarre reasons, we wrap the ViewDockAreaPopup in a KMenu. Must relate to how KStatusNotifierItem works.
+	   _dockAreaPopupMenuWrapper = new KMenu(parent);
+		_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
+		_dockAreaPopup = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
+		_volWA->setDefaultWidget(_dockAreaPopup);
+		_dockAreaPopupMenuWrapper->addAction(_volWA);
 		connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 	}
 
@@ -102,13 +97,6 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 	this,
 	QString("KMixDockWidget")	  
 	);
-	
-//	 ControlManager::instance().addListener(
-//	  QString(), // All mixers (as the Global master Mixer might change)
-//	ControlChangeType::MasterChanged,
-//	this,
-//	QString("KMixDockWidget")
-//	);
 	 
 	      // Refresh in all cases. When there is no Golbal Master we still need
      // to initialize correctly (e.g. for showin 0% or hiding it)
@@ -262,7 +250,7 @@ void KMixDockWidget::activate(const QPoint &pos)
     kDebug() << "Activate at " << pos;
 
     bool showHideMainWindow = false;
-    showHideMainWindow |= (_referenceWidget == 0);
+    showHideMainWindow |= (_dockAreaPopup == 0);
     showHideMainWindow |= (pos.x() == 0  && pos.y() == 0);  // HACK. When the action comes from the context menu, the pos is (0,0)
 
     if ( showHideMainWindow )
@@ -278,7 +266,7 @@ void KMixDockWidget::activate(const QPoint &pos)
 
     // --- When this code path is executed, we want to show the DockAreaPopup)
 
-    KMenu* dockAreaPopup =_referenceWidget; // TODO Refactor to use _referenceWidget directly
+    QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _referenceWidget directly
     kDebug() << "Skip default KStatusNotifierItem behavior";
     if ( dockAreaPopup->isVisible() ) {
         dockAreaPopup->hide();
@@ -295,9 +283,19 @@ void KMixDockWidget::activate(const QPoint &pos)
 //    }
     if ( false ) {}
     else {
-        setAssociatedWidget(_referenceWidget);
+        setAssociatedWidget(_kmixMainWindow);
         kDebug() << "cm is NOT visible => setAssociatedWidget(_referenceWidget)";
 
+        _dockAreaPopupMenuWrapper->removeAction(_volWA);
+        delete _volWA;
+		_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
+		_dockAreaPopup = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), _kmixMainWindow);
+		_volWA->setDefaultWidget(_dockAreaPopup);
+		_dockAreaPopupMenuWrapper->addAction(_volWA);
+
+        _dockAreaPopup->show();
+        dockAreaPopup->show();
+        _dockAreaPopup->adjustSize();
         dockAreaPopup->adjustSize();
         int h = dockAreaPopup->height();
         int x = pos.x() - dockAreaPopup->width()/2;
@@ -402,7 +400,8 @@ void KMixDockWidget::contextMenuAboutToShow()
 //	kDebug() << "hallo";
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
     updateDockMuteAction(dockMuteAction);
-    _contextMenuWasOpen = true;
+
+	_contextMenuWasOpen = true;
 }
 
 void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )

@@ -46,6 +46,8 @@
 #include "gui/guiprofile.h"
 #include "gui/mdwslider.h"
 
+// Restore volume button feature is incomplete => disabling for KDE 4.10
+#undef RESTORE_VOLUME_BUTTON
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
 	KMixWindow *dockW) :
@@ -342,23 +344,27 @@ void ViewDockAreaPopup::constructionFinished()
    optionsLayout = new QHBoxLayout();
    optionsLayout->addWidget(mainWindowButton );
    optionsLayout->addWidget(configureViewButton);
+
+#ifdef RESTORE_VOLUME_BUTTON
    restoreVolumeButton1 = createRestoreVolumeButton(1);
    optionsLayout->addWidget( restoreVolumeButton1 ); // TODO enable only if user has saved a volume profile
+
 //    optionsLayout->addWidget( createRestoreVolumeButton(2) );
 //    optionsLayout->addWidget( createRestoreVolumeButton(3) );
 //    optionsLayout->addWidget( createRestoreVolumeButton(4) );
+#endif
    
       int sliderRow = _layoutMDW->rowCount();
       _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
 
   	updateGuiOptions();
 
-    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+//    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     // TODO Resizing fails. Why?!?
 //    this->resize(_layoutMDW->minimumSize());
 //        this->resize(1,1);
-  	_layoutMDW->invalidate();
+//  	_layoutMDW->invalidate();
   	_layoutMDW->update();
       _layoutMDW->activate();
 //      setLayout(_layoutMDW);

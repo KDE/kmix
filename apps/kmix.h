@@ -45,7 +45,6 @@ class KMixDockWidget;
 class KMixerWidget;
 class KMixWindow;
 class Mixer;
-class ViewDockAreaPopup;
 #include "core/mixer.h"
 
 class OSDWidget;
@@ -130,7 +129,6 @@ private:
    bool m_dontSetDefaultCardOnStart;
    QLabel      *m_errorLabel;
    QList<QString> m_backendFilter;
-   ViewDockAreaPopup *_dockAreaPopup;
    unsigned int m_configVersion;
    void showVolumeDisplay();
    void increaseOrDecreaseVolume(bool increase);

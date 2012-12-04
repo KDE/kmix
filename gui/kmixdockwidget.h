@@ -60,8 +60,8 @@ class KMixDockWidget : public KStatusNotifierItem
    void toggleMinimizeRestore();
 
  private:
-   ViewDockAreaPopup *_referenceWidget2;
-   KMenu *_referenceWidget;
+   ViewDockAreaPopup *_dockAreaPopup;
+   KMenu *_dockAreaPopupMenuWrapper;
    QWidgetAction *_volWA;
    int  _oldToolTipValue;
    char _oldPixmapType;
