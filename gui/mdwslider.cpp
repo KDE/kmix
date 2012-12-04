@@ -863,10 +863,16 @@ void MDWSlider::volumeChange( int )
 //  {
 //    kDebug(67100) << "headphone bug";
 //  }
-	m_waitForSoundSetComplete ++;
-	volumeValues.push_back(m_slidersPlayback.first()->value());
-	if (m_slidersPlayback.count() > 0) volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
-	if (m_slidersCapture.count()  > 0) volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
+	if (!m_slidersPlayback.isEmpty())
+	{
+		m_waitForSoundSetComplete ++;
+		volumeValues.push_back(m_slidersPlayback.first()->value());
+		volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
+	}
+	if (!m_slidersCapture.isEmpty())
+	{
+		volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
+	}
 
 	bool oldViewBlockSignalState = m_view->blockSignals(true);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
