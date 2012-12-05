@@ -188,7 +188,7 @@ void Mixer::recreateId()
 const QString Mixer::dbusPath()
 {
 	// _id needs to be fixed from the very beginning, as the MixDevice construction uses MixDevice::dbusPath().
-	// So once the first MixDevice is created, this must return the correfct value
+	// So once the first MixDevice is created, this must return the correct value
 	if (_id.isEmpty())
 	{
 		// Bug 308014: This a rather dirty hack, but it will guarantee that _id is definitely set.
@@ -196,11 +196,15 @@ const QString Mixer::dbusPath()
 		recreateId();
 	}
 
-    //return QString("/Mixers/" + QString::number( _mixerBackend->m_devnum ) );
-    //return QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
 	kDebug() << "Late _id=" << _id;
 //	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
-    return QString("/Mixers/" + _id.replace(" ", "_").replace(".", "_").replace(":", "_").replace("-", "_") );
+
+	// mixerName may contain arbitrary characters, so replace all that are not allowed to be be part of a DBUS path
+	QString cardPath = _id;
+	cardPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+	cardPath.replace(QLatin1String("//"), QLatin1String("/"));
+
+    return QString("/Mixers/" + cardPath);
 }
 
 void Mixer::volumeSave( KConfig *config )

@@ -232,12 +232,14 @@ const QString& MixDevice::id() const {
 const QString MixDevice::dbusPath() {
    QString controlPath = _id;
    controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+   controlPath.replace(QLatin1String("//"), QLatin1String("/"));
 
-   if (  _mixer->dbusPath().endsWith( '/' ) ) {
-      return _mixer->dbusPath() + controlPath;
-   } else {
-      return _mixer->dbusPath() + '/' + controlPath;
+   if ( controlPath.endsWith( '/' ) )
+   {
+	   controlPath.chop(1);
    }
+
+   return _mixer->dbusPath() + '/' + controlPath;
 }
 
 
