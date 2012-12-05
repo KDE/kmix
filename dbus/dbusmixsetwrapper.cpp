@@ -21,6 +21,7 @@
 #include "dbusmixsetwrapper.h"
 
 #include "core/mixdevice.h"
+#include "core/ControlManager.h"
 #include "mixsetadaptor.h"
 
 DBusMixSetWrapper* DBusMixSetWrapper::instanceSingleton;
@@ -43,10 +44,29 @@ DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 {
 	new MixSetAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( m_dbusPath, this );
+	
+	ControlManager::instance().addListener(
+		QString(),
+		ControlChangeType::MasterChanged, 
+		this,
+		QString("DBusMixSetWrapper"));
 }
 
 DBusMixSetWrapper::~DBusMixSetWrapper()
 {
+}
+
+void DBusMixSetWrapper::controlsChange(int changeType)
+{
+	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+	switch (type)
+	{
+		case ControlChangeType::MasterChanged:
+			signalMasterChanged();
+			break;
+		default:
+			ControlManager::warnUnexpectedChangeType(type, this);
+	}
 }
 
 QStringList DBusMixSetWrapper::mixers() const
@@ -93,6 +113,13 @@ void DBusMixSetWrapper::signalMixersChanged()
 {
 	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
 			"org.kde.KMix.MixSet", "mixersChanged" );
+	QDBusConnection::sessionBus().send( signal );
+}
+
+void DBusMixSetWrapper::signalMasterChanged()
+{
+	QDBusMessage signal = QDBusMessage::createSignal( m_dbusPath, 
+			"org.kde.KMix.MixSet", "masterChanged" );
 	QDBusConnection::sessionBus().send( signal );
 }
 

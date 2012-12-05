@@ -40,6 +40,7 @@ class DBusMixSetWrapper : public QObject
 		~DBusMixSetWrapper();
 		
 		void signalMixersChanged();
+		void signalMasterChanged();
 	public slots:
 		QStringList mixers() const;
 		
@@ -49,6 +50,7 @@ class DBusMixSetWrapper : public QObject
 		QString preferredMasterControl() const;
 		void setCurrentMaster(const QString &mixer, const QString &control);
 		void setPreferredMaster(const QString &mixer, const QString &control);
+		void controlsChange(int changeType);
 	private:
 		static DBusMixSetWrapper* instanceSingleton;
 

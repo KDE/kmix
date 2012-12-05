@@ -16,5 +16,6 @@
       <arg name="control" type="s" direction="in"/>
     </method>
     <signal name="mixersChanged"/>
+    <signal name="masterChanged"/>
   </interface>
 </node>
