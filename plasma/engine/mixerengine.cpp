@@ -109,8 +109,11 @@ void MixerEngine::getInternalData()
 		m_kmix = new OrgKdeKMixMixSetInterface( KMIX_DBUS_SERVICE, KMIX_DBUS_PATH,
 				QDBusConnection::sessionBus(), this );
 		QDBusConnection::sessionBus().connect( KMIX_DBUS_SERVICE, KMIX_DBUS_PATH,
-				"org.kde.KMix.MixSet", "changed",
+				"org.kde.KMix.MixSet", "mixersChanged",
 				this, SLOT(slotMixersChanged()) );
+		QDBusConnection::sessionBus().connect( KMIX_DBUS_SERVICE, KMIX_DBUS_PATH,
+				"org.kde.KMix.MixSet", "masterChanged",
+				this, SLOT(slotMasterChanged()) );
 	}
 	Q_FOREACH( const QString& path, m_kmix->mixers() )
 	{
@@ -378,6 +381,12 @@ void MixerEngine::slotMixersChanged()
 {
 	// Let's give KMix some time to register this mixer on bus and so on
 	QTimer::singleShot( 1000, this, SLOT(updateInternalMixersData()) );
+}
+
+void MixerEngine::slotMasterChanged()
+{
+	setData( "Mixers", "Current Master Mixer", m_kmix->currentMasterMixer() );
+	setData( "Mixers", "Current Master Control", m_kmix->currentMasterControl() );
 }
 
 Plasma::Service* MixerEngine::serviceForSource(const QString& source)

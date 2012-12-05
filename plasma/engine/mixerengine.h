@@ -95,6 +95,7 @@ private slots:
 	void slotServiceUnregistered( const QString &serviceName );
 
 	void slotMixersChanged();
+	void slotMasterChanged();
 	void slotControlChanged();
 	void slotControlsReconfigured();
 };
