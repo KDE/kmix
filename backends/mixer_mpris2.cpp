@@ -258,7 +258,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	return 0;
 }
 
-
+#include <unistd.h>
 
 /**
  * Add the MPRIS control designated by the DBUS busDestination
@@ -271,7 +271,22 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 {
 	int lastDot = busDestination.lastIndexOf('.');
 	QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1);
-	//kDebug(67100) << "Get control of " << busDestination << "id=" << id;
+	kDebug(67100) << "Get control of " << busDestination << "id=" << id;
+	if (id.startsWith("clementine"))
+	{
+		// Bug 311189: Clementine hangs
+        QString text;
+        text =
+            i18n(
+                "Media player '%1' is not compatible with KMix. Integration skipped.",
+                id);
+        // We cannot do GUI stuff in the backend, so lets only log it for now
+//        KMixToolBox::notification("Unsupported Media Player", text);
+        kWarning() << text;
+        return;
+	}
+
+
 	QDBusInterface *qdbiProps  = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
 	QDBusInterface *qdbiPlayer = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.mpris.MediaPlayer2.Player", conn, this);
 
@@ -282,24 +297,35 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 
 	apps.insert(id, mad);
 
-	QList<QVariant> arg;
-	arg.append(QString("org.mpris.MediaPlayer2"));
-	arg.append(QString("Identity"));
-	QDBusMessage msg = mad->propertyIfc->callWithArgumentList(QDBus::Block, "Get", arg);
+	QString readableName = id;
 
-	//msg = conn.call(query, QDBus::Block, 5);
-	if ( msg.type() == QDBusMessage::ReplyMessage )
+	if (id != "clementine")
 	{
-		QList<QVariant> repl = msg.arguments();
-		if ( ! repl.isEmpty() )
-		{
-			QVariant qv = repl.at(0);
-			// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
-			QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
-			QVariant result2 = dbusVariant.variant();
-			QString readableName = result2.toString();
+		QList<QVariant> arg;
+		arg.append(QString("org.mpris.MediaPlayer2"));
+		arg.append(QString("Identity"));
+		QDBusMessage msg = mad->propertyIfc->callWithArgumentList(QDBus::Block, "Get", arg);
 
-			qDebug() << "REPLY " << result2.type() << ": " << readableName;
+		//msg = conn.call(query, QDBus::Block, 5);
+		if ( msg.type() == QDBusMessage::ReplyMessage )
+		{
+			QList<QVariant> repl = msg.arguments();
+			if ( ! repl.isEmpty() )
+			{
+				QVariant qv = repl.at(0);
+				// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
+				QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
+				QVariant result2 = dbusVariant.variant();
+				readableName = result2.toString();
+
+				qDebug() << "REPLY " << result2.type() << ": " << readableName;
+			}
+		}
+		else
+		{
+			qWarning() << "Error (" << msg.type() << "): " << msg.errorName() << " " << msg.errorMessage();
+		}
+	}
 
 			// TODO This hardcoded application list is a quick hack. It should be generalized.
 			MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
@@ -331,12 +357,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 			connect(mad, SIGNAL(volumeChanged(MPrisAppdata*,double)), this, SLOT(volumeChanged(MPrisAppdata*,double)) );
 
 			conn.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mad, SLOT(trackChangedIncoming(QVariantMap)) );
-		}
-	}
-	else
-	{
-		qWarning() << "Error (" << msg.type() << "): " << msg.errorName() << " " << msg.errorMessage();
-	}
+
 }
 
 
