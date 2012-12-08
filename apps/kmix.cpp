@@ -132,6 +132,8 @@ KMixWindow::KMixWindow(bool invisible) :
 KMixWindow::~KMixWindow()
 {
   ControlManager::instance().removeListener(this);
+
+  delete osdWidget;
   // -1- Cleanup Memory: clearMixerWidgets
   while (m_wsMixers->count() != 0)
     {
