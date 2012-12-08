@@ -147,7 +147,7 @@ void ViewDockAreaPopup::_setMixSet()
 	   if ( optionsLayout != 0 )
 	   {
 	     QLayoutItem *li2;
-	     while ( ( li2 = optionsLayout->takeAt(0) ) ) // strangely enough, it crashes here
+	     while ( ( li2 = optionsLayout->takeAt(0) ) )
 	 	    delete li2;
 	   }
 
@@ -202,20 +202,17 @@ Application: KMix (kmix), signal: Segmentation fault
 	 * BKO 299754: Looks like I need to explicitly delete layout(). I have no idea why
 	 *             "delete _layoutMDW" is not enough, as that is supposed to be the layout
 	 *             of this  ViewDockAreaPopup
+	 *             (Hint: it might have been 0 already)
 	 */
-	kDebug() << "2 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 	delete layout(); // BKO 299754
-	kDebug() << "3 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 //	delete _layoutMDW;
 	_layoutMDW = new QGridLayout(this);
-	kDebug() << "4 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 	_layoutMDW->setSpacing(KDialog::spacingHint());
 	_layoutMDW->setMargin(0);
 	//_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
 	_layoutMDW->setSizeConstraint(QLayout::SetMaximumSize);
 	_layoutMDW->setObjectName(QLatin1String("KmixPopupLayout"));
     setLayout(_layoutMDW);
-	kDebug() << "5 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 
 	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
 	// we have to redo the list on each _setMixSet() (instead of setting it once in the Constructor)

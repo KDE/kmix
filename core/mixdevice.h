@@ -113,6 +113,8 @@ public:
    MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = 0 );
    ~MixDevice();
 
+   void close();
+
    shared_ptr<MixDevice> addToPool();
 
    const QString& iconName() const { return _iconName; }

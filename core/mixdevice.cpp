@@ -138,8 +138,24 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
 //    kDebug(67100) << "MixDevice::init() _id=" << _id;
 }
 
+
+/*
+ * When a MixDevice shall be finally discarded, you must use this method to free its resources.
+ * You must not use this MixDevice after calling close().
+ * <br>
+ * The necessity stems from a memory leak due to object cycle (MixDevice<->DBusControlWrapper), so the reference
+ * counting shared_ptr has no chance to clean up. See Bug 309464 for background information.
+ */
+void MixDevice::close()
+{
+	delete _dbusControlWrapper;
+	_dbusControlWrapper = 0;
+}
+
+
 shared_ptr<MixDevice> MixDevice::addToPool()
 {
+	kDebug() << "id=" <<  _mixer->id() << ":" << _id;
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
     _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
@@ -192,7 +208,8 @@ void MixDevice::addEnums(QList<QString*>& ref_enumList)
 }
 
 
-MixDevice::~MixDevice() {
+MixDevice::~MixDevice()
+{
     _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
     delete _dbusControlWrapper;
 }

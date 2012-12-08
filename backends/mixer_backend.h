@@ -41,9 +41,25 @@ protected:
   Mixer_Backend(Mixer *mixer, int devnum);
   virtual ~Mixer_Backend();
 
-  /// Derived classes MUST implement this to open the mixer. Returns a KMix error code (O=OK).
+  /**
+   * Derived classes MUST implement this to open the mixer.
+   *
+   * @return a KMix error code (O=OK).
+   */
   virtual int open() = 0;
-  virtual int close() = 0;
+  /**
+   * Derived classes MUST implement this to close the mixer. Do not call this directly, but use shutdown() instead.
+   * The method cannot be made pure virtual, as we use close() in the destructor, and C++ does not allow this.
+   * http://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
+   *
+   * @return a KMix error code (O=OK).
+   */
+  virtual int close();
+
+  /*
+   * Shutdown deinitializes this MixerBackend, freeing resources and calling close()
+   */
+  virtual int shutdown();
 
   /*
    * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for looking up the
@@ -148,6 +164,7 @@ public slots:
 
 protected:
   QString m_mixerName;
+  void freeMixDevices();
 
 protected slots:
   virtual void readSetFromHW();

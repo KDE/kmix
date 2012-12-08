@@ -238,6 +238,7 @@ void ViewBase::resetMdws()
       while (!_mdws.isEmpty())
 	      delete _mdws.takeFirst();
 
+      // _mixSet contains shared_ptr instances, so clear() should be enough to prevent mem leak
       _mixSet.clear(); // Clean up our _mixSet so we can reapply our GUIProfile
 }
 

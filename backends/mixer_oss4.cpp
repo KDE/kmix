@@ -481,7 +481,6 @@ int Mixer_OSS4::close()
 {
 	m_isOpen = false;
 	int l_i_ret = ::close(m_fd);
-	m_mixDevices.clear();
 	m_recommendedMaster.reset();
 	return l_i_ret;
 }

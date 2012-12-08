@@ -45,14 +45,39 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 
 }
 
-Mixer_Backend::~Mixer_Backend()
+int Mixer_Backend::shutdown()
 {
-// 	qDebug() << "Running Mixer_Backend destructor";
-	delete _pollingTimer;
-	//qDeleteAll(m_mixDevices); // TODO cesken Leak check the removed qDeleteAll()
-	m_mixDevices.clear();
+	int ret = close();
+	freeMixDevices();
+	return ret;
 }
 
+int Mixer_Backend::close()
+{
+	kDebug() << "Implicit close on " << this << ". Please instead call close() explicitly (before destroying this object)";
+	// ^^^ Background. before the destructor runs, the C++ runtime changes the virtual pointers to point back
+	//     to the common base class. So what actually runs is not run Mixer_ALSA::close(), but this method.
+	//
+	//     Comment: IMO this is totally stupid and insane behavior of C++, because you cannot simply cannot call
+	//              the overwritten (cleanup) methods in the destructor.
+	return 0;
+}
+
+Mixer_Backend::~Mixer_Backend()
+{
+	kDebug() << "Destruct " << this;
+// 	qDebug() << "Running Mixer_Backend destructor";
+	delete _pollingTimer;
+	shutdown();
+}
+
+void Mixer_Backend::freeMixDevices()
+{
+	foreach (shared_ptr<MixDevice> md, m_mixDevices)
+		md->close();
+
+	m_mixDevices.clear();
+}
 
 bool Mixer_Backend::openIfValid() {
 	bool valid = false;
@@ -69,9 +94,10 @@ bool Mixer_Backend::openIfValid() {
 			// The initial state must be read manually
 			QTimer::singleShot( POLL_OSS_RATE_FAST, this, SLOT(readSetFromHW()) );
 		}
-	} // cold be opened
-	else {
-		close();
+	} // could be opened
+	else
+	{
+		shutdown();
 	}
 	return valid;
 }

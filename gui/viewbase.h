@@ -134,9 +134,9 @@ public:
 
 protected:
     MixSet _mixSet;
-    QList<Mixer*> _mixers; // this might deprecate _mixer in the future. Currently only in use by ViewDockAreaPopup
+    QList<Mixer*> _mixers;
     KMenu *_popMenu;
-    KActionCollection* _actions; // -<- applciations wide action collection
+    KActionCollection* _actions; // -<- application wide action collection
 
     ViewFlags _vflags;
     const QString _guiProfileId;

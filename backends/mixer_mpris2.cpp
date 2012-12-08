@@ -57,7 +57,6 @@ int Mixer_MPRIS2::open()
 int Mixer_MPRIS2::close()
 {
 	  m_isOpen = false;
-	  m_mixDevices.clear();
 	 return 0;
 }
 
@@ -387,8 +386,14 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 			int lastDot = name.lastIndexOf('.');
 			QString id = ( lastDot == -1 ) ? name : name.mid(lastDot+1);
 			apps.remove(id);
+			shared_ptr<MixDevice> md = m_mixDevices.get(id);
+			kDebug() << "MixDevice 1 useCount=" << md.use_count();
+			md->close();
+			kDebug() << "MixDevice 2 useCount=" << md.use_count();
 			m_mixDevices.removeById(id);
+			kDebug() << "MixDevice 3 useCount=" << md.use_count();
 		    notifyToReconfigureControls();
+			kDebug() << "MixDevice 4 useCount=" << md.use_count();
 		}
 		else
 		{

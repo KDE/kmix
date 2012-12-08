@@ -797,9 +797,15 @@ void Mixer_PULSE::removeWidget(int index)
     {
         if ((*iter)->id() == id)
         {
-//            delete *iter;  // TODO cesken LET-THIS-CHECK  Delete should not be required after migration to shared_ptr
+			shared_ptr<MixDevice> md = m_mixDevices.get(id);
+			kDebug() << "MixDevice 1 useCount=" << md.use_count();
+			md->close();
+			kDebug() << "MixDevice 2 useCount=" << md.use_count();
+
             m_mixDevices.erase(iter);
+			kDebug() << "MixDevice 3 useCount=" << md.use_count();
             emitControlsReconfigured();
+			kDebug() << "MixDevice 4 useCount=" << md.use_count();
             return;
         }
     }
@@ -814,7 +820,7 @@ void Mixer_PULSE::removeAllWidgets()
     if (KMIXPA_APP_PLAYBACK == m_devnum)
         outputRoles.clear();
 
-    m_mixDevices.clear();
+    freeMixDevices();
     emitControlsReconfigured();
 }
 
