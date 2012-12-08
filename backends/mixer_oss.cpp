@@ -187,6 +187,7 @@ int Mixer_OSS::close()
     _pollingTimer->stop();
     m_isOpen = false;
     int l_i_ret = ::close(m_fd);
+    closeCommon();
     return l_i_ret;
 }
 

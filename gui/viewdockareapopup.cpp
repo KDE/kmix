@@ -283,6 +283,11 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
   
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
+    // Leak | relevant | pctl Each time a stream is added, a new ProfControl gets created.
+    //      It cannot be deleted in ~MixDeviceWidget, as ProfControl* ownership is not consistent.
+    //      here a new pctl is created (could be deleted), but in ViewSliders the ProcControl is taken from the
+    //      MixDevice, which in turn uses it from the GUIProfile.
+    //  Summarizing: ProfControl* is either owned by the GUIProfile or created new (ownership unclear).
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
     
     if ( !md->isApplicationStream() )

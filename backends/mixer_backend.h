@@ -57,9 +57,9 @@ protected:
   virtual int close();
 
   /*
-   * Shutdown deinitializes this MixerBackend, freeing resources and calling close()
+   * Shutdown deinitializes this MixerBackend, freeing resources
    */
-  virtual int shutdown();
+  void closeCommon();
 
   /*
    * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for looking up the

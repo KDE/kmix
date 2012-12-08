@@ -516,6 +516,7 @@ Mixer_ALSA::close()
 
   deinitAlsaPolling();
 
+  closeCommon();
   return ret;
 }
 

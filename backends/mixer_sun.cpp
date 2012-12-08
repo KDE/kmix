@@ -222,6 +222,7 @@ int Mixer_SUN::close()
    _pollingTimer->stop();
    m_isOpen = false;
    int l_i_ret = ::close( fd );
+   closeCommon();
    return l_i_ret;
 }
 

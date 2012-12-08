@@ -297,7 +297,7 @@ bool Mixer::openIfValid(int cardId)
 void Mixer::close()
 {
 	if ( _mixerBackend != 0)
-		_mixerBackend->shutdown();
+		_mixerBackend->closeCommon();
 }
 
 

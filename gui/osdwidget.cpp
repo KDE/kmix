@@ -158,7 +158,7 @@ void OSDWidget::themeUpdated()
     if (!Plasma::Theme::defaultTheme()->imagePath("icons/audio").isEmpty()) {
         QFontMetrics fm(m_volumeLabel->font());
         iconSize = QSize(fm.height(), fm.height());
-        // Leak prio=low The old Plasma::Svg is not freed on a themeUpdated(), also it is not freed in the destructor
+        // Leak | low prio | The old Plasma::Svg is not freed on a themeUpdated(), also it is not freed in the destructor
         Plasma::Svg *svgIcon = new Plasma::Svg(this);
         svgIcon->setImagePath("icons/audio");
         svgIcon->setContainsMultipleImages(true);

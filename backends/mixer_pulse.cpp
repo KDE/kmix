@@ -995,6 +995,8 @@ Mixer_PULSE::~Mixer_PULSE()
             }
         }
     }
+
+    closeCommon();
 }
 
 int Mixer_PULSE::open()
@@ -1047,6 +1049,7 @@ int Mixer_PULSE::open()
 
 int Mixer_PULSE::close()
 {
+	closeCommon();
     return 1;
 }
 

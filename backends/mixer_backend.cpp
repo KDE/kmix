@@ -45,16 +45,14 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 
 }
 
-int Mixer_Backend::shutdown()
+void Mixer_Backend::closeCommon()
 {
-	int ret = close();
 	freeMixDevices();
-	return ret;
 }
 
 int Mixer_Backend::close()
 {
-	kDebug() << "Implicit close on " << this << ". Please instead call close() explicitly (before destroying this object)";
+	kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
 	// ^^^ Background. before the destructor runs, the C++ runtime changes the virtual pointers to point back
 	//     to the common base class. So what actually runs is not run Mixer_ALSA::close(), but this method.
 	//
@@ -65,10 +63,13 @@ int Mixer_Backend::close()
 
 Mixer_Backend::~Mixer_Backend()
 {
+	if (!m_mixDevices.isEmpty())
+	{
+		kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
+	}
 	kDebug() << "Destruct " << this;
 // 	qDebug() << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
-	shutdown();
 }
 
 void Mixer_Backend::freeMixDevices()
@@ -97,7 +98,7 @@ bool Mixer_Backend::openIfValid() {
 	} // could be opened
 	else
 	{
-		shutdown();
+		//shutdown();
 	}
 	return valid;
 }

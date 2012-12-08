@@ -57,6 +57,7 @@ int Mixer_MPRIS2::open()
 int Mixer_MPRIS2::close()
 {
 	  m_isOpen = false;
+	  closeCommon();
 	 return 0;
 }
 
@@ -436,6 +437,7 @@ void MPrisAppdata::volumeChangedIncoming(QString /*ifc*/,QVariantMap msg ,QStrin
 
 Mixer_MPRIS2::~Mixer_MPRIS2()
 {
+	close();
 }
 
 MPrisAppdata::MPrisAppdata()
