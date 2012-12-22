@@ -5,6 +5,7 @@ Type=Application
 Exec=kmixctrl --restore
 OnlyShowIn=KDE;
 Name=Restore Mixer Volumes
+Name[bs]=Obnovi jačine miksete
 Name[ca]=Restaura els volums del mesclador
 Name[cs]=Obnovit nastavení hlasitosti
 Name[da]=Genskab mikserlydstyrke
