@@ -771,7 +771,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
                    default: kDebug() << "FATAL: Unknown channel type for capture << " << vc.chid << " ... please report this";  break;
               }
               if ( ret != 0 ) kDebug() << "readVolumeFromHW(" << devnum << ") [get_capture_volume] failed, errno=" << ret;
-              volumeCapture.setVolume( vc.chid, vol);
+              else volumeCapture.setVolume( vc.chid, vol);
        }
     } // has capture volume
 
