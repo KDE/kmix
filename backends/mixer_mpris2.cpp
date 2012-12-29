@@ -269,6 +269,9 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
  */
 void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination)
 {
+	// TODO This looks buggy, as we strip off the (optional) instance id. This means we fail to add
+	//      players multi instance players (e.g. VLC can run in multiple instances).
+	//      Check both addMprisControl() and newMediaPlayer() for "name.mid(lastDot+1);"
 	int lastDot = busDestination.lastIndexOf('.');
 	QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1);
 	kDebug(67100) << "Get control of " << busDestination << "id=" << id;
@@ -384,17 +387,21 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
 		{
 			kDebug() << "Mediaplayer unregisters: " << name;
+			// TODO This looks buggy, as we strip off the (optional) instance id. This means we fail to add
+			//      players multi instance players (e.g. VLC can run in multiple instances).
+			//      Check both addMprisControl() and newMediaPlayer() for "name.mid(lastDot+1);"
 			int lastDot = name.lastIndexOf('.');
 			QString id = ( lastDot == -1 ) ? name : name.mid(lastDot+1);
 			apps.remove(id);
 			shared_ptr<MixDevice> md = m_mixDevices.get(id);
-			kDebug() << "MixDevice 1 useCount=" << md.use_count();
-			md->close();
-			kDebug() << "MixDevice 2 useCount=" << md.use_count();
-			m_mixDevices.removeById(id);
-			kDebug() << "MixDevice 3 useCount=" << md.use_count();
-		    notifyToReconfigureControls();
-			kDebug() << "MixDevice 4 useCount=" << md.use_count();
+			if (md != 0)
+			{
+				// We know about the player that is unregistering => remove internally
+				md->close();
+				m_mixDevices.removeById(id);
+				notifyToReconfigureControls();
+				kDebug() << "MixDevice 4 useCount=" << md.use_count();
+			}
 		}
 		else
 		{
