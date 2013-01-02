@@ -353,7 +353,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
 
     if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
         if (is_new)
-            s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+            s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index, true);
         else {
             int mid = s_mixers[KMIXPA_APP_PLAYBACK]->id2num(s.name);
             if (mid >= 0) {
@@ -417,7 +417,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 
     if (s_mixers.contains(KMIXPA_APP_CAPTURE)) {
         if (is_new)
-            s_mixers[KMIXPA_APP_CAPTURE]->addWidget(s.index);
+            s_mixers[KMIXPA_APP_CAPTURE]->addWidget(s.index, true);
         else {
             int mid = s_mixers[KMIXPA_APP_CAPTURE]->id2num(s.name);
             if (mid >= 0) {
@@ -518,7 +518,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
             outputRoles[s.index] = s;
 
             if (is_new)
-                s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index);
+                s_mixers[KMIXPA_APP_PLAYBACK]->addWidget(s.index, true);
         }
     }
 }
@@ -766,7 +766,7 @@ void Mixer_PULSE::emitControlsReconfigured()
     ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
 }
 
-void Mixer_PULSE::addWidget(int index)
+void Mixer_PULSE::addWidget(int index, bool isAppStream)
 {
     devmap* map = get_widget_map(m_devnum, index);
 
@@ -774,7 +774,7 @@ void Mixer_PULSE::addWidget(int index)
         kWarning(67100) <<  "New " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
         return;
     }
-    addDevice((*map)[index]);
+    addDevice((*map)[index], isAppStream);
     emitControlsReconfigured();
 }
 
@@ -842,7 +842,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         if (isAppStream)
             md->setApplicationStream(true);
 
-	kDebug() << "Adding Pulse volume " << dev.name << ", isCapture= " << isCapture << ", devnum=" << m_devnum;
+	kDebug() << "Adding Pulse volume " << dev.name << ", isCapture= " << isCapture << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
 	if ( isCapture )
 	  md->addCaptureVolume(v);
 	else

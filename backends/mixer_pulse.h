@@ -60,7 +60,7 @@ class Mixer_PULSE : public Mixer_Backend
         virtual bool needsPolling() { return false; }
 
         void triggerUpdate();
-        void addWidget(int index);
+        void addWidget(int index, bool = false);
         void removeWidget(int index);
         void removeAllWidgets();
         MixSet *getMixSet() { return &m_mixDevices; }
