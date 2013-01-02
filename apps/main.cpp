@@ -36,7 +36,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
    KAboutData aboutData( "kmix", 0, ki18n("KMix"),
                          APP_VERSION, ki18n(description), KAboutData::License_GPL,
-                         ki18n("(c) 1996-2012 The KMix Authors"));
+                         ki18n("(c) 1996-2013 The KMix Authors"));
 
    // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.
    aboutData.addAuthor(ki18n("Christian Esken")   , ki18n("Original author and current maintainer"), "esken@kde.org");
