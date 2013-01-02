@@ -233,6 +233,11 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileName
  */
 void GUIProfile::addProfile(GUIProfile* guiprof)
 {
+	// Possible TODO: Delete old mapped GUIProfile, if it exists. Otherwise we might leak one GUIProfile instance
+	//                per unplug/plug sequence. Its quite likely possible that currently no Backend leads to a
+	//                leak: This is because they either don't hotplug cards (PulseAudio, MPRIS2), or they ship
+	//                a XML gui profile (so the Cached version is retrieved, and addProfile() is not called).
+
     s_profiles[guiprof->getId()] = guiprof;
     kDebug() << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
     
@@ -271,14 +276,17 @@ GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileNam
 }
 
 /**
- * This is for all backends that ship no profile files
+ * Returns a fallback GUIProfile. You can call this if the backends ships no profile files.
+ * The returned GUIProfile is also added to the static Map of all GUIProfile instances.
  */
 GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
 {
+	// -1- Get name
     QString fullQualifiedProfileName = buildProfileName(mixer, QString("default"), false);
 
     GUIProfile *fallback = new GUIProfile();
 
+    // -2- Fill details
     ProfProduct* prd = new ProfProduct();
     prd->vendor         = mixer->getDriverName();
     prd->productName    = mixer->readableName();
@@ -301,6 +309,14 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
     fallback->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
     fallback->setName(buildReadableProfileName(mixer, QString("default"))); // The caller can rename this if he likes
     fallback->setDirty();
+
+    /* -3- Add the profile to the static list
+     *     Hint: This looks like a memory leak, as we never remove profiles from memory while KMix runs.
+     *           Especially with application streams it looks suspicious. But please be aware that this method is only
+     *           called for soundcard hotplugs, and not on stream hotplugs. At least it is supposed to be like that.
+     *
+     *           Please also see the docs at addProfile(), they also address the possible memory leakage.
+     */
     addProfile(fallback);
 
     return fallback;
