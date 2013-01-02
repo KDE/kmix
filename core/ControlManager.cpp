@@ -123,8 +123,8 @@ void ControlManager::addListener(QString mixerId, ControlChangeType::Type change
 		if ( changeType & ct )
 		{
 			// Add all listeners.
-			Listener* listener = new Listener(mixerId, ct, target, sourceId);
-			listeners.append(*listener);
+			Listener listener = Listener(mixerId, ct, target, sourceId);
+			listeners.append(listener);
 			listenersChanged = true;
 		}
 	}
