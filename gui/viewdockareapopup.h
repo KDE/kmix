@@ -69,6 +69,10 @@ private:
     QPushButton *restoreVolumeButton4;
     KIcon* restoreVolumeIcon;
 
+    static ProfControl MatchAllForSoundMenu;
+    static QString InternedString_Star;
+    static QString InternedString_Subcontrols;
+
 public slots:
        void controlsChange(int changeType);
        virtual void configureView();

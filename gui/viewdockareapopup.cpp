@@ -49,6 +49,10 @@
 // Restore volume button feature is incomplete => disabling for KDE 4.10
 #undef RESTORE_VOLUME_BUTTON
 
+QString ViewDockAreaPopup::InternedString_Star = QString("*");
+QString ViewDockAreaPopup::InternedString_Subcontrols = QString("pvolume,cvolume,pswitch,cswitch");
+ProfControl ViewDockAreaPopup::MatchAllForSoundMenu = ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
+
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
 	KMixWindow *dockW) :
 	ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
@@ -265,22 +269,25 @@ Application: KMix (kmix), signal: Segmentation fault
 	// Add all application streams
 	foreach ( Mixer* mixer2 , _mixers )
 	{
+		kDebug(67100) << "Add mixer to tray popup? " << mixer2->id();
 		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
 		{
+			kDebug(67100) << "Add to tray popup? " << md->id();
 			if (md->isApplicationStream())
 			{
 				_mixSet.append(md);
-				kDebug(67100) << "Add to tray popup: " << md->id();
+				kDebug(67100) << "Add to tray popup! YES: " << md->id();
 			}
 		}
 	}
 
 }
 
+
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
   bool vertical = (GlobalConfig::instance().traypopupOrientation == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
-  
+  /*
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
     // Leak | relevant | pctl Each time a stream is added, a new ProfControl gets created.
@@ -290,6 +297,7 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
     //  Summarizing: ProfControl* is either owned by the GUIProfile or created new (ownership unclear).
     //  Hint: dummyMatchAll and matchAllPlaybackAndTheCswitch leak together with pctl
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
+ */
     
     if ( !md->isApplicationStream() )
     {
@@ -312,6 +320,7 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 //_layoutMDW->addItem( new QSpacerItem( 5, 5 ), row, col );
     }
     
+    ProfControl *pctl = &MatchAllForSoundMenu;
     MixDeviceWidget *mdw = new MDWSlider(
       md,           // only 1 device.
       true,         // Show Mute LE
