@@ -157,6 +157,7 @@ void ControlManager::removeListener(QObject* target, QString sourceId)
 			kDebug()
 			<< "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId << " from " << target;
 			it.remove();
+			// Hint: As we have actual objects no explicit delete is needed
 			listenersChanged = true;
 		}
 	}

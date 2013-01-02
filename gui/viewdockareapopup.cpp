@@ -288,6 +288,7 @@ QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
     //      here a new pctl is created (could be deleted), but in ViewSliders the ProcControl is taken from the
     //      MixDevice, which in turn uses it from the GUIProfile.
     //  Summarizing: ProfControl* is either owned by the GUIProfile or created new (ownership unclear).
+    //  Hint: dummyMatchAll and matchAllPlaybackAndTheCswitch leak together with pctl
     ProfControl *pctl = new ProfControl( dummyMatchAll, matchAllPlaybackAndTheCswitch);
     
     if ( !md->isApplicationStream() )
