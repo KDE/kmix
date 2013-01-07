@@ -2,7 +2,7 @@
 * osdwidget.cpp
 * Copyright  2009    Aurélien Gâteau <agateau@kde.org>
 * Copyright  2009    Dario Andres Rodriguez <andresbajotierra@gmail.com>
-* Copyright  2009    Christian Esken <christian.esken@arcor.de>   
+* Copyright  2009    Christian Esken <christian.esken@arcor.de>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -41,8 +41,7 @@
 #include <core/mixer.h>
 
 OSDWidget::OSDWidget(QWidget * parent)
-    : QGraphicsView(parent),
-    m_background(new Plasma::FrameSvg(this)),
+    : Plasma::Dialog(parent, Qt::ToolTip),
     m_scene(new QGraphicsScene(this)),
     m_container(new QGraphicsWidget),
     m_iconLabel(new Plasma::Label),
@@ -51,15 +50,9 @@ OSDWidget::OSDWidget(QWidget * parent)
     m_hideTimer(new QTimer(this))
 {
     //Setup the window properties
-    setWindowFlags(Qt::X11BypassWindowManagerHint);
-    setFrameStyle(QFrame::NoFrame);
-    viewport()->setAutoFillBackground(false);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setAttribute(Qt::WA_TranslucentBackground);
-
-    //Setup the widgets
-    m_background->setImagePath("widgets/tooltip");
+    KWindowSystem::setState(winId(), NET::KeepAbove);
+    KWindowSystem::setType(winId(), NET::Tooltip);
+    setAttribute(Qt::WA_X11NetWmWindowTypeToolTip, true);
 
     m_meter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_meter->setMaximum(100);
@@ -72,12 +65,12 @@ OSDWidget::OSDWidget(QWidget * parent)
      * would be to register to volume changes of the global master and additionally
      * register to MasterChanges. That could be slightly more efficient
      */
-      	ControlManager::instance().addListener(
-	  QString(), // all mixers
-	ControlChangeType::Volume,
-	this,
-	QString("OSDWidget")	  
-	);
+    ControlManager::instance().addListener(
+        QString(), // all mixers
+        ControlChangeType::Volume,
+        this,
+        QString("OSDWidget")
+        );
 
     //Setup the auto-hide timer
     m_hideTimer->setInterval(2000);
@@ -86,16 +79,16 @@ OSDWidget::OSDWidget(QWidget * parent)
 
     //Setup the OSD layout
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(m_container);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addItem(m_iconLabel);
     layout->addItem(m_meter);
     layout->addItem(m_volumeLabel);
 
     m_scene->addItem(m_container);
+    setGraphicsWidget(m_container);
 
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated())); // e.g. for updating font
-
-    setScene(m_scene);
 }
 
 
@@ -120,7 +113,7 @@ void OSDWidget::controlsChange(int changeType)
       ControlManager::warnUnexpectedChangeType(type, this);
       break;
   }
-    
+
 }
 void OSDWidget::activateOSD()
 {
@@ -189,7 +182,10 @@ void OSDWidget::themeUpdated()
     m_volumeLabel->setAlignment(Qt::AlignCenter);
     m_volumeLabel->setWordWrap(false);
 
+    m_container->setMinimumSize(iconSize.width() * 13 + m_volumeLabel->nativeWidget()->width(), iconSize.height());
+    m_container->setMaximumSize(iconSize.width() * 13 + m_volumeLabel->nativeWidget()->width(), iconSize.height());
 
+    syncToGraphicsWidget();
 }
 
 
@@ -198,12 +194,12 @@ void OSDWidget::themeUpdated()
  */
 void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
 {
-	kDebug() << "Meter is visible: " << m_meter->isVisible();
+    kDebug() << "Meter is visible: " << m_meter->isVisible();
 
-	if ( muted )
-	{
-		volumeLevel = 0;
-	}
+    if ( muted )
+    {
+        volumeLevel = 0;
+    }
     m_meter->setValue(volumeLevel);
 
     if (!muted && (volumeLevel > 0)) {
@@ -220,45 +216,6 @@ void OSDWidget::setCurrentVolume(int volumeLevel, bool muted)
 
     //Show the volume %
     m_volumeLabel->setText(QString::number(volumeLevel) + " %"); // if you change the text, please adjust textSize in themeUpdated()
-}
-
-void OSDWidget::drawBackground(QPainter *painter, const QRectF &/*rectF*/)
-{
-    painter->save();
-    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    m_background->paintFrame(painter);
-    painter->restore();
-}
-
-QSize OSDWidget::sizeHint() const
-{
-    int iconSize = m_iconLabel->nativeWidget()->pixmap()->height();
-    int labelWidth = m_volumeLabel->nativeWidget()->size().width();
-    int meterHeight = iconSize;
-    int meterWidth = iconSize * 12;
-    qreal left, top, right, bottom;
-    m_background->getMargins(left, top, right, bottom);
-    return QSize(meterWidth + labelWidth + iconSize + left + right, meterHeight + top + bottom);
-}
-
-void OSDWidget::resizeEvent(QResizeEvent*)
-{
-    m_background->resizeFrame(size());
-    m_container->setGeometry(0, 0, width(), height());
-    qreal left, top, right, bottom;
-    m_background->getMargins(left, top, right, bottom);
-    m_container->layout()->setContentsMargins(left, top, right, bottom);
-
-    m_scene->setSceneRect(0, 0, width(), height());
-    if (!KWindowSystem::compositingActive()) {
-        setMask(m_background->mask());
-    }
-}
-
-void OSDWidget::showEvent(QShowEvent *)
-{
-    Plasma::WindowEffects::overrideShadow(winId(), true);
-    Plasma::WindowEffects::enableBlurBehind(winId(), true, m_background->mask());
 }
 
 #include "osdwidget.moc"

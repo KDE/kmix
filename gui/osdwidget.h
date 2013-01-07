@@ -22,7 +22,7 @@
 #ifndef OSDWIDGET__H
 #define OSDWIDGET__H
 
-#include <QGraphicsView>
+#include <Plasma/Dialog>
 
 #include <QPixmap>
 
@@ -31,12 +31,11 @@ class QGraphicsWidget;
 
 namespace Plasma
 {
-class FrameSvg;
 class Label;
 class Meter;
 }
 
-class OSDWidget : public QGraphicsView
+class OSDWidget : public Plasma::Dialog
 {
 Q_OBJECT
 public:
@@ -46,18 +45,10 @@ public:
     void setCurrentVolume(int volumeLevel, bool muted);
     void activateOSD();
 
-    virtual QSize sizeHint() const;
-
     public slots:
        void controlsChange(int changeType);
 
-protected:
-    virtual void drawBackground(QPainter *painter, const QRectF &rectF);
-    virtual void resizeEvent(QResizeEvent *);
-    void showEvent(QShowEvent *event);
-
 private:
-    Plasma::FrameSvg *m_background;
     QGraphicsScene *m_scene;
     QGraphicsWidget *m_container;
     Plasma::Label *m_iconLabel;
