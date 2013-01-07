@@ -2,6 +2,7 @@
 IconName=kmix
 Comment=Sound Mixer
 Comment[bg]=Звуков смесител
+Comment[bs]=Mikser zvuka
 Comment[ca]=Mesclador de so
 Comment[cs]=Zvukový směšovač
 Comment[da]=Lydmikser
@@ -45,6 +46,7 @@ Comment[zh_TW]=音效混音器
 [Event/MasterFallback]
 Name=Audio Device Fallback
 Name[bg]=Резервно звуково устройство
+Name[bs]=Rezervni zvučni uređaj
 Name[ca]=Dispositiu d'àudio alternatiu
 Name[cs]=Náhradní zvukové zařízení
 Name[da]=Erstatning for lydenhed
@@ -85,6 +87,7 @@ Name[zh_CN]=备用音频设备
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
 Comment[bg]=Уведомление за резервно устройство ако подразбиращото се не е налично
+Comment[bs]=Obavještenje o automatskoj alternativi ako željeni uređaj nije dostupan
 Comment[ca]=Notificació del canvi automàtic al dispositiu l'alternatiu si el dispositiu preferit no està disponible
 Comment[cs]=Upozornění na automatickou náhradu, pokud je preferované zařízení nedostupné
 Comment[da]=Bekendtgørelse af automatisk erstatning hvis den foretrukne enhed er utilgængelig
