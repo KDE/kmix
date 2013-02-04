@@ -101,7 +101,7 @@ public slots:
     void update();
     void showMoveMenu();
     virtual void showContextMenu( const QPoint &pos = QCursor::pos() );
-    void increaseOrDecreaseVolume(bool arg1);
+    void increaseOrDecreaseVolume(bool arg1, Volume::VolumeTypeFlag volumeType);
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);
 
@@ -174,8 +174,6 @@ private:
     bool m_sliderInWork;
     int m_waitForSoundSetComplete;
     QList<int> volumeValues;
-
-    long calculateStepIncrement ( Volume&vol, bool decrease );
 };
 
 #endif

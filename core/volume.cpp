@@ -26,6 +26,10 @@
 
 #include <kdebug.h>
 
+float Volume::VOLUME_STEP_DIVISOR = 20;
+float Volume::VOLUME_PAGESTEP_DIVISOR = 10;
+
+
 int Volume::_channelMaskEnum[9] =
 { MLEFT, MRIGHT, MCENTER,
 		MWOOFER,
@@ -62,7 +66,6 @@ Volume::Volume()
 	_switchType = None;
 	_isCapture = false;
 	_chmask = MNONE;
-	disallowSwitchDisallowRead = false;
 }
 
 // IIRC we need the default constructor implicitly for a Collection operation
@@ -111,7 +114,6 @@ void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasS
 	// a) Physical switches will be updated after start from the hardware.
 	// b) Emulated virtual/switches will not receive updates from the hardware, so they shouldn't disable the channels.
 	_switchActivated = true;
-	disallowSwitchDisallowRead = false;
 }
 
 QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumesWhenActive() const
@@ -122,13 +124,32 @@ QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumesWhenActive() const
 QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
 {
 	return _volumesL;
-//	if ( isSwitchActivated() )
-//		return _volumesL;
-//	else
-//	{
-//		return _volumesMuted;
-//	}
 }
+
+/**
+ * Returns the absolute change to do one "step" for this volume. This is similar to a page step in a slider,
+ * namely a fixed percentage of the range.
+ * One step is the percentage given by 100/VOLUME_STEP_DIVISOR. The
+ * default VOLUME_STEP_DIVISOR is 20, so default change is 5% of the volumeSpan().
+ *
+ * This method guarantees a minimum absolute change of 1, zero is never returned.
+ *
+ * It is NOT verified, that such a volume change would actually be possible. You might hit the upper or lower bounds
+ * of the volume range.
+ *
+ *
+ * @param decrease true, if you want a volume step that decreases the volume by one page step
+ * @return The volume step. It will be negative if you have used decrease==true
+ *
+ */
+long Volume::volumeStep(bool decrease)
+{
+  	long inc = volumeSpan() / Volume::VOLUME_STEP_DIVISOR;
+	if ( inc == 0 )	inc = 1;
+	if ( decrease ) inc *= -1;
+	return inc;
+}
+
 
 // @ compatibility
 void Volume::setAllVolumes(long vol)

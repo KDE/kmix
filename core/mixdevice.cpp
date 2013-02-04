@@ -186,7 +186,6 @@ void MixDevice::addPlaybackVolume(Volume &playbackVol)
    // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
    _playbackVolume = playbackVol;
    _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
-    playbackVol.hasSwitchDisallowRead(); // Only allowed to read once, and only here during migrating the switch back to MixDevice
 }
 
 void MixDevice::addCaptureVolume (Volume &captureVol)

@@ -311,18 +311,20 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 void KSmallSlider::wheelEvent( QWheelEvent * qwe)
 {
 //    kDebug(67100) << "KSmallslider::wheelEvent()";
-    int inc = ( maximum() - minimum() ) / Mixer::VOLUME_STEP_DIVISOR;
+	// bko313579 Do not use "delta", as that is setting more related to documents (Editor, Browser). KMix should
+	//           simply always use its own VOLUME_STEP_DIVISOR as a base for percentage change.
+	bool decrease = qwe->delta() < 0;
+	if (qwe->orientation() == Qt::Horizontal) // Reverse horizontal scroll: bko228780
+		decrease = !decrease;
+
+    int inc = ( maximum() - minimum() ) / Volume::VOLUME_STEP_DIVISOR;
     if ( inc < 1)
-	inc = 1;
+    	inc = 1;
 
     //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta();
 	int newVal;
 
-	bool increase = (qwe->delta() > 0);
-	if (qwe->orientation() == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
-		increase = !increase;
-
-    if ( increase ) {
+    if ( !decrease ) {
        newVal = QAbstractSlider::value() + inc;
     }
     else {

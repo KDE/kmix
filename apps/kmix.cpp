@@ -576,7 +576,7 @@ KMixWindow::loadBaseConfig()
     {
       float volumePercentageStep = volumePercentageStepString.toFloat();
       if (volumePercentageStep > 0 && volumePercentageStep <= 100)
-        Mixer::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
+        Volume::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
     }
 
 

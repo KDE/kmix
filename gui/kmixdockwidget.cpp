@@ -342,19 +342,19 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 		return;
 
 
-      Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
-      int inc = vol.volumeSpan() / Mixer::VOLUME_STEP_DIVISOR;
+	Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
+	// bko313579 Do not use "delta", as that is setting more related to documents (Editor, Browser). KMix should
+	//           simply always use its own VOLUME_STEP_DIVISOR as a base for percentage change.
+	bool decrease = delta < 0;
+	if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bko228780
+	decrease = !decrease;
+	long cv = vol.volumeStep(decrease);
 
-    if ( inc < 1 ) inc = 1;
-
-    if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
-    	delta = -delta;
-
-    long int cv = inc * (delta / 120 );
     bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
     kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
 	if ( cv > 0 && isInactive)
-	{   // increasing from muted state: unmute and start with a low volume level
+	{
+		// increasing from muted state: unmute and start with a low volume level
 		if ( vol.isCapture())
 			md->setRecSource(true);
 		else

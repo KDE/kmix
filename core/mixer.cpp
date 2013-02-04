@@ -39,8 +39,6 @@
 QList<Mixer *> Mixer::s_mixers;
 MasterControl Mixer::_globalMasterCurrent;
 MasterControl Mixer::_globalMasterPreferred;
-float Mixer::VOLUME_STEP_DIVISOR = 20;
-float Mixer::VOLUME_PAGESTEP_DIVISOR = 10;
 bool Mixer::m_beepOnVolumeChange = false;
 
 int Mixer::numDrivers()
@@ -639,6 +637,14 @@ void Mixer::decreaseVolume( const QString& mixdeviceID )
 	increaseOrDecreaseVolume(mixdeviceID, true);
 }
 
+/**
+ * Increase or decrease all playback and capture channels of the given control.
+ * This method is very similar to MDWSlider::increaseOrDecreaseVolume(), but it will
+ * NOT auto-unmute.
+ *
+ * @param mixdeviceID The control name
+ * @param decrease true for decrease. false for increase
+ */
 void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease )
 {
 
@@ -646,21 +652,15 @@ void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease 
     if (md.get() != 0)
     {
         Volume& volP=md->playbackVolume();
-        if ( volP.hasVolume() ) {
-        	long volSpan = volP.volumeSpan();
-           double step = volSpan / Mixer::VOLUME_STEP_DIVISOR;
-           if ( step < 1 ) step = 1;
-           if ( decrease ) step = -step;
-           volP.changeAllVolumes(step);
+        if ( volP.hasVolume() )
+        {
+           volP.changeAllVolumes(volP.volumeStep(decrease));
         }
         
         Volume& volC=md->captureVolume();
-        if ( volC.hasVolume() ) {
-        	long volSpan = volC.volumeSpan();
-           double step = volSpan / Mixer::VOLUME_STEP_DIVISOR;
-           if ( step < 1 ) step = 1;
-           if ( decrease ) step = -step;
-           volC.changeAllVolumes(step);
+        if ( volC.hasVolume() )
+        {
+           volC.changeAllVolumes(volC.volumeStep(decrease));
         }
 
         _mixerBackend->writeVolumeToHW(mixdeviceID, md);

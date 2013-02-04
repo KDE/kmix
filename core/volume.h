@@ -80,6 +80,8 @@ friend class MixDevice;
 
     enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
 
+    enum VolumeTypeFlag { Playback = 1, Capture = 2, Both = 3 };
+
     // regular constructor (old, deprecsted)
     //Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     // regular constructor
@@ -144,8 +146,11 @@ friend class MixDevice;
     static int    _channelMaskEnum[9];
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
     QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
-    void hasSwitchDisallowRead() { disallowSwitchDisallowRead = true; };
+    long volumeStep(bool decrease);
     
+    static float VOLUME_STEP_DIVISOR;     // The divisor for defining volume control steps (for mouse-wheel, DBUS and Normal step for Sliders )
+    static float VOLUME_PAGESTEP_DIVISOR; // The divisor for defining volume control steps (page-step for sliders)
+
 protected:
     long          _chmask;
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
