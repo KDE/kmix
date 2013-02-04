@@ -27,6 +27,7 @@
 #include <QStringList>
 #include <QDBusReply>
 #include <QString>
+#include <qvariant.h>
 
 #include <KLocale>
 
@@ -241,17 +242,33 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	 * There is no simple solution (reversing could have the problem of not-adding), so we live for now with it.
 	 */
 	 
-	QDBusReply<QStringList> repl = dbusConn.interface()->registeredServiceNames();
+	/*
+	 * Bug 311189: Introspecting via "dbusConn.interface()->registeredServiceNames()" does not work too well in
+	 *   specific scenarios. Thus I now do a hand crafted 3-line asynchronous version of registeredServiceNames().
+	 */
+	QDBusInterface dbusIfc("org.freedesktop.DBus", "/org/freedesktop/DBus",
+	                          "org.freedesktop.DBus", dbusConn);
+	QDBusPendingReply<QStringList> repl = dbusIfc.asyncCall("ListNames");
+	repl.waitForFinished();
+
 
 	if ( repl.isValid() )
 	{
+		qDebug() << "Attaching Media Players";
 		QStringList result = repl.value();
 		QString s;
 		foreach ( s , result )
 		{
 			if ( s.startsWith("org.mpris.MediaPlayer2") )
+			{
 				addMprisControl(dbusConn, s);
+				kDebug() << "Attached " << s;
+			}
 		}
+	}
+	else
+	{
+		kError() << "Invalid reply while listing Media Players" << repl.error();
 	}
 
 
@@ -275,19 +292,19 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 	int lastDot = busDestination.lastIndexOf('.');
 	QString id = ( lastDot == -1 ) ? busDestination : busDestination.mid(lastDot+1);
 	kDebug(67100) << "Get control of " << busDestination << "id=" << id;
-	if (id.startsWith("clementine"))
-	{
-		// Bug 311189: Clementine hangs
-        QString text;
-        text =
-            i18n(
-                "Media player '%1' is not compatible with KMix. Integration skipped.",
-                id);
-        // We cannot do GUI stuff in the backend, so lets only log it for now
-//        KMixToolBox::notification("Unsupported Media Player", text);
-        kWarning() << text;
-        return;
-	}
+//	if (id.startsWith("clementine"))
+//	{
+//		// Bug 311189: Clementine hangs
+//        QString text;
+//        text =
+//            i18n(
+//                "Media player '%1' is not compatible with KMix. Integration skipped.",
+//                id);
+//        // We cannot do GUI stuff in the backend, so lets only log it for now
+////        KMixToolBox::notification("Unsupported Media Player", text);
+//        kWarning() << text;
+//        return;
+//	}
 
 
 	QDBusInterface *qdbiProps  = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
@@ -302,8 +319,8 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 
 	QString readableName = id;
 
-	if (id != "clementine")
-	{
+//	if (id != "clementine")
+//	{
 		QList<QVariant> arg;
 		arg.append(QString("org.mpris.MediaPlayer2"));
 		arg.append(QString("Identity"));
@@ -328,7 +345,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 		{
 			qWarning() << "Error (" << msg.type() << "): " << msg.errorName() << " " << msg.errorMessage();
 		}
-	}
+//	}
 
 			// TODO This hardcoded application list is a quick hack. It should be generalized.
 			MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
