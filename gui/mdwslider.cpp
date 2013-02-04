@@ -959,7 +959,8 @@ void MDWSlider::setDisabled( bool value )
 
 
 /**
- * This slot is called on a Keyboard Shortcut event.
+ * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which hare handeled by the
+ * KMixWindow class. So for 99.9% of all users, this methos is never called.
  */
 void MDWSlider::increaseVolume()
 {
@@ -967,7 +968,8 @@ void MDWSlider::increaseVolume()
 }
 
 /**
- * This slot is called on a Keyboard Shortcut event.
+ * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which hare handeled by the
+ * KMixWindow class. So for 99.9% of all users, this methos is never called.
  */
 void MDWSlider::decreaseVolume()
 {
@@ -984,43 +986,7 @@ void MDWSlider::decreaseVolume()
  */
 void MDWSlider::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType)
 {
-	kDebug() << "VolumeType=" << volumeType;
-	if (volumeType & Volume::Playback)
-	{
-		kDebug() << "VolumeType=" << volumeType << "   p";
-		Volume& volP = m_mixdevice->playbackVolume();
-		long inc = volP.volumeStep(decrease);
-
-		if ( mixDevice()->id() == "PCM:0" )
-		  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
-
-		if (!decrease && m_mixdevice->isMuted())
-		{
-			// increasing from muted state: unmute and start with a low volume level
-			if (mixDevice()->id() == "PCM:0")
-				kDebug() << "set all to " << inc << "muted old=" << m_mixdevice->isMuted();
-
-			m_mixdevice->setMuted(false);
-			volP.setAllVolumes(inc);
-		}
-		else
-		{
-			volP.changeAllVolumes(inc);
-			if (mixDevice()->id() == "PCM:0")
-				kDebug()
-				<< (decrease ? "decrease by " : "increase by ") << inc;
-		}
-	}
-
-	if (volumeType & Volume::Capture)
-	{
-		kDebug() << "VolumeType=" << volumeType << "   c";
-
-		Volume& volC = m_mixdevice->captureVolume();
-		long inc = volC.volumeStep(decrease);
-		volC.changeAllVolumes(inc);
-	}
-
+	m_mixdevice->increaseOrDecreaseVolume(decrease, volumeType);
 	// I should possibly not block, as the changes that come back from the Soundcard
 	//      will be ignored (e.g. because of capture groups)
 // 	kDebug() << "MDWSlider is blocking signals for " << m_view->id();
@@ -1029,8 +995,6 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 // 	kDebug() << "MDWSlider is unblocking signals for " << m_view->id();
 // 	m_view->blockSignals(oldViewBlockSignalState);
 }
-
-
 
 void MDWSlider::moveStreamAutomatic()
 {

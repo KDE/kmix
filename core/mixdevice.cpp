@@ -164,6 +164,54 @@ shared_ptr<MixDevice> MixDevice::addToPool()
 
 
 /**
+ * Changes the internal state of this MixDevice.
+ * It does not commit the change to the hardware.
+ *
+ * You might want to call something like m_mixdevice->mixer()->commitVolumeChange(m_mixdevice); after calling this method.
+ */
+void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType)
+{
+	bool debugme =  id() == "PCM:0" ;
+	if (volumeType & Volume::Playback)
+	{
+		kDebug() << "VolumeType=" << volumeType << "   p";
+		Volume& volP = playbackVolume();
+		long inc = volP.volumeStep(decrease);
+
+		if (debugme)
+		  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
+
+		if (!decrease && isMuted())
+		{
+			// increasing from muted state: unmute and start with a low volume level
+			if (debugme)
+				kDebug() << "set all to " << inc << "muted old=" << isMuted();
+
+			setMuted(false);
+			volP.setAllVolumes(inc);
+		}
+		else
+		{
+			volP.changeAllVolumes(inc);
+			if (debugme)
+				kDebug() << (decrease ? "decrease by " : "increase by ") << inc;
+		}
+	}
+
+	if (volumeType & Volume::Capture)
+	{
+		kDebug() << "VolumeType=" << volumeType << "   c";
+
+		Volume& volC = captureVolume();
+		long inc = volC.volumeStep(decrease);
+		volC.changeAllVolumes(inc);
+	}
+
+}
+
+
+
+/**
  * Returns the name of the config group
  * @param Prefix of the group, e.g. "View_ALSA_USB_01"
  * @returns The config group name in the format "prefix.mixerId,controlId"

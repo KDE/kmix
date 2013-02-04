@@ -216,6 +216,7 @@ public:
    bool write( KConfig *config, const QString& grp );
    int getUserfriendlyVolumeLevel();
 
+   void increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType);
 
 
 protected:

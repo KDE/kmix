@@ -1133,12 +1133,10 @@ KMixWindow::increaseOrDecreaseVolume(bool increase)
   if (md.get() == 0)
     return; // shouldn't happen, but lets play safe
 
-  md->setMuted(false);
-  if (increase)
-    mixer->increaseVolume(md->id()); // this is awkward. Better move the increaseVolume impl to the Volume class.
-  else
-    mixer->decreaseVolume(md->id());
-  // md->playbackVolume().increase(); // not yet implemented
+  Volume::VolumeTypeFlag volumeType = md->playbackVolume().hasVolume() ? Volume::Playback : Volume::Capture;
+  md->increaseOrDecreaseVolume(!increase, volumeType);
+  md->mixer()->commitVolumeChange(md);
+
   showVolumeDisplay();
 }
 
