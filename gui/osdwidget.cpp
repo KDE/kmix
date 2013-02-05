@@ -31,7 +31,7 @@
 #include <KIcon>
 #include <KDialog>
 #include <KWindowSystem>
-#include <Plasma/FrameSvg>
+#include <Plasma/Svg>
 #include <Plasma/Label>
 #include <Plasma/Meter>
 #include <Plasma/Theme>
@@ -151,15 +151,14 @@ void OSDWidget::themeUpdated()
     if (!Plasma::Theme::defaultTheme()->imagePath("icons/audio").isEmpty()) {
         QFontMetrics fm(m_volumeLabel->font());
         iconSize = QSize(fm.height(), fm.height());
-        // Leak | low prio | The old Plasma::Svg is not freed on a themeUpdated(), also it is not freed in the destructor
-        Plasma::Svg *svgIcon = new Plasma::Svg(this);
-        svgIcon->setImagePath("icons/audio");
-        svgIcon->setContainsMultipleImages(true);
-        svgIcon->resize(iconSize);
-        m_volumeHighPixmap = svgIcon->pixmap("audio-volume-high");
-        m_volumeMediumPixmap = svgIcon->pixmap("audio-volume-medium");
-        m_volumeLowPixmap = svgIcon->pixmap("audio-volume-low");
-        m_volumeMutedPixmap = svgIcon->pixmap("audio-volume-muted");
+        Plasma::Svg svgIcon;
+        svgIcon.setImagePath("icons/audio");
+        svgIcon.setContainsMultipleImages(true);
+        svgIcon.resize(iconSize);
+        m_volumeHighPixmap = svgIcon.pixmap("audio-volume-high");
+        m_volumeMediumPixmap = svgIcon.pixmap("audio-volume-medium");
+        m_volumeLowPixmap = svgIcon.pixmap("audio-volume-low");
+        m_volumeMutedPixmap = svgIcon.pixmap("audio-volume-muted");
     } else {
         iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
         m_volumeHighPixmap = KIcon( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
