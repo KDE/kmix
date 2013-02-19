@@ -26,6 +26,8 @@
 // include files for QT
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QTabWidget>
+#include <QtGui/QScrollArea>
+#include <QtGui/QScrollBar>
 
 // include files for KDE
 #include <KDE/KActionCollection>
@@ -38,8 +40,8 @@
 // KMix
 #include "kmixd_interface.h"
 #include "controlgroup_interface.h"
-
 #include "ControlGroupTab.h"
+#include "VerticalScrollWidget.h"
 
 const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
 const QString KMIX_DBUS_PATH = "/KMixD";
@@ -56,12 +58,15 @@ KMixWindow::KMixWindow(QWidget* parent)
     initActions();
     createGUI( QLatin1String( "kmixui.rc" ) );
     show();
-    QTabWidget *mainWidget = new QTabWidget(this);
-    setCentralWidget(mainWidget);
+    m_tabs = new QTabWidget(this);
+    setCentralWidget(m_tabs);
     foreach(const QString &groupName, m_daemon->mixerGroups()) {
         org::kde::KMix::ControlGroup *group = new org::kde::KMix::ControlGroup(KMIX_DBUS_SERVICE, groupName, QDBusConnection::sessionBus(), this);
-        QWidget *groupWidget = new ControlGroupTab(group, mainWidget);
-        mainWidget->addTab(groupWidget, group->displayName());
+        VerticalScrollWidget *scrollWidget = new VerticalScrollWidget(m_tabs);
+        scrollWidget->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
+        QWidget *groupWidget = new ControlGroupTab(group, scrollWidget);
+        scrollWidget->setWidget(groupWidget);
+        m_tabs->addTab(scrollWidget, group->displayName());
     }
 }
 

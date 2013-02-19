@@ -35,6 +35,7 @@ ControlGroupTab::ControlGroupTab(org::kde::KMix::ControlGroup *group, QWidget *p
     , m_group(group)
 {
     m_layout = new QVBoxLayout(this);
+    m_layout->addStretch();
     m_emptyLabel = new QLabel(tr("No controls available."), this);
     m_emptyLabel->setGeometry(geometry());
     m_emptyLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -63,7 +64,7 @@ void ControlGroupTab::controlAdded(const QString &path)
     qDebug() << "Discovered control" << path;
     org::kde::KMix::Control *control = new org::kde::KMix::Control(KMIX_DBUS_SERVICE, path, QDBusConnection::sessionBus());
     ControlSlider *slider = new ControlSlider(control, this);
-    m_layout->addWidget(slider);
+    m_layout->insertWidget(m_layout->count()-1, slider);
     m_controls[path] = slider;
     m_emptyLabel->hide();
 }

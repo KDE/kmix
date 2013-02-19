@@ -18,41 +18,17 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CONTROLGROUPTAB_H
-#define CONTROLGROUPTAB_H
+#ifndef VERTICALSCROLLWIDGET_H
+#define VERTICALSCROLLWIDGET_H
 
-#include <QtGui/QWidget>
-#include <QtCore/QHash>
+#include <QtGui/QScrollArea>
 
-class QBoxLayout;
-class ControlSlider;
-class QResizeEvent;
-class QLabel;
-
-class OrgKdeKMixControlGroupInterface;
-namespace org {
-    namespace kde {
-        namespace KMix {
-            typedef OrgKdeKMixControlGroupInterface ControlGroup;
-        }
-    }
-}
-
-class ControlGroupTab : public QWidget {
+class VerticalScrollWidget : public QScrollArea {
     Q_OBJECT
 public:
-    ControlGroupTab(org::kde::KMix::ControlGroup *group, QWidget *parent);
-    ~ControlGroupTab();
-protected:
-    void resizeEvent(QResizeEvent *evt);
-private slots:
-    void controlAdded(const QString &path);
-    void controlRemoved(const QString &path);
-private:
-    org::kde::KMix::ControlGroup *m_group;
-    QBoxLayout *m_layout;
-    QHash<QString, ControlSlider*> m_controls;
-    QLabel *m_emptyLabel;
+    VerticalScrollWidget(QWidget *parent);
+    ~VerticalScrollWidget();
+    QSize minimumSizeHint() const;
 };
 
-#endif // CONTROLGROUPTAB_H
+#endif // VERTICALSCROLLWIDGET_H

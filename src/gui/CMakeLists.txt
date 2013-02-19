@@ -5,6 +5,7 @@ set(kmix_KDEINIT_SRCS
    ControlSlider.cpp
    ControlGroupTab.cpp
    ControlMonitor.cpp
+   VerticalScrollWidget.cpp
 )
 
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml

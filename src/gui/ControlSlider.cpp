@@ -178,5 +178,11 @@ void ControlSlider::handleTargetChange()
     }
 }
 
+QSize ControlSlider::minimumSizeHint() const
+{
+    QSize orig = QWidget::minimumSizeHint();
+    return QSize(400, orig.height());
+}
+
 
 #include "ControlSlider.moc"

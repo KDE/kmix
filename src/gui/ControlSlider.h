@@ -43,6 +43,8 @@ class ControlSlider : public QWidget
 public:
     explicit ControlSlider(org::kde::KMix::Control *control, QWidget *parent = 0);
     ~ControlSlider();
+    QSize minimumSizeHint() const;
+
 private slots:
     void volumeChange(int channel, int level);
     void updateVolume(int channel);

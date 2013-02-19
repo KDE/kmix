@@ -56,6 +56,7 @@ private:
     org::kde::KMix::KMixD *m_daemon;
     KMixDockWidget *m_dockWidget;
     QHBoxLayout *m_layout;
+    QTabWidget *m_tabs;
 };
 
 #endif // KMIX_H
