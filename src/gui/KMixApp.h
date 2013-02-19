@@ -36,6 +36,7 @@ namespace org {
 }
 
 class KMixWindow;
+class KMixOSD;
 class KStatusNotifierItem;
 
 class KMixApp : public KUniqueApplication
@@ -50,6 +51,7 @@ Q_OBJECT
     static org::kde::KMix::KMixD *s_daemon;
     KMixWindow *m_kmix;
     KStatusNotifierItem *m_icon;
+    KMixOSD *m_osd;
 };
 
 #endif

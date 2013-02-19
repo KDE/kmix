@@ -20,6 +20,7 @@
  */
 
 #include "KMixApp.h"
+#include "KMixOSD.h"
 #include "KMixWindow.h"
 #include <kdebug.h>
 #include <KDE/KStatusNotifierItem>
@@ -52,6 +53,7 @@ KMixApp::newInstance()
     if ( m_kmix ) {
         m_kmix->show();
     } else {
+        m_osd = new KMixOSD(NULL);
         m_kmix = new KMixWindow(NULL);
         m_icon = new KStatusNotifierItem("kmix");
         m_icon->setAssociatedWidget(m_kmix);

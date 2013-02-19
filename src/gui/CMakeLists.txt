@@ -2,6 +2,7 @@ set(kmix_KDEINIT_SRCS
    main.cpp
    KMixWindow.cpp
    KMixApp.cpp
+   KMixOSD.cpp
    ControlSlider.cpp
    ControlGroupTab.cpp
    ControlMonitor.cpp
