@@ -23,7 +23,9 @@
 #include "KMixWindow.h"
 #include <kdebug.h>
 #include <KDE/KStatusNotifierItem>
+#include "kmixd_interface.h"
 
+org::kde::KMix::KMixD *KMixApp::s_daemon = 0;
 
 KMixApp::KMixApp()
     : KUniqueApplication(), m_kmix( 0 )
@@ -63,3 +65,11 @@ KMixApp::newInstance()
 	return 0;
 }
 
+org::kde::KMix::KMixD *KMixApp::daemon()
+{
+    Q_ASSERT(qApp);
+    if (s_daemon == 0) {
+        s_daemon = new org::kde::KMix::KMixD(KMIX_DBUS_SERVICE, KMIX_DBUS_PATH, QDBusConnection::sessionBus(), qApp);
+    }
+    return s_daemon;
+}

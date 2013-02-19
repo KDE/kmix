@@ -42,9 +42,7 @@
 #include "controlgroup_interface.h"
 #include "ControlGroupTab.h"
 #include "VerticalScrollWidget.h"
-
-const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
-const QString KMIX_DBUS_PATH = "/KMixD";
+#include "KMixApp.h"
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
@@ -54,13 +52,12 @@ KMixWindow::KMixWindow(QWidget* parent)
 {
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     setAttribute(Qt::WA_DeleteOnClose, false);
-    m_daemon = new org::kde::KMix::KMixD(KMIX_DBUS_SERVICE, KMIX_DBUS_PATH, QDBusConnection::sessionBus(), this);
     initActions();
     createGUI( QLatin1String( "kmixui.rc" ) );
     show();
     m_tabs = new QTabWidget(this);
     setCentralWidget(m_tabs);
-    foreach(const QString &groupName, m_daemon->mixerGroups()) {
+    foreach(const QString &groupName, KMixApp::daemon()->mixerGroups()) {
         org::kde::KMix::ControlGroup *group = new org::kde::KMix::ControlGroup(KMIX_DBUS_SERVICE, groupName, QDBusConnection::sessionBus(), this);
         VerticalScrollWidget *scrollWidget = new VerticalScrollWidget(m_tabs);
         scrollWidget->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);

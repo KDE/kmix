@@ -23,6 +23,18 @@
 
 #include <kuniqueapplication.h>
 
+const QString KMIX_DBUS_SERVICE = "org.kde.kmixd";
+const QString KMIX_DBUS_PATH = "/KMixD";
+
+class OrgKdeKMixKMixDInterface;
+namespace org {
+    namespace kde {
+        namespace KMix {
+            typedef ::OrgKdeKMixKMixDInterface KMixD;
+        }
+    }
+}
+
 class KMixWindow;
 class KStatusNotifierItem;
 
@@ -32,8 +44,10 @@ Q_OBJECT
  public:
     KMixApp();
     ~KMixApp();
-    int newInstance ();
+    int newInstance();
+    static org::kde::KMix::KMixD *daemon();
  private:
+    static org::kde::KMix::KMixD *s_daemon;
     KMixWindow *m_kmix;
     KStatusNotifierItem *m_icon;
 };

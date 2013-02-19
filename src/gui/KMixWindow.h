@@ -27,14 +27,6 @@
 #include <kxmlguiwindow.h>
 
 // KMix
-class OrgKdeKMixKMixDInterface;
-namespace org {
-    namespace kde {
-        namespace KMix {
-            typedef ::OrgKdeKMixKMixDInterface KMixD;
-        }
-    }
-}
 
 class KMixDockWidget;
 class QHBoxLayout;
@@ -53,7 +45,6 @@ private slots:
 
 private:
     void initActions();
-    org::kde::KMix::KMixD *m_daemon;
     KMixDockWidget *m_dockWidget;
     QHBoxLayout *m_layout;
     QTabWidget *m_tabs;
