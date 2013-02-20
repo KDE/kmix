@@ -65,6 +65,21 @@ KMixWindow::KMixWindow(QWidget* parent)
         scrollWidget->setWidget(groupWidget);
         m_tabs->addTab(scrollWidget, group->displayName());
     }
+
+    KAction *action = actionCollection()->addAction("increase_volume");
+    action->setText(i18n("Increase Volume"));
+    action->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
+    connect(action, SIGNAL(triggered(bool)), KMixApp::daemon(), SLOT(increaseMaster()));
+
+    action = actionCollection()->addAction("decrease_volume");
+    action->setText(i18n("Decrease Volume"));
+    action->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
+    connect(action, SIGNAL(triggered(bool)), KMixApp::daemon(), SLOT(decreaseMaster()));
+
+    action = actionCollection()->addAction("mute");
+    action->setText(i18n("Mute"));
+    action->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
+    connect(action, SIGNAL(triggered(bool)), KMixApp::daemon(), SLOT(setMasterMute(bool)));
 }
 
 KMixWindow::~KMixWindow()
