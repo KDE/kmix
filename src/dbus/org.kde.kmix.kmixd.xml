@@ -15,8 +15,11 @@
     <signal name="masterChanged">
         <arg name="id" type="s"/>
     </signal>
+    <signal name="masterMuteChanged">
+        <arg name="id" type="b"/>
+    </signal>
     <signal name="masterVolumeChanged">
-        <arg name="level" type="d"/>
+        <arg name="level" type="i"/>
     </signal>
     <property access="readwrite" name="masterVolume" type="i">
     <property access="readwrite" name="masterMuted" type="b">
