@@ -40,6 +40,14 @@ public:
     KMixWindow(QWidget* parent = 0);
     ~KMixWindow();
 
+signals:
+    void enableOSD();
+    void disableOSD();
+
+protected:
+    void showEvent(QShowEvent *evt);
+    void hideEvent(QHideEvent *evt);
+
 private slots:
     void launchPhononConfig();
 

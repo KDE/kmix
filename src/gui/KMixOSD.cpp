@@ -37,6 +37,9 @@
 #include <Plasma/Theme>
 #include <Plasma/WindowEffects>
 
+#include "KMixApp.h"
+#include "kmixd_interface.h"
+
 KMixOSD::KMixOSD(QWidget * parent)
     : QGraphicsView(parent),
     m_background(new Plasma::FrameSvg(this)),
@@ -45,7 +48,8 @@ KMixOSD::KMixOSD(QWidget * parent)
     m_iconLabel(new Plasma::Label),
     m_volumeLabel(new Plasma::Label),
     m_meter(new Plasma::Meter),
-    m_hideTimer(new QTimer(this))
+    m_hideTimer(new QTimer(this)),
+    m_enabled(true)
 {
     //Setup the window properties
     setWindowFlags(Qt::X11BypassWindowManagerHint);
@@ -97,7 +101,6 @@ KMixOSD::KMixOSD(QWidget * parent)
 
     //Set a fixed width for the volume label. To do that we need the text with the maximum width
     //(this is true if the volume is at 100%). We simply achieve that by calling "setCurrentVolume".
-    setCurrentVolume(100, false);
     themeUpdated();
 
     //Setup the auto-hide timer
@@ -116,11 +119,38 @@ KMixOSD::KMixOSD(QWidget * parent)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated())); // e.g. for updating font
 
     setScene(m_scene);
+
+    connect(KMixApp::daemon(), SIGNAL(masterVolumeChanged(int)), this, SLOT(volumeUpdated(int)));
 }
 
-void KMixOSD::activateOSD()
+void KMixOSD::volumeUpdated(int volume)
 {
-    m_hideTimer->start();
+    m_meter->setValue(volume);
+    bool muted = false;
+
+    if (!muted && (volume > 0)) {
+        if (volume < 25) {
+            m_iconLabel->nativeWidget()->setPixmap(m_volumeLowPixmap);
+        } else if (volume < 75) {
+            m_iconLabel->nativeWidget()->setPixmap(m_volumeMediumPixmap);
+        } else {
+            m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
+        }
+    } else {
+        m_iconLabel->nativeWidget()->setPixmap(m_volumeMutedPixmap);
+    }
+
+    //Show the volume %
+    m_volumeLabel->setText(QString::number(volume/USHRT_MAX) + " %"); // if you change the text, please adjust textSize in themeUpdated()
+    activate();
+}
+
+void KMixOSD::activate()
+{
+    if (m_enabled) {
+        show();
+        m_hideTimer->start();
+    }
 }
 
 void KMixOSD::themeUpdated()
@@ -149,29 +179,6 @@ void KMixOSD::themeUpdated()
 //    m_volumeLabel->setText(oldText);
 }
 
-
-/**
- * Set volume level in percent
- */
-void KMixOSD::setCurrentVolume(int volumeLevel, bool muted)
-{
-    m_meter->setValue(volumeLevel);
-
-    if (!muted && (volumeLevel > 0)) {
-        if (volumeLevel < 25) {
-            m_iconLabel->nativeWidget()->setPixmap(m_volumeLowPixmap);
-        } else if (volumeLevel < 75) {
-            m_iconLabel->nativeWidget()->setPixmap(m_volumeMediumPixmap);
-        } else {
-            m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);
-        }
-    } else {
-        m_iconLabel->nativeWidget()->setPixmap(m_volumeMutedPixmap);
-    }
-
-    //Show the volume %
-    m_volumeLabel->setText(QString::number(volumeLevel) + " %"); // if you change the text, please adjust textSize in themeUpdated()
-}
 
 void KMixOSD::drawBackground(QPainter *painter, const QRectF &/*rectF*/)
 {
@@ -210,6 +217,17 @@ void KMixOSD::showEvent(QShowEvent *)
 {
     Plasma::WindowEffects::overrideShadow(winId(), true);
     Plasma::WindowEffects::enableBlurBehind(winId(), true, m_background->mask());
+}
+
+void KMixOSD::disable()
+{
+    m_enabled = false;
+    hide();
+}
+
+void KMixOSD::enable()
+{
+    m_enabled = true;
 }
 
 #include "KMixOSD.moc"

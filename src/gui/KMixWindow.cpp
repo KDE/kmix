@@ -54,7 +54,6 @@ KMixWindow::KMixWindow(QWidget* parent)
     setAttribute(Qt::WA_DeleteOnClose, false);
     initActions();
     createGUI( QLatin1String( "kmixui.rc" ) );
-    show();
     m_tabs = new QTabWidget(this);
     setCentralWidget(m_tabs);
     foreach(const QString &groupName, KMixApp::daemon()->mixerGroups()) {
@@ -101,6 +100,19 @@ void KMixWindow::launchPhononConfig()
     QStringList args;
     args << "kcmshell4" << "kcm_phonon";
     KProcess::startDetached(args);
+}
+
+void KMixWindow::showEvent(QShowEvent *evt)
+{
+    emit disableOSD();
+    KXmlGuiWindow::showEvent(evt);
+}
+
+void KMixWindow::hideEvent(QHideEvent *evt)
+{
+    emit enableOSD();
+    KXmlGuiWindow::hideEvent(evt);
+
 }
 
 #include "KMixWindow.moc"

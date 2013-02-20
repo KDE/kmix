@@ -42,10 +42,12 @@ Q_OBJECT
 public:
     KMixOSD(QWidget * parent = 0);
 
-    void setCurrentVolume(int volumeLevel, bool muted);
-    void activateOSD();
-
     virtual QSize sizeHint() const;
+
+public slots:
+    void activate();
+    void disable();
+    void enable();
 
 protected:
     virtual void drawBackground(QPainter *painter, const QRectF &rectF);
@@ -65,9 +67,11 @@ private:
     QPixmap m_volumeMediumPixmap;
     QPixmap m_volumeLowPixmap;
     QPixmap m_volumeMutedPixmap;
+    bool m_enabled;
 
 private slots:
-	void themeUpdated();
+    void themeUpdated();
+    void volumeUpdated(int value);
 };
 
 #endif

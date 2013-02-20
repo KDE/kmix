@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2000 Stefan Schimanski <schimmi@kde.org>
  * Copyright (C) 2001 Preston Brown <pbrown@kde.org>
+ * Copyright (C) 2013 Trever Fischer <tdfischer@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,8 +54,10 @@ KMixApp::newInstance()
     if ( m_kmix ) {
         m_kmix->show();
     } else {
-        m_osd = new KMixOSD(NULL);
         m_kmix = new KMixWindow(NULL);
+        m_osd = new KMixOSD(NULL);
+        connect(m_kmix, SIGNAL(disableOSD()), m_osd, SLOT(disable()));
+        connect(m_kmix, SIGNAL(enableOSD()), m_osd, SLOT(enable()));
         m_icon = new KStatusNotifierItem("kmix");
         m_icon->setAssociatedWidget(m_kmix);
         m_icon->setCategory(KStatusNotifierItem::Hardware);
@@ -63,6 +66,8 @@ KMixApp::newInstance()
         m_icon->setStatus(KStatusNotifierItem::Passive);
         m_icon->setTitle("KMix");
         m_icon->setToolTip("kmix", "KMix", "Volume");
+
+        m_kmix->show();
     }
 	return 0;
 }
