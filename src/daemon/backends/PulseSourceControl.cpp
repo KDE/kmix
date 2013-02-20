@@ -34,9 +34,11 @@ PulseSourceControl::PulseSourceControl(pa_context *cxt, const pa_source_info *in
 
 void PulseSourceControl::setVolume(Channel c, int v)
 {
-    m_volumes.values[(int)c] = v;
+    m_volumes.values[(int)c] = qMax(0, v);
     if (!pa_context_set_source_volume_by_index(m_context, m_idx, &m_volumes, NULL, NULL)) {
         qWarning() << "pa_context_set_source_volume_by_index() failed";
+    } else {
+        notifyVolumeUpdate(c);
     }
 }
 

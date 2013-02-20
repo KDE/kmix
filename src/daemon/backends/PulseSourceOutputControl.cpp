@@ -32,9 +32,11 @@ PulseSourceOutputControl::PulseSourceOutputControl(pa_context *cxt, const pa_sou
 
 void PulseSourceOutputControl::setVolume(Channel c, int v)
 {
-    m_volumes.values[(int)c] = v;
+    m_volumes.values[(int)c] = qMax(0, v);
     if (!pa_context_set_source_output_volume(m_context, m_idx, &m_volumes, NULL, NULL)) {
         qWarning() << "pa_context_set_source_output_volume() failed";
+    } else {
+        notifyVolumeUpdate(c);
     }
 }
 

@@ -68,6 +68,11 @@ bool PulseControl::canMute() const
     return true;
 }
 
+void PulseControl::notifyVolumeUpdate(Channel c)
+{
+    emit volumeChanged(c, m_volumes.values[c]);
+}
+
 void PulseControl::updateVolumes(const pa_cvolume &volumes)
 {
     QList<int> volumeUpdates;
@@ -80,7 +85,7 @@ void PulseControl::updateVolumes(const pa_cvolume &volumes)
     }
     m_volumes = volumes;
     foreach(int channel, volumeUpdates) {
-        emit volumeChanged((Channel)channel, m_volumes.values[channel]);
+        notifyVolumeUpdate((Channel)channel);
     }
 }
 

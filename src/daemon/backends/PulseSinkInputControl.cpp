@@ -35,9 +35,11 @@ PulseSinkInputControl::PulseSinkInputControl(pa_context *cxt, const pa_sink_inpu
 
 void PulseSinkInputControl::setVolume(Channel c, int v)
 {
-    m_volumes.values[(int)c] = v;
+    m_volumes.values[(int)c] = qMax(0, v);
     if (!pa_context_set_sink_input_volume(m_context, m_idx, &m_volumes, NULL, NULL)) {
         qWarning() << "pa_context_set_sink_input_volume() failed";
+    } else {
+        notifyVolumeUpdate(c);
     }
 }
 

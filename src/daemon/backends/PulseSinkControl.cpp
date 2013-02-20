@@ -32,9 +32,11 @@ PulseSinkControl::PulseSinkControl(pa_context *cxt, const pa_sink_info *info, Pu
 
 void PulseSinkControl::setVolume(Channel c, int v)
 {
-    m_volumes.values[(int)c] = v;
+    m_volumes.values[(int)c] = qMax(0, v);
     if (!pa_context_set_sink_volume_by_index(m_context, m_idx, &m_volumes, NULL, NULL)) {
         qWarning() << "pa_context_set_sink_volume_by_index() failed";
+    } else {
+        notifyVolumeUpdate(c);
     }
 }
 
@@ -50,6 +52,7 @@ void PulseSinkControl::update(const pa_sink_info *info)
     m_iconName = QString::fromUtf8(pa_proplist_gets(info->proplist, PA_PROP_DEVICE_ICON_NAME));
     updateVolumes(info->volume);
     if (m_muted != info->mute) {
+        qDebug() << "Mute changed";
         emit muteChanged(info->mute);
     }
     m_muted = info->mute;
