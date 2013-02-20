@@ -118,7 +118,9 @@ ControlSlider::~ControlSlider()
 
 void ControlSlider::volumeChange(int channel, int level)
 {
+    bool oldstate = m_sliders[channel]->blockSignals(true);
     m_sliders[channel]->setValue(level);
+    m_sliders[channel]->blockSignals(oldstate);
 }
 
 void ControlSlider::updateVolume(int channel)
