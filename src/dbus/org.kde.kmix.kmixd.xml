@@ -7,6 +7,11 @@
     <method name="setMaster">
       <arg name="control" type="i" direction="in"/>
     </method>
+    <method name="setMasterMute">
+      <arg name="muted" type="b" direction="in"/>
+    </method>
+    <method name="increaseMaster"/>
+    <method name="decreaseMaster"/>
     <signal name="masterChanged">
         <arg name="id" type="s"/>
     </signal>
@@ -14,6 +19,7 @@
         <arg name="level" type="d"/>
     </signal>
     <property access="readwrite" name="masterVolume" type="i">
+    <property access="readwrite" name="masterMuted" type="b">
     <signal name="groupAdded">
         <arg name="name" type="s"/>
     </signal>

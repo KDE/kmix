@@ -32,6 +32,7 @@ class KMixDApp : public QCoreApplication
     Q_PROPERTY(QStringList mixerGroups READ mixerGroups);
     Q_PROPERTY(QString masterControl READ masterControl);
     Q_PROPERTY(int masterVolume READ masterVolume WRITE setMasterVolume NOTIFY masterVolumeChanged);
+    Q_PROPERTY(bool masterMuted READ masterMute WRITE setMasterMute NOTIFY masterMuteChanged);
 public:
     KMixDApp(int &argc, char **argv);
     ~KMixDApp();
@@ -42,15 +43,26 @@ public:
 
     int masterVolume() const;
     void setMasterVolume(int v);
+
+    bool masterMute() const;
+
+public slots:
+    void increaseMaster();
+    void decreaseMaster();
+    void setMasterMute(bool muted);
+
 signals:
     void groupAdded(const QString &name);
     void groupRemoved(const QString &name);
     void masterChanged(const QString &path);
     void masterVolumeChanged(int value);
+    void masterMuteChanged(bool isMuted);
+
 private slots:
     void controlAdded(Control *);
     void controlRemoved(Control *);
     void updateMasterVolume();
+    void updateMasterMute();
 private:
     Control *m_master;
 };
