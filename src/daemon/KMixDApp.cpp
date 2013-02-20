@@ -41,9 +41,9 @@ KMixDApp::~KMixDApp()
 
 int KMixDApp::start()
 {
+    new KMixDAdaptor(this);
+    QDBusConnection::sessionBus().registerObject("/KMixD", this);
     if (QDBusConnection::sessionBus().registerService("org.kde.kmixd")) {
-        new KMixDAdaptor(this);
-        QDBusConnection::sessionBus().registerObject("/KMixD", this);
         return exec();
     }
     return 1;
