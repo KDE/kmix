@@ -1217,7 +1217,7 @@ void MDWSlider::showMoveMenu()
     KAction *a = new KAction(_mdwMoveActions);
     a->setText( i18n("Automatic According to Category") );
     _mdwMoveActions->addAction( QString("moveautomatic"), a);
-    connect(a, SIGNAL(triggered(bool)), SLOT(moveStreamAutomatic()));
+    connect(a, SIGNAL(triggered(bool)), SLOT(moveStreamAutomatic()), Qt::QueuedConnection);
     m_moveMenu->addAction( a );
 
     a = new KAction(_mdwMoveActions);
@@ -1229,7 +1229,7 @@ void MDWSlider::showMoveMenu()
     {
         a = new MDWMoveAction(md, _mdwMoveActions);
         _mdwMoveActions->addAction( QString("moveto") + md->id(), a);
-        connect(a, SIGNAL(moveRequest(QString)), SLOT(moveStream(QString)));
+        connect(a, SIGNAL(moveRequest(QString)), SLOT(moveStream(QString)), Qt::QueuedConnection);
         m_moveMenu->addAction( a );
     }
 }
