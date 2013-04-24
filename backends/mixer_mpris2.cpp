@@ -377,7 +377,7 @@ void Mixer_MPRIS2::addMprisControl(QDBusConnection& conn, QString busDestination
 			connect(mad, SIGNAL(volumeChanged(MPrisAppdata*,double)), this, SLOT(volumeChanged(MPrisAppdata*,double)) );
 
 			conn.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mad, SLOT(trackChangedIncoming(QVariantMap)) );
-
+			volumeChanged(mad, mad->playerIfc->property("Volume").toDouble());
 }
 
 
