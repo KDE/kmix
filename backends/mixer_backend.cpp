@@ -186,12 +186,16 @@ void Mixer_Backend::readSetFromHW()
 			 */
 			md->setEnumId( enumIdHW(md->id()) );
 		}
+
+		// Transition the outer return value with the value from this loop iteration
 		if ( retLoop == Mixer::OK && ret == Mixer::OK_UNCHANGED )
 		{
+			// Unchanged => OK (Changed)
 			ret = Mixer::OK;
 		}
 		else if ( retLoop != Mixer::OK && retLoop != Mixer::OK_UNCHANGED )
 		{
+			// If current ret from loop in not OK, then transiton to that: ret (Something) => retLoop (Error)
 			ret = retLoop;
 		}
 	}
@@ -201,6 +205,7 @@ void Mixer_Backend::readSetFromHW()
 		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
 		if ( needsPolling() )
 		{
+			// Upgrade polling frequency temporarily to be more smoooooth
 			_pollingTimer->setInterval(POLL_OSS_RATE_FAST);
 			QTime fastPollingEndsAt = QTime::currentTime ();
 			fastPollingEndsAt = fastPollingEndsAt.addSecs(5);

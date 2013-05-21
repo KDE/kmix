@@ -782,7 +782,8 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
                    case Volume::REARSIDERIGHT: ret = snd_mixer_selem_get_capture_volume( elem, SND_MIXER_SCHN_SIDE_RIGHT  , &vol);     break;
                    default: kDebug() << "FATAL: Unknown channel type for capture << " << vc.chid << " ... please report this";  break;
               }
-              if ( ret != 0 ) kDebug() << "readVolumeFromHW(" << devnum << ") [get_capture_volume] failed, errno=" << ret;
+              if ( ret != 0 )
+            	  kDebug() << "readVolumeFromHW(" << devnum << ") [get_capture_volume] failed, errno=" << ret;
               else volumeCapture.setVolume( vc.chid, vol);
        }
     } // has capture volume

@@ -81,7 +81,9 @@ private:
     int addAllRunningPlayersAndInitHotplug();
     void notifyToReconfigureControls();
     void volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage);
-    
+//	static QDBusMessage* dbusGetAsyncReply(char method[], QDBusInterface* mad);
+//	static QDBusMessage* dbusGetAsyncReply(const char method[], const QList<QVariant>& arg, QDBusInterface* mad);
+
   QMap<QString,MPrisAppdata*> apps;
   QString _id;
 };

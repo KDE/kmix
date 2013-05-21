@@ -272,7 +272,7 @@ Application: KMix (kmix), signal: Segmentation fault
 //		kDebug(67100) << "Add mixer to tray popup? " << mixer2->id();
 		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
 		{
-			kDebug(67100) << "Add to tray popup? " << md->id();
+//			kDebug(67100) << "Add to tray popup? " << md->id();
 			if (md->isApplicationStream())
 			{
 				_mixSet.append(md);
