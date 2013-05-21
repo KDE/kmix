@@ -67,7 +67,7 @@ Mixer_Backend::~Mixer_Backend()
 	{
 		kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
 	}
-	kDebug() << "Destruct " << this;
+//	kDebug() << "Destruct " << this;
 // 	qDebug() << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
 }

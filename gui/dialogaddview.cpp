@@ -125,7 +125,7 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
         QLabel *qlbl = new QLabel( i18n("Select the design for the new view:"), m_mainFrame );
         _layout->addWidget(qlbl);
     
-        createPage(ptr_mixer);
+        createPage();
         connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
     }
     else {
@@ -146,7 +146,7 @@ void DialogAddView::createPageByID(int mixerId)
     {
         Mixer *mixer = (Mixer::mixers())[i];
         if ( mixer->readableName() == selectedMixerName ) {
-            createPage(mixer);
+            createPage();
             break;
         }
     } // for
@@ -157,7 +157,7 @@ void DialogAddView::createPageByID(int mixerId)
  * @par mixerId The Mixer, for which the RadioButton's should be created.
  *              TODO: The mixer's backend MUST be inspected to find out the supported profiles.
  */
-void DialogAddView::createPage(Mixer* mixer)
+void DialogAddView::createPage()
 {
     /** --- Reset page -----------------------------------------------
      * In case the user selected a new Mixer via m_cMixer, we need

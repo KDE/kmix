@@ -180,7 +180,7 @@ void Mixer::recreateId()
     primaryKeyOfMixer.replace(' ','_');
     primaryKeyOfMixer.replace('=','_');
     _id = primaryKeyOfMixer;
-	kDebug() << "Early _id=" << _id;
+//	kDebug() << "Early _id=" << _id;
 }
 
 const QString Mixer::dbusPath()
@@ -194,7 +194,7 @@ const QString Mixer::dbusPath()
 		recreateId();
 	}
 
-	kDebug() << "Late _id=" << _id;
+//	kDebug() << "Late _id=" << _id;
 //	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
 
 	// mixerName may contain arbitrary characters, so replace all that are not allowed to be be part of a DBUS path

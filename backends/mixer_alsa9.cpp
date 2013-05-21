@@ -70,7 +70,7 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-	kDebug() << "Destruct " << this;
+//	kDebug() << "Destruct " << this;
    close();
 }
 
@@ -479,7 +479,7 @@ void Mixer_ALSA::deinitAlsaPolling()
 int
 Mixer_ALSA::close()
 {
-	kDebug() << "close " << this;
+//	kDebug() << "close " << this;
 
   int ret=0;
   m_isOpen = false;

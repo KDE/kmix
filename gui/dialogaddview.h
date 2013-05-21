@@ -48,7 +48,7 @@ class DialogAddView : public KDialog
 
  private:
     void createWidgets(Mixer*);
-    void createPage(Mixer*);
+    void createPage();
     QVBoxLayout* _layout;
     KComboBox* m_cMixer;
     QScrollArea* m_scrollableChannelSelector;

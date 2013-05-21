@@ -193,7 +193,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	delete seperatorBetweenMastersAndStreams;
 	// --- Due to the strange crash, delete everything manually : END ---------------
 
-	kDebug() << "1 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+//	kDebug() << "1 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 	// BKO 299754 . Delete _layoutMDW before resetting ref. Otherwise it would be "delete 0;", aka "NOP"
 //	delete _layoutMDW;
 //	delete layout();
@@ -246,7 +246,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// A loop that adds the Master control of each card
 	foreach ( Mixer* mixer, _mixers )
 	{
-		kDebug() << "ADD? mixerId=" << mixer->id();
+//		kDebug() << "ADD? mixerId=" << mixer->id();
 		shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
 		if ( dockMD == 0 && mixer->size() > 0 )
 		{
@@ -255,7 +255,7 @@ Application: KMix (kmix), signal: Segmentation fault
 		}
 		if ( dockMD != 0 )
 		{
-			kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
+//			kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
 			if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume())
 			{
 				kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
@@ -269,7 +269,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// Add all application streams
 	foreach ( Mixer* mixer2 , _mixers )
 	{
-		kDebug(67100) << "Add mixer to tray popup? " << mixer2->id();
+//		kDebug(67100) << "Add mixer to tray popup? " << mixer2->id();
 		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
 		{
 			kDebug(67100) << "Add to tray popup? " << md->id();
