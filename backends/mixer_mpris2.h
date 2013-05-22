@@ -67,7 +67,10 @@ public:
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
   virtual bool moveStream( const QString& id, const QString& destId );
-  virtual bool needsPolling() { return false; }
+#ifdef __GNUC__
+#warning MPRIS2 currently uses Polling mode. Method needsPolling() must be overwritten again. Polling needs too much CPU.
+#endif
+  //virtual bool needsPolling() { return false; } // TODO cesken
 
   virtual int mediaPlay(QString id);
   virtual int mediaPrev(QString id);
