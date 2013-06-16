@@ -172,7 +172,7 @@ soundcards.</para>-->
 <guimenu>Settings</guimenu>
 <guimenuitem>Audio Setup</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Open <ulink url="help:/kcontrol/phonon">Phonon &systemsettings; module</ulink></action> to configure the sound and video device preference and the backends used by &kde; multimedia API, Phonon.</para></listitem>
+<listitem><para><action>Open <ulink url="help:/kcontrol/phonon">&phonon; &systemsettings; module</ulink></action> to configure the sound and video device preference and the backends used by &kde; multimedia API, &phonon;.</para></listitem>
 </varlistentry>
 </variablelist>
 
