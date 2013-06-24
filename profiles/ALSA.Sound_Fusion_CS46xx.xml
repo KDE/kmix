@@ -21,7 +21,7 @@
 <!-- The products below are for letting the user select the correct product name.
   It could be implemented like this:
    If a new GUIProfile gets selected (either implictly on the first run or a Profile update, or
-   explicitely by the user), prompt the user for the card name.
+   explicitly by the user), prompt the user for the card name.
    Hint: The product stuff is only used in the GUI. It is NOT refeferenced otherwise in the code,
             and especially nothing of it is used as primary key.
  -->

@@ -416,7 +416,7 @@ void ViewBase::save(KConfig *config)
    } // for all MDW's
 
    if ( !dynamic ) {
-        // We do not save GUIProfiles (as they cannot be customised) for dynamic mixers (e.g. PulseAudio)
+        // We do not save GUIProfiles (as they cannot be customized) for dynamic mixers (e.g. PulseAudio)
         kDebug(67100) << "GUIProfile is dirty: " << guiProfile()->isDirty();
         if ( guiProfile()->isDirty() )
             guiProfile()->writeProfile();

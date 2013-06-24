@@ -375,7 +375,7 @@ KMixWindow::saveConfig()
 
   // TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
   kDebug()
-  << "Saved config ... now syncing explicitely";
+  << "Saved config ... now syncing explicitly";
   KGlobal::config()->sync();
   kDebug()
   << "Saved config ... sync finished";

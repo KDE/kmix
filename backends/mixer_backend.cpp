@@ -202,7 +202,7 @@ void Mixer_Backend::readSetFromHW()
 
 	if ( ret == Mixer::OK )
 	{
-		// We explicitely exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
+		// We explicitly exclude Mixer::OK_UNCHANGED and Mixer::ERROR_READ
 		if ( needsPolling() )
 		{
 			// Upgrade polling frequency temporarily to be more smoooooth

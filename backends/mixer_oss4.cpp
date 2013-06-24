@@ -748,7 +748,7 @@ int Mixer_OSS4::wrapIoctl(int ioctlRet)
 	{
 		case EIO:
 		{
-			kDebug ( 67100 ) << "A hardware level error occured" << endl;
+			kDebug ( 67100 ) << "A hardware level error occurred" << endl;
 			break;
 		}
 		case EINVAL:

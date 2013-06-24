@@ -385,7 +385,7 @@ void DialogViewConfiguration::apply()
    {
        if ( pctl->isMandatory() ) {
            ProfControl* newCtl = new ProfControl(*pctl);
-           newCtl->show = "full"; // The user has selected controls => mandatory controls are now only neccesary in extended or full mode
+           newCtl->show = "full"; // The user has selected controls => mandatory controls are now only necessary in extended or full mode
            newControlset.push_back(newCtl);
        }
    }

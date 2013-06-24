@@ -326,7 +326,7 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
 /**
  * Fill the profile with the data from the given XML profile file.
  * @par  ref_fileName: Full qualified filename (with path).
- * @return bool True, if the profile was succesfully created. False if not (e.g. parsing error).
+ * @return bool True, if the profile was successfully created. False if not (e.g. parsing error).
  */
 bool GUIProfile::readProfile(const QString& ref_fileName)
 {

@@ -330,7 +330,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
         	Mixer::mixers().append( mixer );
         	kDebug(67100) << "Added card " << mixer->id();
 
-        	emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subcribe notification system?
+        	emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subscribe notification system?
         	return true;
         }
     } // valid

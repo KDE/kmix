@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 		std::cerr << "Error: GuiProfile '" << qPrintable(fileName) << "' is NOT ok" << std::endl;
 	}
 	else {
-		std::cout << "GuiProfile '" << qPrintable(fileName) << "' read succesfully:\n----------------------\n";
+		std::cout << "GuiProfile '" << qPrintable(fileName) << "' read successfully:\n----------------------\n";
 		std::cout << (*guiprof) ;
 		std::cout << "----------------------\n";
 	}

@@ -138,7 +138,7 @@ void KMixD::saveConfig()
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
 
-   kDebug() << "Saved config ... now syncing explicitely";
+   kDebug() << "Saved config ... now syncing explicitly";
    KGlobal::config()->sync();
    kDebug() << "Saved config ... sync finished";
 }
