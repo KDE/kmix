@@ -45,6 +45,8 @@ typedef struct {
 
 class Mixer_PULSE : public Mixer_Backend
 {
+    Q_OBJECT
+
     public:
         Mixer_PULSE(Mixer *mixer, int devnum);
         virtual ~Mixer_PULSE();
@@ -77,6 +79,11 @@ class Mixer_PULSE : public Mixer_Backend
         void addDevice(devinfo& dev, bool = false);
         bool connectToDaemon();
         void emitControlsReconfigured();
+
+   protected slots:
+        void pulseControlsReconfigured(QString mixerId);
+        void pulseControlsReconfigured();
+
 public:
         void reinit();
 

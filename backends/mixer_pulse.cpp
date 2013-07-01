@@ -769,7 +769,53 @@ static devmap* get_widget_map(int type, int index)
 
 void Mixer_PULSE::emitControlsReconfigured()
 {
+	//	emit controlsReconfigured(_mixer->id());
+    // Do not emit directly to ensure all connected slots are executed
+    // in their own event loop.
+
+	/*
+	 * Comment by cesken: I am not really sure what the comment above means.
+	 *  1) IIRC coling told me "otherwise KMix crashes".
+	 *  2) There are also bug reports that heavily indicate the crash when operation the "move stream" from a popup
+	 *     menu.
+	 *  3) I don't know what the "executed in their own event loop" means. Are we in a "wrong" thread here (PA),
+	 *     which is not suitable for GUI code?!?
+	 *
+	 *  Conclusions:
+	 *  a) It seems there seems to be some object deletion hazard with a QMenu (the one for "move stream")
+	 *  b)  I do not see why executing it Queued is better, because you can never know when it is actually being
+	 *      executed: it could be "right now". It looks like Qt currently executes it after the QMenu hazard has
+	 *      resolved itselves miracously.
+	 *  c) I am definitely strongly opposed on this "execute later" approach. It is pure gambling IMO and might be
+	 *     broken any time (from DEBUG to RELEASE build, or by a new Qt or KDE version).
+	 *
+	 *     TODO Somebody with more Qt and PA internal insight might help to clear up things here.
+	 *
+	 *  Temporary solution: Do the QueuedConnection until we really know hat is going on. But the called code
+	 *                      pulseControlsReconfigured() will then do the standard announce() so that every part of
+	 *                      KMix automatically gets updated.
+	 *
+	 */
+    QMetaObject::invokeMethod(this,
+                              "pulseControlsReconfigured",
+                              Qt::QueuedConnection);
+
+//    QMetaObject::invokeMethod(this,
+//                              "pulseControlsReconfigured",
+//                              Qt::QueuedConnection,
+//                              Q_ARG(QString, _mixer->id()));
+}
+
+void Mixer_PULSE::pulseControlsReconfigured()
+{
+	kDebug() << "Reconfigure " << _mixer->id();
     ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
+}
+
+void Mixer_PULSE::pulseControlsReconfigured(QString mixerId)
+{
+	kDebug() << "Reconfigure " << mixerId;
+    ControlManager::instance().announce(mixerId, ControlChangeType::ControlList, getDriverName());
 }
 
 void Mixer_PULSE::addWidget(int index, bool isAppStream)
@@ -1366,3 +1412,4 @@ QString Mixer_PULSE::getDriverName()
         return "PulseAudio";
 }
 
+#include "mixer_pulse.moc"
