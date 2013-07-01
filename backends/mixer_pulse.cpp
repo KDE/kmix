@@ -774,12 +774,16 @@ void Mixer_PULSE::emitControlsReconfigured()
     // in their own event loop.
 
 	/*
+	 * Bug 309464:
+	 *
 	 * Comment by cesken: I am not really sure what the comment above means.
 	 *  1) IIRC coling told me "otherwise KMix crashes".
 	 *  2) There are also bug reports that heavily indicate the crash when operation the "move stream" from a popup
 	 *     menu.
 	 *  3) I don't know what the "executed in their own event loop" means. Are we in a "wrong" thread here (PA),
 	 *     which is not suitable for GUI code?!?
+	 *
+	 * Work note: Ouch. it means PA thread makes direct calls via announce(), and do even GUI code. OUCH. Redo this comments!
 	 *
 	 *  Conclusions:
 	 *  a) It seems there seems to be some object deletion hazard with a QMenu (the one for "move stream")
