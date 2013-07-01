@@ -52,6 +52,8 @@ int Mixer_MPRIS2::open()
 	_id = "Playback Streams";
 	_mixer->setDynamic();
 	addAllRunningPlayersAndInitHotplug();
+
+	//connect(this, SIGNAL(controlChanged()), SLOT(readSetFromHW()), Qt::QueuedConnection);
 	return 0;
 }
 
@@ -154,7 +156,12 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 }
 
 
-
+/**
+ * A slot that processes data from the MPrisAppdata that emit the signal.
+ *
+ * @param The  emitting MPrisAppdata
+ * @param newVolume The new volume
+ */
 void Mixer_MPRIS2::volumeChanged(MPrisAppdata* mad, double newVolume)
 {
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->id);
@@ -175,11 +182,14 @@ void Mixer_MPRIS2::volumeChangedInternal(shared_ptr<MixDevice> md, int volumePer
 	Volume& vol = md->playbackVolume();
 	vol.setVolume( Volume::LEFT, volumePercentage);
 	md->setMuted(volumePercentage == 0);
-	emit controlChanged();
+//	emit controlChanged();
+	ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("MixerMPRIS2.volumeChanged"));
+
 	kDebug() << "changed i2" << volumePercentage;
 	//  md->playbackVolume().setVolume(vol);
 }
 
+// The following is an example message for an incoming volume change:
 /*
 signal sender=:1.125 -> dest=(null destination) serial=503 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=PropertiesChanged
    string "org.mpris.MediaPlayer2.Player"

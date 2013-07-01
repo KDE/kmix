@@ -67,10 +67,7 @@ public:
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
   virtual bool moveStream( const QString& id, const QString& destId );
-#ifdef __GNUC__
-#warning MPRIS2 currently uses Polling mode. Method needsPolling() must be overwritten again. Polling needs too much CPU.
-#endif
-  //virtual bool needsPolling() { return false; } // TODO cesken
+  virtual bool needsPolling() { return false; }
 
   virtual int mediaPlay(QString id);
   virtual int mediaPrev(QString id);
@@ -80,6 +77,13 @@ public:
 public slots:
     void volumeChanged(MPrisAppdata *mad, double);
     void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
+//private slots:
+	/**
+	 * This transports any changes to the world outside this bakcend. It is connected to the slot readSetFromHW()
+	 * from the base class.
+	 */
+//	void controlChanged();
+
 private:
     int addAllRunningPlayersAndInitHotplug();
     void notifyToReconfigureControls();
