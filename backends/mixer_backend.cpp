@@ -170,7 +170,8 @@ void Mixer_Backend::readSetFromHW()
 
 	foreach (shared_ptr<MixDevice> md, m_mixDevices )
 	{
-	  bool debugMe = (md->id() == "PCM:0" );
+	  //bool debugMe = (md->id() == "PCM:0" );
+	  bool debugMe = false;
 	  if (debugMe) kDebug() << "Old PCM:0 playback state" << md->isMuted()
 	    << ", vol=" << md->playbackVolume().getAvgVolumePercent(Volume::MALL);
 	    
