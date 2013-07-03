@@ -9,6 +9,11 @@ set(kmix_KDEINIT_SRCS
    VerticalScrollWidget.cpp
 )
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.kmixd.xml
 	kmixd_interface)
 qt4_add_dbus_interface(kmix_KDEINIT_SRCS ../dbus/org.kde.kmix.controlgroup.xml

@@ -25,6 +25,11 @@ if (PULSEAUDIO_FOUND)
     )
 endif()
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.kmixd.xml
     KMixDApp.h KMixDApp )
 qt4_add_dbus_adaptor( kmixd_SRCS ../dbus/org.kde.kmix.control.xml
