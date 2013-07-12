@@ -42,6 +42,7 @@
 #include <qwmatrix.h>
 #include <QBoxLayout>
 
+#include "core/ControlManager.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "gui/volumeslider.h"
@@ -949,11 +950,19 @@ void MDWSlider::setDisabled()
 
 void MDWSlider::setDisabled( bool value )
 {
+	//  kDebug() << "disable #1: value=" << value;
 	if ( m_disabled!=value)
 	{
-		value ? hide() : show();
+	  kDebug() << "disable: value=" << value;
+	  //value ? hide() : show();
+	  setVisible(!value); // TODO Hiding via context menu does not work. Why???
 		m_disabled = value;
 		m_view->configurationUpdate();
+#ifdef __GNUC__
+#warning Hiding a slider via context menu is broken. hide() or setVisible(xyz) simply seems to do nothing.
+#endif
+		// announce() recreates everyting, but it does not get better.
+		//ControlManager::instance().announce(m_mixdevice->mixer()->id(), ControlChangeType::ControlList, QString("MDWSlider::setDisabled"));
 	}
 }
 
