@@ -224,32 +224,32 @@ int Mixer_ALSA::open()
         if ( md->playbackVolume().hasVolume() )
         {
           if ( mdID == "Master:0" && masterChosenQuality < 100 ) {
-              kDebug() << "Setting m_recommendedMaster to " << mdID;
+//              kDebug() << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 100;
           }
           else if ( mdID == "PCM:0" && masterChosenQuality < 80) {
-              kDebug() << "Setting m_recommendedMaster to " << mdID;
+//              kDebug() << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 80;
           }
           else if ( mdID == "Front:0" && masterChosenQuality < 60) {
-              kDebug() << "Setting m_recommendedMaster to " << mdID;
+//              kDebug() << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 60;
           }
           else if ( mdID == "DAC:0" && masterChosenQuality < 50) {
-              kDebug() << "Setting m_recommendedMaster to " << mdID;
+//              kDebug() << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 50;
           }
           else if ( mdID == "Headphone:0" && masterChosenQuality < 40) {
-              kDebug() << "Setting m_recommendedMaster to " << mdID;
+//              kDebug() << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 40;
           }
           else if ( mdID == "Master Mono:0" && masterChosenQuality < 30) {
-              kDebug() << "Setting m_recommendedMaster to " << mdID;
+//              kDebug() << "Setting m_recommendedMaster to " << mdID;
               m_recommendedMaster = md;
               masterChosenQuality = 30;
           }
