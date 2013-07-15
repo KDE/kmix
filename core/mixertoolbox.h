@@ -27,7 +27,6 @@
 #include <QRegExp>
 #include <QString>
 
-//#include <KLocale>
 class Mixer;
 
 /**

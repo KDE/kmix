@@ -1020,9 +1020,9 @@ void MDWSlider::moveStream(QString destId)
  */
 void MDWSlider::update()
 {
-	  bool debugMe = (mixDevice()->id() == "PCM:0" );
-	  if (debugMe) kDebug() << "The update() PCM:0 playback state" << mixDevice()->isMuted()
-	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
+//	  bool debugMe = (mixDevice()->id() == "PCM:0" );
+//	  if (debugMe) kDebug() << "The update() PCM:0 playback state" << mixDevice()->isMuted()
+//	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->hasMuteSwitch() )
 		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
@@ -1244,13 +1244,13 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 		QSlider *slider = static_cast<QSlider*>(obj);
 		if (slider != 0)
 		{
-			kDebug();
-			kDebug();
-			kDebug() << "----------------------------- Slider is " << slider;
+//			kDebug();
+//			kDebug();
+//			kDebug() << "----------------------------- Slider is " << slider;
 			// Mouse is over a slider. So lets apply the wheel event to playback or capture only
 			if(m_slidersCapture.contains(slider))
 			{
-				kDebug() << "Slider is capture " << slider;
+//				kDebug() << "Slider is capture " << slider;
 				volumeType = Volume::Capture;
 			}
 		}
