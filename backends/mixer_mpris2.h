@@ -23,40 +23,98 @@
 #define Mixer_MPRIS2_H
 
 #include <QString>
-#include <QMainWindow>
 #include <QtDBus>
 #include <QDBusInterface>
+#include <QDBusPendingCallWatcher>
 #include <QMap>
+#include <QMutex>
+#include <QWaitCondition>
+#include <QQueue>
 
 #include "mixer_backend.h"
 
-class MPrisAppdata : public QObject
+class MPrisControl : public QObject
 {
   Q_OBJECT 
+
 public:
-  MPrisAppdata();
-  ~MPrisAppdata();
-  QString id;
+  MPrisControl(QString id, QString busDestination);
+  ~MPrisControl();
+
+	enum DATA_ELEM
+	{
+		NONE = 0, NAME = 1, VOLUME = 2, ALL = 3
+	};
+
   QDBusInterface* propertyIfc;
   QDBusInterface* playerIfc;
+
+  
+private:
+	QString id;
+	QString busDestination;
+	QString name;
+	int volume;
+
+	int retrievedElems;
+
+public:
+	const QString& getId() const
+	{
+		return id;
+	}
+
+	const QString& getBusDestination() const
+	{
+		return busDestination;
+	}
+
+	const QString& getName() const
+	{
+		return name;
+	}
+
+	void setName(const QString& name)
+	{
+		retrievedElems |= MPrisControl::NAME;
+		this->name = name;
+	}
+
+	int getVolume() const
+	{
+		return volume;
+	}
+
+	void setVolume(int volume)
+	{
+		retrievedElems |= MPrisControl::VOLUME;
+		this->volume = volume;
+	}
+
+	bool isComplete()
+	{
+		return retrievedElems == MPrisControl::ALL;
+	}
+
+
 
 public slots:
   void trackChangedIncoming(QVariantMap msg);
   void volumeChangedIncoming(QString,QVariantMap,QStringList);
-  
+
 signals:
-  void volumeChanged(MPrisAppdata* mad, double);
+  void volumeChanged(MPrisControl* mad, double);
 };
-
-
 
 class Mixer_MPRIS2 : public Mixer_Backend
 {
   Q_OBJECT
+
+//  friend class Mixer_MPRIS2_Thread;
+
 public:
    Mixer_MPRIS2(Mixer *mixer, int device);
     virtual ~Mixer_MPRIS2();
-    void addMprisControl(QDBusConnection& conn, QString arg1);
     QString getDriverName();
     virtual QString getId() const { return _id; };
 
@@ -75,23 +133,24 @@ public:
   virtual int mediaControl(QString id, QString command);
 
 public slots:
-    void volumeChanged(MPrisAppdata *mad, double);
+    void volumeChanged(MPrisControl *mad, double);
     void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
-//private slots:
-	/**
-	 * This transports any changes to the world outside this bakcend. It is connected to the slot readSetFromHW()
-	 * from the base class.
-	 */
-//	void controlChanged();
+    void addMprisControl(QString arg1);
+    void notifyToReconfigureControlsAsync(QString streamId);
+    void notifyToReconfigureControls();
+
+    // Async QDBusPendingCallWatcher's
+    void plugControlIdIncoming(QDBusPendingCallWatcher* watcher);
+    void mediaContolReplyIncoming(QDBusPendingCallWatcher* watcher);
 
 private:
+//    void asyncAddMprisControl(QString busDestination);
+    void messageQueueThreadLoop();
     int addAllRunningPlayersAndInitHotplug();
-    void notifyToReconfigureControls();
     void volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage);
-//	static QDBusMessage* dbusGetAsyncReply(char method[], QDBusInterface* mad);
-//	static QDBusMessage* dbusGetAsyncReply(const char method[], const QList<QVariant>& arg, QDBusInterface* mad);
+	QString busDestinationToControlId(const QString& busDestination);
 
-  QMap<QString,MPrisAppdata*> apps;
+  QMap<QString,MPrisControl*> controls;
   QString _id;
 };
 
