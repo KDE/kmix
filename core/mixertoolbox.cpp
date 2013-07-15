@@ -374,8 +374,6 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
 void MixerToolBox::deinitMixer()
 {
    //kDebug(67100) << "IN MixerToolBox::deinitMixer()";
-	appShutdown = true;
-
    int mixerCount = Mixer::mixers().count();
    for ( int i=0; i<mixerCount; ++i)
    {
