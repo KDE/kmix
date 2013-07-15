@@ -89,7 +89,8 @@ public:
 		       APPLICATION_AMAROK,
 		       APPLICATION_BANSHEE,
 		       APPLICATION_XMM2,
-		       APPLICATION_TOMAHAWK
+		       APPLICATION_TOMAHAWK,
+		       APPLICATION_CLEMENTINE
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };

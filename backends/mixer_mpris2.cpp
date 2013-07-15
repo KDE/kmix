@@ -89,7 +89,7 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 	if ( mad == 0 )
 	  return 0; // Might have disconnected recently => simply ignore command
 
-	kDebug() << "Send " << commandName << " to applicationId=" << applicationId;
+	kDebug() << "Send " << commandName << " to id=" << applicationId;
 	QDBusPendingReply<> repl2 =
 		mad->playerIfc->asyncCall(commandName);
 
@@ -432,6 +432,9 @@ void Mixer_MPRIS2::plugControlIdIncoming(QDBusPendingCallWatcher* watcher)
 			}
 			else if (id.startsWith("tomahawk")) {
 				ct = MixDevice::APPLICATION_TOMAHAWK;
+			}
+			else if (id.startsWith("clementine")) {
+				ct = MixDevice::APPLICATION_CLEMENTINE;
 			}
 
 			MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);

@@ -89,6 +89,8 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
             return "xmms";
         case MixDevice::APPLICATION_TOMAHAWK:
         	return "tomahawk";
+        case MixDevice::APPLICATION_CLEMENTINE:
+        	return "clementine";
 
         case MixDevice::APPLICATION_STREAM:
             return "mixer-pcm";
