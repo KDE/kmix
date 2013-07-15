@@ -206,8 +206,8 @@ void ViewSliders::_setMixSet()
 	else
 	{
 		// Vertical slider => put them horizontally
-		kDebug()
-		<< "vert slider => horizontal alignment";
+//		kDebug()
+//		<< "vert slider => horizontal alignment";
 		_layoutMDW = new QHBoxLayout(this);
 		_layoutMDW->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 		_layoutSliders = new QHBoxLayout();
@@ -377,11 +377,13 @@ void ViewSliders::configurationUpdate()
 	 // This is a bit hacky. Using "simple" can be wrong on the very first start of KMix (but usually it is not!)
 	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), QString("simple"));
 	mdw->setVisible(matchingControl != 0);
+	/*
 	if ( mdwSlider == 0 )
 	{
 	  // not a slider => debug output for enums
 	  kDebug() << "Show ENUM " << mdw->mixDevice()->id() << " ?  matchingControl=" << matchingControl;
 	}
+	*/
 
 	if ( mdwSlider )
 	{

@@ -258,7 +258,7 @@ Application: KMix (kmix), signal: Segmentation fault
 //			kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
 			if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume())
 			{
-				kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
+//				kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
 				// don't add application streams here. They are handled below, so
 				// we make sure to not add them twice
 				_mixSet.append(dockMD);
@@ -269,14 +269,11 @@ Application: KMix (kmix), signal: Segmentation fault
 	// Add all application streams
 	foreach ( Mixer* mixer2 , _mixers )
 	{
-//		kDebug(67100) << "Add mixer to tray popup? " << mixer2->id();
 		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
 		{
-//			kDebug(67100) << "Add to tray popup? " << md->id();
 			if (md->isApplicationStream())
 			{
 				_mixSet.append(md);
-				kDebug(67100) << "Add to tray popup! YES: " << md->id();
 			}
 		}
 	}
