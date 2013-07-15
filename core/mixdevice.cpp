@@ -80,12 +80,16 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
             return "mixer-microphone-front";
         case MixDevice::KMIX_COMPOSITE:
             return "mixer-line";
+
         case MixDevice::APPLICATION_AMAROK:
             return "amarok";
         case MixDevice::APPLICATION_BANSHEE:
             return "media-player-banshee";
         case MixDevice::APPLICATION_XMM2:
             return "xmms";
+        case MixDevice::APPLICATION_TOMAHAWK:
+        	return "tomahawk";
+
         case MixDevice::APPLICATION_STREAM:
             return "mixer-pcm";
 
@@ -155,7 +159,7 @@ void MixDevice::close()
 
 shared_ptr<MixDevice> MixDevice::addToPool()
 {
-	kDebug() << "id=" <<  _mixer->id() << ":" << _id;
+//	kDebug() << "id=" <<  _mixer->id() << ":" << _id;
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
     _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
@@ -171,10 +175,10 @@ shared_ptr<MixDevice> MixDevice::addToPool()
  */
 void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType)
 {
-	bool debugme =  id() == "PCM:0" ;
+	bool debugme = false;
+//	bool debugme =  id() == "PCM:0" ;
 	if (volumeType & Volume::Playback)
 	{
-		kDebug() << "VolumeType=" << volumeType << "   p";
 		Volume& volP = playbackVolume();
 		long inc = volP.volumeStep(decrease);
 
