@@ -268,7 +268,8 @@ int Mixer_ALSA::open()
     return 0;
 }
 
-
+// warnOnce will make sure we only print the first ALSA device not found
+bool Mixer_ALSA::warnOnce = true;
 /**
  * This opens a ALSA device for further interaction.
  * As this is "slightly" more complicated than calling ::open(),  it is put in a separate method.
@@ -282,7 +283,11 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 
     if ( ( err = snd_ctl_open ( &ctl_handle, devName.toAscii().data(), 0 ) ) < 0 )
     {
-        kDebug() << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err);
+    	if (Mixer_ALSA::warnOnce)
+    	{
+    		Mixer_ALSA::warnOnce = false;
+    		kDebug() << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err);
+    	}
         return Mixer::ERR_OPEN;
     }
 
@@ -292,7 +297,11 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
     snd_ctl_card_info_alloca(&hw_info);
     if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
     {
-        kDebug() << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err);
+    	if (Mixer_ALSA::warnOnce)
+    	{
+    		Mixer_ALSA::warnOnce = false;
+    		kDebug() << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err);
+    	}
         //_stateMessage = errorText( Mixer::ERR_READ );
         snd_ctl_close( ctl_handle );
         return Mixer::ERR_READ;
@@ -305,30 +314,47 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
     /* open mixer device */
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
-        kDebug() << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err);
+    	if (Mixer_ALSA::warnOnce)
+    	{
+    		Mixer_ALSA::warnOnce = false;
+    		kDebug() << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err);
+    	}
         _handle = 0;
         return Mixer::ERR_OPEN; // if we cannot open the mixer, we have no devices
     }
 
     if ( ( err = snd_mixer_attach ( _handle, devName.toAscii().data() ) ) < 0 )
     {
-        kDebug() << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err);
+    	if (Mixer_ALSA::warnOnce)
+    	{
+    		Mixer_ALSA::warnOnce = false;
+    		kDebug() << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err);
+    	}
         return Mixer::ERR_OPEN;
     }
 
     if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
     {
-        kDebug() << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err);
+    	if (Mixer_ALSA::warnOnce)
+    	{
+    		Mixer_ALSA::warnOnce = false;
+    		kDebug() << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err);
+    	}
         return Mixer::ERR_READ;
     }
 
     if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
     {
-        kDebug() << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err);
+    	if (Mixer_ALSA::warnOnce)
+    	{
+    		Mixer_ALSA::warnOnce = false;
+    		kDebug() << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err);
+    	}
         close();
         return Mixer::ERR_READ;
     }
 
+    Mixer_ALSA::warnOnce = true;
     kDebug() << probeMessage << "found";
 
     return 0;

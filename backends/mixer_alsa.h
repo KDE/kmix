@@ -84,6 +84,7 @@ private:
     struct pollfd  *m_fds;
     QList<QSocketNotifier*> m_sns;
     //int m_count;
+    static bool warnOnce;
 };
 
 #endif
