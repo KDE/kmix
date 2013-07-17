@@ -60,6 +60,8 @@ int Mixer_MPRIS2::close()
 {
 	  m_isOpen = false;
 	  closeCommon();
+	  qDeleteAll(controls);
+	  controls.clear();
 	 return 0;
 }
 
@@ -469,6 +471,8 @@ void Mixer_MPRIS2::plugControlIdIncoming(QDBusPendingCallWatcher* watcher)
 
 			m_mixDevices.append( mdNew->addToPool() );
 
+			delete vol; // vol is only temporary. mdNew has its own volume object. => delete
+
 			QDBusConnection sessionBus = QDBusConnection::sessionBus();
 			sessionBus.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QVariantMap,QStringList)) );
 			connect(mad, SIGNAL(volumeChanged(MPrisControl*,double)), this, SLOT(volumeChanged(MPrisControl*,double)) );
@@ -585,7 +589,10 @@ MPrisControl::MPrisControl(QString id, QString busDestination)
 }
 
 MPrisControl::~MPrisControl()
-{}
+{
+	delete propertyIfc;
+	delete playerIfc;
+}
 
 QString Mixer_MPRIS2::getDriverName()
 {

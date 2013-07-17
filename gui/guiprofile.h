@@ -135,6 +135,8 @@ class GUIProfile
     GUIProfile();
     virtual ~GUIProfile();
 
+    static void clearCache();
+
     bool readProfile(const QString& ref_fileNamestring);
     bool finalizeProfile() const;
     bool writeProfile();

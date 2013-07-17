@@ -120,7 +120,11 @@ int Mixer_ALSA::open()
 
     snd_mixer_elem_t *elem;
     snd_mixer_selem_id_t *sid;
-    snd_mixer_selem_id_alloca( &sid );
+    bool USE_ALSO_ALLOCA = true; //  TODO remove alloca() when adding "delete sid" in the destructor or close()
+    if (USE_ALSO_ALLOCA)
+    {
+    	snd_mixer_selem_id_alloca( &sid );
+    }
 
     // Determine a card name
     if( m_devnum < -1 || m_devnum > 31 )
@@ -211,14 +215,25 @@ int Mixer_ALSA::open()
 
         MixDevice* mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
 
-        if ( volPlay    != 0      ) mdNew->addPlaybackVolume(*volPlay);
-        if ( volCapture != 0      ) mdNew->addCaptureVolume (*volCapture);
-       	if ( !enumList.isEmpty()  ) mdNew->addEnums(enumList);
+        if ( volPlay    != 0      )
+        {
+        	mdNew->addPlaybackVolume(*volPlay);
+            delete volPlay;
+        }
+        if ( volCapture != 0      )
+        {
+        	mdNew->addCaptureVolume (*volCapture);
+            delete volCapture;
+        }
+       	if ( !enumList.isEmpty()  )
+       	{
+       		mdNew->addEnums(enumList);
+            qDeleteAll(enumList); // clear temporary list
+       	}
 
        	shared_ptr<MixDevice> md = mdNew->addToPool();
         m_mixDevices.append( md );
          
-        qDeleteAll(enumList); // clear temporary list
 
         // --- Recommended master ----------------------------------------
         if ( md->playbackVolume().hasVolume() )
@@ -253,10 +268,6 @@ int Mixer_ALSA::open()
               m_recommendedMaster = md;
               masterChosenQuality = 30;
           }
-
-          //kDebug() << "ALSA create MDW, vol= " << *vol;
-          delete volPlay;
-          delete volCapture;
         }
     } // for all elems
 

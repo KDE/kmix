@@ -76,6 +76,9 @@ bool ProductComparator::operator()(const ProfProduct* p1, const ProfProduct* p2)
 GUIProfile::GUIProfile()
 {
     _dirty = false;
+    _driverVersionMin = 0;
+    _driverVersionMax = 0;
+    _generation = 1;
 }
 
 GUIProfile::~GUIProfile()
@@ -84,6 +87,19 @@ GUIProfile::~GUIProfile()
     qDeleteAll(_controls);
     qDeleteAll(_products);
 }
+
+/**
+ * Clears the GUIProfile cache. You must only call this
+ * before termination of the application, as GUIProfile instances are used in other classes, especially the views.
+ * There is no need to call this in non-GUI applications like kmixd and kmixctrl.
+ */
+void GUIProfile::clearCache()
+{
+	qDeleteAll(s_profiles);
+	s_profiles.clear();
+}
+
+
 
 
 void GUIProfile::setId(const QString& id)
@@ -240,7 +256,6 @@ void GUIProfile::addProfile(GUIProfile* guiprof)
 
     s_profiles[guiprof->getId()] = guiprof;
     kDebug() << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
-    
 }
 
 
@@ -666,6 +681,7 @@ QString ProfControl::renderSubcontrols()
 
 GUIProfileParser::GUIProfileParser(GUIProfile* ref_gp) : _guiProfile(ref_gp)
 {
+	_scope = GUIProfileParser::NONE;  // no scope yet
 }
 
 bool GUIProfileParser::startDocument()

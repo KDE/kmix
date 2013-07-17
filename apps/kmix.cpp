@@ -143,6 +143,14 @@ KMixWindow::~KMixWindow()
     }
   // -2- Mixer HW
   MixerToolBox::instance()->deinitMixer();
+
+  // GUIProfile cache should be cleared very very late, as GUIProfile instances are used in the Views, which
+  // means main window and potentially also in the tray popup (at least we might do so in the future).
+  // This place here could be to early, if we would start to GUIProfile outside KMixWIndow, e.g. in the tray popup.
+  // Until we do so, this is the best place to call clearCache(). Later, e.g. in main() would likely be problematic.
+  GUIProfile::clearCache();
+
+
 }
 
 
