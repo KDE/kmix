@@ -90,7 +90,11 @@ public:
 		       APPLICATION_BANSHEE,
 		       APPLICATION_XMM2,
 		       APPLICATION_TOMAHAWK,
-		       APPLICATION_CLEMENTINE
+		       APPLICATION_CLEMENTINE,
+		       // Hint: VLC still has compatibility problems:
+		       //  2.0 is not detected
+		       //  2.2-nightly has volume issues (total overdrive)
+		       APPLICATION_VLC,
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };

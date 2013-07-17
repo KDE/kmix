@@ -91,6 +91,8 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
         	return "tomahawk";
         case MixDevice::APPLICATION_CLEMENTINE:
         	return "clementine";
+        case MixDevice::APPLICATION_VLC:
+        	return "vlc";
 
         case MixDevice::APPLICATION_STREAM:
             return "mixer-pcm";
@@ -124,6 +126,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     _dbusControlWrapper = 0; // will be set in addToPool()
     _mixer = mixer;
     _id = id;
+    _enumCurrentId = 0;
     mediaPlayControl = false;
     mediaNextControl = false;
     mediaPrevControl = false;
@@ -258,6 +261,7 @@ void MixDevice::addEnums(QList<QString*>& ref_enumList)
             _enumValues.append( *(ref_enumList.at(i)) );
       }
    }
+   _enumCurrentId = 0; // default is first entry (used if we don't get a value via backend or volume restore)
 }
 
 

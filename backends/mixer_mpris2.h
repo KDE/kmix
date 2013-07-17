@@ -149,6 +149,7 @@ private:
     int addAllRunningPlayersAndInitHotplug();
     void volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage);
 	QString busDestinationToControlId(const QString& busDestination);
+	MixDevice::ChannelType getChannelTypeFromPlayerId(const QString& id);
 
   QMap<QString,MPrisControl*> controls;
   QString _id;

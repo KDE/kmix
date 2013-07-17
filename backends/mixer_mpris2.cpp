@@ -102,7 +102,17 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 
 void Mixer_MPRIS2::mediaContolReplyIncoming(QDBusPendingCallWatcher* watcher)
 {
+	const QDBusMessage& msg = watcher->reply();
+	if ( msg.type() == QDBusMessage::ErrorMessage )
+	{
+		kError(67100) << "ERROR in Media control operation, path=" << msg.path() << ", msg=" << msg;
+		watcher->deleteLater();
+		return;
+	}
+
 	QObject *obj = watcher->parent();
+	watcher->deleteLater();
+
 	MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
 	if (mad == 0)
 	{
@@ -113,13 +123,11 @@ void Mixer_MPRIS2::mediaContolReplyIncoming(QDBusPendingCallWatcher* watcher)
 	QString busDestination = mad->getBusDestination();
 	QString readableName = id; // Start with ID, but replace with reply (if exists)
 
-	kDebug() << "Media control for id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
 
-	const QDBusMessage& msg = watcher->reply();
-	if ( msg.type() == QDBusMessage::ErrorMessage )
-	{
-		kError(67100) << "ERROR in Media control operation, id=" << id << ": " << msg;
-	}
+	kDebug() << "Media control for id=" << id << ", path=" << msg.path() << ", interface=" << msg.interface() << ", busDestination" << busDestination << ", name= " << readableName;
+	kDebug() << "msg=" << msg;
+
+
 }
 
 /**
@@ -384,59 +392,70 @@ void Mixer_MPRIS2::addMprisControl(QString busDestination)
 	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(plugControlIdIncoming(QDBusPendingCallWatcher *)));
 }
 
+MixDevice::ChannelType Mixer_MPRIS2::getChannelTypeFromPlayerId(const QString& id)
+{
+	// TODO This hardcoded application list is a quick hack. It should be generalized.
+	MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
+	if (id.startsWith("amarok"))
+	{
+		ct = MixDevice::APPLICATION_AMAROK;
+	}
+	else if (id.startsWith("banshee"))
+	{
+		ct = MixDevice::APPLICATION_BANSHEE;
+	}
+	else if (id.startsWith("vlc"))
+	{
+		ct = MixDevice::APPLICATION_VLC;
+	}
+	else if (id.startsWith("xmms"))
+	{
+		ct = MixDevice::APPLICATION_XMM2;
+	}
+	else if (id.startsWith("tomahawk"))
+	{
+		ct = MixDevice::APPLICATION_TOMAHAWK;
+	}
+	else if (id.startsWith("clementine"))
+	{
+		ct = MixDevice::APPLICATION_CLEMENTINE;
+	}
+
+	return ct;
+}
+
 void Mixer_MPRIS2::plugControlIdIncoming(QDBusPendingCallWatcher* watcher)
 {
-	QObject *obj = watcher->parent();
-	MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
-	if (mad == 0)
-	{
-		kWarning() << "Ignoring unexpected Control Id";
-		return;
-	}
-	QString id = mad->getId();
-	QString busDestination = mad->getBusDestination();
-	QString readableName = id; // Start with ID, but replace with reply (if exists)
-
-	kDebug() << "Plugging id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
-
 	const QDBusMessage& msg = watcher->reply();
-		if ( msg.type() == QDBusMessage::ReplyMessage )
+	if ( msg.type() == QDBusMessage::ReplyMessage )
+	{
+		QObject *obj = watcher->parent();
+		MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
+		if (mad == 0)
 		{
-			QList<QVariant> repl = msg.arguments();
-			if ( ! repl.isEmpty() )
-			{
-				QVariant qv = repl.at(0);
-				// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
-				QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
-				QVariant result2 = dbusVariant.variant();
-				readableName = result2.toString();
+			kWarning() << "Ignoring unexpected Control Id";
+			watcher->deleteLater();
+			return;
+		}
+		QString id = mad->getId();
+		QString busDestination = mad->getBusDestination();
+		QString readableName = id; // Start with ID, but replace with reply (if exists)
 
-				qDebug() << "REPLY " << result2.type() << ": " << readableName;
-			}
-		}
-		else
+		kDebug() << "Plugging id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
+
+		QList<QVariant> repl = msg.arguments();
+		if ( ! repl.isEmpty() )
 		{
-			qWarning() << "Error (" << msg.type() << "): " << msg.errorName() << " " << msg.errorMessage();
-		}
+			QVariant qv = repl.at(0);
+			// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
+			QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
+			QVariant result2 = dbusVariant.variant();
+			readableName = result2.toString();
+
+			qDebug() << "REPLY " << result2.type() << ": " << readableName;
 
 			// TODO This hardcoded application list is a quick hack. It should be generalized.
-			MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
-			if (id.startsWith("amarok")) {
-				ct = MixDevice::APPLICATION_AMAROK;
-			}
-			else if (id.startsWith("banshee")) {
-				ct = MixDevice::APPLICATION_BANSHEE;
-			}
-			else if (id.startsWith("xmms")) {
-				ct = MixDevice::APPLICATION_XMM2;
-			}
-			else if (id.startsWith("tomahawk")) {
-				ct = MixDevice::APPLICATION_TOMAHAWK;
-			}
-			else if (id.startsWith("clementine")) {
-				ct = MixDevice::APPLICATION_CLEMENTINE;
-			}
-
+			MixDevice::ChannelType ct = getChannelTypeFromPlayerId(id);
 			MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
 			// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
 			// Thus we won't add the playback switch
@@ -456,8 +475,17 @@ void Mixer_MPRIS2::plugControlIdIncoming(QDBusPendingCallWatcher* watcher)
 
 			sessionBus.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mad, SLOT(trackChangedIncoming(QVariantMap)) );
 			volumeChanged(mad, mad->playerIfc->property("Volume").toDouble());
-			// Push notifyToReconfigureControls to stack, so it will not be executed synchronously
+
 			notifyToReconfigureControlsAsync(id);
+		}
+	}
+	else
+	{
+		qWarning() << "Error (" << msg.type() << "): " << msg.errorName() << " " << msg.errorMessage();
+	}
+
+	// Push notifyToReconfigureControls to stack, so it will not be executed synchronously
+	watcher->deleteLater();
 }
 
 
