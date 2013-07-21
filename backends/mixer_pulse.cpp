@@ -329,7 +329,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     const char *t;
     if ((t = pa_proplist_gets(i->proplist, "module-stream-restore.id"))) {
         if (strcmp(t, KMIXPA_EVENT_KEY) == 0) {
-            kWarning(67100) << "Ignoring sink-input due to it being designated as an event and thus handled by the Event slider";
+            //kDebug(67100) << "Ignoring sink-input due to it being designated as an event and thus handled by the Event slider";
             return;
         }
     }
