@@ -43,6 +43,7 @@
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
 #include "gui/viewsliders.h"
+#include "core/GlobalConfig.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
 
@@ -94,7 +95,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    GUIProfile* guiprof = getGuiprof();
    if ( guiprof != 0 )
    {
-    kDebug() << "Add a view " << _guiprofId;
+	if (GlobalConfig::instance().debugGUI)
+		kDebug() << "Add a view " << _guiprofId;
     ViewSliders* view = new ViewSliders( this, guiprof->getId(), _mixer, vflags, _guiprofId, _actionCollection );
     possiblyAddView(view);
    }
@@ -118,7 +120,8 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       m_topLayout->addWidget(vbase);
       _views.push_back(vbase);
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
-      kDebug() << "CONNECT ViewBase count " << vbase->getMixers().size();
+      if (GlobalConfig::instance().debugGUI)
+    	  kDebug() << "CONNECT ViewBase count " << vbase->getMixers().size();
       return true;
    }
 }
@@ -147,11 +150,11 @@ const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
 
 void KMixerWidget::loadConfig( KConfig *config )
 {
-   kDebug(67100) << "KMixerWidget::loadConfig()";
     const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
     for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
         ViewBase* view = *it;
-        kDebug(67100) << "KMixerWidget::loadConfig()" << view->id();
+    	if (GlobalConfig::instance().debugVolume)
+    		kDebug(67100) << "KMixerWidget::loadConfig()" << view->id();
         view->load(config);
         view->configurationUpdate();
     } // for all tabs
@@ -161,11 +164,11 @@ void KMixerWidget::loadConfig( KConfig *config )
 
 void KMixerWidget::saveConfig( KConfig *config )
 {
-   kDebug(67100) << "KMixerWidget::saveConfig()";
     const std::vector<ViewBase*>::const_iterator viewsEnd = _views.end();
     for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
         ViewBase* view = *it;
-        kDebug(67100) << "KMixerWidget::saveConfig()" << view->id();
+    	if (GlobalConfig::instance().debugVolume)
+    		kDebug(67100) << "KMixerWidget::saveConfig()" << view->id();
         view->save(config);
     } // for all tabs
 }

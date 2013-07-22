@@ -306,7 +306,7 @@ void DialogViewConfiguration::createPage()
                splitted =  ( md->playbackVolume().count() > 1) || ( md->captureVolume().count() > 1 ) ;
             }
 
-            //qDebug()  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
+            //kDebug()  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
             if ( mdw->isVisible() ) {
               new DialogViewConfigurationItem(_qlw, md->id(), mdw->isVisible(), mdName, splitted, mdw->mixDevice()->iconName());
             }

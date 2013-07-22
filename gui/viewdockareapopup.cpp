@@ -342,42 +342,35 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 
 void ViewDockAreaPopup::constructionFinished()
 {
-   kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
-      
-   mainWindowButton = new QPushButton( i18n("Mixer"), this );
-   mainWindowButton->setObjectName( QLatin1String("MixerPanel" ));
-   connect ( mainWindowButton, SIGNAL(clicked()), SLOT(showPanelSlot()) );
-   
-    configureViewButton = createConfigureViewButton();
+//   kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
 
-   optionsLayout = new QHBoxLayout();
-   optionsLayout->addWidget(mainWindowButton );
-   optionsLayout->addWidget(configureViewButton);
+	mainWindowButton = new QPushButton(i18n("Mixer"), this);
+	mainWindowButton->setObjectName(QLatin1String("MixerPanel"));
+	connect(mainWindowButton, SIGNAL(clicked()), SLOT(showPanelSlot()));
+
+	configureViewButton = createConfigureViewButton();
+
+	optionsLayout = new QHBoxLayout();
+	optionsLayout->addWidget(mainWindowButton);
+	optionsLayout->addWidget(configureViewButton);
 
 #ifdef RESTORE_VOLUME_BUTTON
-   restoreVolumeButton1 = createRestoreVolumeButton(1);
-   optionsLayout->addWidget( restoreVolumeButton1 ); // TODO enable only if user has saved a volume profile
+	restoreVolumeButton1 = createRestoreVolumeButton(1);
+	optionsLayout->addWidget( restoreVolumeButton1 ); // TODO enable only if user has saved a volume profile
 
 //    optionsLayout->addWidget( createRestoreVolumeButton(2) );
 //    optionsLayout->addWidget( createRestoreVolumeButton(3) );
 //    optionsLayout->addWidget( createRestoreVolumeButton(4) );
 #endif
-   
-      int sliderRow = _layoutMDW->rowCount();
-      _layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
 
-  	updateGuiOptions();
+	int sliderRow = _layoutMDW->rowCount();
+	_layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
 
-//    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	updateGuiOptions();
 
-    // TODO Resizing fails. Why?!?
-//    this->resize(_layoutMDW->minimumSize());
-//        this->resize(1,1);
-//  	_layoutMDW->invalidate();
-  	_layoutMDW->update();
-      _layoutMDW->activate();
-//      setLayout(_layoutMDW);
-	kDebug() << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+	_layoutMDW->update();
+	_layoutMDW->activate();
+//	kDebug() << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 }
 
 QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )

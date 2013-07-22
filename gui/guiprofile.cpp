@@ -83,7 +83,7 @@ GUIProfile::GUIProfile()
 
 GUIProfile::~GUIProfile()
 {
-    kError() << "Thou shalt not delete any GUI profile. This message is only OK, when quitting KMix"; 
+    kWarning() << "Thou shalt not delete any GUI profile. This message is only OK, when quitting KMix";
     qDeleteAll(_controls);
     qDeleteAll(_products);
 }

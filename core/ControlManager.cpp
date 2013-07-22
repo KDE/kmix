@@ -18,10 +18,12 @@
  */
 
 #include "ControlManager.h"
+#include "core/GlobalConfig.h"
 
 #include <QMutableListIterator>
 
 #include <KDebug>
+
 
 ControlManager ControlManager::instanceSingleton;
 
@@ -67,15 +69,19 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 			bool listenerAlreadyProcesed = processedListeners.contains(&listener);
 			if ( listenerAlreadyProcesed )
 			{
-				kDebug() << "Skipping already processed listener"; // TODO remove the kDebug()
+				if (GlobalConfig::instance().debugControlManager)
+					kDebug() << "Skipping already processed listener";
 				continue;
 			}
 			if (mixerIsOfInterest && listener.getChangeType() == changeType)
 			{
 				bool success = QMetaObject::invokeMethod(listener.getTarget(), "controlsChange", Qt::DirectConnection,
 				Q_ARG(int, changeType));
-				kDebug() << "Listener " << listener.getSourceId() <<" is interested in " << mixerId
+				if (GlobalConfig::instance().debugControlManager)
+				{
+					kDebug() << "Listener " << listener.getSourceId() <<" is interested in " << mixerId
 				<< ", " << ControlChangeType::toString(changeType);
+				}
 
 				if (!success)
 				{
@@ -85,7 +91,8 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 				if (listenersChanged)
 				{
 					// The invokeMethod() above has changed the listeners => my Iterator is invalid => restart loop
-					kDebug() << "Listeners modified => restart loop";
+					if (GlobalConfig::instance().debugControlManager)
+						kDebug() << "Listeners modified => restart loop";
 					listenersChanged = false;
 					listenersModified = true;
 					break; // break inner loop => restart via outer loop
@@ -96,9 +103,12 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 	}
 	while ( listenersModified);
 
-	kDebug()
-	<< "Announcing " << ControlChangeType::toString(changeType) << " for "
+	if (GlobalConfig::instance().debugControlManager)
+	{
+		kDebug()
+		<< "Announcing " << ControlChangeType::toString(changeType) << " for "
 		<< (mixerId.isEmpty() ? "all cards" : mixerId) << " by " << sourceId;
+	}
 }
 
 /**
@@ -113,10 +123,13 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
  */
 void ControlManager::addListener(QString mixerId, ControlChangeType::Type changeType, QObject* target, QString sourceId)
 {
-	kDebug()
-	<< "Listening to " << ControlChangeType::toString(changeType) << " for "
+	if (GlobalConfig::instance().debugControlManager)
+	{
+		kDebug()
+		<< "Listening to " << ControlChangeType::toString(changeType) << " for "
 		<< (mixerId.isEmpty() ? "all cards" : mixerId) << " by " << sourceId << ". Announcements are sent to "
 		<< target;
+	}
 
 	for ( ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast;  ct = (ControlChangeType::Type)(ct << 1))
 	{
@@ -128,8 +141,11 @@ void ControlManager::addListener(QString mixerId, ControlChangeType::Type change
 			listenersChanged = true;
 		}
 	}
-	kDebug()
-	<< "We now have" << listeners.size() << "listeners";
+	if (GlobalConfig::instance().debugControlManager)
+	{
+		kDebug()
+		<< "We now have" << listeners.size() << "listeners";
+	}
 }
 
 /**
@@ -154,8 +170,9 @@ void ControlManager::removeListener(QObject* target, QString sourceId)
 		Listener& listener = it.next();
 		if (listener.getTarget() == target)
 		{
-			kDebug()
-			<< "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId << " from " << target;
+			if (GlobalConfig::instance().debugControlManager)
+				kDebug()
+				<< "Stop Listening of " << listener.getSourceId() << " requested by " << sourceId << " from " << target;
 			it.remove();
 			// Hint: As we have actual objects no explicit delete is needed
 			listenersChanged = true;
@@ -170,14 +187,15 @@ void ControlManager::warnUnexpectedChangeType(ControlChangeType::Type type, QObj
 
 void ControlManager::shutdownNow()
 {
-	kDebug()
-	<< "Shutting down ControlManager";
+	if (GlobalConfig::instance().debugControlManager)
+		kDebug() << "Shutting down ControlManager";
 	QList<Listener>::iterator it;
 	for (it = listeners.begin(); it != listeners.end(); ++it)
 	{
 		Listener& listener = *it;
-		kDebug()
-		<< "Listener still connected. Closing it. source=" << listener.getSourceId() << "listener="
+		if (GlobalConfig::instance().debugControlManager)
+			kDebug()
+			<< "Listener still connected. Closing it. source=" << listener.getSourceId() << "listener="
 			<< listener.getTarget()->metaObject()->className();
 	}
 }

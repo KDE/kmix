@@ -39,7 +39,8 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 
 {
 	// In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
-	// like ::select() is possible (as in ALSA).
+	// like ::select() is possible (as in ALSA). And force to do an update.
+	_readSetFromHWforceUpdate = true;
 	_pollingTimer = new QTimer(); // will be started on open() and stopped on close()
 	connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()), Qt::QueuedConnection);
 
@@ -67,8 +68,6 @@ Mixer_Backend::~Mixer_Backend()
 	{
 		kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
 	}
-//	kDebug() << "Destruct " << this;
-// 	qDebug() << "Running Mixer_Backend destructor";
 	delete _pollingTimer;
 }
 
@@ -215,7 +214,6 @@ void Mixer_Backend::readSetFromHW()
 			kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
 		}
 
-		kDebug() << "Announcing the readSetFromHW()";
 		ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("Mixer.fromHW"));
 	}
 

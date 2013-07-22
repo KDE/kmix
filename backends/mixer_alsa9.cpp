@@ -70,14 +70,12 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-//	kDebug() << "Destruct " << this;
    close();
 }
 
 int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
    QString name = snd_mixer_selem_id_get_name( sid );
-// kDebug() << name;
    if (name.contains("master"     , Qt::CaseInsensitive)) return MixDevice::VOLUME;
    if (name.contains("master mono", Qt::CaseInsensitive)) return MixDevice::VOLUME;
    if (name.contains("front"      , Qt::CaseInsensitive) &&
@@ -143,7 +141,7 @@ int Mixer_ALSA::open()
         QString msg("No UDI found for '");
         msg += devName;
         msg += "'. Hotplugging not possible";
-        kDebug() << msg;
+        kWarning() << msg;
     }
     // Run a loop over all controls of the card
     unsigned int idx = 0;
@@ -204,7 +202,6 @@ int Mixer_ALSA::open()
         	else
         		finalMixdeviceID = mdID + ".penum"; // playback enum
         }
-        //if ( true || readableName.startsWith("Input Source") ) kDebug() << "Input Source! id=" << finalMixdeviceID << "readableName=" << readableName << ", idx=" << idx;
 
         m_id2numHash[finalMixdeviceID] = idx;
         //kDebug() << "m_id2numHash[mdID] mdID=" << mdID << " idx=" << idx;
@@ -878,7 +875,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
     // --- playback volume
     if ( snd_mixer_selem_has_playback_volume( elem ) )
     {
-    	kDebug() << "phys=" << md->hasPhysicalMuteSwitch() << ", muted=" << md->isMuted();
+//    	kDebug() << "phys=" << md->hasPhysicalMuteSwitch() << ", muted=" << md->isMuted();
     	if ( md->isVirtuallyMuted() )
     	{
     		// Special code path for controls w/o physical mute switch. Doing it in all backends is not perfect,

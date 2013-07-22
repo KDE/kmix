@@ -39,6 +39,10 @@ public:
    
    bool volumeOverdrive; // whether more than recommended volume (typically 0dB) is allowed
 
+   bool debugControlManager;
+   bool debugGUI;
+   bool debugVolume;
+
 protected:
    QSet<QString> mixersForSoundmenu;
 
@@ -52,6 +56,10 @@ private:
     toplevelOrientation = Qt::Vertical;
     traypopupOrientation = Qt::Vertical;
     volumeOverdrive = false;
+
+    debugControlManager = false;
+    debugGUI = false;
+    debugVolume = false;
   };
   
   static GlobalConfig instanceObj;

@@ -135,7 +135,7 @@ public:
 public slots:
     void volumeChanged(MPrisControl *mad, double);
     void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
-    void addMprisControl(QString arg1);
+    void addMprisControlAsync(QString arg1);
     void notifyToReconfigureControlsAsync(QString streamId);
     void notifyToReconfigureControls();
 

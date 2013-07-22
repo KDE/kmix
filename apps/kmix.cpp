@@ -589,6 +589,11 @@ KMixWindow::loadBaseConfig()
 
 
   GlobalConfig::instance().volumeOverdrive = config.readEntry("VolumeOverdrive", false);
+
+  GlobalConfig::instance().debugControlManager = config.readEntry("Debug.ControlManager", false);
+  GlobalConfig::instance().debugGUI = config.readEntry("Debug.GUI", false);
+  GlobalConfig::instance().debugVolume = config.readEntry("Debug.Volume", false);
+
   // --- Advanced options, without GUI: END -------------------------------------
 
   m_backendFilter = config.readEntry<>("Backends", QList<QString>());
@@ -1083,6 +1088,8 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
   m_dontSetDefaultCardOnStart = false;
 
   kmw->loadConfig(KGlobal::config().data());
+  // Now force to read for new tabs, especially after hotplug. Note: Doing it here is bad design and possibly
+  // obsolete, as the backend should take care of upating itself.
   kmw->mixer()->readSetFromHWforceUpdate();
   return true;
 }

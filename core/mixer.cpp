@@ -30,6 +30,7 @@
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
 #include "core/ControlManager.h"
+#include "core/GlobalConfig.h"
 #include "core/volume.h"
 
 /**
@@ -600,29 +601,35 @@ shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID )
    - It is fast               (no copying of Volume objects required)
    - It is easy to understand ( read - modify - commit )
 */
-void Mixer::commitVolumeChange( shared_ptr<MixDevice> md )
+void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
 {
-  _mixerBackend->writeVolumeToHW(md->id(), md );
-   if (md->isEnum())
-   {
-     _mixerBackend->setEnumIdHW(md->id(), md->enumId() );
-   }
-   if ( md->captureVolume().hasSwitch() )
-   {
-      // Make sure to re-read the hardware, because setting capture might have failed.
-      // This is due to exclusive capture groups.
-      // If we wouldn't do this, KMix might show a Capture Switch disabled, but
-      // in reality the capture switch is still on.
-      //
-      // We also cannot rely on a notification from the driver (SocketNotifier), because
-      // nothing has changed, and so there s nothing to notify.
-      _mixerBackend->readSetFromHWforceUpdate();
-      kDebug() << "committing a control with capture volume, that might announce: " << md->id();
-      _mixerBackend->readSetFromHW();
-   }
-      kDebug() << "committing announces the change of: " << md->id();
-      // We announce the change we did, so all other parts of KMix can pick up the change
-      ControlManager::instance().announce(md->mixer()->id(), ControlChangeType::Volume, QString("Mixer.commitVolumeChange()"));
+	_mixerBackend->writeVolumeToHW(md->id(), md);
+	if (md->isEnum())
+	{
+		_mixerBackend->setEnumIdHW(md->id(), md->enumId());
+	}
+	if (md->captureVolume().hasSwitch())
+	{
+		// Make sure to re-read the hardware, because setting capture might have failed.
+		// This is due to exclusive capture groups.
+		// If we wouldn't do this, KMix might show a Capture Switch disabled, but
+		// in reality the capture switch is still on.
+		//
+		// We also cannot rely on a notification from the driver (SocketNotifier), because
+		// nothing has changed, and so there s nothing to notify.
+		_mixerBackend->readSetFromHWforceUpdate();
+		if (GlobalConfig::instance().debugControlManager)
+			kDebug()
+			<< "committing a control with capture volume, that might announce: " << md->id();
+		_mixerBackend->readSetFromHW();
+	}
+	if (GlobalConfig::instance().debugControlManager)
+		kDebug()
+		<< "committing announces the change of: " << md->id();
+
+	// We announce the change we did, so all other parts of KMix can pick up the change
+	ControlManager::instance().announce(md->mixer()->id(), ControlChangeType::Volume,
+		QString("Mixer.commitVolumeChange()"));
 }
 
 // @dbus, used also in kmix app

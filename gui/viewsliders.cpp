@@ -89,29 +89,30 @@ ViewSliders::~ViewSliders()
 //     qDeleteAll(_separators);
 }
 
-
 void ViewSliders::controlsChange(int changeType)
 {
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
-  {
-    case  ControlChangeType::ControlList:
-      createDeviceWidgets();
-      break;
-    case ControlChangeType::GUI:
-    	updateGuiOptions();
-      break;
-      
-    case ControlChangeType::Volume:
-      kDebug() << "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id(); // TODO RELEASE Remove debug
-      refreshVolumeLevels();
-      break;
-      
-    default:
-      ControlManager::warnUnexpectedChangeType(type, this);
-      break;
-  }
-    
+	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+	switch (type)
+	{
+	case ControlChangeType::ControlList:
+		createDeviceWidgets();
+		break;
+	case ControlChangeType::GUI:
+		updateGuiOptions();
+		break;
+
+	case ControlChangeType::Volume:
+		if (GlobalConfig::instance().debugVolume)
+			kDebug()
+			<< "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
+		refreshVolumeLevels();
+		break;
+
+	default:
+		ControlManager::warnUnexpectedChangeType(type, this);
+		break;
+	}
+
 }
 
 
@@ -196,8 +197,6 @@ void ViewSliders::_setMixSet()
 	if (GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
 	{
 		// Horizontal slider => put them vertically
-		kDebug()
-		<< "hor slider => vertical alignment";
 		_layoutMDW = new QVBoxLayout(this);
 		_layoutMDW->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 		_layoutSliders = new QVBoxLayout();
@@ -206,8 +205,6 @@ void ViewSliders::_setMixSet()
 	else
 	{
 		// Vertical slider => put them horizontally
-//		kDebug()
-//		<< "vert slider => horizontal alignment";
 		_layoutMDW = new QHBoxLayout(this);
 		_layoutMDW->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 		_layoutSliders = new QHBoxLayout();
@@ -409,34 +406,43 @@ void ViewSliders::configurationUpdate()
 
 void ViewSliders::refreshVolumeLevels()
 {
-    for ( int i=0; i<_mdws.count(); i++ )
-    {
-        QWidget *mdwx = _mdws[i];
+	for (int i = 0; i < _mdws.count(); i++)
+	{
+		QWidget *mdwx = _mdws[i];
 
-            MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(mdwx);
-            if ( mdw != 0 ) { // sanity check
+		MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(mdwx);
+		if (mdw != 0)
+		{ // sanity check
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
-                // --- start --- The following 4 code lines should be moved to a more
-                //                      generic place, as it only works in this View. But it
-                //                      should also work in the ViewDockareaPopup and everywhere else.
-                MixDeviceComposite* mdc = ::qobject_cast<MixDeviceComposite*>(mdw->mixDevice());
-                if (mdc != 0) {
-                    mdc->update();
-                }
-                // --- end ---
+			// --- start --- The following 4 code lines should be moved to a more
+			//                      generic place, as it only works in this View. But it
+			//                      should also work in the ViewDockareaPopup and everywhere else.
+			MixDeviceComposite* mdc = ::qobject_cast<MixDeviceComposite*>(mdw->mixDevice());
+			if (mdc != 0)
+			{
+				mdc->update();
+			}
+			// --- end ---
 #endif
-	  bool debugMe = (mdw->mixDevice()->id() == "PCM:0" );
-	  if (debugMe) kDebug() << "Old PCM:0 playback state" << mdw->mixDevice()->isMuted()
-	    << ", vol=" << mdw->mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
-                mdw->update();
-            }
-            else {
-                kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
-                // no slider. Cannot happen in theory => skip it
-            }
-    }
+			if (GlobalConfig::instance().debugVolume)
+			{
+				bool debugMe = (mdw->mixDevice()->id() == "PCM:0");
+				if (debugMe)
+					kDebug()
+					<< "Old PCM:0 playback state" << mdw->mixDevice()->isMuted() << ", vol="
+						<< mdw->mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
+			}
+
+			mdw->update();
+		}
+		else
+		{
+			kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
+			// no slider. Cannot happen in theory => skip it
+		}
+	}
 }
 
 #include "viewsliders.moc"

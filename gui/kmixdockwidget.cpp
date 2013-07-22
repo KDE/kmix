@@ -68,8 +68,6 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
-	kDebug() << "Construct the ViewDockAreaPopup and actions";
-
 	_volWA = 0;
 	_dockAreaPopup = 0;
 	_dockAreaPopupMenuWrapper = 0;
@@ -78,7 +76,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 	{
 		// No volume popup => Use the KMixWindow as default action of this KStatusNotifierItem
 		setAssociatedWidget(parent);
-		kDebug() << "We are now associated to " << associatedWidget();
+		kDebug() << "No volume try popup. We are now associated to " << associatedWidget();
 	}
 	else
 	{

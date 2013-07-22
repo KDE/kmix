@@ -24,12 +24,12 @@
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 
-#include <QDebug>
 #include <QStringList>
 #include <QDBusReply>
 #include <QString>
 #include <qvariant.h>
 
+#include <KDebug>
 #include <KLocale>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
@@ -166,8 +166,8 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
 			volInt = result2.toFloat() *100;
 
 			volumeChangedInternal(md, volInt);
-			kDebug() << "changed vol" << volInt;
-//			kDebug(67100) << "REPLY " << qv.type() << ": " << volInt;
+			if (GlobalConfig::instance().debugVolume)
+				kDebug() << "changed vol" << volInt;
 		}
 		else
 		{
@@ -190,7 +190,8 @@ void Mixer_MPRIS2::volumeChanged(MPrisControl* mad, double newVolume)
 {
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
 	int volInt = newVolume *100;
-	kDebug() << "changed" << volInt;
+	if (GlobalConfig::instance().debugVolume)
+		kDebug() << "changed" << volInt;
 	volumeChangedInternal(md, volInt);
 }
 
@@ -298,8 +299,11 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	}
 
 	// Start listening for new Mediaplayers
-	bool ret = dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
-	kDebug() << "Start listening for new Mediaplayers: "  << ret;
+	bool connected = dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
+	if (!connected)
+	{
+		kWarning() << "MPRIS2 hotplug init failure. New Media Players will not be detected.";
+	}
 
 	/* Here is a small concurrency issue.
 	 * If new players appear between registeredServiceNames() below and the connect() above these players *might* show up doubled in KMix.
@@ -308,24 +312,24 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	 
 	/*
 	 * Bug 311189: Introspecting via "dbusConn.interface()->registeredServiceNames()" does not work too well in
-	 *   specific scenarios. Thus I now do a hand crafted 3-line asynchronous version of registeredServiceNames().
+	 * Comment: I am not so sure that registeredServiceNames() is really an issue. It is more likely
+	 *  in a later step, when talking to the probed apps. Still, I now do a hand crafted 3-line version of
+	 *  registeredServiceNames() via "ListNames", so I can later more easily change to async.
 	 */
 	QDBusInterface dbusIfc("org.freedesktop.DBus", "/org/freedesktop/DBus",
 	                          "org.freedesktop.DBus", dbusConn);
 	QDBusPendingReply<QStringList> repl = dbusIfc.asyncCall("ListNames");
-	repl.waitForFinished(); // TODO Actually waitForFinished() is not "asynchronous enough"
-
+	repl.waitForFinished();
 
 	if ( repl.isValid() )
 	{
-		qDebug() << "Attaching Media Players";
 		QString busDestination;
 		foreach ( busDestination , repl.value() )
 		{
 			if ( busDestination.startsWith("org.mpris.MediaPlayer2") )
 			{
-				addMprisControl(busDestination);
-				kDebug() << "Attached " << busDestination;
+				addMprisControlAsync(busDestination);
+				kDebug() << "MPRIS2: Attached " << busDestination;
 			}
 		}
 	}
@@ -351,13 +355,13 @@ QString Mixer_MPRIS2::busDestinationToControlId(const QString& busDestination)
 }
 
 /**
- * Add the MPRIS control designated by the DBUS busDestination
+ * Asynchronously add the MPRIS control designated by the DBUS busDestination.
  * to the internal apps list.
  *
  * @param conn An open connection to the DBUS Session Bus
  * @param busDestination The DBUS busDestination, e.g. "org.mpris.MediaPlayer2.amarok"
  */
-void Mixer_MPRIS2::addMprisControl(QString busDestination)
+void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 {
 	// -1- Create a MPrisControl. Its fields will be filled partially here, partially via ASYNC DUBUS replies
 	QString id = busDestinationToControlId(busDestination);
@@ -454,7 +458,7 @@ void Mixer_MPRIS2::plugControlIdIncoming(QDBusPendingCallWatcher* watcher)
 			QVariant result2 = dbusVariant.variant();
 			readableName = result2.toString();
 
-			qDebug() << "REPLY " << result2.type() << ": " << readableName;
+//			kDebug() << "REPLY " << result2.type() << ": " << readableName;
 
 			// TODO This hardcoded application list is a quick hack. It should be generalized.
 			MixDevice::ChannelType ct = getChannelTypeFromPlayerId(id);
@@ -516,7 +520,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 		if ( oldOwner.isEmpty() && !newOwner.isEmpty())
 		{
 			kDebug() << "Mediaplayer registers: " << name;
-			addMprisControl(name);
+			addMprisControlAsync(name);
 		}
 		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
 		{
