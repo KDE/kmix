@@ -135,8 +135,9 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent) :
 	orientation2Group->addButton(_rbTraypopupHorizontal);
 
 	orientation2Layout->addWidget(qlb2);
-	orientation2Layout->addWidget(_rbTraypopupVertical);
 	orientation2Layout->addWidget(_rbTraypopupHorizontal);
+	orientation2Layout->addWidget(_rbTraypopupVertical);
+	orientation2Layout->addStretch();
 
 
 	layout->addStretch();
