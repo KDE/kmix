@@ -603,6 +603,8 @@ VolumeSliderExtraData& MDWSlider::extraData(QAbstractSlider *slider)
   if ( sl2 ) return sl2->extraData;
   
   kError(67100) << "Invalid slider";
+//  char* foo = 0;
+//  char a = foo[3]; // Traceback ;)
   return MDWSlider::DummVolumeSliderExtraData;
 }
 
@@ -880,9 +882,9 @@ void MDWSlider::volumeChange( int )
 	m_view->blockSignals(oldViewBlockSignalState);
 }
 
-void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref_sliders  )
+void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
 {
-	if ( isStereoLinked() )
+	if (isStereoLinked())
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
 		m_mixdevice->setMuted(false);
@@ -890,14 +892,14 @@ void MDWSlider::volumeChangeInternal( Volume& vol, QList<QAbstractSlider *>& ref
 	}
 	else
 	{
-		for( int i=0; i<ref_sliders.count(); i++ )
+		for (int i = 0; i < ref_sliders.count(); i++)
 		{
-		        if ( m_mixdevice->isMuted())
-		        {   // changing from muted state: unmute (the "if" above is actually superfluous)
+			if (m_mixdevice->isMuted())
+			{   // changing from muted state: unmute (the "if" above is actually superfluous)
 				m_mixdevice->setMuted(false);
 			}
 			QAbstractSlider *sliderWidget = ref_sliders[i];
-			vol.setVolume( extraData(sliderWidget).getChid() ,sliderWidget->value());
+			vol.setVolume(extraData(sliderWidget).getChid(), sliderWidget->value());
 		} // iterate over all sliders
 	}
 }
@@ -1241,7 +1243,7 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 			increase = !increase;
 
 		Volume::VolumeTypeFlag volumeType = Volume::Playback;
-		QSlider *slider = static_cast<QSlider*>(obj);
+		QAbstractSlider *slider = qobject_cast<QAbstractSlider*>(obj);
 		if (slider != 0)
 		{
 //			kDebug();
@@ -1254,17 +1256,27 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 				volumeType = Volume::Capture;
 			}
 		}
+		else
+		{
+			// Mouse not over a slider => do a little guessing
+			if (!m_slidersPlayback.isEmpty())
+				slider = qobject_cast<QAbstractSlider*>(m_slidersPlayback.first());
+			else if (!m_slidersCapture.isEmpty())
+				slider = qobject_cast<QAbstractSlider*>(m_slidersCapture.first());
+			else
+				slider = 0;
+		}
 
 		increaseOrDecreaseVolume(!increase, volumeType);
-//		if (increase) {
-//			increaseVolume();
-//		}
-//		else {
-//			decreaseVolume();
-//		}
 		
-		Volume& volP = m_mixdevice->playbackVolume();
-		volumeValues.push_back(volP.getVolume(extraData((QAbstractSlider*)obj).getChid()));
+		if (slider != 0)
+		{
+			Volume& volP = m_mixdevice->playbackVolume();
+//			kDebug() << "slider=" << slider->objectName();
+			VolumeSliderExtraData& sliderExtraData = extraData(slider);
+//			kDebug() << "slider=" << slider->objectName() << "sliderExtraData=" << sliderExtraData.getSubcontrolLabel() << " , chid=" << sliderExtraData.getChid();
+			volumeValues.push_back(volP.getVolume(sliderExtraData.getChid()));
+		}
 		return true;
 	}
 	return QWidget::eventFilter(obj,e);
