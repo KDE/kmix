@@ -524,9 +524,16 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 		}
 		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
 		{
-			kDebug() << "Mediaplayer unregisters: " << name;
 			QString id = busDestinationToControlId(name);
-			controls.remove(id);
+			kDebug() << "Mediaplayer unregisters: " << name << " , id=" << id;
+
+			if (controls.contains(id))
+			{
+				const MPrisControl *control = controls.value(id);
+				QObject::disconnect(control,0,0,0);
+				controls.remove(id);
+			}
+
 			shared_ptr<MixDevice> md = m_mixDevices.get(id);
 			if (md != 0)
 			{
