@@ -26,7 +26,8 @@ Column {
         id: _controlInfo
 
         anchors {
-            horizontalCenter: parent.horizontalCenter
+            left: parent.left
+            leftMargin: spacing // otherwise will be too much adjacent to the border
         }
 
         property alias icon: _controlIcon.icon

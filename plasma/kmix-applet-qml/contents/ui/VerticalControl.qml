@@ -90,7 +90,6 @@ Column {
         horizontalAlignment: Text.AlignCenter
         wrapMode: Text.WordWrap
         text: i18nc("Here goes the volume percentage value", "%1%", _control.volume)
-        elide: Text.ElideRight
         font.weight: Font.Bold
     }
 
