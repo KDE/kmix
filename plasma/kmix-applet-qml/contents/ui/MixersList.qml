@@ -1,6 +1,5 @@
-// -*- coding: iso-8859-1 -*-
 /*
- *   Author: Diego [Po]lentino Casella <polentino911@gmail.com>
+ *   Author: 2013 Diego [Po]lentino Casella <polentino911@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -19,15 +18,10 @@
  */
 
 import QtQuick 1.1
-import org.kde.plasma.components 0.1 as PlasmaComponents
-import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.qtextracomponents 0.1
 
 ListView {
     id: _mixersList
-    property alias model: _kmixModel
-    orientation: QtVertical
-    clip: true
+
     anchors {
         top: parent.top
         left: parent.left
@@ -35,19 +29,24 @@ ListView {
         bottom: _buttonBar.top
     }
 
+    property alias model: _kmixModel
+
+    clip: true
+    delegate: orientation == QtVertical ? _horizontalDelegate : _verticalDelegate
+
     model: ListModel {
         id: _kmixModel
     }
 
-    delegate: orientation == QtVertical ? _horizontalDelegate : _verticalDelegate
-    
     Component {
         id: _horizontalDelegate
+
         HorizontalMixerListDelegate {}
     }
-    
+
     Component {
         id: _verticalDelegate
+
         VerticalMixerListDelegate {}
     }
 }

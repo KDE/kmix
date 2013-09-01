@@ -9,12 +9,6 @@
     <entry name="showAllMixers" type="Bool">
       <default>true</default>
     </entry>
-    <entry name="showMasterControl" type="Bool">
-      <default>false</default>
-    </entry>
-    <entry name="horizontalSlider" type="Bool">
-      <default>true</default>
-    </entry>
     <entry name="verticalSlider" type="Bool">
       <default>false</default>
     </entry>

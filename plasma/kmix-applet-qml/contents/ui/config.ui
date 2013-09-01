@@ -13,13 +13,16 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Mixer visualization option</string>
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QRadioButton" name="kcfg_showAllMixers">
         <property name="text">
@@ -31,7 +34,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="kcfg_showMasterControl">
+       <widget class="QRadioButton" name="showMasterControl">
         <property name="text">
          <string>Show Master Control only</string>
         </property>
@@ -41,15 +44,28 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Mixer slider orientation</string>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QRadioButton" name="kcfg_horizontalSlider">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>horizontal</string>
+         <string>&lt;b&gt;Mixer slider orientation&lt;/b&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="horizontalSlider">
+        <property name="text">
+         <string>Horizontal</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -59,7 +75,7 @@
       <item>
        <widget class="QRadioButton" name="kcfg_verticalSlider">
         <property name="text">
-         <string>vertical</string>
+         <string>Vertical</string>
         </property>
        </widget>
       </item>
@@ -72,7 +88,7 @@
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeType">
-      <enum>QSizePolicy::Minimum</enum>
+      <enum>QSizePolicy::MinimumExpanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>

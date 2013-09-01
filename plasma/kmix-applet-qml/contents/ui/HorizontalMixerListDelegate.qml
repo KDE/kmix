@@ -1,6 +1,5 @@
-// -*- coding: iso-8859-1 -*-
 /*
- *   Author: Diego [Po]lentino Casella <polentino911@gmail.com>
+ *   Author: 2013 Diego [Po]lentino Casella <polentino911@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -20,34 +19,40 @@
 
 import QtQuick 1.1
 import org.kde.plasma.components 0.1 as PlasmaComponents
-import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.qtextracomponents 0.1
+import org.kde.qtextracomponents 0.1 as QtExtras
 
 Column {
     Row {
         id: _controlInfo
-        property alias icon: _controlIcon.icon
-        property alias text: _controlText.text
-        spacing: 5
+
         anchors {
             horizontalCenter: parent.horizontalCenter
         }
 
-        QIconItem {
+        property alias icon: _controlIcon.icon
+        property alias text: _controlText.text
+
+        spacing: 5
+
+        QtExtras.QIconItem {
             id: _controlIcon
-            width: theme.iconSizes.toolbar
-            height: width
+
             anchors {
                 verticalCenter: parent.verticalCenter
             }
+
+            width: theme.iconSizes.toolbar
+            height: width
         }
 
         PlasmaComponents.Label {
             id: _controlText
-            elide: Text.ElideRight
+
             anchors {
                 verticalCenter: parent.verticalCenter
             }
+
+            elide: Text.ElideRight
         }
     }
 

@@ -1,6 +1,5 @@
-// -*- coding: iso-8859-1 -*-
 /*
- *   Author: Diego [Po]lentino Casella <polentino911@gmail.com>
+ *   Author: 2013 Diego [Po]lentino Casella <polentino911@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -24,6 +23,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 
 Column {
     id: _buttonContainer
+
     anchors {
         left: parent.left
         right: parent.right
@@ -31,50 +31,63 @@ Column {
     }
 
     spacing: 5
+
+    function executeProcess(app) {
+        executable.connectSource(app);
+    }
+
+    PlasmaCore.DataSource {
+        id: executable
+
+        engine: "executable"
+
+        onSourceAdded: removeSource(source)
+    }
+
     PlasmaCore.SvgItem {
         id: separator
-        height: lineSvg.elementSize( "horizontal-line" ).height
-        svg: PlasmaCore.Svg {
-            id: lineSvg
-            imagePath: "widgets/line"
-        }
-        elementId: "horizontal-line"
+
         anchors {
             left: parent.left
             right: parent.right
         }
+
+        height: lineSvg.elementSize("horizontal-line").height
+
+        svg: PlasmaCore.Svg {
+            id: lineSvg
+
+            imagePath: "widgets/line"
+        }
+
+        elementId: "horizontal-line"
     }
 
     Row {
-        spacing: 5
         anchors {
             horizontalCenter: parent.horizontalCenter
         }
 
+        spacing: 5
+
         PlasmaComponents.ToolButton {
             id: _restoreKMix
+
             flat: false
-            text: i18n( "KMix setup" )
+            text: i18n("Mixer setup")
             iconSource: "kmix"
+
             onClicked: action_kmixSetup()
         }
 
         PlasmaComponents.ToolButton {
             id: _phononSetup
+
             flat: false
-            text: i18n( "Phonon setup" )
+            text: i18n("Audio setup")
             iconSource: "preferences-desktop-sound"
+
             onClicked: action_phononSetup()
         }
     }
-
-    PlasmaCore.DataSource {
-        id: executable
-        engine: "executable"
-        onSourceAdded: removeSource( source )
-    }
-
-    function execute( app ) {
-        executable.connectSource( app )
-    }
-}
+} // _buttonContainer

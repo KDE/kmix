@@ -1,13 +1,13 @@
 [Desktop Entry]
-Comment=
+Comment=Applet that let you control the status of the mixers available
 Encoding=UTF-8
 Icon=audio-volume-high
-Keywords=
-Name=KMixApplet
+Keywords=Audio;Volume;Mixer;KMix
+Name=Mixer Applet
 Type=Service
 X-KDE-ParentApp=
 X-KDE-PluginInfo-Author=Diego [Po]lentino Casella
-X-KDE-PluginInfo-Category=Miscellaneous
+X-KDE-PluginInfo-Category=Multimedia
 X-KDE-PluginInfo-Email=polentino911@gmail.com
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Name=org.kde.plasma.plasma-applet-kmix
@@ -15,6 +15,5 @@ X-KDE-PluginInfo-Version=1
 X-KDE-PluginInfo-Website=http://polentino911.wordpress.com
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
 X-Plasma-API=declarativeappletscript
-X-Plasma-DefaultSize=100,100
+X-Plasma-DefaultSize=300,300
 X-Plasma-MainScript=ui/kmixapplet.qml
-X-Plasma-RemoteLocation=
