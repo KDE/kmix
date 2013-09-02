@@ -74,7 +74,9 @@ Item {
         onDataChanged: {
             // if the mixer is not running, disable the applet until it comes usable again
             if (data["Mixers"]["Running"] == true) {
-                for(var i = 0; i < data["Mixers"]["Mixers"].length; ++i) {
+                // iterate backwards because the Master Control is always listed as last in
+                // the dataengine, but it is good ihmo to show it as first element in the list.
+                for(var i = data["Mixers"]["Mixers"].length - 1; i >= 0 ; --i) {
                     _controlSource.connectSource(data["Mixers"]["Mixers"][i]);
                 }
 
