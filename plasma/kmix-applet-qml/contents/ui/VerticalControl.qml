@@ -87,6 +87,11 @@ Column {
     PlasmaComponents.Label {
         id: _volumeIndicator
 
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: _control.top
+        }
+
         horizontalAlignment: Text.AlignCenter
         wrapMode: Text.WordWrap
         text: i18nc("Here goes the volume percentage value", "%1%", _control.volume)
@@ -95,6 +100,12 @@ Column {
 
     PlasmaComponents.Slider {
         id: _volumeSlider
+
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: _volumeIndicator.bottom
+            bottom: _volumeMuteButton.top
+        }
 
         minimumValue: 0
         maximumValue: 100
@@ -115,6 +126,11 @@ Column {
     PlasmaComponents.ToolButton {
         id: _volumeMuteButton
 
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: _control.bottom
+        }
+
         width: theme.mediumIconSize
         height: theme.mediumIconSize
 
@@ -127,11 +143,5 @@ Column {
             op["muted"] = !_control.muted;
             service.startOperationCall(op);
         }
-    }
-
-    Component.onCompleted: {
-        _volumeMuteButton.anchors.horizontalCenter = _control.horizontalCenter;
-        _volumeIndicator.anchors.horizontalCenter = _control.horizontalCenter;
-        _volumeSlider.anchors.horizontalCenter = _control.horizontalCenter;
     }
 } // _control

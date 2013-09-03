@@ -31,6 +31,7 @@ Row {
     property alias dataSource: _volumeEngine.connectedSources
 
     spacing: 5
+    width: parent.width
 
     function retrieveIcon() {
         if (_control.muted) {
@@ -89,6 +90,11 @@ Row {
     PlasmaComponents.ToolButton {
         id: _volumeMuteButton
 
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: parent.left
+        }
+
         width: theme.mediumIconSize
         height: theme.mediumIconSize
 
@@ -105,6 +111,12 @@ Row {
 
     PlasmaComponents.Slider {
         id: _volumeSlider
+
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: _volumeMuteButton.right
+            right: _volumeIndicator.left
+        }
 
         minimumValue: 0
         maximumValue: 100
@@ -125,19 +137,16 @@ Row {
     PlasmaComponents.Label {
         id: _volumeIndicator
 
+        anchors {
+            verticalCenter: parent.verticalCenter
+            right: parent.right
+        }
+
         width: theme.largeIconSize
         height: theme.largeIconSize
 
         horizontalAlignment: Text.AlignRight
         text: i18nc("Here goes the volume percentage value", "%1%", _control.volume)
         font.weight: Font.Bold
-    }
-
-
-    Component.onCompleted: {
-        _volumeIndicator.anchors.right = _control.right;
-        _volumeIndicator.anchors.verticalCenter = _control.verticalCenter;
-        _volumeSlider.anchors.verticalCenter = _volumeIndicator.verticalCenter;
-        _volumeMuteButton.anchors.verticalCenter = _volumeIndicator.verticalCenter;
     }
 } // _control

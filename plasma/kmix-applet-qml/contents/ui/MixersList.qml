@@ -32,6 +32,8 @@ ListView {
     property alias model: _kmixModel
 
     clip: true
+    width: parent.width
+    height: parent.height
     // NOTE: I noticed, when lots of mixers are used, the popup applet icon and tooltip
     // weren't updated because the corresponding visual item wasn't rendered, therefore
     // the reliability of the tray will go nuts without this dynamic cacheBuffer

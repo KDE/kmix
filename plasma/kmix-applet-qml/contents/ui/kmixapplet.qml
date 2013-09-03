@@ -105,14 +105,19 @@ Item {
         id: _container
 
         anchors {
-            fill: _kmixApplet
+            left: _kmixApplet.left
+            right: _kmixApplet.right
         }
 
+        width: parent.width
+        height: parent.height
         spacing: 5
 
         MixersList {
             id: _mixersList
 
+            width: parent.width
+            height: parent.height
             orientation: _kmixApplet.verticalSlider ? Qt.Horizontal : Qt.Vertical
         }
 

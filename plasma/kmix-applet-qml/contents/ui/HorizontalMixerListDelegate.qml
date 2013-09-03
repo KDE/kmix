@@ -22,6 +22,14 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.qtextracomponents 0.1 as QtExtras
 
 Column {
+
+    anchors {
+        left: parent.left
+        right: parent.right
+    }
+
+    width: parent.width
+
     Row {
         id: _controlInfo
 
@@ -58,6 +66,14 @@ Column {
     }
 
     HorizontalControl {
+
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
+
+        width: parent.width
+
         dataSource: _source
         isMasterControl: _isMasterControl
     }

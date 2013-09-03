@@ -23,6 +23,11 @@ import org.kde.qtextracomponents 0.1 as QtExtras
 Column {
     id: _controlInfo
 
+    anchors {
+        top: parent.top
+        bottom: parent.bottom
+    }
+
     property alias icon: _controlIcon.icon
     property variant text: undefined
 
@@ -33,6 +38,7 @@ Column {
 
         anchors {
             horizontalCenter: parent.horizontalCenter
+            top: parent.top
         }
 
         width: theme.iconSizes.toolbar
@@ -40,6 +46,12 @@ Column {
     }
 
     VerticalControl {
+
+        anchors {
+            top: _controlIcon.bottom
+            bottom: parent.bottom
+        }
+
         dataSource: _source
         isMasterControl: _isMasterControl
     }
