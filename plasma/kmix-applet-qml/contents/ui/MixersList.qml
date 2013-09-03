@@ -37,8 +37,8 @@ ListView {
     // the reliability of the tray will go nuts without this dynamic cacheBuffer
     // synchronization
     cacheBuffer: _kmixModel.count + 1
-    delegate: orientation == QtVertical ? _horizontalDelegate : _verticalDelegate
-    interactive: orientation == QtVertical ? height < contentHeight : width < contentWidth
+    delegate: orientation == Qt.Vertical ? _horizontalDelegate : _verticalDelegate
+    interactive: orientation == Qt.Vertical ? height < contentHeight : width < contentWidth
 
     model: ListModel {
         id: _kmixModel
