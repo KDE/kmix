@@ -15,3 +15,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
+
+/* Define to 1 if <tr1/memory> exists and defines std::tr1::shared_ptr. */
+#cmakedefine HAVE_STD_TR1_SHARED_PTR 1
+
+/* Define to 1 if <memory> exists and defines std::shared_ptr. */
+#cmakedefine HAVE_STD_SHARED_PTR 1
