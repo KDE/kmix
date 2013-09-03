@@ -535,7 +535,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 			}
 
 			shared_ptr<MixDevice> md = m_mixDevices.get(id);
-			if (md != 0)
+			if (md)
 			{
 				// We know about the player that is unregistering => remove internally
 				md->close();
