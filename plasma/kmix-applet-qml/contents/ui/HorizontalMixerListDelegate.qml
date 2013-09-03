@@ -34,7 +34,6 @@ Column {
         id: _controlInfo
 
         anchors {
-            left: parent.left
             leftMargin: spacing // otherwise will be too much adjacent to the border
         }
 
@@ -66,11 +65,6 @@ Column {
     }
 
     HorizontalControl {
-
-        anchors {
-            left: parent.left
-            right: parent.right
-        }
 
         width: parent.width
 
