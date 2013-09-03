@@ -22,12 +22,15 @@
 #ifndef CONTROL_POOL_H
 #define CONTROL_POOL_H
 
+#include "config.h"
 
-// std::shared_ptr
+#if defined(HAVE_STD_SHARED_PTR)
 #include <memory>
+using std::shared_ptr;
+#elif defined(HAVE_STD_TR1_SHARED_PTR)
 #include <tr1/memory>
-
-using namespace ::std::tr1;
+using std::tr1::shared_ptr;
+#endif
 
 #include "core/mixdevice.h"
 

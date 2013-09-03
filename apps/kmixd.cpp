@@ -156,7 +156,7 @@ void KMixD::saveBaseConfig()
       config.writeEntry( "MasterMixer", mixerMasterCard->id() );
    }
    shared_ptr<MixDevice> mdMaster = Mixer::getGlobalMasterMD();
-   if ( mdMaster != 0 ) {
+   if ( mdMaster ) {
       config.writeEntry( "MasterMixerDevice", mdMaster->id() );
    }
    QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();

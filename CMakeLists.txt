@@ -26,6 +26,17 @@ if(MSVC)
 endif(MSVC)
 
 
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+    #include <memory>
+    int main() { std::shared_ptr<int> p; return 0; }
+" HAVE_STD_SHARED_PTR)
+check_cxx_source_compiles("
+    #include <tr1/memory>
+    int main() { std::tr1::shared_ptr<int> p; return 0; }
+" HAVE_STD_TR1_SHARED_PTR)
+
+
 configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 
