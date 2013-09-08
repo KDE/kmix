@@ -26,16 +26,13 @@ Column {
     anchors {
         left: parent.left
         right: parent.right
+        leftMargin: _controlInfo.spacing
     }
 
     width: parent.width
 
     Row {
         id: _controlInfo
-
-        anchors {
-            leftMargin: spacing // otherwise will be too much adjacent to the border
-        }
 
         property alias icon: _controlIcon.icon
         property alias text: _controlText.text
