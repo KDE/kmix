@@ -34,7 +34,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="showMasterControl">
+       <widget class="QRadioButton" name="kcfg_showMasterControl">
         <property name="text">
          <string>Show Master Control only</string>
         </property>
@@ -55,7 +55,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>&lt;b&gt;Mixer slider orientation&lt;/b&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Orientation&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="textFormat">
          <enum>Qt::RichText</enum>
@@ -63,7 +63,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="horizontalSlider">
+       <widget class="QRadioButton" name="kcfg_horizontalSlider">
         <property name="text">
          <string>Horizontal</string>
         </property>
