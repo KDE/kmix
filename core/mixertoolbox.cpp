@@ -132,6 +132,12 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
    bool autodetectionFinished = false;
    for( int drv=0; drv<drvNum; drv++ )
    {
+      if ( autodetectionFinished )
+      {
+         // inner loop indicates that we are finished => sane exit from outer loop
+         break;
+      }
+
       QString driverName = Mixer::driverName(drv);
       kDebug(67100) << "Looking for mixers with the : " << driverName << " driver";
       if ( useBackendFilter && ! backendList.contains(driverName) )
@@ -140,11 +146,6 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 	  continue;
       }
       
-
-      if ( autodetectionFinished ) {
-         // inner loop indicates that we are finished => sane exit from outer loop
-         break;
-      }
 
       bool regularBackend =  driverName != "MPRIS2"  && driverName != "PulseAudio";
       if (regularBackend && regularBackendFound)
@@ -170,11 +171,12 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
           */
          if ( ! useBackendFilter )
          {
+        	 bool foundSomethingAndLastControlReached = dev == devNumMax && ! Mixer::mixers().isEmpty();
 			 switch ( multiDriverMode )
 			 {
 			 case SINGLE:
 					// In Single-Driver-mode we only need to check after we reached devNumMax
-					if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
+					if ( foundSomethingAndLastControlReached )
 						autodetectionFinished = true; // highest device number of driver and a Mixer => finished
 					break;
 
@@ -190,13 +192,13 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 				 else if ( driverName == "PulseAudio" )
 				 {
 					 // PulseAudio is not useful together with MPRIS2. Treat it as "single"
-					 if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
+					 if ( foundSomethingAndLastControlReached )
 						 autodetectionFinished = true;
 				 }
 				 else
 				 {
 					 // same check as in SINGLE
-					 if ( dev == devNumMax && ! Mixer::mixers().isEmpty() )
+					 if ( foundSomethingAndLastControlReached )
 						 regularBackendFound = true;
 				 }
 
@@ -306,7 +308,11 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
  */
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
-	int newCardInstanceNum = 1 + s_mixerNums[mixer->getBaseName()];
+	// TODO bug327471 This is really wrong here: _mixerBackend->getBaseName() is empty, as it will be filled by
+	//                mixer->openIfValid(). See 3 lines below for the call!
+	QString mixerBasename = mixer->getBaseName();
+	int newCardInstanceNum = 1 + s_mixerNums[mixerBasename];
+	kDebug() << "mixerBasename=" << mixerBasename << ", cardNumPlanned=" << newCardInstanceNum;
     if ( mixer->openIfValid(newCardInstanceNum) )
     {
         if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) )
@@ -323,7 +329,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 			// This is for creating persistent (reusable) primary keys, which can safely
 			// be referenced (especially for config file access, so it is meant to be persistent!).
 			//s_mixerNums[mixer->getBaseName()]++;
-        	s_mixerNums[mixer->getBaseName()] = newCardInstanceNum;
+        	s_mixerNums[mixerBasename] = newCardInstanceNum;
         	//        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]); // TODO this code must go in mixer->openIfValid()
 
         	Mixer::mixers().append( mixer );

@@ -6,6 +6,9 @@ find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
 include(MacroLibrary)
 
+# Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
+#find_package(Phonon REQUIRED)
+
 find_package(Alsa)
 
 macro_optional_find_package(PulseAudio "0.9.12")
@@ -110,6 +113,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    gui/dialogchoosebackends.cpp 
    gui/guiprofile.cpp
    gui/osdwidget.cpp
+   core/MediaController.cpp
    core/mixertoolbox.cpp
    core/kmixdevicemanager.cpp
    core/ControlManager.cpp
@@ -125,7 +129,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 
 kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmix ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kdeinit_kmix ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 #target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} /home/kde/workspace/kdelibs/build/lib/libsolid.so.4.7.0 ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY})
 
 if (HAVE_LIBASOUND2)
@@ -153,14 +157,13 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 #    core/ControlPool.cpp
     core/GlobalConfig.cpp
     core/MasterControl.cpp
+    core/MediaController.cpp
     core/mixer.cpp 
     core/mixset.cpp 
     core/mixdevice.cpp 
     core/volume.cpp
     core/mixertoolbox.cpp 
     core/kmixdevicemanager.cpp
-    backends/mixer_mpris2.cpp
-    backends/mixer_backend.cpp 
     )
 
 #qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
@@ -168,7 +171,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 kde4_add_plugin(kded_kmixd ${kded_kmixd_SRCS})
 
 
-target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
@@ -197,6 +200,7 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 #   core/ControlPool.cpp
    core/GlobalConfig.cpp
    core/MasterControl.cpp
+   core/MediaController.cpp
    core/mixer.cpp 
    core/mixset.cpp 
    core/mixdevice.cpp 
@@ -210,7 +214,7 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 
 kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})

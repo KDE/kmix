@@ -1,24 +1,25 @@
-V1.90
-Version shipped with KDE3.1
+KDE v4.13
+- Clearly rearranged configuration menu, using Tabs.
+- Sound Menu: Play button reflects playback status and shows either "Play" or "Pause" 
 
-V1.91
-- Multiple soundcards on ALSA are now supported
-- Mixer device names are now shown with a vertical label (saves space and looks nice)
-- MixerDevice categories. Allows to distribute devices on "New Mixer Tab...". It is used
-  in the panel applet to show only important devices initally.
-- Much nicer "New Mixer Tab..." dialog
+- Bugfixes and Features:
+Bug ID	Severity	Summary
+317926  critical kmix start delayed on 20 seconds 
+315383	normal	mpris volume/play status not in sync with app in kmix applet
+299477	normal	KMix Does Not Unmute Master Audio Channel
+256854	normal	Tray popup obscures vertical panel
+304144	normal	KMix does not distinguish separate channels on one volume control
+296951	normal	Tray plasmoid scroll/hiding issues [read description]
+303608	crash	Kmix crashed after selecting Amarok as master and instantly crashed when changing song. Volumes in exeption of the integrated subwoofer go fine; the built-in woofer must be changed trough Alsa, and Amarok must be volumed up/down by it's bar.
+214854	normal	kmix size is not restored by session management, only position.
+319600	major	KMix volume icon is unstale during playback
 
-v3.0
-- KDE 4 version
 
-v3.5
-- This is the KDE 4.2 head version
-- Wish 132330: On-screen display of volume level
-- Wish 157701: Smaller neater dockarea popup
-- Bug  161393: kmix does not associate hotplugged USB HID volume control
-- Bug  168658: kmix - master channel missing
-- Bug  172958: OSD doesn't update when volume is changed using keyboard
-- Feature    : Automatically grab XF86VolumeUp, XF86VolumeDown and XF86VolumeMute (done)
+KDE v4.11
+- Full Sound Menu: Media Player control support
+
+v3.8
+- Feature : KMix has now a profile for TerraTec DMX6Fire cards and is able to handle it's weird volume controls
 
 v3.6
 - This is the KDE 4.4 version
@@ -30,5 +31,25 @@ v3.6
 
 i001: When the user redefines the automatially grabbed XF86Volume* keys, he doesn't have an easy possibilty to get them back, because they are now marked as "no shortcut" in the global shortcut registry. The user must go the KDE system settings module "global shortcuts" and reset them to their default. No user will wfind that!!! So this should be possible inside KMix (ShortcutsDialog or a button "reset volume keys" in the configuration dialog).
 
-v3.8
-- Feature : KMix has now a profile for TerraTec DMX6Fire cards and is able to handle it's weird volume controls
+v3.5
+- This is the KDE 4.2 head version
+- Wish 132330: On-screen display of volume level
+- Wish 157701: Smaller neater dockarea popup
+- Bug  161393: kmix does not associate hotplugged USB HID volume control
+- Bug  168658: kmix - master channel missing
+- Bug  172958: OSD doesn't update when volume is changed using keyboard
+- Feature    : Automatically grab XF86VolumeUp, XF86VolumeDown and XF86VolumeMute (done)
+
+v3.0
+- KDE 4 version
+
+V1.91
+- Multiple soundcards on ALSA are now supported
+- Mixer device names are now shown with a vertical label (saves space and looks nice)
+- MixerDevice categories. Allows to distribute devices on "New Mixer Tab...". It is used
+  in the panel applet to show only important devices initally.
+- Much nicer "New Mixer Tab..." dialog
+
+V1.90
+Version shipped with KDE3.1
+

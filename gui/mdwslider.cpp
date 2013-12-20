@@ -52,7 +52,6 @@
 #include "gui/mdwmoveaction.h"
 
 
-VolumeSliderExtraData MDWSlider::DummVolumeSliderExtraData;
 bool MDWSlider::debugMe = false;
  /**
  * MixDeviceWidget that represents a single mix device, including PopUp, muteLED, ...
@@ -73,6 +72,7 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptur
 	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
 	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
 	m_label( 0 ), /*m_captureLED( 0 ),*/
+	mediaButton(0),
 	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
 	muteButtonSpacing(false), captureLEDSpacing(false), _mdwMoveActions(new KActionCollection(this)), m_moveMenu(0),
 	m_sliderInWork(0), m_waitForSoundSetComplete(0)
@@ -286,10 +286,11 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
     bool includeCapture = _pctl->useSubcontrolCapture();
     bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
     bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
-      bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
-     // bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
+	bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
+	// bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
 	
-      bool wantsMediaControls = ( m_mixdevice->hasMediaNextControl() || m_mixdevice->hasMediaPlayControl() || m_mixdevice->hasMediaPrevControl() );
+	MediaController* mediaController = m_mixdevice->getMediaController();
+	bool wantsMediaControls = mediaController->hasControls();
 
       // case of vertical sliders:
 	if ( _orientation == Qt::Vertical )
@@ -336,6 +337,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 		//volLayout->setSpacing(5);
 		controlLayout->addItem( volLayout );
 
+
 		if ( hasVolumeSliders )
 		{
 			if ( wantsPlaybackSliders )
@@ -343,7 +345,8 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 			if ( wantsCaptureSliders )
 				addSliders( volLayout, 'c', m_mixdevice->captureVolume() , m_slidersCapture );
 			if ( wantsMediaControls )
-				addMediaControls( volLayout ); // Please note that the addmediaControls() is in the hasVolumeSliders check onyl because it was easier to integrate
+				addMediaControls( volLayout ); // Please note that the addmediaControls() is in the
+			// hasVolumeSliders check only because it was easier to integrate
 			controlLayout->addSpacing( 3 );
 		} else {
 			controlLayout->addStretch(1);
@@ -473,31 +476,62 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 	layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
 }
 
-    void MDWSlider::addMediaControls(QBoxLayout* volLayout)
-    {
-      QBoxLayout *mediaLayout;
-      if ( _orientation == Qt::Vertical )
-	mediaLayout = new QVBoxLayout();
-      else
-	mediaLayout = new QHBoxLayout();
+QString MDWSlider::calculatePlaybackIcon(MediaController::PlayState playState)
+{
+	QString mediaIconName;
+	switch (playState)
+	{
+	case MediaController::PlayPlaying:
+		// playing => show pause icon
+		mediaIconName = "media-playback-pause";
+		break;
+	case MediaController::PlayPaused:
+		// stopped/paused => show play icon
+		mediaIconName = "media-playback-start";
+		break;
+	case MediaController::PlayStopped:
+		// stopped/paused => show play icon
+		mediaIconName = "media-playback-start";
+		break;
+	default:
+		// unknown => not good, probably result from player has not yet arrived => show a play button
+		mediaIconName = "media-playback-start";
+		break;
+	}
 
-      if ( mixDevice()->hasMediaPrevControl())
-      {
-	QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout);
-	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPrev(bool)) ); 
-      }
-      if ( mixDevice()->hasMediaPlayControl())
-      {
-	QToolButton *lbl = addMediaButton("media-playback-start", mediaLayout);
-	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)) ); 
-      }
-      if ( mixDevice()->hasMediaNextControl())
-      {
-	QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout);
-	connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaNext(bool)) ); 
-      }
-      volLayout->addLayout(mediaLayout);
-    }
+	return mediaIconName;
+}
+
+void MDWSlider::addMediaControls(QBoxLayout* volLayout)
+{
+	MediaController* mediaController =  mixDevice()->getMediaController();
+
+	QBoxLayout *mediaLayout;
+	if (_orientation == Qt::Vertical)
+		mediaLayout = new QVBoxLayout();
+	else
+		mediaLayout = new QHBoxLayout();
+
+	if (mediaController->hasMediaPrevControl())
+	{
+		QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout);
+		connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPrev(bool)));
+	}
+	if (mediaController->hasMediaPlayControl())
+	{
+		MediaController::PlayState playState = mediaController->getPlayState();
+		QString mediaIcon = calculatePlaybackIcon(playState);
+		mediaButton = addMediaButton(mediaIcon, mediaLayout);
+		connect(mediaButton, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)));
+	}
+
+	if (mediaController->hasMediaNextControl())
+	{
+		QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout);
+		connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaNext(bool)));
+	}
+	volLayout->addLayout(mediaLayout);
+}
 
 
 QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout)
@@ -511,6 +545,19 @@ QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout)
 	layout->addWidget(lbl);
 
 	return lbl;
+}
+
+/**
+ * Updates the icon according to the data model.
+ */
+void MDWSlider::updateMediaButton()
+{
+	if (mediaButton == 0)
+		return; // has no media button
+
+	MediaController* mediaController =  mixDevice()->getMediaController();
+	QString mediaIconName = calculatePlaybackIcon(mediaController->getPlayState());
+	setIcon(mediaIconName, mediaButton);
 }
 
 void MDWSlider::mediaPrev(bool)
@@ -593,19 +640,21 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList
 	} // for all channels of this device
 }
 
-
+/**
+ * Return the VolumeSliderExtraData from either VolumeSlider or KSmallSlider.
+ * You MUST extend this method, should you decide to add more Slider Widget classes.
+ *
+ * @param slider
+ * @return
+ */
 VolumeSliderExtraData& MDWSlider::extraData(QAbstractSlider *slider)
 {
   VolumeSlider* sl = qobject_cast<VolumeSlider*>(slider);
-  if ( sl ) return sl->extraData;
+  if ( sl )
+	  return sl->extraData;
   
   KSmallSlider* sl2 = qobject_cast<KSmallSlider*>(slider);
-  if ( sl2 ) return sl2->extraData;
-  
-  kError(67100) << "Invalid slider";
-//  char* foo = 0;
-//  char a = foo[3]; // Traceback ;)
-  return MDWSlider::DummVolumeSliderExtraData;
+  return sl2->extraData;
 }
 
 

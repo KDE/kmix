@@ -40,7 +40,8 @@ class KAction;
 #include <kxmlguiwindow.h>
 
 // KMix
-class KMixPrefDlg;
+#include "core/GlobalConfig.h"
+
 class KMixDockWidget;
 class KMixerWidget;
 class KMixWindow;
@@ -89,7 +90,7 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes();
    void saveVolumes(QString postfix);
    void saveConfig();
-   virtual void applyPrefs( KMixPrefDlg *prefDlg );
+   virtual void applyPrefs();
    void recreateGUI(bool saveView);
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
    void recreateGUIwithSavingView();
@@ -104,25 +105,19 @@ KMixWindow : public KXmlGuiWindow
    KAccel *m_keyAccel;
    KAction* _actionShowMenubar;
 
-   // move many of the following to a central static configuration object
-   // (they come from the KMix config file, so they are really "static".
-   bool m_showDockWidget;
-   bool trayVolumePopupEnabled;
-   
 private:
-   bool m_onLogin;
-   bool allowAutostart;
-   bool m_beepOnVolumeChange;
+   /**
+    * configSnapshot is used to hold the original state before modifications in the preferences dialog
+    */
+   GlobalConfigData configDataSnapshot;
+
    bool m_startVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
 
-   bool forceNotifierRebuild;
-
    KTabWidget *m_wsMixers;
 
-   KMixPrefDlg *m_prefDlg;
    KMixDockWidget *m_dockWidget;
    QString m_hwInfoString;
    QString m_defaultCardOnStart;

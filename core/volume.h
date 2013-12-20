@@ -62,7 +62,7 @@ friend class MixDevice;
                      MALL=0xFFFF };
 
 
-    enum ChannelID { CHIDMIN      = 0,
+    enum ChannelID { NOCHANNEL =-1, CHIDMIN       = 0,
                   LEFT         = 0, RIGHT         = 1, CENTER = 2,
 
                   WOOFER       = 3,
@@ -179,20 +179,21 @@ private:
     bool _switchActivated;
     SwitchType _switchType;
     bool _isCapture;
-  bool disallowSwitchDisallowRead;
 };
 
 class VolumeChannel
 {  
 public:
-  VolumeChannel(Volume::ChannelID chid) { volume =0; this->chid = chid; }
+  VolumeChannel();
+  /**
+   * Construct a channel for the given channel id.
+   *
+   * @param chid
+   */
+  VolumeChannel(Volume::ChannelID chid);
+
   long volume;
   Volume::ChannelID chid;
-  
-// protected:
-//   friend class Volume;
-//   friend class MixDevice;
-  VolumeChannel(); // Only required for QMap
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);

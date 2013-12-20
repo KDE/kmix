@@ -72,6 +72,7 @@ public:
     void setIcon( QString filename, QLabel** label );
     void setIcon( QString filename, QWidget* label );
     QToolButton* addMediaButton(QString iconName, QLayout* layout);
+    void updateMediaButton();
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
     
@@ -144,7 +145,7 @@ private:
 #endif
 
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
-
+	QString calculatePlaybackIcon(MediaController::PlayState playState);
 
     bool m_linked;
 
@@ -158,7 +159,8 @@ private:
 	QLabel* m_muteText;
         
 	QLabel *m_label; // is either QLabel or VerticalText
-    
+	QToolButton *mediaButton;
+
 	QCheckBox* m_captureCheckbox;
     QLabel* m_captureText;
 

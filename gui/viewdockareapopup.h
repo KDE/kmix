@@ -48,7 +48,7 @@ public:
      virtual void showContextMenu();
 
 protected:
-    KMixWindow  *_dock;
+    KMixWindow  *_kmixMainWindow;
 
     void wheelEvent ( QWheelEvent * e );
     virtual void _setMixSet();

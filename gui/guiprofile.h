@@ -131,7 +131,24 @@ struct ProductComparator
 
 class GUIProfile
 {
-    public:
+public:
+    typedef std::set<ProfProduct*, ProductComparator> ProductSet;
+    typedef QList<ProfControl*> ControlSet;
+
+private:
+    static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }
+    // Loading
+    static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
+    static QString buildReadableProfileName(Mixer* mixer, QString profileName);
+
+    static GUIProfile* loadProfileFromXMLfiles(Mixer* mixer, QString profileName);
+    static void addProfile(GUIProfile* guiprof);
+	static const QString createNormalizedFilename(const QString& profileId);
+
+	static QMap<QString, GUIProfile*> s_profiles;
+
+
+public:
     GUIProfile();
     virtual ~GUIProfile();
 
@@ -148,38 +165,30 @@ class GUIProfile
     QString getId() const;
     QString getMixerId() const { return _mixerId; }
     
-    static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }
     
     unsigned long match(Mixer* mixer);
     friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
     friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 
-    typedef std::set<ProfProduct*, ProductComparator> ProductSet;
 
-
-    ProductSet _products;
 
     static GUIProfile* find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
     static GUIProfile* find(QString id);
     static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
     static GUIProfile* fallbackProfile(Mixer*);
 
-    typedef QList<ProfControl*> ControlSet;
-
-    const ControlSet& getControls() const
-    {
-        return _controls;
-    }
-    ControlSet& getControls()
-    {
-        return _controls;
-    }
+    // --- Getters and setters ----------------------------------------------------------------------
+    const ControlSet& getControls() const;
+    ControlSet& getControls();
     void setControls(ControlSet& newControlSet);
 
     QString getName() const    {        return _name;    }
     void setName(QString _name)    {        this->_name = _name;    }
 
-    // The values from the <soundcard> tag
+    void addProduct(ProfProduct*);
+
+
+    // --- The values from the <soundcard> tag: No getters and setters for them (yet) -----------------------------
     QString _soundcardDriver;
     // The driver version: 1000*1000*MAJOR + 1000*MINOR + PATCHLEVEL
     unsigned long _driverVersionMin;
@@ -187,16 +196,10 @@ class GUIProfile
     QString _soundcardName;
     QString _soundcardType;
     unsigned long _generation;
+
 private:
     ControlSet _controls;
-    
-    // Loading
-    static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
-    static QString buildReadableProfileName(Mixer* mixer, QString profileName);
-
-    static GUIProfile* loadProfileFromXMLfiles(Mixer* mixer, QString profileName);
-    static void addProfile(GUIProfile* guiprof);
-    static QMap<QString, GUIProfile*> s_profiles;
+    ProductSet _products;
     
     QString _id;
     QString _name;

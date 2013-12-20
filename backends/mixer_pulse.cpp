@@ -889,7 +889,7 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         else if (m_devnum == KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
             ms = s_mixers[KMIXPA_CAPTURE]->getMixSet();
 
-        int maxVol = GlobalConfig::instance().volumeOverdrive ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
+        int maxVol = GlobalConfig::instance().data.volumeOverdrive ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
         Volume v(maxVol, PA_VOLUME_MUTED, true, false);
         v.addVolumeChannels(dev.chanMask);
         setVolumeFromPulse(v, dev);

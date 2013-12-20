@@ -52,8 +52,7 @@ int Mixer_MPRIS2::open()
 	m_mixerName = i18n("Playback Streams");
 	_id = "Playback Streams";
 	_mixer->setDynamic();
-	addAllRunningPlayersAndInitHotplug();
-	return 0;
+	return addAllRunningPlayersAndInitHotplug();
 }
 
 int Mixer_MPRIS2::close()
@@ -97,86 +96,49 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 
 
 	QDBusPendingCallWatcher* watchMediaControlReply = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchMediaControlReply, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(mediaContolReplyIncoming(QDBusPendingCallWatcher *)));
+	connect(watchMediaControlReply, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherMediaControl(QDBusPendingCallWatcher *)));
 
 	return 0; // Presume everything went well. Can't do more for ASYNC calls
 }
 
-void Mixer_MPRIS2::mediaContolReplyIncoming(QDBusPendingCallWatcher* watcher)
+void Mixer_MPRIS2::watcherMediaControl(QDBusPendingCallWatcher* watcher)
 {
+	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl == 0)
+	{
+		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
+	}
+
+	// Actually the code below in this method is more or less just debugging
 	const QDBusMessage& msg = watcher->reply();
-	if ( msg.type() == QDBusMessage::ErrorMessage )
-	{
-		kError(67100) << "ERROR in Media control operation, path=" << msg.path() << ", msg=" << msg;
-		watcher->deleteLater();
-		return;
-	}
-
-	QObject *obj = watcher->parent();
-	watcher->deleteLater();
-
-	MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
-	if (mad == 0)
-	{
-		kWarning() << "Ignoring unexpected Control Id";
-		return;
-	}
-	QString id = mad->getId();
-	QString busDestination = mad->getBusDestination();
-	QString readableName = id; // Start with ID, but replace with reply (if exists)
-
-
-	kDebug() << "Media control for id=" << id << ", path=" << msg.path() << ", interface=" << msg.interface() << ", busDestination" << busDestination << ", name= " << readableName;
-	kDebug() << "msg=" << msg;
-
-
+	QString id = mprisCtl->getId();
+	QString busDestination = mprisCtl->getBusDestination();
+	kDebug() << "Media control for id=" << id << ", path=" << msg.path() << ", interface=" << msg.interface() << ", busDestination" << busDestination;
 }
 
 /**
  * readVolumeFromHW() should be used only for hotplug (and even that should go away). Everything should operate via
  * the slot volumeChanged in the future.
  */
-int Mixer_MPRIS2::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md)
+int Mixer_MPRIS2::readVolumeFromHW( const QString& /*id*/, shared_ptr<MixDevice> /*md*/)
 {
-	int volInt = 0;
-
-	QList<QVariant> arg;
-	arg.append(QString("org.mpris.MediaPlayer2.Player"));
-	arg.append(QString("Volume"));
-	MPrisControl* mad = controls.value(id);
-//	QDBusMessage msg = mad->propertyIfc->callWithArgumentList(QDBus::Block, "Get", arg);
-
-	QVariant v1 = QVariant(QString("org.mpris.MediaPlayer2.Player"));
-	QVariant v2 = QVariant(QString("Volume"));
-
-	QDBusPendingReply<QVariant > repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
-	repl2.waitForFinished();
-	QDBusMessage msg = repl2.reply();
-
-
-	if ( msg.type() == QDBusMessage::ReplyMessage )
-	{
-		QList<QVariant> repl = msg.arguments();
-		if ( ! repl.isEmpty() )
-		{
-			QVariant qv = repl.at(0);
-			// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
-			QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
-			QVariant result2 = dbusVariant.variant();
-			volInt = result2.toFloat() *100;
-
-			volumeChangedInternal(md, volInt);
-			if (GlobalConfig::instance().debugVolume)
-				kDebug() << "changed vol" << volInt;
-		}
-		else
-		{
-			kError(67100) << "ERROR GET " << id;
-			return Mixer::ERR_READ;
-		}
-
-	}
+	// Everything is done by notifications => no code neccessary
 	return 0;
+}
+
+
+/**
+ * A slot that processes data from the MPrisControl that emit the signal.
+ *
+ * @param The  emitting MPrisControl
+ * @param newVolume The new volume
+ */
+void Mixer_MPRIS2::playbackStateChanged(MPrisControl* mad, MediaController::PlayState playState)
+{
+	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
+	md->getMediaController()->setPlayState(playState);
+	QMetaObject::invokeMethod(this, "announceGUI", Qt::QueuedConnection);
+//	ControlManager::instance().announce(_mixer->id(), ControlChangeType::GUI, QString("MixerMPRIS2.playbackStateChanged"));
 }
 
 
@@ -190,7 +152,7 @@ void Mixer_MPRIS2::volumeChanged(MPrisControl* mad, double newVolume)
 {
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
 	int volInt = newVolume *100;
-	if (GlobalConfig::instance().debugVolume)
+	if (GlobalConfig::instance().data.debugVolume)
 		kDebug() << "changed" << volInt;
 	volumeChangedInternal(md, volInt);
 }
@@ -206,7 +168,8 @@ void Mixer_MPRIS2::volumeChangedInternal(shared_ptr<MixDevice> md, int volumePer
 	Volume& vol = md->playbackVolume();
 	vol.setVolume( Volume::LEFT, volumePercentage);
 	md->setMuted(volumePercentage == 0);
-	ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("MixerMPRIS2.volumeChanged"));
+	QMetaObject::invokeMethod(this, "announceVolume", Qt::QueuedConnection);
+//	ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("MixerMPRIS2.volumeChanged"));
 }
 
 // The following is an example message for an incoming volume change:
@@ -223,6 +186,13 @@ signal sender=:1.125 -> dest=(null destination) serial=503 path=/org/mpris/Media
    ]
  */
 
+/**
+ * @overload
+ *
+ * @param id
+ * @param md
+ * @return
+ */
 int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
 	Volume& vol = md->playbackVolume();
@@ -239,27 +209,14 @@ int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 	arg << QVariant::fromValue(QDBusVariant(volFloat));
 
 	MPrisControl* mad = controls.value(id);
-//	QDBusMessage msg = mad->propertyIfc->callWithArgumentList(QDBus::NoBlock, "Set", arg);
 
 	QVariant v1 = QVariant(QString("org.mpris.MediaPlayer2.Player"));
 	QVariant v2 = QVariant(QString("Volume"));
 	QVariant v3 = QVariant::fromValue(QDBusVariant(volFloat));
 //	QVariant v3 = QVariant(volFloat);
 
-	//QDBusPendingReply<QVariant > repl2 =
+	// I don't care too much for the reply, as I won't receive a result. Thus fire-and-forget here.
 	mad->propertyIfc->asyncCall("Set", v1, v2, v3);
-	/*
-	repl2.waitForFinished();
-	QDBusMessage msg = repl2.reply();
-
-
-
-	if ( msg.type() == QDBusMessage::ErrorMessage )
-	{
-		kError(67100) << "ERROR SET " << id << ": " << msg;
-		return Mixer::ERR_WRITE;
-	}
-	*/
 	return 0;
 }
 
@@ -311,7 +268,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	 */
 	 
 	/*
-	 * Bug 311189: Introspecting via "dbusConn.interface()->registeredServiceNames()" does not work too well in
+	 * Bug 311189: Introspecting via "dbusConn.interface()->registeredServiceNames()" does not work too well.
 	 * Comment: I am not so sure that registeredServiceNames() is really an issue. It is more likely
 	 *  in a later step, when talking to the probed apps. Still, I now do a hand crafted 3-line version of
 	 *  registeredServiceNames() via "ListNames", so I can later more easily change to async.
@@ -321,23 +278,21 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	QDBusPendingReply<QStringList> repl = dbusIfc.asyncCall("ListNames");
 	repl.waitForFinished();
 
-	if ( repl.isValid() )
+	if (! repl.isValid() )
 	{
-		QString busDestination;
-		foreach ( busDestination , repl.value() )
-		{
-			if ( busDestination.startsWith("org.mpris.MediaPlayer2") )
-			{
-				addMprisControlAsync(busDestination);
-				kDebug() << "MPRIS2: Attached " << busDestination;
-			}
-		}
-	}
-	else
-	{
-		kError() << "Invalid reply while listing Media Players" << repl.error();
+		kError() << "Invalid reply while listing Media Players. MPRIS2 players will not be available." << repl.error();
+		return 1;
 	}
 
+	QString busDestination;
+	foreach ( busDestination , repl.value() )
+	{
+		if ( busDestination.startsWith("org.mpris.MediaPlayer2") )
+		{
+			addMprisControlAsync(busDestination);
+			kDebug() << "MPRIS2: Attached media player on busDestination=" << busDestination;
+		}
+	}
 
 	return 0;
 }
@@ -389,13 +344,12 @@ void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 	 * This behavior is total counter-intuitive :-(((
 	 */
 
-	// Create ASYNC DBUS queries for the new control
+	// Create ASYNC DBUS queries for the new control. This effectively starts a chain of async DBUS commands.
 	QVariant v1 = QVariant(QString("org.mpris.MediaPlayer2"));
 	QVariant v2 = QVariant(QString("Identity"));
-
 	QDBusPendingReply<QVariant > repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
 	QDBusPendingCallWatcher* watchIdentity = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(plugControlIdIncoming(QDBusPendingCallWatcher *)));
+	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherPlugControlId(QDBusPendingCallWatcher *)));
 }
 
 MixDevice::ChannelType Mixer_MPRIS2::getChannelTypeFromPlayerId(const QString& id)
@@ -430,85 +384,187 @@ MixDevice::ChannelType Mixer_MPRIS2::getChannelTypeFromPlayerId(const QString& i
 	return ct;
 }
 
-void Mixer_MPRIS2::plugControlIdIncoming(QDBusPendingCallWatcher* watcher)
+void Mixer_MPRIS2::watcherInitialVolume(QDBusPendingCallWatcher* watcher)
 {
+	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl == 0)
+		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
+
 	const QDBusMessage& msg = watcher->reply();
-	if ( msg.type() == QDBusMessage::ReplyMessage )
+	QList<QVariant> repl = msg.arguments();
+	if ( ! repl.isEmpty() )
 	{
-		QObject *obj = watcher->parent();
-		MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
-		if (mad == 0)
-		{
-			kWarning() << "Ignoring unexpected Control Id";
-			watcher->deleteLater();
-			return;
-		}
-		QString id = mad->getId();
-		QString busDestination = mad->getBusDestination();
-		QString readableName = id; // Start with ID, but replace with reply (if exists)
-
-		kDebug() << "Plugging id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
-
-		QList<QVariant> repl = msg.arguments();
-		if ( ! repl.isEmpty() )
-		{
-			QVariant qv = repl.at(0);
-			// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
-			QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(qv);
-			QVariant result2 = dbusVariant.variant();
-			readableName = result2.toString();
-
-//			kDebug() << "REPLY " << result2.type() << ": " << readableName;
-
-			// TODO This hardcoded application list is a quick hack. It should be generalized.
-			MixDevice::ChannelType ct = getChannelTypeFromPlayerId(id);
-			MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
-			// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
-			// Thus we won't add the playback switch
-			Volume* vol = new Volume( 100, 0, false, false);
-			vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
-			mdNew->addMediaPlayControl();
-			mdNew->addMediaNextControl();
-			mdNew->addMediaPrevControl();
-			mdNew->setApplicationStream(true);
-			mdNew->addPlaybackVolume(*vol);
-
-			m_mixDevices.append( mdNew->addToPool() );
-
-			delete vol; // vol is only temporary. mdNew has its own volume object. => delete
-
-			QDBusConnection sessionBus = QDBusConnection::sessionBus();
-			sessionBus.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mad, SLOT(volumeChangedIncoming(QString,QVariantMap,QStringList)) );
-			connect(mad, SIGNAL(volumeChanged(MPrisControl*,double)), this, SLOT(volumeChanged(MPrisControl*,double)) );
-
-			sessionBus.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mad, SLOT(trackChangedIncoming(QVariantMap)) );
-			volumeChanged(mad, mad->playerIfc->property("Volume").toDouble());
-
-			notifyToReconfigureControlsAsync(id);
-		}
-	}
-	else
-	{
-		qWarning() << "Error (" << msg.type() << "): " << msg.errorName() << " " << msg.errorMessage();
+		QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(repl.at(0));
+		QVariant result2 = dbusVariant.variant();
+		double volume = result2.toDouble();
+		volumeChanged(mprisCtl, volume);
 	}
 
-	// Push notifyToReconfigureControls to stack, so it will not be executed synchronously
+	watcher->deleteLater();
+}
+
+void Mixer_MPRIS2::watcherInitialPlayState(QDBusPendingCallWatcher* watcher)
+{
+	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl == 0)
+		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
+
+	const QDBusMessage& msg = watcher->reply();
+	QList<QVariant> repl = msg.arguments();
+	if ( ! repl.isEmpty() )
+	{
+		QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(repl.at(0));
+		QVariant result2 = dbusVariant.variant();
+		QString playbackStateString = result2.toString();
+
+		MediaController::PlayState playState = Mixer_MPRIS2::mprisPlayStateString2PlayState(playbackStateString);
+		playbackStateChanged(mprisCtl, playState);
+	}
+
 	watcher->deleteLater();
 }
 
 
-void Mixer_MPRIS2::notifyToReconfigureControlsAsync(QString /*streamId*/)
+/**
+ * Convenience method for the watcher*() methods.
+ * Returns the MPrisControl that is parent of the given watcher, if the reply is valid. In this case you can
+ * use the result and call watcher->deleteLater() after processing the result.
+ *
+ * Otherwise 0 is returned, and watcher->deleteLater() is called. <b>Important</b> You must call watcher->deleteLater()
+ * yourself for the other (normal/good) case.
+ *
+ * @param watcher
+ * @return
+ */
+MPrisControl* Mixer_MPRIS2::watcherHelperGetMPrisControl(QDBusPendingCallWatcher* watcher)
 {
-	// currently we do not use the streamId
-	QMetaObject::invokeMethod(this,
-                              "notifyToReconfigureControls",
-                              Qt::QueuedConnection);
+	const QDBusMessage& msg = watcher->reply();
+	if ( msg.type() == QDBusMessage::ReplyMessage )
+	{
+		QObject* obj = watcher->parent();
+		MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
+		if (mad != 0)
+		{
+			return mad;
+		}
+		kWarning() << "Ignoring unexpected Control Id. object=" << obj;
+	}
+
+	else if ( msg.type() == QDBusMessage::ErrorMessage )
+	{
+		kError() << "ERROR in Media control operation, path=" << msg.path() << ", msg=" << msg;
+	}
+
+
+	watcher->deleteLater();
+	return 0;
 }
 
-void Mixer_MPRIS2::notifyToReconfigureControls()
+void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
+{
+	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl == 0)
+	{
+		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
+	}
+
+	const QDBusMessage& msg = watcher->reply();
+	QString id = mprisCtl->getId();
+	QString busDestination = mprisCtl->getBusDestination();
+	QString readableName = id; // Start with ID, but replace with reply (if exists)
+
+	kDebug() << "Plugging id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
+
+	QList<QVariant> repl = msg.arguments();
+	if ( ! repl.isEmpty() )
+	{
+		// We have to do some very ugly casting from QVariant to QDBusVariant to QVariant. This API totally sucks.
+		QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(repl.at(0));
+		QVariant result2 = dbusVariant.variant();
+		readableName = result2.toString();
+
+//			kDebug() << "REPLY " << result2.type() << ": " << readableName;
+
+		MixDevice::ChannelType ct = getChannelTypeFromPlayerId(id);
+		MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
+		// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
+		// Thus we won't add the playback switch
+		Volume* vol = new Volume( 100, 0, false, false);
+		vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
+		MediaController* mediaContoller = mdNew->getMediaController();
+		mediaContoller->addMediaPlayControl();
+		mediaContoller->addMediaNextControl();
+		mediaContoller->addMediaPrevControl();
+		mdNew->setApplicationStream(true);
+		mdNew->addPlaybackVolume(*vol);
+
+		m_mixDevices.append( mdNew->addToPool() );
+
+		delete vol; // vol is only temporary. mdNew has its own volume object. => delete
+
+		QDBusConnection sessionBus = QDBusConnection::sessionBus();
+		sessionBus.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mprisCtl, SLOT(onPropertyChange(QString,QVariantMap,QStringList)) );
+		connect(mprisCtl, SIGNAL(volumeChanged(MPrisControl*,double)), this, SLOT(volumeChanged(MPrisControl*,double)) );
+		connect(mprisCtl, SIGNAL(playbackStateChanged(MPrisControl*,MediaController::PlayState)), SLOT (playbackStateChanged(MPrisControl*,MediaController::PlayState)) );
+
+		sessionBus.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mprisCtl, SLOT(trackChangedIncoming(QVariantMap)) );
+
+		// The following line is evil: mad->playerIfc->property("Volume") is in fact a synchronous call, and
+		// sync calls are strictly forbidden, see bug 317926
+		//volumeChanged(mad, mad->playerIfc->property("Volume").toDouble());
+
+
+		// --- Query initial state --------------------------------------------------------------------------------
+		QVariant v1 = QVariant(QString("org.mpris.MediaPlayer2.Player"));
+
+		QVariant v2 = QVariant(QString("Volume"));
+		QDBusPendingReply<QVariant > repl2 = mprisCtl->propertyIfc->asyncCall("Get", v1, v2);
+		QDBusPendingCallWatcher* watcherOutgoing = new QDBusPendingCallWatcher(repl2, mprisCtl);
+		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherInitialVolume(QDBusPendingCallWatcher *)));
+
+		v2 = QVariant(QString("PlaybackStatus"));
+		repl2 = mprisCtl->propertyIfc->asyncCall("Get", v1, v2);
+		watcherOutgoing = new QDBusPendingCallWatcher(repl2, mprisCtl);
+		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherInitialPlayState(QDBusPendingCallWatcher *)));
+
+		// Push notifyToReconfigureControls to stack, so it will not be executed synchronously
+		announceControlListAsync(id);
+	}
+
+	watcher->deleteLater();
+}
+
+
+// -----------------------------------------------------------------------------------------------------------
+// ASYNC announce slots, including convenience wrappers
+// -----------------------------------------------------------------------------------------------------------
+/**
+ * Convenience wrapper to do the ASYNC call to #announceControlList()
+ * @param
+ */
+void Mixer_MPRIS2::announceControlListAsync(QString /*streamId*/)
+{
+	// currently we do not use the streamId
+	QMetaObject::invokeMethod(this, "announceControlList", Qt::QueuedConnection);
+}
+
+void Mixer_MPRIS2::announceControlList()
 {
     ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
 }
+
+void Mixer_MPRIS2::announceGUI()
+{
+    ControlManager::instance().announce(_mixer->id(), ControlChangeType::GUI, getDriverName());
+}
+
+void Mixer_MPRIS2::announceVolume()
+{
+    ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, getDriverName());
+}
+
+// -----------------------------------------------------------------------------------------------------------
+
 
 /**
  * Handles the hotplug of new MPRIS2 enabled Media Players
@@ -527,6 +583,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 			QString id = busDestinationToControlId(name);
 			kDebug() << "Mediaplayer unregisters: " << name << " , id=" << id;
 
+			// -1- Remove Mediaplayer connection
 			if (controls.contains(id))
 			{
 				const MPrisControl *control = controls.value(id);
@@ -534,13 +591,14 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 				controls.remove(id);
 			}
 
+			// -2- Remove MixDevice from internal list
 			shared_ptr<MixDevice> md = m_mixDevices.get(id);
 			if (md)
 			{
 				// We know about the player that is unregistering => remove internally
 				md->close();
 				m_mixDevices.removeById(id);
-				notifyToReconfigureControlsAsync(id);
+				announceControlListAsync(id);
 				kDebug() << "MixDevice 4 useCount=" << md.use_count();
 			}
 		}
@@ -560,10 +618,29 @@ void MPrisControl::trackChangedIncoming(QVariantMap /*msg*/)
 	kDebug() << "Track changed";
 }
 
+MediaController::PlayState Mixer_MPRIS2::mprisPlayStateString2PlayState(const QString& playbackStatus)
+{
+	MediaController::PlayState playState;
+	if (playbackStatus == "Playing")
+	{
+		playState = MediaController::PlayPlaying;
+	}
+	else if (playbackStatus == "Stopped")
+	{
+		playState = MediaController::PlayStopped;
+	}
+	else if (playbackStatus == "Paused")
+	{
+		playState = MediaController::PlayPaused;
+	}
+
+	return playState;
+}
+
 /**
  * This slot is a simple proxy that enriches the DBUS signal with our data, which especially contains the id of the MixDevice.
  */
-void MPrisControl::volumeChangedIncoming(QString /*ifc*/,QVariantMap msg ,QStringList /*sl*/)
+void MPrisControl::onPropertyChange(QString /*ifc*/,QVariantMap msg ,QStringList /*sl*/)
 {
 	QMap<QString, QVariant>::iterator v = msg.find("Volume");
 	if (v != msg.end() )
@@ -577,8 +654,10 @@ void MPrisControl::volumeChangedIncoming(QString /*ifc*/,QVariantMap msg ,QStrin
 	if (v != msg.end() )
 	{
 		QString playbackStatus = v.value().toString();
-		// "Stopped", "Playing", "Paused"
+		MediaController::PlayState playState = Mixer_MPRIS2::mprisPlayStateString2PlayState(playbackStatus);
 		kDebug() << "PlaybackStatus is now " << playbackStatus;
+
+		emit playbackStateChanged(this, playState);
 	}
 }
 

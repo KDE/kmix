@@ -38,16 +38,29 @@
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
-DialogChooseBackends::DialogChooseBackends(QSet<QString>& mixerIds)
+/**
+ * Creates a dialog to choose mixers from. All currently known mixers will be shown, and the given mixerID's
+ * will be preselected.
+ *
+ * @param mixerIds A set of preselected mixer ID's
+ * @param noButtons is a migration option. When DialogChooseBackends has been integrated as a Tab, it will be removed.
+ */
+DialogChooseBackends::DialogChooseBackends(QSet<QString>& mixerIds, bool noButtons)
   : KDialog(  0 )
 {
     setCaption( i18n( "Select Mixers" ) );
-    if ( Mixer::mixers().count() > 0 )
-        setButtons( Ok|Cancel );
-    else {
-        setButtons( Cancel );
+    if (noButtons)
+    {
+    	setButtons( None );
     }
-    setDefaultButton( Ok );
+    else
+    {
+		bool empty = Mixer::mixers().isEmpty();
+		kWarning() << "select empty=" << empty;
+		setButtons( empty ? Cancel : Ok|Cancel );
+		setDefaultButton( Ok );
+    }
+
    _layout = 0;
    m_vboxForScrollView = 0;
    m_scrollableChannelSelector = 0;

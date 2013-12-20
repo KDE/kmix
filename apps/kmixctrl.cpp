@@ -29,6 +29,7 @@
 #include <kdebug.h>
 
 #include "gui/kmixtoolbox.h"
+#include "core/GlobalConfig.h"
 #include "core/mixer.h"
 #include "core/version.h"
 
@@ -54,6 +55,8 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    KApplication app( false );
+
+   GlobalConfig::init();
 
    // create mixers
    QString dummyStringHwinfo;

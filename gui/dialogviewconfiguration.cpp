@@ -65,15 +65,22 @@ void DialogViewConfigurationItem::refreshItem()
   setData(Qt::DisplayRole, _name);
 }
 
+/**
+ * Serializer. Used for DnD.
+ */
 static QDataStream & operator<< ( QDataStream & s, const DialogViewConfigurationItem & item ) {
     s << item._id;
     s << item._shown;
     s << item._name;
     s << item._splitted;
     s << item._iconName;
- //kDebug() << "<< unserialize << " << s;
+ //kDebug() << "<< serialize << " << s;
     return s;
 }
+
+/**
+ * Deserializer. Used for DnD.
+ */
 static QDataStream & operator>> ( QDataStream & s, DialogViewConfigurationItem & item ) {
   QString id;
   s >> id;
@@ -90,7 +97,7 @@ static QDataStream & operator>> ( QDataStream & s, DialogViewConfigurationItem &
   QString iconName;
   s >> iconName;
   item._iconName = iconName;
- //kDebug() << ">> serialize >> " << id << name << iconName;
+ //kDebug() << ">> deserialize >> " << id << name << iconName;
   return s;
 }
 

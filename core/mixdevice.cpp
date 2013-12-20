@@ -90,7 +90,7 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
         case MixDevice::APPLICATION_TOMAHAWK:
         	return "tomahawk";
         case MixDevice::APPLICATION_CLEMENTINE:
-        	return "clementine";
+        	return "application-x-clementine";
         case MixDevice::APPLICATION_VLC:
         	return "vlc";
 
@@ -127,9 +127,8 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     _mixer = mixer;
     _id = id;
     _enumCurrentId = 0;
-    mediaPlayControl = false;
-    mediaNextControl = false;
-    mediaPrevControl = false;
+
+    mediaController = new MediaController(_id);
     if( name.isEmpty() )
         _name = i18n("unknown");
     else
@@ -159,6 +158,12 @@ void MixDevice::close()
 {
 	delete _dbusControlWrapper;
 	_dbusControlWrapper = 0;
+}
+
+
+MediaController* MixDevice::getMediaController()
+{
+	return mediaController;
 }
 
 

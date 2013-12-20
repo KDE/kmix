@@ -79,27 +79,33 @@ void Mixer_Backend::freeMixDevices()
 	m_mixDevices.clear();
 }
 
-bool Mixer_Backend::openIfValid() {
-	bool valid = false;
+bool Mixer_Backend::openIfValid()
+{
 	int ret = open();
-	if ( ret == 0  && (m_mixDevices.count() > 0 || _mixer->isDynamic())) {
-		valid = true;
-		// A better ID is now calculated in mixertoolbox.cpp, and set via setID(),
-		// but we want a somehow usable fallback just in case.
-
-		if ( needsPolling() ) {
+	if (ret == 0 && (m_mixDevices.count() > 0 || _mixer->isDynamic()))
+	{
+		// Hint: _id is probably not yet perfectly set, as it requires the value from open() and an external
+		//       counter. Thus we start the Timer while _id is not properly set. But it will be done immediately
+		//       by the caller of this method.
+		// Future directions: Do the counter calculation in the backend. It really belongs there, as it is part of
+		//        the PK calculation. Probably provide a standard implementation in Mixer_Backend itself. Also the
+		//        key should be an own class, like:   MixerKey(QString backend, QString baseId, int cardInstance)
+		if (needsPolling())
+		{
 			_pollingTimer->start(POLL_OSS_RATE_FAST);
 		}
-		else {
+		else
+		{
 			// The initial state must be read manually
-			QTimer::singleShot( POLL_OSS_RATE_FAST, this, SLOT(readSetFromHW()) );
+			QTimer::singleShot( POLL_OSS_RATE_FAST, this, SLOT(readSetFromHW()));
 		}
-	} // could be opened
+		return true; // could be opened
+	}
 	else
 	{
 		//shutdown();
+		return false; // could not open
 	}
-	return valid;
 }
 
 bool Mixer_Backend::isOpen() {

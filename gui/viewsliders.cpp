@@ -102,7 +102,7 @@ void ViewSliders::controlsChange(int changeType)
 		break;
 
 	case ControlChangeType::Volume:
-		if (GlobalConfig::instance().debugVolume)
+		if (GlobalConfig::instance().data.debugVolume)
 			kDebug()
 			<< "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
 		refreshVolumeLevels();
@@ -119,7 +119,7 @@ void ViewSliders::controlsChange(int changeType)
 QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
 {
     MixDeviceWidget *mdw;
-    Qt::Orientation orientation = GlobalConfig::instance().toplevelOrientation;
+    Qt::Orientation orientation = GlobalConfig::instance().data.getToplevelOrientation();
 
     if ( md->isEnum() )
     {
@@ -194,7 +194,7 @@ void ViewSliders::_setMixSet()
 	//qDeleteAll(_separators);
 	_separators.clear();
 
-	if (GlobalConfig::instance().toplevelOrientation == Qt::Horizontal)
+	if (GlobalConfig::instance().data.getToplevelOrientation() == Qt::Horizontal)
 	{
 		// Horizontal slider => put them vertically
 		_layoutMDW = new QVBoxLayout(this);
@@ -426,7 +426,7 @@ void ViewSliders::refreshVolumeLevels()
 			// --- end ---
 #endif
 
-			if (GlobalConfig::instance().debugVolume)
+			if (GlobalConfig::instance().data.debugVolume)
 			{
 				bool debugMe = (mdw->mixDevice()->id() == "PCM:0");
 				if (debugMe)

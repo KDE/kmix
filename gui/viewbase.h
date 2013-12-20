@@ -164,6 +164,7 @@ signals:
 
 private:
    QString      m_viewId;
+   void updateMediaPlaybackIcons();
 };
 
 #endif

@@ -40,6 +40,7 @@
 #include <kpluginloader.h> 
 
 // KMix
+#include "core/GlobalConfig.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
 #include "core/version.h"
@@ -83,6 +84,8 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
     setObjectName( QLatin1String("KMixD" ));
     // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
     //setAttribute(Qt::WA_DeleteOnClose, false);
+
+	GlobalConfig::init();
 
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword

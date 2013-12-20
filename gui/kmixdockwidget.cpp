@@ -47,12 +47,11 @@
 
 //#define FEATURE_UNITY_POPUP true
 
-KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
+KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     : KStatusNotifierItem(parent)
     , _oldToolTipValue(-1)
     , _oldPixmapType('-')
     , _kmixMainWindow(parent)
-    , _contextMenuWasOpen(false)
 {
     setToolTipIconByName("kmix");
     setTitle(i18n( "Volume Control"));
@@ -68,33 +67,18 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
-	_volWA = 0;
-	_dockAreaPopup = 0;
-	_dockAreaPopupMenuWrapper = 0;
+	// For bizarre reasons, we wrap the ViewDockAreaPopup in a KMenu. Must relate to how KStatusNotifierItem works.
+   _dockAreaPopupMenuWrapper = new KMenu(parent);
+	_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
+	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
+	_volWA->setDefaultWidget(_dockView);
+	_dockAreaPopupMenuWrapper->addAction(_volWA);
+	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
 
-	if (!volumePopup)
-	{
-		// No volume popup => Use the KMixWindow as default action of this KStatusNotifierItem
-		setAssociatedWidget(parent);
-		kDebug() << "No volume try popup. We are now associated to " << associatedWidget();
-	}
-	else
-	{
-		// For bizarre reasons, we wrap the ViewDockAreaPopup in a KMenu. Must relate to how KStatusNotifierItem works.
-	   _dockAreaPopupMenuWrapper = new KMenu(parent);
-		_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
-		_dockAreaPopup = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
-		_volWA->setDefaultWidget(_dockAreaPopup);
-		_dockAreaPopupMenuWrapper->addAction(_volWA);
-		connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
-	}
-
-  	ControlManager::instance().addListener(
-	  QString(), // All mixers (as the Global master Mixer might change)
-	(ControlChangeType::Type)(ControlChangeType::Volume | ControlChangeType::MasterChanged),
-	this,
-	QString("KMixDockWidget")	  
-	);
+	ControlManager::instance().addListener(
+		QString(), // All mixers (as the Global master Mixer might change)
+		(ControlChangeType::Type) (ControlChangeType::Volume | ControlChangeType::MasterChanged), this,
+		QString("KMixDockWidget"));
 	 
 	      // Refresh in all cases. When there is no Golbal Master we still need
      // to initialize correctly (e.g. for showin 0% or hiding it)
@@ -103,11 +87,11 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent, bool volumePopup)
 
 KMixDockWidget::~KMixDockWidget()
 {
-  ControlManager::instance().removeListener(this);
-    // Note: deleting _volWA also deletes its associated ViewDockAreaPopup (_referenceWidget) and prevents the
-    //       action to be left with a dangling pointer.
-    //       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix 
-    delete _volWA;
+	ControlManager::instance().removeListener(this);
+	// Note: deleting _volWA also deletes its associated ViewDockAreaPopup (_referenceWidget) and prevents the
+	//       action to be left with a dangling pointer.
+	//       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix
+	delete _volWA;
 }
 
 void KMixDockWidget::controlsChange(int changeType)
@@ -132,12 +116,18 @@ void KMixDockWidget::controlsChange(int changeType)
   }
 }
 
+/**
+ * Updates all visual parts of the volume, namely tooltip and pixmap
+ */
 void KMixDockWidget::refreshVolumeLevels()
 {
   setVolumeTip();
   updatePixmap();
 }
 
+/**
+ * Creates the right-click menu
+ */
 void KMixDockWidget::createMenuActions()
 {
     QMenu *menu = contextMenu();
@@ -217,12 +207,13 @@ void KMixDockWidget::updatePixmap()
     char newPixmapType;
     if ( !md )
     {
+    	// no such control => error
         newPixmapType = 'e';
     }
     else
     {
     	int percentage = md->getUserfriendlyVolumeLevel();
-		if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also negative-values
+		if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also muted, and also negative-values
 		else if ( percentage < 25 ) newPixmapType = '1';
 		else if ( percentage < 75 ) newPixmapType = '2';
 		else                        newPixmapType = '3';
@@ -243,92 +234,79 @@ void KMixDockWidget::updatePixmap()
    _oldPixmapType = newPixmapType;
 }
 
+/**
+ * Called whenever the icon gets "activated". Unusally whn its clicked.
+ * @overload
+ * @param pos
+ */
 void KMixDockWidget::activate(const QPoint &pos)
 {
-    kDebug() << "Activate at " << pos;
+	QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _referenceWidget directly
+	if (dockAreaPopup->isVisible())
+	{
+		dockAreaPopup->hide();
+		return;
+	}
 
-    bool showHideMainWindow = false;
-    showHideMainWindow |= (_dockAreaPopup == 0);
-    showHideMainWindow |= (pos.x() == 0  && pos.y() == 0);  // HACK. When the action comes from the context menu, the pos is (0,0)
+	_dockAreaPopupMenuWrapper->removeAction(_volWA);
+	delete _volWA;
+	_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
+	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"),
+		_kmixMainWindow);
+	_volWA->setDefaultWidget(_dockView);
+	_dockAreaPopupMenuWrapper->addAction(_volWA);
 
-    if ( showHideMainWindow )
-    {
-        // Use default KStatusNotifierItem behavior if we are not using the dockAreaPopup
-    	// (or if the action comes from the context menu)
-        kDebug() << "Use default KStatusNotifierItem behavior";
-        setAssociatedWidget(_kmixMainWindow);
-        // This code path shows the Main Window (or hides it when it was shown)
-        KStatusNotifierItem::activate();
-        return;
-    }
+	//_dockView->show(); // TODO cesken check: this should be automatic
+	// Showing, to hopefully get the geometry manager started. We need width and height below. Also
+	// vdesktop->availableGeometry(dockAreaPopup) needs to know on which screen the widget will be shown.
+//	dockAreaPopup->show();
+	_dockView->adjustSize();
+	dockAreaPopup->adjustSize();
 
-    // --- When this code path is executed, we want to show the DockAreaPopup)
+	int x = pos.x() - dockAreaPopup->width() / 2;
+	if (x < 0)
+		x = pos.x();
+	int y = pos.y() - dockAreaPopup->height() / 2;
+	if (y < 0)
+		y = pos.y();
 
-    QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _referenceWidget directly
-    kDebug() << "Skip default KStatusNotifierItem behavior";
-    if ( dockAreaPopup->isVisible() ) {
-        dockAreaPopup->hide();
-        kDebug() << "dap is visible => hide and return";
-        return;
-    }
+	// Now handle Multihead displays. And also make sure that the dialog is not
+	// moved out-of-the screen on the right (see Bug 101742).
+	const QDesktopWidget* vdesktop = QApplication::desktop();
+	const QRect& vScreenSize = vdesktop->availableGeometry(dockAreaPopup);
 
-//    if (dockAreaPopup->isVisible()) {
-//        contextMenu()->hide();
-//        setAssociatedWidget(_kmixMainWindow);
-//        KStatusNotifierItem::activate(pos);
-//        kDebug() << "cm is visible => setAssociatedWidget(_kmixMainWindow)";
-//        return;
-//    }
-    if ( false ) {}
-    else {
-        setAssociatedWidget(_kmixMainWindow);
-        kDebug() << "cm is NOT visible => setAssociatedWidget(_referenceWidget)";
+	if ((x + dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()))
+	{
+		// move horizontally, so that it is completely visible
+		x = vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() - 1;
+		kDebug()
+		<< "Multihead: (case 1) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+	}
+	else if (x < vScreenSize.x())
+	{
+		// horizontally out-of bound
+		x = vScreenSize.x();
+		kDebug() << "Multihead: (case 2) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+	}
 
-        _dockAreaPopupMenuWrapper->removeAction(_volWA);
-        delete _volWA;
-		_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
-		_dockAreaPopup = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), _kmixMainWindow);
-		_volWA->setDefaultWidget(_dockAreaPopup);
-		_dockAreaPopupMenuWrapper->addAction(_volWA);
+	if ((y + dockAreaPopup->height()) > (vScreenSize.height() + vScreenSize.y()))
+	{
+		// move horizontally, so that it is completely visible
+		y = vScreenSize.height() + vScreenSize.y() - dockAreaPopup->height() - 1;
+		kDebug() << "Multihead: (case 3) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+	}
+	else if (y < vScreenSize.y())
+	{
+		// horizontally out-of bound
+		y = vScreenSize.y();
+		kDebug() << "Multihead: (case 4) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+	}
 
-        _dockAreaPopup->show();
-        dockAreaPopup->show();
-        _dockAreaPopup->adjustSize();
-        dockAreaPopup->adjustSize();
-        int h = dockAreaPopup->height();
-        int x = pos.x() - dockAreaPopup->width()/2;
-        int y = pos.y() - h;
 
-        // kDebug() << "h="<<h<< " x="<<x << " y="<<y<< "gx="<< geometry().x() << "gy="<< geometry().y();
-
-        if ( y < 0 ) {
-            y = pos.y();
-        }
-
-        dockAreaPopup->move(x, y);  // so that the mouse is outside of the widget
-
-        dockAreaPopup->show();
-        kDebug() << "moving to" << dockAreaPopup->size() << x << y;
-
-        // Now handle Multihead displays. And also make sure that the dialog is not
-        // moved out-of-the screen on the right (see Bug 101742).
-        const QDesktopWidget* vdesktop = QApplication::desktop();
-        const QRect& vScreenSize = vdesktop->screenGeometry(dockAreaPopup);
-        //const QRect screenGeometry(const QWidget *widget) const
-        if ( (x+dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()) ) {
-            // move horizontally, so that it is completely visible
-            dockAreaPopup->move(vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() -1 , y);
-            kDebug() << "Multihead: (case 1) moving to" << vScreenSize.x() << "," << vScreenSize.y();
-        }
-        else if ( x < vScreenSize.x() ) {
-            // horizontally out-of bound
-            dockAreaPopup->move(vScreenSize.x(), y);
-            kDebug() << "Multihead: (case 2) moving to" << vScreenSize.x() << "," << vScreenSize.y();
-        }
-        // the above stuff could also be implemented vertically
-
-        KWindowSystem::setState( dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-    }
+	KWindowSystem::setType(dockAreaPopup->winId(), NET::Dock);
+	KWindowSystem::setState(dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager);
+	dockAreaPopup->show();
+	dockAreaPopup->move(x, y);
 }
 
 
@@ -395,11 +373,8 @@ bool KMixDockWidget::onlyHaveOneMouseButtonAction()
 void KMixDockWidget::contextMenuAboutToShow()
 {
     // Enable/Disable "Muted" menu item
-//	kDebug() << "hallo";
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
     updateDockMuteAction(dockMuteAction);
-
-	_contextMenuWasOpen = true;
 }
 
 void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )

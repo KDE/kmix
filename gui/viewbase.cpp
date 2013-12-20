@@ -39,6 +39,7 @@
 #include "gui/guiprofile.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
+#include "gui/mdwslider.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 #include "core/mixer.h"
@@ -108,8 +109,9 @@ QPushButton* ViewBase::createConfigureViewButton()
 
 void ViewBase::updateGuiOptions()
 {
-    setTicks(GlobalConfig::instance().showTicks);
-    setLabels(GlobalConfig::instance().showLabels);
+    setTicks(GlobalConfig::instance().data.showTicks);
+    setLabels(GlobalConfig::instance().data.showLabels);
+    updateMediaPlaybackIcons();
 }
 
 QString ViewBase::id() const {
@@ -124,6 +126,22 @@ bool ViewBase::isValid() const
 void ViewBase::setIcons (bool on) { KMixToolBox::setIcons (_mdws, on ); }
 void ViewBase::setLabels(bool on) { KMixToolBox::setLabels(_mdws, on ); }
 void ViewBase::setTicks (bool on) { KMixToolBox::setTicks (_mdws, on ); }
+
+/**
+ * Updates all playback icons to their (new) state, e.g. Paused, or Playing
+ */
+void ViewBase::updateMediaPlaybackIcons()
+{
+	for (int i = 0; i < _mdws.count(); ++i)
+	{
+		// Currently media controls are always attached to sliders => use MDWSlider
+		MDWSlider* mdw = qobject_cast<MDWSlider*>(_mdws[i]);
+		if (mdw != 0)
+		{
+			mdw->updateMediaButton();
+		}
+	}
+}
 
 /**
  * Create all widgets.
@@ -141,7 +159,6 @@ void ViewBase::createDeviceWidgets()
         _mdws.append(mdw); // b) Add it to the local list
     }
 
-    //if ( !pulseaudioPresent() ) // TODO 11 Dynamic view configuration
     if ( !isDynamic() )
     {
       QAction *action = _localActionColletion->addAction("toggle_channels");
@@ -260,7 +277,7 @@ int ViewBase::visibleControls()
  */
 void ViewBase::configureView()
 {
-    Q_ASSERT( !isDynamic() ); // TODO 11 Dynamic view configuration
+    Q_ASSERT( !isDynamic() );
     Q_ASSERT( !pulseaudioPresent() );
     
     DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
@@ -276,6 +293,12 @@ void ViewBase::toggleMenuBarSlot() {
 
 
 /**
+ * Loads the configuration of this view.
+ * <p>
+ * Future directions: The view should probably know its config in advance, so we can use it in #load() and #save()
+ *
+ *
+ * @param config The view for this config
  */
 void ViewBase::load(KConfig *config)
 {
@@ -288,7 +311,7 @@ void ViewBase::load(KConfig *config)
    static QString guiComplexityNames[3] = { QString("simple"), QString("extended"), QString("all") };
 
    // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = isDynamic(); // TODO 11 Dynamic view configuration
+   bool dynamic = isDynamic();
 
    for ( GUIComplexity chosenGuiComplexity = ViewBase::SIMPLE; chosenGuiComplexity <= ViewBase::ALL; ++chosenGuiComplexity )
    {
@@ -379,48 +402,52 @@ ProfControl* ViewBase::findMdw(const QString& mdwId, QString requestedGuiComplex
  */
 void ViewBase::save(KConfig *config)
 {
-   ViewBase *view = this;
-   QString grp = "View.";
-   grp += view->id();
-//   KConfigGroup cg = config->group( grp );
-   kDebug(67100) << "KMixToolBox::saveView() grp=" << grp;
+	ViewBase *view = this;
+	QString grp = "View.";
+	grp += view->id();
 
-   // Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-   bool dynamic = isDynamic();  // TODO 11 Dynamic view configuration
+	// Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
+	bool dynamic = isDynamic();  // TODO 11 Dynamic view configuration
 
-   for (int i=0; i < view->_mdws.count(); ++i ){
-      QWidget *qmdw = view->_mdws[i];
-      if ( qmdw->inherits("MixDeviceWidget") )
-      {
-         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         shared_ptr<MixDevice> md = mdw->mixDevice();
+	for (int i = 0; i < view->_mdws.count(); ++i)
+	{
+		QWidget *qmdw = view->_mdws[i];
+		if (qmdw->inherits("MixDeviceWidget"))
+		{
+			MixDeviceWidget* mdw = (MixDeviceWidget*) qmdw;
+			shared_ptr<MixDevice> md = mdw->mixDevice();
 
-         //kDebug(67100) << "  grp=" << grp.toAscii();
-         //kDebug(67100) << "  mixer=" << view->id().toAscii();
-         //kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
+			//kDebug(67100) << "  grp=" << grp.toAscii();
+			//kDebug(67100) << "  mixer=" << view->id().toAscii();
+			//kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
-         QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
-         KConfigGroup devcg = config->group( devgrp );
+			QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
+			KConfigGroup devcg = config->group(devgrp);
 
-         if ( mdw->inherits("MDWSlider") )
-         {
-            // only sliders have the ability to split apart in mutliple channels
-            devcg.writeEntry( "Split", ! mdw->isStereoLinked() );
-         }
-         if ( !dynamic ) {
-            devcg.writeEntry( "Show" , mdw->isVisibleTo(view) );
+			if (mdw->inherits("MDWSlider"))
+			{
+				// only sliders have the ability to split apart in mutliple channels
+				devcg.writeEntry("Split", !mdw->isStereoLinked());
+			}
+			if (!dynamic)
+			{
+				devcg.writeEntry("Show", mdw->isVisibleTo(view));
 //             kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
-         }
+			}
 
-      } // inherits MixDeviceWidget
-   } // for all MDW's
+		} // inherits MixDeviceWidget
+	} // for all MDW's
 
-   if ( !dynamic ) {
-        // We do not save GUIProfiles (as they cannot be customized) for dynamic mixers (e.g. PulseAudio)
-        kDebug(67100) << "GUIProfile is dirty: " << guiProfile()->isDirty();
-        if ( guiProfile()->isDirty() )
-            guiProfile()->writeProfile();
-   }
+	if (!dynamic)
+	{
+		// We do not save GUIProfiles (as they cannot be customized) for dynamic mixers (e.g. PulseAudio)
+		if (guiProfile()->isDirty())
+		{
+			kDebug(67100)
+			<< "Writing dirty profile. grp=" << grp;
+			guiProfile()->writeProfile();
+		}
+	}
 }
 
 

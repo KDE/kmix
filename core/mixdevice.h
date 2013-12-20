@@ -32,6 +32,7 @@ using std::tr1::shared_ptr;
 #endif
 
 //KMix
+#include "core/MediaController.h"
 class Mixer;
 class MixSet;
 class ProfControl;
@@ -135,12 +136,8 @@ public:
    void addEnums (QList<QString*>& ref_enumList);
    
    // Media controls. New for KMix 4.0
-   void addMediaPlayControl() { mediaPlayControl = true; };
-   void addMediaNextControl() { mediaNextControl = true; };
-   void addMediaPrevControl() { mediaPrevControl = true; };
-   bool hasMediaPlayControl() { return mediaPlayControl; };
-   bool hasMediaNextControl() { return mediaNextControl; };
-   bool hasMediaPrevControl() { return mediaPrevControl; };
+   MediaController* getMediaController();
+   // TODO move all media player controls to the MediaController class
    int mediaPlay();
    int mediaPrev();
    int mediaNext();
@@ -229,7 +226,6 @@ public:
 
    void increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType);
 
-
 protected:
    void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet );
 
@@ -242,6 +238,7 @@ private:
    QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
    DBusControlWrapper *_dbusControlWrapper;
+   MediaController* mediaController;
 
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
    // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:
@@ -259,11 +256,6 @@ private:
 
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
-
-   bool mediaPlayControl;
-   bool mediaNextControl;
-   bool mediaPrevControl;
-
 };
 
 #endif

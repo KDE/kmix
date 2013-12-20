@@ -42,7 +42,7 @@ class KMixDockWidget : public KStatusNotifierItem
    friend class KMixWindow;
 
  public:
-   explicit KMixDockWidget(KMixWindow *parent,bool volumePopup);
+   explicit KMixDockWidget(KMixWindow *parent);
    virtual ~KMixDockWidget();
 
    void setErrorPixmap();
@@ -60,15 +60,14 @@ class KMixDockWidget : public KStatusNotifierItem
    void toggleMinimizeRestore();
 
  private:
-   ViewDockAreaPopup *_dockAreaPopup;
+   ViewDockAreaPopup *_dockView;
    KMenu *_dockAreaPopupMenuWrapper;
    QWidgetAction *_volWA;
    int  _oldToolTipValue;
    char _oldPixmapType;
    KMixWindow* _kmixMainWindow;
 
-   bool _contextMenuWasOpen;
-   bool onlyHaveOneMouseButtonAction();
+	bool onlyHaveOneMouseButtonAction();
    void refreshVolumeLevels();
    void updateDockMuteAction ( KToggleAction* dockMuteAction );
 

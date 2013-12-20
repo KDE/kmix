@@ -149,12 +149,14 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
     QString fname;
     fname += mixer->getBaseName();
     if ( mixer->getCardInstance() > 1 ) {
-        fname += ' ' + mixer->getCardInstance();
+        fname += " %1";
+        fname = fname.arg(mixer->getCardInstance());
     }
     if ( profileName != "default" ) {
         fname += ' ' + profileName;
     }
 
+    kDebug() << fname;
     return fname;
 }
 
@@ -269,10 +271,8 @@ void GUIProfile::addProfile(GUIProfile* guiprof)
 GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileName)
 {
     GUIProfile* guiprof = 0;
-    QString fileName, fileNameFQ;
-
-    fileName = "profiles/" + profileName + ".xml";
-    fileNameFQ = KStandardDirs::locate("appdata", fileName );
+    QString fileName = createNormalizedFilename(profileName);
+    QString fileNameFQ = KStandardDirs::locate("appdata", fileName );
 
     if ( ! fileNameFQ.isEmpty() ) {
         guiprof = new GUIProfile();
@@ -367,14 +367,22 @@ bool GUIProfile::readProfile(const QString& ref_fileName)
     return ok;
 }
 
+const QString GUIProfile::createNormalizedFilename(const QString& profileId)
+{
+	QString profileIdNormalized(profileId);
+	profileIdNormalized.replace(':', '.');
+
+	QString fileName("profiles/");
+	fileName = fileName + profileIdNormalized + ".xml";
+	return fileName;
+ }
 
 bool GUIProfile::writeProfile()
 {
    bool ret = false;
-   QString fileName, fileNameFQ;
-   fileName = "profiles/" + getId() + ".xml";
-   fileName.replace(':', '.');
-   fileNameFQ = KStandardDirs::locateLocal("appdata", fileName, true );
+   QString profileId = getId();
+   QString fileName = createNormalizedFilename(profileId);
+   QString fileNameFQ = KStandardDirs::locateLocal("appdata", fileName, true );
 
    kDebug() << "Write profile:" << fileNameFQ ;
    QFile f(fileNameFQ);
@@ -399,11 +407,30 @@ bool GUIProfile::finalizeProfile() const
     return ok;
 }
 
+
+// -------------------------------------------------------------------------------------
 void GUIProfile::setControls(ControlSet& newControlSet)
 {
     qDeleteAll(_controls);
     _controls = newControlSet;
 }
+
+const GUIProfile::ControlSet& GUIProfile::getControls() const
+{
+    return _controls;
+}
+
+GUIProfile::ControlSet& GUIProfile::getControls()
+{
+    return _controls;
+}
+
+void GUIProfile::addProduct(ProfProduct* prd)
+{
+	_products.insert(prd);
+}
+
+// -------------------------------------------------------------------------------------
 
 
 /**
@@ -807,7 +834,7 @@ void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
 		prd->productRelease = release;
 		prd->comment = comment;
 
-		_guiProfile->_products.insert(prd);
+		_guiProfile->addProduct(prd);
 	}
 }
 

@@ -29,7 +29,7 @@
 class VolumeSliderExtraData
 {
 public:
-	VolumeSliderExtraData() : subcontrolLabel(0) {};
+	VolumeSliderExtraData() : chid(Volume::NOCHANNEL), subcontrolLabel(0) {};
 	~VolumeSliderExtraData() {};
 	void setChid(Volume::ChannelID chid) { this->chid = chid; };
 	Volume::ChannelID getChid() { return chid; };

@@ -22,6 +22,7 @@
 #ifndef KMIXPREFDLG_H
 #define KMIXPREFDLG_H
 
+#include <kconfigdialog.h>
 #include <kdialog.h>
 
 class KMixPrefWidget;
@@ -29,53 +30,102 @@ class KMixPrefWidget;
 class QBoxLayout;
 class QCheckBox;
 class QFrame;
+#include <QGridLayout>
 class QLabel;
 class QRadioButton;
 class QShowEvent;
 class QWidget;
 
-class 
-KMixPrefDlg : public KDialog
+#include "core/GlobalConfig.h"
+#include "gui/dialogchoosebackends.h"
+
+
+class KMixPrefDlg: public KConfigDialog
 {
-   Q_OBJECT
+Q_OBJECT
 
-   friend class KMixWindow;
+public:
+	enum KMixPrefPage
+	{
+		PrefGeneral, PrefSoundMenu, PrefStartup
+	};
 
-  public: 
-   KMixPrefDlg( QWidget *parent );
-   virtual ~KMixPrefDlg();
+	static KMixPrefDlg* createInstance(QWidget *parent, GlobalConfig& config);
+	static KMixPrefDlg* getInstance();
+	void switchToPage(KMixPrefPage page);
+	void setActiveMixersInDock(QSet<QString>& mixerIds);
 
-  signals:
-   void signalApplied( KMixPrefDlg *prefDlg );
+signals:
+	void kmixConfigHasChanged();
 
-   private slots:
-      void apply();
-      void dockIntoPanelChange(int state);
+private slots:
+	void kmixConfigHasChangedEmitter();
 
-  protected:
-    void showEvent ( QShowEvent * event );
+protected:
+	void showEvent(QShowEvent * event);
+	/**
+	 * Orientation is not supported by default => implement manually
+	 * @Override
+	 */
+	void updateWidgets();
+	/**
+	 * Orientation is not supported by default => implement manually
+	 * @Override
+	 */
+	void updateSettings();
 
-  private:
-    void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString toopTipText);
+	bool hasChanged();
 
+private:
+	static KMixPrefDlg* instance;
 
-    QFrame *m_generalTab;
+	KMixPrefDlg(QWidget *parent, GlobalConfig& config);
+	virtual ~KMixPrefDlg();
 
-   QCheckBox *m_dockingChk;
-   QCheckBox *m_volumeChk;
-   QLabel *dynamicControlsRestoreWarning;
-   QCheckBox *m_showTicks;
-   QCheckBox *m_showLabels;
-   QCheckBox* m_showOSD;
-   QCheckBox *m_onLogin;
-   QCheckBox *allowAutostart;
-   QLabel *allowAutostartWarning;
-   QCheckBox *m_beepOnVolumeChange;
-   QLabel *volumeFeedbackWarning;
-   QRadioButton *_rbVertical;
-   QRadioButton *_rbHorizontal;
-   QRadioButton *_rbTraypopupVertical;
-   QRadioButton *_rbTraypopupHorizontal;
+	enum KMixPrefDlgPrefOrientationType
+	{
+		MainOrientation, TrayOrientation
+	};
+
+	GlobalConfig& dialogConfig;
+
+	void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString tooltip, QString kconfigName);
+
+	void createStartupTab();
+	void replaceBackendsInTab(QSet<QString>& backends);
+	void createGeneralTab();
+	void createControlsTab();
+	void createOrientationGroup(const QString& labelSliderOrientation, QGridLayout* orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
+	void todoRemoveThisMethodAndInitBackendsCorrectly();
+
+	QFrame *m_generalTab;
+	QFrame *m_startupTab;
+	QFrame *m_controlsTab;
+
+	QCheckBox *m_dockingChk;
+	QLabel *dynamicControlsRestoreWarning;
+	QCheckBox *m_showTicks;
+	QCheckBox *m_showLabels;
+	QCheckBox* m_showOSD;
+	QCheckBox *m_onLogin;
+	QCheckBox *allowAutostart;
+	QLabel *allowAutostartWarning;
+	QCheckBox *m_beepOnVolumeChange;
+	QCheckBox *m_volumeOverdrive;
+	QLabel *volumeFeedbackWarning;
+	QLabel *volumeOverdriveWarning;
+
+	QBoxLayout *layoutControlsTab;
+	DialogChooseBackends* dvc;
+
+	QRadioButton *_rbVertical;
+	QRadioButton *_rbHorizontal;
+	QRadioButton *_rbTraypopupVertical;
+	QRadioButton *_rbTraypopupHorizontal;
+
+	KPageWidgetItem* generalPage;
+	KPageWidgetItem* soundmenuPage;
+	KPageWidgetItem* startupPage;
 };
 
 #endif // KMIXPREFDLG_H

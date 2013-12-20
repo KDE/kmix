@@ -101,6 +101,7 @@ protected:
 
   virtual bool moveStream( const QString& id, const QString& destId );
 
+  // Future directions: Move media*() methods to MediaController class
   virtual int mediaPlay(QString ) { return 0; }; // implement in the backend if it supports it
   virtual int mediaPrev(QString ) { return 0; }; // implement in the backend if it supports it
   virtual int mediaNext(QString ) { return 0;}; // implement in the backend if it supports it

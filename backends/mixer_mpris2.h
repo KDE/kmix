@@ -100,10 +100,11 @@ public:
 
 public slots:
   void trackChangedIncoming(QVariantMap msg);
-  void volumeChangedIncoming(QString,QVariantMap,QStringList);
+  void onPropertyChange(QString,QVariantMap,QStringList);
 
 signals:
   void volumeChanged(MPrisControl* mad, double);
+  void playbackStateChanged(MPrisControl* mad, MediaController::PlayState);
 };
 
 class Mixer_MPRIS2 : public Mixer_Backend
@@ -132,20 +133,36 @@ public:
   virtual int mediaNext(QString id);
   virtual int mediaControl(QString id, QString command);
 
+  static MediaController::PlayState mprisPlayStateString2PlayState(const QString& playbackStatus);
+
 public slots:
     void volumeChanged(MPrisControl *mad, double);
+    void playbackStateChanged(MPrisControl* mad, MediaController::PlayState);
+
     void newMediaPlayer(QString name, QString oldOwner, QString newOwner);
     void addMprisControlAsync(QString arg1);
-    void notifyToReconfigureControlsAsync(QString streamId);
-    void notifyToReconfigureControls();
+    void announceControlListAsync(QString streamId);
+
+private slots:
+    // asynchronous announce call slots
+    void announceControlList();
+    void announceGUI();
+    void announceVolume();
 
     // Async QDBusPendingCallWatcher's
-    void plugControlIdIncoming(QDBusPendingCallWatcher* watcher);
-    void mediaContolReplyIncoming(QDBusPendingCallWatcher* watcher);
+    void watcherMediaControl(QDBusPendingCallWatcher* watcher);
+    void watcherPlugControlId(QDBusPendingCallWatcher* watcher);
+    void watcherInitialVolume(QDBusPendingCallWatcher* watcher);
+    void watcherInitialPlayState(QDBusPendingCallWatcher* watcher);
+
+private:
+    // Helpers for the watchers
+    MPrisControl* watcherHelperGetMPrisControl(QDBusPendingCallWatcher* watcher);
+
 
 private:
 //    void asyncAddMprisControl(QString busDestination);
-    void messageQueueThreadLoop();
+//    void messageQueueThreadLoop();
     int addAllRunningPlayersAndInitHotplug();
     void volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage);
 	QString busDestinationToControlId(const QString& busDestination);

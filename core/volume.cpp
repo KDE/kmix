@@ -68,8 +68,22 @@ Volume::Volume()
 	_chmask = MNONE;
 }
 
-// IIRC we need the default constructor implicitly for a Collection operation
-VolumeChannel::VolumeChannel() {}
+/**
+ * Do not use. Only implicitely required for QMap.
+ *
+ * @deprecated Do not use
+ */
+VolumeChannel::VolumeChannel()
+{
+	volume = 0;
+	chid = Volume::NOCHANNEL;
+}
+
+VolumeChannel::VolumeChannel(Volume::ChannelID chid)
+{
+	volume = 0;
+	this->chid = chid;
+}
 
 Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
@@ -77,7 +91,7 @@ Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 }
 
 /**
- * @Deprecated
+ * @deprecated
  */
 void Volume::addVolumeChannels(ChannelMask chmask)
 {

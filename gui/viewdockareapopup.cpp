@@ -44,6 +44,7 @@
 #include "core/GlobalConfig.h"
 #include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
+#include "gui/kmixprefdlg.h"
 #include "gui/mdwslider.h"
 
 // Restore volume button feature is incomplete => disabling for KDE 4.10
@@ -55,7 +56,7 @@ ProfControl ViewDockAreaPopup::MatchAllForSoundMenu = ProfControl(ViewDockAreaPo
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
 	KMixWindow *dockW) :
-	ViewBase(parent, id, 0, vflags, guiProfileId), _dock(dockW)
+	ViewBase(parent, id, 0, vflags, guiProfileId), _kmixMainWindow(dockW)
 {
 	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -148,20 +149,20 @@ void ViewDockAreaPopup::_setMixSet()
 {
 	resetMdws();
 
-	   if ( optionsLayout != 0 )
-	   {
-	     QLayoutItem *li2;
-	     while ( ( li2 = optionsLayout->takeAt(0) ) )
-	 	    delete li2;
-	   }
+	if (optionsLayout != 0)
+	{
+		QLayoutItem *li2;
+		while ((li2 = optionsLayout->takeAt(0)))
+			delete li2;
+	}
+// Hint : optionsLayout itself is deleted when "delete _layoutMDW" cascades down
 
-
-   if ( _layoutMDW != 0 )
-   {
-     QLayoutItem *li;
-     while ( ( li = _layoutMDW->takeAt(0) ) )
- 	    delete li;
-   }
+	if (_layoutMDW != 0)
+	{
+		QLayoutItem *li;
+		while ((li = _layoutMDW->takeAt(0)))
+			delete li;
+	}
 
    /*
     * Strangely enough, I cannot delete optionsLayout in a loop. I get a strange stacktrace:
@@ -193,23 +194,16 @@ Application: KMix (kmix), signal: Segmentation fault
 	delete seperatorBetweenMastersAndStreams;
 	// --- Due to the strange crash, delete everything manually : END ---------------
 
-//	kDebug() << "1 layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
-	// BKO 299754 . Delete _layoutMDW before resetting ref. Otherwise it would be "delete 0;", aka "NOP"
-//	delete _layoutMDW;
-//	delete layout();
 	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-	//delete optionsLayout;
 
 	/*
 	 * BKO 299754: Looks like I need to explicitly delete layout(). I have no idea why
 	 *             "delete _layoutMDW" is not enough, as that is supposed to be the layout
 	 *             of this  ViewDockAreaPopup
-	 *             (Hint: it might have been 0 already)
+	 *             (Hint: it might have been 0 already. Nowadays it is definitely, see #resetRefs())
 	 */
 	delete layout(); // BKO 299754
-//	delete _layoutMDW;
 	_layoutMDW = new QGridLayout(this);
 	_layoutMDW->setSpacing(KDialog::spacingHint());
 	_layoutMDW->setMargin(0);
@@ -223,7 +217,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	_mixers.clear();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
-	kDebug() << "Launch with " << preferredMixersForSoundmenu;
+//	kDebug() << "Launch with " << preferredMixersForSoundmenu;
 	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
@@ -283,7 +277,7 @@ Application: KMix (kmix), signal: Segmentation fault
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
-  bool vertical = (GlobalConfig::instance().traypopupOrientation == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
+  bool vertical = (GlobalConfig::instance().data.getTraypopupOrientation() == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
   /*
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
@@ -323,7 +317,7 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
       true,         // Show Mute LE
       true,        // Show Record LED
       false,        // Small
-      GlobalConfig::instance().traypopupOrientation,
+      vertical ? Qt::Vertical : Qt::Horizontal,
       this,         // parent
       this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
       , pctl
@@ -402,8 +396,9 @@ void ViewDockAreaPopup::configureView()
 		currentlyActiveMixersInDockArea.insert(mixer->id());
 	}
 
-	DialogChooseBackends* dvc = new DialogChooseBackends(currentlyActiveMixersInDockArea);
-    dvc->show();
+	KMixPrefDlg* prefDlg = KMixPrefDlg::getInstance();
+	prefDlg->setActiveMixersInDock(currentlyActiveMixersInDockArea);
+	prefDlg->switchToPage(KMixPrefDlg::PrefSoundMenu);
 }
 
 /**
@@ -411,9 +406,9 @@ void ViewDockAreaPopup::configureView()
  */
 void ViewDockAreaPopup::showPanelSlot()
 {
-    _dock->setVisible(true);
-    KWindowSystem::setOnDesktop(_dock->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::activateWindow(_dock->winId());
+    _kmixMainWindow->setVisible(true);
+    KWindowSystem::setOnDesktop(_kmixMainWindow->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(_kmixMainWindow->winId());
     // This is only needed when the window is already visible.
     static_cast<QWidget*>(parent())->hide();
 }

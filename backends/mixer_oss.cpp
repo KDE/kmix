@@ -87,9 +87,14 @@ Mixer_Backend* OSS_getMixer( Mixer* mixer, int device )
   return l_mixer;
 }
 
-Mixer_OSS::Mixer_OSS( Mixer* mixer, int device) : Mixer_Backend(mixer, device)
+Mixer_OSS::Mixer_OSS(Mixer* mixer, int device) :
+	Mixer_Backend(mixer, device)
 {
-  if( device == -1 ) m_devnum = 0;
+	if (device == -1)
+	{
+		m_devnum = 0;
+	}
+	m_fd = -1; // point to an invalid FD
 }
 
 Mixer_OSS::~Mixer_OSS()
@@ -237,6 +242,7 @@ QString Mixer_OSS::errorText(int mixer_error)
       break;
     default:
       l_s_errmsg = Mixer_Backend::errorText(mixer_error);
+      break;
     }
   return l_s_errmsg;
 }

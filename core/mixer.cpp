@@ -181,7 +181,7 @@ void Mixer::recreateId()
     primaryKeyOfMixer.replace(' ','_');
     primaryKeyOfMixer.replace('=','_');
     _id = primaryKeyOfMixer;
-//	kDebug() << "Early _id=" << _id;
+	kDebug() << "Early _id=" << _id;
 }
 
 const QString Mixer::dbusPath()
@@ -283,7 +283,8 @@ bool Mixer::openIfValid(int cardId)
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
-        connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
+        // cesken: The following connect() looks mighty strange. I removed it on 2013-12-18
+        //connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
         new DBusMixerWrapper(this, dbusPath());
     }
 
@@ -410,6 +411,7 @@ QString Mixer::readableName()
 	if ( getCardInstance() > 1)
 		finalName = finalName.append(" %1").arg(getCardInstance());
 
+	kDebug() << "name=" << _mixerBackend->getName() << "instance=" <<  getCardInstance() << ", finalName" << finalName;
 	return finalName;
 }
 
@@ -618,12 +620,12 @@ void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
 		// We also cannot rely on a notification from the driver (SocketNotifier), because
 		// nothing has changed, and so there s nothing to notify.
 		_mixerBackend->readSetFromHWforceUpdate();
-		if (GlobalConfig::instance().debugControlManager)
+		if (GlobalConfig::instance().data.debugControlManager)
 			kDebug()
 			<< "committing a control with capture volume, that might announce: " << md->id();
 		_mixerBackend->readSetFromHW();
 	}
-	if (GlobalConfig::instance().debugControlManager)
+	if (GlobalConfig::instance().data.debugControlManager)
 		kDebug()
 		<< "committing announces the change of: " << md->id();
 

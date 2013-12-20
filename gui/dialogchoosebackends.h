@@ -38,7 +38,7 @@ class DialogChooseBackends : public KDialog
 {
     Q_OBJECT
  public:
-    DialogChooseBackends(QSet<QString>& backends);
+    DialogChooseBackends(QSet<QString>& backends, bool noButtons);
     ~DialogChooseBackends();
 
  public slots:
