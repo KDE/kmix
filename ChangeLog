@@ -1,5 +1,5 @@
 KDE v4.13
-- Clearly rearranged configuration menu, using Tabs.
+- Configuration menu is now using Tabs to provide a more standard, convenient and pleasing layout
 - Sound Menu: Play button reflects playback status and shows either "Play" or "Pause" 
 
 - Bugfixes and Features:
