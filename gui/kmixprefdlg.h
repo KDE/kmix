@@ -53,7 +53,6 @@ public:
 	static KMixPrefDlg* createInstance(QWidget *parent, GlobalConfig& config);
 	static KMixPrefDlg* getInstance();
 	void switchToPage(KMixPrefPage page);
-	void setActiveMixersInDock(QSet<QString>& mixerIds);
 
 signals:
 	void kmixConfigHasChanged();
@@ -92,11 +91,10 @@ private:
 	void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString tooltip, QString kconfigName);
 
 	void createStartupTab();
-	void replaceBackendsInTab(const QSet<QString>& backends);
+	void replaceBackendsInTab();
 	void createGeneralTab();
 	void createControlsTab();
 	void createOrientationGroup(const QString& labelSliderOrientation, QGridLayout* orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
-	void todoRemoveThisMethodAndInitBackendsCorrectly();
 
 	QFrame *m_generalTab;
 	QFrame *m_startupTab;

@@ -390,14 +390,14 @@ void ViewDockAreaPopup::configureView()
 {
 //    Q_ASSERT( !pulseaudioPresent() );
 
-    QSet<QString> currentlyActiveMixersInDockArea;
-	foreach ( Mixer* mixer, _mixers )
-	{
-		currentlyActiveMixersInDockArea.insert(mixer->id());
-	}
+//    QSet<QString> currentlyActiveMixersInDockArea;
+//	foreach ( Mixer* mixer, _mixers )
+//	{
+//		currentlyActiveMixersInDockArea.insert(mixer->id());
+//	}
 
 	KMixPrefDlg* prefDlg = KMixPrefDlg::getInstance();
-	prefDlg->setActiveMixersInDock(currentlyActiveMixersInDockArea);
+	//prefDlg->setActiveMixersInDock(currentlyActiveMixersInDockArea);
 	prefDlg->switchToPage(KMixPrefDlg::PrefSoundMenu);
 }
 

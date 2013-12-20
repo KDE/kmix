@@ -111,11 +111,6 @@ void KMixPrefDlg::switchToPage(KMixPrefPage page)
 	show();
 }
 
-void KMixPrefDlg::setActiveMixersInDock(QSet<QString>& mixerIds)
-{
-	replaceBackendsInTab(mixerIds);
-}
-
 
 // --- TABS --------------------------------------------------------------------------------------------------
 void KMixPrefDlg::createStartupTab()
@@ -244,14 +239,6 @@ void KMixPrefDlg::createGeneralTab()
 	layout->addStretch();
 }
 
-void KMixPrefDlg::todoRemoveThisMethodAndInitBackendsCorrectly()
-{
-	replaceBackendsInTab(GlobalConfig::instance().getMixersForSoundmenu());
-//	GlobalConfig::instance().getMixersForSoundmenu();
-//	QSet<QString> emptyBackendList;
-//	replaceBackendsInTab(emptyBackendList);
-}
-
 void KMixPrefDlg::createControlsTab()
 {
 	layoutControlsTab = new QVBoxLayout(m_controlsTab);
@@ -262,7 +249,7 @@ void KMixPrefDlg::createControlsTab()
 	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Docks the mixer into the KDE system tray"),
 		"AllowDocking");
 
-	todoRemoveThisMethodAndInitBackendsCorrectly();
+	replaceBackendsInTab();
 }
 
 
@@ -335,10 +322,12 @@ void KMixPrefDlg::updateSettings()
     // Announcing MasterChanged, as the sound menu (aka ViewDockAreaPopup) primarily shows master volume(s).
     // In any case, ViewDockAreaPopup treats MasterChanged and ControlList the same, so it is better to announce
     // the "smaller" change.
-    GlobalConfig::instance().setMixersForSoundmenu(dvc->getChosenBackends());
-	ControlManager::instance().announce(QString(), ControlChangeType::MasterChanged, QString("Select Backends Dialog"));
-
-//	emit(kmixConfigHasChanged());
+    bool modified = dvc->getAndResetModifyFlag();
+    if (modified)
+    {
+		GlobalConfig::instance().setMixersForSoundmenu(dvc->getChosenBackends());
+		ControlManager::instance().announce(QString(), ControlChangeType::MasterChanged, QString("Select Backends Dialog"));
+    }
 }
 
 void KMixPrefDlg::kmixConfigHasChangedEmitter()
@@ -349,18 +338,31 @@ void KMixPrefDlg::kmixConfigHasChangedEmitter()
 
 
 /**
- * Returns whether the custom widgets (orientation checkboxes) have changed.
+ * Returns whether the custom widgets (orientation checkboxes) has changed.
  * <p>
  * Hint: this get internally called by KConfigDialog from updateButtons().
  * @return
  */
 bool KMixPrefDlg::hasChanged()
 {
-	bool changed = ((dialogConfig.data.getToplevelOrientation() == Qt::Vertical) ^ _rbHorizontal->isChecked());
+	bool orientationFromConfigIsHor = dialogConfig.data.getToplevelOrientation() == Qt::Horizontal;
+	bool orientationFromWidgetIsHor = _rbHorizontal->isChecked();
+	kDebug() << "Orientation MAIN fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+
+	bool changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
 	if (!changed)
 	{
-		changed = ((dialogConfig.data.getTraypopupOrientation() == Qt::Vertical) ^ _rbTraypopupHorizontal->isChecked());
+		bool orientationFromConfigIsHor = dialogConfig.data.getTraypopupOrientation() == Qt::Horizontal;
+		orientationFromWidgetIsHor = _rbTraypopupHorizontal->isChecked();
+		kDebug() << "Orientation TRAY fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+
+		changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
 	}
+	if (!changed)
+	{
+		changed = dvc->getModifyFlag();
+	}
+
 	kDebug() << "hasChanged=" << changed;
 
 	return changed;
@@ -371,7 +373,7 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 {
 	// -1- Replace widgets ------------------------------------------------------------
 	// Hotplug can change mixers or backends => recreate tab
-	todoRemoveThisMethodAndInitBackendsCorrectly();
+	replaceBackendsInTab();
 
 	// -2- Change visibility and enable status (of the new widgets) ----------------------
 
@@ -401,7 +403,7 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 }
 
 
-void KMixPrefDlg::replaceBackendsInTab(const QSet<QString>& backends)
+void KMixPrefDlg::replaceBackendsInTab()
 {
 	if (dvc != 0)
 	{
@@ -411,6 +413,8 @@ void KMixPrefDlg::replaceBackendsInTab(const QSet<QString>& backends)
 
 	QSet<QString> backendsFromConfig = GlobalConfig::instance().getMixersForSoundmenu();
 	dvc = new DialogChooseBackends(0, backendsFromConfig);
+	connect(dvc, SIGNAL(backendsModified()), SLOT(updateButtons()));
+
 	dvc->show();
 	layoutControlsTab->addWidget(dvc);
 

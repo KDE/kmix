@@ -46,7 +46,7 @@
  * @param noButtons is a migration option. When DialogChooseBackends has been integrated as a Tab, it will be removed.
  */
 DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>& mixerIds)
-  :  QWidget(parent)
+  :  QWidget(parent), modified(false)
 {
 //    setCaption( i18n( "Select Mixers" ) );
 //   	setButtons( None );
@@ -114,6 +114,7 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 	{
 		QCheckBox* qrb = new QCheckBox(mixer->readableName(true), m_vboxForScrollView);
 		qrb->setObjectName(mixer->id());// The object name is used as ID here: see getChosenBackends()
+		connect(qrb, SIGNAL(stateChanged(int)), SLOT(backendsModifiedSlot()));
 		checkboxes.append(qrb);
 		bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
 		qrb->setChecked(mixerShouldBeShown);
@@ -136,6 +137,28 @@ QSet<QString> DialogChooseBackends::getChosenBackends()
     }
     kDebug() << "New list is " << newMixerList;
     return newMixerList;
+}
+
+/**
+ * Returns whether there were any modifications (activation/deactivation) and resets the flag.
+ * @return
+ */
+bool DialogChooseBackends::getAndResetModifyFlag()
+{
+	bool modifiedOld = modified;
+	modified = false;
+	return modifiedOld;
+}
+
+bool DialogChooseBackends::getModifyFlag()
+{
+	return modified;
+}
+
+void DialogChooseBackends::backendsModifiedSlot()
+{
+	modified = true;
+	emit backendsModified();
 }
 
 #include "dialogchoosebackends.moc"

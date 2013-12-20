@@ -425,7 +425,7 @@ QString Mixer::readableName(bool ampersandQuoted)
 	if ( getCardInstance() > 1)
 		finalName = finalName.append(" %1").arg(getCardInstance());
 
-	kDebug() << "name=" << _mixerBackend->getName() << "instance=" <<  getCardInstance() << ", finalName" << finalName;
+//	kDebug() << "name=" << _mixerBackend->getName() << "instance=" <<  getCardInstance() << ", finalName" << finalName;
 	return finalName;
 }
 

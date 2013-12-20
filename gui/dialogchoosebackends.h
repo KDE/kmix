@@ -34,24 +34,33 @@ class KComboBox;
 
 class Mixer;
 
-class DialogChooseBackends : public QWidget
+class DialogChooseBackends: public QWidget
 {
-    Q_OBJECT
- public:
-    DialogChooseBackends(QWidget* parent, const QSet<QString>& backends);
-    ~DialogChooseBackends();
+Q_OBJECT
+public:
+	DialogChooseBackends(QWidget* parent, const QSet<QString>& backends);
+	~DialogChooseBackends();
 
-    QSet<QString> getChosenBackends();
+	QSet<QString> getChosenBackends();
+	bool getAndResetModifyFlag();
+	bool getModifyFlag();
 
- private:
-    void createWidgets(const QSet<QString>& backends);
-    void createPage(const QSet<QString>& backends);
-    QVBoxLayout* _layout;
-    QScrollArea* m_scrollableChannelSelector;
-    KVBox *m_vboxForScrollView;
-    QButtonGroup *m_buttonGroupForScrollView;
-    QList<QCheckBox*> checkboxes;
-    QWidget *m_mainFrame;
+signals:
+	void backendsModified();
+
+private:
+	void createWidgets(const QSet<QString>& backends);
+	void createPage(const QSet<QString>& backends);
+	QVBoxLayout* _layout;
+	QScrollArea* m_scrollableChannelSelector;
+	KVBox *m_vboxForScrollView;
+	QButtonGroup *m_buttonGroupForScrollView;
+	QList<QCheckBox*> checkboxes;
+	QWidget *m_mainFrame;
+	bool modified;
+
+private slots:
+	void backendsModifiedSlot();
 };
 
 #endif
