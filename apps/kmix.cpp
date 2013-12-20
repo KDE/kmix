@@ -1020,9 +1020,16 @@ KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int inser
   /* A newly added mixer will automatically added at the top
    * and thus the window title is also set appropriately */
 
-  QString tabLabel = guiprof->getName();
-  if (tabLabel.isEmpty())
-      tabLabel = kmw->mixer()->readableName();
+  /*
+   * Skip the name from the profile for now. I would at least have to do the '&' quoting for the tab label. But I am
+   * also not 100% sure whether the current name from the profile is any good - it does (likely) not even contain the
+   * card ID. This means you cannot distinguish between cards with an identical name.
+   */
+//  QString tabLabel = guiprof->getName();
+//  if (tabLabel.isEmpty())
+//	  QString tabLabel = kmw->mixer()->readableName(true);
+
+  QString tabLabel = kmw->mixer()->readableName(true);
 
   m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
 

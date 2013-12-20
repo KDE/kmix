@@ -109,7 +109,8 @@ public:
     QString translateKernelToWhatsthis(const QString &kernelName);
 
     /// Return the name of the card/chip/hardware, which is suitable for humans
-    virtual QString readableName();
+    QString readableName();
+    QString readableName(bool ampersandQuoted);
 
     // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
     static QString driverName(int num);

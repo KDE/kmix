@@ -246,9 +246,10 @@ void KMixPrefDlg::createGeneralTab()
 
 void KMixPrefDlg::todoRemoveThisMethodAndInitBackendsCorrectly()
 {
-	GlobalConfig::instance().getMixersForSoundmenu();
-	QSet<QString> emptyBackendList;
-	replaceBackendsInTab(emptyBackendList);
+	replaceBackendsInTab(GlobalConfig::instance().getMixersForSoundmenu());
+//	GlobalConfig::instance().getMixersForSoundmenu();
+//	QSet<QString> emptyBackendList;
+//	replaceBackendsInTab(emptyBackendList);
 }
 
 void KMixPrefDlg::createControlsTab()
@@ -331,6 +332,12 @@ void KMixPrefDlg::updateSettings()
 	kDebug() << "trayOrientation" << trayOrientation << ", _rbTraypopupHorizontal->isChecked()" << _rbTraypopupHorizontal->isChecked();
 	dialogConfig.data.setTraypopupOrientation(trayOrientation);
 
+    // Announcing MasterChanged, as the sound menu (aka ViewDockAreaPopup) primarily shows master volume(s).
+    // In any case, ViewDockAreaPopup treats MasterChanged and ControlList the same, so it is better to announce
+    // the "smaller" change.
+    GlobalConfig::instance().setMixersForSoundmenu(dvc->getChosenBackends());
+	ControlManager::instance().announce(QString(), ControlChangeType::MasterChanged, QString("Select Backends Dialog"));
+
 //	emit(kmixConfigHasChanged());
 }
 
@@ -394,7 +401,7 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 }
 
 
-void KMixPrefDlg::replaceBackendsInTab(QSet<QString>& backends)
+void KMixPrefDlg::replaceBackendsInTab(const QSet<QString>& backends)
 {
 	if (dvc != 0)
 	{
@@ -403,7 +410,8 @@ void KMixPrefDlg::replaceBackendsInTab(QSet<QString>& backends)
 	}
 
 	QSet<QString> backendsFromConfig = GlobalConfig::instance().getMixersForSoundmenu();
-	dvc = new DialogChooseBackends(backendsFromConfig, true);
+	dvc = new DialogChooseBackends(0, backendsFromConfig);
+	dvc->show();
 	layoutControlsTab->addWidget(dvc);
 
 	// Push everything above to the top

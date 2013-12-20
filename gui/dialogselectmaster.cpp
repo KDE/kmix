@@ -160,10 +160,9 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 
     m_vboxForScrollView = new KVBox(); //m_scrollableChannelSelector->viewport()
 
-    QString masterKey = "----noMaster---";  // Use a non-matching name as default
+
     shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
-    if ( master.get() != 0 )
-    	masterKey = master->id();
+    QString masterKey = ( master.get() != 0 ) ? master->id() : "----noMaster---"; // Use non-matching name as default
 
     const MixSet& mixset = mixer->getMixSet();
     MixSet& mset = const_cast<MixSet&>(mixset);
@@ -176,17 +175,10 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 //            kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb";
             QString mdName = md->readableName();
             mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
-            QRadioButton* qrb = new QRadioButton( mdName, m_vboxForScrollView);
+            QRadioButton* qrb = new QRadioButton(mdName, m_vboxForScrollView);
             qrb->setObjectName(md->id());  // The object name is used as ID here: see apply()
             m_buttonGroupForScrollView->addButton(qrb);  //(qrb, md->num());
-            //_qEnabledCB.append(qrb);
-            //m_mixerPKs.push_back(md->id());
-            if ( md->id() == masterKey ) {
-                qrb->setChecked(true); // preselect the current master
-            }
-            else {
-                qrb->setChecked(false);
-            }
+            qrb->setChecked(md->id() == masterKey); // preselect the current master
         }
     }
 

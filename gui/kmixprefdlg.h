@@ -92,7 +92,7 @@ private:
 	void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString tooltip, QString kconfigName);
 
 	void createStartupTab();
-	void replaceBackendsInTab(QSet<QString>& backends);
+	void replaceBackendsInTab(const QSet<QString>& backends);
 	void createGeneralTab();
 	void createControlsTab();
 	void createOrientationGroup(const QString& labelSliderOrientation, QGridLayout* orientationLayout, int row, KMixPrefDlgPrefOrientationType type);

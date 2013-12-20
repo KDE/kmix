@@ -45,21 +45,11 @@
  * @param mixerIds A set of preselected mixer ID's
  * @param noButtons is a migration option. When DialogChooseBackends has been integrated as a Tab, it will be removed.
  */
-DialogChooseBackends::DialogChooseBackends(QSet<QString>& mixerIds, bool noButtons)
-  : KDialog(  0 )
+DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>& mixerIds)
+  :  QWidget(parent)
 {
-    setCaption( i18n( "Select Mixers" ) );
-    if (noButtons)
-    {
-    	setButtons( None );
-    }
-    else
-    {
-		bool empty = Mixer::mixers().isEmpty();
-		kWarning() << "select empty=" << empty;
-		setButtons( empty ? Cancel : Ok|Cancel );
-		setDefaultButton( Ok );
-    }
+//    setCaption( i18n( "Select Mixers" ) );
+//   	setButtons( None );
 
    _layout = 0;
    m_vboxForScrollView = 0;
@@ -78,10 +68,11 @@ DialogChooseBackends::~DialogChooseBackends()
 /**
  * Create basic widgets of the Dialog.
  */
-void DialogChooseBackends::createWidgets(QSet<QString>& mixerIds)
+void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
 {
-    m_mainFrame = new QFrame( this );
-    setMainWidget( m_mainFrame );
+	m_mainFrame = this;
+//    m_mainFrame = new QFrame( this );
+//    setMainWidget( m_mainFrame );
     _layout = new QVBoxLayout(m_mainFrame);
     _layout->setMargin(0);
 
@@ -91,7 +82,6 @@ void DialogChooseBackends::createWidgets(QSet<QString>& mixerIds)
         _layout->addWidget(qlbl);
     
         createPage(mixerIds);
-        connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
     }
     else
     {
@@ -105,7 +95,7 @@ void DialogChooseBackends::createWidgets(QSet<QString>& mixerIds)
  * Create RadioButton's for the Mixer with number 'mixerId'.
  * @par mixerId The Mixer, for which the RadioButton's should be created.
  */
-void DialogChooseBackends::createPage(QSet<QString>& mixerIds)
+void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 {
 	m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
 	m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
@@ -118,25 +108,22 @@ void DialogChooseBackends::createPage(QSet<QString>& mixerIds)
 
 	m_vboxForScrollView = new KVBox();
 
+	bool hasMixerFilter = !mixerIds.isEmpty();
 	kDebug() << "MixerIds=" << mixerIds;
 	foreach ( Mixer* mixer, Mixer::mixers())
 	{
-		QString mdName = mixer->readableName();
-
-		mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QCheckBox creating an accelerator
-		QCheckBox* qrb = new QCheckBox( mdName, m_vboxForScrollView);
-		qrb->setObjectName(mixer->id());// The object name is used as ID here: see apply()
-//		m_buttonGroupForScrollView->addButton(qrb); // TODO remove m_buttonGroupForScrollView
+		QCheckBox* qrb = new QCheckBox(mixer->readableName(true), m_vboxForScrollView);
+		qrb->setObjectName(mixer->id());// The object name is used as ID here: see getChosenBackends()
 		checkboxes.append(qrb);
-		qrb->setChecked( mixerIds.contains(mixer->id()) );// preselect the current master
+		bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
+		qrb->setChecked(mixerShouldBeShown);
 	}
 
 	m_scrollableChannelSelector->setWidget(m_vboxForScrollView);
 	m_vboxForScrollView->show();  // show() is necessary starting with the second call to createPage()
 }
 
-
-void DialogChooseBackends::apply()
+QSet<QString> DialogChooseBackends::getChosenBackends()
 {
 	QSet<QString> newMixerList;
     foreach ( QCheckBox* qcb, checkboxes)
@@ -147,13 +134,8 @@ void DialogChooseBackends::apply()
     		kDebug() << "apply found " << qcb->objectName();
     	}
     }
-
-    // Announcing MasterChanged, as the sound menu (aka ViewDockAreaPopup) primarily shows master volume(s).
-    // In any case, ViewDockAreaPopup treats MasterChanged and ControlList the same, so it is better to announce
-    // the "smaller" change.
     kDebug() << "New list is " << newMixerList;
-    GlobalConfig::instance().setMixersForSoundmenu(newMixerList);
-	ControlManager::instance().announce(QString(), ControlChangeType::MasterChanged, QString("Select Backends Dialog"));
+    return newMixerList;
 }
 
 #include "dialogchoosebackends.moc"
