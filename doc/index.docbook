@@ -50,8 +50,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2012-11-03</date>
-<releaseinfo>4.3</releaseinfo>
+<date>2013-12-21</date>
+<releaseinfo>4.5</releaseinfo>
 
 <abstract>
 <para>&kmix; is an application that allows you to change the volume of your sound card.</para>
@@ -213,36 +213,24 @@ soundcards.</para>-->
 
 <sect2 id='Configure'>
 <title>Configure &kmix;</title>
-<screenshot>
-  <screeninfo>Configure &kmix;</screeninfo>
+<sect3 id="configure-general">
+  <title>
+    General configuration
+  </title>
+  <screenshot>
+  <screeninfo>General configuration of &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
-	    <imagedata fileref="kmix-configure.png" format="PNG"/>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>Configure &kmix;</phrase>
+	    <phrase>General configuration of &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>Configure various &kmix; parameters.</para>
+<para>Configure general &kmix; parameters.</para>
 
 <variablelist>
-<varlistentry>
-<term><menuchoice>
-<guimenu>Behavior</guimenu>
-<guimenuitem>Dock in system tray</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to dock &kmix; in system tray.</action></para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice>
-<guimenu>Behavior</guimenu>
-<guimenuitem>Enable system tray volume control</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable the volume control from system tray.</action></para></listitem>
-</varlistentry>
-
 <varlistentry>
 <term><menuchoice>
 <guimenu>Behavior</guimenu>
@@ -253,20 +241,17 @@ soundcards.</para>-->
 
 <varlistentry>
 <term><menuchoice>
-<guimenu>Startup</guimenu>
-<guimenuitem>Restore Volumes on login</guimenuitem>
+<guimenu>Behavior</guimenu>
+<guimenuitem>Volume Overdrive</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to enable volume restoration on login.</action></para></listitem>
+<listitem><para>Check this box to allow volume to be more than recommended value (sometimes PulseAudio maximal volume exceeds the normal value). &kmix; restart is needed for this setting to take effect.</para>
+  <warning>
+    <para>
+      Uncheck this item if there are audible sound distortions at the maximal volume.
+    </para>
+  </warning>
+</listitem>
 </varlistentry>
-
-<varlistentry>
-<term><menuchoice>
-<guimenu>Startup</guimenu>
-<guimenuitem>Autostart</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable &kmix; autostart with desktop environment.</action></para></listitem>
-</varlistentry>
-
 
 <varlistentry>
 <term><menuchoice>
@@ -308,7 +293,89 @@ soundcards.</para>-->
 <listitem><para><action>Check this radio button to orientate the control slider vertically.</action></para></listitem>
 </varlistentry>
 
+<varlistentry>
+<term><menuchoice>
+<guimenu>Slider orientation (System tray volume control)</guimenu>
+<guimenuitem>Horizontal/Vertical</guimenuitem>
+</menuchoice></term>
+<listitem><para>Same as the previous two radio buttons but for the system tray volume control (the panel that is shown after &LMB; click on &kmix; tray icon).</para></listitem>
+</varlistentry>
 </variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title>
+    Start configuration
+  </title>
+  <screenshot>
+  <screeninfo>Start configuration of &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Start configuration of &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para>This page allows you to configure various &kmix; start parameters.</para>
+
+<variablelist>
+<varlistentry>
+<term><menuchoice>
+<guimenu>Startup</guimenu>
+<guimenuitem>Restore volumes on login</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable volume restoration on login.</action></para>
+  <warning>
+    <para>
+      Dynamic control from PulseAudio and MPRIS2 will not be restored.
+    </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Startup</guimenu>
+<guimenuitem>Autostart</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable &kmix; autostart with desktop environment.</action></para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-sound-menu">
+  <title>
+    Sound menu configuration
+  </title>
+  <screenshot>
+  <screeninfo>Sound menu configuration of &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Sound menu configuration of &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para>This page allows you to configure various &kmix; sound menu parameters.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Dock in system tray</guilabel>
+</term>
+<listitem><para><action>Check this box to dock &kmix; in system tray.</action></para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+  It is possible to select mixers that will be shown in the sound menu using the corresponding list on this page.
+</para>
+</sect3>
 </sect2>
 </sect1>
 </chapter>
