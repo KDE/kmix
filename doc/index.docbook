@@ -330,7 +330,7 @@ soundcards.</para>-->
 <listitem><para><action>Check this box to enable volume restoration on login.</action></para>
   <warning>
     <para>
-      Dynamic control from PulseAudio and MPRIS2 will not be restored.
+      Dynamic controls from PulseAudio and MPRIS2 will not be restored.
     </para>
   </warning>
 </listitem>
