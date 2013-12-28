@@ -600,13 +600,15 @@ shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID)
 
 shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID )
 {
-	shared_ptr<MixDevice> md;
-   int num = _mixerBackend->id2num(mixdeviceID);
-   if ( num!=-1 && num < (int)size() )
-   {
-      md = (*this)[num];
-   }
-   return md;
+	kDebug() << "id=" << mixdeviceID << "md=" << _mixerBackend->m_mixDevices.get(mixdeviceID).get()->id();
+	return _mixerBackend->m_mixDevices.get(mixdeviceID);
+//	shared_ptr<MixDevice> md;
+//   int num = _mixerBackend->id2num(mixdeviceID);
+//   if ( num!=-1 && num < (int)size() )
+//   {
+//      md = (*this)[num];
+//   }
+//   return md;
 }
 
 /**

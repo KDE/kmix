@@ -47,6 +47,9 @@ protected:
   void GainBalanceToVolume( uint_t& gain, uchar_t& balance, Volume& volume );
 
   int fd;
+
+private:
+  int id2num(const QString& id);
 };
 
 #endif 

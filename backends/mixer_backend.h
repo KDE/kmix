@@ -54,14 +54,14 @@ protected:
    *
    * @return a KMix error code (O=OK).
    */
-  virtual int close();
+  virtual int close(); // Not pure virtual. See comment!
 
-  /*
+  /**
    * Shutdown deinitializes this MixerBackend, freeing resources
    */
   void closeCommon();
 
-  /*
+  /**
    * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for looking up the
    * driver name on instanciated objects.
    *
@@ -111,20 +111,15 @@ protected:
 
   shared_ptr<MixDevice> recommendedMaster();
 
-  /** Return a translated error text for the given error number.
+  /**
+   * Return a translated error text for the given error number.
    * Subclasses can override this method to produce platform
    * specific error descriptions.
    */
   virtual QString errorText(int mixer_error);
-  /// Prints out a translated error text for the given error number on stderr
-  void errormsg(int mixer_error);
-
 
   /// Returns translated WhatsThis messages for a control.Translates from
   virtual QString translateKernelToWhatsthis(const QString &kernelName);
-
-   /// Translate ID to internal device number
-   virtual int id2num(const QString& id);
 
    // Return an Universal Device Identification (suitable for the OS, especially for Hotplug and Unplug events)
    virtual QString& udi() { return _udi; };
@@ -161,6 +156,9 @@ signals:
   void controlChanged( void ); // TODO remove?
 
 public slots:
+/**
+ * Re-initialize. Currently only implemented by PulseAudio backend, and this slot might get moved there
+ */
   virtual void reinit() {};
 
 protected:

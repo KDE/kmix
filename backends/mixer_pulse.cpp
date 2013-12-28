@@ -1106,7 +1106,6 @@ int Mixer_PULSE::close()
 }
 
 int Mixer_PULSE::id2num(const QString& id) {
-    //kDebug(67100) << "id2num() id=" << id;
     int num = -1;
     // todo: Store this in a hash or similar
     int i;

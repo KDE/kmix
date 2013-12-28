@@ -509,6 +509,11 @@ QString Mixer_OSS4::errorText(int mixer_error)
 	return l_s_errmsg;
 }
 
+int Mixer_OSS4::id2num(const QString& id)
+{
+	return id.toInt();
+}
+
 bool Mixer_OSS4::prepareUpdateFromHW()
 {
 	oss_mixerinfo minfo;

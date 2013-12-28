@@ -75,6 +75,7 @@ public:
     unsigned int size() const;
 
     /// Returns a pointer to the mix device with the given number
+    // TODO remove this method. Only used by ViewDockAreaPopup: dockMD = (*mixer)[0];
     shared_ptr<MixDevice> operator[](int val_i_num);
 
     /// Returns a pointer to the mix device whose type matches the value
@@ -123,11 +124,7 @@ public:
      */
     QString& id();
 
-//    void setCardInstance(int cardInstance);
     int getCardInstance() const      {          return _cardInstance;      }
-
-    //void setID(QString& ref_id);
-
 
     /// Returns an Universal Device Identifaction of the Mixer. This is an ID that relates to the underlying operating system.
     // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.

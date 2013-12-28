@@ -214,7 +214,8 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 
 	if (volumeType & Volume::Capture)
 	{
-		kDebug() << "VolumeType=" << volumeType << "   c";
+		if (debugme)
+			kDebug() << "VolumeType=" << volumeType << "   c";
 
 		Volume& volC = captureVolume();
 		long inc = volC.volumeStep(decrease);

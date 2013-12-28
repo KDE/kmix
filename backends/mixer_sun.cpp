@@ -479,6 +479,11 @@ void Mixer_SUN::GainBalanceToVolume( uint_t& gain, uchar_t& balance, Volume& vol
    }
 }
 
+int Mixer_SUN::id2num(const QString& id)
+{
+	return id.toInt();
+}
+
 QString SUN_getDriverName() {
         return "SUNAudio";
 }

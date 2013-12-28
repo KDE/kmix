@@ -28,8 +28,8 @@
 
 #include <QTimer>
 
-#define POLL_OSS_RATE_SLOW 1500
-#define POLL_OSS_RATE_FAST 50
+#define POLL_RATE_SLOW 1500
+#define POLL_RATE_FAST 50
 
 
 #include "mixer_backend_i18n.cpp"
@@ -92,12 +92,12 @@ bool Mixer_Backend::openIfValid()
 		//        key should be an own class, like:   MixerKey(QString backend, QString baseId, int cardInstance)
 		if (needsPolling())
 		{
-			_pollingTimer->start(POLL_OSS_RATE_FAST);
+			_pollingTimer->start(POLL_RATE_FAST);
 		}
 		else
 		{
 			// The initial state must be read manually
-			QTimer::singleShot( POLL_OSS_RATE_FAST, this, SLOT(readSetFromHW()));
+			QTimer::singleShot( POLL_RATE_FAST, this, SLOT(readSetFromHW()));
 		}
 		return true; // could be opened
 	}
@@ -201,7 +201,7 @@ void Mixer_Backend::readSetFromHW()
 		}
 		else if ( retLoop != Mixer::OK && retLoop != Mixer::OK_UNCHANGED )
 		{
-			// If current ret from loop in not OK, then transiton to that: ret (Something) => retLoop (Error)
+			// If current ret from loop in not OK, then transition to that: ret (Something) => retLoop (Error)
 			ret = retLoop;
 		}
 	}
@@ -212,7 +212,7 @@ void Mixer_Backend::readSetFromHW()
 		if ( needsPolling() )
 		{
 			// Upgrade polling frequency temporarily to be more smoooooth
-			_pollingTimer->setInterval(POLL_OSS_RATE_FAST);
+			_pollingTimer->setInterval(POLL_RATE_FAST);
 			QTime fastPollingEndsAt = QTime::currentTime ();
 			fastPollingEndsAt = fastPollingEndsAt.addSecs(5);
 			_fastPollingEndsAt = fastPollingEndsAt;
@@ -226,16 +226,12 @@ void Mixer_Backend::readSetFromHW()
 	else
 	{
 		// This code path is entered on Mixer::OK_UNCHANGED and ERROR
-		if ( !_fastPollingEndsAt.isNull() )
+		bool fastPollingEndsNow = (!_fastPollingEndsAt.isNull()) && _fastPollingEndsAt < QTime::currentTime ();
+		if ( fastPollingEndsNow )
 		{
-			// Fast polling is currently active
-			if( _fastPollingEndsAt < QTime::currentTime () )
-			{
-				kDebug() << "End fast polling";
-				_fastPollingEndsAt = QTime();
-				if ( needsPolling() )
-					_pollingTimer->setInterval(POLL_OSS_RATE_SLOW);
-			}
+			kDebug() << "End fast polling";
+			_fastPollingEndsAt = QTime(); // NULL time
+			_pollingTimer->setInterval(POLL_RATE_SLOW);
 		}
 	}
 }
@@ -299,17 +295,6 @@ bool Mixer_Backend::moveStream( const QString& id, const QString& destId ) {
 	return false;
 }
 
-void Mixer_Backend::errormsg(int mixer_error)
-{
-	QString l_s_errText;
-	l_s_errText = errorText(mixer_error);
-	kError() << l_s_errText << "\n";
-}
-
-int Mixer_Backend::id2num(const QString& id)
-{
-	return id.toInt();
-}
 
 QString Mixer_Backend::errorText(int mixer_error)
 {

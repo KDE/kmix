@@ -330,6 +330,20 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
 }
 
 
+int Mixer_OSS::id2num(const QString& id)
+{
+	return id.toInt();
+}
+
+/**
+ * Prints out a translated error text for the given error number on stderr
+ */
+void Mixer_OSS::errormsg(int mixer_error)
+{
+	QString l_s_errText;
+	l_s_errText = errorText(mixer_error);
+	kError() << l_s_errText << "\n";
+}
 
 
 int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )

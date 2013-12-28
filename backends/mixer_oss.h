@@ -51,7 +51,8 @@ private:
   QString m_deviceName;
 
   int setRecsrcToOSS( const QString& id, bool on );
-
+  void errormsg(int mixer_error);
+  int id2num(const QString& id);
 };
 
 #endif

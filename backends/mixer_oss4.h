@@ -37,5 +37,8 @@ protected:
   int	  m_numExtensions;
   int	  m_modifyCounter;
   QString m_deviceName;
+
+private:
+  int id2num(const QString& id);
 };
 #endif
