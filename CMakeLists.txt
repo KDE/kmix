@@ -237,6 +237,7 @@ target_link_libraries( kmixctrl kdeinit_kmixctrl )
 install( TARGETS kmixctrl ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( PROGRAMS kmix.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
+install( PROGRAMS apps/kmixremote DESTINATION ${BIN_INSTALL_DIR} )
 install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmix_autostart.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )

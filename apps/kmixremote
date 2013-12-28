@@ -1,0 +1,127 @@
+#################################################################################
+# kmixremote - control kmix from a script.
+#
+# Set volume
+# Get volume
+# Mute
+#################################################################################
+
+function usage
+{
+  echo "Usage:"
+  echo "List mixers    #   $0 list"
+  echo "List controls  #   $0 list <mixer>"
+  echo "Get Volume     #   $0 get  [--master | <mixer> <control>]"
+  echo "Set Volume     #   $0 set  [--master | <mixer> <control>] <0..100>"
+  echo "Mute/Unmute    #   $0 mute [--master | <mixer> <control>] true|false"
+  echo 
+}
+
+function exit_with_error
+{
+  echo "Error: $1"
+  echo 
+  usage
+  exit 1
+}
+
+# Prints the mixer DBUS ID's on the console. leaving out the "/Mixers/" prefix
+function listMixers
+{
+  qdbus org.kde.kmix /Mixers org.freedesktop.DBus.Properties.Get org.kde.KMix.MixSet mixers | cut -f3 -d/
+  errorCode=$?
+  if test $errorCode != 0; then
+    echo "Error $errorCode listing mixers. KMix is not running."
+  fi
+}
+
+# Prints the mixer control DBUS ID's of the given mixer on the console. leaving out the "/Mixers/" prefix
+function listControls
+{
+  qdbus org.kde.kmix $1 org.freedesktop.DBus.Properties.Get org.kde.KMix.Mixer controls  | cut -f4 -d/
+  errorCode=$?
+  if test $errorCode != 0; then
+    echo "Error $errorCode listing controls. KMix is not running."
+  fi
+}
+
+command=""
+
+if ! type qdbus >/dev/null  2>&1 ; then
+  exit_with_error "$0 requires qdbus, but it cannot be found. Please install or check \$PATH"
+fi
+
+# Read args
+while true; do
+  arg=$1
+  shift
+  if test -z "$arg"; then
+    break
+  elif test "x--master" = "x$arg"; then
+    mixer=`qdbus org.kde.kmix /Mixers org.kde.KMix.MixSet.currentMasterMixer`
+    control=`qdbus org.kde.kmix /Mixers org.kde.KMix.MixSet.currentMasterControl`
+  elif test "x--help" = "x$arg" -o "x-h" = "x$arg"; then
+    usage
+    exit 0
+  else
+    # If not a specific option, then interpret as standad args, in this order: command, mixer, control and genericArg
+    if test -z "$command"; then
+      command=$arg
+    elif test -z "$mixer"; then
+      mixer="${arg}"
+    elif test -z "$control"; then
+      control=$arg
+    elif test -z "$genericArg"; then
+      genericArg=$arg
+    else
+      exit_with_error "Too many aguments"
+    fi
+  fi
+  #echo $arg
+done
+
+
+if test -z "$command"; then
+  usage
+  echo "<mixer>   - The mixer to use. Select one from the following list:"
+  echo "-----------------------------------------------------------------"
+  listMixers
+  exit 0
+elif test "xlist" = "x$command"; then
+  if test -z "$mixer"; then
+    listMixers
+  else
+    # List controls
+    listControls "/Mixers/${mixer}"
+  fi
+  exit 0
+fi
+
+# All following commands require a mixer
+if test -z "$mixer"; then
+  exit_with_error "<mixer> argument missing"
+fi
+if test -z "$control"; then
+    exit_with_error "<control> argument missing"
+fi
+
+# All following commands require a mixer and a control
+
+targetControl="/Mixers/${mixer}/${control}"
+#echo "ARGS: $command $targetControl $genericArg"
+
+# --- EXECUTE PHASE --------------------------------------------------------------------------------------------------
+if test "xget" = "x$command"; then
+  # GET
+  qdbus org.kde.kmix $targetControl org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume
+elif test "xset" = "x$command"; then
+  # SET
+  qdbus org.kde.kmix $targetControl org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume $genericArg
+elif test "xmute" = "x$command"; then
+  # MUTE
+  qdbus org.kde.kmix $targetControl org.freedesktop.DBus.Properties.Set org.kde.KMix.Control mute $genericArg
+else
+  exit_with_error "No such command '$command'"
+fi
+
+exit 0
