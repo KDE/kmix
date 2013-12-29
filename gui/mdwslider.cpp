@@ -512,6 +512,7 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 	else
 		mediaLayout = new QHBoxLayout();
 
+	mediaLayout->addStretch();
 	if (mediaController->hasMediaPrevControl())
 	{
 		QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout);
@@ -530,6 +531,7 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 		QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout);
 		connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaNext(bool)));
 	}
+	mediaLayout->addStretch();
 	volLayout->addLayout(mediaLayout);
 }
 
