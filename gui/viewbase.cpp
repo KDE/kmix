@@ -320,26 +320,10 @@ void ViewBase::load(KConfig *config)
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
       {
-          // --------- WORKAROUND START --------------------------------------
-    	  // TODO remove this workaround code
-         /* Workaround for a bug. KMix in KDE4.0 wrote group names like "[View.Base.Base.Front:0]", with
-          a duplicated "Base" which *should* have been Soundcard ID,like in "[View.Base.ALSA::HDA_NVidia:1.Front:0]".
-
-           Workaround: If found, write back correct group name.
-        */
-         MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
-         shared_ptr<MixDevice> md = mdw->mixDevice();
-
-         QString devgrp = md->configGroupName(grp);
-         KConfigGroup devcg  = config->group( devgrp );
-
-         QString buggyDevgrp = QString("%1.%2.%3").arg(grp).arg(view->id()).arg(md->id());
-         KConfigGroup buggyDevgrpCG = config->group( buggyDevgrp );
-         if ( buggyDevgrpCG.exists() ) {
-            buggyDevgrpCG.copyTo(&devcg);
-            // Group will be deleted in KMixerWidget::fixConfigAfterRead()
-         }
-         // --------- WORKAROUND END --------------------------------------
+          MixDeviceWidget* mdw = (MixDeviceWidget*)qmdw;
+          shared_ptr<MixDevice> md = mdw->mixDevice();
+          QString devgrp = md->configGroupName(grp);
+          KConfigGroup devcg  = config->group( devgrp );
 
          if ( mdw->inherits("MDWSlider") )
          {
