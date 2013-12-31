@@ -86,7 +86,7 @@ public:
     virtual QWidget* add(shared_ptr<MixDevice>) = 0;
 
     // This method is called after a configuration update (show/hide controls, split/unsplit).
-    virtual void configurationUpdate(); // TODO remove
+    virtual void configurationUpdate() = 0;
 
     void load(KConfig *config);
     void save(KConfig *config);

@@ -93,8 +93,8 @@ void ViewBase::addMixer(Mixer *mixer)
   _mixers.append(mixer);
 }
 
-void ViewBase::configurationUpdate() { // TODO still in use?!?
-}
+//void ViewBase::configurationUpdate() {
+//}
 
 
 
@@ -320,6 +320,8 @@ void ViewBase::load(KConfig *config)
       QWidget *qmdw = view->_mdws[i];
       if ( qmdw->inherits("MixDeviceWidget") )
       {
+          // --------- WORKAROUND START --------------------------------------
+    	  // TODO remove this workaround code
          /* Workaround for a bug. KMix in KDE4.0 wrote group names like "[View.Base.Base.Front:0]", with
           a duplicated "Base" which *should* have been Soundcard ID,like in "[View.Base.ALSA::HDA_NVidia:1.Front:0]".
 
@@ -337,6 +339,7 @@ void ViewBase::load(KConfig *config)
             buggyDevgrpCG.copyTo(&devcg);
             // Group will be deleted in KMixerWidget::fixConfigAfterRead()
          }
+         // --------- WORKAROUND END --------------------------------------
 
          if ( mdw->inherits("MDWSlider") )
          {
@@ -345,6 +348,8 @@ void ViewBase::load(KConfig *config)
             mdw->setStereoLinked( !splitChannels );
          }
 
+         // Future directions: "Visibility" is very dirty: It is read from either config file or
+         // GUIProfile. Thus we have a lot of doubled mdw visibility code all throughout KMix.
          bool mdwEnabled = false;
          if ( !dynamic && devcg.hasKey("Show") )
          {
