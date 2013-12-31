@@ -56,7 +56,6 @@ public:
 
 public slots:
     // GUI hide and show
-    void setDisabled();
     void setDisabled(bool);
 
     // Enum handling: next and selecting
@@ -66,6 +65,9 @@ public slots:
 
     void update();
     virtual void showContextMenu(const QPoint& pos = QCursor::pos());
+
+signals:
+    virtual void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 private:
     void createWidgets();

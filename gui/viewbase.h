@@ -38,6 +38,7 @@ class MixDevice;
 #include "core/mixdevice.h"
 #include "core/mixset.h"
 #include "gui/guiprofile.h"
+#include "gui/mixdevicewidget.h"
 
 /**
   * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
@@ -117,6 +118,7 @@ public:
    
    GUIProfile* guiProfile() { return GUIProfile::find(_guiProfileId); };
    GUIComplexity getGuiComplexity() { return guiComplexity; };
+   ProfControl* findMdw(const QString& id);
    ProfControl* findMdw(const QString& mdwId, QString requestedGuiComplexityName);
 
    
@@ -165,6 +167,10 @@ signals:
 private:
    QString      m_viewId;
    void updateMediaPlaybackIcons();
+
+private slots:
+   void guiVisibilitySlot(MixDeviceWidget* source, bool enable);
+
 };
 
 #endif

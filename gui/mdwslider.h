@@ -69,9 +69,9 @@ public:
     void setLabeled( bool value );
     void setTicks( bool ticks );
     void setIcons( bool value );
-    void setIcon( QString filename, QLabel** label );
+//    void setIcon( QString filename, QLabel** label );
     void setIcon( QString filename, QWidget* label );
-    QToolButton* addMediaButton(QString iconName, QLayout* layout);
+    QToolButton* addMediaButton(QString iconName, QLayout* layout, QWidget *parent);
     void updateMediaButton();
     void setColors( QColor high, QColor low, QColor back );
     void setMutedColors( QColor high, QColor low, QColor back );
@@ -97,7 +97,6 @@ public slots:
     void toggleMuted();
     void toggleStereoLinked();
 
-    void setDisabled();
     void setDisabled( bool value );
     void update();
     void showMoveMenu();
@@ -109,6 +108,7 @@ public slots:
 
 signals:
     void toggleMenuBar(bool value);
+    void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 private slots:
     void setRecsrc( bool value );
@@ -129,7 +129,6 @@ private slots:
 
 private:
     KShortcut dummyShortcut;
-    void setIcon( QString iconname );
     QPixmap loadIcon( QString filename );
     void createWidgets( bool showMuteLED, bool showCaptureLED );
     void addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList<QAbstractSlider *>& ref_sliders);
@@ -146,6 +145,12 @@ private:
 
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 	QString calculatePlaybackIcon(MediaController::PlayState playState);
+	void guiAddSlidersAndMediacontrols(bool playSliders, bool capSliders, bool mediaControls, QBoxLayout* layout);
+	void guiAddCaptureCheckbox(bool wantsCaptureLED, const Qt::Alignment& alignmentForCapture,
+		QBoxLayout* layoutForCapture);
+	void guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, QBoxLayout* layoutForMuteButton);
+	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout);
+	void addGlobalShortcut(KAction* action, const QString& label, bool dynamicControl);
 
     bool m_linked;
 

@@ -52,7 +52,6 @@ public:
 
     void addActionToPopup( KAction *action );
 
-    virtual bool isDisabled() const;
     shared_ptr<MixDevice> mixDevice() { return m_mixdevice; }
 
     virtual void setColors( QColor high, QColor low, QColor back );
@@ -66,15 +65,19 @@ public:
 
 
 public slots:
-    virtual void setDisabled( bool value );
     virtual void defineKeys();
-    virtual void update();
-    virtual void showContextMenu( const QPoint &pos = QCursor::pos() );
+	virtual void showContextMenu( const QPoint &pos = QCursor::pos() ) = 0;
+	/**
+	 * update() is called whenever there are volume updates pending from the hardware for this MDW.
+	 */
+    virtual void update() = 0;
+
+signals:
+    virtual void guiVisibilityChange(MixDeviceWidget* source, bool enable) = 0;
 
 protected slots:
+	virtual void setDisabled( bool value ) = 0;
     void volumeChange( int );
-//    virtual void setVolume( int channel, int volume );
-//    virtual void setVolume( Volume volume );
 
 protected:
 
@@ -83,7 +86,6 @@ protected:
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
       ProfControl*         _pctl;
-      bool                 m_disabled;
       Qt::Orientation      _orientation;
       bool                 m_small;
       KShortcutsDialog*    m_shortcutsDialog;

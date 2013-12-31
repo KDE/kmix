@@ -85,7 +85,10 @@ public:
     // Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
     // Because the name is visible, some kind of i18n() should be used.
     QString name;
+
+    void setVisible(bool);
     // show or hide (contains the GUI type: simple, extended, all)
+    // Future direction: Make "show" private
     QString show;
 
     bool isMandatory() const
@@ -134,6 +137,11 @@ class GUIProfile
 public:
     typedef std::set<ProfProduct*, ProductComparator> ProductSet;
     typedef QList<ProfControl*> ControlSet;
+
+	static const QString PNameSimple;
+	static const QString PNameExtended;
+	static const QString PNameAll;
+	static const QString PNameCustom;
 
 private:
     static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }

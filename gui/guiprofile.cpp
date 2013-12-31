@@ -38,6 +38,10 @@
 #include <QtCore/qstring.h>
 
 QMap<QString, GUIProfile*> GUIProfile::s_profiles;
+QString const GUIProfile::PNameSimple("simple");
+QString const GUIProfile::PNameExtended("extended");
+QString const GUIProfile::PNameAll("all");
+QString const GUIProfile::PNameCustom("custom");
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
     return ( s1 < s2 );
@@ -640,6 +644,11 @@ ProfControl::ProfControl(const ProfControl &profControl) :
 
 ProfControl::~ProfControl() {
     delete d;
+}
+
+void ProfControl::setVisible(bool visible)
+{
+	show = visible ? GUIProfile::PNameSimple : GUIProfile::PNameExtended;
 }
 
 void ProfControl::setSubcontrols(QString sctls)

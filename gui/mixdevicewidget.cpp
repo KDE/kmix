@@ -55,7 +55,7 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
    QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),
-   m_disabled( false ), _orientation( orientation ), m_small( small )
+   _orientation( orientation ), m_small( small )
    , m_shortcutsDialog(0)
 {
    _mdwActions = new KActionCollection( this );
@@ -82,11 +82,6 @@ void MixDeviceWidget::addActionToPopup( KAction *action )
    _mdwActions->addAction( action->objectName(), action );
 }
 
-bool MixDeviceWidget::isDisabled() const
-{
-   return m_disabled;
-}
-
 void MixDeviceWidget::defineKeys()
 {
    // Dialog for *global* shortcuts of this MDW
@@ -98,11 +93,11 @@ void MixDeviceWidget::defineKeys()
 }
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
-void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
+//void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
 //void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ }
 //void MixDeviceWidget::setVolume( Volume /*vol*/ ) { /* is virtual */ }
-void MixDeviceWidget::update() { /* is virtual */ }
-void MixDeviceWidget::showContextMenu( const QPoint &pos ) { /* is virtual */ }
+//void MixDeviceWidget::update() { /* is virtual */ }
+//void MixDeviceWidget::showContextMenu( const QPoint &pos ) { /* is virtual */ }
 void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ }
 void MixDeviceWidget::setIcons( bool ) { /* is virtual */ }
 void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ }

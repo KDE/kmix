@@ -46,6 +46,7 @@ public:
     virtual void constructionFinished();
     virtual void refreshVolumeLevels();
      virtual void showContextMenu();
+     virtual void configurationUpdate();
 
 protected:
     KMixWindow  *_kmixMainWindow;

@@ -123,6 +123,11 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 }
 
 
+void ViewDockAreaPopup::configurationUpdate()
+{
+	// TODO Do we still need configurationUpdate(). It was never implemented for ViewDockAreaPopup
+}
+
 // TODO Currently no right-click, as we have problems to get the ViewDockAreaPopup resized
  void ViewDockAreaPopup::showContextMenu()
  {

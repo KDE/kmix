@@ -446,12 +446,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
                 newCtl->id =  '^' + ctlId + '$'; // Replace the (possible generic) regexp by the actual ID
                 // We have made this an an actual control. As it is derived (from e.g. ".*") it is NOT mandatory.
                 newCtl->setMandatory(false);
-                if ( isActiveView ) {
-                    newCtl->show = "simple";
-                }
-                else {
-                    newCtl->show = "extended";
-                }
+                newCtl->setVisible(isActiveView);
                 newCtlSet.push_back(newCtl);
 //                 kDebug() << "Added to new ControlSet (done): " << newCtl->id;
                 break;

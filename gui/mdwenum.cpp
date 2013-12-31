@@ -58,7 +58,7 @@ MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
    // KStandardAction::showMenubar() is in MixDeviceWidget now
    KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
    action->setText( i18n("&Hide") );
-   connect(action, SIGNAL(triggered(bool)), SLOT(setDisabled()));
+   connect(action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)));
    QAction *c = _mdwActions->addAction( "keys" );
    c->setText( i18n("C&onfigure Shortcuts...") );
    connect(c, SIGNAL(triggered(bool)), SLOT(defineKeys()));
@@ -170,17 +170,10 @@ int MDWEnum::enumId()
    }
 }
 
-void MDWEnum::setDisabled()
-{
-   setDisabled( true );
-}
 
-void MDWEnum::setDisabled( bool value ) {
-   if ( m_disabled!=value)
-   {
-      value ? hide() : show();
-      m_disabled = value;
-   }
+void MDWEnum::setDisabled( bool hide )
+{
+	emit guiVisibilityChange(this, !hide);
 }
 
 /**
