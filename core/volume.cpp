@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include <kdebug.h>
+#include <klocalizedstring.h>
 
 float Volume::VOLUME_STEP_DIVISOR = 20;
 float Volume::VOLUME_PAGESTEP_DIVISOR = 10;
@@ -40,11 +41,18 @@ int Volume::_channelMaskEnum[9] =
 
 QString Volume::ChannelNameReadable[9] =
 {
-		"Left", "Right",
-		"Center", "Subwoofer",
-		"Surround Left", "Surround Right",
-		"Side Left", "Side Right",
-		"Rear Center"
+//		"Left", "Right",
+//		"Center", "Subwoofer",
+//		"Surround Left", "Surround Right",
+//		"Side Left", "Side Right",
+//		"Rear Center"
+
+		i18nc("Channel name", "Left"), i18nc("Channel name", "Right"),
+		i18nc("Channel name", "Center"), i18nc("Channel name", "Subwoofer"),
+		i18nc("Channel name", "Surround Left"), i18nc("Channel name", "Surround Right"),
+		i18nc("Channel name", "Side Left"), i18nc("Channel name", "Side Right"),
+		i18nc("Channel name", "Rear Center")
+
 };
 
 char Volume::ChannelNameForPersistence[9][30] = {
