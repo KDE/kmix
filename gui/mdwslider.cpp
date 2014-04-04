@@ -308,7 +308,7 @@ void MDWSlider::guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, 
 		m_qcb->setAutoRaise(true);
 		m_qcb->setCheckable(false);
 		m_qcb->setIcon(QIcon(loadIcon("audio-volume-muted")));
-		layoutForMuteButton->addWidget(m_qcb, alignment);
+		layoutForMuteButton->addWidget(m_qcb, 0, alignment);
 		m_qcb->installEventFilter(this);
 		connect(m_qcb, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
 		QString muteTip(i18n("Mute/Unmute %1", m_mixdevice->readableName()));
@@ -328,7 +328,7 @@ void MDWSlider::guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout)
 	installEventFilter(m_iconLabelSimple);
 	setIcon(m_mixdevice->iconName(), m_iconLabelSimple);
 	m_iconLabelSimple->setToolTip(m_mixdevice->readableName());
-	layout->addWidget(m_iconLabelSimple, alignment);
+	layout->addWidget(m_iconLabelSimple, 0, alignment);
 }
 
 /**
