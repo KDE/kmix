@@ -160,7 +160,7 @@ void OSDWidget::themeUpdated()
         m_volumeLowPixmap = svgIcon.pixmap("audio-volume-low");
         m_volumeMutedPixmap = svgIcon.pixmap("audio-volume-muted");
     } else {
-        iconSize = QSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+        iconSize = QSize(IconSize(KIconLoader::Toolbar), IconSize(KIconLoader::Toolbar));
         m_volumeHighPixmap = KIcon( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
         m_volumeMediumPixmap = KIcon( QLatin1String( "audio-volume-medium" )).pixmap(iconSize);
         m_volumeLowPixmap = KIcon( QLatin1String( "audio-volume-low" )).pixmap(iconSize);

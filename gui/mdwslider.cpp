@@ -503,7 +503,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED )
 QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout)
 {
 	QToolButton *lbl = new QToolButton(this);
-	lbl->setIconSize(QSize(22,22));
+	lbl->setIconSize(QSize(IconSize(KIconLoader::Toolbar),IconSize(KIconLoader::Toolbar)));
 	lbl->setAutoRaise(true);
 	lbl->setCheckable(false);
 	
@@ -646,7 +646,7 @@ QWidget* MDWSlider::createLabel(QWidget* parent, QString& label, QBoxLayout *lay
 
 QPixmap MDWSlider::loadIcon( QString filename )
 {
-	return KIconLoader::global()->loadIcon( filename, KIconLoader::Small, KIconLoader::SizeSmallMedium );
+	return KIconLoader::global()->loadIcon( filename, KIconLoader::Small, IconSize(KIconLoader::Toolbar) );
 }
 
 void MDWSlider::setIcon( QString filename )
@@ -677,7 +677,7 @@ void MDWSlider::setIcon( QString filename, QWidget* label )
 			miniDevPM = miniDevPM.transformed( t );
 			label->resize( 10, 10 );
 		} // small size
-		label->setMinimumSize(22,22);
+		label->setMinimumSize(IconSize(KIconLoader::Toolbar),IconSize(KIconLoader::Toolbar));
 		
 		QLabel* lbl = qobject_cast<QLabel*>(label);
 		if ( lbl != 0 )
