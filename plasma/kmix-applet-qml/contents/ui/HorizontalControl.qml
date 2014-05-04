@@ -26,12 +26,12 @@ Row {
 
     property bool muted: false
     property bool isMasterControl: false
+    property bool disableVolumeUpdate: false
     property int volume: 0
 
     property alias dataSource: _volumeEngine.connectedSources
 
     spacing: 5
-    width: parent.width
 
     function retrieveIcon() {
         if (_control.muted) {
@@ -59,6 +59,11 @@ Row {
         interval: 0
 
         onDataChanged: {
+            if (_control.disableVolumeUpdate) {
+                return;
+            }
+
+            disableVolumeUpdate = true;
             _control.muted = data[connectedSources]["Mute"];
             _volumeMuteButton.checkable = data[connectedSources]["Can Be Muted"];
             _volumeMuteButton.checked = _control.muted;
@@ -84,6 +89,7 @@ Row {
                 // set popup icon too
                 plasmoid.popupIcon = QIcon(_iconSvg.pixmap(icon));
             }
+            disableVolumeUpdate = false;
         }
     }
 
@@ -94,7 +100,6 @@ Row {
             verticalCenter: parent.verticalCenter
             left: parent.left
         }
-
         width: theme.mediumIconSize
         height: theme.mediumIconSize
 
@@ -126,11 +131,17 @@ Row {
         value: _control.volume
 
         onValueChanged: {
+            if (_control.disableVolumeUpdate) {
+                return;
+            }
+
+            disableVolumeUpdate = true;
             // set volume level
             var service = _volumeEngine.serviceForSource(_control.dataSource);
             var op = service.operationDescription("setVolume");
             op["level"] = value;
             service.startOperationCall(op);
+            disableVolumeUpdate = false;
         }
     }
 
@@ -145,7 +156,7 @@ Row {
         width: theme.largeIconSize
         height: theme.largeIconSize
 
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignHCenter
         text: i18nc("Here goes the volume percentage value", "%1%", _control.volume)
     }
 } // _control

@@ -26,10 +26,8 @@ Column {
     anchors {
         left: parent.left
         right: parent.right
-        leftMargin: _controlInfo.spacing
     }
-
-    width: parent.width
+    height: _horizontalControl.height + _controlIcon.height
 
     Row {
         id: _controlInfo
@@ -43,7 +41,10 @@ Column {
             id: _controlIcon
 
             anchors {
-                verticalCenter: parent.verticalCenter
+                topMargin: _controlInfo.spacing
+                leftMargin: _controlInfo.spacing
+                top: _controlInfo.top
+                left: _controlInfo.left
             }
 
             width: theme.iconSizes.toolbar
@@ -54,7 +55,9 @@ Column {
             id: _controlText
 
             anchors {
-                verticalCenter: parent.verticalCenter
+                leftMargin: _controlInfo.spacing
+                left: _controlIcon.right
+                verticalCenter: _controlIcon.verticalCenter
             }
 
             elide: Text.ElideRight
@@ -62,6 +65,7 @@ Column {
     }
 
     HorizontalControl {
+        id: _horizontalControl
 
         width: parent.width
 

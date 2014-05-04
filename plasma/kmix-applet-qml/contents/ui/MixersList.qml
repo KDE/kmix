@@ -18,22 +18,16 @@
  */
 
 import QtQuick 1.1
+import org.kde.plasma.core 0.1 as PlasmaCore
 
 ListView {
     id: _mixersList
 
-    anchors {
-        top: parent.top
-        left: parent.left
-        right: parent.right
-        bottom: _buttonBar.top
-    }
-
     property alias model: _kmixModel
 
     clip: true
-    width: parent.width
-    height: parent.height
+    spacing: 1
+
     // NOTE: I noticed, when lots of mixers are used, the popup applet icon and tooltip
     // weren't updated because the corresponding visual item wasn't rendered, therefore
     // the reliability of the tray will go nuts without this dynamic cacheBuffer
@@ -48,13 +42,43 @@ ListView {
 
     Component {
         id: _horizontalDelegate
+        HorizontalMixerListDelegate {
+            id: horDelegate
 
-        HorizontalMixerListDelegate {}
+            PlasmaCore.FrameSvgItem {
+                id: horizontalRect
+
+                anchors {
+                    top: horDelegate.top
+                    left: horDelegate.left
+                    right: horDelegate.right
+                }
+                width: _mixersList.width
+                height: horDelegate.height
+
+                imagePath: "widgets/listitem"
+                prefix: "section"
+                z: -1
+            }
+        }
     }
 
     Component {
         id: _verticalDelegate
 
-        VerticalMixerListDelegate {}
+
+        VerticalMixerListDelegate {
+            id: verDelegate
+ 
+            PlasmaCore.FrameSvgItem {
+                id: verticalRect
+
+                anchors.fill: verDelegate
+
+                imagePath: "widgets/listitem"
+                prefix: "section"
+                z: -1
+            }
+        }
     }
 }

@@ -38,7 +38,8 @@ Column {
 
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: parent.top
+            top: _controlInfo.top
+            topMargin: _controlInfo.spacing
         }
 
         width: theme.iconSizes.toolbar
@@ -46,9 +47,11 @@ Column {
     }
 
     VerticalControl {
+        id: _verticalControl
 
         anchors {
             top: _controlIcon.bottom
+            bottomMargin: _controlInfo.spacing
             bottom: parent.bottom
         }
 

@@ -30,7 +30,7 @@ Item {
     // properties from kcfg
     property bool showAllMixers: false
     property bool verticalSlider: false
-    //
+    // reference to the current master control
     property variant _currentMasterControl: undefined
 
     function action_kmixSetup() {
@@ -101,28 +101,26 @@ Item {
         onDataChanged: reloadMixers()
     }
 
-    Column {
-        id: _container
+    MixersList {
+        id: _mixersList
 
         anchors {
-            left: _kmixApplet.left
-            right: _kmixApplet.right
+            top: _kmixApplet.top
+            bottom: _buttonBar.top
+            horizontalCenter: _buttonBar.horizontalCenter
         }
+        width: (orientation == Qt.Vertical) ?  _kmixApplet.width : ((_kmixApplet.width > contentWidth) ? contentWidth : _kmixApplet.width)
+        height: (orientation == Qt.Vertical) ?  _kmixApplet.height : ((_kmixApplet.height > contentHeight) ? contentHeight : _kmixApplet.height)
 
-        width: parent.width
-        height: parent.height
-        spacing: 5
+        orientation: _kmixApplet.verticalSlider ? Qt.Horizontal : Qt.Vertical
+    }
 
-        MixersList {
-            id: _mixersList
+    ButtonBar {
+        id: _buttonBar
 
-            width: parent.width
-            height: parent.height
-            orientation: _kmixApplet.verticalSlider ? Qt.Horizontal : Qt.Vertical
-        }
-
-        ButtonBar {
-            id: _buttonBar
+        anchors {
+            horizontalCenter: _kmixApplet.horizontalCenter
+            bottom: _kmixApplet.bottom
         }
     }
 

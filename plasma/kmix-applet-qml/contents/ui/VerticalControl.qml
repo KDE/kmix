@@ -26,6 +26,7 @@ Column {
 
     property bool muted: false
     property bool isMasterControl: false
+    property bool disableVolumeUpdate: false
     property int volume: 0
     property alias dataSource: _volumeEngine.connectedSources
 
@@ -57,6 +58,11 @@ Column {
         interval: 0
 
         onDataChanged: {
+            if (_control.disableVolumeUpdate) {
+                return;
+            }
+
+            disableVolumeUpdate = true;
             _control.muted = data[connectedSources]["Mute"];
             _volumeMuteButton.checkable = data[connectedSources]["Can Be Muted"];
             _volumeMuteButton.checked = _control.muted;
@@ -81,6 +87,7 @@ Column {
                 // set popup icon too
                 plasmoid.popupIcon = QIcon(_iconSvg.pixmap(icon));
             }
+            disableVolumeUpdate = false;
         }
     }
 
@@ -114,11 +121,17 @@ Column {
         value: _control.volume
 
         onValueChanged: {
+            if (_control.disableVolumeUpdate) {
+                return;
+            }
+
+            disableVolumeUpdate = true;
             // set volume level
             var service = _volumeEngine.serviceForSource(_control.dataSource);
             var op = service.operationDescription("setVolume");
             op["level"] = value;
             service.startOperationCall(op);
+            disableVolumeUpdate = false;
         }
     }
 
@@ -129,7 +142,6 @@ Column {
             horizontalCenter: parent.horizontalCenter
             bottom: _control.bottom
         }
-
         width: theme.mediumIconSize
         height: theme.mediumIconSize
 
