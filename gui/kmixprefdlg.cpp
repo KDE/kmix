@@ -202,7 +202,7 @@ void KMixPrefDlg::createGeneralTab()
 
 	// [CONFIG]
 	m_volumeOverdrive = new QCheckBox(i18n("Volume Overdrive"), m_generalTab);
-	addWidgetToLayout(m_volumeOverdrive, layout, 10, "Raise volume maximum to 150% (PulseAudio only)", "VolumeOverdrive");
+	addWidgetToLayout(m_volumeOverdrive, layout, 10, i18nc("@info:tooltip", "Raise volume maximum to 150% (PulseAudio only)"), "VolumeOverdrive");
 	volumeOverdriveWarning = new QLabel(i18n("You must restart KMix for this setting to take effect."), m_generalTab);
 	volumeOverdriveWarning->setEnabled(false);
 	addWidgetToLayout(volumeOverdriveWarning, layout, 20, "", "");

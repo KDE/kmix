@@ -285,7 +285,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
    if ( multipleDriversActive )
    {
       // this will only be possible by hacking the config-file, as it will not be officially supported
-      ref_hwInfoString += "\nExperimental multiple-Driver mode activated";
+      ref_hwInfoString.append("\n").append(i18n("Experimental multiple-Driver mode activated"));
       QString allDrivermatch("*");
       KMixDeviceManager::instance()->setHotpluggingBackends(allDrivermatch);
    }
