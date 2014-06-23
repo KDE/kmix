@@ -35,6 +35,7 @@
 #include <QDBusConnectionInterface>
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QTextDocument>
 
 #include "apps/kmix.h"
 #include "core/ControlManager.h"
@@ -167,7 +168,7 @@ void
 KMixDockWidget::setVolumeTip()
 {
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    QString tip = "";
+    QString tip;
     int virtualToolTipValue = 0;
 
     if ( md.get() == 0 )
@@ -179,10 +180,12 @@ KMixDockWidget::setVolumeTip()
     {
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
-		int val = md->getUserfriendlyVolumeLevel();
-       	tip = i18n( "Volume at %1%", val );
+        int val = md->getUserfriendlyVolumeLevel();
+        tip += "<font size=\"+1\">" + i18n( "Volume at %1%", val ) + "</font>";
         if ( md->isMuted() )
-        	tip += i18n( " (Muted)" );
+            tip += i18n( " (Muted)" );
+        tip += QString( "<br/><font size=\"-1\">%1<br/>%2</font>" )
+            .arg( Qt::escape(md->mixer()->readableName()) ).arg( Qt::escape(md->readableName()) );
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
         virtualToolTipValue = val;

@@ -54,7 +54,7 @@ class MDWSlider : public MixDeviceWidget
 public:
     MDWSlider( shared_ptr<MixDevice> md,
 	       bool includePlayback, bool includeCapture,
-	       bool small, Qt::Orientation,
+	       bool includeMixerName, bool small, Qt::Orientation,
 	       QWidget* parent, ViewBase* view, ProfControl *pctl);
     virtual ~MDWSlider();
 
@@ -130,8 +130,9 @@ private slots:
 private:
     KShortcut dummyShortcut;
     QPixmap loadIcon( QString filename );
-    void createWidgets( bool showMuteLED, bool showCaptureLED );
-    void addSliders( QBoxLayout *volLayout, char type, Volume& vol, QList<QAbstractSlider *>& ref_sliders);
+    void createWidgets( bool showMuteLED, bool showCaptureLED, bool includeMixer );
+    void addSliders( QBoxLayout *volLayout, char type, Volume& vol,
+                     QList<QAbstractSlider *>& ref_sliders, QString tooltipText );
     //void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
@@ -145,11 +146,11 @@ private:
 
     QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 	QString calculatePlaybackIcon(MediaController::PlayState playState);
-	void guiAddSlidersAndMediacontrols(bool playSliders, bool capSliders, bool mediaControls, QBoxLayout* layout);
+	void guiAddSlidersAndMediacontrols(bool playSliders, bool capSliders, bool mediaControls, QBoxLayout* layout, const QString& tooltipText, const QString& captureTooltipText);
 	void guiAddCaptureCheckbox(bool wantsCaptureLED, const Qt::Alignment& alignmentForCapture,
-		QBoxLayout* layoutForCapture);
-	void guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, QBoxLayout* layoutForMuteButton);
-	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout);
+		QBoxLayout* layoutForCapture, const QString& captureTooltipText);
+	void guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, QBoxLayout* layoutForMuteButton, const QString& muteTooltipText);
+	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout, const QString& tooltipText);
 	void addGlobalShortcut(KAction* action, const QString& label, bool dynamicControl);
 
     bool m_linked;

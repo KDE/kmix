@@ -321,6 +321,7 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
       md,           // only 1 device.
       true,         // Show Mute LE
       true,        // Show Record LED
+      true,        // Include Mixer Name
       false,        // Small
       vertical ? Qt::Vertical : Qt::Horizontal,
       this,         // parent

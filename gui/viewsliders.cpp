@@ -143,6 +143,7 @@ QWidget* ViewSliders::add(shared_ptr<MixDevice> md)
                 md,           // MixDevice (parameter)
                 true,         // Show Mute LED
                 true,         // Show Record LED
+                false,        // Include Mixer Name
                 false,        // Small
                 orientation,  // Orientation
                 this,         // parent
