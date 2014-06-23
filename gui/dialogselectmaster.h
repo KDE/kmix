@@ -36,7 +36,7 @@ class DialogSelectMaster : public KDialog
 {
     Q_OBJECT
  public:
-    DialogSelectMaster(Mixer * = 0);
+    DialogSelectMaster(Mixer * = 0, QWidget *parent = 0);
     ~DialogSelectMaster();
 
  public slots:

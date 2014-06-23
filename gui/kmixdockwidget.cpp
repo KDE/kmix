@@ -149,20 +149,12 @@ void KMixDockWidget::createMenuActions()
     QAction *action = actionCollection()->addAction( "select_master" );
     action->setText( i18n("Select Master Channel...") );
     action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
-    connect(action, SIGNAL(triggered(bool)), SLOT(selectMaster()));
+    connect(action, SIGNAL(triggered(bool)), _kmixMainWindow, SLOT(slotSelectMaster()));
     menu->addAction( action );
 
     //Context menu entry to access phonon settings
     menu->addAction(_kmixMainWindow->actionCollection()->action("launch_kdesoundsetup"));
 }
-
-void KMixDockWidget::selectMaster()
-{
-   DialogSelectMaster* dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
-   dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-   dsm->show();
-}
-
 
 void
 KMixDockWidget::setVolumeTip()

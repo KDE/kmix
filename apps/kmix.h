@@ -49,6 +49,7 @@ class Mixer;
 #include "core/mixer.h"
 
 class OSDWidget;
+class DialogSelectMaster;
 
 class
 KMixWindow : public KXmlGuiWindow
@@ -95,6 +96,7 @@ KMixWindow : public KXmlGuiWindow
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
    void recreateGUIwithSavingView();
    void newMixerShown(int tabIndex);
+   void slotSelectMaster();
 
     private:
         KMixerWidget* findKMWforTab( const QString& tabId );
@@ -119,6 +121,8 @@ private:
    KTabWidget *m_wsMixers;
 
    KMixDockWidget *m_dockWidget;
+   DialogSelectMaster *m_dsm;
+
    QString m_hwInfoString;
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
@@ -144,13 +148,13 @@ private:
    void slotHWInfo();
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
-   void slotSelectMaster();
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
    void hideOrClose();
    void slotIncreaseVolume();
    void slotDecreaseVolume();
    void slotMute();
+   void slotSelectMasterClose(QObject*);
 
    void newView();
    void saveAndCloseView(int);

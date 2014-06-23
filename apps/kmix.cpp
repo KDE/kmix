@@ -78,7 +78,7 @@ KMixWindow::KMixWindow(bool invisible) :
     KXmlGuiWindow(0,
         Qt::WindowFlags(
             KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
-    m_dockWidget(), m_dontSetDefaultCardOnStart(false)
+    m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
 {
   setObjectName(QLatin1String("KMixWindow"));
   // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
@@ -132,7 +132,9 @@ KMixWindow::~KMixWindow()
 {
   ControlManager::instance().removeListener(this);
 
+  delete m_dsm;
   delete osdWidget;
+
   // -1- Cleanup Memory: clearMixerWidgets
   while (m_wsMixers->count() != 0)
     {
@@ -1322,14 +1324,24 @@ KMixWindow::slotConfigureCurrentView()
     view->configureView();
 }
 
+void KMixWindow::slotSelectMasterClose(QObject*)
+{
+	m_dsm = 0;
+}
+
 void KMixWindow::slotSelectMaster()
 {
 	Mixer *mixer = Mixer::getGlobalMasterMixer();
 	if (mixer != 0)
 	{
-		QPointer<DialogSelectMaster> dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer());
-		dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-		dsm->show();
+		if (!m_dsm) {
+			m_dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer(), this);
+                        connect(m_dsm, SIGNAL(destroyed(QObject*)), this, SLOT(slotSelectMasterClose(QObject*)));
+			m_dsm->setAttribute(Qt::WA_DeleteOnClose, true);
+		        m_dsm->show();
+		}
+                m_dsm->raise();
+                m_dsm->activateWindow();
 	}
 	else
 	{

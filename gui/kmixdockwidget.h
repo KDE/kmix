@@ -74,7 +74,6 @@ class KMixDockWidget : public KStatusNotifierItem
  private slots:
    void dockMute();
    void trayWheelEvent(int delta,Qt::Orientation);
-   void selectMaster();
    void contextMenuAboutToShow();
 };
 

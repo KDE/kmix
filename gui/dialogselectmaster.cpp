@@ -36,8 +36,8 @@
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
-DialogSelectMaster::DialogSelectMaster( Mixer *mixer  )
-  : KDialog(  0 )
+DialogSelectMaster::DialogSelectMaster( Mixer *mixer, QWidget *parent )
+  : KDialog( parent )
 {
     setCaption( i18n( "Select Master Channel" ) );
     if ( Mixer::mixers().count() > 0 )
