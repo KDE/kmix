@@ -130,6 +130,7 @@ protected:
    */
   virtual QString getName() const;
   virtual QString getId() const;
+  virtual int getCardInstance() const      {   return _cardInstance;      }
 
   // All controls of this card
   MixSet m_mixDevices;
@@ -162,13 +163,66 @@ public slots:
   virtual void reinit() {};
 
 protected:
-  QString m_mixerName;
   void freeMixDevices();
+
+  QMap<QString,int> s_mixerNums;
+
+	/**
+	 * Registers the card for this Backend and sets the card discriminator for the given card name.
+	 * The discriminator should always be 1, unless a second card with
+	 * the same name of a registered card was already registered. Default implementation will return 2, 3 and so on
+	 * for more cards. Subclasses can override this and return arbitrary ID's, but any ID that is not 1 will be
+	 * displayed to the user everywhere where a mixer name is shown, like in the tab name.
+	 *
+	 * For the background please see BKO-327471 and read the following info:
+	 *   "Count mixer nums for every mixer name to identify mixers with equal names.
+	 *    This is for creating persistent (reusable) primary keys, which can safely
+	 *    be referenced (especially for config file access, so it is meant to be persistent!)."
+	 *
+	 *
+	 *
+	 * @param cardBaseName
+	 */
+  void registerCard(QString cardBaseName)
+  {
+		m_mixerName = cardBaseName;
+		int cardDiscriminator = 1 + s_mixerNums[cardBaseName];
+		kDebug() << "cardBaseName=" << cardBaseName << ", cardDiscriminator=" << cardDiscriminator;
+		_cardInstance = cardDiscriminator;
+//		return cardDiscriminator;
+  }
+
+  /**
+   * Unregisters the card of this Backend. The cardDiscriminator counter for this card name is reduced by 1.
+   * See #registerCard() for more info.
+   *
+   * TODO This is not entirely correct. Example: If the first card (cardDiscrimiator == 1) is unpluggged, then
+   *   s_mixerNums["cardName"] is changed from 2 to 1. The next plug of registerCard("cardName") will use
+   *   cardDiscriminator == 2, but the card with taht discrimniator was not unplugged => BANG!!!
+   *
+   * @param cardBaseName
+   */
+  void unregisterCard(QString cardBaseName)
+  {
+	  QMap<QString,int>::const_iterator it = s_mixerNums.constFind(cardBaseName);
+	  if (it != s_mixerNums.constEnd())
+	  {
+		  int beforeValue = it.value();
+		  int afterValue = beforeValue-1;
+		  if (beforeValue > 0)
+			  s_mixerNums[cardBaseName] = afterValue;
+		  kDebug() << "beforeValue=" << beforeValue << ", afterValue" << afterValue;
+	  }
+  }
+
+  int    _cardInstance;
+
 
 protected slots:
   virtual void readSetFromHW();
 private:
   QTime _fastPollingEndsAt;
+  QString m_mixerName;
 };
 
 typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );

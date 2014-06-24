@@ -84,7 +84,7 @@ public:
     shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID );
 
     /// Open/grab the mixer for further intraction
-    bool openIfValid(int cardId);
+    bool openIfValid();
 
     /// Returns whether the card is open/operational
     bool isOpen() const;
@@ -124,7 +124,7 @@ public:
      */
     QString& id();
 
-    int getCardInstance() const      {          return _cardInstance;      }
+    int getCardInstance() const      {   return _mixerBackend->getCardInstance();      }
 
     /// Returns an Universal Device Identifaction of the Mixer. This is an ID that relates to the underlying operating system.
     // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
@@ -201,7 +201,6 @@ private:
     Mixer_Backend *_mixerBackend;
     QString _id;
     QString _masterDevicePK;
-    int    _cardInstance;
     static MasterControl _globalMasterCurrent;
     static MasterControl _globalMasterPreferred;
 

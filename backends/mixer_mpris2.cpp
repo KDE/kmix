@@ -49,7 +49,7 @@ int Mixer_MPRIS2::open()
 	if ( m_devnum !=  0 )
 		return Mixer::ERR_OPEN;
 
-	m_mixerName = i18n("Playback Streams");
+	registerCard(i18n("Playback Streams"));
 	_id = "Playback Streams";
 	_mixer->setDynamic();
 	return addAllRunningPlayersAndInitHotplug();

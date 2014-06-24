@@ -259,7 +259,7 @@ int Mixer_OSS4::open()
 			}
 
 			oss_mixext_root *root = (oss_mixext_root *) ext.data;
-			m_mixerName = root->name;
+			registerCard(root->name);
 
 			for ( int i = 1; i < m_numExtensions; i++ )
 			{

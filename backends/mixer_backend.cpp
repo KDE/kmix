@@ -35,7 +35,7 @@
 #include "mixer_backend_i18n.cpp"
 
 Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
-m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _pollingTimer(0)
+m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _pollingTimer(0), _cardInstance(1)
 
 {
 	// In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
@@ -64,6 +64,7 @@ int Mixer_Backend::close()
 
 Mixer_Backend::~Mixer_Backend()
 {
+	unregisterCard(this->getName());
 	if (!m_mixDevices.isEmpty())
 	{
 		kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";

@@ -11,11 +11,14 @@ include(MacroLibrary)
 
 find_package(Alsa)
 
-macro_optional_find_package(PulseAudio "0.9.12")
-macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server" "http://www.pulseaudio.org/" FALSE "0.9.12" "libpulse is needed to let KMix control PulseAudio")
+set(PA_VER "0.9.16")
+macro_optional_find_package(PulseAudio "${PA_VER}")
+macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
+    "http://www.pulseaudio.org/" FALSE "${PA_VER}" "libpulse is needed to let KMix control PulseAudio")
 find_package(GLIB2)
 macro_optional_find_package(Canberra)
-macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library" "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
+macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library"
+    "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
 
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
 

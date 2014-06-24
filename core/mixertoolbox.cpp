@@ -67,13 +67,14 @@ MixerToolBox* MixerToolBox::instance()
  * 2) Rember UDI's, to match them when unplugging a device
  * 3) Find out, which Backend to use (plugin events of other Backends are ignored).
  *
+ * @deprecated TODO this method has to go away. Migrate to MultiDriverMode enum
+ *
  * @par multiDriverMode Whether the Mixer scan should try more all backendends.
  *          'true' means to scan all backends. 'false' means: After scanning the
  *          current backend the next backend is only scanned if no Mixers were found yet.
  * @par backendList Activated backends (typically a value from the kmixrc or a default)
  * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
  */
-// TODO this method has to go away. Migrate to MultiDriverMode enum
 void MixerToolBox::initMixer(bool multiDriverModeBool, QList<QString> backendList, QString& ref_hwInfoString)
 {
 	MultiDriverMode multiDriverMode = multiDriverModeBool ?  MULTI : SINGLE_PLUS_MPRIS2;
@@ -308,12 +309,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
  */
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
-	// TODO bug327471 This is really wrong here: _mixerBackend->getBaseName() is empty, as it will be filled by
-	//                mixer->openIfValid(). See 3 lines below for the call!
-	QString mixerBasename = mixer->getBaseName();
-	int newCardInstanceNum = 1 + s_mixerNums[mixerBasename];
-	kDebug() << "mixerBasename=" << mixerBasename << ", cardNumPlanned=" << newCardInstanceNum;
-    if ( mixer->openIfValid(newCardInstanceNum) )
+    if ( mixer->openIfValid() )
     {
         if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) )
         {
@@ -325,13 +321,6 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
         }
         else
         {
-			// Count mixer nums for every mixer name to identify mixers with equal names.
-			// This is for creating persistent (reusable) primary keys, which can safely
-			// be referenced (especially for config file access, so it is meant to be persistent!).
-			//s_mixerNums[mixer->getBaseName()]++;
-        	s_mixerNums[mixerBasename] = newCardInstanceNum;
-        	//        mixer->setCardInstance(s_mixerNums[mixer->getBaseName()]); // TODO this code must go in mixer->openIfValid()
-
         	Mixer::mixers().append( mixer );
         	kDebug(67100) << "Added card " << mixer->id();
 
@@ -365,7 +354,6 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
         Mixer *mixer = (Mixer::mixers())[i];
         if ( mixer == par_mixer ) {
             kDebug(67100) << "Removing card " << mixer->id();
-            s_mixerNums[mixer->getBaseName()]--;
             Mixer::mixers().removeAt(i);
             delete mixer;
         }

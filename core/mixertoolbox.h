@@ -59,7 +59,6 @@ class MixerToolBox : public QObject
 
    private:
       static MixerToolBox* s_instance;
-      QMap<QString,int> s_mixerNums;
       static QRegExp s_ignoreMixerExpression;
       
       //static KLocale* s_whatsthisLocale;

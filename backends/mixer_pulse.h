@@ -41,7 +41,9 @@ typedef struct {
 
     Volume::ChannelMask chanMask;
     chanIDMap chanIDs;
+    unsigned int priority;
 } devinfo;
+typedef QMap<int,devinfo> devmap;
 
 class Mixer_PULSE : public Mixer_Backend
 {
@@ -76,9 +78,10 @@ class Mixer_PULSE : public Mixer_Backend
         QString _id;
 
     private:
-        void addDevice(devinfo& dev, bool = false);
+        bool addDevice(devinfo& dev, bool isAppStream = false);
         bool connectToDaemon();
         void emitControlsReconfigured();
+        void updateRecommendedMaster(devmap* map);
 
    protected slots:
         void pulseControlsReconfigured(QString mixerId);

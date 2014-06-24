@@ -65,7 +65,6 @@ static ca_context *s_ccontext = NULL;
 
 QMap<int,Mixer_PULSE*> s_mixers;
 
-typedef QMap<int,devinfo> devmap;
 static devmap outputDevices;
 static devmap captureDevices;
 static QMap<int,QString> clients;
@@ -217,6 +216,10 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     s.channel_map = i->channel_map;
     s.mute = !!i->mute;
     s.stream_restore_rule = "";
+
+    s.priority = 0;
+    if (i->active_port != NULL)
+        s.priority = i->active_port->priority;
 
     translateMasksAndMaps(s);
 
@@ -822,15 +825,38 @@ void Mixer_PULSE::pulseControlsReconfigured(QString mixerId)
     ControlManager::instance().announce(mixerId, ControlChangeType::ControlList, getDriverName());
 }
 
+void Mixer_PULSE::updateRecommendedMaster(devmap* map)
+{
+    unsigned int prio = 0;
+    shared_ptr<MixDevice> res;
+    MixSet::iterator iter;
+
+    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter) {
+        unsigned int devprio = map->value( id2num((*iter)->id()) ).priority;
+        if (( devprio > prio ) || !res ) {
+            prio = devprio;
+            res = *iter;
+        }
+    }
+
+    if (res)
+         kDebug(67100) << "Selecting master " << res->id()
+                       << " for type " << m_devnum;
+    m_recommendedMaster = res;
+}
+
 void Mixer_PULSE::addWidget(int index, bool isAppStream)
 {
     devmap* map = get_widget_map(m_devnum, index);
 
     if (!map->contains(index)) {
-        kWarning(67100) <<  "New " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
+        kWarning(67100) << "New " << m_devnum << " widget notified for index "
+                        << index << " but I cannot find it in my list :s";
         return;
     }
-    addDevice((*map)[index], isAppStream);
+
+    if (addDevice((*map)[index], isAppStream))
+        updateRecommendedMaster(map);
     emitControlsReconfigured();
 }
 
@@ -839,7 +865,8 @@ void Mixer_PULSE::removeWidget(int index)
     devmap* map = get_widget_map(m_devnum);
 
     if (!map->contains(index)) {
-        //kWarning(67100) <<  "Removing " << m_devnum << " widget notified for index " << index << " but I cannot find it in my list :s";
+        kDebug(67100) << "Removing " << m_devnum << " widget notified for index "
+                      << index << " but I cannot find it in my list :s";
         // Sometimes we ignore things (e.g. event sounds) so don't be too noisy here.
         return;
     }
@@ -849,22 +876,25 @@ void Mixer_PULSE::removeWidget(int index)
 
     // We need to find the MixDevice that goes with this widget and remove it.
     MixSet::iterator iter;
+    shared_ptr<MixDevice> md;
     for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
     {
         if ((*iter)->id() == id)
         {
-			shared_ptr<MixDevice> md = m_mixDevices.get(id);
-			kDebug() << "MixDevice 1 useCount=" << md.use_count();
-			md->close();
-			kDebug() << "MixDevice 2 useCount=" << md.use_count();
-
+            md = m_mixDevices.get(id);
+            kDebug() << "MixDevice 1 useCount=" << md.use_count();
+            md->close();
+            kDebug() << "MixDevice 2 useCount=" << md.use_count();
             m_mixDevices.erase(iter);
-			kDebug() << "MixDevice 3 useCount=" << md.use_count();
-            emitControlsReconfigured();
-			kDebug() << "MixDevice 4 useCount=" << md.use_count();
-            return;
+            kDebug() << "MixDevice 3 useCount=" << md.use_count();
+            break;
         }
     }
+
+    if (md)
+        updateRecommendedMaster(map);
+    emitControlsReconfigured();
+    kDebug() << "MixDevice 4 useCount=" << md.use_count();
 }
 
 void Mixer_PULSE::removeAllWidgets()
@@ -880,9 +910,11 @@ void Mixer_PULSE::removeAllWidgets()
     emitControlsReconfigured();
 }
 
-void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
+bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 {
-    if (dev.chanMask != Volume::MNONE) {
+    if (dev.chanMask == Volume::MNONE)
+        return false;
+
         MixSet *ms = 0;
         if (m_devnum == KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
             ms = s_mixers[KMIXPA_PLAYBACK]->getMixSet();
@@ -897,11 +929,13 @@ void Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         if (isAppStream)
             md->setApplicationStream(true);
 
-        kDebug() << "Adding Pulse volume " << dev.name << ", isCapture= " << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE) << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
+        kDebug(67100) << "Adding Pulse volume " << dev.name << ", isCapture= "
+                      << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE)
+                      << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md->addToPool());
-    }
+    return true;
 }
 
 Mixer_Backend* PULSE_getMixer( Mixer *mixer, int devnum )
@@ -1064,35 +1098,40 @@ int Mixer_PULSE::open()
         if (KMIXPA_PLAYBACK == m_devnum)
         {
         	_id = "Playback Devices";
-            m_mixerName = i18n("Playback Devices");
+        	registerCard(i18n("Playback Devices"));
             for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
                 addDevice(*iter);
+            updateRecommendedMaster(&outputDevices);
         }
         else if (KMIXPA_CAPTURE == m_devnum)
         {
         	_id = "Capture Devices";
-            m_mixerName = i18n("Capture Devices");
+        	registerCard(i18n("Capture Devices"));
             for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
                 addDevice(*iter);
+            updateRecommendedMaster(&outputDevices);
         }
         else if (KMIXPA_APP_PLAYBACK == m_devnum)
         {
         	_id = "Playback Streams";
-            m_mixerName = i18n("Playback Streams");
+        	registerCard(i18n("Playback Streams"));
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
                 addDevice(*iter, true);
+            updateRecommendedMaster(&outputRoles);
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
                 addDevice(*iter, true);
+            updateRecommendedMaster(&outputStreams);
         }
         else if (KMIXPA_APP_CAPTURE == m_devnum)
         {
         	_id = "Capture Streams";
-            m_mixerName = i18n("Capture Streams");
+            registerCard(i18n("Capture Streams"));
             for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
                 addDevice(*iter);
+            updateRecommendedMaster(&captureStreams);
         }
 
-        kDebug(67100) <<  "Using PulseAudio for mixer: " << m_mixerName;
+        kDebug(67100) <<  "Using PulseAudio for mixer: " << getName();
         m_isOpen = true;
     }
 

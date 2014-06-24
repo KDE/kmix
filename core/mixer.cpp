@@ -91,7 +91,6 @@ bool Mixer::pulseaudioPresent()
 Mixer::Mixer( QString& ref_driverName, int device )
     : m_balance(0), _mixerBackend(0L), m_dynamic(false)
 {
-    _cardInstance = 0;
     _mixerBackend = 0;
     int driverCount = numDrivers();
     for (int driver=0; driver<driverCount; driver++ ) {
@@ -174,7 +173,7 @@ void Mixer::recreateId()
     QString primaryKeyOfMixer = QString("%1::%2:%3")
             .arg(getDriverName())
             .arg(mixerName)
-            .arg(_cardInstance);
+            .arg(getCardInstance());
     // The following 3 replaces are for not messing up the config file
     primaryKeyOfMixer.replace(']','_');
     primaryKeyOfMixer.replace('[','_'); // not strictly necessary, but lets play safe
@@ -256,7 +255,7 @@ void Mixer::volumeLoad( KConfig *config )
  *
  * @return true, if Mixer could be opened.
  */
-bool Mixer::openIfValid(int cardId)
+bool Mixer::openIfValid()
 {
 	if (_mixerBackend == 0 )
 	{
@@ -264,7 +263,6 @@ bool Mixer::openIfValid(int cardId)
 		return false;
 	}
 
-	_cardInstance = cardId;
     bool ok = _mixerBackend->openIfValid();
     if ( ok )
     {

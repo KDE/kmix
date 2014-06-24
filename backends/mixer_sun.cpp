@@ -206,7 +206,7 @@ int Mixer_SUN::open()
             m_mixDevices.append( md->addToPool() );
          }
 
-     m_mixerName = "SUN Audio Mixer";
+     registerCard("SUN Audio Mixer");
      m_isOpen = true;
 
      return 0;

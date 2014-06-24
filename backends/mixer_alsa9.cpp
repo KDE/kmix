@@ -315,7 +315,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
         return Mixer::ERR_READ;
     }
     const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
-    m_mixerName = mixer_card_name;
+    //QString mixer_card_name_QString = mixer_card_name;
+    registerCard(mixer_card_name);
+
 
     snd_ctl_close( ctl_handle );
 

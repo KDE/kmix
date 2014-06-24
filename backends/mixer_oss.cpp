@@ -176,12 +176,13 @@ int Mixer_OSS::open()
       struct mixer_info l_mix_info;
       if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1)
         {
-          m_mixerName = l_mix_info.name;
+    	  registerCard(l_mix_info.name);
         }
       else
 #endif
-
-        m_mixerName = "OSS Audio Mixer";
+      {
+    	  registerCard("OSS Audio Mixer");
+      }
 
       m_isOpen = true;
       return 0;
