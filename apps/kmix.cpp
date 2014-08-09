@@ -285,7 +285,7 @@ KMixWindow::initActionsAfterInitMixer()
 	// runs with 4 fixed Tabs.
 	if (!Mixer::pulseaudioPresent())
     {
-      QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar, KIconLoader::SizeSmall);
+      QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar, IconSize(KIconLoader::Toolbar));
       QPushButton* _cornerLabelNew = new QPushButton();
       _cornerLabelNew->setIcon(cornerNewPM);
       //cornerLabelNew->setSizePolicy(QSizePolicy());
@@ -312,7 +312,7 @@ KMixWindow::initWidgets()
       SLOT(saveAndCloseView(int)));
 
   QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new",
-      KIconLoader::Toolbar, KIconLoader::SizeSmall);
+      KIconLoader::Toolbar, IconSize(KIconLoader::Small));
 
   connect(m_wsMixers, SIGNAL(currentChanged(int)), SLOT(newMixerShown(int)));
 

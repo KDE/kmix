@@ -306,7 +306,9 @@ void MDWSlider::guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, 
 		m_qcb = new QToolButton(this);
 		m_qcb->setAutoRaise(true);
 		m_qcb->setCheckable(false);
-		m_qcb->setIcon(QIcon(loadIcon("audio-volume-muted")));
+		//m_qcb->setIcon(QIcon(loadIcon("audio-volume-muted")));
+		setIcon("audio-volume-muted", m_qcb);
+		//setIcon("audio-volume-mutd", m_qcb);
 		layoutForMuteButton->addWidget(m_qcb, 0, alignment);
 		m_qcb->installEventFilter(this);
 		connect(m_qcb, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
@@ -525,7 +527,7 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout, QWidget *parent)
 {
 	QToolButton *lbl = new QToolButton(parent);
-	lbl->setIconSize(QSize(22,22));
+	lbl->setIconSize(QSize(IconSize(KIconLoader::Toolbar),IconSize(KIconLoader::Toolbar)));
 	lbl->setAutoRaise(true);
 	lbl->setCheckable(false);
 	
@@ -682,9 +684,9 @@ QWidget* MDWSlider::createLabel(QWidget* parent, QString& label, QBoxLayout *lay
 }
 
 
-QPixmap MDWSlider::loadIcon( QString filename )
+QPixmap MDWSlider::loadIcon( QString filename, KIconLoader::Group group )
 {
-	return KIconLoader::global()->loadIcon( filename, KIconLoader::Small, KIconLoader::SizeSmallMedium );
+	return KIconLoader::global()->loadIcon( filename, group, IconSize(KIconLoader::Toolbar) );
 }
 
 
@@ -698,9 +700,16 @@ QPixmap MDWSlider::loadIcon( QString filename )
 //	setIcon(filename, *label);
 //}
 
+/**
+ * Loads the icon with the given iconName in size KIconLoader::Toolbar, and applies it to the label widget.
+ * The label must be either a QLabel or a QToolButton.
+ *
+ * @param label A QToolButton or a QToolButton that will hold the icon.
+ */
 void MDWSlider::setIcon( QString filename, QWidget* label )
 {
-	QPixmap miniDevPM = loadIcon( filename );
+	QPixmap miniDevPM = loadIcon( filename, KIconLoader::Small );
+//	QPixmap miniDevPM = loadIcon( filename, KIconLoader::Toolbar);
 	if ( !miniDevPM.isNull() )
 	{
 		if ( m_small )
@@ -713,7 +722,7 @@ void MDWSlider::setIcon( QString filename, QWidget* label )
 		} // small size
 		else
 		{
-			label->setMinimumSize(22,22);
+			label->setMinimumSize(IconSize(KIconLoader::Toolbar),IconSize(KIconLoader::Toolbar));
 		}
 		label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 		
@@ -982,8 +991,8 @@ void MDWSlider::setDisabled( bool hide )
 
 
 /**
- * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which hare handeled by the
- * KMixWindow class. So for 99.9% of all users, this methos is never called.
+ * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which are handled by the
+ * KMixWindow class. So for 99.9% of all users, this method is never called.
  */
 void MDWSlider::increaseVolume()
 {
@@ -1107,10 +1116,8 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 	if( m_qcb != 0 )
 	{
 		bool oldBlockState = m_qcb->blockSignals( true );
-		if (m_mixdevice->isMuted())
-			m_qcb->setIcon( QIcon( loadIcon("audio-volume-muted") ) );
-		else
-			m_qcb->setIcon( QIcon( loadIcon("audio-volume-high") ) );
+		QString muteIcon = m_mixdevice->isMuted() ? "audio-volume-muted" : "audio-volume-high";
+		setIcon(muteIcon, m_qcb);
 		m_qcb->blockSignals( oldBlockState );
 	}
 

@@ -38,6 +38,7 @@ class QLabel;
 class KAction;
 class KMenu;
 #include <kshortcut.h>
+#include <kiconloader.h>
 
 class MixDevice;
 class VerticalText;
@@ -129,7 +130,7 @@ private slots:
 
 private:
     KShortcut dummyShortcut;
-    QPixmap loadIcon( QString filename );
+    QPixmap loadIcon( QString filename, KIconLoader::Group group );
     void createWidgets( bool showMuteLED, bool showCaptureLED, bool includeMixer );
     void addSliders( QBoxLayout *volLayout, char type, Volume& vol,
                      QList<QAbstractSlider *>& ref_sliders, QString tooltipText );

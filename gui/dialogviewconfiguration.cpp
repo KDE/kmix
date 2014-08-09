@@ -60,7 +60,7 @@ void DialogViewConfigurationItem::refreshItem()
 {
   setFlags((flags() | Qt::ItemIsDragEnabled) &  ~Qt::ItemIsDropEnabled);
   setText(_name);
-  setIcon(KIconLoader::global()->loadIcon( _iconName, KIconLoader::Small, KIconLoader::SizeSmallMedium ) );
+  setIcon(KIconLoader::global()->loadIcon( _iconName, KIconLoader::Small, IconSize(KIconLoader::Toolbar) ));
   setData(Qt::ToolTipRole, _id);  // a hack. I am giving up to do it right
   setData(Qt::DisplayRole, _name);
 }
