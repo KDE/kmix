@@ -229,7 +229,7 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 /**
  * Returns the name of the config group
  * @param Prefix of the group, e.g. "View_ALSA_USB_01"
- * @returns The config group name in the format "prefix.mixerId,controlId"
+ * @returns The config group name in the format "prefix.mixerId.controlId"
  */
 QString MixDevice::configGroupName(QString prefix)
 {
@@ -237,13 +237,21 @@ QString MixDevice::configGroupName(QString prefix)
 	 return devgrp;
 }
 
-
+/**
+ * Returns a fully qualified id of this control, as a String in the form "controlId@mixerId"
+ * @return
+ */
 QString MixDevice::getFullyQualifiedId()
 {
 	QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());
 	return fqId;
 }
 
+/**
+ * Creates a deep copy of the given Volume, and adds it to this MixDevice.
+ *
+ * @param playbackVol
+ */
 void MixDevice::addPlaybackVolume(Volume &playbackVol)
 {
    // Hint: "_playbackVolume" gets COPIED from "playbackVol", because the copy-constructor actually copies the volume levels.
@@ -251,6 +259,11 @@ void MixDevice::addPlaybackVolume(Volume &playbackVol)
    _playbackVolume.setSwitchType(Volume::PlaybackSwitch);
 }
 
+/**
+ * Creates a deep copy of the given Volume, and adds it to this MixDevice.
+ *
+ * @param captureVol
+ */
 void MixDevice::addCaptureVolume (Volume &captureVol)
 {
    _captureVolume = captureVol;

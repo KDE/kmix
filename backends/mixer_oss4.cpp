@@ -514,7 +514,7 @@ int Mixer_OSS4::id2num(const QString& id)
 	return id.toInt();
 }
 
-bool Mixer_OSS4::prepareUpdateFromHW()
+bool Mixer_OSS4::hasChangedControls()
 {
 	oss_mixerinfo minfo;
 

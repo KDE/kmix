@@ -74,7 +74,7 @@ protected:
   virtual QString getDriverName() = 0;
 
   /**
-   * Opens the mixer, if it constitures a valid Device. You should return "false", when
+   * Opens the mixer, if it constitutes a valid Device. You should return "false", when
    * the Mixer with the devnum given in the constructor is not supported by the Backend. The two
    * typical cases are:
    * (1) No such hardware installed
@@ -87,7 +87,7 @@ protected:
   /** @return true, if the Mixer is open (and thus can be operated) */
   bool isOpen();
 
-  virtual bool prepareUpdateFromHW();
+  virtual bool hasChangedControls();
   void readSetFromHWforceUpdate() const;
 
   /// Volume Read

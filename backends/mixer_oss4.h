@@ -15,7 +15,7 @@ public:
   virtual QString errorText(int mixer_error);
   virtual QString getDriverName();
   virtual bool CheckCapture(oss_mixext *ext);
-  virtual bool prepareUpdateFromHW();
+  virtual bool hasChangedControls();
   virtual int readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md);
   virtual int writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md );
   virtual void setEnumIdHW(const QString& id, unsigned int idx);

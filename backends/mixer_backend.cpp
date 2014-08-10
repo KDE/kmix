@@ -57,6 +57,8 @@ int Mixer_Backend::close()
 	// ^^^ Background. before the destructor runs, the C++ runtime changes the virtual pointers to point back
 	//     to the common base class. So what actually runs is not run Mixer_ALSA::close(), but this method.
 	//
+	//     See http://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
+	//
 	//     Comment: IMO this is totally stupid and insane behavior of C++, because you cannot simply cannot call
 	//              the overwritten (cleanup) methods in the destructor.
 	return 0;
@@ -85,12 +87,6 @@ bool Mixer_Backend::openIfValid()
 	int ret = open();
 	if (ret == 0 && (m_mixDevices.count() > 0 || _mixer->isDynamic()))
 	{
-		// Hint: _id is probably not yet perfectly set, as it requires the value from open() and an external
-		//       counter. Thus we start the Timer while _id is not properly set. But it will be done immediately
-		//       by the caller of this method.
-		// Future directions: Do the counter calculation in the backend. It really belongs there, as it is part of
-		//        the PK calculation. Probably provide a standard implementation in Mixer_Backend itself. Also the
-		//        key should be an own class, like:   MixerKey(QString backend, QString baseId, int cardInstance)
 		if (needsPolling())
 		{
 			_pollingTimer->start(POLL_RATE_FAST);
@@ -118,7 +114,8 @@ bool Mixer_Backend::isOpen() {
  * If you cannot find out for a backend, return "true" - this is also the default implementation.
  * @return true, if there are changes. Otherwise false is returned.
  */
-bool Mixer_Backend::prepareUpdateFromHW() {
+bool Mixer_Backend::hasChangedControls()
+{
 	return true;
 }
 
@@ -151,7 +148,8 @@ QString Mixer_Backend::getId() const
  * 1) Start of KMix - so that we can be sure an initial signal is emitted
  * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
  */
-void Mixer_Backend::readSetFromHWforceUpdate() const {
+void Mixer_Backend::readSetFromHWforceUpdate() const
+{
 	_readSetFromHWforceUpdate = true;
 }
 
@@ -162,7 +160,7 @@ void Mixer_Backend::readSetFromHWforceUpdate() const {
  */
 void Mixer_Backend::readSetFromHW()
 {
-	bool updated = prepareUpdateFromHW();
+	bool updated = hasChangedControls();
 	if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
 		// Some drivers (ALSA) are smart. We don't need to run the following
 		// time-consuming update loop if there was no change

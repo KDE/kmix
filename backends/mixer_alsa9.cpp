@@ -371,7 +371,11 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 }
 
 
-/* setup for select on stdin and the mixer fd */
+/**
+ * Setup for select on stdin and the mixer fd. Every call
+ *
+ * @return A return value from Mixer::MixerError
+ */
 int Mixer_ALSA::setupAlsaPolling()
 {
 	// --- Step 1: Retrieve FD's from ALSALIB
@@ -382,10 +386,22 @@ int Mixer_ALSA::setupAlsaPolling()
 		return Mixer::ERR_OPEN;
 	}
 
-	//if ( countNew != m_sns.size() )
+	/*
+	 * The following "if (true)" read in earlier versions:
+	 *     if ( countNew != m_sns.size() )
+	 *
+	 * This mimics alsamixer behaviour. But reality has proven that
+	 * it is not enough to check for size change. Situations came up where
+	 * the size was identical, but the descriptors changed. This especially
+	 * seems to happen shortly after the kernel loads a soundcard driver and alsalib
+	 * initializes it. Very hard to reproduce, so I do expect some kind of race condition
+	 * there.
+	 * So the final solution is to ALWAYS use the freshest fd's
+	 * delivered by the snd_mixer_poll_descriptors_count() call from above.
+	 */
 	if (true)
 	{
-		// Redo everything if count of FD's have changed (emulating alsamixer behaviour here)
+		// As documentation purpose, please keep the "if (true)" and the comment above explaining it.
 		 while (!m_sns.isEmpty())
 		     delete m_sns.takeFirst();
 
@@ -409,13 +425,11 @@ int Mixer_ALSA::setupAlsaPolling()
 
 
 		// --- Step 2: Create QSocketNotifier's for the FD's
-		//m_sns = new QSocketNotifier*[m_count];
 		for ( int i = 0; i < countNew; ++i )
 		{
-			//kDebug() << "socket " << i;
 			QSocketNotifier* qsn = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
 			m_sns.append(qsn);
-			connect(m_sns[i], SIGNAL(activated(int)), SLOT(readSetFromHW()), Qt::QueuedConnection);
+			connect(qsn, SIGNAL(activated(int)), SLOT(readSetFromHW()), Qt::QueuedConnection);
 		}
 	}
 
@@ -601,7 +615,7 @@ int Mixer_ALSA::id2num(const QString& id) {
    return num;
 }
 
-bool Mixer_ALSA::prepareUpdateFromHW() {
+bool Mixer_ALSA::hasChangedControls() {
     if ( !m_fds || !m_isOpen )
         return false;
 
