@@ -114,7 +114,9 @@ private:
 	QLabel *volumeOverdriveWarning;
 
 	QBoxLayout *layoutControlsTab;
+	QBoxLayout *layoutStartupTab;
 	DialogChooseBackends* dvc;
+	QSpacerItem *dvcSpacerBelow;
 
 	QRadioButton *_rbVertical;
 	QRadioButton *_rbHorizontal;

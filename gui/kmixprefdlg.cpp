@@ -65,6 +65,7 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	setDefaultButton(Ok);
 
 	dvc = 0;
+	dvcSpacerBelow = 0;
 
 	// general buttons
 	m_generalTab = new QFrame(this);
@@ -115,7 +116,7 @@ void KMixPrefDlg::switchToPage(KMixPrefPage page)
 // --- TABS --------------------------------------------------------------------------------------------------
 void KMixPrefDlg::createStartupTab()
 {
-	QBoxLayout* layoutStartupTab = new QVBoxLayout(m_startupTab);
+	layoutStartupTab = new QVBoxLayout(m_startupTab);
 	layoutStartupTab->setMargin(0);
 	layoutStartupTab->setSpacing(KDialog::spacingHint());
 
@@ -134,10 +135,7 @@ void KMixPrefDlg::createStartupTab()
 	addWidgetToLayout(allowAutostart, layoutStartupTab, 10,
 		i18n("Enables the KMix autostart service (kmix_autostart.desktop)"), "AutoStart");
 
-
-	allowAutostartWarning = new QLabel(
-		i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."),
-		m_startupTab);
+	allowAutostartWarning = new QLabel("",	m_startupTab); // actual text is added later
 	addWidgetToLayout(allowAutostartWarning, layoutStartupTab, 10, "", "");
 	layoutStartupTab->addStretch();
 }
@@ -165,12 +163,14 @@ void KMixPrefDlg::createOrientationGroup(const QString& labelSliderOrientation, 
 	}
 
 	// Add both buttons to button group
+	//qrbHor->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	orientationGroup->addButton(qrbHor);
 	orientationGroup->addButton(qrbVert);
 	// Add both buttons and label to layout
-	orientationLayout->addWidget(qlb, row, 0);
-	orientationLayout->addWidget(qrbHor, row, 1);
-	orientationLayout->addWidget(qrbVert, row, 2);
+	orientationLayout->addWidget(qlb, row, 0, Qt::AlignLeft);
+	orientationLayout->addWidget(qrbHor, row, 1, Qt::AlignLeft);
+	orientationLayout->addWidget(qrbVert, row, 2, Qt::AlignLeft);
+	orientationLayout->addItem(new QSpacerItem(1,1,QSizePolicy::Expanding), row, 3);
 
 	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(updateButtons()));
 	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(updateButtons()));
@@ -226,13 +226,11 @@ void KMixPrefDlg::createGeneralTab()
 
 	// [CONFIG] Slider orientation (main window)
 	QGridLayout* orientationGrid = new QGridLayout();
+	orientationGrid->setHorizontalSpacing(KDialog::spacingHint());
 	layout->addItem(orientationGrid);
 
+	// Slider orientation (main window, and tray popup separately).
 	createOrientationGroup(i18n("Slider orientation: "), orientationGrid, 0, KMixPrefDlg::MainOrientation);
-
-	// Slider orientation (tray popup). We use an extra setting
-	QBoxLayout* orientation2Layout = new QHBoxLayout();
-	layout->addItem(orientation2Layout);
 	createOrientationGroup(i18n("Slider orientation (System tray volume control):"), orientationGrid, 1, KMixPrefDlg::TrayOrientation);
 
 	// Push everything above to the top
@@ -396,7 +394,18 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	bool autostartFileExists = !autostartConfigFilename.isNull();
 
 	//allowAutostartWarning->setEnabled(autostartFileExists);
-	allowAutostartWarning->setVisible(!autostartFileExists);
+	if (!autostartFileExists)
+	{
+		if (allowAutostartWarning->text().isEmpty())
+		{
+			// Text is set here, as it is very long and would force the dialog to be very wide, even when
+			// the allowAutostartWarning would not be visible.
+			allowAutostartWarning->setText(
+					i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."));
+		}
+		allowAutostartWarning->setVisible(!autostartFileExists);
+		allowAutostartWarning->setEnabled(false); // always just a grayed out note
+	}
 	allowAutostart->setEnabled(autostartFileExists);
 
 	KDialog::showEvent(event);
@@ -409,6 +418,8 @@ void KMixPrefDlg::replaceBackendsInTab()
 	{
 		layoutControlsTab->removeWidget(dvc);
 		delete dvc;
+		layoutControlsTab->removeItem(dvcSpacerBelow);
+		delete dvcSpacerBelow;
 	}
 
 	QSet<QString> backendsFromConfig = GlobalConfig::instance().getMixersForSoundmenu();
@@ -419,7 +430,10 @@ void KMixPrefDlg::replaceBackendsInTab()
 	layoutControlsTab->addWidget(dvc);
 
 	// Push everything above to the top
-	layoutControlsTab->addStretch();
+//	layoutControlsTab->addStretch();
+
+	dvcSpacerBelow = new QSpacerItem(1,1);
+	layoutControlsTab->addItem(dvcSpacerBelow);
 }
 
 
