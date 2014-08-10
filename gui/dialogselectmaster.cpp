@@ -21,12 +21,9 @@
 
 #include "gui/dialogselectmaster.h"
 
-#include <qbuttongroup.h>
 #include <QLabel>
-#include <qradiobutton.h>
-#include <qscrollarea.h>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QListWidget>
 
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -47,9 +44,7 @@ DialogSelectMaster::DialogSelectMaster( Mixer *mixer, QWidget *parent )
     }
     setDefaultButton( Ok );
    _layout = 0;
-   m_vboxForScrollView = 0;
-   m_scrollableChannelSelector = 0;
-   m_buttonGroupForScrollView = 0;
+   m_channelSelector = 0;
    createWidgets(mixer);  // Open with Mixer Hardware #0
 
 }
@@ -57,7 +52,7 @@ DialogSelectMaster::DialogSelectMaster( Mixer *mixer, QWidget *parent )
 DialogSelectMaster::~DialogSelectMaster()
 {
    delete _layout;
-   delete m_vboxForScrollView;
+   delete m_channelSelector;
 }
 
 /**
@@ -65,7 +60,7 @@ DialogSelectMaster::~DialogSelectMaster()
  */
 void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 {
-    m_mainFrame = new QFrame( this );
+    m_mainFrame = new QWidget( this );
     setMainWidget( m_mainFrame );
     _layout = new QVBoxLayout(m_mainFrame);
     _layout->setMargin(0);
@@ -75,6 +70,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
         // Mixer widget line
         QHBoxLayout* mixerNameLayout = new QHBoxLayout();
         _layout->addItem( mixerNameLayout );
+        mixerNameLayout->setMargin(0);
         mixerNameLayout->setSpacing(KDialog::spacingHint());
     
         QLabel *qlbl = new QLabel( i18n("Current mixer:"), m_mainFrame );
@@ -97,8 +93,9 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
         
     
         m_cMixer->setToolTip( i18n("Current mixer" ) );
-        mixerNameLayout->addWidget(m_cMixer);
-    
+        mixerNameLayout->addWidget(m_cMixer, 1);
+        _layout->addSpacing(KDialog::spacingHint());
+
     } // end if (more_than_1_Mixer)
 
     
@@ -139,26 +136,22 @@ void DialogSelectMaster::createPage(Mixer* mixer)
      * In case the user selected a new Mixer via m_cMixer, we need
      * to remove the stuff created on the last call.
      */
-    // delete the VBox. This should automatically remove all contained QRadioButton's.
-    delete m_vboxForScrollView;
-    delete m_scrollableChannelSelector;
-    delete m_buttonGroupForScrollView;
+	// delete the list widget.
+	// This should automatically remove all contained items.
+	delete m_channelSelector;
+
     
     /** Reset page end -------------------------------------------------- */
     
-    m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
-    //m_buttonGroupForScrollView->hide();
 
-    m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
-
+	m_channelSelector = new QListWidget(m_mainFrame);
 #ifndef QT_NO_ACCESSIBILITY
-    m_scrollableChannelSelector->setAccessibleName( i18n("Select Master Channel") );
+    m_channelSelector->setAccessibleName( i18n("Select Master Channel") );
 #endif
-
-//    m_scrollableChannelSelector->viewport()->setBackgroundRole(QPalette::Background);
-    _layout->addWidget(m_scrollableChannelSelector);
-
-    m_vboxForScrollView = new KVBox(); //m_scrollableChannelSelector->viewport()
+	m_channelSelector->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_channelSelector->setDragEnabled(false);
+	m_channelSelector->setAlternatingRowColors(true);
+	_layout->addWidget(m_channelSelector);
 
 
     shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
@@ -166,24 +159,22 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 
     const MixSet& mixset = mixer->getMixSet();
     MixSet& mset = const_cast<MixSet&>(mixset);
+    // Populate ListView with the MixDevice's having a playbakc volume (excludes pure capture controls and pure enum's)
     for( int i=0; i< mset.count(); ++i )
     {
     	shared_ptr<MixDevice> md = mset[i];
-        // Create a RadioButton for each MixDevice (excluding Enum's)
         if ( md->playbackVolume().hasVolume() )
         {
-//            kDebug(67100) << "DialogSelectMaster::createPage() mset append qrb";
             QString mdName = md->readableName();
-            mdName.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
-            QRadioButton* qrb = new QRadioButton(mdName, m_vboxForScrollView);
-            qrb->setObjectName(md->id());  // The object name is used as ID here: see apply()
-            m_buttonGroupForScrollView->addButton(qrb);  //(qrb, md->num());
-            qrb->setChecked(md->id() == masterKey); // preselect the current master
+			QPixmap icon = KIconLoader::global()->loadIcon(md->iconName(), KIconLoader::Small, IconSize(KIconLoader::Small));
+            QListWidgetItem *item = new QListWidgetItem(icon, mdName, m_channelSelector);
+            item->setData(Qt::UserRole, md->id());  // ID here: see apply()
+            if ( md->id() == masterKey )
+            {          // select the current master
+                m_channelSelector->setCurrentItem(item);
+            }
         }
     }
-
-    m_scrollableChannelSelector->setWidget(m_vboxForScrollView);
-    m_vboxForScrollView->show();  // show() is necessary starting with the second call to createPage()
 }
 
 
@@ -204,10 +195,11 @@ void DialogSelectMaster::apply()
     if ( mixer == 0 )
     	 return; // User must have unplugged everything
    
-    QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
-    if ( button != 0 )
+    QList<QListWidgetItem *> items = m_channelSelector->selectedItems();
+    if (items.count()==1)
     {
-		QString control_id = button->objectName();
+    	QListWidgetItem *item = items.first();
+    	QString control_id = item->data(Qt::UserRole).toString();
 		mixer->setLocalMasterMD( control_id );
 		Mixer::setGlobalMaster(mixer->id(), control_id, true);
 		ControlManager::instance().announce(mixer->id(), ControlChangeType::MasterChanged, QString("Select Master Dialog"));
