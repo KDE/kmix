@@ -623,40 +623,47 @@ bool Mixer_ALSA::hasChangedControls() {
     // Poll on fds with 10ms timeout
     // Hint: alsamixer has an infinite timeout, but we cannot do this because we would block
     // the X11 event handling (Qt event loop) with this.
-    int finished = poll(m_fds, m_sns.size(), 10);
+    int finished = poll(m_fds, m_sns.size(), 10); // TODO Could we pass 0 as timeout here? It makes  no real sense to wait!
 
-    bool updated = false;
-
-    if (finished > 0) {
-        //kDebug() << "Mixer_ALSA::prepareUpdate() 5\n";
-
+    if (finished > 0)
+    {
         unsigned short revents;
-
         if (snd_mixer_poll_descriptors_revents(_handle, m_fds, m_sns.size(), &revents) >= 0)
         {
-        //kDebug() << "Mixer_ALSA::prepareUpdate() 6\n";
-
-            if (revents & POLLNVAL) {
+            if (revents & POLLNVAL)
+            {
                 /* Bug 127294 shows, that we receive POLLNVAL when the user
                     unplugs an USB soundcard. Lets close the card. */
                 kDebug() << "Mixer_ALSA::poll() , Error: poll() returns POLLNVAL\n";
                 close();  // Card was unplugged (unplug, driver unloaded)
-                return false;
             }
-            if (revents & POLLERR) {
+            else if (revents & POLLERR)
+            {
                 kDebug() << "Mixer_ALSA::poll() , Error: poll() returns POLLERR\n";
-                return false;
             }
-            if (revents & POLLIN) {
+            else if (revents & POLLIN)
+            {
                 //kDebug() << "Mixer_ALSA::prepareUpdate() 7\n";
-                snd_mixer_handle_events(_handle);
-                updated = true;
+                int eventCount = snd_mixer_handle_events(_handle);
+                if (eventCount >= 0)
+                {
+                	/*
+                	 * Treating everything that is not an error as a change, even if eventCount == 0.
+                	 * For example, when unplugging the headphones from my ThinkPad Laptop ALSA reports "POLLIN" with eventCount == 0.
+                	 * On the other hand, this means I can not likely detect changes
+                	 */
+//                	kDebug()  << "Mixer_ALSA::poll() delivered changes. eventCount=" << eventCount;
+                	return true;
+                }
+                else
+                {
+                    kWarning() << "Mixer_ALSA::poll() , Error: poll() returns POLLIN with errno=" + eventCount;
+                }
             }
         }
     }
 
-    //kDebug() << "Mixer_ALSA::prepareUpdate() 8\n";
-    return updated;
+    return false;
 }
 
 bool Mixer_ALSA::isRecsrcHW( const QString& id )
