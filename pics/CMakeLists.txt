@@ -25,4 +25,9 @@ install( FILES
     kmixdocked_error.png
     DESTINATION  ${DATA_INSTALL_DIR}/kmix/pics )
 
+if (KMIX_KF5_BUILD)
+include(ECMInstallIcons)
+ecm_install_icons( ${ICON_INSTALL_DIR}   )
+else()
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
+endif()

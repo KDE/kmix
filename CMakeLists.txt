@@ -1,26 +1,77 @@
 project(kmix)
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+# CMake build file for KMix
+# KDE4 support: complete
+# KF5 support is in work. A build will be triggered by adding "-DKMIX_KF5_BUILD=1" to the cmake call 
+if(POLICY CMP0046)
+  cmake_policy (SET CMP0046 NEW)
+endif()
 
+# Your project should require at least CMake 2.8.12 to use FindKF5.cmake
+if (KMIX_KF5_BUILD)
+   cmake_minimum_required(VERSION 2.8.12)
+else ()
+   cmake_minimum_required(VERSION 2.8.11)
+endif()
+
+if(POLICY CMP0046)
+  cmake_policy (SET CMP0046 NEW)
+endif()
+
+
+
+
+if (KMIX_KF5_BUILD)
+find_package(ECM 0.0.10 REQUIRED CONFIG)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+#include(KF5Init/KF5InitMacros)
+#include(MacroLibrary)
+find_package(KF5 REQUIRED COMPONENTS I18n Init)
+find_package(Qt5 REQUIRED COMPONENTS Core DBus Gui Widgets)
+#include(KF5InitMacros)
+
+else()
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
 include(MacroLibrary)
 
+endif()
+
+
+
 # Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
 #find_package(Phonon REQUIRED)
 
-find_package(Alsa)
+
 
 set(PA_VER "0.9.16")
+if (KMIX_KF5_BUILD)
+find_package(PulseAudio "${PA_VER}")
+else()
 macro_optional_find_package(PulseAudio "${PA_VER}")
 macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
     "http://www.pulseaudio.org/" FALSE "${PA_VER}" "libpulse is needed to let KMix control PulseAudio")
+endif()
+
 find_package(GLIB2)
+
+if (KMIX_KF5_BUILD)
+find_package(Canberra)
+else()
 macro_optional_find_package(Canberra)
 macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library"
     "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
+endif()
 
+if (KMIX_KF5_BUILD)
+find_package(ALSA)
+else()
+find_package(Alsa)
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
+endif()
 
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
@@ -48,7 +99,13 @@ configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 include_directories( ${GLIB2_INCLUDE_DIR} /usr/lib/oss/include)
 
-add_subdirectory( doc )
+if (KMIX_KF5_BUILD)
+   # TODO Add warning about porting kde4_create_handbook
+   message( WARNING, "Skipping doc directory due to missing kde4_create_handbook" )
+else()  
+  add_subdirectory( doc )
+endif()
+
 add_subdirectory( pics ) 
 add_subdirectory( profiles ) 
 #add_subdirectory( tests )
@@ -65,17 +122,29 @@ if (CANBERRA_FOUND)
   include_directories(${CANBERRA_INCLUDE_DIRS})
 endif (CANBERRA_FOUND)
 
+#if (KMIX_KF5_BUILD)
+#   message( WARNING, "Skipping kmix_adaptor_SRCS due to missing qt4_add_dbus_adaptor  ... KMix will NOT compile until this is fixed!!!" )
 
 set(kmix_adaptor_SRCS
 	dbus/dbusmixerwrapper.cpp
 	dbus/dbusmixsetwrapper.cpp
 	dbus/dbuscontrolwrapper.cpp)
+if (KMIX_KF5_BUILD)
+qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
+	dbus/dbuscontrolwrapper.h DBusControlWrapper )
+qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
+	dbus/dbusmixerwrapper.h DBusMixerWrapper )
+qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
+	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
+else()  
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
 	dbus/dbuscontrolwrapper.h DBusControlWrapper )
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
 	dbus/dbusmixerwrapper.h DBusMixerWrapper )
 qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
 	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
+endif()
+
 
 set(kmix_backend_SRCS
    backends/mixer_backend.cpp
@@ -130,10 +199,17 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    core/volume.cpp
    )
 
-kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
+if (KMIX_KF5_BUILD)
+#   message( WARNING, "Skipping kdeinit_executable due to missing KF5_ADD_KDEINIT_EXECUTABLE  ... KMix will NOT compile until this is fixed!!!" )
+   kf5_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
+  #target_link_libraries(kdeinit_kmix KF5::Solid KF5::UI KF5::Plasma  Qt5:XML KF5::Phonon)
+   target_link_libraries(kdeinit_kmix ${KF5_SOLID_LIBS} ${KF5_KDEUI_LIBS} ${KF5_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KF5_PHONON_LIBS})
+ 
+else()
+  kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
+  target_link_libraries(kdeinit_kmix ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
+endif()
 
-target_link_libraries(kdeinit_kmix ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
-#target_link_libraries(kdeinit_kmix ${KDE4_KUTILS_LIBS} /home/kde/workspace/kdelibs/build/lib/libsolid.so.4.7.0 ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
@@ -170,9 +246,12 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     )
 
 #qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
- 
-kde4_add_plugin(kded_kmixd ${kded_kmixd_SRCS})
 
+if (KMIX_KF5_BUILD)
+  add_library(kded_kmixd ${kded_kmixd_SRCS})
+else()
+  kde4_add_plugin(kded_kmixd ${kded_kmixd_SRCS})
+endif()
 
 target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 
@@ -215,7 +294,11 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 # gui/guiprofile.cpp
 
 
-kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
+if (KMIX_KF5_BUILD)
+  KF5_ADD_KDEINIT_EXECUTABLE( kmixctrl ${kmixctrl_KDEINIT_SRCS})
+else()
+  kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
+endif()
 
 target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 
@@ -232,7 +315,9 @@ if (CANBERRA_FOUND)
 endif (CANBERRA_FOUND)
 
 ########### next target ###############
-add_subdirectory( plasma )
+if (!KMIX_KF5_BUILD)
+  add_subdirectory( plasma )
+endif()
 
 install( TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -249,4 +334,8 @@ install( FILES dbus/org.kde.kmix.control.xml DESTINATION ${DBUS_INTERFACES_INSTA
 install( FILES dbus/org.kde.kmix.mixer.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 install( FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 
-macro_display_feature_log()
+if (KMIX_KF5_BUILD)
+  feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES) 
+else()
+  macro_display_feature_log()
+endif()
