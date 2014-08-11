@@ -64,10 +64,10 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KUniqueApplication::addCmdLineOptions();
 
-   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-   bool hasArgKeepvisibility = args->isSet("keepvisibility");
+//   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+//   bool hasArgKeepvisibility = args->isSet("keepvisibility");
    //kDebug(67100) <<  "hasArgKeepvisibility=" << hasArgKeepvisibility;
-   KMixApp::keepVisibility(hasArgKeepvisibility);
+//   KMixApp::keepVisibility(hasArgKeepvisibility);
 
    if (!KMixApp::start())
        return 0;
