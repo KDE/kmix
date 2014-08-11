@@ -24,7 +24,7 @@
 
 #include <QString>
 #include <QTime>
-//#include "core/mixer.h"
+#include <QTimer>
 #include "core/mixdevice.h"
 #include "core/mixset.h"
 class Mixer;
