@@ -1,8 +1,15 @@
 project(kmix)
 
-# CMake build file for KMix
+# CMake build file for KMix. It supports both KDE4 and KF5.
+# 
 # KDE4 support: complete
-# KF5 support is in work. A build will be triggered by adding "-DKMIX_KF5_BUILD=1" to the cmake call 
+# KF5 support is in work. A build will be triggered by adding "-DKMIX_KF5_BUILD=1" to the cmake call.
+#       Status: Build fails on kmixdevicemanager.cpp , which does #include <solid/audiointerface.h>
+#               Unfortunately Solid currently has no Audiointerface in KF5, thus it pulls the #include from
+#               KDE4, which leads to error: ‘AudioInterface’ is not a member of ‘Solid::DeviceInterface’
+#
+# Next step: Talk to Alex Fiestas how to progress
+
 if(POLICY CMP0046)
   cmake_policy (SET CMP0046 NEW)
 endif()
@@ -28,7 +35,10 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 #include(KF5Init/KF5InitMacros)
 #include(MacroLibrary)
-find_package(KF5 REQUIRED COMPONENTS I18n Init)
+# I need KF5KDELibs4Support at least for find_package(GLIB2), for KDebug and eventually for Alsa (vs ALSA)
+find_package(KF5 REQUIRED COMPONENTS I18n Init Config Solid KDELibs4Support)
+# find_package(KF5Solid NO_MODULE) : added according to http://api.kde.org/frameworks-api/frameworks5-apidocs/solid/html/index.html
+find_package(KF5Solid NO_MODULE)
 find_package(Qt5 REQUIRED COMPONENTS Core DBus Gui Widgets)
 #include(KF5InitMacros)
 
@@ -66,12 +76,12 @@ macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library"
     "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
 endif()
 
-if (KMIX_KF5_BUILD)
-find_package(ALSA)
-else()
+#if (KMIX_KF5_BUILD)
+#find_package(ALSA)
+#else()
 find_package(Alsa)
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
-endif()
+#endif()
 
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
@@ -202,9 +212,8 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 if (KMIX_KF5_BUILD)
 #   message( WARNING, "Skipping kdeinit_executable due to missing KF5_ADD_KDEINIT_EXECUTABLE  ... KMix will NOT compile until this is fixed!!!" )
    kf5_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
-  #target_link_libraries(kdeinit_kmix KF5::Solid KF5::UI KF5::Plasma  Qt5:XML KF5::Phonon)
-   target_link_libraries(kdeinit_kmix ${KF5_SOLID_LIBS} ${KF5_KDEUI_LIBS} ${KF5_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KF5_PHONON_LIBS})
- 
+  #target_link_libraries( KF5::UI KF5::Plasma  Qt5:XML KF5::Phonon)
+   target_link_libraries(kdeinit_kmix KF5::I18n KF5::ConfigCore KF5::ConfigGui KF5::Solid KF5::KDELibs4Support Qt5::Core Qt5::Widgets Qt5::DBus Qt5::Xml)
 else()
   kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
   target_link_libraries(kdeinit_kmix ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
@@ -253,7 +262,13 @@ else()
   kde4_add_plugin(kded_kmixd ${kded_kmixd_SRCS})
 endif()
 
-target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
+
+if (KMIX_KF5_BUILD)
+	target_link_libraries(kded_kmixd KF5::I18n KF5::ConfigCore KF5::ConfigGui KF5::Solid KF5::KDELibs4Support Qt5::Core Qt5::Widgets Qt5::DBus Qt5::Xml ${KDEx_KDEUI_LIBS} ${KDEx_PHONON_LIBS})
+else()
+	target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
+endif()
+
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
@@ -296,8 +311,10 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 
 if (KMIX_KF5_BUILD)
   KF5_ADD_KDEINIT_EXECUTABLE( kmixctrl ${kmixctrl_KDEINIT_SRCS})
+  target_link_libraries(kdeinit_kmixctrl QtCore ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 else()
   kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
+  target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 endif()
 
 target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
