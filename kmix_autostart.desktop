@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kmix
+Exec=kmix --keepvisibilty
 DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Type=Application
