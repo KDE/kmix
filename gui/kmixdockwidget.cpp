@@ -230,13 +230,13 @@ void KMixDockWidget::updatePixmap()
 }
 
 /**
- * Called whenever the icon gets "activated". Unusally whn its clicked.
+ * Called whenever the icon gets "activated". Usually when its clicked.
  * @overload
  * @param pos
  */
 void KMixDockWidget::activate(const QPoint &pos)
 {
-	QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _referenceWidget directly
+	QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _dockAreaPopupMenuWrapper directly
 	if (dockAreaPopup->isVisible())
 	{
 		dockAreaPopup->hide();
@@ -268,33 +268,33 @@ void KMixDockWidget::activate(const QPoint &pos)
 	// Now handle Multihead displays. And also make sure that the dialog is not
 	// moved out-of-the screen on the right (see Bug 101742).
 	const QDesktopWidget* vdesktop = QApplication::desktop();
-	const QRect& vScreenSize = vdesktop->availableGeometry(dockAreaPopup);
+	int screenNumber = vdesktop->screenNumber(pos);
+	const QRect& vScreenSize = vdesktop->availableGeometry(screenNumber);
 
 	if ((x + dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()))
 	{
 		// move horizontally, so that it is completely visible
 		x = vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() - 1;
-		kDebug()
-		<< "Multihead: (case 1) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+		kDebug() << "Multihead: (case 1) moving to" << x << "," << y;
 	}
 	else if (x < vScreenSize.x())
 	{
 		// horizontally out-of bound
 		x = vScreenSize.x();
-		kDebug() << "Multihead: (case 2) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+		kDebug() << "Multihead: (case 2) moving to" << x << "," << y;
 	}
 
 	if ((y + dockAreaPopup->height()) > (vScreenSize.height() + vScreenSize.y()))
 	{
 		// move horizontally, so that it is completely visible
 		y = vScreenSize.height() + vScreenSize.y() - dockAreaPopup->height() - 1;
-		kDebug() << "Multihead: (case 3) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+		kDebug() << "Multihead: (case 3) moving to" << x << "," << y;
 	}
 	else if (y < vScreenSize.y())
 	{
 		// horizontally out-of bound
 		y = vScreenSize.y();
-		kDebug() << "Multihead: (case 4) moving to" << vScreenSize.x() << "," << vScreenSize.y();
+		kDebug() << "Multihead: (case 4) moving to" << x << "," << y;
 	}
 
 
