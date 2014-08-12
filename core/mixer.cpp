@@ -135,19 +135,6 @@ Mixer* Mixer::findMixer( const QString& mixer_id)
 }
 
 
-///**
-// * Set the card instance. Usually this will be 1, but if there is
-// * more than one card with the same name install, then you need
-// * to use 2, 3, ...
-// */
-//void Mixer::setCardInstance(int cardInstance)
-//{
-//    _cardInstance = cardInstance;
-//    recreateId();
-//    // DBusMixerWrapper must be called after recreateId(), as it uses the id
-//    new DBusMixerWrapper(this, dbusPath());
-//}
-
 /**
  * Set the final ID of this Mixer.
  * <br>Warning: This method is VERY fragile, because it is requires information that we have very late,
@@ -180,7 +167,7 @@ void Mixer::recreateId()
     primaryKeyOfMixer.replace(' ','_');
     primaryKeyOfMixer.replace('=','_');
     _id = primaryKeyOfMixer;
-	kDebug() << "Early _id=" << _id;
+//	kDebug() << "Early _id=" << _id;
 }
 
 const QString Mixer::dbusPath()
@@ -189,13 +176,19 @@ const QString Mixer::dbusPath()
 	// So once the first MixDevice is created, this must return the correct value
 	if (_id.isEmpty())
 	{
-		// Bug 308014: This a rather dirty hack, but it will guarantee that _id is definitely set.
-		// Even the _cardInstance is set at default value during construction of the MixDevice instances
+		if (! _mixerBackend->_cardRegistered)
+		{
+			// Bug 308014: By checking _cardRegistered, we can be sure that everything is fine, including the fact that
+			// the cardId (aka "card instance") is set. If _cardRegistered would be false, we will create potentially
+			// wrong/duplicated DBUS Paths here.
+			kWarning() << "Mixer id was empty when ceating DBUS path. Emergency code created the id=" <<_id;
+		}
+		// Bug 308014: Actually this a shortcut (you could also call it a hack). It would likely better if registerCard()
+		//             would create the Id, but it requires cooperation from ALL backends. Also Mixer->getId() would need to
+		//             proxy that to the backend.
+		// So for now we lazily create the MixerId here, while creating the first MixDevice for that card.
 		recreateId();
 	}
-
-//	kDebug() << "Late _id=" << _id;
-//	kDebug() << "handMade=" << QString("/Mixers/" +  getDriverName() + "." + _mixerBackend->getId()).replace(" ", "x").replace(".", "_");
 
 	// mixerName may contain arbitrary characters, so replace all that are not allowed to be be part of a DBUS path
 	QString cardPath = _id;

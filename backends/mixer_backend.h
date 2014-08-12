@@ -169,6 +169,9 @@ protected:
 
 	/**
 	 * Registers the card for this Backend and sets the card discriminator for the given card name.
+	 * You MUST call this before creating the first MixDevice. Reason is, that each MixDevice instance register a
+	 * DBUS name that includes the mixer ID (and this means also the _cardInstance).
+	 *
 	 * The discriminator should always be 1, unless a second card with
 	 * the same name of a registered card was already registered. Default implementation will return 2, 3 and so on
 	 * for more cards. Subclasses can override this and return arbitrary ID's, but any ID that is not 1 will be
@@ -189,7 +192,7 @@ protected:
 		int cardDiscriminator = 1 + s_mixerNums[cardBaseName];
 		kDebug() << "cardBaseName=" << cardBaseName << ", cardDiscriminator=" << cardDiscriminator;
 		_cardInstance = cardDiscriminator;
-//		return cardDiscriminator;
+		_cardRegistered = true;
   }
 
   /**
@@ -216,6 +219,7 @@ protected:
   }
 
   int    _cardInstance;
+  bool _cardRegistered;
 
 
 protected slots:
