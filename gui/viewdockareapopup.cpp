@@ -52,7 +52,8 @@
 
 QString ViewDockAreaPopup::InternedString_Star = QString("*");
 QString ViewDockAreaPopup::InternedString_Subcontrols = QString("pvolume,cvolume,pswitch,cswitch");
-ProfControl ViewDockAreaPopup::MatchAllForSoundMenu = ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
+ProfControl* ViewDockAreaPopup::MatchAllForSoundMenu = 0;
+//ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
 	KMixWindow *dockW) :
@@ -60,7 +61,25 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 {
 	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
+	/*
+	 * Bug 206724:
+	 * Following are excerpts of trying to receive key events while this popup is open.
+	 * The best I could do with lots of hacks is to get the keyboard events after a mouse-click in the popup.
+	 * But such a solution is neither intuitive nor helpful - if one clicks, then usage of keyboard makes not much sense any longer. 
+	 * I finally gave up on fixing Bug 206724.
+	 */
+	 /*
+	releaseKeyboard();
+	setFocusPolicy(Qt::StrongFocus);
+	setFocus(Qt::TabFocusReason);
+	releaseKeyboard();
+	mainWindowButton->setFocusPolicy(Qt::StrongFocus);
+	
+	Also implemented the following "event handlers", but they do not show any signs of key presses:
+    keyPressEvent()
+    x11Event()
+    eventFilter()
+    */
 	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
 		// Adding all mixers, as we potentially want to show all master controls
@@ -316,7 +335,13 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 //_layoutMDW->addItem( new QSpacerItem( 5, 5 ), row, col );
     }
     
-    ProfControl *pctl = &MatchAllForSoundMenu;
+    if (MatchAllForSoundMenu == 0)
+    {
+    	// Lazy init of static member on first use
+    	MatchAllForSoundMenu = new ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
+    }
+    ProfControl *pctl = MatchAllForSoundMenu;
+
     MixDeviceWidget *mdw = new MDWSlider(
       md,           // only 1 device.
       true,         // Show Mute LE
@@ -370,6 +395,10 @@ void ViewDockAreaPopup::constructionFinished()
 
 	_layoutMDW->update();
 	_layoutMDW->activate();
+
+    //bool fnc = focusNextChild();
+    //kWarning() << "fnc=" <<fnc;
+
 //	kDebug() << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 }
 
