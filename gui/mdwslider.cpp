@@ -223,11 +223,11 @@ int MDWSlider::labelExtentHint() const
  * If a label from another widget has more lines than this widget, then a spacer is added under the label
  */
 void MDWSlider::setLabelExtent(int extent) {
-	if ( _orientation == Qt::Vertical ) {
-		if ( labelExtentHint() < extent )
-			labelSpacer->setFixedHeight( extent - labelExtentHint() );
-		else
-			labelSpacer->setFixedHeight(0);
+	if ( _orientation == Qt::Vertical )
+	{
+		int extentHint = labelExtentHint();
+		int spacerHeight = (extent > extentHint) ? extent - extentHint : 0;
+		labelSpacer->setFixedHeight(spacerHeight);
 	}
 }
 
