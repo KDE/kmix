@@ -429,12 +429,10 @@ void KMixWindow::saveViewConfig()
 	// The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
 	// Otherwise we would not save the Meta information (step -2- below for that mixer.
 	// We also do not save dynamic mixers (e.g. PulseAudio)
-	foreach ( Mixer* mixer, Mixer::mixers() ){
-	if ( !mixer->isDynamic() )
+	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
 		mixerViews[mixer->id()]; // just insert a map entry
 	}
-}
 
 // -1- Save the views themselves
 	for (int i = 0; i < m_wsMixers->count(); ++i)
@@ -447,11 +445,11 @@ void KMixWindow::saveViewConfig()
 			// Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
 			mw->saveConfig(KGlobal::config().data());
 			// add the view to the corresponding mixer list, so we can save a views-per-mixer list below
-			if (!mw->mixer()->isDynamic())
-			{
+//			if (!mw->mixer()->isDynamic())
+//			{
 				QStringList& qsl = mixerViews[mw->mixer()->id()];
 				qsl.append(mw->getGuiprof()->getId());
-			}
+//			}
 		}
 	}
 
@@ -678,14 +676,17 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 		{
 			GUIProfile* guiprof = 0;
+//			if (mixer->isDynamic())
+//			{
+//				// Dynamic will ALWAYS get the fallbackProfile. Actually user can not disable it
+//				guiprof = GUIProfile::fallbackProfile(mixer);
+//			}
+//			else
 			if (reset)
 			{
 				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
 			}
-			else if (mixer->isDynamic())
-			{
-				guiprof = GUIProfile::fallbackProfile(mixer);
-			}
+//			else
 			if ( guiprof != 0 )
 			{
 				guiprof->setDirty();  // All fallback => dirty

@@ -125,7 +125,7 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
         QLabel *qlbl = new QLabel( i18n("Select the design for the new view:"), m_mainFrame );
         _layout->addWidget(qlbl);
     
-        createPage();
+        createPage(Mixer::mixers()[0]);
         connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
     }
     else {
@@ -146,7 +146,7 @@ void DialogAddView::createPageByID(int mixerId)
     {
         Mixer *mixer = (Mixer::mixers())[i];
         if ( mixer->readableName() == selectedMixerName ) {
-            createPage();
+            createPage(mixer);
             break;
         }
     } // for
@@ -155,9 +155,8 @@ void DialogAddView::createPageByID(int mixerId)
 /**
  * Create RadioButton's for the Mixer with number 'mixerId'.
  * @par mixerId The Mixer, for which the RadioButton's should be created.
- *              TODO: The mixer's backend MUST be inspected to find out the supported profiles.
  */
-void DialogAddView::createPage()
+void DialogAddView::createPage(Mixer *mixer)
 {
     /** --- Reset page -----------------------------------------------
      * In case the user selected a new Mixer via m_cMixer, we need
@@ -182,6 +181,14 @@ void DialogAddView::createPage()
 
     for( int i=0; i<viewNames.size(); ++i )
     {
+    	QString viewId = viewIds.at(i);
+    	if (viewId != "default" && mixer->isDynamic())
+    	{
+    		// TODO: The mixer's backend MUST be inspected to find out the supported profiles.
+    		//       Hardcoding it here is only a quick workaround.
+    		continue;
+		}
+		
         // Create a RadioButton for each view type
         QString name = viewNames.at(i);
         name.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator

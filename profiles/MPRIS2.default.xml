@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<soundcard driver="MPRIS2"
+	   version="*:*"
+	   name="*"
+	   type="*"
+	   generation="2"
+	   id="default"
+>
+
+<control id="^.*$" tab="Base" show="extended" mandatory="true" />
+
+</soundcard>
+
+
