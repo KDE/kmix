@@ -60,6 +60,91 @@ public:
 
 };
 
+/**
+ * GuiVisibility can be used in different contexts. One is, to define in the XML GUI Profile, which control to show, e.g. show
+ * "MIC Boost" in EXTENDED mode. The other is for representing the GUI compexity (e.g. for letting the user select a preset like "SIMPLE".
+ */
+class GuiVisibility
+{
+	enum GuiVisibilityId { SIMPLE, EXTENDED, FULL, CUSTOM, NEVER };
+	QString id;
+	GuiVisibilityId idCode;
+
+public:
+static GuiVisibility const GuiSIMPLE;
+static GuiVisibility const GuiEXTENDED;
+static GuiVisibility const GuiFULL;
+static GuiVisibility const GuiCUSTOM;
+static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
+
+	private:
+	GuiVisibility(QString id, GuiVisibilityId idCode)
+	{
+		this->id = id;
+		this->idCode = idCode;
+	}
+
+	public:
+	QString& getId()
+	{
+		return id;
+	}
+
+	/**
+	 * Returns whether this GuiVisibility satisfies the other GuiVisibility.
+	 * GuiNEVER can never be satisfied - if this or other is GuiNEVER, the result is false.
+	 * GuiCUSTOM is always satisfied - if this or other is GuiCUSTOM, the result is true.
+	 * The other 3 enum values are completely ordered as GuiSIMPLE, GuiEXTENDED, GuiFULL.
+	 * <p>
+	 * For example
+	 * GuiSIMPLE satisfies GuiFULL, as simple GUI is part of full GUI.
+	 *
+	 * @param other
+	 * @return
+	 */
+	bool satisfiesVisibility(GuiVisibility& other) const
+	{
+		if (this->idCode == GuiVisibility::NEVER || other.idCode == GuiVisibility::NEVER)
+			return false;
+		if (this->idCode == GuiVisibility::CUSTOM || other.idCode == GuiVisibility::CUSTOM)
+			return false;
+
+		return this->idCode < other.idCode;
+	}
+
+	/**
+	 * Returns the static GuiVisibility represented by the given string.
+	 * For illegal string values, GuiFULL will be returned.
+	 *
+	 * @param string
+	 * @return
+	 */
+	static const GuiVisibility& getByString(QString& string)
+	{
+		if (string == GuiSIMPLE.id)
+			return GuiSIMPLE;
+		if (string == GuiEXTENDED.id)
+			return GuiEXTENDED;
+		if (string == GuiFULL.id)
+			return GuiFULL;
+		if (string == GuiCUSTOM.id)
+			return GuiCUSTOM;
+		if (string == GuiNEVER.id)
+			return GuiNEVER;
+
+		kWarning() << "Unknown GuiVisibility=" << string << ". Applying default=" << GuiFULL.id;
+		return GuiFULL;
+	}
+
+	bool operator==(const GuiVisibility &other) const
+	{
+		return idCode == other.idCode;
+	}
+
+};
+
+
+
 class ProfControl
 {
 public:
@@ -87,9 +172,8 @@ public:
     QString name;
 
     void setVisible(bool);
-    // show or hide (contains the GUI type: simple, extended, all)
-    // Future direction: Make "show" private
-    QString show;
+    void setVisible(const GuiVisibility& visibility);
+    GuiVisibility& getVisibility() { return visibility; };
 
     bool isMandatory() const
     {
@@ -120,6 +204,10 @@ private:
     // For defining the switch type when it is not a standard palyback or capture switch
     QString switchtype;
 
+    // show or hide (contains the GUI type: simple, extended, all)
+
+    GuiVisibility visibility;
+
     bool _mandatory; // A mandatory control must be included in all GUIProfile copies
 
     ProfControlPrivate *d;
@@ -137,11 +225,6 @@ class GUIProfile
 public:
     typedef std::set<ProfProduct*, ProductComparator> ProductSet;
     typedef QList<ProfControl*> ControlSet;
-
-	static const QString PNameSimple;
-	static const QString PNameExtended;
-	static const QString PNameAll;
-	static const QString PNameCustom;
 
 private:
     static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }

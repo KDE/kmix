@@ -392,7 +392,8 @@ void DialogViewConfiguration::apply()
    {
        if ( pctl->isMandatory() ) {
            ProfControl* newCtl = new ProfControl(*pctl);
-           newCtl->show = "full"; // The user has selected controls => mandatory controls are now only necessary in extended or full mode
+           // The user has selected controls => mandatory controls (RegExp templates) should not been shown any longer
+           newCtl->setVisible(GuiVisibility::GuiNEVER);
            newControlset.push_back(newCtl);
        }
    }

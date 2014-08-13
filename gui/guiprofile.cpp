@@ -38,10 +38,14 @@
 #include <QtCore/qstring.h>
 
 QMap<QString, GUIProfile*> GUIProfile::s_profiles;
-QString const GUIProfile::PNameSimple("simple");
-QString const GUIProfile::PNameExtended("extended");
-QString const GUIProfile::PNameAll("all");
-QString const GUIProfile::PNameCustom("custom");
+
+GuiVisibility const GuiVisibility::GuiSIMPLE  (QString("simple"  ) , GuiVisibility::SIMPLE);
+GuiVisibility const GuiVisibility::GuiEXTENDED(QString("extended") , GuiVisibility::EXTENDED);
+// For backwards compatibility, GuiFULL has the ID "all", and not "full"
+GuiVisibility const GuiVisibility::GuiFULL    (QString("all"     ) , GuiVisibility::FULL);
+GuiVisibility const GuiVisibility::GuiCUSTOM  (QString("custom"  ) , GuiVisibility::CUSTOM);
+GuiVisibility const GuiVisibility::GuiNEVER   (QString("never"   ) , GuiVisibility::NEVER);
+
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
     return ( s1 < s2 );
@@ -552,7 +556,7 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 		  os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
 		}
 		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
-		os << " show=\"" << xmlify(profControl->show).toUtf8().constData() << "\"" ;
+		os << " show=\"" << xmlify(profControl->getVisibility().getId().toUtf8().constData()) << "\"" ;
 		if ( profControl->isMandatory() ) {
 		  os << " mandatory=\"true\"";
 		}
@@ -614,15 +618,16 @@ std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
 }
 
 ProfControl::ProfControl(QString& id, QString& subcontrols ) :
-	  _mandatory(false), _split(false) {
+		visibility(GuiVisibility::GuiSIMPLE), _mandatory(false), _split(false)
+{
     d = new ProfControlPrivate();
-    this->show = "simple";
     this->id = id;
     setSubcontrols(subcontrols);
 }
 
 ProfControl::ProfControl(const ProfControl &profControl) :
-	  _mandatory(false), _split(false) {
+		visibility(profControl.visibility), _mandatory(false), _split(false)
+{
     d = new ProfControlPrivate();
     id = profControl.id;
     name = profControl.name;
@@ -635,7 +640,6 @@ ProfControl::ProfControl(const ProfControl &profControl) :
     d->subcontrols = profControl.d->subcontrols;
 
     name = profControl.name;
-    show = profControl.show;
     backgroundColor = profControl.backgroundColor;
     switchtype = profControl.switchtype;
     _mandatory = profControl._mandatory;
@@ -646,9 +650,20 @@ ProfControl::~ProfControl() {
     delete d;
 }
 
+/**
+ * An overridden method for #setVisible(const GuiVisibility&), that either sets GuiVisibility::GuiSIMPLE
+ * or GuiVisibility::GuiNEVER;
+ *
+ * @param visible
+ */
 void ProfControl::setVisible(bool visible)
 {
-	show = visible ? GUIProfile::PNameSimple : GUIProfile::PNameExtended;
+	this->visibility = visible ? GuiVisibility::GuiSIMPLE : GuiVisibility::GuiNEVER;
+}
+
+void ProfControl::setVisible(const GuiVisibility& visibility)
+{
+	this->visibility = visibility;
 }
 
 void ProfControl::setSubcontrols(QString sctls)
@@ -884,7 +899,7 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
         if ( show.isNull() ) { show = '*'; }
 
 	profControl->name = name;
-	profControl->show = show;
+	profControl->setVisible(GuiVisibility::getByString(show));
 	profControl->setBackgroundColor( background );
 	profControl->setSwitchtype(switchtype);
 	profControl->setMandatory(isMandatory);

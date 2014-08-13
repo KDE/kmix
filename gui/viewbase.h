@@ -60,14 +60,14 @@ public:
       Vertical       = 0x0008
    };
    
-   typedef uint GUIComplexity;
-   enum
-   {
-     SIMPLE = 0,
-     EXTENDED = 1,
-     ALL = 2
-   };
-   
+//   typedef uint GUIComplexity;
+//   enum
+//   {
+//     SIMPLE = 0,
+//     EXTENDED = 1,
+//     ALL = 2
+//   };
+//
     ViewBase(QWidget* parent, QString id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
@@ -117,9 +117,9 @@ public:
    void setTicks(bool on);
    
    GUIProfile* guiProfile() { return GUIProfile::find(_guiProfileId); };
-   GUIComplexity getGuiComplexity() { return guiComplexity; };
+  // GUIComplexity getGuiComplexity() { return guiComplexity; };
    ProfControl* findMdw(const QString& id);
-   ProfControl* findMdw(const QString& mdwId, QString requestedGuiComplexityName);
+   ProfControl* findMdw(const QString& mdwId, GuiVisibility visibility);
 
    
    KActionCollection* actionCollection() { return _actions; };
@@ -151,7 +151,9 @@ protected:
     void updateGuiOptions();
     QPushButton* createConfigureViewButton();
 
-    GUIComplexity guiComplexity;
+    void setGuiLevel(GuiVisibility& guiLevel);
+
+    GuiVisibility guiLevel;
 
 public slots:
    virtual void refreshVolumeLevels(); // TODO remove

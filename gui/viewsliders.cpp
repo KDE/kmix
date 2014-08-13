@@ -361,8 +361,9 @@ void ViewSliders::configurationUpdate()
 			haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
 		}
 
-		if (haveCaptureLEDs && haveMuteButtons)
-			break; // We know all we want. Lets break.
+		// The follwing "break" cannot be done any longer, as we need to calculate the highest labelExtent from ALL mdw's
+		//		if (haveCaptureLEDs && haveMuteButtons)
+		//			break; // We know all we want. Lets break.
 	}
    //kDebug(67100) << "topPartExtent is " << topPartExtent;
    bool firstVisibleControlFound = false;
@@ -373,7 +374,7 @@ void ViewSliders::configurationUpdate()
       if ( mdw )
       {
 	 // This is a bit hacky. Using "simple" can be wrong on the very first start of KMix (but usually it is not!)
-	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), QString("simple"));
+	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), guiLevel);
 	mdw->setVisible(matchingControl != 0);
 
 	if ( mdwSlider )

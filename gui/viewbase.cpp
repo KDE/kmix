@@ -52,10 +52,11 @@
  */
 ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiProfileId(guiProfileId)
+, guiLevel(GuiVisibility::GuiSIMPLE)
 {
    setObjectName(id);
+   // When loding the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
-   guiComplexity = ViewBase::SIMPLE;
 	configureIcon = new KIcon( QLatin1String( "configure" ));
 
    
@@ -260,6 +261,7 @@ bool ViewBase::isDynamic() const
 
 bool ViewBase::pulseaudioPresent() const
 {
+	// We do not use Mixer::pulseaudioPresent(), as we are only interested in Mixer instances contained in this View.
   foreach (Mixer* mixer , _mixers )
   {
 	  if ( mixer->getDriverName() == "PulseAudio" )
@@ -329,19 +331,19 @@ void ViewBase::load(KConfig *config)
 	kDebug(67100)
 	<< "KMixToolBox::loadView() grp=" << grp.toAscii();
 
-	static QString guiComplexityNames[3] =
-	{ GUIProfile::PNameSimple,  GUIProfile::PNameExtended,  GUIProfile::PNameAll };
+	static GuiVisibility guiVisibilities[3] =
+	{ GuiVisibility::GuiSIMPLE, GuiVisibility::GuiEXTENDED, GuiVisibility::GuiFULL };
 
 	// Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
 	bool dynamic = isDynamic();
 
-	for (GUIComplexity guiCompl = ViewBase::SIMPLE; guiCompl <= ViewBase::ALL; ++guiCompl)
+	bool guiLevelSet = false;
+	for (int i=0; i<3; ++i)
 	{
+		GuiVisibility& guiCompl = guiVisibilities[i];
 		bool atLeastOneControlIsShown = false;
 		foreach(QWidget *qmdw, view->_mdws)
-//		for (int i = 0; i < view->_mdws.count(); ++i)
 		{
-//			QWidget *qmdw = view->_mdws[i];
 			if (qmdw->inherits("MixDeviceWidget"))
 			{
 				MixDeviceWidget* mdw = (MixDeviceWidget*) qmdw;
@@ -359,18 +361,17 @@ void ViewBase::load(KConfig *config)
 				// Future directions: "Visibility" is very dirty: It is read from either config file or
 				// GUIProfile. Thus we have a lot of doubled mdw visibility code all throughout KMix.
 				bool mdwEnabled = false;
-				if (!dynamic && devcg.hasKey("Show"))
-				{
-					mdwEnabled = (true == devcg.readEntry("Show", true));
-				}
-				else
-				{
+//				if (!dynamic && devcg.hasKey("Show"))
+//				{
+//					mdwEnabled = (true == devcg.readEntry("Show", true));
+//				}
+//				else
+//				{
 					// If not configured in config file, use the default from the profile
-					if (findMdw(mdw->mixDevice()->id(), guiComplexityNames[guiCompl]) != 0)
-					{
-						mdwEnabled = true;
-					}
-				}
+					//mdwEnabled = guiCompl == GuiVisibility::GuiFULL; // last resort. Show ALL
+					mdwEnabled = findMdw(mdw->mixDevice()->id(), guiCompl) != 0; // Match GUI complexity
+					kWarning() << "---------- FIRST RUN: md=" << md->id() << ", guiVisibility=" << guiCompl.getId() << ", enabled=" << mdwEnabled;
+//				}
 				if (mdwEnabled)
 				{
 					atLeastOneControlIsShown = true;
@@ -380,44 +381,57 @@ void ViewBase::load(KConfig *config)
 		} // for all MDW's
 		if (atLeastOneControlIsShown)
 		{
-			this->guiComplexity = guiCompl;
+			guiLevelSet  = true;
+			setGuiLevel(guiCompl);
 			break;   // If there were controls in this complexity level, don't try more
 		}
 	} // for try = 0 ... 1
+
+	if (!guiLevelSet)
+		setGuiLevel(guiVisibilities[2]);
+}
+
+void ViewBase::setGuiLevel(GuiVisibility& guiLevel)
+{
+	this->guiLevel = guiLevel;
 }
 
 /**
  * Checks whether the given mixDevice shall be shown according to the requested
- * GUI complexity. All ProfControl objects are inspected. The first found is returned.
+ * GuiVisibility. All ProfControl objects are inspected. The first found is returned.
  * 
  * @param mdwId The control ID
  * @param requestedGuiComplexityName The GUI name
  * @return The corresponding ProfControl*
  *
  */
-ProfControl* ViewBase::findMdw(const QString& mdwId, QString requestedGuiComplexityName)
+ProfControl* ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility)
 {
 	foreach ( ProfControl* pControl, guiProfile()->getControls() )
 	{
 		QRegExp idRegExp(pControl->id);
-		//kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
-		if ( mdwId.contains(idRegExp) &&
-			pControl->show == requestedGuiComplexityName )
+		if ( mdwId.contains(idRegExp) && pControl->getVisibility().satisfiesVisibility(visibility))
 		{
+			kDebug() << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 			return pControl;
 		}
+		else
+		{
+			kDebug() << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+		}
+
 	} // iterate over all ProfControl entries
 
-	return 0;// not found
+	return 0; // not found
 }
 
 
 /**
- * Returns the ProfControl* to the given id. If none is found, 0 is returned.
- * GUI complexity. All ProfControl objects are inspected. The first found is returned.
+ * Returns the ProfControl* to the given id. The first found is returned.
+ * GuiVisibilityis not taken into account. . All ProfControl objects are inspected.
  *
  * @param id The control ID
- * @return The corresponding ProfControl*
+ * @return The corresponding ProfControl*, or 0 if no match was found
  */
 ProfControl* ViewBase::findMdw(const QString& id)
 {
@@ -466,11 +480,13 @@ void ViewBase::save(KConfig *config)
 				// only sliders have the ability to split apart in mutliple channels
 				devcg.writeEntry("Split", !mdw->isStereoLinked());
 			}
+			/*
 			if (!dynamic)
 			{
 				devcg.writeEntry("Show", mdw->isVisibleTo(view));
 //             kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
 			}
+			*/
 
 		} // inherits MixDeviceWidget
 	} // for all MDW's
