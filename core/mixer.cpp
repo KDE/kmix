@@ -205,6 +205,10 @@ void Mixer::volumeSave( KConfig *config )
     QString grp("Mixer");
     grp.append(id());
     _mixerBackend->m_mixDevices.write( config, grp );
+
+    // This might not be the standard application config object
+    // => Better be safe and call sync().
+    config->sync();
 }
 
 void Mixer::volumeLoad( KConfig *config )
