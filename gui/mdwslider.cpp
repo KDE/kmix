@@ -104,11 +104,11 @@ void MDWSlider::createActions()
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
     KAction *action;
-    if ( ! m_mixdevice->mixer()->isDynamic() ) {
-        action = _mdwActions->add<KToggleAction>( "hide" );
-        action->setText( i18n("&Hide") );
-        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)) );
-    }
+//    if ( ! m_mixdevice->mixer()->isDynamic() ) {
+//        action = _mdwActions->add<KToggleAction>( "hide" );
+//        action->setText( i18n("&Hide") );
+//        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)) );
+//    }
 
     if( m_mixdevice->hasMuteSwitch() )
     {
@@ -1194,9 +1194,9 @@ void MDWSlider::showContextMenu( const QPoint& pos )
 		}
 	}
 
-	QAction *a = _mdwActions->action(  "hide" );
-	if ( a )
-		menu->addAction( a );
+//	QAction *a = _mdwActions->action(  "hide" );
+//	if ( a )
+//		menu->addAction( a );
 
 	QAction *b = _mdwActions->action( "keys" );
 	if ( b ) {

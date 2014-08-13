@@ -60,14 +60,6 @@ public:
       Vertical       = 0x0008
    };
    
-//   typedef uint GUIComplexity;
-//   enum
-//   {
-//     SIMPLE = 0,
-//     EXTENDED = 1,
-//     ALL = 2
-//   };
-//
     ViewBase(QWidget* parent, QString id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
