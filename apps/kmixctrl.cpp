@@ -102,14 +102,16 @@ int kdemain(int argc, char *argv[])
    }
 
    // save volumes
-   if ( args->isSet("save") )
-   {
-      for (int i=0; i<Mixer::mixers().count(); ++i) {
-         Mixer *mixer = (Mixer::mixers())[i];
-         qWarning() << "save " << KGlobal::config().data();
-         mixer->volumeSave( KGlobal::config().data() );
-      }
-   }
+	if (args->isSet("save"))
+	{
+		for (int i = 0; i < Mixer::mixers().count(); ++i)
+		{
+			Mixer *mixer = (Mixer::mixers())[i];
+			KSharedConfig* cfg = KGlobal::config().data();
+			qWarning() << "save " << cfg->name();
+			mixer->volumeSave(cfg);
+		}
+	}
 
    MixerToolBox::instance()->deinitMixer();
 
