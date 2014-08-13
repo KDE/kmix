@@ -37,6 +37,7 @@ class KTabWidget;
 // KDE
 class KAccel;
 class KAction;
+class KToggleAction;
 #include <kxmlguiwindow.h>
 
 // KMix
@@ -48,7 +49,9 @@ class KMixWindow;
 class Mixer;
 #include "core/mixer.h"
 
+#ifndef X_KMIX_KF5_BUILD
 class OSDWidget;
+#endif
 class DialogSelectMaster;
 
 class
@@ -105,7 +108,7 @@ KMixWindow : public KXmlGuiWindow
         void errorPopup(const QString& msg);
 
    KAccel *m_keyAccel;
-   KAction* _actionShowMenubar;
+   KToggleAction* _actionShowMenubar;
 
 private:
    /**
@@ -132,7 +135,9 @@ private:
    void showVolumeDisplay();
    void increaseOrDecreaseVolume(bool increase);
 
+#ifndef X_KMIX_KF5_BUILD
    OSDWidget* osdWidget;
+#endif
 
    bool addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition);
    void setInitialSize();

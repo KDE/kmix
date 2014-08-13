@@ -57,24 +57,16 @@ KMixD : public KDEDModule, protected QDBusContext
    ~KMixD();
 
   private:
+   void delayedInitialization();
    void saveBaseConfig();
    void loadConfig();
    void loadBaseConfig();
 
    void initActions();
-   void initActionsLate();
-
-   void fixConfigAfterRead();
 
   public slots:
-   //void loadVolumes();
-   void saveVolumes();
-   //virtual void applyPrefs( KMixPrefDlg *prefDlg );
 
   private:
-   //KAccel *m_keyAccel;
-   //KAction* _actionShowMenubar;
-
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
 
@@ -82,17 +74,12 @@ KMixD : public KDEDModule, protected QDBusContext
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
    unsigned int m_configVersion;
-   //void increaseOrDecreaseVolume(bool increase);
    QList<QString> m_backendFilter;
 
   private slots:
    void saveConfig();
-   //void slotHWInfo();
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
-   //void slotIncreaseVolume();
-   //void slotDecreaseVolume();
-   //void slotMute();
 };
 
 #endif // KMIXD_H

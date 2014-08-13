@@ -334,9 +334,6 @@ void ViewBase::load(KConfig *config)
 	static GuiVisibility guiVisibilities[3] =
 	{ GuiVisibility::GuiSIMPLE, GuiVisibility::GuiEXTENDED, GuiVisibility::GuiFULL };
 
-	// Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
-	bool dynamic = isDynamic();
-
 	bool guiLevelSet = false;
 	for (int i=0; i<3; ++i)
 	{
@@ -361,17 +358,11 @@ void ViewBase::load(KConfig *config)
 				// Future directions: "Visibility" is very dirty: It is read from either config file or
 				// GUIProfile. Thus we have a lot of doubled mdw visibility code all throughout KMix.
 				bool mdwEnabled = false;
-//				if (!dynamic && devcg.hasKey("Show"))
-//				{
-//					mdwEnabled = (true == devcg.readEntry("Show", true));
-//				}
-//				else
-//				{
-					// If not configured in config file, use the default from the profile
-					//mdwEnabled = guiCompl == GuiVisibility::GuiFULL; // last resort. Show ALL
-					mdwEnabled = findMdw(mdw->mixDevice()->id(), guiCompl) != 0; // Match GUI complexity
-					kWarning() << "---------- FIRST RUN: md=" << md->id() << ", guiVisibility=" << guiCompl.getId() << ", enabled=" << mdwEnabled;
-//				}
+
+				// Consult GuiProfile for visibility
+				mdwEnabled = findMdw(mdw->mixDevice()->id(), guiCompl) != 0; // Match GUI complexity
+//				kWarning() << "---------- FIRST RUN: md=" << md->id() << ", guiVisibility=" << guiCompl.getId() << ", enabled=" << mdwEnabled;
+
 				if (mdwEnabled)
 				{
 					atLeastOneControlIsShown = true;

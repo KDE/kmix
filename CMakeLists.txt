@@ -17,6 +17,7 @@ endif()
 # Your project should require at least CMake 2.8.12 to use FindKF5.cmake
 if (KMIX_KF5_BUILD)
    cmake_minimum_required(VERSION 2.8.12)
+   add_definitions( -DX_KMIX_KF5_BUILD )
 else ()
    cmake_minimum_required(VERSION 2.8.11)
 endif()
@@ -36,9 +37,9 @@ include(KDECMakeSettings)
 #include(KF5Init/KF5InitMacros)
 #include(MacroLibrary)
 # I need KF5KDELibs4Support at least for find_package(GLIB2), for KDebug and eventually for Alsa (vs ALSA)
-find_package(KF5 REQUIRED COMPONENTS I18n Init Config Solid KDELibs4Support)
+find_package(KF5 REQUIRED COMPONENTS I18n Init Config GlobalAccel KDELibs4Support)
 # find_package(KF5Solid NO_MODULE) : added according to http://api.kde.org/frameworks-api/frameworks5-apidocs/solid/html/index.html
-find_package(KF5Solid NO_MODULE)
+#find_package(KF5Solid NO_MODULE)
 find_package(Qt5 REQUIRED COMPONENTS Core DBus Gui Widgets)
 #include(KF5InitMacros)
 
@@ -171,6 +172,10 @@ if (PULSEAUDIO_FOUND)
       backends/mixer_pulse.cpp )
 endif (PULSEAUDIO_FOUND)
 
+if (NOT KMIX_KF5_BUILD)
+	set( kmix_OSD_SRCS gui/osdwidget.cpp )
+endif()
+
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/main.cpp 
    apps/kmix.cpp 
@@ -194,7 +199,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    gui/dialogselectmaster.cpp 
    gui/dialogchoosebackends.cpp 
    gui/guiprofile.cpp
-   gui/osdwidget.cpp
+   ${kmix_OSD_SRCS}
    core/MediaController.cpp
    core/mixertoolbox.cpp
    core/kmixdevicemanager.cpp
@@ -303,6 +308,8 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    core/mixdevice.cpp 
    core/volume.cpp 
    core/mixertoolbox.cpp 
+   # There is no actual need for kmixdevicemanager.cpp (hotplug makes no sense in kmixctrl), but
+   # the dependency comes in via mixertoolbox.cpp
    core/kmixdevicemanager.cpp
    )
 
@@ -311,7 +318,8 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 
 if (KMIX_KF5_BUILD)
   KF5_ADD_KDEINIT_EXECUTABLE( kmixctrl ${kmixctrl_KDEINIT_SRCS})
-  target_link_libraries(kdeinit_kmixctrl QtCore ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
+  target_link_libraries(kdeinit_kmixctrl KF5::I18n KF5::ConfigCore KF5::KDELibs4Support Qt5::Core )
+  #Qt5::DBus Qt5::Xml)
 else()
   kde4_add_kdeinit_executable( kmixctrl ${kmixctrl_KDEINIT_SRCS})
   target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})

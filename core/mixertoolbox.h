@@ -43,9 +43,9 @@ class MixerToolBox : public QObject
 
    public:
       static MixerToolBox* instance();
-      void initMixer(bool, QList<QString> backendList, QString&);
-      void initMixer(MultiDriverMode, QList<QString> backendList, QString&);
-      void initMixerInternal(MultiDriverMode, QList<QString> backendList, QString&);
+      void initMixer(bool, QList<QString> backendList, QString&, bool);
+      void initMixer(MultiDriverMode, QList<QString> backendList, QString&, bool);
+      void initMixerInternal(MultiDriverMode, QList<QString> backendList, QString&, bool);
       void deinitMixer();
       bool possiblyAddMixer(Mixer *mixer);
       void removeMixer(Mixer *mixer);

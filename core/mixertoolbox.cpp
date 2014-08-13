@@ -75,24 +75,24 @@ MixerToolBox* MixerToolBox::instance()
  * @par backendList Activated backends (typically a value from the kmixrc or a default)
  * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
  */
-void MixerToolBox::initMixer(bool multiDriverModeBool, QList<QString> backendList, QString& ref_hwInfoString)
+void MixerToolBox::initMixer(bool multiDriverModeBool, QList<QString> backendList, QString& ref_hwInfoString, bool hotplug)
 {
 	MultiDriverMode multiDriverMode = multiDriverModeBool ?  MULTI : SINGLE_PLUS_MPRIS2;
-	initMixer(multiDriverMode, backendList, ref_hwInfoString);
+	initMixer(multiDriverMode, backendList, ref_hwInfoString, hotplug);
 }
 
-void MixerToolBox::initMixer(MultiDriverMode multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+void MixerToolBox::initMixer(MultiDriverMode multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString, bool hotplug)
 {
-	initMixerInternal(multiDriverMode, backendList, ref_hwInfoString);
+	initMixerInternal(multiDriverMode, backendList, ref_hwInfoString, hotplug);
     if ( Mixer::mixers().isEmpty() )
-      initMixerInternal(multiDriverMode, QList<QString>(), ref_hwInfoString);  // try again without filter
+      initMixerInternal(multiDriverMode, QList<QString>(), ref_hwInfoString, hotplug);  // try again without filter
 }
 
 
 /**
  * 
  */
-void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString)
+void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QString> backendList, QString& ref_hwInfoString, bool hotplug)
 {  
    bool useBackendFilter = ( ! backendList.isEmpty() );
    bool backendMprisFound = false; // only for SINGLE_PLUS_MPRIS2
@@ -288,10 +288,13 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
       // this will only be possible by hacking the config-file, as it will not be officially supported
       ref_hwInfoString.append("\n").append(i18n("Experimental multiple-Driver mode activated"));
       QString allDrivermatch("*");
-      KMixDeviceManager::instance()->setHotpluggingBackends(allDrivermatch);
+
+      if (hotplug)
+    	  KMixDeviceManager::instance()->setHotpluggingBackends(allDrivermatch);
    }
    else {
-       KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
+	   if (hotplug)
+		   KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
    }
 
    kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count();

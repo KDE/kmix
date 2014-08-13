@@ -87,18 +87,31 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
 
 	GlobalConfig::init();
 
+	kWarning() << "kmixd: Triggering delayed initialization";
+
+	QTimer::singleShot( 3000, this, SLOT(delayedInitialization()));
+	
+}
+
+/**
+ * This is called by a singleShot timer. Reason is that KMixD seems to "collide" with other applications
+ * on DBUS, likely creating deadlocks. See Bug 317926 for that. By artificially delaying initialization,
+ * KMixD gets hopefully out of the way of the other applications, avoiding these deadlocks. A small delay
+ * should also not harm too much, as apps using the Mixer DBUS calls on KMixD must be prepared that the
+ * interface is not available rihgt when they start.
+ */
+void KMixD::delayedInitialization()
+{
+	kWarning() << "kmixd: Delayed initialization running now";
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
-   //initActionsLate(); // init actions that require a loaded config
-   //KGlobal::locale()->insertCatalog( QLatin1String( "kmix-controls" ));
-   //initWidgets();
-   //initPrefDlg();
-   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString);
+   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
-   fixConfigAfterRead();
    theKMixDeviceManager->initHotplug();
    connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );
    connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT (unplugged(QString)) );
+
+	kWarning() << "kmixd: Delayed initialization done";
 }
 
 
@@ -109,34 +122,11 @@ KMixD::~KMixD()
 
 
 
-/*
-void KMixD::initActionsLate()
-{
-  if ( m_autouseMultimediaKeys ) {
-    KAction* globalAction = actionCollection()->addAction("increase_volume");
-    globalAction->setText(i18n("Increase Volume"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp), ( KAction::ShortcutTypes)( KAction::ActiveShortcut |  KAction::DefaultShortcut),  KAction::NoAutoloading);
-    connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
-
-    globalAction = actionCollection()->addAction("decrease_volume");
-    globalAction->setText(i18n("Decrease Volume"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
-    connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
-
-    globalAction = actionCollection()->addAction("mute");
-    globalAction->setText(i18n("Mute"));
-    globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
-    connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
-  }
-}
-*/
-
-
 void KMixD::saveConfig()
 {
    kDebug() << "About to save config";
    saveBaseConfig();
-   saveVolumes();
+  // saveVolumes(); // -<- removed from kmixd, as it is possibly a bad idea if both kmix and kmixd write the same config "kmixctrlrc"
 #ifdef __GNUC_
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
@@ -168,33 +158,11 @@ void KMixD::saveBaseConfig()
    kDebug() << "Config (Base) saving done";
 }
 
-/**
- * Stores the volumes of all mixers  Can be restored via loadVolumes() or
- * the kmixctrl application.
- */
-void KMixD::saveVolumes()
-{
-   kDebug() << "About to save config (Volume)";
-   KConfig *cfg = new KConfig( QLatin1String(  "kmixctrlrc" ) );
-   for ( int i=0; i<Mixer::mixers().count(); ++i)
-   {
-      Mixer *mixer = (Mixer::mixers())[i];
-      if ( mixer->isOpen() ) { // protect from unplugged devices (better do *not* save them)
-          mixer->volumeSave( cfg );
-      }
-   }
-   cfg->sync();
-   delete cfg;
-   kDebug() << "Config (Volume) saving done";
-}
-
 
 
 void KMixD::loadConfig()
 {
    loadBaseConfig();
-   //loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
-   //loadVolumes(); // not in use
 }
 
 void KMixD::loadBaseConfig()
@@ -217,49 +185,6 @@ void KMixD::loadBaseConfig()
    MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 }
 
-/**
- * Loads the volumes of all mixers from kmixctrlrc.
- * In other words:
- * Restores the default voumes as stored via saveVolumes() or the
- * execution of "kmixctrl --save"
- */
-/* Currently this is not in use
-void
-KMixD::loadVolumes()
-{
-    KConfig *cfg = new KConfig( QLatin1String(  "kmixctrlrc" ), true );
-    for ( int i=0; i<Mixer::mixers().count(); ++i)
-    {
-        Mixer *mixer = (Mixer::mixers())[i];
-        mixer->volumeLoad( cfg );
-    }
-    delete cfg;
-}
-*/
-
-
-
-
-void KMixD::fixConfigAfterRead()
-{
-   KConfigGroup grp(KGlobal::config(), "Global");
-   unsigned int configVersion = grp.readEntry( "ConfigVersion", 0 );
-   if ( configVersion < 3 ) {
-       // Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
-       // The group has been copied over by KMixToolBox::loadView() for all soundcards, so
-       // we should be fine now
-       QStringList cfgGroups = KGlobal::config()->groupList();
-       QStringListIterator it(cfgGroups);
-       while ( it.hasNext() ) {
-          QString groupName = it.next();
-          if ( groupName.indexOf("View.Base.Base" ) == 0 ) {
-               kDebug(67100) << "Fixing group " << groupName;
-               KConfigGroup buggyDevgrpCG = KGlobal::config()->group( groupName );
-               buggyDevgrpCG.deleteGroup();
-          } // remove buggy group
-       } // for all groups
-   } // if config version < 3
-}
 
 void KMixD::plugged( const char* driverName, const QString& /*udi*/, QString& dev)
 {

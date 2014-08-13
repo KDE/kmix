@@ -18,10 +18,22 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+//#ifndef KDE_VERSION_MAJOR
+//#define X_KMIX_KF5_BUILD
+//#endif
+
 #include "core/mixertoolbox.h"
 #include <kapplication.h>
 #include <kcmdlineargs.h>
+
+
+#ifdef X_KMIX_KF5_BUILD
+#include <k4aboutdata.h>
+#include <KLocalizedString>
+#else
 #include <kaboutdata.h>
+#endif
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -36,11 +48,29 @@
 static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
 
-extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
+extern "C"
+#ifndef X_KMIX_KF5_BUILD
+KDE_EXPORT
+#endif
+int kdemain(int argc, char *argv[])
 {
+#ifdef X_KMIX_KF5_BUILD
+	KLocalizedString::setApplicationDomain("kmix");
+#else
    KLocale::setMainCatalog("kmix");
-   KAboutData aboutData( "kmixctrl", 0, ki18n("KMixCtrl"),
-			 APP_VERSION, ki18n(description), KAboutData::License_GPL,
+#endif
+
+#ifdef X_KMIX_KF5_BUILD
+#define CLASS_KAboutData K4AboutData
+#else
+#define CLASS_KAboutData KAboutData
+#endif
+
+
+
+   CLASS_KAboutData aboutData( "kmixctrl", 0, ki18n("KMixCtrl"),
+			 APP_VERSION, ki18n(description),
+			 CLASS_KAboutData::License_GPL,
 			 ki18n("(c) 2000 by Stefan Schimanski"));
 
    aboutData.addAuthor(ki18n("Stefan Schimanski"), KLocalizedString(), "1Stein@gmx.de");
@@ -60,7 +90,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
    // create mixers
    QString dummyStringHwinfo;
-   MixerToolBox::instance()->initMixer(false, QList<QString>(), dummyStringHwinfo);
+   MixerToolBox::instance()->initMixer(false, QList<QString>(), dummyStringHwinfo, false);
 
    // load volumes
    if ( args->isSet("restore") )
@@ -76,6 +106,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
    {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
+         qWarning() << "save " << KGlobal::config().data();
          mixer->volumeSave( KGlobal::config().data() );
       }
    }
