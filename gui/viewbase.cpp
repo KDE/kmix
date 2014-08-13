@@ -401,16 +401,18 @@ ProfControl* ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility)
 	foreach ( ProfControl* pControl, guiProfile()->getControls() )
 	{
 		QRegExp idRegExp(pControl->id);
-		if ( mdwId.contains(idRegExp) && pControl->getVisibility().satisfiesVisibility(visibility))
+		if ( mdwId.contains(idRegExp) )
 		{
-			kDebug() << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
-			return pControl;
+			if (pControl->getVisibility().satisfiesVisibility(visibility))
+			{
+				kDebug() << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+				return pControl;
+			}
+			else
+			{
+				kDebug() << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+			}
 		}
-		else
-		{
-			kDebug() << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
-		}
-
 	} // iterate over all ProfControl entries
 
 	return 0; // not found

@@ -109,7 +109,7 @@ static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
 		if (this->idCode == GuiVisibility::CUSTOM || other.idCode == GuiVisibility::CUSTOM)
 			return false;
 
-		return this->idCode < other.idCode;
+		return this->idCode <= other.idCode;
 	}
 
 	/**
