@@ -355,13 +355,13 @@ void ViewSliders::configurationUpdate()
 		MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
 		if (mdw && mdw->isVisibleTo(this))
 		{
-			if (mdw->labelExtentHint() > labelExtent)
-				labelExtent = mdw->labelExtentHint();
+			labelExtent = qMax(labelExtent, mdw->labelExtentHint());
+			//kDebug() << "########## EXTENT for " << id() << " is " << labelExtent;
 			haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
 			haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
 		}
 
-		// The follwing "break" cannot be done any longer, as we need to calculate the highest labelExtent from ALL mdw's
+		// The following "break" cannot be done any longer, as we need to calculate the highest labelExtent from ALL mdw's
 		//		if (haveCaptureLEDs && haveMuteButtons)
 		//			break; // We know all we want. Lets break.
 	}
@@ -373,7 +373,7 @@ void ViewSliders::configurationUpdate()
       MDWSlider* mdwSlider = ::qobject_cast<MDWSlider*>(_mdws[i]);
       if ( mdw )
       {
-	 // This is a bit hacky. Using "simple" can be wrong on the very first start of KMix (but usually it is not!)
+	 // guiLevel has been set earlier, by inspecting the controls
 	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), guiLevel);
 	mdw->setVisible(matchingControl != 0);
 
