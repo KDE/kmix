@@ -69,278 +69,257 @@
 #include "dbus/dbusmixsetwrapper.h"
 #include "gui/osdwidget.h"
 
-
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
 
 KMixWindow::KMixWindow(bool invisible) :
-    KXmlGuiWindow(0,
-        Qt::WindowFlags(
-            KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
-    m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
+		KXmlGuiWindow(0, Qt::WindowFlags(
+		KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
+		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
 {
-  setObjectName(QLatin1String("KMixWindow"));
-  // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
-  setAttribute(Qt::WA_DeleteOnClose, false);
+	setObjectName(QLatin1String("KMixWindow"));
+	// disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
+	setAttribute(Qt::WA_DeleteOnClose, false);
 
-  initActions(); // init actions first, so we can use them in the loadConfig() already
-  loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
-  initActionsLate(); // init actions that require a loaded config
-  KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
-  initWidgets();
-  initPrefDlg();
-  DBusMixSetWrapper::initialize(this, "/Mixers");
-  MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter,
-      m_hwInfoString);
-  KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
-  initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
+	initActions(); // init actions first, so we can use them in the loadConfig() already
+	loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
+	initActionsLate(); // init actions that require a loaded config
+	KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
+	initWidgets();
+	initPrefDlg();
+	DBusMixSetWrapper::initialize(this, "/Mixers");
+	MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString);
+	KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
+	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
-  recreateGUI(false);
-  if (m_wsMixers->count() < 1)
-    {
-      // Something is wrong. Perhaps a hardware or driver or backend change. Let KMix search harder
-      recreateGUI(false, QString(), true);
-    }
+	recreateGUI(false);
+	if (m_wsMixers->count() < 1)
+	{
+		// Something is wrong. Perhaps a hardware or driver or backend change. Let KMix search harder
+		recreateGUI(false, QString(), true);
+	}
 
-  if (!kapp->isSessionRestored() ) // done by the session manager otherwise
-  setInitialSize();
+	if (!kapp->isSessionRestored() ) // done by the session manager otherwise
+	setInitialSize();
 
-  fixConfigAfterRead();
-  theKMixDeviceManager->initHotplug();
-  connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
-      SLOT (plugged(const char*,QString,QString&)));
-  connect(theKMixDeviceManager, SIGNAL(unplugged(QString)),
-      SLOT (unplugged(QString)));
-  if (m_startVisible && !invisible)
-    show(); // Started visible
+	fixConfigAfterRead();
+	theKMixDeviceManager->initHotplug();
+	connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
+			SLOT(plugged(const char*,QString,QString&)));
+	connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT(unplugged(QString)));
+	if (m_startVisible && !invisible)
+		show(); // Started visible
 
-  connect(kapp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
+	connect(kapp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
-  ControlManager::instance().addListener(
-  	  QString(), // All mixers (as the Global master Mixer might change)
-  	(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::MasterChanged),
-  	this,
-  	QString("KMixWindow")
-  	);
+	ControlManager::instance().addListener(
+			QString(), // All mixers (as the Global master Mixer might change)
+			(ControlChangeType::Type) (ControlChangeType::ControlList | ControlChangeType::MasterChanged), this,
+			QString("KMixWindow"));
 
-  // Send an initial volume refresh (otherwise all volumes are 0 until the next change)
-  ControlManager::instance().announce(QString(), ControlChangeType::Volume, QString("Startup"));
+	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
+	ControlManager::instance().announce(QString(), ControlChangeType::Volume, QString("Startup"));
 }
 
 KMixWindow::~KMixWindow()
 {
-  ControlManager::instance().removeListener(this);
+	ControlManager::instance().removeListener(this);
 
-  delete m_dsm;
-  delete osdWidget;
+	delete m_dsm;
+	delete osdWidget;
 
-  // -1- Cleanup Memory: clearMixerWidgets
-  while (m_wsMixers->count() != 0)
-    {
-      QWidget *mw = m_wsMixers->widget(0);
-      m_wsMixers->removeTab(0);
-      delete mw;
-    }
+	// -1- Cleanup Memory: clearMixerWidgets
+	while (m_wsMixers->count() != 0)
+	{
+		QWidget *mw = m_wsMixers->widget(0);
+		m_wsMixers->removeTab(0);
+		delete mw;
+	}
 
-  // -2- Mixer HW
-  MixerToolBox::instance()->deinitMixer();
+	// -2- Mixer HW
+	MixerToolBox::instance()->deinitMixer();
 
-  // -3- Action collection (just to please Valgrind)
-  actionCollection()->clear();
+	// -3- Action collection (just to please Valgrind)
+	actionCollection()->clear();
 
-  // GUIProfile cache should be cleared very very late, as GUIProfile instances are used in the Views, which
-  // means main window and potentially also in the tray popup (at least we might do so in the future).
-  // This place here could be to early, if we would start to GUIProfile outside KMixWIndow, e.g. in the tray popup.
-  // Until we do so, this is the best place to call clearCache(). Later, e.g. in main() would likely be problematic.
+	// GUIProfile cache should be cleared very very late, as GUIProfile instances are used in the Views, which
+	// means main window and potentially also in the tray popup (at least we might do so in the future).
+	// This place here could be to early, if we would start to GUIProfile outside KMixWIndow, e.g. in the tray popup.
+	// Until we do so, this is the best place to call clearCache(). Later, e.g. in main() would likely be problematic.
 
-  GUIProfile::clearCache();
-
+	GUIProfile::clearCache();
 
 }
-
-
 
 void KMixWindow::controlsChange(int changeType)
 {
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
-  {
-    case  ControlChangeType::ControlList:
-    case  ControlChangeType::MasterChanged:
-    	updateDocking();
-      break;
+	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
+	switch (type)
+	{
+	case ControlChangeType::ControlList:
+	case ControlChangeType::MasterChanged:
+		updateDocking();
+		break;
 
-    default:
-      ControlManager::warnUnexpectedChangeType(type, this);
-      break;
-  }
+	default:
+		ControlManager::warnUnexpectedChangeType(type, this);
+		break;
+	}
 
 }
 
-void
-KMixWindow::initActions()
+void KMixWindow::initActions()
 {
-  // file menu
-  KStandardAction::quit(this, SLOT(quit()), actionCollection());
+	// file menu
+	KStandardAction::quit(this, SLOT(quit()), actionCollection());
 
-  // settings menu
-  _actionShowMenubar = KStandardAction::showMenubar(this, SLOT(toggleMenuBar()),
-      actionCollection());
-  //actionCollection()->addAction( a->objectName(), a );
-  KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
-  KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()),
-      actionCollection());
-  KAction* action = actionCollection()->addAction("launch_kdesoundsetup");
-  action->setText(i18n("Audio Setup"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
+	// settings menu
+	_actionShowMenubar = KStandardAction::showMenubar(this, SLOT(toggleMenuBar()), actionCollection());
+	//actionCollection()->addAction( a->objectName(), a );
+	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
+	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
+	KAction* action = actionCollection()->addAction("launch_kdesoundsetup");
+	action->setText(i18n("Audio Setup"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
 
-  action = actionCollection()->addAction("hwinfo");
-  action->setText(i18n("Hardware &Information"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(slotHWInfo()));
-  action = actionCollection()->addAction("hide_kmixwindow");
-  action->setText(i18n("Hide Mixer Window"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
-  action->setShortcut(QKeySequence(Qt::Key_Escape));
-  action = actionCollection()->addAction("toggle_channels_currentview");
-  action->setText(i18n("Configure &Channels..."));
-  connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureCurrentView()));
-  action = actionCollection()->addAction("select_master");
-  action->setText(i18n("Select Master Channel..."));
-  connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
+	action = actionCollection()->addAction("hwinfo");
+	action->setText(i18n("Hardware &Information"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(slotHWInfo()));
+	action = actionCollection()->addAction("hide_kmixwindow");
+	action->setText(i18n("Hide Mixer Window"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
+	action->setShortcut(QKeySequence(Qt::Key_Escape));
+	action = actionCollection()->addAction("toggle_channels_currentview");
+	action->setText(i18n("Configure &Channels..."));
+	connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureCurrentView()));
+	action = actionCollection()->addAction("select_master");
+	action->setText(i18n("Select Master Channel..."));
+	connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
 
-  action = actionCollection()->addAction("save_1");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1));
-  action->setText(i18n("Save volume profile 1"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes1()));
+	action = actionCollection()->addAction("save_1");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1));
+	action->setText(i18n("Save volume profile 1"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes1()));
 
-  action = actionCollection()->addAction("save_2");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_2));
-  action->setText(i18n("Save volume profile 2"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes2()));
+	action = actionCollection()->addAction("save_2");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_2));
+	action->setText(i18n("Save volume profile 2"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes2()));
 
-  action = actionCollection()->addAction("save_3");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_3));
-  action->setText(i18n("Save volume profile 3"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes3()));
+	action = actionCollection()->addAction("save_3");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_3));
+	action->setText(i18n("Save volume profile 3"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes3()));
 
-  action = actionCollection()->addAction("save_4");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_4));
-  action->setText(i18n("Save volume profile 4"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes4()));
+	action = actionCollection()->addAction("save_4");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_4));
+	action->setText(i18n("Save volume profile 4"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes4()));
 
-  action = actionCollection()->addAction("load_1");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_1));
-  action->setText(i18n("Load volume profile 1"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes1()));
+	action = actionCollection()->addAction("load_1");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_1));
+	action->setText(i18n("Load volume profile 1"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes1()));
 
-  action = actionCollection()->addAction("load_2");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_2));
-  action->setText(i18n("Load volume profile 2"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes2()));
+	action = actionCollection()->addAction("load_2");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_2));
+	action->setText(i18n("Load volume profile 2"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes2()));
 
-  action = actionCollection()->addAction("load_3");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_3));
-  action->setText(i18n("Load volume profile 3"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes3()));
+	action = actionCollection()->addAction("load_3");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_3));
+	action->setText(i18n("Load volume profile 3"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes3()));
 
-  action = actionCollection()->addAction("load_4");
-  action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_4));
-  action->setText(i18n("Load volume profile 4"));
-  connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
+	action = actionCollection()->addAction("load_4");
+	action->setShortcut(KShortcut(Qt::CTRL + Qt::Key_4));
+	action->setText(i18n("Load volume profile 4"));
+	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
 
-  osdWidget = new OSDWidget();
+	osdWidget = new OSDWidget();
 
-  createGUI(QLatin1String("kmixui.rc"));
+	createGUI(QLatin1String("kmixui.rc"));
 }
 
-void
-KMixWindow::initActionsLate()
+void KMixWindow::initActionsLate()
 {
-  if (m_autouseMultimediaKeys)
-    {
-      KAction* globalAction = actionCollection()->addAction("increase_volume");
-      globalAction->setText(i18n("Increase Volume"));
-      globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
-      connect(globalAction, SIGNAL(triggered(bool)),
-          SLOT(slotIncreaseVolume()));
+	if (m_autouseMultimediaKeys)
+	{
+		KAction* globalAction = actionCollection()->addAction("increase_volume");
+		globalAction->setText(i18n("Increase Volume"));
+		globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeUp));
+		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
 
-      globalAction = actionCollection()->addAction("decrease_volume");
-      globalAction->setText(i18n("Decrease Volume"));
-      globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
-      connect(globalAction, SIGNAL(triggered(bool)),
-          SLOT(slotDecreaseVolume()));
+		globalAction = actionCollection()->addAction("decrease_volume");
+		globalAction->setText(i18n("Decrease Volume"));
+		globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeDown));
+		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
-      globalAction = actionCollection()->addAction("mute");
-      globalAction->setText(i18n("Mute"));
-      globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
-      connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
-    }
+		globalAction = actionCollection()->addAction("mute");
+		globalAction->setText(i18n("Mute"));
+		globalAction->setGlobalShortcut(KShortcut(Qt::Key_VolumeMute));
+		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
+	}
 }
 
-void
-KMixWindow::initActionsAfterInitMixer()
+void KMixWindow::initActionsAfterInitMixer()
 {
 	// Only show the new tab widget if Pulseaudio is not used. Hint: The Pulseaudio backend always
 	// runs with 4 fixed Tabs.
 	if (!Mixer::pulseaudioPresent())
-    {
-      QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar, IconSize(KIconLoader::Toolbar));
-      QPushButton* _cornerLabelNew = new QPushButton();
-      _cornerLabelNew->setIcon(cornerNewPM);
-      //cornerLabelNew->setSizePolicy(QSizePolicy());
-      m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
-      connect(_cornerLabelNew, SIGNAL(clicked()), SLOT (newView()));
-    }
+	{
+		QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar,
+				IconSize(KIconLoader::Toolbar));
+		QPushButton* _cornerLabelNew = new QPushButton();
+		_cornerLabelNew->setIcon(cornerNewPM);
+		//cornerLabelNew->setSizePolicy(QSizePolicy());
+		m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
+		connect(_cornerLabelNew, SIGNAL(clicked()), SLOT(newView()));
+	}
 }
 
-void
-KMixWindow::initPrefDlg()
+void KMixWindow::initPrefDlg()
 {
 	KMixPrefDlg* prefDlg = KMixPrefDlg::createInstance(this, GlobalConfig::instance());
 	connect(prefDlg, SIGNAL(kmixConfigHasChanged()), SLOT(applyPrefs()));
 }
 
-void
-KMixWindow::initWidgets()
+void KMixWindow::initWidgets()
 {
-  m_wsMixers = new KTabWidget();
-  m_wsMixers->setDocumentMode(true);
-  setCentralWidget(m_wsMixers);
-  m_wsMixers->setTabsClosable(false);
-  connect(m_wsMixers, SIGNAL(tabCloseRequested(int)),
-      SLOT(saveAndCloseView(int)));
+	m_wsMixers = new KTabWidget();
+	m_wsMixers->setDocumentMode(true);
+	setCentralWidget(m_wsMixers);
+	m_wsMixers->setTabsClosable(false);
+	connect(m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(saveAndCloseView(int)));
 
-  QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new",
-      KIconLoader::Toolbar, IconSize(KIconLoader::Small));
+	QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar,
+			IconSize(KIconLoader::Small));
 
-  connect(m_wsMixers, SIGNAL(currentChanged(int)), SLOT(newMixerShown(int)));
+	connect(m_wsMixers, SIGNAL(currentChanged(int)), SLOT(newMixerShown(int)));
 
-  // show menubar if the actions says so (or if the action does not exist)
-  menuBar()->setVisible(
-      (_actionShowMenubar == 0) || _actionShowMenubar->isChecked());
+	// show menubar if the actions says so (or if the action does not exist)
+	menuBar()->setVisible((_actionShowMenubar == 0) || _actionShowMenubar->isChecked());
 }
 
-void
-KMixWindow::setInitialSize()
+void KMixWindow::setInitialSize()
 {
-  KConfigGroup config(KGlobal::config(), "Global");
+	KConfigGroup config(KGlobal::config(), "Global");
 
-  // HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
-  // are disabled, so we disable them, get a decent sizehint and enable them
-  // back
-  m_wsMixers->setUsesScrollButtons(false);
-  QSize defSize = sizeHint();
-  m_wsMixers->setUsesScrollButtons(true);
-  QSize size = config.readEntry("Size", defSize);
-  if (!size.isEmpty())
-    resize(size);
+	// HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
+	// are disabled, so we disable them, get a decent sizehint and enable them
+	// back
+	m_wsMixers->setUsesScrollButtons(false);
+	QSize defSize = sizeHint();
+	m_wsMixers->setUsesScrollButtons(true);
+	QSize size = config.readEntry("Size", defSize);
+	if (!size.isEmpty())
+		resize(size);
 
-  QPoint defPos = pos();
-  QPoint pos = config.readEntry("Position", defPos);
-  move(pos);
+	QPoint defPos = pos();
+	QPoint pos = config.readEntry("Position", defPos);
+	move(pos);
 }
-
 
 void KMixWindow::removeDock()
 {
@@ -361,7 +340,7 @@ bool KMixWindow::updateDocking()
 {
 	GlobalConfigData& gcd = GlobalConfig::instance().data;
 
-	if ( !gcd.showDockWidget || Mixer::mixers().isEmpty())
+	if (!gcd.showDockWidget || Mixer::mixers().isEmpty())
 	{
 		removeDock();
 		return false;
@@ -372,20 +351,19 @@ bool KMixWindow::updateDocking()
 	}
 	return true;
 }
-void
-KMixWindow::saveConfig()
+void KMixWindow::saveConfig()
 {
-  saveBaseConfig();
-  saveViewConfig();
-  saveVolumes();
+	saveBaseConfig();
+	saveViewConfig();
+	saveVolumes();
 #ifdef __GNUC_
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
 
-  // TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
-  KGlobal::config()->sync();
-  kDebug()
-  << "Saved config ... sync finished";
+	// TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
+	KGlobal::config()->sync();
+	kDebug()
+	<< "Saved config ... sync finished";
 }
 
 void KMixWindow::saveBaseConfig()
@@ -427,15 +405,14 @@ void KMixWindow::saveViewConfig()
 	// The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
 	// Otherwise we would not save the Meta information (step -2- below for that mixer.
 	// We also do not save dynamic mixers (e.g. PulseAudio)
-	foreach ( Mixer* mixer, Mixer::mixers() )
+	foreach ( Mixer* mixer, Mixer::mixers() ){
+	if ( !mixer->isDynamic() )
 	{
-		if ( !mixer->isDynamic() )
-		{
-			mixerViews[mixer->id()]; // just insert a map entry
-		}
+		mixerViews[mixer->id()]; // just insert a map entry
 	}
+}
 
-	// -1- Save the views themselves
+// -1- Save the views themselves
 	for (int i = 0; i < m_wsMixers->count(); ++i)
 	{
 		QWidget *w = m_wsMixers->widget(i);
@@ -474,100 +451,95 @@ void KMixWindow::saveViewConfig()
  * Stores the volumes of all mixers  Can be restored via loadVolumes() or
  * the kmixctrl application.
  */
-void
-KMixWindow::saveVolumes()
+void KMixWindow::saveVolumes()
 {
-  saveVolumes(QString());
+	saveVolumes(QString());
 }
 
-void
-KMixWindow::saveVolumes(QString postfix)
+void KMixWindow::saveVolumes(QString postfix)
 {
-  const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
-  KConfig *cfg = new KConfig(kmixctrlRcFilename);
-  for (int i = 0; i < Mixer::mixers().count(); ++i)
-    {
-      Mixer *mixer = (Mixer::mixers())[i];
-      if (mixer->isOpen())
-        { // protect from unplugged devices (better do *not* save them)
-          mixer->volumeSave(cfg);
-        }
-    }
-  cfg->sync();
-  delete cfg;
-  kDebug()
-  << "Volume configuration saved";
+	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
+	KConfig *cfg = new KConfig(kmixctrlRcFilename);
+	for (int i = 0; i < Mixer::mixers().count(); ++i)
+	{
+		Mixer *mixer = (Mixer::mixers())[i];
+		if (mixer->isOpen())
+		{ // protect from unplugged devices (better do *not* save them)
+			mixer->volumeSave(cfg);
+		}
+	}
+	cfg->sync();
+	delete cfg;
+	kDebug()
+	<< "Volume configuration saved";
 }
 
-QString
-KMixWindow::getKmixctrlRcFilename(QString postfix)
+QString KMixWindow::getKmixctrlRcFilename(QString postfix)
 {
-  QString kmixctrlRcFilename("kmixctrlrc");
-  if (!postfix.isEmpty())
-    {
-      kmixctrlRcFilename.append(".").append(postfix);
-    }
-  return kmixctrlRcFilename;
+	QString kmixctrlRcFilename("kmixctrlrc");
+	if (!postfix.isEmpty())
+	{
+		kmixctrlRcFilename.append(".").append(postfix);
+	}
+	return kmixctrlRcFilename;
 }
 
-void
-KMixWindow::loadConfig()
+void KMixWindow::loadConfig()
 {
-  loadBaseConfig();
+	loadBaseConfig();
 
-  //loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
-  //loadVolumes(); // not in use
+	//loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
+	//loadVolumes(); // not in use
 
-  // create an initial snapshot, so we have a reference of the state before changes through the preferences dialog
-  configDataSnapshot = GlobalConfig::instance().data;
+	// create an initial snapshot, so we have a reference of the state before changes through the preferences dialog
+	configDataSnapshot = GlobalConfig::instance().data;
 }
 
-void
-KMixWindow::loadBaseConfig()
+void KMixWindow::loadBaseConfig()
 {
-  KConfigGroup config(KGlobal::config(), "Global");
+	KConfigGroup config(KGlobal::config(), "Global");
 
 //  GlobalConfig& gcfg = GlobalConfig::instance();
-  GlobalConfigData& gcd = GlobalConfig::instance().data;
+	GlobalConfigData& gcd = GlobalConfig::instance().data;
 
-  QList<QString> preferredMixersInSoundMenu;
-  preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
-  GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
+	QList<QString> preferredMixersInSoundMenu;
+	preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
+	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
 
-  setBeepOnVolumeChange(gcd.volumeFeedback);
-  m_startVisible = config.readEntry("Visible", false);
-  m_multiDriverMode = config.readEntry("MultiDriver", false);
-  m_defaultCardOnStart = config.readEntry("DefaultCardOnStart", "");
-  m_configVersion = config.readEntry("ConfigVersion", 0);
-  // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
-  // evaluated. Better only write that in saveBaseConfig()
-  m_autouseMultimediaKeys = config.readEntry("AutoUseMultimediaKeys", true);
-  QString mixerMasterCard = config.readEntry("MasterMixer", "");
-  QString masterDev = config.readEntry("MasterMixerDevice", "");
-  Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
-  QString mixerIgnoreExpression = config.readEntry("MixerIgnoreExpression",
-      "Modem");
-  MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
+	setBeepOnVolumeChange(gcd.volumeFeedback);
+	m_startVisible = config.readEntry("Visible", false);
+	m_multiDriverMode = config.readEntry("MultiDriver", false);
+	m_defaultCardOnStart = config.readEntry("DefaultCardOnStart", "");
+	m_configVersion = config.readEntry("ConfigVersion", 0);
+	// WARNING Don't overwrite m_configVersion with the "correct" value, before having it
+	// evaluated. Better only write that in saveBaseConfig()
+	m_autouseMultimediaKeys = config.readEntry("AutoUseMultimediaKeys", true);
+	QString mixerMasterCard = config.readEntry("MasterMixer", "");
+	QString masterDev = config.readEntry("MasterMixerDevice", "");
+	Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
+	QString mixerIgnoreExpression = config.readEntry("MixerIgnoreExpression", "Modem");
+	MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
 
-  // --- Advanced options, without GUI: START -------------------------------------
-  QString volumePercentageStepString = config.readEntry("VolumePercentageStep");
-  if (!volumePercentageStepString.isNull())
-    {
-      float volumePercentageStep = volumePercentageStepString.toFloat();
-      if (volumePercentageStep > 0 && volumePercentageStep <= 100)
-        Volume::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
-    }
+	// --- Advanced options, without GUI: START -------------------------------------
+	QString volumePercentageStepString = config.readEntry("VolumePercentageStep");
+	if (!volumePercentageStepString.isNull())
+	{
+		float volumePercentageStep = volumePercentageStepString.toFloat();
+		if (volumePercentageStep > 0 && volumePercentageStep <= 100)
+			Volume::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
+	}
 
-  // --- Advanced options, without GUI: END -------------------------------------
+	// --- Advanced options, without GUI: END -------------------------------------
 
-  m_backendFilter = config.readEntry<>("Backends", QList<QString>());
-  kDebug() << "Backends: " << m_backendFilter;
+	m_backendFilter = config.readEntry<>("Backends", QList<QString>());
+	kDebug()
+	<< "Backends: " << m_backendFilter;
 
-  // show/hide menu bar
-  bool showMenubar = config.readEntry("Menubar", true);
+	// show/hide menu bar
+	bool showMenubar = config.readEntry("Menubar", true);
 
-  if (_actionShowMenubar)
-    _actionShowMenubar->setChecked(showMenubar);
+	if (_actionShowMenubar)
+		_actionShowMenubar->setChecked(showMenubar);
 }
 
 /**
@@ -577,40 +549,35 @@ KMixWindow::loadBaseConfig()
  * execution of "kmixctrl --save"
  */
 
-void
-KMixWindow::loadVolumes()
+void KMixWindow::loadVolumes()
 {
-  loadVolumes(QString());
+	loadVolumes(QString());
 }
 
-void
-KMixWindow::loadVolumes(QString postfix)
+void KMixWindow::loadVolumes(QString postfix)
 {
-  kDebug()
-  << "About to load config (Volume)";
-  const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
+	kDebug()
+	<< "About to load config (Volume)";
+	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
 
-  KConfig *cfg = new KConfig(kmixctrlRcFilename);
-  for (int i = 0; i < Mixer::mixers().count(); ++i)
-    {
-      Mixer *mixer = (Mixer::mixers())[i];
-      mixer->volumeLoad(cfg);
-    }
-  delete cfg;
+	KConfig *cfg = new KConfig(kmixctrlRcFilename);
+	for (int i = 0; i < Mixer::mixers().count(); ++i)
+	{
+		Mixer *mixer = (Mixer::mixers())[i];
+		mixer->volumeLoad(cfg);
+	}
+	delete cfg;
 }
 
-
-void
-KMixWindow::recreateGUIwithSavingView()
+void KMixWindow::recreateGUIwithSavingView()
 {
 //  saveViewConfig();
-  recreateGUI(true);
+	recreateGUI(true);
 }
 
-void
-KMixWindow::recreateGUI(bool saveConfig)
+void KMixWindow::recreateGUI(bool saveConfig)
 {
-  recreateGUI(saveConfig, QString(), false);
+	recreateGUI(saveConfig, QString(), false);
 }
 
 /**
@@ -620,219 +587,215 @@ KMixWindow::recreateGUI(bool saveConfig)
  * @param forceNewTab To enforce opening a new tab, even when the profileList in the kmixrc is empty.
  *                    It should only be set to "true" in case of a Hotplug (because then the user definitely expects a new Tab to show).
  */
-void
-KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId,
-    bool forceNewTab)
+void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab)
 {
-  // -1- Remember which of the tabs is currently selected for restoration for re-insertion
-  int oldTabPosition = m_wsMixers->currentIndex();
+	// -1- Remember which of the tabs is currently selected for restoration for re-insertion
+	int oldTabPosition = m_wsMixers->currentIndex();
 
-  if (saveConfig)
-    saveViewConfig();  // save the state before recreating
+	if (saveConfig)
+		saveViewConfig();  // save the state before recreating
 
-  // -2- RECREATE THE ALREADY EXISTING TABS **********************************
-  QMap<Mixer*, bool> mixerHasProfile;
+	// -2- RECREATE THE ALREADY EXISTING TABS **********************************
+	QMap<Mixer*, bool> mixerHasProfile;
 
-  // -2a- Build a list of all active profiles in the main window (that means: from all tabs)
-  QList<GUIProfile*> activeGuiProfiles;
-  for (int i = 0; i < m_wsMixers->count(); ++i)
-    {
-      KMixerWidget* kmw = dynamic_cast<KMixerWidget*>(m_wsMixers->widget(i));
-      if (kmw)
-        {
-          activeGuiProfiles.append(kmw->getGuiprof());
-        }
-    }
+// -2a- Build a list of all active profiles in the main window (that means: from all tabs)
+	QList<GUIProfile*> activeGuiProfiles;
+	for (int i = 0; i < m_wsMixers->count(); ++i)
+	{
+		KMixerWidget* kmw = dynamic_cast<KMixerWidget*>(m_wsMixers->widget(i));
+		if (kmw)
+		{
+			activeGuiProfiles.append(kmw->getGuiprof());
+		}
+	}
 
-  // TODO The following loop is a bit buggy, as it iterates over all cached Profiles. But that is wrong for Tabs that got closed.
-  //       I need to loop over something else, e.g. a  profile list built from the currently open Tabs.
-  //       Or (if it that is easier) I might discard the Profile from the cache on "close-tab" (but that must also include unplug actions).
-  foreach( GUIProfile* guiprof, activeGuiProfiles){
-  KMixerWidget* kmw = findKMWforTab(guiprof->getId());
-  Mixer *mixer = Mixer::findMixer( guiprof->getMixerId() );
-  if ( mixer == 0 )
-    {
-      kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
-      continue;
-    }
-  mixerHasProfile[mixer] = true;
-  if ( kmw == 0 )
-    {
-      // does not yet exist => create
-      addMixerWidget(mixer->id(), guiprof->getId(), -1);
-    }
-  else
-    {
-      // did exist => remove and insert new guiprof at old position
-      int indexOfTab = m_wsMixers->indexOf(kmw);
-      if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
-      delete kmw;
-      addMixerWidget(mixer->id(), guiprof->getId(), indexOfTab);
-    }
+	// TODO The following loop is a bit buggy, as it iterates over all cached Profiles. But that is wrong for Tabs that got closed.
+	//       I need to loop over something else, e.g. a  profile list built from the currently open Tabs.
+	//       Or (if it that is easier) I might discard the Profile from the cache on "close-tab" (but that must also include unplug actions).
+	foreach ( GUIProfile* guiprof, activeGuiProfiles){
+	KMixerWidget* kmw = findKMWforTab(guiprof->getId());
+	Mixer *mixer = Mixer::findMixer( guiprof->getMixerId() );
+	if ( mixer == 0 )
+	{
+		kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
+		continue;
+	}
+	mixerHasProfile[mixer] = true;
+	if ( kmw == 0 )
+	{
+		// does not yet exist => create
+		addMixerWidget(mixer->id(), guiprof->getId(), -1);
+	}
+	else
+	{
+		// did exist => remove and insert new guiprof at old position
+		int indexOfTab = m_wsMixers->indexOf(kmw);
+		if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
+		delete kmw;
+		addMixerWidget(mixer->id(), guiprof->getId(), indexOfTab);
+	}
 } // Loop over all GUIProfile's
 
 // -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
-  KConfigGroup pconfig(KGlobal::config(), "Profiles");
-  foreach ( Mixer *mixer, Mixer::mixers()){
-  if ( mixerHasProfile.contains(mixer))
-    {
-      continue;  // OK, this mixer already has a profile => skip it
-    }
-  // No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
-  bool profileListHasKey = false;
-  QStringList profileList;
-  bool aProfileWasAddedSucesufully = false;
+	KConfigGroup pconfig(KGlobal::config(), "Profiles");
+	foreach ( Mixer *mixer, Mixer::mixers()){
+	if ( mixerHasProfile.contains(mixer))
+	{
+		continue;  // OK, this mixer already has a profile => skip it
+	}
+	// No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
+	bool profileListHasKey = false;
+	QStringList profileList;
+	bool aProfileWasAddedSucesufully = false;
 
-  if ( !mixer->isDynamic() )
-    {
-      // We do not support save profiles for dynamic mixers (i.e. PulseAudio)
+	if ( !mixer->isDynamic() )
+	{
+		// We do not support save profiles for dynamic mixers (i.e. PulseAudio)
 
-      profileListHasKey = pconfig.hasKey( mixer->id() );// <<< SHOULD be before the following line
-      profileList = pconfig.readEntry( mixer->id(), QStringList() );
+		profileListHasKey = pconfig.hasKey( mixer->id() );// <<< SHOULD be before the following line
+		profileList = pconfig.readEntry( mixer->id(), QStringList() );
 
-      foreach ( QString profileId, profileList)
-        {
-          // This handles the profileList form the kmixrc
-          kDebug() << "Now searching for profile: " << profileId;
-          GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
-          if ( guiprof != 0 )
-            {
-              addMixerWidget(mixer->id(), guiprof->getId(), -1);
-              aProfileWasAddedSucesufully = true;
-            }
-          else
-            {
-              kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
-            }
-        }
-    }
+		foreach ( QString profileId, profileList)
+		{
+			// This handles the profileList form the kmixrc
+			kDebug() << "Now searching for profile: " << profileId;
+			GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
+			if ( guiprof != 0 )
+			{
+				addMixerWidget(mixer->id(), guiprof->getId(), -1);
+				aProfileWasAddedSucesufully = true;
+			}
+			else
+			{
+				kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+			}
+		}
+	}
 
-  // The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
-  bool we_need_a_fallback = !aProfileWasAddedSucesufully;// we *possibly* want a fallback, if we couldn't add one
-  bool thisMixerShouldBeForced = forceNewTab && ( mixerId.isEmpty() || (mixer->id() == mixerId) );
-  we_need_a_fallback = we_need_a_fallback && ( thisMixerShouldBeForced || !profileListHasKey );// Additional requirement: "forced-tab-for-this-mixer" OR "no key stored in kmixrc yet"
-  if ( we_need_a_fallback )
-    {
-      // The profileList was empty or nothing could be loaded
-      //     (Hint: This means the user cannot hide a device completely
+	// The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
+	bool we_need_a_fallback = !aProfileWasAddedSucesufully;// we *possibly* want a fallback, if we couldn't add one
+	bool thisMixerShouldBeForced = forceNewTab && ( mixerId.isEmpty() || (mixer->id() == mixerId) );
+	we_need_a_fallback = we_need_a_fallback && ( thisMixerShouldBeForced || !profileListHasKey );// Additional requirement: "forced-tab-for-this-mixer" OR "no key stored in kmixrc yet"
+	if ( we_need_a_fallback )
+	{
+		// The profileList was empty or nothing could be loaded
+		//     (Hint: This means the user cannot hide a device completely
 
-      // Lets try a bunch of fallback strategies:
-      GUIProfile* guiprof = 0;
-      if ( !mixer->isDynamic() )
-        {
-          // We know that GUIProfile::find() will return 0 if the mixer is dynamic, so don't bother checking.
-          kDebug() << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
-          guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
-          if ( guiprof == 0 )
-            {
-              kDebug() << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
-              guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
-            }
-        }
-      if ( guiprof == 0)
-        {
-          kDebug() << "Using fallback GUI Profile for the mixer " << mixer->id();
-          // This means there is neither card specific nor card unspecific profile
-          // This is the case for some backends (as they don't ship profiles).
-          guiprof = GUIProfile::fallbackProfile(mixer);
-        }
+		// Lets try a bunch of fallback strategies:
+		GUIProfile* guiprof = 0;
+		if ( !mixer->isDynamic() )
+		{
+			// We know that GUIProfile::find() will return 0 if the mixer is dynamic, so don't bother checking.
+			kDebug() << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
+			guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
+			if ( guiprof == 0 )
+			{
+				kDebug() << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
+				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
+			}
+		}
+		if ( guiprof == 0)
+		{
+			kDebug() << "Using fallback GUI Profile for the mixer " << mixer->id();
+			// This means there is neither card specific nor card unspecific profile
+			// This is the case for some backends (as they don't ship profiles).
+			guiprof = GUIProfile::fallbackProfile(mixer);
+		}
 
-      if ( guiprof != 0 )
-        {
-          guiprof->setDirty();  // All fallback => dirty
-          addMixerWidget(mixer->id(), guiprof->getId(), -1);
-        }
-      else
-        {
-          kError() << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
-        }
+		if ( guiprof != 0 )
+		{
+			guiprof->setDirty();  // All fallback => dirty
+			addMixerWidget(mixer->id(), guiprof->getId(), -1);
+		}
+		else
+		{
+			kError() << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
+		}
 
-    }
+	}
 }
-  mixerHasProfile.clear();
+	mixerHasProfile.clear();
 
-  // -4- FINALIZE **********************************
-  if (m_wsMixers->count() > 0)
-    {
-      if (oldTabPosition >= 0)
-        {
-          m_wsMixers->setCurrentIndex(oldTabPosition);
-        }
-      bool dockingSucceded = updateDocking();
-      if (!dockingSucceded && !Mixer::mixers().empty())
-        {
-          show(); // avoid invisible and unaccessible main window
-        }
-    }
-  else
-    {
-      // No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
-      updateDocking();  // -<- removes the DockIcon
-      hide();
-    }
+	// -4- FINALIZE **********************************
+	if (m_wsMixers->count() > 0)
+	{
+		if (oldTabPosition >= 0)
+		{
+			m_wsMixers->setCurrentIndex(oldTabPosition);
+		}
+		bool dockingSucceded = updateDocking();
+		if (!dockingSucceded && !Mixer::mixers().empty())
+		{
+			show(); // avoid invisible and unaccessible main window
+		}
+	}
+	else
+	{
+		// No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
+		updateDocking();  // -<- removes the DockIcon
+		hide();
+	}
 
 }
 
 KMixerWidget*
 KMixWindow::findKMWforTab(const QString& kmwId)
 {
-  for (int i = 0; i < m_wsMixers->count(); ++i)
-    {
-      KMixerWidget* kmw = (KMixerWidget*) m_wsMixers->widget(i);
-      if (kmw->getGuiprof()->getId() == kmwId)
-        {
-          return kmw;
-        }
-    }
-  return 0;
+	for (int i = 0; i < m_wsMixers->count(); ++i)
+	{
+		KMixerWidget* kmw = (KMixerWidget*) m_wsMixers->widget(i);
+		if (kmw->getGuiprof()->getId() == kmwId)
+		{
+			return kmw;
+		}
+	}
+	return 0;
 }
 
-void
-KMixWindow::newView()
+void KMixWindow::newView()
 {
-  if (Mixer::mixers().empty())
-    {
-      kError() << "Trying to create a View, but no Mixer exists";
-      return; // should never happen
-    }
+	if (Mixer::mixers().empty())
+	{
+		kError() << "Trying to create a View, but no Mixer exists";
+		return; // should never happen
+	}
 
-  Mixer *mixer = Mixer::mixers()[0];
-  QPointer<DialogAddView> dav = new DialogAddView(this, mixer);
-  int ret = dav->exec();
+	Mixer *mixer = Mixer::mixers()[0];
+	QPointer<DialogAddView> dav = new DialogAddView(this, mixer);
+	int ret = dav->exec();
 
-  if (QDialog::Accepted == ret)
-    {
-      QString profileName = dav->getresultViewName();
-      QString mixerId = dav->getresultMixerId();
-      mixer = Mixer::findMixer(mixerId);
-      kDebug()
-      << ">>> mixer = " << mixerId << " -> " << mixer;
+	if (QDialog::Accepted == ret)
+	{
+		QString profileName = dav->getresultViewName();
+		QString mixerId = dav->getresultMixerId();
+		mixer = Mixer::findMixer(mixerId);
+		kDebug()
+		<< ">>> mixer = " << mixerId << " -> " << mixer;
 
-      GUIProfile* guiprof = GUIProfile::find(mixer, profileName, false, false);
-      if (guiprof == 0)
-        {
-          guiprof = GUIProfile::find(mixer, profileName, false, true);
-        }
+		GUIProfile* guiprof = GUIProfile::find(mixer, profileName, false, false);
+		if (guiprof == 0)
+		{
+			guiprof = GUIProfile::find(mixer, profileName, false, true);
+		}
 
-      if (guiprof == 0)
-        {
-          static const QString msg(
-              i18n("Cannot add view - GUIProfile is invalid."));
-          errorPopup(msg);
-        }
-      else
-        {
-          bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
-          if (ret == false)
-            {
-              errorPopup(i18n("View already exists. Cannot add View."));
-            }
-        }
+		if (guiprof == 0)
+		{
+			static const QString msg(i18n("Cannot add view - GUIProfile is invalid."));
+			errorPopup(msg);
+		}
+		else
+		{
+			bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
+			if (ret == false)
+			{
+				errorPopup(i18n("View already exists. Cannot add View."));
+			}
+		}
 
-      delete dav;
-    }
+		delete dav;
+	}
 
-  //kDebug() << "Exit";
+	//kDebug() << "Exit";
 }
 
 /**
@@ -840,131 +803,125 @@ KMixWindow::newView()
  *
  * @arg idx The index in the TabWidget
  */
-void
-KMixWindow::saveAndCloseView(int idx)
+void KMixWindow::saveAndCloseView(int idx)
 {
-  kDebug()
-  << "Enter";
-  QWidget *w = m_wsMixers->widget(idx);
-  KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
-  if (kmw)
-    {
-      kmw->saveConfig(KGlobal::config().data()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
-      m_wsMixers->removeTab(idx);
-      updateTabsClosable();
-      saveViewConfig();
-      delete kmw;
-    }
-  kDebug()
-  << "Exit";
+	kDebug()
+	<< "Enter";
+	QWidget *w = m_wsMixers->widget(idx);
+	KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
+	if (kmw)
+	{
+		kmw->saveConfig(KGlobal::config().data()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
+		m_wsMixers->removeTab(idx);
+		updateTabsClosable();
+		saveViewConfig();
+		delete kmw;
+	}
+	kDebug()
+	<< "Exit";
 }
 
-
-void
-KMixWindow::fixConfigAfterRead()
+void KMixWindow::fixConfigAfterRead()
 {
-  KConfigGroup grp(KGlobal::config(), "Global");
-  unsigned int configVersion = grp.readEntry("ConfigVersion", 0);
-  if (configVersion < 3)
-    {
-      // Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
-      // The group has been copied over by KMixToolBox::loadView() for all soundcards, so
-      // we should be fine now
-      QStringList cfgGroups = KGlobal::config()->groupList();
-      QStringListIterator it(cfgGroups);
-      while (it.hasNext())
-        {
-          QString groupName = it.next();
-          if (groupName.indexOf("View.Base.Base") == 0)
-            {
-              kDebug(67100)
-              << "Fixing group " << groupName;
-              KConfigGroup buggyDevgrpCG = KGlobal::config()->group(groupName);
-              buggyDevgrpCG.deleteGroup();
-            } // remove buggy group
-        } // for all groups
-    } // if config version < 3
+	KConfigGroup grp(KGlobal::config(), "Global");
+	unsigned int configVersion = grp.readEntry("ConfigVersion", 0);
+	if (configVersion < 3)
+	{
+		// Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
+		// The group has been copied over by KMixToolBox::loadView() for all soundcards, so
+		// we should be fine now
+		QStringList cfgGroups = KGlobal::config()->groupList();
+		QStringListIterator it(cfgGroups);
+		while (it.hasNext())
+		{
+			QString groupName = it.next();
+			if (groupName.indexOf("View.Base.Base") == 0)
+			{
+				kDebug(67100)
+				<< "Fixing group " << groupName;
+				KConfigGroup buggyDevgrpCG = KGlobal::config()->group(groupName);
+				buggyDevgrpCG.deleteGroup();
+			} // remove buggy group
+		} // for all groups
+	} // if config version < 3
 }
 
-void
-KMixWindow::plugged(const char* driverName, const QString& udi, QString& dev)
+void KMixWindow::plugged(const char* driverName, const QString& udi, QString& dev)
 {
-  kDebug()
-  << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
-  QString driverNameString;
-  driverNameString = driverName;
-  int devNum = dev.toInt();
-  Mixer *mixer = new Mixer(driverNameString, devNum);
-  if (mixer != 0)
-    {
-      kDebug()
-      << "Plugged: dev=" << dev << "\n";
-      MixerToolBox::instance()->possiblyAddMixer(mixer);
-      recreateGUI(true, mixer->id(), true);
-    }
+	kDebug()
+	<< "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
+	QString driverNameString;
+	driverNameString = driverName;
+	int devNum = dev.toInt();
+	Mixer *mixer = new Mixer(driverNameString, devNum);
+	if (mixer != 0)
+	{
+		kDebug()
+		<< "Plugged: dev=" << dev << "\n";
+		MixerToolBox::instance()->possiblyAddMixer(mixer);
+		recreateGUI(true, mixer->id(), true);
+	}
 }
 
-void
-KMixWindow::unplugged(const QString& udi)
+void KMixWindow::unplugged(const QString& udi)
 {
-  kDebug()
-  << "Unplugged: udi=" << udi << "\n";
-  for (int i = 0; i < Mixer::mixers().count(); ++i)
-    {
-      Mixer *mixer = (Mixer::mixers())[i];
-      //         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
-      if (mixer->udi() == udi)
-        {
-          kDebug() << "Unplugged Match: Removing udi=" << udi << "\n";
-          //KMixToolBox::notification("MasterFallback", "aaa");
-          bool globalMasterMixerDestroyed = (mixer == Mixer::getGlobalMasterMixer());
-          // Part 1) Remove Tab
-          for (int i = 0; i < m_wsMixers->count(); ++i)
-            {
-              QWidget *w = m_wsMixers->widget(i);
-              KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
-              if (kmw && kmw->mixer() == mixer)
-                {
-                  saveAndCloseView(i);
-                  i = -1; // Restart loop from scratch (indices are most likely invalidated at removeTab() )
-                }
-            }
-          MixerToolBox::instance()->removeMixer(mixer);
-          // Check whether the Global Master disappeared, and select a new one if necessary
-          shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-          if (globalMasterMixerDestroyed || md.get() == 0)
-            {
-              // We don't know what the global master should be now.
-              // So lets play stupid, and just select the recommended master of the first device
-              if (Mixer::mixers().count() > 0)
-                {
-                  shared_ptr<MixDevice> master =
-                      ((Mixer::mixers())[0])->getLocalMasterMD();
-                  if (master.get() != 0)
-                    {
-                      QString localMaster = master->id();
-                      Mixer::setGlobalMaster(((Mixer::mixers())[0])->id(), localMaster, false);
+	kDebug()
+	<< "Unplugged: udi=" << udi << "\n";
+	for (int i = 0; i < Mixer::mixers().count(); ++i)
+	{
+		Mixer *mixer = (Mixer::mixers())[i];
+		//         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
+		if (mixer->udi() == udi)
+		{
+			kDebug()
+			<< "Unplugged Match: Removing udi=" << udi << "\n";
+			//KMixToolBox::notification("MasterFallback", "aaa");
+			bool globalMasterMixerDestroyed = (mixer == Mixer::getGlobalMasterMixer());
+			// Part 1) Remove Tab
+			for (int i = 0; i < m_wsMixers->count(); ++i)
+			{
+				QWidget *w = m_wsMixers->widget(i);
+				KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
+				if (kmw && kmw->mixer() == mixer)
+				{
+					saveAndCloseView(i);
+					i = -1; // Restart loop from scratch (indices are most likely invalidated at removeTab() )
+				}
+			}
+			MixerToolBox::instance()->removeMixer(mixer);
+			// Check whether the Global Master disappeared, and select a new one if necessary
+			shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+			if (globalMasterMixerDestroyed || md.get() == 0)
+			{
+				// We don't know what the global master should be now.
+				// So lets play stupid, and just select the recommended master of the first device
+				if (Mixer::mixers().count() > 0)
+				{
+					shared_ptr<MixDevice> master = ((Mixer::mixers())[0])->getLocalMasterMD();
+					if (master.get() != 0)
+					{
+						QString localMaster = master->id();
+						Mixer::setGlobalMaster(((Mixer::mixers())[0])->id(), localMaster, false);
 
-                      QString text;
-                      text =
-                          i18n(
-                              "The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
-                              master->readableName(),
-                              ((Mixer::mixers())[0])->readableName());
-                      KMixToolBox::notification("MasterFallback", text);
-                    }
-                }
-            }
-          if (Mixer::mixers().count() == 0)
-            {
-              QString text;
-              text = i18n("The last soundcard was unplugged.");
-              KMixToolBox::notification("MasterFallback", text);
-            }
-          recreateGUI(true);
-          break;
-        }
-    }
+						QString text;
+						text =
+								i18n(
+										"The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
+										master->readableName(), ((Mixer::mixers())[0])->readableName());
+						KMixToolBox::notification("MasterFallback", text);
+					}
+				}
+			}
+			if (Mixer::mixers().count() == 0)
+			{
+				QString text;
+				text = i18n("The last soundcard was unplugged.");
+				KMixToolBox::notification("MasterFallback", text);
+			}
+			recreateGUI(true);
+			break;
+		}
+	}
 
 }
 
@@ -985,81 +942,78 @@ KMixWindow::unplugged(const QString& udi)
 /**
  *
  */
-bool
-KMixWindow::profileExists(QString guiProfileId)
+bool KMixWindow::profileExists(QString guiProfileId)
 {
-  for (int i = 0; i < m_wsMixers->count(); ++i)
-    {
-      KMixerWidget* kmw = dynamic_cast<KMixerWidget*>(m_wsMixers->widget(i));
-      if (kmw && kmw->getGuiprof()->getId() == guiProfileId)
-        return true;
-    }
-  return false;
+	for (int i = 0; i < m_wsMixers->count(); ++i)
+	{
+		KMixerWidget* kmw = dynamic_cast<KMixerWidget*>(m_wsMixers->widget(i));
+		if (kmw && kmw->getGuiprof()->getId() == guiProfileId)
+			return true;
+	}
+	return false;
 }
 
-bool
-KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition)
+bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition)
 {
-  kDebug() << "Add " << guiprofId;
-  GUIProfile* guiprof = GUIProfile::find(guiprofId);
-  if (guiprof != 0 && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
-    return false; // already present => don't add again
-  Mixer *mixer = Mixer::findMixer(mixer_ID);
-  if (mixer == 0)
-    return false; // no such Mixer
+	kDebug()
+	<< "Add " << guiprofId;
+	GUIProfile* guiprof = GUIProfile::find(guiprofId);
+	if (guiprof != 0 && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
+		return false; // already present => don't add again
+	Mixer *mixer = Mixer::findMixer(mixer_ID);
+	if (mixer == 0)
+		return false; // no such Mixer
 
-  //       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
-  ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-  if ((_actionShowMenubar == 0) || _actionShowMenubar->isChecked())
-    vflags |= ViewBase::MenuBarVisible;
-  if (GlobalConfig::instance().data.getToplevelOrientation() == Qt::Vertical)
-    vflags |= ViewBase::Horizontal;
-  else
-    vflags |= ViewBase::Vertical;
+	//       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
+	ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
+	if ((_actionShowMenubar == 0) || _actionShowMenubar->isChecked())
+		vflags |= ViewBase::MenuBarVisible;
+	if (GlobalConfig::instance().data.getToplevelOrientation() == Qt::Vertical)
+		vflags |= ViewBase::Horizontal;
+	else
+		vflags |= ViewBase::Vertical;
 
-  KMixerWidget *kmw = new KMixerWidget(mixer, this, vflags, guiprofId,
-      actionCollection());
-  /* A newly added mixer will automatically added at the top
-   * and thus the window title is also set appropriately */
+	KMixerWidget *kmw = new KMixerWidget(mixer, this, vflags, guiprofId, actionCollection());
+	/* A newly added mixer will automatically added at the top
+	 * and thus the window title is also set appropriately */
 
-  /*
-   * Skip the name from the profile for now. I would at least have to do the '&' quoting for the tab label. But I am
-   * also not 100% sure whether the current name from the profile is any good - it does (likely) not even contain the
-   * card ID. This means you cannot distinguish between cards with an identical name.
-   */
+	/*
+	 * Skip the name from the profile for now. I would at least have to do the '&' quoting for the tab label. But I am
+	 * also not 100% sure whether the current name from the profile is any good - it does (likely) not even contain the
+	 * card ID. This means you cannot distinguish between cards with an identical name.
+	 */
 //  QString tabLabel = guiprof->getName();
 //  if (tabLabel.isEmpty())
 //	  QString tabLabel = kmw->mixer()->readableName(true);
+	QString tabLabel = kmw->mixer()->readableName(true);
 
-  QString tabLabel = kmw->mixer()->readableName(true);
+	m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
 
-  m_dontSetDefaultCardOnStart = true; // inhibit implicit setting of m_defaultCardOnStart
+	if (insertPosition == -1)
+		m_wsMixers->addTab(kmw, tabLabel);
+	else
+		m_wsMixers->insertTab(insertPosition, kmw, tabLabel);
 
-  if (insertPosition == -1)
-    m_wsMixers->addTab(kmw, tabLabel);
-  else
-    m_wsMixers->insertTab(insertPosition, kmw, tabLabel);
+	if (kmw->getGuiprof()->getId() == m_defaultCardOnStart)
+	{
+		m_wsMixers->setCurrentWidget(kmw);
+	}
 
-  if (kmw->getGuiprof()->getId() == m_defaultCardOnStart)
-    {
-      m_wsMixers->setCurrentWidget(kmw);
-    }
+	updateTabsClosable();
+	m_dontSetDefaultCardOnStart = false;
 
-  updateTabsClosable();
-  m_dontSetDefaultCardOnStart = false;
-
-  kmw->loadConfig(KGlobal::config().data());
-  // Now force to read for new tabs, especially after hotplug. Note: Doing it here is bad design and possibly
-  // obsolete, as the backend should take care of upating itself.
-  kmw->mixer()->readSetFromHWforceUpdate();
-  return true;
+	kmw->loadConfig(KGlobal::config().data());
+	// Now force to read for new tabs, especially after hotplug. Note: Doing it here is bad design and possibly
+	// obsolete, as the backend should take care of upating itself.
+	kmw->mixer()->readSetFromHWforceUpdate();
+	return true;
 }
 
 void KMixWindow::updateTabsClosable()
 {
-    // Pulseaudio runs with 4 fixed tabs - don't allow to close them.
-    // Also do not allow to close the last view
-    m_wsMixers->setTabsClosable(!Mixer::pulseaudioPresent() && m_wsMixers->count() > 1);
+	// Pulseaudio runs with 4 fixed tabs - don't allow to close them.
+	// Also do not allow to close the last view
+	m_wsMixers->setTabsClosable(!Mixer::pulseaudioPresent() && m_wsMixers->count() > 1);
 }
 
 bool KMixWindow::queryClose()
@@ -1097,62 +1051,57 @@ void KMixWindow::hideOrClose()
 }
 
 // internal helper to prevent code duplication in slotIncreaseVolume and slotDecreaseVolume
-void
-KMixWindow::increaseOrDecreaseVolume(bool increase)
+void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
-  if (mixer == 0)
-    return; // e.g. when no soundcard is available
-  shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-  if (md.get() == 0)
-    return; // shouldn't happen, but lets play safe
+	Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
+	if (mixer == 0)
+		return; // e.g. when no soundcard is available
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	if (md.get() == 0)
+		return; // shouldn't happen, but lets play safe
 
-  Volume::VolumeTypeFlag volumeType = md->playbackVolume().hasVolume() ? Volume::Playback : Volume::Capture;
-  md->increaseOrDecreaseVolume(!increase, volumeType);
-  md->mixer()->commitVolumeChange(md);
+	Volume::VolumeTypeFlag volumeType = md->playbackVolume().hasVolume() ? Volume::Playback : Volume::Capture;
+	md->increaseOrDecreaseVolume(!increase, volumeType);
+	md->mixer()->commitVolumeChange(md);
 
-  showVolumeDisplay();
+	showVolumeDisplay();
 }
 
-void
-KMixWindow::slotIncreaseVolume()
+void KMixWindow::slotIncreaseVolume()
 {
-  increaseOrDecreaseVolume(true);
+	increaseOrDecreaseVolume(true);
 }
 
-void
-KMixWindow::slotDecreaseVolume()
+void KMixWindow::slotDecreaseVolume()
 {
-  increaseOrDecreaseVolume(false);
+	increaseOrDecreaseVolume(false);
 }
 
-void
-KMixWindow::showVolumeDisplay()
+void KMixWindow::showVolumeDisplay()
 {
-  Mixer* mixer = Mixer::getGlobalMasterMixer();
-  if (mixer == 0)
-    return; // e.g. when no soundcard is available
-  shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-  if (md.get() == 0)
-    return; // shouldn't happen, but lets play safe
-    
+	Mixer* mixer = Mixer::getGlobalMasterMixer();
+	if (mixer == 0)
+		return; // e.g. when no soundcard is available
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	if (md.get() == 0)
+		return; // shouldn't happen, but lets play safe
+
 // Current volume
- // Setting not required any more, as the OSD updates the volume level itself
+	// Setting not required any more, as the OSD updates the volume level itself
 //   Volume& vol = md->playbackVolume();
 //   osdWidget->setCurrentVolume(vol.getAvgVolumePercent(Volume::MALL),
 //       md->isMuted());
-  	if (GlobalConfig::instance().data.showOSD)
-  	{
-  		osdWidget->show();
-  		osdWidget->activateOSD(); //Enable the hide timer
+	if (GlobalConfig::instance().data.showOSD)
+	{
+		osdWidget->show();
+		osdWidget->activateOSD(); //Enable the hide timer
 	}
-  //Center the OSD
-  QRect rect = KApplication::kApplication()->desktop()->screenGeometry(
-      QCursor::pos());
-  QSize size = osdWidget->sizeHint();
-  int posX = rect.x() + (rect.width() - size.width()) / 2;
-  int posY = rect.y() + 4 * rect.height() / 5;
-  osdWidget->setGeometry(posX, posY, size.width(), size.height());
+	//Center the OSD
+	QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
+	QSize size = osdWidget->sizeHint();
+	int posX = rect.x() + (rect.width() - size.width()) / 2;
+	int posY = rect.y() + 4 * rect.height() / 5;
+	osdWidget->setGeometry(posX, posY, size.width(), size.height());
 }
 
 /**
@@ -1171,11 +1120,10 @@ void KMixWindow::slotMute()
 	showVolumeDisplay();
 }
 
-void
-KMixWindow::quit()
+void KMixWindow::quit()
 {
-  //     kDebug(67100) << "quit";
-  kapp->quit();
+	//     kDebug(67100) << "quit";
+	kapp->quit();
 }
 
 /**
@@ -1187,16 +1135,14 @@ void KMixWindow::showSettings()
 	KMixPrefDlg::getInstance()->show();
 }
 
-void
-KMixWindow::showHelp()
+void KMixWindow::showHelp()
 {
-  actionCollection()->action("help_contents")->trigger();
+	actionCollection()->action("help_contents")->trigger();
 }
 
-void
-KMixWindow::showAbout()
+void KMixWindow::showAbout()
 {
-  actionCollection()->action("help_about_app")->trigger();
+	actionCollection()->action("help_about_app")->trigger();
 }
 
 /**
@@ -1216,15 +1162,16 @@ void KMixWindow::applyPrefs()
 
 	bool toplevelOrientationHasChanged = config.getToplevelOrientation() != configBefore.getToplevelOrientation();
 	bool traypopupOrientationHasChanged = config.getTraypopupOrientation() != configBefore.getTraypopupOrientation();
-	kDebug() << "toplevelOrientationHasChanged=" << toplevelOrientationHasChanged <<
-		", config=" << config.getToplevelOrientation() << ", configBefore=" << configBefore.getToplevelOrientation();
-	kDebug() << "trayOrientationHasChanged=" << traypopupOrientationHasChanged <<
-		", config=" << config.getTraypopupOrientation() << ", configBefore=" << configBefore.getTraypopupOrientation();
+	kDebug()
+	<< "toplevelOrientationHasChanged=" << toplevelOrientationHasChanged << ", config="
+			<< config.getToplevelOrientation() << ", configBefore=" << configBefore.getToplevelOrientation();
+	kDebug()
+	<< "trayOrientationHasChanged=" << traypopupOrientationHasChanged << ", config=" << config.getTraypopupOrientation()
+			<< ", configBefore=" << configBefore.getTraypopupOrientation();
 
 	// -2- Determine what effect the changes have ------------------------------------------------------------------
 
-	if (dockwidgetHasChanged || toplevelOrientationHasChanged
-		|| traypopupOrientationHasChanged)
+	if (dockwidgetHasChanged || toplevelOrientationHasChanged || traypopupOrientationHasChanged)
 	{
 		// These might need a complete relayout => announce a ControlList change to rebuild everything
 		ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("Preferences Dialog"));
@@ -1234,7 +1181,6 @@ void KMixWindow::applyPrefs()
 		ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
 	}
 	// showOSD does not require any information. It reads on-the-fly from GlobalConfig.
-
 
 	// -3- Apply all changes ------------------------------------------------------------------
 
@@ -1260,68 +1206,59 @@ void KMixWindow::setBeepOnVolumeChange(bool beep)
 	Mixer::setBeepOnVolumeChange(beep);
 }
 
-void
-KMixWindow::toggleMenuBar()
+void KMixWindow::toggleMenuBar()
 {
-  menuBar()->setVisible(_actionShowMenubar->isChecked());
+	menuBar()->setVisible(_actionShowMenubar->isChecked());
 }
 
-void
-KMixWindow::slotHWInfo()
+void KMixWindow::slotHWInfo()
 {
-  KMessageBox::information(0, m_hwInfoString,
-      i18n("Mixer Hardware Information"));
+	KMessageBox::information(0, m_hwInfoString, i18n("Mixer Hardware Information"));
 }
 
-void
-KMixWindow::slotKdeAudioSetupExec()
+void KMixWindow::slotKdeAudioSetupExec()
 {
-  QStringList args;
-  args << "kcmshell4" << "kcm_phonon";
-  forkExec(args);
+	QStringList args;
+	args << "kcmshell4" << "kcm_phonon";
+	forkExec(args);
 }
 
-void
-KMixWindow::forkExec(const QStringList& args)
+void KMixWindow::forkExec(const QStringList& args)
 {
-  int pid = KProcess::startDetached(args);
-  if (pid == 0)
-    {
-      static const QString startErrorMessage(
-          i18n(
-              "The helper application is either not installed or not working."));
-      QString msg;
-      msg += startErrorMessage;
-      msg += "\n(";
-      msg += args.join(QLatin1String(" "));
-      msg += ')';
-      errorPopup(msg);
-    }
+	int pid = KProcess::startDetached(args);
+	if (pid == 0)
+	{
+		static const QString startErrorMessage(i18n("The helper application is either not installed or not working."));
+		QString msg;
+		msg += startErrorMessage;
+		msg += "\n(";
+		msg += args.join(QLatin1String(" "));
+		msg += ')';
+		errorPopup(msg);
+	}
 
 }
 
-void
-KMixWindow::errorPopup(const QString& msg)
+void KMixWindow::errorPopup(const QString& msg)
 {
-  QPointer<KDialog> dialog = new KDialog(this);
-  dialog->setButtons(KDialog::Ok);
-  dialog->setCaption(i18n("Error"));
-  QLabel* qlbl = new QLabel(msg);
-  dialog->setMainWidget(qlbl);
-  dialog->exec();
-  delete dialog;
-  kWarning() << msg;
+	QPointer<KDialog> dialog = new KDialog(this);
+	dialog->setButtons(KDialog::Ok);
+	dialog->setCaption(i18n("Error"));
+	QLabel* qlbl = new QLabel(msg);
+	dialog->setMainWidget(qlbl);
+	dialog->exec();
+	delete dialog;
+	kWarning() << msg;
 }
 
-void
-KMixWindow::slotConfigureCurrentView()
+void KMixWindow::slotConfigureCurrentView()
 {
-  KMixerWidget* mw = (KMixerWidget*) m_wsMixers->currentWidget();
-  ViewBase* view = 0;
-  if (mw)
-    view = mw->currentView();
-  if (view)
-    view->configureView();
+	KMixerWidget* mw = (KMixerWidget*) m_wsMixers->currentWidget();
+	ViewBase* view = 0;
+	if (mw)
+		view = mw->currentView();
+	if (view)
+		view->configureView();
 }
 
 void KMixWindow::slotSelectMasterClose(QObject*)
@@ -1334,14 +1271,15 @@ void KMixWindow::slotSelectMaster()
 	Mixer *mixer = Mixer::getGlobalMasterMixer();
 	if (mixer != 0)
 	{
-		if (!m_dsm) {
+		if (!m_dsm)
+		{
 			m_dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer(), this);
-                        connect(m_dsm, SIGNAL(destroyed(QObject*)), this, SLOT(slotSelectMasterClose(QObject*)));
+			connect(m_dsm, SIGNAL(destroyed(QObject*)), this, SLOT(slotSelectMasterClose(QObject*)));
 			m_dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-		        m_dsm->show();
+			m_dsm->show();
 		}
-                m_dsm->raise();
-                m_dsm->activateWindow();
+		m_dsm->raise();
+		m_dsm->activateWindow();
 	}
 	else
 	{
@@ -1349,28 +1287,26 @@ void KMixWindow::slotSelectMaster()
 	}
 }
 
-void
-KMixWindow::newMixerShown(int /*tabIndex*/)
+void KMixWindow::newMixerShown(int /*tabIndex*/)
 {
-  KMixerWidget* kmw = (KMixerWidget*) m_wsMixers->currentWidget();
-  if (kmw)
-    {
-      // I am using the app name as a PREFIX, as KMix is a single window app, and it is
-      // more helpful to the user to see "KDE Mixer" in a window list than a possibly cryptic
-      // soundcard name like "HDA ATI SB"
-      setWindowTitle(i18n("KDE Mixer") + " - " + kmw->mixer()->readableName());
-      if (!m_dontSetDefaultCardOnStart)
-        m_defaultCardOnStart = kmw->getGuiprof()->getId();
-      // As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
-      // It would lead to unnecesary flickering of the (complete) dock area.
+	KMixerWidget* kmw = (KMixerWidget*) m_wsMixers->currentWidget();
+	if (kmw)
+	{
+		// I am using the app name as a PREFIX, as KMix is a single window app, and it is
+		// more helpful to the user to see "KDE Mixer" in a window list than a possibly cryptic
+		// soundcard name like "HDA ATI SB"
+		setWindowTitle(i18n("KDE Mixer") + " - " + kmw->mixer()->readableName());
+		if (!m_dontSetDefaultCardOnStart)
+			m_defaultCardOnStart = kmw->getGuiprof()->getId();
+		// As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
+		// It would lead to unnecesary flickering of the (complete) dock area.
 
-      // We only show the "Configure Channels..." menu item if the mixer is not dynamic
-      ViewBase* view = kmw->currentView();
-      QAction* action = actionCollection()->action(
-          "toggle_channels_currentview");
-      if (view && action)
-        action->setVisible(!view->isDynamic());
-    }
+		// We only show the "Configure Channels..." menu item if the mixer is not dynamic
+		ViewBase* view = kmw->currentView();
+		QAction* action = actionCollection()->action("toggle_channels_currentview");
+		if (view && action)
+			action->setVisible(!view->isDynamic());
+	}
 }
 
 #include "kmix.moc"
