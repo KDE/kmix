@@ -74,6 +74,11 @@ int KMixApp::newInstance()
 
 		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		bool hasArgKeepvisibility = args->isSet("keepvisibility");
+		bool reset = args->isSet("failsafe");
+		if (reset)
+		{
+			kWarning() << "Reset cannot be performed while KMix is running. Please quit KMix and retry then.";
+		}
 
 		if (!hasArgKeepvisibility)
 		{
@@ -136,8 +141,10 @@ int KMixApp::newInstance()
 
 		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		bool hasArgKeepvisibility = args->isSet("keepvisibility");
+		bool reset = args->isSet("failsafe");
 
-		m_kmix = new KMixWindow(hasArgKeepvisibility);
+		m_kmix = new KMixWindow(hasArgKeepvisibility, reset);
+
 		restoreSessionIfApplicable();
 	}
 

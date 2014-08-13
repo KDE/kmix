@@ -78,13 +78,9 @@ int kdemain(int argc, char *argv[])
 
    KCmdLineOptions options;
    options.add("keepvisibility", ki18n("Inhibits the unhiding of the KMix main window, if KMix is already running."));
+   options.add("failsafe", ki18n("Starts KMix in failsafe mode."));
    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
    KUniqueApplication::addCmdLineOptions();
-
-//   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-//   bool hasArgKeepvisibility = args->isSet("keepvisibility");
-   //kDebug(67100) <<  "hasArgKeepvisibility=" << hasArgKeepvisibility;
-//   KMixApp::keepVisibility(hasArgKeepvisibility);
 
    if (!KMixApp::start())
        return 0;

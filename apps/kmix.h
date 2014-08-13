@@ -60,13 +60,13 @@ KMixWindow : public KXmlGuiWindow
    Q_OBJECT
 
   public:
-   KMixWindow(bool invisible);
+   KMixWindow(bool invisible, bool reset);
    ~KMixWindow();
 
   private:
    void saveBaseConfig();
    void saveViewConfig();
-   void loadConfig();
+   void loadAndInitConfig(bool reset);
    void loadBaseConfig();
 
    void initPrefDlg();
@@ -95,8 +95,8 @@ KMixWindow : public KXmlGuiWindow
    void saveVolumes(QString postfix);
    void saveConfig();
    virtual void applyPrefs();
-   void recreateGUI(bool saveView);
-   void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab);
+   void recreateGUI(bool saveView, bool reset);
+   void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab, bool reset);
    void recreateGUIwithSavingView();
    void newMixerShown(int tabIndex);
    void slotSelectMaster();

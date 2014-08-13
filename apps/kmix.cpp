@@ -86,7 +86,7 @@
  * Constructs a mixer window (KMix main window)
  */
 
-KMixWindow::KMixWindow(bool invisible) :
+KMixWindow::KMixWindow(bool invisible, bool reset) :
 		KXmlGuiWindow(0, Qt::WindowFlags(
 		KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
 		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
@@ -96,7 +96,7 @@ KMixWindow::KMixWindow(bool invisible) :
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
 	initActions(); // init actions first, so we can use them in the loadConfig() already
-	loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
+	loadAndInitConfig(reset); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
 	initActionsLate(); // init actions that require a loaded config
 	KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
 	initWidgets();
@@ -106,11 +106,11 @@ KMixWindow::KMixWindow(bool invisible) :
 	KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
 	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
-	recreateGUI(false);
+	recreateGUI(false, reset);
 	if (m_wsMixers->count() < 1)
 	{
 		// Something is wrong. Perhaps a hardware or driver or backend change. Let KMix search harder
-		recreateGUI(false, QString(), true);
+		recreateGUI(false, QString(), true, reset);
 	}
 
 	if (!kapp->isSessionRestored() ) // done by the session manager otherwise
@@ -508,9 +508,12 @@ QString KMixWindow::getKmixctrlRcFilename(QString postfix)
 	return kmixctrlRcFilename;
 }
 
-void KMixWindow::loadConfig()
+void KMixWindow::loadAndInitConfig(bool reset)
 {
-	loadBaseConfig();
+	if (!reset)
+	{
+		loadBaseConfig();
+	}
 
 	//loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
 	//loadVolumes(); // not in use
@@ -595,13 +598,12 @@ void KMixWindow::loadVolumes(QString postfix)
 
 void KMixWindow::recreateGUIwithSavingView()
 {
-//  saveViewConfig();
-	recreateGUI(true);
+	recreateGUI(true, false);
 }
 
-void KMixWindow::recreateGUI(bool saveConfig)
+void KMixWindow::recreateGUI(bool saveConfig, bool reset)
 {
-	recreateGUI(saveConfig, QString(), false);
+	recreateGUI(saveConfig, QString(), false, reset);
 }
 
 /**
@@ -611,12 +613,12 @@ void KMixWindow::recreateGUI(bool saveConfig)
  * @param forceNewTab To enforce opening a new tab, even when the profileList in the kmixrc is empty.
  *                    It should only be set to "true" in case of a Hotplug (because then the user definitely expects a new Tab to show).
  */
-void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab)
+void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab, bool reset)
 {
 	// -1- Remember which of the tabs is currently selected for restoration for re-insertion
 	int oldTabPosition = m_wsMixers->currentIndex();
 
-	if (saveConfig)
+	if (!reset && saveConfig)
 		saveViewConfig();  // save the state before recreating
 
 	// -2- RECREATE THE ALREADY EXISTING TABS **********************************
@@ -633,111 +635,142 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		}
 	}
 
-	// TODO The following loop is a bit buggy, as it iterates over all cached Profiles. But that is wrong for Tabs that got closed.
-	//       I need to loop over something else, e.g. a  profile list built from the currently open Tabs.
-	//       Or (if it that is easier) I might discard the Profile from the cache on "close-tab" (but that must also include unplug actions).
-	foreach ( GUIProfile* guiprof, activeGuiProfiles){
-	KMixerWidget* kmw = findKMWforTab(guiprof->getId());
-	Mixer *mixer = Mixer::findMixer( guiprof->getMixerId() );
-	if ( mixer == 0 )
+	foreach ( GUIProfile* guiprof, activeGuiProfiles)
 	{
-		kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
-		continue;
-	}
-	mixerHasProfile[mixer] = true;
-	if ( kmw == 0 )
-	{
-		// does not yet exist => create
-		addMixerWidget(mixer->id(), guiprof->getId(), -1);
-	}
-	else
-	{
-		// did exist => remove and insert new guiprof at old position
-		int indexOfTab = m_wsMixers->indexOf(kmw);
-		if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
-		delete kmw;
-		addMixerWidget(mixer->id(), guiprof->getId(), indexOfTab);
-	}
-} // Loop over all GUIProfile's
-
-// -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
-	KConfigGroup pconfig(KGlobal::config(), "Profiles");
-	foreach ( Mixer *mixer, Mixer::mixers()){
-	if ( mixerHasProfile.contains(mixer))
-	{
-		continue;  // OK, this mixer already has a profile => skip it
-	}
-	// No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
-	bool profileListHasKey = false;
-	QStringList profileList;
-	bool aProfileWasAddedSucesufully = false;
-
-	if ( !mixer->isDynamic() )
-	{
-		// We do not support save profiles for dynamic mixers (i.e. PulseAudio)
-
-		profileListHasKey = pconfig.hasKey( mixer->id() );// <<< SHOULD be before the following line
-		profileList = pconfig.readEntry( mixer->id(), QStringList() );
-
-		foreach ( QString profileId, profileList)
+		Mixer *mixer = Mixer::findMixer( guiprof->getMixerId() );
+		if ( mixer == 0 )
 		{
-			// This handles the profileList form the kmixrc
-			kDebug() << "Now searching for profile: " << profileId;
-			GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
+			kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
+			continue;
+		}
+		mixerHasProfile[mixer] = true;
+
+		KMixerWidget* kmw = findKMWforTab(guiprof->getId());
+		if ( kmw == 0 )
+		{
+			// does not yet exist => create
+			addMixerWidget(mixer->id(), guiprof->getId(), -1);
+		}
+		else
+		{
+			// did exist => remove and insert new guiprof at old position
+			int indexOfTab = m_wsMixers->indexOf(kmw);
+			if ( indexOfTab != -1 ) m_wsMixers->removeTab(indexOfTab);
+			delete kmw;
+			addMixerWidget(mixer->id(), guiprof->getId(), indexOfTab);
+		}
+	} // Loop over all GUIProfile's
+
+
+
+	// -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
+	KConfigGroup pconfig(KGlobal::config(), "Profiles");
+	foreach ( Mixer *mixer, Mixer::mixers())
+	{
+		if ( mixerHasProfile.contains(mixer))
+		{
+			continue;  // OK, this mixer already has a profile => skip it
+		}
+
+
+		// =========================================================================================
+		// No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
+
+		{
+			GUIProfile* guiprof = 0;
+			if (reset)
+			{
+				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
+			}
+			else if (mixer->isDynamic())
+			{
+				guiprof = GUIProfile::fallbackProfile(mixer);
+			}
 			if ( guiprof != 0 )
 			{
+				guiprof->setDirty();  // All fallback => dirty
 				addMixerWidget(mixer->id(), guiprof->getId(), -1);
-				aProfileWasAddedSucesufully = true;
-			}
-			else
-			{
-				kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+				continue;
 			}
 		}
-	}
 
-	// The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
-	bool we_need_a_fallback = !aProfileWasAddedSucesufully;// we *possibly* want a fallback, if we couldn't add one
-	bool thisMixerShouldBeForced = forceNewTab && ( mixerId.isEmpty() || (mixer->id() == mixerId) );
-	we_need_a_fallback = we_need_a_fallback && ( thisMixerShouldBeForced || !profileListHasKey );// Additional requirement: "forced-tab-for-this-mixer" OR "no key stored in kmixrc yet"
-	if ( we_need_a_fallback )
-	{
-		// The profileList was empty or nothing could be loaded
-		//     (Hint: This means the user cannot hide a device completely
 
-		// Lets try a bunch of fallback strategies:
-		GUIProfile* guiprof = 0;
-		if ( !mixer->isDynamic() )
+		// =========================================================================================
+		// The trivial cases have not added anything => Look at [Profiles] in config file
+
+		QStringList	profileList = pconfig.readEntry( mixer->id(), QStringList() );
+		bool allProfilesRemovedByUser = pconfig.hasKey(mixer->id()) && profileList.isEmpty();
+		if (allProfilesRemovedByUser)
 		{
-			// We know that GUIProfile::find() will return 0 if the mixer is dynamic, so don't bother checking.
+			continue; // User has explicitly hidden the views => do no further checks
+		}
+
+		{
+			bool atLeastOneProfileWasAdded = false;
+
+			foreach ( QString profileId, profileList)
+			{
+				// This handles the profileList form the kmixrc
+				kDebug() << "Now searching for profile: " << profileId;
+				GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
+				if ( guiprof != 0 )
+				{
+					addMixerWidget(mixer->id(), guiprof->getId(), -1);
+					atLeastOneProfileWasAdded = true;
+				}
+				else
+				{
+					kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+				}
+			}
+
+			if (atLeastOneProfileWasAdded)
+			{
+				// Continue
+				continue;
+			}
+		}
+
+		// =========================================================================================
+		// Neither trivial cases have added something, nor the anything => Look at [Profiles] in config file
+
+		// The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
+		bool mixerIdMatch = mixerId.isEmpty() || (mixer->id() == mixerId);
+		bool thisMixerShouldBeForced = forceNewTab && mixerIdMatch;
+		bool we_need_a_fallback = mixerIdMatch && thisMixerShouldBeForced;
+		if ( we_need_a_fallback )
+		{
+			// The profileList was empty or nothing could be loaded
+			//     (Hint: This means the user cannot hide a device completely
+
+			// Lets try a bunch of fallback strategies:
 			kDebug() << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
-			guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
+			GUIProfile* guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
 			if ( guiprof == 0 )
 			{
 				kDebug() << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
 				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
 			}
-		}
-		if ( guiprof == 0)
-		{
-			kDebug() << "Using fallback GUI Profile for the mixer " << mixer->id();
-			// This means there is neither card specific nor card unspecific profile
-			// This is the case for some backends (as they don't ship profiles).
-			guiprof = GUIProfile::fallbackProfile(mixer);
-		}
+			if ( guiprof == 0)
+			{
+				kDebug() << "Using fallback GUI Profile for the mixer " << mixer->id();
+				// This means there is neither card specific nor card unspecific profile
+				// This is the case for some backends (as they don't ship profiles).
+				guiprof = GUIProfile::fallbackProfile(mixer);
+			}
 
-		if ( guiprof != 0 )
-		{
-			guiprof->setDirty();  // All fallback => dirty
-			addMixerWidget(mixer->id(), guiprof->getId(), -1);
-		}
-		else
-		{
-			kError() << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
-		}
+			if ( guiprof != 0 )
+			{
+				guiprof->setDirty();  // All fallback => dirty
+				addMixerWidget(mixer->id(), guiprof->getId(), -1);
+			}
+			else
+			{
+				kError() << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
+			}
 
+		}
 	}
-}
 	mixerHasProfile.clear();
 
 	// -4- FINALIZE **********************************
@@ -883,7 +916,7 @@ void KMixWindow::plugged(const char* driverName, const QString& udi, QString& de
 		kDebug()
 		<< "Plugged: dev=" << dev << "\n";
 		MixerToolBox::instance()->possiblyAddMixer(mixer);
-		recreateGUI(true, mixer->id(), true);
+		recreateGUI(true, mixer->id(), true, false);
 	}
 }
 
@@ -942,7 +975,7 @@ void KMixWindow::unplugged(const QString& udi)
 				text = i18n("The last soundcard was unplugged.");
 				KMixToolBox::notification("MasterFallback", text);
 			}
-			recreateGUI(true);
+			recreateGUI(true, false);
 			break;
 		}
 	}
