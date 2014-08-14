@@ -78,19 +78,12 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
  */
 KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    KDEDModule(parent),
-   m_multiDriverMode (false), // -<- I never-ever want the multi-drivermode to be activated by accident
-   m_dontSetDefaultCardOnStart (false)
+   m_multiDriverMode (false) // -<- I never-ever want the multi-drivermode to be activated by accident
 {
     setObjectName( QLatin1String("KMixD" ));
-    // disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
-    //setAttribute(Qt::WA_DeleteOnClose, false);
-
 	GlobalConfig::init();
-
 	kWarning() << "kmixd: Triggering delayed initialization";
-
 	QTimer::singleShot( 3000, this, SLOT(delayedInitialization()));
-	
 }
 
 /**
@@ -141,9 +134,7 @@ void KMixD::saveBaseConfig()
    kDebug() << "About to save config (Base)";
    KConfigGroup config(KGlobal::config(), "Global");
 
-   config.writeEntry( "DefaultCardOnStart", m_defaultCardOnStart );
    config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
-   config.writeEntry( "AutoUseMultimediaKeys", m_autouseMultimediaKeys );
    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
    if ( mixerMasterCard != 0 ) {
       config.writeEntry( "MasterMixer", mixerMasterCard->id() );
@@ -170,11 +161,9 @@ void KMixD::loadBaseConfig()
     KConfigGroup config(KGlobal::config(), "Global");
 
    m_multiDriverMode = config.readEntry("MultiDriver", false);
-   m_defaultCardOnStart = config.readEntry( "DefaultCardOnStart", "" );
    m_configVersion = config.readEntry( "ConfigVersion", 0 );
    // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
    // evaluated. Better only write that in saveBaseConfig()
-   m_autouseMultimediaKeys = config.readEntry( "AutoUseMultimediaKeys", true ); // currently not in use in kmixd
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
    //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {

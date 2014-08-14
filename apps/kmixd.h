@@ -67,12 +67,10 @@ KMixD : public KDEDModule, protected QDBusContext
   public slots:
 
   private:
-   bool m_multiDriverMode;         // Not officially supported.
-   bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
+   bool m_multiDriverMode;
 
    QString m_hwInfoString;
    QString m_defaultCardOnStart;
-   bool m_dontSetDefaultCardOnStart;
    unsigned int m_configVersion;
    QList<QString> m_backendFilter;
 
