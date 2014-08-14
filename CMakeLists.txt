@@ -40,6 +40,8 @@ include(KDECMakeSettings)
 find_package(KF5 REQUIRED COMPONENTS I18n Init Config GlobalAccel KDELibs4Support)
 # find_package(KF5Solid NO_MODULE) : added according to http://api.kde.org/frameworks-api/frameworks5-apidocs/solid/html/index.html
 #find_package(KF5Solid NO_MODULE)
+find_package(KF5ConfigWidgets)
+find_package(KF5IconThemes)
 find_package(Qt5 REQUIRED COMPONENTS Core DBus Gui Widgets)
 #include(KF5InitMacros)
 
@@ -136,6 +138,10 @@ endif (CANBERRA_FOUND)
 #if (KMIX_KF5_BUILD)
 #   message( WARNING, "Skipping kmix_adaptor_SRCS due to missing qt4_add_dbus_adaptor  ... KMix will NOT compile until this is fixed!!!" )
 
+
+####################################################################################################
+########### definitions: DBUSADAPTOR ###############################################################
+####################################################################################################
 set(kmix_adaptor_SRCS
 	dbus/dbusmixerwrapper.cpp
 	dbus/dbusmixsetwrapper.cpp
@@ -157,6 +163,9 @@ qt4_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
 endif()
 
 
+####################################################################################################
+########### definitions: backends ##################################################################
+####################################################################################################
 set(kmix_backend_SRCS
    backends/mixer_backend.cpp
    backends/mixer_mpris2.cpp
@@ -171,6 +180,12 @@ if (PULSEAUDIO_FOUND)
   set(kmix_backend_SRCS ${kmix_backend_SRCS}
       backends/mixer_pulse.cpp )
 endif (PULSEAUDIO_FOUND)
+
+
+
+####################################################################################################
+########### next target : kmix #####################################################################
+####################################################################################################
 
 if (NOT KMIX_KF5_BUILD)
 	set( kmix_OSD_SRCS gui/osdwidget.cpp )
@@ -215,10 +230,8 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    )
 
 if (KMIX_KF5_BUILD)
-#   message( WARNING, "Skipping kdeinit_executable due to missing KF5_ADD_KDEINIT_EXECUTABLE  ... KMix will NOT compile until this is fixed!!!" )
    kf5_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
-  #target_link_libraries( KF5::UI KF5::Plasma  Qt5:XML KF5::Phonon)
-   target_link_libraries(kdeinit_kmix KF5::I18n KF5::ConfigCore KF5::ConfigGui KF5::Solid KF5::KDELibs4Support Qt5::Core Qt5::Widgets Qt5::DBus Qt5::Xml)
+   target_link_libraries(kdeinit_kmix KF5::I18n KF5::ConfigCore KF5::ConfigGui KF5::ConfigWidgets KF5::IconThemes KF5::GlobalAccel KF5::KDELibs4Support Qt5::Core Qt5::Widgets Qt5::DBus Qt5::Xml)
 else()
   kde4_add_kdeinit_executable( kmix ${kmix_KDEINIT_SRCS})
   target_link_libraries(kdeinit_kmix ${KDE4_SOLID_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
@@ -242,7 +255,12 @@ install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 target_link_libraries( kmix kdeinit_kmix )
 install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-########### next target ###############
+
+
+
+####################################################################################################
+########### next target : kmixd ####################################################################
+####################################################################################################
 
  set(kded_kmixd_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
     apps/kmixd.cpp 
@@ -294,7 +312,11 @@ install(TARGETS kded_kmixd DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install( FILES kmixd.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded )
 
-########### next target ###############
+
+
+####################################################################################################
+########### next target : kmixctrl #################################################################
+####################################################################################################
 
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/kmixctrl.cpp 
@@ -344,6 +366,11 @@ if (!KMIX_KF5_BUILD)
   add_subdirectory( plasma )
 endif()
 
+
+
+####################################################################################################
+########### INSTALL RULES ##########################################################################
+####################################################################################################
 install( TARGETS kdeinit_kmixctrl  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmixctrl kdeinit_kmixctrl )

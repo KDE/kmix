@@ -27,6 +27,7 @@
 
 // KDE
 #include <kaction.h>
+#include <kicon.h>
 #include <kmenu.h>
 #include <klocale.h>
 #include <kiconloader.h>

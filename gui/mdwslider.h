@@ -152,7 +152,7 @@ private:
 		QBoxLayout* layoutForCapture, const QString& captureTooltipText);
 	void guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, QBoxLayout* layoutForMuteButton, const QString& muteTooltipText);
 	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout, const QString& tooltipText);
-	void addGlobalShortcut(KAction* action, const QString& label, bool dynamicControl);
+	void addGlobalShortcut(QAction* action, const QString& label, bool dynamicControl);
 
     bool m_linked;
 

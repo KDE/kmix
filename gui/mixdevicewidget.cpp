@@ -34,7 +34,7 @@
 #include <qcursor.h>
 #include <QMouseEvent>
 #include <qpixmap.h>
-#include <qwmatrix.h>
+//#include <qwmatrix.h>
 
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"

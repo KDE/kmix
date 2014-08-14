@@ -27,6 +27,7 @@
 
 #include <kcombobox.h>
 #include <kdebug.h>
+#include <kiconloader.h>
 #include <klocale.h>
 
 #include "core/ControlManager.h"

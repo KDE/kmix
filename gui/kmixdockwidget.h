@@ -23,12 +23,14 @@
 #ifndef KMIXDOCKWIDGET_H
 #define KMIXDOCKWIDGET_H
 
+class QAction;
 class QString;
 class QWidgetAction;
 
 class KToggleAction;
 #include <kstatusnotifieritem.h>
 
+class KMenu;
 class KMixWindow;
 class Mixer;
 #include "core/mixdevice.h"
@@ -70,6 +72,7 @@ class KMixDockWidget : public KStatusNotifierItem
 	bool onlyHaveOneMouseButtonAction();
    void refreshVolumeLevels();
    void updateDockMuteAction ( KToggleAction* dockMuteAction );
+   QAction* findAction(const char* actionName);
 
  private slots:
    void dockMute();

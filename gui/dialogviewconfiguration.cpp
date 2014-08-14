@@ -32,6 +32,8 @@
 
 #include <kdebug.h>
 #include <kdialog.h>
+#include <kicon.h>
+#include <KIconLoader>
 #include <klocale.h>
 #include <kvbox.h>
 

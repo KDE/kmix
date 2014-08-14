@@ -34,6 +34,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdialog.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <kwindowsystem.h>
 

@@ -25,7 +25,10 @@
 #include <QString>
 
 //#include <kdebug.h>
+#include <KComponentData>
+#include <kglobal.h>
 #include <kglobalaccel.h>
+#include <kiconloader.h>
 #include <klocale.h>
 #include <knotification.h>
 

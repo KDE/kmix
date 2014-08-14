@@ -60,9 +60,14 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 {
 	setFaceType(KPageDialog::List);
 	//setCaption(i18n("Configure"));
+
+#ifdef X_KMIX_KF5_BUILD
+#warning KMixPrefDlgnNeeds to be migrated to KF5 for buttons
+#else
 	setButtons(Ok | Cancel | Apply);
 
 	setDefaultButton(Ok);
+#endif
 
 	dvc = 0;
 	dvcSpacerBelow = 0;
@@ -77,7 +82,11 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	createControlsTab();
 	updateWidgets(); // I thought KConfigDialog would call this, but I saw during a gdb session that it does not do so.
 
+#ifdef X_KMIX_KF5_BUILD
+#warning KMixPrefDlgnNeeds to be migrated to KF5 for buttons
+#else
 	showButtonSeparator(true);
+#endif
 
 	generalPage = addPage(m_generalTab, i18n("General"), "configure");
 	startupPage = addPage(m_startupTab, i18n("Start"), "preferences-system-login");
@@ -408,7 +417,11 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	}
 	allowAutostart->setEnabled(autostartFileExists);
 
+#ifdef X_KMIX_KF5_BUILD
+	KConfigDialog::showEvent(event);
+#else
 	KDialog::showEvent(event);
+#endif
 }
 
 

@@ -42,7 +42,6 @@
 #include <ktoggleaction.h>
 #include <kapplication.h>
 #include <kstandardaction.h>
-#include <kmenu.h>
 #include <khelpmenu.h>
 #include <kdebug.h>
 #include <kxmlguifactory.h>
@@ -75,7 +74,7 @@
 
 #ifdef X_KMIX_KF5_BUILD
 #define CLASS_Action QAction
-#inlcude <QKeySequence>
+#include <QKeySequence>
 #define CLASS_KShortcut QKeySequence
 #else
 #define CLASS_Action KAction
@@ -267,7 +266,6 @@ void KMixWindow::initActionsLate()
 		globalAction->setText(i18n("Increase Volume"));
 
 #ifdef X_KMIX_KF5_BUILD
-		QKeySequence* seq  = new QKeySequence(Qt::Key_VolumeUp);
 		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeUp);
 #else
 		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeUp));
@@ -277,12 +275,20 @@ void KMixWindow::initActionsLate()
 
 		globalAction = actionCollection()->addAction("decrease_volume");
 		globalAction->setText(i18n("Decrease Volume"));
+#ifdef X_KMIX_KF5_BUILD
+		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeDown);
+#else
 		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeDown));
+#endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
 		globalAction = actionCollection()->addAction("mute");
 		globalAction->setText(i18n("Mute"));
+#ifdef X_KMIX_KF5_BUILD
+		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeMute);
+#else
 		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeMute));
+#endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
 	}
 }
@@ -328,7 +334,11 @@ void KMixWindow::initWidgets()
 
 void KMixWindow::setInitialSize()
 {
+#ifdef X_KMIX_KF5_BUILD
+	KConfigGroup config(KSharedConfig::openConfig(), "Global");
+#else
 	KConfigGroup config(KGlobal::config(), "Global");
+#endif
 
 	// HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
 	// are disabled, so we disable them, get a decent sizehint and enable them

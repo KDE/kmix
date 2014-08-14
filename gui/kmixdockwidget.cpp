@@ -34,6 +34,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDesktopWidget>
+#include <QAction>
 #include <QApplication>
 #include <QTextDocument>
 
@@ -105,7 +106,7 @@ void KMixDockWidget::controlsChange(int changeType)
 //      _kmixMainWindow->updateDocking();
 //      _kmixMainWindow->saveConfig();
       refreshVolumeLevels();
-      actionCollection()->action(QLatin1String("select_master"))->setEnabled(Mixer::getGlobalMasterMixer() != 0);
+      findAction("select_master")->setEnabled(Mixer::getGlobalMasterMixer() != 0);
       break;
 
     case ControlChangeType::Volume:
@@ -115,6 +116,23 @@ void KMixDockWidget::controlsChange(int changeType)
     default:
       ControlManager::warnUnexpectedChangeType(type, this);
   }
+}
+
+QAction* KMixDockWidget::findAction(const char* actionName)
+{
+#ifdef X_KMIX_KF5_BUILD
+	QList<QAction*> actions = actionCollection();
+	int size = actions.size();
+	for (int i=0; i<size; ++i)
+	{
+		QAction* action = actions.at(i);
+		if (action->text() == actionName)
+			return action;
+	}
+	return 0;
+#else
+	return actionCollection()->action(QLatin1String(actionName));
+#endif
 }
 
 /**
@@ -138,15 +156,25 @@ void KMixDockWidget::createMenuActions()
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     if ( md.get() != 0 && md->hasMuteSwitch() ) {
         // Put "Mute" selector in context menu
-        KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
-        updateDockMuteAction(action);
+#ifdef X_KMIX_KF5_BUILD
+    	KToggleAction *action = new KToggleAction("dock_mute", 0);
+    	actionCollection().append(action);
+#else
+    	KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
+#endif
+    	updateDockMuteAction(action);
         action->setText( i18n( "M&ute" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT(dockMute()));
         menu->addAction( action );
     }
 
     // Put "Select Master Channel" dialog in context menu
+#ifdef X_KMIX_KF5_BUILD
+    	KToggleAction *action = new KToggleAction("select_master", 0);
+    	actionCollection().append(action);
+#else
     QAction *action = actionCollection()->addAction( "select_master" );
+#endif
     action->setText( i18n("Select Master Channel...") );
     action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
     connect(action, SIGNAL(triggered(bool)), _kmixMainWindow, SLOT(slotSelectMaster()));
@@ -368,7 +396,7 @@ bool KMixDockWidget::onlyHaveOneMouseButtonAction()
 void KMixDockWidget::contextMenuAboutToShow()
 {
     // Enable/Disable "Muted" menu item
-    KToggleAction *dockMuteAction = static_cast<KToggleAction*>(actionCollection()->action("dock_mute"));
+    KToggleAction *dockMuteAction = static_cast<KToggleAction*>(findAction("dock_mute"));
     updateDockMuteAction(dockMuteAction);
 }
 

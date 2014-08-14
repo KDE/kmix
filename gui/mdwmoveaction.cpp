@@ -20,8 +20,12 @@
  */
 
 
-//KMix
 #include "mdwmoveaction.h"
+
+// KDE
+#include <kicon.h>
+
+//KMix
 #include "core/mixdevice.h"
 
 // Qt

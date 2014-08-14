@@ -39,7 +39,7 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <qpixmap.h>
-#include <qwmatrix.h>
+//#include <qwmatrix.h>
 #include <QBoxLayout>
 
 #include "core/ControlManager.h"
@@ -103,7 +103,7 @@ void MDWSlider::createActions()
     taction->setText( i18n("&Split Channels") );
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
-    KAction *action;
+//    KAction *action;
 //    if ( ! m_mixdevice->mixer()->isDynamic() ) {
 //        action = _mdwActions->add<KToggleAction>( "hide" );
 //        action->setText( i18n("&Hide") );
@@ -128,17 +128,17 @@ void MDWSlider::createActions()
         connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
 
-    action = _mdwActions->addAction( "keys" );
-    action->setText( i18n("C&onfigure Shortcuts...") );
-    connect( action, SIGNAL(triggered(bool)), SLOT(defineKeys()) );
+    QAction* qaction = _mdwActions->addAction( "keys" );
+    qaction->setText( i18n("C&onfigure Shortcuts...") );
+    connect( qaction, SIGNAL(triggered(bool)), SLOT(defineKeys()) );
 }
 
-void MDWSlider::addGlobalShortcut(KAction* action, const QString& label, bool dynamicControl)
+void MDWSlider::addGlobalShortcut(QAction* qaction, const QString& label, bool dynamicControl)
 {
 	QString finalLabel(label);
 	finalLabel += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
 
-	action->setText(label);
+	qaction->setText(label);
 	if (!dynamicControl)
 	{
 		// virtual / dynamic controls won't get shortcuts
@@ -147,7 +147,12 @@ void MDWSlider::addGlobalShortcut(KAction* action, const QString& label, bool dy
 		//     #endif
 		//   b->enableGlobalShortcut();
 		// enableGlobalShortcut() is not there => use workaround
-		action->setGlobalShortcut(dummyShortcut);
+#ifdef X_KMIX_KF5_BUILD
+		KGlobalAccel::setGlobalShortcut(qaction, dummyShortcut);
+#else
+		KAction* kaction = (KAction*)qaction;
+		kaction->setGlobalShortcut(dummyShortcut);
+#endif
 	}
 }
 
@@ -160,28 +165,32 @@ void MDWSlider::createShortcutActions()
         I work around this by using a text with setText() that is unique, but still readable to the user.
     */
     QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName() ).arg( mixDevice()->mixer()->readableName() );
-    KAction *b;
+#ifdef X_KMIX_KF5_BUILD
+    QAction *bi, *bd, *bm;
+#else
+    KAction *bi, *bd, *bm;
+#endif
 
     // -1- INCREASE VOLUME SHORTCUT -----------------------------------------
-    b = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );
+    bi = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );
     QString increaseVolumeName = i18n( "Increase Volume" );
-	addGlobalShortcut(b, increaseVolumeName, dynamicControl);
+	addGlobalShortcut(bi, increaseVolumeName, dynamicControl);
    	if ( ! dynamicControl )
-        connect( b, SIGNAL(triggered(bool)), SLOT(increaseVolume()) );
+        connect( bi, SIGNAL(triggered(bool)), SLOT(increaseVolume()) );
 
     // -2- DECREASE VOLUME SHORTCUT -----------------------------------------
-    b = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
+    bd = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
     QString decreaseVolumeName = i18n( "Decrease Volume" );
-	addGlobalShortcut(b, decreaseVolumeName, dynamicControl);
+	addGlobalShortcut(bd, decreaseVolumeName, dynamicControl);
 	if ( ! dynamicControl )
-		connect(b, SIGNAL(triggered(bool)), SLOT(decreaseVolume()));
+		connect(bd, SIGNAL(triggered(bool)), SLOT(decreaseVolume()));
 
     // -3- MUTE VOLUME SHORTCUT -----------------------------------------
-    b = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
+    bm = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
     QString muteVolumeName = i18n( "Toggle Mute" );
-	addGlobalShortcut(b, muteVolumeName, dynamicControl);
+	addGlobalShortcut(bm, muteVolumeName, dynamicControl);
    	if ( ! dynamicControl )
-        connect( b, SIGNAL(triggered(bool)), SLOT(toggleMuted()) );
+        connect( bm, SIGNAL(triggered(bool)), SLOT(toggleMuted()) );
 
 }
 
