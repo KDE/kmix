@@ -150,7 +150,8 @@ public:
     static shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed);
     static Mixer* getGlobalMasterMixer();
     static Mixer* getGlobalMasterMixerNoFalback();
-    static MasterControl& getGlobalMasterPreferred();
+    static MasterControl& getGlobalMasterPreferred(bool fallbackAllowed = true);
+    QString getRecommendedDeviceId();
 
     /******************************************
     The recommended master of this Mixer.

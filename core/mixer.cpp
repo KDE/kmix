@@ -275,6 +275,8 @@ bool Mixer::openIfValid()
         {
             if ( !m_dynamic )
                 kError(67100) << "Mixer::open() no master detected." << endl;
+            else
+                kDebug(67100) << "Mixer::open() no master detected." << endl;
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
@@ -507,16 +509,25 @@ Mixer* Mixer::getGlobalMasterMixer()
  * Return the preferred global master.
  * If there is no preferred global master, returns the current master instead.
  */
-MasterControl& Mixer::getGlobalMasterPreferred()
+MasterControl& Mixer::getGlobalMasterPreferred(bool fallbackAllowed)
 {
-    if ( _globalMasterPreferred.isValid() ) {
+    static MasterControl result;
+
+    if ( !fallbackAllowed || _globalMasterPreferred.isValid() ) {
         kDebug() << "Returning preferred master";
         return _globalMasterPreferred;
     }
-    else {
-        kDebug() << "Returning current master";
-        return _globalMasterCurrent;
+
+    Mixer* mm = Mixer::getGlobalMasterMixerNoFalback();
+    if (mm) {
+        result.set(_globalMasterPreferred.getCard(), mm->getRecommendedDeviceId());
+        if (!result.getControl().isEmpty())
+            kDebug() << "Returning extended preferred master";
+            return result;
     }
+
+    kDebug() << "Returning current master";
+    return _globalMasterCurrent;
 }
 
 
@@ -535,6 +546,12 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 
 	if ( mixer == 0 )
 		return mdRet;
+
+	if (_globalMasterCurrent.getControl().isEmpty())
+	{
+		// Default (recommended) control
+		return mixer->_mixerBackend->recommendedMaster();
+	}
 
 	foreach (shared_ptr<MixDevice> md, mixer->_mixerBackend->m_mixDevices )
 	{
@@ -559,12 +576,21 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 	return mdRet;
 }
 
-
-
+QString Mixer::getRecommendedDeviceId()
+{
+    if ( _mixerBackend != 0 ) {
+        shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
+        if ( recommendedMaster.get() != 0 )
+            return recommendedMaster->id();
+    }
+    return QString();
+}
 
 shared_ptr<MixDevice> Mixer::getLocalMasterMD()
 {
-  return find( _masterDevicePK );
+    if (_mixerBackend && _masterDevicePK.isEmpty())
+        return _mixerBackend->recommendedMaster();
+    return find( _masterDevicePK );
 }
 
 void Mixer::setLocalMasterMD(QString &devPK)

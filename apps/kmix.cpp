@@ -419,12 +419,10 @@ void KMixWindow::saveBaseConfig()
 	config.writeEntry("ConfigVersion", KMIX_CONFIG_VERSION);
 	config.writeEntry("AutoUseMultimediaKeys", m_autouseMultimediaKeys);
 
-	MasterControl& master = Mixer::getGlobalMasterPreferred();
-	if (master.isValid())
-	{
-		config.writeEntry("MasterMixer", master.getCard());
-		config.writeEntry("MasterMixerDevice", master.getControl());
-	}
+	MasterControl& master = Mixer::getGlobalMasterPreferred(false);
+	config.writeEntry("MasterMixer", master.getCard());
+	config.writeEntry("MasterMixerDevice", master.getControl());
+
 	QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
 	config.writeEntry("MixerIgnoreExpression", mixerIgnoreExpression);
 

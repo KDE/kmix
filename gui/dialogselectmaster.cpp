@@ -155,13 +155,41 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 	_layout->addWidget(m_channelSelector);
 
 
-    shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
-    QString masterKey = ( master.get() != 0 ) ? master->id() : "----noMaster---"; // Use non-matching name as default
+//    shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
+//    QString masterKey = ( master.get() != 0 ) ? master->id() : "----noMaster---"; // Use non-matching name as default
 
     const MixSet& mixset = mixer->getMixSet();
-    MixSet& mset = const_cast<MixSet&>(mixset);
-    // Populate ListView with the MixDevice's having a playbakc volume (excludes pure capture controls and pure enum's)
-    for( int i=0; i< mset.count(); ++i )
+	MixSet& mset = const_cast<MixSet&>(mixset);
+
+	MasterControl mc = mixer->getGlobalMasterPreferred(false);
+	QString masterKey = mc.getControl();
+	if (!masterKey.isEmpty() && !mset.get(masterKey))
+	{
+		shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
+		if (master.get() != 0)
+			masterKey = master->id();
+	}
+
+	int msetCount = 0;
+	for (int i = 0; i < mset.count(); ++i)
+    {
+    	shared_ptr<MixDevice> md = mset[i];
+        if ( md->playbackVolume().hasVolume() )
+        	++msetCount;
+    }
+
+	if (msetCount > 0 && !mixer->isDynamic())
+	{
+        QString mdName = i18n("Automatic (%1 recommendation)").arg(mixer->getDriverName());
+		QPixmap icon = KIconLoader::global()->loadIcon("audio-volume-high", KIconLoader::Small, IconSize(KIconLoader::Small));
+        QListWidgetItem *item = new QListWidgetItem(icon, mdName, m_channelSelector);
+        item->setData(Qt::UserRole, QString());  // ID here: see apply(), empty String => Automatic
+		if (masterKey.isEmpty())
+			m_channelSelector->setCurrentItem(item);
+	}
+
+	// Populate ListView with the MixDevice's having a playbakc volume (excludes pure capture controls and pure enum's)
+	for (int i = 0; i < mset.count(); ++i)
     {
     	shared_ptr<MixDevice> md = mset[i];
         if ( md->playbackVolume().hasVolume() )
