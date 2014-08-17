@@ -532,14 +532,12 @@ void KMixWindow::loadBaseConfig()
 {
 	KConfigGroup config(KGlobal::config(), "Global");
 
-//  GlobalConfig& gcfg = GlobalConfig::instance();
 	GlobalConfigData& gcd = GlobalConfig::instance().data;
 
 	QList<QString> preferredMixersInSoundMenu;
 	preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
 	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
 
-	setBeepOnVolumeChange(gcd.volumeFeedback);
 	m_startVisible = config.readEntry("Visible", false);
 	m_multiDriverMode = config.readEntry("MultiDriver", false);
 	m_defaultCardOnStart = config.readEntry("DefaultCardOnStart", "");
@@ -1260,18 +1258,6 @@ void KMixWindow::applyPrefs()
 	// Remove saveConfig() IF aa changes have been migrated to GlobalConfig.
 	// Currently there is still stuff like "show menu bar".
 	saveConfig();
-}
-
-/**
- * Sets whether a beep on volume change should be done.
- * This method store the value internally and also propagates
- * this to the Mixer core.
- *
- * @param beep true, if a beep should be changed
- */
-void KMixWindow::setBeepOnVolumeChange(bool beep)
-{
-	Mixer::setBeepOnVolumeChange(beep);
 }
 
 void KMixWindow::toggleMenuBar()

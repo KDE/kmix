@@ -73,11 +73,8 @@ KMixWindow : public KXmlGuiWindow
    void initActions();
    void initActionsLate();
    void initActionsAfterInitMixer();
-   //void recreateGUI();
    void initWidgets();
-   //void setErrorMixerWidget();
 
-   void setBeepOnVolumeChange(bool beep);
    void fixConfigAfterRead();
 
    virtual bool queryClose();

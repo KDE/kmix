@@ -345,11 +345,6 @@ QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
 
 /* ------- WRAPPER METHODS. END -------------------------------- */
 
-void Mixer::setBeepOnVolumeChange(bool beepOnVolumeChange)
-{
-	m_beepOnVolumeChange = beepOnVolumeChange;
-}
-
 int Mixer::balance() const {
     return m_balance;
 }
