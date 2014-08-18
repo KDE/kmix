@@ -68,7 +68,10 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
-#ifndef X_KMIX_KF5_BUILD
+#ifdef X_KMIX_KF5_BUILD
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusPendingCall>
+#else
 #include "gui/osdwidget.h"
 #endif
 
@@ -1151,23 +1154,37 @@ void KMixWindow::showVolumeDisplay()
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 
-// Current volume
-	// Setting not required any more, as the OSD updates the volume level itself
-//   Volume& vol = md->playbackVolume();
-//   osdWidget->setCurrentVolume(vol.getAvgVolumePercent(Volume::MALL),
-//       md->isMuted());
-#ifndef X_KMIX_KF5_BUILD
-	if (GlobalConfig::instance().data.showOSD)
-	{
-		osdWidget->show();
-		osdWidget->activateOSD(); //Enable the hide timer
-	}
-	//Center the OSD
-	QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
-	QSize size = osdWidget->sizeHint();
-	int posX = rect.x() + (rect.width() - size.width()) / 2;
-	int posY = rect.y() + 4 * rect.height() / 5;
-	osdWidget->setGeometry(posX, posY, size.width(), size.height());
+#ifdef X_KMIX_KF5_BUILD
+    if (GlobalConfig::instance().data.showOSD) {
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+            "org.kde.plasmashell",
+            "/org/kde/osdService",
+            "org.kde.osdService",
+            "volumeChanged"
+        );
+
+        int currentVolume = 0;
+        if (!md->isMuted()) {
+            currentVolume = md->playbackVolume().getAvgVolumePercent(Volume::MALL);
+        }
+
+        msg.setArguments(QList<QVariant>() << currentVolume);
+
+        QDBusConnection::sessionBus().asyncCall(msg);
+    }
+#else
+    if (GlobalConfig::instance().data.showOSD) {
+        // Setting volume not required here anymore, as the OSD updates it by itself
+        osdWidget->show();
+        osdWidget->activateOSD(); //Enable the hide timer
+    }
+
+    //Center the OSD
+    QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
+    QSize size = osdWidget->sizeHint();
+    int posX = rect.x() + (rect.width() - size.width()) / 2;
+    int posY = rect.y() + 4 * rect.height() / 5;
+    osdWidget->setGeometry(posX, posY, size.width(), size.height());
 #endif
 }
 
