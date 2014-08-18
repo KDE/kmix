@@ -48,11 +48,13 @@
 static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
 
-extern "C"
+extern "C" int
 #ifndef X_KMIX_KF5_BUILD
 KDE_EXPORT
+#else
+Q_DECL_EXPORT
 #endif
-int kdemain(int argc, char *argv[])
+kdemain(int argc, char *argv[])
 {
 #ifdef X_KMIX_KF5_BUILD
 	KLocalizedString::setApplicationDomain("kmix");

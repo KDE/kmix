@@ -27,30 +27,31 @@ if(POLICY CMP0046)
 endif()
 
 
-
-
 if (KMIX_KF5_BUILD)
-find_package(ECM 0.0.10 REQUIRED CONFIG)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-#include(KF5Init/KF5InitMacros)
-#include(MacroLibrary)
-# I need KF5KDELibs4Support at least for find_package(GLIB2), for KDebug and eventually for Alsa (vs ALSA)
-find_package(KF5 REQUIRED COMPONENTS I18n Init Config GlobalAccel KDELibs4Support)
-# find_package(KF5Solid NO_MODULE) : added according to http://api.kde.org/frameworks-api/frameworks5-apidocs/solid/html/index.html
-#find_package(KF5Solid NO_MODULE)
-find_package(KF5ConfigWidgets)
-find_package(KF5IconThemes)
-find_package(Qt5 REQUIRED COMPONENTS Core DBus Gui Widgets)
-#include(KF5InitMacros)
+	find_package(ECM 0.0.11 REQUIRED NO_MODULE)
+	set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
+	include(KDEInstallDirs)
+	include(KDECMakeSettings)
+	include(KDECompilerSettings)
+	include(ECMPackageConfigHelpers)
+
+	find_package(KF5 REQUIRED COMPONENTS
+		GlobalAccel
+		I18n
+		KIO
+		XmlGui
+		KDELibs4Support
+		DBusAddons
+		KCMUtils
+		KDELibs4Support)
+	find_package(KF5ConfigWidgets)
+	find_package(KF5IconThemes)
 else()
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
-include(MacroLibrary)
-
+	set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+	find_package(KDE4 REQUIRED)
+	include(KDE4Defaults)
+	include(MacroLibrary)
 endif()
 
 
@@ -58,34 +59,27 @@ endif()
 # Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
 #find_package(Phonon REQUIRED)
 
-
-
 set(PA_VER "0.9.16")
 if (KMIX_KF5_BUILD)
-find_package(PulseAudio "${PA_VER}")
+	find_package(PulseAudio "${PA_VER}")
 else()
-macro_optional_find_package(PulseAudio "${PA_VER}")
-macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
-    "http://www.pulseaudio.org/" FALSE "${PA_VER}" "libpulse is needed to let KMix control PulseAudio")
+	macro_optional_find_package(PulseAudio "${PA_VER}")
+	macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
+		"http://www.pulseaudio.org/" FALSE "${PA_VER}" "libpulse is needed to let KMix control PulseAudio")
 endif()
 
 find_package(GLIB2)
 
 if (KMIX_KF5_BUILD)
-find_package(Canberra)
+	find_package(Canberra)
 else()
-macro_optional_find_package(Canberra)
-macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library"
-    "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
+	macro_optional_find_package(Canberra)
+	macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library"
+		"http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
 endif()
 
-#if (KMIX_KF5_BUILD)
-#find_package(ALSA)
-#else()
 find_package(Alsa)
 alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
-#endif()
-
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
@@ -287,7 +281,19 @@ endif()
 
 
 if (KMIX_KF5_BUILD)
-	target_link_libraries(kded_kmixd KF5::I18n KF5::ConfigCore KF5::ConfigGui KF5::Solid KF5::KDELibs4Support Qt5::Core Qt5::Widgets Qt5::DBus Qt5::Xml ${KDEx_KDEUI_LIBS} ${KDEx_PHONON_LIBS})
+	target_link_libraries(kded_kmixd 
+		KF5::I18n
+		KF5::ConfigCore
+		KF5::ConfigGui
+		KF5::Solid
+		KF5::KDELibs4Support
+		KF5::DBusAddons
+		Qt5::Core
+		Qt5::Widgets
+		Qt5::DBus
+		Qt5::Xml
+		${KDEx_KDEUI_LIBS}
+		${KDEx_PHONON_LIBS})
 else()
 	target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 endif()
