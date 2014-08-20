@@ -189,6 +189,7 @@ KMixDockWidget::setVolumeTip()
 {
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     QString tip;
+    QString subTip;
     int virtualToolTipValue = 0;
 
     if ( md.get() == 0 )
@@ -204,8 +205,8 @@ KMixDockWidget::setVolumeTip()
         tip += "<font size=\"+1\">" + i18n( "Volume at %1%", val ) + "</font>";
         if ( md->isMuted() )
             tip += i18n( " (Muted)" );
-        tip += QString( "<br/><font size=\"-1\">%1<br/>%2</font>" )
-            .arg( Qt::escape(md->mixer()->readableName()) ).arg( Qt::escape(md->readableName()) );
+        subTip = QString( "%1<br/>%2" )
+                 .arg( Qt::escape(md->mixer()->readableName()) ).arg( Qt::escape(md->readableName()) );
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
         virtualToolTipValue = val;
@@ -218,6 +219,7 @@ KMixDockWidget::setVolumeTip()
     {
         // changed (or completely new tooltip)
         setToolTipTitle(tip);
+        setToolTipSubTitle(subTip);
     }
     _oldToolTipValue = virtualToolTipValue;
 }
