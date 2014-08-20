@@ -397,9 +397,14 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	m_volumeOverdrive->setVisible(overdriveAvailable);
 	volumeOverdriveWarning->setVisible(overdriveAvailable);
 
-	QString autostartConfigFilename = KGlobal::dirs()->findResource("autostart", QString("kmix_autostart.desktop"));
-	kDebug()
-	<< "autostartConfigFilename = " << autostartConfigFilename;
+    QString autostartConfigFilename = KGlobal::dirs()->findResource(
+                                      #ifdef X_KMIX_KF5_BUILD
+                                          "xdgconf-autostart",
+                                      #else
+                                          "autostart",
+                                      #endif
+                                          QString("kmix_autostart.desktop"));
+    kDebug() << "autostartConfigFilename = " << autostartConfigFilename;
 	bool autostartFileExists = !autostartConfigFilename.isNull();
 
 	//allowAutostartWarning->setEnabled(autostartFileExists);

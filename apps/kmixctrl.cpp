@@ -57,9 +57,9 @@ Q_DECL_EXPORT
 kdemain(int argc, char *argv[])
 {
 #ifdef X_KMIX_KF5_BUILD
-	KLocalizedString::setApplicationDomain("kmix");
+    KLocalizedString::setApplicationDomain("kmix");
 #else
-   KLocale::setMainCatalog("kmix");
+    KLocale::setMainCatalog("kmix");
 #endif
 
 #ifdef X_KMIX_KF5_BUILD
