@@ -1291,7 +1291,12 @@ void KMixWindow::slotHWInfo()
 void KMixWindow::slotKdeAudioSetupExec()
 {
 	QStringList args;
-	args << "kcmshell4" << "kcm_phonon";
+#ifdef X_KMIX_KF5_BUILD
+    args << "kcmshell5"
+#else
+    args << "kcmshell4"
+#endif
+         << "kcm_phonon";
 	forkExec(args);
 }
 
