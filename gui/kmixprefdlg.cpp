@@ -61,9 +61,7 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	setFaceType(KPageDialog::List);
 	//setCaption(i18n("Configure"));
 
-#ifdef X_KMIX_KF5_BUILD
-#warning KMixPrefDlgnNeeds to be migrated to KF5 for buttons
-#else
+#ifndef X_KMIX_KF5_BUILD
 	setButtons(Ok | Cancel | Apply);
 
 	setDefaultButton(Ok);
@@ -82,9 +80,7 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	createControlsTab();
 	updateWidgets(); // I thought KConfigDialog would call this, but I saw during a gdb session that it does not do so.
 
-#ifdef X_KMIX_KF5_BUILD
-#warning KMixPrefDlgnNeeds to be migrated to KF5 for buttons
-#else
+#ifndef X_KMIX_KF5_BUILD
 	showButtonSeparator(true);
 #endif
 
@@ -144,7 +140,7 @@ void KMixPrefDlg::createStartupTab()
 	addWidgetToLayout(allowAutostart, layoutStartupTab, 10,
 		i18n("Enables the KMix autostart service (kmix_autostart.desktop)"), "AutoStart");
 
-	allowAutostartWarning = new QLabel("",	m_startupTab); // actual text is added later
+    allowAutostartWarning = new QLabel("",	m_startupTab); // actual text is added later
 	addWidgetToLayout(allowAutostartWarning, layoutStartupTab, 10, "", "");
 	layoutStartupTab->addStretch();
 }
@@ -184,8 +180,13 @@ void KMixPrefDlg::createOrientationGroup(const QString& labelSliderOrientation, 
 	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(updateButtons()));
 	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(updateButtons()));
 
+#ifdef X_KMIX_KF5_BUILD
+    connect(button(QDialogButtonBox::Apply), SIGNAL(clicked()), SLOT(kmixConfigHasChangedEmitter()));
+    connect(button(QDialogButtonBox::Ok), SIGNAL(clicked()), SLOT(kmixConfigHasChangedEmitter()));
+#else
 	connect(this, SIGNAL(applyClicked()), SLOT(kmixConfigHasChangedEmitter()));
 	connect(this, SIGNAL(okClicked()), SLOT(kmixConfigHasChangedEmitter()));
+#endif
 
 //	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(settingsChangedSlot()));
 //	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(settingsChangedSlot()));
