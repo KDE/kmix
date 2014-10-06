@@ -23,7 +23,7 @@
 GlobalConfig* GlobalConfig::instanceObj;
 
 GlobalConfig::GlobalConfig() :
-	KConfigSkeleton()
+    KConfigSkeleton("kmixrc")
 {
 	setCurrentGroup("Global");
 	// General
