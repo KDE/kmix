@@ -39,7 +39,6 @@ if (KMIX_KF5_BUILD)
 	find_package(KF5 REQUIRED COMPONENTS
 		GlobalAccel
 		I18n
-		KIO
 		XmlGui
 		DBusAddons
 		KCMUtils
