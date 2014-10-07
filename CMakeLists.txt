@@ -41,7 +41,6 @@ if (KMIX_KF5_BUILD)
 		I18n
 		KIO
 		XmlGui
-		KDELibs4Support
 		DBusAddons
 		KCMUtils
 		KDELibs4Support)
