@@ -56,15 +56,12 @@ KMixD : public KDEDModule, protected QDBusContext
    KMixD(QObject* parent, const QList<QVariant>&);
    ~KMixD();
 
-  private:
-   void delayedInitialization();
+  private: 
    void saveBaseConfig();
    void loadConfig();
    void loadBaseConfig();
 
    void initActions();
-
-  public slots:
 
   private:
    bool m_multiDriverMode;
@@ -75,6 +72,7 @@ KMixD : public KDEDModule, protected QDBusContext
    QList<QString> m_backendFilter;
 
   private slots:
+   void delayedInitialization();
    void saveConfig();
    void plugged( const char* driverName, const QString& udi, QString& dev);
    void unplugged( const QString& udi);
