@@ -90,5 +90,6 @@ kdemain(int argc, char *argv[])
    KMixApp *app = new KMixApp();
    int ret = app->exec();
    delete app;
+   kDebug() << "KMix is now exiting, status=" << ret;
    return ret;
 }

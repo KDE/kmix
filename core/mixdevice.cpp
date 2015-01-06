@@ -288,6 +288,7 @@ MixDevice::~MixDevice()
 {
     _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
     delete _dbusControlWrapper;
+    delete mediaController;
 }
 
 Volume& MixDevice::playbackVolume()
@@ -425,7 +426,7 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 bool MixDevice::write( KConfig *config, const QString& grp )
 {
     if (_mixer->isDynamic() || isArtificial()) {
-        kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
+//        kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 

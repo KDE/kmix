@@ -406,12 +406,12 @@ ProfControl* ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility)
 		{
 			if (pControl->getVisibility().satisfiesVisibility(visibility))
 			{
-				kDebug() << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+//				kDebug() << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 				return pControl;
 			}
 			else
 			{
-				kDebug() << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+//				kDebug() << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 			}
 		}
 	} // iterate over all ProfControl entries

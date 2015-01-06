@@ -51,6 +51,7 @@ public:
 	bool debugControlManager;
 	bool debugGUI;
 	bool debugVolume;
+	bool debugConfig;
 
 	Qt::Orientation getToplevelOrientation();
 	Qt::Orientation getTraypopupOrientation();
@@ -94,6 +95,18 @@ public:
 		instanceObj = new GlobalConfig();
 	}
 	;
+
+	/**
+	 * Frees all data associated with the static instance.
+	 *
+	 */
+	static void shutdown()
+	{
+		delete instanceObj;
+		instanceObj = 0;
+	}
+	;
+
 
 	GlobalConfigData data;
 	void setMixersForSoundmenu(QSet<QString> mixersForSoundmenu)

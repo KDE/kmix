@@ -21,6 +21,7 @@
 #ifndef KMixApp_h
 #define KMixApp_h
 
+#include <QMutex>
 #include <kuniqueapplication.h>
 
 class KMixWindow;
@@ -28,23 +29,19 @@ class KMixWindow;
 class KMixApp : public KUniqueApplication
 {
 Q_OBJECT
-	bool restoreSessionIfApplicable();
+	bool restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset);
+	void createWindowOnce(bool hasArgKeepvisibility, bool reset);
 
  public:
     KMixApp();
     ~KMixApp();
-    int newInstance ();
+    int newInstance() override;
 
-    public slots:
-    //void quitExtended();  // For a hack on visibility()
-//    static void keepVisibility(bool);
-/*
- signals:
-    void stopUpdatesOnVisibility();
-*/
  private:
     KMixWindow *m_kmix;
-//    static bool _keepVisibility;
+    QMutex creationLock;
+	static bool firstCaller;
+
 };
 
 #endif

@@ -509,7 +509,7 @@ MasterControl& Mixer::getGlobalMasterPreferred(bool fallbackAllowed)
     static MasterControl result;
 
     if ( !fallbackAllowed || _globalMasterPreferred.isValid() ) {
-        kDebug() << "Returning preferred master";
+//        kDebug() << "Returning preferred master";
         return _globalMasterPreferred;
     }
 
@@ -517,7 +517,7 @@ MasterControl& Mixer::getGlobalMasterPreferred(bool fallbackAllowed)
     if (mm) {
         result.set(_globalMasterPreferred.getCard(), mm->getRecommendedDeviceId());
         if (!result.getControl().isEmpty())
-            kDebug() << "Returning extended preferred master";
+//            kDebug() << "Returning extended preferred master";
             return result;
     }
 

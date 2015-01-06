@@ -31,8 +31,9 @@ GlobalConfig::GlobalConfig() :
 	addItemBool("Labels", data.showLabels, true);
 	addItemBool("VolumeOverdrive", data.volumeOverdrive, false);
 	addItemBool("VolumeFeedback", data.beepOnVolumeChange, true);
-	ItemString* is = addItemString("Orientation", data.orientationMainGUIString, "Vertical");
-	kDebug() << is->name() << is->value();
+//	ItemString* is =
+	addItemString("Orientation", data.orientationMainGUIString, "Vertical");
+//	kDebug() << is->name() << is->value();
 	addItemString("Orientation.TrayPopup", data.orientationTrayPopupString, QLatin1String("Vertical"));
 
 	// Sound Menu
@@ -50,6 +51,7 @@ GlobalConfig::GlobalConfig() :
 	addItemBool("Debug.ControlManager", data.debugControlManager, false);
 	addItemBool("Debug.GUI", data.debugGUI, false);
 	addItemBool("Debug.Volume", data.debugVolume, false);
+	addItemBool("Debug.Config", data.debugConfig, false);
 
 	readConfig();
 }

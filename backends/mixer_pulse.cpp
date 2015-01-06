@@ -260,7 +260,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     // Do something....
     if (PA_INVALID_INDEX != i->monitor_of_sink)
     {
-        kDebug(67100) << "Ignoring Monitor Source: " << i->description;
+//        kDebug(67100) << "Ignoring Monitor Source: " << i->description;
         return;
     }
 
@@ -929,9 +929,9 @@ bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         if (isAppStream)
             md->setApplicationStream(true);
 
-        kDebug(67100) << "Adding Pulse volume " << dev.name << ", isCapture= "
-                      << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE)
-                      << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
+//        kDebug(67100) << "Adding Pulse volume " << dev.name << ", isCapture= "
+//                      << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE)
+//                      << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
         md->addPlaybackVolume(v);
         md->setMuted(dev.mute);
         m_mixDevices.append(md->addToPool());

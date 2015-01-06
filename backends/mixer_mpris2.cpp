@@ -620,7 +620,7 @@ void MPrisControl::trackChangedIncoming(QVariantMap /*msg*/)
 
 MediaController::PlayState Mixer_MPRIS2::mprisPlayStateString2PlayState(const QString& playbackStatus)
 {
-	MediaController::PlayState playState;
+	MediaController::PlayState playState = MediaController::PlayStopped; // presume Stopped for unknown state
 	if (playbackStatus == "Playing")
 	{
 		playState = MediaController::PlayPlaying;

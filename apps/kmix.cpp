@@ -566,6 +566,7 @@ void KMixWindow::loadBaseConfig()
 
 	// --- Advanced options, without GUI: END -------------------------------------
 
+	// The following log is very helpful in bug reports. Please keep it.
 	m_backendFilter = config.readEntry<>("Backends", QList<QString>());
 	kDebug()
 	<< "Backends: " << m_backendFilter;
@@ -686,17 +687,11 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 		{
 			GUIProfile* guiprof = 0;
-//			if (mixer->isDynamic())
-//			{
-//				// Dynamic will ALWAYS get the fallbackProfile. Actually user can not disable it
-//				guiprof = GUIProfile::fallbackProfile(mixer);
-//			}
-//			else
 			if (reset)
 			{
 				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
 			}
-//			else
+
 			if ( guiprof != 0 )
 			{
 				guiprof->setDirty();  // All fallback => dirty

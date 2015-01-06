@@ -26,6 +26,7 @@ if(POLICY CMP0046)
   cmake_policy (SET CMP0046 NEW)
 endif()
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") 
 
 if (KMIX_KF5_BUILD)
 	find_package(ECM 0.0.11 REQUIRED NO_MODULE)

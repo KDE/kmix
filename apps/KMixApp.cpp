@@ -28,9 +28,10 @@
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 
+bool KMixApp::firstCaller = true;
 
 KMixApp::KMixApp() :
-		KUniqueApplication(), m_kmix(0)
+		KUniqueApplication(), m_kmix(0), creationLock(QMutex::Recursive)
 {
 	GlobalConfig::init();
 
@@ -45,108 +46,170 @@ KMixApp::KMixApp() :
 
 KMixApp::~KMixApp()
 {
+	kDebug() << "Deleting KMixApp";
 	ControlManager::instance().shutdownNow();
 	delete m_kmix;
+	m_kmix = 0;
+	GlobalConfig::shutdown();
 }
 
-bool KMixApp::restoreSessionIfApplicable()
+void KMixApp::createWindowOnce(bool hasArgKeepvisibility, bool reset)
 {
-	bool restore = isSessionRestored() && KMainWindow::canBeRestored(0);
+	// Create window, if it was not yet created (e.g. via autostart or manually)
+	if (m_kmix == 0)
+	{
+		kDebug() << "Creating new KMix window";
+		m_kmix = new KMixWindow(hasArgKeepvisibility, reset);
+	}
+}
+
+bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
+{
+	/**
+	 * We should lock session creation. Rationale:
+	 * KMix can be started multiple times during session start. By "autostart" and "session restore". The order is
+	 * undetermined, as KMix will initialize in the background of KDE session startup (Hint: As a
+	 * KUniqueApplication it decouples from the startkde process!).
+	 *
+	 * Now we must make sure that window creation is definitely done, before the "other" process comes, as it might
+	 * want to restore the session. Working on a half-created window would not be smart! Why can this happen? It
+	 * depends on implementation details insinde Qt, which COULD potentially lead to the following scenarios:
+	 * 1) "Autostart" and "session restore" run concurrenty in 2 differnent Threads.
+	 * 2) The current "main/gui" thread "pops up" a "session restore" message from the Qt event dispatcher.
+	 *    This means that  "Autostart" and "session restore" run interleaved in a single Thread.
+	 */
+	creationLock.lock();
+
+	bool restore = isSessionRestored(); // && KMainWindow::canBeRestored(0);
+	kDebug() << "Starting KMix using kepvisibility=" << hasArgKeepvisibility << ", failsafe=" << reset << ", sessionRestore=" << restore;
+	int createCount = 0;
 	if (restore)
 	{
-		m_kmix->restore(0, false);
+		if (reset)
+		{
+			kWarning() << "Reset cannot be performed while KMix is running. Please quit KMix and retry then.";
+		}
+		int n = 1;
+		while (KMainWindow::canBeRestored(n))
+		{
+			kDebug() << "Restoring window " << n;
+			if (n > 1)
+			{
+				// This code path is "impossible". It is here only for analyzing possible issues with session resoring.
+				// KMix is a single-instance app. If more than one instance is craeated we have a bug.
+				kWarning() << "KDE session management wants to restore multiple instances of KMix. Please report this as a bug.";
+				break;
+			}
+			else
+			{
+				// Create window, if it was not yet created (e.g. via autostart or manually)
+				createWindowOnce(hasArgKeepvisibility, reset);
+				// #restore() is called with the parameter of "show == false", as KMixWindow iteself decides on it.
+				m_kmix->restore(n, false);
+				createCount++;
+			}
+		}
 	}
 
+	if (createCount == 0)
+	{
+		// Normal start, or if nothing could be restored
+		createWindowOnce(hasArgKeepvisibility, reset);
+	}
+
+	creationLock.unlock();
 	return restore;
 }
 
 int KMixApp::newInstance()
 {
-	// There are 3 cases for a new instance
+	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+	bool hasArgKeepvisibility = args->isSet("keepvisibility");
+	bool reset = args->isSet("failsafe");
+
+	/**
+	 * There are 3 cases when starting KMix:
+	 * Autostart            : Cases 1) or 3) below
+	 * Session restore      : Cases 1) or 2a) below
+	 * Manual start by user : Cases 1) or 2b) below
+	 *
+	 * Each may be the creator a new instance, but only if the instance did not exist yet.
+	 */
+
 
 	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
-	static bool first = true;
-	if (!first)
+	/**
+	 * 		NB See https://qa.mandriva.com/show_bug.cgi?id=56893#c3
+	 *
+	 * 		It is important to track this via a separate variable and not
+	 * 		based on m_kmix to handle this race condition.
+	 * 		Specific protection for the activation-prior-to-full-construction
+	 * 		case exists above in the 'already running case'
+	 */
+	creationLock.lock(); // Guard a complete construction
+	bool first = firstCaller;
+	firstCaller = false;
+
+	if (first)
 	{
-		// There already exists an instance/window
-		kDebug(67100)
-		<< "KMixApp::newInstance() Instance exists";
+		/** CASE 1 *******************************************************
+		 *
+		 * Typical case: Normal start. KMix was not running yet => create a new KMixWindow
+		 */
+		GlobalConfig::init();
+		restoreSessionIfApplicable(hasArgKeepvisibility, reset);
 
-		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		bool hasArgKeepvisibility = args->isSet("keepvisibility");
-		bool reset = args->isSet("failsafe");
-		if (reset)
-		{
-			kWarning() << "Reset cannot be performed while KMix is running. Please quit KMix and retry then.";
-		}
-
+	}
+	else
+	{
 		if (!hasArgKeepvisibility)
 		{
-			// *** CASE 1 ******************************************************
-			/*
-			 * KMix is running, AND the *USER* starts it again (w/o --keepvisibilty), the KMix main window will be shown.
+			/** CASE 2 ******************************************************
+			 *
+			 * KMix is running, AND the *USER* starts it again (w/o --keepvisibilty)
+			 * 2a) Restored the KMix main window will be shown.
+			 * 2b) Not restored
 			 */
-			kDebug(67100)
-			<< "KMixApp::newInstance() SHOW WINDOW (_keepVisibility="
-					<< hasArgKeepvisibility << ", isSessionRestored="
-					<< isSessionRestored();
 
 			/*
 			 * Restore Session. This may look strange to you, as the instance already exists. But the following
 			 * sequence might happen:
-			 * 1) Autostart (no restore) => create m_kmix instance (via CASE 3)
-			 * 2) Session restore => we are here at this line of code (CASE 1). m_kmix exists, but still must be restored
+			 * 1) Autostart (no restore) => create m_kmix instance (via CASE 1)
+			 * 2) Session restore => we are here at this line of code (CASE 2). m_kmix exists, but still must be restored
 			 *
 			 */
-			bool wasRestored = restoreSessionIfApplicable();
+			bool wasRestored = restoreSessionIfApplicable(hasArgKeepvisibility, reset);
 
-			// Use standard newInstances(), which shows and activates the main window. But skip it for the
-			// special "restored" case, as we should not override the session rules.
 			if (!wasRestored)
 			{
+				//
+				// Use standard newInstances(), which shows and activates the main window. But skip it for the
+				// special "restored" case, as we should not override the session rules.
 				KUniqueApplication::newInstance();
 			}
+			// else: Do nothing, as session restore has done it.
 		}
 		else
 		{
-			// *** CASE 2 ******************************************************
-			/*
-			 * If KMix is running, AND launched again with --keepvisibilty
+			/** CASE 3 ******************************************************
+			 *
+			 * KMix is running, AND launched again with --keepvisibilty
+			 *
+			 * Typical use case: Autostart
 			 *
 			 * =>  We don't want to change the visibiliy, thus we don't call show() here.
 			 *
-			 * Hint: --keepVisibility is a special (legacy) option for applications that want to start
-			 *       a mixer service, but don't need to show the KMix GUI (like KMilo , KAlarm, ...).
-			 *       See Bug 58901.
-			 *
-			 *       Nowadays this switch can be considered legacy, as applications should use KMixD instead.
+			 * Hint: --keepVisibility is used in kmix_autostart.desktop. It was used in history by KMilo
+			 *       (see BKO 58901), but nowadays Mixer Applets nmight want to use it, though they should
+			 *       use KMixD instead.
 			 */
-			kDebug(67100)
+			kDebug()
 			<< "KMixApp::newInstance() REGULAR_START _keepVisibility="
 					<< hasArgKeepvisibility;
 		}
 	}
-	else
-	{
-		// *** CASE 3 ******************************************************
-		/*
-		 * Regular case: KMix was not running yet => create a new KMixWindow
-		 */
-		first = false;// NB See https://qa.mandriva.com/show_bug.cgi?id=56893#c3
-		// It is important to track this via a separate variable and not
-		// based on m_kmix to handle this race condition.
-		// Specific protection for the activation-prior-to-full-construction
-		// case exists above in the 'already running case'
-		GlobalConfig::init();
 
-		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		bool hasArgKeepvisibility = args->isSet("keepvisibility");
-		bool reset = args->isSet("failsafe");
-
-		m_kmix = new KMixWindow(hasArgKeepvisibility, reset);
-
-		restoreSessionIfApplicable();
-	}
+	creationLock.unlock();
 
 	return 0;
 }
