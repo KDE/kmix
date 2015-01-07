@@ -32,19 +32,7 @@
 #include <QTimer>
 
 // KDE
-//class KAccel;
-class KAction;
-//#include <kxmlguiwindow.h>
 #include <kdedmodule.h> 
-	
-// KMix
-//class KMixPrefDlg;
-//class KMixDockWidget;
-//class KMixWindow;
-//class ViewDockAreaPopup;
-#include "core/mixer.h"
-
-//class OSDWidget;
 
 class
 KMixD : public KDEDModule, protected QDBusContext
@@ -67,8 +55,6 @@ KMixD : public KDEDModule, protected QDBusContext
    bool m_multiDriverMode;
 
    QString m_hwInfoString;
-   QString m_defaultCardOnStart;
-   unsigned int m_configVersion;
    QList<QString> m_backendFilter;
 
   private slots:

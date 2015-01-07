@@ -43,6 +43,7 @@
 #include "core/GlobalConfig.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
+#include "core/mixer.h"
 #include "core/version.h"
 
 K_PLUGIN_FACTORY(KMixDFactory,
@@ -161,14 +162,9 @@ void KMixD::loadBaseConfig()
     KConfigGroup config(KGlobal::config(), "Global");
 
    m_multiDriverMode = config.readEntry("MultiDriver", false);
-   m_configVersion = config.readEntry( "ConfigVersion", 0 );
-   // WARNING Don't overwrite m_configVersion with the "correct" value, before having it
-   // evaluated. Better only write that in saveBaseConfig()
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
    QString masterDev = config.readEntry( "MasterMixerDevice", "" );
-   //if ( ! mixerMasterCard.isEmpty() && ! masterDev.isEmpty() ) {
-      Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
-   //}
+   Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
    QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
    m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
    MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
