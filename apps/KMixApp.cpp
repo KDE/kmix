@@ -107,6 +107,7 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 				// #restore() is called with the parameter of "show == false", as KMixWindow iteself decides on it.
 				m_kmix->restore(n, false);
 				createCount++;
+				n++;
 			}
 		}
 	}
