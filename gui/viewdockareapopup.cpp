@@ -231,7 +231,8 @@ Application: KMix (kmix), signal: Segmentation fault
 	delete layout(); // BKO 299754
 	_layoutMDW = new QGridLayout(this);
 	_layoutMDW->setSpacing(KDialog::spacingHint());
-	_layoutMDW->setMargin(0);
+	// Review #121166: Add some space over device icons, otherwise they may hit window border
+	_layoutMDW->setContentsMargins(0,5,0,0);
 	//_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
 	_layoutMDW->setSizeConstraint(QLayout::SetMaximumSize);
 	_layoutMDW->setObjectName(QLatin1String("KmixPopupLayout"));
