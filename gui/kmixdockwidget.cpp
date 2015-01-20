@@ -54,6 +54,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     , _oldToolTipValue(-1)
     , _oldPixmapType('-')
     , _kmixMainWindow(parent)
+    , _delta(0)
 {
     setToolTipIconByName("kmix");
     setTitle(i18n( "Volume Control"));
@@ -359,15 +360,31 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 
 
 	Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
-	// bko313579 Do not use "delta", as that is setting more related to documents (Editor, Browser). KMix should
-	//           simply always use its own VOLUME_STEP_DIVISOR as a base for percentage change.
-	bool decrease = delta < 0;
+//	kDebug() << "I am seeing a wheel event with delta=" << delta << " and orientation=" <<  wheelOrientation;
 	if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bko228780
-	decrease = !decrease;
-	long cv = vol.volumeStep(decrease);
+	{
+		delta = -delta;
+	}
+	// bko313579, bko341536, Review #121725 - Use delta and round it by 120.
+	_delta += delta;
+	bool decrease = delta < 0;
+	unsigned long inc = 0;
+	while (_delta >= 120) {
+		_delta -= 120;
+		inc++;
+	}
+	while (_delta <= -120) {
+		_delta += 120;
+		inc++;
+	}
+
+	if (inc == 0) {
+		return;
+	}
+	long cv = vol.volumeStep(decrease) * inc;
 
     bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
-    kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
+//    kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
 	if ( cv > 0 && isInactive)
 	{
 		// increasing from muted state: unmute and start with a low volume level

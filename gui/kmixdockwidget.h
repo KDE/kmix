@@ -68,6 +68,7 @@ class KMixDockWidget : public KStatusNotifierItem
    int  _oldToolTipValue;
    char _oldPixmapType;
    KMixWindow* _kmixMainWindow;
+   int _delta;
 
 	bool onlyHaveOneMouseButtonAction();
    void refreshVolumeLevels();
