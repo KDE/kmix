@@ -106,7 +106,19 @@ void KMixDockWidget::controlsChange(int changeType)
 //      _kmixMainWindow->updateDocking();
 //      _kmixMainWindow->saveConfig();
       refreshVolumeLevels();
-      findAction("select_master")->setEnabled(Mixer::getGlobalMasterMixer() != 0);
+      {
+		  QAction *selectMasterAction = findAction("select_master");
+		  if(selectMasterAction)
+		  {
+			  // Review #120432 : Guard findAction("select_master"), as it is sometimes 0 on the KF5 build
+			  //                  This is probably not a final solution, but better than a crash.
+			  selectMasterAction->setEnabled(Mixer::getGlobalMasterMixer() != 0);
+		  }
+		  else
+		  {
+			  kWarning() << "select_master action not found. Cannot enable it in the Systray.";
+		  }
+      }
       break;
 
     case ControlChangeType::Volume:
