@@ -24,6 +24,10 @@
 #include <QDir>
 #include <QWidget>
 #include <QString>
+#include <QStringBuilder>
+#ifndef X_KMIX_KF5_BUILD
+#define QStringLiteral QLatin1String
+#endif
 
 //#include <kdebug.h>
 #include <klocale.h>
@@ -36,7 +40,7 @@
 
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
-QRegExp MixerToolBox::s_ignoreMixerExpression( QLatin1String( "Modem" ));
+QRegExp MixerToolBox::s_ignoreMixerExpression( QStringLiteral( "Modem" ));
 //KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
 /***********************************************************************************
@@ -106,14 +110,14 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
    int driverWithMixer = -1;
    bool multipleDriversActive = false;
 
-   QString driverInfo = "";
-   QString driverInfoUsed = "";
+   QString driverInfo;
+   QString driverInfoUsed;
 
    for( int drv1=0; drv1<drvNum; drv1++ )
    {
       QString driverName = Mixer::driverName(drv1);
       if ( driverInfo.length() > 0 ) {
-         driverInfo += " + ";
+         driverInfo += QStringLiteral(" + ");
       }
       driverInfo += driverName;
    }
@@ -148,7 +152,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
       }
       
 
-      bool regularBackend =  driverName != "MPRIS2"  && driverName != "PulseAudio";
+      bool regularBackend =  driverName != QLatin1String("MPRIS2")  && driverName != QLatin1String("PulseAudio");
       if (regularBackend && regularBackendFound)
       {
     	  // Only accept one regular backend => skip this one
@@ -186,11 +190,11 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 				 break;
 
 			 case SINGLE_PLUS_MPRIS2:
-				 if ( driverName == "MPRIS2" )
+				 if ( driverName == QLatin1String("MPRIS2") )
 				 {
 					 backendMprisFound = true;
 				 }
-				 else if ( driverName == "PulseAudio" )
+				 else if ( driverName == QLatin1String("PulseAudio") )
 				 {
 					 // PulseAudio is not useful together with MPRIS2. Treat it as "single"
 					 if ( foundSomethingAndLastControlReached )
@@ -280,13 +284,13 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
       driverInfoUsed = Mixer::driverName(0);
    }
 
-   ref_hwInfoString = i18n("Sound drivers supported:");
-   ref_hwInfoString.append(" ").append( driverInfo ).append(	"\n").append(i18n("Sound drivers used:")) .append(" ").append(driverInfoUsed);
+   ref_hwInfoString = i18n("Sound drivers supported:") % ' ' % driverInfo % '\n' %
+                      i18n("Sound drivers used:")      % ' ' % driverInfoUsed;
 
    if ( multipleDriversActive )
    {
       // this will only be possible by hacking the config-file, as it will not be officially supported
-      ref_hwInfoString.append("\n").append(i18n("Experimental multiple-Driver mode activated"));
+      ref_hwInfoString += '\n' + i18n("Experimental multiple-Driver mode activated");
       QString allDrivermatch("*");
 
       if (hotplug)

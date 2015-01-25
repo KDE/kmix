@@ -66,14 +66,14 @@ char Volume::ChannelNameForPersistence[9][30] = {
 // Forbidden/private. Only here because if there is no CaptureVolume we need the values initialized
 // And also QMap requires it.
 Volume::Volume()
+: _chmask(MNONE)
+, _minVolume(0)
+, _maxVolume(0)
+, _hasSwitch(false)
+, _switchActivated(false)
+, _switchType(None)
+, _isCapture(false)
 {
-	_minVolume = 0;
-	_maxVolume = 0;
-	_hasSwitch = false;
-	_switchActivated = false;
-	_switchType = None;
-	_isCapture = false;
-	_chmask = MNONE;
 }
 
 /**
@@ -82,15 +82,15 @@ Volume::Volume()
  * @deprecated Do not use
  */
 VolumeChannel::VolumeChannel()
+: volume(0)
+, chid(Volume::NOCHANNEL)
 {
-	volume = 0;
-	chid = Volume::NOCHANNEL;
 }
 
-VolumeChannel::VolumeChannel(Volume::ChannelID chid)
+VolumeChannel::VolumeChannel(Volume::ChannelID c)
+: volume(0)
+, chid(c)
 {
-	volume = 0;
-	this->chid = chid;
 }
 
 Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )

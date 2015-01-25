@@ -47,7 +47,7 @@
 #include "core/version.h"
 
 #ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1Literal
+#define QStringLiteral QLatin1String
 #endif
 
 

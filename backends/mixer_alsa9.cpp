@@ -35,6 +35,9 @@
 
 // Qt
 #include <QList>
+#ifndef X_KMIX_KF5_BUILD
+#define QStringLiteral QLatin1String
+#endif
 
 // STD Headers
 #include <stdlib.h>
@@ -75,38 +78,39 @@ Mixer_ALSA::~Mixer_ALSA()
 
 int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
-   QString name = snd_mixer_selem_id_get_name( sid );
-   if (name.contains("master"     , Qt::CaseInsensitive)) return MixDevice::VOLUME;
-   if (name.contains("master mono", Qt::CaseInsensitive)) return MixDevice::VOLUME;
-   if (name.contains("front"      , Qt::CaseInsensitive) &&
-      !name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::VOLUME;
-   if (name.contains("pc speaker" , Qt::CaseInsensitive)) return MixDevice::SPEAKER;
-   if (name.contains("capture"    , Qt::CaseInsensitive)) return MixDevice::RECMONITOR;
-   if (name.contains("music"      , Qt::CaseInsensitive)) return MixDevice::MIDI;
-   if (name.contains("Synth"      , Qt::CaseInsensitive)) return MixDevice::MIDI;
-   if (name.contains("FM"         , Qt::CaseInsensitive)) return MixDevice::MIDI;
-   if (name.contains("headphone"  , Qt::CaseInsensitive)) return MixDevice::HEADPHONE;
-   if (name.contains("bass"       , Qt::CaseInsensitive)) return MixDevice::BASS;
-   if (name.contains("treble"     , Qt::CaseInsensitive)) return MixDevice::TREBLE;
-   if (name.contains("cd"         , Qt::CaseInsensitive)) return MixDevice::CD;
-   if (name.contains("video"      , Qt::CaseInsensitive)) return MixDevice::VIDEO;
-   if (name.contains("pcm"        , Qt::CaseInsensitive)) return MixDevice::AUDIO;
-   if (name.contains("Wave"       , Qt::CaseInsensitive)) return MixDevice::AUDIO;
-   if (name.contains("surround"   , Qt::CaseInsensitive)) return MixDevice::SURROUND_BACK;
-   if (name.contains("center"     , Qt::CaseInsensitive)) return MixDevice::SURROUND_CENTERFRONT;
-   if (name.contains("ac97"       , Qt::CaseInsensitive)) return MixDevice::AC97;
-   if (name.contains("coaxial"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
-   if (name.contains("optical"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
-   if (name.contains("iec958"     , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
-   if (name.contains("digital"    , Qt::CaseInsensitive)) return MixDevice::DIGITAL;
-   if (name.contains("mic boost"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_BOOST;
-   if (name.contains("Mic Front"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_FRONT;
-   if (name.contains("Front Mic"  , Qt::CaseInsensitive)) return MixDevice::MICROPHONE_FRONT;
-   if (name.contains("mic"        , Qt::CaseInsensitive)) return MixDevice::MICROPHONE;
-   if (name.contains("lfe"        , Qt::CaseInsensitive)) return MixDevice::SURROUND_LFE;
-   if (name.contains("monitor"    , Qt::CaseInsensitive)) return MixDevice::RECMONITOR;
-   if (name.contains("3d"         , Qt::CaseInsensitive)) return MixDevice::SURROUND;
-   if (name.contains("side"       , Qt::CaseInsensitive)) return MixDevice::SURROUND_BACK;
+   const char * cname = snd_mixer_selem_id_get_name( sid );
+   QByteArray name = QByteArray::fromRawData( cname, qstrlen(cname) ).toLower();
+   if (name.contains("master"     )) return MixDevice::VOLUME;
+   if (name.contains("master mono")) return MixDevice::VOLUME;
+   if (name.contains("front"      ) &&
+      !name.contains("mic"        )) return MixDevice::VOLUME;
+   if (name.contains("pc speaker" )) return MixDevice::SPEAKER;
+   if (name.contains("capture"    )) return MixDevice::RECMONITOR;
+   if (name.contains("music"      )) return MixDevice::MIDI;
+   if (name.contains("synth"      )) return MixDevice::MIDI;
+   if (name.contains("fm"         )) return MixDevice::MIDI;
+   if (name.contains("headphone"  )) return MixDevice::HEADPHONE;
+   if (name.contains("bass"       )) return MixDevice::BASS;
+   if (name.contains("treble"     )) return MixDevice::TREBLE;
+   if (name.contains("cd"         )) return MixDevice::CD;
+   if (name.contains("video"      )) return MixDevice::VIDEO;
+   if (name.contains("pcm"        )) return MixDevice::AUDIO;
+   if (name.contains("wave"       )) return MixDevice::AUDIO;
+   if (name.contains("surround"   )) return MixDevice::SURROUND_BACK;
+   if (name.contains("center"     )) return MixDevice::SURROUND_CENTERFRONT;
+   if (name.contains("ac97"       )) return MixDevice::AC97;
+   if (name.contains("coaxial"    )) return MixDevice::DIGITAL;
+   if (name.contains("optical"    )) return MixDevice::DIGITAL;
+   if (name.contains("iec958"     )) return MixDevice::DIGITAL;
+   if (name.contains("digital"    )) return MixDevice::DIGITAL;
+   if (name.contains("mic boost"  )) return MixDevice::MICROPHONE_BOOST;
+   if (name.contains("mic front"  )) return MixDevice::MICROPHONE_FRONT;
+   if (name.contains("front mic"  )) return MixDevice::MICROPHONE_FRONT;
+   if (name.contains("mic"        )) return MixDevice::MICROPHONE;
+   if (name.contains("lfe"        )) return MixDevice::SURROUND_LFE;
+   if (name.contains("monitor"    )) return MixDevice::RECMONITOR;
+   if (name.contains("3d"         )) return MixDevice::SURROUND;
+   if (name.contains("side"       )) return MixDevice::SURROUND_BACK;
 
    return MixDevice::EXTERNAL;
 }
@@ -996,12 +1000,12 @@ Mixer_ALSA::errorText( int mixer_error )
 QString
 ALSA_getDriverName()
 {
-	return "ALSA";
+	return QStringLiteral("ALSA");
 }
 
 QString Mixer_ALSA::getDriverName()
 {
-	return "ALSA";
+	return QStringLiteral("ALSA");
 }
 
 

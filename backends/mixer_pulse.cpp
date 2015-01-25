@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <QtCore/QAbstractEventDispatcher>
 #include <QTimer>
+#include <QStringBuilder>
 
 #include <klocale.h>
 
@@ -339,14 +340,12 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
 
     QString appname = i18n("Unknown Application");
     if (clients.contains(i->client))
-        appname = clients[i->client];
-
-    QString prefix = QString("%1: ").arg(appname);
+        appname = clients.value(i->client);
 
     devinfo s;
     s.index = i->index;
     s.device_index = i->sink;
-    s.description = prefix + QString::fromUtf8(i->name);
+    s.description = appname % QLatin1String(": ") % QString::fromUtf8(i->name);
     s.name = QString("stream:") + QString::number(i->index); //appname.replace(' ', '_').toLower();
     s.icon_name = getIconNameFromProplist(i->proplist);
     s.channel_map = i->channel_map;
@@ -398,14 +397,12 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 
     QString appname = i18n("Unknown Application");
     if (clients.contains(i->client))
-        appname = clients[i->client];
-
-    QString prefix = QString("%1: ").arg(appname);
+        appname = clients.value(i->client);
 
     devinfo s;
     s.index = i->index;
     s.device_index = i->source;
-    s.description = prefix + QString::fromUtf8(i->name);
+    s.description = appname % QLatin1String(": ") % QString::fromUtf8(i->name);
     s.name = QString("stream:") + QString::number(i->index); //appname.replace(' ', '_').toLower();
     s.icon_name = getIconNameFromProplist(i->proplist);
     s.channel_map = i->channel_map;
@@ -745,7 +742,7 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     return cvol;
 }
 
-static devmap* get_widget_map(int type, QString id = "")
+static devmap* get_widget_map(int type, QString id = QString())
 {
     Q_ASSERT(type >= 0 && type <= KMIXPA_WIDGET_MAX);
 
