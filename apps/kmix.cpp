@@ -82,6 +82,7 @@
 #else
 #define CLASS_Action KAction
 #define CLASS_KShortcut KShortcut
+#define QStringLiteral QLatin1Literal
 #endif
 
 /* KMixWindow
@@ -94,7 +95,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 		m_autouseMultimediaKeys(true),
 		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
 {
-	setObjectName(QLatin1String("KMixWindow"));
+	setObjectName(QStringLiteral("KMixWindow"));
 	// disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
@@ -104,7 +105,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
 	initWidgets();
 	initPrefDlg();
-	DBusMixSetWrapper::initialize(this, "/Mixers");
+	DBusMixSetWrapper::initialize(this, QStringLiteral("/Mixers"));
 	MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
 	KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
 	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
@@ -132,10 +133,10 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	ControlManager::instance().addListener(
 			QString(), // All mixers (as the Global master Mixer might change)
 			(ControlChangeType::Type) (ControlChangeType::ControlList | ControlChangeType::MasterChanged), this,
-			QString("KMixWindow"));
+			"KMixWindow");
 
 	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
-	ControlManager::instance().announce(QString(), ControlChangeType::Volume, QString("Startup"));
+	ControlManager::instance().announce(QString(), ControlChangeType::Volume, "Startup");
 }
 
 KMixWindow::~KMixWindow()
@@ -194,63 +195,63 @@ void KMixWindow::initActions()
 
 	// settings menu
 	_actionShowMenubar = KStandardAction::showMenubar(this, SLOT(toggleMenuBar()), actionCollection());
-	//actionCollection()->addAction( a->objectName(), a );
+	//actionCollection()->addAction(QStringLiteral( a->objectName()), a );
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
-	CLASS_Action* action = actionCollection()->addAction("launch_kdesoundsetup");
+	CLASS_Action* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
 	action->setText(i18n("Audio Setup"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
 
-	action = actionCollection()->addAction("hwinfo");
+	action = actionCollection()->addAction(QStringLiteral("hwinfo"));
 	action->setText(i18n("Hardware &Information"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotHWInfo()));
-	action = actionCollection()->addAction("hide_kmixwindow");
+	action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
 	action->setText(i18n("Hide Mixer Window"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
 	action->setShortcut(QKeySequence(Qt::Key_Escape));
-	action = actionCollection()->addAction("toggle_channels_currentview");
+	action = actionCollection()->addAction(QStringLiteral("toggle_channels_currentview"));
 	action->setText(i18n("Configure &Channels..."));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotConfigureCurrentView()));
-	action = actionCollection()->addAction("select_master");
+	action = actionCollection()->addAction(QStringLiteral("select_master"));
 	action->setText(i18n("Select Master Channel..."));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
 
-	action = actionCollection()->addAction("save_1");
+	action = actionCollection()->addAction(QStringLiteral("save_1"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1));
 	action->setText(i18n("Save volume profile 1"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes1()));
 
-	action = actionCollection()->addAction("save_2");
+	action = actionCollection()->addAction(QStringLiteral("save_2"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_2));
 	action->setText(i18n("Save volume profile 2"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes2()));
 
-	action = actionCollection()->addAction("save_3");
+	action = actionCollection()->addAction(QStringLiteral("save_3"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_3));
 	action->setText(i18n("Save volume profile 3"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes3()));
 
-	action = actionCollection()->addAction("save_4");
+	action = actionCollection()->addAction(QStringLiteral("save_4"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_4));
 	action->setText(i18n("Save volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes4()));
 
-	action = actionCollection()->addAction("load_1");
+	action = actionCollection()->addAction(QStringLiteral("load_1"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_1));
 	action->setText(i18n("Load volume profile 1"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes1()));
 
-	action = actionCollection()->addAction("load_2");
+	action = actionCollection()->addAction(QStringLiteral("load_2"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_2));
 	action->setText(i18n("Load volume profile 2"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes2()));
 
-	action = actionCollection()->addAction("load_3");
+	action = actionCollection()->addAction(QStringLiteral("load_3"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_3));
 	action->setText(i18n("Load volume profile 3"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes3()));
 
-	action = actionCollection()->addAction("load_4");
+	action = actionCollection()->addAction(QStringLiteral("load_4"));
 	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_4));
 	action->setText(i18n("Load volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
@@ -266,7 +267,7 @@ void KMixWindow::initActionsLate()
 {
 	if (m_autouseMultimediaKeys)
 	{
-		CLASS_Action* globalAction = actionCollection()->addAction("increase_volume");
+		CLASS_Action* globalAction = actionCollection()->addAction(QStringLiteral("increase_volume"));
 		globalAction->setText(i18n("Increase Volume"));
 
 #ifdef X_KMIX_KF5_BUILD
@@ -277,7 +278,7 @@ void KMixWindow::initActionsLate()
 
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
 
-		globalAction = actionCollection()->addAction("decrease_volume");
+		globalAction = actionCollection()->addAction(QStringLiteral("decrease_volume"));
 		globalAction->setText(i18n("Decrease Volume"));
 #ifdef X_KMIX_KF5_BUILD
 		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeDown);
@@ -286,7 +287,7 @@ void KMixWindow::initActionsLate()
 #endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
-		globalAction = actionCollection()->addAction("mute");
+		globalAction = actionCollection()->addAction(QStringLiteral("mute"));
 		globalAction->setText(i18n("Mute"));
 #ifdef X_KMIX_KF5_BUILD
 		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeMute);

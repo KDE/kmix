@@ -47,12 +47,12 @@ if (KMIX_KF5_BUILD)
 	find_package(KF5ConfigWidgets)
 	find_package(KF5IconThemes)
 else()
-	set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 	find_package(KDE4 REQUIRED)
 	include(KDE4Defaults)
 	include(MacroLibrary)
 endif()
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 
 # Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
