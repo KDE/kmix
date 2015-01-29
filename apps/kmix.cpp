@@ -82,7 +82,7 @@
 #else
 #define CLASS_Action KAction
 #define CLASS_KShortcut KShortcut
-#define QStringLiteral QLatin1Literal
+#define QStringLiteral QLatin1String
 #endif
 
 /* KMixWindow
