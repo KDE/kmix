@@ -197,14 +197,9 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 		if (debugme)
 		  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
 
-		if (!decrease && isMuted())
+		if (isMuted())
 		{
-			// increasing from muted state: unmute and start with a low volume level
-			if (debugme)
-				kDebug() << "set all to " << inc << "muted old=" << isMuted();
-
 			setMuted(false);
-			volP.setAllVolumes(inc);
 		}
 		else
 		{
