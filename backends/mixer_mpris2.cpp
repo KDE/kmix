@@ -122,7 +122,7 @@ void Mixer_MPRIS2::watcherMediaControl(QDBusPendingCallWatcher* watcher)
  */
 int Mixer_MPRIS2::readVolumeFromHW( const QString& /*id*/, shared_ptr<MixDevice> /*md*/)
 {
-	// Everything is done by notifications => no code neccessary
+	// Everything is done by notifications => no code necessary
 	return Mixer::OK_UNCHANGED;
 }
 

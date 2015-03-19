@@ -47,7 +47,6 @@
 #include <kxmlguifactory.h>
 #include <kglobal.h>
 #include <kactioncollection.h>
-#include <ktoggleaction.h>
 #include <KProcess>
 #include <KTabWidget>
 
