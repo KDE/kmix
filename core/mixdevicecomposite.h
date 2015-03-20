@@ -98,7 +98,6 @@ public:
 private:
    long calculateVolume(Volume::VolumeType vt);
 
-   Mixer *_mixer;
    QList<shared_ptr<MixDevice> > _mds;
 
    static const long VolMax;

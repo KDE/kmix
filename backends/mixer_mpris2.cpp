@@ -209,6 +209,11 @@ int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 	arg << QVariant::fromValue(QDBusVariant(volFloat));
 
 	MPrisControl* mad = controls.value(id);
+	if ( !mad )
+	{
+		kDebug() << "id does not exist:" << id;
+		return 0;
+	}
 
 	QVariant v1 = QVariant(QString("org.mpris.MediaPlayer2.Player"));
 	QVariant v2 = QVariant(QString("Volume"));

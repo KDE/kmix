@@ -921,8 +921,8 @@ void KMixWindow::plugged(const char* driverName, const QString& udi, QString& de
 	{
 		kDebug()
 		<< "Plugged: dev=" << dev << "\n";
-		MixerToolBox::instance()->possiblyAddMixer(mixer);
-		recreateGUI(true, mixer->id(), true, false);
+		if (MixerToolBox::instance()->possiblyAddMixer(mixer))
+			recreateGUI(true, mixer->id(), true, false);
 	}
 }
 
