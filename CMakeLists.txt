@@ -30,7 +30,7 @@ endif()
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") 
 
 if (KMIX_KF5_BUILD)
-	find_package(ECM 0.0.11 REQUIRED NO_MODULE)
+	find_package(ECM 5.10.0 REQUIRED NO_MODULE)
 	set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 	include(KDEInstallDirs)
