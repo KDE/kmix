@@ -18,21 +18,13 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-//#ifndef KDE_VERSION_MAJOR
-//#define X_KMIX_KF5_BUILD
-//#endif
-
 #include "core/mixertoolbox.h"
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 
 
-#ifdef X_KMIX_KF5_BUILD
 #include <k4aboutdata.h>
 #include <KLocalizedString>
-#else
-#include <kaboutdata.h>
-#endif
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -49,30 +41,14 @@ static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
 
 extern "C" int
-#ifndef X_KMIX_KF5_BUILD
-KDE_EXPORT
-#else
 Q_DECL_EXPORT
-#endif
 kdemain(int argc, char *argv[])
 {
-#ifdef X_KMIX_KF5_BUILD
     KLocalizedString::setApplicationDomain("kmix");
-#else
-    KLocale::setMainCatalog("kmix");
-#endif
 
-#ifdef X_KMIX_KF5_BUILD
-#define CLASS_KAboutData K4AboutData
-#else
-#define CLASS_KAboutData KAboutData
-#endif
-
-
-
-   CLASS_KAboutData aboutData( "kmixctrl", 0, ki18n("KMixCtrl"),
+    K4AboutData aboutData( "kmixctrl", 0, ki18n("KMixCtrl"),
 			 APP_VERSION, ki18n(description),
-			 CLASS_KAboutData::License_GPL,
+			 K4AboutData::License_GPL,
 			 ki18n("(c) 2000 by Stefan Schimanski"));
 
    aboutData.addAuthor(ki18n("Stefan Schimanski"), KLocalizedString(), "1Stein@gmx.de");

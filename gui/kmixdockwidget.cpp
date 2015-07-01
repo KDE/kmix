@@ -133,7 +133,6 @@ void KMixDockWidget::controlsChange(int changeType)
 
 QAction* KMixDockWidget::findAction(const char* actionName)
 {
-#ifdef X_KMIX_KF5_BUILD
 	QList<QAction*> actions = actionCollection();
 	int size = actions.size();
 	for (int i=0; i<size; ++i)
@@ -144,9 +143,6 @@ QAction* KMixDockWidget::findAction(const char* actionName)
 	}
     qWarning() << "ACTION" << actionName << "NOT FOUND!";
     return Q_NULLPTR;
-#else
-	return actionCollection()->action(QLatin1String(actionName));
-#endif
 }
 
 /**
@@ -170,28 +166,18 @@ void KMixDockWidget::createMenuActions()
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     if ( md.get() != 0 && md->hasMuteSwitch() ) {
         // Put "Mute" selector in context menu
-#ifdef X_KMIX_KF5_BUILD
         KToggleAction *action = new KToggleAction(i18n("M&ute"), this);
         action->setData("dock_mute");
         addAction("dock_mute", action);
-#else
-    	KToggleAction *action = actionCollection()->add<KToggleAction>( "dock_mute" );
-        action->setText( i18n("M&ute") );
-#endif
     	updateDockMuteAction(action);
         connect(action, SIGNAL(triggered(bool)), SLOT(dockMute()));
         menu->addAction( action );
     }
 
     // Put "Select Master Channel" dialog in context menu
-#ifdef X_KMIX_KF5_BUILD
     QAction *action = new QAction(i18n("Select Master Channel..."), this);
     action->setData("select_master");
     addAction("select_master", action);
-#else
-    QAction *action = actionCollection()->addAction( "select_master" );
-    action->setText( i18n("Select Master Channel...") );
-#endif
     action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
     connect(action, SIGNAL(triggered(bool)), _kmixMainWindow, SLOT(slotSelectMaster()));
     menu->addAction( action );

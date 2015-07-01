@@ -21,12 +21,8 @@
 
 #include <kcmdlineargs.h>
 
-#ifdef X_KMIX_KF5_BUILD
 #include <k4aboutdata.h>
 #include <KLocalizedString>
-#else
-#include <kaboutdata.h>
-#endif
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -40,22 +36,12 @@ static const char description[] =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
 
 extern "C" int
-#ifndef X_KMIX_KF5_BUILD
-KDE_EXPORT
-#else
 Q_DECL_EXPORT
-#endif
 kdemain(int argc, char *argv[])
 {
-#ifdef X_KMIX_KF5_BUILD
-#define CLASS_KAboutData K4AboutData
-#else
-#define CLASS_KAboutData KAboutData
-#endif
-
-	CLASS_KAboutData aboutData( "kmix", 0, ki18n("KMix"),
-                         APP_VERSION, ki18n(description), CLASS_KAboutData::License_GPL,
-                         ki18n("(c) 1996-2013 The KMix Authors"));
+    K4AboutData aboutData("kmix", 0, ki18n("KMix"),
+                          APP_VERSION, ki18n(description), K4AboutData::License_GPL,
+                          ki18n("(c) 1996-2013 The KMix Authors"));
 
    // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.
    aboutData.addAuthor(ki18n("Christian Esken")   , ki18n("Original author and current maintainer"), "esken@kde.org");

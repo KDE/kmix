@@ -25,9 +25,6 @@
 #include <QWidget>
 #include <QString>
 #include <QStringBuilder>
-#ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1String
-#endif
 
 //#include <kdebug.h>
 #include <klocale.h>

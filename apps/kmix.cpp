@@ -67,22 +67,9 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
-#ifdef X_KMIX_KF5_BUILD
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusPendingCall>
-#else
-#include "gui/osdwidget.h"
-#endif
-
-#ifdef X_KMIX_KF5_BUILD
-#define CLASS_Action QAction
 #include <QKeySequence>
-#define CLASS_KShortcut QKeySequence
-#else
-#define CLASS_Action KAction
-#define CLASS_KShortcut KShortcut
-#define QStringLiteral QLatin1String
-#endif
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
@@ -143,9 +130,7 @@ KMixWindow::~KMixWindow()
 	ControlManager::instance().removeListener(this);
 
 	delete m_dsm;
-#ifndef X_KMIX_KF5_BUILD
-	delete osdWidget;
-#endif
+
 	// -1- Cleanup Memory: clearMixerWidgets
 	while (m_wsMixers->count() != 0)
 	{
@@ -197,7 +182,7 @@ void KMixWindow::initActions()
 	//actionCollection()->addAction(QStringLiteral( a->objectName()), a );
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
-	CLASS_Action* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
+	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
 	action->setText(i18n("Audio Setup"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
 
@@ -216,48 +201,44 @@ void KMixWindow::initActions()
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_1"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_1));
 	action->setText(i18n("Save volume profile 1"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes1()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_2"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_2));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_2));
 	action->setText(i18n("Save volume profile 2"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes2()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_3"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_3));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_3));
 	action->setText(i18n("Save volume profile 3"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes3()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_4"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_4));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_4));
 	action->setText(i18n("Save volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes4()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_1"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_1));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
 	action->setText(i18n("Load volume profile 1"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes1()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_2"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_2));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
 	action->setText(i18n("Load volume profile 2"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes2()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_3"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_3));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
 	action->setText(i18n("Load volume profile 3"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes3()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_4"));
-	action->setShortcut(CLASS_KShortcut(Qt::CTRL + Qt::Key_4));
+	action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
 	action->setText(i18n("Load volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
-
-#ifndef X_KMIX_KF5_BUILD
-	osdWidget = new OSDWidget();
-#endif
 
 	createGUI(QLatin1String("kmixui.rc"));
 }
@@ -266,33 +247,21 @@ void KMixWindow::initActionsLate()
 {
 	if (m_autouseMultimediaKeys)
 	{
-		CLASS_Action* globalAction = actionCollection()->addAction(QStringLiteral("increase_volume"));
+		QAction* globalAction = actionCollection()->addAction(QStringLiteral("increase_volume"));
 		globalAction->setText(i18n("Increase Volume"));
 
-#ifdef X_KMIX_KF5_BUILD
 		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeUp);
-#else
-		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeUp));
-#endif
 
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
 
 		globalAction = actionCollection()->addAction(QStringLiteral("decrease_volume"));
 		globalAction->setText(i18n("Decrease Volume"));
-#ifdef X_KMIX_KF5_BUILD
 		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeDown);
-#else
-		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeDown));
-#endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
 		globalAction = actionCollection()->addAction(QStringLiteral("mute"));
 		globalAction->setText(i18n("Mute"));
-#ifdef X_KMIX_KF5_BUILD
 		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeMute);
-#else
-		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeMute));
-#endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
 	}
 }
@@ -338,11 +307,7 @@ void KMixWindow::initWidgets()
 
 void KMixWindow::setInitialSize()
 {
-#ifdef X_KMIX_KF5_BUILD
 	KConfigGroup config(KSharedConfig::openConfig(), "Global");
-#else
-	KConfigGroup config(KGlobal::config(), "Global");
-#endif
 
 	// HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
 	// are disabled, so we disable them, get a decent sizehint and enable them
@@ -1149,7 +1114,6 @@ void KMixWindow::showVolumeDisplay()
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 
-#ifdef X_KMIX_KF5_BUILD
     if (GlobalConfig::instance().data.showOSD) {
         QDBusMessage msg = QDBusMessage::createMethodCall(
             "org.kde.plasmashell",
@@ -1167,20 +1131,6 @@ void KMixWindow::showVolumeDisplay()
 
         QDBusConnection::sessionBus().asyncCall(msg);
     }
-#else
-    if (GlobalConfig::instance().data.showOSD) {
-        // Setting volume not required here anymore, as the OSD updates it by itself
-        osdWidget->show();
-        osdWidget->activateOSD(); //Enable the hide timer
-    }
-
-    //Center the OSD
-    QRect rect = KApplication::kApplication()->desktop()->screenGeometry(QCursor::pos());
-    QSize size = osdWidget->sizeHint();
-    int posX = rect.x() + (rect.width() - size.width()) / 2;
-    int posY = rect.y() + 4 * rect.height() / 5;
-    osdWidget->setGeometry(posX, posY, size.width(), size.height());
-#endif
 }
 
 /**
@@ -1285,14 +1235,7 @@ void KMixWindow::slotHWInfo()
 
 void KMixWindow::slotKdeAudioSetupExec()
 {
-	QStringList args;
-#ifdef X_KMIX_KF5_BUILD
-    args << "kcmshell5"
-#else
-    args << "kcmshell4"
-#endif
-         << "kcm_phonon";
-	forkExec(args);
+    forkExec(QStringList() << "kcmshell5" << "kcm_phonon");
 }
 
 void KMixWindow::forkExec(const QStringList& args)

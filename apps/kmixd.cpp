@@ -46,10 +46,6 @@
 #include "core/mixer.h"
 #include "core/version.h"
 
-#ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1String
-#endif
-
 
 K_PLUGIN_FACTORY(KMixDFactory,
                  registerPlugin<KMixD>();

@@ -11,11 +11,7 @@
 #include <kglobal.h>
 
 
-#ifndef X_KMIX_KF5_BUILD
-extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
-#else
 int main(int argc, char *argv[])
-#endif
 {
     KAboutData aboutData( "dialogtest", 0, ki18n("dialogtest"),
                           "1.0", ki18n("bla"), KAboutData::License_GPL,

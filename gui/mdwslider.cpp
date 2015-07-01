@@ -147,12 +147,7 @@ void MDWSlider::addGlobalShortcut(QAction* qaction, const QString& label, bool d
 		//     #endif
 		//   b->enableGlobalShortcut();
 		// enableGlobalShortcut() is not there => use workaround
-#ifdef X_KMIX_KF5_BUILD
 		KGlobalAccel::setGlobalShortcut(qaction, dummyShortcut);
-#else
-		KAction* kaction = (KAction*)qaction;
-		kaction->setGlobalShortcut(dummyShortcut);
-#endif
 	}
 }
 
@@ -165,11 +160,7 @@ void MDWSlider::createShortcutActions()
         I work around this by using a text with setText() that is unique, but still readable to the user.
     */
     QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName() ).arg( mixDevice()->mixer()->readableName() );
-#ifdef X_KMIX_KF5_BUILD
     QAction *bi, *bd, *bm;
-#else
-    KAction *bi, *bd, *bm;
-#endif
 
     // -1- INCREASE VOLUME SHORTCUT -----------------------------------------
     bi = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );

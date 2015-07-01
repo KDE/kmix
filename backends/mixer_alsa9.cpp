@@ -35,9 +35,6 @@
 
 // Qt
 #include <QList>
-#ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1String
-#endif
 
 // STD Headers
 #include <stdlib.h>

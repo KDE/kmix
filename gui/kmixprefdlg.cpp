@@ -61,12 +61,6 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	setFaceType(KPageDialog::List);
 	//setCaption(i18n("Configure"));
 
-#ifndef X_KMIX_KF5_BUILD
-	setButtons(Ok | Cancel | Apply);
-
-	setDefaultButton(Ok);
-#endif
-
 	dvc = 0;
 	dvcSpacerBelow = 0;
 
@@ -79,10 +73,6 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	createGeneralTab();
 	createControlsTab();
 	updateWidgets(); // I thought KConfigDialog would call this, but I saw during a gdb session that it does not do so.
-
-#ifndef X_KMIX_KF5_BUILD
-	showButtonSeparator(true);
-#endif
 
 	generalPage = addPage(m_generalTab, i18n("General"), "configure");
 	startupPage = addPage(m_startupTab, i18n("Start"), "preferences-system-login");
@@ -180,13 +170,8 @@ void KMixPrefDlg::createOrientationGroup(const QString& labelSliderOrientation, 
 	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(updateButtons()));
 	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(updateButtons()));
 
-#ifdef X_KMIX_KF5_BUILD
     connect(button(QDialogButtonBox::Apply), SIGNAL(clicked()), SLOT(kmixConfigHasChangedEmitter()));
     connect(button(QDialogButtonBox::Ok), SIGNAL(clicked()), SLOT(kmixConfigHasChangedEmitter()));
-#else
-	connect(this, SIGNAL(applyClicked()), SLOT(kmixConfigHasChangedEmitter()));
-	connect(this, SIGNAL(okClicked()), SLOT(kmixConfigHasChangedEmitter()));
-#endif
 
 //	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(settingsChangedSlot()));
 //	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(settingsChangedSlot()));
@@ -405,11 +390,7 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	volumeOverdriveWarning->setVisible(overdriveAvailable);
 
     QString autostartConfigFilename = KGlobal::dirs()->findResource(
-                                      #ifdef X_KMIX_KF5_BUILD
                                           "xdgconf-autostart",
-                                      #else
-                                          "autostart",
-                                      #endif
                                           QString("kmix_autostart.desktop"));
 	if (dialogConfig.data.debugConfig)
 	    kDebug() << "autostartConfigFilename = " << autostartConfigFilename;
@@ -430,11 +411,7 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	}
 	allowAutostart->setEnabled(autostartFileExists);
 
-#ifdef X_KMIX_KF5_BUILD
 	KConfigDialog::showEvent(event);
-#else
-	KDialog::showEvent(event);
-#endif
 }
 
 
