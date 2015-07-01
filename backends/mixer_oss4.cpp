@@ -521,14 +521,14 @@ bool Mixer_OSS4::hasChangedControls()
 	minfo.dev = -1;
 	if ( wrapIoctl( ioctl(m_fd, SNDCTL_MIXERINFO, &minfo) ) < 0 )
 	{
-		kDebug(67100) << "Can't get mixerinfo from card!\n" << endl;
+		qCDebug(KMIX_LOG) << "Can't get mixerinfo from card!\n" << endl;
 		return false;
 	}
 
 	if (!minfo.enabled)
 	{
 		// Mixer is disabled. Probably disconnected USB device or card is unavailable;
-		kDebug(67100) << "Mixer for card is disabled!\n" << endl;
+		qCDebug(KMIX_LOG) << "Mixer for card is disabled!\n" << endl;
 		close();
 		return false;
 	}

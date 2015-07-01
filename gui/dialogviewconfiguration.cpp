@@ -46,7 +46,7 @@
 DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent) :
   QListWidgetItem(parent)
 {
-   kDebug() << "DialogViewConfigurationItem() default constructor";
+   qCDebug(KMIX_LOG) << "DialogViewConfigurationItem() default constructor";
    refreshItem();
 }
 
@@ -76,7 +76,7 @@ static QDataStream & operator<< ( QDataStream & s, const DialogViewConfiguration
     s << item._name;
     s << item._splitted;
     s << item._iconName;
- //kDebug() << "<< serialize << " << s;
+ //qCDebug(KMIX_LOG) << "<< serialize << " << s;
     return s;
 }
 
@@ -99,7 +99,7 @@ static QDataStream & operator>> ( QDataStream & s, DialogViewConfigurationItem &
   QString iconName;
   s >> iconName;
   item._iconName = iconName;
- //kDebug() << ">> deserialize >> " << id << name << iconName;
+ //qCDebug(KMIX_LOG) << ">> deserialize >> " << id << name << iconName;
   return s;
 }
 
@@ -192,12 +192,12 @@ DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
  */
 void DialogViewConfiguration::slotDropped ( DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList )
 {
-//kDebug() << "dropped item (index" << index << "): " << item->_id << item->_shown << item->_name << item->_splitted << item->_iconName;
+//qCDebug(KMIX_LOG) << "dropped item (index" << index << "): " << item->_id << item->_shown << item->_name << item->_splitted << item->_iconName;
 
     if ( list == _qlw ) {
         //DialogViewConfigurationItem* after = index > 0 ? static_cast<DialogViewConfigurationItem *>(list->item(index-1)) : 0;
 
-        //kDebug() << "after" << after->text() << after->internalTag();
+        //qCDebug(KMIX_LOG) << "after" << after->text() << after->internalTag();
         if ( sourceIsActiveList ) {
             // has been dragged within the active list (moved).
             _qlw->insertItem ( index, item );
@@ -315,7 +315,7 @@ void DialogViewConfiguration::createPage()
                splitted =  ( md->playbackVolume().count() > 1) || ( md->captureVolume().count() > 1 ) ;
             }
 
-            //kDebug()  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
+            //qCDebug(KMIX_LOG)  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
             if ( mdw->isVisible() ) {
               new DialogViewConfigurationItem(_qlw, md->id(), mdw->isVisible(), mdName, splitted, mdw->mixDevice()->iconName());
             }
@@ -438,10 +438,10 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
 
 
          // -3- Insert it in the new ControlSet **************************
-//         kDebug() << "Should add to new ControlSet: " << ctlId;
+//         qCDebug(KMIX_LOG) << "Should add to new ControlSet: " << ctlId;
         foreach ( ProfControl* control, oldCtlSet)
         {
-            //kDebug() << " checking " << control->id;
+            //qCDebug(KMIX_LOG) << " checking " << control->id;
             QRegExp idRegexp(control->id);
             if ( ctlId.contains(idRegexp) ) {
                 // found. Create a copy
@@ -451,7 +451,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
                 newCtl->setMandatory(false);
                 newCtl->setVisible(isActiveView);
                 newCtlSet.push_back(newCtl);
-//                 kDebug() << "Added to new ControlSet (done): " << newCtl->id;
+//                 qCDebug(KMIX_LOG) << "Added to new ControlSet (done): " << newCtl->id;
                 break;
             }
         }

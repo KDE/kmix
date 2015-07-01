@@ -27,6 +27,8 @@
 #include <QTimer>
 #include "core/mixdevice.h"
 #include "core/mixset.h"
+#include "core/kmixdebug.h"
+
 class Mixer;
 
 
@@ -190,7 +192,7 @@ protected:
   {
 		m_mixerName = cardBaseName;
 		int cardDiscriminator = 1 + s_mixerNums[cardBaseName];
-		kDebug() << "cardBaseName=" << cardBaseName << ", cardDiscriminator=" << cardDiscriminator;
+		qCDebug(KMIX_LOG) << "cardBaseName=" << cardBaseName << ", cardDiscriminator=" << cardDiscriminator;
 		_cardInstance = cardDiscriminator;
 		_cardRegistered = true;
   }
@@ -214,7 +216,7 @@ protected:
 		  int afterValue = beforeValue-1;
 		  if (beforeValue > 0)
 			  s_mixerNums[cardBaseName] = afterValue;
-		  kDebug() << "beforeValue=" << beforeValue << ", afterValue" << afterValue;
+		  qCDebug(KMIX_LOG) << "beforeValue=" << beforeValue << ", afterValue" << afterValue;
 	  }
   }
 

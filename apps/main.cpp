@@ -31,6 +31,7 @@
 
 #include "KMixApp.h"
 #include "core/version.h"
+#include "core/kmixdebug.h"
 
 static const char description[] =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
@@ -76,6 +77,6 @@ kdemain(int argc, char *argv[])
    KMixApp *app = new KMixApp();
    int ret = app->exec();
    delete app;
-   kDebug() << "KMix is now exiting, status=" << ret;
+   qCDebug(KMIX_LOG) << "KMix is now exiting, status=" << ret;
    return ret;
 }

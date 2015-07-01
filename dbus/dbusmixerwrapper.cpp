@@ -26,6 +26,7 @@
 #include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/volume.h"
+#include "core/kmixdebug.h"
 #include "dbus/dbusmixsetwrapper.h"
 #include "mixeradaptor.h"
 
@@ -35,7 +36,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 {
 	m_mixer = parent;
 	new MixerAdaptor( this );
-	kDebug() << "Create QDBusConnection for object " << path;
+	qCDebug(KMIX_LOG) << "Create QDBusConnection for object " << path;
 	QDBusConnection::sessionBus().registerObject( path, this );
 	
 	ControlManager::instance().addListener(
@@ -51,7 +52,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 DBusMixerWrapper::~DBusMixerWrapper()
 {
 	ControlManager::instance().removeListener(this);
-	kDebug() << "Remove QDBusConnection for object " << m_dbusPath;
+	qCDebug(KMIX_LOG) << "Remove QDBusConnection for object " << m_dbusPath;
 	if (DBusMixSetWrapper::instance())
 		DBusMixSetWrapper::instance()->signalMixersChanged();
 }

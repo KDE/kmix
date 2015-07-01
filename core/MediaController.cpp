@@ -28,11 +28,10 @@
  */
 
 #include "core/MediaController.h"
+#include "core/kmixdebug.h"
 
 //#include <phonon/audiooutput.h>
 //#include <phonon/backendcapabilities.h>
-
-#include <KDebug>
 
 MediaController::MediaController(QString controlId) :
 	id(controlId), playState(PlayUnknown)
@@ -52,12 +51,12 @@ MediaController::MediaController(QString controlId) :
 		Phonon::AudioOutputDevice& dev = devs[0];
 
 		QList<QByteArray> props = dev.propertyNames();
-		kDebug() << "desc=" << dev.description() << ", name=" << dev.name() << ", props=";
+		qCDebug(KMIX_LOG) << "desc=" << dev.description() << ", name=" << dev.name() << ", props=";
 		QByteArray prop;
 		int i=0;
 		foreach (prop, props)
 		{
-			kDebug() << "#"  << i << ": "<< prop;
+			qCDebug(KMIX_LOG) << "#"  << i << ": "<< prop;
 			++i;
 		}
 	}

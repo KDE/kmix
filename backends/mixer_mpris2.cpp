@@ -23,13 +23,13 @@
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
+#include "core/kmixdebug.h"
 
 #include <QStringList>
 #include <QDBusReply>
 #include <QString>
 #include <qvariant.h>
 
-#include <KDebug>
 #include <KLocale>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
@@ -90,7 +90,7 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 	if ( mad == 0 )
 	  return 0; // Might have disconnected recently => simply ignore command
 
-	kDebug() << "Send " << commandName << " to id=" << applicationId;
+	qCDebug(KMIX_LOG) << "Send " << commandName << " to id=" << applicationId;
 	QDBusPendingReply<> repl2 =
 		mad->playerIfc->asyncCall(commandName);
 
@@ -113,7 +113,7 @@ void Mixer_MPRIS2::watcherMediaControl(QDBusPendingCallWatcher* watcher)
 	const QDBusMessage& msg = watcher->reply();
 	QString id = mprisCtl->getId();
 	QString busDestination = mprisCtl->getBusDestination();
-	kDebug() << "Media control for id=" << id << ", path=" << msg.path() << ", interface=" << msg.interface() << ", busDestination" << busDestination;
+	qCDebug(KMIX_LOG) << "Media control for id=" << id << ", path=" << msg.path() << ", interface=" << msg.interface() << ", busDestination" << busDestination;
 }
 
 /**
@@ -153,7 +153,7 @@ void Mixer_MPRIS2::volumeChanged(MPrisControl* mad, double newVolume)
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
 	int volInt = newVolume *100;
 	if (GlobalConfig::instance().data.debugVolume)
-		kDebug() << "changed" << volInt;
+		qCDebug(KMIX_LOG) << "changed" << volInt;
 	volumeChangedInternal(md, volInt);
 }
 
@@ -211,7 +211,7 @@ int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 	MPrisControl* mad = controls.value(id);
 	if ( !mad )
 	{
-		kDebug() << "id does not exist:" << id;
+		qCDebug(KMIX_LOG) << "id does not exist:" << id;
 		return 0;
 	}
 
@@ -254,7 +254,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	QDBusConnection dbusConn = QDBusConnection::sessionBus();
 	if (! dbusConn.isConnected() )
 	{
-		kError(67100) <<  "Cannot connect to the D-Bus session bus.\n"
+		qCCritical(KMIX_LOG) <<  "Cannot connect to the D-Bus session bus.\n"
 				<< "To start it, run:\n"
 				<<"\teval `dbus-launch --auto-syntax`\n";
 		return Mixer::ERR_OPEN;
@@ -264,7 +264,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	bool connected = dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
 	if (!connected)
 	{
-		kWarning() << "MPRIS2 hotplug init failure. New Media Players will not be detected.";
+		qCWarning(KMIX_LOG) << "MPRIS2 hotplug init failure. New Media Players will not be detected.";
 	}
 
 	/* Here is a small concurrency issue.
@@ -285,7 +285,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 
 	if (! repl.isValid() )
 	{
-		kError() << "Invalid reply while listing Media Players. MPRIS2 players will not be available." << repl.error();
+		qCCritical(KMIX_LOG) << "Invalid reply while listing Media Players. MPRIS2 players will not be available." << repl.error();
 		return 1;
 	}
 
@@ -295,7 +295,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 		if ( busDestination.startsWith("org.mpris.MediaPlayer2") )
 		{
 			addMprisControlAsync(busDestination);
-			kDebug() << "MPRIS2: Attached media player on busDestination=" << busDestination;
+			qCDebug(KMIX_LOG) << "MPRIS2: Attached media player on busDestination=" << busDestination;
 		}
 	}
 
@@ -307,7 +307,7 @@ QString Mixer_MPRIS2::busDestinationToControlId(const QString& busDestination)
 	const QString prefix = "org.mpris.MediaPlayer2.";
 	if (! busDestination.startsWith(prefix))
 	{
-		kWarning() << "Ignoring unsupported control, busDestination=" << busDestination;
+		qCWarning(KMIX_LOG) << "Ignoring unsupported control, busDestination=" << busDestination;
 		return QString();
 	}
 
@@ -325,7 +325,7 @@ void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 {
 	// -1- Create a MPrisControl. Its fields will be filled partially here, partially via ASYNC DUBUS replies
 	QString id = busDestinationToControlId(busDestination);
-	kDebug() << "Get control of busDestination=" << busDestination << "id=" << id;
+	qCDebug(KMIX_LOG) << "Get control of busDestination=" << busDestination << "id=" << id;
 
 	QDBusConnection conn = QDBusConnection::sessionBus();
 	QDBusInterface *qdbiProps  = new QDBusInterface(QString(busDestination), QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", conn, this);
@@ -452,12 +452,12 @@ MPrisControl* Mixer_MPRIS2::watcherHelperGetMPrisControl(QDBusPendingCallWatcher
 		{
 			return mad;
 		}
-		kWarning() << "Ignoring unexpected Control Id. object=" << obj;
+		qCWarning(KMIX_LOG) << "Ignoring unexpected Control Id. object=" << obj;
 	}
 
 	else if ( msg.type() == QDBusMessage::ErrorMessage )
 	{
-		kError() << "ERROR in Media control operation, path=" << msg.path() << ", msg=" << msg;
+		qCCritical(KMIX_LOG) << "ERROR in Media control operation, path=" << msg.path() << ", msg=" << msg;
 	}
 
 
@@ -478,7 +478,7 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 	QString busDestination = mprisCtl->getBusDestination();
 	QString readableName = id; // Start with ID, but replace with reply (if exists)
 
-	kDebug() << "Plugging id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
+	qCDebug(KMIX_LOG) << "Plugging id=" << id << ", busDestination" << busDestination << ", name= " << readableName;
 
 	QList<QVariant> repl = msg.arguments();
 	if ( ! repl.isEmpty() )
@@ -488,7 +488,7 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 		QVariant result2 = dbusVariant.variant();
 		readableName = result2.toString();
 
-//			kDebug() << "REPLY " << result2.type() << ": " << readableName;
+//			qCDebug(KMIX_LOG) << "REPLY " << result2.type() << ": " << readableName;
 
 		MixDevice::ChannelType ct = getChannelTypeFromPlayerId(id);
 		MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
@@ -580,13 +580,13 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 	{
 		if ( oldOwner.isEmpty() && !newOwner.isEmpty())
 		{
-			kDebug() << "Mediaplayer registers: " << name;
+			qCDebug(KMIX_LOG) << "Mediaplayer registers: " << name;
 			addMprisControlAsync(name);
 		}
 		else if ( !oldOwner.isEmpty() && newOwner.isEmpty())
 		{
 			QString id = busDestinationToControlId(name);
-			kDebug() << "Mediaplayer unregisters: " << name << " , id=" << id;
+			qCDebug(KMIX_LOG) << "Mediaplayer unregisters: " << name << " , id=" << id;
 
 			// -1- Remove Mediaplayer connection
 			if (controls.contains(id))
@@ -604,12 +604,12 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 				md->close();
 				m_mixDevices.removeById(id);
 				announceControlListAsync(id);
-				kDebug() << "MixDevice 4 useCount=" << md.use_count();
+				qCDebug(KMIX_LOG) << "MixDevice 4 useCount=" << md.use_count();
 			}
 		}
 		else
 		{
-			kWarning() << "Mediaplayer has registered under a new name. This is currently not supported by KMix";
+			qCWarning(KMIX_LOG) << "Mediaplayer has registered under a new name. This is currently not supported by KMix";
 		}
 	}
 
@@ -620,7 +620,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
  */
 void MPrisControl::trackChangedIncoming(QVariantMap /*msg*/)
 {
-	kDebug() << "Track changed";
+	qCDebug(KMIX_LOG) << "Track changed";
 }
 
 MediaController::PlayState Mixer_MPRIS2::mprisPlayStateString2PlayState(const QString& playbackStatus)
@@ -651,7 +651,7 @@ void MPrisControl::onPropertyChange(QString /*ifc*/,QVariantMap msg ,QStringList
 	if (v != msg.end() )
 	{
 		double volDouble = v.value().toDouble();
-		kDebug(67100) << "volumeChanged incoming: vol=" << volDouble;
+		qCDebug(KMIX_LOG) << "volumeChanged incoming: vol=" << volDouble;
 		emit volumeChanged( this, volDouble);
 	}
 
@@ -660,7 +660,7 @@ void MPrisControl::onPropertyChange(QString /*ifc*/,QVariantMap msg ,QStringList
 	{
 		QString playbackStatus = v.value().toString();
 		MediaController::PlayState playState = Mixer_MPRIS2::mprisPlayStateString2PlayState(playbackStatus);
-		kDebug() << "PlaybackStatus is now " << playbackStatus;
+		qCDebug(KMIX_LOG) << "PlaybackStatus is now " << playbackStatus;
 
 		emit playbackStateChanged(this, playState);
 	}

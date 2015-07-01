@@ -224,7 +224,7 @@ QColor interpolate( const QColor& low, const QColor& high, int percent ) {
 
 void KSmallSlider::paintEvent( QPaintEvent * )
 {
-//    kDebug(67100) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height();
+//    qCDebug(KMIX_LOG) << "KSmallSlider::paintEvent: width() = " << width() << ", height() = " << height();
    QPainter p( this );
 
    int sliderPos = positionFromValue( QAbstractSlider::value() );
@@ -240,7 +240,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
    {
        if (  orientation() == Qt::Horizontal ) {
          QRect outer = QRect( 1, 1, sliderPos, height() - 2 );
-//	 kDebug(67100) << "KSmallSlider::paintEvent: outer = " << outer;
+//	 qCDebug(KMIX_LOG) << "KSmallSlider::paintEvent: outer = " << outer;
 
          if ( grayed )
              gradient( p, true, outer, grayLow,
@@ -254,7 +254,7 @@ void KSmallSlider::paintEvent( QPaintEvent * )
       else {
          QRect outer = QRect( 1, height()-sliderPos-1, width() - 2, sliderPos-1 );
 /*
-	 kDebug(67100) << "KSmallSlider::paintEvent: sliderPos=" << sliderPos
+	 qCDebug(KMIX_LOG) << "KSmallSlider::paintEvent: sliderPos=" << sliderPos
 			<< "height()=" << height()
 			<< "width()=" << width()
 			<< "outer = " << outer << endl;
@@ -310,7 +310,7 @@ void KSmallSlider::mouseMoveEvent( QMouseEvent *e )
 
 void KSmallSlider::wheelEvent( QWheelEvent * qwe)
 {
-//    kDebug(67100) << "KSmallslider::wheelEvent()";
+//    qCDebug(KMIX_LOG) << "KSmallslider::wheelEvent()";
 	// bko313579 Do not use "delta", as that is setting more related to documents (Editor, Browser). KMix should
 	//           simply always use its own VOLUME_STEP_DIVISOR as a base for percentage change.
 	bool decrease = qwe->delta() < 0;
@@ -321,7 +321,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * qwe)
     if ( inc < 1)
     	inc = 1;
 
-    //kDebug(67100) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta();
+    //qCDebug(KMIX_LOG) << "KSmallslider::wheelEvent() inc=" << inc << "delta=" << e->delta();
 	int newVal;
 
     if ( !decrease ) {
@@ -393,11 +393,11 @@ QSizePolicy KSmallSlider::sizePolicy() const
 {
 
     if ( orientation() == Qt::Vertical ) {
-	//kDebug(67100) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
+	//qCDebug(KMIX_LOG) << "KSmallSlider::sizePolicy() vertical value=(Fixed,MinimumExpanding)\n";
 	return QSizePolicy(  QSizePolicy::Fixed, QSizePolicy::Expanding );
     }
     else {
-	//kDebug(67100) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
+	//qCDebug(KMIX_LOG) << "KSmallSlider::sizePolicy() horizontal value=(MinimumExpanding,Fixed)\n";
         return QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     }
 }

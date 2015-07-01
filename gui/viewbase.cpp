@@ -180,11 +180,11 @@ void ViewBase::createDeviceWidgets()
 void ViewBase::guiVisibilitySlot(MixDeviceWidget* mdw, bool enable)
 {
 	MixDevice* md = mdw->mixDevice().get();
-	kDebug() << "Change " << md->id() << " to visible=" << enable;
+	qCDebug(KMIX_LOG) << "Change " << md->id() << " to visible=" << enable;
 	ProfControl* pctl = findMdw(md->id());
 	if (pctl == 0)
 	{
-		kWarning() << "MixDevice not found, and cannot be hidden, id=" << md->id();
+		qCWarning(KMIX_LOG) << "MixDevice not found, and cannot be hidden, id=" << md->id();
 		return; // Ignore
 	}
 
@@ -232,7 +232,7 @@ void ViewBase::popupReset()
 */
 void ViewBase::showContextMenu()
 {
-    //kDebug(67100) << "ViewBase::showContextMenu()";
+    //qCDebug(KMIX_LOG) << "ViewBase::showContextMenu()";
     popupReset();
 
     QPoint pos = QCursor::pos();
@@ -308,9 +308,9 @@ void ViewBase::configureView()
 }
 
 void ViewBase::toggleMenuBarSlot() {
-    //kDebug(67100) << "ViewBase::toggleMenuBarSlot() start\n";
+    //qCDebug(KMIX_LOG) << "ViewBase::toggleMenuBarSlot() start\n";
     emit toggleMenuBar();
-    //kDebug(67100) << "ViewBase::toggleMenuBarSlot() done\n";
+    //qCDebug(KMIX_LOG) << "ViewBase::toggleMenuBarSlot() done\n";
 }
 
 
@@ -329,7 +329,7 @@ void ViewBase::load(KConfig *config)
 	QString grp = "View.";
 	grp += view->id();
 	//KConfigGroup cg = config->group( grp );
-	kDebug(67100)
+	qCDebug(KMIX_LOG)
 	<< "KMixToolBox::loadView() grp=" << grp.toAscii();
 
 	static GuiVisibility guiVisibilities[3] =
@@ -406,12 +406,12 @@ ProfControl* ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility)
 		{
 			if (pControl->getVisibility().satisfiesVisibility(visibility))
 			{
-//				kDebug() << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+//				qCDebug(KMIX_LOG) << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 				return pControl;
 			}
 			else
 			{
-//				kDebug() << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
+//				qCDebug(KMIX_LOG) << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 			}
 		}
 	} // iterate over all ProfControl entries
@@ -432,7 +432,7 @@ ProfControl* ViewBase::findMdw(const QString& id)
 	foreach ( ProfControl* pControl, guiProfile()->getControls() )
 	{
 		QRegExp idRegExp(pControl->id);
-		//kDebug(67100) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
+		//qCDebug(KMIX_LOG) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
 		if ( id.contains(idRegExp) )
 		{
 			return pControl;
@@ -462,9 +462,9 @@ void ViewBase::save(KConfig *config)
 			MixDeviceWidget* mdw = (MixDeviceWidget*) qmdw;
 			shared_ptr<MixDevice> md = mdw->mixDevice();
 
-			//kDebug(67100) << "  grp=" << grp.toAscii();
-			//kDebug(67100) << "  mixer=" << view->id().toAscii();
-			//kDebug(67100) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
+			//qCDebug(KMIX_LOG) << "  grp=" << grp.toAscii();
+			//qCDebug(KMIX_LOG) << "  mixer=" << view->id().toAscii();
+			//qCDebug(KMIX_LOG) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
 
 			QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
 			KConfigGroup devcg = config->group(devgrp);
@@ -478,7 +478,7 @@ void ViewBase::save(KConfig *config)
 			if (!dynamic)
 			{
 				devcg.writeEntry("Show", mdw->isVisibleTo(view));
-//             kDebug() << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
+//             qCDebug(KMIX_LOG) << "Save devgrp" << devgrp << "show=" << mdw->isVisibleTo(view);
 			}
 			*/
 
@@ -490,7 +490,7 @@ void ViewBase::save(KConfig *config)
 		// We do not save GUIProfiles (as they cannot be customized) for dynamic mixers (e.g. PulseAudio)
 		if (guiProfile()->isDirty())
 		{
-			kDebug(67100)
+			qCDebug(KMIX_LOG)
 			<< "Writing dirty profile. grp=" << grp;
 			guiProfile()->writeProfile();
 		}

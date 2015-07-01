@@ -140,7 +140,7 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
  */
 void DialogAddView::createPageByID(int mixerId)
 {
-  //kDebug(67100) << "DialogAddView::createPage()";
+  //qCDebug(KMIX_LOG) << "DialogAddView::createPage()";
     QString selectedMixerName = m_cMixer->itemText(mixerId);
     for( int i =0; i<Mixer::mixers().count(); i++ )
     {
@@ -235,11 +235,11 @@ void DialogAddView::apply()
     if ( button != 0 ) {
       QString viewName = button->objectName();
       if ( mixer == 0 ) {
-         kError(67100) << "DialogAddView::createPage(): Invalid Mixer (mixer=0)" << endl;
+         qCCritical(KMIX_LOG) << "DialogAddView::createPage(): Invalid Mixer (mixer=0)" << endl;
          return; // can not happen
       }
       else {
-          kDebug() << "We should now create a new view " << viewName << " for mixer " << mixer->id();
+          qCDebug(KMIX_LOG) << "We should now create a new view " << viewName << " for mixer " << mixer->id();
           resultMixerId = mixer->id();
           resultViewName = viewName;
       }

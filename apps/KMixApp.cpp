@@ -46,7 +46,7 @@ KMixApp::KMixApp() :
 
 KMixApp::~KMixApp()
 {
-	kDebug() << "Deleting KMixApp";
+	qCDebug(KMIX_LOG) << "Deleting KMixApp";
 	ControlManager::instance().shutdownNow();
 	delete m_kmix;
 	m_kmix = 0;
@@ -58,7 +58,7 @@ void KMixApp::createWindowOnce(bool hasArgKeepvisibility, bool reset)
 	// Create window, if it was not yet created (e.g. via autostart or manually)
 	if (m_kmix == 0)
 	{
-		kDebug() << "Creating new KMix window";
+		qCDebug(KMIX_LOG) << "Creating new KMix window";
 		m_kmix = new KMixWindow(hasArgKeepvisibility, reset);
 	}
 }
@@ -81,23 +81,23 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	creationLock.lock();
 
 	bool restore = isSessionRestored(); // && KMainWindow::canBeRestored(0);
-	kDebug() << "Starting KMix using kepvisibility=" << hasArgKeepvisibility << ", failsafe=" << reset << ", sessionRestore=" << restore;
+	qCDebug(KMIX_LOG) << "Starting KMix using kepvisibility=" << hasArgKeepvisibility << ", failsafe=" << reset << ", sessionRestore=" << restore;
 	int createCount = 0;
 	if (restore)
 	{
 		if (reset)
 		{
-			kWarning() << "Reset cannot be performed while KMix is running. Please quit KMix and retry then.";
+			qCWarning(KMIX_LOG) << "Reset cannot be performed while KMix is running. Please quit KMix and retry then.";
 		}
 		int n = 1;
 		while (KMainWindow::canBeRestored(n))
 		{
-			kDebug() << "Restoring window " << n;
+			qCDebug(KMIX_LOG) << "Restoring window " << n;
 			if (n > 1)
 			{
 				// This code path is "impossible". It is here only for analyzing possible issues with session resoring.
 				// KMix is a single-instance app. If more than one instance is craeated we have a bug.
-				kWarning() << "KDE session management wants to restore multiple instances of KMix. Please report this as a bug.";
+				qCWarning(KMIX_LOG) << "KDE session management wants to restore multiple instances of KMix. Please report this as a bug.";
 				break;
 			}
 			else
@@ -138,7 +138,7 @@ int KMixApp::newInstance()
 	 */
 
 
-	//kDebug(67100) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
+	//qCDebug(KMIX_LOG) <<  "KMixApp::newInstance() isRestored()=" << isRestored() << "_keepVisibility=" << _keepVisibility;
 	/**
 	 * 		NB See https://qa.mandriva.com/show_bug.cgi?id=56893#c3
 	 *
@@ -204,7 +204,7 @@ int KMixApp::newInstance()
 			 *       (see BKO 58901), but nowadays Mixer Applets nmight want to use it, though they should
 			 *       use KMixD instead.
 			 */
-			kDebug()
+			qCDebug(KMIX_LOG)
 			<< "KMixApp::newInstance() REGULAR_START _keepVisibility="
 					<< hasArgKeepvisibility;
 		}

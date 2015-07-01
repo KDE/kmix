@@ -67,6 +67,7 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
+#include "core/kmixdebug.h"
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusPendingCall>
 #include <QKeySequence>
@@ -365,7 +366,7 @@ void KMixWindow::saveConfig()
 
 	// TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
 	KGlobal::config()->sync();
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Saved config ... sync finished";
 }
 
@@ -395,7 +396,7 @@ void KMixWindow::saveBaseConfig()
 	QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
 	config.writeEntry("MixerIgnoreExpression", mixerIgnoreExpression);
 
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Base configuration saved";
 }
 
@@ -438,11 +439,11 @@ void KMixWindow::saveViewConfig()
 		const QString& mixerProfileKey = it.key(); // this is actually some mixer->id()
 		const QStringList& qslProfiles = it.value();
 		pconfig.writeEntry(mixerProfileKey, qslProfiles);
-		kDebug()
+		qCDebug(KMIX_LOG)
 		<< "Save Profile List for " << mixerProfileKey << ", number of views is " << qslProfiles.count();
 	}
 
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "View configuration saved";
 }
 
@@ -469,7 +470,7 @@ void KMixWindow::saveVolumes(QString postfix)
 	}
 	cfg->sync();
 	delete cfg;
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Volume configuration saved";
 }
 
@@ -533,7 +534,7 @@ void KMixWindow::loadBaseConfig()
 
 	// The following log is very helpful in bug reports. Please keep it.
 	m_backendFilter = config.readEntry<>("Backends", QList<QString>());
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Backends: " << m_backendFilter;
 
 	// show/hide menu bar
@@ -557,7 +558,7 @@ void KMixWindow::loadVolumes()
 
 void KMixWindow::loadVolumes(QString postfix)
 {
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "About to load config (Volume)";
 	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
 
@@ -614,7 +615,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		Mixer *mixer = Mixer::findMixer( guiprof->getMixerId() );
 		if ( mixer == 0 )
 		{
-			kError() << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
+			qCCritical(KMIX_LOG) << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
 			continue;
 		}
 		mixerHasProfile[mixer] = true;
@@ -682,7 +683,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 			foreach ( QString profileId, profileList)
 			{
 				// This handles the profileList form the kmixrc
-				kDebug() << "Now searching for profile: " << profileId;
+				qCDebug(KMIX_LOG) << "Now searching for profile: " << profileId;
 				GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
 				if ( guiprof != 0 )
 				{
@@ -691,7 +692,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 				}
 				else
 				{
-					kError() << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
+					qCCritical(KMIX_LOG) << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
 				}
 			}
 
@@ -715,16 +716,16 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 			//     (Hint: This means the user cannot hide a device completely
 
 			// Lets try a bunch of fallback strategies:
-			kDebug() << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
+			qCDebug(KMIX_LOG) << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
 			GUIProfile* guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
 			if ( guiprof == 0 )
 			{
-				kDebug() << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
+				qCDebug(KMIX_LOG) << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
 				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
 			}
 			if ( guiprof == 0)
 			{
-				kDebug() << "Using fallback GUI Profile for the mixer " << mixer->id();
+				qCDebug(KMIX_LOG) << "Using fallback GUI Profile for the mixer " << mixer->id();
 				// This means there is neither card specific nor card unspecific profile
 				// This is the case for some backends (as they don't ship profiles).
 				guiprof = GUIProfile::fallbackProfile(mixer);
@@ -737,7 +738,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 			}
 			else
 			{
-				kError() << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
+				qCCritical(KMIX_LOG) << "Cannot use ANY profile (including Fallback) for mixer " << mixer->id() << " . This is impossible, and thus this mixer can NOT be used.";
 			}
 
 		}
@@ -784,7 +785,7 @@ void KMixWindow::newView()
 {
 	if (Mixer::mixers().empty())
 	{
-		kError() << "Trying to create a View, but no Mixer exists";
+		qCCritical(KMIX_LOG) << "Trying to create a View, but no Mixer exists";
 		return; // should never happen
 	}
 
@@ -797,7 +798,7 @@ void KMixWindow::newView()
 		QString profileName = dav->getresultViewName();
 		QString mixerId = dav->getresultMixerId();
 		mixer = Mixer::findMixer(mixerId);
-		kDebug()
+		qCDebug(KMIX_LOG)
 		<< ">>> mixer = " << mixerId << " -> " << mixer;
 
 		GUIProfile* guiprof = GUIProfile::find(mixer, profileName, false, false);
@@ -823,7 +824,7 @@ void KMixWindow::newView()
 		delete dav;
 	}
 
-	//kDebug() << "Exit";
+	//qCDebug(KMIX_LOG) << "Exit";
 }
 
 /**
@@ -833,7 +834,7 @@ void KMixWindow::newView()
  */
 void KMixWindow::saveAndCloseView(int idx)
 {
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Enter";
 	QWidget *w = m_wsMixers->widget(idx);
 	KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
@@ -845,7 +846,7 @@ void KMixWindow::saveAndCloseView(int idx)
 		saveViewConfig();
 		delete kmw;
 	}
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Exit";
 }
 
@@ -865,7 +866,7 @@ void KMixWindow::fixConfigAfterRead()
 			QString groupName = it.next();
 			if (groupName.indexOf("View.Base.Base") == 0)
 			{
-				kDebug(67100)
+				qCDebug(KMIX_LOG)
 				<< "Fixing group " << groupName;
 				KConfigGroup buggyDevgrpCG = KGlobal::config()->group(groupName);
 				buggyDevgrpCG.deleteGroup();
@@ -876,7 +877,7 @@ void KMixWindow::fixConfigAfterRead()
 
 void KMixWindow::plugged(const char* driverName, const QString& udi, QString& dev)
 {
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
 	QString driverNameString;
 	driverNameString = driverName;
@@ -884,7 +885,7 @@ void KMixWindow::plugged(const char* driverName, const QString& udi, QString& de
 	Mixer *mixer = new Mixer(driverNameString, devNum);
 	if (mixer != 0)
 	{
-		kDebug()
+		qCDebug(KMIX_LOG)
 		<< "Plugged: dev=" << dev << "\n";
 		if (MixerToolBox::instance()->possiblyAddMixer(mixer))
 			recreateGUI(true, mixer->id(), true, false);
@@ -893,15 +894,15 @@ void KMixWindow::plugged(const char* driverName, const QString& udi, QString& de
 
 void KMixWindow::unplugged(const QString& udi)
 {
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Unplugged: udi=" << udi << "\n";
 	for (int i = 0; i < Mixer::mixers().count(); ++i)
 	{
 		Mixer *mixer = (Mixer::mixers())[i];
-		//         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
+		//         qCDebug(KMIX_LOG) << "Try Match with:" << mixer->udi() << "\n";
 		if (mixer->udi() == udi)
 		{
-			kDebug()
+			qCDebug(KMIX_LOG)
 			<< "Unplugged Match: Removing udi=" << udi << "\n";
 			//KMixToolBox::notification("MasterFallback", "aaa");
 			bool globalMasterMixerDestroyed = (mixer == Mixer::getGlobalMasterMixer());
@@ -983,7 +984,7 @@ bool KMixWindow::profileExists(QString guiProfileId)
 
 bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition)
 {
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "Add " << guiprofId;
 	GUIProfile* guiprof = GUIProfile::find(guiprofId);
 	if (guiprof != 0 && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
@@ -992,7 +993,7 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	if (mixer == 0)
 		return false; // no such Mixer
 
-	//       kDebug(67100) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
+	//       qCDebug(KMIX_LOG) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
 	ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
 	if ((_actionShowMenubar == 0) || _actionShowMenubar->isChecked())
 		vflags |= ViewBase::MenuBarVisible;
@@ -1058,7 +1059,7 @@ bool KMixWindow::queryClose()
 		// Accept the close, if:
 		//     The user has disabled docking
 		// or  SessionSaving() is running
-		//         kDebug(67100) << "close";
+		//         qCDebug(KMIX_LOG) << "close";
 		return true;
 	}
 }
@@ -1151,7 +1152,7 @@ void KMixWindow::slotMute()
 
 void KMixWindow::quit()
 {
-	//     kDebug(67100) << "quit";
+	//     qCDebug(KMIX_LOG) << "quit";
 	kapp->quit();
 }
 
@@ -1191,10 +1192,10 @@ void KMixWindow::applyPrefs()
 
 	bool toplevelOrientationHasChanged = config.getToplevelOrientation() != configBefore.getToplevelOrientation();
 	bool traypopupOrientationHasChanged = config.getTraypopupOrientation() != configBefore.getTraypopupOrientation();
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "toplevelOrientationHasChanged=" << toplevelOrientationHasChanged << ", config="
 			<< config.getToplevelOrientation() << ", configBefore=" << configBefore.getToplevelOrientation();
-	kDebug()
+	qCDebug(KMIX_LOG)
 	<< "trayOrientationHasChanged=" << traypopupOrientationHasChanged << ", config=" << config.getTraypopupOrientation()
 			<< ", configBefore=" << configBefore.getTraypopupOrientation();
 
@@ -1263,7 +1264,7 @@ void KMixWindow::errorPopup(const QString& msg)
 	dialog->setMainWidget(qlbl);
 	dialog->exec();
 	delete dialog;
-	kWarning() << msg;
+	qCWarning(KMIX_LOG) << msg;
 }
 
 void KMixWindow::slotConfigureCurrentView()

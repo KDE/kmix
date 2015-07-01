@@ -81,12 +81,12 @@ protected:
 
     virtual Qt::DropActions supportedDropActions() const
     {
-        //kDebug() << "supportedDropActions!";
+        //qCDebug(KMIX_LOG) << "supportedDropActions!";
         return Qt::MoveAction;
     }
     virtual QStringList mimeTypes() const
     {
-        //kDebug() << "mimeTypes!";
+        //qCDebug(KMIX_LOG) << "mimeTypes!";
         return QStringList() << "application/x-kde-action-list";
     }
 

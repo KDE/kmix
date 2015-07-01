@@ -96,7 +96,7 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    if ( guiprof != 0 )
    {
 	if (GlobalConfig::instance().data.debugGUI)
-		kDebug() << "Add a view " << _guiprofId;
+		qCDebug(KMIX_LOG) << "Add a view " << _guiprofId;
     ViewSliders* view = new ViewSliders( this, guiprof->getId(), _mixer, vflags, _guiprofId, _actionCollection );
     possiblyAddView(view);
    }
@@ -121,7 +121,7 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
       _views.push_back(vbase);
       connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
       if (GlobalConfig::instance().data.debugGUI)
-    	  kDebug() << "CONNECT ViewBase count " << vbase->getMixers().size();
+    	  qCDebug(KMIX_LOG) << "CONNECT ViewBase count " << vbase->getMixers().size();
       return true;
    }
 }
@@ -154,7 +154,7 @@ void KMixerWidget::loadConfig( KConfig *config )
     for ( std::vector<ViewBase*>::const_iterator it = _views.begin(); it != viewsEnd; ++it) {
         ViewBase* view = *it;
     	if (GlobalConfig::instance().data.debugVolume)
-    		kDebug(67100) << "KMixerWidget::loadConfig()" << view->id();
+    		qCDebug(KMIX_LOG) << "KMixerWidget::loadConfig()" << view->id();
         view->load(config);
         view->configurationUpdate();
     } // for all tabs
@@ -169,7 +169,7 @@ void KMixerWidget::saveConfig(KConfig *config)
 	{
 		ViewBase* view = *it;
 		if (GlobalConfig::instance().data.debugVolume)
-			kDebug(67100)
+			qCDebug(KMIX_LOG)
 			<< "KMixerWidget::saveConfig()" << view->id();
 		view->save(config);
 	} // for all tabs

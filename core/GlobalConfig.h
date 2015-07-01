@@ -24,7 +24,6 @@
 #include <QSet>
 
 #include <KConfigSkeleton>
-#include <KDebug>
 
 class GlobalConfigData
 {

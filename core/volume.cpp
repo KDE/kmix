@@ -318,7 +318,7 @@ int Volume::getAvgVolumePercent(ChannelMask chmask)
 	qreal volShiftedToZero = volume - _minVolume;
 	qreal percentReal = ( volSpan == 0 ) ? 0 : ( 100 * volShiftedToZero ) / ( volSpan - 1);
 	int percent = qRound(percentReal);
-	//kDebug() << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
+	//qCDebug(KMIX_LOG) << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
 
 	return percent;
 }

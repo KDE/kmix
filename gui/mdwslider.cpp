@@ -576,7 +576,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 
 	foreach (VolumeChannel vc, vols )
 	{
-		//kDebug(67100) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
+		//qCDebug(KMIX_LOG) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
 		QWidget *subcontrolLabel;
 
 		QString subcontrolTranslation;
@@ -743,7 +743,7 @@ void MDWSlider::setIcon( QString filename, QWidget* label )
 	}
 	else
 	{
-		kError(67100) << "Pixmap missing. filename=" << filename << endl;
+		qCCritical(KMIX_LOG) << "Pixmap missing. filename=" << filename << endl;
 	}
 }
 
@@ -905,7 +905,7 @@ void MDWSlider::volumeChange( int )
 {
 //  if ( mixDevice()->id() == "Headphone:0" )
 //  {
-//    kDebug(67100) << "headphone bug";
+//    qCDebug(KMIX_LOG) << "headphone bug";
 //  }
 	if (!m_slidersPlayback.isEmpty())
 	{
@@ -1021,10 +1021,10 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 	m_mixdevice->increaseOrDecreaseVolume(decrease, volumeType);
 	// I should possibly not block, as the changes that come back from the Soundcard
 	//      will be ignored (e.g. because of capture groups)
-// 	kDebug() << "MDWSlider is blocking signals for " << m_view->id();
+// 	qCDebug(KMIX_LOG) << "MDWSlider is blocking signals for " << m_view->id();
 // 	bool oldViewBlockSignalState = m_view->blockSignals(true);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-// 	kDebug() << "MDWSlider is unblocking signals for " << m_view->id();
+// 	qCDebug(KMIX_LOG) << "MDWSlider is unblocking signals for " << m_view->id();
 // 	m_view->blockSignals(oldViewBlockSignalState);
 }
 
@@ -1044,7 +1044,7 @@ void MDWSlider::moveStream(QString destId)
 void MDWSlider::update()
 {
 //	  bool debugMe = (mixDevice()->id() == "PCM:0" );
-//	  if (debugMe) kDebug() << "The update() PCM:0 playback state" << mixDevice()->isMuted()
+//	  if (debugMe) qCDebug(KMIX_LOG) << "The update() PCM:0 playback state" << mixDevice()->isMuted()
 //	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
 	if ( m_slidersPlayback.count() != 0 || m_mixdevice->hasMuteSwitch() )
@@ -1074,7 +1074,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 //  	  bool debugMe = (mixDevice()->id() == "PCM:0" );
 //	  if (debugMe)
 //	  {
-//	    kDebug() << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
+//	    qCDebug(KMIX_LOG) << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
 //	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 //	  }
   
@@ -1271,13 +1271,13 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 		QAbstractSlider *slider = qobject_cast<QAbstractSlider*>(obj);
 		if (slider != 0)
 		{
-//			kDebug();
-//			kDebug();
-//			kDebug() << "----------------------------- Slider is " << slider;
+//			qCDebug(KMIX_LOG);
+//			qCDebug(KMIX_LOG);
+//			qCDebug(KMIX_LOG) << "----------------------------- Slider is " << slider;
 			// Mouse is over a slider. So lets apply the wheel event to playback or capture only
 			if(m_slidersCapture.contains(slider))
 			{
-//				kDebug() << "Slider is capture " << slider;
+//				qCDebug(KMIX_LOG) << "Slider is capture " << slider;
 				volumeType = Volume::Capture;
 			}
 		}
@@ -1297,9 +1297,9 @@ bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
 		if (slider != 0)
 		{
 			Volume& volP = m_mixdevice->playbackVolume();
-//			kDebug() << "slider=" << slider->objectName();
+//			qCDebug(KMIX_LOG) << "slider=" << slider->objectName();
 			VolumeSliderExtraData& sliderExtraData = extraData(slider);
-//			kDebug() << "slider=" << slider->objectName() << "sliderExtraData=" << sliderExtraData.getSubcontrolLabel() << " , chid=" << sliderExtraData.getChid();
+//			qCDebug(KMIX_LOG) << "slider=" << slider->objectName() << "sliderExtraData=" << sliderExtraData.getSubcontrolLabel() << " , chid=" << sliderExtraData.getChid();
 			volumeValues.push_back(volP.getVolume(sliderExtraData.getChid()));
 		}
 		return true;

@@ -103,7 +103,7 @@ void ViewSliders::controlsChange(int changeType)
 
 	case ControlChangeType::Volume:
 		if (GlobalConfig::instance().data.debugVolume)
-			kDebug()
+			qCDebug(KMIX_LOG)
 			<< "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
 		refreshVolumeLevels();
 		break;
@@ -259,7 +259,7 @@ void ViewSliders::_setMixSet()
 			QRegExp idRegexp(control->id);
 			//bool isExactRegexp = control->id.startsWith('^') && control->id.endsWith('$'); // for optimizing
 			//isExactRegexp &= ( ! control->id.contains(".*") ); // For now. Might be removed in the future, as it cannot be done properly !!!
-			//kDebug(67100) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
+			//qCDebug(KMIX_LOG) << "ViewSliders::setMixSet(): Check GUIProfile id==" << control->id << "\n";
 			// The following for-loop could be simplified by using a std::find_if
 			for ( int i=0; i<mixset.count(); i++ )
 			{
@@ -356,7 +356,7 @@ void ViewSliders::configurationUpdate()
 		if (mdw && mdw->isVisibleTo(this))
 		{
 			labelExtent = qMax(labelExtent, mdw->labelExtentHint());
-			//kDebug() << "########## EXTENT for " << id() << " is " << labelExtent;
+			//qCDebug(KMIX_LOG) << "########## EXTENT for " << id() << " is " << labelExtent;
 			haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
 			haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();
 		}
@@ -365,7 +365,7 @@ void ViewSliders::configurationUpdate()
 		//		if (haveCaptureLEDs && haveMuteButtons)
 		//			break; // We know all we want. Lets break.
 	}
-   //kDebug(67100) << "topPartExtent is " << topPartExtent;
+   //qCDebug(KMIX_LOG) << "topPartExtent is " << topPartExtent;
    bool firstVisibleControlFound = false;
    for ( int i=0; i<_mdws.count(); i++ )
    {
@@ -425,7 +425,7 @@ void ViewSliders::refreshVolumeLevels()
 			{
 				bool debugMe = (mdw->mixDevice()->id() == "PCM:0");
 				if (debugMe)
-					kDebug()
+					qCDebug(KMIX_LOG)
 					<< "Old PCM:0 playback state" << mdw->mixDevice()->isMuted() << ", vol="
 						<< mdw->mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 			}
@@ -434,7 +434,7 @@ void ViewSliders::refreshVolumeLevels()
 		}
 		else
 		{
-			kError(67100) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
+			qCCritical(KMIX_LOG) << "ViewSliders::refreshVolumeLevels(): mdw is not a MixDeviceWidget\n";
 			// no slider. Cannot happen in theory => skip it
 		}
 	}

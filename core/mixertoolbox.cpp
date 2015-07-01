@@ -99,7 +99,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
    bool backendMprisFound = false; // only for SINGLE_PLUS_MPRIS2
    bool regularBackendFound = false; // only for SINGLE_PLUS_MPRIS2
 
-   kDebug() << "multiDriverMode=" << multiDriverMode << ", backendList=" << backendList;
+   qCDebug(KMIX_LOG) << "multiDriverMode=" << multiDriverMode << ", backendList=" << backendList;
 
    // Find all mixers and initialize them
    int drvNum = Mixer::numDrivers();
@@ -141,10 +141,10 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
       }
 
       QString driverName = Mixer::driverName(drv);
-      kDebug(67100) << "Looking for mixers with the : " << driverName << " driver";
+      qCDebug(KMIX_LOG) << "Looking for mixers with the : " << driverName << " driver";
       if ( useBackendFilter && ! backendList.contains(driverName) )
       {
-	  kDebug() << "Skipping " << driverName << " (filtered)";
+	  qCDebug(KMIX_LOG) << "Skipping " << driverName << " (filtered)";
 	  continue;
       }
       
@@ -217,7 +217,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
       
          if ( mixerAccepted )
          {
-            kDebug(67100) << "Success! Found a mixer with the : " << driverName << " driver";
+            qCDebug(KMIX_LOG) << "Success! Found a mixer with the : " << driverName << " driver";
             // append driverName (used drivers)
             if ( !drvInfoAppended )
             {
@@ -298,8 +298,8 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 		   KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
    }
 
-   kDebug(67100) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count();
-   //kDebug(67100) << "OUT MixerToolBox::initMixer()";
+   qCDebug(KMIX_LOG) << ref_hwInfoString << endl << "Total number of detected Mixers: " << Mixer::mixers().count();
+   //qCDebug(KMIX_LOG) << "OUT MixerToolBox::initMixer()";
 
 }
 
@@ -326,7 +326,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
         else
         {
         	Mixer::mixers().append( mixer );
-        	kDebug(67100) << "Added card " << mixer->id();
+        	qCDebug(KMIX_LOG) << "Added card " << mixer->id();
 
         	emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subscribe notification system?
         	return true;
@@ -357,7 +357,7 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
         if ( mixer == par_mixer ) {
-            kDebug(67100) << "Removing card " << mixer->id();
+            qCDebug(KMIX_LOG) << "Removing card " << mixer->id();
             Mixer::mixers().removeAt(i);
             delete mixer;
         }
@@ -371,17 +371,17 @@ void MixerToolBox::removeMixer(Mixer *par_mixer)
  */
 void MixerToolBox::deinitMixer()
 {
-   //kDebug(67100) << "IN MixerToolBox::deinitMixer()";
+   //qCDebug(KMIX_LOG) << "IN MixerToolBox::deinitMixer()";
    int mixerCount = Mixer::mixers().count();
    for ( int i=0; i<mixerCount; ++i)
    {
       Mixer* mixer = (Mixer::mixers())[i];
-      //kDebug(67100) << "MixerToolBox::deinitMixer() Remove Mixer";
+      //qCDebug(KMIX_LOG) << "MixerToolBox::deinitMixer() Remove Mixer";
       mixer->close();
       delete mixer;
    }
    Mixer::mixers().clear();
-   // kDebug(67100) << "OUT MixerToolBox::deinitMixer()";
+   // qCDebug(KMIX_LOG) << "OUT MixerToolBox::deinitMixer()";
 }
 
 

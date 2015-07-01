@@ -167,7 +167,7 @@ void Mixer::recreateId()
     primaryKeyOfMixer.replace(' ','_');
     primaryKeyOfMixer.replace('=','_');
     _id = primaryKeyOfMixer;
-//	kDebug() << "Early _id=" << _id;
+//	qCDebug(KMIX_LOG) << "Early _id=" << _id;
 }
 
 const QString Mixer::dbusPath()
@@ -181,7 +181,7 @@ const QString Mixer::dbusPath()
 			// Bug 308014: By checking _cardRegistered, we can be sure that everything is fine, including the fact that
 			// the cardId (aka "card instance") is set. If _cardRegistered would be false, we will create potentially
 			// wrong/duplicated DBUS Paths here.
-			kWarning() << "Mixer id was empty when ceating DBUS path. Emergency code created the id=" <<_id;
+			qCWarning(KMIX_LOG) << "Mixer id was empty when ceating DBUS path. Emergency code created the id=" <<_id;
 		}
 		// Bug 308014: Actually this a shortcut (you could also call it a hack). It would likely better if registerCard()
 		//             would create the Id, but it requires cooperation from ALL backends. Also Mixer->getId() would need to
@@ -200,7 +200,7 @@ const QString Mixer::dbusPath()
 
 void Mixer::volumeSave( KConfig *config )
 {
-    //    kDebug(67100) << "Mixer::volumeSave()";
+    //    qCDebug(KMIX_LOG) << "Mixer::volumeSave()";
     _mixerBackend->readSetFromHW();
     QString grp("Mixer");
     grp.append(id());
@@ -269,14 +269,14 @@ bool Mixer::openIfValid()
         {
             QString recommendedMasterStr = recommendedMaster->id();
             setLocalMasterMD( recommendedMasterStr );
-            kDebug() << "Mixer::open() detected master: " << recommendedMaster->id();
+            qCDebug(KMIX_LOG) << "Mixer::open() detected master: " << recommendedMaster->id();
         }
         else
         {
             if ( !m_dynamic )
-                kError(67100) << "Mixer::open() no master detected." << endl;
+                qCCritical(KMIX_LOG) << "Mixer::open() no master detected." << endl;
             else
-                kDebug(67100) << "Mixer::open() no master detected." << endl;
+                qCDebug(KMIX_LOG) << "Mixer::open() no master detected." << endl;
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
@@ -322,7 +322,7 @@ MixSet& Mixer::getMixSet()
 QString Mixer::getDriverName()
 {
   QString driverName = _mixerBackend->getDriverName();
-//  kDebug(67100) << "Mixer::getDriverName() = " << driverName << "\n";
+//  qCDebug(KMIX_LOG) << "Mixer::getDriverName() = " << driverName << "\n";
   return driverName;
 }
 
@@ -417,7 +417,7 @@ QString Mixer::readableName(bool ampersandQuoted)
 	if ( getCardInstance() > 1)
 		finalName = finalName.append(" %1").arg(getCardInstance());
 
-//	kDebug() << "name=" << _mixerBackend->getName() << "instance=" <<  getCardInstance() << ", finalName" << finalName;
+//	qCDebug(KMIX_LOG) << "name=" << _mixerBackend->getName() << "instance=" <<  getCardInstance() << ", finalName" << finalName;
 	return finalName;
 }
 
@@ -472,11 +472,11 @@ QString& Mixer::udi(){
  */
 void Mixer::setGlobalMaster(QString ref_card, QString ref_control, bool preferred)
 {
-    kDebug() << "ref_card=" << ref_card << ", ref_control=" << ref_control << ", preferred=" << preferred;
+    qCDebug(KMIX_LOG) << "ref_card=" << ref_card << ", ref_control=" << ref_control << ", preferred=" << preferred;
     _globalMasterCurrent.set(ref_card, ref_control);
     if ( preferred )
         _globalMasterPreferred.set(ref_card, ref_control);
-    kDebug() << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
+    qCDebug(KMIX_LOG) << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
 }
 
 Mixer* Mixer::getGlobalMasterMixerNoFalback()
@@ -495,7 +495,7 @@ Mixer* Mixer::getGlobalMasterMixer()
    if ( mixer == 0 && Mixer::mixers().count() > 0 ) {
       mixer = Mixer::mixers()[0];       // produce fallback
    }
-   //kDebug() << "Mixer::masterCard() returns " << mixer->id();
+   //qCDebug(KMIX_LOG) << "Mixer::masterCard() returns " << mixer->id();
    return mixer;
 }
 
@@ -509,7 +509,7 @@ MasterControl& Mixer::getGlobalMasterPreferred(bool fallbackAllowed)
     static MasterControl result;
 
     if ( !fallbackAllowed || _globalMasterPreferred.isValid() ) {
-//        kDebug() << "Returning preferred master";
+//        qCDebug(KMIX_LOG) << "Returning preferred master";
         return _globalMasterPreferred;
     }
 
@@ -517,11 +517,11 @@ MasterControl& Mixer::getGlobalMasterPreferred(bool fallbackAllowed)
     if (mm) {
         result.set(_globalMasterPreferred.getCard(), mm->getRecommendedDeviceId());
         if (!result.getControl().isEmpty())
-//            kDebug() << "Returning extended preferred master";
+//            qCDebug(KMIX_LOG) << "Returning extended preferred master";
             return result;
     }
 
-    kDebug() << "Returning current master";
+    qCDebug(KMIX_LOG) << "Returning current master";
     return _globalMasterCurrent;
 }
 
@@ -564,7 +564,7 @@ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
 	{
 	  //For some sound cards when using pulseaudio the mixer id is not proper hence returning the first device as master channel device
 	  //This solves the bug id:290177 and problems stated in review #105422
-		kDebug() << "Mixer::masterCardDevice() returns 0 (no globalMaster), returning the first device";
+		qCDebug(KMIX_LOG) << "Mixer::masterCardDevice() returns 0 (no globalMaster), returning the first device";
 		mdRet=firstDevice;
 	}
 
@@ -616,7 +616,7 @@ shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID)
 
 shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID )
 {
-	kDebug() << "id=" << mixdeviceID << "md=" << _mixerBackend->m_mixDevices.get(mixdeviceID).get()->id();
+	qCDebug(KMIX_LOG) << "id=" << mixdeviceID << "md=" << _mixerBackend->m_mixDevices.get(mixdeviceID).get()->id();
 	return _mixerBackend->m_mixDevices.get(mixdeviceID);
 //	shared_ptr<MixDevice> md;
 //   int num = _mixerBackend->id2num(mixdeviceID);
@@ -653,12 +653,12 @@ void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
 		// nothing has changed, and so there s nothing to notify.
 		_mixerBackend->readSetFromHWforceUpdate();
 		if (GlobalConfig::instance().data.debugControlManager)
-			kDebug()
+			qCDebug(KMIX_LOG)
 			<< "committing a control with capture volume, that might announce: " << md->id();
 		_mixerBackend->readSetFromHW();
 	}
 	if (GlobalConfig::instance().data.debugControlManager)
-		kDebug()
+		qCDebug(KMIX_LOG)
 		<< "committing announces the change of: " << md->id();
 
 	// We announce the change we did, so all other parts of KMix can pick up the change

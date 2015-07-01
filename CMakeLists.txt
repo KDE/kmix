@@ -187,6 +187,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    core/mixdevice.cpp
    core/mixdevicecomposite.cpp
    core/volume.cpp
+   core/kmixdebug.cpp
    )
 
 kf5_add_kdeinit_executable(kmix ${kmix_KDEINIT_SRCS})
@@ -243,6 +244,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     core/volume.cpp
     core/mixertoolbox.cpp 
     core/kmixdevicemanager.cpp
+    core/kmixdebug.cpp
     )
 
 #qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
@@ -304,7 +306,8 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    core/mixset.cpp 
    core/mixdevice.cpp 
    core/volume.cpp 
-   core/mixertoolbox.cpp 
+   core/mixertoolbox.cpp
+   core/kmixdebug.cpp
    # There is no actual need for kmixdevicemanager.cpp (hotplug makes no sense in kmixctrl), but
    # the dependency comes in via mixertoolbox.cpp
    core/kmixdevicemanager.cpp

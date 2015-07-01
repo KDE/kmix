@@ -56,12 +56,12 @@ shared_ptr<MixDevice> ControlPool::add(const QString& key, MixDevice* md)
 	shared_ptr<MixDevice> controlFromPool(get(key));
 	if ( controlFromPool.get() != 0)
 	{
-		kDebug() << "----ControlPool already cached key=" << key;
+		qCDebug(KMIX_LOG) << "----ControlPool already cached key=" << key;
 		return controlFromPool;
 	}
 
 	// else: Add the control to the pool
-	kDebug() << "----ControlPool add key=" << key;
+	qCDebug(KMIX_LOG) << "----ControlPool add key=" << key;
 	shared_ptr<MixDevice> mdShared(md);
 	pool->insert(key, mdShared);
 	return mdShared;

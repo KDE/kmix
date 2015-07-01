@@ -142,10 +142,10 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
     _moveDestinationMixSet = moveDestinationMixSet;
     if ( _id.contains(' ') ) {
         // The key is used in the config file. IdbusControlWrappert MUST NOT contain spaces
-        kError(67100) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
+        qCCritical(KMIX_LOG) << "MixDevice::setId(\"" << id << "\") . Invalid key - it must not contain spaces" << endl;
         _id.replace(' ', '_');
     }
-//    kDebug(67100) << "MixDevice::init() _id=" << _id;
+//    qCDebug(KMIX_LOG) << "MixDevice::init() _id=" << _id;
 }
 
 
@@ -171,7 +171,7 @@ MediaController* MixDevice::getMediaController()
 
 shared_ptr<MixDevice> MixDevice::addToPool()
 {
-//	kDebug() << "id=" <<  _mixer->id() << ":" << _id;
+//	qCDebug(KMIX_LOG) << "id=" <<  _mixer->id() << ":" << _id;
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
     _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
@@ -195,7 +195,7 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 		long inc = volP.volumeStep(decrease);
 
 		if (debugme)
-		  kDebug() << ( decrease ? "decrease by " : "increase by " ) << inc ;
+		  qCDebug(KMIX_LOG) << ( decrease ? "decrease by " : "increase by " ) << inc ;
 
 		if (isMuted())
 		{
@@ -205,14 +205,14 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 		{
 			volP.changeAllVolumes(inc);
 			if (debugme)
-				kDebug() << (decrease ? "decrease by " : "increase by ") << inc;
+				qCDebug(KMIX_LOG) << (decrease ? "decrease by " : "increase by ") << inc;
 		}
 	}
 
 	if (volumeType & Volume::Capture)
 	{
 		if (debugme)
-			kDebug() << "VolumeType=" << volumeType << "   c";
+			qCDebug(KMIX_LOG) << "VolumeType=" << volumeType << "   c";
 
 		Volume& volC = captureVolume();
 		long inc = volC.volumeStep(decrease);
@@ -379,13 +379,13 @@ ProfControl* MixDevice::controlProfile() {
 bool MixDevice::read( KConfig *config, const QString& grp )
 {
     if ( _mixer->isDynamic() || isArtificial() ) {
-        kDebug(67100) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
+        qCDebug(KMIX_LOG) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
     QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
     KConfigGroup cg = config->group( devgrp );
-    //kDebug(67100) << "MixDevice::read() of group devgrp=" << devgrp;
+    //qCDebug(KMIX_LOG) << "MixDevice::read() of group devgrp=" << devgrp;
 
     readPlaybackOrCapture(cg, false);
     readPlaybackOrCapture(cg, true );
@@ -423,13 +423,13 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 bool MixDevice::write( KConfig *config, const QString& grp )
 {
     if (_mixer->isDynamic() || isArtificial()) {
-//        kDebug(67100) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
+//        qCDebug(KMIX_LOG) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
         return false;
     }
 
     QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
     KConfigGroup cg = config->group(devgrp);
-    // kDebug(67100) << "MixDevice::write() of group devgrp=" << devgrp;
+    // qCDebug(KMIX_LOG) << "MixDevice::write() of group devgrp=" << devgrp;
 
     writePlaybackOrCapture(cg, false);
     writePlaybackOrCapture(cg, true );

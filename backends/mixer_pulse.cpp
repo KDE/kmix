@@ -93,7 +93,7 @@ static void dec_outstanding(pa_context *c) {
         if (s_context != c) {
             pa_context_disconnect(c);
         } else
-          kDebug(67100) <<  "Reconnected to PulseAudio";
+          qCDebug(KMIX_LOG) <<  "Reconnected to PulseAudio";
     }
 }
 
@@ -103,7 +103,7 @@ static void translateMasksAndMaps(devinfo& dev)
     dev.chanIDs.clear();
 
     if (dev.channel_map.channels != dev.volume.channels) {
-        kError() << "Hiddeous Channel mixup map says " << dev.channel_map.channels << ", volume says: " << dev.volume.channels;
+        qCCritical(KMIX_LOG) << "Hiddeous Channel mixup map says " << dev.channel_map.channels << ", volume says: " << dev.volume.channels;
         return;
     }
     if (1 == dev.channel_map.channels && PA_CHANNEL_POSITION_MONO == dev.channel_map.map[0]) {
@@ -114,7 +114,7 @@ static void translateMasksAndMaps(devinfo& dev)
         for (uint8_t i = 0; i < dev.channel_map.channels; ++i) {
             switch (dev.channel_map.map[i]) {
                 case PA_CHANNEL_POSITION_MONO:
-                    kWarning(67100) << "Channel Map contains a MONO element but has >1 channel - we can't handle this.";
+                    qCWarning(KMIX_LOG) << "Channel Map contains a MONO element but has >1 channel - we can't handle this.";
                     return;
 
                 case PA_CHANNEL_POSITION_FRONT_LEFT:
@@ -154,7 +154,7 @@ static void translateMasksAndMaps(devinfo& dev)
                     dev.chanIDs[i] = Volume::REARSIDERIGHT;
                     break;
                 default:
-                    kWarning(67100) << "Channel Map contains a pa_channel_position we cannot handle " << dev.channel_map.map[i];
+                    qCWarning(KMIX_LOG) << "Channel Map contains a pa_channel_position we cannot handle " << dev.channel_map.map[i];
                     break;
             }
         }
@@ -197,7 +197,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
             return;
 
-        kWarning(67100) << "Sink callback failure";
+        qCWarning(KMIX_LOG) << "Sink callback failure";
         return;
     }
 
@@ -226,7 +226,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
 
     bool is_new = !outputDevices.contains(s.index);
     outputDevices[s.index] = s;
-//     kDebug(67100) << "Got some info about sink: " << s.description;
+//     qCDebug(KMIX_LOG) << "Got some info about sink: " << s.description;
 
     if (s_mixers.contains(KMIXPA_PLAYBACK)) {
         if (is_new)
@@ -247,7 +247,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
             return;
 
-        kWarning(67100) << "Source callback failure";
+        qCWarning(KMIX_LOG) << "Source callback failure";
         return;
     }
 
@@ -261,7 +261,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
     // Do something....
     if (PA_INVALID_INDEX != i->monitor_of_sink)
     {
-//        kDebug(67100) << "Ignoring Monitor Source: " << i->description;
+//        qCDebug(KMIX_LOG) << "Ignoring Monitor Source: " << i->description;
         return;
     }
 
@@ -279,7 +279,7 @@ static void source_cb(pa_context *c, const pa_source_info *i, int eol, void *) {
 
     bool is_new = !captureDevices.contains(s.index);
     captureDevices[s.index] = s;
-//     kDebug(67100) << "Got some info about source: " << s.description;
+//     qCDebug(KMIX_LOG) << "Got some info about source: " << s.description;
 
     if (s_mixers.contains(KMIXPA_CAPTURE)) {
         if (is_new)
@@ -300,7 +300,7 @@ static void client_cb(pa_context *c, const pa_client_info *i, int eol, void *) {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
             return;
 
-        kWarning(67100) << "Client callback failure";
+        qCWarning(KMIX_LOG) << "Client callback failure";
         return;
     }
 
@@ -310,7 +310,7 @@ static void client_cb(pa_context *c, const pa_client_info *i, int eol, void *) {
     }
 
     clients[i->index] = QString::fromUtf8(i->name);
-    //kDebug(67100) << "Got some info about client: " << clients[i->index];
+    //qCDebug(KMIX_LOG) << "Got some info about client: " << clients[i->index];
 }
 
 static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, void *) {
@@ -319,7 +319,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
             return;
 
-        kWarning(67100) << "Sink Input callback failure";
+        qCWarning(KMIX_LOG) << "Sink Input callback failure";
         return;
     }
 
@@ -333,7 +333,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
     const char *t;
     if ((t = pa_proplist_gets(i->proplist, "module-stream-restore.id"))) {
         if (strcmp(t, KMIXPA_EVENT_KEY) == 0) {
-            //kDebug(67100) << "Ignoring sink-input due to it being designated as an event and thus handled by the Event slider";
+            //qCDebug(KMIX_LOG) << "Ignoring sink-input due to it being designated as an event and thus handled by the Event slider";
             return;
         }
     }
@@ -357,7 +357,7 @@ static void sink_input_cb(pa_context *c, const pa_sink_input_info *i, int eol, v
 
     bool is_new = !outputStreams.contains(s.index);
     outputStreams[s.index] = s;
-//     kDebug(67100) << "Got some info about sink input (playback stream): " << s.description;
+//     qCDebug(KMIX_LOG) << "Got some info about sink input (playback stream): " << s.description;
 
     if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
         if (is_new)
@@ -378,7 +378,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
             return;
 
-        kWarning(67100) << "Source Output callback failure";
+        qCWarning(KMIX_LOG) << "Source Output callback failure";
         return;
     }
 
@@ -391,7 +391,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 
     /* NB Until Source Outputs support volumes, we just use the volume of the source itself */
     if (!captureDevices.contains(i->source)) {
-        kDebug(67100) << "Source Output refers to a Source we don't have any info for (probably just a peak meter or similar)";
+        qCDebug(KMIX_LOG) << "Source Output refers to a Source we don't have any info for (probably just a peak meter or similar)";
         return;
     }
 
@@ -419,7 +419,7 @@ static void source_output_cb(pa_context *c, const pa_source_output_info *i, int 
 
     bool is_new = !captureStreams.contains(s.index);
     captureStreams[s.index] = s;
-//     kDebug(67100) << "Got some info about source output (capture stream): " << s.description;
+//     qCDebug(KMIX_LOG) << "Got some info about source output (capture stream): " << s.description;
 
     if (s_mixers.contains(KMIXPA_APP_CAPTURE)) {
         if (is_new)
@@ -458,7 +458,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
 
     if (eol < 0) {
         dec_outstanding(c);
-        kWarning(67100) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(s_context));
+        qCWarning(KMIX_LOG) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(s_context));
         return;
     }
 
@@ -477,7 +477,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
             rule.mute = false;
             rule.device = "";
             s_RestoreRules[KMIXPA_EVENT_KEY] = rule;
-            kDebug(67100) << "Initialising restore rule for new user: " << i18n("Event Sounds");
+            qCDebug(KMIX_LOG) << "Initialising restore rule for new user: " << i18n("Event Sounds");
         }
 
         if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
@@ -498,7 +498,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
 
 
     QString name = QString::fromUtf8(i->name);
-//     kDebug(67100) << QString("Got some info about restore rule: '%1' (Device: %2)").arg(name).arg(i->device ? i->device : "None");
+//     qCDebug(KMIX_LOG) << QString("Got some info about restore rule: '%1' (Device: %2)").arg(name).arg(i->device ? i->device : "None");
     restoreRule rule;
     rule.channel_map = i->channel_map;
     rule.volume = i->volume;
@@ -535,7 +535,7 @@ static void ext_stream_restore_subscribe_cb(pa_context *c, void *) {
 
     pa_operation *o;
     if (!(o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL))) {
-        kWarning(67100) << "pa_ext_stream_restore_read() failed";
+        qCWarning(KMIX_LOG) << "pa_ext_stream_restore_read() failed";
         return;
     }
 
@@ -555,7 +555,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_sink_info_by_index(c, index, sink_cb, NULL))) {
-                    kWarning(67100) << "pa_context_get_sink_info_by_index() failed";
+                    qCWarning(KMIX_LOG) << "pa_context_get_sink_info_by_index() failed";
                     return;
                 }
                 pa_operation_unref(o);
@@ -569,7 +569,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_source_info_by_index(c, index, source_cb, NULL))) {
-                    kWarning(67100) << "pa_context_get_source_info_by_index() failed";
+                    qCWarning(KMIX_LOG) << "pa_context_get_source_info_by_index() failed";
                     return;
                 }
                 pa_operation_unref(o);
@@ -583,7 +583,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_sink_input_info(c, index, sink_input_cb, NULL))) {
-                    kWarning(67100) << "pa_context_get_sink_input_info() failed";
+                    qCWarning(KMIX_LOG) << "pa_context_get_sink_input_info() failed";
                     return;
                 }
                 pa_operation_unref(o);
@@ -597,7 +597,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_source_output_info(c, index, source_output_cb, NULL))) {
-                    kWarning(67100) << "pa_context_get_sink_input_info() failed";
+                    qCWarning(KMIX_LOG) << "pa_context_get_sink_input_info() failed";
                     return;
                 }
                 pa_operation_unref(o);
@@ -610,7 +610,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             } else {
                 pa_operation *o;
                 if (!(o = pa_context_get_client_info(c, index, client_cb, NULL))) {
-                    kWarning(67100) << "pa_context_get_client_info() failed";
+                    qCWarning(KMIX_LOG) << "pa_context_get_client_info() failed";
                     return;
                 }
                 pa_operation_unref(o);
@@ -638,21 +638,21 @@ static void context_state_callback(pa_context *c, void *)
                                             PA_SUBSCRIPTION_MASK_CLIENT|
                                             PA_SUBSCRIPTION_MASK_SINK_INPUT|
                                             PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT), NULL, NULL))) {
-                kWarning(67100) << "pa_context_subscribe() failed";
+                qCWarning(KMIX_LOG) << "pa_context_subscribe() failed";
                 return;
             }
             pa_operation_unref(o);
         }
 
         if (!(o = pa_context_get_sink_info_list(c, sink_cb, NULL))) {
-            kWarning(67100) << "pa_context_get_sink_info_list() failed";
+            qCWarning(KMIX_LOG) << "pa_context_get_sink_info_list() failed";
             return;
         }
         pa_operation_unref(o);
         s_outstandingRequests++;
 
         if (!(o = pa_context_get_source_info_list(c, source_cb, NULL))) {
-            kWarning(67100) << "pa_context_get_source_info_list() failed";
+            qCWarning(KMIX_LOG) << "pa_context_get_source_info_list() failed";
             return;
         }
         pa_operation_unref(o);
@@ -660,21 +660,21 @@ static void context_state_callback(pa_context *c, void *)
 
 
         if (!(o = pa_context_get_client_info_list(c, client_cb, NULL))) {
-            kWarning(67100) << "pa_context_client_info_list() failed";
+            qCWarning(KMIX_LOG) << "pa_context_client_info_list() failed";
             return;
         }
         pa_operation_unref(o);
         s_outstandingRequests++;
 
         if (!(o = pa_context_get_sink_input_info_list(c, sink_input_cb, NULL))) {
-            kWarning(67100) << "pa_context_get_sink_input_info_list() failed";
+            qCWarning(KMIX_LOG) << "pa_context_get_sink_input_info_list() failed";
             return;
         }
         pa_operation_unref(o);
         s_outstandingRequests++;
 
         if (!(o = pa_context_get_source_output_info_list(c, source_output_cb, NULL))) {
-            kWarning(67100) << "pa_context_get_source_output_info_list() failed";
+            qCWarning(KMIX_LOG) << "pa_context_get_source_output_info_list() failed";
             return;
         }
         pa_operation_unref(o);
@@ -690,7 +690,7 @@ static void context_state_callback(pa_context *c, void *)
             if ((o = pa_ext_stream_restore_subscribe(c, 1, NULL, NULL)))
                 pa_operation_unref(o);
         } else {
-            kWarning(67100) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(s_context));
+            qCWarning(KMIX_LOG) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(s_context));
         }
     } else if (!PA_CONTEXT_IS_GOOD(state)) {
         // If this is our probe phase, exit our context immediately
@@ -711,7 +711,7 @@ static void context_state_callback(pa_context *c, void *)
             clients.clear();
 
             if (s_mixers.contains(KMIXPA_PLAYBACK)) {
-                kWarning(67100) << "Connection to PulseAudio daemon closed. Attempting reconnection.";
+                qCWarning(KMIX_LOG) << "Connection to PulseAudio daemon closed. Attempting reconnection.";
                 s_pulseActive = UNKNOWN;
                 QTimer::singleShot(50, s_mixers[KMIXPA_PLAYBACK], SLOT(reinit()));
             }
@@ -724,7 +724,7 @@ static void setVolumeFromPulse(Volume& volume, const devinfo& dev)
     chanIDMap::const_iterator iter;
     for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
-        //kDebug(67100) <<  "Setting volume for channel " << iter.value() << " to " << (long)dev.volume.values[iter.key()] << " (" << ((100*(long)dev.volume.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
+        //qCDebug(KMIX_LOG) <<  "Setting volume for channel " << iter.value() << " to " << (long)dev.volume.values[iter.key()] << " (" << ((100*(long)dev.volume.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
         volume.setVolume(iter.value(), (long)dev.volume.values[iter.key()]);
     }
 }
@@ -737,7 +737,7 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
         cvol.values[iter.key()] = (uint32_t)volume.getVolume(iter.value());
-        //kDebug(67100) <<  "Setting volume for channel " << iter.value() << " to " << cvol.values[iter.key()] << " (" << ((100*cvol.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
+        //qCDebug(KMIX_LOG) <<  "Setting volume for channel " << iter.value() << " to " << cvol.values[iter.key()] << " (" << ((100*cvol.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
     }
     return cvol;
 }
@@ -812,13 +812,13 @@ void Mixer_PULSE::emitControlsReconfigured()
 
 void Mixer_PULSE::pulseControlsReconfigured()
 {
-	kDebug() << "Reconfigure " << _mixer->id();
+	qCDebug(KMIX_LOG) << "Reconfigure " << _mixer->id();
     ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
 }
 
 void Mixer_PULSE::pulseControlsReconfigured(QString mixerId)
 {
-	kDebug() << "Reconfigure " << mixerId;
+	qCDebug(KMIX_LOG) << "Reconfigure " << mixerId;
     ControlManager::instance().announce(mixerId, ControlChangeType::ControlList, getDriverName());
 }
 
@@ -837,7 +837,7 @@ void Mixer_PULSE::updateRecommendedMaster(devmap* map)
     }
 
     if (res)
-         kDebug(67100) << "Selecting master " << res->id()
+         qCDebug(KMIX_LOG) << "Selecting master " << res->id()
                        << " for type " << m_devnum;
     m_recommendedMaster = res;
 }
@@ -847,7 +847,7 @@ void Mixer_PULSE::addWidget(int index, bool isAppStream)
     devmap* map = get_widget_map(m_devnum, index);
 
     if (!map->contains(index)) {
-        kWarning(67100) << "New " << m_devnum << " widget notified for index "
+        qCWarning(KMIX_LOG) << "New " << m_devnum << " widget notified for index "
                         << index << " but I cannot find it in my list :s";
         return;
     }
@@ -862,7 +862,7 @@ void Mixer_PULSE::removeWidget(int index)
     devmap* map = get_widget_map(m_devnum);
 
     if (!map->contains(index)) {
-        kDebug(67100) << "Removing " << m_devnum << " widget notified for index "
+        qCDebug(KMIX_LOG) << "Removing " << m_devnum << " widget notified for index "
                       << index << " but I cannot find it in my list :s";
         // Sometimes we ignore things (e.g. event sounds) so don't be too noisy here.
         return;
@@ -879,11 +879,11 @@ void Mixer_PULSE::removeWidget(int index)
         if ((*iter)->id() == id)
         {
             md = m_mixDevices.get(id);
-            kDebug() << "MixDevice 1 useCount=" << md.use_count();
+            qCDebug(KMIX_LOG) << "MixDevice 1 useCount=" << md.use_count();
             md->close();
-            kDebug() << "MixDevice 2 useCount=" << md.use_count();
+            qCDebug(KMIX_LOG) << "MixDevice 2 useCount=" << md.use_count();
             m_mixDevices.erase(iter);
-            kDebug() << "MixDevice 3 useCount=" << md.use_count();
+            qCDebug(KMIX_LOG) << "MixDevice 3 useCount=" << md.use_count();
             break;
         }
     }
@@ -891,7 +891,7 @@ void Mixer_PULSE::removeWidget(int index)
     if (md)
         updateRecommendedMaster(map);
     emitControlsReconfigured();
-    kDebug() << "MixDevice 4 useCount=" << md.use_count();
+    qCDebug(KMIX_LOG) << "MixDevice 4 useCount=" << md.use_count();
 }
 
 void Mixer_PULSE::removeAllWidgets()
@@ -926,7 +926,7 @@ bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
         if (isAppStream)
             md->setApplicationStream(true);
 
-//        kDebug(67100) << "Adding Pulse volume " << dev.name << ", isCapture= "
+//        qCDebug(KMIX_LOG) << "Adding Pulse volume " << dev.name << ", isCapture= "
 //                      << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE)
 //                      << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
         md->addPlaybackVolume(v);
@@ -946,7 +946,7 @@ bool Mixer_PULSE::connectToDaemon()
 {
     Q_ASSERT(NULL == s_context);
 
-    kDebug(67100) <<  "Attempting connection to PulseAudio sound daemon";
+    qCDebug(KMIX_LOG) <<  "Attempting connection to PulseAudio sound daemon";
     pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
     Q_ASSERT(api);
 
@@ -974,7 +974,7 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
 
     // We require a glib event loop
     if (!QByteArray(QAbstractEventDispatcher::instance()->metaObject()->className()).contains("EventDispatcherGlib")) {
-        kDebug(67100) << "Disabling PulseAudio integration for lack of GLib event loop";
+        qCDebug(KMIX_LOG) << "Disabling PulseAudio integration for lack of GLib event loop";
         s_pulseActive = INACTIVE;
     }
 
@@ -986,23 +986,23 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
         // use a fully async integrated mainloop method to connect and get proper support.
         pa_mainloop *p_test_mainloop;
         if (!(p_test_mainloop = pa_mainloop_new())) {
-            kDebug(67100) << "PulseAudio support disabled: Unable to create mainloop";
+            qCDebug(KMIX_LOG) << "PulseAudio support disabled: Unable to create mainloop";
             s_pulseActive = INACTIVE;
             goto endconstruct;
         }
 
         pa_context *p_test_context;
         if (!(p_test_context = pa_context_new(pa_mainloop_get_api(p_test_mainloop), "kmix-probe"))) {
-            kDebug(67100) << "PulseAudio support disabled: Unable to create context";
+            qCDebug(KMIX_LOG) << "PulseAudio support disabled: Unable to create context";
             pa_mainloop_free(p_test_mainloop);
             s_pulseActive = INACTIVE;
             goto endconstruct;
         }
 
-        kDebug(67100) << "Probing for PulseAudio...";
+        qCDebug(KMIX_LOG) << "Probing for PulseAudio...";
         // (cg) Convert to PA_CONTEXT_NOFLAGS when PulseAudio 0.9.19 is required
         if (pa_context_connect(p_test_context, NULL, static_cast<pa_context_flags_t>(0), NULL) < 0) {
-            kDebug(67100) << QString("PulseAudio support disabled: %1").arg(pa_strerror(pa_context_errno(p_test_context)));
+            qCDebug(KMIX_LOG) << QString("PulseAudio support disabled: %1").arg(pa_strerror(pa_context_errno(p_test_context)));
             pa_context_disconnect(p_test_context);
             pa_context_unref(p_test_context);
             pa_mainloop_free(p_test_mainloop);
@@ -1017,7 +1017,7 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
           pa_mainloop_iterate(p_test_mainloop, 1, NULL);
 
           if (!PA_CONTEXT_IS_GOOD(pa_context_get_state(p_test_context))) {
-            kDebug(67100) << "PulseAudio probe complete.";
+            qCDebug(KMIX_LOG) << "PulseAudio probe complete.";
             break;
           }
         }
@@ -1037,14 +1037,14 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
 #if defined(HAVE_CANBERRA)
             int ret = ca_context_create(&s_ccontext);
             if (ret < 0) {
-                kDebug(67100) << "Disabling Sound Feedback. Canberra context failed.";
+                qCDebug(KMIX_LOG) << "Disabling Sound Feedback. Canberra context failed.";
                 s_ccontext = NULL;
             } else
                 ca_context_set_driver(s_ccontext, "pulse");
 #endif
         }
 
-        kDebug(67100) <<  "PulseAudio status: " << (s_pulseActive==UNKNOWN ? "Unknown (bug)" : (s_pulseActive==ACTIVE ? "Active" : "Inactive"));
+        qCDebug(KMIX_LOG) <<  "PulseAudio status: " << (s_pulseActive==UNKNOWN ? "Unknown (bug)" : (s_pulseActive==ACTIVE ? "Active" : "Inactive"));
     }
 
 endconstruct:
@@ -1084,7 +1084,7 @@ Mixer_PULSE::~Mixer_PULSE()
 
 int Mixer_PULSE::open()
 {
-    //kDebug(67100) <<  "Trying Pulse sink";
+    //qCDebug(KMIX_LOG) <<  "Trying Pulse sink";
 
     if (ACTIVE == s_pulseActive && m_devnum <= KMIXPA_APP_CAPTURE)
     {
@@ -1128,7 +1128,7 @@ int Mixer_PULSE::open()
             updateRecommendedMaster(&captureStreams);
         }
 
-        kDebug(67100) <<  "Using PulseAudio for mixer: " << getName();
+        qCDebug(KMIX_LOG) <<  "Using PulseAudio for mixer: " << getName();
         m_isOpen = true;
     }
 
@@ -1151,7 +1151,7 @@ int Mixer_PULSE::id2num(const QString& id) {
             break;
         }
     }
-    //kDebug(67100) << "id2num() num=" << num;
+    //qCDebug(KMIX_LOG) << "id2num() num=" << num;
     return num;
 }
 
@@ -1186,13 +1186,13 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 
                 pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_sink_volume_by_index(s_context, iter->index, &volume, NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_sink_volume_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_sink_volume_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
 
                 if (!(o = pa_context_set_sink_mute_by_index(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_sink_mute_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_sink_mute_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
@@ -1249,13 +1249,13 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 
                 pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_source_volume_by_index(s_context, iter->index, &volume, NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_volume_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
 
                 if (!(o = pa_context_set_source_mute_by_index(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_source_mute_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_mute_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
@@ -1276,13 +1276,13 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 
                     pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                     if (!(o = pa_context_set_sink_input_volume(s_context, iter->index, &volume, NULL, NULL))) {
-                        kWarning(67100) <<  "pa_context_set_sink_input_volume() failed";
+                        qCWarning(KMIX_LOG) <<  "pa_context_set_sink_input_volume() failed";
                         return Mixer::ERR_READ;
                     }
                     pa_operation_unref(o);
 
                     if (!(o = pa_context_set_sink_input_mute(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                        kWarning(67100) <<  "pa_context_set_sink_input_mute() failed";
+                        qCWarning(KMIX_LOG) <<  "pa_context_set_sink_input_mute() failed";
                         return Mixer::ERR_READ;
                     }
                     pa_operation_unref(o);
@@ -1307,7 +1307,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 
                     pa_operation* o;
                     if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
-                        kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
+                        qCWarning(KMIX_LOG) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                         return Mixer::ERR_READ;
                     }
                     pa_operation_unref(o);
@@ -1328,13 +1328,13 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 #if HAVE_SOURCE_OUTPUT_VOLUMES
                 pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_source_output_volume(s_context, iter->index, &volume, NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_source_output_volume_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_output_volume_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
 
                 if (!(o = pa_context_set_source_output_mute(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_source_output_mute_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_output_mute_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
@@ -1342,13 +1342,13 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
                 // NB Note that this is different from APP_PLAYBACK in that we set the volume on the source itself.
                 pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
                 if (!(o = pa_context_set_source_volume_by_index(s_context, iter->device_index, &volume, NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_source_volume_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_volume_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
 
                 if (!(o = pa_context_set_source_mute_by_index(s_context, iter->device_index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    kWarning(67100) <<  "pa_context_set_source_mute_by_index() failed";
+                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_mute_by_index() failed";
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
@@ -1368,7 +1368,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
     Q_ASSERT(KMIXPA_APP_PLAYBACK == m_devnum || KMIXPA_APP_CAPTURE == m_devnum);
 
-    kDebug(67100) <<  "Mixer_PULSE::moveStream(): Move Stream Requested - Stream: " << id << ", Destination: " << destId;
+    qCDebug(KMIX_LOG) <<  "Mixer_PULSE::moveStream(): Move Stream Requested - Stream: " << id << ", Destination: " << destId;
 
     // Lookup the stream index.
     uint32_t stream_index = PA_INVALID_INDEX;
@@ -1384,14 +1384,14 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
     }
 
     if (PA_INVALID_INDEX == stream_index) {
-        kError(67100) <<  "Mixer_PULSE::moveStream(): Cannot find stream index";
+        qCCritical(KMIX_LOG) <<  "Mixer_PULSE::moveStream(): Cannot find stream index";
         return false;
     }
 
     if (destId.isEmpty()) {
         // We want to remove any specific device in the stream restore rule.
         if (stream_restore_rule.isEmpty() || !s_RestoreRules.contains(stream_restore_rule)) {
-            kWarning(67100) <<  "Mixer_PULSE::moveStream(): Trying to set Automatic on a stream with no rule";
+            qCWarning(KMIX_LOG) <<  "Mixer_PULSE::moveStream(): Trying to set Automatic on a stream with no rule";
         } else {
             restoreRule &rule = s_RestoreRules[stream_restore_rule];
             pa_ext_stream_restore_info info;
@@ -1403,7 +1403,7 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
 
             pa_operation* o;
             if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
-                kWarning(67100) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
+                qCWarning(KMIX_LOG) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
                 return Mixer::ERR_READ;
             }
             pa_operation_unref(o);
@@ -1412,12 +1412,12 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
         pa_operation* o;
         if (KMIXPA_APP_PLAYBACK == m_devnum) {
             if (!(o = pa_context_move_sink_input_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL))) {
-                kWarning(67100) <<  "pa_context_move_sink_input_by_name() failed";
+                qCWarning(KMIX_LOG) <<  "pa_context_move_sink_input_by_name() failed";
                 return false;
             }
         } else {
             if (!(o = pa_context_move_source_output_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL))) {
-                kWarning(67100) <<  "pa_context_move_source_output_by_name() failed";
+                qCWarning(KMIX_LOG) <<  "pa_context_move_source_output_by_name() failed";
                 return false;
             }
         }

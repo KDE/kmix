@@ -109,7 +109,7 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 	m_vboxForScrollView = new KVBox();
 
 	bool hasMixerFilter = !mixerIds.isEmpty();
-	kDebug() << "MixerIds=" << mixerIds;
+	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
 	foreach ( Mixer* mixer, Mixer::mixers())
 	{
 		QCheckBox* qrb = new QCheckBox(mixer->readableName(true), m_vboxForScrollView);
@@ -132,10 +132,10 @@ QSet<QString> DialogChooseBackends::getChosenBackends()
     	if (qcb->isChecked())
     	{
     		newMixerList.insert(qcb->objectName());
-    		kDebug() << "apply found " << qcb->objectName();
+    		qCDebug(KMIX_LOG) << "apply found " << qcb->objectName();
     	}
     }
-    kDebug() << "New list is " << newMixerList;
+    qCDebug(KMIX_LOG) << "New list is " << newMixerList;
     return newMixerList;
 }
 

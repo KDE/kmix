@@ -33,7 +33,7 @@ GlobalConfig::GlobalConfig() :
 	addItemBool("VolumeFeedback", data.beepOnVolumeChange, true);
 //	ItemString* is =
 	addItemString("Orientation", data.orientationMainGUIString, "Vertical");
-//	kDebug() << is->name() << is->value();
+//	qCDebug(KMIX_LOG) << is->name() << is->value();
 	addItemString("Orientation.TrayPopup", data.orientationTrayPopupString, QLatin1String("Vertical"));
 
 	// Sound Menu
@@ -59,7 +59,7 @@ GlobalConfig::GlobalConfig() :
 // --- Special READ/WRITE ----------------------------------------------------------------------------------------
 void GlobalConfig::usrReadConfig()
 {
-//	kDebug() << "or=" << data.orientationMainGUIString;
+//	qCDebug(KMIX_LOG) << "or=" << data.orientationMainGUIString;
 	// Convert orientation strings to Qt::Orientation
 	data.convertOrientation();
 }

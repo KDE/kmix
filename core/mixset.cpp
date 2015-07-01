@@ -23,6 +23,7 @@
 //KMix
 #include "mixset.h"
 #include "core/mixdevice.h"
+#include "core/kmixdebug.h"
 
 // KDE
 #include <kdebug.h>
@@ -40,7 +41,7 @@ MixSet::~MixSet()
 
 bool MixSet::read( KConfig *config, const QString& grp )
 {
-   kDebug(67100) << "MixSet::read() of group " << grp;
+   qCDebug(KMIX_LOG) << "MixSet::read() of group " << grp;
    KConfigGroup group = config->group(grp);
    m_name = group.readEntry( "name", m_name );
 
@@ -57,7 +58,7 @@ bool MixSet::read( KConfig *config, const QString& grp )
 
 bool MixSet::write( KConfig *config, const QString& grp )
 {
-   kDebug(67100) << "MixSet::write() of group " << grp;    
+   qCDebug(KMIX_LOG) << "MixSet::write() of group " << grp;    
    KConfigGroup conf = config->group(grp);
    conf.writeEntry( "name", m_name );
 

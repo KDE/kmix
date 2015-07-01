@@ -84,7 +84,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
 {
     setObjectName( QStringLiteral("KMixD" ));
 	GlobalConfig::init();
-	kWarning() << "kmixd: Triggering delayed initialization";
+	qCWarning(KMIX_LOG) << "kmixd: Triggering delayed initialization";
 	QTimer::singleShot( 3000, this, SLOT(delayedInitialization()));
 }
 
@@ -97,7 +97,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
  */
 void KMixD::delayedInitialization()
 {
-	kWarning() << "kmixd: Delayed initialization running now";
+	qCWarning(KMIX_LOG) << "kmixd: Delayed initialization running now";
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
@@ -106,7 +106,7 @@ void KMixD::delayedInitialization()
    connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );
    connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT (unplugged(QString)) );
 
-	kWarning() << "kmixd: Delayed initialization done";
+    qCWarning(KMIX_LOG) << "kmixd: Delayed initialization done";
 }
 
 
@@ -119,21 +119,21 @@ KMixD::~KMixD()
 
 void KMixD::saveConfig()
 {
-   kDebug() << "About to save config";
+   qCDebug(KMIX_LOG) << "About to save config";
    saveBaseConfig();
   // saveVolumes(); // -<- removed from kmixd, as it is possibly a bad idea if both kmix and kmixd write the same config "kmixctrlrc"
 #ifdef __GNUC_
 #warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
 #endif
 
-   kDebug() << "Saved config ... now syncing explicitly";
+   qCDebug(KMIX_LOG) << "Saved config ... now syncing explicitly";
    KGlobal::config()->sync();
-   kDebug() << "Saved config ... sync finished";
+   qCDebug(KMIX_LOG) << "Saved config ... sync finished";
 }
 
 void KMixD::saveBaseConfig()
 {
-   kDebug() << "About to save config (Base)";
+   qCDebug(KMIX_LOG) << "About to save config (Base)";
    KConfigGroup config(KGlobal::config(), "Global");
 
    config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
@@ -148,7 +148,7 @@ void KMixD::saveBaseConfig()
    QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
    config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
 
-   kDebug() << "Config (Base) saving done";
+   qCDebug(KMIX_LOG) << "Config (Base) saving done";
 }
 
 
@@ -174,13 +174,13 @@ void KMixD::loadBaseConfig()
 
 void KMixD::plugged( const char* driverName, const QString& /*udi*/, QString& dev)
 {
-//     kDebug(67100) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
+//     qCDebug(KMIX_LOG) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
     QString driverNameString;
     driverNameString = driverName;
     int devNum = dev.toInt();
     Mixer *mixer = new Mixer( driverNameString, devNum );
     if ( mixer != 0 ) {
-        kDebug(67100) << "Plugged: dev=" << dev << "\n";
+        qCDebug(KMIX_LOG) << "Plugged: dev=" << dev << "\n";
         MixerToolBox::instance()->possiblyAddMixer(mixer);
     }
 
@@ -188,12 +188,12 @@ void KMixD::plugged( const char* driverName, const QString& /*udi*/, QString& de
 
 void KMixD::unplugged( const QString& udi)
 {
-//     kDebug(67100) << "Unplugged: udi=" <<udi << "\n";
+//     qCDebug(KMIX_LOG) << "Unplugged: udi=" <<udi << "\n";
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];
-//         kDebug(67100) << "Try Match with:" << mixer->udi() << "\n";
+//         qCDebug(KMIX_LOG) << "Try Match with:" << mixer->udi() << "\n";
         if (mixer->udi() == udi ) {
-            kDebug(67100) << "Unplugged Match: Removing udi=" <<udi << "\n";
+            qCDebug(KMIX_LOG) << "Unplugged Match: Removing udi=" <<udi << "\n";
             //KMixToolBox::notification("MasterFallback", "aaa");
             bool globalMasterMixerDestroyed = ( mixer == Mixer::getGlobalMasterMixer() );
 

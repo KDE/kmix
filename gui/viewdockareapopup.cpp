@@ -243,7 +243,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	_mixers.clear();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
-//	kDebug() << "Launch with " << preferredMixersForSoundmenu;
+//	qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
 	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
@@ -266,7 +266,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// A loop that adds the Master control of each card
 	foreach ( Mixer* mixer, _mixers )
 	{
-//		kDebug() << "ADD? mixerId=" << mixer->id();
+//		qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
 		shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
 		if ( !dockMD && mixer->size() > 0 )
 		{
@@ -275,10 +275,10 @@ Application: KMix (kmix), signal: Segmentation fault
 		}
 		if ( dockMD )
 		{
-//			kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
+//			qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
 			if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume())
 			{
-//				kDebug() << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
+//				qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
 				// don't add application streams here. They are handled below, so
 				// we make sure to not add them twice
 				_mixSet.append(dockMD);
@@ -363,13 +363,13 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
    
    _layoutMDW->addWidget( mdw, row, col );
 
-   //kDebug(67100) << "ADDED " << md->id() << " at column " << sliderColumn;
+   //qCDebug(KMIX_LOG) << "ADDED " << md->id() << " at column " << sliderColumn;
    return mdw;
 }
 
 void ViewDockAreaPopup::constructionFinished()
 {
-//   kDebug(67100) << "ViewDockAreaPopup::constructionFinished()\n";
+//   qCDebug(KMIX_LOG) << "ViewDockAreaPopup::constructionFinished()\n";
 
 	mainWindowButton = new QPushButton(i18n("Mixer"), this);
 	mainWindowButton->setObjectName(QLatin1String("MixerPanel"));
@@ -401,7 +401,7 @@ void ViewDockAreaPopup::constructionFinished()
     //bool fnc = focusNextChild();
     //kWarning() << "fnc=" <<fnc;
 
-//	kDebug() << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
+//	qCDebug(KMIX_LOG) << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 }
 
 QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
@@ -417,7 +417,7 @@ void ViewDockAreaPopup::refreshVolumeLevels()
 {
   foreach ( QWidget* qw, _mdws )
   {
-    //kDebug() << "rvl: " << qw;
+    //qCDebug(KMIX_LOG) << "rvl: " << qw;
     MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
     if ( mdw != 0 ) mdw->update();
   }

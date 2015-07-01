@@ -23,6 +23,8 @@
 
 class Mixer;
 
+#include "core/kmixdebug.h"
+
 #include <qxml.h>
 #include <QColor>
 #include <QTextStream>
@@ -33,8 +35,6 @@ class Mixer;
 #include <set>
 #include <vector>
 #include <ostream>
-
-#include <KDebug>
 
 struct SortedStringComparator
 {
@@ -132,7 +132,7 @@ static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
 		if (string == GuiNEVER.id)
 			return GuiNEVER;
 
-		kWarning() << "Unknown GuiVisibility=" << string << ". Applying default=" << GuiFULL.id;
+		qCWarning(KMIX_LOG) << "Unknown GuiVisibility=" << string << ". Applying default=" << GuiFULL.id;
 		return GuiFULL;
 	}
 

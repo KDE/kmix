@@ -101,7 +101,7 @@ void KMixPrefDlg::switchToPage(KMixPrefPage page)
 		setCurrentPage(startupPage);
 		break;
 	default:
-		kWarning() << "Tried to activated unknown preferences page" << page;
+		qCWarning(KMIX_LOG) << "Tried to activated unknown preferences page" << page;
 		break;
 	}
 	show();
@@ -288,7 +288,7 @@ void KMixPrefDlg::addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spa
 void KMixPrefDlg::updateWidgets()
 {
 	if (dialogConfig.data.debugConfig)
-		kDebug() << "";
+		qCDebug(KMIX_LOG) << "";
 	bool toplevelHorizontal = dialogConfig.data.getToplevelOrientation() == Qt::Horizontal;
 	_rbHorizontal->setChecked(toplevelHorizontal);
 	_rbVertical->setChecked(!toplevelHorizontal);
@@ -307,12 +307,12 @@ void KMixPrefDlg::updateSettings()
 {
 	Qt::Orientation toplevelOrientation = _rbHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
 	if (dialogConfig.data.debugConfig)
-		kDebug() << "toplevelOrientation" << toplevelOrientation << ", _rbHorizontal->isChecked()" << _rbHorizontal->isChecked();
+		qCDebug(KMIX_LOG) << "toplevelOrientation" << toplevelOrientation << ", _rbHorizontal->isChecked()" << _rbHorizontal->isChecked();
 	dialogConfig.data.setToplevelOrientation(toplevelOrientation);
 
 	Qt::Orientation trayOrientation = _rbTraypopupHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
 	if (dialogConfig.data.debugConfig)
-		kDebug() << "trayOrientation" << trayOrientation << ", _rbTraypopupHorizontal->isChecked()" << _rbTraypopupHorizontal->isChecked();
+		qCDebug(KMIX_LOG) << "trayOrientation" << trayOrientation << ", _rbTraypopupHorizontal->isChecked()" << _rbTraypopupHorizontal->isChecked();
 	dialogConfig.data.setTraypopupOrientation(trayOrientation);
 
     // Announcing MasterChanged, as the sound menu (aka ViewDockAreaPopup) primarily shows master volume(s).
@@ -344,7 +344,7 @@ bool KMixPrefDlg::hasChanged()
 	bool orientationFromConfigIsHor = dialogConfig.data.getToplevelOrientation() == Qt::Horizontal;
 	bool orientationFromWidgetIsHor = _rbHorizontal->isChecked();
 	if (dialogConfig.data.debugConfig)
-		kDebug() << "Orientation MAIN fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+		qCDebug(KMIX_LOG) << "Orientation MAIN fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
 
 	bool changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
 	if (!changed)
@@ -352,7 +352,7 @@ bool KMixPrefDlg::hasChanged()
 		bool orientationFromConfigIsHor = dialogConfig.data.getTraypopupOrientation() == Qt::Horizontal;
 		orientationFromWidgetIsHor = _rbTraypopupHorizontal->isChecked();
 		if (dialogConfig.data.debugConfig)
-			kDebug() << "Orientation TRAY fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+			qCDebug(KMIX_LOG) << "Orientation TRAY fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
 
 		changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
 	}
@@ -362,7 +362,7 @@ bool KMixPrefDlg::hasChanged()
 	}
 
 	if (dialogConfig.data.debugConfig)
-		kDebug() << "hasChanged=" << changed;
+		qCDebug(KMIX_LOG) << "hasChanged=" << changed;
 
 	return changed;
 }
@@ -393,7 +393,7 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
                                           "xdgconf-autostart",
                                           QString("kmix_autostart.desktop"));
 	if (dialogConfig.data.debugConfig)
-	    kDebug() << "autostartConfigFilename = " << autostartConfigFilename;
+	    qCDebug(KMIX_LOG) << "autostartConfigFilename = " << autostartConfigFilename;
 	bool autostartFileExists = !autostartConfigFilename.isNull();
 
 	//allowAutostartWarning->setEnabled(autostartFileExists);

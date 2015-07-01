@@ -53,7 +53,7 @@ void Mixer_Backend::closeCommon()
 
 int Mixer_Backend::close()
 {
-	kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
+	qCDebug(KMIX_LOG) << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
 	// ^^^ Background. before the destructor runs, the C++ runtime changes the virtual pointers to point back
 	//     to the common base class. So what actually runs is not run Mixer_ALSA::close(), but this method.
 	//
@@ -69,7 +69,7 @@ Mixer_Backend::~Mixer_Backend()
 	unregisterCard(this->getName());
 	if (!m_mixDevices.isEmpty())
 	{
-		kDebug() << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
+		qCDebug(KMIX_LOG) << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
 	}
 	delete _pollingTimer;
 }
@@ -164,7 +164,7 @@ void Mixer_Backend::readSetFromHW()
 	if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
 		// Some drivers (ALSA) are smart. We don't need to run the following
 		// time-consuming update loop if there was no change
-		kDebug(67100) << "Mixer::readSetFromHW(): smart-update-tick";
+		qCDebug(KMIX_LOG) << "Mixer::readSetFromHW(): smart-update-tick";
 		return;
 	}
 
@@ -176,11 +176,11 @@ void Mixer_Backend::readSetFromHW()
 	{
 	  //bool debugMe = (md->id() == "PCM:0" );
 	  bool debugMe = false;
-	  if (debugMe) kDebug() << "Old PCM:0 playback state" << md->isMuted()
+	  if (debugMe) qCDebug(KMIX_LOG) << "Old PCM:0 playback state" << md->isMuted()
 	    << ", vol=" << md->playbackVolume().getAvgVolumePercent(Volume::MALL);
 	    
 		int retLoop = readVolumeFromHW( md->id(), md );
-	  if (debugMe) kDebug() << "New PCM:0 playback state" << md->isMuted()
+	  if (debugMe) qCDebug(KMIX_LOG) << "New PCM:0 playback state" << md->isMuted()
 	    << ", vol=" << md->playbackVolume().getAvgVolumePercent(Volume::MALL);
 		if (md->isEnum() )
 		{
@@ -216,7 +216,7 @@ void Mixer_Backend::readSetFromHW()
 			fastPollingEndsAt = fastPollingEndsAt.addSecs(5);
 			_fastPollingEndsAt = fastPollingEndsAt;
 			//_fastPollingEndsAt = fastPollingEndsAt;
-			kDebug() << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
+			qCDebug(KMIX_LOG) << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
 		}
 
 		ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("Mixer.fromHW"));
@@ -228,7 +228,7 @@ void Mixer_Backend::readSetFromHW()
 		bool fastPollingEndsNow = (!_fastPollingEndsAt.isNull()) && _fastPollingEndsAt < QTime::currentTime ();
 		if ( fastPollingEndsNow )
 		{
-			kDebug() << "End fast polling";
+			qCDebug(KMIX_LOG) << "End fast polling";
 			_fastPollingEndsAt = QTime(); // NULL time
 			_pollingTimer->setInterval(POLL_RATE_SLOW);
 		}
@@ -257,7 +257,7 @@ shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
 	{
 		if ( !_mixer->isDynamic())
 			// This should never ever happen, as KMix does NOT accept soundcards without controls
-			kError(67100) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
+			qCCritical(KMIX_LOG) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
 	}
 
 	// If we reach this code path, then obiously m_recommendedMaster == 0 (see above)

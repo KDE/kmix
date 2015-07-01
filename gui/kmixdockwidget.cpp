@@ -117,7 +117,7 @@ void KMixDockWidget::controlsChange(int changeType)
 		  }
 		  else
 		  {
-			  kWarning() << "select_master action not found. Cannot enable it in the Systray.";
+			  qCWarning(KMIX_LOG) << "select_master action not found. Cannot enable it in the Systray.";
 		  }
       }
       break;
@@ -307,26 +307,26 @@ void KMixDockWidget::activate(const QPoint &pos)
 	{
 		// move horizontally, so that it is completely visible
 		x = vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() - 1;
-		kDebug() << "Multihead: (case 1) moving to" << x << "," << y;
+		qCDebug(KMIX_LOG) << "Multihead: (case 1) moving to" << x << "," << y;
 	}
 	else if (x < vScreenSize.x())
 	{
 		// horizontally out-of bound
 		x = vScreenSize.x();
-		kDebug() << "Multihead: (case 2) moving to" << x << "," << y;
+		qCDebug(KMIX_LOG) << "Multihead: (case 2) moving to" << x << "," << y;
 	}
 
 	if ((y + dockAreaPopup->height()) > (vScreenSize.height() + vScreenSize.y()))
 	{
 		// move horizontally, so that it is completely visible
 		y = vScreenSize.height() + vScreenSize.y() - dockAreaPopup->height() - 1;
-		kDebug() << "Multihead: (case 3) moving to" << x << "," << y;
+		qCDebug(KMIX_LOG) << "Multihead: (case 3) moving to" << x << "," << y;
 	}
 	else if (y < vScreenSize.y())
 	{
 		// horizontally out-of bound
 		y = vScreenSize.y();
-		kDebug() << "Multihead: (case 4) moving to" << x << "," << y;
+		qCDebug(KMIX_LOG) << "Multihead: (case 4) moving to" << x << "," << y;
 	}
 
 
@@ -346,7 +346,7 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 
 
 	Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
-//	kDebug() << "I am seeing a wheel event with delta=" << delta << " and orientation=" <<  wheelOrientation;
+//	qCDebug(KMIX_LOG) << "I am seeing a wheel event with delta=" << delta << " and orientation=" <<  wheelOrientation;
 	if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bko228780
 	{
 		delta = -delta;
@@ -370,7 +370,7 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 	long cv = vol.volumeStep(decrease) * inc;
 
     bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
-//    kDebug() << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
+//    qCDebug(KMIX_LOG) << "Operating on capture=" << vol.isCapture() << ", isInactive=" << isInactive;
 	if ( cv > 0 && isInactive)
 	{
 		// increasing from muted state: unmute and start with a low volume level

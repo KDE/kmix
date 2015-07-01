@@ -199,7 +199,7 @@ void KMixDeviceManager::pluggedSlot(const QString& udi)
                 }
                 break;
            default:
-               kError(67100) <<  "Plugged UNKNOWN Audio device (ignored)";
+               qCCritical(KMIX_LOG) <<  "Plugged UNKNOWN Audio device (ignored)";
                break;
        }
     }

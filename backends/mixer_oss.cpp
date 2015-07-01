@@ -106,7 +106,7 @@ int Mixer_OSS::open()
 {
     QString finalDeviceName;
     finalDeviceName = deviceName( m_devnum );
-  kDebug() << "OSS open() " << finalDeviceName;
+  qCDebug(KMIX_LOG) << "OSS open() " << finalDeviceName;
     if ((m_fd= ::open( finalDeviceName.toAscii().data(), O_RDWR)) < 0)
     {
         if ( errno == EACCES )
@@ -128,7 +128,7 @@ int Mixer_OSS::open()
         QString msg("No UDI found for '");
         msg += finalDeviceName;
         msg += "'. Hotplugging not possible";
-        kDebug(67100) << msg;
+        qCDebug(KMIX_LOG) << msg;
     }
       int devmask, recmask, i_recsrc, stereodevs;
       // Mixer is open. Now define properties
@@ -261,7 +261,7 @@ void print_recsrc(int recsrc)
 		else
 		  msg += '.';
 	}	
-	kDebug() << msg;
+	qCDebug(KMIX_LOG) << msg;
 }
 
 int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
@@ -343,7 +343,7 @@ void Mixer_OSS::errormsg(int mixer_error)
 {
 	QString l_s_errText;
 	l_s_errText = errorText(mixer_error);
-	kError() << l_s_errText << "\n";
+	qCCritical(KMIX_LOG) << l_s_errText << "\n";
 }
 
 
@@ -373,7 +373,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 			int volRight = ((volume>>8) & 0x7f);
 //
 //			if ( md->id() == "0" )
-//				kDebug() << md->id() << ": " << "volLeft=" << volLeft << ", volRight" << volRight;
+//				qCDebug(KMIX_LOG) << md->id() << ": " << "volLeft=" << volLeft << ", volRight" << volRight;
 
 			bool isMuted = volLeft==0 && ( vol.count() < 2 || volRight==0 ); // muted is "left and right muted" or "left muted when mono"
 			md->setMuted( isMuted );
@@ -403,7 +403,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 
 		               if ( volOld != volNew ) {
 		            	   controlChanged = true;
-		            	   //if ( md->id() == "0" ) kDebug() << "changed";
+		            	   //if ( md->id() == "0" ) qCDebug(KMIX_LOG) << "changed";
 		               }
 		        } // foreach
 			} // muted
@@ -431,7 +431,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 	{
 		if ( controlChanged )
 		{
-			//kDebug() << "FINE! " << ret;
+			//qCDebug(KMIX_LOG) << "FINE! " << ret;
 			return Mixer::OK;
 		}
 		else
@@ -441,7 +441,7 @@ int Mixer_OSS::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
 	}
 	else
 	{
-		//kDebug() << "SHIT! " << ret;
+		//qCDebug(KMIX_LOG) << "SHIT! " << ret;
 		return ret;
 	}
 }

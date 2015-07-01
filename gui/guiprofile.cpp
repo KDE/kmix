@@ -91,7 +91,7 @@ GUIProfile::GUIProfile()
 
 GUIProfile::~GUIProfile()
 {
-    kWarning() << "Thou shalt not delete any GUI profile. This message is only OK, when quitting KMix";
+    qCWarning(KMIX_LOG) << "Thou shalt not delete any GUI profile. This message is only OK, when quitting KMix";
     qDeleteAll(_controls);
     qDeleteAll(_products);
 }
@@ -164,7 +164,7 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
         fname += ' ' + profileName;
     }
 
-    kDebug() << fname;
+    qCDebug(KMIX_LOG) << fname;
     return fname;
 }
 
@@ -208,7 +208,7 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileName
         return 0;
 
 //    if ( mixer->isDynamic() ) {
-//        kDebug(67100) << "GUIProfile::find() Not loading GUIProfile for Dynamic Mixer (e.g. PulseAudio)";
+//        qCDebug(KMIX_LOG) << "GUIProfile::find() Not loading GUIProfile for Dynamic Mixer (e.g. PulseAudio)";
 //        return 0;
 //    }
 
@@ -265,7 +265,7 @@ void GUIProfile::addProfile(GUIProfile* guiprof)
 	//                a XML gui profile (so the Cached version is retrieved, and addProfile() is not called).
 
     s_profiles[guiprof->getId()] = guiprof;
-    kDebug() << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
+    qCDebug(KMIX_LOG) << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
 }
 
 
@@ -293,7 +293,7 @@ GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileNam
         }
     }
     else {
-        kDebug() << "Ignore file " <<fileName<< " (does not exist)";
+        qCDebug(KMIX_LOG) << "Ignore file " <<fileName<< " (does not exist)";
     }
     return guiprof;
 }
@@ -354,7 +354,7 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
 bool GUIProfile::readProfile(const QString& ref_fileName)
 {
     QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-    kDebug() << "Read profile:" << ref_fileName ;
+    qCDebug(KMIX_LOG) << "Read profile:" << ref_fileName ;
     QFile xmlFile( ref_fileName );
     QXmlInputSource source( &xmlFile );
     GUIProfileParser* gpp = new GUIProfileParser(this);
@@ -367,7 +367,7 @@ bool GUIProfile::readProfile(const QString& ref_fileName)
     } // Read OK
     else {
         // !! this error message about faulty profiles should probably be surrounded with i18n()
-        kError(67100) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
+        qCCritical(KMIX_LOG) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
     }
     delete gpp;
     delete xmlReader;
@@ -392,7 +392,7 @@ bool GUIProfile::writeProfile()
    QString fileName = createNormalizedFilename(profileId);
    QString fileNameFQ = KStandardDirs::locateLocal("appdata", fileName, true );
 
-   kDebug() << "Write profile:" << fileNameFQ ;
+   qCDebug(KMIX_LOG) << "Write profile:" << fileNameFQ ;
    QFile f(fileNameFQ);
    if ( f.open(QIODevice::WriteOnly | QFile::Truncate) )
    { 
@@ -509,20 +509,20 @@ QString xmlify(QString raw);
 
 QString xmlify(QString raw)
 {
-// 	kDebug() << "Before: " << raw;
+// 	qCDebug(KMIX_LOG) << "Before: " << raw;
 	raw = raw.replace('&', "&amp;");
 	raw = raw.replace('<', "&lt;");
 	raw = raw.replace('>', "&gt;");
 	raw = raw.replace("'", "&apos;");
 	raw = raw.replace("\"", "&quot;");
-// 	kDebug() << "After : " << raw;
+// 	qCDebug(KMIX_LOG) << "After : " << raw;
 	return raw;
 }
 
 
 QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 {
-// kDebug() << "ENTER QTextStream& operator<<";
+// qCDebug(KMIX_LOG) << "ENTER QTextStream& operator<<";
    os << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
    os << endl << endl;
 
@@ -568,7 +568,7 @@ QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
 	os << endl;
 
 	os << "</soundcard>" << endl;
-// kDebug() << "EXIT  QTextStream& operator<<";
+// qCDebug(KMIX_LOG) << "EXIT  QTextStream& operator<<";
 	return os;
 }
 
@@ -680,7 +680,7 @@ void ProfControl::setSubcontrols(QString sctls)
   QStringListIterator qslIt(qsl);
   while (qslIt.hasNext()) {
     QString sctl = qslIt.next();
-       //kDebug() << "setSubcontrols found: " << sctl.toLocal8Bit().constData() << endl;
+       //qCDebug(KMIX_LOG) << "setSubcontrols found: " << sctl.toLocal8Bit().constData() << endl;
        if ( sctl == "pvolume" ) _useSubcontrolPlayback = true;
        else if ( sctl == "cvolume" ) _useSubcontrolCapture = true;
        else if ( sctl == "pswitch" ) _useSubcontrolPlaybackSwitch = true;
@@ -693,7 +693,7 @@ void ProfControl::setSubcontrols(QString sctls)
 	 _useSubcontrolPlaybackSwitch = true;
 	 _useSubcontrolEnum = true;
        }
-       else kWarning() << "Ignoring unknown subcontrol type '" << sctl << "' in profile";
+       else qCWarning(KMIX_LOG) << "Ignoring unknown subcontrol type '" << sctl << "' in profile";
   }
 }
 
