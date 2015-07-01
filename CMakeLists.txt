@@ -32,6 +32,13 @@ include(KDECMakeSettings)
 include(KDECompilerSettings)
 include(ECMPackageConfigHelpers)
 
+find_package(Qt5 5.2.0 REQUIRED NO_MODULE COMPONENTS
+    Core
+    Widgets
+    DBus
+    Xml
+)
+
 find_package(KF5 REQUIRED COMPONENTS
     GlobalAccel
     I18n
