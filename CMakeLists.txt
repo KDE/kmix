@@ -43,7 +43,6 @@ if (KMIX_KF5_BUILD)
 		I18n
 		XmlGui
 		DBusAddons
-		KCMUtils
 		KDELibs4Support)
 	find_package(KF5ConfigWidgets)
 	find_package(KF5IconThemes)
