@@ -78,7 +78,10 @@ else()
 endif()
 
 find_package(Alsa)
-alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
+if(ALSA_FOUND)
+	alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
+	add_definitions(-DHAVE_LIBASOUND2)
+endif(ALSA_FOUND)
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
