@@ -24,12 +24,22 @@
 #define VOLUMESLIDER_H
 
 #include <QSlider>
+#include <QLabel>
+#include <QMouseEvent>
 
 #include "volumesliderextradata.h"
 
 class VolumeSlider : public QSlider
 {
       Q_OBJECT
+	Qt::Orientation m_orientation;
+	QLabel* m_tooltip;
+
+protected:
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+
 public:
       VolumeSlider(Qt::Orientation orientation, QWidget* parent); // : QSlider(orientation, parent);
 
