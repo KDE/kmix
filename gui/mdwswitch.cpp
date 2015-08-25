@@ -229,4 +229,3 @@
 //   return QWidget::eventFilter(obj,e);
 //}
 //
-//#include "mdwswitch.moc"

@@ -246,5 +246,4 @@ void DialogAddView::apply()
    }
 }
 
-#include "dialogaddview.moc"
 

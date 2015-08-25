@@ -440,4 +440,3 @@ void ViewSliders::refreshVolumeLevels()
 	}
 }
 
-#include "viewsliders.moc"

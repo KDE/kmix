@@ -119,5 +119,3 @@ void VolumeSlider::mouseMoveEvent(QMouseEvent* event)
 	//kDebug() << "Volume is "<<percent;
 }
 
-#include "volumeslider.moc"
-

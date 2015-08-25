@@ -438,4 +438,3 @@ void KSmallSlider::setGrayColors( QColor high, QColor low, QColor back )
     //repaint();
 }
 
-#include "ksmallslider.moc"

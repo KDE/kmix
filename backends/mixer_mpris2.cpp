@@ -699,4 +699,3 @@ QString MPRIS2_getDriverName()
 	return "MPRIS2";
 }
 
-#include "mixer_mpris2.moc"

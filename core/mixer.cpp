@@ -736,4 +736,3 @@ bool Mixer::moveStream( const QString id, const QString& destId )
     return ret;
 }
 
-#include "mixer.moc"

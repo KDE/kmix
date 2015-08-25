@@ -216,4 +216,3 @@ int KMixApp::newInstance()
 }
 
 
-#include "KMixApp.moc"
