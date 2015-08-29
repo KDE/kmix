@@ -123,4 +123,3 @@ void DBusMixSetWrapper::signalMasterChanged()
 	QDBusConnection::sessionBus().send( signal );
 }
 
-#include "dbusmixsetwrapper.moc"

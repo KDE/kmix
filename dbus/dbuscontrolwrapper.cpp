@@ -142,4 +142,3 @@ bool DBusControlWrapper::hasCaptureSwitch()
 	return m_md->captureVolume().hasSwitch();
 }
 
-#include "dbuscontrolwrapper.moc"

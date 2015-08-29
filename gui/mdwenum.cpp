@@ -196,4 +196,3 @@ bool MDWEnum::eventFilter( QObject* obj, QEvent* e )
     return QWidget::eventFilter(obj,e);
 }
 
-#include "mdwenum.moc"

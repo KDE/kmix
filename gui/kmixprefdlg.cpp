@@ -442,4 +442,3 @@ void KMixPrefDlg::replaceBackendsInTab()
 
 
 
-#include "kmixprefdlg.moc"

@@ -143,4 +143,3 @@ void DBusMixerWrapper::createDeviceWidgets()
 	QDBusConnection::sessionBus().send( signal );
 }
 
-#include "dbusmixerwrapper.moc"

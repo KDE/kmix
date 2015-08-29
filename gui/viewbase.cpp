@@ -500,4 +500,3 @@ void ViewBase::save(KConfig *config)
 
 // ---------- Popup stuff END ---------------------
 
-#include "viewbase.moc"

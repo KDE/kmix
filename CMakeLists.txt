@@ -44,7 +44,6 @@ find_package(KF5 REQUIRED COMPONENTS
     I18n
     XmlGui
     DBusAddons
-    KCMUtils
     KDELibs4Support
 )
 find_package(KF5ConfigWidgets)
@@ -66,7 +65,10 @@ find_package(GLIB2)
 find_package(Canberra)
 
 find_package(Alsa)
-alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
+if(ALSA_FOUND)
+	alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
+	add_definitions(-DHAVE_LIBASOUND2)
+endif(ALSA_FOUND)
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
@@ -356,7 +358,7 @@ install( PROGRAMS kmix.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( PROGRAMS apps/kmixremote DESTINATION ${BIN_INSTALL_DIR} )
 install( FILES restore_kmix_volumes.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
 install( FILES kmix_autostart.desktop  DESTINATION ${AUTOSTART_INSTALL_DIR})
-install( FILES kmixui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmix )
+install( FILES kmixui.rc  DESTINATION  ${KXMLGUI_INSTALL_DIR}/kmix)
 install( FILES kmixctrl_restore.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES dbus/org.kde.kmix.control.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 install( FILES dbus/org.kde.kmix.mixer.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

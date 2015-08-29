@@ -219,5 +219,4 @@ void KMixDeviceManager::unpluggedSlot(const QString& udi) {
 }
 
 
-#include "kmixdevicemanager.moc"
 

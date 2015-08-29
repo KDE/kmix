@@ -1325,4 +1325,3 @@ void KMixWindow::newMixerShown(int /*tabIndex*/)
 	}
 }
 
-#include "kmix.moc"

@@ -396,4 +396,3 @@ KLocale* MixerToolBox::whatsthisControlLocale()
 */
 
 
-#include "mixertoolbox.moc"

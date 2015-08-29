@@ -1451,4 +1451,3 @@ QString Mixer_PULSE::getDriverName()
         return "PulseAudio";
 }
 
-#include "mixer_pulse.moc"
