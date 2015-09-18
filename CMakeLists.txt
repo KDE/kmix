@@ -43,6 +43,7 @@ if (KMIX_KF5_BUILD)
 		I18n
 		XmlGui
 		DBusAddons
+		Plasma
 		KDELibs4Support)
 	find_package(KF5ConfigWidgets)
 	find_package(KF5IconThemes)
@@ -370,9 +371,7 @@ if (CANBERRA_FOUND)
 endif (CANBERRA_FOUND)
 
 ########### next target ###############
-if (!KMIX_KF5_BUILD)
-  add_subdirectory( plasma )
-endif()
+add_subdirectory( plasma )
 
 
 

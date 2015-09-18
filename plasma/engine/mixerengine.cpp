@@ -24,7 +24,7 @@
 #include "control_interface.h"
 #include "mixerservice.h"
 #include <QTimer>
-#include <KIcon>
+#include <QIcon>
 
 
 const QString MixerEngine::KMIX_DBUS_SERVICE = "org.kde.kmix";
@@ -45,6 +45,7 @@ MixerEngine::MixerEngine(QObject *parent, const QVariantList &args)
 			this, SLOT(slotServiceRegistered(QString)) );
 	connect( watcher, SIGNAL(serviceUnregistered(QString)),
 			this, SLOT(slotServiceUnregistered(QString)) );
+	init();
 }
 
 MixerEngine::~MixerEngine()
@@ -165,7 +166,7 @@ bool MixerEngine::updateSourceEvent( const QString &name )
 bool MixerEngine::getMixersData()
 {
 	QStringList mixerIds;
-	if ( interface->isServiceRegistered( KMIX_DBUS_SERVICE ) )
+	if ( interface->isServiceRegistered( KMIX_DBUS_SERVICE ) && m_kmix )
 	{
 		Q_FOREACH( MixerInfo* mi, m_mixers )
 			mixerIds.append( mi->id );
@@ -261,7 +262,7 @@ void MixerEngine::setControlData(ControlInfo* ci)
 	setData( source, "Mute", ci->iface->mute() );
 	setData( source, "Can Be Muted", ci->iface->canMute() );
 	setData( source, "Readable Name", ci->iface->readableName() );
-	setData( source, "Icon", KIcon(ci->iface->iconName()) );
+	setData( source, "Icon", QIcon::fromTheme(ci->iface->iconName()) );
 	setData( source, "Record Source", ci->iface->recordSource() );
 	setData( source, "Has Capture Switch", ci->iface->hasCaptureSwitch() );
 }
@@ -405,6 +406,11 @@ Plasma::Service* MixerEngine::serviceForSource(const QString& source)
 	return new MixerService( this, curci->iface );
 }
 
+#ifdef X_KMIX_KF5_BUILD
+K_EXPORT_PLASMA_DATAENGINE_WITH_JSON(mixer, MixerEngine, "plasma-dataengine-mixer.json")
+#else
 K_EXPORT_PLASMA_DATAENGINE(mixer, MixerEngine)
+#endif // X_KMIX_KF5_BUILD
+
 
 #include "mixerengine.moc"
