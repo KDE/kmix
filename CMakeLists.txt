@@ -21,6 +21,7 @@ if (KMIX_KF5_BUILD)
    add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 else ()
    cmake_minimum_required(VERSION 2.8.11)
+   set(CMAKE_AUTOMOC ON)
 endif()
 
 if(POLICY CMP0046)
