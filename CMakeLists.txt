@@ -36,7 +36,7 @@ if (KMIX_KF5_BUILD)
 
 	include(KDEInstallDirs)
 	include(KDECMakeSettings)
-	include(KDECompilerSettings)
+	include(KDECompilerSettings NO_POLICY_SCOPE)
 	include(ECMPackageConfigHelpers)
 
 	find_package(KF5 REQUIRED COMPONENTS
