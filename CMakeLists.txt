@@ -12,6 +12,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMPackageConfigHelpers)
+include(ECMInstallIcons)
 
 find_package(Qt5 5.2.0 REQUIRED NO_MODULE COMPONENTS
     Core

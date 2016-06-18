@@ -25,5 +25,10 @@ install( FILES
     kmixdocked_error.png
     DESTINATION  ${DATA_INSTALL_DIR}/kmix/pics )
 
-include(ECMInstallIcons)
-ecm_install_icons(${ICON_INSTALL_DIR})
+ecm_install_icons(ICONS
+    16-actions-kmix.png
+    32-actions-kmix.png
+    48-actions-kmix.png
+    64-actions-kmix.png
+    128-actions-kmix.png
+    DESTINATION ${ICON_INSTALL_DIR} THEME hicolor)
