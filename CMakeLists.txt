@@ -1,26 +1,7 @@
+cmake_minimum_required(VERSION 2.8.12)
 project(kmix)
 
-# CMake build file for KMix. It supports both KDE4 and KF5.
-# 
-# KDE4 support: complete
-# KF5 support is in work.
-#       Status: Build fails on kmixdevicemanager.cpp , which does #include <solid/audiointerface.h>
-#               Unfortunately Solid currently has no Audiointerface in KF5, thus it pulls the #include from
-#               KDE4, which leads to error: ‘AudioInterface’ is not a member of ‘Solid::DeviceInterface’
-#
-# Next step: Talk to Alex Fiestas how to progress
-
-if(POLICY CMP0046)
-  cmake_policy (SET CMP0046 NEW)
-endif()
-
-# Your project should require at least CMake 2.8.12 to use FindKF5.cmake
-cmake_minimum_required(VERSION 2.8.12)
 add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
-
-if(POLICY CMP0046)
-  cmake_policy (SET CMP0046 NEW)
-endif()
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") 
 
@@ -29,7 +10,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDECompilerSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMPackageConfigHelpers)
 
 find_package(Qt5 5.2.0 REQUIRED NO_MODULE COMPONENTS
