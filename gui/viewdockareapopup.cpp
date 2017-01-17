@@ -137,9 +137,6 @@ void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
 {
   if ( _mdws.isEmpty() )
     return;
-  
-   // Pass wheel event from "border widget" to child
-   QApplication::sendEvent( _mdws.first(), e);
 }
 
 

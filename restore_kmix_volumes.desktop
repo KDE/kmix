@@ -1,5 +1,6 @@
 [Desktop Entry]
 X-KDE-autostart-phase=1
+X-KDE-autostart-after=pulseaudio
 X-KDE-autostart-condition=kmixrc:Global:startkdeRestore:true
 Type=Application
 Exec=kmixctrl --restore

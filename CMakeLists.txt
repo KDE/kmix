@@ -25,6 +25,7 @@ find_package(KF5 REQUIRED COMPONENTS
     I18n
     XmlGui
     DBusAddons
+    Plasma
     KDELibs4Support
 )
 find_package(KF5ConfigWidgets)
@@ -324,7 +325,7 @@ if (CANBERRA_FOUND)
 endif (CANBERRA_FOUND)
 
 ########### next target ###############
-# add_subdirectory( plasma )
+add_subdirectory( plasma )
 
 
 ####################################################################################################
