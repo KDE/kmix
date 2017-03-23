@@ -141,7 +141,7 @@ QAction* KMixDockWidget::findAction(const char* actionName)
         if (action->data().toString() == QString::fromUtf8(actionName))
 			return action;
 	}
-    qWarning() << "ACTION" << actionName << "NOT FOUND!";
+    qCWarning(KMIX_LOG) << "ACTION" << actionName << "NOT FOUND!";
     return Q_NULLPTR;
 }
 
