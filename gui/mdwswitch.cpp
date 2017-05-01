@@ -29,7 +29,6 @@
 //#include <kaction.h>
 //#include <kmenu.h>
 //#include <kglobalaccel.h>
-//#include <kdebug.h>
 //#include <ktoggleaction.h>
 //#include <kactioncollection.h>
 //

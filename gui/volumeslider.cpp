@@ -23,7 +23,6 @@
 #include <QFontMetrics>
 
 #include "volumeslider.h"
-#include <kdebug.h>
 
 VolumeSlider::VolumeSlider(Qt::Orientation orientation, QWidget* parent) : QSlider(orientation, parent)
 ,m_orientation(orientation),m_tooltip(new QLabel(parent,Qt::ToolTip))
@@ -115,7 +114,7 @@ void VolumeSlider::mouseMoveEvent(QMouseEvent* event)
 		m_tooltip->move(mapToGlobal(sliderHandle.topLeft()).x(),mapToGlobal(sliderHandle.topLeft()).y()+height());
 	}
 
-	//kDebug() << "Position is"<<mapToGlobal(sliderHandle.topLeft()).x()<<","<<mapToGlobal(sliderHandle.topLeft()).y();
-	//kDebug() << "Volume is "<<percent;
+	//qCDebug(KMIX_LOG) << "Position is"<<mapToGlobal(sliderHandle.topLeft()).x()<<","<<mapToGlobal(sliderHandle.topLeft()).y();
+	//qCDebug(KMIX_LOG) << "Volume is "<<percent;
 }
 

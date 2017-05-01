@@ -23,7 +23,7 @@
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 #include <QStringList>
 #include <QDBusReply>

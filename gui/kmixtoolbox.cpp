@@ -24,7 +24,6 @@
 #include <QWidget>
 #include <QString>
 
-//#include <kdebug.h>
 #include <KComponentData>
 #include <kglobal.h>
 #include <kglobalaccel.h>

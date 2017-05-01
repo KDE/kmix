@@ -26,7 +26,6 @@
 #include <QListWidget>
 
 #include <kcombobox.h>
-#include <kdebug.h>
 #include <kiconloader.h>
 #include <klocale.h>
 

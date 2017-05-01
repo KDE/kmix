@@ -23,7 +23,7 @@
 
 class Mixer;
 
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 #include <qxml.h>
 #include <QColor>

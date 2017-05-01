@@ -26,7 +26,7 @@
 #include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/volume.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 #include "dbus/dbusmixsetwrapper.h"
 #include "mixeradaptor.h"
 

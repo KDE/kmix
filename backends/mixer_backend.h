@@ -27,7 +27,7 @@
 #include <QTimer>
 #include "core/mixdevice.h"
 #include "core/mixset.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 class Mixer;
 

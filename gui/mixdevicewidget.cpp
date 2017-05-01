@@ -29,7 +29,6 @@
 #include <kmenu.h>
 #include <kglobalaccel.h>
 #include <kshortcutsdialog.h>
-#include <kdebug.h>
 
 #include <qcursor.h>
 #include <QMouseEvent>

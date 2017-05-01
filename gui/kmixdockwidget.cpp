@@ -26,7 +26,6 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kdebug.h>
 #include <kwindowsystem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
@@ -417,7 +416,7 @@ void KMixDockWidget::contextMenuAboutToShow()
 {
     // Enable/Disable "Muted" menu item
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(findAction("dock_mute"));
-    qDebug() << "DOCK MUTE" << dockMuteAction;
+    qCDebug(KMIX_LOG) << "DOCK MUTE" << dockMuteAction;
     if (dockMuteAction)
         updateDockMuteAction(dockMuteAction);
 }

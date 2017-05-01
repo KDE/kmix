@@ -32,7 +32,6 @@
 // KDE
 #include <kaction.h>
 #include <kapplication.h>
-#include <kdebug.h>
 #include <kdialog.h>
 #include <kicon.h>
 #include <klocale.h>
@@ -396,7 +395,7 @@ void ViewDockAreaPopup::constructionFinished()
 	_layoutMDW->activate();
 
     //bool fnc = focusNextChild();
-    //kWarning() << "fnc=" <<fnc;
+    //qCWarning(KMIX_LOG) << "fnc=" <<fnc;
 
 //	qCDebug(KMIX_LOG) << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 }

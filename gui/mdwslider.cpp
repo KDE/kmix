@@ -27,7 +27,6 @@
 #include <kaction.h>
 #include <kmenu.h>
 #include <kglobalaccel.h>
-#include <kdebug.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 
@@ -743,7 +742,7 @@ void MDWSlider::setIcon( QString filename, QWidget* label )
 	}
 	else
 	{
-		qCCritical(KMIX_LOG) << "Pixmap missing. filename=" << filename << endl;
+		qCCritical(KMIX_LOG) << "Pixmap missing. filename=" << filename;
 	}
 }
 

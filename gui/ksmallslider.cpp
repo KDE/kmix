@@ -24,8 +24,6 @@
 // For INT_MAX
 #include <limits.h>
 
-#include <kdebug.h>
-
 #include <QWidget>
 #include <qpainter.h>
 #include <QColor>

@@ -20,11 +20,11 @@
  */
 
 #include "core/volume.h"
+#include "kmix_debug.h"
 
 // for operator<<()
 #include <iostream>
 
-#include <kdebug.h>
 #include <klocalizedstring.h>
 
 float Volume::VOLUME_STEP_DIVISOR = 20;

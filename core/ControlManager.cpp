@@ -19,7 +19,7 @@
 
 #include "ControlManager.h"
 #include "core/GlobalConfig.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 #include <QMutableListIterator>
 

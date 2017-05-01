@@ -43,7 +43,6 @@
 #include <kapplication.h>
 #include <kstandardaction.h>
 #include <khelpmenu.h>
-#include <kdebug.h>
 #include <kxmlguifactory.h>
 #include <kglobal.h>
 #include <kactioncollection.h>
@@ -67,7 +66,7 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusPendingCall>
 #include <QKeySequence>

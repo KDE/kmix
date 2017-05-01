@@ -26,7 +26,6 @@
 #include <QString>
 #include <QStringBuilder>
 
-//#include <kdebug.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 

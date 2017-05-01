@@ -30,7 +30,6 @@
 #include <kactioncollection.h>
 #include <kconfig.h>
 #include <kcombobox.h>
-#include <kdebug.h>
 #include <kglobalaccel.h>
 #include <klocale.h>
 #include <kmenu.h>
@@ -114,7 +113,7 @@ void MDWEnum::update()
     _enumCombo->setCurrentIndex( m_mixdevice->enumId() );
   }
   else {
-    qCCritical(KMIX_LOG) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped" << endl;
+    qCCritical(KMIX_LOG) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped";
   }
 }
 

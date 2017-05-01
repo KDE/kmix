@@ -30,7 +30,6 @@
 #include <utility>
 
 // KDE
-#include <kdebug.h>
 #include <kstandarddirs.h>
 
 // KMix
@@ -367,7 +366,7 @@ bool GUIProfile::readProfile(const QString& ref_fileName)
     } // Read OK
     else {
         // !! this error message about faulty profiles should probably be surrounded with i18n()
-        qCCritical(KMIX_LOG) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used." << endl;
+        qCCritical(KMIX_LOG) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used.";
     }
     delete gpp;
     delete xmlReader;
@@ -680,7 +679,7 @@ void ProfControl::setSubcontrols(QString sctls)
   QStringListIterator qslIt(qsl);
   while (qslIt.hasNext()) {
     QString sctl = qslIt.next();
-       //qCDebug(KMIX_LOG) << "setSubcontrols found: " << sctl.toLocal8Bit().constData() << endl;
+       //qCDebug(KMIX_LOG) << "setSubcontrols found: " << sctl.toLocal8Bit().constData();
        if ( sctl == "pvolume" ) _useSubcontrolPlayback = true;
        else if ( sctl == "cvolume" ) _useSubcontrolCapture = true;
        else if ( sctl == "pswitch" ) _useSubcontrolPlaybackSwitch = true;

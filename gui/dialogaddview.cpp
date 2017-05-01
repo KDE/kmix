@@ -29,7 +29,6 @@
 #include <QHBoxLayout>
 
 #include <kcombobox.h>
-#include <kdebug.h>
 #include <klocale.h>
 
 #include "core/mixdevice.h"
@@ -235,7 +234,7 @@ void DialogAddView::apply()
     if ( button != 0 ) {
       QString viewName = button->objectName();
       if ( mixer == 0 ) {
-         qCCritical(KMIX_LOG) << "DialogAddView::createPage(): Invalid Mixer (mixer=0)" << endl;
+         qCCritical(KMIX_LOG) << "DialogAddView::createPage(): Invalid Mixer (mixer=0)";
          return; // can not happen
       }
       else {

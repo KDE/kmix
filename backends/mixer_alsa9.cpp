@@ -30,7 +30,6 @@
 #include "core/volume.h"
 
 // KDE
-#include <kdebug.h>
 #include <klocale.h>
 
 // Qt

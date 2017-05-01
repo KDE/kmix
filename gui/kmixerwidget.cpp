@@ -31,7 +31,6 @@
 // KDE
 #include <kconfig.h>
 #include <kconfiggroup.h>
-#include <kdebug.h>
 #include <kglobal.h>
 #include <kicon.h>
 #include <klocale.h>

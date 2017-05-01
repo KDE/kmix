@@ -22,7 +22,6 @@
 #include "KMixApp.h"
 
 #include <kcmdlineargs.h>
-#include <kdebug.h>
 
 #include "apps/kmix.h"
 #include "core/ControlManager.h"

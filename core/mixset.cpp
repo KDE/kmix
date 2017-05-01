@@ -23,10 +23,9 @@
 //KMix
 #include "mixset.h"
 #include "core/mixdevice.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 // KDE
-#include <kdebug.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
 

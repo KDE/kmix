@@ -19,7 +19,6 @@
  */
 
 #include "core/kmixdevicemanager.h"
-#include <kdebug.h>
 
 #ifdef __GNUC__
 #warning KMix KF5 build does not support hotplugging yet

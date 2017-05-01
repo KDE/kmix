@@ -21,7 +21,6 @@
 
 #include "verticaltext.h"
 #include <QPainter>
-#include <kdebug.h>
 
 
 

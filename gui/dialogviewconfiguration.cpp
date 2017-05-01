@@ -30,7 +30,6 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <kdebug.h>
 #include <kdialog.h>
 #include <kicon.h>
 #include <KIconLoader>

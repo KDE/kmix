@@ -521,14 +521,14 @@ bool Mixer_OSS4::hasChangedControls()
 	minfo.dev = -1;
 	if ( wrapIoctl( ioctl(m_fd, SNDCTL_MIXERINFO, &minfo) ) < 0 )
 	{
-		qCDebug(KMIX_LOG) << "Can't get mixerinfo from card!\n" << endl;
+		qCDebug(KMIX_LOG) << "Can't get mixerinfo from card!\n";
 		return false;
 	}
 
 	if (!minfo.enabled)
 	{
 		// Mixer is disabled. Probably disconnected USB device or card is unavailable;
-		qCDebug(KMIX_LOG) << "Mixer for card is disabled!\n" << endl;
+		qCDebug(KMIX_LOG) << "Mixer for card is disabled!\n";
 		close();
 		return false;
 	}
@@ -616,7 +616,7 @@ int Mixer_OSS4::writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md)
 	if ( wrapIoctl( ioctl(m_fd, SNDCTL_MIX_EXTINFO, &extinfo) ) < 0 )
 	{
 		//TO DO: more specific error handling
-		kDebug ( 67100 ) << "failed to read info for control " << id2num(id) << endl;
+		qCDebug(KMIX_LOG) << "failed to read info for control " << id2num(id);
 		return Mixer::ERR_READ;
 	}
 
@@ -661,7 +661,7 @@ int Mixer_OSS4::writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md)
 
 	if ( wrapIoctl ( ioctl (m_fd, SNDCTL_MIX_WRITE, &mv) ) < 0 )
 	{
-		kDebug ( 67100 ) << "error writing to control" << extinfo.extname << endl;
+		qCDebug(KMIX_LOG) << "error writing to control" << extinfo.extname;
 		return Mixer::ERR_WRITE;
 	}
 	return 0;
@@ -678,7 +678,7 @@ void Mixer_OSS4::setEnumIdHW(const QString& id, unsigned int idx)
 	if ( wrapIoctl ( ioctl(m_fd, SNDCTL_MIX_EXTINFO, &extinfo) ) < 0 )
 	{
 		//TO DO: more specific error handling
-		kDebug ( 67100 ) << "failed to read info for control " << id2num(id) << endl;
+		qCDebug(KMIX_LOG) << "failed to read info for control " << id2num(id);
 		return;
 	}
 
@@ -711,7 +711,7 @@ void Mixer_OSS4::setEnumIdHW(const QString& id, unsigned int idx)
 	if ( wrapIoctl ( ioctl (m_fd, SNDCTL_MIX_WRITE, &mv) ) < 0 )
 	{
 		/* Oops, can't write to mixer */
-		kDebug ( 67100 ) << "error writing to control" << extinfo.extname << endl;
+		qCDebug(KMIX_LOG) << "error writing to control" << extinfo.extname;
 	}
 }
 
@@ -753,28 +753,28 @@ int Mixer_OSS4::wrapIoctl(int ioctlRet)
 	{
 		case EIO:
 		{
-			kDebug ( 67100 ) << "A hardware level error occurred" << endl;
+			qCDebug(KMIX_LOG) << "A hardware level error occurred";
 			break;
 		}
 		case EINVAL:
 		{
-			kDebug ( 67100 ) << "Operation caused an EINVAL. You may have found a bug in kmix OSS4 module or in OSS4 itself" << endl;
+			qCDebug(KMIX_LOG) << "Operation caused an EINVAL. You may have found a bug in kmix OSS4 module or in OSS4 itself";
 			break;
 		}
 		case ENXIO:
 		{
-			kDebug ( 67100 ) << "Operation index out of bounds or requested device does not exist - you likely found a bug in the kmix OSS4 module" << endl;
+			qCDebug(KMIX_LOG) << "Operation index out of bounds or requested device does not exist - you likely found a bug in the kmix OSS4 module";
 			break;
 		}
 		case EPERM:
 		case EACCES:
 		{
-			kDebug ( 67100 ) << errorText ( Mixer::ERR_PERM ) << endl;
+			qCDebug(KMIX_LOG) << errorText ( Mixer::ERR_PERM );
 			break;
 		}
 		case ENODEV:
 		{
-			kDebug ( 67100 ) << "kmix received an ENODEV error - are the OSS4 drivers loaded ?" << endl;
+			qCDebug(KMIX_LOG) << "kmix received an ENODEV error - are the OSS4 drivers loaded ?";
 			break;
 		}
 		case EPIPE:

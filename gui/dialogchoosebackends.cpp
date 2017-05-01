@@ -30,7 +30,6 @@
 #include <QHBoxLayout>
 
 #include <kcombobox.h>
-#include <kdebug.h>
 #include <klocale.h>
 
 #include "core/ControlManager.h"

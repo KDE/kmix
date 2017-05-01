@@ -5,7 +5,10 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") 
 
-find_package(ECM 5.10.0 REQUIRED NO_MODULE)
+set (QT_MIN_VERSION "5.4.0")
+set (KF5_MIN_VERSION "5.14.0")
+
+find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
@@ -13,8 +16,9 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMPackageConfigHelpers)
 include(ECMInstallIcons)
+include(ECMQtDeclareLoggingCategory)
 
-find_package(Qt5 5.2.0 REQUIRED NO_MODULE COMPONENTS
+find_package(Qt5 ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
     Core
     DBus
     Gui
@@ -22,7 +26,7 @@ find_package(Qt5 5.2.0 REQUIRED NO_MODULE COMPONENTS
     Xml
 )
 
-find_package(KF5 REQUIRED COMPONENTS
+find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     Completion
     Config
     ConfigWidgets
@@ -105,6 +109,11 @@ if (CANBERRA_FOUND)
 endif (CANBERRA_FOUND)
 
 
+ecm_qt_declare_logging_category(kmix_debug_SRCS
+                                HEADER kmix_debug.h
+                                IDENTIFIER KMIX_LOG
+                                CATEGORY_NAME org.kde.kmix)
+
 ####################################################################################################
 ########### definitions: DBUSADAPTOR ###############################################################
 ####################################################################################################
@@ -180,7 +189,7 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    core/mixdevice.cpp
    core/mixdevicecomposite.cpp
    core/volume.cpp
-   core/kmixdebug.cpp
+   ${kmix_debug_SRCS}
    )
 
 kf5_add_kdeinit_executable(kmix ${kmix_KDEINIT_SRCS})
@@ -237,7 +246,7 @@ install(TARGETS kmix  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     core/volume.cpp
     core/mixertoolbox.cpp 
     core/kmixdevicemanager.cpp
-    core/kmixdebug.cpp
+    ${kmix_debug_SRCS}
     )
 
 #qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
@@ -300,7 +309,7 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    core/mixdevice.cpp 
    core/volume.cpp 
    core/mixertoolbox.cpp
-   core/kmixdebug.cpp
+   ${kmix_debug_SRCS}
    # There is no actual need for kmixdevicemanager.cpp (hotplug makes no sense in kmixctrl), but
    # the dependency comes in via mixertoolbox.cpp
    core/kmixdevicemanager.cpp

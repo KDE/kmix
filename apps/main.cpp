@@ -24,14 +24,13 @@
 #include <k4aboutdata.h>
 #include <KLocalizedString>
 
-#include <kdebug.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
 #include "KMixApp.h"
 #include "core/version.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 static const char description[] =
 I18N_NOOP("KMix - KDE's full featured mini mixer");

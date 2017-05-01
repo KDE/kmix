@@ -46,7 +46,6 @@
 
 
 // KDE
-#include <kdebug.h>
 #include <KIcon>
 #include <KLocale>
 

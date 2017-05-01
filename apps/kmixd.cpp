@@ -30,7 +30,6 @@
 #include <kconfig.h>
 #include <kaction.h>
 #include <kstandardaction.h>
-#include <kdebug.h>
 #include <kxmlguifactory.h>
 #include <kglobal.h>
 #include <kactioncollection.h>

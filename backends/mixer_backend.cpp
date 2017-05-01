@@ -257,7 +257,7 @@ shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
 	{
 		if ( !_mixer->isDynamic())
 			// This should never ever happen, as KMix does NOT accept soundcards without controls
-			qCCritical(KMIX_LOG) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this." << endl;
+			qCCritical(KMIX_LOG) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this.";
 	}
 
 	// If we reach this code path, then obiously m_recommendedMaster == 0 (see above)

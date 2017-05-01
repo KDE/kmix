@@ -362,7 +362,7 @@ void ViewBase::load(KConfig *config)
 
 				// Consult GuiProfile for visibility
 				mdwEnabled = findMdw(mdw->mixDevice()->id(), guiCompl) != 0; // Match GUI complexity
-//				kWarning() << "---------- FIRST RUN: md=" << md->id() << ", guiVisibility=" << guiCompl.getId() << ", enabled=" << mdwEnabled;
+//				qCWarning(KMIX_LOG) << "---------- FIRST RUN: md=" << md->id() << ", guiVisibility=" << guiCompl.getId() << ", enabled=" << mdwEnabled;
 
 				if (mdwEnabled)
 				{

@@ -23,9 +23,9 @@
 
 #include <fstream>
 
-#include <kdebug.h>
-
+#include <QDebug>
 #include <QList>
+#include <QMap>
 
 class VolumeChannel;
 

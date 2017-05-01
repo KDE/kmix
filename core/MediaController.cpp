@@ -28,7 +28,7 @@
  */
 
 #include "core/MediaController.h"
-#include "core/kmixdebug.h"
+#include "kmix_debug.h"
 
 //#include <phonon/audiooutput.h>
 //#include <phonon/backendcapabilities.h>

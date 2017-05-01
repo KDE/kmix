@@ -25,7 +25,6 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kdebug.h>
 
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
@@ -274,9 +273,9 @@ bool Mixer::openIfValid()
         else
         {
             if ( !m_dynamic )
-                qCCritical(KMIX_LOG) << "Mixer::open() no master detected." << endl;
+                qCCritical(KMIX_LOG) << "Mixer::open() no master detected.";
             else
-                qCDebug(KMIX_LOG) << "Mixer::open() no master detected." << endl;
+                qCDebug(KMIX_LOG) << "Mixer::open() no master detected.";
             QString noMaster = "---no-master-detected---";
             setLocalMasterMD(noMaster); // no master
         }
