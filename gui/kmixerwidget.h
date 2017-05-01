@@ -32,7 +32,7 @@ class QString;
 #include "core/mixer.h"
 #include "gui/mixdevicewidget.h"
 
-// QT
+// Qt
 #include <QVBoxLayout>
 
 // KDE

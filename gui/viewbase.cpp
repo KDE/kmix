@@ -21,7 +21,7 @@
 
 #include "viewbase.h"
 
-// QT
+// Qt
 #include <qcursor.h>
 #include <QMouseEvent>
 

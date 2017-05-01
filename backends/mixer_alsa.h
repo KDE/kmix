@@ -21,11 +21,11 @@
 #ifndef MIXER_ALSA_H
 #define MIXER_ALSA_H
 
-// QT includes
+// Qt includes
 #include <QList>
 #include <QHash>
 
-// Forward QT includes
+// Forward Qt includes
 class QString;
 class QSocketNotifier;
 
