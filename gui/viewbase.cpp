@@ -27,7 +27,6 @@
 
 // KDE
 #include <kaction.h>
-#include <kicon.h>
 #include <kmenu.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -58,7 +57,7 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlag
    setObjectName(id);
    // When loding the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
-	configureIcon = new KIcon( QLatin1String( "configure" ));
+   configureIcon = QIcon::fromTheme( QLatin1String( "configure" ));
 
    
    if ( _actions == 0 ) {
@@ -82,7 +81,6 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlag
 
 ViewBase::~ViewBase()
 {
-	delete configureIcon;
     // Hint: The GUI profile will not be removed, as it is pooled and might be applied to a new View.
 }
 
@@ -99,7 +97,7 @@ void ViewBase::addMixer(Mixer *mixer)
 
 QPushButton* ViewBase::createConfigureViewButton()
 {
-	QPushButton* configureViewButton = new QPushButton(*configureIcon, "", this);
+	QPushButton* configureViewButton = new QPushButton(configureIcon, "", this);
 	configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	configureViewButton->setToolTip(i18n( "Configure Channels" ));
 	connect(configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
@@ -215,7 +213,7 @@ void ViewBase::popupReset()
 
     delete _popMenu;
     _popMenu = new KMenu( this );
-    _popMenu->addTitle( KIcon( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
+    _popMenu->addTitle( QIcon::fromTheme( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
 
     act = _localActionColletion->action( "toggle_channels" );
     if ( act ) _popMenu->addAction(act);

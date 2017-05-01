@@ -30,7 +30,7 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 
-#include <qicon.h>
+#include <QIcon>
 #include <qtoolbutton.h>
 #include <QObject>
 #include <qcursor.h>

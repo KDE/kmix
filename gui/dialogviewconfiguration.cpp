@@ -24,6 +24,7 @@
 #include <algorithm>
 
 #include <QCheckBox>
+#include <QIcon>
 #include <QPushButton>
 #include <QLabel>
 #include <QScrollArea>
@@ -31,7 +32,6 @@
 #include <QGridLayout>
 
 #include <kdialog.h>
-#include <kicon.h>
 #include <KIconLoader>
 #include <klocale.h>
 #include <kvbox.h>
@@ -279,14 +279,14 @@ void DialogViewConfiguration::createPage()
            this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
    
    addSpacer(1,1);
-   const KIcon& icon = KIcon( QLatin1String( "arrow-left" ));
+   const QIcon& icon = QIcon::fromTheme( QLatin1String( "arrow-left" ));
     moveLeftButton = new QPushButton(icon, "");
     moveLeftButton->setEnabled(false);
    _glayout->addWidget(moveLeftButton,1,2);
    connect(moveLeftButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToActiveList()));
    addSpacer(1,3);
 
-   const KIcon& icon2 = KIcon( QLatin1String( "arrow-right" ));
+   const QIcon& icon2 = QIcon::fromTheme( QLatin1String( "arrow-right" ));
     moveRightButton = new QPushButton(icon2, "");
     moveRightButton->setEnabled(false);
    _glayout->addWidget(moveRightButton,1,4);

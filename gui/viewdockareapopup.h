@@ -26,10 +26,9 @@
 class QBoxLayout;
 class QFrame;
 class QGridLayout;
+#include <QIcon>;
 #include <QPushButton>
 class QWidget;
-
-class KIcon;
 
 class Mixer;
 class MixDevice;
@@ -68,7 +67,7 @@ private:
     QPushButton *restoreVolumeButton2;
     QPushButton *restoreVolumeButton3;
     QPushButton *restoreVolumeButton4;
-    KIcon* restoreVolumeIcon;
+    QIcon restoreVolumeIcon;
 
     static ProfControl* MatchAllForSoundMenu;
     static QString InternedString_Star;

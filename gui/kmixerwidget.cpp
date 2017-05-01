@@ -21,6 +21,7 @@
 #include "gui/kmixerwidget.h"
 
 // Qt
+#include <QIcon>
 #include <QLabel>
 #include <qpixmap.h>
 #include <QString>
@@ -32,7 +33,6 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kglobal.h>
-#include <kicon.h>
 #include <klocale.h>
 #include <ktabwidget.h>
 

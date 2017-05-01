@@ -23,8 +23,9 @@
 #include "mixer_interface.h"
 #include "control_interface.h"
 #include "mixerservice.h"
-#include <QTimer>
+
 #include <QIcon>
+#include <QTimer>
 
 
 const QString MixerEngine::KMIX_DBUS_SERVICE = "org.kde.kmix";

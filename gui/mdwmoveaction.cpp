@@ -22,13 +22,11 @@
 
 #include "mdwmoveaction.h"
 
-// KDE
-#include <kicon.h>
-
 //KMix
 #include "core/mixdevice.h"
 
 // Qt
+#include <QIcon>
 #include <QString>
 
 MDWMoveAction::MDWMoveAction(shared_ptr<MixDevice> md, QObject *parent)
@@ -37,7 +35,7 @@ MDWMoveAction::MDWMoveAction(shared_ptr<MixDevice> md, QObject *parent)
    Q_ASSERT(md);
 
    setText(m_mixDevice->readableName());
-   setIcon(KIcon(m_mixDevice->iconName()));
+   setIcon(QIcon::fromTheme(m_mixDevice->iconName()));
    connect(this, SIGNAL(triggered(bool)), SLOT(triggered(bool)));
 }
 

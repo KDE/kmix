@@ -22,13 +22,13 @@
 #include "gui/osdwidget.h"
 
 // Qt
+#include <QIcon>
 #include <QGraphicsLinearLayout>
 #include <QPainter>
 #include <QTimer>
 #include <QLabel>
 
 // KDE
-#include <KIcon>
 #include <KDialog>
 #include <KWindowSystem>
 #include <Plasma/Svg>
@@ -161,10 +161,10 @@ void OSDWidget::themeUpdated()
         m_volumeMutedPixmap = svgIcon.pixmap("audio-volume-muted");
     } else {
         iconSize = QSize(IconSize(KIconLoader::Toolbar), IconSize(KIconLoader::Toolbar));
-        m_volumeHighPixmap = KIcon( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
-        m_volumeMediumPixmap = KIcon( QLatin1String( "audio-volume-medium" )).pixmap(iconSize);
-        m_volumeLowPixmap = KIcon( QLatin1String( "audio-volume-low" )).pixmap(iconSize);
-        m_volumeMutedPixmap = KIcon( QLatin1String( "audio-volume-muted" )).pixmap(iconSize);
+        m_volumeHighPixmap = QIcon::fromTheme( QLatin1String( "audio-volume-high" )).pixmap(iconSize);
+        m_volumeMediumPixmap = QIcon::fromTheme( QLatin1String( "audio-volume-medium" )).pixmap(iconSize);
+        m_volumeLowPixmap = QIcon::fromTheme( QLatin1String( "audio-volume-low" )).pixmap(iconSize);
+        m_volumeMutedPixmap = QIcon::fromTheme( QLatin1String( "audio-volume-muted" )).pixmap(iconSize);
     }
 
     m_iconLabel->nativeWidget()->setPixmap(m_volumeHighPixmap);

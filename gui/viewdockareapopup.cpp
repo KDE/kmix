@@ -25,6 +25,7 @@
 #include <qevent.h>
 #include <qframe.h>
 #include <QGridLayout>
+#include <QIcon>
 #include <QLayoutItem>
 #include <QPushButton>
 #include <QSizePolicy>
@@ -33,7 +34,6 @@
 #include <kaction.h>
 #include <kapplication.h>
 #include <kdialog.h>
-#include <kicon.h>
 #include <klocale.h>
 #include <kwindowsystem.h>
 
@@ -87,7 +87,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 		// The list will be redone in _setMixSet() with the actual Mixer instances to use
 	}
 
-	restoreVolumeIcon = new KIcon(QLatin1String("quickopen-file"));
+	restoreVolumeIcon = QIcon::fromTheme(QLatin1String("quickopen-file"));
 	createDeviceWidgets();
 
 	// Register listeners for all mixers
@@ -102,7 +102,6 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
 {
   ControlManager::instance().removeListener(this);
   delete _layoutMDW;
-  delete restoreVolumeIcon;
   // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cascades down
 }
 
@@ -403,7 +402,7 @@ void ViewDockAreaPopup::constructionFinished()
 QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
 {
 	QString buttonText = QString("%1").arg(storageSlot);
-	QPushButton* profileButton = new QPushButton(*restoreVolumeIcon, buttonText, this);
+	QPushButton* profileButton = new QPushButton(restoreVolumeIcon, buttonText, this);
 	profileButton->setToolTip(i18n("Load volume profile %1").arg(storageSlot));
 	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return profileButton;

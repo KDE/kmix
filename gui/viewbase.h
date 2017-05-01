@@ -23,12 +23,12 @@
 
 // QT
 #include <QWidget>
+#include <QIcon>
 #include <QList>
 #include <QPushButton>
 
 // KDE
 #include <KActionCollection>
-class KIcon;
 class KMenu;
 
 class Mixer;
@@ -136,7 +136,7 @@ protected:
     const QString _guiProfileId;
     KActionCollection *_localActionColletion;
 
-    KIcon* configureIcon;
+    QIcon configureIcon;
 
     virtual void _setMixSet() = 0;
     void resetMdws();

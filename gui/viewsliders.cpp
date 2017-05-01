@@ -46,10 +46,10 @@
 
 
 // KDE
-#include <KIcon>
 #include <KLocale>
 
 // Qt
+#include <QIcon>
 #include <QPushButton>
 #include <QLabel>
 #include <QLayoutItem>
