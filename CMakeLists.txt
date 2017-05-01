@@ -16,21 +16,29 @@ include(ECMInstallIcons)
 
 find_package(Qt5 5.2.0 REQUIRED NO_MODULE COMPONENTS
     Core
-    Widgets
     DBus
+    Gui
+    Widgets
     Xml
 )
 
 find_package(KF5 REQUIRED COMPONENTS
+    Completion
+    Config
+    ConfigWidgets
+    Crash
+    DBusAddons
+    DocTools
     GlobalAccel
     I18n
-    XmlGui
-    DBusAddons
-    Plasma
+    IconThemes
     KDELibs4Support
+    Notifications
+    Plasma
+    WidgetsAddons
+    WindowSystem
+    XmlGui
 )
-find_package(KF5ConfigWidgets)
-find_package(KF5IconThemes)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
