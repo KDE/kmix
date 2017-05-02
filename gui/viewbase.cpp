@@ -23,11 +23,11 @@
 
 // QT
 #include <qcursor.h>
+#include <QMenu>
 #include <QMouseEvent>
 
 // KDE
 #include <kaction.h>
-#include <kmenu.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kactioncollection.h>
@@ -201,7 +201,7 @@ void ViewBase::mousePressEvent( QMouseEvent *e )
  * Return a popup menu. This contains basic entries.
  * More can be added by the caller.
  */
-KMenu* ViewBase::getPopup()
+QMenu* ViewBase::getPopup()
 {
    popupReset();
    return _popMenu;
@@ -212,8 +212,8 @@ void ViewBase::popupReset()
     QAction *act;
 
     delete _popMenu;
-    _popMenu = new KMenu( this );
-    _popMenu->addTitle( QIcon::fromTheme( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
+    _popMenu = new QMenu( this );
+    _popMenu->addSection( QIcon::fromTheme( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
 
     act = _localActionColletion->action( "toggle_channels" );
     if ( act ) _popMenu->addAction(act);

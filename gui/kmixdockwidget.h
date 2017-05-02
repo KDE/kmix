@@ -30,7 +30,7 @@ class QWidgetAction;
 class KToggleAction;
 #include <kstatusnotifieritem.h>
 
-class KMenu;
+class QMenu;
 class KMixWindow;
 class Mixer;
 #include "core/mixdevice.h"
@@ -63,7 +63,7 @@ class KMixDockWidget : public KStatusNotifierItem
 
  private:
    ViewDockAreaPopup *_dockView;
-   KMenu *_dockAreaPopupMenuWrapper;
+   QMenu *_dockAreaPopupMenuWrapper;
    QWidgetAction *_volWA;
    int  _oldToolTipValue;
    char _oldPixmapType;

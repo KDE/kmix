@@ -25,7 +25,6 @@
 
 #include <kaction.h>
 #include <klocale.h>
-#include <kmenu.h>
 #include <kwindowsystem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
@@ -35,6 +34,7 @@
 #include <QDesktopWidget>
 #include <QAction>
 #include <QApplication>
+#include <QMenu>
 #include <QTextDocument>
 
 #include "apps/kmix.h"
@@ -69,8 +69,8 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
-	// For bizarre reasons, we wrap the ViewDockAreaPopup in a KMenu. Must relate to how KStatusNotifierItem works.
-   _dockAreaPopupMenuWrapper = new KMenu(parent);
+	// For bizarre reasons, we wrap the ViewDockAreaPopup in a QMenu. Must relate to how KStatusNotifierItem works.
+   _dockAreaPopupMenuWrapper = new QMenu(parent);
 	_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
 	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
 	_volWA->setDefaultWidget(_dockView);

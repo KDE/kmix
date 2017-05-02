@@ -29,7 +29,7 @@
 
 // KDE
 #include <KActionCollection>
-class KMenu;
+class QMenu;
 
 class Mixer;
 class MixDevice;
@@ -98,7 +98,7 @@ public:
     /**
      * Popup stuff
      */
-    virtual KMenu* getPopup();
+    virtual QMenu* getPopup();
     virtual void popupReset();
     virtual void showContextMenu();
 
@@ -129,7 +129,7 @@ public:
 protected:
     MixSet _mixSet;
     QList<Mixer*> _mixers;
-    KMenu *_popMenu;
+    QMenu *_popMenu;
     KActionCollection* _actions; // -<- application wide action collection
 
     ViewFlags _vflags;

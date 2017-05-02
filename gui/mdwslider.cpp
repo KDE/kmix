@@ -25,7 +25,6 @@
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kaction.h>
-#include <kmenu.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
@@ -35,6 +34,7 @@
 #include <QObject>
 #include <qcursor.h>
 #include <QCheckBox>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QLabel>
 #include <qpixmap.h>
@@ -123,7 +123,7 @@ void MDWSlider::createActions()
     }
 
     if( m_mixdevice->isMovable() ) {
-        m_moveMenu = new KMenu( i18n("Mo&ve"), this);
+        m_moveMenu = new QMenu( i18n("Mo&ve"), this);
         connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
 
@@ -1158,8 +1158,8 @@ void MDWSlider::showContextMenu( const QPoint& pos )
 	if( m_view == 0 )
 		return;
 
-	KMenu *menu = m_view->getPopup();
-	menu->addTitle( SmallIcon( "kmix" ), m_mixdevice->readableName() );
+	QMenu *menu = m_view->getPopup();
+	menu->addSection( SmallIcon( "kmix" ), m_mixdevice->readableName() );
 
 	if (m_moveMenu) {
 		MixSet *ms = m_mixdevice->getMoveDestinationMixSet();

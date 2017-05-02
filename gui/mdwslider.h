@@ -36,7 +36,7 @@ class QToolButton;
 class QLabel;
 
 class KAction;
-class KMenu;
+class QMenu;
 #include <kshortcut.h>
 #include <kiconloader.h>
 
@@ -176,7 +176,7 @@ private:
 	bool captureLEDSpacing;
 
     KActionCollection*   _mdwMoveActions;
-    KMenu *m_moveMenu;
+    QMenu *m_moveMenu;
 
     QList<QAbstractSlider *> m_slidersPlayback;
     QList<QAbstractSlider *> m_slidersCapture;

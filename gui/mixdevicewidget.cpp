@@ -26,11 +26,11 @@
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kaction.h>
-#include <kmenu.h>
 #include <kglobalaccel.h>
 #include <kshortcutsdialog.h>
 
 #include <qcursor.h>
+#include <QMenu>
 #include <QMouseEvent>
 #include <qpixmap.h>
 //#include <qwmatrix.h>

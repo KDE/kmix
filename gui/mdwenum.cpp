@@ -32,12 +32,12 @@
 #include <kcombobox.h>
 #include <kglobalaccel.h>
 #include <klocale.h>
-#include <kmenu.h>
 #include <ktoggleaction.h>
 
 // Qt
 #include <QCursor>
 #include <QLabel>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QObject>
 #include <QBoxLayout>
@@ -122,7 +122,7 @@ void MDWEnum::showContextMenu(const QPoint& pos )
    if( m_view == 0 )
       return;
 
-   KMenu *menu = m_view->getPopup();
+   QMenu *menu = m_view->getPopup();
 
    menu->popup( pos );
 }

@@ -21,13 +21,13 @@
 //
 //#include <qcursor.h>
 //#include <QLabel>
+//#include <QMenu>
 //#include <QMouseEvent>
 //#include <QObject>
 //
 //#include <klocale.h>
 //#include <kconfig.h>
 //#include <kaction.h>
-//#include <kmenu.h>
 //#include <kglobalaccel.h>
 //#include <ktoggleaction.h>
 //#include <kactioncollection.h>
@@ -158,7 +158,7 @@
 //   if( m_view == 0 )
 //   return;
 //
-//    KMenu *menu = m_view->getPopup();
+//    QMenu *menu = m_view->getPopup();
 //
 //    QPoint pos = QCursor::pos();
 //    menu->popup( pos );

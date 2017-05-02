@@ -24,6 +24,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QDesktopWidget>
+#include <QMenuBar>
 #include <QPushButton>
 #include <qradiobutton.h>
 #include <QCursor>
@@ -35,7 +36,6 @@
 #include <KGlobalAccel>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kmenubar.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
