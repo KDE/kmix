@@ -308,9 +308,9 @@ public:
     // Enumeration for the scope
     enum ProfileScope { NONE, SOUNDCARD };
     
-    bool startDocument();
-    bool startElement( const QString&, const QString&, const QString& , const QXmlAttributes& );
-    bool endElement( const QString&, const QString&, const QString& );
+    bool startDocument() Q_DECL_OVERRIDE;
+    bool startElement( const QString&, const QString&, const QString& , const QXmlAttributes& ) Q_DECL_OVERRIDE;
+    bool endElement( const QString&, const QString&, const QString& ) Q_DECL_OVERRIDE;
     
 private:
     void addControl(const QXmlAttributes& attributes);

@@ -116,21 +116,21 @@ class Mixer_MPRIS2 : public Mixer_Backend
 public:
    Mixer_MPRIS2(Mixer *mixer, int device);
     virtual ~Mixer_MPRIS2();
-    QString getDriverName();
-    virtual QString getId() const { return _id; };
+    QString getDriverName() Q_DECL_OVERRIDE;
+    QString getId() const Q_DECL_OVERRIDE { return _id; };
 
-  virtual int open();
-  virtual int close();
-  virtual int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> );
-  virtual int writeVolumeToHW( const QString& id, shared_ptr<MixDevice> );
-  virtual void setEnumIdHW(const QString& id, unsigned int);
-  virtual unsigned int enumIdHW(const QString& id);
-  virtual bool moveStream( const QString& id, const QString& destId );
-  virtual bool needsPolling() { return false; }
+  int open() Q_DECL_OVERRIDE;
+  int close() Q_DECL_OVERRIDE;
+  int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
+  int writeVolumeToHW( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
+  void setEnumIdHW(const QString& id, unsigned int) Q_DECL_OVERRIDE;
+  unsigned int enumIdHW(const QString& id) Q_DECL_OVERRIDE;
+  bool moveStream( const QString& id, const QString& destId ) Q_DECL_OVERRIDE;
+  bool needsPolling() Q_DECL_OVERRIDE { return false; }
 
-  virtual int mediaPlay(QString id);
-  virtual int mediaPrev(QString id);
-  virtual int mediaNext(QString id);
+  int mediaPlay(QString id) Q_DECL_OVERRIDE;
+  int mediaPrev(QString id) Q_DECL_OVERRIDE;
+  int mediaNext(QString id) Q_DECL_OVERRIDE;
   virtual int mediaControl(QString id, QString command);
 
   static MediaController::PlayState mprisPlayStateString2PlayState(const QString& playbackStatus);

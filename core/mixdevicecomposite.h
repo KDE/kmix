@@ -83,16 +83,16 @@ public:
    // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
    // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
    // "mute on", or does it mean "playback on".
-   virtual bool isMuted();
-   virtual void setMuted(bool value);
-   virtual bool isRecSource();
-   virtual void setRecSource(bool value);
-   virtual bool isEnum();
+   bool isMuted() Q_DECL_OVERRIDE;
+   void setMuted(bool value) Q_DECL_OVERRIDE;
+   bool isRecSource() Q_DECL_OVERRIDE;
+   void setRecSource(bool value) Q_DECL_OVERRIDE;
+   bool isEnum() Q_DECL_OVERRIDE;
 
    // Refresh the composite from its components
    void update();
 
-   virtual Volume& playbackVolume();
+   Volume& playbackVolume() Q_DECL_OVERRIDE;
    //virtual Volume& captureVolume();
 
 private:

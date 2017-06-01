@@ -75,15 +75,15 @@ public:
    void dropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList);
 
 protected:
-    virtual QMimeData* mimeData(const QList<QListWidgetItem*> items) const;
-    virtual bool dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction action);
+    QMimeData* mimeData(const QList<QListWidgetItem*> items) const Q_DECL_OVERRIDE;
+    bool dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction action) Q_DECL_OVERRIDE;
 
-    virtual Qt::DropActions supportedDropActions() const
+    Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE
     {
         //qCDebug(KMIX_LOG) << "supportedDropActions!";
         return Qt::MoveAction;
     }
-    virtual QStringList mimeTypes() const
+    QStringList mimeTypes() const Q_DECL_OVERRIDE
     {
         //qCDebug(KMIX_LOG) << "mimeTypes!";
         return QStringList() << "application/x-kde-action-list";
@@ -91,7 +91,7 @@ protected:
 
     // Skip internal dnd handling in QListWidget ---- how is one supposed to figure this out
     // without reading the QListWidget code !?
-    virtual void dropEvent(QDropEvent* ev) {
+    void dropEvent(QDropEvent* ev) Q_DECL_OVERRIDE {
         QAbstractItemView::dropEvent(ev);
     }
 

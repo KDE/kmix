@@ -62,13 +62,13 @@ public:
 	MixerEngine(QObject* parent, const QVariantList& args);
 	~MixerEngine();
 
-	QStringList sources() const;
+	QStringList sources() const Q_DECL_OVERRIDE;
 
 	void init();
-	Plasma::Service* serviceForSource(const QString& source);
+	Plasma::Service* serviceForSource(const QString& source) Q_DECL_OVERRIDE;
 protected:
-	bool sourceRequestEvent( const QString &name );
-	bool updateSourceEvent( const QString &name );
+	bool sourceRequestEvent( const QString &name ) Q_DECL_OVERRIDE;
+	bool updateSourceEvent( const QString &name ) Q_DECL_OVERRIDE;
 private:
 	static const QString KMIX_DBUS_SERVICE;
 	static const QString KMIX_DBUS_PATH;

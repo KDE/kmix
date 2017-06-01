@@ -65,23 +65,23 @@ public:
     void createShortcutActions();
     
     // GUI
-    bool isStereoLinked() const { return m_linked; }
-    void setStereoLinked( bool value );
-    void setLabeled( bool value );
-    void setTicks( bool ticks );
-    void setIcons( bool value );
+    bool isStereoLinked() const Q_DECL_OVERRIDE { return m_linked; }
+    void setStereoLinked( bool value ) Q_DECL_OVERRIDE;
+    void setLabeled( bool value ) Q_DECL_OVERRIDE;
+    void setTicks( bool ticks ) Q_DECL_OVERRIDE;
+    void setIcons( bool value ) Q_DECL_OVERRIDE;
 //    void setIcon( QString filename, QLabel** label );
     void setIcon( QString filename, QWidget* label );
     QToolButton* addMediaButton(QString iconName, QLayout* layout, QWidget *parent);
     void updateMediaButton();
-    void setColors( QColor high, QColor low, QColor back );
-    void setMutedColors( QColor high, QColor low, QColor back );
+    void setColors( QColor high, QColor low, QColor back ) Q_DECL_OVERRIDE;
+    void setMutedColors( QColor high, QColor low, QColor back ) Q_DECL_OVERRIDE;
     
-    bool eventFilter( QObject* obj, QEvent* e );
+    bool eventFilter( QObject* obj, QEvent* e ) Q_DECL_OVERRIDE;
     QString iconName();
     // Layout
     QSizePolicy sizePolicy() const;
-	QSize sizeHint() const;
+	QSize sizeHint() const Q_DECL_OVERRIDE;
 	int labelExtentHint() const;
 	void setLabelExtent(int extent);
 	bool hasMuteButton() const;
@@ -98,10 +98,10 @@ public slots:
     void toggleMuted();
     void toggleStereoLinked();
 
-    void setDisabled( bool value );
-    void update();
+    void setDisabled( bool value ) Q_DECL_OVERRIDE;
+    void update() Q_DECL_OVERRIDE;
     void showMoveMenu();
-    virtual void showContextMenu( const QPoint &pos = QCursor::pos() );
+    void showContextMenu( const QPoint &pos = QCursor::pos() ) Q_DECL_OVERRIDE;
     void increaseOrDecreaseVolume(bool arg1, Volume::VolumeTypeFlag volumeType);
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);
@@ -109,7 +109,7 @@ public slots:
 
 signals:
     void toggleMenuBar(bool value);
-    void guiVisibilityChange(MixDeviceWidget* source, bool enable);
+    void guiVisibilityChange(MixDeviceWidget* source, bool enable) Q_DECL_OVERRIDE;
 
 private slots:
     void setRecsrc( bool value );

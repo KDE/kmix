@@ -38,18 +38,18 @@ public:
     ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl);
     virtual ~ViewSliders();
 
-    virtual QWidget* add(shared_ptr<MixDevice>);
-    virtual void constructionFinished();
-    virtual void configurationUpdate();
+    QWidget* add(shared_ptr<MixDevice>) Q_DECL_OVERRIDE;
+    void constructionFinished() Q_DECL_OVERRIDE;
+    void configurationUpdate() Q_DECL_OVERRIDE;
 
 public slots:
     void controlsChange(int changeType);
 
 protected:
-    virtual void _setMixSet();
+    void _setMixSet() Q_DECL_OVERRIDE;
 
 private:
-    virtual void refreshVolumeLevels();
+    void refreshVolumeLevels() Q_DECL_OVERRIDE;
 
     QBoxLayout* _layoutMDW;
     QLayout* _layoutSliders;

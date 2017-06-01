@@ -153,7 +153,7 @@ public slots:
    void toggleMenuBarSlot();
 
 protected slots:
-   void mousePressEvent( QMouseEvent *e );
+   void mousePressEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
 
 signals:
    void toggleMenuBar();

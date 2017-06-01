@@ -91,7 +91,7 @@ protected:
       KShortcutsDialog*    m_shortcutsDialog;
 
 private:
-      void mousePressEvent( QMouseEvent *e );
+      void mousePressEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
 };
 
 #endif

@@ -54,7 +54,7 @@ class KMixDockWidget : public KStatusNotifierItem
  public slots:
    void setVolumeTip();
    void updatePixmap();
-   void activate(const QPoint &pos);
+   void activate(const QPoint &pos) Q_DECL_OVERRIDE;
    void controlsChange(int changeType);
 
  protected:

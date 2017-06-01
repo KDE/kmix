@@ -40,9 +40,9 @@ class KSmallSlider : public QAbstractSlider
 /*      void setChid(Volume::ChannelID chid) { this->chid = chid; };
       Volume::ChannelID getChid() { return chid; };*/
       
-      QSize sizeHint() const;
+      QSize sizeHint() const Q_DECL_OVERRIDE;
       QSizePolicy sizePolicy() const;
-      QSize minimumSizeHint() const;
+      QSize minimumSizeHint() const Q_DECL_OVERRIDE;
 
       bool gray() const;
 
@@ -57,12 +57,12 @@ public slots:
       void valueChanged( int value );
 
    protected:
-      void resizeEvent( QResizeEvent * );
-      void paintEvent( QPaintEvent * );
+      void resizeEvent( QResizeEvent * ) Q_DECL_OVERRIDE;
+      void paintEvent( QPaintEvent * ) Q_DECL_OVERRIDE;
 
-      void mousePressEvent( QMouseEvent * );
-      void mouseMoveEvent( QMouseEvent * );
-      void wheelEvent( QWheelEvent * );
+      void mousePressEvent( QMouseEvent * ) Q_DECL_OVERRIDE;
+      void mouseMoveEvent( QMouseEvent * ) Q_DECL_OVERRIDE;
+      void wheelEvent( QWheelEvent * ) Q_DECL_OVERRIDE;
 
       void valueChange();
 

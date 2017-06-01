@@ -31,11 +31,11 @@ class VerticalText : public QWidget
       ~VerticalText();
 
       void setText(const QString& text);
-      QSize sizeHint() const;
+      QSize sizeHint() const Q_DECL_OVERRIDE;
       QSizePolicy sizePolicy () const;
-      QSize minimumSizeHint() const;
+      QSize minimumSizeHint() const Q_DECL_OVERRIDE;
    protected:
-      void paintEvent ( QPaintEvent * event );
+      void paintEvent ( QPaintEvent * event ) Q_DECL_OVERRIDE;
 
    private:
       QString m_labelText;

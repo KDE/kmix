@@ -52,22 +52,22 @@ public:
 
     void addActionToPopup( KAction *action );
     QSizePolicy sizePolicy() const;
-    bool eventFilter( QObject* obj, QEvent* e );
+    bool eventFilter( QObject* obj, QEvent* e ) Q_DECL_OVERRIDE;
 
 public slots:
     // GUI hide and show
-    void setDisabled(bool);
+    void setDisabled(bool) Q_DECL_OVERRIDE;
 
     // Enum handling: next and selecting
     void nextEnumId();
     int  enumId();
     void setEnumId(int value);
 
-    void update();
-    virtual void showContextMenu(const QPoint& pos = QCursor::pos());
+    void update() Q_DECL_OVERRIDE;
+    void showContextMenu(const QPoint& pos = QCursor::pos()) Q_DECL_OVERRIDE;
 
 signals:
-    virtual void guiVisibilityChange(MixDeviceWidget* source, bool enable);
+    void guiVisibilityChange(MixDeviceWidget* source, bool enable) Q_DECL_OVERRIDE;
 
 private:
     void createWidgets();

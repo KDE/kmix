@@ -32,16 +32,16 @@ public:
   Mixer_OSS(Mixer *mixer, int device);
   virtual ~Mixer_OSS();
 
-  virtual QString errorText(int mixer_error);
-  virtual int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> );
-  virtual int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> );
+  QString errorText(int mixer_error) Q_DECL_OVERRIDE;
+  int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
+  int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
 
-  virtual QString getDriverName();
+  QString getDriverName() Q_DECL_OVERRIDE;
 
 protected:
 
-  virtual int open();
-  virtual int close();
+  int open() Q_DECL_OVERRIDE;
+  int close() Q_DECL_OVERRIDE;
 
   virtual QString deviceName( int );
   virtual QString deviceNameDevfs( int );

@@ -42,17 +42,17 @@ public:
     ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW);
     virtual ~ViewDockAreaPopup();
 
-    virtual QWidget* add(shared_ptr<MixDevice> md);
-    virtual void constructionFinished();
-    virtual void refreshVolumeLevels();
-     virtual void showContextMenu();
-     virtual void configurationUpdate();
+    QWidget* add(shared_ptr<MixDevice> md) Q_DECL_OVERRIDE;
+    void constructionFinished() Q_DECL_OVERRIDE;
+    void refreshVolumeLevels() Q_DECL_OVERRIDE;
+     void showContextMenu() Q_DECL_OVERRIDE;
+     void configurationUpdate() Q_DECL_OVERRIDE;
 
 protected:
     KMixWindow  *_kmixMainWindow;
 
-    void wheelEvent ( QWheelEvent * e );
-    virtual void _setMixSet();
+    void wheelEvent ( QWheelEvent * e ) Q_DECL_OVERRIDE;
+    void _setMixSet() Q_DECL_OVERRIDE;
 
 private:
   QGridLayout* _layoutMDW;
@@ -76,7 +76,7 @@ private:
 
 public slots:
        void controlsChange(int changeType);
-       virtual void configureView();
+       void configureView() Q_DECL_OVERRIDE;
 
 private slots:
     void showPanelSlot();

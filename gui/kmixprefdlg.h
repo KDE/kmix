@@ -61,19 +61,19 @@ private slots:
 	void kmixConfigHasChangedEmitter();
 
 protected:
-	void showEvent(QShowEvent * event);
+	void showEvent(QShowEvent * event) Q_DECL_OVERRIDE;
 	/**
 	 * Orientation is not supported by default => implement manually
 	 * @Override
 	 */
-	void updateWidgets();
+	void updateWidgets() Q_DECL_OVERRIDE;
 	/**
 	 * Orientation is not supported by default => implement manually
 	 * @Override
 	 */
-	void updateSettings();
+	void updateSettings() Q_DECL_OVERRIDE;
 
-	bool hasChanged();
+	bool hasChanged() Q_DECL_OVERRIDE;
 
 private:
 	static KMixPrefDlg* instance;
