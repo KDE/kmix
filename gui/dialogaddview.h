@@ -26,7 +26,6 @@ class QButtonGroup;
 class KComboBox;
 #include <qradiobutton.h>
 class QScrollArea;
-#include <kvbox.h>
 class QVBoxLayout;
 
 #include <kdialog.h>
@@ -52,9 +51,9 @@ class DialogAddView : public KDialog
     QVBoxLayout* _layout;
     KComboBox* m_cMixer;
     QScrollArea* m_scrollableChannelSelector;
-    KVBox *m_vboxForScrollView;
+    QWidget *m_vboxForScrollView;
     QButtonGroup *m_buttonGroupForScrollView;
-    QFrame *m_mainFrame;
+    QWidget *m_mainFrame;
     static QStringList viewNames;
     static QStringList viewIds;
 

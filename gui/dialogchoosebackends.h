@@ -21,8 +21,6 @@
 #ifndef DIALOGCHOOSEBACKENDS_H
 #define DIALOGCHOOSEBACKENDS_H
 
-class QButtonGroup;
-
 #include <qcheckbox.h>
 #include <QList>
 class QScrollArea;
@@ -30,7 +28,6 @@ class QVBoxLayout;
 
 class KComboBox;
 #include <kdialog.h>
-#include <kvbox.h>
 
 class Mixer;
 
@@ -53,8 +50,7 @@ private:
 	void createPage(const QSet<QString>& backends);
 	QVBoxLayout* _layout;
 	QScrollArea* m_scrollableChannelSelector;
-	KVBox *m_vboxForScrollView;
-	QButtonGroup *m_buttonGroupForScrollView;
+	QWidget *m_vboxForScrollView;
 	QList<QCheckBox*> checkboxes;
 	QWidget *m_mainFrame;
 	bool modified;

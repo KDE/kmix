@@ -83,8 +83,8 @@ DialogAddView::~DialogAddView()
  */
 void DialogAddView::createWidgets(Mixer *ptr_mixer)
 {
-    m_mainFrame = new QFrame( this );
-    setMainWidget( m_mainFrame );
+    m_mainFrame = new QWidget(this);
+    setMainWidget(m_mainFrame);
     _layout = new QVBoxLayout(m_mainFrame);
     _layout->setMargin(0);
 
@@ -92,7 +92,7 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
         QHBoxLayout* mixerNameLayout = new QHBoxLayout();
-        _layout->addItem( mixerNameLayout );
+        _layout->addLayout(mixerNameLayout);
         mixerNameLayout->setSpacing(KDialog::spacingHint());
     
         QLabel *qlbl = new QLabel( i18n("Select mixer:"), m_mainFrame );
@@ -175,8 +175,9 @@ void DialogAddView::createPage(Mixer *mixer)
     m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
     _layout->addWidget(m_scrollableChannelSelector);
 
-    m_vboxForScrollView = new KVBox();
-
+    m_vboxForScrollView = new QWidget();
+    QVBoxLayout *vbl = new QVBoxLayout(m_vboxForScrollView);
+    vbl->setSpacing(0);
 
     for( int i=0; i<viewNames.size(); ++i )
     {
@@ -192,6 +193,7 @@ void DialogAddView::createPage(Mixer *mixer)
         QString name = viewNames.at(i);
         name.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
         QRadioButton* qrb = new QRadioButton( name, m_vboxForScrollView);
+        vbl->addWidget(qrb);
         connect( qrb, SIGNAL(toggled(bool)), this, SLOT(profileRbtoggled(bool)) );
 
         qrb->setObjectName(viewIds.at(i));  // The object name is used as ID here: see apply()

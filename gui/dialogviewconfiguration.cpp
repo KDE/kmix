@@ -34,7 +34,6 @@
 #include <kdialog.h>
 #include <KIconLoader>
 #include <klocalizedstring.h>
-#include <kvbox.h>
 
 #include "gui/guiprofile.h"
 #include "gui/mixdevicewidget.h"

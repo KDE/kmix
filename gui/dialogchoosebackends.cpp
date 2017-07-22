@@ -21,7 +21,6 @@
 
 #include "gui/dialogchoosebackends.h"
 
-#include <qbuttongroup.h>
 #include <QCheckBox>
 #include <QLabel>
 #include <QSet>
@@ -53,7 +52,6 @@ DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>&
    _layout = 0;
    m_vboxForScrollView = 0;
    m_scrollableChannelSelector = 0;
-   m_buttonGroupForScrollView = 0;
    createWidgets(mixerIds);
 
 }
@@ -96,7 +94,6 @@ void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
  */
 void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 {
-	m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
 	m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
 
 #ifndef QT_NO_ACCESSIBILITY
@@ -105,7 +102,9 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 
 	_layout->addWidget(m_scrollableChannelSelector);
 
-	m_vboxForScrollView = new KVBox();
+	m_vboxForScrollView = new QWidget();
+	QVBoxLayout *vbl = new QVBoxLayout(m_vboxForScrollView);
+	vbl->setSpacing(0);
 
 	bool hasMixerFilter = !mixerIds.isEmpty();
 	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
@@ -114,6 +113,7 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 		QCheckBox* qrb = new QCheckBox(mixer->readableName(true), m_vboxForScrollView);
 		qrb->setObjectName(mixer->id());// The object name is used as ID here: see getChosenBackends()
 		connect(qrb, SIGNAL(stateChanged(int)), SLOT(backendsModifiedSlot()));
+                vbl->addWidget(qrb);
 		checkboxes.append(qrb);
 		bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
 		qrb->setChecked(mixerShouldBeShown);
