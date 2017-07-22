@@ -31,7 +31,6 @@
 #include <QSizePolicy>
 
 // KDE
-#include <kapplication.h>
 #include <kdialog.h>
 #include <klocalizedstring.h>
 #include <kwindowsystem.h>

@@ -23,16 +23,8 @@
 #include "kmixd.h"
 
 #include <kaboutdata.h> 
-#include <kcmdlineargs.h>
-
-#include <kiconloader.h>
 #include <kconfig.h>
-#include <kaction.h>
-#include <kstandardaction.h>
-#include <kxmlguifactory.h>
-#include <kactioncollection.h>
-#include <ktoggleaction.h>
-#include <KUniqueApplication>
+#include <klocalizedstring.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h> 
 

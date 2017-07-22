@@ -21,6 +21,7 @@
 #include "apps/kmix.h"
 
 // include files for QT
+#include <QApplication>
 #include <QCheckBox>
 #include <QLabel>
 #include <QDesktopWidget>
@@ -40,7 +41,6 @@
 #include <klocalizedstring.h>
 #include <kconfig.h>
 #include <ktoggleaction.h>
-#include <kapplication.h>
 #include <kstandardaction.h>
 #include <khelpmenu.h>
 #include <kxmlguifactory.h>
@@ -102,8 +102,8 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 		recreateGUI(false, QString(), true, reset);
 	}
 
-	if (!kapp->isSessionRestored() ) // done by the session manager otherwise
-	setInitialSize();
+	if (!qApp->isSessionRestored() ) // done by the session manager otherwise
+		setInitialSize();
 
 	fixConfigAfterRead();
 	theKMixDeviceManager->initHotplug();
@@ -113,7 +113,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	if (m_startVisible && !invisible)
 		show(); // Started visible
 
-	connect(kapp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
+	connect(qApp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
 	ControlManager::instance().addListener(
 			QString(), // All mixers (as the Global master Mixer might change)
@@ -1049,7 +1049,7 @@ void KMixWindow::updateTabsClosable()
 bool KMixWindow::queryClose()
 {
 	GlobalConfigData& gcd = GlobalConfig::instance().data;
-	if (gcd.showDockWidget && !kapp->sessionSaving() )
+	if (gcd.showDockWidget && !qApp->isSavingSession() )
 	{
 		// Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
 		hide();
@@ -1154,7 +1154,7 @@ void KMixWindow::slotMute()
 void KMixWindow::quit()
 {
 	//     qCDebug(KMIX_LOG) << "quit";
-	kapp->quit();
+	qApp->quit();
 }
 
 /**
@@ -1216,7 +1216,7 @@ void KMixWindow::applyPrefs()
 	// -3- Apply all changes ------------------------------------------------------------------
 
 //	this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
-	kapp->processEvents();
+	qApp->processEvents();
 
 	configDataSnapshot = GlobalConfig::instance().data; // create a new snapshot as all current changes are applied now
 

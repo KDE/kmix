@@ -28,7 +28,6 @@
 #include <qradiobutton.h>
 #include <QStandardPaths>
 
-#include <kapplication.h>
 #include <KConfig>
 #include <klocalizedstring.h>
 

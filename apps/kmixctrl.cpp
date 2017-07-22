@@ -19,11 +19,11 @@
  */
 
 #include "core/mixertoolbox.h"
-#include <kapplication.h>
-#include <kcmdlineargs.h>
 
+#include <qcoreapplication.h>
+#include <qcommandlineparser.h>
 
-#include <k4aboutdata.h>
+#include <kaboutdata.h>
 #include <klocalizedstring.h>
 #include <kconfig.h>
 
@@ -39,25 +39,25 @@ extern "C" int
 Q_DECL_EXPORT
 kdemain(int argc, char *argv[])
 {
+    QCoreApplication app(argc, argv);
+
     KLocalizedString::setApplicationDomain("kmix");
 
-    K4AboutData aboutData( "kmixctrl", 0, ki18n("KMixCtrl"),
-			 APP_VERSION, ki18n(description),
-			 K4AboutData::License_GPL,
-			 ki18n("(c) 2000 by Stefan Schimanski"));
+    KAboutData aboutData("kmixctrl", i18n("KMixCtrl"),
+			 APP_VERSION, i18n(description),
+			 KAboutLicense::GPL,
+			 i18n("(c) 2000 by Stefan Schimanski"));
 
-   aboutData.addAuthor(ki18n("Stefan Schimanski"), KLocalizedString(), "1Stein@gmx.de");
+   aboutData.addAuthor(i18n("Stefan Schimanski"), QString(), "1Stein@gmx.de");
+   KAboutData::setApplicationData(aboutData);
 
-   KCmdLineArgs::init( argc, argv, &aboutData );
-
-   KCmdLineOptions options;
-   options.add("s");
-   options.add("save", ki18n("Save current volumes as default"));
-   options.add("r");
-   options.add("restore", ki18n("Restore default volumes"));
-   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-   KApplication app( false );
+   QCommandLineParser parser;
+   aboutData.setupCommandLine(&parser);
+   parser.addOption(QCommandLineOption((QStringList() << "s" << "save"),
+                                       i18n("Save current volumes as default")));
+   parser.addOption(QCommandLineOption((QStringList() << "r" << "restore"),
+                                       i18n("Restore default volumes")));
+   parser.process(app);
 
    GlobalConfig::init();
 
@@ -66,7 +66,7 @@ kdemain(int argc, char *argv[])
    MixerToolBox::instance()->initMixer(false, QList<QString>(), dummyStringHwinfo, false);
 
    // load volumes
-   if ( args->isSet("restore") )
+   if ( parser.isSet("restore") )
    {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
@@ -75,7 +75,7 @@ kdemain(int argc, char *argv[])
    }
 
    // save volumes
-	if (args->isSet("save"))
+	if (parser.isSet("save"))
 	{
 		for (int i = 0; i < Mixer::mixers().count(); ++i)
 		{

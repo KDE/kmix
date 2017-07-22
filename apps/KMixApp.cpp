@@ -21,16 +21,24 @@
 
 #include "KMixApp.h"
 
-#include <kcmdlineargs.h>
+#include <qapplication.h>
+#include <qcommandlineparser.h>
 
 #include "apps/kmix.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 
-bool KMixApp::firstCaller = true;
+static bool firstCaller = true;
 
-KMixApp::KMixApp() :
-		KUniqueApplication(), m_kmix(0), creationLock(QMutex::Recursive)
+// Originally this class was a subclass of KUniqueApplication.
+// Since, now that a unique application is enforced earlier by KDBusService,
+// the only purpose of this class is to receive the activateRequested()
+// signal.  It can therefore be a simple QObject.
+
+KMixApp::KMixApp()
+	: QObject(),
+	  m_kmix(0),
+	  creationLock(QMutex::Recursive)
 {
 	GlobalConfig::init();
 
@@ -40,7 +48,7 @@ KMixApp::KMixApp() :
 	// 2b) The dock icon gets reconstructed, when the user selects a new master.
 	// 3) During the reconstruction, it can easily happen that no window is present => KMix would quit
 	// => disable QuitOnLastWindowClosed
-	setQuitOnLastWindowClosed(false);
+	qApp->setQuitOnLastWindowClosed(false);
 }
 
 KMixApp::~KMixApp()
@@ -79,8 +87,8 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	 */
 	creationLock.lock();
 
-	bool restore = isSessionRestored(); // && KMainWindow::canBeRestored(0);
-	qCDebug(KMIX_LOG) << "Starting KMix using kepvisibility=" << hasArgKeepvisibility << ", failsafe=" << reset << ", sessionRestore=" << restore;
+	bool restore = qApp->isSessionRestored(); // && KMainWindow::canBeRestored(0);
+	qCDebug(KMIX_LOG) << "Starting KMix using keepvisibility=" << hasArgKeepvisibility << ", failsafe=" << reset << ", sessionRestore=" << restore;
 	int createCount = 0;
 	if (restore)
 	{
@@ -121,11 +129,9 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	return restore;
 }
 
-int KMixApp::newInstance()
+void KMixApp::newInstance(const QStringList &arguments, const QString &workingDirectory)
 {
-	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-	bool hasArgKeepvisibility = args->isSet("keepvisibility");
-	bool reset = args->isSet("failsafe");
+	qDebug();
 
 	/**
 	 * There are 3 cases when starting KMix:
@@ -157,12 +163,11 @@ int KMixApp::newInstance()
 		 * Typical case: Normal start. KMix was not running yet => create a new KMixWindow
 		 */
 		GlobalConfig::init();
-		restoreSessionIfApplicable(hasArgKeepvisibility, reset);
-
+		restoreSessionIfApplicable(m_hasArgKeepvisibility, m_hasArgReset);
 	}
 	else
 	{
-		if (!hasArgKeepvisibility)
+		if (!m_hasArgKeepvisibility)
 		{
 			/** CASE 2 ******************************************************
 			 *
@@ -178,14 +183,14 @@ int KMixApp::newInstance()
 			 * 2) Session restore => we are here at this line of code (CASE 2). m_kmix exists, but still must be restored
 			 *
 			 */
-			bool wasRestored = restoreSessionIfApplicable(hasArgKeepvisibility, reset);
-
+			bool wasRestored = restoreSessionIfApplicable(m_hasArgKeepvisibility, m_hasArgReset);
 			if (!wasRestored)
 			{
 				//
 				// Use standard newInstances(), which shows and activates the main window. But skip it for the
 				// special "restored" case, as we should not override the session rules.
-				KUniqueApplication::newInstance();
+				// TODO: what should be done for KF5?
+				//KUniqueApplication::newInstance();
 			}
 			// else: Do nothing, as session restore has done it.
 		}
@@ -205,13 +210,16 @@ int KMixApp::newInstance()
 			 */
 			qCDebug(KMIX_LOG)
 			<< "KMixApp::newInstance() REGULAR_START _keepVisibility="
-					<< hasArgKeepvisibility;
+					<< m_hasArgKeepvisibility;
 		}
 	}
 
 	creationLock.unlock();
-
-	return 0;
 }
 
 
+void KMixApp::parseOptions(const QCommandLineParser &parser)
+{
+	m_hasArgKeepvisibility = parser.isSet("keepvisibility");
+	m_hasArgReset = parser.isSet("failsafe");
+}

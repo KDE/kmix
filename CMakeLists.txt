@@ -199,6 +199,7 @@ target_link_libraries(kdeinit_kmix
     KF5::ConfigGui
     KF5::ConfigWidgets
     KF5::IconThemes
+    KF5::DBusAddons
     KF5::GlobalAccel
     KF5::KDELibs4Support
 

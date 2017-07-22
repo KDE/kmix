@@ -22,26 +22,32 @@
 #define KMixApp_h
 
 #include <QMutex>
-#include <kuniqueapplication.h>
+#include <QObject>
 
+class QCommandLineParser;
 class KMixWindow;
 
-class KMixApp : public KUniqueApplication
+class KMixApp : public QObject
 {
-Q_OBJECT
-	bool restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset);
-	void createWindowOnce(bool hasArgKeepvisibility, bool reset);
+    Q_OBJECT
 
  public:
     KMixApp();
-    ~KMixApp();
-    int newInstance() override;
+    virtual ~KMixApp();
 
- private:
+    void parseOptions(const QCommandLineParser &parser);
+
+public slots:
+    void newInstance(const QStringList &arguments = QStringList(), const QString &workingDirectory = QString());
+
+private:
+    bool restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset);
+    void createWindowOnce(bool hasArgKeepvisibility, bool reset);
+
     KMixWindow *m_kmix;
     QMutex creationLock;
-	static bool firstCaller;
-
+    bool m_hasArgKeepvisibility;
+    bool m_hasArgReset;
 };
 
 #endif
