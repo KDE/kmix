@@ -31,7 +31,6 @@
 #include <qpixmap.h>
 
 
-class KAction;
 class KActionCollection;
 class KShortcutsDialog;
 
@@ -50,7 +49,7 @@ public:
                      QWidget* parent, ViewBase*, ProfControl * );
     virtual ~MixDeviceWidget();
 
-    void addActionToPopup( KAction *action );
+    void addActionToPopup( QAction *action );
 
     shared_ptr<MixDevice> mixDevice() { return m_mixdevice; }
 

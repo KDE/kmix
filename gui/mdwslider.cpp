@@ -24,7 +24,6 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
-#include <kaction.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
@@ -38,8 +37,8 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <qpixmap.h>
-//#include <qwmatrix.h>
 #include <QBoxLayout>
+#include <QAction>
 
 #include "core/ControlManager.h"
 #include "core/mixer.h"
@@ -102,7 +101,7 @@ void MDWSlider::createActions()
     taction->setText( i18n("&Split Channels") );
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
-//    KAction *action;
+//    QAction *action;
 //    if ( ! m_mixdevice->mixer()->isDynamic() ) {
 //        action = _mdwActions->add<KToggleAction>( "hide" );
 //        action->setText( i18n("&Hide") );
@@ -947,7 +946,7 @@ void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_
 
 /**
    This slot is called, when a user has clicked the recsrc button. Also it is called by any other
-    associated KAction like the context menu.
+    associated QAction like the context menu.
  */
 void MDWSlider::toggleRecsrc()
 {
@@ -966,7 +965,7 @@ void MDWSlider::setRecsrc(bool value )
 
 /**
    This slot is called, when a user has clicked the mute button. Also it is called by any other
-    associated KAction like the context menu.
+    associated QAction like the context menu.
  */
 void MDWSlider::toggleMuted()
 {
@@ -1218,13 +1217,13 @@ void MDWSlider::showMoveMenu()
     m_moveMenu->clear();
 
     // Default
-    KAction *a = new KAction(_mdwMoveActions);
+    QAction *a = new QAction(_mdwMoveActions);
     a->setText( i18n("Automatic According to Category") );
     _mdwMoveActions->addAction( QString("moveautomatic"), a);
     connect(a, SIGNAL(triggered(bool)), SLOT(moveStreamAutomatic()), Qt::QueuedConnection);
     m_moveMenu->addAction( a );
 
-    a = new KAction(_mdwMoveActions);
+    a = new QAction(_mdwMoveActions);
     a->setSeparator(true);
     _mdwMoveActions->addAction( QString("-"), a);
 

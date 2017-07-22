@@ -21,11 +21,11 @@
 #ifndef MDWMoveAction_h
 #define MDWMoveAction_h
 
-#include <KAction>
+#include <QAction>
 
 #include "core/mixdevice.h"
 
-class MDWMoveAction : public KAction
+class MDWMoveAction : public QAction
 {
     Q_OBJECT
 

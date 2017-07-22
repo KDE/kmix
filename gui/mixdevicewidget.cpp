@@ -25,7 +25,6 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
-#include <kaction.h>
 #include <kglobalaccel.h>
 #include <kshortcutsdialog.h>
 
@@ -76,7 +75,7 @@ MixDeviceWidget::~MixDeviceWidget()
 {
 }
 
-void MixDeviceWidget::addActionToPopup( KAction *action )
+void MixDeviceWidget::addActionToPopup( QAction *action )
 {
    _mdwActions->addAction( action->objectName(), action );
 }

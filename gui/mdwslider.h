@@ -34,7 +34,6 @@ class QBoxLayout;
 class QToolButton;
 class QLabel;
 
-class KAction;
 class QMenu;
 #include <kshortcut.h>
 #include <kiconloader.h>
@@ -59,7 +58,7 @@ public:
     virtual ~MDWSlider();
 
     enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };
-    void addActionToPopup( KAction *action );
+    void addActionToPopup( QAction *action );
     void createActions();
     void createShortcutActions();
     

@@ -36,7 +36,6 @@ class QTabWidget;
 
 // KDE
 class KAccel;
-class KAction;
 class KToggleAction;
 #include <kxmlguiwindow.h>
 

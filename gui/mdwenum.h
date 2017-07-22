@@ -31,7 +31,6 @@ class MixDevice;
 class ViewBase;
 
 // KDE
-class KAction;
 class KComboBox;
 
 // Qt
@@ -50,7 +49,7 @@ public:
 	       QWidget* parent, ViewBase* view, ProfControl* pctl);
     ~MDWEnum();
 
-    void addActionToPopup( KAction *action );
+    void addActionToPopup( QAction *action );
     QSizePolicy sizePolicy() const;
     bool eventFilter( QObject* obj, QEvent* e ) Q_DECL_OVERRIDE;
 
