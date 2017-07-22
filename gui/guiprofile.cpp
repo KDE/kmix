@@ -24,13 +24,11 @@
 #include <QDir>
 #include <qxml.h>
 #include <QString>
+#include <QStandardPaths>
 
 // System
 #include <iostream>
 #include <utility>
-
-// KDE
-#include <kstandarddirs.h>
 
 // KMix
 #include "core/mixer.h"
@@ -279,7 +277,7 @@ GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileNam
 {
     GUIProfile* guiprof = 0;
     QString fileName = createNormalizedFilename(profileName);
-    QString fileNameFQ = KStandardDirs::locate("appdata", fileName );
+    QString fileNameFQ = QStandardPaths::locate(QStandardPaths::DataLocation, fileName );
 
     if ( ! fileNameFQ.isEmpty() ) {
         guiprof = new GUIProfile();
@@ -389,7 +387,7 @@ bool GUIProfile::writeProfile()
    bool ret = false;
    QString profileId = getId();
    QString fileName = createNormalizedFilename(profileId);
-   QString fileNameFQ = KStandardDirs::locateLocal("appdata", fileName, true );
+   QString fileNameFQ = QStandardPaths::writableLocation(QStandardPaths::DataLocation)+"/"+fileName;
 
    qCDebug(KMIX_LOG) << "Write profile:" << fileNameFQ ;
    QFile f(fileNameFQ);

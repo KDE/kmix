@@ -26,13 +26,12 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <qradiobutton.h>
-//#include <QtGlobal>
+#include <QStandardPaths>
 
 #include <kapplication.h>
 #include <KConfig>
 #include <KGlobal>
 #include <klocale.h>
-#include <KStandardDirs>
 
 #include "gui/kmixerwidget.h"
 #include "core/GlobalConfig.h"
@@ -389,9 +388,8 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	m_volumeOverdrive->setVisible(overdriveAvailable);
 	volumeOverdriveWarning->setVisible(overdriveAvailable);
 
-    QString autostartConfigFilename = KGlobal::dirs()->findResource(
-                                          "xdgconf-autostart",
-                                          QString("kmix_autostart.desktop"));
+	QString autostartConfigFilename =
+		QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "/autostart/kmix_autostart.desktop");
 	if (dialogConfig.data.debugConfig)
 	    qCDebug(KMIX_LOG) << "autostartConfigFilename = " << autostartConfigFilename;
 	bool autostartFileExists = !autostartConfigFilename.isNull();

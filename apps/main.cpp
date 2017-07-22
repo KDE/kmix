@@ -26,7 +26,6 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-#include <kstandarddirs.h>
 
 #include "KMixApp.h"
 #include "core/version.h"

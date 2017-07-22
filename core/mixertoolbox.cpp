@@ -27,7 +27,6 @@
 #include <QStringBuilder>
 
 #include <klocale.h>
-#include <kstandarddirs.h>
 
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
