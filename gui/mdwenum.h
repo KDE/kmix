@@ -66,9 +66,6 @@ public slots:
     void update() Q_DECL_OVERRIDE;
     void showContextMenu(const QPoint& pos = QCursor::pos()) Q_DECL_OVERRIDE;
 
-signals:
-    void guiVisibilityChange(MixDeviceWidget* source, bool enable) Q_DECL_OVERRIDE;
-
 private:
     void createWidgets();
 

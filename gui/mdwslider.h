@@ -106,10 +106,6 @@ public slots:
     void addMediaControls(QBoxLayout* arg1);
 
 
-signals:
-    void toggleMenuBar(bool value);
-    void guiVisibilityChange(MixDeviceWidget* source, bool enable) Q_DECL_OVERRIDE;
-
 private slots:
     void setRecsrc( bool value );
     void setMuted(bool value);

@@ -73,7 +73,7 @@ public slots:
     virtual void update() = 0;
 
 signals:
-    virtual void guiVisibilityChange(MixDeviceWidget* source, bool enable) = 0;
+    void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 protected slots:
 	virtual void setDisabled( bool value ) = 0;
