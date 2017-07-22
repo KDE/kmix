@@ -373,7 +373,7 @@ void KMixWindow::saveConfig()
 
 void KMixWindow::saveBaseConfig()
 {
-	GlobalConfig::instance().writeConfig();
+	GlobalConfig::instance().save();
 
 	KConfigGroup config(KSharedConfig::openConfig(), "Global");
 

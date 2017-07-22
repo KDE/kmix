@@ -53,7 +53,7 @@ GlobalConfig::GlobalConfig() :
 	addItemBool("Debug.Volume", data.debugVolume, false);
 	addItemBool("Debug.Config", data.debugConfig, false);
 
-	readConfig();
+	load();
 }
 
 // --- Special READ/WRITE ----------------------------------------------------------------------------------------
