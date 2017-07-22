@@ -22,7 +22,6 @@
 #include "gui/mixdevicewidget.h"
 
 #include <kactioncollection.h>
-#include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kglobalaccel.h>
@@ -32,7 +31,6 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <qpixmap.h>
-//#include <qwmatrix.h>
 
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"

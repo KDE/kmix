@@ -24,7 +24,7 @@
 #include <k4aboutdata.h>
 #include <KLocalizedString>
 
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "KMixApp.h"
 #include "core/version.h"

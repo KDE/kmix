@@ -20,7 +20,7 @@
 
 #include "mixer_backend.h"
 
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 // for the "ERR_" declartions, #include mixer.h
 #include "core/mixer.h"

@@ -25,7 +25,7 @@
 //#include <QMouseEvent>
 //#include <QObject>
 //
-//#include <klocale.h>
+////#include <klocalizedstring.h>
 //#include <kconfig.h>
 //#include <kaction.h>
 //#include <kglobalaccel.h>

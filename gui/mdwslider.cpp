@@ -21,7 +21,7 @@
 
 #include "gui/mdwslider.h"
 
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <kglobalaccel.h>

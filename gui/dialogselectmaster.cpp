@@ -27,7 +27,7 @@
 
 #include <kcombobox.h>
 #include <kiconloader.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "core/ControlManager.h"
 #include "core/mixdevice.h"

@@ -31,10 +31,9 @@
 #include <QSizePolicy>
 
 // KDE
-#include <kaction.h>
 #include <kapplication.h>
 #include <kdialog.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kwindowsystem.h>
 
 // KMix

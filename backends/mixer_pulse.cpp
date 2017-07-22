@@ -26,8 +26,6 @@
 #include <QTimer>
 #include <QStringBuilder>
 
-#include <klocale.h>
-
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"

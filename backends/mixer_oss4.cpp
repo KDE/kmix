@@ -31,7 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <klocale.h>
 #include <QLinkedList>
 #include <QRegExp>
 

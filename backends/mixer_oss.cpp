@@ -38,7 +38,6 @@
 #endif
 
 
-#include <klocale.h>
 #include <QTimer>
 /*
   I am using a fixed MAX_MIXDEVS #define here.

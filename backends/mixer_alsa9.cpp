@@ -30,7 +30,7 @@
 #include "core/volume.h"
 
 // KDE
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 // Qt
 #include <QList>

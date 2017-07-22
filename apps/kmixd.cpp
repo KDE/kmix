@@ -26,7 +26,6 @@
 #include <kcmdlineargs.h>
 
 #include <kiconloader.h>
-#include <klocale.h>
 #include <kconfig.h>
 #include <kaction.h>
 #include <kstandardaction.h>

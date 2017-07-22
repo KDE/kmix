@@ -24,9 +24,7 @@
 
 
 #include <k4aboutdata.h>
-#include <KLocalizedString>
-
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kconfig.h>
 
 #include "gui/kmixtoolbox.h"

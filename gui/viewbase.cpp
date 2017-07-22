@@ -27,8 +27,7 @@
 #include <QMouseEvent>
 
 // KDE
-#include <kaction.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kiconloader.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>

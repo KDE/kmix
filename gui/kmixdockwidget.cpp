@@ -23,8 +23,7 @@
 
 #include "gui/kmixdockwidget.h"
 
-#include <kaction.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kwindowsystem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>

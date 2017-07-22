@@ -33,7 +33,7 @@
 
 #include <kdialog.h>
 #include <KIconLoader>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kvbox.h>
 
 #include "gui/guiprofile.h"

@@ -29,7 +29,7 @@
 #include <QHBoxLayout>
 
 #include <kcombobox.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "core/mixdevice.h"
 #include "core/mixer.h"

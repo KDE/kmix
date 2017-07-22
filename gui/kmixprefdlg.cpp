@@ -30,7 +30,7 @@
 
 #include <kapplication.h>
 #include <KConfig>
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "gui/kmixerwidget.h"
 #include "core/GlobalConfig.h"

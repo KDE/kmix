@@ -23,7 +23,7 @@
 
 #include <qregexp.h>
 
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "core/ControlPool.h"
 #include "core/mixer.h"

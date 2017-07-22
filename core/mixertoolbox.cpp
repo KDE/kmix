@@ -26,7 +26,7 @@
 #include <QString>
 #include <QStringBuilder>
 
-#include <klocale.h>
+#include <klocalizedstring.h>
 
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"

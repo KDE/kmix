@@ -26,12 +26,11 @@
 #include "viewbase.h"
 
 // KDE
-#include <kaction.h>
 #include <kactioncollection.h>
 #include <kconfig.h>
 #include <kcombobox.h>
 #include <kglobalaccel.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <ktoggleaction.h>
 
 // Qt

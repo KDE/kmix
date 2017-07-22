@@ -37,9 +37,8 @@
 #include <KGlobalAccel>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kconfig.h>
-#include <kaction.h>
 #include <ktoggleaction.h>
 #include <kapplication.h>
 #include <kstandardaction.h>

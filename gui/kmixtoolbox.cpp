@@ -28,7 +28,6 @@
 #include <KComponentData>
 #include <kglobalaccel.h>
 #include <kiconloader.h>
-#include <klocale.h>
 #include <knotification.h>
 
 #include "gui/guiprofile.h"

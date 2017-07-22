@@ -32,7 +32,6 @@
 // KDE
 #include <kconfig.h>
 #include <kconfiggroup.h>
-#include <klocale.h>
 
 // KMix
 #include "apps/kmix.h"

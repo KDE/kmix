@@ -251,7 +251,7 @@
     <tabstop>mutedBack</tabstop>
   </tabstops>
   <includes>
-    <include location="global" >klocale.h</include>
+    <include location="global" >klocalizedstring.h</include>
     <include location="global" >kseparator.h</include>
   </includes>
   <connections>
