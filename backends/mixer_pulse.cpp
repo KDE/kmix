@@ -26,6 +26,8 @@
 #include <QTimer>
 #include <QStringBuilder>
 
+#include <klocalizedstring.h>
+
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
