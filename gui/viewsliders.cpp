@@ -46,7 +46,7 @@
 
 
 // KDE
-#include <KLocale>
+#include <klocalizedstring.h>
 
 // Qt
 #include <QIcon>

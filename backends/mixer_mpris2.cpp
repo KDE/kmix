@@ -30,7 +30,7 @@
 #include <QString>
 #include <qvariant.h>
 
-#include <KLocale>
+#include <klocalizedstring.h>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
 
