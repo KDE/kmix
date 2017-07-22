@@ -23,7 +23,6 @@
 #ifndef MDWSLIDER_H
 #define MDWSLIDER_H
 
-#include <KShortcut>
 #include "volumeslider.h"
 #include <QCheckBox>
 #include <QList>
@@ -129,7 +128,6 @@ private slots:
     void mediaPrev(bool);
 
 private:
-    KShortcut dummyShortcut;
     QPixmap loadIcon( QString filename, KIconLoader::Group group );
     void createWidgets( bool showMuteLED, bool showCaptureLED, bool includeMixer );
     void addSliders( QBoxLayout *volLayout, char type, Volume& vol,

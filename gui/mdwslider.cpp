@@ -146,7 +146,7 @@ void MDWSlider::addGlobalShortcut(QAction* qaction, const QString& label, bool d
 		//     #endif
 		//   b->enableGlobalShortcut();
 		// enableGlobalShortcut() is not there => use workaround
-		KGlobalAccel::setGlobalShortcut(qaction, dummyShortcut);
+		KGlobalAccel::setGlobalShortcut(qaction, QKeySequence());
 	}
 }
 
