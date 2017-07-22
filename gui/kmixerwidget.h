@@ -38,7 +38,6 @@ class QString;
 // KDE
 class KActionCollection;
 class KConfig;
-//class KTabWidget;
 
 // KMix
 class GUIProfile;

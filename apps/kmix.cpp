@@ -29,6 +29,7 @@
 #include <qradiobutton.h>
 #include <QCursor>
 #include <QString>
+#include <QTabWidget>
 
 // include files for KDE
 #include <KConfigSkeleton>
@@ -47,7 +48,6 @@
 #include <kglobal.h>
 #include <kactioncollection.h>
 #include <KProcess>
-#include <KTabWidget>
 
 // KMix
 #include "gui/guiprofile.h"
@@ -293,7 +293,7 @@ void KMixWindow::initPrefDlg()
 
 void KMixWindow::initWidgets()
 {
-	m_wsMixers = new KTabWidget();
+	m_wsMixers = new QTabWidget();
 	m_wsMixers->setDocumentMode(true);
 	setCentralWidget(m_wsMixers);
 	m_wsMixers->setTabsClosable(false);

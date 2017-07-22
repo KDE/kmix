@@ -26,15 +26,14 @@
 #include <qpixmap.h>
 #include <QString>
 #include <qtoolbutton.h>
-#include <qapplication.h> // for QApplication::revsreseLayout()
 #include <QVBoxLayout>
+#include <qtabwidget.h>
 
 // KDE
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <ktabwidget.h>
 
 // KMix
 #include "apps/kmix.h"

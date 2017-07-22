@@ -32,7 +32,7 @@ class QLabel;
 #include <QVBoxLayout>
 class QPushButton;
 #include <QTimer>
-class KTabWidget;
+class QTabWidget;
 
 // KDE
 class KAccel;
@@ -115,7 +115,7 @@ private:
    bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
 
-   KTabWidget *m_wsMixers;
+   QTabWidget *m_wsMixers;
 
    KMixDockWidget *m_dockWidget;
    DialogSelectMaster *m_dsm;
