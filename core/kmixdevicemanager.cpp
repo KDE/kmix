@@ -59,9 +59,7 @@ void KMixDeviceManager::initHotplug()
 
 QString KMixDeviceManager::getUDI_ALSA(int num)
 {
-	QString udi("hw%i");
-	udi.arg(num);
-	return udi;
+	return (QString("hw%1").arg(num));
 
 #if 0
         QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
