@@ -25,7 +25,6 @@
 #include <KLocalizedString>
 
 #include <klocale.h>
-#include <kglobal.h>
 
 #include "KMixApp.h"
 #include "core/version.h"

@@ -85,7 +85,8 @@ public:
 
 	/**
 	 * Call this init method when your app core is properly initialized.
-	 * It is very important that KGlobal is initialized then. Otherwise KGlobal::config() could return a reference to
+	 * It is very important that KGlobal is initialized then. Otherwise
+	 * KSharedConfig::openConfig() could return a reference to
 	 * the "kderc" config instead of the actual application config "kmixrc" or "kmixctrlrc".
 	 *
 	 */

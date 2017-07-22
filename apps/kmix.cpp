@@ -45,7 +45,6 @@
 #include <kstandardaction.h>
 #include <khelpmenu.h>
 #include <kxmlguifactory.h>
-#include <kglobal.h>
 #include <kactioncollection.h>
 #include <KProcess>
 
@@ -88,7 +87,8 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	initActions(); // init actions first, so we can use them in the loadConfig() already
 	loadAndInitConfig(reset); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
 	initActionsLate(); // init actions that require a loaded config
-	KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
+	// TODO: Port to KF5
+	//KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
 	initWidgets();
 	initPrefDlg();
 	DBusMixSetWrapper::initialize(this, QStringLiteral("/Mixers"));
@@ -367,7 +367,7 @@ void KMixWindow::saveConfig()
 #endif
 
 	// TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
-	KGlobal::config()->sync();
+	KSharedConfig::openConfig()->sync();
 	qCDebug(KMIX_LOG)
 	<< "Saved config ... sync finished";
 }
@@ -376,7 +376,7 @@ void KMixWindow::saveBaseConfig()
 {
 	GlobalConfig::instance().writeConfig();
 
-	KConfigGroup config(KGlobal::config(), "Global");
+	KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
 	config.writeEntry("Size", size());
 	config.writeEntry("Position", pos());
@@ -423,7 +423,7 @@ void KMixWindow::saveViewConfig()
 			KMixerWidget* mw = (KMixerWidget*) w;
 			// Here also Views are saved. even for Mixers that are closed. This is necessary when unplugging cards.
 			// Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
-			mw->saveConfig(KGlobal::config().data());
+			mw->saveConfig(KSharedConfig::openConfig().data());
 			// add the view to the corresponding mixer list, so we can save a views-per-mixer list below
 //			if (!mw->mixer()->isDynamic())
 //			{
@@ -434,7 +434,7 @@ void KMixWindow::saveViewConfig()
 	}
 
 	// -2- Save Meta-Information (which views, and in which order). views-per-mixer list
-	KConfigGroup pconfig(KGlobal::config(), "Profiles");
+	KConfigGroup pconfig(KSharedConfig::openConfig(), "Profiles");
 	QMap<QString, QStringList>::const_iterator itEnd = mixerViews.constEnd();
 	for (QMap<QString, QStringList>::const_iterator it = mixerViews.constBegin(); it != itEnd; ++it)
 	{
@@ -502,7 +502,7 @@ void KMixWindow::loadAndInitConfig(bool reset)
 
 void KMixWindow::loadBaseConfig()
 {
-	KConfigGroup config(KGlobal::config(), "Global");
+	KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
 	GlobalConfigData& gcd = GlobalConfig::instance().data;
 
@@ -641,7 +641,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 
 	// -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
-	KConfigGroup pconfig(KGlobal::config(), "Profiles");
+	KConfigGroup pconfig(KSharedConfig::openConfig(), "Profiles");
 	foreach ( Mixer *mixer, Mixer::mixers())
 	{
 		if ( mixerHasProfile.contains(mixer))
@@ -842,7 +842,7 @@ void KMixWindow::saveAndCloseView(int idx)
 	KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
 	if (kmw)
 	{
-		kmw->saveConfig(KGlobal::config().data()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
+		kmw->saveConfig(KSharedConfig::openConfig().data()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
 		m_wsMixers->removeTab(idx);
 		updateTabsClosable();
 		saveViewConfig();
@@ -854,14 +854,14 @@ void KMixWindow::saveAndCloseView(int idx)
 
 void KMixWindow::fixConfigAfterRead()
 {
-	KConfigGroup grp(KGlobal::config(), "Global");
+	KConfigGroup grp(KSharedConfig::openConfig(), "Global");
 	unsigned int configVersion = grp.readEntry("ConfigVersion", 0);
 	if (configVersion < 3)
 	{
 		// Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
 		// The group has been copied over by KMixToolBox::loadView() for all soundcards, so
 		// we should be fine now
-		QStringList cfgGroups = KGlobal::config()->groupList();
+		QStringList cfgGroups = KSharedConfig::openConfig()->groupList();
 		QStringListIterator it(cfgGroups);
 		while (it.hasNext())
 		{
@@ -870,7 +870,7 @@ void KMixWindow::fixConfigAfterRead()
 			{
 				qCDebug(KMIX_LOG)
 				<< "Fixing group " << groupName;
-				KConfigGroup buggyDevgrpCG = KGlobal::config()->group(groupName);
+				KConfigGroup buggyDevgrpCG(KSharedConfig::openConfig(), groupName);
 				buggyDevgrpCG.deleteGroup();
 			} // remove buggy group
 		} // for all groups
@@ -1033,7 +1033,7 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	updateTabsClosable();
 	m_dontSetDefaultCardOnStart = false;
 
-	kmw->loadConfig(KGlobal::config().data());
+	kmw->loadConfig(KSharedConfig::openConfig().data());
 	// Now force to read for new tabs, especially after hotplug. Note: Doing it here is bad design and possibly
 	// obsolete, as the backend should take care of upating itself.
 	kmw->mixer()->readSetFromHWforceUpdate();

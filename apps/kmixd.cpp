@@ -31,7 +31,6 @@
 #include <kaction.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
-#include <kglobal.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <KUniqueApplication>
@@ -126,14 +125,14 @@ void KMixD::saveConfig()
 #endif
 
    qCDebug(KMIX_LOG) << "Saved config ... now syncing explicitly";
-   KGlobal::config()->sync();
+   KSharedConfig::openConfig()->sync();
    qCDebug(KMIX_LOG) << "Saved config ... sync finished";
 }
 
 void KMixD::saveBaseConfig()
 {
    qCDebug(KMIX_LOG) << "About to save config (Base)";
-   KConfigGroup config(KGlobal::config(), "Global");
+   KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
    config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
    Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
@@ -159,7 +158,7 @@ void KMixD::loadConfig()
 
 void KMixD::loadBaseConfig()
 {
-    KConfigGroup config(KGlobal::config(), "Global");
+    KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
    m_multiDriverMode = config.readEntry("MultiDriver", false);
    QString mixerMasterCard = config.readEntry( "MasterMixer", "" );

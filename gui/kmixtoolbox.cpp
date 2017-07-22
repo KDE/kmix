@@ -21,11 +21,11 @@
 
 #include "gui/kmixtoolbox.h"
 
+#include <QCoreApplication>
 #include <QWidget>
 #include <QString>
 
 #include <KComponentData>
-#include <kglobal.h>
 #include <kglobalaccel.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -84,7 +84,7 @@ void KMixToolBox::notification(const char *notificationName, const QString &text
     //notification->setComponentData(componentData());
     notification->setText(text);
     //notification->setPixmap(...);
-    notification->addContext(QLatin1String("Application"), KGlobal::mainComponent().componentName());
+    notification->addContext(QLatin1String("Application"), QCoreApplication::applicationName());
     if (!actions.isEmpty() && receiver && actionSlot) {
         notification->setActions(actions);
         QObject::connect(notification, SIGNAL(activated(uint)), receiver, actionSlot);

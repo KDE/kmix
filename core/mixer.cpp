@@ -24,7 +24,6 @@
 
 #include <klocale.h>
 #include <kconfig.h>
-#include <kglobal.h>
 
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"

@@ -27,7 +27,6 @@
 #include <KLocalizedString>
 
 #include <klocale.h>
-#include <kglobal.h>
 #include <kconfig.h>
 
 #include "gui/kmixtoolbox.h"
@@ -73,7 +72,7 @@ kdemain(int argc, char *argv[])
    {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
-         mixer->volumeLoad( KGlobal::config().data() );
+         mixer->volumeLoad(KSharedConfig::openConfig().data());
       }
    }
 
@@ -83,9 +82,9 @@ kdemain(int argc, char *argv[])
 		for (int i = 0; i < Mixer::mixers().count(); ++i)
 		{
 			Mixer *mixer = (Mixer::mixers())[i];
-			KSharedConfig* cfg = KGlobal::config().data();
+                        KSharedConfig::Ptr cfg = KSharedConfig::openConfig();
 			qCWarning(KMIX_LOG) << "save " << cfg->name();
-			mixer->volumeSave(cfg);
+			mixer->volumeSave(cfg.data());
 		}
 	}
 

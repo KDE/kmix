@@ -8,7 +8,6 @@
 
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
-#include <kglobal.h>
 
 
 int main(int argc, char *argv[])
