@@ -39,6 +39,8 @@ kdemain(int argc, char *argv[])
 {
     QApplication qapp(argc, argv);
 
+    KLocalizedString::setApplicationDomain("kmix");
+
     KAboutData aboutData("kmix", i18n("KMix"),
                          APP_VERSION, i18n(description), KAboutLicense::GPL,
                          i18n("(c) 1996-2013 The KMix Authors"));
