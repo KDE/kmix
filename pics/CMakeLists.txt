@@ -23,7 +23,7 @@ install( FILES
     kmixdocked.png
     kmixdocked_mute.png
     kmixdocked_error.png
-    DESTINATION  ${DATA_INSTALL_DIR}/kmix/pics )
+    DESTINATION  ${KDE_INSTALL_DATADIR}/kmix/pics )
 
 ecm_install_icons(ICONS
     16-actions-kmix.png
@@ -31,4 +31,4 @@ ecm_install_icons(ICONS
     48-actions-kmix.png
     64-actions-kmix.png
     128-actions-kmix.png
-    DESTINATION ${ICON_INSTALL_DIR} THEME hicolor)
+    DESTINATION ${KDE_INSTALL_ICONDIR} THEME hicolor)
