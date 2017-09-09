@@ -25,8 +25,8 @@
 #include <config.h>
 
 // Qt
+#include <QDBusContext>
 #include <QString>
-#include <QtDBus/QtDBus> 
 
 #include <qlist.h>
 #include <QTimer>

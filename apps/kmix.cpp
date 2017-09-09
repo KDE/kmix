@@ -65,8 +65,8 @@
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
 #include "kmix_debug.h"
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusPendingCall>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QKeySequence>
 
 /* KMixWindow

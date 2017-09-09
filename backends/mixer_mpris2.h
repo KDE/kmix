@@ -23,7 +23,6 @@
 #define Mixer_MPRIS2_H
 
 #include <QString>
-#include <QtDBus>
 #include <QDBusInterface>
 #include <QDBusPendingCallWatcher>
 #include <QMap>

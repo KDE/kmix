@@ -32,7 +32,6 @@
 
 // KMix
 #include "core/mixer.h"
-#include <QtCore/qstring.h>
 
 QMap<QString, GUIProfile*> GUIProfile::s_profiles;
 

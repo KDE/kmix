@@ -22,7 +22,7 @@
 #include "mixer_pulse.h"
 
 #include <cstdlib>
-#include <QtCore/QAbstractEventDispatcher>
+#include <QAbstractEventDispatcher>
 #include <QTimer>
 #include <QStringBuilder>
 
