@@ -387,7 +387,7 @@ bool GUIProfile::writeProfile()
    bool ret = false;
    QString profileId = getId();
    QString fileName = createNormalizedFilename(profileId);
-   QString fileNameFQ = QStandardPaths::writableLocation(QStandardPaths::DataLocation)+"/"+fileName;
+   QString fileNameFQ = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + '/' + fileName;
 
    qCDebug(KMIX_LOG) << "Write profile:" << fileNameFQ ;
    QFile f(fileNameFQ);

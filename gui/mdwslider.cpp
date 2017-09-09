@@ -1139,12 +1139,12 @@ void MDWSlider::updateAccesability()
         } else {
                 QList<VolumeChannel> vols = m_mixdevice->playbackVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersPlayback) {
-                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+")");
+                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+')');
                         vols.pop_front();
                 }
                 vols = m_mixdevice->captureVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersCapture) {
-                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+")");
+                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+')');
                         vols.pop_front();
                 }
         }
