@@ -112,7 +112,7 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 			*it = "Treble";
 			cType = MixDevice::TREBLE;
 		} else
-		if ( (*it).startsWith ( "pcm" ) )
+		if ( (*it).startsWith ( QLatin1String("pcm") ) )
 		{
 			(*it).replace ( "pcm","PCM" );
 			cType = MixDevice::AUDIO;
@@ -130,12 +130,12 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 			*it = (*it).toUpper();
 			cType = MixDevice::CD;
 		}
-		if ( (*it).startsWith("vmix") )
+		if ( (*it).startsWith(QLatin1String("vmix")) )
 		{
 			(*it).replace("vmix","Virtual Mixer");
 			cType = MixDevice::VOLUME;
 		} else
-		if ( (*it).endsWith("vol") )
+		if ( (*it).endsWith(QLatin1String("vol")) )
 		{
 			QCharRef ref = (*it)[0];
 			ref = ref.toUpper();

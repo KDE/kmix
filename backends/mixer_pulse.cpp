@@ -751,7 +751,7 @@ static devmap* get_widget_map(int type, QString id = QString())
     else if (KMIXPA_CAPTURE == type)
         return &captureDevices;
     else if (KMIXPA_APP_PLAYBACK == type) {
-        if (id.startsWith("restore:"))
+        if (id.startsWith(QLatin1String("restore:")))
             return &outputRoles;
         return &outputStreams;
     } else if (KMIXPA_APP_CAPTURE == type)
@@ -1266,7 +1266,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
     }
     else if (KMIXPA_APP_PLAYBACK == m_devnum)
     {
-        if (id.startsWith("stream:"))
+        if (id.startsWith(QLatin1String("stream:")))
         {
             for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
             {
@@ -1291,7 +1291,7 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
                 }
             }
         }
-        else if (id.startsWith("restore:"))
+        else if (id.startsWith(QLatin1String("restore:")))
         {
             for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
             {

@@ -292,7 +292,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	QString busDestination;
 	foreach ( busDestination , repl.value() )
 	{
-		if ( busDestination.startsWith("org.mpris.MediaPlayer2") )
+		if ( busDestination.startsWith(QLatin1String("org.mpris.MediaPlayer2")) )
 		{
 			addMprisControlAsync(busDestination);
 			qCDebug(KMIX_LOG) << "MPRIS2: Attached media player on busDestination=" << busDestination;
@@ -361,27 +361,27 @@ MixDevice::ChannelType Mixer_MPRIS2::getChannelTypeFromPlayerId(const QString& i
 {
 	// TODO This hardcoded application list is a quick hack. It should be generalized.
 	MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
-	if (id.startsWith("amarok"))
+	if (id.startsWith(QLatin1String("amarok")))
 	{
 		ct = MixDevice::APPLICATION_AMAROK;
 	}
-	else if (id.startsWith("banshee"))
+	else if (id.startsWith(QLatin1String("banshee")))
 	{
 		ct = MixDevice::APPLICATION_BANSHEE;
 	}
-	else if (id.startsWith("vlc"))
+	else if (id.startsWith(QLatin1String("vlc")))
 	{
 		ct = MixDevice::APPLICATION_VLC;
 	}
-	else if (id.startsWith("xmms"))
+	else if (id.startsWith(QLatin1String("xmms")))
 	{
 		ct = MixDevice::APPLICATION_XMM2;
 	}
-	else if (id.startsWith("tomahawk"))
+	else if (id.startsWith(QLatin1String("tomahawk")))
 	{
 		ct = MixDevice::APPLICATION_TOMAHAWK;
 	}
-	else if (id.startsWith("clementine"))
+	else if (id.startsWith(QLatin1String("clementine")))
 	{
 		ct = MixDevice::APPLICATION_CLEMENTINE;
 	}
@@ -576,7 +576,7 @@ void Mixer_MPRIS2::announceVolume()
  */
 void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwner)
 {
-	if ( name.startsWith("org.mpris.MediaPlayer2") )
+	if ( name.startsWith(QLatin1String("org.mpris.MediaPlayer2")) )
 	{
 		if ( oldOwner.isEmpty() && !newOwner.isEmpty())
 		{
