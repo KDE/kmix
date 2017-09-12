@@ -34,12 +34,3 @@ if (PULSEAUDIO_FOUND)
     target_link_libraries(profiletest ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PULSEAUDIO_FOUND)
 
-########### next target ###############
-set(dialogtest_KDEINIT_SRCS dialogtest.cpp )
-
-kde4_add_kdeinit_executable( dialogtest ${dialogtest_KDEINIT_SRCS}
-    )
-    
-target_link_libraries(kdeinit_dialogtest  ${KDE4_KDEUI_LIBS} )
-
-
