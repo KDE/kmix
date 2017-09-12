@@ -65,10 +65,7 @@ if(ALSA_FOUND)
 	add_definitions(-DHAVE_LIBASOUND2)
 endif(ALSA_FOUND)
 
-add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
-add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
-
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 if(MSVC)
     include_directories( ${TAGLIB_INCLUDES} )
 endif(MSVC)
@@ -259,8 +256,8 @@ target_link_libraries(kded_kmixd
     KF5::I18n
     KF5::ConfigCore
     KF5::ConfigGui
+    KF5::CoreAddons
     KF5::Solid
-    KF5::KDELibs4Support
     KF5::DBusAddons
 
     Qt5::Core
@@ -321,15 +318,16 @@ set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
 
 KF5_ADD_KDEINIT_EXECUTABLE(kmixctrl ${kmixctrl_KDEINIT_SRCS})
 target_link_libraries(kdeinit_kmixctrl
-    KF5::I18n
     KF5::ConfigCore
-    KF5::KDELibs4Support
+    KF5::ConfigGui
+    KF5::CoreAddons
+    KF5::I18n
 
     Qt5::Core
-#Qt5::DBus Qt5::Xml
+    Qt5::DBus
+    Qt5::Widgets
+#Qt5::Xml
 )
-
-target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_PHONON_LIBS})
 
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
