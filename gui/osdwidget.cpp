@@ -29,7 +29,6 @@
 #include <QLabel>
 
 // KDE
-#include <KDialog>
 #include <KWindowSystem>
 #include <Plasma/Svg>
 #include <Plasma/Label>

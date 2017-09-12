@@ -31,6 +31,9 @@
 #include <KConfig>
 #include <klocalizedstring.h>
 
+#include "dialogbase.h"
+#include "dialogstatesaver.h"
+
 #include "gui/kmixerwidget.h"
 #include "core/GlobalConfig.h"
 
@@ -74,10 +77,8 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	generalPage = addPage(m_generalTab, i18n("General"), "configure");
 	startupPage = addPage(m_startupTab, i18n("Start"), "preferences-system-login");
 	soundmenuPage = addPage(m_controlsTab, i18n("Sound Menu"), "audio-volume-high");
-}
 
-KMixPrefDlg::~KMixPrefDlg()
-{
+	new DialogStateSaver(this);
 }
 
 /**
@@ -110,7 +111,7 @@ void KMixPrefDlg::createStartupTab()
 {
 	layoutStartupTab = new QVBoxLayout(m_startupTab);
 	layoutStartupTab->setMargin(0);
-	layoutStartupTab->setSpacing(KDialog::spacingHint());
+	layoutStartupTab->setSpacing(DialogBase::verticalSpacing());
 
 	QLabel* label = new QLabel(i18n("Startup"), m_startupTab);
 	layoutStartupTab->addWidget(label);
@@ -178,7 +179,7 @@ void KMixPrefDlg::createGeneralTab()
 {
 	QBoxLayout* layout = new QVBoxLayout(m_generalTab);
 	layout->setMargin(0);
-	layout->setSpacing(KDialog::spacingHint());
+	layout->setSpacing(DialogBase::verticalSpacing());
 
 	// --- Behavior ---------------------------------------------------------
 	QLabel* label = new QLabel(i18n("Behavior"), m_generalTab);
@@ -218,7 +219,7 @@ void KMixPrefDlg::createGeneralTab()
 
 	// [CONFIG] Slider orientation (main window)
 	QGridLayout* orientationGrid = new QGridLayout();
-	orientationGrid->setHorizontalSpacing(KDialog::spacingHint());
+	orientationGrid->setHorizontalSpacing(DialogBase::horizontalSpacing());
 	layout->addItem(orientationGrid);
 
 	// Slider orientation (main window, and tray popup separately).
@@ -233,7 +234,7 @@ void KMixPrefDlg::createControlsTab()
 {
 	layoutControlsTab = new QVBoxLayout(m_controlsTab);
 	layoutControlsTab->setMargin(0);
-	layoutControlsTab->setSpacing(KDialog::spacingHint());
+	layoutControlsTab->setSpacing(DialogBase::verticalSpacing());
 	m_dockingChk = new QCheckBox(i18n("&Dock in system tray"), m_controlsTab);
 
 	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Docks the mixer into the KDE system tray"),

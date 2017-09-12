@@ -25,16 +25,17 @@ class KComboBox;
 class QVBoxLayout;
 class QListWidget;
 
-#include <kdialog.h>
+#include "dialogbase.h"
 
 class Mixer;
 
-class DialogSelectMaster : public KDialog
+class DialogSelectMaster : public DialogBase
 {
     Q_OBJECT
+
  public:
-    DialogSelectMaster(Mixer * = 0, QWidget *parent = 0);
-    ~DialogSelectMaster();
+    DialogSelectMaster(Mixer *mixer = 0, QWidget *parent = 0);
+    virtual ~DialogSelectMaster() = default;
 
  public slots:
     void apply();
@@ -42,11 +43,8 @@ class DialogSelectMaster : public KDialog
  private:
     void createWidgets(Mixer*);
     void createPage(Mixer*);
-    QVBoxLayout* _layout;
     KComboBox* m_cMixer;
     QListWidget *m_channelSelector;
-    //QStringList m_mixerPKs;
-    QWidget *m_mainFrame;
 
  private slots:
    void createPageByID(int mixerId);

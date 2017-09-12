@@ -21,10 +21,8 @@
 
 #include "gui/dialogaddview.h"
 
-#include <qbuttongroup.h>
 #include <QLabel>
-#include <qradiobutton.h>
-#include <qscrollarea.h>
+#include <QListWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
@@ -35,12 +33,12 @@
 #include "core/mixer.h"
 
 
-QStringList DialogAddView::viewNames;
-QStringList DialogAddView::viewIds;
+static QStringList viewNames;
+static QStringList viewIds;
 
 
-DialogAddView::DialogAddView(QWidget* parent, Mixer *mixer  )
-  : KDialog( parent )
+DialogAddView::DialogAddView(QWidget *parent, Mixer *mixer)
+    : DialogBase( parent )
 {
 	// TODO 000 Adding View for MPRIS2 is broken. We need at least a dummy XML GUI Profile. Also the
 	//      fixed list below is plain wrong. Actually we should get the Profile list from either the XML files or
@@ -57,25 +55,16 @@ DialogAddView::DialogAddView(QWidget* parent, Mixer *mixer  )
         viewIds.append("capture");
     }
 
-    setCaption( i18n( "Add View" ) );
+    setWindowTitle( i18n( "Add View" ) );
     if ( Mixer::mixers().count() > 0 )
-        setButtons( Ok|Cancel );
+        setButtons( QDialogButtonBox::Ok|QDialogButtonBox::Cancel );
     else {
-        setButtons( Cancel );
+        setButtons( QDialogButtonBox::Cancel );
     }
-    setDefaultButton( Ok );
-   _layout = 0;
-   m_vboxForScrollView = 0;
-   m_scrollableChannelSelector = 0;
-   m_buttonGroupForScrollView = 0;
+
+   m_listForChannelSelector = nullptr;
    createWidgets(mixer);  // Open with Mixer Hardware #0
 
-}
-
-DialogAddView::~DialogAddView()
-{
-   delete _layout;
-   delete m_vboxForScrollView;
 }
 
 /**
@@ -83,23 +72,22 @@ DialogAddView::~DialogAddView()
  */
 void DialogAddView::createWidgets(Mixer *ptr_mixer)
 {
-    m_mainFrame = new QWidget(this);
-    setMainWidget(m_mainFrame);
-    _layout = new QVBoxLayout(m_mainFrame);
-    _layout->setMargin(0);
+    QWidget *mainFrame = new QWidget(this);
+    setMainWidget(mainFrame);
+    QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
     if ( Mixer::mixers().count() > 1 ) {
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
         QHBoxLayout* mixerNameLayout = new QHBoxLayout();
-        _layout->addLayout(mixerNameLayout);
-        mixerNameLayout->setSpacing(KDialog::spacingHint());
+        layout->addLayout(mixerNameLayout);
+        mixerNameLayout->setSpacing(DialogBase::horizontalSpacing());
     
-        QLabel *qlbl = new QLabel( i18n("Select mixer:"), m_mainFrame );
+        QLabel *qlbl = new QLabel( i18n("Select mixer:"), mainFrame );
         mixerNameLayout->addWidget(qlbl);
         qlbl->setFixedHeight(qlbl->sizeHint().height());
     
-        m_cMixer = new KComboBox( false, m_mainFrame);
+        m_cMixer = new KComboBox( false, mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
         connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );
@@ -121,15 +109,15 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
 
     
     if ( Mixer::mixers().count() > 0 ) {
-        QLabel *qlbl = new QLabel( i18n("Select the design for the new view:"), m_mainFrame );
-        _layout->addWidget(qlbl);
+        QLabel *qlbl = new QLabel( i18n("Select the design for the new view:"), mainFrame );
+        layout->addWidget(qlbl);
     
         createPage(Mixer::mixers()[0]);
-        connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+        connect( this, SIGNAL(accepted())   , this, SLOT(apply()) );
     }
     else {
-        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), m_mainFrame );
-        _layout->addWidget(qlbl);
+        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), mainFrame );
+        layout->addWidget(qlbl);
     }
 }
 
@@ -161,23 +149,20 @@ void DialogAddView::createPage(Mixer *mixer)
      * In case the user selected a new Mixer via m_cMixer, we need
      * to remove the stuff created on the last call.
      */
-    // delete the VBox. This should automatically remove all contained QRadioButton's.
-    delete m_vboxForScrollView;
-    delete m_scrollableChannelSelector;
-    delete m_buttonGroupForScrollView;
-    enableButton(Ok, false);
+    delete m_listForChannelSelector;
+    setButtonEnabled(QDialogButtonBox::Ok, false);
 
+        /** Reset page end -------------------------------------------------- */
     
-    /** Reset page end -------------------------------------------------- */
-    
-    m_buttonGroupForScrollView = new QButtonGroup(this); // invisible QButtonGroup
+    QWidget *mainFrame = mainWidget();
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(mainFrame->layout());
+    Q_ASSERT(layout!=nullptr);
 
-    m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
-    _layout->addWidget(m_scrollableChannelSelector);
-
-    m_vboxForScrollView = new QWidget();
-    QVBoxLayout *vbl = new QVBoxLayout(m_vboxForScrollView);
-    vbl->setSpacing(0);
+    m_listForChannelSelector = new QListWidget(mainFrame);
+    m_listForChannelSelector->setUniformItemSizes(true);
+    m_listForChannelSelector->setSelectionMode(QAbstractItemView::SingleSelection);
+    connect(m_listForChannelSelector, SIGNAL(itemSelectionChanged()), this, SLOT(profileSelectionChanged()));
+    layout->addWidget(m_listForChannelSelector);
 
     for( int i=0; i<viewNames.size(); ++i )
     {
@@ -189,31 +174,24 @@ void DialogAddView::createPage(Mixer *mixer)
     		continue;
 		}
 		
-        // Create a RadioButton for each view type
+        // Create an item for each view type
         QString name = viewNames.at(i);
-        name.replace('&', "&&"); // Quoting the '&' needed, to prevent QRadioButton creating an accelerator
-        QRadioButton* qrb = new QRadioButton( name, m_vboxForScrollView);
-        vbl->addWidget(qrb);
-        connect( qrb, SIGNAL(toggled(bool)), this, SLOT(profileRbtoggled(bool)) );
-
-        qrb->setObjectName(viewIds.at(i));  // The object name is used as ID here: see apply()
-        m_buttonGroupForScrollView->addButton(qrb);
+        QListWidgetItem *item = new QListWidgetItem(m_listForChannelSelector);
+        item->setText(name);
+        item->setData(Qt::UserRole, viewIds.at(i));  // mixer ID as data
     }
-
-    m_scrollableChannelSelector->setWidget(m_vboxForScrollView);
-    m_vboxForScrollView->show();  // show() is necessary starting with the second call to createPage()
 }
 
 
-void DialogAddView::profileRbtoggled(bool selected)
+void DialogAddView::profileSelectionChanged()
 {
-    if ( selected)
-        enableButton(Ok, true);
+    QList<QListWidgetItem *> items = m_listForChannelSelector->selectedItems();
+    setButtonEnabled(QDialogButtonBox::Ok, !items.isEmpty());
 }
 
 void DialogAddView::apply()
 {
-    Mixer *mixer = 0;
+    Mixer *mixer = nullptr;
     if ( Mixer::mixers().count() == 1 ) {
         // only one mixer => no combo box => take first entry
         mixer = (Mixer::mixers())[0];
@@ -231,20 +209,14 @@ void DialogAddView::apply()
             }
         } // for
     }
-   
-    QAbstractButton* button =  m_buttonGroupForScrollView->checkedButton();
-    if ( button != 0 ) {
-      QString viewName = button->objectName();
-      if ( mixer == 0 ) {
-         qCCritical(KMIX_LOG) << "DialogAddView::createPage(): Invalid Mixer (mixer=0)";
-         return; // can not happen
-      }
-      else {
-          qCDebug(KMIX_LOG) << "We should now create a new view " << viewName << " for mixer " << mixer->id();
-          resultMixerId = mixer->id();
-          resultViewName = viewName;
-      }
-   }
+    Q_ASSERT(mixer!=nullptr);
+
+    QList<QListWidgetItem *> items = m_listForChannelSelector->selectedItems();
+    if (items.isEmpty()) return;			// nothing selected
+    QListWidgetItem *item = items.first();
+    QString viewName = item->data(Qt::UserRole).toString();
+
+    qCDebug(KMIX_LOG) << "We should now create a new view " << viewName << " for mixer " << mixer->id();
+    resultMixerId = mixer->id();
+    resultViewName = viewName;
 }
-
-

@@ -23,7 +23,6 @@
 #define KMIXPREFDLG_H
 
 #include <kconfigdialog.h>
-#include <kdialog.h>
 
 class KMixPrefWidget;
 
@@ -79,7 +78,7 @@ private:
 	static KMixPrefDlg* instance;
 
 	KMixPrefDlg(QWidget *parent, GlobalConfig& config);
-	virtual ~KMixPrefDlg();
+	virtual ~KMixPrefDlg() = default;
 
 	enum KMixPrefDlgPrefOrientationType
 	{

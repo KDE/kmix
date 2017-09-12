@@ -21,23 +21,21 @@
 #ifndef DIALOGADDVIEW_H
 #define DIALOGADDVIEW_H
 
-class QButtonGroup;
 #include <QStringList>
+
+#include "dialogbase.h"
+
 class KComboBox;
-#include <qradiobutton.h>
-class QScrollArea;
-class QVBoxLayout;
-
-#include <kdialog.h>
-
+class QListWidget;
 class Mixer;
 
-class DialogAddView : public KDialog
+
+class DialogAddView : public DialogBase
 {
     Q_OBJECT
  public:
-    DialogAddView(QWidget* parent, Mixer*);
-    ~DialogAddView();
+    DialogAddView(QWidget *parent, Mixer *mixer);
+    virtual ~DialogAddView() = default;
 
     QString getresultViewName() { return resultViewName; }
     QString getresultMixerId() { return resultMixerId; }
@@ -48,21 +46,15 @@ class DialogAddView : public KDialog
  private:
     void createWidgets(Mixer*);
     void createPage(Mixer *mixer);
-    QVBoxLayout* _layout;
     KComboBox* m_cMixer;
-    QScrollArea* m_scrollableChannelSelector;
-    QWidget *m_vboxForScrollView;
-    QButtonGroup *m_buttonGroupForScrollView;
-    QWidget *m_mainFrame;
-    static QStringList viewNames;
-    static QStringList viewIds;
+    QListWidget *m_listForChannelSelector;
 
     QString resultViewName;
     QString resultMixerId;
 
  private slots:
    void createPageByID(int mixerId);
-   void profileRbtoggled(bool selected);
+   void profileSelectionChanged();
 };
 
 #endif

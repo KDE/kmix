@@ -803,22 +803,21 @@ void KMixWindow::newView()
 		<< ">>> mixer = " << mixerId << " -> " << mixer;
 
 		GUIProfile* guiprof = GUIProfile::find(mixer, profileName, false, false);
-		if (guiprof == 0)
+		if (guiprof == nullptr)
 		{
 			guiprof = GUIProfile::find(mixer, profileName, false, true);
 		}
 
-		if (guiprof == 0)
+		if (guiprof == nullptr)
 		{
-			static const QString msg(i18n("Cannot add view - GUIProfile is invalid."));
-			KMessageBox::sorry(this, msg, i18n("Error"));
+			KMessageBox::sorry(this, i18n("Cannot add view - GUIProfile is invalid."), i18n("Error"));
 		}
 		else
 		{
 			bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
-			if (ret == false)
+			if (!ret)
 			{
-				KMessageBox::sorry(this, i18n("View already exists. Cannot add View."), i18n("Error"));
+				KMessageBox::sorry(this, i18n("Cannot add view - View already exists."), i18n("Error"));
 			}
 		}
 
@@ -1245,13 +1244,8 @@ void KMixWindow::forkExec(const QStringList& args)
 	int pid = KProcess::startDetached(args);
 	if (pid == 0)
 	{
-		static const QString startErrorMessage(i18n("The helper application is either not installed or not working."));
-		QString msg;
-		msg += startErrorMessage;
-		msg += "\n(";
-		msg += args.join(QLatin1String(" "));
-		msg += ')';
-		KMessageBox::error(this, msg, i18n("Error"));
+		KMessageBox::error(this, i18n("The helper application is either not installed or not working.\n\n%1",
+					      args.join(QLatin1String(" "))));
 	}
 
 }

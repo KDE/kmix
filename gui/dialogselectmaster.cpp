@@ -34,25 +34,18 @@
 #include "core/mixer.h"
 
 DialogSelectMaster::DialogSelectMaster( Mixer *mixer, QWidget *parent )
-  : KDialog( parent )
+  : DialogBase( parent )
 {
-    setCaption( i18n( "Select Master Channel" ) );
+    setWindowTitle(i18n("Select Master Channel"));
     if ( Mixer::mixers().count() > 0 )
-        setButtons( Ok|Cancel );
+        setButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
     else {
-        setButtons( Cancel );
+        setButtons(QDialogButtonBox::Cancel);
     }
-    setDefaultButton( Ok );
-   _layout = 0;
+
    m_channelSelector = 0;
    createWidgets(mixer);  // Open with Mixer Hardware #0
 
-}
-
-DialogSelectMaster::~DialogSelectMaster()
-{
-   delete _layout;
-   delete m_channelSelector;
 }
 
 /**
@@ -60,24 +53,23 @@ DialogSelectMaster::~DialogSelectMaster()
  */
 void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
 {
-    m_mainFrame = new QWidget( this );
-    setMainWidget( m_mainFrame );
-    _layout = new QVBoxLayout(m_mainFrame);
-    _layout->setMargin(0);
+    QWidget *mainFrame = new QWidget(this);
+    setMainWidget(mainFrame);
+    QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
     if ( Mixer::mixers().count() > 1 ) {
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
         QHBoxLayout* mixerNameLayout = new QHBoxLayout();
-        _layout->addItem( mixerNameLayout );
+        layout->addLayout( mixerNameLayout );
         mixerNameLayout->setMargin(0);
-        mixerNameLayout->setSpacing(KDialog::spacingHint());
+        mixerNameLayout->setSpacing(DialogBase::horizontalSpacing());
     
-        QLabel *qlbl = new QLabel( i18n("Current mixer:"), m_mainFrame );
+        QLabel *qlbl = new QLabel( i18n("Current mixer:"), mainFrame );
         mixerNameLayout->addWidget(qlbl);
         qlbl->setFixedHeight(qlbl->sizeHint().height());
     
-        m_cMixer = new KComboBox( false, m_mainFrame);
+        m_cMixer = new KComboBox( false, mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
         connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );
@@ -94,21 +86,20 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
     
         m_cMixer->setToolTip( i18n("Current mixer" ) );
         mixerNameLayout->addWidget(m_cMixer, 1);
-        _layout->addSpacing(KDialog::spacingHint());
+        layout->addSpacing(DialogBase::verticalSpacing());
 
     } // end if (more_than_1_Mixer)
 
-    
     if ( Mixer::mixers().count() > 0 ) {
-        QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), m_mainFrame );
-        _layout->addWidget(qlbl);
+        QLabel *qlbl = new QLabel( i18n("Select the channel representing the master volume:"), mainFrame );
+        layout->addWidget(qlbl);
     
         createPage(ptr_mixer);
-        connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+        connect(this, SIGNAL(accepted()), this, SLOT(apply()));
     }
     else {
-        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), m_mainFrame );
-        _layout->addWidget(qlbl);
+        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), mainFrame );
+        layout->addWidget(qlbl);
     }
 }
 
@@ -143,21 +134,23 @@ void DialogSelectMaster::createPage(Mixer* mixer)
     
     /** Reset page end -------------------------------------------------- */
     
+        QWidget *mainFrame = mainWidget();
+        QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(mainFrame->layout());
+        Q_ASSERT(layout!=nullptr);
 
-	m_channelSelector = new QListWidget(m_mainFrame);
+	m_channelSelector = new QListWidget(mainFrame);
 #ifndef QT_NO_ACCESSIBILITY
-    m_channelSelector->setAccessibleName( i18n("Select Master Channel") );
+        m_channelSelector->setAccessibleName( i18n("Select Master Channel") );
 #endif
 	m_channelSelector->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_channelSelector->setDragEnabled(false);
 	m_channelSelector->setAlternatingRowColors(true);
-	_layout->addWidget(m_channelSelector);
-
+	layout->addWidget(m_channelSelector);
 
 //    shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
 //    QString masterKey = ( master.get() != 0 ) ? master->id() : "----noMaster---"; // Use non-matching name as default
 
-    const MixSet& mixset = mixer->getMixSet();
+        const MixSet& mixset = mixer->getMixSet();
 	MixSet& mset = const_cast<MixSet&>(mixset);
 
 	MasterControl mc = mixer->getGlobalMasterPreferred(false);
@@ -179,7 +172,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 
 	if (msetCount > 0 && !mixer->isDynamic())
 	{
-        QString mdName = i18n("Automatic (%1 recommendation)").arg(mixer->getDriverName());
+            QString mdName = i18n("Automatic (%1 recommendation)", mixer->getDriverName());
 		QPixmap icon = KIconLoader::global()->loadIcon("audio-volume-high", KIconLoader::Small, IconSize(KIconLoader::Small));
         QListWidgetItem *item = new QListWidgetItem(icon, mdName, m_channelSelector);
         item->setData(Qt::UserRole, QString());  // ID here: see apply(), empty String => Automatic
@@ -222,7 +215,6 @@ void DialogSelectMaster::apply()
 
     if ( mixer == 0 )
     	 return; // User must have unplugged everything
-   
     QList<QListWidgetItem *> items = m_channelSelector->selectedItems();
     if (items.count()==1)
     {

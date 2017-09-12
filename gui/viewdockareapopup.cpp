@@ -31,7 +31,6 @@
 #include <QSizePolicy>
 
 // KDE
-#include <kdialog.h>
 #include <klocalizedstring.h>
 #include <kwindowsystem.h>
 
@@ -44,6 +43,7 @@
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
 #include "gui/mdwslider.h"
+#include "dialogbase.h"
 
 // Restore volume button feature is incomplete => disabling for KDE 4.10
 #undef RESTORE_VOLUME_BUTTON
@@ -223,7 +223,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	 */
 	delete layout(); // BKO 299754
 	_layoutMDW = new QGridLayout(this);
-	_layoutMDW->setSpacing(KDialog::spacingHint());
+	_layoutMDW->setSpacing(DialogBase::verticalSpacing());
 	// Review #121166: Add some space over device icons, otherwise they may hit window border
 	_layoutMDW->setContentsMargins(0,5,0,0);
 	//_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);

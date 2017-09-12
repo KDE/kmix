@@ -154,6 +154,8 @@ set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
    apps/main.cpp 
    apps/kmix.cpp 
    apps/KMixApp.cpp
+   gui/dialogbase.cpp
+   gui/dialogstatesaver.cpp
    gui/kmixdockwidget.cpp 
    gui/kmixprefdlg.cpp 
    gui/viewbase.cpp 

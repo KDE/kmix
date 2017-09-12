@@ -23,16 +23,12 @@
 
 #include <algorithm>
 
-#include <QCheckBox>
-#include <QIcon>
 #include <QPushButton>
 #include <QLabel>
-#include <QScrollArea>
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <kdialog.h>
-#include <KIconLoader>
+#include <kiconloader.h>
 #include <klocalizedstring.h>
 
 #include "gui/guiprofile.h"
@@ -154,29 +150,28 @@ bool DialogViewConfigurationWidget::dropMimeData(int index, const QMimeData * mi
     return true;
 }
 
-DialogViewConfiguration::DialogViewConfiguration( QWidget*, ViewBase& view)
-    : KDialog(  0),
+DialogViewConfiguration::DialogViewConfiguration(QWidget *parent, ViewBase &view)
+    : DialogBase(parent),
       _view(view)
 {
-   setCaption( i18n( "Configure Channels" ) );
-   setButtons( Ok|Cancel );
-   setDefaultButton( Ok );
-   frame = new QWidget( this );
+   setWindowTitle( i18n( "Configure Channels" ) );
+   setButtons( QDialogButtonBox::Ok|QDialogButtonBox::Cancel );
+
+   QWidget *frame = new QWidget( this );
    frame->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-   
    setMainWidget( frame );
    
    // The _layout will hold two items: The title and the Drag-n-Drop area
-   _layout = new QVBoxLayout(frame );
-   _layout->setMargin( 0 );
-   _layout->setSpacing(KDialog::spacingHint());
+   QVBoxLayout *layout = new QVBoxLayout(frame);
+   layout->setMargin( 0 );
+   layout->setSpacing(DialogBase::verticalSpacing());
    
    // --- HEADER ---
-   qlb = new QLabel( i18n("Configuration of the channels. Drag icon to update."), frame );
-   _layout->addWidget(qlb);
+   QLabel *qlb = new QLabel( i18n("Configuration of the channels. Drag icon to update."), frame );
+   layout->addWidget(qlb);
    
    _glayout = new QGridLayout();
-   _layout->addLayout(_glayout);
+   layout->addLayout(_glayout);
 
    _qlw = 0;
    _qlwInactive = 0;
@@ -270,6 +265,7 @@ void DialogViewConfiguration::createPage()
    QLabel *l2 = new QLabel( i18n("Available channels") );
    _glayout->addWidget(l2,0,6);
 
+   QWidget *frame = mainWidget();
    _qlwInactive = new DialogViewConfigurationWidget(frame);
    _qlwInactive->setDragDropMode(QAbstractItemView::DragDrop);
    _qlwInactive->setActiveList(false);
@@ -357,7 +353,7 @@ void DialogViewConfiguration::createPage()
 
 //   scrollArea->updateGeometry();
    updateGeometry();
-   connect( this, SIGNAL(okClicked())   , this, SLOT(apply()) );
+   connect(this, SIGNAL(accepted()), this, SLOT(apply()));
 
 #ifndef QT_NO_ACCESSIBILITY
     moveLeftButton->setAccessibleName( i18n("Show the selected channel") );

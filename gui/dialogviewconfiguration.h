@@ -35,10 +35,8 @@ class QVBoxLayout;
 #include <QDragEnterEvent>
 #include <QMimeData>
 
-// KDE
-#include <kdialog.h>
-
 // KMix
+#include "dialogbase.h"
 #include "gui/guiprofile.h"
 #include "viewbase.h"
 
@@ -100,15 +98,13 @@ private:
 };
 
 
-class DialogViewConfiguration : public KDialog
+class DialogViewConfiguration : public DialogBase
 {
     Q_OBJECT
  public:
     DialogViewConfiguration(QWidget* parent, ViewBase& view);
     ~DialogViewConfiguration();
 
-
-  //  QSize sizeHint() const;
  public slots:
     void apply();
  
@@ -126,12 +122,9 @@ class DialogViewConfiguration : public KDialog
     void createPage();
     void addSpacer(int row, int col);
     void moveSelection(DialogViewConfigurationWidget* from, DialogViewConfigurationWidget* to);
-    QVBoxLayout* _layout;
     ViewBase&    _view;
-    QWidget * frame;
     QGridLayout *_glayout;
 
-    QLabel* qlb;
     QPushButton* moveLeftButton;
     QPushButton* moveRightButton;
 

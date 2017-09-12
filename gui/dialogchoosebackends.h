@@ -27,7 +27,6 @@ class QScrollArea;
 class QVBoxLayout;
 
 class KComboBox;
-#include <kdialog.h>
 
 class Mixer;
 
