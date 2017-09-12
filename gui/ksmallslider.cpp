@@ -32,7 +32,6 @@
 #include <qstyle.h>
 #include <QStyleOptionSlider>
 
-#include "kglobalsettings.h"
 #include "core/mixer.h"
 
 KSmallSlider::KSmallSlider( int minValue, int maxValue, int pageStep,

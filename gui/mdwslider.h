@@ -35,7 +35,6 @@ class QToolButton;
 class QLabel;
 
 class QMenu;
-#include <kshortcut.h>
 #include <kiconloader.h>
 
 class MixDevice;
