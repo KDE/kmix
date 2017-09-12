@@ -811,14 +811,14 @@ void KMixWindow::newView()
 		if (guiprof == 0)
 		{
 			static const QString msg(i18n("Cannot add view - GUIProfile is invalid."));
-			errorPopup(msg);
+			KMessageBox::sorry(this, msg, i18n("Error"));
 		}
 		else
 		{
 			bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
 			if (ret == false)
 			{
-				errorPopup(i18n("View already exists. Cannot add View."));
+				KMessageBox::sorry(this, i18n("View already exists. Cannot add View."), i18n("Error"));
 			}
 		}
 
@@ -1251,21 +1251,9 @@ void KMixWindow::forkExec(const QStringList& args)
 		msg += "\n(";
 		msg += args.join(QLatin1String(" "));
 		msg += ')';
-		errorPopup(msg);
+		KMessageBox::error(this, msg, i18n("Error"));
 	}
 
-}
-
-void KMixWindow::errorPopup(const QString& msg)
-{
-	QPointer<KDialog> dialog = new KDialog(this);
-	dialog->setButtons(KDialog::Ok);
-	dialog->setCaption(i18n("Error"));
-	QLabel* qlbl = new QLabel(msg);
-	dialog->setMainWidget(qlbl);
-	dialog->exec();
-	delete dialog;
-	qCWarning(KMIX_LOG) << msg;
 }
 
 void KMixWindow::slotConfigureCurrentView()

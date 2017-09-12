@@ -98,7 +98,6 @@ KMixWindow : public KXmlGuiWindow
         KMixerWidget* findKMWforTab( const QString& tabId );
 
         void forkExec(const QStringList& args);
-        void errorPopup(const QString& msg);
 
    KAccel *m_keyAccel;
    KToggleAction* _actionShowMenubar;
