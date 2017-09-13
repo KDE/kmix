@@ -25,7 +25,6 @@
 #include <QWidget>
 #include <QString>
 
-#include <KComponentData>
 #include <kglobalaccel.h>
 #include <kiconloader.h>
 #include <knotification.h>

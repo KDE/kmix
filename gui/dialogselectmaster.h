@@ -21,7 +21,7 @@
 #ifndef DIALOGSELECTMASTER_H
 #define DIALOGSELECTMASTER_H
 
-class KComboBox;
+class QComboBox;
 class QVBoxLayout;
 class QListWidget;
 
@@ -43,7 +43,7 @@ class DialogSelectMaster : public DialogBase
  private:
     void createWidgets(Mixer*);
     void createPage(Mixer*);
-    KComboBox* m_cMixer;
+    QComboBox* m_cMixer;
     QListWidget *m_channelSelector;
 
  private slots:

@@ -30,11 +30,9 @@
 class MixDevice;
 class ViewBase;
 
-// KDE
-class KComboBox;
-
 // Qt
 class QBoxLayout;
+class QComboBox;
 class QLabel;
 
 #include "gui/mixdevicewidget.h"
@@ -69,7 +67,7 @@ private:
     void createWidgets();
 
     QLabel        *_label;
-    KComboBox     *_enumCombo;
+    QComboBox     *_enumCombo;
     QBoxLayout    *_layout;
 };
 

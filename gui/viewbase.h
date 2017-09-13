@@ -60,7 +60,7 @@ public:
       Vertical       = 0x0008
    };
    
-    ViewBase(QWidget* parent, QString id, Qt::WFlags, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
+    ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
     virtual ~ViewBase();
 
     void addMixer(Mixer *mixer);

@@ -289,7 +289,7 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
     QString probeMessage;
     probeMessage += "Trying ALSA Device '" + devName + "': ";
 
-    if ( ( err = snd_ctl_open ( &ctl_handle, devName.toAscii().data(), 0 ) ) < 0 )
+    if ( ( err = snd_ctl_open ( &ctl_handle, devName.toLatin1().data(), 0 ) ) < 0 )
     {
     	if (Mixer_ALSA::warnOnce)
     	{
@@ -333,7 +333,7 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
         return Mixer::ERR_OPEN; // if we cannot open the mixer, we have no devices
     }
 
-    if ( ( err = snd_mixer_attach ( _handle, devName.toAscii().data() ) ) < 0 )
+    if ( ( err = snd_mixer_attach ( _handle, devName.toLatin1().data() ) ) < 0 )
     {
     	if (Mixer_ALSA::warnOnce)
     	{
@@ -544,7 +544,7 @@ Mixer_ALSA::close()
   {
     //qCDebug(KMIX_LOG) << "IN  Mixer_ALSA::close()";
     snd_mixer_free ( _handle );
-    if ( ( ret = snd_mixer_detach ( _handle, devName.toAscii().data() ) ) < 0 )
+    if ( ( ret = snd_mixer_detach ( _handle, devName.toLatin1().data() ) ) < 0 )
     {
         qCDebug(KMIX_LOG) << "snd_mixer_detach err=" << snd_strerror(ret);
     }

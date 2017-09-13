@@ -28,7 +28,6 @@
 // KDE
 #include <kactioncollection.h>
 #include <kconfig.h>
-#include <kcombobox.h>
 #include <kglobalaccel.h>
 #include <klocalizedstring.h>
 #include <ktoggleaction.h>
@@ -40,6 +39,7 @@
 #include <QMouseEvent>
 #include <QObject>
 #include <QBoxLayout>
+#include <QComboBox>
 
 /**
  * Class that represents an Enum element (a select one-from-many selector)
@@ -91,7 +91,7 @@ void MDWEnum::createWidgets()
 
    _label = new QLabel( m_mixdevice->readableName(), this);
    _layout->addWidget(_label);
-   _enumCombo = new KComboBox( false, this);
+   _enumCombo = new QComboBox(this);
    _enumCombo->installEventFilter(this);
    // ------------ fill ComboBox start ------------
    int maxEnumId= m_mixdevice->enumValues().count();

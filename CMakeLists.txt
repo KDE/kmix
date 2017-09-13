@@ -36,9 +36,13 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     GlobalAccel
     I18n
     IconThemes
+    # Do not remove KDELibs4Support from here yet,
+    # it provides CMake modules to find GLIB2 and PulseAudio.
     KDELibs4Support
+    Init
     Notifications
     Plasma
+    Solid
     WidgetsAddons
     WindowSystem
     XmlGui
@@ -46,9 +50,6 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-
-# Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
-#find_package(Phonon REQUIRED)
 
 # PulseAudio is an optional dependency
 set(PA_VER "0.9.16")
@@ -59,9 +60,9 @@ find_package(GLIB2)
 # Canberra is an optional dependency
 find_package(Canberra)
 
-find_package(Alsa)
+find_package(ALSA)
 if(ALSA_FOUND)
-	alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
+        set(HAVE_LIBASOUND2 TRUE)
 	add_definitions(-DHAVE_LIBASOUND2)
 endif(ALSA_FOUND)
 
@@ -200,7 +201,9 @@ target_link_libraries(kdeinit_kmix
     KF5::IconThemes
     KF5::DBusAddons
     KF5::GlobalAccel
-    KF5::KDELibs4Support
+    KF5::XmlGui
+    KF5::Notifications
+    KF5::WindowSystem
 
     Qt5::Core
     Qt5::Widgets
@@ -210,7 +213,7 @@ target_link_libraries(kdeinit_kmix
 
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
+    target_link_libraries(kdeinit_kmix ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
 if (PULSEAUDIO_FOUND)
@@ -261,19 +264,17 @@ target_link_libraries(kded_kmixd
     KF5::CoreAddons
     KF5::Solid
     KF5::DBusAddons
+    KF5::CoreAddons
 
     Qt5::Core
     Qt5::Widgets
     Qt5::DBus
     Qt5::Xml
-
-    ${KDEx_KDEUI_LIBS}
-    ${KDEx_PHONON_LIBS}
 )
 
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
+    target_link_libraries(kded_kmixd ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
 if (PULSEAUDIO_FOUND)
@@ -328,11 +329,10 @@ target_link_libraries(kdeinit_kmixctrl
     Qt5::Core
     Qt5::DBus
     Qt5::Widgets
-#Qt5::Xml
 )
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
+    target_link_libraries(kdeinit_kmixctrl ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
 if (PULSEAUDIO_FOUND)

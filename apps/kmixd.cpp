@@ -22,7 +22,6 @@
 
 #include "kmixd.h"
 
-#include <kaboutdata.h> 
 #include <kconfig.h>
 #include <klocalizedstring.h>
 #include <kpluginfactory.h>

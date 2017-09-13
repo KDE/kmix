@@ -28,7 +28,6 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-#include <kcombobox.h>
 #include <klocalizedstring.h>
 
 #include "core/ControlManager.h"

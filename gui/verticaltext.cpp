@@ -24,7 +24,7 @@
 
 
 
-VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WFlags f) : QWidget(parent,f)
+VerticalText::VerticalText(QWidget * parent, const QString& text, Qt::WindowFlags f) : QWidget(parent,f)
 {
    m_labelText = text;
 }

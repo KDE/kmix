@@ -106,13 +106,13 @@ int Mixer_OSS::open()
     QString finalDeviceName;
     finalDeviceName = deviceName( m_devnum );
   qCDebug(KMIX_LOG) << "OSS open() " << finalDeviceName;
-    if ((m_fd= ::open( finalDeviceName.toAscii().data(), O_RDWR)) < 0)
+    if ((m_fd= ::open( finalDeviceName.toLatin1().data(), O_RDWR)) < 0)
     {
         if ( errno == EACCES )
         return Mixer::ERR_PERM;
         else {
             finalDeviceName = deviceNameDevfs( m_devnum );
-            if ((m_fd= ::open( finalDeviceName.toAscii().data(), O_RDWR)) < 0)
+            if ((m_fd= ::open( finalDeviceName.toLatin1().data(), O_RDWR)) < 0)
             {
                 if ( errno == EACCES )
                     return Mixer::ERR_PERM;

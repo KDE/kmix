@@ -33,8 +33,8 @@
 class QBoxLayout;
 class QToolButton;
 class QLabel;
-
 class QMenu;
+
 #include <kiconloader.h>
 
 class MixDevice;

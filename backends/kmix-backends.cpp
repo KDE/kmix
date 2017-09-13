@@ -23,9 +23,6 @@
 /* This code is being #include'd from mixer.cpp */
 
 #include <config.h>
-#ifdef HAVE_LIBASOUND2
-#include <config-alsa.h>
-#endif
 
 #include "mixer_backend.h"
 #include "core/mixer.h"

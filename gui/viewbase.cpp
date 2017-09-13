@@ -49,7 +49,7 @@
  * Creates an empty View. To populate it with MixDevice instances, you must implement
  * _setMixSet() in your derived class.
  */
-ViewBase::ViewBase(QWidget* parent, QString id, Qt::WFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
+ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiProfileId(guiProfileId)
 , guiLevel(GuiVisibility::GuiSIMPLE)
 {
@@ -327,7 +327,7 @@ void ViewBase::load(KConfig *config)
 	grp += view->id();
 	//KConfigGroup cg = config->group( grp );
 	qCDebug(KMIX_LOG)
-	<< "KMixToolBox::loadView() grp=" << grp.toAscii();
+	<< "KMixToolBox::loadView() grp=" << grp.toLatin1();
 
 	static GuiVisibility guiVisibilities[3] =
 	{ GuiVisibility::GuiSIMPLE, GuiVisibility::GuiEXTENDED, GuiVisibility::GuiFULL };
@@ -459,9 +459,9 @@ void ViewBase::save(KConfig *config)
 			MixDeviceWidget* mdw = (MixDeviceWidget*) qmdw;
 			shared_ptr<MixDevice> md = mdw->mixDevice();
 
-			//qCDebug(KMIX_LOG) << "  grp=" << grp.toAscii();
-			//qCDebug(KMIX_LOG) << "  mixer=" << view->id().toAscii();
-			//qCDebug(KMIX_LOG) << "  mdwPK=" << mdw->mixDevice()->id().toAscii();
+			//qCDebug(KMIX_LOG) << "  grp=" << grp.toLatin1();
+			//qCDebug(KMIX_LOG) << "  mixer=" << view->id().toLatin1();
+			//qCDebug(KMIX_LOG) << "  mdwPK=" << mdw->mixDevice()->id().toLatin1();
 
 			QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
 			KConfigGroup devcg = config->group(devgrp);

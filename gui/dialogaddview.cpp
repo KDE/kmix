@@ -25,8 +25,8 @@
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QComboBox>
 
-#include <kcombobox.h>
 #include <klocalizedstring.h>
 
 #include "core/mixdevice.h"
@@ -87,7 +87,7 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
         mixerNameLayout->addWidget(qlbl);
         qlbl->setFixedHeight(qlbl->sizeHint().height());
     
-        m_cMixer = new KComboBox( false, mainFrame);
+        m_cMixer = new QComboBox(mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
         connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );

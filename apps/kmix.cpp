@@ -31,18 +31,15 @@
 #include <QCursor>
 #include <QString>
 #include <QTabWidget>
+#include <QPointer>
 
 // include files for KDE
-#include <KConfigSkeleton>
-#include <kcombobox.h>
 #include <KGlobalAccel>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klocalizedstring.h>
 #include <kconfig.h>
-#include <ktoggleaction.h>
 #include <kstandardaction.h>
-#include <khelpmenu.h>
 #include <kxmlguifactory.h>
 #include <kactioncollection.h>
 #include <KProcess>

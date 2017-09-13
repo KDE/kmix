@@ -206,7 +206,8 @@ KMixDockWidget::setVolumeTip()
         if ( md->isMuted() )
             tip += i18n( " (Muted)" );
         subTip = QString( "%1<br/>%2" )
-                 .arg( Qt::escape(md->mixer()->readableName()) ).arg( Qt::escape(md->readableName()) );
+		.arg(md->mixer()->readableName().toHtmlEscaped())
+		.arg(md->readableName().toHtmlEscaped());
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
         virtualToolTipValue = val;

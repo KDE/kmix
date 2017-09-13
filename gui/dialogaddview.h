@@ -25,7 +25,7 @@
 
 #include "dialogbase.h"
 
-class KComboBox;
+class QComboBox;
 class QListWidget;
 class Mixer;
 
@@ -46,7 +46,7 @@ class DialogAddView : public DialogBase
  private:
     void createWidgets(Mixer*);
     void createPage(Mixer *mixer);
-    KComboBox* m_cMixer;
+    QComboBox* m_cMixer;
     QListWidget *m_listForChannelSelector;
 
     QString resultViewName;
