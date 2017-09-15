@@ -275,6 +275,7 @@ void KMixWindow::initActionsAfterInitMixer()
 				IconSize(KIconLoader::Toolbar));
 		QPushButton* _cornerLabelNew = new QPushButton();
 		_cornerLabelNew->setIcon(cornerNewPM);
+		_cornerLabelNew->setToolTip(i18n("Add new view"));
 		//cornerLabelNew->setSizePolicy(QSizePolicy());
 		m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
 		connect(_cornerLabelNew, SIGNAL(clicked()), SLOT(newView()));
@@ -1290,8 +1291,10 @@ void KMixWindow::newMixerShown(int /*tabIndex*/)
 	{
 		// I am using the app name as a PREFIX, as KMix is a single window app, and it is
 		// more helpful to the user to see "KDE Mixer" in a window list than a possibly cryptic
-		// soundcard name like "HDA ATI SB"
-		setWindowTitle(i18n("KDE Mixer") + " - " + kmw->mixer()->readableName());
+		// soundcard name like "HDA ATI SB".
+		// Reformatted for KF5 so as to not say "KDE"
+		// and so that there are not two different dashes.
+		setWindowTitle(i18n("Mixer (%1)", kmw->mixer()->readableName()));
 		if (!m_dontSetDefaultCardOnStart)
 			m_defaultCardOnStart = kmw->getGuiprof()->getId();
 		// As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.

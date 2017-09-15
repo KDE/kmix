@@ -23,6 +23,7 @@ install( FILES
     kmixdocked.png
     kmixdocked_mute.png
     kmixdocked_error.png
+    show-mixer.png
     DESTINATION  ${KDE_INSTALL_DATADIR}/kmix/pics )
 
 ecm_install_icons(ICONS

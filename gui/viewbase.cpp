@@ -98,7 +98,7 @@ QPushButton* ViewBase::createConfigureViewButton()
 {
 	QPushButton* configureViewButton = new QPushButton(configureIcon, "", this);
 	configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	configureViewButton->setToolTip(i18n( "Configure Channels" ));
+	configureViewButton->setToolTip(i18n( "Configure this view" ));
 	connect(configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
 	return configureViewButton;
 }

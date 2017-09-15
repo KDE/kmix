@@ -214,7 +214,13 @@ void ViewSliders::_setMixSet()
 	_layoutSliders->setSpacing(0);
 	_layoutMDW->setContentsMargins(0, 0, 0, 0);
 	_layoutMDW->setSpacing(0);
+
+	// The stretch added here is so that, if there is width to spare, the
+	// controls are centered in the window but the configure button is
+	// always at the bottom right.
+	_layoutMDW->addStretch();
 	_layoutMDW->addItem(_layoutSliders);
+	_layoutMDW->addStretch();
 
 	_layoutEnum = new QVBoxLayout();
 	_layoutMDW->addLayout(_layoutEnum);

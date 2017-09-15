@@ -167,7 +167,7 @@ DialogViewConfiguration::DialogViewConfiguration(QWidget *parent, ViewBase &view
    layout->setSpacing(DialogBase::verticalSpacing());
    
    // --- HEADER ---
-   QLabel *qlb = new QLabel( i18n("Configuration of the channels. Drag icon to update."), frame );
+   QLabel *qlb = new QLabel( i18n("Configure the visible channels. Drag icons between the lists to update."), frame );
    layout->addWidget(qlb);
    
    _glayout = new QGridLayout();
@@ -259,10 +259,10 @@ void DialogViewConfiguration::createPage()
 {
    QList<QWidget *> &mdws = _view._mdws;
 
-   QLabel *l1 = new QLabel( i18n("Visible channels") );
+   QLabel *l1 = new QLabel( i18n("Visible channels:") );
    _glayout->addWidget(l1,0,0);
       
-   QLabel *l2 = new QLabel( i18n("Available channels") );
+   QLabel *l2 = new QLabel( i18n("Available channels:") );
    _glayout->addWidget(l2,0,6);
 
    QWidget *frame = mainWidget();
@@ -277,6 +277,7 @@ void DialogViewConfiguration::createPage()
    const QIcon& icon = QIcon::fromTheme( QLatin1String( "arrow-left" ));
     moveLeftButton = new QPushButton(icon, "");
     moveLeftButton->setEnabled(false);
+    moveLeftButton->setToolTip(i18n("Move the selected channel to the visible list"));
    _glayout->addWidget(moveLeftButton,1,2);
    connect(moveLeftButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToActiveList()));
    addSpacer(1,3);
@@ -284,6 +285,7 @@ void DialogViewConfiguration::createPage()
    const QIcon& icon2 = QIcon::fromTheme( QLatin1String( "arrow-right" ));
     moveRightButton = new QPushButton(icon2, "");
     moveRightButton->setEnabled(false);
+    moveRightButton->setToolTip(i18n("Move the selected channel to the available (hidden) list"));
    _glayout->addWidget(moveRightButton,1,4);
    connect(moveRightButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToInactiveList()));
    addSpacer(1,5);
