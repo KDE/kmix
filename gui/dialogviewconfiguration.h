@@ -21,7 +21,7 @@
 #ifndef DIALOGVIEWCONFIGURATION_H
 #define DIALOGVIEWCONFIGURATION_H
 
-// QT
+// Qt
 #include <QCheckBox>
 class QLabel;
 #include <QGridLayout>
@@ -31,7 +31,7 @@ class QHBoxLayout;
 class QScrollArea;
 class QVBoxLayout;
 
-// QT DND
+// Qt DND
 #include <QDragEnterEvent>
 #include <QMimeData>
 

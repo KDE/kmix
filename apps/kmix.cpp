@@ -20,7 +20,7 @@
 
 #include "apps/kmix.h"
 
-// include files for QT
+// include files for Qt
 #include <QApplication>
 #include <QCheckBox>
 #include <QLabel>

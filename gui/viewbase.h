@@ -21,7 +21,7 @@
 #ifndef ViewBase_h
 #define ViewBase_h
 
-// QT
+// Qt
 #include <QWidget>
 #include <QIcon>
 #include <QList>

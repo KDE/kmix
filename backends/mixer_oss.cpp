@@ -145,7 +145,7 @@ int Mixer_OSS::open()
             {
               if( devmask & ( 1 << idx ) ) // device active?
                 {
-                  Volume playbackVol( 100, 1, true, false );
+                  Volume playbackVol( 100, 0, true, false );
 		  playbackVol.addVolumeChannel(VolumeChannel(Volume::LEFT));
 		  if ( stereodevs & ( 1 << idx ) )
 		    playbackVol.addVolumeChannel(VolumeChannel(Volume::RIGHT));
@@ -162,7 +162,7 @@ int Mixer_OSS::open()
                   // Tutorial: Howto add a simple capture switch
                   if ( recmask & ( 1 << idx ) ) {
                      // can be captured => add capture volume, with no capture volume
-                     Volume captureVol( 100, 1, true, true );
+                     Volume captureVol( 100, 0, true, true );
                      md->addCaptureVolume(captureVol);
                  }
 
