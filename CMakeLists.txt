@@ -38,6 +38,8 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     IconThemes
     # Do not remove KDELibs4Support from here yet,
     # it provides CMake modules to find GLIB2 and PulseAudio.
+    # If these modules are accepted into ECM (https://phabricator.kde.org/D7823),
+    # then please see note below.
     KDELibs4Support
     Init
     Notifications
@@ -50,12 +52,19 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-
 # PulseAudio is an optional dependency
+#
+# Note that if the CMake module to find PulseAudio is accepted into ECM,
+# then in accordance with ECM conventions its output variables match the
+# case of the package (therefore PulseAudio_FOUND etc).  The variables used
+# in this file therefore need to be updated to suit.
 set(PA_VER "0.9.16")
 find_package(PulseAudio "${PA_VER}")
 
-find_package(GLIB2)
+# PulseAudio requires GLib2
+if (PULSEAUDIO_FOUND)
+  find_package(GLIB2 REQUIRED)
+endif(PULSEAUDIO_FOUND)
 
 # Canberra is an optional dependency
 find_package(Canberra)
@@ -85,24 +94,25 @@ check_cxx_source_compiles("
 
 configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
-
-include_directories( ${GLIB2_INCLUDE_DIR} /usr/lib/oss/include)
+# TODO: is the next line really needed now?
+include_directories("/usr/lib/oss/include")
+if (PULSEAUDIO_FOUND)
+  include_directories(${GLIB2_INCLUDE_DIR})
+endif(PULSEAUDIO_FOUND)
 
 add_subdirectory(doc)
 
-add_subdirectory( pics ) 
-add_subdirectory( profiles ) 
+add_subdirectory(pics)
+add_subdirectory(profiles)
 #add_subdirectory( tests )
 
-if (PULSEAUDIO_FOUND)
+if(PULSEAUDIO_FOUND)
   add_definitions(-DHAVE_PULSE)
-
   include_directories(${PULSEAUDIO_INCLUDE_DIR})
-endif (PULSEAUDIO_FOUND)
+endif(PULSEAUDIO_FOUND)
 
 if (CANBERRA_FOUND)
   add_definitions(-DHAVE_CANBERRA)
-
   include_directories(${CANBERRA_INCLUDE_DIRS})
 endif (CANBERRA_FOUND)
 
