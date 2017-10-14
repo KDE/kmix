@@ -64,6 +64,9 @@ kdemain(int argc, char *argv[])
    aboutData.addCredit(i18n("Erwin Mascher")     , i18n("Improving support for emu10k1 based soundcards"));
    aboutData.addCredit(i18n("Valentin Rusu")     , i18n("TerraTec DMX6Fire support"), "kde@rusu.info");
 
+   aboutData.setOrganizationDomain(QByteArray("kde.org"));
+   aboutData.setDesktopFileName(QStringLiteral("org.kde.kmix"));
+
    KAboutData::setApplicationData(aboutData);
    // Implement running as a unique application
    KDBusService service(KDBusService::Unique);
