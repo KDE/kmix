@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop">
+  <id>org.kde.kmix.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>KMix</name>
+  <name xml:lang="en-GB">KMix</name>
+  <name xml:lang="x-test">xxKMixxx</name>
+
+  <summary>Sound Mixer</summary>
+  <summary xml:lang="en-GB">Sound Mixer</summary>
+  <summary xml:lang="x-test">xxSound Mixerxx</summary>
+
+  <description>
+    <p>KMix is a sound channel mixer and volume control.</p>
+    <p xml:lang="en-GB">KMix is a sound channel mixer and volume control.</p>
+    <p xml:lang="x-test">xxKMix is a sound channel mixer and volume control.xx</p>
+  </description>
+
+  <url type="homepage">https://www.kde.org/applications/multimedia/kmix/</url>
+  <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?product=kmix</url>
+  <url type="help">https://docs.kde.org/trunk5/en/kdemultimedia/kmix/</url>
+  <url type="donation">https://www.kde.org/community/donations</url>
+
+  <provides>
+    <binary>kmix</binary>
+  </provides>
+  <project_group>KDE</project_group>
+</component>

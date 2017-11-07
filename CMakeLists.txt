@@ -7,8 +7,9 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set (QT_MIN_VERSION "5.4.0")
 set (KF5_MIN_VERSION "5.14.0")
+set (ECM_MIN_VERSION "5.14.0")
 
-find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
+find_package(ECM ${ECM_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
@@ -38,8 +39,9 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     IconThemes
     # Do not remove KDELibs4Support from here yet,
     # it provides CMake modules to find GLIB2 and PulseAudio.
-    # If these modules are accepted into ECM (https://phabricator.kde.org/D7823),
-    # then please see note below.
+    # When ECM 5.41.0 is released (https://phabricator.kde.org/D7823),
+    # then it can be removed (see note below) and the ECM_MIN_VERSION
+    # at the top updated to "5.41.0".
     KDELibs4Support
     Init
     Notifications
@@ -238,6 +240,7 @@ install(TARGETS kdeinit_kmix DESTINATION ${KDE_INSTALL_LIBDIR} )
 
 target_link_libraries( kmix kdeinit_kmix )
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+install(FILES org.kde.kmix.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 
 
