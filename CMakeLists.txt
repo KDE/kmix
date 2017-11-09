@@ -229,7 +229,7 @@ if (HAVE_LIBASOUND2)
 endif (HAVE_LIBASOUND2)
 
 if (PULSEAUDIO_FOUND)
-    target_link_libraries(kdeinit_kmix ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+  target_link_libraries(kdeinit_kmix ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PULSEAUDIO_FOUND)
 
 if (CANBERRA_FOUND)
