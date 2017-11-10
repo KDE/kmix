@@ -5,6 +5,9 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+# TODO: When ECM 5.41.0 is released (https://phabricator.kde.org/D7823),
+# ECM_MIN_VERSION should be updated to "5.41.0" and FindGLIB2.cmake and
+# FindPulseAudio.cmake be removed from cmake/modules.
 set (QT_MIN_VERSION "5.4.0")
 set (KF5_MIN_VERSION "5.14.0")
 set (ECM_MIN_VERSION "5.14.0")
@@ -37,12 +40,6 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     GlobalAccel
     I18n
     IconThemes
-    # Do not remove KDELibs4Support from here yet,
-    # it provides CMake modules to find GLIB2 and PulseAudio.
-    # When ECM 5.41.0 is released (https://phabricator.kde.org/D7823),
-    # then it can be removed (see note below) and the ECM_MIN_VERSION
-    # at the top updated to "5.41.0".
-    KDELibs4Support
     Init
     Notifications
     Plasma
