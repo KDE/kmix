@@ -3,7 +3,7 @@ project(kmix)
 
 add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set (QT_MIN_VERSION "5.4.0")
 set (KF5_MIN_VERSION "5.14.0")
@@ -64,9 +64,9 @@ set(PA_VER "0.9.16")
 find_package(PulseAudio "${PA_VER}")
 
 # PulseAudio requires GLib2
-if (PULSEAUDIO_FOUND)
+if (PulseAudio_FOUND)
   find_package(GLIB2 REQUIRED)
-endif(PULSEAUDIO_FOUND)
+endif(PulseAudio_FOUND)
 
 # Canberra is an optional dependency
 find_package(Canberra)
@@ -98,9 +98,9 @@ configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 # TODO: is the next line really needed now?
 include_directories("/usr/lib/oss/include")
-if (PULSEAUDIO_FOUND)
+if (PulseAudio_FOUND)
   include_directories(${GLIB2_INCLUDE_DIR})
-endif(PULSEAUDIO_FOUND)
+endif(PulseAudio_FOUND)
 
 add_subdirectory(doc)
 
@@ -108,10 +108,10 @@ add_subdirectory(pics)
 add_subdirectory(profiles)
 #add_subdirectory( tests )
 
-if(PULSEAUDIO_FOUND)
+if(PulseAudio_FOUND)
   add_definitions(-DHAVE_PULSE)
-  include_directories(${PULSEAUDIO_INCLUDE_DIR})
-endif(PULSEAUDIO_FOUND)
+  include_directories(${PulseAudio_INCLUDE_DIRS})
+endif(PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
   add_definitions(-DHAVE_CANBERRA)
@@ -152,10 +152,10 @@ if (HAVE_LIBASOUND2)
       backends/mixer_alsa9.cpp )
 endif (HAVE_LIBASOUND2)
 
-if (PULSEAUDIO_FOUND)
+if (PulseAudio_FOUND)
   set(kmix_backend_SRCS ${kmix_backend_SRCS}
       backends/mixer_pulse.cpp )
-endif (PULSEAUDIO_FOUND)
+endif (PulseAudio_FOUND)
 
 
 
@@ -164,29 +164,29 @@ endif (PULSEAUDIO_FOUND)
 ####################################################################################################
 
 set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   apps/main.cpp 
-   apps/kmix.cpp 
+   apps/main.cpp
+   apps/kmix.cpp
    apps/KMixApp.cpp
    gui/dialogbase.cpp
    gui/dialogstatesaver.cpp
-   gui/kmixdockwidget.cpp 
-   gui/kmixprefdlg.cpp 
-   gui/viewbase.cpp 
-   gui/viewdockareapopup.cpp 
-   gui/viewsliders.cpp 
-   gui/mixdevicewidget.cpp 
+   gui/kmixdockwidget.cpp
+   gui/kmixprefdlg.cpp
+   gui/viewbase.cpp
+   gui/viewdockareapopup.cpp
+   gui/viewsliders.cpp
+   gui/mixdevicewidget.cpp
    gui/mdwmoveaction.cpp
-   gui/mdwslider.cpp 
-   gui/mdwenum.cpp 
-   gui/kmixerwidget.cpp 
+   gui/mdwslider.cpp
+   gui/mdwenum.cpp
+   gui/kmixerwidget.cpp
    gui/ksmallslider.cpp
    gui/verticaltext.cpp
-   gui/volumeslider.cpp 
-   gui/kmixtoolbox.cpp 
-   gui/dialogaddview.cpp 
-   gui/dialogviewconfiguration.cpp 
-   gui/dialogselectmaster.cpp 
-   gui/dialogchoosebackends.cpp 
+   gui/volumeslider.cpp
+   gui/kmixtoolbox.cpp
+   gui/dialogaddview.cpp
+   gui/dialogviewconfiguration.cpp
+   gui/dialogselectmaster.cpp
+   gui/dialogchoosebackends.cpp
    gui/guiprofile.cpp
    ${kmix_OSD_SRCS}
    core/MediaController.cpp
@@ -228,9 +228,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
-if (PULSEAUDIO_FOUND)
+if (PulseAudio_FOUND)
   target_link_libraries(kdeinit_kmix ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
+endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
   target_link_libraries(kdeinit_kmix ${CANBERRA_LIBRARIES})
@@ -250,22 +250,22 @@ install(FILES org.kde.kmix.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 ####################################################################################################
 
  set(kded_kmixd_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-    apps/kmixd.cpp 
+    apps/kmixd.cpp
     core/ControlManager.cpp
 #    core/ControlPool.cpp
     core/GlobalConfig.cpp
     core/MasterControl.cpp
     core/MediaController.cpp
-    core/mixer.cpp 
-    core/mixset.cpp 
-    core/mixdevice.cpp 
+    core/mixer.cpp
+    core/mixset.cpp
+    core/mixdevice.cpp
     core/volume.cpp
-    core/mixertoolbox.cpp 
+    core/mixertoolbox.cpp
     core/kmixdevicemanager.cpp
     ${kmix_debug_SRCS}
     )
 
-#qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer) 
+#qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer)
 
 add_library(kded_kmixd ${kded_kmixd_SRCS})
 
@@ -290,9 +290,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kded_kmixd ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
+if (PulseAudio_FOUND)
+    target_link_libraries(kded_kmixd ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
   target_link_libraries(kded_kmixd ${CANBERRA_LIBRARIES})
@@ -312,16 +312,16 @@ install( FILES kmixd.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kded )
 ####################################################################################################
 
 set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   apps/kmixctrl.cpp 
+   apps/kmixctrl.cpp
    core/ControlManager.cpp
 #   core/ControlPool.cpp
    core/GlobalConfig.cpp
    core/MasterControl.cpp
    core/MediaController.cpp
-   core/mixer.cpp 
-   core/mixset.cpp 
-   core/mixdevice.cpp 
-   core/volume.cpp 
+   core/mixer.cpp
+   core/mixset.cpp
+   core/mixdevice.cpp
+   core/volume.cpp
    core/mixertoolbox.cpp
    ${kmix_debug_SRCS}
    # There is no actual need for kmixdevicemanager.cpp (hotplug makes no sense in kmixctrl), but
@@ -348,9 +348,9 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
+if (PulseAudio_FOUND)
+    target_link_libraries(kdeinit_kmixctrl ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
   target_link_libraries(kdeinit_kmixctrl ${CANBERRA_LIBRARIES})
