@@ -5,6 +5,7 @@
   <project_license>GPL-2.0+</project_license>
   <name>KMix</name>
   <name xml:lang="ca">KMix</name>
+  <name xml:lang="ca-valencia">KMix</name>
   <name xml:lang="nl">KMix</name>
   <name xml:lang="pt">KMix</name>
   <name xml:lang="sv">Kmix</name>
@@ -12,6 +13,7 @@
   <name xml:lang="x-test">xxKMixxx</name>
   <summary>Sound Mixer</summary>
   <summary xml:lang="ca">Mesclador de so</summary>
+  <summary xml:lang="ca-valencia">Mesclador de so</summary>
   <summary xml:lang="nl">Geluidsmixer</summary>
   <summary xml:lang="pt">Mesa de Mistura</summary>
   <summary xml:lang="sv">Ljudmixer</summary>
@@ -20,6 +22,7 @@
   <description>
     <p>KMix is a sound channel mixer and volume control.</p>
     <p xml:lang="ca">El KMix és un mesclador de canals de so amb control del volum.</p>
+    <p xml:lang="ca-valencia">El KMix és un mesclador de canals de so amb control del volum.</p>
     <p xml:lang="nl">KMix is een mixer voor geluidskanalen en volumebesturing.</p>
     <p xml:lang="pt">O KMix é uma mesa de mistura e um controlo do volume dos canais de som.</p>
     <p xml:lang="sv">Kmix är en ljudkanalmixer och volymkontroll.</p>
