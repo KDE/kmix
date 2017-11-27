@@ -8,6 +8,7 @@
   <name xml:lang="ca-valencia">KMix</name>
   <name xml:lang="cs">KMix</name>
   <name xml:lang="de">KMix</name>
+  <name xml:lang="en-GB">KMix</name>
   <name xml:lang="es">KMix</name>
   <name xml:lang="fr">KMix</name>
   <name xml:lang="it">KMix</name>
@@ -22,6 +23,7 @@
   <summary xml:lang="ca-valencia">Mesclador de so</summary>
   <summary xml:lang="cs">Zvukový směšovač</summary>
   <summary xml:lang="de">Lautstärkeregler</summary>
+  <summary xml:lang="en-GB">Sound Mixer</summary>
   <summary xml:lang="es">Mezclador de sonido</summary>
   <summary xml:lang="fr">Mixeur de son</summary>
   <summary xml:lang="it">Mixer audio</summary>
@@ -36,6 +38,7 @@
     <p xml:lang="ca">El KMix és un mesclador de canals de so amb control del volum.</p>
     <p xml:lang="ca-valencia">El KMix és un mesclador de canals de so amb control del volum.</p>
     <p xml:lang="cs">KMix je zvukový směšovač a ovladač hlasitosti.</p>
+    <p xml:lang="en-GB">KMix is a sound channel mixer and volume control.</p>
     <p xml:lang="es">KMix es un mezclador de canales de sonido y un controlador de volumen.</p>
     <p xml:lang="it">Kmix è un mixer per i canali audio ed un regolatore del volume.</p>
     <p xml:lang="nl">KMix is een mixer voor geluidskanalen en volumebesturing.</p>
