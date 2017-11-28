@@ -13,6 +13,7 @@
   <name xml:lang="it">KMix</name>
   <name xml:lang="nl">KMix</name>
   <name xml:lang="pt">KMix</name>
+  <name xml:lang="pt-BR">KMix</name>
   <name xml:lang="sk">KMix</name>
   <name xml:lang="sv">Kmix</name>
   <name xml:lang="uk">KMix</name>
@@ -27,6 +28,7 @@
   <summary xml:lang="it">Mixer audio</summary>
   <summary xml:lang="nl">Geluidsmixer</summary>
   <summary xml:lang="pt">Mesa de Mistura</summary>
+  <summary xml:lang="pt-BR">Mixer de som</summary>
   <summary xml:lang="sk">Zvukový mixér</summary>
   <summary xml:lang="sv">Ljudmixer</summary>
   <summary xml:lang="uk">Звуковий мікшер</summary>
@@ -40,6 +42,7 @@
     <p xml:lang="it">Kmix è un mixer per i canali audio ed un regolatore del volume.</p>
     <p xml:lang="nl">KMix is een mixer voor geluidskanalen en volumebesturing.</p>
     <p xml:lang="pt">O KMix é uma mesa de mistura e um controlo do volume dos canais de som.</p>
+    <p xml:lang="pt-BR">O KMix é um mixer de canais de som e controle de volume.</p>
     <p xml:lang="sk">KMix je mixér zvukových kanálov a ovládač hlasitosti.</p>
     <p xml:lang="sv">Kmix är en ljudkanalmixer och volymkontroll.</p>
     <p xml:lang="uk">KMix — мікшер звукових каналів та програма для керування гучністю відтворення.</p>
