@@ -49,5 +49,6 @@ Name[tr]=Karıştırıcı Ayarlarını Yeniden Yükle
 Name[ug]=سازلىغۇچ تەڭشەكلىرىنى ئەسلىگە كەلتۈر
 Name[uk]=Відновити параметри мікшера
 Name[x-test]=xxRestore Mixer Settingsxx
+Name[zh_CN]=还原混音器设置
 Name[zh_TW]=回復混音器設定
 Exec=kmixctrl --restore
