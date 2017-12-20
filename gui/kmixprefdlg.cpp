@@ -426,8 +426,8 @@ void KMixPrefDlg::replaceBackendsInTab()
 	dvc = new DialogChooseBackends(0, backendsFromConfig);
 	connect(dvc, SIGNAL(backendsModified()), SLOT(updateButtons()));
 
-	dvc->show();
 	layoutControlsTab->addWidget(dvc);
+	dvc->show();
 
 	// Push everything above to the top
 //	layoutControlsTab->addStretch();
