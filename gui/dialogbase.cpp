@@ -46,37 +46,38 @@ DialogBase::DialogBase(QWidget *pnt)
     mButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel, this);
     connect(mButtonBox, &QDialogButtonBox::accepted, this, &DialogBase::accept);
     connect(mButtonBox, &QDialogButtonBox::rejected, this, &DialogBase::reject);
+
+    mMainLayout = new QVBoxLayout;
+    mMainLayout->setContentsMargins(0, 0, 0, 0);
+    mMainLayout->setSpacing(0);
+    setLayout(mMainLayout);
+
+    QWidget *buttonBoxWrapper = new QWidget; // for margins
+    QVBoxLayout *buttonBoxWrapperLayout = new QVBoxLayout;
+    buttonBoxWrapperLayout->addWidget(mButtonBox);
+    buttonBoxWrapper->setLayout(buttonBoxWrapperLayout);
+    mMainLayout->addWidget(buttonBoxWrapper);
 }
 
-
-void DialogBase::showEvent(QShowEvent *ev)
+void DialogBase::setMainWidget(QWidget *w)
 {
-    if (layout()==nullptr)					// layout not yet set up
-    {
-        qDebug() << "set up layout";
-        QVBoxLayout *mainLayout = new QVBoxLayout;
-        setLayout(mainLayout);
-
-        if (mMainWidget==nullptr)
-        {
-            qWarning() << "No main widget set for" << objectName();
-            mMainWidget = new QWidget(this);
+    if (w == nullptr) {
+        if (mMainWidget != nullptr) {
+            mMainLayout->removeWidget(mMainWidget);
+            mMainWidget = nullptr;
         }
-
-        // Our own QVBoxLayout provides margins inside the dialogue box.
-        // Therefore the main widget does not also need to have a margin.
-        QLayout *contentsLayout = mMainWidget->layout();
-        if (contentsLayout!=nullptr) contentsLayout->setContentsMargins(0, 0, 0, 0);
-
-        mainLayout->addWidget(mMainWidget);
-        mainLayout->setStretchFactor(mMainWidget, 1);
-
-        mainLayout->addWidget(mButtonBox);
+        return;
     }
 
-    QDialog::showEvent(ev);				// show the dialogue
-}
+    if (mMainWidget != nullptr) {
+        mMainLayout->replaceWidget(mMainWidget, w);
+    } else {
+        mMainLayout->insertWidget(0, w, 1);
+    }
 
+    mMainWidget = w;
+    mMainLayout->setStretchFactor(mMainWidget, 1);
+}
 
 void DialogBase::setButtons(QDialogButtonBox::StandardButtons buttons)
 {
