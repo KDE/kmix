@@ -13,6 +13,7 @@
   <name xml:lang="fi">KMix</name>
   <name xml:lang="fr">KMix</name>
   <name xml:lang="gl">KMix</name>
+  <name xml:lang="id">KMix</name>
   <name xml:lang="it">KMix</name>
   <name xml:lang="ko">KMix</name>
   <name xml:lang="nl">KMix</name>
@@ -39,6 +40,7 @@
   <summary xml:lang="fi">Äänimikseri</summary>
   <summary xml:lang="fr">Mixeur de son</summary>
   <summary xml:lang="gl">Mesturador de son</summary>
+  <summary xml:lang="id">Sound Mixer</summary>
   <summary xml:lang="it">Mixer audio</summary>
   <summary xml:lang="ko">소리 믹서</summary>
   <summary xml:lang="nl">Geluidsmixer</summary>
@@ -66,6 +68,7 @@
     <p xml:lang="fi">KMix on äänikavanamikseri ja äänenvoimakkuuden säädin.</p>
     <p xml:lang="fr">KMix est un outil de mixage des canaux sonores et de contrôle du volume.</p>
     <p xml:lang="gl">KMix é un mesturador de canles de son e un controlador de volume.</p>
+    <p xml:lang="id">KMix adalah mixer channel suara dan kendali volume.</p>
     <p xml:lang="it">Kmix è un mixer per i canali audio ed un regolatore del volume.</p>
     <p xml:lang="ko">KMix는 오디오 채널 믹서와 음량 조절 도구입니다.</p>
     <p xml:lang="nl">KMix is een mixer voor geluidskanalen en volumebesturing.</p>
