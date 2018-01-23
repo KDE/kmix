@@ -101,6 +101,7 @@ Name[tr]=Ses Aygıtı Yedeğe Geçiş
 Name[ug]=ئاۋاز ئۈسكۈنىسىنى تۆۋەنلەت
 Name[uk]=Другорядний аудіопристрій
 Name[x-test]=xxAudio Device Fallbackxx
+Name[zh_CN]=备用音频设备
 Name[zh_TW]=預設音效裝置
 Comment=Notification on automatic fallback if the preferred device is unavailable
 Comment[bg]=Уведомление за резервно устройство ако подразбиращото се не е налично
