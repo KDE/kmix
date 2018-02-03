@@ -24,8 +24,8 @@
 #include <qdialog.h>
 #include <qdialogbuttonbox.h>
 
-class QShowEvent;
 class QSpacerItem;
+class QVBoxLayout;
 class KGuiItem;
 class KConfigGroup;
 class DialogStateSaver;
@@ -201,14 +201,10 @@ protected:
      *
      * @param w The widget
      **/
-    void setMainWidget(QWidget *w)			{ mMainWidget = w; }
-
-    /**
-     * @reimp
-     **/
-    virtual void showEvent(QShowEvent *ev);
+    void setMainWidget(QWidget *w);
 
 private:
+    QVBoxLayout *mMainLayout;
     QDialogButtonBox *mButtonBox;
     QWidget *mMainWidget;
     DialogStateSaver *mStateSaver;
