@@ -72,7 +72,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
 {
     setObjectName( QStringLiteral("KMixD" ));
 	GlobalConfig::init();
-	qCWarning(KMIX_LOG) << "kmixd: Triggering delayed initialization";
+	qCDebug(KMIX_LOG) << "kmixd: Triggering delayed initialization";
 	QTimer::singleShot( 3000, this, SLOT(delayedInitialization()));
 }
 
@@ -85,7 +85,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
  */
 void KMixD::delayedInitialization()
 {
-	qCWarning(KMIX_LOG) << "kmixd: Delayed initialization running now";
+	qCDebug(KMIX_LOG) << "kmixd: Delayed initialization running now";
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
@@ -94,7 +94,7 @@ void KMixD::delayedInitialization()
    connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );
    connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT (unplugged(QString)) );
 
-    qCWarning(KMIX_LOG) << "kmixd: Delayed initialization done";
+    qCDebug(KMIX_LOG) << "kmixd: Delayed initialization done";
 }
 
 

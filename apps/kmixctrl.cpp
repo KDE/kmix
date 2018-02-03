@@ -81,7 +81,7 @@ kdemain(int argc, char *argv[])
 		{
 			Mixer *mixer = (Mixer::mixers())[i];
                         KSharedConfig::Ptr cfg = KSharedConfig::openConfig();
-			qCWarning(KMIX_LOG) << "save " << cfg->name();
+			qCDebug(KMIX_LOG) << "save " << cfg->name();
 			mixer->volumeSave(cfg.data());
 		}
 	}
