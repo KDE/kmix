@@ -88,6 +88,7 @@
     <p xml:lang="sv">Kmix är en ljudkanalmixer och volymkontroll.</p>
     <p xml:lang="uk">KMix — мікшер звукових каналів та програма для керування гучністю відтворення.</p>
     <p xml:lang="x-test">xxKMix is a sound channel mixer and volume control.xx</p>
+    <p xml:lang="zh-CN">KMix 是声道混合器和音量控制器。</p>
   </description>
   <url type="homepage">https://www.kde.org/applications/multimedia/kmix/</url>
   <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?product=kmix</url>
