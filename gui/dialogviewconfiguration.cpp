@@ -163,14 +163,13 @@ DialogViewConfiguration::DialogViewConfiguration(QWidget *parent, ViewBase &view
    
    // The _layout will hold two items: The title and the Drag-n-Drop area
    QVBoxLayout *layout = new QVBoxLayout(frame);
-   layout->setMargin( 0 );
-   layout->setSpacing(DialogBase::verticalSpacing());
    
    // --- HEADER ---
    QLabel *qlb = new QLabel( i18n("Configure the visible channels. Drag icons between the lists to update."), frame );
    layout->addWidget(qlb);
    
    _glayout = new QGridLayout();
+   _glayout->setMargin(0);
    layout->addLayout(_glayout);
 
    _qlw = 0;
