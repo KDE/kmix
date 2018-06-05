@@ -34,13 +34,9 @@
 #include "core/mixer.h"
 #include "core/version.h"
 
-
-K_PLUGIN_FACTORY(KMixDFactory,
-                 registerPlugin<KMixD>();
-    )
-K_EXPORT_PLUGIN(KMixDFactory("kmixd"))
-
-
+K_PLUGIN_FACTORY_WITH_JSON(KMixDFactory,
+                           "kmixd.json",
+                           registerPlugin<KMixD>();)
 
 /*
 static const char description[] =

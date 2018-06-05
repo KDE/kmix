@@ -262,12 +262,10 @@ install(FILES org.kde.kmix.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
     ${kmix_debug_SRCS}
     )
 
-#qt4_add_dbus_adaptor(kded_kmixd_SRCS org.kde.KMixD.xml kmixd.h Mixer)
+add_library(kmixd MODULE ${kded_kmixd_SRCS})
+kcoreaddons_desktop_to_json(kmixd kmixd.desktop)
 
-add_library(kded_kmixd ${kded_kmixd_SRCS})
-
-
-target_link_libraries(kded_kmixd
+target_link_libraries(kmixd
     KF5::I18n
     KF5::ConfigCore
     KF5::ConfigGui
@@ -284,25 +282,20 @@ target_link_libraries(kded_kmixd
 
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kded_kmixd ${ALSA_LIBRARIES})
+    target_link_libraries(kmixd ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
 if (PulseAudio_FOUND)
-    target_link_libraries(kded_kmixd ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+    target_link_libraries(kmixd ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
-  target_link_libraries(kded_kmixd ${CANBERRA_LIBRARIES})
+  target_link_libraries(kmixd ${CANBERRA_LIBRARIES})
 endif (CANBERRA_FOUND)
 
-install(TARGETS kded_kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR})
-
-#target_link_libraries( kmixd kded_kmixd )
-#install(TARGETS kmixd DESTINATION ${PLUGIN_INSTALL_DIR} )
-
-install( FILES kmixd.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kded )
-
-
+install(TARGETS kmixd
+        DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded
+)
 
 ####################################################################################################
 ########### next target : kmixctrl #################################################################
