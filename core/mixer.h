@@ -37,11 +37,12 @@
 #include "core/GlobalConfig.h"
 #include "core/mixdevice.h"
 #include "dbus/dbusmixerwrapper.h"
+#include "kmixcore_export.h"
 
 class Volume;
 class KConfig;
 
-class Mixer : public QObject
+class KMIXCORE_EXPORT Mixer : public QObject
 {
       Q_OBJECT
 

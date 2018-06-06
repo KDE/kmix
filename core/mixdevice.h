@@ -37,6 +37,8 @@ class Mixer;
 class MixSet;
 class ProfControl;
 #include "core/volume.h"
+#include "kmixcore_export.h"
+
 class DBusControlWrapper;
 
 // KDE
@@ -59,7 +61,7 @@ class DBusControlWrapper;
                 I finally decided against it, as it seems better to have the MixDevice being the container
                 for the embedded subcontrol(s). These could be either Volume, Enum or some virtual MixDevice.
  */
-class MixDevice : public QObject
+class KMIXCORE_EXPORT MixDevice : public QObject
 {
 Q_OBJECT
 

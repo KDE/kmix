@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QString>
 
+#include "kmixcore_export.h"
 
 // typedef int ControlChangeType;
 //   enum ControlChangeType {
@@ -31,9 +32,9 @@
 //   GUI // Visual changes, like "split channel" OR "show labels"    
 //   }; 
 
-class ControlChangeType: QObject
+class ControlChangeType : public QObject
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
 	enum Type
@@ -126,7 +127,7 @@ private:
   
 };
 
-class ControlManager
+class KMIXCORE_EXPORT ControlManager
 {
 public:
   static ControlManager& instance();

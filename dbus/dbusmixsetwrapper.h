@@ -23,8 +23,9 @@
 
 #include <QStringList>
 #include "core/mixer.h"
+#include "kmixcore_export.h"
 
-class DBusMixSetWrapper : public QObject
+class KMIXCORE_EXPORT DBusMixSetWrapper : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(QStringList mixers READ mixers)

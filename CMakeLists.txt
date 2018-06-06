@@ -21,6 +21,7 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMPackageConfigHelpers)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
+include(GenerateExportHeader)
 
 find_package(Qt5 ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
     Core
@@ -69,16 +70,6 @@ endif(PulseAudio_FOUND)
 find_package(Canberra)
 
 find_package(ALSA)
-if(ALSA_FOUND)
-        set(HAVE_LIBASOUND2 TRUE)
-	add_definitions(-DHAVE_LIBASOUND2)
-endif(ALSA_FOUND)
-
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
-if(MSVC)
-    include_directories( ${TAGLIB_INCLUDES} )
-endif(MSVC)
-
 
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
@@ -93,28 +84,47 @@ check_cxx_source_compiles("
 
 configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
-# TODO: is the next line really needed now?
+####################################################################################################
+########### compile definitions ####################################################################
+####################################################################################################
+
+include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+# TODO: is the next line needed now?
 include_directories("/usr/lib/oss/include")
+# TODO: is the next line really needed? Nothing seems to use anything to do with tagging.
+if (MSVC)
+  include_directories(${TAGLIB_INCLUDES})
+endif (MSVC)
+
+if (ALSA_FOUND)
+  set(HAVE_LIBASOUND2 TRUE)
+  add_definitions(-DHAVE_LIBASOUND2)
+endif (ALSA_FOUND)
+
 if (PulseAudio_FOUND)
-  include_directories(${GLIB2_INCLUDE_DIR})
-endif(PulseAudio_FOUND)
-
-add_subdirectory(doc)
-
-add_subdirectory(pics)
-add_subdirectory(profiles)
-#add_subdirectory( tests )
-
-if(PulseAudio_FOUND)
   add_definitions(-DHAVE_PULSE)
   include_directories(${PulseAudio_INCLUDE_DIRS})
-endif(PulseAudio_FOUND)
+  include_directories(${GLIB2_INCLUDE_DIR})
+endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
   add_definitions(-DHAVE_CANBERRA)
   include_directories(${CANBERRA_INCLUDE_DIRS})
 endif (CANBERRA_FOUND)
 
+####################################################################################################
+########### subdirectories #########################################################################
+####################################################################################################
+
+add_subdirectory(doc)
+add_subdirectory(pics)
+add_subdirectory(profiles)
+#add_subdirectory(tests)
+add_subdirectory(plasma)
+
+####################################################################################################
+########### definitions: logging ###################################################################
+####################################################################################################
 
 ecm_qt_declare_logging_category(kmix_debug_SRCS
                                 HEADER kmix_debug.h
@@ -122,12 +132,15 @@ ecm_qt_declare_logging_category(kmix_debug_SRCS
                                 CATEGORY_NAME org.kde.kmix)
 
 ####################################################################################################
-########### definitions: DBUSADAPTOR ###############################################################
+########### definitions: DBus adaptor ##############################################################
 ####################################################################################################
+
 set(kmix_adaptor_SRCS
-	dbus/dbusmixerwrapper.cpp
-	dbus/dbusmixsetwrapper.cpp
-	dbus/dbuscontrolwrapper.cpp)
+  dbus/dbusmixerwrapper.cpp
+  dbus/dbusmixsetwrapper.cpp
+  dbus/dbuscontrolwrapper.cpp
+)
+
 qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
 	dbus/dbuscontrolwrapper.h DBusControlWrapper )
 qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
@@ -135,237 +148,210 @@ qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
 qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
 	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
 
+install(FILES dbus/org.kde.kmix.control.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})
+install(FILES dbus/org.kde.kmix.mixer.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})
+install(FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})
 
 ####################################################################################################
 ########### definitions: backends ##################################################################
 ####################################################################################################
+
 set(kmix_backend_SRCS
-   backends/mixer_backend.cpp
-   backends/mixer_mpris2.cpp
-   )
+  backends/mixer_backend.cpp
+  backends/mixer_mpris2.cpp
+)
 
 if (HAVE_LIBASOUND2)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS}
-      backends/mixer_alsa9.cpp )
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_alsa9.cpp )
 endif (HAVE_LIBASOUND2)
 
 if (PulseAudio_FOUND)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS}
-      backends/mixer_pulse.cpp )
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp )
 endif (PulseAudio_FOUND)
 
-
-
 ####################################################################################################
-########### next target : kmix #####################################################################
+########### target: kmixcore library ###############################################################
 ####################################################################################################
 
-set(kmix_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   apps/main.cpp
-   apps/kmix.cpp
-   apps/KMixApp.cpp
-   gui/dialogbase.cpp
-   gui/dialogstatesaver.cpp
-   gui/kmixdockwidget.cpp
-   gui/kmixprefdlg.cpp
-   gui/viewbase.cpp
-   gui/viewdockareapopup.cpp
-   gui/viewsliders.cpp
-   gui/mixdevicewidget.cpp
-   gui/mdwmoveaction.cpp
-   gui/mdwslider.cpp
-   gui/mdwenum.cpp
-   gui/kmixerwidget.cpp
-   gui/ksmallslider.cpp
-   gui/verticaltext.cpp
-   gui/volumeslider.cpp
-   gui/kmixtoolbox.cpp
-   gui/dialogaddview.cpp
-   gui/dialogviewconfiguration.cpp
-   gui/dialogselectmaster.cpp
-   gui/dialogchoosebackends.cpp
-   gui/guiprofile.cpp
-   ${kmix_OSD_SRCS}
-   core/MediaController.cpp
-   core/mixertoolbox.cpp
-   core/kmixdevicemanager.cpp
-   core/ControlManager.cpp
-#   core/ControlPool.cpp
-   core/GlobalConfig.cpp
-   core/MasterControl.cpp
-   core/mixer.cpp
-   core/mixset.cpp
-   core/mixdevice.cpp
-   core/mixdevicecomposite.cpp
-   core/volume.cpp
-   ${kmix_debug_SRCS}
-   )
+set(kmixcore_SRCS
+  core/MediaController.cpp
+  core/mixertoolbox.cpp
+  core/kmixdevicemanager.cpp
+  core/ControlManager.cpp
+  core/GlobalConfig.cpp
+  core/MasterControl.cpp
+  core/mixer.cpp
+  core/mixset.cpp
+  core/mixdevice.cpp
+  core/mixdevicecomposite.cpp
+  core/volume.cpp
+)
 
-kf5_add_kdeinit_executable(kmix ${kmix_KDEINIT_SRCS})
-target_link_libraries(kdeinit_kmix
-    KF5::I18n
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::ConfigWidgets
-    KF5::IconThemes
-    KF5::DBusAddons
-    KF5::GlobalAccel
-    KF5::XmlGui
-    KF5::Notifications
-    KF5::WindowSystem
+add_library(kmixcore SHARED
+  ${kmixcore_SRCS}
+  ${kmix_adaptor_SRCS}
+  ${kmix_backend_SRCS}
+  ${kmix_debug_SRCS}
+)
 
+target_link_libraries(kmixcore
     Qt5::Core
     Qt5::Widgets
     Qt5::DBus
-    Qt5::Xml
+    KF5::I18n
+    KF5::ConfigCore
+    KF5::ConfigGui
 )
 
+generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_export.h)
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmix ${ALSA_LIBRARIES})
+    target_link_libraries(kmixcore ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
 if (PulseAudio_FOUND)
-  target_link_libraries(kdeinit_kmix ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+  target_link_libraries(kmixcore ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
-  target_link_libraries(kdeinit_kmix ${CANBERRA_LIBRARIES})
+  target_link_libraries(kmixcore ${CANBERRA_LIBRARIES})
 endif (CANBERRA_FOUND)
 
-install(TARGETS kdeinit_kmix DESTINATION ${KDE_INSTALL_LIBDIR} )
+install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR})
 
-target_link_libraries( kmix kdeinit_kmix )
+####################################################################################################
+########### target: kmixgui library ################################################################
+####################################################################################################
+
+set(kmixgui_SRCS
+  gui/dialogbase.cpp
+  gui/dialogstatesaver.cpp
+  gui/kmixdockwidget.cpp
+  gui/kmixprefdlg.cpp
+  gui/viewbase.cpp
+  gui/viewdockareapopup.cpp
+  gui/viewsliders.cpp
+  gui/mixdevicewidget.cpp
+  gui/mdwmoveaction.cpp
+  gui/mdwslider.cpp
+  gui/mdwenum.cpp
+  gui/kmixerwidget.cpp
+  gui/ksmallslider.cpp
+  gui/verticaltext.cpp
+  gui/volumeslider.cpp
+  gui/kmixtoolbox.cpp
+  gui/dialogaddview.cpp
+  gui/dialogviewconfiguration.cpp
+  gui/dialogselectmaster.cpp
+  gui/dialogchoosebackends.cpp
+  gui/guiprofile.cpp
+)
+
+add_library(kmixgui STATIC
+  ${kmixgui_SRCS}
+  ${kmix_debug_SRCS}
+)
+
+target_link_libraries(kmixgui
+  kmixcore
+  Qt5::Core
+  Qt5::Widgets
+  KF5::I18n
+  KF5::ConfigCore
+  KF5::ConfigGui
+  KF5::IconThemes
+  KF5::GlobalAccel
+  KF5::Notifications
+  KF5::XmlGui
+  KF5::WindowSystem
+)
+
+####################################################################################################
+########### target: kmix ###########################################################################
+####################################################################################################
+
+set(kmix_SRCS
+  apps/main.cpp
+  apps/kmix.cpp
+  apps/KMixApp.cpp
+  ${kmix_debug_SRCS}
+)
+
+kf5_add_kdeinit_executable(kmix ${kmix_SRCS})
+target_link_libraries(kdeinit_kmix
+  kmixcore
+  kmixgui
+  KF5::I18n
+  KF5::IconThemes
+  KF5::DBusAddons
+  KF5::GlobalAccel
+  KF5::XmlGui
+  KF5::Notifications
+  KF5::WindowSystem
+)
+
+install(TARGETS kdeinit_kmix DESTINATION ${KDE_INSTALL_LIBDIR})
+target_link_libraries( kmix kdeinit_kmix)
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES org.kde.kmix.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
-
-
+install(FILES desktop/kmixui.rc DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kmix)
+install(PROGRAMS desktop/org.kde.kmix.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(FILES desktop/org.kde.kmix.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+install(FILES desktop/kmix_autostart.desktop DESTINATION ${KDE_INSTALL_AUTOSTARTDIR})
+install(FILES desktop/kmix.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFY5RCDIR} )
 
 ####################################################################################################
-########### next target : kmixd ####################################################################
+########### target: kmixd ##########################################################################
 ####################################################################################################
 
- set(kded_kmixd_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-    apps/kmixd.cpp
-    core/ControlManager.cpp
-#    core/ControlPool.cpp
-    core/GlobalConfig.cpp
-    core/MasterControl.cpp
-    core/MediaController.cpp
-    core/mixer.cpp
-    core/mixset.cpp
-    core/mixdevice.cpp
-    core/volume.cpp
-    core/mixertoolbox.cpp
-    core/kmixdevicemanager.cpp
-    ${kmix_debug_SRCS}
-    )
+set(kmixd_SRCS
+  apps/kmixd.cpp
+  ${kmix_debug_SRCS}
+)
 
-add_library(kmixd MODULE ${kded_kmixd_SRCS})
-kcoreaddons_desktop_to_json(kmixd kmixd.desktop)
+add_library(kmixd MODULE ${kmixd_SRCS})
+kcoreaddons_desktop_to_json(kmixd desktop/kmixd.desktop)
 
 target_link_libraries(kmixd
-    KF5::I18n
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::CoreAddons
-    KF5::Solid
-    KF5::DBusAddons
-    KF5::CoreAddons
-
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::DBus
-    Qt5::Xml
+  kmixcore
+  KF5::I18n
+  KF5::CoreAddons
+  KF5::DBusAddons
 )
 
+install(TARGETS kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded)
 
-if (HAVE_LIBASOUND2)
-    target_link_libraries(kmixd ${ALSA_LIBRARIES})
-endif (HAVE_LIBASOUND2)
+####################################################################################################
+########### target: kmixctrl #######################################################################
+####################################################################################################
 
-if (PulseAudio_FOUND)
-    target_link_libraries(kmixd ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PulseAudio_FOUND)
-
-if (CANBERRA_FOUND)
-  target_link_libraries(kmixd ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
-
-install(TARGETS kmixd
-        DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded
+set(kmixctrl_SRCS
+  apps/kmixctrl.cpp
+  ${kmix_debug_SRCS}
 )
 
-####################################################################################################
-########### next target : kmixctrl #################################################################
-####################################################################################################
-
-set(kmixctrl_KDEINIT_SRCS ${kmix_adaptor_SRCS} ${kmix_backend_SRCS}
-   apps/kmixctrl.cpp
-   core/ControlManager.cpp
-#   core/ControlPool.cpp
-   core/GlobalConfig.cpp
-   core/MasterControl.cpp
-   core/MediaController.cpp
-   core/mixer.cpp
-   core/mixset.cpp
-   core/mixdevice.cpp
-   core/volume.cpp
-   core/mixertoolbox.cpp
-   ${kmix_debug_SRCS}
-   # There is no actual need for kmixdevicemanager.cpp (hotplug makes no sense in kmixctrl), but
-   # the dependency comes in via mixertoolbox.cpp
-   core/kmixdevicemanager.cpp
-   )
-
-# gui/guiprofile.cpp
-
-
-KF5_ADD_KDEINIT_EXECUTABLE(kmixctrl ${kmixctrl_KDEINIT_SRCS})
+kf5_add_kdeinit_executable(kmixctrl ${kmixctrl_SRCS})
 target_link_libraries(kdeinit_kmixctrl
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::CoreAddons
-    KF5::I18n
-
-    Qt5::Core
-    Qt5::DBus
-    Qt5::Widgets
+  kmixcore
+  KF5::I18n
+  KF5::CoreAddons
 )
 
-if (HAVE_LIBASOUND2)
-    target_link_libraries(kdeinit_kmixctrl ${ALSA_LIBRARIES})
-endif (HAVE_LIBASOUND2)
+install(TARGETS kdeinit_kmixctrl DESTINATION ${KDE_INSTALL_LIBDIR})
+target_link_libraries(kmixctrl kdeinit_kmixctrl)
+install(TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
-if (PulseAudio_FOUND)
-    target_link_libraries(kdeinit_kmixctrl ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PulseAudio_FOUND)
-
-if (CANBERRA_FOUND)
-  target_link_libraries(kdeinit_kmixctrl ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
-
-########### next target ###############
-add_subdirectory( plasma )
-
+install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 ####################################################################################################
-########### INSTALL RULES ##########################################################################
+########### other installs #########################################################################
 ####################################################################################################
-install( TARGETS kdeinit_kmixctrl  DESTINATION ${KDE_INSTALL_LIBDIR} )
 
-target_link_libraries( kmixctrl kdeinit_kmixctrl )
-install( TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} )
+install(PROGRAMS apps/kmixremote DESTINATION ${KDE_INSTALL_BINDIR})
+install(FILES desktop/restore_kmix_volumes.desktop DESTINATION ${KDE_INSTALL_AUTOSTARTDIR})
 
-install( PROGRAMS org.kde.kmix.desktop  DESTINATION ${KDE_INSTALL_APPDIR} )
-install( PROGRAMS apps/kmixremote DESTINATION ${KDE_INSTALL_BINDIR} )
-install( FILES restore_kmix_volumes.desktop  DESTINATION ${KDE_INSTALL_AUTOSTARTDIR} )
-install( FILES kmix_autostart.desktop  DESTINATION ${KDE_INSTALL_AUTOSTARTDIR} )
-install( FILES kmixui.rc  DESTINATION  ${KDE_INSTALL_KXMLGUI5DIR}/kmix )
-install( FILES kmixctrl_restore.desktop  DESTINATION  ${KDE_INSTALL_KSERVICES5DIR} )
-install( FILES dbus/org.kde.kmix.control.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
-install( FILES dbus/org.kde.kmix.mixer.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
-install( FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
+####################################################################################################
+########### end ####################################################################################
+####################################################################################################
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

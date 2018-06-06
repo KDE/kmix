@@ -27,10 +27,12 @@
 #include <QList>
 #include <QMap>
 
+#include "kmixcore_export.h"
+
 class VolumeChannel;
 
 
-class Volume
+class KMIXCORE_EXPORT Volume
 {
 
 friend class MixDevice;
@@ -181,7 +183,7 @@ private:
     bool _isCapture;
 };
 
-class VolumeChannel
+class KMIXCORE_EXPORT VolumeChannel
 {  
 public:
   VolumeChannel();

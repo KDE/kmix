@@ -27,6 +27,8 @@
 #include <QRegExp>
 #include <QString>
 
+#include "kmixcore_export.h"
+
 class Mixer;
 
 /**
@@ -35,7 +37,7 @@ class Mixer;
  * The reason, why it is not put in a common base class is, that the classes are
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
  */
-class MixerToolBox : public QObject
+class KMIXCORE_EXPORT MixerToolBox : public QObject
 {
     Q_OBJECT
 

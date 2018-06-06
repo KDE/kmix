@@ -31,10 +31,12 @@
 
 #include <QString>
 
+#include "kmixcore_export.h"
+
 /**
  * A MediaController controls exactly one Media Player. You can think of it as a single control, like PCM.
  */
-class MediaController
+class KMIXCORE_EXPORT MediaController
 {
 public:
     enum PlayState { PlayPaused, PlayPlaying, PlayStopped, PlayUnknown };

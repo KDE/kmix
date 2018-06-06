@@ -24,8 +24,9 @@
 #include <QList>
 
 #include "core/mixdevice.h"
+#include "kmixcore_export.h"
 
-class MixSet : public QList <shared_ptr<MixDevice> >
+class KMIXCORE_EXPORT MixSet : public QList<shared_ptr<MixDevice> >
 {
    public:
 	~MixSet();

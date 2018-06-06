@@ -9,6 +9,7 @@
 #define MASTERCONTROL_H_
 
 #include "config.h"
+#include "kmixcore_export.h"
 
 #if defined(HAVE_STD_SHARED_PTR)
 #include <memory>
@@ -20,7 +21,7 @@ using std::tr1::shared_ptr;
 
 #include <QString>
 
-class MasterControl
+class KMIXCORE_EXPORT MasterControl
 {
 public:
     MasterControl();

@@ -23,7 +23,9 @@
 
 #include <QObject>
 
-class KMixDeviceManager : public QObject
+#include "kmixcore_export.h"
+
+class KMIXCORE_EXPORT KMixDeviceManager : public QObject
 {
   Q_OBJECT
 

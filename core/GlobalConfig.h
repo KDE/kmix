@@ -25,7 +25,9 @@
 
 #include <KConfigSkeleton>
 
-class GlobalConfigData
+#include "kmixcore_export.h"
+
+class KMIXCORE_EXPORT GlobalConfigData
 {
 	friend class GlobalConfig;
 
@@ -71,7 +73,7 @@ private:
 
 };
 
-class GlobalConfig: public KConfigSkeleton
+class KMIXCORE_EXPORT GlobalConfig : public KConfigSkeleton
 {
 private:
 	static GlobalConfig* instanceObj;
