@@ -2,11 +2,11 @@
 Type=Service
 Icon=kmix
 Name=KMix Daemon
+Name[en_GB]=KMix Daemon
+Name[x-test]=xxKMix Daemonxx
 Comment=Monitors sound devices
-#X-KDE-autostart-phase=1
-#X-DBUS-StartupType=Unique
-#X-KDE-ServiceTypes=
-#X-KDE-StartupNotify=false
+Comment[en_GB]=Monitors sound devices
+Comment[x-test]=xxMonitors sound devicesxx
 
 # KDED registration
 X-KDE-ServiceTypes=KDEDModule
