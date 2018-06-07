@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(kmix)
+set(PROJECT_VERSION "5.13.80")
+set(PROJECT_VERSION_MAJOR 5)
 
 add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 
@@ -203,6 +205,7 @@ target_link_libraries(kmixcore
     KF5::ConfigGui
 )
 
+set_target_properties(kmixcore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
 generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_export.h)
 
 if (HAVE_LIBASOUND2)
@@ -217,7 +220,7 @@ if (CANBERRA_FOUND)
   target_link_libraries(kmixcore ${CANBERRA_LIBRARIES})
 endif (CANBERRA_FOUND)
 
-install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR})
+install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR} LIBRARY NAMELINK_SKIP)
 
 ####################################################################################################
 ########### target: kmixgui library ################################################################
