@@ -2,10 +2,14 @@
 Type=Service
 Icon=kmix
 Name=KMix Daemon
-Name[en_GB]=KMix Daemon
+Name[ca]=Dimoni del KMix
+Name[pt]=Servidor do KMix
+Name[uk]=Фонова служба KMix
 Name[x-test]=xxKMix Daemonxx
 Comment=Monitors sound devices
-Comment[en_GB]=Monitors sound devices
+Comment[ca]=Controla els dispositius de so
+Comment[pt]=Vigia os dispositivos de som
+Comment[uk]=Стежить за звуковими пристроями
 Comment[x-test]=xxMonitors sound devicesxx
 
 # KDED registration
