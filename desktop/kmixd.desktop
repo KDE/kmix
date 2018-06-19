@@ -32,6 +32,6 @@ Comment[x-test]=xxMonitors sound devicesxx
 
 # KDED registration
 X-KDE-ServiceTypes=KDEDModule
-X-KDE-Library=kded_kmixd
+X-KDE-Library=kmixd
 X-KDE-Kded-autoload=true
 OnlyShowIn=KDE;
