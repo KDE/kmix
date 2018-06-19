@@ -13,6 +13,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set (QT_MIN_VERSION "5.4.0")
 set (KF5_MIN_VERSION "5.14.0")
 set (ECM_MIN_VERSION "5.14.0")
+set (PA_MIN_VERSION "0.9.16")
 
 find_package(ECM ${ECM_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
@@ -60,8 +61,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # then in accordance with ECM conventions its output variables match the
 # case of the package (therefore PulseAudio_FOUND etc).  The variables used
 # in this file therefore need to be updated to suit.
-set(PA_VER "0.9.16")
-find_package(PulseAudio "${PA_VER}")
+find_package(PulseAudio "${PA_MIN_VERSION}")
 
 # PulseAudio requires GLib2
 if (PulseAudio_FOUND)
@@ -197,10 +197,13 @@ add_library(kmixcore SHARED
 )
 
 target_link_libraries(kmixcore
+  PUBLIC
     Qt5::Core
     Qt5::Widgets
+  PRIVATE
     Qt5::DBus
     KF5::I18n
+  PUBLIC
     KF5::ConfigCore
     KF5::ConfigGui
 )
@@ -209,15 +212,15 @@ set_target_properties(kmixcore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION $
 generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_export.h)
 
 if (HAVE_LIBASOUND2)
-    target_link_libraries(kmixcore ${ALSA_LIBRARIES})
+  target_link_libraries(kmixcore PRIVATE ${ALSA_LIBRARIES})
 endif (HAVE_LIBASOUND2)
 
 if (PulseAudio_FOUND)
-  target_link_libraries(kmixcore ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+  target_link_libraries(kmixcore PRIVATE ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
-  target_link_libraries(kmixcore ${CANBERRA_LIBRARIES})
+  target_link_libraries(kmixcore PRIVATE ${CANBERRA_LIBRARIES})
 endif (CANBERRA_FOUND)
 
 install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR} LIBRARY NAMELINK_SKIP)
@@ -304,7 +307,7 @@ install(FILES desktop/kmix_autostart.desktop DESTINATION ${KDE_INSTALL_AUTOSTART
 install(FILES desktop/kmix.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFY5RCDIR} )
 
 ####################################################################################################
-########### target: kmixd ##########################################################################
+########### target: kded_kmixd #####################################################################
 ####################################################################################################
 
 set(kmixd_SRCS
@@ -312,17 +315,18 @@ set(kmixd_SRCS
   ${kmix_debug_SRCS}
 )
 
-add_library(kmixd MODULE ${kmixd_SRCS})
-kcoreaddons_desktop_to_json(kmixd desktop/kmixd.desktop)
+add_library(kded_kmixd MODULE ${kmixd_SRCS})
+set_target_properties(kded_kmixd PROPERTIES OUTPUT_NAME kmixd)
+kcoreaddons_desktop_to_json(kded_kmixd desktop/kmixd.desktop)
 
-target_link_libraries(kmixd
+target_link_libraries(kded_kmixd
   kmixcore
   KF5::I18n
   KF5::CoreAddons
   KF5::DBusAddons
 )
 
-install(TARGETS kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded)
+install(TARGETS kded_kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded)
 
 ####################################################################################################
 ########### target: kmixctrl #######################################################################
