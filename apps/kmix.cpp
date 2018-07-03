@@ -179,7 +179,7 @@ void KMixWindow::initActions()
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
 	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
-	action->setText(i18n("Audio Setup"));
+	action->setText(i18n("Audio Setup..."));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
 
 	action = actionCollection()->addAction(QStringLiteral("hwinfo"));

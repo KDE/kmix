@@ -173,15 +173,16 @@ void KMixDockWidget::createMenuActions()
     }
 
     // Put "Select Master Channel" dialog in context menu
-    QAction *action = new QAction(i18n("Select Master Channel..."), this);
-    action->setData("select_master");
-    addAction("select_master", action);
+    QAction *action = _kmixMainWindow->actionCollection()->action("select_master");
     action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
-    connect(action, SIGNAL(triggered(bool)), _kmixMainWindow, SLOT(slotSelectMaster()));
-    menu->addAction( action );
+    menu->addAction(action);
 
-    //Context menu entry to access phonon settings
+    // Context menu entry to access Phonon settings
     menu->addAction(_kmixMainWindow->actionCollection()->action("launch_kdesoundsetup"));
+
+    // Context menu entry to access KMix settings
+    // action name from tier3/kconfigwidgets/src/kstandardaction_p.h
+    menu->addAction(_kmixMainWindow->actionCollection()->action("options_configure"));
 }
 
 void
