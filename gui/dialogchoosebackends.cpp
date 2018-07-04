@@ -21,12 +21,10 @@
 
 #include "gui/dialogchoosebackends.h"
 
-#include <QCheckBox>
-#include <QLabel>
-#include <QSet>
-#include <qscrollarea.h>
+#include <qlabel.h>
+#include <qset.h>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <qlistwidget.h>
 
 #include <klocalizedstring.h>
 
@@ -49,16 +47,8 @@ DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>&
 //   	setButtons( None );
 
    _layout = 0;
-   m_vboxForScrollView = 0;
-   m_scrollableChannelSelector = 0;
    createWidgets(mixerIds);
 
-}
-
-DialogChooseBackends::~DialogChooseBackends()
-{
-   delete _layout;
-   delete m_vboxForScrollView;
 }
 
 /**
@@ -66,23 +56,19 @@ DialogChooseBackends::~DialogChooseBackends()
  */
 void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
 {
-	m_mainFrame = this;
-//    m_mainFrame = new QFrame( this );
-//    setMainWidget( m_mainFrame );
-    _layout = new QVBoxLayout(m_mainFrame);
+    _layout = new QVBoxLayout(this);
     _layout->setMargin(0);
 
     if ( !Mixer::mixers().isEmpty() )
     {
-        QLabel *qlbl = new QLabel( i18n("Select the Mixers to display in the sound menu"), m_mainFrame );
-        _layout->addWidget(qlbl);
-    
+        m_listLabel = new QLabel( i18n("Mixers to show in the popup volume control:"), this);
+        _layout->addWidget(m_listLabel);
         createPage(mixerIds);
     }
     else
     {
-        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), m_mainFrame );
-        _layout->addWidget(qlbl);
+        m_listLabel = new QLabel( i18n("No sound card is installed or currently plugged in."), this);
+        _layout->addWidget(m_listLabel);
     }
 }
 
@@ -93,44 +79,46 @@ void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
  */
 void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 {
-	m_scrollableChannelSelector = new QScrollArea(m_mainFrame);
-
+	m_mixerList = new QListWidget(this);
+	m_mixerList->setUniformItemSizes(true);
+	m_mixerList->setAlternatingRowColors(true);
+	m_mixerList->setSelectionMode(QAbstractItemView::NoSelection);
+	m_mixerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #ifndef QT_NO_ACCESSIBILITY
-	m_scrollableChannelSelector->setAccessibleName(i18n("Select Mixers"));
+	m_mixerList->setAccessibleName(i18n("Select Mixers"));
 #endif
+	m_listLabel->setBuddy(m_mixerList);
 
-	_layout->addWidget(m_scrollableChannelSelector);
-
-	m_vboxForScrollView = new QWidget();
-	QVBoxLayout *vbl = new QVBoxLayout(m_vboxForScrollView);
-	vbl->setSpacing(0);
+	_layout->addWidget(m_mixerList);
 
 	bool hasMixerFilter = !mixerIds.isEmpty();
 	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
 	foreach ( Mixer* mixer, Mixer::mixers())
 	{
-		QCheckBox* qrb = new QCheckBox(mixer->readableName(true), m_vboxForScrollView);
-		qrb->setObjectName(mixer->id());// The object name is used as ID here: see getChosenBackends()
-		connect(qrb, SIGNAL(stateChanged(int)), SLOT(backendsModifiedSlot()));
-                vbl->addWidget(qrb);
-		checkboxes.append(qrb);
-		bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
-		qrb->setChecked(mixerShouldBeShown);
+            QListWidgetItem *item = new QListWidgetItem(m_mixerList);
+            item->setText(mixer->readableName(true));
+            item->setSizeHint(QSize(1, 16));
+            item->setFlags(Qt::ItemIsEnabled|Qt::ItemIsUserCheckable|Qt::ItemNeverHasChildren);
+            const bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
+            item->setCheckState(mixerShouldBeShown ? Qt::Checked : Qt::Unchecked);
+            item->setData(Qt::UserRole, mixer->id());
 	}
 
-	m_scrollableChannelSelector->setWidget(m_vboxForScrollView);
-	m_vboxForScrollView->show();  // show() is necessary starting with the second call to createPage()
+        connect(m_mixerList, SIGNAL(itemChanged(QListWidgetItem *)), SLOT(backendsModifiedSlot()));
+        connect(m_mixerList, SIGNAL(itemActivated(QListWidgetItem *)), SLOT(itemActivatedSlot(QListWidgetItem *)));
 }
 
 QSet<QString> DialogChooseBackends::getChosenBackends()
 {
 	QSet<QString> newMixerList;
-    foreach ( QCheckBox* qcb, checkboxes)
-    {
-    	if (qcb->isChecked())
-    	{
-    		newMixerList.insert(qcb->objectName());
-    		qCDebug(KMIX_LOG) << "apply found " << qcb->objectName();
+        for (int row = 0; row<m_mixerList->count(); ++row)
+        {
+            QListWidgetItem *item = m_mixerList->item(row);
+            if (item->checkState()==Qt::Checked)
+            {
+		const QString mixer = item->data(Qt::UserRole).toString();
+		newMixerList.insert(mixer);
+		qCDebug(KMIX_LOG) << "apply found " << mixer;
     	}
     }
     qCDebug(KMIX_LOG) << "New list is " << newMixerList;
@@ -160,3 +148,7 @@ void DialogChooseBackends::backendsModifiedSlot()
 }
 
 
+void DialogChooseBackends::itemActivatedSlot(QListWidgetItem *item)
+{
+	item->setCheckState(item->checkState()==Qt::Checked ? Qt::Unchecked : Qt::Checked);
+}

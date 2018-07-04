@@ -21,21 +21,23 @@
 #ifndef DIALOGCHOOSEBACKENDS_H
 #define DIALOGCHOOSEBACKENDS_H
 
-#include <qcheckbox.h>
-#include <QList>
-class QScrollArea;
-class QVBoxLayout;
+#include <qwidget.h>
 
-class KComboBox;
+class QLabel;
+class QVBoxLayout;
+class QListWidget;
+class QListWidgetItem;
 
 class Mixer;
 
-class DialogChooseBackends: public QWidget
+
+class DialogChooseBackends : public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
 	DialogChooseBackends(QWidget* parent, const QSet<QString>& backends);
-	~DialogChooseBackends();
+	virtual ~DialogChooseBackends() = default;
 
 	QSet<QString> getChosenBackends();
 	bool getAndResetModifyFlag();
@@ -47,15 +49,15 @@ signals:
 private:
 	void createWidgets(const QSet<QString>& backends);
 	void createPage(const QSet<QString>& backends);
+
+	QListWidget *m_mixerList;
+	QLabel *m_listLabel;
 	QVBoxLayout* _layout;
-	QScrollArea* m_scrollableChannelSelector;
-	QWidget *m_vboxForScrollView;
-	QList<QCheckBox*> checkboxes;
-	QWidget *m_mainFrame;
 	bool modified;
 
 private slots:
 	void backendsModifiedSlot();
+	void itemActivatedSlot(QListWidgetItem *item);
 };
 
 #endif

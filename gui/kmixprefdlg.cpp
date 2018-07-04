@@ -77,7 +77,7 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 
 	generalPage = addPage(m_generalTab, i18n("General"), "configure");
 	startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
-	soundmenuPage = addPage(m_controlsTab, i18n("Sound Menu"), "audio-volume-high");
+	soundmenuPage = addPage(m_controlsTab, i18n("Volume Control"), "audio-volume-high");
 
 	new DialogStateSaver(this);
 }
@@ -260,11 +260,12 @@ void KMixPrefDlg::createControlsTab()
 	layoutControlsTab = new QVBoxLayout(m_controlsTab);
 	layoutControlsTab->setMargin(0);
 	layoutControlsTab->setSpacing(DialogBase::verticalSpacing());
-	m_dockingChk = new QCheckBox(i18n("&Dock in system tray"), m_controlsTab);
+	m_dockingChk = new QCheckBox(i18n("Dock in system tray"), m_controlsTab);
 
-	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Docks the mixer into the KDE system tray"),
+	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Dock the mixer into the system tray. Click on it to open the popup volume control."),
 		"AllowDocking");
 
+	layoutControlsTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
 	replaceBackendsInTab();
 }
 
