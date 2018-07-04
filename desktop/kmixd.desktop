@@ -16,6 +16,7 @@ Name[pt]=Servidor do KMix
 Name[sv]=Kmix-demon
 Name[uk]=Фонова служба KMix
 Name[x-test]=xxKMix Daemonxx
+Name[zh_CN]=KMix 守护进程
 Comment=Monitors sound devices
 Comment[ca]=Controla els dispositius de so
 Comment[ca@valencia]=Controla els dispositius de so
