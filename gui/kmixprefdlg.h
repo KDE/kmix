@@ -29,11 +29,12 @@ class KMixPrefWidget;
 class QBoxLayout;
 class QCheckBox;
 class QFrame;
-#include <QGridLayout>
-class QLabel;
+class QGridLayout;
 class QRadioButton;
 class QShowEvent;
 class QWidget;
+class QSpacerItem;
+class KMessageWidget;
 
 #include "core/GlobalConfig.h"
 #include "gui/dialogchoosebackends.h"
@@ -100,17 +101,17 @@ private:
 	QFrame *m_controlsTab;
 
 	QCheckBox *m_dockingChk;
-	QLabel *dynamicControlsRestoreWarning;
+	KMessageWidget *dynamicControlsRestoreWarning;
 	QCheckBox *m_showTicks;
 	QCheckBox *m_showLabels;
 	QCheckBox* m_showOSD;
 	QCheckBox *m_onLogin;
 	QCheckBox *allowAutostart;
-	QLabel *allowAutostartWarning;
+	KMessageWidget *allowAutostartWarning;
 	QCheckBox *m_beepOnVolumeChange;
 	QCheckBox *m_volumeOverdrive;
-	QLabel *volumeFeedbackWarning;
-	QLabel *volumeOverdriveWarning;
+	KMessageWidget *volumeFeedbackWarning;
+	KMessageWidget *volumeOverdriveWarning;
 
 	QBoxLayout *layoutControlsTab;
 	QBoxLayout *layoutStartupTab;

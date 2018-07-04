@@ -23,13 +23,14 @@
 #include "gui/kmixprefdlg.h"
 
 #include <qbuttongroup.h>
-#include <QCheckBox>
-#include <QLabel>
+#include <qcheckbox.h>
+#include <qlabel.h>
 #include <qradiobutton.h>
-#include <QStandardPaths>
+#include <qgroupbox.h>
 
-#include <KConfig>
+#include <kconfig.h>
 #include <klocalizedstring.h>
+#include <kmessagewidget.h>
 
 #include "dialogbase.h"
 #include "dialogstatesaver.h"
@@ -75,7 +76,7 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	updateWidgets(); // I thought KConfigDialog would call this, but I saw during a gdb session that it does not do so.
 
 	generalPage = addPage(m_generalTab, i18n("General"), "configure");
-	startupPage = addPage(m_startupTab, i18n("Start"), "preferences-system-login");
+	startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
 	soundmenuPage = addPage(m_controlsTab, i18n("Sound Menu"), "audio-volume-high");
 
 	new DialogStateSaver(this);
@@ -113,23 +114,34 @@ void KMixPrefDlg::createStartupTab()
 	layoutStartupTab->setMargin(0);
 	layoutStartupTab->setSpacing(DialogBase::verticalSpacing());
 
-	QLabel* label = new QLabel(i18n("Startup"), m_startupTab);
-	layoutStartupTab->addWidget(label);
-
-	m_onLogin = new QCheckBox(i18n("Restore volumes on login"), m_startupTab);
-	addWidgetToLayout(m_onLogin, layoutStartupTab, 10, i18n("Restore all volume levels and switches."), "startkdeRestore");
-
-	dynamicControlsRestoreWarning = new QLabel(
-		i18n("Dynamic controls from Pulseaudio and MPRIS2 will not be restored."), m_startupTab);
-	dynamicControlsRestoreWarning->setEnabled(false);
-	addWidgetToLayout(dynamicControlsRestoreWarning, layoutStartupTab, 10, "", "");
-
-	allowAutostart = new QCheckBox(i18n("Autostart"), m_startupTab);
+	allowAutostart = new QCheckBox(i18n("Start KMix on desktop startup"), m_startupTab);
 	addWidgetToLayout(allowAutostart, layoutStartupTab, 10,
-		i18n("Enables the KMix autostart service (kmix_autostart.desktop)"), "AutoStart");
+			  i18n("Start KMix automatically when the desktop starts."), "AutoStart");
 
-    allowAutostartWarning = new QLabel("",	m_startupTab); // actual text is added later
-	addWidgetToLayout(allowAutostartWarning, layoutStartupTab, 10, "", "");
+	allowAutostartWarning = new KMessageWidget(
+		i18n("Autostart will not work, because the autostart file kmix_autostart.desktop is missing. Check that KMix is installed correctly."), m_startupTab);
+	allowAutostartWarning->setIcon(QIcon::fromTheme("dialog-error"));
+	allowAutostartWarning->setMessageType(KMessageWidget::Error);
+	allowAutostartWarning->setCloseButtonVisible(false);
+	allowAutostartWarning->setWordWrap(true);
+	allowAutostartWarning->setVisible(false);
+	addWidgetToLayout(allowAutostartWarning, layoutStartupTab, 2, "", "");
+
+	layoutStartupTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
+
+	m_onLogin = new QCheckBox(i18n("Restore volumes on desktop startup"), m_startupTab);
+	addWidgetToLayout(m_onLogin, layoutStartupTab, 10,
+			  i18n("Restore all mixer volume levels and switches when the desktop starts."), "startkdeRestore");
+
+	dynamicControlsRestoreWarning = new KMessageWidget(
+		i18n("Dynamic controls from PulseAudio and MPRIS2 will not be restored."), m_startupTab);
+	dynamicControlsRestoreWarning->setIcon(QIcon::fromTheme("dialog-warning"));
+	dynamicControlsRestoreWarning->setMessageType(KMessageWidget::Warning);
+	dynamicControlsRestoreWarning->setCloseButtonVisible(false);
+	dynamicControlsRestoreWarning->setWordWrap(true);
+	dynamicControlsRestoreWarning->setVisible(false);
+	addWidgetToLayout(dynamicControlsRestoreWarning, layoutStartupTab, 2, "", "");
+
 	layoutStartupTab->addStretch();
 }
 
@@ -182,27 +194,40 @@ void KMixPrefDlg::createGeneralTab()
 	layout->setSpacing(DialogBase::verticalSpacing());
 
 	// --- Behavior ---------------------------------------------------------
-	QLabel* label = new QLabel(i18n("Behavior"), m_generalTab);
-	layout->addWidget(label);
+	QGroupBox *grp = new QGroupBox(i18n("Behavior"), m_generalTab);
+	grp->setFlat(true);
+	layout->addWidget(grp);
 
 	// [CONFIG]
-	m_beepOnVolumeChange = new QCheckBox(i18n("Volume Feedback"), m_generalTab);
+	m_beepOnVolumeChange = new QCheckBox(i18n("Volume feedback"), m_generalTab);
 	addWidgetToLayout(m_beepOnVolumeChange, layout, 10, "", "VolumeFeedback");
 
-	volumeFeedbackWarning = new QLabel(i18n("Volume feedback is only available for Pulseaudio."), m_generalTab);
-	volumeFeedbackWarning->setEnabled(false);
-	addWidgetToLayout(volumeFeedbackWarning, layout, 20, "", "");
+	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), m_generalTab);
+	addWidgetToLayout(m_volumeOverdrive, layout, 10, i18nc("@info:tooltip", "Raise the maximum volume to 150%"), "VolumeOverdrive");
 
-	// [CONFIG]
-	m_volumeOverdrive = new QCheckBox(i18n("Volume Overdrive"), m_generalTab);
-	addWidgetToLayout(m_volumeOverdrive, layout, 10, i18nc("@info:tooltip", "Raise volume maximum to 150% (PulseAudio only)"), "VolumeOverdrive");
-	volumeOverdriveWarning = new QLabel(i18n("You must restart KMix for this setting to take effect."), m_generalTab);
-	volumeOverdriveWarning->setEnabled(false);
-	addWidgetToLayout(volumeOverdriveWarning, layout, 20, "", "");
+	volumeFeedbackWarning = new KMessageWidget(
+		i18n("Volume feedback and volume overdrive are only available for PulseAudio."), m_generalTab);
+	volumeFeedbackWarning->setIcon(QIcon::fromTheme("dialog-warning"));
+	volumeFeedbackWarning->setMessageType(KMessageWidget::Warning);
+	volumeFeedbackWarning->setCloseButtonVisible(false);
+	volumeFeedbackWarning->setWordWrap(true);
+	volumeFeedbackWarning->setVisible(false);
+	addWidgetToLayout(volumeFeedbackWarning, layout, 2, "", "");
+
+	volumeOverdriveWarning = new KMessageWidget(
+		i18n("KMix must be restarted for the Volume Overdrive setting to take effect."), m_generalTab);
+	volumeOverdriveWarning->setIcon(QIcon::fromTheme("dialog-information"));
+	volumeOverdriveWarning->setMessageType(KMessageWidget::Information);
+	volumeOverdriveWarning->setCloseButtonVisible(false);
+	volumeOverdriveWarning->setWordWrap(true);
+	volumeOverdriveWarning->setVisible(false);
+	addWidgetToLayout(volumeOverdriveWarning, layout, 2, "", "");
 
 	// --- Visual ---------------------------------------------------------
-	QLabel* label2 = new QLabel(i18n("Visual"), m_generalTab);
-	layout->addWidget(label2);
+	layout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
+	grp = new QGroupBox(i18n("Visual"), m_generalTab);
+	grp->setFlat(true);
+	layout->addWidget(grp);
 
 	// [CONFIG]
 	m_showTicks = new QCheckBox(i18n("Show &tickmarks"), m_generalTab);
@@ -216,15 +241,15 @@ void KMixPrefDlg::createGeneralTab()
 	m_showOSD = new QCheckBox(i18n("Show On Screen Display (&OSD)"), m_generalTab);
 	addWidgetToLayout(m_showOSD, layout, 10, "", "showOSD");
 
-
 	// [CONFIG] Slider orientation (main window)
+	layout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
 	QGridLayout* orientationGrid = new QGridLayout();
 	orientationGrid->setHorizontalSpacing(DialogBase::horizontalSpacing());
 	layout->addItem(orientationGrid);
 
 	// Slider orientation (main window, and tray popup separately).
-	createOrientationGroup(i18n("Slider orientation: "), orientationGrid, 0, KMixPrefDlg::MainOrientation);
-	createOrientationGroup(i18n("Slider orientation (System tray volume control):"), orientationGrid, 1, KMixPrefDlg::TrayOrientation);
+	createOrientationGroup(i18n("Slider orientation (main window): "), orientationGrid, 0, KMixPrefDlg::MainOrientation);
+	createOrientationGroup(i18n("Slider orientation (system tray popup):"), orientationGrid, 1, KMixPrefDlg::TrayOrientation);
 
 	// Push everything above to the top
 	layout->addStretch();
@@ -372,43 +397,39 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	// Hotplug can change mixers or backends => recreate tab
 	replaceBackendsInTab();
 
+	KConfigDialog::showEvent(event);
+
 	// -2- Change visibility and enable status (of the new widgets) ----------------------
 
 	// As GUI can change, the warning will only been shown on demand
 	dynamicControlsRestoreWarning->setVisible(Mixer::dynamicBackendsPresent());
 
-	// Pulseaudio supports volume feedback. Disable the configuaration option for all other backends
-	// and show a warning.
-	bool volumeFeebackAvailable = Mixer::pulseaudioPresent();
-	volumeFeedbackWarning->setVisible(!volumeFeebackAvailable);
-	m_beepOnVolumeChange->setDisabled(!volumeFeebackAvailable);
-
-	bool overdriveAvailable = volumeFeebackAvailable; // "shortcut" for Mixer::pulseaudioPresent() (see above)
-	m_volumeOverdrive->setVisible(overdriveAvailable);
-	volumeOverdriveWarning->setVisible(overdriveAvailable);
-
 	QString autostartConfigFilename =
 		QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "/autostart/kmix_autostart.desktop");
 	if (dialogConfig.data.debugConfig)
 	    qCDebug(KMIX_LOG) << "autostartConfigFilename = " << autostartConfigFilename;
-	bool autostartFileExists = !autostartConfigFilename.isNull();
-
-	//allowAutostartWarning->setEnabled(autostartFileExists);
-	if (!autostartFileExists)
-	{
-		if (allowAutostartWarning->text().isEmpty())
-		{
-			// Text is set here, as it is very long and would force the dialog to be very wide, even when
-			// the allowAutostartWarning would not be visible.
-			allowAutostartWarning->setText(
-					i18n("Autostart can not be enabled, as the autostart file kmix_autostart.desktop is not installed."));
-		}
-		allowAutostartWarning->setVisible(!autostartFileExists);
-		allowAutostartWarning->setEnabled(false); // always just a grayed out note
-	}
+	bool autostartFileExists = !autostartConfigFilename.isEmpty();
+	allowAutostartWarning->setVisible(!autostartFileExists);
 	allowAutostart->setEnabled(autostartFileExists);
 
-	KConfigDialog::showEvent(event);
+	// Only PulseAudio supports volume feedback and volume overdrive.
+	// Disable those configuration options for other backends, and
+	// show a warning message.
+	const bool pulseAudioAvailable = Mixer::pulseaudioPresent();
+	if (!pulseAudioAvailable)
+	{
+		m_beepOnVolumeChange->setChecked(false);
+		m_beepOnVolumeChange->setEnabled(false);
+		m_volumeOverdrive->setChecked(false);
+		m_volumeOverdrive->setEnabled(false);
+		volumeFeedbackWarning->setVisible(true);
+		volumeOverdriveWarning->setVisible(false);
+	}
+	else
+	{
+		volumeFeedbackWarning->setVisible(false);
+		volumeOverdriveWarning->setVisible(true);
+	}
 }
 
 
