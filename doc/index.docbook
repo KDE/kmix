@@ -277,7 +277,7 @@ soundcards.</para>-->
 
 <varlistentry>
 <term><menuchoice>
-<guimenu>Slider orientation</guimenu>
+<guimenu>Slider orientation (main window)</guimenu>
 <guimenuitem>Horizontal</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Check this radio button to orientate the control slider horizontally.</action></para></listitem>
@@ -293,7 +293,7 @@ soundcards.</para>-->
 
 <varlistentry>
 <term><menuchoice>
-<guimenu>Slider orientation (System tray volume control)</guimenu>
+<guimenu>Slider orientation (system tray popup)</guimenu>
 <guimenuitem>Horizontal/Vertical</guimenuitem>
 </menuchoice></term>
 <listitem><para>Same as the previous two radio buttons but for the system tray volume control (the panel that is shown after &LMB; click on &kmix; tray icon).</para></listitem>
@@ -323,9 +323,17 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Startup</guimenu>
-<guimenuitem>Restore volumes on login</guimenuitem>
+<guimenuitem>Start KMix on desktop startup</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to enable volume restoration on login.</action></para>
+<listitem><para><action>Check this box to enable &kmix; autostart with desktop environment.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Startup</guimenu>
+<guimenuitem>Restore volumes on desktop startup</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable volume levels and switches restoration on desktop start.</action></para>
   <warning>
     <para>
       Dynamic controls from PulseAudio and MPRIS2 will not be restored.
@@ -333,34 +341,26 @@ soundcards.</para>-->
   </warning>
 </listitem>
 </varlistentry>
-
-<varlistentry>
-<term><menuchoice>
-<guimenu>Startup</guimenu>
-<guimenuitem>Autostart</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable &kmix; autostart with desktop environment.</action></para></listitem>
-</varlistentry>
 </variablelist>
 
 </sect3>
 
-<sect3 id="configure-sound-menu">
+<sect3 id="configure-volume-control">
   <title>
-    Sound menu configuration
+    Volume control configuration
   </title>
   <screenshot>
-  <screeninfo>Sound menu configuration of &kmix;</screeninfo>
+  <screeninfo>Volume control configuration of &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>Sound menu configuration of &kmix;</phrase>
+	    <phrase>Volume control configuration of &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>This page allows you to configure various &kmix; sound menu parameters.</para>
+<para>This page allows you to configure various &kmix; popup volume control parameters.</para>
 
 <variablelist>
 <varlistentry>
@@ -371,7 +371,7 @@ soundcards.</para>-->
 </variablelist>
 
 <para>
-  It is possible to select mixers that will be shown in the sound menu using the corresponding list on this page.
+  It is possible to select mixers that will be shown in the volume control using the corresponding list on this page.
 </para>
 </sect3>
 </sect2>
