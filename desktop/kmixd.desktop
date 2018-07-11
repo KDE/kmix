@@ -17,6 +17,7 @@ Name[sv]=Kmix-demon
 Name[uk]=Фонова служба KMix
 Name[x-test]=xxKMix Daemonxx
 Name[zh_CN]=KMix 守护进程
+Name[zh_TW]=KMix 伺服程式
 Comment=Monitors sound devices
 Comment[ca]=Controla els dispositius de so
 Comment[ca@valencia]=Controla els dispositius de so
@@ -32,6 +33,7 @@ Comment[pt]=Vigia os dispositivos de som
 Comment[sv]=Övervakar ljudenheter
 Comment[uk]=Стежить за звуковими пристроями
 Comment[x-test]=xxMonitors sound devicesxx
+Comment[zh_TW]=顯示器音效裝置
 
 # KDED registration
 X-KDE-ServiceTypes=KDEDModule
