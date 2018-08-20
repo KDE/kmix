@@ -19,10 +19,10 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "volumeslider.h"
+
 #include <QStyleOption>
 #include <QFontMetrics>
-
-#include "volumeslider.h"
 
 VolumeSlider::VolumeSlider(Qt::Orientation orientation, QWidget* parent) : QSlider(orientation, parent)
 ,m_orientation(orientation),m_tooltip(new QLabel(parent,Qt::ToolTip))

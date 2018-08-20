@@ -402,7 +402,7 @@ QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
 {
 	QString buttonText = QString("%1").arg(storageSlot);
 	QPushButton* profileButton = new QPushButton(restoreVolumeIcon, buttonText, this);
-	profileButton->setToolTip(i18n("Load volume profile %1").arg(storageSlot));
+	profileButton->setToolTip(i18n("Load volume profile %1", storageSlot));
 	profileButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return profileButton;
 }

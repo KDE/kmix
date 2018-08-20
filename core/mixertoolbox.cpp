@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "core/mixertoolbox.h"
 #include "core/mixer.h"
 
 #include <QDir>
@@ -30,8 +31,6 @@
 
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
-
-#include "core/mixertoolbox.h"
 
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
