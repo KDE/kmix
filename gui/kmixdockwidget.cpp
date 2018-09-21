@@ -195,7 +195,7 @@ KMixDockWidget::setVolumeTip()
 
     if ( md.get() == 0 )
     {
-        tip = i18n("Mixer cannot be found"); // !! text could be reworked
+        tip = i18n("No mixer devices available");
         virtualToolTipValue = -2;
     }
     else
@@ -203,12 +203,12 @@ KMixDockWidget::setVolumeTip()
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
         int val = md->getUserfriendlyVolumeLevel();
-        tip += "<font size=\"+1\">" + i18n( "Volume at %1%", val ) + "</font>";
-        if ( md->isMuted() )
-            tip += i18n( " (Muted)" );
-        subTip = QString( "%1<br/>%2" )
-		.arg(md->mixer()->readableName().toHtmlEscaped())
-		.arg(md->readableName().toHtmlEscaped());
+        if (md->isMuted()) tip = i18n("Volume muted");
+        else tip = i18n("Volume at %1%", val);
+
+        subTip = i18n("%1 - %2",
+		      md->mixer()->readableName().toHtmlEscaped(),
+		      md->readableName().toHtmlEscaped());
 
         // create a new "virtual" value. With that we see "volume changes" as well as "muted changes"
         virtualToolTipValue = val;
