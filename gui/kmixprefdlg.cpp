@@ -129,12 +129,12 @@ void KMixPrefDlg::createStartupTab()
 
 	layoutStartupTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
 
-	m_onLogin = new QCheckBox(i18n("Restore volumes on desktop startup"), m_startupTab);
+	m_onLogin = new QCheckBox(i18n("Restore previous volume settings on desktop startup"), m_startupTab);
 	addWidgetToLayout(m_onLogin, layoutStartupTab, 10,
-			  i18n("Restore all mixer volume levels and switches when the desktop starts."), "startkdeRestore");
+			  i18n("Restore all mixer volume levels and switches to their last used settings when the desktop starts."), "startkdeRestore");
 
 	dynamicControlsRestoreWarning = new KMessageWidget(
-		i18n("Dynamic controls from PulseAudio and MPRIS2 will not be restored."), m_startupTab);
+		i18n("The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."), m_startupTab);
 	dynamicControlsRestoreWarning->setIcon(QIcon::fromTheme("dialog-warning"));
 	dynamicControlsRestoreWarning->setMessageType(KMessageWidget::Warning);
 	dynamicControlsRestoreWarning->setCloseButtonVisible(false);
