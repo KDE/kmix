@@ -41,7 +41,7 @@ class KMIXCORE_EXPORT MediaController
 public:
     enum PlayState { PlayPaused, PlayPlaying, PlayStopped, PlayUnknown };
 
-	MediaController(QString);
+	explicit MediaController(QString);
 	virtual ~MediaController();
 
 	   void addMediaPlayControl() { mediaPlayControl = true; };

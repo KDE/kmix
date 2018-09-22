@@ -46,7 +46,7 @@ class DialogViewConfigurationItem : public QListWidgetItem
 
 
  public:
-    DialogViewConfigurationItem( QListWidget *parent);
+    explicit DialogViewConfigurationItem( QListWidget *parent);
     DialogViewConfigurationItem( QListWidget *parent, QString id, bool shown, QString name, int splitted, const QString& iconName );
 
     void refreshItem();
@@ -62,7 +62,7 @@ class DialogViewConfigurationWidget : public QListWidget
 {
     Q_OBJECT
 public:
-    DialogViewConfigurationWidget(QWidget *parent=0);
+    explicit DialogViewConfigurationWidget(QWidget *parent=0);
 
     void setActiveList(bool isActiveList) {
         m_activeList = isActiveList;

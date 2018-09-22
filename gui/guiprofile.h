@@ -304,7 +304,7 @@ QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 class GUIProfileParser : public QXmlDefaultHandler
 {
 public:
-    GUIProfileParser(GUIProfile* ref_gp);
+    explicit GUIProfileParser(GUIProfile* ref_gp);
     // Enumeration for the scope
     enum ProfileScope { NONE, SOUNDCARD };
     
