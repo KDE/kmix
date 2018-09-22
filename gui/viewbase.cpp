@@ -153,7 +153,7 @@ void ViewBase::createDeviceWidgets()
     {
         QWidget* mdw = add(md); // a) Let the View implementation do its work
         _mdws.append(mdw); // b) Add it to the local list
-        connect(mdw, SIGNAL(guiVisibilityChange(MixDeviceWidget*, bool)), SLOT(guiVisibilitySlot(MixDeviceWidget*, bool)));
+        connect(mdw, SIGNAL(guiVisibilityChange(MixDeviceWidget*,bool)), SLOT(guiVisibilitySlot(MixDeviceWidget*,bool)));
     }
 
     if ( !isDynamic() )

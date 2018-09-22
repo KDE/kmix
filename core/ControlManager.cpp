@@ -117,7 +117,7 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
  *
  * @param mixerId The id of the Mixer you are interested in
  * @param changetType The changeType of interest
- * @param target The QObject, where the notification signal is sent to. It must implement the SLOT controlChanged(QString mixerId, ControlChangeType::Type changeType).
+ * @param target The QObject, where the notification signal is sent to. It must implement the SLOT controlChanged(QString mixerId,ControlChangeType::Type changeType).
  * @param sourceId Only for logging
  */
 void ControlManager::addListener(QString mixerId, ControlChangeType::Type changeType, QObject* target, QString sourceId)
