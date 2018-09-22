@@ -56,7 +56,7 @@ void ControlManager::announce(QString mixerId, ControlChangeType::Type changeTyp
 		for (it = listeners.begin(); it != listeners.end(); ++it)
 		{
 			Listener& listener = *it;
-			if ( &listener == 0 )
+			if ( &listener == nullptr )
 			{
 				qCWarning(KMIX_LOG) << "null Listener detected ... skipping";
 				continue;
