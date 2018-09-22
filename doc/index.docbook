@@ -48,8 +48,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2018-07-10</date>
-<releaseinfo>Applications 18.08</releaseinfo>
+<date>2018-09-22</date>
+<releaseinfo>Applications 18.12</releaseinfo>
 
 <abstract>
 <para>&kmix; is an application that allows you to change the volume of your sound card.</para>
@@ -331,12 +331,12 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Startup</guimenu>
-<guimenuitem>Restore volumes on desktop startup</guimenuitem>
+<guimenuitem>Restore previous volume settings on desktop startup</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to enable volume levels and switches restoration on desktop start.</action></para>
+<listitem><para><action>Check this box to enable volume levels and switches restoration to their last used settings on desktop start.</action></para>
   <warning>
     <para>
-      Dynamic controls from PulseAudio and MPRIS2 will not be restored.
+      The volume of PulseAudio or MPRIS2 dynamic controls will not be restored.
     </para>
   </warning>
 </listitem>
