@@ -201,7 +201,7 @@ Application: KMix (kmix), signal: Segmentation fault
 
    // --- Due to the strange crash, delete everything manually : START ---------------
    // I am a bit confused why this doesn't crash. I moved the "optionsLayout->takeAt(0) delete" loop at the beginning,
-   // so the obejcts should already be deleted. ...
+   // so the objects should already be deleted. ...
 	delete configureViewButton;
 	delete restoreVolumeButton1;
 	delete restoreVolumeButton2;

@@ -62,7 +62,7 @@ public:
 
 /**
  * GuiVisibility can be used in different contexts. One is, to define in the XML GUI Profile, which control to show, e.g. show
- * "MIC Boost" in EXTENDED mode. The other is for representing the GUI compexity (e.g. for letting the user select a preset like "SIMPLE".
+ * "MIC Boost" in EXTENDED mode. The other is for representing the GUI complexity (e.g. for letting the user select a preset like "SIMPLE".
  */
 class GuiVisibility
 {

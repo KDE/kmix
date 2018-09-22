@@ -22,7 +22,7 @@
 #ifndef CONTROL_POOL_H
 #define CONTROL_POOL_H
 
-#include "config.h"
+#include <config.h>
 
 #if defined(HAVE_STD_SHARED_PTR)
 #include <memory>

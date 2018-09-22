@@ -34,6 +34,7 @@
 #include "core/mixer.h"
 #include <sys/soundcard.h>
 #include <QTimer>
+#include <qplatformdefs.h>
 //======================================================================
 // CONSTANT/ENUM DEFINITIONS
 //======================================================================
@@ -157,12 +158,12 @@ int Mixer_SUN::open()
    //
    // Open the mixer hardware driver
    //
-   QString audiodev(getenv("AUDIODEV"));
+   QString audiodev(qgetenv("AUDIODEV"));
    if(audiodev.isNull())
      audiodev = "/dev/audio";
    audiodev += "ctl";
    _udi = audiodev; // use device name as UDI. Doesn't matter as we only use it for hotplugging/unplugging.
-   if ( ( fd = ::open( audiodev.toLatin1().data(), O_RDWR ) ) < 0 )
+   if ( ( fd = QT_OPEN( audiodev.toLatin1().data(), O_RDWR ) ) < 0 )
    {
       if ( errno == EACCES )
          return Mixer::ERR_PERM;

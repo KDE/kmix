@@ -32,7 +32,7 @@
 #include "core/volume.h"
 
 /**
- * Some general design hints. Hierachy is Mixer->MixDevice->Volume
+ * Some general design hints. Hierarchy is Mixer->MixDevice->Volume
  */
 
 QList<Mixer *> Mixer::s_mixers;
@@ -179,7 +179,7 @@ const QString Mixer::dbusPath()
 			// Bug 308014: By checking _cardRegistered, we can be sure that everything is fine, including the fact that
 			// the cardId (aka "card instance") is set. If _cardRegistered would be false, we will create potentially
 			// wrong/duplicated DBUS Paths here.
-			qCWarning(KMIX_LOG) << "Mixer id was empty when ceating DBUS path. Emergency code created the id=" <<_id;
+			qCWarning(KMIX_LOG) << "Mixer id was empty when creating DBUS path. Emergency code created the id=" <<_id;
 		}
 		// Bug 308014: Actually this a shortcut (you could also call it a hack). It would likely better if registerCard()
 		//             would create the Id, but it requires cooperation from ALL backends. Also Mixer->getId() would need to

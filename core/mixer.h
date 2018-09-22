@@ -50,7 +50,7 @@ public:
 	/**
 	 * Status for Mixer operations.
 	 * 
-	 * OK_UNCHANGED is a apecial variant of OK. It must be implemented by
+	 * OK_UNCHANGED is a special variant of OK. It must be implemented by
 	 * backends that use needsPolling() == true. See Mixer_OSS.cpp for an
 	 * example. Rationale is that we need a proper change check: Otherwise
 	 * the DBUS Session Bus is massively spammed. Also quite likely the Mixer
@@ -85,7 +85,7 @@ public:
     /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
     shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID );
 
-    /// Open/grab the mixer for further intraction
+    /// Open/grab the mixer for further interaction
     bool openIfValid();
 
     /// Returns whether the card is open/operational
@@ -131,7 +131,7 @@ public:
 
     int getCardInstance() const      {   return _mixerBackend->getCardInstance();      }
 
-    /// Returns an Universal Device Identifaction of the Mixer. This is an ID that relates to the underlying operating system.
+    /// Returns an Universal Device Identification of the Mixer. This is an ID that relates to the underlying operating system.
     // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
     // Examples:
     // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1

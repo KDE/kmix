@@ -77,7 +77,7 @@ class KMixerWidget : public QWidget
    QString _guiprofId;
    ProfTab* _tab;
    std::vector<ViewBase*> _views;
-   KActionCollection* _actionCollection;  // -<- applciations wide action collection
+   KActionCollection* _actionCollection;  // -<- applications wide action collection
    
    void createLayout(ViewBase::ViewFlags vflags);
    bool possiblyAddView(ViewBase* vbase);

@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 //OSS4 mixer backend for KMix by Yoper Team released under GPL v2 or later
@@ -33,6 +33,7 @@
 
 #include <QLinkedList>
 #include <QRegExp>
+#include <qplatformdefs.h>
 
 Mixer_Backend* OSS4_getMixer(Mixer *mixer, int device)
 {
@@ -183,7 +184,7 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 
 int Mixer_OSS4::open()
 {
-	if ( (m_fd= ::open("/dev/mixer", O_RDWR)) < 0 )
+	if ( (m_fd= QT_OPEN("/dev/mixer", O_RDWR)) < 0 )
 	{
 		if ( errno == EACCES )
 			return Mixer::ERR_PERM;
@@ -233,7 +234,7 @@ int Mixer_OSS4::open()
 			}
 
 			::close(m_fd);
-			if ( (m_fd= ::open(mi.devnode, O_RDWR)) < 0 )
+			if ( (m_fd= QT_OPEN(mi.devnode, O_RDWR)) < 0 )
 			{
 				return Mixer::ERR_OPEN;
 			}

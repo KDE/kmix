@@ -54,7 +54,7 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::Vie
 , guiLevel(GuiVisibility::GuiSIMPLE)
 {
    setObjectName(id);
-   // When loding the View from the XML profile, guiLevel can get overridden
+   // When loading the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
    configureIcon = QIcon::fromTheme( QLatin1String( "configure" ));
 
@@ -348,7 +348,7 @@ void ViewBase::load(KConfig *config)
 
 				if (mdw->inherits("MDWSlider"))
 				{
-					// only sliders have the ability to split apart in mutliple channels
+					// only sliders have the ability to split apart in multiple channels
 					bool splitChannels = devcg.readEntry("Split", !mdw->isStereoLinked());
 					mdw->setStereoLinked(!splitChannels);
 				}
@@ -468,7 +468,7 @@ void ViewBase::save(KConfig *config)
 
 			if (mdw->inherits("MDWSlider"))
 			{
-				// only sliders have the ability to split apart in mutliple channels
+				// only sliders have the ability to split apart in multiple channels
 				devcg.writeEntry("Split", !mdw->isStereoLinked());
 			}
 			/*

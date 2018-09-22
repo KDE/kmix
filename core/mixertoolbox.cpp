@@ -57,7 +57,7 @@ MixerToolBox* MixerToolBox::instance()
 
 
 /**
- * Scan for Mixers in the System. This is the method that implicitely fills the
+ * Scan for Mixers in the System. This is the method that implicitly fills the
  * list of Mixer's, which is accessible via the static Mixer::mixer() method.
  *
  * This is run only once during the initialization phase of KMix. It has the following tasks:
@@ -67,11 +67,11 @@ MixerToolBox* MixerToolBox::instance()
  *
  * @deprecated TODO this method has to go away. Migrate to MultiDriverMode enum
  *
- * @par multiDriverMode Whether the Mixer scan should try more all backendends.
+ * @par multiDriverMode Whether the Mixer scan should try more all backends.
  *          'true' means to scan all backends. 'false' means: After scanning the
  *          current backend the next backend is only scanned if no Mixers were found yet.
  * @par backendList Activated backends (typically a value from the kmixrc or a default)
- * @par ref_hwInfoString Here a descripitive text of the scan is returned (Hardware Information)
+ * @par ref_hwInfoString Here a descriptive text of the scan is returned (Hardware Information)
  */
 void MixerToolBox::initMixer(bool multiDriverModeBool, QList<QString> backendList, QString& ref_hwInfoString, bool hotplug)
 {

@@ -22,7 +22,7 @@
 
 #include <klocalizedstring.h>
 
-// for the "ERR_" declartions, #include mixer.h
+// for the "ERR_" declarations, #include mixer.h
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 
@@ -186,7 +186,7 @@ void Mixer_Backend::readSetFromHW()
 		{
 			/*
 			 * This could be reworked:
-			 * Plan: Read everything (incuding enum's) in readVolumeFromHW().
+			 * Plan: Read everything (including enum's) in readVolumeFromHW().
 			 * readVolumeFromHW() should then be renamed to readHW().
 			 */
 			md->setEnumId( enumIdHW(md->id()) );
@@ -260,7 +260,7 @@ shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
 			qCCritical(KMIX_LOG) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this.";
 	}
 
-	// If we reach this code path, then obiously m_recommendedMaster == 0 (see above)
+	// If we reach this code path, then obviously m_recommendedMaster == 0 (see above)
 	return m_recommendedMaster;
 
 }

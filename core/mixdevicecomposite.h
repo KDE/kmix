@@ -81,7 +81,7 @@ public:
 
 
    // Methods for handling the switches. This methods are useful, because the Sswitch in the Volume object
-   // is an abstract concept. It places no interpration on the meaning of the switch (e.g. does "switch set" mean
+   // is an abstract concept. It places no interpretation on the meaning of the switch (e.g. does "switch set" mean
    // "mute on", or does it mean "playback on".
    bool isMuted() Q_DECL_OVERRIDE;
    void setMuted(bool value) Q_DECL_OVERRIDE;

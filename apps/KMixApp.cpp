@@ -80,8 +80,8 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	 *
 	 * Now we must make sure that window creation is definitely done, before the "other" process comes, as it might
 	 * want to restore the session. Working on a half-created window would not be smart! Why can this happen? It
-	 * depends on implementation details insinde Qt, which COULD potentially lead to the following scenarios:
-	 * 1) "Autostart" and "session restore" run concurrenty in 2 differnent Threads.
+	 * depends on implementation details inside Qt, which COULD potentially lead to the following scenarios:
+	 * 1) "Autostart" and "session restore" run concurrently in 2 different Threads.
 	 * 2) The current "main/gui" thread "pops up" a "session restore" message from the Qt event dispatcher.
 	 *    This means that  "Autostart" and "session restore" run interleaved in a single Thread.
 	 */
@@ -102,8 +102,8 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 			qCDebug(KMIX_LOG) << "Restoring window " << n;
 			if (n > 1)
 			{
-				// This code path is "impossible". It is here only for analyzing possible issues with session resoring.
-				// KMix is a single-instance app. If more than one instance is craeated we have a bug.
+				// This code path is "impossible". It is here only for analyzing possible issues with session restoring.
+				// KMix is a single-instance app. If more than one instance is created we have a bug.
 				qCWarning(KMIX_LOG) << "KDE session management wants to restore multiple instances of KMix. Please report this as a bug.";
 				break;
 			}
@@ -111,7 +111,7 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 			{
 				// Create window, if it was not yet created (e.g. via autostart or manually)
 				createWindowOnce(hasArgKeepvisibility, reset);
-				// #restore() is called with the parameter of "show == false", as KMixWindow iteself decides on it.
+				// #restore() is called with the parameter of "show == false", as KMixWindow itself decides on it.
 				m_kmix->restore(n, false);
 				createCount++;
 				n++;
@@ -202,10 +202,10 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 			 *
 			 * Typical use case: Autostart
 			 *
-			 * =>  We don't want to change the visibiliy, thus we don't call show() here.
+			 * =>  We don't want to change the visibility, thus we don't call show() here.
 			 *
 			 * Hint: --keepVisibility is used in kmix_autostart.desktop. It was used in history by KMilo
-			 *       (see BKO 58901), but nowadays Mixer Applets nmight want to use it, though they should
+			 *       (see BKO 58901), but nowadays Mixer Applets might want to use it, though they should
 			 *       use KMixD instead.
 			 */
 			qCDebug(KMIX_LOG)
