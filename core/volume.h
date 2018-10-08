@@ -77,8 +77,8 @@ friend class MixDevice;
 
                   CHIDMAX      = 8 };
 
-    static char ChannelNameForPersistence[9][30];
-    static QString ChannelNameReadable[9];
+    static QString channelNameForPersistence(ChannelID id);
+    static QString channelNameReadable(ChannelID id);
 
     enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
 
@@ -145,7 +145,6 @@ friend class MixDevice;
 
     // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
-    static int    _channelMaskEnum[9];
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
     QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
     long volumeStep(bool decrease);

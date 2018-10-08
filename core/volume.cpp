@@ -31,37 +31,52 @@ float Volume::VOLUME_STEP_DIVISOR = 20;
 float Volume::VOLUME_PAGESTEP_DIVISOR = 10;
 
 
-int Volume::_channelMaskEnum[9] =
-{ MLEFT, MRIGHT, MCENTER,
-		MWOOFER,
-		MSURROUNDLEFT, MSURROUNDRIGHT,
-		MREARSIDELEFT, MREARSIDERIGHT,
-		MREARCENTER
-};
-
-QString Volume::ChannelNameReadable[9] =
+static Volume::ChannelMask channelMask[] =
 {
-//		"Left", "Right",
-//		"Center", "Subwoofer",
-//		"Surround Left", "Surround Right",
-//		"Side Left", "Side Right",
-//		"Rear Center"
-
-		i18nc("Channel name", "Left"), i18nc("Channel name", "Right"),
-		i18nc("Channel name", "Center"), i18nc("Channel name", "Subwoofer"),
-		i18nc("Channel name", "Surround Left"), i18nc("Channel name", "Surround Right"),
-		i18nc("Channel name", "Side Left"), i18nc("Channel name", "Side Right"),
-		i18nc("Channel name", "Rear Center")
-
+        Volume::MLEFT, Volume::MRIGHT, Volume::MCENTER,
+        Volume::MWOOFER,
+        Volume::MSURROUNDLEFT, Volume::MSURROUNDRIGHT,
+        Volume::MREARSIDELEFT, Volume::MREARSIDERIGHT,
+        Volume::MREARCENTER
 };
 
-char Volume::ChannelNameForPersistence[9][30] = {
-		"volumeL", "volumeR",
-		"volumeCenter", "volumeWoofer",
-		"volumeSurroundL", "volumeSurroundR",
-		"volumeSideL", "volumeSideR",
-		"volumeRearCenter"
-};
+QString Volume::channelNameReadable(ChannelID id)
+{
+    switch (id)
+    {
+case LEFT:              return (i18nc("Channel name", "Left"));
+case RIGHT:             return (i18nc("Channel name", "Right"));
+case CENTER:            return (i18nc("Channel name", "Center"));
+case WOOFER:            return (i18nc("Channel name", "Subwoofer"));
+case SURROUNDLEFT:      return (i18nc("Channel name", "Surround Left"));
+case SURROUNDRIGHT:     return (i18nc("Channel name", "Surround Right"));
+case REARSIDELEFT:      return (i18nc("Channel name", "Side Left"));
+case REARSIDERIGHT:     return (i18nc("Channel name", "Side Right"));
+case REARCENTER:        return (i18nc("Channel name", "Rear Center"));
+default:                qCWarning(KMIX_LOG) << "called for unknown ID" << id;
+                        return (i18nc("Channel name", "Unknown"));
+    }
+}
+
+
+QString Volume::channelNameForPersistence(ChannelID id)
+{
+    switch (id)
+    {
+case LEFT:              return ("volumeL");
+case RIGHT:             return ("volumeR");
+case CENTER:            return ("volumeCenter");
+case WOOFER:            return ("volumeWoofer");
+case SURROUNDLEFT:      return ("volumeSurroundL");
+case SURROUNDRIGHT:     return ("volumeSurroundR");
+case REARSIDELEFT:      return ("volumeSideL");
+case REARSIDERIGHT:     return ("volumeSideR");
+case REARCENTER:        return ("volumeRearCenter");
+default:                qCWarning(KMIX_LOG) << "called for unknown ID" << id;
+                        return ("unknown");
+    }
+}
+
 
 // Forbidden/private. Only here because if there is no CaptureVolume we need the values initialized
 // And also QMap requires it.
@@ -105,7 +120,7 @@ void Volume::addVolumeChannels(ChannelMask chmask)
 {
 	for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
 	{
-		if ( chmask & Volume::_channelMaskEnum[chid] )
+		if ( chmask & channelMask[chid] )
 		{
 			addVolumeChannel(VolumeChannel(chid));
 		}
@@ -293,7 +308,7 @@ qreal Volume::getAvgVolume(ChannelMask chmask)
 	long long sumOfActiveVolumes = 0;
 	foreach (VolumeChannel vc, _volumesL )
 	{
-		if (Volume::_channelMaskEnum[vc.chid] & chmask )
+		if (channelMask[vc.chid] & chmask )
 		{
 			sumOfActiveVolumes += vc.volume;
 			++avgVolumeCounter;

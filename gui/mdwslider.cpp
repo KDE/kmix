@@ -579,7 +579,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 
 		QString subcontrolTranslation;
 		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + ' ';
-		subcontrolTranslation += Volume::ChannelNameReadable[vc.chid]; //Volume::getSubcontrolTranslation(chid);
+		subcontrolTranslation += Volume::channelNameReadable(vc.chid);
 		subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
 
 		QAbstractSlider* slider;
@@ -1139,12 +1139,12 @@ void MDWSlider::updateAccesability()
         } else {
                 QList<VolumeChannel> vols = m_mixdevice->playbackVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersPlayback) {
-                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+')');
+                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
                 }
                 vols = m_mixdevice->captureVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersCapture) {
-                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::ChannelNameReadable[vols.first().chid]+')');
+                        slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
                 }
         }

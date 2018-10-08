@@ -454,7 +454,7 @@ void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
 
 QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)
 {
-       QString volstr (Volume::ChannelNameForPersistence[chid]);
+       QString volstr = Volume::channelNameForPersistence(chid);
        if ( capture ) volstr += "Capture";
        return volstr;
 }
