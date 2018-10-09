@@ -84,7 +84,7 @@ void KMixD::delayedInitialization()
     qCDebug(KMIX_LOG) << "Delayed initialization running now";
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
-   MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
+   MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
 
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
    connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixD::plugged);
@@ -97,7 +97,7 @@ void KMixD::delayedInitialization()
 
 KMixD::~KMixD()
 {
-   MixerToolBox::instance()->deinitMixer();
+   MixerToolBox::deinitMixer();
 }
 
 
@@ -130,7 +130,7 @@ void KMixD::saveBaseConfig()
    if ( mdMaster ) {
       config.writeEntry( "MasterMixerDevice", mdMaster->id() );
    }
-   QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
+   QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
    config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
 
    qCDebug(KMIX_LOG) << "Config (Base) saving done";
@@ -153,7 +153,7 @@ void KMixD::loadBaseConfig()
    Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
    QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
    m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
-   MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
+   MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 }
 
 
@@ -165,7 +165,7 @@ void KMixD::plugged(const char *driverName, const QString &udi, int dev)
     if (mixer!=nullptr)
     {
         qCDebug(KMIX_LOG) << "adding mixer" << mixer->id() << mixer->readableName();
-        MixerToolBox::instance()->possiblyAddMixer(mixer);
+        MixerToolBox::possiblyAddMixer(mixer);
     }
 }
 
@@ -183,7 +183,7 @@ void KMixD::unplugged(const QString &udi)
             //KMixToolBox::notification("MasterFallback", "aaa");
             bool globalMasterMixerDestroyed = ( mixer == Mixer::getGlobalMasterMixer() );
 
-            MixerToolBox::instance()->removeMixer(mixer);
+            MixerToolBox::removeMixer(mixer);
             // Check whether the Global Master disappeared, and select a new one if necessary
             shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
             if ( globalMasterMixerDestroyed || md.get() == 0 ) {

@@ -53,8 +53,6 @@ KMixD : public KDEDModule, protected QDBusContext
 
   private:
    bool m_multiDriverMode;
-
-   QString m_hwInfoString;
    QList<QString> m_backendFilter;
 
   private slots:

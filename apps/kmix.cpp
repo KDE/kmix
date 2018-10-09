@@ -89,7 +89,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	initWidgets();
 	initPrefDlg();
 	DBusMixSetWrapper::initialize(this, QStringLiteral("/Mixers"));
-	MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
+	m_hwInfoString = MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
 	KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
 	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
@@ -137,7 +137,7 @@ KMixWindow::~KMixWindow()
 	}
 
 	// -2- Mixer HW
-	MixerToolBox::instance()->deinitMixer();
+	MixerToolBox::deinitMixer();
 
 	// -3- Action collection (just to please Valgrind)
 	actionCollection()->clear();
@@ -390,7 +390,7 @@ void KMixWindow::saveBaseConfig()
 	config.writeEntry("MasterMixer", master.getCard());
 	config.writeEntry("MasterMixerDevice", master.getControl());
 
-	QString mixerIgnoreExpression = MixerToolBox::instance()->mixerIgnoreExpression();
+	QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
 	config.writeEntry("MixerIgnoreExpression", mixerIgnoreExpression);
 
 	qCDebug(KMIX_LOG)
@@ -516,7 +516,7 @@ void KMixWindow::loadBaseConfig()
 	QString masterDev = config.readEntry("MasterMixerDevice", "");
 	Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
 	QString mixerIgnoreExpression = config.readEntry("MixerIgnoreExpression", "Modem");
-	MixerToolBox::instance()->setMixerIgnoreExpression(mixerIgnoreExpression);
+	MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 
 	// --- Advanced options, without GUI: START -------------------------------------
 	QString volumePercentageStepString = config.readEntry("VolumePercentageStep");
@@ -886,7 +886,7 @@ void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 	Mixer *mixer = new Mixer(QString::fromLocal8Bit(driverName), dev);
 	if (mixer!=nullptr)
 	{
-		if (MixerToolBox::instance()->possiblyAddMixer(mixer))
+		if (MixerToolBox::possiblyAddMixer(mixer))
 		{
 			qCDebug(KMIX_LOG) << "adding mixer id" << mixer->id() << "name" << mixer->readableName();
 			recreateGUI(true, mixer->id(), true, false);
@@ -921,7 +921,7 @@ void KMixWindow::unplugged(const QString &udi)
 			}
 
 			// Part 2: Remove mixer from known list
-			MixerToolBox::instance()->removeMixer(mixer);
+			MixerToolBox::removeMixer(mixer);
 
 			// Part 3: Check whether the Global Master disappeared,
 			// and select a new one if necessary
