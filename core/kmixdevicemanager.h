@@ -32,17 +32,17 @@ class KMIXCORE_EXPORT KMixDeviceManager : public QObject
     public:
         static KMixDeviceManager* instance();
         void initHotplug();
-        void setHotpluggingBackends(const QString& backendName) { _hotpluggingBackend = backendName; } ;
+        void setHotpluggingBackends(const QString& backendName);
         QString getUDI_ALSA(int num);
         QString getUDI_OSS(const QString& devname);
 
     signals:
-        void plugged( const char* driverName, const QString& udi, QString& dev);
-        void unplugged( const QString& udi);
+        void plugged(const char *driverName, const QString &udi, int dev);
+        void unplugged(const QString &udi);
 
     private:
-        KMixDeviceManager();
-        ~KMixDeviceManager();
+        KMixDeviceManager() = default;
+        virtual ~KMixDeviceManager() = default;
         QString _hotpluggingBackend;
         
     private slots:

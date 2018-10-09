@@ -194,6 +194,7 @@ target_link_libraries(kmixcore
   PRIVATE
     Qt5::DBus
     KF5::I18n
+    KF5::Solid
   PUBLIC
     KF5::ConfigCore
     KF5::ConfigGui

@@ -81,16 +81,17 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
  */
 void KMixD::delayedInitialization()
 {
-	qCDebug(KMIX_LOG) << "kmixd: Delayed initialization running now";
+    qCDebug(KMIX_LOG) << "Delayed initialization running now";
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
    MixerToolBox::instance()->initMixer(m_multiDriverMode, m_backendFilter, m_hwInfoString, true);
-   KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
-   theKMixDeviceManager->initHotplug();
-   connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)), SLOT (plugged(const char*,QString,QString&)) );
-   connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT (unplugged(QString)) );
 
-    qCDebug(KMIX_LOG) << "kmixd: Delayed initialization done";
+   KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
+   connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixD::plugged);
+   connect(theKMixDeviceManager, &KMixDeviceManager::unplugged, this, &KMixD::unplugged);
+   theKMixDeviceManager->initHotplug();
+
+   qCDebug(KMIX_LOG) << "Delayed initialization done";
 }
 
 
@@ -156,22 +157,23 @@ void KMixD::loadBaseConfig()
 }
 
 
-void KMixD::plugged( const char* driverName, const QString& /*udi*/, QString& dev)
+void KMixD::plugged(const char *driverName, const QString &udi, int dev)
 {
-//     qCDebug(KMIX_LOG) << "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
-    QString driverNameString;
-    driverNameString = driverName;
-    int devNum = dev.toInt();
-    Mixer *mixer = new Mixer( driverNameString, devNum );
-    if ( mixer != 0 ) {
-        qCDebug(KMIX_LOG) << "Plugged: dev=" << dev << "\n";
+    qCDebug(KMIX_LOG) << "dev" << dev << "driver" << driverName << "udi" << udi;
+
+    Mixer *mixer = new Mixer(QString::fromLocal8Bit(driverName), dev);
+    if (mixer!=nullptr)
+    {
+        qCDebug(KMIX_LOG) << "adding mixer" << mixer->id() << mixer->readableName();
         MixerToolBox::instance()->possiblyAddMixer(mixer);
     }
-
 }
 
-void KMixD::unplugged( const QString& udi)
+
+void KMixD::unplugged(const QString &udi)
 {
+    qCDebug(KMIX_LOG) << "udi" << udi;
+
 //     qCDebug(KMIX_LOG) << "Unplugged: udi=" <<udi << "\n";
     for (int i=0; i<Mixer::mixers().count(); ++i) {
         Mixer *mixer = (Mixer::mixers())[i];

@@ -60,8 +60,9 @@ KMixD : public KDEDModule, protected QDBusContext
   private slots:
    void delayedInitialization();
    void saveConfig();
-   void plugged( const char* driverName, const QString& udi, QString& dev);
-   void unplugged( const QString& udi);
+
+   void plugged(const char *driverName, const QString &udi, int dev);
+   void unplugged(const QString &udi);
 };
 
 #endif // KMIXD_H

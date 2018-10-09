@@ -61,7 +61,7 @@ public:
         ERR_OPEN, OK_UNCHANGED };
 
 
-    Mixer( QString& ref_driverName, int device );
+    Mixer(const QString &ref_driverName, int device);
     virtual ~Mixer();
 
     static int numDrivers();
@@ -112,6 +112,7 @@ public:
     QString translateKernelToWhatsthis(const QString &kernelName);
 
     /// Return the name of the card/chip/hardware, which is suitable for humans
+    // TODO: combine with default paramaeter
     QString readableName();
     QString readableName(bool ampersandQuoted);
 

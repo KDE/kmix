@@ -373,6 +373,7 @@ void ViewDockAreaPopup::constructionFinished()
 
 	optionsLayout = new QHBoxLayout();
 	optionsLayout->addWidget(mainWindowButton);
+	optionsLayout->addStretch(1);
 	optionsLayout->addWidget(configureViewButton);
 
 #ifdef RESTORE_VOLUME_BUTTON

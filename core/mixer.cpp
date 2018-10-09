@@ -86,8 +86,10 @@ bool Mixer::pulseaudioPresent()
 }
 
 
-Mixer::Mixer( QString& ref_driverName, int device )
-    : m_balance(0), _mixerBackend(0L), m_dynamic(false)
+Mixer::Mixer(const QString &ref_driverName, int device)
+    : m_balance(0),
+      _mixerBackend(nullptr),
+      m_dynamic(false)
 {
     _mixerBackend = 0;
     int driverCount = numDrivers();
@@ -243,47 +245,40 @@ void Mixer::volumeLoad( KConfig *config )
  * Opens the mixer.
  * Also, starts the polling timer, for polling the Volumes from the Mixer.
  *
- * @param cardId The cardId Usually this will be 1, but if there is
- * more than one card with the same name install, then you need
- * to use 2, 3, ...
- *
  * @return true, if Mixer could be opened.
  */
 bool Mixer::openIfValid()
 {
-	if (_mixerBackend == 0 )
-	{
-		// if we did not instantiate a suitable Backend, then Mixer is invalid
-		return false;
-	}
-
-    bool ok = _mixerBackend->openIfValid();
-    if ( ok )
+    if (_mixerBackend==nullptr)
     {
-        recreateId();
-        shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
-        if ( recommendedMaster.get() != 0 )
-        {
-            QString recommendedMasterStr = recommendedMaster->id();
-            setLocalMasterMD( recommendedMasterStr );
-            qCDebug(KMIX_LOG) << "Mixer::open() detected master: " << recommendedMaster->id();
-        }
-        else
-        {
-            if ( !m_dynamic )
-                qCCritical(KMIX_LOG) << "Mixer::open() no master detected.";
-            else
-                qCDebug(KMIX_LOG) << "Mixer::open() no master detected.";
-            QString noMaster = "---no-master-detected---";
-            setLocalMasterMD(noMaster); // no master
-        }
-        // cesken: The following connect() looks mighty strange. I removed it on 2013-12-18
-        //connect( _mixerBackend, SIGNAL(controlChanged()), SIGNAL(controlChanged()) );
-        new DBusMixerWrapper(this, dbusPath());
+        // If we did not instantiate a suitable backend, then the mixer is invalid.
+        qCWarning(KMIX_LOG) << "no mixer backend";
+        return false;
     }
 
-    return ok;
+    bool ok = _mixerBackend->openIfValid();
+    if (!ok) return (false);
+
+    recreateId();
+    shared_ptr<MixDevice> recommendedMaster = _mixerBackend->recommendedMaster();
+    if (recommendedMaster.get()!=nullptr)
+    {
+        QString recommendedMasterStr = recommendedMaster->id();
+        setLocalMasterMD( recommendedMasterStr );
+        qCDebug(KMIX_LOG) << "Detected master" << recommendedMaster->id();
+    }
+    else
+    {
+        if (!m_dynamic) qCCritical(KMIX_LOG) << "No master detected and not dynamic";
+        else qCDebug(KMIX_LOG) << "No master detected but dynamic";
+        QString noMaster = "---no-master-detected---";
+        setLocalMasterMD(noMaster); // no master
+    }
+
+    new DBusMixerWrapper(this, dbusPath());
+    return (true);
 }
+
 
 /**
  * Closes the mixer.

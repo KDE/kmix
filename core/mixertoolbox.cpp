@@ -300,6 +300,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
 
 }
 
+
 /**
  * Opens and adds a mixer to the KMix wide Mixer array, if the given Mixer is valid.
  * Otherwise the Mixer is deleted.
@@ -310,32 +311,25 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
  */
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer) 
 {
-    if ( mixer->openIfValid() )
+    if (mixer->openIfValid())
     {
-        if ( (!s_ignoreMixerExpression.isEmpty()) && mixer->id().contains(s_ignoreMixerExpression) )
+        if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
         {
-            // This Mixer should be ignored (default expression is "Modem").
-        	// next 3 lines are duplicated code
-            delete mixer;
-            mixer = 0;
-            return false;
+            Mixer::mixers().append(mixer);
+            qCDebug(KMIX_LOG) << "Added mixer " << mixer->id();
+            return (true);
         }
         else
         {
-        	Mixer::mixers().append( mixer );
-        	qCDebug(KMIX_LOG) << "Added card " << mixer->id();
-
-        	emit mixerAdded(mixer->id()); // TODO should we still use this, as we now have our publish/subscribe notification system?
-        	return true;
+            // This mixer should be ignored (the default ignore expression is "Modem").
+            qCDebug(KMIX_LOG) << "mixer" << mixer->id() << "ignored";
         }
-    } // valid
-    else
-    {
-        delete mixer;
-        mixer = 0;
-        return false;
-    } // invalid
+    }
+
+    delete mixer;
+    return (false);
 }
+
 
 /* This allows to set an expression form Mixers that should be ignored.
   The default is "Modem", because most people don't want to control the modem volume. */

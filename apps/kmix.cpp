@@ -104,10 +104,10 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 		setInitialSize();
 
 	fixConfigAfterRead();
+	connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixWindow::plugged);
+	connect(theKMixDeviceManager, &KMixDeviceManager::unplugged, this, &KMixWindow::unplugged);
 	theKMixDeviceManager->initHotplug();
-	connect(theKMixDeviceManager, SIGNAL(plugged(const char*,QString,QString&)),
-			SLOT(plugged(const char*,QString,QString&)));
-	connect(theKMixDeviceManager, SIGNAL(unplugged(QString)), SLOT(unplugged(QString)));
+
 	if (m_startVisible && !invisible)
 		show(); // Started visible
 
@@ -879,38 +879,36 @@ void KMixWindow::fixConfigAfterRead()
 	} // if config version < 3
 }
 
-void KMixWindow::plugged(const char* driverName, const QString& udi, QString& dev)
+
+void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 {
-	qCDebug(KMIX_LOG)
-	<< "Plugged: dev=" << dev << "(" << driverName << ") udi=" << udi << "\n";
-	QString driverNameString;
-	driverNameString = driverName;
-	int devNum = dev.toInt();
-	Mixer *mixer = new Mixer(driverNameString, devNum);
-	if (mixer != 0)
+	qCDebug(KMIX_LOG) << "dev" << dev << "driver" << driverName << "udi" << udi;
+	Mixer *mixer = new Mixer(QString::fromLocal8Bit(driverName), dev);
+	if (mixer!=nullptr)
 	{
-		qCDebug(KMIX_LOG)
-		<< "Plugged: dev=" << dev << "\n";
 		if (MixerToolBox::instance()->possiblyAddMixer(mixer))
+		{
+			qCDebug(KMIX_LOG) << "adding mixer id" << mixer->id() << "name" << mixer->readableName();
 			recreateGUI(true, mixer->id(), true, false);
+		}
+		else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
 	}
 }
 
-void KMixWindow::unplugged(const QString& udi)
+
+void KMixWindow::unplugged(const QString &udi)
 {
-	qCDebug(KMIX_LOG)
-	<< "Unplugged: udi=" << udi << "\n";
+	qCDebug(KMIX_LOG) << "udi" << udi;
 	for (int i = 0; i < Mixer::mixers().count(); ++i)
 	{
 		Mixer *mixer = (Mixer::mixers())[i];
-		//         qCDebug(KMIX_LOG) << "Try Match with:" << mixer->udi() << "\n";
+		// qCDebug(KMIX_LOG) << "Try Match with:" << mixer->udi();
 		if (mixer->udi() == udi)
 		{
-			qCDebug(KMIX_LOG)
-			<< "Unplugged Match: Removing udi=" << udi << "\n";
-			//KMixToolBox::notification("MasterFallback", "aaa");
+			qCDebug(KMIX_LOG) << "Removing mixer";
 			bool globalMasterMixerDestroyed = (mixer == Mixer::getGlobalMasterMixer());
-			// Part 1) Remove Tab
+
+			// Part 1: Remove tab from GUI
 			for (int i = 0; i < m_wsMixers->count(); ++i)
 			{
 				QWidget *w = m_wsMixers->widget(i);
@@ -921,8 +919,12 @@ void KMixWindow::unplugged(const QString& udi)
 					i = -1; // Restart loop from scratch (indices are most likely invalidated at removeTab() )
 				}
 			}
+
+			// Part 2: Remove mixer from known list
 			MixerToolBox::instance()->removeMixer(mixer);
-			// Check whether the Global Master disappeared, and select a new one if necessary
+
+			// Part 3: Check whether the Global Master disappeared,
+			// and select a new one if necessary
 			shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
 			if (globalMasterMixerDestroyed || md.get() == 0)
 			{

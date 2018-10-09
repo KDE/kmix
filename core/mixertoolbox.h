@@ -36,6 +36,9 @@ class Mixer;
  * It only contains no-GUI code. The shared with-GUI code is in KMixToolBox
  * The reason, why it is not put in a common base class is, that the classes are
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
+
+// TODO: it can therefore be a namespace with only static methods.
+
  */
 class KMIXCORE_EXPORT MixerToolBox : public QObject
 {
@@ -56,9 +59,6 @@ class KMIXCORE_EXPORT MixerToolBox : public QObject
       
       //static KLocale* whatsthisControlLocale();
       
-   signals:
-      void mixerAdded(QString mixerID);
-
    private:
       static MixerToolBox* s_instance;
       static QRegExp s_ignoreMixerExpression;
