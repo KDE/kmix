@@ -388,18 +388,7 @@ void Mixer::setBalanceInternal(Volume& vol)
 /**
  * Returns a name suitable for a human user to read (on a label, ...)
  */
-QString Mixer::readableName()
-{
-	return readableName(false);
-}
 
-/**
- * Returns a name suitable for a human user to read, possibly with quoted ampersand. The latter is required by
- * some GUI elements like QRadioButton or when used as a Tab label, as '&' introduces an accelerator there.
- *
- * @param ampersandQuoted
- * @return
- */
 QString Mixer::readableName(bool ampersandQuoted)
 {
 	QString finalName = _mixerBackend->getName();

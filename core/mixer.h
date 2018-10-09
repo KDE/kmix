@@ -111,10 +111,15 @@ public:
     /// Wrapper to Mixer_Backend
     QString translateKernelToWhatsthis(const QString &kernelName);
 
-    /// Return the name of the card/chip/hardware, which is suitable for humans
-    // TODO: combine with default paramaeter
-    QString readableName();
-    QString readableName(bool ampersandQuoted);
+    /**
+      * Get a name suitable for a human user to read, possibly with quoted ampersand.
+      * The latter is required by some GUI elements like QRadioButton or when used as a
+      * tab label, as '&' introduces an accelerator there.
+      *
+      * @param ampersandQuoted @c true if '&' characters are to be quoted
+      * @return the readable device name
+      */
+    QString readableName(bool ampersandQuoted = false);
 
     // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
     static QString driverName(int num);
