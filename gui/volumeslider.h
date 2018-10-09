@@ -3,7 +3,7 @@
  * KMix -- KDE's full featured mini mixer
  *
  *
- * Copyright Christian Esken
+ * Copyright Christian Esken <esken@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

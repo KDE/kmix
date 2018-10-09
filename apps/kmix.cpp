@@ -546,7 +546,7 @@ void KMixWindow::loadBaseConfig()
 /**
  * Loads the volumes of all mixers from kmixctrlrc.
  * In other words:
- * Restores the default voumes as stored via saveVolumes() or the
+ * Restores the default volumes as stored via saveVolumes() or the
  * execution of "kmixctrl --save"
  */
 
@@ -754,7 +754,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		bool dockingSucceded = updateDocking();
 		if (!dockingSucceded && !Mixer::mixers().empty())
 		{
-			show(); // avoid invisible and unaccessible main window
+			show(); // avoid invisible and inaccessible main window
 		}
 	}
 	else
@@ -957,7 +957,7 @@ void KMixWindow::unplugged(const QString& udi)
  * This widget shows an error message like "no mixers detected.
  void KMixWindow::setErrorMixerWidget()
  {
- QString s = i18n("Please plug in your soundcard.No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
+ QString s = i18n("Please plug in your soundcard. No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
  m_errorLabel = new QLabel( s,this  );
  m_errorLabel->setAlignment( Qt::AlignCenter );
  m_errorLabel->setWordWrap(true);
@@ -1031,7 +1031,7 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 
 	kmw->loadConfig(KSharedConfig::openConfig().data());
 	// Now force to read for new tabs, especially after hotplug. Note: Doing it here is bad design and possibly
-	// obsolete, as the backend should take care of upating itself.
+	// obsolete, as the backend should take care of updating itself.
 	kmw->mixer()->readSetFromHWforceUpdate();
 	return true;
 }
@@ -1175,7 +1175,7 @@ void KMixWindow::showAbout()
 
 /**
  * Apply the Preferences from the preferences dialog. Depending on what has been changed,
- * the corresponding announcemnts are made.
+ * the corresponding announcements are made.
  */
 void KMixWindow::applyPrefs()
 {

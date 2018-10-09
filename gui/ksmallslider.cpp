@@ -187,7 +187,7 @@ void gradient( QPainter &p, bool hor, const QRect &rect, const QColor &ca, const
    // would make it slow
    if (!hor)
    {
-      for ( y = rect.top(); y <= rect.bottom(); y++ ) {
+      for ( y = rect.top(); y <= rect.bottom(); ++y ) {
          rl += rcdelta;
          gl += gcdelta;
          bl += bcdelta;
@@ -197,7 +197,7 @@ void gradient( QPainter &p, bool hor, const QRect &rect, const QColor &ca, const
       }
    } else
    {
-      for( x = rect.left(); x <= rect.right(); x++) {
+      for( x = rect.left(); x <= rect.right(); ++x) {
          rl += rcdelta;
          gl += gcdelta;
          bl += bcdelta;
@@ -331,7 +331,7 @@ void KSmallSlider::wheelEvent( QWheelEvent * qwe)
     emit valueChanged(newVal);
     qwe->accept(); // Accept the event
 
-    // Hint: Qt autmatically triggers a valueChange() when we do setValue()
+    // Hint: Qt automatically triggers a valueChange() when we do setValue()
 }
 
 

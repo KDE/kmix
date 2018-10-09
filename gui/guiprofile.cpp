@@ -509,8 +509,8 @@ QString xmlify(QString raw)
 	raw = raw.replace('&', "&amp;");
 	raw = raw.replace('<', "&lt;");
 	raw = raw.replace('>', "&gt;");
-	raw = raw.replace("'", "&apos;");
-	raw = raw.replace("\"", "&quot;");
+	raw = raw.replace('\'', "&apos;");
+	raw = raw.replace('\"', "&quot;");
 // 	qCDebug(KMIX_LOG) << "After : " << raw;
 	return raw;
 }

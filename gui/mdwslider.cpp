@@ -206,7 +206,7 @@ QSize MDWSlider::sizeHint() const
  * This method is a helper for users of this class who would like
  * to show multiple MDWSlider, and align the sliders.
  * It returns the "height" (if vertical) of this widgets label.
- * Warning: Line wraps are computed for a fixed size (100), this may be unaccurate in case,
+ * Warning: Line wraps are computed for a fixed size (100), this may be inaccurate in case,
  * the widgets have different sizes.
  */
 int MDWSlider::labelExtentHint() const
@@ -998,8 +998,8 @@ void MDWSlider::increaseVolume()
 }
 
 /**
- * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which hare handeled by the
- * KMixWindow class. So for 99.9% of all users, this methos is never called.
+ * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which hare handled by the
+ * KMixWindow class. So for 99.9% of all users, this method is never called.
  */
 void MDWSlider::decreaseVolume()
 {

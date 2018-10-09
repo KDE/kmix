@@ -104,8 +104,8 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
             item->setData(Qt::UserRole, mixer->id());
 	}
 
-        connect(m_mixerList, SIGNAL(itemChanged(QListWidgetItem *)), SLOT(backendsModifiedSlot()));
-        connect(m_mixerList, SIGNAL(itemActivated(QListWidgetItem *)), SLOT(itemActivatedSlot(QListWidgetItem *)));
+        connect(m_mixerList, SIGNAL(itemChanged(QListWidgetItem*)), SLOT(backendsModifiedSlot()));
+        connect(m_mixerList, SIGNAL(itemActivated(QListWidgetItem*)), SLOT(itemActivatedSlot(QListWidgetItem*)));
 }
 
 QSet<QString> DialogChooseBackends::getChosenBackends()

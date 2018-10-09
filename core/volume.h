@@ -84,7 +84,7 @@ friend class MixDevice;
 
     enum VolumeTypeFlag { Playback = 1, Capture = 2, Both = 3 };
 
-    // regular constructor (old, deprecsted)
+    // regular constructor (old, deprecated)
     //Volume( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     // regular constructor
     Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
@@ -143,7 +143,7 @@ friend class MixDevice;
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend QDebug operator<<(QDebug os, const Volume& vol);
 
-    // _channelMaskEnum[] and the following elements moved to public seection. operator<<() could not
+    // _channelMaskEnum[] and the following elements moved to public section. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
     QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
@@ -159,7 +159,7 @@ protected:
 
     long          _minVolume;
     long          _maxVolume;
-   // setSwitch() and isSwitchActivated() are tricky. No regular class (incuding the Backends) shall use
+   // setSwitch() and isSwitchActivated() are tricky. No regular class (including the Backends) shall use
    // these functions. Our friend class MixDevice will handle that gracefully for us.
    void setSwitch( bool active );
    bool isSwitchActivated() const  // TODO rename to isActive()

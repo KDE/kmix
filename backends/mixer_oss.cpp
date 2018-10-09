@@ -29,6 +29,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <qplatformdefs.h>
 
 // Since we're guaranteed an OSS setup here, let's make life easier
 #if !defined(__NetBSD__) && !defined(__OpenBSD__)
@@ -106,13 +107,13 @@ int Mixer_OSS::open()
     QString finalDeviceName;
     finalDeviceName = deviceName( m_devnum );
   qCDebug(KMIX_LOG) << "OSS open() " << finalDeviceName;
-    if ((m_fd= ::open( finalDeviceName.toLatin1().data(), O_RDWR)) < 0)
+    if ((m_fd= QT_OPEN( finalDeviceName.toLatin1().data(), O_RDWR)) < 0)
     {
         if ( errno == EACCES )
         return Mixer::ERR_PERM;
         else {
             finalDeviceName = deviceNameDevfs( m_devnum );
-            if ((m_fd= ::open( finalDeviceName.toLatin1().data(), O_RDWR)) < 0)
+            if ((m_fd= QT_OPEN( finalDeviceName.toLatin1().data(), O_RDWR)) < 0)
             {
                 if ( errno == EACCES )
                     return Mixer::ERR_PERM;
@@ -311,7 +312,7 @@ int Mixer_OSS::setRecsrcToOSS( const QString& id, bool on )
     }
 
     // Re-read status of record source(s). Just in case the hardware/driver has
-    // some limitaton (like exclusive switches)
+    // some limitation (like exclusive switches)
     int recsrcMask;
     if (ioctl(m_fd, SOUND_MIXER_READ_RECSRC, &recsrcMask) == -1)
         errormsg(Mixer::ERR_READ);

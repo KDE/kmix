@@ -34,7 +34,7 @@ class DialogSelectMaster : public DialogBase
     Q_OBJECT
 
  public:
-    DialogSelectMaster(Mixer *mixer = 0, QWidget *parent = 0);
+    explicit DialogSelectMaster(Mixer *mixer = 0, QWidget *parent = 0);
     virtual ~DialogSelectMaster() = default;
 
  public slots:

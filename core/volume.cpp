@@ -131,7 +131,7 @@ void Volume::addVolumeChannels(ChannelMask chmask)
 void Volume::addVolumeChannel(VolumeChannel vc)
 {
 	_volumesL.insert(vc.chid, vc);
-	// Add the correpsonnding "muted version" of the chnnel.
+	// Add the corresponding "muted version" of the channel.
 //	VolumeChannel* zeroChannel = new VolumeChannel(vc.chid);
 //	zeroChannel->volume = 0;
 //	_volumesMuted.insert(zeroChannel->chid, *zeroChannel); // TODO remove _volumesMuted

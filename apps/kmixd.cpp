@@ -77,7 +77,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
  * on DBUS, likely creating deadlocks. See Bug 317926 for that. By artificially delaying initialization,
  * KMixD gets hopefully out of the way of the other applications, avoiding these deadlocks. A small delay
  * should also not harm too much, as apps using the Mixer DBUS calls on KMixD must be prepared that the
- * interface is not available rihgt when they start.
+ * interface is not available right when they start.
  */
 void KMixD::delayedInitialization()
 {

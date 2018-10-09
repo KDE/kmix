@@ -81,8 +81,8 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
 		(ControlChangeType::Type) (ControlChangeType::Volume | ControlChangeType::MasterChanged), this,
 		QString("KMixDockWidget"));
 	 
-	      // Refresh in all cases. When there is no Golbal Master we still need
-     // to initialize correctly (e.g. for showin 0% or hiding it)
+	      // Refresh in all cases. When there is no Global Master we still need
+     // to initialize correctly (e.g. for showing 0% or hiding it)
      refreshVolumeLevels();
 }
 

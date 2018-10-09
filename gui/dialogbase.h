@@ -66,7 +66,7 @@ public:
      * Get a spacing hint suitable for use within the dialog layout.
      *
      * @return The spacing hint
-     * @deprecated Kept for compatiblity with KDE4.
+     * @deprecated Kept for compatibility with KDE4.
      * Use @c verticalSpacing() or @c horizontalSpacing() as appropriate.
      **/
     static Q_DECL_DEPRECATED int spacingHint();

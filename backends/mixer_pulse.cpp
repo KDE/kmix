@@ -103,7 +103,7 @@ static void translateMasksAndMaps(devinfo& dev)
     dev.chanIDs.clear();
 
     if (dev.channel_map.channels != dev.volume.channels) {
-        qCCritical(KMIX_LOG) << "Hiddeous Channel mixup map says " << dev.channel_map.channels << ", volume says: " << dev.volume.channels;
+        qCCritical(KMIX_LOG) << "Hideous Channel mixup map says " << dev.channel_map.channels << ", volume says: " << dev.volume.channels;
         return;
     }
     if (1 == dev.channel_map.channels && PA_CHANNEL_POSITION_MONO == dev.channel_map.map[0]) {
@@ -477,7 +477,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
             rule.mute = false;
             rule.device = "";
             s_RestoreRules[KMIXPA_EVENT_KEY] = rule;
-            qCDebug(KMIX_LOG) << "Initialising restore rule for new user: " << i18n("Event Sounds");
+            qCDebug(KMIX_LOG) << "Initializing restore rule for new user: " << i18n("Event Sounds");
         }
 
         if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
@@ -789,7 +789,7 @@ void Mixer_PULSE::emitControlsReconfigured()
 	 *  a) It seems there seems to be some object deletion hazard with a QMenu (the one for "move stream")
 	 *  b)  I do not see why executing it Queued is better, because you can never know when it is actually being
 	 *      executed: it could be "right now". It looks like Qt currently executes it after the QMenu hazard has
-	 *      resolved itselves miracously.
+	 *      resolved itself miraculously.
 	 *  c) I am definitely strongly opposed on this "execute later" approach. It is pure gambling IMO and might be
 	 *     broken any time (from DEBUG to RELEASE build, or by a new Qt or KDE version).
 	 *

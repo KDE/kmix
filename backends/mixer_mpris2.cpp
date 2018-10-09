@@ -96,7 +96,7 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 
 
 	QDBusPendingCallWatcher* watchMediaControlReply = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchMediaControlReply, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherMediaControl(QDBusPendingCallWatcher *)));
+	connect(watchMediaControlReply, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherMediaControl(QDBusPendingCallWatcher*)));
 
 	return 0; // Presume everything went well. Can't do more for ASYNC calls
 }
@@ -354,7 +354,7 @@ void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 	QVariant v2 = QVariant(QString("Identity"));
 	QDBusPendingReply<QVariant > repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
 	QDBusPendingCallWatcher* watchIdentity = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherPlugControlId(QDBusPendingCallWatcher *)));
+	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherPlugControlId(QDBusPendingCallWatcher*)));
 }
 
 MixDevice::ChannelType Mixer_MPRIS2::getChannelTypeFromPlayerId(const QString& id)
@@ -525,12 +525,12 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 		QVariant v2 = QVariant(QString("Volume"));
 		QDBusPendingReply<QVariant > repl2 = mprisCtl->propertyIfc->asyncCall("Get", v1, v2);
 		QDBusPendingCallWatcher* watcherOutgoing = new QDBusPendingCallWatcher(repl2, mprisCtl);
-		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherInitialVolume(QDBusPendingCallWatcher *)));
+		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherInitialVolume(QDBusPendingCallWatcher*)));
 
 		v2 = QVariant(QString("PlaybackStatus"));
 		repl2 = mprisCtl->propertyIfc->asyncCall("Get", v1, v2);
 		watcherOutgoing = new QDBusPendingCallWatcher(repl2, mprisCtl);
-		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher *)), this, SLOT(watcherInitialPlayState(QDBusPendingCallWatcher *)));
+		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherInitialPlayState(QDBusPendingCallWatcher*)));
 
 		// Push notifyToReconfigureControls to stack, so it will not be executed synchronously
 		announceControlListAsync(id);

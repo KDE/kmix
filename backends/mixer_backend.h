@@ -65,11 +65,11 @@ protected:
 
   /**
    * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for looking up the
-   * driver name on instanciated objects.
+   * driver name on instantiated objects.
    *
    * Please note, that there is also a static implementation of the driverName
    * (Because there is no "virtual static" in C++, I need the method twice).
-   * The static implementation is for the Mixer Factory (who needs it *before* instanciating an object).
+   * The static implementation is for the Mixer Factory (who needs it *before* instantiating an object).
    * While it is not a member function, its implementation can still be found in the corresponding
    * Backend implementation. For example in mixer_oss.cpp there is a global function called OSS_getDriverName().
    */
@@ -203,7 +203,7 @@ protected:
    *
    * TODO This is not entirely correct. Example: If the first card (cardDiscrimiator == 1) is unpluggged, then
    *   s_mixerNums["cardName"] is changed from 2 to 1. The next plug of registerCard("cardName") will use
-   *   cardDiscriminator == 2, but the card with taht discrimniator was not unplugged => BANG!!!
+   *   cardDiscriminator == 2, but the card with that discriminator was not unplugged => BANG!!!
    *
    * @param cardBaseName
    */

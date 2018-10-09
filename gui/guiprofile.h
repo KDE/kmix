@@ -62,7 +62,7 @@ public:
 
 /**
  * GuiVisibility can be used in different contexts. One is, to define in the XML GUI Profile, which control to show, e.g. show
- * "MIC Boost" in EXTENDED mode. The other is for representing the GUI compexity (e.g. for letting the user select a preset like "SIMPLE".
+ * "MIC Boost" in EXTENDED mode. The other is for representing the GUI complexity (e.g. for letting the user select a preset like "SIMPLE".
  */
 class GuiVisibility
 {
@@ -304,7 +304,7 @@ QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 class GUIProfileParser : public QXmlDefaultHandler
 {
 public:
-    GUIProfileParser(GUIProfile* ref_gp);
+    explicit GUIProfileParser(GUIProfile* ref_gp);
     // Enumeration for the scope
     enum ProfileScope { NONE, SOUNDCARD };
     
