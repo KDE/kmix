@@ -33,15 +33,14 @@ class KMIXCORE_EXPORT DBusMixSetWrapper : public QObject
 	Q_PROPERTY(QString currentMasterControl READ currentMasterControl)
 	Q_PROPERTY(QString preferredMasterMixer READ preferredMasterMixer)
 	Q_PROPERTY(QString preferredMasterControl READ preferredMasterControl)
+
 	public:
 		static void initialize(QObject* parent, const QString& path);
 		static DBusMixSetWrapper* instance();
 
-		DBusMixSetWrapper(QObject* parent, const QString& path);
-		~DBusMixSetWrapper();
-		
 		void signalMixersChanged();
 		void signalMasterChanged();
+
 	public slots:
 		QStringList mixers() const;
 		
@@ -52,8 +51,10 @@ class KMIXCORE_EXPORT DBusMixSetWrapper : public QObject
 		void setCurrentMaster(const QString &mixer, const QString &control);
 		void setPreferredMaster(const QString &mixer, const QString &control);
 		void controlsChange(int changeType);
+
 	private:
-		static DBusMixSetWrapper* instanceSingleton;
+		DBusMixSetWrapper(QObject* parent, const QString& path);
+		virtual ~DBusMixSetWrapper() = default;
 
 		QString m_dbusPath;
 };

@@ -24,13 +24,11 @@
 #include "core/ControlManager.h"
 #include "mixsetadaptor.h"
 
-DBusMixSetWrapper* DBusMixSetWrapper::instanceSingleton;
+static DBusMixSetWrapper *instanceSingleton = nullptr;
 
 void DBusMixSetWrapper::initialize(QObject* parent, const QString& path)
 {
-	/* This should not happen! */
-	if (instanceSingleton)
-		delete instanceSingleton;
+	Q_ASSERT(instanceSingleton==nullptr);
 	instanceSingleton = new DBusMixSetWrapper(parent, path);
 }
 
@@ -50,10 +48,6 @@ DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 		ControlChangeType::MasterChanged, 
 		this,
 		QString("DBusMixSetWrapper"));
-}
-
-DBusMixSetWrapper::~DBusMixSetWrapper()
-{
 }
 
 void DBusMixSetWrapper::controlsChange(int changeType)
