@@ -65,6 +65,13 @@ QString KMixDeviceManager::getUDI_OSS(const QString &devname)
 }
 
 
+static bool isSoundDevice(const QString &udi)
+{
+    QRegExp rx("/sound/");				// any UDI mentioning sound
+    return (udi.contains(rx));
+}
+
+
 static int matchDevice(const QString &udi)
 {
     QRegExp rx("/sound/card(\\d+)$");			// match sound card and ID number
@@ -75,6 +82,8 @@ static int matchDevice(const QString &udi)
 
 void KMixDeviceManager::pluggedSlot(const QString &udi)
 {
+    if (!isSoundDevice(udi)) return;			// ignore non-sound devices
+
     Solid::Device device(udi);
     if (!device.isValid())
     {
@@ -104,7 +113,7 @@ void KMixDeviceManager::pluggedSlot(const QString &udi)
         qCDebug(KMIX_LOG) << "udi" << udi;
         const QString alsaUDI = getUDI_ALSA(dev);
         qCDebug(KMIX_LOG) << "ALSA udi" << alsaUDI << "device" << dev;
-        QTimer::singleShot(HOTPLUG_DELAY, [=](){ emit plugged("ALSA", alsaUDI, dev); });
+        QTimer::singleShot(HOTPLUG_DELAY, [&](){ emit plugged("ALSA", alsaUDI, dev); });
     }							// allow hotplug to settle
     else qCDebug(KMIX_LOG) << "Ignored unrecognised UDI" << udi;
 }
@@ -112,6 +121,8 @@ void KMixDeviceManager::pluggedSlot(const QString &udi)
 
 void KMixDeviceManager::unpluggedSlot(const QString &udi)
 {
+    if (!isSoundDevice(udi)) return;			// ignore non-sound devices
+
     // At this point the device has already been unplugged by the user.
     // Solid doesn't know anything about the device except the UDI, but
     // that can be matched using the same logic as for plugging.
@@ -122,7 +133,7 @@ void KMixDeviceManager::unpluggedSlot(const QString &udi)
         qCDebug(KMIX_LOG) << "udi" << udi;
         const QString alsaUDI = getUDI_ALSA(dev);
         qCDebug(KMIX_LOG) << "ALSA udi" << alsaUDI << "device" << dev;
-        QTimer::singleShot(HOTPLUG_DELAY, [=](){ emit unplugged(alsaUDI); });
+        QTimer::singleShot(HOTPLUG_DELAY, [&](){ emit unplugged(alsaUDI); });
     }							// allow hotplug to settle
     else qCDebug(KMIX_LOG) << "Ignored unrecognised UDI" << udi;
 }
