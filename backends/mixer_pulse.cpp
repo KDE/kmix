@@ -909,29 +909,28 @@ void Mixer_PULSE::removeAllWidgets()
 
 bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 {
-    if (dev.chanMask == Volume::MNONE)
-        return false;
+    if (dev.chanMask == Volume::MNONE) return false;
 
-        MixSet *ms = 0;
-        if (m_devnum == KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
-            ms = s_mixers[KMIXPA_PLAYBACK]->getMixSet();
-        else if (m_devnum == KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
-            ms = s_mixers[KMIXPA_CAPTURE]->getMixSet();
+    MixSet *ms = nullptr;
+    if (m_devnum == KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
+        ms = s_mixers[KMIXPA_PLAYBACK]->getMixSet();
+    else if (m_devnum == KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
+        ms = s_mixers[KMIXPA_CAPTURE]->getMixSet();
 
-        int maxVol = GlobalConfig::instance().data.volumeOverdrive ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
-        Volume v(maxVol, PA_VOLUME_MUTED, true, false);
-        v.addVolumeChannels(dev.chanMask);
-        setVolumeFromPulse(v, dev);
-        MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
-        if (isAppStream)
-            md->setApplicationStream(true);
+    int maxVol = GlobalConfig::instance().data.volumeOverdrive ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
+    Volume v(maxVol, PA_VOLUME_MUTED, true, false);
+    v.addVolumeChannels(dev.chanMask);
+    setVolumeFromPulse(v, dev);
+    MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
+    if (isAppStream)
+        md->setApplicationStream(true);
 
 //        qCDebug(KMIX_LOG) << "Adding Pulse volume " << dev.name << ", isCapture= "
 //                      << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE)
 //                      << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
-        md->addPlaybackVolume(v);
-        md->setMuted(dev.mute);
-        m_mixDevices.append(md->addToPool());
+    md->addPlaybackVolume(v);
+    md->setMuted(dev.mute);
+    m_mixDevices.append(md->addToPool());
     return true;
 }
 
@@ -1404,7 +1403,7 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
             pa_operation* o;
             if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
                 qCWarning(KMIX_LOG) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
-                return Mixer::ERR_READ;
+                return false;
             }
             pa_operation_unref(o);
         }
