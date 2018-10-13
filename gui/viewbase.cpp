@@ -463,7 +463,7 @@ void ViewBase::save(KConfig *config)
 			//qCDebug(KMIX_LOG) << "  mixer=" << view->id().toLatin1();
 			//qCDebug(KMIX_LOG) << "  mdwPK=" << mdw->mixDevice()->id().toLatin1();
 
-			QString devgrp = QString("%1.%2.%3").arg(grp).arg(md->mixer()->id()).arg(md->id());
+			QString devgrp = QString("%1.%2.%3").arg(grp, md->mixer()->id(), md->id());
 			KConfigGroup devcg = config->group(devgrp);
 
 			if (mdw->inherits("MDWSlider"))

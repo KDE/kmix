@@ -229,7 +229,7 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
  */
 QString MixDevice::configGroupName(QString prefix)
 {
-         QString devgrp = QString("%1.%2.%3").arg(prefix).arg(mixer()->id()).arg(id());
+	 QString devgrp = QString("%1.%2.%3").arg(prefix, mixer()->id(), id());
 	 return devgrp;
 }
 
@@ -239,7 +239,7 @@ QString MixDevice::configGroupName(QString prefix)
  */
 QString MixDevice::getFullyQualifiedId()
 {
-	QString fqId = QString("%1@%2").arg(_id).arg(_mixer->id());
+	QString fqId = QString("%1@%2").arg(_id, _mixer->id());
 	return fqId;
 }
 
@@ -382,7 +382,7 @@ bool MixDevice::read( KConfig *config, const QString& grp )
         return false;
     }
 
-    QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
+    QString devgrp = QString("%1.Dev%2").arg(grp, _id);
     KConfigGroup cg = config->group( devgrp );
     //qCDebug(KMIX_LOG) << "MixDevice::read() of group devgrp=" << devgrp;
 
@@ -426,7 +426,7 @@ bool MixDevice::write( KConfig *config, const QString& grp )
         return false;
     }
 
-    QString devgrp = QString("%1.Dev%2").arg(grp).arg(_id);
+    QString devgrp = QString("%1.Dev%2").arg(grp, _id);
     KConfigGroup cg = config->group(devgrp);
     // qCDebug(KMIX_LOG) << "MixDevice::write() of group devgrp=" << devgrp;
 

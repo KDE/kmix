@@ -157,7 +157,7 @@ void MDWSlider::createShortcutActions()
         This is a bug according to the thread "Global shortcuts are saved with their text-name and not their action-name - Bug?" on kcd.
         I work around this by using a text with setText() that is unique, but still readable to the user.
     */
-    QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName() ).arg( mixDevice()->mixer()->readableName() );
+    QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName(), mixDevice()->mixer()->readableName() );
     QAction *bi, *bd, *bm;
 
     // -1- INCREASE VOLUME SHORTCUT -----------------------------------------
@@ -350,9 +350,9 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
     QString captureTooltipText( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
     QString muteTooltipText( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
     if (includeMixerName) {
-        tooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName() ).arg( tooltipText );
-        captureTooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName() ).arg( captureTooltipText );
-        muteTooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName() ).arg( muteTooltipText );
+        tooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName(), tooltipText );
+        captureTooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName(), captureTooltipText );
+        muteTooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName(), muteTooltipText );
     }
 
       // case of vertical sliders:

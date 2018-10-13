@@ -156,8 +156,7 @@ void Mixer::recreateId()
     QString mixerName = _mixerBackend->getId();
     mixerName.replace(':','_');
     QString primaryKeyOfMixer = QString("%1::%2:%3")
-            .arg(getDriverName())
-            .arg(mixerName)
+            .arg(getDriverName(), mixerName)
             .arg(getCardInstance());
     // The following 3 replaces are for not messing up the config file
     primaryKeyOfMixer.replace(']','_');
