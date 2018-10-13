@@ -297,9 +297,6 @@ void KMixWindow::initWidgets()
 	m_wsMixers->setTabsClosable(false);
 	connect(m_wsMixers, SIGNAL(tabCloseRequested(int)), SLOT(saveAndCloseView(int)));
 
-	QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar,
-			IconSize(KIconLoader::Small));
-
 	connect(m_wsMixers, SIGNAL(currentChanged(int)), SLOT(newMixerShown(int)));
 
 	// show menubar if the actions says so (or if the action does not exist)
