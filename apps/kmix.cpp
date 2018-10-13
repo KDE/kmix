@@ -32,6 +32,7 @@
 #include <QString>
 #include <QTabWidget>
 #include <QPointer>
+#include <QHash>
 
 // include files for KDE
 #include <KGlobalAccel>
@@ -596,7 +597,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		saveViewConfig();  // save the state before recreating
 
 	// -2- RECREATE THE ALREADY EXISTING TABS **********************************
-	QMap<Mixer*, bool> mixerHasProfile;
+	QHash<Mixer*, bool> mixerHasProfile;
 
 // -2a- Build a list of all active profiles in the main window (that means: from all tabs)
 	QList<GUIProfile*> activeGuiProfiles;
