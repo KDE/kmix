@@ -35,9 +35,7 @@
 static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
 
-extern "C" int
-Q_DECL_EXPORT
-kdemain(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 

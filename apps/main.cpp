@@ -33,9 +33,7 @@
 static const char description[] =
 I18N_NOOP("KMix - KDE's full featured mini mixer");
 
-extern "C" int
-Q_DECL_EXPORT
-kdemain(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     QApplication qapp(argc, argv);
 

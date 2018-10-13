@@ -44,7 +44,6 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     GlobalAccel
     I18n
     IconThemes
-    Init
     Notifications
     Plasma
     Solid
@@ -283,8 +282,8 @@ set(kmix_SRCS
   ${kmix_debug_SRCS}
 )
 
-kf5_add_kdeinit_executable(kmix ${kmix_SRCS})
-target_link_libraries(kdeinit_kmix
+add_executable(kmix ${kmix_SRCS})
+target_link_libraries(kmix
   kmixcore
   kmixgui
   KF5::I18n
@@ -296,8 +295,6 @@ target_link_libraries(kdeinit_kmix
   KF5::WindowSystem
 )
 
-install(TARGETS kdeinit_kmix DESTINATION ${KDE_INSTALL_LIBDIR})
-target_link_libraries( kmix kdeinit_kmix)
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES desktop/kmixui.rc DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kmix)
@@ -337,15 +334,13 @@ set(kmixctrl_SRCS
   ${kmix_debug_SRCS}
 )
 
-kf5_add_kdeinit_executable(kmixctrl ${kmixctrl_SRCS})
-target_link_libraries(kdeinit_kmixctrl
+add_executable(kmixctrl ${kmixctrl_SRCS})
+target_link_libraries(kmixctrl
   kmixcore
   KF5::I18n
   KF5::CoreAddons
 )
 
-install(TARGETS kdeinit_kmixctrl DESTINATION ${KDE_INSTALL_LIBDIR})
-target_link_libraries(kmixctrl kdeinit_kmixctrl)
 install(TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
