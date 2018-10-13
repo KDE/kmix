@@ -657,7 +657,7 @@ bool Mixer_ALSA::hasChangedControls() {
                 }
                 else
                 {
-                    qCWarning(KMIX_LOG) << "Mixer_ALSA::poll() , Error: poll() returns POLLIN with errno=" + eventCount;
+                    qCWarning(KMIX_LOG) << "Mixer_ALSA::poll() , Error: poll() returns POLLIN with errno=" << eventCount;
                 }
             }
         }
