@@ -113,7 +113,7 @@ void KMixDeviceManager::pluggedSlot(const QString &udi)
         qCDebug(KMIX_LOG) << "udi" << udi;
         const QString alsaUDI = getUDI_ALSA(dev);
         qCDebug(KMIX_LOG) << "ALSA udi" << alsaUDI << "device" << dev;
-        QTimer::singleShot(HOTPLUG_DELAY, [&](){ emit plugged("ALSA", alsaUDI, dev); });
+        QTimer::singleShot(HOTPLUG_DELAY, [=](){ emit plugged("ALSA", alsaUDI, dev); });
     }							// allow hotplug to settle
     else qCDebug(KMIX_LOG) << "Ignored unrecognised UDI" << udi;
 }
@@ -133,7 +133,7 @@ void KMixDeviceManager::unpluggedSlot(const QString &udi)
         qCDebug(KMIX_LOG) << "udi" << udi;
         const QString alsaUDI = getUDI_ALSA(dev);
         qCDebug(KMIX_LOG) << "ALSA udi" << alsaUDI << "device" << dev;
-        QTimer::singleShot(HOTPLUG_DELAY, [&](){ emit unplugged(alsaUDI); });
+        QTimer::singleShot(HOTPLUG_DELAY, [=](){ emit unplugged(alsaUDI); });
     }							// allow hotplug to settle
     else qCDebug(KMIX_LOG) << "Ignored unrecognised UDI" << udi;
 }
