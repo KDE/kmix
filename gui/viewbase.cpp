@@ -159,7 +159,7 @@ void ViewBase::createDeviceWidgets()
     if ( !isDynamic() )
     {
       QAction *action = _localActionColletion->addAction("toggle_channels");
-      action->setText(i18n("&Channels"));
+      action->setText(i18n("Configure Channels..."));
       connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
    }
 
