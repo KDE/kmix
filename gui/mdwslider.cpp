@@ -971,9 +971,8 @@ void MDWSlider::volumeChange( int )
 		volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
 	}
 
-	bool oldViewBlockSignalState = m_view->blockSignals(true);
+	QSignalBlocker blocker(m_view);
 	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-	m_view->blockSignals(oldViewBlockSignalState);
 }
 
 void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
@@ -1131,36 +1130,34 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 //	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 //	  }
   
-	for( int i=0; i<ref_sliders.count(); i++ )
+	for (int i = 0; i<ref_sliders.count(); ++i)
 	{
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
 		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
 		int volume_index;
 
-		bool oldBlockState = slider->blockSignals( true );
-
-//		slider->setValue( useVolume );
+		QSignalBlocker blocker(slider);
 		// --- Avoid feedback loops START -----------------
-		if((volume_index = volumeValues.indexOf(useVolume)) > -1 && --m_waitForSoundSetComplete < 1)
+		volume_index = volumeValues.indexOf(useVolume);
+		if (volume_index>-1 && --m_waitForSoundSetComplete<1)
 		{
 		    m_waitForSoundSetComplete = 0;
 		    volumeValues.removeAt(volume_index);
 
-		    if(!m_sliderInWork)
-			  slider->setValue(useVolume);
+		    if (!m_sliderInWork) slider->setValue(useVolume);
 		}
-		else if(!m_sliderInWork && m_waitForSoundSetComplete < 1)
+		else if (!m_sliderInWork && m_waitForSoundSetComplete<1)
 		{
 			slider->setValue(useVolume);
 		}
 		// --- Avoid feedback loops END -----------------
 
-		if ( slider->inherits( "KSmallSlider" ) )
+		KSmallSlider *smallSlider = qobject_cast<KSmallSlider *>(slider);
+		if (smallSlider!=nullptr)		// faster than QObject::inherits()
 		{
-			((KSmallSlider*)slider)->setGray( m_mixdevice->isMuted() );
+			smallSlider->setGray(m_mixdevice->isMuted());
 		}
-		slider->blockSignals( oldBlockState );
 	} // for all sliders
 
 
