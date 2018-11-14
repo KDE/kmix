@@ -51,9 +51,11 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
                                  bool small, Qt::Orientation orientation,
                                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
    QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),
-   _orientation( orientation ), m_small( small )
+   m_orientation( orientation ), m_small( small )
    , m_shortcutsDialog(0)
 {
+   setContextMenuPolicy(Qt::DefaultContextMenu);
+
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );
    
@@ -67,10 +69,6 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
    if ( whatsthisText != "---") {
       setWhatsThis(whatsthisText);
    }
-}
-
-MixDeviceWidget::~MixDeviceWidget()
-{
 }
 
 void MixDeviceWidget::addActionToPopup( QAction *action )
@@ -88,6 +86,11 @@ void MixDeviceWidget::defineKeys()
    m_shortcutsDialog->configure();
 }
 
+void MixDeviceWidget::contextMenuEvent(QContextMenuEvent *ev)
+{
+    showContextMenu(ev->globalPos());
+}
+
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
 //void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
 //void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ }
@@ -98,16 +101,3 @@ void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ }
 void MixDeviceWidget::setIcons( bool ) { /* is virtual */ }
 void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ }
 void MixDeviceWidget::setMutedColors( QColor , QColor , QColor ) { /* is virtual */ }
-
-
-
-void MixDeviceWidget::mousePressEvent( QMouseEvent *e )
-{
-   if ( e->button() == Qt::RightButton )
-      showContextMenu();
-   else {
-       QWidget::mousePressEvent(e);
-   }
-}
-
-

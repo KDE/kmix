@@ -384,8 +384,8 @@ void ViewSliders::configurationUpdate()
 	{
 		  // additional options for sliders
 		 mdwSlider->setLabelExtent(labelExtent);
-		 mdwSlider->setMuteButtonSpace(haveMuteButtons);
-		 mdwSlider->setCaptureLEDSpace(haveCaptureLEDs);
+// 		 mdwSlider->setMuteButtonSpace(haveMuteButtons);
+// 		 mdwSlider->setCaptureLEDSpace(haveCaptureLEDs);
 	}
          bool thisControlIsVisible = mdw->isVisibleTo(this);
          bool showSeparator = ( firstVisibleControlFound && thisControlIsVisible);

@@ -38,59 +38,57 @@ class MixDevice;
 class ProfControl;
 class ViewBase;
 
-class MixDeviceWidget
- : public QWidget
+class MixDeviceWidget : public QWidget
 {
-      Q_OBJECT
+    Q_OBJECT
 
 public:
     MixDeviceWidget( shared_ptr<MixDevice> md,
                      bool small, Qt::Orientation orientation,
                      QWidget* parent, ViewBase*, ProfControl * );
-    virtual ~MixDeviceWidget();
+    virtual ~MixDeviceWidget() = default;
 
     void addActionToPopup( QAction *action );
 
-    shared_ptr<MixDevice> mixDevice() { return m_mixdevice; }
+    shared_ptr<MixDevice> mixDevice()			{ return (m_mixdevice); }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
     virtual void setMutedColors( QColor high, QColor low, QColor back );
 
-    virtual bool isStereoLinked() const { return false; }
-    virtual void setStereoLinked( bool ) {}
-    virtual void setLabeled( bool );
-    virtual void setTicks( bool ) {}
-
+    virtual bool isStereoLinked() const			{ return (false); }
+    virtual void setStereoLinked(bool)			{}
+    virtual void setLabeled(bool);
+    virtual void setTicks(bool)				{}
 
 public slots:
     virtual void defineKeys();
-	virtual void showContextMenu( const QPoint &pos = QCursor::pos() ) = 0;
-	/**
-	 * update() is called whenever there are volume updates pending from the hardware for this MDW.
-	 */
+    virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
+
+    /**
+      * Called whenever there are volume updates pending from the hardware for this MDW.
+      */
     virtual void update() = 0;
 
 signals:
     void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 protected slots:
-	virtual void setDisabled( bool value ) = 0;
-    void volumeChange( int );
+    virtual void setDisabled(bool value) = 0;
+    void volumeChange(int);
 
 protected:
+    void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
 
+protected:
       shared_ptr<MixDevice>  m_mixdevice;
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
       ProfControl*         _pctl;
-      Qt::Orientation      _orientation;
+      Qt::Orientation      m_orientation;
       bool                 m_small;
       KShortcutsDialog*    m_shortcutsDialog;
-
-private:
-      void mousePressEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
 };
 
 #endif

@@ -31,6 +31,7 @@
 #include <qpixmap.h>
 
 class QBoxLayout;
+class QGridLayout;
 class QToolButton;
 class QLabel;
 class QMenu;
@@ -67,14 +68,14 @@ public:
     void setLabeled( bool value ) Q_DECL_OVERRIDE;
     void setTicks( bool ticks ) Q_DECL_OVERRIDE;
     void setIcons( bool value ) Q_DECL_OVERRIDE;
-//    void setIcon( QString filename, QLabel** label );
-    void setIcon( QString filename, QWidget* label );
+
     QToolButton* addMediaButton(QString iconName, QLayout* layout, QWidget *parent);
     void updateMediaButton();
     void setColors( QColor high, QColor low, QColor back ) Q_DECL_OVERRIDE;
     void setMutedColors( QColor high, QColor low, QColor back ) Q_DECL_OVERRIDE;
     
-    bool eventFilter( QObject* obj, QEvent* e ) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *obj, QEvent *ev) Q_DECL_OVERRIDE;
+
     QString iconName();
     // Layout
     QSizePolicy sizePolicy() const;
@@ -82,8 +83,8 @@ public:
 	int labelExtentHint() const;
 	void setLabelExtent(int extent);
 	bool hasMuteButton() const;
-	void setMuteButtonSpace(bool);
-	void setCaptureLEDSpace(bool);
+// 	void setMuteButtonSpace(bool);
+// 	void setCaptureLEDSpace(bool);
 	bool hasCaptureLED() const;
 
 	static VolumeSliderExtraData DummVolumeSliderExtraData;
@@ -103,9 +104,8 @@ public slots:
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);
 
-
 private slots:
-    void setRecsrc( bool value );
+    void setRecsrc(bool value);
     void setMuted(bool value);
     void volumeChange( int );
     void sliderPressed();
@@ -122,7 +122,8 @@ private slots:
     void mediaPrev(bool);
 
 private:
-    QPixmap loadIcon( QString filename, KIconLoader::Group group );
+    void setIcon(const QString &filename, QWidget *label);
+//    QPixmap loadIcon( QString filename, KIconLoader::Group group );
     void createWidgets( bool showMuteLED, bool showCaptureLED, bool includeMixer );
     void addSliders( QBoxLayout *volLayout, char type, Volume& vol,
                      QList<QAbstractSlider *>& ref_sliders, QString tooltipText );
@@ -137,35 +138,36 @@ private:
     void updateAccesability();
 #endif
 
-    QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
+//    QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 	QString calculatePlaybackIcon(MediaController::PlayState playState);
 	void guiAddSlidersAndMediacontrols(bool playSliders, bool capSliders, bool mediaControls, QBoxLayout* layout, const QString& tooltipText, const QString& captureTooltipText);
-	void guiAddCaptureCheckbox(bool wantsCaptureLED, const Qt::Alignment& alignmentForCapture,
-		QBoxLayout* layoutForCapture, const QString& captureTooltipText);
-	void guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, QBoxLayout* layoutForMuteButton, const QString& muteTooltipText);
-	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout, const QString& tooltipText);
+	void guiAddCaptureButton(const QString &captureTooltipText);
+	void guiAddMuteButton(const QString& muteTooltipText);
+// 	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout, const QString& tooltipText);
 	void addGlobalShortcut(QAction* action, const QString& label, bool dynamicControl);
+    int controlButtonSize();
 
     bool m_linked;
 
-	QWidget *muteButtonSpacer;
-	QWidget *captureSpacer;
-	QWidget *labelSpacer;
+// 	QWidget *muteButtonSpacer;
+// 	QWidget *captureSpacer;
+// 	QWidget *labelSpacer;
 
-    // GUI: Top portion ( Icon + Mute)
-	QLabel      *m_iconLabelSimple;
-	QToolButton* m_qcb;
-	QLabel* m_muteText;
-        
-	QLabel *m_label; // is either QLabel or VerticalText
-	QToolButton *mediaButton;
+    QGridLayout *m_controlGrid;
 
-	QCheckBox* m_captureCheckbox;
-    QLabel* m_captureText;
+	QLabel      *m_controlIcon;
+// 	QLabel* m_muteText;
+	QLabel *m_controlLabel; // is either QLabel or VerticalText
 
-	int labelSpacing;
-	bool muteButtonSpacing;
-	bool captureLEDSpacing;
+	QToolButton* m_muteButton;
+	QCheckBox* m_captureButton;
+	QToolButton *m_mediaPlayButton;
+	int m_controlButtonSize;
+//     QLabel* m_captureText;
+
+// 	int labelSpacing;
+// 	bool muteButtonSpacing;
+// 	bool captureLEDSpacing;
 
     KActionCollection*   _mdwMoveActions;
     QMenu *m_moveMenu;

@@ -80,7 +80,7 @@ MDWEnum::~MDWEnum()
 
 void MDWEnum::createWidgets()
 {
-   if ( _orientation == Qt::Vertical ) {
+   if ( m_orientation == Qt::Vertical ) {
       _layout = new QVBoxLayout( this );
 	  _layout->setAlignment(Qt::AlignLeft);
    }
