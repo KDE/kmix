@@ -83,8 +83,6 @@ public:
 	int labelExtentHint() const;
 	void setLabelExtent(int extent);
 	bool hasMuteButton() const;
-// 	void setMuteButtonSpace(bool);
-// 	void setCaptureLEDSpace(bool);
 	bool hasCaptureLED() const;
 
 	static VolumeSliderExtraData DummVolumeSliderExtraData;
@@ -138,36 +136,26 @@ private:
     void updateAccesability();
 #endif
 
-//    QWidget* createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool);
 	QString calculatePlaybackIcon(MediaController::PlayState playState);
-	void guiAddSlidersAndMediacontrols(bool playSliders, bool capSliders, bool mediaControls, QBoxLayout* layout, const QString& tooltipText, const QString& captureTooltipText);
+	QWidget *guiAddButtonSpacer();
 	void guiAddCaptureButton(const QString &captureTooltipText);
-	void guiAddMuteButton(const QString& muteTooltipText);
-// 	void guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout, const QString& tooltipText);
+	void guiAddMuteButton(const QString &muteTooltipText);
+	void guiAddControlIcon(const QString &tooltipText);
+	void guiAddControlLabel(Qt::Alignment alignment, const QString &channelName);
 	void addGlobalShortcut(QAction* action, const QString& label, bool dynamicControl);
-    int controlButtonSize();
+    QSize controlButtonSize();
 
     bool m_linked;
-
-// 	QWidget *muteButtonSpacer;
-// 	QWidget *captureSpacer;
-// 	QWidget *labelSpacer;
 
     QGridLayout *m_controlGrid;
 
 	QLabel      *m_controlIcon;
-// 	QLabel* m_muteText;
 	QLabel *m_controlLabel; // is either QLabel or VerticalText
 
 	QToolButton* m_muteButton;
 	QCheckBox* m_captureButton;
 	QToolButton *m_mediaPlayButton;
-	int m_controlButtonSize;
-//     QLabel* m_captureText;
-
-// 	int labelSpacing;
-// 	bool muteButtonSpacing;
-// 	bool captureLEDSpacing;
+	QSize m_controlButtonSize;
 
     KActionCollection*   _mdwMoveActions;
     QMenu *m_moveMenu;

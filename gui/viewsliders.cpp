@@ -372,21 +372,20 @@ void ViewSliders::configurationUpdate()
    bool firstVisibleControlFound = false;
    for ( int i=0; i<_mdws.count(); i++ )
    {
-      MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(_mdws[i]);
-      MDWSlider* mdwSlider = ::qobject_cast<MDWSlider*>(_mdws[i]);
+      MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget*>(_mdws[i]);
+      MDWSlider *mdwSlider = qobject_cast<MDWSlider*>(_mdws[i]);
       if ( mdw )
       {
 	 // guiLevel has been set earlier, by inspecting the controls
 	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), guiLevel);
 	mdw->setVisible(matchingControl != 0);
 
-	if ( mdwSlider )
+	if (mdwSlider!=nullptr)
 	{
-		  // additional options for sliders
-		 mdwSlider->setLabelExtent(labelExtent);
-// 		 mdwSlider->setMuteButtonSpace(haveMuteButtons);
-// 		 mdwSlider->setCaptureLEDSpace(haveCaptureLEDs);
+		// additional options for sliders
+		mdwSlider->setLabelExtent(labelExtent);
 	}
+
          bool thisControlIsVisible = mdw->isVisibleTo(this);
          bool showSeparator = ( firstVisibleControlFound && thisControlIsVisible);
          if ( _separators.contains( mdw->mixDevice()->id() ))
