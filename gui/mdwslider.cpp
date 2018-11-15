@@ -26,17 +26,11 @@
 #include <kconfig.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
-#include <ktoggleaction.h>
 
 #include <QCoreApplication>
-
-#include <QIcon>
-#include <qtoolbutton.h>
-#include <QObject>
-#include <QCheckBox>
+#include <QToolButton>
 #include <QMenu>
 #include <QLabel>
-#include <qpixmap.h>
 #include <QBoxLayout>
 #include <QGridLayout>
 #include <QAction>
@@ -49,11 +43,8 @@
 #include "gui/ksmallslider.h"
 #include "gui/verticaltext.h"
 #include "gui/mdwmoveaction.h"
+#include "gui/toggletoolbutton.h"
 
-
-static const KIconLoader::Group iconLoadGroup = KIconLoader::Small;
-static const KIconLoader::Group iconSizeGroup = KIconLoader::Toolbar;
-static const int iconSmallSize = 10;
 
 bool MDWSlider::debugMe = false;
 
@@ -262,18 +253,18 @@ bool MDWSlider::hasCaptureLED() const
 
 void MDWSlider::guiAddCaptureButton(const QString &captureTooltipText)
 {
-	m_captureButton = new QCheckBox(i18n("cap"), this);
+	m_captureButton = new ToggleToolButton("media-record", this);
+	m_captureButton->setSmallSize(m_small);
 	m_captureButton->installEventFilter(this);
-	connect(m_captureButton, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)));
+	connect(m_captureButton, SIGNAL(clicked(bool)), this, SLOT(toggleRecsrc()));
 	m_captureButton->setToolTip(captureTooltipText);
 }
 
 void MDWSlider::guiAddMuteButton(const QString &muteTooltipText)
 {
-	m_muteButton = new QToolButton(this);
-	m_muteButton->setAutoRaise(true);
-	m_muteButton->setCheckable(false);
-	setIcon("audio-volume-muted", m_muteButton);
+	m_muteButton = new ToggleToolButton("audio-volume-high", this);
+	m_muteButton->setInactiveIcon("audio-volume-muted");
+	m_muteButton->setSmallSize(m_small);
 	m_muteButton->installEventFilter(this);
 	connect(m_muteButton, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
 	m_muteButton->setToolTip(muteTooltipText);
@@ -290,7 +281,7 @@ void MDWSlider::guiAddControlLabel(Qt::Alignment alignment, const QString &chann
 void MDWSlider::guiAddControlIcon(const QString &tooltipText)
 {
 	m_controlIcon = new QLabel(this);
-	setIcon(m_mixdevice->iconName(), m_controlIcon);
+	ToggleToolButton::setIndicatorIcon(m_mixdevice->iconName(), m_controlIcon, m_small);
 	m_controlIcon->setToolTip(tooltipText);
 	m_controlIcon->installEventFilter(this);
 }
@@ -320,7 +311,7 @@ QSize MDWSlider::controlButtonSize()
 	if (!m_controlButtonSize.isValid())		// not calculated yet
 	{
 		auto *buttonSpacer = new QToolButton();
-		setIcon("unknown", buttonSpacer);
+		ToggleToolButton::setIndicatorIcon("unknown", buttonSpacer, m_small);
 		m_controlButtonSize = buttonSpacer->sizeHint();
 		qCDebug(KMIX_LOG) << m_controlButtonSize;
 		delete buttonSpacer;
@@ -342,7 +333,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 	const bool wantsCaptureLED = showCaptureLED && includeCapture;
 	const bool wantsMuteButton = showMuteButton && includePlayback;
 	
-	MediaController *mediaController = m_mixdevice->getMediaController();
+	const MediaController *mediaController = m_mixdevice->getMediaController();
 	const bool wantsMediaControls = mediaController->hasControls();
 
 	const QString channelName = m_mixdevice->readableName();
@@ -552,11 +543,11 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout, QWidget *parent)
 {
 	QToolButton *lbl = new QToolButton(parent);
-	lbl->setIconSize(QSize(IconSize(iconSizeGroup), IconSize(iconSizeGroup)));
+	lbl->setIconSize(QSize(IconSize(KIconLoader::Toolbar), IconSize(KIconLoader::Toolbar)));
 	lbl->setAutoRaise(true);
 	lbl->setCheckable(false);
 	
-	setIcon(iconName, lbl);
+	ToggleToolButton::setIndicatorIcon(iconName, lbl);
 	layout->addWidget(lbl);
 
 	return lbl;
@@ -572,7 +563,7 @@ void MDWSlider::updateMediaButton()
 
 	MediaController* mediaController =  mixDevice()->getMediaController();
 	QString mediaIconName = calculatePlaybackIcon(mediaController->getPlayState());
-	setIcon(mediaIconName, m_mediaPlayButton);
+	ToggleToolButton::setIndicatorIcon(mediaIconName, m_mediaPlayButton);
 }
 
 void MDWSlider::mediaPrev(bool)
@@ -588,12 +579,6 @@ void MDWSlider::mediaNext(bool)
 void MDWSlider::mediaPlay(bool)
 {
   mixDevice()->mediaPlay();
-}
-
-
-static QPixmap loadIcon(const QString &filename, KIconLoader::Group group)
-{
-	return (KIconLoader::global()->loadIcon(filename, group, IconSize(iconSizeGroup)));
 }
 
 
@@ -717,55 +702,6 @@ void MDWSlider::sliderReleased()
 }
 
 
-
-/**
- * Loads the icon with the given @p iconName in the size KIconLoader::Small,
- * and applies it to the @p label widget.  The widget must be either a
- * QLabel or a QToolButton.
- */
-void MDWSlider::setIcon(const QString &filename, QWidget *label)
-{
-	QPixmap miniDevPM = loadIcon(filename, iconLoadGroup);
-	if (miniDevPM.isNull())
-	{
-		qCWarning(KMIX_LOG) << "Could not get pixmap for" << filename;
-		return;
-	}
-
-	// TODO: why is this happening on every control change?
-	qDebug() << "loaded" << filename << "pixmap size" << miniDevPM.size();
-
-	if (m_small)					// small size, scale icon
-	{
-		QMatrix t;
-		t.scale(double(iconSmallSize)/miniDevPM.width(), double(iconSmallSize)/miniDevPM.height());
-		miniDevPM = miniDevPM.transformed(t);
-		label->resize(iconSmallSize, iconSmallSize);
-	}
-	else						// not small size
-	{
-		label->setMinimumSize(IconSize(iconSizeGroup), IconSize(iconSizeGroup));
-	}
-
-	label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-		
-	QLabel *lbl = qobject_cast<QLabel *>(label);
-	if (lbl!=nullptr)
-	{
-		lbl->setPixmap(miniDevPM);
-		lbl->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-	}
-	else
-	{
-		QToolButton *tbt = qobject_cast<QToolButton *>(label);
-		if (tbt!=nullptr)
-		{
-			tbt->setIcon(miniDevPM);
-		}
-	}
-}
-
-
 QString MDWSlider::iconName()
 {
     return m_mixdevice->iconName();
@@ -844,8 +780,7 @@ MDWSlider::setTicks( bool value )
 
 /**
  * Enables or disables tickmarks
- * Please note that always only the first and last slider has tickmarks.
- * 
+ * Please note that always only the first and last slider have tickmarks.
  */
 void MDWSlider::setTicksInternal(QList<QAbstractSlider *>& ref_sliders, bool ticks)
 {
@@ -1125,20 +1060,18 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 	} // for all sliders
 
 
-	// update mute
-
-	if( m_muteButton != 0 )
+	// update mute state
+	if (m_muteButton!=nullptr)
 	{
 		QSignalBlocker blocker(m_muteButton);
-		// TODO: this is the cause of setIcon() being called on every control change
-		QString muteIcon = m_mixdevice->isMuted() ? "audio-volume-muted" : "audio-volume-high";
-		setIcon(muteIcon, m_muteButton);
+		m_muteButton->setActive(!m_mixdevice->isMuted());
 	}
 
-	if( m_captureButton )
+	// update capture state
+	if (m_captureButton!=nullptr)
 	{
 		QSignalBlocker blocker(m_captureButton);
-		m_captureButton->setChecked( m_mixdevice->isRecSource() );
+		m_captureButton->setActive(m_mixdevice->isRecSource());
 	}
 
 }
@@ -1284,7 +1217,7 @@ bool MDWSlider::eventFilter(QObject *obj, QEvent *ev)
 
 	if (slider!=nullptr)
 	{
-		//qCDebug(KMIX_LOG) << "identified as over slider" << slider;
+		//qCDebug(KMIX_LOG) << "identified for slider" << slider;
 		QCoreApplication::sendEvent(slider, ev);
 	}
 

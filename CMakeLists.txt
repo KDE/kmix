@@ -243,6 +243,7 @@ set(kmixgui_SRCS
   gui/dialogselectmaster.cpp
   gui/dialogchoosebackends.cpp
   gui/guiprofile.cpp
+  gui/toggletoolbutton.cpp
 )
 
 add_library(kmixgui STATIC

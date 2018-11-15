@@ -23,12 +23,14 @@
 #ifndef MDWSLIDER_H
 #define MDWSLIDER_H
 
-#include "volumeslider.h"
-#include <QCheckBox>
-#include <QList>
-#include <QWidget>
 #include <qlist.h>
-#include <qpixmap.h>
+
+#include <kiconloader.h>
+
+#include "gui/volumeslider.h"
+#include "gui/mixdevicewidget.h"
+#include "core/volume.h"
+
 
 class QBoxLayout;
 class QGridLayout;
@@ -36,14 +38,10 @@ class QToolButton;
 class QLabel;
 class QMenu;
 
-#include <kiconloader.h>
-
 class MixDevice;
 class VerticalText;
 class ViewBase;
-
-#include "gui/mixdevicewidget.h"
-#include "core/volume.h"
+class ToggleToolButton;
 
 
 class MDWSlider : public MixDeviceWidget
@@ -85,10 +83,8 @@ public:
 	bool hasMuteButton() const;
 	bool hasCaptureLED() const;
 
-	static VolumeSliderExtraData DummVolumeSliderExtraData;
 	static bool debugMe;
-    
-    
+
 public slots:
     void toggleRecsrc();
     void toggleMuted();
@@ -120,12 +116,9 @@ private slots:
     void mediaPrev(bool);
 
 private:
-    void setIcon(const QString &filename, QWidget *label);
-//    QPixmap loadIcon( QString filename, KIconLoader::Group group );
     void createWidgets( bool showMuteLED, bool showCaptureLED, bool includeMixer );
     void addSliders( QBoxLayout *volLayout, char type, Volume& vol,
                      QList<QAbstractSlider *>& ref_sliders, QString tooltipText );
-    //void addDefaultLabel(QBoxLayout *layout, Qt::Orientation orientation);
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList< QAbstractSlider* >& ref_sliders, bool showSubcontrolLabels);
@@ -152,8 +145,8 @@ private:
 	QLabel      *m_controlIcon;
 	QLabel *m_controlLabel; // is either QLabel or VerticalText
 
-	QToolButton* m_muteButton;
-	QCheckBox* m_captureButton;
+	ToggleToolButton *m_muteButton;
+	ToggleToolButton *m_captureButton;
 	QToolButton *m_mediaPlayButton;
 	QSize m_controlButtonSize;
 

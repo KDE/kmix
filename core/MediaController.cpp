@@ -33,7 +33,7 @@
 //#include <phonon/audiooutput.h>
 //#include <phonon/backendcapabilities.h>
 
-MediaController::MediaController(QString controlId) :
+MediaController::MediaController(const QString &controlId) :
 	id(controlId), playState(PlayUnknown)
 {
     mediaPlayControl = false;
@@ -63,20 +63,16 @@ MediaController::MediaController(QString controlId) :
 	*/
 }
 
-MediaController::~MediaController()
-{
-}
-
 /**
  * Returns whether this device has at least one media player control.
  * @return
  */
-bool MediaController::hasControls()
+bool MediaController::hasControls() const
 {
 	return mediaPlayControl | mediaNextControl | mediaPrevControl;
 }
 
-MediaController::PlayState MediaController::getPlayState()
+MediaController::PlayState MediaController::getPlayState() const
 {
 	return playState;
 }
