@@ -7,15 +7,11 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-# TODO: When ECM 5.41.0 is released (https://phabricator.kde.org/D7823),
-# ECM_MIN_VERSION should be updated to "5.41.0" and FindGLIB2.cmake and
-# FindPulseAudio.cmake be removed from cmake/modules.
-set (QT_MIN_VERSION "5.4.0")
-set (KF5_MIN_VERSION "5.14.0")
-set (ECM_MIN_VERSION "5.14.0")
+set (QT_MIN_VERSION "5.7.0")
+set (KF5_MIN_VERSION "5.41.0")
 set (PA_MIN_VERSION "0.9.16")
 
-find_package(ECM ${ECM_MIN_VERSION} REQUIRED NO_MODULE)
+find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
@@ -56,10 +52,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 # PulseAudio is an optional dependency
 #
-# Note that if the CMake module to find PulseAudio is accepted into ECM,
-# then in accordance with ECM conventions its output variables match the
-# case of the package (therefore PulseAudio_FOUND etc).  The variables used
-# in this file therefore need to be updated to suit.
 find_package(PulseAudio "${PA_MIN_VERSION}")
 
 # PulseAudio requires GLib2
