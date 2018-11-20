@@ -680,16 +680,24 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 			foreach ( QString profileId, profileList)
 			{
 				// This handles the profileList form the kmixrc
-				qCDebug(KMIX_LOG) << "Now searching for profile: " << profileId;
+				qCDebug(KMIX_LOG) << "Searching for GUI profile" << profileId;
 				GUIProfile* guiprof = GUIProfile::find(mixer, profileId, true, false);// ### Card specific profile ###
-				if ( guiprof != 0 )
+
+				if (guiprof==nullptr)
+				{
+					qCWarning(KMIX_LOG) << "Cannot load profile" << profileId;
+					if (profileId.startsWith("MPRIS2."))
+					{
+						profileId = "MPRIS2.default";
+						qCDebug(KMIX_LOG) << "For MPRIS2 falling back to" << profileId;
+						guiprof = GUIProfile::find(mixer, profileId, true, false);
+					}
+				}
+
+				if (guiprof!=nullptr)
 				{
 					addMixerWidget(mixer->id(), guiprof->getId(), -1);
 					atLeastOneProfileWasAdded = true;
-				}
-				else
-				{
-					qCCritical(KMIX_LOG) << "Cannot load profile " << profileId << " . It was removed by the user, or the KMix config file is defective.";
 				}
 			}
 
