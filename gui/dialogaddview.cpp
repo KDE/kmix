@@ -164,7 +164,7 @@ void DialogAddView::createPage(Mixer *mixer)
     connect(m_listForChannelSelector, SIGNAL(itemSelectionChanged()), this, SLOT(profileSelectionChanged()));
     layout->addWidget(m_listForChannelSelector);
 
-    for( int i=0; i<viewNames.size(); ++i )
+    for (int i = 0; i<viewNames.size(); ++i)
     {
     	QString viewId = viewIds.at(i);
     	if (viewId != "default" && mixer->isDynamic())
@@ -180,6 +180,9 @@ void DialogAddView::createPage(Mixer *mixer)
         item->setText(name);
         item->setData(Qt::UserRole, viewIds.at(i));  // mixer ID as data
     }
+
+    // If there is only one option available to select, then preselect it.
+    if (m_listForChannelSelector->count()==1) m_listForChannelSelector->setCurrentRow(0);
 }
 
 
