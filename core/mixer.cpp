@@ -389,7 +389,7 @@ void Mixer::setBalanceInternal(Volume& vol)
  * Returns a name suitable for a human user to read (on a label, ...)
  */
 
-QString Mixer::readableName(bool ampersandQuoted)
+QString Mixer::readableName(bool ampersandQuoted) const
 {
 	QString finalName = _mixerBackend->getName();
 	if (ampersandQuoted)
@@ -428,12 +428,13 @@ void Mixer::setID(QString& ref_id)
 }
 */
 
-QString& Mixer::id()
+const QString &Mixer::id() const
 {
   return _id;
 }
 
-QString& Mixer::udi(){
+const QString &Mixer::udi() const
+{
     return _mixerBackend->udi();
 }
 
@@ -562,7 +563,7 @@ QString Mixer::getRecommendedDeviceId()
     return QString();
 }
 
-shared_ptr<MixDevice> Mixer::getLocalMasterMD()
+shared_ptr<MixDevice> Mixer::getLocalMasterMD() const
 {
     if (_mixerBackend && _masterDevicePK.isEmpty())
         return _mixerBackend->recommendedMaster();
@@ -575,7 +576,7 @@ void Mixer::setLocalMasterMD(QString &devPK)
 }
 
 
-shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID)
+shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID) const
 {
 
 	shared_ptr<MixDevice> mdRet;
