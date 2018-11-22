@@ -38,8 +38,6 @@ static const int iconSmallSize = 10;
 ToggleToolButton::ToggleToolButton(const QString &activeIconName, QWidget *pnt)
     : QToolButton(pnt)
 {
-    qCDebug(KMIX_LOG) << activeIconName;
-
     mActiveLoaded = mInactiveLoaded = false;
     mActiveIcon = activeIconName;
     mSmallSize = false;
@@ -54,19 +52,12 @@ ToggleToolButton::ToggleToolButton(const QString &activeIconName, QWidget *pnt)
 // based on MDWSlider::setIcon()
 QPixmap getPixmap(const QString &name, bool small = false)
 {
-    qCDebug(KMIX_LOG) << name << "small?" << small;
-
     QPixmap pix = KIconLoader::global()->loadIcon(name, iconLoadGroup, IconSize(iconSizeGroup));
-    if (pix.isNull()) qCWarning(KMIX_LOG) << "failed for" << name;
-    else
-    {
-	qCDebug(KMIX_LOG) << "loaded" << name << "size" << pix.size();
-	if (small)					// want small size, so scale pixmap
-	{
-            pix = pix.scaled(iconSmallSize, iconSmallSize);
-            qCDebug(KMIX_LOG) << "scaled to size" << pix.size();
-	}
+    if (!pix.isNull())					// load icon, check success
+    {							// if wanting small size, scale pixmap
+	if (small) pix = pix.scaled(iconSmallSize, iconSmallSize);
     }
+    else qCWarning(KMIX_LOG) << "failed to load" << name;
 
     // Return the allocated pixmap even if it failed to load, so that
     // the caller can tell and only one load attempt will be made.
@@ -100,9 +91,7 @@ void ToggleToolButton::setActive(bool active)
                 if (!mInactiveLoaded) mInactivePixmap = getPixmap(mInactiveIcon, mSmallSize);
             }
             else
-            {
-                qCDebug(KMIX_LOG) << "want inactive but no name set";
-							// need to derive from active state
+            {						// need to derive from active state
                 if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, mSmallSize);
                 mActiveLoaded = true;			// only if not already tried
                 if (mActivePixmap.isNull()) qCWarning(KMIX_LOG) << "want inactive but no active available";
@@ -142,13 +131,11 @@ void ToggleToolButton::setIndicatorIcon(const QString &iconName, QWidget *label,
         return;
     }
 
-    qDebug() << "loaded" << iconName << "pixmap size" << pix.size();
-
     if (small)						// small size, set for scaled icon
     {
         label->resize(iconSmallSize, iconSmallSize);
     }
-    else						// not small size
+    else						// not small size, set for normal icon
     {
         label->resize(IconSize(iconSizeGroup), IconSize(iconSizeGroup));
     }
