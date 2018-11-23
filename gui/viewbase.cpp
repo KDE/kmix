@@ -148,23 +148,33 @@ void ViewBase::updateMediaPlaybackIcons()
  */
 void ViewBase::createDeviceWidgets()
 {
-  _setMixSet();
-    foreach ( shared_ptr<MixDevice> md, _mixSet )
+    // If this widget is currently visible, it is hidden while the device widgets are
+    // being added and shown again afterwards.  This is because, if we are called as
+    // a result of change of orientation or a control being added or removed while we
+    // are visible, isVisibleTo() in ViewSliders::configurationUpdate() appears to
+    // return false even for controls that should be visible.  This means that they
+    // do not get included in the label extent calculation and the labels will not
+    // be resized evenly.
+    const bool wasVisible = isVisible();
+    if (wasVisible) hide();				// hide if currently visible
+
+    _setMixSet();
+    foreach (const shared_ptr<MixDevice> md, _mixSet)
     {
-        QWidget* mdw = add(md); // a) Let the View implementation do its work
-        _mdws.append(mdw); // b) Add it to the local list
+        QWidget *mdw = add(md);				// a) Let the implementation do its work
+        _mdws.append(mdw);				// b) Add it to the local list
         connect(mdw, SIGNAL(guiVisibilityChange(MixDeviceWidget*,bool)), SLOT(guiVisibilitySlot(MixDeviceWidget*,bool)));
     }
 
-    if ( !isDynamic() )
+    if (!isDynamic())
     {
-      QAction *action = _localActionColletion->addAction("toggle_channels");
-      action->setText(i18n("Configure Channels..."));
-      connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
-   }
+        QAction *action = _localActionColletion->addAction("toggle_channels");
+        action->setText(i18n("Configure Channels..."));
+        connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
+    }
 
-        // allow view to "polish" itself
-      constructionFinished();
+    constructionFinished();				// allow view to "polish" itself
+    if (wasVisible) show();				// show again if originally visible
 }
 
 /**

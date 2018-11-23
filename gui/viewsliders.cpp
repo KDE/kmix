@@ -380,7 +380,7 @@ void ViewSliders::configurationUpdate()
 	ProfControl* matchingControl = findMdw(mdw->mixDevice()->id(), guiLevel);
 	mdw->setVisible(matchingControl != 0);
 
-	if (mdwSlider!=nullptr)
+	if (mdwSlider!=nullptr && labelExtent>0)
 	{
 		// additional options for sliders
 		mdwSlider->setLabelExtent(labelExtent);
