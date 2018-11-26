@@ -1138,8 +1138,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	}
 
 	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
-		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
-		if ( stereo ) {
+		KToggleAction *stereo = qobject_cast<KToggleAction *>(_mdwActions->action("stereo"));
+		if (stereo!=nullptr) {
 			QSignalBlocker blocker(stereo);
 			stereo->setChecked(!isStereoLinked());
 			menu->addAction( stereo );
@@ -1147,8 +1147,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	}
 
 	if ( m_mixdevice->captureVolume().hasSwitch() ) {
-		KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
-		if ( ta ) {
+		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("recsrc"));
+		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
 			ta->setChecked( m_mixdevice->isRecSource() );
 			menu->addAction( ta );
@@ -1156,8 +1156,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	}
 
 	if ( m_mixdevice->hasMuteSwitch() ) {
-		KToggleAction *ta = ( KToggleAction* )_mdwActions->action( "mute" );
-		if ( ta ) {
+		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("mute"));
+		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
 			ta->setChecked( m_mixdevice->isMuted() );
 			menu->addAction( ta );
