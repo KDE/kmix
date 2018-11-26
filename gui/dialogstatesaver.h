@@ -169,7 +169,7 @@ protected:
     /**
      * @reimp
      **/
-    virtual bool eventFilter(QObject *obj, QEvent *ev);
+    virtual bool eventFilter(QObject *obj, QEvent *ev) Q_DECL_OVERRIDE;
 
 private slots:
     void restoreConfigInternal();
