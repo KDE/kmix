@@ -26,6 +26,7 @@
 #include <QStringList>
 
 #include "core/mixer.h"
+#include "core/ControlManager.h"
 
 class DBusMixerWrapper : public QObject
 {
@@ -55,7 +56,7 @@ class DBusMixerWrapper : public QObject
 		int balance();
 		void setBalance(int balance);
 	public slots:
-		void controlsChange(int changeType);
+		void controlsChange(ControlManager::ChangeType changeType);
 	private:
 		void createDeviceWidgets();
 		void refreshVolumeLevels();

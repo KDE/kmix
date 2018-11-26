@@ -66,7 +66,7 @@ OSDWidget::OSDWidget(QWidget * parent)
      */
     ControlManager::instance().addListener(
         QString(), // all mixers
-        ControlChangeType::Volume,
+        ControlManager::Volume,
         this,
         QString("OSDWidget")
         );
@@ -95,13 +95,12 @@ OSDWidget::~OSDWidget()
 {
   ControlManager::instance().removeListener(this);
 }
-void OSDWidget::controlsChange(int changeType)
+void OSDWidget::controlsChange(ControlManager::ChangeType changeType)
 {
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
     shared_ptr<MixDevice> master = Mixer::getGlobalMasterMD();
-  switch (type )
+  switch (changeType)
   {
-    case ControlChangeType::Volume:
+    case ControlManager::Volume:
       if ( master )
       {
 	setCurrentVolume(master->playbackVolume().getAvgVolumePercent(Volume::MALL), master->isMuted());
@@ -109,7 +108,7 @@ void OSDWidget::controlsChange(int changeType)
       break;
 
     default:
-      ControlManager::warnUnexpectedChangeType(type, this);
+      ControlManager::warnUnexpectedChangeType(changeType, this);
       break;
   }
 

@@ -41,6 +41,7 @@ class KToggleAction;
 
 // KMix
 #include "core/GlobalConfig.h"
+#include "core/ControlManager.h"
 
 class KMixDockWidget;
 class KMixerWidget;
@@ -76,7 +77,7 @@ KMixWindow : public KXmlGuiWindow
    bool queryClose() Q_DECL_OVERRIDE;
 
   public slots:
-   void controlsChange(int changeType);
+   void controlsChange(ControlManager::ChangeType changeType);
    void quit();
    void showSettings();
    void showHelp();

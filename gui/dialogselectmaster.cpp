@@ -222,7 +222,7 @@ void DialogSelectMaster::apply()
     	QString control_id = item->data(Qt::UserRole).toString();
 		mixer->setLocalMasterMD( control_id );
 		Mixer::setGlobalMaster(mixer->id(), control_id, true);
-		ControlManager::instance().announce(mixer->id(), ControlChangeType::MasterChanged, QString("Select Master Dialog"));
+		ControlManager::instance().announce(mixer->id(), ControlManager::MasterChanged, QString("Select Master Dialog"));
    }
 }
 

@@ -34,6 +34,7 @@ class QMenu;
 class KMixWindow;
 class Mixer;
 #include "core/mixdevice.h"
+#include "core/ControlManager.h"
 class ViewDockAreaPopup;
 class Volume;
 
@@ -55,7 +56,7 @@ class KMixDockWidget : public KStatusNotifierItem
    void setVolumeTip();
    void updatePixmap();
    void activate(const QPoint &pos) Q_DECL_OVERRIDE;
-   void controlsChange(int changeType);
+   void controlsChange(ControlManager::ChangeType changeType);
 
  protected:
    void createMenuActions();

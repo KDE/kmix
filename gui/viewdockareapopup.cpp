@@ -91,8 +91,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	// Register listeners for all mixers
 	ControlManager::instance().addListener(
 		QString(), // all mixers
-		static_cast<ControlChangeType::Type>(ControlChangeType::GUI|ControlChangeType::ControlList|
-						     ControlChangeType::Volume|ControlChangeType::MasterChanged),
+		ControlManager::GUI|ControlManager::ControlList|ControlManager::Volume|ControlManager::MasterChanged,
 		this, QString("ViewDockAreaPopup"));
 }
 
@@ -105,25 +104,24 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
 }
 
 
-void ViewDockAreaPopup::controlsChange(int changeType)
+void ViewDockAreaPopup::controlsChange(ControlManager::ChangeType changeType)
 {
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
+  switch (changeType)
   {
-    case  ControlChangeType::ControlList:
-    case  ControlChangeType::MasterChanged:
+    case  ControlManager::ControlList:
+    case  ControlManager::MasterChanged:
       createDeviceWidgets();
       break;
-    case ControlChangeType::GUI:
+    case ControlManager::GUI:
     	updateGuiOptions();
       break;
 
-    case ControlChangeType::Volume:
+    case ControlManager::Volume:
       refreshVolumeLevels();
       break;
 
     default:
-      ControlManager::warnUnexpectedChangeType(type, this);
+      ControlManager::warnUnexpectedChangeType(changeType, this);
       break;
   }
     

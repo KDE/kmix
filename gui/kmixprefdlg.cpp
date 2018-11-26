@@ -346,7 +346,7 @@ void KMixPrefDlg::updateSettings()
     if (modified)
     {
 		GlobalConfig::instance().setMixersForSoundmenu(dvc->getChosenBackends());
-		ControlManager::instance().announce(QString(), ControlChangeType::MasterChanged, QString("Select Backends Dialog"));
+		ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
     }
 }
 

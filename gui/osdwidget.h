@@ -46,7 +46,7 @@ public:
     void activateOSD();
 
     public slots:
-       void controlsChange(int changeType);
+       void controlsChange(ControlManager::ChangeType changeType);
 
 private:
     QGraphicsScene *m_scene;

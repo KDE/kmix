@@ -138,7 +138,7 @@ void Mixer_MPRIS2::playbackStateChanged(MPrisControl* mad, MediaController::Play
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
 	md->getMediaController()->setPlayState(playState);
 	QMetaObject::invokeMethod(this, "announceGUI", Qt::QueuedConnection);
-//	ControlManager::instance().announce(_mixer->id(), ControlChangeType::GUI, QString("MixerMPRIS2.playbackStateChanged"));
+//	ControlManager::instance().announce(_mixer->id(), ControlManager::GUI, QString("MixerMPRIS2.playbackStateChanged"));
 }
 
 
@@ -169,7 +169,7 @@ void Mixer_MPRIS2::volumeChangedInternal(shared_ptr<MixDevice> md, int volumePer
 	vol.setVolume( Volume::LEFT, volumePercentage);
 	md->setMuted(volumePercentage == 0);
 	QMetaObject::invokeMethod(this, "announceVolume", Qt::QueuedConnection);
-//	ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, QString("MixerMPRIS2.volumeChanged"));
+//	ControlManager::instance().announce(_mixer->id(), ControlManager::Volume, QString("MixerMPRIS2.volumeChanged"));
 }
 
 // The following is an example message for an incoming volume change:
@@ -555,17 +555,17 @@ void Mixer_MPRIS2::announceControlListAsync(QString /*streamId*/)
 
 void Mixer_MPRIS2::announceControlList()
 {
-    ControlManager::instance().announce(_mixer->id(), ControlChangeType::ControlList, getDriverName());
+    ControlManager::instance().announce(_mixer->id(), ControlManager::ControlList, getDriverName());
 }
 
 void Mixer_MPRIS2::announceGUI()
 {
-    ControlManager::instance().announce(_mixer->id(), ControlChangeType::GUI, getDriverName());
+    ControlManager::instance().announce(_mixer->id(), ControlManager::GUI, getDriverName());
 }
 
 void Mixer_MPRIS2::announceVolume()
 {
-    ControlManager::instance().announce(_mixer->id(), ControlChangeType::Volume, getDriverName());
+    ControlManager::instance().announce(_mixer->id(), ControlManager::Volume, getDriverName());
 }
 
 // -----------------------------------------------------------------------------------------------------------

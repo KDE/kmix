@@ -23,6 +23,7 @@
 
 #include <QStringList>
 #include "core/mixer.h"
+#include "core/ControlManager.h"
 #include "kmixcore_export.h"
 
 class KMIXCORE_EXPORT DBusMixSetWrapper : public QObject
@@ -50,7 +51,7 @@ class KMIXCORE_EXPORT DBusMixSetWrapper : public QObject
 		QString preferredMasterControl() const;
 		void setCurrentMaster(const QString &mixer, const QString &control);
 		void setPreferredMaster(const QString &mixer, const QString &control);
-		void controlsChange(int changeType);
+		void controlsChange(ControlManager::ChangeType changeType);
 
 	private:
 		DBusMixSetWrapper(QObject* parent, const QString& path);

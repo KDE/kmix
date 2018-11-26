@@ -115,11 +115,11 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 
 	ControlManager::instance().addListener(
 			QString(), // All mixers (as the Global master Mixer might change)
-			static_cast<ControlChangeType::Type>(ControlChangeType::ControlList|ControlChangeType::MasterChanged), this,
+			ControlManager::ControlList|ControlManager::MasterChanged, this,
 			"KMixWindow");
 
 	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
-	ControlManager::instance().announce(QString(), ControlChangeType::Volume, "Startup");
+	ControlManager::instance().announce(QString(), ControlManager::Volume, "Startup");
 }
 
 KMixWindow::~KMixWindow()
@@ -151,18 +151,17 @@ KMixWindow::~KMixWindow()
 
 }
 
-void KMixWindow::controlsChange(int changeType)
+void KMixWindow::controlsChange(ControlManager::ChangeType changeType)
 {
-	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-	switch (type)
+	switch (changeType)
 	{
-	case ControlChangeType::ControlList:
-	case ControlChangeType::MasterChanged:
+	case ControlManager::ControlList:
+	case ControlManager::MasterChanged:
 		updateDocking();
 		break;
 
 	default:
-		ControlManager::warnUnexpectedChangeType(type, this);
+		ControlManager::warnUnexpectedChangeType(changeType, this);
 		break;
 	}
 
@@ -1208,11 +1207,11 @@ void KMixWindow::applyPrefs()
 	if (dockwidgetHasChanged || toplevelOrientationHasChanged || traypopupOrientationHasChanged)
 	{
 		// These might need a complete relayout => announce a ControlList change to rebuild everything
-		ControlManager::instance().announce(QString(), ControlChangeType::ControlList, QString("Preferences Dialog"));
+		ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("Preferences Dialog"));
 	}
 	else if (labelsHasChanged || ticksHasChanged)
 	{
-		ControlManager::instance().announce(QString(), ControlChangeType::GUI, QString("Preferences Dialog"));
+		ControlManager::instance().announce(QString(), ControlManager::GUI, QString("Preferences Dialog"));
 	}
 	// showOSD does not require any information. It reads on-the-fly from GlobalConfig.
 

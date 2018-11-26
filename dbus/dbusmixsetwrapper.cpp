@@ -45,21 +45,20 @@ DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 	
 	ControlManager::instance().addListener(
 		QString(),
-		ControlChangeType::MasterChanged, 
+		ControlManager::MasterChanged,
 		this,
 		QString("DBusMixSetWrapper"));
 }
 
-void DBusMixSetWrapper::controlsChange(int changeType)
+void DBusMixSetWrapper::controlsChange(ControlManager::ChangeType changeType)
 {
-	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-	switch (type)
+	switch (changeType)
 	{
-		case ControlChangeType::MasterChanged:
+		case ControlManager::MasterChanged:
 			signalMasterChanged();
 			break;
 		default:
-			ControlManager::warnUnexpectedChangeType(type, this);
+			ControlManager::warnUnexpectedChangeType(changeType, this);
 	}
 }
 

@@ -26,6 +26,8 @@
 #include <QIcon>
 #include <QPushButton>
 
+#include "core/ControlManager.h"
+
 class QBoxLayout;
 class QFrame;
 class QGridLayout;
@@ -75,7 +77,7 @@ private:
     static QString InternedString_Subcontrols;
 
 public slots:
-       void controlsChange(int changeType);
+       void controlsChange(ControlManager::ChangeType changeType);
        void configureView() Q_DECL_OVERRIDE;
 
 private slots:

@@ -41,8 +41,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	
 	ControlManager::instance().addListener(
 		m_mixer->id(),
-                // TODO: convert ControlChangeType to a QFlags
-		static_cast<ControlChangeType::Type>(ControlChangeType::ControlList|ControlChangeType::Volume),
+		ControlManager::ControlList|ControlManager::Volume,
 		this,
 		QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
 	);
@@ -58,21 +57,20 @@ DBusMixerWrapper::~DBusMixerWrapper()
 		DBusMixSetWrapper::instance()->signalMixersChanged();
 }
 
-void DBusMixerWrapper::controlsChange(int changeType)
+void DBusMixerWrapper::controlsChange(ControlManager::ChangeType changeType)
 {
-	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-	switch (type )
+	switch (changeType)
 	{
-	case  ControlChangeType::ControlList:
+	case  ControlManager::ControlList:
 		createDeviceWidgets();
 		break;
 	  
-	case ControlChangeType::Volume:
+	case ControlManager::Volume:
 		refreshVolumeLevels();
 		break;
 	  
 	default:
-		ControlManager::warnUnexpectedChangeType(type, this);
+		ControlManager::warnUnexpectedChangeType(changeType, this);
 		break;
 	}
 }

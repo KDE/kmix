@@ -20,91 +20,55 @@
 #ifndef CONTROLMANAGER_H
 #define CONTROLMANAGER_H
 
-#include <QObject>
-#include <QString>
+#include <qstring.h>
+#include <qflags.h>
+#include <qlist.h>
+
+class QObject;
+class Listener;
 
 #include "kmixcore_export.h"
 
-// typedef int ControlChangeType;
-//   enum ControlChangeType {
-//   Volume,  // Volume or Switch change (Mute or Capture Switch, or Enum)
-//   ControlList, // Control added or deleted
-//   GUI // Visual changes, like "split channel" OR "show labels"    
-//   }; 
 
-class ControlChangeType : public QObject
+class KMIXCORE_EXPORT ControlManager
 {
-	Q_OBJECT
-
 public:
-	enum Type
-	{
-		None = 0,  //
-		TypeFirst = 1,
-		Volume = 1,  // Volume or Switch change (Mute or Capture Switch, or Enum)
-		ControlList = 2, // Control added or deleted
-		GUI = 4, // Visual changes, like "split channel" OR "show labels"
-		MasterChanged = 8 // Master (global or local) has changed
-		,
-		TypeLast = 16
-	};
+  static ControlManager &instance();
 
-	static QString toString(Type changeType)
-	{
-		QString ret;
-		bool needsSeparator = false;
-		for (ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast; ct =
-			     static_cast<ControlChangeType::Type>(ct << 1))
-		{
-			if (changeType & ct)
-			{
-				if (needsSeparator)
-					ret.append('|');
-				switch (ct)
-				{
-				case Volume:
-					ret.append("Volume");
-					break;
-				case ControlList:
-					ret.append("ControlList");
-					break;
-				case GUI:
-					ret.append("GUI");
-					break;
-				case MasterChanged:
-					ret.append("MasterChange");
-					break;
-				default:
-					ret.append("Invalid");
-					break;
-				}
-
-				needsSeparator = true;
-			}
-		}
-
-		return ret;
-
-	};
-  
-    static ControlChangeType::Type fromInt(int type)
+  enum ChangeType
   {
-    switch ( type )
-    {
-      case 1: return Volume;
-      case 2: return ControlList;
-      case 4: return GUI;
-      case 8: return MasterChanged;
-      default: return None;
-    }
+    None = 0,						// no change
+    First = 1,
+    Volume = 1,						// Volume or Switch change (Mute or Capture Switch, or Enum)
+    ControlList = 2,					// Control added or deleted
+    GUI = 4,						// Visual changes, like "split channel" OR "show labels"
+    MasterChanged = 8,					// Master (global or local) has changed
+    Last = 16
   };
+  Q_DECLARE_FLAGS(ChangeTypes, ChangeType)
+
+  void announce(const QString &mixerId, ControlManager::ChangeType changeType, const QString &sourceId);
+  void addListener(const QString &mixerId, ControlManager::ChangeTypes changeTypes, QObject *target, const QString &sourceId);
+  void removeListener(QObject *target, const QString &sourceId = QString());
+
+  static void warnUnexpectedChangeType(ControlManager::ChangeType type, QObject *obj);
+  void shutdownNow();
   
+private:
+    ControlManager();
+    static ControlManager instanceSingleton;
+    QList<Listener *> listeners;
+    bool listenersChanged;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ControlManager::ChangeTypes)
+
+
 
 class Listener
 {
 public:
-  Listener(const QString mixerId, ControlChangeType::Type changeType, QObject* target, QString& sourceId)
+  Listener(const QString &mixerId, ControlManager::ChangeType changeType, QObject *target, const QString &sourceId)
   {
     this->mixerId = mixerId;
     this->controlChangeType = changeType;
@@ -113,38 +77,17 @@ public:
     this->sourceId = sourceId;
   }
   
-  const QString& getMixerId() { return mixerId; };
-    ControlChangeType::Type& getChangeType() { return controlChangeType; };
-    QObject* getTarget() { return target; };
-    const QString& getSourceId() { return sourceId; };
+  const QString getMixerId() const { return mixerId; };
+    ControlManager::ChangeType getChangeType() const { return controlChangeType; };
+    QObject *getTarget() const { return target; };
+    const QString getSourceId() const { return sourceId; };
 
 private:
   QString mixerId;
-  ControlChangeType::Type controlChangeType;
-  QObject* target;
+  ControlManager::ChangeType controlChangeType;
+  QObject *target;
   QString sourceId;
-
-  
 };
 
-class KMIXCORE_EXPORT ControlManager
-{
-public:
-  static ControlManager& instance();
-  
-  void announce(QString mixerId, ControlChangeType::Type changeType, QString sourceId);
-  void addListener(QString mixerId, ControlChangeType::Type changeType, QObject* target, QString sourceId);
-  void removeListener(QObject* target);
-  void removeListener(QObject* target, QString sourceId);
-  
-  static void warnUnexpectedChangeType(ControlChangeType::Type type, QObject *obj);
-  void shutdownNow();
-  
-private:
-    ControlManager();
-    static ControlManager instanceSingleton;
-    QList<Listener> listeners;
-    bool listenersChanged;
-};
 
 #endif // CONTROLMANAGER_H

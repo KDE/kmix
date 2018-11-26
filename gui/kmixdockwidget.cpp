@@ -78,7 +78,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
 
 	ControlManager::instance().addListener(
 		QString(), // All mixers (as the Global master Mixer might change)
-		static_cast<ControlChangeType::Type>(ControlChangeType::Volume|ControlChangeType::MasterChanged), this,
+		ControlManager::Volume|ControlManager::MasterChanged, this,
 		QString("KMixDockWidget"));
 	 
 	      // Refresh in all cases. When there is no Global Master we still need
@@ -95,12 +95,11 @@ KMixDockWidget::~KMixDockWidget()
 	delete _volWA;
 }
 
-void KMixDockWidget::controlsChange(int changeType)
+void KMixDockWidget::controlsChange(ControlManager::ChangeType changeType)
 {
-  ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-  switch (type )
+  switch (changeType)
   {
-    case  ControlChangeType::MasterChanged:
+    case  ControlManager::MasterChanged:
       // Notify the main window, as it might need to update the visibiliy of the dock icon.
 //      _kmixMainWindow->updateDocking();
 //      _kmixMainWindow->saveConfig();
@@ -120,12 +119,12 @@ void KMixDockWidget::controlsChange(int changeType)
       }
       break;
 
-    case ControlChangeType::Volume:
+    case ControlManager::Volume:
       refreshVolumeLevels();
       break;
 
     default:
-      ControlManager::warnUnexpectedChangeType(type, this);
+      ControlManager::warnUnexpectedChangeType(changeType, this);
   }
 }
 

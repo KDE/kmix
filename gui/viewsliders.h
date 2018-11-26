@@ -29,7 +29,8 @@ class QLabel;
 class QWidget;
 
 class Mixer;
-#include "viewbase.h"
+#include "gui/viewbase.h"
+#include "core/ControlManager.h"
 
 class ViewSliders : public ViewBase
 {
@@ -43,7 +44,7 @@ public:
     void configurationUpdate() Q_DECL_OVERRIDE;
 
 public slots:
-    void controlsChange(int changeType);
+    void controlsChange(ControlManager::ChangeType changeType);
 
 protected:
     void _setMixSet() Q_DECL_OVERRIDE;

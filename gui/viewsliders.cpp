@@ -76,7 +76,7 @@ ViewSliders::ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::Vi
 	createDeviceWidgets();
 
 	ControlManager::instance().addListener(mixer->id(),
-					       static_cast<ControlChangeType::Type>(ControlChangeType::GUI|ControlChangeType::ControlList|ControlChangeType::Volume),
+					       ControlManager::GUI|ControlManager::ControlList|ControlManager::Volume,
 					       this, QString("ViewSliders.%1").arg(mixer->id()));
 }
 
@@ -87,19 +87,18 @@ ViewSliders::~ViewSliders()
 //     qDeleteAll(_separators);
 }
 
-void ViewSliders::controlsChange(int changeType)
+void ViewSliders::controlsChange(ControlManager::ChangeType changeType)
 {
-	ControlChangeType::Type type = ControlChangeType::fromInt(changeType);
-	switch (type)
+	switch (changeType)
 	{
-	case ControlChangeType::ControlList:
+	case ControlManager::ControlList:
 		createDeviceWidgets();
 		break;
-	case ControlChangeType::GUI:
+	case ControlManager::GUI:
 		updateGuiOptions();
 		break;
 
-	case ControlChangeType::Volume:
+	case ControlManager::Volume:
 		if (GlobalConfig::instance().data.debugVolume)
 			qCDebug(KMIX_LOG)
 			<< "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
@@ -107,7 +106,7 @@ void ViewSliders::controlsChange(int changeType)
 		break;
 
 	default:
-		ControlManager::warnUnexpectedChangeType(type, this);
+		ControlManager::warnUnexpectedChangeType(changeType, this);
 		break;
 	}
 
