@@ -125,7 +125,8 @@ void ControlManager::addListener(QString mixerId, ControlChangeType::Type change
 		<< target;
 	}
 
-	for ( ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast;  ct = (ControlChangeType::Type)(ct << 1))
+	for ( ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast;
+	      ct = static_cast<ControlChangeType::Type>(ct << 1))
 	{
 		if ( changeType & ct )
 		{

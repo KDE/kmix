@@ -76,9 +76,8 @@ ViewSliders::ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::Vi
 	createDeviceWidgets();
 
 	ControlManager::instance().addListener(mixer->id(),
-		(ControlChangeType::Type) (ControlChangeType::GUI | ControlChangeType::ControlList | ControlChangeType::Volume),
-		this, QString("ViewSliders.%1").arg(mixer->id()));
-
+					       static_cast<ControlChangeType::Type>(ControlChangeType::GUI|ControlChangeType::ControlList|ControlChangeType::Volume),
+					       this, QString("ViewSliders.%1").arg(mixer->id()));
 }
 
 ViewSliders::~ViewSliders()

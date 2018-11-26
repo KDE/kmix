@@ -97,7 +97,7 @@ int KSmallSlider::positionFromValue( int logical_val, int span ) const
         return ( (p/scale) * span ) / (range/scale);
         // ### the above line is probably not 100% correct
         // ### but fixing it isn't worth the extreme pain...
-    } else if ( range > (uint)span ) {
+    } else if ( range > static_cast<uint>(span)) {
         return (2*p*span + range) / (2*range);
     } else {
         uint div = span / range;
@@ -119,7 +119,7 @@ int KSmallSlider::valueFromPosition( int pos, int span ) const
 
     uint range = maximum() - minimum();
 
-    if ( (uint)span > range )
+    if (static_cast<uint>(span) > range )
         return  minimum() + (2*pos*range + span) / (2*span);
     else {
         uint div = range / span;

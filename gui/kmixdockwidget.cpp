@@ -78,7 +78,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
 
 	ControlManager::instance().addListener(
 		QString(), // All mixers (as the Global master Mixer might change)
-		(ControlChangeType::Type) (ControlChangeType::Volume | ControlChangeType::MasterChanged), this,
+		static_cast<ControlChangeType::Type>(ControlChangeType::Volume|ControlChangeType::MasterChanged), this,
 		QString("KMixDockWidget"));
 	 
 	      // Refresh in all cases. When there is no Global Master we still need

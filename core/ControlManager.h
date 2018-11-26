@@ -54,7 +54,7 @@ public:
 		QString ret;
 		bool needsSeparator = false;
 		for (ControlChangeType::Type ct = ControlChangeType::TypeFirst; ct != ControlChangeType::TypeLast; ct =
-			(ControlChangeType::Type) (ct << 1))
+			     static_cast<ControlChangeType::Type>(ct << 1))
 		{
 			if (changeType & ct)
 			{

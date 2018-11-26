@@ -41,7 +41,8 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	
 	ControlManager::instance().addListener(
 		m_mixer->id(),
-		(ControlChangeType::Type)(ControlChangeType::ControlList | ControlChangeType::Volume),
+                // TODO: convert ControlChangeType to a QFlags
+		static_cast<ControlChangeType::Type>(ControlChangeType::ControlList|ControlChangeType::Volume),
 		this,
 		QString("DBusMixerWrapper.%1").arg(m_mixer->id())	  
 	);

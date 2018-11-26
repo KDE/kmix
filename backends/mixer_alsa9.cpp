@@ -163,7 +163,7 @@ int Mixer_ALSA::open()
                     .arg(snd_mixer_selem_id_get_index( sid ) );
         mdID.replace(' ','_'); // Any key/ID we use, must not uses spaces (rule)
 
-        MixDevice::ChannelType ct = (MixDevice::ChannelType)identify( sid );
+        const MixDevice::ChannelType ct = static_cast<MixDevice::ChannelType>(identify(sid));
 
         /* ------------------------------------------------------------------------------- */
 
@@ -407,7 +407,7 @@ int Mixer_ALSA::setupAlsaPolling()
 
 
 		free(m_fds);
-		m_fds = (struct pollfd*)calloc(countNew, sizeof(struct pollfd));
+		m_fds = static_cast<struct pollfd *>(calloc(countNew, sizeof(struct pollfd)));
 		if (m_fds == NULL) {
 			qCDebug(KMIX_LOG) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
 			return Mixer::ERR_OPEN;
@@ -726,7 +726,7 @@ void Mixer_ALSA::setEnumIdHW(const QString& id, unsigned int idx) {
 
     for (int i = 0; i <= SND_MIXER_SCHN_LAST; ++i)
     {
-		int ret = snd_mixer_selem_set_enum_item(elem, (snd_mixer_selem_channel_id_t)i,idx);
+        int ret = snd_mixer_selem_set_enum_item(elem, static_cast<snd_mixer_selem_channel_id_t>(i), idx);
 		if (ret < 0 && i == 0)
 		{
 			// Log errors only for one channel. This should be enough, and another reason is that I also do not check which channels are supported at all.
@@ -903,7 +903,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
     	{
     		// Special code path for controls w/o physical mute switch. Doing it in all backends is not perfect,
     		// but it saves a lot of code and removes a lot of complexity in the Volume and MixDevice classes.
-    		int ret = snd_mixer_selem_set_playback_volume_all( elem, (long)0);
+		int ret = snd_mixer_selem_set_playback_volume_all(elem, 0L);
             if ( ret != 0 )
           	  qCDebug(KMIX_LOG) << "writeVolumeToHW(" << devnum << ") [set_playback_volume] failed, errno=" << ret;
     	}

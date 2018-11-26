@@ -115,7 +115,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 
 	ControlManager::instance().addListener(
 			QString(), // All mixers (as the Global master Mixer might change)
-			(ControlChangeType::Type) (ControlChangeType::ControlList | ControlChangeType::MasterChanged), this,
+			static_cast<ControlChangeType::Type>(ControlChangeType::ControlList|ControlChangeType::MasterChanged), this,
 			"KMixWindow");
 
 	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
@@ -413,9 +413,9 @@ void KMixWindow::saveViewConfig()
 	for (int i = 0; i < m_wsMixers->count(); ++i)
 	{
 		QWidget *w = m_wsMixers->widget(i);
-		if (w->inherits("KMixerWidget"))
+		KMixerWidget *mw = qobject_cast<KMixerWidget *>(w);
+		if (mw!=nullptr)
 		{
-			KMixerWidget* mw = (KMixerWidget*) w;
 			// Here also Views are saved. even for Mixers that are closed. This is necessary when unplugging cards.
 			// Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
 			mw->saveConfig(KSharedConfig::openConfig().data());
@@ -777,7 +777,7 @@ KMixWindow::findKMWforTab(const QString& kmwId)
 {
 	for (int i = 0; i < m_wsMixers->count(); ++i)
 	{
-		KMixerWidget* kmw = (KMixerWidget*) m_wsMixers->widget(i);
+		KMixerWidget *kmw = qobject_cast<KMixerWidget *>(m_wsMixers->widget(i));
 		if (kmw->getGuiprof()->getId() == kmwId)
 		{
 			return kmw;
@@ -1256,7 +1256,7 @@ void KMixWindow::forkExec(const QStringList& args)
 
 void KMixWindow::slotConfigureCurrentView()
 {
-	KMixerWidget* mw = (KMixerWidget*) m_wsMixers->currentWidget();
+	KMixerWidget *mw = qobject_cast<KMixerWidget *>(m_wsMixers->currentWidget());
 	ViewBase* view = 0;
 	if (mw)
 		view = mw->currentView();
@@ -1292,8 +1292,8 @@ void KMixWindow::slotSelectMaster()
 
 void KMixWindow::newMixerShown(int /*tabIndex*/)
 {
-	KMixerWidget* kmw = (KMixerWidget*) m_wsMixers->currentWidget();
-	if (kmw)
+	KMixerWidget *kmw = qobject_cast<KMixerWidget *>(m_wsMixers->currentWidget());
+	if (kmw!=nullptr)
 	{
 		// I am using the app name as a PREFIX, as KMix is a single window app, and it is
 		// more helpful to the user to see "KDE Mixer" in a window list than a possibly cryptic

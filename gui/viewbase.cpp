@@ -339,9 +339,9 @@ void ViewBase::load(KConfig *config)
 		bool atLeastOneControlIsShown = false;
 		foreach(QWidget *qmdw, view->_mdws)
 		{
-			if (qmdw->inherits("MixDeviceWidget"))
+			MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(qmdw);
+			if (mdw!=nullptr)
 			{
-				MixDeviceWidget* mdw = (MixDeviceWidget*) qmdw;
 				shared_ptr<MixDevice> md = mdw->mixDevice();
 				QString devgrp = md->configGroupName(grp);
 				KConfigGroup devcg = config->group(devgrp);
@@ -454,9 +454,9 @@ void ViewBase::save(KConfig *config)
 	for (int i = 0; i < view->_mdws.count(); ++i)
 	{
 		QWidget *qmdw = view->_mdws[i];
-		if (qmdw->inherits("MixDeviceWidget"))
+                MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(qmdw);
+		if (mdw!=nullptr)
 		{
-			MixDeviceWidget* mdw = (MixDeviceWidget*) qmdw;
 			shared_ptr<MixDevice> md = mdw->mixDevice();
 
 			//qCDebug(KMIX_LOG) << "  grp=" << grp.toLatin1();

@@ -110,7 +110,7 @@ VolumeChannel::VolumeChannel(Volume::ChannelID c)
 
 Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
-	init((ChannelMask)0, maxVolume, minVolume, hasSwitch, isCapture );
+    init(static_cast<ChannelMask>(0), maxVolume, minVolume, hasSwitch, isCapture );
 }
 
 /**
@@ -124,7 +124,7 @@ void Volume::addVolumeChannels(ChannelMask chmask)
 		{
 			addVolumeChannel(VolumeChannel(chid));
 		}
-		chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
+		chid = static_cast<Volume::ChannelID>(1+static_cast<int>(chid));
 	} // for all channels
 }
 

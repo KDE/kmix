@@ -68,7 +68,7 @@ void VolumeSlider::mousePressEvent(QMouseEvent* event)
 		 * VolumeSlider class currently holds no pointer/reference to the "underlying" Volume object, a bit code
 		 * "duplication" is acceptable here.
 		 */
-		qreal percentReal = ((qreal)100 * value() ) / ( maximum() - minimum());
+		qreal percentReal = (100.0*value())/(maximum()-minimum());
 		int percent = qRound(percentReal);
 		m_tooltip->setText(QString::number(percent));
 		m_tooltip->show();
@@ -89,7 +89,7 @@ void VolumeSlider::mouseMoveEvent(QMouseEvent* event)
 	initStyleOption(&opt);
 	QRect sliderHandle = style()->subControlRect(QStyle::CC_Slider,&opt,QStyle::SC_SliderHandle,this);
 
-	qreal percentReal = ((qreal)100 * value() ) / ( maximum() - minimum() );
+	qreal percentReal = (100.0*value())/(maximum()-minimum());
 	int percent = qRound(percentReal);
 
 	//Change width of label if percent becomes 100

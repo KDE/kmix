@@ -111,7 +111,7 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
     : _profControl(0)
 {
-    init(mixer, id, name, channelTypeToIconName(type), (MixSet*)0);
+    init(mixer, id, name, channelTypeToIconName(type), nullptr);
 }
 
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
@@ -412,7 +412,8 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
        if ( config.hasKey(volstr) ) {
           volume.setVolume(chid, config.readEntry(volstr, 0));
        } // if saved channel exists
-       chid = (Volume::ChannelID)( 1 + (int)chid); // ugly
+       // TODO: ugly, so find a better way (implement Volume::ChannelID::operator++)
+       chid = static_cast<Volume::ChannelID>(1+static_cast<int>(chid));
     } // for all channels
 }
 
@@ -447,7 +448,7 @@ void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
     Volume& volume = capture ? captureVolume() : playbackVolume();
     foreach (VolumeChannel vc, volume.getVolumes() )
     {
-       config.writeEntry(getVolString(vc.chid,capture) , (int)vc.volume);
+        config.writeEntry(getVolString(vc.chid,capture), static_cast<int>(vc.volume));
     } // for all channels
 
 }

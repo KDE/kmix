@@ -91,8 +91,9 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	// Register listeners for all mixers
 	ControlManager::instance().addListener(
 		QString(), // all mixers
-		(ControlChangeType::Type) (ControlChangeType::GUI | ControlChangeType::ControlList | ControlChangeType::Volume
-			| ControlChangeType::MasterChanged), this, QString("ViewDockAreaPopup"));
+		static_cast<ControlChangeType::Type>(ControlChangeType::GUI|ControlChangeType::ControlList|
+						     ControlChangeType::Volume|ControlChangeType::MasterChanged),
+		this, QString("ViewDockAreaPopup"));
 }
 
 
