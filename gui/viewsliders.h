@@ -21,25 +21,28 @@
 #ifndef ViewSliders_h
 #define ViewSliders_h
 
+#include "viewbase.h"
+
 class QBoxLayout;
-#include <QFrame>
-#include <QHash>
+class QGridLayout;
 class QLabel;
-#include <QPushButton>
-class QWidget;
+class QPushButton;
 
 class Mixer;
+
 #include "gui/viewbase.h"
 #include "core/ControlManager.h"
+
 
 class ViewSliders : public ViewBase
 {
     Q_OBJECT
+
 public:
-    ViewSliders(QWidget* parent, QString id, Mixer* mixer, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actColl);
+    ViewSliders(QWidget *parent, const QString &id, Mixer *mixer, ViewBase::ViewFlags vflags, const QString &guiProfileId, KActionCollection *actColl);
     virtual ~ViewSliders();
 
-    QWidget* add(shared_ptr<MixDevice>) Q_DECL_OVERRIDE;
+    QWidget *add(const shared_ptr<MixDevice> md) Q_DECL_OVERRIDE;
     void constructionFinished() Q_DECL_OVERRIDE;
     void configurationUpdate() Q_DECL_OVERRIDE;
 
@@ -47,18 +50,16 @@ public slots:
     void controlsChange(ControlManager::ChangeType changeType);
 
 protected:
-    void _setMixSet() Q_DECL_OVERRIDE;
+    void initLayout() Q_DECL_OVERRIDE;
 
 private:
     void refreshVolumeLevels() Q_DECL_OVERRIDE;
 
-    QBoxLayout* _layoutMDW;
-    QLayout* _layoutSliders;
-	QBoxLayout* _layoutEnum;
-    QHash<QString,QFrame*> _separators;
-    QPushButton* _configureViewButton;
-    QLabel* emptyStreamHint;
+    QGridLayout *m_layoutMDW;
+    QBoxLayout *m_layoutSliders;
+    QBoxLayout *m_layoutSwitches;
+    QPushButton *m_configureViewButton;
+    QLabel *m_emptyStreamHint;
 };
 
 #endif
-

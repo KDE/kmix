@@ -50,7 +50,7 @@ public:
 
     void addActionToPopup( QAction *action );
 
-    shared_ptr<MixDevice> mixDevice()			{ return (m_mixdevice); }
+    shared_ptr<MixDevice> mixDevice() const		{ return (m_mixdevice); }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );

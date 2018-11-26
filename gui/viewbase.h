@@ -76,7 +76,7 @@ public:
     /**
      * Creates a suitable representation for the given MixDevice.
      */
-    virtual QWidget* add(shared_ptr<MixDevice>) = 0;
+    virtual QWidget* add(const shared_ptr<MixDevice>) = 0;
 
     // This method is called after a configuration update (show/hide controls, split/unsplit).
     virtual void configurationUpdate() = 0;
@@ -138,7 +138,7 @@ protected:
 
     QIcon configureIcon;
 
-    virtual void _setMixSet() = 0;
+    virtual void initLayout() = 0;
     void resetMdws();
     void updateGuiOptions();
     QPushButton* createConfigureViewButton();

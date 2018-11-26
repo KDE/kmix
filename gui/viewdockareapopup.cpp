@@ -82,7 +82,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	{
 		// Adding all mixers, as we potentially want to show all master controls
 		addMixer(mixer);
-		// The list will be redone in _setMixSet() with the actual Mixer instances to use
+		// The list will be redone in initLayout() with the actual Mixer instances to use
 	}
 
 	restoreVolumeIcon = QIcon::fromTheme(QLatin1String("quickopen-file"));
@@ -162,7 +162,7 @@ void ViewDockAreaPopup::resetRefs()
 	_layoutMDW = 0;
 }
 
-void ViewDockAreaPopup::_setMixSet()
+void ViewDockAreaPopup::initLayout()
 {
 	resetMdws();
 
@@ -187,7 +187,7 @@ void ViewDockAreaPopup::_setMixSet()
 Application: KMix (kmix), signal: Segmentation fault
 [...]
 #6  0x00007f9c9a282900 in QString::shared_null () from /usr/lib/x86_64-linux-gnu/libQtCore.so.4
-#7  0x00007f9c9d4286b0 in ViewDockAreaPopup::_setMixSet (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:164
+#7  0x00007f9c9d4286b0 in ViewDockAreaPopup::initLayout (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:164
 #8  0x00007f9c9d425700 in ViewBase::createDeviceWidgets (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewbase.cpp:137
 #9  0x00007f9c9d42845b in ViewDockAreaPopup::controlsChange (this=0x1272b60, changeType=2) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:91
     */
@@ -231,7 +231,7 @@ Application: KMix (kmix), signal: Segmentation fault
     setLayout(_layoutMDW);
 
 	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
-	// we have to redo the list on each _setMixSet() (instead of setting it once in the Constructor)
+	// we have to redo the list on each initLayout() (instead of setting it once in the Constructor)
 	_mixers.clear();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();

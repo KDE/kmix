@@ -47,7 +47,7 @@
 
 /**
  * Creates an empty View. To populate it with MixDevice instances, you must implement
- * _setMixSet() in your derived class.
+ * initLayout() in your derived class.
  */
 ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiProfileId(guiProfileId)
@@ -56,6 +56,7 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::Vie
    setObjectName(id);
    // When loading the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
+   // TODO: does not need to be a member
    configureIcon = QIcon::fromTheme( QLatin1String( "configure" ));
 
    
@@ -88,10 +89,6 @@ void ViewBase::addMixer(Mixer *mixer)
 {
   _mixers.append(mixer);
 }
-
-//void ViewBase::configurationUpdate() {
-//}
-
 
 
 QPushButton* ViewBase::createConfigureViewButton()
@@ -158,7 +155,7 @@ void ViewBase::createDeviceWidgets()
     const bool wasVisible = isVisible();
     if (wasVisible) hide();				// hide if currently visible
 
-    _setMixSet();
+    initLayout();
     foreach (const shared_ptr<MixDevice> md, _mixSet)
     {
         QWidget *mdw = add(md);				// a) Let the implementation do its work
@@ -281,9 +278,11 @@ bool ViewBase::pulseaudioPresent() const
 
 void ViewBase::resetMdws()
 {
-      // We need to delete the current MixDeviceWidgets so we can redraw them
-      while (!_mdws.isEmpty())
-	      delete _mdws.takeFirst();
+      // We need to delete the current MixDeviceWidgets so we can recreate them
+//       while (!_mdws.isEmpty())
+// 	      delete _mdws.takeFirst();
+      qDeleteAll(_mdws);
+      _mdws.clear();
 
       // _mixSet contains shared_ptr instances, so clear() should be enough to prevent mem leak
       _mixSet.clear(); // Clean up our _mixSet so we can reapply our GUIProfile
