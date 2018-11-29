@@ -45,10 +45,10 @@
 
 // KDE
 #include <klocalizedstring.h>
+#include <kmessagewidget.h>
 
 // Qt
 #include <QPushButton>
-#include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -145,9 +145,6 @@ void ViewSliders::initLayout()
 {
 	resetMdws();
 
-	delete m_emptyStreamHint;
-	m_emptyStreamHint = nullptr;
-
 	// Our m_layoutSliders now should only contain spacer widgets from the addSpacing() calls in add() above.
 	// We need to trash those too otherwise all sliders gradually migrate away from the edge :p
 	if (m_layoutSliders!=nullptr)
@@ -201,14 +198,11 @@ void ViewSliders::initLayout()
 	else if (viewId.contains(".Capture_Devices.")) emptyStreamText = i18n("There are no capture devices.");
 	else if (viewId.contains(".Playback_Devices.")) emptyStreamText = i18n("There are no playback devices.");
 
-	// TODO: does this need to be a member?
-	m_emptyStreamHint = new QLabel(emptyStreamText);
-	QFont f = m_emptyStreamHint->font();
-	f.setBold(true);
-	m_emptyStreamHint->setFont(f);
-	m_emptyStreamHint->setAlignment(Qt::AlignCenter);
-	m_emptyStreamHint->setWordWrap(true);
-	m_emptyStreamHint->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	delete m_emptyStreamHint;
+	m_emptyStreamHint = new KMessageWidget(emptyStreamText, this);
+	m_emptyStreamHint->setIcon(QIcon::fromTheme("dialog-information"));
+	m_emptyStreamHint->setMessageType(KMessageWidget::Information);
+	m_emptyStreamHint->setCloseButtonVisible(false);
 	m_layoutSliders->addWidget(m_emptyStreamHint);
 
 	if (GlobalConfig::instance().data.getToplevelOrientation()==Qt::Horizontal)

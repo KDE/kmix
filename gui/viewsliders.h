@@ -25,8 +25,8 @@
 
 class QBoxLayout;
 class QGridLayout;
-class QLabel;
 class QPushButton;
+class KMessageWidget;
 
 class Mixer;
 
@@ -59,7 +59,7 @@ private:
     QBoxLayout *m_layoutSliders;
     QBoxLayout *m_layoutSwitches;
     QPushButton *m_configureViewButton;
-    QLabel *m_emptyStreamHint;
+    KMessageWidget *m_emptyStreamHint;
 };
 
 #endif
