@@ -46,7 +46,7 @@
 MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
    MixDeviceWidget(md, false, parent, view, par_pctl),
-   _label(0), _enumCombo(0), _layout(0)
+   _label(0), _enumCombo(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
@@ -65,17 +65,23 @@ MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
 
 void MDWEnum::createWidgets()
 {
-    if (orientation()==Qt::Vertical) {
-      _layout = new QVBoxLayout( this );
-	  _layout->setAlignment(Qt::AlignLeft);
-   }
-   else {
-      _layout = new QHBoxLayout( this );
-	  _layout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-   }
+    QBoxLayout *_layout;
+    if (orientation()==Qt::Vertical)
+    {
+        _layout = new QVBoxLayout(this);
+        _layout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+    }
+    else
+    {
+        _layout = new QHBoxLayout(this);
+        _layout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    }
 
    _label = new QLabel( m_mixdevice->readableName(), this);
    _layout->addWidget(_label);
+
+    if (orientation()==Qt::Horizontal) _layout->addSpacing(8);
+
    _enumCombo = new QComboBox(this);
    _enumCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
@@ -158,4 +164,28 @@ int MDWEnum::enumId()
 void MDWEnum::setDisabled( bool hide )
 {
 	emit guiVisibilityChange(this, !hide);
+}
+
+/**
+ * For users of this class who would like to show multiple MDWEnum's properly aligned.
+ * It returns the size of the control label (in the control layout direction).
+ */
+int MDWEnum::labelExtentHint() const
+{
+	if (_label==nullptr) return (0);
+
+	if (orientation()==Qt::Vertical) return (_label->sizeHint().height());
+	else return (_label->sizeHint().width());
+}
+
+/**
+ * If a label from another switch is larger than ours, then the
+ * extent of our label is adjusted.
+ */
+void MDWEnum::setLabelExtent(int extent)
+{
+	if (_label==nullptr) return;
+
+	if (orientation()==Qt::Vertical) _label->setMinimumHeight(extent);
+	else _label->setMinimumWidth(extent);
 }

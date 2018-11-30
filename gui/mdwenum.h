@@ -28,7 +28,6 @@ class MixDevice;
 class ViewBase;
 
 // Qt
-class QBoxLayout;
 class QComboBox;
 class QLabel;
 
@@ -45,6 +44,8 @@ public:
 
     void addActionToPopup( QAction *action );
     QSizePolicy sizePolicy() const;
+    int labelExtentHint() const Q_DECL_OVERRIDE;
+    void setLabelExtent(int extent) Q_DECL_OVERRIDE;
 
 public slots:
     // GUI hide and show
@@ -63,7 +64,6 @@ private:
 
     QLabel        *_label;
     QComboBox     *_enumCombo;
-    QBoxLayout    *_layout;
 };
 
 #endif

@@ -78,8 +78,8 @@ public:
     // Layout
     QSizePolicy sizePolicy() const;
 	QSize sizeHint() const Q_DECL_OVERRIDE;
-	int labelExtentHint() const;
-	void setLabelExtent(int extent);
+    int labelExtentHint() const Q_DECL_OVERRIDE;
+    void setLabelExtent(int extent) Q_DECL_OVERRIDE;
 	bool hasMuteButton() const;
 	bool hasCaptureLED() const;
 

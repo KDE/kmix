@@ -45,7 +45,7 @@ KMixDeviceManager* KMixDeviceManager::instance()
 
 void KMixDeviceManager::initHotplug()
 {
-    qDebug();
+    qCDebug(KMIX_LOG);
     connect(Solid::DeviceNotifier::instance(), &Solid::DeviceNotifier::deviceAdded,
             this, &KMixDeviceManager::pluggedSlot);
     connect(Solid::DeviceNotifier::instance(), &Solid::DeviceNotifier::deviceRemoved,
@@ -141,6 +141,6 @@ void KMixDeviceManager::unpluggedSlot(const QString &udi)
 
 void KMixDeviceManager::setHotpluggingBackends(const QString& backendName)
 {
-    qDebug() << "using" << backendName;
+    qCDebug(KMIX_LOG) << "using" << backendName;
     _hotpluggingBackend = backendName;
 }

@@ -306,6 +306,8 @@ void ViewSliders::initLayout()
 
 void ViewSliders::constructionFinished()
 {
+	m_layoutSwitches->addStretch(1);		// push switches to top or left
+
 	configurationUpdate();
 	if (!isDynamic())
 	{
@@ -321,41 +323,60 @@ void ViewSliders::constructionFinished()
 
 void ViewSliders::configurationUpdate()
 {
-	// Adjust height of top part by setting it to the maximum of all mdw's
-	int labelExtent = 0;
+	// Adjust the view layout by setting the extent of all the control labels
+	// to allow space for the largest.  The extent of a control's label is
+	// found from its labelExtentHint() virtual function (which takes account
+	// of the control layout direction), and is then set by its setLabelExtent()
+	// virtual function.
 
-	// Find out whether any MDWSlider has Switches. If one has, then we need "extents"
+	// The maximum extent is calculated and set separately for sliders and
+	// for switches (enums).
+	int labelExtentSliders = 0;
+	int labelExtentSwitches = 0;
 
 	const int num = mixDeviceCount();
-	for (int i = 0; i<num; ++i)
-	{
-		const MDWSlider *mdw = qobject_cast<MDWSlider *>(mixDeviceAt(i));
-		if (mdw!=nullptr && mdw->isVisibleTo(this))
-		{
-			labelExtent = qMax(labelExtent, mdw->labelExtentHint());
-			//qCDebug(KMIX_LOG) << "########## EXTENT for " << id() << " is " << labelExtent;
-		}
-	}
 
-	//qCDebug(KMIX_LOG) << "topPartExtent is " << topPartExtent;
+	// Pass 1: Set the visibility of all controls
 	for (int i = 0; i<num; ++i)
 	{
 		MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(mixDeviceAt(i));
-		if (mdw!=nullptr)
-		{
-			// guiLevel has been set earlier, by inspecting the controls
-			ProfControl *matchingControl = findMdw(mdw->mixDevice()->id());
-			mdw->setVisible(matchingControl!=nullptr);
+		if (mdw==nullptr) continue;
 
-			MDWSlider *mdwSlider = qobject_cast<MDWSlider *>(mdw);
-			if (mdwSlider!=nullptr && labelExtent>0)
-			{
-				// additional options for sliders
-				mdwSlider->setLabelExtent(labelExtent);
-			}
-		}					// if have a MixDeviceWidget
-	}						// for all MDW's
+		// The GUI level has been set earlier, by inspecting the controls
+		ProfControl *matchingControl = findMdw(mdw->mixDevice()->id());
+		mdw->setVisible(matchingControl!=nullptr);
+	}
 
+	// Pass 2: Find the maximum extent of all applicable controls
+	for (int i = 0; i<num; ++i)
+	{
+		const QWidget *w = mixDeviceAt(i);
+		Q_ASSERT(w!=nullptr);
+		if (!w->isVisibleTo(this)) continue;	// not currently visible
+
+		const MDWSlider *mdws = qobject_cast<const MDWSlider *>(w);
+		if (mdws!=nullptr) labelExtentSliders = qMax(labelExtentSliders, mdws->labelExtentHint());
+
+		const MDWEnum *mdwe = qobject_cast<const MDWEnum *>(w);
+		if (mdwe!=nullptr) labelExtentSwitches = qMax(labelExtentSwitches, mdwe->labelExtentHint());
+	}
+
+	// Pass 3: Set the maximum extent of all applicable controls
+	for (int i = 0; i<num; ++i)
+	{
+		QWidget *w = mixDeviceAt(i);
+		Q_ASSERT(w!=nullptr);
+		if (!w->isVisibleTo(this)) continue;	// not currently visible
+
+		MDWSlider *mdws = qobject_cast<MDWSlider *>(w);
+		if (mdws!=nullptr && labelExtentSliders>0) mdws->setLabelExtent(labelExtentSliders);
+
+		MDWEnum *mdwe = qobject_cast<MDWEnum *>(w);
+		if (mdwe!=nullptr && labelExtentSwitches>0) mdwe->setLabelExtent(labelExtentSwitches);
+	}
+
+	// An old comment here said that this was necessary for KDE3.
+	// Not sure if it is still required two generations later.
 	m_layoutMDW->activate();
 }
 

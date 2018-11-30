@@ -58,6 +58,9 @@ public:
     virtual void setLabeled(bool);
     virtual void setTicks(bool)				{}
 
+    virtual int labelExtentHint() const			{ return (0); }
+    virtual void setLabelExtent(int extent)		{ Q_UNUSED(extent); }
+
 public slots:
     virtual void defineKeys();
     virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
