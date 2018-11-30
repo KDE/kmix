@@ -59,22 +59,23 @@ bool MDWSlider::debugMe = false;
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptureLED
-        , bool includeMixerName, bool small, QWidget* parent
-        , ViewBase* view
-        , ProfControl* par_ctl
-        ) :
-	MixDeviceWidget(md,small,parent,view, par_ctl),
-	m_linked(true),
-	m_controlGrid(nullptr),
-	m_controlIcon(nullptr),
-	m_controlLabel(nullptr),
-	m_muteButton(nullptr),
-	m_captureButton(nullptr),
-	m_mediaPlayButton(nullptr),
-	m_controlButtonSize(QSize()),
-	_mdwMoveActions(new KActionCollection(this)), m_moveMenu(0),
-	m_sliderInWork(false), m_waitForSoundSetComplete(0)
+MDWSlider::MDWSlider(shared_ptr<MixDevice> md,
+		     bool showMuteLED, bool showCaptureLED,
+		     bool includeMixerName, bool small,
+		     ViewBase *view)
+	: MixDeviceWidget(md,small,view),
+	  m_linked(true),
+	  m_controlGrid(nullptr),
+	  m_controlIcon(nullptr),
+	  m_controlLabel(nullptr),
+	  m_muteButton(nullptr),
+	  m_captureButton(nullptr),
+	  m_mediaPlayButton(nullptr),
+	  m_controlButtonSize(QSize()),
+	  _mdwMoveActions(new KActionCollection(this)),
+	  m_moveMenu(nullptr),
+	  m_sliderInWork(false),
+	  m_waitForSoundSetComplete(0)
 {
 	qCDebug(KMIX_LOG) << "for" << m_mixdevice->readableName() << "name?" << includeMixerName << "small?" << m_small;
 
@@ -326,8 +327,8 @@ QSize MDWSlider::controlButtonSize()
  */
 void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool includeMixerName )
 {
-	const bool includePlayback = _pctl->useSubcontrolPlayback();
-	const bool includeCapture = _pctl->useSubcontrolCapture();
+	const bool includePlayback = profileControl()->useSubcontrolPlayback();
+	const bool includeCapture = profileControl()->useSubcontrolCapture();
 	const bool wantsPlaybackSliders = includePlayback && m_mixdevice->playbackVolume().count()>0;
 	const bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
 	const bool wantsCaptureLED = showCaptureLED && includeCapture;
@@ -491,7 +492,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 		if (buttonSpacer!=nullptr) m_controlGrid->addWidget(buttonSpacer, 0, 3);
 	}
 
-	const bool stereoLinked = !_pctl->isSplit();
+	const bool stereoLinked = !profileControl()->isSplit();
 	setStereoLinked( stereoLinked );
 	
 	// Activate it explicitly in KDE3 because of PanelApplet/Kicker issues.
@@ -663,8 +664,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 
 			if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
 			else slider->setMinimumWidth(minSliderSize);
-			if ( ! _pctl->getBackgroundColor().isEmpty() ) {
-				slider->setStyleSheet("QSlider { background-color: " + _pctl->getBackgroundColor() + " }");
+			if ( !profileControl()->getBackgroundColor().isEmpty() ) {
+				slider->setStyleSheet("QSlider { background-color: " + profileControl()->getBackgroundColor() + " }");
 			}
 		} // not small
 

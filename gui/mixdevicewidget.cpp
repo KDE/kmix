@@ -47,14 +47,18 @@
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */
-MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
-                                 bool small,
-                                 QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
-   QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),
-   m_small( small ),
-   m_shortcutsDialog(nullptr)
+MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, bool small, ViewBase *view)
+    : QWidget(view),
+      m_mixdevice(md),
+      m_view(view),
+      m_small(small),
+      m_shortcutsDialog(nullptr)
 {
    setContextMenuPolicy(Qt::DefaultContextMenu);
+
+   // The default control profile.
+   // ViewDockAreaPopup sets this later using setProfileControl().
+   m_pctl = md->controlProfile();
 
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );

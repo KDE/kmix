@@ -40,14 +40,14 @@ class MixDeviceWidget : public QWidget
     Q_OBJECT
 
 public:
-    MixDeviceWidget( shared_ptr<MixDevice> md,
-                     bool small,
-                     QWidget* parent, ViewBase*, ProfControl * );
+    MixDeviceWidget(shared_ptr<MixDevice> md, bool small, ViewBase *view);
     virtual ~MixDeviceWidget() = default;
 
     void addActionToPopup( QAction *action );
 
     shared_ptr<MixDevice> mixDevice() const		{ return (m_mixdevice); }
+    ProfControl *profileControl() const			{ return (m_pctl); }
+    void setProfileControl(ProfControl *pctl)		{ m_pctl = pctl; }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
@@ -87,9 +87,11 @@ protected:
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
-      ProfControl*         _pctl;
       bool                 m_small;
       KShortcutsDialog*    m_shortcutsDialog;
+
+private:
+      ProfControl*         m_pctl;
 };
 
 #endif

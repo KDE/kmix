@@ -52,7 +52,7 @@ public:
     MDWSlider( shared_ptr<MixDevice> md,
 	       bool includePlayback, bool includeCapture,
 	       bool includeMixerName, bool small,
-	       QWidget* parent, ViewBase* view, ProfControl *pctl);
+	       ViewBase *view);
     virtual ~MDWSlider();
 
     enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };

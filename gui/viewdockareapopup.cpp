@@ -325,20 +325,20 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
     if (MatchAllForSoundMenu == 0)
     {
     	// Lazy init of static member on first use
+        // TODO: why do the strings have to be interned?  This is a once only init.
     	MatchAllForSoundMenu = new ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
     }
-    ProfControl *pctl = MatchAllForSoundMenu;
 
     MixDeviceWidget *mdw = new MDWSlider(
       md,           // only 1 device.
-      true,         // Show Mute LE
+      true,         // Show Mute LED
       true,        // Show Record LED
       true,        // Include Mixer Name
       false,        // Small
-      this,         // parent
-      this,             // view
-      pctl		// par_ctl
+      this             // view
    );
+
+    mdw->setProfileControl(MatchAllForSoundMenu);
     mdw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    //if (sliderColumn == 1 ) sliderColumn =0;

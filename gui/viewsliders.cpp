@@ -115,9 +115,7 @@ QWidget *ViewSliders::add(const shared_ptr<MixDevice> md)
     if (md->isEnum())					// control is a switch
     {
         mdw = new MDWEnum(md,				// MixDevice (parameter)
-			  this,				// parent
-			  this,				// View widget
-			  md->controlProfile());	// profile
+			  this);			// view
         m_layoutSwitches->addWidget(mdw);
     }
     else						// control is a slider
@@ -127,9 +125,7 @@ QWidget *ViewSliders::add(const shared_ptr<MixDevice> md)
 			    true,			// Show Record LED
 			    false,			// Include Mixer Name
 			    false,			// Small
-			    this,			// parent
-			    this,			// View widget
-			    md->controlProfile());	// profile
+			    this);			// view
         m_layoutSliders->addWidget(mdw);
     }
 

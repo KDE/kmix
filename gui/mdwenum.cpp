@@ -43,10 +43,10 @@
  * Class that represents an Enum element (a select one-from-many selector)
  * The orientation (horizontal, vertical) is ignored
  */
-MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
-                 QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
-   MixDeviceWidget(md, false, parent, view, par_pctl),
-   _label(0), _enumCombo(0)
+MDWEnum::MDWEnum(shared_ptr<MixDevice> md, ViewBase *view)
+    : MixDeviceWidget(md, false, view),
+      _label(nullptr),
+      _enumCombo(nullptr)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
