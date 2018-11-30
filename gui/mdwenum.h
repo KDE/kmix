@@ -23,9 +23,6 @@
 #ifndef MDWENUM_H
 #define MDWENUM_H
 
-#include <QWidget>
-#include "core/volume.h"
-
 // KMix
 class MixDevice;
 class ViewBase;
@@ -45,11 +42,10 @@ public:
     MDWEnum( shared_ptr<MixDevice> md,
 	       Qt::Orientation orientation,
 	       QWidget* parent, ViewBase* view, ProfControl* pctl);
-    ~MDWEnum();
+    virtual ~MDWEnum() = default;
 
     void addActionToPopup( QAction *action );
     QSizePolicy sizePolicy() const;
-    bool eventFilter( QObject* obj, QEvent* e ) Q_DECL_OVERRIDE;
 
 public slots:
     // GUI hide and show

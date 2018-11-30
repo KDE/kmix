@@ -22,13 +22,11 @@
 
 // KMix
 #include "mdwenum.h"
-#include "core/mixer.h"
 #include "viewbase.h"
+#include "core/mixer.h"
 
 // KDE
 #include <kactioncollection.h>
-#include <kconfig.h>
-#include <kglobalaccel.h>
 #include <klocalizedstring.h>
 #include <ktoggleaction.h>
 
@@ -63,18 +61,6 @@ MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
 
    // create widgets
    createWidgets();
-
-   /* remove this for production version
-     QAction *a = _mdwActions->addAction( "Next Value" );
-     c->setText( i18n( "Next Value" ) );
-     connect(a, SIGNAL(triggered(bool)), SLOT(nextEnumId()));
-   */
-
-   installEventFilter( this ); // filter for popup
-}
-
-MDWEnum::~MDWEnum()
-{
 }
 
 
@@ -92,7 +78,8 @@ void MDWEnum::createWidgets()
    _label = new QLabel( m_mixdevice->readableName(), this);
    _layout->addWidget(_label);
    _enumCombo = new QComboBox(this);
-   _enumCombo->installEventFilter(this);
+   _enumCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
    // ------------ fill ComboBox start ------------
    int maxEnumId= m_mixdevice->enumValues().count();
    for (int i=0; i<maxEnumId; i++ ) {
@@ -173,24 +160,3 @@ void MDWEnum::setDisabled( bool hide )
 {
 	emit guiVisibilityChange(this, !hide);
 }
-
-/**
- * An event filter for the various QWidgets. We watch for Mouse press Events, so
- * that we can popup the context menu.
- */
-bool MDWEnum::eventFilter( QObject* obj, QEvent* e )
-{
-   if (e->type() == QEvent::MouseButtonPress) {
-      QMouseEvent *qme = static_cast<QMouseEvent*>(e);
-      if (qme->button() == Qt::RightButton) {
-         showContextMenu();
-         return true;
-      }
-   } else if (e->type() == QEvent::ContextMenu) {
-      QPoint pos = reinterpret_cast<QWidget *>(obj)->mapToGlobal(QPoint(0, 0));
-      showContextMenu(pos);
-      return true;
-   }
-    return QWidget::eventFilter(obj,e);
-}
-
