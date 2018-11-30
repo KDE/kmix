@@ -54,6 +54,7 @@ protected:
     KMixWindow  *_kmixMainWindow;
 
     void initLayout() Q_DECL_OVERRIDE;
+    Qt::Orientation orientationSetting() const Q_DECL_OVERRIDE;
 
 private:
   QGridLayout* _layoutMDW;

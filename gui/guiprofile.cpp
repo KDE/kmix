@@ -41,6 +41,7 @@ GuiVisibility const GuiVisibility::GuiEXTENDED(QString("extended") , GuiVisibili
 GuiVisibility const GuiVisibility::GuiFULL    (QString("all"     ) , GuiVisibility::FULL);
 GuiVisibility const GuiVisibility::GuiCUSTOM  (QString("custom"  ) , GuiVisibility::CUSTOM);
 GuiVisibility const GuiVisibility::GuiNEVER   (QString("never"   ) , GuiVisibility::NEVER);
+GuiVisibility const GuiVisibility::GuiDEFAULT (QString("default" ) , GuiVisibility::DEFAULT);
 
 
 bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {

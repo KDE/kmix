@@ -51,6 +51,7 @@ public slots:
 
 protected:
     void initLayout() Q_DECL_OVERRIDE;
+    Qt::Orientation orientationSetting() const Q_DECL_OVERRIDE;
 
 private:
     void refreshVolumeLevels() Q_DECL_OVERRIDE;

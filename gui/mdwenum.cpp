@@ -44,9 +44,8 @@
  * The orientation (horizontal, vertical) is ignored
  */
 MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
-                 Qt::Orientation orientation,
                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
-   MixDeviceWidget(md, false, orientation, parent, view, par_pctl),
+   MixDeviceWidget(md, false, parent, view, par_pctl),
    _label(0), _enumCombo(0), _layout(0)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
@@ -66,7 +65,7 @@ MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
 
 void MDWEnum::createWidgets()
 {
-   if ( m_orientation == Qt::Vertical ) {
+    if (orientation()==Qt::Vertical) {
       _layout = new QVBoxLayout( this );
 	  _layout->setAlignment(Qt::AlignLeft);
    }

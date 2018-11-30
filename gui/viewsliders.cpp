@@ -36,7 +36,6 @@
 
 // KMix
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "core/mixdevicecomposite.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
@@ -112,12 +111,10 @@ void ViewSliders::controlsChange(ControlManager::ChangeType changeType)
 QWidget *ViewSliders::add(const shared_ptr<MixDevice> md)
 {
     MixDeviceWidget *mdw;
-    Qt::Orientation orientation = GlobalConfig::instance().data.getToplevelOrientation();
 
     if (md->isEnum())					// control is a switch
     {
         mdw = new MDWEnum(md,				// MixDevice (parameter)
-			  orientation,			// Orientation
 			  this,				// parent
 			  this,				// View widget
 			  md->controlProfile());	// profile
@@ -130,7 +127,6 @@ QWidget *ViewSliders::add(const shared_ptr<MixDevice> md)
 			    true,			// Show Record LED
 			    false,			// Include Mixer Name
 			    false,			// Small
-			    orientation,		// Orientation
 			    this,			// parent
 			    this,			// View widget
 			    md->controlProfile());	// profile
@@ -172,8 +168,8 @@ void ViewSliders::initLayout()
 	m_layoutMDW->setRowStretch(0, 1);
 	m_layoutMDW->setColumnStretch(0, 1);
 
-	if (GlobalConfig::instance().data.getToplevelOrientation()==Qt::Horizontal)
-	{						// horizontal sliders
+	if (orientation()==Qt::Horizontal)		// horizontal sliders
+	{
 		m_layoutMDW->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 		m_layoutSliders = new QVBoxLayout();
@@ -205,8 +201,8 @@ void ViewSliders::initLayout()
 	m_emptyStreamHint->setCloseButtonVisible(false);
 	m_layoutSliders->addWidget(m_emptyStreamHint);
 
-	if (GlobalConfig::instance().data.getToplevelOrientation()==Qt::Horizontal)
-	{						// horizontal sliders
+	if (orientation()==Qt::Horizontal)		// horizontal sliders
+	{
 		// Row 0: Sliders
 		m_layoutMDW->addLayout(m_layoutSliders, 0, 0, 1, -1, Qt::AlignHCenter|Qt::AlignVCenter);
 		// Row 1: Switches
@@ -253,7 +249,7 @@ void ViewSliders::initLayout()
 
 						// Now check whether subcontrols required
 						const bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && (md->playbackVolume().hasVolume() || md->hasMuteSwitch()));
-						const bool subcontrolCaptureWanted = (control->useSubcontrolCapture() && (md->captureVolume() .hasVolume() || md->captureVolume() .hasSwitch()));
+						const bool subcontrolCaptureWanted = (control->useSubcontrolCapture() && (md->captureVolume().hasVolume() || md->captureVolume().hasSwitch()));
 						const bool subcontrolEnumWanted = (control->useSubcontrolEnum() && md->isEnum());
 						const bool subcontrolWanted = subcontrolPlaybackWanted|subcontrolCaptureWanted|subcontrolEnumWanted;
 						if (!subcontrolWanted) continue;
@@ -402,4 +398,10 @@ void ViewSliders::refreshVolumeLevels()
 			// no slider. Cannot happen in theory => skip it
 		}
 	}
+}
+
+
+Qt::Orientation ViewSliders::orientationSetting() const
+{
+	return (GlobalConfig::instance().data.getToplevelOrientation());
 }

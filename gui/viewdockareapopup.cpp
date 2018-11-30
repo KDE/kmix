@@ -38,7 +38,6 @@
 #include "apps/kmix.h"
 #include "core/mixer.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
@@ -288,7 +287,8 @@ Application: KMix (kmix), signal: Segmentation fault
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
-  bool vertical = (GlobalConfig::instance().data.getTraypopupOrientation() == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
+  const bool vertical = (orientation()==Qt::Vertical);
+
   /*
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
@@ -335,10 +335,9 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
       true,        // Show Record LED
       true,        // Include Mixer Name
       false,        // Small
-      vertical ? Qt::Vertical : Qt::Horizontal,
       this,         // parent
-      this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
-      , pctl
+      this,             // view
+      pctl		// par_ctl
    );
     mdw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
@@ -439,3 +438,8 @@ void ViewDockAreaPopup::showPanelSlot()
     static_cast<QWidget*>(parent())->hide();
 }
 
+
+Qt::Orientation ViewDockAreaPopup::orientationSetting() const
+{
+	return (GlobalConfig::instance().data.getTraypopupOrientation());
+}

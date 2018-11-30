@@ -58,6 +58,8 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::Vie
       _guiProfileId(guiProfileId)
 {
    setObjectName(id);
+   qCDebug(KMIX_LOG) << "id" << id << "flags" << vflags;
+
    // When loading the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
    
@@ -148,6 +150,9 @@ void ViewBase::createDeviceWidgets()
     const bool wasVisible = isVisible();
     if (wasVisible) hide();				// hide if currently visible
 
+    _orientation = orientationSetting();		// refresh orientation from settings
+    qCDebug(KMIX_LOG) << id() << "orientation" << _orientation;
+
     initLayout();
     foreach (const shared_ptr<MixDevice> md, _mixSet)
     {
@@ -236,6 +241,9 @@ void ViewBase::showContextMenu()
     _popMenu->popup( pos );
 }
 
+// ---------- Popup stuff END ---------------------
+
+
 void ViewBase::refreshVolumeLevels()
 {
     // is virtual
@@ -311,8 +319,6 @@ void ViewBase::toggleMenuBarSlot() {
     emit toggleMenuBar();
     //qCDebug(KMIX_LOG) << "ViewBase::toggleMenuBarSlot() done\n";
 }
-
-
 
 /**
  * Loads the configuration of this view.
@@ -403,8 +409,7 @@ ProfControl *ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility) c
 		QRegExp idRegExp(pControl->id);
 		if ( mdwId.contains(idRegExp) )
 		{
-			if (visibility==GuiVisibility::GuiSIMPLE ||
-			    pControl->getVisibility().satisfiesVisibility(visibility))
+			if (pControl->getVisibility().satisfiesVisibility(visibility))
 			{
 //				qCDebug(KMIX_LOG) << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 				return pControl;
@@ -470,7 +475,3 @@ void ViewBase::save(KConfig *config) const
 		}
 	}
 }
-
-
-// ---------- Popup stuff END ---------------------
-

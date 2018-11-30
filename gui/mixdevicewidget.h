@@ -25,18 +25,15 @@
 #ifndef MIXDEVICEWIDGET_H
 #define MIXDEVICEWIDGET_H
 
-#include <QWidget>
 #include "core/mixdevice.h"
 #include "core/volume.h"
-#include <qpixmap.h>
-
+#include "gui/viewbase.h"
 
 class KActionCollection;
 class KShortcutsDialog;
 
 class MixDevice;
 class ProfControl;
-class ViewBase;
 
 class MixDeviceWidget : public QWidget
 {
@@ -44,7 +41,7 @@ class MixDeviceWidget : public QWidget
 
 public:
     MixDeviceWidget( shared_ptr<MixDevice> md,
-                     bool small, Qt::Orientation orientation,
+                     bool small,
                      QWidget* parent, ViewBase*, ProfControl * );
     virtual ~MixDeviceWidget() = default;
 
@@ -80,13 +77,14 @@ protected slots:
 protected:
     void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
 
+    Qt::Orientation orientation() const			{ return (m_view->orientation()); }
+
 protected:
       shared_ptr<MixDevice>  m_mixdevice;
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
       ProfControl*         _pctl;
-      Qt::Orientation      m_orientation;
       bool                 m_small;
       KShortcutsDialog*    m_shortcutsDialog;
 };

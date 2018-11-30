@@ -18,8 +18,8 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef ViewBase_h
-#define ViewBase_h
+#ifndef VIEWBASE_H
+#define VIEWBASE_H
 
 // Qt
 #include <QList>
@@ -34,12 +34,12 @@ class QContextMenuEvent;
 
 class Mixer;
 class MixDevice;
+class MixDeviceWidget;
 
 // KMix
 #include "core/mixdevice.h"
 #include "core/mixset.h"
 #include "gui/guiprofile.h"
-#include "gui/mixdevicewidget.h"
 
 /**
   * The ViewBase is an abstract base class, to be used for subclassing the real Mixer Views.
@@ -52,9 +52,7 @@ public:
     enum ViewFlag
     {
         HasMenuBar     = 0x0001,
-        MenuBarVisible = 0x0002,
-        Horizontal     = 0x0004,
-        Vertical       = 0x0008
+        MenuBarVisible = 0x0002
     };
     Q_DECLARE_FLAGS(ViewFlags, ViewFlag);
 
@@ -68,12 +66,6 @@ public:
 
     void load(const KConfig *config);
     void save(KConfig *config) const;
-
-    /**
-     * Creates the widgets for all supported devices. The default implementation loops
-     * over the supported MixDevice's and calls add() for each of it.
-     */
-    virtual void createDeviceWidgets();
 
     QMenu *getPopup();
 
@@ -90,13 +82,15 @@ public:
 
     GUIProfile* guiProfile() const			{ return (GUIProfile::find(_guiProfileId)); }
 
-    ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::GuiSIMPLE) const;
+    ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::GuiDEFAULT) const;
 
     KActionCollection *actionCollection() const		{ return (_actions); };
     const QList<Mixer*> &getMixers() const		{ return (_mixers); };
 
     int mixDeviceCount() const				{ return (_mdws.count()); }
     QWidget *mixDeviceAt(int i) const			{ return (_mdws.at(i)); }
+
+    Qt::Orientation orientation() const			{ return (_orientation); }
 
 private:
     /**
@@ -112,6 +106,7 @@ private:
     KActionCollection *_localActionColletion;
 
     ViewFlags _vflags;
+    Qt::Orientation _orientation;
     GuiVisibility guiLevel;
     const QString _guiProfileId;
 
@@ -133,6 +128,13 @@ protected:
     void addMixer(Mixer *mixer);
 
     virtual void initLayout() = 0;
+    virtual Qt::Orientation orientationSetting() const = 0;
+
+    /**
+     * Creates the widgets for all supported devices. The default implementation loops
+     * over the supported MixDevice's and calls add() for each of it.
+     */
+    void createDeviceWidgets();
 
     /**
      * Popup stuff

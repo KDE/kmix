@@ -48,11 +48,11 @@
  * the panel applet or any other smallish settings.
  */
 MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
-                                 bool small, Qt::Orientation orientation,
+                                 bool small,
                                  QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
    QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),
-   m_orientation( orientation ), m_small( small )
-   , m_shortcutsDialog(0)
+   m_small( small ),
+   m_shortcutsDialog(nullptr)
 {
    setContextMenuPolicy(Qt::DefaultContextMenu);
 

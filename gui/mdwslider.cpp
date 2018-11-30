@@ -60,11 +60,11 @@ bool MDWSlider::debugMe = false;
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
 MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptureLED
-        , bool includeMixerName, bool small, Qt::Orientation orientation, QWidget* parent
+        , bool includeMixerName, bool small, QWidget* parent
         , ViewBase* view
         , ProfControl* par_ctl
         ) :
-	MixDeviceWidget(md,small,orientation,parent,view, par_ctl),
+	MixDeviceWidget(md,small,parent,view, par_ctl),
 	m_linked(true),
 	m_controlGrid(nullptr),
 	m_controlIcon(nullptr),
@@ -191,7 +191,7 @@ void MDWSlider::createShortcutActions()
 
 QSizePolicy MDWSlider::sizePolicy() const
 {
-	if ( m_orientation == Qt::Vertical )
+	if (orientation()==Qt::Vertical)
 	{
 		return QSizePolicy(  QSizePolicy::Preferred, QSizePolicy::MinimumExpanding );
 	}
@@ -218,7 +218,7 @@ int MDWSlider::labelExtentHint() const
 {
 	if (m_controlLabel==nullptr) return (0);
 
-	if (m_orientation==Qt::Vertical) return (m_controlLabel->heightForWidth(m_controlLabel->minimumWidth()));
+	if (orientation()==Qt::Vertical) return (m_controlLabel->heightForWidth(m_controlLabel->minimumWidth()));
 	else return (m_controlLabel->sizeHint().width());
 }
 
@@ -229,7 +229,7 @@ void MDWSlider::setLabelExtent(int extent)
 {
 	if (m_controlGrid==nullptr) return;
 
-	if (m_orientation==Qt::Vertical) m_controlGrid->setRowMinimumHeight(1, extent);
+	if (orientation()==Qt::Vertical) m_controlGrid->setRowMinimumHeight(1, extent);
 	else m_controlGrid->setColumnMinimumWidth(1, extent);
 }
 
@@ -291,7 +291,7 @@ QWidget *MDWSlider::guiAddButtonSpacer()
 	if (hasMuteButton() || hasCaptureLED()) return (nullptr);
 							// spacer not needed
 	QWidget *buttonSpacer = new QWidget(this);
-	if (m_orientation==Qt::Vertical)		// vertical sliders
+	if (orientation()==Qt::Vertical)		// vertical sliders
 	{
 		buttonSpacer->setMinimumHeight(controlButtonSize().height());
 		buttonSpacer->setMaximumWidth(1);
@@ -352,7 +352,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 	setLayout(m_controlGrid);
 	QBoxLayout *volLayout;
 
-	if (m_orientation==Qt::Vertical)		// vertical sliders
+	if (orientation()==Qt::Vertical)		// vertical sliders
 	{
 		m_controlGrid->setContentsMargins(2, 0, 2, 0);
 		const Qt::Alignment sliderAlign = Qt::AlignHCenter|Qt::AlignBottom;
@@ -530,10 +530,8 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 	MediaController* mediaController =  mixDevice()->getMediaController();
 
 	QBoxLayout *mediaLayout;
-	if (m_orientation == Qt::Vertical)
-		mediaLayout = new QVBoxLayout();
-	else
-		mediaLayout = new QHBoxLayout();
+	if (orientation()==Qt::Vertical) mediaLayout = new QVBoxLayout();
+	else mediaLayout = new QHBoxLayout();
 
 //	QFrame* frame1 = new QFrame(this);
 //	frame1->setFrameShape(QFrame::StyledPanel);
@@ -644,17 +642,17 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		QString subcontrolTranslation;
 		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + ' ';
 		subcontrolTranslation += Volume::channelNameReadable(vc.chid);
-		subcontrolLabel = createLabel(this, subcontrolTranslation, m_orientation, true);
+		subcontrolLabel = createLabel(this, subcontrolTranslation, orientation(), true);
 		volLayout->addWidget(subcontrolLabel);
 
 		QAbstractSlider* slider;
 		if ( m_small )
 		{
 			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Volume::VOLUME_PAGESTEP_DIVISOR,
-				                           vol.getVolume( vc.chid ), m_orientation, this );
+						   vol.getVolume( vc.chid ), orientation(), this );
 		} // small
 		else  {
-			slider = new VolumeSlider( m_orientation, this );
+			slider = new VolumeSlider(orientation(), this);
 			slider->setMinimum(minvol);
 			slider->setMaximum(maxvol);
 			slider->setPageStep(maxvol / Volume::VOLUME_PAGESTEP_DIVISOR);
@@ -663,12 +661,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 			
 			extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
-			if ( m_orientation == Qt::Vertical ) {
-				slider->setMinimumHeight( minSliderSize );
-			}
-			else {
-				slider->setMinimumWidth( minSliderSize );
-			}
+			if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
+			else slider->setMinimumWidth(minSliderSize);
 			if ( ! _pctl->getBackgroundColor().isEmpty() ) {
 				slider->setStyleSheet("QSlider { background-color: " + _pctl->getBackgroundColor() + " }");
 			}

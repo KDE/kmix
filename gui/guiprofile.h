@@ -66,7 +66,7 @@ public:
  */
 class GuiVisibility
 {
-	enum GuiVisibilityId { SIMPLE, EXTENDED, FULL, CUSTOM, NEVER };
+	enum GuiVisibilityId { SIMPLE, EXTENDED, FULL, CUSTOM, NEVER, DEFAULT };
 	QString id;
 	GuiVisibilityId idCode;
 
@@ -75,7 +75,8 @@ static GuiVisibility const GuiSIMPLE;
 static GuiVisibility const GuiEXTENDED;
 static GuiVisibility const GuiFULL;
 static GuiVisibility const GuiCUSTOM;
-static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
+static GuiVisibility const GuiNEVER;			// e.g. templates with regexp's
+static GuiVisibility const GuiDEFAULT;			// default argument to ViewBase::findMdw()
 
 	private:
 	GuiVisibility(QString id, GuiVisibilityId idCode)
@@ -94,6 +95,7 @@ static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
 	 * Returns whether this GuiVisibility satisfies the other GuiVisibility.
 	 * GuiNEVER can never be satisfied - if this or other is GuiNEVER, the result is false.
 	 * GuiCUSTOM is always satisfied - if this or other is GuiCUSTOM, the result is true.
+	 * GuiDEFAULT for the other is always satisfied.
 	 * The other 3 enum values are completely ordered as GuiSIMPLE, GuiEXTENDED, GuiFULL.
 	 * <p>
 	 * For example
@@ -108,6 +110,9 @@ static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
 			return false;
 		if (this->idCode == GuiVisibility::CUSTOM || other.idCode == GuiVisibility::CUSTOM)
 			return false;
+
+                if (other.idCode==GuiVisibility::DEFAULT)
+                    return true;
 
 		return this->idCode <= other.idCode;
 	}
