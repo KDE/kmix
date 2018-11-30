@@ -49,10 +49,7 @@ class MDWSlider : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWSlider( shared_ptr<MixDevice> md,
-	       bool includePlayback, bool includeCapture,
-	       bool includeMixerName, bool small,
-	       ViewBase *view);
+    MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view);
     virtual ~MDWSlider();
 
     enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };
@@ -116,7 +113,7 @@ private slots:
     void mediaPrev(bool);
 
 private:
-    void createWidgets( bool showMuteLED, bool showCaptureLED, bool includeMixer );
+    void createWidgets();
     void addSliders( QBoxLayout *volLayout, char type, Volume& vol,
                      QList<QAbstractSlider *>& ref_sliders, QString tooltipText );
 

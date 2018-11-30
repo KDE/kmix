@@ -47,11 +47,11 @@
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */
-MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, bool small, ViewBase *view)
+MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view)
     : QWidget(view),
       m_mixdevice(md),
       m_view(view),
-      m_small(small),
+      m_flags(flags),
       m_shortcutsDialog(nullptr)
 {
    setContextMenuPolicy(Qt::DefaultContextMenu);

@@ -40,7 +40,16 @@ class MixDeviceWidget : public QWidget
     Q_OBJECT
 
 public:
-    MixDeviceWidget(shared_ptr<MixDevice> md, bool small, ViewBase *view);
+    enum MDWFlag
+    {
+        SmallSize = 0x01,
+        ShowMute = 0x02,
+        ShowCapture = 0x04,
+        ShowMixerName = 0x08
+    };
+    Q_DECLARE_FLAGS(MDWFlags, MDWFlag);
+
+    MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view);
     virtual ~MixDeviceWidget() = default;
 
     void addActionToPopup( QAction *action );
@@ -81,17 +90,20 @@ protected:
     void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
 
     Qt::Orientation orientation() const			{ return (m_view->orientation()); }
+    MixDeviceWidget::MDWFlags flags() const		{ return (m_flags); }
 
 protected:
       shared_ptr<MixDevice>  m_mixdevice;
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
       ViewBase*            m_view;
-      bool                 m_small;
+      MDWFlags             m_flags;
       KShortcutsDialog*    m_shortcutsDialog;
 
 private:
       ProfControl*         m_pctl;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(MixDeviceWidget::MDWFlags);
 
 #endif

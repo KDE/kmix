@@ -59,11 +59,8 @@ bool MDWSlider::debugMe = false;
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(shared_ptr<MixDevice> md,
-		     bool showMuteLED, bool showCaptureLED,
-		     bool includeMixerName, bool small,
-		     ViewBase *view)
-	: MixDeviceWidget(md,small,view),
+MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view)
+	: MixDeviceWidget(md, flags, view),
 	  m_linked(true),
 	  m_controlGrid(nullptr),
 	  m_controlIcon(nullptr),
@@ -77,10 +74,10 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md,
 	  m_sliderInWork(false),
 	  m_waitForSoundSetComplete(0)
 {
-	qCDebug(KMIX_LOG) << "for" << m_mixdevice->readableName() << "name?" << includeMixerName << "small?" << m_small;
+	//qCDebug(KMIX_LOG) << "for" << m_mixdevice->readableName() << "flags" << MixDeviceWidget::flags();
 
     createActions();
-    createWidgets( showMuteLED, showCaptureLED, includeMixerName );
+    createWidgets();
     createShortcutActions();
 
     // Yes, this looks odd - monitor all events sent to myself by myself?
@@ -255,7 +252,7 @@ bool MDWSlider::hasCaptureLED() const
 void MDWSlider::guiAddCaptureButton(const QString &captureTooltipText)
 {
 	m_captureButton = new ToggleToolButton("media-record", this);
-	m_captureButton->setSmallSize(m_small);
+	m_captureButton->setSmallSize(flags() & MixDeviceWidget::SmallSize);
 	m_captureButton->installEventFilter(this);
 	connect(m_captureButton, SIGNAL(clicked(bool)), this, SLOT(toggleRecsrc()));
 	m_captureButton->setToolTip(captureTooltipText);
@@ -265,7 +262,7 @@ void MDWSlider::guiAddMuteButton(const QString &muteTooltipText)
 {
 	m_muteButton = new ToggleToolButton("audio-volume-high", this);
 	m_muteButton->setInactiveIcon("audio-volume-muted");
-	m_muteButton->setSmallSize(m_small);
+	m_muteButton->setSmallSize(flags() & MixDeviceWidget::SmallSize);
 	m_muteButton->installEventFilter(this);
 	connect(m_muteButton, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
 	m_muteButton->setToolTip(muteTooltipText);
@@ -282,7 +279,8 @@ void MDWSlider::guiAddControlLabel(Qt::Alignment alignment, const QString &chann
 void MDWSlider::guiAddControlIcon(const QString &tooltipText)
 {
 	m_controlIcon = new QLabel(this);
-	ToggleToolButton::setIndicatorIcon(m_mixdevice->iconName(), m_controlIcon, m_small);
+	ToggleToolButton::setIndicatorIcon(m_mixdevice->iconName(), m_controlIcon,
+					   (flags() & MixDeviceWidget::SmallSize));
 	m_controlIcon->setToolTip(tooltipText);
 	m_controlIcon->installEventFilter(this);
 }
@@ -312,7 +310,8 @@ QSize MDWSlider::controlButtonSize()
 	if (!m_controlButtonSize.isValid())		// not calculated yet
 	{
 		auto *buttonSpacer = new QToolButton();
-		ToggleToolButton::setIndicatorIcon("unknown", buttonSpacer, m_small);
+		ToggleToolButton::setIndicatorIcon("unknown", buttonSpacer,
+						   (flags() & MixDeviceWidget::SmallSize));
 		m_controlButtonSize = buttonSpacer->sizeHint();
 		qCDebug(KMIX_LOG) << m_controlButtonSize;
 		delete buttonSpacer;
@@ -325,25 +324,25 @@ QSize MDWSlider::controlButtonSize()
 /**
  * Creates all widgets : Icon, Label, Mute-Button, Slider(s) and Capture-Button.
  */
-void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool includeMixerName )
+void MDWSlider::createWidgets()
 {
 	const bool includePlayback = profileControl()->useSubcontrolPlayback();
 	const bool includeCapture = profileControl()->useSubcontrolCapture();
-	const bool wantsPlaybackSliders = includePlayback && m_mixdevice->playbackVolume().count()>0;
-	const bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
-	const bool wantsCaptureLED = showCaptureLED && includeCapture;
-	const bool wantsMuteButton = showMuteButton && includePlayback;
+	const bool wantsPlaybackSliders = includePlayback && (mixDevice()->playbackVolume().count()>0);
+	const bool wantsCaptureSliders  = includeCapture && (mixDevice()->captureVolume().count()>0);
+	const bool wantsCaptureLED = includeCapture && (flags() & MixDeviceWidget::ShowCapture);
+	const bool wantsMuteButton = includePlayback && (flags() & MixDeviceWidget::ShowMute);
 	
-	const MediaController *mediaController = m_mixdevice->getMediaController();
+	const MediaController *mediaController = mixDevice()->getMediaController();
 	const bool wantsMediaControls = mediaController->hasControls();
 
-	const QString channelName = m_mixdevice->readableName();
+	const QString channelName = mixDevice()->readableName();
 	QString tooltipText = channelName;
 	QString captureTooltipText = i18nc("%1=channel", "Capture/Uncapture %1", channelName);
 	QString muteTooltipText = i18nc("%1=channel", "Mute/Unmute %1", channelName);
-	if (includeMixerName)
+	if (flags() & MixDeviceWidget::ShowMixerName)
 	{
-		const QString mixerName = m_mixdevice->mixer()->readableName();
+		const QString mixerName = mixDevice()->mixer()->readableName();
 		tooltipText = i18nc("%1=device %2=channel", "%1\n%2", mixerName, tooltipText);
 		captureTooltipText = i18nc("%1=device %2=channel", "%1\n%2", mixerName, captureTooltipText);
 		muteTooltipText = i18nc("%1=device %2=channel", "%1\n%2", mixerName, muteTooltipText);
@@ -647,7 +646,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		volLayout->addWidget(subcontrolLabel);
 
 		QAbstractSlider* slider;
-		if ( m_small )
+		if (flags() & MixDeviceWidget::SmallSize)
 		{
 			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Volume::VOLUME_PAGESTEP_DIVISOR,
 						   vol.getVolume( vc.chid ), orientation(), this );

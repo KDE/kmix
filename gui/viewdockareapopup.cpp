@@ -329,15 +329,9 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
     	MatchAllForSoundMenu = new ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
     }
 
-    MixDeviceWidget *mdw = new MDWSlider(
-      md,           // only 1 device.
-      true,         // Show Mute LED
-      true,        // Show Record LED
-      true,        // Include Mixer Name
-      false,        // Small
-      this             // view
-   );
-
+    MixDeviceWidget *mdw = new MDWSlider(md,
+					 MixDeviceWidget::ShowMute|MixDeviceWidget::ShowCapture|MixDeviceWidget::ShowMixerName,
+					 this);
     mdw->setProfileControl(MatchAllForSoundMenu);
     mdw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
