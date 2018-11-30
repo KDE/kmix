@@ -128,13 +128,6 @@ void ViewDockAreaPopup::controlsChange(ControlManager::ChangeType changeType)
 }
 
 
-void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
-{
-  if ( _mdws.isEmpty() )
-    return;
-}
-
-
 void ViewDockAreaPopup::configurationUpdate()
 {
 	// TODO Do we still need configurationUpdate(). It was never implemented for ViewDockAreaPopup
@@ -407,15 +400,17 @@ QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
 	return profileButton;
 }
 
+
 void ViewDockAreaPopup::refreshVolumeLevels()
 {
-  foreach ( QWidget* qw, _mdws )
-  {
-    //qCDebug(KMIX_LOG) << "rvl: " << qw;
-    MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
-    if ( mdw != 0 ) mdw->update();
-  }
+	const int num = mixDeviceCount();
+	for (int i = 0; i<num; ++i)
+	{
+		MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(mixDeviceAt(i));
+		if (mdw!=nullptr) mdw->update();
+	}
 }
+
 
 void ViewDockAreaPopup::configureView()
 {

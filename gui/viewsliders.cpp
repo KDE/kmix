@@ -329,9 +329,11 @@ void ViewSliders::configurationUpdate()
 	int labelExtent = 0;
 
 	// Find out whether any MDWSlider has Switches. If one has, then we need "extents"
-	for (int i = 0; i<_mdws.count(); ++i)
+
+	const int num = mixDeviceCount();
+	for (int i = 0; i<num; ++i)
 	{
-		const MDWSlider *mdw = qobject_cast<MDWSlider *>(_mdws[i]);
+		const MDWSlider *mdw = qobject_cast<MDWSlider *>(mixDeviceAt(i));
 		if (mdw!=nullptr && mdw->isVisibleTo(this))
 		{
 			labelExtent = qMax(labelExtent, mdw->labelExtentHint());
@@ -340,16 +342,16 @@ void ViewSliders::configurationUpdate()
 	}
 
 	//qCDebug(KMIX_LOG) << "topPartExtent is " << topPartExtent;
-	for (int i = 0; i<_mdws.count(); ++i)
+	for (int i = 0; i<num; ++i)
 	{
-		MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(_mdws[i]);
+		MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(mixDeviceAt(i));
 		if (mdw!=nullptr)
 		{
 			// guiLevel has been set earlier, by inspecting the controls
-			ProfControl *matchingControl = findMdw(mdw->mixDevice()->id(), guiLevel);
+			ProfControl *matchingControl = findMdw(mdw->mixDevice()->id());
 			mdw->setVisible(matchingControl!=nullptr);
 
-			MDWSlider *mdwSlider = qobject_cast<MDWSlider *>(_mdws[i]);
+			MDWSlider *mdwSlider = qobject_cast<MDWSlider *>(mdw);
 			if (mdwSlider!=nullptr && labelExtent>0)
 			{
 				// additional options for sliders
@@ -364,12 +366,11 @@ void ViewSliders::configurationUpdate()
 
 void ViewSliders::refreshVolumeLevels()
 {
-	for (int i = 0; i < _mdws.count(); i++)
+	const int num = mixDeviceCount();
+	for (int i = 0; i<num; ++i)
 	{
-		QWidget *mdwx = _mdws[i];
-
-		MixDeviceWidget* mdw = ::qobject_cast<MixDeviceWidget*>(mdwx);
-		if (mdw != 0)
+		MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget*>(mixDeviceAt(i));
+		if (mdw!=nullptr)
 		{ // sanity check
 
 #ifdef TEST_MIXDEVICE_COMPOSITE

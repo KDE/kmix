@@ -53,7 +53,6 @@ public:
 protected:
     KMixWindow  *_kmixMainWindow;
 
-    void wheelEvent ( QWheelEvent * e ) Q_DECL_OVERRIDE;
     void initLayout() Q_DECL_OVERRIDE;
 
 private:

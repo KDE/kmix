@@ -22,14 +22,15 @@
 #define ViewBase_h
 
 // Qt
-#include <QWidget>
-#include <QIcon>
 #include <QList>
 #include <QPushButton>
+#include <QFlags>
 
 // KDE
 #include <KActionCollection>
+
 class QMenu;
+class QContextMenuEvent;
 
 class Mixer;
 class MixDevice;
@@ -41,48 +42,32 @@ class MixDevice;
 #include "gui/mixdevicewidget.h"
 
 /**
-  * The ViewBase is a virtual base class, to be used for subclassing the real Mixer Views.
+  * The ViewBase is an abstract base class, to be used for subclassing the real Mixer Views.
   */
 class ViewBase : public QWidget
 {
     Q_OBJECT
 
-friend class KMixToolBox;  // the toolbox is everybodys friend :-)
-
 public:
+    enum ViewFlag
+    {
+        HasMenuBar     = 0x0001,
+        MenuBarVisible = 0x0002,
+        Horizontal     = 0x0004,
+        Vertical       = 0x0008
+    };
+    Q_DECLARE_FLAGS(ViewFlags, ViewFlag);
 
-   typedef uint ViewFlags;
-   enum ViewFlagsEnum {
-      // Regular flags
-      HasMenuBar     = 0x0001,
-      MenuBarVisible = 0x0002,
-      Horizontal     = 0x0004,
-      Vertical       = 0x0008
-   };
-   
     ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
-    virtual ~ViewBase();
-
-    void addMixer(Mixer *mixer);
-    
-    QString id() const;
-
-    // This method is called by ViewBase at the end of createDeviceWidgets(). The default
-    // implementation does nothing. Subclasses can override this method for doing final
-    // touches. This is very much like polish(), but called at an exactly well-known time.
-    // Also I do not want Views to interfere with polish()
-    virtual void constructionFinished() = 0;
-
-    /**
-     * Creates a suitable representation for the given MixDevice.
-     */
-    virtual QWidget* add(const shared_ptr<MixDevice>) = 0;
+    // The GUI profile will not be removed on destruction,
+    // as it is pooled and might be applied to a new View.
+    virtual ~ViewBase() = default;
 
     // This method is called after a configuration update (show/hide controls, split/unsplit).
     virtual void configurationUpdate() = 0;
 
-    void load(KConfig *config);
-    void save(KConfig *config);
+    void load(const KConfig *config);
+    void save(KConfig *config) const;
 
     /**
      * Creates the widgets for all supported devices. The default implementation loops
@@ -90,34 +75,30 @@ public:
      */
     virtual void createDeviceWidgets();
 
-    int visibleControls();
-    
+    QMenu *getPopup();
+
     bool isDynamic() const;
     bool pulseaudioPresent() const;
-
-    /**
-     * Popup stuff
-     */
-    virtual QMenu* getPopup();
-    virtual void popupReset();
-    virtual void showContextMenu();
-
-    virtual bool isValid() const;
+    int visibleControls() const;
 
    void setIcons(bool on);
    void setLabels(bool on);
    void setTicks(bool on);
    
-   GUIProfile* guiProfile() { return GUIProfile::find(_guiProfileId); };
-  // GUIComplexity getGuiComplexity() { return guiComplexity; };
-   ProfControl* findMdw(const QString& id);
-   ProfControl* findMdw(const QString& mdwId, GuiVisibility visibility);
+    bool isValid() const;
+    QString id() const					{ return (m_viewId); }
 
-   
-   KActionCollection* actionCollection() { return _actions; };
+    GUIProfile* guiProfile() const			{ return (GUIProfile::find(_guiProfileId)); }
 
-   QList<Mixer*>& getMixers() { return _mixers; };
+    ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::GuiSIMPLE) const;
 
+    KActionCollection *actionCollection() const		{ return (_actions); };
+    const QList<Mixer*> &getMixers() const		{ return (_mixers); };
+
+    int mixDeviceCount() const				{ return (_mdws.count()); }
+    QWidget *mixDeviceAt(int i) const			{ return (_mdws.at(i)); }
+
+private:
     /**
      * Contains the widgets for the _mixSet. There is a 1:1 relationship, which means:
      * _mdws[i] is the Widget for the MixDevice _mixSet[i] - please see ViewBase::createDeviceWidgets().
@@ -126,46 +107,60 @@ public:
      */
     QList<QWidget *> _mdws;
 
+    QMenu *_popMenu;
+    KActionCollection* _actions; // -<- application wide action collection
+    KActionCollection *_localActionColletion;
+
+    ViewFlags _vflags;
+    GuiVisibility guiLevel;
+    const QString _guiProfileId;
+
+   QString m_viewId;
+
+private:
+    void setGuiLevel(GuiVisibility& guiLevel);
+    void updateMediaPlaybackIcons();
+    void popupReset();
+
 protected:
     MixSet _mixSet;
     QList<Mixer*> _mixers;
-    QMenu *_popMenu;
-    KActionCollection* _actions; // -<- application wide action collection
 
-    ViewFlags _vflags;
-    const QString _guiProfileId;
-    KActionCollection *_localActionColletion;
-
-    QIcon configureIcon;
-
-    virtual void initLayout() = 0;
+protected:
     void resetMdws();
     void updateGuiOptions();
-    QPushButton* createConfigureViewButton();
+    QPushButton *createConfigureViewButton();
+    void addMixer(Mixer *mixer);
 
-    void setGuiLevel(GuiVisibility& guiLevel);
+    virtual void initLayout() = 0;
 
-    GuiVisibility guiLevel;
+    /**
+     * Popup stuff
+     */
+    void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
+    virtual void showContextMenu();
+
+    // Creates a suitable representation for the given MixDevice.
+    virtual QWidget *add(const shared_ptr<MixDevice>) = 0;
+
+    // This method is called by ViewBase at the end of createDeviceWidgets(). The default
+    // implementation does nothing. Subclasses can override this method for doing final
+    // touches. This is very much like polish(), but called at an exactly well-known time.
+    // Also I do not want Views to interfere with polish()
+    virtual void constructionFinished() = 0;
 
 public slots:
    virtual void refreshVolumeLevels(); // TODO remove
    virtual void configureView();
-   void toggleMenuBarSlot();
-
-protected slots:
-   void mousePressEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
 
 signals:
    void toggleMenuBar();
 
-private:
-   QString      m_viewId;
-   void updateMediaPlaybackIcons();
-
 private slots:
    void guiVisibilitySlot(MixDeviceWidget* source, bool enable);
-
+   void toggleMenuBarSlot();
 };
 
-#endif
+Q_DECLARE_OPERATORS_FOR_FLAGS(ViewBase::ViewFlags);
 
+#endif

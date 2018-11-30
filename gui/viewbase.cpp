@@ -50,15 +50,16 @@
  * initLayout() in your derived class.
  */
 ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
-    : QWidget(parent, f), _popMenu(NULL), _actions(actionColletion), _vflags(vflags), _guiProfileId(guiProfileId)
-, guiLevel(GuiVisibility::GuiSIMPLE)
+    : QWidget(parent, f),
+      _popMenu(NULL),
+      _actions(actionColletion),
+      _vflags(vflags),
+      guiLevel(GuiVisibility::GuiSIMPLE),
+      _guiProfileId(guiProfileId)
 {
    setObjectName(id);
    // When loading the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
-   // TODO: does not need to be a member
-   configureIcon = QIcon::fromTheme( QLatin1String( "configure" ));
-
    
    if ( _actions == 0 ) {
       // We create our own action collection, if the actionColletion was 0.
@@ -79,11 +80,6 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::Vie
    }
 }
 
-ViewBase::~ViewBase()
-{
-    // Hint: The GUI profile will not be removed, as it is pooled and might be applied to a new View.
-}
-
 
 void ViewBase::addMixer(Mixer *mixer)
 {
@@ -93,7 +89,8 @@ void ViewBase::addMixer(Mixer *mixer)
 
 QPushButton* ViewBase::createConfigureViewButton()
 {
-	QPushButton* configureViewButton = new QPushButton(configureIcon, "", this);
+	QPushButton* configureViewButton = new QPushButton(QIcon::fromTheme(QLatin1String("configure")),
+							   QString(), this);
 	configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	configureViewButton->setToolTip(i18n( "Configure this view" ));
 	connect(configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
@@ -105,10 +102,6 @@ void ViewBase::updateGuiOptions()
     setTicks(GlobalConfig::instance().data.showTicks);
     setLabels(GlobalConfig::instance().data.showLabels);
     updateMediaPlaybackIcons();
-}
-
-QString ViewBase::id() const {
-    return m_viewId;
 }
 
 bool ViewBase::isValid() const
@@ -196,11 +189,11 @@ void ViewBase::guiVisibilitySlot(MixDeviceWidget* mdw, bool enable)
 	ControlManager::instance().announce(md->mixer()->id(), ControlManager::ControlList, QString("ViewBase::guiVisibilitySlot"));
 }
 
-// ---------- Popup stuff START ---------------------
-void ViewBase::mousePressEvent( QMouseEvent *e )
+// // ---------- Popup stuff START ---------------------
+
+void ViewBase::contextMenuEvent(QContextMenuEvent *ev)
 {
-   if ( e->button() == Qt::RightButton )
-      showContextMenu();
+    showContextMenu();
 }
 
 /**
@@ -289,7 +282,7 @@ void ViewBase::resetMdws()
 }
 
 
-int ViewBase::visibleControls()
+int ViewBase::visibleControls() const
 {
 	int visibleCount = 0;
 	foreach (QWidget* qw, _mdws)
@@ -329,7 +322,7 @@ void ViewBase::toggleMenuBarSlot() {
  *
  * @param config The view for this config
  */
-void ViewBase::load(KConfig *config)
+void ViewBase::load(const KConfig *config)
 {
 	ViewBase *view = this;
 	QString grp = "View.";
@@ -403,14 +396,15 @@ void ViewBase::setGuiLevel(GuiVisibility& guiLevel)
  * @return The corresponding ProfControl*
  *
  */
-ProfControl* ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility)
+ProfControl *ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility) const
 {
 	foreach ( ProfControl* pControl, guiProfile()->getControls() )
 	{
 		QRegExp idRegExp(pControl->id);
 		if ( mdwId.contains(idRegExp) )
 		{
-			if (pControl->getVisibility().satisfiesVisibility(visibility))
+			if (visibility==GuiVisibility::GuiSIMPLE ||
+			    pControl->getVisibility().satisfiesVisibility(visibility))
 			{
 //				qCDebug(KMIX_LOG) << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 				return pControl;
@@ -420,50 +414,24 @@ ProfControl* ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility)
 //				qCDebug(KMIX_LOG) << "NOMATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 			}
 		}
-	} // iterate over all ProfControl entries
-
-	return 0; // not found
+	}						// iterate over all ProfControl entries
+	return (nullptr);				// not found
 }
 
-
-/**
- * Returns the ProfControl* to the given id. The first found is returned.
- * GuiVisibilityis not taken into account. . All ProfControl objects are inspected.
- *
- * @param id The control ID
- * @return The corresponding ProfControl*, or 0 if no match was found
- */
-ProfControl* ViewBase::findMdw(const QString& id)
-{
-	foreach ( ProfControl* pControl, guiProfile()->getControls() )
-	{
-		QRegExp idRegExp(pControl->id);
-		//qCDebug(KMIX_LOG) << "KMixToolBox::loadView() try match " << (*pControl).id << " for " << mdw->mixDevice()->id();
-		if ( id.contains(idRegExp) )
-		{
-			return pControl;
-		}
-	} // iterate over all ProfControl entries
-
-	return 0;// not found
-}
 
 /*
  * Saves the View configuration
  */
-void ViewBase::save(KConfig *config)
+void ViewBase::save(KConfig *config) const
 {
-	ViewBase *view = this;
-	QString grp = "View.";
-	grp += view->id();
+	const QString grp = "View."+id();
 
 	// Certain bits are not saved for dynamic mixers (e.g. PulseAudio)
 	bool dynamic = isDynamic();  // TODO 11 Dynamic view configuration
 
-	for (int i = 0; i < view->_mdws.count(); ++i)
+	for (int i = 0; i<_mdws.count(); ++i)
 	{
-		QWidget *qmdw = view->_mdws[i];
-                MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(qmdw);
+                MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(_mdws[i]);
 		if (mdw!=nullptr)
 		{
 			shared_ptr<MixDevice> md = mdw->mixDevice();
