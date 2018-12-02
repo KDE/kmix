@@ -82,7 +82,7 @@ public:
 
     GUIProfile* guiProfile() const			{ return (GUIProfile::find(_guiProfileId)); }
 
-    ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::GuiDEFAULT) const;
+    ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::Default) const;
 
     KActionCollection *actionCollection() const		{ return (_actions); };
     const QList<Mixer*> &getMixers() const		{ return (_mixers); };
@@ -113,7 +113,7 @@ private:
    QString m_viewId;
 
 private:
-    void setGuiLevel(GuiVisibility& guiLevel);
+    void setGuiLevel(GuiVisibility guiLevel);
     void updateMediaPlaybackIcons();
     void popupReset();
 

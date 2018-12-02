@@ -224,7 +224,7 @@ void ViewSliders::initLayout()
 			foreach (ProfControl *control, guiprof->getControls())
 			{
 				// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-				QRegExp idRegexp(control->id);
+				QRegExp idRegexp(control->id());
 				// The following for-loop could be simplified by using a std::find_if
 				for (int i = 0; i<mixset.count(); ++i)
 				{
@@ -241,16 +241,16 @@ void ViewSliders::initLayout()
 						const bool subcontrolPlaybackWanted = (control->useSubcontrolPlayback() && (md->playbackVolume().hasVolume() || md->hasMuteSwitch()));
 						const bool subcontrolCaptureWanted = (control->useSubcontrolCapture() && (md->captureVolume().hasVolume() || md->captureVolume().hasSwitch()));
 						const bool subcontrolEnumWanted = (control->useSubcontrolEnum() && md->isEnum());
-						const bool subcontrolWanted = subcontrolPlaybackWanted|subcontrolCaptureWanted|subcontrolEnumWanted;
+						const bool subcontrolWanted = subcontrolPlaybackWanted || subcontrolCaptureWanted || subcontrolEnumWanted;
 						if (!subcontrolWanted) continue;
 
 						md->setControlProfile(control);
-						if (!control->name.isNull())
+						if (!control->name().isNull())
 						{
 							// Apply the custom name from the profile
 							// TODO:  This is the wrong place.  It only
 							// applies to controls in THIS type of view.
-							md->setReadableName(control->name);
+							md->setReadableName(control->name());
 						}
 						if (!control->getSwitchtype().isNull())
 						{

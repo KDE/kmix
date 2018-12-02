@@ -374,7 +374,7 @@ void DialogViewConfiguration::apply()
 
     // -1- Update view and profile *****************************************
    GUIProfile* prof = _view.guiProfile();
-   GUIProfile::ControlSet& oldControlset = prof->getControls();
+   const GUIProfile::ControlSet &oldControlset = prof->getControls();
    GUIProfile::ControlSet newControlset;
 
    QAbstractItemModel* model;
@@ -389,7 +389,7 @@ void DialogViewConfiguration::apply()
        if ( pctl->isMandatory() ) {
            ProfControl* newCtl = new ProfControl(*pctl);
            // The user has selected controls => mandatory controls (RegExp templates) should not been shown any longer
-           newCtl->setVisible(GuiVisibility::GuiNEVER);
+           newCtl->setVisibility(GuiVisibility::Never);
            newControlset.push_back(newCtl);
        }
    }
@@ -405,7 +405,7 @@ void DialogViewConfiguration::apply()
       ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("View Configuration Dialog"));
 }
 
-void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)
+void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, const GUIProfile::ControlSet &oldCtlSet, GUIProfile::ControlSet &newCtlSet)
 {
     const int numRows = model->rowCount();
     const int num = _view.mixDeviceCount();
@@ -435,11 +435,11 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
         foreach ( ProfControl* control, oldCtlSet)
         {
             //qCDebug(KMIX_LOG) << " checking " << control->id;
-            QRegExp idRegexp(control->id);
+            QRegExp idRegexp(control->id());
             if ( ctlId.contains(idRegexp) ) {
                 // found. Create a copy
                 ProfControl* newCtl = new ProfControl(*control);
-                newCtl->id =  '^' + ctlId + '$'; // Replace the (possible generic) regexp by the actual ID
+                newCtl->setId('^' + ctlId + '$'); // Replace the (possible generic) regexp by the actual ID
                 // We have made this an an actual control. As it is derived (from e.g. ".*") it is NOT mandatory.
                 newCtl->setMandatory(false);
                 newCtl->setVisible(isActiveView);

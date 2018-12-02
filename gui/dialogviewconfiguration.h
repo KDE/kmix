@@ -118,7 +118,7 @@ class DialogViewConfiguration : public DialogBase
    
  private:
     //void dragEnterEvent(QDragEnterEvent *event);
-    void prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet);
+    void prepareControls(QAbstractItemModel* model, bool isActiveView, const GUIProfile::ControlSet &oldCtlSet, GUIProfile::ControlSet &newCtlSet);
     void createPage();
     void addSpacer(int row, int col);
     void moveSelection(DialogViewConfigurationWidget* from, DialogViewConfigurationWidget* to);

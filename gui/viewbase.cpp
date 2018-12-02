@@ -54,7 +54,7 @@ ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::Vie
       _popMenu(NULL),
       _actions(actionColletion),
       _vflags(vflags),
-      guiLevel(GuiVisibility::GuiSIMPLE),
+      guiLevel(GuiVisibility::Simple),
       _guiProfileId(guiProfileId)
 {
    setObjectName(id);
@@ -337,13 +337,17 @@ void ViewBase::load(const KConfig *config)
 	qCDebug(KMIX_LOG)
 	<< "KMixToolBox::loadView() grp=" << grp.toLatin1();
 
-	static GuiVisibility guiVisibilities[3] =
-	{ GuiVisibility::GuiSIMPLE, GuiVisibility::GuiEXTENDED, GuiVisibility::GuiFULL };
+	static const GuiVisibility guiVisibilities[3] =
+	{
+		GuiVisibility::Simple,
+		GuiVisibility::Extended,
+		GuiVisibility::Full
+	};
 
 	bool guiLevelSet = false;
-	for (int i=0; i<3; ++i)
+	for (int i = 0; i<3; ++i)
 	{
-		GuiVisibility& guiCompl = guiVisibilities[i];
+		const GuiVisibility guiCompl = guiVisibilities[i];
 		bool atLeastOneControlIsShown = false;
 		foreach(QWidget *qmdw, view->_mdws)
 		{
@@ -385,10 +389,10 @@ void ViewBase::load(const KConfig *config)
 	} // for try = 0 ... 1
 
 	if (!guiLevelSet)
-		setGuiLevel(guiVisibilities[2]);
+		setGuiLevel(GuiVisibility::Full);
 }
 
-void ViewBase::setGuiLevel(GuiVisibility& guiLevel)
+void ViewBase::setGuiLevel(GuiVisibility guiLevel)
 {
 	this->guiLevel = guiLevel;
 }
@@ -406,10 +410,10 @@ ProfControl *ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility) c
 {
 	foreach ( ProfControl* pControl, guiProfile()->getControls() )
 	{
-		QRegExp idRegExp(pControl->id);
+		QRegExp idRegExp(pControl->id());
 		if ( mdwId.contains(idRegExp) )
 		{
-			if (pControl->getVisibility().satisfiesVisibility(visibility))
+			if (pControl->satisfiesVisibility(visibility))
 			{
 //				qCDebug(KMIX_LOG) << "  MATCH " << (*pControl).id << " for " << mdwId << " with visibility " << pControl->getVisibility().getId() << " to " << visibility.getId();
 				return pControl;
