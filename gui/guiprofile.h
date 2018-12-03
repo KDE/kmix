@@ -83,7 +83,7 @@ public:
     bool useSubcontrolPlaybackSwitch() const	{ return (_useSubcontrolPlaybackSwitch); }
     bool useSubcontrolCaptureSwitch() const	{ return (_useSubcontrolCaptureSwitch); }
     bool useSubcontrolEnum() const		{ return (_useSubcontrolEnum); }
-    QString renderSubcontrols();
+    QString renderSubcontrols() const;
 
     QString getBackgroundColor() const		{ return (_backgroundColor); }
     void setBackgroundColor(const QString &col)	{ _backgroundColor = col; }
@@ -156,7 +156,7 @@ public:
     GUIProfile();
     ~GUIProfile();
 
-    bool readProfile(const QString& ref_fileNamestring);
+    bool readProfile(const QString &ref_fileNamestring);
     bool finalizeProfile() const;
     bool writeProfile();
     
@@ -167,14 +167,12 @@ public:
     QString getId() const			{ return (_id); }
     QString getMixerId() const			{ return (_mixerId); }
     
-    unsigned long match(Mixer *mixer) const;
-
-    friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
+    unsigned long match(const Mixer *mixer) const;
 
     static void clearCache();
     static GUIProfile *find(const QString &id);
-    static GUIProfile *find(Mixer *mixer, const QString &profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
-    static GUIProfile *fallbackProfile(Mixer *mixer);
+    static GUIProfile *find(const Mixer *mixer, const QString &profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
+    static GUIProfile *fallbackProfile(const Mixer *mixer);
 
     // --- Getters and setters ----------------------------------------------------------------------
     const ControlSet &getControls() const	{ return (_controls); }
@@ -205,8 +203,6 @@ private:
     bool _dirty;
 };
 
-//std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
-QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 
 class GUIProfileParser : public QXmlDefaultHandler
 {

@@ -65,7 +65,7 @@ public:
     virtual ~Mixer();
 
     static int numDrivers();
-    QString getDriverName();
+    QString getDriverName() const;
 
     shared_ptr<MixDevice>  find(const QString& devPK) const;
     static Mixer* findMixer( const QString& mixer_id);
@@ -106,7 +106,7 @@ public:
      * Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
      * mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
      */
-    virtual QString getBaseName();
+    virtual QString getBaseName() const;
 
     /// Wrapper to Mixer_Backend
     QString translateKernelToWhatsthis(const QString &kernelName);

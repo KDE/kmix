@@ -311,7 +311,7 @@ MixSet& Mixer::getMixSet()
 /**
  * Returns the driver name, that handles this Mixer.
  */
-QString Mixer::getDriverName()
+QString Mixer::getDriverName() const
 {
   QString driverName = _mixerBackend->getDriverName();
 //  qCDebug(KMIX_LOG) << "Mixer::getDriverName() = " << driverName << "\n";
@@ -403,7 +403,7 @@ QString Mixer::readableName(bool ampersandQuoted) const
 }
 
 
-QString Mixer::getBaseName()
+QString Mixer::getBaseName() const
 {
   return _mixerBackend->getName();
 }

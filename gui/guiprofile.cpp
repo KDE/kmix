@@ -21,17 +21,14 @@
 #include "gui/guiprofile.h"
 
 // Qt
-#include <QDir>
-#include <qxml.h>
-#include <QString>
+#include <QSaveFile>
+#include <QXmlStreamWriter>
+#include <QXmlSimpleReader>
 #include <QStandardPaths>
-
-// System
-#include <iostream>
-#include <utility>
 
 // KMix
 #include "core/mixer.h"
+
 
 QMap<QString, GUIProfile *> s_profiles;
 
@@ -128,7 +125,7 @@ void GUIProfile::clearCache()
  * @arg profileName   The profile name (e.g. "capture", "playback", "my-cool-profile", or "any"
  * @return            The profile name
  */
-static QString buildProfileName(Mixer *mixer, const QString &profileName, bool ignoreCard)
+static QString buildProfileName(const Mixer *mixer, const QString &profileName, bool ignoreCard)
 {
     QString fname;
     fname += mixer->getDriverName();
@@ -147,7 +144,7 @@ static QString buildProfileName(Mixer *mixer, const QString &profileName, bool i
  * Generate a readable profile name (for presenting to the user).
  * Hint: Currently used as Tab label.
  */
-static QString buildReadableProfileName(Mixer *mixer, const QString &profileName)
+static QString buildReadableProfileName(const Mixer *mixer, const QString &profileName)
 {
     QString fname;
     fname += mixer->getBaseName();
@@ -193,9 +190,9 @@ static QString createNormalizedFilename(const QString &profileId)
  * It tries to load the Soundcard specific file first (a).
  * If it doesn't exist, it will load the default profile corresponding to the soundcard driver (b).
  */
-static GUIProfile *loadProfileFromXMLfiles(Mixer *mixer, const QString &profileName)
+static GUIProfile *loadProfileFromXMLfiles(const Mixer *mixer, const QString &profileName)
 {
-    GUIProfile* guiprof = 0;
+    GUIProfile* guiprof = nullptr;
     QString fileName = createNormalizedFilename(profileName);
     QString fileNameFQ = QStandardPaths::locate(QStandardPaths::DataLocation, fileName );
 
@@ -206,7 +203,7 @@ static GUIProfile *loadProfileFromXMLfiles(Mixer *mixer, const QString &profileN
         }
         else {
             delete guiprof; // not good (e.g. Parsing error => drop this profile silently)
-            guiprof = 0;
+            guiprof = nullptr;
         }
     }
     else {
@@ -243,7 +240,7 @@ static void addProfile(GUIProfile *guiprof)
  * @arg ignoreCardName If profileName not fully qualified, this is used in building the requestedProfileName
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
  */
-GUIProfile *GUIProfile::find(Mixer *mixer, const QString &profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
+GUIProfile *GUIProfile::find(const Mixer *mixer, const QString &profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
 {
     GUIProfile *guiprof = nullptr;
 
@@ -301,7 +298,7 @@ GUIProfile *GUIProfile::find(Mixer *mixer, const QString &profileName, bool prof
  * Returns a fallback GUIProfile. You can call this if the backends ships no profile files.
  * The returned GUIProfile is also added to the static Map of all GUIProfile instances.
  */
-GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
+GUIProfile* GUIProfile::fallbackProfile(const Mixer *mixer)
 {
 	// -1- Get name
     QString fullQualifiedProfileName = buildProfileName(mixer, QString("default"), false);
@@ -350,15 +347,15 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
  * @par  ref_fileName: Full qualified filename (with path).
  * @return bool True, if the profile was successfully created. False if not (e.g. parsing error).
  */
-bool GUIProfile::readProfile(const QString& ref_fileName)
+bool GUIProfile::readProfile(const QString &ref_fileName)
 {
-    QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-    qCDebug(KMIX_LOG) << "Read profile:" << ref_fileName ;
-    QFile xmlFile( ref_fileName );
-    QXmlInputSource source( &xmlFile );
-    GUIProfileParser* gpp = new GUIProfileParser(this);
-    xmlReader->setContentHandler(gpp);
-    bool ok = xmlReader->parse( source );
+    QXmlSimpleReader xmlReader;
+    qCDebug(KMIX_LOG) << "Read profile" << ref_fileName;
+    QFile xmlFile(ref_fileName);
+    QXmlInputSource source(&xmlFile);
+    GUIProfileParser gpp(this);
+    xmlReader.setContentHandler(&gpp);
+    bool ok = xmlReader.parse(source);
 
     //std::cout << "Raw Profile: " << *this;
     if ( ok ) {
@@ -366,39 +363,108 @@ bool GUIProfile::readProfile(const QString& ref_fileName)
     } // Read OK
     else {
         // !! this error message about faulty profiles should probably be surrounded with i18n()
-        qCCritical(KMIX_LOG) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used.";
+        qCCritical(KMIX_LOG) << "ERROR: The profile" << ref_fileName<< "contains errors, and cannot be used";
     }
 
-    // TODO: can these 2 be stack variables?
-    delete gpp;
-    delete xmlReader;
-   
     return ok;
 }
 
 
 bool GUIProfile::writeProfile()
 {
-   bool ret = false;
    QString profileId = getId();
    QString fileName = createNormalizedFilename(profileId);
    QString fileNameFQ = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + '/' + fileName;
 
-   qCDebug(KMIX_LOG) << "Write profile:" << fileNameFQ ;
-   QFile f(fileNameFQ);
-   if ( f.open(QIODevice::WriteOnly | QFile::Truncate) )
-   { 
-      QTextStream out(&f);
-      out << *this;
-      f.close();
-      ret = true;
+   qCDebug(KMIX_LOG) << "Write profile" << fileNameFQ;
+   QSaveFile f(fileNameFQ);
+   if (!f.open(QIODevice::WriteOnly|QFile::Truncate))
+   {
+      qCWarning(KMIX_LOG) << "Cannot save profile to" << fileNameFQ;
+      return (false);
    }
 
-   if ( ret ) {
-       _dirty = false;
+   QXmlStreamWriter writer(&f);
+   writer.setAutoFormatting(true);
+
+   // <?xml version="1.0" encoding="utf-8"?>
+   writer.writeStartDocument();
+
+   //  <soundcard
+   writer.writeStartElement("soundcard");
+   //    driver=	_soundcardDriver
+   writer.writeAttribute("driver", _soundcardDriver);
+   //    version=	(_driverVersionMin << ":" << _driverVersionMax)
+   writer.writeAttribute("version", QString("%1:%2").arg(_driverVersionMin).arg(_driverVersionMax));
+   //    name=		guiprof._soundcardName
+   writer.writeAttribute("name", _soundcardName);
+   //    type=		guiprof._soundcardType
+   writer.writeAttribute("type", _soundcardType);
+   //    generation=	guiprof._generation
+   writer.writeAttribute("generation", QString::number(_generation));
+
+   //  <profile
+   writer.writeStartElement("profile");
+   //    id=		guiprof._id
+   writer.writeAttribute("id", _id);
+   //    name=		guiprof._name
+   writer.writeAttribute("name", _name);
+   //  />
+   writer.writeEndElement();
+
+   foreach (const ProfProduct *prd, qAsConst(_products))
+   {
+      //  <product
+      writer.writeStartElement("product");
+      //    vendor=		prd->vendor
+      writer.writeAttribute("vendor", prd->vendor);
+      //    name=		prd->productName
+      writer.writeAttribute("name", prd->productName);
+      //    release=		prd->productRelease
+      if (!prd->productRelease.isNull()) writer.writeAttribute("release", prd->productRelease);
+      //	 comment=	prd->comment
+      if (!prd->comment.isNull()) writer.writeAttribute("comment", prd->comment);
+      //  />
+      writer.writeEndElement();
+   }							// for all products
+
+   foreach (const ProfControl *profControl, qAsConst(getControls()))
+   {
+      //  <control
+      writer.writeStartElement("control");
+      //    id=			profControl->id()
+      writer.writeAttribute("id", profControl->id());
+      //    name=		profControl->name()
+      const QString name = profControl->name();
+      if (!name.isNull() && name!=profControl->id()) writer.writeAttribute("name", name);
+      //    subcontrols=	profControl->renderSubcontrols()
+      writer.writeAttribute("subcontrols", profControl->renderSubcontrols());
+      //    show=		visibilityToString(profControl->getVisibility())
+      writer.writeAttribute("show", visibilityToString(profControl->getVisibility()));
+      //    mandatory=		"true"
+      if (profControl->isMandatory()) writer.writeAttribute("mandatory", "true");
+      //    split=		"true"
+      if (profControl->isSplit())  writer.writeAttribute("split", "true");
+      //  />
+      writer.writeEndElement();
+   }							// for all controls
+
+   //  </soundcard>
+   writer.writeEndElement();
+
+   writer.writeEndDocument();
+   if (writer.hasError())
+   {
+	   qCWarning(KMIX_LOG) << "XML writing failed to" << fileNameFQ;
+	   f.cancelWriting();
+	   return (false);
    }
-   return ret;
+
+   f.commit();
+   _dirty = false;
+   return (true);
 }
+
 
 /** This is now empty. It can be removed */
 bool GUIProfile::finalizeProfile() const
@@ -454,7 +520,7 @@ void GUIProfile::setControls(ControlSet& newControlSet)
  * @todo Implement "card type" match value
  * @todo Implement "version" match value (must be in backends as well)
  */
-unsigned long GUIProfile::match(Mixer* mixer) const
+unsigned long GUIProfile::match(const Mixer *mixer) const
 {
 	unsigned long matchValue = 0;
 	if ( _soundcardDriver != mixer->getDriverName() ) {
@@ -480,74 +546,6 @@ unsigned long GUIProfile::match(Mixer* mixer) const
 		matchValue += 900;
 	}
 	return matchValue;
-}
-
-
-static QByteArray xmlify(const QString &str)
-{
-	QByteArray raw = str.toUtf8();
-// 	qCDebug(KMIX_LOG) << "Before: " << raw;
-	raw.replace('&', "&amp;");
-	raw.replace('<', "&lt;");
-	raw.replace('>', "&gt;");
-	raw.replace('\'', "&apos;");
-	raw.replace('\"', "&quot;");
-// 	qCDebug(KMIX_LOG) << "After : " << raw;
-	return (raw);
-}
-
-
-// TODO: use QXmlStreamWriter
-QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
-{
-// qCDebug(KMIX_LOG) << "ENTER QTextStream& operator<<";
-   os << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-   os << endl << endl;
-
-   os << "<soundcard driver=\"" << xmlify(guiprof._soundcardDriver) << "\""
-      << " version = \"" << guiprof._driverVersionMin << ":" << guiprof._driverVersionMax  << "\"" << endl
-      << " name = \"" << xmlify(guiprof._soundcardName) << "\"" << endl
-      << " type = \"" << xmlify(guiprof._soundcardType) << "\"" << endl
-      << " generation = \"" << guiprof._generation << "\"" << endl
-      << ">" << endl << endl ;
-
-   os << "<profile id=\"" << xmlify(guiprof._id) << "\" name=\"" << xmlify(guiprof._name) << "\"/>" << endl;
-
-   for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
-	{
-		ProfProduct* prd = *it;
-		os << "<product vendor=\"" << xmlify(prd->vendor) << "\" name=\"" << xmlify(prd->productName) << "\"";
-		if ( ! prd->productRelease.isNull() ) {
-			os << " release=\"" << xmlify(prd->productRelease) << "\"";
-		}
-		if ( ! prd->comment.isNull() ) {
-			os << " comment=\"" << xmlify(prd->comment) << "\"";
-		}
-		os << " />" << endl;
-	} // for all products
-	os << endl;
-
-    foreach ( ProfControl* profControl, guiprof.getControls() )
-	{
-		os << "<control id=\"" << xmlify(profControl->id()) << "\"" ;
-		if ( !profControl->name().isNull() && profControl->name()!=profControl->id()) {
-			os << " name=\"" << xmlify(profControl->name()) << "\"" ;
-		}
-		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols()) << "\"" ;
-		os << " show=\"" << xmlify(visibilityToString(profControl->getVisibility())) << "\"" ;
-		if ( profControl->isMandatory() ) {
-		  os << " mandatory=\"true\"";
-		}
-		if ( profControl->isSplit() ) {
-		  os << " split=\"true\"";
-		}
-		os << " />" << endl;
-	} // for all controls
-	os << endl;
-
-	os << "</soundcard>" << endl;
-// qCDebug(KMIX_LOG) << "EXIT  QTextStream& operator<<";
-	return os;
 }
 
 
@@ -642,7 +640,7 @@ void ProfControl::setSubcontrols(QString sctls)
   }
 }
 
-QString ProfControl::renderSubcontrols()
+QString ProfControl::renderSubcontrols() const
 {
     QString sctlString;
     if ( _useSubcontrolPlayback && _useSubcontrolPlaybackSwitch && _useSubcontrolCapture && _useSubcontrolCaptureSwitch && _useSubcontrolEnum ) {
@@ -700,7 +698,7 @@ bool GUIProfileParser::startElement( const QString& ,
 			}
 			else {
 				// skip unknown top-level nodes
-				std::cerr << "Ignoring unsupported element '" << qName.toUtf8().constData() << "'" << std::endl;
+				qCWarning(KMIX_LOG) << "Ignoring unsupported element" << qName;
 			}
 			// we are accepting <soundcard> only
 		break;
@@ -717,7 +715,7 @@ bool GUIProfileParser::startElement( const QString& ,
                 addProfileInfo(attributes);
             }
 			else {
-				std::cerr << "Ignoring unsupported element '" << qName.toUtf8().constData() << "'" << std::endl;
+				qCWarning(KMIX_LOG) << "Ignoring unsupported element" << qName;
 			}
 			// we are accepting <product>, <control> and <tab>
 
@@ -853,13 +851,13 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
   } // id != null
 }
 
-void GUIProfileParser::printAttributes(const QXmlAttributes& attributes) {
-		    if ( attributes.length() > 0 ) {
-		        for ( int i = 0 ; i < attributes.length(); i++ ) {
-					std::cout << attributes.qName(i).toUtf8().constData() << ":"<< attributes.value(i).toUtf8().constData() << " , ";
-		        }
-			    std::cout << std::endl;
-		    }
+void GUIProfileParser::printAttributes(const QXmlAttributes& attributes)
+{
+	if (attributes.length() > 0 ) {
+		for ( int i = 0 ; i < attributes.length(); i++ ) {
+			qCDebug(KMIX_LOG) << i << attributes.qName(i) << "="<< attributes.value(i);
+		}
+	}
 }
 
 void GUIProfileParser::splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim)
