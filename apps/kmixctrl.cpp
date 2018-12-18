@@ -60,8 +60,7 @@ int main(int argc, char *argv[])
    GlobalConfig::init();
 
    // create mixers
-   QString dummyStringHwinfo;
-   MixerToolBox::instance()->initMixer(false, QList<QString>(), dummyStringHwinfo, false);
+   MixerToolBox::initMixer(false, QStringList(), false);
 
    // load volumes
    if ( parser.isSet("restore") )
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-   MixerToolBox::instance()->deinitMixer();
+   MixerToolBox::deinitMixer();
 
    return 0;
 }

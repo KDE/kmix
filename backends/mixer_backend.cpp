@@ -82,10 +82,19 @@ void Mixer_Backend::freeMixDevices()
 	m_mixDevices.clear();
 }
 
+
 bool Mixer_Backend::openIfValid()
 {
-	int ret = open();
-	if (ret == 0 && (m_mixDevices.count() > 0 || _mixer->isDynamic()))
+	const int ret = open();
+	if (ret!=0)
+	{
+		//qCWarning(KMIX_LOG) << "open" << getName() << "failed" << ret;
+		return false;				// could not open
+	}
+
+	qCDebug(KMIX_LOG) << "opened" << getName() <<  "count" << m_mixDevices.count()
+			  << "dynamic?" << _mixer->isDynamic() << "needsPolling?" << needsPolling();
+	if (m_mixDevices.count() > 0 || _mixer->isDynamic())
 	{
 		if (needsPolling())
 		{
@@ -96,14 +105,15 @@ bool Mixer_Backend::openIfValid()
 			// The initial state must be read manually
 			QTimer::singleShot( POLL_RATE_FAST, this, SLOT(readSetFromHW()));
 		}
-		return true; // could be opened
+		return true;				// could be opened
 	}
 	else
 	{
-		//shutdown();
-		return false; // could not open
+		qCWarning(KMIX_LOG) << "no mix devices and not dynamic";
+		return false;				// could not open
 	}
 }
+
 
 bool Mixer_Backend::isOpen() {
 	return m_isOpen;

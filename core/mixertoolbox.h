@@ -37,33 +37,16 @@ class Mixer;
  * The reason, why it is not put in a common base class is, that the classes are
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
  */
-class KMIXCORE_EXPORT MixerToolBox : public QObject
+
+namespace KMIXCORE_EXPORT MixerToolBox
 {
-    Q_OBJECT
+    QString initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
 
-    enum MultiDriverMode { SINGLE, SINGLE_PLUS_MPRIS2, MULTI };
-
-   public:
-      static MixerToolBox* instance();
-      void initMixer(bool, QList<QString> backendList, QString&, bool);
-      void initMixer(MultiDriverMode, QList<QString> backendList, QString&, bool);
-      void initMixerInternal(MultiDriverMode, QList<QString> backendList, QString&, bool);
-      void deinitMixer();
-      bool possiblyAddMixer(Mixer *mixer);
-      void removeMixer(Mixer *mixer);
-      void setMixerIgnoreExpression(const QString& ignoreExpr);
-      QString mixerIgnoreExpression() const;
-      
-      //static KLocale* whatsthisControlLocale();
-      
-   signals:
-      void mixerAdded(QString mixerID);
-
-   private:
-      static MixerToolBox* s_instance;
-      static QRegExp s_ignoreMixerExpression;
-      
-      //static KLocale* s_whatsthisLocale;
-};
+    void deinitMixer();
+    bool possiblyAddMixer(Mixer *mixer);
+    void removeMixer(Mixer *mixer);
+    void setMixerIgnoreExpression(const QString &ignoreExpr);
+    QString mixerIgnoreExpression();
+}
 
 #endif

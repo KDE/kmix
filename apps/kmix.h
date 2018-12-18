@@ -142,8 +142,10 @@ private:
    void slotHWInfo();
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
-   void plugged( const char* driverName, const QString& udi, QString& dev);
-   void unplugged( const QString& udi);
+
+   void plugged(const char *driverName, const QString &udi, int dev);
+   void unplugged(const QString &udi);
+
    void hideOrClose();
    void slotIncreaseVolume();
    void slotDecreaseVolume();
