@@ -52,10 +52,7 @@ public:
     MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl);
     virtual ~MixDeviceWidget() = default;
 
-    void addActionToPopup( QAction *action );
-
     shared_ptr<MixDevice> mixDevice() const		{ return (m_mixdevice); }
-    ProfControl *profileControl() const			{ return (m_pctl); }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
@@ -70,9 +67,6 @@ public:
     virtual void setLabelExtent(int extent)		{ Q_UNUSED(extent); }
 
 public slots:
-    virtual void defineKeys();
-    virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
-
     /**
       * Called whenever there are volume updates pending from the hardware for this MDW.
       */
@@ -82,25 +76,31 @@ signals:
     void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 protected slots:
+    virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
     virtual void setDisabled(bool value) = 0;
+
+    virtual void defineKeys();
     void volumeChange(int);
 
 protected:
+    void addActionToPopup(QAction *action);
     void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
 
     Qt::Orientation orientation() const			{ return (m_view->orientation()); }
     MixDeviceWidget::MDWFlags flags() const		{ return (m_flags); }
+    ViewBase *view() const				{ return (m_view); }
+    ProfControl *profileControl() const			{ return (m_pctl); }
 
 protected:
-      shared_ptr<MixDevice>  m_mixdevice;
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
-      ViewBase*            m_view;
-      MDWFlags             m_flags;
-      KShortcutsDialog*    m_shortcutsDialog;
 
 private:
-      ProfControl*         m_pctl;
+      MDWFlags m_flags;
+      shared_ptr<MixDevice>  m_mixdevice;
+      ProfControl *m_pctl;
+      ViewBase *m_view;
+      KShortcutsDialog *m_shortcutsDialog;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(MixDeviceWidget::MDWFlags);

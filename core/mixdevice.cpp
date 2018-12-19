@@ -310,11 +310,6 @@ unsigned int MixDevice::enumId()
    return _enumCurrentId;
 }
 
-QList<QString>& MixDevice::enumValues() {
-   return _enumValues;
-}
-
-
 const QString& MixDevice::id() const {
    return _id;
 }

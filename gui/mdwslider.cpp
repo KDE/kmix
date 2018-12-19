@@ -74,7 +74,7 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, 
 	  m_sliderInWork(false),
 	  m_waitForSoundSetComplete(0)
 {
-	//qCDebug(KMIX_LOG) << "for" << m_mixdevice->readableName() << "flags" << MixDeviceWidget::flags();
+	//qCDebug(KMIX_LOG) << "for" << mixDevice()->readableName() << "flags" << MixDeviceWidget::flags();
 
     createActions();
     createWidgets();
@@ -105,26 +105,26 @@ void MDWSlider::createActions()
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
 //    QAction *action;
-//    if ( ! m_mixdevice->mixer()->isDynamic() ) {
+//    if ( ! mixDevice()->mixer()->isDynamic() ) {
 //        action = _mdwActions->add<KToggleAction>( "hide" );
 //        action->setText( i18n("&Hide") );
 //        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)) );
 //    }
 
-    if( m_mixdevice->hasMuteSwitch() )
+    if( mixDevice()->hasMuteSwitch() )
     {
         taction = _mdwActions->add<KToggleAction>( "mute" );
         taction->setText( i18n("&Muted") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
     }
 
-    if( m_mixdevice->captureVolume().hasSwitch() ) {
+    if( mixDevice()->captureVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "recsrc" );
         taction->setText( i18n("Captu&re") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleRecsrc()) );
     }
 
-    if( m_mixdevice->isMovable() ) {
+    if( mixDevice()->isMovable() ) {
         m_moveMenu = new QMenu( i18n("Mo&ve"), this);
         connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
@@ -279,7 +279,7 @@ void MDWSlider::guiAddControlLabel(Qt::Alignment alignment, const QString &chann
 void MDWSlider::guiAddControlIcon(const QString &tooltipText)
 {
 	m_controlIcon = new QLabel(this);
-	ToggleToolButton::setIndicatorIcon(m_mixdevice->iconName(), m_controlIcon,
+	ToggleToolButton::setIndicatorIcon(mixDevice()->iconName(), m_controlIcon,
 					   (flags() & MixDeviceWidget::SmallSize));
 	m_controlIcon->setToolTip(tooltipText);
 	m_controlIcon->installEventFilter(this);
@@ -375,7 +375,7 @@ void MDWSlider::createWidgets()
 		{
 			volLayout = new QHBoxLayout();
 			volLayout->setAlignment(sliderAlign);
-			addSliders(volLayout, 'p', m_mixdevice->playbackVolume(), m_slidersPlayback, tooltipText);
+			addSliders(volLayout, 'p', mixDevice()->playbackVolume(), m_slidersPlayback, tooltipText);
 			m_controlGrid->addLayout(volLayout, 2, col);
 			playbackCol = col;
 			++col;
@@ -385,7 +385,7 @@ void MDWSlider::createWidgets()
 		{
 			volLayout = new QHBoxLayout();
 			volLayout->setAlignment(sliderAlign);
-			addSliders(volLayout, 'c', m_mixdevice->captureVolume(), m_slidersCapture, tooltipText);
+			addSliders(volLayout, 'c', mixDevice()->captureVolume(), m_slidersCapture, tooltipText);
 			m_controlGrid->addLayout(volLayout, 2, col);
 			captureCol = col;
 			++col;
@@ -402,13 +402,13 @@ void MDWSlider::createWidgets()
 		m_controlGrid->setRowStretch(2, 1);	// sliders need the most space
 
 		// Row 3: Control buttons
-		if (wantsMuteButton && m_mixdevice->hasMuteSwitch())
+		if (wantsMuteButton && mixDevice()->hasMuteSwitch())
 		{
 			guiAddMuteButton(muteTooltipText);
 			m_controlGrid->addWidget(m_muteButton, 3, playbackCol, Qt::AlignHCenter|Qt::AlignTop);
 		}
 
-		if (wantsCaptureLED && m_mixdevice->captureVolume().hasSwitch())
+		if (wantsCaptureLED && mixDevice()->captureVolume().hasSwitch())
 		{
 			guiAddCaptureButton(captureTooltipText);
 			m_controlGrid->addWidget(m_captureButton, 3, captureCol, Qt::AlignHCenter|Qt::AlignTop);
@@ -447,7 +447,7 @@ void MDWSlider::createWidgets()
 		{
 			volLayout = new QVBoxLayout();
 			volLayout->setAlignment(sliderAlign);
-			addSliders(volLayout, 'p', m_mixdevice->playbackVolume(), m_slidersPlayback, tooltipText);
+			addSliders(volLayout, 'p', mixDevice()->playbackVolume(), m_slidersPlayback, tooltipText);
 			m_controlGrid->addLayout(volLayout, row, 2);
 			playbackRow = row;
 			++row;
@@ -457,7 +457,7 @@ void MDWSlider::createWidgets()
 		{
 			volLayout = new QVBoxLayout();
 			volLayout->setAlignment(sliderAlign);
-			addSliders(volLayout, 'c', m_mixdevice->captureVolume(), m_slidersCapture, tooltipText);
+			addSliders(volLayout, 'c', mixDevice()->captureVolume(), m_slidersCapture, tooltipText);
 			m_controlGrid->addLayout(volLayout, row, 2);
 			captureRow = row;
 			++row;
@@ -474,13 +474,13 @@ void MDWSlider::createWidgets()
 		m_controlGrid->setColumnStretch(2, 1);	// sliders need the most space
 
 		// Column 3: Control buttons
-		if (wantsMuteButton && m_mixdevice->hasMuteSwitch())
+		if (wantsMuteButton && mixDevice()->hasMuteSwitch())
 		{
 			guiAddMuteButton(muteTooltipText);
 			m_controlGrid->addWidget(m_muteButton, playbackRow, 3, Qt::AlignRight|Qt::AlignVCenter);
 		}
 
-		if (wantsCaptureLED && m_mixdevice->captureVolume().hasSwitch())
+		if (wantsCaptureLED && mixDevice()->captureVolume().hasSwitch())
 		{
 			guiAddCaptureButton(captureTooltipText);
 			m_controlGrid->addWidget(m_captureButton, captureRow, 3, Qt::AlignRight|Qt::AlignVCenter);
@@ -720,7 +720,7 @@ void MDWSlider::sliderReleased()
 
 QString MDWSlider::iconName()
 {
-    return m_mixdevice->iconName();
+    return mixDevice()->iconName();
 }
 
 void
@@ -879,15 +879,15 @@ void MDWSlider::volumeChange( int )
 	{
 		++m_waitForSoundSetComplete;
 		volumeValues.push_back(m_slidersPlayback.first()->value());
-		volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
+		volumeChangeInternal(mixDevice()->playbackVolume(), m_slidersPlayback);
 	}
 	if (!m_slidersCapture.isEmpty())
 	{
-		volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
+		volumeChangeInternal(mixDevice()->captureVolume(), m_slidersCapture);
 	}
 
-	QSignalBlocker blocker(m_view);
-	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+	QSignalBlocker blocker(view());
+	mixDevice()->mixer()->commitVolumeChange(mixDevice());
 }
 
 void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
@@ -895,16 +895,16 @@ void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_
 	if (isStereoLinked())
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
-		m_mixdevice->setMuted(false);
+		mixDevice()->setMuted(false);
 		vol.setAllVolumes(firstSlider->value());
 	}
 	else
 	{
 		for (int i = 0; i < ref_sliders.count(); i++)
 		{
-			if (m_mixdevice->isMuted())
+			if (mixDevice()->isMuted())
 			{   // changing from muted state: unmute (the "if" above is actually superfluous)
-				m_mixdevice->setMuted(false);
+				mixDevice()->setMuted(false);
 			}
 			QAbstractSlider *sliderWidget = ref_sliders[i];
 			vol.setVolume(extraData(sliderWidget).getChid(), sliderWidget->value());
@@ -919,15 +919,15 @@ void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_
  */
 void MDWSlider::toggleRecsrc()
 {
-	setRecsrc( !m_mixdevice->isRecSource() );
+	setRecsrc( !mixDevice()->isRecSource() );
 }
 
 void MDWSlider::setRecsrc(bool value)
 {
-	if ( m_mixdevice->captureVolume().hasSwitch() )
+	if ( mixDevice()->captureVolume().hasSwitch() )
 	{
-		m_mixdevice->setRecSource( value );
-		m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
+		mixDevice()->setRecSource( value );
+		mixDevice()->mixer()->commitVolumeChange( mixDevice() );
 	}
 }
 
@@ -938,15 +938,15 @@ void MDWSlider::setRecsrc(bool value)
  */
 void MDWSlider::toggleMuted()
 {
-	setMuted( !m_mixdevice->isMuted() );
+	setMuted( !mixDevice()->isMuted() );
 }
 
 void MDWSlider::setMuted(bool value)
 {
-	if ( m_mixdevice->hasMuteSwitch() )
+	if ( mixDevice()->hasMuteSwitch() )
 	{
-		m_mixdevice->setMuted( value );
-		m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+		mixDevice()->setMuted( value );
+		mixDevice()->mixer()->commitVolumeChange(mixDevice());
 	}
 }
 
@@ -985,24 +985,24 @@ void MDWSlider::decreaseVolume()
  */
 void MDWSlider::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType)
 {
-	m_mixdevice->increaseOrDecreaseVolume(decrease, volumeType);
+	mixDevice()->increaseOrDecreaseVolume(decrease, volumeType);
 	// I should possibly not block, as the changes that come back from the Soundcard
 	//      will be ignored (e.g. because of capture groups)
-// 	qCDebug(KMIX_LOG) << "MDWSlider is blocking signals for " << m_view->id();
-// 	bool oldViewBlockSignalState = m_view->blockSignals(true);
-	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-// 	qCDebug(KMIX_LOG) << "MDWSlider is unblocking signals for " << m_view->id();
-// 	m_view->blockSignals(oldViewBlockSignalState);
+// 	qCDebug(KMIX_LOG) << "MDWSlider is blocking signals for " << view()->id();
+// 	bool oldViewBlockSignalState = view()->blockSignals(true);
+	mixDevice()->mixer()->commitVolumeChange(mixDevice());
+// 	qCDebug(KMIX_LOG) << "MDWSlider is unblocking signals for " << view()->id();
+// 	view()->blockSignals(oldViewBlockSignalState);
 }
 
 void MDWSlider::moveStreamAutomatic()
 {
-    m_mixdevice->mixer()->moveStream(m_mixdevice->id(), "");
+    mixDevice()->mixer()->moveStream(mixDevice()->id(), "");
 }
 
 void MDWSlider::moveStream(QString destId)
 {
-    m_mixdevice->mixer()->moveStream(m_mixdevice->id(), destId);
+    mixDevice()->mixer()->moveStream(mixDevice()->id(), destId);
 }
 
 /**
@@ -1014,18 +1014,18 @@ void MDWSlider::update()
 //	  if (debugMe) qCDebug(KMIX_LOG) << "The update() PCM:0 playback state" << mixDevice()->isMuted()
 //	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
-	if ( m_slidersPlayback.count() != 0 || m_mixdevice->hasMuteSwitch() )
-		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
-	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
-		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, m_mixdevice->isNotRecSource() );
+	if ( m_slidersPlayback.count() != 0 || mixDevice()->hasMuteSwitch() )
+		updateInternal(mixDevice()->playbackVolume(), m_slidersPlayback, mixDevice()->isMuted() );
+	if ( m_slidersCapture.count()  != 0 || mixDevice()->captureVolume().hasSwitch() )
+		updateInternal(mixDevice()->captureVolume(), m_slidersCapture, mixDevice()->isNotRecSource() );
 	if (m_controlLabel!=nullptr)
 	{
 		QLabel *l;
 		VerticalText *v;
 		if ((l = dynamic_cast<QLabel*>(m_controlLabel)))
-			l->setText(m_mixdevice->readableName());
+			l->setText(mixDevice()->readableName());
 		else if ((v = dynamic_cast<VerticalText*>(m_controlLabel)))
-			v->setText(m_mixdevice->readableName());
+			v->setText(mixDevice()->readableName());
 	}
 	updateAccesability();
 }
@@ -1071,7 +1071,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 		KSmallSlider *smallSlider = qobject_cast<KSmallSlider *>(slider);
 		if (smallSlider!=nullptr)		// faster than QObject::inherits()
 		{
-			smallSlider->setGray(m_mixdevice->isMuted());
+			smallSlider->setGray(mixDevice()->isMuted());
 		}
 	} // for all sliders
 
@@ -1080,14 +1080,14 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 	if (m_muteButton!=nullptr)
 	{
 		QSignalBlocker blocker(m_muteButton);
-		m_muteButton->setActive(!m_mixdevice->isMuted());
+		m_muteButton->setActive(!mixDevice()->isMuted());
 	}
 
 	// update capture state
 	if (m_captureButton!=nullptr)
 	{
 		QSignalBlocker blocker(m_captureButton);
-		m_captureButton->setActive(m_mixdevice->isRecSource());
+		m_captureButton->setActive(mixDevice()->isRecSource());
 	}
 
 }
@@ -1101,12 +1101,12 @@ void MDWSlider::updateAccesability()
                 if (!m_slidersCapture.isEmpty())
                         m_slidersCapture[0]->setAccessibleName(m_slidersCapture[0]->toolTip());
         } else {
-                QList<VolumeChannel> vols = m_mixdevice->playbackVolume().getVolumes().values();
+                QList<VolumeChannel> vols = mixDevice()->playbackVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersPlayback) {
                         slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
                 }
-                vols = m_mixdevice->captureVolume().getVolumes().values();
+                vols = mixDevice()->captureVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersCapture) {
                         slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
@@ -1118,13 +1118,13 @@ void MDWSlider::updateAccesability()
 
 void MDWSlider::showContextMenu(const QPoint &pos)
 {
-	if (m_view ==nullptr) return;
+	if (view()==nullptr) return;
 
-	QMenu *menu = m_view->getPopup();
-	menu->addSection( SmallIcon( "kmix" ), m_mixdevice->readableName() );
+	QMenu *menu = view()->getPopup();
+	menu->addSection( SmallIcon( "kmix" ), mixDevice()->readableName() );
 
 	if (m_moveMenu) {
-		MixSet *ms = m_mixdevice->getMoveDestinationMixSet();
+		MixSet *ms = mixDevice()->getMoveDestinationMixSet();
 		Q_ASSERT(ms);
 
 		m_moveMenu->setEnabled((ms->count() > 1));
@@ -1140,20 +1140,20 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		}
 	}
 
-	if ( m_mixdevice->captureVolume().hasSwitch() ) {
+	if ( mixDevice()->captureVolume().hasSwitch() ) {
 		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("recsrc"));
 		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
-			ta->setChecked( m_mixdevice->isRecSource() );
+			ta->setChecked( mixDevice()->isRecSource() );
 			menu->addAction( ta );
 		}
 	}
 
-	if ( m_mixdevice->hasMuteSwitch() ) {
+	if ( mixDevice()->hasMuteSwitch() ) {
 		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("mute"));
 		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
-			ta->setChecked( m_mixdevice->isMuted() );
+			ta->setChecked( mixDevice()->isMuted() );
 			menu->addAction( ta );
 		}
 	}
@@ -1175,7 +1175,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 
 void MDWSlider::showMoveMenu()
 {
-    MixSet *ms = m_mixdevice->getMoveDestinationMixSet();
+    MixSet *ms = mixDevice()->getMoveDestinationMixSet();
     Q_ASSERT(ms);
 
     _mdwMoveActions->clear();

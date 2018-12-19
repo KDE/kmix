@@ -49,10 +49,9 @@
  */
 MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl)
     : QWidget(view),
-      m_mixdevice(md),
-      m_view(view),
       m_flags(flags),
-      m_shortcutsDialog(nullptr)
+      m_mixdevice(md),
+      m_view(view)
 {
    setContextMenuPolicy(Qt::DefaultContextMenu);
 
@@ -64,6 +63,7 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewB
 
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );
+   m_shortcutsDialog = nullptr;
    
    QString name (md->id());
   /* char* whatsThisChar = whatsthis.toUtf8().data();

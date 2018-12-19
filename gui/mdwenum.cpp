@@ -77,7 +77,7 @@ void MDWEnum::createWidgets()
         _layout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     }
 
-   _label = new QLabel( m_mixdevice->readableName(), this);
+   _label = new QLabel( mixDevice()->readableName(), this);
    _layout->addWidget(_label);
 
     if (orientation()==Qt::Horizontal) _layout->addSpacing(8);
@@ -86,36 +86,35 @@ void MDWEnum::createWidgets()
    _enumCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
    // ------------ fill ComboBox start ------------
-   int maxEnumId= m_mixdevice->enumValues().count();
+   const QStringList &values = mixDevice()->enumValues();
+   int maxEnumId = values.count();
    for (int i=0; i<maxEnumId; i++ ) {
-      _enumCombo->addItem( m_mixdevice->enumValues().at(i));
+      _enumCombo->addItem(values.at(i));
    }
    // ------------ fill ComboBox end --------------
    _layout->addWidget(_enumCombo);
    connect( _enumCombo, SIGNAL(activated(int)), this, SLOT(setEnumId(int)) );
-   _enumCombo->setToolTip( m_mixdevice->readableName() );
+   _enumCombo->setToolTip( mixDevice()->readableName() );
 	_layout->addStretch(1);
 }
 
 void MDWEnum::update()
 {
-  if ( m_mixdevice->isEnum() ) {
-    //qCDebug(KMIX_LOG) << "MDWEnum::update() enumID=" << m_mixdevice->enumId();
-    _enumCombo->setCurrentIndex( m_mixdevice->enumId() );
+  if ( mixDevice()->isEnum() ) {
+    //qCDebug(KMIX_LOG) << "MDWEnum::update() enumID=" << mixDevice()->enumId();
+    _enumCombo->setCurrentIndex( mixDevice()->enumId() );
   }
   else {
-    qCCritical(KMIX_LOG) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped";
+    qCCritical(KMIX_LOG) << "MDWEnum::update() enumID=" << mixDevice()->enumId() << " is no Enum ... skipped";
   }
 }
 
 void MDWEnum::showContextMenu(const QPoint& pos )
 {
-   if( m_view == 0 )
-      return;
+   if (view()==nullptr) return;
 
-   QMenu *menu = m_view->getPopup();
-
-   menu->popup( pos );
+   QMenu *menu = view()->getPopup();
+   menu->popup(pos);
 }
 
 
@@ -129,9 +128,9 @@ QSizePolicy MDWEnum::sizePolicy() const
     associated KAction like the context menu.
 */
 void MDWEnum::nextEnumId() {
-   if( m_mixdevice->isEnum() ) {
+   if( mixDevice()->isEnum() ) {
       int curEnum = enumId();
-      if ( curEnum < m_mixdevice->enumValues().count() ) {
+      if ( curEnum < mixDevice()->enumValues().count() ) {
          // next enum value
          setEnumId(curEnum+1);
       }
@@ -144,16 +143,16 @@ void MDWEnum::nextEnumId() {
 
 void MDWEnum::setEnumId(int value)
 {
-   if (  m_mixdevice->isEnum() ) {
-      m_mixdevice->setEnumId( value );
-      m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
+   if (  mixDevice()->isEnum() ) {
+      mixDevice()->setEnumId( value );
+      mixDevice()->mixer()->commitVolumeChange( mixDevice() );
    }
 }
 
 int MDWEnum::enumId()
 {
-   if (  m_mixdevice->isEnum() ) {
-      return m_mixdevice->enumId();
+   if (  mixDevice()->isEnum() ) {
+      return mixDevice()->enumId();
    }
    else {
       return 0;
