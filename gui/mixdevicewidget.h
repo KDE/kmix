@@ -49,14 +49,13 @@ public:
     };
     Q_DECLARE_FLAGS(MDWFlags, MDWFlag);
 
-    MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view);
+    MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl);
     virtual ~MixDeviceWidget() = default;
 
     void addActionToPopup( QAction *action );
 
     shared_ptr<MixDevice> mixDevice() const		{ return (m_mixdevice); }
     ProfControl *profileControl() const			{ return (m_pctl); }
-    void setProfileControl(ProfControl *pctl)		{ m_pctl = pctl; }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );

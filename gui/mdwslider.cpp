@@ -59,8 +59,8 @@ bool MDWSlider::debugMe = false;
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view)
-	: MixDeviceWidget(md, flags, view),
+MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl)
+	: MixDeviceWidget(md, flags, view, pctl),
 	  m_linked(true),
 	  m_controlGrid(nullptr),
 	  m_controlIcon(nullptr),

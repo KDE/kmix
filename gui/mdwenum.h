@@ -38,7 +38,7 @@ class MDWEnum : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view);
+    MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl = nullptr);
     virtual ~MDWEnum() = default;
 
     void addActionToPopup( QAction *action );

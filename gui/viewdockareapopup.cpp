@@ -47,10 +47,6 @@
 // Restore volume button feature is incomplete => disabling for KDE 4.10
 #undef RESTORE_VOLUME_BUTTON
 
-QString ViewDockAreaPopup::InternedString_Star = QString("*");
-QString ViewDockAreaPopup::InternedString_Subcontrols = QString("pvolume,cvolume,pswitch,cswitch");
-ProfControl* ViewDockAreaPopup::MatchAllForSoundMenu = 0;
-//ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
 	KMixWindow *dockW) :
@@ -322,17 +318,17 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 //_layoutMDW->addItem( new QSpacerItem( 5, 5 ), row, col );
     }
     
-    if (MatchAllForSoundMenu == 0)
+    static ProfControl *MatchAllForSoundMenu = nullptr;
+    if (MatchAllForSoundMenu==nullptr)
     {
-    	// Lazy init of static member on first use
-        // TODO: why do the strings have to be interned?  This is a once only init.
-    	MatchAllForSoundMenu = new ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
+        // Lazy init of static member on first use
+        MatchAllForSoundMenu = new ProfControl("*", "pvolume,cvolume,pswitch,cswitch");
     }
 
     MixDeviceWidget *mdw = new MDWSlider(md,
 					 MixDeviceWidget::ShowMute|MixDeviceWidget::ShowCapture|MixDeviceWidget::ShowMixerName,
-					 this);
-    mdw->setProfileControl(MatchAllForSoundMenu);
+					 this,
+					 MatchAllForSoundMenu);
     mdw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    //if (sliderColumn == 1 ) sliderColumn =0;

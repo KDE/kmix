@@ -47,7 +47,7 @@
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */
-MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view)
+MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl)
     : QWidget(view),
       m_mixdevice(md),
       m_view(view),
@@ -56,9 +56,11 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewB
 {
    setContextMenuPolicy(Qt::DefaultContextMenu);
 
-   // The default control profile.
-   // ViewDockAreaPopup sets this later using setProfileControl().
-   m_pctl = md->controlProfile();
+   // The control profile.  ViewSliders uses the default from the MixDevice.
+   // ViewDockAreaPopup sets a special one.
+   m_pctl = pctl;
+   if (m_pctl==nullptr) m_pctl = md->controlProfile();
+   Q_ASSERT(m_pctl!=nullptr);
 
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );

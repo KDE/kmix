@@ -49,7 +49,7 @@ class MDWSlider : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view);
+    MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl = nullptr);
     virtual ~MDWSlider();
 
     enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };
