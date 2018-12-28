@@ -41,8 +41,8 @@ class KMIXCORE_EXPORT MediaController
 public:
     enum PlayState { PlayPaused, PlayPlaying, PlayStopped, PlayUnknown };
 
-	explicit MediaController(QString);
-	virtual ~MediaController();
+	explicit MediaController(const QString &controlId);
+	virtual ~MediaController() = default;
 
 	   void addMediaPlayControl() { mediaPlayControl = true; };
 	   void addMediaNextControl() { mediaNextControl = true; };
@@ -50,10 +50,10 @@ public:
 	   bool hasMediaPlayControl() { return mediaPlayControl; };
 	   bool hasMediaNextControl() { return mediaNextControl; };
 	   bool hasMediaPrevControl() { return mediaPrevControl; };
-	    bool hasControls();
+	    bool hasControls() const;
 
 
-	MediaController::PlayState getPlayState();
+	MediaController::PlayState getPlayState() const;
     void setPlayState(PlayState playState);
 
     bool canSkipNext();

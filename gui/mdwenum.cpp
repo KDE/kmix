@@ -22,13 +22,11 @@
 
 // KMix
 #include "mdwenum.h"
-#include "core/mixer.h"
 #include "viewbase.h"
+#include "core/mixer.h"
 
 // KDE
 #include <kactioncollection.h>
-#include <kconfig.h>
-#include <kglobalaccel.h>
 #include <klocalizedstring.h>
 #include <ktoggleaction.h>
 
@@ -45,11 +43,10 @@
  * Class that represents an Enum element (a select one-from-many selector)
  * The orientation (horizontal, vertical) is ignored
  */
-MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
-                 Qt::Orientation orientation,
-                 QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
-   MixDeviceWidget(md, false, orientation, parent, view, par_pctl),
-   _label(0), _enumCombo(0), _layout(0)
+MDWEnum::MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl)
+    : MixDeviceWidget(md, flags, view, pctl),
+      _label(nullptr),
+      _enumCombo(nullptr)
 {
    // create actions (on _mdwActions, see MixDeviceWidget)
 
@@ -63,67 +60,61 @@ MDWEnum::MDWEnum( shared_ptr<MixDevice> md,
 
    // create widgets
    createWidgets();
-
-   /* remove this for production version
-     QAction *a = _mdwActions->addAction( "Next Value" );
-     c->setText( i18n( "Next Value" ) );
-     connect(a, SIGNAL(triggered(bool)), SLOT(nextEnumId()));
-   */
-
-   installEventFilter( this ); // filter for popup
-}
-
-MDWEnum::~MDWEnum()
-{
 }
 
 
 void MDWEnum::createWidgets()
 {
-   if ( _orientation == Qt::Vertical ) {
-      _layout = new QVBoxLayout( this );
-	  _layout->setAlignment(Qt::AlignLeft);
-   }
-   else {
-      _layout = new QHBoxLayout( this );
-	  _layout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-   }
+    QBoxLayout *_layout;
+    if (orientation()==Qt::Vertical)
+    {
+        _layout = new QVBoxLayout(this);
+        _layout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+    }
+    else
+    {
+        _layout = new QHBoxLayout(this);
+        _layout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    }
 
-   _label = new QLabel( m_mixdevice->readableName(), this);
+   _label = new QLabel( mixDevice()->readableName(), this);
    _layout->addWidget(_label);
+
+    if (orientation()==Qt::Horizontal) _layout->addSpacing(8);
+
    _enumCombo = new QComboBox(this);
-   _enumCombo->installEventFilter(this);
+   _enumCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
    // ------------ fill ComboBox start ------------
-   int maxEnumId= m_mixdevice->enumValues().count();
+   const QStringList &values = mixDevice()->enumValues();
+   int maxEnumId = values.count();
    for (int i=0; i<maxEnumId; i++ ) {
-      _enumCombo->addItem( m_mixdevice->enumValues().at(i));
+      _enumCombo->addItem(values.at(i));
    }
    // ------------ fill ComboBox end --------------
    _layout->addWidget(_enumCombo);
    connect( _enumCombo, SIGNAL(activated(int)), this, SLOT(setEnumId(int)) );
-   _enumCombo->setToolTip( m_mixdevice->readableName() );
+   _enumCombo->setToolTip( mixDevice()->readableName() );
 	_layout->addStretch(1);
 }
 
 void MDWEnum::update()
 {
-  if ( m_mixdevice->isEnum() ) {
-    //qCDebug(KMIX_LOG) << "MDWEnum::update() enumID=" << m_mixdevice->enumId();
-    _enumCombo->setCurrentIndex( m_mixdevice->enumId() );
+  if ( mixDevice()->isEnum() ) {
+    //qCDebug(KMIX_LOG) << "MDWEnum::update() enumID=" << mixDevice()->enumId();
+    _enumCombo->setCurrentIndex( mixDevice()->enumId() );
   }
   else {
-    qCCritical(KMIX_LOG) << "MDWEnum::update() enumID=" << m_mixdevice->enumId() << " is no Enum ... skipped";
+    qCCritical(KMIX_LOG) << "MDWEnum::update() enumID=" << mixDevice()->enumId() << " is no Enum ... skipped";
   }
 }
 
 void MDWEnum::showContextMenu(const QPoint& pos )
 {
-   if( m_view == 0 )
-      return;
+   if (view()==nullptr) return;
 
-   QMenu *menu = m_view->getPopup();
-
-   menu->popup( pos );
+   QMenu *menu = view()->getPopup();
+   menu->popup(pos);
 }
 
 
@@ -137,9 +128,9 @@ QSizePolicy MDWEnum::sizePolicy() const
     associated KAction like the context menu.
 */
 void MDWEnum::nextEnumId() {
-   if( m_mixdevice->isEnum() ) {
+   if( mixDevice()->isEnum() ) {
       int curEnum = enumId();
-      if ( curEnum < m_mixdevice->enumValues().count() ) {
+      if ( curEnum < mixDevice()->enumValues().count() ) {
          // next enum value
          setEnumId(curEnum+1);
       }
@@ -152,16 +143,16 @@ void MDWEnum::nextEnumId() {
 
 void MDWEnum::setEnumId(int value)
 {
-   if (  m_mixdevice->isEnum() ) {
-      m_mixdevice->setEnumId( value );
-      m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
+   if (  mixDevice()->isEnum() ) {
+      mixDevice()->setEnumId( value );
+      mixDevice()->mixer()->commitVolumeChange( mixDevice() );
    }
 }
 
 int MDWEnum::enumId()
 {
-   if (  m_mixdevice->isEnum() ) {
-      return m_mixdevice->enumId();
+   if (  mixDevice()->isEnum() ) {
+      return mixDevice()->enumId();
    }
    else {
       return 0;
@@ -175,22 +166,25 @@ void MDWEnum::setDisabled( bool hide )
 }
 
 /**
- * An event filter for the various QWidgets. We watch for Mouse press Events, so
- * that we can popup the context menu.
+ * For users of this class who would like to show multiple MDWEnum's properly aligned.
+ * It returns the size of the control label (in the control layout direction).
  */
-bool MDWEnum::eventFilter( QObject* obj, QEvent* e )
+int MDWEnum::labelExtentHint() const
 {
-   if (e->type() == QEvent::MouseButtonPress) {
-      QMouseEvent *qme = static_cast<QMouseEvent*>(e);
-      if (qme->button() == Qt::RightButton) {
-         showContextMenu();
-         return true;
-      }
-   } else if (e->type() == QEvent::ContextMenu) {
-      QPoint pos = reinterpret_cast<QWidget *>(obj)->mapToGlobal(QPoint(0, 0));
-      showContextMenu(pos);
-      return true;
-   }
-    return QWidget::eventFilter(obj,e);
+	if (_label==nullptr) return (0);
+
+	if (orientation()==Qt::Vertical) return (_label->sizeHint().height());
+	else return (_label->sizeHint().width());
 }
 
+/**
+ * If a label from another switch is larger than ours, then the
+ * extent of our label is adjusted.
+ */
+void MDWEnum::setLabelExtent(int extent)
+{
+	if (_label==nullptr) return;
+
+	if (orientation()==Qt::Vertical) _label->setMinimumHeight(extent);
+	else _label->setMinimumWidth(extent);
+}

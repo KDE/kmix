@@ -21,31 +21,46 @@
 #include "gui/guiprofile.h"
 
 // Qt
-#include <QDir>
-#include <qxml.h>
-#include <QString>
+#include <QSaveFile>
+#include <QXmlStreamWriter>
+#include <QXmlSimpleReader>
 #include <QStandardPaths>
-
-// System
-#include <iostream>
-#include <utility>
 
 // KMix
 #include "core/mixer.h"
 
-QMap<QString, GUIProfile*> GUIProfile::s_profiles;
 
-GuiVisibility const GuiVisibility::GuiSIMPLE  (QString("simple"  ) , GuiVisibility::SIMPLE);
-GuiVisibility const GuiVisibility::GuiEXTENDED(QString("extended") , GuiVisibility::EXTENDED);
-// For backwards compatibility, GuiFULL has the ID "all", and not "full"
-GuiVisibility const GuiVisibility::GuiFULL    (QString("all"     ) , GuiVisibility::FULL);
-GuiVisibility const GuiVisibility::GuiCUSTOM  (QString("custom"  ) , GuiVisibility::CUSTOM);
-GuiVisibility const GuiVisibility::GuiNEVER   (QString("never"   ) , GuiVisibility::NEVER);
+QMap<QString, GUIProfile *> s_profiles;
 
 
-bool SortedStringComparator::operator()(const std::string& s1, const std::string& s2) const {
-    return ( s1 < s2 );
+static QString visibilityToString(GuiVisibility vis)
+{
+	switch (vis)
+	{
+case GuiVisibility::Simple:	return ("simple");
+case GuiVisibility::Extended:	return ("extended");
+// For backwards compatibility, 'Full' has the ID "all" and not "full"
+case GuiVisibility::Full:	return ("all");
+case GuiVisibility::Custom:	return ("custom");
+case GuiVisibility::Never:	return ("never");
+case GuiVisibility::Default:	return ("default");
+default:			return ("unknown");
+	}
 }
+
+
+static GuiVisibility visibilityFromString(const QString &str)
+{
+	if (str=="simple") return (GuiVisibility::Simple);
+	else if (str=="extended") return (GuiVisibility::Extended);
+	else if (str=="all") return (GuiVisibility::Full);
+	else if (str=="custom") return (GuiVisibility::Custom);
+	else if (str=="never") return (GuiVisibility::Never);
+
+	qCWarning(KMIX_LOG) << "Unknown string value" << str;
+	return (GuiVisibility::Full);
+}
+
 
 /**
  * Product comparator for sorting:
@@ -104,33 +119,13 @@ void GUIProfile::clearCache()
 }
 
 
-
-
-void GUIProfile::setId(const QString& id)
-{
-    _id = id;
-}
-
-QString GUIProfile::getId() const
-{
-    return _id;
-}
-
-bool GUIProfile::isDirty()  const {
-    return _dirty;
-}
-
-void GUIProfile::setDirty() {
-    _dirty = true;
-}
-
 /**
  * Build a profile name. Suitable to use as primary key and to build filenames.
  * @arg mixer         The mixer
  * @arg profileName   The profile name (e.g. "capture", "playback", "my-cool-profile", or "any"
  * @return            The profile name
  */
-QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard)
+static QString buildProfileName(const Mixer *mixer, const QString &profileName, bool ignoreCard)
 {
     QString fname;
     fname += mixer->getDriverName();
@@ -144,11 +139,12 @@ QString GUIProfile::buildProfileName(Mixer* mixer, QString profileName, bool ign
     return fname;
 }
 
+
 /**
  * Generate a readable profile name (for presenting to the user).
  * Hint: Currently used as Tab label.
  */
-QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
+static QString buildReadableProfileName(const Mixer *mixer, const QString &profileName)
 {
     QString fname;
     fname += mixer->getBaseName();
@@ -170,17 +166,65 @@ QString GUIProfile::buildReadableProfileName(Mixer* mixer, QString profileName)
  * 
  * @returns The loaded GUIProfile for the given ID
  */
-GUIProfile* GUIProfile::find(QString id)
+GUIProfile *GUIProfile::find(const QString &id)
 {
-  // Not thread safe (due to non-atomic contains()/get()
-  if ( s_profiles.contains(id) )
-  {
-    return s_profiles[id];
-  }
-  else
-  {
-    return 0;
-  }
+	// Return found value or default-constructed one (nullptr).
+	// Does not insert into map.  Now thread-safe.
+	return (s_profiles.value(id));
+}
+
+
+static QString createNormalizedFilename(const QString &profileId)
+{
+	QString profileIdNormalized(profileId);
+	profileIdNormalized.replace(':', '.');
+
+	QString fileName("profiles/");
+	fileName = fileName + profileIdNormalized + ".xml";
+	return fileName;
+}
+
+
+/**
+ * Loads a GUI Profile from disk (XML profile file).
+ * It tries to load the Soundcard specific file first (a).
+ * If it doesn't exist, it will load the default profile corresponding to the soundcard driver (b).
+ */
+static GUIProfile *loadProfileFromXMLfiles(const Mixer *mixer, const QString &profileName)
+{
+    GUIProfile* guiprof = nullptr;
+    QString fileName = createNormalizedFilename(profileName);
+    QString fileNameFQ = QStandardPaths::locate(QStandardPaths::DataLocation, fileName );
+
+    if ( ! fileNameFQ.isEmpty() ) {
+        guiprof = new GUIProfile();
+        if ( guiprof->readProfile(fileNameFQ) && ( guiprof->match(mixer) > 0) ) {
+            // loaded
+        }
+        else {
+            delete guiprof; // not good (e.g. Parsing error => drop this profile silently)
+            guiprof = nullptr;
+        }
+    }
+    else {
+        qCDebug(KMIX_LOG) << "Ignore file " <<fileName<< " (does not exist)";
+    }
+    return guiprof;
+}
+
+
+/*
+ * Add the profile to the internal list of profiles (Profile caching).
+ */
+static void addProfile(GUIProfile *guiprof)
+{
+	// Possible TODO: Delete old mapped GUIProfile, if it exists. Otherwise we might leak one GUIProfile instance
+	//                per unplug/plug sequence. Its quite likely possible that currently no Backend leads to a
+	//                leak: This is because they either don't hotplug cards (PulseAudio, MPRIS2), or they ship
+	//                a XML gui profile (so the Cached version is retrieved, and addProfile() is not called).
+
+    s_profiles[guiprof->getId()] = guiprof;
+    qCDebug(KMIX_LOG) << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
 }
 
 
@@ -196,12 +240,11 @@ GUIProfile* GUIProfile::find(QString id)
  * @arg ignoreCardName If profileName not fully qualified, this is used in building the requestedProfileName
  * @return GUIProfile*  The loaded GUIProfile, or 0 if no profile matched. Hint: if you use allowFallback==true, this should never return 0.
  */
-GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
+GUIProfile *GUIProfile::find(const Mixer *mixer, const QString &profileName, bool profileNameIsFullyQualified, bool ignoreCardName)
 {
-    GUIProfile* guiprof = 0;
+    GUIProfile *guiprof = nullptr;
 
-    if ( mixer == 0 || profileName.isEmpty() )
-        return 0;
+    if (mixer==nullptr || profileName.isEmpty()) return (nullptr);
 
 //    if ( mixer->isDynamic() ) {
 //        qCDebug(KMIX_LOG) << "GUIProfile::find() Not loading GUIProfile for Dynamic Mixer (e.g. PulseAudio)";
@@ -224,7 +267,7 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileName
     }
     else {
         guiprof = loadProfileFromXMLfiles(mixer, requestedProfileName);  // Load from XML ###Card specific profile###
-        if ( guiprof != 0 ) {
+        if ( guiprof!=nullptr) {
             guiprof->_mixerId = mixer->id();
             guiprof->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
 
@@ -247,58 +290,15 @@ GUIProfile* GUIProfile::find(Mixer* mixer, QString profileName, bool profileName
         }
     }
     
-    return guiprof;
+    return (guiprof);
 }
 
-/*
- * Add the profile to the internal list of profiles (Profile caching).
- */
-void GUIProfile::addProfile(GUIProfile* guiprof)
-{
-	// Possible TODO: Delete old mapped GUIProfile, if it exists. Otherwise we might leak one GUIProfile instance
-	//                per unplug/plug sequence. Its quite likely possible that currently no Backend leads to a
-	//                leak: This is because they either don't hotplug cards (PulseAudio, MPRIS2), or they ship
-	//                a XML gui profile (so the Cached version is retrieved, and addProfile() is not called).
-
-    s_profiles[guiprof->getId()] = guiprof;
-    qCDebug(KMIX_LOG) << "I have added" << guiprof->getId() << "; Number of profiles is now " <<  s_profiles.size() ;
-}
-
-
-
-
-/**
- * Loads a GUI Profile from disk (xml profile file).
- * It tries to load the Soundcard specific file first (a).
- * If it doesn't exist, it will load the default profile corresponding to the soundcard driver (b).
- */
-GUIProfile* GUIProfile::loadProfileFromXMLfiles(Mixer* mixer, QString profileName)
-{
-    GUIProfile* guiprof = 0;
-    QString fileName = createNormalizedFilename(profileName);
-    QString fileNameFQ = QStandardPaths::locate(QStandardPaths::DataLocation, fileName );
-
-    if ( ! fileNameFQ.isEmpty() ) {
-        guiprof = new GUIProfile();
-        if ( guiprof->readProfile(fileNameFQ) && ( guiprof->match(mixer) > 0) ) {
-            // loaded
-        }
-        else {
-            delete guiprof; // not good (e.g. Parsing error => drop this profile silently)
-            guiprof = 0;
-        }
-    }
-    else {
-        qCDebug(KMIX_LOG) << "Ignore file " <<fileName<< " (does not exist)";
-    }
-    return guiprof;
-}
 
 /**
  * Returns a fallback GUIProfile. You can call this if the backends ships no profile files.
  * The returned GUIProfile is also added to the static Map of all GUIProfile instances.
  */
-GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
+GUIProfile* GUIProfile::fallbackProfile(const Mixer *mixer)
 {
 	// -1- Get name
     QString fullQualifiedProfileName = buildProfileName(mixer, QString("default"), false);
@@ -347,15 +347,15 @@ GUIProfile* GUIProfile::fallbackProfile(Mixer *mixer)
  * @par  ref_fileName: Full qualified filename (with path).
  * @return bool True, if the profile was successfully created. False if not (e.g. parsing error).
  */
-bool GUIProfile::readProfile(const QString& ref_fileName)
+bool GUIProfile::readProfile(const QString &ref_fileName)
 {
-    QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-    qCDebug(KMIX_LOG) << "Read profile:" << ref_fileName ;
-    QFile xmlFile( ref_fileName );
-    QXmlInputSource source( &xmlFile );
-    GUIProfileParser* gpp = new GUIProfileParser(this);
-    xmlReader->setContentHandler(gpp);
-    bool ok = xmlReader->parse( source );
+    QXmlSimpleReader xmlReader;
+    qCDebug(KMIX_LOG) << "Read profile" << ref_fileName;
+    QFile xmlFile(ref_fileName);
+    QXmlInputSource source(&xmlFile);
+    GUIProfileParser gpp(this);
+    xmlReader.setContentHandler(&gpp);
+    bool ok = xmlReader.parse(source);
 
     //std::cout << "Raw Profile: " << *this;
     if ( ok ) {
@@ -363,52 +363,113 @@ bool GUIProfile::readProfile(const QString& ref_fileName)
     } // Read OK
     else {
         // !! this error message about faulty profiles should probably be surrounded with i18n()
-        qCCritical(KMIX_LOG) << "ERROR: The profile '" << ref_fileName<< "' contains errors, and is not used.";
+        qCCritical(KMIX_LOG) << "ERROR: The profile" << ref_fileName<< "contains errors, and cannot be used";
     }
-    delete gpp;
-    delete xmlReader;
-   
+
     return ok;
 }
 
-const QString GUIProfile::createNormalizedFilename(const QString& profileId)
-{
-	QString profileIdNormalized(profileId);
-	profileIdNormalized.replace(':', '.');
-
-	QString fileName("profiles/");
-	fileName = fileName + profileIdNormalized + ".xml";
-	return fileName;
- }
 
 bool GUIProfile::writeProfile()
 {
-   bool ret = false;
    QString profileId = getId();
    QString fileName = createNormalizedFilename(profileId);
    QString fileNameFQ = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + '/' + fileName;
 
-   qCDebug(KMIX_LOG) << "Write profile:" << fileNameFQ ;
-   QFile f(fileNameFQ);
-   if ( f.open(QIODevice::WriteOnly | QFile::Truncate) )
-   { 
-      QTextStream out(&f);
-      out << *this;
-      f.close();
-      ret = true;
+   qCDebug(KMIX_LOG) << "Write profile" << fileNameFQ;
+   QSaveFile f(fileNameFQ);
+   if (!f.open(QIODevice::WriteOnly|QFile::Truncate))
+   {
+      qCWarning(KMIX_LOG) << "Cannot save profile to" << fileNameFQ;
+      return (false);
    }
 
-   if ( ret ) {
-       _dirty = false;
+   QXmlStreamWriter writer(&f);
+   writer.setAutoFormatting(true);
+
+   // <?xml version="1.0" encoding="utf-8"?>
+   writer.writeStartDocument();
+
+   //  <soundcard
+   writer.writeStartElement("soundcard");
+   //    driver=	_soundcardDriver
+   writer.writeAttribute("driver", _soundcardDriver);
+   //    version=	(_driverVersionMin << ":" << _driverVersionMax)
+   writer.writeAttribute("version", QString("%1:%2").arg(_driverVersionMin).arg(_driverVersionMax));
+   //    name=		guiprof._soundcardName
+   writer.writeAttribute("name", _soundcardName);
+   //    type=		guiprof._soundcardType
+   writer.writeAttribute("type", _soundcardType);
+   //    generation=	guiprof._generation
+   writer.writeAttribute("generation", QString::number(_generation));
+
+   //  <profile
+   writer.writeStartElement("profile");
+   //    id=		guiprof._id
+   writer.writeAttribute("id", _id);
+   //    name=		guiprof._name
+   writer.writeAttribute("name", _name);
+   //  />
+   writer.writeEndElement();
+
+   foreach (const ProfProduct *prd, qAsConst(_products))
+   {
+      //  <product
+      writer.writeStartElement("product");
+      //    vendor=		prd->vendor
+      writer.writeAttribute("vendor", prd->vendor);
+      //    name=		prd->productName
+      writer.writeAttribute("name", prd->productName);
+      //    release=		prd->productRelease
+      if (!prd->productRelease.isNull()) writer.writeAttribute("release", prd->productRelease);
+      //	 comment=	prd->comment
+      if (!prd->comment.isNull()) writer.writeAttribute("comment", prd->comment);
+      //  />
+      writer.writeEndElement();
+   }							// for all products
+
+   foreach (const ProfControl *profControl, qAsConst(getControls()))
+   {
+      //  <control
+      writer.writeStartElement("control");
+      //    id=			profControl->id()
+      writer.writeAttribute("id", profControl->id());
+      //    name=		profControl->name()
+      const QString name = profControl->name();
+      if (!name.isNull() && name!=profControl->id()) writer.writeAttribute("name", name);
+      //    subcontrols=	profControl->renderSubcontrols()
+      writer.writeAttribute("subcontrols", profControl->renderSubcontrols());
+      //    show=		visibilityToString(profControl->getVisibility())
+      writer.writeAttribute("show", visibilityToString(profControl->getVisibility()));
+      //    mandatory=		"true"
+      if (profControl->isMandatory()) writer.writeAttribute("mandatory", "true");
+      //    split=		"true"
+      if (profControl->isSplit())  writer.writeAttribute("split", "true");
+      //  />
+      writer.writeEndElement();
+   }							// for all controls
+
+   //  </soundcard>
+   writer.writeEndElement();
+
+   writer.writeEndDocument();
+   if (writer.hasError())
+   {
+	   qCWarning(KMIX_LOG) << "XML writing failed to" << fileNameFQ;
+	   f.cancelWriting();
+	   return (false);
    }
-   return ret;
+
+   f.commit();
+   _dirty = false;
+   return (true);
 }
+
 
 /** This is now empty. It can be removed */
 bool GUIProfile::finalizeProfile() const
 {
-    bool ok = true;
-    return ok;
+    return (true);
 }
 
 
@@ -417,21 +478,6 @@ void GUIProfile::setControls(ControlSet& newControlSet)
 {
     qDeleteAll(_controls);
     _controls = newControlSet;
-}
-
-const GUIProfile::ControlSet& GUIProfile::getControls() const
-{
-    return _controls;
-}
-
-GUIProfile::ControlSet& GUIProfile::getControls()
-{
-    return _controls;
-}
-
-void GUIProfile::addProduct(ProfProduct* prd)
-{
-	_products.insert(prd);
 }
 
 // -------------------------------------------------------------------------------------
@@ -474,7 +520,8 @@ void GUIProfile::addProduct(ProfProduct* prd)
  * @todo Implement "card type" match value
  * @todo Implement "version" match value (must be in backends as well)
  */
-unsigned long GUIProfile::match(Mixer* mixer) {
+unsigned long GUIProfile::match(const Mixer *mixer) const
+{
 	unsigned long matchValue = 0;
 	if ( _soundcardDriver != mixer->getDriverName() ) {
 		return 0;
@@ -501,170 +548,70 @@ unsigned long GUIProfile::match(Mixer* mixer) {
 	return matchValue;
 }
 
-QString xmlify(QString raw);
 
-QString xmlify(QString raw)
+ProfControl::ProfControl(const QString &id, const QString &subcontrols)
+	: _id(id),
+	  _visibility(GuiVisibility::Simple),
+	  _mandatory(false),
+	  _split(false)
 {
-// 	qCDebug(KMIX_LOG) << "Before: " << raw;
-	raw = raw.replace('&', "&amp;");
-	raw = raw.replace('<', "&lt;");
-	raw = raw.replace('>', "&gt;");
-	raw = raw.replace('\'', "&apos;");
-	raw = raw.replace('\"', "&quot;");
-// 	qCDebug(KMIX_LOG) << "After : " << raw;
-	return raw;
-}
-
-
-QTextStream& operator<<(QTextStream &os, const GUIProfile& guiprof)
-{
-// qCDebug(KMIX_LOG) << "ENTER QTextStream& operator<<";
-   os << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-   os << endl << endl;
-
-   os << "<soundcard driver=\"" << xmlify(guiprof._soundcardDriver).toUtf8().constData() << "\""
-      << " version = \"" << guiprof._driverVersionMin << ":" << guiprof._driverVersionMax  << "\"" << endl
-      << " name = \"" << xmlify(guiprof._soundcardName).toUtf8().constData() << "\"" << endl
-      << " type = \"" << xmlify(guiprof._soundcardType).toUtf8().constData() << "\"" << endl
-      << " generation = \"" << guiprof._generation << "\"" << endl
-      << ">" << endl << endl ;
-
-   os << "<profile id=\"" << xmlify(guiprof._id) << "\" name=\"" << xmlify(guiprof._name) << "\"/>" << endl;
-
-   for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
-	{
-		ProfProduct* prd = *it;
-		os << "<product vendor=\"" << xmlify(prd->vendor).toUtf8().constData() << "\" name=\"" << xmlify(prd->productName).toUtf8().constData() << "\"";
-		if ( ! prd->productRelease.isNull() ) {
-			os << " release=\"" << xmlify(prd->productRelease).toUtf8().constData() << "\"";
-		}
-		if ( ! prd->comment.isNull() ) {
-			os << " comment=\"" << xmlify(prd->comment).toUtf8().constData() << "\"";
-		}
-		os << " />" << endl;
-	} // for all products
-	os << endl;
-
-    foreach ( ProfControl* profControl, guiprof.getControls() )
-	{
-		os << "<control id=\"" << xmlify(profControl->id).toUtf8().constData() << "\"" ;
-		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
-		  os << " name=\"" << xmlify(profControl->name).toUtf8().constData() << "\"" ;
-		}
-		os << " subcontrols=\"" << xmlify( profControl->renderSubcontrols().toUtf8().constData()) << "\"" ;
-		os << " show=\"" << xmlify(profControl->getVisibility().getId().toUtf8().constData()) << "\"" ;
-		if ( profControl->isMandatory() ) {
-		  os << " mandatory=\"true\"";
-		}
-		if ( profControl->isSplit() ) {
-		  os << " split=\"true\"";
-		}
-		os << " />" << endl;
-	} // for all controls
-	os << endl;
-
-	os << "</soundcard>" << endl;
-// qCDebug(KMIX_LOG) << "EXIT  QTextStream& operator<<";
-	return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const GUIProfile& guiprof) {
-	os  << "Soundcard:" << std::endl
-			<< "  Driver=" << guiprof._soundcardDriver.toUtf8().constData() << std::endl
-			<< "  Driver-Version min=" << guiprof._driverVersionMin
-			<< " max=" << guiprof._driverVersionMax << std::endl
-			<< "  Card-Name=" << guiprof._soundcardName.toUtf8().constData() << std::endl
-			<< "  Card-Type=" << guiprof._soundcardType.toUtf8().constData() << std::endl
-			<< "  Profile-Generation="  << guiprof._generation
-			<< std::endl;
-
-    os << "Profile:" << std::endl
-            << "    Id=" << guiprof._id.toUtf8().constData() << std::endl
-            << "  Name=" << guiprof._name.toUtf8().constData() << std::endl;
-
-	for ( GUIProfile::ProductSet::const_iterator it = guiprof._products.begin(); it != guiprof._products.end(); ++it)
-	{
-		ProfProduct* prd = *it;
-		os << "Product:\n  Vendor=" << prd->vendor.toUtf8().constData() << std::endl << "  Name=" << prd->productName.toUtf8().constData() << std::endl;
-		if ( ! prd->productRelease.isNull() ) {
-			os << "  Release=" << prd->productRelease.toUtf8().constData() << std::endl;
-		}
-		if ( ! prd->comment.isNull() ) {
-			os << "  Comment = " << prd->comment.toUtf8().constData() << std::endl;
-		}
-	} // for all products
-
-    foreach ( ProfControl* profControl, guiprof.getControls() )
-	{
-//		ProfControl* profControl = *it;
-		os << "Control:\n  ID=" << profControl->id.toUtf8().constData() << std::endl;
-		if ( !profControl->name.isNull() && profControl->name != profControl->id ) {
-		 		os << "  Name = " << profControl->name.toUtf8().constData() << std::endl;
-		}
-		os << "  Subcontrols=" << profControl->renderSubcontrols().toUtf8().constData() << std::endl;
-		if ( profControl->isMandatory() ) {
-		    os << " mandatory=\"true\"" << std::endl;
-		}
-		if ( profControl->isSplit() ) {
-		    os << " split=\"true\"" << std::endl;
-		}
-	} // for all controls
-
-	return os;
-}
-
-ProfControl::ProfControl(QString& id, QString& subcontrols ) :
-		visibility(GuiVisibility::GuiSIMPLE), _mandatory(false), _split(false)
-{
-    d = new ProfControlPrivate();
-    this->id = id;
     setSubcontrols(subcontrols);
 }
 
-ProfControl::ProfControl(const ProfControl &profControl) :
-		visibility(profControl.visibility), _mandatory(false), _split(false)
+ProfControl::ProfControl(const ProfControl &profControl)
+	: _mandatory(false),
+	  _split(false)
 {
-    d = new ProfControlPrivate();
-    id = profControl.id;
-    name = profControl.name;
+    _id = profControl._id;
+    _name = profControl._name;
+    _visibility = profControl._visibility;
 
     _useSubcontrolPlayback = profControl._useSubcontrolPlayback;
     _useSubcontrolCapture = profControl._useSubcontrolCapture;
     _useSubcontrolPlaybackSwitch = profControl._useSubcontrolPlaybackSwitch;
     _useSubcontrolCaptureSwitch = profControl._useSubcontrolCaptureSwitch;
     _useSubcontrolEnum = profControl._useSubcontrolEnum;
-    d->subcontrols = profControl.d->subcontrols;
+    _subcontrols = profControl._subcontrols;
 
-    name = profControl.name;
-    backgroundColor = profControl.backgroundColor;
-    switchtype = profControl.switchtype;
+    _backgroundColor = profControl._backgroundColor;
+    _switchtype = profControl._switchtype;
     _mandatory = profControl._mandatory;
     _split = profControl._split;
 }
 
-ProfControl::~ProfControl() {
-    delete d;
+
+bool ProfControl::satisfiesVisibility(GuiVisibility vis) const
+{
+	GuiVisibility me = getVisibility();
+	if (me==GuiVisibility::Never || vis==GuiVisibility::Never) return (false);
+	if (me==GuiVisibility::Custom || vis==GuiVisibility::Custom) return (false);
+	if (vis==GuiVisibility::Default) return (true);
+	return (static_cast<int>(me)<=static_cast<int>(vis));
 }
 
+
 /**
- * An overridden method for #setVisible(const GuiVisibility&), that either sets GuiVisibility::GuiSIMPLE
- * or GuiVisibility::GuiNEVER;
- *
- * @param visible
+ * An overridden method that either sets
+ * GuiVisibility::Simple or GuiVisibility::Never.
  */
 void ProfControl::setVisible(bool visible)
 {
-	this->visibility = visible ? GuiVisibility::GuiSIMPLE : GuiVisibility::GuiNEVER;
+	setVisibility(visible ? GuiVisibility::Simple : GuiVisibility::Never);
 }
 
-void ProfControl::setVisible(const GuiVisibility& visibility)
+void ProfControl::setVisibility(GuiVisibility vis)
 {
-	this->visibility = visibility;
+	_visibility = vis;
+}
+
+void ProfControl::setVisibility(const QString &visString)
+{
+	setVisibility(visibilityFromString(visString));
 }
 
 void ProfControl::setSubcontrols(QString sctls)
 {
-    d->subcontrols = sctls;
+    _subcontrols = sctls;
 
   _useSubcontrolPlayback = false;
   _useSubcontrolCapture = false;
@@ -693,7 +640,7 @@ void ProfControl::setSubcontrols(QString sctls)
   }
 }
 
-QString ProfControl::renderSubcontrols()
+QString ProfControl::renderSubcontrols() const
 {
     QString sctlString;
     if ( _useSubcontrolPlayback && _useSubcontrolPlaybackSwitch && _useSubcontrolCapture && _useSubcontrolCaptureSwitch && _useSubcontrolEnum ) {
@@ -751,7 +698,7 @@ bool GUIProfileParser::startElement( const QString& ,
 			}
 			else {
 				// skip unknown top-level nodes
-				std::cerr << "Ignoring unsupported element '" << qName.toUtf8().constData() << "'" << std::endl;
+				qCWarning(KMIX_LOG) << "Ignoring unsupported element" << qName;
 			}
 			// we are accepting <soundcard> only
 		break;
@@ -768,7 +715,7 @@ bool GUIProfileParser::startElement( const QString& ,
                 addProfileInfo(attributes);
             }
 			else {
-				std::cerr << "Ignoring unsupported element '" << qName.toUtf8().constData() << "'" << std::endl;
+				qCWarning(KMIX_LOG) << "Ignoring unsupported element" << qName;
 			}
 			// we are accepting <product>, <control> and <tab>
 
@@ -892,28 +839,25 @@ void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
         }
 
         ProfControl *profControl = new ProfControl(id, subcontrols);
-        if ( show.isNull() ) { show = '*'; }
 
-	profControl->name = name;
-	profControl->setVisible(GuiVisibility::getByString(show));
+	profControl->setName(name);
+	profControl->setVisibility(show.isNull() ? "all" : show);
 	profControl->setBackgroundColor( background );
 	profControl->setSwitchtype(switchtype);
 	profControl->setMandatory(isMandatory);
-	
-        if ( !split.isNull() && split=="true") {
-	    profControl->setSplit(true);
-	}
-	_guiProfile->getControls().push_back(profControl);
+        if (split=="true") profControl->setSplit(true);
+
+	_guiProfile->addControl(profControl);
   } // id != null
 }
 
-void GUIProfileParser::printAttributes(const QXmlAttributes& attributes) {
-		    if ( attributes.length() > 0 ) {
-		        for ( int i = 0 ; i < attributes.length(); i++ ) {
-					std::cout << attributes.qName(i).toUtf8().constData() << ":"<< attributes.value(i).toUtf8().constData() << " , ";
-		        }
-			    std::cout << std::endl;
-		    }
+void GUIProfileParser::printAttributes(const QXmlAttributes& attributes)
+{
+	if (attributes.length() > 0 ) {
+		for ( int i = 0 ; i < attributes.length(); i++ ) {
+			qCDebug(KMIX_LOG) << i << attributes.qName(i) << "="<< attributes.value(i);
+		}
+	}
 }
 
 void GUIProfileParser::splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim)

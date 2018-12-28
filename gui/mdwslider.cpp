@@ -26,18 +26,13 @@
 #include <kconfig.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
-#include <ktoggleaction.h>
 
-#include <QIcon>
-#include <qtoolbutton.h>
-#include <QObject>
-#include <qcursor.h>
-#include <QCheckBox>
+#include <QCoreApplication>
+#include <QToolButton>
 #include <QMenu>
-#include <QMouseEvent>
 #include <QLabel>
-#include <qpixmap.h>
 #include <QBoxLayout>
+#include <QGridLayout>
 #include <QAction>
 
 #include "core/ControlManager.h"
@@ -48,9 +43,12 @@
 #include "gui/ksmallslider.h"
 #include "gui/verticaltext.h"
 #include "gui/mdwmoveaction.h"
+#include "gui/toggletoolbutton.h"
 
 
 bool MDWSlider::debugMe = false;
+
+
  /**
  * MixDeviceWidget that represents a single mix device, including PopUp, muteLED, ...
  *
@@ -61,37 +59,42 @@ bool MDWSlider::debugMe = false;
  *
  * Due to the many options, this is the most complicated MixDeviceWidget subclass.
  */
-MDWSlider::MDWSlider(shared_ptr<MixDevice> md, bool showMuteLED, bool showCaptureLED
-        , bool includeMixerName, bool small, Qt::Orientation orientation, QWidget* parent
-        , ViewBase* view
-        , ProfControl* par_ctl
-        ) :
-	MixDeviceWidget(md,small,orientation,parent,view, par_ctl),
-	m_linked(true),	muteButtonSpacer(0), captureSpacer(0), labelSpacer(0),
-	m_iconLabelSimple(0), m_qcb(0), m_muteText(0),
-	m_label( 0 ),
-	mediaButton(0),
-	m_captureCheckbox(0), m_captureText(0), labelSpacing(0),
-	muteButtonSpacing(false), captureLEDSpacing(false), _mdwMoveActions(new KActionCollection(this)), m_moveMenu(0),
-	m_sliderInWork(0), m_waitForSoundSetComplete(0)
+MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl)
+	: MixDeviceWidget(md, flags, view, pctl),
+	  m_linked(true),
+	  m_controlGrid(nullptr),
+	  m_controlIcon(nullptr),
+	  m_controlLabel(nullptr),
+	  m_muteButton(nullptr),
+	  m_captureButton(nullptr),
+	  m_mediaPlayButton(nullptr),
+	  m_controlButtonSize(QSize()),
+	  _mdwMoveActions(new KActionCollection(this)),
+	  m_moveMenu(nullptr),
+	  m_sliderInWork(false),
+	  m_waitForSoundSetComplete(0)
 {
+	//qCDebug(KMIX_LOG) << "for" << mixDevice()->readableName() << "flags" << MixDeviceWidget::flags();
+
     createActions();
-    createWidgets( showMuteLED, showCaptureLED, includeMixerName );
+    createWidgets();
     createShortcutActions();
-    installEventFilter( this ); // filter for popup
+
+    // Yes, this looks odd - monitor all events sent to myself by myself?
+    // But it's so that wheel events over the MDWSlider background can be
+    // handled by eventFilter() in the same way as wheel events over child
+    // widgets.  Each child widget apart from the sliders themselves also
+    // also needs to have the event filter installed on it, because QWidget
+    // by default ignores the wheel event and does not propagate it.
+    installEventFilter(this);
+
     update();
 }
 
 MDWSlider::~MDWSlider()
 {
-	foreach( QAbstractSlider* slider, m_slidersPlayback)
-	{
-		delete slider;
-	}
-	foreach( QAbstractSlider* slider, m_slidersCapture)
-	{
-		delete slider;
-	}
+	qDeleteAll(m_slidersPlayback);
+	qDeleteAll(m_slidersCapture);
 }
 
 void MDWSlider::createActions()
@@ -102,32 +105,32 @@ void MDWSlider::createActions()
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
 //    QAction *action;
-//    if ( ! m_mixdevice->mixer()->isDynamic() ) {
+//    if ( ! mixDevice()->mixer()->isDynamic() ) {
 //        action = _mdwActions->add<KToggleAction>( "hide" );
 //        action->setText( i18n("&Hide") );
 //        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)) );
 //    }
 
-    if( m_mixdevice->hasMuteSwitch() )
+    if( mixDevice()->hasMuteSwitch() )
     {
         taction = _mdwActions->add<KToggleAction>( "mute" );
         taction->setText( i18n("&Muted") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
     }
 
-    if( m_mixdevice->captureVolume().hasSwitch() ) {
+    if( mixDevice()->captureVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "recsrc" );
-        taction->setText( i18n("Set &Record Source") );
+        taction->setText( i18n("Captu&re") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleRecsrc()) );
     }
 
-    if( m_mixdevice->isMovable() ) {
+    if( mixDevice()->isMovable() ) {
         m_moveMenu = new QMenu( i18n("Mo&ve"), this);
         connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
 
     QAction* qaction = _mdwActions->addAction( "keys" );
-    qaction->setText( i18n("C&onfigure Shortcuts...") );
+    qaction->setText( i18n("Channel Shortcuts...") );
     connect( qaction, SIGNAL(triggered(bool)), SLOT(defineKeys()) );
 }
 
@@ -186,14 +189,13 @@ void MDWSlider::createShortcutActions()
 
 QSizePolicy MDWSlider::sizePolicy() const
 {
-	if ( _orientation == Qt::Vertical )
+	if (orientation()==Qt::Vertical)
 	{
 		return QSizePolicy(  QSizePolicy::Preferred, QSizePolicy::MinimumExpanding );
 	}
 	else
 	{
 		return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Preferred );
-//		return QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Fixed );
 	}
 }
 
@@ -202,261 +204,299 @@ QSize MDWSlider::sizeHint() const
 	return QSize( 90, QWidget::sizeHint().height());
 }
 
+
 /**
  * This method is a helper for users of this class who would like
  * to show multiple MDWSlider, and align the sliders.
- * It returns the "height" (if vertical) of this widgets label.
+ * It returns the "height" (if vertical) of this slider's label.
  * Warning: Line wraps are computed for a fixed size (100), this may be inaccurate in case,
  * the widgets have different sizes.
  */
 int MDWSlider::labelExtentHint() const
 {
-	if ( _orientation == Qt::Vertical && m_label ) {
-		return m_label->heightForWidth(m_label->minimumWidth());
-	}
-	return 0;
+	if (m_controlLabel==nullptr) return (0);
+
+	if (orientation()==Qt::Vertical) return (m_controlLabel->heightForWidth(m_controlLabel->minimumWidth()));
+	else return (m_controlLabel->sizeHint().width());
 }
 
 /**
  * If a label from another widget has more lines than this widget, then a spacer is added under the label
  */
-void MDWSlider::setLabelExtent(int extent) {
-	if ( _orientation == Qt::Vertical )
-	{
-		int extentHint = labelExtentHint();
-		int spacerHeight = (extent > extentHint) ? extent - extentHint : 0;
-		labelSpacer->setFixedHeight(spacerHeight);
-	}
+void MDWSlider::setLabelExtent(int extent)
+{
+	if (m_controlGrid==nullptr) return;
+
+	if (orientation()==Qt::Vertical) m_controlGrid->setRowMinimumHeight(1, extent);
+	else m_controlGrid->setColumnMinimumWidth(1, extent);
 }
+
 
 /**
  * Alignment helper
  */
 bool MDWSlider::hasMuteButton() const
 {
-	return m_qcb!=0;
+	return (m_muteButton!=nullptr);
 }
 
-
-/**
- * If this widget does not have a mute button, but another widget has, we add a spacer here with the
- * size of a QToolButton (don't know how to make a better estimate)
- */
-void MDWSlider::setMuteButtonSpace(bool value)
-{
-	if (hasMuteButton() || !value) {
-		muteButtonSpacer->setFixedSize(0,0);
-		muteButtonSpacer->setVisible(false);
-	} else {
-		QToolButton b;
-		muteButtonSpacer->setFixedSize( b.sizeHint() );
-	}
-}
 
 /**
  * See "hasMuteButton"
  */
 bool MDWSlider::hasCaptureLED() const
 {
-	return m_captureCheckbox!=0;
+	return (m_captureButton!=nullptr);
 }
 
-/**
- * See "setMuteButtonSpace"
- */
-void MDWSlider::setCaptureLEDSpace(bool showCaptureLED)
+void MDWSlider::guiAddCaptureButton(const QString &captureTooltipText)
 {
-	if ( !showCaptureLED || hasCaptureLED() ) {
-		captureSpacer->setFixedSize(0,0);
-		captureSpacer->setVisible(false);
-	} else
-		captureSpacer->setFixedSize(QCheckBox().sizeHint());
+	m_captureButton = new ToggleToolButton("media-record", this);
+	m_captureButton->setSmallSize(flags() & MixDeviceWidget::SmallSize);
+	m_captureButton->installEventFilter(this);
+	connect(m_captureButton, SIGNAL(clicked(bool)), this, SLOT(toggleRecsrc()));
+	m_captureButton->setToolTip(captureTooltipText);
 }
 
-void MDWSlider::guiAddSlidersAndMediacontrols(bool playSliders, bool capSliders, bool mediaControls, QBoxLayout* layout, const QString& tooltipText, const QString& captureTooltipText)
+void MDWSlider::guiAddMuteButton(const QString &muteTooltipText)
 {
-	if (playSliders)
-		addSliders(layout, 'p', m_mixdevice->playbackVolume(), m_slidersPlayback, tooltipText);
-
-	if (capSliders)
-		addSliders(layout, 'c', m_mixdevice->captureVolume(), m_slidersCapture, captureTooltipText);
-
-	if (mediaControls)
-		addMediaControls(layout);
+	m_muteButton = new ToggleToolButton("audio-volume-high", this);
+	m_muteButton->setInactiveIcon("audio-volume-muted");
+	m_muteButton->setSmallSize(flags() & MixDeviceWidget::SmallSize);
+	m_muteButton->installEventFilter(this);
+	connect(m_muteButton, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
+	m_muteButton->setToolTip(muteTooltipText);
 }
 
-void MDWSlider::guiAddCaptureCheckbox(bool wantsCaptureLED, const Qt::Alignment& alignmentForCapture, QBoxLayout* layoutForCapture, const QString& captureTooltipText)
+void MDWSlider::guiAddControlLabel(Qt::Alignment alignment, const QString &channelName)
 {
-	if (wantsCaptureLED && m_mixdevice->captureVolume().hasSwitch())
+	m_controlLabel = new QLabel(channelName, this);
+	m_controlLabel->setWordWrap(true);
+	m_controlLabel->setAlignment(alignment);
+	m_controlLabel->installEventFilter(this);
+}
+
+void MDWSlider::guiAddControlIcon(const QString &tooltipText)
+{
+	m_controlIcon = new QLabel(this);
+	ToggleToolButton::setIndicatorIcon(mixDevice()->iconName(), m_controlIcon,
+					   (flags() & MixDeviceWidget::SmallSize));
+	m_controlIcon->setToolTip(tooltipText);
+	m_controlIcon->installEventFilter(this);
+}
+
+QWidget *MDWSlider::guiAddButtonSpacer()
+{
+	if (hasMuteButton() || hasCaptureLED()) return (nullptr);
+							// spacer not needed
+	QWidget *buttonSpacer = new QWidget(this);
+	if (orientation()==Qt::Vertical)		// vertical sliders
 	{
-		m_captureCheckbox = new QCheckBox(i18n("capture"), this);
-		m_captureCheckbox->installEventFilter(this);
-		layoutForCapture->addWidget(m_captureCheckbox, alignmentForCapture);
-		connect(m_captureCheckbox, SIGNAL(toggled(bool)), this, SLOT(setRecsrc(bool)));
-		m_captureCheckbox->setToolTip(captureTooltipText);
+		buttonSpacer->setMinimumHeight(controlButtonSize().height());
+		buttonSpacer->setMaximumWidth(1);
 	}
-}
-
-void MDWSlider::guiAddMuteButton(bool wantsMuteButton, Qt::Alignment alignment, QBoxLayout* layoutForMuteButton, const QString& muteTooltipText)
-{
-	if (wantsMuteButton && m_mixdevice->hasMuteSwitch())
+	else						// horizontal sliders
 	{
-		m_qcb = new QToolButton(this);
-		m_qcb->setAutoRaise(true);
-		m_qcb->setCheckable(false);
-		//m_qcb->setIcon(QIcon(loadIcon("audio-volume-muted")));
-		setIcon("audio-volume-muted", m_qcb);
-		//setIcon("audio-volume-mutd", m_qcb);
-		layoutForMuteButton->addWidget(m_qcb, 0, alignment);
-		m_qcb->installEventFilter(this);
-		connect(m_qcb, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
-		m_qcb->setToolTip(muteTooltipText);
+		buttonSpacer->setMinimumWidth(controlButtonSize().width());
+		buttonSpacer->setMaximumHeight(1);
 	}
 
-	// Spacer will be shown, when no mute button is displayed
-	muteButtonSpacer = new QWidget(this);
-	layoutForMuteButton->addWidget( muteButtonSpacer );
-	muteButtonSpacer->installEventFilter(this);
-
+	buttonSpacer->installEventFilter(this);
+	return (buttonSpacer);
 }
 
-void MDWSlider::guiAddControlIcon(Qt::Alignment alignment, QBoxLayout* layout, const QString& tooltipText)
+QSize MDWSlider::controlButtonSize()
 {
-	m_iconLabelSimple = new QLabel(this);
-	installEventFilter(m_iconLabelSimple);
-	setIcon(m_mixdevice->iconName(), m_iconLabelSimple);
-	m_iconLabelSimple->setToolTip(tooltipText);
-	layout->addWidget(m_iconLabelSimple, 0, alignment);
+	if (!m_controlButtonSize.isValid())		// not calculated yet
+	{
+		auto *buttonSpacer = new QToolButton();
+		ToggleToolButton::setIndicatorIcon("unknown", buttonSpacer,
+						   (flags() & MixDeviceWidget::SmallSize));
+		m_controlButtonSize = buttonSpacer->sizeHint();
+		qCDebug(KMIX_LOG) << m_controlButtonSize;
+		delete buttonSpacer;
+	}
+
+	return (m_controlButtonSize);
 }
+
 
 /**
  * Creates all widgets : Icon, Label, Mute-Button, Slider(s) and Capture-Button.
  */
-void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool includeMixerName )
+void MDWSlider::createWidgets()
 {
-    bool includePlayback = _pctl->useSubcontrolPlayback();
-    bool includeCapture = _pctl->useSubcontrolCapture();
-    bool wantsPlaybackSliders = includePlayback && ( m_mixdevice->playbackVolume().count() > 0 );
-    bool wantsCaptureSliders  = includeCapture && ( m_mixdevice->captureVolume().count() > 0 );
-    bool wantsCaptureLED = showCaptureLED && includeCapture;
-    bool wantsMuteButton = showMuteButton && includePlayback;
-	bool hasVolumeSliders = wantsPlaybackSliders || wantsCaptureSliders;
-	// bool bothCaptureANDPlaybackExist = wantsPlaybackSliders && wantsCaptureSliders;
+	const bool includePlayback = profileControl()->useSubcontrolPlayback();
+	const bool includeCapture = profileControl()->useSubcontrolCapture();
+	const bool wantsPlaybackSliders = includePlayback && (mixDevice()->playbackVolume().count()>0);
+	const bool wantsCaptureSliders  = includeCapture && (mixDevice()->captureVolume().count()>0);
+	const bool wantsCaptureLED = includeCapture && (flags() & MixDeviceWidget::ShowCapture);
+	const bool wantsMuteButton = includePlayback && (flags() & MixDeviceWidget::ShowMute);
 	
-	MediaController* mediaController = m_mixdevice->getMediaController();
-	bool wantsMediaControls = mediaController->hasControls();
+	const MediaController *mediaController = mixDevice()->getMediaController();
+	const bool wantsMediaControls = mediaController->hasControls();
 
-    QString tooltipText = m_mixdevice->readableName();
-    QString captureTooltipText( i18n( "Capture/Uncapture %1", m_mixdevice->readableName() ) );
-    QString muteTooltipText( i18n( "Mute/Unmute %1", m_mixdevice->readableName() ) );
-    if (includeMixerName) {
-        tooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName(), tooltipText );
-        captureTooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName(), captureTooltipText );
-        muteTooltipText = QString( "%1\n%2" ).arg( m_mixdevice->mixer()->readableName(), muteTooltipText );
-    }
-
-      // case of vertical sliders:
-	if ( _orientation == Qt::Vertical )
+	const QString channelName = mixDevice()->readableName();
+	QString tooltipText = channelName;
+	QString captureTooltipText = i18nc("%1=channel", "Capture/Uncapture %1", channelName);
+	QString muteTooltipText = i18nc("%1=channel", "Mute/Unmute %1", channelName);
+	if (flags() & MixDeviceWidget::ShowMixerName)
 	{
-		QVBoxLayout *controlLayout = new QVBoxLayout(this);
-		controlLayout->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-		setLayout(controlLayout);
-        controlLayout->setContentsMargins(0,0,0,0);
-
-		guiAddControlIcon(Qt::AlignHCenter|Qt::AlignTop, controlLayout, tooltipText);
-
-        Qt::Alignment centerAlign = Qt::AlignHCenter | Qt::AlignBottom;
-
-		//the device label
-		m_label = new QLabel( m_mixdevice->readableName(), this);
-		m_label->setWordWrap(true);
-		int max = 80;
-		QStringList words = m_mixdevice->readableName().split(QChar(' '));
-		foreach (QString name, words)
-			max = qMax(max,QLabel(name).sizeHint().width());
-//		if (words.size()>1 && m_label)
-//			m_label->setMinimumWidth(80);
-//		if (m_label->sizeHint().width()>max && m_label->sizeHint().width()>80)
-//			m_label->setMinimumWidth(max);
-		m_label->setMinimumWidth(max);
-		m_label->setMinimumHeight(m_label->heightForWidth(m_label->minimumWidth()));
-		m_label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-		m_label->setAlignment(Qt::AlignHCenter);
-		controlLayout->addWidget(m_label, 0, centerAlign );
-
-		//spacer with height to match height difference to other slider widgets
-		labelSpacer = new QWidget(this);
-		controlLayout->addWidget( labelSpacer );
-		labelSpacer->installEventFilter(this);
-
-		// sliders
-		QBoxLayout *volLayout = new QHBoxLayout( );
-		volLayout->setAlignment(centerAlign);
-		controlLayout->addItem( volLayout );
-
-		guiAddSlidersAndMediacontrols(wantsPlaybackSliders, wantsCaptureSliders, wantsMediaControls, volLayout, tooltipText, captureTooltipText);
-		if ( !hasVolumeSliders )
-			controlLayout->addStretch(1); // Not sure why we have this for "vertical sliders" case
-
-		guiAddCaptureCheckbox(wantsCaptureLED, centerAlign, controlLayout, captureTooltipText);
-
-		// spacer which is shown when no capture button present
-		captureSpacer = new QWidget(this);
-		controlLayout->addWidget( captureSpacer );
-		captureSpacer->installEventFilter(this);
-
-
-		//mute button
-		guiAddMuteButton(wantsMuteButton, centerAlign, controlLayout, muteTooltipText);
-	}
-	else
-	{
-		/*
-		 * Horizontal sliders: row1 contains the label (and capture button).
-		 * row2 contains icon, sliders, and mute button
-		 */
-
-		QVBoxLayout *rows = new QVBoxLayout( this );
-
-		// --- ROW1 ------------------------------------------------------------------------
-		QHBoxLayout *row1 = new QHBoxLayout();
-		rows->addItem( row1 );
-
-		m_label = new QLabel(m_mixdevice->readableName(), this);
-		m_label->installEventFilter( this );
-		row1->addWidget( m_label );
-		row1->setAlignment(m_label, Qt::AlignVCenter);
-
-		row1->addStretch();
-		row1->addWidget(captureSpacer);
-
-		guiAddCaptureCheckbox(wantsCaptureLED, Qt::AlignRight, row1, captureTooltipText);
-		captureSpacer = new QWidget(this); // create, but do not add to any layout (not used!)
-
-
-		// --- ROW2 ------------------------------------------------------------------------
-		QHBoxLayout *row2 = new QHBoxLayout();
-		row2->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-		rows->setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-		rows->addItem( row2 );
-
-		guiAddControlIcon(Qt::AlignVCenter, row2, tooltipText);
-
-
-
-		// --- SLIDERS ---------------------------
-		QBoxLayout *volLayout = new QVBoxLayout(  );
-		volLayout->setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-		row2->addItem( volLayout );
-
-		guiAddSlidersAndMediacontrols(wantsPlaybackSliders, wantsCaptureSliders, wantsMediaControls, volLayout, tooltipText, captureTooltipText);
-		guiAddMuteButton(wantsMuteButton, Qt::AlignRight, row2, muteTooltipText);
+		const QString mixerName = mixDevice()->mixer()->readableName();
+		tooltipText = i18nc("%1=device %2=channel", "%1\n%2", mixerName, tooltipText);
+		captureTooltipText = i18nc("%1=device %2=channel", "%1\n%2", mixerName, captureTooltipText);
+		muteTooltipText = i18nc("%1=device %2=channel", "%1\n%2", mixerName, muteTooltipText);
 	}
 
-	bool stereoLinked = !_pctl->isSplit();
+	m_controlGrid = new QGridLayout(this);
+	setLayout(m_controlGrid);
+	QBoxLayout *volLayout;
+
+	if (orientation()==Qt::Vertical)		// vertical sliders
+	{
+		m_controlGrid->setContentsMargins(2, 0, 2, 0);
+		const Qt::Alignment sliderAlign = Qt::AlignHCenter|Qt::AlignBottom;
+
+		// Row 0: Control type icon
+		guiAddControlIcon(tooltipText);
+		m_controlGrid->addWidget(m_controlIcon, 0, 0, 1, -1, Qt::AlignHCenter|Qt::AlignTop);
+
+		// Row 1: Device name label
+		guiAddControlLabel(Qt::AlignHCenter, channelName);
+		m_controlGrid->addWidget(m_controlLabel, 1, 0, 1, -1, Qt::AlignHCenter|Qt::AlignTop);
+
+		// Row 2: Sliders
+
+		int col = 0;				// current column being filled
+		int playbackCol = 0;			// where these sliders ended up
+		int captureCol = 1;			// or default button column if none
+
+		if (wantsPlaybackSliders)
+		{
+			volLayout = new QHBoxLayout();
+			volLayout->setAlignment(sliderAlign);
+			addSliders(volLayout, 'p', mixDevice()->playbackVolume(), m_slidersPlayback, tooltipText);
+			m_controlGrid->addLayout(volLayout, 2, col);
+			playbackCol = col;
+			++col;
+		}
+
+		if (wantsCaptureSliders)
+		{
+			volLayout = new QHBoxLayout();
+			volLayout->setAlignment(sliderAlign);
+			addSliders(volLayout, 'c', mixDevice()->captureVolume(), m_slidersCapture, tooltipText);
+			m_controlGrid->addLayout(volLayout, 2, col);
+			captureCol = col;
+			++col;
+		}
+
+		if (wantsMediaControls)
+		{
+			volLayout = new QHBoxLayout();
+			volLayout->setAlignment(sliderAlign);
+			addMediaControls(volLayout);
+			m_controlGrid->addLayout(volLayout, 2, col);
+		}
+
+		m_controlGrid->setRowStretch(2, 1);	// sliders need the most space
+
+		// Row 3: Control buttons
+		if (wantsMuteButton && mixDevice()->hasMuteSwitch())
+		{
+			guiAddMuteButton(muteTooltipText);
+			m_controlGrid->addWidget(m_muteButton, 3, playbackCol, Qt::AlignHCenter|Qt::AlignTop);
+		}
+
+		if (wantsCaptureLED && mixDevice()->captureVolume().hasSwitch())
+		{
+			guiAddCaptureButton(captureTooltipText);
+			m_controlGrid->addWidget(m_captureButton, 3, captureCol, Qt::AlignHCenter|Qt::AlignTop);
+		}
+
+		// If nether a mute nor a capture button is present, then put a
+		// dummy spacer button (in column 0, where the mute button would
+		// normally go).  This is to maintain the size of the slider
+		// relative to others that do have one or both buttons.
+		//
+		// We have to do this, rather than setting a minimum height for row 3,
+		// as in the case where it is needed row 3 will be empty and QGridLayout
+		// ignores the minimum height set on it.
+		QWidget *buttonSpacer = guiAddButtonSpacer();
+		if (buttonSpacer!=nullptr) m_controlGrid->addWidget(buttonSpacer, 3, 0);
+	}
+	else						// horizontal sliders
+	{
+		const Qt::Alignment sliderAlign = Qt::AlignHCenter|Qt::AlignVCenter;
+
+		// Column 0: Control type icon
+		guiAddControlIcon(tooltipText);
+		m_controlGrid->addWidget(m_controlIcon, 0, 0, -1, 1, Qt::AlignLeft|Qt::AlignVCenter);
+
+		// Column 1: Device name label
+		guiAddControlLabel(Qt::AlignLeft, channelName);
+		m_controlGrid->addWidget(m_controlLabel, 0, 1, -1, 1, Qt::AlignLeft|Qt::AlignVCenter);
+
+		// Column 2: Sliders
+
+		int row = 0;				// current row being filled
+		int playbackRow = 0;			// where these sliders ended up
+		int captureRow = 1;			// or default button row if none
+
+		if (wantsPlaybackSliders)
+		{
+			volLayout = new QVBoxLayout();
+			volLayout->setAlignment(sliderAlign);
+			addSliders(volLayout, 'p', mixDevice()->playbackVolume(), m_slidersPlayback, tooltipText);
+			m_controlGrid->addLayout(volLayout, row, 2);
+			playbackRow = row;
+			++row;
+		}
+
+		if (wantsCaptureSliders)
+		{
+			volLayout = new QVBoxLayout();
+			volLayout->setAlignment(sliderAlign);
+			addSliders(volLayout, 'c', mixDevice()->captureVolume(), m_slidersCapture, tooltipText);
+			m_controlGrid->addLayout(volLayout, row, 2);
+			captureRow = row;
+			++row;
+		}
+
+		if (wantsMediaControls)
+		{
+			volLayout = new QVBoxLayout();
+			volLayout->setAlignment(sliderAlign);
+			addMediaControls(volLayout);
+			m_controlGrid->addLayout(volLayout, row, 2);
+		}
+
+		m_controlGrid->setColumnStretch(2, 1);	// sliders need the most space
+
+		// Column 3: Control buttons
+		if (wantsMuteButton && mixDevice()->hasMuteSwitch())
+		{
+			guiAddMuteButton(muteTooltipText);
+			m_controlGrid->addWidget(m_muteButton, playbackRow, 3, Qt::AlignRight|Qt::AlignVCenter);
+		}
+
+		if (wantsCaptureLED && mixDevice()->captureVolume().hasSwitch())
+		{
+			guiAddCaptureButton(captureTooltipText);
+			m_controlGrid->addWidget(m_captureButton, captureRow, 3, Qt::AlignRight|Qt::AlignVCenter);
+		}
+
+		// Dummy spacer button
+		QWidget *buttonSpacer = guiAddButtonSpacer();
+		if (buttonSpacer!=nullptr) m_controlGrid->addWidget(buttonSpacer, 0, 3);
+	}
+
+	const bool stereoLinked = !profileControl()->isSplit();
 	setStereoLinked( stereoLinked );
 	
-	layout()->activate(); // Activate it explicitly in KDE3 because of PanelApplet/kicker issues
+	// Activate it explicitly in KDE3 because of PanelApplet/Kicker issues.
+	// Not sure whether this is necessary 2 generations later.
+	layout()->activate();
 }
 
 QString MDWSlider::calculatePlaybackIcon(MediaController::PlayState playState)
@@ -490,10 +530,8 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 	MediaController* mediaController =  mixDevice()->getMediaController();
 
 	QBoxLayout *mediaLayout;
-	if (_orientation == Qt::Vertical)
-		mediaLayout = new QVBoxLayout();
-	else
-		mediaLayout = new QHBoxLayout();
+	if (orientation()==Qt::Vertical) mediaLayout = new QVBoxLayout();
+	else mediaLayout = new QHBoxLayout();
 
 //	QFrame* frame1 = new QFrame(this);
 //	frame1->setFrameShape(QFrame::StyledPanel);
@@ -508,8 +546,8 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 	{
 		MediaController::PlayState playState = mediaController->getPlayState();
 		QString mediaIcon = calculatePlaybackIcon(playState);
-		mediaButton = addMediaButton(mediaIcon, mediaLayout, frame);
-		connect(mediaButton, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)));
+		m_mediaPlayButton = addMediaButton(mediaIcon, mediaLayout, frame);
+		connect(m_mediaPlayButton, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)));
 	}
 
 	if (mediaController->hasMediaNextControl())
@@ -525,11 +563,11 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout, QWidget *parent)
 {
 	QToolButton *lbl = new QToolButton(parent);
-	lbl->setIconSize(QSize(IconSize(KIconLoader::Toolbar),IconSize(KIconLoader::Toolbar)));
+	lbl->setIconSize(QSize(IconSize(KIconLoader::Toolbar), IconSize(KIconLoader::Toolbar)));
 	lbl->setAutoRaise(true);
 	lbl->setCheckable(false);
 	
-	setIcon(iconName, lbl);
+	ToggleToolButton::setIndicatorIcon(iconName, lbl);
 	layout->addWidget(lbl);
 
 	return lbl;
@@ -540,12 +578,12 @@ QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout, QWidge
  */
 void MDWSlider::updateMediaButton()
 {
-	if (mediaButton == 0)
+	if (m_mediaPlayButton == 0)
 		return; // has no media button
 
 	MediaController* mediaController =  mixDevice()->getMediaController();
 	QString mediaIconName = calculatePlaybackIcon(mediaController->getPlayState());
-	setIcon(mediaIconName, mediaButton);
+	ToggleToolButton::setIndicatorIcon(mediaIconName, m_mediaPlayButton);
 }
 
 void MDWSlider::mediaPrev(bool)
@@ -563,6 +601,30 @@ void MDWSlider::mediaPlay(bool)
   mixDevice()->mediaPlay();
 }
 
+
+static QWidget *createLabel(QWidget *parent, const QString &label, Qt::Orientation orient, bool small)
+{
+	QFont qf;
+	qf.setPointSize(8);
+
+	QWidget *labelWidget;
+	if (orient == Qt::Horizontal)
+	{
+		auto *ql = new QLabel(label, parent);
+		if (small) ql->setFont(qf);
+		labelWidget = ql;
+	}
+	else
+	{
+		auto *vt = new VerticalText(parent, label);
+		if (small) vt->setFont(qf);
+		labelWidget = vt;
+	}
+
+	return (labelWidget);
+}
+
+
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
                             QList<QAbstractSlider *>& ref_sliders, QString tooltipText)
 {
@@ -574,22 +636,23 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 
 	foreach (VolumeChannel vc, vols )
 	{
-		//qCDebug(KMIX_LOG) << "Add label to " << vc.chid << ": " <<  Volume::ChannelNameReadable[vc.chid];
+		//qCDebug(KMIX_LOG) << "Add label to " << vc.chid << ": " <<  Volume::channelNameReadable(vc.chid);
 		QWidget *subcontrolLabel;
 
 		QString subcontrolTranslation;
 		if ( type == 'c' ) subcontrolTranslation += i18n("Capture") + ' ';
 		subcontrolTranslation += Volume::channelNameReadable(vc.chid);
-		subcontrolLabel = createLabel(this, subcontrolTranslation, volLayout, true);
+		subcontrolLabel = createLabel(this, subcontrolTranslation, orientation(), true);
+		volLayout->addWidget(subcontrolLabel);
 
 		QAbstractSlider* slider;
-		if ( m_small )
+		if (flags() & MixDeviceWidget::SmallSize)
 		{
 			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Volume::VOLUME_PAGESTEP_DIVISOR,
-				                           vol.getVolume( vc.chid ), _orientation, this );
+						   vol.getVolume( vc.chid ), orientation(), this );
 		} // small
 		else  {
-			slider = new VolumeSlider( _orientation, this );
+			slider = new VolumeSlider(orientation(), this);
 			slider->setMinimum(minvol);
 			slider->setMaximum(maxvol);
 			slider->setPageStep(maxvol / Volume::VOLUME_PAGESTEP_DIVISOR);
@@ -598,19 +661,15 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 			
 			extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
-			if ( _orientation == Qt::Vertical ) {
-				slider->setMinimumHeight( minSliderSize );
-			}
-			else {
-				slider->setMinimumWidth( minSliderSize );
-			}
-			if ( ! _pctl->getBackgroundColor().isEmpty() ) {
-				slider->setStyleSheet("QSlider { background-color: " + _pctl->getBackgroundColor() + " }");
+			if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
+			else slider->setMinimumWidth(minSliderSize);
+			if ( !profileControl()->getBackgroundColor().isEmpty() ) {
+				slider->setStyleSheet("QSlider { background-color: " + profileControl()->getBackgroundColor() + " }");
 			}
 		} // not small
 
 		extraData(slider).setChid(vc.chid);
-		slider->installEventFilter( this );
+//		slider->installEventFilter( this );
 		if ( type == 'p' ) {
 			slider->setToolTip( tooltipText );
 		}
@@ -659,95 +718,9 @@ void MDWSlider::sliderReleased()
 }
 
 
-QWidget* MDWSlider::createLabel(QWidget* parent, QString& label, QBoxLayout *layout, bool small)
-{
-  QFont qf;
-  qf.setPointSize(8);
-
-  QWidget* labelWidget;
-	if (_orientation == Qt::Horizontal)
-	{
-		labelWidget = new QLabel(label, parent);
-		if ( small ) ((QLabel*)labelWidget)->setFont(qf);
-	}
-	else {
-		labelWidget = new VerticalText(parent, label);
-		if ( small ) ((VerticalText*)labelWidget)->setFont(qf);
-	}
-	
-	labelWidget->installEventFilter( parent );
-	layout->addWidget(labelWidget);
-
-	return labelWidget;
-}
-
-
-QPixmap MDWSlider::loadIcon( QString filename, KIconLoader::Group group )
-{
-	return KIconLoader::global()->loadIcon( filename, group, IconSize(KIconLoader::Toolbar) );
-}
-
-
-//void MDWSlider::setIcon( QString filename, QLabel** label )
-//{
-//	if( (*label) == 0 )
-//	{
-//		*label = new QLabel(this);
-//		installEventFilter( *label );
-//	}
-//	setIcon(filename, *label);
-//}
-
-/**
- * Loads the icon with the given iconName in size KIconLoader::Toolbar, and applies it to the label widget.
- * The label must be either a QLabel or a QToolButton.
- *
- * @param label A QToolButton or a QToolButton that will hold the icon.
- */
-void MDWSlider::setIcon( QString filename, QWidget* label )
-{
-	QPixmap miniDevPM = loadIcon( filename, KIconLoader::Small );
-//	QPixmap miniDevPM = loadIcon( filename, KIconLoader::Toolbar);
-	if ( !miniDevPM.isNull() )
-	{
-		if ( m_small )
-		{
-			// scale icon
-			QMatrix t;
-			t = t.scale( 10.0/miniDevPM.width(), 10.0/miniDevPM.height() );
-			miniDevPM = miniDevPM.transformed( t );
-			label->resize( 10, 10 );
-		} // small size
-		else
-		{
-			label->setMinimumSize(IconSize(KIconLoader::Toolbar),IconSize(KIconLoader::Toolbar));
-		}
-		label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-		
-		QLabel* lbl = qobject_cast<QLabel*>(label);
-		if ( lbl != 0 )
-		{
-		  lbl->setPixmap( miniDevPM );
-		  lbl->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-		} // QLabel
-		else
-		{
-		  QToolButton* tbt = qobject_cast<QToolButton*>(label);
-		  if ( tbt != 0 )
-		  {
-			    tbt->setIcon( miniDevPM );
-		  } // QToolButton 
-		}
-	}
-	else
-	{
-		qCCritical(KMIX_LOG) << "Pixmap missing. filename=" << filename;
-	}
-}
-
 QString MDWSlider::iconName()
 {
-    return m_mixdevice->iconName();
+    return mixDevice()->iconName();
 }
 
 void
@@ -810,9 +783,7 @@ MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool s
 void
 MDWSlider::setLabeled(bool value)
 {
-	if ( m_label != 0) m_label->setVisible(value);
-	if ( m_muteText != 0) m_muteText->setVisible(value);
-	if ( m_captureText != 0) m_captureText->setVisible(value);
+	if ( m_controlLabel != 0) m_controlLabel->setVisible(value);
 	layout()->activate();
 }
 
@@ -825,8 +796,7 @@ MDWSlider::setTicks( bool value )
 
 /**
  * Enables or disables tickmarks
- * Please note that always only the first and last slider has tickmarks.
- * 
+ * Please note that always only the first and last slider have tickmarks.
  */
 void MDWSlider::setTicksInternal(QList<QAbstractSlider *>& ref_sliders, bool ticks)
 {
@@ -855,12 +825,12 @@ void MDWSlider::setTicksInternal(QList<QAbstractSlider *>& ref_sliders, bool tic
 void
 MDWSlider::setIcons(bool value)
 {
-	if ( m_iconLabelSimple != 0 ) {
-		if ( ( !m_iconLabelSimple->isHidden() ) !=value ) {
+	if ( m_controlIcon != 0 ) {
+		if ( ( !m_controlIcon->isHidden() ) !=value ) {
 			if (value)
-				m_iconLabelSimple->show();
+				m_controlIcon->show();
 			else
-				m_iconLabelSimple->hide();
+				m_controlIcon->hide();
 
 			layout()->activate();
 		}
@@ -907,18 +877,17 @@ void MDWSlider::volumeChange( int )
 //  }
 	if (!m_slidersPlayback.isEmpty())
 	{
-		m_waitForSoundSetComplete ++;
+		++m_waitForSoundSetComplete;
 		volumeValues.push_back(m_slidersPlayback.first()->value());
-		volumeChangeInternal(m_mixdevice->playbackVolume(), m_slidersPlayback);
+		volumeChangeInternal(mixDevice()->playbackVolume(), m_slidersPlayback);
 	}
 	if (!m_slidersCapture.isEmpty())
 	{
-		volumeChangeInternal(m_mixdevice->captureVolume(), m_slidersCapture);
+		volumeChangeInternal(mixDevice()->captureVolume(), m_slidersCapture);
 	}
 
-	bool oldViewBlockSignalState = m_view->blockSignals(true);
-	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-	m_view->blockSignals(oldViewBlockSignalState);
+	QSignalBlocker blocker(view());
+	mixDevice()->mixer()->commitVolumeChange(mixDevice());
 }
 
 void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
@@ -926,16 +895,16 @@ void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_
 	if (isStereoLinked())
 	{
 		QAbstractSlider* firstSlider = ref_sliders.first();
-		m_mixdevice->setMuted(false);
+		mixDevice()->setMuted(false);
 		vol.setAllVolumes(firstSlider->value());
 	}
 	else
 	{
 		for (int i = 0; i < ref_sliders.count(); i++)
 		{
-			if (m_mixdevice->isMuted())
+			if (mixDevice()->isMuted())
 			{   // changing from muted state: unmute (the "if" above is actually superfluous)
-				m_mixdevice->setMuted(false);
+				mixDevice()->setMuted(false);
 			}
 			QAbstractSlider *sliderWidget = ref_sliders[i];
 			vol.setVolume(extraData(sliderWidget).getChid(), sliderWidget->value());
@@ -950,15 +919,15 @@ void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_
  */
 void MDWSlider::toggleRecsrc()
 {
-	setRecsrc( m_mixdevice->isRecSource() );
+	setRecsrc( !mixDevice()->isRecSource() );
 }
 
-void MDWSlider::setRecsrc(bool value )
+void MDWSlider::setRecsrc(bool value)
 {
-	if ( m_mixdevice->captureVolume().hasSwitch() )
+	if ( mixDevice()->captureVolume().hasSwitch() )
 	{
-		m_mixdevice->setRecSource( value );
-		m_mixdevice->mixer()->commitVolumeChange( m_mixdevice );
+		mixDevice()->setRecSource( value );
+		mixDevice()->mixer()->commitVolumeChange( mixDevice() );
 	}
 }
 
@@ -969,15 +938,15 @@ void MDWSlider::setRecsrc(bool value )
  */
 void MDWSlider::toggleMuted()
 {
-	setMuted( !m_mixdevice->isMuted() );
+	setMuted( !mixDevice()->isMuted() );
 }
 
 void MDWSlider::setMuted(bool value)
 {
-	if ( m_mixdevice->hasMuteSwitch() )
+	if ( mixDevice()->hasMuteSwitch() )
 	{
-		m_mixdevice->setMuted( value );
-		m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
+		mixDevice()->setMuted( value );
+		mixDevice()->mixer()->commitVolumeChange(mixDevice());
 	}
 }
 
@@ -1016,24 +985,24 @@ void MDWSlider::decreaseVolume()
  */
 void MDWSlider::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType)
 {
-	m_mixdevice->increaseOrDecreaseVolume(decrease, volumeType);
+	mixDevice()->increaseOrDecreaseVolume(decrease, volumeType);
 	// I should possibly not block, as the changes that come back from the Soundcard
 	//      will be ignored (e.g. because of capture groups)
-// 	qCDebug(KMIX_LOG) << "MDWSlider is blocking signals for " << m_view->id();
-// 	bool oldViewBlockSignalState = m_view->blockSignals(true);
-	m_mixdevice->mixer()->commitVolumeChange(m_mixdevice);
-// 	qCDebug(KMIX_LOG) << "MDWSlider is unblocking signals for " << m_view->id();
-// 	m_view->blockSignals(oldViewBlockSignalState);
+// 	qCDebug(KMIX_LOG) << "MDWSlider is blocking signals for " << view()->id();
+// 	bool oldViewBlockSignalState = view()->blockSignals(true);
+	mixDevice()->mixer()->commitVolumeChange(mixDevice());
+// 	qCDebug(KMIX_LOG) << "MDWSlider is unblocking signals for " << view()->id();
+// 	view()->blockSignals(oldViewBlockSignalState);
 }
 
 void MDWSlider::moveStreamAutomatic()
 {
-    m_mixdevice->mixer()->moveStream(m_mixdevice->id(), "");
+    mixDevice()->mixer()->moveStream(mixDevice()->id(), "");
 }
 
 void MDWSlider::moveStream(QString destId)
 {
-    m_mixdevice->mixer()->moveStream(m_mixdevice->id(), destId);
+    mixDevice()->mixer()->moveStream(mixDevice()->id(), destId);
 }
 
 /**
@@ -1045,18 +1014,18 @@ void MDWSlider::update()
 //	  if (debugMe) qCDebug(KMIX_LOG) << "The update() PCM:0 playback state" << mixDevice()->isMuted()
 //	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 
-	if ( m_slidersPlayback.count() != 0 || m_mixdevice->hasMuteSwitch() )
-		updateInternal(m_mixdevice->playbackVolume(), m_slidersPlayback, m_mixdevice->isMuted() );
-	if ( m_slidersCapture.count()  != 0 || m_mixdevice->captureVolume().hasSwitch() )
-		updateInternal(m_mixdevice->captureVolume(), m_slidersCapture, m_mixdevice->isNotRecSource() );
-	if (m_label)
+	if ( m_slidersPlayback.count() != 0 || mixDevice()->hasMuteSwitch() )
+		updateInternal(mixDevice()->playbackVolume(), m_slidersPlayback, mixDevice()->isMuted() );
+	if ( m_slidersCapture.count()  != 0 || mixDevice()->captureVolume().hasSwitch() )
+		updateInternal(mixDevice()->captureVolume(), m_slidersCapture, mixDevice()->isNotRecSource() );
+	if (m_controlLabel!=nullptr)
 	{
 		QLabel *l;
 		VerticalText *v;
-		if ((l = dynamic_cast<QLabel*>(m_label)))
-			l->setText(m_mixdevice->readableName());
-		else if ((v = dynamic_cast<VerticalText*>(m_label)))
-			v->setText(m_mixdevice->readableName());
+		if ((l = dynamic_cast<QLabel*>(m_controlLabel)))
+			l->setText(mixDevice()->readableName());
+		else if ((v = dynamic_cast<VerticalText*>(m_controlLabel)))
+			v->setText(mixDevice()->readableName());
 	}
 	updateAccesability();
 }
@@ -1076,54 +1045,49 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 //	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
 //	  }
   
-	for( int i=0; i<ref_sliders.count(); i++ )
+	for (int i = 0; i<ref_sliders.count(); ++i)
 	{
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
 		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
 		int volume_index;
 
-		bool oldBlockState = slider->blockSignals( true );
-
-//		slider->setValue( useVolume );
+		QSignalBlocker blocker(slider);
 		// --- Avoid feedback loops START -----------------
-		if((volume_index = volumeValues.indexOf(useVolume)) > -1 && --m_waitForSoundSetComplete < 1)
+		volume_index = volumeValues.indexOf(useVolume);
+		if (volume_index>-1 && --m_waitForSoundSetComplete<1)
 		{
 		    m_waitForSoundSetComplete = 0;
 		    volumeValues.removeAt(volume_index);
 
-		    if(!m_sliderInWork)
-			  slider->setValue(useVolume);
+		    if (!m_sliderInWork) slider->setValue(useVolume);
 		}
-		else if(!m_sliderInWork && m_waitForSoundSetComplete < 1)
+		else if (!m_sliderInWork && m_waitForSoundSetComplete<1)
 		{
 			slider->setValue(useVolume);
 		}
 		// --- Avoid feedback loops END -----------------
 
-		if ( slider->inherits( "KSmallSlider" ) )
+		KSmallSlider *smallSlider = qobject_cast<KSmallSlider *>(slider);
+		if (smallSlider!=nullptr)		// faster than QObject::inherits()
 		{
-			((KSmallSlider*)slider)->setGray( m_mixdevice->isMuted() );
+			smallSlider->setGray(mixDevice()->isMuted());
 		}
-		slider->blockSignals( oldBlockState );
 	} // for all sliders
 
 
-	// update mute
-
-	if( m_qcb != 0 )
+	// update mute state
+	if (m_muteButton!=nullptr)
 	{
-		bool oldBlockState = m_qcb->blockSignals( true );
-		QString muteIcon = m_mixdevice->isMuted() ? "audio-volume-muted" : "audio-volume-high";
-		setIcon(muteIcon, m_qcb);
-		m_qcb->blockSignals( oldBlockState );
+		QSignalBlocker blocker(m_muteButton);
+		m_muteButton->setActive(!mixDevice()->isMuted());
 	}
 
-	if( m_captureCheckbox )
+	// update capture state
+	if (m_captureButton!=nullptr)
 	{
-		bool oldBlockState = m_captureCheckbox->blockSignals( true );
-		m_captureCheckbox->setChecked( m_mixdevice->isRecSource() );
-		m_captureCheckbox->blockSignals( oldBlockState );
+		QSignalBlocker blocker(m_captureButton);
+		m_captureButton->setActive(mixDevice()->isRecSource());
 	}
 
 }
@@ -1137,12 +1101,12 @@ void MDWSlider::updateAccesability()
                 if (!m_slidersCapture.isEmpty())
                         m_slidersCapture[0]->setAccessibleName(m_slidersCapture[0]->toolTip());
         } else {
-                QList<VolumeChannel> vols = m_mixdevice->playbackVolume().getVolumes().values();
+                QList<VolumeChannel> vols = mixDevice()->playbackVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersPlayback) {
                         slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
                 }
-                vols = m_mixdevice->captureVolume().getVolumes().values();
+                vols = mixDevice()->captureVolume().getVolumes().values();
                 foreach (QAbstractSlider *slider, m_slidersCapture) {
                         slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
@@ -1152,16 +1116,15 @@ void MDWSlider::updateAccesability()
 #endif
 
 
-void MDWSlider::showContextMenu( const QPoint& pos )
+void MDWSlider::showContextMenu(const QPoint &pos)
 {
-	if( m_view == 0 )
-		return;
+	if (view()==nullptr) return;
 
-	QMenu *menu = m_view->getPopup();
-	menu->addSection( SmallIcon( "kmix" ), m_mixdevice->readableName() );
+	QMenu *menu = view()->getPopup();
+	menu->addSection( SmallIcon( "kmix" ), mixDevice()->readableName() );
 
 	if (m_moveMenu) {
-		MixSet *ms = m_mixdevice->getMoveDestinationMixSet();
+		MixSet *ms = mixDevice()->getMoveDestinationMixSet();
 		Q_ASSERT(ms);
 
 		m_moveMenu->setEnabled((ms->count() > 1));
@@ -1169,25 +1132,28 @@ void MDWSlider::showContextMenu( const QPoint& pos )
 	}
 
 	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
-		KToggleAction *stereo = (KToggleAction *)_mdwActions->action( "stereo" );
-		if ( stereo ) {
-			stereo->setChecked( !isStereoLinked() );
+		KToggleAction *stereo = qobject_cast<KToggleAction *>(_mdwActions->action("stereo"));
+		if (stereo!=nullptr) {
+			QSignalBlocker blocker(stereo);
+			stereo->setChecked(!isStereoLinked());
 			menu->addAction( stereo );
 		}
 	}
 
-	if ( m_mixdevice->captureVolume().hasSwitch() ) {
-		KToggleAction *ta = (KToggleAction *)_mdwActions->action( "recsrc" );
-		if ( ta ) {
-			ta->setChecked( m_mixdevice->isRecSource() );
+	if ( mixDevice()->captureVolume().hasSwitch() ) {
+		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("recsrc"));
+		if (ta!=nullptr) {
+			QSignalBlocker blocker(ta);
+			ta->setChecked( mixDevice()->isRecSource() );
 			menu->addAction( ta );
 		}
 	}
 
-	if ( m_mixdevice->hasMuteSwitch() ) {
-		KToggleAction *ta = ( KToggleAction* )_mdwActions->action( "mute" );
-		if ( ta ) {
-			ta->setChecked( m_mixdevice->isMuted() );
+	if ( mixDevice()->hasMuteSwitch() ) {
+		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("mute"));
+		if (ta!=nullptr) {
+			QSignalBlocker blocker(ta);
+			ta->setChecked( mixDevice()->isMuted() );
 			menu->addAction( ta );
 		}
 	}
@@ -1197,20 +1163,19 @@ void MDWSlider::showContextMenu( const QPoint& pos )
 //		menu->addAction( a );
 
 	QAction *b = _mdwActions->action( "keys" );
-	if ( b ) {
-//       QAction sep( _mdwPopupActions );
-//       sep.setSeparator( true );
-//       menu->addAction( &sep );
-		menu->addAction( b );
+	if (b!=nullptr)
+	{
+		menu->addSeparator();
+		menu->addAction(b);
 	}
 
-	menu->popup( pos );
+	menu->popup(pos);
 }
 
 
 void MDWSlider::showMoveMenu()
 {
-    MixSet *ms = m_mixdevice->getMoveDestinationMixSet();
+    MixSet *ms = mixDevice()->getMoveDestinationMixSet();
     Q_ASSERT(ms);
 
     _mdwMoveActions->clear();
@@ -1237,71 +1202,40 @@ void MDWSlider::showMoveMenu()
     }
 }
 
+
 /**
- * An event filter for the various QWidgets. We watch for Mouse press Events, so
- * that we can popup the context menu.
+ * An event filter for the various widgets making up this control.
+ *
+ * Redirect all wheel events to the main slider, so that they will be
+ * handled consistently regardless of where the pointer actually is.
  */
-bool MDWSlider::eventFilter( QObject* obj, QEvent* e )
+bool MDWSlider::eventFilter(QObject *obj, QEvent *ev)
 {
-	QEvent::Type eventType = e->type();
-	if (eventType == QEvent::MouseButtonPress) {
-		QMouseEvent *qme = static_cast<QMouseEvent*>(e);
-		if (qme->button() == Qt::RightButton) {
-			showContextMenu();
-			return true;
-		}
-	} else if (eventType == QEvent::ContextMenu) {
-		QPoint pos = reinterpret_cast<QWidget *>(obj)->mapToGlobal(QPoint(0, 0));
-		showContextMenu(pos);
-		return true;
-	}
-	// Attention: We don't filter WheelEvents for KSmallSlider, because it handles WheelEvents itself
-	else if ( eventType == QEvent::Wheel )
-//	         && strcmp(obj->metaObject()->className(),"KSmallSlider") != 0 )  {  // Remove the KSmallSlider check. If KSmallSlider comes back, use a cheaper type check - e.g. a boolean value.
+	if (ev->type()!=QEvent::Wheel) return (QWidget::eventFilter(obj, ev));
+							// only want wheel events
+	if (!ev->spontaneous()) return (false);		// avoid recursion on slider
+
+	QAbstractSlider *slider = qobject_cast<QAbstractSlider *>(obj);
+	if (slider!=nullptr)				// event is over a slider
 	{
-		QWheelEvent *qwe = static_cast<QWheelEvent*>(e);
-
-		bool increase = (qwe->delta() > 0);
-		if (qwe->orientation() == Qt::Horizontal) // Reverse horizontal scroll: bko228780 
-			increase = !increase;
-
-		Volume::VolumeTypeFlag volumeType = Volume::Playback;
-		QAbstractSlider *slider = qobject_cast<QAbstractSlider*>(obj);
-		if (slider != 0)
-		{
-//			qCDebug(KMIX_LOG);
-//			qCDebug(KMIX_LOG);
-//			qCDebug(KMIX_LOG) << "----------------------------- Slider is " << slider;
-			// Mouse is over a slider. So lets apply the wheel event to playback or capture only
-			if(m_slidersCapture.contains(slider))
-			{
-//				qCDebug(KMIX_LOG) << "Slider is capture " << slider;
-				volumeType = Volume::Capture;
-			}
-		}
-		else
-		{
-			// Mouse not over a slider => do a little guessing
-			if (!m_slidersPlayback.isEmpty())
-				slider = qobject_cast<QAbstractSlider*>(m_slidersPlayback.first());
-			else if (!m_slidersCapture.isEmpty())
-				slider = qobject_cast<QAbstractSlider*>(m_slidersCapture.first());
-			else
-				slider = 0;
-		}
-
-		increaseOrDecreaseVolume(!increase, volumeType);
-		
-		if (slider != 0)
-		{
-			Volume& volP = m_mixdevice->playbackVolume();
-//			qCDebug(KMIX_LOG) << "slider=" << slider->objectName();
-			VolumeSliderExtraData& sliderExtraData = extraData(slider);
-//			qCDebug(KMIX_LOG) << "slider=" << slider->objectName() << "sliderExtraData=" << sliderExtraData.getSubcontrolLabel() << " , chid=" << sliderExtraData.getChid();
-			volumeValues.push_back(volP.getVolume(sliderExtraData.getChid()));
-		}
-		return true;
+		// Do nothing in this case.  No event filter is installed
+		// on a slider, and it will handle the wheel event itself.
+		qCWarning(KMIX_LOG) << "unexpected wheel event on slider" << slider;
+		return (false);
 	}
-	return QWidget::eventFilter(obj,e);
-}
 
+	// Mouse is not over a slider.  Find the principal slider (the first
+	// playback control if there are any, otherwise the first capture
+	// control if any) and redirect the event to that.
+	if (!m_slidersPlayback.isEmpty()) slider = m_slidersPlayback.first();
+	else if (!m_slidersCapture.isEmpty()) slider = m_slidersCapture.first();
+	else slider = nullptr;
+
+	if (slider!=nullptr)
+	{
+		//qCDebug(KMIX_LOG) << "identified for slider" << slider;
+		QCoreApplication::sendEvent(slider, ev);
+	}
+
+	return (true);					// wheel event handled
+}

@@ -147,7 +147,7 @@ public:
    // Returns a user readable name of the control.
    QString   readableName()         { return _name; }
    // Sets a user readable name for the control.
-   void      setReadableName(QString& name)      { _name = name; }
+   void      setReadableName(const QString &name)      { _name = name; }
 
    QString configGroupName(QString prefix);
 
@@ -218,7 +218,7 @@ public:
 
    void setEnumId(int);
    unsigned int enumId();
-   QList<QString>& enumValues();
+   const QStringList &enumValues() const		{ return (_enumValues); }
 
    bool hasPhysicalMuteSwitch();
    
@@ -237,7 +237,7 @@ private:
    Volume _playbackVolume;
    Volume _captureVolume;
    int _enumCurrentId;
-   QList<QString> _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
+   QStringList _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
    DBusControlWrapper *_dbusControlWrapper;
    MediaController* mediaController;

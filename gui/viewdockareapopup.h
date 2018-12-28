@@ -53,8 +53,8 @@ public:
 protected:
     KMixWindow  *_kmixMainWindow;
 
-    void wheelEvent ( QWheelEvent * e ) Q_DECL_OVERRIDE;
-    void _setMixSet() Q_DECL_OVERRIDE;
+    void initLayout() Q_DECL_OVERRIDE;
+    Qt::Orientation orientationSetting() const Q_DECL_OVERRIDE;
 
 private:
   QGridLayout* _layoutMDW;

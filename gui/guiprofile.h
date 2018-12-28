@@ -31,15 +31,8 @@ class Mixer;
 #include <QString>
 
 #include <string>
-#include <map>
 #include <set>
-#include <vector>
 #include <ostream>
-
-struct SortedStringComparator
-{
-    bool operator()(const std::string&, const std::string&) const;
-};
 
 
 struct ProfProduct
@@ -51,145 +44,73 @@ struct ProfProduct
     QString comment;
 };
 
-class ProfControlPrivate
-{
-public:
-    // List of controls, e.g: "rec:1-2,recswitch"
-    // THIS IS RAW DATA AS LOADED FROM THE PROFILE. DO NOT USE IT, except for debugging.
-    QString subcontrols;
-
-};
 
 /**
  * GuiVisibility can be used in different contexts. One is, to define in the XML GUI Profile, which control to show, e.g. show
  * "MIC Boost" in EXTENDED mode. The other is for representing the GUI complexity (e.g. for letting the user select a preset like "SIMPLE".
  */
-class GuiVisibility
+enum class GuiVisibility
 {
-	enum GuiVisibilityId { SIMPLE, EXTENDED, FULL, CUSTOM, NEVER };
-	QString id;
-	GuiVisibilityId idCode;
-
-public:
-static GuiVisibility const GuiSIMPLE;
-static GuiVisibility const GuiEXTENDED;
-static GuiVisibility const GuiFULL;
-static GuiVisibility const GuiCUSTOM;
-static GuiVisibility const GuiNEVER;   // e.g. templates with regexp's
-
-	private:
-	GuiVisibility(QString id, GuiVisibilityId idCode)
-	{
-		this->id = id;
-		this->idCode = idCode;
-	}
-
-	public:
-	QString& getId()
-	{
-		return id;
-	}
-
-	/**
-	 * Returns whether this GuiVisibility satisfies the other GuiVisibility.
-	 * GuiNEVER can never be satisfied - if this or other is GuiNEVER, the result is false.
-	 * GuiCUSTOM is always satisfied - if this or other is GuiCUSTOM, the result is true.
-	 * The other 3 enum values are completely ordered as GuiSIMPLE, GuiEXTENDED, GuiFULL.
-	 * <p>
-	 * For example
-	 * GuiSIMPLE satisfies GuiFULL, as simple GUI is part of full GUI.
-	 *
-	 * @param other
-	 * @return
-	 */
-	bool satisfiesVisibility(GuiVisibility& other) const
-	{
-		if (this->idCode == GuiVisibility::NEVER || other.idCode == GuiVisibility::NEVER)
-			return false;
-		if (this->idCode == GuiVisibility::CUSTOM || other.idCode == GuiVisibility::CUSTOM)
-			return false;
-
-		return this->idCode <= other.idCode;
-	}
-
-	/**
-	 * Returns the static GuiVisibility represented by the given string.
-	 * For illegal string values, GuiFULL will be returned.
-	 *
-	 * @param string
-	 * @return
-	 */
-	static const GuiVisibility& getByString(QString& string)
-	{
-		if (string == GuiSIMPLE.id)
-			return GuiSIMPLE;
-		if (string == GuiEXTENDED.id)
-			return GuiEXTENDED;
-		if (string == GuiFULL.id)
-			return GuiFULL;
-		if (string == GuiCUSTOM.id)
-			return GuiCUSTOM;
-		if (string == GuiNEVER.id)
-			return GuiNEVER;
-
-		qCWarning(KMIX_LOG) << "Unknown GuiVisibility=" << string << ". Applying default=" << GuiFULL.id;
-		return GuiFULL;
-	}
-
-	bool operator==(const GuiVisibility &other) const
-	{
-		return idCode == other.idCode;
-	}
-
+    Simple,
+    Extended,
+    Full,
+    Custom,
+    Never,
+    Default
 };
-
 
 
 class ProfControl
 {
 public:
-    ProfControl(QString& id, QString& subcontrols);
+    ProfControl(const QString &id, const QString &subcontrols);
     ProfControl(const ProfControl &ctl); // copy constructor
-    ~ProfControl();
-    // ID as returned by the Mixer Backend, e.g. Master:0
-    QString id;
+    ~ProfControl() = default;
+
+    // ID as returned by the Mixer Backend, e.g. "Master:0"
+    QString id() const				{ return (_id); }
+    void setId(const QString &id)		{ _id = id; }
+
+    // Visible name for the User (if null, 'id' will be used).
+    // And in the future a default lookup table will be consulted.
+    // Because the name is visible, some kind of i18n() should be used.
+    QString name() const			{ return (_name); }
+    void setName(const QString &name)		{ _name = name; }
 
     void setSubcontrols(QString sctls);
-    bool useSubcontrolPlayback() {return _useSubcontrolPlayback;};
-    bool useSubcontrolCapture() {return _useSubcontrolCapture;};
-    bool useSubcontrolPlaybackSwitch() {return _useSubcontrolPlaybackSwitch;};
-    bool useSubcontrolCaptureSwitch() {return _useSubcontrolCaptureSwitch;};
-    bool useSubcontrolEnum() {return _useSubcontrolEnum;};
-    QString renderSubcontrols();
+    bool useSubcontrolPlayback() const		{ return (_useSubcontrolPlayback); }
+    bool useSubcontrolCapture() const		{ return (_useSubcontrolCapture); }
+    bool useSubcontrolPlaybackSwitch() const	{ return (_useSubcontrolPlaybackSwitch); }
+    bool useSubcontrolCaptureSwitch() const	{ return (_useSubcontrolCaptureSwitch); }
+    bool useSubcontrolEnum() const		{ return (_useSubcontrolEnum); }
+    QString renderSubcontrols() const;
 
-    QString getBackgroundColor() const    {        return backgroundColor;    }
-    void setBackgroundColor(QString& backgroundColor)    {        this->backgroundColor = backgroundColor;    }
-    QString getSwitchtype() const    {        return switchtype;    }
-    void setSwitchtype(QString switchtype)    {        this->switchtype = switchtype;    }
+    QString getBackgroundColor() const		{ return (_backgroundColor); }
+    void setBackgroundColor(const QString &col)	{ _backgroundColor = col; }
+    QString getSwitchtype() const		{ return (_switchtype); }
+    void setSwitchtype(const QString &swtype)	{ _switchtype = swtype; }
 
-    // Visible name for the User ( if name.isNull(), id will be used - And in the future a default lookup table will be consulted ).
-    // Because the name is visible, some kind of i18n() should be used.
-    QString name;
+    void setVisible(bool visible);
+    void setVisibility(GuiVisibility vis);
+    void setVisibility(const QString &visString);
+    GuiVisibility getVisibility() const		{ return (_visibility); }
 
-    void setVisible(bool);
-    void setVisible(const GuiVisibility& visibility);
-    GuiVisibility& getVisibility() { return visibility; };
+    bool isMandatory() const			{ return (_mandatory); }
+    void setMandatory(bool mandatory)		{ _mandatory = mandatory; }
 
-    bool isMandatory() const
-    {
-        return _mandatory;
-    }
+    void setSplit (bool split)			{ _split = split; }
+    bool isSplit() const			{ return (_split); }
 
-    void setMandatory(bool _mandatory)
-    {
-        this->_mandatory = _mandatory;
-    }
-    void setSplit ( bool split ) {
-      _split = split;
-    }
-    bool isSplit() const { 
-      return _split;
-    }
+    /**
+      * Returns whether this ProfControl's GuiVisibility satisfies the other GuiVisibility.
+      * 'Never' can never be satisfied - if this or the other is 'Never', the result is false.
+      * 'Custom' is always satisfied - if this or the other is 'Custom', the result is true.
+      * 'Default' for the other is always satisfied.
+      * The other 3 enum values are completely ordered as 'Simple' < 'Extended' < 'Full'.
+      * <p>
+      * For example, 'Simple' satisfies 'Full', as the simple GUI is part of the full GUI.
+      */
+    bool satisfiesVisibility(GuiVisibility vis) const;
 
 private:
     // The following are the deserialized values of _subcontrols
@@ -199,19 +120,23 @@ private:
     bool _useSubcontrolCaptureSwitch;
     bool _useSubcontrolEnum;
 
+    QString _id;
+    QString _name;
+
     // For applying custom colors
-    QString backgroundColor;
+    QString _backgroundColor;
     // For defining the switch type when it is not a standard palyback or capture switch
-    QString switchtype;
+    QString _switchtype;
 
     // show or hide (contains the GUI type: simple, extended, all)
-
-    GuiVisibility visibility;
+    GuiVisibility _visibility;
 
     bool _mandatory; // A mandatory control must be included in all GUIProfile copies
-
-    ProfControlPrivate *d;
     bool _split; // true if this widget is to show two sliders
+
+    // List of controls, e.g: "rec:1-2,recswitch"
+    // THIS IS RAW DATA AS LOADED FROM THE PROFILE. DO NOT USE IT, except for debugging.
+    QString _subcontrols;
 };
 
 
@@ -220,64 +145,44 @@ struct ProductComparator
     bool operator()(const ProfProduct*, const ProfProduct*) const;
 };
 
+
 class GUIProfile
 {
 public:
     typedef std::set<ProfProduct*, ProductComparator> ProductSet;
     typedef QList<ProfControl*> ControlSet;
 
-private:
-    static QMap<QString, GUIProfile*>& getProfiles() { return s_profiles; }
-    // Loading
-    static QString buildProfileName(Mixer* mixer, QString profileName, bool ignoreCard);
-    static QString buildReadableProfileName(Mixer* mixer, QString profileName);
-
-    static GUIProfile* loadProfileFromXMLfiles(Mixer* mixer, QString profileName);
-    static void addProfile(GUIProfile* guiprof);
-	static const QString createNormalizedFilename(const QString& profileId);
-
-	static QMap<QString, GUIProfile*> s_profiles;
-
-
 public:
     GUIProfile();
-    virtual ~GUIProfile();
+    ~GUIProfile();
 
-    static void clearCache();
-
-    bool readProfile(const QString& ref_fileNamestring);
+    bool readProfile(const QString &ref_fileNamestring);
     bool finalizeProfile() const;
     bool writeProfile();
     
-    bool isDirty() const;
-    void setDirty();
+    bool isDirty() const			{ return (_dirty); }
+    void setDirty()				{ _dirty = true; }
     
-    void setId(const QString& id);
-    QString getId() const;
-    QString getMixerId() const { return _mixerId; }
+    void setId(const QString &id)		{ _id = id; }
+    QString getId() const			{ return (_id); }
+    QString getMixerId() const			{ return (_mixerId); }
     
-    
-    unsigned long match(Mixer* mixer);
-    friend std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
-    friend QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
+    unsigned long match(const Mixer *mixer) const;
 
-
-
-    static GUIProfile* find(Mixer* mixer, QString profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
-    static GUIProfile* find(QString id);
-    static GUIProfile* selectProfileFromXMLfiles(Mixer*, QString preferredProfile);
-    static GUIProfile* fallbackProfile(Mixer*);
+    static void clearCache();
+    static GUIProfile *find(const QString &id);
+    static GUIProfile *find(const Mixer *mixer, const QString &profileName, bool profileNameIsFullyQualified, bool ignoreCardName);
+    static GUIProfile *fallbackProfile(const Mixer *mixer);
 
     // --- Getters and setters ----------------------------------------------------------------------
-    const ControlSet& getControls() const;
-    ControlSet& getControls();
-    void setControls(ControlSet& newControlSet);
+    const ControlSet &getControls() const	{ return (_controls); }
 
-    QString getName() const    {        return _name;    }
-    void setName(QString _name)    {        this->_name = _name;    }
+    void setControls(ControlSet &newControlSet);
+    void addControl(ProfControl *ctrl)		{ _controls.push_back(ctrl); }
+    void addProduct(ProfProduct *prod)		{ _products.insert(prod); }
 
-    void addProduct(ProfProduct*);
-
+    QString getName() const			{ return (_name); }
+    void setName(const QString &name)		{ _name = name; }
 
     // --- The values from the <soundcard> tag: No getters and setters for them (yet) -----------------------------
     QString _soundcardDriver;
@@ -298,8 +203,6 @@ private:
     bool _dirty;
 };
 
-std::ostream& operator<<(std::ostream& os, const GUIProfile& vol);
-QTextStream& operator<<(QTextStream &outStream, const GUIProfile& guiprof);
 
 class GUIProfileParser : public QXmlDefaultHandler
 {

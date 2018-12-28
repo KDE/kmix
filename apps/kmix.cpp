@@ -1002,11 +1002,6 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
 	if ((_actionShowMenubar == 0) || _actionShowMenubar->isChecked())
 		vflags |= ViewBase::MenuBarVisible;
-	if (GlobalConfig::instance().data.getToplevelOrientation() == Qt::Vertical)
-		vflags |= ViewBase::Horizontal;
-	else
-		vflags |= ViewBase::Vertical;
-
 	KMixerWidget *kmw = new KMixerWidget(mixer, this, vflags, guiprofId, actionCollection());
 	/* A newly added mixer will automatically added at the top
 	 * and thus the window title is also set appropriately */

@@ -94,8 +94,10 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
 
         for( int i =0; i<Mixer::mixers().count(); i++ )
         {
-            Mixer *mixer = (Mixer::mixers())[i];
-            m_cMixer->addItem( mixer->readableName() );
+            const Mixer *mixer = (Mixer::mixers())[i];
+            const shared_ptr<MixDevice> md = mixer->getLocalMasterMD();
+            const QString iconName = (md!=nullptr) ? md->iconName() : "media-playback-start";
+            m_cMixer->addItem(QIcon::fromTheme(iconName), mixer->readableName() );
          } // end for all_Mixers
         // Make the current Mixer the current item in the ComboBox
         int findIndex = m_cMixer->findText( ptr_mixer->readableName() );
@@ -164,7 +166,7 @@ void DialogAddView::createPage(Mixer *mixer)
     connect(m_listForChannelSelector, SIGNAL(itemSelectionChanged()), this, SLOT(profileSelectionChanged()));
     layout->addWidget(m_listForChannelSelector);
 
-    for( int i=0; i<viewNames.size(); ++i )
+    for (int i = 0; i<viewNames.size(); ++i)
     {
     	QString viewId = viewIds.at(i);
     	if (viewId != "default" && mixer->isDynamic())
@@ -180,6 +182,9 @@ void DialogAddView::createPage(Mixer *mixer)
         item->setText(name);
         item->setData(Qt::UserRole, viewIds.at(i));  // mixer ID as data
     }
+
+    // If there is only one option available to select, then preselect it.
+    if (m_listForChannelSelector->count()==1) m_listForChannelSelector->setCurrentRow(0);
 }
 
 

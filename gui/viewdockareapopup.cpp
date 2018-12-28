@@ -38,7 +38,6 @@
 #include "apps/kmix.h"
 #include "core/mixer.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
@@ -48,10 +47,6 @@
 // Restore volume button feature is incomplete => disabling for KDE 4.10
 #undef RESTORE_VOLUME_BUTTON
 
-QString ViewDockAreaPopup::InternedString_Star = QString("*");
-QString ViewDockAreaPopup::InternedString_Subcontrols = QString("pvolume,cvolume,pswitch,cswitch");
-ProfControl* ViewDockAreaPopup::MatchAllForSoundMenu = 0;
-//ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
 	KMixWindow *dockW) :
@@ -82,7 +77,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::View
 	{
 		// Adding all mixers, as we potentially want to show all master controls
 		addMixer(mixer);
-		// The list will be redone in _setMixSet() with the actual Mixer instances to use
+		// The list will be redone in initLayout() with the actual Mixer instances to use
 	}
 
 	restoreVolumeIcon = QIcon::fromTheme(QLatin1String("quickopen-file"));
@@ -128,13 +123,6 @@ void ViewDockAreaPopup::controlsChange(ControlManager::ChangeType changeType)
 }
 
 
-void ViewDockAreaPopup::wheelEvent ( QWheelEvent * e )
-{
-  if ( _mdws.isEmpty() )
-    return;
-}
-
-
 void ViewDockAreaPopup::configurationUpdate()
 {
 	// TODO Do we still need configurationUpdate(). It was never implemented for ViewDockAreaPopup
@@ -162,7 +150,7 @@ void ViewDockAreaPopup::resetRefs()
 	_layoutMDW = 0;
 }
 
-void ViewDockAreaPopup::_setMixSet()
+void ViewDockAreaPopup::initLayout()
 {
 	resetMdws();
 
@@ -187,7 +175,7 @@ void ViewDockAreaPopup::_setMixSet()
 Application: KMix (kmix), signal: Segmentation fault
 [...]
 #6  0x00007f9c9a282900 in QString::shared_null () from /usr/lib/x86_64-linux-gnu/libQtCore.so.4
-#7  0x00007f9c9d4286b0 in ViewDockAreaPopup::_setMixSet (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:164
+#7  0x00007f9c9d4286b0 in ViewDockAreaPopup::initLayout (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:164
 #8  0x00007f9c9d425700 in ViewBase::createDeviceWidgets (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewbase.cpp:137
 #9  0x00007f9c9d42845b in ViewDockAreaPopup::controlsChange (this=0x1272b60, changeType=2) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:91
     */
@@ -231,7 +219,7 @@ Application: KMix (kmix), signal: Segmentation fault
     setLayout(_layoutMDW);
 
 	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
-	// we have to redo the list on each _setMixSet() (instead of setting it once in the Constructor)
+	// we have to redo the list on each initLayout() (instead of setting it once in the Constructor)
 	_mixers.clear();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
@@ -295,7 +283,8 @@ Application: KMix (kmix), signal: Segmentation fault
 
 QWidget* ViewDockAreaPopup::add(shared_ptr<MixDevice> md)
 {
-  bool vertical = (GlobalConfig::instance().data.getTraypopupOrientation() == Qt::Vertical); // I am wondering whether using vflags for this would still make sense
+  const bool vertical = (orientation()==Qt::Vertical);
+
   /*
     QString dummyMatchAll("*");
     QString matchAllPlaybackAndTheCswitch("pvolume,cvolume,pswitch,cswitch");
@@ -329,24 +318,17 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
 //_layoutMDW->addItem( new QSpacerItem( 5, 5 ), row, col );
     }
     
-    if (MatchAllForSoundMenu == 0)
+    static ProfControl *MatchAllForSoundMenu = nullptr;
+    if (MatchAllForSoundMenu==nullptr)
     {
-    	// Lazy init of static member on first use
-    	MatchAllForSoundMenu = new ProfControl(ViewDockAreaPopup::InternedString_Star, ViewDockAreaPopup::InternedString_Subcontrols);
+        // Lazy init of static member on first use
+        MatchAllForSoundMenu = new ProfControl("*", "pvolume,cvolume,pswitch,cswitch");
     }
-    ProfControl *pctl = MatchAllForSoundMenu;
 
-    MixDeviceWidget *mdw = new MDWSlider(
-      md,           // only 1 device.
-      true,         // Show Mute LE
-      true,        // Show Record LED
-      true,        // Include Mixer Name
-      false,        // Small
-      vertical ? Qt::Vertical : Qt::Horizontal,
-      this,         // parent
-      this             // NOT ANYMORE!!! -> Is "NULL", so that there is no RMB-popup
-      , pctl
-   );
+    MixDeviceWidget *mdw = new MDWSlider(md,
+					 MixDeviceWidget::ShowMute|MixDeviceWidget::ShowCapture|MixDeviceWidget::ShowMixerName,
+					 this,
+					 MatchAllForSoundMenu);
     mdw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
    int sliderColumn = vertical ? _layoutMDW->columnCount() : _layoutMDW->rowCount();
    //if (sliderColumn == 1 ) sliderColumn =0;
@@ -407,15 +389,17 @@ QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
 	return profileButton;
 }
 
+
 void ViewDockAreaPopup::refreshVolumeLevels()
 {
-  foreach ( QWidget* qw, _mdws )
-  {
-    //qCDebug(KMIX_LOG) << "rvl: " << qw;
-    MixDeviceWidget* mdw = qobject_cast<MixDeviceWidget*>(qw);
-    if ( mdw != 0 ) mdw->update();
-  }
+	const int num = mixDeviceCount();
+	for (int i = 0; i<num; ++i)
+	{
+		MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(mixDeviceAt(i));
+		if (mdw!=nullptr) mdw->update();
+	}
 }
+
 
 void ViewDockAreaPopup::configureView()
 {
@@ -444,3 +428,8 @@ void ViewDockAreaPopup::showPanelSlot()
     static_cast<QWidget*>(parent())->hide();
 }
 
+
+Qt::Orientation ViewDockAreaPopup::orientationSetting() const
+{
+	return (GlobalConfig::instance().data.getTraypopupOrientation());
+}

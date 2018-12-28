@@ -131,7 +131,7 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 
 void KMixApp::newInstance(const QStringList &arguments, const QString &workingDirectory)
 {
-	qDebug();
+	qCDebug(KMIX_LOG);
 
 	/**
 	 * There are 3 cases when starting KMix:

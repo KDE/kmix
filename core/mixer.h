@@ -65,9 +65,9 @@ public:
     virtual ~Mixer();
 
     static int numDrivers();
-    QString getDriverName();
+    QString getDriverName() const;
 
-    shared_ptr<MixDevice>  find(const QString& devPK);
+    shared_ptr<MixDevice>  find(const QString& devPK) const;
     static Mixer* findMixer( const QString& mixer_id);
 
     void volumeSave( KConfig *config );
@@ -106,7 +106,7 @@ public:
      * Use this method if you need an instance-UNspecific name, e.g. for finding an appropriate
      * mixer layout for this card, or as a prefix for constructing instance specific ID's like in id().
      */
-    virtual QString getBaseName();
+    virtual QString getBaseName() const;
 
     /// Wrapper to Mixer_Backend
     QString translateKernelToWhatsthis(const QString &kernelName);
@@ -119,7 +119,7 @@ public:
       * @param ampersandQuoted @c true if '&' characters are to be quoted
       * @return the readable device name
       */
-    QString readableName(bool ampersandQuoted = false);
+    QString readableName(bool ampersandQuoted = false) const;
 
     // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
     static QString driverName(int num);
@@ -133,7 +133,7 @@ public:
     /**
      * Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
      */
-    QString& id();
+    const QString &id() const;
 
     int getCardInstance() const      {   return _mixerBackend->getCardInstance();      }
 
@@ -143,7 +143,7 @@ public:
     // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
     // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
     // Solaris: /dev/audio
-    QString& udi();
+    const QString &udi() const;
 
     // Returns a DBus path for this mixer
     // Used also by MixDevice to bind to this path
@@ -167,7 +167,7 @@ public:
     /******************************************
     The recommended master of this Mixer.
     ******************************************/
-    shared_ptr<MixDevice> getLocalMasterMD();
+    shared_ptr<MixDevice> getLocalMasterMD() const;
     void setLocalMasterMD(QString&);
 
     /// get the actual MixSet

@@ -47,15 +47,23 @@
  * SHOULD honor these values - those who do not might not be suitable for placing in
  * the panel applet or any other smallish settings.
  */
-MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
-                                 bool small, Qt::Orientation orientation,
-                                 QWidget* parent, ViewBase* view, ProfControl* par_pctl) :
-   QWidget( parent ), m_mixdevice( md ), m_view( view ), _pctl(par_pctl),
-   _orientation( orientation ), m_small( small )
-   , m_shortcutsDialog(0)
+MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl)
+    : QWidget(view),
+      m_flags(flags),
+      m_mixdevice(md),
+      m_view(view)
 {
+   setContextMenuPolicy(Qt::DefaultContextMenu);
+
+   // The control profile.  ViewSliders uses the default from the MixDevice.
+   // ViewDockAreaPopup sets a special one.
+   m_pctl = pctl;
+   if (m_pctl==nullptr) m_pctl = md->controlProfile();
+   Q_ASSERT(m_pctl!=nullptr);
+
    _mdwActions = new KActionCollection( this );
    _mdwPopupActions = new KActionCollection( this );
+   m_shortcutsDialog = nullptr;
    
    QString name (md->id());
   /* char* whatsThisChar = whatsthis.toUtf8().data();
@@ -67,10 +75,6 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md,
    if ( whatsthisText != "---") {
       setWhatsThis(whatsthisText);
    }
-}
-
-MixDeviceWidget::~MixDeviceWidget()
-{
 }
 
 void MixDeviceWidget::addActionToPopup( QAction *action )
@@ -88,6 +92,11 @@ void MixDeviceWidget::defineKeys()
    m_shortcutsDialog->configure();
 }
 
+void MixDeviceWidget::contextMenuEvent(QContextMenuEvent *ev)
+{
+    showContextMenu(ev->globalPos());
+}
+
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
 //void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
 //void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ }
@@ -98,16 +107,3 @@ void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ }
 void MixDeviceWidget::setIcons( bool ) { /* is virtual */ }
 void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ }
 void MixDeviceWidget::setMutedColors( QColor , QColor , QColor ) { /* is virtual */ }
-
-
-
-void MixDeviceWidget::mousePressEvent( QMouseEvent *e )
-{
-   if ( e->button() == Qt::RightButton )
-      showContextMenu();
-   else {
-       QWidget::mousePressEvent(e);
-   }
-}
-
-

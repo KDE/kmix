@@ -23,15 +23,11 @@
 #ifndef MDWENUM_H
 #define MDWENUM_H
 
-#include <QWidget>
-#include "core/volume.h"
-
 // KMix
 class MixDevice;
 class ViewBase;
 
 // Qt
-class QBoxLayout;
 class QComboBox;
 class QLabel;
 
@@ -42,14 +38,13 @@ class MDWEnum : public MixDeviceWidget
     Q_OBJECT
 
 public:
-    MDWEnum( shared_ptr<MixDevice> md,
-	       Qt::Orientation orientation,
-	       QWidget* parent, ViewBase* view, ProfControl* pctl);
-    ~MDWEnum();
+    MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl = nullptr);
+    virtual ~MDWEnum() = default;
 
     void addActionToPopup( QAction *action );
     QSizePolicy sizePolicy() const;
-    bool eventFilter( QObject* obj, QEvent* e ) Q_DECL_OVERRIDE;
+    int labelExtentHint() const Q_DECL_OVERRIDE;
+    void setLabelExtent(int extent) Q_DECL_OVERRIDE;
 
 public slots:
     // GUI hide and show
@@ -68,7 +63,6 @@ private:
 
     QLabel        *_label;
     QComboBox     *_enumCombo;
-    QBoxLayout    *_layout;
 };
 
 #endif

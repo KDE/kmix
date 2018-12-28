@@ -25,72 +25,84 @@
 #ifndef MIXDEVICEWIDGET_H
 #define MIXDEVICEWIDGET_H
 
-#include <QWidget>
 #include "core/mixdevice.h"
 #include "core/volume.h"
-#include <qpixmap.h>
-
+#include "gui/viewbase.h"
 
 class KActionCollection;
 class KShortcutsDialog;
 
 class MixDevice;
 class ProfControl;
-class ViewBase;
 
-class MixDeviceWidget
- : public QWidget
+class MixDeviceWidget : public QWidget
 {
-      Q_OBJECT
+    Q_OBJECT
 
 public:
-    MixDeviceWidget( shared_ptr<MixDevice> md,
-                     bool small, Qt::Orientation orientation,
-                     QWidget* parent, ViewBase*, ProfControl * );
-    virtual ~MixDeviceWidget();
+    enum MDWFlag
+    {
+        SmallSize = 0x01,
+        ShowMute = 0x02,
+        ShowCapture = 0x04,
+        ShowMixerName = 0x08
+    };
+    Q_DECLARE_FLAGS(MDWFlags, MDWFlag);
 
-    void addActionToPopup( QAction *action );
+    MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl);
+    virtual ~MixDeviceWidget() = default;
 
-    shared_ptr<MixDevice> mixDevice() { return m_mixdevice; }
+    shared_ptr<MixDevice> mixDevice() const		{ return (m_mixdevice); }
 
     virtual void setColors( QColor high, QColor low, QColor back );
     virtual void setIcons( bool value );
     virtual void setMutedColors( QColor high, QColor low, QColor back );
 
-    virtual bool isStereoLinked() const { return false; }
-    virtual void setStereoLinked( bool ) {}
-    virtual void setLabeled( bool );
-    virtual void setTicks( bool ) {}
+    virtual bool isStereoLinked() const			{ return (false); }
+    virtual void setStereoLinked(bool)			{}
+    virtual void setLabeled(bool);
+    virtual void setTicks(bool)				{}
 
+    virtual int labelExtentHint() const			{ return (0); }
+    virtual void setLabelExtent(int extent)		{ Q_UNUSED(extent); }
 
 public slots:
-    virtual void defineKeys();
-	virtual void showContextMenu( const QPoint &pos = QCursor::pos() ) = 0;
-	/**
-	 * update() is called whenever there are volume updates pending from the hardware for this MDW.
-	 */
+    /**
+      * Called whenever there are volume updates pending from the hardware for this MDW.
+      */
     virtual void update() = 0;
 
 signals:
     void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 protected slots:
-	virtual void setDisabled( bool value ) = 0;
-    void volumeChange( int );
+    virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
+    virtual void setDisabled(bool value) = 0;
+
+    virtual void defineKeys();
+    void volumeChange(int);
 
 protected:
+    void addActionToPopup(QAction *action);
+    void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
 
-      shared_ptr<MixDevice>  m_mixdevice;
+    Qt::Orientation orientation() const			{ return (m_view->orientation()); }
+    MixDeviceWidget::MDWFlags flags() const		{ return (m_flags); }
+    ViewBase *view() const				{ return (m_view); }
+    ProfControl *profileControl() const			{ return (m_pctl); }
+
+protected:
       KActionCollection*   _mdwActions;
       KActionCollection*   _mdwPopupActions;
-      ViewBase*            m_view;
-      ProfControl*         _pctl;
-      Qt::Orientation      _orientation;
-      bool                 m_small;
-      KShortcutsDialog*    m_shortcutsDialog;
 
 private:
-      void mousePressEvent( QMouseEvent *e ) Q_DECL_OVERRIDE;
+      MDWFlags m_flags;
+      shared_ptr<MixDevice>  m_mixdevice;
+      ProfControl *m_pctl;
+      ViewBase *m_view;
+      KShortcutsDialog *m_shortcutsDialog;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(MixDeviceWidget::MDWFlags);
 
 #endif

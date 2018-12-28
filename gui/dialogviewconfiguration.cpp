@@ -256,8 +256,6 @@ void DialogViewConfiguration::selectionChangedInactive()
  */
 void DialogViewConfiguration::createPage()
 {
-   QList<QWidget *> &mdws = _view._mdws;
-
    QLabel *l1 = new QLabel( i18n("Visible channels:") );
    _glayout->addWidget(l1,0,0);
       
@@ -296,14 +294,16 @@ void DialogViewConfiguration::createPage()
 
     // --- CONTROLS IN THE GRID ------------------------------------
    //QPalette::ColorRole bgRole;
-   for ( int i=0; i<mdws.count(); ++i )
-   {
+
+    const int num = _view.mixDeviceCount();
+    for (int i = 0; i<num; ++i)
+    {
+        MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(_view.mixDeviceAt(i));
+        if (mdw==nullptr) continue;
+
        //if ( i%2 == 0) bgRole = QPalette::Base; else bgRole = QPalette::AlternateBase;
-      QWidget *qw = mdws[i];
-      if ( qw->inherits("MixDeviceWidget") ) {
-            MixDeviceWidget *mdw = static_cast<MixDeviceWidget*>(qw);
             shared_ptr<MixDevice> md = mdw->mixDevice();
-            QString mdName = md->readableName();
+            const QString mdName = md->readableName();
 
             int splitted = -1;
             if ( ! md->isEnum() ) {
@@ -343,7 +343,6 @@ void DialogViewConfiguration::createPage()
             */
                 //_qLimitCB.append(0);
             /*}*/
-      } // is not enum
    } // for all MDW's
 
    
@@ -375,7 +374,7 @@ void DialogViewConfiguration::apply()
 
     // -1- Update view and profile *****************************************
    GUIProfile* prof = _view.guiProfile();
-   GUIProfile::ControlSet& oldControlset = prof->getControls();
+   const GUIProfile::ControlSet &oldControlset = prof->getControls();
    GUIProfile::ControlSet newControlset;
 
    QAbstractItemModel* model;
@@ -390,7 +389,7 @@ void DialogViewConfiguration::apply()
        if ( pctl->isMandatory() ) {
            ProfControl* newCtl = new ProfControl(*pctl);
            // The user has selected controls => mandatory controls (RegExp templates) should not been shown any longer
-           newCtl->setVisible(GuiVisibility::GuiNEVER);
+           newCtl->setVisibility(GuiVisibility::Never);
            newControlset.push_back(newCtl);
        }
    }
@@ -406,9 +405,11 @@ void DialogViewConfiguration::apply()
       ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("View Configuration Dialog"));
 }
 
-void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, GUIProfile::ControlSet& oldCtlSet, GUIProfile::ControlSet& newCtlSet)
+void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, const GUIProfile::ControlSet &oldCtlSet, GUIProfile::ControlSet &newCtlSet)
 {
-    int numRows = model->rowCount();
+    const int numRows = model->rowCount();
+    const int num = _view.mixDeviceCount();
+
     for (int row = 0; row < numRows; ++row) {
         // -1- Extract the value from the model ***************************
         QModelIndex index = model->index(row, 0);
@@ -416,14 +417,11 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
         vdci = model->data(index, Qt::ToolTipRole);   // TooltipRole stores the ID (well, thats not really clean design, but it works)
         QString ctlId = vdci.toString();
 
-
         // -2- Find the mdw, und update it **************************
-        foreach ( QWidget *qw, _view._mdws )
+        for (int i = 0; i<num; ++i)
         {
-            MixDeviceWidget *mdw = dynamic_cast<MixDeviceWidget*>(qw);
-            if ( !mdw ) {
-                continue;
-            }
+            MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(_view.mixDeviceAt(i));
+            if (mdw==nullptr) continue;
 
             if ( mdw->mixDevice()->id() == ctlId ) {
                 mdw->setVisible(isActiveView);
@@ -437,11 +435,11 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
         foreach ( ProfControl* control, oldCtlSet)
         {
             //qCDebug(KMIX_LOG) << " checking " << control->id;
-            QRegExp idRegexp(control->id);
+            QRegExp idRegexp(control->id());
             if ( ctlId.contains(idRegexp) ) {
                 // found. Create a copy
                 ProfControl* newCtl = new ProfControl(*control);
-                newCtl->id =  '^' + ctlId + '$'; // Replace the (possible generic) regexp by the actual ID
+                newCtl->setId('^' + ctlId + '$'); // Replace the (possible generic) regexp by the actual ID
                 // We have made this an an actual control. As it is derived (from e.g. ".*") it is NOT mandatory.
                 newCtl->setMandatory(false);
                 newCtl->setVisible(isActiveView);
