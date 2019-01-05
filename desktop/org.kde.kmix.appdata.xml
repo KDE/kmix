@@ -33,6 +33,7 @@
   <name xml:lang="uk">KMix</name>
   <name xml:lang="x-test">xxKMixxx</name>
   <name xml:lang="zh-CN">KMix</name>
+  <name xml:lang="zh-TW">KMix</name>
   <summary>Sound Mixer</summary>
   <summary xml:lang="ca">Mesclador de so</summary>
   <summary xml:lang="ca-valencia">Mesclador de so</summary>
@@ -63,6 +64,7 @@
   <summary xml:lang="uk">Звуковий мікшер</summary>
   <summary xml:lang="x-test">xxSound Mixerxx</summary>
   <summary xml:lang="zh-CN">混音器</summary>
+  <summary xml:lang="zh-TW">聲音混音器</summary>
   <description>
     <p>KMix is a sound channel mixer and volume control.</p>
     <p xml:lang="ca">El KMix és un mesclador de canals de so amb control del volum.</p>
@@ -94,6 +96,7 @@
     <p xml:lang="uk">KMix — мікшер звукових каналів та програма для керування гучністю відтворення.</p>
     <p xml:lang="x-test">xxKMix is a sound channel mixer and volume control.xx</p>
     <p xml:lang="zh-CN">KMix 是声道混合器和音量控制器。</p>
+    <p xml:lang="zh-TW">KMix 是款音訊混音器，也是個音量控制器。</p>
   </description>
   <url type="homepage">https://www.kde.org/applications/multimedia/kmix/</url>
   <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?product=kmix</url>
