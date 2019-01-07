@@ -38,15 +38,15 @@ class Mixer;
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
  */
 
-namespace MixerToolBox KMIXCORE_EXPORT
+namespace MixerToolBox
 {
-    QString initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
+    KMIXCORE_EXPORT QString initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
 
-    void deinitMixer();
-    bool possiblyAddMixer(Mixer *mixer);
-    void removeMixer(Mixer *mixer);
-    void setMixerIgnoreExpression(const QString &ignoreExpr);
-    QString mixerIgnoreExpression();
+    KMIXCORE_EXPORT void deinitMixer();
+    KMIXCORE_EXPORT bool possiblyAddMixer(Mixer *mixer);
+    KMIXCORE_EXPORT void removeMixer(Mixer *mixer);
+    KMIXCORE_EXPORT void setMixerIgnoreExpression(const QString &ignoreExpr);
+    KMIXCORE_EXPORT QString mixerIgnoreExpression();
 }
 
 #endif
