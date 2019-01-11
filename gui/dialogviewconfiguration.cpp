@@ -37,18 +37,27 @@
 #include "core/mixdevice.h"
 #include "core/mixer.h"
 
-DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent) :
-  QListWidgetItem(parent)
-{
-   qCDebug(KMIX_LOG) << "DialogViewConfigurationItem() default constructor";
-   refreshItem();
-}
-
-
-
-DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, QString id, bool shown, QString name, int splitted, const QString& iconName) :
+/**
+ * Standard constructor.
+ */
+DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, const QString &id, bool shown, const QString &name, int splitted, const QString& iconName) :
    QListWidgetItem(parent), _id(id), _shown(shown), _name(name), _splitted(splitted), _iconName(iconName)
 {
+  refreshItem();
+}
+
+/**
+ * Deserializing constructor.  Used for DnD.
+ */
+DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, QDataStream &s)
+    : QListWidgetItem(parent)
+{
+  s >> _id;
+  s >> _shown;
+  s >> _name;
+  s >> _splitted;
+  s >> _iconName;
+
   refreshItem();
 }
 
@@ -61,41 +70,20 @@ void DialogViewConfigurationItem::refreshItem()
   setData(Qt::DisplayRole, _name);
 }
 
-/**
- * Serializer. Used for DnD.
- */
-static QDataStream & operator<< ( QDataStream & s, const DialogViewConfigurationItem & item ) {
-    s << item._id;
-    s << item._shown;
-    s << item._name;
-    s << item._splitted;
-    s << item._iconName;
- //qCDebug(KMIX_LOG) << "<< serialize << " << s;
-    return s;
-}
 
 /**
- * Deserializer. Used for DnD.
+ * Serializer.  Used for DnD.
  */
-static QDataStream & operator>> ( QDataStream & s, DialogViewConfigurationItem & item ) {
-  QString id;
-  s >> id;
-  item._id = id;
-  bool shown;
-  s >> shown;
-  item._shown = shown;
-  QString name;
-  s >> name;
-  item._name = name;
-  int splitted;
-  s >> splitted;
-  item._splitted = splitted;
-  QString iconName;
-  s >> iconName;
-  item._iconName = iconName;
- //qCDebug(KMIX_LOG) << ">> deserialize >> " << id << name << iconName;
-  return s;
+QDataStream &DialogViewConfigurationItem::serialize(QDataStream &s) const
+{
+    s << _id;
+    s << _shown;
+    s << _name;
+    s << _splitted;
+    s << _iconName;
+    return (s);
 }
+
 
 DialogViewConfigurationWidget::DialogViewConfigurationWidget(QWidget *parent)
     : QListWidget(parent),
@@ -104,14 +92,11 @@ DialogViewConfigurationWidget::DialogViewConfigurationWidget(QWidget *parent)
     setDragDropMode(QAbstractItemView::DragDrop);
     setDropIndicatorShown(true);
     setAcceptDrops(true);
-setSelectionMode(QAbstractItemView::SingleSelection);
-setDragEnabled(true);
-viewport()->setAcceptDrops(true);
-setAlternatingRowColors(true);
-
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setDragEnabled(true);
+    viewport()->setAcceptDrops(true);
+    setAlternatingRowColors(true);
 }
-
-
 
 QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*> items) const
 {
@@ -119,14 +104,11 @@ QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*>
         return 0;
     QMimeData* mimedata = new QMimeData();
 
-    DialogViewConfigurationItem* item = 0;
     QByteArray data;
-    {
-        QDataStream stream(&data, QIODevice::WriteOnly);
-        // we only support single selection
-        item = static_cast<DialogViewConfigurationItem *>(items.first());
-        stream << *item;
-    }
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    // we only support single selection
+    DialogViewConfigurationItem* item = static_cast<DialogViewConfigurationItem *>(items.first());
+    stream << *item;
 
     bool active = isActiveList();
     mimedata->setData("application/x-kde-action-list", data);
@@ -138,15 +120,11 @@ QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*>
 bool DialogViewConfigurationWidget::dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction /*action*/)
 {
     const QByteArray data = mimeData->data("application/x-kde-action-list");
-    if (data.isEmpty())
-        return false;
-    QDataStream stream(data);
-    const bool sourceIsActiveList = mimeData->data("application/x-kde-source-treewidget") == "active";
+    if (data.isEmpty()) return false;
 
-    DialogViewConfigurationItem* item = new DialogViewConfigurationItem(0); // needs parent, use this temporarily
-    stream >> *item;
-    item->refreshItem();
-    emit dropped(this, index, item, sourceIsActiveList);
+    QDataStream stream(data);
+    DialogViewConfigurationItem* item = new DialogViewConfigurationItem(nullptr, stream);
+    emit dropped(this, index, item);
     return true;
 }
 
@@ -172,40 +150,18 @@ DialogViewConfiguration::DialogViewConfiguration(QWidget *parent, ViewBase &view
    _glayout->setMargin(0);
    layout->addLayout(_glayout);
 
-   _qlw = 0;
-   _qlwInactive = 0;
    createPage();
 }
 
 
 
 /**
- * Drop an item from one list to the other
+ * Drop an item from one list to the other.
  */
-void DialogViewConfiguration::slotDropped ( DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList )
+void DialogViewConfiguration::slotDropped(DialogViewConfigurationWidget *list, int index, DialogViewConfigurationItem *item)
 {
-//qCDebug(KMIX_LOG) << "dropped item (index" << index << "): " << item->_id << item->_shown << item->_name << item->_splitted << item->_iconName;
-
-    if ( list == _qlw ) {
-        //DialogViewConfigurationItem* after = index > 0 ? static_cast<DialogViewConfigurationItem *>(list->item(index-1)) : 0;
-
-        //qCDebug(KMIX_LOG) << "after" << after->text() << after->internalTag();
-        if ( sourceIsActiveList ) {
-            // has been dragged within the active list (moved).
-            _qlw->insertItem ( index, item );
-            //moveActive(item, after);
-        } else {
-            // dragged from the inactive list to the active list
-            _qlw->insertItem ( index, item );
-            //insertActive(item, after, true);
-        }
-    }
-    else if ( list == _qlwInactive ) {
-        // has been dragged to the inactive list -> remove from the active list.
-        //removeActive(item);
-        _qlwInactive->insertItem ( index, item );
-    }
-
+    //qCDebug(KMIX_LOG) << "dropped item (index" << index << "): " << item->_id << item->_shown << item->_name << item->_splitted << item->_iconName;
+    list->insertItem(index, item);
 }
 
 
@@ -217,37 +173,38 @@ void DialogViewConfiguration::addSpacer(int row, int col)
 }
 
 
-void DialogViewConfiguration::moveSelection(DialogViewConfigurationWidget* from, DialogViewConfigurationWidget* to)
+void DialogViewConfiguration::moveSelection(DialogViewConfigurationWidget *from, DialogViewConfigurationWidget *to)
 {
-  foreach ( QListWidgetItem* item, from->selectedItems() )
-  {
-     QListWidgetItem *clonedItem = item->clone();
-    to->addItem ( clonedItem );
-    to->setCurrentItem(clonedItem);
-    delete item;
-  }
+    const QList<QListWidgetItem *> sel = from->selectedItems();
+    from->selectionModel()->clearSelection();
+
+    foreach (QListWidgetItem *item, sel)
+    {
+        from->takeItem(from->row(item));
+        to->addItem(item);
+        to->setCurrentItem(item);
+    }
 }
 
 void DialogViewConfiguration::moveSelectionToActiveList()
 {
-  moveSelection(_qlwInactive, _qlw);
+  moveSelection(_qlwInactive, _qlwActive);
 }
 
 void DialogViewConfiguration::moveSelectionToInactiveList()
 {
-  moveSelection(_qlw, _qlwInactive);
+  moveSelection(_qlwActive, _qlwInactive);
 }
 
 void DialogViewConfiguration::selectionChangedActive()
 {
-//   bool activeIsNotEmpty = _qlw->selectedItems().isEmpty();
-  moveRightButton->setEnabled(! _qlw->selectedItems().isEmpty());
+  moveRightButton->setEnabled(!_qlwActive->selectedItems().isEmpty());
   moveLeftButton->setEnabled(false);
 }
 
 void DialogViewConfiguration::selectionChangedInactive()
 {
-  moveLeftButton->setEnabled(! _qlwInactive->selectedItems().isEmpty());
+  moveLeftButton->setEnabled(!_qlwInactive->selectedItems().isEmpty());
   moveRightButton->setEnabled(false);
 }
 
@@ -267,8 +224,7 @@ void DialogViewConfiguration::createPage()
    _qlwInactive->setDragDropMode(QAbstractItemView::DragDrop);
    _qlwInactive->setActiveList(false);
    _glayout->addWidget(_qlwInactive,1,6);
-   connect(_qlwInactive, SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
-           this  ,         SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
+   connect(_qlwInactive, &DialogViewConfigurationWidget::dropped, this, &DialogViewConfiguration::slotDropped);
    
    addSpacer(1,1);
    const QIcon& icon = QIcon::fromTheme( QLatin1String( "arrow-left" ));
@@ -276,7 +232,7 @@ void DialogViewConfiguration::createPage()
     moveLeftButton->setEnabled(false);
     moveLeftButton->setToolTip(i18n("Move the selected channel to the visible list"));
    _glayout->addWidget(moveLeftButton,1,2);
-   connect(moveLeftButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToActiveList()));
+   connect(moveLeftButton, &QPushButton::clicked, this, &DialogViewConfiguration::moveSelectionToActiveList);
    addSpacer(1,3);
 
    const QIcon& icon2 = QIcon::fromTheme( QLatin1String( "arrow-right" ));
@@ -284,13 +240,12 @@ void DialogViewConfiguration::createPage()
     moveRightButton->setEnabled(false);
     moveRightButton->setToolTip(i18n("Move the selected channel to the available (hidden) list"));
    _glayout->addWidget(moveRightButton,1,4);
-   connect(moveRightButton, SIGNAL(clicked(bool)), SLOT(moveSelectionToInactiveList()));
+   connect(moveRightButton, &QPushButton::clicked, this, &DialogViewConfiguration::moveSelectionToInactiveList);
    addSpacer(1,5);
 
-   _qlw = new DialogViewConfigurationWidget(frame);
-   _glayout->addWidget(_qlw,1,0);
-    connect(_qlw  ,     SIGNAL(dropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)),
-            this  ,       SLOT(slotDropped(DialogViewConfigurationWidget*,int,DialogViewConfigurationItem*,bool)));
+   _qlwActive = new DialogViewConfigurationWidget(frame);
+   _glayout->addWidget(_qlwActive,1,0);
+   connect(_qlwActive, &DialogViewConfigurationWidget::dropped, this, &DialogViewConfiguration::slotDropped);
 
     // --- CONTROLS IN THE GRID ------------------------------------
    //QPalette::ColorRole bgRole;
@@ -298,11 +253,11 @@ void DialogViewConfiguration::createPage()
     const int num = _view.mixDeviceCount();
     for (int i = 0; i<num; ++i)
     {
-        MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(_view.mixDeviceAt(i));
+        const MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(_view.mixDeviceAt(i));
         if (mdw==nullptr) continue;
 
        //if ( i%2 == 0) bgRole = QPalette::Base; else bgRole = QPalette::AlternateBase;
-            shared_ptr<MixDevice> md = mdw->mixDevice();
+            const shared_ptr<MixDevice> md = mdw->mixDevice();
             const QString mdName = md->readableName();
 
             int splitted = -1;
@@ -311,60 +266,23 @@ void DialogViewConfiguration::createPage()
             }
 
             //qCDebug(KMIX_LOG)  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
-            if ( mdw->isVisible() ) {
-              new DialogViewConfigurationItem(_qlw, md->id(), mdw->isVisible(), mdName, splitted, mdw->mixDevice()->iconName());
-            }
-            else {
-              new DialogViewConfigurationItem(_qlwInactive, md->id(), mdw->isVisible(), mdName, splitted, mdw->mixDevice()->iconName());
-            }
+            auto *item = new DialogViewConfigurationItem(nullptr, md->id(), true, mdName, splitted, mdw->mixDevice()->iconName());
+            if (mdw->isVisible()) _qlwActive->addItem(item);
+            else _qlwInactive->addItem(item);
+    } // for all MDW's
 
-/*
-            if ( ! md->isEnum() && ( ( md->playbackVolume().count() > 1) || ( md->captureVolume().count() > 1) ) ) {
-                cb = new QCheckBox( "", vboxForScrollView ); // split
-                cb->setBackgroundRole(bgRole);
-                cb->setAutoFillBackground(true);
-                _qSplitCB.append(cb);
-                cb->setChecked( ! mdw->isStereoLinked() );
-                grid->addWidget(cb,1+i,1);
-            }
-            else {
-                _qSplitCB.append(0);
-            }
-*/
-            /*
-            if ( ! md->isEnum() && ( md->playbackVolume().count() + md->captureVolume().count() >0 ) ) {
-                cb = new QCheckBox( "", vboxForScrollView ); // limit
-                cb->setBackgroundRole(bgRole);
-                cb->setAutoFillBackground(true);
-                _qLimitCB.append(cb);
-                grid->addWidget(cb,1+i,2);
-            }
-            else {
-            */
-                //_qLimitCB.append(0);
-            /*}*/
-   } // for all MDW's
+    connect(_qlwInactive, &QListWidget::itemSelectionChanged, this, &DialogViewConfiguration::selectionChangedInactive);
+    connect(_qlwActive, &QListWidget::itemSelectionChanged, this, &DialogViewConfiguration::selectionChangedActive);
 
-   
-      connect(_qlwInactive, SIGNAL(itemSelectionChanged()),
-           this  ,         SLOT(selectionChangedInactive()));
-      connect(_qlw, SIGNAL(itemSelectionChanged()),
-           this  ,         SLOT(selectionChangedActive()));
-
-//   scrollArea->updateGeometry();
-   updateGeometry();
-   connect(this, SIGNAL(accepted()), this, SLOT(apply()));
+    updateGeometry();
+    connect(this, &QDialog::accepted, this, &DialogViewConfiguration::apply);
 
 #ifndef QT_NO_ACCESSIBILITY
     moveLeftButton->setAccessibleName( i18n("Show the selected channel") );
     moveRightButton->setAccessibleName( i18n("Hide the selected channel") );
-    _qlw->setAccessibleName( i18n("Visible channels") );
+    _qlwActive->setAccessibleName( i18n("Visible channels") );
     _qlwInactive->setAccessibleName( i18n("Available channels") );
 #endif
-}
-
-DialogViewConfiguration::~DialogViewConfiguration()
-{
 }
 
 
@@ -378,7 +296,7 @@ void DialogViewConfiguration::apply()
    GUIProfile::ControlSet newControlset;
 
    QAbstractItemModel* model;
-   model = _qlw->model();
+   model = _qlwActive->model();
    prepareControls(model, true, oldControlset, newControlset);
    model = _qlwInactive->model();
    prepareControls(model, false, oldControlset, newControlset);

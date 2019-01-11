@@ -42,15 +42,22 @@ class QVBoxLayout;
 
 class DialogViewConfigurationItem : public QListWidgetItem
 {
- friend class QDataStream;
-
-
  public:
-    explicit DialogViewConfigurationItem( QListWidget *parent);
-    DialogViewConfigurationItem( QListWidget *parent, QString id, bool shown, QString name, int splitted, const QString& iconName );
+    DialogViewConfigurationItem(QListWidget *parent, QDataStream &s);
+    DialogViewConfigurationItem(QListWidget *parent, const QString &id, bool shown, const QString &name, int splitted, const QString &iconName);
+    ~DialogViewConfigurationItem() = default;
 
+private:
     void refreshItem();
- public:
+
+    QDataStream &serialize(QDataStream &s) const;
+    friend QDataStream &operator<<(QDataStream &s, const DialogViewConfigurationItem &item)
+    {
+        return (item.serialize(s));
+    }
+
+private:
+    // TODO: are '_shown', '_splitted' and '_iconName' actually used?
     QString _id;
     bool _shown;
     QString _name;
@@ -70,7 +77,7 @@ public:
     bool isActiveList() const { return m_activeList; };
 
  Q_SIGNALS:
-   void dropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList);
+   void dropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item);
 
 protected:
     QMimeData* mimeData(const QList<QListWidgetItem*> items) const Q_DECL_OVERRIDE;
@@ -103,13 +110,13 @@ class DialogViewConfiguration : public DialogBase
     Q_OBJECT
  public:
     DialogViewConfiguration(QWidget* parent, ViewBase& view);
-    ~DialogViewConfiguration();
+    virtual ~DialogViewConfiguration() = default;
 
  public slots:
     void apply();
  
  private slots:
-   void slotDropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item, bool sourceIsActiveList );
+   void slotDropped(DialogViewConfigurationWidget *list, int index, DialogViewConfigurationItem *item);
 
    void moveSelectionToActiveList();
    void moveSelectionToInactiveList();
@@ -128,7 +135,7 @@ class DialogViewConfiguration : public DialogBase
     QPushButton* moveLeftButton;
     QPushButton* moveRightButton;
 
-    DialogViewConfigurationWidget *_qlw;
+    DialogViewConfigurationWidget *_qlwActive;
     DialogViewConfigurationWidget *_qlwInactive;
 };
 
