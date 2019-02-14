@@ -21,6 +21,7 @@
 #include "gui/guiprofile.h"
 
 // Qt
+#include <QDir>
 #include <QSaveFile>
 #include <QXmlStreamWriter>
 #include <QXmlSimpleReader>
@@ -31,6 +32,7 @@
 
 
 QMap<QString, GUIProfile *> s_profiles;
+const QString s_profileDir("profiles");
 
 
 static QString visibilityToString(GuiVisibility vis)
@@ -179,9 +181,7 @@ static QString createNormalizedFilename(const QString &profileId)
 	QString profileIdNormalized(profileId);
 	profileIdNormalized.replace(':', '.');
 
-	QString fileName("profiles/");
-	fileName = fileName + profileIdNormalized + ".xml";
-	return fileName;
+	return profileIdNormalized + ".xml";
 }
 
 
@@ -193,7 +193,7 @@ static QString createNormalizedFilename(const QString &profileId)
 static GUIProfile *loadProfileFromXMLfiles(const Mixer *mixer, const QString &profileName)
 {
     GUIProfile* guiprof = nullptr;
-    QString fileName = createNormalizedFilename(profileName);
+    QString fileName = s_profileDir + '/' + createNormalizedFilename(profileName);
     QString fileNameFQ = QStandardPaths::locate(QStandardPaths::DataLocation, fileName );
 
     if ( ! fileNameFQ.isEmpty() ) {
@@ -373,8 +373,12 @@ bool GUIProfile::readProfile(const QString &ref_fileName)
 bool GUIProfile::writeProfile()
 {
    QString profileId = getId();
+   QDir profileDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + '/' + s_profileDir);
    QString fileName = createNormalizedFilename(profileId);
-   QString fileNameFQ = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + '/' + fileName;
+   QString fileNameFQ = profileDir.filePath(fileName);
+
+   if (!profileDir.exists())
+       profileDir.mkpath(".");
 
    qCDebug(KMIX_LOG) << "Write profile" << fileNameFQ;
    QSaveFile f(fileNameFQ);
