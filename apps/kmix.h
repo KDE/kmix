@@ -119,7 +119,6 @@ private:
    KMixDockWidget *m_dockWidget;
    DialogSelectMaster *m_dsm;
 
-   QString m_hwInfoString;
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
    QLabel      *m_errorLabel;
@@ -139,7 +138,6 @@ private:
 	void updateTabsClosable();
 
   private slots:
-   void slotHWInfo();
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
 

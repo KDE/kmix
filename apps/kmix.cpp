@@ -89,7 +89,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	initWidgets();
 	initPrefDlg();
 	DBusMixSetWrapper::initialize(this, QStringLiteral("/Mixers"));
-	m_hwInfoString = MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
+	MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
 	KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
 	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
@@ -181,10 +181,6 @@ void KMixWindow::initActions()
 	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
 	action->setText(i18n("Audio Setup..."));
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
-
-	action = actionCollection()->addAction(QStringLiteral("hwinfo"));
-	action->setText(i18n("Hardware &Information"));
-	connect(action, SIGNAL(triggered(bool)), SLOT(slotHWInfo()));
 
 	action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
 	action->setText(i18n("Hide Mixer Window"));
@@ -1227,11 +1223,6 @@ void KMixWindow::applyPrefs()
 void KMixWindow::toggleMenuBar()
 {
 	menuBar()->setVisible(_actionShowMenubar->isChecked());
-}
-
-void KMixWindow::slotHWInfo()
-{
-	KMessageBox::information(0, m_hwInfoString, i18n("Mixer Hardware Information"));
 }
 
 void KMixWindow::slotKdeAudioSetupExec()
