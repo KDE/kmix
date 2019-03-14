@@ -124,12 +124,12 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
 {
     _artificial = false;
     _applicationStream = false;
-    _dbusControlWrapper = 0; // will be set in addToPool()
+    _dbusControlWrapper = nullptr;			// will be set in addToPool()
     _mixer = mixer;
     _id = id;
     _enumCurrentId = 0;
 
-    mediaController = new MediaController(_id);
+    _mediaController = new MediaController(_id);
     if( name.isEmpty() )
         _name = i18n("unknown");
     else
@@ -158,13 +158,7 @@ void MixDevice::init(  Mixer* mixer, const QString& id, const QString& name, con
 void MixDevice::close()
 {
 	delete _dbusControlWrapper;
-	_dbusControlWrapper = 0;
-}
-
-
-MediaController* MixDevice::getMediaController()
-{
-	return mediaController;
+	_dbusControlWrapper = nullptr;
 }
 
 
@@ -174,7 +168,7 @@ shared_ptr<MixDevice> MixDevice::addToPool()
     shared_ptr<MixDevice> thisSharedPtr(this);
     //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
     _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
-	return thisSharedPtr;
+    return (thisSharedPtr);
 }
 
 
@@ -190,7 +184,7 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 //	bool debugme =  id() == "PCM:0" ;
 	if (volumeType & Volume::Playback)
 	{
-		Volume& volP = playbackVolume();
+		Volume &volP = playbackVolume();
 		long inc = volP.volumeStep(decrease);
 
 		if (debugme)
@@ -227,7 +221,7 @@ void MixDevice::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
  * @param Prefix of the group, e.g. "View_ALSA_USB_01"
  * @returns The config group name in the format "prefix.mixerId.controlId"
  */
-QString MixDevice::configGroupName(QString prefix)
+QString MixDevice::configGroupName(QString prefix) const
 {
 	 QString devgrp = QString("%1.%2.%3").arg(prefix, mixer()->id(), id());
 	 return devgrp;
@@ -237,7 +231,7 @@ QString MixDevice::configGroupName(QString prefix)
  * Returns a fully qualified id of this control, as a String in the form "controlId@mixerId"
  * @return
  */
-QString MixDevice::getFullyQualifiedId()
+QString MixDevice::fullyQualifiedId() const
 {
 	QString fqId = QString("%1@%2").arg(_id, _mixer->id());
 	return fqId;
@@ -284,19 +278,8 @@ MixDevice::~MixDevice()
 {
     _enumValues.clear(); // The QString's inside will be auto-deleted, as they get unref'ed
     delete _dbusControlWrapper;
-    delete mediaController;
+    delete _mediaController;
 }
-
-Volume& MixDevice::playbackVolume()
-{
-    return _playbackVolume;
-}
-
-Volume& MixDevice::captureVolume()
-{
-    return _captureVolume;
-}
-
 
 void MixDevice::setEnumId(int enumId)
 {
@@ -305,16 +288,8 @@ void MixDevice::setEnumId(int enumId)
    }
 }
 
-unsigned int MixDevice::enumId()
+const QString MixDevice::dbusPath() const
 {
-   return _enumCurrentId;
-}
-
-const QString& MixDevice::id() const {
-   return _id;
-}
-
-const QString MixDevice::dbusPath() {
    QString controlPath = _id;
    controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
    controlPath.replace(QLatin1String("//"), QLatin1String("/"));
@@ -324,43 +299,32 @@ const QString MixDevice::dbusPath() {
 	   controlPath.chop(1);
    }
 
-   return _mixer->dbusPath() + '/' + controlPath;
+   return (_mixer->dbusPath()+'/'+controlPath);
 }
 
 
-bool MixDevice::isMuted()                  { return ! _playbackVolume.isSwitchActivated(); }
-/**
- * Returns whether this MixDevice is virtually muted. Only MixDevice objects w/o a physical switch can be muted virtually.
- */
-bool MixDevice::isVirtuallyMuted()
-{
-	return !hasPhysicalMuteSwitch() && isMuted();
-}
-void MixDevice::setMuted(bool mute)        { _playbackVolume.setSwitch(!mute); }
-void MixDevice::toggleMute()               { setMuted( _playbackVolume.isSwitchActivated()); }
-bool MixDevice::hasMuteSwitch()            { return playbackVolume().hasVolume() || playbackVolume().hasSwitch(); }
-bool MixDevice::hasPhysicalMuteSwitch()    { return playbackVolume().hasSwitch(); }
-bool MixDevice::isRecSource()              { return ( _captureVolume.hasSwitch() &&  _captureVolume.isSwitchActivated() ); }
-bool MixDevice::isNotRecSource()           { return ( _captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated() ); }
-void MixDevice::setRecSource(bool value)   { _captureVolume.setSwitch( value ); }
-bool MixDevice::isEnum()                   { return ( ! _enumValues.empty() ); }
+bool MixDevice::isMuted() const			{ return (!_playbackVolume.isSwitchActivated()); }
+bool MixDevice::isVirtuallyMuted() const	{ return (!hasPhysicalMuteSwitch() && isMuted()); }
+void MixDevice::setMuted(bool mute)		{ _playbackVolume.setSwitch(!mute); }
+void MixDevice::toggleMute()			{ setMuted( _playbackVolume.isSwitchActivated()); }
 
-int MixDevice::mediaPlay() { return mixer()->mediaPlay(_id); }
-int MixDevice::mediaPrev() { return mixer()->mediaPrev(_id); }
-int MixDevice::mediaNext() { return mixer()->mediaNext(_id); }
+bool MixDevice::hasMuteSwitch() const		{ return (_playbackVolume.hasVolume() || _playbackVolume.hasSwitch()); }
+bool MixDevice::hasPhysicalMuteSwitch() const	{ return (_playbackVolume.hasSwitch()); }
+
+bool MixDevice::isRecSource() const		{ return (_captureVolume.hasSwitch() && _captureVolume.isSwitchActivated()); }
+bool MixDevice::isNotRecSource() const		{ return (_captureVolume.hasSwitch() && !_captureVolume.isSwitchActivated()); }
+void MixDevice::setRecSource(bool value)	{ _captureVolume.setSwitch( value ); }
+
+bool MixDevice::isEnum() const			{ return (!_enumValues.isEmpty()); }
+
+int MixDevice::mediaPlay()			{ return (mixer()->mediaPlay(_id)); }
+int MixDevice::mediaPrev()			{ return (mixer()->mediaPrev(_id)); }
+int MixDevice::mediaNext()			{ return (mixer()->mediaNext(_id)); }
+
 
 bool MixDevice::operator==(const MixDevice& other) const
 {
    return ( _id == other._id );
-}
-
-void MixDevice::setControlProfile(ProfControl* control)
-{
-    _profControl = control;
-}
-
-ProfControl* MixDevice::controlProfile() {
-    return _profControl;
 }
 
 /**
@@ -370,7 +334,7 @@ ProfControl* MixDevice::controlProfile() {
  * because we need to read the minimum and maximum volume levels.
  * (Another solution would be to "equip" volFromConfig with maxInt and minInt values).
  */
-bool MixDevice::read( KConfig *config, const QString& grp )
+bool MixDevice::read(const KConfig *config, const QString &grp)
 {
     if ( _mixer->isDynamic() || isArtificial() ) {
         qCDebug(KMIX_LOG) << "MixDevice::read(): This MixDevice does not permit volume restoration (i.e. because it is handled lower down in the audio stack). Ignoring.";
@@ -378,7 +342,7 @@ bool MixDevice::read( KConfig *config, const QString& grp )
     }
 
     QString devgrp = QString("%1.Dev%2").arg(grp, _id);
-    KConfigGroup cg = config->group( devgrp );
+    const KConfigGroup cg = config->group( devgrp );
     //qCDebug(KMIX_LOG) << "MixDevice::read() of group devgrp=" << devgrp;
 
     readPlaybackOrCapture(cg, false);
@@ -415,7 +379,7 @@ void MixDevice::readPlaybackOrCapture(const KConfigGroup& config, bool capture)
 /**
  *  called on "kmixctrl --save" and from the GUI's (currently only on exit)
  */
-bool MixDevice::write( KConfig *config, const QString& grp )
+bool MixDevice::write(KConfig *config, const QString &grp)
 {
     if (_mixer->isDynamic() || isArtificial()) {
 //        qCDebug(KMIX_LOG) << "MixDevice::write(): This MixDevice does not permit volume saving (i.e. because it is handled lower down in the audio stack). Ignoring.";
@@ -427,14 +391,12 @@ bool MixDevice::write( KConfig *config, const QString& grp )
     // qCDebug(KMIX_LOG) << "MixDevice::write() of group devgrp=" << devgrp;
 
     writePlaybackOrCapture(cg, false);
-    writePlaybackOrCapture(cg, true );
+    writePlaybackOrCapture(cg, true);
 
-    cg.writeEntry("is_muted" , isMuted() );
-    cg.writeEntry("is_recsrc", isRecSource() );
+    cg.writeEntry("is_muted" , isMuted());
+    cg.writeEntry("is_recsrc", isRecSource());
     cg.writeEntry("name", _name);
-    if ( isEnum() ) {
-        cg.writeEntry("enum_id", enumId() );
-    }
+    if (isEnum()) cg.writeEntry("enum_id", enumId());
     return true;
 }
 
@@ -457,20 +419,16 @@ QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)
 
 /**
  * Returns the playback volume level in percent. If the volume is muted, 0 is returned.
- * If the given MixDevice contains no playback volume, the capture volume isd used
+ * If the given MixDevice contains no playback volume, the capture volume is used
  * instead, and 0 is returned if capturing is disabled for the given MixDevice.
  *
  * @returns The volume level in percent
  */
-int MixDevice::getUserfriendlyVolumeLevel()
+int MixDevice::userVolumeLevel() const
 {
-	MixDevice* md = this;
-	bool usePlayback = md->playbackVolume().hasVolume();
-	Volume& vol = usePlayback ? md->playbackVolume() : md->captureVolume();
-	bool isActive = usePlayback ? !md->isMuted() : md->isRecSource();
+	bool usePlayback = _playbackVolume.hasVolume();
+	const Volume &vol = usePlayback ? _playbackVolume : _captureVolume;
+	bool isActive = usePlayback ? !isMuted() : isRecSource();
 	int val = isActive ? vol.getAvgVolumePercent(Volume::MALL) : 0;
-	return val;
+	return (val);
 }
-
-
-

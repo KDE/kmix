@@ -52,9 +52,9 @@ MixDeviceComposite::~MixDeviceComposite()
 
 
 
-Volume& MixDeviceComposite::playbackVolume()
+Volume &MixDeviceComposite::playbackVolume()
 {
-    return *_compositePlaybackVolume;
+    return (*_compositePlaybackVolume);
 }
 
 // Volume& MixDeviceComposite::captureVolume()
@@ -98,7 +98,7 @@ long MixDeviceComposite::calculateVolume(Volume::VolumeType vt)
 }
 
 
-bool MixDeviceComposite::isMuted()
+bool MixDeviceComposite::isMuted() const
 {
     bool isMuted = false;
     QListIterator<shared_ptr<MixDevice> > it(_mds);
@@ -121,7 +121,7 @@ void MixDeviceComposite::setMuted(bool value)
     }
 }
 
-bool MixDeviceComposite::isRecSource()
+bool MixDeviceComposite::isRecSource() const
 {
     bool isRecSource = false;
     QListIterator<shared_ptr<MixDevice> > it(_mds);
@@ -144,7 +144,7 @@ void MixDeviceComposite::setRecSource(bool value)
 }
 
 
-bool MixDeviceComposite::isEnum()
+bool MixDeviceComposite::isEnum() const
 {
     bool isEnum = true;
     QListIterator<shared_ptr<MixDevice> > it(_mds);

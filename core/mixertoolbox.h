@@ -40,7 +40,7 @@ class Mixer;
 
 namespace MixerToolBox
 {
-    KMIXCORE_EXPORT QString initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
+    KMIXCORE_EXPORT void initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
 
     KMIXCORE_EXPORT void deinitMixer();
     KMIXCORE_EXPORT bool possiblyAddMixer(Mixer *mixer);

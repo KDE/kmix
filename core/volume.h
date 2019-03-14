@@ -34,10 +34,9 @@ class VolumeChannel;
 
 class KMIXCORE_EXPORT Volume
 {
+    friend class MixDevice;
 
-friend class MixDevice;
-
- public:
+public:
     // Channel definition:
     // For example a 2.0 system just has MLEFT and MRIGHT.
     // A 5.1 system adds MCENTER, MWOOFER, MSURROUNDLEFT and MSURROUNDRIGHT.
@@ -95,7 +94,7 @@ friend class MixDevice;
     // Set all volumes as given by vol
     void setAllVolumes(long vol);
     // Set all volumes to the ones given in vol
-//     void setVolume(const Volume &vol );
+    //void setVolume(const Volume &vol );
     // Set volumes as specified by the channel mask
     //void setVolume( const Volume &vol, ChannelMask chmask);
     void setVolume( ChannelID chid, long volume);
@@ -103,42 +102,38 @@ friend class MixDevice;
     // Increase or decrease all volumes by step
     void changeAllVolumes( long step );
     
-    long getVolume(ChannelID chid);
-    long getVolumeForGUI(ChannelID chid);
-    qreal getAvgVolume(ChannelMask chmask);
-    int getAvgVolumePercent(ChannelMask chmask);
+    long getVolume(ChannelID chid) const;
+    long getVolumeForGUI(ChannelID chid) const;
+    qreal getAvgVolume(ChannelMask chmask) const;
+    int getAvgVolumePercent(ChannelMask chmask) const;
 
     //long operator[](int);
-    long maxVolume();
-    long minVolume();
+    long maxVolume() const				{ return (_maxVolume); }
+    long minVolume() const				{ return (_minVolume); }
+
     /**
-     * The number of valid volume levels, mathematically: maxVolume - minVolume + 1
+     * The number of valid volume levels
      */
-    long volumeSpan();
-    int  count();
-    
-    bool hasSwitch() const
-    {
-    	return _hasSwitch;
-    };
-    bool hasVolume() const          { return (_maxVolume != _minVolume); }
+    long volumeSpan() const				{ return (_maxVolume-_minVolume+1); }
+
+    int count() const					{ return (getVolumes().count()); }
+    bool hasSwitch() const				{ return (_hasSwitch); }
+    bool hasVolume() const				{ return (_maxVolume!=_minVolume); }
+
     /**
      * Returns whether this is a playback or capture volume.
      *
      * @return true, if it is a capture volume
      */
-    bool isCapture() const
-    {
-    	return _isCapture;
-    }
+    bool isCapture() const				{ return (_isCapture); }
     
-   // Some playback switches control playback, and some are special.
-   // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
-   // It is only used for GUI things, like showing a "Mute" text or tooltip
-   // Capture is not really used, and has only been added for completeness and future extensibility.
-   enum SwitchType { None, PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
-   void setSwitchType(SwitchType type) { _switchType = type; }
-   Volume::SwitchType switchType() { return _switchType; }
+    // Some playback switches control playback, and some are special.
+    // ALSA doesn't differentiate between playback, OnOff and special, so users can add this information in the profile.
+    // It is only used for GUI things, like showing a "Mute" text or tooltip
+    // Capture is not really used, and has only been added for completeness and future extensibility.
+    enum SwitchType { None, PlaybackSwitch, CaptureSwitch, OnSwitch, OffSwitch, SpecialSwitch };
+    void setSwitchType(SwitchType type)			{ _switchType = type; }
+    Volume::SwitchType switchType() const		{ return (_switchType); }
 
     friend std::ostream& operator<<(std::ostream& os, const Volume& vol);
     friend QDebug operator<<(QDebug os, const Volume& vol);
@@ -147,8 +142,8 @@ friend class MixDevice;
     // access it, when private. Strange, as operator<<() is declared friend.
     QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
     QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
-    long volumeStep(bool decrease);
-    
+    long volumeStep(bool decrease) const;
+
     static float VOLUME_STEP_DIVISOR;     // The divisor for defining volume control steps (for mouse-wheel, DBUS and Normal step for Sliders )
     static float VOLUME_PAGESTEP_DIVISOR; // The divisor for defining volume control steps (page-step for sliders)
 
@@ -182,19 +177,20 @@ private:
     bool _isCapture;
 };
 
+
 class KMIXCORE_EXPORT VolumeChannel
 {  
 public:
-  VolumeChannel();
-  /**
-   * Construct a channel for the given channel id.
-   *
-   * @param chid
-   */
-  VolumeChannel(Volume::ChannelID chid);
+    VolumeChannel();
+    /**
+     * Construct a channel for the given channel id.
+     *
+     * @param chid
+     */
+    VolumeChannel(Volume::ChannelID chid);
 
-  long volume;
-  Volume::ChannelID chid;
+    long volume;
+    Volume::ChannelID chid;
 };
 
 std::ostream& operator<<(std::ostream& os, const Volume& vol);

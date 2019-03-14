@@ -63,7 +63,7 @@ class DBusControlWrapper;
  */
 class KMIXCORE_EXPORT MixDevice : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     // For each ChannelType a special icon exists
@@ -123,50 +123,49 @@ public:
     *  @par name is the readable name. This one is presented to the user in the GUI
     *  @par type The control type. It is only used to find an appropriate icon
     */
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, ChannelType type );
-   MixDevice( Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = 0 );
-   ~MixDevice();
+   MixDevice(Mixer* mixer, const QString& id, const QString& name, ChannelType type );
+   MixDevice(Mixer* mixer, const QString& id, const QString& name, const QString& iconName = "", MixSet* moveDestinationMixSet = nullptr);
+   virtual ~MixDevice();
 
    void close();
 
    shared_ptr<MixDevice> addToPool();
 
-   const QString& iconName() const { return _iconName; }
+   const QString &iconName() const			{ return (_iconName); }
 
    void addPlaybackVolume(Volume &playbackVol);
    void addCaptureVolume (Volume &captureVol);
-   void addEnums (QList<QString*>& ref_enumList);
+   void addEnums(QList<QString*>& ref_enumList);
    
    // Media controls. New for KMix 4.0
-   MediaController* getMediaController();
+   MediaController* mediaController() const		{ return (_mediaController); }
    // TODO move all media player controls to the MediaController class
    int mediaPlay();
    int mediaPrev();
    int mediaNext();
 
    // Returns a user readable name of the control.
-   QString   readableName()         { return _name; }
+   QString readableName() const				{ return (_name); }
    // Sets a user readable name for the control.
-   void      setReadableName(const QString &name)      { _name = name; }
+   void setReadableName(const QString &name)		{ _name = name; }
 
-   QString configGroupName(QString prefix);
+   QString configGroupName(QString prefix) const;
 
    /**
     * Returns an ID of this MixDevice, as passed in the constructor. The Creator (normally the backend) 
     * MUST ensure that all MixDevices's of one card have unique ID's.
     * The ID is used through the whole KMix application (including the config file) for identifying controls.
     */
- 
-   const QString& id() const;
-   QString getFullyQualifiedId();
+   const QString &id() const				{ return (_id); }
+   QString fullyQualifiedId() const;
 
    /**
     * Returns the DBus path for this MixDevice
     */
-   const QString dbusPath();
+   const QString dbusPath() const;
 
    // Returns the associated mixer
-   Mixer* mixer() { return _mixer; }
+   Mixer *mixer() const					{ return (_mixer); }
 
    // operator==() is used currently only for duplicate detection with QList's contains() method
    bool operator==(const MixDevice& other) const;
@@ -174,57 +173,49 @@ public:
    // Methods for handling the switches. This methods are useful, because the Switch in the Volume object
    // is an abstract concept. It places no interpretation on the meaning of the switch (e.g. does "switch set" mean
    // "mute on", or does it mean "playback on", or "Capture active", or ...
-   virtual bool isMuted();
-   virtual bool isVirtuallyMuted();
+   virtual bool isMuted() const;
    virtual void setMuted(bool value);
-   virtual bool hasMuteSwitch();
+   virtual bool hasMuteSwitch() const;
    virtual void toggleMute();
-   virtual bool isRecSource();
-   virtual bool isNotRecSource();
+   virtual bool isRecSource() const;
+   virtual bool isNotRecSource() const;
    virtual void setRecSource(bool value);
-   virtual bool isEnum();
+   virtual bool isEnum() const;
+   /**
+    * Returns whether this MixDevice is virtually muted.
+    * Only MixDevice objects w/o a physical switch can be muted virtually.
+    */
+   virtual bool isVirtuallyMuted() const;
    /**
     * Returns whether this is an application stream.
     */
-   virtual bool isApplicationStream() const { return _applicationStream; };
+   virtual bool isApplicationStream() const		{ return (_applicationStream); }
    /**
     * Mark this MixDevice as application stream
     */
-    void setApplicationStream(bool applicationStream) { _applicationStream = applicationStream; }
+   void setApplicationStream(bool applicationStream)	{ _applicationStream = applicationStream; }
    
-   bool isMovable() const
-   {
-       return (0 != _moveDestinationMixSet);
-   }
-   MixSet *getMoveDestinationMixSet() const
-   {
-       return _moveDestinationMixSet;
-   }
+   bool isMovable() const				{ return (_moveDestinationMixSet!=nullptr); }
+   MixSet *moveDestinationMixSet() const		{ return (_moveDestinationMixSet); }
 
-   bool isArtificial()  const
-   {
-       return _artificial;
-   }
-   void setArtificial(bool artificial)
-   {
-       _artificial = artificial;
-   }
+   bool isArtificial() const				{ return (_artificial); }
+   void setArtificial(bool artificial)			{ _artificial = artificial; }
 
-   void setControlProfile(ProfControl* control);
-   ProfControl* controlProfile();
+   void setControlProfile(ProfControl *control)		{ _profControl = control; }
+   ProfControl* controlProfile() const 			{ return (_profControl); }
    
-   virtual Volume& playbackVolume();
-   virtual Volume& captureVolume();
+   virtual Volume &playbackVolume()			{ return (_playbackVolume); }
+   virtual Volume &captureVolume()			{ return (_captureVolume); }
 
    void setEnumId(int);
-   unsigned int enumId();
+   unsigned int enumId() const				{ return (_enumCurrentId); }
    const QStringList &enumValues() const		{ return (_enumValues); }
 
-   bool hasPhysicalMuteSwitch();
+   bool hasPhysicalMuteSwitch() const;
    
-   bool read( KConfig *config, const QString& grp );
-   bool write( KConfig *config, const QString& grp );
-   int getUserfriendlyVolumeLevel();
+   bool read(const KConfig *config, const QString &grp);
+   bool write(KConfig *config, const QString &grp);
+   int userVolumeLevel() const;
 
    void increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag volumeType);
 
@@ -232,7 +223,8 @@ protected:
    void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet );
 
 private:
-  QString getVolString(Volume::ChannelID chid, bool capture);
+   QString getVolString(Volume::ChannelID chid, bool capture);
+
    Mixer *_mixer;
    Volume _playbackVolume;
    Volume _captureVolume;
@@ -240,7 +232,7 @@ private:
    QStringList _enumValues; // A MixDevice, that is an ENUM, has these _enumValues
 
    DBusControlWrapper *_dbusControlWrapper;
-   MediaController* mediaController;
+   MediaController* _mediaController;
 
    // A virtual control. It will not be saved/restored and/or doesn't get shortcuts
    // Actually we discriminate those "virtual" controls in artificial controls and dynamic controls:

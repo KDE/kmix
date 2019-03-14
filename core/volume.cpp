@@ -179,7 +179,7 @@ QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
  * @return The volume step. It will be negative if you have used decrease==true
  *
  */
-long Volume::volumeStep(bool decrease)
+long Volume::volumeStep(bool decrease) const
 {
   	long inc = volumeSpan() / Volume::VOLUME_STEP_DIVISOR;
 	if ( inc == 0 )	inc = 1;
@@ -271,22 +271,11 @@ void Volume::setVolume( ChannelID chid, long vol)
 //      }
   }
 
-long Volume::maxVolume() {
-	return _maxVolume;
-}
-
-long Volume::minVolume() {
-	return _minVolume;
-}
-
-long Volume::volumeSpan() {
-	return _maxVolume - _minVolume + 1;
-}
 
 /**
  * Returns the volume of the given channel.
  */
-long Volume::getVolume(ChannelID chid)
+long Volume::getVolume(ChannelID chid) const
 {
 	return _volumesL.value(chid).volume;
 }
@@ -294,7 +283,7 @@ long Volume::getVolume(ChannelID chid)
 /**
  * Returns the volume of the given channel. If this Volume is inactive (switched off), 0 is returned.
  */
-long Volume::getVolumeForGUI(ChannelID chid)
+long Volume::getVolumeForGUI(ChannelID chid) const
 {
 	if (! isSwitchActivated() )
 		return 0;
@@ -302,7 +291,7 @@ long Volume::getVolumeForGUI(ChannelID chid)
 	return _volumesL.value(chid).volume;
 }
 
-qreal Volume::getAvgVolume(ChannelMask chmask)
+qreal Volume::getAvgVolume(ChannelMask chmask) const
 {
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
@@ -324,7 +313,7 @@ qreal Volume::getAvgVolume(ChannelMask chmask)
 }
 
 
-int Volume::getAvgVolumePercent(ChannelMask chmask)
+int Volume::getAvgVolumePercent(ChannelMask chmask) const
 {
 	qreal volume = getAvgVolume(chmask);
 	// min=-100, max=200 => volSpan = 301
@@ -336,10 +325,6 @@ int Volume::getAvgVolumePercent(ChannelMask chmask)
 	//qCDebug(KMIX_LOG) << "volSpan=" << volSpan << ", volume=" << volume << ", volShiftedToPositive=" << volShiftedToZero << ", percent=" << percent;
 
 	return percent;
-}
-
-int Volume::count() {
-	return getVolumes().count();
 }
 
 /**

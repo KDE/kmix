@@ -136,7 +136,7 @@ int Mixer_MPRIS2::readVolumeFromHW( const QString& /*id*/, shared_ptr<MixDevice>
 void Mixer_MPRIS2::playbackStateChanged(MPrisControl* mad, MediaController::PlayState playState)
 {
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
-	md->getMediaController()->setPlayState(playState);
+	md->mediaController()->setPlayState(playState);
 	QMetaObject::invokeMethod(this, "announceGUI", Qt::QueuedConnection);
 //	ControlManager::instance().announce(_mixer->id(), ControlManager::GUI, QString("MixerMPRIS2.playbackStateChanged"));
 }
@@ -496,7 +496,7 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 		// Thus we won't add the playback switch
 		Volume* vol = new Volume( 100, 0, false, false);
 		vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
-		MediaController* mediaContoller = mdNew->getMediaController();
+		MediaController* mediaContoller = mdNew->mediaController();
 		mediaContoller->addMediaPlayControl();
 		mediaContoller->addMediaNextControl();
 		mediaContoller->addMediaPrevControl();

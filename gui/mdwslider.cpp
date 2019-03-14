@@ -333,7 +333,7 @@ void MDWSlider::createWidgets()
 	const bool wantsCaptureLED = includeCapture && (flags() & MixDeviceWidget::ShowCapture);
 	const bool wantsMuteButton = includePlayback && (flags() & MixDeviceWidget::ShowMute);
 	
-	const MediaController *mediaController = mixDevice()->getMediaController();
+	const MediaController *mediaController = mixDevice()->mediaController();
 	const bool wantsMediaControls = mediaController->hasControls();
 
 	const QString channelName = mixDevice()->readableName();
@@ -527,7 +527,7 @@ QString MDWSlider::calculatePlaybackIcon(MediaController::PlayState playState)
 
 void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 {
-	MediaController* mediaController =  mixDevice()->getMediaController();
+	MediaController *mediaController =  mixDevice()->mediaController();
 
 	QBoxLayout *mediaLayout;
 	if (orientation()==Qt::Vertical) mediaLayout = new QVBoxLayout();
@@ -581,7 +581,7 @@ void MDWSlider::updateMediaButton()
 	if (m_mediaPlayButton == 0)
 		return; // has no media button
 
-	MediaController* mediaController =  mixDevice()->getMediaController();
+	MediaController *mediaController =  mixDevice()->mediaController();
 	QString mediaIconName = calculatePlaybackIcon(mediaController->getPlayState());
 	ToggleToolButton::setIndicatorIcon(mediaIconName, m_mediaPlayButton);
 }
@@ -1124,8 +1124,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	menu->addSection( SmallIcon( "kmix" ), mixDevice()->readableName() );
 
 	if (m_moveMenu) {
-		MixSet *ms = mixDevice()->getMoveDestinationMixSet();
-		Q_ASSERT(ms);
+		MixSet *ms = mixDevice()->moveDestinationMixSet();
+		Q_ASSERT(ms!=nullptr);
 
 		m_moveMenu->setEnabled((ms->count() > 1));
 		menu->addMenu( m_moveMenu );
@@ -1175,8 +1175,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 
 void MDWSlider::showMoveMenu()
 {
-    MixSet *ms = mixDevice()->getMoveDestinationMixSet();
-    Q_ASSERT(ms);
+    MixSet *ms = mixDevice()->moveDestinationMixSet();
+    Q_ASSERT(ms!=nullptr);
 
     _mdwMoveActions->clear();
     m_moveMenu->clear();

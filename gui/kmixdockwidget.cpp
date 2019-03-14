@@ -201,7 +201,7 @@ KMixDockWidget::setVolumeTip()
     {
         // Playback volume will be used for the DockIcon if available.
         // This heuristic is "good enough" for the DockIcon for now.
-        int val = md->getUserfriendlyVolumeLevel();
+        int val = md->userVolumeLevel();
         if (md->isMuted()) tip = i18n("Volume muted");
         else tip = i18n("Volume at %1%", val);
 
@@ -238,7 +238,7 @@ void KMixDockWidget::updatePixmap()
     }
     else
     {
-    	int percentage = md->getUserfriendlyVolumeLevel();
+	int percentage = md->userVolumeLevel();
 		if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also muted, and also negative-values
 		else if ( percentage < 25 ) newPixmapType = '1';
 		else if ( percentage < 75 ) newPixmapType = '2';
