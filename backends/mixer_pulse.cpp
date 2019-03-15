@@ -454,11 +454,50 @@ static devinfo create_role_devinfo(QString name) {
 }
 
 
-void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info *i, int eol, void *) {
+/**
+ * Helper for performing an operation on the device specified by @p id.
+ * Search for the device by name in the specified @p devices map, perform
+ * the function @c func on it, and return the result of that.  If the
+ * device is not found then do nothing.
+ */
+static int doForDevice(const QString &id, const devmap *devices, shared_ptr<MixDevice> md,
+                int (*func)(const devinfo &, shared_ptr<MixDevice>))
+{
+    for (devmap::const_iterator iter = devices->constBegin(); iter!=devices->constEnd(); ++iter)
+    {
+        if (iter->name==id) return ((*func)(*iter, md));
+    }
 
+    qCDebug(KMIX_LOG) << "Device" << id << "not in map";
+    return (Mixer::OK);
+}
+
+
+/**
+ * Helper for checking the result of a PulseAudio operation.
+ * If the operation @p op failed, log a message identifying the
+ * call @p explain, then return @c false.  Return @c true if the
+ * operation succeeeded, after dereferencing the operation.
+ */
+static bool checkOpResult(pa_operation *op, const char *explain)
+{
+    if (op==nullptr)
+    {
+        qCWarning(KMIX_LOG) << "PulseAudio operation" << explain << "failed,"
+                            << pa_strerror(pa_context_errno(s_context));
+        return (false);
+    }
+
+    pa_operation_unref(op);
+    return (true);
+}
+
+
+void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info *i, int eol, void *)
+{
     if (eol < 0) {
         dec_outstanding(c);
-        qCWarning(KMIX_LOG) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(s_context));
+        qCWarning(KMIX_LOG) << "Failed to initialize stream_restore extension," << pa_strerror(pa_context_errno(s_context));
         return;
     }
 
@@ -466,7 +505,8 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
         dec_outstanding(c);
 
         // Special case: ensure that our media events exists.
-        // On first login by a new users, this wont be in our database so we should create it.
+        // On first login by a new user this won't be in our
+        // database, so we should create it.
         if (!s_RestoreRules.contains(KMIXPA_EVENT_KEY)) {
             // Create a fake rule
             restoreRule rule;
@@ -477,7 +517,7 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
             rule.mute = false;
             rule.device = "";
             s_RestoreRules[KMIXPA_EVENT_KEY] = rule;
-            qCDebug(KMIX_LOG) << "Initializing restore rule for new user: " << i18n("Event Sounds");
+            qCDebug(KMIX_LOG) << "Initializing restore rule for 'Event Sounds'";
         }
 
         if (s_mixers.contains(KMIXPA_APP_PLAYBACK)) {
@@ -529,36 +569,28 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
     }
 }
 
-static void ext_stream_restore_subscribe_cb(pa_context *c, void *) {
-
+static void ext_stream_restore_subscribe_cb(pa_context *c, void *)
+{
     Q_ASSERT(c == s_context);
 
-    pa_operation *o;
-    if (!(o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL))) {
-        qCWarning(KMIX_LOG) << "pa_ext_stream_restore_read() failed";
-        return;
-    }
-
-    pa_operation_unref(o);
+    pa_operation *op = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL);
+    checkOpResult(op, "pa_ext_stream_restore_read");
 }
 
 
-static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *) {
-
+static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *)
+{
     Q_ASSERT(c == s_context);
 
-    switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK) {
+    switch (t & PA_SUBSCRIPTION_EVENT_FACILITY_MASK)
+    {
         case PA_SUBSCRIPTION_EVENT_SINK:
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 if (s_mixers.contains(KMIXPA_PLAYBACK))
                     s_mixers[KMIXPA_PLAYBACK]->removeWidget(index);
             } else {
-                pa_operation *o;
-                if (!(o = pa_context_get_sink_info_by_index(c, index, sink_cb, NULL))) {
-                    qCWarning(KMIX_LOG) << "pa_context_get_sink_info_by_index() failed";
-                    return;
-                }
-                pa_operation_unref(o);
+                pa_operation *op = pa_context_get_sink_info_by_index(c, index, sink_cb, NULL);
+                checkOpResult(op, "pa_context_get_sink_info_by_index");
             }
             break;
 
@@ -567,12 +599,8 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_CAPTURE))
                     s_mixers[KMIXPA_CAPTURE]->removeWidget(index);
             } else {
-                pa_operation *o;
-                if (!(o = pa_context_get_source_info_by_index(c, index, source_cb, NULL))) {
-                    qCWarning(KMIX_LOG) << "pa_context_get_source_info_by_index() failed";
-                    return;
-                }
-                pa_operation_unref(o);
+                pa_operation *op = pa_context_get_source_info_by_index(c, index, source_cb, NULL);
+                checkOpResult(op, "pa_context_get_source_info_by_index");
             }
             break;
 
@@ -581,12 +609,8 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_APP_PLAYBACK))
                     s_mixers[KMIXPA_APP_PLAYBACK]->removeWidget(index);
             } else {
-                pa_operation *o;
-                if (!(o = pa_context_get_sink_input_info(c, index, sink_input_cb, NULL))) {
-                    qCWarning(KMIX_LOG) << "pa_context_get_sink_input_info() failed";
-                    return;
-                }
-                pa_operation_unref(o);
+                pa_operation *op = pa_context_get_sink_input_info(c, index, sink_input_cb, NULL);
+                checkOpResult(op, "pa_context_get_sink_input_info");
             }
             break;
 
@@ -595,12 +619,8 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_APP_CAPTURE))
                     s_mixers[KMIXPA_APP_CAPTURE]->removeWidget(index);
             } else {
-                pa_operation *o;
-                if (!(o = pa_context_get_source_output_info(c, index, source_output_cb, NULL))) {
-                    qCWarning(KMIX_LOG) << "pa_context_get_sink_input_info() failed";
-                    return;
-                }
-                pa_operation_unref(o);
+                pa_operation *op = pa_context_get_source_output_info(c, index, source_output_cb, NULL);
+                checkOpResult(op, "pa_context_get_sink_input_info");
             }
             break;
 
@@ -608,15 +628,10 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 clients.remove(index);
             } else {
-                pa_operation *o;
-                if (!(o = pa_context_get_client_info(c, index, client_cb, NULL))) {
-                    qCWarning(KMIX_LOG) << "pa_context_get_client_info() failed";
-                    return;
-                }
-                pa_operation_unref(o);
+                pa_operation *op = pa_context_get_client_info(c, index, client_cb, NULL);
+                checkOpResult(op, "pa_context_get_client_info");
             }
             break;
-
     }
 }
 
@@ -626,71 +641,49 @@ static void context_state_callback(pa_context *c, void *)
     pa_context_state_t state = pa_context_get_state(c);
     if (state == PA_CONTEXT_READY) {
         // Attempt to load things up
-        pa_operation *o;
+        pa_operation *op;
 
         // 1. Register for the stream changes (except during probe)
         if (s_context == c) {
             pa_context_set_subscribe_callback(c, subscribe_cb, NULL);
 
-            if (!(o = pa_context_subscribe(c, (pa_subscription_mask_t)
+            op = pa_context_subscribe(c, (pa_subscription_mask_t)
                                            (PA_SUBSCRIPTION_MASK_SINK|
                                             PA_SUBSCRIPTION_MASK_SOURCE|
                                             PA_SUBSCRIPTION_MASK_CLIENT|
                                             PA_SUBSCRIPTION_MASK_SINK_INPUT|
-                                            PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT), NULL, NULL))) {
-                qCWarning(KMIX_LOG) << "pa_context_subscribe() failed";
-                return;
-            }
-            pa_operation_unref(o);
+                                            PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT), NULL, NULL);
+            if (!checkOpResult(op, "pa_context_subscribe")) return;
         }
 
-        if (!(o = pa_context_get_sink_info_list(c, sink_cb, NULL))) {
-            qCWarning(KMIX_LOG) << "pa_context_get_sink_info_list() failed";
-            return;
-        }
-        pa_operation_unref(o);
+        op = pa_context_get_sink_info_list(c, sink_cb, NULL);
+        if (!checkOpResult(op, "pa_context_get_sink_info_list")) return;
         s_outstandingRequests++;
 
-        if (!(o = pa_context_get_source_info_list(c, source_cb, NULL))) {
-            qCWarning(KMIX_LOG) << "pa_context_get_source_info_list() failed";
-            return;
-        }
-        pa_operation_unref(o);
+        op = pa_context_get_source_info_list(c, source_cb, NULL);
+        if (!checkOpResult(op, "pa_context_get_source_info_list")) return;
         s_outstandingRequests++;
 
-
-        if (!(o = pa_context_get_client_info_list(c, client_cb, NULL))) {
-            qCWarning(KMIX_LOG) << "pa_context_client_info_list() failed";
-            return;
-        }
-        pa_operation_unref(o);
+        op = pa_context_get_client_info_list(c, client_cb, NULL);
+        if (!checkOpResult(op, "pa_context_client_info_list")) return;
         s_outstandingRequests++;
 
-        if (!(o = pa_context_get_sink_input_info_list(c, sink_input_cb, NULL))) {
-            qCWarning(KMIX_LOG) << "pa_context_get_sink_input_info_list() failed";
-            return;
-        }
-        pa_operation_unref(o);
+        op = pa_context_get_sink_input_info_list(c, sink_input_cb, NULL);
+        if (!checkOpResult(op, "pa_context_get_sink_input_info_list")) return;
         s_outstandingRequests++;
 
-        if (!(o = pa_context_get_source_output_info_list(c, source_output_cb, NULL))) {
-            qCWarning(KMIX_LOG) << "pa_context_get_source_output_info_list() failed";
-            return;
-        }
-        pa_operation_unref(o);
+        op = pa_context_get_source_output_info_list(c, source_output_cb, NULL);
+        if (!checkOpResult(op, "pa_context_get_source_output_info_list")) return;
         s_outstandingRequests++;
 
         /* These calls are not always supported */
-        if ((o = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL))) {
-            pa_operation_unref(o);
+        op = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL);
+        if (checkOpResult(op, "pa_ext_stream_restore_read"))
+        {
             s_outstandingRequests++;
 
             pa_ext_stream_restore_set_subscribe_cb(c, ext_stream_restore_subscribe_cb, NULL);
-
-            if ((o = pa_ext_stream_restore_subscribe(c, 1, NULL, NULL)))
-                pa_operation_unref(o);
-        } else {
-            qCWarning(KMIX_LOG) << "Failed to initialize stream_restore extension: " << pa_strerror(pa_context_errno(s_context));
+            pa_ext_stream_restore_subscribe(c, 1, NULL, NULL);
         }
     } else if (!PA_CONTEXT_IS_GOOD(state)) {
         // If this is our probe phase, exit our context immediately
@@ -698,7 +691,7 @@ static void context_state_callback(pa_context *c, void *)
             pa_context_disconnect(c);
         } else {
             // If we're not probing, it means we've been disconnected from our
-            // glib context
+            // GLib context
             pa_context_unref(s_context);
             s_context = NULL;
 
@@ -995,22 +988,23 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
         s_pulseActive = INACTIVE;
     }
 
-
     ++refcount;
     if (INACTIVE != s_pulseActive && 1 == refcount)
     {
-        // First of all conenct to PA via simple/blocking means and if that succeeds,
+        // First of all connect to PA via simple/blocking means and if that succeeds,
         // use a fully async integrated mainloop method to connect and get proper support.
-        pa_mainloop *p_test_mainloop;
-        if (!(p_test_mainloop = pa_mainloop_new())) {
-            qCDebug(KMIX_LOG) << "PulseAudio support disabled: Unable to create mainloop";
+        pa_mainloop *p_test_mainloop = pa_mainloop_new();
+        if (p_test_mainloop==nullptr)
+        {
+            qCDebug(KMIX_LOG) << "PulseAudio support disabled, unable to create mainloop";
             s_pulseActive = INACTIVE;
             goto endconstruct;
         }
 
-        pa_context *p_test_context;
-        if (!(p_test_context = pa_context_new(pa_mainloop_get_api(p_test_mainloop), "kmix-probe"))) {
-            qCDebug(KMIX_LOG) << "PulseAudio support disabled: Unable to create context";
+        pa_context *p_test_context = pa_context_new(pa_mainloop_get_api(p_test_mainloop), "kmix-probe");
+        if (p_test_context==nullptr)
+        {
+            qCDebug(KMIX_LOG) << "PulseAudio support disabled, unable to create context";
             pa_mainloop_free(p_test_mainloop);
             s_pulseActive = INACTIVE;
             goto endconstruct;
@@ -1018,8 +1012,9 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
 
         qCDebug(KMIX_LOG) << "Probing for PulseAudio...";
         // (cg) Convert to PA_CONTEXT_NOFLAGS when PulseAudio 0.9.19 is required
-        if (pa_context_connect(p_test_context, NULL, static_cast<pa_context_flags_t>(0), NULL) < 0) {
-            qCDebug(KMIX_LOG) << QString("PulseAudio support disabled: %1").arg(pa_strerror(pa_context_errno(p_test_context)));
+        if (pa_context_connect(p_test_context, NULL, static_cast<pa_context_flags_t>(0), NULL) < 0)
+        {
+            qCDebug(KMIX_LOG) << QString("PulseAudio support disabled, %1").arg(pa_strerror(pa_context_errno(p_test_context)));
             pa_context_disconnect(p_test_context);
             pa_context_unref(p_test_context);
             pa_mainloop_free(p_test_mainloop);
@@ -1042,7 +1037,6 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
         pa_context_unref(p_test_context);
         pa_mainloop_free(p_test_mainloop);
 
-
         if (INACTIVE != s_pulseActive)
         {
             // Reconnect via integrated mainloop
@@ -1054,7 +1048,7 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
 #if defined(HAVE_CANBERRA)
             int ret = ca_context_create(&s_ccontext);
             if (ret < 0) {
-                qCDebug(KMIX_LOG) << "Disabling Sound Feedback. Canberra context failed.";
+                qCDebug(KMIX_LOG) << "Disabling sound feedback, Canberra context create failed";
                 s_ccontext = NULL;
             } else
                 ca_context_set_driver(s_ccontext, "pulse");
@@ -1170,31 +1164,6 @@ int Mixer_PULSE::id2num(const QString& id) {
     }
     //qCDebug(KMIX_LOG) << "id2num() num=" << num;
     return num;
-}
-
-
-static int doForDevice(const QString &id, const devmap *devices, shared_ptr<MixDevice> md,
-                int (*func)(const devinfo &, shared_ptr<MixDevice>))
-{
-    for (devmap::const_iterator iter = devices->constBegin(); iter!=devices->constEnd(); ++iter)
-    {
-        if (iter->name==id) return ((*func)(*iter, md));
-    }
-
-    return (Mixer::OK);
-}
-
-
-
-static bool checkOpResult(pa_operation *op, const QString &explain)
-{
-    if (op==nullptr)
-    {
-        qCWarning(KMIX_LOG) << "PulseAudio operation" << qPrintable(explain) << "failed";
-        return (false);
-    }
-    pa_operation_unref(op);
-    return (true);
 }
 
 
@@ -1353,37 +1322,46 @@ default:
 
 
 /**
-* Move the stream to a new destination
-*/
-bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
-    Q_ASSERT(KMIXPA_APP_PLAYBACK == m_devnum || KMIXPA_APP_CAPTURE == m_devnum);
+ * Move the stream to a new destination.
+ */
+bool Mixer_PULSE::moveStream(const QString &id, const QString &destId)
+{
+    Q_ASSERT(m_devnum==KMIXPA_APP_PLAYBACK || m_devnum==KMIXPA_APP_CAPTURE);
+    qCDebug(KMIX_LOG) <<  "move" << id << "->" << destId;
 
-    qCDebug(KMIX_LOG) <<  "Mixer_PULSE::moveStream(): Move Stream Requested - Stream: " << id << ", Destination: " << destId;
-
-    // Lookup the stream index.
+    // Look up the stream index
     uint32_t stream_index = PA_INVALID_INDEX;
-    QString stream_restore_rule = "";
-    devmap::iterator iter;
-    devmap *map = get_widget_map(m_devnum);
-    for (iter = map->begin(); iter != map->end(); ++iter) {
-        if (iter->name == id) {
+    QString stream_restore_rule;
+
+    const devmap *map = get_widget_map(m_devnum);
+    for (devmap::const_iterator iter = map->constBegin(); iter!=map->constEnd(); ++iter)
+    {
+        if (iter->name==id)
+        {
             stream_index = iter->index;
             stream_restore_rule = iter->stream_restore_rule;
             break;
         }
     }
 
-    if (PA_INVALID_INDEX == stream_index) {
-        qCCritical(KMIX_LOG) <<  "Mixer_PULSE::moveStream(): Cannot find stream index";
+    if (stream_index==PA_INVALID_INDEX)
+    {
+        qCCritical(KMIX_LOG) <<  "Cannot find stream index for" << id;
         return false;
     }
 
-    if (destId.isEmpty()) {
-        // We want to remove any specific device in the stream restore rule.
-        if (stream_restore_rule.isEmpty() || !s_RestoreRules.contains(stream_restore_rule)) {
-            qCWarning(KMIX_LOG) <<  "Mixer_PULSE::moveStream(): Trying to set Automatic on a stream with no rule";
-        } else {
-            restoreRule &rule = s_RestoreRules[stream_restore_rule];
+    if (destId.isEmpty())
+    {
+        // Reset the stream to automatic destination, using the previously saved
+        // restore rule.
+        if (stream_restore_rule.isEmpty() || !s_RestoreRules.contains(stream_restore_rule))
+        {
+            qCWarning(KMIX_LOG) <<  "Stream has no restore rule";
+        }
+        else
+        {
+            // We want to remove any specific device in the stream restore rule.
+            const restoreRule &rule = s_RestoreRules[stream_restore_rule];
             pa_ext_stream_restore_info info;
             info.name = stream_restore_rule.toUtf8().constData();
             info.channel_map = rule.channel_map;
@@ -1391,31 +1369,28 @@ bool Mixer_PULSE::moveStream( const QString& id, const QString& destId ) {
             info.device = NULL;
             info.mute = rule.mute ? 1 : 0;
 
-            pa_operation* o;
-            if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
-                qCWarning(KMIX_LOG) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
-                return false;
-            }
-            pa_operation_unref(o);
+            pa_operation *op = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL);
+            if (!checkOpResult(op, "pa_ext_stream_restore_write")) return (false);
         }
-    } else {
-        pa_operation* o;
-        if (KMIXPA_APP_PLAYBACK == m_devnum) {
-            if (!(o = pa_context_move_sink_input_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL))) {
-                qCWarning(KMIX_LOG) <<  "pa_context_move_sink_input_by_name() failed";
-                return false;
-            }
-        } else {
-            if (!(o = pa_context_move_source_output_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL))) {
-                qCWarning(KMIX_LOG) <<  "pa_context_move_source_output_by_name() failed";
-                return false;
-            }
+    }
+    else
+    {
+        // Move the stream to the specified destination.
+        if (m_devnum==KMIXPA_APP_PLAYBACK)
+        {
+            pa_operation *op = pa_context_move_sink_input_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL);
+            if (!checkOpResult(op, "pa_context_move_sink_input_by_name")) return (false);
         }
-        pa_operation_unref(o);
+        else
+        {
+            pa_operation *op = pa_context_move_source_output_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL);
+            if (!checkOpResult(op, "pa_context_move_source_output_by_name")) return (false);
+        }
     }
 
-    return true;
+    return (true);
 }
+
 
 void Mixer_PULSE::reinit()
 {
