@@ -909,29 +909,46 @@ void Mixer_PULSE::removeAllWidgets()
 
 bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 {
-    if (dev.chanMask == Volume::MNONE) return false;
+    if (dev.chanMask==Volume::MNONE) return (false);
 
     MixSet *ms = nullptr;
-    if (m_devnum == KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
+    if (m_devnum==KMIXPA_APP_PLAYBACK && s_mixers.contains(KMIXPA_PLAYBACK))
+    {
         ms = s_mixers[KMIXPA_PLAYBACK]->getMixSet();
-    else if (m_devnum == KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
+    }
+    else if (m_devnum==KMIXPA_APP_CAPTURE && s_mixers.contains(KMIXPA_CAPTURE))
+    {
         ms = s_mixers[KMIXPA_CAPTURE]->getMixSet();
+    }
 
-    int maxVol = GlobalConfig::instance().data.volumeOverdrive ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
+    const bool isCapture = (m_devnum==KMIXPA_APP_CAPTURE || m_devnum==KMIXPA_CAPTURE);
+
+    const int maxVol = (!isCapture && GlobalConfig::instance().data.volumeOverdrive) ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
     Volume v(maxVol, PA_VOLUME_MUTED, true, false);
     v.addVolumeChannels(dev.chanMask);
     setVolumeFromPulse(v, dev);
-    MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
-    if (isAppStream)
-        md->setApplicationStream(true);
 
-//        qCDebug(KMIX_LOG) << "Adding Pulse volume " << dev.name << ", isCapture= "
-//                      << (m_devnum == KMIXPA_CAPTURE || m_devnum == KMIXPA_APP_CAPTURE)
-//                      << ", isAppStream= " << isAppStream << "=" << md->isApplicationStream() << ", devnum=" << m_devnum;
-    md->addPlaybackVolume(v);
-    md->setMuted(dev.mute);
+    MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
+    if (isAppStream) md->setApplicationStream(true);
+
+    //qCDebug(KMIX_LOG) << "Adding Pulse volume" << dev.name
+    //                  << "isCapture" << isCapture
+    //                  << "isAppStream" << isAppStream << "=" << md->isApplicationStream()
+    //                  << "devnum" << m_devnum;
+
+    if (isCapture)
+    {
+        md->addCaptureVolume(v);
+        md->setRecSource(!dev.mute);
+    }
+    else
+    {
+        md->addPlaybackVolume(v);
+        md->setMuted(dev.mute);
+    }
+
     m_mixDevices.append(md->addToPool());
-    return true;
+    return (true);
 }
 
 Mixer_Backend* PULSE_getMixer( Mixer *mixer, int devnum )
@@ -1155,212 +1172,185 @@ int Mixer_PULSE::id2num(const QString& id) {
     return num;
 }
 
-int Mixer_PULSE::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
-{
-    devmap *map = get_widget_map(m_devnum, id);
 
-    devmap::iterator iter;
-    for (iter = map->begin(); iter != map->end(); ++iter)
+static int doForDevice(const QString &id, const devmap *devices, shared_ptr<MixDevice> md,
+                int (*func)(const devinfo &, shared_ptr<MixDevice>))
+{
+    for (devmap::const_iterator iter = devices->constBegin(); iter!=devices->constEnd(); ++iter)
     {
-        if (iter->name == id)
-        {
-            setVolumeFromPulse(md->playbackVolume(), *iter);
-            md->setMuted(iter->mute);
-            break;
-        }
+        if (iter->name==id) return ((*func)(*iter, md));
     }
 
-    return 0;
+    return (Mixer::OK);
 }
 
-int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
+
+
+static bool checkOpResult(pa_operation *op, const QString &explain)
 {
-    devmap::iterator iter;
-    if (KMIXPA_PLAYBACK == m_devnum)
+    if (op==nullptr)
     {
-        for (iter = outputDevices.begin(); iter != outputDevices.end(); ++iter)
-        {
-            if (iter->name == id)
-            {
-                pa_operation *o;
-
-                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
-                if (!(o = pa_context_set_sink_volume_by_index(s_context, iter->index, &volume, NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_sink_volume_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
-
-                if (!(o = pa_context_set_sink_mute_by_index(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_sink_mute_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
-
-#if defined(HAVE_CANBERRA)
-                if (s_ccontext && Mixer::getBeepOnVolumeChange() ) {
-                    int playing = 0;
-                    int cindex = 2; // Note "2" is simply the index we've picked. It's somewhat irrelevant.
-
-                    
-                    ca_context_playing(s_ccontext, cindex, &playing);
-
-                    // NB Depending on how this is desired to work, we may want to simply
-                    // skip playing, or cancel the currently playing sound and play our
-                    // new one... for now, let's do the latter.
-                    if (playing) {
-                        ca_context_cancel(s_ccontext, cindex);
-                        playing = 0;
-                    }
-                    
-                    if (!playing) {
-                        char dev[64];
-
-                        snprintf(dev, sizeof(dev), "%lu", (unsigned long) iter->index);
-                        ca_context_change_device(s_ccontext, dev);
-
-                        // Ideally we'd use something like ca_gtk_play_for_widget()...
-                        ca_context_play(
-                            s_ccontext,
-                            cindex,
-                            CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
-                            CA_PROP_EVENT_ID, "audio-volume-change",
-                            CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
-                            CA_PROP_CANBERRA_ENABLE, "1",
-                            NULL
-                        );
-
-                        ca_context_change_device(s_ccontext, NULL);
-                    }
-                }
-#endif
-
-                return 0;
-            }
-        }
+        qCWarning(KMIX_LOG) << "PulseAudio operation" << qPrintable(explain) << "failed";
+        return (false);
     }
-    else if (KMIXPA_CAPTURE == m_devnum)
+    pa_operation_unref(op);
+    return (true);
+}
+
+
+int Mixer_PULSE::readVolumeFromHW(const QString &id, shared_ptr<MixDevice> md)
+{
+    const devmap *map = get_widget_map(m_devnum, id);
+    return (doForDevice(id, map, md,
+                        [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
+                        {
+                            setVolumeFromPulse(md->playbackVolume(), dev);
+                            md->setMuted(dev.mute);			// to cover both playback
+                            md->setRecSource(!dev.mute);		// and capture channels
+                            return (0);
+                        }));
+}
+
+
+int Mixer_PULSE::writeVolumeToHW(const QString &id, shared_ptr<MixDevice> md)
+{
+    switch (m_devnum)
     {
-        for (iter = captureDevices.begin(); iter != captureDevices.end(); ++iter)
-        {
-            if (iter->name == id)
-            {
-                pa_operation *o;
+case KMIXPA_PLAYBACK:
+        return (doForDevice(id, &outputDevices, md,
+                            [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
+                            {
+                                pa_cvolume volume = genVolumeForPulse(dev, md->playbackVolume());
+                                pa_operation *op = pa_context_set_sink_volume_by_index(s_context, dev.index, &volume, NULL, NULL);
+                                if (!checkOpResult(op,"pa_context_set_sink_volume_by_index")) return (Mixer::ERR_WRITE);
 
-                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
-                if (!(o = pa_context_set_source_volume_by_index(s_context, iter->index, &volume, NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_volume_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
+                                op = pa_context_set_sink_mute_by_index(s_context, dev.index, (md->isMuted() ? 1 : 0), NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_sink_mute_by_index")) return (Mixer::ERR_WRITE);
+#ifdef HAVE_CANBERRA
+                                if (s_ccontext!=nullptr && Mixer::getBeepOnVolumeChange())
+                                {
+                                    int playing = 0;
+                                    // Note that '2' is simply an index we've picked.
+                                    // It's mostly irrelevant.
+                                    int cindex = 2;
 
-                if (!(o = pa_context_set_source_mute_by_index(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_mute_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
+                                    ca_context_playing(s_ccontext, cindex, &playing);
 
-                return 0;
-            }
-        }
-    }
-    else if (KMIXPA_APP_PLAYBACK == m_devnum)
-    {
+                                    // Note: Depending on how this is desired to work,
+                                    // we may want to simply skip playing, or cancel the
+                                    // currently playing sound and play our
+                                    // new one... for now, let's do the latter.
+                                    if (playing)
+                                    {
+                                        ca_context_cancel(s_ccontext, cindex);
+                                        playing = 0;
+                                    }
+
+                                    if (playing==0)
+                                    {
+                                        char devnum[64];
+                                        snprintf(devnum, sizeof(devnum), "%lu", (unsigned long) dev.index);
+                                        ca_context_change_device(s_ccontext, devnum);
+
+                                        // Ideally we'd use something like ca_gtk_play_for_widget()...
+                                        ca_context_play(
+                                            s_ccontext,
+                                            cindex,
+                                            CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
+                                            CA_PROP_EVENT_ID, "audio-volume-change",
+                                            CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
+                                            CA_PROP_CANBERRA_ENABLE, "1",
+                                            NULL);
+
+                                        ca_context_change_device(s_ccontext, NULL);
+                                    }
+                                }
+#endif // HAVE_CANBERRA
+                                return (Mixer::OK);
+                            }));
+
+case KMIXPA_CAPTURE:
+        return (doForDevice(id, &captureDevices, md,
+                            [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
+                            {
+                                pa_cvolume volume = genVolumeForPulse(dev, md->captureVolume());
+                                pa_operation *op = pa_context_set_source_volume_by_index(s_context, dev.index, &volume, NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_source_volume_by_index")) return (Mixer::ERR_WRITE);
+
+                                op = pa_context_set_source_mute_by_index(s_context, dev.index, (md->isRecSource() ? 0 : 1), NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_source_mute_by_index")) return (Mixer::ERR_WRITE);
+
+                                return (Mixer::OK);
+                            }));
+
+case KMIXPA_APP_PLAYBACK:
         if (id.startsWith(QLatin1String("stream:")))
         {
-            for (iter = outputStreams.begin(); iter != outputStreams.end(); ++iter)
-            {
-                if (iter->name == id)
-                {
-                    pa_operation *o;
+            return (doForDevice(id, &outputStreams, md,
+                                [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
+                                {
+                                    pa_cvolume volume = genVolumeForPulse(dev, md->playbackVolume());
+                                    pa_operation *op = pa_context_set_sink_input_volume(s_context, dev.index, &volume, NULL, NULL);
+                                    if (!checkOpResult(op, "pa_context_set_sink_input_volume")) return (Mixer::ERR_WRITE);
 
-                    pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
-                    if (!(o = pa_context_set_sink_input_volume(s_context, iter->index, &volume, NULL, NULL))) {
-                        qCWarning(KMIX_LOG) <<  "pa_context_set_sink_input_volume() failed";
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
+                                    op = pa_context_set_sink_input_mute(s_context, dev.index, (md->isMuted() ? 1 : 0), NULL, NULL);
+                                    if (!checkOpResult(op, "pa_context_set_sink_input_mute")) return (Mixer::ERR_WRITE);
 
-                    if (!(o = pa_context_set_sink_input_mute(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                        qCWarning(KMIX_LOG) <<  "pa_context_set_sink_input_mute() failed";
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
-
-                    return 0;
-                }
-            }
+                                    return (Mixer::OK);
+                                }));
         }
         else if (id.startsWith(QLatin1String("restore:")))
         {
-            for (iter = outputRoles.begin(); iter != outputRoles.end(); ++iter)
-            {
-                if (iter->name == id)
-                {
-                    restoreRule &rule = s_RestoreRules[iter->stream_restore_rule];
-                    pa_ext_stream_restore_info info;
-                    info.name = iter->stream_restore_rule.toUtf8().constData();
-                    info.channel_map = rule.channel_map;
-                    info.volume = genVolumeForPulse(*iter, md->playbackVolume());
-                    info.device = rule.device.isEmpty() ? NULL : rule.device.toUtf8().constData();
-                    info.mute = (md->isMuted() ? 1 : 0);
+            return (doForDevice(id, &outputRoles, md,
+                                [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
+                                {
+                                    restoreRule &rule = s_RestoreRules[dev.stream_restore_rule];
+                                    pa_ext_stream_restore_info info;
+                                    info.name = dev.stream_restore_rule.toUtf8().constData();
+                                    info.channel_map = rule.channel_map;
+                                    info.volume = genVolumeForPulse(dev, md->playbackVolume());
+                                    info.device = rule.device.isEmpty() ? NULL : rule.device.toUtf8().constData();
+                                    info.mute = (md->isMuted() ? 1 : 0);
 
-                    pa_operation* o;
-                    if (!(o = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL))) {
-                        qCWarning(KMIX_LOG) <<  "pa_ext_stream_restore_write() failed" << info.channel_map.channels << info.volume.channels << info.name;
-                        return Mixer::ERR_READ;
-                    }
-                    pa_operation_unref(o);
+                                    pa_operation *op = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL);
+                                    if (!checkOpResult(op, "pa_ext_stream_restore_write")) return (Mixer::ERR_WRITE);
 
-                    return 0;
-                }
-            }
+                                    return (Mixer::OK);
+                                }));
         }
-    }
-    else if (KMIXPA_APP_CAPTURE == m_devnum)
-    {
-        for (iter = captureStreams.begin(); iter != captureStreams.end(); ++iter)
-        {
-            if (iter->name == id)
-            {
-                pa_operation *o;
+        else return (Mixer::OK);
 
+case KMIXPA_APP_CAPTURE:
+        return (doForDevice(id, &captureStreams, md,
+                            [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
+                            {
 #if HAVE_SOURCE_OUTPUT_VOLUMES
-                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
-                if (!(o = pa_context_set_source_output_volume(s_context, iter->index, &volume, NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_output_volume_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
+                                pa_cvolume volume = genVolumeForPulse(dev, md->captureVolume());
+                                pa_operation *op = pa_context_set_source_output_volume(s_context, dev.index, &volume, NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_source_output_volume")) return (Mixer::ERR_WRITE);
 
-                if (!(o = pa_context_set_source_output_mute(s_context, iter->index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_output_mute_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
+                                op = pa_context_set_source_output_mute(s_context, dev.index, (md->isRecSource() ? 0 : 1), NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_source_output_mute")) return (Mixer::ERR_WRITE);
 #else                
-                // NB Note that this is different from APP_PLAYBACK in that we set the volume on the source itself.
-                pa_cvolume volume = genVolumeForPulse(*iter, md->playbackVolume());
-                if (!(o = pa_context_set_source_volume_by_index(s_context, iter->device_index, &volume, NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_volume_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
+                                // Note that this is different from APP_PLAYBACK in that
+                                // we set the volume on the source itself.
+                                pa_cvolume volume = genVolumeForPulse(dev, md->captureVolume());
+                                pa_operation *op = pa_context_set_source_volume_by_index(s_context, dev.device_index, &volume, NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_source_volume_by_index")) return (Mixer::ERR_WRITE);
 
-                if (!(o = pa_context_set_source_mute_by_index(s_context, iter->device_index, (md->isMuted() ? 1 : 0), NULL, NULL))) {
-                    qCWarning(KMIX_LOG) <<  "pa_context_set_source_mute_by_index() failed";
-                    return Mixer::ERR_READ;
-                }
-                pa_operation_unref(o);
+                                op = pa_context_set_source_mute_by_index(s_context, dev.device_index, (md->isRecSource() ? 0 : 1), NULL, NULL);
+                                if (!checkOpResult(op, "pa_context_set_source_mute_by_index")) return (Mixer::ERR_WRITE);
 #endif
+                                return (Mixer::OK);
+                            }));
 
-                return 0;
-            }
-        }
+default:
+        qCWarning(KMIX_LOG) << "Unknown device index" << m_devnum;
     }
 
-    return 0;
+    return (Mixer::OK);
 }
+
 
 /**
 * Move the stream to a new destination
