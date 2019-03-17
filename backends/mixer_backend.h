@@ -101,7 +101,8 @@ protected:
   virtual void setEnumIdHW(const QString& id, unsigned int);
   virtual unsigned int enumIdHW(const QString& id);
 
-  virtual bool moveStream( const QString& id, const QString& destId );
+  virtual bool moveStream(const QString &id, const QString &destId);
+  virtual QString currentStreamDevice(const QString &id) const;
 
   // Future directions: Move media*() methods to MediaController class
   virtual int mediaPlay(QString ) { return 0; }; // implement in the backend if it supports it

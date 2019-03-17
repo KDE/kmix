@@ -105,12 +105,11 @@ private slots:
     void increaseVolume();
     void decreaseVolume();
 
-    void moveStreamAutomatic();
-    void moveStream( QString destId );
-
     void mediaPlay(bool);
     void mediaNext(bool);
     void mediaPrev(bool);
+
+    void moveStream(bool checked);
 
 private:
     void createWidgets();
@@ -147,7 +146,6 @@ private:
 	QToolButton *m_mediaPlayButton;
 	QSize m_controlButtonSize;
 
-    KActionCollection*   _mdwMoveActions;
     QMenu *m_moveMenu;
 
     QList<QAbstractSlider *> m_slidersPlayback;

@@ -124,7 +124,6 @@ public:
   int writeVolumeToHW( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
   void setEnumIdHW(const QString& id, unsigned int) Q_DECL_OVERRIDE;
   unsigned int enumIdHW(const QString& id) Q_DECL_OVERRIDE;
-  bool moveStream( const QString& id, const QString& destId ) Q_DECL_OVERRIDE;
   bool needsPolling() Q_DECL_OVERRIDE { return false; }
 
   int mediaPlay(QString id) Q_DECL_OVERRIDE;

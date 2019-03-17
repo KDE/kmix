@@ -536,7 +536,6 @@ void ext_stream_restore_read_cb(pa_context *c, const pa_ext_stream_restore_info 
         return;
     }
 
-
     QString name = QString::fromUtf8(i->name);
 //     qCDebug(KMIX_LOG) << QString("Got some info about restore rule: '%1' (Device: %2)").arg(name).arg(i->device ? i->device : "None");
     restoreRule rule;
@@ -753,6 +752,7 @@ static devmap* get_widget_map(int type, QString id = QString())
     Q_ASSERT(0);
     return NULL;
 }
+
 static devmap* get_widget_map(int type, int index)
 {
     if (PA_INVALID_INDEX == (uint32_t)index)
@@ -1321,39 +1321,40 @@ default:
 }
 
 
+static const devinfo *getStreamInfo(int devnum, const QString &id)
+{
+    //qCDebug(KMIX_LOG) <<  "dev" << devnum << "id" << id;
+    const devmap *map = get_widget_map(devnum);
+    for (devmap::const_iterator iter = map->constBegin(); iter!=map->constEnd(); ++iter)
+    {
+        // I think this will work!  '*iter' dereferences the iterator and obtains
+        // a reference to the actual map item.  '&' then takes the address of that
+        // and returns a pointer.
+        if (iter->name==id) return (&*iter);
+    }
+
+    qCWarning(KMIX_LOG) <<  "Cannot find stream index for" << id;
+    return (nullptr);
+}
+
+
 /**
  * Move the stream to a new destination.
  */
 bool Mixer_PULSE::moveStream(const QString &id, const QString &destId)
 {
     Q_ASSERT(m_devnum==KMIXPA_APP_PLAYBACK || m_devnum==KMIXPA_APP_CAPTURE);
-    qCDebug(KMIX_LOG) <<  "move" << id << "->" << destId;
+    qCDebug(KMIX_LOG) <<  "dev" << m_devnum << "move" << id << "->" << destId;
 
-    // Look up the stream index
-    uint32_t stream_index = PA_INVALID_INDEX;
-    QString stream_restore_rule;
-
-    const devmap *map = get_widget_map(m_devnum);
-    for (devmap::const_iterator iter = map->constBegin(); iter!=map->constEnd(); ++iter)
-    {
-        if (iter->name==id)
-        {
-            stream_index = iter->index;
-            stream_restore_rule = iter->stream_restore_rule;
-            break;
-        }
-    }
-
-    if (stream_index==PA_INVALID_INDEX)
-    {
-        qCCritical(KMIX_LOG) <<  "Cannot find stream index for" << id;
-        return false;
-    }
+    const devinfo *info = getStreamInfo(m_devnum, id);
+    if (info==nullptr) return (false);
 
     if (destId.isEmpty())
     {
-        // Reset the stream to automatic destination, using the previously saved
+        // Reset the stream to its automatic destination, using the previously saved
         // restore rule.
+
+        const QString stream_restore_rule = info->stream_restore_rule;
         if (stream_restore_rule.isEmpty() || !s_RestoreRules.contains(stream_restore_rule))
         {
             qCWarning(KMIX_LOG) <<  "Stream has no restore rule";
@@ -1376,6 +1377,8 @@ bool Mixer_PULSE::moveStream(const QString &id, const QString &destId)
     else
     {
         // Move the stream to the specified destination.
+
+        const uint32_t stream_index = info->index;
         if (m_devnum==KMIXPA_APP_PLAYBACK)
         {
             pa_operation *op = pa_context_move_sink_input_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL);
@@ -1389,6 +1392,29 @@ bool Mixer_PULSE::moveStream(const QString &id, const QString &destId)
     }
 
     return (true);
+}
+
+
+QString Mixer_PULSE::currentStreamDevice(const QString &id) const
+{
+    Q_ASSERT(m_devnum==KMIXPA_APP_PLAYBACK || m_devnum==KMIXPA_APP_CAPTURE);
+    //qCDebug(KMIX_LOG) <<  "dev" << m_devnum << "id" << id;
+
+    const devinfo *info = getStreamInfo(m_devnum, id);
+    if (info==nullptr) return (QString());
+
+    const int dev = info->device_index;
+    // Look in 'outputDevices' for KMIXPA_APP_PLAYBACK, or 'captureDevices' for KMIXPA_APP_CAPTURE
+    const devmap *deviceMap = get_widget_map(m_devnum==KMIXPA_APP_PLAYBACK ? KMIXPA_PLAYBACK : KMIXPA_CAPTURE);
+    if (deviceMap->contains(dev))
+    {
+        const devinfo &s = deviceMap->value(dev);
+        //qDebug() << "  dev" << s.device_index << "desc" << s.description << "->" << s.name;
+        return (s.name);
+    }
+    //else qDebug() << "  no device info";
+
+    return (QString());
 }
 
 

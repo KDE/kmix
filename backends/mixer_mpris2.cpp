@@ -236,12 +236,6 @@ unsigned int Mixer_MPRIS2::enumIdHW(const QString&)
 	return 0;
 }
 
-bool Mixer_MPRIS2::moveStream( const QString&, const QString&  )
-{
-	// not supported in MPRIS
-	return false;
-}
-
 
 /**
  * Adds all currently running players and then starts listening

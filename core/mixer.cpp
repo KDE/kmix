@@ -710,11 +710,17 @@ bool Mixer::isDynamic()
     return m_dynamic;
 }
 
-bool Mixer::moveStream( const QString id, const QString& destId )
+
+bool Mixer::moveStream(const QString &id, const QString &destId)
 {
     // We should really check that id is within our md's....
-    bool ret = _mixerBackend->moveStream( id, destId );
+    bool ret = _mixerBackend->moveStream(id, destId);
     ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("Mixer.moveStream()"));
-    return ret;
+    return (ret);
 }
 
+
+QString Mixer::currentStreamDevice(const QString &id) const
+{
+    return (_mixerBackend->currentStreamDevice(id));
+}

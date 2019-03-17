@@ -295,13 +295,24 @@ unsigned int Mixer_Backend::enumIdHW(const QString& ) {
 	return 0;
 }
 
+
 /**
  * Move the stream to a new destination
  */
-bool Mixer_Backend::moveStream( const QString& id, const QString& destId ) {
-	Q_UNUSED(id);
+bool Mixer_Backend::moveStream(const QString &id, const QString &destId)
+{
+	qCDebug(KMIX_LOG) << "called for unsupported" << id;
 	Q_UNUSED(destId);
-	return false;
+	return (false);
+}
+
+/**
+ * Get the current destination device of a stream
+ */
+QString Mixer_Backend::currentStreamDevice(const QString &id) const
+{
+	qCDebug(KMIX_LOG) << "called for unsupported" << id;
+	return (QString());
 }
 
 

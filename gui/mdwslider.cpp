@@ -42,7 +42,6 @@
 #include "gui/viewbase.h"
 #include "gui/ksmallslider.h"
 #include "gui/verticaltext.h"
-#include "gui/mdwmoveaction.h"
 #include "gui/toggletoolbutton.h"
 
 
@@ -69,7 +68,6 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, 
 	  m_captureButton(nullptr),
 	  m_mediaPlayButton(nullptr),
 	  m_controlButtonSize(QSize()),
-	  _mdwMoveActions(new KActionCollection(this)),
 	  m_moveMenu(nullptr),
 	  m_sliderInWork(false),
 	  m_waitForSoundSetComplete(0)
@@ -101,7 +99,7 @@ void MDWSlider::createActions()
 {
     // create actions (on _mdwActions, see MixDeviceWidget)
     KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
-    taction->setText( i18n("&Split Channels") );
+    taction->setText( i18n("Split Channels") );
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
 //    QAction *action;
@@ -114,18 +112,18 @@ void MDWSlider::createActions()
     if( mixDevice()->hasMuteSwitch() )
     {
         taction = _mdwActions->add<KToggleAction>( "mute" );
-        taction->setText( i18n("&Muted") );
+        taction->setText( i18n("Mute") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
     }
 
     if( mixDevice()->captureVolume().hasSwitch() ) {
         taction = _mdwActions->add<KToggleAction>( "recsrc" );
-        taction->setText( i18n("Captu&re") );
+        taction->setText( i18n("Capture") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleRecsrc()) );
     }
 
     if( mixDevice()->isMovable() ) {
-        m_moveMenu = new QMenu( i18n("Mo&ve"), this);
+        m_moveMenu = new QMenu( i18n("Use Device"), this);
         connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
 
@@ -995,15 +993,19 @@ void MDWSlider::increaseOrDecreaseVolume(bool decrease, Volume::VolumeTypeFlag v
 // 	view()->blockSignals(oldViewBlockSignalState);
 }
 
-void MDWSlider::moveStreamAutomatic()
+
+/**
+ * Must be called by the triggered(bool) signal from a QAction.
+ */
+void MDWSlider::moveStream(bool checked)
 {
-    mixDevice()->mixer()->moveStream(mixDevice()->id(), "");
+	Q_UNUSED(checked);
+	QAction *act = qobject_cast<QAction *>(sender());
+	Q_ASSERT(act!=nullptr);
+	const QString destId = act->data().toString();
+	mixDevice()->mixer()->moveStream(mixDevice()->id(), destId);
 }
 
-void MDWSlider::moveStream(QString destId)
-{
-    mixDevice()->mixer()->moveStream(mixDevice()->id(), destId);
-}
 
 /**
  * This is called whenever there are volume updates pending from the hardware for this MDW.
@@ -1127,7 +1129,13 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		MixSet *ms = mixDevice()->moveDestinationMixSet();
 		Q_ASSERT(ms!=nullptr);
 
-		m_moveMenu->setEnabled((ms->count() > 1));
+		m_moveMenu->setEnabled(ms->count()>1);
+		// The "Event Sounds" stream cannot be moved at present.  This is because
+		// Mixer_PULSE::moveStream() does not record the stream ID in the
+		// output stream list and hence cannot get its PulseAudio stream index.
+		// I don't know whether this is a design decision or a PA limitation.
+		if (mixDevice()->id().endsWith(":event")) m_moveMenu->setEnabled(false);
+
 		menu->addMenu( m_moveMenu );
 	}
 
@@ -1175,30 +1183,33 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 
 void MDWSlider::showMoveMenu()
 {
-    MixSet *ms = mixDevice()->moveDestinationMixSet();
+    const MixSet *ms = mixDevice()->moveDestinationMixSet();
     Q_ASSERT(ms!=nullptr);
 
-    _mdwMoveActions->clear();
+    const QString cur = mixDevice()->mixer()->currentStreamDevice(mixDevice()->id());
+
+    // There is no need to keep a record of the actions (in a KActionCollection
+    // or otherwise);  QMenu::clear() will delete them as long as they are owned
+    // by the menu.
     m_moveMenu->clear();
 
-    // Default
-    QAction *a = new QAction(_mdwMoveActions);
-    a->setText( i18n("Automatic According to Category") );
-    _mdwMoveActions->addAction( QString("moveautomatic"), a);
-    connect(a, SIGNAL(triggered(bool)), SLOT(moveStreamAutomatic()), Qt::QueuedConnection);
-    m_moveMenu->addAction( a );
+    // Default action
+    QAction *act = new QAction(i18n("Automatic (according to category)"), m_moveMenu);
+    act->setData(QString());
+    connect(act, &QAction::triggered, this, &MDWSlider::moveStream, Qt::QueuedConnection);
+    m_moveMenu->addAction(act);
 
-    a = new QAction(_mdwMoveActions);
-    a->setSeparator(true);
-    _mdwMoveActions->addAction( QString("-"), a);
+    m_moveMenu->addSeparator();
 
-    m_moveMenu->addAction( a );
-    foreach (shared_ptr<MixDevice> md, *ms)
+    // Device actions
+    foreach (const shared_ptr<MixDevice> md, *ms)
     {
-        a = new MDWMoveAction(md, _mdwMoveActions);
-        _mdwMoveActions->addAction( QString("moveto") + md->id(), a);
-        connect(a, SIGNAL(moveRequest(QString)), SLOT(moveStream(QString)), Qt::QueuedConnection);
-        m_moveMenu->addAction( a );
+	act = new QAction(QIcon::fromTheme(md->iconName()), md->readableName(), m_moveMenu);
+	act->setData(md->id());
+	act->setCheckable(true);
+	if (md->id()==cur) act->setChecked(true);
+	connect(act, &QAction::triggered, this, &MDWSlider::moveStream, Qt::QueuedConnection);
+	m_moveMenu->addAction(act);
     }
 }
 

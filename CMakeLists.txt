@@ -230,7 +230,6 @@ set(kmixgui_SRCS
   gui/viewdockareapopup.cpp
   gui/viewsliders.cpp
   gui/mixdevicewidget.cpp
-  gui/mdwmoveaction.cpp
   gui/mdwslider.cpp
   gui/mdwenum.cpp
   gui/kmixerwidget.cpp

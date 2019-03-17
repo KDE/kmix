@@ -56,6 +56,7 @@ class Mixer_PULSE : public Mixer_Backend
         int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
         int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
 
+        QString currentStreamDevice(const QString &id) const Q_DECL_OVERRIDE;
         bool moveStream( const QString& id, const QString& destId ) Q_DECL_OVERRIDE;
 
         QString getDriverName() Q_DECL_OVERRIDE;
