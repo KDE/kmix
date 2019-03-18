@@ -216,19 +216,18 @@ Application: KMix (kmix), signal: Segmentation fault
 	//_layoutMDW->setSizeConstraint(QLayout::SetMinimumSize);
 	_layoutMDW->setSizeConstraint(QLayout::SetMaximumSize);
 	_layoutMDW->setObjectName(QLatin1String("KmixPopupLayout"));
-    setLayout(_layoutMDW);
+	setLayout(_layoutMDW);
 
 	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
 	// we have to redo the list on each initLayout() (instead of setting it once in the Constructor)
 	_mixers.clear();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
-//	qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
+	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
 	foreach ( Mixer* mixer, Mixer::mixers() )
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
-		if (useMixer)
-			addMixer(mixer);
+		if (useMixer) addMixer(mixer);
 	}
 
 	// The following loop is for the case when everything gets filtered out. We "reset" to show everything then.
@@ -242,42 +241,57 @@ Application: KMix (kmix), signal: Segmentation fault
 		}
 	}
 
-
 	// A loop that adds the Master control of each card
-	foreach ( Mixer* mixer, _mixers )
+
+	// TODO: check whether this is working as intended for PulseAudio.
+	//
+	// Logic might say that enabling "Playback Devices" should show all of the
+	// playback devices (cards) in the popup, whereas at the moment it only
+	// shows the configured master playback device.  This is the same behaviour
+	// for the non-PulseAudio case where only the master control for each card
+	// is shown, although each card can be configured to individually
+	// appear in the popup.  With PulseAudio "Playback Devices" is considered
+	// to be a single card and only the master channel from it is shown.
+	//
+	// To do this, there needs to be a loop over all 'MixDevice's of the 'Mixer'
+	// instead of just taking the getLocalMaster() device of it.
+	//
+	// Maybe need a configuration option?
+
+	foreach (const Mixer *mixer, _mixers)
 	{
-//		qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
-		shared_ptr<MixDevice>dockMD = mixer->getLocalMasterMD();
-		if ( !dockMD && mixer->size() > 0 )
+		//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
+		// Get the configured master control for the mixer.
+		shared_ptr<MixDevice> dockMD = mixer->getLocalMasterMD();
+		if (dockMD==nullptr && mixer->size()>0)
 		{
-			// If we have no dock device yet, we will take the first available mixer device.
-			dockMD = (*mixer)[0];
+			// If the mixer has no local master device defined,
+			// then take its first available device.
+			dockMD = mixer->getMixSet().first();
 		}
-		if ( dockMD )
+
+		if (dockMD!=nullptr)			// have a master device to dock
 		{
-//			qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
-			if ( !dockMD->isApplicationStream() && dockMD->playbackVolume().hasVolume())
+			// Do not add application streams here, they are handled below.
+			if (dockMD->isApplicationStream()) continue;
+
+			//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
+			if (dockMD->playbackVolume().hasVolume() || dockMD->captureVolume().hasVolume())
 			{
-//				qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
-				// don't add application streams here. They are handled below, so
-				// we make sure to not add them twice
+				//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
 				_mixSet.append(dockMD);
 			}
 		}
 	} // loop over all cards
 
-	// Add all application streams
-	foreach ( Mixer* mixer2 , _mixers )
+	// Finally add all application streams
+	foreach (const Mixer *mixer, _mixers)
 	{
-		foreach ( shared_ptr<MixDevice> md, mixer2->getMixSet() )
+		foreach (shared_ptr<MixDevice> md, mixer->getMixSet())
 		{
-			if (md->isApplicationStream())
-			{
-				_mixSet.append(md);
-			}
+			if (md->isApplicationStream()) _mixSet.append(md);
 		}
 	}
-
 }
 
 

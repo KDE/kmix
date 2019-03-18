@@ -67,6 +67,7 @@ void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
     }
     else
     {
+        // TODO: use KMessageWidget
         m_listLabel = new QLabel( i18n("No sound card is installed or currently plugged in."), this);
         _layout->addWidget(m_listLabel);
     }

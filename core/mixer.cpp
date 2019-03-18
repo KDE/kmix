@@ -296,15 +296,10 @@ unsigned int Mixer::size() const
   return _mixerBackend->m_mixDevices.count();
 }
 
-shared_ptr<MixDevice> Mixer::operator[](int num)
-{
-	shared_ptr<MixDevice> md =  _mixerBackend->m_mixDevices.at( num );
-	return md;
-}
 
-MixSet& Mixer::getMixSet()
+MixSet &Mixer::getMixSet() const
 {
-  return _mixerBackend->m_mixDevices;
+    return (_mixerBackend->m_mixDevices);
 }
 
 

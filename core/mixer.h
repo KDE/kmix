@@ -76,10 +76,6 @@ public:
     /// Tells the number of the mixing devices
     unsigned int size() const;
 
-    /// Returns a pointer to the mix device with the given number
-    // TODO remove this method. Only used by ViewDockAreaPopup: dockMD = (*mixer)[0];
-    shared_ptr<MixDevice> operator[](int val_i_num);
-
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
     /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
@@ -171,7 +167,7 @@ public:
     void setLocalMasterMD(QString&);
 
     /// get the actual MixSet
-    MixSet& getMixSet();
+    MixSet &getMixSet() const;
 
     /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );
