@@ -104,9 +104,11 @@
   <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?product=kmix</url>
   <url type="help">https://docs.kde.org/?application=kmix</url>
   <url type="donation">https://www.kde.org/community/donations/?app=kmix&amp;source=appdata</url>
-  <screenshot>
-    <image>https://cdn.kde.org/screenshots/kmix/kmix.png</image>
-  </screenshot>
+  <screenshots>
+    <screenshot>
+      <image>https://cdn.kde.org/screenshots/kmix/kmix.png</image>
+    </screenshot>
+  </screenshots>
   <provides>
     <binary>kmix</binary>
   </provides>
