@@ -82,8 +82,6 @@ configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 ####################################################################################################
 
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
-# TODO: is the next line needed now?
-include_directories("/usr/lib/oss/include")
 # TODO: is the next line really needed? Nothing seems to use anything to do with tagging.
 if (MSVC)
   include_directories(${TAGLIB_INCLUDES})
