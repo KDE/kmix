@@ -267,8 +267,8 @@ void KMixWindow::initActionsAfterInitMixer()
 	// runs with 4 fixed Tabs.
 	if (!Mixer::pulseaudioPresent())
 	{
-		QPixmap cornerNewPM = KIconLoader::global()->loadIcon("tab-new", KIconLoader::Toolbar,
-				IconSize(KIconLoader::Toolbar));
+		QPixmap cornerNewPM = KIconLoader::global()->loadScaledIcon("tab-new", KIconLoader::Toolbar,
+				devicePixelRatioF(), IconSize(KIconLoader::Toolbar));
 		QPushButton* _cornerLabelNew = new QPushButton();
 		_cornerLabelNew->setIcon(cornerNewPM);
 		_cornerLabelNew->setToolTip(i18n("Add new view"));

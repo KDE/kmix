@@ -35,6 +35,8 @@ I18N_NOOP("KMix - KDE's full featured mini mixer");
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     QApplication qapp(argc, argv);
 
     KLocalizedString::setApplicationDomain("kmix");

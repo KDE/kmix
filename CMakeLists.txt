@@ -8,7 +8,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set (QT_MIN_VERSION "5.7.0")
-set (KF5_MIN_VERSION "5.41.0")
+set (KF5_MIN_VERSION "5.48.0")
 set (PA_MIN_VERSION "0.9.16")
 
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)

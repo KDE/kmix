@@ -50,12 +50,12 @@ ToggleToolButton::ToggleToolButton(const QString &activeIconName, QWidget *pnt)
 
 
 // based on MDWSlider::setIcon()
-QPixmap getPixmap(const QString &name, bool small = false)
+QPixmap getPixmap(const QString &name, qreal devicePixelRatio, bool small)
 {
-    QPixmap pix = KIconLoader::global()->loadIcon(name, iconLoadGroup, IconSize(iconSizeGroup));
+    QPixmap pix = KIconLoader::global()->loadScaledIcon(name, iconLoadGroup, devicePixelRatio, IconSize(iconSizeGroup));
     if (!pix.isNull())					// load icon, check success
     {							// if wanting small size, scale pixmap
-	if (small) pix = pix.scaled(iconSmallSize, iconSmallSize);
+	if (small) pix = pix.scaled(QSize(iconSmallSize, iconSmallSize) * devicePixelRatio);
     }
     else qCWarning(KMIX_LOG) << "failed to load" << name;
 
@@ -76,7 +76,7 @@ void ToggleToolButton::setActive(bool active)
     {
         if (mActivePixmap.isNull())			// need pixmap for active state
         {						// only if not already tried
-            if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, mSmallSize);
+            if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, devicePixelRatioF(), mSmallSize);
             mActiveLoaded = true;			// note not to try again
         }
 
@@ -88,11 +88,11 @@ void ToggleToolButton::setActive(bool active)
         {
             if (!mInactiveIcon.isEmpty())		// inactive icon is set
             {
-                if (!mInactiveLoaded) mInactivePixmap = getPixmap(mInactiveIcon, mSmallSize);
+                if (!mInactiveLoaded) mInactivePixmap = getPixmap(mInactiveIcon, devicePixelRatioF(), mSmallSize);
             }
             else
             {						// need to derive from active state
-                if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, mSmallSize);
+                if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, devicePixelRatioF(), mSmallSize);
                 mActiveLoaded = true;			// only if not already tried
                 if (mActivePixmap.isNull()) qCWarning(KMIX_LOG) << "want inactive but no active available";
                 else
@@ -124,7 +124,7 @@ void ToggleToolButton::setActive(bool active)
  */
 void ToggleToolButton::setIndicatorIcon(const QString &iconName, QWidget *label, bool small)
 {
-    QPixmap pix = getPixmap(iconName, small);
+    QPixmap pix = getPixmap(iconName, label->devicePixelRatioF(), small);
     if (pix.isNull())
     {
         qCWarning(KMIX_LOG) << "Could not get pixmap for" << iconName;

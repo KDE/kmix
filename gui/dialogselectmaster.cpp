@@ -174,7 +174,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
 	if (msetCount > 0 && !mixer->isDynamic())
 	{
             QString mdName = i18n("Automatic (%1 recommendation)", mixer->getDriverName());
-		QPixmap icon = KIconLoader::global()->loadIcon("audio-volume-high", KIconLoader::Small, IconSize(KIconLoader::Small));
+		QPixmap icon = KIconLoader::global()->loadScaledIcon("audio-volume-high", KIconLoader::Small, devicePixelRatioF(), IconSize(KIconLoader::Small));
         QListWidgetItem *item = new QListWidgetItem(icon, mdName, m_channelSelector);
         item->setData(Qt::UserRole, QString());  // ID here: see apply(), empty String => Automatic
 		if (masterKey.isEmpty())
@@ -188,7 +188,7 @@ void DialogSelectMaster::createPage(Mixer* mixer)
         if ( md->playbackVolume().hasVolume() )
         {
             QString mdName = md->readableName();
-			QPixmap icon = KIconLoader::global()->loadIcon(md->iconName(), KIconLoader::Small, IconSize(KIconLoader::Small));
+			QPixmap icon = KIconLoader::global()->loadScaledIcon(md->iconName(), KIconLoader::Small, devicePixelRatioF(), IconSize(KIconLoader::Small));
             QListWidgetItem *item = new QListWidgetItem(icon, mdName, m_channelSelector);
             item->setData(Qt::UserRole, md->id());  // ID here: see apply()
             if ( md->id() == masterKey )
