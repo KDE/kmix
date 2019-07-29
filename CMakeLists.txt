@@ -41,12 +41,17 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     I18n
     IconThemes
     Notifications
-    Plasma
     Solid
     WidgetsAddons
     WindowSystem
     XmlGui
 )
+
+find_package(Plasma ${KF5_MIN_VERSION})
+set_package_properties(Plasma PROPERTIES
+                       TYPE OPTIONAL
+                       PURPOSE "Required to build Plasma data engine"
+                      )
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
@@ -111,7 +116,9 @@ add_subdirectory(doc)
 add_subdirectory(pics)
 add_subdirectory(profiles)
 #add_subdirectory(tests)
-add_subdirectory(plasma)
+if (Plasma_FOUND)
+  add_subdirectory(plasma)
+endif (Plasma_FOUND)
 
 ####################################################################################################
 ########### definitions: logging ###################################################################
