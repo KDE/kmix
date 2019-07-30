@@ -47,8 +47,8 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     XmlGui
 )
 
-find_package(Plasma ${KF5_MIN_VERSION})
-set_package_properties(Plasma PROPERTIES
+find_package(KF5Plasma ${KF5_MIN_VERSION})
+set_package_properties(KF5Plasma PROPERTIES
                        TYPE OPTIONAL
                        PURPOSE "Required to build Plasma data engine"
                       )
@@ -116,9 +116,9 @@ add_subdirectory(doc)
 add_subdirectory(pics)
 add_subdirectory(profiles)
 #add_subdirectory(tests)
-if (Plasma_FOUND)
+if (KF5Plasma_FOUND)
   add_subdirectory(plasma)
-endif (Plasma_FOUND)
+endif ()
 
 ####################################################################################################
 ########### definitions: logging ###################################################################
