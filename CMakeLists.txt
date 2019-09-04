@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 project(kmix)
 set(PROJECT_VERSION "5.13.80")
 set(PROJECT_VERSION_MAJOR 5)
@@ -7,7 +7,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set (QT_MIN_VERSION "5.7.0")
+set (QT_MIN_VERSION "5.11.0")
 set (KF5_MIN_VERSION "5.48.0")
 set (PA_MIN_VERSION "0.9.16")
 
