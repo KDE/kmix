@@ -1,5 +1,6 @@
 [Global]
 IconName=kmix
+DesktopEntry=org.kde.kmix
 Comment=Sound Mixer
 Comment[bg]=Звуков смесител
 Comment[bs]=Mikser zvuka
