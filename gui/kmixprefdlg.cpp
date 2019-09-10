@@ -198,30 +198,34 @@ void KMixPrefDlg::createGeneralTab()
 	grp->setFlat(true);
 	layout->addWidget(grp);
 
-	// [CONFIG]
-	m_beepOnVolumeChange = new QCheckBox(i18n("Volume feedback"), m_generalTab);
-	addWidgetToLayout(m_beepOnVolumeChange, layout, 10, "", "VolumeFeedback");
+	auto *behaviorLayout = new QVBoxLayout;
+	behaviorLayout->setContentsMargins(0, 0, 0, 0);
+	grp->setLayout(behaviorLayout);
 
-	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), m_generalTab);
-	addWidgetToLayout(m_volumeOverdrive, layout, 10, i18nc("@info:tooltip", "Raise the maximum volume to 150%"), "VolumeOverdrive");
+	// [CONFIG]
+	m_beepOnVolumeChange = new QCheckBox(i18n("Volume feedback"), grp);
+	addWidgetToLayout(m_beepOnVolumeChange, behaviorLayout, 10, "", "VolumeFeedback");
+
+	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), grp);
+	addWidgetToLayout(m_volumeOverdrive, behaviorLayout, 10, i18nc("@info:tooltip", "Raise the maximum volume to 150%"), "VolumeOverdrive");
 
 	volumeFeedbackWarning = new KMessageWidget(
-		i18n("Volume feedback and volume overdrive are only available for PulseAudio."), m_generalTab);
+		i18n("Volume feedback and volume overdrive are only available for PulseAudio."), grp);
 	volumeFeedbackWarning->setIcon(QIcon::fromTheme("dialog-warning"));
 	volumeFeedbackWarning->setMessageType(KMessageWidget::Warning);
 	volumeFeedbackWarning->setCloseButtonVisible(false);
 	volumeFeedbackWarning->setWordWrap(true);
 	volumeFeedbackWarning->setVisible(false);
-	addWidgetToLayout(volumeFeedbackWarning, layout, 2, "", "");
+	addWidgetToLayout(volumeFeedbackWarning, behaviorLayout, 2, "", "");
 
 	volumeOverdriveWarning = new KMessageWidget(
-		i18n("KMix must be restarted for the Volume Overdrive setting to take effect."), m_generalTab);
+		i18n("KMix must be restarted for the Volume Overdrive setting to take effect."), grp);
 	volumeOverdriveWarning->setIcon(QIcon::fromTheme("dialog-information"));
 	volumeOverdriveWarning->setMessageType(KMessageWidget::Information);
 	volumeOverdriveWarning->setCloseButtonVisible(false);
 	volumeOverdriveWarning->setWordWrap(true);
 	volumeOverdriveWarning->setVisible(false);
-	addWidgetToLayout(volumeOverdriveWarning, layout, 2, "", "");
+	addWidgetToLayout(volumeOverdriveWarning, behaviorLayout, 2, "", "");
 
 	// --- Visual ---------------------------------------------------------
 	layout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
@@ -229,23 +233,27 @@ void KMixPrefDlg::createGeneralTab()
 	grp->setFlat(true);
 	layout->addWidget(grp);
 
-	// [CONFIG]
-	m_showTicks = new QCheckBox(i18n("Show &tickmarks"), m_generalTab);
-	addWidgetToLayout(m_showTicks, layout, 10, i18n("Enable/disable tickmark scales on the sliders"), "Tickmarks");
+	auto *visualLayout = new QVBoxLayout;
+	visualLayout->setContentsMargins(0, 0, 0, 0);
+	grp->setLayout(visualLayout);
 
-	m_showLabels = new QCheckBox(i18n("Show &labels"), m_generalTab);
-	addWidgetToLayout(m_showLabels, layout, 10, i18n("Enables/disables description labels above the sliders"),
+	// [CONFIG]
+	m_showTicks = new QCheckBox(i18n("Show &tickmarks"), grp);
+	addWidgetToLayout(m_showTicks, visualLayout, 10, i18n("Enable/disable tickmark scales on the sliders"), "Tickmarks");
+
+	m_showLabels = new QCheckBox(i18n("Show &labels"), grp);
+	addWidgetToLayout(m_showLabels, visualLayout, 10, i18n("Enables/disables description labels above the sliders"),
 		"Labels");
 
 	// [CONFIG]
-	m_showOSD = new QCheckBox(i18n("Show On Screen Display (&OSD)"), m_generalTab);
-	addWidgetToLayout(m_showOSD, layout, 10, "", "showOSD");
+	m_showOSD = new QCheckBox(i18n("Show On Screen Display (&OSD)"), grp);
+	addWidgetToLayout(m_showOSD, visualLayout, 10, "", "showOSD");
 
 	// [CONFIG] Slider orientation (main window)
-	layout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
+	visualLayout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
 	QGridLayout* orientationGrid = new QGridLayout();
 	orientationGrid->setHorizontalSpacing(DialogBase::horizontalSpacing());
-	layout->addItem(orientationGrid);
+	visualLayout->addLayout(orientationGrid);
 
 	// Slider orientation (main window, and tray popup separately).
 	createOrientationGroup(i18n("Slider orientation (main window): "), orientationGrid, 0, KMixPrefDlg::MainOrientation);
