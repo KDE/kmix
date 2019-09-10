@@ -23,23 +23,54 @@
 
 #include <qicon.h>
 #include <qlabel.h>
-
-#include <kiconloader.h>
-#include <kiconeffect.h>
+#include <qiconengine.h>
+#include <qstyle.h>
 
 #include <kmix_debug.h>
 
 
-static const KIconLoader::Group iconLoadGroup = KIconLoader::Small;
-static const KIconLoader::Group iconSizeGroup = KIconLoader::Toolbar;
 static const int iconSmallSize = 10;
+
+
+class DisabledIconEngine : public QIconEngine
+{
+    QIcon m_icon;
+public:
+    DisabledIconEngine(const QIcon &icon) : QIconEngine(), m_icon(icon) {}
+    ~DisabledIconEngine() override {}
+
+    QIconEngine *clone() const override
+    {
+        return new DisabledIconEngine(m_icon);
+    }
+
+    void paint(QPainter *painter, const QRect &rect, QIcon::Mode, QIcon::State state) override
+    {
+        return m_icon.paint(painter, rect, Qt::AlignCenter, QIcon::Disabled, state);
+    }
+
+    QPixmap pixmap(const QSize &size, QIcon::Mode, QIcon::State state) override
+    {
+        return m_icon.pixmap(size, QIcon::Disabled, state);
+    }
+
+    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) override
+    {
+        return m_icon.actualSize(size, mode, state);
+    }
+
+    QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) const override
+    {
+        return m_icon.availableSizes(mode, state);
+    }
+};
 
 
 ToggleToolButton::ToggleToolButton(const QString &activeIconName, QWidget *pnt)
     : QToolButton(pnt)
 {
     mActiveLoaded = mInactiveLoaded = false;
-    mActiveIcon = activeIconName;
+    mActiveIconName = activeIconName;
     mSmallSize = false;
     mIsActive = true;
     mFirstTime = true;
@@ -49,73 +80,55 @@ ToggleToolButton::ToggleToolButton(const QString &activeIconName, QWidget *pnt)
 }
 
 
-// based on MDWSlider::setIcon()
-QPixmap getPixmap(const QString &name, qreal devicePixelRatio, bool small)
-{
-    QPixmap pix = KIconLoader::global()->loadScaledIcon(name, iconLoadGroup, devicePixelRatio, IconSize(iconSizeGroup));
-    if (!pix.isNull())					// load icon, check success
-    {							// if wanting small size, scale pixmap
-	if (small) pix = pix.scaled(QSize(iconSmallSize, iconSmallSize) * devicePixelRatio);
-    }
-    else qCWarning(KMIX_LOG) << "failed to load" << name;
-
-    // Return the allocated pixmap even if it failed to load, so that
-    // the caller can tell and only one load attempt will be made.
-    return (pix);
-}
-
-
 void ToggleToolButton::setActive(bool active)
 {
     if (!mFirstTime && (active==mIsActive)) return;	// no change required
     mIsActive = active;					// record required state
     mFirstTime = false;					// note now initialised
 
-    QPixmap *pix = nullptr;				// new pixmap to set
+    QIcon icon;						// new icon to set
     if (mIsActive)					// look at new state
     {
-        if (mActivePixmap.isNull())			// need pixmap for active state
+        if (mActiveIcon.isNull())			// need icon for active state
         {						// only if not already tried
-            if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, devicePixelRatioF(), mSmallSize);
+            if (!mActiveLoaded) mActiveIcon = QIcon::fromTheme(mActiveIconName);
             mActiveLoaded = true;			// note not to try again
         }
 
-        pix = &mActivePixmap;				// the pixmap to use
+        icon = mActiveIcon;				// the icon to use
     }
     else						// want inactive state
     {
-        if (mInactivePixmap.isNull())			// need pixmap for inactive state
+        if (mInactiveIcon.isNull())			// need icon for inactive state
         {
-            if (!mInactiveIcon.isEmpty())		// inactive icon is set
+            if (!mInactiveIconName.isEmpty())		// inactive icon is set
             {
-                if (!mInactiveLoaded) mInactivePixmap = getPixmap(mInactiveIcon, devicePixelRatioF(), mSmallSize);
+                if (!mInactiveLoaded) mInactiveIcon = QIcon::fromTheme(mInactiveIconName);
             }
             else
             {						// need to derive from active state
-                if (!mActiveLoaded) mActivePixmap = getPixmap(mActiveIcon, devicePixelRatioF(), mSmallSize);
+                if (!mActiveLoaded) mActiveIcon = QIcon::fromTheme(mActiveIconName);
                 mActiveLoaded = true;			// only if not already tried
-                if (mActivePixmap.isNull()) qCWarning(KMIX_LOG) << "want inactive but no active available";
+                if (mActiveIcon.isNull()) qCWarning(KMIX_LOG) << "want inactive but no active available";
                 else
                 {
-                    mInactivePixmap = KIconLoader::global()->iconEffect()->apply(mActivePixmap,
-                                                                                 KIconLoader::Toolbar,
-                                                                                 KIconLoader::DisabledState);
+                    mInactiveIcon = QIcon(new DisabledIconEngine(mActiveIcon));
                 }
             }
 
             mInactiveLoaded = true;			// note not to try again
         }
 
-        pix = &mInactivePixmap;				// the pixmap to use
+        icon = mInactiveIcon;				// the icon to use
     }
 
-    if (pix->isNull()) return;				// pixmap not available
-    setIcon(*pix);					// set button pixmap
+    if (icon.isNull()) return;				// icon not available
+    setIcon(icon);					// set button icon
 }
 
 
 /**
- * Loads the icon with the given @p iconName in the size KIconLoader::Small,
+ * Loads the icon with the given @p iconName
  * and applies it to the @p label widget.  The widget must be either a
  * QLabel or a QToolButton.
  *
@@ -124,32 +137,35 @@ void ToggleToolButton::setActive(bool active)
  */
 void ToggleToolButton::setIndicatorIcon(const QString &iconName, QWidget *label, bool small)
 {
-    QPixmap pix = getPixmap(iconName, label->devicePixelRatioF(), small);
-    if (pix.isNull())
+    const auto icon = QIcon::fromTheme(iconName);
+    if (icon.isNull())
     {
-        qCWarning(KMIX_LOG) << "Could not get pixmap for" << iconName;
+        qCWarning(KMIX_LOG) << "Could not get icon for" << iconName;
         return;
     }
 
+    QSize iconSize;
     if (small)						// small size, set for scaled icon
     {
-        label->resize(iconSmallSize, iconSmallSize);
+        iconSize = QSize(iconSmallSize, iconSmallSize);
     }
     else						// not small size, set for normal icon
     {
-        label->resize(IconSize(iconSizeGroup), IconSize(iconSizeGroup));
+        const auto toolBarIconSize = label->style()->pixelMetric(QStyle::PM_TabBarIconSize, nullptr, label);
+        iconSize = QSize(toolBarIconSize, toolBarIconSize);
     }
+    label->resize(iconSize);
     label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 		
     QLabel *lbl = qobject_cast<QLabel *>(label);
     if (lbl!=nullptr)
     {
-        lbl->setPixmap(pix);
+        lbl->setPixmap(icon.pixmap(iconSize));
         lbl->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     }
     else
     {
         QToolButton *tbt = qobject_cast<QToolButton *>(label);
-        if (tbt!=nullptr) tbt->setIcon(pix);		// works because implicit QPixmap -> QIcon
+        if (tbt!=nullptr) tbt->setIcon(icon);
     }
 }

@@ -26,7 +26,6 @@
 #include <QString>
 
 #include <kglobalaccel.h>
-#include <kiconloader.h>
 #include <knotification.h>
 
 #include "gui/guiprofile.h"

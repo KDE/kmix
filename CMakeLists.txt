@@ -39,7 +39,6 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     DocTools
     GlobalAccel
     I18n
-    IconThemes
     Notifications
     Solid
     WidgetsAddons
@@ -262,7 +261,6 @@ target_link_libraries(kmixgui
   KF5::I18n
   KF5::ConfigCore
   KF5::ConfigGui
-  KF5::IconThemes
   KF5::GlobalAccel
   KF5::Notifications
   KF5::XmlGui
@@ -285,7 +283,6 @@ target_link_libraries(kmix
   kmixcore
   kmixgui
   KF5::I18n
-  KF5::IconThemes
   KF5::DBusAddons
   KF5::GlobalAccel
   KF5::XmlGui

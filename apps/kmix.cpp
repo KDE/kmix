@@ -36,7 +36,6 @@
 
 // include files for KDE
 #include <KGlobalAccel>
-#include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klocalizedstring.h>
 #include <kconfig.h>
@@ -267,10 +266,8 @@ void KMixWindow::initActionsAfterInitMixer()
 	// runs with 4 fixed Tabs.
 	if (!Mixer::pulseaudioPresent())
 	{
-		QPixmap cornerNewPM = KIconLoader::global()->loadScaledIcon("tab-new", KIconLoader::Toolbar,
-				devicePixelRatioF(), IconSize(KIconLoader::Toolbar));
 		QPushButton* _cornerLabelNew = new QPushButton();
-		_cornerLabelNew->setIcon(cornerNewPM);
+		_cornerLabelNew->setIcon(QIcon::fromTheme("tab-new"));
 		_cornerLabelNew->setToolTip(i18n("Add new view"));
 		//cornerLabelNew->setSizePolicy(QSizePolicy());
 		m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);

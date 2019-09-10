@@ -28,7 +28,6 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <kiconloader.h>
 #include <klocalizedstring.h>
 
 #include "gui/guiprofile.h"
@@ -40,8 +39,8 @@
 /**
  * Standard constructor.
  */
-DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, qreal devicePixelRatio, const QString &id, bool shown, const QString &name, int splitted, const QString& iconName) :
-   QListWidgetItem(parent), _id(id), _shown(shown), _name(name), _splitted(splitted), _iconName(iconName), _devicePixelRatio(devicePixelRatio)
+DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, const QString &id, bool shown, const QString &name, int splitted, const QString& iconName) :
+   QListWidgetItem(parent), _id(id), _shown(shown), _name(name), _splitted(splitted), _iconName(iconName)
 {
   refreshItem();
 }
@@ -49,9 +48,8 @@ DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, qr
 /**
  * Deserializing constructor.  Used for DnD.
  */
-DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, qreal devicePixelRatio, QDataStream &s)
+DialogViewConfigurationItem::DialogViewConfigurationItem(QListWidget *parent, QDataStream &s)
     : QListWidgetItem(parent)
-    , _devicePixelRatio(devicePixelRatio)
 {
   s >> _id;
   s >> _shown;
@@ -66,7 +64,7 @@ void DialogViewConfigurationItem::refreshItem()
 {
   setFlags((flags() | Qt::ItemIsDragEnabled) &  ~Qt::ItemIsDropEnabled);
   setText(_name);
-  setIcon(KIconLoader::global()->loadScaledIcon( _iconName, KIconLoader::Small, _devicePixelRatio, IconSize(KIconLoader::Toolbar) ));
+  setIcon(QIcon::fromTheme(_iconName));
   setData(Qt::ToolTipRole, _id);  // a hack. I am giving up to do it right
   setData(Qt::DisplayRole, _name);
 }
@@ -124,7 +122,7 @@ bool DialogViewConfigurationWidget::dropMimeData(int index, const QMimeData * mi
     if (data.isEmpty()) return false;
 
     QDataStream stream(data);
-    DialogViewConfigurationItem* item = new DialogViewConfigurationItem(nullptr, devicePixelRatioF(), stream);
+    DialogViewConfigurationItem* item = new DialogViewConfigurationItem(nullptr, stream);
     emit dropped(this, index, item);
     return true;
 }
@@ -267,7 +265,7 @@ void DialogViewConfiguration::createPage()
             }
 
             //qCDebug(KMIX_LOG)  << "add DialogViewConfigurationItem: " << mdName << " visible=" << mdw->isVisible() << "splitted=" << splitted;
-            auto *item = new DialogViewConfigurationItem(nullptr, devicePixelRatioF(), md->id(), true, mdName, splitted, mdw->mixDevice()->iconName());
+            auto *item = new DialogViewConfigurationItem(nullptr, md->id(), true, mdName, splitted, mdw->mixDevice()->iconName());
             if (mdw->isVisible()) _qlwActive->addItem(item);
             else _qlwInactive->addItem(item);
     } // for all MDW's

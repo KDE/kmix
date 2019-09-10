@@ -45,22 +45,22 @@ public:
     void setSmallSize(bool small = true)		{ mSmallSize = small; }
     bool isActive() const				{ return (mIsActive); }
 
-    void setActiveIcon(const QString &name)		{ mActiveIcon = name; }
-    void setInactiveIcon(const QString &name)		{ mInactiveIcon = name; }
+    void setActiveIcon(const QString &name)		{ mActiveIconName = name; }
+    void setInactiveIcon(const QString &name)		{ mInactiveIconName = name; }
 
     static void setIndicatorIcon(const QString &iconName, QWidget *label, bool small = false);
 
 private:
     bool mSmallSize;
-    QString mActiveIcon;
-    QString mInactiveIcon;
+    QString mActiveIconName;
+    QString mInactiveIconName;
 
     bool mIsActive;
     bool mFirstTime;
 
-    QPixmap mActivePixmap;
+    QIcon mActiveIcon;
     bool mActiveLoaded;
-    QPixmap mInactivePixmap;
+    QIcon mInactiveIcon;
     bool mInactiveLoaded;
 };
 

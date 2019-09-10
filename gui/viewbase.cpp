@@ -28,7 +28,6 @@
 
 // KDE
 #include <klocalizedstring.h>
-#include <kiconloader.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kstandardaction.h>

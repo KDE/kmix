@@ -22,7 +22,6 @@
 #include "gui/mdwslider.h"
 
 #include <klocalizedstring.h>
-#include <kiconloader.h>
 #include <kconfig.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
@@ -561,7 +560,6 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout, QWidget *parent)
 {
 	QToolButton *lbl = new QToolButton(parent);
-	lbl->setIconSize(QSize(IconSize(KIconLoader::Toolbar), IconSize(KIconLoader::Toolbar)));
 	lbl->setAutoRaise(true);
 	lbl->setCheckable(false);
 	
@@ -1123,7 +1121,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	if (view()==nullptr) return;
 
 	QMenu *menu = view()->getPopup();
-	menu->addSection( SmallIcon( "kmix" ), mixDevice()->readableName() );
+	menu->addSection( QIcon::fromTheme( "kmix" ), mixDevice()->readableName() );
 
 	if (m_moveMenu) {
 		MixSet *ms = mixDevice()->moveDestinationMixSet();

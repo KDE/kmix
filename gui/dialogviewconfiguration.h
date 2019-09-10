@@ -43,8 +43,8 @@ class QVBoxLayout;
 class DialogViewConfigurationItem : public QListWidgetItem
 {
  public:
-    DialogViewConfigurationItem(QListWidget *parent, qreal devicePixelRatio, QDataStream &s);
-    DialogViewConfigurationItem(QListWidget *parent, qreal devicePixelRatio, const QString &id, bool shown, const QString &name, int splitted, const QString &iconName);
+    DialogViewConfigurationItem(QListWidget *parent, QDataStream &s);
+    DialogViewConfigurationItem(QListWidget *parent, const QString &id, bool shown, const QString &name, int splitted, const QString &iconName);
     ~DialogViewConfigurationItem() = default;
 
 private:
@@ -63,7 +63,6 @@ private:
     QString _name;
     int _splitted;
     QString _iconName;
-    qreal _devicePixelRatio;
 };
 
 class DialogViewConfigurationWidget : public QListWidget

@@ -25,8 +25,6 @@
 
 #include <qlist.h>
 
-#include <kiconloader.h>
-
 #include "gui/volumeslider.h"
 #include "gui/mixdevicewidget.h"
 #include "core/volume.h"

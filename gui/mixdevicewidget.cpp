@@ -22,7 +22,6 @@
 #include "gui/mixdevicewidget.h"
 
 #include <kactioncollection.h>
-#include <kiconloader.h>
 #include <kconfig.h>
 #include <kglobalaccel.h>
 #include <kshortcutsdialog.h>
