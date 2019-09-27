@@ -55,7 +55,7 @@ void VerticalText::paintEvent ( QPaintEvent * /*event*/ ) {
 
 QSize VerticalText::sizeHint() const {
     const QFontMetrics& fontMetr = fontMetrics();
-    QSize textSize(fontMetr.width(m_labelText), fontMetr.height());
+    QSize textSize(fontMetr.boundingRect(m_labelText).width(), fontMetr.height());
     textSize.transpose();
     return textSize;
 }
@@ -63,7 +63,7 @@ QSize VerticalText::sizeHint() const {
 QSize VerticalText::minimumSizeHint() const
 {
     const QFontMetrics& fontMetr = fontMetrics();
-    QSize textSize(fontMetr.width("MMMM"), fontMetr.height());
+    QSize textSize(fontMetr.boundingRect("MMMM").width(), fontMetr.height());
     textSize.transpose();
     return textSize;
 }
