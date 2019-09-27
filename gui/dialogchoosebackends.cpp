@@ -57,7 +57,7 @@ DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>&
 void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
 {
     _layout = new QVBoxLayout(this);
-    _layout->setMargin(0);
+    _layout->setContentsMargins(0, 0, 0, 0);
 
     if ( !Mixer::mixers().isEmpty() )
     {

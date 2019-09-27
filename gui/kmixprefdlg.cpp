@@ -111,7 +111,7 @@ void KMixPrefDlg::switchToPage(KMixPrefPage page)
 void KMixPrefDlg::createStartupTab()
 {
 	layoutStartupTab = new QVBoxLayout(m_startupTab);
-	layoutStartupTab->setMargin(0);
+	layoutStartupTab->setContentsMargins(0, 0, 0, 0);
 	layoutStartupTab->setSpacing(DialogBase::verticalSpacing());
 
 	allowAutostart = new QCheckBox(i18n("Start KMix on desktop startup"), m_startupTab);
@@ -190,7 +190,7 @@ void KMixPrefDlg::createOrientationGroup(const QString& labelSliderOrientation, 
 void KMixPrefDlg::createGeneralTab()
 {
 	QBoxLayout* layout = new QVBoxLayout(m_generalTab);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(DialogBase::verticalSpacing());
 
 	// --- Behavior ---------------------------------------------------------
@@ -266,7 +266,7 @@ void KMixPrefDlg::createGeneralTab()
 void KMixPrefDlg::createControlsTab()
 {
 	layoutControlsTab = new QVBoxLayout(m_controlsTab);
-	layoutControlsTab->setMargin(0);
+	layoutControlsTab->setContentsMargins(0, 0, 0, 0);
 	layoutControlsTab->setSpacing(DialogBase::verticalSpacing());
 	m_dockingChk = new QCheckBox(i18n("Dock in system tray"), m_controlsTab);
 

@@ -146,7 +146,7 @@ DialogViewConfiguration::DialogViewConfiguration(QWidget *parent, ViewBase &view
    layout->addWidget(qlb);
    
    _glayout = new QGridLayout();
-   _glayout->setMargin(0);
+   _glayout->setContentsMargins(0, 0, 0, 0);
    layout->addLayout(_glayout);
 
    createPage();
