@@ -330,7 +330,7 @@ void KMixDockWidget::activate(const QPoint &pos)
 
 
 	KWindowSystem::setType(dockAreaPopup->winId(), NET::Dock);
-	KWindowSystem::setState(dockAreaPopup->winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager);
+	KWindowSystem::setState(dockAreaPopup->winId(), NET::KeepAbove | NET::SkipTaskbar | NET::SkipPager);
 	dockAreaPopup->show();
 	dockAreaPopup->move(x, y);
 }
