@@ -196,6 +196,7 @@ target_link_libraries(kmixcore
     Qt5::Core
     Qt5::Widgets
   PRIVATE
+    Qt5::Xml
     Qt5::DBus
     KF5::I18n
     KF5::Solid
