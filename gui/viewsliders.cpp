@@ -114,7 +114,7 @@ QWidget *ViewSliders::add(const shared_ptr<MixDevice> md)
 
     if (md->isEnum())					// control is a switch
     {
-        mdw = new MDWEnum(md, 0, this);
+        mdw = new MDWEnum(md, {}, this);
         m_layoutSwitches->addWidget(mdw);
     }
     else						// control is a slider

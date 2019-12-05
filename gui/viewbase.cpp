@@ -48,7 +48,7 @@
  * Creates an empty View. To populate it with MixDevice instances, you must implement
  * initLayout() in your derived class.
  */
-ViewBase::ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, QString guiProfileId, KActionCollection *actionColletion)
+ViewBase::ViewBase(QWidget* parent, const QString &id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, const QString &guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f),
       _popMenu(NULL),
       _actions(actionColletion),

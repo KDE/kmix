@@ -54,9 +54,9 @@ public:
         HasMenuBar     = 0x0001,
         MenuBarVisible = 0x0002
     };
-    Q_DECLARE_FLAGS(ViewFlags, ViewFlag);
+    Q_DECLARE_FLAGS(ViewFlags, ViewFlag)
 
-    ViewBase(QWidget* parent, QString id, Qt::WindowFlags f, ViewFlags vflags, QString guiProfileId, KActionCollection* actionCollection = 0);
+    ViewBase(QWidget* parent, const QString &id, Qt::WindowFlags f, ViewFlags vflags, const QString &guiProfileId, KActionCollection* actionCollection = nullptr);
     // The GUI profile will not be removed on destruction,
     // as it is pooled and might be applied to a new View.
     virtual ~ViewBase() = default;

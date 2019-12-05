@@ -69,9 +69,9 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
 
 	// For bizarre reasons, we wrap the ViewDockAreaPopup in a QMenu. Must relate to how KStatusNotifierItem works.
-   _dockAreaPopupMenuWrapper = new QMenu(parent);
-	_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
-	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"), parent);
+    _dockAreaPopupMenuWrapper = new QMenu(parent);
+    _volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
+    _dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"), parent);
 	_volWA->setDefaultWidget(_dockView);
 	_dockAreaPopupMenuWrapper->addAction(_volWA);
 	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
@@ -277,7 +277,7 @@ void KMixDockWidget::activate(const QPoint &pos)
 	_dockAreaPopupMenuWrapper->removeAction(_volWA);
 	delete _volWA;
 	_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
-	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", 0, QString("no-guiprofile-yet-in-dock"),
+	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"),
 		_kmixMainWindow);
 	_volWA->setDefaultWidget(_dockView);
 	_dockAreaPopupMenuWrapper->addAction(_volWA);

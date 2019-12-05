@@ -47,7 +47,7 @@ public:
         ShowCapture = 0x04,
         ShowMixerName = 0x08
     };
-    Q_DECLARE_FLAGS(MDWFlags, MDWFlag);
+    Q_DECLARE_FLAGS(MDWFlags, MDWFlag)
 
     MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewBase *view, ProfControl *pctl);
     virtual ~MixDeviceWidget() = default;

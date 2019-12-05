@@ -48,9 +48,9 @@
 #undef RESTORE_VOLUME_BUTTON
 
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId,
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags, const QString &guiProfileId,
 	KMixWindow *dockW) :
-	ViewBase(parent, id, 0, vflags, guiProfileId), _kmixMainWindow(dockW)
+	ViewBase(parent, id, {}, vflags, guiProfileId), _kmixMainWindow(dockW)
 {
 	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);

@@ -41,7 +41,7 @@ class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
 public:
-    ViewDockAreaPopup(QWidget* parent, QString id, ViewBase::ViewFlags vflags, QString guiProfileId, KMixWindow *dockW);
+    ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags, const QString &guiProfileId, KMixWindow *dockW);
     virtual ~ViewDockAreaPopup();
 
     QWidget* add(shared_ptr<MixDevice> md) Q_DECL_OVERRIDE;
