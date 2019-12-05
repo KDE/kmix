@@ -56,25 +56,25 @@ public:
     void createShortcutActions();
     
     // GUI
-    bool isStereoLinked() const Q_DECL_OVERRIDE { return m_linked; }
-    void setStereoLinked( bool value ) Q_DECL_OVERRIDE;
-    void setLabeled( bool value ) Q_DECL_OVERRIDE;
-    void setTicks( bool ticks ) Q_DECL_OVERRIDE;
-    void setIcons( bool value ) Q_DECL_OVERRIDE;
+    bool isStereoLinked() const override { return m_linked; }
+    void setStereoLinked( bool value ) override;
+    void setLabeled( bool value ) override;
+    void setTicks( bool ticks ) override;
+    void setIcons( bool value ) override;
 
     QToolButton* addMediaButton(QString iconName, QLayout* layout, QWidget *parent);
     void updateMediaButton();
-    void setColors( QColor high, QColor low, QColor back ) Q_DECL_OVERRIDE;
-    void setMutedColors( QColor high, QColor low, QColor back ) Q_DECL_OVERRIDE;
+    void setColors( QColor high, QColor low, QColor back ) override;
+    void setMutedColors( QColor high, QColor low, QColor back ) override;
     
-    bool eventFilter(QObject *obj, QEvent *ev) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *obj, QEvent *ev) override;
 
     QString iconName();
     // Layout
     QSizePolicy sizePolicy() const;
-	QSize sizeHint() const Q_DECL_OVERRIDE;
-    int labelExtentHint() const Q_DECL_OVERRIDE;
-    void setLabelExtent(int extent) Q_DECL_OVERRIDE;
+	QSize sizeHint() const override;
+    int labelExtentHint() const override;
+    void setLabelExtent(int extent) override;
 	bool hasMuteButton() const;
 	bool hasCaptureLED() const;
 
@@ -85,10 +85,10 @@ public slots:
     void toggleMuted();
     void toggleStereoLinked();
 
-    void setDisabled( bool value ) Q_DECL_OVERRIDE;
-    void update() Q_DECL_OVERRIDE;
+    void setDisabled( bool value ) override;
+    void update() override;
     void showMoveMenu();
-    void showContextMenu( const QPoint &pos = QCursor::pos() ) Q_DECL_OVERRIDE;
+    void showContextMenu( const QPoint &pos = QCursor::pos() ) override;
     void increaseOrDecreaseVolume(bool arg1, Volume::VolumeTypeFlag volumeType);
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);
@@ -111,8 +111,8 @@ private slots:
 
 private:
     void createWidgets();
-    void addSliders( QBoxLayout *volLayout, char type, Volume& vol,
-                     QList<QAbstractSlider *>& ref_sliders, QString tooltipText );
+    void addSliders(QBoxLayout *volLayout, char type, Volume& vol,
+                     QList<QAbstractSlider *>& ref_sliders, const QString &tooltipText );
 
     // Methods that are called two times from a wrapper. Once for playabck, once for capture
     void setStereoLinkedInternal( QList< QAbstractSlider* >& ref_sliders, bool showSubcontrolLabels);

@@ -131,7 +131,7 @@ private:
 	/**
 	 * @Override
 	 */
-	void usrReadConfig() Q_DECL_OVERRIDE;
+	void usrReadConfig() override;
 	/**
 	 * @Override
 	 */

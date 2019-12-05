@@ -613,7 +613,7 @@ void ProfControl::setVisibility(const QString &visString)
 	setVisibility(visibilityFromString(visString));
 }
 
-void ProfControl::setSubcontrols(QString sctls)
+void ProfControl::setSubcontrols(const QString &sctls)
 {
     _subcontrols = sctls;
 

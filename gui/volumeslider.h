@@ -36,9 +36,9 @@ class VolumeSlider : public QSlider
 	QLabel* m_tooltip;
 
 protected:
-	void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-	void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-	void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
 
 public:
       VolumeSlider(Qt::Orientation orientation, QWidget* parent); // : QSlider(orientation, parent);

@@ -84,7 +84,7 @@ protected slots:
 
 protected:
     void addActionToPopup(QAction *action);
-    void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
+    void contextMenuEvent(QContextMenuEvent *ev) override;
 
     Qt::Orientation orientation() const			{ return (m_view->orientation()); }
     MixDeviceWidget::MDWFlags flags() const		{ return (m_flags); }

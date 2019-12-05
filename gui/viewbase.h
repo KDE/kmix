@@ -84,8 +84,8 @@ public:
 
     ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::Default) const;
 
-    KActionCollection *actionCollection() const		{ return (_actions); };
-    const QList<Mixer*> &getMixers() const		{ return (_mixers); };
+    KActionCollection *actionCollection() const		{ return (_actions); }
+    const QList<Mixer*> &getMixers() const		{ return (_mixers); }
 
     int mixDeviceCount() const				{ return (_mdws.count()); }
     QWidget *mixDeviceAt(int i) const			{ return (_mdws.at(i)); }
@@ -139,7 +139,7 @@ protected:
     /**
      * Popup stuff
      */
-    void contextMenuEvent(QContextMenuEvent *ev) Q_DECL_OVERRIDE;
+    void contextMenuEvent(QContextMenuEvent *ev) override;
     virtual void showContextMenu();
 
     // Creates a suitable representation for the given MixDevice.
@@ -163,6 +163,6 @@ private slots:
    void toggleMenuBarSlot();
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(ViewBase::ViewFlags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(ViewBase::ViewFlags)
 
 #endif

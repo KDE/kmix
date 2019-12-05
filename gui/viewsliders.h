@@ -42,19 +42,19 @@ public:
     ViewSliders(QWidget *parent, const QString &id, Mixer *mixer, ViewBase::ViewFlags vflags, const QString &guiProfileId, KActionCollection *actColl);
     virtual ~ViewSliders();
 
-    QWidget *add(const shared_ptr<MixDevice> md) Q_DECL_OVERRIDE;
-    void constructionFinished() Q_DECL_OVERRIDE;
-    void configurationUpdate() Q_DECL_OVERRIDE;
+    QWidget *add(const shared_ptr<MixDevice> md) override;
+    void constructionFinished() override;
+    void configurationUpdate() override;
 
 public slots:
     void controlsChange(ControlManager::ChangeType changeType);
 
 protected:
-    void initLayout() Q_DECL_OVERRIDE;
-    Qt::Orientation orientationSetting() const Q_DECL_OVERRIDE;
+    void initLayout() override;
+    Qt::Orientation orientationSetting() const override;
 
 private:
-    void refreshVolumeLevels() Q_DECL_OVERRIDE;
+    void refreshVolumeLevels() override;
 
     QGridLayout *m_layoutMDW;
     QBoxLayout *m_layoutSliders;

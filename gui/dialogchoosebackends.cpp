@@ -137,7 +137,7 @@ bool DialogChooseBackends::getAndResetModifyFlag()
 	return modifiedOld;
 }
 
-bool DialogChooseBackends::getModifyFlag()
+bool DialogChooseBackends::getModifyFlag() const
 {
 	return modified;
 }

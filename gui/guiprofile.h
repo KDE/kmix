@@ -77,7 +77,7 @@ public:
     QString name() const			{ return (_name); }
     void setName(const QString &name)		{ _name = name; }
 
-    void setSubcontrols(QString sctls);
+    void setSubcontrols(const QString &sctls);
     bool useSubcontrolPlayback() const		{ return (_useSubcontrolPlayback); }
     bool useSubcontrolCapture() const		{ return (_useSubcontrolCapture); }
     bool useSubcontrolPlaybackSwitch() const	{ return (_useSubcontrolPlaybackSwitch); }
@@ -211,9 +211,9 @@ public:
     // Enumeration for the scope
     enum ProfileScope { NONE, SOUNDCARD };
     
-    bool startDocument() Q_DECL_OVERRIDE;
-    bool startElement( const QString&, const QString&, const QString& , const QXmlAttributes& ) Q_DECL_OVERRIDE;
-    bool endElement( const QString&, const QString&, const QString& ) Q_DECL_OVERRIDE;
+    bool startDocument() override;
+    bool startElement( const QString&, const QString&, const QString& , const QXmlAttributes& ) override;
+    bool endElement( const QString&, const QString&, const QString& ) override;
     
 private:
     void addControl(const QXmlAttributes& attributes);

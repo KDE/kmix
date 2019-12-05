@@ -53,16 +53,16 @@ class Mixer_PULSE : public Mixer_Backend
         Mixer_PULSE(Mixer *mixer, int devnum);
         virtual ~Mixer_PULSE();
 
-        int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
-        int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> ) Q_DECL_OVERRIDE;
+        int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> ) override;
+        int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> ) override;
 
-        QString currentStreamDevice(const QString &id) const Q_DECL_OVERRIDE;
-        bool moveStream( const QString& id, const QString& destId ) Q_DECL_OVERRIDE;
+        QString currentStreamDevice(const QString &id) const override;
+        bool moveStream( const QString& id, const QString& destId ) override;
 
-        QString getDriverName() Q_DECL_OVERRIDE;
-        QString getId() const Q_DECL_OVERRIDE { return _id; };
+        QString getDriverName() override;
+        QString getId() const override { return _id; };
 
-        bool needsPolling() Q_DECL_OVERRIDE { return false; }
+        bool needsPolling() override { return false; }
 
         void triggerUpdate();
         void addWidget(int index, bool = false);
@@ -72,8 +72,8 @@ class Mixer_PULSE : public Mixer_Backend
         int id2num(const QString& id);
 
     protected:
-        int open() Q_DECL_OVERRIDE;
-        int close() Q_DECL_OVERRIDE;
+        int open() override;
+        int close() override;
 
         int fd;
         QString _id;
@@ -89,7 +89,7 @@ class Mixer_PULSE : public Mixer_Backend
         void pulseControlsReconfigured();
 
 public:
-        void reinit() Q_DECL_OVERRIDE;
+        void reinit() override;
 
 };
 

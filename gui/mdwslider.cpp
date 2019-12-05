@@ -622,7 +622,7 @@ static QWidget *createLabel(QWidget *parent, const QString &label, Qt::Orientati
 
 
 void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
-                            QList<QAbstractSlider *>& ref_sliders, QString tooltipText)
+                            QList<QAbstractSlider *>& ref_sliders, const QString &tooltipText)
 {
 	const int minSliderSize = fontMetrics().height() * 10;
 	long minvol = vol.minVolume();

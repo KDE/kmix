@@ -42,18 +42,18 @@ public:
     explicit Mixer_ALSA(Mixer *mixer, int device = -1 );
     ~Mixer_ALSA();
 
-    int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md ) Q_DECL_OVERRIDE;
-    int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md ) Q_DECL_OVERRIDE;
-    void setEnumIdHW( const QString& id, unsigned int) Q_DECL_OVERRIDE;
-    unsigned int enumIdHW(const QString& id) Q_DECL_OVERRIDE;
-    bool hasChangedControls() Q_DECL_OVERRIDE;
+    int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md ) override;
+    int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md ) override;
+    void setEnumIdHW( const QString& id, unsigned int) override;
+    unsigned int enumIdHW(const QString& id) override;
+    bool hasChangedControls() override;
 
-    bool needsPolling() Q_DECL_OVERRIDE { return false; }
-    QString getDriverName() Q_DECL_OVERRIDE;
+    bool needsPolling() override { return false; }
+    QString getDriverName() override;
 
 protected:
-    int open() Q_DECL_OVERRIDE;
-    int close() Q_DECL_OVERRIDE;
+    int open() override;
+    int close() override;
     int id2num(const QString& id);
 
 private:
@@ -68,7 +68,7 @@ private:
     int identify( snd_mixer_selem_id_t *sid );
     snd_mixer_elem_t* getMixerElem(int devnum);
 
-    QString errorText(int mixer_error) Q_DECL_OVERRIDE;
+    QString errorText(int mixer_error) override;
     typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;
     AlsaMixerSidList mixer_sid_list;
     typedef QList<snd_mixer_elem_t *> AlsaMixerElemList;

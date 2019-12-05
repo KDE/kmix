@@ -37,8 +37,8 @@ class DialogAddView : public DialogBase
     DialogAddView(QWidget *parent, Mixer *mixer);
     virtual ~DialogAddView() = default;
 
-    QString getresultViewName() { return resultViewName; }
-    QString getresultMixerId() { return resultMixerId; }
+    QString getresultViewName() const { return resultViewName; }
+    QString getresultMixerId() const { return resultMixerId; }
 
  public slots:
     void apply();

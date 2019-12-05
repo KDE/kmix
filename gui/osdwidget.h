@@ -39,7 +39,7 @@ class OSDWidget : public Plasma::Dialog
 {
 Q_OBJECT
 public:
-    explicit OSDWidget(QWidget * parent = 0);
+    explicit OSDWidget(QWidget * parent = nullptr);
     virtual ~OSDWidget();
 
     void setCurrentVolume(int volumeLevel, bool muted);

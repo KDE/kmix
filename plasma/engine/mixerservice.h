@@ -34,7 +34,7 @@ public:
 	OrgKdeKMixControlInterface* iface();
 protected:
 	Plasma::ServiceJob* createJob(const QString& operation,
-								QMap<QString,QVariant>& parameters) Q_DECL_OVERRIDE;
+								QMap<QString,QVariant>& parameters) override;
 	OrgKdeKMixControlInterface* m_iface;
 };
 
@@ -45,7 +45,7 @@ class MixerJob : public Plasma::ServiceJob
 public:
 	MixerJob( MixerService *parent, const QString &operation,
 			QMap<QString,QVariant>& parameters );
-	void start() Q_DECL_OVERRIDE;
+	void start() override;
 private:
 	MixerService *m_service;
 };

@@ -74,7 +74,7 @@ KMixWindow : public KXmlGuiWindow
 
    void fixConfigAfterRead();
 
-   bool queryClose() Q_DECL_OVERRIDE;
+   bool queryClose() override;
 
   public slots:
    void controlsChange(ControlManager::ChangeType changeType);

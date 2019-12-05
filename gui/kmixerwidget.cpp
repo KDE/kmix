@@ -49,8 +49,8 @@
    KMixerWidget contains
    a TabBar with n Tabs (at least one per soundcard). These contain View's with sliders, switches and other GUI elements visualizing the Mixer)
 */
-KMixerWidget::KMixerWidget( Mixer *mixer,
-                            QWidget * parent, ViewBase::ViewFlags vflags, QString guiprofId,
+KMixerWidget::KMixerWidget(Mixer *mixer,
+                            QWidget * parent, ViewBase::ViewFlags vflags, const QString &guiprofId,
                             KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer),
      m_topLayout(0), _guiprofId(guiprofId),

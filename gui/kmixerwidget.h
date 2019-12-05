@@ -53,12 +53,12 @@ class KMixerWidget : public QWidget
 
   public:
    explicit KMixerWidget( Mixer *mixer,
-                          QWidget *parent, ViewBase::ViewFlags vflags, QString  guiprofId, KActionCollection* coll = 0 );
+                          QWidget *parent, ViewBase::ViewFlags vflags, const QString  &guiprofId, KActionCollection* coll = nullptr );
    ~KMixerWidget();
 
    Mixer *mixer() { return _mixer; }
    ViewBase* currentView();
-   GUIProfile* getGuiprof() { return GUIProfile::find(_guiprofId); };
+   GUIProfile* getGuiprof() { return GUIProfile::find(_guiprofId); }
 
    
   signals:

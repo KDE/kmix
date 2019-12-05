@@ -29,16 +29,16 @@
 class VolumeSliderExtraData
 {
 public:
-	VolumeSliderExtraData() : chid(Volume::NOCHANNEL), subcontrolLabel(0) {};
-	~VolumeSliderExtraData() {};
-	void setChid(Volume::ChannelID chid) { this->chid = chid; };
-	Volume::ChannelID getChid() { return chid; };
-	void setSubcontrolLabel(QWidget *subcontrolLabel) { this->subcontrolLabel = subcontrolLabel; };
+    VolumeSliderExtraData() : chid(Volume::NOCHANNEL) {}
+    ~VolumeSliderExtraData() {}
+    void setChid(Volume::ChannelID chid) { this->chid = chid; }
+    Volume::ChannelID getChid() { return chid; }
+    void setSubcontrolLabel(QWidget *subcontrolLabel) { this->subcontrolLabel = subcontrolLabel; }
 	QWidget* getSubcontrolLabel() {return subcontrolLabel; }
 
 protected:
 	Volume::ChannelID chid;
-	QWidget *subcontrolLabel;
+    QWidget *subcontrolLabel = nullptr;
 };
 
 class AbstractVolumeSlider : public QAbstractSlider, public VolumeSliderExtraData

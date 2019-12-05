@@ -41,7 +41,7 @@ public:
 
 	QSet<QString> getChosenBackends();
 	bool getAndResetModifyFlag();
-	bool getModifyFlag();
+    bool getModifyFlag() const;
 
 signals:
 	void backendsModified();

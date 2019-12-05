@@ -43,20 +43,20 @@ public:
 
     void addActionToPopup( QAction *action );
     QSizePolicy sizePolicy() const;
-    int labelExtentHint() const Q_DECL_OVERRIDE;
-    void setLabelExtent(int extent) Q_DECL_OVERRIDE;
+    int labelExtentHint() const override;
+    void setLabelExtent(int extent) override;
 
 public slots:
     // GUI hide and show
-    void setDisabled(bool) Q_DECL_OVERRIDE;
+    void setDisabled(bool) override;
 
     // Enum handling: next and selecting
     void nextEnumId();
     int  enumId();
     void setEnumId(int value);
 
-    void update() Q_DECL_OVERRIDE;
-    void showContextMenu(const QPoint& pos = QCursor::pos()) Q_DECL_OVERRIDE;
+    void update() override;
+    void showContextMenu(const QPoint& pos = QCursor::pos()) override;
 
 private:
     void createWidgets();
