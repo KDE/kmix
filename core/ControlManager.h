@@ -77,10 +77,10 @@ public:
     this->sourceId = sourceId;
   }
   
-  const QString getMixerId() const { return mixerId; };
-    ControlManager::ChangeType getChangeType() const { return controlChangeType; };
-    QObject *getTarget() const { return target; };
-    const QString getSourceId() const { return sourceId; };
+  const QString getMixerId() const { return mixerId; }
+    ControlManager::ChangeType getChangeType() const { return controlChangeType; }
+    QObject *getTarget() const { return target; }
+    const QString getSourceId() const { return sourceId; }
 
 private:
   QString mixerId;

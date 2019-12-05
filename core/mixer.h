@@ -183,9 +183,9 @@ public:
     virtual bool moveStream(const QString &id, const QString &destId);
     virtual QString currentStreamDevice(const QString &id) const;
 
-   virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); };
-   virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); };
-   virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); };
+   virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); }
+   virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); }
+   virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); }
 
     void commitVolumeChange( shared_ptr<MixDevice> md );
 

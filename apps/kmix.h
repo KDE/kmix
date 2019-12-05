@@ -86,7 +86,7 @@ KMixWindow : public KXmlGuiWindow
    void loadVolumes();
    void loadVolumes(QString postfix);
    void saveVolumes();
-   void saveVolumes(QString postfix);
+   void saveVolumes(const QString &postfix);
    void saveConfig();
    virtual void applyPrefs();
    void recreateGUI(bool saveView, bool reset);
@@ -131,7 +131,7 @@ private:
    void setInitialSize();
 
     private:
-    static QString getKmixctrlRcFilename(QString postfix);
+    static QString getKmixctrlRcFilename(const QString &postfix);
 	bool profileExists(QString guiProfileId);
 	bool updateDocking();
 	void removeDock();

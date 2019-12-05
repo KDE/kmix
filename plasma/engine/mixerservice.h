@@ -30,7 +30,7 @@ class MixerService : public Plasma::Service
 {
 	Q_OBJECT
 public:
-	MixerService( QObject *parent, OrgKdeKMixControlInterface *iface );
+    explicit MixerService( QObject *parent, OrgKdeKMixControlInterface *iface );
 	OrgKdeKMixControlInterface* iface();
 protected:
 	Plasma::ServiceJob* createJob(const QString& operation,
@@ -43,8 +43,8 @@ class MixerJob : public Plasma::ServiceJob
 {
 	Q_OBJECT
 public:
-	MixerJob( MixerService *parent, const QString &operation,
-			QMap<QString,QVariant>& parameters );
+    MixerJob(MixerService *parent, const QString &operation,
+            const QMap<QString, QVariant> &parameters );
 	void start() override;
 private:
 	MixerService *m_service;

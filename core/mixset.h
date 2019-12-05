@@ -34,12 +34,12 @@ class KMIXCORE_EXPORT MixSet : public QList<shared_ptr<MixDevice> >
       bool read( KConfig *config, const QString& grp );
       bool write( KConfig *config, const QString& grp );
 
-      QString name() { return m_name; }
+      QString name() const { return m_name; }
       void setName( const QString &name );
       
-      shared_ptr<MixDevice> get(QString id);
+      shared_ptr<MixDevice> get(const QString &id);
 
-      void removeById(QString id);
+      void removeById(const QString &id);
 
    private:
       QString m_name;

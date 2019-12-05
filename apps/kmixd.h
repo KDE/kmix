@@ -41,7 +41,7 @@ KMixD : public KDEDModule, protected QDBusContext
   Q_CLASSINFO("D-Bus Interface", "org.kde.KMixD")
 
   public:
-   KMixD(QObject* parent, const QList<QVariant>&);
+   explicit KMixD(QObject* parent, const QList<QVariant>&);
    ~KMixD();
 
   private: 

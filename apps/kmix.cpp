@@ -445,7 +445,7 @@ void KMixWindow::saveVolumes()
 	saveVolumes(QString());
 }
 
-void KMixWindow::saveVolumes(QString postfix)
+void KMixWindow::saveVolumes(const QString &postfix)
 {
 	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
 	KConfig *cfg = new KConfig(kmixctrlRcFilename);
@@ -463,7 +463,7 @@ void KMixWindow::saveVolumes(QString postfix)
 	<< "Volume configuration saved";
 }
 
-QString KMixWindow::getKmixctrlRcFilename(QString postfix)
+QString KMixWindow::getKmixctrlRcFilename(const QString &postfix)
 {
 	QString kmixctrlRcFilename("kmixctrlrc");
 	if (!postfix.isEmpty())

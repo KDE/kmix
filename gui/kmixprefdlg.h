@@ -88,7 +88,7 @@ private:
 
 	GlobalConfig& dialogConfig;
 
-	void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString tooltip, QString kconfigName);
+    void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, const QString &tooltip, const QString &kconfigName);
 
 	void createStartupTab();
 	void replaceBackendsInTab();

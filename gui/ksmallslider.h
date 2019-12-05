@@ -35,7 +35,7 @@ class KSmallSlider : public QAbstractSlider
 
    public:
       KSmallSlider( int minValue, int maxValue, int pageStep, int value,
-        Qt::Orientation, QWidget *parent, const char *name=0 );
+        Qt::Orientation, QWidget *parent, const char *name=nullptr );
 
 /*      void setChid(Volume::ChannelID chid) { this->chid = chid; };
       Volume::ChannelID getChid() { return chid; };*/

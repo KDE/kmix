@@ -60,7 +60,7 @@ class Mixer_PULSE : public Mixer_Backend
         bool moveStream( const QString& id, const QString& destId ) override;
 
         QString getDriverName() override;
-        QString getId() const override { return _id; };
+        QString getId() const override { return _id; }
 
         bool needsPolling() override { return false; }
 

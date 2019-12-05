@@ -290,7 +290,7 @@ void KMixPrefDlg::createControlsTab()
  * @param toopTipText
  * @param objectName
  */
-void KMixPrefDlg::addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, QString tooltip, QString kconfigName)
+void KMixPrefDlg::addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, const QString &tooltip, const QString &kconfigName)
 {
 	if (!kconfigName.isEmpty())
 	{

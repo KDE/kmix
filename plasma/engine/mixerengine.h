@@ -59,7 +59,7 @@ class MixerEngine : public Plasma::DataEngine,
 	Q_OBJECT
 
 public:
-	MixerEngine(QObject* parent, const QVariantList& args);
+    explicit MixerEngine(QObject* parent, const QVariantList& args);
 	~MixerEngine();
 
 	QStringList sources() const override;

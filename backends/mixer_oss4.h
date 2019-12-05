@@ -46,7 +46,7 @@ protected:
 
   int wrapIoctl(int ioctlRet);
 
-  void reinitialize() { open(); close(); };
+  void reinitialize() { open(); close(); }
   virtual int open();
   virtual int close();
 

@@ -41,7 +41,7 @@ Plasma::ServiceJob* MixerService::createJob(const QString& operation,
 }
 
 MixerJob::MixerJob( MixerService* service, const QString &operation,
-				QMap<QString,QVariant>& parameters )
+                const QMap<QString,QVariant>& parameters )
 	: Plasma::ServiceJob(service->destination(), operation, parameters, service)
 	, m_service( service )
 {

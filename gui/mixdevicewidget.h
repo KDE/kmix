@@ -103,6 +103,6 @@ private:
       KShortcutsDialog *m_shortcutsDialog;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(MixDeviceWidget::MDWFlags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(MixDeviceWidget::MDWFlags)
 
 #endif

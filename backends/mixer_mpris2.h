@@ -116,7 +116,7 @@ public:
    Mixer_MPRIS2(Mixer *mixer, int device);
     virtual ~Mixer_MPRIS2();
     QString getDriverName() override;
-    QString getId() const override { return _id; };
+    QString getId() const override { return _id; }
 
   int open() override;
   int close() override;

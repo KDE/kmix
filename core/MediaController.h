@@ -44,12 +44,12 @@ public:
 	explicit MediaController(const QString &controlId);
 	virtual ~MediaController() = default;
 
-	   void addMediaPlayControl() { mediaPlayControl = true; };
-	   void addMediaNextControl() { mediaNextControl = true; };
-	   void addMediaPrevControl() { mediaPrevControl = true; };
-	   bool hasMediaPlayControl() { return mediaPlayControl; };
-	   bool hasMediaNextControl() { return mediaNextControl; };
-	   bool hasMediaPrevControl() { return mediaPrevControl; };
+       void addMediaPlayControl() { mediaPlayControl = true; }
+       void addMediaNextControl() { mediaNextControl = true; }
+       void addMediaPrevControl() { mediaPrevControl = true; }
+       bool hasMediaPlayControl() { return mediaPlayControl; }
+       bool hasMediaNextControl() { return mediaNextControl; }
+       bool hasMediaPrevControl() { return mediaPrevControl; }
 	    bool hasControls() const;
 
 
