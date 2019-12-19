@@ -372,7 +372,7 @@ void KMixWindow::saveBaseConfig()
 	// Using it again, as internal behaviour has changed with KDE4
 	config.writeEntry("Visible", isVisible());
 	config.writeEntry("Menubar", _actionShowMenubar->isChecked());
-	config.writeEntry("Soundmenu.Mixers", GlobalConfig::instance().getMixersForSoundmenu().toList());
+        config.writeEntry("Soundmenu.Mixers", GlobalConfig::instance().getMixersForSoundmenu().values());
 
 	config.writeEntry("DefaultCardOnStart", m_defaultCardOnStart);
 	config.writeEntry("ConfigVersion", KMIX_CONFIG_VERSION);
