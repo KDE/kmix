@@ -1132,7 +1132,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		// Mixer_PULSE::moveStream() does not record the stream ID in the
 		// output stream list and hence cannot get its PulseAudio stream index.
 		// I don't know whether this is a design decision or a PA limitation.
-		if (mixDevice()->id().endsWith(":event")) m_moveMenu->setEnabled(false);
+		if (mixDevice()->id().endsWith(QLatin1String(":event"))) m_moveMenu->setEnabled(false);
 
 		menu->addMenu( m_moveMenu );
 	}

@@ -678,7 +678,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 				if (guiprof==nullptr)
 				{
 					qCWarning(KMIX_LOG) << "Cannot load profile" << profileId;
-					if (profileId.startsWith("MPRIS2."))
+					if (profileId.startsWith(QLatin1String("MPRIS2.")))
 					{
 						profileId = "MPRIS2.default";
 						qCDebug(KMIX_LOG) << "For MPRIS2 falling back to" << profileId;

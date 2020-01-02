@@ -52,7 +52,7 @@ protected:
   /**
    * Derived classes MUST implement this to close the mixer. Do not call this directly, but use shutdown() instead.
    * The method cannot be made pure virtual, as we use close() in the destructor, and C++ does not allow this.
-   * http://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
+   * https://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
    *
    * @return a KMix error code (O=OK).
    */

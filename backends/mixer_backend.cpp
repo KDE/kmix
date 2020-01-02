@@ -57,7 +57,7 @@ int Mixer_Backend::close()
 	// ^^^ Background. before the destructor runs, the C++ runtime changes the virtual pointers to point back
 	//     to the common base class. So what actually runs is not run Mixer_ALSA::close(), but this method.
 	//
-	//     See http://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
+	//     See https://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
 	//
 	//     Comment: IMO this is totally stupid and insane behavior of C++, because you cannot simply cannot call
 	//              the overwritten (cleanup) methods in the destructor.
