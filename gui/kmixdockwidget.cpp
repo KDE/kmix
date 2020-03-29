@@ -23,6 +23,11 @@
 
 #include "gui/kmixdockwidget.h"
 
+// Define this if KStatusNotifierItem::setOverlayIconByName() works.
+// As of March 2020 it appears to be not working, the base icon is
+// shown but with no overlay.
+//#define CAN_USE_ICON_OVERLAY	1
+
 #include <klocalizedstring.h>
 #include <kwindowsystem.h>
 #include <kactioncollection.h>
@@ -34,7 +39,11 @@
 #include <QAction>
 #include <QApplication>
 #include <QMenu>
+#include <QScreen>
 #include <QTextDocument>
+#ifndef CAN_USE_ICON_OVERLAY
+#include <QPainter>
+#endif // CAN_USE_ICON_OVERLAY
 
 #include "apps/kmix.h"
 #include "core/ControlManager.h"
@@ -44,8 +53,6 @@
 #include "gui/mixdevicewidget.h"
 #include "gui/viewdockareapopup.h"
 
-
-//#define FEATURE_UNITY_POPUP true
 
 KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     : KStatusNotifierItem(parent)
@@ -65,8 +72,8 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
 
     createMenuActions();
 
-    connect(this, SIGNAL(scrollRequested(int,Qt::Orientation)), this, SLOT(trayWheelEvent(int,Qt::Orientation)));
-    connect(this, SIGNAL(secondaryActivateRequested(QPoint)), this, SLOT(dockMute()));
+    connect(this, &KStatusNotifierItem::scrollRequested, this, &KMixDockWidget::trayWheelEvent);
+    connect(this, &KStatusNotifierItem::secondaryActivateRequested, this, &KMixDockWidget::dockMute);
 
 	// For bizarre reasons, we wrap the ViewDockAreaPopup in a QMenu. Must relate to how KStatusNotifierItem works.
     _dockAreaPopupMenuWrapper = new QMenu(parent);
@@ -74,7 +81,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     _dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"), parent);
 	_volWA->setDefaultWidget(_dockView);
 	_dockAreaPopupMenuWrapper->addAction(_volWA);
-	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(contextMenuAboutToShow()));
+	connect(contextMenu(), &QMenu::aboutToShow, this, &KMixDockWidget::contextMenuAboutToShow);
 
 	ControlManager::instance().addListener(
 		QString(), // All mixers (as the Global master Mixer might change)
@@ -128,7 +135,7 @@ void KMixDockWidget::controlsChange(ControlManager::ChangeType changeType)
   }
 }
 
-QAction* KMixDockWidget::findAction(const char* actionName)
+QAction *KMixDockWidget::findAction(const char *actionName)
 {
 	QList<QAction*> actions = actionCollection();
 	int size = actions.size();
@@ -139,7 +146,7 @@ QAction* KMixDockWidget::findAction(const char* actionName)
 			return action;
 	}
     qCWarning(KMIX_LOG) << "ACTION" << actionName << "NOT FOUND!";
-    return Q_NULLPTR;
+    return (nullptr);
 }
 
 /**
@@ -157,18 +164,17 @@ void KMixDockWidget::refreshVolumeLevels()
 void KMixDockWidget::createMenuActions()
 {
     QMenu *menu = contextMenu();
-    if (!menu)
-        return; // We do not use a menu
+    if (menu==nullptr) return;				// We do not use a menu
 
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    if ( md.get() != 0 && md->hasMuteSwitch() ) {
+    if (md.get()!=nullptr && md->hasMuteSwitch()) {
         // Put "Mute" selector in context menu
         KToggleAction *action = new KToggleAction(i18n("M&ute"), this);
         action->setData("dock_mute");
         addAction("dock_mute", action);
     	updateDockMuteAction(action);
-        connect(action, SIGNAL(triggered(bool)), SLOT(dockMute()));
-        menu->addAction( action );
+        connect(action, &QAction::triggered, this, &KMixDockWidget::dockMute);
+        menu->addAction(action);
     }
 
     // Put "Select Master Channel" dialog in context menu
@@ -184,15 +190,14 @@ void KMixDockWidget::createMenuActions()
     menu->addAction(_kmixMainWindow->actionCollection()->action("options_configure"));
 }
 
-void
-KMixDockWidget::setVolumeTip()
+void KMixDockWidget::setVolumeTip()
 {
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
     QString tip;
     QString subTip;
     int virtualToolTipValue = 0;
 
-    if ( md.get() == 0 )
+    if (md.get()==nullptr)
     {
         tip = i18n("No mixer devices available");
         virtualToolTipValue = -2;
@@ -228,36 +233,64 @@ KMixDockWidget::setVolumeTip()
 
 void KMixDockWidget::updatePixmap()
 {
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
 
-    char newPixmapType;
-    if ( !md )
+    char newPixmapType = 'e';				// default = error indication
+    if (md.get()!=nullptr)				// a control is available
     {
-    	// no such control => error
-        newPixmapType = 'e';
-    }
-    else
-    {
-	int percentage = md->userVolumeLevel();
-		if      ( percentage <= 0 ) newPixmapType = '0';  // Hint: also muted, and also negative-values
-		else if ( percentage < 25 ) newPixmapType = '1';
-		else if ( percentage < 75 ) newPixmapType = '2';
-		else                        newPixmapType = '3';
+	const int percentage = md->userVolumeLevel();
+	if      (percentage<=0) newPixmapType = '0';	// also muted or negative value
+	else if (percentage<25) newPixmapType = '1';
+	else if (percentage<75) newPixmapType = '2';
+	else                    newPixmapType = '3';
     }
 
-   if ( newPixmapType != _oldPixmapType ) {
-      // Pixmap must be changed => do so
-      switch ( newPixmapType ) {
-         case 'e': setIconByName( "kmixdocked_error" ); break;
-         case 'm': 
-         case '0': setIconByName( "audio-volume-muted"  ); break;
-         case '1': setIconByName( "audio-volume-low"  ); break;
-         case '2': setIconByName( "audio-volume-medium" ); break;
-         case '3': setIconByName( "audio-volume-high" ); break;
-      }
-   }
+    if (newPixmapType!=_oldPixmapType)			// pixmap must be changed => do so
+    {
+        switch (newPixmapType)
+        {
+case 'e':   {
+#ifdef CAN_USE_ICON_OVERLAY
+                setIconByName("audio-volume-medium");
+                setOverlayIconByName("error");
+#else // CAN_USE_ICON_OVERLAY
+		// Using QIcon/QPixmap here because dependency on KIconThemes was removed
+		// by commit 6b59a9a8.  This notification code path will only be used if
+		// no sound devices are available or if there is a serious error, so any
+		// inefficiency or HiDPI display problem is not serious.
+		//
+		// Based on KStatusNotifierItem::setOverlayIconByName()
+		// in tier2/knotifications/src/kstatusnotifieritem.cpp
+		// Pixmap size 24 from s_legacyTrayIconSize in the same source file
 
-   _oldPixmapType = newPixmapType;
+                QPixmap iconPix = QIcon::fromTheme("audio-volume-medium").pixmap(24, 24, QIcon::Disabled);
+                QPixmap overlayPix = QIcon::fromTheme("error").pixmap(12, 12, QIcon::Normal);
+
+                QPainter p(&iconPix);
+                p.drawPixmap(iconPix.width()-overlayPix.width(), iconPix.height()-overlayPix.height(), overlayPix);
+                p.end();
+
+                setIconByPixmap(QIcon(iconPix));
+#endif // CAN_USE_ICON_OVERLAY
+            }
+            break;
+
+case 'm':
+case '0':   setIconByName("audio-volume-muted");
+            break;
+
+case '1':   setIconByName("audio-volume-low");
+            break;
+
+case '2':   setIconByName("audio-volume-medium");
+            break;
+
+case '3':   setIconByName("audio-volume-high");
+            break;
+        }
+    }
+
+    _oldPixmapType = newPixmapType;
 }
 
 /**
@@ -298,9 +331,9 @@ void KMixDockWidget::activate(const QPoint &pos)
 
 	// Now handle Multihead displays. And also make sure that the dialog is not
 	// moved out-of-the screen on the right (see Bug 101742).
-	const QDesktopWidget* vdesktop = QApplication::desktop();
-	int screenNumber = vdesktop->screenNumber(pos);
-	const QRect& vScreenSize = vdesktop->availableGeometry(screenNumber);
+	const QScreen *screen = QGuiApplication::screenAt(pos);
+	if (screen==nullptr) return;
+	const QRect vScreenSize = screen->availableGeometry();
 
 	if ((x + dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()))
 	{
@@ -336,13 +369,10 @@ void KMixDockWidget::activate(const QPoint &pos)
 }
 
 
-void
-KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
+void KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 {
 	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-	if ( md.get() == 0 )
-		return;
-
+	if (md.get()==nullptr) return;
 
 	Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
 //	qCDebug(KMIX_LOG) << "I am seeing a wheel event with delta=" << delta << " and orientation=" <<  wheelOrientation;
@@ -387,11 +417,10 @@ KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
 }
 
 
-void
-KMixDockWidget::dockMute()
+void KMixDockWidget::dockMute()
 {
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    if ( md )
+    if (md.get()!=nullptr)
     {
         md->toggleMute();
         md->mixer()->commitVolumeChange( md );
@@ -417,14 +446,13 @@ void KMixDockWidget::contextMenuAboutToShow()
     // Enable/Disable "Muted" menu item
     KToggleAction *dockMuteAction = static_cast<KToggleAction*>(findAction("dock_mute"));
     qCDebug(KMIX_LOG) << "DOCK MUTE" << dockMuteAction;
-    if (dockMuteAction)
-        updateDockMuteAction(dockMuteAction);
+    if (dockMuteAction!=nullptr) updateDockMuteAction(dockMuteAction);
 }
 
 void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )
 {  
     shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    if ( md && dockMuteAction != 0 )
+    if (md.get()!=nullptr && dockMuteAction!=nullptr)
     {
     	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
     	bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
@@ -433,4 +461,3 @@ void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )
         dockMuteAction->setChecked( isInactive );
     }
 }
-
