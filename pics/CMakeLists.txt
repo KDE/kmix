@@ -20,9 +20,6 @@ install( FILES
     mixer-headset.png
     mixer-digital.png
     mixer-ac97.png
-    kmixdocked.png
-    kmixdocked_mute.png
-    kmixdocked_error.png
     show-mixer.png
     DESTINATION  ${KDE_INSTALL_DATADIR}/kmix/pics )
 
