@@ -29,7 +29,6 @@
 
 #include <klocalizedstring.h>
 
-#include "core/mixdevice.h"
 #include "core/mixer.h"
 
 
@@ -37,7 +36,7 @@ static QStringList viewNames;
 static QStringList viewIds;
 
 
-DialogAddView::DialogAddView(QWidget *parent, Mixer *mixer)
+DialogAddView::DialogAddView(QWidget *parent, const Mixer *mixer)
     : DialogBase( parent )
 {
 	// TODO 000 Adding View for MPRIS2 is broken. We need at least a dummy XML GUI Profile. Also the
@@ -63,20 +62,25 @@ DialogAddView::DialogAddView(QWidget *parent, Mixer *mixer)
     }
 
    m_listForChannelSelector = nullptr;
-   createWidgets(mixer);  // Open with Mixer Hardware #0
 
+   createWidgets(mixer);				// for the specified 'mixer'
 }
+
 
 /**
  * Create basic widgets of the Dialog.
  */
-void DialogAddView::createWidgets(Mixer *ptr_mixer)
+void DialogAddView::createWidgets(const Mixer *mixer)
 {
     QWidget *mainFrame = new QWidget(this);
     setMainWidget(mainFrame);
     QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
-    if ( Mixer::mixers().count() > 1 ) {
+    const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
+    int mixerIndex = 0;					// index of specified 'mixer'
+
+    if (mixers.count()>1)
+    {
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
         QHBoxLayout* mixerNameLayout = new QHBoxLayout();
@@ -90,62 +94,60 @@ void DialogAddView::createWidgets(Mixer *ptr_mixer)
         m_cMixer = new QComboBox(mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-        connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );
+        m_cMixer->setToolTip(i18n("Current mixer"));
 
-        for( int i =0; i<Mixer::mixers().count(); i++ )
+        for (int i = 0; i<mixers.count(); ++i)
         {
-            const Mixer *mixer = (Mixer::mixers())[i];
-            const shared_ptr<MixDevice> md = mixer->getLocalMasterMD();
-            const QString iconName = (md!=nullptr) ? md->iconName() : "media-playback-start";
-            m_cMixer->addItem(QIcon::fromTheme(iconName), mixer->readableName() );
-         } // end for all_Mixers
-        // Make the current Mixer the current item in the ComboBox
-        int findIndex = m_cMixer->findText( ptr_mixer->readableName() );
-        if ( findIndex != -1 ) m_cMixer->setCurrentIndex( findIndex );
-        
-    
-        m_cMixer->setToolTip( i18n("Current mixer" ) );
-        mixerNameLayout->addWidget(m_cMixer);
-    
-    } // end if (more_than_1_Mixer)
+            const Mixer *m = mixers[i];
+            const QString name = m->readableName();
+            m_cMixer->addItem(QIcon::fromTheme(m->iconName()), name);
+            if (name==mixer->readableName()) mixerIndex = i;
+        }
 
-    
-    if ( Mixer::mixers().count() > 0 ) {
+        // Select the specified 'mixer' as the current item in the combo box.
+        // If it was not found by the loop above, then select the first item.
+        m_cMixer->setCurrentIndex(mixerIndex);
+        
+        connect(m_cMixer, QOverload<int>::of(&QComboBox::activated), this, &DialogAddView::createPageByID);
+        mixerNameLayout->addWidget(m_cMixer);
+    }
+
+    if (mixers.count()>0)
+    {
         QLabel *qlbl = new QLabel( i18n("Select the design for the new view:"), mainFrame );
         layout->addWidget(qlbl);
-    
-        createPage(Mixer::mixers()[0]);
-        connect( this, SIGNAL(accepted())   , this, SLOT(apply()) );
+
+        createPage(mixer);				// equivalent to mixers[mixerIndex]
+
+        connect(this, &QDialog::accepted, this, &DialogAddView::apply);
     }
-    else {
+    else
+    {
+        // TODO: see DialogChooseBackends::createWidgets()
         QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), mainFrame );
         layout->addWidget(qlbl);
     }
 }
 
+
 /**
- * Create RadioButton's for the Mixer with number 'mixerId'.
- * @par mixerId The Mixer, for which the RadioButton's should be created.
+ * Create the view profile list for the specified mixer
+ *
+ * @p mixerId the ID (index) of the mixer for which the list should be created.
  */
 void DialogAddView::createPageByID(int mixerId)
 {
-  //qCDebug(KMIX_LOG) << "DialogAddView::createPage()";
-    QString selectedMixerName = m_cMixer->itemText(mixerId);
-    for( int i =0; i<Mixer::mixers().count(); i++ )
-    {
-        Mixer *mixer = (Mixer::mixers())[i];
-        if ( mixer->readableName() == selectedMixerName ) {
-            createPage(mixer);
-            break;
-        }
-    } // for
+    Mixer *mixer = Mixer::mixers().at(mixerId);
+    if (mixer!=nullptr) createPage(mixer);
 }
 
+
 /**
- * Create RadioButton's for the Mixer with number 'mixerId'.
- * @par mixerId The Mixer, for which the RadioButton's should be created.
+ * Create the view profile list for the specified mixer
+ *
+ * @p mixer the mixer for which the list should be created
  */
-void DialogAddView::createPage(Mixer *mixer)
+void DialogAddView::createPage(const Mixer *mixer)
 {
     /** --- Reset page -----------------------------------------------
      * In case the user selected a new Mixer via m_cMixer, we need
@@ -163,7 +165,7 @@ void DialogAddView::createPage(Mixer *mixer)
     m_listForChannelSelector = new QListWidget(mainFrame);
     m_listForChannelSelector->setUniformItemSizes(true);
     m_listForChannelSelector->setSelectionMode(QAbstractItemView::SingleSelection);
-    connect(m_listForChannelSelector, SIGNAL(itemSelectionChanged()), this, SLOT(profileSelectionChanged()));
+    connect(m_listForChannelSelector, &QListWidget::itemSelectionChanged, this, &DialogAddView::profileSelectionChanged);
     layout->addWidget(m_listForChannelSelector);
 
     for (int i = 0; i<viewNames.size(); ++i)
@@ -178,8 +180,7 @@ void DialogAddView::createPage(Mixer *mixer)
 		
         // Create an item for each view type
         QString name = viewNames.at(i);
-        QListWidgetItem *item = new QListWidgetItem(m_listForChannelSelector);
-        item->setText(name);
+        QListWidgetItem *item = new QListWidgetItem(name, m_listForChannelSelector);
         item->setData(Qt::UserRole, viewIds.at(i));  // mixer ID as data
     }
 
@@ -190,38 +191,35 @@ void DialogAddView::createPage(Mixer *mixer)
 
 void DialogAddView::profileSelectionChanged()
 {
-    QList<QListWidgetItem *> items = m_listForChannelSelector->selectedItems();
+    const QList<QListWidgetItem *> items = m_listForChannelSelector->selectedItems();
     setButtonEnabled(QDialogButtonBox::Ok, !items.isEmpty());
 }
 
+
 void DialogAddView::apply()
 {
-    Mixer *mixer = nullptr;
-    if ( Mixer::mixers().count() == 1 ) {
+    const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
+    Mixer *mixer = nullptr;				// selected mixer found
+
+    if (mixers.count()==1)
+    {
         // only one mixer => no combo box => take first entry
-        mixer = (Mixer::mixers())[0];
+        mixer = mixers.first();
     }
-    else if ( Mixer::mixers().count() > 1 ) {
-        // find mixer that is currently active in the ComboBox
-        QString selectedMixerName = m_cMixer->itemText(m_cMixer->currentIndex());
-        
-        for( int i =0; i<Mixer::mixers().count(); i++ )
-        {
-            mixer = (Mixer::mixers())[i];
-            if ( mixer->readableName() == selectedMixerName ) {
-                mixer = (Mixer::mixers())[i];
-                break;
-            }
-        } // for
+    else if (mixers.count()>1)
+    {
+        // use the mixer that is currently selected in the combo box
+        const int idx = m_cMixer->currentIndex();
+        if (idx!=-1) mixer = mixers.at(idx);
     }
     Q_ASSERT(mixer!=nullptr);
 
     QList<QListWidgetItem *> items = m_listForChannelSelector->selectedItems();
     if (items.isEmpty()) return;			// nothing selected
     QListWidgetItem *item = items.first();
-    QString viewName = item->data(Qt::UserRole).toString();
+    const QString viewName = item->data(Qt::UserRole).toString();
 
-    qCDebug(KMIX_LOG) << "We should now create a new view " << viewName << " for mixer " << mixer->id();
+    qCDebug(KMIX_LOG) << "Result view name" << viewName << "for mixer" << mixer->id();
     resultMixerId = mixer->id();
     resultViewName = viewName;
 }

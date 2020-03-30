@@ -34,19 +34,21 @@ class DialogAddView : public DialogBase
 {
     Q_OBJECT
  public:
-    DialogAddView(QWidget *parent, Mixer *mixer);
+    DialogAddView(QWidget *parent, const Mixer *mixer);
     virtual ~DialogAddView() = default;
 
-    QString getresultViewName() const { return resultViewName; }
-    QString getresultMixerId() const { return resultMixerId; }
+    QString getresultViewName() const		{ return (resultViewName); }
+    QString getresultMixerId() const		{ return (resultMixerId); }
 
  public slots:
     void apply();
 
  private:
-    void createWidgets(Mixer*);
-    void createPage(Mixer *mixer);
-    QComboBox* m_cMixer;
+    void createWidgets(const Mixer *mixer);
+    void createPage(const Mixer *mixer);
+
+ private:
+    QComboBox *m_cMixer;
     QListWidget *m_listForChannelSelector;
 
     QString resultViewName;

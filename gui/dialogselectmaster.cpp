@@ -98,6 +98,7 @@ void DialogSelectMaster::createWidgets(Mixer *ptr_mixer)
         connect(this, SIGNAL(accepted()), this, SLOT(apply()));
     }
     else {
+        // TODO: see DialogChooseBackends::createWidgets()
         QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), mainFrame );
         layout->addWidget(qlbl);
     }
