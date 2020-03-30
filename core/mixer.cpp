@@ -197,7 +197,7 @@ const QString Mixer::dbusPath()
     return QString("/Mixers/" + cardPath);
 }
 
-void Mixer::volumeSave( KConfig *config )
+void Mixer::volumeSave(KConfig *config) const
 {
     //    qCDebug(KMIX_LOG) << "Mixer::volumeSave()";
     _mixerBackend->readSetFromHW();
@@ -210,7 +210,7 @@ void Mixer::volumeSave( KConfig *config )
     config->sync();
 }
 
-void Mixer::volumeLoad( KConfig *config )
+void Mixer::volumeLoad(KConfig *config)
 {
    QString grp("Mixer");
    grp.append(id());
@@ -325,7 +325,7 @@ void Mixer::readSetFromHWforceUpdate() const {
 }
 
   /// Returns translated WhatsThis messages for a control.Translates from 
-QString Mixer::translateKernelToWhatsthis(const QString &kernelName)
+QString Mixer::translateKernelToWhatsthis(const QString &kernelName) const
 {
    return _mixerBackend->translateKernelToWhatsthis(kernelName);
 }
@@ -591,7 +591,7 @@ shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID) const
 }
 
 
-shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID )
+shared_ptr<MixDevice> Mixer::getMixdeviceById( const QString& mixdeviceID ) const
 {
 	qCDebug(KMIX_LOG) << "id=" << mixdeviceID << "md=" << _mixerBackend->m_mixDevices.get(mixdeviceID).get()->id();
 	return _mixerBackend->m_mixDevices.get(mixdeviceID);
@@ -700,7 +700,7 @@ void Mixer::setDynamic ( bool dynamic )
     m_dynamic = dynamic;
 }
 
-bool Mixer::isDynamic()
+bool Mixer::isDynamic() const
 {
     return m_dynamic;
 }
@@ -718,4 +718,12 @@ bool Mixer::moveStream(const QString &id, const QString &destId)
 QString Mixer::currentStreamDevice(const QString &id) const
 {
     return (_mixerBackend->currentStreamDevice(id));
+}
+
+
+QString Mixer::iconName() const
+{
+    const shared_ptr<MixDevice> master = getLocalMasterMD();
+    if (master!=nullptr) return (master->iconName());
+    return ("media-playback-start");			// fallback default icon
 }

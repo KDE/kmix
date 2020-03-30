@@ -70,8 +70,8 @@ public:
     shared_ptr<MixDevice>  find(const QString& devPK) const;
     static Mixer* findMixer( const QString& mixer_id);
 
-    void volumeSave( KConfig *config );
-    void volumeLoad( KConfig *config );
+    void volumeSave(KConfig *config) const;
+    void volumeLoad(KConfig *config);
 
     /// Tells the number of the mixing devices
     unsigned int size() const;
@@ -79,7 +79,7 @@ public:
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
     /// mixer_oss.cpp (0 is Volume, 4 is PCM, etc.)
-    shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID );
+    shared_ptr<MixDevice> getMixdeviceById( const QString& deviceID ) const;
 
     /// Open/grab the mixer for further interaction
     bool openIfValid();
@@ -105,7 +105,7 @@ public:
     virtual QString getBaseName() const;
 
     /// Wrapper to Mixer_Backend
-    QString translateKernelToWhatsthis(const QString &kernelName);
+    QString translateKernelToWhatsthis(const QString &kernelName) const;
 
     /**
       * Get a name suitable for a human user to read, possibly with quoted ampersand.
@@ -145,7 +145,7 @@ public:
     // Used also by MixDevice to bind to this path
     const QString dbusPath();
 
-    static QList<Mixer*> & mixers();
+    static QList<Mixer *> &mixers();
 
     /******************************************
     The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
@@ -158,6 +158,7 @@ public:
     static Mixer* getGlobalMasterMixer();
     static Mixer* getGlobalMasterMixerNoFalback();
     static MasterControl& getGlobalMasterPreferred(bool fallbackAllowed = true);
+
     QString getRecommendedDeviceId();
 
     /******************************************
@@ -165,6 +166,11 @@ public:
     ******************************************/
     shared_ptr<MixDevice> getLocalMasterMD() const;
     void setLocalMasterMD(QString&);
+
+    /**
+     * An icon for the mixer's master channel
+     */
+    QString iconName() const;
 
     /// get the actual MixSet
     MixSet &getMixSet() const;
@@ -175,7 +181,7 @@ public:
 
     /// Says if we are dynamic (e.g. widgets can come and go)
     virtual void setDynamic( bool dynamic = true );
-    virtual bool isDynamic();
+    virtual bool isDynamic() const;
 
     static bool dynamicBackendsPresent();
     static bool pulseaudioPresent();
