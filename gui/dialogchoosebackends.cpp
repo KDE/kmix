@@ -29,9 +29,6 @@
 #include <klocalizedstring.h>
 #include <kmessagewidget.h>
 
-#include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
-#include "core/mixdevice.h"
 #include "core/mixer.h"
 
 /**
@@ -39,18 +36,17 @@
  * will be preselected.
  *
  * @param mixerIds A set of preselected mixer ID's
- * @param noButtons is a migration option. When DialogChooseBackends has been integrated as a Tab, it will be removed.
  */
-DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>& mixerIds)
+DialogChooseBackends::DialogChooseBackends(QWidget *parent, const QSet<QString> &mixerIds)
   :  QWidget(parent), modified(false)
 {
    createWidgets(mixerIds);
 }
 
 /**
- * Create basic widgets of the Dialog.
+ * Create basic widgets of the dialogue.
  */
-void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
+void DialogChooseBackends::createWidgets(const QSet<QString> &mixerIds)
 {
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     vLayout->setContentsMargins(0, 0, 0, 0);
@@ -64,6 +60,7 @@ void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
 
     if (Mixer::mixers().isEmpty())
     {
+        // TODO: to KMixToolbox - used here, DialogSelectMaster, DialogAddView
 	KMessageWidget *noMixersWarning = new KMessageWidget(i18n("No sound cards are installed or are currently available."), this);
 	noMixersWarning->setIcon(QIcon::fromTheme("dialog-warning"));
 	noMixersWarning->setMessageType(KMessageWidget::Warning);
@@ -77,10 +74,9 @@ void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
 
 
 /**
- * Create RadioButton's for the Mixer with number 'mixerId'.
- * @par mixerId The Mixer, for which the RadioButton's should be created.
+ * Create selection list for the specified mixers.
  */
-void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
+void DialogChooseBackends::createPage(const QSet<QString> &mixerIds)
 {
 	m_mixerList = new QListWidget(this);
 	m_mixerList->setUniformItemSizes(true);
@@ -92,21 +88,17 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 #endif
 	bool hasMixerFilter = !mixerIds.isEmpty();
 	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
-	foreach (const Mixer *mixer, Mixer::mixers())
+	for (const Mixer *mixer : Mixer::mixers())
 	{
             QListWidgetItem *item = new QListWidgetItem(m_mixerList);
             item->setText(mixer->readableName(true));
             item->setSizeHint(QSize(1, 16));
-
-            // TODO: implement a Mixer::iconName()
-            const shared_ptr<MixDevice> md = mixer->getLocalMasterMD();
-            const QString iconName = (md!=nullptr) ? md->iconName() : "media-playback-start";
-            item->setIcon(QIcon::fromTheme(iconName));
-
+            item->setIcon(QIcon::fromTheme(mixer->iconName()));
             item->setFlags(Qt::ItemIsEnabled|Qt::ItemIsUserCheckable|Qt::ItemNeverHasChildren);
+            item->setData(Qt::UserRole, mixer->id());
+
             const bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
             item->setCheckState(mixerShouldBeShown ? Qt::Checked : Qt::Unchecked);
-            item->setData(Qt::UserRole, mixer->id());
 	}
 
         connect(m_mixerList, &QListWidget::itemChanged, this, &DialogChooseBackends::backendsModifiedSlot);
