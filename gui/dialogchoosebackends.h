@@ -23,8 +23,6 @@
 
 #include <qwidget.h>
 
-class QLabel;
-class QVBoxLayout;
 class QListWidget;
 class QListWidgetItem;
 
@@ -41,7 +39,7 @@ public:
 
 	QSet<QString> getChosenBackends();
 	bool getAndResetModifyFlag();
-    bool getModifyFlag() const;
+	bool getModifyFlag() const;
 
 signals:
 	void backendsModified();
@@ -51,8 +49,6 @@ private:
 	void createPage(const QSet<QString>& backends);
 
 	QListWidget *m_mixerList;
-	QLabel *m_listLabel;
-	QVBoxLayout* _layout;
 	bool modified;
 
 private slots:

@@ -27,6 +27,7 @@
 #include <qlistwidget.h>
 
 #include <klocalizedstring.h>
+#include <kmessagewidget.h>
 
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
@@ -43,12 +44,7 @@
 DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>& mixerIds)
   :  QWidget(parent), modified(false)
 {
-//    setCaption( i18n( "Select Mixers" ) );
-//   	setButtons( None );
-
-   _layout = 0;
    createWidgets(mixerIds);
-
 }
 
 /**
@@ -56,20 +52,26 @@ DialogChooseBackends::DialogChooseBackends(QWidget* parent, const QSet<QString>&
  */
 void DialogChooseBackends::createWidgets(const QSet<QString>& mixerIds)
 {
-    _layout = new QVBoxLayout(this);
-    _layout->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    vLayout->setContentsMargins(0, 0, 0, 0);
 
-    if ( !Mixer::mixers().isEmpty() )
+    QLabel *topLabel = new QLabel(i18n("Mixers to show in the popup volume control:"), this);
+    vLayout->addWidget(topLabel);
+
+    createPage(mixerIds);
+    vLayout->addWidget(m_mixerList, 1);
+    topLabel->setBuddy(m_mixerList);
+
+    if (Mixer::mixers().isEmpty())
     {
-        m_listLabel = new QLabel( i18n("Mixers to show in the popup volume control:"), this);
-        _layout->addWidget(m_listLabel);
-        createPage(mixerIds);
-    }
-    else
-    {
-        // TODO: use KMessageWidget
-        m_listLabel = new QLabel( i18n("No sound card is installed or currently plugged in."), this);
-        _layout->addWidget(m_listLabel);
+	KMessageWidget *noMixersWarning = new KMessageWidget(i18n("No sound cards are installed or are currently available."), this);
+	noMixersWarning->setIcon(QIcon::fromTheme("dialog-warning"));
+	noMixersWarning->setMessageType(KMessageWidget::Warning);
+	noMixersWarning->setCloseButtonVisible(false);
+	noMixersWarning->setWordWrap(true);
+
+        vLayout->addWidget(noMixersWarning);
+	m_mixerList->setEnabled(false);
     }
 }
 
@@ -88,25 +90,27 @@ void DialogChooseBackends::createPage(const QSet<QString>& mixerIds)
 #ifndef QT_NO_ACCESSIBILITY
 	m_mixerList->setAccessibleName(i18n("Select Mixers"));
 #endif
-	m_listLabel->setBuddy(m_mixerList);
-
-	_layout->addWidget(m_mixerList);
-
 	bool hasMixerFilter = !mixerIds.isEmpty();
 	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
-	foreach ( Mixer* mixer, Mixer::mixers())
+	foreach (const Mixer *mixer, Mixer::mixers())
 	{
             QListWidgetItem *item = new QListWidgetItem(m_mixerList);
             item->setText(mixer->readableName(true));
             item->setSizeHint(QSize(1, 16));
+
+            // TODO: implement a Mixer::iconName()
+            const shared_ptr<MixDevice> md = mixer->getLocalMasterMD();
+            const QString iconName = (md!=nullptr) ? md->iconName() : "media-playback-start";
+            item->setIcon(QIcon::fromTheme(iconName));
+
             item->setFlags(Qt::ItemIsEnabled|Qt::ItemIsUserCheckable|Qt::ItemNeverHasChildren);
             const bool mixerShouldBeShown = !hasMixerFilter || mixerIds.contains(mixer->id());
             item->setCheckState(mixerShouldBeShown ? Qt::Checked : Qt::Unchecked);
             item->setData(Qt::UserRole, mixer->id());
 	}
 
-        connect(m_mixerList, SIGNAL(itemChanged(QListWidgetItem*)), SLOT(backendsModifiedSlot()));
-        connect(m_mixerList, SIGNAL(itemActivated(QListWidgetItem*)), SLOT(itemActivatedSlot(QListWidgetItem*)));
+        connect(m_mixerList, &QListWidget::itemChanged, this, &DialogChooseBackends::backendsModifiedSlot);
+        connect(m_mixerList, &QListWidget::itemActivated, this, &DialogChooseBackends::itemActivatedSlot);
 }
 
 QSet<QString> DialogChooseBackends::getChosenBackends()
