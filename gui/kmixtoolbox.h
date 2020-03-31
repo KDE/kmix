@@ -25,20 +25,19 @@
 #include "qwidget.h"
 
 
-
 /**
  * This toolbox contains various static methods that are shared throughout KMix.
  * The reason, why it is not put in a common base class is, that the classes are
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
  */
 
-class KMixToolBox {
- public:
-    static void setIcons  (QList<QWidget *> &mdws, bool on );
-    static void setLabels (QList<QWidget *> &mdws, bool on );
-    static void setTicks  (QList<QWidget *> &mdws, bool on );
+namespace KMixToolBox
+{
+    void setIcons(QList<QWidget *> &mdws, bool on);
+    void setLabels(QList<QWidget *> &mdws, bool on);
+    void setTicks(QList<QWidget *> &mdws, bool on);
     
-    static void notification(const char *notificationName, const QString &text, const QStringList &actions = QStringList(), QObject *receiver = nullptr, const char *actionSlot = nullptr);
-};
+    void notification(const char *notificationName, const QString &text);
+} // namespace KMixToolBox
 
 #endif

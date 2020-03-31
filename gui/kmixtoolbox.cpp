@@ -22,69 +22,58 @@
 #include "gui/kmixtoolbox.h"
 
 #include <QCoreApplication>
-#include <QWidget>
-#include <QString>
 
-#include <kglobalaccel.h>
 #include <knotification.h>
 
-#include "gui/guiprofile.h"
-#include "mdwslider.h"
 #include "gui/mixdevicewidget.h"
-#include "core/mixdevice.h"
-#include "core/mixer.h"
-#include "viewbase.h"
-
-// TODO KMixToolbox is rather superfluous today, as there is no "KMix Applet" any more, and it was probably always bad style.
-//      I only have to think what to do with KMixToolBox::notification()
 
 /***********************************************************************************
- KMixToolbox contains several GUI relevant methods that are shared between the 
- KMix Main Program, and the KMix Applet.
- kmixctrl - as not non-GUI application - does NOT link to KMixToolBox.
+ KMixToolbox contains several GUI utility functions that are only used by the 
+ KMix main program.  kded_kmix and kmixctrl - as non-GUI applications - do not
+ use or link to KMixToolBox.
 
- This means: Shared GUI stuff goes into the KMixToolBox class , non-GUI stuff goes
+ This means that shared GUI stuff goes into KMixToolBox here, non-GUI stuff goes
  into the MixerToolBox class.
  ***********************************************************************************/
-void KMixToolBox::setIcons(QList<QWidget *> &mdws, bool on ) {
-   for (int i=0; i < mdws.count(); ++i ){
-      QWidget *mdw = mdws[i];
-      if ( mdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-         static_cast<MixDeviceWidget*>(mdw)->setIcons( on );
-      }
-   }
+
+void KMixToolBox::setIcons(QList<QWidget *> &mdws, bool on)
+{
+    for (QWidget *w : mdws)
+    {
+        MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(w);
+        if (mdw!=nullptr) mdw->setIcons(on);
+    }
 }
 
-void KMixToolBox::setLabels(QList<QWidget *> &mdws, bool on ) {
-   for (int i=0; i < mdws.count(); ++i ){
-      QWidget *mdw = mdws[i];
-      if ( mdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-         static_cast<MixDeviceWidget*>(mdw)->setLabeled( on );
-      }
-   }
+
+void KMixToolBox::setLabels(QList<QWidget *> &mdws, bool on)
+{
+    for (QWidget *w : mdws)
+    {
+        MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(w);
+        if (mdw!=nullptr) mdw->setLabeled(on);
+    }
 }
 
-void KMixToolBox::setTicks(QList<QWidget *> &mdws, bool on ) {
-   for (int i=0; i < mdws.count(); ++i ){
-      QWidget *mdw = mdws[i];
-      if ( mdw->inherits("MixDeviceWidget") ) { // -<- play safe here
-         static_cast<MixDeviceWidget*>(mdw)->setTicks( on );
-      }
-   }
+
+void KMixToolBox::setTicks(QList<QWidget *> &mdws, bool on)
+{
+    for (QWidget *w : mdws)
+    {
+        MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(w);
+        if (mdw!=nullptr) mdw->setTicks(on);
+    }
 }
 
-void KMixToolBox::notification(const char *notificationName, const QString &text,
-                                const QStringList &actions, QObject *receiver,
-                                const char *actionSlot)
+
+void KMixToolBox::notification(const char *notificationName, const QString &text)
 {
     KNotification *notification = new KNotification(notificationName);
-    //notification->setComponentData(componentData());
     notification->setText(text);
-    //notification->setPixmap(...);
+    notification->setIconName(QLatin1String("kmix"));
     notification->addContext(QLatin1String("Application"), QCoreApplication::applicationName());
-    if (!actions.isEmpty() && receiver && actionSlot) {
-        notification->setActions(actions);
-        QObject::connect(notification, SIGNAL(activated(uint)), receiver, actionSlot);
-    }
     notification->sendEvent();
+    // Otherwise there will be a memory leak (although the notification is not
+    // shown very often).  Assuming that it is safe to delete here.
+    notification->deleteLater();
 }

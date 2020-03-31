@@ -238,10 +238,10 @@ void KMixPrefDlg::createGeneralTab()
 	grp->setLayout(visualLayout);
 
 	// [CONFIG]
-	m_showTicks = new QCheckBox(i18n("Show &tickmarks"), grp);
+	m_showTicks = new QCheckBox(i18n("Show slider &tickmarks"), grp);
 	addWidgetToLayout(m_showTicks, visualLayout, 10, i18n("Enable/disable tickmark scales on the sliders"), "Tickmarks");
 
-	m_showLabels = new QCheckBox(i18n("Show &labels"), grp);
+	m_showLabels = new QCheckBox(i18n("Show control &labels"), grp);
 	addWidgetToLayout(m_showLabels, visualLayout, 10, i18n("Enables/disables description labels above the sliders"),
 		"Labels");
 
