@@ -24,6 +24,8 @@
 #include <QCoreApplication>
 
 #include <knotification.h>
+#include <kmessagewidget.h>
+#include <klocalizedstring.h>
 
 #include "gui/mixdevicewidget.h"
 
@@ -73,7 +75,24 @@ void KMixToolBox::notification(const char *notificationName, const QString &text
     notification->setIconName(QLatin1String("kmix"));
     notification->addContext(QLatin1String("Application"), QCoreApplication::applicationName());
     notification->sendEvent();
-    // Otherwise there will be a memory leak (although the notification is not
-    // shown very often).  Assuming that it is safe to delete here.
+    // Otherwise there will be a memory leak (although the notification is
+    // rarely shown).  Assuming that it is safe to delete here.
     notification->deleteLater();
+}
+
+
+QWidget *KMixToolBox::noDevicesWarningWidget(QWidget *parent)
+{
+    KMessageWidget *mw = new KMessageWidget(noDevicesWarningString(), parent);
+    mw->setIcon(QIcon::fromTheme("dialog-warning"));
+    mw->setMessageType(KMessageWidget::Warning);
+    mw->setCloseButtonVisible(false);
+    mw->setWordWrap(true);
+    return (mw);
+}
+
+
+QString KMixToolBox::noDevicesWarningString()
+{
+    return (i18n("No sound devices are installed or are currently available."));
 }

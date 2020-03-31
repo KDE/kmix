@@ -38,6 +38,9 @@ namespace KMixToolBox
     void setTicks(QList<QWidget *> &mdws, bool on);
     
     void notification(const char *notificationName, const QString &text);
+
+    QWidget *noDevicesWarningWidget(QWidget *parent = nullptr);
+    QString noDevicesWarningString();
 } // namespace KMixToolBox
 
 #endif
