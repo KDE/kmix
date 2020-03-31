@@ -37,7 +37,7 @@ class KMIXCORE_EXPORT MixSet : public QList<shared_ptr<MixDevice> >
       QString name() const { return m_name; }
       void setName( const QString &name );
       
-      shared_ptr<MixDevice> get(const QString &id);
+      shared_ptr<MixDevice> get(const QString &id) const;
 
       void removeById(const QString &id);
 

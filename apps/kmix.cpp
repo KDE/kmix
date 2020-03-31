@@ -952,19 +952,6 @@ void KMixWindow::unplugged(const QString &udi)
 
 }
 
-/**
- * Create a widget with an error message
- * This widget shows an error message like "no mixers detected.
- void KMixWindow::setErrorMixerWidget()
- {
- QString s = i18n("Please plug in your soundcard. No soundcard found. Probably you have not set it up or are missing soundcard drivers. Please check your operating system manual for installing your soundcard."); // !! better text
- m_errorLabel = new QLabel( s,this  );
- m_errorLabel->setAlignment( Qt::AlignCenter );
- m_errorLabel->setWordWrap(true);
- m_errorLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
- m_wsMixers->addTab( m_errorLabel, i18n("No soundcard found") );
- }
- */
 
 /**
  *
@@ -1255,12 +1242,12 @@ void KMixWindow::slotSelectMasterClose(QObject*)
 
 void KMixWindow::slotSelectMaster()
 {
-	Mixer *mixer = Mixer::getGlobalMasterMixer();
-	if (mixer != 0)
+	const Mixer *mixer = Mixer::getGlobalMasterMixer();
+	if (mixer!=nullptr)
 	{
 		if (!m_dsm)
 		{
-			m_dsm = new DialogSelectMaster(Mixer::getGlobalMasterMixer(), this);
+			m_dsm = new DialogSelectMaster(mixer, this);
 			connect(m_dsm, SIGNAL(destroyed(QObject*)), this, SLOT(slotSelectMasterClose(QObject*)));
 			m_dsm->setAttribute(Qt::WA_DeleteOnClose, true);
 			m_dsm->show();
@@ -1270,7 +1257,7 @@ void KMixWindow::slotSelectMaster()
 	}
 	else
 	{
-		KMessageBox::error(0, i18n("No sound card is installed or currently plugged in."));
+		KMessageBox::error(nullptr, KMixToolBox::noDevicesWarningString());
 	}
 }
 

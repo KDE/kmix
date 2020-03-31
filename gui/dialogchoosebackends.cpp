@@ -27,9 +27,9 @@
 #include <qlistwidget.h>
 
 #include <klocalizedstring.h>
-#include <kmessagewidget.h>
 
 #include "core/mixer.h"
+#include "gui/kmixtoolbox.h"
 
 /**
  * Creates a dialog to choose mixers from. All currently known mixers will be shown, and the given mixerID's
@@ -60,13 +60,7 @@ void DialogChooseBackends::createWidgets(const QSet<QString> &mixerIds)
 
     if (Mixer::mixers().isEmpty())
     {
-        // TODO: to KMixToolbox - used here, DialogSelectMaster, DialogAddView
-	KMessageWidget *noMixersWarning = new KMessageWidget(i18n("No sound cards are installed or are currently available."), this);
-	noMixersWarning->setIcon(QIcon::fromTheme("dialog-warning"));
-	noMixersWarning->setMessageType(KMessageWidget::Warning);
-	noMixersWarning->setCloseButtonVisible(false);
-	noMixersWarning->setWordWrap(true);
-
+	QWidget *noMixersWarning = KMixToolBox::noDevicesWarningWidget(this);
         vLayout->addWidget(noMixersWarning);
 	m_mixerList->setEnabled(false);
     }

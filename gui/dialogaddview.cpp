@@ -30,6 +30,7 @@
 #include <klocalizedstring.h>
 
 #include "core/mixer.h"
+#include "gui/kmixtoolbox.h"
 
 
 static QStringList viewNames;
@@ -37,14 +38,15 @@ static QStringList viewIds;
 
 
 DialogAddView::DialogAddView(QWidget *parent, const Mixer *mixer)
-    : DialogBase( parent )
+    : DialogBase(parent)
 {
 	// TODO 000 Adding View for MPRIS2 is broken. We need at least a dummy XML GUI Profile. Also the
 	//      fixed list below is plain wrong. Actually we should get the Profile list from either the XML files or
 	//      from the backend. The latter is probably easier for now.
     if ( viewNames.isEmpty() )
     {
-        // initialize static list. Later this list could be generated from the actually installed profiles
+        // Initialize static list.
+        // Maybe this list could be generated from the actually installed profiles.
         viewNames.append(i18n("All controls"));
         viewNames.append(i18n("Only playback controls"));
         viewNames.append(i18n("Only capture controls"));
@@ -54,21 +56,17 @@ DialogAddView::DialogAddView(QWidget *parent, const Mixer *mixer)
         viewIds.append("capture");
     }
 
-    setWindowTitle( i18n( "Add View" ) );
-    if ( Mixer::mixers().count() > 0 )
-        setButtons( QDialogButtonBox::Ok|QDialogButtonBox::Cancel );
-    else {
-        setButtons( QDialogButtonBox::Cancel );
-    }
+    setWindowTitle(i18n("Add View"));
+    if (!Mixer::mixers().isEmpty()) setButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    else setButtons(QDialogButtonBox::Cancel);
 
-   m_listForChannelSelector = nullptr;
-
-   createWidgets(mixer);				// for the specified 'mixer'
+    m_listForChannelSelector = nullptr;
+    createWidgets(mixer);				// for the specified 'mixer'
 }
 
 
 /**
- * Create basic widgets of the Dialog.
+ * Create basic widgets of the dialogue.
  */
 void DialogAddView::createWidgets(const Mixer *mixer)
 {
@@ -123,9 +121,9 @@ void DialogAddView::createWidgets(const Mixer *mixer)
     }
     else
     {
-        // TODO: see DialogChooseBackends::createWidgets()
-        QLabel *qlbl = new QLabel( i18n("No sound card is installed or currently plugged in."), mainFrame );
-        layout->addWidget(qlbl);
+	QWidget *noMixersWarning = KMixToolBox::noDevicesWarningWidget(mainFrame);
+        layout->addWidget(noMixersWarning);
+        layout->addStretch(1);
     }
 }
 

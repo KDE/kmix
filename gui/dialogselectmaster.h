@@ -34,15 +34,16 @@ class DialogSelectMaster : public DialogBase
     Q_OBJECT
 
  public:
-    explicit DialogSelectMaster(Mixer *mixer = nullptr, QWidget *parent = nullptr);
+    explicit DialogSelectMaster(const Mixer *mixer = nullptr, QWidget *parent = nullptr);
     virtual ~DialogSelectMaster() = default;
 
  public slots:
     void apply();
 
  private:
-    void createWidgets(Mixer*);
-    void createPage(Mixer*);
+    void createWidgets(const Mixer *mixer);
+    void createPage(const Mixer *mixer);
+
     QComboBox* m_cMixer;
     QListWidget *m_channelSelector;
 

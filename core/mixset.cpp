@@ -77,7 +77,7 @@ void MixSet::setName( const QString &name )
     m_name = name;
 }
 
-shared_ptr<MixDevice> MixSet::get(const QString &id)
+shared_ptr<MixDevice> MixSet::get(const QString &id) const
 {
 	shared_ptr<MixDevice> mdRet;
 
