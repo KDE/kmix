@@ -48,8 +48,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2018-09-22</date>
-<releaseinfo>Applications 18.12</releaseinfo>
+<date>2020-04-01</date>
+<releaseinfo>Applications 20.08</releaseinfo>
 
 <abstract>
 <para>&kmix; is an application that allows you to change the volume of your sound card.</para>
@@ -254,15 +254,15 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Visual</guimenu>
-<guimenuitem>Show tickmarks</guimenuitem>
+<guimenuitem>Show slider tickmarks</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Check this box to show tickmarks on controls.</action></para></listitem>
+<listitem><para><action>Check this box to show tickmarks on the sliders.</action></para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><menuchoice>
 <guimenu>Visual</guimenu>
-<guimenuitem>Show labels</guimenuitem>
+<guimenuitem>Show control labels</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Check this box to show labels of controls.</action></para></listitem>
 </varlistentry>
