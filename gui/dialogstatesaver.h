@@ -102,9 +102,9 @@ public:
      * saving the state of any window.  The state is saved to a group
      * named as appropriate for the window.
      *
-     * @param window window to save the state of
+     * @param widget window to save the state of
      **/
-    static void saveWindowState(QWidget *window);
+    static void saveWindowState(QWidget *widget);
 
     /**
      * Save the state of a window.
@@ -113,10 +113,10 @@ public:
      * saving the state of any window.  The state is saved to the
      * specified group.
      *
-     * @param window window to save the state of
+     * @param widget window to save the state of
      * @param grp group to save the configuration to
      **/
-    static void saveWindowState(QWidget *window, KConfigGroup &grp);
+    static void saveWindowState(QWidget *widget, KConfigGroup &grp);
 
     /**
      * Restore the state of a window.
@@ -125,9 +125,9 @@ public:
      * restoring the state of any window.  The state is restored from
      * a group named as appropriate for the window.
      *
-     * @param window window to restore the state of
+     * @param widget window to restore the state of
      **/
-    static void restoreWindowState(QWidget *window);
+    static void restoreWindowState(QWidget *widget);
 
     /**
      * Restore the state of a window.
@@ -136,10 +136,10 @@ public:
      * restoring the state of any window.  The state is restored from
      * the specified group.
      *
-     * @param window window to restore the state of
+     * @param widget window to restore the state of
      * @param grp group to restore the configuration from
      **/
-    static void restoreWindowState(QWidget *window, const KConfigGroup &grp);
+    static void restoreWindowState(QWidget *widget, const KConfigGroup &grp);
 
 protected:
     /**

@@ -491,11 +491,9 @@ void KMixWindow::loadBaseConfig()
 {
 	KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
-	GlobalConfigData& gcd = GlobalConfig::instance().data;
-
-	QList<QString> preferredMixersInSoundMenu;
-	preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
-	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
+	const QStringList preferredMixers = config.readEntry("Soundmenu.Mixers", QStringList());
+	const QSet<QString> preferredMixersSet(preferredMixers.begin(), preferredMixers.end());
+	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersSet);
 
 	m_startVisible = config.readEntry("Visible", false);
 	m_multiDriverMode = config.readEntry("MultiDriver", false);
@@ -523,14 +521,11 @@ void KMixWindow::loadBaseConfig()
 
 	// The following log is very helpful in bug reports. Please keep it.
 	m_backendFilter = config.readEntry<>("Backends", QList<QString>());
-	qCDebug(KMIX_LOG)
-	<< "Backends: " << m_backendFilter;
+	qCDebug(KMIX_LOG) << "Backends: " << m_backendFilter;
 
 	// show/hide menu bar
 	bool showMenubar = config.readEntry("Menubar", true);
-
-	if (_actionShowMenubar)
-		_actionShowMenubar->setChecked(showMenubar);
+	if (_actionShowMenubar!=nullptr) _actionShowMenubar->setChecked(showMenubar);
 }
 
 /**
