@@ -491,10 +491,16 @@ void KMixWindow::loadBaseConfig()
 {
 	KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
+	GlobalConfigData& gcd = GlobalConfig::instance().data;
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+	QList<QString> preferredMixersInSoundMenu;
+	preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
+	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
+#else
 	const QStringList preferredMixers = config.readEntry("Soundmenu.Mixers", QStringList());
 	const QSet<QString> preferredMixersSet(preferredMixers.begin(), preferredMixers.end());
 	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersSet);
-
+#endif
 	m_startVisible = config.readEntry("Visible", false);
 	m_multiDriverMode = config.readEntry("MultiDriver", false);
 	m_defaultCardOnStart = config.readEntry("DefaultCardOnStart", "");
