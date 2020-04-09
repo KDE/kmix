@@ -177,11 +177,7 @@ void KMixWindow::initActions()
 	//actionCollection()->addAction(QStringLiteral( a->objectName()), a );
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
-	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
-	action->setText(i18n("Audio Setup..."));
-	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
-
-	action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
+	QAction* action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
 	action->setText(i18n("Hide Mixer Window"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
 	actionCollection()->setDefaultShortcut(action, Qt::Key_Escape);
@@ -1208,11 +1204,6 @@ void KMixWindow::applyPrefs()
 void KMixWindow::toggleMenuBar()
 {
 	menuBar()->setVisible(_actionShowMenubar->isChecked());
-}
-
-void KMixWindow::slotKdeAudioSetupExec()
-{
-    forkExec(QStringList() << "kcmshell5" << "kcm_phonon");
 }
 
 void KMixWindow::forkExec(const QStringList& args)

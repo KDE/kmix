@@ -138,7 +138,6 @@ private:
 	void updateTabsClosable();
 
   private slots:
-   void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
 
    void plugged(const char *driverName, const QString &udi, int dev);
