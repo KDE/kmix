@@ -42,6 +42,7 @@ public:
 
 	bool volumeOverdrive; // whether more than recommended volume (typically 0dB) is allowed
 	bool beepOnVolumeChange;
+	QString VolumePercentageStep;
 
 	// Startup
 	bool allowAutostart;

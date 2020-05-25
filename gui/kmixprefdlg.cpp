@@ -24,6 +24,7 @@
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qspinbox.h>
 #include <qlabel.h>
 #include <qradiobutton.h>
 #include <qgroupbox.h>
@@ -209,6 +210,7 @@ void KMixPrefDlg::createGeneralTab()
 	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), grp);
 	addWidgetToLayout(m_volumeOverdrive, behaviorLayout, 10, i18nc("@info:tooltip", "Raise the maximum volume to 150%"), "VolumeOverdrive");
 
+	// Volume Feedback Warning
 	volumeFeedbackWarning = new KMessageWidget(
 		i18n("Volume feedback and volume overdrive are only available for PulseAudio."), grp);
 	volumeFeedbackWarning->setIcon(QIcon::fromTheme("dialog-warning"));
@@ -218,8 +220,27 @@ void KMixPrefDlg::createGeneralTab()
 	volumeFeedbackWarning->setVisible(false);
 	addWidgetToLayout(volumeFeedbackWarning, behaviorLayout, 2, "", "");
 
+	// Volume Step Grid
+	QGridLayout* horizontalGrid = new QGridLayout();
+	horizontalGrid->setHorizontalSpacing(DialogBase::horizontalSpacing());
+
+	// Volume Step SpinBox
+	m_volumeStep = new QSpinBox(grp);
+	m_volumeStep->setSuffix(" %");
+	m_volumeStep->setRange(1, 50);
+	// Register SpinBox for KConfig
+	m_volumeStep->setObjectName("kcfg_VolumePercentageStep");
+
+	horizontalGrid->addWidget(new QLabel(i18n("Volume step:"), m_generalTab), 0, 0, Qt::AlignLeft);
+	horizontalGrid->addWidget(m_volumeStep, 0, 1, Qt::AlignLeft);
+	horizontalGrid->addItem(new QSpacerItem(1 ,1 , QSizePolicy::Expanding), 0, 2);
+
+	// Add grid to behavior layout
+	behaviorLayout->addLayout(horizontalGrid);
+
+	// Volume Step and Overdrive Warning
 	volumeOverdriveWarning = new KMessageWidget(
-		i18n("KMix must be restarted for the Volume Overdrive setting to take effect."), grp);
+		i18n("KMix must be restarted for the Volume Step and Overdrive settings to take effect."), grp);
 	volumeOverdriveWarning->setIcon(QIcon::fromTheme("dialog-information"));
 	volumeOverdriveWarning->setMessageType(KMessageWidget::Information);
 	volumeOverdriveWarning->setCloseButtonVisible(false);
@@ -465,7 +486,3 @@ void KMixPrefDlg::replaceBackendsInTab()
 	dvcSpacerBelow = new QSpacerItem(1,1);
 	layoutControlsTab->addItem(dvcSpacerBelow);
 }
-
-
-
-

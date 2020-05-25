@@ -28,6 +28,7 @@ class KMixPrefWidget;
 
 class QBoxLayout;
 class QCheckBox;
+class QSpinBox;
 class QFrame;
 class QGridLayout;
 class QRadioButton;
@@ -110,6 +111,7 @@ private:
 	KMessageWidget *allowAutostartWarning;
 	QCheckBox *m_beepOnVolumeChange;
 	QCheckBox *m_volumeOverdrive;
+	QSpinBox *m_volumeStep;
 	KMessageWidget *volumeFeedbackWarning;
 	KMessageWidget *volumeOverdriveWarning;
 

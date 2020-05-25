@@ -1285,4 +1285,3 @@ void KMixWindow::newMixerShown(int /*tabIndex*/)
 			action->setVisible(!view->isDynamic());
 	}
 }
-

@@ -31,6 +31,7 @@ GlobalConfig::GlobalConfig() :
 	addItemBool("Labels", data.showLabels, true);
 	addItemBool("VolumeOverdrive", data.volumeOverdrive, false);
 	addItemBool("VolumeFeedback", data.beepOnVolumeChange, true);
+	addItemString("VolumePercentageStep", data.VolumePercentageStep, "5");
 //	ItemString* is =
 	addItemString("Orientation", data.orientationMainGUIString, "Vertical");
 //	qCDebug(KMIX_LOG) << is->name() << is->value();
