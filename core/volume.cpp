@@ -40,7 +40,7 @@ static Volume::ChannelMask channelMask[] =
         Volume::MREARCENTER
 };
 
-QString Volume::channelNameReadable(ChannelID id)
+QString Volume::channelNameReadable(Volume::ChannelID id)
 {
     switch (id)
     {
@@ -59,7 +59,7 @@ default:                qCWarning(KMIX_LOG) << "called for unknown ID" << id;
 }
 
 
-QString Volume::channelNameForPersistence(ChannelID id)
+QString Volume::channelNameForPersistence(Volume::ChannelID id)
 {
     switch (id)
     {
@@ -110,13 +110,13 @@ VolumeChannel::VolumeChannel(Volume::ChannelID c)
 
 Volume::Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture )
 {
-    init(static_cast<ChannelMask>(0), maxVolume, minVolume, hasSwitch, isCapture );
+    init(Volume::MNONE, maxVolume, minVolume, hasSwitch, isCapture );
 }
 
 /**
  * @deprecated
  */
-void Volume::addVolumeChannels(ChannelMask chmask)
+void Volume::addVolumeChannels(Volume::ChannelMask chmask)
 {
 	for ( Volume::ChannelID chid=Volume::CHIDMIN; chid<= Volume::CHIDMAX;  )
 	{
@@ -139,7 +139,7 @@ void Volume::addVolumeChannel(VolumeChannel vc)
 
 
 
-void Volume::init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
+void Volume::init( Volume::ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture)
 {
 	_chmask          = chmask;
 	_maxVolume       = maxVolume;
@@ -218,7 +218,7 @@ void Volume::changeAllVolumes( long step )
  * Sets the volume for the given Channel
  * @ compatibility
  */
-void Volume::setVolume( ChannelID chid, long vol)
+void Volume::setVolume( Volume::ChannelID chid, long vol)
 {
 	QMap<Volume::ChannelID, VolumeChannel>::iterator it = _volumesL.find(chid);
 	if ( it != _volumesL.end())
@@ -235,7 +235,7 @@ void Volume::setVolume( ChannelID chid, long vol)
 // {
 // 	foreach (VolumeChannel vc, _volumesL )
 // 	{
-// 		ChannelID chid = vc.chid;
+// 		Volume::ChannelID chid = vc.chid;
 // 		v.getVolumes()[chid].volume = vc.volume;
 // 		//v.getVolumes()[chid].unmutedVolume = vc.volume;
 // 	}
@@ -275,7 +275,7 @@ void Volume::setVolume( ChannelID chid, long vol)
 /**
  * Returns the volume of the given channel.
  */
-long Volume::getVolume(ChannelID chid) const
+long Volume::getVolume(Volume::ChannelID chid) const
 {
 	return _volumesL.value(chid).volume;
 }
@@ -283,7 +283,7 @@ long Volume::getVolume(ChannelID chid) const
 /**
  * Returns the volume of the given channel. If this Volume is inactive (switched off), 0 is returned.
  */
-long Volume::getVolumeForGUI(ChannelID chid) const
+long Volume::getVolumeForGUI(Volume::ChannelID chid) const
 {
 	if (! isSwitchActivated() )
 		return 0;
@@ -291,7 +291,7 @@ long Volume::getVolumeForGUI(ChannelID chid) const
 	return _volumesL.value(chid).volume;
 }
 
-qreal Volume::getAvgVolume(ChannelMask chmask) const
+qreal Volume::getAvgVolume(Volume::ChannelMask chmask) const
 {
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
@@ -313,7 +313,7 @@ qreal Volume::getAvgVolume(ChannelMask chmask) const
 }
 
 
-int Volume::getAvgVolumePercent(ChannelMask chmask) const
+int Volume::getAvgVolumePercent(Volume::ChannelMask chmask) const
 {
 	qreal volume = getAvgVolume(chmask);
 	// min=-100, max=200 => volSpan = 301

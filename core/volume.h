@@ -41,43 +41,60 @@ public:
     // For example a 2.0 system just has MLEFT and MRIGHT.
     // A 5.1 system adds MCENTER, MWOOFER, MSURROUNDLEFT and MSURROUNDRIGHT.
     // A 7.1 system furthermore adds MREARLEFT and MREARRIGHT.
-    enum ChannelMask { MNONE     = 0,
+    enum ChannelMaskBits
+    {
+        MNONE          = 0x000,
 
-                     MLEFT     =    1, MRIGHT     =    2, MCENTER =    4,
-                     MMAIN     =    3, MFRONT     =    7,
+        MLEFT          = 0x001,
+        MRIGHT         = 0x002,
+        MCENTER        = 0x004,
+        MMAIN          = 0x003,
+        MFRONT         = 0x007,
 
-                     MWOOFER   =    8,
+        MWOOFER        = 0x008,
 
-                     // SURROUND (4.0 or 4.1 or in higher - like 5.1)
-                     MSURROUNDLEFT = 0x10, MSURROUNDRIGHT = 0x20,
-                     // MSURROUND
-                     MSURROUND     = 0x30,
+        // SURROUND (4.0 or 4.1 or in higher - like 5.1)
+        MSURROUNDLEFT  = 0x010,
+        MSURROUNDRIGHT = 0x020,
+        // all SURROUND
+        MSURROUND      = 0x030,
 
-                     // REARSIDE (Usually only in 7.1)
-                     MREARSIDELEFT = 0x40, MREARSIDERIGHT = 0x80,
-                     // REARCENTER (Usually only in 6.1)
-                     MREARCENTER   = 0x100,
-                     // MREAR
-                     MREAR         = 0x1C0,
+        // REARSIDE (Usually only in 7.1)
+        MREARSIDELEFT  = 0x040,
+        MREARSIDERIGHT = 0x080,
+        // REARCENTER (Usually only in 6.1)
+        MREARCENTER    = 0x100,
+        // all REAR
+        MREAR          = 0x1C0,
 
-                     MALL=0xFFFF };
+        MALL           = 0xFFF
+    };
+    Q_DECLARE_FLAGS(ChannelMask, ChannelMaskBits)
 
+    enum ChannelID
+    {
+        NOCHANNEL     = -1,
+        CHIDMIN       = 0,
 
-    enum ChannelID { NOCHANNEL =-1, CHIDMIN       = 0,
-                  LEFT         = 0, RIGHT         = 1, CENTER = 2,
+        LEFT          = 0,
+        RIGHT         = 1,
+        CENTER        = 2,
 
-                  WOOFER       = 3,
+        WOOFER        = 3,
 
-                  SURROUNDLEFT = 4, SURROUNDRIGHT = 5,
+        SURROUNDLEFT  = 4,
+        SURROUNDRIGHT = 5,
 
-                  REARSIDELEFT = 6, REARSIDERIGHT = 7,
+        REARSIDELEFT  = 6,
+        REARSIDERIGHT = 7,
 
-                  REARCENTER   = 8,
+        REARCENTER    = 8,
 
-                  CHIDMAX      = 8 };
+        CHIDMAX       = 8
+    };
 
-    static QString channelNameForPersistence(ChannelID id);
-    static QString channelNameReadable(ChannelID id);
+    static QString channelNameForPersistence(Volume::ChannelID id);
+    static QString channelNameReadable(Volume::ChannelID id);
 
     enum VolumeType { PlaybackVT = 0 , CaptureVT = 1 };
 
@@ -89,23 +106,23 @@ public:
     Volume(long maxVolume, long minVolume, bool hasSwitch, bool isCapture );
     void addVolumeChannel(VolumeChannel ch);
     /// @Deprecated
-    void addVolumeChannels(ChannelMask chmask);
+    void addVolumeChannels(Volume::ChannelMask chmask);
     
     // Set all volumes as given by vol
     void setAllVolumes(long vol);
     // Set all volumes to the ones given in vol
     //void setVolume(const Volume &vol );
     // Set volumes as specified by the channel mask
-    //void setVolume( const Volume &vol, ChannelMask chmask);
-    void setVolume( ChannelID chid, long volume);
+    //void setVolume( const Volume &vol, Volume::ChannelMask chmask);
+    void setVolume( Volume::ChannelID chid, long volume);
 
     // Increase or decrease all volumes by step
     void changeAllVolumes( long step );
     
-    long getVolume(ChannelID chid) const;
-    long getVolumeForGUI(ChannelID chid) const;
-    qreal getAvgVolume(ChannelMask chmask) const;
-    int getAvgVolumePercent(ChannelMask chmask) const;
+    long getVolume(Volume::ChannelID chid) const;
+    long getVolumeForGUI(Volume::ChannelID chid) const;
+    qreal getAvgVolume(Volume::ChannelMask chmask) const;
+    int getAvgVolumePercent(Volume::ChannelMask chmask) const;
 
     //long operator[](int);
     long maxVolume() const				{ return (_maxVolume); }
@@ -167,7 +184,7 @@ private:
     // constructor for dummy volumes
     Volume();
 
-    void init( ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
+    void init( Volume::ChannelMask chmask, long maxVolume, long minVolume, bool hasSwitch, bool isCapture);
 
     long volrange( long vol );
 
@@ -176,6 +193,8 @@ private:
     SwitchType _switchType;
     bool _isCapture;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Volume::ChannelMask)
 
 
 class KMIXCORE_EXPORT VolumeChannel

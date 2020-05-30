@@ -108,7 +108,7 @@ static void translateMasksAndMaps(devinfo& dev)
     }
     if (1 == dev.channel_map.channels && PA_CHANNEL_POSITION_MONO == dev.channel_map.map[0]) {
         // We just use the left channel to represent this.
-        dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MLEFT);
+        dev.chanMask |= Volume::MLEFT;
         dev.chanIDs[0] = Volume::LEFT;
     } else {
         for (uint8_t i = 0; i < dev.channel_map.channels; ++i) {
@@ -118,39 +118,39 @@ static void translateMasksAndMaps(devinfo& dev)
                     return;
 
                 case PA_CHANNEL_POSITION_FRONT_LEFT:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MLEFT);
+                    dev.chanMask |= Volume::MLEFT;
                     dev.chanIDs[i] = Volume::LEFT;
                     break;
                 case PA_CHANNEL_POSITION_FRONT_RIGHT:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MRIGHT);
+                    dev.chanMask |= Volume::MRIGHT;
                     dev.chanIDs[i] = Volume::RIGHT;
                     break;
                 case PA_CHANNEL_POSITION_FRONT_CENTER:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MCENTER);
+                    dev.chanMask |= Volume::MCENTER;
                     dev.chanIDs[i] = Volume::CENTER;
                     break;
                 case PA_CHANNEL_POSITION_REAR_CENTER:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARCENTER);
+                    dev.chanMask |= Volume::MREARCENTER;
                     dev.chanIDs[i] = Volume::REARCENTER;
                     break;
                 case PA_CHANNEL_POSITION_REAR_LEFT:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MSURROUNDLEFT);
+                    dev.chanMask |= Volume::MSURROUNDLEFT;
                     dev.chanIDs[i] = Volume::SURROUNDLEFT;
                     break;
                 case PA_CHANNEL_POSITION_REAR_RIGHT:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MSURROUNDRIGHT);
+                    dev.chanMask |= Volume::MSURROUNDRIGHT;
                     dev.chanIDs[i] = Volume::SURROUNDRIGHT;
                     break;
                 case PA_CHANNEL_POSITION_LFE:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MWOOFER);
+                    dev.chanMask |= Volume::MWOOFER;
                     dev.chanIDs[i] = Volume::WOOFER;
                     break;
                 case PA_CHANNEL_POSITION_SIDE_LEFT:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDELEFT);
+                    dev.chanMask |= Volume::MREARSIDELEFT;
                     dev.chanIDs[i] = Volume::REARSIDELEFT;
                     break;
                 case PA_CHANNEL_POSITION_SIDE_RIGHT:
-                    dev.chanMask = (Volume::ChannelMask)( dev.chanMask | Volume::MREARSIDERIGHT);
+                    dev.chanMask |= Volume::MREARSIDERIGHT;
                     dev.chanIDs[i] = Volume::REARSIDERIGHT;
                     break;
                 default:
@@ -646,8 +646,8 @@ static void context_state_callback(pa_context *c, void *)
         if (s_context == c) {
             pa_context_set_subscribe_callback(c, subscribe_cb, NULL);
 
-            op = pa_context_subscribe(c, (pa_subscription_mask_t)
-                                           (PA_SUBSCRIPTION_MASK_SINK|
+            op = pa_context_subscribe(c, static_cast<pa_subscription_mask_t>(
+                                            PA_SUBSCRIPTION_MASK_SINK|
                                             PA_SUBSCRIPTION_MASK_SOURCE|
                                             PA_SUBSCRIPTION_MASK_CLIENT|
                                             PA_SUBSCRIPTION_MASK_SINK_INPUT|
@@ -715,7 +715,7 @@ static void setVolumeFromPulse(Volume& volume, const devinfo& dev)
     for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
         //qCDebug(KMIX_LOG) <<  "Setting volume for channel " << iter.value() << " to " << (long)dev.volume.values[iter.key()] << " (" << ((100*(long)dev.volume.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
-        volume.setVolume(iter.value(), (long)dev.volume.values[iter.key()]);
+        volume.setVolume(iter.value(), static_cast<long>(dev.volume.values[iter.key()]));
     }
 }
 
@@ -726,7 +726,7 @@ static pa_cvolume genVolumeForPulse(const devinfo& dev, Volume& volume)
     chanIDMap::const_iterator iter;
     for (iter = dev.chanIDs.begin(); iter != dev.chanIDs.end(); ++iter)
     {
-        cvol.values[iter.key()] = (uint32_t)volume.getVolume(iter.value());
+        cvol.values[iter.key()] = static_cast<uint32_t>(volume.getVolume(iter.value()));
         //qCDebug(KMIX_LOG) <<  "Setting volume for channel " << iter.value() << " to " << cvol.values[iter.key()] << " (" << ((100*cvol.values[iter.key()]) / PA_VOLUME_NORM) << "%)";
     }
     return cvol;
@@ -753,9 +753,8 @@ static devmap* get_widget_map(int type, QString id = QString())
 
 static devmap* get_widget_map(int type, int index)
 {
-    if (PA_INVALID_INDEX == (uint32_t)index)
-        return get_widget_map(type, "restore:");
-    return get_widget_map(type);
+    if (static_cast<uint32_t>(index)==PA_INVALID_INDEX) return (get_widget_map(type, "restore:"));
+    return (get_widget_map(type));
 }
 
 void Mixer_PULSE::emitControlsReconfigured()
@@ -1204,9 +1203,8 @@ case KMIXPA_PLAYBACK:
 
                                     if (playing==0)
                                     {
-                                        char devnum[64];
-                                        snprintf(devnum, sizeof(devnum), "%lu", (unsigned long) dev.index);
-                                        ca_context_change_device(s_ccontext, devnum);
+                                        const QByteArray devnum = QByteArray::number(dev.index);
+                                        ca_context_change_device(s_ccontext, devnum.constData());
 
                                         // Ideally we'd use something like ca_gtk_play_for_widget()...
                                         ca_context_play(
