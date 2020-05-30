@@ -27,6 +27,8 @@
 #include "mixer_backend.h"
 #include <pulse/pulseaudio.h>
 
+struct QtPaMainLoop;
+
 typedef QMap<uint8_t,Volume::ChannelID> chanIDMap;
 typedef struct {
     int index;
@@ -77,6 +79,7 @@ class Mixer_PULSE : public Mixer_Backend
 
         int fd;
         QString _id;
+        std::unique_ptr<QtPaMainLoop> m_mainloop;
 
     private:
         bool addDevice(devinfo& dev, bool isAppStream = false);

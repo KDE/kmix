@@ -58,11 +58,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 #
 find_package(PulseAudio "${PA_MIN_VERSION}")
 
-# PulseAudio requires GLib2
-if (PulseAudio_FOUND)
-  find_package(GLIB2 REQUIRED)
-endif(PulseAudio_FOUND)
-
 # Canberra is an optional dependency
 find_package(Canberra)
 
@@ -99,7 +94,6 @@ endif (ALSA_FOUND)
 if (PulseAudio_FOUND)
   add_definitions(-DHAVE_PULSE)
   include_directories(${PulseAudio_INCLUDE_DIRS})
-  include_directories(${GLIB2_INCLUDE_DIR})
 endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
@@ -213,7 +207,7 @@ if (HAVE_LIBASOUND2)
 endif (HAVE_LIBASOUND2)
 
 if (PulseAudio_FOUND)
-  target_link_libraries(kmixcore PRIVATE ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
+  target_link_libraries(kmixcore PRIVATE ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY})
 endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)

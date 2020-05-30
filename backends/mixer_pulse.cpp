@@ -21,6 +21,8 @@
 
 #include "mixer_pulse.h"
 
+#include "qtpamainloop.h"
+
 #include <cstdlib>
 #include <QAbstractEventDispatcher>
 #include <QTimer>
@@ -32,7 +34,6 @@
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 
-#include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
 #if defined(HAVE_CANBERRA)
 #  include <canberra.h>
@@ -55,7 +56,6 @@
 #define KMIXPA_EVENT_KEY "sink-input-by-media-role:event"
 
 static unsigned int refcount = 0;
-static pa_glib_mainloop *s_mainloop = NULL;
 static pa_context *s_context = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_outstandingRequests = 0;
@@ -689,8 +689,6 @@ static void context_state_callback(pa_context *c, void *)
         if (s_context != c) {
             pa_context_disconnect(c);
         } else {
-            // If we're not probing, it means we've been disconnected from our
-            // GLib context
             pa_context_unref(s_context);
             s_context = NULL;
 
@@ -956,10 +954,14 @@ bool Mixer_PULSE::connectToDaemon()
     Q_ASSERT(NULL == s_context);
 
     qCDebug(KMIX_LOG) <<  "Attempting connection to PulseAudio sound daemon";
-    pa_mainloop_api *api = pa_glib_mainloop_get_api(s_mainloop);
-    Q_ASSERT(api);
 
-    s_context = pa_context_new(api, "KMix");
+    // No need to create this until necessary
+    if (!m_mainloop) {
+        // When bumping c++ requirement to c++14,
+        // replace with `= std::make_unique<QtPaMainLoop>();`
+        m_mainloop.reset(new QtPaMainLoop);
+    }
+    s_context = pa_context_new(&m_mainloop->pa_vtable, "KMix");
     Q_ASSERT(s_context);
 
     if (pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0) < 0) {
@@ -980,13 +982,6 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
     QString pulseenv = qgetenv("KMIX_PULSEAUDIO_DISABLE");
     if (pulseenv.toInt())
         s_pulseActive = INACTIVE;
-
-    // We require a glib event loop
-    if (!QByteArray(QAbstractEventDispatcher::instance()->metaObject()->className()).contains("EventDispatcherGlib") &&
-        !QByteArray(QAbstractEventDispatcher::instance()->metaObject()->className()).contains("GlibEventDispatcher")) {
-        qCDebug(KMIX_LOG) << "Disabling PulseAudio integration for lack of GLib event loop";
-        s_pulseActive = INACTIVE;
-    }
 
     ++refcount;
     if (INACTIVE != s_pulseActive && 1 == refcount)
@@ -1040,9 +1035,6 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
         if (INACTIVE != s_pulseActive)
         {
             // Reconnect via integrated mainloop
-            s_mainloop = pa_glib_mainloop_new(NULL);
-            Q_ASSERT(s_mainloop);
-
             connectToDaemon();
 
 #if defined(HAVE_CANBERRA)
@@ -1081,11 +1073,6 @@ Mixer_PULSE::~Mixer_PULSE()
             if (s_context) {
                 pa_context_unref(s_context);
                 s_context = NULL;
-            }
-
-            if (s_mainloop) {
-                pa_glib_mainloop_free(s_mainloop);
-                s_mainloop = NULL;
             }
         }
     }
