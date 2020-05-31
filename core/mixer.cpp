@@ -175,18 +175,19 @@ const QString Mixer::dbusPath()
 	// So once the first MixDevice is created, this must return the correct value
 	if (_id.isEmpty())
 	{
-		if (! _mixerBackend->_cardRegistered)
+		bool wasRegistered = _mixerBackend->_cardRegistered;
+		// Bug 308014: Actually this a shortcut (you could also call it a hack). It would likely better if registerCard()
+		//             would create the Id, but it requires cooperation from ALL backends. Also Mixer->getId() would need to
+		//             proxy that to the backend.
+		// So for now we lazily create the MixerId here, while creating the first MixDevice for that card.
+		recreateId();
+		if (! wasRegistered)
 		{
 			// Bug 308014: By checking _cardRegistered, we can be sure that everything is fine, including the fact that
 			// the cardId (aka "card instance") is set. If _cardRegistered would be false, we will create potentially
 			// wrong/duplicated DBUS Paths here.
 			qCWarning(KMIX_LOG) << "Mixer id was empty when creating DBUS path. Emergency code created the id=" <<_id;
 		}
-		// Bug 308014: Actually this a shortcut (you could also call it a hack). It would likely better if registerCard()
-		//             would create the Id, but it requires cooperation from ALL backends. Also Mixer->getId() would need to
-		//             proxy that to the backend.
-		// So for now we lazily create the MixerId here, while creating the first MixDevice for that card.
-		recreateId();
 	}
 
 	// mixerName may contain arbitrary characters, so replace all that are not allowed to be be part of a DBUS path
