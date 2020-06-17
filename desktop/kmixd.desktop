@@ -28,7 +28,6 @@ Name[sk]=KMix Daemon
 Name[sl]=KMix demon
 Name[sv]=Kmix-demon
 Name[uk]=Фонова служба KMix
-Name[x-test]=xxKMix Daemonxx
 Name[zh_CN]=KMix 守护进程
 Name[zh_TW]=KMix 伺服程式
 Comment=Monitors sound devices
@@ -58,7 +57,6 @@ Comment[sk]=Sleduje zvukové zariadenia
 Comment[sl]=Nadzoruje zvočne naprave
 Comment[sv]=Övervakar ljudenheter
 Comment[uk]=Стежить за звуковими пристроями
-Comment[x-test]=xxMonitors sound devicesxx
 Comment[zh_CN]=监视声音设备
 Comment[zh_TW]=顯示器音效裝置
 
