@@ -46,6 +46,7 @@ Name[sv]=Datagränssnitt för mixer
 Name[tr]=Karıştırıcı Veri Sağlayıcısı
 Name[ug]=سازلىغۇچ سانلىق مەلۇمات ماتورى
 Name[uk]=Рушій даних мікшера
+Name[x-test]=xxMixer DataEnginexx
 Name[zh_CN]=混音器数据引擎
 Name[zh_TW]=混合器資料引擎
 X-KDE-ServiceTypes=Plasma/DataEngine
