@@ -48,10 +48,6 @@ MDWEnum::MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, View
       _label(nullptr),
       _enumCombo(nullptr)
 {
-   KToggleAction *action = channelActions()->add<KToggleAction>("hide");
-   action->setText( i18n("&Hide") );
-   connect(action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)));
-
    createWidgets();
    createShortcutsAction();
 }
@@ -103,12 +99,10 @@ void MDWEnum::update()
   }
 }
 
-void MDWEnum::showContextMenu(const QPoint& pos )
-{
-   if (view()==nullptr) return;
 
-   QMenu *menu = view()->getPopup();
-   menu->popup(pos);
+void MDWEnum::createContextMenu(QMenu *menu)
+{
+    // nothing special for this sort of control
 }
 
 
@@ -153,11 +147,6 @@ int MDWEnum::enumId()
    }
 }
 
-
-void MDWEnum::setDisabled( bool hide )
-{
-	emit guiVisibilityChange(this, !hide);
-}
 
 /**
  * For users of this class who would like to show multiple MDWEnum's properly aligned.

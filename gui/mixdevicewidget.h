@@ -76,12 +76,10 @@ signals:
     void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
 protected slots:
-    virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
-    virtual void setDisabled(bool value) = 0;
-
     void volumeChange(int);
 
 protected:
+    virtual void createContextMenu(QMenu *menu) = 0;
     void contextMenuEvent(QContextMenuEvent *ev) override;
     void createShortcutsAction();
 

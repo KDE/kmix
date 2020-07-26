@@ -46,16 +46,15 @@ public:
     void setLabelExtent(int extent) override;
 
 public slots:
-    // GUI hide and show
-    void setDisabled(bool) override;
-
     // Enum handling: next and selecting
     void nextEnumId();
     int  enumId();
     void setEnumId(int value);
 
     void update() override;
-    void showContextMenu(const QPoint& pos = QCursor::pos()) override;
+
+protected:
+    void createContextMenu(QMenu *menu) override;
 
 private:
     void createWidgets();

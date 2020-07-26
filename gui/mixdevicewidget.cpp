@@ -100,16 +100,27 @@ void MixDeviceWidget::configureShortcuts()
 
 void MixDeviceWidget::contextMenuEvent(QContextMenuEvent *ev)
 {
-    showContextMenu(ev->globalPos());
+    if (view()==nullptr) return;
+    QMenu *menu = view()->getPopup();
+    menu->addSection(QIcon::fromTheme("kmix"), mixDevice()->readableName());
+
+    createContextMenu(menu);
+
+    // the common "Channel Shortcuts" action
+    QAction *act = m_channelActions->action("keys");
+    if (act!=nullptr)
+    {
+        menu->addSeparator();
+        menu->addAction(act);
+    }
+
+    menu->popup(ev->globalPos());
 }
 
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
-//void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }
-//void MixDeviceWidget::setVolume( int /*channel*/, int /*vol*/ ) { /* is virtual */ }
-//void MixDeviceWidget::setVolume( Volume /*vol*/ ) { /* is virtual */ }
-//void MixDeviceWidget::update() { /* is virtual */ }
-//void MixDeviceWidget::showContextMenu( const QPoint &pos ) { /* is virtual */ }
+//void MixDeviceWidget::update() { /* is pure virtual */ }
+//void MixDeviceWidget::createContextMenu(QMenu *menu) { /* is pure virtual */ }
 void MixDeviceWidget::setColors( QColor , QColor , QColor ) { /* is virtual */ }
 void MixDeviceWidget::setIcons( bool ) { /* is virtual */ }
 void MixDeviceWidget::setLabeled( bool ) { /* is virtual */ }

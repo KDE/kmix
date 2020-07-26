@@ -102,13 +102,6 @@ void MDWSlider::createActions()
     taction->setText( i18n("Split Channels") );
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
-//    QAction *action;
-//    if ( ! mixDevice()->mixer()->isDynamic() ) {
-//        action = channelActions()->add<KToggleAction>( "hide" );
-//        action->setText( i18n("&Hide") );
-//        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)) );
-//    }
-
     if( mixDevice()->hasMuteSwitch() )
     {
         taction = channelActions()->add<KToggleAction>( "mute" );
@@ -960,12 +953,6 @@ void MDWSlider::setMuted(bool value)
 }
 
 
-void MDWSlider::setDisabled( bool hide )
-{
-	emit guiVisibilityChange(this, !hide);
-}
-
-
 /**
  * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which are handled by the
  * KMixWindow class. So for 99.9% of all users, this method is never called.
@@ -1129,14 +1116,10 @@ void MDWSlider::updateAccesability()
 #endif
 
 
-void MDWSlider::showContextMenu(const QPoint &pos)
+void MDWSlider::createContextMenu(QMenu *menu)
 {
-	if (view()==nullptr) return;
-
-	QMenu *menu = view()->getPopup();
-	menu->addSection( QIcon::fromTheme( "kmix" ), mixDevice()->readableName() );
-
-	if (m_moveMenu) {
+	if (m_moveMenu!=nullptr)
+	{
 		MixSet *ms = mixDevice()->moveDestinationMixSet();
 		Q_ASSERT(ms!=nullptr);
 
@@ -1150,7 +1133,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		menu->addMenu( m_moveMenu );
 	}
 
-	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
+	if (m_slidersPlayback.count()>1 || m_slidersCapture.count()>1)
+	{
 		KToggleAction *stereo = qobject_cast<KToggleAction *>(channelActions()->action("stereo"));
 		if (stereo!=nullptr) {
 			QSignalBlocker blocker(stereo);
@@ -1159,7 +1143,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		}
 	}
 
-	if ( mixDevice()->captureVolume().hasSwitch() ) {
+	if (mixDevice()->captureVolume().hasSwitch())
+	{
 		KToggleAction *ta = qobject_cast<KToggleAction *>(channelActions()->action("recsrc"));
 		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
@@ -1168,7 +1153,8 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		}
 	}
 
-	if ( mixDevice()->hasMuteSwitch() ) {
+	if (mixDevice()->hasMuteSwitch())
+	{
 		KToggleAction *ta = qobject_cast<KToggleAction *>(channelActions()->action("mute"));
 		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
@@ -1176,15 +1162,6 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 			menu->addAction( ta );
 		}
 	}
-
-	QAction *b = channelActions()->action( "keys" );
-	if (b!=nullptr)
-	{
-		menu->addSeparator();
-		menu->addAction(b);
-	}
-
-	menu->popup(pos);
 }
 
 

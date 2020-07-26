@@ -80,13 +80,14 @@ public slots:
     void toggleMuted();
     void toggleStereoLinked();
 
-    void setDisabled( bool value ) override;
+//     void setDisabled( bool value ) override;
     void update() override;
-    void showMoveMenu();
-    void showContextMenu( const QPoint &pos = QCursor::pos() ) override;
     void increaseOrDecreaseVolume(bool arg1, Volume::VolumeTypeFlag volumeType);
     VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);
+
+protected:
+    void createContextMenu(QMenu *menu) override;
 
 private slots:
     void setRecsrc(bool value);
@@ -102,6 +103,7 @@ private slots:
     void mediaNext(bool);
     void mediaPrev(bool);
 
+    void showMoveMenu();
     void moveStream(bool checked);
 
 private:
