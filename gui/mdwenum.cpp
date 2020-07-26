@@ -48,8 +48,7 @@ MDWEnum::MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, View
       _label(nullptr),
       _enumCombo(nullptr)
 {
-   createWidgets();
-   createShortcutsAction();
+    createWidgets();
 }
 
 

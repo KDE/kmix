@@ -81,7 +81,6 @@ protected slots:
 protected:
     virtual void createContextMenu(QMenu *menu) = 0;
     void contextMenuEvent(QContextMenuEvent *ev) override;
-    void createShortcutsAction();
 
     Qt::Orientation orientation() const			{ return (m_view->orientation()); }
     MixDeviceWidget::MDWFlags flags() const		{ return (m_flags); }

@@ -76,7 +76,6 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, 
     createActions();
     createWidgets();
     createGlobalActions();
-    createShortcutsAction();
 
     // Yes, this looks odd - monitor all events sent to myself by myself?
     // But it's so that wheel events over the MDWSlider background can be

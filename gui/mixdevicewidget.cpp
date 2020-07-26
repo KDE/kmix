@@ -62,6 +62,10 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewB
    m_globalActions = new KActionCollection(this);
    m_shortcutsDialog = nullptr;
    
+   QAction *act = m_channelActions->addAction("keys");
+   act->setText(i18n("Channel Shortcuts..."));
+   connect(act, &QAction::triggered, this, &MixDeviceWidget::configureShortcuts);
+
    QString name (md->id());
   /* char* whatsThisChar = whatsthis.toUtf8().data();
    QString w;
@@ -72,16 +76,6 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewB
    if ( whatsthisText != "---") {
       setWhatsThis(whatsthisText);
    }
-}
-
-
-void MixDeviceWidget::createShortcutsAction()
-{
-    if (m_globalActions->isEmpty()) return;		// no shortcuts to define
-
-    QAction* act = m_channelActions->addAction("keys");
-    act->setText(i18n("Channel Shortcuts..."));
-    connect(act, &QAction::triggered, this, &MixDeviceWidget::configureShortcuts);
 }
 
 
@@ -106,10 +100,10 @@ void MixDeviceWidget::contextMenuEvent(QContextMenuEvent *ev)
 
     createContextMenu(menu);
 
-    // the common "Channel Shortcuts" action
+    // The common "Channel Shortcuts" action
     QAction *act = m_channelActions->action("keys");
-    if (act!=nullptr)
-    {
+    if (act!=nullptr && !m_globalActions->isEmpty())	// action is available, and
+    {							// there are shortcuts to define
         menu->addSeparator();
         menu->addAction(act);
     }
