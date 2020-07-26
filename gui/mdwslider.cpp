@@ -75,7 +75,8 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, 
 
     createActions();
     createWidgets();
-    createShortcutActions();
+    createGlobalActions();
+    createShortcutsAction();
 
     // Yes, this looks odd - monitor all events sent to myself by myself?
     // But it's so that wheel events over the MDWSlider background can be
@@ -96,27 +97,27 @@ MDWSlider::~MDWSlider()
 
 void MDWSlider::createActions()
 {
-    // create actions (on _mdwActions, see MixDeviceWidget)
-    KToggleAction *taction = _mdwActions->add<KToggleAction>( "stereo" );
+    // create actions (in channelActions(), see MixDeviceWidget)
+	KToggleAction *taction = channelActions()->add<KToggleAction>( "stereo" );
     taction->setText( i18n("Split Channels") );
     connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
 
 //    QAction *action;
 //    if ( ! mixDevice()->mixer()->isDynamic() ) {
-//        action = _mdwActions->add<KToggleAction>( "hide" );
+//        action = channelActions()->add<KToggleAction>( "hide" );
 //        action->setText( i18n("&Hide") );
 //        connect( action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)) );
 //    }
 
     if( mixDevice()->hasMuteSwitch() )
     {
-        taction = _mdwActions->add<KToggleAction>( "mute" );
+        taction = channelActions()->add<KToggleAction>( "mute" );
         taction->setText( i18n("Mute") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
     }
 
     if( mixDevice()->captureVolume().hasSwitch() ) {
-        taction = _mdwActions->add<KToggleAction>( "recsrc" );
+        taction = channelActions()->add<KToggleAction>( "recsrc" );
         taction->setText( i18n("Capture") );
         connect( taction, SIGNAL(toggled(bool)), SLOT(toggleRecsrc()) );
     }
@@ -125,62 +126,74 @@ void MDWSlider::createActions()
         m_moveMenu = new QMenu( i18n("Use Device"), this);
         connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
     }
-
-    QAction* qaction = _mdwActions->addAction( "keys" );
-    qaction->setText( i18n("Channel Shortcuts...") );
-    connect( qaction, SIGNAL(triggered(bool)), SLOT(defineKeys()) );
 }
 
-void MDWSlider::addGlobalShortcut(QAction* qaction, const QString& label, bool dynamicControl)
-{
-	QString finalLabel(label);
-	finalLabel += " - " + mixDevice()->readableName() + ", " + mixDevice()->mixer()->readableName();
 
-	qaction->setText(label);
-	if (!dynamicControl)
+void MDWSlider::createGlobalActions()
+{
+	const shared_ptr<MixDevice> md = mixDevice();
+	const Mixer *mixer = md->mixer();
+
+	// I don't understand the former logic here.  This variable and the comment
+	// in MDWSlider::addGlobalShortcut() say that there are no shortcuts
+	// assigned for a virtual or dynamic control - which makes sense.  However,
+	// for such a control an action was created but its triggered() signal was
+	// never connected to anything - so even if the action was accessible from
+	// the GUI it would have done nothing.
+	//
+	// Possibly what was intended was that the shortcut should be local to KMix.
+	// However, that doesn't make sense either - in MixDeviceWidget::defineKeys()
+	// (which is now MixDeviceWidget::configureShortcuts()), only the global
+	// shortcuts are allowed to be edited.
+	//
+	// In order to keep things simple, do not assign any shortcuts for a
+	// virtual/dynamic control.
+	if (mixer->isDynamic()) return;
+
+	// The following actions are created for the desktop "Global Shortcuts" settings.
+	// It would appear that the discussion and caution below was only required
+	// for KDE4 and has been fixed in KF5.
+	//
+	// Note that global shortcuts are saved with the name as set with QAction::setText(),
+	// instead of their internal action name which is the QObject::objectName().
+        // This is a bug according to the kde-core-devel thread "Global shortcuts are saved with
+	// their text-name and not..." at https://marc.info/?t=119901891400001&r=1&w=2
+	//
+	// Work around this by setting a text that is unique, but still readable for the user.
+
+	// A suffix string to identify the control in the global shortcut configuration.
+	// This should not be I18N'ed so that the assignment is independent of the
+	// display language.
+	const QString actionSuffix  = QString("%1@%2").arg(md->readableName(), mixer->readableName());
+
+	// -3- MUTE VOLUME SHORTCUT -----------------------------------------
+	QAction *act = new QAction(i18nc("1=device name, 2=control name",
+					 "Mute %2 on %1",
+					 mixer->readableName(), md->readableName()), this);
+	globalActions()->addAction(QString("toggle-mute-")+actionSuffix, act);
+	KGlobalAccel::setGlobalShortcut(act, QKeySequence());
+	connect(act, &QAction::triggered, this, &MDWSlider::toggleMuted);
+
+	// Only create volume actions if there are either any playback or capture
+	// sliders present.  It is assumed that there cannot be both.
+	if (m_slidersPlayback.count()!=0 || m_slidersCapture.count()!=0)
 	{
-		// virtual / dynamic controls won't get shortcuts
-		//     #ifdef __GNUC__
-		//     #warning GLOBAL SHORTCUTS ARE NOW ASSIGNED TO ALL CONTROLS, as enableGlobalShortcut(), has not been committed
-		//     #endif
-		//   b->enableGlobalShortcut();
-		// enableGlobalShortcut() is not there => use workaround
-		KGlobalAccel::setGlobalShortcut(qaction, QKeySequence());
+		// -1- INCREASE VOLUME SHORTCUT -----------------------------------------
+		act = new QAction(i18nc("1=device name, 2=control name",
+					"Increase volume of %2 on %1",
+					mixer->readableName(), md->readableName()), this);
+		globalActions()->addAction(QString("increase-volume-")+actionSuffix, act);
+		KGlobalAccel::setGlobalShortcut(act, QKeySequence());
+		connect(act, &QAction::triggered, this, &MDWSlider::increaseVolume);
+
+		// -2- DECREASE VOLUME SHORTCUT -----------------------------------------
+		act = new QAction(i18nc("1=device name, 2=control name",
+					"Decrease volume of %2 on %1",
+					mixer->readableName(), md->readableName()), this);
+		globalActions()->addAction(QString("decrease-volume-")+actionSuffix, act);
+		KGlobalAccel::setGlobalShortcut(act, QKeySequence());
+		connect(act, &QAction::triggered, this, &MDWSlider::decreaseVolume);
 	}
-}
-
-void MDWSlider::createShortcutActions()
-{
-	bool dynamicControl = mixDevice()->mixer()->isDynamic();
-    // The following actions are for the "Configure Shortcuts" dialog
-    /* PLEASE NOTE THAT global shortcuts are saved with the name as set with setName(), instead of their action name.
-        This is a bug according to the thread "Global shortcuts are saved with their text-name and not their action-name - Bug?" on kcd.
-        I work around this by using a text with setText() that is unique, but still readable to the user.
-    */
-    QString actionSuffix  = QString(" - %1, %2").arg( mixDevice()->readableName(), mixDevice()->mixer()->readableName() );
-    QAction *bi, *bd, *bm;
-
-    // -1- INCREASE VOLUME SHORTCUT -----------------------------------------
-    bi = _mdwPopupActions->addAction( QString("Increase volume %1").arg( actionSuffix ) );
-    QString increaseVolumeName = i18n( "Increase Volume" );
-	addGlobalShortcut(bi, increaseVolumeName, dynamicControl);
-   	if ( ! dynamicControl )
-        connect( bi, SIGNAL(triggered(bool)), SLOT(increaseVolume()) );
-
-    // -2- DECREASE VOLUME SHORTCUT -----------------------------------------
-    bd = _mdwPopupActions->addAction( QString("Decrease volume %1").arg( actionSuffix ) );
-    QString decreaseVolumeName = i18n( "Decrease Volume" );
-	addGlobalShortcut(bd, decreaseVolumeName, dynamicControl);
-	if ( ! dynamicControl )
-		connect(bd, SIGNAL(triggered(bool)), SLOT(decreaseVolume()));
-
-    // -3- MUTE VOLUME SHORTCUT -----------------------------------------
-    bm = _mdwPopupActions->addAction( QString("Toggle mute %1").arg( actionSuffix ) );
-    QString muteVolumeName = i18n( "Toggle Mute" );
-	addGlobalShortcut(bm, muteVolumeName, dynamicControl);
-   	if ( ! dynamicControl )
-        connect( bm, SIGNAL(triggered(bool)), SLOT(toggleMuted()) );
-
 }
 
 
@@ -963,7 +976,7 @@ void MDWSlider::increaseVolume()
 }
 
 /**
- * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which hare handled by the
+ * This slot is called on a Keyboard Shortcut event, except for the XF86Audio* shortcuts which are handled by the
  * KMixWindow class. So for 99.9% of all users, this method is never called.
  */
 void MDWSlider::decreaseVolume()
@@ -1138,7 +1151,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	}
 
 	if ( m_slidersPlayback.count()>1 || m_slidersCapture.count()>1) {
-		KToggleAction *stereo = qobject_cast<KToggleAction *>(_mdwActions->action("stereo"));
+		KToggleAction *stereo = qobject_cast<KToggleAction *>(channelActions()->action("stereo"));
 		if (stereo!=nullptr) {
 			QSignalBlocker blocker(stereo);
 			stereo->setChecked(!isStereoLinked());
@@ -1147,7 +1160,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	}
 
 	if ( mixDevice()->captureVolume().hasSwitch() ) {
-		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("recsrc"));
+		KToggleAction *ta = qobject_cast<KToggleAction *>(channelActions()->action("recsrc"));
 		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
 			ta->setChecked( mixDevice()->isRecSource() );
@@ -1156,7 +1169,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 	}
 
 	if ( mixDevice()->hasMuteSwitch() ) {
-		KToggleAction *ta = qobject_cast<KToggleAction *>(_mdwActions->action("mute"));
+		KToggleAction *ta = qobject_cast<KToggleAction *>(channelActions()->action("mute"));
 		if (ta!=nullptr) {
 			QSignalBlocker blocker(ta);
 			ta->setChecked( mixDevice()->isMuted() );
@@ -1164,11 +1177,7 @@ void MDWSlider::showContextMenu(const QPoint &pos)
 		}
 	}
 
-//	QAction *a = _mdwActions->action(  "hide" );
-//	if ( a )
-//		menu->addAction( a );
-
-	QAction *b = _mdwActions->action( "keys" );
+	QAction *b = channelActions()->action( "keys" );
 	if (b!=nullptr)
 	{
 		menu->addSeparator();

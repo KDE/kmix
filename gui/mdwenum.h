@@ -41,7 +41,6 @@ public:
     MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl = nullptr);
     virtual ~MDWEnum() = default;
 
-    void addActionToPopup( QAction *action );
     QSizePolicy sizePolicy() const;
     int labelExtentHint() const override;
     void setLabelExtent(int extent) override;

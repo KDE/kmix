@@ -23,13 +23,11 @@
 
 #include <kactioncollection.h>
 #include <kconfig.h>
-#include <kglobalaccel.h>
 #include <kshortcutsdialog.h>
+#include <klocalizedstring.h>
 
-#include <qcursor.h>
-#include <QMenu>
-#include <QMouseEvent>
-#include <qpixmap.h>
+#include <qmenu.h>
+#include <qevent.h>
 
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
@@ -60,8 +58,8 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewB
    if (m_pctl==nullptr) m_pctl = md->controlProfile();
    Q_ASSERT(m_pctl!=nullptr);
 
-   _mdwActions = new KActionCollection( this );
-   _mdwPopupActions = new KActionCollection( this );
+   m_channelActions = new KActionCollection(this);
+   m_globalActions = new KActionCollection(this);
    m_shortcutsDialog = nullptr;
    
    QString name (md->id());
@@ -76,25 +74,35 @@ MixDeviceWidget::MixDeviceWidget(shared_ptr<MixDevice> md, MDWFlags flags, ViewB
    }
 }
 
-void MixDeviceWidget::addActionToPopup( QAction *action )
+
+void MixDeviceWidget::createShortcutsAction()
 {
-   _mdwActions->addAction( action->objectName(), action );
+    if (m_globalActions->isEmpty()) return;		// no shortcuts to define
+
+    QAction* act = m_channelActions->addAction("keys");
+    act->setText(i18n("Channel Shortcuts..."));
+    connect(act, &QAction::triggered, this, &MixDeviceWidget::configureShortcuts);
 }
 
-void MixDeviceWidget::defineKeys()
+
+void MixDeviceWidget::configureShortcuts()
 {
-   // Dialog for *global* shortcuts of this MDW
-   if ( m_shortcutsDialog == 0 ) {
-      m_shortcutsDialog = new KShortcutsDialog( KShortcutsEditor::GlobalAction );
-      m_shortcutsDialog->addCollection(_mdwPopupActions);
-   }
-   m_shortcutsDialog->configure();
+    // Dialog for *global* shortcuts of this MDW
+    if (m_shortcutsDialog==nullptr)
+    {
+        m_shortcutsDialog = new KShortcutsDialog(KShortcutsEditor::GlobalAction);
+        m_shortcutsDialog->addCollection(m_globalActions);
+    }
+
+    m_shortcutsDialog->configure();
 }
+
 
 void MixDeviceWidget::contextMenuEvent(QContextMenuEvent *ev)
 {
     showContextMenu(ev->globalPos());
 }
+
 
 void MixDeviceWidget::volumeChange( int ) { /* is virtual */ }
 //void MixDeviceWidget::setDisabled( bool ) { /* is virtual */ }

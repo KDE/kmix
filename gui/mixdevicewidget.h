@@ -79,21 +79,22 @@ protected slots:
     virtual void showContextMenu(const QPoint &pos = QCursor::pos()) = 0;
     virtual void setDisabled(bool value) = 0;
 
-    virtual void defineKeys();
     void volumeChange(int);
 
 protected:
-    void addActionToPopup(QAction *action);
     void contextMenuEvent(QContextMenuEvent *ev) override;
+    void createShortcutsAction();
 
     Qt::Orientation orientation() const			{ return (m_view->orientation()); }
     MixDeviceWidget::MDWFlags flags() const		{ return (m_flags); }
     ViewBase *view() const				{ return (m_view); }
     ProfControl *profileControl() const			{ return (m_pctl); }
 
-protected:
-      KActionCollection*   _mdwActions;
-      KActionCollection*   _mdwPopupActions;
+    KActionCollection *channelActions() const		{ return (m_channelActions); }
+    KActionCollection *globalActions() const		{ return (m_globalActions); }
+
+private slots:
+    void configureShortcuts();
 
 private:
       MDWFlags m_flags;
@@ -101,6 +102,9 @@ private:
       ProfControl *m_pctl;
       ViewBase *m_view;
       KShortcutsDialog *m_shortcutsDialog;
+
+      KActionCollection *m_channelActions;
+      KActionCollection *m_globalActions;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(MixDeviceWidget::MDWFlags)

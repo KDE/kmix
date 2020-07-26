@@ -50,11 +50,6 @@ public:
     MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, ViewBase *view, ProfControl *pctl = nullptr);
     virtual ~MDWSlider();
 
-    enum LabelType { LT_ALL, LT_FIRST_CAPTURE, LT_NONE };
-    void addActionToPopup( QAction *action );
-    void createActions();
-    void createShortcutActions();
-    
     // GUI
     bool isStereoLinked() const override { return m_linked; }
     void setStereoLinked( bool value ) override;
@@ -111,6 +106,9 @@ private slots:
 
 private:
     void createWidgets();
+    void createActions();
+    void createGlobalActions();
+
     void addSliders(QBoxLayout *volLayout, char type, Volume& vol,
                      QList<QAbstractSlider *>& ref_sliders, const QString &tooltipText );
 
@@ -129,7 +127,6 @@ private:
 	void guiAddMuteButton(const QString &muteTooltipText);
 	void guiAddControlIcon(const QString &tooltipText);
 	void guiAddControlLabel(Qt::Alignment alignment, const QString &channelName);
-	void addGlobalShortcut(QAction* action, const QString& label, bool dynamicControl);
     QSize controlButtonSize();
 
     bool m_linked;

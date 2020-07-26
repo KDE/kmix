@@ -48,18 +48,12 @@ MDWEnum::MDWEnum(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, View
       _label(nullptr),
       _enumCombo(nullptr)
 {
-   // create actions (on _mdwActions, see MixDeviceWidget)
-
-   // KStandardAction::showMenubar() is in MixDeviceWidget now
-   KToggleAction *action = _mdwActions->add<KToggleAction>( "hide" );
+   KToggleAction *action = channelActions()->add<KToggleAction>("hide");
    action->setText( i18n("&Hide") );
    connect(action, SIGNAL(triggered(bool)), SLOT(setDisabled(bool)));
-   QAction *c = _mdwActions->addAction( "keys" );
-   c->setText( i18n("C&onfigure Shortcuts...") );
-   connect(c, SIGNAL(triggered(bool)), SLOT(defineKeys()));
 
-   // create widgets
    createWidgets();
+   createShortcutsAction();
 }
 
 
