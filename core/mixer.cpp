@@ -112,7 +112,7 @@ Mixer::Mixer(const QString &ref_driverName, int device)
 Mixer::~Mixer() {
    // Close the mixer. This might also free memory, depending on the called backend method
    close();
-   delete _mixerBackend;
+   _mixerBackend->deleteLater();
 }
 
 
