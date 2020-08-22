@@ -31,8 +31,8 @@ class KMIXCORE_EXPORT MixSet : public QList<shared_ptr<MixDevice> >
    public:
 	~MixSet();
 
-      bool read( KConfig *config, const QString& grp );
-      bool write( KConfig *config, const QString& grp );
+      bool read(const KConfig *config, const QString &grp);
+      bool write(KConfig *config, const QString &grp) const;
 
       QString name() const { return m_name; }
       void setName( const QString &name );

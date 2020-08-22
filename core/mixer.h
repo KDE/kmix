@@ -60,21 +60,20 @@ public:
     enum MixerError { OK=0, ERR_PERM=1, ERR_WRITE, ERR_READ,
         ERR_OPEN, OK_UNCHANGED };
 
-
     Mixer(const QString &ref_driverName, int device);
     virtual ~Mixer();
 
     static int numDrivers();
-    QString getDriverName() const;
+    QString getDriverName() const		{ return (_mixerBackend->getDriverName()); }
 
-    shared_ptr<MixDevice>  find(const QString& devPK) const;
-    static Mixer* findMixer( const QString& mixer_id);
+    shared_ptr<MixDevice> find(const QString &devPK) const;
+    static Mixer* findMixer(const QString &mixer_id);
 
     void volumeSave(KConfig *config) const;
-    void volumeLoad(KConfig *config);
+    void volumeLoad(const KConfig *config);
 
-    /// Tells the number of the mixing devices
-    unsigned int size() const;
+    /// How many mixer backend devices
+    unsigned int size() const			{ return (_mixerBackend->m_mixDevices.count()); }
 
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
@@ -120,18 +119,14 @@ public:
     // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
     static QString driverName(int num);
 
-    static bool getBeepOnVolumeChange()
-    {
-    	GlobalConfigData& gcd = GlobalConfig::instance().data;
-    	return gcd.beepOnVolumeChange;
-    }
+    static bool getBeepOnVolumeChange();
 
     /**
      * Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
      */
-    const QString &id() const;
+    const QString &id() const			{ return (_id); }
 
-    int getCardInstance() const      {   return _mixerBackend->getCardInstance();      }
+    int getCardInstance() const      		{ return _mixerBackend->getCardInstance(); }
 
     /// Returns an Universal Device Identification of the Mixer. This is an ID that relates to the underlying operating system.
     // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
@@ -139,7 +134,7 @@ public:
     // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
     // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
     // Solaris: /dev/audio
-    const QString &udi() const;
+    const QString &udi() const			{ return _mixerBackend->udi(); }
 
     // Returns a DBus path for this mixer
     // Used also by MixDevice to bind to this path
@@ -153,19 +148,18 @@ public:
     At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
     ******************************************/
     static void setGlobalMaster(QString ref_card, QString ref_control, bool preferred);
-    static shared_ptr<MixDevice> getGlobalMasterMD();
-    static shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed);
+    static shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed = true);
     static Mixer* getGlobalMasterMixer();
     static Mixer* getGlobalMasterMixerNoFalback();
     static MasterControl& getGlobalMasterPreferred(bool fallbackAllowed = true);
 
-    QString getRecommendedDeviceId();
+    QString getRecommendedDeviceId() const;
 
     /******************************************
     The recommended master of this Mixer.
     ******************************************/
     shared_ptr<MixDevice> getLocalMasterMD() const;
-    void setLocalMasterMD(QString&);
+    void setLocalMasterMD(const QString &devPK);
 
     /**
      * An icon for the mixer's master channel
@@ -173,15 +167,15 @@ public:
     QString iconName() const;
 
     /// get the actual MixSet
-    MixSet &getMixSet() const;
+    MixSet &getMixSet() const			{ return (_mixerBackend->m_mixDevices); }
 
     /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );
     virtual void decreaseVolume( const QString& mixdeviceID );
 
     /// Says if we are dynamic (e.g. widgets can come and go)
-    virtual void setDynamic( bool dynamic = true );
-    virtual bool isDynamic() const;
+    virtual void setDynamic(bool dynamic = true)	{ m_dynamic = dynamic; }
+    virtual bool isDynamic() const			{ return (m_dynamic); }
 
     static bool dynamicBackendsPresent();
     static bool pulseaudioPresent();
@@ -189,14 +183,15 @@ public:
     virtual bool moveStream(const QString &id, const QString &destId);
     virtual QString currentStreamDevice(const QString &id) const;
 
-   virtual int mediaPlay(QString id) { return _mixerBackend->mediaPlay(id); }
-   virtual int mediaPrev(QString id) { return _mixerBackend->mediaPrev(id); }
-   virtual int mediaNext(QString id) { return _mixerBackend->mediaNext(id); }
+    virtual int mediaPlay(QString id)		{ return _mixerBackend->mediaPlay(id); }
+    virtual int mediaPrev(QString id)		{ return _mixerBackend->mediaPrev(id); }
+    virtual int mediaNext(QString id)		{ return _mixerBackend->mediaNext(id); }
 
     void commitVolumeChange( shared_ptr<MixDevice> md );
 
 public slots:
     void readSetFromHWforceUpdate() const;
+
     virtual void setBalance(int balance); // sets the m_balance (see there)
     
 signals:
@@ -204,8 +199,7 @@ signals:
     void controlChanged(void); // TODO remove?
 
 protected:
-    int m_balance; // from -100 (just left) to 100 (just right)
-    static QList<Mixer*> s_mixers;
+    static QList<Mixer *> s_mixers;
 
 private:
     void setBalanceInternal(Volume& vol);
@@ -215,13 +209,11 @@ private:
     Mixer_Backend *_mixerBackend;
     QString _id;
     QString _masterDevicePK;
-    static MasterControl _globalMasterCurrent;
-    static MasterControl _globalMasterPreferred;
-
+    int m_balance; // from -100 (just left) to 100 (just right)
     bool m_dynamic;
 
-    static bool m_beepOnVolumeChange;
-
+    static MasterControl _globalMasterCurrent;
+    static MasterControl _globalMasterPreferred;
 };
 
 #endif

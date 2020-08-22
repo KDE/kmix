@@ -38,7 +38,7 @@ MixSet::~MixSet()
 	clear();
 }
 
-bool MixSet::read( KConfig *config, const QString& grp )
+bool MixSet::read(const KConfig *config, const QString &grp)
 {
    qCDebug(KMIX_LOG) << "MixSet::read() of group " << grp;
    KConfigGroup group = config->group(grp);
@@ -55,7 +55,7 @@ bool MixSet::read( KConfig *config, const QString& grp )
    return have_success && !have_fail;
 }
 
-bool MixSet::write( KConfig *config, const QString& grp )
+bool MixSet::write(KConfig *config, const QString &grp) const
 {
    qCDebug(KMIX_LOG) << "MixSet::write() of group " << grp;    
    KConfigGroup conf = config->group(grp);
