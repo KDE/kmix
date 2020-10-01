@@ -44,9 +44,6 @@
 #include "gui/toggletoolbutton.h"
 
 
-bool MDWSlider::debugMe = false;
-
-
  /**
  * MixDeviceWidget that represents a single mix device, including PopUp, muteLED, ...
  *
@@ -233,23 +230,6 @@ void MDWSlider::setLabelExtent(int extent)
 	else m_controlGrid->setColumnMinimumWidth(1, extent);
 }
 
-
-/**
- * Alignment helper
- */
-bool MDWSlider::hasMuteButton() const
-{
-	return (m_muteButton!=nullptr);
-}
-
-
-/**
- * See "hasMuteButton"
- */
-bool MDWSlider::hasCaptureLED() const
-{
-	return (m_captureButton!=nullptr);
-}
 
 void MDWSlider::guiAddCaptureButton(const QString &captureTooltipText)
 {
@@ -633,10 +613,9 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 	long minvol = vol.minVolume();
 	long maxvol = vol.maxVolume();
 
-	QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
-
-	foreach (VolumeChannel vc, vols )
-	{
+	const QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
+	for (const VolumeChannel &vc : vols)
+	{						// for all channels of this device
 		//qCDebug(KMIX_LOG) << "Add label to " << vc.chid << ": " <<  Volume::channelNameReadable(vc.chid);
 		QWidget *subcontrolLabel;
 
@@ -646,7 +625,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		subcontrolLabel = createLabel(this, subcontrolTranslation, orientation(), true);
 		volLayout->addWidget(subcontrolLabel);
 
-		QAbstractSlider* slider;
+		QAbstractSlider *slider;
 		if (flags() & MixDeviceWidget::SmallSize)
 		{
 			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Volume::VOLUME_PAGESTEP_DIVISOR,
@@ -686,7 +665,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		connect( slider, SIGNAL(sliderPressed()), SLOT(sliderPressed()) );
 		connect( slider, SIGNAL(sliderReleased()), SLOT(sliderReleased()) );
 		
-	} // for all channels of this device
+	}
 }
 
 /**
@@ -696,6 +675,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
  * @param slider
  * @return
  */
+
 VolumeSliderExtraData& MDWSlider::extraData(QAbstractSlider *slider)
 {
   VolumeSlider* sl = qobject_cast<VolumeSlider*>(slider);
@@ -752,7 +732,7 @@ MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool s
 	  return;
 
 	bool first = true;
-	foreach ( QAbstractSlider* slider1, ref_sliders )
+	for (QAbstractSlider *slider1 : ref_sliders)
 	{
 		slider1->setVisible(!m_linked || first); // One slider (the 1st) is always shown
 		extraData(slider1).getSubcontrolLabel()->setVisible(!m_linked && showSubcontrolLabels); // (*)
@@ -872,10 +852,6 @@ MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
 /** This slot is called, when a user has changed the volume via the KMix Slider. */
 void MDWSlider::volumeChange( int )
 {
-//  if ( mixDevice()->id() == "Headphone:0" )
-//  {
-//    qCDebug(KMIX_LOG) << "headphone bug";
-//  }
 	if (!m_slidersPlayback.isEmpty())
 	{
 		++m_waitForSoundSetComplete;
@@ -893,23 +869,22 @@ void MDWSlider::volumeChange( int )
 
 void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders)
 {
+	// Changing from the muted state, so ensure unmuted
+	mixDevice()->setMuted(false);
+
 	if (isStereoLinked())
 	{
-		QAbstractSlider* firstSlider = ref_sliders.first();
-		mixDevice()->setMuted(false);
+		const QAbstractSlider *firstSlider = ref_sliders.first();
 		vol.setAllVolumes(firstSlider->value());
 	}
 	else
 	{
-		for (int i = 0; i < ref_sliders.count(); i++)
-		{
-			if (mixDevice()->isMuted())
-			{   // changing from muted state: unmute (the "if" above is actually superfluous)
-				mixDevice()->setMuted(false);
-			}
+		for (int i = 0; i<ref_sliders.count(); ++i)
+		{					// iterate over all sliders
+			// TODO: const
 			QAbstractSlider *sliderWidget = ref_sliders[i];
 			vol.setVolume(extraData(sliderWidget).getChid(), sliderWidget->value());
-		} // iterate over all sliders
+		}
 	}
 }
 
@@ -1009,10 +984,6 @@ void MDWSlider::moveStream(bool checked)
  */
 void MDWSlider::update()
 {
-//	  bool debugMe = (mixDevice()->id() == "PCM:0" );
-//	  if (debugMe) qCDebug(KMIX_LOG) << "The update() PCM:0 playback state" << mixDevice()->isMuted()
-//	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
-
 	if ( m_slidersPlayback.count() != 0 || mixDevice()->hasMuteSwitch() )
 		updateInternal(mixDevice()->playbackVolume(), m_slidersPlayback, mixDevice()->isMuted() );
 	if ( m_slidersCapture.count()  != 0 || mixDevice()->captureVolume().hasSwitch() )
@@ -1037,13 +1008,6 @@ void MDWSlider::update()
  */
 void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, bool muted)
 {
-//  	  bool debugMe = (mixDevice()->id() == "PCM:0" );
-//	  if (debugMe)
-//	  {
-//	    qCDebug(KMIX_LOG) << "The updateInternal() PCM:0 playback state" << mixDevice()->isMuted()
-//	    << ", vol=" << mixDevice()->playbackVolume().getAvgVolumePercent(Volume::MALL);
-//	  }
-  
 	for (int i = 0; i<ref_sliders.count(); ++i)
 	{
 		QAbstractSlider *slider = ref_sliders.at( i );
@@ -1101,12 +1065,12 @@ void MDWSlider::updateAccesability()
                         m_slidersCapture[0]->setAccessibleName(m_slidersCapture[0]->toolTip());
         } else {
                 QList<VolumeChannel> vols = mixDevice()->playbackVolume().getVolumes().values();
-                foreach (QAbstractSlider *slider, m_slidersPlayback) {
+                for (QAbstractSlider *slider : m_slidersPlayback) {
                         slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
                 }
                 vols = mixDevice()->captureVolume().getVolumes().values();
-                foreach (QAbstractSlider *slider, m_slidersCapture) {
+                for (QAbstractSlider *slider : m_slidersCapture) {
                         slider->setAccessibleName(slider->toolTip()+ " (" +Volume::channelNameReadable(vols.first().chid)+')');
                         vols.pop_front();
                 }
@@ -1185,7 +1149,7 @@ void MDWSlider::showMoveMenu()
     m_moveMenu->addSeparator();
 
     // Device actions
-    foreach (const shared_ptr<MixDevice> md, *ms)
+    for (const shared_ptr<MixDevice> md : *ms)
     {
 	act = new QAction(QIcon::fromTheme(md->iconName()), md->readableName(), m_moveMenu);
 	act->setData(md->id());

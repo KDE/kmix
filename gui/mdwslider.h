@@ -51,43 +51,38 @@ public:
     virtual ~MDWSlider();
 
     // GUI
-    bool isStereoLinked() const override { return m_linked; }
-    void setStereoLinked( bool value ) override;
-    void setLabeled( bool value ) override;
-    void setTicks( bool ticks ) override;
-    void setIcons( bool value ) override;
+    bool isStereoLinked() const override		{ return (m_linked); }
+    void setStereoLinked(bool value) override;
+
+    void setLabeled(bool value) override;
+    void setTicks(bool ticks) override;
+    void setIcons(bool value) override;
 
     QToolButton* addMediaButton(QString iconName, QLayout* layout, QWidget *parent);
     void updateMediaButton();
     void setColors( QColor high, QColor low, QColor back ) override;
     void setMutedColors( QColor high, QColor low, QColor back ) override;
     
-    bool eventFilter(QObject *obj, QEvent *ev) override;
-
     QString iconName();
     // Layout
     QSizePolicy sizePolicy() const;
 	QSize sizeHint() const override;
     int labelExtentHint() const override;
     void setLabelExtent(int extent) override;
-	bool hasMuteButton() const;
-	bool hasCaptureLED() const;
-
-	static bool debugMe;
 
 public slots:
     void toggleRecsrc();
     void toggleMuted();
     void toggleStereoLinked();
 
-//     void setDisabled( bool value ) override;
     void update() override;
     void increaseOrDecreaseVolume(bool arg1, Volume::VolumeTypeFlag volumeType);
-    VolumeSliderExtraData& extraData(QAbstractSlider *slider);
     void addMediaControls(QBoxLayout* arg1);
 
 protected:
     void createContextMenu(QMenu *menu) override;
+
+    bool eventFilter(QObject *obj, QEvent *ev) override;
 
 private slots:
     void setRecsrc(bool value);
@@ -122,6 +117,11 @@ private:
 #ifndef QT_NO_ACCESSIBILITY
     void updateAccesability();
 #endif
+
+    bool hasMuteButton() const				{ return (m_muteButton!=nullptr); }
+    bool hasCaptureLED() const				{ return (m_captureButton!=nullptr); }
+
+    VolumeSliderExtraData &extraData(QAbstractSlider *slider);
 
 	QString calculatePlaybackIcon(MediaController::PlayState playState);
 	QWidget *guiAddButtonSpacer();
