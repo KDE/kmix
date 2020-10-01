@@ -27,23 +27,36 @@
 #include <QLabel>
 #include <QMouseEvent>
 
-#include "volumesliderextradata.h"
+#include "core/volume.h"
+
 
 class VolumeSlider : public QSlider
 {
-      Q_OBJECT
-	Qt::Orientation m_orientation;
-	QLabel* m_tooltip;
-
-protected:
-	void mousePressEvent(QMouseEvent *event) override;
-	void mouseMoveEvent(QMouseEvent *event) override;
-	void mouseReleaseEvent(QMouseEvent *event) override;
+    Q_OBJECT
 
 public:
-      VolumeSlider(Qt::Orientation orientation, QWidget* parent); // : QSlider(orientation, parent);
+    VolumeSlider(Qt::Orientation orientation, QWidget *parent);
+    virtual ~VolumeSlider() = default;
 
-      VolumeSliderExtraData extraData;
+    Volume::ChannelID channelId() const			{ return (m_chid); }
+    void setChannelId(Volume::ChannelID chid)		{ m_chid = chid; }
+
+    QWidget *subControlLabel() const			{ return (m_subControlLabel); }
+    void setSubControlLabel(QWidget *subControlLabel)	{ m_subControlLabel = subControlLabel; }
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
+private:
+    void updateToolTip();
+
+    Qt::Orientation m_orientation;
+    QLabel *m_tooltip;
+
+    Volume::ChannelID m_chid;
+    QWidget *m_subControlLabel;
 };
 
 #endif

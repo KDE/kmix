@@ -119,8 +119,6 @@ private:
     bool hasMuteButton() const				{ return (m_muteButton!=nullptr); }
     bool hasCaptureLED() const				{ return (m_captureButton!=nullptr); }
 
-    VolumeSliderExtraData &extraData(QAbstractSlider *slider);
-
 	QString calculatePlaybackIcon(MediaController::PlayState playState);
 	QWidget *guiAddButtonSpacer();
 	void guiAddCaptureButton(const QString &captureTooltipText);

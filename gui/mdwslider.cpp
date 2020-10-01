@@ -620,14 +620,13 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		subcontrolLabel = createLabel(this, subcontrolTranslation, orientation(), true);
 		volLayout->addWidget(subcontrolLabel);
 
-		QAbstractSlider *slider = new VolumeSlider(orientation(), this);
+		VolumeSlider *slider = new VolumeSlider(orientation(), this);
 		slider->setMinimum(minvol);
 		slider->setMaximum(maxvol);
 		slider->setPageStep(maxvol / Volume::VOLUME_PAGESTEP_DIVISOR);
 		slider->setValue(  vol.getVolume( vc.chid ) );
 		volumeValues.push_back( vol.getVolume( vc.chid ) );
 			
-		extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
 		if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
 		else slider->setMinimumWidth(minSliderSize);
@@ -635,7 +634,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 			slider->setStyleSheet("QSlider { background-color: " + profileControl()->getBackgroundColor() + " }");
 		}
 
-		extraData(slider).setChid(vc.chid);
+		slider->setSubControlLabel(subcontrolLabel);
+		slider->setChannelId(vc.chid);
 
 		if ( type == 'p' ) {
 			slider->setToolTip( tooltipText );
@@ -653,25 +653,6 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		connect( slider, SIGNAL(sliderReleased()), SLOT(sliderReleased()) );
 		
 	}
-}
-
-/**
- * Return the VolumeSliderExtraData from either VolumeSlider or KSmallSlider.
- * You MUST extend this method, should you decide to add more Slider Widget classes.
- *
- * @param slider
- * @return
- */
-
-VolumeSliderExtraData& MDWSlider::extraData(QAbstractSlider *slider)
-{
-  VolumeSlider* sl = qobject_cast<VolumeSlider*>(slider);
-  if ( sl )
-	  return sl->extraData;
-
-  // TODO: temporary dummy value
-  static VolumeSliderExtraData ed;
-  return (ed);
 }
 
 
@@ -720,32 +701,36 @@ MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool s
 	  return;
 
 	bool first = true;
-	for (QAbstractSlider *slider1 : ref_sliders)
+	for (QAbstractSlider *slider : ref_sliders)
 	{
-		slider1->setVisible(!m_linked || first); // One slider (the 1st) is always shown
-		extraData(slider1).getSubcontrolLabel()->setVisible(!m_linked && showSubcontrolLabels); // (*)
+		slider->setVisible(!m_linked || first); // One slider (the 1st) is always shown
+
+		const VolumeSlider *vs = qobject_cast<VolumeSlider *>(slider);
+		// cesken: Not including "|| first" in the check below because the text would
+		// not look nice:  it would show "Left" or "Capture Left", while it should
+		// be "Playback" and "Capture" in the "linked" case.
+		//
+		// But the only affected situation is when we have playback AND capture on
+		// the same control, where we show no label.  It would be nice to at least
+		// put a "Capture" label on the capture subcontrol instead.  To achieve this
+		// we would need to change the text on the first capture subcontrol dynamically.
+		// This can be done, but I'll leave this open for now.
+		if (vs!=nullptr) vs->subControlLabel()->setVisible(!m_linked && showSubcontrolLabels);
+
 		first = false;
-		/* (*) cesken: I have excluded the "|| first" check because the text would not be nice:
-		 *     It would be "Left" or "Capture Left", while it should be "Playback" and "Capture" in the "linked" case.
-		 *
-		 *     But the only affected situation is when we have playback AND capture on the same control, where we show no label.
-		 *     It would be nice to put at least a "Capture" label on the capture subcontrol instead.
-		 *     To achieve this we would need to exchange the Text on the first capture subcontrol dynamically. This can
-		 *     be done, but I'll leave this open for now.
-		 */
 	}
 
-
-
-	// Redo the tickmarks to last slider in the slider list.
-	// The implementation is not obvious, so lets explain:
-	// We ALWAYS have tickmarks on the LAST slider. Sometimes the slider is not shown, and then we just don't bother.
-	// a) So, if the last slider has tickmarks, we can always call setTicks( true ).
-	// b) if the last slider has NO tickmarks, there ae no tickmarks at all, and we don't need to redo the tickmarks.
-	QSlider* slider = qobject_cast<QSlider*>( ref_sliders.last() );
-	if( slider && slider->tickPosition() != QSlider::NoTicks) 
-		setTicks( true );
-
+	// Redo the tickmarks for the last slider in the slider list.
+	//
+	// The implementation is not obvious, so let's explain:  We ALWAYS have tickmarks
+	// on the LAST slider. Sometimes the slider is not shown, and then we just don't bother.
+	//
+	// a) So, if the last slider has tickmarks, we can always call setTicks(true).
+	//
+	// b) if the last slider has NO tickmarks, there are no tickmarks at all, and we
+	// don't need to redo the tickmarks.
+	QSlider *slider = qobject_cast<QSlider *>(ref_sliders.last());
+	if (slider!=nullptr && slider->tickPosition()!=QSlider::NoTicks) setTicks(true);
 }
 
 
@@ -839,9 +824,8 @@ void MDWSlider::volumeChangeInternal(Volume& vol, QList<QAbstractSlider *>& ref_
 	{
 		for (int i = 0; i<ref_sliders.count(); ++i)
 		{					// iterate over all sliders
-			// TODO: const
-			QAbstractSlider *sliderWidget = ref_sliders[i];
-			vol.setVolume(extraData(sliderWidget).getChid(), sliderWidget->value());
+			const VolumeSlider *vs = qobject_cast<VolumeSlider *>(ref_sliders.at(i));
+			if (vs!=nullptr) vol.setVolume(vs->channelId(), vs->value());
 		}
 	}
 }
@@ -968,14 +952,15 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 {
 	for (int i = 0; i<ref_sliders.count(); ++i)
 	{						// for all sliders
-		QAbstractSlider *slider = ref_sliders.at( i );
-		Volume::ChannelID chid = extraData(slider).getChid();
+		VolumeSlider *slider = qobject_cast<VolumeSlider *>(ref_sliders.at(i));
+		if (slider==nullptr) continue;
+
+		Volume::ChannelID chid = slider->channelId();
 		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
-		int volume_index;
 
 		QSignalBlocker blocker(slider);
 		// --- Avoid feedback loops START -----------------
-		volume_index = volumeValues.indexOf(useVolume);
+		const int volume_index = volumeValues.indexOf(useVolume);
 		if (volume_index>-1 && --m_waitForSoundSetComplete<1)
 		{
 		    m_waitForSoundSetComplete = 0;
