@@ -605,8 +605,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
                             QList<QAbstractSlider *>& ref_sliders, const QString &tooltipText)
 {
 	const int minSliderSize = fontMetrics().height() * 10;
-	long minvol = vol.minVolume();
-	long maxvol = vol.maxVolume();
+	const long minvol = vol.minVolume();
+	const long maxvol = vol.maxVolume();
 
 	const QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
 	for (const VolumeChannel &vc : vols)
@@ -623,10 +623,18 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		VolumeSlider *slider = new VolumeSlider(orientation(), this);
 		slider->setMinimum(minvol);
 		slider->setMaximum(maxvol);
-		slider->setPageStep(maxvol / Volume::VOLUME_PAGESTEP_DIVISOR);
-		slider->setValue(  vol.getVolume( vc.chid ) );
-		volumeValues.push_back( vol.getVolume( vc.chid ) );
-			
+
+		// Set the slider page step to be the same as the configured volume step.
+		// If that volume step is the minimum possible value (1), then set it
+		// to 2 so that it is bigger than the single step.
+		int pageStep = vol.volumeStep(false);
+		if (pageStep==1) pageStep = 2;
+		slider->setPageStep(pageStep);
+		// Don't show too many tick marks if the page step is small.
+		if (pageStep<10) slider->setTickInterval(qRound((maxvol-minvol)/10.0));
+
+		slider->setValue(vol.getVolume(vc.chid));
+		volumeValues.push_back(vol.getVolume(vc.chid));
 
 		if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
 		else slider->setMinimumWidth(minSliderSize);

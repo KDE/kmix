@@ -28,6 +28,7 @@
 #include <qlabel.h>
 #include <qradiobutton.h>
 #include <qgroupbox.h>
+#include <qguiapplication.h>
 
 #include <kconfig.h>
 #include <klocalizedstring.h>
@@ -231,6 +232,14 @@ void KMixPrefDlg::createGeneralTab()
 	// Register SpinBox for KConfig
 	m_volumeStep->setObjectName("kcfg_VolumePercentageStep");
 
+	m_volumeStep->setToolTip(xi18nc("@info:tooltip",
+					"<para>Set the volume step as a percentage of the volume range.</para>"
+					"This affects changing the volume via hot keys, "
+					"with the mouse wheel over the system tray icon, "
+					"or moving sliders by a page step.</para>"
+					"<para>%1 must be restarted for this change to take effect.</para>",
+					QGuiApplication::applicationDisplayName()));
+
 	horizontalGrid->addWidget(new QLabel(i18n("Volume step:"), m_generalTab), 0, 0, Qt::AlignLeft);
 	horizontalGrid->addWidget(m_volumeStep, 0, 1, Qt::AlignLeft);
 	horizontalGrid->addItem(new QSpacerItem(1 ,1 , QSizePolicy::Expanding), 0, 2);
@@ -240,7 +249,8 @@ void KMixPrefDlg::createGeneralTab()
 
 	// Volume Step and Overdrive Warning
 	volumeOverdriveWarning = new KMessageWidget(
-		i18n("KMix must be restarted for the Volume Step and Overdrive settings to take effect."), grp);
+		i18n("%1 must be restarted for the Volume Step and Overdrive settings to take effect.",
+		     QGuiApplication::applicationDisplayName()), grp);
 	volumeOverdriveWarning->setIcon(QIcon::fromTheme("dialog-information"));
 	volumeOverdriveWarning->setMessageType(KMessageWidget::Information);
 	volumeOverdriveWarning->setCloseButtonVisible(false);
@@ -340,8 +350,7 @@ void KMixPrefDlg::addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spa
  */
 void KMixPrefDlg::updateWidgets()
 {
-	if (dialogConfig.data.debugConfig)
-		qCDebug(KMIX_LOG) << "";
+	if (dialogConfig.data.debugConfig) qCDebug(KMIX_LOG);
 	bool toplevelHorizontal = dialogConfig.data.getToplevelOrientation() == Qt::Horizontal;
 	_rbHorizontal->setChecked(toplevelHorizontal);
 	_rbVertical->setChecked(!toplevelHorizontal);

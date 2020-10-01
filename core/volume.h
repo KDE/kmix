@@ -161,13 +161,13 @@ public:
     QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
     long volumeStep(bool decrease) const;
 
-    static float VOLUME_STEP_DIVISOR;     // The divisor for defining volume control steps (for mouse-wheel, DBUS and Normal step for Sliders )
-    static float VOLUME_PAGESTEP_DIVISOR; // The divisor for defining volume control steps (page-step for sliders)
+    // Sets the value from the GUI configuration.  This affects all volume
+    // increment or decrement operations.
+    static void setVolumeStep(int percent);
 
 protected:
     long          _chmask;
     QMap<Volume::ChannelID, VolumeChannel> _volumesL;
-//    QMap<Volume::ChannelID, VolumeChannel> _volumesMuted;
 
     long          _minVolume;
     long          _maxVolume;

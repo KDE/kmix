@@ -27,8 +27,19 @@
 
 #include <klocalizedstring.h>
 
-float Volume::VOLUME_STEP_DIVISOR = 20;
-float Volume::VOLUME_PAGESTEP_DIVISOR = 10;
+
+// This value is the number of steps to take the volume from minimum to maximum.
+// It applies to changing the volume by hot key, or by the mouse wheel over the
+// system tray icon.  For consistency, it is also used as the page step for
+// volume sliders (clicking in the blank area on each side of the slider, or
+// the PgUp/PgDown keys when the slider has focus).  The slider single step
+// (dragging the slider, or using the arrow keys) is not changed from the default
+// of 1, which gives one hardware volume step.
+//
+// The default set here is 5% which means 20 steps.  It can be changed by the
+// "Volume Step" option in the KMix settings.
+
+static float s_volumeStepDivisor = (100.0/5);
 
 
 static Volume::ChannelMask channelMask[] =
@@ -164,27 +175,35 @@ QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
 }
 
 /**
- * Returns the absolute change to do one "step" for this volume. This is similar to a page step in a slider,
- * namely a fixed percentage of the range.
- * One step is the percentage given by 100/VOLUME_STEP_DIVISOR. The
- * default VOLUME_STEP_DIVISOR is 20, so default change is 5% of the volumeSpan().
+ * Returns the absolute change to do one "step" for this volume.
+ *
+ * This is similar to a page step in a slider, namely a fixed percentage
+ * of the range.
+ * One step is the percentage given by 100/VOLUME_STEP_DIVISOR.
+ * The default divisor is 20, so the default change is 5% of the volumeSpan().
  *
  * This method guarantees a minimum absolute change of 1, zero is never returned.
  *
- * It is NOT verified, that such a volume change would actually be possible. You might hit the upper or lower bounds
- * of the volume range.
+ * It is NOT verified, that such a volume change would actually be possible.
+ * You might hit the upper or lower bounds of the volume range.
  *
- *
- * @param decrease true, if you want a volume step that decreases the volume by one page step
+ * @param decrease @c true if you want a volume step that decreases the volume by one page step
  * @return The volume step. It will be negative if you have used decrease==true
- *
  */
 long Volume::volumeStep(bool decrease) const
 {
-  	long inc = volumeSpan() / Volume::VOLUME_STEP_DIVISOR;
-	if ( inc == 0 )	inc = 1;
-	if ( decrease ) inc *= -1;
-	return inc;
+	long inc = qRound(volumeSpan()/s_volumeStepDivisor);
+	if (inc==0) inc = 1;
+	if (decrease) inc = -inc;
+	return (inc);
+}
+
+
+/* static */ void Volume::setVolumeStep(int percent)
+{
+    if (percent<=0 || percent>=100) return;
+    s_volumeStepDivisor = 100.0/percent;
+    qDebug() << "percent" << percent << "-> divisor" << s_volumeStepDivisor;
 }
 
 

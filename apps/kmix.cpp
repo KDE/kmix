@@ -510,16 +510,9 @@ void KMixWindow::loadBaseConfig()
 	QString mixerIgnoreExpression = config.readEntry("MixerIgnoreExpression", "Modem");
 	MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 
-	// --- Advanced options, without GUI: START -------------------------------------
-	QString volumePercentageStepString = config.readEntry("VolumePercentageStep");
-	if (!volumePercentageStepString.isNull())
-	{
-		float volumePercentageStep = volumePercentageStepString.toFloat();
-		if (volumePercentageStep > 0 && volumePercentageStep <= 100)
-			Volume::VOLUME_STEP_DIVISOR = (100 / volumePercentageStep);
-	}
-
-	// --- Advanced options, without GUI: END -------------------------------------
+	// The global volume step setting.
+	const int volumePercentageStep = config.readEntry("VolumePercentageStep", -1);
+	if (volumePercentageStep>0) Volume::setVolumeStep(volumePercentageStep);
 
 	// The following log is very helpful in bug reports. Please keep it.
 	m_backendFilter = config.readEntry<>("Backends", QList<QString>());
