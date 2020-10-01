@@ -32,7 +32,6 @@
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
 #include "viewbase.h"
-#include "ksmallslider.h"
 #include "verticaltext.h"
 
 /**

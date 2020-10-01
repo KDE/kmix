@@ -42,7 +42,6 @@ class MixDeviceWidget : public QWidget
 public:
     enum MDWFlag
     {
-        SmallSize = 0x01,
         ShowMute = 0x02,
         ShowCapture = 0x04,
         ShowMixerName = 0x08

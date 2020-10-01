@@ -60,8 +60,6 @@ public:
 
     QToolButton* addMediaButton(QString iconName, QLayout* layout, QWidget *parent);
     void updateMediaButton();
-    void setColors( QColor high, QColor low, QColor back ) override;
-    void setMutedColors( QColor high, QColor low, QColor back ) override;
     
     QString iconName();
     // Layout

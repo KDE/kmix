@@ -232,7 +232,6 @@ set(kmixgui_SRCS
   gui/mdwslider.cpp
   gui/mdwenum.cpp
   gui/kmixerwidget.cpp
-  gui/ksmallslider.cpp
   gui/verticaltext.cpp
   gui/volumeslider.cpp
   gui/kmixtoolbox.cpp

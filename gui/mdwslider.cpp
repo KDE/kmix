@@ -39,7 +39,6 @@
 #include "gui/guiprofile.h"
 #include "gui/volumeslider.h"
 #include "gui/viewbase.h"
-#include "gui/ksmallslider.h"
 #include "gui/verticaltext.h"
 #include "gui/toggletoolbutton.h"
 
@@ -234,7 +233,6 @@ void MDWSlider::setLabelExtent(int extent)
 void MDWSlider::guiAddCaptureButton(const QString &captureTooltipText)
 {
 	m_captureButton = new ToggleToolButton("media-record", this);
-	m_captureButton->setSmallSize(flags() & MixDeviceWidget::SmallSize);
 	m_captureButton->installEventFilter(this);
 	connect(m_captureButton, SIGNAL(clicked(bool)), this, SLOT(toggleRecsrc()));
 	m_captureButton->setToolTip(captureTooltipText);
@@ -244,7 +242,6 @@ void MDWSlider::guiAddMuteButton(const QString &muteTooltipText)
 {
 	m_muteButton = new ToggleToolButton("audio-volume-high", this);
 	m_muteButton->setInactiveIcon("audio-volume-muted");
-	m_muteButton->setSmallSize(flags() & MixDeviceWidget::SmallSize);
 	m_muteButton->installEventFilter(this);
 	connect(m_muteButton, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
 	m_muteButton->setToolTip(muteTooltipText);
@@ -261,8 +258,7 @@ void MDWSlider::guiAddControlLabel(Qt::Alignment alignment, const QString &chann
 void MDWSlider::guiAddControlIcon(const QString &tooltipText)
 {
 	m_controlIcon = new QLabel(this);
-	ToggleToolButton::setIndicatorIcon(mixDevice()->iconName(), m_controlIcon,
-					   (flags() & MixDeviceWidget::SmallSize));
+	ToggleToolButton::setIndicatorIcon(mixDevice()->iconName(), m_controlIcon);
 	m_controlIcon->setToolTip(tooltipText);
 	m_controlIcon->installEventFilter(this);
 }
@@ -292,8 +288,7 @@ QSize MDWSlider::controlButtonSize()
 	if (!m_controlButtonSize.isValid())		// not calculated yet
 	{
 		auto *buttonSpacer = new QToolButton();
-		ToggleToolButton::setIndicatorIcon("unknown", buttonSpacer,
-						   (flags() & MixDeviceWidget::SmallSize));
+		ToggleToolButton::setIndicatorIcon("unknown", buttonSpacer);
 		m_controlButtonSize = buttonSpacer->sizeHint();
 		qCDebug(KMIX_LOG) << m_controlButtonSize;
 		delete buttonSpacer;
@@ -625,31 +620,23 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		subcontrolLabel = createLabel(this, subcontrolTranslation, orientation(), true);
 		volLayout->addWidget(subcontrolLabel);
 
-		QAbstractSlider *slider;
-		if (flags() & MixDeviceWidget::SmallSize)
-		{
-			slider = new KSmallSlider( minvol, maxvol, (maxvol-minvol+1) / Volume::VOLUME_PAGESTEP_DIVISOR,
-						   vol.getVolume( vc.chid ), orientation(), this );
-		} // small
-		else  {
-			slider = new VolumeSlider(orientation(), this);
-			slider->setMinimum(minvol);
-			slider->setMaximum(maxvol);
-			slider->setPageStep(maxvol / Volume::VOLUME_PAGESTEP_DIVISOR);
-			slider->setValue(  vol.getVolume( vc.chid ) );
-			volumeValues.push_back( vol.getVolume( vc.chid ) );
+		QAbstractSlider *slider = new VolumeSlider(orientation(), this);
+		slider->setMinimum(minvol);
+		slider->setMaximum(maxvol);
+		slider->setPageStep(maxvol / Volume::VOLUME_PAGESTEP_DIVISOR);
+		slider->setValue(  vol.getVolume( vc.chid ) );
+		volumeValues.push_back( vol.getVolume( vc.chid ) );
 			
-			extraData(slider).setSubcontrolLabel(subcontrolLabel);
+		extraData(slider).setSubcontrolLabel(subcontrolLabel);
 
-			if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
-			else slider->setMinimumWidth(minSliderSize);
-			if ( !profileControl()->getBackgroundColor().isEmpty() ) {
-				slider->setStyleSheet("QSlider { background-color: " + profileControl()->getBackgroundColor() + " }");
-			}
-		} // not small
+		if (orientation()==Qt::Vertical) slider->setMinimumHeight(minSliderSize);
+		else slider->setMinimumWidth(minSliderSize);
+		if ( !profileControl()->getBackgroundColor().isEmpty() ) {
+			slider->setStyleSheet("QSlider { background-color: " + profileControl()->getBackgroundColor() + " }");
+		}
 
 		extraData(slider).setChid(vc.chid);
-//		slider->installEventFilter( this );
+
 		if ( type == 'p' ) {
 			slider->setToolTip( tooltipText );
 		}
@@ -660,7 +647,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 
 		volLayout->addWidget( slider ); // add to layout
 		ref_sliders.append ( slider ); // add to list
-		//ref_slidersChids.append(vc.chid);
+
 		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
 		connect( slider, SIGNAL(sliderPressed()), SLOT(sliderPressed()) );
 		connect( slider, SIGNAL(sliderReleased()), SLOT(sliderReleased()) );
@@ -681,9 +668,10 @@ VolumeSliderExtraData& MDWSlider::extraData(QAbstractSlider *slider)
   VolumeSlider* sl = qobject_cast<VolumeSlider*>(slider);
   if ( sl )
 	  return sl->extraData;
-  
-  KSmallSlider* sl2 = qobject_cast<KSmallSlider*>(slider);
-  return sl2->extraData;
+
+  // TODO: temporary dummy value
+  static VolumeSliderExtraData ed;
+  return (ed);
 }
 
 
@@ -816,36 +804,6 @@ MDWSlider::setIcons(bool value)
 			layout()->activate();
 		}
 	} // if it has an icon
-}
-
-void
-MDWSlider::setColors( QColor high, QColor low, QColor back )
-{
-	for( int i=0; i<m_slidersPlayback.count(); ++i ) {
-		QWidget *slider = m_slidersPlayback[i];
-		KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
-		if ( smallSlider ) smallSlider->setColors( high, low, back );
-	}
-	for( int i=0; i<m_slidersCapture.count(); ++i ) {
-		QWidget *slider = m_slidersCapture[i];
-		KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
-		if ( smallSlider ) smallSlider->setColors( high, low, back );
-	}
-}
-
-void
-MDWSlider::setMutedColors( QColor high, QColor low, QColor back )
-{
-	for( int i=0; i<m_slidersPlayback.count(); ++i ) {
-		QWidget *slider = m_slidersPlayback[i];
-		KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
-		if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
-	}
-	for( int i=0; i<m_slidersCapture.count(); ++i ) {
-		QWidget *slider = m_slidersCapture[i];
-		KSmallSlider *smallSlider = dynamic_cast<KSmallSlider*>(slider);
-		if ( smallSlider ) smallSlider->setGrayColors( high, low, back );
-	}
 }
 
 
@@ -1009,7 +967,7 @@ void MDWSlider::update()
 void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_sliders, bool muted)
 {
 	for (int i = 0; i<ref_sliders.count(); ++i)
-	{
+	{						// for all sliders
 		QAbstractSlider *slider = ref_sliders.at( i );
 		Volume::ChannelID chid = extraData(slider).getChid();
 		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
@@ -1030,13 +988,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 			slider->setValue(useVolume);
 		}
 		// --- Avoid feedback loops END -----------------
-
-		KSmallSlider *smallSlider = qobject_cast<KSmallSlider *>(slider);
-		if (smallSlider!=nullptr)		// faster than QObject::inherits()
-		{
-			smallSlider->setGray(mixDevice()->isMuted());
-		}
-	} // for all sliders
+	}
 
 
 	// update mute state
