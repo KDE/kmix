@@ -59,13 +59,10 @@ KMixPrefDlg* KMixPrefDlg::createInstance(QWidget *parent, GlobalConfig& config)
 
 KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	KConfigDialog(parent, i18n("Configure"), &config), dialogConfig(config)
-
 {
 	setFaceType(KPageDialog::List);
-	//setCaption(i18n("Configure"));
 
-	dvc = 0;
-	dvcSpacerBelow = 0;
+	dvc = nullptr;
 
 	// general buttons
 	m_generalTab = new QFrame(this);
@@ -80,6 +77,9 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
 	generalPage = addPage(m_generalTab, i18n("General"), "configure");
 	startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
 	soundmenuPage = addPage(m_controlsTab, i18n("Volume Control"), "audio-volume-high");
+
+	connect(button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this, &KMixPrefDlg::kmixConfigHasChanged);
+	connect(button(QDialogButtonBox::Ok), &QAbstractButton::clicked, this, &KMixPrefDlg::kmixConfigHasChanged);
 
 	new DialogStateSaver(this);
 }
@@ -118,7 +118,7 @@ void KMixPrefDlg::createStartupTab()
 
 	allowAutostart = new QCheckBox(i18n("Start KMix on desktop startup"), m_startupTab);
 	addWidgetToLayout(allowAutostart, layoutStartupTab, 10,
-			  i18n("Start KMix automatically when the desktop starts."), "AutoStart");
+			  i18n("Start KMix automatically when the desktop starts"), "AutoStart");
 
 	allowAutostartWarning = new KMessageWidget(
 		i18n("Autostart will not work, because the autostart file kmix_autostart.desktop is missing. Check that KMix is installed correctly."), m_startupTab);
@@ -133,7 +133,7 @@ void KMixPrefDlg::createStartupTab()
 
 	m_onLogin = new QCheckBox(i18n("Restore previous volume settings on desktop startup"), m_startupTab);
 	addWidgetToLayout(m_onLogin, layoutStartupTab, 10,
-			  i18n("Restore all mixer volume levels and switches to their last used settings when the desktop starts."), "startkdeRestore");
+			  i18n("Restore all mixer volume levels and switches to their last used settings when the desktop starts"), "startkdeRestore");
 
 	dynamicControlsRestoreWarning = new KMessageWidget(
 		i18n("The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."), m_startupTab);
@@ -147,7 +147,8 @@ void KMixPrefDlg::createStartupTab()
 	layoutStartupTab->addStretch();
 }
 
-void KMixPrefDlg::createOrientationGroup(const QString& labelSliderOrientation, QGridLayout* orientationLayout, int row, KMixPrefDlgPrefOrientationType prefType)
+
+void KMixPrefDlg::createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType prefType)
 {
 	QButtonGroup* orientationGroup = new QButtonGroup(m_generalTab);
 	orientationGroup->setExclusive(true);
@@ -170,24 +171,31 @@ void KMixPrefDlg::createOrientationGroup(const QString& labelSliderOrientation, 
 	}
 
 	// Add both buttons to button group
-	//qrbHor->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	orientationGroup->addButton(qrbHor);
 	orientationGroup->addButton(qrbVert);
 	// Add both buttons and label to layout
 	orientationLayout->addWidget(qlb, row, 0, Qt::AlignLeft);
 	orientationLayout->addWidget(qrbHor, row, 1, Qt::AlignLeft);
 	orientationLayout->addWidget(qrbVert, row, 2, Qt::AlignLeft);
-	orientationLayout->addItem(new QSpacerItem(1,1,QSizePolicy::Expanding), row, 3);
+	orientationLayout->setColumnStretch(2, 1);
 
-	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(updateButtons()));
-	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(updateButtons()));
-
-    connect(button(QDialogButtonBox::Apply), SIGNAL(clicked()), SLOT(kmixConfigHasChangedEmitter()));
-    connect(button(QDialogButtonBox::Ok), SIGNAL(clicked()), SLOT(kmixConfigHasChangedEmitter()));
-
-//	connect(qrbHor, SIGNAL(toggled(bool)), SLOT(settingsChangedSlot()));
-//	connect(qrbVert, SIGNAL(toggled(bool)), SLOT(settingsChangedSlot()));
+	connect(qrbHor, &QAbstractButton::toggled, this, &KMixPrefDlg::updateButtons);
+	connect(qrbVert, &QAbstractButton::toggled, this, &KMixPrefDlg::updateButtons);
 }
+
+
+void KMixPrefDlg::setOrientationTooltip(QGridLayout *orientationLayout, int row, const QString &tooltip)
+{
+	for (int c = 0; c<=2; ++c)
+	{
+		QLayoutItem *item = orientationLayout->itemAtPosition(row, c);
+		if (item==nullptr) continue;
+		QWidget *widget = item->widget();
+		if (widget==nullptr) continue;
+		widget->setToolTip(tooltip);
+	}
+}
+
 
 void KMixPrefDlg::createGeneralTab()
 {
@@ -204,28 +212,43 @@ void KMixPrefDlg::createGeneralTab()
 	behaviorLayout->setContentsMargins(0, 0, 0, 0);
 	grp->setLayout(behaviorLayout);
 
-	// [CONFIG]
-	m_beepOnVolumeChange = new QCheckBox(i18n("Volume feedback"), grp);
-	addWidgetToLayout(m_beepOnVolumeChange, behaviorLayout, 10, "", "VolumeFeedback");
-
+	// Volume Overdrive
 	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), grp);
-	addWidgetToLayout(m_volumeOverdrive, behaviorLayout, 10, i18nc("@info:tooltip", "Raise the maximum volume to 150%"), "VolumeOverdrive");
+	addWidgetToLayout(m_volumeOverdrive, behaviorLayout, 10,
+			  i18nc("@info:tooltip", "Allow the volume to be raised above the recommended maximum (typically to 150%)"),
+			  "VolumeOverdrive");
 
-	// Volume Feedback Warning
-	volumeFeedbackWarning = new KMessageWidget(
-		i18n("Volume feedback and volume overdrive are only available for PulseAudio."), grp);
-	volumeFeedbackWarning->setIcon(QIcon::fromTheme("dialog-warning"));
-	volumeFeedbackWarning->setMessageType(KMessageWidget::Warning);
-	volumeFeedbackWarning->setCloseButtonVisible(false);
-	volumeFeedbackWarning->setWordWrap(true);
-	volumeFeedbackWarning->setVisible(false);
-	addWidgetToLayout(volumeFeedbackWarning, behaviorLayout, 2, "", "");
+	// Volume Overdrive warning
+	m_pulseOnlyWarning = new KMessageWidget(i18n("Volume overdrive is only available for PulseAudio."), grp);
+	m_pulseOnlyWarning->setIcon(QIcon::fromTheme("dialog-warning"));
+	m_pulseOnlyWarning->setMessageType(KMessageWidget::Warning);
+	m_pulseOnlyWarning->setCloseButtonVisible(false);
+	m_pulseOnlyWarning->setWordWrap(true);
+	m_pulseOnlyWarning->setVisible(false);
+	addWidgetToLayout(m_pulseOnlyWarning, behaviorLayout, 2, "", "");
 
-	// Volume Step Grid
-	QGridLayout* horizontalGrid = new QGridLayout();
-	horizontalGrid->setHorizontalSpacing(DialogBase::horizontalSpacing());
+	// Restart warning
+	m_restartWarning = new KMessageWidget(
+		i18n("%1 must be restarted for the volume overdrive setting to take effect.",
+		     QGuiApplication::applicationDisplayName()), grp);
+	m_restartWarning->setIcon(QIcon::fromTheme("dialog-information"));
+	m_restartWarning->setMessageType(KMessageWidget::Information);
+	m_restartWarning->setCloseButtonVisible(false);
+	m_restartWarning->setWordWrap(true);
+	m_restartWarning->setVisible(false);
+	addWidgetToLayout(m_restartWarning, behaviorLayout, 2, "", "");
 
-	// Volume Step SpinBox
+	// Volume Feedback
+	m_beepOnVolumeChange = new QCheckBox(i18n("Volume feedback"), grp);
+	addWidgetToLayout(m_beepOnVolumeChange, behaviorLayout, 10,
+			  i18nc("@info:tooltip", "Play a sample sound when the volume changes"),
+			  "VolumeFeedback");
+
+	// Volume Step layout
+	QHBoxLayout *horizontalGrid = new QHBoxLayout();
+	horizontalGrid->setMargin(0);
+
+	// Volume Step spin box
 	m_volumeStep = new QSpinBox(grp);
 	m_volumeStep->setSuffix(" %");
 	m_volumeStep->setRange(1, 50);
@@ -240,26 +263,14 @@ void KMixPrefDlg::createGeneralTab()
 					"<para>%1 must be restarted for this change to take effect.</para>",
 					QGuiApplication::applicationDisplayName()));
 
-	horizontalGrid->addWidget(new QLabel(i18n("Volume step:"), m_generalTab), 0, 0, Qt::AlignLeft);
-	horizontalGrid->addWidget(m_volumeStep, 0, 1, Qt::AlignLeft);
-	horizontalGrid->addItem(new QSpacerItem(1 ,1 , QSizePolicy::Expanding), 0, 2);
-
-	// Add grid to behavior layout
+	horizontalGrid->addWidget(new QLabel(i18n("Volume step:"), m_generalTab));
+	horizontalGrid->addWidget(m_volumeStep);
+	horizontalGrid->addItem(new QSpacerItem(1 ,1 , QSizePolicy::Expanding));
+	behaviorLayout->addItem(DialogBase::verticalSpacerItem());
 	behaviorLayout->addLayout(horizontalGrid);
 
-	// Volume Step and Overdrive Warning
-	volumeOverdriveWarning = new KMessageWidget(
-		i18n("%1 must be restarted for the Volume Step and Overdrive settings to take effect.",
-		     QGuiApplication::applicationDisplayName()), grp);
-	volumeOverdriveWarning->setIcon(QIcon::fromTheme("dialog-information"));
-	volumeOverdriveWarning->setMessageType(KMessageWidget::Information);
-	volumeOverdriveWarning->setCloseButtonVisible(false);
-	volumeOverdriveWarning->setWordWrap(true);
-	volumeOverdriveWarning->setVisible(false);
-	addWidgetToLayout(volumeOverdriveWarning, behaviorLayout, 2, "", "");
-
 	// --- Visual ---------------------------------------------------------
-	layout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
+	layout->addItem(DialogBase::verticalSpacerItem());
 	grp = new QGroupBox(i18n("Visual"), m_generalTab);
 	grp->setFlat(true);
 	layout->addWidget(grp);
@@ -270,18 +281,17 @@ void KMixPrefDlg::createGeneralTab()
 
 	// [CONFIG]
 	m_showTicks = new QCheckBox(i18n("Show slider &tickmarks"), grp);
-	addWidgetToLayout(m_showTicks, visualLayout, 10, i18n("Enable/disable tickmark scales on the sliders"), "Tickmarks");
+	addWidgetToLayout(m_showTicks, visualLayout, 10, i18n("Show tick mark scales on sliders"), "Tickmarks");
 
 	m_showLabels = new QCheckBox(i18n("Show control &labels"), grp);
-	addWidgetToLayout(m_showLabels, visualLayout, 10, i18n("Enables/disables description labels above the sliders"),
-		"Labels");
+	addWidgetToLayout(m_showLabels, visualLayout, 10, i18n("Show description labels for sliders"), "Labels");
 
 	// [CONFIG]
 	m_showOSD = new QCheckBox(i18n("Show On Screen Display (&OSD)"), grp);
-	addWidgetToLayout(m_showOSD, visualLayout, 10, "", "showOSD");
+	addWidgetToLayout(m_showOSD, visualLayout, 10, i18n("Show an on-screen indicator when changing the volume via hotkeys"), "showOSD");
 
 	// [CONFIG] Slider orientation (main window)
-	visualLayout->addItem(new QSpacerItem(1, DialogBase::verticalSpacing()));
+	visualLayout->addItem(DialogBase::verticalSpacerItem());
 	QGridLayout* orientationGrid = new QGridLayout();
 	orientationGrid->setHorizontalSpacing(DialogBase::horizontalSpacing());
 	visualLayout->addLayout(orientationGrid);
@@ -289,6 +299,8 @@ void KMixPrefDlg::createGeneralTab()
 	// Slider orientation (main window, and tray popup separately).
 	createOrientationGroup(i18n("Slider orientation (main window): "), orientationGrid, 0, KMixPrefDlg::MainOrientation);
 	createOrientationGroup(i18n("Slider orientation (system tray popup):"), orientationGrid, 1, KMixPrefDlg::TrayOrientation);
+	setOrientationTooltip(orientationGrid, 0, i18n("Set the orientation of the main window control sliders"));
+	setOrientationTooltip(orientationGrid, 1, i18n("Set the orientation of the system tray volume control sliders"));
 
 	// Push everything above to the top
 	layout->addStretch();
@@ -307,7 +319,6 @@ void KMixPrefDlg::createControlsTab()
 	layoutControlsTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
 	replaceBackendsInTab();
 }
-
 
 
 // --- Helper --------------------------------------------------------------------------------------------------
@@ -386,13 +397,9 @@ void KMixPrefDlg::updateSettings()
 		GlobalConfig::instance().setMixersForSoundmenu(dvc->getChosenBackends());
 		ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
     }
-}
 
-void KMixPrefDlg::kmixConfigHasChangedEmitter()
-{
-	emit(kmixConfigHasChanged());
+    dialogConfig.data.beepOnVolumeChange = m_beepOnVolumeChange->isChecked();
 }
-
 
 
 /**
@@ -418,9 +425,18 @@ bool KMixPrefDlg::hasChanged()
 
 		changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
 	}
+
 	if (!changed)
 	{
 		changed = dvc->getModifyFlag();
+	}
+
+	if (!changed)
+	{
+		bool feedbackFromConfig = dialogConfig.data.volumeFeedback;
+		bool feedbackFromDialogue = m_beepOnVolumeChange->isChecked();
+
+		changed = feedbackFromConfig ^ feedbackFromDialogue;
 	}
 
 	if (dialogConfig.data.debugConfig)
@@ -430,7 +446,7 @@ bool KMixPrefDlg::hasChanged()
 }
 
 
-void KMixPrefDlg::showEvent(QShowEvent * event)
+void KMixPrefDlg::showEvent(QShowEvent *event)
 {
 	// -1- Replace widgets ------------------------------------------------------------
 	// Hotplug can change mixers or backends => recreate tab
@@ -451,47 +467,38 @@ void KMixPrefDlg::showEvent(QShowEvent * event)
 	allowAutostartWarning->setVisible(!autostartFileExists);
 	allowAutostart->setEnabled(autostartFileExists);
 
-	// Only PulseAudio supports volume feedback and volume overdrive.
-	// Disable those configuration options for other backends, and
-	// show a warning message.
+	// Only PulseAudio supports volume overdrive.  Disable that
+	// configuration option for other backends, and show a warning
+	// message.
 	const bool pulseAudioAvailable = Mixer::pulseaudioPresent();
 	if (!pulseAudioAvailable)
 	{
-		m_beepOnVolumeChange->setChecked(false);
-		m_beepOnVolumeChange->setEnabled(false);
 		m_volumeOverdrive->setChecked(false);
 		m_volumeOverdrive->setEnabled(false);
-		volumeFeedbackWarning->setVisible(true);
-		volumeOverdriveWarning->setVisible(false);
+		m_pulseOnlyWarning->setVisible(true);
+		m_restartWarning->setVisible(false);
 	}
 	else
 	{
-		volumeFeedbackWarning->setVisible(false);
-		volumeOverdriveWarning->setVisible(true);
+		m_pulseOnlyWarning->setVisible(false);
+		m_restartWarning->setVisible(true);
 	}
 }
 
 
 void KMixPrefDlg::replaceBackendsInTab()
 {
-	if (dvc != 0)
+	if (dvc!=nullptr)
 	{
 		layoutControlsTab->removeWidget(dvc);
 		delete dvc;
-		layoutControlsTab->removeItem(dvcSpacerBelow);
-		delete dvcSpacerBelow;
 	}
 
 	QSet<QString> backendsFromConfig = GlobalConfig::instance().getMixersForSoundmenu();
 	dvc = new DialogChooseBackends(0, backendsFromConfig);
 	connect(dvc, SIGNAL(backendsModified()), SLOT(updateButtons()));
+	dvc->setToolTip(i18n("The mixers that are checked here will be shown in the popup volume control."));
 
 	layoutControlsTab->addWidget(dvc);
-	dvc->show();
-
-	// Push everything above to the top
-//	layoutControlsTab->addStretch();
-
-	dvcSpacerBelow = new QSpacerItem(1,1);
-	layoutControlsTab->addItem(dvcSpacerBelow);
+	layoutControlsTab->setStretchFactor(dvc, 1);
 }

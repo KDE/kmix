@@ -34,7 +34,7 @@ class QGridLayout;
 class QRadioButton;
 class QShowEvent;
 class QWidget;
-class QSpacerItem;
+
 class KMessageWidget;
 
 #include "core/GlobalConfig.h"
@@ -57,9 +57,6 @@ public:
 
 signals:
 	void kmixConfigHasChanged();
-
-private slots:
-	void kmixConfigHasChangedEmitter();
 
 protected:
 	void showEvent(QShowEvent * event) override;
@@ -89,13 +86,14 @@ private:
 
 	GlobalConfig& dialogConfig;
 
-    void addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, const QString &tooltip, const QString &kconfigName);
-
 	void createStartupTab();
 	void replaceBackendsInTab();
 	void createGeneralTab();
 	void createControlsTab();
-	void createOrientationGroup(const QString& labelSliderOrientation, QGridLayout* orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
+
+	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip, const QString &kconfigName);
+	void createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
+	void setOrientationTooltip(QGridLayout *orientationLayout, int row, const QString &tooltip);
 
 	QFrame *m_generalTab;
 	QFrame *m_startupTab;
@@ -112,13 +110,12 @@ private:
 	QCheckBox *m_beepOnVolumeChange;
 	QCheckBox *m_volumeOverdrive;
 	QSpinBox *m_volumeStep;
-	KMessageWidget *volumeFeedbackWarning;
-	KMessageWidget *volumeOverdriveWarning;
+	KMessageWidget *m_pulseOnlyWarning;
+	KMessageWidget *m_restartWarning;
 
 	QBoxLayout *layoutControlsTab;
 	QBoxLayout *layoutStartupTab;
 	DialogChooseBackends* dvc;
-	QSpacerItem *dvcSpacerBelow;
 
 	QRadioButton *_rbVertical;
 	QRadioButton *_rbHorizontal;

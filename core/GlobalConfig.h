@@ -20,7 +20,6 @@
 #ifndef GLOBALCONFIG_H
 #define GLOBALCONFIG_H
 
-#include <Qt>
 #include <QSet>
 
 #include <KConfigSkeleton>
