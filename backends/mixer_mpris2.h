@@ -152,6 +152,7 @@ private slots:
     void watcherPlugControlId(QDBusPendingCallWatcher* watcher);
     void watcherInitialVolume(QDBusPendingCallWatcher* watcher);
     void watcherInitialPlayState(QDBusPendingCallWatcher* watcher);
+    void watcherDesktopFile(QDBusPendingCallWatcher* watcher);
 
 private:
     // Helpers for the watchers
@@ -164,7 +165,6 @@ private:
     int addAllRunningPlayersAndInitHotplug();
     void volumeChangedInternal(shared_ptr<MixDevice> md, int volumePercentage);
 	QString busDestinationToControlId(const QString& busDestination);
-	MixDevice::ChannelType getChannelTypeFromPlayerId(const QString& id);
 
   QMap<QString,MPrisControl*> controls;
   QString _id;

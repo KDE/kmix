@@ -17,6 +17,7 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
+ * MPRIS2 specification: https://specifications.freedesktop.org/mpris-spec/
  */
 
 #include "mixer_mpris2.h"
@@ -25,12 +26,11 @@
 #include "core/GlobalConfig.h"
 #include "kmix_debug.h"
 
-#include <QStringList>
 #include <QDBusReply>
-#include <QString>
 #include <qvariant.h>
 
 #include <klocalizedstring.h>
+#include <kdesktopfile.h>
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
 
@@ -86,9 +86,9 @@ int Mixer_MPRIS2::mediaNext(QString id)
  */
 int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 {
-	MPrisControl* mad = controls.value(applicationId);
-	if ( mad == 0 )
-	  return 0; // Might have disconnected recently => simply ignore command
+	MPrisControl *mad = controls.value(applicationId);
+	if (mad==nullptr)
+		return (0); // Might have disconnected recently => simply ignore command
 
 	qCDebug(KMIX_LOG) << "Send " << commandName << " to id=" << applicationId;
 	QDBusPendingReply<> repl2 =
@@ -98,13 +98,13 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 	QDBusPendingCallWatcher* watchMediaControlReply = new QDBusPendingCallWatcher(repl2, mad);
 	connect(watchMediaControlReply, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherMediaControl(QDBusPendingCallWatcher*)));
 
-	return 0; // Presume everything went well. Can't do more for ASYNC calls
+	return (0); // Presume everything went well. Can't do more for ASYNC calls
 }
 
 void Mixer_MPRIS2::watcherMediaControl(QDBusPendingCallWatcher* watcher)
 {
-	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
-	if (mprisCtl == 0)
+	MPrisControl *mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl==nullptr)
 	{
 		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
 	}
@@ -195,8 +195,8 @@ signal sender=:1.125 -> dest=(null destination) serial=503 path=/org/mpris/Media
  */
 int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 {
-	Volume& vol = md->playbackVolume();
-	double volFloat = 0;
+	const Volume &vol = md->playbackVolume();
+	double volFloat = 0.0;
 	if ( ! md->isMuted() )
 	{
 		int volInt = vol.getVolume(Volume::LEFT);
@@ -218,7 +218,6 @@ int Mixer_MPRIS2::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 	QVariant v1 = QVariant(QString("org.mpris.MediaPlayer2.Player"));
 	QVariant v2 = QVariant(QString("Volume"));
 	QVariant v3 = QVariant::fromValue(QDBusVariant(volFloat));
-//	QVariant v3 = QVariant(volFloat);
 
 	// I don't care too much for the reply, as I won't receive a result. Thus fire-and-forget here.
 	mad->propertyIfc->asyncCall("Set", v1, v2, v3);
@@ -349,44 +348,39 @@ void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 	QDBusPendingReply<QVariant > repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
 	QDBusPendingCallWatcher* watchIdentity = new QDBusPendingCallWatcher(repl2, mad);
 	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherPlugControlId(QDBusPendingCallWatcher*)));
+
+	v2 = QVariant(QString("DesktopEntry"));
+	repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
+	watchIdentity = new QDBusPendingCallWatcher(repl2, mad);
+	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherDesktopFile(QDBusPendingCallWatcher*)));
 }
 
-MixDevice::ChannelType Mixer_MPRIS2::getChannelTypeFromPlayerId(const QString& id)
+
+// These icon names were originally provided by MixDevice::channelTypeToIconName()
+// using MixDevice::ChannelType values hardcoded for known applications in
+// Mixer_MPRIS2::getChannelTypeFromPlayerId().  Now the icon name is resolved
+// here only for those applications which are not expected to provide an icon
+// name in their desktop file, or do not make that information available.
+
+static QString getIconNameFromPlayerId(const QString &id)
 {
-	// TODO This hardcoded application list is a quick hack. It should be generalized.
-	MixDevice::ChannelType ct = MixDevice::APPLICATION_STREAM;
-	if (id.startsWith(QLatin1String("amarok")))
-	{
-		ct = MixDevice::APPLICATION_AMAROK;
-	}
-	else if (id.startsWith(QLatin1String("banshee")))
-	{
-		ct = MixDevice::APPLICATION_BANSHEE;
-	}
-	else if (id.startsWith(QLatin1String("vlc")))
-	{
-		ct = MixDevice::APPLICATION_VLC;
-	}
-	else if (id.startsWith(QLatin1String("xmms")))
-	{
-		ct = MixDevice::APPLICATION_XMM2;
-	}
-	else if (id.startsWith(QLatin1String("tomahawk")))
-	{
-		ct = MixDevice::APPLICATION_TOMAHAWK;
-	}
-	else if (id.startsWith(QLatin1String("clementine")))
-	{
-		ct = MixDevice::APPLICATION_CLEMENTINE;
-	}
+	if (id.startsWith(QLatin1String("amarok"))) return ("amarok");
+	if (id.startsWith(QLatin1String("banshee"))) return ("media-player-banshee");
+	if (id.startsWith(QLatin1String("xmms"))) return ("xmms");
+	if (id.startsWith(QLatin1String("tomahawk"))) return ("tomahawk");
+	if (id.startsWith(QLatin1String("clementine"))) return ("application-x-clementine");
+	// Surprisingly...
+	if (id.startsWith(QLatin1String("chrome"))) return ("chrome-browser");
+	if (id.startsWith(QLatin1String("chromium"))) return ("chromium-browser");
 
-	return ct;
+	return (QString());				// no application known
 }
+
 
 void Mixer_MPRIS2::watcherInitialVolume(QDBusPendingCallWatcher* watcher)
 {
-	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
-	if (mprisCtl == 0)
+	MPrisControl *mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl==nullptr)
 		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
 
 	const QDBusMessage& msg = watcher->reply();
@@ -404,8 +398,8 @@ void Mixer_MPRIS2::watcherInitialVolume(QDBusPendingCallWatcher* watcher)
 
 void Mixer_MPRIS2::watcherInitialPlayState(QDBusPendingCallWatcher* watcher)
 {
-	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
-	if (mprisCtl == 0)
+	MPrisControl *mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl==nullptr)
 		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
 
 	const QDBusMessage& msg = watcher->reply();
@@ -418,6 +412,40 @@ void Mixer_MPRIS2::watcherInitialPlayState(QDBusPendingCallWatcher* watcher)
 
 		MediaController::PlayState playState = Mixer_MPRIS2::mprisPlayStateString2PlayState(playbackStateString);
 		playbackStateChanged(mprisCtl, playState);
+	}
+
+	watcher->deleteLater();
+}
+
+void Mixer_MPRIS2::watcherDesktopFile(QDBusPendingCallWatcher *watcher)
+{
+	MPrisControl *mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl==nullptr) return;
+
+	const QDBusMessage& msg = watcher->reply();
+	QList<QVariant> repl = msg.arguments();
+	if (!repl.isEmpty())
+	{
+		QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(repl.at(0));
+		QVariant result2 = dbusVariant.variant();
+
+		KDesktopFile desktop(result2.toString()+".desktop");
+		if (desktop.hasApplicationType())
+		{
+			QString iconName = desktop.readIcon();
+			shared_ptr<MixDevice> md = m_mixDevices.get(mprisCtl->getId());
+			qDebug() << "got icon" << iconName << "for application" << md->readableName();
+			md->setIconName(iconName);
+
+			const QString &builtinIconName = getIconNameFromPlayerId(md->id());
+			if (!builtinIconName.isEmpty())
+			{
+				qCWarning(KMIX_LOG) << "The MPRIS2 application" << md->id()
+						    << "provides an icon name via its desktop file."
+						    << "It does not need to be hardcoded"
+						    << "in Mixer_MPRIS2::getIconNameFromPlayerId().";
+			}
+		}
 	}
 
 	watcher->deleteLater();
@@ -440,29 +468,25 @@ MPrisControl* Mixer_MPRIS2::watcherHelperGetMPrisControl(QDBusPendingCallWatcher
 	const QDBusMessage& msg = watcher->reply();
 	if ( msg.type() == QDBusMessage::ReplyMessage )
 	{
-		QObject* obj = watcher->parent();
-		MPrisControl* mad = qobject_cast<MPrisControl*>(obj);
-		if (mad != 0)
-		{
-			return mad;
-		}
+		QObject *obj = watcher->parent();
+		MPrisControl *mad = qobject_cast<MPrisControl *>(obj);
+		if (mad!=nullptr) return (mad);
 		qCWarning(KMIX_LOG) << "Ignoring unexpected Control Id. object=" << obj;
 	}
 
 	else if ( msg.type() == QDBusMessage::ErrorMessage )
 	{
-		qCCritical(KMIX_LOG) << "ERROR in Media control operation, path=" << msg.path() << ", msg=" << msg;
+		qCCritical(KMIX_LOG) << "ERROR in Media control operation, path=" << msg.path() << "msg=" << msg;
 	}
 
-
 	watcher->deleteLater();
-	return 0;
+	return (nullptr);
 }
 
 void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 {
-	MPrisControl* mprisCtl = watcherHelperGetMPrisControl(watcher);
-	if (mprisCtl == 0)
+	MPrisControl *mprisCtl = watcherHelperGetMPrisControl(watcher);
+	if (mprisCtl==nullptr)
 	{
 		return; // Reply for unknown media player. Probably "unplugged" (or not yet plugged)
 	}
@@ -481,16 +505,22 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 		QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(repl.at(0));
 		QVariant result2 = dbusVariant.variant();
 		readableName = result2.toString();
+		//qCDebug(KMIX_LOG) << "REPLY " << result2.type() << ": " << readableName;
 
-//			qCDebug(KMIX_LOG) << "REPLY " << result2.type() << ": " << readableName;
+		QString iconName = getIconNameFromPlayerId(id);
+		// This is the icon name returned for MixDevice::APPLICATION_STREAM
+		// by MixDevice::channelTypeToIconName().  If the application
+		// provides an icon name in its desktop file, then this is only a
+		// fallback until that information arrives (asynchronously) over DBus.
+		if (iconName.isEmpty()) iconName = "mixer-pcm";
 
-		MixDevice::ChannelType ct = getChannelTypeFromPlayerId(id);
-		MixDevice* mdNew = new MixDevice(_mixer, id, readableName, ct);
+		MixDevice *mdNew = new MixDevice(_mixer, id, readableName, iconName);
+
 		// MPRIS2 doesn't support an actual mute switch. Mute is defined as volume = 0.0
 		// Thus we won't add the playback switch
-		Volume* vol = new Volume( 100, 0, false, false);
+		Volume *vol = new Volume( 100, 0, false, false);
 		vol->addVolumeChannel(VolumeChannel(Volume::LEFT)); // MPRIS is only one control ("Mono")
-		MediaController* mediaContoller = mdNew->mediaController();
+		MediaController *mediaContoller = mdNew->mediaController();
 		mediaContoller->addMediaPlayControl();
 		mediaContoller->addMediaNextControl();
 		mediaContoller->addMediaPrevControl();

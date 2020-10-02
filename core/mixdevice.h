@@ -90,19 +90,9 @@ public:
                        MICROPHONE_BOOST,
                        MICROPHONE_FRONT_BOOST,
                        MICROPHONE_FRONT,
+
                        KMIX_COMPOSITE,
-		       
-		       APPLICATION_STREAM,
-		       // Some specific applications
-		       APPLICATION_AMAROK,
-		       APPLICATION_BANSHEE,
-		       APPLICATION_XMM2,
-		       APPLICATION_TOMAHAWK,
-		       APPLICATION_CLEMENTINE,
-		       // Hint: VLC still has compatibility problems:
-		       //  2.0 is not detected
-		       //  2.2-nightly has volume issues (total overdrive)
-		       APPLICATION_VLC,
+		       APPLICATION_STREAM
                      };
 
    enum SwitchType { OnOff, Mute, Capture, Activator };
@@ -132,6 +122,7 @@ public:
    shared_ptr<MixDevice> addToPool();
 
    const QString &iconName() const			{ return (_iconName); }
+   void setIconName(const QString &newName);
 
    void addPlaybackVolume(Volume &playbackVol);
    void addCaptureVolume (Volume &captureVol);
@@ -221,6 +212,9 @@ public:
 
 protected:
    void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet );
+
+signals:
+   void iconNameChanged(const QString &newName);
 
 private:
    QString getVolString(Volume::ChannelID chid, bool capture);

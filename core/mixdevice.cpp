@@ -80,18 +80,10 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
         case MixDevice::KMIX_COMPOSITE:
             return "mixer-line";
 
-        case MixDevice::APPLICATION_AMAROK:
-            return "amarok";
-        case MixDevice::APPLICATION_BANSHEE:
-            return "media-player-banshee";
-        case MixDevice::APPLICATION_XMM2:
-            return "xmms";
-        case MixDevice::APPLICATION_TOMAHAWK:
-        	return "tomahawk";
-        case MixDevice::APPLICATION_CLEMENTINE:
-        	return "application-x-clementine";
-        case MixDevice::APPLICATION_VLC:
-        	return "vlc";
+        // Icon names for known MPRIS2 applications are now taken from the application's
+        // desktop file, for those that provide one.  If the application does not
+        // provide a desktop file or icon information then there is a fallback list
+        // in Mixer_MPRIS2::getIconNameFromPlayerId().
 
         case MixDevice::APPLICATION_STREAM:
             return "mixer-pcm";
@@ -431,4 +423,12 @@ int MixDevice::userVolumeLevel() const
 	bool isActive = usePlayback ? !isMuted() : isRecSource();
 	int val = isActive ? vol.getAvgVolumePercent(Volume::MALL) : 0;
 	return (val);
+}
+
+
+void MixDevice::setIconName(const QString &newName)
+{
+    qDebug() << "for" << readableName() << "icon" << newName;
+    _iconName = newName;
+    emit iconNameChanged(newName);
 }

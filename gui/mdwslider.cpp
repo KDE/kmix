@@ -261,6 +261,17 @@ void MDWSlider::guiAddControlIcon(const QString &tooltipText)
 	ToggleToolButton::setIndicatorIcon(mixDevice()->iconName(), m_controlIcon);
 	m_controlIcon->setToolTip(tooltipText);
 	m_controlIcon->installEventFilter(this);
+
+	// A MPRIS2 application's icon name is obtained from its desktop file.
+	// Finding the desktop file is an asynchronous DBus operation which
+	// could in theory happen after the MDWSlider has been created (which
+	// would have used the fallback icon name).  So update the indicator
+	// icon on a signal.
+	connect(mixDevice().get(), &MixDevice::iconNameChanged,
+		this, [this](const QString &newName) {
+			      qDebug() << "for" << mixDevice()->readableName() << "new icon" << newName;
+			      ToggleToolButton::setIndicatorIcon(newName, m_controlIcon);
+		      });
 }
 
 QWidget *MDWSlider::guiAddButtonSpacer()
