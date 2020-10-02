@@ -244,6 +244,16 @@ void KMixPrefDlg::createGeneralTab()
 			  i18nc("@info:tooltip", "Play a sample sound when the volume changes"),
 			  "VolumeFeedback");
 
+#ifndef HAVE_CANBERRA
+	// Volume Feedback warning
+	KMessageWidget *canberraWarning = new KMessageWidget(i18n("Volume feedback is only available when configured with Canberra."), grp);
+	canberraWarning->setIcon(QIcon::fromTheme("dialog-warning"));
+	canberraWarning->setMessageType(KMessageWidget::Warning);
+	canberraWarning->setCloseButtonVisible(false);
+	canberraWarning->setWordWrap(true);
+	addWidgetToLayout(canberraWarning, behaviorLayout, 2, "", "");
+#endif
+
 	// Volume Step layout
 	QHBoxLayout *horizontalGrid = new QHBoxLayout();
 	horizontalGrid->setMargin(0);
@@ -467,6 +477,11 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 	allowAutostartWarning->setVisible(!autostartFileExists);
 	allowAutostart->setEnabled(autostartFileExists);
 
+#ifndef HAVE_CANBERRA
+	// Need to be configured with Canberra to enable volume feedback.
+	m_beepOnVolumeChange->setChecked(false);
+	m_beepOnVolumeChange->setEnabled(false);
+#endif
 	// Only PulseAudio supports volume overdrive.  Disable that
 	// configuration option for other backends, and show a warning
 	// message.
