@@ -234,7 +234,7 @@ void KMixPrefDlg::createGeneralTab()
 
 	m_volumeStep->setToolTip(xi18nc("@info:tooltip",
 					"<para>Set the volume step as a percentage of the volume range.</para>"
-					"This affects changing the volume via hot keys, "
+					"<para>This affects changing the volume via hot keys, "
 					"with the mouse wheel over the system tray icon, "
 					"or moving sliders by a page step.</para>"
 					"<para>%1 must be restarted for this change to take effect.</para>",

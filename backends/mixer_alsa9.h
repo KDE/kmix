@@ -21,12 +21,7 @@
 #ifndef MIXER_ALSA_H
 #define MIXER_ALSA_H
 
-// Qt includes
-#include <QList>
-#include <QHash>
-
 // Forward Qt includes
-class QString;
 class QSocketNotifier;
 
 #include "mixer_backend.h"
@@ -36,11 +31,14 @@ extern "C"
    #include <alsa/asoundlib.h>
 }
 
+
 class Mixer_ALSA : public Mixer_Backend
 {
+    Q_OBJECT
+
 public:
     explicit Mixer_ALSA(Mixer *mixer, int device = -1 );
-    ~Mixer_ALSA();
+    virtual ~Mixer_ALSA();
 
     int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md ) override;
     int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md ) override;
@@ -56,6 +54,11 @@ protected:
     int close() override;
     int id2num(const QString& id);
 
+private slots:
+#ifdef HAVE_CANBERRA
+    void playFeedbackSound();
+#endif
+
 private:
 
     int openAlsaDevice(const QString& devName);
@@ -64,7 +67,7 @@ private:
     int setupAlsaPolling();
     void deinitAlsaPolling();
 
-    virtual bool isRecsrcHW( const QString& id );
+    bool isRecsrcHW( const QString& id );
     int identify( snd_mixer_selem_id_t *sid );
     snd_mixer_elem_t* getMixerElem(int devnum);
 
@@ -83,8 +86,13 @@ private:
     QString devName;
     struct pollfd  *m_fds;
     QList<QSocketNotifier*> m_sns;
-    //int m_count;
-    static bool warnOnce;
+
+    QByteArray m_deviceName;
+
+#ifdef HAVE_CANBERRA
+    QTimer *m_playFeedbackTimer;
+#endif
+
 };
 
 #endif

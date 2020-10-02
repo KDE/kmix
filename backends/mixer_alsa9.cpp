@@ -24,7 +24,7 @@
 
 
 // KMix
-#include "mixer_alsa.h"
+#include "mixer_alsa9.h"
 #include "core/kmixdevicemanager.h"
 #include "core/mixer.h"
 #include "core/volume.h"
@@ -33,7 +33,7 @@
 #include <klocalizedstring.h>
 
 // Qt
-#include <QList>
+#include <qtimer.h>
 
 // STD Headers
 #include <stdlib.h>
@@ -42,12 +42,20 @@
 #include <assert.h>
 #include <qsocketnotifier.h>
 
-//#include "core/mixer.h"
-//class Mixer;
+#ifdef HAVE_CANBERRA
+#include <canberra.h>
+#endif
+
+
+#ifdef HAVE_CANBERRA
+static ca_context *s_ccontext = nullptr;
+static unsigned int s_refcount = 0;
+#endif
 
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
+
 
 Mixer_Backend*
 ALSA_getMixer(Mixer *mixer, int device )
@@ -61,16 +69,56 @@ ALSA_getMixer(Mixer *mixer, int device )
 
 Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  device )
 {
-   m_fds = 0;
-   _handle = 0;
-   ctl_handle = 0;
-   _initialUpdate = true;
+    m_fds = 0;
+    _handle = 0;
+    ctl_handle = 0;
+    _initialUpdate = true;
+
+#ifdef HAVE_CANBERRA
+    ++s_refcount;					// increment Canberra reference count
+    if (s_refcount==1)					// initialise Canberra the first time
+    {
+        int ret = ca_context_create(&s_ccontext);
+        if (ret<0)
+        {
+            qCWarning(KMIX_LOG) << "Failed to create Canberra context for volume feedback," << ca_strerror(ret);
+            s_ccontext = nullptr;
+            return;
+        }
+
+        ca_context_set_driver(s_ccontext, "alsa");
+        qCDebug(KMIX_LOG) << "Initialised Canberra context for volume feedback";
+
+        m_playFeedbackTimer = new QTimer(this);
+        m_playFeedbackTimer->setSingleShot(true);
+        m_playFeedbackTimer->setInterval(100);
+        m_playFeedbackTimer->callOnTimeout(this, &Mixer_ALSA::playFeedbackSound);
+    }
+#endif
 }
+
 
 Mixer_ALSA::~Mixer_ALSA()
 {
-   close();
+    close();
+
+#ifdef HAVE_CANBERRA
+    if (s_refcount>0)					// have some Canberra references
+    {
+        --s_refcount;					// decrement Canberra reference count
+        if (s_refcount==0)				// no more references remaining
+        {
+            if (s_ccontext!=nullptr)			// have a Canberra context
+            {
+                ca_context_destroy(s_ccontext);		// don't need it any more
+                s_ccontext = nullptr;
+                qCDebug(KMIX_LOG) << "Finished with Canberra context";
+            }
+        }
+    }
+#endif
 }
+
 
 int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
 {
@@ -111,6 +159,7 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    return MixDevice::EXTERNAL;
 }
 
+
 int Mixer_ALSA::open()
 {
     int masterChosenQuality = 0;
@@ -125,24 +174,16 @@ int Mixer_ALSA::open()
     }
 
     // Determine a card name
-    if( m_devnum < -1 || m_devnum > 31 )
-        devName = "default";
-    else
-        devName = QString( "hw:%1" ).arg( m_devnum );
+    if (m_devnum<-1 || m_devnum>31) m_deviceName = "default";
+    else m_deviceName = "hw:"+QByteArray::number(m_devnum);
 
     // Open the card
-    err = openAlsaDevice(devName);
-    if ( err != 0 ) {
-        return err;
-    }
+    err = openAlsaDevice(m_deviceName);
+    if (err!=0) return (err);
 
     _udi = KMixDeviceManager::instance()->getUDI_ALSA(m_devnum);
-    if ( _udi.isEmpty() ) {
-        QString msg("No UDI found for '");
-        msg += devName;
-        msg += "'. Hotplugging not possible";
-        qCWarning(KMIX_LOG) << msg;
-    }
+    if (_udi.isEmpty()) qCWarning(KMIX_LOG) << "No UDI found for" << m_deviceName << "so hotplugging not possible";
+
     // Run a loop over all controls of the card
     unsigned int idx = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ) )
@@ -276,8 +317,7 @@ int Mixer_ALSA::open()
     return 0;
 }
 
-// warnOnce will make sure we only print the first ALSA device not found
-bool Mixer_ALSA::warnOnce = true;
+
 /**
  * This opens a ALSA device for further interaction.
  * As this is "slightly" more complicated than calling ::open(),  it is put in a separate method.
@@ -285,15 +325,17 @@ bool Mixer_ALSA::warnOnce = true;
 int Mixer_ALSA::openAlsaDevice(const QString& devName)
 {
     int err;
+    // warnOnce will make sure we only print the first ALSA device not found
+    static bool warnOnce = true;
 
     QString probeMessage;
     probeMessage += "Trying ALSA Device '" + devName + "': ";
 
     if ( ( err = snd_ctl_open ( &ctl_handle, devName.toLatin1().data(), 0 ) ) < 0 )
     {
-    	if (Mixer_ALSA::warnOnce)
+        if (warnOnce)
     	{
-    		Mixer_ALSA::warnOnce = false;
+                warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_ctl_open err=" << snd_strerror(err);
     	}
         return Mixer::ERR_OPEN;
@@ -305,9 +347,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
     snd_ctl_card_info_alloca(&hw_info);
     if ( ( err = snd_ctl_card_info ( ctl_handle, hw_info ) ) < 0 )
     {
-    	if (Mixer_ALSA::warnOnce)
-    	{
-    		Mixer_ALSA::warnOnce = false;
+        if (warnOnce)
+        {
+                warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_ctl_card_info err=" << snd_strerror(err);
     	}
         //_stateMessage = errorText( Mixer::ERR_READ );
@@ -324,9 +366,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
     /* open mixer device */
     if ( ( err = snd_mixer_open ( &_handle, 0 ) ) < 0 )
     {
-    	if (Mixer_ALSA::warnOnce)
+        if (warnOnce)
     	{
-    		Mixer_ALSA::warnOnce = false;
+                warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err);
     	}
         _handle = 0;
@@ -335,9 +377,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 
     if ( ( err = snd_mixer_attach ( _handle, devName.toLatin1().data() ) ) < 0 )
     {
-    	if (Mixer_ALSA::warnOnce)
+        if (warnOnce)
     	{
-    		Mixer_ALSA::warnOnce = false;
+                warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_mixer_attach err=" << snd_strerror(err);
     	}
         return Mixer::ERR_OPEN;
@@ -345,9 +387,9 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 
     if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
     {
-    	if (Mixer_ALSA::warnOnce)
+        if (warnOnce)
     	{
-    		Mixer_ALSA::warnOnce = false;
+                warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_mixer_selem_register err=" << snd_strerror(err);
     	}
         return Mixer::ERR_READ;
@@ -355,19 +397,18 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 
     if ( ( err = snd_mixer_load ( _handle ) ) < 0 )
     {
-    	if (Mixer_ALSA::warnOnce)
+        if (warnOnce)
     	{
-    		Mixer_ALSA::warnOnce = false;
+                warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_mixer_load err=" << snd_strerror(err);
     	}
         close();
         return Mixer::ERR_READ;
     }
 
-    Mixer_ALSA::warnOnce = true;
+    warnOnce = true;
     qCDebug(KMIX_LOG) << probeMessage << "found";
-
-    return 0;
+    return (0);
 }
 
 
@@ -877,12 +918,8 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 
     int devnum = id2num(id);
 
-    snd_mixer_elem_t *elem = getMixerElem( devnum );
-    if ( !elem )
-    {
-        return 0;
-    }
-
+    snd_mixer_elem_t *elem = getMixerElem(devnum);
+    if (elem==nullptr) return (0);
 
     // --- playback switch
     bool hasPlaybackSwitch = snd_mixer_selem_has_playback_switch( elem ) || snd_mixer_selem_has_common_switch  ( elem );
@@ -893,7 +930,6 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
 			sw = !sw; // invert all bits
 		snd_mixer_selem_set_playback_switch_all(elem, sw);
 	}
-
 
     // --- playback volume
     if ( snd_mixer_selem_has_playback_volume( elem ) )
@@ -930,9 +966,12 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
               //if (id== "Master:0" || id== "PCM:0" ) { qCDebug(KMIX_LOG) << "volumePlayback control=" << id << ", chid=" << vc.chid << ", vol=" << vc.volume; }
           }
     	}
+
+#ifdef HAVE_CANBERRA
+        m_playFeedbackTimer->start();
+#endif
+
     } // has playback volume
-
-
 
     // --- capture volume
     if ( snd_mixer_selem_has_capture_volume ( elem ) )
@@ -1005,3 +1044,52 @@ QString Mixer_ALSA::getDriverName()
 }
 
 
+#ifdef HAVE_CANBERRA
+
+void Mixer_ALSA::playFeedbackSound()
+{
+    if (!Mixer::getBeepOnVolumeChange()) return;	// no feedback sound required
+    if (s_ccontext==nullptr) return;			// Canberra not set up
+
+    int playing = 0;
+    // Note that '2' is simply an index we've picked.
+    // It's mostly irrelevant.
+    const int cindex = 2;
+
+    ca_context_playing(s_ccontext, cindex, &playing);
+    // Note: Depending on how this is desired to work,
+    // we may want to simply skip playing, or cancel the
+    // currently playing sound and play our
+    // new one... for now, let's do the latter.
+    if (playing!=0)
+    {
+        ca_context_cancel(s_ccontext, cindex);
+        playing = 0;
+    }
+
+    if (playing==0)
+    {
+        if (!m_deviceName.isEmpty()) ca_context_change_device(s_ccontext, m_deviceName.constData());
+
+        // Ideally we'd use something like ca_gtk_play_for_widget()...
+        int ret = ca_context_play(s_ccontext,
+                                  cindex,
+                                  CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
+                                  CA_PROP_EVENT_ID, "audio-volume-change",
+                                  CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
+                                  CA_PROP_CANBERRA_ENABLE, "1",
+                                  nullptr);
+
+        // Sometimes trying to play sounds in quick succession returns the
+        // error CA_ERROR_NOTAVAILABLE = "Not available", even though playing
+        // the previous sound has been cancelled above.  Ignore that error.
+        if (ret<0 && ret!=CA_ERROR_NOTAVAILABLE)
+        {
+            qCWarning(KMIX_LOG) << "Failed to play Canberra sound for volume feedback," << ca_strerror(ret);
+        }
+
+        ca_context_change_device(s_ccontext, nullptr);
+    }
+}
+
+#endif // HAVE_CANBERRA
