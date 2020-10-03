@@ -182,9 +182,6 @@ void KMixDockWidget::createMenuActions()
     action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
     menu->addAction(action);
 
-    // Context menu entry to access Phonon settings
-    menu->addAction(_kmixMainWindow->actionCollection()->action("launch_kdesoundsetup"));
-
     // Context menu entry to access KMix settings
     // action name from tier3/kconfigwidgets/src/kstandardaction_p.h
     menu->addAction(_kmixMainWindow->actionCollection()->action("options_configure"));
