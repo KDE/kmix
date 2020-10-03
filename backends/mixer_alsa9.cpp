@@ -88,12 +88,11 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
 
         ca_context_set_driver(s_ccontext, "alsa");
         qCDebug(KMIX_LOG) << "Initialised Canberra context for volume feedback";
-
-        m_playFeedbackTimer = new QTimer(this);
-        m_playFeedbackTimer->setSingleShot(true);
-        m_playFeedbackTimer->setInterval(100);
-        m_playFeedbackTimer->callOnTimeout(this, &Mixer_ALSA::playFeedbackSound);
     }
+    m_playFeedbackTimer = new QTimer(this);
+    m_playFeedbackTimer->setSingleShot(true);
+    m_playFeedbackTimer->setInterval(100);
+    m_playFeedbackTimer->callOnTimeout(this, &Mixer_ALSA::playFeedbackSound);
 #endif
 }
 
