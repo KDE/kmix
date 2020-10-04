@@ -33,6 +33,7 @@
 // KDE
 #include <klocalizedstring.h>
 #include <kwindowsystem.h>
+#include <kglobalaccel.h>
 
 // KMix
 #include "apps/kmix.h"
@@ -54,30 +55,46 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 {
 	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	/*
-	 * Bug 206724:
-	 * Following are excerpts of trying to receive key events while this popup is open.
-	 * The best I could do with lots of hacks is to get the keyboard events after a mouse-click in the popup.
-	 * But such a solution is neither intuitive nor helpful - if one clicks, then usage of keyboard makes not much sense any longer. 
-	 * I finally gave up on fixing Bug 206724.
-	 */
-	 /*
-	releaseKeyboard();
+
+	// Original comments from cesken on commit 2bd1c4cb 12 Aug 2014:
+	//
+	//   Bug 206724:
+	//   Following are excerpts of trying to receive key events while
+	//   this popup is open.  The best I could do with lots of hacks is
+	//   to get the keyboard events after a mouse-click in the popup.
+	//   But such a solution is neither intuitive nor helpful - if one
+	//   clicks, then usage of keyboard makes not much sense any longer.
+	//   I finally gave up on fixing Bug 206724.
+	//
+	//   releaseKeyboard();
+	//   setFocusPolicy(Qt::StrongFocus);
+	//   setFocus(Qt::TabFocusReason);
+	//   releaseKeyboard();
+	//   mainWindowButton->setFocusPolicy(Qt::StrongFocus);
+	//
+	//   Also implemented the following "event handlers", but they
+	//   do not show any signs of key presses:
+	//
+	//   keyPressEvent()
+	//   x11Event()
+	//   eventFilter()
+	//
+	// However, that applied to KDE4/Qt4.  it does now seem to be possible
+	// to receive key events on the popup, by doing setFocusPolicy() and
+	// setFocus() below.  setFocus() needs to be called on an idle timer,
+	// if it is not called or is called directly there is the very strange
+	// effect that the popup does not receive key events until one of the
+	// up/down arrow keys is first pressed;  the first key disappears but
+	// then all subsequent events for all keys are received.
+	//
 	setFocusPolicy(Qt::StrongFocus);
-	setFocus(Qt::TabFocusReason);
-	releaseKeyboard();
-	mainWindowButton->setFocusPolicy(Qt::StrongFocus);
-	
-	Also implemented the following "event handlers", but they do not show any signs of key presses:
-    keyPressEvent()
-    x11Event()
-    eventFilter()
-    */
-	foreach ( Mixer* mixer, Mixer::mixers() )
+	QTimer::singleShot(0, this, [this]() { setFocus(Qt::OtherFocusReason); });
+
+	// Adding all mixers, as we potentially want to show all master controls.
+	// The list will be redone in initLayout() with the actual Mixer instances to use.
+	for (Mixer *mixer : Mixer::mixers())
 	{
-		// Adding all mixers, as we potentially want to show all master controls
 		addMixer(mixer);
-		// The list will be redone in initLayout() with the actual Mixer instances to use
 	}
 
 	restoreVolumeIcon = QIcon::fromTheme(QLatin1String("quickopen-file"));
@@ -96,6 +113,64 @@ ViewDockAreaPopup::~ViewDockAreaPopup()
   ControlManager::instance().removeListener(this);
   delete _layoutMDW;
   // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cascades down
+}
+
+
+void ViewDockAreaPopup::keyPressEvent(QKeyEvent *ev)
+{
+	// Key events are received here, after the widget has been set up for
+	// focus in the constructor above.  However, this event handler receives
+	// all key events, including global ones - this is presumably because
+	// KMixDockWidget wraps the popup volume control in a menu which grabs
+	// the keyboard while shown.  Releasing the grab closes the menu and
+	// hence the popup, so the grab has to be maintained.
+	//
+	// Handle the small subset of key events that we are interested in:
+	// the up/down arrow keys for a volume step, Page Up/Down for a
+	// double step, and Space or M to toggle mute.  Since we also receive
+	// global shortcuts, check for the configured KMix global shortcuts
+	// and act on them.  Unfortunately, as is the case with any menu when
+	// it is active, all other keys are grabbed and other global shortcuts
+	// will not work.  The standard QWidget::keyPressEvent() handler will
+	// close the popup on Escape.
+
+	KActionCollection *ac = _kmixMainWindow->actionCollection();
+	QAction *actUp = ac->action("increase_volume");
+	QAction *actDown = ac->action("decrease_volume");
+	QAction *actMute = ac->action("mute");
+
+	int key = ev->key();
+	const QKeySequence seq(key);
+	// KGlobalAccel::shortcut() is safe if called with nullptr.
+	if (KGlobalAccel::self()->shortcut(actUp).contains(seq)) key = Qt::Key_Up;
+	if (KGlobalAccel::self()->shortcut(actDown).contains(seq)) key = Qt::Key_Down;
+	if (KGlobalAccel::self()->shortcut(actMute).contains(seq)) key = Qt::Key_Space;
+
+	switch (key)
+	{
+case Qt::Key_PageUp:
+            if (actUp!=nullptr) actUp->trigger();	// double step up
+	    Q_FALLTHROUGH();
+
+case Qt::Key_Up:
+            if (actUp!=nullptr) actUp->trigger();	// single step up
+            return;
+
+case Qt::Key_PageDown:
+            if (actDown!=nullptr) actDown->trigger();	// double step down
+	    Q_FALLTHROUGH();
+
+case Qt::Key_Down:
+            if (actDown!=nullptr) actDown->trigger();	// single step down
+            return;
+
+case Qt::Key_M:
+case Qt::Key_Space:
+            if (actMute!=nullptr) actMute->trigger();	// toggle mute
+            return;
+	}
+
+	QWidget::keyPressEvent(ev);			// handle others, including ESC
 }
 
 
@@ -218,8 +293,9 @@ Application: KMix (kmix), signal: Segmentation fault
 	_layoutMDW->setObjectName(QLatin1String("KmixPopupLayout"));
 	setLayout(_layoutMDW);
 
-	// Adding all mixers, as we potentially want to show all master controls. Due to hotplugging
-	// we have to redo the list on each initLayout() (instead of setting it once in the Constructor)
+	// Adding all mixers, as we potentially want to show all master controls.
+	// Due to hotplugging we have to redo the list on each initLayout() instead of
+	// setting it once in the constructor.
 	_mixers.clear();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();

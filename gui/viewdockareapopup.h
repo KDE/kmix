@@ -40,6 +40,7 @@ class KMixWindow;
 class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
+
 public:
     ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags, const QString &guiProfileId, KMixWindow *dockW);
     virtual ~ViewDockAreaPopup();
@@ -51,13 +52,15 @@ public:
      void configurationUpdate() override;
 
 protected:
-    KMixWindow  *_kmixMainWindow;
-
     void initLayout() override;
     Qt::Orientation orientationSetting() const override;
 
+    void keyPressEvent(QKeyEvent *ev) override;
+
 private:
-  QGridLayout* _layoutMDW;
+    KMixWindow *_kmixMainWindow;
+    QGridLayout *_layoutMDW;
+
     QPushButton* createRestoreVolumeButton ( int storageSlot );
     
     bool separatorBetweenMastersAndStreamsInserted;
