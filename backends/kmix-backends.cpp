@@ -36,7 +36,6 @@
 #endif
 
 #ifdef __linux__
-
 #define OSS_MIXER
 #endif
 
@@ -49,9 +48,6 @@
 #endif // hpux
 
 // PORTING: add #ifdef PLATFORM , commands , #endif, add your new mixer below
-
-// Compiled by its own!
-//#include "backends/mixer_mpris2.cpp"
 
 #if defined(SUN_MIXER)
 #include "backends/mixer_sun.cpp"
@@ -76,7 +72,7 @@
 #endif
 
 
-// Possibly encapsualte by #ifdef HAVE_DBUS
+// Possibly encapsulated by #ifdef HAVE_DBUS
 Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device );
 QString MPRIS2_getDriverName();
 
