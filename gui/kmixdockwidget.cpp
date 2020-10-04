@@ -76,6 +76,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     connect(this, &KStatusNotifierItem::secondaryActivateRequested, this, &KMixDockWidget::dockMute);
 
 	// For bizarre reasons, we wrap the ViewDockAreaPopup in a QMenu. Must relate to how KStatusNotifierItem works.
+    // TODO: Is this necessary? Deleted and recreated in activate()
     _dockAreaPopupMenuWrapper = new QMenu(parent);
     _volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
     _dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"), parent);
@@ -291,12 +292,28 @@ case '3':   setIconByName("audio-volume-high");
 }
 
 /**
- * Called whenever the icon gets "activated". Usually when its clicked.
- * @overload
- * @param pos
+ * Called when the system tray icon gets "activated".
+ *
+ * This can happen in two ways, either by a left-click on the icon or
+ * by "Restore" from the context menu.  In the first case the sender()
+ * is a null pointer and 'pos' is the popup position.  In the second
+ * case the sender() is the KStatusNotifierItem's QAction and 'pos' is
+ * a null QPoint.
+ *
+ * Left-clicking on the system tray icon should pop up the volume control,
+ * as expected.  However, it is not useful to do the same for "Restore" as
+ * there is no 'pos' to open at (and no way to find it), so the popup volume
+ * control appears at the top left of the screen.  It is more useful, and
+ * follows the action label more accurately, to open the main KMix window.
  */
 void KMixDockWidget::activate(const QPoint &pos)
 {
+	if (pos.isNull())				// "Restore" from the menu
+	{
+		_dockView->showPanelSlot();
+		return;
+	}
+
 	QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _dockAreaPopupMenuWrapper directly
 	if (dockAreaPopup->isVisible())
 	{
@@ -357,7 +374,6 @@ void KMixDockWidget::activate(const QPoint &pos)
 		y = vScreenSize.y();
 		qCDebug(KMIX_LOG) << "Multihead: (case 4) moving to" << x << "," << y;
 	}
-
 
 	KWindowSystem::setType(dockAreaPopup->winId(), NET::Dock);
 	KWindowSystem::setState(dockAreaPopup->winId(), NET::KeepAbove | NET::SkipTaskbar | NET::SkipPager);

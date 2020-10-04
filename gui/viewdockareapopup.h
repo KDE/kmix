@@ -61,7 +61,8 @@ private:
     KMixWindow *_kmixMainWindow;
     QGridLayout *_layoutMDW;
 
-    QPushButton* createRestoreVolumeButton ( int storageSlot );
+    QPushButton* createRestoreVolumeButton (int storageSlot);
+    void resetRefs();
     
     bool separatorBetweenMastersAndStreamsInserted;
     bool separatorBetweenMastersAndStreamsRequired;
@@ -75,17 +76,10 @@ private:
     QPushButton *restoreVolumeButton4;
     QIcon restoreVolumeIcon;
 
-    static ProfControl* MatchAllForSoundMenu;
-    static QString InternedString_Star;
-    static QString InternedString_Subcontrols;
-
 public slots:
-       void controlsChange(ControlManager::ChangeType changeType);
-       void configureView() override;
-
-private slots:
+    void controlsChange(ControlManager::ChangeType changeType);
+    void configureView() override;
     void showPanelSlot();
-	void resetRefs();
 };
 
 #endif

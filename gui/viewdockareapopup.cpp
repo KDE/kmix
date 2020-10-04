@@ -49,9 +49,10 @@
 #undef RESTORE_VOLUME_BUTTON
 
 
-ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags, const QString &guiProfileId,
-	KMixWindow *dockW) :
-	ViewBase(parent, id, {}, vflags, guiProfileId), _kmixMainWindow(dockW)
+ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags,
+				     const QString &guiProfileId, KMixWindow *dockW)
+	: ViewBase(parent, id, {}, vflags, guiProfileId),
+	  _kmixMainWindow(dockW)
 {
 	resetRefs();
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -141,7 +142,7 @@ void ViewDockAreaPopup::keyPressEvent(QKeyEvent *ev)
 
 	int key = ev->key();
 	const QKeySequence seq(key);
-	// KGlobalAccel::shortcut() is safe if called with nullptr.
+	// KGlobalAccel::shortcut() is safe if called with a null pointer.
 	if (KGlobalAccel::self()->shortcut(actUp).contains(seq)) key = Qt::Key_Up;
 	if (KGlobalAccel::self()->shortcut(actDown).contains(seq)) key = Qt::Key_Down;
 	if (KGlobalAccel::self()->shortcut(actMute).contains(seq)) key = Qt::Key_Space;
@@ -212,24 +213,24 @@ void ViewDockAreaPopup::configurationUpdate()
 
 void ViewDockAreaPopup::resetRefs()
 {
-	seperatorBetweenMastersAndStreams = 0;
+	seperatorBetweenMastersAndStreams = nullptr;
 	separatorBetweenMastersAndStreamsInserted = false;
 	separatorBetweenMastersAndStreamsRequired = false;
-	configureViewButton = 0;
-	restoreVolumeButton1 = 0;
-	restoreVolumeButton2 = 0;
-	restoreVolumeButton3 = 0;
-	restoreVolumeButton4 = 0;
-	mainWindowButton = 0;
-	optionsLayout = 0;
-	_layoutMDW = 0;
+	configureViewButton = nullptr;
+	restoreVolumeButton1 = nullptr;
+	restoreVolumeButton2 = nullptr;
+	restoreVolumeButton3 = nullptr;
+	restoreVolumeButton4 = nullptr;
+	mainWindowButton = nullptr;
+	optionsLayout = nullptr;
+	_layoutMDW = nullptr;
 }
 
 void ViewDockAreaPopup::initLayout()
 {
 	resetMdws();
 
-	if (optionsLayout != 0)
+	if (optionsLayout!=nullptr)
 	{
 		QLayoutItem *li2;
 		while ((li2 = optionsLayout->takeAt(0)))
@@ -237,7 +238,7 @@ void ViewDockAreaPopup::initLayout()
 	}
 // Hint : optionsLayout itself is deleted when "delete _layoutMDW" cascades down
 
-	if (_layoutMDW != 0)
+	if (_layoutMDW!=nullptr)
 	{
 		QLayoutItem *li;
 		while ((li = _layoutMDW->takeAt(0)))
@@ -254,7 +255,7 @@ Application: KMix (kmix), signal: Segmentation fault
 #8  0x00007f9c9d425700 in ViewBase::createDeviceWidgets (this=0x1272b60) at /home/chris/workspace/kmix-git-trunk/gui/viewbase.cpp:137
 #9  0x00007f9c9d42845b in ViewDockAreaPopup::controlsChange (this=0x1272b60, changeType=2) at /home/chris/workspace/kmix-git-trunk/gui/viewdockareapopup.cpp:91
     */
-//   if ( optionsLayout != 0 )
+//   if ( optionsLayout != nullptr )
 //   {
 //     QLayoutItem *li2;
 //     while ( ( li2 = optionsLayout->takeAt(0) ) ) // strangely enough, it crashes here
@@ -283,7 +284,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	 *             of this  ViewDockAreaPopup
 	 *             (Hint: it might have been 0 already. Nowadays it is definitely, see #resetRefs())
 	 */
-	delete layout(); // BKO 299754
+	delete layout(); // Bug 299754
 	_layoutMDW = new QGridLayout(this);
 	_layoutMDW->setSpacing(DialogBase::verticalSpacing());
 	// Review #121166: Add some space over device icons, otherwise they may hit window border
@@ -498,7 +499,7 @@ void ViewDockAreaPopup::configureView()
 }
 
 /**
- * This gets activated whne a user clicks the "Mixer" PushButton in this popup.
+ * This gets activated when a user clicks the "Mixer" PushButton in this popup.
  */
 void ViewDockAreaPopup::showPanelSlot()
 {
