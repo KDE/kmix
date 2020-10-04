@@ -48,8 +48,8 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2020-04-01</date>
-<releaseinfo>Applications 20.08</releaseinfo>
+<date>2020-10-04</date>
+<releaseinfo>Applications 20.12</releaseinfo>
 
 <abstract>
 <para>&kmix; is an application that allows you to change the volume of your sound card.</para>
@@ -232,14 +232,6 @@ soundcards.</para>-->
 <varlistentry>
 <term><menuchoice>
 <guimenu>Behavior</guimenu>
-<guimenuitem>Volume Feedback</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable audible feedback on volume change.</action></para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice>
-<guimenu>Behavior</guimenu>
 <guimenuitem>Volume Overdrive</guimenuitem>
 </menuchoice></term>
 <listitem><para>Check this box to allow volume to be more than recommended value (sometimes PulseAudio maximal volume exceeds the normal value). &kmix; restart is needed for this setting to take effect.</para>
@@ -248,6 +240,32 @@ soundcards.</para>-->
       Uncheck this item if there are audible sound distortions at the maximal volume.
     </para>
   </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Behavior</guimenu>
+<guimenuitem>Volume Feedback</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Check this box to enable audible feedback on volume change.</action></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice>
+<guimenu>Behavior</guimenu>
+<guimenuitem>Volume step</guimenuitem>
+</menuchoice></term>
+<listitem>
+    <para>
+        Set the volume step as a percentage of the volume range.
+    </para>
+    <para>
+        This affects changing the volume via hot keys, with the mouse wheel over the system tray icon, or moving sliders by a page step.
+    </para>
+    <para>
+        &kmix; must be restarted for this change to take effect.
+    </para>
 </listitem>
 </varlistentry>
 
@@ -285,7 +303,7 @@ soundcards.</para>-->
 
 <varlistentry>
 <term><menuchoice>
-<guimenu>Slider orientation</guimenu>
+<guimenu>Slider orientation (main window)</guimenu>
 <guimenuitem>Vertical</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Check this radio button to orientate the control slider vertically.</action></para></listitem>
