@@ -85,7 +85,11 @@ public:
     ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::Default) const;
 
     KActionCollection *actionCollection() const		{ return (_actions); }
-    const QList<Mixer*> &getMixers() const		{ return (_mixers); }
+
+    const QList<Mixer *> &getMixers() const		{ return (_mixers); }
+    void clearMixers()					{ _mixers.clear(); }
+    const MixSet &getMixSet() const			{ return (_mixSet); }
+    void addToMixSet(shared_ptr<MixDevice> md)		{ _mixSet.append(md); }
 
     int mixDeviceCount() const				{ return (_mdws.count()); }
     QWidget *mixDeviceAt(int i) const			{ return (_mdws.at(i)); }
@@ -117,9 +121,9 @@ private:
     void updateMediaPlaybackIcons();
     void popupReset();
 
-protected:
+private:
     MixSet _mixSet;
-    QList<Mixer*> _mixers;
+    QList<Mixer *> _mixers;
 
 protected:
     void resetMdws();

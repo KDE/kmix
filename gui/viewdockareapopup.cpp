@@ -296,11 +296,11 @@ Application: KMix (kmix), signal: Segmentation fault
 	// Adding all mixers, as we potentially want to show all master controls.
 	// Due to hotplugging we have to redo the list on each initLayout() instead of
 	// setting it once in the constructor.
-	_mixers.clear();
+	clearMixers();
 
 	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
-	foreach ( Mixer* mixer, Mixer::mixers() )
+	for (Mixer *mixer : qAsConst(Mixer::mixers()))
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
 		if (useMixer) addMixer(mixer);
@@ -309,9 +309,9 @@ Application: KMix (kmix), signal: Segmentation fault
 	// The following loop is for the case when everything gets filtered out. We "reset" to show everything then.
 	// Hint: Filtering everything out can only be an "accident", e.g. when restarting KMix with changed hardware or
 	// backends.
-	if ( _mixers.isEmpty() )
+	if (getMixers().isEmpty())
 	{
-		foreach ( Mixer* mixer, Mixer::mixers() )
+		for (Mixer *mixer : qAsConst(Mixer::mixers()))
 		{
 			addMixer(mixer);
 		}
@@ -334,7 +334,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	//
 	// Maybe need a configuration option?
 
-	foreach (const Mixer *mixer, _mixers)
+	for (const Mixer *mixer : qAsConst(getMixers()))
 	{
 		//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
 		// Get the configured master control for the mixer.
@@ -355,17 +355,17 @@ Application: KMix (kmix), signal: Segmentation fault
 			if (dockMD->playbackVolume().hasVolume() || dockMD->captureVolume().hasVolume())
 			{
 				//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
-				_mixSet.append(dockMD);
+				addToMixSet(dockMD);
 			}
 		}
 	} // loop over all cards
 
 	// Finally add all application streams
-	foreach (const Mixer *mixer, _mixers)
+	for (const Mixer *mixer : qAsConst(getMixers()))
 	{
-		foreach (shared_ptr<MixDevice> md, mixer->getMixSet())
+		for (shared_ptr<MixDevice> md : qAsConst(mixer->getMixSet()))
 		{
-			if (md->isApplicationStream()) _mixSet.append(md);
+			if (md->isApplicationStream()) addToMixSet(md);
 		}
 	}
 }
@@ -493,16 +493,7 @@ void ViewDockAreaPopup::refreshVolumeLevels()
 
 void ViewDockAreaPopup::configureView()
 {
-//    Q_ASSERT( !pulseaudioPresent() );
-
-//    QSet<QString> currentlyActiveMixersInDockArea;
-//	foreach ( Mixer* mixer, _mixers )
-//	{
-//		currentlyActiveMixersInDockArea.insert(mixer->id());
-//	}
-
-	KMixPrefDlg* prefDlg = KMixPrefDlg::getInstance();
-	//prefDlg->setActiveMixersInDock(currentlyActiveMixersInDockArea);
+	KMixPrefDlg *prefDlg = KMixPrefDlg::getInstance();
 	prefDlg->switchToPage(KMixPrefDlg::PrefSoundMenu);
 }
 

@@ -189,6 +189,8 @@ void ViewSliders::initLayout()
 	m_emptyStreamHint->setIcon(QIcon::fromTheme("dialog-information"));
 	m_emptyStreamHint->setMessageType(KMessageWidget::Information);
 	m_emptyStreamHint->setCloseButtonVisible(false);
+	m_emptyStreamHint->setMaximumWidth(200);
+	m_emptyStreamHint->setWordWrap(true);
 	m_layoutSliders->addWidget(m_emptyStreamHint);
 
 	if (orientation()==Qt::Horizontal)		// horizontal sliders
@@ -217,7 +219,7 @@ void ViewSliders::initLayout()
 	const GUIProfile *guiprof = guiProfile();
 	if (guiprof!=nullptr)
 	{
-		foreach (Mixer *mixer, _mixers)
+		for (const Mixer *mixer : getMixers())
 		{
 			const MixSet &mixset = mixer->getMixSet();
 
@@ -232,7 +234,7 @@ void ViewSliders::initLayout()
 
 					if (md->id().contains(idRegexp))
 					{		// match found (by name)
-						if (_mixSet.contains(md))
+						if (getMixSet().contains(md))
 						{	// check for duplicate already
 							continue;
 						}
@@ -259,7 +261,7 @@ void ViewSliders::initLayout()
 							else if (control->getSwitchtype()=="Off")
 								md->playbackVolume().setSwitchType(Volume::OffSwitch);
 						}
-						_mixSet.append(md);
+						addToMixSet(md);
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
 						if ( md->id() == "Front:0" || md->id() == "Surround:0")
@@ -277,7 +279,7 @@ void ViewSliders::initLayout()
 
 	// Show a hint why a tab is empty (dynamic controls!)
 	// TODO: 'visibleControls()==0' could be used for the !isDynamic() case
-	m_emptyStreamHint->setVisible(_mixSet.isEmpty() && isDynamic());
+	m_emptyStreamHint->setVisible(getMixSet().isEmpty() && isDynamic());
 
 #ifdef TEST_MIXDEVICE_COMPOSITE
 	// @todo: This is currently hardcoded, and instead must be read as usual from the Profile
