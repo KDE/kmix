@@ -37,20 +37,15 @@
 #include <QDBusConnectionInterface>
 #include <QDesktopWidget>
 #include <QAction>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QMenu>
 #include <QScreen>
-#include <QTextDocument>
 #ifndef CAN_USE_ICON_OVERLAY
 #include <QPainter>
 #endif // CAN_USE_ICON_OVERLAY
 
 #include "apps/kmix.h"
 #include "core/ControlManager.h"
-#include "core/mixer.h"
-#include "core/mixertoolbox.h"
-#include "gui/dialogselectmaster.h"
-#include "gui/mixdevicewidget.h"
 #include "gui/viewdockareapopup.h"
 
 
@@ -62,7 +57,7 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
     , _delta(0)
 {
     setToolTipIconByName("kmix");
-    setTitle(i18n( "Volume Control"));
+    setTitle(i18n("Volume Control"));
     setCategory(Hardware);
     setStatus(Active);
 
@@ -74,84 +69,88 @@ KMixDockWidget::KMixDockWidget(KMixWindow* parent)
 
     connect(this, &KStatusNotifierItem::scrollRequested, this, &KMixDockWidget::trayWheelEvent);
     connect(this, &KStatusNotifierItem::secondaryActivateRequested, this, &KMixDockWidget::dockMute);
+    connect(contextMenu(), &QMenu::aboutToShow, this, &KMixDockWidget::contextMenuAboutToShow);
 
-	// For bizarre reasons, we wrap the ViewDockAreaPopup in a QMenu. Must relate to how KStatusNotifierItem works.
-    // TODO: Is this necessary? Deleted and recreated in activate()
-    _dockAreaPopupMenuWrapper = new QMenu(parent);
-    _volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
-    _dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"), parent);
-	_volWA->setDefaultWidget(_dockView);
-	_dockAreaPopupMenuWrapper->addAction(_volWA);
-	connect(contextMenu(), &QMenu::aboutToShow, this, &KMixDockWidget::contextMenuAboutToShow);
+    // For bizarre reasons, we wrap the ViewDockAreaPopup in a QMenu.
+    // It must relate to how KStatusNotifierItem works.
+    //
+    // This looks very inefficient - deleting and recreating not only
+    // the volume control but the wrappers around it every time the
+    // volume control is opened.  However, this code seems to be very
+    // fragile so it is better left as it is.
+    _dockPopupWrapper = nullptr;
+    _dockWidgetAction = nullptr;
+    createWidgets();
 
-	ControlManager::instance().addListener(
-		QString(), // All mixers (as the Global master Mixer might change)
-		ControlManager::Volume|ControlManager::MasterChanged, this,
-		QString("KMixDockWidget"));
+    ControlManager::instance().addListener(
+	    QString(),					// All mixers (as the global master mixer might change)
+	    ControlManager::Volume|ControlManager::MasterChanged,
+	    this,
+	    QString("KMixDockWidget"));
 	 
-	      // Refresh in all cases. When there is no Global Master we still need
-     // to initialize correctly (e.g. for showing 0% or hiding it)
-     refreshVolumeLevels();
+    // Refresh in all cases. When there is no global master we still need
+    // to initialize correctly (e.g. for showing 0% or hiding it)
+    refreshVolumeLevels();
 }
 
 KMixDockWidget::~KMixDockWidget()
 {
 	ControlManager::instance().removeListener(this);
-	// Note: deleting _volWA also deletes its associated ViewDockAreaPopup (_referenceWidget) and prevents the
+	// Note: deleting _dockWidgetAction also deletes its associated ViewDockAreaPopup (_dockView) and prevents the
 	//       action to be left with a dangling pointer.
 	//       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix
-	delete _volWA;
+	delete _dockWidgetAction;
 }
+
+
+void KMixDockWidget::createWidgets()
+{
+	if (_dockPopupWrapper==nullptr) _dockPopupWrapper = new QMenu(_kmixMainWindow);
+	else _dockPopupWrapper->removeAction(_dockWidgetAction);
+
+	delete _dockWidgetAction;			// also deletes '_dockView' if it exists
+
+	_dockWidgetAction = new QWidgetAction(_dockPopupWrapper);
+	_dockView = new ViewDockAreaPopup(_dockPopupWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"), _kmixMainWindow);
+	_dockWidgetAction->setDefaultWidget(_dockView);
+	_dockPopupWrapper->addAction(_dockWidgetAction);
+}
+
 
 void KMixDockWidget::controlsChange(ControlManager::ChangeType changeType)
 {
-  switch (changeType)
-  {
-    case  ControlManager::MasterChanged:
-      // Notify the main window, as it might need to update the visibiliy of the dock icon.
-//      _kmixMainWindow->updateDocking();
-//      _kmixMainWindow->saveConfig();
-      refreshVolumeLevels();
-      {
-		  QAction *selectMasterAction = findAction("select_master");
-		  if(selectMasterAction)
-		  {
-			  // Review #120432 : Guard findAction("select_master"), as it is sometimes 0 on the KF5 build
-			  //                  This is probably not a final solution, but better than a crash.
-			  selectMasterAction->setEnabled(Mixer::getGlobalMasterMixer() != 0);
-		  }
-		  else
-		  {
-			  qCWarning(KMIX_LOG) << "select_master action not found. Cannot enable it in the Systray.";
-		  }
-      }
-      break;
-
-    case ControlManager::Volume:
-      refreshVolumeLevels();
-      break;
-
-    default:
-      ControlManager::warnUnexpectedChangeType(changeType, this);
-  }
-}
-
-QAction *KMixDockWidget::findAction(const char *actionName)
-{
-	QList<QAction*> actions = actionCollection();
-	int size = actions.size();
-	for (int i=0; i<size; ++i)
+	switch (changeType)
 	{
-		QAction* action = actions.at(i);
-        if (action->data().toString() == QString::fromUtf8(actionName))
-			return action;
+case ControlManager::MasterChanged:
+		// KF5: This will never apply because we use the "Select Master Channel"
+		// action from the KMix main window.  It is not added as an action to the
+		// KStatusNotifierItem, so findAction() would never find it.
+		//
+		//QAction *selectMasterAction = findAction("select_master");
+		//if (selectMasterAction)
+		//{
+		//    // Review #120432 : Guard findAction("select_master"),
+		//    // as it is sometimes NULL on the KF5 build.
+		//    // This is probably not a final solution, but better than a crash.
+		//    selectMasterAction->setEnabled(Mixer::getGlobalMasterMixer()!=nullptr);
+		//}
+		//else
+		//{
+		//    qCWarning(KMIX_LOG) << "select_master action not found. Cannot enable it in the Systray.";
+		//}
+		Q_FALLTHROUGH();
+
+case ControlManager::Volume:
+		refreshVolumeLevels();
+		break;
+
+default:	ControlManager::warnUnexpectedChangeType(changeType, this);
+		break;
 	}
-    qCWarning(KMIX_LOG) << "ACTION" << actionName << "NOT FOUND!";
-    return (nullptr);
 }
 
 /**
- * Updates all visual parts of the volume, namely tooltip and pixmap
+ * Updates all visual parts of the volume control, namely tooltip and pixmap
  */
 void KMixDockWidget::refreshVolumeLevels()
 {
@@ -160,33 +159,31 @@ void KMixDockWidget::refreshVolumeLevels()
 }
 
 /**
- * Creates the right-click menu
+ * Add our actions to the context menu.
  */
 void KMixDockWidget::createMenuActions()
 {
     QMenu *menu = contextMenu();
     if (menu==nullptr) return;				// We do not use a menu
 
-    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    if (md.get()!=nullptr && md->hasMuteSwitch()) {
-        // Put "Mute" selector in context menu
-        KToggleAction *action = new KToggleAction(i18n("M&ute"), this);
-        action->setData("dock_mute");
-        addAction("dock_mute", action);
-    	updateDockMuteAction(action);
-        connect(action, &QAction::triggered, this, &KMixDockWidget::dockMute);
-        menu->addAction(action);
+    const shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    if (md.get()!=nullptr && md->hasMuteSwitch())
+    {
+        // "Mute" action
+        _dockMuteAction = new KToggleAction(i18n("M&ute"), this);
+        connect(_dockMuteAction, &QAction::triggered, this, &KMixDockWidget::dockMute);
+        menu->addAction(_dockMuteAction);
     }
 
-    // Put "Select Master Channel" dialog in context menu
+    // "Select Master Channel" dialog
     QAction *action = _kmixMainWindow->actionCollection()->action("select_master");
-    action->setEnabled(Mixer::getGlobalMasterMixer() != 0);
-    menu->addAction(action);
+    if (action!=nullptr) menu->addAction(action);
 
-    // Context menu entry to access KMix settings
-    // action name from tier3/kconfigwidgets/src/kstandardaction_p.h
-    menu->addAction(_kmixMainWindow->actionCollection()->action("options_configure"));
+    // "Configure KMix" settings
+    action = _kmixMainWindow->actionCollection()->action(KStandardAction::name(KStandardAction::Preferences));
+    if (action!=nullptr) menu->addAction(action);
 }
+
 
 void KMixDockWidget::setVolumeTip()
 {
@@ -308,38 +305,46 @@ case '3':   setIconByName("audio-volume-high");
  */
 void KMixDockWidget::activate(const QPoint &pos)
 {
-	if (pos.isNull())				// "Restore" from the menu
+	if (pos.isNull())				// "Restore"/"Minimise" from the menu
 	{
-		_dockView->showPanelSlot();
+		// This is not 100% the correct thing to do.
+		//
+		// KStatusNotifierItemPrivate::checkVisibility() tests
+		// whether the associated widget is at top level and
+		// unobscured (in which case it is hidden) or it is in
+		// any other state (in which case it is shown, raised
+		// and made active).  However, the "is obscured"
+		// information is not easily available so the test is complex
+		// involving lots of checks on the KWindowInfo state.
+		//
+		// The simpler approach here is to hide the main
+		// window if it is currently active, and otherwise
+		// show, raise and activate it.  The only situation in
+		// which this is not correct is where the window is
+		// active but obscured.
+		if (_kmixMainWindow->isActiveWindow()) _kmixMainWindow->hide();
+		else _dockView->showPanelSlot();	// toggle the KMix main window
 		return;
 	}
 
-	QWidget* dockAreaPopup = _dockAreaPopupMenuWrapper; // TODO Refactor to use _dockAreaPopupMenuWrapper directly
-	if (dockAreaPopup->isVisible())
+	if (_dockPopupWrapper->isVisible())
 	{
-		dockAreaPopup->hide();
+		_dockPopupWrapper->hide();
 		return;
 	}
 
-	_dockAreaPopupMenuWrapper->removeAction(_volWA);
-	delete _volWA;
-	_volWA = new QWidgetAction(_dockAreaPopupMenuWrapper);
-	_dockView = new ViewDockAreaPopup(_dockAreaPopupMenuWrapper, "dockArea", {}, QString("no-guiprofile-yet-in-dock"),
-		_kmixMainWindow);
-	_volWA->setDefaultWidget(_dockView);
-	_dockAreaPopupMenuWrapper->addAction(_volWA);
+	createWidgets();				// recreate the popup
 
 	//_dockView->show(); // TODO cesken check: this should be automatic
 	// Showing, to hopefully get the geometry manager started. We need width and height below. Also
 	// vdesktop->availableGeometry(dockAreaPopup) needs to know on which screen the widget will be shown.
-//	dockAreaPopup->show();
 	_dockView->adjustSize();
-	dockAreaPopup->adjustSize();
+	_dockPopupWrapper->adjustSize();
 
-	int x = pos.x() - dockAreaPopup->width() / 2;
+	int x = pos.x() - _dockPopupWrapper->width() / 2;
 	if (x < 0)
 		x = pos.x();
-	int y = pos.y() - dockAreaPopup->height() / 2;
+	int y = pos.y() - _dockPopupWrapper->height() / 2;
 	if (y < 0)
 		y = pos.y();
 
@@ -349,10 +354,10 @@ void KMixDockWidget::activate(const QPoint &pos)
 	if (screen==nullptr) return;
 	const QRect vScreenSize = screen->availableGeometry();
 
-	if ((x + dockAreaPopup->width()) > (vScreenSize.width() + vScreenSize.x()))
+	if ((x + _dockPopupWrapper->width()) > (vScreenSize.width() + vScreenSize.x()))
 	{
 		// move horizontally, so that it is completely visible
-		x = vScreenSize.width() + vScreenSize.x() - dockAreaPopup->width() - 1;
+		x = vScreenSize.width() + vScreenSize.x() - _dockPopupWrapper->width() - 1;
 		qCDebug(KMIX_LOG) << "Multihead: (case 1) moving to" << x << "," << y;
 	}
 	else if (x < vScreenSize.x())
@@ -362,10 +367,10 @@ void KMixDockWidget::activate(const QPoint &pos)
 		qCDebug(KMIX_LOG) << "Multihead: (case 2) moving to" << x << "," << y;
 	}
 
-	if ((y + dockAreaPopup->height()) > (vScreenSize.height() + vScreenSize.y()))
+	if ((y + _dockPopupWrapper->height()) > (vScreenSize.height() + vScreenSize.y()))
 	{
 		// move horizontally, so that it is completely visible
-		y = vScreenSize.height() + vScreenSize.y() - dockAreaPopup->height() - 1;
+		y = vScreenSize.height() + vScreenSize.y() - _dockPopupWrapper->height() - 1;
 		qCDebug(KMIX_LOG) << "Multihead: (case 3) moving to" << x << "," << y;
 	}
 	else if (y < vScreenSize.y())
@@ -375,25 +380,25 @@ void KMixDockWidget::activate(const QPoint &pos)
 		qCDebug(KMIX_LOG) << "Multihead: (case 4) moving to" << x << "," << y;
 	}
 
-	KWindowSystem::setType(dockAreaPopup->winId(), NET::Dock);
-	KWindowSystem::setState(dockAreaPopup->winId(), NET::KeepAbove | NET::SkipTaskbar | NET::SkipPager);
-	dockAreaPopup->show();
-	dockAreaPopup->move(x, y);
+	KWindowSystem::setType(_dockPopupWrapper->winId(), NET::Dock);
+	KWindowSystem::setState(_dockPopupWrapper->winId(), NET::KeepAbove | NET::SkipTaskbar | NET::SkipPager);
+	_dockPopupWrapper->show();
+	_dockPopupWrapper->move(x, y);
 }
 
 
-void KMixDockWidget::trayWheelEvent(int delta,Qt::Orientation wheelOrientation)
+void KMixDockWidget::trayWheelEvent(int delta, Qt::Orientation wheelOrientation)
 {
 	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
 	if (md.get()==nullptr) return;
 
 	Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
 //	qCDebug(KMIX_LOG) << "I am seeing a wheel event with delta=" << delta << " and orientation=" <<  wheelOrientation;
-	if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bko228780
+	if (wheelOrientation == Qt::Horizontal) // Reverse horizontal scroll: bug 228780
 	{
 		delta = -delta;
 	}
-	// bko313579, bko341536, Review #121725 - Use delta and round it by 120.
+	// Bug 313579, bug 341536, review #121725 - Use delta and round it by 120.
 	_delta += delta;
 	bool decrease = delta < 0;
 	unsigned long inc = 0;
@@ -445,32 +450,33 @@ void KMixDockWidget::dockMute()
  * Returns whether the running Desktop only supports one Mouse Button
  * Hint: Unity / Gnome only support one type of activation (left-click == right-click).
  */
-bool KMixDockWidget::onlyHaveOneMouseButtonAction()
+bool KMixDockWidget::onlyHaveOneMouseButtonAction() const
 {
-	QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = QDBusConnection::sessionBus();
     bool unityIsRunning = (connection.interface()->isServiceRegistered("com.canonical.Unity.Panel.Service"));
     // Possibly implement other detectors, like for Gnome 3 or Gnome 2
     return unityIsRunning;
-
 }
+
 
 void KMixDockWidget::contextMenuAboutToShow()
 {
-    // Enable/Disable "Muted" menu item
-    KToggleAction *dockMuteAction = static_cast<KToggleAction*>(findAction("dock_mute"));
-    qCDebug(KMIX_LOG) << "DOCK MUTE" << dockMuteAction;
-    if (dockMuteAction!=nullptr) updateDockMuteAction(dockMuteAction);
-}
-
-void KMixDockWidget::updateDockMuteAction ( KToggleAction* dockMuteAction )
-{  
-    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-    if (md.get()!=nullptr && dockMuteAction!=nullptr)
+    // Enable/disable "Mute".
+    if (_dockMuteAction!=nullptr)
     {
-    	Volume& vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
-    	bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
-        bool hasSwitch = vol.isCapture() ? vol.hasSwitch() : md->hasMuteSwitch();
-        dockMuteAction->setEnabled( hasSwitch );
-        dockMuteAction->setChecked( isInactive );
+        shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+        if (md.get()!=nullptr)
+        {
+            const Volume &vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
+            const bool isInactive =  vol.isCapture() ? !md->isRecSource() : md->isMuted();
+            const bool hasSwitch = vol.isCapture() ? vol.hasSwitch() : md->hasMuteSwitch();
+            _dockMuteAction->setEnabled(hasSwitch);
+            _dockMuteAction->setChecked(isInactive);
+        }
     }
+
+    // Enable/disable "Select Master Channel".
+    // It will only be disabled if there are no sound devices available at all.
+    QAction *action = _kmixMainWindow->actionCollection()->action("select_master");
+    if (action!=nullptr) action->setEnabled(Mixer::getGlobalMasterMixer()!=nullptr);
 }

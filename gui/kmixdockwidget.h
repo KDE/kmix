@@ -23,62 +23,54 @@
 #ifndef KMIXDOCKWIDGET_H
 #define KMIXDOCKWIDGET_H
 
-class QAction;
-class QString;
+#include <kstatusnotifieritem.h>
+
+#include "core/ControlManager.h"
+
+class QMenu;
 class QWidgetAction;
 
 class KToggleAction;
-#include <kstatusnotifieritem.h>
 
-class QMenu;
 class KMixWindow;
-class Mixer;
-#include "core/mixdevice.h"
-#include "core/ControlManager.h"
 class ViewDockAreaPopup;
-class Volume;
+
 
 class KMixDockWidget : public KStatusNotifierItem
 {
    Q_OBJECT
 
-   friend class KMixWindow;
-
  public:
    explicit KMixDockWidget(KMixWindow *parent);
    virtual ~KMixDockWidget();
 
-   void setErrorPixmap();
-   void ignoreNextEvent();
-   void update();
-
  public slots:
-   void setVolumeTip();
-   void updatePixmap();
    void activate(const QPoint &pos) override;
    void controlsChange(ControlManager::ChangeType changeType);
 
  protected:
    void createMenuActions();
-   void toggleMinimizeRestore();
+   void setErrorPixmap();
 
- private:
-   ViewDockAreaPopup *_dockView;
-   QMenu *_dockAreaPopupMenuWrapper;
-   QWidgetAction *_volWA;
-   int  _oldToolTipValue;
-   char _oldPixmapType;
-   KMixWindow* _kmixMainWindow;
-   int _delta;
+private:
+    ViewDockAreaPopup *_dockView;
+    QMenu *_dockPopupWrapper;
+    QWidgetAction *_dockWidgetAction;
+    int  _oldToolTipValue;
+    char _oldPixmapType;
+    KMixWindow* _kmixMainWindow;
+    int _delta;
+    KToggleAction *_dockMuteAction;
 
-	bool onlyHaveOneMouseButtonAction();
-   void refreshVolumeLevels();
-   void updateDockMuteAction ( KToggleAction* dockMuteAction );
-   QAction* findAction(const char* actionName);
+    bool onlyHaveOneMouseButtonAction() const;
+    void refreshVolumeLevels();
+    void createWidgets();
+    void setVolumeTip();
+    void updatePixmap();
 
  private slots:
    void dockMute();
-   void trayWheelEvent(int delta,Qt::Orientation);
+   void trayWheelEvent(int delta, Qt::Orientation wheelOrientation);
    void contextMenuAboutToShow();
 };
 
