@@ -57,16 +57,19 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
     QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
     const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
-    int mixerIndex = 0;					// index of specified 'mixer'
 
     if (mixers.count()>1)
     {
+        int mixerIndex = 0;				// index of selected mixer
+
+        // TODO: should "Playback Streams" (ALSA) be shown here?
+        // There is no meaningful concept of a master channel for that.
+
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
-        QHBoxLayout* mixerNameLayout = new QHBoxLayout();
+        QHBoxLayout *mixerNameLayout = new QHBoxLayout();
         layout->addLayout( mixerNameLayout );
         mixerNameLayout->setContentsMargins(0, 0, 0, 0);
-        mixerNameLayout->setSpacing(DialogBase::horizontalSpacing());
     
         QLabel *qlbl = new QLabel( i18n("Current mixer:"), mainFrame );
         mixerNameLayout->addWidget(qlbl);
@@ -75,14 +78,13 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
         m_cMixer = new QComboBox(mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-        connect( m_cMixer, SIGNAL(activated(int)), this, SLOT(createPageByID(int)) );
+        connect(m_cMixer, QOverload<int>::of(&QComboBox::activated), this, &DialogSelectMaster::createPageByID);
 
         for (int i = 0; i<mixers.count(); ++i)
         {
             const Mixer *m = mixers[i];
-            const QString name = m->readableName();
-            m_cMixer->addItem(QIcon::fromTheme(m->iconName()), name);
-            if (name==mixer->readableName()) mixerIndex = i;
+            m_cMixer->addItem(QIcon::fromTheme(m->iconName()), m->readableName(), m->id());
+            if (m->id()==mixer->id()) mixerIndex = i;
          }
 
         // Select the specified 'mixer' as the current item in the combo box.
@@ -117,6 +119,8 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
  */
 void DialogSelectMaster::createPageByID(int mixerId)
 {
+    // TODO: would Mixer::mixers().value(mixerId) work just as well?
+    // TODO: mixerId should really be named mixerIndex!
     const QString mixer_id = m_cMixer->itemData(mixerId).toString();
     const Mixer *mixer = Mixer::findMixer(mixer_id);
     if (mixer!=nullptr) createPage(mixer);
@@ -154,24 +158,22 @@ void DialogSelectMaster::createPage(const Mixer *mixer)
 	layout->addWidget(m_channelSelector);
 
         const MixSet &mixset = mixer->getMixSet();
-        const MixSet &mset = const_cast<MixSet &>(mixset);
-
 	const MasterControl mc = mixer->getGlobalMasterPreferred(false);
 	QString masterKey = mc.getControl();
-	if (!masterKey.isEmpty() && !mset.get(masterKey))
+	if (!masterKey.isEmpty() && !mixset.get(masterKey))
 	{
 		const shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
 		if (master.get()!=nullptr) masterKey = master->id();
 	}
 
 	int msetCount = 0;
-	for (int i = 0; i < mset.count(); ++i)
+	for (int i = 0; i<mixset.count(); ++i)
         {
-            const shared_ptr<MixDevice> md = mset[i];
+            const shared_ptr<MixDevice> md = mixset[i];
             if (md->playbackVolume().hasVolume()) ++msetCount;
         }
 
-	if (msetCount > 0 && !mixer->isDynamic())
+	if (msetCount>0 && !mixer->isDynamic())
 	{
             QString mdName = i18n("Automatic (%1 recommendation)", mixer->getDriverName());
             auto *item = new QListWidgetItem(QIcon::fromTheme("audio-volume-high"), mdName, m_channelSelector);
@@ -181,9 +183,9 @@ void DialogSelectMaster::createPage(const Mixer *mixer)
 
 	// Populate the list view with the MixDevice's having a playback volume
         // (excludes pure capture controls and pure enum's)
-	for (int i = 0; i < mset.count(); ++i)
+	for (int i = 0; i<mixset.count(); ++i)
         {
-            const shared_ptr<MixDevice> md = mset[i];
+            const shared_ptr<MixDevice> md = mixset[i];
             if (md->playbackVolume().hasVolume())
             {
                 const QString mdName = md->readableName();
