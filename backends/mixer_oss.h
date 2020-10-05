@@ -29,30 +29,29 @@
 class Mixer_OSS : public Mixer_Backend
 {
 public:
-  Mixer_OSS(Mixer *mixer, int device);
-  virtual ~Mixer_OSS();
+    Mixer_OSS(Mixer *mixer, int device);
+    virtual ~Mixer_OSS();
 
-  QString errorText(int mixer_error) override;
-  int readVolumeFromHW( const QString& id, shared_ptr<MixDevice> ) override;
-  int writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> ) override;
+    QString errorText(int mixer_error) override;
+    int readVolumeFromHW(const QString &id, shared_ptr<MixDevice>) override;
+    int writeVolumeToHW(const QString &id, shared_ptr<MixDevice>) override;
 
-  QString getDriverName() override;
+    QString getDriverName() override;
 
 protected:
+    int open() override;
+    int close() override;
 
-  int open() override;
-  int close() override;
-
-  virtual QString deviceName( int );
-  virtual QString deviceNameDevfs( int );
+    virtual QString deviceName(int);
+    virtual QString deviceNameDevfs(int);
 
 private:
-  int     m_fd;
-  QString m_deviceName;
+    int m_fd;
+    QString m_deviceName;
 
-  int setRecsrcToOSS( const QString& id, bool on );
-  void errormsg(int mixer_error);
-  int id2num(const QString& id);
+    int setRecsrcToOSS(const QString &id, bool on);
+    void errormsg(int mixer_error);
+    int id2num(const QString &id);
 };
 
 #endif
