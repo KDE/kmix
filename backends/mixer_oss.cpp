@@ -54,6 +54,7 @@
  */
 #define MAX_MIXDEVS 32
 
+// clang-format off
 const char* MixerDevNames[32]={
     I18N_NOOP("Volume"),   I18N_NOOP("Bass"),       I18N_NOOP("Treble"),
     I18N_NOOP("Synth"),    I18N_NOOP("Pcm"),        I18N_NOOP("Speaker"),
@@ -79,6 +80,7 @@ const MixDevice::ChannelType MixerChannelTypes[32] = {
     MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,
     MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,
     MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
+// clang-format on
 
 Mixer_Backend* OSS_getMixer( Mixer* mixer, int device )
 {
