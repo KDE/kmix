@@ -25,6 +25,7 @@
 #include <QVBoxLayout>
 #include <QListWidget>
 #include <QComboBox>
+#include <QToolTip>
 
 #include <klocalizedstring.h>
 
@@ -97,8 +98,20 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
 
     if (mixers.count()>0)
     {
-        QLabel *qlbl = new QLabel(i18n("Select the channel representing the master volume:"), mainFrame);
+        QLabel *qlbl = new QLabel(xi18nc("@info", "Select the <a href=\"i\">master volume</a> channel:"), mainFrame);
+        // Not a good idea to set Qt::LinksAccessibleByKeyboard, if the link is
+        // clicked on or gets focus then the Return key will not activate the OK
+        // button as expected.
+        //qlbl->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::LinksAccessibleByKeyboard);
         layout->addWidget(qlbl);
+        connect(qlbl, &QLabel::linkActivated, this, [this]() {
+            QToolTip::showText(QCursor::pos(), xi18nc("@info:tooltip",
+"<para>Here you can select the master sound device (if there is more than one) and its master channel.</para>"
+"<para>The master channel is the one that is affected by the system tray volume control, "
+"the volume up/down and mute global shortcut keys, "
+"and the <interface>Mute</interface> action in the system tray popup menu.</para>"));
+        });
+
         createPage(mixer);
 
         connect(this, &QDialog::accepted, this, &DialogSelectMaster::apply);
