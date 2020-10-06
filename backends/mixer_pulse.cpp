@@ -35,8 +35,8 @@
 #include "core/GlobalConfig.h"
 
 #include <pulse/ext-stream-restore.h>
-#if defined(HAVE_CANBERRA)
-#  include <canberra.h>
+#ifdef HAVE_CANBERRA
+#include <canberra.h>
 #endif
 
 // PA_VOLUME_UI_MAX landed in pulseaudio-0.9.23, so this can be removed when/if
@@ -60,7 +60,7 @@ static pa_context *s_context = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_outstandingRequests = 0;
 
-#if defined(HAVE_CANBERRA)
+#ifdef HAVE_CANBERRA
 static ca_context *s_ccontext = NULL;
 #endif
 
@@ -619,7 +619,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                     s_mixers[KMIXPA_APP_CAPTURE]->removeWidget(index);
             } else {
                 pa_operation *op = pa_context_get_source_output_info(c, index, source_output_cb, NULL);
-                checkOpResult(op, "pa_context_get_sink_input_info");
+                checkOpResult(op, "pa_context_get_source_output_info");
             }
             break;
 
@@ -1036,7 +1036,7 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
             // Reconnect via integrated mainloop
             connectToDaemon();
 
-#if defined(HAVE_CANBERRA)
+#ifdef HAVE_CANBERRA
             int ret = ca_context_create(&s_ccontext);
             if (ret < 0) {
                 qCDebug(KMIX_LOG) << "Disabling sound feedback, Canberra context create failed";
@@ -1062,7 +1062,7 @@ Mixer_PULSE::~Mixer_PULSE()
         --refcount;
         if (0 == refcount)
         {
-#if defined(HAVE_CANBERRA)
+#ifdef HAVE_CANBERRA
             if (s_ccontext) {
                 ca_context_destroy(s_ccontext);
                 s_ccontext = NULL;
