@@ -50,8 +50,18 @@
 
    The #define below is only there for internal reasons.
    In other words: Don't play around with this value
+
+   FreeBSD, on the other hand, has had SOUND_MIXER_NRDEVICES set to 25
+   for at least the last 13 years; it doesn't change. In addition,
+   deviceNameDevfs() overruns the alphabet and ends up looking for
+   silly mixer names like /dev/sound/mixer\ . All the devices above
+   SOUND_MIXER_NRDEVICES simply don't work.
  */
+#if defined(__FreeBSD__) && defined(SOUND_MIXER_NRDEVICES)
+#define MAX_MIXDEVS SOUND_MIXER_NRDEVICES
+#else
 #define MAX_MIXDEVS 32
+#endif
 
 // clang-format off
 const char* MixerDevNames[MAX_MIXDEVS]={
@@ -63,9 +73,14 @@ const char* MixerDevNames[MAX_MIXDEVS]={
     I18N_NOOP("Line2"),    I18N_NOOP("Line3"),      I18N_NOOP("Digital1"),
     I18N_NOOP("Digital2"), I18N_NOOP("Digital3"),   I18N_NOOP("PhoneIn"),
     I18N_NOOP("PhoneOut"), I18N_NOOP("Video"),      I18N_NOOP("Radio"),
-    I18N_NOOP("Monitor"),  I18N_NOOP("3D-depth"),   I18N_NOOP("3D-center"),
+    I18N_NOOP("Monitor")
+#if MAX_MIXDEVS > 25
+    ,
+    I18N_NOOP("3D-depth"),   I18N_NOOP("3D-center"),
     I18N_NOOP("unknown"),  I18N_NOOP("unknown"),    I18N_NOOP("unknown"),
-    I18N_NOOP("unknown") , I18N_NOOP("unused") };
+    I18N_NOOP("unknown") , I18N_NOOP("unused")
+#endif
+};
 
 const MixDevice::ChannelType MixerChannelTypes[MAX_MIXDEVS] = {
     MixDevice::VOLUME,   MixDevice::BASS,       MixDevice::TREBLE,
@@ -76,9 +91,14 @@ const MixDevice::ChannelType MixerChannelTypes[MAX_MIXDEVS] = {
     MixDevice::EXTERNAL, MixDevice::EXTERNAL,   MixDevice::DIGITAL,
     MixDevice::DIGITAL,  MixDevice::DIGITAL,    MixDevice::EXTERNAL,
     MixDevice::EXTERNAL, MixDevice::VIDEO,      MixDevice::EXTERNAL,
-    MixDevice::EXTERNAL, MixDevice::VOLUME,     MixDevice::VOLUME,
+    MixDevice::EXTERNAL
+#if MAX_MIXDEVS > 25
+    ,
+    MixDevice::VOLUME,   MixDevice::VOLUME,
     MixDevice::UNKNOWN,  MixDevice::UNKNOWN,    MixDevice::UNKNOWN,
-    MixDevice::UNKNOWN,  MixDevice::UNKNOWN };
+    MixDevice::UNKNOWN,  MixDevice::UNKNOWN
+#endif
+};
 // clang-format on
 
 Mixer_Backend *OSS_getMixer(Mixer *mixer, int device)
