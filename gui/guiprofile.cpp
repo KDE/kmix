@@ -194,7 +194,7 @@ static GUIProfile *loadProfileFromXMLfiles(const Mixer *mixer, const QString &pr
 {
     GUIProfile* guiprof = nullptr;
     QString fileName = s_profileDir + '/' + createNormalizedFilename(profileName);
-    QString fileNameFQ = QStandardPaths::locate(QStandardPaths::DataLocation, fileName );
+    QString fileNameFQ = QStandardPaths::locate(QStandardPaths::AppDataLocation, fileName );
 
     if ( ! fileNameFQ.isEmpty() ) {
         guiprof = new GUIProfile();
@@ -373,7 +373,7 @@ bool GUIProfile::readProfile(const QString &ref_fileName)
 bool GUIProfile::writeProfile()
 {
    QString profileId = getId();
-   QDir profileDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + '/' + s_profileDir);
+   QDir profileDir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + '/' + s_profileDir);
    QString fileName = createNormalizedFilename(profileId);
    QString fileNameFQ = profileDir.filePath(fileName);
 
