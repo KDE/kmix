@@ -330,7 +330,6 @@ void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 	mad->playerIfc = qdbiPlayer;
 	controls.insert(id, mad);
 
-
 	/*
 	 * WTF: - asyncCall("Get", arg)                          : returns an error message (see below)
 	 *      - asyncCallWithArgumentList("Get", arg)          : returns an error message (see below)
@@ -372,6 +371,8 @@ static QString getIconNameFromPlayerId(const QString &id)
 	// Surprisingly...
 	if (id.startsWith(QLatin1String("chrome"))) return ("chrome-browser");
 	if (id.startsWith(QLatin1String("chromium"))) return ("chromium-browser");
+	// Uses QtWebEngine which is based on Chromium, so as above...
+	if (id.startsWith(QLatin1String("akregator"))) return ("akregator");
 
 	return (QString());				// no application known
 }
