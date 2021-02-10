@@ -24,15 +24,17 @@
 #include <QDir>
 #include <QSaveFile>
 #include <QXmlStreamWriter>
-#include <QXmlSimpleReader>
+#include <QXmlStreamReader>
 #include <QStandardPaths>
-
 // KMix
 #include "core/mixer.h"
 
 
-QMap<QString, GUIProfile *> s_profiles;
-const QString s_profileDir("profiles");
+#undef DEBUG_XMLREADER
+
+
+static QMap<QString, GUIProfile *> s_profiles;
+static const QString s_profileDir("profiles");
 
 
 static QString visibilityToString(GuiVisibility vis)
@@ -322,8 +324,6 @@ GUIProfile* GUIProfile::fallbackProfile(const Mixer *mixer)
     fallback->_soundcardDriver = mixer->getDriverName();
     fallback->_soundcardName   = mixer->readableName();
 
-    fallback->finalizeProfile();
-
     fallback->_mixerId = mixer->id();
     fallback->setId(fullQualifiedProfileName); // this one contains some soundcard id (basename + instance)
     fallback->setName(buildReadableProfileName(mixer, QString("default"))); // The caller can rename this if he likes
@@ -344,29 +344,61 @@ GUIProfile* GUIProfile::fallbackProfile(const Mixer *mixer)
 
 /**
  * Fill the profile with the data from the given XML profile file.
- * @par  ref_fileName: Full qualified filename (with path).
+ * @par  fileName: Full qualified filename (with path).
  * @return bool True, if the profile was successfully created. False if not (e.g. parsing error).
  */
-bool GUIProfile::readProfile(const QString &ref_fileName)
+bool GUIProfile::readProfile(const QString &fileName)
 {
-    QXmlSimpleReader xmlReader;
-    qCDebug(KMIX_LOG) << "Read profile" << ref_fileName;
-    QFile xmlFile(ref_fileName);
-    QXmlInputSource source(&xmlFile);
-    GUIProfileParser gpp(this);
-    xmlReader.setContentHandler(&gpp);
-    bool ok = xmlReader.parse(source);
+    qCDebug(KMIX_LOG) << "reading" << fileName;
 
-    //std::cout << "Raw Profile: " << *this;
-    if ( ok ) {
-        ok = finalizeProfile();
-    } // Read OK
-    else {
-        // !! this error message about faulty profiles should probably be surrounded with i18n()
-        qCCritical(KMIX_LOG) << "ERROR: The profile" << ref_fileName<< "contains errors, and cannot be used";
+    QFile xmlFile(fileName);
+    bool ok = xmlFile.open(QIODevice::ReadOnly);
+    if (ok)
+    {
+        GUIProfileParser gpp(this);
+
+        QXmlStreamReader reader(&xmlFile);
+        while (!reader.atEnd())
+        {
+            bool startOk = reader.readNextStartElement();
+            if (!startOk)
+            {
+#ifdef DEBUG_XMLREADER
+                qCDebug(KMIX_LOG) << "  no more start elements";
+#endif
+                break;
+            }
+
+            const QString &name = reader.name().toString().toLower();
+            const QXmlStreamAttributes attrs = reader.attributes();
+#ifdef DEBUG_XMLREADER
+            qCDebug(KMIX_LOG) << "  element" << name << "has" << attrs.count() << "attributes:";
+            for (const QXmlStreamAttribute &attr : qAsConst(attrs))
+            {
+                qCDebug(KMIX_LOG) << "    " << attr.name() << "=" << attr.value();
+            }
+#endif
+            if (name=="soundcard")
+            {
+                gpp.addSoundcard(attrs);
+                continue;				// then read contained elements
+            }
+            else if (name=="control") gpp.addControl(attrs);
+            else if (name=="product") gpp.addProduct(attrs);
+            else if (name=="profile") gpp.addProfileInfo(attrs);
+            else qCDebug(KMIX_LOG) << "Unknown XML tag" << name << "at line" << reader.lineNumber();
+
+            reader.skipCurrentElement();
+        }
+
+        if (reader.hasError())
+        {
+            qCWarning(KMIX_LOG) << "XML parse error at line" << reader.lineNumber() << "-" << reader.errorString();
+            ok = false;
+        }
     }
 
-    return ok;
+    return (ok);
 }
 
 
@@ -425,9 +457,9 @@ bool GUIProfile::writeProfile()
       //    name=		prd->productName
       writer.writeAttribute("name", prd->productName);
       //    release=		prd->productRelease
-      if (!prd->productRelease.isNull()) writer.writeAttribute("release", prd->productRelease);
+      if (!prd->productRelease.isEmpty()) writer.writeAttribute("release", prd->productRelease);
       //	 comment=	prd->comment
-      if (!prd->comment.isNull()) writer.writeAttribute("comment", prd->comment);
+      if (!prd->comment.isEmpty()) writer.writeAttribute("comment", prd->comment);
       //  />
       writer.writeEndElement();
    }							// for all products
@@ -440,7 +472,7 @@ bool GUIProfile::writeProfile()
       writer.writeAttribute("id", profControl->id());
       //    name=		profControl->name()
       const QString name = profControl->name();
-      if (!name.isNull() && name!=profControl->id()) writer.writeAttribute("name", name);
+      if (!name.isEmpty() && name!=profControl->id()) writer.writeAttribute("name", name);
       //    subcontrols=	profControl->renderSubcontrols()
       writer.writeAttribute("subcontrols", profControl->renderSubcontrols());
       //    show=		visibilityToString(profControl->getVisibility())
@@ -469,12 +501,6 @@ bool GUIProfile::writeProfile()
    return (true);
 }
 
-
-/** This is now empty. It can be removed */
-bool GUIProfile::finalizeProfile() const
-{
-    return (true);
-}
 
 
 // -------------------------------------------------------------------------------------
@@ -681,205 +707,103 @@ QString ProfControl::renderSubcontrols() const
 
 // ### PARSER START ################################################
 
-
-GUIProfileParser::GUIProfileParser(GUIProfile* ref_gp) : _guiProfile(ref_gp)
+GUIProfileParser::GUIProfileParser(GUIProfile *ref_gp)
 {
-	_scope = GUIProfileParser::NONE;  // no scope yet
+    _guiProfile = ref_gp;
 }
 
-bool GUIProfileParser::startDocument()
+
+void GUIProfileParser::addSoundcard(const QXmlStreamAttributes &attributes)
 {
-	_scope = GUIProfileParser::NONE;  // no scope yet
-	return true;
+    const QString driver     = attributes.value("driver").toString();
+    const QString version    = attributes.value("version").toString();
+    const QString name	     = attributes.value("name").toString();
+    const QString type	     = attributes.value("type").toString();
+    const QString generation = attributes.value("generation").toString();
+
+    // Adding a card makes only sense if we have at least
+    // the driver and product name.
+    if (driver.isEmpty() || name.isEmpty() ) return;
+
+    _guiProfile->_soundcardDriver = driver;
+    _guiProfile->_soundcardName = name;
+    _guiProfile->_soundcardType = type;
+
+    if (version.isEmpty())
+    {
+        _guiProfile->_driverVersionMin = 0;
+        _guiProfile->_driverVersionMax = 0;
+    }
+    else
+    {
+        const QStringList versionMinMax = version.split(':', Qt::KeepEmptyParts);
+        _guiProfile->_driverVersionMin = versionMinMax.value(0).toULong();
+        _guiProfile->_driverVersionMax = versionMinMax.value(1).toULong();
+    }
+
+    _guiProfile->_generation = generation.toUInt();
 }
 
-bool GUIProfileParser::startElement( const QString& ,
-                                    const QString& ,
-                                    const QString& qName,
-                                    const QXmlAttributes& attributes )
+
+void GUIProfileParser::addProfileInfo(const QXmlStreamAttributes& attributes)
 {
-	switch ( _scope ) {
-		case GUIProfileParser::NONE:
-			/** we are reading the "top level" ***************************/
-			if ( qName.toLower() == "soundcard" ) {
-				_scope = GUIProfileParser::SOUNDCARD;
-				addSoundcard(attributes);
-			}
-			else {
-				// skip unknown top-level nodes
-				qCWarning(KMIX_LOG) << "Ignoring unsupported element" << qName;
-			}
-			// we are accepting <soundcard> only
-		break;
-
-		case GUIProfileParser::SOUNDCARD:
-			if ( qName.toLower() == "product" ) {
-				// Defines product names under which the chipset/hardware is sold
-				addProduct(attributes);
-			}
-			else if ( qName.toLower() == "control" ) {
-				addControl(attributes);
-			}
-            else if ( qName.toLower() == "profile" ) {
-                addProfileInfo(attributes);
-            }
-			else {
-				qCWarning(KMIX_LOG) << "Ignoring unsupported element" << qName;
-			}
-			// we are accepting <product>, <control> and <tab>
-
-		break;
-
-	} // switch()
-    return true;
-}
-
-bool GUIProfileParser::endElement( const QString&, const QString&, const QString& qName )
-{
-	if ( qName == "soundcard" ) {
-		_scope = GUIProfileParser::NONE; // should work out OK, as we don't nest soundcard entries
-	}
-    return true;
-}
-
-void GUIProfileParser::addSoundcard(const QXmlAttributes& attributes) {
-/*
-	std::cout  << "Soundcard: ";
-	printAttributes(attributes);
-*/
-	QString driver	= attributes.value("driver");
-	QString version = attributes.value("version");
-	QString name	= attributes.value("name");
-	QString type	= attributes.value("type");
-	QString generation = attributes.value("generation");
-	if ( !driver.isNull() && !name.isNull() ) {
-		_guiProfile->_soundcardDriver = driver;
-		_guiProfile->_soundcardName = name;
-		if ( type.isNull() ) {
-			_guiProfile->_soundcardType = "";
-		}
-		else {
-			_guiProfile->_soundcardType = type;
-		}
-		if ( version.isNull() ) {
-			_guiProfile->_driverVersionMin = 0;
-			_guiProfile->_driverVersionMax = 0;
-		}
-		else {
-			std::pair<QString,QString> versionMinMax;
-			splitPair(version, versionMinMax, ':');
-			_guiProfile->_driverVersionMin = versionMinMax.first.toULong();
-			_guiProfile->_driverVersionMax = versionMinMax.second.toULong();
-		}
-		if ( type.isNull() ) { type = ""; };
-		if ( generation.isNull() ) {
-			_guiProfile->_generation = 0;
-		}
-		else {
-			// Hint: If the conversion fails, _generation will be assigned 0 (which is fine)
-			_guiProfile->_generation = generation.toUInt();
-		}
-	}
-
-}
-
-
-
-void GUIProfileParser::addProfileInfo(const QXmlAttributes& attributes) {
-    QString name = attributes.value("name");
-    QString id   = attributes.value("id");
+    const QString name = attributes.value("name").toString();
+    const QString id   = attributes.value("id").toString();
 
     _guiProfile->setId(id);
     _guiProfile->setName(name);
 }
 
-void GUIProfileParser::addProduct(const QXmlAttributes& attributes) {
-	/*
-	std::cout  << "Product: ";
-	printAttributes(attributes);
-	*/
-	QString vendor = attributes.value("vendor");
-	QString name = attributes.value("name");
-	QString release = attributes.value("release");
-	QString comment = attributes.value("comment");
-	if ( !vendor.isNull() && !name.isNull() ) {
-		// Adding a product makes only sense if we have at least vendor and product name
-		ProfProduct *prd = new ProfProduct();
-		prd->vendor = vendor;
-		prd->productName = name;
-		prd->productRelease = release;
-		prd->comment = comment;
 
-		_guiProfile->addProduct(prd);
-	}
-}
-
-void GUIProfileParser::addControl(const QXmlAttributes& attributes) {
-    /*
-    std::cout  << "Control: ";
-    printAttributes(attributes);
-    */
-    QString id = attributes.value("id");
-    QString subcontrols = attributes.value("subcontrols");
-    QString name = attributes.value("name");
-    QString show = attributes.value("show");
-    QString background = attributes.value("background");
-    QString switchtype = attributes.value("switchtype");
-    QString mandatory = attributes.value("mandatory");
-    QString split = attributes.value("split");
-    bool isMandatory = false;
-
-    if ( !id.isNull() ) {
-        // We need at least an "id". We can set defaults for the rest, if undefined.
-        if ( subcontrols.isNull() || subcontrols.isEmpty() ) {
-            subcontrols = '*';  // for compatibility reasons, we interpret an empty string as match-all (aka "*")
-        }
-        if ( name.isNull() ) {
-            // ignore. isNull() will be checked by all users.
-        }
-        if ( ! mandatory.isNull() && mandatory == "true" ) {
-            isMandatory = true;
-        }
-        if ( !background.isNull() ) {
-            // ignore. isNull() will be checked by all users.
-        }
-        if ( !switchtype.isNull() ) {
-            // ignore. isNull() will be checked by all users.
-        }
-
-        ProfControl *profControl = new ProfControl(id, subcontrols);
-
-	profControl->setName(name);
-	profControl->setVisibility(show.isNull() ? "all" : show);
-	profControl->setBackgroundColor( background );
-	profControl->setSwitchtype(switchtype);
-	profControl->setMandatory(isMandatory);
-        if (split=="true") profControl->setSplit(true);
-
-	_guiProfile->addControl(profControl);
-  } // id != null
-}
-
-void GUIProfileParser::printAttributes(const QXmlAttributes& attributes)
+void GUIProfileParser::addProduct(const QXmlStreamAttributes& attributes)
 {
-	if (attributes.length() > 0 ) {
-		for ( int i = 0 ; i < attributes.length(); i++ ) {
-			qCDebug(KMIX_LOG) << i << attributes.qName(i) << "="<< attributes.value(i);
-		}
-	}
+    const QString vendor  = attributes.value("vendor").toString();
+    const QString name    = attributes.value("name").toString();
+    const QString release = attributes.value("release").toString();
+    const QString comment = attributes.value("comment").toString();
+
+    // Adding a product makes only sense if we have at least
+    // the vendor and product name.
+    if (vendor.isEmpty() || name.isEmpty()) return;
+
+    ProfProduct *prd = new ProfProduct();
+    prd->vendor = vendor;
+    prd->productName = name;
+    prd->productRelease = release;
+    prd->comment = comment;
+
+    _guiProfile->addProduct(prd);
 }
 
-void GUIProfileParser::splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim)
+
+void GUIProfileParser::addControl(const QXmlStreamAttributes &attributes)
 {
-	int delimPos = pairString.indexOf(delim);
-	if ( delimPos == -1 ) {
-		// delimiter not found => use an empty String for "second"
-		result.first  = pairString;
-		result.second = "";
-	}
-	else {
-		// delimiter found
-		result.first  = pairString.mid(0,delimPos);
-		result.second = pairString.left(delimPos+1);
-	}
+    const QString id          = attributes.value("id").toString();
+    const QString subcontrols = attributes.value("subcontrols").toString();
+    const QString name        = attributes.value("name").toString();
+    const QString show        = attributes.value("show").toString();
+    const QString background  = attributes.value("background").toString();
+    const QString switchtype  = attributes.value("switchtype").toString();
+    const QString mandatory   = attributes.value("mandatory").toString();
+    const QString split       = attributes.value("split").toString();
+
+    // We need at least an "id".  We can set defaults for the rest, if undefined.
+    if (id.isEmpty()) return;
+
+    // ignore whether 'name' is null, will be checked by all users.
+    bool isMandatory = (mandatory=="true");
+    // ignore whether 'background' is null, will be checked by all users.
+    // ignore whether 'switchtype' is null, will be checked by all users.
+
+    // For compatibility reasons, we interpret an empty string as match-all (aka "*")
+    ProfControl *profControl = new ProfControl(id, (subcontrols.isEmpty() ? "*" : subcontrols));
+
+    profControl->setName(name);
+    profControl->setVisibility(show.isEmpty() ? "all" : show);
+    profControl->setBackgroundColor(background);
+    profControl->setSwitchtype(switchtype);
+    profControl->setMandatory(isMandatory);
+    if (split=="true") profControl->setSplit(true);
+
+    _guiProfile->addControl(profControl);
 }

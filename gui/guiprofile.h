@@ -18,21 +18,17 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _GUIPROFILE_H_
-#define _GUIPROFILE_H_
+#ifndef GUIPROFILE__H
+#define GUIPROFILE__H
+
+#include <qstring.h>
+#include <qlist.h>
+
+#include <set>
+
 
 class Mixer;
-
-#include "kmix_debug.h"
-
-#include <qxml.h>
-#include <QColor>
-#include <QTextStream>
-#include <QString>
-
-#include <string>
-#include <set>
-#include <ostream>
+class QXmlStreamAttributes;
 
 
 struct ProfProduct
@@ -125,7 +121,7 @@ private:
 
     // For applying custom colors
     QString _backgroundColor;
-    // For defining the switch type when it is not a standard palyback or capture switch
+    // For defining the switch type when it is not a standard playback or capture switch
     QString _switchtype;
 
     // show or hide (contains the GUI type: simple, extended, all)
@@ -149,17 +145,16 @@ struct ProductComparator
 class GUIProfile
 {
 public:
-    typedef std::set<ProfProduct*, ProductComparator> ProductSet;
-    typedef QList<ProfControl*> ControlSet;
+    typedef std::set<ProfProduct *, ProductComparator> ProductSet;
+    typedef QList<ProfControl *> ControlSet;
 
 public:
     GUIProfile();
     ~GUIProfile();
 
-    bool readProfile(const QString &ref_fileNamestring);
-    bool finalizeProfile() const;
+    bool readProfile(const QString &fileName);
     bool writeProfile();
-    
+
     bool isDirty() const			{ return (_dirty); }
     void setDirty()				{ _dirty = true; }
     
@@ -204,27 +199,18 @@ private:
 };
 
 
-class GUIProfileParser : public QXmlDefaultHandler
+class GUIProfileParser
 {
 public:
-    explicit GUIProfileParser(GUIProfile* ref_gp);
-    // Enumeration for the scope
-    enum ProfileScope { NONE, SOUNDCARD };
-    
-    bool startDocument() override;
-    bool startElement( const QString&, const QString&, const QString& , const QXmlAttributes& ) override;
-    bool endElement( const QString&, const QString&, const QString& ) override;
-    
-private:
-    void addControl(const QXmlAttributes& attributes);
-    void addProduct(const QXmlAttributes& attributes);
-    void addSoundcard(const QXmlAttributes& attributes);
-    void addProfileInfo(const QXmlAttributes& attributes);
-    void printAttributes(const QXmlAttributes& attributes);
-    void splitPair(const QString& pairString, std::pair<QString,QString>& result, char delim);
+    explicit GUIProfileParser(GUIProfile *ref_gp);
 
-    ProfileScope _scope;
-    GUIProfile* _guiProfile;
+    void addControl(const QXmlStreamAttributes &attributes);
+    void addProduct(const QXmlStreamAttributes &attributes);
+    void addSoundcard(const QXmlStreamAttributes &attributes);
+    void addProfileInfo(const QXmlStreamAttributes &attributes);
+
+private:
+    GUIProfile *_guiProfile;
 };
 
-#endif //_GUIPROFILE_H_
+#endif // GUIPROFILE__H
