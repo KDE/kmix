@@ -97,7 +97,7 @@ ControlInfo* MixerEngine::createControlInfo( const QString& mixerId, const QStri
 	curci->dbusPath = dbusPath;
 	curci->updateRequired = false;
 	curci->unused = false;
-	m_controls.insertMulti( mixerId, curci );
+	m_controls.insert(mixerId, curci);
 	return curci;
 }
 
