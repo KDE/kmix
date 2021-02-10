@@ -395,11 +395,11 @@ bool MixDevice::write(KConfig *config, const QString &grp)
 void MixDevice::writePlaybackOrCapture(KConfigGroup& config, bool capture)
 {
     Volume& volume = capture ? captureVolume() : playbackVolume();
-    foreach (VolumeChannel vc, volume.getVolumes() )
-    {
-        config.writeEntry(getVolString(vc.chid,capture), static_cast<int>(vc.volume));
-    } // for all channels
-
+    const QMap<Volume::ChannelID, VolumeChannel> volumes = volume.getVolumes();
+    for (const VolumeChannel &vc : volumes)
+    {							// for all channels
+        config.writeEntry(getVolString(vc.chid, capture), static_cast<int>(vc.volume));
+    }
 }
 
 QString MixDevice::getVolString(Volume::ChannelID chid, bool capture)

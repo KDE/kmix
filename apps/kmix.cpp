@@ -392,9 +392,9 @@ void KMixWindow::saveViewConfig()
 	// The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
 	// Otherwise we would not save the Meta information (step -2- below for that mixer.
 	// We also do not save dynamic mixers (e.g. PulseAudio)
-	foreach ( Mixer* mixer, Mixer::mixers() )
+	for (const Mixer *mixer : qAsConst(Mixer::mixers()))
 	{
-		mixerViews[mixer->id()]; // just insert a map entry
+		mixerViews[mixer->id()];		// just insert a map entry
 	}
 
 // -1- Save the views themselves
@@ -576,7 +576,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		saveViewConfig();  // save the state before recreating
 
 	// -2- RECREATE THE ALREADY EXISTING TABS **********************************
-	QHash<Mixer*, bool> mixerHasProfile;
+	QHash<const Mixer *, bool> mixerHasProfile;
 
 // -2a- Build a list of all active profiles in the main window (that means: from all tabs)
 	QList<GUIProfile*> activeGuiProfiles;
@@ -589,10 +589,10 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		}
 	}
 
-	foreach ( GUIProfile* guiprof, activeGuiProfiles)
+	for (const GUIProfile *guiprof : qAsConst(activeGuiProfiles))
 	{
-		Mixer *mixer = Mixer::findMixer( guiprof->getMixerId() );
-		if ( mixer == 0 )
+		const Mixer *mixer = Mixer::findMixer(guiprof->getMixerId());
+		if (mixer==nullptr)
 		{
 			qCCritical(KMIX_LOG) << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
 			continue;
@@ -619,7 +619,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 	// -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
 	KConfigGroup pconfig(KSharedConfig::openConfig(), "Profiles");
-	foreach ( Mixer *mixer, Mixer::mixers())
+	for (const Mixer *mixer : qAsConst(Mixer::mixers()))
 	{
 		if ( mixerHasProfile.contains(mixer))
 		{
@@ -659,7 +659,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		{
 			bool atLeastOneProfileWasAdded = false;
 
-			foreach ( QString profileId, profileList)
+			for (const QString &profileId : qAsConst(profileList))
 			{
 				// This handles the profileList form the kmixrc
 				qCDebug(KMIX_LOG) << "Searching for GUI profile" << profileId;
@@ -670,9 +670,9 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 					qCWarning(KMIX_LOG) << "Cannot load profile" << profileId;
 					if (profileId.startsWith(QLatin1String("MPRIS2.")))
 					{
-						profileId = "MPRIS2.default";
-						qCDebug(KMIX_LOG) << "For MPRIS2 falling back to" << profileId;
-						guiprof = GUIProfile::find(mixer, profileId, true, false);
+						const QString fallbackProfileId = "MPRIS2.default";
+						qCDebug(KMIX_LOG) << "For MPRIS2 falling back to" << fallbackProfileId;
+						guiprof = GUIProfile::find(mixer, fallbackProfileId, true, false);
 					}
 				}
 

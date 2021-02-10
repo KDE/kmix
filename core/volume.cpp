@@ -164,12 +164,7 @@ void Volume::init( Volume::ChannelMask chmask, long maxVolume, long minVolume, b
 	_switchActivated = true;
 }
 
-QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumesWhenActive() const
-{
-	return _volumesL;
-}
-
-QMap<Volume::ChannelID, VolumeChannel> Volume::getVolumes() const
+const QMap<Volume::ChannelID, VolumeChannel> &Volume::getVolumes() const
 {
 	return _volumesL;
 }
@@ -314,7 +309,7 @@ qreal Volume::getAvgVolume(Volume::ChannelMask chmask) const
 {
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
-	foreach (VolumeChannel vc, _volumesL )
+	for (const VolumeChannel &vc : qAsConst(_volumesL))
 	{
 		if (channelMask[vc.chid] & chmask )
 		{
@@ -368,7 +363,7 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
 	os << "(";
 
 	bool first = true;
-	foreach ( const VolumeChannel vc, vol.getVolumes() )
+	for (const VolumeChannel &vc : qAsConst(vol.getVolumes()))
 	{
 		if ( !first )  os << ",";
 		else first = false;
@@ -385,7 +380,7 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
 QDebug operator<<(QDebug os, const Volume& vol) {
 	os << "(";
 	bool first = true;
-	foreach ( VolumeChannel vc, vol.getVolumes() )
+	for (const VolumeChannel &vc : qAsConst(vol.getVolumes()))
 	{
 		if ( !first )  os << ",";
 		else first = false;

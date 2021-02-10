@@ -61,11 +61,8 @@ KMixerWidget::KMixerWidget(Mixer *mixer,
 
 KMixerWidget::~KMixerWidget()
 {
-  foreach (ViewBase *view, _views)
-  {
-    delete view;
-  }
-  _views.clear();
+    qDeleteAll(_views);
+    _views.clear();
 }
 
 /**

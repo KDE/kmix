@@ -416,7 +416,7 @@ bool GUIProfile::writeProfile()
    //  />
    writer.writeEndElement();
 
-   foreach (const ProfProduct *prd, qAsConst(_products))
+   for (const ProfProduct *prd : qAsConst(_products))
    {
       //  <product
       writer.writeStartElement("product");
@@ -432,7 +432,7 @@ bool GUIProfile::writeProfile()
       writer.writeEndElement();
    }							// for all products
 
-   foreach (const ProfControl *profControl, qAsConst(getControls()))
+   for (const ProfControl *profControl : qAsConst(getControls()))
    {
       //  <control
       writer.writeStartElement("control");

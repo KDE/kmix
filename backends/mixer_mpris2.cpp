@@ -282,8 +282,8 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 		return 1;
 	}
 
-	QString busDestination;
-	foreach ( busDestination , repl.value() )
+	const QStringList &replyValues = repl.value();
+	for (const QString &busDestination : qAsConst(replyValues))
 	{
 		if ( busDestination.startsWith(QLatin1String("org.mpris.MediaPlayer2")) )
 		{

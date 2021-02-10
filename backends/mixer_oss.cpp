@@ -376,7 +376,8 @@ int Mixer_OSS::readVolumeFromHW(const QString &id, shared_ptr<MixDevice> md)
                 // Muted is represented in OSS by value 0. We don't want to write the value 0 as a volume,
                 // but instead we only mark it muted (see setMuted() above).
 
-                foreach (VolumeChannel vc, vol.getVolumes()) {
+                for (const VolumeChannel &vc : qAsConst(vol.getVolumes()))
+                {
                     long volOld = 0;
                     long volNew = 0;
                     switch (vc.chid) {
@@ -399,7 +400,7 @@ int Mixer_OSS::readVolumeFromHW(const QString &id, shared_ptr<MixDevice> md)
                         controlChanged = true;
                         // if ( md->id() == "0" ) qCDebug(KMIX_LOG) << "changed";
                     }
-                } // foreach
+                } // for
             } // muted
         }
     }

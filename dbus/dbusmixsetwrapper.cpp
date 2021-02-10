@@ -65,8 +65,7 @@ void DBusMixSetWrapper::controlsChange(ControlManager::ChangeType changeType)
 QStringList DBusMixSetWrapper::mixers() const
 {
 	QStringList result;
-	Q_FOREACH(Mixer* mixer, Mixer::mixers())
-		result.append( mixer->dbusPath() );
+	for (Mixer *mixer : qAsConst(Mixer::mixers())) result.append(mixer->dbusPath());
 	return result;
 }
 

@@ -45,7 +45,7 @@ bool MixSet::read(const KConfig *config, const QString &grp)
    m_name = group.readEntry( "name", m_name );
 
    bool have_success = false, have_fail = false;
-   foreach ( shared_ptr<MixDevice> md, *this)
+   for (shared_ptr<MixDevice> md : *this)
    {
        if ( md->read( config, grp ) )
            have_success = true;
@@ -62,7 +62,7 @@ bool MixSet::write(KConfig *config, const QString &grp) const
    conf.writeEntry( "name", m_name );
 
    bool have_success = false, have_fail = false;
-   foreach ( shared_ptr<MixDevice> md, *this)
+   for (shared_ptr<MixDevice> md : *this)
    {
        if ( md->write( config, grp ) )
            have_success = true;
@@ -81,7 +81,7 @@ shared_ptr<MixDevice> MixSet::get(const QString &id) const
 {
 	shared_ptr<MixDevice> mdRet;
 
-	foreach ( shared_ptr<MixDevice> md, *this)
+	for (shared_ptr<MixDevice> md : *this)
 	{
 		if ( md->id() == id )
 		{
@@ -97,11 +97,11 @@ void MixSet::removeById(const QString &id)
 	for (int i=0; i < count() ; i++ )
 	{
 		shared_ptr<MixDevice> md = operator[](i);
-	    if ( md->id() == id )
-	    {
-	    	removeAt(i);
-	    	break;
-	    }
+                if ( md->id() == id )
+                {
+                    removeAt(i);
+                    break;
+                }
 	}
 }
 

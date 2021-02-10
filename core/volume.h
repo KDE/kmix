@@ -157,8 +157,7 @@ public:
 
     // _channelMaskEnum[] and the following elements moved to public section. operator<<() could not
     // access it, when private. Strange, as operator<<() is declared friend.
-    QMap<Volume::ChannelID, VolumeChannel> getVolumes() const;
-    QMap<Volume::ChannelID, VolumeChannel> getVolumesWhenActive() const;
+    const QMap<Volume::ChannelID, VolumeChannel> &getVolumes() const;
     long volumeStep(bool decrease) const;
 
     // Sets the value from the GUI configuration.  This affects all volume

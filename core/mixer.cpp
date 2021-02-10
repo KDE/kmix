@@ -66,7 +66,7 @@ MasterControl Mixer::_globalMasterPreferred;
  */
 /* static */ bool Mixer::dynamicBackendsPresent()
 {
-    foreach (const Mixer *mixer, s_mixers)
+    for (const Mixer *mixer : qAsConst(s_mixers))
     {
         if (mixer->isDynamic()) return (true);
     }
@@ -75,7 +75,7 @@ MasterControl Mixer::_globalMasterPreferred;
 
 /* static */ bool Mixer::pulseaudioPresent()
 {
-    foreach (const Mixer *mixer, s_mixers)
+    for (const Mixer *mixer : qAsConst(s_mixers))
     {
         if (mixer->getDriverName()=="PulseAudio") return (true);
     }
@@ -409,7 +409,7 @@ QString Mixer::getBaseName() const
 
 /* static */ Mixer *Mixer::getGlobalMasterMixerNoFalback()
 {
-    foreach (Mixer *mixer, Mixer::mixers())
+    for (Mixer *mixer : qAsConst(s_mixers))
     {
         if (mixer!=nullptr && mixer->id()==_globalMasterCurrent.getCard())
             return mixer;
@@ -468,7 +468,7 @@ QString Mixer::getBaseName() const
 		return mixer->_mixerBackend->recommendedMaster();
 	}
 
-	foreach (shared_ptr<MixDevice> md, mixer->_mixerBackend->m_mixDevices )
+	for (const shared_ptr<MixDevice> md : qAsConst(mixer->_mixerBackend->m_mixDevices))
 	{
 		if (!md) continue; // invalid
 
@@ -513,10 +513,10 @@ void Mixer::setLocalMasterMD(const QString &devPK)
 }
 
 
-shared_ptr<MixDevice> Mixer::find(const QString& mixdeviceID) const
+shared_ptr<MixDevice> Mixer::find(const QString &mixdeviceID) const
 {
 	shared_ptr<MixDevice> mdRet;
-	foreach (shared_ptr<MixDevice> md, _mixerBackend->m_mixDevices)
+	for (const shared_ptr<MixDevice> md : qAsConst(_mixerBackend->m_mixDevices))
 	{
 		if (!md) continue; // invalid
 		if (md->id()==mixdeviceID)

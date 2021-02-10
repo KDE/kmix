@@ -153,7 +153,7 @@ void ViewBase::createDeviceWidgets()
     qCDebug(KMIX_LOG) << id() << "orientation" << _orientation;
 
     initLayout();
-    foreach (const shared_ptr<MixDevice> md, _mixSet)
+    for (const shared_ptr<MixDevice> md : qAsConst(_mixSet))
     {
         QWidget *mdw = add(md);				// a) Let the implementation do its work
         _mdws.append(mdw);				// b) Add it to the local list
@@ -182,8 +182,8 @@ void ViewBase::guiVisibilitySlot(MixDeviceWidget* mdw, bool enable)
 {
 	MixDevice* md = mdw->mixDevice().get();
 	qCDebug(KMIX_LOG) << "Change " << md->id() << " to visible=" << enable;
-	ProfControl* pctl = findMdw(md->id());
-	if (pctl == 0)
+	ProfControl *pctl = findMdw(md->id());
+	if (pctl==nullptr)
 	{
 		qCWarning(KMIX_LOG) << "MixDevice not found, and cannot be hidden, id=" << md->id();
 		return; // Ignore
@@ -256,23 +256,21 @@ void ViewBase::refreshVolumeLevels()
  */
 bool ViewBase::isDynamic() const
 {
-  foreach (Mixer* mixer , _mixers )
-  {
-    if ( mixer->isDynamic() )
-      return true;
-  }
-  return false;
+	for (const Mixer *mixer : qAsConst(_mixers))
+	{
+		if (mixer->isDynamic()) return true;
+	}
+	return false;
 }
 
 bool ViewBase::pulseaudioPresent() const
 {
 	// We do not use Mixer::pulseaudioPresent(), as we are only interested in Mixer instances contained in this View.
-  foreach (Mixer* mixer , _mixers )
-  {
-	  if ( mixer->getDriverName() == "PulseAudio" )
-		  return true;
-  }
-  return false;
+	for (const Mixer *mixer : qAsConst(_mixers))
+	{
+		if ( mixer->getDriverName() == "PulseAudio" ) return true;
+	}
+	return false;
 }
 
 
@@ -292,7 +290,7 @@ void ViewBase::resetMdws()
 int ViewBase::visibleControls() const
 {
 	int visibleCount = 0;
-	foreach (QWidget* qw, _mdws)
+	for (const QWidget *qw : qAsConst(_mdws))
 	{
 		if (qw->isVisible())
 			++ visibleCount;
@@ -348,7 +346,7 @@ void ViewBase::load(const KConfig *config)
 	{
 		const GuiVisibility guiCompl = guiVisibilities[i];
 		bool atLeastOneControlIsShown = false;
-		foreach(QWidget *qmdw, view->_mdws)
+		for (QWidget *qmdw : qAsConst(view->_mdws))
 		{
 			MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(qmdw);
 			if (mdw!=nullptr)
@@ -407,7 +405,7 @@ void ViewBase::setGuiLevel(GuiVisibility guiLevel)
  */
 ProfControl *ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility) const
 {
-	foreach ( ProfControl* pControl, guiProfile()->getControls() )
+	for (ProfControl *pControl : qAsConst(guiProfile()->getControls()))
 	{
 		QRegExp idRegExp(pControl->id());
 		if ( mdwId.contains(idRegExp) )

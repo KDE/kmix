@@ -223,7 +223,7 @@ void ViewSliders::initLayout()
 		{
 			const MixSet &mixset = mixer->getMixSet();
 
-			foreach (ProfControl *control, guiprof->getControls())
+			for (ProfControl *control : qAsConst(guiprof->getControls()))
 			{
 				// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
 				QRegExp idRegexp(control->id());
@@ -335,7 +335,7 @@ void ViewSliders::configurationUpdate()
 		if (mdw==nullptr) continue;
 
 		// The GUI level has been set earlier, by inspecting the controls
-		ProfControl *matchingControl = findMdw(mdw->mixDevice()->id());
+		const ProfControl *matchingControl = findMdw(mdw->mixDevice()->id());
 		mdw->setVisible(matchingControl!=nullptr);
 	}
 

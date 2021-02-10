@@ -50,11 +50,10 @@ MediaController::MediaController(const QString &controlId) :
 
 		Phonon::AudioOutputDevice& dev = devs[0];
 
-		QList<QByteArray> props = dev.propertyNames();
+		const QList<QByteArray> props = dev.propertyNames();
 		qCDebug(KMIX_LOG) << "desc=" << dev.description() << ", name=" << dev.name() << ", props=";
-		QByteArray prop;
 		int i=0;
-		foreach (prop, props)
+		for (const QByteArray &prop : props)
 		{
 			qCDebug(KMIX_LOG) << "#"  << i << ": "<< prop;
 			++i;

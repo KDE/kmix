@@ -177,7 +177,7 @@ void DialogViewConfiguration::moveSelection(DialogViewConfigurationWidget *from,
     const QList<QListWidgetItem *> sel = from->selectedItems();
     from->selectionModel()->clearSelection();
 
-    foreach (QListWidgetItem *item, sel)
+    for (QListWidgetItem *item : qAsConst(sel))
     {
         from->takeItem(from->row(item));
         to->addItem(item);
@@ -301,7 +301,7 @@ void DialogViewConfiguration::apply()
    prepareControls(model, false, oldControlset, newControlset);
 
    // -2- Copy all mandatory "catch-all" controls form the old to the new ControlSet  *******
-   foreach ( ProfControl* pctl, oldControlset)
+   for (const ProfControl *pctl : qAsConst(oldControlset))
    {
        if ( pctl->isMandatory() ) {
            ProfControl* newCtl = new ProfControl(*pctl);
@@ -349,7 +349,7 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
 
          // -3- Insert it in the new ControlSet **************************
 //         qCDebug(KMIX_LOG) << "Should add to new ControlSet: " << ctlId;
-        foreach ( ProfControl* control, oldCtlSet)
+        for (const ProfControl *control : qAsConst(oldCtlSet))
         {
             //qCDebug(KMIX_LOG) << " checking " << control->id;
             QRegExp idRegexp(control->id());
