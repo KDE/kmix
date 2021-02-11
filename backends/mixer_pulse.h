@@ -66,6 +66,8 @@ class Mixer_PULSE : public Mixer_Backend
 
         bool needsPolling() override { return false; }
 
+        // Only used internally, but need to be able to be called by
+        // static PulseAudio callback functions.
         void triggerUpdate();
         void addWidget(int index, bool = false);
         void removeWidget(int index);

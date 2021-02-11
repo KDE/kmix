@@ -269,7 +269,7 @@ void MDWSlider::guiAddControlIcon(const QString &tooltipText)
 	// icon on a signal.
 	connect(mixDevice().get(), &MixDevice::iconNameChanged,
 		this, [this](const QString &newName) {
-			      qDebug() << "for" << mixDevice()->readableName() << "new icon" << newName;
+			      qCDebug(KMIX_LOG) << "for" << mixDevice()->readableName() << "new icon" << newName;
 			      ToggleToolButton::setIndicatorIcon(newName, m_controlIcon);
 		      });
 }
@@ -620,8 +620,8 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 	const long maxvol = vol.maxVolume();
 
 	const QMap<Volume::ChannelID, VolumeChannel> vols = vol.getVolumes();
-	for (const VolumeChannel &vc : vols)
-	{						// for all channels of this device
+	for (const VolumeChannel &vc : vols)		// for all channels of this device
+	{
 		//qCDebug(KMIX_LOG) << "Add label to " << vc.chid << ": " <<  Volume::channelNameReadable(vc.chid);
 		QWidget *subcontrolLabel;
 
@@ -638,11 +638,29 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		// Set the slider page step to be the same as the configured volume step.
 		// If that volume step is the minimum possible value (1), then set it
 		// to 2 so that it is bigger than the single step.
-		int pageStep = vol.volumeStep(false);
-		if (pageStep==1) pageStep = 2;
+		const int pageStep = qMax(static_cast<int>(vol.volumeStep(false)), 2);
 		slider->setPageStep(pageStep);
+
+		// Need to set the single step too, because some devices have a substantial
+		// range (e.g. PulseAudio always returns the range as from 0 to 65536).
+		// Having the single step at the default setting (i.e. 1) makes key and
+		// wheel events over the slider so slow that it appears not to be moving
+		// (although it actually is).  See http://bugs.kde.org/show_bug.cgi?id=416405
+		// for report.
+		//
+		// Since volume level is always displayed as a percentage, set the single
+		// step to give an increment of 1% unless the range is <100 already.  This
+		// will be subject to rounding unless the range is at least 200, but it's
+		// the best that can be done.
+		const int volRange = maxvol-minvol;
+		if (volRange>100)
+		{
+			const int volStep = qMax(qRound(volRange/100.0), 1);
+			slider->setSingleStep(volStep);
+		}
+
 		// Don't show too many tick marks if the page step is small.
-		if (pageStep<10) slider->setTickInterval(qRound((maxvol-minvol)/10.0));
+		if (pageStep<10) slider->setTickInterval(qRound(volRange/10.0));
 
 		slider->setValue(vol.getVolume(vc.chid));
 		volumeValues.push_back(vol.getVolume(vc.chid));
@@ -667,10 +685,11 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		volLayout->addWidget( slider ); // add to layout
 		ref_sliders.append ( slider ); // add to list
 
-		connect( slider, SIGNAL(valueChanged(int)), SLOT(volumeChange(int)) );
-		connect( slider, SIGNAL(sliderPressed()), SLOT(sliderPressed()) );
-		connect( slider, SIGNAL(sliderReleased()), SLOT(sliderReleased()) );
-		
+		connect(slider, &QAbstractSlider::valueChanged, this, &MDWSlider::volumeChange);
+		// TODO: Could these two connections and the tracking of m_sliderInWork
+		// be replaced by slider->isSliderDown()?
+		connect(slider, &QAbstractSlider::sliderPressed, this, &MDWSlider::sliderPressed);
+		connect(slider, &QAbstractSlider::sliderReleased, this, &MDWSlider::sliderReleased);
 	}
 }
 
