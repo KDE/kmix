@@ -134,6 +134,8 @@ protected:
     virtual void initLayout() = 0;
     virtual Qt::Orientation orientationSetting() const = 0;
 
+    void adjustControlsLayout();
+
     /**
      * Creates the widgets for all supported devices. The default implementation loops
      * over the supported MixDevice's and calls add() for each of it.

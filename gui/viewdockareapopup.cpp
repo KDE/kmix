@@ -432,9 +432,10 @@ _layoutMDW->addWidget( seperatorBetweenMastersAndStreams, row, col );
    return mdw;
 }
 
+
 void ViewDockAreaPopup::constructionFinished()
 {
-//   qCDebug(KMIX_LOG) << "ViewDockAreaPopup::constructionFinished()\n";
+	//qCDebug(KMIX_LOG);
 
 	mainWindowButton = new QPushButton(QIcon::fromTheme("show-mixer"), "" , this);
 	mainWindowButton->setObjectName(QLatin1String("MixerPanel"));
@@ -460,16 +461,11 @@ void ViewDockAreaPopup::constructionFinished()
 	int sliderRow = _layoutMDW->rowCount();
 	_layoutMDW->addLayout(optionsLayout, sliderRow, 0, 1, _layoutMDW->columnCount());
 
+	// The controls layout needs to be adjusted after the popup has been shown.
+	QTimer::singleShot(0, this, [this](){ adjustControlsLayout(); });
 	updateGuiOptions();
-
-	_layoutMDW->update();
-	_layoutMDW->activate();
-
-    //bool fnc = focusNextChild();
-    //qCWarning(KMIX_LOG) << "fnc=" <<fnc;
-
-//	qCDebug(KMIX_LOG) << "F layout()=" << layout() << ", _layoutMDW=" << _layoutMDW;
 }
+
 
 QPushButton* ViewDockAreaPopup::createRestoreVolumeButton ( int storageSlot )
 {

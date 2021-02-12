@@ -213,10 +213,10 @@ QSize MDWSlider::sizeHint() const
 int MDWSlider::labelExtentHint() const
 {
 	if (m_controlLabel==nullptr) return (0);
-
-	if (orientation()==Qt::Vertical) return (m_controlLabel->heightForWidth(m_controlLabel->minimumWidth()));
+	if (orientation()==Qt::Vertical) return (m_controlLabel->heightForWidth(m_controlLabel->width()));
 	else return (m_controlLabel->sizeHint().width());
 }
+
 
 /**
  * If a label from another widget has more lines than this widget, then a spacer is added under the label

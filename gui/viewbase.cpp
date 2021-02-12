@@ -38,6 +38,7 @@
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
 #include "gui/mdwslider.h"
+#include "gui/mdwenum.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 #include "core/mixer.h"
@@ -170,6 +171,57 @@ void ViewBase::createDeviceWidgets()
     constructionFinished();				// allow view to "polish" itself
     if (wasVisible) show();				// show again if originally visible
 }
+
+
+void ViewBase::adjustControlsLayout()
+{
+	// Adjust the view layout by setting the extent of all the control labels
+	// to allow space for the largest.  The extent of a control's label is
+	// found from its labelExtentHint() virtual function (which takes account
+	// of the control layout direction), and is then set by its setLabelExtent()
+	// virtual function.
+
+	// The maximum extent is calculated and set separately for sliders and
+	// for switches (enums).
+	int labelExtentSliders = 0;
+	int labelExtentSwitches = 0;
+
+	const int num = mixDeviceCount();
+
+	// Pass 1: Find the maximum extent of all applicable controls
+	for (int i = 0; i<num; ++i)
+	{
+		const QWidget *w = mixDeviceAt(i);
+		Q_ASSERT(w!=nullptr);
+		if (!w->isVisibleTo(this)) continue;	// not currently visible
+
+		const MDWSlider *mdws = qobject_cast<const MDWSlider *>(w);
+		if (mdws!=nullptr) labelExtentSliders = qMax(labelExtentSliders, mdws->labelExtentHint());
+
+		const MDWEnum *mdwe = qobject_cast<const MDWEnum *>(w);
+		if (mdwe!=nullptr) labelExtentSwitches = qMax(labelExtentSwitches, mdwe->labelExtentHint());
+	}
+
+	// Pass 2: Set the maximum extent of all applicable controls
+	for (int i = 0; i<num; ++i)
+	{
+		QWidget *w = mixDeviceAt(i);
+		Q_ASSERT(w!=nullptr);
+		if (!w->isVisibleTo(this)) continue;	// not currently visible
+
+		MDWSlider *mdws = qobject_cast<MDWSlider *>(w);
+		if (mdws!=nullptr && labelExtentSliders>0) mdws->setLabelExtent(labelExtentSliders);
+
+		MDWEnum *mdwe = qobject_cast<MDWEnum *>(w);
+		if (mdwe!=nullptr && labelExtentSwitches>0) mdwe->setLabelExtent(labelExtentSwitches);
+	}
+
+	// An old comment in ViewSliders::configurationUpdate() said
+	// that this was necessary for KDE3.  Not sure if it is still
+	// required two generations later.
+	layout()->activate();
+}
+
 
 /**
  * Called when a specific control is to be shown or hidden. At the moment it is only called via
