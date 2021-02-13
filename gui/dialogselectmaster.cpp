@@ -98,7 +98,7 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
 
     if (mixers.count()>0)
     {
-        QLabel *qlbl = new QLabel(xi18nc("@info", "Select the <a href=\"i\">master volume</a> channel:"), mainFrame);
+        QLabel *qlbl = new QLabel(xi18nc("@info", "Select the <link url=\"i\">master volume</link> channel:"), mainFrame);
         // Not a good idea to set Qt::LinksAccessibleByKeyboard, if the link is
         // clicked on or gets focus then the Return key will not activate the OK
         // button as expected.
