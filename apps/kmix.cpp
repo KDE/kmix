@@ -56,7 +56,6 @@
 #include "gui/kmixprefdlg.h"
 #include "gui/kmixdockwidget.h"
 #include "gui/kmixtoolbox.h"
-#include "core/version.h"
 #include "gui/viewdockareapopup.h"
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"

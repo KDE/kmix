@@ -27,7 +27,6 @@
 #include <kdbusservice.h>
 
 #include "KMixApp.h"
-#include "core/version.h"
 #include "kmix_debug.h"
 
 static const char description[] =
@@ -42,7 +41,7 @@ int main(int argc, char *argv[])
     KLocalizedString::setApplicationDomain("kmix");
 
     KAboutData aboutData("kmix", i18n("KMix"),
-                         APP_VERSION, i18n(description), KAboutLicense::GPL,
+                         KMIX_VERSION, i18n(description), KAboutLicense::GPL,
                          i18n("(c) 1996-2013 The KMix Authors"));
 
    // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.

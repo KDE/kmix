@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.5)
-project(kmix)
-set(PROJECT_VERSION "5.13.80")
-set(PROJECT_VERSION_MAJOR 5)
 
-add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
+# KDE Applications version, managed by release script.
+set(RELEASE_SERVICE_VERSION_MAJOR "21")
+set(RELEASE_SERVICE_VERSION_MINOR "03")
+set(RELEASE_SERVICE_VERSION_MICRO "70")
+set(RELEASE_SERVICE_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_VERSION_MINOR}.${RELEASE_SERVICE_VERSION_MICRO}")
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(KMIX_VERSION ${RELEASE_SERVICE_VERSION})
+project(kmix VERSION ${KMIX_VERSION})
+# SOVERSION of the kmixcore library
+set(KMIX_VERSION_MAJOR 5)
+# Version of the configuration, originally from core/version.h
+set(KMIX_CONFIG_VERSION 3)
 
 set (QT_MIN_VERSION "5.11.0")
 set (KF5_MIN_VERSION "5.48.0")
@@ -85,6 +91,13 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 if (MSVC)
   include_directories(${TAGLIB_INCLUDES})
 endif (MSVC)
+
+# TODO: this must be long obsolete by now
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
+add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
+add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
 
 if (ALSA_FOUND)
   set(HAVE_LIBASOUND2 TRUE)
@@ -199,7 +212,7 @@ target_link_libraries(kmixcore
     KF5::ConfigGui
 )
 
-set_target_properties(kmixcore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+set_target_properties(kmixcore PROPERTIES VERSION ${KMIX_VERSION} SOVERSION ${KMIX_VERSION_MAJOR})
 generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_export.h)
 
 if (HAVE_LIBASOUND2)

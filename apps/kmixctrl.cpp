@@ -30,7 +30,6 @@
 #include "gui/kmixtoolbox.h"
 #include "core/GlobalConfig.h"
 #include "core/mixer.h"
-#include "core/version.h"
 
 static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
@@ -42,7 +41,7 @@ int main(int argc, char *argv[])
     KLocalizedString::setApplicationDomain("kmix");
 
     KAboutData aboutData("kmixctrl", i18n("KMixCtrl"),
-			 APP_VERSION, i18n(description),
+			 KMIX_VERSION, i18n(description),
 			 KAboutLicense::GPL,
 			 i18n("(c) 2000 by Stefan Schimanski"));
 
