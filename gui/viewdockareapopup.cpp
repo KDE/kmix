@@ -34,9 +34,9 @@
 #include <klocalizedstring.h>
 #include <kwindowsystem.h>
 #include <kglobalaccel.h>
+#include <kxmlguiwindow.h>
 
 // KMix
-#include "apps/kmix.h"
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 #include "gui/dialogchoosebackends.h"
@@ -50,7 +50,7 @@
 
 
 ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags,
-				     const QString &guiProfileId, KMixWindow *dockW)
+				     const QString &guiProfileId, KXmlGuiWindow *dockW)
 	: ViewBase(parent, id, {}, vflags, guiProfileId),
 	  _kmixMainWindow(dockW)
 {

@@ -26,7 +26,7 @@
 #include <klocalizedstring.h>
 #include <kdbusservice.h>
 
-#include "KMixApp.h"
+#include "kmixapp.h"
 #include "kmix_debug.h"
 
 static const char description[] =

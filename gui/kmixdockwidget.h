@@ -31,8 +31,8 @@ class QMenu;
 class QWidgetAction;
 
 class KToggleAction;
+class KXmlGuiWindow;
 
-class KMixWindow;
 class ViewDockAreaPopup;
 
 
@@ -40,11 +40,11 @@ class KMixDockWidget : public KStatusNotifierItem
 {
    Q_OBJECT
 
- public:
-   explicit KMixDockWidget(KMixWindow *parent);
+public:
+   explicit KMixDockWidget(KXmlGuiWindow *parent);
    virtual ~KMixDockWidget();
 
- public slots:
+public slots:
    void activate(const QPoint &pos) override;
    void controlsChange(ControlManager::ChangeType changeType);
 
@@ -58,20 +58,23 @@ private:
     QWidgetAction *_dockWidgetAction;
     int  _oldToolTipValue;
     char _oldPixmapType;
-    KMixWindow* _kmixMainWindow;
+    KXmlGuiWindow *_kmixMainWindow;
     int _delta;
     KToggleAction *_dockMuteAction;
 
+private:
     bool onlyHaveOneMouseButtonAction() const;
     void refreshVolumeLevels();
     void createWidgets();
     void setVolumeTip();
     void updatePixmap();
 
- private slots:
+protected slots:
+   void contextMenuAboutToShow();
+
+private slots:
    void dockMute();
    void trayWheelEvent(int delta, Qt::Orientation wheelOrientation);
-   void contextMenuAboutToShow();
 };
 
 #endif

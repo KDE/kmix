@@ -36,13 +36,15 @@ class QWidget;
 class Mixer;
 class MixDevice;
 class KMixWindow;
+class KXmlGuiWindow;
+
 
 class ViewDockAreaPopup : public ViewBase
 {
     Q_OBJECT
 
 public:
-    ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags, const QString &guiProfileId, KMixWindow *dockW);
+    ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBase::ViewFlags vflags, const QString &guiProfileId, KXmlGuiWindow *dockW);
     virtual ~ViewDockAreaPopup();
 
     QWidget* add(shared_ptr<MixDevice> md) override;
@@ -58,7 +60,7 @@ protected:
     void keyPressEvent(QKeyEvent *ev) override;
 
 private:
-    KMixWindow *_kmixMainWindow;
+    KXmlGuiWindow *_kmixMainWindow;
     QGridLayout *_layoutMDW;
 
     QPushButton* createRestoreVolumeButton (int storageSlot);

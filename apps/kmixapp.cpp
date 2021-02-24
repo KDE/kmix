@@ -19,16 +19,19 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "KMixApp.h"
+#include "kmixapp.h"
 
 #include <qapplication.h>
 #include <qcommandlineparser.h>
 
-#include "apps/kmix.h"
+#include "kmix_debug.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
+#include "apps/kmixwindow.h"
+
 
 static bool firstCaller = true;
+
 
 // Originally this class was a subclass of KUniqueApplication.
 // Since, now that a unique application is enforced earlier by KDBusService,
@@ -37,7 +40,7 @@ static bool firstCaller = true;
 
 KMixApp::KMixApp()
 	: QObject(),
-	  m_kmix(0),
+	  m_kmix(nullptr),
 	  creationLock(QMutex::Recursive)
 {
 	GlobalConfig::init();
@@ -56,14 +59,14 @@ KMixApp::~KMixApp()
 	qCDebug(KMIX_LOG) << "Deleting KMixApp";
 	ControlManager::instance().shutdownNow();
 	delete m_kmix;
-	m_kmix = 0;
+	m_kmix = nullptr;
 	GlobalConfig::shutdown();
 }
 
 void KMixApp::createWindowOnce(bool hasArgKeepvisibility, bool reset)
 {
 	// Create window, if it was not yet created (e.g. via autostart or manually)
-	if (m_kmix == 0)
+	if (m_kmix==nullptr)
 	{
 		qCDebug(KMIX_LOG) << "Creating new KMix window";
 		m_kmix = new KMixWindow(hasArgKeepvisibility, reset);

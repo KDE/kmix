@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "apps/kmix.h"
+#include "kmixwindow.h"
 
 // include files for Qt
 #include <QApplication>
@@ -29,29 +29,31 @@
 #include <QPushButton>
 #include <qradiobutton.h>
 #include <QCursor>
-#include <QString>
 #include <QTabWidget>
 #include <QPointer>
 #include <QHash>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
+#include <QKeySequence>
 
 // include files for KDE
-#include <KGlobalAccel>
+#include <kglobalaccel.h>
 #include <kmessagebox.h>
 #include <klocalizedstring.h>
 #include <kconfig.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
 #include <kactioncollection.h>
-#include <KProcess>
 
 // KMix
-#include "gui/guiprofile.h"
+#include "kmix_debug.h"
 #include "core/ControlManager.h"
 #include "core/GlobalConfig.h"
 #include "core/MasterControl.h"
 #include "core/MediaController.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
+#include "gui/guiprofile.h"
 #include "gui/kmixerwidget.h"
 #include "gui/kmixprefdlg.h"
 #include "gui/kmixdockwidget.h"
@@ -60,18 +62,14 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
-#include "kmix_debug.h"
-#include <QDBusInterface>
-#include <QDBusPendingCall>
-#include <QKeySequence>
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
  */
 
 KMixWindow::KMixWindow(bool invisible, bool reset) :
-		KXmlGuiWindow(0, Qt::WindowFlags(
-		KDE_DEFAULT_WINDOWFLAGS | Qt::WindowContextHelpButtonHint)), m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
+		KXmlGuiWindow(nullptr, Qt::WindowFlags(KDE_DEFAULT_WINDOWFLAGS|Qt::WindowContextHelpButtonHint)),
+		m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
 		m_autouseMultimediaKeys(true),
 		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
 {
@@ -173,7 +171,6 @@ void KMixWindow::initActions()
 
 	// settings menu
 	_actionShowMenubar = KStandardAction::showMenubar(this, SLOT(toggleMenuBar()), actionCollection());
-	//actionCollection()->addAction(QStringLiteral( a->objectName()), a );
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
 	QAction* action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
@@ -1196,17 +1193,6 @@ void KMixWindow::applyPrefs()
 void KMixWindow::toggleMenuBar()
 {
 	menuBar()->setVisible(_actionShowMenubar->isChecked());
-}
-
-void KMixWindow::forkExec(const QStringList& args)
-{
-	int pid = KProcess::startDetached(args);
-	if (pid == 0)
-	{
-		KMessageBox::error(this, i18n("The helper application is either not installed or not working.\n\n%1",
-					      args.join(QLatin1String(" "))));
-	}
-
 }
 
 void KMixWindow::slotConfigureCurrentView()

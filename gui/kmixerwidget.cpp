@@ -21,12 +21,9 @@
 #include "gui/kmixerwidget.h"
 
 // Qt
-#include <QIcon>
-#include <QLabel>
 #include <qpixmap.h>
-#include <QString>
 #include <qtoolbutton.h>
-#include <QVBoxLayout>
+#include <qboxlayout.h>
 #include <qtabwidget.h>
 
 // KDE
@@ -34,14 +31,13 @@
 #include <kconfiggroup.h>
 
 // KMix
-#include "apps/kmix.h"
+#include "core/GlobalConfig.h"
+#include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
 #include "gui/viewsliders.h"
-#include "core/GlobalConfig.h"
-#include "core/mixer.h"
-#include "core/mixertoolbox.h"
 
 
 /**

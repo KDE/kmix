@@ -21,17 +21,12 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "gui/kmixdockwidget.h"
+#include "kmixdockwidget.h"
 
 // Define this if KStatusNotifierItem::setOverlayIconByName() works.
 // As of March 2020 it appears to be not working, the base icon is
 // shown but with no overlay.
 //#define CAN_USE_ICON_OVERLAY	1
-
-#include <klocalizedstring.h>
-#include <kwindowsystem.h>
-#include <kactioncollection.h>
-#include <ktoggleaction.h>
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -44,12 +39,18 @@
 #include <QPainter>
 #endif // CAN_USE_ICON_OVERLAY
 
-#include "apps/kmix.h"
+#include <klocalizedstring.h>
+#include <kwindowsystem.h>
+#include <kactioncollection.h>
+#include <ktoggleaction.h>
+#include <kxmlguiwindow.h>
+
 #include "core/ControlManager.h"
+#include "core/mixer.h"
 #include "gui/viewdockareapopup.h"
 
 
-KMixDockWidget::KMixDockWidget(KMixWindow* parent)
+KMixDockWidget::KMixDockWidget(KXmlGuiWindow *parent)
     : KStatusNotifierItem(parent)
     , _oldToolTipValue(-1)
     , _oldPixmapType('-')

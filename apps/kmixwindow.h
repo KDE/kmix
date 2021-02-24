@@ -18,49 +18,44 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KMIX_H
-#define KMIX_H
-
+#ifndef KMIXWINDOW_H
+#define KMIXWINDOW_H
 
 #include <config.h>
 
 // Qt
-#include <QString>
-
-class QLabel;
-#include <qlist.h>
-#include <QVBoxLayout>
-class QPushButton;
-#include <QTimer>
-class QTabWidget;
+#include <qboxlayout.h>
+#include <qtimer.h>
 
 // KDE
-class KAccel;
-class KToggleAction;
+// class KAccel;
 #include <kxmlguiwindow.h>
 
 // KMix
 #include "core/GlobalConfig.h"
 #include "core/ControlManager.h"
+#include "core/mixer.h"
+
+class QTabWidget;
+
+class KToggleAction;
 
 class KMixDockWidget;
 class KMixerWidget;
 class KMixWindow;
 class Mixer;
-#include "core/mixer.h"
-
 class DialogSelectMaster;
 
-class
-KMixWindow : public KXmlGuiWindow
+
+class KMixWindow : public KXmlGuiWindow
 {
    Q_OBJECT
 
-  public:
+public:
    KMixWindow(bool invisible, bool reset);
-   ~KMixWindow();
+   virtual ~KMixWindow();
 
-  private:
+private:
    void saveBaseConfig();
    void saveViewConfig();
    void loadAndInitConfig(bool reset);
@@ -74,9 +69,10 @@ KMixWindow : public KXmlGuiWindow
 
    void fixConfigAfterRead();
 
+protected:
    bool queryClose() override;
 
-  public slots:
+public slots:
    void controlsChange(ControlManager::ChangeType changeType);
    void quit();
    void showSettings();
@@ -95,15 +91,10 @@ KMixWindow : public KXmlGuiWindow
    void newMixerShown(int tabIndex);
    void slotSelectMaster();
 
-    private:
-        KMixerWidget* findKMWforTab( const QString& tabId );
-
-        void forkExec(const QStringList& args);
-
-   KAccel *m_keyAccel;
-   KToggleAction* _actionShowMenubar;
-
 private:
+    KMixerWidget* findKMWforTab( const QString& tabId );
+    KToggleAction* _actionShowMenubar;
+
    /**
     * configSnapshot is used to hold the original state before modifications in the preferences dialog
     */
@@ -121,23 +112,25 @@ private:
 
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
-   QLabel      *m_errorLabel;
-   QList<QString> m_backendFilter;
+   QStringList m_backendFilter;
    unsigned int m_configVersion;
-   void showVolumeDisplay();
-   void increaseOrDecreaseVolume(bool increase);
 
-   bool addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition);
-   void setInitialSize();
 
-    private:
+private:
+    void showVolumeDisplay();
+    void increaseOrDecreaseVolume(bool increase);
+
+    bool addMixerWidget(const QString& mixer_ID, QString guiprofId, int insertPosition);
+    void setInitialSize();
+    bool profileExists(QString guiProfileId);
+    bool updateDocking();
+    void removeDock();
+    void updateTabsClosable();
+
+private:
     static QString getKmixctrlRcFilename(const QString &postfix);
-	bool profileExists(QString guiProfileId);
-	bool updateDocking();
-	void removeDock();
-	void updateTabsClosable();
 
-  private slots:
+private slots:
    void slotConfigureCurrentView();
 
    void plugged(const char *driverName, const QString &udi, int dev);
@@ -163,4 +156,4 @@ private:
    void saveVolumes4() { saveVolumes(QString("4")); }
 };
 
-#endif // KMIX_H
+#endif							// KMIXWINDOW_H

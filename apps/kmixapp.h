@@ -27,6 +27,7 @@
 class QCommandLineParser;
 class KMixWindow;
 
+
 class KMixApp : public QObject
 {
     Q_OBJECT

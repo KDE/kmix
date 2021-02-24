@@ -280,8 +280,8 @@ target_link_libraries(kmixgui
 
 set(kmix_SRCS
   apps/main.cpp
-  apps/kmix.cpp
-  apps/KMixApp.cpp
+  apps/kmixwindow.cpp
+  apps/kmixapp.cpp
   ${kmix_debug_SRCS}
 )
 
