@@ -21,8 +21,6 @@
 #ifndef MixDevice_h
 #define MixDevice_h
 
-#include <config.h>
-
 #if defined(HAVE_STD_SHARED_PTR)
 #include <memory>
 using std::shared_ptr;

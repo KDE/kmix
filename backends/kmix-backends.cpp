@@ -22,8 +22,6 @@
 
 /* This code is being #include'd from mixer.cpp */
 
-#include <config.h>
-
 #include "mixer_backend.h"
 #include "core/mixer.h"
 

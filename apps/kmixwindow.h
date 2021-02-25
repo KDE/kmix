@@ -21,8 +21,6 @@
 #ifndef KMIXWINDOW_H
 #define KMIXWINDOW_H
 
-#include <config.h>
-
 // Qt
 #include <qboxlayout.h>
 #include <qtimer.h>

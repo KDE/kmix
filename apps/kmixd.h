@@ -22,8 +22,6 @@
 #define KMIXD_H
 
 
-#include <config.h>
-
 // Qt
 #include <QDBusContext>
 #include <QString>

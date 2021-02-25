@@ -79,6 +79,7 @@ find_package(Canberra)
 # ALSA is an optional dependency
 find_package(ALSA)
 
+# TODO: this test is probably obsolete by now
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
     #include <memory>
@@ -88,8 +89,6 @@ check_cxx_source_compiles("
     #include <tr1/memory>
     int main() { std::tr1::shared_ptr<int> p; return 0; }
 " HAVE_STD_TR1_SHARED_PTR)
-
-configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 ####################################################################################################
 ########### compile definitions ####################################################################
@@ -107,6 +106,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
 add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
+
+if (HAVE_STD_SHARED_PTR)
+  add_definitions(-DHAVE_STD_SHARED_PTR)
+else (HAVE_STD_SHARED_PTR)
+  if (HAVE_STD_TR1_SHARED_PTR)
+    add_definitions(-DHAVE_STD_TR1_SHARED_PTR)
+  endif (HAVE_STD_TR1_SHARED_PTR)
+endif (HAVE_STD_SHARED_PTR)
 
 if (ALSA_FOUND)
   set(HAVE_LIBASOUND2 TRUE)

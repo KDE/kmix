@@ -21,7 +21,6 @@
 #ifndef MASTERCONTROL_H_
 #define MASTERCONTROL_H_
 
-#include <config.h>
 #include "kmixcore_export.h"
 
 #if defined(HAVE_STD_SHARED_PTR)
