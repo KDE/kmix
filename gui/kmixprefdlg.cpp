@@ -198,9 +198,15 @@ void KMixPrefDlg::createGeneralTab()
 	behaviorLayout->setContentsMargins(0, 0, 0, 0);
 	grp->setLayout(behaviorLayout);
 
+	// Only PulseAudio supports volume overdrive.  Ignore that
+	// configuration option for other backends, and show a warning
+	// message.
+	const bool pulseAudioAvailable = Mixer::pulseaudioPresent();
+
 	// Volume Overdrive
 	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), grp);
-	m_volumeOverdrive->setChecked(Settings::volumeOverdrive());
+	m_volumeOverdrive->setChecked(pulseAudioAvailable && Settings::volumeOverdrive());
+	m_volumeOverdrive->setEnabled(pulseAudioAvailable);
 	connect(m_volumeOverdrive, &QAbstractButton::toggled, this, [this]() { settingChanged(); });
 	addWidgetToLayout(m_volumeOverdrive, behaviorLayout, 10,
 			  i18nc("@info:tooltip", "Allow the volume to be raised above the recommended maximum (typically to 150%)"));
@@ -211,7 +217,7 @@ void KMixPrefDlg::createGeneralTab()
 	m_pulseOnlyWarning->setMessageType(KMessageWidget::Warning);
 	m_pulseOnlyWarning->setCloseButtonVisible(false);
 	m_pulseOnlyWarning->setWordWrap(true);
-	m_pulseOnlyWarning->setVisible(false);
+	m_pulseOnlyWarning->setVisible(!pulseAudioAvailable);
 	addWidgetToLayout(m_pulseOnlyWarning, behaviorLayout, 2, "");
 
 	// Restart warning
@@ -222,7 +228,7 @@ void KMixPrefDlg::createGeneralTab()
 	m_restartWarning->setMessageType(KMessageWidget::Information);
 	m_restartWarning->setCloseButtonVisible(false);
 	m_restartWarning->setWordWrap(true);
-	m_restartWarning->setVisible(false);
+	m_restartWarning->setVisible(pulseAudioAvailable);
 	addWidgetToLayout(m_restartWarning, behaviorLayout, 2, "");
 
 	// Volume Feedback
@@ -240,8 +246,10 @@ void KMixPrefDlg::createGeneralTab()
 	canberraWarning->setCloseButtonVisible(false);
 	canberraWarning->setWordWrap(true);
 	addWidgetToLayout(canberraWarning, behaviorLayout, 2, "");
+	// Volume Feedback check box
+	m_beepOnVolumeChange->setChecked(false);
+	m_beepOnVolumeChange->setEnabled(false);
 #endif
-
 	// Volume Step layout
 	QHBoxLayout *horizontalGrid = new QHBoxLayout();
 	horizontalGrid->setMargin(0);
@@ -473,28 +481,6 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 	bool autostartFileExists = !autostartConfigFilename.isEmpty();
 	allowAutostartWarning->setVisible(!autostartFileExists);
 	allowAutostart->setEnabled(autostartFileExists);
-
-#ifndef HAVE_CANBERRA
-	// Need to be configured with Canberra to enable volume feedback.
-	m_beepOnVolumeChange->setChecked(false);
-	m_beepOnVolumeChange->setEnabled(false);
-#endif
-	// Only PulseAudio supports volume overdrive.  Disable that
-	// configuration option for other backends, and show a warning
-	// message.
-	const bool pulseAudioAvailable = Mixer::pulseaudioPresent();
-	if (!pulseAudioAvailable)
-	{
-		m_volumeOverdrive->setChecked(false);
-		m_volumeOverdrive->setEnabled(false);
-		m_pulseOnlyWarning->setVisible(true);
-		m_restartWarning->setVisible(false);
-	}
-	else
-	{
-		m_pulseOnlyWarning->setVisible(false);
-		m_restartWarning->setVisible(true);
-	}
 
 	m_controlsChanged = KMixPrefDlg::ChangedNone;
 	KConfigDialog::updateButtons();
