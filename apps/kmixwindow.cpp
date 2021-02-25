@@ -1110,59 +1110,40 @@ void KMixWindow::showAbout()
 	actionCollection()->action("help_about_app")->trigger();
 }
 
+
 /**
  * Apply the Preferences from the preferences dialog. Depending on what has been changed,
  * the corresponding announcements are made.
  */
-void KMixWindow::applyPrefs()
+void KMixWindow::applyPrefs(KMixPrefDlg::PrefChanges changes)
 {
-// 	// -1- Determine what has changed ------------------------------------------------------------------
-// 	GlobalConfigData& config = GlobalConfig::instance().data;
-// 	GlobalConfigData& configBefore = configDataSnapshot;
+	qCDebug(KMIX_LOG) << "changes" << changes;
 
-// TODO: Work out how to get the "what has changed" result from the
-// KMixPrefDlg.  For now, just assume that everything has.
-
-	bool labelsHasChanged = true;
-	bool ticksHasChanged = true;
-	bool dockwidgetHasChanged = true;
-	bool toplevelOrientationHasChanged = true;
-	bool traypopupOrientationHasChanged = true;
-// 	bool labelsHasChanged = config.showLabels ^ configBefore.showLabels;
-// 	bool ticksHasChanged = config.showTicks ^ configBefore.showTicks;
-// 	bool dockwidgetHasChanged = config.showDockWidget ^ configBefore.showDockWidget;
-// 
-// 	bool toplevelOrientationHasChanged = config.getToplevelOrientation() != configBefore.getToplevelOrientation();
-// 	bool traypopupOrientationHasChanged = config.getTraypopupOrientation() != configBefore.getTraypopupOrientation();
-// 	qCDebug(KMIX_LOG)
-// 	<< "toplevelOrientationHasChanged=" << toplevelOrientationHasChanged << ", config="
-// 			<< config.getToplevelOrientation() << ", configBefore=" << configBefore.getToplevelOrientation();
-// 	qCDebug(KMIX_LOG)
-// 	<< "trayOrientationHasChanged=" << traypopupOrientationHasChanged << ", config=" << config.getTraypopupOrientation()
-// 			<< ", configBefore=" << configBefore.getTraypopupOrientation();
-
-	// -2- Determine what effect the changes have ------------------------------------------------------------------
-
-	if (dockwidgetHasChanged || toplevelOrientationHasChanged || traypopupOrientationHasChanged)
+	if (changes & KMixPrefDlg::ChangedControls)
 	{
 		// These might need a complete relayout => announce a ControlList change to rebuild everything
 		ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("Preferences Dialog"));
 	}
-	else if (labelsHasChanged || ticksHasChanged)
+	else if (changes & KMixPrefDlg::ChangedMaster)
+	{
+		// This announce was originally made in KMixPrefDlg::updateSettings().
+		// It is treated as equivalent to ControlManager::ControlList by
+		// the system tray popup, hence the 'else' here.
+		ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
+	}
+	if (changes & KMixPrefDlg::ChangedGui)
 	{
 		ControlManager::instance().announce(QString(), ControlManager::GUI, QString("Preferences Dialog"));
 	}
-	// showOSD does not require any information. It reads on-the-fly from GlobalConfig.
 
-	// -3- Apply all changes ------------------------------------------------------------------
-
-//	this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
+	//this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
 	qApp->processEvents();
 
 	// Remove saveConfig() IF aa changes have been migrated to GlobalConfig.
 	// Currently there is still stuff like "show menu bar".
 	saveConfig();
 }
+
 
 void KMixWindow::toggleMenuBar()
 {

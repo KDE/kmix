@@ -33,7 +33,7 @@
 
 // KMix
 #include "core/ControlManager.h"
-#include "core/mixer.h"
+#include "gui/kmixprefdlg.h"
 
 class QTabWidget;
 
@@ -83,12 +83,14 @@ public slots:
    void saveVolumes();
    void saveVolumes(const QString &postfix);
    void saveConfig();
-   virtual void applyPrefs();
    void recreateGUI(bool saveView, bool reset);
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab, bool reset);
    void recreateGUIwithSavingView();
    void newMixerShown(int tabIndex);
    void slotSelectMaster();
+
+protected slots:
+    void applyPrefs(KMixPrefDlg::PrefChanges changed);
 
 private:
     KMixerWidget* findKMWforTab( const QString& tabId );

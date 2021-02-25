@@ -25,6 +25,7 @@
 #include <kconfigdialog.h>
 
 class KMixPrefWidget;
+class DialogChooseBackends;
 
 class QBoxLayout;
 class QCheckBox;
@@ -37,12 +38,10 @@ class QWidget;
 
 class KMessageWidget;
 
-#include "gui/dialogchoosebackends.h"
-
 
 class KMixPrefDlg: public KConfigDialog
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
 	enum KMixPrefPage
@@ -50,12 +49,22 @@ public:
 		PrefGeneral, PrefSoundMenu, PrefStartup
 	};
 
+	enum PrefChanged
+	{
+		ChangedNone = 0x00,
+		ChangedAny = 0x01,
+		ChangedControls = 0x02,
+		ChangedGui = 0x04,
+		ChangedMaster = 0x08
+	};
+	Q_DECLARE_FLAGS(PrefChanges, PrefChanged);
+
 	static KMixPrefDlg* createInstance(QWidget *parent);
 	static KMixPrefDlg* getInstance();
 	void switchToPage(KMixPrefPage page);
 
 signals:
-	void kmixConfigHasChanged();
+	void kmixConfigHasChanged(KMixPrefDlg::PrefChanges changed);
 
 protected:
 	void showEvent(QShowEvent * event) override;
@@ -73,7 +82,7 @@ protected:
 	bool hasChanged() override;
 
 private slots:
-	void slotControlChanged();
+	void settingChanged(KMixPrefDlg::PrefChanged changes = KMixPrefDlg::ChangedAny);
 
 private:
 	static KMixPrefDlg* instance;
@@ -99,7 +108,7 @@ private:
 	QFrame *m_startupTab;
 	QFrame *m_controlsTab;
 
-	bool m_controlsChanged;
+	KMixPrefDlg::PrefChanges m_controlsChanged;
 
 	QCheckBox *m_dockingChk;
 	KMessageWidget *dynamicControlsRestoreWarning;
@@ -117,7 +126,7 @@ private:
 
 	QBoxLayout *layoutControlsTab;
 	QBoxLayout *layoutStartupTab;
-	DialogChooseBackends* dvc;
+	DialogChooseBackends *dvc;
 
 	QRadioButton *_rbVertical;
 	QRadioButton *_rbHorizontal;
@@ -129,4 +138,7 @@ private:
 	KPageWidgetItem* startupPage;
 };
 
-#endif // KMIXPREFDLG_H
+Q_DECLARE_OPERATORS_FOR_FLAGS(KMixPrefDlg::PrefChanges)
+
+
+#endif							// KMIXPREFDLG_H
