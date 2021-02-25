@@ -38,26 +38,15 @@
 #include "dialogstatesaver.h"
 #include "gui/kmixerwidget.h"
 #include "gui/dialogchoosebackends.h"
-
 #include "settings.h"
 
 
-KMixPrefDlg* KMixPrefDlg::instance = 0;
-
-KMixPrefDlg* KMixPrefDlg::getInstance()
+/* static */ KMixPrefDlg *KMixPrefDlg::instance(QWidget *parent)
 {
-	return instance;
+	KMixPrefDlg *sInstance = new KMixPrefDlg(parent);
+	return (sInstance);
 }
 
-KMixPrefDlg* KMixPrefDlg::createInstance(QWidget *parent)
-{
-	if (instance == 0)
-	{
-		instance = new KMixPrefDlg(parent);
-	}
-	return instance;
-
-}
 
 KMixPrefDlg::KMixPrefDlg(QWidget *parent)
 	: KConfigDialog(parent, i18n("Configure"), Settings::self())
@@ -66,45 +55,41 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent)
 
 	dvc = nullptr;
 
-	// general buttons
-	m_generalTab = new QFrame(this);
-	m_controlsTab = new QFrame(this);
 	m_startupTab = new QFrame(this);
-
 	createStartupTab();
+	m_generalTab = new QFrame(this);
 	createGeneralTab();
+	m_controlsTab = new QFrame(this);
 	createControlsTab();
 	updateWidgets(); // I thought KConfigDialog would call this, but I saw during a gdb session that it does not do so.
 
-	generalPage = addPage(m_generalTab, i18n("General"), "configure");
-	startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
-	soundmenuPage = addPage(m_controlsTab, i18n("Volume Control"), "audio-volume-high");
+	m_generalPage = addPage(m_generalTab, i18n("General"), "configure");
+	m_startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
+	m_soundmenuPage = addPage(m_controlsTab, i18n("Volume Control"), "audio-volume-high");
 
-	new DialogStateSaver(this);
+	new DialogStateSaver(this);			// save dialogue size when closed
 }
 
-/**
- * Switches to a specific page and shows it.
- * @param page
- */
-void KMixPrefDlg::switchToPage(KMixPrefPage page)
+
+void KMixPrefDlg::showAtPage(KMixPrefDlg::PrefPage page)
 {
 	switch (page)
 	{
-	case PrefGeneral:
-		setCurrentPage(generalPage);
+	case PageGeneral:
+		setCurrentPage(m_generalPage);
 		break;
-	case PrefSoundMenu:
-		setCurrentPage(soundmenuPage);
+	case PageStartup:
+		setCurrentPage(m_startupPage);
 		break;
-	case PrefStartup:
-		setCurrentPage(startupPage);
+	case PageVolumeControl:
+		setCurrentPage(m_soundmenuPage);
 		break;
 	default:
-		qCWarning(KMIX_LOG) << "Tried to activated unknown preferences page" << page;
+		qCWarning(KMIX_LOG) << "Unknown preferences page" << page;
 		break;
 	}
-	show();
+
+	show();						// show with the selected page
 }
 
 

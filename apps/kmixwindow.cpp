@@ -266,9 +266,11 @@ void KMixWindow::initActionsAfterInitMixer()
 }
 
 
+//  This needs to done on initialisation, so that the
+//  signal can be connected.
 void KMixWindow::initPrefDlg()
 {
-	KMixPrefDlg *prefDlg = KMixPrefDlg::createInstance(this);
+	KMixPrefDlg *prefDlg = KMixPrefDlg::instance(this);
 	connect(prefDlg, &KMixPrefDlg::kmixConfigHasChanged, this, &KMixWindow::applyPrefs);
 }
 
@@ -1092,11 +1094,11 @@ void KMixWindow::quit()
 }
 
 /**
- * Shows the configuration dialog, with the "general" tab opened.
+ * Shows the configuration dialog, with the "General" tab opened.
  */
 void KMixWindow::showSettings()
 {
-	KMixPrefDlg::getInstance()->switchToPage(KMixPrefDlg::PrefGeneral);
+	KMixPrefDlg::instance()->showAtPage(KMixPrefDlg::PageGeneral);
 }
 
 

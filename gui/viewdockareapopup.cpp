@@ -491,8 +491,7 @@ void ViewDockAreaPopup::refreshVolumeLevels()
 
 void ViewDockAreaPopup::configureView()
 {
-	KMixPrefDlg *prefDlg = KMixPrefDlg::getInstance();
-	prefDlg->switchToPage(KMixPrefDlg::PrefSoundMenu);
+	KMixPrefDlg::instance()->showAtPage(KMixPrefDlg::PageVolumeControl);
 }
 
 

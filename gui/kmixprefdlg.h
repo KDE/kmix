@@ -44,9 +44,11 @@ class KMixPrefDlg: public KConfigDialog
 	Q_OBJECT
 
 public:
-	enum KMixPrefPage
+	enum PrefPage
 	{
-		PrefGeneral, PrefSoundMenu, PrefStartup
+		PageGeneral,
+		PageStartup,
+		PageVolumeControl
 	};
 
 	enum PrefChanged
@@ -59,15 +61,14 @@ public:
 	};
 	Q_DECLARE_FLAGS(PrefChanges, PrefChanged);
 
-	static KMixPrefDlg* createInstance(QWidget *parent);
-	static KMixPrefDlg* getInstance();
-	void switchToPage(KMixPrefPage page);
+	static KMixPrefDlg *instance(QWidget *parent = nullptr);
+	void showAtPage(KMixPrefDlg::PrefPage page);
 
 signals:
 	void kmixConfigHasChanged(KMixPrefDlg::PrefChanges changed);
 
 protected:
-	void showEvent(QShowEvent * event) override;
+	void showEvent(QShowEvent *event) override;
 	/**
 	 * Orientation is not supported by default => implement manually
 	 * @Override
@@ -85,9 +86,7 @@ private slots:
 	void settingChanged(KMixPrefDlg::PrefChanged changes = KMixPrefDlg::ChangedAny);
 
 private:
-	static KMixPrefDlg* instance;
-
-	KMixPrefDlg(QWidget *parent);
+	explicit KMixPrefDlg(QWidget *parent = nullptr);
 	virtual ~KMixPrefDlg() = default;
 
 	enum KMixPrefDlgPrefOrientationType
@@ -133,9 +132,9 @@ private:
 	QRadioButton *_rbTraypopupVertical;
 	QRadioButton *_rbTraypopupHorizontal;
 
-	KPageWidgetItem* generalPage;
-	KPageWidgetItem* soundmenuPage;
-	KPageWidgetItem* startupPage;
+	KPageWidgetItem *m_generalPage;
+	KPageWidgetItem *m_soundmenuPage;
+	KPageWidgetItem *m_startupPage;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KMixPrefDlg::PrefChanges)
