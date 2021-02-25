@@ -13,6 +13,17 @@ set(KMIX_VERSION_MAJOR 5)
 # Version of the configuration, originally from core/version.h
 set(KMIX_CONFIG_VERSION 3)
 
+####################################################################################################
+########### options ################################################################################
+####################################################################################################
+
+# Plasma dataengines are apparently deprecated and will be removed in Plasma 6
+option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
+
+####################################################################################################
+########### dependencies and tests #################################################################
+####################################################################################################
+
 set (QT_MIN_VERSION "5.11.0")
 set (KF5_MIN_VERSION "5.48.0")
 set (PA_MIN_VERSION "0.9.16")
@@ -52,21 +63,20 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     XmlGui
 )
 
-find_package(KF5Plasma ${KF5_MIN_VERSION})
-set_package_properties(KF5Plasma PROPERTIES
-                       TYPE OPTIONAL
-                       PURPOSE "Required to build Plasma data engine"
-                      )
+if (BUILD_DATAENGINE)
+  find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
+  set_package_properties(KF5Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
+endif (BUILD_DATAENGINE)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 # PulseAudio is an optional dependency
-#
 find_package(PulseAudio "${PA_MIN_VERSION}")
 
 # Canberra is an optional dependency
 find_package(Canberra)
 
+# ALSA is an optional dependency
 find_package(ALSA)
 
 include(CheckCXXSourceCompiles)
@@ -78,7 +88,6 @@ check_cxx_source_compiles("
     #include <tr1/memory>
     int main() { std::tr1::shared_ptr<int> p; return 0; }
 " HAVE_STD_TR1_SHARED_PTR)
-
 
 configure_file (config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
@@ -121,10 +130,12 @@ endif (CANBERRA_FOUND)
 add_subdirectory(doc)
 add_subdirectory(pics)
 add_subdirectory(profiles)
-#add_subdirectory(tests)
-if (KF5Plasma_FOUND)
-  add_subdirectory(plasma)
-endif ()
+
+if (BUILD_DATAENGINE)
+  if (KF5Plasma_FOUND)
+    add_subdirectory(plasma)
+  endif (KF5Plasma_FOUND)
+endif (BUILD_DATAENGINE)
 
 ####################################################################################################
 ########### definitions: logging ###################################################################
