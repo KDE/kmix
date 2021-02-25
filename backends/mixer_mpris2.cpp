@@ -21,10 +21,11 @@
  */
 
 #include "mixer_mpris2.h"
+
 #include "core/mixer.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "kmix_debug.h"
+#include "settings.h"
 
 #include <QDBusReply>
 #include <qvariant.h>
@@ -152,8 +153,7 @@ void Mixer_MPRIS2::volumeChanged(MPrisControl* mad, double newVolume)
 {
 	shared_ptr<MixDevice> md = m_mixDevices.get(mad->getId());
 	int volInt = newVolume *100;
-	if (GlobalConfig::instance().data.debugVolume)
-		qCDebug(KMIX_LOG) << "changed" << volInt;
+	if (Settings::debugVolume()) qCDebug(KMIX_LOG) << "changed" << volInt;
 	volumeChangedInternal(md, volInt);
 }
 

@@ -18,7 +18,8 @@
  */
 
 #include "ControlManager.h"
-#include "core/GlobalConfig.h"
+
+#include "settings.h"
 #include "kmix_debug.h"
 
 #include <QMutableListIterator>
@@ -61,7 +62,7 @@ void ControlManager::announce(const QString &mixerId, ControlManager::ChangeType
 			bool listenerAlreadyProcesed = processedListeners.contains(listener);
 			if ( listenerAlreadyProcesed )
 			{
-				if (GlobalConfig::instance().data.debugControlManager)
+				if (Settings::debugControlManager())
 					qCDebug(KMIX_LOG) << "Skipping already processed listener";
 				continue;
 			}
@@ -71,7 +72,7 @@ void ControlManager::announce(const QString &mixerId, ControlManager::ChangeType
 									 "controlsChange",
 									 Qt::DirectConnection,
 									 Q_ARG(ControlManager::ChangeType, changeType));
-				if (GlobalConfig::instance().data.debugControlManager)
+				if (Settings::debugControlManager())
 				{
 					qCDebug(KMIX_LOG) << "Listener" << listener->getSourceId()
 							  << "is interested in" << mixerId
@@ -86,7 +87,7 @@ void ControlManager::announce(const QString &mixerId, ControlManager::ChangeType
 				if (listenersChanged)
 				{
 					// The invokeMethod() above has changed the listeners => my Iterator is invalid => restart loop
-					if (GlobalConfig::instance().data.debugControlManager)
+					if (Settings::debugControlManager())
 						qCDebug(KMIX_LOG) << "Listeners modified => restart loop";
 					listenersChanged = false;
 					listenersModified = true;
@@ -98,7 +99,7 @@ void ControlManager::announce(const QString &mixerId, ControlManager::ChangeType
 	}
 	while (listenersModified);
 
-	if (GlobalConfig::instance().data.debugControlManager)
+	if (Settings::debugControlManager())
 	{
 		qCDebug(KMIX_LOG)
 		<< "Announcing" << changeType << "for"
@@ -119,7 +120,7 @@ void ControlManager::announce(const QString &mixerId, ControlManager::ChangeType
 void ControlManager::addListener(const QString &mixerId, ControlManager::ChangeTypes changeTypes,
 				 QObject *target, const QString &sourceId)
 {
-	if (GlobalConfig::instance().data.debugControlManager)
+	if (Settings::debugControlManager())
 	{
 		qCDebug(KMIX_LOG)
 		<< "Listening to" << changeTypes << "for"
@@ -138,7 +139,7 @@ void ControlManager::addListener(const QString &mixerId, ControlManager::ChangeT
 			listenersChanged = true;
 		}
 	}
-	if (GlobalConfig::instance().data.debugControlManager)
+	if (Settings::debugControlManager())
 	{
 		qCDebug(KMIX_LOG) << "We now have" << listeners.size() << "listeners";
 	}
@@ -160,7 +161,7 @@ void ControlManager::removeListener(QObject *target, const QString &sourceId)
 		Listener *listener = it.next();
 		if (listener->getTarget() == target)
 		{
-			if (GlobalConfig::instance().data.debugControlManager)
+			if (Settings::debugControlManager())
 				qCDebug(KMIX_LOG)
 				<< "Stop Listening of" << listener->getSourceId() << "requested by" << src << "from" << target;
 			it.remove();
@@ -177,12 +178,12 @@ void ControlManager::warnUnexpectedChangeType(ControlManager::ChangeType type, Q
 
 void ControlManager::shutdownNow()
 {
-	if (GlobalConfig::instance().data.debugControlManager)
+	if (Settings::debugControlManager())
 		qCDebug(KMIX_LOG) << "Shutting down ControlManager";
 	for (QList<Listener *>::const_iterator it = listeners.constBegin(); it!=listeners.constEnd(); ++it)
 	{
 		Listener *listener = (*it);
-		if (GlobalConfig::instance().data.debugControlManager)
+		if (Settings::debugControlManager())
 			qCDebug(KMIX_LOG)
 			<< "Listener still connected. Closing it. source" << listener->getSourceId()
 			<< "target" << listener->getTarget()->metaObject()->className();

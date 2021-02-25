@@ -34,7 +34,6 @@
 #include "backends/mixer_backend.h"
 #include "core/MasterControl.h"
 #include "mixset.h"
-#include "core/GlobalConfig.h"
 #include "core/mixdevice.h"
 #include "dbus/dbusmixerwrapper.h"
 #include "kmixcore_export.h"
@@ -118,8 +117,6 @@ public:
 
     // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
     static QString driverName(int num);
-
-    static bool getBeepOnVolumeChange();
 
     /**
      * Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"

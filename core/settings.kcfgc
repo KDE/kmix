@@ -1,0 +1,13 @@
+File=settings.kcfg
+ClassName=Settings
+Singleton=true
+
+ItemAccessors=true
+Mutators=true
+SetUserTexts=true
+UseEnumTypes=false
+
+TranslationSystem=kde
+
+IncludeFiles=kmixcore_export.h
+Visibility=KMIXCORE_EXPORT

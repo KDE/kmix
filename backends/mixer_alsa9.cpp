@@ -23,11 +23,14 @@
  */
 
 
-// KMix
+// Own
 #include "mixer_alsa9.h"
+
+// KMix
 #include "core/kmixdevicemanager.h"
 #include "core/mixer.h"
 #include "core/volume.h"
+#include "settings.h"
 
 // KDE
 #include <klocalizedstring.h>
@@ -1047,7 +1050,7 @@ QString Mixer_ALSA::getDriverName()
 
 void Mixer_ALSA::playFeedbackSound()
 {
-    if (!Mixer::getBeepOnVolumeChange()) return;	// no feedback sound required
+    if (!Settings::beepOnVolumeChange()) return;	// no feedback sound required
     if (s_ccontext==nullptr) return;			// Canberra not set up
 
     int playing = 0;

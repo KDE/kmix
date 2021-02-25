@@ -32,7 +32,6 @@
 #include <kxmlguiwindow.h>
 
 // KMix
-#include "core/GlobalConfig.h"
 #include "core/ControlManager.h"
 #include "core/mixer.h"
 
@@ -95,11 +94,6 @@ private:
     KMixerWidget* findKMWforTab( const QString& tabId );
     KToggleAction* _actionShowMenubar;
 
-   /**
-    * configSnapshot is used to hold the original state before modifications in the preferences dialog
-    */
-   GlobalConfigData configDataSnapshot;
-
    bool m_startVisible;
    bool m_visibilityUpdateAllowed;
    bool m_multiDriverMode;         // Not officially supported.
@@ -114,7 +108,6 @@ private:
    bool m_dontSetDefaultCardOnStart;
    QStringList m_backendFilter;
    unsigned int m_configVersion;
-
 
 private:
     void showVolumeDisplay();

@@ -40,6 +40,7 @@
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
 #include "gui/mdwenum.h"
+#include "settings.h"
 #include "gui/mdwslider.h"
 
 // KDE
@@ -94,7 +95,7 @@ void ViewSliders::controlsChange(ControlManager::ChangeType changeType)
 		break;
 
 	case ControlManager::Volume:
-		if (GlobalConfig::instance().data.debugVolume)
+		if (Settings::debugVolume())
 			qCDebug(KMIX_LOG)
 			<< "NOW I WILL REFRESH VOLUME LEVELS. I AM " << id();
 		refreshVolumeLevels();
@@ -352,7 +353,7 @@ void ViewSliders::refreshVolumeLevels()
 			// --- end ---
 #endif
 
-			if (GlobalConfig::instance().data.debugVolume)
+			if (Settings::debugVolume())
 			{
 				bool debugMe = (mdw->mixDevice()->id() == "PCM:0");
 				if (debugMe)
@@ -374,5 +375,5 @@ void ViewSliders::refreshVolumeLevels()
 
 Qt::Orientation ViewSliders::orientationSetting() const
 {
-	return (GlobalConfig::instance().data.getToplevelOrientation());
+	return (static_cast<Qt::Orientation>(Settings::orientationMainWindow()));
 }

@@ -28,14 +28,16 @@
 #include <kpluginloader.h> 
 
 // KMix
-#include "core/GlobalConfig.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
 #include "core/mixer.h"
+#include "settings.h"
+
 
 K_PLUGIN_FACTORY_WITH_JSON(KMixDFactory,
                            "kmixd.json",
                            registerPlugin<KMixD>();)
+
 
 /* KMixD
  * Constructs a mixer window (KMix main window)
@@ -45,7 +47,6 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    m_multiDriverMode (false) // -<- I never-ever want the multi-drivermode to be activated by accident
 {
     setObjectName( QStringLiteral("KMixD" ));
-	GlobalConfig::init();
 	qCDebug(KMIX_LOG) << "kmixd: Triggering delayed initialization";
 	QTimer::singleShot( 3000, this, SLOT(delayedInitialization()));
 }
@@ -90,31 +91,22 @@ void KMixD::saveConfig()
 #endif
 
    qCDebug(KMIX_LOG) << "Saved config ... now syncing explicitly";
-   KSharedConfig::openConfig()->sync();
+   Settings::self()->save();
    qCDebug(KMIX_LOG) << "Saved config ... sync finished";
 }
 
 void KMixD::saveBaseConfig()
 {
    qCDebug(KMIX_LOG) << "About to save config (Base)";
-   KConfigGroup config(KSharedConfig::openConfig(), "Global");
 
-   config.writeEntry( "ConfigVersion", KMIX_CONFIG_VERSION );
-   Mixer* mixerMasterCard = Mixer::getGlobalMasterMixer();
-   if ( mixerMasterCard != 0 ) {
-      config.writeEntry( "MasterMixer", mixerMasterCard->id() );
-   }
+   Settings::setConfigVersion(KMIX_CONFIG_VERSION);
+   const Mixer *mixerMasterCard = Mixer::getGlobalMasterMixer();
+   if (mixerMasterCard!=nullptr) Settings::setMasterMixer(mixerMasterCard->id());
    shared_ptr<MixDevice> mdMaster = Mixer::getGlobalMasterMD();
-   if ( mdMaster ) {
-      config.writeEntry( "MasterMixerDevice", mdMaster->id() );
-   }
-   QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
-   config.writeEntry( "MixerIgnoreExpression", mixerIgnoreExpression );
-
+   if (mdMaster) Settings::setMasterMixerDevice(mdMaster->id());
+   Settings::setMixerIgnoreExpression(MixerToolBox::mixerIgnoreExpression());
    qCDebug(KMIX_LOG) << "Config (Base) saving done";
 }
-
-
 
 void KMixD::loadConfig()
 {
@@ -123,15 +115,15 @@ void KMixD::loadConfig()
 
 void KMixD::loadBaseConfig()
 {
-    KConfigGroup config(KSharedConfig::openConfig(), "Global");
+    m_multiDriverMode = Settings::multiDriver();
+    QString mixerMasterCard = Settings::masterMixer();
+    QString masterDev = Settings::masterMixerDevice();
+    Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
+    QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
+    if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 
-   m_multiDriverMode = config.readEntry("MultiDriver", false);
-   QString mixerMasterCard = config.readEntry( "MasterMixer", "" );
-   QString masterDev = config.readEntry( "MasterMixerDevice", "" );
-   Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
-   QString mixerIgnoreExpression = config.readEntry( "MixerIgnoreExpression", "Modem" );
-   m_backendFilter = config.readEntry<>( "Backends", QList<QString>() );
-   MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
+    m_backendFilter = Settings::backends();
+    MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 }
 
 

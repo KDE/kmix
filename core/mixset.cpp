@@ -40,7 +40,7 @@ MixSet::~MixSet()
 
 bool MixSet::read(const KConfig *config, const QString &grp)
 {
-   qCDebug(KMIX_LOG) << "MixSet::read() of group " << grp;
+   qCDebug(KMIX_LOG) << "group " << grp;
    KConfigGroup group = config->group(grp);
    m_name = group.readEntry( "name", m_name );
 
@@ -57,7 +57,7 @@ bool MixSet::read(const KConfig *config, const QString &grp)
 
 bool MixSet::write(KConfig *config, const QString &grp) const
 {
-   qCDebug(KMIX_LOG) << "MixSet::write() of group " << grp;    
+   qCDebug(KMIX_LOG) << "group " << grp;
    KConfigGroup conf = config->group(grp);
    conf.writeEntry( "name", m_name );
 

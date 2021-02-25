@@ -182,7 +182,6 @@ set(kmixcore_SRCS
   core/mixertoolbox.cpp
   core/kmixdevicemanager.cpp
   core/ControlManager.cpp
-  core/GlobalConfig.cpp
   core/MasterControl.cpp
   core/mixer.cpp
   core/mixset.cpp
@@ -190,6 +189,8 @@ set(kmixcore_SRCS
   core/mixdevicecomposite.cpp
   core/volume.cpp
 )
+
+kconfig_add_kcfg_files(kmixcore_SRCS core/settings.kcfgc)
 
 add_library(kmixcore SHARED
   ${kmixcore_SRCS}
@@ -228,6 +229,7 @@ if (CANBERRA_FOUND)
 endif (CANBERRA_FOUND)
 
 install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR} LIBRARY NAMELINK_SKIP)
+install(FILES core/settings.kcfg RENAME kmixsettings.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
 
 ####################################################################################################
 ########### target: kmixgui library ################################################################

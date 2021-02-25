@@ -32,7 +32,7 @@
 
 #include "core/mixer.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
+#include "settings.h"
 
 #include <pulse/ext-stream-restore.h>
 #ifdef HAVE_CANBERRA
@@ -913,7 +913,7 @@ bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
 
     const bool isCapture = (m_devnum==KMIXPA_APP_CAPTURE || m_devnum==KMIXPA_CAPTURE);
 
-    const int maxVol = (!isCapture && GlobalConfig::instance().data.volumeOverdrive) ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
+    const int maxVol = (!isCapture && Settings::volumeOverdrive()) ? PA_VOLUME_UI_MAX : PA_VOLUME_NORM;
     Volume v(maxVol, PA_VOLUME_MUTED, true, false);
     v.addVolumeChannels(dev.chanMask);
     setVolumeFromPulse(v, dev);

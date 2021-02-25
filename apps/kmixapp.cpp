@@ -26,8 +26,8 @@
 
 #include "kmix_debug.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "apps/kmixwindow.h"
+#include "settings.h"
 
 
 static bool firstCaller = true;
@@ -43,8 +43,6 @@ KMixApp::KMixApp()
 	  m_kmix(nullptr),
 	  creationLock(QMutex::Recursive)
 {
-	GlobalConfig::init();
-
 	// We must disable QuitOnLastWindowClosed. Rationale:
 	// 1) The normal state of KMix is to only have the dock icon shown.
 	// 2a) The dock icon gets reconstructed, whenever a soundcard is hotplugged or unplugged.
@@ -60,7 +58,7 @@ KMixApp::~KMixApp()
 	ControlManager::instance().shutdownNow();
 	delete m_kmix;
 	m_kmix = nullptr;
-	GlobalConfig::shutdown();
+	Settings::self()->save();
 }
 
 void KMixApp::createWindowOnce(bool hasArgKeepvisibility, bool reset)
@@ -165,7 +163,6 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 		 *
 		 * Typical case: Normal start. KMix was not running yet => create a new KMixWindow
 		 */
-		GlobalConfig::init();
 		restoreSessionIfApplicable(m_hasArgKeepvisibility, m_hasArgReset);
 	}
 	else

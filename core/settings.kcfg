@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile>kmixrc</kcfgfile>
+  <include>qglobal.h</include>
+
+  <group name="Global">
+
+    <!-- Configure KMix - General				-->
+
+    <entry name="ShowTicks" key="Tickmarks" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <entry name="ShowLabels" key="Labels" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <entry name="VolumeOverdrive" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <entry name="BeepOnVolumeChange" key="VolumeFeedback" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <entry name="VolumePercentageStep" type="Int">
+      <default>5</default>
+    </entry>
+
+    <entry name="OrientationMainWindow" key="Orientation" type="Int">
+      <default>Qt::Vertical</default>
+    </entry>
+
+    <entry name="OrientationTrayPopup" key="OrientationTrayPopup" type="Int">
+      <default>Qt::Vertical</default>
+    </entry>
+
+    <entry name="ShowOSD" key="showOSD" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <!-- Configure KMix - Volume Control			-->
+
+    <entry name="ShowDockWidget" key="AllowDocking" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <!-- Configure KMix - Startup				-->
+
+    <entry name="StartRestore" key="startkdeRestore" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <!-- Set by KMixPrefDlg, read by kmix_autostart.desktop	-->
+
+    <entry name="AutoStart" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <!-- Saved by KMixWindow::saveBaseConfig() and loaded	-->
+    <!-- by KMixWindow::loadBaseConfig(), no GUI		-->
+
+    <entry name="ConfigVersion" type="Int">
+    </entry>
+
+    <entry name="Size" type="Size">
+    </entry>
+
+    <entry name="Position" type="Point">
+    </entry>
+
+    <entry name="Visible" type="Bool">
+    </entry>
+
+    <entry name="Menubar" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <entry name="MixersForSoundMenu" key="Soundmenu.Mixers" type="StringList">
+    </entry>
+
+    <entry name="DefaultCardOnStart" type="String">
+    </entry>
+
+    <entry name="AutoUseMultimediaKeys" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <entry name="MasterMixer" type="String">
+    </entry>
+
+    <entry name="MasterMixerDevice" type="String">
+    </entry>
+
+    <entry name="MixerIgnoreExpression" type="String">
+    </entry>
+
+    <!-- Only loaded by KMixWindow::loadBaseConfig(), no GUI	-->
+
+    <entry name="MultiDriver" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <entry name="Backends" type="StringList">
+    </entry>
+
+  </group>
+
+  <!-- Saved by KMixWindow::saveViewConfig() and read		-->
+  <!-- by KMixWindow::recreateGUI()				-->
+  <group name="Profiles">
+  </group>
+
+  <!-- Debug options, no GUI					-->
+  <group name="Debug">
+
+    <entry name="DebugControlManager" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <entry name="DebugGui" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <entry name="DebugVolume" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <entry name="DebugConfig" type="Bool">
+      <default>false</default>
+    </entry>
+
+  </group>
+
+</kcfg>

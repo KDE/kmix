@@ -44,6 +44,7 @@
 #include "gui/kmixprefdlg.h"
 #include "gui/mdwslider.h"
 #include "dialogbase.h"
+#include "settings.h"
 
 // Restore volume button feature is incomplete => disabling for KDE 4.10
 #undef RESTORE_VOLUME_BUTTON
@@ -299,7 +300,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// setting it once in the constructor.
 	clearMixers();
 
-	QSet<QString> preferredMixersForSoundmenu = GlobalConfig::instance().getMixersForSoundmenu();
+	const QStringList preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
 	for (Mixer *mixer : qAsConst(Mixer::mixers()))
 	{
@@ -494,6 +495,7 @@ void ViewDockAreaPopup::configureView()
 	prefDlg->switchToPage(KMixPrefDlg::PrefSoundMenu);
 }
 
+
 /**
  * This gets activated when a user clicks the "Mixer" PushButton in this popup.
  */
@@ -503,11 +505,11 @@ void ViewDockAreaPopup::showPanelSlot()
     KWindowSystem::setOnDesktop(_kmixMainWindow->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::activateWindow(_kmixMainWindow->winId());
     // This is only needed when the window is already visible.
-    static_cast<QWidget*>(parent())->hide();
+    static_cast<QWidget *>(parent())->hide();
 }
 
 
 Qt::Orientation ViewDockAreaPopup::orientationSetting() const
 {
-	return (GlobalConfig::instance().data.getTraypopupOrientation());
+	return (static_cast<Qt::Orientation>(Settings::orientationTrayPopup()));
 }

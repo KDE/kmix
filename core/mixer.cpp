@@ -25,10 +25,10 @@
 #include <klocalizedstring.h>
 #include <kconfig.h>
 
+#include "settings.h"
 #include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "core/volume.h"
 
 /**
@@ -561,12 +561,12 @@ void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
 		// We also cannot rely on a notification from the driver (SocketNotifier), because
 		// nothing has changed, and so there s nothing to notify.
 		_mixerBackend->readSetFromHWforceUpdate();
-		if (GlobalConfig::instance().data.debugControlManager)
+		if (Settings::debugControlManager())
 			qCDebug(KMIX_LOG)
 			<< "committing a control with capture volume, that might announce: " << md->id();
 		_mixerBackend->readSetFromHW();
 	}
-	if (GlobalConfig::instance().data.debugControlManager)
+	if (Settings::debugControlManager())
 		qCDebug(KMIX_LOG)
 		<< "committing announces the change of: " << md->id();
 
@@ -646,11 +646,4 @@ QString Mixer::iconName() const
     const shared_ptr<MixDevice> master = getLocalMasterMD();
     if (master!=nullptr) return (master->iconName());
     return ("media-playback-start");			// fallback default icon
-}
-
-
-/* static */ bool Mixer::getBeepOnVolumeChange()
-{
-    GlobalConfigData &gcd = GlobalConfig::instance().data;
-    return (gcd.beepOnVolumeChange);
 }

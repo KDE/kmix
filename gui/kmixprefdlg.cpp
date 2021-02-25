@@ -20,7 +20,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "gui/kmixprefdlg.h"
+#include "kmixprefdlg.h"
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
@@ -36,9 +36,9 @@
 
 #include "dialogbase.h"
 #include "dialogstatesaver.h"
-
 #include "gui/kmixerwidget.h"
-#include "core/GlobalConfig.h"
+#include "settings.h"
+
 
 KMixPrefDlg* KMixPrefDlg::instance = 0;
 
@@ -47,18 +47,18 @@ KMixPrefDlg* KMixPrefDlg::getInstance()
 	return instance;
 }
 
-KMixPrefDlg* KMixPrefDlg::createInstance(QWidget *parent, GlobalConfig& config)
+KMixPrefDlg* KMixPrefDlg::createInstance(QWidget *parent)
 {
 	if (instance == 0)
 	{
-		instance = new KMixPrefDlg(parent, config);
+		instance = new KMixPrefDlg(parent);
 	}
 	return instance;
 
 }
 
-KMixPrefDlg::KMixPrefDlg(QWidget *parent, GlobalConfig& config) :
-	KConfigDialog(parent, i18n("Configure"), &config), dialogConfig(config)
+KMixPrefDlg::KMixPrefDlg(QWidget *parent)
+	: KConfigDialog(parent, i18n("Configure"), Settings::self())
 {
 	setFaceType(KPageDialog::List);
 
@@ -117,8 +117,10 @@ void KMixPrefDlg::createStartupTab()
 	layoutStartupTab->setSpacing(DialogBase::verticalSpacing());
 
 	allowAutostart = new QCheckBox(i18n("Start KMix on desktop startup"), m_startupTab);
+	allowAutostart->setChecked(Settings::autoStart());
+	connect(allowAutostart, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
 	addWidgetToLayout(allowAutostart, layoutStartupTab, 10,
-			  i18n("Start KMix automatically when the desktop starts"), "AutoStart");
+			  i18n("Start KMix automatically when the desktop starts"));
 
 	allowAutostartWarning = new KMessageWidget(
 		i18n("Autostart will not work, because the autostart file kmix_autostart.desktop is missing. Check that KMix is installed correctly."), m_startupTab);
@@ -127,13 +129,15 @@ void KMixPrefDlg::createStartupTab()
 	allowAutostartWarning->setCloseButtonVisible(false);
 	allowAutostartWarning->setWordWrap(true);
 	allowAutostartWarning->setVisible(false);
-	addWidgetToLayout(allowAutostartWarning, layoutStartupTab, 2, "", "");
+	addWidgetToLayout(allowAutostartWarning, layoutStartupTab, 2, "");
 
 	layoutStartupTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
 
 	m_onLogin = new QCheckBox(i18n("Restore previous volume settings on desktop startup"), m_startupTab);
+	m_onLogin->setChecked(Settings::startRestore());
+	connect(m_onLogin, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
 	addWidgetToLayout(m_onLogin, layoutStartupTab, 10,
-			  i18n("Restore all mixer volume levels and switches to their last used settings when the desktop starts"), "startkdeRestore");
+			  i18n("Restore all mixer volume levels and switches to their last used settings when the desktop starts"));
 
 	dynamicControlsRestoreWarning = new KMessageWidget(
 		i18n("The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."), m_startupTab);
@@ -142,7 +146,7 @@ void KMixPrefDlg::createStartupTab()
 	dynamicControlsRestoreWarning->setCloseButtonVisible(false);
 	dynamicControlsRestoreWarning->setWordWrap(true);
 	dynamicControlsRestoreWarning->setVisible(false);
-	addWidgetToLayout(dynamicControlsRestoreWarning, layoutStartupTab, 2, "", "");
+	addWidgetToLayout(dynamicControlsRestoreWarning, layoutStartupTab, 2, "");
 
 	layoutStartupTab->addStretch();
 }
@@ -161,13 +165,11 @@ void KMixPrefDlg::createOrientationGroup(const QString &labelSliderOrientation, 
 	{
 		_rbTraypopupHorizontal = qrbHor;
 		_rbTraypopupVertical = qrbVert;
-		orientationGroup->setObjectName("Orientation.TrayPopup");
 	}
 	else
 	{
 		_rbHorizontal = qrbHor;
 		_rbVertical = qrbVert;
-		orientationGroup->setObjectName("Orientation");
 	}
 
 	// Add both buttons to button group
@@ -179,8 +181,8 @@ void KMixPrefDlg::createOrientationGroup(const QString &labelSliderOrientation, 
 	orientationLayout->addWidget(qrbVert, row, 2, Qt::AlignLeft);
 	orientationLayout->setColumnStretch(2, 1);
 
-	connect(qrbHor, &QAbstractButton::toggled, this, &KMixPrefDlg::updateButtons);
-	connect(qrbVert, &QAbstractButton::toggled, this, &KMixPrefDlg::updateButtons);
+	connect(qrbHor, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
+	connect(qrbVert, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
 }
 
 
@@ -214,9 +216,10 @@ void KMixPrefDlg::createGeneralTab()
 
 	// Volume Overdrive
 	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), grp);
+	m_volumeOverdrive->setChecked(Settings::volumeOverdrive());
+	connect(m_volumeOverdrive, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
 	addWidgetToLayout(m_volumeOverdrive, behaviorLayout, 10,
-			  i18nc("@info:tooltip", "Allow the volume to be raised above the recommended maximum (typically to 150%)"),
-			  "VolumeOverdrive");
+			  i18nc("@info:tooltip", "Allow the volume to be raised above the recommended maximum (typically to 150%)"));
 
 	// Volume Overdrive warning
 	m_pulseOnlyWarning = new KMessageWidget(i18n("Volume overdrive is only available for PulseAudio."), grp);
@@ -225,7 +228,7 @@ void KMixPrefDlg::createGeneralTab()
 	m_pulseOnlyWarning->setCloseButtonVisible(false);
 	m_pulseOnlyWarning->setWordWrap(true);
 	m_pulseOnlyWarning->setVisible(false);
-	addWidgetToLayout(m_pulseOnlyWarning, behaviorLayout, 2, "", "");
+	addWidgetToLayout(m_pulseOnlyWarning, behaviorLayout, 2, "");
 
 	// Restart warning
 	m_restartWarning = new KMessageWidget(
@@ -236,13 +239,14 @@ void KMixPrefDlg::createGeneralTab()
 	m_restartWarning->setCloseButtonVisible(false);
 	m_restartWarning->setWordWrap(true);
 	m_restartWarning->setVisible(false);
-	addWidgetToLayout(m_restartWarning, behaviorLayout, 2, "", "");
+	addWidgetToLayout(m_restartWarning, behaviorLayout, 2, "");
 
 	// Volume Feedback
 	m_beepOnVolumeChange = new QCheckBox(i18n("Volume feedback"), grp);
+	m_beepOnVolumeChange->setChecked(Settings::beepOnVolumeChange());
+	connect(m_beepOnVolumeChange, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
 	addWidgetToLayout(m_beepOnVolumeChange, behaviorLayout, 10,
-			  i18nc("@info:tooltip", "Play a sample sound when the volume changes"),
-			  "VolumeFeedback");
+			  i18nc("@info:tooltip", "Play a sample sound when the volume changes"));
 
 #ifndef HAVE_CANBERRA
 	// Volume Feedback warning
@@ -251,7 +255,7 @@ void KMixPrefDlg::createGeneralTab()
 	canberraWarning->setMessageType(KMessageWidget::Warning);
 	canberraWarning->setCloseButtonVisible(false);
 	canberraWarning->setWordWrap(true);
-	addWidgetToLayout(canberraWarning, behaviorLayout, 2, "", "");
+	addWidgetToLayout(canberraWarning, behaviorLayout, 2, "");
 #endif
 
 	// Volume Step layout
@@ -262,8 +266,8 @@ void KMixPrefDlg::createGeneralTab()
 	m_volumeStep = new QSpinBox(grp);
 	m_volumeStep->setSuffix(" %");
 	m_volumeStep->setRange(1, 50);
-	// Register SpinBox for KConfig
-	m_volumeStep->setObjectName("kcfg_VolumePercentageStep");
+	m_volumeStep->setValue(Settings::volumePercentageStep());
+	connect(m_volumeStep, QOverload<int>::of(&QSpinBox::valueChanged), this, &KMixPrefDlg::slotControlChanged);
 
 	m_volumeStep->setToolTip(xi18nc("@info:tooltip",
 					"<para>Set the volume step as a percentage of the volume range.</para>"
@@ -291,14 +295,20 @@ void KMixPrefDlg::createGeneralTab()
 
 	// [CONFIG]
 	m_showTicks = new QCheckBox(i18n("Show slider &tickmarks"), grp);
-	addWidgetToLayout(m_showTicks, visualLayout, 10, i18n("Show tick mark scales on sliders"), "Tickmarks");
+	m_showTicks->setChecked(Settings::showTicks());
+	connect(m_showTicks, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
+	addWidgetToLayout(m_showTicks, visualLayout, 10, i18n("Show tick mark scales on sliders"));
 
 	m_showLabels = new QCheckBox(i18n("Show control &labels"), grp);
-	addWidgetToLayout(m_showLabels, visualLayout, 10, i18n("Show description labels for sliders"), "Labels");
+	m_showLabels->setChecked(Settings::showLabels());
+	connect(m_showLabels, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
+	addWidgetToLayout(m_showLabels, visualLayout, 10, i18n("Show description labels for sliders"));
 
 	// [CONFIG]
 	m_showOSD = new QCheckBox(i18n("Show On Screen Display (&OSD)"), grp);
-	addWidgetToLayout(m_showOSD, visualLayout, 10, i18n("Show an on-screen indicator when changing the volume via hotkeys"), "showOSD");
+	m_showOSD->setChecked(Settings::showOSD());
+	connect(m_showOSD, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
+	addWidgetToLayout(m_showOSD, visualLayout, 10, i18n("Show an on-screen indicator when changing the volume via hotkeys"));
 
 	// [CONFIG] Slider orientation (main window)
 	visualLayout->addItem(DialogBase::verticalSpacerItem());
@@ -321,10 +331,11 @@ void KMixPrefDlg::createControlsTab()
 	layoutControlsTab = new QVBoxLayout(m_controlsTab);
 	layoutControlsTab->setContentsMargins(0, 0, 0, 0);
 	layoutControlsTab->setSpacing(DialogBase::verticalSpacing());
-	m_dockingChk = new QCheckBox(i18n("Dock in system tray"), m_controlsTab);
 
-	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Dock the mixer into the system tray. Click on it to open the popup volume control."),
-		"AllowDocking");
+	m_dockingChk = new QCheckBox(i18n("Dock in system tray"), m_controlsTab);
+	m_dockingChk->setChecked(Settings::showDockWidget());
+	connect(m_dockingChk, &QAbstractButton::toggled, this, &KMixPrefDlg::slotControlChanged);
+	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Dock the mixer into the system tray. Click on it to open the popup volume control."));
 
 	layoutControlsTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
 	replaceBackendsInTab();
@@ -342,18 +353,9 @@ void KMixPrefDlg::createControlsTab()
  * @param toopTipText
  * @param objectName
  */
-void KMixPrefDlg::addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spacingBefore, const QString &tooltip, const QString &kconfigName)
+void KMixPrefDlg::addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip)
 {
-	if (!kconfigName.isEmpty())
-	{
-		// Widget to be registered for KConfig
-		widget->setObjectName("kcfg_" + kconfigName);
-	}
-
-	if ( !tooltip.isEmpty() )
-	{
-		widget->setToolTip(tooltip);
-	}
+	if (!tooltip.isEmpty()) widget->setToolTip(tooltip);
 
 	QBoxLayout *l = new QHBoxLayout();
 	l->addSpacing(spacingBefore);
@@ -371,12 +373,13 @@ void KMixPrefDlg::addWidgetToLayout(QWidget* widget, QBoxLayout* layout, int spa
  */
 void KMixPrefDlg::updateWidgets()
 {
-	if (dialogConfig.data.debugConfig) qCDebug(KMIX_LOG);
-	bool toplevelHorizontal = dialogConfig.data.getToplevelOrientation() == Qt::Horizontal;
+	qCDebug(KMIX_LOG);
+
+	const bool toplevelHorizontal = static_cast<Qt::Orientation>(Settings::orientationMainWindow())==Qt::Horizontal;
 	_rbHorizontal->setChecked(toplevelHorizontal);
 	_rbVertical->setChecked(!toplevelHorizontal);
 
-	bool trayHorizontal = dialogConfig.data.getTraypopupOrientation() == Qt::Horizontal;
+	const bool trayHorizontal = static_cast<Qt::Orientation>(Settings::orientationTrayPopup())==Qt::Horizontal;
 	_rbTraypopupHorizontal->setChecked(trayHorizontal);
 	_rbTraypopupVertical->setChecked(!trayHorizontal);
 }
@@ -384,19 +387,17 @@ void KMixPrefDlg::updateWidgets()
 /**
  * Updates config from the widgets. And emits the signal kmixConfigHasChanged().
  * <p>
- * Hint: this get internally called by KConfigDialog after pressing the OK or Apply button.
+ * Hint: this gets internally called by KConfigDialog after pressing the OK or Apply button.
  */
 void KMixPrefDlg::updateSettings()
 {
-	Qt::Orientation toplevelOrientation = _rbHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
-	if (dialogConfig.data.debugConfig)
-		qCDebug(KMIX_LOG) << "toplevelOrientation" << toplevelOrientation << ", _rbHorizontal->isChecked()" << _rbHorizontal->isChecked();
-	dialogConfig.data.setToplevelOrientation(toplevelOrientation);
+	qCDebug(KMIX_LOG);
 
-	Qt::Orientation trayOrientation = _rbTraypopupHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
-	if (dialogConfig.data.debugConfig)
-		qCDebug(KMIX_LOG) << "trayOrientation" << trayOrientation << ", _rbTraypopupHorizontal->isChecked()" << _rbTraypopupHorizontal->isChecked();
-	dialogConfig.data.setTraypopupOrientation(trayOrientation);
+	const Qt::Orientation toplevelOrientation = _rbHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
+	Settings::setOrientationMainWindow(toplevelOrientation);
+
+	const Qt::Orientation trayOrientation = _rbTraypopupHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
+	Settings::setOrientationTrayPopup(trayOrientation);
 
     // Announcing MasterChanged, as the sound menu (aka ViewDockAreaPopup) primarily shows master volume(s).
     // In any case, ViewDockAreaPopup treats MasterChanged and ControlList the same, so it is better to announce
@@ -404,11 +405,29 @@ void KMixPrefDlg::updateSettings()
     bool modified = dvc->getAndResetModifyFlag();
     if (modified)
     {
-		GlobalConfig::instance().setMixersForSoundmenu(dvc->getChosenBackends());
-		ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
+	    Settings::setMixersForSoundMenu(dvc->getChosenBackends().values());
+	    ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
     }
 
-    dialogConfig.data.beepOnVolumeChange = m_beepOnVolumeChange->isChecked();
+    Settings::setBeepOnVolumeChange(m_beepOnVolumeChange->isChecked());
+    Settings::setAutoStart(allowAutostart->isChecked());
+    Settings::setStartRestore(m_onLogin->isChecked());
+    Settings::setVolumeOverdrive(m_volumeOverdrive->isChecked());
+    Settings::setVolumePercentageStep(m_volumeStep->value());
+    Settings::setShowTicks(m_showTicks->isChecked());
+    Settings::setShowLabels(m_showLabels->isChecked());
+    Settings::setShowOSD(m_showOSD->isChecked());
+    Settings::setShowDockWidget(m_dockingChk->isChecked());
+
+    Settings::self()->save();
+    m_controlsChanged = false;
+}
+
+
+void KMixPrefDlg::slotControlChanged()
+{
+	m_controlsChanged = true;
+	KConfigDialog::settingsChangedSlot();
 }
 
 
@@ -420,39 +439,51 @@ void KMixPrefDlg::updateSettings()
  */
 bool KMixPrefDlg::hasChanged()
 {
-	bool orientationFromConfigIsHor = dialogConfig.data.getToplevelOrientation() == Qt::Horizontal;
-	bool orientationFromWidgetIsHor = _rbHorizontal->isChecked();
-	if (dialogConfig.data.debugConfig)
-		qCDebug(KMIX_LOG) << "Orientation MAIN fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+// 	bool orientationFromWidgetIsHor = _rbHorizontal->isChecked();
+// 	if (Settings::debugConfig())
+// 		qCDebug(KMIX_LOG) << "Orientation MAIN fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+// 
+// 	bool changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
+// 	if (!changed)
+// 	{
+// 		bool orientationFromConfigIsHor = static_cast<Qt::Orientation>(Settings::orientationTrayPopup())==Qt::Horizontal;
+// 		orientationFromWidgetIsHor = _rbTraypopupHorizontal->isChecked();
+// 		if (Settings::debugConfig())
+// 			qCDebug(KMIX_LOG) << "Orientation TRAY fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
+// 
+// 		changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
+// 	}
+// 
+// 	if (!changed)
+// 	{
+// 		changed = dvc->getModifyFlag();
+// 	}
+// 
+// 	if (!changed)
+// 	{
+// 		bool feedbackFromConfig = Settings::beepOnVolumeChange();
+// 		bool feedbackFromDialogue = m_beepOnVolumeChange->isChecked();
+// 
+// 		changed = feedbackFromConfig ^ feedbackFromDialogue;
+// 	}
+// 
 
-	bool changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
-	if (!changed)
-	{
-		bool orientationFromConfigIsHor = dialogConfig.data.getTraypopupOrientation() == Qt::Horizontal;
-		orientationFromWidgetIsHor = _rbTraypopupHorizontal->isChecked();
-		if (dialogConfig.data.debugConfig)
-			qCDebug(KMIX_LOG) << "Orientation TRAY fromConfig=" << (orientationFromConfigIsHor ? "Hor" : "Vert") << ", fromWidget=" << (orientationFromWidgetIsHor ? "Hor" : "Vert");
 
-		changed = orientationFromConfigIsHor ^ orientationFromWidgetIsHor;
-	}
 
-	if (!changed)
-	{
-		changed = dvc->getModifyFlag();
-	}
 
-	if (!changed)
-	{
-		bool feedbackFromConfig = dialogConfig.data.volumeFeedback;
-		bool feedbackFromDialogue = m_beepOnVolumeChange->isChecked();
 
-		changed = feedbackFromConfig ^ feedbackFromDialogue;
-	}
 
-	if (dialogConfig.data.debugConfig)
-		qCDebug(KMIX_LOG) << "hasChanged=" << changed;
 
-	return changed;
+
+
+
+
+
+
+
+
+	qCDebug(KMIX_LOG) << "returning" << m_controlsChanged;
+	return (m_controlsChanged);
 }
 
 
@@ -471,7 +502,7 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 
 	QString autostartConfigFilename =
 		QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "/autostart/kmix_autostart.desktop");
-	if (dialogConfig.data.debugConfig)
+	if (Settings::debugConfig())
 	    qCDebug(KMIX_LOG) << "autostartConfigFilename = " << autostartConfigFilename;
 	bool autostartFileExists = !autostartConfigFilename.isEmpty();
 	allowAutostartWarning->setVisible(!autostartFileExists);
@@ -498,6 +529,9 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 		m_pulseOnlyWarning->setVisible(false);
 		m_restartWarning->setVisible(true);
 	}
+
+	m_controlsChanged = false;
+	KConfigDialog::updateButtons();
 }
 
 
@@ -509,9 +543,10 @@ void KMixPrefDlg::replaceBackendsInTab()
 		delete dvc;
 	}
 
-	QSet<QString> backendsFromConfig = GlobalConfig::instance().getMixersForSoundmenu();
-	dvc = new DialogChooseBackends(0, backendsFromConfig);
-	connect(dvc, SIGNAL(backendsModified()), SLOT(updateButtons()));
+	const QStringList bfc = Settings::mixersForSoundMenu();
+	QSet<QString> backendsFromConfig = QSet<QString>(bfc.begin(), bfc.end());
+	dvc = new DialogChooseBackends(nullptr, backendsFromConfig);
+	connect(dvc, &DialogChooseBackends::backendsModified, this, &KMixPrefDlg::slotControlChanged);
 	dvc->setToolTip(i18n("The mixers that are checked here will be shown in the popup volume control."));
 
 	layoutControlsTab->addWidget(dvc);

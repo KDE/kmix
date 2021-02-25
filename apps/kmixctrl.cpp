@@ -18,8 +18,6 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "core/mixertoolbox.h"
-
 #include <qcoreapplication.h>
 #include <qcommandlineparser.h>
 
@@ -28,8 +26,10 @@
 #include <kconfig.h>
 
 #include "gui/kmixtoolbox.h"
-#include "core/GlobalConfig.h"
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
+#include "settings.h"
+
 
 static const char description[] =
 I18N_NOOP("kmixctrl - kmix volume save/restore utility");
@@ -56,8 +56,6 @@ int main(int argc, char *argv[])
                                        i18n("Restore default volumes")));
    parser.process(app);
 
-   GlobalConfig::init();
-
    // create mixers
    MixerToolBox::initMixer(false, QStringList(), false);
 
@@ -66,7 +64,7 @@ int main(int argc, char *argv[])
    {
       for (int i=0; i<Mixer::mixers().count(); ++i) {
          Mixer *mixer = (Mixer::mixers())[i];
-         mixer->volumeLoad(KSharedConfig::openConfig().data());
+         mixer->volumeLoad(Settings::self()->config());
       }
    }
 
@@ -75,10 +73,8 @@ int main(int argc, char *argv[])
 	{
 		for (int i = 0; i < Mixer::mixers().count(); ++i)
 		{
-			Mixer *mixer = (Mixer::mixers())[i];
-                        KSharedConfig::Ptr cfg = KSharedConfig::openConfig();
-			qCDebug(KMIX_LOG) << "save " << cfg->name();
-			mixer->volumeSave(cfg.data());
+			const Mixer *mixer = (Mixer::mixers())[i];
+			mixer->volumeSave(Settings::self()->config());
 		}
 	}
 

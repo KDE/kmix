@@ -40,7 +40,6 @@
 #include <kglobalaccel.h>
 #include <kmessagebox.h>
 #include <klocalizedstring.h>
-#include <kconfig.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
 #include <kactioncollection.h>
@@ -48,7 +47,6 @@
 // KMix
 #include "kmix_debug.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "core/MasterControl.h"
 #include "core/MediaController.h"
 #include "core/mixertoolbox.h"
@@ -62,6 +60,7 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
+#include "settings.h"
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
@@ -261,17 +260,18 @@ void KMixWindow::initActionsAfterInitMixer()
 		QPushButton* _cornerLabelNew = new QPushButton();
 		_cornerLabelNew->setIcon(QIcon::fromTheme("tab-new"));
 		_cornerLabelNew->setToolTip(i18n("Add new view"));
-		//cornerLabelNew->setSizePolicy(QSizePolicy());
 		m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
 		connect(_cornerLabelNew, SIGNAL(clicked()), SLOT(newView()));
 	}
 }
 
+
 void KMixWindow::initPrefDlg()
 {
-	KMixPrefDlg* prefDlg = KMixPrefDlg::createInstance(this, GlobalConfig::instance());
-	connect(prefDlg, SIGNAL(kmixConfigHasChanged()), SLOT(applyPrefs()));
+	KMixPrefDlg *prefDlg = KMixPrefDlg::createInstance(this);
+	connect(prefDlg, &KMixPrefDlg::kmixConfigHasChanged, this, &KMixWindow::applyPrefs);
 }
+
 
 void KMixWindow::initWidgets()
 {
@@ -289,21 +289,18 @@ void KMixWindow::initWidgets()
 
 void KMixWindow::setInitialSize()
 {
-	KConfigGroup config(KSharedConfig::openConfig(), "Global");
-
 	// HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
 	// are disabled, so we disable them, get a decent sizehint and enable them
 	// back
 	m_wsMixers->setUsesScrollButtons(false);
 	QSize defSize = sizeHint();
 	m_wsMixers->setUsesScrollButtons(true);
-	QSize size = config.readEntry("Size", defSize);
-	if (!size.isEmpty())
-		resize(size);
+	QSize size = Settings::size();
+	if (size.isNull()) size = defSize;
+	if (!size.isNull()) resize(size);
 
-	QPoint defPos = pos();
-	QPoint pos = config.readEntry("Position", defPos);
-	move(pos);
+	QPoint pos = Settings::position();
+	if (!pos.isNull()) move(pos);
 }
 
 void KMixWindow::removeDock()
@@ -323,9 +320,7 @@ void KMixWindow::removeDock()
  */
 bool KMixWindow::updateDocking()
 {
-	GlobalConfigData& gcd = GlobalConfig::instance().data;
-
-	if (!gcd.showDockWidget || Mixer::mixers().isEmpty())
+	if (!Settings::showDockWidget() || Mixer::mixers().isEmpty())
 	{
 		removeDock();
 		return false;
@@ -341,9 +336,6 @@ void KMixWindow::saveConfig()
 	saveBaseConfig();
 	saveViewConfig();
 	saveVolumes();
-#ifdef __GNUC_
-#warn We must Sync here, or we will lose configuration data. The reson for that is unknown.
-#endif
 
 	// TODO cesken The reason for not writing might be that we have multiple cascaded KConfig objects. I must migrate to KSharedConfig !!!
 	KSharedConfig::openConfig()->sync();
@@ -353,32 +345,30 @@ void KMixWindow::saveConfig()
 
 void KMixWindow::saveBaseConfig()
 {
-	GlobalConfig::instance().save();
+	Settings::setConfigVersion(KMIX_CONFIG_VERSION);
 
-	KConfigGroup config(KSharedConfig::openConfig(), "Global");
-
-	config.writeEntry("Size", size());
-	config.writeEntry("Position", pos());
+	Settings::setSize(size());
+	Settings::setPosition(pos());
 	// Cannot use isVisible() here, as in the "aboutToQuit()" case this widget is already hidden.
 	// (Please note that the problem was only there when quitting via Systray - esken).
 	// Using it again, as internal behaviour has changed with KDE4
-	config.writeEntry("Visible", isVisible());
-	config.writeEntry("Menubar", _actionShowMenubar->isChecked());
-        config.writeEntry("Soundmenu.Mixers", GlobalConfig::instance().getMixersForSoundmenu().values());
+	Settings::setVisible(isVisible());
+	Settings::setMenubar(_actionShowMenubar->isChecked());
 
-	config.writeEntry("DefaultCardOnStart", m_defaultCardOnStart);
-	config.writeEntry("ConfigVersion", KMIX_CONFIG_VERSION);
-	config.writeEntry("AutoUseMultimediaKeys", m_autouseMultimediaKeys);
+	// TODO: check whether the next line is needed
+	//Settings::setMixersForSoundMenu(GlobalConfig::instance().getMixersForSoundmenu().values());
+	Settings::setDefaultCardOnStart(m_defaultCardOnStart);
+	Settings::setAutoUseMultimediaKeys(m_autouseMultimediaKeys);
 
-	MasterControl& master = Mixer::getGlobalMasterPreferred(false);
-	config.writeEntry("MasterMixer", master.getCard());
-	config.writeEntry("MasterMixerDevice", master.getControl());
+	const MasterControl &master = Mixer::getGlobalMasterPreferred(false);
+	Settings::setMasterMixer(master.getCard());
+	Settings::setMasterMixerDevice(master.getControl());
 
-	QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
-	config.writeEntry("MixerIgnoreExpression", mixerIgnoreExpression);
+	const QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
+	Settings::setMixerIgnoreExpression(mixerIgnoreExpression);
 
-	qCDebug(KMIX_LOG)
-	<< "Base configuration saved";
+	Settings::self()->save();
+	qCDebug(KMIX_LOG) << "Base configuration saved";
 }
 
 void KMixWindow::saveViewConfig()
@@ -402,7 +392,7 @@ void KMixWindow::saveViewConfig()
 		{
 			// Here also Views are saved. even for Mixers that are closed. This is necessary when unplugging cards.
 			// Otherwise the user will be confused afer re-plugging the card (as the config was not saved).
-			mw->saveConfig(KSharedConfig::openConfig().data());
+			mw->saveConfig(Settings::self()->config());
 			// add the view to the corresponding mixer list, so we can save a views-per-mixer list below
 //			if (!mw->mixer()->isDynamic())
 //			{
@@ -465,57 +455,39 @@ QString KMixWindow::getKmixctrlRcFilename(const QString &postfix)
 	return kmixctrlRcFilename;
 }
 
+
 void KMixWindow::loadAndInitConfig(bool reset)
 {
-	if (!reset)
-	{
-		loadBaseConfig();
-	}
-
-	//loadViewConfig(); // mw->loadConfig() explicitly called always after creating mw.
-	//loadVolumes(); // not in use
-
-	// create an initial snapshot, so we have a reference of the state before changes through the preferences dialog
-	configDataSnapshot = GlobalConfig::instance().data;
+	if (!reset) loadBaseConfig();
 }
+
 
 void KMixWindow::loadBaseConfig()
 {
-	KConfigGroup config(KSharedConfig::openConfig(), "Global");
-
-	GlobalConfigData& gcd = GlobalConfig::instance().data;
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-	QList<QString> preferredMixersInSoundMenu;
-	preferredMixersInSoundMenu = config.readEntry("Soundmenu.Mixers", preferredMixersInSoundMenu);
-	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersInSoundMenu.toSet());
-#else
-	const QStringList preferredMixers = config.readEntry("Soundmenu.Mixers", QStringList());
-	const QSet<QString> preferredMixersSet(preferredMixers.begin(), preferredMixers.end());
-	GlobalConfig::instance().setMixersForSoundmenu(preferredMixersSet);
-#endif
-	m_startVisible = config.readEntry("Visible", false);
-	m_multiDriverMode = config.readEntry("MultiDriver", false);
-	m_defaultCardOnStart = config.readEntry("DefaultCardOnStart", "");
-	m_configVersion = config.readEntry("ConfigVersion", 0);
+	m_startVisible = Settings::visible();
+	m_multiDriverMode = Settings::multiDriver();
+	m_defaultCardOnStart = Settings::defaultCardOnStart();
+	m_configVersion = Settings::configVersion();
 	// WARNING Don't overwrite m_configVersion with the "correct" value, before having it
 	// evaluated. Better only write that in saveBaseConfig()
-	m_autouseMultimediaKeys = config.readEntry("AutoUseMultimediaKeys", true);
-	QString mixerMasterCard = config.readEntry("MasterMixer", "");
-	QString masterDev = config.readEntry("MasterMixerDevice", "");
+	m_autouseMultimediaKeys = Settings::autoUseMultimediaKeys();
+	QString mixerMasterCard = Settings::masterMixer();
+	QString masterDev = Settings::masterMixerDevice();
 	Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
-	QString mixerIgnoreExpression = config.readEntry("MixerIgnoreExpression", "Modem");
-	MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
+
+	QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
+	if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 
 	// The global volume step setting.
-	const int volumePercentageStep = config.readEntry("VolumePercentageStep", -1);
+	const int volumePercentageStep = Settings::volumePercentageStep();
 	if (volumePercentageStep>0) Volume::setVolumeStep(volumePercentageStep);
 
 	// The following log is very helpful in bug reports. Please keep it.
-	m_backendFilter = config.readEntry<>("Backends", QList<QString>());
-	qCDebug(KMIX_LOG) << "Backends: " << m_backendFilter;
+	m_backendFilter = Settings::backends();
+	qCDebug(KMIX_LOG) << "Backends from settings" << m_backendFilter;
 
 	// show/hide menu bar
-	bool showMenubar = config.readEntry("Menubar", true);
+	bool showMenubar = Settings::menubar();
 	if (_actionShowMenubar!=nullptr) _actionShowMenubar->setChecked(showMenubar);
 }
 
@@ -822,7 +794,7 @@ void KMixWindow::saveAndCloseView(int idx)
 	KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
 	if (kmw)
 	{
-		kmw->saveConfig(KSharedConfig::openConfig().data()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
+		kmw->saveConfig(Settings::self()->config()); // -<- This alone is not enough, as I need to save the META information as well. Thus use saveViewConfig() below
 		m_wsMixers->removeTab(idx);
 		updateTabsClosable();
 		saveViewConfig();
@@ -834,8 +806,7 @@ void KMixWindow::saveAndCloseView(int idx)
 
 void KMixWindow::fixConfigAfterRead()
 {
-	KConfigGroup grp(KSharedConfig::openConfig(), "Global");
-	unsigned int configVersion = grp.readEntry("ConfigVersion", 0);
+	unsigned int configVersion = Settings::configVersion();
 	if (configVersion < 3)
 	{
 		// Fix the "double Base" bug, by deleting all groups starting with "View.Base.Base.".
@@ -848,8 +819,7 @@ void KMixWindow::fixConfigAfterRead()
 			QString groupName = it.next();
 			if (groupName.indexOf("View.Base.Base") == 0)
 			{
-				qCDebug(KMIX_LOG)
-				<< "Fixing group " << groupName;
+				qCDebug(KMIX_LOG) << "Fixing group " << groupName;
 				KConfigGroup buggyDevgrpCG(KSharedConfig::openConfig(), groupName);
 				buggyDevgrpCG.deleteGroup();
 			} // remove buggy group
@@ -997,7 +967,7 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	updateTabsClosable();
 	m_dontSetDefaultCardOnStart = false;
 
-	kmw->loadConfig(KSharedConfig::openConfig().data());
+	kmw->loadConfig(Settings::self()->config());
 	// Now force to read for new tabs, especially after hotplug. Note: Doing it here is bad design and possibly
 	// obsolete, as the backend should take care of updating itself.
 	kmw->mixer()->readSetFromHWforceUpdate();
@@ -1013,8 +983,7 @@ void KMixWindow::updateTabsClosable()
 
 bool KMixWindow::queryClose()
 {
-	GlobalConfigData& gcd = GlobalConfig::instance().data;
-	if (gcd.showDockWidget && !qApp->isSavingSession() )
+	if (Settings::showDockWidget() && !qApp->isSavingSession())
 	{
 		// Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
 		hide();
@@ -1032,8 +1001,7 @@ bool KMixWindow::queryClose()
 
 void KMixWindow::hideOrClose()
 {
-	GlobalConfigData& gcd = GlobalConfig::instance().data;
-	if (gcd.showDockWidget && m_dockWidget != 0)
+	if (Settings::showDockWidget() && m_dockWidget!=nullptr)
 	{
 		// we can hide if there is a dock widget
 		hide();
@@ -1081,7 +1049,8 @@ void KMixWindow::showVolumeDisplay()
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 
-    if (GlobalConfig::instance().data.showOSD) {
+	if (Settings::showOSD())
+	{
         QDBusMessage msg = QDBusMessage::createMethodCall(
             "org.kde.plasmashell",
             "/org/kde/osdService",
@@ -1128,8 +1097,8 @@ void KMixWindow::quit()
 void KMixWindow::showSettings()
 {
 	KMixPrefDlg::getInstance()->switchToPage(KMixPrefDlg::PrefGeneral);
-	KMixPrefDlg::getInstance()->show();
 }
+
 
 void KMixWindow::showHelp()
 {
@@ -1147,23 +1116,30 @@ void KMixWindow::showAbout()
  */
 void KMixWindow::applyPrefs()
 {
-	// -1- Determine what has changed ------------------------------------------------------------------
-	GlobalConfigData& config = GlobalConfig::instance().data;
-	GlobalConfigData& configBefore = configDataSnapshot;
+// 	// -1- Determine what has changed ------------------------------------------------------------------
+// 	GlobalConfigData& config = GlobalConfig::instance().data;
+// 	GlobalConfigData& configBefore = configDataSnapshot;
 
-	bool labelsHasChanged = config.showLabels ^ configBefore.showLabels;
-	bool ticksHasChanged = config.showTicks ^ configBefore.showTicks;
+// TODO: Work out how to get the "what has changed" result from the
+// KMixPrefDlg.  For now, just assume that everything has.
 
-	bool dockwidgetHasChanged = config.showDockWidget ^ configBefore.showDockWidget;
-
-	bool toplevelOrientationHasChanged = config.getToplevelOrientation() != configBefore.getToplevelOrientation();
-	bool traypopupOrientationHasChanged = config.getTraypopupOrientation() != configBefore.getTraypopupOrientation();
-	qCDebug(KMIX_LOG)
-	<< "toplevelOrientationHasChanged=" << toplevelOrientationHasChanged << ", config="
-			<< config.getToplevelOrientation() << ", configBefore=" << configBefore.getToplevelOrientation();
-	qCDebug(KMIX_LOG)
-	<< "trayOrientationHasChanged=" << traypopupOrientationHasChanged << ", config=" << config.getTraypopupOrientation()
-			<< ", configBefore=" << configBefore.getTraypopupOrientation();
+	bool labelsHasChanged = true;
+	bool ticksHasChanged = true;
+	bool dockwidgetHasChanged = true;
+	bool toplevelOrientationHasChanged = true;
+	bool traypopupOrientationHasChanged = true;
+// 	bool labelsHasChanged = config.showLabels ^ configBefore.showLabels;
+// 	bool ticksHasChanged = config.showTicks ^ configBefore.showTicks;
+// 	bool dockwidgetHasChanged = config.showDockWidget ^ configBefore.showDockWidget;
+// 
+// 	bool toplevelOrientationHasChanged = config.getToplevelOrientation() != configBefore.getToplevelOrientation();
+// 	bool traypopupOrientationHasChanged = config.getTraypopupOrientation() != configBefore.getTraypopupOrientation();
+// 	qCDebug(KMIX_LOG)
+// 	<< "toplevelOrientationHasChanged=" << toplevelOrientationHasChanged << ", config="
+// 			<< config.getToplevelOrientation() << ", configBefore=" << configBefore.getToplevelOrientation();
+// 	qCDebug(KMIX_LOG)
+// 	<< "trayOrientationHasChanged=" << traypopupOrientationHasChanged << ", config=" << config.getTraypopupOrientation()
+// 			<< ", configBefore=" << configBefore.getTraypopupOrientation();
 
 	// -2- Determine what effect the changes have ------------------------------------------------------------------
 
@@ -1182,8 +1158,6 @@ void KMixWindow::applyPrefs()
 
 //	this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
 	qApp->processEvents();
-
-	configDataSnapshot = GlobalConfig::instance().data; // create a new snapshot as all current changes are applied now
 
 	// Remove saveConfig() IF aa changes have been migrated to GlobalConfig.
 	// Currently there is still stuff like "show menu bar".

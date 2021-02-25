@@ -37,7 +37,6 @@ class QWidget;
 
 class KMessageWidget;
 
-#include "core/GlobalConfig.h"
 #include "gui/dialogchoosebackends.h"
 
 
@@ -51,7 +50,7 @@ public:
 		PrefGeneral, PrefSoundMenu, PrefStartup
 	};
 
-	static KMixPrefDlg* createInstance(QWidget *parent, GlobalConfig& config);
+	static KMixPrefDlg* createInstance(QWidget *parent);
 	static KMixPrefDlg* getInstance();
 	void switchToPage(KMixPrefPage page);
 
@@ -73,10 +72,13 @@ protected:
 
 	bool hasChanged() override;
 
+private slots:
+	void slotControlChanged();
+
 private:
 	static KMixPrefDlg* instance;
 
-	KMixPrefDlg(QWidget *parent, GlobalConfig& config);
+	KMixPrefDlg(QWidget *parent);
 	virtual ~KMixPrefDlg() = default;
 
 	enum KMixPrefDlgPrefOrientationType
@@ -84,20 +86,20 @@ private:
 		MainOrientation, TrayOrientation
 	};
 
-	GlobalConfig& dialogConfig;
-
 	void createStartupTab();
 	void replaceBackendsInTab();
 	void createGeneralTab();
 	void createControlsTab();
 
-	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip, const QString &kconfigName);
+	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip);
 	void createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
 	void setOrientationTooltip(QGridLayout *orientationLayout, int row, const QString &tooltip);
 
 	QFrame *m_generalTab;
 	QFrame *m_startupTab;
 	QFrame *m_controlsTab;
+
+	bool m_controlsChanged;
 
 	QCheckBox *m_dockingChk;
 	KMessageWidget *dynamicControlsRestoreWarning;

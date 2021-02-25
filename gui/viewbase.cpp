@@ -40,9 +40,9 @@
 #include "gui/mdwslider.h"
 #include "gui/mdwenum.h"
 #include "core/ControlManager.h"
-#include "core/GlobalConfig.h"
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
+#include "settings.h"
 
 
 /**
@@ -101,8 +101,8 @@ QPushButton* ViewBase::createConfigureViewButton()
 
 void ViewBase::updateGuiOptions()
 {
-    setTicks(GlobalConfig::instance().data.showTicks);
-    setLabels(GlobalConfig::instance().data.showLabels);
+    setTicks(Settings::showTicks());
+    setLabels(Settings::showLabels());
     updateMediaPlaybackIcons();
 }
 

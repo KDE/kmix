@@ -140,7 +140,8 @@ QString Mixer_Backend::getName() const
 
 /**
  * The id of the Mixer this backend represents. The default implementation simply returns the name.
- * Often it is just a name/id for the kernel. so name and id are usually identical. See also #Mixer_Backend::getName().
+ * Often it is just a name/id for the kernel. so name and id are usually identical. See also
+ * Mixer_Backend::getName().
  * You must override this method if you want to set ID different from name.
  */
 QString Mixer_Backend::getId() const
@@ -172,7 +173,7 @@ void Mixer_Backend::readSetFromHW()
 	if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
 		// Some drivers (ALSA) are smart. We don't need to run the following
 		// time-consuming update loop if there was no change
-		qCDebug(KMIX_LOG) << "Mixer::readSetFromHW(): smart-update-tick";
+		qCDebug(KMIX_LOG) << "smart-update-tick";
 		return;
 	}
 
