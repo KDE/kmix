@@ -97,8 +97,8 @@ public:
 
    /**
     * Constructor for a MixDevice.
-    * After having constructed a MixDevice, you <b>must</b> add it to the ControlPool
-    * by calling addToPool(). You may then <b>not</b> delete this object.
+    * After having constructed a MixDevice, you <b>must</b> add it to the DBus
+    * interfaces by calling addToPool(). You may then <b>not</b> delete this object.
     *
     * @par mixer The mixer this control belongs to
     * @par id  Defines the ID, e.g. used in looking up the keys in kmixrc. Also it is used heavily inside KMix as unique key. 

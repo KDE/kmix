@@ -25,7 +25,6 @@
 
 #include <klocalizedstring.h>
 
-#include "core/ControlPool.h"
 #include "core/mixer.h"
 #include "dbus/dbuscontrolwrapper.h"
 #include "gui/guiprofile.h"
@@ -158,8 +157,7 @@ shared_ptr<MixDevice> MixDevice::addToPool()
 {
 //	qCDebug(KMIX_LOG) << "id=" <<  _mixer->id() << ":" << _id;
     shared_ptr<MixDevice> thisSharedPtr(this);
-    //shared_ptr<MixDevice> thisSharedPtr = ControlPool::instance()->add(fullyQualifiedId, this);
-    _dbusControlWrapper = new DBusControlWrapper( thisSharedPtr, dbusPath() );
+    _dbusControlWrapper = new DBusControlWrapper(thisSharedPtr, dbusPath());
     return (thisSharedPtr);
 }
 
