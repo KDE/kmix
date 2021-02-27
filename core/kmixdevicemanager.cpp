@@ -55,7 +55,7 @@ void KMixDeviceManager::initHotplug()
 
 QString KMixDeviceManager::getUDI_ALSA(int num)
 {
-	return (QString("hw%1").arg(num));
+	return (QString("hw:%1").arg(num));
 }
 
 
