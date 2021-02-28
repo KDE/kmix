@@ -22,170 +22,191 @@
 #include "settings.h"
 #include "kmix_debug.h"
 
-#include <QMutableListIterator>
 
+struct Listener
+{
+	QString mixerId;
+	ControlManager::ChangeType changeType;
+	// TODO: recording 'target' is bit dangerous, as it might get deleted.
+	// Use a smart pointer?
+	QObject *target;
+	QString sourceId;
+};
 
-ControlManager ControlManager::instanceSingleton;
 
 ControlManager &ControlManager::instance()
 {
-	return instanceSingleton;
+	static ControlManager *sInstance = new ControlManager;
+	return (*sInstance);
 }
+
 
 ControlManager::ControlManager()
 {
-	listenersChanged = false;
+	m_listenersChanged = false;
 }
 
-/**
- * Announce a change for one or all mixers.
- *
- * @param mixerId The mixerId. Use an empty QString() to announce a change for all mixers
- * @param changeType A bit array of ControlChangeType flags
- * @param sourceId Only for logging
- *
- */
+
+// TODO: this does not seem to implement the anti-loopback test as described in
+// the original comments for addListener(), "Listeners are not informed about changes
+// that originate from oneself (according to sourceId)".
+
 void ControlManager::announce(const QString &mixerId, ControlManager::ChangeType changeType, const QString &sourceId)
 {
-	bool listenersModified = false;
-	QSet<Listener *> processedListeners;
-	do
-	{
-		listenersModified = false;
-		for (QList<Listener *>::const_iterator it = listeners.constBegin(); it!=listeners.constEnd(); ++it)
-		{
-			Listener *listener = (*it);
-
-			bool mixerIsOfInterest = listener->getMixerId().isEmpty() || mixerId.isEmpty()
-				|| listener->getMixerId() == mixerId;
-
-			bool listenerAlreadyProcesed = processedListeners.contains(listener);
-			if ( listenerAlreadyProcesed )
-			{
-				if (Settings::debugControlManager())
-					qCDebug(KMIX_LOG) << "Skipping already processed listener";
-				continue;
-			}
-			if (mixerIsOfInterest && listener->getChangeType() == changeType)
-			{
-				bool success = QMetaObject::invokeMethod(listener->getTarget(),
-									 "controlsChange",
-									 Qt::DirectConnection,
-									 Q_ARG(ControlManager::ChangeType, changeType));
-				if (Settings::debugControlManager())
-				{
-					qCDebug(KMIX_LOG) << "Listener" << listener->getSourceId()
-							  << "is interested in" << mixerId
-							  << "type" << changeType;
-				}
-
-				if (!success)
-				{
-					qCCritical(KMIX_LOG) << "Listener failed to send to " << listener->getTarget()->metaObject()->className();
-				}
-				processedListeners.insert(listener);
-				if (listenersChanged)
-				{
-					// The invokeMethod() above has changed the listeners => my Iterator is invalid => restart loop
-					if (Settings::debugControlManager())
-						qCDebug(KMIX_LOG) << "Listeners modified => restart loop";
-					listenersChanged = false;
-					listenersModified = true;
-					break; // break inner loop => restart via outer loop
-				}
-
-			}
-		}
-	}
-	while (listenersModified);
+	bool listenersModified = true;			// do loop at least once
+	QSet<const Listener *> processedListeners;	// listeners that have been processed
 
 	if (Settings::debugControlManager())
 	{
-		qCDebug(KMIX_LOG)
-		<< "Announcing" << changeType << "for"
-		<< (mixerId.isEmpty() ? "all cards" : mixerId) << "by" << sourceId;
+		qCDebug(KMIX_LOG) << "Announcing" << changeType << "for mixer"
+				  << (mixerId.isEmpty() ? "(all)" : mixerId)
+				  << "by" << sourceId;
 	}
+
+	while (listenersModified)
+	{
+		listenersModified = false;		// unmodified so far this loop
+		for (QList<Listener *>::const_iterator it = m_listeners.constBegin(); it!=m_listeners.constEnd(); ++it)
+		{
+			const Listener *listener = (*it);
+
+			const bool listenerAlreadyProcessed = processedListeners.contains(listener);
+			if (listenerAlreadyProcessed)
+			{
+				if (Settings::debugControlManager()) qCDebug(KMIX_LOG) << "Skipping already processed listener";
+				continue;
+			}
+
+			const bool listenerInterested = listener->mixerId.isEmpty() ||	// listener wants all mixers
+			                                mixerId.isEmpty() ||		// announce for all mixers
+			                                listener->mixerId==mixerId;	// listener wants this mixer
+			if (!listenerInterested) continue;				// don't want this listener
+			if (listener->changeType!=changeType) continue;			// doesn't want this change type
+
+			if (Settings::debugControlManager())
+			{
+				qCDebug(KMIX_LOG) << "Listener" << listener->sourceId
+						  << "interested in" << mixerId
+						  << "change type" << changeType;
+			}
+
+			bool success = QMetaObject::invokeMethod(listener->target,
+								 "controlsChange",
+								 Qt::DirectConnection,
+								 Q_ARG(ControlManager::ChangeType, changeType));
+			if (!success)
+			{
+				qCWarning(KMIX_LOG) << "failed to signal"
+						    << listener->target->metaObject()->className();
+			}
+
+			processedListeners.insert(listener);
+			if (m_listenersChanged)
+			{
+				// The invokeMethod() above has changed the list of
+				// listeners, therefore the iterator may not be valid.
+				// Restart the loop, but retain the list of processed
+				// listeners so that those already processed are not
+				// done again.
+				if (Settings::debugControlManager()) qCDebug(KMIX_LOG) << "Listeners modified, restart loop";
+				m_listenersChanged = false;
+				listenersModified = true;
+				break;			// break inner loop, continue outer loop
+			}
+		}					// inner loop
+	}						// outer loop
 }
 
-/**
- * Adds a listener for the given mixerId and changeType.
- * Listeners are informed about all corresponding changes via a signal.
- * Listeners are not informed about changes that originate from oneself (according to sourceId).
- *
- * @param mixerId The id of the Mixer you are interested in
- * @param changetType The changeType of interest
- * @param target The QObject, where the notification signal is sent to. It must implement the SLOT controlChanged(QString mixerId,ControlManager::ChangeType changeType).
- * @param sourceId Only for logging
- */
+
 void ControlManager::addListener(const QString &mixerId, ControlManager::ChangeTypes changeTypes,
 				 QObject *target, const QString &sourceId)
 {
 	if (Settings::debugControlManager())
 	{
-		qCDebug(KMIX_LOG)
-		<< "Listening to" << changeTypes << "for"
-		<< (mixerId.isEmpty() ? "all cards" : mixerId) << "by" << sourceId
-		<< "sent to" << target;
+		qCDebug(KMIX_LOG) << "Listening to" << changeTypes << "for mixer"
+				  << (mixerId.isEmpty() ? "(all)" : mixerId)
+				  << "by" << sourceId
+				  << "target" << target->metaObject()->className();
 	}
 
 	for (ControlManager::ChangeType ct = ChangeType::First; ct!=ChangeType::Last;
-	      ct = static_cast<ControlManager::ChangeType>(ct << 1))
+	     ct = static_cast<ControlManager::ChangeType>(ct << 1))
 	{
+		// See if this change type is wanted.
 		if (changeTypes & ct)
 		{
-			// Add all listeners.
-			Listener *listener = new Listener(mixerId, ct, target, sourceId);
-			listeners.append(listener);
-			listenersChanged = true;
+			// Add a new listener for each wanted change type.
+			Listener *listener = new Listener;
+			listener->mixerId = mixerId;
+			listener->changeType = ct;
+			listener->target = target;
+			listener->sourceId = sourceId;
+			m_listeners.append(listener);
+			// Note that the list of listeners has changed, in the event
+			// that we are being called by a target of an announce loop
+			// that is in progress.
+			m_listenersChanged = true;
 		}
 	}
+
 	if (Settings::debugControlManager())
 	{
-		qCDebug(KMIX_LOG) << "We now have" << listeners.size() << "listeners";
+		qCDebug(KMIX_LOG) << "now have" << m_listeners.size() << "listeners";
 	}
 }
 
-/**
- * Removes all listeners of the given target.
- * @param target The QObject that was used to register via addListener()
- * @param sourceId Optional: Only for logging
- */
+
 void ControlManager::removeListener(QObject *target, const QString &sourceId)
 {
-	QString src = sourceId;
-	if (src.isEmpty()) src = target->metaObject()->className();
+	removeListener(target, ControlManager::None, sourceId);
+}
 
-	QMutableListIterator<Listener *> it(listeners);
+
+void ControlManager::removeListener(QObject *target, ControlManager::ChangeType changeType, const QString &sourceId)
+{
+	QMutableListIterator<Listener *> it(m_listeners);
 	while (it.hasNext())
 	{
 		Listener *listener = it.next();
-		if (listener->getTarget() == target)
+		if (listener->target!=target) continue;
+		if (changeType!=ControlManager::None && listener->changeType!=changeType) continue;
+
+		if (Settings::debugControlManager())
 		{
-			if (Settings::debugControlManager())
-				qCDebug(KMIX_LOG)
-				<< "Stop Listening of" << listener->getSourceId() << "requested by" << src << "from" << target;
-			it.remove();
-			// Hint: As we have actual objects no explicit delete is needed
-			listenersChanged = true;
+			qCDebug(KMIX_LOG) << "Remove of" << listener->sourceId << "target" << target << "requested by" << sourceId;
 		}
+
+		it.remove();
+		// TODO: this original comment does not make sense, the Listener was
+		// allocated on the heap by us and a pointer to it is stored in the
+		// list.  So surely it needs to be deleted?
+		// "Hint: As we have actual objects stored, no explicit delete is needed"
+
+		// See comment in addListener() above.
+		m_listenersChanged = true;
 	}
 }
 
-void ControlManager::warnUnexpectedChangeType(ControlManager::ChangeType type, QObject *obj)
+
+void ControlManager::warnUnexpectedChangeType(ControlManager::ChangeType changeType, QObject *obj)
 {
-	qCWarning(KMIX_LOG) << "Unexpected type " << type << " received by " << obj->metaObject()->className();
+	qCWarning(KMIX_LOG) << "Unexpected change type" << changeType << "received by" << obj;
 }
+
 
 void ControlManager::shutdownNow()
 {
-	if (Settings::debugControlManager())
-		qCDebug(KMIX_LOG) << "Shutting down ControlManager";
-	for (QList<Listener *>::const_iterator it = listeners.constBegin(); it!=listeners.constEnd(); ++it)
+	if (Settings::debugControlManager()) qCDebug(KMIX_LOG) << "Shutting down";
+	for (QList<Listener *>::const_iterator it = m_listeners.constBegin(); it!=m_listeners.constEnd(); ++it)
 	{
 		Listener *listener = (*it);
 		if (Settings::debugControlManager())
-			qCDebug(KMIX_LOG)
-			<< "Listener still connected. Closing it. source" << listener->getSourceId()
-			<< "target" << listener->getTarget()->metaObject()->className();
+		{
+			// Despite the original log message which said
+			// "Listener still connected. Closing it."
+			// this actually did nothing apart from the
+			// log message.
+			qCDebug(KMIX_LOG) << "Listener still registered by" << listener->sourceId << "target" << listener->target;
+		}
 	}
 }
