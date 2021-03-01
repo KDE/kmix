@@ -22,19 +22,13 @@
 
 // include files for Qt
 #include <QApplication>
-#include <QCheckBox>
-#include <QLabel>
-#include <QDesktopWidget>
 #include <QMenuBar>
-#include <QPushButton>
-#include <qradiobutton.h>
-#include <QCursor>
 #include <QTabWidget>
 #include <QPointer>
 #include <QHash>
+#include <QTimer>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
-#include <QKeySequence>
 
 // include files for KDE
 #include <kglobalaccel.h>
@@ -42,25 +36,25 @@
 #include <klocalizedstring.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
-#include <kactioncollection.h>
 
 // KMix
 #include "kmix_debug.h"
 #include "core/ControlManager.h"
-#include "core/MasterControl.h"
-#include "core/MediaController.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
-#include "gui/guiprofile.h"
 #include "gui/kmixerwidget.h"
 #include "gui/kmixprefdlg.h"
 #include "gui/kmixdockwidget.h"
 #include "gui/kmixtoolbox.h"
-#include "gui/viewdockareapopup.h"
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
 #include "settings.h"
+
+#ifdef HAVE_CANBERRA
+#include "volumefeedback.h"
+#endif
+
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
@@ -103,8 +97,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	connect(theKMixDeviceManager, &KMixDeviceManager::unplugged, this, &KMixWindow::unplugged);
 	theKMixDeviceManager->initHotplug();
 
-	if (m_startVisible && !invisible)
-		show(); // Started visible
+	if (m_startVisible && !invisible) show();	// Started visible
 
 	connect(qApp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
@@ -112,7 +105,9 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 			QString(), // All mixers (as the Global master Mixer might change)
 			ControlManager::ControlList|ControlManager::MasterChanged, this,
 			"KMixWindow");
-
+#ifdef HAVE_CANBERRA
+	VolumeFeedback::instance()->init();		// set up for volume feedback
+#endif
 	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
 	ControlManager::instance().announce(QString(), ControlManager::Volume, "Startup");
 }
@@ -750,6 +745,8 @@ void KMixWindow::newView()
 	QPointer<DialogAddView> dav = new DialogAddView(this, mixer);
 	int ret = dav->exec();
 
+	// TODO: it is pointless using a smart pointer for the dialogue
+	// (which is good practice) here and then not checking it!
 	if (QDialog::Accepted == ret)
 	{
 		QString profileName = dav->getresultViewName();

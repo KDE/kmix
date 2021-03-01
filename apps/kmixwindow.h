@@ -21,17 +21,13 @@
 #ifndef KMIXWINDOW_H
 #define KMIXWINDOW_H
 
-// Qt
-#include <qboxlayout.h>
-#include <qtimer.h>
-
 // KDE
-// class KAccel;
 #include <kxmlguiwindow.h>
 
 // KMix
 #include "core/ControlManager.h"
 #include "gui/kmixprefdlg.h"
+
 
 class QTabWidget;
 

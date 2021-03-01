@@ -30,30 +30,12 @@
 #include "core/kmixdevicemanager.h"
 #include "core/mixer.h"
 #include "core/volume.h"
-#include "settings.h"
 
 // KDE
 #include <klocalizedstring.h>
 
 // Qt
-#include <qtimer.h>
-
-// STD Headers
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <assert.h>
 #include <qsocketnotifier.h>
-
-#ifdef HAVE_CANBERRA
-#include <canberra.h>
-#endif
-
-
-#ifdef HAVE_CANBERRA
-static ca_context *s_ccontext = nullptr;
-static unsigned int s_refcount = 0;
-#endif
 
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
@@ -76,49 +58,12 @@ Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  devic
     _handle = 0;
     ctl_handle = 0;
     _initialUpdate = true;
-
-#ifdef HAVE_CANBERRA
-    ++s_refcount;					// increment Canberra reference count
-    if (s_refcount==1)					// initialise Canberra the first time
-    {
-        int ret = ca_context_create(&s_ccontext);
-        if (ret<0)
-        {
-            qCWarning(KMIX_LOG) << "Failed to create Canberra context for volume feedback," << ca_strerror(ret);
-            s_ccontext = nullptr;
-            return;
-        }
-
-        ca_context_set_driver(s_ccontext, "alsa");
-        qCDebug(KMIX_LOG) << "Initialised Canberra context for volume feedback";
-    }
-    m_playFeedbackTimer = new QTimer(this);
-    m_playFeedbackTimer->setSingleShot(true);
-    m_playFeedbackTimer->setInterval(100);
-    m_playFeedbackTimer->callOnTimeout(this, &Mixer_ALSA::playFeedbackSound);
-#endif
 }
 
 
 Mixer_ALSA::~Mixer_ALSA()
 {
     close();
-
-#ifdef HAVE_CANBERRA
-    if (s_refcount>0)					// have some Canberra references
-    {
-        --s_refcount;					// decrement Canberra reference count
-        if (s_refcount==0)				// no more references remaining
-        {
-            if (s_ccontext!=nullptr)			// have a Canberra context
-            {
-                ca_context_destroy(s_ccontext);		// don't need it any more
-                s_ccontext = nullptr;
-                qCDebug(KMIX_LOG) << "Finished with Canberra context";
-            }
-        }
-    }
-#endif
 }
 
 
@@ -968,11 +913,6 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
               //if (id== "Master:0" || id== "PCM:0" ) { qCDebug(KMIX_LOG) << "volumePlayback control=" << id << ", chid=" << vc.chid << ", vol=" << vc.volume; }
           }
     	}
-
-#ifdef HAVE_CANBERRA
-        m_playFeedbackTimer->start();
-#endif
-
     } // has playback volume
 
     // --- capture volume
@@ -1044,54 +984,3 @@ QString Mixer_ALSA::getDriverName()
 {
 	return QStringLiteral("ALSA");
 }
-
-
-#ifdef HAVE_CANBERRA
-
-void Mixer_ALSA::playFeedbackSound()
-{
-    if (!Settings::beepOnVolumeChange()) return;	// no feedback sound required
-    if (s_ccontext==nullptr) return;			// Canberra not set up
-
-    int playing = 0;
-    // Note that '2' is simply an index we've picked.
-    // It's mostly irrelevant.
-    const int cindex = 2;
-
-    ca_context_playing(s_ccontext, cindex, &playing);
-    // Note: Depending on how this is desired to work,
-    // we may want to simply skip playing, or cancel the
-    // currently playing sound and play our
-    // new one... for now, let's do the latter.
-    if (playing!=0)
-    {
-        ca_context_cancel(s_ccontext, cindex);
-        playing = 0;
-    }
-
-    if (playing==0)
-    {
-        if (!m_deviceName.isEmpty()) ca_context_change_device(s_ccontext, m_deviceName.constData());
-
-        // Ideally we'd use something like ca_gtk_play_for_widget()...
-        int ret = ca_context_play(s_ccontext,
-                                  cindex,
-                                  CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
-                                  CA_PROP_EVENT_ID, "audio-volume-change",
-                                  CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
-                                  CA_PROP_CANBERRA_ENABLE, "1",
-                                  nullptr);
-
-        // Sometimes trying to play sounds in quick succession returns the
-        // error CA_ERROR_NOTAVAILABLE = "Not available", even though playing
-        // the previous sound has been cancelled above.  Ignore that error.
-        if (ret<0 && ret!=CA_ERROR_NOTAVAILABLE)
-        {
-            qCWarning(KMIX_LOG) << "Failed to play Canberra sound for volume feedback," << ca_strerror(ret);
-        }
-
-        ca_context_change_device(s_ccontext, nullptr);
-    }
-}
-
-#endif // HAVE_CANBERRA
