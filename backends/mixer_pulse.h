@@ -22,8 +22,6 @@
 #ifndef MIXER_PULSE_H
 #define MIXER_PULSE_H
 
-#include <QString>
-
 #include "mixer_backend.h"
 #include <pulse/pulseaudio.h>
 

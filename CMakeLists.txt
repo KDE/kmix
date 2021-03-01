@@ -243,7 +243,8 @@ if (PulseAudio_FOUND)
 endif (PulseAudio_FOUND)
 
 if (CANBERRA_FOUND)
-  target_link_libraries(kmixcore PRIVATE ${CANBERRA_LIBRARIES})
+  # VolumeFeedback calls Canberra directly, so public linking is required
+  target_link_libraries(kmixcore PUBLIC ${CANBERRA_LIBRARIES})
 endif (CANBERRA_FOUND)
 
 install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR} LIBRARY NAMELINK_SKIP)
@@ -304,6 +305,10 @@ set(kmix_SRCS
   apps/kmixapp.cpp
   ${kmix_debug_SRCS}
 )
+
+if (CANBERRA_FOUND)
+  set(kmix_SRCS ${kmix_SRCS} apps/volumefeedback.cpp)
+endif (CANBERRA_FOUND)
 
 add_executable(kmix ${kmix_SRCS})
 target_link_libraries(kmix

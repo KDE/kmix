@@ -46,7 +46,7 @@ public:
     unsigned int enumIdHW(const QString& id) override;
     bool hasChangedControls() override;
 
-    bool needsPolling() override { return false; }
+    bool needsPolling() override			{ return (false); }
     QString getDriverName() override;
 
 protected:
@@ -54,13 +54,7 @@ protected:
     int close() override;
     int id2num(const QString& id);
 
-private slots:
-#ifdef HAVE_CANBERRA
-    void playFeedbackSound();
-#endif
-
 private:
-
     int openAlsaDevice(const QString& devName);
     void addEnumerated(snd_mixer_elem_t *elem, QList<QString*>&);
     Volume* addVolume(snd_mixer_elem_t *elem, bool capture);
@@ -72,6 +66,8 @@ private:
     snd_mixer_elem_t* getMixerElem(int devnum);
 
     QString errorText(int mixer_error) override;
+
+private:
     typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;
     AlsaMixerSidList mixer_sid_list;
     typedef QList<snd_mixer_elem_t *> AlsaMixerElemList;
@@ -88,11 +84,6 @@ private:
     QList<QSocketNotifier*> m_sns;
 
     QByteArray m_deviceName;
-
-#ifdef HAVE_CANBERRA
-    QTimer *m_playFeedbackTimer;
-#endif
-
 };
 
 #endif
