@@ -25,7 +25,7 @@ option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 ####################################################################################################
 
 set (QT_MIN_VERSION "5.11.0")
-set (KF5_MIN_VERSION "5.48.0")
+set (KF5_MIN_VERSION "5.68.0")
 set (PA_MIN_VERSION "0.9.16")
 
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
@@ -151,6 +151,8 @@ endif (BUILD_DATAENGINE)
 ecm_qt_declare_logging_category(kmix_debug_SRCS
                                 HEADER kmix_debug.h
                                 IDENTIFIER KMIX_LOG
+                                EXPORT kmixlogging
+                                DESCRIPTION "KMix sound mixer and volume control"
                                 CATEGORY_NAME org.kde.kmix)
 
 ####################################################################################################
@@ -373,6 +375,10 @@ install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVIC
 
 install(PROGRAMS apps/kmixremote DESTINATION ${KDE_INSTALL_BINDIR})
 install(FILES desktop/restore_kmix_volumes.desktop DESTINATION ${KDE_INSTALL_AUTOSTARTDIR})
+
+ecm_qt_install_logging_categories(EXPORT kmixlogging
+                                  FILE kmix.categories
+                                  DESTINATION "${KDE_INSTALL_LOGGINGCATEGORIESDIR}")
 
 ####################################################################################################
 ########### end ####################################################################################
