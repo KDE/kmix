@@ -232,7 +232,7 @@ void VolumeFeedback::slotPlayFeedback()
 		ca_context_play(
 			m_ccontext,
 			cindex,
-			CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8(),
+			CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
 			CA_PROP_EVENT_ID, "audio-volume-change",
 			CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
 			CA_PROP_CANBERRA_ENABLE, "1",
