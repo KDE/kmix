@@ -26,6 +26,7 @@
 #include <QListWidget>
 #include <QComboBox>
 #include <QToolTip>
+#include <QStandardItemModel>
 
 #include <klocalizedstring.h>
 
@@ -63,9 +64,6 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
     {
         int mixerIndex = 0;				// index of selected mixer
 
-        // TODO: should "Playback Streams" (ALSA) be shown here?
-        // There is no meaningful concept of a master channel for that.
-
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
         QHBoxLayout *mixerNameLayout = new QHBoxLayout();
@@ -86,6 +84,30 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
             const Mixer *m = mixers[i];
             m_cMixer->addItem(QIcon::fromTheme(m->iconName()), m->readableName(), m->id());
             if (m->id()==mixer->id()) mixerIndex = i;
+
+            const MixSet &mixset = m->getMixSet();
+            bool hasValidVolume = false;
+            for (int j = 0; j<mixset.count(); ++j)
+            {
+                const shared_ptr<MixDevice> md = mixset[j];
+                if (md->playbackVolume().hasVolume())
+                {
+                    hasValidVolume = true;
+                    break;
+                }
+            }
+
+            if (!hasValidVolume)
+            {
+                qCDebug(KMIX_LOG) << "mixer" << m->readableName() << "has no valid volume";
+                QStandardItemModel *model = qobject_cast<QStandardItemModel*>(m_cMixer->model());
+                QStandardItem *item = model->item(i);
+                item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+
+                // Need to set the item colour role so that it is shown in the disabled
+                // colour.  See https://stackoverflow.com/questions/11439773/
+                item->setData(m_cMixer->palette().brush(QPalette::Disabled, QPalette::Text), Qt::ForegroundRole);
+            }
          }
 
         // Select the specified 'mixer' as the current item in the combo box.
@@ -112,9 +134,18 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
 "and the <interface>Mute</interface> action in the system tray popup menu.</para>"));
         });
 
-        createPage(mixer);
+	m_channelSelector = new QListWidget(mainFrame);
+#ifndef QT_NO_ACCESSIBILITY
+        m_channelSelector->setAccessibleName(i18n("Select Master Channel"));
+#endif
+	m_channelSelector->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_channelSelector->setDragEnabled(false);
+	m_channelSelector->setAlternatingRowColors(true);
+        connect(m_channelSelector, &QListWidget::itemSelectionChanged, this, &DialogSelectMaster::slotUpdateButtons);
+	layout->addWidget(m_channelSelector);
 
         connect(this, &QDialog::accepted, this, &DialogSelectMaster::apply);
+        createPage(mixer);
     }
     else
     {
@@ -147,28 +178,9 @@ void DialogSelectMaster::createPageByID(int mixerId)
  */
 void DialogSelectMaster::createPage(const Mixer *mixer)
 {
-    /** --- Reset page -----------------------------------------------
-     * In case the user selected a new Mixer via m_cMixer, we need
-     * to remove the stuff created on the last call.
-     */
-	// delete the list widget.
-	// This should automatically remove all contained items.
-	delete m_channelSelector;
-    
-    /** Reset page end -------------------------------------------------- */
-    
-        QWidget *mainFrame = mainWidget();
-        QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(mainFrame->layout());
-        Q_ASSERT(layout!=nullptr);
-
-	m_channelSelector = new QListWidget(mainFrame);
-#ifndef QT_NO_ACCESSIBILITY
-        m_channelSelector->setAccessibleName( i18n("Select Master Channel") );
-#endif
-	m_channelSelector->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_channelSelector->setDragEnabled(false);
-	m_channelSelector->setAlternatingRowColors(true);
-	layout->addWidget(m_channelSelector);
+	// Clear the existing list widget.
+	// This should automatically remove and delete all contained items.
+	m_channelSelector->clear();
 
         const MixSet &mixset = mixer->getMixSet();
 	const MasterControl mc = mixer->getGlobalMasterPreferred(false);
@@ -211,7 +223,14 @@ void DialogSelectMaster::createPage(const Mixer *mixer)
             }
         }
 
-        setButtonEnabled(QDialogButtonBox::Ok, m_channelSelector->count()>0);
+        slotUpdateButtons();
+}
+
+
+void DialogSelectMaster::slotUpdateButtons()
+{
+    const QList<QListWidgetItem *> items = m_channelSelector->selectedItems();
+    setButtonEnabled(QDialogButtonBox::Ok, items.count()>0);
 }
 
 
@@ -222,7 +241,7 @@ void DialogSelectMaster::apply()
 
     if (mixers.count()==1)
     {
-        // only one mixer => no combo box => take first entry
+        // only one mixer => no combo box => take first (and only) entry
         mixer = mixers.first();
     }
     else if (mixers.count()>1)
@@ -232,15 +251,20 @@ void DialogSelectMaster::apply()
         if (idx!=-1) mixer = mixers.at(idx);
     }
 
-    if (mixer==nullptr) return;				// user must have unplugged everything
+    if (mixer==nullptr)					// no mixers present,
+    {							// user must have unplugged everything
+        qCWarning(KMIX_LOG) << "no selected mixer";
+        return;
+    }
 
-    QList<QListWidgetItem *> items = m_channelSelector->selectedItems();
+    const QList<QListWidgetItem *> items = m_channelSelector->selectedItems();
     if (items.count()==1)
     {
-    	QListWidgetItem *item = items.first();
+	const QListWidgetItem *item = items.first();
     	QString control_id = item->data(Qt::UserRole).toString();
         mixer->setLocalMasterMD(control_id);
         Mixer::setGlobalMaster(mixer->id(), control_id, true);
         ControlManager::instance().announce(mixer->id(), ControlManager::MasterChanged, QString("Select Master Dialog"));
     }
+    else qCWarning(KMIX_LOG) << "no selected channel";
 }

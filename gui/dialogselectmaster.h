@@ -44,11 +44,13 @@ class DialogSelectMaster : public DialogBase
     void createWidgets(const Mixer *mixer);
     void createPage(const Mixer *mixer);
 
+ private:
     QComboBox* m_cMixer;
     QListWidget *m_channelSelector;
 
  private slots:
-   void createPageByID(int mixerId);
+    void createPageByID(int mixerId);
+    void slotUpdateButtons();
 };
 
 #endif
