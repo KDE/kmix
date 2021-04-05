@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 # KDE Applications version, managed by release script.
 set(RELEASE_SERVICE_VERSION_MAJOR "21")
-set(RELEASE_SERVICE_VERSION_MINOR "03")
+set(RELEASE_SERVICE_VERSION_MINOR "07")
 set(RELEASE_SERVICE_VERSION_MICRO "70")
 set(RELEASE_SERVICE_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_VERSION_MINOR}.${RELEASE_SERVICE_VERSION_MICRO}")
 
@@ -34,7 +34,6 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} )
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
-include(ECMPackageConfigHelpers)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
 include(GenerateExportHeader)
