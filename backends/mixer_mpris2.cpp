@@ -28,7 +28,7 @@
 #include "settings.h"
 
 #include <QDBusReply>
-#include <qvariant.h>
+#include <qicon.h>
 
 #include <klocalizedstring.h>
 #include <kdesktopfile.h>
@@ -368,9 +368,17 @@ static QString getIconNameFromPlayerId(const QString &id)
 	if (id.startsWith(QLatin1String("xmms"))) return ("xmms");
 	if (id.startsWith(QLatin1String("tomahawk"))) return ("tomahawk");
 	if (id.startsWith(QLatin1String("clementine"))) return ("application-x-clementine");
-	// Surprisingly...
-	if (id.startsWith(QLatin1String("chrome"))) return ("chrome-browser");
-	if (id.startsWith(QLatin1String("chromium"))) return ("chromium-browser");
+
+	// Surprisingly, claims to support MPRIS2 but does not fully.
+	// The installed icon name may vary depending on whether the application
+	// is really Chrome or Chromium.
+	if (id.startsWith(QLatin1String("chrome")) || id.startsWith(QLatin1String("chromium")))
+	{
+		if (QIcon::hasThemeIcon("chromium-browser")) return ("chromium-browser");
+		if (QIcon::hasThemeIcon("chrome-browser")) return ("chrome-browser");
+		if (QIcon::hasThemeIcon("google-chrome")) return ("google-chrome");
+	}
+
 	// Uses QtWebEngine which is based on Chromium, so as above...
 	if (id.startsWith(QLatin1String("akregator"))) return ("akregator");
 
