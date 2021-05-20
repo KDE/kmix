@@ -381,7 +381,9 @@ static QString getIconNameFromPlayerId(const QString &id)
 
 	// Uses QtWebEngine which is based on Chromium, so as above...
 	if (id.startsWith(QLatin1String("akregator"))) return ("akregator");
+	if (id.startsWith(QLatin1String("konqueror"))) return ("konqueror");
 
+	qCDebug(KMIX_LOG) << "no desktop file or known icon for" << id;
 	return (QString());				// no application known
 }
 
