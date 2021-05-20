@@ -369,15 +369,15 @@ static QString getIconNameFromPlayerId(const QString &id)
 	if (id.startsWith(QLatin1String("tomahawk"))) return ("tomahawk");
 	if (id.startsWith(QLatin1String("clementine"))) return ("application-x-clementine");
 
+	// Partially supports MPRIS2 from version 75 onwards.
+	// Some systems seem to have really old icon names.
+	if (id.startsWith(QLatin1String("firefox"))) return ("firefox;netscape");
+
 	// Surprisingly, claims to support MPRIS2 but does not fully.
 	// The installed icon name may vary depending on whether the application
 	// is really Chrome or Chromium.
 	if (id.startsWith(QLatin1String("chrome")) || id.startsWith(QLatin1String("chromium")))
-	{
-		if (QIcon::hasThemeIcon("chromium-browser")) return ("chromium-browser");
-		if (QIcon::hasThemeIcon("chrome-browser")) return ("chrome-browser");
-		if (QIcon::hasThemeIcon("google-chrome")) return ("google-chrome");
-	}
+		return ("chromium-browser;chrome-browser;google-chrome");
 
 	// Uses QtWebEngine which is based on Chromium, so as above...
 	if (id.startsWith(QLatin1String("akregator"))) return ("akregator");

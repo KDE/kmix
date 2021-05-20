@@ -137,7 +137,15 @@ void ToggleToolButton::setActive(bool active)
  */
 void ToggleToolButton::setIndicatorIcon(const QString &iconName, QWidget *label, bool small)
 {
-    const auto icon = QIcon::fromTheme(iconName);
+    const QStringList iconNames = iconName.split(';');
+    QIcon icon;
+    for (const auto &name : iconNames)
+    {
+        if (!QIcon::hasThemeIcon(name)) continue;
+        icon = QIcon::fromTheme(name);
+        break;
+    }
+
     if (icon.isNull())
     {
         qCWarning(KMIX_LOG) << "Could not get icon for" << iconName;
