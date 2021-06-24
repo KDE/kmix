@@ -31,6 +31,7 @@
 #include <QDBusPendingCall>
 
 // include files for KDE
+#include <kxmlgui_version.h>
 #include <kglobalaccel.h>
 #include <kmessagebox.h>
 #include <klocalizedstring.h>
@@ -166,7 +167,13 @@ void KMixWindow::initActions()
 	// settings menu
 	_actionShowMenubar = KStandardAction::showMenubar(this, SLOT(toggleMenuBar()), actionCollection());
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
+
+#if KXMLGUI_VERSION >= QT_VERSION_CHECK(5, 84, 0)
+	KStandardAction::keyBindings(guiFactory(), &KXMLGUIFactory::showConfigureShortcutsDialog, actionCollection());
+#else
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
+#endif
+
 	QAction* action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
 	action->setText(i18n("Hide Mixer Window"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
