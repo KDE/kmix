@@ -37,6 +37,7 @@
 #include <klocalizedstring.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
+#include <KProcess>
 
 // KMix
 #include "kmix_debug.h"
@@ -174,7 +175,11 @@ void KMixWindow::initActions()
 	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
 #endif
 
-	QAction* action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
+	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
+	action->setText(i18n("Audio Setup..."));
+	connect(action, SIGNAL(triggered(bool)), SLOT(slotKdeAudioSetupExec()));
+
+	action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
 	action->setText(i18n("Hide Mixer Window"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(hideOrClose()));
 	actionCollection()->setDefaultShortcut(action, Qt::Key_Escape);
@@ -1154,6 +1159,21 @@ void KMixWindow::applyPrefs(KMixPrefDlg::PrefChanges changes)
 void KMixWindow::toggleMenuBar()
 {
 	menuBar()->setVisible(_actionShowMenubar->isChecked());
+}
+
+void KMixWindow::slotKdeAudioSetupExec()
+{
+    forkExec(QStringList() << "kcmshell5" << "kcm_pulseaudio");
+}
+
+void KMixWindow::forkExec(const QStringList& args)
+{
+   int pid = KProcess::startDetached(args);
+   if (pid == 0)
+   {
+       KMessageBox::error(this, i18n("The helper application is either not installed or not working.\n\n%1",
+                         args.join(QLatin1String(" "))));
+   }
 }
 
 void KMixWindow::slotConfigureCurrentView()

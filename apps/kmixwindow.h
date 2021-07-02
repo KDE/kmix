@@ -88,6 +88,7 @@ protected slots:
 
 private:
     KMixerWidget* findKMWforTab( const QString& tabId );
+    void forkExec(const QStringList& args);
     KToggleAction* _actionShowMenubar;
 
    bool m_startVisible;
@@ -120,6 +121,7 @@ private:
     static QString getKmixctrlRcFilename(const QString &postfix);
 
 private slots:
+   void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
 
    void plugged(const char *driverName, const QString &udi, int dev);
