@@ -97,7 +97,11 @@ DialogViewConfigurationWidget::DialogViewConfigurationWidget(QWidget *parent)
     setAlternatingRowColors(true);
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*> items) const
+#else
+QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem *> &items) const
+#endif
 {
     if (items.isEmpty())
         return 0;

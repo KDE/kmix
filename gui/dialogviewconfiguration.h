@@ -80,7 +80,11 @@ public:
    void dropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item);
 
 protected:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QMimeData* mimeData(const QList<QListWidgetItem*> items) const override;
+#else
+    QMimeData* mimeData(const QList<QListWidgetItem *> &items) const override;
+#endif
     bool dropMimeData(int index, const QMimeData * mimeData, Qt::DropAction action) override;
 
     Qt::DropActions supportedDropActions() const override
