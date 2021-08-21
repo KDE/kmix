@@ -135,6 +135,12 @@ void VolumeFeedback::masterChanged()
 	}
 
 	const shared_ptr<MixDevice> md = globalMaster->getLocalMasterMD();
+	if (md==nullptr)
+	{
+		qCDebug(KMIX_LOG) << "global master doest have a local master MD ( MixDevice )";
+		m_currentMaster.clear();
+		return;
+	}
 	const Volume &vol = md->playbackVolume();
 	if (!vol.hasVolume())
 	{
