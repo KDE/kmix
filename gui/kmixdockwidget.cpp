@@ -56,6 +56,7 @@ KMixDockWidget::KMixDockWidget(KXmlGuiWindow *parent)
     , _oldPixmapType('-')
     , _kmixMainWindow(parent)
     , _delta(0)
+    , _dockMuteAction(nullptr)
 {
     setToolTipIconByName("kmix");
     setTitle(i18n("Volume Control"));
@@ -88,7 +89,7 @@ KMixDockWidget::KMixDockWidget(KXmlGuiWindow *parent)
 	    ControlManager::Volume|ControlManager::MasterChanged,
 	    this,
 	    QString("KMixDockWidget"));
-	 
+
     // Refresh in all cases. When there is no global master we still need
     // to initialize correctly (e.g. for showing 0% or hiding it)
     refreshVolumeLevels();
