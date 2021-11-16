@@ -31,9 +31,6 @@
 #include "settings.h"
 
 
-static const char description[] =
-I18N_NOOP("kmixctrl - kmix volume save/restore utility");
-
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
@@ -41,7 +38,7 @@ int main(int argc, char *argv[])
     KLocalizedString::setApplicationDomain("kmix");
 
     KAboutData aboutData("kmixctrl", i18n("KMixCtrl"),
-			 KMIX_VERSION, i18n(description),
+                         KMIX_VERSION, i18n("kmixctrl - kmix volume save/restore utility"),
 			 KAboutLicense::GPL,
 			 i18n("(c) 2000 by Stefan Schimanski"));
 

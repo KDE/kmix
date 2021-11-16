@@ -29,9 +29,6 @@
 #include "kmixapp.h"
 #include "kmix_debug.h"
 
-static const char description[] =
-I18N_NOOP("KMix - KDE's full featured mini mixer");
-
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -41,7 +38,7 @@ int main(int argc, char *argv[])
     KLocalizedString::setApplicationDomain("kmix");
 
     KAboutData aboutData("kmix", i18n("KMix"),
-                         KMIX_VERSION, i18n(description), KAboutLicense::GPL,
+                         KMIX_VERSION, i18n("KMix - KDE's full featured mini mixer"), KAboutLicense::GPL,
                          i18n("(c) 1996-2013 The KMix Authors"));
 
    // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.
