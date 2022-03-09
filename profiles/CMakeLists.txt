@@ -7,5 +7,5 @@ install( FILES
   PulseAudio.default.xml
   SUNAudio.default.xml
   ALSA.TerraTec_DMX6Fire.1.default.xml
-	DESTINATION  ${DATA_INSTALL_DIR}/kmix/profiles )
+	DESTINATION  ${KDE_INSTALL_DATADIR}/kmix/profiles )
 
