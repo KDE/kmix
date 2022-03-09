@@ -78,17 +78,6 @@ find_package(Canberra)
 # ALSA is an optional dependency
 find_package(ALSA)
 
-# TODO: this test is probably obsolete by now
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("
-    #include <memory>
-    int main() { std::shared_ptr<int> p; return 0; }
-" HAVE_STD_SHARED_PTR)
-check_cxx_source_compiles("
-    #include <tr1/memory>
-    int main() { std::tr1::shared_ptr<int> p; return 0; }
-" HAVE_STD_TR1_SHARED_PTR)
-
 ####################################################################################################
 ########### compile definitions ####################################################################
 ####################################################################################################
@@ -98,14 +87,6 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
 add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
-
-if (HAVE_STD_SHARED_PTR)
-  add_definitions(-DHAVE_STD_SHARED_PTR)
-else (HAVE_STD_SHARED_PTR)
-  if (HAVE_STD_TR1_SHARED_PTR)
-    add_definitions(-DHAVE_STD_TR1_SHARED_PTR)
-  endif (HAVE_STD_TR1_SHARED_PTR)
-endif (HAVE_STD_SHARED_PTR)
 
 if (ALSA_FOUND)
   set(HAVE_LIBASOUND2 TRUE)

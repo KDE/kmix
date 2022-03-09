@@ -23,13 +23,8 @@
 
 #include "kmixcore_export.h"
 
-#if defined(HAVE_STD_SHARED_PTR)
 #include <memory>
 using std::shared_ptr;
-#elif defined(HAVE_STD_TR1_SHARED_PTR)
-#include <tr1/memory>
-using std::tr1::shared_ptr;
-#endif
 
 #include <QString>
 
