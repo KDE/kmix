@@ -93,7 +93,6 @@ endif ()
 
 if (PulseAudio_FOUND)
   add_definitions(-DHAVE_PULSE)
-  include_directories(${PulseAudio_INCLUDE_DIRS})
 endif ()
 
 if (CANBERRA_FOUND)
@@ -211,7 +210,7 @@ if (HAVE_LIBASOUND2)
 endif ()
 
 if (PulseAudio_FOUND)
-  target_link_libraries(kmixcore PRIVATE ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY})
+  target_link_libraries(kmixcore PRIVATE PulseAudio::PulseAudio)
 endif ()
 
 if (CANBERRA_FOUND)
