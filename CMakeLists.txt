@@ -65,7 +65,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 if (BUILD_DATAENGINE)
   find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
   set_package_properties(KF5Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
-endif (BUILD_DATAENGINE)
+endif ()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
@@ -91,17 +91,17 @@ add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
 if (ALSA_FOUND)
   set(HAVE_LIBASOUND2 TRUE)
   add_definitions(-DHAVE_LIBASOUND2)
-endif (ALSA_FOUND)
+endif ()
 
 if (PulseAudio_FOUND)
   add_definitions(-DHAVE_PULSE)
   include_directories(${PulseAudio_INCLUDE_DIRS})
-endif (PulseAudio_FOUND)
+endif ()
 
 if (CANBERRA_FOUND)
   add_definitions(-DHAVE_CANBERRA)
   include_directories(${CANBERRA_INCLUDE_DIRS})
-endif (CANBERRA_FOUND)
+endif ()
 
 ####################################################################################################
 ########### subdirectories #########################################################################
@@ -114,8 +114,8 @@ add_subdirectory(profiles)
 if (BUILD_DATAENGINE)
   if (KF5Plasma_FOUND)
     add_subdirectory(plasma)
-  endif (KF5Plasma_FOUND)
-endif (BUILD_DATAENGINE)
+  endif ()
+endif ()
 
 ####################################################################################################
 ########### definitions: logging ###################################################################
@@ -160,11 +160,11 @@ set(kmix_backend_SRCS
 
 if (HAVE_LIBASOUND2)
   set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_alsa9.cpp )
-endif (HAVE_LIBASOUND2)
+endif ()
 
 if (PulseAudio_FOUND)
   set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp )
-endif (PulseAudio_FOUND)
+endif ()
 
 ####################################################################################################
 ########### target: kmixcore library ###############################################################
@@ -211,16 +211,16 @@ generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_exp
 
 if (HAVE_LIBASOUND2)
   target_link_libraries(kmixcore PRIVATE ${ALSA_LIBRARIES})
-endif (HAVE_LIBASOUND2)
+endif ()
 
 if (PulseAudio_FOUND)
   target_link_libraries(kmixcore PRIVATE ${PulseAudio_LIBRARIES} ${PulseAudio_MAINLOOP_LIBRARY})
-endif (PulseAudio_FOUND)
+endif ()
 
 if (CANBERRA_FOUND)
   # VolumeFeedback calls Canberra directly, so public linking is required
   target_link_libraries(kmixcore PUBLIC ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
+endif ()
 
 install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR} LIBRARY NAMELINK_SKIP)
 install(FILES core/settings.kcfg RENAME kmixsettings.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
@@ -283,7 +283,7 @@ set(kmix_SRCS
 
 if (CANBERRA_FOUND)
   set(kmix_SRCS ${kmix_SRCS} apps/volumefeedback.cpp)
-endif (CANBERRA_FOUND)
+endif ()
 
 add_executable(kmix ${kmix_SRCS})
 target_link_libraries(kmix
