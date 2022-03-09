@@ -67,8 +67,6 @@ if (BUILD_DATAENGINE)
   set_package_properties(KF5Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
 endif ()
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-
 # PulseAudio is an optional dependency
 find_package(PulseAudio "${PA_MIN_VERSION}")
 
@@ -100,7 +98,6 @@ endif ()
 
 if (CANBERRA_FOUND)
   add_definitions(-DHAVE_CANBERRA)
-  include_directories(${CANBERRA_INCLUDE_DIRS})
 endif ()
 
 ####################################################################################################
@@ -219,7 +216,7 @@ endif ()
 
 if (CANBERRA_FOUND)
   # VolumeFeedback calls Canberra directly, so public linking is required
-  target_link_libraries(kmixcore PUBLIC ${CANBERRA_LIBRARIES})
+  target_link_libraries(kmixcore PUBLIC Canberra::Canberra)
 endif ()
 
 install(TARGETS kmixcore DESTINATION ${KDE_INSTALL_LIBDIR} LIBRARY NAMELINK_SKIP)
