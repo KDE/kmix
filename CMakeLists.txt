@@ -206,7 +206,7 @@ set_target_properties(kmixcore PROPERTIES VERSION ${KMIX_VERSION} SOVERSION ${KM
 generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_export.h)
 
 if (HAVE_LIBASOUND2)
-  target_link_libraries(kmixcore PRIVATE ${ALSA_LIBRARIES})
+  target_link_libraries(kmixcore PRIVATE ALSA::ALSA)
 endif ()
 
 if (PulseAudio_FOUND)
