@@ -99,9 +99,6 @@ if (MSVC)
   include_directories(${TAGLIB_INCLUDES})
 endif (MSVC)
 
-# TODO: this must be long obsolete by now
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
 add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
