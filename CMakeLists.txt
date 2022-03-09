@@ -94,10 +94,6 @@ check_cxx_source_compiles("
 ####################################################################################################
 
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
-# TODO: is the next line really needed? Nothing seems to use anything to do with tagging.
-if (MSVC)
-  include_directories(${TAGLIB_INCLUDES})
-endif (MSVC)
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
