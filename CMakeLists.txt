@@ -200,6 +200,7 @@ target_link_libraries(kmixcore
   PUBLIC
     KF5::ConfigCore
     KF5::ConfigGui
+    KF5::CoreAddons
 )
 
 set_target_properties(kmixcore PROPERTIES VERSION ${KMIX_VERSION} SOVERSION ${KMIX_VERSION_MAJOR})
@@ -286,6 +287,7 @@ target_link_libraries(kmix
   kmixcore
   kmixgui
   KF5::I18n
+  KF5::CoreAddons
   KF5::DBusAddons
   KF5::GlobalAccel
   KF5::XmlGui
