@@ -30,7 +30,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
+#include <KLazyLocalizedString>
 // Since we're guaranteed an OSS setup here, let's make life easier
 #if !defined(__NetBSD__) && !defined(__OpenBSD__)
 #include <sys/soundcard.h>
@@ -64,21 +64,21 @@
 #endif
 
 // clang-format off
-const char* MixerDevNames[MAX_MIXDEVS]={
-    I18N_NOOP("Volume"),   I18N_NOOP("Bass"),       I18N_NOOP("Treble"),
-    I18N_NOOP("Synth"),    I18N_NOOP("Pcm"),        I18N_NOOP("Speaker"),
-    I18N_NOOP("Line"),     I18N_NOOP("Microphone"), I18N_NOOP("CD"),
-    I18N_NOOP("Mix"),      I18N_NOOP("Pcm2"),       I18N_NOOP("RecMon"),
-    I18N_NOOP("IGain"),    I18N_NOOP("OGain"),      I18N_NOOP("Line1"),
-    I18N_NOOP("Line2"),    I18N_NOOP("Line3"),      I18N_NOOP("Digital1"),
-    I18N_NOOP("Digital2"), I18N_NOOP("Digital3"),   I18N_NOOP("PhoneIn"),
-    I18N_NOOP("PhoneOut"), I18N_NOOP("Video"),      I18N_NOOP("Radio"),
-    I18N_NOOP("Monitor")
+const KLocalizedString MixerDevNames[MAX_MIXDEVS]={
+    kli18n("Volume"),   kli18n("Bass"),       kli18n("Treble"),
+    kli18n("Synth"),    kli18n("Pcm"),        kli18n("Speaker"),
+    kli18n("Line"),     kli18n("Microphone"), kli18n("CD"),
+    kli18n("Mix"),      kli18n("Pcm2"),       kli18n("RecMon"),
+    kli18n("IGain"),    kli18n("OGain"),      kli18n("Line1"),
+    kli18n("Line2"),    kli18n("Line3"),      kli18n("Digital1"),
+    kli18n("Digital2"), kli18n("Digital3"),   kli18n("PhoneIn"),
+    kli18n("PhoneOut"), kli18n("Video"),      kli18n("Radio"),
+    kli18n("Monitor")
 #if MAX_MIXDEVS > 25
     ,
-    I18N_NOOP("3D-depth"),   I18N_NOOP("3D-center"),
-    I18N_NOOP("unknown"),  I18N_NOOP("unknown"),    I18N_NOOP("unknown"),
-    I18N_NOOP("unknown") , I18N_NOOP("unused")
+    kli18n("3D-depth"),   kli18n("3D-center"),
+    kli18n("unknown"),  kli18n("unknown"),    kli18n("unknown"),
+    kli18n("unknown") , kli18n("unused")
 #endif
 };
 
@@ -170,7 +170,7 @@ int Mixer_OSS::open()
 
             QString id;
             id.setNum(idx);
-            MixDevice *md = new MixDevice(_mixer, id, i18n(MixerDevNames[idx]), MixerChannelTypes[idx]);
+            MixDevice *md = new MixDevice(_mixer, id, MixerDevNames[idx].toString(), MixerChannelTypes[idx]);
             md->addPlaybackVolume(playbackVol);
 
             // Tutorial: Howto add a simple capture switch
