@@ -468,7 +468,7 @@ QString Mixer::getBaseName() const
 		return mixer->_mixerBackend->recommendedMaster();
 	}
 
-	for (const shared_ptr<MixDevice> md : qAsConst(mixer->_mixerBackend->m_mixDevices))
+    for (const shared_ptr<MixDevice> &md : qAsConst(mixer->_mixerBackend->m_mixDevices))
 	{
 		if (!md) continue; // invalid
 
@@ -516,7 +516,7 @@ void Mixer::setLocalMasterMD(const QString &devPK)
 shared_ptr<MixDevice> Mixer::find(const QString &mixdeviceID) const
 {
 	shared_ptr<MixDevice> mdRet;
-	for (const shared_ptr<MixDevice> md : qAsConst(_mixerBackend->m_mixDevices))
+    for (const shared_ptr<MixDevice> &md : qAsConst(_mixerBackend->m_mixDevices))
 	{
 		if (!md) continue; // invalid
 		if (md->id()==mixdeviceID)

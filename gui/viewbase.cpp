@@ -154,7 +154,7 @@ void ViewBase::createDeviceWidgets()
     qCDebug(KMIX_LOG) << id() << "orientation" << _orientation;
 
     initLayout();
-    for (const shared_ptr<MixDevice> md : qAsConst(_mixSet))
+    for (const shared_ptr<MixDevice> &md : qAsConst(_mixSet))
     {
         QWidget *mdw = add(md);				// a) Let the implementation do its work
         _mdws.append(mdw);				// b) Add it to the local list

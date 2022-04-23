@@ -1124,7 +1124,7 @@ void MDWSlider::showMoveMenu()
     m_moveMenu->addSeparator();
 
     // Device actions
-    for (const shared_ptr<MixDevice> md : *ms)
+    for (const shared_ptr<MixDevice> &md : *ms)
     {
 	act = new QAction(QIcon::fromTheme(md->iconName()), md->readableName(), m_moveMenu);
 	act->setData(md->id());
