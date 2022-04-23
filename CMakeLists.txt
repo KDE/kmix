@@ -40,7 +40,7 @@ include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
 include(GenerateExportHeader)
 
-find_package(Qt5 ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
+find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
     Core
     DBus
     Gui
@@ -195,8 +195,8 @@ target_link_libraries(kmixcore
     Qt::Core
     Qt::Widgets
   PRIVATE
-    Qt5::Xml
-    Qt5::DBus
+    Qt::Xml
+    Qt::DBus
     KF5::I18n
     KF5::Solid
   PUBLIC
@@ -345,14 +345,14 @@ target_link_libraries(kmixctrl
 
 install(TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVICESDIR})
 
 ####################################################################################################
 ########### tests ##################################################################################
 ####################################################################################################
 
 if(BUILD_TESTING)
-  find_package(Qt5Test ${QT_MIN_VERSION} CONFIG REQUIRED)
+  find_package(Qt${QT_MAJOR_VERSION}Test ${QT_MIN_VERSION} CONFIG REQUIRED)
   add_subdirectory(tests)
 endif()
 

@@ -5,9 +5,9 @@ add_executable(profiletest ${profiletest_SRCS})
 
 target_link_libraries(profiletest
     kmixgui
-    Qt5::Core
-    Qt5::DBus
-    Qt5::Test
+    Qt::Core
+    Qt::DBus
+    Qt::Test
     KF5::ConfigCore
     KF5::ConfigGui
     KF5::I18n
