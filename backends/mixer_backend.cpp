@@ -76,7 +76,7 @@ Mixer_Backend::~Mixer_Backend()
 
 void Mixer_Backend::freeMixDevices()
 {
-	for (shared_ptr<MixDevice> md : qAsConst(m_mixDevices)) md->close();
+	for (shared_ptr<MixDevice> md : std::as_const(m_mixDevices)) md->close();
 	m_mixDevices.clear();
 }
 
@@ -181,7 +181,7 @@ void Mixer_Backend::readSetFromHW()
 
 	int ret = Mixer::OK_UNCHANGED;
 
-	for (shared_ptr<MixDevice> md : qAsConst(m_mixDevices))
+	for (shared_ptr<MixDevice> md : std::as_const(m_mixDevices))
 	{
 	  //bool debugMe = (md->id() == "PCM:0" );
 	  bool debugMe = false;

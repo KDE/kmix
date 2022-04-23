@@ -224,7 +224,7 @@ void ViewSliders::initLayout()
 		{
 			const MixSet &mixset = mixer->getMixSet();
 
-			for (ProfControl *control : qAsConst(guiprof->getControls()))
+			for (ProfControl *control : std::as_const(guiprof->getControls()))
 			{
 				// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
 				QRegExp idRegexp(control->id());

@@ -82,7 +82,7 @@ void DialogChooseBackends::createPage(const QSet<QString> &mixerIds)
 #endif
 	bool hasMixerFilter = !mixerIds.isEmpty();
 	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
-	for (const Mixer *mixer : qAsConst(Mixer::mixers()))
+	for (const Mixer *mixer : std::as_const(Mixer::mixers()))
 	{
             // TODO: No point in showing mixers which do not have any volume controls.
             // See checks done in ViewDockAreaPopup::initLayout()

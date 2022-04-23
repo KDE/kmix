@@ -373,7 +373,7 @@ bool GUIProfile::readProfile(const QString &fileName)
             const QXmlStreamAttributes attrs = reader.attributes();
 #ifdef DEBUG_XMLREADER
             qCDebug(KMIX_LOG) << "  element" << name << "has" << attrs.count() << "attributes:";
-            for (const QXmlStreamAttribute &attr : qAsConst(attrs))
+            for (const QXmlStreamAttribute &attr : std::as_const(attrs))
             {
                 qCDebug(KMIX_LOG) << "    " << attr.name() << "=" << attr.value();
             }
@@ -448,7 +448,7 @@ bool GUIProfile::writeProfile()
    //  />
    writer.writeEndElement();
 
-   for (const ProfProduct *prd : qAsConst(_products))
+   for (const ProfProduct *prd : std::as_const(_products))
    {
       //  <product
       writer.writeStartElement("product");
@@ -464,7 +464,7 @@ bool GUIProfile::writeProfile()
       writer.writeEndElement();
    }							// for all products
 
-   for (const ProfControl *profControl : qAsConst(getControls()))
+   for (const ProfControl *profControl : std::as_const(getControls()))
    {
       //  <control
       writer.writeStartElement("control");

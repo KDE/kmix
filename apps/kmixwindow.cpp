@@ -387,7 +387,7 @@ void KMixWindow::saveViewConfig()
 	// The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
 	// Otherwise we would not save the Meta information (step -2- below for that mixer.
 	// We also do not save dynamic mixers (e.g. PulseAudio)
-	for (const Mixer *mixer : qAsConst(Mixer::mixers()))
+	for (const Mixer *mixer : std::as_const(Mixer::mixers()))
 	{
 		mixerViews[mixer->id()];		// just insert a map entry
 	}
@@ -566,7 +566,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		}
 	}
 
-	for (const GUIProfile *guiprof : qAsConst(activeGuiProfiles))
+	for (const GUIProfile *guiprof : std::as_const(activeGuiProfiles))
 	{
 		const Mixer *mixer = Mixer::findMixer(guiprof->getMixerId());
 		if (mixer==nullptr)
@@ -596,7 +596,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 	// -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
 	KConfigGroup pconfig(KSharedConfig::openConfig(), "Profiles");
-	for (const Mixer *mixer : qAsConst(Mixer::mixers()))
+	for (const Mixer *mixer : std::as_const(Mixer::mixers()))
 	{
 		if ( mixerHasProfile.contains(mixer))
 		{
@@ -636,7 +636,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		{
 			bool atLeastOneProfileWasAdded = false;
 
-			for (const QString &profileId : qAsConst(profileList))
+			for (const QString &profileId : std::as_const(profileList))
 			{
 				// This handles the profileList form the kmixrc
 				qCDebug(KMIX_LOG) << "Searching for GUI profile" << profileId;

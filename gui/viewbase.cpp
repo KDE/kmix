@@ -154,7 +154,7 @@ void ViewBase::createDeviceWidgets()
     qCDebug(KMIX_LOG) << id() << "orientation" << _orientation;
 
     initLayout();
-    for (const shared_ptr<MixDevice> &md : qAsConst(_mixSet))
+    for (const shared_ptr<MixDevice> &md : std::as_const(_mixSet))
     {
         QWidget *mdw = add(md);				// a) Let the implementation do its work
         _mdws.append(mdw);				// b) Add it to the local list
@@ -308,7 +308,7 @@ void ViewBase::refreshVolumeLevels()
  */
 bool ViewBase::isDynamic() const
 {
-	for (const Mixer *mixer : qAsConst(_mixers))
+    for (const Mixer *mixer : std::as_const(_mixers))
 	{
 		if (mixer->isDynamic()) return true;
 	}
@@ -318,7 +318,7 @@ bool ViewBase::isDynamic() const
 bool ViewBase::pulseaudioPresent() const
 {
 	// We do not use Mixer::pulseaudioPresent(), as we are only interested in Mixer instances contained in this View.
-	for (const Mixer *mixer : qAsConst(_mixers))
+    for (const Mixer *mixer : std::as_const(_mixers))
 	{
 		if ( mixer->getDriverName() == "PulseAudio" ) return true;
 	}
@@ -342,7 +342,7 @@ void ViewBase::resetMdws()
 int ViewBase::visibleControls() const
 {
 	int visibleCount = 0;
-	for (const QWidget *qw : qAsConst(_mdws))
+    for (const QWidget *qw : std::as_const(_mdws))
 	{
 		if (qw->isVisible())
 			++ visibleCount;
@@ -398,7 +398,7 @@ void ViewBase::load(const KConfig *config)
 	{
 		const GuiVisibility guiCompl = guiVisibilities[i];
 		bool atLeastOneControlIsShown = false;
-		for (QWidget *qmdw : qAsConst(view->_mdws))
+        for (QWidget *qmdw : std::as_const(view->_mdws))
 		{
 			MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(qmdw);
 			if (mdw!=nullptr)
@@ -457,7 +457,7 @@ void ViewBase::setGuiLevel(GuiVisibility guiLevel)
  */
 ProfControl *ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility) const
 {
-	for (ProfControl *pControl : qAsConst(guiProfile()->getControls()))
+    for (ProfControl *pControl : std::as_const(guiProfile()->getControls()))
 	{
 		QRegExp idRegExp(pControl->id());
 		if ( mdwId.contains(idRegExp) )

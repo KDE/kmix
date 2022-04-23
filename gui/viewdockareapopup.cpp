@@ -302,7 +302,7 @@ Application: KMix (kmix), signal: Segmentation fault
 
 	const QStringList preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
-	for (Mixer *mixer : qAsConst(Mixer::mixers()))
+	for (Mixer *mixer : std::as_const(Mixer::mixers()))
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
 		if (useMixer) addMixer(mixer);
@@ -313,7 +313,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// backends.
 	if (getMixers().isEmpty())
 	{
-		for (Mixer *mixer : qAsConst(Mixer::mixers()))
+		for (Mixer *mixer : std::as_const(Mixer::mixers()))
 		{
 			addMixer(mixer);
 		}
@@ -336,7 +336,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	//
 	// Maybe need a configuration option?
 
-	for (const Mixer *mixer : qAsConst(getMixers()))
+	for (const Mixer *mixer : std::as_const(getMixers()))
 	{
 		//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
 		// Get the configured master control for the mixer.
@@ -363,9 +363,9 @@ Application: KMix (kmix), signal: Segmentation fault
 	} // loop over all cards
 
 	// Finally add all application streams
-	for (const Mixer *mixer : qAsConst(getMixers()))
+	for (const Mixer *mixer : std::as_const(getMixers()))
 	{
-		for (shared_ptr<MixDevice> md : qAsConst(mixer->getMixSet()))
+		for (shared_ptr<MixDevice> md : std::as_const(mixer->getMixSet()))
 		{
 			if (md->isApplicationStream()) addToMixSet(md);
 		}

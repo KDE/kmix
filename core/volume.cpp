@@ -309,7 +309,7 @@ qreal Volume::getAvgVolume(Volume::ChannelMask chmask) const
 {
 	int avgVolumeCounter = 0;
 	long long sumOfActiveVolumes = 0;
-	for (const VolumeChannel &vc : qAsConst(_volumesL))
+	for (const VolumeChannel &vc : std::as_const(_volumesL))
 	{
 		if (channelMask[vc.chid] & chmask )
 		{
@@ -363,7 +363,7 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
 	os << "(";
 
 	bool first = true;
-	for (const VolumeChannel &vc : qAsConst(vol.getVolumes()))
+	for (const VolumeChannel &vc : std::as_const(vol.getVolumes()))
 	{
 		if ( !first )  os << ",";
 		else first = false;
@@ -380,7 +380,7 @@ std::ostream& operator<<(std::ostream& os, const Volume& vol) {
 QDebug operator<<(QDebug os, const Volume& vol) {
 	os << "(";
 	bool first = true;
-	for (const VolumeChannel &vc : qAsConst(vol.getVolumes()))
+	for (const VolumeChannel &vc : std::as_const(vol.getVolumes()))
 	{
 		if ( !first )  os << ",";
 		else first = false;
