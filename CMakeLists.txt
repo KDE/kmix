@@ -24,10 +24,10 @@ option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 ########### dependencies and tests #################################################################
 ####################################################################################################
 
-set (QT_MIN_VERSION "5.11.0")
-set (KF5_MIN_VERSION "5.68.0")
+set (QT_MIN_VERSION "5.15.0")
+set (KF5_MIN_VERSION "5.90.0")
 set (PA_MIN_VERSION "0.9.16")
-
+set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} )
 
@@ -134,11 +134,11 @@ set(kmix_adaptor_SRCS
   dbus/dbuscontrolwrapper.cpp
 )
 
-qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
+qt_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.control.xml
 	dbus/dbuscontrolwrapper.h DBusControlWrapper )
-qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
+qt_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixer.xml
 	dbus/dbusmixerwrapper.h DBusMixerWrapper )
-qt5_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
+qt_add_dbus_adaptor( kmix_adaptor_SRCS dbus/org.kde.kmix.mixset.xml
 	dbus/dbusmixsetwrapper.h DBusMixSetWrapper )
 
 install(FILES dbus/org.kde.kmix.control.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})
@@ -190,8 +190,8 @@ add_library(kmixcore SHARED
 
 target_link_libraries(kmixcore
   PUBLIC
-    Qt5::Core
-    Qt5::Widgets
+    Qt::Core
+    Qt::Widgets
   PRIVATE
     Qt5::Xml
     Qt5::DBus
@@ -256,8 +256,8 @@ add_library(kmixgui STATIC
 
 target_link_libraries(kmixgui
   kmixcore
-  Qt5::Core
-  Qt5::Widgets
+  Qt::Core
+  Qt::Widgets
   KF5::I18n
   KF5::ConfigCore
   KF5::ConfigGui
@@ -297,11 +297,11 @@ target_link_libraries(kmix
 
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES desktop/kmixui.rc DESTINATION ${KDE_INSTALL_KXMLGUI5DIR}/kmix)
+install(FILES desktop/kmixui.rc DESTINATION ${KDE_INSTALL_KXMLGUIDIR}/kmix)
 install(PROGRAMS desktop/org.kde.kmix.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES desktop/org.kde.kmix.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 install(FILES desktop/kmix_autostart.desktop DESTINATION ${KDE_INSTALL_AUTOSTARTDIR})
-install(FILES desktop/kmix.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFY5RCDIR} )
+install(FILES desktop/kmix.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFYRCDIR} )
 
 ####################################################################################################
 ########### target: kded_kmixd #####################################################################
