@@ -24,7 +24,6 @@
 #include <qobject.h>
 #include <qlist.h>
 #include <QMap>
-#include <QRegExp>
 #include <QString>
 
 #include "kmixcore_export.h"

@@ -21,6 +21,7 @@
 #include "core/kmixdevicemanager.h"
 
 #include <QRegExp>
+#include <QRegularExpression>
 #include <QString>
 #include <QTimer>
 
@@ -67,7 +68,7 @@ QString KMixDeviceManager::getUDI_OSS(const QString &devname)
 
 static bool isSoundDevice(const QString &udi)
 {
-    QRegExp rx("/sound/");				// any UDI mentioning sound
+    QRegularExpression rx("/sound/");				// any UDI mentioning sound
     return (udi.contains(rx));
 }
 
