@@ -157,11 +157,11 @@ set(kmix_backend_SRCS
 )
 
 if (HAVE_LIBASOUND2)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_alsa9.cpp )
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_alsa9.cpp backends/mixer_alsa9.h)
 endif ()
 
 if (PulseAudio_FOUND)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp )
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp backends/mixer_pulse.h)
 endif ()
 
 ####################################################################################################
@@ -179,6 +179,16 @@ set(kmixcore_SRCS
   core/mixdevice.cpp
   core/mixdevicecomposite.cpp
   core/volume.cpp
+  core/MediaController.h
+  core/mixertoolbox.h
+  core/kmixdevicemanager.h
+  core/ControlManager.h
+  core/MasterControl.h
+  core/mixer.h
+  core/mixset.h
+  core/mixdevice.h
+  core/mixdevicecomposite.h
+  core/volume.h
 )
 
 kconfig_add_kcfg_files(kmixcore_SRCS core/settings.kcfgc)
@@ -249,6 +259,26 @@ set(kmixgui_SRCS
   gui/dialogchoosebackends.cpp
   gui/guiprofile.cpp
   gui/toggletoolbutton.cpp
+  gui/dialogbase.h
+  gui/dialogstatesaver.h
+  gui/kmixdockwidget.h
+  gui/kmixprefdlg.h
+  gui/viewbase.h
+  gui/viewdockareapopup.h
+  gui/viewsliders.h
+  gui/mixdevicewidget.h
+  gui/mdwslider.h
+  gui/mdwenum.h
+  gui/kmixerwidget.h
+  gui/verticaltext.h
+  gui/volumeslider.h
+  gui/kmixtoolbox.h
+  gui/dialogaddview.h
+  gui/dialogviewconfiguration.h
+  gui/dialogselectmaster.h
+  gui/dialogchoosebackends.h
+  gui/guiprofile.h
+  gui/toggletoolbutton.h
 )
 
 add_library(kmixgui STATIC
@@ -277,11 +307,13 @@ set(kmix_SRCS
   apps/main.cpp
   apps/kmixwindow.cpp
   apps/kmixapp.cpp
+  apps/kmixwindow.h
+  apps/kmixapp.h
   ${kmix_debug_SRCS}
 )
 
 if (CANBERRA_FOUND)
-  set(kmix_SRCS ${kmix_SRCS} apps/volumefeedback.cpp)
+  set(kmix_SRCS ${kmix_SRCS} apps/volumefeedback.cpp apps/volumefeedback.h)
 endif ()
 
 add_executable(kmix ${kmix_SRCS})

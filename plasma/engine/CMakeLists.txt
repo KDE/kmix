@@ -3,6 +3,8 @@ include_directories( ../../ )
 set(mixer_engine_SRCS
 	mixerengine.cpp
 	mixerservice.cpp
+        mixerengine.h
+        mixerservice.h
 )
 
 qt_add_dbus_interface(mixer_engine_SRCS ../../dbus/org.kde.kmix.mixset.xml
