@@ -61,10 +61,10 @@ class KMixerWidget : public QWidget
    GUIProfile* getGuiprof() { return GUIProfile::find(_guiprofId); }
 
    
-  signals:
+  Q_SIGNALS:
    void toggleMenuBar();
     
-  public slots:
+  public Q_SLOTS:
    void setIcons( bool on );
    void toggleMenuBarSlot();
 

@@ -76,7 +76,7 @@ public:
     }
     bool isActiveList() const { return m_activeList; }
 
- Q_SIGNALS:
+Q_SIGNALS:
    void dropped(DialogViewConfigurationWidget* list, int index, DialogViewConfigurationItem* item);
 
 protected:
@@ -116,10 +116,10 @@ class DialogViewConfiguration : public DialogBase
     DialogViewConfiguration(QWidget* parent, ViewBase& view);
     virtual ~DialogViewConfiguration() = default;
 
- public slots:
+ public Q_SLOTS:
     void apply();
  
- private slots:
+ private Q_SLOTS:
    void slotDropped(DialogViewConfigurationWidget *list, int index, DialogViewConfigurationItem *item);
 
    void moveSelectionToActiveList();

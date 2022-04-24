@@ -186,12 +186,12 @@ public:
 
     void commitVolumeChange( shared_ptr<MixDevice> md );
 
-public slots:
+public Q_SLOTS:
     void readSetFromHWforceUpdate() const;
 
     virtual void setBalance(int balance); // sets the m_balance (see there)
     
-signals:
+Q_SIGNALS:
     void newBalance(Volume& );
     void controlChanged(void); // TODO remove?
 

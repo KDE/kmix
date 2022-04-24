@@ -64,7 +64,7 @@ public:
 	static KMixPrefDlg *instance(QWidget *parent = nullptr);
 	void showAtPage(KMixPrefDlg::PrefPage page);
 
-signals:
+Q_SIGNALS:
 	void kmixConfigHasChanged(KMixPrefDlg::PrefChanges changed);
 
 protected:
@@ -82,7 +82,7 @@ protected:
 
 	bool hasChanged() override;
 
-private slots:
+private Q_SLOTS:
 	void settingChanged(KMixPrefDlg::PrefChanged changes = KMixPrefDlg::ChangedAny);
 
 private:

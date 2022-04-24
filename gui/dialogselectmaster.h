@@ -37,7 +37,7 @@ class DialogSelectMaster : public DialogBase
     explicit DialogSelectMaster(const Mixer *mixer = nullptr, QWidget *parent = nullptr);
     virtual ~DialogSelectMaster() = default;
 
- public slots:
+ public Q_SLOTS:
     void apply();
 
  private:
@@ -48,7 +48,7 @@ class DialogSelectMaster : public DialogBase
     QComboBox* m_cMixer;
     QListWidget *m_channelSelector;
 
- private slots:
+ private Q_SLOTS:
     void createPageByID(int mixerId);
     void slotUpdateButtons();
 };

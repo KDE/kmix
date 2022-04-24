@@ -171,7 +171,7 @@ protected:
      **/
     virtual bool eventFilter(QObject *obj, QEvent *ev) override;
 
-private slots:
+private Q_SLOTS:
     void restoreConfigInternal();
     void saveConfigInternal() const;
 

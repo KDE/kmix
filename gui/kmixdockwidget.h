@@ -44,7 +44,7 @@ public:
    explicit KMixDockWidget(KXmlGuiWindow *parent);
    virtual ~KMixDockWidget();
 
-public slots:
+public Q_SLOTS:
    void activate(const QPoint &pos) override;
    void controlsChange(ControlManager::ChangeType changeType);
 
@@ -69,10 +69,10 @@ private:
     void setVolumeTip();
     void updatePixmap();
 
-protected slots:
+protected Q_SLOTS:
    void contextMenuAboutToShow();
 
-private slots:
+private Q_SLOTS:
    void dockMute();
    void trayWheelEvent(int delta, Qt::Orientation wheelOrientation);
 };

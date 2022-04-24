@@ -65,16 +65,16 @@ public:
     virtual int labelExtentHint() const			{ return (0); }
     virtual void setLabelExtent(int extent)		{ Q_UNUSED(extent); }
 
-public slots:
+public Q_SLOTS:
     /**
       * Called whenever there are volume updates pending from the hardware for this MDW.
       */
     virtual void update() = 0;
 
-signals:
+Q_SIGNALS:
     void guiVisibilityChange(MixDeviceWidget* source, bool enable);
 
-protected slots:
+protected Q_SLOTS:
     void volumeChange(int);
 
 protected:
@@ -89,7 +89,7 @@ protected:
     KActionCollection *channelActions() const		{ return (m_channelActions); }
     KActionCollection *globalActions() const		{ return (m_globalActions); }
 
-private slots:
+private Q_SLOTS:
     void configureShortcuts();
 
 private:

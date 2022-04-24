@@ -45,7 +45,7 @@ public:
     int labelExtentHint() const override;
     void setLabelExtent(int extent) override;
 
-public slots:
+public Q_SLOTS:
     // Enum handling: next and selecting
     void nextEnumId();
     int  enumId();

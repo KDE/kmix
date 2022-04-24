@@ -157,14 +157,14 @@ protected:
     // Also I do not want Views to interfere with polish()
     virtual void constructionFinished() = 0;
 
-public slots:
+public Q_SLOTS:
    virtual void refreshVolumeLevels(); // TODO remove
    virtual void configureView();
 
-signals:
+Q_SIGNALS:
    void toggleMenuBar();
 
-private slots:
+private Q_SLOTS:
    void guiVisibilitySlot(MixDeviceWidget* source, bool enable);
    void toggleMenuBarSlot();
 };

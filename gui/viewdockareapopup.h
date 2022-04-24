@@ -78,7 +78,7 @@ private:
     QPushButton *restoreVolumeButton4;
     QIcon restoreVolumeIcon;
 
-public slots:
+public Q_SLOTS:
     void controlsChange(ControlManager::ChangeType changeType);
     void configureView() override;
     void showPanelSlot();

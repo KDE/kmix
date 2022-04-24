@@ -40,7 +40,7 @@ class DialogAddView : public DialogBase
     QString getresultViewName() const		{ return (resultViewName); }
     QString getresultMixerId() const		{ return (resultMixerId); }
 
- public slots:
+ public Q_SLOTS:
     void apply();
 
  private:
@@ -54,7 +54,7 @@ class DialogAddView : public DialogBase
     QString resultViewName;
     QString resultMixerId;
 
- private slots:
+ private Q_SLOTS:
    void createPageByID(int mixerId);
    void profileSelectionChanged();
 };

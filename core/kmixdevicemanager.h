@@ -36,7 +36,7 @@ class KMIXCORE_EXPORT KMixDeviceManager : public QObject
         QString getUDI_ALSA(int num);
         QString getUDI_OSS(const QString& devname);
 
-    signals:
+    Q_SIGNALS:
         void plugged(const char *driverName, const QString &udi, int dev);
         void unplugged(const QString &udi);
 
@@ -45,7 +45,7 @@ class KMIXCORE_EXPORT KMixDeviceManager : public QObject
         virtual ~KMixDeviceManager() = default;
         QString _hotpluggingBackend;
         
-    private slots:
+    private Q_SLOTS:
         void pluggedSlot(const QString&);
         void unpluggedSlot(const QString&);
 

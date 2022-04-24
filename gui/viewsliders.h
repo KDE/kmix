@@ -46,7 +46,7 @@ public:
     void constructionFinished() override;
     void configurationUpdate() override;
 
-public slots:
+public Q_SLOTS:
     void controlsChange(ControlManager::ChangeType changeType);
 
 protected:

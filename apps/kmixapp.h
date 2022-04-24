@@ -38,7 +38,7 @@ class KMixApp : public QObject
 
     void parseOptions(const QCommandLineParser &parser);
 
-public slots:
+public Q_SLOTS:
     void newInstance(const QStringList &arguments = QStringList(), const QString &workingDirectory = QString());
 
 private:

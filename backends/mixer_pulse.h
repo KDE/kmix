@@ -87,7 +87,7 @@ class Mixer_PULSE : public Mixer_Backend
         void emitControlsReconfigured();
         void updateRecommendedMaster(devmap* map);
 
-   protected slots:
+   protected Q_SLOTS:
         void pulseControlsReconfigured(QString mixerId);
         void pulseControlsReconfigured();
 

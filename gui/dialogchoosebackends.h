@@ -41,7 +41,7 @@ public:
 	bool getAndResetModifyFlag();
 	bool getModifyFlag() const;
 
-signals:
+Q_SIGNALS:
 	void backendsModified();
 
 private:
@@ -51,7 +51,7 @@ private:
 	QListWidget *m_mixerList;
 	bool modified;
 
-private slots:
+private Q_SLOTS:
 	void backendsModifiedSlot();
 	void itemActivatedSlot(QListWidgetItem *item);
 };

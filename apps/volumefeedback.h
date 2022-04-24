@@ -39,7 +39,7 @@ public:
 	static VolumeFeedback *instance();
 	void init();
 
-public slots:
+public Q_SLOTS:
 	void controlsChange(ControlManager::ChangeType changeType);
 
 private:
@@ -49,7 +49,7 @@ private:
 	void volumeChanged();
 	void masterChanged();
 
-private slots:
+private Q_SLOTS:
 	void slotPlayFeedback();
 
 private:

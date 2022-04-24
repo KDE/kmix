@@ -206,7 +206,7 @@ public:
 protected:
    void init( Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet );
 
-signals:
+Q_SIGNALS:
    void iconNameChanged(const QString &newName);
 
 private:

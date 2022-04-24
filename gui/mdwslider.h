@@ -68,7 +68,7 @@ public:
     int labelExtentHint() const override;
     void setLabelExtent(int extent) override;
 
-public slots:
+public Q_SLOTS:
     void toggleRecsrc();
     void toggleMuted();
     void toggleStereoLinked();
@@ -82,7 +82,7 @@ protected:
 
     bool eventFilter(QObject *obj, QEvent *ev) override;
 
-private slots:
+private Q_SLOTS:
     void setRecsrc(bool value);
     void setMuted(bool value);
     void volumeChange( int );

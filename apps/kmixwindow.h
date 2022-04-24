@@ -65,7 +65,7 @@ private:
 protected:
    bool queryClose() override;
 
-public slots:
+public Q_SLOTS:
    void controlsChange(ControlManager::ChangeType changeType);
    void quit();
    void showSettings();
@@ -83,7 +83,7 @@ public slots:
    void newMixerShown(int tabIndex);
    void slotSelectMaster();
 
-protected slots:
+protected Q_SLOTS:
     void applyPrefs(KMixPrefDlg::PrefChanges changed);
 
 private:
@@ -120,7 +120,7 @@ private:
 private:
     static QString getKmixctrlRcFilename(const QString &postfix);
 
-private slots:
+private Q_SLOTS:
    void slotKdeAudioSetupExec();
    void slotConfigureCurrentView();
 
