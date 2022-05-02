@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kmix -qwindowtitle "%c" %i
+Exec=kmix -qwindowtitle "%c"
 X-DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Type=Application
