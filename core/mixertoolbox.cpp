@@ -24,7 +24,6 @@
 
 #include <QDir>
 #include <QWidget>
-#include <QString>
 #include <QStringBuilder>
 
 #include <klocalizedstring.h>

@@ -37,7 +37,6 @@
 #include "core/ControlManager.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"
-#include "gui/volumeslider.h"
 #include "gui/viewbase.h"
 #include "gui/verticaltext.h"
 #include "gui/toggletoolbutton.h"

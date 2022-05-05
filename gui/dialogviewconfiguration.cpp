@@ -26,11 +26,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <QGridLayout>
 
 #include <klocalizedstring.h>
 
-#include "gui/guiprofile.h"
 #include "gui/mixdevicewidget.h"
 #include "core/ControlManager.h"
 #include "core/mixdevice.h"

@@ -35,7 +35,6 @@
 #include "viewsliders.h"
 
 // KMix
-#include "core/ControlManager.h"
 #include "core/mixdevicecomposite.h"
 #include "core/mixer.h"
 #include "gui/guiprofile.h"

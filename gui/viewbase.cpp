@@ -34,7 +34,6 @@
 #include <kmessagebox.h>
 // KMix
 #include "dialogviewconfiguration.h"
-#include "gui/guiprofile.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/mixdevicewidget.h"
 #include "gui/mdwslider.h"

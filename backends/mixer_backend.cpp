@@ -26,7 +26,6 @@
 #include "core/mixer.h"
 #include "core/ControlManager.h"
 
-#include <QTimer>
 
 #define POLL_RATE_SLOW 1500
 #define POLL_RATE_FAST 50

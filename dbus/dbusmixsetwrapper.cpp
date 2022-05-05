@@ -21,7 +21,6 @@
 #include "dbusmixsetwrapper.h"
 
 #include "core/mixdevice.h"
-#include "core/ControlManager.h"
 #include "mixsetadaptor.h"
 
 static DBusMixSetWrapper *instanceSingleton = nullptr;

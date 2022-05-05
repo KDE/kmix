@@ -25,9 +25,7 @@
 #include <qevent.h>
 #include <qframe.h>
 #include <QGridLayout>
-#include <QIcon>
 #include <QLayoutItem>
-#include <QPushButton>
 #include <QSizePolicy>
 
 // KDE
@@ -38,7 +36,6 @@
 
 // KMix
 #include "core/mixer.h"
-#include "core/ControlManager.h"
 #include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"

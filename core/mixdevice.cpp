@@ -28,7 +28,6 @@
 #include "core/mixer.h"
 #include "dbus/dbuscontrolwrapper.h"
 #include "gui/guiprofile.h"
-#include "core/volume.h"
 
 static const QString channelTypeToIconName( MixDevice::ChannelType type )
 {

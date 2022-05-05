@@ -41,11 +41,9 @@
 
 // KMix
 #include "kmix_debug.h"
-#include "core/ControlManager.h"
 #include "core/mixertoolbox.h"
 #include "core/kmixdevicemanager.h"
 #include "gui/kmixerwidget.h"
-#include "gui/kmixprefdlg.h"
 #include "gui/kmixdockwidget.h"
 #include "gui/kmixtoolbox.h"
 #include "gui/dialogaddview.h"

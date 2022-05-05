@@ -31,11 +31,9 @@
 #include <kconfiggroup.h>
 
 // KMix
-#include "core/mixer.h"
 #include "core/mixertoolbox.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixtoolbox.h"
-#include "gui/mixdevicewidget.h"
 #include "gui/viewsliders.h"
 #include "settings.h"
 

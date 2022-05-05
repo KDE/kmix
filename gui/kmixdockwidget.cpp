@@ -45,7 +45,6 @@
 #include <ktoggleaction.h>
 #include <kxmlguiwindow.h>
 
-#include "core/ControlManager.h"
 #include "core/mixer.h"
 #include "gui/viewdockareapopup.h"
 

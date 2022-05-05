@@ -26,10 +26,8 @@
 #include <kconfig.h>
 
 #include "settings.h"
-#include "backends/mixer_backend.h"
 #include "backends/kmix-backends.cpp"
 #include "core/ControlManager.h"
-#include "core/volume.h"
 
 /**
  * Some general design hints. Hierarchy is Mixer->MixDevice->Volume

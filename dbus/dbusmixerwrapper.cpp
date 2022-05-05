@@ -21,9 +21,7 @@
 
 #include "dbusmixerwrapper.h"
 
-#include <QStringList>
 
-#include "core/ControlManager.h"
 #include "core/mixdevice.h"
 #include "core/volume.h"
 #include "kmix_debug.h"
