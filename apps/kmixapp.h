@@ -46,7 +46,7 @@ private:
     void createWindowOnce(bool hasArgKeepvisibility, bool reset);
 
     KMixWindow *m_kmix;
-    QMutex creationLock;
+    QRecursiveMutex creationLock;
     bool m_hasArgKeepvisibility;
     bool m_hasArgReset;
 };

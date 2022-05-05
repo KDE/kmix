@@ -40,8 +40,7 @@ static bool firstCaller = true;
 
 KMixApp::KMixApp()
 	: QObject(),
-	  m_kmix(nullptr),
-	  creationLock(QMutex::Recursive)
+      m_kmix(nullptr)
 {
 	// We must disable QuitOnLastWindowClosed. Rationale:
 	// 1) The normal state of KMix is to only have the dock icon shown.
