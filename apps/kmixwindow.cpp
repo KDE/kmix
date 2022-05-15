@@ -167,11 +167,7 @@ void KMixWindow::initActions()
 	_actionShowMenubar = KStandardAction::showMenubar(this, SLOT(toggleMenuBar()), actionCollection());
 	KStandardAction::preferences(this, SLOT(showSettings()), actionCollection());
 
-#if KXMLGUI_VERSION >= QT_VERSION_CHECK(5, 84, 0)
 	KStandardAction::keyBindings(guiFactory(), &KXMLGUIFactory::showConfigureShortcutsDialog, actionCollection());
-#else
-	KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
-#endif
 
 	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
 	action->setText(i18n("Audio Setup..."));

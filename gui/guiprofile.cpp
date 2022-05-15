@@ -649,11 +649,7 @@ void ProfControl::setSubcontrols(const QString &sctls)
   _useSubcontrolCaptureSwitch = false;
   _useSubcontrolEnum = false;
 
-#if QT_VERSION>=QT_VERSION_CHECK(5, 14, 0)
   QStringList qsl = sctls.split( ',',  Qt::SkipEmptyParts, Qt::CaseInsensitive);
-#else
-  QStringList qsl = sctls.split( ',',  QString::SkipEmptyParts, Qt::CaseInsensitive);
-#endif
 
   QStringListIterator qslIt(qsl);
   while (qslIt.hasNext()) {
