@@ -110,6 +110,7 @@ Name[x-test]=xxKMixxx
 Name[zh_CN]=KMix
 Name[zh_TW]=音效調整_KMix
 Comment=Control sound volumes
+Comment[bg]=Контролиране на силата на звука
 Comment[ca]=Controla els volums del so
 Comment[ca@valencia]=Controla els volums del so
 Comment[cs]=Ovládejte hlasitosti zvuků
