@@ -2,6 +2,7 @@
 Type=Service
 Icon=kmix
 Name=KMix Daemon
+Name[bg]=Демон на KMix
 Name[ca]=Dimoni del KMix
 Name[ca@valencia]=Dimoni de KMix
 Name[cs]=Démon KMix
@@ -36,6 +37,7 @@ Name[x-test]=xxKMix Daemonxx
 Name[zh_CN]=KMix 守护进程
 Name[zh_TW]=KMix 伺服程式
 Comment=Monitors sound devices
+Comment[bg]=Наблюдение на звукови устройства
 Comment[ca]=Controla els dispositius de so
 Comment[ca@valencia]=Controla els dispositius de so
 Comment[cs]=Monitoruje zvuková zařízení
