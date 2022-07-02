@@ -4,6 +4,7 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <name>KMix</name>
+  <name xml:lang="bg">KMix</name>
   <name xml:lang="ca">KMix</name>
   <name xml:lang="ca-valencia">KMix</name>
   <name xml:lang="cs">KMix</name>
@@ -42,6 +43,7 @@
   <name xml:lang="zh-CN">KMix</name>
   <name xml:lang="zh-TW">KMix</name>
   <summary>Sound Mixer</summary>
+  <summary xml:lang="bg">Аудио миксер</summary>
   <summary xml:lang="ca">Mesclador de so</summary>
   <summary xml:lang="ca-valencia">Mesclador de so</summary>
   <summary xml:lang="cs">Zvukový směšovač</summary>
@@ -81,6 +83,7 @@
   <summary xml:lang="zh-TW">聲音混音器</summary>
   <description>
     <p>KMix is a sound channel mixer and volume control.</p>
+    <p xml:lang="bg">KMix е програма за смесване на звукови канали и контрол на силата на звука.</p>
     <p xml:lang="ca">El KMix és un mesclador de canals de so amb control del volum.</p>
     <p xml:lang="ca-valencia">KMix és un mesclador de canals de so amb control del volum.</p>
     <p xml:lang="cs">KMix je zvukový směšovač a ovladač hlasitosti.</p>
