@@ -24,7 +24,7 @@ option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 ########### dependencies and tests #################################################################
 ####################################################################################################
 
-set (QT_MIN_VERSION "5.15.0")
+set (QT_MIN_VERSION "5.15.2")
 set (KF5_MIN_VERSION "5.90.0")
 set (PA_MIN_VERSION "0.9.16")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
