@@ -769,14 +769,14 @@ void KMixWindow::newView()
 
 		if (guiprof == nullptr)
 		{
-			KMessageBox::sorry(this, i18n("Cannot add view - GUIProfile is invalid."), i18n("Error"));
+			KMessageBox::error(this, i18n("Cannot add view - GUIProfile is invalid."), i18n("Error"));
 		}
 		else
 		{
 			bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
 			if (!ret)
 			{
-				KMessageBox::sorry(this, i18n("Cannot add view - View already exists."), i18n("Error"));
+				KMessageBox::error(this, i18n("Cannot add view - View already exists."), i18n("Error"));
 			}
 		}
 
