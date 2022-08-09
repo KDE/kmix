@@ -19,5 +19,5 @@ target_link_libraries(plasma_engine_mixer KF5::Plasma Qt::DBus)
 kcoreaddons_desktop_to_json(plasma_engine_mixer plasma-dataengine-mixer.desktop)
 
 install(TARGETS plasma_engine_mixer DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/dataengine)
-install(FILES plasma-dataengine-mixer.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install(FILES plasma-dataengine-mixer.desktop DESTINATION ${KDE_INSTALL_KSERVICESDIR})
 install(FILES mixer.operations DESTINATION ${PLASMA_DATA_INSTALL_DIR}/services)
