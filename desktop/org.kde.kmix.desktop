@@ -3,7 +3,6 @@ Exec=kmix -qwindowtitle "%c" %i
 X-DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Type=Application
-Terminal=false
 Icon=kmix
 GenericName=Sound Mixer
 GenericName[bg]=Звуков смесител

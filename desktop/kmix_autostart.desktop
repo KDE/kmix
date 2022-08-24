@@ -3,7 +3,6 @@ Exec=kmix --keepvisibility
 X-DocPath=kmix/index.html
 OnlyShowIn=KDE;
 Type=Application
-Terminal=false
 X-KDE-autostart-after=panel
 X-KDE-autostart-after=pulseaudio
 X-KDE-StartupNotify=false
