@@ -115,6 +115,13 @@ void VolumeFeedback::volumeChanged()
 {
 	const Mixer *m = Mixer::getGlobalMasterMixer();		// current global master
 	const shared_ptr<MixDevice> md = m->getLocalMasterMD();	// its master device
+	if (md==nullptr)
+	{
+		qCDebug(KMIX_LOG) << "global master doest have a local master MD ( MixDevice )";
+		m_currentMaster.clear();
+		return;
+	}
+
 	int newvol = md->userVolumeLevel();			// current volume level
 	//qCDebug(KMIX_LOG) << m_currentVolume << "->" << newvol;
 
