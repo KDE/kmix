@@ -1,0 +1,525 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY kappname "&kmix;">
+  <!ENTITY package "kdemultimedia">
+  <!ENTITY % Lithuanian "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+<title
+>&kmix; vadovas</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Programuotojas</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Programuotojas</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Programuotojas</contrib>
+</othercredit>
+
+<othercredit role="translator"
+><firstname
+>Tomas</firstname
+><surname
+>Straupis</surname
+><affiliation
+><address
+><email
+>tomasstraupis@gmail.com</email
+></address
+></affiliation
+><contrib
+>Vertė</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2010-02-18</date>
+<releaseinfo
+>3.7</releaseinfo>
+
+<abstract>
+<para
+>&kmix; - programa, leidžianti jums keisti garso kortos garsumą.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>sound</keyword>
+<keyword
+>volume</keyword>
+<keyword
+>mixer</keyword>
+
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Įvadas</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; veikia keliose skirtingose platformose ir suderinamas su eile garso tvarkyklių.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &IRIX; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Jei turite įdiegtas ir ALSA, ir Open Sound System tvarkykles, &kmix; naudos ALSA tvarkyklę.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>&kmix; nuotrauka</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; nuotrauka</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Pagrindinis langas</title>
+
+<para
+>&kmix; pagrindinio lango apžvalga</para>
+<screenshot>
+  <screeninfo
+>&kmix; nuotrauka</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; nuotrauka</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Failų parinktys</title>
+<screenshot>
+  <screeninfo
+>&kmix; failų parinktys</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; failų parinktys</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>Failas</guimenu
+> <guimenuitem
+>Slėpti maišiklio langą</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Slėpti maišiklio langą</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Nustatymai</title>
+
+<screenshot>
+  <screeninfo
+>&kmix; nustatymai</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; nustatymai</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Nustatymai</guimenu
+> <guimenuitem
+>Konfigūruoti kanalus...</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Konfigūruoti garso kanalus</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<sect2 id='Channels'>
+<title
+>Konfigūruoti &kmix; kanalus</title>
+<screenshot>
+  <screeninfo
+>&kmix; kanalai</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; kanalai</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Parinkite &kmix; kanalus, kurie turėtų būti naudojami garso išvedimui ir įvedimui.</para>
+</sect2>
+
+<sect2 id='Master_Channels'>
+<title
+>Pažymėkite pagrindinį kanalą</title>
+<screenshot>
+  <screeninfo
+>&kmix; pagrindinis kanalas</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; pagrindinis kanalas</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Pasirinkite pagrindinį &kmix; kanalą.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>Konfigūruoti &kmix;</title>
+<screenshot>
+  <screeninfo
+>Konfigūruoti &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Konfigūruoti &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Konfigūruoti įvairius &kmix; parameterus.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Elgsena</guimenu
+> <guimenuitem
+>Įdiegti į pultą</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Įjunkite šią parinktį, jei norite, kad &kmix; būtų rodomas sistemos pulte.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Elgsena</guimenu
+> <guimenuitem
+>Įjungti sisteminiame dėkle garso lygių valdymą</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Įjunkite šią parinktį, jei norite, kad sistemos dėkle būtų galima reguliuoti garso lygį.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Elgsena</guimenu
+> <guimenuitem
+>Atstatyti garsumą prisijungus</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Įjunkite šią parinktį, kad prisijungus būtų atstatytas garsumo lygmuo.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Vaizdinis</guimenu
+> <guimenuitem
+>Rodyti skales</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Įjunkite šią parinktį, jei norite, kad būtų valdikliuose būtų rodoma skalė.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Vaizdinis</guimenu
+> <guimenuitem
+>Rodyti etiketes</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Įjunkite šią parinktį, kad būtų rodomos valdiklių etiketės.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Slinkiklių orientacija</guimenu
+> <guimenuitem
+>Horizontali</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Parinkus šią akutę valdiklių slankikliai judės horizontaliai.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Slankiklių orientacija</guimenu
+> <guimenuitem
+>Vertikali</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Parinkus šią akutę valdiklių slankikliai judės vertikaliai.</action
+></para
+></listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Padėkos ir licencija</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Dokumentacijos autorinės teisės &copy; 2010 Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Dėkojame:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (nukopijavo daug dalykų iš senosios &kmix; dokumentacijos) </para>
+
+<para
+>Tomas Straupis<email
+>tomasstraupis@gmail.com</email
+></para
+> 
+&underFDL; &underGPL; </chapter>
+
+<appendix id="installation">
+<title
+>Diegimas</title>
+
+<sect1 id="getting-Kmix">
+<title
+>Iš kur gauti &kmix;</title>
+&install.intro.documentation; </sect1>
+
+<sect1 id="compilation">
+<title
+>Kompiliavimas ir diegimas</title>
+&install.compile.documentation; </sect1>
+</appendix>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

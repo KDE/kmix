@@ -1,0 +1,1379 @@
+# Translation for kmix.po to Euskara/Basque (eu).
+# Copyright (C) 1999-2018, Free Software Foundation.
+# Copyright (C) 2019-2021, This file is copyright:
+# This file is distributed under the same license as the kmix package.
+# KDE euskaratzeko proiektuko arduraduna <xalba@ni.eus>.
+#
+# Translator:
+# Iñigo Salvador Azurmendi <xalba@ni.eus>, 1999, 2005, 2018, 2019, 2020, 2021.
+# Marcos  <marcos@euskalgnu.org>, 2005, 2006.
+# Ion Gaztañaga <igaztanaga@gmail.com>, 2005.
+# Julen Landa Alustiza <julen@mundurat.net>, 2009.
+# Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: kmix\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"PO-Revision-Date: 2021-07-21 10:17+0200\n"
+"Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
+"Language-Team: Basque <kde-i18n-eu@kde.org>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 21.04.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Marcos,Ion Gaztañaga,Julen Landa,Iñigo Salvador Azurmendi"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr ""
+"marcos@euskalgnu.org,igaztanaga@gmail.com,julen@mundurat.net,xalba@ni.eus"
+
+#: apps/kmixctrl.cpp:40
+#, kde-format
+msgid "KMixCtrl"
+msgstr "KMixCtrl"
+
+#: apps/kmixctrl.cpp:41
+#, kde-format
+msgid "kmixctrl - kmix volume save/restore utility"
+msgstr "kmixctrl - kmix bolumena gorde/lehengoratzeko tresna"
+
+#: apps/kmixctrl.cpp:43
+#, kde-format
+msgid "(c) 2000 by Stefan Schimanski"
+msgstr "(c) 2000 by Stefan Schimanski"
+
+#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#, kde-format
+msgid "Stefan Schimanski"
+msgstr "Stefan Schimanski"
+
+#: apps/kmixctrl.cpp:51
+#, kde-format
+msgid "Save current volumes as default"
+msgstr "Gorde uneko bolumenak lehenetsi gisa"
+
+#: apps/kmixctrl.cpp:53
+#, kde-format
+msgid "Restore default volumes"
+msgstr "Lehengoratu bolumen lehenetsiak"
+
+#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"Gailu nagusia duen soinu-txartela deskonektatu egin da. %2 txarteleko %1 "
+"kontrolera aldatzen."
+
+#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "Azken soinu-txartela deskonektatu egin da."
+
+#: apps/kmixwindow.cpp:173
+#, kde-format
+msgid "Audio Setup..."
+msgstr "Audioaren ezarpena..."
+
+#: apps/kmixwindow.cpp:177
+#, kde-format
+msgid "Hide Mixer Window"
+msgstr "Ezkutatu nahastailearen leihoa"
+
+#: apps/kmixwindow.cpp:182
+#, kde-format
+msgid "Configure &Channels..."
+msgstr "Konfiguratu &kanalak..."
+
+#: apps/kmixwindow.cpp:186
+#, kde-format
+msgid "Select Master Channel..."
+msgstr "Hautatu kanal nagusia..."
+
+#: apps/kmixwindow.cpp:191
+#, kde-format
+msgid "Save volume profile 1"
+msgstr "Gorde 1 bolumen profila"
+
+#: apps/kmixwindow.cpp:196
+#, kde-format
+msgid "Save volume profile 2"
+msgstr "Gorde 2 bolumen profila"
+
+#: apps/kmixwindow.cpp:201
+#, kde-format
+msgid "Save volume profile 3"
+msgstr "Gorde 3 bolumen profila"
+
+#: apps/kmixwindow.cpp:206
+#, kde-format
+msgid "Save volume profile 4"
+msgstr "Gorde 4 bolumen profila"
+
+#: apps/kmixwindow.cpp:211
+#, kde-format
+msgid "Load volume profile 1"
+msgstr "Zamatu 1 bolumen profila"
+
+#: apps/kmixwindow.cpp:216
+#, kde-format
+msgid "Load volume profile 2"
+msgstr "Zamatu 2 bolumen profila"
+
+#: apps/kmixwindow.cpp:221
+#, kde-format
+msgid "Load volume profile 3"
+msgstr "Zamatu 3 bolumen profila"
+
+#: apps/kmixwindow.cpp:226
+#, kde-format
+msgid "Load volume profile 4"
+msgstr "Zamatu 4 bolumen profila"
+
+#: apps/kmixwindow.cpp:237
+#, kde-format
+msgid "Increase Volume"
+msgstr "Handitu bolumena"
+
+#: apps/kmixwindow.cpp:244
+#, kde-format
+msgid "Decrease Volume"
+msgstr "Txikitu bolumena"
+
+#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#, kde-format
+msgid "Mute"
+msgstr "Isilarazi"
+
+#: apps/kmixwindow.cpp:263
+#, kde-format
+msgid "Add new view"
+msgstr "Gehitu ikuspegi berria"
+
+#: apps/kmixwindow.cpp:772
+#, kde-format
+msgid "Cannot add view - GUIProfile is invalid."
+msgstr "Ezin da ikuspegia gehitu - «GUIProfile» baliogabea da."
+
+#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Error"
+msgstr "Errorea"
+
+#: apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Cannot add view - View already exists."
+msgstr "Ezin da ikuspegia gehitu - Ikuspegia badago dagoeneko."
+
+#: apps/kmixwindow.cpp:1168
+#, kde-format
+msgid ""
+"The helper application is either not installed or not working.\n"
+"\n"
+"%1"
+msgstr ""
+"Aplikazio laguntzailea ez da instalatu edo ez dabil.\n"
+"\n"
+"%1"
+
+#: apps/kmixwindow.cpp:1219
+#, kde-format
+msgid "Mixer (%1)"
+msgstr "Nahastailea (%1)"
+
+#: apps/main.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "KMix"
+
+#: apps/main.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "KMix - KDEren gaitasun handiko nahastaile txiki"
+
+#: apps/main.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2013 KMix-en egileak"
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "Christian Esken"
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "Jatorrizko egilea eta uneko mantentzailea"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "Colin Guthrie"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr "PulseAudioren euskarria"
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "Helio Chissini de Castro"
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "ALSA 0.9x eratorpena"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "Brian Hanson"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Solaris support"
+msgstr "Solaris-en euskarria"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/main.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "Igor Poboiko"
+
+#: apps/main.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "Plasma datu-motorra"
+
+#: apps/main.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "Aldi baterako mantentzailea"
+
+#: apps/main.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "Sebestyen Zoltan"
+
+#: apps/main.cpp:57 apps/main.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "*BSD konponketak"
+
+#: apps/main.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "Lennart Augustsson"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "Nadeem Hasan"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "Isilarazi eta bolumen aurreikustea, bestelako konponketak"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "Erwin Mascher"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "emu10k1-ean oinarritutako soinu-txartelen euskarria hobetzea"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "Valentin Rusu"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "TerraTec DMX6Fire euskarria"
+
+#: apps/main.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr "KMixen lehio nagusia erakustea eragozten du, KMix jada martxan bada."
+
+#: apps/main.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr "KMix hutsegiteekiko modu seguruan abiatzen du."
+
+#: apps/volumefeedback.cpp:248
+#, kde-format
+msgid "Volume Control Feedback Sound"
+msgstr "Bolumen kontrolaren berrelikadura soinua"
+
+#: backends/mixer_alsa9.cpp:962
+#, kde-format
+msgid ""
+"You do not have permission to access the alsa mixer device.\n"
+"Please verify if all alsa devices are properly created."
+msgstr ""
+"Ez duzu ALSA nahastaile gailua atzitzeko baimenik.\n"
+"Begiratu ALSA gailu guztiak behar bezala sortu diren."
+
+#: backends/mixer_alsa9.cpp:966
+#, kde-format
+msgid ""
+"Alsa mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+msgstr ""
+"Ezin da ALSA nahastailerik aurkitu.\n"
+"Egiaztatu soinu-txartela instalatuta dagoela eta\n"
+"bere gidaria zamatuta dagoela.\n"
+
+#: backends/mixer_backend.cpp:323
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"kmix: Ez duzu nahastaile gailua atzitzeko baimenik.\n"
+"Egiaztatu zure sistema-eragilearen eskuliburua atzitzea baimentzeko."
+
+#: backends/mixer_backend.cpp:327
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "kmix: Ezin izan da nahastailera idatzi."
+
+#: backends/mixer_backend.cpp:330
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "kmix: Ezin izan da nahastailetik irakurri."
+
+#: backends/mixer_backend.cpp:333
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"kmix: Ezin da nahastailea aurkitu.\n"
+"Egiaztatu soinu-txartela instalatuta eta\n"
+"bere gidaria zamatuta dagoen.\n"
+
+#: backends/mixer_backend.cpp:338
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr ""
+"kmix: Errore ezezaguna. Mesedez, jakinarazi errore hau nola sortu duzun."
+
+#: backends/mixer_backend_i18n.cpp:24
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Mikrofono sarreraren grabatze maila."
+
+#: backends/mixer_backend_i18n.cpp:25
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Aurreko bozgorailuen bolumena, edo bozgorailu guztiena (zure soinu-txartel "
+"ereduaren arabera), kontrolatzen du. Irteera digital bat erabiltzen baduzu, "
+"agian beste kontrol batzuk ere erabili beharko dituzu, hala-nola, ADC edo "
+"DAC. Aurikularrentzako, soinu-txartelek aurikularraren kontrol bat hornitzen "
+"dute."
+
+#: backends/mixer_backend_i18n.cpp:26
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"Euskarri gehienak, MP3ak edo bideoak esaterako, PCM kanala erabiliz atzera-"
+"jotzen dira. Hori dela eta, halako euskarrien atzera-jotzeko bolumena biek "
+"kontrolatzen dute, honek eta nagusiak edo aurikularraren kanalak."
+
+#: backends/mixer_backend_i18n.cpp:27
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Aurikularraren bolumena kontrolatzen du. Soinu-txartel batzuek etengailu bat "
+"dute, aurikularraren irteera gaitzeko eskuz aktibatu behar dena."
+
+#: backends/mixer_backend_i18n.cpp:28
+#, kde-format
+msgid "---"
+msgstr "---"
+
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#, kde-format
+msgid "Playback Streams"
+msgstr "Atzera-jotzeko fluxuak"
+
+#: backends/mixer_oss.cpp:68
+msgid "Volume"
+msgstr "Bolumena"
+
+#: backends/mixer_oss.cpp:68
+msgid "Bass"
+msgstr "Baxua"
+
+#: backends/mixer_oss.cpp:68
+msgid "Treble"
+msgstr "Altua"
+
+#: backends/mixer_oss.cpp:69
+msgid "Synth"
+msgstr "Sintetizatzailea"
+
+#: backends/mixer_oss.cpp:69
+msgid "Pcm"
+msgstr "PCM"
+
+#: backends/mixer_oss.cpp:69
+msgid "Speaker"
+msgstr "Bozgorailua"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#, kde-format
+msgid "Microphone"
+msgstr "Mikrofonoa"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#, kde-format
+msgid "CD"
+msgstr "CD"
+
+#: backends/mixer_oss.cpp:70
+msgid "Line"
+msgstr "Lerroa"
+
+#: backends/mixer_oss.cpp:71
+msgid "Mix"
+msgstr "Nahaste"
+
+#: backends/mixer_oss.cpp:71
+msgid "Pcm2"
+msgstr "PCM2"
+
+#: backends/mixer_oss.cpp:71
+msgid "RecMon"
+msgstr "GrabMon"
+
+#: backends/mixer_oss.cpp:72
+msgid "IGain"
+msgstr "Sarrera irabazi"
+
+#: backends/mixer_oss.cpp:72
+msgid "OGain"
+msgstr "Irteera irabazi"
+
+#: backends/mixer_oss.cpp:72
+msgid "Line1"
+msgstr "Lerroa1"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line2"
+msgstr "Lerroa2"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line3"
+msgstr "Lerroa3"
+
+#: backends/mixer_oss.cpp:73
+msgid "Digital1"
+msgstr "Digitala1"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital2"
+msgstr "Digitala2"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital3"
+msgstr "Digitala3"
+
+#: backends/mixer_oss.cpp:74
+msgid "PhoneIn"
+msgstr "Telefono sarrera"
+
+#: backends/mixer_oss.cpp:75
+msgid "PhoneOut"
+msgstr "Telefono irteera"
+
+#: backends/mixer_oss.cpp:75
+msgid "Video"
+msgstr "Bideoa"
+
+#: backends/mixer_oss.cpp:75
+msgid "Radio"
+msgstr "Irratia"
+
+#: backends/mixer_oss.cpp:76
+msgid "Monitor"
+msgstr "Monitorea"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-depth"
+msgstr "3D-sakonera"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-center"
+msgstr "3D-erdigunea"
+
+#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#, kde-format
+msgid "unknown"
+msgstr "ezezaguna"
+
+#: backends/mixer_oss.cpp:81
+msgid "unused"
+msgstr "erabili gabea"
+
+#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
+msgstr ""
+"kmix: Ez duzu nahastaile gailua atzitzeko baimenik.\n"
+"Hasi saioa root gisa eta egin 'chmod a+rw /dev/mixer*' atzitzea baimentzeko."
+
+#: backends/mixer_oss.cpp:247
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using commercial OSS."
+msgstr ""
+"kmix: Nahastailea ezin da aurkitu.\n"
+"Egiaztatu soinu-txartela instalatuta dagoela eta\n"
+"bere gidaria zamatuta dagoela.\n"
+"Linuxen agian 'insmod' erabili beharko duzu modulua zamatzeko.\n"
+"Erabili 'soundon' OSS komertziala erabiliz gero."
+
+#: backends/mixer_oss4.cpp:499
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using OSS4 from 4front."
+msgstr ""
+"kmix: Nahastailea ezin da aurkitu.\n"
+"Egiaztatu soinu-txartela instalatuta dagoela eta\n"
+"bere gidaria zamatuta dagoela.\n"
+"Linuxen agian 'insmod' erabili beharko duzu modulua zamatzeko.\n"
+"Erabili 'soundon' 4font-etik OSS4 erabiliz gero."
+
+#: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
+#, kde-format
+msgid "Unknown Application"
+msgstr "Aplikazio ezezaguna"
+
+#: backends/mixer_pulse.cpp:434
+#, kde-format
+msgid "Event Sounds"
+msgstr "Gertaera soinuak"
+
+#: backends/mixer_pulse.cpp:1067
+#, kde-format
+msgid "Playback Devices"
+msgstr "Atzera-jotzeko gailuak"
+
+#: backends/mixer_pulse.cpp:1075
+#, kde-format
+msgid "Capture Devices"
+msgstr "Atzemateko gailuak"
+
+#: backends/mixer_pulse.cpp:1094
+#, kde-format
+msgid "Capture Streams"
+msgstr "Atzeman fluxuak"
+
+#: backends/mixer_sun.cpp:69
+#, kde-format
+msgid "Master Volume"
+msgstr "Bolumen nagusia"
+
+#: backends/mixer_sun.cpp:70
+#, kde-format
+msgid "Internal Speaker"
+msgstr "Barneko bozgorailua"
+
+#: backends/mixer_sun.cpp:71
+#, kde-format
+msgid "Headphone"
+msgstr "Aurikularra"
+
+#: backends/mixer_sun.cpp:72
+#, kde-format
+msgid "Line Out"
+msgstr "Irteerako lerroa"
+
+#: backends/mixer_sun.cpp:73
+#, kde-format
+msgid "Record Monitor"
+msgstr "Grabatze monitorea"
+
+#: backends/mixer_sun.cpp:75
+#, kde-format
+msgid "Line In"
+msgstr "Sarrerako lerroa"
+
+#: backends/mixer_sun.cpp:241
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Ask your system administrator to fix /dev/audioctl to allow access."
+msgstr ""
+"kmix: Ez duzu nahastaile gailua atzitzeko baimenik.\n"
+"Eskatu zure sistema-administratzaileari /dev/audioctl atzitzea baimentzeko."
+
+#: core/volume.cpp:58
+#, kde-format
+msgctxt "Channel name"
+msgid "Left"
+msgstr "Ezkerra"
+
+#: core/volume.cpp:59
+#, kde-format
+msgctxt "Channel name"
+msgid "Right"
+msgstr "Eskuna"
+
+#: core/volume.cpp:60
+#, kde-format
+msgctxt "Channel name"
+msgid "Center"
+msgstr "Erdia"
+
+#: core/volume.cpp:61
+#, kde-format
+msgctxt "Channel name"
+msgid "Subwoofer"
+msgstr "Azpibaxuen bozgorailua"
+
+#: core/volume.cpp:62
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Left"
+msgstr "Inguruko ezkerra"
+
+#: core/volume.cpp:63
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Right"
+msgstr "Inguruko eskuina"
+
+#: core/volume.cpp:64
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Left"
+msgstr "Alboko ezkerra"
+
+#: core/volume.cpp:65
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Right"
+msgstr "Alboko eskuina"
+
+#: core/volume.cpp:66
+#, kde-format
+msgctxt "Channel name"
+msgid "Rear Center"
+msgstr "Atzeko erdikoa"
+
+#: core/volume.cpp:68
+#, kde-format
+msgctxt "Channel name"
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+#: gui/dialogaddview.cpp:50
+#, kde-format
+msgid "All controls"
+msgstr "Kontrol guztiak"
+
+#: gui/dialogaddview.cpp:51
+#, kde-format
+msgid "Only playback controls"
+msgstr "Soilik atzera-jotzeko kontrolak"
+
+#: gui/dialogaddview.cpp:52
+#, kde-format
+msgid "Only capture controls"
+msgstr "Soilik atzemateko kontrolak"
+
+#: gui/dialogaddview.cpp:59
+#, kde-format
+msgid "Add View"
+msgstr "Gehitu ikuspegia"
+
+#: gui/dialogaddview.cpp:88
+#, kde-format
+msgid "Select mixer:"
+msgstr "Hautatu nahastailea:"
+
+#: gui/dialogaddview.cpp:95
+#, kde-format
+msgid "Current mixer"
+msgstr "Uneko nahastailea"
+
+#: gui/dialogaddview.cpp:115
+#, kde-format
+msgid "Select the design for the new view:"
+msgstr "Hautatu ikuspegi berriaren diseinua:"
+
+#: gui/dialogchoosebackends.cpp:54
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr "Bolumen kontrol gainerakorrean erakutsi beharreko nahastailea"
+
+#: gui/dialogchoosebackends.cpp:81
+#, kde-format
+msgid "Select Mixers"
+msgstr "Hautatu nahastaileak"
+
+#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#, kde-format
+msgid "Select Master Channel"
+msgstr "Hautatu kanal nagusia"
+
+#: gui/dialogselectmaster.cpp:73
+#, kde-format
+msgid "Current mixer:"
+msgstr "Uneko nahastailea:"
+
+#: gui/dialogselectmaster.cpp:123
+#, kde-kuit-format
+msgctxt "@info"
+msgid "Select the <link url=\"i\">master volume</link> channel:"
+msgstr "Hautatu <link url=\"i\">bolumen-kanal nagusia</link>:"
+
+#: gui/dialogselectmaster.cpp:131
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Here you can select the master sound device (if there is more than "
+"one) and its master channel.</para><para>The master channel is the one that "
+"is affected by the system tray volume control, the volume up/down and mute "
+"global shortcut keys, and the <interface>Mute</interface> action in the "
+"system tray popup menu.</para>"
+msgstr ""
+"<para>Hemen hauta dezakezu soinu-gailu nagusia (bat baino gehiago dagoenean) "
+"eta haren kanal nagusia.</para><para>Kanal nagusia da, sistema-erretiluko "
+"bolumen-agintearen, bolumena igotzeko/jaisteko eta isilarazteko laster-tekla "
+"globalen, eta sistema-erretiluko menu gainerakorreko <interface>isilarazi</"
+"interface> ekintzaren eragina jasotzen duena.</para>"
+
+#: gui/dialogselectmaster.cpp:203
+#, kde-format
+msgid "Automatic (%1 recommendation)"
+msgstr "Automatikoa (%1 aholkatua)"
+
+#: gui/dialogviewconfiguration.cpp:136
+#, kde-format
+msgid "Configure Channels"
+msgstr "Konfiguratu kanalak"
+
+#: gui/dialogviewconfiguration.cpp:147
+#, kde-format
+msgid "Configure the visible channels. Drag icons between the lists to update."
+msgstr ""
+"Konfiguratu kanal ikusgaiak. Arrastatu ikonoak zerrenden artea eguneratzeko."
+
+#: gui/dialogviewconfiguration.cpp:217
+#, kde-format
+msgid "Visible channels:"
+msgstr "Kanal ikusgaiak:"
+
+#: gui/dialogviewconfiguration.cpp:220
+#, kde-format
+msgid "Available channels:"
+msgstr "Kanal erabilgarriak:"
+
+#: gui/dialogviewconfiguration.cpp:234
+#, kde-format
+msgid "Move the selected channel to the visible list"
+msgstr "Eraman hautatuko kanala ikusgaien zerrendara"
+
+#: gui/dialogviewconfiguration.cpp:242
+#, kde-format
+msgid "Move the selected channel to the available (hidden) list"
+msgstr "Eraman hautatutako kanala erabilgarrien (ezkutukoa) zerrendara"
+
+#: gui/dialogviewconfiguration.cpp:282
+#, kde-format
+msgid "Show the selected channel"
+msgstr "Erakusi hautatutako kanala"
+
+#: gui/dialogviewconfiguration.cpp:283
+#, kde-format
+msgid "Hide the selected channel"
+msgstr "Ezkutatu hautatutako kanala"
+
+#: gui/dialogviewconfiguration.cpp:284
+#, kde-format
+msgid "Visible channels"
+msgstr "Kanal ikusgaiak"
+
+#: gui/dialogviewconfiguration.cpp:285
+#, kde-format
+msgid "Available channels"
+msgstr "Kanal erabilgarriak"
+
+#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#, kde-format
+msgid "Volume Control"
+msgstr "Bolumen kontrola"
+
+#: gui/kmixdockwidget.cpp:174
+#, kde-format
+msgid "M&ute"
+msgstr "&Isilarazi"
+
+#: gui/kmixdockwidget.cpp:198
+#, kde-format
+msgid "No mixer devices available"
+msgstr "Ez dago gailu nahastaile erabilgarririk"
+
+#: gui/kmixdockwidget.cpp:206
+#, kde-format
+msgid "Volume muted"
+msgstr "Bolumena isilarazita"
+
+#: gui/kmixdockwidget.cpp:207
+#, kde-format
+msgid "Volume at %1%"
+msgstr "Bolumena %%1(e)an"
+
+#: gui/kmixdockwidget.cpp:209
+#, kde-format
+msgid "%1 - %2"
+msgstr "%1 - %2"
+
+#: gui/kmixprefdlg.cpp:52
+#, kde-format
+msgid "Configure"
+msgstr "Konfiguratu"
+
+#: gui/kmixprefdlg.cpp:66
+#, kde-format
+msgid "General"
+msgstr "Orokorra"
+
+#: gui/kmixprefdlg.cpp:67
+#, kde-format
+msgid "Startup"
+msgstr "Abioa"
+
+#: gui/kmixprefdlg.cpp:103
+#, kde-format
+msgid "Start KMix on desktop startup"
+msgstr "Abiatu KMix mahaigaina abiatzean"
+
+#: gui/kmixprefdlg.cpp:107
+#, kde-format
+msgid "Start KMix automatically when the desktop starts"
+msgstr "Abiatu KMix automatikoki mahaigaina abiatzean"
+
+#: gui/kmixprefdlg.cpp:110
+#, kde-format
+msgid ""
+"Autostart will not work, because the autostart file kmix_autostart.desktop "
+"is missing. Check that KMix is installed correctly."
+msgstr ""
+"Automatikoki abiatzea ez da ibiliko, horretarako fitxategia kmix_autostart."
+"desktop falta delako. Egiaztatu KMix ondo instalatuta dagoen."
+
+#: gui/kmixprefdlg.cpp:120
+#, kde-format
+msgid "Restore previous volume settings on desktop startup"
+msgstr "Lehengoratu bolumenaren aurreko ezarpenak mahaigaina abiatzean"
+
+#: gui/kmixprefdlg.cpp:124
+#, kde-format
+msgid ""
+"Restore all mixer volume levels and switches to their last used settings "
+"when the desktop starts"
+msgstr ""
+"Lehengoratu nahastailearen bolumen mailak eta etengailuak erabili zireneko "
+"azken ezarpenetara mahaigaina abiatzean"
+
+#: gui/kmixprefdlg.cpp:127
+#, kde-format
+msgid ""
+"The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
+msgstr ""
+"PulseAudio edo MPRIS2-ren kontrol dinamikoen bolumena ez da lehengoratuko."
+
+#: gui/kmixprefdlg.cpp:145
+#, kde-format
+msgid "&Horizontal"
+msgstr "&Horizontala"
+
+#: gui/kmixprefdlg.cpp:146
+#, kde-format
+msgid "&Vertical"
+msgstr "&Bertikala"
+
+#: gui/kmixprefdlg.cpp:193
+#, kde-format
+msgid "Behavior"
+msgstr "Jokabidea"
+
+#: gui/kmixprefdlg.cpp:207
+#, kde-format
+msgid "Volume overdrive"
+msgstr "Bolumen muga behartzea"
+
+#: gui/kmixprefdlg.cpp:212
+#, kde-format
+msgctxt "@info:tooltip"
+msgid ""
+"Allow the volume to be raised above the recommended maximum (typically to "
+"150%)"
+msgstr ""
+"Onartu bolumena gomendatutako gehienezkoaren gainetik igotzea (eskuarki, % "
+"150)"
+
+#: gui/kmixprefdlg.cpp:215
+#, kde-format
+msgid "Volume overdrive is only available for PulseAudio."
+msgstr "Bolumen muga PulseAudio-rako bakarrik dago erabilgarri."
+
+#: gui/kmixprefdlg.cpp:225
+#, kde-format
+msgid "%1 must be restarted for the volume overdrive setting to take effect."
+msgstr ""
+"%1 berrabiatu beharra dago bolumen muga behartzeko ezarpenak indarrean jar "
+"daitezen."
+
+#: gui/kmixprefdlg.cpp:235
+#, kde-format
+msgid "Volume feedback"
+msgstr "Bolumenaren berrelikadura"
+
+#: gui/kmixprefdlg.cpp:239
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Play a sample sound when the volume changes"
+msgstr "Jo soinu-lagin bat bolumena aldatzen denean"
+
+#: gui/kmixprefdlg.cpp:243
+#, kde-format
+msgid "Volume feedback is only available when configured with Canberra."
+msgstr ""
+"Bolumenaren berrelikatzea erabilgarri dago soilik Canberra-ren bidez "
+"konfiguratzen denean."
+
+#: gui/kmixprefdlg.cpp:265
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Set the volume step as a percentage of the volume range.</"
+"para><para>This affects changing the volume via hot keys, with the mouse "
+"wheel over the system tray icon, or moving sliders by a page step.</"
+"para><para>%1 must be restarted for this change to take effect.</para>"
+msgstr ""
+"<para>Ezarri bolumen-urratsa bolumen-bitartearen ehuneko gisa.</"
+"para><para>Horrek eragiten dio bolumena laster-teklekin, sistema-erretiluko "
+"ikono gainetik sagua-gurpilarekin, edo graduatzaileak orriko urrats baten "
+"bidez aldatzeari.</para><para>%1 berrabiarazi egin behar da aldaketa hau "
+"indarrean jartzeko.</para>"
+
+#: gui/kmixprefdlg.cpp:272
+#, kde-format
+msgid "Volume step:"
+msgstr "Bolumen urratsa:"
+
+#: gui/kmixprefdlg.cpp:280
+#, kde-format
+msgid "Visual"
+msgstr "Ikustezko"
+
+#: gui/kmixprefdlg.cpp:289
+#, kde-format
+msgid "Show slider &tickmarks"
+msgstr "Erakutsi graduatzaileko es&kala-markak"
+
+#: gui/kmixprefdlg.cpp:292
+#, kde-format
+msgid "Show tick mark scales on sliders"
+msgstr "Erakutsi eskala-marratxoak graduatzaileetan"
+
+#: gui/kmixprefdlg.cpp:294
+#, kde-format
+msgid "Show control &labels"
+msgstr "Erakutsi kontroletako e&tiketak"
+
+#: gui/kmixprefdlg.cpp:297
+#, kde-format
+msgid "Show description labels for sliders"
+msgstr "Erakutsi graduatzailetarako etiketa deskribatzaileak "
+
+#: gui/kmixprefdlg.cpp:300
+#, kde-format
+msgid "Show On Screen Display (&OSD)"
+msgstr "Erakutsi pantailan adierazlea (&OSD)"
+
+#: gui/kmixprefdlg.cpp:303
+#, kde-format
+msgid "Show an on-screen indicator when changing the volume via hotkeys"
+msgstr ""
+"Erakutsi pantailako adierazle bat tekla-lasterren bidez bolumena aldatzean"
+
+#: gui/kmixprefdlg.cpp:312
+#, kde-format
+msgid "Slider orientation (main window): "
+msgstr "Graduatzailearen orientatzea (leiho nagusia): "
+
+#: gui/kmixprefdlg.cpp:313
+#, kde-format
+msgid "Slider orientation (system tray popup):"
+msgstr "Graduatzailearen orientatzea (sistemaren erretiluko gainerakorra):"
+
+#: gui/kmixprefdlg.cpp:314
+#, kde-format
+msgid "Set the orientation of the main window control sliders"
+msgstr "Ezarri leiho nagusian aginte graduatzaileen orientazioa"
+
+#: gui/kmixprefdlg.cpp:315
+#, kde-format
+msgid "Set the orientation of the system tray volume control sliders"
+msgstr "Ezarri sistema-erretiluko bolumen aginte graduatzaileen orientazioa"
+
+#: gui/kmixprefdlg.cpp:327
+#, kde-format
+msgid "Dock in system tray"
+msgstr "Ainguratu sistemaren erretiluan"
+
+#: gui/kmixprefdlg.cpp:330
+#, kde-format
+msgid ""
+"Dock the mixer into the system tray. Click on it to open the popup volume "
+"control."
+msgstr ""
+"Ainguratu nahastailea sistemaren erretiluan. Klik egin bere gainean bolumen "
+"kontrol gainerakorra irekitzeko."
+
+#: gui/kmixprefdlg.cpp:502
+#, kde-format
+msgid ""
+"The mixers that are checked here will be shown in the popup volume control."
+msgstr ""
+"Hemen markatuta dauden nahastaileak bolumen-aginte gainerakorrean erakutsiko "
+"dira."
+
+#: gui/kmixtoolbox.cpp:97
+#, kde-format
+msgid "No sound devices are installed or are currently available."
+msgstr ""
+"Ez dago instalatuta soinu gailurik edo une honetan ez daude erabilgarri."
+
+#: gui/mdwslider.cpp:96
+#, kde-format
+msgid "Split Channels"
+msgstr "Zatitu kanalak"
+
+#: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
+#, kde-format
+msgid "Capture"
+msgstr "Atzerman"
+
+#: gui/mdwslider.cpp:113
+#, kde-format
+msgid "Use Device"
+msgstr "Erabili gailua"
+
+#: gui/mdwslider.cpp:158
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Mute %2 on %1"
+msgstr "Isilarazi %2 %1(e)(a)n"
+
+#: gui/mdwslider.cpp:170
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Increase volume of %2 on %1"
+msgstr "Igo %2(r)en bolumena %1(e)(a)n"
+
+#: gui/mdwslider.cpp:178
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Decrease volume of %2 on %1"
+msgstr "Jaitsi %2(r)en bolumena %1(e)(a)n"
+
+#: gui/mdwslider.cpp:328
+#, kde-format
+msgctxt "%1=channel"
+msgid "Capture/Uncapture %1"
+msgstr "Atzeman/ez atzeman %1"
+
+#: gui/mdwslider.cpp:329
+#, kde-format
+msgctxt "%1=channel"
+msgid "Mute/Unmute %1"
+msgstr "Isilarazi/ozendu %1"
+
+#: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
+#, kde-format
+msgctxt "%1=device %2=channel"
+msgid ""
+"%1\n"
+"%2"
+msgstr ""
+"%1\n"
+"%2"
+
+#: gui/mdwslider.cpp:680
+#, kde-format
+msgid "%1 (capture)"
+msgstr "%1 (atzeman)"
+
+#: gui/mdwslider.cpp:1118
+#, kde-format
+msgid "Automatic (according to category)"
+msgstr "Automatikoa (kategoriaren arabera)"
+
+#: gui/mixdevicewidget.cpp:65
+#, kde-format
+msgid "Channel Shortcuts..."
+msgstr "Kanaletako lasterbideak..."
+
+#: gui/viewbase.cpp:96
+#, kde-format
+msgid "Configure this view"
+msgstr "Konfiguratu ikuspegi hau"
+
+#: gui/viewbase.cpp:166
+#, kde-format
+msgid "Configure Channels..."
+msgstr "Konfiguratu kanalak..."
+
+#: gui/viewbase.cpp:270
+#, kde-format
+msgid "Device Settings"
+msgstr "Gailuen ezarpenak"
+
+#: gui/viewdockareapopup.cpp:440
+#, kde-format
+msgid "Show the full mixer window"
+msgstr "Erakutsi nahastailearen leihoa osoa"
+
+#: gui/viewdockareapopup.cpp:472
+#, kde-format
+msgid "Load volume profile %1"
+msgstr "Zamatu %1 bolumen profila"
+
+#: gui/viewsliders.cpp:180
+#, kde-format
+msgid "Nothing is playing audio."
+msgstr "Ez dago ezer audioa jotzen."
+
+#: gui/viewsliders.cpp:183
+#, kde-format
+msgid "Nothing is capturing audio."
+msgstr "Ez dago ezer audio atzematen."
+
+#: gui/viewsliders.cpp:184
+#, kde-format
+msgid "There are no capture devices."
+msgstr "Ez dago atzemateko gailurik."
+
+#: gui/viewsliders.cpp:185
+#, kde-format
+msgid "There are no playback devices."
+msgstr "Ez dago atzera-jotzeko gailurik."
+
+#~ msgctxt "@info:tooltip"
+#~ msgid "Raise the maximum volume to 150%"
+#~ msgstr "Altxatu gehienezko bolumena % 150era"
+
+#~ msgid "&Hide"
+#~ msgstr "&Ezkutatu"
+
+#~ msgid "C&onfigure Shortcuts..."
+#~ msgstr "K&onfiguratu lasterbideak..."
+
+#~ msgid "Toggle Mute"
+#~ msgstr "Isilarazi/ozendu"
+
+#~ msgid "Hardware &Information"
+#~ msgstr "Hardwarearen &informazioa"
+
+#~ msgid "Mixer Hardware Information"
+#~ msgstr "Nahastaile-hardwarearen informazioa"
+
+#~ msgid "Sound drivers supported:"
+#~ msgstr "Onartutako soinu-gidariak:"
+
+#~ msgid "Sound drivers used:"
+#~ msgstr "Erabilitako soinu-gidariak:"
+
+#~ msgid "Experimental multiple-Driver mode activated"
+#~ msgstr "Gidari-anitzeko modu esperimentala aktibatu da"
+
+#~ msgid "&Muted"
+#~ msgstr "&Isilarazita"
+
+#, fuzzy
+#~| msgid "Capture"
+#~ msgid "Captu&re"
+#~ msgstr "Atzerman"
+
+#~ msgid "Mo&ve"
+#~ msgstr "&Mugitu"
+
+#~ msgid "Set &Record Source"
+#~ msgstr "Ezarri &grabazioaren iturburua"
+
+#~ msgid "capture"
+#~ msgstr "atzeman"
+
+#~ msgid "&Channels"
+#~ msgstr "&Kanalak"
+
+#~ msgid "Mixer cannot be found"
+#~ msgstr "Nahastailea ezin da aurkitu"
+
+#~ msgid " (Muted)"
+#~ msgstr " (Isilarazita)"
+
+#~ msgid "Docks the mixer into the KDE system tray"
+#~ msgstr "Nahastailea KDE sistemaren erretiluan atrakatzen du"
+
+#~ msgid "&Use custom colors"
+#~ msgstr "&Erabili kolore pertsonalizatuak"
+
+#~ msgid "Active"
+#~ msgstr "Aktiboa"
+
+#~ msgid "&Silent:"
+#~ msgstr "&Mutu:"
+
+#~ msgid "&Loud:"
+#~ msgstr "&Ozen:"
+
+#~ msgid "&Background:"
+#~ msgstr "&Atzeko planoa:"
+
+#~ msgid "Muted"
+#~ msgstr "Mutututa"
+
+#~ msgid "Lou&d:"
+#~ msgstr "O&zen:"
+
+#~ msgid "Backgrou&nd:"
+#~ msgstr "A&tzeko planoa:"
+
+#~ msgid "Silen&t:"
+#~ msgstr "Mu&tu:"
+
+#~ msgid "&File"
+#~ msgstr "&Fitxategia"
+
+#~ msgid "&Help"
+#~ msgstr "&Laguntza"
+
+#, fuzzy
+#~| msgid "Mixer"
+#~ msgid "KDE Mixer"
+#~ msgstr "Nahastailea"
+
+#~ msgid "Allows to control the volume from the system tray"
+#~ msgstr "Sistemaren erretilutik bolumena kontrolatzea ahalbidetzen du"
+
+#~ msgid "Invalid mixer"
+#~ msgstr "Nahastaile baliogabea"
+
+#~ msgid ""
+#~ "(c) 1996-2007 Christian Esken\n"
+#~ "(c) 2000-2003 Stefan Schimanski\n"
+#~ "(c) 2002-2005 Helio Chissini de Castro"
+#~ msgstr ""
+#~ "(c) 1996-2007 Christian Esken\n"
+#~ "(c) 2000-2003 Stefan Schimanski\n"
+#~ "(c) 2002-2005 Helio Chissini de Castro"
+
+#~ msgid "Co-maintainer, Alsa 0.9x port"
+#~ msgstr "Ko-mantenitzailea; Alsa 0.9x moldaketa"
+
+#~ msgid "Nick Lopez"
+#~ msgstr "Nick Lopez"
+
+#, fuzzy
+#~| msgid "Christian Esken"
+#~ msgid "(c) 2000 by Christian Esken"
+#~ msgstr "Christian Esken"
+
+#~ msgid "Toggle Switch"
+#~ msgstr "Txandakatu konmutadorea"
+
+#~ msgid "On"
+#~ msgstr "Piztuta"
+
+#~ msgid "Off"
+#~ msgstr "Itzalita"
+
+#~ msgid "Configure - Mixer Applet"
+#~ msgstr "Konfiguratu - nahastailearen miniaplikazioa"
+
+#~ msgid "KMix Panel Applet"
+#~ msgstr "KMix panelaren miniaplikazioa"
+
+#~ msgid "Mini Sound Mixer Applet"
+#~ msgstr "Soinu nahastailearen miniaplikazioa"
+
+#~ msgid ""
+#~ "(c) 1996-2000 Christian Esken\n"
+#~ "(c) 2000-2003 Christian Esken, Stefan Schimanski"
+#~ msgstr ""
+#~ "(c) 1996-2000 Christian Esken\n"
+#~ "(c) 2000-2003 Christian Esken, Stefan Schimanski"
+
+#~ msgid ""
+#~ "For detailed credits, please refer to the About information of the KMix "
+#~ "program"
+#~ msgstr ""
+#~ "Kreditu zehatzagoetarako, joan KMix programaren 'Honi buruz...' "
+#~ "informaziora"
+
+#~ msgid "Mixers"
+#~ msgstr "Nahastaileak"
+
+#~ msgid "Available mixers:"
+#~ msgstr "Nahastaile erabilgarriak:"
+
+#~ msgid "Invalid mixer entered."
+#~ msgstr "Nahastaile baliogabea sartu da."
+
+#~ msgid "Show/Hide"
+#~ msgstr "Erakutsi/Ezkutatu"
+
+#~ msgid "Split"
+#~ msgstr "Zatitu"

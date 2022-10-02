@@ -1,0 +1,761 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY kappname-n '<application>K‑mikseta</application>'>
+  <!ENTITY kappname-g '<application>K‑miksete</application>'>
+  <!ENTITY kappname-d '<application>K‑mikseti</application>'>
+  <!ENTITY kappname-a '<application>K‑miksetu</application>'>
+  <!ENTITY kappname-i '<application>K‑miksetom</application>'>
+  <!ENTITY kappname-l '<application>K‑mikseti</application>'>
+  <!ENTITY package "kdemultimedia">
+  <!ENTITY % Serbian-Latin "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>Priručnik za <application
+>K‑miksetu</application
+></title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Čaturvedi</surname
+><address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Kristijan</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>programer</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Ćisini de Kastro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>programer</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brajan</firstname
+> <surname
+>Henson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>programer</contrib>
+</othercredit>
+
+<othercredit role="translator"
+><firstname
+>Dragan</firstname
+><surname
+>Pantelić</surname
+><affiliation
+><address
+><email
+>falcon-10@gmx.de</email
+></address
+></affiliation
+><contrib
+>prevod</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Kristijan Esken i Mat Džonston</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>21. 12. 2013.</date>
+<releaseinfo
+>4.5 (KDE 4.13)</releaseinfo>
+
+<abstract>
+<para
+><application
+>K‑mikseta</application
+> je program kojim možete menjati jačinu zvuka sa zvučne kartice.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>K‑mikseta</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>zvuk</keyword>
+<keyword
+>glasnost</keyword>
+<keyword
+>mikseta</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Uvod</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+><application
+>K‑mikseta</application
+> podržava nekoliko platformi i zvučnih drajvera.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Ako su instalirani i alsa i OSD drajveri, <application
+>K‑mikseta</application
+> će koristiti alsa drajver.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>Snimak ekrana <application
+>K‑miksete</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Snimak ekrana <application
+>K‑miksete</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Glavni prozor</title>
+
+<para
+>Pregled glavnog prozora <application
+>K‑miksete</application
+></para>
+<screenshot>
+  <screeninfo
+>Snimak ekrana <application
+>K‑miksete</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Snimak ekrana <application
+>K‑miksete</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Opcije fajla</title>
+<screenshot>
+  <screeninfo
+>Opcije fajla u <application
+>K‑mikseti</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Opcije fajla u <application
+>K‑mikseti</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+><keycap
+>Esc</keycap
+></keycombo
+> </shortcut
+> <guimenu
+>Fajl</guimenu
+> <guimenuitem
+>Sakrij prozor miksete</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Sakrivanje prozora miksete.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Postavke</title>
+
+<screenshot>
+  <screeninfo
+>Postavke <application
+>K‑miksete</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Postavke <application
+>K‑miksete</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Podešavanje</guimenu
+> <guimenuitem
+>Audio postava</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Otvara <ulink url="help:/kcontrol/phonon"
+><application
+>Phononov</application
+> modul Sistemskih postavki</ulink
+></action
+>, radi podešavanja audio i video uređaja, i pozadina za KDE‑ov multimedijski API, <application
+>Phonon</application
+>.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Izbor glavnog kanala</title>
+<screenshot>
+  <screeninfo
+>Glavni kanal u <application
+>K‑mikseti</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Glavni kanal u <application
+>K‑mikseti</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Izaberite glavni kanal u <application
+>K‑mikseti</application
+>.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>Podešavanje <application
+>K‑miksete</application
+></title>
+<sect3 id="configure-general">
+  <title
+>Opšte podešavanje </title>
+  <screenshot>
+  <screeninfo
+>Opšte podešavanje <application
+>K‑miksete</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Opšte podešavanje <application
+>K‑miksete</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Podešavanje opštih parametara <application
+>K‑miksete</application
+>.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Ponašanje</guimenu
+> <guimenuitem
+>Odziv jačine</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Popunite ovo da aktivirate čujni odziv pri promeni jačine.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Ponašanje</guimenu
+> <guimenuitem
+>Povišenje jačine</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Popunite ovu kućicu da bi jačina mogla da bude iznad preporučene vrednosti (ponekad najveća jačina PulseAudija premašuje normalnu vrednost). Morate ponovo pokrenuti <application
+>K‑miksetu</application
+> da bi postavka stupila na snagu.</para>
+  <warning>
+    <para
+>Ispraznite ovo ako primetite izobličenja zvuka pri najvećoj jačini. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Prikaz</guimenu
+> <guimenuitem
+>Podeoci</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Popunite ovo da bi kontrole imale podeoke.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Prikaz</guimenu
+> <guimenuitem
+>Etikete</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Popunite ovo da bi kontrole imale etikete.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Prikaz</guimenu
+> <guimenuitem
+>Ekranski prikaz (OSD)</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Popunite ovo da aktivirate OSD prikaz, pri lebdenju nad <application
+>K‑miksetinim</application
+> kasetnim vidžetom.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Usmerenje klizača:</guimenu
+> <guimenuitem
+>Vodoravno</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Ovim radio dugmetom zadajete vodoravno usmerenje za klizače kontrola.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Usmerenje klizača:</guimenu
+> <guimenuitem
+>Uspravno</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Ovim radio dugmetom zadajete uspravno usmerenje za klizače kontrola.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Usmerenje klizača (jačina u sistemskoj kaseti):</guimenu
+> </menuchoice
+></term>
+<listitem
+><para
+>Isto kao prethodna dva radio dugmeta, samo za kontrolu jačine u sistemskoj kaseti (panel koji se dobija levim klikom na kasetnu ikonicu <application
+>K‑miksete</application
+>).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Podešavanje pokretanja </title>
+  <screenshot>
+  <screeninfo
+>Podešavanje pokretanja <application
+>K‑miksete</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Podešavanje pokretanja <application
+>K‑miksete</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Na ovoj stranici možete podesiti razne parametre pokretanja <application
+>K‑miksete</application
+>.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Ponašanje</guimenu
+> <guimenuitem
+>Obnovi jačine po prijavljivanju</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Popunite ovo da omogućite obnavljanje jačine zvuka po prijavljivanju.</action
+></para>
+  <warning>
+    <para
+>Dinamičke kontrole iz PulseAudija i MPRIS‑a 2 neće biti obnovljene. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Pokretanje</guimenu
+> <guimenuitem
+>Samopokretanje</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Popunite ovo da uključite samopokretanje <application
+>K‑miksete</application
+> zajedno sa okruženjem površi.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-sound-menu">
+  <title
+>Podešavanje zvučnog menija </title>
+  <screenshot>
+  <screeninfo
+>Podešavanje zvučnog menija <application
+>K‑miksete</application
+>.</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Podešavanje zvučnog menija <application
+>K‑miksete</application
+>.</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Na ovoj stranici možete podesiti razne parametre zvučnog menija <application
+>K‑miksete</application
+>.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Usidri u sistemsku kasetu</guilabel>
+</term>
+<listitem
+><para
+><action
+>Popunite ovo da bi <application
+>K‑mikseta</application
+> pristala u sistemsku kasetu.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Preko spiska na ovoj stranici možete izabrati koje će miksete biti prikazane u zvučnom meniju. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Napredna upotreba</title>
+<sect1>
+<title
+>Daljinsko upravljanje i skriptovanje preko D‑Busa</title>
+<para
+><application
+>K‑miksetom</application
+> možete upravljati preko D‑Busa. Napredni korisnici ovako mogu izvoditi specijalne zahvate, poput utišavanja računara svaki dan u 22.000, ili bilo kakav drugi skriptovani zadatak. </para>
+
+<para
+>Nabrajanje svih D‑Bus metoda i svojstava u vezi sa <application
+>K‑miksetom</application
+>: <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Dobavljanje jačine zvuka (0%–100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Postavljanje jačine zvuka (0%–100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Zasluge i licenca</title>
+
+<para
+><application
+>K‑mikseta</application
+> </para>
+
+<para
+>Dokumentacija: © 2010, Gaurav Čaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Zahvalnice:</para>
+<para
+><personname
+><firstname
+>Mat</firstname
+> <surname
+>Džonston</surname
+></personname
+> &Matt.Johnston.mail; (preuzeti mnogi delovi iz njegove stare dokumentacije za <application
+>K‑miksetu</application
+>) </para>
+
+<para
+>Preveo Dragan Pantelić <email
+>falcon-10@gmx.de</email
+>.</para
+> 
+&underFDL; &underGPL; </chapter>
+
+<appendix id="installation">
+<title
+>Instaliranje</title>
+
+<sect1 id="getting-Kmix">
+<title
+>Kako nabaviti <application
+>K‑miksetu</application
+></title>
+&install.intro.documentation; </sect1>
+
+<sect1 id="compilation">
+<title
+>Kompilovanje i instaliranje</title>
+&install.compile.documentation; </sect1>
+</appendix>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

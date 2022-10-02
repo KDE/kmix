@@ -1,0 +1,676 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY % Ukrainian "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>Підручник з &kmix;</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Розробник</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Розробник</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Розробник</contrib>
+</othercredit>
+
+<othercredit role="translator"
+><firstname
+>Юрій</firstname
+><surname
+>Чорноіван</surname
+><affiliation
+><address
+><email
+>yurchor@ukr.net</email
+></address
+></affiliation
+><contrib
+>Переклад українською</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken і &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>4 жовтня 2020 року</date>
+<releaseinfo
+>Програми 20.12</releaseinfo>
+
+<abstract>
+<para
+>&kmix; — це програма, яка надає вам змогу змінювати гучність вашої звукової картки.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>звук</keyword>
+<keyword
+>гучність</keyword>
+<keyword
+>мікшер</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Вступ</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; підтримує декілька платформ і звукових драйверів.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Якщо на вашому комп’ютері встановлено і драйвери ALSA і драйвери OSS, &kmix; буде використовувати драйвер ALSA.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>Знімок вікна &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Знімок вікна &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Головне вікно</title>
+
+<para
+>Огляд головного вікна &kmix;</para>
+<screenshot>
+  <screeninfo
+>Знімок вікна &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Знімок вікна &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Пункти меню «Файл»</title>
+<screenshot>
+  <screeninfo
+>Пункти меню «Файл» &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Пункти меню «Файл» &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>Файл</guimenu
+> <guimenuitem
+>Сховати вікно мікшера</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Сховати вікно мікшера</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Параметри</title>
+
+<screenshot>
+  <screeninfo
+>Параметри &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Параметри &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Параметри</guimenu
+> <guimenuitem
+>Налаштування звуку</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Відкрити <ulink url="help:/kcontrol/phonon"
+>модуль &phonon; «Системних параметрів»</ulink
+></action
+> для налаштовування пріоритетності використання пристроїв відтворення звуку і відео та серверів обробки звукових даних, що використовуються програмним інтерфейсом роботи з мультимедійними даними &kde;, &phonon;.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Вибір головного каналу</title>
+<screenshot>
+  <screeninfo
+>Головний канал &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Головний канал &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Виберіть ваш головний канал &kmix;.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>Налаштовування &kmix;</title>
+<sect3 id="configure-general">
+  <title
+>Загальні налаштування </title>
+  <screenshot>
+  <screeninfo
+>Загальні налаштування &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Загальні налаштування &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Зміна загальних параметрів &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Поведінка</guimenu
+> <guimenuitem
+>Перевантаження гучності</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Позначте цей пункт, якщо хочете дозволити рівні звуку, що перевищують рекомендовані (іноді максимальний рівень гучності у PulseAudio перевищує нормальний рівень). Для набуття чинності цим параметром &kmix; слід перезапустити.</para>
+  <warning>
+    <para
+>Зніміть позначку з цього пункту, якщо за максимального рівня звуку ви чуєте викривлення та шуми. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Поведінка</guimenu
+> <guimenuitem
+>Відгук керування гучністю</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб наказати програмі супроводжувати звуком зміну гучності.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Поведінка</guimenu
+> <guimenuitem
+>Крок гучності</guimenuitem
+> </menuchoice
+></term>
+<listitem>
+    <para
+>Встановити кроки зміни гучності у відсотках до діапазону гучності. </para>
+    <para
+>Зміна цього параметра стосуватиметься зміни гучності за допомогою клавіатурних скорочень, прокручування коліщатка миші, коли вказівник перебуває над піктограмою у системному лотку, та пересування повзунків на крок. </para>
+    <para
+>Щоб зміни набули чинності, &kmix; слід перезапустити. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Візуалізація</guimenu
+> <guimenuitem
+>Показувати поділки на повзунку</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб наказати програмі показувати поділки на повзунках.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Візуалізація</guimenu
+> <guimenuitem
+>Показувати написи на засобах керування</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб наказати програмі показувати написи на регуляторах.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Візуалізація</guimenu
+> <guimenuitem
+>Показувати екранну панель (OSD)</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб увімкнути показ екранної панелі у відповідь на наведення вказівника на віджет системного лотка &kmix;.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Орієнтація повзунка (головне вікно)</guimenu
+> <guimenuitem
+>Горизонтально</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначення цього варіанта призведе до горизонтального розташування повзунків.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Орієнтація повзунка (головне вікно)</guimenu
+> <guimenuitem
+>Вертикально</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначення цього варіанта призведе до вертикального розташування повзунків.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Орієнтація повзунка (контекстна панель системного лотка)</guimenu
+> <guimenuitem
+>Горизонтально/Вертикально</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Те саме, що і попередні два варіанти, але для панелі керування за допомогою системного лотка (панелі, яку буде показано у відповідь на клацання лівою кнопкою миші на піктограмі &kmix; у системному лотку).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Налаштування запуску </title>
+  <screenshot>
+  <screeninfo
+>Налаштування запуску &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Налаштування запуску &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>За допомогою цього пункту ви можете налаштувати параметри запуску &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Запуск</guimenu
+> <guimenuitem
+>Запускати KMix під час запуску стільниці</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб увімкнути автоматичний запуск &kmix; разом зі стільничним середовищем.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Запуск</guimenu
+> <guimenuitem
+>Відновлювати попередні параметри гучності при запуску стільниці</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб наказати середовищу відновлювати значення гучностей та перемикачів до останнього використаного значення при запуску стільниці.</action
+></para>
+  <warning>
+    <para
+>Гучність для динамічних засобів керування звуком PulseAudio або MPRIS2 відновлено не буде. </para>
+  </warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-volume-control">
+  <title
+>Налаштування керування гучністю </title>
+  <screenshot>
+  <screeninfo
+>Налаштування керування гучністю у &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Налаштування керування гучністю у &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>За допомогою цього пункту ви можете налаштувати параметри панелі керування гучністю у &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Пришвартувати у системному лотку</guilabel>
+</term>
+<listitem
+><para
+><action
+>Позначте цей пункт, щоб середовище згортало вікно &kmix; до системного лотка.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Ви можете вибрати мікшери, які буде показано на панелі керування гучністю, за допомогою відповідного списку на цій сторінці. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Додаткові можливості</title>
+<sect1>
+<title
+>Віддалене керування та керування за допомогою скриптів</title>
+<para
+>&kmix; можна керувати за допомогою &DBus;. Таке керування призначено для досвідчених користувачів, яким потрібно досягти певної мети, наприклад вимикання звуку на комп’ютері кожного дня о 10 годині вечора. </para>
+
+<para
+>Показ списку всіх пов’язаних з &kmix; методів і властивостей &DBus; <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Отримання рівня гучності (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Встановлення рівня гучності (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Подяки і ліцензія</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Авторські права на документацію належать Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+>, ©2010 </para>
+<para
+>Особливі подяки:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (значну частину цього підручника скопійовано з його документації до старих версій &kmix;) </para>
+
+<para
+>Переклад українською: Юрій Чорноіван <email
+>yurchor@ukr.net</email
+></para
+> 
+&underFDL; &underGPL; </chapter>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

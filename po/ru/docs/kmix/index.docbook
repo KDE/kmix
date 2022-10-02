@@ -1,0 +1,971 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY kappname "&kmix;">
+  <!ENTITY package "kdemultimedia">
+  <!ENTITY % Russian "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+<title
+>Руководство &kmix;</title>
+
+<authorgroup>
+<author
+><firstname
+>Matt</firstname
+> <surname
+>Johnston</surname
+> <affiliation
+> <address
+>&Matt.Johnston.mail;</address>
+</affiliation>
+</author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Разработчик</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Разработчик</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Stefan</firstname
+> <surname
+>Schimanski</surname
+> <affiliation
+><address
+><email
+>1Stein@gmx.de</email
+></address
+></affiliation>
+<contrib
+>Разработчик</contrib>
+</othercredit>
+
+<othercredit role="reviewer"
+><firstname
+>Lauri</firstname
+> <surname
+>Watts</surname
+> <affiliation
+><address
+>&Lauri.Watts.mail;</address
+></affiliation>
+<contrib
+>Редактор</contrib>
+</othercredit>
+<othercredit role="translator"
+><firstname
+>Григорий</firstname
+><surname
+>Мохин</surname
+> <affiliation
+><address
+><email
+>mok@kde.ru</email
+></address
+></affiliation
+><firstname
+>Павел</firstname
+><surname
+>Малеев</surname
+> <affiliation
+><address
+><email
+>rolland39@gmail.com</email
+></address
+></affiliation
+> <contrib
+>Перевод на русский</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2007-01-05</date>
+<releaseinfo
+>2.6.1</releaseinfo>
+
+<abstract
+><para
+>&kmix; - это программа для управления громкостью звука.</para>
+<para
+>Предупреждение: это руководство содержит документацию для старых версий&kmix;, а именно версии, которая поставляется с &kde; 3.5. </para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>звук</keyword>
+<keyword
+>громкость</keyword>
+<keyword
+>микшер</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title
+>Введение</title>
+
+<para
+>Предупреждение: это руководство содержит документацию для старых версий&kmix;, а именно версии, которая поставляется с &kde; 3.5. </para>
+
+<para
+>&kmix; - это микшер для звуковых плат, входящий в состав &kde;. Это маленькая, но полнофункциональная утилита, позволяющая управлять всеми звуковыми платами.</para>
+
+<para
+>&kmix; поддерживает различные платформы и драйверы:</para>
+
+<itemizedlist>
+<listitem
+><para
+>Звуковые драйверы ALSA.</para
+></listitem>
+<listitem
+><para
+>Все  платформы Open Sound System, что было проверено на &Linux;, FreeBSD, NetBSD и BSDI.</para
+></listitem>
+<listitem
+><para
+>Компьютеры на ОС &Solaris;.</para
+></listitem>
+<listitem
+><para
+>Компьютеры на ОС &IRIX;.</para
+></listitem>
+<listitem
+><para
+>Компьютеры на ОС &HP-UX;.</para
+></listitem>
+</itemizedlist>
+
+<para
+>Если у вас имеются драйвера ALSA и Open Sound System, &kmix; будет использовать ALSA.</para>
+
+</chapter>
+
+<chapter id="working-with-kmix">
+<title
+>Как работать с &kmix;</title>
+
+<sect1 id="basic-usage">
+<title
+>Основы</title>
+
+<para
+>Использовать &kmix; очень просто. Каждое устройство микшера, найденное на звуковой плате, представлено ползунком - регулятором громкости. Устройства моно имеют один ползунок, стерео - один или два, как вы сами пожелаете. Дополнительно к этому есть регулятор баланса внизу окна &kmix;. Если у вас несколько звуковых плат, каждая из них отображается на отдельной вкладке. <screenshot>
+<screeninfo
+>Главное окно &kmix;</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-window.png" format="PNG"/></imageobject>
+<textobject
+><phrase
+>Главное окно &kmix;</phrase
+></textobject>
+</mediaobject>
+</screenshot>
+
+</para>
+
+
+<para
+>Окно может иметь до трёх разделов с разными регуляторами звуковой карты: <guilabel
+>Выход</guilabel
+>, <guilabel
+>Вход</guilabel
+> и<guilabel
+>Переключатели</guilabel
+>. Эти секции содержат регуляторы громкости, переключатели для включения.выключения записи или воспроизведения и средства для выбора одного из нескольких вариантов. <simplelist>
+<member
+><guilabel
+>Выход</guilabel
+>: Содержит элементы управления связанные с воспроизведением, подобно регулятору громкости <guilabel
+>Master</guilabel
+>.</member>
+<member
+><guilabel
+>Вход</guilabel
+>: Содержит все элементы управления, которые связаны с записью звука, как <guilabel
+>Capture</guilabel
+>.</member>
+<member
+>Переключатели: Содержит все элементы управления, которые позволяют только переключать некоторые функции в состояние Вкл или Выкл (например «Mic Boost (+20dB)») и способы выбора одного из нескольких вариантов (например, <guilabel
+>Mic Select </guilabel
+>: <guilabel
+>Mic1</guilabel
+>  и <guilabel
+>Mic2</guilabel
+>).</member>
+</simplelist>
+</para>
+
+<para
+>Кроме регуляторов звука, в &kmix; используются световые индикаторы. Далее описаны их цвета:</para>
+<simplelist>
+<member
+>Зелёный: Воспроизведение</member>
+<member
+>Красный: Запись</member>
+<member
+>Жёлтый: Специальные возможности звуковой карты</member>
+</simplelist>
+<para
+>Это три цвета могут быть двух оттенков: яркий означает Вкл., а тусклый означает Выкл.</para>
+</sect1>
+
+<sect1 id="volume-sliders">
+<title
+>Регуляторы громкости</title>
+
+<para
+>Регуляторы громкости в разделах <guilabel
+>Выход</guilabel
+> и<guilabel
+>Вход</guilabel
+> состоят из (сверху вниз) <screenshot>
+<screeninfo
+>Регулятор громкости (Раздел <guilabel
+>Вход</guilabel
+>)</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-channel-playback.png" format="PNG"/></imageobject>
+<textobject
+><phrase
+>Регулятор громкости (Раздел <guilabel
+>Вход</guilabel
+>)</phrase
+></textobject>
+</mediaobject>
+</screenshot>
+
+<simplelist>
+<member
+>Значок, отображающий функцию регулятора.</member>
+<member
+>Индикатор значения громкости (необязательный параметр).</member>
+<member
+>Зелёный индикатор включает и выключает звук (при выключенном звуке индикатор не горит, при включённом - светится зелёным).</member>
+<member
+>Ползунок, регулирующий громкость (совет: можно скрыть надпись, если микшер занимает много места на экране).</member>
+<member
+>Если элемент поддерживает запись, индикатор горит красным, если он горит ярко-красным - он выбран для записи, если тёмно-красным - не выбран.</member>
+</simplelist>
+
+<screenshot>
+<screeninfo
+>Регулятор громкости с переключателем записи (раздел<guilabel
+>Выход</guilabel
+>)</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="kmix-channel-record.png" format="PNG"/></imageobject>
+<textobject
+><phrase
+>Регулятор громкости с переключателем записи (раздел<guilabel
+>Выход</guilabel
+>)</phrase
+></textobject>
+</mediaobject>
+</screenshot>
+
+</para>
+
+
+<para
+>У ползунков - регуляторов громкости - есть контекстное меню, выпадающее при нажатии правой кнопкой мыши. Всего есть несколько пунктов меню, но из них показываются только те, которые можно выбрать. </para>
+
+<variablelist>
+<varlistentry>
+<term
+><guimenuitem
+>Разделить каналы</guimenuitem
+></term>
+<listitem
+><para
+>Показать один или оба ползунка. Применимо только для стерео-устройств. Правый ползунок регулирует правый канал, левый - левый.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><guimenuitem
+>Звук выключен</guimenuitem
+></term>
+<listitem
+><para
+>Отключить или включить устройство.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><guimenuitem
+>Скрыть</guimenuitem
+></term>
+<listitem
+><para
+>Если вам не нужно данное устройство, его показ можно отключить. Снова его можно будет показать только через <guilabel
+>Каналы</guilabel
+> (см. ниже)</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><guimenuitem
+>Настроить глобальные комбинации клавиш...</guimenuitem
+></term>
+<listitem
+><para
+>Чтобы управлять устройством с клавиатуры, через этот пункт можно вызвать диалог KDE <guilabel
+>Быстрые клавиши</guilabel
+>. Клавиши для увеличения и уменьшения громкости работают глобально, в том числе и тогда, когда &kmix; свёрнут или встроен в панель.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><guimenuitem
+>Каналы</guimenuitem
+></term>
+<listitem
+><para
+>Откроется диалоговое окно, где вы можете настроить  по разделам (<guilabel
+>Выход</guilabel
+>, <guilabel
+>Вход</guilabel
+>, <guilabel
+>Переключатели</guilabel
+>), какие каналы вы хотите видеть.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><guimenuitem
+>Показать/Спрятать полоску меню</guimenuitem
+></term>
+<listitem
+><para
+>Эта опция не конкретного устройства, но влияет на окно микшера. Полоску меню можно скрыть и вернуть обратно, также и с помощью быстрой клавиши (по умолчанию <keycombo action="simul"
+>&Ctrl;<keycap
+>M</keycap
+></keycombo
+>).</para
+></listitem>
+</varlistentry>
+
+</variablelist>
+</sect1>
+
+<sect1 id="switches">
+<title
+>Переключатели и способы выбора из вариантов</title>
+
+<para
+>Регуляторы в разделе <guilabel
+>Переключатели</guilabel
+> состоят из индикаторов и короткой метки, описывающей функцию. Раздел <guilabel
+>Переключатели</guilabel
+> так же может содержать способы для выбора из вариантов. Помните, что эти регуляторы часто специфичны и обычно не требуют изменения обычным пользователем. Контекстное меню содержит пункты <guimenuitem
+>Каналы</guimenuitem
+> и <guimenuitem
+>Показать/Спрятать полоску меню</guimenuitem
+>, описанные ранее.<screenshot
+> <screeninfo
+>Переключатели и способы выбора из вариантов (Раздел<guilabel
+>Переключатели</guilabel
+>) </screeninfo
+> <mediaobject
+> <imageobject
+>  <imagedata fileref="kmix-channel-switches.png" format="PNG"/></imageobject
+> <textobject
+><phrase
+>Переключатели и способы выбора из вариантов (Раздел<guilabel
+>Переключатели</guilabel
+>)</phrase
+></textobject
+> </mediaobject
+> </screenshot
+> Помните, красные индикаторы связаны с записью, а желтые контролируют специальные возможности звуковой карты. Снимок экрана, показанный выше показывает (справа налево) не горящий индикатор <guilabel
+>Выход IEC958</guilabel
+> (желтый=специальный регулятор), горящий индикатор <guilabel
+>Mix</guilabel
+> (красный=связанный с записью), не горящий индикатор связанный с записью, горящий специальный регулятор и способ выбора из вариантов (<guilabel
+>PCM Out Path &amp; Mute</guilabel
+>). Если вы не уверены в регуляторах, обратитесь к поставщику драйвера для вашей звуковой карты (для большинства дистрибутивов &Linux; это <ulink url="http://www.alsa-project.org"
+>ALSA</ulink
+>). </para>
+
+</sect1>
+
+<sect1 id="panning-slider">
+<title
+>Регулятор баланса</title>
+
+<para
+>С помощью этого ползунка вы можете регулировать баланс громкости между левым и правым каналом. Этот регулятор действует на весь звук, воспроизводимый на устройстве. По умолчанию ползунок располагается посередине. Перемещение ползунка влево снижает громкость правого канала, вправо - левого. Конечно, это можно изменить, если у вас перепутаны сами колонки.</para>
+<para
+>Относительно Surround-систем необходимо помнить, что <guilabel
+>Master</guilabel
+>  устройство регулирует только передние колонки. Это ограничение драйвера вашей звуковой карты.</para
+> 
+<para
+>Если ваша звуковая карта не имеет <guilabel
+>Master</guilabel
+> устройства, то сам &kmix; может выбрать другое устройство, часто это <guilabel
+>Wave</guilabel
+> или <guilabel
+>PCM</guilabel
+>. </para>
+
+</sect1>
+
+<sect1 id="configuration-options">
+<title
+>Параметры конфигурации</title>
+
+<para
+>Используйте <menuchoice
+><guimenu
+>Настройка</guimenu
+><guimenuitem
+>Настроить &kmix;...</guimenuitem
+></menuchoice
+> для изменения параметров. Далее перечислены эти пункты:</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Встроить в панель</guilabel
+></term>
+<listitem
+><para
+>При выборе этой опции &kmix; будет встраиваться в панель при закрытии главного окна. Если она отключена, то &kmix; будет закрыт, и вы не сможете управлять громкостью с помощью клавиш, которые присвоены этому  действию.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Использовать регулятор громкости в панели задач</guilabel
+></term>
+<listitem
+><para
+>При щелчке левой кнопкой на значке &kmix; всплывёт окно с параметрами громкости для предпочтительного устройства (совет: здесь вы не можете сменить это устройство — его нужно указать в самом &kmix;). Если эта опция отключена, по щелчку на значке левой кнопкой будет отображено главное окно &kmix;.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Показать деления шкалы</guilabel
+></term>
+<listitem
+><para
+>Показывает штрихи на шкале регулятора.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Показать названия каналов</guilabel
+></term>
+<listitem
+><para
+>Показать названия каждого из устройств звуковой платы. Включён этот флажок или нет, наведя курсор на иконку устройства, вы увидите его название.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Восстановить уровни громкости при запуске KDE</guilabel
+></term>
+<listitem
+><para
+>Позволить &kde; восстанавливать громкость в начале сеанса: будут восстановлены установки громкости, сохранённые при вашем последнем выходе. Если операционная система сохраняет значения параметров, вы не нуждаетесь в этой опции (но на многопользовательских компьютерах её стоит использовать).</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Значения громкости:</guilabel
+></term>
+<listitem
+><para
+>Выбор того, будут ли и как показываться значения громкости: <guilabel
+>Нет</guilabel
+>, <guilabel
+>Абсолютно</guilabel
+> или <guilabel
+>Относительно</guilabel
+>.</para
+></listitem>
+</varlistentry>
+<varlistentry>
+<term
+><guilabel
+>Расположение ползунков:</guilabel
+></term>
+<listitem
+><para
+>С этим параметром вы можете повернуть главное окно &kmix; на 90 градусов. Ползунки, тексты и все остальное повернется. Есть некоторые исключения для этого правила, полоска меню, способы выбора микшера, ползунок баланса и способ выбора из вариантов.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+
+</chapter>
+
+
+<chapter id="working-with-kmixapplet">
+<title
+>Аплет панели &kmix;</title>
+
+<para
+>Аплет панели &kmix; - это его другой интерфейс. Его можно встроить в панель KDE <guimenuitem
+>Добавить аплет на панель...</guimenuitem
+> в <guimenu
+>Меню панели</guimenu
+> или контекстном меню. Выбрать <guilabel
+>Аудиомикшер</guilabel
+> и нажать <guibutton
+>Добавить на панель</guibutton
+> или два раза нажать <guilabel
+>Аудиомикшер</guilabel
+>. </para>
+
+<para
+>С аплетом панели &kmix; можно работать также, как и с <link linkend="working-with-kmix"
+>главным окном</link
+>, включая и контекстное меню. Основные отличия таковы: <simplelist>
+<member
+>Нет главного меню.</member>
+<member
+>При наличии нескольких звуковых плат невозможно поменять микшер, выбрав его в начале.</member>
+<member
+>Нет значка встраивания в панель. Чтобы он появился, нужно запустить &kmix; из главного меню <guilabel
+>K-Menu</guilabel
+> -> <guilabel
+>Мультимедиа</guilabel
+> -> <guilabel
+>Звуковой микшер</guilabel
+>.</member>
+<member
+>Значки будут показаны лишь при достаточно большом размере панели.</member>
+<member
+>Не будет названий устройств.</member>
+<member
+>Настройка осуществляется через меню панели - цвета и направление ползунков.</member>
+<member
+>Значения громкости не сохраняются автоматически. Если вы хотите, чтобы значения сохранились после выхода, запустите &kmix; из K-меню</member>
+</simplelist>
+
+</para>
+</chapter>
+
+
+<chapter id="advanced-kmix">
+<title
+>Дополнительные возможности &kmix;</title>
+
+<warning
+><para
+>В этой главе описываются возможности &kmix;, которые могут пригодиться опытным пользователям и вряд ли понадобятся в обычной работе. Поэтому вы можете её пропустить без особого вреда для себя.</para
+></warning>
+
+<sect1 id="dcop-overview">
+<title
+>Интерфейс &DCOP;</title>
+
+<para
+>Иногда вам нужно управлять микшером из другого приложения или делать что-то ещё, например, глушить звук в десять часов вечера. Интерфейс &kmix; с &DCOP;позволяет делать это очень легко. Наберите <userinput
+><command
+>dcop kmix</command
+></userinput
+> в командной строке и начинайте работу с &DCOP;. Возможности &kmix; следующие:</para>
+
+<variablelist>
+<varlistentry>
+<term
+><userinput
+><command
+>Mixer0</command
+></userinput
+></term>
+<listitem
+><para
+>Управление первым микшером. Вы можете задавать уровень громкости, выключать звук, менять баланс и т.д. Наберите <userinput
+><command
+>dcop kmix Mixer0</command
+> </userinput
+> и поупражняйтесь с возможностями. При наличии нескольких звуковых плат будут доступны <userinput
+><command
+>Mixer1</command
+></userinput
+> и другие.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><userinput
+><command
+>kmix-mainwindow#1</command
+></userinput
+></term>
+<listitem
+><para
+>Управление главным окном микшера. Его можно скрыть и показать, изменить размер и т.д. Наберите <userinput
+><command
+>dcop kmix kmix-mainwindow#1 </command
+></userinput
+> и пробуйте.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+
+<sect1 id="dcop-examples">
+<title
+>Примеры DCOP</title>
+
+<variablelist>
+<varlistentry>
+<term
+><userinput
+><command
+>dcop kmix kmix-mainwindow#1 hide</command
+></userinput
+></term>
+<listitem
+><para
+>Скрыть окно микшера. <userinput
+><command
+>dcop kmix kmix-mainwindow#1 show</command
+></userinput
+> или иконки панели сделает его снова видимым.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><userinput
+><command
+>dcop kmix kmix-mainwindow#1 resize 1 1</command
+></userinput
+></term>
+<listitem
+><para
+>Окно микшера примет минимально доступный размер, так чтобы вместить все ползунки и другие элемента окна.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><userinput
+><command
+>dcop kmix Mixer0 mixerName</command
+></userinput
+></term>
+<listitem
+><para
+>Выводит имя первого микшера, например: <computeroutput
+>Sound Fusion CS46xx</computeroutput
+>.</para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><userinput
+><command
+>dcop kmix Mixer1 setVolume 0 10</command
+></userinput
+></term>
+<listitem
+><para
+>Задать громкость второго микшера, устройство 0 в 10 процентов. Устройство 0 часто бывает главным, но не всегда. Для того чтобы выключить звук на главном устройстве второй звуковой платы, наберите <userinput
+><command
+>dcop kmix Mixer1 setMasterVolume 0</command
+></userinput
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Эти команды можно выполнять непосредственно из командной строки в KDE. Чтобы выполнять команды dcop из другого места, например из скриптов crontab, нужно задать переменную среды <envar
+>DCOPSERVER</envar
+> (как она выглядит в первой строке вашего файла <filename
+>~/.DCOPserver_hostname_:0</filename
+>), например:</para>
+
+<programlisting
+>#!/bin/sh
+DCOPSERVER=`cat /home/yourhome/.DCOPserver_yourhostname_:0 | grep local`
+export DCOPSERVER
+dcop kmix Mixer0 setMasterVolume 0
+</programlisting>
+</sect1>
+
+<sect1 id="tips-and-tricks">
+<title
+>Полезные советы</title>
+<sect2>
+<title
+>Параллельное использование драйверов ALSA и OSS</title>
+<para
+>&kmix; на &Linux; работает или с драйвером ALSA, или с OSS, но не с обоими сразу. Если всё же нужно использовать оба эти драйвера, то поступайте так: закройте &kmix; и добавьте строчку в файл <filename
+>kmixrc</filename
+> в разделе глобальных параметров.</para>
+<programlisting
+>MultiDriver=true</programlisting>
+<para
+>Потом снова запустите &kmix;. В меню <menuchoice
+><guimenu
+>Справка</guimenu
+><guimenuitem
+>Сведения об оборудовании</guimenuitem
+></menuchoice
+> вы увидите "<guilabel
+>Используемые звуковые драйверы: ALSA0.9 + OSS</guilabel
+>" и "<guilabel
+>Экспериментальный режим работы со многими драйверами</guilabel
+>"</para>
+
+<warning
+><para
+>Скорее всего, все ваши микшеры будут показаны дважды.</para>
+<para
+>В такой конфигурации никаких гарантий работы не существует.</para
+></warning>
+</sect2>
+
+</sect1>
+
+</chapter>
+
+<chapter id="credits">
+<title
+>Разработчики и лицензирование</title>
+
+<para
+>Главный разработчик</para>
+
+<itemizedlist>
+<listitem
+><para
+>Copyright 1996-2000 Кристиан Эскен (Christian Esken)</para
+></listitem>
+<listitem
+><para
+>Copyright 2000-2003 Кристиан Эскен (Christian Esken) и Стефан Шимански (Stefan Schimanski)</para
+></listitem>
+<listitem
+><para
+>Copyright 2003-2005 Кристиан Эскен (Christian Esken) и Хелио Чиссини де Кастро (Helio Chissini de Castro)</para
+></listitem>
+</itemizedlist>
+
+<para
+>Участники:</para>
+
+<itemizedlist>
+<listitem
+><para
+>Кристиан Эскен (Christian Esken) <email
+>esken@kde.org</email
+></para
+></listitem>
+<listitem
+><para
+>Стефан Шимански (Stefan Schimanski) <email
+>1Stein@gmx.de</email
+></para
+></listitem>
+<listitem
+><para
+>Пол Кендалл (Paul Kendall) <email
+>paul@orion.co.nz</email
+> - перенос на &SGI;</para
+></listitem>
+<listitem
+><para
+>Себастьян Золтан (Sebestyen Zoltan) <email
+>szoli@digo.inf.elte.hu</email
+> - исправления для FreeBSD</para
+></listitem>
+<listitem
+><para
+>Фаро Жан-Луи (Faraut Jean-Louis) <email
+>jlf@essi.fr</email
+> - исправления для &Solaris;</para
+></listitem>
+<listitem
+><para
+>Ник Лопес (Nick Lopez) <email
+>kimo_sabe@usa.net</email
+> - перенос на ALSA</para
+></listitem>
+<listitem
+><para
+>Хельге Деллер (&Helge.Deller;) <email
+>deller@gmx.de</email
+> - перенос на &HP;-UX</para
+></listitem>
+<listitem
+><para
+>Леннарт Аугустсон (Lennart Augustsson) <email
+>augustss@cs.chalmers.se</email
+> - исправления для *BSD</para
+></listitem>
+</itemizedlist>
+
+<para
+>Документация: &copy; 2000 Мэтт Джонстон (&Matt.Johnston;) &Matt.Johnston.mail;</para>
+
+<para
+>Обновления для версии 1.91 - Кристиан Эскен (Christian Esken) <email
+>esken@kde.org</email
+></para>
+
+<para
+>Обновлено в 2005 для &kmix; V2.2 Кристиан Эскен (Christian Esken)  <email
+>esken@kde.org</email
+></para>
+
+<para
+>Обновлено в 7/2005 для &kmix; V2.6 Кристиан Эскен (Christian Esken) <email
+>esken@kde.org</email
+></para>
+
+<para
+>Основано на документации, написанной Кристианом Эскеном (Christian Esken) <email
+>esken@kde.org</email
+></para>
+<para
+>Перевод на русский: Григорий Мохин <email
+>mok@kde.ru</email
+></para
+> <para
+>Обновления для версии 3.5.1 - Павел Семенченко <email
+>apix@bk.ru</email
+></para
+> <para
+>Обновление перевода — Павел Малеев <email
+>rolland39@gmail.com</email
+></para
+> 
+&underFDL; &underGPL; </chapter>
+
+<appendix id="installation">
+<title
+>Установка</title>
+
+<sect1 id="getting-kmix">
+<title
+>Где взять &kmix;</title>
+&install.intro.documentation; </sect1>
+
+<sect1 id="requirements">
+<title
+>Требования</title>
+
+<para
+>Очевидно, что &kmix; полезен только при наличии звуковой платы. &kmix; поддерживает различные платформы и драйверы звука:</para>
+
+<itemizedlist>
+<listitem
+><para
+>Все  платформы Open Sound System, что было проверено на &Linux;, FreeBSD, NetBSD и BSDI.</para
+></listitem>
+<listitem
+><para
+>Компьютеры на ОС &Solaris;.</para
+></listitem>
+<listitem
+><para
+>Компьютеры на ОС &IRIX;.</para
+></listitem>
+<listitem
+><para
+>Звуковые драйверы ALSA.</para
+></listitem>
+<listitem
+><para
+>Компьютеры на ОС &HP-UX;.</para
+></listitem>
+</itemizedlist>
+
+</sect1>
+
+<sect1 id="compilation">
+<title
+>Сборка и установка</title>
+&install.compile.documentation; </sect1>
+
+</appendix>
+
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-omittag: nil
+sgml-shorttag: t
+End:
+-->
+

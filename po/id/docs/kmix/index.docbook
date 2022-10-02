@@ -1,0 +1,656 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY % Indonesian "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>Buku Petunjuk &kmix;</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Pengembang</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Pengembang</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Pengembang</contrib>
+</othercredit>
+
+<othercredit role="translator"
+><firstname
+>Wantoyo</firstname
+><surname
+></surname
+><affiliation
+><address
+><email
+>wantoyek@gmail.com</email
+></address
+></affiliation
+><contrib
+>Terjemahan</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>22-09-2018</date>
+<releaseinfo
+>Aplikasi 18.12</releaseinfo>
+
+<abstract>
+<para
+>&kmix; adalah sebuah aplikasi yang memperkenankan kamu untuk mengubah volume pada sound card kamu.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>sound</keyword>
+<keyword
+>volume</keyword>
+<keyword
+>mixer</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Pengenalan</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; mendukung berbagai platform dan driver sound.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Jika kamu memiliki kedua driver ALSA dan Open Sound System yang terinstal, &kmix; akan menggunakan driver ALSA.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>Cuplikan &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Cuplikan &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Window Utama</title>
+
+<para
+>Ikhtisar Window Utama &kmix;</para>
+<screenshot>
+  <screeninfo
+>Cuplikan &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Cuplikan &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Opsi File</title>
+<screenshot>
+  <screeninfo
+>Opsi file &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Opsi file &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>File</guimenu
+> <guimenuitem
+>Sembunyikan Window Mixer</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Sembunyikan Window Mixer</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Pengaturan</title>
+
+<screenshot>
+  <screeninfo
+>Pengaturan &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Pengaturan &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Pengaturan</guimenu
+> <guimenuitem
+>Pengaturan Audio</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Buka <ulink url="help:/kcontrol/phonon"
+>modul &phonon; &systemsettings;</ulink
+></action
+> untuk mengkonfigurasi preferensi perangkat sound dan video dan backend yang digunakan oleh &kde; multimedia API, &phonon;.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Pilih Channel Master</title>
+<screenshot>
+  <screeninfo
+>Channel Master &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Channel Master &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Pilih channel master &kmix;mu.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>Konfigurasikan &kmix;</title>
+<sect3 id="configure-general">
+  <title
+>Konfigurasi umum </title>
+  <screenshot>
+  <screeninfo
+>Konfigurasi umum &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Konfigurasi umum &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Parameter konfigurasi umum &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Perilaku</guimenu
+> <guimenuitem
+>Volume Feedback</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk memfungsikan feedback dapat teraudio pada perubahan volume.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Perilaku</guimenu
+> <guimenuitem
+>Overdrive Volume</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Centang kotak ini untuk memperkenankan volume lebih dari nilai yang dianjurkan (terkadang volume maksimal PulseAudio melebihi nilai normal). Memulai ulang &kmix; diperlukan supaya pengaturan ini berpengaruh.</para>
+  <warning>
+    <para
+>Hapus centang item ini jika kedengaran distorsi suara di volume maksimal. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visual</guimenu
+> <guimenuitem
+>Tampilkan tanda titik</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk menampilkan tanda titik pada kendali.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visual</guimenu
+> <guimenuitem
+>Tampilkan label</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk menampilkan label pada kendali.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visual</guimenu
+> <guimenuitem
+>Tampilkan On Screen Display (OSD)</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk memfungsikan tampilan OSD saat melayang di widget tray &kmix;.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Orientasi penggeser (window utama)</guimenu
+> <guimenuitem
+>Mendatar</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang tombol radio ini untuk mengorientasi penggeser kendali secara mendatar.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Orientasi penggeser</guimenu
+> <guimenuitem
+>Tegak</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang tombol radio ini untuk mengorientasi penggeser kendali secara menegak.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Orientasi penggeser (sembulan baki sistem)</guimenu
+> <guimenuitem
+>Mendatar/Tegak</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Sama seperti halnya dua tombol radio sebelumnya tetapi untuk kendali volume baki sistem (panel tersebut tampil setelah klik &LMB; pada ikon tray &kmix;).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Mulai konfigurasi </title>
+  <screenshot>
+  <screeninfo
+>Mulai konfigurasi &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Mulai konfigurasi &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Halaman ini memperkenankan kamu untuk mengkonfigurasi berbagai parameter pemulaian &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Pemulaian</guimenu
+> <guimenuitem
+>Jalankan KMix saat pemulaian desktop</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk memfungsikan autostart &kmix; dengan lingkungan desktop.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Pemulaian</guimenu
+> <guimenuitem
+>Kembalikan pengaturan volume sebelumnya saat pemulaian desktop</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk memfungsikan tingkat volume dan mengalihkan pemulihan ke pengaturan yang digunakan terakhir saat start desktop.</action
+></para>
+  <warning>
+    <para
+>Volume PulseAudio atau MPRIS2 dynamic controls tidak akan dikembalikan. </para>
+  </warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-volume-control">
+  <title
+>Konfigurasi kendali volume </title>
+  <screenshot>
+  <screeninfo
+>Konfigurasi kendali volume &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Konfigurasi kendali volume &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Halaman ini memperkenankan kamu untuk mengkonfigurasi berbagai parameter kendali volume sembulan &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Dock dalam baki sistem</guilabel>
+</term>
+<listitem
+><para
+><action
+>Centang kotak ini untuk dock &kmix; dalam baki sistem.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Ini memungkinkan untuk memilih mixer yang akan ditampilkan dalam kendali volume menggunakan daftar yang sesuai pada halaman ini. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Penggunaan tingkat-lanjut</title>
+<sect1>
+<title
+>Pengendalian jarak jauh dan penskripan via &DBus;</title>
+<para
+>Kamu bisa mengendalikan &kmix; via &DBus;. Ini adalah untuk pengguna tingkat lanjut yang mau melakukan tugas khusus, seperti membungkam PC setiap hari pukul 10 malam, atau untuk tugas penskripan apapun lainnya. </para>
+
+<para
+>Daftar semua &kmix; sehubungan properti dan metode DBus <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Mendapatkan level volume (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Set level volume (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Penghargaan dan Lisensi</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Hak cipta dokumentasi &copy; 2010 Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Terimakasih kepada:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (salin dan tempel banyak hal dari dokumentasi &kmix; lawas) </para>
+
+<para
+>Wantoyo<email
+>wantoyek@gmail.com</email
+></para
+> &underFDL; &underGPL; </chapter>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

@@ -1,0 +1,657 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY % Dutch "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>Het handboek van &kmix;</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Ontwikkelaar</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Ontwikkelaar</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Ontwikkelaar</contrib>
+</othercredit>
+
+&Niels.Reedijk;&Niels.Luten;&Freek.de.Kruijf; 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2020-10-04</date>
+<releaseinfo
+>Applications 20.12</releaseinfo>
+
+<abstract>
+<para
+>&kmix; is een programma waarmee om het volume van uw geluidskaart aan te passen.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>geluid</keyword>
+<keyword
+>volume</keyword>
+<keyword
+>mixer</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Inleiding</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; ondersteunt verscheidene platformen en stuurprogramma's voor geluid.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Als u zowel ALSA als de Open Sound System-apparaatstuurprogramma hebt geïnstalleerd, dan zal &kmix; het ALSA-apparaatstuurprogramma gebruiken.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>Schermafdruk van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Schermafdruk van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Hoofdvenster</title>
+
+<para
+>Overzicht van het hoofdvenster van &kmix;</para>
+<screenshot>
+  <screeninfo
+>Schermafdruk van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Schermafdruk van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Bestandsopties</title>
+<screenshot>
+  <screeninfo
+>Bestandsopties van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Bestandsopties van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>File</guimenu
+> <guimenuitem
+>Mixervenster verbergen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Mixervenster verbergen</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Instellingen</title>
+
+<screenshot>
+  <screeninfo
+>Instellingen van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Instellingen van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Instellingen</guimenu
+> <guimenuitem
+>Audio instellen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Open <ulink url="help:/kcontrol/phonon"
+>de module &phonon; &systemsettings;</ulink
+></action
+> om de voorkeuren van het geluids- en video-apparaat en de backends in te stellen gebruikt door de multimedia API en &phonon; van &kde;.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Hoofdkanaal selecteren</title>
+<screenshot>
+  <screeninfo
+>Hoofdkanaal van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Hoofdkanaal van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Uw hoofdkanaal van &kmix; selecteren.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>&kmix; instellen</title>
+<sect3 id="configure-general">
+  <title
+>Algemene instellingen </title>
+  <screenshot>
+  <screeninfo
+>Algemene instellingen van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Algemene instellingen van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Algemene parameters van &kmix; instellen.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Gedrag</guimenu
+> <guimenuitem
+>Overdrive van volume</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Activeer dit vakje om toe te staan dat het volume meer is dan de aanbevolen waarde (soms overstijgt het maximale volume van PulseAudio de normale waarde). Herstarten van &kmix; is nodig om deze instelling effectief te maken.</para>
+  <warning>
+    <para
+>Deactiveer dit item als er hoorbare verstoring van het geluid is bij het maximale volume. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Gedrag</guimenu
+> <guimenuitem
+>Terugkoppeling van volume</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit vakje om hoorbare terugkoppeling in te schakelen bij wijzigen van het volume.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Gedrag</guimenu
+> <guimenuitem
+>Volumestap</guimenuitem
+> </menuchoice
+></term>
+<listitem>
+    <para
+>De volumestap instellen als een percentage van de volumereeks. </para>
+    <para
+>Dit beïnvloedt het wijzigen van het volume via sneltoetsen, met het muiswiel over het systeemvakpictogram of de schuifregelaars verplaatsen door een paginastap. </para>
+    <para
+>&kmix; moet opnieuw gestart worden om instellingen voor deze wijziging effectief te maken. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Beeld</guimenu
+> <guimenuitem
+>Schaalaanduiding van regelaar tonen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit vakje om schaalaanduiding op de regelaars te tonen.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Beeld</guimenu
+> <guimenuitem
+>Besturingslabels tonen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit vakje om labels op regelaars te tonen.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visueel</guimenu
+> <guimenuitem
+>On Screen Display (OSD) tonen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit vakje om het tonen van OSD in te schakelen bij het bewegen van de muis over het widget van &kmix; in het systeemvak.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Oriëntatie van schuifregelaar (hoofdvenster)</guimenu
+> <guimenuitem
+>Horizontaal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit keuzerondje om de oriëntatie van de schuifregelaar op horizontaal in te stellen.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Oriëntatie van schuifregelaar (hoofdvenster)</guimenu
+> <guimenuitem
+>Verticaal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit keuzerondje om de oriëntatie van de schuifregelaar op verticaal in te stellen.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Oriëntatie van schuifregelaar (popup in systeemvak)</guimenu
+> <guimenuitem
+>Horizontaal/Verticaal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Hetzelfde als de vorige twee keuzerondjes echter voor de volumeregeling in het systeemvak (het paneel dat getoond wordt na klikken met de &LMB; op het pictogram van &kmix; in het systeemvak).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Met instellen beginnen </title>
+  <screenshot>
+  <screeninfo
+>Met instellen van &kmix; beginnen</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Met instellen van &kmix; beginnen</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Deze pagina stelt u in staat verschillende startparameters van &kmix; in te stellen.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Opstarten</guimenu
+> <guimenuitem
+>KMix starten bij opstarten van bureaublad</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit vakje om &kmix; automatisch te starten samen met de bureaubladomgeving.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Opstarten</guimenu
+> <guimenuitem
+>Vorige volumes herstellen bij opstarten van bureaublad</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Activeer dit vakje om niveaus van volumes en schakelaars te herstellen naar hun laatste instellingen bij opstarten van het bureaublad.</action
+></para>
+  <warning>
+    <para
+>Het volume van PulseAudio of MPRIS2 dynamische besturing zal niet worden hersteld. </para>
+  </warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-volume-control">
+  <title
+>Configuratie van volumebesturing </title>
+  <screenshot>
+  <screeninfo
+>Configuratie van volumebesturing van &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Configuratie van volumebesturing van &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Deze pagina stelt u in staat verschillende parameters van de popup van besturing van volume van &kmix; in te stellen.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>In systeemvak plaatsen</guilabel>
+</term>
+<listitem
+><para
+><action
+>Activeer dit vakje om &kmix; in het systeemvak te verankeren.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Het is mogelijk om mixers te selecteren die getoond zullen worden in de besturing van volume met de overeenkomstige lijst op deze pagina. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Gevorderd gebruik</title>
+<sect1>
+<title
+>Afstandsbesturing en een script gebruiken via &DBus;</title>
+<para
+>U kunt &kmix; via &DBus; besturen. Dit is voor gevorderde gebruikers die speciale taken willen uitvoeren, zoals de PC elke dag om 22 uur dempen of voor een andere taak via een script. </para>
+
+<para
+>Maak een lijst van alle methoden en eigenschappen van relaties tussen &DBus; en &kmix; <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Volumeniveau ophalen (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Niveau van volume instellen (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Dankbetuigingen en licentie</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Documentatie copyright &copy; 2010 Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Met dank aan:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (kopieerde en plakte veel van zijn oude &kmix; documentatie) </para>
+
+&meld.fouten;&vertaling.niels.luten;&vertaling.rinse;&vertaling.freek; &underFDL; &underGPL; </chapter>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

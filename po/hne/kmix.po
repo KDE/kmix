@@ -1,0 +1,1400 @@
+# translation of kmix.po to Hindi
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Ravishankar Shrivastava <raviratlami@yahoo.com>, 2007.
+# Ravishankar Shrivastava <raviratlami@aol.in>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: kmix\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"PO-Revision-Date: 2009-02-26 17:29+0530\n"
+"Last-Translator: Ravishankar Shrivastava <raviratlami@aol.in>\n"
+"Language-Team: Hindi <kde-i18n-doc@lists.kde.org>\n"
+"Language: hne\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 0.2\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "रविसंकर सिरीवास्तव, जी. करूनाकर"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "raviratlami@aol.in,"
+
+#: apps/kmixctrl.cpp:40
+#, kde-format
+msgid "KMixCtrl"
+msgstr "KMixCtrl"
+
+#: apps/kmixctrl.cpp:41
+#, kde-format
+msgid "kmixctrl - kmix volume save/restore utility"
+msgstr "kmixctrl - kmix अवाज सहेजना/बहाल करना यूटिलिटी"
+
+#: apps/kmixctrl.cpp:43
+#, kde-format
+msgid "(c) 2000 by Stefan Schimanski"
+msgstr "(c) 2000 स्टीफन स्कीमांस्की द्वारा"
+
+#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#, kde-format
+msgid "Stefan Schimanski"
+msgstr "स्टीफन सिमांस्की"
+
+#: apps/kmixctrl.cpp:51
+#, kde-format
+msgid "Save current volumes as default"
+msgstr "अभी हाल के अवाज ल डिफाल्ट के जइसन सहेजव"
+
+#: apps/kmixctrl.cpp:53
+#, kde-format
+msgid "Restore default volumes"
+msgstr "डिफाल्ट अवाज बहाल करव"
+
+#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+
+#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr ""
+
+#: apps/kmixwindow.cpp:173
+#, kde-format
+msgid "Audio Setup..."
+msgstr ""
+
+#: apps/kmixwindow.cpp:177
+#, kde-format
+msgid "Hide Mixer Window"
+msgstr "मिक्सर विंडो लुकाव"
+
+#: apps/kmixwindow.cpp:182
+#, kde-format
+msgid "Configure &Channels..."
+msgstr "चैनल कान्फिगर करव (&C)..."
+
+#: apps/kmixwindow.cpp:186
+#, kde-format
+msgid "Select Master Channel..."
+msgstr "मास्टर चैनल चुनव..."
+
+#: apps/kmixwindow.cpp:191
+#, kde-format
+msgid "Save volume profile 1"
+msgstr ""
+
+#: apps/kmixwindow.cpp:196
+#, kde-format
+msgid "Save volume profile 2"
+msgstr ""
+
+#: apps/kmixwindow.cpp:201
+#, kde-format
+msgid "Save volume profile 3"
+msgstr ""
+
+#: apps/kmixwindow.cpp:206
+#, kde-format
+msgid "Save volume profile 4"
+msgstr ""
+
+#: apps/kmixwindow.cpp:211
+#, kde-format
+msgid "Load volume profile 1"
+msgstr ""
+
+#: apps/kmixwindow.cpp:216
+#, kde-format
+msgid "Load volume profile 2"
+msgstr ""
+
+#: apps/kmixwindow.cpp:221
+#, kde-format
+msgid "Load volume profile 3"
+msgstr ""
+
+#: apps/kmixwindow.cpp:226
+#, kde-format
+msgid "Load volume profile 4"
+msgstr ""
+
+#: apps/kmixwindow.cpp:237
+#, kde-format
+msgid "Increase Volume"
+msgstr "अवाज बढ़ाव"
+
+#: apps/kmixwindow.cpp:244
+#, kde-format
+msgid "Decrease Volume"
+msgstr "अवाज कम करव"
+
+#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#, kde-format
+msgid "Mute"
+msgstr "मौन"
+
+#: apps/kmixwindow.cpp:263
+#, kde-format
+msgid "Add new view"
+msgstr ""
+
+#: apps/kmixwindow.cpp:772
+#, kde-format
+msgid "Cannot add view - GUIProfile is invalid."
+msgstr ""
+
+#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Error"
+msgstr ""
+
+#: apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Cannot add view - View already exists."
+msgstr ""
+
+#: apps/kmixwindow.cpp:1168
+#, kde-format
+msgid ""
+"The helper application is either not installed or not working.\n"
+"\n"
+"%1"
+msgstr ""
+
+#: apps/kmixwindow.cpp:1219
+#, fuzzy, kde-format
+#| msgid "Mixer"
+msgid "Mixer (%1)"
+msgstr "मिक्सर"
+
+#: apps/main.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "के-मिक्स"
+
+#: apps/main.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "के-मिक्स - केडीई के पूरा विसेसता लिए नन्हा मिक्सर"
+
+#: apps/main.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr ""
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "क्रिस्चियन एस्केन"
+
+#: apps/main.cpp:45
+#, fuzzy, kde-format
+#| msgid "Current maintainer"
+msgid "Original author and current maintainer"
+msgstr "अभी हाल के मेंटेनर"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr ""
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr ""
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "हेलियो चिसिनी द कास्त्रो"
+
+#: apps/main.cpp:47
+#, fuzzy, kde-format
+#| msgid "ALSA port"
+msgid "ALSA 0.9x port"
+msgstr "ALSA पोर्ट"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "ब्रायन हेनसन"
+
+#: apps/main.cpp:48
+#, fuzzy, kde-format
+#| msgid "Solaris port"
+msgid "Solaris support"
+msgstr "सोलारिस पोर्ट"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/main.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr ""
+
+#: apps/main.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr ""
+
+#: apps/main.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "अस्थाई मेंटेनर"
+
+#: apps/main.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "सेबेस्टियन जोल्टान"
+
+#: apps/main.cpp:57 apps/main.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "*BSD फिक्सेस"
+
+#: apps/main.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "लेनार्ट आगस्टसन"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "नदीम हसन"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "मौन अउ अवाज प्रिव्यू, अउ फिक्सेस"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "एरविन मासेर"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "emu10k1 आधार से साउंडकार्ड बर समर्थन मं सुधार"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr ""
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr ""
+
+#: apps/main.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr ""
+"केमिक्स के मुख्य विंडो ल प्रकट करे ल इनहिबिट करथे  यदि केमिक्स पहिली से ही चल रहा होथे ."
+
+#: apps/main.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr ""
+
+#: apps/volumefeedback.cpp:248
+#, fuzzy, kde-format
+#| msgid "Volume"
+msgid "Volume Control Feedback Sound"
+msgstr "अवाज निर्धारक"
+
+#: backends/mixer_alsa9.cpp:962
+#, fuzzy, kde-format
+#| msgid ""
+#| "kmix:You do not have permission to access the mixer device.\n"
+#| "Please check your operating systems manual to allow the access."
+msgid ""
+"You do not have permission to access the alsa mixer device.\n"
+"Please verify if all alsa devices are properly created."
+msgstr ""
+"के-मिक्स:आप मन ल मिक्सर उपकरन मं पहुंचे बर अनुमति नइ हे.\n"
+"किरपा करके, अपन आपरेटिंग सिसटम मेनुअल ल पहुंच अनुमति बर जांचव."
+
+#: backends/mixer_alsa9.cpp:966
+#, kde-format
+msgid ""
+"Alsa mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+msgstr ""
+"आल्सा मिक्सर नइ मिलिस.\n"
+"किरपा करके, जांचव कि साउन्डकार्ड इनस्टाल हे तथा\n"
+"साउन्डकार्ड ड्राइवर लोड करिस होही .\n"
+
+#: backends/mixer_backend.cpp:323
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"के-मिक्स:आप मन ल मिक्सर उपकरन मं पहुंचे बर अनुमति नइ हे.\n"
+"किरपा करके, अपन आपरेटिंग सिसटम मेनुअल ल पहुंच अनुमति बर जांचव."
+
+#: backends/mixer_backend.cpp:327
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "के-मिक्सः मिक्सर मं लिख नइ सकिस."
+
+#: backends/mixer_backend.cpp:330
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "के-मिक्सः मिक्सर से पढ़ नइ सकिस."
+
+#: backends/mixer_backend.cpp:333
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"के-मिक्सः मिक्सर नइ मिलिस.\n"
+"किरपा करके, जांचव कि साउंडकार्ड इनस्टाल हे अउ ए कि\n"
+"the soundcard driver is loaded.\n"
+
+#: backends/mixer_backend.cpp:338
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr ""
+"के-मिक्स: अग्यात गलती. किरपा करके, रपट करव कि एखर गलती ल कइसन रिपोट करे जाए."
+
+#: backends/mixer_backend_i18n.cpp:24
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr ""
+
+#: backends/mixer_backend_i18n.cpp:25
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+
+#: backends/mixer_backend_i18n.cpp:26
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+
+#: backends/mixer_backend_i18n.cpp:27
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+
+#: backends/mixer_backend_i18n.cpp:28
+#, kde-format
+msgid "---"
+msgstr ""
+
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#, kde-format
+msgid "Playback Streams"
+msgstr ""
+
+#: backends/mixer_oss.cpp:68
+msgid "Volume"
+msgstr "अवाज निर्धारक"
+
+#: backends/mixer_oss.cpp:68
+msgid "Bass"
+msgstr "बास"
+
+#: backends/mixer_oss.cpp:68
+msgid "Treble"
+msgstr "ट्रेबल"
+
+#: backends/mixer_oss.cpp:69
+msgid "Synth"
+msgstr "सिंथ"
+
+#: backends/mixer_oss.cpp:69
+msgid "Pcm"
+msgstr "पीसीएम"
+
+#: backends/mixer_oss.cpp:69
+msgid "Speaker"
+msgstr "स्पीकर"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#, kde-format
+msgid "Microphone"
+msgstr "माइक्रोफोन"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#, kde-format
+msgid "CD"
+msgstr "सीडी"
+
+#: backends/mixer_oss.cpp:70
+msgid "Line"
+msgstr "पंक्ति"
+
+#: backends/mixer_oss.cpp:71
+msgid "Mix"
+msgstr "मिक्स"
+
+#: backends/mixer_oss.cpp:71
+msgid "Pcm2"
+msgstr "पीसीएम2"
+
+#: backends/mixer_oss.cpp:71
+msgid "RecMon"
+msgstr "रेक-मान"
+
+#: backends/mixer_oss.cpp:72
+msgid "IGain"
+msgstr "आई-गेन"
+
+#: backends/mixer_oss.cpp:72
+msgid "OGain"
+msgstr "ओ-गेन"
+
+#: backends/mixer_oss.cpp:72
+msgid "Line1"
+msgstr "लाइन1"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line2"
+msgstr "लाइन2"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line3"
+msgstr "लाइन3"
+
+#: backends/mixer_oss.cpp:73
+msgid "Digital1"
+msgstr "डिजिटल1"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital2"
+msgstr "डिजिटल2"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital3"
+msgstr "डिजिटल3"
+
+#: backends/mixer_oss.cpp:74
+msgid "PhoneIn"
+msgstr "फोन-इन"
+
+#: backends/mixer_oss.cpp:75
+msgid "PhoneOut"
+msgstr "फोन-आउट"
+
+#: backends/mixer_oss.cpp:75
+msgid "Video"
+msgstr "वीडियो"
+
+#: backends/mixer_oss.cpp:75
+msgid "Radio"
+msgstr "रेडियो"
+
+#: backends/mixer_oss.cpp:76
+msgid "Monitor"
+msgstr "मानीटर"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-depth"
+msgstr "3डी-गहराई"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-center"
+msgstr "3डी-केंद्र"
+
+#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#, kde-format
+msgid "unknown"
+msgstr "अग्यात"
+
+#: backends/mixer_oss.cpp:81
+msgid "unused"
+msgstr "उपयोग मं नइ"
+
+#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#, fuzzy, kde-format
+#| msgid ""
+#| "kmix:You do not have permission to access the mixer device.\n"
+#| "Please check your operating systems manual to allow the access."
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
+msgstr ""
+"के-मिक्स:आप मन ल मिक्सर उपकरन मं पहुंचे बर अनुमति नइ हे.\n"
+"किरपा करके, अपन आपरेटिंग सिसटम मेनुअल ल पहुंच अनुमति बर जांचव."
+
+#: backends/mixer_oss.cpp:247
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using commercial OSS."
+msgstr ""
+"के-मिक्स: किरपा करके, जांचव कि साउन्डकार्ड इनस्टाल हे तथा\n"
+"साउन्डकार्ड ड्राइवर लोड करिस होही .\n"
+"लिनक्स सिसटम मं आप मन ल 'insmod' के उपयोग ड्राइवर लोड करे मं करना पड़ सकथे .\n"
+"जब व्यावसायिक ओएसएस उपयोग करते होही तहां उपयोग करव 'soundon' का."
+
+#: backends/mixer_oss4.cpp:499
+#, fuzzy, kde-format
+#| msgid ""
+#| "kmix: Mixer cannot be found.\n"
+#| "Please check that the soundcard is installed and the\n"
+#| "soundcard driver is loaded.\n"
+#| "On Linux you might need to use 'insmod' to load the driver.\n"
+#| "Use 'soundon' when using commercial OSS."
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using OSS4 from 4front."
+msgstr ""
+"के-मिक्स: किरपा करके, जांचव कि साउन्डकार्ड इनस्टाल हे तथा\n"
+"साउन्डकार्ड ड्राइवर लोड करिस होही .\n"
+"लिनक्स सिसटम मं आप मन ल 'insmod' के उपयोग ड्राइवर लोड करे मं करना पड़ सकथे .\n"
+"जब व्यावसायिक ओएसएस उपयोग करते होही तहां उपयोग करव 'soundon' का."
+
+#: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
+#, kde-format
+msgid "Unknown Application"
+msgstr ""
+
+#: backends/mixer_pulse.cpp:434
+#, kde-format
+msgid "Event Sounds"
+msgstr ""
+
+#: backends/mixer_pulse.cpp:1067
+#, kde-format
+msgid "Playback Devices"
+msgstr ""
+
+#: backends/mixer_pulse.cpp:1075
+#, fuzzy, kde-format
+#| msgid "Capture"
+msgid "Capture Devices"
+msgstr "कैप्चर"
+
+#: backends/mixer_pulse.cpp:1094
+#, fuzzy, kde-format
+#| msgid "Capture"
+msgid "Capture Streams"
+msgstr "कैप्चर"
+
+#: backends/mixer_sun.cpp:69
+#, kde-format
+msgid "Master Volume"
+msgstr "मुख्य अवाज निर्धारक"
+
+#: backends/mixer_sun.cpp:70
+#, kde-format
+msgid "Internal Speaker"
+msgstr "अंदर के स्पीकर"
+
+#: backends/mixer_sun.cpp:71
+#, kde-format
+msgid "Headphone"
+msgstr "हेडफोन"
+
+#: backends/mixer_sun.cpp:72
+#, kde-format
+msgid "Line Out"
+msgstr "लाए आउट"
+
+#: backends/mixer_sun.cpp:73
+#, kde-format
+msgid "Record Monitor"
+msgstr "रेकार्ड मानीटर"
+
+#: backends/mixer_sun.cpp:75
+#, kde-format
+msgid "Line In"
+msgstr "लाए इन"
+
+#: backends/mixer_sun.cpp:241
+#, fuzzy, kde-format
+#| msgid ""
+#| "kmix:You do not have permission to access the mixer device.\n"
+#| "Please check your operating systems manual to allow the access."
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Ask your system administrator to fix /dev/audioctl to allow access."
+msgstr ""
+"के-मिक्स:आप मन ल मिक्सर उपकरन मं पहुंचे बर अनुमति नइ हे.\n"
+"किरपा करके, अपन आपरेटिंग सिसटम मेनुअल ल पहुंच अनुमति बर जांचव."
+
+#: core/volume.cpp:58
+#, kde-format
+msgctxt "Channel name"
+msgid "Left"
+msgstr ""
+
+#: core/volume.cpp:59
+#, kde-format
+msgctxt "Channel name"
+msgid "Right"
+msgstr ""
+
+#: core/volume.cpp:60
+#, fuzzy, kde-format
+#| msgid "3D-center"
+msgctxt "Channel name"
+msgid "Center"
+msgstr "3डी-केंद्र"
+
+#: core/volume.cpp:61
+#, kde-format
+msgctxt "Channel name"
+msgid "Subwoofer"
+msgstr ""
+
+#: core/volume.cpp:62
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Left"
+msgstr ""
+
+#: core/volume.cpp:63
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Right"
+msgstr ""
+
+#: core/volume.cpp:64
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Left"
+msgstr ""
+
+#: core/volume.cpp:65
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Right"
+msgstr ""
+
+#: core/volume.cpp:66
+#, kde-format
+msgctxt "Channel name"
+msgid "Rear Center"
+msgstr ""
+
+#: core/volume.cpp:68
+#, fuzzy, kde-format
+#| msgid "unknown"
+msgctxt "Channel name"
+msgid "Unknown"
+msgstr "अग्यात"
+
+#: gui/dialogaddview.cpp:50
+#, kde-format
+msgid "All controls"
+msgstr ""
+
+#: gui/dialogaddview.cpp:51
+#, kde-format
+msgid "Only playback controls"
+msgstr ""
+
+#: gui/dialogaddview.cpp:52
+#, kde-format
+msgid "Only capture controls"
+msgstr ""
+
+#: gui/dialogaddview.cpp:59
+#, kde-format
+msgid "Add View"
+msgstr ""
+
+#: gui/dialogaddview.cpp:88
+#, fuzzy, kde-format
+#| msgid "Select Mixer"
+msgid "Select mixer:"
+msgstr "मिक्सर चुनव"
+
+#: gui/dialogaddview.cpp:95
+#, kde-format
+msgid "Current mixer"
+msgstr "अभी हाल के मिक्सर"
+
+#: gui/dialogaddview.cpp:115
+#, kde-format
+msgid "Select the design for the new view:"
+msgstr ""
+
+#: gui/dialogchoosebackends.cpp:54
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr ""
+
+#: gui/dialogchoosebackends.cpp:81
+#, fuzzy, kde-format
+#| msgid "Select Mixer"
+msgid "Select Mixers"
+msgstr "मिक्सर चुनव"
+
+#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#, kde-format
+msgid "Select Master Channel"
+msgstr "मास्टर चैनल चुनव"
+
+#: gui/dialogselectmaster.cpp:73
+#, fuzzy, kde-format
+#| msgid "Current mixer"
+msgid "Current mixer:"
+msgstr "अभी हाल के मिक्सर"
+
+#: gui/dialogselectmaster.cpp:123
+#, fuzzy, kde-kuit-format
+#| msgid "Select the channel representing the master volume:"
+msgctxt "@info"
+msgid "Select the <link url=\"i\">master volume</link> channel:"
+msgstr "मुख्य अवाज निर्धारक के प्रतिनिधित्व करे चैनल चुनव:"
+
+#: gui/dialogselectmaster.cpp:131
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Here you can select the master sound device (if there is more than "
+"one) and its master channel.</para><para>The master channel is the one that "
+"is affected by the system tray volume control, the volume up/down and mute "
+"global shortcut keys, and the <interface>Mute</interface> action in the "
+"system tray popup menu.</para>"
+msgstr ""
+
+#: gui/dialogselectmaster.cpp:203
+#, kde-format
+msgid "Automatic (%1 recommendation)"
+msgstr ""
+
+#: gui/dialogviewconfiguration.cpp:136
+#, fuzzy, kde-format
+#| msgid "Configure &Channels..."
+msgid "Configure Channels"
+msgstr "चैनल कान्फिगर करव (&C)..."
+
+#: gui/dialogviewconfiguration.cpp:147
+#, fuzzy, kde-format
+#| msgid "Configuration of the channels."
+msgid "Configure the visible channels. Drag icons between the lists to update."
+msgstr "चैनल के कान्फिगरेसन."
+
+#: gui/dialogviewconfiguration.cpp:217
+#, fuzzy, kde-format
+#| msgid "Available mixers:"
+msgid "Visible channels:"
+msgstr "मिलत मिक्सर्स"
+
+#: gui/dialogviewconfiguration.cpp:220
+#, fuzzy, kde-format
+#| msgid "Available mixers:"
+msgid "Available channels:"
+msgstr "मिलत मिक्सर्स"
+
+#: gui/dialogviewconfiguration.cpp:234
+#, fuzzy, kde-format
+#| msgid "Select Master Channel"
+msgid "Move the selected channel to the visible list"
+msgstr "मास्टर चैनल चुनव"
+
+#: gui/dialogviewconfiguration.cpp:242
+#, kde-format
+msgid "Move the selected channel to the available (hidden) list"
+msgstr ""
+
+#: gui/dialogviewconfiguration.cpp:282
+#, fuzzy, kde-format
+#| msgid "Select Master Channel"
+msgid "Show the selected channel"
+msgstr "मास्टर चैनल चुनव"
+
+#: gui/dialogviewconfiguration.cpp:283
+#, kde-format
+msgid "Hide the selected channel"
+msgstr ""
+
+#: gui/dialogviewconfiguration.cpp:284
+#, fuzzy, kde-format
+#| msgid "Available mixers:"
+msgid "Visible channels"
+msgstr "मिलत मिक्सर्स"
+
+#: gui/dialogviewconfiguration.cpp:285
+#, fuzzy, kde-format
+#| msgid "Available mixers:"
+msgid "Available channels"
+msgstr "मिलत मिक्सर्स"
+
+#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#, fuzzy, kde-format
+#| msgid "Volume"
+msgid "Volume Control"
+msgstr "अवाज निर्धारक"
+
+#: gui/kmixdockwidget.cpp:174
+#, kde-format
+msgid "M&ute"
+msgstr "मौन (&u)"
+
+#: gui/kmixdockwidget.cpp:198
+#, kde-format
+msgid "No mixer devices available"
+msgstr ""
+
+#: gui/kmixdockwidget.cpp:206
+#, fuzzy, kde-format
+#| msgid "Volume"
+msgid "Volume muted"
+msgstr "अवाज निर्धारक"
+
+#: gui/kmixdockwidget.cpp:207
+#, kde-format
+msgid "Volume at %1%"
+msgstr "अवाज %1% पर"
+
+#: gui/kmixdockwidget.cpp:209
+#, kde-format
+msgid "%1 - %2"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:52
+#, kde-format
+msgid "Configure"
+msgstr "कान्फिगर"
+
+#: gui/kmixprefdlg.cpp:66
+#, kde-format
+msgid "General"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:67
+#, kde-format
+msgid "Startup"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:103
+#, kde-format
+msgid "Start KMix on desktop startup"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:107
+#, kde-format
+msgid "Start KMix automatically when the desktop starts"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:110
+#, kde-format
+msgid ""
+"Autostart will not work, because the autostart file kmix_autostart.desktop "
+"is missing. Check that KMix is installed correctly."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:120
+#, fuzzy, kde-format
+#| msgid "Restore volumes on login"
+msgid "Restore previous volume settings on desktop startup"
+msgstr "लागिन मं निरधारित अवाज बहाल करव"
+
+#: gui/kmixprefdlg.cpp:124
+#, fuzzy, kde-format
+#| msgid "Restore volumes on login"
+msgid ""
+"Restore all mixer volume levels and switches to their last used settings "
+"when the desktop starts"
+msgstr "लागिन मं निरधारित अवाज बहाल करव"
+
+#: gui/kmixprefdlg.cpp:127
+#, kde-format
+msgid ""
+"The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:145
+#, kde-format
+msgid "&Horizontal"
+msgstr "आड़ा (&H)"
+
+#: gui/kmixprefdlg.cpp:146
+#, kde-format
+msgid "&Vertical"
+msgstr "खड़ा (&V)"
+
+#: gui/kmixprefdlg.cpp:193
+#, fuzzy, kde-format
+msgid "Behavior"
+msgstr "बर्ताव"
+
+#: gui/kmixprefdlg.cpp:207
+#, fuzzy, kde-format
+#| msgid "Volume"
+msgid "Volume overdrive"
+msgstr "अवाज निर्धारक"
+
+#: gui/kmixprefdlg.cpp:212
+#, kde-format
+msgctxt "@info:tooltip"
+msgid ""
+"Allow the volume to be raised above the recommended maximum (typically to "
+"150%)"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:215
+#, kde-format
+msgid "Volume overdrive is only available for PulseAudio."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:225
+#, kde-format
+msgid "%1 must be restarted for the volume overdrive setting to take effect."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:235
+#, fuzzy, kde-format
+#| msgid "Volume"
+msgid "Volume feedback"
+msgstr "अवाज निर्धारक"
+
+#: gui/kmixprefdlg.cpp:239
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Play a sample sound when the volume changes"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:243
+#, kde-format
+msgid "Volume feedback is only available when configured with Canberra."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:265
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Set the volume step as a percentage of the volume range.</"
+"para><para>This affects changing the volume via hot keys, with the mouse "
+"wheel over the system tray icon, or moving sliders by a page step.</"
+"para><para>%1 must be restarted for this change to take effect.</para>"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:272
+#, fuzzy, kde-format
+#| msgid "Volume"
+msgid "Volume step:"
+msgstr "अवाज निर्धारक"
+
+#: gui/kmixprefdlg.cpp:280
+#, kde-format
+msgid "Visual"
+msgstr "दृस्टि"
+
+#: gui/kmixprefdlg.cpp:289
+#, fuzzy, kde-format
+#| msgid "Show &tickmarks"
+msgid "Show slider &tickmarks"
+msgstr "टिक-मार्क देखाव (&t)"
+
+#: gui/kmixprefdlg.cpp:292
+#, fuzzy, kde-format
+#| msgid "Enable/disable tickmark scales on the sliders"
+msgid "Show tick mark scales on sliders"
+msgstr "स्लाइडर मं टिकमार्क स्केल सक्छम/अक्छम करव"
+
+#: gui/kmixprefdlg.cpp:294
+#, fuzzy, kde-format
+#| msgid "Show &labels"
+msgid "Show control &labels"
+msgstr "लेबल देखाव (&l)"
+
+#: gui/kmixprefdlg.cpp:297
+#, fuzzy, kde-format
+#| msgid "Enables/disables description labels above the sliders"
+msgid "Show description labels for sliders"
+msgstr "स्लाइडर के ऊपर विवरन लेबल सक्छम/अक्छम करव"
+
+#: gui/kmixprefdlg.cpp:300
+#, kde-format
+msgid "Show On Screen Display (&OSD)"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:303
+#, kde-format
+msgid "Show an on-screen indicator when changing the volume via hotkeys"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:312
+#, fuzzy, kde-format
+#| msgid "Slider orientation: "
+msgid "Slider orientation (main window): "
+msgstr "स्लाइडर आकार अउ दिसा:"
+
+#: gui/kmixprefdlg.cpp:313
+#, fuzzy, kde-format
+#| msgid "Enable system tray &volume control"
+msgid "Slider orientation (system tray popup):"
+msgstr "तंत्र तस्तरी अवाज नियंत्रक सक्छम करव (&v)"
+
+#: gui/kmixprefdlg.cpp:314
+#, fuzzy, kde-format
+#| msgid "Slider orientation: "
+msgid "Set the orientation of the main window control sliders"
+msgstr "स्लाइडर आकार अउ दिसा:"
+
+#: gui/kmixprefdlg.cpp:315
+#, fuzzy, kde-format
+#| msgid "Enable system tray &volume control"
+msgid "Set the orientation of the system tray volume control sliders"
+msgstr "तंत्र तस्तरी अवाज नियंत्रक सक्छम करव (&v)"
+
+#: gui/kmixprefdlg.cpp:327
+#, fuzzy, kde-format
+#| msgid "&Dock in system tray"
+msgid "Dock in system tray"
+msgstr "तंत्र तस्तरी मं डाक करव (&D)"
+
+#: gui/kmixprefdlg.cpp:330
+#, kde-format
+msgid ""
+"Dock the mixer into the system tray. Click on it to open the popup volume "
+"control."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:502
+#, kde-format
+msgid ""
+"The mixers that are checked here will be shown in the popup volume control."
+msgstr ""
+
+#: gui/kmixtoolbox.cpp:97
+#, kde-format
+msgid "No sound devices are installed or are currently available."
+msgstr ""
+
+#: gui/mdwslider.cpp:96
+#, fuzzy, kde-format
+#| msgid "&Split Channels"
+msgid "Split Channels"
+msgstr "चैनल्स स्प्लिट करव (&S)"
+
+#: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
+#, fuzzy, kde-format
+#| msgid "(capture)"
+msgid "Capture"
+msgstr "(कैप्चर)"
+
+#: gui/mdwslider.cpp:113
+#, fuzzy, kde-format
+#| msgid "Capture"
+msgid "Use Device"
+msgstr "कैप्चर"
+
+#: gui/mdwslider.cpp:158
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Mute %2 on %1"
+msgstr ""
+
+#: gui/mdwslider.cpp:170
+#, fuzzy, kde-format
+#| msgid "Increase Volume"
+msgctxt "1=device name, 2=control name"
+msgid "Increase volume of %2 on %1"
+msgstr "अवाज बढ़ाव"
+
+#: gui/mdwslider.cpp:178
+#, fuzzy, kde-format
+#| msgid "Decrease Volume"
+msgctxt "1=device name, 2=control name"
+msgid "Decrease volume of %2 on %1"
+msgstr "अवाज कम करव"
+
+#: gui/mdwslider.cpp:328
+#, fuzzy, kde-format
+#| msgid "Capture/Uncapture %1"
+msgctxt "%1=channel"
+msgid "Capture/Uncapture %1"
+msgstr "कैप्चर/अनकैप्चर %1"
+
+#: gui/mdwslider.cpp:329
+#, fuzzy, kde-format
+#| msgid "Mute/Unmute %1"
+msgctxt "%1=channel"
+msgid "Mute/Unmute %1"
+msgstr "अवाज बन्द/अवाज चालू %1"
+
+#: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
+#, kde-format
+msgctxt "%1=device %2=channel"
+msgid ""
+"%1\n"
+"%2"
+msgstr ""
+
+#: gui/mdwslider.cpp:680
+#, kde-format
+msgid "%1 (capture)"
+msgstr "%1 (कैप्चर)"
+
+#: gui/mdwslider.cpp:1118
+#, kde-format
+msgid "Automatic (according to category)"
+msgstr ""
+
+#: gui/mixdevicewidget.cpp:65
+#, fuzzy, kde-format
+#| msgid "C&onfigure Shortcuts..."
+msgid "Channel Shortcuts..."
+msgstr "सार्टकट कान्फिगर करव... (&o)"
+
+#: gui/viewbase.cpp:96
+#, fuzzy, kde-format
+#| msgid "Configure &Channels..."
+msgid "Configure this view"
+msgstr "चैनल कान्फिगर करव (&C)..."
+
+#: gui/viewbase.cpp:166
+#, fuzzy, kde-format
+#| msgid "Configure &Channels..."
+msgid "Configure Channels..."
+msgstr "चैनल कान्फिगर करव (&C)..."
+
+#: gui/viewbase.cpp:270
+#, kde-format
+msgid "Device Settings"
+msgstr "उपकरन सेटिंग"
+
+#: gui/viewdockareapopup.cpp:440
+#, fuzzy, kde-format
+#| msgid "Show Mixer Window"
+msgid "Show the full mixer window"
+msgstr "मिक्सर विंडो देखाव"
+
+#: gui/viewdockareapopup.cpp:472
+#, kde-format
+msgid "Load volume profile %1"
+msgstr ""
+
+#: gui/viewsliders.cpp:180
+#, kde-format
+msgid "Nothing is playing audio."
+msgstr ""
+
+#: gui/viewsliders.cpp:183
+#, kde-format
+msgid "Nothing is capturing audio."
+msgstr ""
+
+#: gui/viewsliders.cpp:184
+#, fuzzy, kde-format
+#| msgid "Capture"
+msgid "There are no capture devices."
+msgstr "कैप्चर"
+
+#: gui/viewsliders.cpp:185
+#, kde-format
+msgid "There are no playback devices."
+msgstr ""
+
+#~ msgid "&Hide"
+#~ msgstr "लुकाव (&H)"
+
+#~ msgid "C&onfigure Shortcuts..."
+#~ msgstr "सार्टकट कान्फिगर करव... (&o)"
+
+#~ msgid "Toggle Mute"
+#~ msgstr "मौन टागल करव"
+
+#~ msgid "Hardware &Information"
+#~ msgstr "हार्डवेयर जानकारी (&I)"
+
+#~ msgid "Mixer Hardware Information"
+#~ msgstr "मिक्सर हार्डवेयर जानकारी"
+
+#~ msgid "Sound drivers supported:"
+#~ msgstr "समर्थित अवाज ड्राइवर्स:"
+
+#~ msgid "Sound drivers used:"
+#~ msgstr "उपयोग मं अवाज ड्राइवर्स:"
+
+#~ msgid "&Muted"
+#~ msgstr "मौन (&M)"
+
+#, fuzzy
+#~| msgid "(capture)"
+#~ msgid "Captu&re"
+#~ msgstr "(कैप्चर)"
+
+#, fuzzy
+#~| msgid "M&ute"
+#~ msgid "Mo&ve"
+#~ msgstr "मौन (&u)"
+
+#~ msgid "Set &Record Source"
+#~ msgstr "रेकार्ड स्रोत सेट करव (&R)"
+
+#, fuzzy
+#~| msgid "(capture)"
+#~ msgid "capture"
+#~ msgstr "(कैप्चर)"
+
+#~ msgid "&Channels"
+#~ msgstr "चैनल्स (&C)"
+
+#~ msgid "Mixer cannot be found"
+#~ msgstr "मिक्सर खोजे नइ जा सकिस"
+
+#~ msgid " (Muted)"
+#~ msgstr " (मौन)"
+
+#~ msgid "Docks the mixer into the KDE system tray"
+#~ msgstr "केडीई तंत्र तस्तरी मं मिक्सर ल रखथे "
+
+#~ msgid "&Use custom colors"
+#~ msgstr "मनमाफिक रंग उपयोग करव (&U)"
+
+#~ msgid "Active"
+#~ msgstr "सक्रिय"
+
+#~ msgid "&Silent:"
+#~ msgstr "मूकः (&S)"
+
+#~ msgid "&Loud:"
+#~ msgstr "ऊँचाः (&L)"
+
+#~ msgid "&Background:"
+#~ msgstr "पिछोत अंगनाः (&B)"
+
+#~ msgid "Muted"
+#~ msgstr "मौन"
+
+#~ msgid "Lou&d:"
+#~ msgstr "ऊँचाः (&d)"
+
+#~ msgid "Backgrou&nd:"
+#~ msgstr "पिछोत अंगनाः (&n)"
+
+#~ msgid "Silen&t:"
+#~ msgstr "मूकः (&t)"
+
+#~ msgid "&File"
+#~ msgstr "फाइल (&F)"
+
+#~ msgid "&Help"
+#~ msgstr "मदद (&H)"
+
+#, fuzzy
+#~| msgid "Mixer"
+#~ msgid "KDE Mixer"
+#~ msgstr "मिक्सर"
+
+#~ msgid "Allows to control the volume from the system tray"
+#~ msgstr "अवाज ल तंत्र तस्तरी मं से नियंत्रित करन देथे "
+
+#~ msgid "Invalid mixer"
+#~ msgstr "अवैध मिक्सर"
+
+#~ msgid ""
+#~ "(c) 1996-2007 Christian Esken\n"
+#~ "(c) 2000-2003 Stefan Schimanski\n"
+#~ "(c) 2002-2005 Helio Chissini de Castro"
+#~ msgstr ""
+#~ "(c) 1996-2007 क्रिस्चियन एस्कैन\n"
+#~ "(c) 2000-2003 स्टीफन सिमान्स्की\n"
+#~ "(c) 2002-2005 हेलियो चिस्सिनी द कास्त्रो"
+
+#~ msgid "Co-maintainer, Alsa 0.9x port"
+#~ msgstr "को-मेंटेनर, आल्सा 0.9x पोर्ट"
+
+#~ msgid "Nick Lopez"
+#~ msgstr "निक लोपेज"
+
+#, fuzzy
+#~| msgid "(c) 2007 by Christian Esken"
+#~ msgid "(c) 2000 by Christian Esken"
+#~ msgstr "(c) 2007 क्रिस्चियन एस्कैन द्वारा"
+
+#~ msgid "Toggle Switch"
+#~ msgstr "टागल स्विच"
+
+#~ msgid "On"
+#~ msgstr "चालू"
+
+#~ msgid "Off"
+#~ msgstr "बंद"
+
+#~ msgid "Configure - Mixer Applet"
+#~ msgstr "मिक्सर ऐपलेट कान्फिगर करव"
+
+#~ msgid "KMix Panel Applet"
+#~ msgstr "के-मिक्स पेनल ऐपलेट"
+
+#~ msgid "Mini Sound Mixer Applet"
+#~ msgstr "छोटे अवाज मिक्सर ऐपलेट"
+
+#~ msgid ""
+#~ "(c) 1996-2000 Christian Esken\n"
+#~ "(c) 2000-2003 Christian Esken, Stefan Schimanski"
+#~ msgstr ""
+#~ "(c) 1996-2000 क्रिस्चियन एस्कैन\n"
+#~ "(c) 2000-2003 क्रिस्चियन एस्कैन, स्टीफन सिमान्स्की"
+
+#~ msgid ""
+#~ "For detailed credits, please refer to the About information of the KMix "
+#~ "program"
+#~ msgstr "विस्तृत स्रेय बर किरपा करके, के-मिक्स प्रोग्राम परिचय देखव "
+
+#~ msgid "Mixers"
+#~ msgstr "मिक्सर्स"
+
+#~ msgid "Available mixers:"
+#~ msgstr "मिलत मिक्सर्स"
+
+#~ msgid "Invalid mixer entered."
+#~ msgstr "अवैध मिक्सर प्रविस्ट"
+
+#~ msgid "Show/Hide"
+#~ msgstr "देखाव / लुकाव"
+
+#~ msgid "Split"
+#~ msgstr "स्प्लिट"
+
+#~ msgid "Current Mixer"
+#~ msgstr "अभी हाल के मिक्सर"
+
+#~ msgid "kmixd - Soundcard Mixer Device Manager"
+#~ msgstr "केमिक्सडी - साउंडकार्ड मिक्सर डिवाये मैनेजर"
+
+#~ msgid "Soundcard Mixer Device Manager"
+#~ msgstr "साउन्डकार्ड मिक्सर डिवाये मैनेजर"
+
+#~ msgid "Left/Right balancing"
+#~ msgstr "डेरी/जेवनी संतुलन"
+
+#~ msgid "Next Value"
+#~ msgstr "अगला मूल्य"

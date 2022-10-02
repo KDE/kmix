@@ -1,0 +1,1326 @@
+# translation of kmix.po to Slovak
+# Stanislav Visnovsky <visnovsky@nenya.ms.mff.cuni.cz>, 2002.
+# Stanislav Visnovsky <visnovsky@kde.org>, 2003, 2004.
+# Jozef Říha <jose1711@gmail.com>, 2006.
+# Michal Sulek <misurel@gmail.com>, 2009, 2010, 2011.
+# Richard Frič <Richard.Fric@kdemail.net>, 2011.
+# Roman Paholík <wizzardsk@gmail.com>, 2012, 2013, 2014, 2017.
+# Matej Mrenica <matejm98mthw@gmail.com>, 2019.
+msgid ""
+msgstr ""
+"Project-Id-Version: kmix\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"PO-Revision-Date: 2019-10-10 19:46+0200\n"
+"Last-Translator: Matej Mrenica <matejm98mthw@gmail.com>\n"
+"Language-Team: Slovak <kde-i18n-doc@kde.org>\n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 19.08.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr ""
+"Juraj Bednár,Peter Belak,Brian Gajdos,Peter Lacko,Peter Strelec,Stanislav "
+"Višňovský,Jozef Říha,Michal Šulek"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr ""
+"juraj@bednar.sk,pepek@pobox.sk,brian@linuxee.sk,Peter.Lacko@pobox.sk,"
+"beko@profi.sk,visnovsky@nenya.ms.mff.cuni.cz,jose1711@gmail.com,"
+"misurel@gmail.com"
+
+#: apps/kmixctrl.cpp:40
+#, kde-format
+msgid "KMixCtrl"
+msgstr "KMixCtrl"
+
+#: apps/kmixctrl.cpp:41
+#, kde-format
+msgid "kmixctrl - kmix volume save/restore utility"
+msgstr "kmixctrl - nástroj pre uloženie/obnovenie hlasitosti kmix"
+
+#: apps/kmixctrl.cpp:43
+#, kde-format
+msgid "(c) 2000 by Stefan Schimanski"
+msgstr "(c) 2000 by Stefan Schimanski"
+
+#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#, kde-format
+msgid "Stefan Schimanski"
+msgstr "Stefan Schimanski"
+
+#: apps/kmixctrl.cpp:51
+#, kde-format
+msgid "Save current volumes as default"
+msgstr "Uloží aktuálne hlasitosti ako štandardné"
+
+#: apps/kmixctrl.cpp:53
+#, kde-format
+msgid "Restore default volumes"
+msgstr "Obnoví štandardné hlasitosti"
+
+#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"Zvuková karta obsahujúca hlavné zariadenie bola odpojená. Zmení sa na %1 na "
+"karte %2."
+
+#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "Posledná zvuková karta bola odpojená."
+
+#: apps/kmixwindow.cpp:173
+#, kde-format
+msgid "Audio Setup..."
+msgstr "Nastavenie zvuku..."
+
+#: apps/kmixwindow.cpp:177
+#, kde-format
+msgid "Hide Mixer Window"
+msgstr "Skryť okno mixéra"
+
+#: apps/kmixwindow.cpp:182
+#, kde-format
+msgid "Configure &Channels..."
+msgstr "Nastaviť ka&nály..."
+
+#: apps/kmixwindow.cpp:186
+#, kde-format
+msgid "Select Master Channel..."
+msgstr "Vybrať hlavný kanál..."
+
+#: apps/kmixwindow.cpp:191
+#, kde-format
+msgid "Save volume profile 1"
+msgstr "Uložiť profil hlasitosti 1"
+
+#: apps/kmixwindow.cpp:196
+#, kde-format
+msgid "Save volume profile 2"
+msgstr "Uložiť profil hlasitosti 2"
+
+#: apps/kmixwindow.cpp:201
+#, kde-format
+msgid "Save volume profile 3"
+msgstr "Uložiť profil hlasitosti 3"
+
+#: apps/kmixwindow.cpp:206
+#, kde-format
+msgid "Save volume profile 4"
+msgstr "Uložiť profil hlasitosti 4"
+
+#: apps/kmixwindow.cpp:211
+#, kde-format
+msgid "Load volume profile 1"
+msgstr "Načítať profil hlasitosti 1"
+
+#: apps/kmixwindow.cpp:216
+#, kde-format
+msgid "Load volume profile 2"
+msgstr "Načítať profil hlasitosti 2"
+
+#: apps/kmixwindow.cpp:221
+#, kde-format
+msgid "Load volume profile 3"
+msgstr "Načítať profil hlasitosti 3"
+
+#: apps/kmixwindow.cpp:226
+#, kde-format
+msgid "Load volume profile 4"
+msgstr "Načítať profil hlasitosti 4"
+
+#: apps/kmixwindow.cpp:237
+#, kde-format
+msgid "Increase Volume"
+msgstr "Zvýšiť hlasitosť"
+
+#: apps/kmixwindow.cpp:244
+#, kde-format
+msgid "Decrease Volume"
+msgstr "Znížiť hlasitosť"
+
+#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#, kde-format
+msgid "Mute"
+msgstr "Stlmiť"
+
+#: apps/kmixwindow.cpp:263
+#, kde-format
+msgid "Add new view"
+msgstr "Pridať nový pohľad"
+
+#: apps/kmixwindow.cpp:772
+#, kde-format
+msgid "Cannot add view - GUIProfile is invalid."
+msgstr "Nie je možné pridať zobrazenie - GUIProfile je neplatný."
+
+#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Error"
+msgstr "Chyba"
+
+#: apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Cannot add view - View already exists."
+msgstr "Nie je možné pridať zobrazenie - zobrazenie už existuje."
+
+#: apps/kmixwindow.cpp:1168
+#, kde-format
+msgid ""
+"The helper application is either not installed or not working.\n"
+"\n"
+"%1"
+msgstr ""
+"Pomocná aplikácia nie je nainštalovaná alebo nepracuje.\n"
+"\n"
+"%1"
+
+#: apps/kmixwindow.cpp:1219
+#, kde-format
+msgid "Mixer (%1)"
+msgstr "Mixér (%1)"
+
+#: apps/main.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "KMix"
+
+#: apps/main.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "KMix - Plnohodnotný mini mixér pre KDE"
+
+#: apps/main.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2013 Autori KMix"
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "Christian Esken"
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "Pôvodný autor a aktuálny správca"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "Colin Guthrie"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr "Podpora PulseAudio"
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "Helio Chissini de Castro"
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "Port ALSA 0.9x"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "Brian Hanson"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Solaris support"
+msgstr "Podpora pre Solaris"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/main.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "Igor Poboiko"
+
+#: apps/main.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "Dátový engine Plasma"
+
+#: apps/main.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "Dočasný správca"
+
+#: apps/main.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "Sebestyen Zoltan"
+
+#: apps/main.cpp:57 apps/main.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "*BSD opravy"
+
+#: apps/main.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "Lennart Augustsson"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "Nadeem Hasan"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "Funkcia stlmiť a hlasitosť, iné opravy"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "Erwin Mascher"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "Vylepšená podpora pre emu10k1 zvukové karty"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "Valentin Rusu"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "Podpora TerraTec DMX6Fire"
+
+#: apps/main.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr "Zabráni zobrazeniu hlavného okna KMix, ak už KMix beží."
+
+#: apps/main.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr "Spustí KMix v režime failsafe."
+
+#: apps/volumefeedback.cpp:248
+#, kde-format
+msgid "Volume Control Feedback Sound"
+msgstr "Zvuk odozvy ovládania hlasitosti"
+
+#: backends/mixer_alsa9.cpp:962
+#, kde-format
+msgid ""
+"You do not have permission to access the alsa mixer device.\n"
+"Please verify if all alsa devices are properly created."
+msgstr ""
+"Nemáte oprávnenie pristupovať k zariadeniu mixéra alsa.\n"
+"Overte, že máte správne vytvorené všetky zariadenia alsa."
+
+#: backends/mixer_alsa9.cpp:966
+#, kde-format
+msgid ""
+"Alsa mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+msgstr ""
+"Nie je možné nájsť mixér Alsa.\n"
+"Skontrolujte, či je nainštalovaná zvuková karta\n"
+"a načítaný ovládač zvukovej karty.\n"
+
+#: backends/mixer_backend.cpp:323
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"kmix: Nemáte oprávnenie pristupovať k zariadeniu mixéra.\n"
+"Prečítajte si manuál vášho operačného systému ako zmeniť práva."
+
+#: backends/mixer_backend.cpp:327
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "kmix: Nepodarilo sa zapisovať do mixéra."
+
+#: backends/mixer_backend.cpp:330
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "kmix: Nepodarilo sa čítať z mixéra."
+
+#: backends/mixer_backend.cpp:333
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"kmix: Nie je možné nájsť mixér.\n"
+"Skontrolujte, či je nainštalovaná zvuková karta\n"
+"a načítaný ovládač zvukovej karty.\n"
+
+#: backends/mixer_backend.cpp:338
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr "kmix: Neznáma chyba. Nahláste, ako ste dospeli k tejto chybe."
+
+#: backends/mixer_backend_i18n.cpp:24
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Úroveň nahrávania zo vstupu mikrofónu."
+
+#: backends/mixer_backend_i18n.cpp:25
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Ovláda hlasitosť predných reproduktorov alebo všetkých reproduktorov (závisí "
+"na modeli zvukovej karty). Ak používate digitálny výstup, možno bude "
+"potrebné tiež použiť iné ovládanie ako ADC alebo DAC. Slúchadlá poskytujú "
+"často vlastné ovládanie hlasitosti."
+
+#: backends/mixer_backend_i18n.cpp:26
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"Väčšina multimédií ako MP3 a videá sú prehrávané cez PCM kanál. Rovnako je "
+"hlasitosť prehrávania týchto multimédií ovládaná aj kanálmi Hlavný alebo "
+"Slúchadlá."
+
+#: backends/mixer_backend_i18n.cpp:27
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Ovláda hlasitosť slúchadiel. Niektoré zvukové karty obsahujú prepínač, "
+"ktorým musí byť výstup slúchadiel manuálne zapnutý."
+
+#: backends/mixer_backend_i18n.cpp:28
+#, kde-format
+msgid "---"
+msgstr "---"
+
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#, kde-format
+msgid "Playback Streams"
+msgstr "Prúdy prehrávania"
+
+#: backends/mixer_oss.cpp:68
+msgid "Volume"
+msgstr "Hlasitosť"
+
+#: backends/mixer_oss.cpp:68
+msgid "Bass"
+msgstr "Basy"
+
+#: backends/mixer_oss.cpp:68
+msgid "Treble"
+msgstr "Výšky"
+
+#: backends/mixer_oss.cpp:69
+msgid "Synth"
+msgstr "Synth"
+
+#: backends/mixer_oss.cpp:69
+msgid "Pcm"
+msgstr "Pcm"
+
+#: backends/mixer_oss.cpp:69
+msgid "Speaker"
+msgstr "Reproduktor"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#, kde-format
+msgid "Microphone"
+msgstr "Mikrofón"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#, kde-format
+msgid "CD"
+msgstr "CD"
+
+#: backends/mixer_oss.cpp:70
+msgid "Line"
+msgstr "Line"
+
+#: backends/mixer_oss.cpp:71
+msgid "Mix"
+msgstr "Mix"
+
+#: backends/mixer_oss.cpp:71
+msgid "Pcm2"
+msgstr "Pcm2"
+
+#: backends/mixer_oss.cpp:71
+msgid "RecMon"
+msgstr "RecMon"
+
+#: backends/mixer_oss.cpp:72
+msgid "IGain"
+msgstr "IGain"
+
+#: backends/mixer_oss.cpp:72
+msgid "OGain"
+msgstr "OGain"
+
+#: backends/mixer_oss.cpp:72
+msgid "Line1"
+msgstr "Line1"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line2"
+msgstr "Line2"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line3"
+msgstr "Line3"
+
+#: backends/mixer_oss.cpp:73
+msgid "Digital1"
+msgstr "Digital1"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital2"
+msgstr "Digital2"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital3"
+msgstr "Digital3"
+
+#: backends/mixer_oss.cpp:74
+msgid "PhoneIn"
+msgstr "PhoneIn"
+
+#: backends/mixer_oss.cpp:75
+msgid "PhoneOut"
+msgstr "PhoneOut"
+
+#: backends/mixer_oss.cpp:75
+msgid "Video"
+msgstr "Video"
+
+#: backends/mixer_oss.cpp:75
+msgid "Radio"
+msgstr "Rádio"
+
+#: backends/mixer_oss.cpp:76
+msgid "Monitor"
+msgstr "Monitor"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-depth"
+msgstr "3D hĺbka"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-center"
+msgstr "3D stred"
+
+#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#, kde-format
+msgid "unknown"
+msgstr "neznámy"
+
+#: backends/mixer_oss.cpp:81
+msgid "unused"
+msgstr "nepoužité"
+
+#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
+msgstr ""
+"kmix: Nemáte oprávnenie pristupovať k zariadeniu mixéra.\n"
+"Prihláste sa ako root a zadajte 'chmod a+rw /dev/mixer*' na povolenie "
+"prístupu."
+
+#: backends/mixer_oss.cpp:247
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using commercial OSS."
+msgstr ""
+"kmix: Nie je možné nájsť mixér.\n"
+"Skontrolujte, či je nainštalovaná zvuková karta\n"
+"a načítaný ovládač zvukovej karty.\n"
+"Na systéme Linux musíte použiť príkaz 'insmod' na zavedenie ovládača\n"
+"zvukovej karty alebo použite 'soundon' ak používate komerčný OSS."
+
+#: backends/mixer_oss4.cpp:499
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using OSS4 from 4front."
+msgstr ""
+"kmix: Nie je možné nájsť mixér.\n"
+"Skontrolujte, či je nainštalovaná zvuková karta\n"
+"a načítaný ovládač zvukovej karty.\n"
+"Na systéme Linux musíte použiť príkaz 'insmod' na zavedenie ovládača.\n"
+"Ak používate OSS4 od 4front použite príkaz 'soundon'."
+
+#: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
+#, kde-format
+msgid "Unknown Application"
+msgstr "Neznáma aplikácia"
+
+#: backends/mixer_pulse.cpp:434
+#, kde-format
+msgid "Event Sounds"
+msgstr "Zvuky udalostí"
+
+#: backends/mixer_pulse.cpp:1067
+#, kde-format
+msgid "Playback Devices"
+msgstr "Prehrávacie zariadenia"
+
+#: backends/mixer_pulse.cpp:1075
+#, kde-format
+msgid "Capture Devices"
+msgstr "Záznamové zariadenia"
+
+#: backends/mixer_pulse.cpp:1094
+#, kde-format
+msgid "Capture Streams"
+msgstr "Prúdy zachytávania"
+
+#: backends/mixer_sun.cpp:69
+#, kde-format
+msgid "Master Volume"
+msgstr "Hlavná hlasitosť"
+
+#: backends/mixer_sun.cpp:70
+#, kde-format
+msgid "Internal Speaker"
+msgstr "Interný reproduktor"
+
+#: backends/mixer_sun.cpp:71
+#, kde-format
+msgid "Headphone"
+msgstr "Slúchadlá"
+
+#: backends/mixer_sun.cpp:72
+#, kde-format
+msgid "Line Out"
+msgstr "Linkový výstup"
+
+#: backends/mixer_sun.cpp:73
+#, kde-format
+msgid "Record Monitor"
+msgstr "Monitor nahrávania"
+
+#: backends/mixer_sun.cpp:75
+#, kde-format
+msgid "Line In"
+msgstr "Linkový vstup"
+
+#: backends/mixer_sun.cpp:241
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Ask your system administrator to fix /dev/audioctl to allow access."
+msgstr ""
+"kmix: Nemáte oprávnenie pristupovať k zariadeniu mixéra.\n"
+"Spýtajte sa administrátora na oprávnenie prístupu na zariadenie /dev/"
+"audioctl."
+
+#: core/volume.cpp:58
+#, kde-format
+msgctxt "Channel name"
+msgid "Left"
+msgstr "Ľavý"
+
+#: core/volume.cpp:59
+#, kde-format
+msgctxt "Channel name"
+msgid "Right"
+msgstr "Pravý"
+
+#: core/volume.cpp:60
+#, kde-format
+msgctxt "Channel name"
+msgid "Center"
+msgstr "Stredný"
+
+#: core/volume.cpp:61
+#, kde-format
+msgctxt "Channel name"
+msgid "Subwoofer"
+msgstr "Subwoofer"
+
+#: core/volume.cpp:62
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Left"
+msgstr "Ľavý efektový"
+
+#: core/volume.cpp:63
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Right"
+msgstr "Pravý efektový"
+
+#: core/volume.cpp:64
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Left"
+msgstr "Bočný ľavý"
+
+#: core/volume.cpp:65
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Right"
+msgstr "Bočný pravý"
+
+#: core/volume.cpp:66
+#, kde-format
+msgctxt "Channel name"
+msgid "Rear Center"
+msgstr "Zadný stredový"
+
+#: core/volume.cpp:68
+#, kde-format
+msgctxt "Channel name"
+msgid "Unknown"
+msgstr "Neznáme"
+
+#: gui/dialogaddview.cpp:50
+#, kde-format
+msgid "All controls"
+msgstr "Všetky ovládacie prvky"
+
+#: gui/dialogaddview.cpp:51
+#, kde-format
+msgid "Only playback controls"
+msgstr "Iba ovládacie prvky prehrávania"
+
+#: gui/dialogaddview.cpp:52
+#, kde-format
+msgid "Only capture controls"
+msgstr "Iba ovládacie prvky zachytenia"
+
+#: gui/dialogaddview.cpp:59
+#, kde-format
+msgid "Add View"
+msgstr "Pridať zobrazenie"
+
+#: gui/dialogaddview.cpp:88
+#, kde-format
+msgid "Select mixer:"
+msgstr "Vyberte mixér:"
+
+#: gui/dialogaddview.cpp:95
+#, kde-format
+msgid "Current mixer"
+msgstr "Aktuálny mixér"
+
+#: gui/dialogaddview.cpp:115
+#, kde-format
+msgid "Select the design for the new view:"
+msgstr "Vyberte rozloženie pre nové zobrazenie:"
+
+#: gui/dialogchoosebackends.cpp:54
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr "Mixéry na zobrazenie v kontextovom ovládaní hlasitosti:"
+
+#: gui/dialogchoosebackends.cpp:81
+#, kde-format
+msgid "Select Mixers"
+msgstr "Vybrať zmiešavače"
+
+#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#, kde-format
+msgid "Select Master Channel"
+msgstr "Vybrať hlavný kanál"
+
+#: gui/dialogselectmaster.cpp:73
+#, kde-format
+msgid "Current mixer:"
+msgstr "Aktuálny mixér:"
+
+#: gui/dialogselectmaster.cpp:123
+#, fuzzy, kde-kuit-format
+#| msgid "Select the channel representing the master volume:"
+msgctxt "@info"
+msgid "Select the <link url=\"i\">master volume</link> channel:"
+msgstr "Vyberte kanál predstavujúci hlavnú hlasitosť:"
+
+#: gui/dialogselectmaster.cpp:131
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Here you can select the master sound device (if there is more than "
+"one) and its master channel.</para><para>The master channel is the one that "
+"is affected by the system tray volume control, the volume up/down and mute "
+"global shortcut keys, and the <interface>Mute</interface> action in the "
+"system tray popup menu.</para>"
+msgstr ""
+
+#: gui/dialogselectmaster.cpp:203
+#, kde-format
+msgid "Automatic (%1 recommendation)"
+msgstr "Automaticky (odporúčanie %1)"
+
+#: gui/dialogviewconfiguration.cpp:136
+#, kde-format
+msgid "Configure Channels"
+msgstr "Nastaviť kanály"
+
+#: gui/dialogviewconfiguration.cpp:147
+#, kde-format
+msgid "Configure the visible channels. Drag icons between the lists to update."
+msgstr ""
+"Nastavenie viditeľných kanálov. Ťahajte ikonu medzi zoznamami na "
+"aktualizáciu."
+
+#: gui/dialogviewconfiguration.cpp:217
+#, kde-format
+msgid "Visible channels:"
+msgstr "Viditeľné kanály:"
+
+#: gui/dialogviewconfiguration.cpp:220
+#, kde-format
+msgid "Available channels:"
+msgstr "Dostupné kanály:"
+
+#: gui/dialogviewconfiguration.cpp:234
+#, kde-format
+msgid "Move the selected channel to the visible list"
+msgstr "Presunúť vybraný kanál medzi viditeľné"
+
+#: gui/dialogviewconfiguration.cpp:242
+#, kde-format
+msgid "Move the selected channel to the available (hidden) list"
+msgstr "Presunúť vybraný kanál medzi dostupné (skryté)"
+
+#: gui/dialogviewconfiguration.cpp:282
+#, kde-format
+msgid "Show the selected channel"
+msgstr "Zobraziť vybraný kanál"
+
+#: gui/dialogviewconfiguration.cpp:283
+#, kde-format
+msgid "Hide the selected channel"
+msgstr "Skryť vybraný kanál"
+
+#: gui/dialogviewconfiguration.cpp:284
+#, kde-format
+msgid "Visible channels"
+msgstr "Viditeľné kanály"
+
+#: gui/dialogviewconfiguration.cpp:285
+#, kde-format
+msgid "Available channels"
+msgstr "Dostupné kanály"
+
+#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#, kde-format
+msgid "Volume Control"
+msgstr "Ovládanie hlasitosti"
+
+#: gui/kmixdockwidget.cpp:174
+#, kde-format
+msgid "M&ute"
+msgstr "S&tlmiť"
+
+#: gui/kmixdockwidget.cpp:198
+#, kde-format
+msgid "No mixer devices available"
+msgstr "Nie sú dostupné žiadne mixéry"
+
+#: gui/kmixdockwidget.cpp:206
+#, kde-format
+msgid "Volume muted"
+msgstr "Hlasitosť stlmená"
+
+#: gui/kmixdockwidget.cpp:207
+#, kde-format
+msgid "Volume at %1%"
+msgstr "Hlasitosť na %1%"
+
+#: gui/kmixdockwidget.cpp:209
+#, kde-format
+msgid "%1 - %2"
+msgstr "%1 - %2"
+
+#: gui/kmixprefdlg.cpp:52
+#, kde-format
+msgid "Configure"
+msgstr "Nastaviť"
+
+#: gui/kmixprefdlg.cpp:66
+#, kde-format
+msgid "General"
+msgstr "Všeobecné"
+
+#: gui/kmixprefdlg.cpp:67
+#, kde-format
+msgid "Startup"
+msgstr "Spustenie"
+
+#: gui/kmixprefdlg.cpp:103
+#, kde-format
+msgid "Start KMix on desktop startup"
+msgstr "Spustiť KMix pri štarte počítača"
+
+#: gui/kmixprefdlg.cpp:107
+#, fuzzy, kde-format
+#| msgid "Start KMix automatically when the desktop starts."
+msgid "Start KMix automatically when the desktop starts"
+msgstr "Spustiť KMix automaticky keď sa zapne počítač."
+
+#: gui/kmixprefdlg.cpp:110
+#, kde-format
+msgid ""
+"Autostart will not work, because the autostart file kmix_autostart.desktop "
+"is missing. Check that KMix is installed correctly."
+msgstr ""
+"Automatické spustenie sa nedá povoliť, lebo chýba súbor kmix_autostart."
+"desktop. Skontrolujte že KMix je správne nainštalovaný."
+
+#: gui/kmixprefdlg.cpp:120
+#, kde-format
+msgid "Restore previous volume settings on desktop startup"
+msgstr "Obnoviť predchádzajúcu hlasitosť pri spustení počítača"
+
+#: gui/kmixprefdlg.cpp:124
+#, fuzzy, kde-format
+#| msgid ""
+#| "Restore all mixer volume levels and switches to their last used settings "
+#| "when the desktop starts."
+msgid ""
+"Restore all mixer volume levels and switches to their last used settings "
+"when the desktop starts"
+msgstr ""
+"Po spustení počítača obnoviť všetky úrovne hlasitosti mixéra a prepnúť na "
+"posledné použité nastavenia."
+
+#: gui/kmixprefdlg.cpp:127
+#, kde-format
+msgid ""
+"The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
+msgstr "Hlasitosť dynamických ovládačov Pulseaudio a MPRIS2 nebude obnovená."
+
+#: gui/kmixprefdlg.cpp:145
+#, kde-format
+msgid "&Horizontal"
+msgstr "&Horizontálna"
+
+#: gui/kmixprefdlg.cpp:146
+#, kde-format
+msgid "&Vertical"
+msgstr "&Vertikálna"
+
+#: gui/kmixprefdlg.cpp:193
+#, kde-format
+msgid "Behavior"
+msgstr "Správanie"
+
+#: gui/kmixprefdlg.cpp:207
+#, kde-format
+msgid "Volume overdrive"
+msgstr "Nadmerná hlasitosť"
+
+#: gui/kmixprefdlg.cpp:212
+#, kde-format
+msgctxt "@info:tooltip"
+msgid ""
+"Allow the volume to be raised above the recommended maximum (typically to "
+"150%)"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:215
+#, fuzzy, kde-format
+#| msgid ""
+#| "Volume feedback and volume overdrive are only available for PulseAudio."
+msgid "Volume overdrive is only available for PulseAudio."
+msgstr "Odozva hlasitosti a nadmerná hlasitosť sú dostupné iba pre Pulseaudio."
+
+#: gui/kmixprefdlg.cpp:225
+#, fuzzy, kde-format
+#| msgid ""
+#| "KMix must be restarted for the Volume Overdrive setting to take effect."
+msgid "%1 must be restarted for the volume overdrive setting to take effect."
+msgstr ""
+"Musíte reštartovať KMix, aby sa prejavilo nastavenie Nadmerná hlasitosť."
+
+#: gui/kmixprefdlg.cpp:235
+#, kde-format
+msgid "Volume feedback"
+msgstr "Odozva hlasitosti"
+
+#: gui/kmixprefdlg.cpp:239
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Play a sample sound when the volume changes"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:243
+#, kde-format
+msgid "Volume feedback is only available when configured with Canberra."
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:265
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Set the volume step as a percentage of the volume range.</"
+"para><para>This affects changing the volume via hot keys, with the mouse "
+"wheel over the system tray icon, or moving sliders by a page step.</"
+"para><para>%1 must be restarted for this change to take effect.</para>"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:272
+#, fuzzy, kde-format
+#| msgid "Volume muted"
+msgid "Volume step:"
+msgstr "Hlasitosť stlmená"
+
+#: gui/kmixprefdlg.cpp:280
+#, kde-format
+msgid "Visual"
+msgstr "Vzhľad"
+
+#: gui/kmixprefdlg.cpp:289
+#, fuzzy, kde-format
+#| msgid "Show &tickmarks"
+msgid "Show slider &tickmarks"
+msgstr "Zo&brazovať značky"
+
+#: gui/kmixprefdlg.cpp:292
+#, fuzzy, kde-format
+#| msgid "Enable/disable tickmark scales on the sliders"
+msgid "Show tick mark scales on sliders"
+msgstr "Povolí/zakáže značky na posuvníkoch"
+
+#: gui/kmixprefdlg.cpp:294
+#, fuzzy, kde-format
+#| msgid "Show &labels"
+msgid "Show control &labels"
+msgstr "Zob&razovať popisy"
+
+#: gui/kmixprefdlg.cpp:297
+#, fuzzy, kde-format
+#| msgid "Enables/disables description labels above the sliders"
+msgid "Show description labels for sliders"
+msgstr "Povolí/zakáže popisy nad posuvníkmi"
+
+#: gui/kmixprefdlg.cpp:300
+#, kde-format
+msgid "Show On Screen Display (&OSD)"
+msgstr "Zobraziť displej na obrazovke (OSD)"
+
+#: gui/kmixprefdlg.cpp:303
+#, kde-format
+msgid "Show an on-screen indicator when changing the volume via hotkeys"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:312
+#, kde-format
+msgid "Slider orientation (main window): "
+msgstr "Orientácia posuvníkov (hlavné okno): "
+
+#: gui/kmixprefdlg.cpp:313
+#, kde-format
+msgid "Slider orientation (system tray popup):"
+msgstr "Orientácia posuvníka (ovládanie hlasitosti v systémovej lište):"
+
+#: gui/kmixprefdlg.cpp:314
+#, fuzzy, kde-format
+#| msgid "Slider orientation (main window): "
+msgid "Set the orientation of the main window control sliders"
+msgstr "Orientácia posuvníkov (hlavné okno): "
+
+#: gui/kmixprefdlg.cpp:315
+#, kde-format
+msgid "Set the orientation of the system tray volume control sliders"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:327
+#, kde-format
+msgid "Dock in system tray"
+msgstr "Ukotviť v systémovej lište"
+
+#: gui/kmixprefdlg.cpp:330
+#, kde-format
+msgid ""
+"Dock the mixer into the system tray. Click on it to open the popup volume "
+"control."
+msgstr ""
+"Vložiť mixér do systémovej lišty. Kliknutím na ňu otvoríte kontextové "
+"ovládanie hlasitosti."
+
+#: gui/kmixprefdlg.cpp:502
+#, fuzzy, kde-format
+#| msgid "Mixers to show in the popup volume control:"
+msgid ""
+"The mixers that are checked here will be shown in the popup volume control."
+msgstr "Mixéry na zobrazenie v kontextovom ovládaní hlasitosti:"
+
+#: gui/kmixtoolbox.cpp:97
+#, fuzzy, kde-format
+#| msgid "No sound card is installed or currently plugged in."
+msgid "No sound devices are installed or are currently available."
+msgstr "Nie je nainštalovaná ani pripojená žiadna zvuková karta."
+
+#: gui/mdwslider.cpp:96
+#, kde-format
+msgid "Split Channels"
+msgstr "Rozdeliť kanály"
+
+#: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
+#, kde-format
+msgid "Capture"
+msgstr "Zachytiť"
+
+#: gui/mdwslider.cpp:113
+#, kde-format
+msgid "Use Device"
+msgstr "Použiť zariadenie"
+
+#: gui/mdwslider.cpp:158
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Mute %2 on %1"
+msgstr ""
+
+#: gui/mdwslider.cpp:170
+#, fuzzy, kde-format
+#| msgid "Increase Volume"
+msgctxt "1=device name, 2=control name"
+msgid "Increase volume of %2 on %1"
+msgstr "Zvýšiť hlasitosť"
+
+#: gui/mdwslider.cpp:178
+#, fuzzy, kde-format
+#| msgid "Decrease Volume"
+msgctxt "1=device name, 2=control name"
+msgid "Decrease volume of %2 on %1"
+msgstr "Znížiť hlasitosť"
+
+#: gui/mdwslider.cpp:328
+#, kde-format
+msgctxt "%1=channel"
+msgid "Capture/Uncapture %1"
+msgstr "Zachytiť/zrušiť zachytenie %1"
+
+#: gui/mdwslider.cpp:329
+#, kde-format
+msgctxt "%1=channel"
+msgid "Mute/Unmute %1"
+msgstr "Stlmiť/zrušiť stlmenie %1"
+
+#: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
+#, kde-format
+msgctxt "%1=device %2=channel"
+msgid ""
+"%1\n"
+"%2"
+msgstr ""
+"%1\n"
+"%2"
+
+#: gui/mdwslider.cpp:680
+#, kde-format
+msgid "%1 (capture)"
+msgstr "%1 (zachytiť)"
+
+#: gui/mdwslider.cpp:1118
+#, kde-format
+msgid "Automatic (according to category)"
+msgstr "Automaticky (podľa kategórie)"
+
+#: gui/mixdevicewidget.cpp:65
+#, kde-format
+msgid "Channel Shortcuts..."
+msgstr "Skratky kanálov..."
+
+#: gui/viewbase.cpp:96
+#, kde-format
+msgid "Configure this view"
+msgstr "Nastaviť tento pohľad"
+
+#: gui/viewbase.cpp:166
+#, kde-format
+msgid "Configure Channels..."
+msgstr "Nastaviť kanály..."
+
+#: gui/viewbase.cpp:270
+#, kde-format
+msgid "Device Settings"
+msgstr "Nastavenie zariadenia"
+
+#: gui/viewdockareapopup.cpp:440
+#, kde-format
+msgid "Show the full mixer window"
+msgstr "Zobraziť celé okno mixéra"
+
+#: gui/viewdockareapopup.cpp:472
+#, kde-format
+msgid "Load volume profile %1"
+msgstr "Načítať profil hlasitosti %1"
+
+#: gui/viewsliders.cpp:180
+#, kde-format
+msgid "Nothing is playing audio."
+msgstr "Nič neprehráva zvuk."
+
+#: gui/viewsliders.cpp:183
+#, kde-format
+msgid "Nothing is capturing audio."
+msgstr "Nič nezachytáva zvuk."
+
+#: gui/viewsliders.cpp:184
+#, kde-format
+msgid "There are no capture devices."
+msgstr "Žiadne zariadenia na zachytávanie."
+
+#: gui/viewsliders.cpp:185
+#, kde-format
+msgid "There are no playback devices."
+msgstr "Žiadne zariadenia na prehrávanie."
+
+#~ msgctxt "@info:tooltip"
+#~ msgid "Raise the maximum volume to 150%"
+#~ msgstr "Zvýšiť maximálnu hlasitosť na 150%"
+
+#~ msgid "&Hide"
+#~ msgstr "&Skryť"
+
+#~ msgid "C&onfigure Shortcuts..."
+#~ msgstr "&Nastaviť skratky..."
+
+#~ msgid "Toggle Mute"
+#~ msgstr "Prepnúť stlmenie"
+
+#~ msgid "Hardware &Information"
+#~ msgstr "&Informácie o hardvéri"
+
+#~ msgid "Mixer Hardware Information"
+#~ msgstr "Informácie o hardvéri mixéru"
+
+#~ msgid "Sound drivers supported:"
+#~ msgstr "Podporované zvukové ovládače:"
+
+#~ msgid "Sound drivers used:"
+#~ msgstr "Použité zvukové ovládače:"
+
+#~ msgid "Experimental multiple-Driver mode activated"
+#~ msgstr "Experimentálny režim viacerých ovládačov aktivovaný"
+
+#~ msgid "&Muted"
+#~ msgstr "S&tlmené"
+
+#, fuzzy
+#~| msgid "Capture"
+#~ msgid "Captu&re"
+#~ msgstr "Zachytiť"
+
+#~ msgid "Mo&ve"
+#~ msgstr "&Presunúť"
+
+#~ msgid "Set &Record Source"
+#~ msgstr "Nastaviť z&droj nahrávania"
+
+#~ msgid "capture"
+#~ msgstr "zachytiť"
+
+#~ msgid "&Channels"
+#~ msgstr "&Kanály"
+
+#~ msgid "Mixer cannot be found"
+#~ msgstr "Mixér nie je možné nájsť"
+
+#~ msgid " (Muted)"
+#~ msgstr " (Stlmené)"
+
+#~ msgid "Select the Mixers to display in the sound menu"
+#~ msgstr "Vyberte zmiešavače na zobrazenie v ponuke zvuku"
+
+#~ msgid "Start"
+#~ msgstr "Spustiť"
+
+#~ msgid "Sound Menu"
+#~ msgstr "Ponuka zvuku"
+
+#~ msgid "Autostart"
+#~ msgstr "Automatické spustenie"
+
+#~ msgid "Enables the KMix autostart service (kmix_autostart.desktop)"
+#~ msgstr "Povolí službu automatického spustenia KMix (kmix_autostart.desktop)"
+
+#~ msgctxt "@info:tooltip"
+#~ msgid "Raise volume maximum to 150% (PulseAudio only)"
+#~ msgstr "Zvýšiť hlasitosť maximálne na 150% (iba PulseAudio)"
+
+#~ msgid "Docks the mixer into the KDE system tray"
+#~ msgstr "Skryje mixér do systémovej lišty KDE"
+
+#~ msgid "&Use custom colors"
+#~ msgstr "Použiť &vlastné farby"
+
+#~ msgid "Active"
+#~ msgstr "Aktívne"
+
+#~ msgid "&Silent:"
+#~ msgstr "&Potichu:"
+
+#~ msgid "&Loud:"
+#~ msgstr "&Nahlas:"
+
+#~ msgid "&Background:"
+#~ msgstr "Po&zadie:"
+
+#~ msgid "Muted"
+#~ msgstr "Stlmené"
+
+#~ msgid "Lou&d:"
+#~ msgstr "Nahla&s:"
+
+#~ msgid "Backgrou&nd:"
+#~ msgstr "Pozadi&e:"
+
+#~ msgid "Silen&t:"
+#~ msgstr "Potich&u:"
+
+#~ msgid "&File"
+#~ msgstr "&Súbor"
+
+#~ msgid "&Help"
+#~ msgstr "&Pomocník"
+
+#~ msgid "View already exists. Cannot add View."
+#~ msgstr "Zobrazenie už existuje, preto ho nie je možné pridať."
+
+#~ msgid "KDE Mixer"
+#~ msgstr "KDE zmiešavač"

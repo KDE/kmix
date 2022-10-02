@@ -1,0 +1,1239 @@
+# Translation of kmix.po into Serbian.
+# Chusslove Illich <caslav.ilic@gmx.net>, 2003, 2005, 2006, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017.
+# Toplica Tanaskovic <toptan@kde.org.yu>, 2003, 2004.
+# Slobodan Simic <slsimic@gmail.com>, 2005, 2007, 2008.
+# Dalibor Djuric <daliborddjuric@gmail.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: kmix\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2020-05-31 18:05+0200\n"
+"PO-Revision-Date: 2017-09-28 17:59+0200\n"
+"Last-Translator: Chusslove Illich <caslav.ilic@gmx.net>\n"
+"Language-Team: Serbian <kde-i18n-sr@kde.org>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+"X-Environment: kde\n"
+
+# well-spelled: Чала
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Золтан Чала,Љубиша Радивојевић,Јован Поповић,Часлав Илић"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr ""
+"zolika@sezampro.yu,claw@claw.co.yu,jpopovic@pakom.co.yu,caslav.ilic@gmx.net"
+
+#: apps/kmix.cpp:181
+#, fuzzy, kde-format
+#| msgid "Audio Setup"
+msgid "Audio Setup..."
+msgstr "Аудио постава"
+
+#: apps/kmix.cpp:185
+#, kde-format
+msgid "Hide Mixer Window"
+msgstr "Сакриј прозор миксете"
+
+#: apps/kmix.cpp:190
+#, kde-format
+msgid "Configure &Channels..."
+msgstr "Подеси &канале..."
+
+#: apps/kmix.cpp:194
+#, kde-format
+msgid "Select Master Channel..."
+msgstr "Изабери главни канал..."
+
+#: apps/kmix.cpp:199
+#, kde-format
+msgid "Save volume profile 1"
+msgstr "Сачувај профил јачине 1"
+
+#: apps/kmix.cpp:204
+#, kde-format
+msgid "Save volume profile 2"
+msgstr "Сачувај профил јачине 2"
+
+#: apps/kmix.cpp:209
+#, kde-format
+msgid "Save volume profile 3"
+msgstr "Сачувај профил јачине 3"
+
+#: apps/kmix.cpp:214
+#, kde-format
+msgid "Save volume profile 4"
+msgstr "Сачувај профил јачине 4"
+
+#: apps/kmix.cpp:219
+#, kde-format
+msgid "Load volume profile 1"
+msgstr "Учитај профил јачине 1"
+
+#: apps/kmix.cpp:224
+#, kde-format
+msgid "Load volume profile 2"
+msgstr "Учитај профил јачине 2"
+
+#: apps/kmix.cpp:229
+#, kde-format
+msgid "Load volume profile 3"
+msgstr "Учитај профил јачине 3"
+
+#: apps/kmix.cpp:234
+#, kde-format
+msgid "Load volume profile 4"
+msgstr "Учитај профил јачине 4"
+
+#: apps/kmix.cpp:245 gui/mdwslider.cpp:165
+#, kde-format
+msgid "Increase Volume"
+msgstr "Повећај јачину"
+
+#: apps/kmix.cpp:252 gui/mdwslider.cpp:172
+#, kde-format
+msgid "Decrease Volume"
+msgstr "Смањи јачину"
+
+# Држи кратко, стоји у уским колонама; јасно да се ради о звуку.
+#: apps/kmix.cpp:257 gui/mdwslider.cpp:114
+#, kde-format
+msgid "Mute"
+msgstr "Искључи"
+
+# >> @info:tooltip
+#: apps/kmix.cpp:271
+#, kde-format
+msgid "Add new view"
+msgstr "Додај нови приказ"
+
+# literal-segment: GUIProfile
+#: apps/kmix.cpp:810
+#, kde-format
+msgid "Cannot add view - GUIProfile is invalid."
+msgstr "Не могу да додам приказ — лош GUIProfile."
+
+#: apps/kmix.cpp:810 apps/kmix.cpp:817
+#, kde-format
+msgid "Error"
+msgstr "Грешка"
+
+#: apps/kmix.cpp:817
+#, kde-format
+msgid "Cannot add view - View already exists."
+msgstr "Не могу да додам приказ — већ постоји."
+
+#: apps/kmix.cpp:937 apps/kmixd.cpp:199
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"Извучена је звучна картица на којој је главни уређај. Пребацујем на контролу "
+"%1 картице %2."
+
+#: apps/kmix.cpp:946 apps/kmixd.cpp:209
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "Извучена је последња звучна картица."
+
+#: apps/kmix.cpp:1223
+#, kde-format
+msgid ""
+"The helper application is either not installed or not working.\n"
+"\n"
+"%1"
+msgstr ""
+"Помоћни програм или није инсталиран или не функционише.\n"
+"\n"
+"%1"
+
+# >> @title:window
+#: apps/kmix.cpp:1275
+#, kde-format
+msgid "Mixer (%1)"
+msgstr "Миксета (%1)"
+
+#: apps/kmixctrl.cpp:36
+#, kde-format
+msgid "kmixctrl - kmix volume save/restore utility"
+msgstr "К‑миксконтрола — уписивање и обнављање јачина"
+
+#: apps/kmixctrl.cpp:44
+#, kde-format
+msgid "KMixCtrl"
+msgstr "К‑миксконтрола"
+
+#: apps/kmixctrl.cpp:47
+#, kde-format
+msgid "(c) 2000 by Stefan Schimanski"
+msgstr "© 2000, Штефан Шимански"
+
+#: apps/kmixctrl.cpp:49 apps/main.cpp:60
+#, kde-format
+msgid "Stefan Schimanski"
+msgstr "Штефан Шимански"
+
+#: apps/kmixctrl.cpp:55
+#, kde-format
+msgid "Save current volumes as default"
+msgstr "Сачувај тренутне јачине као подразумеване"
+
+#: apps/kmixctrl.cpp:57
+#, kde-format
+msgid "Restore default volumes"
+msgstr "Врати на подразумеване јачине"
+
+#: apps/main.cpp:34
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "К‑миксета — КДЕ‑ова свеобухватна мини миксета"
+
+#: apps/main.cpp:44
+#, kde-format
+msgid "KMix"
+msgstr "К‑миксета"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "© 1996–2013, аутори К‑миксете"
+
+#: apps/main.cpp:49
+#, kde-format
+msgid "Christian Esken"
+msgstr "Кристијан Ескен"
+
+#: apps/main.cpp:49
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "Првобитни аутор и тренутни одржавалац"
+
+#: apps/main.cpp:50
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "Колин Гатри"
+
+#: apps/main.cpp:50
+#, kde-format
+msgid "PulseAudio support"
+msgstr "Подршка за Пулс‑аудио"
+
+#: apps/main.cpp:51
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "Хелио Ћисини де Кастро"
+
+#: apps/main.cpp:51
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "Преношење на Алсу 0.9"
+
+#: apps/main.cpp:52
+#, kde-format
+msgid "Brian Hanson"
+msgstr "Брајан Хенсон"
+
+#: apps/main.cpp:52
+#, kde-format
+msgid "Solaris support"
+msgstr "Подршка за Соларис"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/main.cpp:59
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "Игор Побојко"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "Плазма датомотор"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "Привремени одржавалац"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "Золтан Шебешћен"
+
+#: apps/main.cpp:61 apps/main.cpp:62
+#, kde-format
+msgid "*BSD fixes"
+msgstr "Исправке за БСД"
+
+#: apps/main.cpp:62
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "Ленарт Августсон"
+
+#: apps/main.cpp:63
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "Надим Хасан"
+
+#: apps/main.cpp:63
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "Искључивање звука и преглед јачина, друге исправке"
+
+#: apps/main.cpp:64
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "Ервин Машер"
+
+#: apps/main.cpp:64
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "Побољшање подршке за звучне картице засноване на ЕМУ10к1"
+
+#: apps/main.cpp:65
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "Валантен Ризи"
+
+#: apps/main.cpp:65
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "Подршка за Тератеков ДМИкс сиксфајер"
+
+#: apps/main.cpp:79
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr ""
+"Не дозвољава приказивање главног прозора К‑миксете, ако је К‑миксета већ у "
+"погону."
+
+#: apps/main.cpp:80
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr "Покреће К‑миксета у безотказном режиму."
+
+#: backends/mixer_alsa9.cpp:981
+#, kde-format
+msgid ""
+"You do not have permission to access the alsa mixer device.\n"
+"Please verify if all alsa devices are properly created."
+msgstr ""
+"Немате дозволу да приступите алса уређају миксете.\n"
+"Проверите да ли су алса уређаји правилно направљени."
+
+#: backends/mixer_alsa9.cpp:985
+#, kde-format
+msgid ""
+"Alsa mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+msgstr ""
+"К‑миксета: Не могу да нађем алса миксету.\n"
+"Проверите да ли је звучна картица инсталирана\n"
+"и да ли је учитан драјвер за њу.\n"
+
+#: backends/mixer_backend.cpp:325
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"К‑миксета: Немате дозволу да приступите уређају миксете.\n"
+"Погледајте у упутству оперативног система како да омогућите приступ."
+
+#: backends/mixer_backend.cpp:329
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "К‑миксета: Не могу да пишем у миксету."
+
+#: backends/mixer_backend.cpp:332
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "К‑миксета: Не могу да читам из миксете."
+
+#: backends/mixer_backend.cpp:335
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"К‑миксета: Не могу да нађем миксету.\n"
+"Проверите да ли је звучна картица инсталирана\n"
+"и да ли је учитан драјвер за њу.\n"
+
+#: backends/mixer_backend.cpp:340
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr ""
+"К‑миксета: Непозната грешка. Молимо вас да пријавите како сте је изазвали."
+
+#: backends/mixer_backend_i18n.cpp:24
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Ниво снимања на улазу микрофона."
+
+#: backends/mixer_backend_i18n.cpp:25
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Управља јачином предњих или свих звучника (у зависности од модела звучне "
+"картице). Ако користите дигитални излаз, можда ћете морати да користите и "
+"контроле АДЦ‑а или ДАЦ‑а. Звучне картице обично дају и контролу за слушалице."
+
+#: backends/mixer_backend_i18n.cpp:26
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"Већина медијума, попут МП3 нумера или филмова, пушта се преко ПЦМ канала. "
+"Зато се јачином звука за те медијуме управља и преко овог и преко главног "
+"канала (или канала за слушалице)."
+
+#: backends/mixer_backend_i18n.cpp:27
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Управља јачином звука на слушалицама. Неке звучне картице имају прекидач "
+"који треба ручно активирати за излаз на слушалице."
+
+#: backends/mixer_backend_i18n.cpp:28
+#, kde-format
+msgid "---"
+msgstr "---"
+
+# >> @item mixer device name
+#: backends/mixer_mpris2.cpp:52 backends/mixer_pulse.cpp:1111
+#, kde-format
+msgid "Playback Streams"
+msgstr "токови пуштања"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:58
+#, kde-format
+msgid "Volume"
+msgstr "јачина"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:58
+#, kde-format
+msgid "Bass"
+msgstr "бас"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:58
+#, kde-format
+msgid "Treble"
+msgstr "сопран"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:59
+#, kde-format
+msgid "Synth"
+msgstr "синтисајзер"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:59
+#, kde-format
+msgid "Pcm"
+msgstr "ПЦМ"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:59
+#, kde-format
+msgid "Speaker"
+msgstr "бипер"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:60 backends/mixer_sun.cpp:74
+#, kde-format
+msgid "Microphone"
+msgstr "микрофон"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:60 backends/mixer_sun.cpp:76
+#, kde-format
+msgid "CD"
+msgstr "ЦД"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:60
+#, kde-format
+msgid "Line"
+msgstr "линија"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:61
+#, kde-format
+msgid "Mix"
+msgstr "микс"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:61
+#, kde-format
+msgid "Pcm2"
+msgstr "ПЦМ 2"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:61
+#, kde-format
+msgid "RecMon"
+msgstr "монитор снимања"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:62
+#, kde-format
+msgid "IGain"
+msgstr "улазно појачање"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:62
+#, kde-format
+msgid "OGain"
+msgstr "излазно појачање"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:62
+#, kde-format
+msgid "Line1"
+msgstr "линија 1"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:63
+#, kde-format
+msgid "Line2"
+msgstr "линија 2"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:63
+#, kde-format
+msgid "Line3"
+msgstr "линија 3"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:63
+#, kde-format
+msgid "Digital1"
+msgstr "дигитални 1"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:64
+#, kde-format
+msgid "Digital2"
+msgstr "дигитални 2"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:64
+#, kde-format
+msgid "Digital3"
+msgstr "дигитални 3"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:64
+#, kde-format
+msgid "PhoneIn"
+msgstr "телефонски улаз"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:65
+#, kde-format
+msgid "PhoneOut"
+msgstr "телефонски излаз"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:65
+#, kde-format
+msgid "Video"
+msgstr "видео"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:65
+#, kde-format
+msgid "Radio"
+msgstr "радио"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:66
+#, kde-format
+msgid "Monitor"
+msgstr "монитор"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:66
+#, kde-format
+msgid "3D-depth"
+msgstr "3Д дубина"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:66
+#, kde-format
+msgid "3D-center"
+msgstr "3Д центар"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:67 backends/mixer_oss.cpp:68 core/mixdevice.cpp:134
+#, kde-format
+msgid "unknown"
+msgstr "непознато"
+
+# >> @item mixer device name
+#: backends/mixer_oss.cpp:68
+#, kde-format
+msgid "unused"
+msgstr "некоришћено"
+
+#: backends/mixer_oss.cpp:234 backends/mixer_oss4.cpp:495
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
+msgstr ""
+"К‑миксета: Немате дозволу да приступ уређају миксете.\n"
+"Пријавите се као „root“ и извршите „chmod а+rw /dev/mixer*“ да бисте "
+"омогућили приступ."
+
+#: backends/mixer_oss.cpp:238
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using commercial OSS."
+msgstr ""
+"К‑миксета: Не могу да нађем миксету.\n"
+"Проверите да ли је звучна картица инсталирана\n"
+"и да ли је учитан драјвер за њу.\n"
+"Под Линуксом вам можда треба insmod да бисте\n"
+"учитали драјвер.\n"
+"Употребите soundon ако користите комерцијални ОСС."
+
+#: backends/mixer_oss4.cpp:499
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using OSS4 from 4front."
+msgstr ""
+"К‑миксета: Не могу да нађем миксету.\n"
+"Проверите да ли је звучна картица инсталирана\n"
+"и да ли је учитан драјвер за њу.\n"
+"Под Линуксом вам можда треба insmod да бисте\n"
+"учитали драјвер.\n"
+"Употребите soundon ако користите ОСС 4 од Фоурфронта."
+
+#: backends/mixer_pulse.cpp:341 backends/mixer_pulse.cpp:398
+#, kde-format
+msgid "Unknown Application"
+msgstr "Непознат програм"
+
+#: backends/mixer_pulse.cpp:444
+#, kde-format
+msgid "Event Sounds"
+msgstr "Звукови догађаја"
+
+# >> @item mixer device name
+#: backends/mixer_pulse.cpp:1095
+#, kde-format
+msgid "Playback Devices"
+msgstr "уређаји за пуштање"
+
+# >> @item mixer device name
+#: backends/mixer_pulse.cpp:1103
+#, kde-format
+msgid "Capture Devices"
+msgstr "уређаји за хватање"
+
+# >> @item mixer device name
+#: backends/mixer_pulse.cpp:1122
+#, kde-format
+msgid "Capture Streams"
+msgstr "токови хватања"
+
+#: backends/mixer_pulse.cpp:1213
+#, kde-format
+msgid "Volume Control Feedback Sound"
+msgstr "Одзивни звук контроле јачине"
+
+# >> @item mixer device name
+#: backends/mixer_sun.cpp:69
+#, kde-format
+msgid "Master Volume"
+msgstr "главна јачина"
+
+# >> @item mixer device name
+#: backends/mixer_sun.cpp:70
+#, kde-format
+msgid "Internal Speaker"
+msgstr "унутрашњи бипер"
+
+# >> @item mixer device name
+#: backends/mixer_sun.cpp:71
+#, kde-format
+msgid "Headphone"
+msgstr "слушалице"
+
+# >> @item mixer device name
+#: backends/mixer_sun.cpp:72
+#, kde-format
+msgid "Line Out"
+msgstr "излазна линија"
+
+# >> @item mixer device name
+#: backends/mixer_sun.cpp:73
+#, kde-format
+msgid "Record Monitor"
+msgstr "монитор снимања"
+
+# >> @item mixer device name
+#: backends/mixer_sun.cpp:75
+#, kde-format
+msgid "Line In"
+msgstr "улазна линија"
+
+#: backends/mixer_sun.cpp:241
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Ask your system administrator to fix /dev/audioctl to allow access."
+msgstr ""
+"К‑миксета: Немате дозволу да приступите уређају миксете.\n"
+"Тражите систем-администратору да омогући приступ „/dev/audioctl“."
+
+#: core/volume.cpp:47
+#, kde-format
+msgctxt "Channel name"
+msgid "Left"
+msgstr "леви"
+
+#: core/volume.cpp:48
+#, kde-format
+msgctxt "Channel name"
+msgid "Right"
+msgstr "десни"
+
+#: core/volume.cpp:49
+#, kde-format
+msgctxt "Channel name"
+msgid "Center"
+msgstr "средишњи"
+
+#: core/volume.cpp:50
+#, kde-format
+msgctxt "Channel name"
+msgid "Subwoofer"
+msgstr "бас звучник"
+
+#: core/volume.cpp:51
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Left"
+msgstr "окружујући леви"
+
+#: core/volume.cpp:52
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Right"
+msgstr "окружујући десни"
+
+#: core/volume.cpp:53
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Left"
+msgstr "бочни леви"
+
+#: core/volume.cpp:54
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Right"
+msgstr "бочни десни"
+
+#: core/volume.cpp:55
+#, kde-format
+msgctxt "Channel name"
+msgid "Rear Center"
+msgstr "задњи средишњи"
+
+# >> @item mixer device name
+#: core/volume.cpp:57
+#, fuzzy, kde-format
+#| msgid "unknown"
+msgctxt "Channel name"
+msgid "Unknown"
+msgstr "непознато"
+
+#: gui/dialogaddview.cpp:50
+#, kde-format
+msgid "All controls"
+msgstr "Све контроле"
+
+#: gui/dialogaddview.cpp:51
+#, kde-format
+msgid "Only playback controls"
+msgstr "Само контроле пуштања"
+
+#: gui/dialogaddview.cpp:52
+#, kde-format
+msgid "Only capture controls"
+msgstr "Само контроле хватања"
+
+# >> @title:window
+#: gui/dialogaddview.cpp:59
+#, kde-format
+msgid "Add View"
+msgstr "Додавање приказа"
+
+#: gui/dialogaddview.cpp:88
+#, kde-format
+msgid "Select mixer:"
+msgstr "Миксета:"
+
+#: gui/dialogaddview.cpp:95
+#, kde-format
+msgid "Current mixer"
+msgstr "Тренутна миксета"
+
+#: gui/dialogaddview.cpp:115
+#, kde-format
+msgid "Select the design for the new view:"
+msgstr "Изглед новог приказа:"
+
+#: gui/dialogchoosebackends.cpp:54
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr ""
+
+# >> @title:window
+#: gui/dialogchoosebackends.cpp:81
+#, kde-format
+msgid "Select Mixers"
+msgstr "Избор миксета"
+
+# >> @title:window
+#: gui/dialogselectmaster.cpp:41 gui/dialogselectmaster.cpp:149
+#, kde-format
+msgid "Select Master Channel"
+msgstr "Избор главног канала"
+
+#: gui/dialogselectmaster.cpp:71
+#, kde-format
+msgid "Current mixer:"
+msgstr "Тренутна миксета:"
+
+#: gui/dialogselectmaster.cpp:98
+#, kde-format
+msgid "Select the channel representing the master volume:"
+msgstr "Канал који представља главну јачину:"
+
+# >> @item %1 driver name
+#: gui/dialogselectmaster.cpp:176
+#, kde-format
+msgid "Automatic (%1 recommendation)"
+msgstr "аутоматски (препоручује %1)"
+
+# >> @title:window
+#: gui/dialogviewconfiguration.cpp:134
+#, kde-format
+msgid "Configure Channels"
+msgstr "Подешавање канала"
+
+#: gui/dialogviewconfiguration.cpp:145
+#, kde-format
+msgid "Configure the visible channels. Drag icons between the lists to update."
+msgstr "Подесите видљиве канале. Ажурирајте спискове превлачењем иконица."
+
+#: gui/dialogviewconfiguration.cpp:215
+#, kde-format
+msgid "Visible channels:"
+msgstr "Видљиви канали:"
+
+#: gui/dialogviewconfiguration.cpp:218
+#, kde-format
+msgid "Available channels:"
+msgstr "Доступни канали:"
+
+#: gui/dialogviewconfiguration.cpp:232
+#, kde-format
+msgid "Move the selected channel to the visible list"
+msgstr "Премести изабрани канал на списак видљивих"
+
+#: gui/dialogviewconfiguration.cpp:240
+#, kde-format
+msgid "Move the selected channel to the available (hidden) list"
+msgstr "Премести изабрани канал на списак доступних (скривених)"
+
+#: gui/dialogviewconfiguration.cpp:280
+#, kde-format
+msgid "Show the selected channel"
+msgstr "Прикажи изабрани канал"
+
+#: gui/dialogviewconfiguration.cpp:281
+#, kde-format
+msgid "Hide the selected channel"
+msgstr "Сакриј изабрани канал"
+
+#: gui/dialogviewconfiguration.cpp:282
+#, kde-format
+msgid "Visible channels"
+msgstr "Видљиви канали"
+
+#: gui/dialogviewconfiguration.cpp:283
+#, kde-format
+msgid "Available channels"
+msgstr "Доступни канали"
+
+#: gui/kmixdockwidget.cpp:65 gui/kmixprefdlg.cpp:81
+#, kde-format
+msgid "Volume Control"
+msgstr "Контрола јачине"
+
+#: gui/kmixdockwidget.cpp:172
+#, kde-format
+msgid "M&ute"
+msgstr "&Искључи звук"
+
+#: gui/kmixdockwidget.cpp:202
+#, kde-format
+msgid "No mixer devices available"
+msgstr ""
+
+#: gui/kmixdockwidget.cpp:210
+#, fuzzy, kde-format
+#| msgid "Volume Feedback"
+msgid "Volume muted"
+msgstr "Одзив јачине"
+
+#: gui/kmixdockwidget.cpp:211
+#, kde-format
+msgid "Volume at %1%"
+msgstr "Јачина на %1%"
+
+#: gui/kmixdockwidget.cpp:213
+#, kde-format
+msgid "%1 - %2"
+msgstr ""
+
+# >! Contexts.
+#: gui/kmixprefdlg.cpp:60
+#, kde-format
+msgid "Configure"
+msgstr "Подеси"
+
+#: gui/kmixprefdlg.cpp:79
+#, kde-format
+msgid "General"
+msgstr "Опште"
+
+#: gui/kmixprefdlg.cpp:80
+#, kde-format
+msgid "Startup"
+msgstr "Покретање"
+
+#: gui/kmixprefdlg.cpp:118
+#, kde-format
+msgid "Start KMix on desktop startup"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:120
+#, kde-format
+msgid "Start KMix automatically when the desktop starts."
+msgstr ""
+
+# literal-segment: kmix_autostart.desktop
+#: gui/kmixprefdlg.cpp:123
+#, fuzzy, kde-format
+#| msgid ""
+#| "Autostart can not be enabled, as the autostart file kmix_autostart."
+#| "desktop is not installed."
+msgid ""
+"Autostart will not work, because the autostart file kmix_autostart.desktop "
+"is missing. Check that KMix is installed correctly."
+msgstr ""
+"Самопокретање не може да се укључи зато што фајл kmix_autostart.desktop није "
+"инсталиран."
+
+#: gui/kmixprefdlg.cpp:133
+#, fuzzy, kde-format
+#| msgid "Restore volumes on login"
+msgid "Restore previous volume settings on desktop startup"
+msgstr "Обнови јачине по пријављивању"
+
+#: gui/kmixprefdlg.cpp:135
+#, fuzzy, kde-format
+#| msgid "Restore all volume levels and switches."
+msgid ""
+"Restore all mixer volume levels and switches to their last used settings "
+"when the desktop starts."
+msgstr "Обнови све јачине и прекидаче звука."
+
+#: gui/kmixprefdlg.cpp:138
+#, fuzzy, kde-format
+#| msgid "Dynamic controls from Pulseaudio and MPRIS2 will not be restored."
+msgid ""
+"The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
+msgstr "Динамичке контроле из Пулс‑аудија и МПРИС‑а 2 неће бити обновљене."
+
+#: gui/kmixprefdlg.cpp:155
+#, kde-format
+msgid "&Horizontal"
+msgstr "&Водоравно"
+
+#: gui/kmixprefdlg.cpp:156
+#, kde-format
+msgid "&Vertical"
+msgstr "&Усправно"
+
+#: gui/kmixprefdlg.cpp:198
+#, kde-format
+msgid "Behavior"
+msgstr "Понашање"
+
+#: gui/kmixprefdlg.cpp:207
+#, fuzzy, kde-format
+#| msgid "Volume Feedback"
+msgid "Volume feedback"
+msgstr "Одзив јачине"
+
+# ? Неутралисано. Нека идеја за ‘overdrive’?
+#: gui/kmixprefdlg.cpp:210
+#, fuzzy, kde-format
+#| msgid "Volume Overdrive"
+msgid "Volume overdrive"
+msgstr "Повишење јачине"
+
+#: gui/kmixprefdlg.cpp:211
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Raise the maximum volume to 150%"
+msgstr ""
+
+#: gui/kmixprefdlg.cpp:215
+#, fuzzy, kde-format
+#| msgid "Volume feedback is only available for Pulseaudio."
+msgid "Volume feedback and volume overdrive are only available for PulseAudio."
+msgstr "Одзив јачине је доступан само за Пулс‑аудио."
+
+#: gui/kmixprefdlg.cpp:234
+#, fuzzy, kde-format
+#| msgid "Volume Feedback"
+msgid "Volume step:"
+msgstr "Одзив јачине"
+
+#: gui/kmixprefdlg.cpp:243
+#, fuzzy, kde-format
+#| msgid "You must restart KMix for this setting to take effect."
+msgid ""
+"KMix must be restarted for the Volume Step and Overdrive settings to take "
+"effect."
+msgstr ""
+"Морате поново покренути К‑миксету да би ова поставка ступила у дејство."
+
+#: gui/kmixprefdlg.cpp:253
+#, kde-format
+msgid "Visual"
+msgstr "Приказ"
+
+#: gui/kmixprefdlg.cpp:262
+#, fuzzy, kde-format
+#| msgid "Show &tickmarks"
+msgid "Show slider &tickmarks"
+msgstr "&Подеоци"
+
+#: gui/kmixprefdlg.cpp:263
+#, kde-format
+msgid "Enable/disable tickmark scales on the sliders"
+msgstr "Укључите или искључите подеоке на клизачима."
+
+#: gui/kmixprefdlg.cpp:265
+#, fuzzy, kde-format
+#| msgid "Show &labels"
+msgid "Show control &labels"
+msgstr "&Етикете"
+
+#: gui/kmixprefdlg.cpp:266
+#, kde-format
+msgid "Enables/disables description labels above the sliders"
+msgstr "Укључите или искључите описне етикете изнад клизача."
+
+#: gui/kmixprefdlg.cpp:270
+#, kde-format
+msgid "Show On Screen Display (&OSD)"
+msgstr "Екрански приказ (&ОСД)"
+
+#: gui/kmixprefdlg.cpp:280
+#, fuzzy, kde-format
+#| msgid "Slider orientation: "
+msgid "Slider orientation (main window): "
+msgstr "Усмерење клизача: "
+
+#: gui/kmixprefdlg.cpp:281
+#, fuzzy, kde-format
+#| msgid "Slider orientation (System tray volume control):"
+msgid "Slider orientation (system tray popup):"
+msgstr "Усмерење клизача (јачина у системској касети):"
+
+#: gui/kmixprefdlg.cpp:292
+#, fuzzy, kde-format
+#| msgid "&Dock in system tray"
+msgid "Dock in system tray"
+msgstr "&Усидри у системску касету"
+
+#: gui/kmixprefdlg.cpp:294
+#, kde-format
+msgid ""
+"Dock the mixer into the system tray. Click on it to open the popup volume "
+"control."
+msgstr ""
+
+#: gui/kmixtoolbox.cpp:97
+#, fuzzy, kde-format
+#| msgid "No sound card is installed or currently plugged in."
+msgid "No sound devices are installed or are currently available."
+msgstr "Нема ниједне инсталиране нити утакнуте звучне картице."
+
+# >> @option:check
+#: gui/mdwenum.cpp:55
+#, kde-format
+msgid "&Hide"
+msgstr "&Сакривено"
+
+#: gui/mdwenum.cpp:58
+#, kde-format
+msgid "C&onfigure Shortcuts..."
+msgstr "П&одеси пречице..."
+
+# >> @option:check
+#: gui/mdwslider.cpp:101
+#, fuzzy, kde-format
+#| msgid "&Split Channels"
+msgid "Split Channels"
+msgstr "&Раздвојени канали"
+
+#: gui/mdwslider.cpp:120 gui/mdwslider.cpp:639
+#, kde-format
+msgid "Capture"
+msgstr "Хватање"
+
+# >> @item mixer device name
+#: gui/mdwslider.cpp:125
+#, fuzzy, kde-format
+#| msgid "Capture Devices"
+msgid "Use Device"
+msgstr "уређаји за хватање"
+
+#: gui/mdwslider.cpp:130
+#, fuzzy, kde-format
+#| msgid "C&onfigure Shortcuts..."
+msgid "Channel Shortcuts..."
+msgstr "П&одеси пречице..."
+
+#: gui/mdwslider.cpp:179
+#, kde-format
+msgid "Toggle Mute"
+msgstr "Искључено/укључено"
+
+#: gui/mdwslider.cpp:338
+#, fuzzy, kde-format
+#| msgid "Capture/Uncapture %1"
+msgctxt "%1=channel"
+msgid "Capture/Uncapture %1"
+msgstr "Ухвати/отпусти %1"
+
+#: gui/mdwslider.cpp:339
+#, fuzzy, kde-format
+#| msgid "Mute/Unmute %1"
+msgctxt "%1=channel"
+msgid "Mute/Unmute %1"
+msgstr "Искључи/укључи %1"
+
+#: gui/mdwslider.cpp:343 gui/mdwslider.cpp:344 gui/mdwslider.cpp:345
+#, kde-format
+msgctxt "%1=device %2=channel"
+msgid ""
+"%1\n"
+"%2"
+msgstr ""
+
+#: gui/mdwslider.cpp:673
+#, kde-format
+msgid "%1 (capture)"
+msgstr "%1 (хватање)"
+
+#: gui/mdwslider.cpp:1195
+#, fuzzy, kde-format
+#| msgid "Automatic According to Category"
+msgid "Automatic (according to category)"
+msgstr "Аутоматско према категорији"
+
+# >> @info:tooltip
+#: gui/viewbase.cpp:96
+#, kde-format
+msgid "Configure this view"
+msgstr "Подеси овај приказ"
+
+#: gui/viewbase.cpp:166
+#, fuzzy, kde-format
+#| msgid "Configure &Channels..."
+msgid "Configure Channels..."
+msgstr "Подеси &канале..."
+
+#: gui/viewbase.cpp:219
+#, kde-format
+msgid "Device Settings"
+msgstr "Поставке уређаја"
+
+# >> @info:tooltip
+#: gui/viewdockareapopup.cpp:364
+#, kde-format
+msgid "Show the full mixer window"
+msgstr "Прикажи пун прозор миксете"
+
+#: gui/viewdockareapopup.cpp:401
+#, kde-format
+msgid "Load volume profile %1"
+msgstr "Учитај профил јачине %1"
+
+#: gui/viewsliders.cpp:180
+#, kde-format
+msgid "Nothing is playing audio."
+msgstr "Ништа не пушта аудио."
+
+#: gui/viewsliders.cpp:183
+#, kde-format
+msgid "Nothing is capturing audio."
+msgstr "Ништа не хвата аудио."
+
+#: gui/viewsliders.cpp:184
+#, fuzzy, kde-format
+#| msgid "No capture devices."
+msgid "There are no capture devices."
+msgstr "Нема уређаја за хватање."
+
+#: gui/viewsliders.cpp:185
+#, fuzzy, kde-format
+#| msgid "No playback devices."
+msgid "There are no playback devices."
+msgstr "Нема уређаја за пуштање."

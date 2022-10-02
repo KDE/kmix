@@ -1,0 +1,675 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY % Swedish "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>Handbok &kmix;</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Utvecklare</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Utvecklare</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Utvecklare</contrib>
+</othercredit>
+
+<othercredit role="translator"
+> <firstname
+>Stefan</firstname
+> <surname
+>Asserhäll</surname
+> <affiliation
+><address
+><email
+>stefan.asserhall@bredband.net</email
+></address
+></affiliation
+> <contrib
+>Översättare</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken och &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2020-10-04</date>
+<releaseinfo
+>Program 20.12</releaseinfo>
+
+<abstract>
+<para
+>&kmix; är ett program som låter dig ändra volym för ditt ljudkort.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>ljud</keyword>
+<keyword
+>volym</keyword>
+<keyword
+>mixer</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Inledning</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; stöder flera olika plattformar och ljuddrivrutiner.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Om du både har installerat ALSA och Open Sound System drivrutiner, använder &kmix; ALSA-drivrutinen.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>Skärmbild av &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Skärmbild av &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Huvudfönster</title>
+
+<para
+>Översikt av &kmix; huvudfönster</para>
+<screenshot>
+  <screeninfo
+>Skärmbild av &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Skärmbild av &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Arkivalternativ</title>
+<screenshot>
+  <screeninfo
+>&kmix; arkivalternativ</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; arkivalternativ</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>Arkiv</guimenu
+> <guimenuitem
+>Dölj mixerfönster</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Dölj mixerfönster</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Inställningar</title>
+
+<screenshot>
+  <screeninfo
+>&kmix; inställningar</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; inställningar</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Inställningar</guimenu
+> <guimenuitem
+>Ljudinställning</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Öppna <ulink url="help:/kcontrol/phonon"
+>&phonon;s systeminställningsmodul</ulink
+></action
+> för att anpassa inställningar av ljud- och videoenheter och gränssnitten som används av &kde;:s programmeringsgränssnitt för multimedia, &phonon;.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Välj huvudkanal</title>
+<screenshot>
+  <screeninfo
+>&kmix; huvudkanal</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; huvudkanal</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Markera &kmix; huvudkanal.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>Anpassa &kmix;</title>
+<sect3 id="configure-general">
+  <title
+>Allmän inställning </title>
+  <screenshot>
+  <screeninfo
+>Allmän inställning av &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Allmän inställning av &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Anpassa allmänna parametrar i &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Beteende</guimenu
+> <guimenuitem
+>Övervolym</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Markera rutan för att tillåta att volymen ställs in till mer än rekommenderat värde (ibland överskrider maximal volym i Pulseaudio det normala värdet). En omstart av &kmix; krävs för att inställningen ska få någon effekt.</para>
+  <warning>
+    <para
+>Avmarkera alternativet om det uppstår hörbar ljuddistortion vid maximal volym. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Beteende</guimenu
+> <guimenuitem
+>Volymåtermatning</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera rutan för att aktivera hörbar återmatning vid volymändring.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Beteende</guimenu
+> <guimenuitem
+>Volymsteg</guimenuitem
+> </menuchoice
+></term>
+<listitem>
+    <para
+>Ställ in volymsteget som ett procentvärde av volymintervallet. </para>
+    <para
+>Det påverkar ändring av volymen via snabbtangenter, med mushjulet över ikonen i systembrickan, eller flytta skjutreglagen med ett sidosteg. </para>
+    <para
+>&kmix; måste startas om för att ändringen ska få effekt. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visuell</guimenu
+> <guimenuitem
+>Visa gradering på skjutreglage</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera rutan för att visa gradering på skjutreglagen.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visuell</guimenu
+> <guimenuitem
+>Visa kontrolletiketter</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera rutan för att visa beteckningar för kontrollreglage.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Visuell</guimenu
+> <guimenuitem
+>Skärmvisning (OSD)</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera rutan för att aktivera skärmvisning när musen hålls över &kmix; ikon i systembrickan.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Skjutreglagens orientering (huvudfönster)</guimenu
+> <guimenuitem
+>Horisontell</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera alternativknappen för att rotera kontrollreglaget horisontellt.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Skjutreglagens orientering (huvudfönster)</guimenu
+> <guimenuitem
+>Vertikal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera alternativknappen för att rotera kontrollreglaget vertikalt.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Skjutreglagens orientering (volymkontroll i systembrickan)</guimenu
+> <guimenuitem
+>Horisontell/Vertikal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Samma som föregående två alternativknappar men för systembrickans volymkontroll (rutan som visas vid ett vänsterklick på &kmix; ikon i systembrickan).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Startinställning </title>
+  <screenshot>
+  <screeninfo
+>Startinställning av &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Startinställning av &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Sidan låter dig anpassa diverse startparametrar i &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Start</guimenu
+> <guimenuitem
+>Starta Kmix vid skrivbordsstart</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera rutan för att aktivera automatisk start av &kmix; med skrivbordsmiljön.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Start</guimenu
+> <guimenuitem
+>Återställ föregående volyminställningar vid skrivbordsstart</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Markera rutan för att aktivera återställning av volymnivåer och brytare till deras senast använda inställningar vid skrivbordsstart.</action
+></para>
+  <warning>
+    <para
+>Dynamisk kontroll av Pulseaudio eller MPRIS2 volym återställs inte. </para>
+  </warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-volume-control">
+  <title
+>Inställning av volymkontroll </title>
+  <screenshot>
+  <screeninfo
+>Inställning av volymkontroll i &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Inställning av volymkontroll i &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Sidan låter dig anpassa diverse parametrar för volymkontroll i &kmix;.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Docka i systembrickan</guilabel>
+</term>
+<listitem
+><para
+><action
+>Markera rutan för att docka &kmix; i systembrickan.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Det går att välja mixrar som ska visas i volymkontrollen med motsvarande lista på den här sidan. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Avancerad användning</title>
+<sect1>
+<title
+>Fjärrstyrning och skript via &DBus;</title>
+<para
+>Det går att styra &kmix; via &DBus;. Det är avsett för avancerade användare som vill utföra särskilda uppgifter, som att alltid tysta datorn varje dag klockan 22, eller andra skriptuppgifter. </para>
+
+<para
+>Lista alla &DBus;-relaterade metoder och egenskaper i &kmix; <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Hämta volymen (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Ställa in volymen (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Tack till och licens</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Dokumentation copyright &copy; 2010 Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Tack till:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (kopierade och klistrade in en mängd saker från hans gamla &kmix; documentation) </para>
+
+<para
+>Översättning Stefan Asserhäll <email
+>stefan.asserhall@bredband.net</email
+></para
+> &underFDL; &underGPL; </chapter>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

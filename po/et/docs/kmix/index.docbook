@@ -1,0 +1,674 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY kappname "&kmix;">
+  <!ENTITY package "kdemultimedia">
+  <!ENTITY % Estonian  "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>&kmix;i käsiraamat</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Arendaja</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Arendaja</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Arendaja</contrib>
+</othercredit>
+
+<othercredit role="translator"
+><firstname
+>Marek</firstname
+><surname
+>Laane</surname
+><affiliation
+><address
+><email
+>bald@starman.ee</email
+></address
+></affiliation
+><contrib
+>Tõlge eesti keelde</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>2013-12-21</date>
+<releaseinfo
+>4.5 (&kde; 4.13)</releaseinfo>
+
+<abstract>
+<para
+>&kmix; võimaldab muuta sinu helikaardi helitugevust.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>heli</keyword>
+<keyword
+>helitugevus</keyword>
+<keyword
+>mikser</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Sissejuhatus</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; toetab mitmeid platvorme ja helidraivereid.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Kui sul on paigaldatud nii ALSA kui ka Open Sound Systemi draiverid, kasutab &kmix; ALSA draiverit.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>&kmix;i pilt</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i pilt</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Peaaken</title>
+
+<para
+>&kmix;i peaakna ülevaade</para>
+<screenshot>
+  <screeninfo
+>&kmix;i pilt</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i pilt</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Faili valikud</title>
+<screenshot>
+  <screeninfo
+>&kmix;i faili valikud</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i faili valikud</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>Fail</guimenu
+> <guimenuitem
+>Peida mikseri aken</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Peida mikseri aken</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Seadistused</title>
+
+<screenshot>
+  <screeninfo
+>&kmix;i seadistused</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i seadistused</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Seadistused</guimenu
+> <guimenuitem
+>Heli seadistamine</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+><ulink url="help:/kcontrol/phonon"
+>&phonon;i Süsteemi seadistuste mooduli</ulink
+> avamine</action
+> heli- ja videoseadmete eelistuste ning &kde; multimeedia-API &phonon;i kasutatavate taustaprogrammide seadistamiseks;.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Peamise kanali valimine</title>
+<screenshot>
+  <screeninfo
+>&kmix;i peamine kanal</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i peamine kanal</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>&kmix;i peamise kanali valimine</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>&kmix;i seadistamine</title>
+<sect3 id="configure-general">
+  <title
+>Üldised seadistused </title>
+  <screenshot>
+  <screeninfo
+>&kmix;i üldised seadistused</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i üldised seadistused</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>&kmix;i üldiste parameetrite seadistamine.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Käitumine</guimenu
+> <guimenuitem
+>Helitugevuse tagasiside</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle märkimisel kuuleb helitugevuse muutmisel tagasisidet.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Käitumine</guimenu
+> <guimenuitem
+>Helitugevuse ülekeeramine</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Selle märkimisel saab helitugevus olla suurem kui soovitatav väärtus (mõnikord ületab PulseAudio maksimaalne helitugevus normaalset väärtust). Selle jõustumiseks on vaja &kmix; taaskäivitada.</para>
+  <warning>
+    <para
+>Eemalda selle sätte eest märge, kui maksimaalse helitugevusega on selgelt kuulda helimoonutusi. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Välimus</guimenu
+> <guimenuitem
+>Liuguritel näidatakse positsioonimärke</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle märkimisel näidatakse mikseri liuguritel positsioonimärke.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Välimus</guimenu
+> <guimenuitem
+>Pealdiste näitamine</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle märkimisel näidatakse liugurite juures nende nimetusi.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Välimus</guimenu
+> <guimenuitem
+>Ekraaniesituse (OSD) näitamine</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle märkimisel näeb hiirekursorit &kmix;i süsteemisalve vidina kohale viies ekraaniesitust (OSD).</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Liuguri asend</guimenu
+> <guimenuitem
+>Horisontaalne</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle valimisel asetsevad liugurid horisontaalselt.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Liuguri asend</guimenu
+> <guimenuitem
+>Vertikaalne</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle valimisel asetsevad liugurid vertikaalselt.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Liuguri orientatsioon (süsteemisalve helitugevuse juhis)</guimenu
+> <guimenuitem
+>Horisontaalne/Vertikaalne</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Sama, mis eelmised kaks raadionuppu, aga süsteemisalve helitugevuse juhise tarbeks (paneel, mida näeb, kui klõpsata &HVNga; &kmix;i süsteemisalve ikoonil).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Käivitamise seadistamine </title>
+  <screenshot>
+  <screeninfo
+>&kmix;i käivitamise seadistamine</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i käivitamise seadistamine</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Siin saab seadistada mitmesuguseid &kmix;i käivitamisega seotud parameetreid.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Käivitamine</guimenu
+> <guimenuitem
+>Helitugevused taastatakse sisselogimisel</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle märkimisel taastatakse varem kehtinud helitugevused sisselogimisel.</action
+></para>
+  <warning>
+    <para
+>PulseAudio ja MPRIS2 dünaamilist kontrolli ei taastata. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Käivitamine</guimenu
+> <guimenuitem
+>Automaatkäivitus</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Selle märkimisel käivitatakse &kmix; automaatsel koos töökeskkonnaga.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-sound-menu">
+  <title
+>Hekimenüü seadistamine </title>
+  <screenshot>
+  <screeninfo
+>&kmix;i helimenüü seadistamine</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix;i helimenüü seadistamine</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Siin saab seadistada mitmesuguseid &kmix;i helimenüü parameetreid.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Dokkimine süsteemisalve</guilabel>
+</term>
+<listitem
+><para
+><action
+>Selle märkimisel dokitakse &kmix; süsteemisalve.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Helimenüüs näidatavaid miksereid saab valida selle lehekülje loendis. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Kasutamine edasijõudnutele</title>
+<sect1>
+<title
+>Kaugjuhtimine ja skriptimine &DBus;i vahendusel</title>
+<para
+>&kmix;i on võimalik juhtida &DBus;i vahendusel. See on mõeldud kogenud kasutajatele, kes soovivad ette võtta spetsiifilisi toiminguid, näiteks muuta arvuti tummaks iga päev kell 10 õhtul, või mis tahes skriptimistoiminguid. </para>
+
+<para
+>Kõigi &kmix;iga seotud &DBus;i meetodite ja omaduste loend <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Helitugevuse hankimine (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Helitugevuse määramine (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Autorid ja litsents</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Dokumentatsiooni autoriõigus &copy; 2010: Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Tänusõnad:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (paljud asjad on kopeeritud tema vanast &kmix;i dokumentatsioonist) </para>
+
+<para
+>Tõlge eesti keelde: Marek Laane <email
+>bald@starman.ee</email
+></para
+> 
+&underFDL; &underGPL; </chapter>
+
+<appendix id="installation">
+<title
+>Paigaldamine</title>
+
+<sect1 id="getting-Kmix">
+<title
+>&kmix;i hankimine</title>
+&install.intro.documentation; </sect1>
+
+<sect1 id="compilation">
+<title
+>Kompileerimine ja paigaldamine</title>
+&install.compile.documentation; </sect1>
+</appendix>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->

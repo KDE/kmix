@@ -1,0 +1,1423 @@
+# translation of kmix.po to Greek
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+#
+# Stergios Dramis <sdramis@egnatia.ee.auth.gr>, 2002-2004.
+# Spiros Georgaras <sng@hellug.gr>, 2005, 2006, 2007.
+# Toussis Manolis <manolis@koppermind.homelinux.org>, 2007, 2008, 2009.
+# Spiros Georgaras <sngeorgaras@otenet.gr>, 2008.
+# Glentadakis Dimitrios <translators_team@mandrivalinux.gr>, 2009.
+# Petros <pvidalis@gmail.com>, 2010, 2018.
+# Stelios <sstavra@gmail.com>, 2011, 2012, 2017, 2019, 2020, 2021.
+# Dimitrios Glentadakis <dglent@gmail.com>, 2011, 2012, 2014.
+# Antonis Geralis <capoiosct@gmail.com>, 2012.
+# Dimitris Kardarakos <dimkard@gmail.com>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: kmix\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"PO-Revision-Date: 2021-06-19 08:06+0300\n"
+"Last-Translator: Stelios <sstavra@gmail.com>\n"
+"Language-Team: Greek <kde-i18n-el@kde.org>\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 20.04.2\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Τούσης Μανώλης,Σπύρος Γεωργαράς"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "manolis@koppermind.homelinux.org,sng@hellug.gr"
+
+#: apps/kmixctrl.cpp:40
+#, kde-format
+msgid "KMixCtrl"
+msgstr "KMixCtrl"
+
+#: apps/kmixctrl.cpp:41
+#, kde-format
+msgid "kmixctrl - kmix volume save/restore utility"
+msgstr "kmixctrl - εργαλείο αποθήκευσης/αποκατάστασης έντασης του kmix"
+
+#: apps/kmixctrl.cpp:43
+#, kde-format
+msgid "(c) 2000 by Stefan Schimanski"
+msgstr "(c) 2000 by Stefan Schimanski"
+
+#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#, kde-format
+msgid "Stefan Schimanski"
+msgstr "Stefan Schimanski"
+
+#: apps/kmixctrl.cpp:51
+#, kde-format
+msgid "Save current volumes as default"
+msgstr "Αποθήκευση τρεχουσών εντάσεων ως προκαθορισμένες"
+
+#: apps/kmixctrl.cpp:53
+#, kde-format
+msgid "Restore default volumes"
+msgstr "Αποκατάσταση προκαθορισμένων εντάσεων"
+
+#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"Η κάρτα ήχου που περιλαμβάνει την κύρια συσκευή έχει αφαιρεθεί. Μετάβαση στο "
+"%1 της κάρτας %2"
+
+#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "Η τελευταία κάρτα ήχου έχει αφαιρεθεί."
+
+#: apps/kmixwindow.cpp:173
+#, kde-format
+msgid "Audio Setup..."
+msgstr "Ρύθμιση ήχου..."
+
+#: apps/kmixwindow.cpp:177
+#, kde-format
+msgid "Hide Mixer Window"
+msgstr "Απόκρυψη παραθύρου μείκτη"
+
+#: apps/kmixwindow.cpp:182
+#, kde-format
+msgid "Configure &Channels..."
+msgstr "Διαμόρφωση &καναλιών..."
+
+#: apps/kmixwindow.cpp:186
+#, kde-format
+msgid "Select Master Channel..."
+msgstr "Επιλογή κύριου καναλιού..."
+
+#: apps/kmixwindow.cpp:191
+#, kde-format
+msgid "Save volume profile 1"
+msgstr "Αποθήκευση προφίλ έντασης 1"
+
+#: apps/kmixwindow.cpp:196
+#, kde-format
+msgid "Save volume profile 2"
+msgstr "Αποθήκευση προφίλ έντασης 2"
+
+#: apps/kmixwindow.cpp:201
+#, kde-format
+msgid "Save volume profile 3"
+msgstr "Αποθήκευση προφίλ έντασης 3"
+
+#: apps/kmixwindow.cpp:206
+#, kde-format
+msgid "Save volume profile 4"
+msgstr "Αποθήκευση προφίλ έντασης 4"
+
+#: apps/kmixwindow.cpp:211
+#, kde-format
+msgid "Load volume profile 1"
+msgstr "Φόρτωση προφίλ έντασης 1"
+
+#: apps/kmixwindow.cpp:216
+#, kde-format
+msgid "Load volume profile 2"
+msgstr "Φόρτωση προφίλ έντασης 2"
+
+#: apps/kmixwindow.cpp:221
+#, kde-format
+msgid "Load volume profile 3"
+msgstr "Φόρτωση προφίλ έντασης 3"
+
+#: apps/kmixwindow.cpp:226
+#, kde-format
+msgid "Load volume profile 4"
+msgstr "Φόρτωση προφίλ έντασης 4"
+
+#: apps/kmixwindow.cpp:237
+#, kde-format
+msgid "Increase Volume"
+msgstr "Αύξηση έντασης"
+
+#: apps/kmixwindow.cpp:244
+#, kde-format
+msgid "Decrease Volume"
+msgstr "Μείωση έντασης"
+
+#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#, kde-format
+msgid "Mute"
+msgstr "Κλείσιμο ήχου"
+
+#: apps/kmixwindow.cpp:263
+#, kde-format
+msgid "Add new view"
+msgstr "Προσθήκη νέας προβολής"
+
+#: apps/kmixwindow.cpp:772
+#, kde-format
+msgid "Cannot add view - GUIProfile is invalid."
+msgstr "Αδυναμία προσθήκης προβολής - Το GUIProfile δεν είναι έγκυρο."
+
+#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: apps/kmixwindow.cpp:779
+#, kde-format
+msgid "Cannot add view - View already exists."
+msgstr "Αδυναμία προσθήκης προβολής - Η προβολή υπάρχει ήδη."
+
+#: apps/kmixwindow.cpp:1168
+#, kde-format
+msgid ""
+"The helper application is either not installed or not working.\n"
+"\n"
+"%1"
+msgstr ""
+"Η εφαρμογή βοήθειας ή δεν είναι εγκατεστημένη ή δεν λειτουργεί.\n"
+"\n"
+"%1"
+
+#: apps/kmixwindow.cpp:1219
+#, kde-format
+msgid "Mixer (%1)"
+msgstr "Μείκτης (%1)"
+
+#: apps/main.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "KMix"
+
+#: apps/main.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "KMix - Ο ολοκληρωμένος μίνι μείκτης του KDE"
+
+#: apps/main.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2013 Οι συγγραφείς του KMix"
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "Christian Esken"
+
+#: apps/main.cpp:45
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "Αρχικός συγγραφέας και τρέχων συντηρητής"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "Colin Guthrie"
+
+#: apps/main.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr "Υποστήριξη PulseAudio"
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "Helio Chissini de Castro"
+
+#: apps/main.cpp:47
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "Μεταφορά του ALSA 0.9x"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "Brian Hanson"
+
+#: apps/main.cpp:48
+#, kde-format
+msgid "Solaris support"
+msgstr "Υποστήριξη Solaris"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/main.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "Igor Poboiko"
+
+#: apps/main.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "Μηχανής δεδομένων Plasma"
+
+#: apps/main.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "Προσωρινός συντηρητής"
+
+#: apps/main.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "Sebestyen Zoltan"
+
+#: apps/main.cpp:57 apps/main.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "Διορθώσεις για το *BSD"
+
+#: apps/main.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "Lennart Augustsson"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "Nadeem Hasan"
+
+#: apps/main.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "Κλείσιμο ήχου και προεπισκόπηση έντασης, άλλες διορθώσεις"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "Erwin Mascher"
+
+#: apps/main.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "Βελτίωση της υποστήριξης για κάρτες ήχου emu10k1"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "Valentin Rusu"
+
+#: apps/main.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "Υποστήριξη TerraTec DMX6Fire"
+
+#: apps/main.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr ""
+"Αποτρέπει την εμφάνιση του κύριου παραθύρου του KMix, αν αυτό εκτελείται ήδη."
+
+#: apps/main.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr "Εκκινεί το KMix σε ασφαλή λειτουργία."
+
+#: apps/volumefeedback.cpp:248
+#, kde-format
+msgid "Volume Control Feedback Sound"
+msgstr "Ήχος ανάδρασης ελέγχου έντασης"
+
+#: backends/mixer_alsa9.cpp:962
+#, kde-format
+msgid ""
+"You do not have permission to access the alsa mixer device.\n"
+"Please verify if all alsa devices are properly created."
+msgstr ""
+"Δεν έχετε δικαίωμα προσπέλασης στη συσκευή μείκτη alsa.\n"
+"Παρακαλώ βεβαιωθείτε ότι όλες οι συσκευές alsa έχουν δημιουργηθεί σωστά."
+
+#: backends/mixer_alsa9.cpp:966
+#, kde-format
+msgid ""
+"Alsa mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+msgstr ""
+"Ο μείκτης alsa είναι αδύνατο να βρεθεί.\n"
+"Παρακαλώ ελέγξτε ότι η κάρτα ήχου είναι εγκατεστημένη και ότι\n"
+"ο οδηγός της κάρτας ήχου έχει φορτωθεί.\n"
+
+#: backends/mixer_backend.cpp:323
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"kmix: Δεν έχετε δικαίωμα προσπέλασης στη συσκευή μείκτη.\n"
+"Παρακαλώ ελέγξτε τα εγχειρίδια του λειτουργικού σας συστήματος για να "
+"επιτραπεί η πρόσβαση."
+
+#: backends/mixer_backend.cpp:327
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "kmix: Αδυναμία εγγραφής στο μείκτη."
+
+#: backends/mixer_backend.cpp:330
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "kmix: Αδυναμία ανάγνωσης από το μείκτη."
+
+#: backends/mixer_backend.cpp:333
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"kmix: Ο μείκτης δε βρέθηκε.\n"
+"Παρακαλώ ελέγξτε ότι η κάρτα ήχου είναι εγκατεστημένη και ότι\n"
+"ο οδηγός της κάρτας ήχου έχει φορτωθεί.\n"
+
+#: backends/mixer_backend.cpp:338
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr ""
+"kmix: Άγνωστο σφάλμα. Παρακαλώ αναφέρετε πώς δημιουργήθηκε αυτό το σφάλμα."
+
+#: backends/mixer_backend_i18n.cpp:24
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Επίπεδο ηχογράφησης της εισόδου του μικροφώνου."
+
+#: backends/mixer_backend_i18n.cpp:25
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Ελέγχει την ένταση των μπροστινών ηχείων ή όλων των ηχείων (εξαρτάται από το "
+"μοντέλο της κάρτας ήχου). Εάν χρησιμοποιείται μια ψηφιακή έξοδο, ίσως "
+"χρειαστεί επίσης να χρησιμοποιήσετε και άλλα όπως ADC ή DAC. Για ακουστικά, "
+"οι κάρτες ήχου συχνά παρέχουν και ένα σύστημα ελέγχου ακουστικών."
+
+#: backends/mixer_backend_i18n.cpp:26
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"Τα περισσότερα μέσα, όπως MP3s και βίντεο, αναπαράγονται χρησιμοποιώντας το "
+"κανάλι PCM. Έτσι ώστε, η ένταση της αναπαραγωγής των μέσων να ελέγχεται και "
+"από τα δύο κανάλια το Κύριο ή των Ακουστικών."
+
+#: backends/mixer_backend_i18n.cpp:27
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Ελέγχει την ένταση του ήχου των ακουστικών. Μερικές κάρτες ήχου περιέχουν "
+"ένα διακόπτη ο οποίος θα πρέπει χειροκίνητα να ενεργοποιηθεί ώστε να είναι "
+"εφικτή η έξοδος από τα ακουστικά."
+
+#: backends/mixer_backend_i18n.cpp:28
+#, kde-format
+msgid "---"
+msgstr "---"
+
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#, kde-format
+msgid "Playback Streams"
+msgstr "Ροές αναπαραγωγής"
+
+#: backends/mixer_oss.cpp:68
+msgid "Volume"
+msgstr "Ένταση"
+
+#: backends/mixer_oss.cpp:68
+msgid "Bass"
+msgstr "Μπάσα"
+
+#: backends/mixer_oss.cpp:68
+msgid "Treble"
+msgstr "Πρίμα"
+
+#: backends/mixer_oss.cpp:69
+msgid "Synth"
+msgstr "Synth"
+
+#: backends/mixer_oss.cpp:69
+msgid "Pcm"
+msgstr "Pcm"
+
+#: backends/mixer_oss.cpp:69
+msgid "Speaker"
+msgstr "Ηχείο"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#, kde-format
+msgid "Microphone"
+msgstr "Μικρόφωνο"
+
+#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#, kde-format
+msgid "CD"
+msgstr "CD"
+
+#: backends/mixer_oss.cpp:70
+msgid "Line"
+msgstr "Γραμμή"
+
+#: backends/mixer_oss.cpp:71
+msgid "Mix"
+msgstr "Μείξη"
+
+#: backends/mixer_oss.cpp:71
+msgid "Pcm2"
+msgstr "Pcm2"
+
+#: backends/mixer_oss.cpp:71
+msgid "RecMon"
+msgstr "Παρακολούθηση εγγραφής"
+
+#: backends/mixer_oss.cpp:72
+msgid "IGain"
+msgstr "Ενίσχυση εισόδου"
+
+#: backends/mixer_oss.cpp:72
+msgid "OGain"
+msgstr "Ενίσχυση εξόδου"
+
+#: backends/mixer_oss.cpp:72
+msgid "Line1"
+msgstr "Γραμμή1"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line2"
+msgstr "Γραμμή2"
+
+#: backends/mixer_oss.cpp:73
+msgid "Line3"
+msgstr "Γραμμή3"
+
+#: backends/mixer_oss.cpp:73
+msgid "Digital1"
+msgstr "Ψηφιακή1"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital2"
+msgstr "Ψηφιακή2"
+
+#: backends/mixer_oss.cpp:74
+msgid "Digital3"
+msgstr "Ψηφιακή3"
+
+#: backends/mixer_oss.cpp:74
+msgid "PhoneIn"
+msgstr "PhoneIn"
+
+#: backends/mixer_oss.cpp:75
+msgid "PhoneOut"
+msgstr "PhoneOut"
+
+#: backends/mixer_oss.cpp:75
+msgid "Video"
+msgstr "Βίντεο"
+
+#: backends/mixer_oss.cpp:75
+msgid "Radio"
+msgstr "Ραδιόφωνο"
+
+#: backends/mixer_oss.cpp:76
+msgid "Monitor"
+msgstr "Παρακολούθηση"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-depth"
+msgstr "Βάθος-3Δ"
+
+#: backends/mixer_oss.cpp:79
+msgid "3D-center"
+msgstr "Κέντρο-3Δ"
+
+#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#, kde-format
+msgid "unknown"
+msgstr "άγνωστο"
+
+#: backends/mixer_oss.cpp:81
+msgid "unused"
+msgstr "αχρησιμοποίητο"
+
+#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
+msgstr ""
+"kmix: Δεν έχετε δικαίωμα προσπέλασης στη συσκευή μείκτη.\n"
+"Με διακαιώματα root εκτελέστε την εντολή 'chmod a+rw /dev/mixer*' για να σας "
+"επιτραπεί η πρόσβαση."
+
+#: backends/mixer_oss.cpp:247
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using commercial OSS."
+msgstr ""
+"kmix: Ο μείκτης δε βρέθηκε.\n"
+"Παρακαλώ ελέγξτε αν η κάρτα ήχου είναι εγκατεστημένη και ότι\n"
+"ο οδηγός της κάρτας ήχου έχει φορτωθεί.\n"
+"Στο Linux μπορεί να χρειαστεί η εντολή 'insmod' για τη φόρτωση του οδηγού.\n"
+"Χρησιμοποιήστε την εντολή 'soundon' όταν χρησιμοποιείτε το εμπορικό πακέτο "
+"OSS."
+
+#: backends/mixer_oss4.cpp:499
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and the\n"
+"soundcard driver is loaded.\n"
+"On Linux you might need to use 'insmod' to load the driver.\n"
+"Use 'soundon' when using OSS4 from 4front."
+msgstr ""
+"kmix: Ο μείκτης δεν βρέθηκε.\n"
+"Παρακαλώ ελέγξτε αν η κάρτα ήχου είναι εγκατεστημένη και ότι\n"
+"ο οδηγός της κάρτας ήχου έχει φορτωθεί.\n"
+"Στο Linux μπορεί να χρειαστεί η εντολή 'insmod' για τη φόρτωση του οδηγού.\n"
+"Χρησιμοποιήστε την εντολή 'soundon' όταν χρησιμοποιείτε OSS4 από το 4front."
+
+#: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
+#, kde-format
+msgid "Unknown Application"
+msgstr "Άγνωστη εφαρμογή"
+
+#: backends/mixer_pulse.cpp:434
+#, kde-format
+msgid "Event Sounds"
+msgstr "Ήχοι γεγονότων"
+
+#: backends/mixer_pulse.cpp:1067
+#, kde-format
+msgid "Playback Devices"
+msgstr "Συσκευές αναπαραγωγής"
+
+#: backends/mixer_pulse.cpp:1075
+#, kde-format
+msgid "Capture Devices"
+msgstr "Συσκευές εγγραφής"
+
+#: backends/mixer_pulse.cpp:1094
+#, kde-format
+msgid "Capture Streams"
+msgstr "Ροές εγγραφής"
+
+#: backends/mixer_sun.cpp:69
+#, kde-format
+msgid "Master Volume"
+msgstr "Κύρια ένταση"
+
+#: backends/mixer_sun.cpp:70
+#, kde-format
+msgid "Internal Speaker"
+msgstr "Εσωτερικό ηχείο"
+
+#: backends/mixer_sun.cpp:71
+#, kde-format
+msgid "Headphone"
+msgstr "Ακουστικά"
+
+#: backends/mixer_sun.cpp:72
+#, kde-format
+msgid "Line Out"
+msgstr "Γραμμή εξόδου"
+
+#: backends/mixer_sun.cpp:73
+#, kde-format
+msgid "Record Monitor"
+msgstr "Παρακολούθηση εγγραφής"
+
+#: backends/mixer_sun.cpp:75
+#, kde-format
+msgid "Line In"
+msgstr "Γραμμή εισόδου"
+
+#: backends/mixer_sun.cpp:241
+#, kde-format
+msgid ""
+"kmix: You do not have permission to access the mixer device.\n"
+"Ask your system administrator to fix /dev/audioctl to allow access."
+msgstr ""
+"kmix: Δεν έχετε δικαίωμα προσπέλασης στη συσκευή μείκτη.\n"
+"Ζητήστε από τον διαχειριστή του συστήματός σας να διορθώσει το /dev/audioctl "
+"ώστε να επιτρέπεται η προσπέλαση."
+
+#: core/volume.cpp:58
+#, kde-format
+msgctxt "Channel name"
+msgid "Left"
+msgstr "Αριστερά"
+
+#: core/volume.cpp:59
+#, kde-format
+msgctxt "Channel name"
+msgid "Right"
+msgstr "Δεξιά"
+
+#: core/volume.cpp:60
+#, kde-format
+msgctxt "Channel name"
+msgid "Center"
+msgstr "Κεντρικό"
+
+#: core/volume.cpp:61
+#, kde-format
+msgctxt "Channel name"
+msgid "Subwoofer"
+msgstr "Βαθύφωνο"
+
+#: core/volume.cpp:62
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Left"
+msgstr "Πολυκάναλο αριστερά"
+
+#: core/volume.cpp:63
+#, kde-format
+msgctxt "Channel name"
+msgid "Surround Right"
+msgstr "Πολυκάναλο δεξιά"
+
+#: core/volume.cpp:64
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Left"
+msgstr "Πλευρικό αριστερά"
+
+#: core/volume.cpp:65
+#, kde-format
+msgctxt "Channel name"
+msgid "Side Right"
+msgstr "Πλευρικό δεξιά"
+
+#: core/volume.cpp:66
+#, kde-format
+msgctxt "Channel name"
+msgid "Rear Center"
+msgstr "Οπίσθιο κεντρικό"
+
+#: core/volume.cpp:68
+#, kde-format
+msgctxt "Channel name"
+msgid "Unknown"
+msgstr "Άγνωστο"
+
+#: gui/dialogaddview.cpp:50
+#, kde-format
+msgid "All controls"
+msgstr "Όλες οι λειτουργίες ελέγχου"
+
+#: gui/dialogaddview.cpp:51
+#, kde-format
+msgid "Only playback controls"
+msgstr "Λειτουργίες ελέγχου αναπαραγωγής μόνο"
+
+#: gui/dialogaddview.cpp:52
+#, kde-format
+msgid "Only capture controls"
+msgstr "Λειτουργίες ελέγχου εγγραφής μόνο"
+
+#: gui/dialogaddview.cpp:59
+#, kde-format
+msgid "Add View"
+msgstr "Προσθήκη προβολής"
+
+#: gui/dialogaddview.cpp:88
+#, kde-format
+msgid "Select mixer:"
+msgstr "Επιλογή μείκτη:"
+
+#: gui/dialogaddview.cpp:95
+#, kde-format
+msgid "Current mixer"
+msgstr "Τρέχων μείκτης"
+
+#: gui/dialogaddview.cpp:115
+#, kde-format
+msgid "Select the design for the new view:"
+msgstr "Επιλογή σχεδίασης για τη νέα προβολή:"
+
+#: gui/dialogchoosebackends.cpp:54
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr ""
+"Μίξερ για εμφάνιση στον έλεγχο έντασης του popup:Μίξερ για εμφάνιση στον "
+"έλεγχο έντασης του popup:"
+
+#: gui/dialogchoosebackends.cpp:81
+#, kde-format
+msgid "Select Mixers"
+msgstr "Επιλογή μικτών"
+
+#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#, kde-format
+msgid "Select Master Channel"
+msgstr "Επιλογή κύριου καναλιού"
+
+#: gui/dialogselectmaster.cpp:73
+#, kde-format
+msgid "Current mixer:"
+msgstr "Τρέχων μείκτης:"
+
+#: gui/dialogselectmaster.cpp:123
+#, kde-kuit-format
+msgctxt "@info"
+msgid "Select the <link url=\"i\">master volume</link> channel:"
+msgstr "Επιλέξτε το <link url=\"i\">κύριο κανάλι έντασης</link>:"
+
+#: gui/dialogselectmaster.cpp:131
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Here you can select the master sound device (if there is more than "
+"one) and its master channel.</para><para>The master channel is the one that "
+"is affected by the system tray volume control, the volume up/down and mute "
+"global shortcut keys, and the <interface>Mute</interface> action in the "
+"system tray popup menu.</para>"
+msgstr ""
+"<para>Εδώ μπορείτε να επιλέξετε την κύρια συσκευή ήχου (αν είναι "
+"περισσότερες από μία) και το κύριο κανάλι της.</para><para>Το κύριο κανάλι "
+"είναι αυτό που επηρεάζεται από το συστατικό ελέγχου έντασης στο πλαίσιο "
+"συστήματος, την αύξηση/μείωση της έντασης και τις καθολικές συντομεύσεις "
+"σίγασης και την ενέργεια <interface>Σίγαση</interface> στο αναδυόμενο μενού "
+"του πλαισίου συστήματος.</para>"
+
+#: gui/dialogselectmaster.cpp:203
+#, kde-format
+msgid "Automatic (%1 recommendation)"
+msgstr "Αυτόματο (%1 σύσταση)"
+
+#: gui/dialogviewconfiguration.cpp:136
+#, kde-format
+msgid "Configure Channels"
+msgstr "Διαμόρφωση καναλιών"
+
+#: gui/dialogviewconfiguration.cpp:147
+#, kde-format
+msgid "Configure the visible channels. Drag icons between the lists to update."
+msgstr ""
+"Διαμόρφωση των ορατών καναλιών. Η ενημέρωση γίνεται έλκοντας τα εικονίδια "
+"ανάμεσα στις λίστες."
+
+#: gui/dialogviewconfiguration.cpp:217
+#, kde-format
+msgid "Visible channels:"
+msgstr "Ορατά κανάλια:"
+
+#: gui/dialogviewconfiguration.cpp:220
+#, kde-format
+msgid "Available channels:"
+msgstr "Διαθέσιμα κανάλια:"
+
+#: gui/dialogviewconfiguration.cpp:234
+#, kde-format
+msgid "Move the selected channel to the visible list"
+msgstr "Μετακίνηση του επιλεγμένου καναλιού στην ορατή λίστα"
+
+#: gui/dialogviewconfiguration.cpp:242
+#, kde-format
+msgid "Move the selected channel to the available (hidden) list"
+msgstr "Μετακίνηση του επιλεγμένου καναλιού στη διαθέσιμη (κρυφή) λίστα"
+
+#: gui/dialogviewconfiguration.cpp:282
+#, kde-format
+msgid "Show the selected channel"
+msgstr "Εμφάνιση επιλεγμένου καναλιού"
+
+#: gui/dialogviewconfiguration.cpp:283
+#, kde-format
+msgid "Hide the selected channel"
+msgstr "Απόκρυψη επιλεγμένου καναλιού"
+
+#: gui/dialogviewconfiguration.cpp:284
+#, kde-format
+msgid "Visible channels"
+msgstr "Ορατά κανάλια"
+
+#: gui/dialogviewconfiguration.cpp:285
+#, kde-format
+msgid "Available channels"
+msgstr "Διαθέσιμα κανάλια"
+
+#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#, kde-format
+msgid "Volume Control"
+msgstr "Έλεγχος έντασης"
+
+#: gui/kmixdockwidget.cpp:174
+#, kde-format
+msgid "M&ute"
+msgstr "&Κλείσιμο ήχου"
+
+#: gui/kmixdockwidget.cpp:198
+#, kde-format
+msgid "No mixer devices available"
+msgstr "Καμία διαθέσιμη συσκευή μείκτη"
+
+#: gui/kmixdockwidget.cpp:206
+#, kde-format
+msgid "Volume muted"
+msgstr "Η ένταση είναι σε σίγαση"
+
+#: gui/kmixdockwidget.cpp:207
+#, kde-format
+msgid "Volume at %1%"
+msgstr "Ένταση στο %1%"
+
+#: gui/kmixdockwidget.cpp:209
+#, kde-format
+msgid "%1 - %2"
+msgstr "%1 - %2"
+
+#: gui/kmixprefdlg.cpp:52
+#, kde-format
+msgid "Configure"
+msgstr "Διαμόρφωση"
+
+#: gui/kmixprefdlg.cpp:66
+#, kde-format
+msgid "General"
+msgstr "Γενικά"
+
+#: gui/kmixprefdlg.cpp:67
+#, kde-format
+msgid "Startup"
+msgstr "Έναρξη"
+
+#: gui/kmixprefdlg.cpp:103
+#, kde-format
+msgid "Start KMix on desktop startup"
+msgstr "Έναρξη KMix κατά την εκκίνηση της επιφάνειας εργασίας"
+
+#: gui/kmixprefdlg.cpp:107
+#, kde-format
+msgid "Start KMix automatically when the desktop starts"
+msgstr "Αυτόματη έναρξη KMix κατά την εκκίνηση της επιφάνειας εργασίας"
+
+#: gui/kmixprefdlg.cpp:110
+#, kde-format
+msgid ""
+"Autostart will not work, because the autostart file kmix_autostart.desktop "
+"is missing. Check that KMix is installed correctly."
+msgstr ""
+"Αδυναμία ενεργοποίησης της αυτόματης εκκίνησης, καθώς το αρχείο αυτόματης "
+"εκκίνησης kmix_autostart.desktop απουσιάζει. Ελέγξτε ότι το KMix είναι σωστά "
+"εγκατεστημένο."
+
+#: gui/kmixprefdlg.cpp:120
+#, kde-format
+msgid "Restore previous volume settings on desktop startup"
+msgstr ""
+"Επαναφορά προηγούμενων ρυθμίσεων της έντασης κατά την εκκίνηση της "
+"επιφάνειας εργασίας"
+
+#: gui/kmixprefdlg.cpp:124
+#, kde-format
+msgid ""
+"Restore all mixer volume levels and switches to their last used settings "
+"when the desktop starts"
+msgstr ""
+"Επαναφορά όλων των επίπεδων έντασης του μίκτη και μεταάβαση στις τελευταίες "
+"ρυθμίσεις που έχετε χρησιμοποιήσεικατά την εκκίνηση η επιφάνεια εργασίας"
+
+#: gui/kmixprefdlg.cpp:127
+#, kde-format
+msgid ""
+"The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
+msgstr ""
+"Η ένταση του δυναμικού ελέγχου PulseAudio ή MPRIS2 δεν θα αποκατασταθεί."
+
+#: gui/kmixprefdlg.cpp:145
+#, kde-format
+msgid "&Horizontal"
+msgstr "&Οριζόντια"
+
+#: gui/kmixprefdlg.cpp:146
+#, kde-format
+msgid "&Vertical"
+msgstr "&Κατακόρυφα"
+
+#: gui/kmixprefdlg.cpp:193
+#, kde-format
+msgid "Behavior"
+msgstr "Συμπεριφορά"
+
+#: gui/kmixprefdlg.cpp:207
+#, kde-format
+msgid "Volume overdrive"
+msgstr "Υπεροδήγηση έντασης"
+
+#: gui/kmixprefdlg.cpp:212
+#, kde-format
+msgctxt "@info:tooltip"
+msgid ""
+"Allow the volume to be raised above the recommended maximum (typically to "
+"150%)"
+msgstr ""
+"Να επιτρέπεται στην ένταση να υψώνεται πάνω από το συνιστώμενο μέγιστο "
+"(τυπικά έως 150%)"
+
+#: gui/kmixprefdlg.cpp:215
+#, kde-format
+msgid "Volume overdrive is only available for PulseAudio."
+msgstr "Η υπεροδήγηση της έντασης είναι διαθέσιμη μόνο για το Pulseaudio."
+
+#: gui/kmixprefdlg.cpp:225
+#, kde-format
+msgid "%1 must be restarted for the volume overdrive setting to take effect."
+msgstr ""
+"Πρέπει να γίνει επανεκκίνηση του %1 για να εφαρμοστεί η ρύθμιση της "
+"υπεροδήγησης της έντασης."
+
+#: gui/kmixprefdlg.cpp:235
+#, kde-format
+msgid "Volume feedback"
+msgstr "Ανάδραση έντασης"
+
+#: gui/kmixprefdlg.cpp:239
+#, kde-format
+msgctxt "@info:tooltip"
+msgid "Play a sample sound when the volume changes"
+msgstr "Αναπαραγωγή απλού ήχου όταν αλλάζει η ένταση"
+
+#: gui/kmixprefdlg.cpp:243
+#, kde-format
+msgid "Volume feedback is only available when configured with Canberra."
+msgstr ""
+"Η απόκριση από την ένταση είναι διαθέσιμη μόνο όταν έχει διαμορφωθεί με το "
+"Canberra."
+
+#: gui/kmixprefdlg.cpp:265
+#, kde-kuit-format
+msgctxt "@info:tooltip"
+msgid ""
+"<para>Set the volume step as a percentage of the volume range.</"
+"para><para>This affects changing the volume via hot keys, with the mouse "
+"wheel over the system tray icon, or moving sliders by a page step.</"
+"para><para>%1 must be restarted for this change to take effect.</para>"
+msgstr ""
+"<para>Ρυθμίστε το βήμα της έντασης ως ποσοστό του εύρους της.</"
+"para><para>Αυτό επιδρά στην αλλαγή της έντασης μέσω πληκτρολογίου, με τη "
+"ρόδα του ποντικιού πάνω από το εικονίδιο του πλαισίου συστήματος ή με τη "
+"μετακίνηση των ολισθητών ανά βήμα σελίδας.</para><para>Πρέεπι να γίνει "
+"επανεκκίνηση του %1 για να έχει αποτέλεσμα αυτή η αλλαγή.</para>"
+
+#: gui/kmixprefdlg.cpp:272
+#, kde-format
+msgid "Volume step:"
+msgstr "Βήμα έντασης"
+
+#: gui/kmixprefdlg.cpp:280
+#, kde-format
+msgid "Visual"
+msgstr "Ορατά"
+
+#: gui/kmixprefdlg.cpp:289
+#, kde-format
+msgid "Show slider &tickmarks"
+msgstr "Εμφάνιση &κλίμακας κύλισης"
+
+#: gui/kmixprefdlg.cpp:292
+#, kde-format
+msgid "Show tick mark scales on sliders"
+msgstr "Εμφάνιση δεικτών κλίμακας στους ολισθητές"
+
+#: gui/kmixprefdlg.cpp:294
+#, kde-format
+msgid "Show control &labels"
+msgstr "Εμφάνιση ετικετών κουμπιών ε&λέγχου"
+
+#: gui/kmixprefdlg.cpp:297
+#, kde-format
+msgid "Show description labels for sliders"
+msgstr "Εμφάνιση ετικετών περιγραφής για τους ολισθητές"
+
+#: gui/kmixprefdlg.cpp:300
+#, kde-format
+msgid "Show On Screen Display (&OSD)"
+msgstr "Εμφάνιση στην οθόνη (&OSD)"
+
+#: gui/kmixprefdlg.cpp:303
+#, kde-format
+msgid "Show an on-screen indicator when changing the volume via hotkeys"
+msgstr ""
+"Να εμφανίζεται στην οθόνη δείκτης όταν αλλάζει η ένταση μέσω συντομεύσεων"
+
+#: gui/kmixprefdlg.cpp:312
+#, kde-format
+msgid "Slider orientation (main window): "
+msgstr "Προσανατολισμός ολισθητή (κύριο παράθυρο): "
+
+#: gui/kmixprefdlg.cpp:313
+#, kde-format
+msgid "Slider orientation (system tray popup):"
+msgstr "Προσανατολισμός ολισθητή (αναδυόμενο πλαίσιο συστήματος):"
+
+#: gui/kmixprefdlg.cpp:314
+#, kde-format
+msgid "Set the orientation of the main window control sliders"
+msgstr "Ρύθμιση του προσανατολισμού των ολισθητών ελέγχου του κύριου παραθύρου"
+
+#: gui/kmixprefdlg.cpp:315
+#, kde-format
+msgid "Set the orientation of the system tray volume control sliders"
+msgstr ""
+"Ρύθμιση του προσανατολισμού των ολισθητών ελέγχου της έντασης στο πλαίσιο "
+"συστήματος"
+
+#: gui/kmixprefdlg.cpp:327
+#, kde-format
+msgid "Dock in system tray"
+msgstr "Προσάρτηση στο πλαίσιο συστήματος"
+
+#: gui/kmixprefdlg.cpp:330
+#, kde-format
+msgid ""
+"Dock the mixer into the system tray. Click on it to open the popup volume "
+"control."
+msgstr ""
+"Προσάρτηση μίκτη στο πλαίσιο συστήματος. Κάντε κλικ σε αυτό για να ανοίξετε "
+"τον έλεγχο της έντασης."
+
+#: gui/kmixprefdlg.cpp:502
+#, kde-format
+msgid ""
+"The mixers that are checked here will be shown in the popup volume control."
+msgstr ""
+"Οι μείκτες που επιλέγονται εδώ θα εμφανιστούν στον αναδυόμενο έλεγχο έντασης."
+
+#: gui/kmixtoolbox.cpp:97
+#, kde-format
+msgid "No sound devices are installed or are currently available."
+msgstr "Δεν έχει εγκατασταθεί και δεν είναι διαθέσιμη καμία συσκευή ήχου."
+
+#: gui/mdwslider.cpp:96
+#, kde-format
+msgid "Split Channels"
+msgstr "Διαχωρισμός καναλιών"
+
+#: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
+#, kde-format
+msgid "Capture"
+msgstr "Εγγραφή"
+
+#: gui/mdwslider.cpp:113
+#, kde-format
+msgid "Use Device"
+msgstr "Χρήση συσκευής"
+
+#: gui/mdwslider.cpp:158
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Mute %2 on %1"
+msgstr "Σίγαση %2 στο %1"
+
+#: gui/mdwslider.cpp:170
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Increase volume of %2 on %1"
+msgstr "Αύξηση έντασης του %2 στο %1"
+
+#: gui/mdwslider.cpp:178
+#, kde-format
+msgctxt "1=device name, 2=control name"
+msgid "Decrease volume of %2 on %1"
+msgstr "Μείωση έντασης του %2 στο %1"
+
+#: gui/mdwslider.cpp:328
+#, kde-format
+msgctxt "%1=channel"
+msgid "Capture/Uncapture %1"
+msgstr "Απ/ενεργοποίηση εγγραφής %1"
+
+#: gui/mdwslider.cpp:329
+#, kde-format
+msgctxt "%1=channel"
+msgid "Mute/Unmute %1"
+msgstr "Απ/ενεργοποίηση ήχου του %1"
+
+#: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
+#, kde-format
+msgctxt "%1=device %2=channel"
+msgid ""
+"%1\n"
+"%2"
+msgstr ""
+"%1\n"
+"%2"
+
+#: gui/mdwslider.cpp:680
+#, kde-format
+msgid "%1 (capture)"
+msgstr "%1 (εγγραφή)"
+
+#: gui/mdwslider.cpp:1118
+#, kde-format
+msgid "Automatic (according to category)"
+msgstr "Αυτόματο (ανάλογα με την κατηγορία)"
+
+#: gui/mixdevicewidget.cpp:65
+#, kde-format
+msgid "Channel Shortcuts..."
+msgstr "Συντομεύσεις καναλιών..."
+
+#: gui/viewbase.cpp:96
+#, kde-format
+msgid "Configure this view"
+msgstr "Διαμόρφωση αυτής της προβολής"
+
+#: gui/viewbase.cpp:166
+#, kde-format
+msgid "Configure Channels..."
+msgstr "Διαμόρφωση καναλιών..."
+
+#: gui/viewbase.cpp:270
+#, kde-format
+msgid "Device Settings"
+msgstr "Ρυθμίσεις συσκευής"
+
+#: gui/viewdockareapopup.cpp:440
+#, kde-format
+msgid "Show the full mixer window"
+msgstr "Εμφάνιση του πλήρους παραθύρου μείκτη"
+
+#: gui/viewdockareapopup.cpp:472
+#, kde-format
+msgid "Load volume profile %1"
+msgstr "Φόρτωση προφίλ έντασης %1"
+
+#: gui/viewsliders.cpp:180
+#, kde-format
+msgid "Nothing is playing audio."
+msgstr "Τίποτε δεν αναπαράγει τον ήχο."
+
+#: gui/viewsliders.cpp:183
+#, kde-format
+msgid "Nothing is capturing audio."
+msgstr "Τίποτε δεν συλλαμβάνει τον ήχο."
+
+#: gui/viewsliders.cpp:184
+#, kde-format
+msgid "There are no capture devices."
+msgstr "Δεν υπάρχουν συσκευές σύλληψης."
+
+#: gui/viewsliders.cpp:185
+#, kde-format
+msgid "There are no playback devices."
+msgstr "Δεν υπάρχουν συσκευές αναπαραγωγής."
+
+#~ msgctxt "@info:tooltip"
+#~ msgid "Raise the maximum volume to 150%"
+#~ msgstr "Αύξηση μέγιστης έντασης στο 150%"
+
+#~ msgid "&Hide"
+#~ msgstr "&Απόκρυψη"
+
+#~ msgid "C&onfigure Shortcuts..."
+#~ msgstr "&Διαμόρφωση συντομεύσεων..."
+
+#~ msgid "Toggle Mute"
+#~ msgstr "Εναλλαγή κλεισίματος ήχου"
+
+#~ msgid "Hardware &Information"
+#~ msgstr "&Πληροφορίες υλικού"
+
+#~ msgid "Mixer Hardware Information"
+#~ msgstr "Πληροφορίες υλικού μείκτη"
+
+#~ msgid "Sound drivers supported:"
+#~ msgstr "Οδηγοί ήχου που υποστηρίζονται:"
+
+#~ msgid "Sound drivers used:"
+#~ msgstr "Οδηγοί ήχου που χρησιμοποιούνται:"
+
+#~ msgid "Experimental multiple-Driver mode activated"
+#~ msgstr "Η λειτουργία πειραματικού πολυ-οδηγού ενεργοποιήθηκε"
+
+#~ msgid "&Muted"
+#~ msgstr "&Κλείσιμο ήχου"
+
+#, fuzzy
+#~| msgid "Capture"
+#~ msgid "Captu&re"
+#~ msgstr "Εγγραφή"
+
+#~ msgid "Mo&ve"
+#~ msgstr "Μετα&κίνηση"
+
+#~ msgid "Set &Record Source"
+#~ msgstr "Ορισμός πηγής &ηχογράφησης"
+
+#~ msgid "capture"
+#~ msgstr "εγγραφή"
+
+#~ msgid "&Channels"
+#~ msgstr "&Κανάλια"
+
+#~ msgid "Mixer cannot be found"
+#~ msgstr "Δεν μπορεί να βρεθεί ο μείκτης"
+
+#~ msgid " (Muted)"
+#~ msgstr " (Κλείσιμο ήχου)"
+
+#~ msgid "Select the Mixers to display in the sound menu"
+#~ msgstr "Επιλεξτε τους μίκτες που θα εμφανίζονται στο μενού ήχου"
+
+#~ msgid "Start"
+#~ msgstr "Εκκίνηση"
+
+#~ msgid "Sound Menu"
+#~ msgstr "Μενού ήχου"
+
+#~ msgid "Autostart"
+#~ msgstr "Αυτόματη εκκίνηση"
+
+#~ msgid "Enables the KMix autostart service (kmix_autostart.desktop)"
+#~ msgstr ""
+#~ "Ενεργοποιεί την υπηρεσία αυτόματης εκκίνησης του KMix (kmix_autostart."
+#~ "desktop)"
+
+#~ msgctxt "@info:tooltip"
+#~ msgid "Raise volume maximum to 150% (PulseAudio only)"
+#~ msgstr "Ανύψωση έντασης μέγιστο στο 150% (PulseAudio μόνο)"
+
+#~ msgid "Docks the mixer into the KDE system tray"
+#~ msgstr "Προσαρτά το μείκτη στο πλαίσιο συστήματος του KDE"
+
+#~ msgid "&Use custom colors"
+#~ msgstr "&Χρήση προσαρμοσμένων χρωμάτων"
+
+#~ msgid "Active"
+#~ msgstr "Ενεργό"
+
+#~ msgid "&Silent:"
+#~ msgstr "&Σιωπηλό:"
+
+#~ msgid "&Loud:"
+#~ msgstr "&Δυνατό:"
+
+#~ msgid "&Background:"
+#~ msgstr "&Φόντο:"
+
+#~ msgid "Muted"
+#~ msgstr "Χωρίς ήχο"
+
+#~ msgid "Lou&d:"
+#~ msgstr "Δυνα&τό:"
+
+#~ msgid "Backgrou&nd:"
+#~ msgstr "Φό&ντο:"
+
+#~ msgid "Silen&t:"
+#~ msgstr "Σιωπη&λό:"
+
+#~ msgid "&File"
+#~ msgstr "&Αρχείο"
+
+#~ msgid "&Help"
+#~ msgstr "&Βοήθεια"
+
+#~ msgid "View already exists. Cannot add View."
+#~ msgstr "Η προβολή υπάρχει ήδη. Αδυναμία προσθήκης προβολής."
+
+#~ msgid "KDE Mixer"
+#~ msgstr "KDE Μίκτης"
+
+#~ msgid "Allows to control the volume from the system tray"
+#~ msgstr "Σας επιτρέπει να ελέγχετε την ένταση από το πλαίσιο συστήματος"
+
+#~ msgid "Media player '%1' is not compatible with KMix. Integration skipped."
+#~ msgstr ""
+#~ "Ο αναπαραγωγές πολυμέσων '%1' δεν είναι συμβατός με το KMix. Η ενσωμάτωση "
+#~ "παραλείφθηκε."
+
+#~ msgid "Master channel selection"
+#~ msgstr "Επιλογή κύριου καναλιού"
+
+#~ msgid "Invalid mixer"
+#~ msgstr "Μη έγκυρος μείκτης"
+
+#~ msgid ""
+#~ "(c) 1996-2007 Christian Esken\n"
+#~ "(c) 2000-2003 Stefan Schimanski\n"
+#~ "(c) 2002-2005 Helio Chissini de Castro"
+#~ msgstr ""
+#~ "(c) 1996-2007 Christian Esken\n"
+#~ "(c) 2002-2003 Stefan Schimanski\n"
+#~ "(c) 2002-2005 Helio Chissini de Castro"
+
+#~ msgid "Co-maintainer, Alsa 0.9x port"
+#~ msgstr "Τρέχων συντηρητής, προσαρμογή στο Alsa 0.9x"
+
+#~ msgid "Nick Lopez"
+#~ msgstr "Nick Lopez"
+
+#, fuzzy
+#~ msgid "(c) 2000 by Christian Esken"
+#~ msgstr "Christian Esken"
+
+#~ msgid "Toggle Switch"
+#~ msgstr "Εναλλαγή διακόπτη"
+
+#~ msgid "On"
+#~ msgstr "Ανοικτό"
+
+#~ msgid "Off"
+#~ msgstr "Κλειστό"
+
+#~ msgid "Configure - Mixer Applet"
+#~ msgstr "Ρύθμιση - μικροεφαρμογή μείκτη"
+
+#~ msgid "KMix Panel Applet"
+#~ msgstr "Μικροεφαρμογή πίνακα KMix"
+
+#~ msgid "Mini Sound Mixer Applet"
+#~ msgstr "Μικροεφαρμογή μείκτη ήχου"
+
+#~ msgid ""
+#~ "(c) 1996-2000 Christian Esken\n"
+#~ "(c) 2000-2003 Christian Esken, Stefan Schimanski"
+#~ msgstr ""
+#~ "(c) 1996-2000 Christian Esken\n"
+#~ "(c) 2000-2003 Christian Esken, Stefan Schimanski"
+
+#~ msgid ""
+#~ "For detailed credits, please refer to the About information of the KMix "
+#~ "program"
+#~ msgstr ""
+#~ "Για λεπτομερείς ευχαριστίες παρακαλώ δείτε τις πληροφορίες Σχετικά με το "
+#~ "πρόγραμμα KMix"
+
+#~ msgid "Mixers"
+#~ msgstr "Μείκτες"
+
+#~ msgid "Available mixers:"
+#~ msgstr "Διαθέσιμοι μείκτες:"
+
+#~ msgid "Invalid mixer entered."
+#~ msgstr "Ορίστηκε μη έγκυρος μείκτης."
+
+#~ msgid "Show/Hide"
+#~ msgstr "Εμφάνιση/Απόκρυψη"
+
+#~ msgid "Split"
+#~ msgstr "Διαχωρισμός"
+
+#~ msgid "Current Mixer"
+#~ msgstr "Τρέχων μείκτης"
