@@ -1082,8 +1082,8 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
-"Acobla el mesclador a la safata del sistema. Feu-hi clic per a obrir el "
-"control de volum emergent."
+"Acobla el mesclador a dins de la safata del sistema. Feu-hi clic per a obrir "
+"el control de volum emergent."
 
 #: gui/kmixprefdlg.cpp:502
 #, kde-format
