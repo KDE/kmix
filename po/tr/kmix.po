@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: kdemultimedia-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2022-04-13 11:07+0300\n"
+"PO-Revision-Date: 2022-10-12 14:22+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 21.12.3\n"
+"X-Generator: Lokalize 22.08.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -1006,7 +1006,7 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
-"<para>Ses düzeyi adımını ses düzeyinin yüzdesi olarak ayarla.</"
+"<para>Ses düzeyi çentiğini, ses düzeyinin yüzdesi olarak ayarla.</"
 "para><para>Bu, ses düzeyini kısayol düğmeleriyle, sistem tepsisi "
 "üzerindeyken fare tekerleğiyle veya kaydırıcıları bir sayfa adımıyla "
 "değiştirmeyi etkiler.</para><para>Değişikliklerin etkin olması için %1 "
@@ -1015,7 +1015,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:272
 #, kde-format
 msgid "Volume step:"
-msgstr "Ses düzeyi adımı:"
+msgstr "Ses düzeyi çentiği:"
 
 #: gui/kmixprefdlg.cpp:280
 #, kde-format
