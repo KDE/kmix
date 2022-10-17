@@ -752,7 +752,7 @@ msgstr "Seleccioneu el disseny per a la vista nova:"
 #: gui/dialogchoosebackends.cpp:54
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr "Mescladors a mostrar en el control de volum emergent:"
+msgstr "Mescladors que s'han de mostrar en el control de volum emergent:"
 
 #: gui/dialogchoosebackends.cpp:81
 #, kde-format
@@ -805,8 +805,8 @@ msgstr "Configuració dels canals"
 #, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr ""
-"Configureu els canals visibles. Arrossegueu les icones entre les llistes a "
-"actualitzar."
+"Configureu els canals visibles. Arrossegueu les icones entre les llistes que "
+"s'hagen d'actualitzar."
 
 #: gui/dialogviewconfiguration.cpp:217
 #, kde-format
