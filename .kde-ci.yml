@@ -15,6 +15,6 @@ Dependencies:
     'frameworks/ki18n': '@stable'
     'frameworks/knotifications': '@stable'
     'frameworks/solid': '@stable'
-    'frameworks/kwidgetaddons': '@stable'
+    'frameworks/kwidgetsaddons': '@stable'
     'frameworks/kwindowsystem': '@stable'
     'frameworks/kxmlgui': '@stable'
