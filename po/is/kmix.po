@@ -4,20 +4,20 @@
 # Logi Ragnarsson <logir@imf.au.dk>, 1998.
 # Arnar Leosson <leosson@frisurf.no>, 2004.
 # Þröstur Svanbergsson <throstur@bylur.net>, 2004.
-# Sveinn í Felli <sveinki@nett.is>, 2009, 2010, 2011, 2013, 2018.
+# Sveinn í Felli <sveinki@nett.is>, 2009, 2010, 2011, 2013, 2018, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2018-01-10 09:19+0000\n"
+"PO-Revision-Date: 2022-12-11 18:08+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
-"Language-Team: Icelandic <translation-team-is@lists.sourceforge.net>\n"
+"Language-Team: Icelandic\n"
 "Language: is\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 21.12.3\n"
 "Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
 "\n"
 "\n"
@@ -46,7 +46,7 @@ msgstr "kmixctrl - græja til að vista/endurheimta styrk hljóðrása"
 #: apps/kmixctrl.cpp:43
 #, kde-format
 msgid "(c) 2000 by Stefan Schimanski"
-msgstr "(c) 2000 by Stefan Schimanski"
+msgstr "(c) 2000 Stefan Schimanski"
 
 #: apps/kmixctrl.cpp:45 apps/main.cpp:56
 #, kde-format
@@ -77,10 +77,9 @@ msgid "The last soundcard was unplugged."
 msgstr "Síðasta hljóðkort var aftengt."
 
 #: apps/kmixwindow.cpp:173
-#, fuzzy, kde-format
-#| msgid "Audio Setup"
+#, kde-format
 msgid "Audio Setup..."
-msgstr "Hljóðuppsetning"
+msgstr "Hljóðuppsetning..."
 
 #: apps/kmixwindow.cpp:177
 #, kde-format
@@ -316,7 +315,7 @@ msgstr "Kemur í veg fyrir birtingu aðalglugga KMix ef KMix er þegar keyrandi.
 #: apps/main.cpp:76
 #, kde-format
 msgid "Starts KMix in failsafe mode."
-msgstr ""
+msgstr "Ræsir KMix í villuvörðu umhverfi."
 
 #: apps/volumefeedback.cpp:248
 #, fuzzy, kde-format
@@ -705,11 +704,10 @@ msgid "Rear Center"
 msgstr "Aftan miðja"
 
 #: core/volume.cpp:68
-#, fuzzy, kde-format
-#| msgid "unknown"
+#, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr "óþekkt"
+msgstr "Óþekkt"
 
 #: gui/dialogaddview.cpp:50
 #, kde-format
@@ -767,11 +765,10 @@ msgid "Current mixer:"
 msgstr "Núverandi hljóðblandari:"
 
 #: gui/dialogselectmaster.cpp:123
-#, fuzzy, kde-kuit-format
-#| msgid "Select the channel representing the master volume:"
+#, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "Veldu rásina sem er aðalrás:"
+msgstr "Veldu rásina sem er <link url=\"i\">aðalrás</link>:"
 
 #: gui/dialogselectmaster.cpp:131
 #, kde-kuit-format
@@ -853,13 +850,12 @@ msgstr "&Þagga niður"
 #: gui/kmixdockwidget.cpp:198
 #, kde-format
 msgid "No mixer devices available"
-msgstr ""
+msgstr "Engin hljóðböndunartæki tiltæk"
 
 #: gui/kmixdockwidget.cpp:206
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume muted"
-msgstr "Hljóðstyrksviðbrögð"
+msgstr "Hljóðstyrkur þaggaður"
 
 #: gui/kmixdockwidget.cpp:207
 #, kde-format
@@ -869,7 +865,7 @@ msgstr "Hljóðstyrkur á %1%"
 #: gui/kmixdockwidget.cpp:209
 #, kde-format
 msgid "%1 - %2"
-msgstr ""
+msgstr "%1 - %2"
 
 #: gui/kmixprefdlg.cpp:52
 #, kde-format
@@ -889,12 +885,12 @@ msgstr "Ræsing"
 #: gui/kmixprefdlg.cpp:103
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "Ræsa KMix við ræsingu kerfis"
 
 #: gui/kmixprefdlg.cpp:107
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "Ræsa KMix sjálfkrafa þegar skjáborðsumhverfið ræsist"
 
 #: gui/kmixprefdlg.cpp:110
 #, fuzzy, kde-format
@@ -945,8 +941,7 @@ msgid "Behavior"
 msgstr "Hegðun"
 
 #: gui/kmixprefdlg.cpp:207
-#, fuzzy, kde-format
-#| msgid "Volume Overdrive"
+#, kde-format
 msgid "Volume overdrive"
 msgstr "Hljóðstyrksmettun (overdrive)"
 
@@ -959,20 +954,17 @@ msgid ""
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:215
-#, fuzzy, kde-format
-#| msgid "Volume feedback is only available for Pulseaudio."
+#, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr "Hljóðstyrksviðbrögð eru eigöngu tiltæk með Pulseaudio."
+msgstr "Hljóðstyrksvmettun er eingöngu tiltæk með Pulseaudio."
 
 #: gui/kmixprefdlg.cpp:225
-#, fuzzy, kde-format
-#| msgid "You must restart KMix for this setting to take effect."
+#, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
-msgstr "Þú þarft að endurræsa KMix til að þessi stilling taki gildi."
+msgstr "Þú þarft að endurræsa %1 til að þessi stilling taki gildi."
 
 #: gui/kmixprefdlg.cpp:235
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume feedback"
 msgstr "Hljóðstyrksviðbrögð"
 
@@ -998,10 +990,9 @@ msgid ""
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:272
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume step:"
-msgstr "Hljóðstyrksviðbrögð"
+msgstr "Þrep hljóðstyrks:"
 
 #: gui/kmixprefdlg.cpp:280
 #, kde-format
@@ -1009,16 +1000,14 @@ msgid "Visual"
 msgstr "Myndrænt"
 
 #: gui/kmixprefdlg.cpp:289
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "Sýna &hök"
+msgstr "Sýna &hök á sleða"
 
 #: gui/kmixprefdlg.cpp:292
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "Sýna/fela hök við sleða"
+msgstr "Sýna hakmerki á sleðum"
 
 #: gui/kmixprefdlg.cpp:294
 #, fuzzy, kde-format
@@ -1043,16 +1032,14 @@ msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:312
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Slider orientation (main window): "
-msgstr "Stefna rennislár: "
+msgstr "Stefna sleða (aðalgluggi): "
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Slider orientation (System tray volume control):"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Stefna sleða (fyrir hljóðstyrkstákn í kerfisbakka):"
+msgstr "Stefna sleða (sprettgluggi kerfisbakka):"
 
 #: gui/kmixprefdlg.cpp:314
 #, fuzzy, kde-format
@@ -1067,10 +1054,9 @@ msgid "Set the orientation of the system tray volume control sliders"
 msgstr "Virkja hljóð&styrk í kerfisbakka"
 
 #: gui/kmixprefdlg.cpp:327
-#, fuzzy, kde-format
-#| msgid "&Dock in system tray"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "&Hleypa á spjaldið"
+msgstr "Setja í kerfisbakka"
 
 #: gui/kmixprefdlg.cpp:330
 #, kde-format
@@ -1086,16 +1072,14 @@ msgid ""
 msgstr ""
 
 #: gui/kmixtoolbox.cpp:97
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr "Ekkert hljóðkort er uppsett eða tengt."
+msgstr "Ekkert hljóðtæki er uppsett eða tengt."
 
 #: gui/mdwslider.cpp:96
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "&Kljúfa rásir"
+msgstr "Kljúfa rásir"
 
 #: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
 #, kde-format
@@ -1103,30 +1087,27 @@ msgid "Capture"
 msgstr "Grípa"
 
 #: gui/mdwslider.cpp:113
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Use Device"
-msgstr "Upptökutæki"
+msgstr "Nota tæki"
 
 #: gui/mdwslider.cpp:158
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "Þagga niður %2 á %1"
 
 #: gui/mdwslider.cpp:170
-#, fuzzy, kde-format
-#| msgid "Increase Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "Hækka styrk"
+msgstr "Hækka hljóðstyrk %2 á %1"
 
 #: gui/mdwslider.cpp:178
-#, fuzzy, kde-format
-#| msgid "Decrease Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "Lækka styrk"
+msgstr "Minnka hljóðstyrk %2 á %1"
 
 #: gui/mdwslider.cpp:328
 #, fuzzy, kde-format
@@ -1136,8 +1117,7 @@ msgid "Capture/Uncapture %1"
 msgstr "Grípa/sleppa %1"
 
 #: gui/mdwslider.cpp:329
-#, fuzzy, kde-format
-#| msgid "Mute/Unmute %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
 msgstr "Þagga/afþagga %1"
@@ -1149,6 +1129,8 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:680
 #, kde-format
@@ -1156,16 +1138,14 @@ msgid "%1 (capture)"
 msgstr "%1 (grípa)"
 
 #: gui/mdwslider.cpp:1118
-#, fuzzy, kde-format
-#| msgid "Automatic According to Category"
+#, kde-format
 msgid "Automatic (according to category)"
-msgstr "Sjálfvirkt miðað við flokk"
+msgstr "Sjálfvirkt (miðað við flokk)"
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
-#| msgid "C&onfigure Shortcuts..."
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "Stilla &flýtilykla..."
+msgstr "Flýtilyklar rása..."
 
 #: gui/viewbase.cpp:96
 #, kde-format
@@ -1173,10 +1153,9 @@ msgid "Configure this view"
 msgstr "Stilla þessa sýn"
 
 #: gui/viewbase.cpp:166
-#, fuzzy, kde-format
-#| msgid "Configure &Channels..."
+#, kde-format
 msgid "Configure Channels..."
-msgstr "Stilla &rásir..."
+msgstr "Stilla rásir..."
 
 #: gui/viewbase.cpp:270
 #, kde-format
@@ -1204,16 +1183,14 @@ msgid "Nothing is capturing audio."
 msgstr "Ekkert er taka upp hljóð."
 
 #: gui/viewsliders.cpp:184
-#, fuzzy, kde-format
-#| msgid "No capture devices."
+#, kde-format
 msgid "There are no capture devices."
-msgstr "Engin upptökutæki."
+msgstr "Það eru engin upptökutæki."
 
 #: gui/viewsliders.cpp:185
-#, fuzzy, kde-format
-#| msgid "No playback devices."
+#, kde-format
 msgid "There are no playback devices."
-msgstr "Engin afspilunartæki."
+msgstr "Það eru engin afspilunartæki."
 
 #~ msgid "&Hide"
 #~ msgstr "&Fela"
