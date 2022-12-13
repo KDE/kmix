@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2022-12-11 18:08+0000\n"
+"PO-Revision-Date: 2022-12-12 09:27+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language-Team: Icelandic\n"
 "Language: is\n"
@@ -747,7 +747,7 @@ msgstr "Veldu framsetningu nýju sýnarinnar:"
 #: gui/dialogchoosebackends.cpp:54
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "Hljóðblandarar sem á að birta hljóðstyrkstilli í sprettglugga:"
 
 #: gui/dialogchoosebackends.cpp:81
 #, kde-format
@@ -1016,10 +1016,9 @@ msgid "Show control &labels"
 msgstr "Sýna &merki"
 
 #: gui/kmixprefdlg.cpp:297
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "Sýnir/felur merkimiðana yfir sleðunum"
+msgstr "Birta skýringar á sleðum"
 
 #: gui/kmixprefdlg.cpp:300
 #, kde-format
@@ -1042,16 +1041,14 @@ msgid "Slider orientation (system tray popup):"
 msgstr "Stefna sleða (sprettgluggi kerfisbakka):"
 
 #: gui/kmixprefdlg.cpp:314
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "Stefna rennislár: "
+msgstr "Stilla stefnu stýrisleða í aðalglugga"
 
 #: gui/kmixprefdlg.cpp:315
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr "Virkja hljóð&styrk í kerfisbakka"
+msgstr "Stilla stefnu stýrisleða í kerfisbakka"
 
 #: gui/kmixprefdlg.cpp:327
 #, kde-format
@@ -1110,11 +1107,10 @@ msgid "Decrease volume of %2 on %1"
 msgstr "Minnka hljóðstyrk %2 á %1"
 
 #: gui/mdwslider.cpp:328
-#, fuzzy, kde-format
-#| msgid "Capture/Uncapture %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr "Grípa/sleppa %1"
+msgstr "Grípa/Sleppa %1"
 
 #: gui/mdwslider.cpp:329
 #, kde-format
