@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2022-12-08 08:59+0100\n"
+"PO-Revision-Date: 2022-12-13 03:21+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -153,7 +153,7 @@ msgstr "ახალი ხედის დამატება"
 #: apps/kmixwindow.cpp:772
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
-msgstr ""
+msgstr "ხედის დამატების შეცდომა - GUIProfile არასწორია."
 
 #: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
 #, kde-format
@@ -163,7 +163,7 @@ msgstr "შეცდომა"
 #: apps/kmixwindow.cpp:779
 #, kde-format
 msgid "Cannot add view - View already exists."
-msgstr ""
+msgstr "ხედის დამატების შეცდომა - ხედი უკვე არსებობს."
 
 #: apps/kmixwindow.cpp:1168
 #, kde-format
@@ -186,7 +186,7 @@ msgstr "KMix"
 #: apps/main.cpp:41
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr ""
+msgstr "KMix - KDE-ის სრული ფუნქციონალის მქონე მინი-მიქსერი"
 
 #: apps/main.cpp:42
 #, kde-format
@@ -295,7 +295,7 @@ msgstr "ვალენტინ რუსუ"
 #: apps/main.cpp:61
 #, kde-format
 msgid "TerraTec DMX6Fire support"
-msgstr ""
+msgstr "TerraTec DMX6Fire -ის მხარდაჭერა"
 
 #: apps/main.cpp:75
 #, kde-format
@@ -306,7 +306,7 @@ msgstr ""
 #: apps/main.cpp:76
 #, kde-format
 msgid "Starts KMix in failsafe mode."
-msgstr ""
+msgstr "KMix-ის უსაფრთხო რეჟიმში გაშვება."
 
 #: apps/volumefeedback.cpp:248
 #, kde-format
@@ -698,12 +698,12 @@ msgstr "მიმდინარე მიქსერი"
 #: gui/dialogaddview.cpp:115
 #, kde-format
 msgid "Select the design for the new view:"
-msgstr ""
+msgstr "აირჩიეთ ახალი ხედის დიზაინი:"
 
 #: gui/dialogchoosebackends.cpp:54
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "მხტუნარა ხმის კონტროლში ნაჩვენები მიქსერები:"
 
 #: gui/dialogchoosebackends.cpp:81
 #, kde-format
@@ -724,7 +724,7 @@ msgstr "მიმდინარე მიქსერი:"
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr ""
+msgstr "აირჩიეთ<link url=\"i\">მთავარი ხმის</link> არხი:"
 
 #: gui/dialogselectmaster.cpp:131
 #, kde-kuit-format
@@ -740,7 +740,7 @@ msgstr ""
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
 msgid "Automatic (%1 recommendation)"
-msgstr ""
+msgstr "ავტომატური (%1 რეკომენდაცია)"
 
 #: gui/dialogviewconfiguration.cpp:136
 #, kde-format
@@ -765,22 +765,22 @@ msgstr "ხელმისაწვდომი არხები:"
 #: gui/dialogviewconfiguration.cpp:234
 #, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr ""
+msgstr "მონიშნული არხის ხილულ სიაში გადატანა"
 
 #: gui/dialogviewconfiguration.cpp:242
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr ""
+msgstr "მონიშნული არხის ხელმისაწვდომ (დამალულ) სიაში გადატანა"
 
 #: gui/dialogviewconfiguration.cpp:282
 #, kde-format
 msgid "Show the selected channel"
-msgstr ""
+msgstr "მონიშნული არხის ჩვენება"
 
 #: gui/dialogviewconfiguration.cpp:283
 #, kde-format
 msgid "Hide the selected channel"
-msgstr ""
+msgstr "მონიშნული არხის დამალვა"
 
 #: gui/dialogviewconfiguration.cpp:284
 #, kde-format
@@ -959,17 +959,17 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:294
 #, kde-format
 msgid "Show control &labels"
-msgstr ""
+msgstr "კონტროლების &ჭდეების ჩვენება"
 
 #: gui/kmixprefdlg.cpp:297
 #, kde-format
 msgid "Show description labels for sliders"
-msgstr ""
+msgstr "ჩოჩიებისთვის აღწერის ჭდეების ჩვენება"
 
 #: gui/kmixprefdlg.cpp:300
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
-msgstr ""
+msgstr "ეკრაზე ჩვენების ჩართვა (&OSD)"
 
 #: gui/kmixprefdlg.cpp:303
 #, kde-format
@@ -979,17 +979,17 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:312
 #, kde-format
 msgid "Slider orientation (main window): "
-msgstr ""
+msgstr "ჩოჩიის ორიენტაცია (მთავარი ფანჯარა): "
 
 #: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr ""
+msgstr "ჩოჩიის ორიენტაცია (სისტემის კუთხის მხტუნარა):"
 
 #: gui/kmixprefdlg.cpp:314
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr ""
+msgstr "მთავარ ფანჯრის კონტროლის ჩოჩიების ორიენტაციის დაყენება"
 
 #: gui/kmixprefdlg.cpp:315
 #, kde-format
@@ -1082,7 +1082,7 @@ msgstr "%1 (ჩაწერა)"
 #: gui/mdwslider.cpp:1118
 #, kde-format
 msgid "Automatic (according to category)"
-msgstr ""
+msgstr "ავტომატური (კატეგორიაზე დაყრდნობით)"
 
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
