@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2022-12-13 06:37+0100\n"
+"PO-Revision-Date: 2023-01-01 13:04+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -64,6 +64,8 @@ msgid ""
 "The soundcard containing the master device was unplugged. Changing to "
 "control %1 on card %2."
 msgstr ""
+"ძირითადი მოწყობილობის შემცველი ხმოვანი ბარათი გამოერთებულია. კონტროლი %2 "
+"ბარათზე მოთავსებულ %1-ზე შეიცვლება."
 
 #: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
 #, kde-format
@@ -172,6 +174,9 @@ msgid ""
 "\n"
 "%1"
 msgstr ""
+"დამხმარე აპლიკაცია დაყენებული არაა, ან არ მუშაობს.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1219
 #, kde-format
@@ -275,7 +280,7 @@ msgstr "Nadeem Hasan"
 #: apps/main.cpp:59
 #, kde-format
 msgid "Mute and volume preview, other fixes"
-msgstr ""
+msgstr "დადუმება და ხმის გადახედვა. სხვა შეცდომები"
 
 #: apps/main.cpp:60
 #, kde-format
@@ -285,7 +290,7 @@ msgstr "Erwin Mascher"
 #: apps/main.cpp:60
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
-msgstr ""
+msgstr "Emu10k1-ზე ბაზირებული ხმოვანი ბარათების მხარდაჭერის გაუმჯობესება"
 
 #: apps/main.cpp:61
 #, kde-format
@@ -301,7 +306,7 @@ msgstr "TerraTec DMX6Fire -ის მხარდაჭერა"
 #, kde-format
 msgid ""
 "Inhibits the unhiding of the KMix main window, if KMix is already running."
-msgstr ""
+msgstr "თუ Kmix-ი უკვე გაშვებულია, მთავარი ფანჯრის გამოჩენის აკრძალვა."
 
 #: apps/main.cpp:76
 #, kde-format
@@ -319,6 +324,8 @@ msgid ""
 "You do not have permission to access the alsa mixer device.\n"
 "Please verify if all alsa devices are properly created."
 msgstr ""
+"Alsa-ის მიქსერის მოწყობილობასთან წვდომა არ გაგაჩნიათ.\n"
+"გადაამოწმეთ, შეიქმნა ALSA-ის ყველა მოწყობილობა, თუა რა."
 
 #: backends/mixer_alsa9.cpp:966
 #, kde-format
@@ -327,6 +334,9 @@ msgid ""
 "Please check that the soundcard is installed and the\n"
 "soundcard driver is loaded.\n"
 msgstr ""
+"ALSA-ის მიქსერი ვერ ვიპოვე.\n"
+"შეამოწმეთ, დაყენებულია თუ არა ხმოვანი ბარათი და\n"
+"ჩატვირთულია თუ არა მისი დრაივერი.\n"
 
 #: backends/mixer_backend.cpp:323
 #, kde-format
@@ -334,6 +344,8 @@ msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
 "Please check your operating systems manual to allow the access."
 msgstr ""
+"kmix: მიქსერის მოწყობილობამდე წვდომა არ გაგაჩნიათ.\n"
+"წვდომის დასაშვებად თქვენი ოპერაციული სისტემის სახელმძღვანელო გადაამოწმეთ."
 
 #: backends/mixer_backend.cpp:327
 #, kde-format
@@ -352,11 +364,14 @@ msgid ""
 "Please check that the soundcard is installed and that\n"
 "the soundcard driver is loaded.\n"
 msgstr ""
+"kmix: მიქსერი ვერ ვიპოვე.\n"
+"შეამოწმეთ, დაყენებულია თუ არა ხმოვანი ბარათი და\n"
+"ჩატვირთულია თუ არა მისი დრაივერი.\n"
 
 #: backends/mixer_backend.cpp:338
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
-msgstr ""
+msgstr "kmix: უცნობის შეცდომა. გთხოვთ, მოგვწერეთ, როგორ ქენით ეს."
 
 #: backends/mixer_backend_i18n.cpp:24
 #, kde-format
@@ -840,12 +855,12 @@ msgstr "გაშვება"
 #: gui/kmixprefdlg.cpp:103
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "KMix-ის გაშვება სამუშაო მაგიდის ჩატვირთვისას"
 
 #: gui/kmixprefdlg.cpp:107
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "KMix-ის გაშვება სამუშაო მაგიდის ჩატვირთვისას"
 
 #: gui/kmixprefdlg.cpp:110
 #, kde-format
@@ -857,7 +872,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:120
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr ""
+msgstr "სამუშაო მაგიდის გაშვებისას ხმის წინა პარამეტრების აღდგენა"
 
 #: gui/kmixprefdlg.cpp:124
 #, kde-format
@@ -890,7 +905,7 @@ msgstr "ქცევა"
 #: gui/kmixprefdlg.cpp:207
 #, kde-format
 msgid "Volume overdrive"
-msgstr ""
+msgstr "ხმის გაძლიერება"
 
 #: gui/kmixprefdlg.cpp:212
 #, kde-format
@@ -898,28 +913,28 @@ msgctxt "@info:tooltip"
 msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
-msgstr ""
+msgstr "ხმის რეკომენდებულზე მაღლა გაძლიერება (ჩვეულებრივ 150%-მდე)"
 
 #: gui/kmixprefdlg.cpp:215
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr ""
+msgstr "ხმის გაძლიერება მხოლოდ PulseAudio-შია ხელმისაწვდომი."
 
 #: gui/kmixprefdlg.cpp:225
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
-msgstr ""
+msgstr "ხმის გაძლიერების ჩასართავად %1-ის გადატვირთვა აუცილებელია."
 
 #: gui/kmixprefdlg.cpp:235
 #, kde-format
 msgid "Volume feedback"
-msgstr ""
+msgstr "ხმის კონტროლის უკუკავშირი"
 
 #: gui/kmixprefdlg.cpp:239
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "ხმის დონის ცვლილებისას ნიმუში ხმის დაკვრა"
 
 #: gui/kmixprefdlg.cpp:243
 #, kde-format
@@ -949,12 +964,12 @@ msgstr "ვიზუალი"
 #: gui/kmixprefdlg.cpp:289
 #, kde-format
 msgid "Show slider &tickmarks"
-msgstr ""
+msgstr "&შკალის დანაყოფების ჩვენება"
 
 #: gui/kmixprefdlg.cpp:292
 #, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr ""
+msgstr "არხების რეგულირების ცოციებზე შკალის დანაყოფების ჩვენება"
 
 #: gui/kmixprefdlg.cpp:294
 #, kde-format
@@ -1012,12 +1027,12 @@ msgstr ""
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
-msgstr ""
+msgstr "შემოწმებული მიქსერები ხმის კონტროლის მხტუნარაში გამოჩნდებიან."
 
 #: gui/kmixtoolbox.cpp:97
 #, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr ""
+msgstr "ხმის ბარათი ან დაყენებული არაა, ან ამჟამად მიუწვდომელია."
 
 #: gui/mdwslider.cpp:96
 #, kde-format
