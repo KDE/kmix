@@ -821,12 +821,12 @@ msgstr "Canals disponibles:"
 #: gui/dialogviewconfiguration.cpp:234
 #, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "Moveu el canal seleccionat en la llista visible"
+msgstr "Moveu el canal seleccionat cap a la llista visible"
 
 #: gui/dialogviewconfiguration.cpp:242
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr "Moveu el canal seleccionat en la llista disponible (oculta)"
+msgstr "Moveu el canal seleccionat cap a la llista disponible (oculta)"
 
 #: gui/dialogviewconfiguration.cpp:282
 #, kde-format
