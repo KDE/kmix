@@ -1,67 +1,154 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
-  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+  <!ENTITY % German "INCLUDE"
+> <!-- change language only here -->
   <!ENTITY % addindex "IGNORE">
 ]>
 
 <book id="kmix" lang="&language;">
 
 <bookinfo>
-<title>The &kmix; Handbook</title>
+<title
+>Das Handbuch zu &kmix;</title>
 
 <authorgroup>
-<author>
-<firstname>Gaurav</firstname>
-<surname>Chaturvedi</surname>
-<address><email>gaurav.p.chaturvedi@gmail.com</email></address>
-</author>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
 
-<othercredit role="developer">
-<firstname>Christian</firstname>
-<surname>Esken</surname>
-<affiliation><address><email>esken@kde.org</email></address></affiliation>
-<contrib>Developer</contrib>
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Entwickler</contrib>
 </othercredit>
 
-<othercredit role="developer">
-<firstname>Helio</firstname>
-<surname>Chissini de Castro</surname>
-<affiliation><address><email>helio@kde.org</email></address></affiliation>
-<contrib>Developer</contrib>
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Entwickler</contrib>
 </othercredit>
 
 
-<othercredit role="developer">
-<firstname>Brian</firstname>
-<surname>Hanson</surname>
-<affiliation><address><email>bhanson@hotmail.com</email></address></affiliation>
-<contrib>Developer</contrib>
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Entwickler</contrib>
 </othercredit>
 
-<!-- TRANS:ROLES_OF_TRANSLATORS -->
+<othercredit role="translator"
+><firstname
+>Gregor</firstname
+><surname
+>Zumstein</surname
+><affiliation
+><address
+><email
+>zumstein@ssd.ethz.ch</email
+></address
+></affiliation
+><contrib
+>Übersetzung</contrib
+></othercredit
+><othercredit role="translator"
+><firstname
+>Frank</firstname
+><surname
+>Schütte</surname
+><affiliation
+><address
+><email
+>F.Schuette@t-online.de</email
+></address
+></affiliation
+><contrib
+>Überarbeitung der Übersetzung</contrib
+></othercredit
+><othercredit role="translator"
+><firstname
+>Arnold</firstname
+><surname
+>Krille</surname
+><affiliation
+><address
+><email
+>arnold@arnoldarts.de</email
+></address
+></affiliation
+><contrib
+>Überarbeitung der Übersetzung</contrib
+></othercredit
+> 
 </authorgroup>
 
 <copyright>
-<year>1996</year><year>2005</year>
-<holder>Christian Esken &amp; &Matt.Johnston;</holder>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
 </copyright>
 
-<legalnotice>&FDLNotice;</legalnotice>
+<legalnotice
+>&FDLNotice;</legalnotice>
 
-<date>2020-10-04</date>
-<releaseinfo>Applications 20.12</releaseinfo>
+<date
+>2020-10-04</date>
+<releaseinfo
+>Anwendungen 20.12</releaseinfo>
 
 <abstract>
-<para>&kmix; is an application that allows you to change the volume of your sound card.</para>
+<para
+>&kmix; ist eine Anwendung, die es Ihnen erlaubt, die Lautstärkeeinstellungen Ihrer Soundkarte zu verändern.</para>
 </abstract>
 
 <keywordset>
-<keyword>KDE</keyword>
-<keyword>KMix</keyword>
-<keyword>kdemultimedia</keyword>
-<keyword>sound</keyword>
-<keyword>volume</keyword>
-<keyword>mixer</keyword>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedia</keyword>
+<keyword
+>Sound</keyword>
+<keyword
+>Mixer</keyword>
+<keyword
+>Lautstärkeregelung</keyword>
 
 </keywordset>
 
@@ -70,32 +157,52 @@
 http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
   -->
 <chapter id="introduction">
-<title>Introduction</title>
+<title
+>Einleitung</title>
 
-<!--<para>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
 full-featured. The program should give controls for each of your
-soundcards.</para>-->
+soundcards.</para
+>-->
 
-<para>&kmix; supports several platforms and sound drivers.</para>
+<para
+>&kmix; unterstützt verschiedene Betriebssysteme und Sound-Treiber.</para>
 
 <!--<itemizedlist>
-<listitem><para> The ALSA soundcard driver.</para></listitem>
-<listitem><para> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para></listitem>
-<listitem><para> &Solaris; based machines.</para></listitem>
-<listitem><para> &HP-UX; based machines.</para></listitem>
-</itemizedlist>-->
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
 
-<para>If you have both ALSA and Open Sound System drivers installed, &kmix; will use the ALSA driver.</para>
+<para
+>Wenn sowohl ALSA als auch das Open Sound System installiert sind, benutzt &kmix; standardmäßig ALSA.</para>
 
 <para>
 <screenshot>
-  <screeninfo>Screenshot of &kmix;</screeninfo>
+  <screeninfo
+>Bildschirmfoto von &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>Screenshot of &kmix;</phrase>
+	    <phrase
+>Bildschirmfoto von &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
@@ -106,256 +213,383 @@ soundcards.</para>-->
 </chapter>
 
 <chapter id="Main_Window">
-<title>Main Window</title>
+<title
+>Hauptfenster</title>
 
-<para>Overview of &kmix; Main Window</para>
+<para
+>Übersicht über das Hauptfenster von &kmix;</para>
 <screenshot>
-  <screeninfo>Screenshot of &kmix;</screeninfo>
+  <screeninfo
+>Bildschirmfoto von &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>Screenshot of &kmix;</phrase>
+	    <phrase
+>Bildschirmfoto von &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
 
 <sect1 id='File_Options'>
-<title>File Options</title>
+<title
+>Dateioptionen</title>
 <screenshot>
-  <screeninfo>&kmix; File options</screeninfo>
+  <screeninfo
+>Dateioptionen von &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-file.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>&kmix; File options</phrase>
+	    <phrase
+>Dateioptionen von &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
 
 <variablelist>
 <varlistentry>
-<term><menuchoice>
-<shortcut>
-<keycombo action="simul">&Esc;</keycombo>
-</shortcut>
-<guimenu>File</guimenu>
-<guimenuitem>Hide Mixer Window</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Hide Mixer Window</action></para></listitem>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>Datei</guimenu
+> <guimenuitem
+>Lautstärkeregler ausblenden</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Lautstärkeregler ausblenden</action
+></para
+></listitem>
 </varlistentry>
 </variablelist>
 </sect1>
 
 <sect1 id='Settings'>
-<title>Settings</title>
+<title
+>Einstellungen</title>
 
 <screenshot>
-  <screeninfo>&kmix; Settings</screeninfo>
+  <screeninfo
+>Einstellungen von &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-options.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>&kmix; Settings</phrase>
+	    <phrase
+>Einstellungen von &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
 
 <variablelist>
 <varlistentry>
-<term><menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Audio Setup</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Open <ulink url="help:/kcontrol/phonon">&phonon; &systemsettings; module</ulink></action> to configure the sound and video device preference and the backends used by &kde; multimedia API, &phonon;.</para></listitem>
+<term
+><menuchoice
+><guimenu
+>Einstellungen</guimenu
+> <guimenuitem
+>Audio-Einrichtung</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Öffnet</action
+> das <ulink url="help:/kcontrol/phonon"
+>&systemsettings;-Modul für &phonon;</ulink
+>, um die Gerätepriorität für Audio und Video sowie die Backends für die &kde;-Schnittstelle zu &phonon; festzulegen.</para
+></listitem>
 </varlistentry>
 </variablelist>
 
 
 <!-- Unavailable for standard PulseAudio configuration
 <sect2 id='Channels'>
-<title>Configure &kmix; Channels</title>
+<title
+>Configure &kmix; Channels</title>
 <screenshot>
-  <screeninfo>&kmix; Channels</screeninfo>
+  <screeninfo
+>&kmix; Channels</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-channels.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>&kmix; Channels</phrase>
+	    <phrase
+>&kmix; Channels</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>Select the &kmix; channels you want to be used for output or input audio information.</para>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
 </sect2>
 -->
 
 <sect2 id='Master_Channels'>
-<title>Select Master Channel</title>
+<title
+>Auswahl des Hauptkanals</title>
 <screenshot>
-  <screeninfo>&kmix; Master Channel</screeninfo>
+  <screeninfo
+>&kmix;-Hauptkanal</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-master.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>&kmix; Master Channel</phrase>
+	    <phrase
+>&kmix;-Hauptkanal</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>Select your &kmix; master channel.</para>
+<para
+>Wählen Sie Ihren &kmix;-Hauptkanal.</para>
 </sect2>
 
 <sect2 id='Configure'>
-<title>Configure &kmix;</title>
+<title
+>&kmix; einrichten</title>
 <sect3 id="configure-general">
-  <title>
-    General configuration
-  </title>
+  <title
+>Allgemeine Einstellungen </title>
   <screenshot>
-  <screeninfo>General configuration of &kmix;</screeninfo>
+  <screeninfo
+>Allgemeine Einstellungen von &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>General configuration of &kmix;</phrase>
+	    <phrase
+>Allgemeine Einstellungen von &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>Configure general &kmix; parameters.</para>
+<para
+>Stellen Sie verschiedene allgemeine &kmix;-Parameter ein.</para>
 
 <variablelist>
 <varlistentry>
-<term><menuchoice>
-<guimenu>Behavior</guimenu>
-<guimenuitem>Volume Overdrive</guimenuitem>
-</menuchoice></term>
-<listitem><para>Check this box to allow volume to be more than recommended value (sometimes PulseAudio maximal volume exceeds the normal value). &kmix; restart is needed for this setting to take effect.</para>
+<term
+><menuchoice
+><guimenu
+>Verhalten</guimenu
+> <guimenuitem
+>Lautstärke-Übersteuerung</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Aktivieren Sie dieses Ankreuzfeld, um für die Lautstärke erhöhte Werte zuzulassen. Manchmal überschreitet die maximale Lautstärke von PulseAudio den normalen Wert. Damit diese Einstellung wirksam wird, muss &kmix; neu gestartet werden.</para>
   <warning>
-    <para>
-      Uncheck this item if there are audible sound distortions at the maximal volume.
-    </para>
+    <para
+>Gibt es hörbare Verzerrungen bei maximaler Lautstärke, schalten Sie dies ab. </para>
   </warning>
 </listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Behavior</guimenu>
-<guimenuitem>Volume Feedback</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable audible feedback on volume change.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Verhalten</guimenu
+> <guimenuitem
+>Rückmeldung der Lautstärke</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, um eine akustische Rückmeldung beim Ändern der Lautstärke zu erhalten.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Behavior</guimenu>
-<guimenuitem>Volume step</guimenuitem>
-</menuchoice></term>
+<term
+><menuchoice
+><guimenu
+>Verhalten</guimenu
+> <guimenuitem
+>Schrittweite der Lautstärke</guimenuitem
+> </menuchoice
+></term>
 <listitem>
-    <para>
-        Set the volume step as a percentage of the volume range.
-    </para>
-    <para>
-        This affects changing the volume via hot keys, with the mouse wheel over the system tray icon, or moving sliders by a page step.
-    </para>
-    <para>
-        &kmix; must be restarted for this change to take effect.
-    </para>
+    <para
+>Legt die Schrittweite der Lautstärke als Prozentwert des Lautstärkeumfangs fest. </para>
+    <para
+>Dies betrifft die Änderung der Lautstärke durch Kurzbefehle, durch Drehen des Mausrads auf dem Symbol im Systemabschnitt der Kontrollleiste oder durch Bewegen der Schieberegler durch einen Seitenschritt. </para>
+    <para
+>Sie müssen &kmix; neu starten, damit diese Änderungen aktiv werden. </para>
 </listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Visual</guimenu>
-<guimenuitem>Show slider tickmarks</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to show tickmarks on the sliders.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Visuell</guimenu
+> <guimenuitem
+>Skalenstriche anzeigen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, um Skalenstriche an den Lautstärkereglern anzuzeigen.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Visual</guimenu>
-<guimenuitem>Show control labels</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to show labels of controls.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Visuell</guimenu
+> <guimenuitem
+>Bezeichnungen anzeigen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, um die Bezeichnungen der Lautstärkeregler anzuzeigen.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Visual</guimenu>
-<guimenuitem>Show On Screen Display (OSD)</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable OSD show on hovering &kmix; tray widget.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Visuell</guimenu
+> <guimenuitem
+>On-Screen-Display (OSD) anzeigen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, um beim Überfahren des &kmix;-Symbols in der Kontrollleiste das OSD (On Screen Display) anzuzeigen.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Slider orientation (main window)</guimenu>
-<guimenuitem>Horizontal</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this radio button to orientate the control slider horizontally.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Regler-Ausrichtung im Hauptfenster</guimenu
+> <guimenuitem
+>Horizontal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Wählen Sie diese Einstellung, wenn die Lautstärkeregler horizontal dargestellt werden sollen.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Slider orientation (main window)</guimenu>
-<guimenuitem>Vertical</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this radio button to orientate the control slider vertically.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Regler-Ausrichtung im Hauptfenster</guimenu
+> <guimenuitem
+>Vertikal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Wählen Sie diese Einstellung, wenn die Lautstärkeregler vertikal dargestellt werden sollen.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Slider orientation (system tray popup)</guimenu>
-<guimenuitem>Horizontal/Vertical</guimenuitem>
-</menuchoice></term>
-<listitem><para>Same as the previous two radio buttons but for the system tray volume control (the panel that is shown after &LMB; click on &kmix; tray icon).</para></listitem>
+<term
+><menuchoice
+><guimenu
+>Ausrichtung der Lautstärkeregler im Aufklappfenster der Kontrollleiste</guimenu
+> <guimenuitem
+>Horizontal/Vertikal</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Die Ausrichtung der Lautstärkeregler, diesmal im Systemabschnitt der Kontrollleiste, das durch Klicken mit der &LMBn; auf das &kmix;-Symbol angezeigt wird.</para
+></listitem>
 </varlistentry>
 </variablelist>
 
 </sect3>
 
 <sect3 id="configure-start">
-  <title>
-    Start configuration
-  </title>
+  <title
+>Starteinstellungen </title>
   <screenshot>
-  <screeninfo>Start configuration of &kmix;</screeninfo>
+  <screeninfo
+>Starteinstellungen für &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>Start configuration of &kmix;</phrase>
+	    <phrase
+>Starteinstellungen für &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>This page allows you to configure various &kmix; start parameters.</para>
+<para
+>Auf dieser Seite können Sie verschiedene Parameter für den Start von &kmix; einstellen.</para>
 
 <variablelist>
 <varlistentry>
-<term><menuchoice>
-<guimenu>Startup</guimenu>
-<guimenuitem>Start KMix on desktop startup</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable &kmix; autostart with desktop environment.</action></para></listitem>
+<term
+><menuchoice
+><guimenu
+>Programmstart</guimenu
+> <guimenuitem
+>KMix beim Start der Arbeitsfläche starten</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, im &kmix; automatisch mit der Arbeitsflächenumgebung zu starten.</action
+></para
+></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><menuchoice>
-<guimenu>Startup</guimenu>
-<guimenuitem>Restore previous volume settings on desktop startup</guimenuitem>
-</menuchoice></term>
-<listitem><para><action>Check this box to enable volume levels and switches restoration to their last used settings on desktop start.</action></para>
+<term
+><menuchoice
+><guimenu
+>Programmstart</guimenu
+> <guimenuitem
+>Lautstärken beim Start der Arbeitsfläche wiederherstellen</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, wenn die eingestellte Lautstärke und Einstellungen beim Start der Arbeitsfläche wiederhergestellt werden sollen.</action
+></para>
   <warning>
-    <para>
-      The volume of PulseAudio or MPRIS2 dynamic controls will not be restored.
-    </para>
+    <para
+>Dynamische Steuerung von PulseAudio und MPRIS2 wird nicht wieder hergestellt. </para>
   </warning>
 </listitem>
 </varlistentry>
@@ -364,80 +598,102 @@ soundcards.</para>-->
 </sect3>
 
 <sect3 id="configure-volume-control">
-  <title>
-    Volume control configuration
-  </title>
+  <title
+>Einstellung der Lautstärkeregelung </title>
   <screenshot>
-  <screeninfo>Volume control configuration of &kmix;</screeninfo>
+  <screeninfo
+>Einstellung der Lautstärkeregelung in &kmix;</screeninfo>
 	<mediaobject>
 	  <imageobject>
 	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
 	  </imageobject>
 	  <textobject>
-	    <phrase>Volume control configuration of &kmix;</phrase>
+	    <phrase
+>Einstellung der Lautstärkeregelung in &kmix;</phrase>
 	  </textobject>
 	</mediaobject>
 </screenshot>
-<para>This page allows you to configure various &kmix; popup volume control parameters.</para>
+<para
+>Auf dieser Seite stellen Sie die verschiedenen &kmix;-Parameter der Lautstärkeregelung im Aufklappfenster ein.</para>
 
 <variablelist>
 <varlistentry>
-<term><guilabel>Dock in system tray</guilabel>
+<term
+><guilabel
+>An Kontrollleiste andocken</guilabel>
 </term>
-<listitem><para><action>Check this box to dock &kmix; in system tray.</action></para></listitem>
+<listitem
+><para
+><action
+>Aktivieren Sie diese Option, um &kmix; an die Kontrollleiste anzudocken.</action
+></para
+></listitem>
 </varlistentry>
 </variablelist>
 
-<para>
-  It is possible to select mixers that will be shown in the volume control using the corresponding list on this page.
-</para>
+<para
+>Es können Mixer aus der zugehörigen Liste auf dieser Seite ausgewählt werden, die dann in der Lautstärkeregelung angezeigt werden. </para>
 </sect3>
 </sect2>
 </sect1>
 </chapter>
 
 <chapter id="advanced">
-<title>Advanced usage</title>
+<title
+>Weiterführende Funktionen</title>
 <sect1>
-<title>Remote controlling and scripting via &DBus;</title>
-<para>
-You can control &kmix; via &DBus;. This is for advanced users who want to achieve special tasks, like muting the PC every day at 10 pm, or for any other scripting task.
+<title
+>Fernsteuerung und Skripte für &DBus;</title>
+<para
+>&kmix; kann über &DBus; gesteuert werden. Dies ist für erfahrene Anwender gedacht, um besondere Aufgaben durchzuführen wie zum Beispiel den Rechner jeden Tag um 10 Uhr stummzuschalten und um &kmix; über Skripte zu steuern. </para>
+
+<para
+>Alle &DBus;-Methoden und -Eigenschaften für &kmix; auflisten: <programlisting
+>qdbus org.kde.kmix</programlisting>
 </para>
 
-<para>
-List all &kmix; related &DBus; methods and properties
-<programlisting>qdbus org.kde.kmix</programlisting>
+<para
+>Lautstärke (0-100 %) abfragen: <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
 </para>
 
-<para>
-Getting volume level (0-100%):
-<programlisting>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
-</para>
-
-<para>
-Setting volume level (0-100%):
-<programlisting>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+<para
+>Lautstärke (0-100 %) einstellen: <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
 </para>
 
 </sect1>
 </chapter>
 
 <chapter id="credits">
-<title>Credits and License</title>
+<title
+>Danksagungen und Lizenz</title>
 
-<para>
-&kmix;
-</para>
+<para
+>&kmix; </para>
 
-<para>Documentation copyright &copy; 2010 Gaurav Chaturvedi <email>gaurav.p.chaturvedi@gmail.com </email> </para>
-<para>Thanks to:</para>
-<para>&Matt.Johnston; &Matt.Johnston.mail; (copy and pasted a lot of things from his old &kmix; documentation) </para>
+<para
+>Copyright für die Dokumentation &copy; 2010 Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Dank an:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (brachte einiges aus seiner alten &kmix;-Dokumentation ein) </para>
 
-<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
-&underFDL;
-&underGPL;
-
-</chapter>
+<para
+>Übersetzung Gregor Zumstein <email
+>zumstein@ssd.ethz.ch</email
+></para
+> <para
+>Überarbeitung der Übersetzung Frank Schütte <email
+>F.Schuette@t-online.de</email
+></para
+><para
+>Arnold Krille<email
+>arnold@arnoldarts.de</email
+></para
+> &underFDL; &underGPL; </chapter>
 
 &documentation.index;
 </book>
