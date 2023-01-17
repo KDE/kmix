@@ -80,7 +80,7 @@ msgstr "S'ha desconnectat l'última targeta de so."
 #: apps/kmixwindow.cpp:173
 #, kde-format
 msgid "Audio Setup..."
-msgstr "Configuració de l'àudio..."
+msgstr "Configureu l'àudio..."
 
 #: apps/kmixwindow.cpp:177
 #, kde-format
@@ -757,7 +757,7 @@ msgstr "Mescladors que s'han de mostrar en el control de volum emergent:"
 #: gui/dialogchoosebackends.cpp:81
 #, kde-format
 msgid "Select Mixers"
-msgstr "Selecció dels mescladors"
+msgstr "Seleccioneu els mescladors"
 
 #: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
 #, kde-format
@@ -799,7 +799,7 @@ msgstr "Automàtic (%1 recomanació)"
 #: gui/dialogviewconfiguration.cpp:136
 #, kde-format
 msgid "Configure Channels"
-msgstr "Configuració dels canals"
+msgstr "Configureu els canals"
 
 #: gui/dialogviewconfiguration.cpp:147
 #, kde-format
@@ -1177,7 +1177,7 @@ msgstr "Configura esta vista"
 #: gui/viewbase.cpp:166
 #, kde-format
 msgid "Configure Channels..."
-msgstr "Configuració dels canals..."
+msgstr "Configureu els canals..."
 
 #: gui/viewbase.cpp:270
 #, kde-format
