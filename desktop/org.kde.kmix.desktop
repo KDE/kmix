@@ -140,6 +140,7 @@ Comment[tr]=Ses düzeylerini denetler
 Comment[uk]=Керування гучністю звуків
 Comment[x-test]=xxControl sound volumesxx
 Comment[zh_CN]=控制音量
+Comment[zh_TW]=控制音效裝置
 X-KDE-StartupNotify=true
 X-DBUS-StartupType=Unique
 Categories=Qt;KDE;AudioVideo;Audio;Mixer;
