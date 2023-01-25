@@ -7,30 +7,31 @@
 # pan93412 <pan93412@gmail.com>, 2018, 2019, 2020.
 # Frank Weng (a.k.a. Franklin) <franklin at goodhorse dot idv dot tw>, 2006, 2007, 2008, 2009, 2010.
 # Franklin Weng <franklin at goodhorse dot idv dot tw>, 2007, 2008.
+# Kisaragi Hiu <mail@kisaragi-hiu.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2020-04-03 00:55+0800\n"
-"Last-Translator: Yi-Jyun Pan <pan93412@gmail.com>\n"
-"Language-Team: Chinese <zh-l10n@lists.linux.org.tw>\n"
+"PO-Revision-Date: 2023-01-24 19:28+0900\n"
+"Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
+"Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 19.12.3\n"
+"X-Generator: Lokalize 22.12.0\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Joe Man, Frank Weng (a.k.a. Franklin)"
+msgstr "Joe Man, Frank Weng (a.k.a. Franklin), Kisaragi Hiu"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "trmetal@yahoo.com.hk, franklin@goodhorse.idv.tw"
+msgstr "trmetal@yahoo.com.hk, franklin@goodhorse.idv.tw, mail@kisaragi-hiu.com"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -756,11 +757,10 @@ msgid "Current mixer:"
 msgstr "目前混音器："
 
 #: gui/dialogselectmaster.cpp:123
-#, fuzzy, kde-kuit-format
-#| msgid "Select the channel representing the master volume:"
+#, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "選擇主音量的聲道："
+msgstr "選擇<link url=\"i\">主音量</link>的聲道："
 
 #: gui/dialogselectmaster.cpp:131
 #, kde-kuit-format
@@ -772,6 +772,9 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>在此您可以選擇主要聲音裝置（如果有超過一個裝置的話）以及它的主聲道。</"
+"para><para>主聲道是系統匣音量控制、音量上/下鍵及靜音全域快捷鍵、以及系統匣彈"
+"出視窗的<interface>靜音</interface>動作所會控制的聲道。</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
@@ -879,10 +882,9 @@ msgid "Start KMix on desktop startup"
 msgstr "系統啟動時啟動 KMix"
 
 #: gui/kmixprefdlg.cpp:107
-#, fuzzy, kde-format
-#| msgid "Start KMix automatically when the desktop starts."
+#, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr "當系統開啟時，自動開啟 KMix。"
+msgstr "當系統開啟時，自動啟動 KMix"
 
 #: gui/kmixprefdlg.cpp:110
 #, kde-format
@@ -899,14 +901,11 @@ msgid "Restore previous volume settings on desktop startup"
 msgstr "桌面啟動時還原到上一個音量設定"
 
 #: gui/kmixprefdlg.cpp:124
-#, fuzzy, kde-format
-#| msgid ""
-#| "Restore all mixer volume levels and switches to their last used settings "
-#| "when the desktop starts."
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "當桌面啟動時，重設所有的混音器音量等級並切換到其上次使用的設定。"
+msgstr "當桌面啟動時，重設所有的混音器音量等級並切換到其上次使用的設定"
 
 #: gui/kmixprefdlg.cpp:127
 #, kde-format
@@ -940,21 +939,17 @@ msgctxt "@info:tooltip"
 msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
-msgstr ""
+msgstr "允許音量提升到超過建議的最大值（一般到 150%）"
 
 #: gui/kmixprefdlg.cpp:215
-#, fuzzy, kde-format
-#| msgid ""
-#| "Volume feedback and volume overdrive are only available for PulseAudio."
+#, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr "音量回饋與音量超規只能在 PulseAudio 使用。"
+msgstr "音量超規只能在 PulseAudio 使用。"
 
 #: gui/kmixprefdlg.cpp:225
-#, fuzzy, kde-format
-#| msgid ""
-#| "KMix must be restarted for the Volume Overdrive setting to take effect."
+#, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
-msgstr "音量超規設定需要將 KMix 重新啟動後才能生效。"
+msgstr "%1 必須重新啟動後音量超規設定才會生效。"
 
 #: gui/kmixprefdlg.cpp:235
 #, kde-format
@@ -965,12 +960,12 @@ msgstr "音量回饋"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "音量變更時播放一個範例音效"
 
 #: gui/kmixprefdlg.cpp:243
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "音量回饋只能在用 Canberra 設定時使用。"
 
 #: gui/kmixprefdlg.cpp:265
 #, kde-kuit-format
@@ -981,12 +976,14 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>設定音量間隔值，單位是音量範圍的百分比。</para><para>這會影響的修改音量"
+"方式有使用快捷鍵、在系統匣圖示上使用滑鼠滾輪、以及依頁面間隔移動音量控制器"
+"時。</para><para>%1 必須重新啟動後這個變更才會生效。</para>"
 
 #: gui/kmixprefdlg.cpp:272
-#, fuzzy, kde-format
-#| msgid "Volume muted"
+#, kde-format
 msgid "Volume step:"
-msgstr "音量靜音"
+msgstr "音量間隔值："
 
 #: gui/kmixprefdlg.cpp:280
 #, kde-format
@@ -999,10 +996,9 @@ msgid "Show slider &tickmarks"
 msgstr "顯示刻度(&T)"
 
 #: gui/kmixprefdlg.cpp:292
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "顯示/隱藏音量控制器的刻度"
+msgstr "顯示音量控制器的刻度"
 
 #: gui/kmixprefdlg.cpp:294
 #, kde-format
@@ -1010,10 +1006,9 @@ msgid "Show control &labels"
 msgstr "顯示標籤(&L)"
 
 #: gui/kmixprefdlg.cpp:297
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "顯示/隱藏音量控制器上的標題"
+msgstr "顯示音量控制器的標題"
 
 #: gui/kmixprefdlg.cpp:300
 #, kde-format
@@ -1023,7 +1018,7 @@ msgstr "顯示螢幕上字樣（OSD）(&O)"
 #: gui/kmixprefdlg.cpp:303
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr ""
+msgstr "使用快捷鍵調整音量時顯示螢幕指示器"
 
 #: gui/kmixprefdlg.cpp:312
 #, kde-format
@@ -1036,15 +1031,14 @@ msgid "Slider orientation (system tray popup):"
 msgstr "滑動器方向（系統匣彈出視窗）："
 
 #: gui/kmixprefdlg.cpp:314
-#, fuzzy, kde-format
-#| msgid "Slider orientation (main window): "
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "滑動器方向（主視窗）："
+msgstr "設定主視窗音量控制器的方向"
 
 #: gui/kmixprefdlg.cpp:315
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr ""
+msgstr "設定系統匣音量控制器的方向"
 
 #: gui/kmixprefdlg.cpp:327
 #, kde-format
@@ -1059,11 +1053,10 @@ msgid ""
 msgstr "於系統匣嵌入混音器。點擊它以開啟音量控制彈出視窗。"
 
 #: gui/kmixprefdlg.cpp:502
-#, fuzzy, kde-format
-#| msgid "Mixers to show in the popup volume control:"
+#, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
-msgstr "音量控制彈出視窗中的欲顯示等化器："
+msgstr "在這裡勾選的混音器會在音量控制彈出視窗中顯示。"
 
 #: gui/kmixtoolbox.cpp:97
 #, kde-format
@@ -1089,21 +1082,19 @@ msgstr "使用裝置"
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "用 %1 將 %2 靜音"
 
 #: gui/mdwslider.cpp:170
-#, fuzzy, kde-format
-#| msgid "Increase Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "遞增音量"
+msgstr "用 %1 提高 %2 的音量"
 
 #: gui/mdwslider.cpp:178
-#, fuzzy, kde-format
-#| msgid "Decrease Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "遞減音量"
+msgstr "用 %1 降低 %2 的音量"
 
 #: gui/mdwslider.cpp:328
 #, kde-format
