@@ -130,7 +130,7 @@
   <url type="help">https://docs.kde.org/?application=kmix</url>
   <url type="donation">https://www.kde.org/community/donations/?app=kmix&amp;source=appdata</url>
   <screenshots>
-    <screenshot>
+    <screenshot type="default">
       <image>https://cdn.kde.org/screenshots/kmix/kmix.png</image>
     </screenshot>
   </screenshots>
