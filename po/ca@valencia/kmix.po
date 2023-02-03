@@ -41,7 +41,7 @@ msgstr "KMixCtrl"
 #: apps/kmixctrl.cpp:41
 #, kde-format
 msgid "kmixctrl - kmix volume save/restore utility"
-msgstr "kmixctrl - Utilitat per que es guardarà/restaurar el volum del kmix"
+msgstr "kmixctrl - Utilitat per a guardar/restaurar el volum de kmix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
