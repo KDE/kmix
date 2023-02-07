@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: kdemultimedia-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2023-01-18 22:29+0300\n"
+"PO-Revision-Date: 2023-02-07 00:41+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.12.1\n"
+"X-Generator: Lokalize 22.12.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -47,7 +47,7 @@ msgstr ""
 #: apps/kmixctrl.cpp:40
 #, kde-format
 msgid "KMixCtrl"
-msgstr "KMixCtrl"
+msgstr "K MiksCtrl"
 
 #: apps/kmixctrl.cpp:41
 #, kde-format
@@ -202,7 +202,7 @@ msgstr "Karıştırıcı (%1)"
 #: apps/main.cpp:40
 #, kde-format
 msgid "KMix"
-msgstr "KMix"
+msgstr "K Miks"
 
 #: apps/main.cpp:41
 #, kde-format
@@ -212,7 +212,7 @@ msgstr "Kmix - KDE'nin tam kapsamlı mini karıştırıcısı"
 #: apps/main.cpp:42
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
-msgstr "(c) 1996-2013 KMix Yazarları"
+msgstr "(c) 1996-2013 K Miks Yazarları"
 
 #: apps/main.cpp:45
 #, kde-format
@@ -322,12 +322,12 @@ msgstr "TerraTec DMX6Fire desteği"
 #, kde-format
 msgid ""
 "Inhibits the unhiding of the KMix main window, if KMix is already running."
-msgstr "KMix çalışıyorsa KMix ana penceresinin gösterilmesini engeller."
+msgstr "K Miks çalışıyorsa K Miks ana penceresinin gösterilmesini engeller."
 
 #: apps/main.cpp:76
 #, kde-format
 msgid "Starts KMix in failsafe mode."
-msgstr "KMix'i güvenceli kipte başlatır."
+msgstr "K Miks'i güvenceli kipte başlatır."
 
 #: apps/volumefeedback.cpp:248
 #, kde-format
@@ -902,12 +902,12 @@ msgstr "Başlangıç"
 #: gui/kmixprefdlg.cpp:103
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr "Masaüstü başlangıcında KMix'i başlat"
+msgstr "Masaüstü başlangıcında K Miks'i başlat"
 
 #: gui/kmixprefdlg.cpp:107
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr "Masaüstü başlatıldığında KMix'i kendiliğinden başlat"
+msgstr "Masaüstü başlatıldığında K Miks'i kendiliğinden başlat"
 
 #: gui/kmixprefdlg.cpp:110
 #, kde-format
@@ -916,7 +916,7 @@ msgid ""
 "is missing. Check that KMix is installed correctly."
 msgstr ""
 "Otomatik başlatma çalışmayacak; çünkü kmix_autostart_desktop dosyası eksik. "
-"KMix'in düzgünce kurulduğundan emin olun."
+"K Miks'in düzgünce kurulduğundan emin olun."
 
 #: gui/kmixprefdlg.cpp:120
 #, kde-format
