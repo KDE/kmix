@@ -348,7 +348,6 @@ set(kmixd_SRCS
 
 add_library(kded_kmixd MODULE ${kmixd_SRCS})
 set_target_properties(kded_kmixd PROPERTIES OUTPUT_NAME kmixd)
-kcoreaddons_desktop_to_json(kded_kmixd desktop/kmixd.desktop)
 
 target_link_libraries(kded_kmixd
   kmixcore
