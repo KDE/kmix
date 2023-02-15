@@ -1,6 +1,14 @@
 {
     "KPlugin": {
         "Description": "Monitors sound devices",
+        "Description[ca@valencia]": "Controla els dispositius de so",
+        "Description[ca]": "Controla els dispositius de so",
+        "Description[ka]": "ხმის მოწყობილობების მონიტორინგი",
+        "Description[nl]": "Monitort geluidsapparaten",
+        "Description[pt_BR]": "Monitora dispositivos de som",
+        "Description[tr]": "Ses aygıtlarını izler",
+        "Description[uk]": "Стежить за звуковими пристроями",
+        "Description[x-test]": "xxMonitors sound devicesxx",
         "Icon": "kmix",
         "Name": "KMix Daemon",
         "Name[bg]": "Демон на KMix",
