@@ -1,11 +1,13 @@
 {
     "KPlugin": {
         "Description": "Monitors sound devices",
+        "Description[bg]": "Следи звуковите устройства",
         "Description[ca@valencia]": "Controla els dispositius de so",
         "Description[ca]": "Controla els dispositius de so",
         "Description[cs]": "Monitoruje zvuková zařízení",
         "Description[eu]": "Soinu-gailuak gainbegiratzen ditu",
         "Description[fr]": "Surveille les périphériques de son",
+        "Description[it]": "Controlla i dispositivi sonori",
         "Description[ka]": "ხმის მოწყობილობების მონიტორინგი",
         "Description[nl]": "Monitort geluidsapparaten",
         "Description[pt]": "Vigia os dispositivos de som",
