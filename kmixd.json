@@ -18,6 +18,7 @@
         "Description[uk]": "Стежить за звуковими пристроями",
         "Description[x-test]": "xxMonitors sound devicesxx",
         "Description[zh_CN]": "监视声音设备",
+        "Description[zh_TW]": "監控音效裝置",
         "Icon": "kmix",
         "Name": "KMix Daemon",
         "Name[bg]": "Демон на KMix",
