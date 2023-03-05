@@ -196,7 +196,7 @@ msgstr "مازج.ك"
 #: apps/main.cpp:41
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "مازج.ك - مازج كيدي الصوتي المصغر"
+msgstr "مازج.ك - مازج كِيدِي الصوتي المصغر"
 
 #: apps/main.cpp:42
 #, kde-format
@@ -1276,7 +1276,7 @@ msgstr "لا توجد أجهزة قراءة"
 #~ msgstr "رفع الحد الأقصى للصوت إلى 150% (PulseAudio فقط)"
 
 #~ msgid "Docks the mixer into the KDE system tray"
-#~ msgstr "تضع المازج في صينية نظام كيدي"
+#~ msgstr "تضع المازج في صينية نظام كِيدِي"
 
 #~ msgid "&Use custom colors"
 #~ msgstr "&استعمل الالوان المعتادة"
@@ -1315,7 +1315,7 @@ msgstr "لا توجد أجهزة قراءة"
 #~ msgstr "العرض موجود مسبقاً. لا يمكن إضافة عرض"
 
 #~ msgid "KDE Mixer"
-#~ msgstr "مازج كيدي"
+#~ msgstr "مازج كِيدِي"
 
 #~ msgid "Allows to control the volume from the system tray"
 #~ msgstr "يسمح بالتحكم بالصوت من صينية النظام"
