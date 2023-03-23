@@ -1,21 +1,21 @@
 # Esperantaj mesaĝoj por "kmix"
 # Copyright (C) 1998 Free Software Foundation, Inc.
 # Wolfram Diestel <diestel@rzaix340.rz.uni-leipzig.de>, 1998.
-#
+# Oliver Kellogg <okellogg@users.sourceforge.net>, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix 1.0pre2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2002-07-12 13:11GMT\n"
-"Last-Translator: Steffen Pietsch <Steffen.Pietsch@BerlinOnline.de>\n"
-"Language-Team: Esperanto <eo@li.org>\n"
+"PO-Revision-Date: 2023-03-22 19:13+01\n"
+"Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
+"Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.6\n"
+"X-Generator: translate-po (https://github.com/zcribe/translate-po)\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #, kde-format
@@ -39,10 +39,9 @@ msgid "kmixctrl - kmix volume save/restore utility"
 msgstr "KMixCtrl - utilaĵo por sekurigi/restarigi laŭtecojn por Miksilo"
 
 #: apps/kmixctrl.cpp:43
-#, fuzzy, kde-format
-#| msgid "Stefan Schimanski"
+#, kde-format
 msgid "(c) 2000 by Stefan Schimanski"
-msgstr "Stefan Schimanski"
+msgstr "(c) 2000 de Stefan Schimanski"
 
 #: apps/kmixctrl.cpp:45 apps/main.cpp:56
 #, kde-format
@@ -52,12 +51,12 @@ msgstr "Stefan Schimanski"
 #: apps/kmixctrl.cpp:51
 #, kde-format
 msgid "Save current volumes as default"
-msgstr "Konservu nunajn laŭtecojn kiel aprioraj"
+msgstr "Konservi aktualajn laŭtecojn kiel aprioraj"
 
 #: apps/kmixctrl.cpp:53
 #, kde-format
 msgid "Restore default volumes"
-msgstr "Restarigu la apriorajn laŭtecojn"
+msgstr "Restarigi la apriorajn laŭtecojn"
 
 #: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
 #, kde-format
@@ -65,96 +64,98 @@ msgid ""
 "The soundcard containing the master device was unplugged. Changing to "
 "control %1 on card %2."
 msgstr ""
+"La sonkarto enhavanta la mastran aparaton estis malkonektita. Ŝanĝante al "
+"kontrolo %1 sur karto %2."
 
 #: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
 #, kde-format
 msgid "The last soundcard was unplugged."
-msgstr ""
+msgstr "La lasta sonkarto estis malkonektita."
 
 #: apps/kmixwindow.cpp:173
 #, kde-format
 msgid "Audio Setup..."
-msgstr ""
+msgstr "Aŭdio-Agordo..."
 
 #: apps/kmixwindow.cpp:177
 #, kde-format
 msgid "Hide Mixer Window"
-msgstr ""
+msgstr "Kaŝi Miksilan Fenestron"
 
 #: apps/kmixwindow.cpp:182
-#, fuzzy, kde-format
+#, kde-format
 msgid "Configure &Channels..."
-msgstr "&Dividu kanalojn"
+msgstr "Agordi &Kanalojn..."
 
 #: apps/kmixwindow.cpp:186
-#, fuzzy, kde-format
+#, kde-format
 msgid "Select Master Channel..."
-msgstr "&Dividu kanalojn"
+msgstr "Elekti Mastran Kanalon..."
 
 #: apps/kmixwindow.cpp:191
 #, kde-format
 msgid "Save volume profile 1"
-msgstr ""
+msgstr "Konservi laŭtecan profilon 1"
 
 #: apps/kmixwindow.cpp:196
 #, kde-format
 msgid "Save volume profile 2"
-msgstr ""
+msgstr "Konservi laŭtecan profilon 2"
 
 #: apps/kmixwindow.cpp:201
 #, kde-format
 msgid "Save volume profile 3"
-msgstr ""
+msgstr "Konservi laŭtecan profilon 3"
 
 #: apps/kmixwindow.cpp:206
 #, kde-format
 msgid "Save volume profile 4"
-msgstr ""
+msgstr "Konservi laŭtecan profilon 4"
 
 #: apps/kmixwindow.cpp:211
 #, kde-format
 msgid "Load volume profile 1"
-msgstr ""
+msgstr "Ŝargi laŭtecan profilon 1"
 
 #: apps/kmixwindow.cpp:216
 #, kde-format
 msgid "Load volume profile 2"
-msgstr ""
+msgstr "Ŝargi laŭtecan profilon 2"
 
 #: apps/kmixwindow.cpp:221
 #, kde-format
 msgid "Load volume profile 3"
-msgstr ""
+msgstr "Ŝargi laŭtecan profilon 3"
 
 #: apps/kmixwindow.cpp:226
 #, kde-format
 msgid "Load volume profile 4"
-msgstr ""
+msgstr "Ŝargi laŭtecan profilon 4"
 
 #: apps/kmixwindow.cpp:237
 #, kde-format
 msgid "Increase Volume"
-msgstr "Laŭtigu"
+msgstr "Plilaŭtigi"
 
 #: apps/kmixwindow.cpp:244
 #, kde-format
 msgid "Decrease Volume"
-msgstr "Mallaŭtigu"
+msgstr "Malplilaŭtigi"
 
 #: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
-#, fuzzy, kde-format
+#, kde-format
 msgid "Mute"
-msgstr "Mallaŭtigite"
+msgstr "Mute"
 
 #: apps/kmixwindow.cpp:263
 #, kde-format
 msgid "Add new view"
-msgstr ""
+msgstr "Aldoni novan vidon"
 
 #: apps/kmixwindow.cpp:772
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
-msgstr ""
+msgstr "Ne povas aldoni vidon - GUIProfile estas malvalida."
 
 #: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
 #, kde-format
@@ -164,7 +165,7 @@ msgstr "Eraro"
 #: apps/kmixwindow.cpp:779
 #, kde-format
 msgid "Cannot add view - View already exists."
-msgstr ""
+msgstr "Ne povas aldoni vidon - Vido jam ekzistas."
 
 #: apps/kmixwindow.cpp:1168
 #, kde-format
@@ -173,11 +174,14 @@ msgid ""
 "\n"
 "%1"
 msgstr ""
+"La helpa aplikaĵo aŭ ne estas instalita aŭ ne funkcias.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1219
-#, fuzzy, kde-format
+#, kde-format
 msgid "Mixer (%1)"
-msgstr "Miksiloj"
+msgstr "Miksilo (%1)"
 
 #: apps/main.cpp:40
 #, kde-format
@@ -192,7 +196,7 @@ msgstr "Miksilo - La plenfunkcia miksileto de KDE"
 #: apps/main.cpp:42
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
-msgstr ""
+msgstr "(c) 1996-2013 La KMix-Aŭtoroj"
 
 #: apps/main.cpp:45
 #, kde-format
@@ -200,19 +204,19 @@ msgid "Christian Esken"
 msgstr "Christian ESKEN"
 
 #: apps/main.cpp:45
-#, fuzzy, kde-format
+#, kde-format
 msgid "Original author and current maintainer"
-msgstr "Elektu miksilon"
+msgstr "Origina aŭtoro kaj nuna prizorganto"
 
 #: apps/main.cpp:46
 #, kde-format
 msgid "Colin Guthrie"
-msgstr ""
+msgstr "Colin Guthrie"
 
 #: apps/main.cpp:46
 #, kde-format
 msgid "PulseAudio support"
-msgstr ""
+msgstr "Subteno de PulseAudio"
 
 #: apps/main.cpp:47
 #, kde-format
@@ -220,10 +224,9 @@ msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
 #: apps/main.cpp:47
-#, fuzzy, kde-format
-#| msgid "ALSA port"
+#, kde-format
 msgid "ALSA 0.9x port"
-msgstr "ALSA-porto"
+msgstr "ALSA 0.9x haveno"
 
 #: apps/main.cpp:48
 #, kde-format
@@ -231,10 +234,9 @@ msgid "Brian Hanson"
 msgstr "Brian Hanson"
 
 #: apps/main.cpp:48
-#, fuzzy, kde-format
-#| msgid "Solaris port"
+#, kde-format
 msgid "Solaris support"
-msgstr "Solariso-porto"
+msgstr "Solaris-subteno"
 
 #. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
@@ -243,17 +245,17 @@ msgstr "Solariso-porto"
 #: apps/main.cpp:55
 #, kde-format
 msgid "Igor Poboiko"
-msgstr ""
+msgstr "Igor Poboiko"
 
 #: apps/main.cpp:55
 #, kde-format
 msgid "Plasma Dataengine"
-msgstr ""
+msgstr "Plasma Datumomaŝino"
 
 #: apps/main.cpp:56
-#, fuzzy, kde-format
+#, kde-format
 msgid "Temporary maintainer"
-msgstr "Elektu miksilon"
+msgstr "Provizora prizorganto"
 
 #: apps/main.cpp:57
 #, kde-format
@@ -278,7 +280,7 @@ msgstr "Nadeem Hasan"
 #: apps/main.cpp:59
 #, kde-format
 msgid "Mute and volume preview, other fixes"
-msgstr ""
+msgstr "Silentiga kaj laŭteca antaŭrigardo, aliaj korektoj"
 
 #: apps/main.cpp:60
 #, kde-format
@@ -288,7 +290,7 @@ msgstr "Erwin Mascher"
 #: apps/main.cpp:60
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
-msgstr ""
+msgstr "Plibonigo de subteno por sonkartoj bazitaj en emu10k1"
 
 #: apps/main.cpp:61
 #, kde-format
@@ -298,44 +300,44 @@ msgstr "Valentin Rusu"
 #: apps/main.cpp:61
 #, kde-format
 msgid "TerraTec DMX6Fire support"
-msgstr ""
+msgstr "TerraTec DMX6Fire-subteno"
 
 #: apps/main.cpp:75
 #, kde-format
 msgid ""
 "Inhibits the unhiding of the KMix main window, if KMix is already running."
 msgstr ""
+"Malpermesas la malkaŝadon de la ĉefa fenestro de KMix, se KMix jam funkcias."
 
 #: apps/main.cpp:76
 #, kde-format
 msgid "Starts KMix in failsafe mode."
-msgstr ""
+msgstr "Lanĉas KMix en sekura reĝimo."
 
 #: apps/volumefeedback.cpp:248
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume Control Feedback Sound"
-msgstr "Laŭteco"
+msgstr "Laŭtecostira Rekuplosono"
 
 #: backends/mixer_alsa9.cpp:962
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
 "Please verify if all alsa devices are properly created."
 msgstr ""
-"Miksilo: Vi ne havas permeson aliri la miksaparaton.\n"
-"Bonvolu rigardi en la manlibron de via operaciumo pri kiel akiri permeson."
+"Vi ne havas permeson aliri la alsa-miksilon.\n"
+"Bonvolu kontroli ĉu ĉiuj alsa-aparatoj estas ĝuste kreitaj."
 
 #: backends/mixer_alsa9.cpp:966
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
 "Please check that the soundcard is installed and the\n"
 "soundcard driver is loaded.\n"
 msgstr ""
-"Miksilo: Miksilo ne troviĝis.\n"
-"Bonvolu kontroli, ke la sonorkarto estas instalita kaj ke la\n"
-"sonorpelilo estas ŝargita.\n"
+"Alsa miksilo ne troveblas.\n"
+"Bonvolu kontroli, ke la sonkarto estas instalita kaj la\n"
+"sonkarto-ŝoforo estas ŝargita.\n"
 
 #: backends/mixer_backend.cpp:323
 #, kde-format
@@ -375,7 +377,7 @@ msgstr "Miksilo: Nekonata eraro. Bonvolu raporti, kiel vi kaŭzis la eraron."
 #: backends/mixer_backend_i18n.cpp:24
 #, kde-format
 msgid "Recording level of the microphone input."
-msgstr ""
+msgstr "Registra nivelo de la mikrofona enigo."
 
 #: backends/mixer_backend_i18n.cpp:25
 #, kde-format
@@ -385,6 +387,10 @@ msgid ""
 "other controls like ADC or DAC. For headphones, soundcards often supply a "
 "Headphone control."
 msgstr ""
+"Mastrumas la laŭtecon de la antaŭaj laŭtparoliloj aŭ ĉiuj laŭtparoliloj (laŭ "
+"via sonkartomodelo). Se vi uzas ciferecan eligon, vi eble bezonos ankaŭ uzi "
+"aliajn kontrolojn kiel ADC aŭ DAC. Por aŭdiloj, sonkartoj ofte provizas "
+"Kapaŭdilojn."
 
 #: backends/mixer_backend_i18n.cpp:26
 #, kde-format
@@ -393,6 +399,9 @@ msgid ""
 "As such, the playback volume of such media is controlled by both this and "
 "the Master or Headphone channels."
 msgstr ""
+"Plej multaj amaskomunikiloj, kiel MP3 aŭ Videoj, estas reluditaj per la PCM-"
+"kanalo. Kiel tia, la reprodukta laŭteco de tia amaskomunikilaro estas regata "
+"de kaj ĉi tio kaj la Master aŭ Headphone-kanaloj."
 
 #: backends/mixer_backend_i18n.cpp:27
 #, kde-format
@@ -400,6 +409,8 @@ msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
 "manually activated to enable the headphone output."
 msgstr ""
+"Mastrumas la laŭtecon de la aŭdiloj. Iuj sonkartoj inkluzivas ŝaltilon, kiu "
+"devas esti mane aktivigita por ebligi la aŭdilon-eligon."
 
 #: backends/mixer_backend_i18n.cpp:28
 #, kde-format
@@ -409,7 +420,7 @@ msgstr "---"
 #: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
 #, kde-format
 msgid "Playback Streams"
-msgstr ""
+msgstr "Reproduktaj Rojoj"
 
 #: backends/mixer_oss.cpp:68
 msgid "Volume"
@@ -537,7 +548,7 @@ msgid ""
 "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
 msgstr ""
 "Miksilo: Vi ne havas permeson aliri la miksaparaton.\n"
-"Salutu kiel sistemestro kaj komandu 'chmod a+rw /dev/mixer*' por akiri "
+"Ensalutu kiel sistemestro kaj komandu 'chmod a+rw /dev/mixer*' por akiri "
 "permeson."
 
 #: backends/mixer_oss.cpp:247
@@ -556,13 +567,7 @@ msgstr ""
 "Uzu 'soundon' se vi uzas komercan OSS."
 
 #: backends/mixer_oss4.cpp:499
-#, fuzzy, kde-format
-#| msgid ""
-#| "kmix: Mixer cannot be found.\n"
-#| "Please check that the soundcard is installed and the\n"
-#| "soundcard driver is loaded.\n"
-#| "On Linux you might need to use 'insmod' to load the driver.\n"
-#| "Use 'soundon' when using commercial OSS."
+#, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
 "Please check that the soundcard is installed and the\n"
@@ -570,11 +575,11 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using OSS4 from 4front."
 msgstr ""
-"Miksilo: Miksilaparato ne trovita.\n"
-"Bonvolu kontroli, ke la sonorkarto estas instalita kaj la\n"
-"sonorkarta pelilo estas ŝargita.\n"
-"Sur Linukso eble necesas 'insmod' por ŝargi la pelilon.\n"
-"Uzu 'soundon' se vi uzas komercan OSS."
+"kmix: Miksilo ne troveblas.\n"
+"Bonvolu kontroli, ke la sonkarto estas instalita kaj la\n"
+"sonkarto-pelilo estas ŝargita.\n"
+"En Linukso vi eble bezonos uzi 'insmod' por ŝargi la ŝoforon.\n"
+"Uzu 'soundon' kiam vi uzas OSS4 de 4front."
 
 #: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
 #, kde-format
@@ -584,22 +589,22 @@ msgstr "Nekonata aplikaĵo"
 #: backends/mixer_pulse.cpp:434
 #, kde-format
 msgid "Event Sounds"
-msgstr ""
+msgstr "Eventaj Sonoj"
 
 #: backends/mixer_pulse.cpp:1067
 #, kde-format
 msgid "Playback Devices"
-msgstr ""
+msgstr "Reproduktaj aparatoj"
 
 #: backends/mixer_pulse.cpp:1075
 #, kde-format
 msgid "Capture Devices"
-msgstr ""
+msgstr "Kaptaj aparatoj"
 
 #: backends/mixer_pulse.cpp:1094
 #, kde-format
 msgid "Capture Streams"
-msgstr ""
+msgstr "Kapti Rojojn"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -644,7 +649,7 @@ msgstr ""
 #, kde-format
 msgctxt "Channel name"
 msgid "Left"
-msgstr "Maldekstre"
+msgstr "Maldekstra"
 
 #: core/volume.cpp:59
 #, kde-format
@@ -668,13 +673,13 @@ msgstr "Basa laŭtilo"
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr ""
+msgstr "Ĉirkaŭumo Maldekstra"
 
 #: core/volume.cpp:63
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Right"
-msgstr ""
+msgstr "Ĉirkaŭumo Dekstra"
 
 #: core/volume.cpp:64
 #, kde-format
@@ -695,74 +700,71 @@ msgid "Rear Center"
 msgstr "Malantaŭa Centro"
 
 #: core/volume.cpp:68
-#, fuzzy, kde-format
-#| msgid "unknown"
+#, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr "nekonata"
+msgstr "Nekonata"
 
 #: gui/dialogaddview.cpp:50
 #, kde-format
 msgid "All controls"
-msgstr ""
+msgstr "Ĉiuj kontroloj"
 
 #: gui/dialogaddview.cpp:51
 #, kde-format
 msgid "Only playback controls"
-msgstr ""
+msgstr "Nur reproduktaj kontroloj"
 
 #: gui/dialogaddview.cpp:52
 #, kde-format
 msgid "Only capture controls"
-msgstr ""
+msgstr "Nur kaptaj stiriloj"
 
 #: gui/dialogaddview.cpp:59
 #, kde-format
 msgid "Add View"
-msgstr ""
+msgstr "Aldoni Vidon"
 
 #: gui/dialogaddview.cpp:88
-#, fuzzy, kde-format
-#| msgid "Select Mixer"
+#, kde-format
 msgid "Select mixer:"
-msgstr "Elektu miksilon"
+msgstr "Elekti miksilon:"
 
 #: gui/dialogaddview.cpp:95
-#, fuzzy, kde-format
+#, kde-format
 msgid "Current mixer"
-msgstr "Elektu miksilon"
+msgstr "Nuna miksilo"
 
 #: gui/dialogaddview.cpp:115
 #, kde-format
 msgid "Select the design for the new view:"
-msgstr ""
+msgstr "Elektu la dezajnon por la nova vido:"
 
 #: gui/dialogchoosebackends.cpp:54
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "Miksiloj montrendaj en la ŝprucfenestra laŭtecostirilo:"
 
 #: gui/dialogchoosebackends.cpp:81
-#, fuzzy, kde-format
-#| msgid "Select Mixer"
+#, kde-format
 msgid "Select Mixers"
-msgstr "Elektu miksilon"
+msgstr "Elekti Miksilojn"
 
 #: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
-#, fuzzy, kde-format
+#, kde-format
 msgid "Select Master Channel"
-msgstr "&Dividu kanalojn"
+msgstr "Elekti Mastran Kanalon"
 
 #: gui/dialogselectmaster.cpp:73
-#, fuzzy, kde-format
+#, kde-format
 msgid "Current mixer:"
-msgstr "Elektu miksilon"
+msgstr "Nuna miksilo:"
 
 #: gui/dialogselectmaster.cpp:123
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr ""
+msgstr "Elektu la kanalon <link url=\"i\">mastra laŭteco</link>:"
 
 #: gui/dialogselectmaster.cpp:131
 #, kde-kuit-format
@@ -774,69 +776,72 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>Ĉi tie vi povas elekti la mastran sonaparaton (se estas pli ol unu) "
+"kaj ĝian ĉefkanalon.</para><para >La ĉefkanalo estas tiu, kiu estas tuŝita "
+"de la regulo de la laŭteco de la sistemo, la laŭteco supren. /malsupren kaj "
+"silentigi tutmondajn klavojn, kaj la ago <interface>Muti</interface> en la "
+"ŝprucmenuo de la sistempleto.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
 msgid "Automatic (%1 recommendation)"
-msgstr ""
+msgstr "Aŭtomata (%1 rekomendo)"
 
 #: gui/dialogviewconfiguration.cpp:136
-#, fuzzy, kde-format
+#, kde-format
 msgid "Configure Channels"
-msgstr "&Dividu kanalojn"
+msgstr "Agordi Kanalojn"
 
 #: gui/dialogviewconfiguration.cpp:147
-#, fuzzy, kde-format
+#, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
-msgstr "&Dividu kanalojn"
+msgstr ""
+"Agordu la videblajn kanalojn. Trenu ikonojn inter la listoj por ĝisdatigi."
 
 #: gui/dialogviewconfiguration.cpp:217
-#, fuzzy, kde-format
+#, kde-format
 msgid "Visible channels:"
-msgstr "&Dividu kanalojn"
+msgstr "Videblaj kanaloj:"
 
 #: gui/dialogviewconfiguration.cpp:220
-#, fuzzy, kde-format
-#| msgid "Available mixers:"
+#, kde-format
 msgid "Available channels:"
-msgstr "Uzeblaj miksiloj:"
+msgstr "Disponeblaj kanaloj:"
 
 #: gui/dialogviewconfiguration.cpp:234
-#, fuzzy, kde-format
+#, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "&Dividu kanalojn"
+msgstr "Movi la elektitan kanalon al la videbla listo"
 
 #: gui/dialogviewconfiguration.cpp:242
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr ""
+msgstr "Movi la elektitan kanalon al la disponebla (kaŝita) listo"
 
 #: gui/dialogviewconfiguration.cpp:282
-#, fuzzy, kde-format
+#, kde-format
 msgid "Show the selected channel"
-msgstr "&Dividu kanalojn"
+msgstr "Montri la elektitan kanalon"
 
 #: gui/dialogviewconfiguration.cpp:283
 #, kde-format
 msgid "Hide the selected channel"
-msgstr ""
+msgstr "Kaŝi la elektitan kanalon"
 
 #: gui/dialogviewconfiguration.cpp:284
-#, fuzzy, kde-format
+#, kde-format
 msgid "Visible channels"
-msgstr "&Dividu kanalojn"
+msgstr "Videblaj kanaloj"
 
 #: gui/dialogviewconfiguration.cpp:285
-#, fuzzy, kde-format
-#| msgid "Available mixers:"
+#, kde-format
 msgid "Available channels"
-msgstr "Uzeblaj miksiloj:"
+msgstr "Disponeblaj kanaloj"
 
 #: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume Control"
-msgstr "Laŭteco"
+msgstr "Laŭtecmastrumo"
 
 #: gui/kmixdockwidget.cpp:174
 #, kde-format
@@ -846,23 +851,22 @@ msgstr "&Mallaŭtigite"
 #: gui/kmixdockwidget.cpp:198
 #, kde-format
 msgid "No mixer devices available"
-msgstr ""
+msgstr "Neniuj miksiloj haveblaj"
 
 #: gui/kmixdockwidget.cpp:206
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume muted"
-msgstr "Laŭteco"
+msgstr "Laŭteco silentigita"
 
 #: gui/kmixdockwidget.cpp:207
-#, fuzzy, kde-format
+#, kde-format
 msgid "Volume at %1%"
 msgstr "Laŭteco je %1%"
 
 #: gui/kmixdockwidget.cpp:209
 #, kde-format
 msgid "%1 - %2"
-msgstr ""
+msgstr "%1 - %2"
 
 #: gui/kmixprefdlg.cpp:52
 #, kde-format
@@ -882,12 +886,12 @@ msgstr "Lanĉo"
 #: gui/kmixprefdlg.cpp:103
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "Komenci KMix je labortabla ekfunkciigo"
 
 #: gui/kmixprefdlg.cpp:107
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "Lanĉi KMix aŭtomate kiam la labortablo komenciĝas"
 
 #: gui/kmixprefdlg.cpp:110
 #, kde-format
@@ -895,29 +899,34 @@ msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
+"Aŭtomata starto ne funkcios, ĉar la aŭtostartdosiero kmix_autostart.desktop "
+"mankas. Kontrolu, ke KMix estas ĝuste instalita."
 
 #: gui/kmixprefdlg.cpp:120
-#, fuzzy, kde-format
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "Restarigu la apriorajn laŭtecojn"
+msgstr "Restarigi antaŭajn laŭtecajn agordojn ĉe labortabla ekfunkciigo"
 
 #: gui/kmixprefdlg.cpp:124
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "Restarigu la apriorajn laŭtecojn"
+msgstr ""
+"Restarigi ĉiujn miksaĵajn laŭtecnivelojn kaj ŝanĝas al siaj laste uzitaj "
+"agordoj kiam la labortablo ekrulas"
 
 #: gui/kmixprefdlg.cpp:127
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
 msgstr ""
+"La laŭteco de dinamikaj kontroloj PulseAudio aŭ MPRIS2 ne estos restarigita."
 
 #: gui/kmixprefdlg.cpp:145
 #, kde-format
 msgid "&Horizontal"
-msgstr "&Horizontale"
+msgstr "&Horizontala"
 
 #: gui/kmixprefdlg.cpp:146
 #, kde-format
@@ -930,10 +939,9 @@ msgid "Behavior"
 msgstr "Konduto"
 
 #: gui/kmixprefdlg.cpp:207
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume overdrive"
-msgstr "Laŭteco"
+msgstr "Laŭteco trorapidumo"
 
 #: gui/kmixprefdlg.cpp:212
 #, kde-format
@@ -942,33 +950,34 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
+"Permesu al la volumeno esti altigita super la rekomendita maksimumo (tipe al "
+"150%)"
 
 #: gui/kmixprefdlg.cpp:215
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr ""
+msgstr "Laŭteco-overdrive nur disponeblas por PulseAudio."
 
 #: gui/kmixprefdlg.cpp:225
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
-msgstr ""
+msgstr "%1 devas esti rekomencita por ke la agordo de laŭteco efikiĝu."
 
 #: gui/kmixprefdlg.cpp:235
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume feedback"
-msgstr "Laŭteco"
+msgstr "Rekuplado de laŭteco"
 
 #: gui/kmixprefdlg.cpp:239
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "Ludu specimenan sonon kiam la laŭteco ŝanĝiĝas"
 
 #: gui/kmixprefdlg.cpp:243
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "Laŭteca rekuplado disponeblas nur kiam agordita kun Kanbero."
 
 #: gui/kmixprefdlg.cpp:265
 #, kde-kuit-format
@@ -979,81 +988,75 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>Agordu la laŭtecan paŝon kiel procenton de la laŭteca gamo.</"
+"para><para>Ĉi tio influas ŝanĝi la laŭtecon per fulmoklavoj, kun la musrado "
+"super la sistempleto-ikono, aŭ movante glitilojn per paĝa paŝo.</para><para>"
+"%1 devas esti rekomencita por ke ĉi tiu ŝanĝo ekvalidu.</para>"
 
 #: gui/kmixprefdlg.cpp:272
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume step:"
-msgstr "Laŭteco"
+msgstr "Laŭteco-paŝo:"
 
 #: gui/kmixprefdlg.cpp:280
 #, kde-format
 msgid "Visual"
-msgstr ""
+msgstr "Vida"
 
 #: gui/kmixprefdlg.cpp:289
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "Montru &skalerojn"
+msgstr "Montri ŝovilajn &tikmarkojn"
 
 #: gui/kmixprefdlg.cpp:292
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "(Mal)montras skalojn ĉe la ŝoviloj"
+msgstr "Montru tikmarkajn skalojn sur ŝoviloj"
 
 #: gui/kmixprefdlg.cpp:294
-#, fuzzy, kde-format
-#| msgid "Show &labels"
+#, kde-format
 msgid "Show control &labels"
-msgstr "Montru &etikedojn"
+msgstr "Montri stiri&lajn etikedojn"
 
 #: gui/kmixprefdlg.cpp:297
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "(Mal)montras etikedojn super la ŝoviloj"
+msgstr "Montru priskribajn etikedojn por ŝoviloj"
 
 #: gui/kmixprefdlg.cpp:300
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
-msgstr ""
+msgstr "Montri surekranan bildigon (&OSD)"
 
 #: gui/kmixprefdlg.cpp:303
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr ""
+msgstr "Montru surekranan indikilon kiam oni ŝanĝas la laŭtecon per klavoj"
 
 #: gui/kmixprefdlg.cpp:312
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Slider orientation (main window): "
-msgstr "Ebligu &laŭtecŝanĝon en la Panelo"
+msgstr "Ŝovila orientiĝo (ĉefa fenestro):"
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Ebligu &laŭtecŝanĝon en la Panelo"
+msgstr "Ŝovila orientiĝo (ŝprucfenestro de la sistempleto):"
 
 #: gui/kmixprefdlg.cpp:314
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "Ebligu &laŭtecŝanĝon en la Panelo"
+msgstr "Agordu la orientiĝon de la ĉeffenestraj stirŝoviloj"
 
 #: gui/kmixprefdlg.cpp:315
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr "Ebligu &laŭtecŝanĝon en la Panelo"
+msgstr "Agordi la orientiĝon de la sistempletaj ŝoviloj pri laŭtecmastrumo"
 
 #: gui/kmixprefdlg.cpp:327
-#, fuzzy, kde-format
-#| msgid "&Dock into panel"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "&Enpaneligu"
+msgstr "Doki en la sistempleto"
 
 #: gui/kmixprefdlg.cpp:330
 #, kde-format
@@ -1061,63 +1064,66 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"Aldoku la miksilon en la sisteman pleton. Alklaku ĝin por malfermi la "
+"ŝprucan laŭtecmastrumilon."
 
 #: gui/kmixprefdlg.cpp:502
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
+"La miksiloj, kiuj estas kontrolitaj ĉi tie, estos montritaj en la "
+"ŝprucfenestra laŭtecmastrumilo."
 
 #: gui/kmixtoolbox.cpp:97
 #, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr ""
+msgstr "Neniuj sonaj aparatoj estas instalitaj aŭ disponeblaj nuntempe."
 
 #: gui/mdwslider.cpp:96
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "&Dividu kanalojn"
+msgstr "Dividi kanalojn"
 
 #: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
 #, kde-format
 msgid "Capture"
-msgstr ""
+msgstr "Kapto"
 
 #: gui/mdwslider.cpp:113
 #, kde-format
 msgid "Use Device"
-msgstr ""
+msgstr "Uzi Aparaton"
 
 #: gui/mdwslider.cpp:158
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "Silentigi %2 sur %1"
 
 #: gui/mdwslider.cpp:170
-#, fuzzy, kde-format
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "&Dividu kanalojn"
+msgstr "Pliigi laŭtecon de %2 sur %1"
 
 #: gui/mdwslider.cpp:178
-#, fuzzy, kde-format
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "&Dividu kanalojn"
+msgstr "Malpliigi laŭtecon de %2 sur %1"
 
 #: gui/mdwslider.cpp:328
 #, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr ""
+msgstr "Kapti/Malkapti %1"
 
 #: gui/mdwslider.cpp:329
 #, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
-msgstr ""
+msgstr "Silentigi/Malŝalti %1"
 
 #: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
 #, kde-format
@@ -1126,31 +1132,33 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:680
 #, kde-format
 msgid "%1 (capture)"
-msgstr ""
+msgstr "%1 (kapto)"
 
 #: gui/mdwslider.cpp:1118
 #, kde-format
 msgid "Automatic (according to category)"
-msgstr ""
+msgstr "Aŭtomata (laŭ kategorio)"
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "&Dividu kanalojn"
+msgstr "Kanalaj Ŝparvojoj..."
 
 #: gui/viewbase.cpp:96
-#, fuzzy, kde-format
+#, kde-format
 msgid "Configure this view"
-msgstr "&Dividu kanalojn"
+msgstr "Agordi ĉi tiun vidon"
 
 #: gui/viewbase.cpp:166
-#, fuzzy, kde-format
+#, kde-format
 msgid "Configure Channels..."
-msgstr "&Dividu kanalojn"
+msgstr "Agordi Kanalojn..."
 
 #: gui/viewbase.cpp:270
 #, kde-format
@@ -1160,190 +1168,29 @@ msgstr "Aparatoagordo"
 #: gui/viewdockareapopup.cpp:440
 #, kde-format
 msgid "Show the full mixer window"
-msgstr ""
+msgstr "Montri la plenan miksilfenestron"
 
 #: gui/viewdockareapopup.cpp:472
 #, kde-format
 msgid "Load volume profile %1"
-msgstr ""
+msgstr "Ŝargi laŭtecan profilon %1"
 
 #: gui/viewsliders.cpp:180
 #, kde-format
 msgid "Nothing is playing audio."
-msgstr ""
+msgstr "Nenio ludas audio."
 
 #: gui/viewsliders.cpp:183
 #, kde-format
 msgid "Nothing is capturing audio."
-msgstr ""
+msgstr "Nenio kaptas audio."
 
 #: gui/viewsliders.cpp:184
 #, kde-format
 msgid "There are no capture devices."
-msgstr ""
+msgstr "Ne ekzistas kaptaj aparatoj."
 
 #: gui/viewsliders.cpp:185
 #, kde-format
 msgid "There are no playback devices."
-msgstr ""
-
-#~ msgid "&Hide"
-#~ msgstr "&Kaŝu"
-
-#, fuzzy
-#~ msgid "C&onfigure Shortcuts..."
-#~ msgstr "&Dividu kanalojn"
-
-#, fuzzy
-#~ msgid "Toggle Mute"
-#~ msgstr "(Mal)mutigu"
-
-#~ msgid "&Muted"
-#~ msgstr "&Mallaŭtigite"
-
-#, fuzzy
-#~| msgid "M&ute"
-#~ msgid "Mo&ve"
-#~ msgstr "&Mallaŭtigite"
-
-#~ msgid "Set &Record Source"
-#~ msgstr "Donu &registrofonton"
-
-#, fuzzy
-#~ msgid "&Channels"
-#~ msgstr "&Dividu kanalojn"
-
-#~ msgid " (Muted)"
-#~ msgstr " (Mallaŭtigite)"
-
-#~ msgid "Start"
-#~ msgstr "Komenco"
-
-#, fuzzy
-#~| msgid "Docks the mixer into the KDE panel"
-#~ msgid "Docks the mixer into the KDE system tray"
-#~ msgstr "Enmetas la miksilon en la Panelo"
-
-#, fuzzy
-#~ msgid "&Use custom colors"
-#~ msgstr "&Propraj koloroj"
-
-#~ msgid "Active"
-#~ msgstr "Aktiva"
-
-#, fuzzy
-#~ msgid "&Silent:"
-#~ msgstr "Silenta:"
-
-#, fuzzy
-#~ msgid "&Loud:"
-#~ msgstr "Laŭta:"
-
-#, fuzzy
-#~ msgid "&Background:"
-#~ msgstr "Fono:"
-
-#~ msgid "Muted"
-#~ msgstr "Mallaŭtigite"
-
-#, fuzzy
-#~ msgid "Lou&d:"
-#~ msgstr "Laŭta:"
-
-#, fuzzy
-#~ msgid "Backgrou&nd:"
-#~ msgstr "Fono:"
-
-#, fuzzy
-#~ msgid "Silen&t:"
-#~ msgstr "Silenta:"
-
-#~ msgid "&File"
-#~ msgstr "&Dosiero"
-
-#~ msgid "&Help"
-#~ msgstr "&Helpo"
-
-#, fuzzy
-#~ msgid "KDE Mixer"
-#~ msgstr "Miksiloj"
-
-#, fuzzy
-#~| msgid "Docks the mixer into the KDE panel"
-#~ msgid "Allows to control the volume from the system tray"
-#~ msgstr "Enmetas la miksilon en la Panelo"
-
-#~ msgid "Invalid mixer"
-#~ msgstr "Nevalida miksilo"
-
-#~ msgid "Nick Lopez"
-#~ msgstr "Nick Lopez"
-
-#, fuzzy
-#~| msgid "Christian Esken"
-#~ msgid "(c) 2000 by Christian Esken"
-#~ msgstr "Christian Esken"
-
-#, fuzzy
-#~ msgid "Toggle Switch"
-#~ msgstr "(Mal)mutigu"
-
-#~ msgid "Off"
-#~ msgstr "Neniam"
-
-#~ msgid "Mixers"
-#~ msgstr "Miksiloj"
-
-#~ msgid "Available mixers:"
-#~ msgstr "Uzeblaj miksiloj:"
-
-#~ msgid "Invalid mixer entered."
-#~ msgstr "Nevalida miksilo donita."
-
-#, fuzzy
-#~ msgid "Current Mixer"
-#~ msgstr "Elektu miksilon"
-
-#~ msgid "Left/Right balancing"
-#~ msgstr "ekvilibro inter maldekstre kaj dekstre"
-
-#, fuzzy
-#~ msgid "Record"
-#~ msgstr "Registrante"
-
-#, fuzzy
-#~ msgid "Toggle Mute of Master Channel"
-#~ msgstr "&Dividu kanalojn"
-
-#, fuzzy
-#~ msgid "Volume Values: "
-#~ msgstr "Laŭteco"
-
-#~ msgid "SGI Port"
-#~ msgstr "SGI-porto"
-
-#~ msgid "HP/UX port"
-#~ msgstr "HP/UX-porto"
-
-#~ msgid "NAS port"
-#~ msgstr "NAS-porto"
-
-#~ msgid "kmix: Your mixer does not control any devices."
-#~ msgstr "Miksilo: Via miksilo ne stiras iun ajn aparaton."
-
-#~ msgid ""
-#~ "kmix: Mixer does not support your platform. See mixer.cpp for porting "
-#~ "hints (PORTING)."
-#~ msgstr ""
-#~ "Miksilo: Miksilo ne subtenas vian operaciumon/apartaronb. Vidu mixer.cpp "
-#~ "pri indikoj de portado al alia medio."
-
-#~ msgid "kmix: Not enough memory."
-#~ msgstr "Miksilo: Ne sufiĉe da memoro."
-
-#~ msgid ""
-#~ "kmix: Initial set is incompatible.\n"
-#~ "Using a default set.\n"
-#~ msgstr ""
-#~ "Miksilo: Prepara valoraro ne estas kongrua.\n"
-#~ "Uzante la aprioran.\n"
+msgstr "Ne ekzistas reproduktaj aparatoj."
