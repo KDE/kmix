@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: kdemultimedia-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2023-03-31 21:32+0300\n"
+"PO-Revision-Date: 2023-04-11 01:15+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 23.03.70\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -47,7 +47,7 @@ msgstr ""
 #: apps/kmixctrl.cpp:40
 #, kde-format
 msgid "KMixCtrl"
-msgstr "K MiksCtrl"
+msgstr "K Miks Denetimi"
 
 #: apps/kmixctrl.cpp:41
 #, kde-format
@@ -106,7 +106,7 @@ msgstr "&Kanalları Yapılandır..."
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "Ana Kanalı Seçin..."
+msgstr "Ana Kanalı Seç..."
 
 #: apps/kmixwindow.cpp:191
 #, kde-format
@@ -207,7 +207,7 @@ msgstr "K Miks"
 #: apps/main.cpp:41
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "Kmix - KDE'nin tam kapsamlı mini karıştırıcısı"
+msgstr "K Miks - KDE'nin tam özellikli mini karıştırıcısı"
 
 #: apps/main.cpp:42
 #, kde-format
@@ -266,12 +266,12 @@ msgstr "Igor Poboiko"
 #: apps/main.cpp:55
 #, kde-format
 msgid "Plasma Dataengine"
-msgstr "Plasma Veri Motoru"
+msgstr "Plasma Veri İşletkesi"
 
 #: apps/main.cpp:56
 #, kde-format
 msgid "Temporary maintainer"
-msgstr "Geçici olarak yürüten"
+msgstr "Geçici bakımcı"
 
 #: apps/main.cpp:57
 #, kde-format
@@ -291,7 +291,7 @@ msgstr "Lennart Augustsson"
 #: apps/main.cpp:59
 #, kde-format
 msgid "Nadeem Hasan"
-msgstr "Nadeem Hasan"
+msgstr "Nedim Hasan"
 
 #: apps/main.cpp:59
 #, kde-format
@@ -427,7 +427,7 @@ msgid ""
 "manually activated to enable the headphone output."
 msgstr ""
 "Kulaklık ses düzeyini denetler. Bazı ses kartlarında, kulaklık çıkışının "
-"kullanılabilmesi için elle etkinleştirilmesi gereken bir anahtar mevcuttur."
+"kullanılabilmesi için elle etkinleştirilmesi gereken bir anahtar vardır."
 
 #: backends/mixer_backend_i18n.cpp:28
 #, kde-format
@@ -437,11 +437,11 @@ msgstr "---"
 #: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
 #, kde-format
 msgid "Playback Streams"
-msgstr "Çalma Akışları"
+msgstr "Çalan Akışlar"
 
 #: backends/mixer_oss.cpp:68
 msgid "Volume"
-msgstr "Ses"
+msgstr "Ses Düzeyi"
 
 #: backends/mixer_oss.cpp:68
 msgid "Bass"
@@ -479,7 +479,7 @@ msgstr "Giriş"
 
 #: backends/mixer_oss.cpp:71
 msgid "Mix"
-msgstr "Mix"
+msgstr "Miks"
 
 #: backends/mixer_oss.cpp:71
 msgid "Pcm2"
@@ -511,15 +511,15 @@ msgstr "Kanal3"
 
 #: backends/mixer_oss.cpp:73
 msgid "Digital1"
-msgstr "Sayısal"
+msgstr "Sayısal1"
 
 #: backends/mixer_oss.cpp:74
 msgid "Digital2"
-msgstr "Sayısal"
+msgstr "Sayısal2"
 
 #: backends/mixer_oss.cpp:74
 msgid "Digital3"
-msgstr "Sayısal"
+msgstr "Sayısal3"
 
 #: backends/mixer_oss.cpp:74
 msgid "PhoneIn"
@@ -543,11 +543,11 @@ msgstr "Monitör"
 
 #: backends/mixer_oss.cpp:79
 msgid "3D-depth"
-msgstr "3D-derinlik"
+msgstr "3B Derinlik"
 
 #: backends/mixer_oss.cpp:79
 msgid "3D-center"
-msgstr "3D-orta"
+msgstr "3B Merkez"
 
 #: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
 #, kde-format
@@ -610,17 +610,17 @@ msgstr "Olay Sesleri"
 #: backends/mixer_pulse.cpp:1067
 #, kde-format
 msgid "Playback Devices"
-msgstr "Çalma Aygıtları"
+msgstr "Çalan Aygıtlar"
 
 #: backends/mixer_pulse.cpp:1075
 #, kde-format
 msgid "Capture Devices"
-msgstr "Kayıt Aygıtları"
+msgstr "Yakalama Aygıtları"
 
 #: backends/mixer_pulse.cpp:1094
 #, kde-format
 msgid "Capture Streams"
-msgstr "Kayıt Akışları"
+msgstr "Yakalama Akışları"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -640,7 +640,7 @@ msgstr "Kulaklık"
 #: backends/mixer_sun.cpp:72
 #, kde-format
 msgid "Line Out"
-msgstr "Çıkış hattı"
+msgstr "Çıkış Hattı"
 
 #: backends/mixer_sun.cpp:73
 #, kde-format
@@ -689,13 +689,13 @@ msgstr "Subwoofer"
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr "Surround Sol"
+msgstr "Çepeçevre Sol"
 
 #: core/volume.cpp:63
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Right"
-msgstr "Surround Sağ"
+msgstr "Çepeçevre Sağ"
 
 #: core/volume.cpp:64
 #, kde-format
@@ -713,7 +713,7 @@ msgstr "Sağ Kenar"
 #, kde-format
 msgctxt "Channel name"
 msgid "Rear Center"
-msgstr "Arka Orta"
+msgstr "Arka Merkez"
 
 #: core/volume.cpp:68
 #, kde-format
@@ -1213,4 +1213,4 @@ msgstr "Yakalama aygıtı yok."
 #: gui/viewsliders.cpp:185
 #, kde-format
 msgid "There are no playback devices."
-msgstr "Çalma aygıtı yok."
+msgstr "Çalan aygıt yok."
