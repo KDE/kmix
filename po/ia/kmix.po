@@ -279,7 +279,7 @@ msgstr "Nadeem Hasan"
 #: apps/main.cpp:59
 #, kde-format
 msgid "Mute and volume preview, other fixes"
-msgstr "Vista preliminari pro silentiar e volumine, altere fixationes"
+msgstr "Vista preliminar pro silentiar e volumine, altere fixationes"
 
 #: apps/main.cpp:60
 #, kde-format
