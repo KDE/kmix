@@ -30,9 +30,9 @@
 
 // KDE
 #include <klocalizedstring.h>
-#include <kwindowsystem.h>
 #include <kglobalaccel.h>
 #include <kxmlguiwindow.h>
+#include <kx11extras.h>
 
 // KMix
 #include "core/mixer.h"
@@ -498,8 +498,8 @@ void ViewDockAreaPopup::configureView()
 void ViewDockAreaPopup::showPanelSlot()
 {
     _kmixMainWindow->setVisible(true);
-    KWindowSystem::setOnDesktop(_kmixMainWindow->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::activateWindow(_kmixMainWindow->winId());
+    KX11Extras::setOnDesktop(_kmixMainWindow->winId(), KX11Extras::currentDesktop());
+    KX11Extras::activateWindow(_kmixMainWindow->winId());
     // This is only needed when the window is already visible.
     static_cast<QWidget *>(parent())->hide();
 }

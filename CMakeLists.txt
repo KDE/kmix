@@ -25,7 +25,7 @@ option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 ####################################################################################################
 
 set (QT_MIN_VERSION "5.15.2")
-set (KF5_MIN_VERSION "5.90.0")
+set (KF5_MIN_VERSION "5.101.0")
 set (PA_MIN_VERSION "0.9.16")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
