@@ -63,15 +63,6 @@ public:
     QWidget *mainWidget() const				{ return (mMainWidget); }
 
     /**
-     * Get a spacing hint suitable for use within the dialog layout.
-     *
-     * @return The spacing hint
-     * @deprecated Kept for compatibility with KDE4.
-     * Use @c verticalSpacing() or @c horizontalSpacing() as appropriate.
-     **/
-    static Q_DECL_DEPRECATED int spacingHint();
-
-    /**
      * Get a vertical spacing suitable for use within the dialog layout.
      *
      * @return The spacing hint
