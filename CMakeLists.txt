@@ -304,7 +304,7 @@ target_link_libraries(kmixgui
 ####################################################################################################
 
 set(kmix_SRCS
-  apps/main.cpp
+  apps/kmixmain.cpp
   apps/kmixwindow.cpp
   apps/kmixapp.cpp
   apps/kmixwindow.h
