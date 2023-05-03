@@ -843,7 +843,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
         // Refresh the capture switch information of *all* controls of this card.
         // Doing it for all is necessary, because enabling one record source often
         // automatically disables another record source (due to the hardware design)
-        for (const shared_ptr<MixDevice> md : qAsConst(m_mixDevices))
+        for (const shared_ptr<MixDevice> &md : qAsConst(m_mixDevices))
         {
             bool isRecsrc =  isRecsrcHW( md->id() );
             // qCDebug(KMIX_LOG) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc;
