@@ -40,19 +40,20 @@ public:
     explicit Mixer_ALSA(Mixer *mixer, int device = -1 );
     virtual ~Mixer_ALSA();
 
-    int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md ) override;
-    int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md ) override;
+protected:
+    int open() override;
+    int close() override;
+
+    QString errorText(int mixer_error) override;
     void setEnumIdHW( const QString& id, unsigned int) override;
     unsigned int enumIdHW(const QString& id) override;
+
+    int  readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md ) override;
+    int  writeVolumeToHW ( const QString& id, shared_ptr<MixDevice> md ) override;
     bool hasChangedControls() override;
 
     bool needsPolling() override			{ return (false); }
     QString getDriverName() override;
-
-protected:
-    int open() override;
-    int close() override;
-    int id2num(const QString& id);
 
 private:
     int openAlsaDevice(const QString& devName);
@@ -62,10 +63,9 @@ private:
     void deinitAlsaPolling();
 
     bool isRecsrcHW( const QString& id );
-    int identify( snd_mixer_selem_id_t *sid );
     snd_mixer_elem_t* getMixerElem(int devnum);
 
-    QString errorText(int mixer_error) override;
+    int id2num(const QString &id);
 
 private:
     typedef QList<snd_mixer_selem_id_t *>AlsaMixerSidList;

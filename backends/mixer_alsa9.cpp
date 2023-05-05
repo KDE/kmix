@@ -67,14 +67,18 @@ Mixer_ALSA::~Mixer_ALSA()
 }
 
 
-int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
+static MixDevice::ChannelType identify(snd_mixer_selem_id_t *sid)
 {
-   const char * cname = snd_mixer_selem_id_get_name( sid );
-   QByteArray name = QByteArray::fromRawData( cname, qstrlen(cname) ).toLower();
+   const char *cname = snd_mixer_selem_id_get_name(sid);
+   const QByteArray name = QByteArray::fromRawData(cname, qstrlen(cname)).toLower();
+
    if (name.contains("master"     )) return MixDevice::VOLUME;
    if (name.contains("master mono")) return MixDevice::VOLUME;
-   if (name.contains("front"      ) &&
-      !name.contains("mic"        )) return MixDevice::VOLUME;
+   if (name.contains("mic boost"  )) return MixDevice::MICROPHONE_BOOST;
+   if (name.contains("mic front"  )) return MixDevice::MICROPHONE_FRONT;
+   if (name.contains("front mic"  )) return MixDevice::MICROPHONE_FRONT;
+   if (name.contains("mic"        )) return MixDevice::MICROPHONE;
+   if (name.contains("front"      )) return MixDevice::VOLUME;
    if (name.contains("pc speaker" )) return MixDevice::SPEAKER;
    if (name.contains("capture"    )) return MixDevice::RECMONITOR;
    if (name.contains("music"      )) return MixDevice::MIDI;
@@ -94,10 +98,6 @@ int Mixer_ALSA::identify( snd_mixer_selem_id_t *sid )
    if (name.contains("optical"    )) return MixDevice::DIGITAL;
    if (name.contains("iec958"     )) return MixDevice::DIGITAL;
    if (name.contains("digital"    )) return MixDevice::DIGITAL;
-   if (name.contains("mic boost"  )) return MixDevice::MICROPHONE_BOOST;
-   if (name.contains("mic front"  )) return MixDevice::MICROPHONE_FRONT;
-   if (name.contains("front mic"  )) return MixDevice::MICROPHONE_FRONT;
-   if (name.contains("mic"        )) return MixDevice::MICROPHONE;
    if (name.contains("lfe"        )) return MixDevice::SURROUND_LFE;
    if (name.contains("monitor"    )) return MixDevice::RECMONITOR;
    if (name.contains("3d"         )) return MixDevice::SURROUND;
@@ -151,7 +151,7 @@ int Mixer_ALSA::open()
                     .arg(snd_mixer_selem_id_get_index( sid ) );
         mdID.replace(' ','_'); // Any key/ID we use, must not uses spaces (rule)
 
-        const MixDevice::ChannelType ct = static_cast<MixDevice::ChannelType>(identify(sid));
+        const MixDevice::ChannelType ct = identify(sid);
 
         /* ------------------------------------------------------------------------------- */
 
@@ -593,15 +593,12 @@ snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
  */
 }
 
-int Mixer_ALSA::id2num(const QString& id) {
-   //qCDebug(KMIX_LOG) << "id2num() id=" << id;
-   int num = -1;
-   if ( m_id2numHash.contains(id) ) {
-      num = m_id2numHash[id];
-   }
-   //qCDebug(KMIX_LOG) << "id2num() num=" << num;
-   return num;
+
+/* private */ int Mixer_ALSA::id2num(const QString& id)
+{
+   return (m_id2numHash.value(id, -1));
 }
+
 
 bool Mixer_ALSA::hasChangedControls() {
     if ( !m_fds || !m_isOpen )
