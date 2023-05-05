@@ -24,6 +24,9 @@
 #include <qapplication.h>
 #include <qcommandlineparser.h>
 
+#include <qdbusinterface.h>
+#include <qdbusmessage.h>
+
 #include "kmix_debug.h"
 #include "core/ControlManager.h"
 #include "apps/kmixwindow.h"
@@ -129,6 +132,56 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	return restore;
 }
 
+
+// If this application ("Classic KMix") is running, then there is no
+// point in the KDED module also running because device hotplug is
+// handled by us.  So, if that KDED module is loaded, tell KDED to
+// unload it and also set it to not automatically start in future.
+
+static void disableKdedModule(const QString &moduleName)
+{
+	qCDebug(KMIX_LOG) << "Checking KDED" << moduleName << "module";
+
+	QDBusInterface kded("org.kde.kded5", "/kded", "org.kde.kded5", QDBusConnection::sessionBus());
+	if (!kded.isValid())
+	{
+		qCWarning(KMIX_LOG) << "cannot connect to KDED";
+		return;
+	}
+
+	QDBusMessage reply = kded.call("loadedModules");
+	const QStringList loaded = reply.arguments().at(0).toStringList();
+	if (loaded.contains(moduleName))
+	{
+		qCDebug(KMIX_LOG) << "Module is currently loaded, unloading it";
+		reply = kded.call("unloadModule", moduleName);
+		if (reply.type()==QDBusMessage::ErrorMessage)
+		{
+			qCWarning(KMIX_LOG) << "cannot unload module," << reply.errorMessage();
+		}
+
+		reply = kded.call("isModuleAutoloaded", moduleName);
+		if (reply.type()==QDBusMessage::ErrorMessage)
+		{
+			qCWarning(KMIX_LOG) << "cannot check whether module is autoloaded," << reply.errorMessage();
+			return;
+		}
+
+		if (reply.arguments().at(0).toBool())
+		{
+			qCDebug(KMIX_LOG) << "Disabling module autoload";
+			reply = kded.call("setModuleAutoloading", moduleName, false);
+			if (reply.type()==QDBusMessage::ErrorMessage)
+			{
+				qCWarning(KMIX_LOG) << "cannot disable autoload," << reply.errorMessage();
+			}
+		}
+	}
+
+	qCDebug(KMIX_LOG) << "KDED module checks done";
+}
+
+
 void KMixApp::newInstance(const QStringList &arguments, const QString &workingDirectory)
 {
 	qCDebug(KMIX_LOG);
@@ -153,7 +206,7 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 	 * 		case exists above in the 'already running case'
 	 */
 	creationLock.lock(); // Guard a complete construction
-	bool first = firstCaller;
+	const bool first = firstCaller;
 	firstCaller = false;
 
 	if (first)
@@ -163,6 +216,9 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 		 * Typical case: Normal start. KMix was not running yet => create a new KMixWindow
 		 */
 		restoreSessionIfApplicable(m_hasArgKeepvisibility, m_hasArgReset);
+
+		// Check for and disable the "kmixd" KDED module if necessary.
+		disableKdedModule("kmixd");
 	}
 	else
 	{
