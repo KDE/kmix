@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"POT-Creation-Date: 2023-05-06 00:46+0000\n"
 "PO-Revision-Date: 2013-02-23 17:39+0530\n"
 "Last-Translator: Chetan Khona <chetan@kompkin.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -42,7 +42,7 @@ msgstr "के-मिक्स-कंट्रोल - के-मिक्स �
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 स्टेफन शिमान्स्की"
 
-#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:56
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "स्टेफन शिमान्स्की"
@@ -69,6 +69,136 @@ msgstr ""
 #, kde-format
 msgid "The last soundcard was unplugged."
 msgstr "शेवटचे साऊंडकार्ड काढले गेले."
+
+#: apps/kmixmain.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "के-मिक्स"
+
+#: apps/kmixmain.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "के-मिक्स - केडीई चा वैशिष्ठ्यपूर्ण लहान मिक्सर"
+
+#: apps/kmixmain.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2013 के-मिक्स लेखक"
+
+#: apps/kmixmain.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "क्रिश्चियन एस्केन"
+
+#: apps/kmixmain.cpp:45
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "मूळ लेखक व वर्तमान नियंत्रक"
+
+#: apps/kmixmain.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "कोलिन गुथ्री"
+
+#: apps/kmixmain.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr "पल्स ऑडिओ समर्थन"
+
+#: apps/kmixmain.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "हेलिओ चिस्सिनि डे कास्ट्रो"
+
+#: apps/kmixmain.cpp:47
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "ALSA 0.9x पोर्ट"
+
+#: apps/kmixmain.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "ब्रायन हेन्सन"
+
+#: apps/kmixmain.cpp:48
+#, kde-format
+msgid "Solaris support"
+msgstr "सोलेरिस समर्थन"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/kmixmain.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "इगोर पोबोइको"
+
+#: apps/kmixmain.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "प्लाज्मा डेटाइंजिन"
+
+#: apps/kmixmain.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "तात्पूरता पालक"
+
+#: apps/kmixmain.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "सेबेस्तियन झोल्टान"
+
+#: apps/kmixmain.cpp:57 apps/kmixmain.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "*BSD निराकरण"
+
+#: apps/kmixmain.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "लेन्नार्ट अगस्टसन"
+
+#: apps/kmixmain.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "नदीम हसन"
+
+#: apps/kmixmain.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "मौन व आवाज पूर्वावलोकन, इतर निर्धारण"
+
+#: apps/kmixmain.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "एर्विन माशेर"
+
+#: apps/kmixmain.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "emu10k1 आधारित साउंडकार्ड साठी सुधारित समर्थन"
+
+#: apps/kmixmain.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "व्हेलेन्टिन रुसु"
+
+#: apps/kmixmain.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "TerraTec DMX6Fire समर्थन"
+
+#: apps/kmixmain.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr "जर के-मिक्स अगोदरच चालू असेल तर के-मिक्सची मुख्य चौकट लपविणे थांबवतो."
+
+#: apps/kmixmain.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr ""
 
 #: apps/kmixwindow.cpp:173
 #, fuzzy, kde-format
@@ -182,136 +312,6 @@ msgstr "मदत अनुप्रयोग प्रतिष्ठापी�
 #| msgid "Mixer"
 msgid "Mixer (%1)"
 msgstr "मिक्सर"
-
-#: apps/main.cpp:40
-#, kde-format
-msgid "KMix"
-msgstr "के-मिक्स"
-
-#: apps/main.cpp:41
-#, kde-format
-msgid "KMix - KDE's full featured mini mixer"
-msgstr "के-मिक्स - केडीई चा वैशिष्ठ्यपूर्ण लहान मिक्सर"
-
-#: apps/main.cpp:42
-#, kde-format
-msgid "(c) 1996-2013 The KMix Authors"
-msgstr "(c) 1996-2013 के-मिक्स लेखक"
-
-#: apps/main.cpp:45
-#, kde-format
-msgid "Christian Esken"
-msgstr "क्रिश्चियन एस्केन"
-
-#: apps/main.cpp:45
-#, kde-format
-msgid "Original author and current maintainer"
-msgstr "मूळ लेखक व वर्तमान नियंत्रक"
-
-#: apps/main.cpp:46
-#, kde-format
-msgid "Colin Guthrie"
-msgstr "कोलिन गुथ्री"
-
-#: apps/main.cpp:46
-#, kde-format
-msgid "PulseAudio support"
-msgstr "पल्स ऑडिओ समर्थन"
-
-#: apps/main.cpp:47
-#, kde-format
-msgid "Helio Chissini de Castro"
-msgstr "हेलिओ चिस्सिनि डे कास्ट्रो"
-
-#: apps/main.cpp:47
-#, kde-format
-msgid "ALSA 0.9x port"
-msgstr "ALSA 0.9x पोर्ट"
-
-#: apps/main.cpp:48
-#, kde-format
-msgid "Brian Hanson"
-msgstr "ब्रायन हेन्सन"
-
-#: apps/main.cpp:48
-#, kde-format
-msgid "Solaris support"
-msgstr "सोलेरिस समर्थन"
-
-#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
-#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
-#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
-#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/main.cpp:55
-#, kde-format
-msgid "Igor Poboiko"
-msgstr "इगोर पोबोइको"
-
-#: apps/main.cpp:55
-#, kde-format
-msgid "Plasma Dataengine"
-msgstr "प्लाज्मा डेटाइंजिन"
-
-#: apps/main.cpp:56
-#, kde-format
-msgid "Temporary maintainer"
-msgstr "तात्पूरता पालक"
-
-#: apps/main.cpp:57
-#, kde-format
-msgid "Sebestyen Zoltan"
-msgstr "सेबेस्तियन झोल्टान"
-
-#: apps/main.cpp:57 apps/main.cpp:58
-#, kde-format
-msgid "*BSD fixes"
-msgstr "*BSD निराकरण"
-
-#: apps/main.cpp:58
-#, kde-format
-msgid "Lennart Augustsson"
-msgstr "लेन्नार्ट अगस्टसन"
-
-#: apps/main.cpp:59
-#, kde-format
-msgid "Nadeem Hasan"
-msgstr "नदीम हसन"
-
-#: apps/main.cpp:59
-#, kde-format
-msgid "Mute and volume preview, other fixes"
-msgstr "मौन व आवाज पूर्वावलोकन, इतर निर्धारण"
-
-#: apps/main.cpp:60
-#, kde-format
-msgid "Erwin Mascher"
-msgstr "एर्विन माशेर"
-
-#: apps/main.cpp:60
-#, kde-format
-msgid "Improving support for emu10k1 based soundcards"
-msgstr "emu10k1 आधारित साउंडकार्ड साठी सुधारित समर्थन"
-
-#: apps/main.cpp:61
-#, kde-format
-msgid "Valentin Rusu"
-msgstr "व्हेलेन्टिन रुसु"
-
-#: apps/main.cpp:61
-#, kde-format
-msgid "TerraTec DMX6Fire support"
-msgstr "TerraTec DMX6Fire समर्थन"
-
-#: apps/main.cpp:75
-#, kde-format
-msgid ""
-"Inhibits the unhiding of the KMix main window, if KMix is already running."
-msgstr "जर के-मिक्स अगोदरच चालू असेल तर के-मिक्सची मुख्य चौकट लपविणे थांबवतो."
-
-#: apps/main.cpp:76
-#, kde-format
-msgid "Starts KMix in failsafe mode."
-msgstr ""
 
 #: apps/volumefeedback.cpp:248
 #, kde-format
