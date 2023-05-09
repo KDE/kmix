@@ -54,18 +54,7 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent)
 	setFaceType(KPageDialog::List);
 
 	dvc = nullptr;
-
-	m_startupTab = new QFrame(this);
-	createStartupTab();
-	m_generalTab = new QFrame(this);
-	createGeneralTab();
-	m_controlsTab = new QFrame(this);
-	createControlsTab();
-	updateWidgets(); // I thought KConfigDialog would call this, but I saw during a gdb session that it does not do so.
-
-	m_generalPage = addPage(m_generalTab, i18n("General"), "configure");
-	m_startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
-	m_soundmenuPage = addPage(m_controlsTab, i18n("Volume Control"), "audio-volume-high");
+	m_startupTab = m_generalTab = m_controlsTab = nullptr;
 
 	new DialogStateSaver(this);			// save dialogue size when closed
 }
@@ -73,6 +62,32 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent)
 
 void KMixPrefDlg::showAtPage(KMixPrefDlg::PrefPage page)
 {
+	// First create the pages and their widgets if not done already.
+	if (m_startupTab==nullptr)
+	{
+		qCDebug(KMIX_LOG) << "creating pages";
+
+		m_startupTab = new QFrame(this);
+		createStartupTab();
+		m_generalTab = new QFrame(this);
+		createGeneralTab();
+		m_controlsTab = new QFrame(this);
+		createControlsTab();
+
+		// I thought KConfigDialog would call this, but I saw
+		// during a gdb session that it does not do so.
+		// However, there is no need to track changes or emit
+		// the change signal during this initialisation.
+		// See settingChanged().
+		QSignalBlocker block(this);
+		updateWidgets();
+
+		m_generalPage = addPage(m_generalTab, i18n("General"), "configure");
+		m_startupPage = addPage(m_startupTab, i18n("Startup"), "preferences-system-login");
+		m_soundmenuPage = addPage(m_controlsTab, i18n("Volume Control"), "audio-volume-high");
+	}
+
+	// Then the requested page can be selected.
 	switch (page)
 	{
 	case PageGeneral:
@@ -444,7 +459,7 @@ void KMixPrefDlg::settingChanged(KMixPrefDlg::PrefChanged changes)
 {
 	m_controlsChanged |= changes;
 	qCDebug(KMIX_LOG) << "changed" << m_controlsChanged;
-	KConfigDialog::settingsChangedSlot();
+	if (!signalsBlocked()) KConfigDialog::settingsChangedSlot();
 }
 
 
