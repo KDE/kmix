@@ -148,8 +148,12 @@ void ToggleToolButton::setIndicatorIcon(const QString &iconName, QWidget *label,
 
     if (icon.isNull())
     {
-        qCWarning(KMIX_LOG) << "Could not get icon for" << iconName;
-        return;
+        qCWarning(KMIX_LOG) << "No such icon" << iconName;
+        // Need a fallback here.  For example, PulseAudio has been observed
+        // to return a channel icon name "audio-card-pci" which does not exist
+        // in the Oxygen or Breeze themes.
+        icon = QIcon::fromTheme("audio-card");
+        if (icon.isNull()) return;			// what, that not avilable either?
     }
 
     QSize iconSize;
