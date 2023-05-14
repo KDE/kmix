@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"POT-Creation-Date: 2023-05-06 00:46+0000\n"
 "PO-Revision-Date: 2023-01-24 19:28+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -48,7 +48,7 @@ msgstr "kmixctrl - 音量 儲存/復原 工具"
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 by Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:56
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -74,6 +74,136 @@ msgstr "包含主裝置的音效卡未插入。改為音效卡 %2 上的控制 %
 #, kde-format
 msgid "The last soundcard was unplugged."
 msgstr "上次的音效卡未插入。"
+
+#: apps/kmixmain.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "KMix"
+
+#: apps/kmixmain.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "KMix - KDE 的全功能小型混音器"
+
+#: apps/kmixmain.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2013 KMix 作者群"
+
+#: apps/kmixmain.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "Christian Esken"
+
+#: apps/kmixmain.cpp:45
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "原始作者，目前維護者"
+
+#: apps/kmixmain.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "Colin Guthrie"
+
+#: apps/kmixmain.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr "PulseAudio 支援"
+
+#: apps/kmixmain.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "Helio Chissini de Castro"
+
+#: apps/kmixmain.cpp:47
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "ALSA 0.9x 移植"
+
+#: apps/kmixmain.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "Brian Hanson"
+
+#: apps/kmixmain.cpp:48
+#, kde-format
+msgid "Solaris support"
+msgstr "Solaris 支援"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/kmixmain.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "Igor Poboiko"
+
+#: apps/kmixmain.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "Plasma 資料引擎"
+
+#: apps/kmixmain.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "暫時維護者"
+
+#: apps/kmixmain.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "Sebestyen Zoltan"
+
+#: apps/kmixmain.cpp:57 apps/kmixmain.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "*BSD 修正"
+
+#: apps/kmixmain.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "Lennart Augustsson"
+
+#: apps/kmixmain.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "Nadeem Hasan"
+
+#: apps/kmixmain.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "靜音與音量預覽，其他修正"
+
+#: apps/kmixmain.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "Erwin Mascher"
+
+#: apps/kmixmain.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "增進 emu10k1 系列的音效卡的支援"
+
+#: apps/kmixmain.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "Valentin Rusu"
+
+#: apps/kmixmain.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "TerraTec DMX6Fire 支援"
+
+#: apps/kmixmain.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr "若是 KMix 已在執行中，則禁止取消隱藏 KMix 主視窗。"
+
+#: apps/kmixmain.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr "以安全模式啟動 KMix。"
 
 #: apps/kmixwindow.cpp:173
 #, kde-format
@@ -185,136 +315,6 @@ msgstr ""
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "混音器 (%1)"
-
-#: apps/main.cpp:40
-#, kde-format
-msgid "KMix"
-msgstr "KMix"
-
-#: apps/main.cpp:41
-#, kde-format
-msgid "KMix - KDE's full featured mini mixer"
-msgstr "KMix - KDE 的全功能小型混音器"
-
-#: apps/main.cpp:42
-#, kde-format
-msgid "(c) 1996-2013 The KMix Authors"
-msgstr "(c) 1996-2013 KMix 作者群"
-
-#: apps/main.cpp:45
-#, kde-format
-msgid "Christian Esken"
-msgstr "Christian Esken"
-
-#: apps/main.cpp:45
-#, kde-format
-msgid "Original author and current maintainer"
-msgstr "原始作者，目前維護者"
-
-#: apps/main.cpp:46
-#, kde-format
-msgid "Colin Guthrie"
-msgstr "Colin Guthrie"
-
-#: apps/main.cpp:46
-#, kde-format
-msgid "PulseAudio support"
-msgstr "PulseAudio 支援"
-
-#: apps/main.cpp:47
-#, kde-format
-msgid "Helio Chissini de Castro"
-msgstr "Helio Chissini de Castro"
-
-#: apps/main.cpp:47
-#, kde-format
-msgid "ALSA 0.9x port"
-msgstr "ALSA 0.9x 移植"
-
-#: apps/main.cpp:48
-#, kde-format
-msgid "Brian Hanson"
-msgstr "Brian Hanson"
-
-#: apps/main.cpp:48
-#, kde-format
-msgid "Solaris support"
-msgstr "Solaris 支援"
-
-#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
-#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
-#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
-#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/main.cpp:55
-#, kde-format
-msgid "Igor Poboiko"
-msgstr "Igor Poboiko"
-
-#: apps/main.cpp:55
-#, kde-format
-msgid "Plasma Dataengine"
-msgstr "Plasma 資料引擎"
-
-#: apps/main.cpp:56
-#, kde-format
-msgid "Temporary maintainer"
-msgstr "暫時維護者"
-
-#: apps/main.cpp:57
-#, kde-format
-msgid "Sebestyen Zoltan"
-msgstr "Sebestyen Zoltan"
-
-#: apps/main.cpp:57 apps/main.cpp:58
-#, kde-format
-msgid "*BSD fixes"
-msgstr "*BSD 修正"
-
-#: apps/main.cpp:58
-#, kde-format
-msgid "Lennart Augustsson"
-msgstr "Lennart Augustsson"
-
-#: apps/main.cpp:59
-#, kde-format
-msgid "Nadeem Hasan"
-msgstr "Nadeem Hasan"
-
-#: apps/main.cpp:59
-#, kde-format
-msgid "Mute and volume preview, other fixes"
-msgstr "靜音與音量預覽，其他修正"
-
-#: apps/main.cpp:60
-#, kde-format
-msgid "Erwin Mascher"
-msgstr "Erwin Mascher"
-
-#: apps/main.cpp:60
-#, kde-format
-msgid "Improving support for emu10k1 based soundcards"
-msgstr "增進 emu10k1 系列的音效卡的支援"
-
-#: apps/main.cpp:61
-#, kde-format
-msgid "Valentin Rusu"
-msgstr "Valentin Rusu"
-
-#: apps/main.cpp:61
-#, kde-format
-msgid "TerraTec DMX6Fire support"
-msgstr "TerraTec DMX6Fire 支援"
-
-#: apps/main.cpp:75
-#, kde-format
-msgid ""
-"Inhibits the unhiding of the KMix main window, if KMix is already running."
-msgstr "若是 KMix 已在執行中，則禁止取消隱藏 KMix 主視窗。"
-
-#: apps/main.cpp:76
-#, kde-format
-msgid "Starts KMix in failsafe mode."
-msgstr "以安全模式啟動 KMix。"
 
 #: apps/volumefeedback.cpp:248
 #, kde-format

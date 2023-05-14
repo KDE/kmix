@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-09-28 00:47+0000\n"
+"POT-Creation-Date: 2023-05-06 00:46+0000\n"
 "PO-Revision-Date: 2021-06-19 08:06+0300\n"
 "Last-Translator: Stelios <sstavra@gmail.com>\n"
 "Language-Team: Greek <kde-i18n-el@kde.org>\n"
@@ -51,7 +51,7 @@ msgstr "kmixctrl - εργαλείο αποθήκευσης/αποκατάστα�
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 by Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/main.cpp:56
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:56
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -79,6 +79,137 @@ msgstr ""
 #, kde-format
 msgid "The last soundcard was unplugged."
 msgstr "Η τελευταία κάρτα ήχου έχει αφαιρεθεί."
+
+#: apps/kmixmain.cpp:40
+#, kde-format
+msgid "KMix"
+msgstr "KMix"
+
+#: apps/kmixmain.cpp:41
+#, kde-format
+msgid "KMix - KDE's full featured mini mixer"
+msgstr "KMix - Ο ολοκληρωμένος μίνι μείκτης του KDE"
+
+#: apps/kmixmain.cpp:42
+#, kde-format
+msgid "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2013 Οι συγγραφείς του KMix"
+
+#: apps/kmixmain.cpp:45
+#, kde-format
+msgid "Christian Esken"
+msgstr "Christian Esken"
+
+#: apps/kmixmain.cpp:45
+#, kde-format
+msgid "Original author and current maintainer"
+msgstr "Αρχικός συγγραφέας και τρέχων συντηρητής"
+
+#: apps/kmixmain.cpp:46
+#, kde-format
+msgid "Colin Guthrie"
+msgstr "Colin Guthrie"
+
+#: apps/kmixmain.cpp:46
+#, kde-format
+msgid "PulseAudio support"
+msgstr "Υποστήριξη PulseAudio"
+
+#: apps/kmixmain.cpp:47
+#, kde-format
+msgid "Helio Chissini de Castro"
+msgstr "Helio Chissini de Castro"
+
+#: apps/kmixmain.cpp:47
+#, kde-format
+msgid "ALSA 0.9x port"
+msgstr "Μεταφορά του ALSA 0.9x"
+
+#: apps/kmixmain.cpp:48
+#, kde-format
+msgid "Brian Hanson"
+msgstr "Brian Hanson"
+
+#: apps/kmixmain.cpp:48
+#, kde-format
+msgid "Solaris support"
+msgstr "Υποστήριξη Solaris"
+
+#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
+#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
+#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
+#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+#: apps/kmixmain.cpp:55
+#, kde-format
+msgid "Igor Poboiko"
+msgstr "Igor Poboiko"
+
+#: apps/kmixmain.cpp:55
+#, kde-format
+msgid "Plasma Dataengine"
+msgstr "Μηχανής δεδομένων Plasma"
+
+#: apps/kmixmain.cpp:56
+#, kde-format
+msgid "Temporary maintainer"
+msgstr "Προσωρινός συντηρητής"
+
+#: apps/kmixmain.cpp:57
+#, kde-format
+msgid "Sebestyen Zoltan"
+msgstr "Sebestyen Zoltan"
+
+#: apps/kmixmain.cpp:57 apps/kmixmain.cpp:58
+#, kde-format
+msgid "*BSD fixes"
+msgstr "Διορθώσεις για το *BSD"
+
+#: apps/kmixmain.cpp:58
+#, kde-format
+msgid "Lennart Augustsson"
+msgstr "Lennart Augustsson"
+
+#: apps/kmixmain.cpp:59
+#, kde-format
+msgid "Nadeem Hasan"
+msgstr "Nadeem Hasan"
+
+#: apps/kmixmain.cpp:59
+#, kde-format
+msgid "Mute and volume preview, other fixes"
+msgstr "Κλείσιμο ήχου και προεπισκόπηση έντασης, άλλες διορθώσεις"
+
+#: apps/kmixmain.cpp:60
+#, kde-format
+msgid "Erwin Mascher"
+msgstr "Erwin Mascher"
+
+#: apps/kmixmain.cpp:60
+#, kde-format
+msgid "Improving support for emu10k1 based soundcards"
+msgstr "Βελτίωση της υποστήριξης για κάρτες ήχου emu10k1"
+
+#: apps/kmixmain.cpp:61
+#, kde-format
+msgid "Valentin Rusu"
+msgstr "Valentin Rusu"
+
+#: apps/kmixmain.cpp:61
+#, kde-format
+msgid "TerraTec DMX6Fire support"
+msgstr "Υποστήριξη TerraTec DMX6Fire"
+
+#: apps/kmixmain.cpp:75
+#, kde-format
+msgid ""
+"Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgstr ""
+"Αποτρέπει την εμφάνιση του κύριου παραθύρου του KMix, αν αυτό εκτελείται ήδη."
+
+#: apps/kmixmain.cpp:76
+#, kde-format
+msgid "Starts KMix in failsafe mode."
+msgstr "Εκκινεί το KMix σε ασφαλή λειτουργία."
 
 #: apps/kmixwindow.cpp:173
 #, kde-format
@@ -190,137 +321,6 @@ msgstr ""
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Μείκτης (%1)"
-
-#: apps/main.cpp:40
-#, kde-format
-msgid "KMix"
-msgstr "KMix"
-
-#: apps/main.cpp:41
-#, kde-format
-msgid "KMix - KDE's full featured mini mixer"
-msgstr "KMix - Ο ολοκληρωμένος μίνι μείκτης του KDE"
-
-#: apps/main.cpp:42
-#, kde-format
-msgid "(c) 1996-2013 The KMix Authors"
-msgstr "(c) 1996-2013 Οι συγγραφείς του KMix"
-
-#: apps/main.cpp:45
-#, kde-format
-msgid "Christian Esken"
-msgstr "Christian Esken"
-
-#: apps/main.cpp:45
-#, kde-format
-msgid "Original author and current maintainer"
-msgstr "Αρχικός συγγραφέας και τρέχων συντηρητής"
-
-#: apps/main.cpp:46
-#, kde-format
-msgid "Colin Guthrie"
-msgstr "Colin Guthrie"
-
-#: apps/main.cpp:46
-#, kde-format
-msgid "PulseAudio support"
-msgstr "Υποστήριξη PulseAudio"
-
-#: apps/main.cpp:47
-#, kde-format
-msgid "Helio Chissini de Castro"
-msgstr "Helio Chissini de Castro"
-
-#: apps/main.cpp:47
-#, kde-format
-msgid "ALSA 0.9x port"
-msgstr "Μεταφορά του ALSA 0.9x"
-
-#: apps/main.cpp:48
-#, kde-format
-msgid "Brian Hanson"
-msgstr "Brian Hanson"
-
-#: apps/main.cpp:48
-#, kde-format
-msgid "Solaris support"
-msgstr "Υποστήριξη Solaris"
-
-#. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
-#. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
-#. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
-#. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/main.cpp:55
-#, kde-format
-msgid "Igor Poboiko"
-msgstr "Igor Poboiko"
-
-#: apps/main.cpp:55
-#, kde-format
-msgid "Plasma Dataengine"
-msgstr "Μηχανής δεδομένων Plasma"
-
-#: apps/main.cpp:56
-#, kde-format
-msgid "Temporary maintainer"
-msgstr "Προσωρινός συντηρητής"
-
-#: apps/main.cpp:57
-#, kde-format
-msgid "Sebestyen Zoltan"
-msgstr "Sebestyen Zoltan"
-
-#: apps/main.cpp:57 apps/main.cpp:58
-#, kde-format
-msgid "*BSD fixes"
-msgstr "Διορθώσεις για το *BSD"
-
-#: apps/main.cpp:58
-#, kde-format
-msgid "Lennart Augustsson"
-msgstr "Lennart Augustsson"
-
-#: apps/main.cpp:59
-#, kde-format
-msgid "Nadeem Hasan"
-msgstr "Nadeem Hasan"
-
-#: apps/main.cpp:59
-#, kde-format
-msgid "Mute and volume preview, other fixes"
-msgstr "Κλείσιμο ήχου και προεπισκόπηση έντασης, άλλες διορθώσεις"
-
-#: apps/main.cpp:60
-#, kde-format
-msgid "Erwin Mascher"
-msgstr "Erwin Mascher"
-
-#: apps/main.cpp:60
-#, kde-format
-msgid "Improving support for emu10k1 based soundcards"
-msgstr "Βελτίωση της υποστήριξης για κάρτες ήχου emu10k1"
-
-#: apps/main.cpp:61
-#, kde-format
-msgid "Valentin Rusu"
-msgstr "Valentin Rusu"
-
-#: apps/main.cpp:61
-#, kde-format
-msgid "TerraTec DMX6Fire support"
-msgstr "Υποστήριξη TerraTec DMX6Fire"
-
-#: apps/main.cpp:75
-#, kde-format
-msgid ""
-"Inhibits the unhiding of the KMix main window, if KMix is already running."
-msgstr ""
-"Αποτρέπει την εμφάνιση του κύριου παραθύρου του KMix, αν αυτό εκτελείται ήδη."
-
-#: apps/main.cpp:76
-#, kde-format
-msgid "Starts KMix in failsafe mode."
-msgstr "Εκκινεί το KMix σε ασφαλή λειτουργία."
 
 #: apps/volumefeedback.cpp:248
 #, kde-format
