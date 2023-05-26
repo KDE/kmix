@@ -298,8 +298,8 @@ bool possiblyAddMixer(Mixer *mixer)
     {
         if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
         {
-            Mixer::mixers().append(mixer);
-            qCDebug(KMIX_LOG) << "Added mixer " << mixer->id();
+            Mixer::appendMixer(mixer);
+            qCDebug(KMIX_LOG) << "Added mixer" << mixer->id();
             return (true);
         }
         else
@@ -326,36 +326,31 @@ QString mixerIgnoreExpression()
      return s_ignoreMixerExpression.pattern( );
 }
 
-void removeMixer(Mixer *par_mixer)
+
+void removeMixer(Mixer *mixer)
 {
-    for (int i=0; i<Mixer::mixers().count(); ++i) {
-        Mixer *mixer = (Mixer::mixers())[i];
-        if ( mixer == par_mixer ) {
-            qCDebug(KMIX_LOG) << "Removing card " << mixer->id();
-            Mixer::mixers().removeAt(i);
-            delete mixer;
-        }
-    }
+    qCDebug(KMIX_LOG) << "Removing mixer" << mixer->id();
+    Mixer::removeMixer(mixer);
+    delete mixer;
 }
 
 
-
-/*
- * Clean up and free all resources of all found Mixers, which were found in the initMixer() call
- */
+// Clean up and free all resources of all currently known 'Mixer's,
+// which were found in the initMixer() call.
 void deinitMixer()
 {
-   //qCDebug(KMIX_LOG) << "IN MixerToolBox::deinitMixer()";
-   int mixerCount = Mixer::mixers().count();
-   for ( int i=0; i<mixerCount; ++i)
-   {
-      Mixer* mixer = (Mixer::mixers())[i];
-      //qCDebug(KMIX_LOG) << "MixerToolBox::deinitMixer() Remove Mixer";
-      mixer->close();
-      delete mixer;
-   }
-   Mixer::mixers().clear();
-   // qCDebug(KMIX_LOG) << "OUT MixerToolBox::deinitMixer()";
+    qCDebug(KMIX_LOG);
+
+    const QList<Mixer *> &mixers = Mixer::mixers();
+    for (Mixer *mixer : qAsConst(mixers))
+    {
+        mixer->close();
+        delete mixer;
+    }
+
+    // This is safe despite the 'delete' above, because Mixer::clearMixers()
+    // does not access or delete the existing list.
+    Mixer::clearMixers();
 }
 
 }							// namespace MixerToolBox

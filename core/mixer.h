@@ -137,7 +137,16 @@ public:
     // Used also by MixDevice to bind to this path
     const QString dbusPath();
 
-    static QList<Mixer *> &mixers();
+    // TODO: move static list of mixers to MixerToolBox
+
+    // Returns a reference to the list of all the currently known mixers.
+    static const QList<Mixer *> &mixers()		{ return (s_allMixers); }
+    // Add a mixer to the above list.
+    static void appendMixer(Mixer *mixer)		{ s_allMixers.append(mixer); }
+    // Remove a mixer from the above list.
+    static void removeMixer(Mixer *mixer)		{ s_allMixers.removeAll(mixer); }
+    // Remove all mixers from the above list.
+    static void clearMixers()				{ s_allMixers.clear(); }
 
     /******************************************
     The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
@@ -195,9 +204,6 @@ Q_SIGNALS:
     void newBalance(Volume& );
     void controlChanged(void); // TODO remove?
 
-protected:
-    static QList<Mixer *> s_mixers;
-
 private:
     void setBalanceInternal(Volume& vol);
     void recreateId();
@@ -209,6 +215,7 @@ private:
     int m_balance; // from -100 (just left) to 100 (just right)
     bool m_dynamic;
 
+    static QList<Mixer *> s_allMixers;
     static MasterControl _globalMasterCurrent;
     static MasterControl _globalMasterPreferred;
 };

@@ -33,9 +33,10 @@
  * Some general design hints. Hierarchy is Mixer->MixDevice->Volume
  */
 
-QList<Mixer *> Mixer::s_mixers;
-MasterControl Mixer::_globalMasterCurrent;
-MasterControl Mixer::_globalMasterPreferred;
+/* static */ QList<Mixer *> Mixer::s_allMixers;
+/* static */ MasterControl Mixer::_globalMasterCurrent;
+/* static */ MasterControl Mixer::_globalMasterPreferred;
+
 
 /* static */ int Mixer::numDrivers()
 {
@@ -50,13 +51,6 @@ MasterControl Mixer::_globalMasterPreferred;
     return (num);
 }
 
-/*
- * Returns a reference to the current mixer list.
- */
-/* static */ QList<Mixer *> &Mixer::mixers()
-{
-    return s_mixers;
-}
 
 /**
  * Returns whether there is at least one dynamic mixer active.
@@ -64,7 +58,7 @@ MasterControl Mixer::_globalMasterPreferred;
  */
 /* static */ bool Mixer::dynamicBackendsPresent()
 {
-    for (const Mixer *mixer : std::as_const(s_mixers))
+    for (const Mixer *mixer : std::as_const(s_allMixers))
     {
         if (mixer->isDynamic()) return (true);
     }
@@ -73,7 +67,7 @@ MasterControl Mixer::_globalMasterPreferred;
 
 /* static */ bool Mixer::pulseaudioPresent()
 {
-    for (const Mixer *mixer : std::as_const(s_mixers))
+    for (const Mixer *mixer : std::as_const(s_allMixers))
     {
         if (mixer->getDriverName()=="PulseAudio") return (true);
     }
@@ -407,7 +401,7 @@ QString Mixer::getBaseName() const
 
 /* static */ Mixer *Mixer::getGlobalMasterMixerNoFalback()
 {
-    for (Mixer *mixer : std::as_const(s_mixers))
+    for (Mixer *mixer : std::as_const(s_allMixers))
     {
         if (mixer!=nullptr && mixer->id()==_globalMasterCurrent.getCard())
             return mixer;
