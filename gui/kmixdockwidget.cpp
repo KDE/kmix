@@ -46,6 +46,7 @@
 #include <kxmlguiwindow.h>
 
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/viewdockareapopup.h"
 
 
@@ -167,7 +168,7 @@ void KMixDockWidget::createMenuActions()
     QMenu *menu = contextMenu();
     if (menu==nullptr) return;				// We do not use a menu
 
-    const shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    const shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
     if (md.get()!=nullptr && md->hasMuteSwitch())
     {
         // "Mute" action
@@ -188,7 +189,7 @@ void KMixDockWidget::createMenuActions()
 
 void KMixDockWidget::setVolumeTip()
 {
-    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
     QString tip;
     QString subTip;
     int virtualToolTipValue = 0;
@@ -229,7 +230,7 @@ void KMixDockWidget::setVolumeTip()
 
 void KMixDockWidget::updatePixmap()
 {
-    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 
     char newPixmapType = 'e';				// default = error indication
     if (md.get()!=nullptr)				// a control is available
@@ -390,7 +391,7 @@ void KMixDockWidget::activate(const QPoint &pos)
 
 void KMixDockWidget::trayWheelEvent(int delta, Qt::Orientation wheelOrientation)
 {
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 	if (md.get()==nullptr) return;
 
 	Volume &vol = ( md->playbackVolume().hasVolume() ) ?  md->playbackVolume() : md->captureVolume();
@@ -438,7 +439,7 @@ void KMixDockWidget::trayWheelEvent(int delta, Qt::Orientation wheelOrientation)
 
 void KMixDockWidget::dockMute()
 {
-    shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+    shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
     if (md.get()!=nullptr)
     {
         md->toggleMute();
@@ -465,7 +466,7 @@ void KMixDockWidget::contextMenuAboutToShow()
     // Enable/disable "Mute".
     if (_dockMuteAction!=nullptr)
     {
-        shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+        shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
         if (md.get()!=nullptr)
         {
             const Volume &vol = md->playbackVolume().hasVolume() ? md->playbackVolume() : md->captureVolume();
@@ -479,5 +480,5 @@ void KMixDockWidget::contextMenuAboutToShow()
     // Enable/disable "Select Master Channel".
     // It will only be disabled if there are no sound devices available at all.
     QAction *action = _kmixMainWindow->actionCollection()->action("select_master");
-    if (action!=nullptr) action->setEnabled(Mixer::getGlobalMasterMixer()!=nullptr);
+    if (action!=nullptr) action->setEnabled(MixerToolBox::getGlobalMasterMixer()!=nullptr);
 }

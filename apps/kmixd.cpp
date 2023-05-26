@@ -100,9 +100,9 @@ void KMixD::saveBaseConfig()
    qCDebug(KMIX_LOG) << "About to save config (Base)";
 
    Settings::setConfigVersion(KMIX_CONFIG_VERSION);
-   const Mixer *mixerMasterCard = Mixer::getGlobalMasterMixer();
+   const Mixer *mixerMasterCard = MixerToolBox::getGlobalMasterMixer();
    if (mixerMasterCard!=nullptr) Settings::setMasterMixer(mixerMasterCard->id());
-   shared_ptr<MixDevice> mdMaster = Mixer::getGlobalMasterMD();
+   shared_ptr<MixDevice> mdMaster = MixerToolBox::getGlobalMasterMD();
    if (mdMaster) Settings::setMasterMixerDevice(mdMaster->id());
    Settings::setMixerIgnoreExpression(MixerToolBox::mixerIgnoreExpression());
    qCDebug(KMIX_LOG) << "Config (Base) saving done";
@@ -118,7 +118,7 @@ void KMixD::loadBaseConfig()
     m_multiDriverMode = Settings::multiDriver();
     QString mixerMasterCard = Settings::masterMixer();
     QString masterDev = Settings::masterMixerDevice();
-    Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
+    MixerToolBox::setGlobalMaster(mixerMasterCard, masterDev, true);
     QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
     if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 
@@ -166,14 +166,14 @@ void KMixD::unplugged(const QString &udi)
 	}
 
 	qCDebug(KMIX_LOG) << "Removing mixer";
-	const bool globalMasterMixerDestroyed = (unpluggedMixer==Mixer::getGlobalMasterMixer());
+	const bool globalMasterMixerDestroyed = (unpluggedMixer==MixerToolBox::getGlobalMasterMixer());
 
 	// Remove the mixer from the known list
 	MixerToolBox::removeMixer(unpluggedMixer);
 
 	// Check whether the Global Master disappeared,
 	// and select a new one if necessary
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 	if (globalMasterMixerDestroyed || md==nullptr)
 	{
 		const QList<Mixer *> mixers = MixerToolBox::mixers();
@@ -184,7 +184,7 @@ void KMixD::unplugged(const QString &udi)
 			{
 				Mixer *mixer = mixers.first();
 				QString localMaster = master->id();
-				Mixer::setGlobalMaster(mixer->id(), localMaster, false);
+				MixerToolBox::setGlobalMaster(mixer->id(), localMaster, false);
 			}
 		}
 	}

@@ -184,7 +184,7 @@ void DialogSelectMaster::createPage(const Mixer *mixer)
 	m_channelSelector->clear();
 
         const MixSet &mixset = mixer->getMixSet();
-	const MasterControl mc = mixer->getGlobalMasterPreferred(false);
+	const MasterControl mc = MixerToolBox::getGlobalMasterPreferred(false);
 	QString masterKey = mc.getControl();
 	if (!masterKey.isEmpty() && !mixset.get(masterKey))
 	{
@@ -264,7 +264,7 @@ void DialogSelectMaster::apply()
 	const QListWidgetItem *item = items.first();
     	QString control_id = item->data(Qt::UserRole).toString();
         mixer->setLocalMasterMD(control_id);
-        Mixer::setGlobalMaster(mixer->id(), control_id, true);
+        MixerToolBox::setGlobalMaster(mixer->id(), control_id, true);
         ControlManager::instance().announce(mixer->id(), ControlManager::MasterChanged, QString("Select Master Dialog"));
     }
     else qCWarning(KMIX_LOG) << "no selected channel";

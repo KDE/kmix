@@ -71,34 +71,34 @@ QStringList DBusMixSetWrapper::mixers() const
 
 QString DBusMixSetWrapper::currentMasterMixer() const
 {
-	Mixer* masterMixer = Mixer::getGlobalMasterMixer();
+	Mixer *masterMixer = MixerToolBox::getGlobalMasterMixer();
 	return masterMixer ? masterMixer->id() : QString();
 }
 
 QString DBusMixSetWrapper::currentMasterControl() const
 {
-	shared_ptr<MixDevice> masterControl = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> masterControl = MixerToolBox::getGlobalMasterMD();
 	return masterControl ? masterControl->id() : QString();
 }
 
 QString DBusMixSetWrapper::preferredMasterMixer() const
 {
-	return Mixer::getGlobalMasterPreferred().getCard();
+	return MixerToolBox::getGlobalMasterPreferred().getCard();
 }
 
 QString DBusMixSetWrapper::preferredMasterControl() const
 {
-	return Mixer::getGlobalMasterPreferred().getControl();
+	return MixerToolBox::getGlobalMasterPreferred().getControl();
 }
 
 void DBusMixSetWrapper::setCurrentMaster(const QString &mixer, const QString &control)
 {
-	Mixer::setGlobalMaster(mixer, control, false);
+	MixerToolBox::setGlobalMaster(mixer, control, false);
 }
 
 void DBusMixSetWrapper::setPreferredMaster(const QString &mixer, const QString &control)
 {
-	Mixer::setGlobalMaster(mixer, control, true);
+	MixerToolBox::setGlobalMaster(mixer, control, true);
 }
 
 void DBusMixSetWrapper::signalMixersChanged()

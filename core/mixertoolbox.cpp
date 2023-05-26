@@ -32,6 +32,9 @@ static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
 
 static QList<Mixer *> s_allMixers;
 
+static MasterControl s_globalMasterCurrent;
+static MasterControl s_globalMasterPreferred;
+
 /***********************************************************************************
  Attention:
  This MixerToolBox is linked to the KMix Main Program, the KMix Applet and kmixctrl.
@@ -219,7 +222,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
    } // loop over soundcard drivers
    
     // Add a master device (if we haven't defined one yet)
-   if ( !Mixer::getGlobalMasterMD(false) ) {
+   if ( !MixerToolBox::getGlobalMasterMD(false) ) {
       // We have no master card yet. This actually only happens when there was
       // not one defined in the kmixrc.
       // So lets just set the first card as master card.
@@ -227,14 +230,14 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
 	  shared_ptr<MixDevice> master = s_allMixers.first()->getLocalMasterMD();
          if ( master ) {
              QString controlId = master->id();
-             Mixer::setGlobalMaster(s_allMixers.first()->id(), controlId, true);
+             MixerToolBox::setGlobalMaster(s_allMixers.first()->id(), controlId, true);
          }
       }
    }
    else {
       // setGlobalMaster was already set after reading the configuration.
       // So we must make the local master consistent
-	  shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	  shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
       QString mdID = md->id();
       md->mixer()->setLocalMasterMD(mdID);
    }
@@ -289,6 +292,7 @@ void MixerToolBox::initMixer(bool multiDriverFlag, const QStringList &backendLis
  */
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 {
+    if (mixer==nullptr) return (false);
     if (mixer->openIfValid())
     {
         if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
@@ -360,4 +364,111 @@ Mixer *MixerToolBox::findMixer(const QString &mixerId)
     }
 
     return (nullptr);
+}
+
+
+/**
+ * Set the global master, which is shown in the dock area and which is accessible via the
+ * DBUS masterVolume() method.
+ *
+ * The parameters are taken over as-is, this means without checking for validity.
+ * This allows the User to define a master card that is not always available
+ * (e.g. it is an USB hotplugging device). Also you can set the master at any time you
+ * like, e.g. after reading the KMix configuration file and before actually constructing
+ * the Mixer instances (hint: this method is static!).
+ *
+ * @param ref_card The card id
+ * @param ref_control The control id. The corresponding control must be present in the card.
+ * @param preferred Whether this is the preferred master (auto-selected on coldplug and hotplug).
+ */
+void MixerToolBox::setGlobalMaster(const QString &ref_card, const QString &ref_control, bool preferred)
+{
+    qCDebug(KMIX_LOG) << "card" << ref_card << "control" << ref_control << "preferred?" << preferred;
+    s_globalMasterCurrent.set(ref_card, ref_control);
+    if (preferred) s_globalMasterPreferred.set(ref_card, ref_control);
+}
+
+
+Mixer *MixerToolBox::getGlobalMasterMixer(bool fallbackAllowed)
+{
+    const QString &ref_card = s_globalMasterCurrent.getCard();
+    for (Mixer *mixer : std::as_const(s_allMixers))
+    {
+        if (mixer->id()==ref_card) return (mixer);
+    }
+
+    if (fallbackAllowed)
+    {							// first mixer available as fallback
+        if (!s_allMixers.isEmpty()) return (s_allMixers.first());
+    }
+
+    return (nullptr);
+}
+
+
+/**
+ * Return the preferred global master.
+ * If there is no preferred global master, returns the current master instead.
+ */
+MasterControl &MixerToolBox::getGlobalMasterPreferred(bool fallbackAllowed)
+{
+    static MasterControl result;
+
+    if (!fallbackAllowed || s_globalMasterPreferred.isValid())
+    {
+        //qCDebug(KMIX_LOG) << "Returning preferred master";
+        return (s_globalMasterPreferred);
+    }
+
+    Mixer *mm = getGlobalMasterMixer(false);		// no fallback
+    if (mm!=nullptr)
+    {
+        result.set(s_globalMasterPreferred.getCard(), mm->getRecommendedDeviceId());
+        if (!result.getControl().isEmpty())
+        {
+            //qCDebug(KMIX_LOG) << "Returning extended preferred master";
+            return (result);
+        }
+    }
+
+    qCDebug(KMIX_LOG) << "Returning current master";
+    return (s_globalMasterCurrent);
+}
+
+
+shared_ptr<MixDevice> MixerToolBox::getGlobalMasterMD(bool fallbackAllowed)
+{
+    shared_ptr<MixDevice> mdRet;
+    Mixer *mixer = getGlobalMasterMixer(fallbackAllowed);
+    if (mixer==nullptr) return (mdRet);
+
+    if (s_globalMasterCurrent.getControl().isEmpty())
+    {
+        // Default (recommended) control
+        return (mixer->recommendedMaster());
+    }
+
+    shared_ptr<MixDevice> firstDevice;
+    for (const shared_ptr<MixDevice> &md : std::as_const(mixer->getMixSet()))
+    {							// getMixSet() = _mixerBackend->m_mixDevices
+        if (md==nullptr) continue;			// invalid
+
+        firstDevice = md;
+        if (md->id()==s_globalMasterCurrent.getControl())
+        {
+            mdRet = md;
+            break;					// found
+        }
+    }
+
+    if (mdRet==nullptr)
+    {
+        // For some sound cards when using PulseAudio the mixer ID is not proper,
+        // hence returning the first device as master channel device.
+        // This solves bug 290177 and problems stated in review #105422.
+        qCDebug(KMIX_LOG) << " No global master, returning the first device";
+        mdRet = firstDevice;
+    }
+
+    return (mdRet);
 }

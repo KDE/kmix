@@ -363,7 +363,7 @@ void KMixWindow::saveBaseConfig()
 	Settings::setDefaultCardOnStart(m_defaultCardOnStart);
 	Settings::setAutoUseMultimediaKeys(m_autouseMultimediaKeys);
 
-	const MasterControl &master = Mixer::getGlobalMasterPreferred(false);
+	const MasterControl &master = MixerToolBox::getGlobalMasterPreferred(false);
 	Settings::setMasterMixer(master.getCard());
 	Settings::setMasterMixerDevice(master.getControl());
 
@@ -470,7 +470,7 @@ void KMixWindow::loadBaseConfig()
 	m_autouseMultimediaKeys = Settings::autoUseMultimediaKeys();
 	QString mixerMasterCard = Settings::masterMixer();
 	QString masterDev = Settings::masterMixerDevice();
-	Mixer::setGlobalMaster(mixerMasterCard, masterDev, true);
+	MixerToolBox::setGlobalMaster(mixerMasterCard, masterDev, true);
 
 	QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
 	if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
@@ -859,7 +859,7 @@ void KMixWindow::unplugged(const QString &udi)
 	}
 
 	qCDebug(KMIX_LOG) << "Removing mixer";
-	const bool globalMasterMixerDestroyed = (unpluggedMixer==Mixer::getGlobalMasterMixer());
+	const bool globalMasterMixerDestroyed = (unpluggedMixer==MixerToolBox::getGlobalMasterMixer());
 
 	// Part 1: Remove tab from GUI
 	//
@@ -882,7 +882,7 @@ void KMixWindow::unplugged(const QString &udi)
 
 	// Part 3: Check whether the Global Master disappeared,
 	// and select a new one if necessary
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 	if (globalMasterMixerDestroyed || md==nullptr)
 	{
 		// We don't know what the global master should be now.
@@ -899,7 +899,7 @@ void KMixWindow::unplugged(const QString &udi)
 			{
 				Mixer *mixer = mixers.first();
 				QString localMaster = master->id();
-				Mixer::setGlobalMaster(mixer->id(), localMaster, false);
+				MixerToolBox::setGlobalMaster(mixer->id(), localMaster, false);
 
 				QString text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
 						    master->readableName(), mixer->readableName());
@@ -1023,10 +1023,10 @@ void KMixWindow::hideOrClose()
 // internal helper to prevent code duplication in slotIncreaseVolume and slotDecreaseVolume
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
-	Mixer* mixer = Mixer::getGlobalMasterMixer(); // only needed for the awkward construct below
+	Mixer* mixer = MixerToolBox::getGlobalMasterMixer(); // only needed for the awkward construct below
 	if (mixer == 0)
 		return; // e.g. when no soundcard is available
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 
@@ -1049,10 +1049,10 @@ void KMixWindow::slotDecreaseVolume()
 
 void KMixWindow::showVolumeDisplay()
 {
-	Mixer* mixer = Mixer::getGlobalMasterMixer();
+	Mixer* mixer = MixerToolBox::getGlobalMasterMixer();
 	if (mixer == 0)
 		return; // e.g. when no soundcard is available
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 
@@ -1081,10 +1081,10 @@ void KMixWindow::showVolumeDisplay()
  */
 void KMixWindow::slotMute()
 {
-	Mixer* mixer = Mixer::getGlobalMasterMixer();
+	Mixer* mixer = MixerToolBox::getGlobalMasterMixer();
 	if (mixer == 0)
 		return; // e.g. when no soundcard is available
-	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 	md->toggleMute();
@@ -1189,7 +1189,7 @@ void KMixWindow::slotSelectMasterClose(QObject*)
 
 void KMixWindow::slotSelectMaster()
 {
-	const Mixer *mixer = Mixer::getGlobalMasterMixer();
+	const Mixer *mixer = MixerToolBox::getGlobalMasterMixer();
 	if (mixer!=nullptr)
 	{
 		if (!m_dsm)

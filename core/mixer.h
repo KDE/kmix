@@ -123,6 +123,7 @@ public:
     const QString &id() const			{ return (_id); }
 
     int getCardInstance() const      		{ return _mixerBackend->getCardInstance(); }
+    shared_ptr<MixDevice> recommendedMaster()	{ return (_mixerBackend->recommendedMaster()); }
 
     /// Returns an Universal Device Identification of the Mixer. This is an ID that relates to the underlying operating system.
     // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
@@ -135,17 +136,6 @@ public:
     // Returns a DBus path for this mixer
     // Used also by MixDevice to bind to this path
     const QString dbusPath();
-
-    /******************************************
-    The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
-    different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
-    At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
-    ******************************************/
-    static void setGlobalMaster(QString ref_card, QString ref_control, bool preferred);
-    static shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed = true);
-    static Mixer* getGlobalMasterMixer();
-    static Mixer* getGlobalMasterMixerNoFalback();
-    static MasterControl& getGlobalMasterPreferred(bool fallbackAllowed = true);
 
     QString getRecommendedDeviceId() const;
 
@@ -161,6 +151,7 @@ public:
     QString iconName() const;
 
     /// get the actual MixSet
+    // TODO: rename to mixDevices()
     MixSet &getMixSet() const			{ return (_mixerBackend->m_mixDevices); }
 
     /// DBUS oriented methods
@@ -202,9 +193,6 @@ private:
     QString _masterDevicePK;
     int m_balance; // from -100 (just left) to 100 (just right)
     bool m_dynamic;
-
-    static MasterControl _globalMasterCurrent;
-    static MasterControl _globalMasterPreferred;
 };
 
 #endif

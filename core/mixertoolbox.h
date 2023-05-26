@@ -25,7 +25,10 @@
 
 #include "kmixcore_export.h"
 
+#include "MasterControl.h"
+
 class Mixer;
+class MixDevice;
 
 
 /**
@@ -38,18 +41,28 @@ class Mixer;
 namespace MixerToolBox
 {
     KMIXCORE_EXPORT void initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
-
     KMIXCORE_EXPORT void deinitMixer();
+
+    // Manage the global list of mixers, either at initialisation time
+    // or by hotplug.
     KMIXCORE_EXPORT bool possiblyAddMixer(Mixer *mixer);
     KMIXCORE_EXPORT void removeMixer(Mixer *mixer);
+
+    // Matching of mixer names that should be ignored.
     KMIXCORE_EXPORT void setMixerIgnoreExpression(const QString &ignoreExpr);
     KMIXCORE_EXPORT QString mixerIgnoreExpression();
 
-    // Returns the list of all the currently known mixers
+    // A read-only list of all the currently known mixers.
     KMIXCORE_EXPORT const QList<Mixer *> &mixers();
 
     // Find a mixer with the given 'mixerId'
     KMIXCORE_EXPORT Mixer *findMixer(const QString &mixerId);
+
+    // Managing the global master mixer.
+    KMIXCORE_EXPORT void setGlobalMaster(const QString &ref_card, const QString &ref_control, bool preferred);
+    KMIXCORE_EXPORT Mixer *getGlobalMasterMixer(bool fallbackAllowed = true);
+    KMIXCORE_EXPORT MasterControl &getGlobalMasterPreferred(bool fallbackAllowed = true);
+    KMIXCORE_EXPORT shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed = true);
 }
 
 #endif

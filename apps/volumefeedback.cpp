@@ -29,6 +29,7 @@
 // KMix
 #include "kmix_debug.h"
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "settings.h"
 
 // Others
@@ -113,7 +114,7 @@ default:	ControlManager::warnUnexpectedChangeType(changeType, this);
 
 void VolumeFeedback::volumeChanged()
 {
-	const Mixer *m = Mixer::getGlobalMasterMixer();		// current global master
+	const Mixer *m = MixerToolBox::getGlobalMasterMixer();		// current global master
 	const shared_ptr<MixDevice> md = m->getLocalMasterMD();	// its master device
 	if (md==nullptr)
 	{
@@ -133,7 +134,7 @@ void VolumeFeedback::volumeChanged()
 
 void VolumeFeedback::masterChanged()
 {
-	const Mixer *globalMaster = Mixer::getGlobalMasterMixer();
+	const Mixer *globalMaster = MixerToolBox::getGlobalMasterMixer();
 	if (globalMaster==nullptr)
 	{
 		qCDebug(KMIX_LOG) << "no current global master";
