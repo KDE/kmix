@@ -323,7 +323,7 @@ void KMixWindow::removeDock()
  */
 bool KMixWindow::updateDocking()
 {
-	if (!Settings::showDockWidget() || Mixer::mixers().isEmpty())
+	if (!Settings::showDockWidget() || MixerToolBox::mixers().isEmpty())
 	{
 		removeDock();
 		return false;
@@ -381,7 +381,7 @@ void KMixWindow::saveViewConfig()
 	// The following loop is necessary for the case that the user has hidden all views for a Mixer instance.
 	// Otherwise we would not save the Meta information (step -2- below for that mixer.
 	// We also do not save dynamic mixers (e.g. PulseAudio)
-	for (const Mixer *mixer : std::as_const(Mixer::mixers()))
+	for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		mixerViews[mixer->id()];		// just insert a map entry
 	}
@@ -425,28 +425,22 @@ void KMixWindow::saveViewConfig()
  * Stores the volumes of all mixers  Can be restored via loadVolumes() or
  * the kmixctrl application.
  */
-void KMixWindow::saveVolumes()
-{
-	saveVolumes(QString());
-}
 
 void KMixWindow::saveVolumes(const QString &postfix)
 {
 	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
-	KConfig *cfg = new KConfig(kmixctrlRcFilename);
-	for (int i = 0; i < Mixer::mixers().count(); ++i)
+	KConfig cfg(kmixctrlRcFilename);
+
+	for (const Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
-		Mixer *mixer = (Mixer::mixers())[i];
-		if (mixer->isOpen())
-		{ // protect from unplugged devices (better do *not* save them)
-			mixer->volumeSave(cfg);
-		}
+		// Protect from unplugged devices - better to *not* save them
+		if (mixer->isOpen()) mixer->volumeSave(&cfg);
 	}
-	cfg->sync();
-	delete cfg;
-	qCDebug(KMIX_LOG)
-	<< "Volume configuration saved";
+
+	cfg.sync();
+	qCDebug(KMIX_LOG) << "Volume configuration saved";
 }
+
 
 QString KMixWindow::getKmixctrlRcFilename(const QString &postfix)
 {
@@ -501,25 +495,18 @@ void KMixWindow::loadBaseConfig()
  * execution of "kmixctrl --save"
  */
 
-void KMixWindow::loadVolumes()
+void KMixWindow::loadVolumes(const QString &postfix)
 {
-	loadVolumes(QString());
-}
+	qCDebug(KMIX_LOG) << "About to load config (Volume)";
+	const QString &kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
+	const KConfig cfg(kmixctrlRcFilename);
 
-void KMixWindow::loadVolumes(QString postfix)
-{
-	qCDebug(KMIX_LOG)
-	<< "About to load config (Volume)";
-	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
-
-	KConfig *cfg = new KConfig(kmixctrlRcFilename);
-	for (int i = 0; i < Mixer::mixers().count(); ++i)
+	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
-		Mixer *mixer = (Mixer::mixers())[i];
-		mixer->volumeLoad(cfg);
+		mixer->volumeLoad(&cfg);
 	}
-	delete cfg;
 }
+
 
 void KMixWindow::recreateGUIwithSavingView()
 {
@@ -562,10 +549,10 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 	for (const GUIProfile *guiprof : std::as_const(activeGuiProfiles))
 	{
-		const Mixer *mixer = Mixer::findMixer(guiprof->getMixerId());
+		const Mixer *mixer = MixerToolBox::findMixer(guiprof->getMixerId());
 		if (mixer==nullptr)
 		{
-			qCCritical(KMIX_LOG) << "MixerToolBox::find() hasn't found the Mixer for the profile " << guiprof->getId();
+			qCCritical(KMIX_LOG) << "No mixer for the profile" << guiprof->getId();
 			continue;
 		}
 		mixerHasProfile[mixer] = true;
@@ -590,7 +577,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 	// -3- ADD TABS FOR Mixer instances that have no tab yet **********************************
 	KConfigGroup pconfig(KSharedConfig::openConfig(), "Profiles");
-	for (const Mixer *mixer : std::as_const(Mixer::mixers()))
+	for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		if ( mixerHasProfile.contains(mixer))
 		{
@@ -711,7 +698,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 			m_wsMixers->setCurrentIndex(oldTabPosition);
 		}
 		bool dockingSucceded = updateDocking();
-		if (!dockingSucceded && !Mixer::mixers().empty())
+		if (!dockingSucceded && !MixerToolBox::mixers().empty())
 		{
 			show(); // avoid invisible and inaccessible main window
 		}
@@ -741,13 +728,14 @@ KMixWindow::findKMWforTab(const QString& kmwId)
 
 void KMixWindow::newView()
 {
-	if (Mixer::mixers().empty())
+	const QList<Mixer *> &mixers = MixerToolBox::mixers();
+	if (mixers.isEmpty())
 	{
 		qCCritical(KMIX_LOG) << "Trying to create a View, but no Mixer exists";
 		return; // should never happen
 	}
 
-	Mixer *mixer = Mixer::mixers()[0];
+	Mixer *mixer = mixers.first();
 	QPointer<DialogAddView> dav = new DialogAddView(this, mixer);
 	int ret = dav->exec();
 
@@ -757,9 +745,8 @@ void KMixWindow::newView()
 	{
 		QString profileName = dav->getresultViewName();
 		QString mixerId = dav->getresultMixerId();
-		mixer = Mixer::findMixer(mixerId);
-		qCDebug(KMIX_LOG)
-		<< ">>> mixer = " << mixerId << " -> " << mixer;
+		mixer = MixerToolBox::findMixer(mixerId);
+		qCDebug(KMIX_LOG) << ">>> mixer = " << mixerId << " -> " << mixer;
 
 		GUIProfile* guiprof = GUIProfile::find(mixer, profileName, false, false);
 		if (guiprof == nullptr)
@@ -851,66 +838,82 @@ void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 
 void KMixWindow::unplugged(const QString &udi)
 {
-	qCDebug(KMIX_LOG) << "udi" << udi;
-	for (int i = 0; i < Mixer::mixers().count(); ++i)
+	qCDebug(KMIX_LOG) << "UDI" << udi;
+
+	// This assumes that there can be at most one mixer in the list
+	// with the given UDI.
+	Mixer *unpluggedMixer = nullptr;
+	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
-		Mixer *mixer = (Mixer::mixers())[i];
-		// qCDebug(KMIX_LOG) << "Try Match with:" << mixer->udi();
-		if (mixer->udi() == udi)
+		if (mixer->udi()==udi)
 		{
-			qCDebug(KMIX_LOG) << "Removing mixer";
-			bool globalMasterMixerDestroyed = (mixer == Mixer::getGlobalMasterMixer());
-
-			// Part 1: Remove tab from GUI
-			for (int i = 0; i < m_wsMixers->count(); ++i)
-			{
-				QWidget *w = m_wsMixers->widget(i);
-				KMixerWidget* kmw = ::qobject_cast<KMixerWidget*>(w);
-				if (kmw && kmw->mixer() == mixer)
-				{
-					saveAndCloseView(i);
-					i = -1; // Restart loop from scratch (indices are most likely invalidated at removeTab() )
-				}
-			}
-
-			// Part 2: Remove mixer from known list
-			MixerToolBox::removeMixer(mixer);
-
-			// Part 3: Check whether the Global Master disappeared,
-			// and select a new one if necessary
-			shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
-			if (globalMasterMixerDestroyed || md.get() == 0)
-			{
-				// We don't know what the global master should be now.
-				// So lets play stupid, and just select the recommended master of the first device
-				if (Mixer::mixers().count() > 0)
-				{
-					shared_ptr<MixDevice> master = ((Mixer::mixers())[0])->getLocalMasterMD();
-					if (master.get() != 0)
-					{
-						QString localMaster = master->id();
-						Mixer::setGlobalMaster(((Mixer::mixers())[0])->id(), localMaster, false);
-
-						QString text;
-						text =
-								i18n(
-										"The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
-										master->readableName(), ((Mixer::mixers())[0])->readableName());
-						KMixToolBox::notification("MasterFallback", text);
-					}
-				}
-			}
-			if (Mixer::mixers().count() == 0)
-			{
-				QString text;
-				text = i18n("The last soundcard was unplugged.");
-				KMixToolBox::notification("MasterFallback", text);
-			}
-			recreateGUI(true, false);
+			unpluggedMixer = mixer;
 			break;
 		}
 	}
 
+	if (unpluggedMixer==nullptr)
+	{
+		qCDebug(KMIX_LOG) << "No mixer with that UDI";
+		return;
+	}
+
+	qCDebug(KMIX_LOG) << "Removing mixer";
+	const bool globalMasterMixerDestroyed = (unpluggedMixer==Mixer::getGlobalMasterMixer());
+
+	// Part 1: Remove tab from GUI
+	//
+	// Although there is assumed to be only one mixer with
+	// the given UDI, there can be more than one GUI tab for it.
+	for (int i = 0; i<m_wsMixers->count(); ++i)
+	{
+		KMixerWidget *kmw = qobject_cast<KMixerWidget *>(m_wsMixers->widget(i));
+		if (kmw!=nullptr && kmw->mixer()==unpluggedMixer)
+		{
+			saveAndCloseView(i);
+			// Restart the loop from scratch - indexes are
+			// most likely invalidated by removeTab().
+			i = -1;
+		}
+	}
+
+	// Part 2: Remove the mixer from the known list
+	MixerToolBox::removeMixer(unpluggedMixer);
+
+	// Part 3: Check whether the Global Master disappeared,
+	// and select a new one if necessary
+	shared_ptr<MixDevice> md = Mixer::getGlobalMasterMD();
+	if (globalMasterMixerDestroyed || md==nullptr)
+	{
+		// We don't know what the global master should be now.
+		// So lets play stupid, and just select the recommended master
+		// of the first device.
+
+		// Re-fetch the list of mixers, since the unplugged one one was
+		// removed above.
+		const QList<Mixer *> &mixers = MixerToolBox::mixers();
+		if (!mixers.isEmpty())
+		{
+			shared_ptr<MixDevice> master = mixers.first()->getLocalMasterMD();
+			if (master!=nullptr)
+			{
+				Mixer *mixer = mixers.first();
+				QString localMaster = master->id();
+				Mixer::setGlobalMaster(mixer->id(), localMaster, false);
+
+				QString text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
+						    master->readableName(), mixer->readableName());
+				KMixToolBox::notification("MasterFallback", text);
+			}
+		}
+		else
+		{
+			QString text = i18n("The last soundcard was unplugged.");
+			KMixToolBox::notification("MasterFallback", text);
+		}
+
+		recreateGUI(true, false);
+	}
 }
 
 
@@ -935,9 +938,8 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	GUIProfile* guiprof = GUIProfile::find(guiprofId);
 	if (guiprof != 0 && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
 		return false; // already present => don't add again
-	Mixer *mixer = Mixer::findMixer(mixer_ID);
-	if (mixer == 0)
-		return false; // no such Mixer
+	Mixer *mixer = MixerToolBox::findMixer(mixer_ID);
+	if (mixer==nullptr) return (false);		// no such Mixer
 
 	//       qCDebug(KMIX_LOG) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
 	ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;

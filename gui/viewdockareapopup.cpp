@@ -36,6 +36,7 @@
 
 // KMix
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
@@ -91,7 +92,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 
 	// Adding all mixers, as we potentially want to show all master controls.
 	// The list will be redone in initLayout() with the actual Mixer instances to use.
-	for (Mixer *mixer : Mixer::mixers())
+	for (Mixer *mixer : MixerToolBox::mixers())
 	{
 		addMixer(mixer);
 	}
@@ -299,7 +300,7 @@ Application: KMix (kmix), signal: Segmentation fault
 
 	const QStringList preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
-	for (Mixer *mixer : std::as_const(Mixer::mixers()))
+	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
 		if (useMixer) addMixer(mixer);
@@ -310,7 +311,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// backends.
 	if (getMixers().isEmpty())
 	{
-		for (Mixer *mixer : std::as_const(Mixer::mixers()))
+		for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 		{
 			addMixer(mixer);
 		}

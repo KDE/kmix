@@ -29,6 +29,7 @@
 #include <klocalizedstring.h>
 
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/kmixtoolbox.h"
 
 /**
@@ -58,7 +59,7 @@ void DialogChooseBackends::createWidgets(const QSet<QString> &mixerIds)
     vLayout->addWidget(m_mixerList, 1);
     topLabel->setBuddy(m_mixerList);
 
-    if (Mixer::mixers().isEmpty())
+    if (MixerToolBox::mixers().isEmpty())
     {
 	QWidget *noMixersWarning = KMixToolBox::noDevicesWarningWidget(this);
         vLayout->addWidget(noMixersWarning);
@@ -82,7 +83,7 @@ void DialogChooseBackends::createPage(const QSet<QString> &mixerIds)
 #endif
 	bool hasMixerFilter = !mixerIds.isEmpty();
 	qCDebug(KMIX_LOG) << "MixerIds=" << mixerIds;
-	for (const Mixer *mixer : std::as_const(Mixer::mixers()))
+	for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
             // TODO: No point in showing mixers which do not have any volume controls.
             // See checks done in ViewDockAreaPopup::initLayout()

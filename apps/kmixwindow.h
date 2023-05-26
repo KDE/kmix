@@ -72,10 +72,8 @@ public Q_SLOTS:
    void showHelp();
    void showAbout();
    void toggleMenuBar();
-   void loadVolumes();
-   void loadVolumes(QString postfix);
-   void saveVolumes();
-   void saveVolumes(const QString &postfix);
+   void loadVolumes(const QString &postfix = QString());
+   void saveVolumes(const QString &postfix = QString());
    void saveConfig();
    void recreateGUI(bool saveView, bool reset);
    void recreateGUI(bool saveConfig, const QString& mixerId, bool forceNewTab, bool reset);

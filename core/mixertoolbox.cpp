@@ -20,19 +20,17 @@
  */
 
 #include "core/mixertoolbox.h"
-#include "core/mixer.h"
 
-#include <QDir>
-#include <QWidget>
 #include <QStringBuilder>
 
-#include <klocalizedstring.h>
-
+#include "core/mixer.h"
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
 
 
 static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
+
+static QList<Mixer *> s_allMixers;
 
 /***********************************************************************************
  Attention:
@@ -41,9 +39,6 @@ static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
  not to put any GUI classes in here.
  In the case where it is unavoidable, please put them in KMixToolBox.
  ***********************************************************************************/
-
-namespace MixerToolBox
-{
 
 enum MultiDriverMode { SINGLE, SINGLE_PLUS_MPRIS2, MULTI };
 
@@ -139,7 +134,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
       for( int dev=0; dev<=devNumMax; dev++ )
       {
          Mixer *mixer = new Mixer( driverName, dev );
-         bool mixerAccepted = possiblyAddMixer(mixer);
+         bool mixerAccepted = MixerToolBox::possiblyAddMixer(mixer);
    
          /* Lets decide if the autoprobing shall end.
           * If the user has configured a backend filter, we will use that as a plain list to obey. It overrides the
@@ -147,7 +142,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
           */
          if ( ! useBackendFilter )
          {
-        	 bool foundSomethingAndLastControlReached = dev == devNumMax && ! Mixer::mixers().isEmpty();
+		 bool foundSomethingAndLastControlReached = dev==devNumMax && !s_allMixers.isEmpty();
 			 switch ( multiDriverMode )
 			 {
 			 case SINGLE:
@@ -196,7 +191,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
             if ( !drvInfoAppended )
             {
                drvInfoAppended = true;
-               if (Mixer::mixers().count()>1) driverInfoUsed += ",";
+               if (s_allMixers.count()>1) driverInfoUsed += ",";
                driverInfoUsed += driverName;
             }
 
@@ -228,11 +223,11 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
       // We have no master card yet. This actually only happens when there was
       // not one defined in the kmixrc.
       // So lets just set the first card as master card.
-      if ( Mixer::mixers().count() > 0 ) {
-    	  shared_ptr<MixDevice> master = Mixer::mixers().first()->getLocalMasterMD();
+       if (!s_allMixers.isEmpty()) {
+	  shared_ptr<MixDevice> master = s_allMixers.first()->getLocalMasterMD();
          if ( master ) {
              QString controlId = master->id();
-             Mixer::setGlobalMaster( Mixer::mixers().first()->id(), controlId, true);
+             Mixer::setGlobalMaster(s_allMixers.first()->id(), controlId, true);
          }
       }
    }
@@ -244,7 +239,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
       md->mixer()->setLocalMasterMD(mdID);
    }
 
-   if (Mixer::mixers().count()==0)
+   if (s_allMixers.isEmpty())
    {
        // If there was no mixer found, we assume, that hotplugging will take place
        // on the preferred driver (this is always the first in the backend list).
@@ -263,21 +258,21 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
        if (hotplug) KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
    }
 
-   qCDebug(KMIX_LOG) << "Total number of detected mixers" << Mixer::mixers().count();
+   qCDebug(KMIX_LOG) << "Total detected mixers" << s_allMixers.count();
 }
 
 
 static void initMixer(MultiDriverMode multiDriverMode, const QStringList &backendList, bool hotplug)
 {
     initMixerInternal(multiDriverMode, backendList, hotplug);
-    if (Mixer::mixers().isEmpty())			// failed to find any mixers
+    if (s_allMixers.isEmpty())				// failed to find any mixers,
     {							// try again without filter
         initMixerInternal(multiDriverMode, QStringList(), hotplug);
     }
 }
 
 
-void initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug)
+void MixerToolBox::initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug)
 {
     MultiDriverMode multiDriverMode = multiDriverFlag ?  MULTI : SINGLE_PLUS_MPRIS2;
     initMixer(multiDriverMode, backendList, hotplug);
@@ -292,13 +287,13 @@ void initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplu
  * @arg mixer
  * @returns true if the Mixer was added
  */
-bool possiblyAddMixer(Mixer *mixer)
+bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 {
     if (mixer->openIfValid())
     {
         if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
         {
-            Mixer::appendMixer(mixer);
+            s_allMixers.append(mixer);
             qCDebug(KMIX_LOG) << "Added mixer" << mixer->id();
             return (true);
         }
@@ -316,41 +311,53 @@ bool possiblyAddMixer(Mixer *mixer)
 
 /* This allows to set an expression form Mixers that should be ignored.
   The default is "Modem", because most people don't want to control the modem volume. */
-void setMixerIgnoreExpression(const QString &ignoreExpr)
+void MixerToolBox::setMixerIgnoreExpression(const QString &ignoreExpr)
 {
     s_ignoreMixerExpression.setPattern(ignoreExpr);
 }
 
-QString mixerIgnoreExpression()
+QString MixerToolBox::mixerIgnoreExpression()
 {
-     return s_ignoreMixerExpression.pattern( );
+    return s_ignoreMixerExpression.pattern();
 }
 
 
-void removeMixer(Mixer *mixer)
+void MixerToolBox::removeMixer(Mixer *mixer)
 {
     qCDebug(KMIX_LOG) << "Removing mixer" << mixer->id();
-    Mixer::removeMixer(mixer);
+    s_allMixers.removeAll(mixer);
     delete mixer;
 }
 
 
 // Clean up and free all resources of all currently known 'Mixer's,
 // which were found in the initMixer() call.
-void deinitMixer()
+void MixerToolBox::deinitMixer()
 {
     qCDebug(KMIX_LOG);
-
-    const QList<Mixer *> &mixers = Mixer::mixers();
-    for (Mixer *mixer : qAsConst(mixers))
+    while (!s_allMixers.isEmpty())
     {
-        mixer->close();
+        Mixer *mixer = s_allMixers.takeFirst();
+        if (mixer!=nullptr) mixer->close();
         delete mixer;
     }
-
-    // This is safe despite the 'delete' above, because Mixer::clearMixers()
-    // does not access or delete the existing list.
-    Mixer::clearMixers();
 }
 
-}							// namespace MixerToolBox
+
+const QList<Mixer *> &MixerToolBox::mixers()
+{
+    return (s_allMixers);
+}
+
+
+Mixer *MixerToolBox::findMixer(const QString &mixerId)
+{
+    const int mixerCount = s_allMixers.count();
+    for (int i = 0; i<mixerCount; ++i)
+    {
+        Mixer *mix = s_allMixers[i];
+        if (mix->id()==mixerId) return (mix);
+    }
+
+    return (nullptr);
+}

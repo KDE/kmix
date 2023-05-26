@@ -30,6 +30,7 @@
 #include <klocalizedstring.h>
 
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/kmixtoolbox.h"
 
 
@@ -57,7 +58,7 @@ DialogAddView::DialogAddView(QWidget *parent, const Mixer *mixer)
     }
 
     setWindowTitle(i18n("Add View"));
-    if (!Mixer::mixers().isEmpty()) setButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    if (!MixerToolBox::mixers().isEmpty()) setButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
     else setButtons(QDialogButtonBox::Cancel);
 
     m_listForChannelSelector = nullptr;
@@ -74,8 +75,8 @@ void DialogAddView::createWidgets(const Mixer *mixer)
     setMainWidget(mainFrame);
     QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
-    const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
-    int mixerIndex = 0;					// index of specified 'mixer'
+    const QList<Mixer *> &mixers = MixerToolBox::mixers();	// list of all mixers present
+    int mixerIndex = 0;						// index of specified 'mixer'
 
     if (mixers.count()>1)
     {
@@ -135,7 +136,7 @@ void DialogAddView::createWidgets(const Mixer *mixer)
  */
 void DialogAddView::createPageByID(int mixerId)
 {
-    Mixer *mixer = Mixer::mixers().at(mixerId);
+    Mixer *mixer = MixerToolBox::mixers().at(mixerId);
     if (mixer!=nullptr) createPage(mixer);
 }
 
@@ -196,8 +197,8 @@ void DialogAddView::profileSelectionChanged()
 
 void DialogAddView::apply()
 {
-    const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
-    Mixer *mixer = nullptr;				// selected mixer found
+    const QList<Mixer *> &mixers = MixerToolBox::mixers();	// list of all mixers present
+    Mixer *mixer = nullptr;					// selected mixer found
 
     if (mixers.count()==1)
     {

@@ -28,12 +28,13 @@
 #include "settings.h"
 #include "backends/kmix-backends.cpp"
 #include "core/ControlManager.h"
+#include "core/mixertoolbox.h"
+
 
 /**
  * Some general design hints. Hierarchy is Mixer->MixDevice->Volume
  */
 
-/* static */ QList<Mixer *> Mixer::s_allMixers;
 /* static */ MasterControl Mixer::_globalMasterCurrent;
 /* static */ MasterControl Mixer::_globalMasterPreferred;
 
@@ -58,16 +59,17 @@
  */
 /* static */ bool Mixer::dynamicBackendsPresent()
 {
-    for (const Mixer *mixer : std::as_const(s_allMixers))
+    for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
     {
         if (mixer->isDynamic()) return (true);
     }
     return (false);
 }
 
+
 /* static */ bool Mixer::pulseaudioPresent()
 {
-    for (const Mixer *mixer : std::as_const(s_allMixers))
+    for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
     {
         if (mixer->getDriverName()=="PulseAudio") return (true);
     }
@@ -105,22 +107,6 @@ Mixer::~Mixer()
    // Close the mixer. This might also free memory, depending on the called backend method
    close();
    _mixerBackend->deleteLater();
-}
-
-
-/*
- * Find a Mixer. If there is no mixer with the given id, a null pointer is returned
- */
-/* static */ Mixer *Mixer::findMixer(const QString &mixer_id)
-{
-    const int mixerCount = mixers().count();
-    for (int i = 0; i<mixerCount; ++i)
-    {
-        Mixer *mix = mixers().at(i);
-        if (mix->id()==mixer_id) return (mix);
-    }
-
-    return (nullptr);
 }
 
 
@@ -401,7 +387,7 @@ QString Mixer::getBaseName() const
 
 /* static */ Mixer *Mixer::getGlobalMasterMixerNoFalback()
 {
-    for (Mixer *mixer : std::as_const(s_allMixers))
+    for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
     {
         if (mixer!=nullptr && mixer->id()==_globalMasterCurrent.getCard())
             return mixer;
@@ -412,8 +398,12 @@ QString Mixer::getBaseName() const
 /* static */ Mixer* Mixer::getGlobalMasterMixer()
 {
     Mixer *mixer = getGlobalMasterMixerNoFalback();
-    if (mixer==nullptr && mixers().count()>0) mixer = mixers()[0]; // produce fallback
-    //qCDebug(KMIX_LOG) << "Mixer::masterCard() returns " << mixer->id();
+    if (mixer==nullptr)
+    {
+        const QList<Mixer *> &mixers = MixerToolBox::mixers();
+        if (!mixers.isEmpty()) mixer = mixers.first();	// produce fallback
+    }
+
     return (mixer);
 }
 

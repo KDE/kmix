@@ -66,7 +66,6 @@ public:
     QString getDriverName() const		{ return (_mixerBackend->getDriverName()); }
 
     shared_ptr<MixDevice> find(const QString &devPK) const;
-    static Mixer* findMixer(const QString &mixer_id);
 
     void volumeSave(KConfig *config) const;
     void volumeLoad(const KConfig *config);
@@ -137,17 +136,6 @@ public:
     // Used also by MixDevice to bind to this path
     const QString dbusPath();
 
-    // TODO: move static list of mixers to MixerToolBox
-
-    // Returns a reference to the list of all the currently known mixers.
-    static const QList<Mixer *> &mixers()		{ return (s_allMixers); }
-    // Add a mixer to the above list.
-    static void appendMixer(Mixer *mixer)		{ s_allMixers.append(mixer); }
-    // Remove a mixer from the above list.
-    static void removeMixer(Mixer *mixer)		{ s_allMixers.removeAll(mixer); }
-    // Remove all mixers from the above list.
-    static void clearMixers()				{ s_allMixers.clear(); }
-
     /******************************************
     The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
     different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
@@ -215,7 +203,6 @@ private:
     int m_balance; // from -100 (just left) to 100 (just right)
     bool m_dynamic;
 
-    static QList<Mixer *> s_allMixers;
     static MasterControl _globalMasterCurrent;
     static MasterControl _globalMasterPreferred;
 };

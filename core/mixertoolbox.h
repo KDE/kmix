@@ -21,18 +21,16 @@
 #ifndef MIXERTOOLBOX_H
 #define MIXERTOOLBOX_H
 
-#include <qobject.h>
-#include <qlist.h>
-#include <QMap>
-#include <QString>
+#include <qstringlist.h>
 
 #include "kmixcore_export.h"
 
 class Mixer;
 
+
 /**
  * This toolbox contains various static methods that are shared throughout KMix.
- * It only contains no-GUI code. The shared with-GUI code is in KMixToolBox
+ * It only contains no-GUI code, the shared with-GUI code is in KMixToolBox.
  * The reason, why it is not put in a common base class is, that the classes are
  * very different and cannot be changed (e.g. KPanelApplet) without major headache.
  */
@@ -46,6 +44,12 @@ namespace MixerToolBox
     KMIXCORE_EXPORT void removeMixer(Mixer *mixer);
     KMIXCORE_EXPORT void setMixerIgnoreExpression(const QString &ignoreExpr);
     KMIXCORE_EXPORT QString mixerIgnoreExpression();
+
+    // Returns the list of all the currently known mixers
+    KMIXCORE_EXPORT const QList<Mixer *> &mixers();
+
+    // Find a mixer with the given 'mixerId'
+    KMIXCORE_EXPORT Mixer *findMixer(const QString &mixerId);
 }
 
 #endif

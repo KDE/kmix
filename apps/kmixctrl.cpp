@@ -59,21 +59,20 @@ int main(int argc, char *argv[])
    // load volumes
    if ( parser.isSet("restore") )
    {
-      for (int i=0; i<Mixer::mixers().count(); ++i) {
-         Mixer *mixer = (Mixer::mixers())[i];
-         mixer->volumeLoad(Settings::self()->config());
-      }
+       for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+       {
+           mixer->volumeLoad(Settings::self()->config());
+       }
    }
 
    // save volumes
-	if (parser.isSet("save"))
-	{
-		for (int i = 0; i < Mixer::mixers().count(); ++i)
-		{
-			const Mixer *mixer = (Mixer::mixers())[i];
-			mixer->volumeSave(Settings::self()->config());
-		}
-	}
+   if (parser.isSet("save"))
+   {
+       for (const Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+       {
+           mixer->volumeSave(Settings::self()->config());
+       }
+   }
 
    MixerToolBox::deinitMixer();
 
