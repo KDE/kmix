@@ -79,7 +79,6 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	initPrefDlg();
 	DBusMixSetWrapper::initialize(this, QStringLiteral("/Mixers"));
 	MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
-	KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
 	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
 	recreateGUI(false, reset);
@@ -93,9 +92,6 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 		setInitialSize();
 
 	fixConfigAfterRead();
-	connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixWindow::plugged);
-	connect(theKMixDeviceManager, &KMixDeviceManager::unplugged, this, &KMixWindow::unplugged);
-	theKMixDeviceManager->initHotplug();
 
 	if (m_startVisible && !invisible) show();	// Started visible
 
@@ -254,15 +250,30 @@ void KMixWindow::initActionsLate()
 
 void KMixWindow::initActionsAfterInitMixer()
 {
-	// Only show the new tab widget if Pulseaudio is not used. Hint: The Pulseaudio backend always
-	// runs with 4 fixed Tabs.
+	// Only show the new tab widget if PulseAudio is not in use.
+	// PulseAudio always shows 4 fixed GUI tabs.
 	if (!MixerToolBox::pulseaudioPresent())
 	{
-		QPushButton* _cornerLabelNew = new QPushButton();
+		QPushButton *_cornerLabelNew = new QPushButton(this);
 		_cornerLabelNew->setIcon(QIcon::fromTheme("tab-new"));
 		_cornerLabelNew->setToolTip(i18n("Add new view"));
 		m_wsMixers->setCornerWidget(_cornerLabelNew, Qt::TopLeftCorner);
 		connect(_cornerLabelNew, SIGNAL(clicked()), SLOT(newView()));
+	}
+
+	// If PulseAudio is in use, then that handles device hotplugging itself.
+	// Therefore there is no need to watch for or handle hotplug events
+	// ourselves, because that would lead to an ALSA driver being opened
+	// for a device which is also being handled by PulseAudio.
+	//
+	// This is assumed to be be required, though, in the experimental and
+	// untested multi-driver mode.
+	if (!MixerToolBox::pulseaudioPresent() || m_multiDriverMode)
+	{
+		KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
+		connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixWindow::plugged);
+		connect(theKMixDeviceManager, &KMixDeviceManager::unplugged, this, &KMixWindow::unplugged);
+		theKMixDeviceManager->initHotplug();
 	}
 }
 
@@ -481,7 +492,8 @@ void KMixWindow::loadBaseConfig()
 
 	// The following log is very helpful in bug reports. Please keep it.
 	m_backendFilter = Settings::backends();
-	qCDebug(KMIX_LOG) << "Backends from settings" << m_backendFilter;
+	qCDebug(KMIX_LOG) << "Backends from settings =" << m_backendFilter;
+	qCDebug(KMIX_LOG) << "Multi driver mode from settings =" << m_multiDriverMode;
 
 	// show/hide menu bar
 	bool showMenubar = Settings::menubar();

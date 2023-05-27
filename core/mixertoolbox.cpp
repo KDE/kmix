@@ -62,30 +62,45 @@ static QString backendNameFor(int driverIndex)
 
 
 /**
- * Scan for Mixers in the System. This is the method that implicitly fills the
- * list of Mixer's, which is accessible via the static Mixer::mixer() method.
+ * Scan for Mixer devices on the system. This fills the list of Mixer's which is
+ * accessible via Mixer::mixers().
  *
- * This is run only once during the initialization phase of KMix. It has the following tasks:
+ * This is run only once during the initialization phase of KMix. It performs
+ * the following tasks:
+ *
  * 1) Coldplug scan, to fill the initial mixer list
- * 2) Rember UDI's, to match them when unplugging a device
- * 3) Find out, which Backend to use (plugin events of other Backends are ignored).
+ * 2) Resolve which backend to use (plugin events of other Backends are ignored).
  *
- * @deprecated TODO this method has to go away. Migrate to MultiDriverMode enum
+ * @param multiDriverMode Whether the scan should try to scan for more backends
+ * once one "regular" backand has been found.  "Regular" means a backend which
+ * has a 1-1 correspndence between an instance and a hardware device (card).
+ * Therefore ALSA and OSS are "regular" backends but PulseAudio is not.
+ * @c MULTI means to scan all backends.  @c SINGLE means to only scan until a
+ * "regular" backend to use has been found.  @c SINGLE_PLUS_MPRIS2 is the same
+ * as @c SINGLE but also accepts the MPRIS2 backend.
  *
- * @par multiDriverMode Whether the Mixer scan should try more all backends.
- *          'true' means to scan all backends. 'false' means: After scanning the
- *          current backend the next backend is only scanned if no Mixers were found yet.
- * @par backendList Activated backends (typically a value from the kmixrc or a default)
- * @par ref_hwInfoString Here a descriptive text of the scan is returned (Hardware Information)
+ * @param backendList A list of allowed backends (typically a value from kmixrc or
+ * a default).  A null list meanbs to accept any backend.
+ *
+ * @param hotplug Whether hotplugging is expected to happen for the detected backends.
+ * The KMix application and the KDED module set this to @c true, while kmixctrl
+ * sets this to @c false because it is only a transient utility.
  */
-
 static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList &backendList, bool hotplug)
 {  
    bool useBackendFilter = ( ! backendList.isEmpty() );
    bool backendMprisFound = false; // only for SINGLE_PLUS_MPRIS2
    bool regularBackendFound = false; // only for SINGLE_PLUS_MPRIS2
 
-   qCDebug(KMIX_LOG) << "multiDriverMode" << multiDriverMode << "backendList" << backendList;
+   QByteArray multiModeString;
+   switch (multiDriverMode)
+   {
+case SINGLE:			multiModeString = "SINGLE";				break;
+case SINGLE_PLUS_MPRIS2:	multiModeString = "SINGLE_PLUS_MPRIS2";			break;
+case MULTI:			multiModeString = "MULTI";				break;
+default:			multiModeString = QByteArray::number(multiDriverMode);	break;
+   }
+   qCDebug(KMIX_LOG) << "multiDriverMode" << qPrintable(multiModeString) << "backendList" << backendList;
 
    // Find all mixers and initialize them
 
