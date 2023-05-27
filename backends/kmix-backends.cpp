@@ -22,11 +22,10 @@
 
 /* This code is being #include'd from mixer.cpp */
 
+// TODO: needed if typedefs moved from mixer_backend.h to here?
 #include "mixer_backend.h"
+
 #include "core/mixer.h"
-
-#include <QString>
-
 
 
 #if defined(sun) || defined(__sun__)

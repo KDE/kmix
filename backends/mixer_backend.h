@@ -232,6 +232,8 @@ private:
   QString m_mixerName;
 };
 
+
+// TODO: can be internal to kmix-backends.cpp?
 typedef Mixer_Backend *getMixerFunc( Mixer* mixer, int device );
 typedef QString getDriverNameFunc( );
 

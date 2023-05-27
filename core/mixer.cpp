@@ -26,7 +26,6 @@
 #include <kconfig.h>
 
 #include "settings.h"
-#include "backends/kmix-backends.cpp"
 #include "core/ControlManager.h"
 #include "core/mixertoolbox.h"
 
@@ -36,41 +35,13 @@
  */
 
 
-/* static */ int Mixer::numDrivers()
-{
-    const MixerFactory *factory = g_mixerFactories;
-    int num = 0;
-    while (factory->getMixer!=nullptr)
-    {
-        ++num;
-        ++factory;
-    }
-
-    return (num);
-}
-
-
-Mixer::Mixer(const QString &ref_driverName, int device)
+Mixer::Mixer(const QString &driverName, int deviceIndex)
     : m_balance(0),
       m_dynamic(false)
 {
-    _mixerBackend = nullptr;
-    const int driverCount = numDrivers();
-    for (int driver = 0; driver<driverCount; ++driver)
-    {
-        const QString name = driverName(driver);
-        if (name==ref_driverName)
-        {
-            // driver found => retrieve Mixer factory for that driver
-            getMixerFunc *f = g_mixerFactories[driver].getMixer;
-            if (f!=nullptr)
-            {
-                _mixerBackend = f(this, device);
-                readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
-            }
-            break;
-        }
-    }
+    _mixerBackend = MixerToolBox::getBackendFor(driverName, deviceIndex, this);
+    // Enforce an initial update on the first call of readSetFromHW()
+    if (_mixerBackend!=nullptr) readSetFromHWforceUpdate();
 }
 
 
@@ -96,7 +67,7 @@ Mixer::~Mixer()
  */
 void Mixer::recreateId()
 {
-    /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
+    /* As we use "::" and ":" as separators, the parts %1, %2 and %3 may not
      * contain it.
      * %1, the driver name is from the KMix backends, it does not contain colons.
      * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
@@ -321,17 +292,6 @@ QString Mixer::readableName(bool ampersandQuoted) const
 QString Mixer::getBaseName() const
 {
   return _mixerBackend->getName();
-}
-
-/**
- * Queries the Driver Factory for a driver.
- * @p driver Index number. 0 <= driver < numDrivers()
- */
-/* static */ QString Mixer::driverName(int driver)
-{
-    getDriverNameFunc *f = g_mixerFactories[driver].getDriverName;
-    if (f!=nullptr) return f();
-    else return "unknown";
 }
 
 

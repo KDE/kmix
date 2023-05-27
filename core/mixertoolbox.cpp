@@ -27,6 +27,9 @@
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
 
+// This header file contains global data for the available backends.
+#include "backends/kmix-backends.cpp"
+
 
 static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
 
@@ -44,6 +47,41 @@ static MasterControl s_globalMasterPreferred;
  ***********************************************************************************/
 
 enum MultiDriverMode { SINGLE, SINGLE_PLUS_MPRIS2, MULTI };
+
+
+// TODO: is this not just the same as sizeof(g_mixerFactories)/sizeof(MixerFactory)
+// (but watch out for the null terminator!)
+
+/**
+ * Get the number of available backends (audio drivers).
+ */
+static int numBackends()
+{
+    const MixerFactory *factory = g_mixerFactories;
+    int num = 0;
+    while (factory->getMixer!=nullptr)
+    {
+        ++num;
+        ++factory;
+    }
+
+    return (num);
+}
+
+
+/**
+ * Query the backend factory list for the backend name corresponding
+ * to the specified @p driverIndex in the list.
+ *
+ * @param driverIndex Index in list, 0 <= driver < numDrivers()
+ */
+static QString backendNameFor(int driverIndex)
+{
+    getDriverNameFunc *f = g_mixerFactories[driverIndex].getDriverName;
+    Q_ASSERT(f!=nullptr);				// known data, should never happen
+    return (f());
+}
+
 
 /**
  * Scan for Mixers in the System. This is the method that implicitly fills the
@@ -72,7 +110,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
    qCDebug(KMIX_LOG) << "multiDriverMode" << multiDriverMode << "backendList" << backendList;
 
    // Find all mixers and initialize them
-   const int drvNum = Mixer::numDrivers();
+   const int drvNum = numBackends();
 
    int driverWithMixer = -1;
    bool multipleDriversActive = false;
@@ -81,7 +119,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
 
    for (int drv = 0; drv<drvNum; ++drv)
    {
-       const QString driverName = Mixer::driverName(drv);
+       const QString driverName = backendNameFor(drv);
        if (!driverInfo.isEmpty()) driverInfo += QStringLiteral(",");
        driverInfo += driverName;
    }
@@ -111,7 +149,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
          break;
       }
 
-      QString driverName = Mixer::driverName(drv);
+      QString driverName = backendNameFor(drv);
       qCDebug(KMIX_LOG) << "Looking for mixers with the" << driverName << "driver";
       if ( useBackendFilter && ! backendList.contains(driverName) )
       {
@@ -246,7 +284,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
    {
        // If there was no mixer found, we assume, that hotplugging will take place
        // on the preferred driver (this is always the first in the backend list).
-       driverInfoUsed = Mixer::driverName(0);
+       driverInfoUsed = backendNameFor(0);
    }
    qCDebug(KMIX_LOG) << "Sound drivers used -" << qPrintable(driverInfoUsed);
 
@@ -505,4 +543,28 @@ bool MixerToolBox::pulseaudioPresent()
         if (mixer->getDriverName()=="PulseAudio") return (true);
     }
     return (false);
+}
+
+
+/**
+ * Create a backend instance for the specified @p backendName and its
+ * internal @p deviceIndex.  It will be associated with the parent @p mixer.
+ */
+Mixer_Backend *MixerToolBox::getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer)
+{
+    const int driverCount = numBackends();
+    for (int driverIndex = 0; driverIndex<driverCount; ++driverIndex)
+    {
+        const QString name = backendNameFor(driverIndex);
+        if (name==backendName)				// look for backend with that name
+        {
+            // Retrieve the mixer factory for that backend and use it
+            getMixerFunc *f = g_mixerFactories[driverIndex].getMixer;
+            Q_ASSERT(f!=nullptr);			// known data, should never happen
+            return (f(mixer, deviceIndex));
+        }
+    }
+
+    qCWarning(KMIX_LOG) << "No backend available for" << backendName;
+    return (nullptr);					// no such backend found
 }

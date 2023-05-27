@@ -29,6 +29,8 @@
 
 class Mixer;
 class MixDevice;
+// TODO: rename
+class Mixer_Backend;
 
 
 /**
@@ -67,6 +69,9 @@ namespace MixerToolBox
     // Whether these apply somewhere among all known mixers.
     KMIXCORE_EXPORT bool dynamicBackendsPresent();
     KMIXCORE_EXPORT bool pulseaudioPresent();
+
+    // Creating a mixer backend using the list of available backends.
+    KMIXCORE_EXPORT Mixer_Backend *getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer);
 }
 
 #endif

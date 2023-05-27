@@ -41,6 +41,13 @@
 class Volume;
 class KConfig;
 
+
+/**
+  * This class manages a single mixer only, it should not include any
+  * static functions or global data.  The global list of mixers and
+  * backends is managed in MixerToolBox.
+*/
+
 class KMIXCORE_EXPORT Mixer : public QObject
 {
       Q_OBJECT
@@ -54,15 +61,13 @@ public:
 	 * example. Rationale is that we need a proper change check: Otherwise
 	 * the DBUS Session Bus is massively spammed. Also quite likely the Mixer
 	 * GUI might get updated all the time.
-	 * 
 	 */
     enum MixerError { OK=0, ERR_PERM=1, ERR_WRITE, ERR_READ,
         ERR_OPEN, OK_UNCHANGED };
 
-    Mixer(const QString &ref_driverName, int device);
+    Mixer(const QString &driverName, int deviceIndex);
     virtual ~Mixer();
 
-    static int numDrivers();
     QString getDriverName() const		{ return (_mixerBackend->getDriverName()); }
 
     shared_ptr<MixDevice> find(const QString &devPK) const;
@@ -71,6 +76,7 @@ public:
     void volumeLoad(const KConfig *config);
 
     /// How many mixer backend devices
+    // TODO: rename to numDevices, belongs with mixDevices below
     unsigned int size() const			{ return (_mixerBackend->m_mixDevices.count()); }
 
     /// Returns a pointer to the mix device whose type matches the value
@@ -113,9 +119,6 @@ public:
       * @return the readable device name
       */
     QString readableName(bool ampersandQuoted = false) const;
-
-    // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
-    static QString driverName(int num);
 
     /**
      * Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
