@@ -24,9 +24,9 @@
 
 #include <QString>
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 
-class Mixer_OSS : public Mixer_Backend
+class Mixer_OSS : public MixerBackend
 {
 public:
     Mixer_OSS(Mixer *mixer, int device);

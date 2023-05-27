@@ -101,15 +101,15 @@ const MixDevice::ChannelType MixerChannelTypes[MAX_MIXDEVS] = {
 };
 // clang-format on
 
-Mixer_Backend *OSS_getMixer(Mixer *mixer, int device)
+MixerBackend *OSS_getMixer(Mixer *mixer, int device)
 {
-    Mixer_Backend *l_mixer;
+    MixerBackend *l_mixer;
     l_mixer = new Mixer_OSS(mixer, device);
     return l_mixer;
 }
 
 Mixer_OSS::Mixer_OSS(Mixer *mixer, int device)
-    : Mixer_Backend(mixer, device)
+    : MixerBackend(mixer, device)
 {
     if (device == -1) {
         m_devnum = 0;
@@ -251,7 +251,7 @@ QString Mixer_OSS::errorText(int mixer_error)
                           "Use 'soundon' when using commercial OSS.");
         break;
     default:
-        l_s_errmsg = Mixer_Backend::errorText(mixer_error);
+        l_s_errmsg = MixerBackend::errorText(mixer_error);
         break;
     }
     return l_s_errmsg;

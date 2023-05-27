@@ -25,9 +25,9 @@
 
 #include <QString>
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 
-class Mixer_SUN : public Mixer_Backend
+class Mixer_SUN : public MixerBackend
 {
 public:
   Mixer_SUN(Mixer *mixer, int devnum);

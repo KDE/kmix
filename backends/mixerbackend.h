@@ -32,7 +32,7 @@
 class Mixer;
 
 
-class Mixer_Backend : public QObject
+class MixerBackend : public QObject
 {
       Q_OBJECT
 
@@ -40,8 +40,8 @@ friend class Mixer;
 
 // The Mixer Backend's may only be accessed from the Mixer class.
 protected:
-  Mixer_Backend(Mixer *mixer, int devnum);
-  virtual ~Mixer_Backend();
+  MixerBackend(Mixer *mixer, int devnum);
+  virtual ~MixerBackend();
 
   /**
    * Derived classes MUST implement this to open the mixer.

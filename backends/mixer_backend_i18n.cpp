@@ -19,7 +19,7 @@
  */
 
 
-QString Mixer_Backend::translateKernelToWhatsthis(const QString &kernelName)
+QString MixerBackend::translateKernelToWhatsthis(const QString &kernelName)
 {
         if (kernelName == "Mic:0") return i18n("Recording level of the microphone input.");
 	else if (kernelName == "Master:0") return i18n("Controls the volume of the front speakers or all speakers (depending on your soundcard model). If you use a digital output, you might need to also use other controls like ADC or DAC. For headphones, soundcards often supply a Headphone control.");

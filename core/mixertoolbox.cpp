@@ -534,7 +534,7 @@ bool MixerToolBox::pulseaudioPresent()
  * Create a backend instance for the specified @p backendName and its
  * internal @p deviceIndex.  It will be associated with the parent @p mixer.
  */
-Mixer_Backend *MixerToolBox::getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer)
+MixerBackend *MixerToolBox::getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer)
 {
     for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
     {

@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 
 #include <klocalizedstring.h>
 
@@ -33,7 +33,7 @@
 
 #include "mixer_backend_i18n.cpp"
 
-Mixer_Backend::Mixer_Backend(Mixer *mixer, int device) :
+MixerBackend::MixerBackend(Mixer *mixer, int device) :
 m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _pollingTimer(0), _cardInstance(1), _cardRegistered(false)
 
 {
@@ -45,12 +45,12 @@ m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _poll
 
 }
 
-void Mixer_Backend::closeCommon()
+void MixerBackend::closeCommon()
 {
 	freeMixDevices();
 }
 
-int Mixer_Backend::close()
+int MixerBackend::close()
 {
 	qCDebug(KMIX_LOG) << "Implicit close on " << this << ". Please instead call closeCommon() and close() explicitly (in concrete Backend destructor)";
 	// ^^^ Background. before the destructor runs, the C++ runtime changes the virtual pointers to point back
@@ -63,7 +63,7 @@ int Mixer_Backend::close()
 	return 0;
 }
 
-Mixer_Backend::~Mixer_Backend()
+MixerBackend::~MixerBackend()
 {
 	unregisterCard(this->getName());
 	if (!m_mixDevices.isEmpty())
@@ -73,14 +73,14 @@ Mixer_Backend::~Mixer_Backend()
 	delete _pollingTimer;
 }
 
-void Mixer_Backend::freeMixDevices()
+void MixerBackend::freeMixDevices()
 {
 	for (shared_ptr<MixDevice> md : std::as_const(m_mixDevices)) md->close();
 	m_mixDevices.clear();
 }
 
 
-bool Mixer_Backend::openIfValid()
+bool MixerBackend::openIfValid()
 {
 	const int ret = open();
 	if (ret!=0)
@@ -112,7 +112,7 @@ bool Mixer_Backend::openIfValid()
 }
 
 
-bool Mixer_Backend::isOpen() {
+bool MixerBackend::isOpen() {
 	return m_isOpen;
 }
 
@@ -121,7 +121,7 @@ bool Mixer_Backend::isOpen() {
  * If you cannot find out for a backend, return "true" - this is also the default implementation.
  * @return true, if there are changes. Otherwise false is returned.
  */
-bool Mixer_Backend::hasChangedControls()
+bool MixerBackend::hasChangedControls()
 {
 	return true;
 }
@@ -132,7 +132,7 @@ bool Mixer_Backend::hasChangedControls()
  * different, as they represent some distinct function like "Application streams" or "Capture Devices". Also backends
  * that do not have names might can to set ID and name different like i18n("SUN Audio") and "SUNAudio".
  */
-QString Mixer_Backend::getName() const
+QString MixerBackend::getName() const
 {
 	return m_mixerName;
 }
@@ -140,10 +140,10 @@ QString Mixer_Backend::getName() const
 /**
  * The id of the Mixer this backend represents. The default implementation simply returns the name.
  * Often it is just a name/id for the kernel. so name and id are usually identical. See also
- * Mixer_Backend::getName().
+ * MixerBackend::getName().
  * You must override this method if you want to set ID different from name.
  */
-QString Mixer_Backend::getId() const
+QString MixerBackend::getId() const
 {
 	return m_mixerName; // Backwards compatibility. PulseAudio overrides it.
 }
@@ -156,7 +156,7 @@ QString Mixer_Backend::getId() const
  * 1) Start of KMix - so that we can be sure an initial signal is emitted
  * 2) When reconstructing any MixerWidget (e.g. DockIcon after applying preferences)
  */
-void Mixer_Backend::readSetFromHWforceUpdate() const
+void MixerBackend::readSetFromHWforceUpdate() const
 {
 	_readSetFromHWforceUpdate = true;
 }
@@ -166,7 +166,7 @@ void Mixer_Backend::readSetFromHWforceUpdate() const
  * You can call this to retrieve the freshest information from the mixer HW.
  * This method is also called regularly by the mixer timer.
  */
-void Mixer_Backend::readSetFromHW()
+void MixerBackend::readSetFromHW()
 {
 	bool updated = hasChangedControls();
 	if ( (! updated) && (! _readSetFromHWforceUpdate) ) {
@@ -248,7 +248,7 @@ void Mixer_Backend::readSetFromHW()
  * first device in the device list. Backends can override this (i.e. the ALSA Backend does so).
  * The users preference is NOT returned by this method - see the Mixer class for that.
  */
-shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
+shared_ptr<MixDevice> MixerBackend::recommendedMaster()
 {
 	if ( m_recommendedMaster )
 	{
@@ -265,7 +265,7 @@ shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
 	{
 		if ( !_mixer->isDynamic())
 			// This should never ever happen, as KMix does NOT accept soundcards without controls
-			qCCritical(KMIX_LOG) << "Mixer_Backend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this.";
+			qCCritical(KMIX_LOG) << "MixerBackend::recommendedMaster(): returning invalid master. This is a bug in KMix. Please file a bug report stating how you produced this.";
 	}
 
 	// If we reach this code path, then obviously m_recommendedMaster == 0 (see above)
@@ -279,7 +279,7 @@ shared_ptr<MixDevice> Mixer_Backend::recommendedMaster()
  * wants to support it, it must implement the driver specific 
  * code in its subclass (see Mixer_ALSA.cpp for an example).
  */
-void Mixer_Backend::setEnumIdHW(const QString& , unsigned int) {
+void MixerBackend::setEnumIdHW(const QString& , unsigned int) {
 	return;
 }
 
@@ -289,7 +289,7 @@ void Mixer_Backend::setEnumIdHW(const QString& , unsigned int) {
  * wants to support it, it must implement the driver specific
  * code in its subclass (see Mixer_ALSA.cpp for an example).
  */
-unsigned int Mixer_Backend::enumIdHW(const QString& ) {
+unsigned int MixerBackend::enumIdHW(const QString& ) {
 	return 0;
 }
 
@@ -297,7 +297,7 @@ unsigned int Mixer_Backend::enumIdHW(const QString& ) {
 /**
  * Move the stream to a new destination
  */
-bool Mixer_Backend::moveStream(const QString &id, const QString &destId)
+bool MixerBackend::moveStream(const QString &id, const QString &destId)
 {
 	qCDebug(KMIX_LOG) << "called for unsupported" << id;
 	Q_UNUSED(destId);
@@ -307,14 +307,14 @@ bool Mixer_Backend::moveStream(const QString &id, const QString &destId)
 /**
  * Get the current destination device of a stream
  */
-QString Mixer_Backend::currentStreamDevice(const QString &id) const
+QString MixerBackend::currentStreamDevice(const QString &id) const
 {
 	qCDebug(KMIX_LOG) << "called for unsupported" << id;
 	return (QString());
 }
 
 
-QString Mixer_Backend::errorText(int mixer_error)
+QString MixerBackend::errorText(int mixer_error)
 {
 	QString l_s_errmsg;
 	switch (mixer_error)

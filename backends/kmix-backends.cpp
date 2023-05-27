@@ -67,17 +67,17 @@
 #endif
 
 // Possibly encapsulated by #ifdef HAVE_DBUS
-Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int deviceIndex);
+MixerBackend* MPRIS2_getMixer(Mixer *mixer, int deviceIndex);
 extern const char *MPRIS2_driverName;
 
-Mixer_Backend* ALSA_getMixer(Mixer *mixer, int deviceIndex);
+MixerBackend* ALSA_getMixer(Mixer *mixer, int deviceIndex);
 extern const char *ALSA_driverName;
 
-Mixer_Backend* PULSE_getMixer(Mixer *mixer, int deviceIndex);
+MixerBackend* PULSE_getMixer(Mixer *mixer, int deviceIndex);
 extern const char *PULSE_driverName;
 
 // Types used in the backend list
-typedef Mixer_Backend *getMixerFunc(Mixer* mixer, int device);
+typedef MixerBackend *getMixerFunc(Mixer* mixer, int device);
 struct MixerFactory
 {
     getMixerFunc *getMixer;

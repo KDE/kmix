@@ -24,7 +24,7 @@
 // Forward Qt includes
 class QSocketNotifier;
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 
 extern "C"
 {
@@ -32,7 +32,7 @@ extern "C"
 }
 
 
-class Mixer_ALSA : public Mixer_Backend
+class Mixer_ALSA : public MixerBackend
 {
     Q_OBJECT
 

@@ -152,7 +152,7 @@ install(FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${KDE_INSTALL_DBUSINTERFA
 ####################################################################################################
 
 set(kmix_backend_SRCS
-  backends/mixer_backend.cpp
+  backends/mixerbackend.cpp
   backends/mixer_mpris2.cpp
 )
 

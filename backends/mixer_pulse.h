@@ -22,7 +22,7 @@
 #ifndef MIXER_PULSE_H
 #define MIXER_PULSE_H
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 #include <pulse/pulseaudio.h>
 
 struct QtPaMainLoop;
@@ -45,7 +45,7 @@ typedef struct {
 } devinfo;
 typedef QMap<int,devinfo> devmap;
 
-class Mixer_PULSE : public Mixer_Backend
+class Mixer_PULSE : public MixerBackend
 {
     Q_OBJECT
 

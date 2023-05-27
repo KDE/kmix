@@ -931,9 +931,9 @@ bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
     return (true);
 }
 
-Mixer_Backend* PULSE_getMixer( Mixer *mixer, int devnum )
+MixerBackend* PULSE_getMixer( Mixer *mixer, int devnum )
 {
-   Mixer_Backend *l_mixer;
+   MixerBackend *l_mixer;
    l_mixer = new Mixer_PULSE( mixer, devnum );
    return l_mixer;
 }
@@ -963,7 +963,7 @@ bool Mixer_PULSE::connectToDaemon()
 }
 
 
-Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum)
+Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : MixerBackend(mixer, devnum)
 {
     if ( devnum == -1 )
         m_devnum = 0;

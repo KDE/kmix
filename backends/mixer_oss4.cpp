@@ -34,14 +34,14 @@
 #include <QRegExp>
 #include <qplatformdefs.h>
 
-Mixer_Backend* OSS4_getMixer(Mixer *mixer, int device)
+MixerBackend* OSS4_getMixer(Mixer *mixer, int device)
 {
-	Mixer_Backend *l_mixer;
+	MixerBackend *l_mixer;
 	l_mixer = new Mixer_OSS4(mixer, device);
 	return l_mixer;
 }
 
-Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : Mixer_Backend(mixer, device)
+Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : MixerBackend(mixer, device)
 {
 	if ( device == -1 ) m_devnum = 0;
 	m_numExtensions = 0;
@@ -503,7 +503,7 @@ QString Mixer_OSS4::errorText(int mixer_error)
 			                  "Use 'soundon' when using OSS4 from 4front.");
 			break;
 		default:
-			l_s_errmsg = Mixer_Backend::errorText(mixer_error);
+			l_s_errmsg = MixerBackend::errorText(mixer_error);
 	}
 	return l_s_errmsg;
 }

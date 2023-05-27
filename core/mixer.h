@@ -31,7 +31,7 @@
 #include <QString>
 
 #include "core/volume.h"
-#include "backends/mixer_backend.h"
+#include "backends/mixerbackend.h"
 #include "core/MasterControl.h"
 #include "mixset.h"
 #include "core/mixdevice.h"
@@ -107,7 +107,7 @@ public:
      */
     virtual QString getBaseName() const;
 
-    /// Wrapper to Mixer_Backend
+    /// Wrapper to MixerBackend
     QString translateKernelToWhatsthis(const QString &kernelName) const;
 
     /**
@@ -188,7 +188,7 @@ private:
     void recreateId();
     void increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease );
 
-    Mixer_Backend *_mixerBackend;
+    MixerBackend *_mixerBackend;
     QString _id;
     QString _masterDevicePK;
     int m_balance; // from -100 (just left) to 100 (just right)

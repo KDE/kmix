@@ -30,7 +30,7 @@
 #include <QWaitCondition>
 #include <QQueue>
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 
 class MPrisControl : public QObject
 {
@@ -106,7 +106,7 @@ signals:
   void playbackStateChanged(MPrisControl* mad, MediaController::PlayState);
 };
 
-class Mixer_MPRIS2 : public Mixer_Backend
+class Mixer_MPRIS2 : public MixerBackend
 {
   Q_OBJECT
 

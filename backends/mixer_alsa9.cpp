@@ -42,17 +42,17 @@
 //#define KMIX_ALSA_VOLUME_DEBUG
 
 
-Mixer_Backend*
+MixerBackend*
 ALSA_getMixer(Mixer *mixer, int device )
 {
 
-   Mixer_Backend *l_mixer;
+   MixerBackend *l_mixer;
 
    l_mixer = new Mixer_ALSA(mixer,  device );
    return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  device )
+Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : MixerBackend(mixer,  device )
 {
     m_fds = 0;
     _handle = 0;
@@ -965,7 +965,7 @@ Mixer_ALSA::errorText( int mixer_error )
 					"soundcard driver is loaded.\n" );
 			break;
 		default:
-			l_s_errmsg = Mixer_Backend::errorText( mixer_error );
+			l_s_errmsg = MixerBackend::errorText( mixer_error );
 	}
 	return l_s_errmsg;
 }
