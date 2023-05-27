@@ -162,9 +162,6 @@ public:
     virtual void setDynamic(bool dynamic = true)	{ m_dynamic = dynamic; }
     virtual bool isDynamic() const			{ return (m_dynamic); }
 
-    static bool dynamicBackendsPresent();
-    static bool pulseaudioPresent();
-
     virtual bool moveStream(const QString &id, const QString &destId);
     virtual QString currentStreamDevice(const QString &id) const;
 
@@ -172,7 +169,7 @@ public:
     virtual int mediaPrev(QString id)		{ return _mixerBackend->mediaPrev(id); }
     virtual int mediaNext(QString id)		{ return _mixerBackend->mediaNext(id); }
 
-    void commitVolumeChange( shared_ptr<MixDevice> md );
+    void commitVolumeChange(shared_ptr<MixDevice> md);
 
 public Q_SLOTS:
     void readSetFromHWforceUpdate() const;

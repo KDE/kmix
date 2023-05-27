@@ -63,6 +63,10 @@ namespace MixerToolBox
     KMIXCORE_EXPORT Mixer *getGlobalMasterMixer(bool fallbackAllowed = true);
     KMIXCORE_EXPORT MasterControl &getGlobalMasterPreferred(bool fallbackAllowed = true);
     KMIXCORE_EXPORT shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed = true);
+
+    // Whether these apply somewhere among all known mixers.
+    KMIXCORE_EXPORT bool dynamicBackendsPresent();
+    KMIXCORE_EXPORT bool pulseaudioPresent();
 }
 
 #endif

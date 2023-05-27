@@ -256,7 +256,7 @@ void KMixWindow::initActionsAfterInitMixer()
 {
 	// Only show the new tab widget if Pulseaudio is not used. Hint: The Pulseaudio backend always
 	// runs with 4 fixed Tabs.
-	if (!Mixer::pulseaudioPresent())
+	if (!MixerToolBox::pulseaudioPresent())
 	{
 		QPushButton* _cornerLabelNew = new QPushButton();
 		_cornerLabelNew->setIcon(QIcon::fromTheme("tab-new"));
@@ -985,7 +985,7 @@ void KMixWindow::updateTabsClosable()
 {
 	// Pulseaudio runs with 4 fixed tabs - don't allow to close them.
 	// Also do not allow to close the last view
-	m_wsMixers->setTabsClosable(!Mixer::pulseaudioPresent() && m_wsMixers->count() > 1);
+	m_wsMixers->setTabsClosable(!MixerToolBox::pulseaudioPresent() && m_wsMixers->count() > 1);
 }
 
 bool KMixWindow::queryClose()

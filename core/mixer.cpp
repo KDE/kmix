@@ -50,30 +50,6 @@
 }
 
 
-/**
- * Returns whether there is at least one dynamic mixer active.
- * @returns true, if at least one dynamic mixer is active
- */
-/* static */ bool Mixer::dynamicBackendsPresent()
-{
-    for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
-    {
-        if (mixer->isDynamic()) return (true);
-    }
-    return (false);
-}
-
-
-/* static */ bool Mixer::pulseaudioPresent()
-{
-    for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
-    {
-        if (mixer->getDriverName()=="PulseAudio") return (true);
-    }
-    return (false);
-}
-
-
 Mixer::Mixer(const QString &ref_driverName, int device)
     : m_balance(0),
       m_dynamic(false)

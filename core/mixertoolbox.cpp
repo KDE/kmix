@@ -472,3 +472,37 @@ shared_ptr<MixDevice> MixerToolBox::getGlobalMasterMD(bool fallbackAllowed)
 
     return (mdRet);
 }
+
+
+/**
+ * Check whether a dynamic mixer if active.
+ *
+ * @return @c true if at least one dynamic mixer is active
+ */
+bool MixerToolBox::dynamicBackendsPresent()
+{
+    for (const Mixer *mixer : std::as_const(s_allMixers))
+    {
+        if (mixer->isDynamic()) return (true);
+    }
+    return (false);
+}
+
+
+/**
+ * Check whether the PulseAudio backend is active.
+ *
+ * @return @c true if at least one mixer using PulseAudio is active
+ *
+ * @note In the default mode of operation, if PulseAudio is active
+ * then it will be the only active backend.  In the experimental
+ * multi-driver mode, then it may be one among others.
+ */
+bool MixerToolBox::pulseaudioPresent()
+{
+    for (const Mixer *mixer : std::as_const(s_allMixers))
+    {
+        if (mixer->getDriverName()=="PulseAudio") return (true);
+    }
+    return (false);
+}
