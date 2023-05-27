@@ -20,13 +20,11 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/* This code is being #include'd from mixer.cpp */
-
-// TODO: needed if typedefs moved from mixer_backend.h to here?
-#include "mixer_backend.h"
+/* This code is being #include'd from mixtoolbox.cpp */
 
 #include "core/mixer.h"
 
+// Selection of the supported backends based on platform
 
 #if defined(sun) || defined(__sun__)
 #define SUN_MIXER
@@ -50,7 +48,7 @@
 #include "backends/mixer_sun.cpp"
 #endif
 
-// OSS 3 / 4
+// OSS 3/4
 #if defined(OSS_MIXER)
 #include "backends/mixer_oss.cpp"
 
@@ -68,43 +66,51 @@
 #include "backends/mixer_oss4.cpp"
 #endif
 
-
 // Possibly encapsulated by #ifdef HAVE_DBUS
-Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device );
-QString MPRIS2_getDriverName();
+Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *MPRIS2_driverName;
 
-Mixer_Backend* ALSA_getMixer(Mixer *mixer, int device );
-QString ALSA_getDriverName();
+Mixer_Backend* ALSA_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *ALSA_driverName;
 
-Mixer_Backend* PULSE_getMixer(Mixer *mixer, int device );
-QString PULSE_getDriverName();
+Mixer_Backend* PULSE_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *PULSE_driverName;
 
-MixerFactory g_mixerFactories[] = {
+// Types used in the backend list
+typedef Mixer_Backend *getMixerFunc(Mixer* mixer, int device);
+struct MixerFactory
+{
+    getMixerFunc *getMixer;
+    const char *backendName;
+};
 
+// The list of supported backends
+static const MixerFactory g_mixerFactories[] =
+{
 #if defined(SUN_MIXER)
-    { SUN_getMixer, SUN_getDriverName },
+    { SUN_getMixer, SUN_driverName },
 #endif
 
 #if defined(HAVE_PULSE)
-    { PULSE_getMixer, PULSE_getDriverName },
+    { PULSE_getMixer, PULSE_driverName },
 #endif
 
 #if defined(HAVE_LIBASOUND2)
-    { ALSA_getMixer, ALSA_getDriverName },
+    { ALSA_getMixer, ALSA_driverName },
 #endif
 
 #if defined(OSS_MIXER)
-    { OSS_getMixer, OSS_getDriverName },
+    { OSS_getMixer, OSS_driverName },
 #endif
 
 #if defined(OSS4_MIXER)
-    { OSS4_getMixer, OSS4_getDriverName },
+    { OSS4_getMixer, OSS4_driverName },
 #endif
 
-    // Make sure MPRIS2 is at the end. Implementation of SINGLE_PLUS_MPRIS2 in MixerToolBox is much easier.
-    // And also we make sure, streams are always the last backend, which is important for the default KMix GUI layout.
-    { MPRIS2_getMixer, MPRIS2_getDriverName },
-
-    { 0, 0 }
+    // Make sure MPRIS2 is at the end.  The implementation of SINGLE_PLUS_MPRIS2
+    // in MixerToolBox is much easier.  And also we make sure that streams are always
+    // the last backend, which is important for the default KMix GUI layout.
+    { MPRIS2_getMixer, MPRIS2_driverName }
 };
 
+static const int numBackends = sizeof(g_mixerFactories)/sizeof(MixerFactory);

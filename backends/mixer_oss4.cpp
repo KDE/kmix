@@ -786,13 +786,10 @@ int Mixer_OSS4::wrapIoctl(int ioctlRet)
 	return ioctlRet;
 }
 
+
+const char *OSS4_driverName = "OSS4";
+
 QString Mixer_OSS4::getDriverName()
 {
-	return "OSS4";
+	return (OSS4_driverName);
 }
-
-QString OSS4_getDriverName()
-{
-	return "OSS4";
-}
-

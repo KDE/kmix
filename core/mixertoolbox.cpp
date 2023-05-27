@@ -27,7 +27,7 @@
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
 
-// This header file contains global data for the available backends.
+// This file contains global data for the available backends.
 #include "backends/kmix-backends.cpp"
 
 
@@ -49,26 +49,6 @@ static MasterControl s_globalMasterPreferred;
 enum MultiDriverMode { SINGLE, SINGLE_PLUS_MPRIS2, MULTI };
 
 
-// TODO: is this not just the same as sizeof(g_mixerFactories)/sizeof(MixerFactory)
-// (but watch out for the null terminator!)
-
-/**
- * Get the number of available backends (audio drivers).
- */
-static int numBackends()
-{
-    const MixerFactory *factory = g_mixerFactories;
-    int num = 0;
-    while (factory->getMixer!=nullptr)
-    {
-        ++num;
-        ++factory;
-    }
-
-    return (num);
-}
-
-
 /**
  * Query the backend factory list for the backend name corresponding
  * to the specified @p driverIndex in the list.
@@ -77,9 +57,7 @@ static int numBackends()
  */
 static QString backendNameFor(int driverIndex)
 {
-    getDriverNameFunc *f = g_mixerFactories[driverIndex].getDriverName;
-    Q_ASSERT(f!=nullptr);				// known data, should never happen
-    return (f());
+    return (g_mixerFactories[driverIndex].backendName);
 }
 
 
@@ -110,14 +88,12 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
    qCDebug(KMIX_LOG) << "multiDriverMode" << multiDriverMode << "backendList" << backendList;
 
    // Find all mixers and initialize them
-   const int drvNum = numBackends();
 
    int driverWithMixer = -1;
    bool multipleDriversActive = false;
 
    QString driverInfo;
-
-   for (int drv = 0; drv<drvNum; ++drv)
+   for (int drv = 0; drv<numBackends; ++drv)
    {
        const QString driverName = backendNameFor(drv);
        if (!driverInfo.isEmpty()) driverInfo += QStringLiteral(",");
@@ -141,7 +117,7 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
    bool autodetectionFinished = false;
    QString driverInfoUsed;
 
-   for (int drv = 0; drv<drvNum; ++drv)
+   for (int drv = 0; drv<numBackends; ++drv)
    {
       if ( autodetectionFinished )
       {
@@ -283,14 +259,22 @@ static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList
    if (s_allMixers.isEmpty())
    {
        // If there was no mixer found, we assume, that hotplugging will take place
-       // on the preferred driver (this is always the first in the backend list).
+       // on the preferred driver (which is always the first in the backend list).
        driverInfoUsed = backendNameFor(0);
    }
    qCDebug(KMIX_LOG) << "Sound drivers used -" << qPrintable(driverInfoUsed);
 
-   if ( multipleDriversActive )
+   if (multipleDriversActive)
    {
-       // this will only be possible by hacking the config-file, as it will not be officially supported
+       // Note: Even if only the ALSA or OSS driver is in use, this will be
+       // true because MPRIS2 also counts as a driver above.  However this
+       // does not actually change anything, because the backend names given
+       // to KMixDeviceManager::setHotpluggingBackends() are ignored.
+       //
+       // The original comment here, which I don't understand the relevance
+       // of, said:
+       //   this will only be possible by hacking the config-file,
+       //   as it will not be officially supported
        qCDebug(KMIX_LOG) << "Experimental multiple-driver mode activated";
        if (hotplug) KMixDeviceManager::instance()->setHotpluggingBackends("*");
    }
@@ -552,8 +536,7 @@ bool MixerToolBox::pulseaudioPresent()
  */
 Mixer_Backend *MixerToolBox::getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer)
 {
-    const int driverCount = numBackends();
-    for (int driverIndex = 0; driverIndex<driverCount; ++driverIndex)
+    for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
     {
         const QString name = backendNameFor(driverIndex);
         if (name==backendName)				// look for backend with that name

@@ -724,13 +724,10 @@ MPrisControl::~MPrisControl()
 	delete playerIfc;
 }
 
+
+const char *MPRIS2_driverName = "MPRIS2";
+
 QString Mixer_MPRIS2::getDriverName()
 {
-	return "MPRIS2";
+	return (MPRIS2_driverName);
 }
-
-QString MPRIS2_getDriverName()
-{
-	return "MPRIS2";
-}
-

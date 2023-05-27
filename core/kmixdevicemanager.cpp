@@ -140,8 +140,10 @@ void KMixDeviceManager::unpluggedSlot(const QString &udi)
 }
 
 
-void KMixDeviceManager::setHotpluggingBackends(const QString& backendName)
+void KMixDeviceManager::setHotpluggingBackends(const QString &backendName)
 {
     qCDebug(KMIX_LOG) << "using" << backendName;
+    // Note: this setting is ignored, it is assumed above that
+    // Solid only delivers sound card hotplug events for ALSA.
     _hotpluggingBackend = backendName;
 }

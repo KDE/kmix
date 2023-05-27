@@ -971,13 +971,9 @@ Mixer_ALSA::errorText( int mixer_error )
 }
 
 
-QString
-ALSA_getDriverName()
-{
-	return QStringLiteral("ALSA");
-}
+const char *ALSA_driverName = "ALSA";
 
 QString Mixer_ALSA::getDriverName()
 {
-	return QStringLiteral("ALSA");
+    return (ALSA_driverName);
 }

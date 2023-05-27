@@ -1352,12 +1352,9 @@ void Mixer_PULSE::triggerUpdate()
 
 // Please see KMixWindow::initActionsAfterInitMixer(), it uses the driverName
 
-QString PULSE_getDriverName() {
-        return "PulseAudio";
-}
+const char *PULSE_driverName = "PulseAudio";
 
 QString Mixer_PULSE::getDriverName()
 {
-        return "PulseAudio";
+    return (PULSE_driverName);
 }
-

@@ -455,12 +455,10 @@ int Mixer_OSS::writeVolumeToHW(const QString &id, shared_ptr<MixDevice> md)
     return 0;
 }
 
-QString OSS_getDriverName()
-{
-    return "OSS";
-}
+
+const char *OSS_driverName = "OSS";
 
 QString Mixer_OSS::getDriverName()
 {
-    return "OSS";
+    return (OSS_driverName);
 }

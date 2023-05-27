@@ -485,12 +485,11 @@ int Mixer_SUN::id2num(const QString& id)
 	return id.toInt();
 }
 
-QString SUN_getDriverName() {
-        return "SUNAudio";
-}
+
+const char *SUN_driverName() = "SUNAudio";
 
 QString Mixer_SUN::getDriverName()
 {
-        return "SUNAudio";
+    return (SUN_driverName);
 }
 
