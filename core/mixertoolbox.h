@@ -68,6 +68,8 @@ namespace MixerToolBox
     // Whether these apply somewhere among all known mixers.
     KMIXCORE_EXPORT bool dynamicBackendsPresent();
     KMIXCORE_EXPORT bool pulseaudioPresent();
+    KMIXCORE_EXPORT bool backendPresent(const QString &driverName);
+    KMIXCORE_EXPORT QString preferredBackend();
 
     // Creating a mixer backend using the list of available backends.
     KMIXCORE_EXPORT MixerBackend *getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer);

@@ -141,15 +141,25 @@ int Mixer_OSS::open()
         }
     }
 
-    _udi = KMixDeviceManager::instance()->getUDI_OSS(finalDeviceName);
-    if (_udi.isEmpty()) {
-        QString msg("No UDI found for '");
-        msg += finalDeviceName;
-        msg += "'. Hotplugging not possible";
-        qCDebug(KMIX_LOG) << msg;
+    _udi = KMixDeviceManager::instance()->getUDI(m_devnum);	// should always succeed
+    if (_udi.isEmpty()) qCDebug(KMIX_LOG) << "No UDI for" << finalDeviceName<< "- hotplugging not possible";
+
+    // Register the card now, so that it will have an ID set.  The loop
+    // below requires it.  If it is not done here then there will be an
+    // "Emergency ID created" message from Mixer::dbusPath() which is
+    // called from MixDevice::addToPool().
+#if defined(SOUND_MIXER_INFO)
+    struct mixer_info l_mix_info;
+    if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
+        registerCard(l_mix_info.name);
+    } else
+#endif
+    {
+        registerCard("OSS Audio Mixer");
     }
+
+    // Mixer is open. Now define its properties.
     int devmask, recmask, i_recsrc, stereodevs;
-    // Mixer is open. Now define properties
     if (ioctl(m_fd, SOUND_MIXER_READ_DEVMASK, &devmask) == -1)
         return Mixer::ERR_READ;
     if (ioctl(m_fd, SOUND_MIXER_READ_RECMASK, &recmask) == -1)
@@ -185,15 +195,8 @@ int Mixer_OSS::open()
         idx++;
     }
 
-#if defined(SOUND_MIXER_INFO)
-    struct mixer_info l_mix_info;
-    if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
-        registerCard(l_mix_info.name);
-    } else
-#endif
-    {
-        registerCard("OSS Audio Mixer");
-    }
+    // MixerBackend::registerCard() was originally called here.
+    // This is too late, see above.
 
     m_isOpen = true;
     return 0;

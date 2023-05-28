@@ -142,12 +142,12 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
 
       QString driverName = backendNameFor(drv);
       qCDebug(KMIX_LOG) << "Looking for mixers with the" << driverName << "driver";
+
       if ( useBackendFilter && ! backendList.contains(driverName) )
       {
 	  qCDebug(KMIX_LOG) << "Ignored" << driverName << "- filtered by backend list";
 	  continue;
       }
-      
 
       bool regularBackend =  driverName != QLatin1String("MPRIS2")  && driverName != QLatin1String("PulseAudio");
       if (regularBackend && regularBackendFound)
@@ -275,7 +275,7 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
    {
        // If there was no mixer found, we assume, that hotplugging will take place
        // on the preferred driver (which is always the first in the backend list).
-       driverInfoUsed = backendNameFor(0);
+       driverInfoUsed = MixerToolBox::preferredBackend();
    }
    qCDebug(KMIX_LOG) << "Sound drivers used -" << qPrintable(driverInfoUsed);
 
@@ -537,11 +537,41 @@ bool MixerToolBox::dynamicBackendsPresent()
  */
 bool MixerToolBox::pulseaudioPresent()
 {
+    return (backendPresent("PulseAudio"));
+}
+
+
+/**
+ * Check whether an instance of the specified backend is active.
+ *
+ * @param driverName The driver name to check
+ * @return @c true if at least one mixer using that backend is active
+ */
+bool MixerToolBox::backendPresent(const QString &driverName)
+{
+    // TODO: can use std::find_if
     for (const Mixer *mixer : std::as_const(s_allMixers))
     {
-        if (mixer->getDriverName()=="PulseAudio") return (true);
+        if (mixer->getDriverName()==driverName) return (true);
     }
     return (false);
+}
+
+
+/**
+ * The preferred fallback backend name if none could be found during
+ * the initial scan.  This is the first in the backend list which is
+ * not PulseAudio.
+ */
+QString MixerToolBox::preferredBackend()
+{
+    for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
+    {
+        const QString name = backendNameFor(driverIndex);
+        if (name!="PulseAudio") return (name);
+    }
+
+    return (backendNameFor(0));				// very last resort fallback
 }
 
 

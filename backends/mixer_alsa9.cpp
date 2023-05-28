@@ -128,8 +128,8 @@ int Mixer_ALSA::open()
     err = openAlsaDevice(m_deviceName);
     if (err!=0) return (err);
 
-    _udi = KMixDeviceManager::instance()->getUDI_ALSA(m_devnum);
-    if (_udi.isEmpty()) qCWarning(KMIX_LOG) << "No UDI found for" << m_deviceName << "so hotplugging not possible";
+    _udi = KMixDeviceManager::instance()->getUDI(m_devnum);	// should always succeed
+    if (_udi.isEmpty()) qCDebug(KMIX_LOG) << "No UDI for" << m_deviceName<< "- hotplugging not possible";
 
     // Run a loop over all controls of the card
     unsigned int idx = 0;

@@ -18,12 +18,13 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef kmixdevicemanager_h
-#define kmixdevicemanager_h
+#ifndef KMIXDEVICEMANAGER_H
+#define KMIXDEVICEMANAGER_H
 
 #include <QObject>
 
 #include "kmixcore_export.h"
+
 
 class KMIXCORE_EXPORT KMixDeviceManager : public QObject
 {
@@ -31,13 +32,13 @@ class KMIXCORE_EXPORT KMixDeviceManager : public QObject
 
     public:
         static KMixDeviceManager* instance();
+
         void initHotplug();
-        void setHotpluggingBackends(const QString& backendName);
-        QString getUDI_ALSA(int num);
-        QString getUDI_OSS(const QString& devname);
+        void setHotpluggingBackends(const QString &backendName);
+        QString getUDI(int devnum) const;
 
     Q_SIGNALS:
-        void plugged(const char *driverName, const QString &udi, int dev);
+        void plugged(const char *driverName, const QString &udi, int devnum);
         void unplugged(const QString &udi);
 
     private:
@@ -46,12 +47,8 @@ class KMIXCORE_EXPORT KMixDeviceManager : public QObject
         QString _hotpluggingBackend;
         
     private Q_SLOTS:
-        void pluggedSlot(const QString&);
-        void unpluggedSlot(const QString&);
-
-    private:
-        static KMixDeviceManager* s_KMixDeviceManager;
+        void pluggedSlot(const QString &udi);
+        void unpluggedSlot(const QString &udi);
 };
 
 #endif
-
