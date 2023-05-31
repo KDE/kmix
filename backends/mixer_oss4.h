@@ -23,7 +23,7 @@
 #define MIXER_OSS4_H
 
 #include "mixerbackend.h"
-#include <sys/soundcard.h>
+
 
 class Mixer_OSS4 : public MixerBackend
 {

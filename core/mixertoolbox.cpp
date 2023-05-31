@@ -27,9 +27,6 @@
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
 
-// This file contains global data for the available backends.
-#include "backends/kmix-backends.cpp"
-
 
 static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
 
@@ -37,6 +34,79 @@ static QList<Mixer *> s_allMixers;
 
 static MasterControl s_globalMasterCurrent;
 static MasterControl s_globalMasterPreferred;
+
+/**
+ * Data for the available backends.
+ */
+
+#ifdef HAVE_SUN_MIXER
+extern MixerBackend* SUN_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *SUN_driverName;
+#endif
+
+// Possibly encapsulated by #ifdef HAVE_DBUS
+extern MixerBackend *MPRIS2_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *MPRIS2_driverName;
+
+#ifdef HAVE_ALSA_MIXER
+extern MixerBackend *ALSA_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *ALSA_driverName;
+#endif
+
+#ifdef HAVE_PULSEAUDIO
+extern MixerBackend *PULSE_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *PULSE_driverName;
+#endif
+
+#ifdef HAVE_OSS_3
+extern MixerBackend *OSS_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *OSS_driverName;
+#endif
+
+#ifdef HAVE_OSS_4
+extern MixerBackend *OSS4_getMixer(Mixer *mixer, int deviceIndex);
+extern const char *OSS4_driverName;
+#endif
+
+// Types used in the backend list
+typedef MixerBackend *getMixerFunc(Mixer* mixer, int device);
+struct MixerFactory
+{
+    getMixerFunc *getMixer;
+    const char *backendName;
+};
+
+// The list of supported backends
+static const MixerFactory g_mixerFactories[] =
+{
+#ifdef HAVE_SUN_MIXER
+    { SUN_getMixer, SUN_driverName },
+#endif
+
+#ifdef HAVE_PULSEAUDIO
+    { PULSE_getMixer, PULSE_driverName },
+#endif
+
+#ifdef HAVE_ALSA_MIXER
+    { ALSA_getMixer, ALSA_driverName },
+#endif
+
+#ifdef HAVE_OSS_3
+    { OSS_getMixer, OSS_driverName },
+#endif
+
+#ifdef HAVE_OSS_4
+    { OSS4_getMixer, OSS4_driverName },
+#endif
+
+    // Make sure MPRIS2 is at the end.  The implementation of SINGLE_PLUS_MPRIS2
+    // in MixerToolBox is much easier.  And also we make sure that streams are always
+    // the last backend, which is important for the default KMix GUI layout.
+    { MPRIS2_getMixer, MPRIS2_driverName }
+};
+
+static const int numBackends = sizeof(g_mixerFactories)/sizeof(MixerFactory);
+
 
 /***********************************************************************************
  Attention:
@@ -192,12 +262,14 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
 				 {
 					 backendMprisFound = true;
 				 }
+#ifdef HAVE_PULSEAUDIO
 				 else if ( driverName == QLatin1String("PulseAudio") )
 				 {
 					 // PulseAudio is not useful together with MPRIS2. Treat it as "single"
 					 if ( foundSomethingAndLastControlReached )
 						 autodetectionFinished = true;
 				 }
+#endif
 				 else
 				 {
 					 // same check as in SINGLE
@@ -537,7 +609,11 @@ bool MixerToolBox::dynamicBackendsPresent()
  */
 bool MixerToolBox::pulseaudioPresent()
 {
+#ifdef HAVE_PULSEAUDIO
     return (backendPresent("PulseAudio"));
+#else
+    return (false);
+#endif
 }
 
 

@@ -21,7 +21,6 @@
 
 //OSS4 mixer backend for KMix by Yoper Team released under GPL v2 or later
 
-/* We're getting soundcard.h via mixer_oss4.h */
 #include "mixer_oss4.h"
 
 #include <fcntl.h>
@@ -30,6 +29,14 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#ifdef HAVE_SOUNDCARD_H
+#include <soundcard.h>
+#else
+#ifdef HAVE_SYS_SOUNDCARD_H
+#include <sys/soundcard.h>
+#endif
+#endif
 
 #include <QRegExp>
 #include <qplatformdefs.h>

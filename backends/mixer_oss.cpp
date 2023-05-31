@@ -31,14 +31,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <KLazyLocalizedString>
-// Since we're guaranteed an OSS setup here, let's make life easier
-#if !defined(__NetBSD__) && !defined(__OpenBSD__)
-#include <sys/soundcard.h>
-#else
+
+#ifdef HAVE_SOUNDCARD_H
 #include <soundcard.h>
+#else
+#ifdef HAVE_SYS_SOUNDCARD_H
+#include <sys/soundcard.h>
+#endif
 #endif
 
 #include <QTimer>
+
 /*
   I am using a fixed MAX_MIXDEVS #define here.
    People might argue, that I should rather use the SOUND_MIXER_NRDEVICES
