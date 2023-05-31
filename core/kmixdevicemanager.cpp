@@ -29,9 +29,10 @@
 
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
+#include <solid/block.h>
 
 
-static const int HOTPLUG_DELAY = 500;			// settling delay, milliseconds
+static const int HOTPLUG_DELAY = 1000;			// settling delay, milliseconds
 
 
 KMixDeviceManager *KMixDeviceManager::instance()
@@ -48,6 +49,11 @@ void KMixDeviceManager::initHotplug()
             this, &KMixDeviceManager::pluggedSlot);
     connect(Solid::DeviceNotifier::instance(), &Solid::DeviceNotifier::deviceRemoved,
             this, &KMixDeviceManager::unpluggedSlot);
+
+    mHotplugTimer = new QTimer(this);
+    mHotplugTimer->setInterval(HOTPLUG_DELAY);
+    mHotplugTimer->setSingleShot(true);
+    connect(mHotplugTimer, &QTimer::timeout, this, &KMixDeviceManager::slotTimer);
 }
 
 
@@ -71,7 +77,7 @@ static bool isSoundDevice(const QString &udi)
 
 static int matchDevice(const QString &udi)
 {
-    QRegExp rx("/sound/card(\\d+)$");			// match sound card and ID number
+    QRegExp rx("/sound/card(\\d+)/");			// match sound card and number
     if (!udi.contains(rx)) return (-1);			// UDI not recognised
     return (rx.cap(1).toInt());				// assume conversion succeeds
 }
@@ -98,11 +104,46 @@ void KMixDeviceManager::pluggedSlot(const QString &udi)
     // OSS:
     //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4
     //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/mixer4
-    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/pcmC4D0p
-    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/controlC4
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/pcm4
     //
-    // The first of each of these is considered to be the canonical form and
-    // triggers device hotplug, after a settling delay.  The others are ignored.
+    // However, there are a number of complications with the delivery of these
+    // UDIs, for both hotplug and unplug events:
+    //
+    //   1.  Multiple UDIs as above may be delivered for a single device,
+    //       in a random order.
+    //   2.  UDIs may be delivered for more than one device, for example if
+    //       a card that supports multiple devices is hotplugged.
+    //   3.  If both ALSA and OSS drivers are supported on the system,
+    //       then UDIs for both ALSA and OSS may be delivered.
+    //   4.  For OSS, the canonical form (the first example above) may
+    //       not be delivered.
+    //   5.  Again for OSS, the device type (as in the second and third
+    //       examples above) may vary.
+    //
+    // There is also the possibility that a hotplug may soon be followed by
+    // an unplug for the same device, or vice versa.
+    //
+    // To correctly handle all of the above possibilities, the hotplug or
+    // unplug events are not actioned immediately.  Pending events are noted
+    // in the 'mPendingMap' map, indexed by device number.  By observation,
+    // if both ALSA and OSS UDIs are delivered for a single device then the
+    // device numbers for both are the same, so that is noted by separate
+    // flags.  ALSA and OSS can be reliably distinguished by the physical
+    // device name provided by Solid.
+    //
+    // Unplug events are also noted by a pending flag, with an additional flag
+    // noting whether this unplug closely (within the HOTPLUG_DELAy time) follows
+    // a hotplug for the same device.  In this case, there is no need to
+    // action either event because the device will not have actually been added.
+    //
+    // The converse - a hotplug closely following an unplug for the same device -
+    // cannot be ignored in the same way because the device will probably need
+    // to be opened again.  Therefore the unplug and then the hotplug are both
+    // actioned in that order.
+    //
+    // When things have settled down (after the HOTPLUG_DELAY time from the last
+    // event), the complete situation, on a device by device basis, is evaluated
+    // and appropriate actions taken.
     //
     // Note that the Solid device UDI is not used anywhere else within KMix,
     // what is referred to as a "UDI" elsewhere is as described in the
@@ -112,57 +153,20 @@ void KMixDeviceManager::pluggedSlot(const QString &udi)
     // https://community.kde.org/Frameworks/Porting_Notes#Solid_Changes
 
     const int devnum = matchDevice(udi);
-    if (devnum!=-1)
+    if (devnum!=-1 && device.is<Solid::Block>())
     {
         qCDebug(KMIX_LOG) << "Plugged UDI" << udi;
-        const QString ourUDI = getUDI(devnum);
-        qCDebug(KMIX_LOG) << "-> our UDI" << ourUDI << "devnum" << devnum;
 
-        // It is not possible to deduce from the Solid UDI whether the hotplug
-        // event is being delivered for an ALSA or an OSS device, but somehow
-        // we have to find out.
-        //
-        // The assumption made is that the backend corresponding to the first
-        // existing mixer is also appropriate for the newly plugged device.
-        // In practice this will be the only "regular" backend (see
-        // MixerToolBox::initMixerInternal() for what that means) in use
-        // unless the multi driver mode is enabled.  If no mixers are yet
-        // active it means that no sound devices were present until now,
-        // in which case the preferred (first supported) backend is used.
-        //
-        // Unfortunately this still may not select the correct backend in the
-        // situation where:
-        //
-        //   1.  KMix is configured to support both ALSA and OSS (and possibly
-        //       also PulseAudio, which does not affect the situation).
-        //   2.  No sound cards were present at initial KMix startup, therefore
-        //       the 'mixers' list below is empty or only contains MPRIS2.
-        //   3.  An OSS device is hotplugged.
-        //
-        // Because KMix cannot know from Solid that the hotplug is of an OSS
-        // device, and ALSA is the higher priority driver, ALSA will be used
-        // for the new device.  However, it is assumed that OSS will only be
-        // in use if the system does not support ALSA and KMix has been built
-        // without ALSA support, so using the first supported backend in this
-        // rare case is reasonable.
-        //
-        // TODO: may be able to examine Solid's Block.Device to determine
-        // whether ALSA or OSS (see solid-hardware5 list details) applies.
-        // This would resolve the ambiguity completely.
+        const Solid::Block *blk = device.as<Solid::Block>();
+        const QString blkdev = blk->device();
+        qCDebug(KMIX_LOG) << "devnum" << devnum << "device" << blkdev;
 
-        QString backend;
-        const QList<Mixer *> mixers = MixerToolBox::mixers();
-        if (!mixers.isEmpty())
-        {
-            const Mixer *mixer = mixers.first();
-            // Check for the case that there were initially no "regular"
-            // backends active, which means that the first may be MPRIS2.
-            if (!mixer->isDynamic()) backend = mixer->getDriverName();
-        }
-        if (backend.isEmpty()) backend = MixerToolBox::preferredBackend();
-
-        // Action after a short delay to allow hotplug to settle.
-        QTimer::singleShot(HOTPLUG_DELAY, [=](){ emit plugged(backend.toLatin1(), ourUDI, devnum); });
+        // Do not override a pending unplug for that same device,
+        // because it will probably have to be opened again
+        PendingFlags orig = mPendingMap[devnum];
+        mPendingMap[devnum] = orig|(blkdev.contains("/snd/") ? PluggedALSA : PluggedOSS);
+        //qCDebug(KMIX_LOG) << "  updated map [" << devnum << "]" << orig << "->" << mPendingMap[devnum];
+        mHotplugTimer->start();
     }
     else qCDebug(KMIX_LOG) << "Ignored unrecognised UDI" << udi;
 }
@@ -189,11 +193,82 @@ void KMixDeviceManager::unpluggedSlot(const QString &udi)
     if (devnum!=-1)
     {
         qCDebug(KMIX_LOG) << "Unplugged UDI" << udi;
-        const QString ourUDI = getUDI(devnum);
-        qCDebug(KMIX_LOG) << "-> our UDI" << ourUDI << "devnum" << devnum;
-        QTimer::singleShot(HOTPLUG_DELAY, [=](){ emit unplugged(ourUDI); });
-    }							// allow hotplug to settle
+
+        PendingFlags orig = mPendingMap[devnum];
+        mPendingMap[devnum] = orig|Unplugged;
+        // If there is a pending hotplug event (for the same device),
+        // then note this unplug as overriding it.
+        if (orig & (PluggedALSA|PluggedOSS)) mPendingMap[devnum] |= UnplugOverride;
+        //qCDebug(KMIX_LOG) << "  updated map [" << devnum << "]" << orig << "->" << mPendingMap[devnum];
+        mHotplugTimer->start();
+    }
     else qCDebug(KMIX_LOG) << "Ignored unrecognised UDI" << udi;
+}
+
+
+void KMixDeviceManager::slotTimer()
+{
+    qCDebug(KMIX_LOG) << mPendingMap.count()  << "pending events";
+    for (const int devnum : mPendingMap.keys())		// process each device by number
+    {
+        const PendingFlags ops = mPendingMap[devnum];	// pending operations for that device
+        qCDebug(KMIX_LOG) << "  " << devnum << "=>" << ops;
+
+        const QString ourUDI = getUDI(devnum);
+        qCDebug(KMIX_LOG) << "  our UDI" << ourUDI;
+
+        if (ops & Unplugged)				// device was unplugged
+        {
+            if (ops & UnplugOverride)			// soon after a hotplug,
+            {						// nothing more to do
+                qCDebug(KMIX_LOG) << "  unplug overrides hotplug, do nothing";
+                continue;
+            }
+
+            emit unplugged(ourUDI);			// action the unplug event
+        }
+
+        bool plugALSA = (ops & PluggedALSA);		// an ALSA device was hotplugged
+        bool plugOSS = (ops & PluggedOSS);		// an OSS device was hotplugged
+        if (plugALSA || plugOSS)			// either of them happened
+        {
+            QString backend;				// backend that will be used
+            if (plugALSA && plugOSS)
+            {
+                qCDebug(KMIX_LOG) << "  hotplug both ALSA and OSS";
+                // Look to see which backends are already in use, and choose
+                // one that is already being used with ALSA having priority.
+                if (MixerToolBox::backendPresent("ALSA")) plugOSS = false;
+                else if (MixerToolBox::backendPresent("OSS")) plugALSA = false;
+                else if (MixerToolBox::backendPresent("OSS4")) plugALSA = false;
+            }
+
+            // If there are existing backends in use, then ALSA or OSS should now
+            // have been resolved to match.  Even if that was not resolved above,
+            // select ALSA or OSS (with ALSA having priority) if the backend is
+            // available (that means supported by KMix, even if it is not currently
+            // in use).
+            if (plugALSA)
+            {
+                if (MixerToolBox::backendAvailable("ALSA")) backend = "ALSA";
+            }
+            else if (plugOSS)
+            {
+                if (MixerToolBox::backendAvailable("OSS")) backend = "OSS";
+                else if (MixerToolBox::backendAvailable("OSS4")) backend = "OSS4";
+            }
+
+            // If the backend has still not been resolved, then use the default
+            // preferred backend - which is the first "regular" backend which
+            // is supported.
+            if (backend.isEmpty()) backend = MixerToolBox::preferredBackend();
+
+            qCDebug(KMIX_LOG) << "  -> using backend" << backend;
+            emit plugged(backend.toLatin1(), ourUDI, devnum);
+        }
+    }
+
+    mPendingMap.clear();				// nothing more is pending
 }
 
 

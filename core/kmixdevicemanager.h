@@ -22,8 +22,11 @@
 #define KMIXDEVICEMANAGER_H
 
 #include <QObject>
+#include <QMap>
 
 #include "kmixcore_export.h"
+
+class QTimer;
 
 
 class KMIXCORE_EXPORT KMixDeviceManager : public QObject
@@ -42,13 +45,29 @@ class KMIXCORE_EXPORT KMixDeviceManager : public QObject
         void unplugged(const QString &udi);
 
     private:
+        // Used only in this class, but must be available here
+        // so that 'mPendingMap' can be defined below.
+        enum PendingFlag
+        {
+                PluggedALSA = 0x01,
+                PluggedOSS = 0x02,
+                Unplugged = 0x04,
+                UnplugOverride = 0x08
+        };
+        Q_DECLARE_FLAGS(PendingFlags, PendingFlag)
+
+    private:
         KMixDeviceManager() = default;
         virtual ~KMixDeviceManager() = default;
         QString _hotpluggingBackend;
-        
+        QTimer *mHotplugTimer;
+
+        QMap<int, PendingFlags> mPendingMap;
+
     private Q_SLOTS:
         void pluggedSlot(const QString &udi);
         void unpluggedSlot(const QString &udi);
+        void slotTimer();
 };
 
 #endif

@@ -542,7 +542,8 @@ bool MixerToolBox::pulseaudioPresent()
 
 
 /**
- * Check whether an instance of the specified backend is active.
+ * Check whether an instance of the specified backend is active:
+ * that is, whether any existing mixer is using this driver.
  *
  * @param driverName The driver name to check
  * @return @c true if at least one mixer using that backend is active
@@ -572,6 +573,25 @@ QString MixerToolBox::preferredBackend()
     }
 
     return (backendNameFor(0));				// very last resort fallback
+}
+
+
+/**
+ * Check whether the specified backend is available:  that is,
+ * if support for it is compiled into KMix.
+ *
+ * @param driverName The driver name to check
+ * @return @c true if the backend is available
+ */
+bool MixerToolBox::backendAvailable(const QString &driverName)
+{
+    for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
+    {
+        const QString name = backendNameFor(driverIndex);
+        if (name==driverName) return (true);
+    }
+
+    return (false);				// very last resort fallback
 }
 
 
