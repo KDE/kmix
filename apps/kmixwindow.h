@@ -91,7 +91,6 @@ private:
 
    bool m_startVisible;
    bool m_visibilityUpdateAllowed;
-   bool m_multiDriverMode;         // Not officially supported.
    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
 
    QTabWidget *m_wsMixers;
@@ -101,7 +100,6 @@ private:
 
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
-   QStringList m_backendFilter;
    unsigned int m_configVersion;
 
 private:

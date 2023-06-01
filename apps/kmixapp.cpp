@@ -29,6 +29,8 @@
 
 #include "kmix_debug.h"
 #include "core/ControlManager.h"
+#include "core/mixertoolbox.h"
+#include "core/volume.h"
 #include "apps/kmixwindow.h"
 #include "settings.h"
 
@@ -277,4 +279,38 @@ void KMixApp::parseOptions(const QCommandLineParser &parser)
 {
 	m_hasArgKeepvisibility = parser.isSet("keepvisibility");
 	m_hasArgReset = parser.isSet("failsafe");
+
+	// Hidden configuration settings which affect the entire application
+	// are also parsed and set here.  Therefore they do not need to be passed
+	// all the way down to KMixWindow only to eventually end up in the same
+	// place anyway.
+
+	// The match expression for ignored mixer names.
+	QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
+	if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
+
+	// The global volume step setting.
+	const int volumePercentageStep = Settings::volumePercentageStep();
+	if (volumePercentageStep>0) Volume::setVolumeStep(volumePercentageStep);
+
+	// The following log is very helpful in bug reports. Please keep it.
+	QStringList backendFilter = Settings::backends();
+	qCDebug(KMIX_LOG) << "Backends from settings =" << backendFilter;
+	if (parser.isSet("backends"))
+	{
+		// The command line option overrides the configured setting.
+		backendFilter = parser.value("backends").split(',');
+		qCDebug(KMIX_LOG) << "Backends from command line =" << backendFilter;
+	}
+	if (!backendFilter.isEmpty()) MixerToolBox::setAllowedBackends(backendFilter);
+
+	bool multiDriverMode = Settings::multiDriver();
+	qCDebug(KMIX_LOG) << "Multi driver mode from settings =" << multiDriverMode;
+	if (parser.isSet("multidriver"))
+	{
+		multiDriverMode = true;
+		qCDebug(KMIX_LOG) << "Multi driver mode from command line =" << multiDriverMode;
+	}
+
+	if (multiDriverMode) MixerToolBox::setMultiDriverMode(true);
 }

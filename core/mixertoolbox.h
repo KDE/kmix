@@ -41,7 +41,9 @@ class MixerBackend;
 
 namespace MixerToolBox
 {
-    KMIXCORE_EXPORT void initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug);
+    // Probe for all supported mixers at application startup.
+    KMIXCORE_EXPORT void initMixer(bool allowHotplug);
+    // Close and remove all of the mixers at application shutdown.
     KMIXCORE_EXPORT void deinitMixer();
 
     // Manage the global list of mixers, either at initialisation time
@@ -50,6 +52,8 @@ namespace MixerToolBox
     KMIXCORE_EXPORT void removeMixer(Mixer *mixer);
 
     // Matching of mixer names that should be ignored.
+    // Note that this is not the same as setAllowedBackends()
+    // which filters by backend name.
     KMIXCORE_EXPORT void setMixerIgnoreExpression(const QString &ignoreExpr);
     KMIXCORE_EXPORT QString mixerIgnoreExpression();
 
@@ -74,6 +78,26 @@ namespace MixerToolBox
 
     // Creating a mixer backend using the list of available backends.
     KMIXCORE_EXPORT MixerBackend *getBackendFor(const QString &backendName, int deviceIndex, Mixer *mixer);
+
+    // Set the mixer backends allowed to be used (for testing), formerly the
+    // second parameter passed to initMixer().  If this list is not empty
+    // then only those backends will be probed on startup or considered for
+    // hotplugging.  This is a global setting that affects the entire
+    // application, and is not the same as the ignored mixer names set by
+    // setMixerIgnoreExpression() above.
+    //
+    // The PulseAudio backend reads the KMIX_PULSEAUDIO_DISABLE environment
+    // variable which, if set, disables the PulseAudio mainloop connection.
+    // However, this backend list acts before that variable is checked -
+    // if it is not included in the list then the PulseAudio backend
+    // is not even considered.
+    KMIXCORE_EXPORT void setAllowedBackends(const QStringList &backends);
+
+    // The experimental multiple driver mode, formerly the first parameter
+    // passed to initMixer().  This is again a global setting that affects
+    // the entire application.
+    KMIXCORE_EXPORT void setMultiDriverMode(bool multiDriverMode);
+    KMIXCORE_EXPORT bool isMultiDriverMode();
 }
 
 #endif

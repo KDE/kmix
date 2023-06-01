@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
    parser.process(app);
 
    // create mixers
-   MixerToolBox::initMixer(false, QStringList(), false);
+   MixerToolBox::initMixer(false);
 
    // load volumes
    if ( parser.isSet("restore") )

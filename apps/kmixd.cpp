@@ -63,7 +63,7 @@ void KMixD::delayedInitialization()
     qCDebug(KMIX_LOG) << "Delayed initialization running now";
    //initActions(); // init actions first, so we can use them in the loadConfig() already
    loadConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
-   MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
+   MixerToolBox::initMixer(true);
 
    KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
    connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixD::plugged);
@@ -119,11 +119,11 @@ void KMixD::loadBaseConfig()
     QString mixerMasterCard = Settings::masterMixer();
     QString masterDev = Settings::masterMixerDevice();
     MixerToolBox::setGlobalMaster(mixerMasterCard, masterDev, true);
-    QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
-    if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
 
-    m_backendFilter = Settings::backends();
-    MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
+    const QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
+    if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
+    const QStringList allowedBackends = Settings::backends();
+    if (!allowedBackends.isEmpty()) MixerToolBox::setAllowedBackends(allowedBackends);
 }
 
 

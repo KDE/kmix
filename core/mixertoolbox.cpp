@@ -29,6 +29,8 @@
 
 
 static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
+static QStringList s_allowedBackends;
+static bool s_multiDriverFlag = false;			// never activate by accident!
 
 static QList<Mixer *> s_allMixers;
 
@@ -121,13 +123,19 @@ enum MultiDriverMode { SINGLE, SINGLE_PLUS_MPRIS2, MULTI };
 
 /**
  * Query the backend factory list for the backend name corresponding
- * to the specified @p driverIndex in the list.
+ * to the specified @p driverIndex in the list.  This also implements
+ * the allowed backend filtering and so may return a null string if
+ * the backend at the specified index is not to be used.
  *
- * @param driverIndex Index in list, 0 <= driver < numDrivers()
+ * @param driverIndex Index in list, 0 <= index < numBackends
+ * @param filter If @c false, ignore the allowed backend filter list
+ * @return the backend name, or a null string if that backend is filtered out
  */
-static QString backendNameFor(int driverIndex)
+static QString backendNameFor(int driverIndex, bool filter = true)
 {
-    return (g_mixerFactories[driverIndex].backendName);
+    const QString &name = g_mixerFactories[driverIndex].backendName;
+    if (filter && !s_allowedBackends.isEmpty() && !s_allowedBackends.contains(name, Qt::CaseInsensitive)) return (QString());
+    return (name);
 }
 
 
@@ -149,16 +157,13 @@ static QString backendNameFor(int driverIndex)
  * "regular" backend to use has been found.  @c SINGLE_PLUS_MPRIS2 is the same
  * as @c SINGLE but also accepts the MPRIS2 backend.
  *
- * @param backendList A list of allowed backends (typically a value from kmixrc or
- * a default).  A null list meanbs to accept any backend.
- *
- * @param hotplug Whether hotplugging is expected to happen for the detected backends.
+ * @param allowHotplug Whether hotplugging is expected to happen for the detected backends.
  * The KMix application and the KDED module set this to @c true, while kmixctrl
  * sets this to @c false because it is only a transient utility.
  */
-static void initMixerInternal(MultiDriverMode multiDriverMode, const QStringList &backendList, bool hotplug)
+static void initMixerInternal(MultiDriverMode multiDriverMode, bool allowHotplug)
 {  
-   bool useBackendFilter = ( ! backendList.isEmpty() );
+   const bool useBackendFilter = !s_allowedBackends.isEmpty();
    bool backendMprisFound = false; // only for SINGLE_PLUS_MPRIS2
    bool regularBackendFound = false; // only for SINGLE_PLUS_MPRIS2
 
@@ -170,21 +175,24 @@ case SINGLE_PLUS_MPRIS2:	multiModeString = "SINGLE_PLUS_MPRIS2";			break;
 case MULTI:			multiModeString = "MULTI";				break;
 default:			multiModeString = QByteArray::number(multiDriverMode);	break;
    }
-   qCDebug(KMIX_LOG) << "multiDriverMode" << qPrintable(multiModeString) << "backendList" << backendList;
+   qCDebug(KMIX_LOG) << "multiDriverMode -" << qPrintable(multiModeString);
 
    // Find all mixers and initialize them
 
    int driverWithMixer = -1;
    bool multipleDriversActive = false;
 
-   QString driverInfo;
+   QStringList allDrivers;
+   QStringList allowedDrivers;
    for (int drv = 0; drv<numBackends; ++drv)
    {
-       const QString driverName = backendNameFor(drv);
-       if (!driverInfo.isEmpty()) driverInfo += QStringLiteral(",");
-       driverInfo += driverName;
+       allDrivers.append(backendNameFor(drv, false));
+       const QString &name = backendNameFor(drv);
+       if (!name.isEmpty()) allowedDrivers.append(name);
    }
-   qCDebug(KMIX_LOG) << "Sound drivers supported -" << qPrintable(driverInfo);
+
+   qCDebug(KMIX_LOG) << "Sound drivers supported -" << qPrintable(allDrivers.join(','));
+   if (allowedDrivers.count()<allDrivers.count()) qCDebug(KMIX_LOG) << "Sound drivers allowed -" << qPrintable(allowedDrivers.join(','));
 
    /* Run a loop over all drivers. The loop will terminate after the first driver which
       has mixers. And here is the reason:
@@ -200,7 +208,7 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
       */
    
    bool autodetectionFinished = false;
-   QString driverInfoUsed;
+   QStringList driverInfoUsed;
 
    for (int drv = 0; drv<numBackends; ++drv)
    {
@@ -210,16 +218,14 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
          break;
       }
 
-      QString driverName = backendNameFor(drv);
-      qCDebug(KMIX_LOG) << "Looking for mixers with the" << driverName << "driver";
-
-      if ( useBackendFilter && ! backendList.contains(driverName) )
+      const QString driverName = backendNameFor(drv);
+      if (driverName.isEmpty())
       {
-	  qCDebug(KMIX_LOG) << "Ignored" << driverName << "- filtered by backend list";
+	  qCDebug(KMIX_LOG) << "Ignored" << backendNameFor(drv, false) << "- filtered";
 	  continue;
       }
 
-      bool regularBackend =  driverName != QLatin1String("MPRIS2")  && driverName != QLatin1String("PulseAudio");
+      const bool regularBackend = driverName!=QLatin1String("MPRIS2") && driverName!=QLatin1String("PulseAudio");
       if (regularBackend && regularBackendFound)
       {
 	  qCDebug(KMIX_LOG) << "Ignored" << driverName << "- regular backend already found";
@@ -227,6 +233,8 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
     	  continue;
       }
    
+      qCDebug(KMIX_LOG) << "Looking for mixers with the" << driverName << "driver";
+
       bool drvInfoAppended = false;
       // The "19" below is just a "silly" number:
       // (Old: The loop will break as soon as an error is detected - e.g. on 3rd loop when 2 soundcards are installed)
@@ -295,8 +303,7 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
             if ( !drvInfoAppended )
             {
                drvInfoAppended = true;
-               if (s_allMixers.count()>1) driverInfoUsed += ",";
-               driverInfoUsed += driverName;
+               driverInfoUsed.append(driverName);
             }
 
             // Check whether there are mixers in different drivers, so that the user can be warned
@@ -343,13 +350,13 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
       md->mixer()->setLocalMasterMD(mdID);
    }
 
-   if (s_allMixers.isEmpty())
+   qCDebug(KMIX_LOG) << "Sound drivers used -" << qPrintable(driverInfoUsed.join(','));
+   if (driverInfoUsed.isEmpty())
    {
-       // If there was no mixer found, we assume, that hotplugging will take place
+       // If there no mixers were found, we assume, that hotplugging will take place
        // on the preferred driver (which is always the first in the backend list).
-       driverInfoUsed = MixerToolBox::preferredBackend();
+       driverInfoUsed.append(MixerToolBox::preferredBackend());
    }
-   qCDebug(KMIX_LOG) << "Sound drivers used -" << qPrintable(driverInfoUsed);
 
    if (multipleDriversActive)
    {
@@ -363,31 +370,21 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
        //   this will only be possible by hacking the config-file,
        //   as it will not be officially supported
        qCDebug(KMIX_LOG) << "Experimental multiple-driver mode activated";
-       if (hotplug) KMixDeviceManager::instance()->setHotpluggingBackends("*");
+       if (allowHotplug) KMixDeviceManager::instance()->setHotpluggingBackends("*");
    }
    else
    {
-       if (hotplug) KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed);
+       if (allowHotplug) KMixDeviceManager::instance()->setHotpluggingBackends(driverInfoUsed.first());
    }
 
    qCDebug(KMIX_LOG) << "Total detected mixers" << s_allMixers.count();
 }
 
 
-static void initMixer(MultiDriverMode multiDriverMode, const QStringList &backendList, bool hotplug)
+void MixerToolBox::initMixer(bool allowHotplug)
 {
-    initMixerInternal(multiDriverMode, backendList, hotplug);
-    if (s_allMixers.isEmpty())				// failed to find any mixers,
-    {							// try again without filter
-        initMixerInternal(multiDriverMode, QStringList(), hotplug);
-    }
-}
-
-
-void MixerToolBox::initMixer(bool multiDriverFlag, const QStringList &backendList, bool hotplug)
-{
-    MultiDriverMode multiDriverMode = multiDriverFlag ?  MULTI : SINGLE_PLUS_MPRIS2;
-    initMixer(multiDriverMode, backendList, hotplug);
+    const MultiDriverMode multiDriverMode = s_multiDriverFlag ?  MULTI : SINGLE_PLUS_MPRIS2;
+    initMixerInternal(multiDriverMode, allowHotplug);
 }
 
 
@@ -636,7 +633,7 @@ bool MixerToolBox::backendPresent(const QString &driverName)
 
 
 /**
- * The preferred fallback backend name if none could be found during
+ * The preferred fallback backend name, if none could be found during
  * the initial scan.  This is the first in the backend list which is
  * not PulseAudio.
  */
@@ -644,8 +641,9 @@ QString MixerToolBox::preferredBackend()
 {
     for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
     {
-        const QString name = backendNameFor(driverIndex);
-        if (name!="PulseAudio") return (name);
+        const QString &name = backendNameFor(driverIndex);
+        if (name.isEmpty()) continue;			// backend name is filtered out
+        if (name!="PulseAudio") return (name);		// acceptable name
     }
 
     return (backendNameFor(0));				// very last resort fallback
@@ -663,8 +661,8 @@ bool MixerToolBox::backendAvailable(const QString &driverName)
 {
     for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
     {
-        const QString name = backendNameFor(driverIndex);
-        if (name==driverName) return (true);
+        const QString &name = backendNameFor(driverIndex);
+        if (!name.isEmpty() && name==driverName) return (true);
     }
 
     return (false);				// very last resort fallback
@@ -679,8 +677,8 @@ MixerBackend *MixerToolBox::getBackendFor(const QString &backendName, int device
 {
     for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
     {
-        const QString name = backendNameFor(driverIndex);
-        if (name==backendName)				// look for backend with that name
+        const QString &name = backendNameFor(driverIndex);
+        if (!name.isEmpty() && name==backendName)	// look for backend with that name
         {
             // Retrieve the mixer factory for that backend and use it
             getMixerFunc *f = g_mixerFactories[driverIndex].getMixer;
@@ -691,4 +689,24 @@ MixerBackend *MixerToolBox::getBackendFor(const QString &backendName, int device
 
     qCWarning(KMIX_LOG) << "No backend available for" << backendName;
     return (nullptr);					// no such backend found
+}
+
+
+void MixerToolBox::setAllowedBackends(const QStringList &backends)
+{
+    qCDebug(KMIX_LOG) << backends;
+    s_allowedBackends = backends;
+}
+
+
+void MixerToolBox::setMultiDriverMode(bool multiDriverMode)
+{
+    qCDebug(KMIX_LOG) << multiDriverMode;
+    s_multiDriverFlag = multiDriverMode;
+}
+
+
+bool MixerToolBox::isMultiDriverMode()
+{
+    return (s_multiDriverFlag);
 }

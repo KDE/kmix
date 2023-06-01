@@ -62,7 +62,6 @@
 
 KMixWindow::KMixWindow(bool invisible, bool reset) :
 		KXmlGuiWindow(nullptr, Qt::WindowFlags(KDE_DEFAULT_WINDOWFLAGS|Qt::WindowContextHelpButtonHint)),
-		m_multiDriverMode(false), // -<- I never-ever want the multi-drivermode to be activated by accident
 		m_autouseMultimediaKeys(true),
 		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
 {
@@ -78,7 +77,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	initWidgets();
 	initPrefDlg();
 	DBusMixSetWrapper::initialize(this, QStringLiteral("/Mixers"));
-	MixerToolBox::initMixer(m_multiDriverMode, m_backendFilter, true);
+	MixerToolBox::initMixer(true); // with hotplugging enabled
 	initActionsAfterInitMixer(); // init actions that require initialized mixer backend(s).
 
 	recreateGUI(false, reset);
@@ -268,7 +267,7 @@ void KMixWindow::initActionsAfterInitMixer()
 	//
 	// This is assumed to be be required, though, in the experimental and
 	// untested multi-driver mode.
-	if (!MixerToolBox::pulseaudioPresent() || m_multiDriverMode)
+	if (!MixerToolBox::pulseaudioPresent() || MixerToolBox::isMultiDriverMode())
 	{
 		KMixDeviceManager *theKMixDeviceManager = KMixDeviceManager::instance();
 		connect(theKMixDeviceManager, &KMixDeviceManager::plugged, this, &KMixWindow::plugged);
@@ -378,8 +377,9 @@ void KMixWindow::saveBaseConfig()
 	Settings::setMasterMixer(master.getCard());
 	Settings::setMasterMixerDevice(master.getControl());
 
-	const QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
-	Settings::setMixerIgnoreExpression(mixerIgnoreExpression);
+	// There is no point in saving this, it cannot be changed within KMix.
+	//const QString mixerIgnoreExpression = MixerToolBox::mixerIgnoreExpression();
+	//Settings::setMixerIgnoreExpression(mixerIgnoreExpression);
 
 	Settings::self()->save();
 	qCDebug(KMIX_LOG) << "Base configuration saved";
@@ -473,7 +473,6 @@ void KMixWindow::loadAndInitConfig(bool reset)
 void KMixWindow::loadBaseConfig()
 {
 	m_startVisible = Settings::visible();
-	m_multiDriverMode = Settings::multiDriver();
 	m_defaultCardOnStart = Settings::defaultCardOnStart();
 	m_configVersion = Settings::configVersion();
 	// WARNING Don't overwrite m_configVersion with the "correct" value, before having it
@@ -482,18 +481,6 @@ void KMixWindow::loadBaseConfig()
 	QString mixerMasterCard = Settings::masterMixer();
 	QString masterDev = Settings::masterMixerDevice();
 	MixerToolBox::setGlobalMaster(mixerMasterCard, masterDev, true);
-
-	QString mixerIgnoreExpression = Settings::mixerIgnoreExpression();
-	if (!mixerIgnoreExpression.isEmpty()) MixerToolBox::setMixerIgnoreExpression(mixerIgnoreExpression);
-
-	// The global volume step setting.
-	const int volumePercentageStep = Settings::volumePercentageStep();
-	if (volumePercentageStep>0) Volume::setVolumeStep(volumePercentageStep);
-
-	// The following log is very helpful in bug reports. Please keep it.
-	m_backendFilter = Settings::backends();
-	qCDebug(KMIX_LOG) << "Backends from settings =" << m_backendFilter;
-	qCDebug(KMIX_LOG) << "Multi driver mode from settings =" << m_multiDriverMode;
 
 	// show/hide menu bar
 	bool showMenubar = Settings::menubar();

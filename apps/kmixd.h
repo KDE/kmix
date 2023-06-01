@@ -51,7 +51,6 @@ KMixD : public KDEDModule, protected QDBusContext
 
   private:
    bool m_multiDriverMode;
-   QList<QString> m_backendFilter;
 
   private slots:
    void delayedInitialization();
