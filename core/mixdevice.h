@@ -141,7 +141,15 @@ public:
     * The ID is used through the whole KMix application (including the config file) for identifying controls.
     */
    const QString &id() const				{ return (_id); }
-   QString fullyQualifiedId() const;
+
+   /**
+    * The hardware ID of the MixDevice is used as the Canberra device ID
+    * for playing the volume feedback.  Its format depends on the backend
+    * and should not otherwise be interpreted or assumed to be in any
+    * particular format.
+    */
+   const QByteArray &hardwareId() const				{ return (mHardwareId); }
+   void setHardwareId(const QByteArray &hid)			{ mHardwareId = hid; }
 
    /**
     * Returns the DBus path for this MixDevice
@@ -237,6 +245,8 @@ private:
 
    void readPlaybackOrCapture(const KConfigGroup& config, bool capture);
    void writePlaybackOrCapture(KConfigGroup& config, bool capture);
+
+   QByteArray mHardwareId;
 };
 
 #endif

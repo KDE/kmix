@@ -38,6 +38,8 @@ extern "C"
 #include <canberra.h>
 }
 
+#undef DEBUG_CANBERRA
+
 // The Canberra API is described at
 // https://developer.gnome.org/libcanberra/unstable/libcanberra-canberra.html
 
@@ -58,7 +60,7 @@ VolumeFeedback::VolumeFeedback()
 	int ret = ca_context_create(&m_ccontext);
 	if (ret<0)
 	{
-                qCDebug(KMIX_LOG) << "Canberra context create failed, volume feedback unavailable - " << ca_strerror(ret);
+                qCDebug(KMIX_LOG) << "Canberra context create failed, volume feedback unavailable -" << ca_strerror(ret);
                 m_ccontext = nullptr;
 		return;
 	}
@@ -181,24 +183,50 @@ void VolumeFeedback::masterChanged()
 					       "VolumeFeedback (volume)");	// source ID
 
 	// Set the Canberra driver to match the master device.
-	// I can't seem to find any documentation on the driver
-	// names that are supported, so this is just a guess based
-	// on the name set by original PulseAudio implementation.
+	// There is no actual documentation on the driver names that
+	// are supported, so these are just guessed based on the name
+	// set by the original feedback implementation (which was only
+	// for PulseAudio) and the Canberra source file 'src/driver-order.c'.
+	//
+	// Note that Canberra does not recommended the use of OSS, because
+	// the sound device may not support the sound file format in use.
+	// In particular, the standard freedesktop sound theme provides
+	// sound files in Ogg Vorbis format - which, however, Canberra does
+	// actually seem to be able to play through OSS.
 	QString driver = globalMaster->getDriverName().toLower();
 	if (driver=="pulseaudio") driver = "pulse";
+	// OSS 4 may not be fully supported, see "Current Status"
+	// in http://0pointer.de/lennart/projects/libcanberra
+	else if (driver=="oss4") driver = "oss";
 	qCDebug(KMIX_LOG) << "Setting Canberra driver to" << driver;
 	ca_context_set_driver(m_ccontext, driver.toLocal8Bit());
 
-	// Similarly, this is just a guess based on the existing
-	// PulseAudio and ALSA support.  All existing backends
-	// set the UDI to the equivalent of the hardware device
-	// name.
-	QString device = globalMaster->udi();
-	if (!device.isEmpty())
-	{
-		qCDebug(KMIX_LOG) << "Setting Canberra device to" << device;
-		ca_context_change_device(m_ccontext, device.toLocal8Bit());
-	}
+	// The device name expected is again not actually documented and so
+	// these values have been obtained from the Canberra source.
+	//
+	// ALSA: the name is passed to snd_pcm_open() by open_alsa()
+	// in 'src/alsa.c' and is therefore assumed to be of the form
+	// "hw:devnum,index".
+	//
+	// PulseAudio: the name is passed to pa_stream_connect_playback()
+	// or pa_context_play_sample_with_proplist() by driver_play() in
+	// 'src/pulse.c' and is therefore in the same format as the MixDevice
+	// ID that was set during construction.  However, the original
+	// volume feedback implementation passed a numeric index (as a
+	// string) here.
+	//
+	// OSS: the name is open()'ed by open_oss() in 'src/oss.c' and seems
+	// to be expected to be the "dsp" device node numbered the same as the
+	// "mixer" device node.
+	//
+	// OSS4: the name format is unknown, so just use the default device.
+	//
+	// The Canberra device is set to NULL if it is blank, then the driver
+	// default will be used.  Passing a temporary string works, because
+	// Canberra duplicates it.
+	QByteArray device = md->hardwareId();
+	qCDebug(KMIX_LOG) << "Setting Canberra device to" << device;
+	ca_context_change_device(m_ccontext, (!device.isEmpty() ? device : nullptr));
 
 	m_currentVolume = -1;				// always make a sound after change
 	controlsChange(ControlManager::Volume);		// simulate a volume change
@@ -243,7 +271,7 @@ void VolumeFeedback::slotPlayFeedback()
 		// have already been done in masterChanged() above.
 
 		// Ideally we'd use something like ca_gtk_play_for_widget()...
-		ca_context_play(
+		int status = ca_context_play(
 			m_ccontext,
 			cindex,
 			CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
@@ -251,7 +279,9 @@ void VolumeFeedback::slotPlayFeedback()
 			CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
 			CA_PROP_CANBERRA_ENABLE, "1",
 			nullptr);
-
-		ca_context_change_device(m_ccontext, nullptr);
+#ifdef DEBUG_CANBERRA
+		if (status<0) qCDebug(KMIX_LOG) << "ca_context_play status" << status
+						 << "-" << ca_strerror(status);
+#endif
 	}
 }

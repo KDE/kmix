@@ -227,6 +227,7 @@ protected:
 
 protected slots:
   virtual void readSetFromHW();
+
 private:
   QTime _fastPollingEndsAt;
   QString m_mixerName;

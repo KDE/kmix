@@ -186,6 +186,11 @@ int Mixer_OSS::open()
             MixDevice *md = new MixDevice(_mixer, id, MixerDevNames[idx].toString(), MixerChannelTypes[idx]);
             md->addPlaybackVolume(playbackVol);
 
+            QByteArray dspName = finalDeviceName.toLocal8Bit();
+            // The DSP device with the same number as the mixer device.
+            dspName.replace("/mixer", "/dsp");
+            md->setHardwareId(dspName);
+
             // Tutorial: Howto add a simple capture switch
             if (recmask & (1 << idx)) {
                 // can be captured => add capture volume, with no capture volume
@@ -235,9 +240,8 @@ QString Mixer_OSS::deviceNameDevfs(int devnum)
         break;
 
     default:
-        QString devname("/dev/sound/mixer");
-        devname += ('0' + devnum);
-        return devname;
+        QString devname("/dev/sound/mixer%1");
+        return devname.arg(devnum);
     }
 }
 

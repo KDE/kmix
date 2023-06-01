@@ -908,8 +908,9 @@ bool Mixer_PULSE::addDevice(devinfo& dev, bool isAppStream)
     v.addVolumeChannels(dev.chanMask);
     setVolumeFromPulse(v, dev);
 
-    MixDevice* md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
+    MixDevice *md = new MixDevice( _mixer, dev.name, dev.description, dev.icon_name, ms);
     if (isAppStream) md->setApplicationStream(true);
+    md->setHardwareId(md->id().toLocal8Bit());
 
     //qCDebug(KMIX_LOG) << "Adding Pulse volume" << dev.name
     //                  << "isCapture" << isCapture

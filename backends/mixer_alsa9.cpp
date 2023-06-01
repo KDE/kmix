@@ -197,8 +197,8 @@ int Mixer_ALSA::open()
         mixer_sid_list.append( sid );
         idx++;
 
-
-        MixDevice* mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
+        MixDevice *mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
+        mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum)+","+QByteArray::number(idx));
 
         if ( volPlay    != 0      )
         {
