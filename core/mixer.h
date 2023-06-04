@@ -128,13 +128,27 @@ public:
     int getCardInstance() const      		{ return _mixerBackend->getCardInstance(); }
     shared_ptr<MixDevice> recommendedMaster()	{ return (_mixerBackend->recommendedMaster()); }
 
-    /// Returns an Universal Device Identification of the Mixer. This is an ID that relates to the underlying operating system.
-    // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
-    // Examples:
-    // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
-    // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
-    // Solaris: /dev/audio
-    const QString &udi() const			{ return _mixerBackend->udi(); }
+    /**
+     * Identifying the mixer for hotplugging.  This is an ID that corresponds
+     * to the underlying operating system device identifier.  It was formerly
+     * referred to internally to KMix as a "UDI", although that was not the same
+     * as the external OS UDI and was confusing.
+     *
+     * For OSS and ALSA this is the Solid UDI.  Since a single card can have multiple
+     * Solid UDIs corresponding to separate interfaces of a card (e.g. for ALSA the
+     * control device and the PCM devices), this is filtered in the backend to be
+     * the UDI for the most closely associated device.  So for ALSA this should be
+     * the UDI for the "control" device and for OSS the UDI for the "mixer".
+     *
+     * For Solaris this is just the device name ("/dev/audioN"), although it is not
+     * certain that hotplugging of sound devices is supported on that venerable OS.
+     *
+     * Note:  Formerly this was a property of the mixer backend, but the backend
+     * knows or performs nothing associated with hotplugging so it is here as a
+     * property of the mixer instead.
+     */
+    const QString &hotplugId() const			{ return (m_hotplugId); }
+    void setHotplugId(const QString &id)		{ m_hotplugId = id; }
 
     // Returns a DBus path for this mixer
     // Used also by MixDevice to bind to this path
@@ -193,6 +207,8 @@ private:
     QString _masterDevicePK;
     int m_balance; // from -100 (just left) to 100 (just right)
     bool m_dynamic;
+
+    QString m_hotplugId;				// UDI for hotplugging
 };
 
 #endif

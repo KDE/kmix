@@ -128,9 +128,6 @@ int Mixer_ALSA::open()
     err = openAlsaDevice(m_deviceName);
     if (err!=0) return (err);
 
-    _udi = KMixDeviceManager::instance()->getUDI(m_devnum);	// should always succeed
-    if (_udi.isEmpty()) qCDebug(KMIX_LOG) << "No UDI for" << m_deviceName<< "- hotplugging not possible";
-
     // Run a loop over all controls of the card
     unsigned int idx = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ) )
@@ -976,4 +973,21 @@ const char *ALSA_driverName = "ALSA";
 QString Mixer_ALSA::getDriverName()
 {
     return (ALSA_driverName);
+}
+
+
+int ALSA_acceptsHotplugId(const QString &id)
+{
+    // The Solid device UDIs for a plugged ALSA sound card are of the form:
+    //
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:13.2/usb2/2-4/2-4.1/2-4.1:1.0/sound/card3
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:13.2/usb2/2-4/2-4.1/2-4.1:1.0/sound/card3/pcmC3D0p
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:13.2/usb2/2-1/2-1.3/2-1.3:1.0/sound/card3/controlC3
+    //
+    // The "control" one of these is taken as the canonical form.  The "card" and
+    // "control" numbers are assumed to be the same, but this is not checked.
+
+    QRegExp rx("/card(\\d+)/controlC(\\d+)$");		// match sound card control device
+    if (!id.contains(rx)) return (-1);			// UDI not recognised
+    return (rx.cap(2).toInt());				// assume conversion succeeds
 }

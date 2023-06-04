@@ -144,9 +144,6 @@ int Mixer_OSS::open()
         }
     }
 
-    _udi = KMixDeviceManager::instance()->getUDI(m_devnum);	// should always succeed
-    if (_udi.isEmpty()) qCDebug(KMIX_LOG) << "No UDI for" << finalDeviceName<< "- hotplugging not possible";
-
     // Register the card now, so that it will have an ID set.  The loop
     // below requires it.  If it is not done here then there will be an
     // "Emergency ID created" message from Mixer::dbusPath() which is
@@ -471,4 +468,21 @@ const char *OSS_driverName = "OSS";
 QString Mixer_OSS::getDriverName()
 {
     return (OSS_driverName);
+}
+
+
+int OSS_acceptsHotplugId(const QString &id)
+{
+    // The Solid device UDIs for a plugged OSS sound card are of the form:
+    //
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/mixer4
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/pcm4
+    //
+    // The "mixer" one of these is taken as the canonical form.  The "card" and
+    // "mixer" numbers are assumed to be the same, but this is not checked.
+
+    QRegExp rx("/card(\\d+)/mixer(\\d+)$");		// match sound card mixer device
+    if (!id.contains(rx)) return (-1);			// UDI not recognised
+    return (rx.cap(2).toInt());				// assume conversion succeeds
 }

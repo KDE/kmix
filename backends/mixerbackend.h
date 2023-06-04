@@ -19,8 +19,8 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
  
-#ifndef MIXER_BACKEND_H
-#define MIXER_BACKEND_H
+#ifndef MIXERBACKEND_H
+#define MIXERBACKEND_H
 
 #include <QString>
 #include <QTime>
@@ -34,11 +34,11 @@ class Mixer;
 
 class MixerBackend : public QObject
 {
-      Q_OBJECT
+  Q_OBJECT
 
-friend class Mixer;
+  // The MixerBackend may only be accessed via the Mixer class.
+  friend class Mixer;
 
-// The Mixer Backend's may only be accessed from the Mixer class.
 protected:
   MixerBackend(Mixer *mixer, int devnum);
   virtual ~MixerBackend();
@@ -49,6 +49,9 @@ protected:
    * @return a KMix error code (O=OK).
    */
   virtual int open() = 0;
+
+    // TODO: this comment is wrong, shutdown() does not exist.
+    // Do they mean closeCommon()?
   /**
    * Derived classes MUST implement this to close the mixer. Do not call this directly, but use shutdown() instead.
    * The method cannot be made pure virtual, as we use close() in the destructor, and C++ does not allow this.
@@ -121,11 +124,9 @@ protected:
    */
   virtual QString errorText(int mixer_error);
 
+    // TODO: incorporated included source file into .cpp
   /// Returns translated WhatsThis messages for a control.Translates from
   virtual QString translateKernelToWhatsthis(const QString &kernelName);
-
-   // Return an Universal Device Identification (suitable for the OS, especially for Hotplug and Unplug events)
-   virtual QString& udi() { return _udi; };
 
   int m_devnum;
   /**
@@ -152,11 +153,12 @@ protected:
    // so that was 'wrong' anyhow
   Mixer* _mixer;
   QTimer* _pollingTimer;
-  QString _udi;  // Universal Device Identification
 
+    // TODO: not used by any subclass, can be private
   mutable bool _readSetFromHWforceUpdate;
 
 signals:
+    // TODO: does not appear to be used
   void controlChanged( void ); // TODO remove?
 
 public slots:
@@ -168,6 +170,7 @@ public slots:
 protected:
   void freeMixDevices();
 
+    // TODO: not used by any subclass, can be private
   QMap<QString,int> s_mixerNums;
 
 	/**
@@ -221,6 +224,7 @@ protected:
 	  }
   }
 
+    // TODO: not used by any subclass, can be private
   int    _cardInstance;
   bool _cardRegistered;
 

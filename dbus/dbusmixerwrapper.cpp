@@ -123,7 +123,7 @@ QString DBusMixerWrapper::id()
 
 QString DBusMixerWrapper::udi()
 {
-	return m_mixer->udi();
+	return m_mixer->hotplugId();
 }
 
 void DBusMixerWrapper::refreshVolumeLevels()

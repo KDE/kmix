@@ -821,17 +821,17 @@ void KMixWindow::fixConfigAfterRead()
 
 void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 {
-	qCDebug(KMIX_LOG) << "dev" << dev << "driver" << driverName << "udi" << udi;
+	qCDebug(KMIX_LOG) << "driver" << driverName << "dev" << dev << "UDI" << udi;
 	Mixer *mixer = new Mixer(QString::fromLocal8Bit(driverName), dev);
-	if (mixer!=nullptr)
+	if (mixer==nullptr) return;
+
+	mixer->setHotplugId(udi);			// record UDI for unplugging
+	if (MixerToolBox::possiblyAddMixer(mixer))
 	{
-		if (MixerToolBox::possiblyAddMixer(mixer))
-		{
-			qCDebug(KMIX_LOG) << "adding mixer id" << mixer->id() << "name" << mixer->readableName();
-			recreateGUI(true, mixer->id(), true, false);
-		}
-		else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
+		qCDebug(KMIX_LOG) << "adding mixer id" << mixer->id() << mixer->readableName();
+		recreateGUI(true, mixer->id(), true, false);
 	}
+	else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
 }
 
 
@@ -844,7 +844,7 @@ void KMixWindow::unplugged(const QString &udi)
 	Mixer *unpluggedMixer = nullptr;
 	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
-		if (mixer->udi()==udi)
+		if (mixer->hotplugId()==udi)
 		{
 			unpluggedMixer = mixer;
 			break;
@@ -853,7 +853,7 @@ void KMixWindow::unplugged(const QString &udi)
 
 	if (unpluggedMixer==nullptr)
 	{
-		qCDebug(KMIX_LOG) << "No mixer with that UDI";
+		qCDebug(KMIX_LOG) << "No mixer present with that UDI";
 		return;
 	}
 

@@ -152,7 +152,7 @@ void KMixD::unplugged(const QString &udi)
 	Mixer *unpluggedMixer = nullptr;
 	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
-		if (mixer->udi()==udi)
+		if (mixer->hotplugId()==udi)
 		{
 			unpluggedMixer = mixer;
 			break;

@@ -73,7 +73,6 @@ namespace MixerToolBox
     KMIXCORE_EXPORT bool dynamicBackendsPresent();
     KMIXCORE_EXPORT bool pulseaudioPresent();
     KMIXCORE_EXPORT bool backendPresent(const QString &driverName);
-    KMIXCORE_EXPORT bool backendAvailable(const QString &driverName);
     KMIXCORE_EXPORT QString preferredBackend();
 
     // Creating a mixer backend using the list of available backends.
@@ -98,6 +97,13 @@ namespace MixerToolBox
     // the entire application.
     KMIXCORE_EXPORT void setMultiDriverMode(bool multiDriverMode);
     KMIXCORE_EXPORT bool isMultiDriverMode();
+
+    // Quickly check whether a Solid UDI is likely to be of interest.
+    KMIXCORE_EXPORT bool isSoundDevice(const QString &udi);
+
+    // Check whether a hotplug ID (for systems that support it, a Solid UDI)
+    // is recognised by any backend.
+    KMIXCORE_EXPORT QPair<QString,int> acceptsHotplugId(const QString &id);
 }
 
 #endif
