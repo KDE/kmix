@@ -991,3 +991,12 @@ int ALSA_acceptsHotplugId(const QString &id)
     if (!id.contains(rx)) return (-1);			// UDI not recognised
     return (rx.cap(2).toInt());				// assume conversion succeeds
 }
+
+
+bool ALSA_acceptsDeviceNode(const QString &blkdev, int devnum)
+{
+    // The primary ALSA device is "/dev/snd/controlC<N>" which corresponds to
+    // the "control" UDI as above.
+    const QString dev = "/dev/snd/controlC"+QString::number(devnum);
+    return (blkdev==dev);
+}

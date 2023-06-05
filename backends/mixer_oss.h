@@ -42,9 +42,6 @@ protected:
     int open() override;
     int close() override;
 
-    virtual QString deviceName(int);
-    virtual QString deviceNameDevfs(int);
-
 private:
     int m_fd;
     QString m_deviceName;

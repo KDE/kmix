@@ -125,6 +125,19 @@ Mixer_OSS::~Mixer_OSS()
     close();
 }
 
+
+static QString deviceName(int devnum)
+{
+    return (QString("/dev/mixer%1").arg(devnum==0 ? "" : QString::number(devnum)));
+}
+
+
+static QString deviceNameDevfs(int devnum)
+{
+    return (QString("/dev/sound/mixer%1").arg(devnum==0 ? "" : QString::number(devnum)));
+}
+
+
 int Mixer_OSS::open()
 {
     QString finalDeviceName;
@@ -216,31 +229,6 @@ int Mixer_OSS::close()
     return l_i_ret;
 }
 
-QString Mixer_OSS::deviceName(int devnum)
-{
-    switch (devnum) {
-    case 0:
-        return QString("/dev/mixer");
-        break;
-
-    default:
-        QString devname("/dev/mixer%1");
-        return devname.arg(devnum);
-    }
-}
-
-QString Mixer_OSS::deviceNameDevfs(int devnum)
-{
-    switch (devnum) {
-    case 0:
-        return QString("/dev/sound/mixer");
-        break;
-
-    default:
-        QString devname("/dev/sound/mixer%1");
-        return devname.arg(devnum);
-    }
-}
 
 QString Mixer_OSS::errorText(int mixer_error)
 {
@@ -485,4 +473,12 @@ int OSS_acceptsHotplugId(const QString &id)
     QRegExp rx("/card(\\d+)/mixer(\\d+)$");		// match sound card mixer device
     if (!id.contains(rx)) return (-1);			// UDI not recognised
     return (rx.cap(2).toInt());				// assume conversion succeeds
+}
+
+
+bool OSS_acceptsDeviceNode(const QString &blkdev, int devnum)
+{
+    // The primary OSS device is "/dev/mixer[N]" which corresponds to
+    // the "mixer" UDI as above.
+    return (blkdev==deviceName(devnum) || blkdev==deviceNameDevfs(devnum));
 }

@@ -33,6 +33,14 @@
 
 static const int HOTPLUG_DELAY = 1000;			// settling delay, milliseconds
 
+/**
+ * Most of the hotplugging logic is now elsewhere:  MixerToolBox handles verification
+ * of plugged/unplugged UDIs and their association with a backend, while KMixWindow
+ * actions the actual adding or removing of the mixer as appropriate.  However, this
+ * still needs to be a class (MixerToolBox is not) so that it can receive the
+ * signals from Solid.
+ */
+
 
 KMixDeviceManager *KMixDeviceManager::instance()
 {

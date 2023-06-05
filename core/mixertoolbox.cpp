@@ -27,8 +27,12 @@
 #include "core/kmixdevicemanager.h"
 #include "core/mixdevice.h"
 
+#include <solid/device.h>
+#include <solid/block.h>
+
 
 static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
+
 static QStringList s_allowedBackends;			// filter for enabled backends
 static QString s_hotplugBackend;			// backend for hotplug events
 static bool s_multiDriverFlag = false;			// never activate by accident!
@@ -54,6 +58,7 @@ extern const char *MPRIS2_driverName;
 #ifdef HAVE_ALSA_MIXER
 extern MixerBackend *ALSA_getMixer(Mixer *mixer, int deviceIndex);
 extern int ALSA_acceptsHotplugId(const QString &id);
+extern bool ALSA_acceptsDeviceNode(const QString &blkdev, int devnum);
 extern const char *ALSA_driverName;
 #endif
 
@@ -65,6 +70,7 @@ extern const char *PULSE_driverName;
 #ifdef HAVE_OSS_3
 extern MixerBackend *OSS_getMixer(Mixer *mixer, int deviceIndex);
 extern int OSS_acceptsHotplugId(const QString &id);
+extern bool OSS_acceptsDeviceNode(const QString &blkdev, int devnum);
 extern const char *OSS_driverName;
 #endif
 
@@ -98,6 +104,18 @@ typedef MixerBackend *getMixerFuncType(Mixer *mixer, int device);
 typedef int acceptsHotplugIdFuncType(const QString &id);
 
 /**
+ * Function type to check whether a device node is recognised
+ * by a backend.
+ *
+ * @param blkdev The device node path, normally a character device
+ * (althougn Solid calls it a block device)
+ * @param devnum The device instance number
+ * @return @c true if the device is recognised and matches the
+ * device instance number.
+ */
+typedef bool acceptsDeviceNodeFuncType(const QString &blkdev, int devnum);
+
+/**
  * Data for one supported backend
  */
 struct MixerFactory
@@ -105,6 +123,7 @@ struct MixerFactory
     getMixerFuncType *getMixerFunc;
     const char *backendName;
     acceptsHotplugIdFuncType *acceptsHotplugIdFunc;
+    acceptsDeviceNodeFuncType *acceptsDeviceNodeFunc;
 };
 
 /**
@@ -113,29 +132,29 @@ struct MixerFactory
 static const MixerFactory g_mixerFactories[] =
 {
 #ifdef HAVE_SUN_MIXER
-    { &SUN_getMixer, SUN_driverName, nullptr },
+    { &SUN_getMixer, SUN_driverName, nullptr, nullptr },
 #endif
 
 #ifdef HAVE_PULSEAUDIO
-    { &PULSE_getMixer, PULSE_driverName, nullptr },
+    { &PULSE_getMixer, PULSE_driverName, nullptr, nullptr },
 #endif
 
 #ifdef HAVE_ALSA_MIXER
-    { &ALSA_getMixer, ALSA_driverName, &ALSA_acceptsHotplugId },
+    { &ALSA_getMixer, ALSA_driverName, &ALSA_acceptsHotplugId, &ALSA_acceptsDeviceNode },
 #endif
 
 #ifdef HAVE_OSS_3
-    { &OSS_getMixer, OSS_driverName, &OSS_acceptsHotplugId },
+    { &OSS_getMixer, OSS_driverName, &OSS_acceptsHotplugId, &OSS_acceptsDeviceNode },
 #endif
 
 #ifdef HAVE_OSS_4
-    { &OSS4_getMixer, OSS4_driverName, nullptr },
+    { &OSS4_getMixer, OSS4_driverName, nullptr, nullptr },
 #endif
 
     // Make sure MPRIS2 is at the end.  The implementation of SINGLE_PLUS_MPRIS2
     // in MixerToolBox is much easier.  And also we make sure that streams are always
     // the last backend, which is important for the default KMix GUI layout.
-    { &MPRIS2_getMixer, MPRIS2_driverName, nullptr }
+    { &MPRIS2_getMixer, MPRIS2_driverName, nullptr, nullptr }
 };
 
 static const int numBackends = sizeof(g_mixerFactories)/sizeof(MixerFactory);
@@ -171,14 +190,60 @@ static QString backendNameFor(int driverIndex, bool filter = true)
 
 
 /**
+ * This is used during initial coldplugging to find the Solid UDI that should
+ * be associated with the detected mixer.  It is needed so that if the device
+ * is later unplugged, the relevant instance can be found to remove.  For a
+ * hotplugged device the UDI is provided by Solid in the first place, but for
+ * coldplugged devices it has to be searched for.
+ *
+ * Note: The need for this could possibly be eliminated by asking Solid for
+ * all currently known sound devices at coldplug time, instead of probing with
+ * each backend.  However, much of initMixerInternal() would still have to be
+ * retained to handle the mixer setup for PulseAudio and MPRIS2.
+ */
+static QString hotplugIdForDevice(int driverIndex, int devnum)
+{
+    // If the backend does not support hotplugging, ignore it.
+    acceptsDeviceNodeFuncType *f = g_mixerFactories[driverIndex].acceptsDeviceNodeFunc;
+    if (f==nullptr) return (QString());
+
+    // If the backend is not configured, ignore it.
+    const QString &backend = backendNameFor(driverIndex);
+    if (backend.isEmpty()) return (QString());
+
+    // If the backend is not enabled for hotplugging, ignore it.
+    if (!s_hotplugBackend.isEmpty() && backend!=s_hotplugBackend) return (QString());
+
+    const QList<Solid::Device> allDevices = Solid::Device::allDevices();
+    for (const Solid::Device &device : allDevices)
+    {
+        const QString &udi = device.udi();		// quickly ignore non-sound devices
+        if (!MixerToolBox::isSoundDevice(udi)) continue;
+
+        if (!device.is<Solid::Block>()) continue;	// must have a device node path
+
+        const Solid::Block *blk = device.as<Solid::Block>();
+        const QString blkdev = blk->device();
+        if ((*f)(blkdev, devnum))
+        {
+            qCDebug(KMIX_LOG) << "for device" << blkdev << "found UDI" << udi;
+            return (udi);		// see if device is recognised
+        }
+    }
+
+    return (QString());					// no UDI found
+}
+
+
+/**
  * Scan for Mixer devices on the system. This fills the list of Mixer's which is
- * accessible via Mixer::mixers().
+ * accessible via MixerToolBox::mixers().
  *
  * This is run only once during the initialization phase of KMix. It performs
  * the following tasks:
  *
  * 1) Coldplug scan, to fill the initial mixer list
- * 2) Resolve which backend to use (plugin events of other Backends are ignored).
+ * 2) Resolve which backend to use (hotplug events of other backends are ignored).
  *
  * @param multiDriverMode Whether the scan should try to scan for more backends
  * once one "regular" backand has been found.  "Regular" means a backend which
@@ -188,9 +253,9 @@ static QString backendNameFor(int driverIndex, bool filter = true)
  * "regular" backend to use has been found.  @c SINGLE_PLUS_MPRIS2 is the same
  * as @c SINGLE but also accepts the MPRIS2 backend.
  *
- * @param allowHotplug Whether hotplugging is expected to happen for the detected backends.
- * The KMix application and the KDED module set this to @c true, while kmixctrl
- * sets this to @c false because it is only a transient utility.
+ * @param allowHotplug Whether hotplugging is expected to happen for the detected
+ * backends.  The KMix application and the KDED module set this to @c true, while
+ * kmixctrl sets this to @c false because it is only a transient utility.
  */
 static void initMixerInternal(MultiDriverMode multiDriverMode, bool allowHotplug)
 {  
@@ -331,8 +396,14 @@ default:			multiModeString = QByteArray::number(multiDriverMode);	break;
          {
              qCDebug(KMIX_LOG) << "Accepted mixer" << mixer->id() << "for the" << driverName << "driver";
 
-             // TODO: ask backend for a Solid UDI
-             // mixer->setHotplugId(udi);
+             if (!mixer->isDynamic())			// not PulseAudio or MPRIS2
+             {
+                 // Find and set the hotplug ID, so that the device will be
+                 // able to be unplugged later.
+                 const QString &id = hotplugIdForDevice(drv, dev);
+                 if (!id.isEmpty()) mixer->setHotplugId(id);
+                 else qCWarning(KMIX_LOG) << "Cannot find UDI - unplug not possible";
+             }
 
             // append driverName (used drivers)
             if ( !drvInfoAppended )
@@ -686,25 +757,6 @@ QString MixerToolBox::preferredBackend()
 }
 
 
-// /**
-//  * Check whether the specified backend is available:  that is,
-//  * if support for it is compiled into KMix.
-//  *
-//  * @param driverName The driver name to check
-//  * @return @c true if the backend is available
-//  */
-// bool MixerToolBox::backendAvailable(const QString &driverName)
-// {
-//     for (int driverIndex = 0; driverIndex<numBackends; ++driverIndex)
-//     {
-//         const QString &name = backendNameFor(driverIndex);
-//         if (!name.isEmpty() && name==driverName) return (true);
-//     }
-
-//     return (false);				// very last resort fallback
-// }
-
-
 /**
  * Create a backend instance for the specified @p backendName and its
  * internal @p deviceIndex.  It will be associated with the parent @p mixer.
@@ -753,6 +805,7 @@ bool MixerToolBox::isSoundDevice(const QString &id)
     return (id.contains("/sound/"));			// any UDI mentioning sound
 }
 
+
 /**
  * See whether the specified hotplug ID applies to any of the
  * available backends, in priority order.
@@ -764,7 +817,6 @@ bool MixerToolBox::isSoundDevice(const QString &id)
  * @note This function and the backend functions that it calls may
  * be called very frequently and for arbitrary UDIs.  Keep them silent!
  */
-
 QPair<QString,int> MixerToolBox::acceptsHotplugId(const QString &id)
 {
     QPair<QString,int> res;
