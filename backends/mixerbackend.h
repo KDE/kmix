@@ -124,9 +124,12 @@ protected:
    */
   virtual QString errorText(int mixer_error);
 
-    // TODO: incorporated included source file into .cpp
-  /// Returns translated WhatsThis messages for a control.Translates from
-  virtual QString translateKernelToWhatsthis(const QString &kernelName);
+  /**
+   * Return a translated WhatsThis message for a control.
+   * Subclasses can override this method to produce backend
+   * specific control descriptions.
+   */
+  virtual QString translateKernelToWhatsthis(const QString &kernelName) const;
 
   int m_devnum;
   /**

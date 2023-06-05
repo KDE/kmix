@@ -31,8 +31,6 @@
 #define POLL_RATE_FAST 50
 
 
-#include "mixer_backend_i18n.cpp"
-
 MixerBackend::MixerBackend(Mixer *mixer, int device) :
 m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _pollingTimer(0), _cardInstance(1), _cardRegistered(false)
 
@@ -297,7 +295,7 @@ unsigned int MixerBackend::enumIdHW(const QString& ) {
 /**
  * Move the stream to a new destination
  */
-bool MixerBackend::moveStream(const QString &id, const QString &destId)
+/* virtual */ bool MixerBackend::moveStream(const QString &id, const QString &destId)
 {
 	qCDebug(KMIX_LOG) << "called for unsupported" << id;
 	Q_UNUSED(destId);
@@ -307,14 +305,14 @@ bool MixerBackend::moveStream(const QString &id, const QString &destId)
 /**
  * Get the current destination device of a stream
  */
-QString MixerBackend::currentStreamDevice(const QString &id) const
+/* virtual */ QString MixerBackend::currentStreamDevice(const QString &id) const
 {
 	qCDebug(KMIX_LOG) << "called for unsupported" << id;
 	return (QString());
 }
 
 
-QString MixerBackend::errorText(int mixer_error)
+/* virtual */ QString MixerBackend::errorText(int mixer_error)
 {
 	QString l_s_errmsg;
 	switch (mixer_error)
@@ -342,5 +340,11 @@ QString MixerBackend::errorText(int mixer_error)
 }
 
 
-
-
+/* virtual */ QString MixerBackend::translateKernelToWhatsthis(const QString &kernelName) const
+{
+        if (kernelName == "Mic:0") return (i18n("Recording level of the microphone input."));
+	else if (kernelName == "Master:0") return (i18n("Controls the volume of the front speakers or all speakers (depending on your soundcard model). If you use a digital output, you might need to also use other controls like ADC or DAC. For headphones, soundcards often supply a Headphone control."));
+	else if (kernelName == "PCM:0") return (i18n("Most media, such as MP3s or Videos, are played back using the PCM channel. As such, the playback volume of such media is controlled by both this and the Master or Headphone channels."));
+	else if (kernelName == "Headphone:0") return (i18n("Controls the headphone volume. Some soundcards include a switch that must be manually activated to enable the headphone output."));
+	else return (i18n("---"));
+}
