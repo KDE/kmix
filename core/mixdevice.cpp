@@ -217,16 +217,6 @@ QString MixDevice::configGroupName(QString prefix) const
 }
 
 /**
- * Returns a fully qualified id of this control, as a String in the form "controlId@mixerId"
- * @return
- */
-QString MixDevice::fullyQualifiedId() const
-{
-	QString fqId = QString("%1@%2").arg(_id, _mixer->id());
-	return fqId;
-}
-
-/**
  * Creates a deep copy of the given Volume, and adds it to this MixDevice.
  *
  * @param playbackVol

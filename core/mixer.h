@@ -26,20 +26,24 @@
 #ifndef RANDOMPREFIX_MIXER_H
 #define RANDOMPREFIX_MIXER_H
 
-#include <QList>
 #include <QObject>
-#include <QString>
 
 #include "core/volume.h"
-#include "backends/mixer_backend.h"
 #include "core/MasterControl.h"
-#include "mixset.h"
+#include "core/mixset.h"
 #include "core/mixdevice.h"
+#include "backends/mixerbackend.h"
 #include "dbus/dbusmixerwrapper.h"
 #include "kmixcore_export.h"
 
-class Volume;
 class KConfig;
+
+
+/**
+  * This class manages a single mixer only, it should not include any
+  * static functions or global data.  The global list of mixers and
+  * backends is managed in MixerToolBox.
+*/
 
 class KMIXCORE_EXPORT Mixer : public QObject
 {
@@ -54,25 +58,19 @@ public:
 	 * example. Rationale is that we need a proper change check: Otherwise
 	 * the DBUS Session Bus is massively spammed. Also quite likely the Mixer
 	 * GUI might get updated all the time.
-	 * 
 	 */
     enum MixerError { OK=0, ERR_PERM=1, ERR_WRITE, ERR_READ,
         ERR_OPEN, OK_UNCHANGED };
 
-    Mixer(const QString &ref_driverName, int device);
+    Mixer(const QString &driverName, int deviceIndex);
     virtual ~Mixer();
 
-    static int numDrivers();
     QString getDriverName() const		{ return (_mixerBackend->getDriverName()); }
 
     shared_ptr<MixDevice> find(const QString &devPK) const;
-    static Mixer* findMixer(const QString &mixer_id);
 
     void volumeSave(KConfig *config) const;
     void volumeLoad(const KConfig *config);
-
-    /// How many mixer backend devices
-    unsigned int size() const			{ return (_mixerBackend->m_mixDevices.count()); }
 
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
@@ -102,7 +100,7 @@ public:
      */
     virtual QString getBaseName() const;
 
-    /// Wrapper to Mixer_Backend
+    /// Wrapper to MixerBackend
     QString translateKernelToWhatsthis(const QString &kernelName) const;
 
     /**
@@ -115,40 +113,39 @@ public:
       */
     QString readableName(bool ampersandQuoted = false) const;
 
-    // Returns the name of the driver, e.g. "OSS" or "ALSA0.9"
-    static QString driverName(int num);
-
     /**
      * Returns an unique ID of the Mixer. It currently looks like "<soundcard_descr>::<hw_number>:<driver>"
      */
     const QString &id() const			{ return (_id); }
 
     int getCardInstance() const      		{ return _mixerBackend->getCardInstance(); }
+    shared_ptr<MixDevice> recommendedMaster()	{ return (_mixerBackend->recommendedMaster()); }
 
-    /// Returns an Universal Device Identification of the Mixer. This is an ID that relates to the underlying operating system.
-    // For OSS and ALSA this is taken from Solid (actually HAL). For Solaris this is just the device name.
-    // Examples:
-    // ALSA: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_alsa_control__1
-    // OSS: /org/freedesktop/Hal/devices/usb_device_d8c_1_noserial_if0_sound_card_0_2_oss_mixer__1
-    // Solaris: /dev/audio
-    const QString &udi() const			{ return _mixerBackend->udi(); }
+    /**
+     * Identifying the mixer for hotplugging.  This is an ID that corresponds
+     * to the underlying operating system device identifier.  It was formerly
+     * referred to internally to KMix as a "UDI", although that was not the same
+     * as the external OS UDI and was confusing.
+     *
+     * For OSS and ALSA this is the Solid UDI.  Since a single card can have multiple
+     * Solid UDIs corresponding to separate interfaces of a card (e.g. for ALSA the
+     * control device and the PCM devices), this is filtered in the backend to be
+     * the UDI for the most closely associated device.  So for ALSA this should be
+     * the UDI for the "control" device and for OSS the UDI for the "mixer".
+     *
+     * For Solaris this is just the device name ("/dev/audioN"), although it is not
+     * certain that hotplugging of sound devices is supported on that venerable OS.
+     *
+     * Note:  Formerly this was a property of the mixer backend, but the backend
+     * knows or performs nothing associated with hotplugging so it is here as a
+     * property of the mixer instead.
+     */
+    const QString &hotplugId() const			{ return (m_hotplugId); }
+    void setHotplugId(const QString &id)		{ m_hotplugId = id; }
 
     // Returns a DBus path for this mixer
     // Used also by MixDevice to bind to this path
     const QString dbusPath();
-
-    static QList<Mixer *> &mixers();
-
-    /******************************************
-    The KMix GLOBAL master card. Please note that KMix and KMixPanelApplet can have a
-    different MasterCard's at the moment (but actually KMixPanelApplet does not read/save this yet).
-    At the moment it is only used for selecting the Mixer to use in KMix's DockIcon.
-    ******************************************/
-    static void setGlobalMaster(QString ref_card, QString ref_control, bool preferred);
-    static shared_ptr<MixDevice> getGlobalMasterMD(bool fallbackAllowed = true);
-    static Mixer* getGlobalMasterMixer();
-    static Mixer* getGlobalMasterMixerNoFalback();
-    static MasterControl& getGlobalMasterPreferred(bool fallbackAllowed = true);
 
     QString getRecommendedDeviceId() const;
 
@@ -163,8 +160,10 @@ public:
      */
     QString iconName() const;
 
-    /// get the actual MixSet
-    MixSet &getMixSet() const			{ return (_mixerBackend->m_mixDevices); }
+    /// How many mixer backend devices
+    unsigned int numDevices() const		{ return (_mixerBackend->m_mixDevices.count()); }
+    /// Access the actual MixSet
+    MixSet &mixDevices() const			{ return (_mixerBackend->m_mixDevices); }
 
     /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );
@@ -174,9 +173,6 @@ public:
     virtual void setDynamic(bool dynamic = true)	{ m_dynamic = dynamic; }
     virtual bool isDynamic() const			{ return (m_dynamic); }
 
-    static bool dynamicBackendsPresent();
-    static bool pulseaudioPresent();
-
     virtual bool moveStream(const QString &id, const QString &destId);
     virtual QString currentStreamDevice(const QString &id) const;
 
@@ -184,7 +180,7 @@ public:
     virtual int mediaPrev(QString id)		{ return _mixerBackend->mediaPrev(id); }
     virtual int mediaNext(QString id)		{ return _mixerBackend->mediaNext(id); }
 
-    void commitVolumeChange( shared_ptr<MixDevice> md );
+    void commitVolumeChange(shared_ptr<MixDevice> md);
 
 public Q_SLOTS:
     void readSetFromHWforceUpdate() const;
@@ -192,25 +188,21 @@ public Q_SLOTS:
     virtual void setBalance(int balance); // sets the m_balance (see there)
     
 Q_SIGNALS:
+    // TODO: this signal is never used
     void newBalance(Volume& );
-    void controlChanged(void); // TODO remove?
-
-protected:
-    static QList<Mixer *> s_mixers;
 
 private:
     void setBalanceInternal(Volume& vol);
     void recreateId();
     void increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease );
 
-    Mixer_Backend *_mixerBackend;
+    MixerBackend *_mixerBackend;
     QString _id;
     QString _masterDevicePK;
     int m_balance; // from -100 (just left) to 100 (just right)
     bool m_dynamic;
 
-    static MasterControl _globalMasterCurrent;
-    static MasterControl _globalMasterPreferred;
+    QString m_hotplugId;				// UDI for hotplugging
 };
 
 #endif

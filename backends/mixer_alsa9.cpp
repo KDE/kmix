@@ -41,18 +41,21 @@
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
+// For ALSA API documentation se
+// https://www.alsa-project.org/alsa-doc/alsa-lib/index.html
 
-Mixer_Backend*
+
+MixerBackend*
 ALSA_getMixer(Mixer *mixer, int device )
 {
 
-   Mixer_Backend *l_mixer;
+   MixerBackend *l_mixer;
 
    l_mixer = new Mixer_ALSA(mixer,  device );
    return l_mixer;
 }
 
-Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : Mixer_Backend(mixer,  device )
+Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : MixerBackend(mixer,  device )
 {
     m_fds = 0;
     _handle = 0;
@@ -128,9 +131,6 @@ int Mixer_ALSA::open()
     err = openAlsaDevice(m_deviceName);
     if (err!=0) return (err);
 
-    _udi = KMixDeviceManager::instance()->getUDI_ALSA(m_devnum);
-    if (_udi.isEmpty()) qCWarning(KMIX_LOG) << "No UDI found for" << m_deviceName << "so hotplugging not possible";
-
     // Run a loop over all controls of the card
     unsigned int idx = 0;
     for ( elem = snd_mixer_first_elem( _handle ); elem; elem = snd_mixer_elem_next( elem ) )
@@ -197,8 +197,10 @@ int Mixer_ALSA::open()
         mixer_sid_list.append( sid );
         idx++;
 
-
-        MixDevice* mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
+        MixDevice *mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
+        mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum));
+        // TODO: this does not appear to work with volume feedback
+        //mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum)+","+QByteArray::number(idx));
 
         if ( volPlay    != 0      )
         {
@@ -965,19 +967,41 @@ Mixer_ALSA::errorText( int mixer_error )
 					"soundcard driver is loaded.\n" );
 			break;
 		default:
-			l_s_errmsg = Mixer_Backend::errorText( mixer_error );
+			l_s_errmsg = MixerBackend::errorText( mixer_error );
 	}
 	return l_s_errmsg;
 }
 
 
-QString
-ALSA_getDriverName()
-{
-	return QStringLiteral("ALSA");
-}
+const char *ALSA_driverName = "ALSA";
 
 QString Mixer_ALSA::getDriverName()
 {
-	return QStringLiteral("ALSA");
+    return (ALSA_driverName);
+}
+
+
+int ALSA_acceptsHotplugId(const QString &id)
+{
+    // The Solid device UDIs for a plugged ALSA sound card are of the form:
+    //
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:13.2/usb2/2-4/2-4.1/2-4.1:1.0/sound/card3
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:13.2/usb2/2-4/2-4.1/2-4.1:1.0/sound/card3/pcmC3D0p
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:13.2/usb2/2-1/2-1.3/2-1.3:1.0/sound/card3/controlC3
+    //
+    // The "control" one of these is taken as the canonical form.  The "card" and
+    // "control" numbers are assumed to be the same, but this is not checked.
+
+    QRegExp rx("/card(\\d+)/controlC(\\d+)$");		// match sound card control device
+    if (!id.contains(rx)) return (-1);			// UDI not recognised
+    return (rx.cap(2).toInt());				// assume conversion succeeds
+}
+
+
+bool ALSA_acceptsDeviceNode(const QString &blkdev, int devnum)
+{
+    // The primary ALSA device is "/dev/snd/controlC<N>" which corresponds to
+    // the "control" UDI as above.
+    const QString dev = "/dev/snd/controlC"+QString::number(devnum);
+    return (blkdev==dev);
 }

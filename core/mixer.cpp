@@ -26,84 +26,23 @@
 #include <kconfig.h>
 
 #include "settings.h"
-#include "backends/kmix-backends.cpp"
 #include "core/ControlManager.h"
+#include "core/mixertoolbox.h"
+
 
 /**
  * Some general design hints. Hierarchy is Mixer->MixDevice->Volume
  */
 
-QList<Mixer *> Mixer::s_mixers;
-MasterControl Mixer::_globalMasterCurrent;
-MasterControl Mixer::_globalMasterPreferred;
 
-/* static */ int Mixer::numDrivers()
-{
-    const MixerFactory *factory = g_mixerFactories;
-    int num = 0;
-    while (factory->getMixer!=nullptr)
-    {
-        ++num;
-        ++factory;
-    }
-
-    return (num);
-}
-
-/*
- * Returns a reference to the current mixer list.
- */
-/* static */ QList<Mixer *> &Mixer::mixers()
-{
-    return s_mixers;
-}
-
-/**
- * Returns whether there is at least one dynamic mixer active.
- * @returns true, if at least one dynamic mixer is active
- */
-/* static */ bool Mixer::dynamicBackendsPresent()
-{
-    for (const Mixer *mixer : std::as_const(s_mixers))
-    {
-        if (mixer->isDynamic()) return (true);
-    }
-    return (false);
-}
-
-/* static */ bool Mixer::pulseaudioPresent()
-{
-    for (const Mixer *mixer : std::as_const(s_mixers))
-    {
-        if (mixer->getDriverName()=="PulseAudio") return (true);
-    }
-    return (false);
-}
-
-
-Mixer::Mixer(const QString &ref_driverName, int device)
+Mixer::Mixer(const QString &driverName, int deviceIndex)
     : m_balance(0),
       m_dynamic(false)
 {
-    _mixerBackend = nullptr;
-    const int driverCount = numDrivers();
-    for (int driver = 0; driver<driverCount; ++driver)
-    {
-        const QString name = driverName(driver);
-        if (name==ref_driverName)
-        {
-            // driver found => retrieve Mixer factory for that driver
-            getMixerFunc *f = g_mixerFactories[driver].getMixer;
-            if (f!=nullptr)
-            {
-                _mixerBackend = f(this, device);
-                readSetFromHWforceUpdate();  // enforce an initial update on first readSetFromHW()
-            }
-            break;
-        }
-    }
+    _mixerBackend = MixerToolBox::getBackendFor(driverName, deviceIndex, this);
+    // Enforce an initial update on the first call of readSetFromHW()
+    if (_mixerBackend!=nullptr) readSetFromHWforceUpdate();
 }
-
 
 
 Mixer::~Mixer()
@@ -111,22 +50,6 @@ Mixer::~Mixer()
    // Close the mixer. This might also free memory, depending on the called backend method
    close();
    _mixerBackend->deleteLater();
-}
-
-
-/*
- * Find a Mixer. If there is no mixer with the given id, a null pointer is returned
- */
-/* static */ Mixer *Mixer::findMixer(const QString &mixer_id)
-{
-    const int mixerCount = mixers().count();
-    for (int i = 0; i<mixerCount; ++i)
-    {
-        Mixer *mix = mixers().at(i);
-        if (mix->id()==mixer_id) return (mix);
-    }
-
-    return (nullptr);
 }
 
 
@@ -144,7 +67,7 @@ Mixer::~Mixer()
  */
 void Mixer::recreateId()
 {
-    /* As we use "::" and ":" as separators, the parts %1,%2 and %3 may not
+    /* As we use "::" and ":" as separators, the parts %1, %2 and %3 may not
      * contain it.
      * %1, the driver name is from the KMix backends, it does not contain colons.
      * %2, the mixer name, is typically coming from an OS driver. It could contain colons.
@@ -371,123 +294,6 @@ QString Mixer::getBaseName() const
   return _mixerBackend->getName();
 }
 
-/**
- * Queries the Driver Factory for a driver.
- * @p driver Index number. 0 <= driver < numDrivers()
- */
-/* static */ QString Mixer::driverName(int driver)
-{
-    getDriverNameFunc *f = g_mixerFactories[driver].getDriverName;
-    if (f!=nullptr) return f();
-    else return "unknown";
-}
-
-/**
- * Set the global master, which is shown in the dock area and which is accessible via the
- * DBUS masterVolume() method.
- *
- * The parameters are taken over as-is, this means without checking for validity.
- * This allows the User to define a master card that is not always available
- * (e.g. it is an USB hotplugging device). Also you can set the master at any time you
- * like, e.g. after reading the KMix configuration file and before actually constructing
- * the Mixer instances (hint: this method is static!).
- *
- * @param ref_card The card id
- * @param ref_control The control id. The corresponding control must be present in the card.
- * @param preferred Whether this is the preferred master (auto-selected on coldplug and hotplug).
- */
-/* static */ void Mixer::setGlobalMaster(QString ref_card, QString ref_control, bool preferred)
-{
-    qCDebug(KMIX_LOG) << "ref_card=" << ref_card << ", ref_control=" << ref_control << ", preferred=" << preferred;
-    _globalMasterCurrent.set(ref_card, ref_control);
-    if ( preferred )
-        _globalMasterPreferred.set(ref_card, ref_control);
-    qCDebug(KMIX_LOG) << "Mixer::setGlobalMaster() card=" <<ref_card<< " control=" << ref_control;
-}
-
-/* static */ Mixer *Mixer::getGlobalMasterMixerNoFalback()
-{
-    for (Mixer *mixer : std::as_const(s_mixers))
-    {
-        if (mixer!=nullptr && mixer->id()==_globalMasterCurrent.getCard())
-            return mixer;
-    }
-    return (nullptr);
-}
-
-/* static */ Mixer* Mixer::getGlobalMasterMixer()
-{
-    Mixer *mixer = getGlobalMasterMixerNoFalback();
-    if (mixer==nullptr && mixers().count()>0) mixer = mixers()[0]; // produce fallback
-    //qCDebug(KMIX_LOG) << "Mixer::masterCard() returns " << mixer->id();
-    return (mixer);
-}
-
-
-/**
- * Return the preferred global master.
- * If there is no preferred global master, returns the current master instead.
- */
-/* static */ MasterControl &Mixer::getGlobalMasterPreferred(bool fallbackAllowed)
-{
-    static MasterControl result;
-
-    if ( !fallbackAllowed || _globalMasterPreferred.isValid() ) {
-//        qCDebug(KMIX_LOG) << "Returning preferred master";
-        return _globalMasterPreferred;
-    }
-
-    Mixer* mm = Mixer::getGlobalMasterMixerNoFalback();
-    if (mm!=nullptr) {
-        result.set(_globalMasterPreferred.getCard(), mm->getRecommendedDeviceId());
-        if (!result.getControl().isEmpty())
-//            qCDebug(KMIX_LOG) << "Returning extended preferred master";
-            return result;
-    }
-
-    qCDebug(KMIX_LOG) << "Returning current master";
-    return _globalMasterCurrent;
-}
-
-
-/* static */ shared_ptr<MixDevice> Mixer::getGlobalMasterMD(bool fallbackAllowed)
-{
-	shared_ptr<MixDevice> mdRet;
-	shared_ptr<MixDevice> firstDevice;
-	Mixer *mixer = fallbackAllowed ?
-		   Mixer::getGlobalMasterMixer() : Mixer::getGlobalMasterMixerNoFalback();
-
-	if (mixer==nullptr)
-		return mdRet;
-
-	if (_globalMasterCurrent.getControl().isEmpty())
-	{
-		// Default (recommended) control
-		return mixer->_mixerBackend->recommendedMaster();
-	}
-
-    for (const shared_ptr<MixDevice> &md : std::as_const(mixer->_mixerBackend->m_mixDevices))
-	{
-		if (!md) continue; // invalid
-
-		firstDevice=md;
-		if ( md->id() == _globalMasterCurrent.getControl() )
-		{
-			mdRet = md;
-			break; // found
-		}
-	}
-
-	if (!mdRet)
-	{
-	  //For some sound cards when using pulseaudio the mixer id is not proper hence returning the first device as master channel device
-	  //This solves the bug id:290177 and problems stated in review #105422
-		qCDebug(KMIX_LOG) << "Mixer::masterCardDevice() returns 0 (no globalMaster), returning the first device";
-		mdRet=firstDevice;
-	}
-
-	return mdRet;
-}
 
 QString Mixer::getRecommendedDeviceId() const
 {

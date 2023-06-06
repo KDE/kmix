@@ -32,6 +32,7 @@
 
 #include "core/ControlManager.h"
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/kmixtoolbox.h"
 
 
@@ -41,7 +42,7 @@ DialogSelectMaster::DialogSelectMaster(const Mixer *mixer, QWidget *parent)
     : DialogBase(parent)
 {
     setWindowTitle(i18n("Select Master Channel"));
-    if (Mixer::mixers().count()>0) setButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    if (!MixerToolBox::mixers().isEmpty()) setButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
     else setButtons(QDialogButtonBox::Cancel);
 
    m_channelSelector = nullptr;
@@ -58,11 +59,11 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
     setMainWidget(mainFrame);
     QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
-    const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
+    const QList<Mixer *> &mixers = MixerToolBox::mixers();	// list of all mixers present
 
     if (mixers.count()>1)
     {
-        int mixerIndex = 0;				// index of selected mixer
+        int mixerIndex = 0;					// index of selected mixer
 
         // More than one Mixer => show Combo-Box to select Mixer
         // Mixer widget line
@@ -85,7 +86,7 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
             m_cMixer->addItem(QIcon::fromTheme(m->iconName()), m->readableName(), m->id());
             if (m->id()==mixer->id()) mixerIndex = i;
 
-            const MixSet &mixset = m->getMixSet();
+            const MixSet &mixset = m->mixDevices();
             bool hasValidVolume = false;
             for (int j = 0; j<mixset.count(); ++j)
             {
@@ -166,7 +167,7 @@ void DialogSelectMaster::createPageByID(int mixerId)
     // TODO: would Mixer::mixers().value(mixerId) work just as well?
     // TODO: mixerId should really be named mixerIndex!
     const QString mixer_id = m_cMixer->itemData(mixerId).toString();
-    const Mixer *mixer = Mixer::findMixer(mixer_id);
+    const Mixer *mixer = MixerToolBox::findMixer(mixer_id);
     if (mixer!=nullptr) createPage(mixer);
 }
 
@@ -182,9 +183,8 @@ void DialogSelectMaster::createPage(const Mixer *mixer)
 	// This should automatically remove and delete all contained items.
 	m_channelSelector->clear();
 
-        const MixSet &mixset = mixer->getMixSet();
-	const MasterControl mc = mixer->getGlobalMasterPreferred(false);
-	QString masterKey = mc.getControl();
+        const MixSet &mixset = mixer->mixDevices();
+	QString masterKey = MixerToolBox::getGlobalMasterPreferred(false).getControl();
 	if (!masterKey.isEmpty() && !mixset.get(masterKey))
 	{
 		const shared_ptr<MixDevice> master = mixer->getLocalMasterMD();
@@ -236,8 +236,8 @@ void DialogSelectMaster::slotUpdateButtons()
 
 void DialogSelectMaster::apply()
 {
-    const QList<Mixer *> &mixers = Mixer::mixers();	// list of all mixers present
-    Mixer *mixer = nullptr;				// selected mixer found
+    const QList<Mixer *> &mixers = MixerToolBox::mixers();	// list of all mixers present
+    Mixer *mixer = nullptr;					// selected mixer found
 
     if (mixers.count()==1)
     {
@@ -263,7 +263,7 @@ void DialogSelectMaster::apply()
 	const QListWidgetItem *item = items.first();
     	QString control_id = item->data(Qt::UserRole).toString();
         mixer->setLocalMasterMD(control_id);
-        Mixer::setGlobalMaster(mixer->id(), control_id, true);
+        MixerToolBox::setGlobalMaster(mixer->id(), control_id, true);
         ControlManager::instance().announce(mixer->id(), ControlManager::MasterChanged, QString("Select Master Dialog"));
     }
     else qCWarning(KMIX_LOG) << "no selected channel";

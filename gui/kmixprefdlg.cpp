@@ -37,6 +37,7 @@
 #include "dialogbase.h"
 #include "dialogstatesaver.h"
 #include "gui/kmixerwidget.h"
+#include "core/mixertoolbox.h"
 #include "gui/dialogchoosebackends.h"
 #include "settings.h"
 
@@ -216,7 +217,7 @@ void KMixPrefDlg::createGeneralTab()
 	// Only PulseAudio supports volume overdrive.  Ignore that
 	// configuration option for other backends, and show a warning
 	// message.
-	const bool pulseAudioAvailable = Mixer::pulseaudioPresent();
+	const bool pulseAudioAvailable = MixerToolBox::pulseaudioPresent();
 
 	// Volume Overdrive
 	m_volumeOverdrive = new QCheckBox(i18n("Volume overdrive"), grp);
@@ -487,7 +488,7 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 	// -2- Change visibility and enable status (of the new widgets) ----------------------
 
 	// As GUI can change, the warning will only been shown on demand
-	dynamicControlsRestoreWarning->setVisible(Mixer::dynamicBackendsPresent());
+	dynamicControlsRestoreWarning->setVisible(MixerToolBox::dynamicBackendsPresent());
 
 	QString autostartConfigFilename =
 		QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "/autostart/kmix_autostart.desktop");

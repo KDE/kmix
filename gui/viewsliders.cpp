@@ -221,7 +221,7 @@ void ViewSliders::initLayout()
 	{
 		for (const Mixer *mixer : getMixers())
 		{
-			const MixSet &mixset = mixer->getMixSet();
+			const MixSet &mixset = mixer->mixDevices();
 
 			for (ProfControl *control : std::as_const(guiprof->getControls()))
 			{

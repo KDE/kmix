@@ -64,21 +64,29 @@ int main(int argc, char *argv[])
    aboutData.setDesktopFileName(QStringLiteral("org.kde.kmix"));
 
    KAboutData::setApplicationData(aboutData);
+
+   // Set up and parse the command line now, so as to be able to respond to
+   // help and version options even if the application is already running.
+   QCommandLineParser parser;
+   aboutData.setupCommandLine(&parser);
+   parser.addOption(QCommandLineOption("keepvisibility", i18n("Inhibit showing the KMix main window, if KMix is already running.")));
+   parser.addOption(QCommandLineOption("failsafe", i18n("Start KMix in failsafe mode.")));
+   parser.addOption(QCommandLineOption("backends", i18n("A list of backends to use (for testing only)."), i18n("name[,name...]"), QString()));
+   parser.addOption(QCommandLineOption("multidriver", i18n("Enable the (experimental) multiple driver mode.")));
+   parser.process(qapp);
+
    // Implement running as a unique application
    KDBusService service(KDBusService::Unique);
    KMixApp kmapp;					// continues here if unique
    QObject::connect(&service, &KDBusService::activateRequested, &kmapp, &KMixApp::newInstance);
 
-   // Now known to be the first or only instance of the application
-   QCommandLineParser parser;
-   aboutData.setupCommandLine(&parser);
-   parser.addOption(QCommandLineOption("keepvisibility", i18n("Inhibits the unhiding of the KMix main window, if KMix is already running.")));
-   parser.addOption(QCommandLineOption("failsafe", i18n("Starts KMix in failsafe mode.")));
-   parser.process(qapp);
-   kmapp.parseOptions(parser);				// pass options for startup
-
+   // Now known to be the first or only instance of the application.
+   // Parse the command line options applicable to KMix, then start
+   // the application main loop.
+   kmapp.parseOptions(parser);
    kmapp.newInstance();
    int ret = qapp.exec();
+
    qCDebug(KMIX_LOG) << "KMix is now exiting, status=" << ret;
-   return ret;
+   return (ret);
 }

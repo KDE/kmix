@@ -22,7 +22,7 @@
 #ifndef MIXER_PULSE_H
 #define MIXER_PULSE_H
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 #include <pulse/pulseaudio.h>
 
 struct QtPaMainLoop;
@@ -31,7 +31,7 @@ struct devinfo;
 typedef QMap<int,devinfo> devmap;
 
 
-class Mixer_PULSE : public Mixer_Backend
+class Mixer_PULSE : public MixerBackend
 {
     Q_OBJECT
 
@@ -59,6 +59,9 @@ class Mixer_PULSE : public Mixer_Backend
         int id2num(const QString& id);
         MixSet *getMixSet()				{ return (&m_mixDevices); }
 
+   public Q_SLOTS:
+        void reinit();
+
     protected:
         int open() override;
         int close() override;
@@ -76,9 +79,6 @@ class Mixer_PULSE : public Mixer_Backend
    protected Q_SLOTS:
         //void pulseControlsReconfigured(QString mixerId);
         void pulseControlsReconfigured();
-
-public:
-        void reinit() override;
 };
 
 #endif

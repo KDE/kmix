@@ -22,10 +22,10 @@
 #ifndef MIXER_OSS4_H
 #define MIXER_OSS4_H
 
-#include "mixer_backend.h"
-#include <sys/soundcard.h>
+#include "mixerbackend.h"
 
-class Mixer_OSS4 : public Mixer_Backend
+
+class Mixer_OSS4 : public MixerBackend
 {
 public:
   Mixer_OSS4(Mixer* mixer, int device);

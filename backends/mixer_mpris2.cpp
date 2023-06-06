@@ -35,12 +35,12 @@
 
 // Set the QDBUS_DEBUG env variable for debugging Qt DBUS calls.
 
-Mixer_Backend* MPRIS2_getMixer(Mixer *mixer, int device )
+MixerBackend* MPRIS2_getMixer(Mixer *mixer, int device )
 {
 	return new Mixer_MPRIS2(mixer, device );
 }
 
-Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : Mixer_Backend(mixer, device )
+Mixer_MPRIS2::Mixer_MPRIS2(Mixer *mixer, int device) : MixerBackend(mixer, device )
 {
 }
 
@@ -724,13 +724,10 @@ MPrisControl::~MPrisControl()
 	delete playerIfc;
 }
 
+
+const char *MPRIS2_driverName = "MPRIS2";
+
 QString Mixer_MPRIS2::getDriverName()
 {
-	return "MPRIS2";
+	return (MPRIS2_driverName);
 }
-
-QString MPRIS2_getDriverName()
-{
-	return "MPRIS2";
-}
-

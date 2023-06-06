@@ -21,6 +21,7 @@
 #include "dbusmixsetwrapper.h"
 
 #include "core/mixdevice.h"
+#include "core/mixertoolbox.h"
 #include "mixsetadaptor.h"
 
 static DBusMixSetWrapper *instanceSingleton = nullptr;
@@ -64,40 +65,40 @@ void DBusMixSetWrapper::controlsChange(ControlManager::ChangeType changeType)
 QStringList DBusMixSetWrapper::mixers() const
 {
 	QStringList result;
-	for (Mixer *mixer : std::as_const(Mixer::mixers())) result.append(mixer->dbusPath());
+	for (Mixer *mixer : std::as_const(MixerToolBox::mixers())) result.append(mixer->dbusPath());
 	return result;
 }
 
 QString DBusMixSetWrapper::currentMasterMixer() const
 {
-	Mixer* masterMixer = Mixer::getGlobalMasterMixer();
+	Mixer *masterMixer = MixerToolBox::getGlobalMasterMixer();
 	return masterMixer ? masterMixer->id() : QString();
 }
 
 QString DBusMixSetWrapper::currentMasterControl() const
 {
-	shared_ptr<MixDevice> masterControl = Mixer::getGlobalMasterMD();
+	shared_ptr<MixDevice> masterControl = MixerToolBox::getGlobalMasterMD();
 	return masterControl ? masterControl->id() : QString();
 }
 
 QString DBusMixSetWrapper::preferredMasterMixer() const
 {
-	return Mixer::getGlobalMasterPreferred().getCard();
+	return MixerToolBox::getGlobalMasterPreferred().getCard();
 }
 
 QString DBusMixSetWrapper::preferredMasterControl() const
 {
-	return Mixer::getGlobalMasterPreferred().getControl();
+	return MixerToolBox::getGlobalMasterPreferred().getControl();
 }
 
 void DBusMixSetWrapper::setCurrentMaster(const QString &mixer, const QString &control)
 {
-	Mixer::setGlobalMaster(mixer, control, false);
+	MixerToolBox::setGlobalMaster(mixer, control, false);
 }
 
 void DBusMixSetWrapper::setPreferredMaster(const QString &mixer, const QString &control)
 {
-	Mixer::setGlobalMaster(mixer, control, true);
+	MixerToolBox::setGlobalMaster(mixer, control, true);
 }
 
 void DBusMixSetWrapper::signalMixersChanged()

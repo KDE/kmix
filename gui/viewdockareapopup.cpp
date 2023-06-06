@@ -36,6 +36,7 @@
 
 // KMix
 #include "core/mixer.h"
+#include "core/mixertoolbox.h"
 #include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
@@ -94,7 +95,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 	//
 	// TODO: is this necessary?  As the comment says, initLayout() does a
 	// clearMixers() which clears the mixers that addMixer() adds here.
-	for (Mixer *mixer : Mixer::mixers())
+	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
 		addMixer(mixer);
 	}
@@ -231,12 +232,12 @@ void ViewDockAreaPopup::resetRefs()
 void ViewDockAreaPopup::addDevice(shared_ptr<MixDevice> md, const Mixer *mixer)
 {
 	shared_ptr<MixDevice> dockMD = md;
-	if (dockMD==nullptr && mixer->size()>0)
+	if (dockMD==nullptr && mixer->numDevices()>0)
 	{
 		// If the mixer has no local master device defined,
 		// then take its first available device.  first() is
 		// safe here because size() has been checked above.
-		dockMD = mixer->getMixSet().first();
+		dockMD = mixer->mixDevices().first();
 	}
 
 	if (dockMD==nullptr) return;			// still no master device
@@ -335,7 +336,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// below adds invividual PulseAudio devices.
 	const QStringList preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
-	for (Mixer *mixer : std::as_const(Mixer::mixers()))
+	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
 
@@ -351,7 +352,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// to hotplugging.  We "reset" the list to show everything.
 	if (getMixers().isEmpty())
 	{
-		for (Mixer *mixer : std::as_const(Mixer::mixers()))
+		for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 		{
 			addMixer(mixer);
 		}
@@ -364,7 +365,6 @@ Application: KMix (kmix), signal: Segmentation fault
 	for (const Mixer *mixer : std::as_const(mixers))
 	{
 		qDebug() << "mixer" << mixer->id() << mixer->readableName();
-
 		if (mixer->getDriverName()=="PulseAudio")
 		{
 			// For PulseAudio, there is the fixed set of four mixers
@@ -387,7 +387,7 @@ Application: KMix (kmix), signal: Segmentation fault
 			// appear in the popup.  Maybe a configuration option or
 			// being able to do that selection for PulseAudio?
 
-			const MixSet &ms = mixer->getMixSet();
+			const MixSet &ms = mixer->mixDevices();
 			qDebug() << "PulseAudio adding" << ms.count() << "devices";
 			for (shared_ptr<MixDevice> md : std::as_const(ms))
 			{
@@ -404,7 +404,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// Finally add all application streams
 	for (const Mixer *mixer : std::as_const(getMixers()))
 	{
-		for (shared_ptr<MixDevice> md : std::as_const(mixer->getMixSet()))
+		for (shared_ptr<MixDevice> md : std::as_const(mixer->mixDevices()))
 		{
 			if (md->isApplicationStream()) addToMixSet(md);
 		}

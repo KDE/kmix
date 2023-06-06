@@ -116,9 +116,9 @@ const uint_t MixerSunPortMasks[] =
 // FUNCTION    : SUN_getMixer
 // DESCRIPTION : Creates and returns a new mixer object.
 //======================================================================
-Mixer_Backend* SUN_getMixer( Mixer *mixer, int devnum )
+MixerBackend* SUN_getMixer( Mixer *mixer, int devnum )
 {
-   Mixer_Backend *l_mixer;
+   MixerBackend *l_mixer;
    l_mixer = new Mixer_SUN( mixer, devnum );
    return l_mixer;
 }
@@ -128,7 +128,7 @@ Mixer_Backend* SUN_getMixer( Mixer *mixer, int devnum )
 // FUNCTION    : Mixer::Mixer
 // DESCRIPTION : Class constructor.
 //======================================================================
-Mixer_SUN::Mixer_SUN(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum)
+Mixer_SUN::Mixer_SUN(Mixer *mixer, int devnum) : MixerBackend(mixer, devnum)
 {
    if ( devnum == -1 )
       m_devnum = 0;
@@ -243,7 +243,7 @@ QString Mixer_SUN::errorText( int mixer_error )
          );
          break;
       default:
-         errmsg = Mixer_Backend::errorText( mixer_error );
+         errmsg = MixerBackend::errorText( mixer_error );
    }
    return errmsg;
 }
@@ -485,12 +485,10 @@ int Mixer_SUN::id2num(const QString& id)
 	return id.toInt();
 }
 
-QString SUN_getDriverName() {
-        return "SUNAudio";
-}
+
+const char *SUN_driverName = "Sun";
 
 QString Mixer_SUN::getDriverName()
 {
-        return "SUNAudio";
+    return (SUN_driverName);
 }
-

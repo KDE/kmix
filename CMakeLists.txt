@@ -39,6 +39,8 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
 include(GenerateExportHeader)
+include (CheckIncludeFile)
+include (CheckSourceRuns)
 
 find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
     Core
@@ -69,14 +71,92 @@ if (BUILD_DATAENGINE)
   set_package_properties(KF5Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
 endif ()
 
-# PulseAudio is an optional dependency
+####################################################################################################
+########### sound backend support ##################################################################
+####################################################################################################
+
+# Sun Audio, only for that platform
+check_include_file("sys/audioio.h" HAVE_SYS_AUDIOIO_H)
+if (HAVE_SYS_AUDIOIO_H)
+  message(STATUS "Building with Sun audio support")
+  set(HAVE_SUN_MIXER true)
+  add_definitions(-DHAVE_SUN_MIXER)
+  set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "Sun")
+endif ()
+
+# OSS, Linux or BSD
+check_include_file("soundcard.h" HAVE_SOUNDCARD_H)
+check_include_file("sys/soundcard.h" HAVE_SYS_SOUNDCARD_H)
+if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
+  add_definitions(-DHAVE_OSS_MIXER)
+  set(HAVE_OSS_MIXER true)
+  if (HAVE_SOUNDCARD_H)
+    set(TEST_COMPILE_FLAGS "${TEST_COMPILE_FLAGS} -DHAVE_SOUNDCARD_H")
+    add_definitions(-DHAVE_SOUNDCARD_H)
+  endif ()
+  if (HAVE_SYS_SOUNDCARD_H)
+    set(TEST_COMPILE_FLAGS "${TEST_COMPILE_FLAGS} -DHAVE_SYS_SOUNDCARD_H")
+    add_definitions(-DHAVE_SYS_SOUNDCARD_H)
+  endif ()
+
+  # Running a program is hopefully more reliable than trying to
+  # grep through header files to find a definition.  Need try_run()
+  # here so as to be able to read the output result.
+  try_run(TEST_RUN_RESULT TEST_COMPILE_RESULT
+          ${CMAKE_CURRENT_BINARY_DIR}
+          SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/ossversion.c
+          COMPILE_DEFINITIONS "${TEST_COMPILE_FLAGS}"
+          RUN_OUTPUT_VARIABLE TEST_RESULT_VERSION)
+  #message(STATUS "TEST_RUN_RESULT= ${TEST_RUN_RESULT}")
+  #message(STATUS "TEST_COMPILE_RESULT= ${TEST_COMPILE_RESULT}")
+  #message(STATUS "TEST_RESULT_VERSION= ${TEST_RESULT_VERSION}")
+
+  if (${TEST_COMPILE_RESULT} AND (${TEST_RUN_RESULT} EQUAL 0))
+    message(STATUS "Detected OSS version ${TEST_RESULT_VERSION}")
+    if (${TEST_RESULT_VERSION} GREATER_EQUAL 0x400000)
+      message(STATUS "Building with OSS 4 support")
+      set(HAVE_OSS_4 true)
+      add_definitions(-DHAVE_OSS_4)
+      set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS4")
+    else ()
+      message(STATUS "Building with OSS 3 support")
+      set(HAVE_OSS_3 true)
+      add_definitions(-DHAVE_OSS_3)
+      set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS")
+    endif ()
+  else ()
+    message(STATUS "Unable to get OSS version, assuming 3")
+    set(HAVE_OSS_3 true)
+    add_definitions(-DHAVE_OSS_3)
+    set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS")
+  endif ()
+endif ()
+
+# PulseAudio, optional
 find_package(PulseAudio "${PA_MIN_VERSION}")
+if (PulseAudio_FOUND)
+  message(STATUS "Building with PulseAudio support")
+  set(HAVE_PULSEAUDIO true)
+  add_definitions(-DHAVE_PULSEAUDIO)
+  set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "PulseAudio")
+endif ()
 
-# Canberra is an optional dependency
-find_package(Canberra)
-
-# ALSA is an optional dependency
+# ALSA, optional
 find_package(ALSA)
+if (ALSA_FOUND)
+  message(STATUS "Building with ALSA support")
+  set(HAVE_ALSA_MIXER true)
+  add_definitions(-DHAVE_ALSA_MIXER)
+  set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "ALSA")
+endif ()
+
+message(STATUS "Supported backends: ${SUPPORTED_BACKENDS}")
+
+# Canberra, optional for volume feedback
+find_package(Canberra)
+if (CANBERRA_FOUND)
+  add_definitions(-DHAVE_CANBERRA)
+endif ()
 
 ####################################################################################################
 ########### compile definitions ####################################################################
@@ -87,19 +167,6 @@ include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
 add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
-
-if (ALSA_FOUND)
-  set(HAVE_LIBASOUND2 TRUE)
-  add_definitions(-DHAVE_LIBASOUND2)
-endif ()
-
-if (PulseAudio_FOUND)
-  add_definitions(-DHAVE_PULSE)
-endif ()
-
-if (CANBERRA_FOUND)
-  add_definitions(-DHAVE_CANBERRA)
-endif ()
 
 ####################################################################################################
 ########### subdirectories #########################################################################
@@ -151,17 +218,26 @@ install(FILES dbus/org.kde.kmix.mixset.xml DESTINATION ${KDE_INSTALL_DBUSINTERFA
 ########### definitions: backends ##################################################################
 ####################################################################################################
 
-set(kmix_backend_SRCS
-  backends/mixer_backend.cpp
-  backends/mixer_mpris2.cpp
-)
+set(kmix_backend_SRCS backends/mixerbackend.cpp backends/mixer_mpris2.cpp)
 
-if (HAVE_LIBASOUND2)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_alsa9.cpp backends/mixer_alsa9.h)
+if (HAVE_ALSA_MIXER)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_alsa9.cpp)
 endif ()
 
-if (PulseAudio_FOUND)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp backends/mixer_pulse.h)
+if (HAVE_PULSEAUDIO)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp)
+endif ()
+
+if (HAVE_SUN_MIXER)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_sun.cpp)
+endif ()
+
+if (HAVE_OSS_3)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_oss.cpp)
+endif ()
+
+if (HAVE_OSS_4)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_oss4.cpp)
 endif ()
 
 ####################################################################################################
@@ -218,11 +294,11 @@ target_link_libraries(kmixcore
 set_target_properties(kmixcore PROPERTIES VERSION ${KMIX_VERSION} SOVERSION ${KMIX_VERSION_MAJOR})
 generate_export_header(kmixcore BASE_NAME kmixcore EXPORT_FILE_NAME kmixcore_export.h)
 
-if (HAVE_LIBASOUND2)
+if (HAVE_ALSA_MIXER)
   target_link_libraries(kmixcore PRIVATE ALSA::ALSA)
 endif ()
 
-if (PulseAudio_FOUND)
+if (HAVE_PULSEAUDIO)
   target_link_libraries(kmixcore PRIVATE PulseAudio::PulseAudio)
 endif ()
 

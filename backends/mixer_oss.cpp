@@ -31,14 +31,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <KLazyLocalizedString>
-// Since we're guaranteed an OSS setup here, let's make life easier
-#if !defined(__NetBSD__) && !defined(__OpenBSD__)
-#include <sys/soundcard.h>
-#else
+
+#ifdef HAVE_SOUNDCARD_H
 #include <soundcard.h>
+#else
+#ifdef HAVE_SYS_SOUNDCARD_H
+#include <sys/soundcard.h>
+#endif
 #endif
 
 #include <QTimer>
+
 /*
   I am using a fixed MAX_MIXDEVS #define here.
    People might argue, that I should rather use the SOUND_MIXER_NRDEVICES
@@ -101,15 +104,15 @@ const MixDevice::ChannelType MixerChannelTypes[MAX_MIXDEVS] = {
 };
 // clang-format on
 
-Mixer_Backend *OSS_getMixer(Mixer *mixer, int device)
+MixerBackend *OSS_getMixer(Mixer *mixer, int device)
 {
-    Mixer_Backend *l_mixer;
+    MixerBackend *l_mixer;
     l_mixer = new Mixer_OSS(mixer, device);
     return l_mixer;
 }
 
 Mixer_OSS::Mixer_OSS(Mixer *mixer, int device)
-    : Mixer_Backend(mixer, device)
+    : MixerBackend(mixer, device)
 {
     if (device == -1) {
         m_devnum = 0;
@@ -121,6 +124,19 @@ Mixer_OSS::~Mixer_OSS()
 {
     close();
 }
+
+
+static QString deviceName(int devnum)
+{
+    return (QString("/dev/mixer%1").arg(devnum==0 ? "" : QString::number(devnum)));
+}
+
+
+static QString deviceNameDevfs(int devnum)
+{
+    return (QString("/dev/sound/mixer%1").arg(devnum==0 ? "" : QString::number(devnum)));
+}
+
 
 int Mixer_OSS::open()
 {
@@ -141,15 +157,22 @@ int Mixer_OSS::open()
         }
     }
 
-    _udi = KMixDeviceManager::instance()->getUDI_OSS(finalDeviceName);
-    if (_udi.isEmpty()) {
-        QString msg("No UDI found for '");
-        msg += finalDeviceName;
-        msg += "'. Hotplugging not possible";
-        qCDebug(KMIX_LOG) << msg;
+    // Register the card now, so that it will have an ID set.  The loop
+    // below requires it.  If it is not done here then there will be an
+    // "Emergency ID created" message from Mixer::dbusPath() which is
+    // called from MixDevice::addToPool().
+#if defined(SOUND_MIXER_INFO)
+    struct mixer_info l_mix_info;
+    if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
+        registerCard(l_mix_info.name);
+    } else
+#endif
+    {
+        registerCard("OSS Audio Mixer");
     }
+
+    // Mixer is open. Now define its properties.
     int devmask, recmask, i_recsrc, stereodevs;
-    // Mixer is open. Now define properties
     if (ioctl(m_fd, SOUND_MIXER_READ_DEVMASK, &devmask) == -1)
         return Mixer::ERR_READ;
     if (ioctl(m_fd, SOUND_MIXER_READ_RECMASK, &recmask) == -1)
@@ -173,6 +196,11 @@ int Mixer_OSS::open()
             MixDevice *md = new MixDevice(_mixer, id, MixerDevNames[idx].toString(), MixerChannelTypes[idx]);
             md->addPlaybackVolume(playbackVol);
 
+            QByteArray dspName = finalDeviceName.toLocal8Bit();
+            // The DSP device with the same number as the mixer device.
+            dspName.replace("/mixer", "/dsp");
+            md->setHardwareId(dspName);
+
             // Tutorial: Howto add a simple capture switch
             if (recmask & (1 << idx)) {
                 // can be captured => add capture volume, with no capture volume
@@ -185,15 +213,8 @@ int Mixer_OSS::open()
         idx++;
     }
 
-#if defined(SOUND_MIXER_INFO)
-    struct mixer_info l_mix_info;
-    if (ioctl(m_fd, SOUND_MIXER_INFO, &l_mix_info) != -1) {
-        registerCard(l_mix_info.name);
-    } else
-#endif
-    {
-        registerCard("OSS Audio Mixer");
-    }
+    // MixerBackend::registerCard() was originally called here.
+    // This is too late, see above.
 
     m_isOpen = true;
     return 0;
@@ -208,32 +229,6 @@ int Mixer_OSS::close()
     return l_i_ret;
 }
 
-QString Mixer_OSS::deviceName(int devnum)
-{
-    switch (devnum) {
-    case 0:
-        return QString("/dev/mixer");
-        break;
-
-    default:
-        QString devname("/dev/mixer%1");
-        return devname.arg(devnum);
-    }
-}
-
-QString Mixer_OSS::deviceNameDevfs(int devnum)
-{
-    switch (devnum) {
-    case 0:
-        return QString("/dev/sound/mixer");
-        break;
-
-    default:
-        QString devname("/dev/sound/mixer");
-        devname += ('0' + devnum);
-        return devname;
-    }
-}
 
 QString Mixer_OSS::errorText(int mixer_error)
 {
@@ -251,7 +246,7 @@ QString Mixer_OSS::errorText(int mixer_error)
                           "Use 'soundon' when using commercial OSS.");
         break;
     default:
-        l_s_errmsg = Mixer_Backend::errorText(mixer_error);
+        l_s_errmsg = MixerBackend::errorText(mixer_error);
         break;
     }
     return l_s_errmsg;
@@ -455,12 +450,35 @@ int Mixer_OSS::writeVolumeToHW(const QString &id, shared_ptr<MixDevice> md)
     return 0;
 }
 
-QString OSS_getDriverName()
-{
-    return "OSS";
-}
+
+const char *OSS_driverName = "OSS";
 
 QString Mixer_OSS::getDriverName()
 {
-    return "OSS";
+    return (OSS_driverName);
+}
+
+
+int OSS_acceptsHotplugId(const QString &id)
+{
+    // The Solid device UDIs for a plugged OSS sound card are of the form:
+    //
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/mixer4
+    //   /org/kde/solid/udev/sys/devices/pci0000:00/0000:00:12.1/usb4/4-2/4-2:1.0/sound/card4/pcm4
+    //
+    // The "mixer" one of these is taken as the canonical form.  The "card" and
+    // "mixer" numbers are assumed to be the same, but this is not checked.
+
+    QRegExp rx("/card(\\d+)/mixer(\\d+)$");		// match sound card mixer device
+    if (!id.contains(rx)) return (-1);			// UDI not recognised
+    return (rx.cap(2).toInt());				// assume conversion succeeds
+}
+
+
+bool OSS_acceptsDeviceNode(const QString &blkdev, int devnum)
+{
+    // The primary OSS device is "/dev/mixer[N]" which corresponds to
+    // the "mixer" UDI as above.
+    return (blkdev==deviceName(devnum) || blkdev==deviceNameDevfs(devnum));
 }

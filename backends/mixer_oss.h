@@ -24,9 +24,9 @@
 
 #include <QString>
 
-#include "mixer_backend.h"
+#include "mixerbackend.h"
 
-class Mixer_OSS : public Mixer_Backend
+class Mixer_OSS : public MixerBackend
 {
 public:
     Mixer_OSS(Mixer *mixer, int device);
@@ -41,9 +41,6 @@ public:
 protected:
     int open() override;
     int close() override;
-
-    virtual QString deviceName(int);
-    virtual QString deviceNameDevfs(int);
 
 private:
     int m_fd;

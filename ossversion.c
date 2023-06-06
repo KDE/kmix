@@ -1,7 +1,7 @@
 /*
  * KMix -- KDE's full featured mini mixer
  *
- * Copyright (C) 2000 Stefan Schimanski <1Stein@gmx.de>
+ * Copyright (C) 2023 Jonathan Marten <jonathan.marten@kdemail.net>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,46 +18,17 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KMIXD_H
-#define KMIXD_H
+#include <stdio.h>
+#ifdef HAVE_SOUNDCARD_H
+#include <soundcard.h>
+#else
+#ifdef HAVE_SYS_SOUNDCARD_H
+#include <sys/soundcard.h>
+#endif
+#endif
 
-
-// Qt
-#include <QDBusContext>
-#include <QString>
-
-#include <qlist.h>
-#include <QTimer>
-
-// KDE
-#include <kdedmodule.h> 
-
-class
-KMixD : public KDEDModule, protected QDBusContext
+int main()
 {
-  Q_OBJECT
-  Q_CLASSINFO("D-Bus Interface", "org.kde.KMixD")
-
-  public:
-   explicit KMixD(QObject* parent, const QList<QVariant>&);
-   ~KMixD();
-
-  private: 
-   void saveBaseConfig();
-   void loadConfig();
-   void loadBaseConfig();
-
-   void initActions();
-
-  private:
-   bool m_multiDriverMode;
-
-  private slots:
-   void delayedInitialization();
-   void saveConfig();
-
-   void plugged(const char *driverName, const QString &udi, int dev);
-   void unplugged(const QString &udi);
-};
-
-#endif // KMIXD_H
+	printf("0x%06X", SOUND_VERSION);
+	return (0);
+}
