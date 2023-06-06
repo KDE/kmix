@@ -348,3 +348,62 @@ unsigned int MixerBackend::enumIdHW(const QString& ) {
 	else if (kernelName == "Headphone:0") return (i18n("Controls the headphone volume. Some soundcards include a switch that must be manually activated to enable the headphone output."));
 	else return (i18n("---"));
 }
+
+
+/**
+ * Registers the card for this backend and sets the card discriminator for the
+ * given card name.
+ *
+ * You MUST call this before creating the first @c MixDevice.  The reason is that
+ * each @c MixDevice instance registers a DBUS name that includes the mixer ID
+ * (and this means also the @c _cardInstance).
+ *
+ * The discriminator should always be 1, unless a second card with the same name
+ * as a registered card was already registered.  The default implementation will
+ * return 2, 3 and so on for more cards.  Subclasses can override this and return
+ * arbitrary IDs, but any ID that is not 1 will be displayed to the user everywhere
+ * where a mixer name is shown, like in the tab name.
+ *
+ * For the background please see BKO-327471 and read the following info:
+ * "Count mixer nums for every mixer name to identify mixers with equal names.
+ * This is for creating persistent (reusable) primary keys, which can safely
+ * be referenced (especially for config file access, so it is meant to be
+ * persistent!)."
+ *
+ * @param cardBaseName The base mixer name for the card
+ */
+void MixerBackend::registerCard(const QString &cardBaseName)
+{
+	m_mixerName = cardBaseName;
+	int cardDiscriminator = 1 + m_mixerNums[cardBaseName];
+	qCDebug(KMIX_LOG) << "cardBaseName=" << cardBaseName << "cardDiscriminator=" << cardDiscriminator;
+	_cardInstance = cardDiscriminator;
+	_cardRegistered = true;
+}
+
+
+/**
+ * Unregisters the card of this backend.
+ *
+ * The card discriminator counter for this card name is reduced by 1.
+ * See @c registerCard() for more information.
+ *
+ * TODO: This is not entirely correct.  For example, if the first card
+ * (cardDiscrimiator==1) is unpluggged, then @c m_mixerNums["cardName"] is
+ * changed from 2 to 1. The next plug of registerCard("cardName") will use
+ * a @c cardDiscriminator of 2, but the card with that discriminator was not
+ * unplugged => BANG!!!
+ *
+ * @param cardBaseName The base mixer name of the card
+ */
+void MixerBackend::unregisterCard(const QString &cardBaseName)
+{
+	const QMap<QString,int>::const_iterator it = m_mixerNums.constFind(cardBaseName);
+	if (it != m_mixerNums.constEnd())
+	{
+		int beforeValue = it.value();
+		int afterValue = beforeValue-1;
+		if (beforeValue>0) m_mixerNums[cardBaseName] = afterValue;
+		qCDebug(KMIX_LOG) << "beforeValue=" << beforeValue << "afterValue" << afterValue;
+	}
+}

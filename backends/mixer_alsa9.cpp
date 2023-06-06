@@ -41,6 +41,9 @@
 //#define ALSA_SWITCH_DEBUG
 //#define KMIX_ALSA_VOLUME_DEBUG
 
+// For ALSA API documentation se
+// https://www.alsa-project.org/alsa-doc/alsa-lib/index.html
+
 
 MixerBackend*
 ALSA_getMixer(Mixer *mixer, int device )

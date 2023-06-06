@@ -86,7 +86,7 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
             m_cMixer->addItem(QIcon::fromTheme(m->iconName()), m->readableName(), m->id());
             if (m->id()==mixer->id()) mixerIndex = i;
 
-            const MixSet &mixset = m->getMixSet();
+            const MixSet &mixset = m->mixDevices();
             bool hasValidVolume = false;
             for (int j = 0; j<mixset.count(); ++j)
             {
@@ -183,9 +183,8 @@ void DialogSelectMaster::createPage(const Mixer *mixer)
 	// This should automatically remove and delete all contained items.
 	m_channelSelector->clear();
 
-        const MixSet &mixset = mixer->getMixSet();
-	const MasterControl mc = MixerToolBox::getGlobalMasterPreferred(false);
-	QString masterKey = mc.getControl();
+        const MixSet &mixset = mixer->mixDevices();
+	QString masterKey = MixerToolBox::getGlobalMasterPreferred(false).getControl();
 	if (!masterKey.isEmpty() && !mixset.get(masterKey))
 	{
 		const shared_ptr<MixDevice> master = mixer->getLocalMasterMD();

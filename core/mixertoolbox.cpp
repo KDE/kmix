@@ -505,21 +505,19 @@ void MixerToolBox::initMixer(bool allowHotplug)
 bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 {
     if (mixer==nullptr) return (false);
-    if (mixer->openIfValid())
+
+    // Only try to open the mixer if it is not to be ignored.
+    // The default ignore expression is "Modem".
+    if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
     {
-        // TODO: wrong order, do this check before opening the mixer?
-        if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
+        if (mixer->openIfValid())
         {
             s_allMixers.append(mixer);
             qCDebug(KMIX_LOG) << "Added mixer" << mixer->id();
             return (true);
         }
-        else
-        {
-            // This mixer should be ignored (the default ignore expression is "Modem").
-            qCDebug(KMIX_LOG) << "mixer" << mixer->id() << "ignored";
-        }
     }
+    else qCDebug(KMIX_LOG) << "mixer" << mixer->id() << "ignored";
 
     delete mixer;
     return (false);
@@ -662,8 +660,8 @@ shared_ptr<MixDevice> MixerToolBox::getGlobalMasterMD(bool fallbackAllowed)
     }
 
     shared_ptr<MixDevice> firstDevice;
-    for (const shared_ptr<MixDevice> &md : std::as_const(mixer->getMixSet()))
-    {							// getMixSet() = _mixerBackend->m_mixDevices
+    for (const shared_ptr<MixDevice> &md : std::as_const(mixer->mixDevices()))
+    {
         if (md==nullptr) continue;			// invalid
 
         firstDevice = md;

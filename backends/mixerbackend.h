@@ -50,42 +50,47 @@ protected:
    */
   virtual int open() = 0;
 
-    // TODO: this comment is wrong, shutdown() does not exist.
-    // Do they mean closeCommon()?
   /**
-   * Derived classes MUST implement this to close the mixer. Do not call this directly, but use shutdown() instead.
-   * The method cannot be made pure virtual, as we use close() in the destructor, and C++ does not allow this.
-   * https://stackoverflow.com/questions/99552/where-do-pure-virtual-function-call-crashes-come-from?lq=1
+   * Derived classes MUST implement this to close the mixer. Do not call this directly,
+   * but use closeCommon() instead.  The method cannot be pure virtual as we use close()
+   * in the destructor, and C++ does not allow this.
+   * https://stackoverflow.com/questions/99552
    *
    * @return a KMix error code (O=OK).
    */
-  virtual int close(); // Not pure virtual. See comment!
+  virtual int close();
 
   /**
-   * Shutdown deinitializes this MixerBackend, freeing resources
+   * Deinitialize this backend, freeing resources.
    */
   void closeCommon();
 
   /**
-   * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for looking up the
-   * driver name on instantiated objects.
+   * Returns the driver name, e.g. "ALSA" or "OSS". This virtual method is for
+   * looking up the driver name on instantiated objects.
    *
-   * Please note, that there is also a static implementation of the driverName
+   * Please note, that there is also a global character string variable for
+   * the driver name.  It and this function should return the same string value.
    * (Because there is no "virtual static" in C++, I need the method twice).
-   * The static implementation is for the Mixer Factory (who needs it *before* instantiating an object).
-   * While it is not a member function, its implementation can still be found in the corresponding
-   * Backend implementation. For example in mixer_oss.cpp there is a global function called OSS_getDriverName().
+   * The global value is for the mixer factory, which needs it *before* instantiating
+   * an object.   While it is not a member function, its implementation
+   * can still be found in the corresponding backend implementation.  For example,
+   * in mixer_oss.cpp there is a global variable called OSS_driverName.
    */
   virtual QString getDriverName() = 0;
 
   /**
-   * Opens the mixer, if it constitutes a valid Device. You should return "false", when
-   * the Mixer with the devnum given in the constructor is not supported by the Backend. The two
-   * typical cases are:
+   * Opens the mixer, if it constitutes a valid device.
+   *
+   * @return @c true if the open succeeded, or @false if the mixer could not
+   * be opened or is not supported by the backend.  The two typical cases are:
    * (1) No such hardware installed
-   * (2) The hardware exists, but has no mixer support (e.g. external soundcard with only mechanical volume knobs)
-   * The implementation calls open(), checks the return code and whether the number of
-   * supported channels is > 0. The device remains opened if it is valid, otherwise a close() is done.
+   * (2) The hardware exists, but has no mixer support (e.g. is an external sound card
+   * with only mechanical volume knobs).
+   *
+   * The implementation calls open(), checks the return code and whether the number
+   * of supported channels is>0.  The device remains opened if it is valid,
+   * otherwise close() is done.
    */
   bool openIfValid();
 
@@ -131,13 +136,28 @@ protected:
    */
   virtual QString translateKernelToWhatsthis(const QString &kernelName) const;
 
-  int m_devnum;
   /**
-   * User friendly name of the Mixer (e.g. "USB 7.1 Surround System"). If your mixer API gives you a usable name, use that name.
+   * The user friendly name of the Mixer (e.g. "USB 7.1 Surround System").
+   * If your mixer API gives you a usable name, use that name.
    */
   virtual QString getName() const;
   virtual QString getId() const;
   virtual int getCardInstance() const      {   return _cardInstance;      }
+
+  void freeMixDevices();
+
+  /**
+   * Registers the card for this backend.
+   */
+  void registerCard(const QString &cardBaseName);
+
+  /**
+   * Unregisters the card of this backend.
+   */
+  void unregisterCard(const QString &cardBaseName);
+
+protected:
+  int m_devnum;
 
   // All controls of this card
   MixSet m_mixDevices;
@@ -146,91 +166,20 @@ protected:
    * Please don't access the next vars from the Mixer class (even though Mixer is a friend).
    * There are proper access methods for them.
    ******************************************************************************************/
+
   bool m_isOpen;
-  // The MixDevice that would qualify best as MasterDevice (according to the taste of the Backend developer)
+  // The MixDevice that would qualify best as MasterDevice (according to the taste of
+  // the backend developer)
   shared_ptr<MixDevice> m_recommendedMaster;
-   // The Mixer is stored her only for one reason: The backend creates the MixDevice's, and it has shown
-   // that it is helpful if the MixDevice's know their corresponding Mixer. KMix lived 10 years without that,
-   // but just believe me. It's *really* better, for example, you can put controls of different soundcards in
-   // one View. That is very cool! Also the MDW doesn't need to store the Mixer any longer (MDW is a GUI element,
-   // so that was 'wrong' anyhow
+  // The Mixer is stored her only for one reason:  the backend creates the MixDevice's,
+  // and it has shown that it is helpful if the MixDevice's know their corresponding Mixer.
+  // KMix lived 10 years without that, but just believe me. It's *really* better, for
+  // example, you can put controls of different soundcards in one View. That is very cool!
+  // Also the MDW doesn't need to store the Mixer any longer (MDW is a GUI element, so
+  // that was 'wrong' anyhow
   Mixer* _mixer;
+
   QTimer* _pollingTimer;
-
-    // TODO: not used by any subclass, can be private
-  mutable bool _readSetFromHWforceUpdate;
-
-signals:
-    // TODO: does not appear to be used
-  void controlChanged( void ); // TODO remove?
-
-public slots:
-/**
- * Re-initialize. Currently only implemented by PulseAudio backend, and this slot might get moved there
- */
-  virtual void reinit() {};
-
-protected:
-  void freeMixDevices();
-
-    // TODO: not used by any subclass, can be private
-  QMap<QString,int> s_mixerNums;
-
-	/**
-	 * Registers the card for this Backend and sets the card discriminator for the given card name.
-	 * You MUST call this before creating the first MixDevice. Reason is, that each MixDevice instance register a
-	 * DBUS name that includes the mixer ID (and this means also the _cardInstance).
-	 *
-	 * The discriminator should always be 1, unless a second card with
-	 * the same name of a registered card was already registered. Default implementation will return 2, 3 and so on
-	 * for more cards. Subclasses can override this and return arbitrary ID's, but any ID that is not 1 will be
-	 * displayed to the user everywhere where a mixer name is shown, like in the tab name.
-	 *
-	 * For the background please see BKO-327471 and read the following info:
-	 *   "Count mixer nums for every mixer name to identify mixers with equal names.
-	 *    This is for creating persistent (reusable) primary keys, which can safely
-	 *    be referenced (especially for config file access, so it is meant to be persistent!)."
-	 *
-	 *
-	 *
-	 * @param cardBaseName
-	 */
-  void registerCard(QString cardBaseName)
-  {
-		m_mixerName = cardBaseName;
-		int cardDiscriminator = 1 + s_mixerNums[cardBaseName];
-		qCDebug(KMIX_LOG) << "cardBaseName=" << cardBaseName << ", cardDiscriminator=" << cardDiscriminator;
-		_cardInstance = cardDiscriminator;
-		_cardRegistered = true;
-  }
-
-  /**
-   * Unregisters the card of this Backend. The cardDiscriminator counter for this card name is reduced by 1.
-   * See #registerCard() for more info.
-   *
-   * TODO This is not entirely correct. Example: If the first card (cardDiscrimiator == 1) is unpluggged, then
-   *   s_mixerNums["cardName"] is changed from 2 to 1. The next plug of registerCard("cardName") will use
-   *   cardDiscriminator == 2, but the card with that discriminator was not unplugged => BANG!!!
-   *
-   * @param cardBaseName
-   */
-  void unregisterCard(QString cardBaseName)
-  {
-	  QMap<QString,int>::const_iterator it = s_mixerNums.constFind(cardBaseName);
-	  if (it != s_mixerNums.constEnd())
-	  {
-		  int beforeValue = it.value();
-		  int afterValue = beforeValue-1;
-		  if (beforeValue > 0)
-			  s_mixerNums[cardBaseName] = afterValue;
-		  qCDebug(KMIX_LOG) << "beforeValue=" << beforeValue << ", afterValue" << afterValue;
-	  }
-  }
-
-    // TODO: not used by any subclass, can be private
-  int    _cardInstance;
-  bool _cardRegistered;
-
 
 protected slots:
   virtual void readSetFromHW();
@@ -238,6 +187,12 @@ protected slots:
 private:
   QTime _fastPollingEndsAt;
   QString m_mixerName;
+  int    _cardInstance;
+  bool _cardRegistered;
+
+  mutable bool _readSetFromHWforceUpdate;
+
+  QMap<QString,int> m_mixerNums;
 };
 
 #endif

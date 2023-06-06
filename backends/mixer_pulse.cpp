@@ -54,7 +54,7 @@ static pa_context *s_context = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_outstandingRequests = 0;
 
-QMap<int,Mixer_PULSE*> s_mixers;
+static QMap<int,Mixer_PULSE *> s_mixers;
 
 static devmap outputDevices;
 static devmap captureDevices;
@@ -693,7 +693,7 @@ static void context_state_callback(pa_context *c, void *)
             if (s_mixers.contains(KMIXPA_PLAYBACK)) {
                 qCWarning(KMIX_LOG) << "Connection to PulseAudio daemon closed. Attempting reconnection.";
                 s_pulseActive = UNKNOWN;
-                QTimer::singleShot(50, s_mixers[KMIXPA_PLAYBACK], SLOT(reinit()));
+                QTimer::singleShot(50, s_mixers[KMIXPA_PLAYBACK], &Mixer_PULSE::reinit);
             }
         }
     }
@@ -964,14 +964,11 @@ bool Mixer_PULSE::connectToDaemon()
 }
 
 
-Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : MixerBackend(mixer, devnum)
+Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum)
+    : MixerBackend(mixer, devnum)
 {
-    if ( devnum == -1 )
-        m_devnum = 0;
-
-    QString pulseenv = qgetenv("KMIX_PULSEAUDIO_DISABLE");
-    if (pulseenv.toInt())
-        s_pulseActive = INACTIVE;
+    if (devnum==-1) m_devnum = 0;
+    if (qEnvironmentVariableIntValue("KMIX_PULSEAUDIO_DISABLE")) s_pulseActive = INACTIVE;
 
     ++refcount;
     if (INACTIVE != s_pulseActive && 1 == refcount)

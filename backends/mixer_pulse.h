@@ -73,6 +73,9 @@ class Mixer_PULSE : public MixerBackend
         MixSet *getMixSet() { return &m_mixDevices; }
         int id2num(const QString& id);
 
+   public Q_SLOTS:
+        void reinit();
+
     protected:
         int open() override;
         int close() override;
@@ -90,9 +93,6 @@ class Mixer_PULSE : public MixerBackend
    protected Q_SLOTS:
         void pulseControlsReconfigured(QString mixerId);
         void pulseControlsReconfigured();
-
-public:
-        void reinit() override;
 
 };
 

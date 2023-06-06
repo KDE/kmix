@@ -82,7 +82,7 @@ QString DBusMixerWrapper::driverName()
 QStringList DBusMixerWrapper::controls()
 {
 	QStringList result;
-    for (const shared_ptr<MixDevice> &md : std::as_const(m_mixer->getMixSet()))
+	for (const shared_ptr<MixDevice> &md : std::as_const(m_mixer->mixDevices()))
 	{
 		result.append( md->dbusPath() );
 	}

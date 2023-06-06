@@ -26,19 +26,16 @@
 #ifndef RANDOMPREFIX_MIXER_H
 #define RANDOMPREFIX_MIXER_H
 
-#include <QList>
 #include <QObject>
-#include <QString>
 
 #include "core/volume.h"
-#include "backends/mixerbackend.h"
 #include "core/MasterControl.h"
-#include "mixset.h"
+#include "core/mixset.h"
 #include "core/mixdevice.h"
+#include "backends/mixerbackend.h"
 #include "dbus/dbusmixerwrapper.h"
 #include "kmixcore_export.h"
 
-class Volume;
 class KConfig;
 
 
@@ -74,10 +71,6 @@ public:
 
     void volumeSave(KConfig *config) const;
     void volumeLoad(const KConfig *config);
-
-    /// How many mixer backend devices
-    // TODO: rename to numDevices, belongs with mixDevices below
-    unsigned int size() const			{ return (_mixerBackend->m_mixDevices.count()); }
 
     /// Returns a pointer to the mix device whose type matches the value
     /// given by the parameter and the array MixerDevNames given in
@@ -167,9 +160,10 @@ public:
      */
     QString iconName() const;
 
-    /// get the actual MixSet
-    // TODO: rename to mixDevices()
-    MixSet &getMixSet() const			{ return (_mixerBackend->m_mixDevices); }
+    /// How many mixer backend devices
+    unsigned int numDevices() const		{ return (_mixerBackend->m_mixDevices.count()); }
+    /// Access the actual MixSet
+    MixSet &mixDevices() const			{ return (_mixerBackend->m_mixDevices); }
 
     /// DBUS oriented methods
     virtual void increaseVolume( const QString& mixdeviceID );
@@ -194,8 +188,8 @@ public Q_SLOTS:
     virtual void setBalance(int balance); // sets the m_balance (see there)
     
 Q_SIGNALS:
+    // TODO: this signal is never used
     void newBalance(Volume& );
-    void controlChanged(void); // TODO remove?
 
 private:
     void setBalanceInternal(Volume& vol);

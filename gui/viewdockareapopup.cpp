@@ -339,11 +339,11 @@ Application: KMix (kmix), signal: Segmentation fault
 		//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
 		// Get the configured master control for the mixer.
 		shared_ptr<MixDevice> dockMD = mixer->getLocalMasterMD();
-		if (dockMD==nullptr && mixer->size()>0)
+		if (dockMD==nullptr && mixer->numDevices()>0)
 		{
 			// If the mixer has no local master device defined,
 			// then take its first available device.
-			dockMD = mixer->getMixSet().first();
+			dockMD = mixer->mixDevices().first();
 		}
 
 		if (dockMD!=nullptr)			// have a master device to dock
@@ -363,7 +363,7 @@ Application: KMix (kmix), signal: Segmentation fault
 	// Finally add all application streams
 	for (const Mixer *mixer : std::as_const(getMixers()))
 	{
-		for (shared_ptr<MixDevice> md : std::as_const(mixer->getMixSet()))
+		for (shared_ptr<MixDevice> md : std::as_const(mixer->mixDevices()))
 		{
 			if (md->isApplicationStream()) addToMixSet(md);
 		}
