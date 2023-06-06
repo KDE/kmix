@@ -34,12 +34,12 @@ class QFrame;
 class QGridLayout;
 class QRadioButton;
 class QShowEvent;
-class QWidget;
+class QListWidget;
 
 class KMessageWidget;
 
 
-class KMixPrefDlg: public KConfigDialog
+class KMixPrefDlg : public KConfigDialog
 {
 	Q_OBJECT
 
@@ -95,14 +95,15 @@ private:
 	};
 
 	void createStartupTab();
-	void replaceBackendsInTab();
 	void createGeneralTab();
 	void createControlsTab();
+	void updateBackends();
 
 	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip);
 	void createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
 	void setOrientationTooltip(QGridLayout *orientationLayout, int row, const QString &tooltip);
 
+private:
 	QFrame *m_generalTab;
 	QFrame *m_startupTab;
 	QFrame *m_controlsTab;
@@ -125,7 +126,8 @@ private:
 
 	QBoxLayout *layoutControlsTab;
 	QBoxLayout *layoutStartupTab;
-	DialogChooseBackends *dvc;
+
+	QListWidget *m_mixerList;
 
 	QRadioButton *_rbVertical;
 	QRadioButton *_rbHorizontal;

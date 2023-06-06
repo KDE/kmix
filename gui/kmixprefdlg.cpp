@@ -29,6 +29,7 @@
 #include <qradiobutton.h>
 #include <qgroupbox.h>
 #include <qguiapplication.h>
+#include <qlistwidget.h>
 
 #include <kconfig.h>
 #include <klocalizedstring.h>
@@ -38,7 +39,6 @@
 #include "dialogstatesaver.h"
 #include "gui/kmixerwidget.h"
 #include "core/mixertoolbox.h"
-#include "gui/dialogchoosebackends.h"
 #include "settings.h"
 
 
@@ -54,7 +54,6 @@ KMixPrefDlg::KMixPrefDlg(QWidget *parent)
 {
 	setFaceType(KPageDialog::List);
 
-	dvc = nullptr;
 	m_startupTab = m_generalTab = m_controlsTab = nullptr;
 
 	new DialogStateSaver(this);			// save dialogue size when closed
@@ -346,7 +345,31 @@ void KMixPrefDlg::createControlsTab()
 	addWidgetToLayout(m_dockingChk, layoutControlsTab, 10, i18n("Dock the mixer into the system tray. Click on it to open the popup volume control."));
 
 	layoutControlsTab->addItem(new QSpacerItem(1, 2*DialogBase::verticalSpacing()));
-	replaceBackendsInTab();
+
+	QLabel *topLabel = new QLabel(i18n("Mixers to show in the popup volume control:"), this);
+	layoutControlsTab->addWidget(topLabel);
+
+	m_mixerList = new QListWidget(this);
+	m_mixerList->setUniformItemSizes(true);
+	m_mixerList->setAlternatingRowColors(true);
+	m_mixerList->setSelectionMode(QAbstractItemView::NoSelection);
+	m_mixerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#ifndef QT_NO_ACCESSIBILITY
+	m_mixerList->setAccessibleName(i18n("Select Mixers"));
+#endif
+	m_mixerList->setToolTip(i18n("The mixers that are checked here will be shown in the popup volume control."));
+
+	connect(m_mixerList, &QListWidget::itemChanged, this, [this]()
+	{
+		settingChanged(KMixPrefDlg::ChangedMaster);
+	});
+	connect(m_mixerList, &QListWidget::itemActivated, this, [](QListWidgetItem *item)
+	{
+		item->setCheckState(item->checkState()==Qt::Checked ? Qt::Unchecked : Qt::Checked);
+	});
+
+	layoutControlsTab->addWidget(m_mixerList);
+	layoutControlsTab->setStretchFactor(m_mixerList, 1);
 }
 
 
@@ -406,9 +429,6 @@ void KMixPrefDlg::updateSettings()
 	const Qt::Orientation trayOrientation = _rbTraypopupHorizontal->isChecked() ? Qt::Horizontal : Qt::Vertical;
 	Settings::setOrientationTrayPopup(trayOrientation);
 
-	const bool devicesModified = dvc->getAndResetModifyFlag();
-	if (devicesModified) Settings::setMixersForSoundMenu(dvc->getChosenBackends().values());
-
 	Settings::setBeepOnVolumeChange(m_beepOnVolumeChange->isChecked());
 	Settings::setAutoStart(allowAutostart->isChecked());
 	Settings::setStartRestore(m_onLogin->isChecked());
@@ -419,6 +439,37 @@ void KMixPrefDlg::updateSettings()
 	Settings::setShowOSD(m_showOSD->isChecked());
 	Settings::setShowDockWidget(m_dockingChk->isChecked());
 
+	KConfigGroup grp(KSharedConfig::openConfig(), "SystemTray");
+	const int num = m_mixerList->count();
+	QStringList trayConfig;
+
+	qDebug() << "saving" << num << "mixers for popup";
+	for (int i = 0; i<num; ++i)
+	{
+		// So that the listed mixers remain ordered.
+		// "1000 mixers should be enough for anyone"
+		const QString key = QString("%1").arg(i, 3, 10, QLatin1Char('0'));
+
+		const QListWidgetItem *item = m_mixerList->item(i);
+		const QString &id = item->data(Qt::UserRole).toString();
+
+		// The settings are stored as "id,enabled,icon[,readable]"
+		QStringList data(id);
+		const bool isEnabled = item->checkState()==Qt::Checked;
+		data.append(isEnabled ? "1" : "0");
+		data.append(item->icon().name());
+
+		const Mixer *mixer = MixerToolBox::findMixer(id);
+		if (mixer!=nullptr) data.append(mixer->readableName());
+
+		grp.writeEntry(key, data);
+
+		// Save enabled mixers to this list, which is used by the
+		// system tray popup.
+		if (isEnabled) trayConfig.append(id);
+	}
+
+	Settings::setMixersForSoundMenu(trayConfig);	// for the system tray popup
 	Settings::self()->save();
 
 	qCDebug(KMIX_LOG) << "controls changed" << m_controlsChanged;
@@ -481,7 +532,7 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 {
 	// -1- Replace widgets ------------------------------------------------------------
 	// Hotplug can change mixers or backends => recreate tab
-	replaceBackendsInTab();
+	updateBackends();
 
 	KConfigDialog::showEvent(event);
 
@@ -503,20 +554,95 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 }
 
 
-void KMixPrefDlg::replaceBackendsInTab()
+void KMixPrefDlg::updateBackends()
 {
-	if (dvc!=nullptr)
+	QSignalBlocker block(m_mixerList);		// not while updating
+	m_mixerList->clear();				// start with empty list
+
+	QStringList mixerIds;
+	QMap<QString, QString> mixerNames;
+	QMap<QString, QString> mixerIcons;
+	QMap<QString, bool> mixerEnabled;
+
+	const KConfigGroup grp(KSharedConfig::openConfig(), "SystemTray");
+	if (grp.exists())
 	{
-		layoutControlsTab->removeWidget(dvc);
-		delete dvc;
+		const QStringList keys = grp.keyList();
+		for (const QString &key : qAsConst(keys))
+		{
+			// The stored value is expected to be "id,enabled,icon[,readable]"
+			const QStringList data = grp.readEntry(key, QStringList());
+
+			const QString &id = data.value(0);
+			if (id.isEmpty()) continue;
+			if (!mixerIds.contains(id)) mixerIds.append(id);
+
+			const QString &isEnabled = data.value(1);
+			mixerEnabled[id] = isEnabled.toInt()!=0;
+
+			const QString &iconName = data.value(2);
+			if (!iconName.isEmpty()) mixerIcons[id] = iconName;
+
+			const QString &readableName = data.value(3);
+			if (!readableName.isEmpty()) mixerNames[id] = readableName;
+		}
+
+		qCDebug(KMIX_LOG) << "Loaded" << mixerIds.count() << "mixers from new config";
+	}
+	else
+	{
+		// Assuming that there can be no duplicates in this list,
+		// because it would have been originally written out from
+		// the values of a QSet.
+		mixerIds = Settings::mixersForSoundMenu();
+
+		// A mixer is always taken to be enabled if it appears in
+		// this list.
+		for (const QString &id : qAsConst(mixerIds)) mixerEnabled[id] = true;
+
+		qCDebug(KMIX_LOG) << "Loaded" << mixerIds.count() << "mixers from old config";
 	}
 
-	const QStringList bfc = Settings::mixersForSoundMenu();
-	QSet<QString> backendsFromConfig = QSet<QString>(bfc.begin(), bfc.end());
-	dvc = new DialogChooseBackends(nullptr, backendsFromConfig);
-	connect(dvc, &DialogChooseBackends::backendsModified, this, [this]() { settingChanged(KMixPrefDlg::ChangedMaster); });
-	dvc->setToolTip(i18n("The mixers that are checked here will be shown in the popup volume control."));
+	// Add all of the currently active mixers, including their
+	// current readable names and icons.
+	for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
+	{
+		const QString &id = mixer->id();
+		if (!mixerIds.contains(id)) mixerIds.append(id);
+		mixerIcons[id] = mixer->iconName();
+		mixerNames[id] = mixer->readableName();
+	}
 
-	layoutControlsTab->addWidget(dvc);
-	layoutControlsTab->setStretchFactor(dvc, 1);
+	qCDebug(KMIX_LOG) << "Total" << mixerIds.count() << "mixers to display";
+
+	for (const QString &id : qAsConst(mixerIds))
+	{
+		// TODO: No point in showing mixers which do not have any volume controls.
+		// See checks done in ViewDockAreaPopup::initLayout()
+		// Implement shared test Mixer::hasVolumeCOntrol()
+
+		QListWidgetItem *item = new QListWidgetItem(m_mixerList);
+		item->setSizeHint(QSize(1, 16+2));
+		item->setData(Qt::UserRole, id);
+
+		// Only currently active mixers can have their state changed.
+		// In theory, inactive mixers could as well (which would not
+		// affect the system tray GUI until they were actually plugged
+		// in again), but to get the disabled item appearance the flag
+		// affects the checkable state also.
+		item->setFlags(Qt::ItemIsUserCheckable|Qt::ItemNeverHasChildren);
+		const Mixer *mixer = MixerToolBox::findMixer(id);
+		if (mixer!=nullptr) item->setFlags(item->flags()|Qt::ItemIsEnabled);
+
+		QString iconName = mixerIcons.value(id);
+		if (iconName.isEmpty()) iconName = "speaker";
+		item->setIcon(QIcon::fromTheme(iconName));
+
+		QString readableName = mixerNames.value(id);
+		if (readableName.isEmpty()) readableName = '('+id+')';
+		item->setText(readableName);
+
+		const bool mixerShouldBeShown = mixerEnabled.value(id);
+		item->setCheckState(mixerShouldBeShown ? Qt::Checked : Qt::Unchecked);
+	}
 }

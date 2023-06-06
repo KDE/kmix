@@ -79,6 +79,8 @@
       <default>true</default>
     </entry>
 
+    <!-- Saved by KMixPrefDlg::updateSettings(), only read	-->
+    <!-- by ViewDockAreaPopup::initLayout()			-->
     <entry name="MixersForSoundMenu" key="Soundmenu.Mixers" type="StringList">
     </entry>
 
@@ -112,6 +114,11 @@
   <!-- Saved by KMixWindow::saveViewConfig() and read		-->
   <!-- by KMixWindow::recreateGUI()				-->
   <group name="Profiles">
+  </group>
+
+  <!-- Saved by KMixPrefDlg::updateSettings() and read		-->
+  <!-- by KMixPrefDlg::updateBackends() if the group exists	-->
+  <group name="SystemTray">
   </group>
 
   <!-- Debug options, no GUI					-->

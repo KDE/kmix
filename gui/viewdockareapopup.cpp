@@ -37,7 +37,6 @@
 // KMix
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
-#include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
 #include "gui/mdwslider.h"
@@ -346,7 +345,7 @@ Application: KMix (kmix), signal: Segmentation fault
 		if (useMixer) addMixer(mixer);
 	}
 
-	// The following loop is for the case whre no devices were added
+	// The following loop is for the case where no devices were added
 	// above, for example when the 'preferredMixersForSoundmenu' list was
 	// not empty but contained only mixers which have now disappeared due
 	// to hotplugging.  We "reset" the list to show everything.
