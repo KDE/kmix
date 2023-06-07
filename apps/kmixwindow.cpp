@@ -606,12 +606,17 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		// =========================================================================================
 		// The trivial cases have not added anything => Look at [Profiles] in config file
 
-		QStringList	profileList = pconfig.readEntry( mixer->id(), QStringList() );
-		bool allProfilesRemovedByUser = pconfig.hasKey(mixer->id()) && profileList.isEmpty();
+		const QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() );
+		const bool allProfilesRemovedByUser = pconfig.hasKey(mixer->id()) && profileList.isEmpty();
 		if (allProfilesRemovedByUser)
 		{
 			continue; // User has explicitly hidden the views => do no further checks
 		}
+
+		// PulseAudio tabs are fixed and cannot be hidden by the user,
+		// unless the configuration file key is present but has a blank
+		// profile list (as tested by 'allProfilesRemovedByUser' above).
+		if (mixer->getDriverName()=="PulseAudio") forceNewTab = true;
 
 		{
 			bool atLeastOneProfileWasAdded = false;
@@ -651,9 +656,9 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		// Neither trivial cases have added something, nor the anything => Look at [Profiles] in config file
 
 		// The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
-		bool mixerIdMatch = mixerId.isEmpty() || (mixer->id() == mixerId);
-		bool thisMixerShouldBeForced = forceNewTab && mixerIdMatch;
-		bool we_need_a_fallback = mixerIdMatch && thisMixerShouldBeForced;
+		const bool mixerIdMatch = mixerId.isEmpty() || (mixer->id() == mixerId);
+		const bool thisMixerShouldBeForced = forceNewTab && mixerIdMatch;
+		const bool we_need_a_fallback = mixerIdMatch && thisMixerShouldBeForced;
 		if ( we_need_a_fallback )
 		{
 			// The profileList was empty or nothing could be loaded
