@@ -59,7 +59,7 @@ KMixApp::KMixApp()
 KMixApp::~KMixApp()
 {
 	qCDebug(KMIX_LOG) << "Deleting KMixApp";
-	ControlManager::instance().shutdownNow();
+	ControlManager::instance()->shutdownNow();
 	delete m_kmix;
 	m_kmix = nullptr;
 	Settings::self()->save();

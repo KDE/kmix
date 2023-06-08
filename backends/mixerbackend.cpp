@@ -225,7 +225,7 @@ void MixerBackend::readSetFromHW()
 			qCDebug(KMIX_LOG) << "Start fast polling from " << QTime::currentTime() <<"until " << _fastPollingEndsAt;
 		}
 
-		ControlManager::instance().announce(_mixer->id(), ControlManager::Volume, QString("Mixer.fromHW"));
+		ControlManager::instance()->announce(_mixer->id(), ControlManager::Volume, QString("Mixer.fromHW"));
 	}
 
 	else

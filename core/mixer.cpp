@@ -375,7 +375,7 @@ void Mixer::commitVolumeChange(shared_ptr<MixDevice> md)
 		<< "committing announces the change of: " << md->id();
 
 	// We announce the change we did, so all other parts of KMix can pick up the change
-	ControlManager::instance().announce(md->mixer()->id(), ControlManager::Volume,
+	ControlManager::instance()->announce(md->mixer()->id(), ControlManager::Volume,
 		QString("Mixer.commitVolumeChange()"));
 }
 
@@ -418,7 +418,7 @@ void Mixer::increaseOrDecreaseVolume( const QString& mixdeviceID, bool decrease 
 
         _mixerBackend->writeVolumeToHW(mixdeviceID, md);
     }
-   ControlManager::instance().announce(md->mixer()->id(), ControlManager::Volume, QString("Mixer.increaseOrDecreaseVolume()"));
+   ControlManager::instance()->announce(md->mixer()->id(), ControlManager::Volume, QString("Mixer.increaseOrDecreaseVolume()"));
 
     /************************************************************
         It is important, not to implement this method like this:
@@ -434,7 +434,7 @@ bool Mixer::moveStream(const QString &id, const QString &destId)
 {
     // We should really check that id is within our md's....
     bool ret = _mixerBackend->moveStream(id, destId);
-    ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("Mixer.moveStream()"));
+    ControlManager::instance()->announce(QString(), ControlManager::ControlList, QString("Mixer.moveStream()"));
     return (ret);
 }
 

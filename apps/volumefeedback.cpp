@@ -75,7 +75,7 @@ VolumeFeedback::VolumeFeedback()
 	m_feedbackTimer->setInterval(150);
 	connect(m_feedbackTimer, &QTimer::timeout, this, &VolumeFeedback::slotPlayFeedback);
 
-	ControlManager::instance().addListener(QString(),			// any mixer
+	ControlManager::instance()->addListener(QString(),			// any mixer
 					       ControlManager::MasterChanged,	// type of change
 					       this,				// receiver
 					       "VolumeFeedback (master)");	// source ID
@@ -174,10 +174,10 @@ void VolumeFeedback::masterChanged()
 
 	// Remove only the listener for ControlManager::Volume,
 	// retaining the one for ControlManager::MasterChanged.
-	ControlManager::instance().removeListener(this, ControlManager::Volume, "VolumeFeedback");
+	ControlManager::instance()->removeListener(this, ControlManager::Volume, "VolumeFeedback");
 
 	// Then monitor for a volume change on the new master
-	ControlManager::instance().addListener(globalMaster->id(),		// mixer ID
+	ControlManager::instance()->addListener(globalMaster->id(),		// mixer ID
 					       ControlManager::Volume,		// type of change
 					       this,				// receiver
 					       "VolumeFeedback (volume)");	// source ID

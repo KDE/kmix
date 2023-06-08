@@ -32,7 +32,7 @@ class Listener;
 class KMIXCORE_EXPORT ControlManager
 {
 public:
-  static ControlManager &instance();
+  static ControlManager *instance();
 
   enum ChangeType
   {

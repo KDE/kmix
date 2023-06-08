@@ -103,7 +103,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 	createDeviceWidgets();
 
 	// Register listeners for all mixers
-	ControlManager::instance().addListener(
+	ControlManager::instance()->addListener(
 		QString(), // all mixers
 		ControlManager::GUI|ControlManager::ControlList|ControlManager::Volume|ControlManager::MasterChanged,
 		this, QString("ViewDockAreaPopup"));
@@ -112,7 +112,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 
 ViewDockAreaPopup::~ViewDockAreaPopup()
 {
-  ControlManager::instance().removeListener(this);
+  ControlManager::instance()->removeListener(this);
   delete _layoutMDW;
   // Hint: optionsLayout and "everything else" is deleted when "delete _layoutMDW" cascades down
 }

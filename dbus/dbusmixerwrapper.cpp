@@ -37,7 +37,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 	qCDebug(KMIX_LOG) << "Create QDBusConnection for object " << path;
 	QDBusConnection::sessionBus().registerObject( path, this );
 	
-	ControlManager::instance().addListener(
+	ControlManager::instance()->addListener(
 		m_mixer->id(),
 		ControlManager::ControlList|ControlManager::Volume,
 		this,
@@ -49,7 +49,7 @@ DBusMixerWrapper::DBusMixerWrapper(Mixer* parent, const QString& path)
 
 DBusMixerWrapper::~DBusMixerWrapper()
 {
-	ControlManager::instance().removeListener(this);
+	ControlManager::instance()->removeListener(this);
 	qCDebug(KMIX_LOG) << "Remove QDBusConnection for object " << m_dbusPath;
 	if (DBusMixSetWrapper::instance())
 		DBusMixSetWrapper::instance()->signalMixersChanged();

@@ -814,13 +814,13 @@ void Mixer_PULSE::emitControlsReconfigured()
 void Mixer_PULSE::pulseControlsReconfigured()
 {
 	qCDebug(KMIX_LOG) << "Reconfigure " << _mixer->id();
-    ControlManager::instance().announce(_mixer->id(), ControlManager::ControlList, getDriverName());
+    ControlManager::instance()->announce(_mixer->id(), ControlManager::ControlList, getDriverName());
 }
 
 // void Mixer_PULSE::pulseControlsReconfigured(QString mixerId)
 // {
 // 	qCDebug(KMIX_LOG) << "Reconfigure " << mixerId;
-//     ControlManager::instance().announce(mixerId, ControlManager::ControlList, getDriverName());
+//     ControlManager::instance()->announce(mixerId, ControlManager::ControlList, getDriverName());
 // }
 
 void Mixer_PULSE::updateRecommendedMaster(const devmap *map)

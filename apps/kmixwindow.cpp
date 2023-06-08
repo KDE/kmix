@@ -96,7 +96,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 
 	connect(qApp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
-	ControlManager::instance().addListener(
+	ControlManager::instance()->addListener(
 			QString(), // All mixers (as the Global master Mixer might change)
 			ControlManager::ControlList|ControlManager::MasterChanged, this,
 			"KMixWindow");
@@ -104,12 +104,12 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	VolumeFeedback::instance()->init();		// set up for volume feedback
 #endif
 	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
-	ControlManager::instance().announce(QString(), ControlManager::Volume, "Startup");
+	ControlManager::instance()->announce(QString(), ControlManager::Volume, "Startup");
 }
 
 KMixWindow::~KMixWindow()
 {
-	ControlManager::instance().removeListener(this);
+	ControlManager::instance()->removeListener(this);
 
 	delete m_dsm;
 
@@ -369,7 +369,6 @@ void KMixWindow::saveBaseConfig()
 	Settings::setMenubar(_actionShowMenubar->isChecked());
 
 	// TODO: check whether the next line is needed
-	//Settings::setMixersForSoundMenu(GlobalConfig::instance().getMixersForSoundmenu().values());
 	Settings::setDefaultCardOnStart(m_defaultCardOnStart);
 	Settings::setAutoUseMultimediaKeys(m_autouseMultimediaKeys);
 
@@ -606,12 +605,17 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		// =========================================================================================
 		// The trivial cases have not added anything => Look at [Profiles] in config file
 
-		QStringList	profileList = pconfig.readEntry( mixer->id(), QStringList() );
-		bool allProfilesRemovedByUser = pconfig.hasKey(mixer->id()) && profileList.isEmpty();
+		const QStringList profileList = pconfig.readEntry( mixer->id(), QStringList() );
+		const bool allProfilesRemovedByUser = pconfig.hasKey(mixer->id()) && profileList.isEmpty();
 		if (allProfilesRemovedByUser)
 		{
 			continue; // User has explicitly hidden the views => do no further checks
 		}
+
+		// PulseAudio tabs are fixed and cannot be hidden by the user,
+		// unless the configuration file key is present but has a blank
+		// profile list (as tested by 'allProfilesRemovedByUser' above).
+		if (mixer->getDriverName()=="PulseAudio") forceNewTab = true;
 
 		{
 			bool atLeastOneProfileWasAdded = false;
@@ -651,9 +655,9 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		// Neither trivial cases have added something, nor the anything => Look at [Profiles] in config file
 
 		// The we_need_a_fallback case is a bit tricky. Please ask the author (cesken) before even considering to change the code.
-		bool mixerIdMatch = mixerId.isEmpty() || (mixer->id() == mixerId);
-		bool thisMixerShouldBeForced = forceNewTab && mixerIdMatch;
-		bool we_need_a_fallback = mixerIdMatch && thisMixerShouldBeForced;
+		const bool mixerIdMatch = mixerId.isEmpty() || (mixer->id() == mixerId);
+		const bool thisMixerShouldBeForced = forceNewTab && mixerIdMatch;
+		const bool we_need_a_fallback = mixerIdMatch && thisMixerShouldBeForced;
 		if ( we_need_a_fallback )
 		{
 			// The profileList was empty or nothing could be loaded
@@ -826,12 +830,15 @@ void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 	if (mixer==nullptr) return;
 
 	mixer->setHotplugId(udi);			// record UDI for unplugging
+	const QString mixerId = mixer->id();		// note for announce later
 	if (MixerToolBox::possiblyAddMixer(mixer))
 	{
 		qCDebug(KMIX_LOG) << "adding mixer id" << mixer->id() << mixer->readableName();
 		recreateGUI(true, mixer->id(), true, false);
 	}
 	else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
+
+	ControlManager::instance()->announce(mixerId, ControlManager::ControlList, objectName());
 }
 
 
@@ -856,6 +863,8 @@ void KMixWindow::unplugged(const QString &udi)
 		qCDebug(KMIX_LOG) << "No mixer present with that UDI";
 		return;
 	}
+
+	const QString mixerId = unpluggedMixer->id();	// note for announce later
 
 	qCDebug(KMIX_LOG) << "Removing mixer";
 	const bool globalMasterMixerDestroyed = (unpluggedMixer==MixerToolBox::getGlobalMasterMixer());
@@ -913,6 +922,8 @@ void KMixWindow::unplugged(const QString &udi)
 
 		recreateGUI(true, false);
 	}
+
+	ControlManager::instance()->announce(mixerId, ControlManager::ControlList, objectName());
 }
 
 
@@ -1128,18 +1139,18 @@ void KMixWindow::applyPrefs(KMixPrefDlg::PrefChanges changes)
 	if (changes & KMixPrefDlg::ChangedControls)
 	{
 		// These might need a complete relayout => announce a ControlList change to rebuild everything
-		ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("Preferences Dialog"));
+		ControlManager::instance()->announce(QString(), ControlManager::ControlList, QString("Preferences Dialog"));
 	}
 	else if (changes & KMixPrefDlg::ChangedMaster)
 	{
 		// This announce was originally made in KMixPrefDlg::updateSettings().
 		// It is treated as equivalent to ControlManager::ControlList by
 		// the system tray popup, hence the 'else' here.
-		ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
+		ControlManager::instance()->announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
 	}
 	if (changes & KMixPrefDlg::ChangedGui)
 	{
-		ControlManager::instance().announce(QString(), ControlManager::GUI, QString("Preferences Dialog"));
+		ControlManager::instance()->announce(QString(), ControlManager::GUI, QString("Preferences Dialog"));
 	}
 
 	//this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)

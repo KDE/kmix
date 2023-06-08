@@ -255,16 +255,6 @@ set(kmixcore_SRCS
   core/mixdevice.cpp
   core/mixdevicecomposite.cpp
   core/volume.cpp
-  core/MediaController.h
-  core/mixertoolbox.h
-  core/kmixdevicemanager.h
-  core/ControlManager.h
-  core/MasterControl.h
-  core/mixer.h
-  core/mixset.h
-  core/mixdevice.h
-  core/mixdevicecomposite.h
-  core/volume.h
 )
 
 kconfig_add_kcfg_files(kmixcore_SRCS core/settings.kcfgc)
@@ -334,25 +324,6 @@ set(kmixgui_SRCS
   gui/dialogselectmaster.cpp
   gui/guiprofile.cpp
   gui/toggletoolbutton.cpp
-  gui/dialogbase.h
-  gui/dialogstatesaver.h
-  gui/kmixdockwidget.h
-  gui/kmixprefdlg.h
-  gui/viewbase.h
-  gui/viewdockareapopup.h
-  gui/viewsliders.h
-  gui/mixdevicewidget.h
-  gui/mdwslider.h
-  gui/mdwenum.h
-  gui/kmixerwidget.h
-  gui/verticaltext.h
-  gui/volumeslider.h
-  gui/kmixtoolbox.h
-  gui/dialogaddview.h
-  gui/dialogviewconfiguration.h
-  gui/dialogselectmaster.h
-  gui/guiprofile.h
-  gui/toggletoolbutton.h
 )
 
 add_library(kmixgui STATIC
@@ -381,13 +352,11 @@ set(kmix_SRCS
   apps/kmixmain.cpp
   apps/kmixwindow.cpp
   apps/kmixapp.cpp
-  apps/kmixwindow.h
-  apps/kmixapp.h
   ${kmix_debug_SRCS}
 )
 
 if (CANBERRA_FOUND)
-  set(kmix_SRCS ${kmix_SRCS} apps/volumefeedback.cpp apps/volumefeedback.h)
+  set(kmix_SRCS ${kmix_SRCS} apps/volumefeedback.cpp)
 endif ()
 
 add_executable(kmix ${kmix_SRCS})

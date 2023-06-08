@@ -241,7 +241,7 @@ void ViewBase::guiVisibilitySlot(MixDeviceWidget* mdw, bool enable)
 	}
 
 	pctl->setVisible(enable);
-	ControlManager::instance().announce(md->mixer()->id(), ControlManager::ControlList, QString("ViewBase::guiVisibilitySlot"));
+	ControlManager::instance()->announce(md->mixer()->id(), ControlManager::ControlList, QString("ViewBase::guiVisibilitySlot"));
 }
 
 // // ---------- Popup stuff START ---------------------

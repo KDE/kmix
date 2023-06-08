@@ -84,7 +84,7 @@ KMixDockWidget::KMixDockWidget(KXmlGuiWindow *parent)
     _dockWidgetAction = nullptr;
     createWidgets();
 
-    ControlManager::instance().addListener(
+    ControlManager::instance()->addListener(
 	    QString(),					// All mixers (as the global master mixer might change)
 	    ControlManager::Volume|ControlManager::MasterChanged,
 	    this,
@@ -97,7 +97,7 @@ KMixDockWidget::KMixDockWidget(KXmlGuiWindow *parent)
 
 KMixDockWidget::~KMixDockWidget()
 {
-	ControlManager::instance().removeListener(this);
+	ControlManager::instance()->removeListener(this);
 	// Note: deleting _dockWidgetAction also deletes its associated ViewDockAreaPopup (_dockView) and prevents the
 	//       action to be left with a dangling pointer.
 	//       cesken: I adapted the patch from https://bugs.kde.org/show_bug.cgi?id=220621#c27 to branch /branches/work/kmix

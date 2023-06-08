@@ -105,10 +105,10 @@ void KMixPrefDlg::showAtPage(KMixPrefDlg::PrefPage page)
 	}
 
 	// Register a listener for control list changes
-	ControlManager::instance().addListener(QString(),			// all mixers
-					       ControlManager::ControlList,	// change of interest
-					       this,				// receiver
-					       objectName());			// sourceId
+	ControlManager::instance()->addListener(QString(),			// all mixers
+						ControlManager::ControlList,	// change of interest
+						this,				// receiver
+						objectName());			// sourceId
 
 	show();						// show with the selected page
 }
@@ -789,12 +789,24 @@ void KMixPrefDlg::updateVolumeControls(const KConfigGroup &grp)
 
 void KMixPrefDlg::controlsChange(ControlManager::ChangeType changeType)
 {
-	if (changeType!=ControlManager::ControlList) return;
-	if (!isVisible()) return;			// not currently showing
+	if (changeType!=ControlManager::ControlList)
+	{
+		ControlManager::warnUnexpectedChangeType(changeType, this);
+		return;
+	}
 
+	// If the dialogue is not currently showing then there is no need
+	// for an immediate update.  The configuration will have been saved
+	// and will be regenerated when the dialogue is next shown.
+	if (!isVisible()) return;
+
+	// Save the current configuration to a temporary group, then
+	// regenerate the list from that taking account of the new
+	// mixer configuration.  Delete the temporary group when
+	// finished.
 	qCDebug(KMIX_LOG) << "Regenerating volume controls list";
 	KConfigGroup grp(KSharedConfig::openConfig(), "SystemTrayTemp");
 	updateSettingsFromItem(m_mixerList->invisibleRootItem(), grp, nullptr);
 	updateVolumeControls(grp);
-	grp.deleteGroup();				// only a temporary group
+	grp.deleteGroup();
 }

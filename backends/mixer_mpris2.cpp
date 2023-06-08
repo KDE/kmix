@@ -590,17 +590,17 @@ void Mixer_MPRIS2::announceControlListAsync(QString /*streamId*/)
 
 void Mixer_MPRIS2::announceControlList()
 {
-    ControlManager::instance().announce(_mixer->id(), ControlManager::ControlList, getDriverName());
+    ControlManager::instance()->announce(_mixer->id(), ControlManager::ControlList, getDriverName());
 }
 
 void Mixer_MPRIS2::announceGUI()
 {
-    ControlManager::instance().announce(_mixer->id(), ControlManager::GUI, getDriverName());
+    ControlManager::instance()->announce(_mixer->id(), ControlManager::GUI, getDriverName());
 }
 
 void Mixer_MPRIS2::announceVolume()
 {
-    ControlManager::instance().announce(_mixer->id(), ControlManager::Volume, getDriverName());
+    ControlManager::instance()->announce(_mixer->id(), ControlManager::Volume, getDriverName());
 }
 
 // -----------------------------------------------------------------------------------------------------------
