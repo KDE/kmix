@@ -34,7 +34,7 @@ class QFrame;
 class QGridLayout;
 class QRadioButton;
 class QShowEvent;
-class QListWidget;
+class QTreeWidget;
 
 class KMessageWidget;
 
@@ -97,7 +97,7 @@ private:
 	void createStartupTab();
 	void createGeneralTab();
 	void createControlsTab();
-	void updateBackends();
+	void updateVolumeControls();
 
 	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip);
 	void createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
@@ -127,7 +127,7 @@ private:
 	QBoxLayout *layoutControlsTab;
 	QBoxLayout *layoutStartupTab;
 
-	QListWidget *m_mixerList;
+	QTreeWidget *m_mixerList;
 
 	QRadioButton *_rbVertical;
 	QRadioButton *_rbHorizontal;
