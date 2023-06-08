@@ -43,7 +43,7 @@ DBusMixSetWrapper::DBusMixSetWrapper(QObject* parent, const QString& path)
 	new MixSetAdaptor( this );
 	QDBusConnection::sessionBus().registerObject( m_dbusPath, this );
 	
-	ControlManager::instance().addListener(
+	ControlManager::instance()->addListener(
 		QString(),
 		ControlManager::MasterChanged,
 		this,

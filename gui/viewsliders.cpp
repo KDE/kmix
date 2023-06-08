@@ -71,14 +71,14 @@ ViewSliders::ViewSliders(QWidget *parent, const QString &id, Mixer *mixer,
 
 	createDeviceWidgets();
 
-	ControlManager::instance().addListener(mixer->id(),
+	ControlManager::instance()->addListener(mixer->id(),
 					       ControlManager::GUI|ControlManager::ControlList|ControlManager::Volume,
 					       this, QString("ViewSliders.%1").arg(mixer->id()));
 }
 
 ViewSliders::~ViewSliders()
 {
-    ControlManager::instance().removeListener(this);
+    ControlManager::instance()->removeListener(this);
     delete m_layoutMDW;
 }
 

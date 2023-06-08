@@ -318,9 +318,9 @@ void DialogViewConfiguration::apply()
 
    // --- Step 3: Tell the view, that it has changed (probably it needs some "polishing" ---
     if ( _view.getMixers().size() == 1 )
-      ControlManager::instance().announce(_view.getMixers().first()->id(), ControlManager::ControlList, QString("View Configuration Dialog"));
+      ControlManager::instance()->announce(_view.getMixers().first()->id(), ControlManager::ControlList, QString("View Configuration Dialog"));
     else
-      ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("View Configuration Dialog"));
+      ControlManager::instance()->announce(QString(), ControlManager::ControlList, QString("View Configuration Dialog"));
 }
 
 void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool isActiveView, const GUIProfile::ControlSet &oldCtlSet, GUIProfile::ControlSet &newCtlSet)

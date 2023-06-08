@@ -264,7 +264,7 @@ void DialogSelectMaster::apply()
     	QString control_id = item->data(Qt::UserRole).toString();
         mixer->setLocalMasterMD(control_id);
         MixerToolBox::setGlobalMaster(mixer->id(), control_id, true);
-        ControlManager::instance().announce(mixer->id(), ControlManager::MasterChanged, QString("Select Master Dialog"));
+        ControlManager::instance()->announce(mixer->id(), ControlManager::MasterChanged, QString("Select Master Dialog"));
     }
     else qCWarning(KMIX_LOG) << "no selected channel";
 }

@@ -34,10 +34,10 @@ struct Listener
 };
 
 
-ControlManager &ControlManager::instance()
+ControlManager *ControlManager::instance()
 {
 	static ControlManager *sInstance = new ControlManager;
-	return (*sInstance);
+	return (sInstance);
 }
 
 

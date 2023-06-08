@@ -96,7 +96,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 
 	connect(qApp, SIGNAL(aboutToQuit()), SLOT(saveConfig()) );
 
-	ControlManager::instance().addListener(
+	ControlManager::instance()->addListener(
 			QString(), // All mixers (as the Global master Mixer might change)
 			ControlManager::ControlList|ControlManager::MasterChanged, this,
 			"KMixWindow");
@@ -104,12 +104,12 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	VolumeFeedback::instance()->init();		// set up for volume feedback
 #endif
 	// Send an initial volume refresh (otherwise all volumes are 0 until the next change)
-	ControlManager::instance().announce(QString(), ControlManager::Volume, "Startup");
+	ControlManager::instance()->announce(QString(), ControlManager::Volume, "Startup");
 }
 
 KMixWindow::~KMixWindow()
 {
-	ControlManager::instance().removeListener(this);
+	ControlManager::instance()->removeListener(this);
 
 	delete m_dsm;
 
@@ -369,7 +369,6 @@ void KMixWindow::saveBaseConfig()
 	Settings::setMenubar(_actionShowMenubar->isChecked());
 
 	// TODO: check whether the next line is needed
-	//Settings::setMixersForSoundMenu(GlobalConfig::instance().getMixersForSoundmenu().values());
 	Settings::setDefaultCardOnStart(m_defaultCardOnStart);
 	Settings::setAutoUseMultimediaKeys(m_autouseMultimediaKeys);
 
@@ -839,7 +838,7 @@ void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 	}
 	else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
 
-	ControlManager::instance().announce(mixerId, ControlManager::ControlList, objectName());
+	ControlManager::instance()->announce(mixerId, ControlManager::ControlList, objectName());
 }
 
 
@@ -924,7 +923,7 @@ void KMixWindow::unplugged(const QString &udi)
 		recreateGUI(true, false);
 	}
 
-	ControlManager::instance().announce(mixerId, ControlManager::ControlList, objectName());
+	ControlManager::instance()->announce(mixerId, ControlManager::ControlList, objectName());
 }
 
 
@@ -1140,18 +1139,18 @@ void KMixWindow::applyPrefs(KMixPrefDlg::PrefChanges changes)
 	if (changes & KMixPrefDlg::ChangedControls)
 	{
 		// These might need a complete relayout => announce a ControlList change to rebuild everything
-		ControlManager::instance().announce(QString(), ControlManager::ControlList, QString("Preferences Dialog"));
+		ControlManager::instance()->announce(QString(), ControlManager::ControlList, QString("Preferences Dialog"));
 	}
 	else if (changes & KMixPrefDlg::ChangedMaster)
 	{
 		// This announce was originally made in KMixPrefDlg::updateSettings().
 		// It is treated as equivalent to ControlManager::ControlList by
 		// the system tray popup, hence the 'else' here.
-		ControlManager::instance().announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
+		ControlManager::instance()->announce(QString(), ControlManager::MasterChanged, QString("Select Backends Dialog"));
 	}
 	if (changes & KMixPrefDlg::ChangedGui)
 	{
-		ControlManager::instance().announce(QString(), ControlManager::GUI, QString("Preferences Dialog"));
+		ControlManager::instance()->announce(QString(), ControlManager::GUI, QString("Preferences Dialog"));
 	}
 
 	//this->repaint(); // make KMix look fast (saveConfig() often uses several seconds)
