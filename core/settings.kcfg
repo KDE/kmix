@@ -121,6 +121,11 @@
   <group name="SystemTray">
   </group>
 
+  <!-- Used by KMixPrefDlg::controlsChange() to temporarily	-->
+  <!-- save the settings and update for new controls		-->
+  <group name="SystemTrayTemp">
+  </group>
+
   <!-- Debug options, no GUI					-->
   <group name="Debug">
 

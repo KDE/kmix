@@ -228,7 +228,7 @@ void ViewDockAreaPopup::resetRefs()
 }
 
 
-void ViewDockAreaPopup::addDevice(shared_ptr<MixDevice> md, const Mixer *mixer)
+void ViewDockAreaPopup::addDevice(const shared_ptr<MixDevice> md, const Mixer *mixer)
 {
 	shared_ptr<MixDevice> dockMD = md;
 	if (dockMD==nullptr && mixer->numDevices()>0)

@@ -24,6 +24,8 @@
 
 #include <kconfigdialog.h>
 
+#include <core/ControlManager.h>
+
 class KMixPrefWidget;
 class DialogChooseBackends;
 
@@ -37,6 +39,7 @@ class QShowEvent;
 class QTreeWidget;
 
 class KMessageWidget;
+class KConfigGroup;
 
 
 class KMixPrefDlg : public KConfigDialog
@@ -63,6 +66,9 @@ public:
 
 	static KMixPrefDlg *instance(QWidget *parent = nullptr);
 	void showAtPage(KMixPrefDlg::PrefPage page);
+
+public Q_SLOTS:
+	void controlsChange(ControlManager::ChangeType changeType);
 
 Q_SIGNALS:
 	void kmixConfigHasChanged(KMixPrefDlg::PrefChanges changed);
@@ -97,7 +103,7 @@ private:
 	void createStartupTab();
 	void createGeneralTab();
 	void createControlsTab();
-	void updateVolumeControls();
+	void updateVolumeControls(const KConfigGroup &grp);
 
 	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip);
 	void createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType type);

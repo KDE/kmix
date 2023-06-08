@@ -104,6 +104,12 @@ void KMixPrefDlg::showAtPage(KMixPrefDlg::PrefPage page)
 		break;
 	}
 
+	// Register a listener for control list changes
+	ControlManager::instance().addListener(QString(),			// all mixers
+					       ControlManager::ControlList,	// change of interest
+					       this,				// receiver
+					       objectName());			// sourceId
+
 	show();						// show with the selected page
 }
 
@@ -461,7 +467,7 @@ static void updateSettingsFromItem(const QTreeWidgetItem *item, KConfigGroup &gr
 
 		// Save enabled mixers to this list, which is used by the
 		// system tray popup.
-		if (isShown) trayConfig->append(id);
+		if (isShown && trayConfig!=nullptr) trayConfig->append(id);
 	}
 
 	// Recurse for this item's children.
@@ -499,8 +505,8 @@ void KMixPrefDlg::updateSettings()
 	QStringList trayConfig;
 
 	updateSettingsFromItem(m_mixerList->invisibleRootItem(), grp, &trayConfig);
-	Settings::setMixersForSoundMenu(trayConfig);	// for the system tray popup
 	qCDebug(KMIX_LOG) << "tray config" << trayConfig;
+	Settings::setMixersForSoundMenu(trayConfig);	// for the system tray popup
 
 	Settings::self()->save();
 
@@ -564,7 +570,8 @@ void KMixPrefDlg::showEvent(QShowEvent *event)
 {
 	// -1- Replace widgets ------------------------------------------------------------
 	// Hotplug can change mixers or backends => recreate tab
-	updateVolumeControls();
+	const KConfigGroup grp(KSharedConfig::openConfig(), "SystemTray");
+	updateVolumeControls(grp);
 
 	KConfigDialog::showEvent(event);
 
@@ -644,7 +651,7 @@ static void createTreeItem(QTreeWidgetItem *item, const QString &id, const Mixer
 /**
  * Update the tree list of mixers to be shown.
  */
-void KMixPrefDlg::updateVolumeControls()
+void KMixPrefDlg::updateVolumeControls(const KConfigGroup &grp)
 {
 	QSignalBlocker block(m_mixerList);		// not while updating
 	m_mixerList->clear();				// start with empty list
@@ -653,7 +660,6 @@ void KMixPrefDlg::updateVolumeControls()
 	QMap<QString, MixerData> mixerData;		// information for each of these
 	bool isTree = false;				// the list is a tree, not yet
 
-	const KConfigGroup grp(KSharedConfig::openConfig(), "SystemTray");
 	if (grp.exists())
 	{
 		// Read the list of mixers (both active and previously seen)
@@ -755,7 +761,7 @@ void KMixPrefDlg::updateVolumeControls()
 
 		// TODO: No point in showing mixers which do not have any volume controls.
 		// See checks done in ViewDockAreaPopup::initLayout()
-		// Implement shared test Mixer::hasVolumeCOntrol()
+		// Implement shared test Mixer::hasVolumeControl()
 
 		QTreeWidgetItem *item = new QTreeWidgetItem(m_mixerList);
 		createTreeItem(item, id, data);
@@ -778,4 +784,17 @@ void KMixPrefDlg::updateVolumeControls()
 
 	m_mixerList->expandAll();			// initially show fully expanded
 	m_mixerList->setRootIsDecorated(isTree);	// hide tree expanders if not used
+}
+
+
+void KMixPrefDlg::controlsChange(ControlManager::ChangeType changeType)
+{
+	if (changeType!=ControlManager::ControlList) return;
+	if (!isVisible()) return;			// not currently showing
+
+	qCDebug(KMIX_LOG) << "Regenerating volume controls list";
+	KConfigGroup grp(KSharedConfig::openConfig(), "SystemTrayTemp");
+	updateSettingsFromItem(m_mixerList->invisibleRootItem(), grp, nullptr);
+	updateVolumeControls(grp);
+	grp.deleteGroup();				// only a temporary group
 }
