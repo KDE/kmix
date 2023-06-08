@@ -22,7 +22,8 @@
 #define KMIXTOOLBOX_H
 
 #include "qlist.h"
-#include "qwidget.h"
+
+class QWidget;
 
 
 /**

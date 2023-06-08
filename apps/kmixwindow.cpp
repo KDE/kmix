@@ -831,12 +831,15 @@ void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 	if (mixer==nullptr) return;
 
 	mixer->setHotplugId(udi);			// record UDI for unplugging
+	const QString mixerId = mixer->id();		// note for announce later
 	if (MixerToolBox::possiblyAddMixer(mixer))
 	{
 		qCDebug(KMIX_LOG) << "adding mixer id" << mixer->id() << mixer->readableName();
 		recreateGUI(true, mixer->id(), true, false);
 	}
 	else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
+
+	ControlManager::instance().announce(mixerId, ControlManager::ControlList, objectName());
 }
 
 
@@ -861,6 +864,8 @@ void KMixWindow::unplugged(const QString &udi)
 		qCDebug(KMIX_LOG) << "No mixer present with that UDI";
 		return;
 	}
+
+	const QString mixerId = unpluggedMixer->id();	// note for announce later
 
 	qCDebug(KMIX_LOG) << "Removing mixer";
 	const bool globalMasterMixerDestroyed = (unpluggedMixer==MixerToolBox::getGlobalMasterMixer());
@@ -918,6 +923,8 @@ void KMixWindow::unplugged(const QString &udi)
 
 		recreateGUI(true, false);
 	}
+
+	ControlManager::instance().announce(mixerId, ControlManager::ControlList, objectName());
 }
 
 
