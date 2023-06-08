@@ -254,6 +254,12 @@ void ViewDockAreaPopup::addDevice(shared_ptr<MixDevice> md, const Mixer *mixer)
 }
 
 
+static bool shouldUseMixer(const QStringList &filter, const QString &id)
+{
+	return (filter.isEmpty() || filter.contains(id));
+}
+
+
 void ViewDockAreaPopup::initLayout()
 {
 	resetMdws();
@@ -328,16 +334,16 @@ Application: KMix (kmix), signal: Segmentation fault
 	clearMixers();
 
 	// This is the "Mixers to show in the popup volume control" list
-	// as set in the "Perferences - Volume Control" dialogue.
+	// as set in the "Preferences - Volume Control" dialogue.
 	// For ALSA this will select from the available cards and also
 	// MPRIS2 "Playback Streams".  For PulseAudio this will select from
 	// the four preset "PlayBack/Capture Devices/Streams", the loop
 	// below adds invividual PulseAudio devices.
-	const QStringList preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
+	const QStringList &preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
 	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
-		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
+		const bool useMixer = shouldUseMixer(preferredMixersForSoundmenu, mixer->id());
 
 		// addMixer() here is ViewBase::addMixer() which appends
 		// the 'mixer' to the list which will be returned
@@ -381,16 +387,12 @@ Application: KMix (kmix), signal: Segmentation fault
 			// all devices of the mixer, not just the configured master.
 			// Therefore a volume control is shown for all playback
 			// devices.
-
-			// TODO: for ALSA each card can be configured to individually
-			// appear in the popup.  Maybe a configuration option or
-			// being able to do that selection for PulseAudio?
-
 			const MixSet &ms = mixer->mixDevices();
 			qDebug() << "PulseAudio adding" << ms.count() << "devices";
 			for (shared_ptr<MixDevice> md : std::as_const(ms))
 			{
-				addDevice(md, mixer);
+				const bool useMixer = shouldUseMixer(preferredMixersForSoundmenu, md->id());
+				if (useMixer) addDevice(md, mixer);
 			}
 		}
 		else					// not PulseAudio
