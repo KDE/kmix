@@ -63,7 +63,6 @@ MDWSlider::MDWSlider(shared_ptr<MixDevice> md, MixDeviceWidget::MDWFlags flags, 
 	  m_mediaPlayButton(nullptr),
 	  m_controlButtonSize(QSize()),
 	  m_moveMenu(nullptr),
-	  m_sliderInWork(false),
 	  m_waitForSoundSetComplete(0)
 {
 	//qCDebug(KMIX_LOG) << "for" << mixDevice()->readableName() << "flags" << MixDeviceWidget::flags();
@@ -685,23 +684,7 @@ void MDWSlider::addSliders( QBoxLayout *volLayout, char type, Volume& vol,
 		ref_sliders.append ( slider ); // add to list
 
 		connect(slider, &QAbstractSlider::valueChanged, this, &MDWSlider::volumeChange);
-		// TODO: Could these two connections and the tracking of m_sliderInWork
-		// be replaced by slider->isSliderDown()?
-		connect(slider, &QAbstractSlider::sliderPressed, this, &MDWSlider::sliderPressed);
-		connect(slider, &QAbstractSlider::sliderReleased, this, &MDWSlider::sliderReleased);
 	}
-}
-
-
-void MDWSlider::sliderPressed()
-{
-  m_sliderInWork = true;
-}
-
-
-void MDWSlider::sliderReleased()
-{
-  m_sliderInWork = false;
 }
 
 
@@ -991,6 +974,7 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 	{						// for all sliders
 		VolumeSlider *slider = qobject_cast<VolumeSlider *>(ref_sliders.at(i));
 		if (slider==nullptr) continue;
+		const bool sliderDown = slider->isSliderDown();
 
 		Volume::ChannelID chid = slider->channelId();
 		long useVolume = muted ? 0 : vol.getVolumeForGUI(chid);
@@ -1003,9 +987,9 @@ void MDWSlider::updateInternal(Volume& vol, QList<QAbstractSlider *>& ref_slider
 		    m_waitForSoundSetComplete = 0;
 		    volumeValues.removeAt(volume_index);
 
-		    if (!m_sliderInWork) slider->setValue(useVolume);
+		    if (!sliderDown) slider->setValue(useVolume);
 		}
-		else if (!m_sliderInWork && m_waitForSoundSetComplete<1)
+		else if (!sliderDown && m_waitForSoundSetComplete<1)
 		{
 			slider->setValue(useVolume);
 		}
