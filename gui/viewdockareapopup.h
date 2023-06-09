@@ -65,6 +65,7 @@ private:
 
     QPushButton* createRestoreVolumeButton (int storageSlot);
     void resetRefs();
+    void addDevice(const shared_ptr<MixDevice> md, const Mixer *mixer);
     
     bool separatorBetweenMastersAndStreamsInserted;
     bool separatorBetweenMastersAndStreamsRequired;

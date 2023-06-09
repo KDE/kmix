@@ -198,7 +198,9 @@ int Mixer_ALSA::open()
         idx++;
 
         MixDevice *mdNew = new MixDevice(_mixer, finalMixdeviceID, readableName, ct );
-        mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum)+","+QByteArray::number(idx));
+        mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum));
+        // TODO: this does not appear to work with volume feedback
+        //mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum)+","+QByteArray::number(idx));
 
         if ( volPlay    != 0      )
         {

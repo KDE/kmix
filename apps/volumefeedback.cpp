@@ -261,6 +261,9 @@ void VolumeFeedback::slotPlayFeedback()
 	// new one... for now, let's do the latter.
 	if (playing)
 	{
+#ifdef DEBUG_CANBERRA
+		qCDebug(KMIX_LOG) << "playing, calling ca_context_cancel";
+#endif
 		ca_context_cancel(m_ccontext, cindex);
 		playing = 0;
 	}

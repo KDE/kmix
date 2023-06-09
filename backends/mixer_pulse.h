@@ -27,23 +27,9 @@
 
 struct QtPaMainLoop;
 
-typedef QMap<uint8_t,Volume::ChannelID> chanIDMap;
-typedef struct {
-    int index;
-    int device_index;
-    QString name;
-    QString description;
-    QString icon_name;
-    pa_cvolume volume;
-    pa_channel_map channel_map;
-    bool mute;
-    QString stream_restore_rule;
-
-    Volume::ChannelMask chanMask;
-    chanIDMap chanIDs;
-    unsigned int priority;
-} devinfo;
+struct devinfo;
 typedef QMap<int,devinfo> devmap;
+
 
 class Mixer_PULSE : public MixerBackend
 {
@@ -67,11 +53,11 @@ class Mixer_PULSE : public MixerBackend
         // Only used internally, but need to be able to be called by
         // static PulseAudio callback functions.
         void triggerUpdate();
-        void addWidget(int index, bool = false);
+        void addWidget(int index, bool isAppStream = false);
         void removeWidget(int index);
         void removeAllWidgets();
-        MixSet *getMixSet() { return &m_mixDevices; }
         int id2num(const QString& id);
+        MixSet *getMixSet()				{ return (&m_mixDevices); }
 
    public Q_SLOTS:
         void reinit();
@@ -88,12 +74,11 @@ class Mixer_PULSE : public MixerBackend
         bool addDevice(devinfo& dev, bool isAppStream = false);
         bool connectToDaemon();
         void emitControlsReconfigured();
-        void updateRecommendedMaster(devmap* map);
+        void updateRecommendedMaster(const devmap *map);
 
    protected Q_SLOTS:
-        void pulseControlsReconfigured(QString mixerId);
+        //void pulseControlsReconfigured(QString mixerId);
         void pulseControlsReconfigured();
-
 };
 
 #endif

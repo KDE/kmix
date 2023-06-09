@@ -49,6 +49,27 @@
 
 #define KMIXPA_EVENT_KEY "sink-input-by-media-role:event"
 
+
+typedef QMap<uint8_t,Volume::ChannelID> chanIDMap;
+
+struct devinfo
+{
+    int index;
+    int device_index;
+    QString name;
+    QString description;
+    QString icon_name;
+    pa_cvolume volume;
+    pa_channel_map channel_map;
+    bool mute;
+    QString stream_restore_rule;
+
+    Volume::ChannelMask chanMask;
+    chanIDMap chanIDs;
+    unsigned int priority;
+};
+
+
 static unsigned int refcount = 0;
 static pa_context *s_context = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
@@ -796,19 +817,19 @@ void Mixer_PULSE::pulseControlsReconfigured()
     ControlManager::instance()->announce(_mixer->id(), ControlManager::ControlList, getDriverName());
 }
 
-void Mixer_PULSE::pulseControlsReconfigured(QString mixerId)
-{
-	qCDebug(KMIX_LOG) << "Reconfigure " << mixerId;
-    ControlManager::instance()->announce(mixerId, ControlManager::ControlList, getDriverName());
-}
+// void Mixer_PULSE::pulseControlsReconfigured(QString mixerId)
+// {
+// 	qCDebug(KMIX_LOG) << "Reconfigure " << mixerId;
+//     ControlManager::instance()->announce(mixerId, ControlManager::ControlList, getDriverName());
+// }
 
-void Mixer_PULSE::updateRecommendedMaster(devmap* map)
+void Mixer_PULSE::updateRecommendedMaster(const devmap *map)
 {
     unsigned int prio = 0;
     shared_ptr<MixDevice> res;
-    MixSet::iterator iter;
 
-    for (iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter) {
+    for (MixSet::iterator iter = m_mixDevices.begin(); iter != m_mixDevices.end(); ++iter)
+    {
         unsigned int devprio = map->value( id2num((*iter)->id()) ).priority;
         if (( devprio > prio ) || !res ) {
             prio = devprio;

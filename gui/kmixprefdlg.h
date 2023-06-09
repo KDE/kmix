@@ -24,6 +24,8 @@
 
 #include <kconfigdialog.h>
 
+#include <core/ControlManager.h>
+
 class KMixPrefWidget;
 class DialogChooseBackends;
 
@@ -34,12 +36,13 @@ class QFrame;
 class QGridLayout;
 class QRadioButton;
 class QShowEvent;
-class QWidget;
+class QTreeWidget;
 
 class KMessageWidget;
+class KConfigGroup;
 
 
-class KMixPrefDlg: public KConfigDialog
+class KMixPrefDlg : public KConfigDialog
 {
 	Q_OBJECT
 
@@ -63,6 +66,9 @@ public:
 
 	static KMixPrefDlg *instance(QWidget *parent = nullptr);
 	void showAtPage(KMixPrefDlg::PrefPage page);
+
+public Q_SLOTS:
+	void controlsChange(ControlManager::ChangeType changeType);
 
 Q_SIGNALS:
 	void kmixConfigHasChanged(KMixPrefDlg::PrefChanges changed);
@@ -95,14 +101,15 @@ private:
 	};
 
 	void createStartupTab();
-	void replaceBackendsInTab();
 	void createGeneralTab();
 	void createControlsTab();
+	void updateVolumeControls(const KConfigGroup &grp);
 
 	void addWidgetToLayout(QWidget *widget, QBoxLayout *layout, int spacingBefore, const QString &tooltip);
 	void createOrientationGroup(const QString &labelSliderOrientation, QGridLayout *orientationLayout, int row, KMixPrefDlgPrefOrientationType type);
 	void setOrientationTooltip(QGridLayout *orientationLayout, int row, const QString &tooltip);
 
+private:
 	QFrame *m_generalTab;
 	QFrame *m_startupTab;
 	QFrame *m_controlsTab;
@@ -125,7 +132,8 @@ private:
 
 	QBoxLayout *layoutControlsTab;
 	QBoxLayout *layoutStartupTab;
-	DialogChooseBackends *dvc;
+
+	QTreeWidget *m_mixerList;
 
 	QRadioButton *_rbVertical;
 	QRadioButton *_rbHorizontal;

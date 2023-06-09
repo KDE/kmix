@@ -37,7 +37,6 @@
 // KMix
 #include "core/mixer.h"
 #include "core/mixertoolbox.h"
-#include "gui/dialogchoosebackends.h"
 #include "gui/guiprofile.h"
 #include "gui/kmixprefdlg.h"
 #include "gui/mdwslider.h"
@@ -92,7 +91,10 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 
 	// Adding all mixers, as we potentially want to show all master controls.
 	// The list will be redone in initLayout() with the actual Mixer instances to use.
-	for (Mixer *mixer : MixerToolBox::mixers())
+	//
+	// TODO: is this necessary?  As the comment says, initLayout() does a
+	// clearMixers() which clears the mixers that addMixer() adds here.
+	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
 	{
 		addMixer(mixer);
 	}
@@ -225,6 +227,39 @@ void ViewDockAreaPopup::resetRefs()
 	_layoutMDW = nullptr;
 }
 
+
+void ViewDockAreaPopup::addDevice(const shared_ptr<MixDevice> md, const Mixer *mixer)
+{
+	shared_ptr<MixDevice> dockMD = md;
+	if (dockMD==nullptr && mixer->numDevices()>0)
+	{
+		// If the mixer has no local master device defined,
+		// then take its first available device.  first() is
+		// safe here because size() has been checked above.
+		dockMD = mixer->mixDevices().first();
+	}
+
+	if (dockMD==nullptr) return;			// still no master device
+
+	// Do not add application streams here, they are handled elsewhere.
+	if (dockMD->isApplicationStream()) return;
+
+	// Add the device if it has a volume control.
+	if (dockMD->playbackVolume().hasVolume() || dockMD->captureVolume().hasVolume())
+	{
+		qDebug() << "adding" << dockMD->id() << dockMD->readableName();
+		//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
+		addToMixSet(dockMD);
+	}
+}
+
+
+static bool shouldUseMixer(const QStringList &filter, const QString &id)
+{
+	return (filter.isEmpty() || filter.contains(id));
+}
+
+
 void ViewDockAreaPopup::initLayout()
 {
 	resetMdws();
@@ -298,17 +333,28 @@ Application: KMix (kmix), signal: Segmentation fault
 	// setting it once in the constructor.
 	clearMixers();
 
-	const QStringList preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
+	// This is the "Mixers to show in the popup volume control" list
+	// as set in the "Preferences - Volume Control" dialogue.
+	// For ALSA this will select from the available cards and also
+	// MPRIS2 "Playback Streams".  For PulseAudio this will select from
+	// the four preset "PlayBack/Capture Devices/Streams", the loop
+	// below adds invividual PulseAudio devices.
+	const QStringList &preferredMixersForSoundmenu = Settings::mixersForSoundMenu();
 	//qCDebug(KMIX_LOG) << "Launch with " << preferredMixersForSoundmenu;
 	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
-		bool useMixer = preferredMixersForSoundmenu.isEmpty() || preferredMixersForSoundmenu.contains(mixer->id());
+		const bool useMixer = shouldUseMixer(preferredMixersForSoundmenu, mixer->id());
+
+		// addMixer() here is ViewBase::addMixer() which appends
+		// the 'mixer' to the list which will be returned
+		// by getMixers() below.
 		if (useMixer) addMixer(mixer);
 	}
 
-	// The following loop is for the case when everything gets filtered out. We "reset" to show everything then.
-	// Hint: Filtering everything out can only be an "accident", e.g. when restarting KMix with changed hardware or
-	// backends.
+	// The following loop is for the case where no devices were added
+	// above, for example when the 'preferredMixersForSoundmenu' list was
+	// not empty but contained only mixers which have now disappeared due
+	// to hotplugging.  We "reset" the list to show everything.
 	if (getMixers().isEmpty())
 	{
 		for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
@@ -318,45 +364,41 @@ Application: KMix (kmix), signal: Segmentation fault
 	}
 
 	// A loop that adds the Master control of each card
+	const auto &mixers = getMixers();
+	qDebug() << "adding" << mixers.count() << "mixers";
 
-	// TODO: check whether this is working as intended for PulseAudio.
-	//
-	// Logic might say that enabling "Playback Devices" should show all of the
-	// playback devices (cards) in the popup, whereas at the moment it only
-	// shows the configured master playback device.  This is the same behaviour
-	// for the non-PulseAudio case where only the master control for each card
-	// is shown, although each card can be configured to individually
-	// appear in the popup.  With PulseAudio "Playback Devices" is considered
-	// to be a single card and only the master channel from it is shown.
-	//
-	// To do this, there needs to be a loop over all 'MixDevice's of the 'Mixer'
-	// instead of just taking the getLocalMaster() device of it.
-	//
-	// Maybe need a configuration option?
-
-	for (const Mixer *mixer : std::as_const(getMixers()))
+	for (const Mixer *mixer : std::as_const(mixers))
 	{
-		//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id();
-		// Get the configured master control for the mixer.
-		shared_ptr<MixDevice> dockMD = mixer->getLocalMasterMD();
-		if (dockMD==nullptr && mixer->numDevices()>0)
+		qDebug() << "mixer" << mixer->id() << mixer->readableName();
+		if (mixer->getDriverName()=="PulseAudio")
 		{
-			// If the mixer has no local master device defined,
-			// then take its first available device.
-			dockMD = mixer->mixDevices().first();
-		}
-
-		if (dockMD!=nullptr)			// have a master device to dock
-		{
-			// Do not add application streams here, they are handled below.
-			if (dockMD->isApplicationStream()) continue;
-
-			//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id();
-			if (dockMD->playbackVolume().hasVolume() || dockMD->captureVolume().hasVolume())
+			// For PulseAudio, there is the fixed set of four mixers
+			// "Playback Devices" etc.  All playback devices, for example,
+			// appear under that.  Following the original logic as for
+			// ALSA, a volume control is shown only for the configured
+			// master playback device.  Under ALSA, this still shows a
+			// control for all devices because each device is a separate
+			// mixer.
+			//
+			// The same also applies to "Capture Devices".
+			//
+			// In order to achieve the same user-visible behaviour as with
+			// ALSA, for PulseAudio there is a second loop below which adds
+			// all devices of the mixer, not just the configured master.
+			// Therefore a volume control is shown for all playback
+			// devices.
+			const MixSet &ms = mixer->mixDevices();
+			qDebug() << "PulseAudio adding" << ms.count() << "devices";
+			for (shared_ptr<MixDevice> md : std::as_const(ms))
 			{
-				//qCDebug(KMIX_LOG) << "ADD? mixerId=" << mixer->id() << ", md=" << dockMD->id() << ": YES";
-				addToMixSet(dockMD);
+				const bool useMixer = shouldUseMixer(preferredMixersForSoundmenu, md->id());
+				if (useMixer) addDevice(md, mixer);
 			}
+		}
+		else					// not PulseAudio
+		{
+			shared_ptr<MixDevice> md = mixer->getLocalMasterMD();
+			addDevice(md, mixer);
 		}
 	} // loop over all cards
 

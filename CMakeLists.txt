@@ -322,7 +322,6 @@ set(kmixgui_SRCS
   gui/dialogaddview.cpp
   gui/dialogviewconfiguration.cpp
   gui/dialogselectmaster.cpp
-  gui/dialogchoosebackends.cpp
   gui/guiprofile.cpp
   gui/toggletoolbutton.cpp
 )
