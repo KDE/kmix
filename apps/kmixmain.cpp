@@ -29,6 +29,22 @@
 #include "kmixapp.h"
 #include "kmix_debug.h"
 
+#ifdef HAVE_PULSEAUDIO
+#include <pulse/version.h>
+#endif
+
+#ifdef HAVE_ALSA_MIXER
+#include <alsa/version.h>
+#endif
+
+#ifdef HAVE_SYS_SOUNDCARD_H
+#include <sys/soundcard.h>
+#endif
+#ifdef HAVE_SOUNDCARD_H
+#include <soundcard.h>
+#endif
+
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -52,6 +68,7 @@ int main(int argc, char *argv[])
 // aboutData.addAuthor(i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 
    // Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
+   aboutData.addCredit(i18n("Jonathan Marten")   , i18n("KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"), "jonathan.marten@kdemail.net");
    aboutData.addCredit(i18n("Igor Poboiko")      , i18n("Plasma Dataengine"), "igor.poboiko@gmail.com");
    aboutData.addCredit(i18n("Stefan Schimanski") , i18n("Temporary maintainer"), "schimmi@kde.org");
    aboutData.addCredit(i18n("Sebestyen Zoltan")  , i18n("*BSD fixes"), "szoli@digo.inf.elte.hu");
@@ -62,6 +79,32 @@ int main(int argc, char *argv[])
 
    aboutData.setOrganizationDomain(QByteArray("kde.org"));
    aboutData.setDesktopFileName(QStringLiteral("org.kde.kmix"));
+
+#ifdef HAVE_PULSEAUDIO
+   // Using pa_get_library_version() here would require the
+   // PulseAudio::PulseAudio target to be linked as PUBLIC.
+   aboutData.addComponent(i18n("PulseAudio"),
+                          i18n("Sound server"),
+                          pa_get_headers_version(),
+                          "https://www.freedesktop.org/wiki/Software/PulseAudio");
+#endif
+#ifdef HAVE_ALSA_MIXER
+    aboutData.addComponent(i18n("ALSA"),
+                           i18n("Advanced Linux Sound Architecture"),
+                           SND_LIB_VERSION_STR,
+                           "https://alsa-project.org/wiki/Main_Page");
+#endif
+#ifdef HAVE_OSS_3
+    aboutData.addComponent(i18n("OSS 3"),
+                           i18n("Open Sound System"),
+                           QByteArray::number(SOUND_VERSION, 16));
+#endif
+#ifdef HAVE_OSS_4
+    aboutData.addComponent(i18n("OSS 4"),
+                           i18n("Open Sound System"),
+                           QByteArray::number(SOUND_VERSION, 16),
+                           "http://www.opensound.com/");
+#endif
 
    KAboutData::setApplicationData(aboutData);
 
