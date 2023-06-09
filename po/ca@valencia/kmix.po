@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-05-06 00:46+0000\n"
+"POT-Creation-Date: 2023-06-09 00:47+0000\n"
 "PO-Revision-Date: 2022-02-06 12:56+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
@@ -62,20 +62,6 @@ msgstr "Guarda els volums actuals com a predeterminats"
 #, kde-format
 msgid "Restore default volumes"
 msgstr "Restaura els volums predeterminats"
-
-#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
-#, kde-format
-msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
-msgstr ""
-"S'ha desconnectat la targeta de so que tenia el dispositiu mestre. S'ha "
-"canviat al control %1 de la targeta %2."
-
-#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "S'ha desconnectat l'última targeta de so."
 
 #: apps/kmixmain.cpp:40
 #, kde-format
@@ -196,115 +182,146 @@ msgstr "Valentin Rusu"
 msgid "TerraTec DMX6Fire support"
 msgstr "Implementació de TerraTec DMX6Fire"
 
-#: apps/kmixmain.cpp:75
-#, kde-format
-msgid ""
-"Inhibits the unhiding of the KMix main window, if KMix is already running."
+#: apps/kmixmain.cpp:72
+#, fuzzy, kde-format
+#| msgid ""
+#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
 "Inhibix l'aparició de la finestra principal de KMix, si este ja s'està "
 "executant."
 
-#: apps/kmixmain.cpp:76
-#, kde-format
-msgid "Starts KMix in failsafe mode."
+#: apps/kmixmain.cpp:73
+#, fuzzy, kde-format
+#| msgid "Starts KMix in failsafe mode."
+msgid "Start KMix in failsafe mode."
 msgstr "Inicia KMix en el mode a prova de fallades."
 
-#: apps/kmixwindow.cpp:173
+#: apps/kmixmain.cpp:74
+#, kde-format
+msgid "A list of backends to use (for testing only)."
+msgstr ""
+
+#: apps/kmixmain.cpp:74
+#, kde-format
+msgid "name[,name...]"
+msgstr ""
+
+#: apps/kmixmain.cpp:75
+#, kde-format
+msgid "Enable the (experimental) multiple driver mode."
+msgstr ""
+
+#: apps/kmixwindow.cpp:168
 #, kde-format
 msgid "Audio Setup..."
 msgstr "Configureu l'àudio..."
 
-#: apps/kmixwindow.cpp:177
+#: apps/kmixwindow.cpp:172
 #, kde-format
 msgid "Hide Mixer Window"
 msgstr "Oculta la finestra del mesclador"
 
-#: apps/kmixwindow.cpp:182
+#: apps/kmixwindow.cpp:177
 #, kde-format
 msgid "Configure &Channels..."
 msgstr "Configura els &canals..."
 
-#: apps/kmixwindow.cpp:186
+#: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Select Master Channel..."
 msgstr "Seleccioneu el canal mestre..."
 
-#: apps/kmixwindow.cpp:191
+#: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Save volume profile 1"
 msgstr "Guarda el perfil del volum 1"
 
-#: apps/kmixwindow.cpp:196
+#: apps/kmixwindow.cpp:191
 #, kde-format
 msgid "Save volume profile 2"
 msgstr "Guarda el perfil del volum 2"
 
-#: apps/kmixwindow.cpp:201
+#: apps/kmixwindow.cpp:196
 #, kde-format
 msgid "Save volume profile 3"
 msgstr "Guarda el perfil del volum 3"
 
-#: apps/kmixwindow.cpp:206
+#: apps/kmixwindow.cpp:201
 #, kde-format
 msgid "Save volume profile 4"
 msgstr "Guarda el perfil del volum 3"
 
-#: apps/kmixwindow.cpp:211
+#: apps/kmixwindow.cpp:206
 #, kde-format
 msgid "Load volume profile 1"
 msgstr "Carrega el perfil del volum 1"
 
-#: apps/kmixwindow.cpp:216
+#: apps/kmixwindow.cpp:211
 #, kde-format
 msgid "Load volume profile 2"
 msgstr "Carrega el perfil del volum 2"
 
-#: apps/kmixwindow.cpp:221
+#: apps/kmixwindow.cpp:216
 #, kde-format
 msgid "Load volume profile 3"
 msgstr "Carrega el perfil del volum 3"
 
-#: apps/kmixwindow.cpp:226
+#: apps/kmixwindow.cpp:221
 #, kde-format
 msgid "Load volume profile 4"
 msgstr "Carrega el perfil del volum 4"
 
-#: apps/kmixwindow.cpp:237
+#: apps/kmixwindow.cpp:232
 #, kde-format
 msgid "Increase Volume"
 msgstr "Apuja el volum"
 
-#: apps/kmixwindow.cpp:244
+#: apps/kmixwindow.cpp:239
 #, kde-format
 msgid "Decrease Volume"
 msgstr "Abaixa el volum"
 
-#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:102
 #, kde-format
 msgid "Mute"
 msgstr "Silencia"
 
-#: apps/kmixwindow.cpp:263
+#: apps/kmixwindow.cpp:258
 #, kde-format
 msgid "Add new view"
 msgstr "Afig una vista nova"
 
-#: apps/kmixwindow.cpp:772
+#: apps/kmixwindow.cpp:763
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "No s'ha pogut afegir la vista -GUIProfile no és vàlid-."
 
-#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#: apps/kmixwindow.cpp:763 apps/kmixwindow.cpp:770
 #, kde-format
 msgid "Error"
 msgstr "S'ha produït un error"
 
-#: apps/kmixwindow.cpp:779
+#: apps/kmixwindow.cpp:770
 #, kde-format
 msgid "Cannot add view - View already exists."
 msgstr "No s'ha pogut afegir la vista -la vista ja existix-."
 
-#: apps/kmixwindow.cpp:1168
+#: apps/kmixwindow.cpp:908
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"S'ha desconnectat la targeta de so que tenia el dispositiu mestre. S'ha "
+"canviat al control %1 de la targeta %2."
+
+#: apps/kmixwindow.cpp:915
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "S'ha desconnectat l'última targeta de so."
+
+#: apps/kmixwindow.cpp:1174
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -315,17 +332,17 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1219
+#: apps/kmixwindow.cpp:1225
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mesclador (%1)"
 
-#: apps/volumefeedback.cpp:248
+#: apps/volumefeedback.cpp:277
 #, kde-format
 msgid "Volume Control Feedback Sound"
 msgstr "So de reacció del control del volum"
 
-#: backends/mixer_alsa9.cpp:962
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -334,7 +351,7 @@ msgstr ""
 "No teniu permís d'accés al dispositiu mesclador alsa.\n"
 "Verifiqueu si tots els dispositius alsa estan creats correctament."
 
-#: backends/mixer_alsa9.cpp:966
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -345,211 +362,131 @@ msgstr ""
 "Comproveu que la targeta de so està instal·lada i que\n"
 "el controlador de la targeta s'ha carregat.\n"
 
-#: backends/mixer_backend.cpp:323
-#, kde-format
-msgid ""
-"kmix:You do not have permission to access the mixer device.\n"
-"Please check your operating systems manual to allow the access."
-msgstr ""
-"kmix: no teniu permís d'accés al dispositiu mesclador.\n"
-"Mireu al manual del vostre sistema operatiu per a permetre l'accés."
-
-#: backends/mixer_backend.cpp:327
-#, kde-format
-msgid "kmix: Could not write to mixer."
-msgstr "kmix: no s'ha pogut escriure al mesclador."
-
-#: backends/mixer_backend.cpp:330
-#, kde-format
-msgid "kmix: Could not read from mixer."
-msgstr "kmix: no s'ha pogut llegir des del mesclador."
-
-#: backends/mixer_backend.cpp:333
-#, kde-format
-msgid ""
-"kmix: Mixer cannot be found.\n"
-"Please check that the soundcard is installed and that\n"
-"the soundcard driver is loaded.\n"
-msgstr ""
-"kmix: no es pot trobar el mesclador.\n"
-"Comproveu que la targeta de so està instal·lada i que\n"
-"el controlador de la targeta s'ha carregat.\n"
-
-#: backends/mixer_backend.cpp:338
-#, kde-format
-msgid "kmix: Unknown error. Please report how you produced this error."
-msgstr "kmix: error desconegut. Informeu com l'heu produït."
-
-#: backends/mixer_backend_i18n.cpp:24
-#, kde-format
-msgid "Recording level of the microphone input."
-msgstr "Nivell de gravació de l'entrada del micròfon."
-
-#: backends/mixer_backend_i18n.cpp:25
-#, kde-format
-msgid ""
-"Controls the volume of the front speakers or all speakers (depending on your "
-"soundcard model). If you use a digital output, you might need to also use "
-"other controls like ADC or DAC. For headphones, soundcards often supply a "
-"Headphone control."
-msgstr ""
-"Controla el volum dels altaveus frontals o de tots els altaveus (en funció "
-"del model de la targeta de so). Si esteu utilitzant una eixida digital, "
-"potser també vos caldrà utilitzar altres controls com l'ADC o DAC. Per als "
-"auriculars, les targetes de so normalment proporcionen un control "
-"d'auricular."
-
-#: backends/mixer_backend_i18n.cpp:26
-#, kde-format
-msgid ""
-"Most media, such as MP3s or Videos, are played back using the PCM channel. "
-"As such, the playback volume of such media is controlled by both this and "
-"the Master or Headphone channels."
-msgstr ""
-"La majoria dels elements multimèdia, com els MP3 o vídeos, es reproduïxen "
-"utilitzant el canal PCM. Per tant, el volum de reproducció d'estos elements "
-"multimèdia es controla tant amb este com amb els canals Mestre o Auricular."
-
-#: backends/mixer_backend_i18n.cpp:27
-#, kde-format
-msgid ""
-"Controls the headphone volume. Some soundcards include a switch that must be "
-"manually activated to enable the headphone output."
-msgstr ""
-"Controla el volum de l'auricular. Algunes targetes de so inclouen un "
-"commutador que es pot activar manualment per tal d'activar l'eixida de "
-"l'auricular."
-
-#: backends/mixer_backend_i18n.cpp:28
-#, kde-format
-msgid "---"
-msgstr "---"
-
-#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1081
 #, kde-format
 msgid "Playback Streams"
 msgstr "Fluxos de reproducció"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Volume"
 msgstr "Volum"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Bass"
 msgstr "Baix"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Treble"
 msgstr "Agut"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Synth"
 msgstr "Sintetitzador"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Pcm"
 msgstr "PCM"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Speaker"
 msgstr "Altaveu"
 
-#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:74
 #, kde-format
 msgid "Microphone"
 msgstr "Micròfon"
 
-#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:76
 #, kde-format
 msgid "CD"
 msgstr "CD"
 
-#: backends/mixer_oss.cpp:70
+#: backends/mixer_oss.cpp:73
 msgid "Line"
 msgstr "Línia"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "Mix"
 msgstr "Mesclador"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "Pcm2"
 msgstr "PCM2"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "RecMon"
 msgstr "RecMon"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "IGain"
 msgstr "Guany de l'entrada"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "OGain"
 msgstr "Guany de l'eixida"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "Line1"
 msgstr "Línia1"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Line2"
 msgstr "Línia2"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Line3"
 msgstr "Línia3"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Digital1"
 msgstr "Digital1"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "Digital2"
 msgstr "Digital2"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "Digital3"
 msgstr "Digital3"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "PhoneIn"
 msgstr "Entrada del micro"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "PhoneOut"
 msgstr "Eixida del micro"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "Video"
 msgstr "Vídeo"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "Radio"
 msgstr "Ràdio"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:79
 msgid "Monitor"
 msgstr "Monitor"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:82
 msgid "3D-depth"
 msgstr "Profunditat 3D"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:82
 msgid "3D-center"
 msgstr "Centre 3D"
 
-#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#: backends/mixer_oss.cpp:83 backends/mixer_oss.cpp:84 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
 msgstr "desconegut"
 
-#: backends/mixer_oss.cpp:81
+#: backends/mixer_oss.cpp:84
 msgid "unused"
 msgstr "sense ús"
 
-#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -559,7 +496,7 @@ msgstr ""
 "Accediu com a administrador i feu «chmod a+rw /dev/mixer*» per a permetre "
 "l'accés."
 
-#: backends/mixer_oss.cpp:247
+#: backends/mixer_oss.cpp:242
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -574,7 +511,7 @@ msgstr ""
 "A Linux podeu necessitar utilitzar «insmod» per a carregar el controlador.\n"
 "Utilitzeu «soundon» quan utilitzeu l'OSS comercial."
 
-#: backends/mixer_oss4.cpp:499
+#: backends/mixer_oss4.cpp:506
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -599,17 +536,17 @@ msgstr "Aplicació desconeguda"
 msgid "Event Sounds"
 msgstr "Sons dels esdeveniments"
 
-#: backends/mixer_pulse.cpp:1067
+#: backends/mixer_pulse.cpp:1065
 #, kde-format
 msgid "Playback Devices"
 msgstr "Dispositius de reproducció"
 
-#: backends/mixer_pulse.cpp:1075
+#: backends/mixer_pulse.cpp:1073
 #, kde-format
 msgid "Capture Devices"
 msgstr "Dispositius de captura"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1092
 #, kde-format
 msgid "Capture Streams"
 msgstr "Fluxos de la captura"
@@ -653,6 +590,86 @@ msgstr ""
 "kmix: no teniu permís d'accés al dispositiu mesclador.\n"
 "Demaneu a l'administrador del sistema que arregle /dev/audioctl per a "
 "permetre l'accés."
+
+#: backends/mixerbackend.cpp:321
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"kmix: no teniu permís d'accés al dispositiu mesclador.\n"
+"Mireu al manual del vostre sistema operatiu per a permetre l'accés."
+
+#: backends/mixerbackend.cpp:325
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "kmix: no s'ha pogut escriure al mesclador."
+
+#: backends/mixerbackend.cpp:328
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "kmix: no s'ha pogut llegir des del mesclador."
+
+#: backends/mixerbackend.cpp:331
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"kmix: no es pot trobar el mesclador.\n"
+"Comproveu que la targeta de so està instal·lada i que\n"
+"el controlador de la targeta s'ha carregat.\n"
+
+#: backends/mixerbackend.cpp:336
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr "kmix: error desconegut. Informeu com l'heu produït."
+
+#: backends/mixerbackend.cpp:345
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Nivell de gravació de l'entrada del micròfon."
+
+#: backends/mixerbackend.cpp:346
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Controla el volum dels altaveus frontals o de tots els altaveus (en funció "
+"del model de la targeta de so). Si esteu utilitzant una eixida digital, "
+"potser també vos caldrà utilitzar altres controls com l'ADC o DAC. Per als "
+"auriculars, les targetes de so normalment proporcionen un control "
+"d'auricular."
+
+#: backends/mixerbackend.cpp:347
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"La majoria dels elements multimèdia, com els MP3 o vídeos, es reproduïxen "
+"utilitzant el canal PCM. Per tant, el volum de reproducció d'estos elements "
+"multimèdia es controla tant amb este com amb els canals Mestre o Auricular."
+
+#: backends/mixerbackend.cpp:348
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Controla el volum de l'auricular. Algunes targetes de so inclouen un "
+"commutador que es pot activar manualment per tal d'activar l'eixida de "
+"l'auricular."
+
+#: backends/mixerbackend.cpp:349
+#, kde-format
+msgid "---"
+msgstr "---"
 
 #: core/volume.cpp:58
 #, kde-format
@@ -714,68 +731,68 @@ msgctxt "Channel name"
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: gui/dialogaddview.cpp:50
+#: gui/dialogaddview.cpp:51
 #, kde-format
 msgid "All controls"
 msgstr "Tots els controls"
 
-#: gui/dialogaddview.cpp:51
+#: gui/dialogaddview.cpp:52
 #, kde-format
 msgid "Only playback controls"
 msgstr "Només els controls de la reproducció"
 
-#: gui/dialogaddview.cpp:52
+#: gui/dialogaddview.cpp:53
 #, kde-format
 msgid "Only capture controls"
 msgstr "Només els controls de la captura"
 
-#: gui/dialogaddview.cpp:59
+#: gui/dialogaddview.cpp:60
 #, kde-format
 msgid "Add View"
 msgstr "Afig una vista"
 
-#: gui/dialogaddview.cpp:88
+#: gui/dialogaddview.cpp:89
 #, kde-format
 msgid "Select mixer:"
 msgstr "Seleccioneu un mesclador:"
 
-#: gui/dialogaddview.cpp:95
+#: gui/dialogaddview.cpp:96
 #, kde-format
 msgid "Current mixer"
 msgstr "Mesclador actual"
 
-#: gui/dialogaddview.cpp:115
+#: gui/dialogaddview.cpp:116
 #, kde-format
 msgid "Select the design for the new view:"
 msgstr "Seleccioneu el disseny per a la vista nova:"
 
-#: gui/dialogchoosebackends.cpp:54
+#: gui/dialogchoosebackends.cpp:55
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
 msgstr "Mescladors que s'han de mostrar en el control de volum emergent:"
 
-#: gui/dialogchoosebackends.cpp:81
+#: gui/dialogchoosebackends.cpp:82
 #, kde-format
 msgid "Select Mixers"
 msgstr "Seleccioneu els mescladors"
 
-#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
 msgstr "Seleccioneu el canal mestre"
 
-#: gui/dialogselectmaster.cpp:73
+#: gui/dialogselectmaster.cpp:74
 #, kde-format
 msgid "Current mixer:"
 msgstr "Mesclador actual:"
 
-#: gui/dialogselectmaster.cpp:123
+#: gui/dialogselectmaster.cpp:124
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
 msgstr "Seleccioneu el canal del <link url=\"i\">volum mestre</link>:"
 
-#: gui/dialogselectmaster.cpp:131
+#: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -848,62 +865,62 @@ msgstr "Canals visibles"
 msgid "Available channels"
 msgstr "Canals disponibles"
 
-#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:88
 #, kde-format
 msgid "Volume Control"
 msgstr "Control del volum"
 
-#: gui/kmixdockwidget.cpp:174
+#: gui/kmixdockwidget.cpp:175
 #, kde-format
 msgid "M&ute"
 msgstr "&Silenci"
 
-#: gui/kmixdockwidget.cpp:198
+#: gui/kmixdockwidget.cpp:199
 #, kde-format
 msgid "No mixer devices available"
 msgstr "No hi ha disponible cap dispositiu mesclador"
 
-#: gui/kmixdockwidget.cpp:206
+#: gui/kmixdockwidget.cpp:207
 #, kde-format
 msgid "Volume muted"
 msgstr "Volum silenciat"
 
-#: gui/kmixdockwidget.cpp:207
+#: gui/kmixdockwidget.cpp:208
 #, kde-format
 msgid "Volume at %1%"
 msgstr "Volum a %1%"
 
-#: gui/kmixdockwidget.cpp:209
+#: gui/kmixdockwidget.cpp:210
 #, kde-format
 msgid "%1 - %2"
 msgstr "%1 - %2"
 
-#: gui/kmixprefdlg.cpp:52
+#: gui/kmixprefdlg.cpp:53
 #, kde-format
 msgid "Configure"
 msgstr "Configura"
 
-#: gui/kmixprefdlg.cpp:66
+#: gui/kmixprefdlg.cpp:86
 #, kde-format
 msgid "General"
 msgstr "General"
 
-#: gui/kmixprefdlg.cpp:67
+#: gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Startup"
 msgstr "Inici"
 
-#: gui/kmixprefdlg.cpp:103
+#: gui/kmixprefdlg.cpp:119
 #, kde-format
 msgid "Start KMix on desktop startup"
 msgstr "Inicia KMix en iniciar l'escriptori"
 
-#: gui/kmixprefdlg.cpp:107
+#: gui/kmixprefdlg.cpp:123
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
 msgstr "Inicia automàticament KMix quan s'inicie l'escriptori"
 
-#: gui/kmixprefdlg.cpp:110
+#: gui/kmixprefdlg.cpp:126
 #, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
@@ -913,12 +930,12 @@ msgstr ""
 "automàtic «kmix_autostart.desktop». Comproveu que KMix estiga instal·lat "
 "correctament."
 
-#: gui/kmixprefdlg.cpp:120
+#: gui/kmixprefdlg.cpp:136
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
 msgstr "Restaura la configuració previ de volum en iniciar l'escriptori"
 
-#: gui/kmixprefdlg.cpp:124
+#: gui/kmixprefdlg.cpp:140
 #, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
@@ -927,34 +944,34 @@ msgstr ""
 "Restaura tots els nivells de volum dels mescladors i dels commutadors a la "
 "seua última configuració utilitzada en iniciar l'escriptori"
 
-#: gui/kmixprefdlg.cpp:127
+#: gui/kmixprefdlg.cpp:143
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
 msgstr ""
 "El volum de PulseAudio i els controls dinàmics de MPRIS2 no es restauraran."
 
-#: gui/kmixprefdlg.cpp:145
+#: gui/kmixprefdlg.cpp:161
 #, kde-format
 msgid "&Horizontal"
 msgstr "&Horitzontal"
 
-#: gui/kmixprefdlg.cpp:146
+#: gui/kmixprefdlg.cpp:162
 #, kde-format
 msgid "&Vertical"
 msgstr "&Vertical"
 
-#: gui/kmixprefdlg.cpp:193
+#: gui/kmixprefdlg.cpp:209
 #, kde-format
 msgid "Behavior"
 msgstr "Comportament"
 
-#: gui/kmixprefdlg.cpp:207
+#: gui/kmixprefdlg.cpp:223
 #, kde-format
 msgid "Volume overdrive"
 msgstr "Distorsió del volum"
 
-#: gui/kmixprefdlg.cpp:212
+#: gui/kmixprefdlg.cpp:228
 #, kde-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -964,35 +981,35 @@ msgstr ""
 "Permet que el volum s'eleve per damunt del màxim recomanat (normalment al "
 "150%)"
 
-#: gui/kmixprefdlg.cpp:215
+#: gui/kmixprefdlg.cpp:231
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
 msgstr "La distorsió del volum només està disponibles per a PulseAudio."
 
-#: gui/kmixprefdlg.cpp:225
+#: gui/kmixprefdlg.cpp:241
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr "Cal tornar a iniciar %1 perquè la distorsió del volum tinga efecte."
 
-#: gui/kmixprefdlg.cpp:235
+#: gui/kmixprefdlg.cpp:251
 #, kde-format
 msgid "Volume feedback"
 msgstr "Reacció del control del volum"
 
-#: gui/kmixprefdlg.cpp:239
+#: gui/kmixprefdlg.cpp:255
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
 msgstr "Reproduïx un so d'exemple quan canvie el volum"
 
-#: gui/kmixprefdlg.cpp:243
+#: gui/kmixprefdlg.cpp:259
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr ""
 "La reacció del volum només estarà disponible si està configurat amb la "
 "Canberra."
 
-#: gui/kmixprefdlg.cpp:265
+#: gui/kmixprefdlg.cpp:281
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -1007,76 +1024,76 @@ msgstr ""
 "controls lliscants amb un pas de pàgina.</para><para>Cal tornar a iniciar %1 "
 "perquè este canvi tinga efecte.</para>"
 
-#: gui/kmixprefdlg.cpp:272
+#: gui/kmixprefdlg.cpp:288
 #, kde-format
 msgid "Volume step:"
 msgstr "Pas del volum:"
 
-#: gui/kmixprefdlg.cpp:280
+#: gui/kmixprefdlg.cpp:296
 #, kde-format
 msgid "Visual"
 msgstr "Visual"
 
-#: gui/kmixprefdlg.cpp:289
+#: gui/kmixprefdlg.cpp:305
 #, kde-format
 msgid "Show slider &tickmarks"
 msgstr "Mostra les ma&rques dels controls lliscants"
 
-#: gui/kmixprefdlg.cpp:292
+#: gui/kmixprefdlg.cpp:308
 #, kde-format
 msgid "Show tick mark scales on sliders"
 msgstr "Mostra les marques de les escales als controls lliscants"
 
-#: gui/kmixprefdlg.cpp:294
+#: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show control &labels"
 msgstr "Mostra les &etiquetes dels controls"
 
-#: gui/kmixprefdlg.cpp:297
+#: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show description labels for sliders"
 msgstr "Mostra les etiquetes descriptives dels controls lliscants"
 
-#: gui/kmixprefdlg.cpp:300
+#: gui/kmixprefdlg.cpp:316
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
 msgstr "Mostra en pantalla (&OSD)"
 
-#: gui/kmixprefdlg.cpp:303
+#: gui/kmixprefdlg.cpp:319
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
 "Mostra un indicador per pantalla en canviar el volum a través de les dreceres"
 
-#: gui/kmixprefdlg.cpp:312
+#: gui/kmixprefdlg.cpp:328
 #, kde-format
 msgid "Slider orientation (main window): "
 msgstr "Orientació dels controls lliscants (finestra principal): "
 
-#: gui/kmixprefdlg.cpp:313
+#: gui/kmixprefdlg.cpp:329
 #, kde-format
 msgid "Slider orientation (system tray popup):"
 msgstr ""
 "Orientació dels controls lliscants (emergent de la safata del sistema):"
 
-#: gui/kmixprefdlg.cpp:314
+#: gui/kmixprefdlg.cpp:330
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
 msgstr "Establix l'orientació dels controls lliscants de la finestra principal"
 
-#: gui/kmixprefdlg.cpp:315
+#: gui/kmixprefdlg.cpp:331
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr ""
 "Establix l'orientació dels controls lliscants del volum de la safata del "
 "sistema"
 
-#: gui/kmixprefdlg.cpp:327
+#: gui/kmixprefdlg.cpp:343
 #, kde-format
 msgid "Dock in system tray"
 msgstr "Acobla en la safata del sistema"
 
-#: gui/kmixprefdlg.cpp:330
+#: gui/kmixprefdlg.cpp:346
 #, kde-format
 msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
@@ -1085,7 +1102,7 @@ msgstr ""
 "Acobla el mesclador a dins de la safata del sistema. Feu-hi clic per a obrir "
 "el control de volum emergent."
 
-#: gui/kmixprefdlg.cpp:502
+#: gui/kmixprefdlg.cpp:518
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
@@ -1184,12 +1201,12 @@ msgstr "Configureu els canals..."
 msgid "Device Settings"
 msgstr "Paràmetres del dispositiu"
 
-#: gui/viewdockareapopup.cpp:440
+#: gui/viewdockareapopup.cpp:441
 #, kde-format
 msgid "Show the full mixer window"
 msgstr "Mostra la finestra completa del mesclador"
 
-#: gui/viewdockareapopup.cpp:472
+#: gui/viewdockareapopup.cpp:473
 #, kde-format
 msgid "Load volume profile %1"
 msgstr "Carrega el perfil del volum %1"

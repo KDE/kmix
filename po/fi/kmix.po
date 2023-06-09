@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-05-06 00:46+0000\n"
+"POT-Creation-Date: 2023-06-09 00:47+0000\n"
 "PO-Revision-Date: 2021-09-05 15:54+0300\n"
 "Last-Translator: Tommi Nieminen <translator@legisign.org>\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
@@ -69,20 +69,6 @@ msgstr "Tallenna äänenvoimakkuudet oletukseksi"
 #, kde-format
 msgid "Restore default volumes"
 msgstr "Palauta oletusäänenvoimakkuudet"
-
-#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
-#, kde-format
-msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
-msgstr ""
-"Päälaitteen sisältävä äänikortti irrotettiin. Vaihdetaan säätimeen %1 "
-"kortilla %2."
-
-#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Viimeinen äänikortti irrotettiin."
 
 # pmap: =/gen=KMixin/
 # pmap: =/elat=KMixistä/
@@ -205,113 +191,145 @@ msgstr "Valentin Rusu"
 msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire -tuki"
 
-#: apps/kmixmain.cpp:75
-#, kde-format
-msgid ""
-"Inhibits the unhiding of the KMix main window, if KMix is already running."
+#: apps/kmixmain.cpp:72
+#, fuzzy, kde-format
+#| msgid ""
+#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "Estää KMixin pääikkunan näyttämisen, jos KMix on jo käynnissä."
 
-#: apps/kmixmain.cpp:76
-#, kde-format
-msgid "Starts KMix in failsafe mode."
+#: apps/kmixmain.cpp:73
+#, fuzzy, kde-format
+#| msgid "Starts KMix in failsafe mode."
+msgid "Start KMix in failsafe mode."
 msgstr "Käynnistää KMixin vikasietotilassa."
 
-#: apps/kmixwindow.cpp:173
+#: apps/kmixmain.cpp:74
+#, kde-format
+msgid "A list of backends to use (for testing only)."
+msgstr ""
+
+#: apps/kmixmain.cpp:74
+#, kde-format
+msgid "name[,name...]"
+msgstr ""
+
+#: apps/kmixmain.cpp:75
+#, fuzzy, kde-format
+#| msgid "Experimental multiple-Driver mode activated"
+msgid "Enable the (experimental) multiple driver mode."
+msgstr "Kokeellinen moniajuritila käytössä"
+
+#: apps/kmixwindow.cpp:168
 #, kde-format
 msgid "Audio Setup..."
 msgstr "Ääniasetukset…"
 
-#: apps/kmixwindow.cpp:177
+#: apps/kmixwindow.cpp:172
 #, kde-format
 msgid "Hide Mixer Window"
 msgstr "Piilota mikseri-ikkuna"
 
-#: apps/kmixwindow.cpp:182
+#: apps/kmixwindow.cpp:177
 #, kde-format
 msgid "Configure &Channels..."
 msgstr "Valitse &kanavat…"
 
-#: apps/kmixwindow.cpp:186
+#: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Select Master Channel..."
 msgstr "Valitse pääkanava…"
 
-#: apps/kmixwindow.cpp:191
+#: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Save volume profile 1"
 msgstr "Tallenna äänenvoimakkuusprofiili 1"
 
-#: apps/kmixwindow.cpp:196
+#: apps/kmixwindow.cpp:191
 #, kde-format
 msgid "Save volume profile 2"
 msgstr "Tallenna äänenvoimakkuusprofiili 2"
 
-#: apps/kmixwindow.cpp:201
+#: apps/kmixwindow.cpp:196
 #, kde-format
 msgid "Save volume profile 3"
 msgstr "Tallenna äänenvoimakkuusprofiili 3"
 
-#: apps/kmixwindow.cpp:206
+#: apps/kmixwindow.cpp:201
 #, kde-format
 msgid "Save volume profile 4"
 msgstr "Tallenna äänenvoimakkuusprofiili 4"
 
-#: apps/kmixwindow.cpp:211
+#: apps/kmixwindow.cpp:206
 #, kde-format
 msgid "Load volume profile 1"
 msgstr "Lataa äänenvoimakkuusprofiili 1"
 
-#: apps/kmixwindow.cpp:216
+#: apps/kmixwindow.cpp:211
 #, kde-format
 msgid "Load volume profile 2"
 msgstr "Lataa äänenvoimakkuusprofiili 2"
 
-#: apps/kmixwindow.cpp:221
+#: apps/kmixwindow.cpp:216
 #, kde-format
 msgid "Load volume profile 3"
 msgstr "Lataa äänenvoimakkuusprofiili 3"
 
-#: apps/kmixwindow.cpp:226
+#: apps/kmixwindow.cpp:221
 #, kde-format
 msgid "Load volume profile 4"
 msgstr "Lataa äänenvoimakkuusprofiili 4"
 
-#: apps/kmixwindow.cpp:237
+#: apps/kmixwindow.cpp:232
 #, kde-format
 msgid "Increase Volume"
 msgstr "Lisää laitteen äänenvoimakkuutta"
 
-#: apps/kmixwindow.cpp:244
+#: apps/kmixwindow.cpp:239
 #, kde-format
 msgid "Decrease Volume"
 msgstr "Laske laitteen äänenvoimakkuutta"
 
-#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:102
 #, kde-format
 msgid "Mute"
 msgstr "Vaimenna"
 
-#: apps/kmixwindow.cpp:263
+#: apps/kmixwindow.cpp:258
 #, kde-format
 msgid "Add new view"
 msgstr "Lisää uusi näkymä"
 
-#: apps/kmixwindow.cpp:772
+#: apps/kmixwindow.cpp:763
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "Näkymää ei voitu lisätä – GUIProfile on virheellinen."
 
-#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#: apps/kmixwindow.cpp:763 apps/kmixwindow.cpp:770
 #, kde-format
 msgid "Error"
 msgstr "Virhe"
 
-#: apps/kmixwindow.cpp:779
+#: apps/kmixwindow.cpp:770
 #, kde-format
 msgid "Cannot add view - View already exists."
 msgstr "Näkymää ei voitu lisätä – sellainen on jo olemassa."
 
-#: apps/kmixwindow.cpp:1168
+#: apps/kmixwindow.cpp:908
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"Päälaitteen sisältävä äänikortti irrotettiin. Vaihdetaan säätimeen %1 "
+"kortilla %2."
+
+#: apps/kmixwindow.cpp:915
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "Viimeinen äänikortti irrotettiin."
+
+#: apps/kmixwindow.cpp:1174
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -322,17 +340,17 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1219
+#: apps/kmixwindow.cpp:1225
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mikseri (%1)"
 
-#: apps/volumefeedback.cpp:248
+#: apps/volumefeedback.cpp:277
 #, kde-format
 msgid "Volume Control Feedback Sound"
 msgstr "Äänenvoimakkuuden säädön palauteääni"
 
-#: backends/mixer_alsa9.cpp:962
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -341,7 +359,7 @@ msgstr ""
 "kmix: ALSA:n mikserilaitteen käyttöön ei ole oikeuksia.\n"
 "Tarkista, että kaikki ALSA-laitteet on luotu oikein."
 
-#: backends/mixer_alsa9.cpp:966
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -352,211 +370,131 @@ msgstr ""
 "Tarkista, että äänikortti on asennettu ja\n"
 "sen ajuri on ladattu.\n"
 
-#: backends/mixer_backend.cpp:323
-#, kde-format
-msgid ""
-"kmix:You do not have permission to access the mixer device.\n"
-"Please check your operating systems manual to allow the access."
-msgstr ""
-"kmix: Mikserilaitteeseen ei ole oikeuksia.\n"
-"Tarkista käyttöjärjestelmän ohjeesta, miten käyttö sallitaan."
-
-#: backends/mixer_backend.cpp:327
-#, kde-format
-msgid "kmix: Could not write to mixer."
-msgstr "kmix: Mikseriin ei voitu kirjoittaa"
-
-#: backends/mixer_backend.cpp:330
-#, kde-format
-msgid "kmix: Could not read from mixer."
-msgstr "kmix: Mikseristä ei voitu lukea"
-
-#: backends/mixer_backend.cpp:333
-#, kde-format
-msgid ""
-"kmix: Mixer cannot be found.\n"
-"Please check that the soundcard is installed and that\n"
-"the soundcard driver is loaded.\n"
-msgstr ""
-"kmix: Mikseriä ei löytynyt\n"
-"Tarkista, että äänikortti on asennettu ja\n"
-"sen ajuri on ladattu.\n"
-
-#: backends/mixer_backend.cpp:338
-#, kde-format
-msgid "kmix: Unknown error. Please report how you produced this error."
-msgstr ""
-"kmix: Tuntematon virhe. Tee vikailmoitus, jossa kerrot miten aiheutit tämän "
-"virheen."
-
-#: backends/mixer_backend_i18n.cpp:24
-#, kde-format
-msgid "Recording level of the microphone input."
-msgstr "Mikrofonisisääntulon äänitystaso."
-
-#: backends/mixer_backend_i18n.cpp:25
-#, kde-format
-msgid ""
-"Controls the volume of the front speakers or all speakers (depending on your "
-"soundcard model). If you use a digital output, you might need to also use "
-"other controls like ADC or DAC. For headphones, soundcards often supply a "
-"Headphone control."
-msgstr ""
-"Säätää etukaiuttimien tai kaikkien kaiuttimien äänenvoimakkuutta riippuen "
-"äänikorttisi mallista. Jos käytät digitaaliulostuloa, sinun täytyy ehkä "
-"käyttää muitakin säätimiä kuten ADC:tä tai DAC:ia. Kuulokkeille äänikortit "
-"usein tarjoavat kuulokesäädön."
-
-#: backends/mixer_backend_i18n.cpp:26
-#, kde-format
-msgid ""
-"Most media, such as MP3s or Videos, are played back using the PCM channel. "
-"As such, the playback volume of such media is controlled by both this and "
-"the Master or Headphone channels."
-msgstr ""
-"Useimmat mediat kuten MP3:t ja videot toistetaan käyttäen PCM-kanavaa, joten "
-"niiden toistoäänenvoimakkuuteen vaikuttaa sekä tämä että pää- tai "
-"kuulokekanavan säätö."
-
-#: backends/mixer_backend_i18n.cpp:27
-#, kde-format
-msgid ""
-"Controls the headphone volume. Some soundcards include a switch that must be "
-"manually activated to enable the headphone output."
-msgstr ""
-"Säätää kuulokkeiden äänenvoimakkuutta. Joissakin äänikorteissa on valinta, "
-"joka täytyy käsin ottaa käyttöön kuulokeulostulon käyttämiseksi."
-
-#: backends/mixer_backend_i18n.cpp:28
-#, kde-format
-msgid "---"
-msgstr "---"
-
-#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1081
 #, kde-format
 msgid "Playback Streams"
 msgstr "Toistovirrat"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Volume"
 msgstr "Äänenvoimakkuus"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Bass"
 msgstr "Basso"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Treble"
 msgstr "Diskantti"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Synth"
 msgstr "Syntetisaattori"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Pcm"
 msgstr "PCM"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Speaker"
 msgstr "Kaiutin"
 
-#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:74
 #, kde-format
 msgid "Microphone"
 msgstr "Mikrofoni"
 
-#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:76
 #, kde-format
 msgid "CD"
 msgstr "CD"
 
-#: backends/mixer_oss.cpp:70
+#: backends/mixer_oss.cpp:73
 msgid "Line"
 msgstr "Linja"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "Mix"
 msgstr "Mikseri"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "Pcm2"
 msgstr "PCM 2"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "RecMon"
 msgstr "Äänitysmonitori"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "IGain"
 msgstr "I-vahvistus"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "OGain"
 msgstr "O-vahvistus"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "Line1"
 msgstr "Linja 1"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Line2"
 msgstr "Linja 2"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Line3"
 msgstr "Linja 3"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Digital1"
 msgstr "Digitaali 1"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "Digital2"
 msgstr "Digitaali 2"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "Digital3"
 msgstr "Digitaali 3"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "PhoneIn"
 msgstr "Kuuloke sisään"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "PhoneOut"
 msgstr "Kuuloke ulos"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "Video"
 msgstr "Video"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "Radio"
 msgstr "Radio"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:79
 msgid "Monitor"
 msgstr "Monitori"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:82
 msgid "3D-depth"
 msgstr "3D-syvyys"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:82
 msgid "3D-center"
 msgstr "3D-keski"
 
-#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#: backends/mixer_oss.cpp:83 backends/mixer_oss.cpp:84 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
 msgstr "tuntematon"
 
-#: backends/mixer_oss.cpp:81
+#: backends/mixer_oss.cpp:84
 msgid "unused"
 msgstr "käyttämätön"
 
-#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -566,7 +504,7 @@ msgstr ""
 "Kirjaudu sisään pääkäyttäjänä ja kirjoita 'chmod a+rw /dev/mixer*' "
 "salliaksesi käytön."
 
-#: backends/mixer_oss.cpp:247
+#: backends/mixer_oss.cpp:242
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -581,7 +519,7 @@ msgstr ""
 "Linuxissa saatat myös tarvita insmod-komentoa.\n"
 "Käytä soundon-komentoa kaupallisessa OSS:ssä."
 
-#: backends/mixer_oss4.cpp:499
+#: backends/mixer_oss4.cpp:506
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -606,17 +544,17 @@ msgstr "Tuntematon sovellus"
 msgid "Event Sounds"
 msgstr "Tapahtumien äänet"
 
-#: backends/mixer_pulse.cpp:1067
+#: backends/mixer_pulse.cpp:1065
 #, kde-format
 msgid "Playback Devices"
 msgstr "Toistolaitteet"
 
-#: backends/mixer_pulse.cpp:1075
+#: backends/mixer_pulse.cpp:1073
 #, kde-format
 msgid "Capture Devices"
 msgstr "Kaappauslaitteet"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1092
 #, kde-format
 msgid "Capture Streams"
 msgstr "Kaappausvirrat"
@@ -659,6 +597,86 @@ msgid ""
 msgstr ""
 "kmix: Ei käyttöoikeuksia mikserilaitteeseen.\n"
 "Pyydä pääkäyttäjää sallimaan pääsy /dev/audioctl-laitetiedostoon."
+
+#: backends/mixerbackend.cpp:321
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"kmix: Mikserilaitteeseen ei ole oikeuksia.\n"
+"Tarkista käyttöjärjestelmän ohjeesta, miten käyttö sallitaan."
+
+#: backends/mixerbackend.cpp:325
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "kmix: Mikseriin ei voitu kirjoittaa"
+
+#: backends/mixerbackend.cpp:328
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "kmix: Mikseristä ei voitu lukea"
+
+#: backends/mixerbackend.cpp:331
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"kmix: Mikseriä ei löytynyt\n"
+"Tarkista, että äänikortti on asennettu ja\n"
+"sen ajuri on ladattu.\n"
+
+#: backends/mixerbackend.cpp:336
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr ""
+"kmix: Tuntematon virhe. Tee vikailmoitus, jossa kerrot miten aiheutit tämän "
+"virheen."
+
+#: backends/mixerbackend.cpp:345
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Mikrofonisisääntulon äänitystaso."
+
+#: backends/mixerbackend.cpp:346
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Säätää etukaiuttimien tai kaikkien kaiuttimien äänenvoimakkuutta riippuen "
+"äänikorttisi mallista. Jos käytät digitaaliulostuloa, sinun täytyy ehkä "
+"käyttää muitakin säätimiä kuten ADC:tä tai DAC:ia. Kuulokkeille äänikortit "
+"usein tarjoavat kuulokesäädön."
+
+#: backends/mixerbackend.cpp:347
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"Useimmat mediat kuten MP3:t ja videot toistetaan käyttäen PCM-kanavaa, joten "
+"niiden toistoäänenvoimakkuuteen vaikuttaa sekä tämä että pää- tai "
+"kuulokekanavan säätö."
+
+#: backends/mixerbackend.cpp:348
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Säätää kuulokkeiden äänenvoimakkuutta. Joissakin äänikorteissa on valinta, "
+"joka täytyy käsin ottaa käyttöön kuulokeulostulon käyttämiseksi."
+
+#: backends/mixerbackend.cpp:349
+#, kde-format
+msgid "---"
+msgstr "---"
 
 #: core/volume.cpp:58
 #, kde-format
@@ -720,68 +738,68 @@ msgctxt "Channel name"
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: gui/dialogaddview.cpp:50
+#: gui/dialogaddview.cpp:51
 #, kde-format
 msgid "All controls"
 msgstr "Kaikki säätimet"
 
-#: gui/dialogaddview.cpp:51
+#: gui/dialogaddview.cpp:52
 #, kde-format
 msgid "Only playback controls"
 msgstr "Vain toistosäätimet"
 
-#: gui/dialogaddview.cpp:52
+#: gui/dialogaddview.cpp:53
 #, kde-format
 msgid "Only capture controls"
 msgstr "Vain kaappaussäätimet"
 
-#: gui/dialogaddview.cpp:59
+#: gui/dialogaddview.cpp:60
 #, kde-format
 msgid "Add View"
 msgstr "Lisää näkymä"
 
-#: gui/dialogaddview.cpp:88
+#: gui/dialogaddview.cpp:89
 #, kde-format
 msgid "Select mixer:"
 msgstr "Valitse mikseri:"
 
-#: gui/dialogaddview.cpp:95
+#: gui/dialogaddview.cpp:96
 #, kde-format
 msgid "Current mixer"
 msgstr "Nykyinen mikseri"
 
-#: gui/dialogaddview.cpp:115
+#: gui/dialogaddview.cpp:116
 #, kde-format
 msgid "Select the design for the new view:"
 msgstr "Valitse uuden näkymän rakenne:"
 
-#: gui/dialogchoosebackends.cpp:54
+#: gui/dialogchoosebackends.cpp:55
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
 msgstr "Ponnahdussäätimessä näytettävät mikserit:"
 
-#: gui/dialogchoosebackends.cpp:81
+#: gui/dialogchoosebackends.cpp:82
 #, kde-format
 msgid "Select Mixers"
 msgstr "Valitse mikserit"
 
-#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
 msgstr "Valitse pääkanava"
 
-#: gui/dialogselectmaster.cpp:73
+#: gui/dialogselectmaster.cpp:74
 #, kde-format
 msgid "Current mixer:"
 msgstr "Nykyinen mikseri"
 
-#: gui/dialogselectmaster.cpp:123
+#: gui/dialogselectmaster.cpp:124
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
 msgstr "Valitse <link url=\"i\">pää-äänenvoimakkuuden</link> kanava:"
 
-#: gui/dialogselectmaster.cpp:131
+#: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -854,62 +872,62 @@ msgstr "Näkyvät kanavat:"
 msgid "Available channels"
 msgstr "Käytettävissä olevat kanavat:"
 
-#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:88
 #, kde-format
 msgid "Volume Control"
 msgstr "Äänenvoimakkuuden säätö"
 
-#: gui/kmixdockwidget.cpp:174
+#: gui/kmixdockwidget.cpp:175
 #, kde-format
 msgid "M&ute"
 msgstr "&Vaimennettu"
 
-#: gui/kmixdockwidget.cpp:198
+#: gui/kmixdockwidget.cpp:199
 #, kde-format
 msgid "No mixer devices available"
 msgstr "Mikserilaitteita ei ole käytettävissä"
 
-#: gui/kmixdockwidget.cpp:206
+#: gui/kmixdockwidget.cpp:207
 #, kde-format
 msgid "Volume muted"
 msgstr "Ääni vaimennettu"
 
-#: gui/kmixdockwidget.cpp:207
+#: gui/kmixdockwidget.cpp:208
 #, kde-format
 msgid "Volume at %1%"
 msgstr "Äänenvoimakkuus %1 %"
 
-#: gui/kmixdockwidget.cpp:209
+#: gui/kmixdockwidget.cpp:210
 #, kde-format
 msgid "%1 - %2"
 msgstr "%1 – %2"
 
-#: gui/kmixprefdlg.cpp:52
+#: gui/kmixprefdlg.cpp:53
 #, kde-format
 msgid "Configure"
 msgstr "Asetuket"
 
-#: gui/kmixprefdlg.cpp:66
+#: gui/kmixprefdlg.cpp:86
 #, kde-format
 msgid "General"
 msgstr "Yleiset"
 
-#: gui/kmixprefdlg.cpp:67
+#: gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Startup"
 msgstr "Käynnistys"
 
-#: gui/kmixprefdlg.cpp:103
+#: gui/kmixprefdlg.cpp:119
 #, kde-format
 msgid "Start KMix on desktop startup"
 msgstr "Käynnistä KMix työpöydän käynnistymisen yhteydessä"
 
-#: gui/kmixprefdlg.cpp:107
+#: gui/kmixprefdlg.cpp:123
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
 msgstr "Käynnistä KMix automaattisesti työpöydän käynnistyessä."
 
-#: gui/kmixprefdlg.cpp:110
+#: gui/kmixprefdlg.cpp:126
 #, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
@@ -918,12 +936,12 @@ msgstr ""
 "Automaattikäynnistystä ei voi ottaa käyttöön, koska tarvittavaa "
 "kmix_autostart.desktop-tiedostoa ei ole asennettu."
 
-#: gui/kmixprefdlg.cpp:120
+#: gui/kmixprefdlg.cpp:136
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
 msgstr "Palauta äänenvoimakkuusasetukset työpöytää käynnistettäessä"
 
-#: gui/kmixprefdlg.cpp:124
+#: gui/kmixprefdlg.cpp:140
 #, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
@@ -932,34 +950,34 @@ msgstr ""
 "Palauta äänenvoimakkuustasot ja asetukset käynnistettäessä viimeisimpiin "
 "käytössä olleisiin arvoihinsa."
 
-#: gui/kmixprefdlg.cpp:127
+#: gui/kmixprefdlg.cpp:143
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
 msgstr ""
 "PulseAudion äänenvoimakkuutta tai MPRIS2:n dynaamisia säätöjä ei palauteta."
 
-#: gui/kmixprefdlg.cpp:145
+#: gui/kmixprefdlg.cpp:161
 #, kde-format
 msgid "&Horizontal"
 msgstr "&Vaaka"
 
-#: gui/kmixprefdlg.cpp:146
+#: gui/kmixprefdlg.cpp:162
 #, kde-format
 msgid "&Vertical"
 msgstr "&Pysty"
 
-#: gui/kmixprefdlg.cpp:193
+#: gui/kmixprefdlg.cpp:209
 #, kde-format
 msgid "Behavior"
 msgstr "Toiminta"
 
-#: gui/kmixprefdlg.cpp:207
+#: gui/kmixprefdlg.cpp:223
 #, kde-format
 msgid "Volume overdrive"
 msgstr "Äänenvoimakkuuden ylisäätö"
 
-#: gui/kmixprefdlg.cpp:212
+#: gui/kmixprefdlg.cpp:228
 #, kde-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -969,34 +987,34 @@ msgstr ""
 "Salli äänenvoimakkuuden nosto yli suositellun enimmäisarvon (yleensä 150 "
 "prosenttiin)"
 
-#: gui/kmixprefdlg.cpp:215
+#: gui/kmixprefdlg.cpp:231
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
 msgstr "Äänenvoimakkuuden yliohjaus on käytettävissä vain PulseAudiossa."
 
-#: gui/kmixprefdlg.cpp:225
+#: gui/kmixprefdlg.cpp:241
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr "%1 on käynnistettävä uudelleen, jotta yliohjausasetus tulisi voimaan."
 
-#: gui/kmixprefdlg.cpp:235
+#: gui/kmixprefdlg.cpp:251
 #, kde-format
 msgid "Volume feedback"
 msgstr "Äänenvoimakkuuden palaute"
 
-#: gui/kmixprefdlg.cpp:239
+#: gui/kmixprefdlg.cpp:255
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
 msgstr "Soita äänimerkki äänenvoimakkuuden muututtua"
 
-#: gui/kmixprefdlg.cpp:243
+#: gui/kmixprefdlg.cpp:259
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr ""
 "Äänenvoimakkuuden palaute on käytettävissä vain Canberralla asetettuna."
 
-#: gui/kmixprefdlg.cpp:265
+#: gui/kmixprefdlg.cpp:281
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -1011,72 +1029,72 @@ msgstr ""
 "PgUp/PgDn-askelin.</para><para>%1 tulee käynnistää uudelleen, jotta muutos "
 "tulisi voimaan.</para>"
 
-#: gui/kmixprefdlg.cpp:272
+#: gui/kmixprefdlg.cpp:288
 #, kde-format
 msgid "Volume step:"
 msgstr "Äänenvoimakkuuden askel:"
 
-#: gui/kmixprefdlg.cpp:280
+#: gui/kmixprefdlg.cpp:296
 #, kde-format
 msgid "Visual"
 msgstr "Ulkoasu"
 
-#: gui/kmixprefdlg.cpp:289
+#: gui/kmixprefdlg.cpp:305
 #, kde-format
 msgid "Show slider &tickmarks"
 msgstr "Näytä &mitta-asteikko"
 
-#: gui/kmixprefdlg.cpp:292
+#: gui/kmixprefdlg.cpp:308
 #, kde-format
 msgid "Show tick mark scales on sliders"
 msgstr "Näyttää liukusäätimissä mitta-asteikko"
 
-#: gui/kmixprefdlg.cpp:294
+#: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show control &labels"
 msgstr "Näytä &selitteet"
 
-#: gui/kmixprefdlg.cpp:297
+#: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show description labels for sliders"
 msgstr "Näyttää säädinten kuvaavat selitteet"
 
-#: gui/kmixprefdlg.cpp:300
+#: gui/kmixprefdlg.cpp:316
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
 msgstr "Näytä kuvaruutunäyttö (&OSD)"
 
-#: gui/kmixprefdlg.cpp:303
+#: gui/kmixprefdlg.cpp:319
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr "Näytä näyttöilmaisin muutettaessa äänenvoimakkuutta pikanäppäimin"
 
-#: gui/kmixprefdlg.cpp:312
+#: gui/kmixprefdlg.cpp:328
 #, kde-format
 msgid "Slider orientation (main window): "
 msgstr "Säädinten suunta (pääikkuna): "
 
-#: gui/kmixprefdlg.cpp:313
+#: gui/kmixprefdlg.cpp:329
 #, kde-format
 msgid "Slider orientation (system tray popup):"
 msgstr "Säädinten suunta (ilmoitusalueen säädin):"
 
-#: gui/kmixprefdlg.cpp:314
+#: gui/kmixprefdlg.cpp:330
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
 msgstr "Aseta pääikkunan säädinten suunta"
 
-#: gui/kmixprefdlg.cpp:315
+#: gui/kmixprefdlg.cpp:331
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr "Aseta ilmoitusalueen äänenvoimakkuussäädinten suunta"
 
-#: gui/kmixprefdlg.cpp:327
+#: gui/kmixprefdlg.cpp:343
 #, kde-format
 msgid "Dock in system tray"
 msgstr "Telakoi ilmoitusalueelle"
 
-#: gui/kmixprefdlg.cpp:330
+#: gui/kmixprefdlg.cpp:346
 #, kde-format
 msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
@@ -1085,7 +1103,7 @@ msgstr ""
 "Telakoi mikseri ilmoitusalueelle. Avaa äänenvoimakkuussäädin napsauttamalla "
 "sitä."
 
-#: gui/kmixprefdlg.cpp:502
+#: gui/kmixprefdlg.cpp:518
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
@@ -1181,12 +1199,12 @@ msgstr "Kanava-asetukset…"
 msgid "Device Settings"
 msgstr "Laiteasetukset"
 
-#: gui/viewdockareapopup.cpp:440
+#: gui/viewdockareapopup.cpp:441
 #, kde-format
 msgid "Show the full mixer window"
 msgstr "Näytä täysi mikseri-ikkuna"
 
-#: gui/viewdockareapopup.cpp:472
+#: gui/viewdockareapopup.cpp:473
 #, kde-format
 msgid "Load volume profile %1"
 msgstr "Lataa äänenvoimakkuusprofiili %1"
@@ -1235,9 +1253,6 @@ msgstr "Ei toistolaitteita."
 
 #~ msgid "Sound drivers used:"
 #~ msgstr "Käytetyt ääniajurit:"
-
-#~ msgid "Experimental multiple-Driver mode activated"
-#~ msgstr "Kokeellinen moniajuritila käytössä"
 
 #~ msgid "&Muted"
 #~ msgstr "&Vaimennettu"
