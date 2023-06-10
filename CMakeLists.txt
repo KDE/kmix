@@ -113,7 +113,7 @@ if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
 
   if (${TEST_COMPILE_RESULT} AND (${TEST_RUN_RESULT} EQUAL 0))
     message(STATUS "Detected OSS version ${TEST_RESULT_VERSION}")
-    if (${TEST_RESULT_VERSION} GREATER_EQUAL 0x400000)
+    if (${TEST_RESULT_VERSION} GREATER_EQUAL 0x040000)
       message(STATUS "Building with OSS 4 support")
       set(HAVE_OSS_4 true)
       add_definitions(-DHAVE_OSS_4)
