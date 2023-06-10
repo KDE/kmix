@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: kdemultimedia-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-09 00:47+0000\n"
-"PO-Revision-Date: 2023-04-11 01:15+0300\n"
+"PO-Revision-Date: 2023-06-09 12:31+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 23.03.70\n"
+"X-Generator: Lokalize 23.07.70\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -194,32 +194,29 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire desteği"
 
 #: apps/kmixmain.cpp:72
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "K Miks çalışıyorsa K Miks ana penceresinin gösterilmesini engeller."
+msgstr "K Miks çalışıyorsa K Miks ana penceresinin gösterilmesini engelleyin."
 
 #: apps/kmixmain.cpp:73
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "K Miks'i güvenceli kipte başlatır."
+msgstr "K Miks'i güvenceli kipte başlatın."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Kullanılacak arka uçların listesi (sınama amaçlı)."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "name[,ad...]"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Çoklu sürücü kipini (deneysel) etkinleştirin."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format

@@ -18,20 +18,20 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-09 00:47+0000\n"
-"PO-Revision-Date: 2023-02-17 11:07+0100\n"
+"PO-Revision-Date: 2023-06-09 10:50+0200\n"
 "Last-Translator: Freek de Kruijf <freekdekruijf@kde.nl>\n"
 "Language-Team: \n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 22.12.2\n"
+"X-Generator: Lokalize 23.04.1\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Joris Gansemans,Rinse de Vries,Ruurd Pels,Freek de Kruijf - t/m 2021"
+msgstr "Joris Gansemans,Rinse de Vries,Ruurd Pels,Freek de Kruijf - t/m 2023"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
@@ -189,35 +189,31 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire ondersteuning"
 
 #: apps/kmixmain.cpp:72
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
-"Onderdrukt het niet-verbergen van het hoofdvenster van KMix, als KMix al "
-"draait"
+"Onderdruk het tonen van het hoofdvenster van KMix, als KMix al actief is."
 
 #: apps/kmixmain.cpp:73
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr "KMix starten in modus failsafe."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Een lijst met te gebruiken backends (alleen voor testen)."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "naam[,naam...]"
 
 #: apps/kmixmain.cpp:75
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Experimentele modus met meerdere apparaatstuurprogramma's geactiveerd"
+msgstr ""
+"De (experimentele) modus met meerdere apparaatstuurprogramma's inschakelen."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format

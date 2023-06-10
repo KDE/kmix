@@ -2,7 +2,7 @@
 # Translation of kmix.po to Slovenian
 # KMIX TRANSLATION TO SLOVENIAN LANGUAGE.
 # Copyright (C) 2001, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
-# $Id: kmix.po 1653466 2023-06-09 01:32:46Z scripty $
+# $Id: kmix.po 1653546 2023-06-10 01:30:16Z scripty $
 # $Source$
 #
 # Rok Papez <rok@slo.net>, 2000.
@@ -16,17 +16,17 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-09 00:47+0000\n"
-"PO-Revision-Date: 2021-03-03 10:11+0100\n"
+"PO-Revision-Date: 2023-06-09 08:34+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Translator: Andrej Mernik <andrejm@ubuntu.si>\n"
-"X-Generator: Lokalize 20.08.1\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
+"Translator: Andrej Mernik <andrejm@ubuntu.si>\n"
+"X-Generator: Poedit 3.3.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -191,33 +191,29 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Podpora za TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:72
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Prepreči prikazovanje glavnega okna KMix, če je KMix že zagnan."
+msgstr "Prepreči prikazovanje glavnega okna KMix, če KMix že teče."
 
 #: apps/kmixmain.cpp:73
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Zažene KMix v zasilnem načinu."
+msgstr "Zaženi KMix v zasilnem načinu."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Seznam zaledij za uporabo (samo za testiranje)."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "ime[,ime...]"
 
 #: apps/kmixmain.cpp:75
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Vklopljen eksperimentalni način z več gonilniki"
+msgstr "Vklopljen eksperimentalni način z več gonilniki."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format

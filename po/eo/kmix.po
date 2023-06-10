@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix 1.0pre2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-09 00:47+0000\n"
-"PO-Revision-Date: 2023-03-22 19:13+01\n"
+"PO-Revision-Date: 2023-06-09 12:40+01\n"
 "Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
@@ -21,12 +21,13 @@ msgstr ""
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Wolfram Diestel,Steffen Pietsch"
+msgstr "Wolfram Diestel,Steffen Pietsch,Oliver Kellogg"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "wolfram@steloj.de,Steffen.Pietsch@BerlinOnline.de"
+msgstr ""
+"wolfram@steloj.de,Steffen.Pietsch@BerlinOnline.de,okellogg@users.sf.net"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -178,33 +179,30 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire-subteno"
 
 #: apps/kmixmain.cpp:72
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
-"Malpermesas la malkaŝadon de la ĉefa fenestro de KMix, se KMix jam funkcias."
+"Malebligi la montron de la ĉefa fenestro de KMix, se KMix jam estas rulanta."
 
 #: apps/kmixmain.cpp:73
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Lanĉas KMix en sekura reĝimo."
+msgstr "Lanĉas KMix en fiaskosekura reĝimo."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Listo de backends uzendaj (nur por testado)."
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "nomo[,nomo...]"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Ebligi la (eksperimentan) plurpelilan reĝimon."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
