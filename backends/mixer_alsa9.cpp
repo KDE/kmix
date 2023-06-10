@@ -461,17 +461,15 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
        snd_mixer_selem_get_capture_volume_range( elem, &minVolume, &maxVolume );
     }
 
-
     // Check if this control has at least one volume control
     bool hasVolume = snd_mixer_selem_has_playback_volume(elem) || snd_mixer_selem_has_capture_volume(elem);
 
     // Check if a appropriate switch is present (appropriate means, based o nthe "capture" parameter)
     bool hasCommonSwitch = snd_mixer_selem_has_common_switch ( elem );
 
-    bool hasSwitch = hasCommonSwitch |
-        capture
-        ? snd_mixer_selem_has_capture_switch ( elem )
-        : snd_mixer_selem_has_playback_switch ( elem );
+    bool hasSwitch = hasCommonSwitch ||
+                     (capture ? snd_mixer_selem_has_capture_switch(elem)
+                              : snd_mixer_selem_has_playback_switch(elem));
 
     if ( hasVolume || hasSwitch ) {
         //qCDebug(KMIX_LOG) << "Add somthing with chn=" << chn << ", capture=" << capture;
