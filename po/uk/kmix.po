@@ -6,20 +6,20 @@
 # Andriy Rysin <rysin@kde.org>, 2000, 2002, 2003.
 # Eugene Onischenko <oneugene@ukr.net>, 2003, 2004, 2005.
 # Ivan Petrouchtchak <fr.ivan@ukrainian-orthodox.org>, 2004, 2005, 2006, 2007, 2008.
-# Yuri Chornoivan <yurchor@ukr.net>, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2017, 2018, 2019, 2020, 2021.
+# Yuri Chornoivan <yurchor@ukr.net>, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2017, 2018, 2019, 2020, 2021, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-05-06 00:46+0000\n"
-"PO-Revision-Date: 2021-03-02 08:53+0200\n"
+"POT-Creation-Date: 2023-06-09 00:47+0000\n"
+"PO-Revision-Date: 2023-06-09 17:23+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 20.11.70\n"
+"X-Generator: Lokalize 20.12.0\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
@@ -62,20 +62,6 @@ msgstr "Записати поточні гучності як типові"
 #, kde-format
 msgid "Restore default volumes"
 msgstr "Повертає типові гучності"
-
-#: apps/kmixd.cpp:169 apps/kmixwindow.cpp:897
-#, kde-format
-msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
-msgstr ""
-"Було від'єднано звукову плату головного пристрою. Змінюється керування %1 на "
-"платі %2."
-
-#: apps/kmixd.cpp:179 apps/kmixwindow.cpp:906
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Останню звукову плату було від'єднано."
 
 #: apps/kmixmain.cpp:40
 #, kde-format
@@ -196,113 +182,141 @@ msgstr "Valentin Rusu"
 msgid "TerraTec DMX6Fire support"
 msgstr "Підтримка TerraTec DMX6Fire"
 
-#: apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:72
 #, kde-format
-msgid ""
-"Inhibits the unhiding of the KMix main window, if KMix is already running."
-msgstr "Блокує не-приховування головного вікна KMix, якщо KMix вже запущено."
+msgid "Inhibit showing the KMix main window, if KMix is already running."
+msgstr "Заборонити показ головного вікна, якщо KMix вже запущено."
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:73
 #, kde-format
-msgid "Starts KMix in failsafe mode."
+msgid "Start KMix in failsafe mode."
 msgstr "Запустити KMix у безпечному режимі."
 
-#: apps/kmixwindow.cpp:173
+#: apps/kmixmain.cpp:74
+#, kde-format
+msgid "A list of backends to use (for testing only)."
+msgstr "Список модулів для використання (лише для перевірки)."
+
+#: apps/kmixmain.cpp:74
+#, kde-format
+msgid "name[,name...]"
+msgstr "назва[,назва...]"
+
+#: apps/kmixmain.cpp:75
+#, kde-format
+msgid "Enable the (experimental) multiple driver mode."
+msgstr "Увімкнути (експериментальний) режим декількох драйверів."
+
+#: apps/kmixwindow.cpp:168
 #, kde-format
 msgid "Audio Setup..."
 msgstr "Налаштування звуку…"
 
-#: apps/kmixwindow.cpp:177
+#: apps/kmixwindow.cpp:172
 #, kde-format
 msgid "Hide Mixer Window"
 msgstr "Сховати вікно мікшера"
 
-#: apps/kmixwindow.cpp:182
+#: apps/kmixwindow.cpp:177
 #, kde-format
 msgid "Configure &Channels..."
 msgstr "Налаштувати &канали..."
 
-#: apps/kmixwindow.cpp:186
+#: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Select Master Channel..."
 msgstr "Вибрати головний канал..."
 
-#: apps/kmixwindow.cpp:191
+#: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Save volume profile 1"
 msgstr "Зберегти профіль звуку 1"
 
-#: apps/kmixwindow.cpp:196
+#: apps/kmixwindow.cpp:191
 #, kde-format
 msgid "Save volume profile 2"
 msgstr "Зберегти профіль звуку 2"
 
-#: apps/kmixwindow.cpp:201
+#: apps/kmixwindow.cpp:196
 #, kde-format
 msgid "Save volume profile 3"
 msgstr "Зберегти профіль звуку 3"
 
-#: apps/kmixwindow.cpp:206
+#: apps/kmixwindow.cpp:201
 #, kde-format
 msgid "Save volume profile 4"
 msgstr "Зберегти профіль звуку 4"
 
-#: apps/kmixwindow.cpp:211
+#: apps/kmixwindow.cpp:206
 #, kde-format
 msgid "Load volume profile 1"
 msgstr "Завантажити профіль звуку 1"
 
-#: apps/kmixwindow.cpp:216
+#: apps/kmixwindow.cpp:211
 #, kde-format
 msgid "Load volume profile 2"
 msgstr "Завантажити профіль звуку 2"
 
-#: apps/kmixwindow.cpp:221
+#: apps/kmixwindow.cpp:216
 #, kde-format
 msgid "Load volume profile 3"
 msgstr "Завантажити профіль звуку 3"
 
-#: apps/kmixwindow.cpp:226
+#: apps/kmixwindow.cpp:221
 #, kde-format
 msgid "Load volume profile 4"
 msgstr "Завантажити профіль звуку 4"
 
-#: apps/kmixwindow.cpp:237
+#: apps/kmixwindow.cpp:232
 #, kde-format
 msgid "Increase Volume"
 msgstr "Збільшити гучність"
 
-#: apps/kmixwindow.cpp:244
+#: apps/kmixwindow.cpp:239
 #, kde-format
 msgid "Decrease Volume"
 msgstr "Зменшити гучність"
 
-#: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
+#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:102
 #, kde-format
 msgid "Mute"
 msgstr "Вимкнути звук"
 
-#: apps/kmixwindow.cpp:263
+#: apps/kmixwindow.cpp:258
 #, kde-format
 msgid "Add new view"
 msgstr "Додати нову панель"
 
-#: apps/kmixwindow.cpp:772
+#: apps/kmixwindow.cpp:763
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "Не вдалося додати панель: некоректний профіль графічного інтерфейсу."
 
-#: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
+#: apps/kmixwindow.cpp:763 apps/kmixwindow.cpp:770
 #, kde-format
 msgid "Error"
 msgstr "Помилка"
 
-#: apps/kmixwindow.cpp:779
+#: apps/kmixwindow.cpp:770
 #, kde-format
 msgid "Cannot add view - View already exists."
 msgstr "Не вдалося додати панель: панель вже існує."
 
-#: apps/kmixwindow.cpp:1168
+#: apps/kmixwindow.cpp:908
+#, kde-format
+msgid ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
+msgstr ""
+"Було від'єднано звукову плату головного пристрою. Змінюється керування %1 на "
+"платі %2."
+
+#: apps/kmixwindow.cpp:915
+#, kde-format
+msgid "The last soundcard was unplugged."
+msgstr "Останню звукову плату було від'єднано."
+
+#: apps/kmixwindow.cpp:1174
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -313,17 +327,17 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1219
+#: apps/kmixwindow.cpp:1225
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Мікшер (%1)"
 
-#: apps/volumefeedback.cpp:248
+#: apps/volumefeedback.cpp:277
 #, kde-format
 msgid "Volume Control Feedback Sound"
 msgstr "Контрольний звук керування гучністю"
 
-#: backends/mixer_alsa9.cpp:962
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -332,7 +346,7 @@ msgstr ""
 "У вас відсутні права доступу до пристрою мікшера.\n"
 "Будь ласка, переконайтеся, що всі пристрої alsa встановлено вірно."
 
-#: backends/mixer_alsa9.cpp:966
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -343,213 +357,131 @@ msgstr ""
 "Будь ласка перевірте, що звукову плату встановлено\n"
 "та що драйвер завантажений.\n"
 
-#: backends/mixer_backend.cpp:323
-#, kde-format
-msgid ""
-"kmix:You do not have permission to access the mixer device.\n"
-"Please check your operating systems manual to allow the access."
-msgstr ""
-"kmix: У вас немає прав для доступу до пристрою мікшера.\n"
-"Будь ласка, перегляньте інструкцію по системі щодо прав доступу."
-
-#: backends/mixer_backend.cpp:327
-#, kde-format
-msgid "kmix: Could not write to mixer."
-msgstr "kmix: помилка запису у мікшер."
-
-#: backends/mixer_backend.cpp:330
-#, kde-format
-msgid "kmix: Could not read from mixer."
-msgstr "kmix: помилка читання з мікшера."
-
-#: backends/mixer_backend.cpp:333
-#, kde-format
-msgid ""
-"kmix: Mixer cannot be found.\n"
-"Please check that the soundcard is installed and that\n"
-"the soundcard driver is loaded.\n"
-msgstr ""
-"kmix: не знайдено мікшер.\n"
-"Будь ласка перевірте, що звукова плата встановлена\n"
-"та що драйвер завантажений.\n"
-
-#: backends/mixer_backend.cpp:338
-#, kde-format
-msgid "kmix: Unknown error. Please report how you produced this error."
-msgstr ""
-"kmix: невідома помилка. Будь ласка, надішліть звіт про те, як ви потрапили у "
-"таку халепу."
-
-#: backends/mixer_backend_i18n.cpp:24
-#, kde-format
-msgid "Recording level of the microphone input."
-msgstr "Рівень гучності запису на вхідному каналі мікрофона."
-
-#: backends/mixer_backend_i18n.cpp:25
-#, kde-format
-msgid ""
-"Controls the volume of the front speakers or all speakers (depending on your "
-"soundcard model). If you use a digital output, you might need to also use "
-"other controls like ADC or DAC. For headphones, soundcards often supply a "
-"Headphone control."
-msgstr ""
-"Керує гучністю передніх гучномовців або всіх гучномовців (залежно від моделі "
-"звукової картки). Якщо ви користуєтеся цифровим виводом даних, ймовірно, вам "
-"також варто скористатися іншими регуляторами, зокрема ADC або DAC. Для "
-"звукових карток з виходом для навушників часто передбачено регулятор "
-"гучності для навушників (Headphone)."
-
-#: backends/mixer_backend_i18n.cpp:26
-#, kde-format
-msgid ""
-"Most media, such as MP3s or Videos, are played back using the PCM channel. "
-"As such, the playback volume of such media is controlled by both this and "
-"the Master or Headphone channels."
-msgstr ""
-"Більшість мультимедійних даних, зокрема дані у форматі MP3 або відео, "
-"відтворюються за допомогою каналу PCM. Отже, гучність відтворення таких "
-"даних керується одразу цим каналом і головним каналом або каналом навушників."
-
-#: backends/mixer_backend_i18n.cpp:27
-#, kde-format
-msgid ""
-"Controls the headphone volume. Some soundcards include a switch that must be "
-"manually activated to enable the headphone output."
-msgstr ""
-"Керує гучністю каналу навушників. На деяких звукових картках передбачено "
-"окремий перемикач, який слід перемкнути вручну, щоб уможливити вивід даних "
-"на канал навушників."
-
-#: backends/mixer_backend_i18n.cpp:28
-#, kde-format
-msgid "---"
-msgstr "---"
-
-#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1083
+#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1081
 #, kde-format
 msgid "Playback Streams"
 msgstr "Потоки відтворення даних"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Volume"
 msgstr "Гучність"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Bass"
 msgstr "Нижні частоти"
 
-#: backends/mixer_oss.cpp:68
+#: backends/mixer_oss.cpp:71
 msgid "Treble"
 msgstr "Верхні частоти"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Synth"
 msgstr "Синт."
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Pcm"
 msgstr "Pcm"
 
-#: backends/mixer_oss.cpp:69
+#: backends/mixer_oss.cpp:72
 msgid "Speaker"
 msgstr "Гучномовець"
 
-#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:74
+#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:74
 #, kde-format
 msgid "Microphone"
 msgstr "Мікрофон"
 
-#: backends/mixer_oss.cpp:70 backends/mixer_sun.cpp:76
+#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:76
 #, kde-format
 msgid "CD"
 msgstr "КД"
 
-#: backends/mixer_oss.cpp:70
+#: backends/mixer_oss.cpp:73
 msgid "Line"
 msgstr "Лінійний вх"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "Mix"
 msgstr "Mix"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "Pcm2"
 msgstr "Pcm2"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:74
 msgid "RecMon"
 msgstr "ІндЗап"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "IGain"
 msgstr "ВхПс"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "OGain"
 msgstr "ВихПс"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:75
 msgid "Line1"
 msgstr "Лінійний вх 1"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Line2"
 msgstr "Лінійний вх 2"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Line3"
 msgstr "Лінійний вх 3"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:76
 msgid "Digital1"
 msgstr "Цифровий 1"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "Digital2"
 msgstr "Цифровий 2"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "Digital3"
 msgstr "Цифровий 3"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:77
 msgid "PhoneIn"
 msgstr "Телеф. вх"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "PhoneOut"
 msgstr "Телеф. вих"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "Video"
 msgstr "Відео"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:78
 msgid "Radio"
 msgstr "Радіо"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:79
 msgid "Monitor"
 msgstr "Монітор"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:82
 msgid "3D-depth"
 msgstr "Тривимірна глибина"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:82
 msgid "3D-center"
 msgstr "Тривимірний центр"
 
-#: backends/mixer_oss.cpp:80 backends/mixer_oss.cpp:81 core/mixdevice.cpp:124
+#: backends/mixer_oss.cpp:83 backends/mixer_oss.cpp:84 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
 msgstr "невідомий"
 
-#: backends/mixer_oss.cpp:81
+#: backends/mixer_oss.cpp:84
 msgid "unused"
 msgstr "не використовується"
 
-#: backends/mixer_oss.cpp:243 backends/mixer_oss4.cpp:495
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -559,7 +491,7 @@ msgstr ""
 "Зареєструйтеся як root та запустіть «chmod a+rw /dev/mixer*» для відкриття "
 "доступу."
 
-#: backends/mixer_oss.cpp:247
+#: backends/mixer_oss.cpp:242
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -574,7 +506,7 @@ msgstr ""
 "Для Linux, можливо, вам потрібно завантажити драйвер за допомогою «insmod».\n"
 "Використовуйте «soundon», якщо у вас комерційна версія OSS."
 
-#: backends/mixer_oss4.cpp:499
+#: backends/mixer_oss4.cpp:506
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -599,17 +531,17 @@ msgstr "Невідома програма"
 msgid "Event Sounds"
 msgstr "Звуки подій"
 
-#: backends/mixer_pulse.cpp:1067
+#: backends/mixer_pulse.cpp:1065
 #, kde-format
 msgid "Playback Devices"
 msgstr "Пристрої відтворення"
 
-#: backends/mixer_pulse.cpp:1075
+#: backends/mixer_pulse.cpp:1073
 #, kde-format
 msgid "Capture Devices"
 msgstr "Пристрої захоплення"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1092
 #, kde-format
 msgid "Capture Streams"
 msgstr "Потоки захоплення даних"
@@ -653,6 +585,88 @@ msgstr ""
 "kmix: У вас не вистачає прав для доступу до пристрою мікшера.\n"
 "Зверніться до системного адміністратора, щоб виправити /dev/audioctl для "
 "надання доступу."
+
+#: backends/mixerbackend.cpp:321
+#, kde-format
+msgid ""
+"kmix:You do not have permission to access the mixer device.\n"
+"Please check your operating systems manual to allow the access."
+msgstr ""
+"kmix: У вас немає прав для доступу до пристрою мікшера.\n"
+"Будь ласка, перегляньте інструкцію по системі щодо прав доступу."
+
+#: backends/mixerbackend.cpp:325
+#, kde-format
+msgid "kmix: Could not write to mixer."
+msgstr "kmix: помилка запису у мікшер."
+
+#: backends/mixerbackend.cpp:328
+#, kde-format
+msgid "kmix: Could not read from mixer."
+msgstr "kmix: помилка читання з мікшера."
+
+#: backends/mixerbackend.cpp:331
+#, kde-format
+msgid ""
+"kmix: Mixer cannot be found.\n"
+"Please check that the soundcard is installed and that\n"
+"the soundcard driver is loaded.\n"
+msgstr ""
+"kmix: не знайдено мікшер.\n"
+"Будь ласка перевірте, що звукова плата встановлена\n"
+"та що драйвер завантажений.\n"
+
+#: backends/mixerbackend.cpp:336
+#, kde-format
+msgid "kmix: Unknown error. Please report how you produced this error."
+msgstr ""
+"kmix: невідома помилка. Будь ласка, надішліть звіт про те, як ви потрапили у "
+"таку халепу."
+
+#: backends/mixerbackend.cpp:345
+#, kde-format
+msgid "Recording level of the microphone input."
+msgstr "Рівень гучності запису на вхідному каналі мікрофона."
+
+#: backends/mixerbackend.cpp:346
+#, kde-format
+msgid ""
+"Controls the volume of the front speakers or all speakers (depending on your "
+"soundcard model). If you use a digital output, you might need to also use "
+"other controls like ADC or DAC. For headphones, soundcards often supply a "
+"Headphone control."
+msgstr ""
+"Керує гучністю передніх гучномовців або всіх гучномовців (залежно від моделі "
+"звукової картки). Якщо ви користуєтеся цифровим виводом даних, ймовірно, вам "
+"також варто скористатися іншими регуляторами, зокрема ADC або DAC. Для "
+"звукових карток з виходом для навушників часто передбачено регулятор "
+"гучності для навушників (Headphone)."
+
+#: backends/mixerbackend.cpp:347
+#, kde-format
+msgid ""
+"Most media, such as MP3s or Videos, are played back using the PCM channel. "
+"As such, the playback volume of such media is controlled by both this and "
+"the Master or Headphone channels."
+msgstr ""
+"Більшість мультимедійних даних, зокрема дані у форматі MP3 або відео, "
+"відтворюються за допомогою каналу PCM. Отже, гучність відтворення таких "
+"даних керується одразу цим каналом і головним каналом або каналом навушників."
+
+#: backends/mixerbackend.cpp:348
+#, kde-format
+msgid ""
+"Controls the headphone volume. Some soundcards include a switch that must be "
+"manually activated to enable the headphone output."
+msgstr ""
+"Керує гучністю каналу навушників. На деяких звукових картках передбачено "
+"окремий перемикач, який слід перемкнути вручну, щоб уможливити вивід даних "
+"на канал навушників."
+
+#: backends/mixerbackend.cpp:349
+#, kde-format
+msgid "---"
+msgstr "---"
 
 #: core/volume.cpp:58
 #, kde-format
@@ -714,69 +728,69 @@ msgctxt "Channel name"
 msgid "Unknown"
 msgstr "Невідомий"
 
-#: gui/dialogaddview.cpp:50
+#: gui/dialogaddview.cpp:51
 #, kde-format
 msgid "All controls"
 msgstr "Всі елементи керування"
 
-#: gui/dialogaddview.cpp:51
+#: gui/dialogaddview.cpp:52
 #, kde-format
 msgid "Only playback controls"
 msgstr "Лише керування відтворенням"
 
-#: gui/dialogaddview.cpp:52
+#: gui/dialogaddview.cpp:53
 #, kde-format
 msgid "Only capture controls"
 msgstr "Лише керування захопленням"
 
-#: gui/dialogaddview.cpp:59
+#: gui/dialogaddview.cpp:60
 #, kde-format
 msgid "Add View"
 msgstr "Додати панель"
 
-#: gui/dialogaddview.cpp:88
+#: gui/dialogaddview.cpp:89
 #, kde-format
 msgid "Select mixer:"
 msgstr "Виберіть мікшер:"
 
-#: gui/dialogaddview.cpp:95
+#: gui/dialogaddview.cpp:96
 #, kde-format
 msgid "Current mixer"
 msgstr "Поточний мікшер"
 
-#: gui/dialogaddview.cpp:115
+#: gui/dialogaddview.cpp:116
 #, kde-format
 msgid "Select the design for the new view:"
 msgstr "Виберіть компонування нової панелі:"
 
-#: gui/dialogchoosebackends.cpp:54
+#: gui/dialogchoosebackends.cpp:55
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
 msgstr "Мікшери, які слід показувати на контекстній панелі гучності:"
 
-#: gui/dialogchoosebackends.cpp:81
+#: gui/dialogchoosebackends.cpp:82
 #, kde-format
 msgid "Select Mixers"
 msgstr "Вибір мікшерів"
 
-#: gui/dialogselectmaster.cpp:43 gui/dialogselectmaster.cpp:139
+#: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
 msgstr "Виберіть головний канал"
 
-#: gui/dialogselectmaster.cpp:73
+#: gui/dialogselectmaster.cpp:74
 #, kde-format
 msgid "Current mixer:"
 msgstr "Поточний мікшер:"
 
-#: gui/dialogselectmaster.cpp:123
+#: gui/dialogselectmaster.cpp:124
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
 msgstr ""
 "Виберіть канал, який відповідає <link url=\"i\">головній гучності</link>:"
 
-#: gui/dialogselectmaster.cpp:131
+#: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -850,62 +864,62 @@ msgstr "Видимі канали"
 msgid "Available channels"
 msgstr "Доступні канали"
 
-#: gui/kmixdockwidget.cpp:61 gui/kmixprefdlg.cpp:68
+#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:88
 #, kde-format
 msgid "Volume Control"
 msgstr "Регулятор гучності"
 
-#: gui/kmixdockwidget.cpp:174
+#: gui/kmixdockwidget.cpp:175
 #, kde-format
 msgid "M&ute"
 msgstr "В&имкнути"
 
-#: gui/kmixdockwidget.cpp:198
+#: gui/kmixdockwidget.cpp:199
 #, kde-format
 msgid "No mixer devices available"
 msgstr "Немає доступних пристроїв мікшування"
 
-#: gui/kmixdockwidget.cpp:206
+#: gui/kmixdockwidget.cpp:207
 #, kde-format
 msgid "Volume muted"
 msgstr "Звук вимкнено"
 
-#: gui/kmixdockwidget.cpp:207
+#: gui/kmixdockwidget.cpp:208
 #, kde-format
 msgid "Volume at %1%"
 msgstr "Гучність на %1%"
 
-#: gui/kmixdockwidget.cpp:209
+#: gui/kmixdockwidget.cpp:210
 #, kde-format
 msgid "%1 - %2"
 msgstr "%1 — %2"
 
-#: gui/kmixprefdlg.cpp:52
+#: gui/kmixprefdlg.cpp:53
 #, kde-format
 msgid "Configure"
 msgstr "Налаштувати"
 
-#: gui/kmixprefdlg.cpp:66
+#: gui/kmixprefdlg.cpp:86
 #, kde-format
 msgid "General"
 msgstr "Загальне"
 
-#: gui/kmixprefdlg.cpp:67
+#: gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Startup"
 msgstr "Запуск"
 
-#: gui/kmixprefdlg.cpp:103
+#: gui/kmixprefdlg.cpp:119
 #, kde-format
 msgid "Start KMix on desktop startup"
 msgstr "Запускати KMix під час запуску стільниці"
 
-#: gui/kmixprefdlg.cpp:107
+#: gui/kmixprefdlg.cpp:123
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
 msgstr "Автоматично запускати KMix при запуску стільниці"
 
-#: gui/kmixprefdlg.cpp:110
+#: gui/kmixprefdlg.cpp:126
 #, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
@@ -914,12 +928,12 @@ msgstr ""
 "Автозапуск не працюватиме, оскільки не знайдено файла автоматичного запуску "
 "kmix_autostart.desktop. Перевірте, чи належним чином встановлено KMix."
 
-#: gui/kmixprefdlg.cpp:120
+#: gui/kmixprefdlg.cpp:136
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
 msgstr "Відновлювати попередні параметри гучності при запуску стільниці"
 
-#: gui/kmixprefdlg.cpp:124
+#: gui/kmixprefdlg.cpp:140
 #, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
@@ -928,7 +942,7 @@ msgstr ""
 "Відновлювати значення всіх рівнів гучності та перемикачів мікшера до "
 "останнього використаного значення при запуску стільничного середовища"
 
-#: gui/kmixprefdlg.cpp:127
+#: gui/kmixprefdlg.cpp:143
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
@@ -936,27 +950,27 @@ msgstr ""
 "Гучність для динамічних засобів керування звуком PulseAudio або MPRIS2 "
 "відновлено не буде."
 
-#: gui/kmixprefdlg.cpp:145
+#: gui/kmixprefdlg.cpp:161
 #, kde-format
 msgid "&Horizontal"
 msgstr "&Горизонтально"
 
-#: gui/kmixprefdlg.cpp:146
+#: gui/kmixprefdlg.cpp:162
 #, kde-format
 msgid "&Vertical"
 msgstr "&Вертикально"
 
-#: gui/kmixprefdlg.cpp:193
+#: gui/kmixprefdlg.cpp:209
 #, kde-format
 msgid "Behavior"
 msgstr "Поведінка"
 
-#: gui/kmixprefdlg.cpp:207
+#: gui/kmixprefdlg.cpp:223
 #, kde-format
 msgid "Volume overdrive"
 msgstr "Перевантаження гучності"
 
-#: gui/kmixprefdlg.cpp:212
+#: gui/kmixprefdlg.cpp:228
 #, kde-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -965,37 +979,37 @@ msgid ""
 msgstr ""
 "Дозволити збільшення гучності понад рекомендований максимум (типово, до 150%)"
 
-#: gui/kmixprefdlg.cpp:215
+#: gui/kmixprefdlg.cpp:231
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
 msgstr "Перевантаженням гучності можна скористатися лише з PulseAudio."
 
-#: gui/kmixprefdlg.cpp:225
+#: gui/kmixprefdlg.cpp:241
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
 "Щоб зміни щодо перевантаження гучності набули чинності, слід перезапустити "
 "%1."
 
-#: gui/kmixprefdlg.cpp:235
+#: gui/kmixprefdlg.cpp:251
 #, kde-format
 msgid "Volume feedback"
 msgstr "Відгук керування гучністю"
 
-#: gui/kmixprefdlg.cpp:239
+#: gui/kmixprefdlg.cpp:255
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
 msgstr "Відтворювати зразок звуку при зміні гучності"
 
-#: gui/kmixprefdlg.cpp:243
+#: gui/kmixprefdlg.cpp:259
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr ""
 "Супровід зміни гучності можливий, лише якщо програму налаштовано на роботу "
 "за допомогою Canberra."
 
-#: gui/kmixprefdlg.cpp:265
+#: gui/kmixprefdlg.cpp:281
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -1010,73 +1024,73 @@ msgstr ""
 "перебуває над піктограмою у системному лотку, та пересування повзунків на "
 "крок.</para><para>Щоб зміни набули чинності, %1 слід перезапустити.</para>"
 
-#: gui/kmixprefdlg.cpp:272
+#: gui/kmixprefdlg.cpp:288
 #, kde-format
 msgid "Volume step:"
 msgstr "Крок гучності:"
 
-#: gui/kmixprefdlg.cpp:280
+#: gui/kmixprefdlg.cpp:296
 #, kde-format
 msgid "Visual"
 msgstr "Візуалізація"
 
-#: gui/kmixprefdlg.cpp:289
+#: gui/kmixprefdlg.cpp:305
 #, kde-format
 msgid "Show slider &tickmarks"
 msgstr "Показувати &поділки на повзунку"
 
-#: gui/kmixprefdlg.cpp:292
+#: gui/kmixprefdlg.cpp:308
 #, kde-format
 msgid "Show tick mark scales on sliders"
 msgstr "Показувати шкалу на повзунках"
 
-#: gui/kmixprefdlg.cpp:294
+#: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show control &labels"
 msgstr "Показувати &написи на засобах керування"
 
-#: gui/kmixprefdlg.cpp:297
+#: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show description labels for sliders"
 msgstr "Показувати описові мітки для повзунків"
 
-#: gui/kmixprefdlg.cpp:300
+#: gui/kmixprefdlg.cpp:316
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
 msgstr "Показувати &екранну панель (OSD)"
 
-#: gui/kmixprefdlg.cpp:303
+#: gui/kmixprefdlg.cpp:319
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
 "Показувати екранний індикатор при зміні гучності за допомогою клавіатури"
 
-#: gui/kmixprefdlg.cpp:312
+#: gui/kmixprefdlg.cpp:328
 #, kde-format
 msgid "Slider orientation (main window): "
 msgstr "Орієнтація повзунка (головне вікно): "
 
-#: gui/kmixprefdlg.cpp:313
+#: gui/kmixprefdlg.cpp:329
 #, kde-format
 msgid "Slider orientation (system tray popup):"
 msgstr "Орієнтація повзунка (контекстна панель системного лотка):"
 
-#: gui/kmixprefdlg.cpp:314
+#: gui/kmixprefdlg.cpp:330
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
 msgstr "Встановити орієнтацію повзунків керування у головному вікні"
 
-#: gui/kmixprefdlg.cpp:315
+#: gui/kmixprefdlg.cpp:331
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr "Встановити орієнтацію повзунків керування гучністю у системному лотку"
 
-#: gui/kmixprefdlg.cpp:327
+#: gui/kmixprefdlg.cpp:343
 #, kde-format
 msgid "Dock in system tray"
 msgstr "Додати у системний лоток"
 
-#: gui/kmixprefdlg.cpp:330
+#: gui/kmixprefdlg.cpp:346
 #, kde-format
 msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
@@ -1085,7 +1099,7 @@ msgstr ""
 "Швартувати мікшер до системного лотка. Натисніть піктограму у системному "
 "лотку, щоб відкрити контекстну панель керування гучністю."
 
-#: gui/kmixprefdlg.cpp:502
+#: gui/kmixprefdlg.cpp:518
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
@@ -1184,12 +1198,12 @@ msgstr "Налаштувати канали…"
 msgid "Device Settings"
 msgstr "Параметри пристрою"
 
-#: gui/viewdockareapopup.cpp:440
+#: gui/viewdockareapopup.cpp:441
 #, kde-format
 msgid "Show the full mixer window"
 msgstr "Показати повноцінне вікно мікшера"
 
-#: gui/viewdockareapopup.cpp:472
+#: gui/viewdockareapopup.cpp:473
 #, kde-format
 msgid "Load volume profile %1"
 msgstr "Завантажити профіль звуку %1"
@@ -1238,9 +1252,6 @@ msgstr "Немає пристроїв відтворення."
 
 #~ msgid "Sound drivers used:"
 #~ msgstr "Драйвери звуку, які вжито:"
-
-#~ msgid "Experimental multiple-Driver mode activated"
-#~ msgstr "Задіяно експериментальний багатодрайверний режим"
 
 #~ msgid "&Muted"
 #~ msgstr "&Вимкнено"
