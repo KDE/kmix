@@ -26,7 +26,7 @@
 #include "kmixcore_export.h"
 
 class QObject;
-class Listener;
+struct Listener;
 
 
 class KMIXCORE_EXPORT ControlManager
