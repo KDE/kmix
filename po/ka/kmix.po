@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-09 00:47+0000\n"
-"PO-Revision-Date: 2023-01-10 07:07+0100\n"
+"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"PO-Revision-Date: 2023-06-10 06:32+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -43,7 +43,7 @@ msgstr "kmixctrl - kmix -ის ხმის დონეების შენ�
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 by Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:56
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:73
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -58,57 +58,57 @@ msgstr "მიმდინარე ხმის დონეების ნა
 msgid "Restore default volumes"
 msgstr "ნაგულისხმები ხმების აღდგენა"
 
-#: apps/kmixmain.cpp:40
+#: apps/kmixmain.cpp:56
 #, kde-format
 msgid "KMix"
 msgstr "KMix"
 
-#: apps/kmixmain.cpp:41
+#: apps/kmixmain.cpp:57
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE-ის სრული ფუნქციონალის მქონე მინი-მიქსერი"
 
-#: apps/kmixmain.cpp:42
+#: apps/kmixmain.cpp:58
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
 msgstr "(c) 1996-2013 KMix -ის ავტორები"
 
-#: apps/kmixmain.cpp:45
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "Christian Esken"
 msgstr "Christian Esken"
 
-#: apps/kmixmain.cpp:45
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "Original author and current maintainer"
 msgstr "პროექტის მიმდინარე ხელმძღვანელი, ავტორი"
 
-#: apps/kmixmain.cpp:46
+#: apps/kmixmain.cpp:62
 #, kde-format
 msgid "Colin Guthrie"
 msgstr "Colin Guthrie"
 
-#: apps/kmixmain.cpp:46
+#: apps/kmixmain.cpp:62
 #, kde-format
 msgid "PulseAudio support"
 msgstr "PulseAudio -ის მხარდაჭერა"
 
-#: apps/kmixmain.cpp:47
+#: apps/kmixmain.cpp:63
 #, kde-format
 msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
-#: apps/kmixmain.cpp:47
+#: apps/kmixmain.cpp:63
 #, kde-format
 msgid "ALSA 0.9x port"
 msgstr "ALSA 0.9x -ზე პორტი"
 
-#: apps/kmixmain.cpp:48
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Brian Hanson"
 msgstr "Brian Hanson"
 
-#: apps/kmixmain.cpp:48
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Solaris support"
 msgstr "Solaris -ის მხარდაჭერა"
@@ -117,93 +117,137 @@ msgstr "Solaris -ის მხარდაჭერა"
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
 #. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 #. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/kmixmain.cpp:55
+#: apps/kmixmain.cpp:71
+#, kde-format
+msgid "Jonathan Marten"
+msgstr ""
+
+#: apps/kmixmain.cpp:71
+#, kde-format
+msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+msgstr ""
+
+#: apps/kmixmain.cpp:72
 #, kde-format
 msgid "Igor Poboiko"
 msgstr "Igor Poboiko"
 
-#: apps/kmixmain.cpp:55
+#: apps/kmixmain.cpp:72
 #, kde-format
 msgid "Plasma Dataengine"
 msgstr "Plasma მონაცემების ძრავი"
 
-#: apps/kmixmain.cpp:56
+#: apps/kmixmain.cpp:73
 #, kde-format
 msgid "Temporary maintainer"
 msgstr "დროებითი წამყვანი პროგრამისტი"
 
-#: apps/kmixmain.cpp:57
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Sebestyen Zoltan"
 msgstr "Sebestyen Zoltan"
 
-#: apps/kmixmain.cpp:57 apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:74 apps/kmixmain.cpp:75
 #, kde-format
 msgid "*BSD fixes"
 msgstr "*BSD -ზე შეცდომების გასწორება"
 
-#: apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Lennart Augustsson"
 msgstr "Lennart Augustsson"
 
-#: apps/kmixmain.cpp:59
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Nadeem Hasan"
 msgstr "Nadeem Hasan"
 
-#: apps/kmixmain.cpp:59
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Mute and volume preview, other fixes"
 msgstr "დადუმება და ხმის გადახედვა. სხვა შეცდომები"
 
-#: apps/kmixmain.cpp:60
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Erwin Mascher"
 msgstr "Erwin Mascher"
 
-#: apps/kmixmain.cpp:60
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
 msgstr "Emu10k1-ზე ბაზირებული ხმოვანი ბარათების მხარდაჭერის გაუმჯობესება"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "Valentin Rusu"
 msgstr "ვალენტინ რუსუ"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire -ის მხარდაჭერა"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:86
 #, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#| msgid "PulseAudio support"
+msgid "PulseAudio"
+msgstr "PulseAudio -ის მხარდაჭერა"
+
+#: apps/kmixmain.cpp:87
+#, kde-format
+msgid "Sound server"
+msgstr ""
+
+#: apps/kmixmain.cpp:92
+#, kde-format
+msgid "ALSA"
+msgstr ""
+
+#: apps/kmixmain.cpp:93
+#, kde-format
+msgid "Advanced Linux Sound Architecture"
+msgstr ""
+
+#: apps/kmixmain.cpp:98
+#, kde-format
+msgid "OSS 3"
+msgstr ""
+
+#: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
+#, fuzzy, kde-format
+#| msgid "Event Sounds"
+msgid "Open Sound System"
+msgstr "მოვლენის ხმები"
+
+#: apps/kmixmain.cpp:103
+#, kde-format
+msgid "OSS 4"
+msgstr ""
+
+#: apps/kmixmain.cpp:115
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "თუ Kmix-ი უკვე გაშვებულია, მთავარი ფანჯრის გამოჩენის აკრძალვა."
 
-#: apps/kmixmain.cpp:73
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#: apps/kmixmain.cpp:116
+#, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr "KMix-ის უსაფრთხო რეჟიმში გაშვება."
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "გამოსაყენებელ უკანაბოლოების სია (მხოლოდ ტესტირებისთვის)"
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "სახელი[,სახელი...]"
 
-#: apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:118
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "ბევრი დრაივერის რეჟიმის (ექსპერიმენტალური) ჩართვა."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -275,7 +319,7 @@ msgstr "ხმის აწევა"
 msgid "Decrease Volume"
 msgstr "ხმის დაწევა"
 
-#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:102
+#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
 #, kde-format
 msgid "Mute"
 msgstr "დადუმება"
@@ -285,22 +329,22 @@ msgstr "დადუმება"
 msgid "Add new view"
 msgstr "ახალი ხედის დამატება"
 
-#: apps/kmixwindow.cpp:763
+#: apps/kmixwindow.cpp:762
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "ხედის დამატების შეცდომა - GUIProfile არასწორია."
 
-#: apps/kmixwindow.cpp:763 apps/kmixwindow.cpp:770
+#: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
 #, kde-format
 msgid "Error"
 msgstr "შეცდომა"
 
-#: apps/kmixwindow.cpp:770
+#: apps/kmixwindow.cpp:769
 #, kde-format
 msgid "Cannot add view - View already exists."
 msgstr "ხედის დამატების შეცდომა - ხედი უკვე არსებობს."
 
-#: apps/kmixwindow.cpp:908
+#: apps/kmixwindow.cpp:912
 #, kde-format
 msgid ""
 "The soundcard containing the master device was unplugged. Changing to "
@@ -309,12 +353,12 @@ msgstr ""
 "ძირითადი მოწყობილობის შემცველი ხმოვანი ბარათი გამოერთებულია. კონტროლი %2 "
 "ბარათზე მოთავსებულ %1-ზე შეიცვლება."
 
-#: apps/kmixwindow.cpp:915
+#: apps/kmixwindow.cpp:919
 #, kde-format
 msgid "The last soundcard was unplugged."
 msgstr "გამოერთებულია ბოლო ხმის ბარათი."
 
-#: apps/kmixwindow.cpp:1174
+#: apps/kmixwindow.cpp:1180
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -325,17 +369,17 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1225
+#: apps/kmixwindow.cpp:1231
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "მიქსერი (%1)"
 
-#: apps/volumefeedback.cpp:277
+#: apps/volumefeedback.cpp:280
 #, kde-format
 msgid "Volume Control Feedback Sound"
 msgstr "ხმის კონტროლის საპასუხო ხმა"
 
-#: backends/mixer_alsa9.cpp:959
+#: backends/mixer_alsa9.cpp:961
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -344,7 +388,7 @@ msgstr ""
 "Alsa-ის მიქსერის მოწყობილობასთან წვდომა არ გაგაჩნიათ.\n"
 "გადაამოწმეთ, შეიქმნა ALSA-ის ყველა მოწყობილობა, თუა რა."
 
-#: backends/mixer_alsa9.cpp:963
+#: backends/mixer_alsa9.cpp:965
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -355,10 +399,10 @@ msgstr ""
 "შეამოწმეთ, დაყენებულია თუ არა ხმოვანი ბარათი და\n"
 "ჩატვირთულია თუ არა მისი დრაივერი.\n"
 
-#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1081
+#: backends/mixer_mpris2.cpp:53
 #, kde-format
-msgid "Playback Streams"
-msgstr "დასაკრავი ნაკადები"
+msgid "Application Streams"
+msgstr ""
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
@@ -520,27 +564,32 @@ msgstr ""
 "დაგჭიდეთ.\n"
 "ფასიანი 4front OSS-ის გამოყენებისას 'soundon' ბრძანება დაგჭირდებათ."
 
-#: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
+#: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
 msgid "Unknown Application"
 msgstr "უცნობი აპლიკაცია"
 
-#: backends/mixer_pulse.cpp:434
+#: backends/mixer_pulse.cpp:455
 #, kde-format
 msgid "Event Sounds"
 msgstr "მოვლენის ხმები"
 
-#: backends/mixer_pulse.cpp:1065
+#: backends/mixer_pulse.cpp:1086
 #, kde-format
 msgid "Playback Devices"
 msgstr "დამკვრელი მოწყობილობები"
 
-#: backends/mixer_pulse.cpp:1073
+#: backends/mixer_pulse.cpp:1094
 #, kde-format
 msgid "Capture Devices"
 msgstr "ჩამწერი მოწყობილობები"
 
-#: backends/mixer_pulse.cpp:1092
+#: backends/mixer_pulse.cpp:1102
+#, kde-format
+msgid "Playback Streams"
+msgstr "დასაკრავი ნაკადები"
+
+#: backends/mixer_pulse.cpp:1113
 #, kde-format
 msgid "Capture Streams"
 msgstr "ჩასაწერი ნაკადები"
@@ -756,16 +805,6 @@ msgstr "მიმდინარე მიქსერი"
 msgid "Select the design for the new view:"
 msgstr "აირჩიეთ ახალი ხედის დიზაინი:"
 
-#: gui/dialogchoosebackends.cpp:55
-#, kde-format
-msgid "Mixers to show in the popup volume control:"
-msgstr "მხტუნარა ხმის კონტროლში ნაჩვენები მიქსერები:"
-
-#: gui/dialogchoosebackends.cpp:82
-#, kde-format
-msgid "Select Mixers"
-msgstr "აირჩეთ მიქსერები"
-
 #: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
@@ -853,7 +892,7 @@ msgstr "ხილული არხები"
 msgid "Available channels"
 msgstr "ხელმისაწვდომი არხები"
 
-#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:88
+#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Volume Control"
 msgstr "ხმის კონტროლი"
@@ -888,27 +927,27 @@ msgstr "%1 - %2"
 msgid "Configure"
 msgstr "მორგება"
 
-#: gui/kmixprefdlg.cpp:86
+#: gui/kmixprefdlg.cpp:85
 #, kde-format
 msgid "General"
 msgstr "საერთო"
 
-#: gui/kmixprefdlg.cpp:87
+#: gui/kmixprefdlg.cpp:86
 #, kde-format
 msgid "Startup"
 msgstr "გაშვება"
 
-#: gui/kmixprefdlg.cpp:119
+#: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
 msgstr "KMix-ის გაშვება სამუშაო მაგიდის ჩატვირთვისას"
 
-#: gui/kmixprefdlg.cpp:123
+#: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
 msgstr "KMix-ის გაშვება სამუშაო მაგიდის ჩატვირთვისას"
 
-#: gui/kmixprefdlg.cpp:126
+#: gui/kmixprefdlg.cpp:131
 #, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
@@ -917,12 +956,12 @@ msgstr ""
 "ავტომატური გაშვება არ იმუშავებს, იმიტომ, რომ kmix_autostart.desktop ვერ "
 "ვიპოვე. შეამოწმეთ kmix-ის ფაილები."
 
-#: gui/kmixprefdlg.cpp:136
+#: gui/kmixprefdlg.cpp:141
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
 msgstr "სამუშაო მაგიდის გაშვებისას ხმის წინა პარამეტრების აღდგენა"
 
-#: gui/kmixprefdlg.cpp:140
+#: gui/kmixprefdlg.cpp:145
 #, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
@@ -931,33 +970,33 @@ msgstr ""
 "სამუშაო მაგიდის გაშვებისას მიქსერის ყველა დონის აღდგენა და ნაგულისხმები "
 "მნიშვნელობების ჩატვირთვა"
 
-#: gui/kmixprefdlg.cpp:143
+#: gui/kmixprefdlg.cpp:148
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
 msgstr "PulseAudio-ის ან MPRIS2 დინამიკური კონტროლის ხმის აღდგენა შეუძლებელია."
 
-#: gui/kmixprefdlg.cpp:161
+#: gui/kmixprefdlg.cpp:166
 #, kde-format
 msgid "&Horizontal"
 msgstr "ჰორიზონტალური"
 
-#: gui/kmixprefdlg.cpp:162
+#: gui/kmixprefdlg.cpp:167
 #, kde-format
 msgid "&Vertical"
 msgstr "ვერტიკალური"
 
-#: gui/kmixprefdlg.cpp:209
+#: gui/kmixprefdlg.cpp:214
 #, kde-format
 msgid "Behavior"
 msgstr "ქცევა"
 
-#: gui/kmixprefdlg.cpp:223
+#: gui/kmixprefdlg.cpp:228
 #, kde-format
 msgid "Volume overdrive"
 msgstr "ხმის გაძლიერება"
 
-#: gui/kmixprefdlg.cpp:228
+#: gui/kmixprefdlg.cpp:233
 #, kde-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -965,34 +1004,34 @@ msgid ""
 "150%)"
 msgstr "ხმის რეკომენდებულზე მაღლა გაძლიერება (ჩვეულებრივ 150%-მდე)"
 
-#: gui/kmixprefdlg.cpp:231
+#: gui/kmixprefdlg.cpp:236
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
 msgstr "ხმის გაძლიერება მხოლოდ PulseAudio-შია ხელმისაწვდომი."
 
-#: gui/kmixprefdlg.cpp:241
+#: gui/kmixprefdlg.cpp:246
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr "ხმის გაძლიერების ჩასართავად %1-ის გადატვირთვა აუცილებელია."
 
-#: gui/kmixprefdlg.cpp:251
+#: gui/kmixprefdlg.cpp:256
 #, kde-format
 msgid "Volume feedback"
 msgstr "ხმის კონტროლის უკუკავშირი"
 
-#: gui/kmixprefdlg.cpp:255
+#: gui/kmixprefdlg.cpp:260
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
 msgstr "ხმის დონის ცვლილებისას ნიმუში ხმის დაკვრა"
 
-#: gui/kmixprefdlg.cpp:259
+#: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr ""
 "ხმოვანი უკუკავშირი მხოლოდ Canberra-სთან ერთად მორგებისასაა ხელმისაწვდომი."
 
-#: gui/kmixprefdlg.cpp:281
+#: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -1007,72 +1046,72 @@ msgstr ""
 "გადაადგილება გვერდის ნაბიჯით.</para> <para>%1 უნდა განახლდეს ამ ცვლილების "
 "ძალაში ჩასასვლად.</para>"
 
-#: gui/kmixprefdlg.cpp:288
+#: gui/kmixprefdlg.cpp:293
 #, kde-format
 msgid "Volume step:"
 msgstr "ხმის ბიჯი:"
 
-#: gui/kmixprefdlg.cpp:296
+#: gui/kmixprefdlg.cpp:301
 #, kde-format
 msgid "Visual"
 msgstr "ვიზუალი"
 
-#: gui/kmixprefdlg.cpp:305
+#: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show slider &tickmarks"
 msgstr "&შკალის დანაყოფების ჩვენება"
 
-#: gui/kmixprefdlg.cpp:308
+#: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show tick mark scales on sliders"
 msgstr "არხების რეგულირების ცოციებზე შკალის დანაყოფების ჩვენება"
 
-#: gui/kmixprefdlg.cpp:310
+#: gui/kmixprefdlg.cpp:315
 #, kde-format
 msgid "Show control &labels"
 msgstr "კონტროლების &ჭდეების ჩვენება"
 
-#: gui/kmixprefdlg.cpp:313
+#: gui/kmixprefdlg.cpp:318
 #, kde-format
 msgid "Show description labels for sliders"
 msgstr "ჩოჩიებისთვის აღწერის ჭდეების ჩვენება"
 
-#: gui/kmixprefdlg.cpp:316
+#: gui/kmixprefdlg.cpp:321
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
 msgstr "ეკრაზე ჩვენების ჩართვა (&OSD)"
 
-#: gui/kmixprefdlg.cpp:319
+#: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr "მალსახმობების საშუალებით ხმის შეცვლისას ეკრანზე ინდიკატორის შეცვლა"
 
-#: gui/kmixprefdlg.cpp:328
+#: gui/kmixprefdlg.cpp:333
 #, kde-format
 msgid "Slider orientation (main window): "
 msgstr "ჩოჩიის ორიენტაცია (მთავარი ფანჯარა): "
 
-#: gui/kmixprefdlg.cpp:329
+#: gui/kmixprefdlg.cpp:334
 #, kde-format
 msgid "Slider orientation (system tray popup):"
 msgstr "ჩოჩიის ორიენტაცია (სისტემის კუთხის მხტუნარა):"
 
-#: gui/kmixprefdlg.cpp:330
+#: gui/kmixprefdlg.cpp:335
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
 msgstr "მთავარ ფანჯრის კონტროლის ჩოჩიების ორიენტაციის დაყენება"
 
-#: gui/kmixprefdlg.cpp:331
+#: gui/kmixprefdlg.cpp:336
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr "სისტემის კუთხეში ხმის კონტროლის ჩოჩიების ორიენტაციის დაყენება"
 
-#: gui/kmixprefdlg.cpp:343
+#: gui/kmixprefdlg.cpp:348
 #, kde-format
 msgid "Dock in system tray"
 msgstr "სისტემის კუთხეში ხატულის ჩვენება"
 
-#: gui/kmixprefdlg.cpp:346
+#: gui/kmixprefdlg.cpp:351
 #, kde-format
 msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
@@ -1081,7 +1120,17 @@ msgstr ""
 "მიქსერის სისტემის კუთხესთან მიბმა. მხტუნარა ხმის კონტროლის ჩოჩიის "
 "გასახსნელად ზედ დააწკაპუნეთ."
 
-#: gui/kmixprefdlg.cpp:518
+#: gui/kmixprefdlg.cpp:355
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr "მხტუნარა ხმის კონტროლში ნაჩვენები მიქსერები:"
+
+#: gui/kmixprefdlg.cpp:365
+#, kde-format
+msgid "Select Mixers"
+msgstr "აირჩეთ მიქსერები"
+
+#: gui/kmixprefdlg.cpp:367
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
@@ -1092,52 +1141,52 @@ msgstr "შემოწმებული მიქსერები ხმი�
 msgid "No sound devices are installed or are currently available."
 msgstr "ხმის ბარათი ან დაყენებული არაა, ან ამჟამად მიუწვდომელია."
 
-#: gui/mdwslider.cpp:96
+#: gui/mdwslider.cpp:95
 #, kde-format
 msgid "Split Channels"
 msgstr "არხების გაყოფა"
 
-#: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
+#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:627
 #, kde-format
 msgid "Capture"
 msgstr "ჩაჭერა"
 
-#: gui/mdwslider.cpp:113
+#: gui/mdwslider.cpp:112
 #, kde-format
 msgid "Use Device"
 msgstr "მოწყობილობის გამოყენება"
 
-#: gui/mdwslider.cpp:158
+#: gui/mdwslider.cpp:157
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
 msgstr "%2-ის დადუმება %1-ზე"
 
-#: gui/mdwslider.cpp:170
+#: gui/mdwslider.cpp:169
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
 msgstr "%2-ის ხმის აწევა %1-ზე"
 
-#: gui/mdwslider.cpp:178
+#: gui/mdwslider.cpp:177
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
 msgstr "%2-ის ხმის დაწევა %1-ზე"
 
-#: gui/mdwslider.cpp:328
+#: gui/mdwslider.cpp:327
 #, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
 msgstr "%1 -დან ჩაჭერა/ჩაჭერის გაუქმება"
 
-#: gui/mdwslider.cpp:329
+#: gui/mdwslider.cpp:328
 #, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
 msgstr "%1-ის დადუმება/დადუმების ოხსნა"
 
-#: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
+#: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
 msgctxt "%1=device %2=channel"
 msgid ""
@@ -1147,12 +1196,12 @@ msgstr ""
 "%1\n"
 "%2"
 
-#: gui/mdwslider.cpp:680
+#: gui/mdwslider.cpp:679
 #, kde-format
 msgid "%1 (capture)"
 msgstr "%1 (ჩაწერა)"
 
-#: gui/mdwslider.cpp:1118
+#: gui/mdwslider.cpp:1102
 #, kde-format
 msgid "Automatic (according to category)"
 msgstr "ავტომატური (კატეგორიაზე დაყრდნობით)"
@@ -1177,12 +1226,12 @@ msgstr "არხების მორგება..."
 msgid "Device Settings"
 msgstr "მოწყობილობის პარამეტრები"
 
-#: gui/viewdockareapopup.cpp:441
+#: gui/viewdockareapopup.cpp:483
 #, kde-format
 msgid "Show the full mixer window"
 msgstr "მიქსერის სრული ფანჯრის ჩვენება"
 
-#: gui/viewdockareapopup.cpp:473
+#: gui/viewdockareapopup.cpp:515
 #, kde-format
 msgid "Load volume profile %1"
 msgstr "ხმების პროფილის ჩატვირთვა %1"
