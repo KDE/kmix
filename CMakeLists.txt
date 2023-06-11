@@ -20,13 +20,19 @@ set(KMIX_CONFIG_VERSION 3)
 # Plasma dataengines are apparently deprecated and will be removed in Plasma 6
 option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 
+# For testing OSS4 build on Linux with 4Front OSS4 installed
+#
+# The OSS4_INCLUDES variable must point to the prototype/usr/lib/oss/include
+# directory in a built (but does not have to be installed) OSS4 source tree.
+set(OSS4_INCLUDES "" CACHE PATH "Include path for OSS4 include files")
+
 ####################################################################################################
 ########### dependencies and tests #################################################################
 ####################################################################################################
 
-set (QT_MIN_VERSION "5.15.2")
-set (KF5_MIN_VERSION "5.101.0")
-set (PA_MIN_VERSION "0.9.16")
+set(QT_MIN_VERSION "5.15.2")
+set(KF5_MIN_VERSION "5.101.0")
+set(PA_MIN_VERSION "0.9.16")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} )
@@ -39,8 +45,9 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
 include(GenerateExportHeader)
-include (CheckIncludeFile)
-include (CheckSourceRuns)
+include(CheckIncludeFile)
+include(CheckSourceRuns)
+include(CheckStructHasMember)
 
 find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
     Core
@@ -85,6 +92,12 @@ if (HAVE_SYS_AUDIOIO_H)
 endif ()
 
 # OSS, Linux or BSD
+if (NOT (OSS4_INCLUDES STREQUAL ""))
+  set(CMAKE_REQUIRED_INCLUDES ${OSS4_INCLUDES})
+  set(TEST_COMPILE_FLAGS "-I${OSS4_INCLUDES}")
+  message(STATUS "OSS4 includes: ${OSS4_INCLUDES}")
+endif ()
+
 check_include_file("soundcard.h" HAVE_SOUNDCARD_H)
 check_include_file("sys/soundcard.h" HAVE_SYS_SOUNDCARD_H)
 if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
@@ -114,11 +127,18 @@ if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
   if (${TEST_COMPILE_RESULT} AND (${TEST_RUN_RESULT} EQUAL 0))
     message(STATUS "Detected OSS version ${TEST_RESULT_VERSION}")
     if (${TEST_RESULT_VERSION} GREATER_EQUAL 0x040000)
-      message(STATUS "OSS 4 support is currently disabled")
-      #message(STATUS "Building with OSS 4 support")
-      #set(HAVE_OSS_4 true)
-      #add_definitions(-DHAVE_OSS_4)
-      #set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS4")
+      message(STATUS "Building with OSS 4 support")
+      set(HAVE_OSS_4 true)
+      add_definitions(-DHAVE_OSS_4)
+      set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS4")
+
+      # This is included in 4Front OSS 4 but not in standard BSD.
+      # Not possible to test at compile time.  Both of those appear
+      # to have sys/soundcard.h and not soundcard.h installed.
+      check_struct_has_member(oss_mixerinfo devnode sys/soundcard.h HAVE_MIXERINFO_DEVNODE)
+      if (HAVE_MIXERINFO_DEVNODE)
+	add_definitions(-DHAVE_MIXERINFO_DEVNODE)
+      endif ()
     else ()
       message(STATUS "Building with OSS 3 support")
       set(HAVE_OSS_3 true)
@@ -164,6 +184,10 @@ endif ()
 ####################################################################################################
 
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+
+if (NOT (OSS4_INCLUDES STREQUAL ""))
+  include_directories(BEFORE ${OSS4_INCLUDES})
+endif ()
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")

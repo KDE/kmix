@@ -41,6 +41,11 @@
 #include <QRegExp>
 #include <qplatformdefs.h>
 
+#include "core/mixer.h"
+
+#include <klocalizedstring.h>
+
+
 MixerBackend* OSS4_getMixer(Mixer *mixer, int device)
 {
 	MixerBackend *l_mixer;
@@ -60,11 +65,10 @@ Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : MixerBackend(mixer, device)
 bool Mixer_OSS4::CheckCapture(oss_mixext *ext)
 {
 	QString name = ext->extname;
-	if ( ext->flags & MIXF_RECVOL || name.split('.').contains("in") )
-	{
-		return true;
-	}
-	return false;
+#ifdef MIXF_RECVOL					// in 4Front only
+	if (ext->flags & MIXF_RECVOL) return true;
+#endif
+	return (name.split('.').contains("in"));
 }
 
 Mixer_OSS4::~Mixer_OSS4()
@@ -78,13 +82,14 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 	MixDevice::ChannelType cType = MixDevice::UNKNOWN;
 	QStringList classes = name.split (QRegExp( QLatin1String(  "[-,.]" ) ));
 
-
-	if ( flags & MIXF_PCMVOL  ||
-	     flags & MIXF_MONVOL  ||
-	     flags & MIXF_MAINVOL )
+#ifdef MIXF_PCMVOL
+	if (flags & MIXF_PCMVOL  ||			// these flags in 4Front only
+	    flags & MIXF_MONVOL  ||
+	    flags & MIXF_MAINVOL)
 	{
 		cType = MixDevice::VOLUME;
 	}
+#endif
 
 	for ( QStringList::Iterator it = classes.begin(); it != classes.end(); ++it )
 	{
@@ -190,7 +195,8 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 
 int Mixer_OSS4::open()
 {
-	if ( (m_fd= QT_OPEN("/dev/mixer", O_RDWR)) < 0 )
+	QByteArray devnode = "/dev/mixer";
+	if ((m_fd = QT_OPEN(devnode, O_RDWR))<0)
 	{
 		if ( errno == EACCES )
 			return Mixer::ERR_PERM;
@@ -239,8 +245,15 @@ int Mixer_OSS4::open()
 				return Mixer::ERR_READ;
 			}
 
-			::close(m_fd);
-			if ( (m_fd= QT_OPEN(mi.devnode, O_RDWR)) < 0 )
+			QT_CLOSE(m_fd);
+#ifdef HAVE_MIXERINFO_DEVNODE
+			// oss_mixerinfo.devnode is in 4Front but not in BSD.
+			devnode = mi.devnode;
+#else
+			// Assume that the device is "/dev/mixerN" as for OSS3.
+			if (m_devnum>0) devnode += QByteArray::number(m_devnum);
+#endif
+			if ((m_fd = QT_OPEN(devnode, O_RDWR))<0)
 			{
 				return Mixer::ERR_OPEN;
 			}
@@ -320,16 +333,21 @@ int Mixer_OSS4::open()
 
 				MixDevice::ChannelType cType = classifyAndRename(name, ext.flags);
 
-				if ( (ext.type == MIXT_STEREOSLIDER16 ||
-				      ext.type == MIXT_STEREOSLIDER   ||
-				      ext.type == MIXT_MONOSLIDER16   ||
-				      ext.type == MIXT_MONOSLIDER     ||
-				      ext.type == MIXT_SLIDER 
-				      ) 				   )
+				if ((ext.type == MIXT_STEREOSLIDER   ||
+				     ext.type == MIXT_MONOSLIDER     ||
+#ifdef MIXT_STEREOSLIDER16				// in 4Front only
+				     ext.type == MIXT_STEREOSLIDER16 ||
+#endif
+#ifdef MIXT_MONOSLIDER16				// in 4Front only
+				     ext.type == MIXT_MONOSLIDER16   ||
+#endif
+				     ext.type == MIXT_SLIDER))
 				{
-					if ( ext.type == MIXT_STEREOSLIDER16 ||
-					        ext.type == MIXT_STEREOSLIDER
-					   )
+					if (
+#ifdef MIXT_STEREOSLIDER16				// in 4Front only
+						ext.type == MIXT_STEREOSLIDER16 ||
+#endif
+					        ext.type == MIXT_STEREOSLIDER)
 					{
 						chMask = Volume::ChannelMask(Volume::MLEFT|Volume::MRIGHT);
 					}
@@ -363,12 +381,18 @@ int Mixer_OSS4::open()
 						masterHeuristic = md;
 						masterHeuristicAvailable = true;
 					}
+
 					
-					if ( !masterChosen && ext.flags & MIXF_MAINVOL )
+#ifdef MIXF_MAINVOL					// in 4Front only
+					// If it is not possible to choose the master
+					// channel this way, then hope that the heuristic
+					// will do that.
+					if (!masterChosen && (ext.flags & MIXF_MAINVOL))
 					{
 						m_recommendedMaster = md;
 						masterChosen = true;
 					}
+#endif
 				}
 				else if ( ext.type == MIXT_HEXVALUE )
 				{
@@ -393,14 +417,16 @@ int Mixer_OSS4::open()
 						md->addPlaybackVolume(vol);
 					}
 					
-					if ( !masterChosen && ext.flags & MIXF_MAINVOL )
+#ifdef MIXF_MAINVOL					// in 4Front only, see above
+					if (!masterChosen && (ext.flags & MIXF_MAINVOL))
 					{
 						m_recommendedMaster = md;
 						masterChosen = true;
 					}
+#endif
 				}
 				else if ( ext.type == MIXT_ONOFF 
-#ifdef MIXT_MUTE
+#ifdef MIXT_MUTE					// in 4Front only
 					|| ext.type == MIXT_MUTE
 #endif
 					)
@@ -576,7 +602,7 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md)
 		
 		switch ( extinfo.type )
 		{
-#ifdef MIXT_MUTE		  
+#ifdef MIXT_MUTE		  			// in 4Front only
 			case MIXT_MUTE:
 #endif			  
 			case MIXT_ONOFF:
@@ -595,15 +621,17 @@ int Mixer_OSS4::readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md)
 			case MIXT_SLIDER:
 				vol.setVolume(Volume::LEFT, mv.value);
 				break;
-
+#ifdef MIXT_MONOSLIDER16	  			// in 4Front only
 			case MIXT_MONOSLIDER16:
 				vol.setVolume(Volume::LEFT, mv.value & 0xffff);
 				break;
-
+#endif
+#ifdef MIXT_STEREOSLIDER16	  			// in 4Front only
 			case MIXT_STEREOSLIDER16:
 				vol.setVolume(Volume::LEFT, mv.value & 0xffff);
 				vol.setVolume(Volume::RIGHT, ( mv.value >> 16 ) & 0xffff);
 				break;
+#endif
 		}
 	}
 	return 0;
@@ -649,13 +677,16 @@ int Mixer_OSS4::writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md)
 			volume = vol.getVolume(Volume::LEFT);
 			break;
 
+#ifdef MIXT_MONOSLIDER16				// in 4Front only
 		case MIXT_MONOSLIDER16:
 			volume = vol.getVolume(Volume::LEFT);
 			break;
-
+#endif
+#ifdef MIXT_STEREOSLIDER16				// in 4Front only
 		case MIXT_STEREOSLIDER16:
 			volume = vol.getVolume(Volume::LEFT) | ( vol.getVolume(Volume::RIGHT) << 16 );
 			break;
+#endif
 		default:
 			return -1;
 	}

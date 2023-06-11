@@ -25,6 +25,9 @@
 #include "mixerbackend.h"
 
 
+class oss_mixext;
+
+
 class Mixer_OSS4 : public MixerBackend
 {
 public:
