@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-09 00:47+0000\n"
+"POT-Creation-Date: 2023-06-11 00:46+0000\n"
 "PO-Revision-Date: 2022-02-05 19:19+0000\n"
 "Last-Translator: Sergiu Bivol <sergiu@cip.md>\n"
 "Language-Team: Romanian\n"
@@ -44,7 +44,7 @@ msgstr "kmixctrl - utilitar de salvare/refacere volume \"kmix\""
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 de Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:56
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:73
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -59,57 +59,57 @@ msgstr "Salvează volumele curente ca implicite"
 msgid "Restore default volumes"
 msgstr "Reface volumele implicite"
 
-#: apps/kmixmain.cpp:40
+#: apps/kmixmain.cpp:56
 #, kde-format
 msgid "KMix"
 msgstr "KMix"
 
-#: apps/kmixmain.cpp:41
+#: apps/kmixmain.cpp:57
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - Mixer avansat pentru KDE"
 
-#: apps/kmixmain.cpp:42
+#: apps/kmixmain.cpp:58
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
 msgstr "(c) 1996-2013 Autorii KMix"
 
-#: apps/kmixmain.cpp:45
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "Christian Esken"
 msgstr "Christian Esken"
 
-#: apps/kmixmain.cpp:45
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "Original author and current maintainer"
 msgstr "Autor original și responsabil actual"
 
-#: apps/kmixmain.cpp:46
+#: apps/kmixmain.cpp:62
 #, kde-format
 msgid "Colin Guthrie"
 msgstr "Colin Guthrie"
 
-#: apps/kmixmain.cpp:46
+#: apps/kmixmain.cpp:62
 #, kde-format
 msgid "PulseAudio support"
 msgstr "Suport PulseAudio"
 
-#: apps/kmixmain.cpp:47
+#: apps/kmixmain.cpp:63
 #, kde-format
 msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
-#: apps/kmixmain.cpp:47
+#: apps/kmixmain.cpp:63
 #, kde-format
 msgid "ALSA 0.9x port"
 msgstr "Portare ALSA 0.9x"
 
-#: apps/kmixmain.cpp:48
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Brian Hanson"
 msgstr "Brian Hanson"
 
-#: apps/kmixmain.cpp:48
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Solaris support"
 msgstr "Suport pentru Solaris"
@@ -118,67 +118,115 @@ msgstr "Suport pentru Solaris"
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
 #. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 #. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/kmixmain.cpp:55
+#: apps/kmixmain.cpp:71
+#, kde-format
+msgid "Jonathan Marten"
+msgstr ""
+
+#: apps/kmixmain.cpp:71
+#, kde-format
+msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+msgstr ""
+
+#: apps/kmixmain.cpp:72
 #, kde-format
 msgid "Igor Poboiko"
 msgstr "Igor Poboiko"
 
-#: apps/kmixmain.cpp:55
+#: apps/kmixmain.cpp:72
 #, kde-format
 msgid "Plasma Dataengine"
 msgstr "Motor de date Plasma"
 
-#: apps/kmixmain.cpp:56
+#: apps/kmixmain.cpp:73
 #, kde-format
 msgid "Temporary maintainer"
 msgstr "Responsabil temporar"
 
-#: apps/kmixmain.cpp:57
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Sebestyen Zoltan"
 msgstr "Sebestyen Zoltan"
 
-#: apps/kmixmain.cpp:57 apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:74 apps/kmixmain.cpp:75
 #, kde-format
 msgid "*BSD fixes"
 msgstr "Corectări *BSD"
 
-#: apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Lennart Augustsson"
 msgstr "Lennart Augustsson"
 
-#: apps/kmixmain.cpp:59
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Nadeem Hasan"
 msgstr "Nadeem Hasan"
 
-#: apps/kmixmain.cpp:59
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Mute and volume preview, other fixes"
 msgstr "Previzualizare volume și \"tăcut\", alte corecții"
 
-#: apps/kmixmain.cpp:60
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Erwin Mascher"
 msgstr "Erwin Mascher"
 
-#: apps/kmixmain.cpp:60
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
 msgstr "Îmbunătățirea suportului pentru plăci de sunet emuk10k1"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "Valentin Rusu"
 msgstr "Valentin Rusu"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "TerraTec DMX6Fire support"
 msgstr "Suport TerraTec DMX6Fire"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:86
+#, fuzzy, kde-format
+#| msgid "PulseAudio support"
+msgid "PulseAudio"
+msgstr "Suport PulseAudio"
+
+#: apps/kmixmain.cpp:87
+#, fuzzy, kde-format
+#| msgid "Sound drivers used:"
+msgid "Sound server"
+msgstr "Driver-e de sunet utilizate:"
+
+#: apps/kmixmain.cpp:92
+#, kde-format
+msgid "ALSA"
+msgstr ""
+
+#: apps/kmixmain.cpp:93
+#, kde-format
+msgid "Advanced Linux Sound Architecture"
+msgstr ""
+
+#: apps/kmixmain.cpp:98
+#, kde-format
+msgid "OSS 3"
+msgstr ""
+
+#: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
+#, fuzzy, kde-format
+#| msgid "Event Sounds"
+msgid "Open Sound System"
+msgstr "Sunetele evenimentelor"
+
+#: apps/kmixmain.cpp:103
+#, kde-format
+msgid "OSS 4"
+msgstr ""
+
+#: apps/kmixmain.cpp:115
 #, fuzzy, kde-format
 #| msgid ""
 #| "Inhibits the unhiding of the KMix main window, if KMix is already running."
@@ -186,23 +234,23 @@ msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
 "Inhibează apariția ferestrei principale KMix, dacă acesta rulează deja."
 
-#: apps/kmixmain.cpp:73
+#: apps/kmixmain.cpp:116
 #, fuzzy, kde-format
 #| msgid "Starts KMix in failsafe mode."
 msgid "Start KMix in failsafe mode."
 msgstr "Pornește KMix în regim de siguranță."
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr ""
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
 msgstr ""
 
-#: apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:118
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr ""
@@ -277,7 +325,7 @@ msgstr "Mărește volumul"
 msgid "Decrease Volume"
 msgstr "Micșorează volumul"
 
-#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:102
+#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
 #, kde-format
 msgid "Mute"
 msgstr "Muțește"
@@ -287,22 +335,22 @@ msgstr "Muțește"
 msgid "Add new view"
 msgstr "Adaugă vizualizare nouă"
 
-#: apps/kmixwindow.cpp:763
+#: apps/kmixwindow.cpp:762
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "Vizualizarea nu poate fi adăugată - GUIProfile nu este valid."
 
-#: apps/kmixwindow.cpp:763 apps/kmixwindow.cpp:770
+#: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
 #, kde-format
 msgid "Error"
 msgstr "Eroare"
 
-#: apps/kmixwindow.cpp:770
+#: apps/kmixwindow.cpp:769
 #, kde-format
 msgid "Cannot add view - View already exists."
 msgstr "Vizualizarea nu poate fi adăugată - vizualizarea există deja."
 
-#: apps/kmixwindow.cpp:908
+#: apps/kmixwindow.cpp:912
 #, kde-format
 msgid ""
 "The soundcard containing the master device was unplugged. Changing to "
@@ -311,12 +359,12 @@ msgstr ""
 "Placa de sunet conținînd dispozitivul stăpîn a fost detașată. Schimb la "
 "controlul %1 pe placa %2."
 
-#: apps/kmixwindow.cpp:915
+#: apps/kmixwindow.cpp:919
 #, kde-format
 msgid "The last soundcard was unplugged."
 msgstr "Ultima placă de sunet a fost detașată."
 
-#: apps/kmixwindow.cpp:1174
+#: apps/kmixwindow.cpp:1180
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -327,17 +375,17 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1225
+#: apps/kmixwindow.cpp:1231
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mixer (%1)"
 
-#: apps/volumefeedback.cpp:277
+#: apps/volumefeedback.cpp:280
 #, kde-format
 msgid "Volume Control Feedback Sound"
 msgstr "Sunet de reacție pentru controlul volumului"
 
-#: backends/mixer_alsa9.cpp:959
+#: backends/mixer_alsa9.cpp:961
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -346,7 +394,7 @@ msgstr ""
 "kmix: Nu aveți permisiuni să accesați dispozitivul mixer ALSA.\n"
 "Vă rog să verificați dacă au fost create toate dispozitivele ALSA."
 
-#: backends/mixer_alsa9.cpp:963
+#: backends/mixer_alsa9.cpp:965
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -357,10 +405,10 @@ msgstr ""
 "Verificați dacă placa de sunet este instalată și\n"
 "dacă driverul de sunet este încărcat.\n"
 
-#: backends/mixer_mpris2.cpp:53 backends/mixer_pulse.cpp:1081
+#: backends/mixer_mpris2.cpp:53
 #, kde-format
-msgid "Playback Streams"
-msgstr "Fluxuri de redare"
+msgid "Application Streams"
+msgstr ""
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
@@ -523,27 +571,32 @@ msgstr ""
 "pentru a încărca driverul.\n"
 "Utilizați „soundon” cînd folosiți OSS4 de la 4front."
 
-#: backends/mixer_pulse.cpp:331 backends/mixer_pulse.cpp:388
+#: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
 msgid "Unknown Application"
 msgstr "Aplicație necunoscută"
 
-#: backends/mixer_pulse.cpp:434
+#: backends/mixer_pulse.cpp:455
 #, kde-format
 msgid "Event Sounds"
 msgstr "Sunetele evenimentelor"
 
-#: backends/mixer_pulse.cpp:1065
+#: backends/mixer_pulse.cpp:1086
 #, kde-format
 msgid "Playback Devices"
 msgstr "Dispozitive de redare"
 
-#: backends/mixer_pulse.cpp:1073
+#: backends/mixer_pulse.cpp:1094
 #, kde-format
 msgid "Capture Devices"
 msgstr "Dispozitive de captură"
 
-#: backends/mixer_pulse.cpp:1092
+#: backends/mixer_pulse.cpp:1102
+#, kde-format
+msgid "Playback Streams"
+msgstr "Fluxuri de redare"
+
+#: backends/mixer_pulse.cpp:1113
 #, kde-format
 msgid "Capture Streams"
 msgstr "Fluxuri de captură"
@@ -764,16 +817,6 @@ msgstr "Mixerul curent"
 msgid "Select the design for the new view:"
 msgstr "Alegeți stilul noii vizualizări:"
 
-#: gui/dialogchoosebackends.cpp:55
-#, kde-format
-msgid "Mixers to show in the popup volume control:"
-msgstr "Mixere de afișat în controlul de volum contextual:"
-
-#: gui/dialogchoosebackends.cpp:82
-#, kde-format
-msgid "Select Mixers"
-msgstr "Alegeți mixerele"
-
 #: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
@@ -863,7 +906,7 @@ msgstr "Canale vizibile"
 msgid "Available channels"
 msgstr "Canale disponibile"
 
-#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:88
+#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Volume Control"
 msgstr "Control volum"
@@ -898,27 +941,27 @@ msgstr "%1 - %2"
 msgid "Configure"
 msgstr "Configurează"
 
-#: gui/kmixprefdlg.cpp:86
+#: gui/kmixprefdlg.cpp:85
 #, kde-format
 msgid "General"
 msgstr "Generale"
 
-#: gui/kmixprefdlg.cpp:87
+#: gui/kmixprefdlg.cpp:86
 #, kde-format
 msgid "Startup"
 msgstr "Pornire"
 
-#: gui/kmixprefdlg.cpp:119
+#: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
 msgstr "Pornește KMix la pornirea biroului"
 
-#: gui/kmixprefdlg.cpp:123
+#: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
 msgstr "Pornește KMix automat la pornirea biroului"
 
-#: gui/kmixprefdlg.cpp:126
+#: gui/kmixprefdlg.cpp:131
 #, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
@@ -927,12 +970,12 @@ msgstr ""
 "Pornirea automată nu va funcționa deoarece lipsește fișierul de pornire "
 "automată kmix_autostart.desktop. Verificați dacă KMix e instalat corect."
 
-#: gui/kmixprefdlg.cpp:136
+#: gui/kmixprefdlg.cpp:141
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
 msgstr "Restabilește configurările de volum precedente la pornirea biroului"
 
-#: gui/kmixprefdlg.cpp:140
+#: gui/kmixprefdlg.cpp:145
 #, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
@@ -941,34 +984,34 @@ msgstr ""
 "Restabilește toate nivelurile de volum ale mixerelor și comută la ultimele "
 "configurări folosite când pornește biroul"
 
-#: gui/kmixprefdlg.cpp:143
+#: gui/kmixprefdlg.cpp:148
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
 msgstr ""
 "Volumul controalelor dinamice Pulseaudio sau MPRIS2 nu va fi restabilit."
 
-#: gui/kmixprefdlg.cpp:161
+#: gui/kmixprefdlg.cpp:166
 #, kde-format
 msgid "&Horizontal"
 msgstr "&Orizontal"
 
-#: gui/kmixprefdlg.cpp:162
+#: gui/kmixprefdlg.cpp:167
 #, kde-format
 msgid "&Vertical"
 msgstr "&Vertical"
 
-#: gui/kmixprefdlg.cpp:209
+#: gui/kmixprefdlg.cpp:214
 #, kde-format
 msgid "Behavior"
 msgstr "Comportament"
 
-#: gui/kmixprefdlg.cpp:223
+#: gui/kmixprefdlg.cpp:228
 #, kde-format
 msgid "Volume overdrive"
 msgstr "Suprasolicitare volum"
 
-#: gui/kmixprefdlg.cpp:228
+#: gui/kmixprefdlg.cpp:233
 #, kde-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -977,35 +1020,35 @@ msgid ""
 msgstr ""
 "Permite ridicarea volumului peste maximul recomandat (de obicei la 150%)"
 
-#: gui/kmixprefdlg.cpp:231
+#: gui/kmixprefdlg.cpp:236
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
 msgstr "Suprasolicitarea volumului e disponibilă numai pentru PulseAudio."
 
-#: gui/kmixprefdlg.cpp:241
+#: gui/kmixprefdlg.cpp:246
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
 "%1 trebuie repornit pentru ca opțiunile de suprasolicitare a volumului să "
 "intre în vigoare."
 
-#: gui/kmixprefdlg.cpp:251
+#: gui/kmixprefdlg.cpp:256
 #, kde-format
 msgid "Volume feedback"
 msgstr "Reacție la volum"
 
-#: gui/kmixprefdlg.cpp:255
+#: gui/kmixprefdlg.cpp:260
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
 msgstr "Redă un sunet demonstrativ la schimbarea volumului"
 
-#: gui/kmixprefdlg.cpp:259
+#: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr "Reacția la volum e disponibilă doar când se configurează cu Canberra."
 
-#: gui/kmixprefdlg.cpp:281
+#: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
 msgctxt "@info:tooltip"
 msgid ""
@@ -1020,73 +1063,73 @@ msgstr ""
 "cu pas de o pagină.</para><para>%1 trebuie repornit pentru ca opțiunile de "
 "pas al volumului și suprasolicitare să aibă efect.</para>"
 
-#: gui/kmixprefdlg.cpp:288
+#: gui/kmixprefdlg.cpp:293
 #, kde-format
 msgid "Volume step:"
 msgstr "Pas volum:"
 
-#: gui/kmixprefdlg.cpp:296
+#: gui/kmixprefdlg.cpp:301
 #, kde-format
 msgid "Visual"
 msgstr "Vizual"
 
-#: gui/kmixprefdlg.cpp:305
+#: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show slider &tickmarks"
 msgstr "Ara&tă diviziunile glisorului"
 
-#: gui/kmixprefdlg.cpp:308
+#: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show tick mark scales on sliders"
 msgstr "Arată gradații pe glisori"
 
-#: gui/kmixprefdlg.cpp:310
+#: gui/kmixprefdlg.cpp:315
 #, kde-format
 msgid "Show control &labels"
 msgstr "Arată etichete&le de control"
 
-#: gui/kmixprefdlg.cpp:313
+#: gui/kmixprefdlg.cpp:318
 #, kde-format
 msgid "Show description labels for sliders"
 msgstr "Arată etichete descriptive pe glisori"
 
-#: gui/kmixprefdlg.cpp:316
+#: gui/kmixprefdlg.cpp:321
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
 msgstr "Arată afișajul pe ecran (&OSD)"
 
-#: gui/kmixprefdlg.cpp:319
+#: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr "Arată un indicator pe ecran la schimbarea volumului prin scurtături"
 
-#: gui/kmixprefdlg.cpp:328
+#: gui/kmixprefdlg.cpp:333
 #, kde-format
 msgid "Slider orientation (main window): "
 msgstr "Orientare glisor (fereastră principală):"
 
-#: gui/kmixprefdlg.cpp:329
+#: gui/kmixprefdlg.cpp:334
 #, kde-format
 msgid "Slider orientation (system tray popup):"
 msgstr "Orientarea glisorului (meniu contextual în tava de sistem):"
 
-#: gui/kmixprefdlg.cpp:330
+#: gui/kmixprefdlg.cpp:335
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
 msgstr "Stabilește orientarea glisorilor de control din fereastra principală"
 
-#: gui/kmixprefdlg.cpp:331
+#: gui/kmixprefdlg.cpp:336
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr ""
 "Stabilește orientarea glisorilor de control al volumului din tava de sistem"
 
-#: gui/kmixprefdlg.cpp:343
+#: gui/kmixprefdlg.cpp:348
 #, kde-format
 msgid "Dock in system tray"
 msgstr "Andochează în tava de sistem"
 
-#: gui/kmixprefdlg.cpp:346
+#: gui/kmixprefdlg.cpp:351
 #, kde-format
 msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
@@ -1095,7 +1138,17 @@ msgstr ""
 "Andochează mixerul în tava de sistem. Apăsați pe el pentru a deschide "
 "controlul volumului."
 
-#: gui/kmixprefdlg.cpp:518
+#: gui/kmixprefdlg.cpp:355
+#, kde-format
+msgid "Mixers to show in the popup volume control:"
+msgstr "Mixere de afișat în controlul de volum contextual:"
+
+#: gui/kmixprefdlg.cpp:365
+#, kde-format
+msgid "Select Mixers"
+msgstr "Alegeți mixerele"
+
+#: gui/kmixprefdlg.cpp:367
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
@@ -1106,52 +1159,52 @@ msgstr "Mixerele bifate aici vor fi arătate în controlul volumului contextual.
 msgid "No sound devices are installed or are currently available."
 msgstr "Niciun dispozitiv de sunet nu e instalat sau disponibil acum."
 
-#: gui/mdwslider.cpp:96
+#: gui/mdwslider.cpp:95
 #, kde-format
 msgid "Split Channels"
 msgstr "Desparte canalele"
 
-#: gui/mdwslider.cpp:108 gui/mdwslider.cpp:628
+#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:627
 #, kde-format
 msgid "Capture"
 msgstr "Captură"
 
-#: gui/mdwslider.cpp:113
+#: gui/mdwslider.cpp:112
 #, kde-format
 msgid "Use Device"
 msgstr "Folosește dispozitivul"
 
-#: gui/mdwslider.cpp:158
+#: gui/mdwslider.cpp:157
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
 msgstr "Muțește %2 de pe %1"
 
-#: gui/mdwslider.cpp:170
+#: gui/mdwslider.cpp:169
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
 msgstr "Mărește volumul %2 de pe %1"
 
-#: gui/mdwslider.cpp:178
+#: gui/mdwslider.cpp:177
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
 msgstr "Scade volumul %2 de pe %1"
 
-#: gui/mdwslider.cpp:328
+#: gui/mdwslider.cpp:327
 #, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
 msgstr "Captează/decaptează %1"
 
-#: gui/mdwslider.cpp:329
+#: gui/mdwslider.cpp:328
 #, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
 msgstr "Muțește/sonorizează %1"
 
-#: gui/mdwslider.cpp:333 gui/mdwslider.cpp:334 gui/mdwslider.cpp:335
+#: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
 msgctxt "%1=device %2=channel"
 msgid ""
@@ -1161,12 +1214,12 @@ msgstr ""
 "%1\n"
 "%2"
 
-#: gui/mdwslider.cpp:680
+#: gui/mdwslider.cpp:679
 #, kde-format
 msgid "%1 (capture)"
 msgstr "%1 (captură)"
 
-#: gui/mdwslider.cpp:1118
+#: gui/mdwslider.cpp:1102
 #, kde-format
 msgid "Automatic (according to category)"
 msgstr "Automat (corespunzător categoriei)"
@@ -1191,12 +1244,12 @@ msgstr "Configurare canale..."
 msgid "Device Settings"
 msgstr "Configurări dispozitiv"
 
-#: gui/viewdockareapopup.cpp:441
+#: gui/viewdockareapopup.cpp:483
 #, kde-format
 msgid "Show the full mixer window"
 msgstr "Arată fereastra completă a mixerului"
 
-#: gui/viewdockareapopup.cpp:473
+#: gui/viewdockareapopup.cpp:515
 #, kde-format
 msgid "Load volume profile %1"
 msgstr "Încarcă profilul de volum %1"
@@ -1242,9 +1295,6 @@ msgstr "Nu sunt dispozitive de redare."
 
 #~ msgid "Sound drivers supported:"
 #~ msgstr "Driver-e de sunet suportate:"
-
-#~ msgid "Sound drivers used:"
-#~ msgstr "Driver-e de sunet utilizate:"
 
 #~ msgid "&Muted"
 #~ msgstr "&Tăcut"
