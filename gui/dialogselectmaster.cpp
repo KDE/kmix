@@ -127,7 +127,7 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
         // button as expected.
         //qlbl->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::LinksAccessibleByKeyboard);
         layout->addWidget(qlbl);
-        connect(qlbl, &QLabel::linkActivated, this, [this]() {
+        connect(qlbl, &QLabel::linkActivated, this, []() {
             QToolTip::showText(QCursor::pos(), xi18nc("@info:tooltip",
 "<para>Here you can select the master sound device (if there is more than one) and its master channel.</para>"
 "<para>The master channel is the one that is affected by the system tray volume control, "
