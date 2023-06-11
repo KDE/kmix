@@ -1,0 +1,29 @@
+KMix and OSS 4
+==============
+
+KMix is developed primarily under Linux, which supports OSS3 in the kernel
+as standard but normally uses either ALSA or PulseAudio.  The history of the
+OSS4 backend is not clear, the last significant code changes being in 2014,
+but OSS4 is currently included in the BSD kernel and is also available as
+an add-on for Linux from 4Front Technologies (http://opensound.com/oss.html).
+
+Unfortunately the 4Front version of OSS4 appears to be more advanced
+compared with the BSD version, with a number of not only macro definitions
+but also structure members which are not in BSD.  The OSS4 backend would
+have been developed using the 4Front version because it uses these
+advanced extensions.
+
+In this release (from commit dbf2ddad), build time tests and compile time
+conditionals have been used to try to make the backend compatible with both
+4Front and BSD.  This works as far as the KDE GitLab CI system is concerned,
+but I do not have a running BSD desktop with Frameworks and Plasma to test
+the actual KMix application against.  Any reports from users of BSD with
+OSS4 as the primary sound system would be welcomed.
+
+Of course, BSD today also supports ALSA and PulseAudio which may give
+better control over sound and stream routing.  If either of these sound
+systems are available then they will be used in preference to OSS regardless
+of the platform.
+
+
+Jonathan Marten <jonathan.marten@kdemail.net>, June 2023
