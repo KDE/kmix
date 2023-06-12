@@ -1,22 +1,21 @@
 # translation of kmix.po to Tamil
 # Copyright (C) 2004 Free Software Foundation, Inc.
-# , 2004.
-# , 2004.
-# , 2004.
 #
+# Kishore G <kishore96@gmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-09-28 00:47+0000\n"
-"PO-Revision-Date: 2005-01-04 23:57-0800\n"
-"Last-Translator: Tamil PC <tamilpc@ambalam.com>\n"
+"PO-Revision-Date: 2023-06-11 17:26+0530\n"
+"Last-Translator: Kishore G <kishore96@gmail.com>\n"
 "Language-Team: Tamil <en@li.org>\n"
 "Language: ta\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 23.04.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -73,7 +72,7 @@ msgstr ""
 #: apps/kmixwindow.cpp:173
 #, kde-format
 msgid "Audio Setup..."
-msgstr ""
+msgstr "ஒலி அமைப்பு..."
 
 #: apps/kmixwindow.cpp:177
 #, kde-format
@@ -94,62 +93,62 @@ msgstr "&பிரித்த வழிகள்"
 #: apps/kmixwindow.cpp:191
 #, kde-format
 msgid "Save volume profile 1"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 1ஐ சேமி"
 
 #: apps/kmixwindow.cpp:196
 #, kde-format
 msgid "Save volume profile 2"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 2ஐ சேமி"
 
 #: apps/kmixwindow.cpp:201
 #, kde-format
 msgid "Save volume profile 3"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 3ஐ சேமி"
 
 #: apps/kmixwindow.cpp:206
 #, kde-format
 msgid "Save volume profile 4"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 4ஐ சேமி"
 
 #: apps/kmixwindow.cpp:211
 #, kde-format
 msgid "Load volume profile 1"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 1ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:216
 #, kde-format
 msgid "Load volume profile 2"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 2ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:221
 #, kde-format
 msgid "Load volume profile 3"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 3ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:226
 #, kde-format
 msgid "Load volume profile 4"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 4ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:237
-#, fuzzy, kde-format
+#, kde-format
 msgid "Increase Volume"
-msgstr "ஒலி அலவை உயர்த்து"
+msgstr "ஒலியளவை உயர்த்து"
 
 #: apps/kmixwindow.cpp:244
-#, fuzzy, kde-format
+#, kde-format
 msgid "Decrease Volume"
-msgstr "ஒலி அலவை குறை"
+msgstr "ஒலியளவை குறை"
 
 #: apps/kmixwindow.cpp:249 gui/mdwslider.cpp:102
 #, kde-format
 msgid "Mute"
-msgstr "ஒலி அடக்கம்"
+msgstr "ஒலியடக்கு"
 
 #: apps/kmixwindow.cpp:263
 #, kde-format
 msgid "Add new view"
-msgstr ""
+msgstr "புதிய காட்சிப்பகுதியை சேர்"
 
 #: apps/kmixwindow.cpp:772
 #, kde-format
@@ -159,7 +158,7 @@ msgstr ""
 #: apps/kmixwindow.cpp:772 apps/kmixwindow.cpp:779
 #, kde-format
 msgid "Error"
-msgstr ""
+msgstr "சிக்கல்"
 
 #: apps/kmixwindow.cpp:779
 #, kde-format
@@ -173,6 +172,9 @@ msgid ""
 "\n"
 "%1"
 msgstr ""
+"உதவிநிரல் நிறுவப்படவில்லை, அல்லது வேலை செய்யவில்லை.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1219
 #, fuzzy, kde-format
@@ -315,10 +317,9 @@ msgid "Starts KMix in failsafe mode."
 msgstr ""
 
 #: apps/volumefeedback.cpp:248
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume Control Feedback Sound"
-msgstr "ஒலி அளவு"
+msgstr "ஒலிமாற்ற பின்னூட்ட ஒலி"
 
 #: backends/mixer_alsa9.cpp:962
 #, kde-format
