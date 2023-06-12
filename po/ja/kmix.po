@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2011-08-27 14:14-0700\n"
 "Last-Translator: Fumiaki Okushi <okushi@kde.gr.jp>\n"
 "Language-Team: Japanese <kde-jp@kde.org>\n"
@@ -399,7 +399,7 @@ msgstr "ミキサー"
 msgid "Volume Control Feedback Sound"
 msgstr "音量のコントロール"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -408,7 +408,7 @@ msgstr ""
 "あなたには ALSA ミキサーデバイスにアクセスする権限がありません。\n"
 "ALSA デバイスがすべて適切に作成されているか確認してください。"
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -543,7 +543,7 @@ msgstr "不明"
 msgid "unused"
 msgstr "未使用"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -570,7 +570,7 @@ msgstr ""
 "商用版の OSS を使っている場合は\n"
 "soundon を使ってください。"
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

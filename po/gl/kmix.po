@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2023-05-01 11:38+0200\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-11 07:51+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -30,7 +30,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.0\n"
+"X-Generator: Lokalize 23.04.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -240,33 +240,29 @@ msgid "OSS 4"
 msgstr ""
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Inhibe o erguer a xanela principal de KMix, se xa esta á executarse."
+msgstr "Inhibe amosar a xanela principal de KMix, se xa esta á executarse."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Inicia KMix no modo a proba de erros."
+msgstr "Iniciar KMix no modo a proba de erros."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Unha lista de motores para usar (só para probas)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "nome[,nome…]"
 
 #: apps/kmixmain.cpp:118
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Activouse o modo experimental de múltiplos controladores."
+msgstr "Activar o modo (experimental) de varios controladores."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -398,7 +394,7 @@ msgstr "Mesturador (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Son de información do control do volume."
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -407,7 +403,7 @@ msgstr ""
 "Non ten permiso para acceder ao dispositivo do mesturador de alsa.\n"
 "Verifique que todos os dispositivos alsa están creados axeitadamente."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -547,7 +543,7 @@ msgstr "descoñecido"
 msgid "unused"
 msgstr "sen usar"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -571,7 +567,7 @@ msgstr ""
 "En Linux, pode que teña que usar «insmod» para cargar o controlador.\n"
 "Utilice «soundon» se está a usar o OSS comercial."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2013-01-07 03:50+0600\n"
 "Last-Translator: Sairan Kikkarin <sairan@computer.org>\n"
 "Language-Team: Kazakh <kde-i18n-doc@kde.org>\n"
@@ -386,7 +386,7 @@ msgstr "Микшер"
 msgid "Volume Control Feedback Sound"
 msgstr "Дыбыс деңгейін орнату дыбысы "
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -395,7 +395,7 @@ msgstr ""
 "Alsa микшеріне қатынау рұқсатыңыз жоқ.\n"
 "Барлық alsa құрылғылары дұрыс құрылғанын тексеріңіз."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -530,7 +530,7 @@ msgstr "беймәлім"
 msgid "unused"
 msgstr "қолданылмайды"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -554,7 +554,7 @@ msgstr ""
 "Linux-та драйверді жүктеу үшін 'insmod' қомандасын қолданады. Коммерциялық "
 "OSS-терді қолдансаңыз 'soundon' командасы пайдалы болар."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

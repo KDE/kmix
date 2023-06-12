@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2013-09-08 07:05+0900\n"
 "Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -386,7 +386,7 @@ msgstr "بىرىكتۈرگۈچ"
 msgid "Volume Control Feedback Sound"
 msgstr "ئاۋاز تىزگىن ئىنكاس قايتۇرۇش ئاۋازى"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -395,7 +395,7 @@ msgstr ""
 "alsa بىرىكتۈرگۈچ ئۈسكۈنە زىيارەت ھوقۇقىڭىز يوق.\n"
 "ھەممە alsa ئۈسكۈنىلەرنى توغرا قۇرغانلىقىڭىزنى دەلىللەڭ."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -529,7 +529,7 @@ msgstr "نامەلۇم"
 msgid "unused"
 msgstr "ئىشلىتىلمىگىنى‏"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -553,7 +553,7 @@ msgstr ""
 "لىنۇكىستا 'insmod' نى ئىشلىتىپ قوزغاتقۇنى يۈكلەيسىز.\n"
 "ئەگەر سودا OSS نى ئىشلەتسىڭىز ئۇنداقتا 'soundon' نى ئىشلىتىڭ."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

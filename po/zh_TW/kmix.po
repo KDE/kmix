@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2023-01-24 19:28+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -385,7 +385,7 @@ msgstr "混音器 (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "音量控制回饋音效"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -394,7 +394,7 @@ msgstr ""
 "您沒有足夠權限去存取 alsa 混音器裝置。\n"
 "請確認所有的 alsa 裝置均已正確建立。"
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -528,7 +528,7 @@ msgstr "不詳"
 msgid "unused"
 msgstr "未使用"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -552,7 +552,7 @@ msgstr ""
 "在 Linux 系統下可能需要執行 'insmod' 去載入驅動程式。\n"
 "當使用商業版的 OSS 時，需要執行 'soundon'"
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2023-01-02 07:26+0700\n"
 "Last-Translator: Wantoyèk <wantoyek@gmail.com>\n"
 "Language-Team: Indonesian <kde-i18n-doc@kde.org>\n"
@@ -387,7 +387,7 @@ msgstr "Mixer (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Suara Feedback Kontrol Volume"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -396,7 +396,7 @@ msgstr ""
 "Anda tidak memiliki izin untuk mengakses peranti alsa mixer.Silakan periksa "
 "apakah peranti alsa diciptakan dengan benar."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -531,7 +531,7 @@ msgstr "takdiketahui"
 msgid "unused"
 msgstr "takdigunakan"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -556,7 +556,7 @@ msgstr ""
 "Pada Linux Anda mungkin perlu menggunakan 'insmod' untuk memuat driver.\n"
 "Gunakan 'soundon' ketika menggunakan OSS komersial."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

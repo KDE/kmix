@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-09-12 22:54+0200\n"
 "Last-Translator: giovanni <g.sora@tiscali.it>\n"
 "Language-Team: Interlingua <kde-i18n-doc@kde.org>\n"
@@ -385,7 +385,7 @@ msgstr "mixer (miscitor) (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Sono de retroaction de controlo de volumine"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -394,7 +394,7 @@ msgstr ""
 "Tu non ha le permissiones pro acceder al dispositivo  de alsa mixer.\n"
 "Pro favor tu verifica si omne dispositivos alsa es propriemente create."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -529,7 +529,7 @@ msgstr "incognite"
 msgid "unused"
 msgstr "non usate"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -555,7 +555,7 @@ msgstr ""
 "le driver.\n"
 "Usa le commando 'soundon' quando on usa OSS commercial."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

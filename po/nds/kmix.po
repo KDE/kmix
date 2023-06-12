@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2014-08-15 15:47+0200\n"
 "Last-Translator: Sönke Dibbern <s_dibbern@web.de>\n"
 "Language-Team: Low Saxon <kde-i18n-nds@kde.org>\n"
@@ -386,7 +386,7 @@ msgstr "Mischer"
 msgid "Volume Control Feedback Sound"
 msgstr "Luutstärkstüern-Testklang"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -395,7 +395,7 @@ msgstr ""
 "Du hest keen Togriepverlöven för de Alsa-Mischerreedschap.\n"
 "Bitte prööv, wat all Alsa-Reedschappen propper opstellt sünd."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -530,7 +530,7 @@ msgstr "nich begäng"
 msgid "unused"
 msgstr "Nich bruukt"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -556,7 +556,7 @@ msgstr ""
 "den Driever utföhren. Bruuk \"soundon\", wenn Du en\n"
 "warflich Bedriefsysteem bruukst."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

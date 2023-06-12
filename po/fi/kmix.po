@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-09-05 15:54+0300\n"
 "Last-Translator: Tommi Nieminen <translator@legisign.org>\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
@@ -398,7 +398,7 @@ msgstr "Mikseri (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Äänenvoimakkuuden säädön palauteääni"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -407,7 +407,7 @@ msgstr ""
 "kmix: ALSA:n mikserilaitteen käyttöön ei ole oikeuksia.\n"
 "Tarkista, että kaikki ALSA-laitteet on luotu oikein."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -542,7 +542,7 @@ msgstr "tuntematon"
 msgid "unused"
 msgstr "käyttämätön"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -567,7 +567,7 @@ msgstr ""
 "Linuxissa saatat myös tarvita insmod-komentoa.\n"
 "Käytä soundon-komentoa kaupallisessa OSS:ssä."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

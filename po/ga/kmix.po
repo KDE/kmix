@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdemultimedia/kmix.po\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2004-12-03 14:52-0500\n"
 "Last-Translator: Kevin Scannell <kscanne@gmail.com>\n"
 "Language-Team: Irish <gaeilge-gnulinux@lists.sourceforge.net>\n"
@@ -386,7 +386,7 @@ msgstr "Meascthóir"
 msgid "Volume Control Feedback Sound"
 msgstr "Fuaim Aischothaithe don Rialtán Airde"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -395,7 +395,7 @@ msgstr ""
 "Níl cead agat an gléas meascthóra ALSA a rochtain.\n"
 "Deimhnigh go bhfuil gach gléas ALSA cruthaithe mar is ceart."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -530,7 +530,7 @@ msgstr "anaithnid"
 msgid "unused"
 msgstr "gan úsáid"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -555,7 +555,7 @@ msgstr ""
 "Ar chóras Linux, seans gur gá duit 'insmod' a úsáid chun\n"
 "an tiománaí a luchtú."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

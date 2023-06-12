@@ -6,15 +6,15 @@
 # Thomas Reitelbach <tr@erdfunkstelle.de>, 2005, 2006, 2007, 2008, 2009, 2010.
 # Martin Ereth <martin.ereth@arcor.de>, 2007, 2008.
 # Burkhard Lück <lueck@hube-lueck.de>, 2009, 2011, 2012, 2013, 2014, 2017, 2018, 2019, 2020, 2021.
-# Frederik Schwarzer <schwarzer@kde.org>, 2009, 2010, 2011, 2012, 2021, 2022.
+# Frederik Schwarzer <schwarzer@kde.org>, 2009, 2010, 2011, 2012, 2021, 2022, 2023.
 # Johannes Obermayr <johannesobermayr@gmx.de>, 2010.
 # Panagiotis Papadopoulos <pano_90@gmx.net>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2022-02-26 02:46+0100\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-12 00:12+0200\n"
 "Last-Translator: Frederik Schwarzer <schwarzer@kde.org>\n"
 "Language-Team: German <kde-i18n-doc@kde.org>\n"
 "Language: de\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 21.08.0\n"
+"X-Generator: Lokalize 23.07.70\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -128,7 +128,7 @@ msgstr "Solaris-Unterstützung"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
@@ -196,56 +196,50 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Unterstützung für TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Unterstützung für PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Verwendete Soundtreiber:"
+msgstr "Soundserver"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Advanced Linux Sound Architecture"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Ereignistöne"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
-"Verhindert das Anzeigen des Hauptfensters von KMix, wenn KMix bereits läuft."
+"Das Anzeigen des Hauptfensters von KMix verhindern, wenn KMix bereits läuft."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Startet KMix im abgesicherten Modus."
+msgstr "KMix im abgesicherten Modus starten."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
@@ -396,7 +390,7 @@ msgstr "Mixer (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Rückmeldeton bei Lautstärkeeinstellung"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -406,7 +400,7 @@ msgstr ""
 "Bitte vergewissern Sie sich, dass alle Alsa-Geräte ordnungsgemäß installiert "
 "sind."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -541,7 +535,7 @@ msgstr "unbekannt"
 msgid "unused"
 msgstr "unbenutzt"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -566,7 +560,7 @@ msgstr ""
 "Unter Linux müssen Sie vielleicht „insmod“ ausführen, um den Treiber\n"
 "zu laden. Falls Sie das kommerzielle OSS verwenden, führen Sie „soundon“ aus."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

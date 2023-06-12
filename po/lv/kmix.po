@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2012-01-11 20:43+0200\n"
 "Last-Translator: Rūdofls Mazurs <rudolfs.mazurs@gmail.com>\n"
 "Language-Team: Latvian <kde-i18n-doc@kde.org>\n"
@@ -390,7 +390,7 @@ msgstr "Mikseris"
 msgid "Volume Control Feedback Sound"
 msgstr "Skaļuma vadīkla"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -399,7 +399,7 @@ msgstr ""
 "Jums nav atļaujas piekļuvei pie alsa miksera ierīces.\n"
 "Lūdzu pārbaudiet, vai visas alsa ierīces ir pareizi izveidotas."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -534,7 +534,7 @@ msgstr "nezināms"
 msgid "unused"
 msgstr "neizmantots"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -559,7 +559,7 @@ msgstr ""
 "Uz Linux draivera ielādēšanai lieto 'insmod' komandu.\n"
 "Lietojot komerciālu OSS, lietojiet 'soundon' komandu."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

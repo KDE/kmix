@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix VERSION\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2002-11-07 11:33+0200\n"
 "Last-Translator: WEB-Translator <http://kde.af.org.za>\n"
 "Language-Team: AFRIKAANS <AF@lia.org.za>\n"
@@ -373,7 +373,7 @@ msgstr "Mengers"
 msgid "Volume Control Feedback Sound"
 msgstr "Volume"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, fuzzy, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -382,7 +382,7 @@ msgstr ""
 "kmix:Jy doen nie het reg na toegang verkry die menger toestel.\n"
 "Asseblief bevestig jou operating sisteme hand na toelaat die toegang verkry."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, fuzzy, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -517,7 +517,7 @@ msgstr "onbekende"
 msgid "unused"
 msgstr "ongebruik"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -542,7 +542,7 @@ msgstr ""
 "Op Linux jy dalk benodig na gebruik 'insmod' na las die drywer.\n"
 "gebruik 'soundon' wanneer te gebruik komersiële Oss."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix: Mixer cannot be found.\n"

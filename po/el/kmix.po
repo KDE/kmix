@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-06-19 08:06+0300\n"
 "Last-Translator: Stelios <sstavra@gmail.com>\n"
 "Language-Team: Greek <kde-i18n-el@kde.org>\n"
@@ -393,7 +393,7 @@ msgstr "Μείκτης (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Ήχος ανάδρασης ελέγχου έντασης"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -402,7 +402,7 @@ msgstr ""
 "Δεν έχετε δικαίωμα προσπέλασης στη συσκευή μείκτη alsa.\n"
 "Παρακαλώ βεβαιωθείτε ότι όλες οι συσκευές alsa έχουν δημιουργηθεί σωστά."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -537,7 +537,7 @@ msgstr "άγνωστο"
 msgid "unused"
 msgstr "αχρησιμοποίητο"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -563,7 +563,7 @@ msgstr ""
 "Χρησιμοποιήστε την εντολή 'soundon' όταν χρησιμοποιείτε το εμπορικό πακέτο "
 "OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

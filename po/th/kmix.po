@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2010-10-20 01:01+0700\n"
 "Last-Translator: Phuwanat Sakornsakolpat <narachai@gmail.com>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -388,7 +388,7 @@ msgstr "ปรับผสมเสียง"
 msgid "Volume Control Feedback Sound"
 msgstr "การควบคุมทั้งหมด"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -397,7 +397,7 @@ msgstr ""
 "kmix:คุณไม่ได้รับอนุญาตให้ใช้งานอุปกรณ์ปรับแต่งระดับเสียง alsa ได้\n"
 "โปรดตรวจสอบจากคู่มือของ alsa เพื่อให้สามารถใช้ได้"
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -532,7 +532,7 @@ msgstr "ไม่ทราบ"
 msgid "unused"
 msgstr "ไม่ใช้"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -556,7 +556,7 @@ msgstr ""
 "บน Linux คุณต้องใช้คำสั่ง 'insmod' เพื่อโหลดไดรฟเวอร์\n"
 "และ 'soundon' เมื่อใช้ OSS"
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

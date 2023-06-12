@@ -1,22 +1,21 @@
 # translation of kmix.po to Tamil
 # Copyright (C) 2004 Free Software Foundation, Inc.
-# , 2004.
-# , 2004.
-# , 2004.
 #
+# Kishore G <kishore96@gmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2005-01-04 23:57-0800\n"
-"Last-Translator: Tamil PC <tamilpc@ambalam.com>\n"
-"Language-Team: Tamil <en@li.org>\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-11 17:26+0530\n"
+"Last-Translator: Kishore G <kishore96@gmail.com>\n"
+"Language-Team: Tamil <kde-i18n-doc@kde.org>\n"
 "Language: ta\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 23.04.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -255,7 +254,7 @@ msgstr ""
 #: apps/kmixwindow.cpp:168
 #, kde-format
 msgid "Audio Setup..."
-msgstr ""
+msgstr "ஒலி அமைப்பு..."
 
 #: apps/kmixwindow.cpp:172
 #, kde-format
@@ -276,62 +275,62 @@ msgstr "&பிரித்த வழிகள்"
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Save volume profile 1"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 1ஐ சேமி"
 
 #: apps/kmixwindow.cpp:191
 #, kde-format
 msgid "Save volume profile 2"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 2ஐ சேமி"
 
 #: apps/kmixwindow.cpp:196
 #, kde-format
 msgid "Save volume profile 3"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 3ஐ சேமி"
 
 #: apps/kmixwindow.cpp:201
 #, kde-format
 msgid "Save volume profile 4"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 4ஐ சேமி"
 
 #: apps/kmixwindow.cpp:206
 #, kde-format
 msgid "Load volume profile 1"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 1ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:211
 #, kde-format
 msgid "Load volume profile 2"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 2ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:216
 #, kde-format
 msgid "Load volume profile 3"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 3ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:221
 #, kde-format
 msgid "Load volume profile 4"
-msgstr ""
+msgstr "ஒலியளவு பயன்முறை 4ஐ ஏற்று"
 
 #: apps/kmixwindow.cpp:232
-#, fuzzy, kde-format
+#, kde-format
 msgid "Increase Volume"
-msgstr "ஒலி அலவை உயர்த்து"
+msgstr "ஒலியளவை உயர்த்து"
 
 #: apps/kmixwindow.cpp:239
-#, fuzzy, kde-format
+#, kde-format
 msgid "Decrease Volume"
-msgstr "ஒலி அலவை குறை"
+msgstr "ஒலியளவை குறை"
 
 #: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
 #, kde-format
 msgid "Mute"
-msgstr "ஒலி அடக்கம்"
+msgstr "ஒலியடக்கு"
 
 #: apps/kmixwindow.cpp:258
 #, kde-format
 msgid "Add new view"
-msgstr ""
+msgstr "புதிய காட்சிப்பகுதியை சேர்"
 
 #: apps/kmixwindow.cpp:762
 #, kde-format
@@ -341,7 +340,7 @@ msgstr ""
 #: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
 #, kde-format
 msgid "Error"
-msgstr ""
+msgstr "சிக்கல்"
 
 #: apps/kmixwindow.cpp:769
 #, kde-format
@@ -367,6 +366,9 @@ msgid ""
 "\n"
 "%1"
 msgstr ""
+"உதவிநிரல் நிறுவப்படவில்லை, அல்லது வேலை செய்யவில்லை.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1231
 #, fuzzy, kde-format
@@ -375,12 +377,11 @@ msgid "Mixer (%1)"
 msgstr "கலப்பான்"
 
 #: apps/volumefeedback.cpp:280
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume Control Feedback Sound"
-msgstr "ஒலி அளவு"
+msgstr "ஒலிமாற்ற பின்னூட்ட ஒலி"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -389,7 +390,7 @@ msgstr ""
 "alsa கலவை சாதனத்துக்கு உங்களுக்கு அனுமதி இல்லை.\n"
 "தயவு செய்து alsa கலவை சாதனம் சரியான முறையில் உருவாக்கப்பட்டதா என்று பார்க்கவும்"
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -523,7 +524,7 @@ msgstr "தெரியாத"
 msgid "unused"
 msgstr "பயன்படுத்தாத"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -547,7 +548,7 @@ msgstr ""
 "Linuxஇல் இயக்கத்தை உள்ளிட 'insmod'  தேவை.\n"
 "OSS உபயோகிக்கையில் soundon'  உபயோகிக்கவும்."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix: Mixer cannot be found.\n"

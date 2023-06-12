@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: __kde__kdemultimedia__kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2014-12-18 05:14+0000\n"
 "Last-Translator: Dino Babahmetovic <dbabahmeto1@etf.unsa.ba>\n"
 "Language-Team: Bosanski <lokal@linux.org.ba>\n"
@@ -397,7 +397,7 @@ msgstr "Mikseri"
 msgid "Volume Control Feedback Sound"
 msgstr "Zvuk osjećaja pri promjeni jačine"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -406,7 +406,7 @@ msgstr ""
 "Nemate privilegije za pristup alsa mikserskom uređaju.\n"
 "Molim provjerite da li su ispravno kreirane sve alsa datoteke uređaja."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -541,7 +541,7 @@ msgstr "nepoznat"
 msgid "unused"
 msgstr "neiskorišteno"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -567,7 +567,7 @@ msgstr ""
 "drajver.\n"
 "Probajte 'soundon' ako koristite komercijalni OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

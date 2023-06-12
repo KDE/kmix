@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2023-06-10 06:32+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
@@ -379,7 +379,7 @@ msgstr "მიქსერი (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "ხმის კონტროლის საპასუხო ხმა"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -388,7 +388,7 @@ msgstr ""
 "Alsa-ის მიქსერის მოწყობილობასთან წვდომა არ გაგაჩნიათ.\n"
 "გადაამოწმეთ, შეიქმნა ALSA-ის ყველა მოწყობილობა, თუა რა."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -523,7 +523,7 @@ msgstr "უცნობი"
 msgid "unused"
 msgstr "გამოუყენებელი"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -548,7 +548,7 @@ msgstr ""
 "დაგჭიდეთ.\n"
 "ფასიანი OSS-ის გამოყენებისას 'soundon' ბრძანება დაგჭირდებათ."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

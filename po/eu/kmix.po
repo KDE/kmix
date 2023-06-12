@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-07-21 10:17+0200\n"
 "Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
 "Language-Team: Basque <kde-i18n-eu@kde.org>\n"
@@ -392,7 +392,7 @@ msgstr "Nahastailea (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Bolumen kontrolaren berrelikadura soinua"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -401,7 +401,7 @@ msgstr ""
 "Ez duzu ALSA nahastaile gailua atzitzeko baimenik.\n"
 "Begiratu ALSA gailu guztiak behar bezala sortu diren."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -536,7 +536,7 @@ msgstr "ezezaguna"
 msgid "unused"
 msgstr "erabili gabea"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -560,7 +560,7 @@ msgstr ""
 "Linuxen agian 'insmod' erabili beharko duzu modulua zamatzeko.\n"
 "Erabili 'soundon' OSS komertziala erabiliz gero."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

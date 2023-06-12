@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2023-06-09 17:23+0300\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-11 09:41+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
 "Language: uk\n"
@@ -125,12 +125,14 @@ msgstr "Підтримка Solaris"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"Інтерактивне приєднання у KF5, супровід змін гучності у ALSA/OSS, "
+"удосконалення інтерфейсу"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -193,42 +195,39 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Підтримка TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Підтримка PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Драйвери звуку, які вжито:"
+msgstr "Звуковий сервер"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Удосконалене звукова архітектура Linux (ALSA)"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Звуки подій"
+msgstr "Відкрита звукова система (OSS)"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
 #, kde-format
@@ -385,7 +384,7 @@ msgstr "Мікшер (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Контрольний звук керування гучністю"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -394,7 +393,7 @@ msgstr ""
 "У вас відсутні права доступу до пристрою мікшера.\n"
 "Будь ласка, переконайтеся, що всі пристрої alsa встановлено вірно."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -408,7 +407,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Потоки даних програм"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
@@ -529,7 +528,7 @@ msgstr "невідомий"
 msgid "unused"
 msgstr "не використовується"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -554,7 +553,7 @@ msgstr ""
 "Для Linux, можливо, вам потрібно завантажити драйвер за допомогою «insmod».\n"
 "Використовуйте «soundon», якщо у вас комерційна версія OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

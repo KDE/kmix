@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-05-16 22:20+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -384,7 +384,7 @@ msgstr "믹서(%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "음량 제어 피드백 소리"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -393,7 +393,7 @@ msgstr ""
 "Alsa 믹서 장치에 접근할 수 있는 권한이 없습니다.\n"
 "모든 alsa 장치가 만들어져 있는지 확인하십시오."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -528,7 +528,7 @@ msgstr "알 수 없음"
 msgid "unused"
 msgstr "사용되지 않음"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -551,7 +551,7 @@ msgstr ""
 "리눅스에서 드라이버를 부르려면 'insmod' 명령을 사용하십시오.\n"
 "상용 OSS를 사용한다면 'soundon'을 사용하십시오."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

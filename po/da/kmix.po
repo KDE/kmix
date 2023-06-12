@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2020-07-21 18:02+0200\n"
 "Last-Translator: Martin Schlander <mschlander@opensuse.org>\n"
 "Language-Team: Danish <kde-i18n-doc@kde.org>\n"
@@ -385,7 +385,7 @@ msgstr "Mikser (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Feedback-lyd for lydstyrkekontrol"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -394,7 +394,7 @@ msgstr ""
 "Du har ikke tilladelse til at få adgang til alsa-mikserenheden.\n"
 "Verificér venligst at alle alsa-enheder er lavet rigtigt."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -529,7 +529,7 @@ msgstr "ukendt"
 msgid "unused"
 msgstr "ubrugt"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -553,7 +553,7 @@ msgstr ""
 "På Linux kan man bruge 'insmod' for at indlæse driveren.\n"
 "Brug 'soundon' hvis du bruger kommercielt OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

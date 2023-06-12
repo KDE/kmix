@@ -4,20 +4,20 @@
 # Salvador Gimeno Zanón <salgiza@ono.com>, 2004, 2005.
 # santi <santi@kde-es.org>, 2005.
 # Pablo de Vicente <pablo.devicente@gmail.com>, 2005.
-# Eloy Cuadra <ecuadra@eloihr.net>, 2006, 2007, 2013, 2014.
+# Eloy Cuadra <ecuadra@eloihr.net>, 2006, 2007, 2013, 2014, 2023.
 # Jaime Robles <jaime@kde.org>, 2008.
 # Enrique Matias Sanchez (Quique) <cronopios@gmail.com>, 2008, 2009.
 # Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>, 2009, 2010, 2011, 2012.
 # Rocio Gallego <traducciones @rociogallego.com>, 2012.
 # Ayoze Hernández Díaz <ayoze12@gmail.com>, 2013.
 # David Paul <eodos0@gmail.com>, 2014.
-# Víctor Rodrigo Córdoba <vrcordoba@gmail.com>, 2017, 2018, 2019, 2020, 2021.
+# Víctor Rodrigo Córdoba <vrcordoba@gmail.com>, 2017, 2018, 2019, 2020, 2021, 2023, %Y.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2021-11-06 17:25+0100\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-11 21:21+0100\n"
 "Last-Translator: Víctor Rodrigo Córdoba <vrcordoba@gmail.com>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 20.04.2\n"
+"X-Generator: Lokalize 23.04.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -133,7 +133,7 @@ msgstr "Adaptación a Solaris"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
@@ -201,10 +201,9 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Implementación de TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Implementación de PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
 #, kde-format
@@ -214,7 +213,7 @@ msgstr ""
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
@@ -224,47 +223,43 @@ msgstr ""
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Sonidos de evento"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
 "Si KMix ya está en ejecución, impide que se muestre su ventana principal."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Inicia KMix en modo seguro."
+msgstr "Iniciar KMix en modo seguro."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Una lista de motores a usar (solo para tests)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "nombre[,nombre...]"
 
 #: apps/kmixmain.cpp:118
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Activar el modo (experimental) de controlador múltiple."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -398,7 +393,7 @@ msgstr "Mezclador (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Sonido de notificación del control del volumen"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -407,7 +402,7 @@ msgstr ""
 "No tiene permisos para acceder al dispositivo mezclador de ALSA.\n"
 "Verifique que todos los dispositivos de ALSA se crearon correctamente."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -542,7 +537,7 @@ msgstr "desconocido"
 msgid "unused"
 msgstr "SinUso"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -567,7 +562,7 @@ msgstr ""
 "En Linux, puede necesitar usar «insmod» para cargar el controlador.\n"
 "Use «soundon» si está usando la versión comercial de OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

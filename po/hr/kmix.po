@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix 0\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2010-05-30 21:06+0200\n"
 "Last-Translator: Andrej Dundovic <adundovi@gmail.com>\n"
 "Language-Team: Croatian <kde-croatia-list@lists.sourceforge.net>\n"
@@ -393,7 +393,7 @@ msgstr "Mikseta"
 msgid "Volume Control Feedback Sound"
 msgstr "Razina Zvuka"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -402,7 +402,7 @@ msgstr ""
 "Nemate dozvolu za pristupanje alsa-inom uređaju za miksanje.\n"
 "Provjerite jesu li uređaji alsa-e napravljeni pravilno."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -537,7 +537,7 @@ msgstr "nepoznato"
 msgid "unused"
 msgstr "nekorišteno"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -562,7 +562,7 @@ msgstr ""
 "Na Linuxu možda morate pokrenuti 'insmod' da učitate\n"
 "upravljačke programe. Koristite 'soundon' ako koristite komercijalni OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

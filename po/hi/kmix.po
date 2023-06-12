@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-06-29 20:35+0530\n"
 "Last-Translator: Raghavendra Kamath <raghu@raghukamath.com>\n"
 "Language-Team: kde-hindi\n"
@@ -385,7 +385,7 @@ msgstr "मिक्सर"
 msgid "Volume Control Feedback Sound"
 msgstr "आवाज़ निर्धारक"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix:You do not have permission to access the mixer device.\n"
@@ -397,7 +397,7 @@ msgstr ""
 "के-मिक्स:आपको मिक्सर उपकरण पर पहुँच हेतु अनुमति नहीं है.\n"
 "कृपया अपने आपरेटिंग तंत्र मेनुअल को पहुँच अनुमति हेतु जाँचें."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -532,7 +532,7 @@ msgstr "अज्ञात"
 msgid "unused"
 msgstr "उपयोग में नहीं"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix:You do not have permission to access the mixer device.\n"
@@ -558,7 +558,7 @@ msgstr ""
 "लिनक्स तंत्र में आपको 'insmod' का उपयोग ड्राइवर लोड करने में करना पड़ सकता है.\n"
 "जब व्यावसायिक ओएसएस उपयोग करते हों तो इस्तेमाल करें 'soundon' का."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix: Mixer cannot be found.\n"

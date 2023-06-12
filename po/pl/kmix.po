@@ -1,6 +1,6 @@
 # translation of kmix2.po to Polish
 # translation of kmix.po to
-# Version: $Revision: 1653610 $
+# Version: $Revision: 1653692 $
 # Krzysztof Lichota, 2004.
 # Marcin Giedz <mgiedz@elka.pw.edu.pl>, 2002.
 # Mikolaj Machowski <mikmach@wp.pl>, 2003, 2004, 2005, 2007, 2008, 2009.
@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2021-03-07 07:54+0100\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: Polish <kde-i18n-doc@kde.org>\n"
@@ -396,7 +396,7 @@ msgstr "Mikser (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Sterowanie głośnością dźwięku zwrotnego"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -405,7 +405,7 @@ msgstr ""
 "Nie masz praw dostępu do miksera ALSA.\n"
 "Sprawdź, czy urządzenia ALSA zostały prawidłowo utworzone."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -540,7 +540,7 @@ msgstr "nieznane"
 msgid "unused"
 msgstr "nieużywany"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -565,7 +565,7 @@ msgstr ""
 "W Linuksie możesz potrzebować 'insmod', aby wczytać sterownik.\n"
 "Jeśli używasz komercyjnego OSS, użyj 'soundon'."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

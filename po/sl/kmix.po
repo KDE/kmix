@@ -2,7 +2,7 @@
 # Translation of kmix.po to Slovenian
 # KMIX TRANSLATION TO SLOVENIAN LANGUAGE.
 # Copyright (C) 2001, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
-# $Id: kmix.po 1653610 2023-06-11 01:30:25Z scripty $
+# $Id: kmix.po 1653692 2023-06-12 01:36:51Z scripty $
 # $Source$
 #
 # Rok Papez <rok@slo.net>, 2000.
@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2023-06-09 08:34+0200\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-11 06:20+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
@@ -133,12 +133,13 @@ msgstr "Podpora za Solaris"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"KF5 hotplugging, ALSA/OSS odziv glasnosti, izboljšave grafilčnega vmesnika"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -201,42 +202,40 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Podpora za TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Podpora za PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Uporabljeni zvočni gonilniki:"
+msgstr "Zvočni strežnik"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
 msgstr ""
+"Napredna linuxova zvočna arhitektura - Advanced Linux Sound Architecture"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Zvoki dogodkov"
+msgstr "Odprti sistem zvokov - Open Sound System"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
 #, kde-format
@@ -393,7 +392,7 @@ msgstr "Mešalnik (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Zvok odziva nadzora glasnosti"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -402,7 +401,7 @@ msgstr ""
 "Nimate dovoljenj, da bi dostopali do naprave za mešanje.\n"
 "Preverite, če so vse naprave alsa pravilno ustvarjene."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -416,7 +415,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Tokovi aplikacij"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
@@ -537,7 +536,7 @@ msgstr "neznano"
 msgid "unused"
 msgstr "neuporabljeno"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -562,7 +561,7 @@ msgstr ""
 "Pod Linuxom morate morda uporabiti »insmod«, da naložite gonilnik.\n"
 "Za komercialni OSS uporabite »soundon«."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2022-12-12 09:27+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language-Team: Icelandic\n"
@@ -388,7 +388,7 @@ msgstr "Hljóðblandari (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Hljóðstyrkur"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -397,7 +397,7 @@ msgstr ""
 "Þú hefur ekki aðgangsheimildir að alsa hljóðblandaranum.\n"
 "Gangtu úr skugga um að alsa tækjaskrárnar séu rétt uppsettar."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -532,7 +532,7 @@ msgstr "óþekkt"
 msgid "unused"
 msgstr "ónotað"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -557,7 +557,7 @@ msgstr ""
 "Á Linux gæti þurft að nota 'insmod' til að setja rekillinn inn.\n"
 "Notaðu 'soundon' fyrir ófrjálsa OSS rekla."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

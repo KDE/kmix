@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2012-06-20 15:10+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer\n"
@@ -381,7 +381,7 @@ msgstr "ឧបករណ៍​លាយ"
 msgid "Volume Control Feedback Sound"
 msgstr "ត្រួតពិនិត្យ​កម្រិត​សំឡេង​ត្រឡប់"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -390,7 +390,7 @@ msgstr ""
 "អ្នក​មិន​មាន​សិទ្ធិ​ដើម្បី​ចូលដំណើរការ​ឧបករណ៍​លាយ alsa ឡើយ ។\n"
 "សូម​ផ្ទៀងផ្ទាត់​ថា បាន​បង្កើត​ឧបករណ៍ alsa ទាំងអស់​បាន​ត្រឹមត្រូវ ។"
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -525,7 +525,7 @@ msgstr "មិន​ស្គាល់​"
 msgid "unused"
 msgstr "មិន​ប្រើ"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -549,7 +549,7 @@ msgstr ""
 "នៅ​ក្នុង​លីនីក អ្នក​ប្រហែល​ជា​ត្រូវ​ប្រើ 'insmod' ដើម្បី​ផ្ទុក​កម្មវិធី​បញ្ជា ។\n"
 "ប្រើ 'soundon' បើ​អ្នក​ប្រើ OSS ពាណិជ្ជកម្ម ។"
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

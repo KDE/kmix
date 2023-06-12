@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix 1.0pre2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
-"PO-Revision-Date: 2023-06-09 12:40+01\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"PO-Revision-Date: 2023-06-11 15:14+01\n"
 "Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
@@ -102,7 +102,7 @@ msgstr "Helio Chissini de Castro"
 #: apps/kmixmain.cpp:63
 #, kde-format
 msgid "ALSA 0.9x port"
-msgstr "ALSA 0.9x haveno"
+msgstr "ALSA 0.9x portado"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -121,12 +121,13 @@ msgstr "Solaris-subteno"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"Dumkura permuteblo en KF5, laŭteca respondreago en ALSA/OSS, GUI-plibonigoj"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -189,41 +190,39 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire-subteno"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Subteno de PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
 #, kde-format
 msgid "Sound server"
-msgstr ""
+msgstr "Sonservilo"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Altnivela Linux-Sonila Arkitekturo"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Eventaj Sonoj"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
 #, kde-format
@@ -381,7 +380,7 @@ msgstr "Miksilo (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Laŭtecostira Rekuplosono"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -390,7 +389,7 @@ msgstr ""
 "Vi ne havas permeson aliri la alsa-miksilon.\n"
 "Bonvolu kontroli ĉu ĉiuj alsa-aparatoj estas ĝuste kreitaj."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -525,7 +524,7 @@ msgstr "nekonata"
 msgid "unused"
 msgstr "neuzata"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -550,7 +549,7 @@ msgstr ""
 "Sur Linukso eble necesas 'insmod' por ŝargi la pelilon.\n"
 "Uzu 'soundon' se vi uzas komercan OSS."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

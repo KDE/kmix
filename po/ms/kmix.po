@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mimos\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2005-11-30 11:20+0800\n"
 "Last-Translator: MIMOS <opensource@mimos.my>\n"
 "Language-Team: Malay <kedidiemas@yahoogroups.com>\n"
@@ -377,7 +377,7 @@ msgstr "Pengadun"
 msgid "Volume Control Feedback Sound"
 msgstr "Volum"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -386,7 +386,7 @@ msgstr ""
 "Anda tidak diizinkan untuk mengakses peranti pencampur alsa.\n"
 "Sahkan sama ada semua peranti alsa dicipta dengan betul atau tidak."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -521,7 +521,7 @@ msgstr "tak diketahui"
 msgid "unused"
 msgstr "tidak digunakan"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -546,7 +546,7 @@ msgstr ""
 "Pada Linux anda mungkin perlu menggunakan 'insmod' untuk memuatkan pemacu.\n"
 "Gunakan 'soundon' apabila menggunakan OSS komersil."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix: Mixer cannot be found.\n"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2022-09-19 19:15+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: ar\n"
@@ -389,7 +389,7 @@ msgstr "المازج (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "صوت مؤشر التحكم بالصوت"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -398,7 +398,7 @@ msgstr ""
 "ليس لديك الإذن للوصول إلى وحدة مازج alsa .\n"
 "رجاءً تأكد أن كل أجهزة alsa أنشئت إنشاءً صحيحاً"
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -533,7 +533,7 @@ msgstr "غير معروف"
 msgid "unused"
 msgstr "غير مستعمل"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -557,7 +557,7 @@ msgstr ""
 "في لينكس رببما تحتاج لاستخدام 'insmod' لتحميل التعريف.\n"
 "استخدم 'soundon' حينما تستعمل OSS التجارية."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"

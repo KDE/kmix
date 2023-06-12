@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-11 00:46+0000\n"
+"POT-Creation-Date: 2023-06-12 00:51+0000\n"
 "PO-Revision-Date: 2002-11-04 10:19SAST\n"
 "Last-Translator: Lwandle Mgidlana <lwandle@translate.org.za>\n"
 "Language-Team: Xhosa <xhosa@translate.org.za>\n"
@@ -378,7 +378,7 @@ msgstr "Abaxhubi"
 msgid "Volume Control Feedback Sound"
 msgstr "Umqulu"
 
-#: backends/mixer_alsa9.cpp:961
+#: backends/mixer_alsa9.cpp:959
 #, fuzzy, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -387,7 +387,7 @@ msgstr ""
 "kmix:Awunayo imvume yokunikezela icebo lokuxhuba.\n"
 "Nceda khangela incwadi yesandla yendlela yokusebenza ukuvumela unikezelo."
 
-#: backends/mixer_alsa9.cpp:965
+#: backends/mixer_alsa9.cpp:963
 #, fuzzy, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -522,7 +522,7 @@ msgstr "ayaziwa"
 msgid "unused"
 msgstr "engasebenziswanga"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:502
+#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -547,7 +547,7 @@ msgstr ""
 "Kwi Linux kungafuneka usebenzise i 'insmod' ukulayisha umqhubi.\n"
 "Sebenzisa i 'soundon' xa usebenzisa i OSS yorhwebo."
 
-#: backends/mixer_oss4.cpp:506
+#: backends/mixer_oss4.cpp:532
 #, fuzzy, kde-format
 #| msgid ""
 #| "kmix: Mixer cannot be found.\n"
