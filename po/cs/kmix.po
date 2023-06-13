@@ -125,7 +125,7 @@ msgstr "Podpora pro Solaris"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
@@ -193,10 +193,9 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Podpora pro TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Podpora PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
 #, kde-format
@@ -206,12 +205,12 @@ msgstr ""
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "ALSA (Advanced Linux Sound Architecture)"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
@@ -219,10 +218,9 @@ msgid "OSS 3"
 msgstr ""
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Zvuky událostí"
+msgstr "OSS (Open Sound System)"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
@@ -230,17 +228,14 @@ msgid "OSS 4"
 msgstr ""
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Zabraňuje opětovnému zobrazení okna KMix, pokud už KMix běží."
+msgstr ""
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Spustit KMix v bezpečném režimu."
+msgstr ""
 
 #: apps/kmixmain.cpp:117
 #, kde-format
