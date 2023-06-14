@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2023-02-16 09:04+0100\n"
+"PO-Revision-Date: 2023-06-12 16:26+0200\n"
 "Last-Translator: Vit Pelcak <vit@pelcak.org>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Lokalize 22.12.2\n"
+"X-Generator: Lokalize 23.04.2\n"
 "X-Language: cs_CZ\n"
 "X-Source-Language: en_US\n"
 
@@ -200,7 +200,7 @@ msgstr "PulseAudio"
 #: apps/kmixmain.cpp:87
 #, kde-format
 msgid "Sound server"
-msgstr ""
+msgstr "Zvukový server"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
@@ -230,12 +230,12 @@ msgstr ""
 #: apps/kmixmain.cpp:115
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr ""
+msgstr "Potlačit zobrazení hlavního okna KMix, pokud už KMix běží."
 
 #: apps/kmixmain.cpp:116
 #, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr ""
+msgstr "Spustit KMix v bezpečném režimu."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
@@ -245,12 +245,12 @@ msgstr ""
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "název[,název...]"
 
 #: apps/kmixmain.cpp:118
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Povolit (experimentální) režim více ovladačů."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -405,7 +405,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Proudy aplikací"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"

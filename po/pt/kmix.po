@@ -22,7 +22,7 @@ msgstr ""
 "X-POFile-SpellExtra: PulseAudio GUIProfile Fire Valentin Pulseaudio DMX\n"
 "X-POFile-SpellExtra: TerraTec Rusu Poboiko Igor MPRIS desktop\n"
 "X-POFile-SpellExtra: kmixautostart OSD Woofer Canberra Jonathan Marten KF\n"
-"X-POFile-SpellExtra: Advanced Sound Open System\n"
+"X-POFile-SpellExtra: Advanced Sound Open System Architecture\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
