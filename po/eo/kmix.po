@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix 1.0pre2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2023-06-11 15:14+01\n"
+"PO-Revision-Date: 2023-06-15 21:48+0100\n"
 "Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
@@ -398,12 +398,12 @@ msgid ""
 msgstr ""
 "Alsa miksilo ne troveblas.\n"
 "Bonvolu kontroli, ke la sonkarto estas instalita kaj la\n"
-"sonkarto-ŝoforo estas ŝargita.\n"
+"sonkarto-pelilo estas ŝargita.\n"
 
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Fluoj de Aplikaĵoj"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
@@ -561,7 +561,7 @@ msgstr ""
 "kmix: Miksilo ne troveblas.\n"
 "Bonvolu kontroli, ke la sonkarto estas instalita kaj la\n"
 "sonkarto-pelilo estas ŝargita.\n"
-"En Linukso vi eble bezonos uzi 'insmod' por ŝargi la ŝoforon.\n"
+"En Linukso vi eble bezonos uzi 'insmod' por ŝargi la pelilon.\n"
 "Uzu 'soundon' kiam vi uzas OSS4 de 4front."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
