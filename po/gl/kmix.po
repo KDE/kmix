@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2023-06-12 07:40+0200\n"
+"PO-Revision-Date: 2023-06-17 12:12+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -30,7 +30,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.1\n"
+"X-Generator: Lokalize 23.04.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -934,7 +934,7 @@ msgstr "Non hai dispositivos mesturadores dispoñíbeis"
 #: gui/kmixdockwidget.cpp:207
 #, kde-format
 msgid "Volume muted"
-msgstr "Silenciouse o son"
+msgstr "Silenciado"
 
 #: gui/kmixdockwidget.cpp:208
 #, kde-format
@@ -1121,7 +1121,8 @@ msgstr "Orientación do desprazador (xanela principal): "
 #: gui/kmixprefdlg.cpp:334
 #, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Orientación do desprazador (xanela emerxente da área de notificación):"
+msgstr ""
+"Orientación do desprazador (notificación emerxente da área de notificación):"
 
 #: gui/kmixprefdlg.cpp:335
 #, kde-format
@@ -1145,13 +1146,13 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
-"Acoplar o mesturador na área de notificación. Prémao para abrir a xanela "
-"emerxente de control de volume."
+"Acoplar o mesturador na área de notificación. Prémao para abrir o control de "
+"volume emerxente."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr "Mesturadores para mostrar na xanela emerxente de control de volume:"
+msgstr "Mesturadores para mostrar no control de volume emerxente:"
 
 #: gui/kmixprefdlg.cpp:365
 #, kde-format
