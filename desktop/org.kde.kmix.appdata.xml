@@ -12,6 +12,7 @@
   <name xml:lang="de">KMix</name>
   <name xml:lang="el">KMix</name>
   <name xml:lang="en-GB">KMix</name>
+  <name xml:lang="eo">KMix</name>
   <name xml:lang="es">KMix</name>
   <name xml:lang="et">KMix</name>
   <name xml:lang="eu">KMix</name>
@@ -52,6 +53,7 @@
   <summary xml:lang="de">Lautstärkeregler</summary>
   <summary xml:lang="el">Μίκτης ήχου</summary>
   <summary xml:lang="en-GB">Sound Mixer</summary>
+  <summary xml:lang="eo">Sonmiksilo</summary>
   <summary xml:lang="es">Mezclador de sonido</summary>
   <summary xml:lang="et">Helimikser</summary>
   <summary xml:lang="eu">Soinu nahaslea</summary>
@@ -93,12 +95,13 @@
     <p xml:lang="de">KMix ist ein Mixer für Sound-Kanäle und ein Lautstärkeregler</p>
     <p xml:lang="el">Το KMix είναι ένας μίκτης καναλιών ήχου και για έλεγχο της έντασης.</p>
     <p xml:lang="en-GB">KMix is a sound channel mixer and volume control.</p>
+    <p xml:lang="eo">KMix estas sonkanala miksilo kaj laŭtecregilo.</p>
     <p xml:lang="es">KMix es un mezclador de canales de sonido y un controlador de volumen.</p>
     <p xml:lang="et">KMix on helikanalite mikser ja helitugevuse juhtimise tööriist.</p>
     <p xml:lang="eu">KMix soinu kanal nahasle eta bolumen aginte bat da.</p>
     <p xml:lang="fi">KMix on äänikavanamikseri ja äänenvoimakkuuden säädin.</p>
     <p xml:lang="fr">KMix est un outil de mixage des canaux sonores et de contrôle du volume.</p>
-    <p xml:lang="gl">KMix é un mesturador de canles de son e un controlador de volume.</p>
+    <p xml:lang="gl">KMix é un mesturador de canles de son e un control de volume.</p>
     <p xml:lang="hu">A KMix egy hangcsatorna-keverő és hangerő-szabályozó alkalmazás.</p>
     <p xml:lang="ia">KMix es un miscitor de canal de sono e controlo de volumine.</p>
     <p xml:lang="id">KMix adalah mixer channel suara dan kendali volume.</p>
