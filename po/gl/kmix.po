@@ -713,7 +713,7 @@ msgid ""
 "the Master or Headphone channels."
 msgstr ""
 "A meirande parte do contido multimedia, como os MP3 ou os vídeos, "
-"reprodúcense empregando a canle PCM. Ao ser así o volume de reprodución dese "
+"reprodúcense usando a canle PCM. Ao ser así o volume de reprodución dese "
 "contido contrólase tanto desde as canle mestra como da canles dos "
 "auriculares."
 
@@ -899,7 +899,7 @@ msgstr "Mover a canle seleccionada á lista de dispoñíbeis (ocultas)."
 #: gui/dialogviewconfiguration.cpp:282
 #, kde-format
 msgid "Show the selected channel"
-msgstr "Mostrar a canle escollida"
+msgstr "Amosar a canle escollida"
 
 #: gui/dialogviewconfiguration.cpp:283
 #, kde-format
@@ -1091,12 +1091,12 @@ msgstr "Mos&trar marcas nos desprazadores"
 #: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "Mostrar mascas nos desprazadores"
+msgstr "Amosar mascas nos desprazadores"
 
 #: gui/kmixprefdlg.cpp:315
 #, kde-format
 msgid "Show control &labels"
-msgstr "Mostrar as etiquetas de contro&l"
+msgstr "Amosar as etiquetas de contro&l"
 
 #: gui/kmixprefdlg.cpp:318
 #, kde-format
@@ -1106,12 +1106,12 @@ msgstr "Mostra etiquetas de descrición nos desprazadores"
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
-msgstr "Mostrar a visualización na pantalla (&OSD)."
+msgstr "Amosar a visualización na pantalla (&OSD)."
 
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr "Mostrar un indicador en pantalla ao cambiar o volume cun atallo"
+msgstr "Amosar un indicador en pantalla ao cambiar o volume cun atallo"
 
 #: gui/kmixprefdlg.cpp:333
 #, kde-format
@@ -1152,7 +1152,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr "Mesturadores para mostrar no control de volume emerxente:"
+msgstr "Mesturadores para amosar no control de volume emerxente:"
 
 #: gui/kmixprefdlg.cpp:365
 #, kde-format
@@ -1259,7 +1259,7 @@ msgstr "Opcións do dispositivo"
 #: gui/viewdockareapopup.cpp:483
 #, kde-format
 msgid "Show the full mixer window"
-msgstr "Mostrar a xanela completa do mesturador."
+msgstr "Amosar a xanela completa do mesturador."
 
 #: gui/viewdockareapopup.cpp:515
 #, kde-format
