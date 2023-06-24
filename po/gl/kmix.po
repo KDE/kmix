@@ -1164,7 +1164,7 @@ msgstr "Seleccionar o mesturadores"
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
-"Os mesturadores marcados aquí mostraranse no control de volume emerxente."
+"Os mesturadores marcados aquí amosaranse no control de volume emerxente."
 
 #: gui/kmixtoolbox.cpp:97
 #, kde-format
