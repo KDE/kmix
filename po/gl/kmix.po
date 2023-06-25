@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2023-06-17 12:12+0200\n"
+"PO-Revision-Date: 2023-06-24 12:51+0200\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -85,7 +85,7 @@ msgstr "KMix — Pequeno e completo mesturador de KDE"
 #: apps/kmixmain.cpp:58
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
-msgstr "© 1996-2013, Os autores de KMix"
+msgstr "© 1996-2013 Persoas autoras de KMix"
 
 #: apps/kmixmain.cpp:61
 #, kde-format
@@ -95,7 +95,7 @@ msgstr "Christian Esken"
 #: apps/kmixmain.cpp:61
 #, kde-format
 msgid "Original author and current maintainer"
-msgstr "Autor orixinal e mantedor actual."
+msgstr "Autoría orixinal e mantemento actual."
 
 #: apps/kmixmain.cpp:62
 #, kde-format
@@ -684,7 +684,7 @@ msgstr ""
 #: backends/mixerbackend.cpp:336
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
-msgstr "kmix: Erro descoñecido. Por favor, informe de como produciu este erro."
+msgstr "kmix: Erro descoñecido. Informe de como produciu este erro."
 
 #: backends/mixerbackend.cpp:345
 #, kde-format
@@ -1029,7 +1029,7 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
-"Permitir subir o volume alén do máximo recomendado (normalmente ata 150%)"
+"Permitir subir o volume alén do máximo recomendado (normalmente ata 150%)."
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
@@ -1052,7 +1052,7 @@ msgstr "Información do volume"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr "Reproducir un son de mostra cando cambie o volume"
+msgstr "Reproducir un son de mostra cando cambie o volume."
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
@@ -1070,8 +1070,9 @@ msgid ""
 msgstr ""
 "<para>Definir o chanzo de volume como porcentaxe do volume máximo.</"
 "para><para>Isto afecta ao cambio de volume mediante atallos, coa roda do "
-"rato sobre a icona da área de notificación, ou a paxinación de desprazadores."
-"</para><para>Debe reiniciar %1 para que o cambio xurda efecto.</para>"
+"rato sobre a icona da área de notificación, ou a paxinación de controis "
+"esvaradíos.</para><para>Debe reiniciar %1 para que o cambio xurda efecto.</"
+"para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
@@ -1086,12 +1087,12 @@ msgstr "Visual"
 #: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show slider &tickmarks"
-msgstr "Mos&trar marcas nos desprazadores"
+msgstr "Amosar &marcas nos controis esvaradíos"
 
 #: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "Amosar mascas nos desprazadores"
+msgstr "Amosar mascas nos controis esvaradíos"
 
 #: gui/kmixprefdlg.cpp:315
 #, kde-format
@@ -1101,7 +1102,7 @@ msgstr "Amosar as etiquetas de contro&l"
 #: gui/kmixprefdlg.cpp:318
 #, kde-format
 msgid "Show description labels for sliders"
-msgstr "Mostra etiquetas de descrición nos desprazadores"
+msgstr "Amosar etiquetas de descrición nos controis esvaradíos"
 
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
@@ -1116,24 +1117,26 @@ msgstr "Amosar un indicador en pantalla ao cambiar o volume cun atallo"
 #: gui/kmixprefdlg.cpp:333
 #, kde-format
 msgid "Slider orientation (main window): "
-msgstr "Orientación do desprazador (xanela principal): "
+msgstr "Orientación do control esvaradío (xanela principal): "
 
 #: gui/kmixprefdlg.cpp:334
 #, kde-format
 msgid "Slider orientation (system tray popup):"
 msgstr ""
-"Orientación do desprazador (notificación emerxente da área de notificación):"
+"Orientación do control esvaradío (notificación emerxente da área de "
+"notificación):"
 
 #: gui/kmixprefdlg.cpp:335
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "Definir a orientación dos desprazadores da xanela principal"
+msgstr "Definir a orientación dos controis esvaradíos da xanela principal"
 
 #: gui/kmixprefdlg.cpp:336
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr ""
-"Definir a orientación dos desprazadores de volume da área de notificación"
+"Definir a orientación dos controis esvaradíos de volume da área de "
+"notificación"
 
 #: gui/kmixprefdlg.cpp:348
 #, kde-format

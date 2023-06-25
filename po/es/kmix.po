@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2023-06-11 21:21+0100\n"
+"PO-Revision-Date: 2023-06-24 17:40+0200\n"
 "Last-Translator: Víctor Rodrigo Córdoba <vrcordoba@gmail.com>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.1\n"
+"X-Generator: Lokalize 20.04.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -139,6 +139,8 @@ msgstr "Jonathan Marten"
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"Conexión en caliente KF5, realimentación de volumen ALSA/OSS, mejoras en la "
+"interfaz gráfica de usuario"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -208,7 +210,7 @@ msgstr "PulseAudio"
 #: apps/kmixmain.cpp:87
 #, kde-format
 msgid "Sound server"
-msgstr ""
+msgstr "Servidor de sonido"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
@@ -218,7 +220,7 @@ msgstr "ALSA"
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Arquitectura avanzada de sonido de Linux"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
@@ -416,7 +418,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Transmisiones de aplicación"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
