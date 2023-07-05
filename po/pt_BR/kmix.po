@@ -11,14 +11,14 @@
 # Diniz Bortolotto <diniz.bortolotto@gmail.com>, 2007, 2008.
 # doutor.zero <doutor.zero@gmail.com>, 2007.
 # André Marcelo Alvarenga <alvarenga@kde.org>, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2018, 2019.
-# Luiz Fernando Ranghetti <elchevive@opensuse.org>, 2009, 2012, 2017, 2018, 2019, 2020, 2021.
+# Luiz Fernando Ranghetti <elchevive@opensuse.org>, 2009, 2012, 2017, 2018, 2019, 2020, 2021, 2023.
 # Marcus Gama <marcus.gama@gmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2021-03-19 09:37-0300\n"
+"PO-Revision-Date: 2023-07-04 15:21-0300\n"
 "Last-Translator: Luiz Fernando Ranghetti <elchevive@opensuse.org>\n"
 "Language-Team: Brazilian Portuguese <kde-i18n-pt_BR@kde.org>\n"
 "Language: pt_BR\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 20.04.2\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -134,7 +134,7 @@ msgstr "Suporte ao Solaris"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
@@ -202,61 +202,55 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Suporte ao TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Suporte ao PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Drivers de som usados:"
+msgstr "Servidor de som"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Advanced Linux Sound Architecture"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Sons de eventos"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
-"Inibe a exibição da janela principal do KMix, se ele já estiver em execução."
+"Inibir a exibição da janela principal do KMix, se ele já estiver em execução."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Inicia o KMix no modo de segurança."
+msgstr "Iniciar o KMix no modo de segurança."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Uma lista de infraestruturas a usar (apenas para testes)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
@@ -264,10 +258,9 @@ msgid "name[,name...]"
 msgstr ""
 
 #: apps/kmixmain.cpp:118
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Modo experimental de múltiplos drivers ativado"
+msgstr "Habilitar o modo (experimental) de múltiplos drivers."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
