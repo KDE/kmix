@@ -838,6 +838,9 @@ void KMixWindow::plugged(const char *driverName, const QString &udi, int dev)
 	}
 	else qCWarning(KMIX_LOG) << "Cannot add mixer to GUI";
 
+	KMixToolBox::notification("CardHotplugged", i18n("The sound device '%1' was connected.",
+							 mixer->readableName()));
+
 	ControlManager::instance()->announce(mixerId, ControlManager::ControlList, objectName());
 }
 
@@ -885,7 +888,11 @@ void KMixWindow::unplugged(const QString &udi)
 		}
 	}
 
-	// Part 2: Remove the mixer from the known list
+	// Part 2: Remove the mixer from the known list.
+	// First send the unplugged notifiation, while the unplugged
+	// mixer and its readable name are still available.
+	KMixToolBox::notification("CardUnplugged", i18n("The sound device '%1' was disconnected.",
+							unpluggedMixer->readableName()));
 	MixerToolBox::removeMixer(unpluggedMixer);
 
 	// Part 3: Check whether the Global Master disappeared,
@@ -909,14 +916,14 @@ void KMixWindow::unplugged(const QString &udi)
 				QString localMaster = master->id();
 				MixerToolBox::setGlobalMaster(mixer->id(), localMaster, false);
 
-				QString text = i18n("The soundcard containing the master device was unplugged. Changing to control %1 on card %2.",
+				QString text = i18n("The current master device was disconnected. Changing master to '%1' on device '%2'.",
 						    master->readableName(), mixer->readableName());
 				KMixToolBox::notification("MasterFallback", text);
 			}
 		}
 		else
 		{
-			QString text = i18n("The last soundcard was unplugged.");
+			QString text = i18n("The last sound device was disconnected. No sound devices are available.");
 			KMixToolBox::notification("MasterFallback", text);
 		}
 

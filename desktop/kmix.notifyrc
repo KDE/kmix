@@ -110,7 +110,7 @@ Name[uk]=Другорядний аудіопристрій
 Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_CN]=音频设备备选
 Name[zh_TW]=預設音效裝置
-Comment=Notification on automatic fallback if the preferred device is unavailable
+Comment=Automatic fallback if the preferred device is unavailable
 Comment[bg]=Уведомление за резервно устройство ако подразбиращото се не е налично
 Comment[bs]=Obavještenje o automatskoj alternativi ako željeni uređaj nije dostupan
 Comment[ca]=Notificació del canvi automàtic al dispositiu alternatiu si el dispositiu preferit no està disponible
@@ -119,7 +119,7 @@ Comment[cs]=Upozornění na automatickou náhradu, pokud je preferované zaříz
 Comment[da]=Bekendtgørelse af automatisk erstatning hvis den foretrukne enhed er utilgængelig
 Comment[de]=Benachrichtigung bei automatischem Wechsel zum Ausweichgerät, wenn das bevorzugte Gerät nicht verfügbar ist
 Comment[el]=Ειδοποίηση σε αυτόματη μετάπτωση αν η προτιμώμενη συσκευή δεν είναι διαθέσιμη
-Comment[en_GB]=Notification on automatic fallback if the preferred device is unavailable
+Comment[en_GB]=Automatic fallback if the preferred device is unavailable
 Comment[eo]=Sciigo pri aŭtomata retrodefaŭlto se la preferata aparato ne haveblas
 Comment[es]=Notificación si se recurre automáticamente a otro dispositivo cuando el preferido no está disponible
 Comment[et]=Automaatne varuvariant, kui eelistatud seade pole saadaval
@@ -159,8 +159,28 @@ Comment[sv]=Underrättelse vid automatisk återgång om önskad enhet inte är t
 Comment[tr]=Tercih edilen aygıt erişilemez ise otomatik olarak yeni aygıta geçme bildirimi
 Comment[ug]=مايىللىقتىكى ئۈسكۈنەنى ئىشلەتكىلى بولمىغاندا ئۆزلۈكىدىن تۆۋەنلىتىش ئۇقتۇرۇشى
 Comment[uk]=Сповіщення про автоматичне повернення до типового пристрою, якщо бажаний пристрій недоступний
-Comment[x-test]=xxNotification on automatic fallback if the preferred device is unavailablexx
+Comment[x-test]=xxAutomatic fallback if the preferred device is unavailablexx
 Comment[zh_CN]=如果首选设备不可用，在自动使用备选设备时进行通知
 Comment[zh_TW]=若是選用的裝置無法使用時，通知會自動使用預設的裝置
+Contexts=Application
+Action=Popup
+
+[Event/CardHotplugged]
+Name=Audio Device Connected
+Name[en_GB]=Audio Device Connected
+Name[x-test]=xxAudio Device Connectedxx
+Comment=A sound device was connected
+Comment[en_GB]=A sound device was connected
+Comment[x-test]=xxA sound device was connectedxx
+Contexts=Application
+Action=Popup
+
+[Event/CardUnplugged]
+Name=Audio Device Disconnected
+Name[en_GB]=Audio Device Disconnected
+Name[x-test]=xxAudio Device Disconnectedxx
+Comment=A sound device was disconnected
+Comment[en_GB]=A sound device was disconnected
+Comment[x-test]=xxA sound device was disconnectedxx
 Contexts=Application
 Action=Popup

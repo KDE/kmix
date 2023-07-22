@@ -21,7 +21,7 @@
 
 #include "gui/kmixtoolbox.h"
 
-#include <QCoreApplication>
+#include <qcoreapplication.h>
 
 #include <knotification.h>
 #include <kmessagewidget.h>
@@ -75,9 +75,8 @@ void KMixToolBox::notification(const char *notificationName, const QString &text
     notification->setIconName(QLatin1String("kmix"));
     notification->addContext(QLatin1String("Application"), QCoreApplication::applicationName());
     notification->sendEvent();
-    // Otherwise there will be a memory leak (although the notification is
-    // rarely shown).  Assuming that it is safe to delete here.
-    notification->deleteLater();
+    // There is no need to delete the notification here, it will delete
+    // itself when it is closed or the timeout expires.
 }
 
 
