@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2020-10-25 13:27+0100\n"
 "Last-Translator: Mihkel Tõnnov <mihhkel@gmail.com>\n"
 "Language-Team: Estonian <>\n"
@@ -354,21 +354,35 @@ msgstr "Viga"
 msgid "Cannot add view - View already exists."
 msgstr "Vaate lisamine nurjus - vaade on juba olemas."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "Master-seadet sisaldav helikaart on lahti ühendatud. %1 juhtimine antakse "
 "üle kaardile %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Viimati kasutatud helikaart on lahti ühendatud."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "Ühtegi heliseadet pole paigaldatud või praegu saadaval."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -379,7 +393,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mikser (%1)"
@@ -1155,7 +1169,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr "Helitugevuse hüpikus näidatavad mikserid:"
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "Ühtegi heliseadet pole paigaldatud või praegu saadaval."
@@ -1276,6 +1290,9 @@ msgstr "Hõiveseadmeid pole."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Taasesitusseadmeid pole."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "Viimati kasutatud helikaart on lahti ühendatud."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"

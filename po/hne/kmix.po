@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2009-02-26 17:29+0530\n"
 "Last-Translator: Ravishankar Shrivastava <raviratlami@aol.in>\n"
 "Language-Team: Hindi <kde-i18n-doc@lists.kde.org>\n"
@@ -350,19 +350,29 @@ msgstr ""
 msgid "Cannot add view - View already exists."
 msgstr ""
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
-msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
 msgstr ""
 
 #: apps/kmixwindow.cpp:919
 #, kde-format
-msgid "The last soundcard was unplugged."
+msgid ""
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:926
+#, kde-format
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr ""
+
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -370,7 +380,7 @@ msgid ""
 "%1"
 msgstr ""
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, fuzzy, kde-format
 #| msgid "Mixer"
 msgid "Mixer (%1)"
@@ -1158,7 +1168,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr ""

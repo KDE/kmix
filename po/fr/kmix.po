@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2023-06-13 06:34+0200\n"
 "Last-Translator: Xavier BESNARD <xavier.besnard@neuf.fr>\n"
 "Language-Team: fr\n"
@@ -359,21 +359,35 @@ msgstr "Erreur"
 msgid "Cannot add view - View already exists."
 msgstr "Impossible d'ajouter une vue, la vue existe déjà."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "La carte son contenant le périphérique principal a été débranchée. "
 "Changement vers le contrôle %1 sur la carte %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "La dernière carte son a été débranchée."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "Aucun périphérique de son n'est installé ou actuellement disponible."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -384,7 +398,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mixeur (%1)"
@@ -1176,7 +1190,7 @@ msgstr ""
 "Les mixeurs, cochés ici, seront affichés dans le menu contextuel de contrôle "
 "du volume"
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "Aucun périphérique de son n'est installé ou actuellement disponible."
@@ -1295,6 +1309,9 @@ msgstr "Il n'y a aucun périphérique de capture."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Il n'y a aucun périphérique de lecture."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "La dernière carte son a été débranchée."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"

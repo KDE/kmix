@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2022-09-19 19:15+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: ar\n"
@@ -354,21 +354,35 @@ msgstr "خطأ"
 msgid "Cannot add view - View already exists."
 msgstr "لا يمكن إضافة عرض - موجودة بالفعل"
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "بطاقة الصوت التي تحوي الجهاز الرئيسي مفصولة. سيغيّر إلى التحكم %1 الموجود في "
 "بطاقة %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "آخر بطاقة صوت فصلت."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound card is installed or currently plugged in."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "لا توجد بطاقة صوت مثبتة أو موصلة حالياً"
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -379,7 +393,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "المازج (%1)"
@@ -1144,7 +1158,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, fuzzy, kde-format
 #| msgid "No sound card is installed or currently plugged in."
 msgid "No sound devices are installed or are currently available."
@@ -1276,6 +1290,9 @@ msgstr "لا توجد أجهزة التقاط"
 #| msgid "No playback devices."
 msgid "There are no playback devices."
 msgstr "لا توجد أجهزة قراءة"
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "آخر بطاقة صوت فصلت."
 
 #~ msgid "&Hide"
 #~ msgstr "إ&خفاء"

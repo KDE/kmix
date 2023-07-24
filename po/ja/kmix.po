@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2011-08-27 14:14-0700\n"
 "Last-Translator: Fumiaki Okushi <okushi@kde.gr.jp>\n"
 "Language-Team: Japanese <kde-jp@kde.org>\n"
@@ -365,21 +365,34 @@ msgstr "エラー"
 msgid "Cannot add view - View already exists."
 msgstr "ビューを追加できません - GUIProfile が不正です。"
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "マスターデバイスを含むサウンドカードが取り外されています。カード %2 のコント"
 "ロール %1 に変更します。"
 
-#: apps/kmixwindow.cpp:919
+#: apps/kmixwindow.cpp:926
 #, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "前回のサウンドカードが取り外されています。"
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr ""
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -387,7 +400,7 @@ msgid ""
 "%1"
 msgstr ""
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, fuzzy, kde-format
 #| msgid "Mixer"
 msgid "Mixer (%1)"
@@ -1162,7 +1175,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr ""
@@ -1292,3 +1305,6 @@ msgstr "キャプチャデバイス"
 #| msgid "Playback Devices"
 msgid "There are no playback devices."
 msgstr "再生デバイス"
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "前回のサウンドカードが取り外されています。"

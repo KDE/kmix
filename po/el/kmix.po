@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2021-06-19 08:06+0300\n"
 "Last-Translator: Stelios <sstavra@gmail.com>\n"
 "Language-Team: Greek <kde-i18n-el@kde.org>\n"
@@ -358,21 +358,35 @@ msgstr "Σφάλμα"
 msgid "Cannot add view - View already exists."
 msgstr "Αδυναμία προσθήκης προβολής - Η προβολή υπάρχει ήδη."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "Η κάρτα ήχου που περιλαμβάνει την κύρια συσκευή έχει αφαιρεθεί. Μετάβαση στο "
 "%1 της κάρτας %2"
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Η τελευταία κάρτα ήχου έχει αφαιρεθεί."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "Δεν έχει εγκατασταθεί και δεν είναι διαθέσιμη καμία συσκευή ήχου."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -383,7 +397,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Μείκτης (%1)"
@@ -1173,7 +1187,7 @@ msgid ""
 msgstr ""
 "Οι μείκτες που επιλέγονται εδώ θα εμφανιστούν στον αναδυόμενο έλεγχο έντασης."
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "Δεν έχει εγκατασταθεί και δεν είναι διαθέσιμη καμία συσκευή ήχου."
@@ -1292,6 +1306,9 @@ msgstr "Δεν υπάρχουν συσκευές σύλληψης."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Δεν υπάρχουν συσκευές αναπαραγωγής."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "Η τελευταία κάρτα ήχου έχει αφαιρεθεί."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"

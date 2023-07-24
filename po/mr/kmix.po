@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2013-02-23 17:39+0530\n"
 "Last-Translator: Chetan Khona <chetan@kompkin.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -349,20 +349,34 @@ msgstr "त्रुटी"
 msgid "Cannot add view - View already exists."
 msgstr "दृश्य जोडू शकत नाही - GUIProfile अवैध आहे."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "मुख्य साधन अंतर्भूत असणारे साऊंडकार्ड काढले गेले. नियंत्रण %2 कार्ड वरील %1 कडे बदलत आहे."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "शेवटचे साऊंडकार्ड काढले गेले."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound card is installed or currently plugged in."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "एकही साऊंडकार्ड प्रतिष्ठापीत नाही किंवा जोडलेले नाही."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, fuzzy, kde-format
 #| msgid "The helper application is either not installed or not working."
 msgid ""
@@ -371,7 +385,7 @@ msgid ""
 "%1"
 msgstr "मदत अनुप्रयोग प्रतिष्ठापीत नाही किंवा चालत नाही."
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, fuzzy, kde-format
 #| msgid "Mixer"
 msgid "Mixer (%1)"
@@ -1144,7 +1158,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, fuzzy, kde-format
 #| msgid "No sound card is installed or currently plugged in."
 msgid "No sound devices are installed or are currently available."
@@ -1274,6 +1288,9 @@ msgstr "पकडणारी साधने नाहीत."
 #| msgid "No playback devices."
 msgid "There are no playback devices."
 msgstr "प्लेबॅक साधने नाहीत."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "शेवटचे साऊंडकार्ड काढले गेले."
 
 #~ msgid "&Hide"
 #~ msgstr "लपवा (&H)"

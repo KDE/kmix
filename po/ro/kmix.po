@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2022-02-05 19:19+0000\n"
 "Last-Translator: Sergiu Bivol <sergiu@cip.md>\n"
 "Language-Team: Romanian\n"
@@ -350,21 +350,35 @@ msgstr "Eroare"
 msgid "Cannot add view - View already exists."
 msgstr "Vizualizarea nu poate fi adăugată - vizualizarea există deja."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "Placa de sunet conținînd dispozitivul stăpîn a fost detașată. Schimb la "
 "controlul %1 pe placa %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Ultima placă de sunet a fost detașată."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "Niciun dispozitiv de sunet nu e instalat sau disponibil acum."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -375,7 +389,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mixer (%1)"
@@ -1154,7 +1168,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr "Mixerele bifate aici vor fi arătate în controlul volumului contextual."
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "Niciun dispozitiv de sunet nu e instalat sau disponibil acum."
@@ -1273,6 +1287,9 @@ msgstr "Nu sunt dispozitive de captare."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Nu sunt dispozitive de redare."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "Ultima placă de sunet a fost detașată."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"

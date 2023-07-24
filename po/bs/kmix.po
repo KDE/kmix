@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: __kde__kdemultimedia__kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2014-12-18 05:14+0000\n"
 "Last-Translator: Dino Babahmetovic <dbabahmeto1@etf.unsa.ba>\n"
 "Language-Team: Bosanski <lokal@linux.org.ba>\n"
@@ -363,21 +363,35 @@ msgstr "Greška"
 msgid "Cannot add view - View already exists."
 msgstr "Nije moguće dodati pogled - GUIProfile je nevažeći."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "Zvučna karta na kojoj je glavni uređaj je izvađena. Prebacujem kontrolu na "
 "%1 kartice %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Posljednja zvučna karta je izvađena."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound card is installed or currently plugged in."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "Nijedna zvučna kartica nije instalirana ili trenutno priključena."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, fuzzy, kde-format
 #| msgid "The helper application is either not installed or not working."
 msgid ""
@@ -386,7 +400,7 @@ msgid ""
 "%1"
 msgstr "Pomoćna aplikacija ili nije instalirana ili ne radi."
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, fuzzy, kde-format
 #| msgid "Mixer"
 msgid "Mixer (%1)"
@@ -1168,7 +1182,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, fuzzy, kde-format
 #| msgid "No sound card is installed or currently plugged in."
 msgid "No sound devices are installed or are currently available."
@@ -1298,6 +1312,9 @@ msgstr "Nema uređaja za dohvat."
 #| msgid "No playback devices."
 msgid "There are no playback devices."
 msgstr "Nema uređaja za reprodukciju."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "Posljednja zvučna karta je izvađena."
 
 #~ msgid "&Hide"
 #~ msgstr "&Sakrij"

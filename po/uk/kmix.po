@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2023-06-11 09:41+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
@@ -349,21 +349,37 @@ msgstr "Помилка"
 msgid "Cannot add view - View already exists."
 msgstr "Не вдалося додати панель: панель вже існує."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "Було від'єднано звукову плату головного пристрою. Змінюється керування %1 на "
 "платі %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "Останню звукову плату було від'єднано."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr ""
+"Не встановлено жодного звукового пристрою або жоден зі звукових пристроїв не "
+"є доступним."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -374,7 +390,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Мікшер (%1)"
@@ -1158,7 +1174,7 @@ msgid ""
 msgstr ""
 "Позначені тут мікшери буде показано на контекстній панелі керування гучністю."
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr ""
@@ -1279,6 +1295,9 @@ msgstr "Немає пристроїв захоплення."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Немає пристроїв відтворення."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "Останню звукову плату було від'єднано."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"

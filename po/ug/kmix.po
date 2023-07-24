@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2013-09-08 07:05+0900\n"
 "Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -352,21 +352,35 @@ msgstr "خاتالىق"
 msgid "Cannot add view - View already exists."
 msgstr "كۆرۈنۈش قوشالمايدۇ - GUI سەپلىمە ھۆججەت ئىناۋەتسىز."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "ئاساسىي ئۈسكۈنىنى ئۆز ئىچىگە ئالغان ئۈن كارتا قىستۇرۇلمىغان. %2 ئۈن "
 "كارتىدىكى %1 تىزگىنگە ئۆزگەردى."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "ئاخىرقى ئۈن كارتا قىستۇرۇلمىغان."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound card is installed or currently plugged in."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "ئۈن كارتا ئورنىتىلمىغان ياكى نۆۋەتتە قىستۇرۇلمىغان."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, fuzzy, kde-format
 #| msgid "The helper application is either not installed or not working."
 msgid ""
@@ -375,7 +389,7 @@ msgid ""
 "%1"
 msgstr "قوشۇمچە قوللىنىشچان پروگرامما ئورنىتىلمىغان ياكى خىزمەت قىلمايۋاتىدۇ."
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, fuzzy, kde-format
 #| msgid "Mixer"
 msgid "Mixer (%1)"
@@ -1153,7 +1167,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, fuzzy, kde-format
 #| msgid "No sound card is installed or currently plugged in."
 msgid "No sound devices are installed or are currently available."
@@ -1283,6 +1297,9 @@ msgstr "تۇتىدىغان ئۈسكۈنە يوق."
 #| msgid "No playback devices."
 msgid "There are no playback devices."
 msgstr "چالىدىغان ئۈسكۈنە يوق."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "ئاخىرقى ئۈن كارتا قىستۇرۇلمىغان."
 
 #~ msgid "&Hide"
 #~ msgstr "يوشۇر(&H)"

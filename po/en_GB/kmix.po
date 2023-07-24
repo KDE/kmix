@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2023-06-17 12:18+0100\n"
 "Last-Translator: Steve Allewell <steve.allewell@gmail.com>\n"
 "Language-Team: British English\n"
@@ -344,21 +344,35 @@ msgstr "Error"
 msgid "Cannot add view - View already exists."
 msgstr "Cannot add view - View already exists."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
-msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+msgid "The sound device '%1' was connected."
 msgstr ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
 
 #: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "The last soundcard was unplugged."
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
+msgid ""
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
+msgstr ""
+"The soundcard containing the master device was unplugged. Changing to "
+"control %1 on card %2."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "No sound devices are installed or are currently available."
+
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -369,7 +383,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Mixer (%1)"
@@ -1138,7 +1152,7 @@ msgid ""
 msgstr ""
 "The mixers that are ticked here will be shown in the popup volume control."
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "No sound devices are installed or are currently available."
@@ -1257,6 +1271,9 @@ msgstr "There are no capture devices."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "There are no playback devices."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "The last soundcard was unplugged."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"

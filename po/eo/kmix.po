@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix 1.0pre2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2023-06-15 21:48+0100\n"
 "Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
@@ -345,21 +345,35 @@ msgstr "Eraro"
 msgid "Cannot add view - View already exists."
 msgstr "Ne povas aldoni vidon - Vido jam ekzistas."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "La sonkarto enhavanta la mastran aparaton estis malkonektita. Ŝanĝante al "
 "kontrolo %1 sur karto %2."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "La lasta sonkarto estis malkonektita."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "Neniuj sonaj aparatoj estas instalitaj aŭ disponeblaj nuntempe."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -370,7 +384,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Miksilo (%1)"
@@ -1141,7 +1155,7 @@ msgstr ""
 "La miksiloj, kiuj estas kontrolitaj ĉi tie, estos montritaj en la "
 "ŝprucfenestra laŭtecmastrumilo."
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "Neniuj sonaj aparatoj estas instalitaj aŭ disponeblaj nuntempe."
@@ -1260,3 +1274,6 @@ msgstr "Ne ekzistas kaptaj aparatoj."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Ne ekzistas reproduktaj aparatoj."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "La lasta sonkarto estis malkonektita."

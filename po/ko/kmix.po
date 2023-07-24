@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-06-12 00:51+0000\n"
+"POT-Creation-Date: 2023-07-24 07:32+0000\n"
 "PO-Revision-Date: 2021-05-16 22:20+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -349,32 +349,46 @@ msgstr "오류"
 msgid "Cannot add view - View already exists."
 msgstr "보기를 추가할 수 없음 - 이미 존재합니다."
 
-#: apps/kmixwindow.cpp:912
+#: apps/kmixwindow.cpp:841
 #, kde-format
+msgid "The sound device '%1' was connected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:894
+#, kde-format
+msgid "The sound device '%1' was disconnected."
+msgstr ""
+
+#: apps/kmixwindow.cpp:919
+#, fuzzy, kde-format
+#| msgid ""
+#| "The soundcard containing the master device was unplugged. Changing to "
+#| "control %1 on card %2."
 msgid ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 msgstr ""
 "마스터 장치가 있는 사운드 카드의 연결이 해제되었습니다. 카드 %2의 %1(으)로 제"
 "어를 넘겨 줍니다."
 
-#: apps/kmixwindow.cpp:919
-#, kde-format
-msgid "The last soundcard was unplugged."
-msgstr "마지막 사운드 카드의 연결이 해제되었습니다."
+#: apps/kmixwindow.cpp:926
+#, fuzzy, kde-format
+#| msgid "No sound devices are installed or are currently available."
+msgid "The last sound device was disconnected. No sound devices are available."
+msgstr "사운드 장치가 설치되어 있지 않거나 현재 사용 가능한 장치가 없습니다."
 
-#: apps/kmixwindow.cpp:1180
+#: apps/kmixwindow.cpp:1187
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
 "\n"
 "%1"
 msgstr ""
-"도우미 프로그램이 설치되지 않았거나 작동하지 않습니다.\n"
+"도우미 앱이 설치되지 않았거나 작동하지 않습니다.\n"
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1231
+#: apps/kmixwindow.cpp:1238
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "믹서(%1)"
@@ -569,7 +583,7 @@ msgstr ""
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
 msgid "Unknown Application"
-msgstr "알 수 없는 프로그램"
+msgstr "알 수 없는 앱"
 
 #: backends/mixer_pulse.cpp:455
 #, kde-format
@@ -1131,7 +1145,7 @@ msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr "여기에서 선택한 믹서를 팝업 음량 제어에 표시합니다."
 
-#: gui/kmixtoolbox.cpp:97
+#: gui/kmixtoolbox.cpp:96
 #, kde-format
 msgid "No sound devices are installed or are currently available."
 msgstr "사운드 장치가 설치되어 있지 않거나 현재 사용 가능한 장치가 없습니다."
@@ -1250,6 +1264,9 @@ msgstr "캡처 장치가 없습니다."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "재생 장치가 없습니다."
+
+#~ msgid "The last soundcard was unplugged."
+#~ msgstr "마지막 사운드 카드의 연결이 해제되었습니다."
 
 #~ msgctxt "@info:tooltip"
 #~ msgid "Raise the maximum volume to 150%"
