@@ -1,14 +1,14 @@
 # Translation of kmix.po to Korean.
 # Copyright (C) 1999-2001, 2007-2008 Free Software Foundation, Inc.
 # Byeong-Chan Kim <redhands@linux.sarang.net>, 1999.
-# Shinjo Park <kde@peremen.name>, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2017, 2019, 2020, 2021.
+# Shinjo Park <kde@peremen.name>, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2017, 2019, 2020, 2021, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2021-05-16 22:20+0200\n"
+"PO-Revision-Date: 2023-07-25 00:57+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Lokalize 20.12.3\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -120,12 +120,12 @@ msgstr "솔라리스 지원"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
-msgstr ""
+msgstr "KF5 핫플러그, ALSA/OSS 음량 피드백, GUI 개선"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -188,71 +188,64 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire 지원"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "PulseAudio 지"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "사용 중인 사운드 드라이버:"
+msgstr "소리 서버"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "ALSA(고급 Linux 사운드 구조)"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "이벤트 소리"
+msgstr "OSS(열린 사운드 시스템)"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "KMix가 이미 실행 중이면 KMaix 주 창의 숨김을 해제합니다."
+msgstr "KMix가 이미 실행 중이면 KMaix 주 창 표시를 방지합니다."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr "KMix를 안전 모드로 시작합니다."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "사용할 백엔드 목록입니다(테스트 전용)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "name[,name...]"
 
 #: apps/kmixmain.cpp:118
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "실험적인 다중 드라이버 모드 활성화됨"
+msgstr "실험적인 다중 드라이버 모드가 활성화되었습니다."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -407,7 +400,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "앱 스트림"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
@@ -1194,7 +1187,7 @@ msgstr ""
 #: gui/mdwslider.cpp:679
 #, kde-format
 msgid "%1 (capture)"
-msgstr "%1 (캡처)"
+msgstr "%1(캡처)"
 
 #: gui/mdwslider.cpp:1102
 #, kde-format
