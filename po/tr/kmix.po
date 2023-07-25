@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: kdemultimedia-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-06-11 21:27+0300\n"
+"PO-Revision-Date: 2023-07-24 13:27+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -363,30 +363,26 @@ msgstr "Görünüm eklenemiyor - Görünüm zaten mevcut."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Ses aygıtı '%1' takıldı."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Ses aygıtı '%1' çıkarıldı."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Ana aygıtı içeren ses kartı çıkarıldı. %2 kartının üzerindeki %1 denetimine "
-"geçiliyor."
+"Geçerli ana aygıt çıkarıldı. '%2' aygıtındaki ana aygıt '%1' olarak "
+"değiştiriliyor."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Kurulu veya kullanılabilir bir ses aygıtı yok."
+msgstr "Son ses aygıtı çıkarıldı. Kullanılabilir ses aygıtı yok."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format

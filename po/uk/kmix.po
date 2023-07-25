@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-06-11 09:41+0300\n"
+"PO-Revision-Date: 2023-07-24 16:57+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
 "Language: uk\n"
@@ -352,32 +352,28 @@ msgstr "Не вдалося додати панель: панель вже іс�
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Звуковий пристрій «%1» було з'єднано."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Звуковий пристрій «%1» було від'єднано."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Було від'єднано звукову плату головного пристрою. Змінюється керування %1 на "
-"платі %2."
+"Поточний основний пристрій було від'єднано. Змінюємо основний пристрій на "
+"«%1» на пристрої «%2»."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
 msgstr ""
-"Не встановлено жодного звукового пристрою або жоден зі звукових пристроїв не "
-"є доступним."
+"Було від'єднано останній звуковий пристрій. Немає доступних звукових "
+"пристроїв."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format

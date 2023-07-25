@@ -2,7 +2,7 @@
 # Translation of kmix.po to Slovenian
 # KMIX TRANSLATION TO SLOVENIAN LANGUAGE.
 # Copyright (C) 2001, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
-# $Id: kmix.po 1656450 2023-07-24 08:17:19Z scripty $
+# $Id: kmix.po 1656580 2023-07-25 01:25:54Z scripty $
 # $Source$
 #
 # Rok Papez <rok@slo.net>, 2000.
@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-06-11 06:20+0200\n"
+"PO-Revision-Date: 2023-07-24 19:17+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
 "Translator: Andrej Mernik <andrejm@ubuntu.si>\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -360,30 +360,27 @@ msgstr "Pogleda ni mogoče dodati, ker že obstaja."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Zvočna naprava '%1' je bila priklopljena."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Zvočna naprava '%1' je bila odklopljena."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Zvočna kartica, ki je bila glavna naprava, je bila odklopljena. Preklop na "
-"nadzor %1 na zvočni kartici %2."
+"Trenutna glavna naprava je bila odklopljena. Spreminjanje glavne v '%1' na "
+"napravi '%2'."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Trenutno ni nameščene ali na voljo nobene zvočne naprave."
+msgstr ""
+"Zadnja zvočna naprava je bila odklopljena. Na voljo ni nobene zvočne naprave."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
