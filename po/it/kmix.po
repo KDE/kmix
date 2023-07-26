@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-06-12 10:20+0200\n"
+"PO-Revision-Date: 2023-07-25 14:12+0200\n"
 "Last-Translator: Vincenzo Reale <smart2128vr@gmail.com>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
 "Language: it\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 23.04.2\n"
+"X-Generator: Lokalize 23.04.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -351,30 +351,28 @@ msgstr "Impossibile aggiungere la vista - la vista esiste già."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Il dispositivo audio «%1» è stato connesso."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Il dispositivo audio «%1» è stato disconnesso."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"La scheda sonora contenente il dispositivo master è stata disconnessa. Sto "
-"modificando per controllare %1 sulla scheda %2."
+"Il dispositivo principale attuale è stato disconnesso. Modifica del "
+"principale a «%1» sul dispositivo «%2»."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Non è installata o attualmente disponibile alcuna scheda audio."
+msgstr ""
+"L'ultimo dispositivo audio è stato disconnesso. Non sono disponibili "
+"dispositivi audio."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
