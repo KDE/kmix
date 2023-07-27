@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-06-14 12:36+0200\n"
+"PO-Revision-Date: 2023-07-26 18:14+0200\n"
 "Last-Translator: giovanni <g.sora@tiscali.it>\n"
 "Language-Team: Interlingua <kde-i18n-doc@kde.org>\n"
 "Language: ia\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 21.12.1\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #, kde-format
@@ -348,30 +348,28 @@ msgstr "Non pote adder vista - Vista jam existe."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Le dispositivo de sono '%1' esseva connectite."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Le dispositivo de sono '%1' esseva disconnectite."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Le carta de sono continente le dispositivo maestro esseva disconnectite. On "
-"cambia controlo %1 sur carta %2."
+"Le le dispositivo maestro esseva disconnectite. On cambia  maestro a '%1' "
+"sur dispositivo '%2'."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Necun dispositivo de sono es installate o currentemenmte disponibile."
+msgstr ""
+"Le ultime dispositivo de sono esseva disconnectite. Necun dispositivos de "
+"sono es disponibile."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
