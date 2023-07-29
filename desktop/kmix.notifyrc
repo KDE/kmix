@@ -2,7 +2,7 @@
 IconName=kmix
 DesktopEntry=org.kde.kmix
 Comment=Sound Mixer
-Comment[bg]=Звуков смесител
+Comment[bg]=Звуков миксер
 Comment[bs]=Mikser zvuka
 Comment[ca]=Mesclador de so
 Comment[ca@valencia]=Mesclador de so
@@ -111,6 +111,7 @@ Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_CN]=音频设备备选
 Name[zh_TW]=預設音效裝置
 Comment=Automatic fallback if the preferred device is unavailable
+Comment[bg]=Автоматично връщане към резервно устройство, ако предпочитаното устройство не е налично
 Comment[ca]=Canvi automàtic al dispositiu alternatiu si el dispositiu preferit no està disponible
 Comment[ca@valencia]=Canvi automàtic al dispositiu alternatiu si el dispositiu preferit no està disponible
 Comment[eo]=Aŭtomata retrodefaŭlto se la preferata aparato ne haveblas
@@ -127,6 +128,7 @@ Action=Popup
 
 [Event/CardHotplugged]
 Name=Audio Device Connected
+Name[bg]=Звуковото устройство е свързано
 Name[ca]=Dispositiu d'àudio connectat
 Name[ca@valencia]=Dispositiu d'àudio connectat
 Name[eo]=Aŭd-aparato Konektita
@@ -139,6 +141,7 @@ Name[tr]=Ses Aygıtı Takıldı
 Name[uk]=З'єднано звуковий пристрій
 Name[x-test]=xxAudio Device Connectedxx
 Comment=A sound device was connected
+Comment[bg]=Свързана е звукова карта
 Comment[ca]=S'ha connectat un dispositiu de so
 Comment[ca@valencia]=S'ha connectat un dispositiu de so
 Comment[eo]=Sonaparato estis konektita
@@ -155,6 +158,7 @@ Action=Popup
 
 [Event/CardUnplugged]
 Name=Audio Device Disconnected
+Name[bg]=Връзка с аудио устройство е прекъсната
 Name[ca]=Dispositiu d'àudio desconnectat
 Name[ca@valencia]=Dispositiu d'àudio desconnectat
 Name[eo]=Aŭd-aparato Malkonektita
@@ -167,6 +171,7 @@ Name[tr]=Ses Aygıtı Çıkarıldı
 Name[uk]=Від'єднано звуковий пристрій
 Name[x-test]=xxAudio Device Disconnectedxx
 Comment=A sound device was disconnected
+Comment[bg]=Връзка с аудио устройство е прекъсната
 Comment[ca]=S'ha desconnectat un dispositiu de so
 Comment[ca@valencia]=S'ha desconnectat un dispositiu de so
 Comment[eo]=Sonaparato estis malkonektita
