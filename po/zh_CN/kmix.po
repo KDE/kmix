@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-07-23 12:28\n"
+"PO-Revision-Date: 2023-07-30 07:09\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -348,28 +348,24 @@ msgstr "无法添加视图 - 该视图已存在。"
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "声音设备“%1”已连接。"
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "声音设备“%1”已断开连接。"
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
-msgstr "包含主设备的声卡未插入。切换为声卡 %2 上的 %1 控制。"
+msgstr "当前主设备已断开连接。主设备将切换为位于设备“%2”的“%1”。"
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "尚未安装声音设备或设备当前不可用。"
+msgstr "最后一个声音设备已断开连接。没有可用的声音设备。"
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
@@ -1254,6 +1250,3 @@ msgstr "没有捕获设备。"
 #, kde-format
 msgid "There are no playback devices."
 msgstr "没有播放设备。"
-
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "最近使用的声卡已拔出。"

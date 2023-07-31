@@ -1,11 +1,10 @@
 # Translation for kmix.po to Euskara/Basque (eu).
-# Copyright (C) 1999-2018, Free Software Foundation.
-# Copyright (C) 2019-2021, This file is copyright:
+# Copyright (C) 1999-2023 This file is copyright:
 # This file is distributed under the same license as the kmix package.
 # KDE euskaratzeko proiektuko arduraduna <xalba@ni.eus>.
 #
 # Translator:
-# Iñigo Salvador Azurmendi <xalba@ni.eus>, 1999, 2005, 2018, 2019, 2020, 2021.
+# Iñigo Salvador Azurmendi <xalba@ni.eus>, 1999, 2005, 2018, 2019, 2020, 2021, 2023.
 # Marcos  <marcos@euskalgnu.org>, 2005, 2006.
 # Ion Gaztañaga <igaztanaga@gmail.com>, 2005.
 # Julen Landa Alustiza <julen@mundurat.net>, 2009.
@@ -15,26 +14,26 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2021-07-21 10:17+0200\n"
+"PO-Revision-Date: 2023-07-30 18:52+0200\n"
 "Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
 "Language-Team: Basque <kde-i18n-eu@kde.org>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 21.04.3\n"
+"X-Generator: Lokalize 23.04.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Marcos,Ion Gaztañaga,Julen Landa,Iñigo Salvador Azurmendi"
+msgstr "Iñigo Salvador Azurmendi,Marcos,Ion Gaztañaga,Julen Landa"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr ""
-"marcos@euskalgnu.org,igaztanaga@gmail.com,julen@mundurat.net,xalba@ni.eus"
+"xalba@ni.eus,marcos@euskalgnu.org,igaztanaga@gmail.com,julen@mundurat.net"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -128,12 +127,14 @@ msgstr "Solaris-en euskarria"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"KF5 martxan dela konektatzea, ALSA/OSS bolumenaren atzeraelikadura, GUI "
+"hobekuntzak"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -196,71 +197,65 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire euskarria"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "PulseAudioren euskarria"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Erabilitako soinu-gidariak:"
+msgstr "Soinu zerbitzaria"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
 msgstr ""
+"Advanced Linux Sound Architecture (Linux-eko Soinu Arkitektura Aurreratua)"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Gertaera soinuak"
+msgstr "Open Sound System (Soinu Sistema Irekia)"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "KMixen lehio nagusia erakustea eragozten du, KMix jada martxan bada."
+msgstr "«KMix»en leiho nagusia erakustea eragozten du, KMix jada martxan bada."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "KMix hutsegiteekiko modu seguruan abiatzen du."
+msgstr "Abiarazi KMix hutsegiteekiko modu seguruan."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Erabil daitezkeen bizkarraldekoen zerrenda bat (probatarako bakarrik)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "izena[,izena...]"
 
 #: apps/kmixmain.cpp:118
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Gidari-anitzeko modu esperimentala aktibatu da"
+msgstr "Gaitu gidari anitzeko modua (esperimentala)."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -360,31 +355,26 @@ msgstr "Ezin da ikuspegia gehitu - Ikuspegia badago dagoeneko."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "'%1' soinu-gailua konektatu da."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "'%1' soinu-gailua deskonektatu da."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Gailu nagusia duen soinu-txartela deskonektatu egin da. %2 txarteleko %1 "
-"kontrolera aldatzen."
+"Egungo gailu nagusia deskonektatu da. '%2'(e)an nagusia '%1'(e)ra aldatzen."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
 msgstr ""
-"Ez dago instalatuta soinu gailurik edo une honetan ez daude erabilgarri."
+"Azken soinu-gailua deskonektatu da. Ez dago soinu gailurik erabilgarri."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
@@ -430,7 +420,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Aplikazio-korronteak"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
