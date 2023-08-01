@@ -6,13 +6,13 @@
 # Karl Backström <backstrom@kde.org>, 1998.
 # Mattias Newzella <newzella@linux.nu>, 2000, 2001, 2002,2003, 2004.
 # Per Lindström <per.lindstrom@osd.privataccess.nu>, 2000.
-# Stefan Asserhäll <stefan.asserhall@bredband.net>, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2017, 2018, 2019, 2020, 2021.
+# Stefan Asserhäll <stefan.asserhall@bredband.net>, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2017, 2018, 2019, 2020, 2021, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2021-03-02 07:29+0100\n"
+"PO-Revision-Date: 2023-07-31 09:55+0200\n"
 "Last-Translator: Stefan Asserhäll <stefan.asserhall@bredband.net>\n"
 "Language-Team: Swedish <kde-i18n-doc@kde.org>\n"
 "Language: sv\n"
@@ -124,12 +124,14 @@ msgstr "Solaris-stöd"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"KF5-direktinkoppling, ALSA/OSS återmatning av volym, förbättringar av "
+"grafiskt gränssnitt"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -192,71 +194,64 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Stöd för TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Stöd för PulseAudio"
+msgstr "Pulseaudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Ljuddrivrutiner som används:"
+msgstr "Ljudserver"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Avancerad ljudarkitektur för Linux"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Händelseljud"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Förhindrar att Kmix huvudfönster visas, om Kmix redan kör."
+msgstr "Förhindra att Kmix huvudfönster visas, om Kmix redan kör."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Startar Kmix i felsäkert läge."
+msgstr "Starta Kmix i felsäkert läge."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "En lista över gränssnitt att använda (bara för utprovning)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "namn[,namn...]"
 
 #: apps/kmixmain.cpp:118
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Experimentellt läge för flera drivrutiner aktiverat"
+msgstr "Aktivera experimentellt läge för flera drivrutiner."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -357,30 +352,26 @@ msgstr "Kan inte lägga till vy - vyn finns redan."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Ljudenheten '%1' kopplades in."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Ljudenheten '%1' kopplades bort."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Ljudkortet som innehåller huvudenheten har kopplats bort. Byter till "
-"kontroll %1 på kort %2."
+"Den nuvarande huvudenheten kopplades bort. Byter till '%1' på enheten '%2'."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Inga ljudenheter är installerade eller är för närvarande tillgängliga."
+msgstr ""
+"Den sista ljudenheten kopplades bort. Inga ljudenheter är tillgängliga."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
@@ -426,7 +417,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Programströmmar"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
