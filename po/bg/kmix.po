@@ -1281,6 +1281,3 @@ msgstr "Няма устройства за запис."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Няма устройства за възпроизвеждане."
-
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "Последната звукова карта е била премахната."
