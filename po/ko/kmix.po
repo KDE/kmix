@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-07-25 00:57+0200\n"
+"PO-Revision-Date: 2023-08-06 21:32+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
 "Language: ko\n"
@@ -345,30 +345,28 @@ msgstr "보기를 추가할 수 없음 - 이미 존재합니다."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "'%1' 소리 장치가 연결되었습니다."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "'%1' 소리 장치의 연결이 해제되었습니다."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"마스터 장치가 있는 사운드 카드의 연결이 해제되었습니다. 카드 %2의 %1(으)로 제"
-"어를 넘겨 줍니다."
+"현재 마스터 장치의 연결이 해제되었습니다. '%2' 장치의 '%1'(으)로 마스터를 변"
+"경합니다."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "사운드 장치가 설치되어 있지 않거나 현재 사용 가능한 장치가 없습니다."
+msgstr ""
+"마지막 소리 장치의 연결이 해제되었습니다. 사용할 수 있는 소리 장치가 없습니"
+"다."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
