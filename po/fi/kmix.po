@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-06-27 17:41+0300\n"
+"PO-Revision-Date: 2023-07-27 15:15+0300\n"
 "Last-Translator: Tommi Nieminen <translator@legisign.org>\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
 "Language: fi\n"
@@ -361,30 +361,26 @@ msgstr "Näkymää ei voitu lisätä – sellainen on jo olemassa."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Äänilaite ”%1” on kytketty."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Äänilaite ”%1” on irrotettu."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Päälaitteen sisältävä äänikortti irrotettiin. Vaihdetaan säätimeen %1 "
-"kortilla %2."
+"Nykyinen pääkanava on irrotettu. Vaihdetaan pääkanavaksi ”%1” laitteella "
+"”%2”."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Äänilaitteita ei ole asennettu tai käytettävissä."
+msgstr "Irrotettiin viimeinen äänilaite. Äänilaitteita ei ole käytettävissä."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
