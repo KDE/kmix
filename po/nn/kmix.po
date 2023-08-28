@@ -127,8 +127,7 @@ msgstr "Jonathan Marten"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
-msgstr ""
-"KF5-hotplugging, lydstyrke­meldingar for ALSA/OSS, forbetra brukarflate"
+msgstr "KF5-hotplugging, lydstyrke­meldingar for ALSA/OSS, forbetra brukarflate"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
