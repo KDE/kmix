@@ -112,21 +112,21 @@ if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
     add_definitions(-DHAVE_SYS_SOUNDCARD_H)
   endif ()
 
-  # Running a program is hopefully more reliable than trying to
-  # grep through header files to find a definition.  Need try_run()
-  # here so as to be able to read the output result.
-  try_run(TEST_RUN_RESULT TEST_COMPILE_RESULT
+  # Comparing with preprocessor is hopefully more reliable than trying to
+  # grep through header files to find a definition.  Unlike try_run(),
+  # causes no problem for cross-compilation.
+  try_compile(OSS3_COMPILE_RESULT
           ${CMAKE_CURRENT_BINARY_DIR}
-          SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/ossversion.c
-          COMPILE_DEFINITIONS "${TEST_COMPILE_FLAGS}"
-          RUN_OUTPUT_VARIABLE TEST_RESULT_VERSION)
-  #message(STATUS "TEST_RUN_RESULT= ${TEST_RUN_RESULT}")
-  #message(STATUS "TEST_COMPILE_RESULT= ${TEST_COMPILE_RESULT}")
-  #message(STATUS "TEST_RESULT_VERSION= ${TEST_RESULT_VERSION}")
+          SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ossversion3.c
+          COMPILE_DEFINITIONS "${TEST_COMPILE_FLAGS}")
+  try_compile(OSS4_COMPILE_RESULT
+          ${CMAKE_CURRENT_BINARY_DIR}
+          SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ossversion4.c
+          COMPILE_DEFINITIONS "${TEST_COMPILE_FLAGS}")
+  #message(STATUS "OSS3_COMPILE_RESULT= ${OSS3_COMPILE_RESULT}")
+  #message(STATUS "OSS4_COMPILE_RESULT= ${OSS4_COMPILE_RESULT}")
 
-  if (${TEST_COMPILE_RESULT} AND (${TEST_RUN_RESULT} EQUAL 0))
-    message(STATUS "Detected OSS version ${TEST_RESULT_VERSION}")
-    if (${TEST_RESULT_VERSION} GREATER_EQUAL 0x040000)
+  if (${OSS4_COMPILE_RESULT})
       message(STATUS "Building with OSS 4 support")
       set(HAVE_OSS_4 true)
       add_definitions(-DHAVE_OSS_4)
@@ -137,20 +137,19 @@ if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
       # to have sys/soundcard.h and not soundcard.h installed.
       check_struct_has_member(oss_mixerinfo devnode sys/soundcard.h HAVE_MIXERINFO_DEVNODE)
       if (HAVE_MIXERINFO_DEVNODE)
-	add_definitions(-DHAVE_MIXERINFO_DEVNODE)
+        add_definitions(-DHAVE_MIXERINFO_DEVNODE)
       endif ()
-    else ()
+    elseif (${OSS3_COMPILE_RESULT})
       message(STATUS "Building with OSS 3 support")
       set(HAVE_OSS_3 true)
       add_definitions(-DHAVE_OSS_3)
       set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS")
+    else ()
+      message(STATUS "Unable to get OSS version, assuming 3")
+      set(HAVE_OSS_3 true)
+      add_definitions(-DHAVE_OSS_3)
+      set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS")
     endif ()
-  else ()
-    message(STATUS "Unable to get OSS version, assuming 3")
-    set(HAVE_OSS_3 true)
-    add_definitions(-DHAVE_OSS_3)
-    set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "OSS")
-  endif ()
 endif ()
 
 # PulseAudio, optional

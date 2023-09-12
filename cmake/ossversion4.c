@@ -2,6 +2,7 @@
  * KMix -- KDE's full featured mini mixer
  *
  * Copyright (C) 2023 Jonathan Marten <jonathan.marten@kdemail.net>
+ * Copyright (C) 2023 Piotr Wójcik <chocimier@tlen.pl>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +28,14 @@
 #endif
 #endif
 
+
+#if SOUND_VERSION < 0x040000
+#error "SOUND_VERSION < 0x040000"
+#endif
+#if 0x050000 <= SOUND_VERSION
+#error "0x050000 <= SOUND_VERSION"
+#endif
+
 int main()
 {
-	printf("0x%06X", SOUND_VERSION);
-	return (0);
 }
