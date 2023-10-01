@@ -346,7 +346,7 @@ msgstr "Engadir unha vista"
 #: apps/kmixwindow.cpp:762
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
-msgstr "Non se pode engadir unha vista. «GUIProfile» é incorrecto."
+msgstr "Non é posíbel engadir unha vista. «GUIProfile» é incorrecto."
 
 #: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
 #, kde-format
@@ -356,7 +356,7 @@ msgstr "Erro"
 #: apps/kmixwindow.cpp:769
 #, kde-format
 msgid "Cannot add view - View already exists."
-msgstr "Non se pode engadir a vista porque xa existe."
+msgstr "Non é posíbel engadir a vista porque xa existe."
 
 #: apps/kmixwindow.cpp:841
 #, kde-format
@@ -421,7 +421,7 @@ msgid ""
 "Please check that the soundcard is installed and the\n"
 "soundcard driver is loaded.\n"
 msgstr ""
-"Non se pode atopar o mesturador de Alsa.\n"
+"Non é posíbel atopar o mesturador de Alsa.\n"
 "Comprobe que a tarxeta de son está instalada e que o\n"
 "controlador está cargado.\n"
 
@@ -576,7 +576,7 @@ msgstr ""
 "Comprobe que a tarxeta de son está instalada e que o\n"
 "controlador está cargado.\n"
 "En Linux, pode que teña que usar «insmod» para cargar o controlador.\n"
-"Utilice «soundon» se está a usar o OSS comercial."
+"Use «soundon» se está a usar o OSS comercial."
 
 #: backends/mixer_oss4.cpp:532
 #, kde-format
@@ -591,7 +591,7 @@ msgstr ""
 "Comprobe que a tarxeta de son está instalada e que o\n"
 "controlador está cargado.\n"
 "En Linux pode que teña que usar «insmod» para cargar o controlador.\n"
-"Utilice «soundon» se está a usar o OSS4 comercial."
+"Use «soundon» se está a usar o OSS4 comercial."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
