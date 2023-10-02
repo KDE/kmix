@@ -1,6 +1,6 @@
 # translation of kmix2.po to Polish
 # translation of kmix.po to
-# Version: $Revision: 1659912 $
+# Version: $Revision: 1661481 $
 # Krzysztof Lichota, 2004.
 # Marcin Giedz <mgiedz@elka.pw.edu.pl>, 2002.
 # Mikolaj Machowski <mikmach@wp.pl>, 2003, 2004, 2005, 2007, 2008, 2009.
@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: kmix2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-07-24 07:32+0000\n"
-"PO-Revision-Date: 2023-09-09 10:49+0200\n"
+"PO-Revision-Date: 2023-10-01 08:49+0200\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: Polish <kde-i18n-doc@kde.org>\n"
 "Language: pl\n"
@@ -359,30 +359,28 @@ msgstr "Nie można dodać widoku - widok już istnieje."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Urządzenie dźwiękowe '%1' zostało podłączone"
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Urządzenie dźwiękowe '%1' zostało odłączone."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Karta dźwiękowa zawierająca urządzenie master została odłączona. Zmiana na "
-"%1 na karcie %2."
+"Obecne główne urządzenie zostało odłączone. Zmiana głównego urządzenia na "
+"'%1' na urządzeniu '%2'."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Obecnie brak podłączonej lub dostępnej urządzenia dźwiękowego."
+msgstr ""
+"Ostatnie urządzenie dźwiękowe zostało odłączone. Obecnie nie ma dostępnych "
+"żadnych urządzeń dźwiękowych."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
