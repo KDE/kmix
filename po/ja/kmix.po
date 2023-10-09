@@ -1305,6 +1305,3 @@ msgstr "キャプチャデバイス"
 #| msgid "Playback Devices"
 msgid "There are no playback devices."
 msgstr "再生デバイス"
-
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "前回のサウンドカードが取り外されています。"
