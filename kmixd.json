@@ -28,7 +28,6 @@
         "Description[sv]": "Övervakar ljudenheter",
         "Description[tr]": "Ses aygıtlarını izler",
         "Description[uk]": "Стежить за звуковими пристроями",
-        "Description[x-test]": "xxMonitors sound devicesxx",
         "Description[zh_CN]": "监视声音设备",
         "Description[zh_TW]": "監控音效裝置",
         "Icon": "kmix",
@@ -66,7 +65,6 @@
         "Name[sv]": "Kmix-demon",
         "Name[tr]": "K Miks Ardalan Süreci",
         "Name[uk]": "Фонова служба KMix",
-        "Name[x-test]": "xxKMix Daemonxx",
         "Name[zh_CN]": "KMix 守护进程",
         "Name[zh_TW]": "KMix 伺服程式"
     },
