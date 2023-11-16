@@ -1220,7 +1220,7 @@ msgstr "Captura/No captura %1"
 #, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
-msgstr "Silencia/Activa %1"
+msgstr "Silencia o activa %1"
 
 #: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
