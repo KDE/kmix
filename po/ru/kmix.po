@@ -13,19 +13,20 @@
 # Yuri Efremov <yur.arh@gmail.com>, 2012, 2013.
 # Alexander Lakhin <exclusion@gmail.com>, 2014.
 # Alexander Yavorsky <kekcuha@gmail.com>, 2019, 2020, 2021.
+# Olesya Gerasimenko <translation-team@basealt.ru>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2021-05-30 09:50+0300\n"
-"Last-Translator: Alexander Yavorsky <kekcuha@gmail.com>\n"
-"Language-Team: Russian <kde-russian@lists.kde.ru>\n"
+"PO-Revision-Date: 2023-11-16 10:12+0300\n"
+"Last-Translator: Olesya Gerasimenko <translation-team@basealt.ru>\n"
+"Language-Team: Basealt Translation Team\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 21.04.1\n"
+"X-Generator: Lokalize 23.04.3\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -36,12 +37,13 @@ msgstr ""
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Григорий Мохин,Kate S. Sheveleva,Ольга Миронова"
+msgstr "Григорий Мохин,Kate S. Sheveleva,Ольга Миронова,Олеся Герасименко"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "mok@kde.ru,kate@altlinux.ru,omiro@basealt.ru"
+msgstr ""
+"mok@kde.ru,kate@altlinux.ru,omiro@basealt.ru,translation-team@basealt.ru"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -135,17 +137,19 @@ msgstr "Перенос на Solaris"
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:71
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
+"«Горячее» подключение в KF5, сопровождение изменения громкости в ALSA/OSS, "
+"улучшения интерфейса"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
 msgid "Igor Poboiko"
-msgstr "Игорь Побойко"
+msgstr "Igor Poboiko"
 
 #: apps/kmixmain.cpp:72
 #, kde-format
@@ -203,71 +207,64 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Поддержка TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:86
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Поддержка PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:87
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Используемые звуковые драйверы:"
+msgstr "Звуковой сервер"
 
 #: apps/kmixmain.cpp:92
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:93
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Расширенная звуковая архитектура Linux (ALSA)"
 
 #: apps/kmixmain.cpp:98
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Звуки уведомлений"
+msgstr "Открытая звуковая система (OSS)"
 
 #: apps/kmixmain.cpp:103
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:115
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Блокирует вывод на экран главного окна KMix, если KMix уже запущен."
+msgstr "Блокировать показ главного окна KMix, если KMix уже запущен."
 
 #: apps/kmixmain.cpp:116
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Запускает KMix в безопасном режиме."
+msgstr "Запустить KMix в безопасном режиме."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Список модулей для использования (только для тестирования)."
 
 #: apps/kmixmain.cpp:117
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "название[,название...]"
 
 #: apps/kmixmain.cpp:118
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Включён экспериментальный режим работы с несколькими драйверами"
+msgstr "Включить режим работы с несколькими драйверами (экспериментальный)."
 
 #: apps/kmixwindow.cpp:168
 #, kde-format
@@ -423,7 +420,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Потоки данных программ"
 
 #: backends/mixer_oss.cpp:71
 msgid "Volume"
