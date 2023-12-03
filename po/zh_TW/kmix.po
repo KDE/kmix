@@ -7,20 +7,20 @@
 # pan93412 <pan93412@gmail.com>, 2018, 2019, 2020.
 # Frank Weng (a.k.a. Franklin) <franklin at goodhorse dot idv dot tw>, 2006, 2007, 2008, 2009, 2010.
 # Franklin Weng <franklin at goodhorse dot idv dot tw>, 2007, 2008.
-# Kisaragi Hiu <mail@kisaragi-hiu.com>, 2023.
+# SPDX-FileCopyrightText: 2023 Kisaragi Hiu <mail@kisaragi-hiu.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-11-05 12:31+0000\n"
-"PO-Revision-Date: 2023-06-15 04:32+0900\n"
+"PO-Revision-Date: 2023-12-02 20:19+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
-"Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
+"Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 23.04.2\n"
+"X-Generator: Lokalize 23.08.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #, kde-format
@@ -315,12 +315,12 @@ msgstr "載入音量設定檔 4"
 #: apps/kmixwindow.cpp:232
 #, kde-format
 msgid "Increase Volume"
-msgstr "遞增音量"
+msgstr "提高音量"
 
 #: apps/kmixwindow.cpp:239
 #, kde-format
 msgid "Decrease Volume"
-msgstr "遞減音量"
+msgstr "降低音量"
 
 #: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
 #, kde-format
@@ -350,28 +350,24 @@ msgstr "無法新增檢視 - 檢視已經存在。"
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "音效裝置「%1」已連線。"
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "音效裝置「%1」已中斷連線。"
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
-msgstr "包含主裝置的音效卡未插入。改為音效卡 %2 上的控制 %1"
+msgstr "目前的主裝置已中斷連線。將會變更為裝置「%2」上的「%1」。"
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "未安裝或無法使用音效裝置。"
+msgstr "最後一個音效裝置已斷線。沒有可用的音效裝置。"
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
