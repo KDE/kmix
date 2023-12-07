@@ -148,7 +148,7 @@ soundcards.</para
 >-->
 
 <para
->Si les pilotes ALSA et Open Sound System sont tous les deux installés, &kmix; utilisera le pilote ALSA.</para>
+>Si les pilotes « ALSA » et « OSS » sont tous les deux installés, &kmix; utilisera le pilote « ALSA ».</para>
 
 <para>
 <screenshot>
@@ -437,7 +437,7 @@ soundcards.</para
 <listitem
 ><para
 ><action
->Cochez cette case pour activer l'affichage de l'OSD lors du survol du composant graphique de &kmix; dans la boîte à miniatures.</action
+>Veuillez cocher cette case pour activer l'affichage « OSD » lors du survol du composant graphique de &kmix; dans la boîte à miniatures.</action
 ></para
 ></listitem>
 </varlistentry>
@@ -601,9 +601,9 @@ soundcards.</para
 >Utilisation experte</title>
 <sect1>
 <title
->Contrôle à distance et scriptage via &DBus;</title>
+>Contrôle à distance et développement de scripts grâce à &DBus;</title>
 <para
->Vous pouvez contrôler &kmix; via &DBus;. Ceci concerne les utilisateurs experts qui veulent effectuer certaines tâchesspéciales, comme couper le son du PC tous les soirs à 22h, ou pour toute autre tâche réalisable par un script. </para>
+>Vous pouvez contrôler &kmix; via &DBus;. Ceci concerne les utilisateurs experts qui veulent effectuer certaines tâches spéciales, comme couper le son de l'ordinateur tous les soirs à 22h, ou pour toute autre tâche réalisable par un script. </para>
 
 <para
 >Liste toutes les méthodes et propriétés de &kmix; en relation avec &DBus; <programlisting
