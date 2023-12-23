@@ -11,15 +11,15 @@
 # Matthieu Robin <kde@macolu.org>, 2004, 2005, 2006.
 # Mickael Sibelle <kimael@gmail.com>, 2008.
 # Ludovic grossard <grossard@kde.org>, 2009, 2011, 2012, 2013, 2014, 2015.
-# SPDX-FileCopyrightText: 2012, 2013, 2020, 2021, 2023 xavier <xavier.besnard@neuf.fr>
+# SPDX-FileCopyrightText: 2012, 2013, 2020, 2021, 2023 Xavier Besnard <xavier.besnard@kde.org>
 # Simon Depiets <sdepiets@gmail.com>, 2018, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-06-12 00:51+0000\n"
-"PO-Revision-Date: 2023-06-13 06:34+0200\n"
-"Last-Translator: Xavier BESNARD <xavier.besnard@neuf.fr>\n"
+"PO-Revision-Date: 2023-09-10 20:23+0200\n"
+"Last-Translator: Xavier Besnard <xavier.besnard@kde.org>\n"
 "Language-Team: fr\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,7 @@ msgstr "Ludovic Grossard, Simon Depiets, Xavier Besnard"
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "grossard@kde.org, sdepiets@gmail.com, xavier.besnard@neuf.fr"
+msgstr "grossard@kde.org, sdepiets@gmail.com, xavier.besnard@kde.org"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
