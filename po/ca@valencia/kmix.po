@@ -564,7 +564,7 @@ msgstr ""
 "kmix: no es pot trobar el mesclador.\n"
 "Comproveu que la targeta de so està instal·lada i que\n"
 "el controlador de la targeta s'ha carregat\n"
-"A Linux podeu necessitar utilitzar «insmod» per a carregar el controlador.\n"
+"En Linux podeu necessitar utilitzar «insmod» per a carregar el controlador.\n"
 "Utilitzeu «soundon» quan utilitzeu l'OSS comercial."
 
 #: backends/mixer_oss4.cpp:532
@@ -579,7 +579,7 @@ msgstr ""
 "kmix: no es pot trobar el mesclador.\n"
 "Comproveu que la targeta de so està instal·lada i que\n"
 "el controlador de la targeta s'ha carregat\n"
-"A Linux podeu necessitar utilitzar «insmod» per a carregar el controlador.\n"
+"En Linux podeu necessitar utilitzar «insmod» per a carregar el controlador.\n"
 "Utilitzeu «soundon» quan utilitzeu l'OSS4 de 4front."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
