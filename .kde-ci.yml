@@ -7,7 +7,6 @@ Dependencies:
     'frameworks/extra-cmake-modules': '@stable'
     'frameworks/kconfig': '@stable'
     'frameworks/kconfigwidgets': '@stable'
-    'frameworks/kcrash': '@stable'
     'frameworks/kdbusaddons': '@stable'
     'frameworks/kdoctools': '@stable'
     'frameworks/kglobalaccel': '@stable'
