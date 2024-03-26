@@ -1,0 +1,675 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+  <!ENTITY % Slovenian "INCLUDE"
+> <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book id="kmix" lang="&language;">
+
+<bookinfo>
+<title
+>&kmix; Priročnik</title>
+
+<authorgroup>
+<author
+><firstname
+>Gaurav</firstname
+> <surname
+>Chaturvedi</surname
+> <address
+><email
+>gaurav.p.chaturvedi@gmail.com</email
+></address
+> </author>
+
+<othercredit role="developer"
+><firstname
+>Christian</firstname
+> <surname
+>Esken</surname
+> <affiliation
+><address
+><email
+>esken@kde.org</email
+></address
+></affiliation>
+<contrib
+>Razvijalec</contrib>
+</othercredit>
+
+<othercredit role="developer"
+><firstname
+>Helio</firstname
+> <surname
+>Chissini de Castro</surname
+> <affiliation
+><address
+><email
+>helio@kde.org</email
+></address
+></affiliation>
+<contrib
+>Razvijalec</contrib>
+</othercredit>
+
+
+<othercredit role="developer"
+><firstname
+>Brian</firstname
+> <surname
+>Hanson</surname
+> <affiliation
+><address
+><email
+>bhanson@hotmail.com</email
+></address
+></affiliation>
+<contrib
+>Razvijalec</contrib>
+</othercredit>
+
+<othercredit role="translator"
+><firstname
+>Matjaž</firstname
+><surname
+>Jeran</surname
+><affiliation
+><address
+><email
+>matjaz.jeran@amis.net</email
+></address
+></affiliation
+><contrib
+>Prevod</contrib
+></othercredit
+> 
+</authorgroup>
+
+<copyright>
+<year
+>1996</year
+><year
+>2005</year>
+<holder
+>Christian Esken &amp; &Matt.Johnston;</holder>
+</copyright>
+
+<legalnotice
+>&FDLNotice;</legalnotice>
+
+<date
+>04.10.2020</date>
+<releaseinfo
+>Applications 20.12</releaseinfo>
+
+<abstract>
+<para
+>&kmix; je aplikacija, ki vam omogoča spreminjanje glasnosti vaše zvočne kartice.</para>
+</abstract>
+
+<keywordset>
+<keyword
+>KDE</keyword>
+<keyword
+>KMix</keyword>
+<keyword
+>kdemultimedija</keyword>
+<keyword
+>zvok</keyword>
+<keyword
+>glasnost</keyword>
+<keyword
+>mešalnik</keyword>
+
+</keywordset>
+
+</bookinfo>
+<!-- FIXME
+http://kmix5.wordpress.com/2012/06/26/kmixs-top-secret-features-part-1-volume-presets/
+  -->
+<chapter id="introduction">
+<title
+>Uvod</title>
+
+<!--<para
+>&kmix; is &kde;'s soundcard mixer program. Though small, it is
+full-featured. The program should give controls for each of your
+soundcards.</para
+>-->
+
+<para
+>&kmix; podpira več platform in zvočnih gonilnikov.</para>
+
+<!--<itemizedlist>
+<listitem
+><para
+> The ALSA soundcard driver.</para
+></listitem>
+<listitem
+><para
+> All Open Sound System platforms. Explicitly tested are &Linux;, FreeBSD, NetBSD and BSDI.</para
+></listitem>
+<listitem
+><para
+> &Solaris; based machines.</para
+></listitem>
+<listitem
+><para
+> &HP-UX; based machines.</para
+></listitem>
+</itemizedlist
+>-->
+
+<para
+>Če imate nameščene gonilnike ALSA in Open Sound System, &kmix; bo uporabljal gonilnik ALSA.</para>
+
+<para>
+<screenshot>
+  <screeninfo
+>Posnetek zaslona &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Posnetek zaslona &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+</para>
+
+
+
+</chapter>
+
+<chapter id="Main_Window">
+<title
+>Glavno okno</title>
+
+<para
+>Pregled &kmix; Glavno okno</para>
+<screenshot>
+  <screeninfo
+>Posnetek zaslona &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Posnetek zaslona &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<sect1 id='File_Options'>
+<title
+>Možnosti datoteke</title>
+<screenshot>
+  <screeninfo
+>&kmix; Možnosti datoteke</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-file.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Možnosti datoteke</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><shortcut
+> <keycombo action="simul"
+>&Esc;</keycombo
+> </shortcut
+> <guimenu
+>Datoteka</guimenu
+> <guimenuitem
+>Skrij okno mešalnika</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Skrij okno mešalnika</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id='Settings'>
+<title
+>Nastavitve</title>
+
+<screenshot>
+  <screeninfo
+>&kmix; Nastavitve</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-options.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Nastavitve</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Nastavitve</guimenu
+> <guimenuitem
+>Nastavitev zvoka</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Odpri <ulink url="help:/kcontrol/phonon"
+>&phonon; &systemsettings; modul</ulink
+></action
+> za konfiguracijo nastavitev zvočne in video naprave ter ozadij, ki jih uporablja &kde; multimedijski API, &phonon;.</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+
+<!-- Unavailable for standard PulseAudio configuration
+<sect2 id='Channels'>
+<title
+>Configure &kmix; Channels</title>
+<screenshot>
+  <screeninfo
+>&kmix; Channels</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-channels.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Channels</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Select the &kmix; channels you want to be used for output or input audio information.</para>
+</sect2>
+-->
+
+<sect2 id='Master_Channels'>
+<title
+>Izberi glavni kanal</title>
+<screenshot>
+  <screeninfo
+>&kmix; Glavni kanal</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-master.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>&kmix; Glavni kanal</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Izberi svoj &kmix; glavni kanal.</para>
+</sect2>
+
+<sect2 id='Configure'>
+<title
+>Konfigurirajte &kmix;</title>
+<sect3 id="configure-general">
+  <title
+>Splošna konfiguracija </title>
+  <screenshot>
+  <screeninfo
+>Splošna konfiguracija &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-general.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Splošna konfiguracija &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Konfigurirajte splošno &kmix; parametri.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Vedenje</guimenu
+> <guimenuitem
+>Prekoračitev glasnosti</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Označite to polje, če želite omogočiti, da je glasnost večja od priporočene vrednosti (včasih največja glasnost PulseAudio preseže normalno vrednost). &kmix; za uveljavitev te nastavitve je potreben ponovni zagon.</para>
+  <warning>
+    <para
+>Počistite to postavko, če so slišna popačenja zvoka pri največji glasnosti. </para>
+  </warning>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Obnašanje</guimenu
+> <guimenuitem
+>Povratne informacije o glasnosti</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite to polje, če želite omogočiti zvočne povratne informacije o spremembi glasnosti.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Obnašanje</guimenu
+> <guimenuitem
+>Korak glasnosti</guimenuitem
+> </menuchoice
+></term>
+<listitem>
+    <para
+>Nastavite korak glasnosti kot odstotek obsega glasnosti. </para>
+    <para
+>To vpliva na spreminjanje glasnosti z vročimi tipkami, z miškinim kolescem nad ikono sistemske vrstice ali premikanjem drsnikov za korak strani. </para>
+    <para
+>&kmix; je treba znova zagnati, da bo ta sprememba začela veljati. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Vizualno</guimenu
+> <guimenuitem
+>Prikaži kljukice drsnika</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite to polje, če želite na drsnikih prikazati kljukice.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Vizualno</guimenu
+> <guimenuitem
+>Pokaži nadzorne oznake</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite to polje, če želite prikazati oznake kontrolnikov.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Vizualno</guimenu
+> <guimenuitem
+>Prikaži prikaz na zaslonu (OSD)</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite to polje, če želite omogočiti prikaz OSD ob miški nad pladnjem &kmix;.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Usmerjenost drsnika (glavno okno)</guimenu
+> <guimenuitem
+>Vodoravno</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite ta izbirni gumb, če želite nadzorni drsnik usmeriti vodoravno.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Usmerjenost drsnika (glavno okno)</guimenu
+> <guimenuitem
+>Navpično</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite ta izbirni gumb, če želite upravljalni drsnik usmeriti navpično.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Usmerjenost drsnika (pojavno okno sistemske vrstice)</guimenu
+> <guimenuitem
+>Vodoravno/navpično</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+>Enako kot prejšnja dva izbirna gumba, vendar za nadzor glasnosti sistemskega pladnja (plošča, ki je prikazana po &LMB; kliknite ikono &kmix; pladnja).</para
+></listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-start">
+  <title
+>Zaženi konfiguracijo </title>
+  <screenshot>
+  <screeninfo
+>Začni konfiguracijo &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-start.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Začni konfiguracijo &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Ta stran vam omogoča konfiguracijo različnih &kmix; začetnih parametrov.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Zagon</guimenu
+> <guimenuitem
+>Zaženi KMix ob zagonu namizja</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite to polje, da omogočite samodejni zagon &kmix; z namiznim okoljem.</action
+></para
+></listitem>
+</varlistentry>
+
+<varlistentry>
+<term
+><menuchoice
+><guimenu
+>Zagon</guimenu
+> <guimenuitem
+>Obnovi prejšnje nastavitve glasnosti ob zagonu namizja</guimenuitem
+> </menuchoice
+></term>
+<listitem
+><para
+><action
+>Označite to polje, da omogočite ravni glasnosti in obnovitev stikal na njihove zadnje uporabljene nastavitve ob zagonu namizja.</action
+></para>
+  <warning>
+    <para
+>Glasnost dinamičnih kontrolnikov PulseAudio ali MPRIS2 ne bo obnovljena. </para>
+  </warning>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+<sect3 id="configure-volume-control">
+  <title
+>Konfiguracija nadzora glasnosti </title>
+  <screenshot>
+  <screeninfo
+>Konfiguracija nadzora glasnosti &kmix;</screeninfo>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="kmix-configure-sound-menu.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase
+>Konfiguracija nadzora glasnosti &kmix;</phrase>
+	  </textobject>
+	</mediaobject>
+</screenshot>
+<para
+>Ta stran vam omogoča konfiguracijo različnih &kmix; pojavnih parametrov nadzora glasnosti.</para>
+
+<variablelist>
+<varlistentry>
+<term
+><guilabel
+>Priklop v sistemski vrstici</guilabel>
+</term>
+<listitem
+><para
+><action
+>Označite to polje, če želite &kmix; v sistemski vrstici.</action
+></para
+></listitem>
+</varlistentry>
+</variablelist>
+
+<para
+>Z ustreznim seznamom na tej strani je mogoče izbrati mešalnike, ki bodo prikazani v nadzoru glasnosti. </para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
+<chapter id="advanced">
+<title
+>Napredna uporaba</title>
+<sect1>
+<title
+>Daljinsko upravljanje in skriptiranje prek &DBus;</title>
+<para
+>Nadzorujete lahko &kmix; prek &DBus;. To je za napredne uporabnike, ki želijo doseči posebne naloge, kot je utišanje računalnika vsak dan ob 22. uri, ali za katero koli drugo skriptno nalogo. </para>
+
+<para
+>Prikaži vse &kmix; povezanih &DBus; metode in lastnosti <programlisting
+>qdbus org.kde.kmix</programlisting>
+</para>
+
+<para
+>Pridobivanje ravni glasnosti (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
+</para>
+
+<para
+>Nastavitev glasnosti (0-100%): <programlisting
+>qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
+</para>
+
+</sect1>
+</chapter>
+
+<chapter id="credits">
+<title
+>Zasluge in licenca</title>
+
+<para
+>&kmix; </para>
+
+<para
+>Avtorske pravice za dokumentacijo &copy; 2010 Gaurav Chaturvedi <email
+>gaurav.p.chaturvedi@gmail.com </email
+> </para>
+<para
+>Zahvale gredo:</para>
+<para
+>&Matt.Johnston; &Matt.Johnston.mail; (kopiraj in prilepi veliko stvari iz njegove stare dokumentacije &kmix;) </para>
+
+<para
+>Prevod: Matjaž Jeran <email
+>matjaz.jeran@amis.net</email
+></para
+> &underFDL; &underGPL; </chapter>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+// vim:ts=2:sw=2:tw=78:noet:noai
+-->
