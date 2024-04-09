@@ -60,6 +60,7 @@ find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONEN
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     Config
     ConfigWidgets
+    Crash
     DBusAddons
     DocTools
     GlobalAccel
@@ -385,6 +386,7 @@ add_executable(kmix ${kmix_SRCS})
 target_link_libraries(kmix
   kmixcore
   kmixgui
+  KF5::Crash
   KF5::I18n
   KF5::CoreAddons
   KF5::DBusAddons

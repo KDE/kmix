@@ -23,6 +23,7 @@
 #include <qapplication.h>
 
 #include <kaboutdata.h>
+#include <KCrash>
 #include <klocalizedstring.h>
 #include <kdbusservice.h>
 
@@ -52,6 +53,8 @@ int main(int argc, char *argv[])
     QApplication qapp(argc, argv);
 
     KLocalizedString::setApplicationDomain("kmix");
+
+    KCrash::initialize();
 
     KAboutData aboutData("kmix", i18n("KMix"),
                          KMIX_VERSION, i18n("KMix - KDE's full featured mini mixer"), KAboutLicense::GPL,
