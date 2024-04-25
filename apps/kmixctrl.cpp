@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
    // load volumes
    if ( parser.isSet("restore") )
    {
-       for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+       for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
        {
            mixer->volumeLoad(Settings::self()->config());
        }
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
    // save volumes
    if (parser.isSet("save"))
    {
-       for (const Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+       for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
        {
            mixer->volumeSave(Settings::self()->config());
        }

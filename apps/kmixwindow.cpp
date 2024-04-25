@@ -441,7 +441,7 @@ void KMixWindow::saveVolumes(const QString &postfix)
 	const QString& kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
 	KConfig cfg(kmixctrlRcFilename);
 
-	for (const Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+	for (const Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		// Protect from unplugged devices - better to *not* save them
 		if (mixer->isOpen()) mixer->volumeSave(&cfg);
@@ -499,7 +499,7 @@ void KMixWindow::loadVolumes(const QString &postfix)
 	const QString &kmixctrlRcFilename = getKmixctrlRcFilename(postfix);
 	const KConfig cfg(kmixctrlRcFilename);
 
-	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		mixer->volumeLoad(&cfg);
 	}
@@ -852,7 +852,7 @@ void KMixWindow::unplugged(const QString &udi)
 	// This assumes that there can be at most one mixer in the list
 	// with the given UDI.
 	Mixer *unpluggedMixer = nullptr;
-	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		if (mixer->hotplugId()==udi)
 		{

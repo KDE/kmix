@@ -665,7 +665,7 @@ void KMixPrefDlg::updateVolumeControls(const KConfigGroup &grp)
 		// Read the list of mixers (both active and previously seen)
 		// from the new settings group.
 		const QStringList keys = grp.keyList();
-		for (const QString &key : qAsConst(keys))
+		for (const QString &key : std::as_const(keys))
 		{
 			// The stored value is expected to be "id,enabled,icon[,readable]"
 			const QStringList conf = grp.readEntry(key, QStringList());
@@ -699,7 +699,7 @@ void KMixPrefDlg::updateVolumeControls(const KConfigGroup &grp)
 
 		// A mixer is always taken to be shown if it appears in
 		// this list.
-		for (const QString &id : qAsConst(mixerIds))
+		for (const QString &id : std::as_const(mixerIds))
 		{
 			MixerData &data = mixerData[id];
 			data.isShown = true;
@@ -752,7 +752,7 @@ void KMixPrefDlg::updateVolumeControls(const KConfigGroup &grp)
 
 	qCDebug(KMIX_LOG) << "Total" << mixerIds.count() << "mixers to display";
 
-	for (const QString &id : qAsConst(mixerIds))
+	for (const QString &id : std::as_const(mixerIds))
 	{
 		// Create tree items for all top level items,
 		// that is, those that have no parent.
@@ -771,7 +771,7 @@ void KMixPrefDlg::updateVolumeControls(const KConfigGroup &grp)
 			// Create child items which belong under this
 			// parent item, that is, where their parent's ID
 			// matches this parent item.
-			for (const QString &subid : qAsConst(mixerIds))
+			for (const QString &subid : std::as_const(mixerIds))
 			{
 				const MixerData &subdata = mixerData[subid];
 				if (subdata.parentId!=id) continue;

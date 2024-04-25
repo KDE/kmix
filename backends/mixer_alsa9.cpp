@@ -774,7 +774,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
     	}
     	else
     	{
-            for (const VolumeChannel &vc : qAsConst(volumePlayback.getVolumes()))
+            for (const VolumeChannel &vc : std::as_const(volumePlayback.getVolumes()))
         {
                int ret = 0;
                switch(vc.chid) {
@@ -810,7 +810,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
     // --- capture volume
     if ( snd_mixer_selem_has_capture_volume ( elem ) )
     {
-        for (const VolumeChannel &vc : qAsConst(volumeCapture.getVolumes()))
+        for (const VolumeChannel &vc : std::as_const(volumeCapture.getVolumes()))
         {
                int ret = 0;
                switch(vc.chid) {
@@ -841,7 +841,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
         // Refresh the capture switch information of *all* controls of this card.
         // Doing it for all is necessary, because enabling one record source often
         // automatically disables another record source (due to the hardware design)
-        for (const shared_ptr<MixDevice> &md : qAsConst(m_mixDevices))
+        for (const shared_ptr<MixDevice> &md : std::as_const(m_mixDevices))
         {
             bool isRecsrc =  isRecsrcHW( md->id() );
             // qCDebug(KMIX_LOG) << "Mixer::setRecordSource(): isRecsrcHW(" <<  md->id() << ") =" <<  isRecsrc;
@@ -890,7 +890,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
     	}
     	else
     	{
-            for (const VolumeChannel &vc : qAsConst(volumePlayback.getVolumes()))
+            for (const VolumeChannel &vc : std::as_const(volumePlayback.getVolumes()))
       {
                int ret = 0;
                switch(vc.chid)
@@ -916,7 +916,7 @@ Mixer_ALSA::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
     // --- capture volume
     if ( snd_mixer_selem_has_capture_volume ( elem ) )
     {
-        for (const VolumeChannel &vc : qAsConst(volumeCapture.getVolumes()))
+        for (const VolumeChannel &vc : std::as_const(volumeCapture.getVolumes()))
       {
                int ret = 0;
                switch(vc.chid) {

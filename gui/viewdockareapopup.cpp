@@ -94,7 +94,7 @@ ViewDockAreaPopup::ViewDockAreaPopup(QWidget* parent, const QString &id, ViewBas
 	//
 	// TODO: is this necessary?  As the comment says, initLayout() does a
 	// clearMixers() which clears the mixers that addMixer() adds here.
-	for (Mixer *mixer : qAsConst(MixerToolBox::mixers()))
+	for (Mixer *mixer : std::as_const(MixerToolBox::mixers()))
 	{
 		addMixer(mixer);
 	}
