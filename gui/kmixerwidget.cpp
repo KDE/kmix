@@ -47,7 +47,7 @@ KMixerWidget::KMixerWidget(Mixer *mixer,
                             QWidget * parent, ViewBase::ViewFlags vflags, const QString &guiprofId,
                             KActionCollection* actionCollection )
    : QWidget( parent ), _mixer(mixer),
-     m_topLayout(0), _guiprofId(guiprofId),
+     m_topLayout(nullptr), _guiprofId(guiprofId),
      _actionCollection(actionCollection)
 {
 	createLayout(vflags);
@@ -79,8 +79,8 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
    * 2b) Create device widgets
    * 2c) Add Views to Tab
    ********************************************************************/
-   GUIProfile* guiprof = getGuiprof();
-   if ( guiprof != 0 )
+   GUIProfile *guiprof = getGuiprof();
+   if (guiprof!=nullptr)
    {
        if (Settings::debugGui())
 		qCDebug(KMIX_LOG) << "Add a view " << _guiprofId;
@@ -121,7 +121,7 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
  */
 ViewBase* KMixerWidget::currentView()
 {
-	return _views.empty() ? 0 : _views[0];
+    return (_views.empty() ? nullptr : _views[0]);
 }
 
 

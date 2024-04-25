@@ -627,7 +627,7 @@ void Mixer_MPRIS2::newMediaPlayer(QString name, QString oldOwner, QString newOwn
 			if (controls.contains(id))
 			{
 				const MPrisControl *control = controls.value(id);
-				QObject::disconnect(control,0,0,0);
+				QObject::disconnect(control, nullptr, nullptr, nullptr);
 				controls.remove(id);
 			}
 
@@ -707,10 +707,9 @@ Mixer_MPRIS2::~Mixer_MPRIS2()
 	close();
 }
 
-MPrisControl::MPrisControl(QString id, QString busDestination)
- : propertyIfc(0)
- , playerIfc(0)
-
+MPrisControl::MPrisControl(QString id, QString busDestination) :
+	propertyIfc(nullptr),
+	playerIfc(nullptr)
 {
 	volume = 0;
 	this->id = id;

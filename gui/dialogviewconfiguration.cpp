@@ -102,8 +102,7 @@ QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*>
 QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem *> &items) const
 #endif
 {
-    if (items.isEmpty())
-        return 0;
+    if (items.isEmpty()) return (nullptr);
     QMimeData* mimedata = new QMimeData();
 
     QByteArray data;

@@ -563,8 +563,7 @@ QToolButton* MDWSlider::addMediaButton(QString iconName, QLayout* layout, QWidge
  */
 void MDWSlider::updateMediaButton()
 {
-	if (m_mediaPlayButton == 0)
-		return; // has no media button
+	if (m_mediaPlayButton==nullptr) return;		// has no media button
 
 	MediaController *mediaController =  mixDevice()->mediaController();
 	QString mediaIconName = calculatePlaybackIcon(mediaController->getPlayState());
@@ -757,7 +756,7 @@ MDWSlider::setStereoLinkedInternal(QList<QAbstractSlider *>& ref_sliders, bool s
 void
 MDWSlider::setLabeled(bool value)
 {
-	if ( m_controlLabel != 0) m_controlLabel->setVisible(value);
+	if (m_controlLabel!=nullptr) m_controlLabel->setVisible(value);
 	layout()->activate();
 }
 
@@ -775,7 +774,7 @@ MDWSlider::setTicks( bool value )
 void MDWSlider::setTicksInternal(QList<QAbstractSlider *>& ref_sliders, bool ticks)
 {
 	VolumeSlider* slider = qobject_cast<VolumeSlider*>( ref_sliders[0]);
-	if (slider == 0 ) return; // Ticks are only in VolumeSlider, but not in KSmallslider
+	if (slider==nullptr) return;			// Ticks are only in VolumeSlider, but not in KSmallslider
 	
 	if( ticks )
 	{
@@ -799,7 +798,7 @@ void MDWSlider::setTicksInternal(QList<QAbstractSlider *>& ref_sliders, bool tic
 void
 MDWSlider::setIcons(bool value)
 {
-	if ( m_controlIcon != 0 ) {
+	if (m_controlIcon!=nullptr) {
 		if ( ( !m_controlIcon->isHidden() ) !=value ) {
 			if (value)
 				m_controlIcon->show();

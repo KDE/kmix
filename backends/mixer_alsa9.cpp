@@ -58,9 +58,9 @@ ALSA_getMixer(Mixer *mixer, int device )
 
 Mixer_ALSA::Mixer_ALSA( Mixer* mixer, int device ) : MixerBackend(mixer,  device )
 {
-    m_fds = 0;
-    _handle = 0;
-    ctl_handle = 0;
+    m_fds = nullptr;
+    _handle = nullptr;
+    ctl_handle = nullptr;
     _initialUpdate = true;
 }
 
@@ -156,9 +156,9 @@ int Mixer_ALSA::open()
 
         /* ------------------------------------------------------------------------------- */
 
-        Volume* volPlay    = 0;
-        Volume* volCapture = 0;
-        QList<QString*> enumList;
+        Volume *volPlay = nullptr;
+        Volume *volCapture = nullptr;
+        QList<QString *> enumList;
 
         if ( snd_mixer_selem_is_enumerated(elem) ) {
             // --- Enumerated ---
@@ -203,12 +203,12 @@ int Mixer_ALSA::open()
         // TODO: this does not appear to work with volume feedback
         //mdNew->setHardwareId("hw:"+QByteArray::number(m_devnum)+","+QByteArray::number(idx));
 
-        if ( volPlay    != 0      )
+        if (volPlay!=nullptr)
         {
         	mdNew->addPlaybackVolume(*volPlay);
             delete volPlay;
         }
-        if ( volCapture != 0      )
+        if (volCapture!=nullptr)
         {
         	mdNew->addCaptureVolume (*volCapture);
             delete volCapture;
@@ -321,7 +321,7 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
                 warnOnce = false;
     		qCDebug(KMIX_LOG) << probeMessage << "not found: snd_mixer_open err=" << snd_strerror(err);
     	}
-        _handle = 0;
+        _handle = nullptr;
         return Mixer::ERR_OPEN; // if we cannot open the mixer, we have no devices
     }
 
@@ -335,7 +335,7 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
         return Mixer::ERR_OPEN;
     }
 
-    if ( ( err = snd_mixer_selem_register ( _handle, NULL, NULL ) ) < 0 )
+    if ( ( err = snd_mixer_selem_register ( _handle, nullptr, nullptr ) ) < 0 )
     {
         if (warnOnce)
     	{
@@ -399,7 +399,7 @@ int Mixer_ALSA::setupAlsaPolling()
 
 		free(m_fds);
 		m_fds = static_cast<struct pollfd *>(calloc(countNew, sizeof(struct pollfd)));
-		if (m_fds == NULL) {
+		if (m_fds == nullptr) {
 			qCDebug(KMIX_LOG) << "Mixer_ALSA::poll() , calloc() = null" << "\n";
 			return Mixer::ERR_OPEN;
 		}
@@ -451,7 +451,7 @@ void Mixer_ALSA::addEnumerated(snd_mixer_elem_t *elem, QList<QString*>& enumList
 
 Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
 {
-    Volume* vol = 0;
+    Volume *vol = nullptr;
     long maxVolume = 0, minVolume = 0;
 
     // Add volumes
@@ -509,7 +509,7 @@ void Mixer_ALSA::deinitAlsaPolling()
 {
 	if ( m_fds )
 		free( m_fds );
-	m_fds = 0;
+	m_fds = nullptr;
 
 	while (!m_sns.isEmpty())
 		delete m_sns.takeFirst();
@@ -523,13 +523,13 @@ Mixer_ALSA::close()
   int ret=0;
   m_isOpen = false;
 
-  if ( ctl_handle != 0)
+  if (ctl_handle !=nullptr)
   {
 	  //snd_ctl_close( ctl_handle );
-	  ctl_handle = 0;
+	  ctl_handle = nullptr;
   }
 
-  if ( _handle != 0 )
+  if (_handle!=nullptr)
   {
     //qCDebug(KMIX_LOG) << "IN  Mixer_ALSA::close()";
     snd_mixer_free ( _handle );
@@ -544,7 +544,7 @@ Mixer_ALSA::close()
 	if ( ret == 0 ) ret = ret2; // no error before => use current error code
     }
 
-    _handle = 0;
+    _handle = nullptr;
     //qCDebug(KMIX_LOG) << "OUT Mixer_ALSA::close()";
 
   }
@@ -564,25 +564,26 @@ Mixer_ALSA::close()
  * Resolve index to a control (snd_mixer_elem_t*)
  * @par idx Index to query. For any invalid index (including -1) returns a 0 control.
  */
-snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx) {
-	snd_mixer_elem_t* elem = 0;
-        if ( ! m_isOpen ) return elem; // unplugging guard
+snd_mixer_elem_t* Mixer_ALSA::getMixerElem(int idx)
+{
+	snd_mixer_elem_t *elem = nullptr;
+        if (!m_isOpen) return (elem);			// unplugging guard
+	if (idx==-1) return (elem);
 
-	if ( idx == -1 ) {
-		return elem;
-	}
 	if ( int( mixer_sid_list.count() ) > idx ) {
 		snd_mixer_selem_id_t * sid = mixer_sid_list[ idx ];
 		// The next line (hopefully) only finds selem's, not elem's.
 		elem = snd_mixer_find_selem(_handle, sid);
 
-		if ( elem == 0 ) {
+		if (elem==nullptr)
+                {
 			// !! Check, whether the warning should be omitted. Probably
 			//    Route controls are non-simple elements.
 			qCDebug(KMIX_LOG) << "Error finding mixer element " << idx;
 		}
 	}
-	return elem;
+
+	return (elem);
 
 /*
  I would have liked to use the following trivial implementation instead of the
@@ -729,12 +730,13 @@ void Mixer_ALSA::setEnumIdHW(const QString& id, unsigned int idx) {
  *          of the SAME snd_mixer_elem_t. KMix does NOT support that and
  *          always shows the value of the first channel.
  */
-unsigned int Mixer_ALSA::enumIdHW(const QString& id) {
+unsigned int Mixer_ALSA::enumIdHW(const QString& id)
+{
     int devnum = id2num(id);
     snd_mixer_elem_t *elem = getMixerElem( devnum );
     unsigned int idx = 0;
 
-    if ( elem != 0 && snd_mixer_selem_is_enumerated(elem) )
+    if (elem!=nullptr && snd_mixer_selem_is_enumerated(elem) )
     {
         int ret = snd_mixer_selem_get_enum_item(elem,SND_MIXER_SCHN_FRONT_LEFT,&idx);
         if (ret < 0) {

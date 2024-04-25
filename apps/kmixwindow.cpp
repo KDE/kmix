@@ -63,7 +63,8 @@
 KMixWindow::KMixWindow(bool invisible, bool reset) :
 		KXmlGuiWindow(nullptr),
 		m_autouseMultimediaKeys(true),
-		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
+		m_dsm(nullptr),
+		m_dontSetDefaultCardOnStart(false)
 {
 	setObjectName(QStringLiteral("KMixWindow"));
 	// disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
@@ -297,7 +298,7 @@ void KMixWindow::initWidgets()
 	connect(m_wsMixers, SIGNAL(currentChanged(int)), SLOT(newMixerShown(int)));
 
 	// show menubar if the actions says so (or if the action does not exist)
-	menuBar()->setVisible((_actionShowMenubar == 0) || _actionShowMenubar->isChecked());
+	menuBar()->setVisible((_actionShowMenubar==nullptr) || _actionShowMenubar->isChecked());
 }
 
 void KMixWindow::setInitialSize()
@@ -321,7 +322,7 @@ void KMixWindow::removeDock()
 	if (m_dockWidget)
 	{
 		m_dockWidget->deleteLater();
-		m_dockWidget = 0;
+		m_dockWidget = nullptr;
 	}
 }
 
@@ -556,7 +557,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		mixerHasProfile[mixer] = true;
 
 		KMixerWidget* kmw = findKMWforTab(guiprof->getId());
-		if ( kmw == 0 )
+		if (kmw ==nullptr)
 		{
 			// does not yet exist => create
 			addMixerWidget(mixer->id(), guiprof->getId(), -1);
@@ -587,13 +588,13 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 		// No TAB YET => This should mean KMix is just started, or the user has just plugged in a card
 
 		{
-			GUIProfile* guiprof = 0;
+			GUIProfile *guiprof = nullptr;
 			if (reset)
 			{
 				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
 			}
 
-			if ( guiprof != 0 )
+			if ( guiprof!=nullptr)
 			{
 				guiprof->setDirty();  // All fallback => dirty
 				addMixerWidget(mixer->id(), guiprof->getId(), -1);
@@ -665,13 +666,13 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 			// Lets try a bunch of fallback strategies:
 			qCDebug(KMIX_LOG) << "Attempting to find a card-specific GUI Profile for the mixer " << mixer->id();
-			GUIProfile* guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
-			if ( guiprof == 0 )
+			GUIProfile *guiprof = GUIProfile::find(mixer, QString("default"), false, false);// ### Card specific profile ###
+			if (guiprof==nullptr)
 			{
 				qCDebug(KMIX_LOG) << "Not found. Attempting to find a generic GUI Profile for the mixer " << mixer->id();
 				guiprof = GUIProfile::find(mixer, QString("default"), false, true); // ### Card unspecific profile ###
 			}
-			if ( guiprof == 0)
+			if (guiprof==nullptr)
 			{
 				qCDebug(KMIX_LOG) << "Using fallback GUI Profile for the mixer " << mixer->id();
 				// This means there is neither card specific nor card unspecific profile
@@ -679,7 +680,7 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 				guiprof = GUIProfile::fallbackProfile(mixer);
 			}
 
-			if ( guiprof != 0 )
+			if (guiprof!=nullptr)
 			{
 				guiprof->setDirty();  // All fallback => dirty
 				addMixerWidget(mixer->id(), guiprof->getId(), -1);
@@ -715,18 +716,14 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 
 }
 
-KMixerWidget*
-KMixWindow::findKMWforTab(const QString& kmwId)
+KMixerWidget *KMixWindow::findKMWforTab(const QString &kmwId)
 {
 	for (int i = 0; i < m_wsMixers->count(); ++i)
 	{
 		KMixerWidget *kmw = qobject_cast<KMixerWidget *>(m_wsMixers->widget(i));
-		if (kmw->getGuiprof()->getId() == kmwId)
-		{
-			return kmw;
-		}
+		if (kmw->getGuiprof()->getId() == kmwId) return (kmw);
 	}
-	return 0;
+	return (nullptr);
 }
 
 void KMixWindow::newView()
@@ -953,14 +950,14 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	qCDebug(KMIX_LOG)
 	<< "Add " << guiprofId;
 	GUIProfile* guiprof = GUIProfile::find(guiprofId);
-	if (guiprof != 0 && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
-		return false; // already present => don't add again
+	if (guiprof!=nullptr && profileExists(guiprof->getId())) // TODO Bad place. Should be checked in the add-tab-dialog
+		return (false); // already present => don't add again
 	Mixer *mixer = MixerToolBox::findMixer(mixer_ID);
 	if (mixer==nullptr) return (false);		// no such Mixer
 
 	//       qCDebug(KMIX_LOG) << "KMixWindow::addMixerWidget() " << mixer_ID << " is being added";
 	ViewBase::ViewFlags vflags = ViewBase::HasMenuBar;
-	if ((_actionShowMenubar == 0) || _actionShowMenubar->isChecked())
+	if ((_actionShowMenubar==nullptr) || _actionShowMenubar->isChecked())
 		vflags |= ViewBase::MenuBarVisible;
 	KMixerWidget *kmw = new KMixerWidget(mixer, this, vflags, guiprofId, actionCollection());
 	/* A newly added mixer will automatically added at the top
@@ -1041,11 +1038,9 @@ void KMixWindow::hideOrClose()
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
 {
 	Mixer* mixer = MixerToolBox::getGlobalMasterMixer(); // only needed for the awkward construct below
-	if (mixer == 0)
-		return; // e.g. when no soundcard is available
+	if (mixer==nullptr) return;			     // e.g. when no soundcard is available
 	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
-	if (md.get() == 0)
-		return; // shouldn't happen, but lets play safe
+	if (md.get()==nullptr) return;			// shouldn't happen, but lets play safe
 
 	Volume::VolumeTypeFlag volumeType = md->playbackVolume().hasVolume() ? Volume::Playback : Volume::Capture;
 	md->increaseOrDecreaseVolume(!increase, volumeType);
@@ -1067,11 +1062,9 @@ void KMixWindow::slotDecreaseVolume()
 void KMixWindow::showVolumeDisplay()
 {
 	Mixer* mixer = MixerToolBox::getGlobalMasterMixer();
-	if (mixer == 0)
-		return; // e.g. when no soundcard is available
+	if (mixer==nullptr) return;			// e.g. when no soundcard is available
 	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
-	if (md.get() == 0)
-		return; // shouldn't happen, but lets play safe
+	if (md.get()==nullptr) return;			// shouldn't happen, but lets play safe
 
 	if (Settings::showOSD())
 	{
@@ -1099,11 +1092,9 @@ void KMixWindow::showVolumeDisplay()
 void KMixWindow::slotMute()
 {
 	Mixer* mixer = MixerToolBox::getGlobalMasterMixer();
-	if (mixer == 0)
-		return; // e.g. when no soundcard is available
+	if (mixer==nullptr) return;			// e.g. when no soundcard is available
 	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
-	if (md.get() == 0)
-		return; // shouldn't happen, but lets play safe
+	if (md.get()==nullptr) return;			// shouldn't happen, but lets play safe
 	md->toggleMute();
 	mixer->commitVolumeChange(md);
 	showVolumeDisplay();
@@ -1192,16 +1183,14 @@ void KMixWindow::forkExec(const QStringList& args)
 void KMixWindow::slotConfigureCurrentView()
 {
 	KMixerWidget *mw = qobject_cast<KMixerWidget *>(m_wsMixers->currentWidget());
-	ViewBase* view = 0;
-	if (mw)
-		view = mw->currentView();
-	if (view)
-		view->configureView();
+	if (mw==nullptr) return;
+	ViewBase* view = mw->currentView();
+	if (view!=nullptr) view->configureView();
 }
 
-void KMixWindow::slotSelectMasterClose(QObject*)
+void KMixWindow::slotSelectMasterClose()
 {
-	m_dsm = 0;
+	m_dsm = nullptr;
 }
 
 void KMixWindow::slotSelectMaster()
@@ -1209,13 +1198,14 @@ void KMixWindow::slotSelectMaster()
 	const Mixer *mixer = MixerToolBox::getGlobalMasterMixer();
 	if (mixer!=nullptr)
 	{
-		if (!m_dsm)
+		if (m_dsm==nullptr)
 		{
 			m_dsm = new DialogSelectMaster(mixer, this);
-			connect(m_dsm, SIGNAL(destroyed(QObject*)), this, SLOT(slotSelectMasterClose(QObject*)));
+			connect(m_dsm, SIGNAL(destroyed(QObject*)), this, SLOT(slotSelectMasterClose()));
 			m_dsm->setAttribute(Qt::WA_DeleteOnClose, true);
 			m_dsm->show();
 		}
+
 		m_dsm->raise();
 		m_dsm->activateWindow();
 	}
@@ -1242,9 +1232,8 @@ void KMixWindow::newMixerShown(int /*tabIndex*/)
 		// It would lead to unnecesary flickering of the (complete) dock area.
 
 		// We only show the "Configure Channels..." menu item if the mixer is not dynamic
-		ViewBase* view = kmw->currentView();
+		const ViewBase* view = kmw->currentView();
 		QAction* action = actionCollection()->action("toggle_channels_currentview");
-		if (view && action)
-			action->setVisible(!view->isDynamic());
+		if (view!=nullptr && action!=nullptr) action->setVisible(!view->isDynamic());
 	}
 }

@@ -99,13 +99,13 @@ static const QString channelTypeToIconName( MixDevice::ChannelType type )
  * The ChannelType tells which kind of control the MixDevice is.
  */
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, ChannelType type )
-    : _profControl(0)
+    : _profControl(nullptr)
 {
     init(mixer, id, name, channelTypeToIconName(type), nullptr);
 }
 
 MixDevice::MixDevice(  Mixer* mixer, const QString& id, const QString& name, const QString& iconName, MixSet* moveDestinationMixSet )
-    : _profControl(0)
+    : _profControl(nullptr)
 {
     init(mixer, id, name, iconName, moveDestinationMixSet);
 }

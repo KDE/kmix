@@ -23,8 +23,8 @@
 
 // Qt
 #include <qcursor.h>
-#include <QMenu>
-#include <QMouseEvent>
+#include <qmenu.h>
+#include <qevent.h>
 #include <qregularexpression.h>
 
 // KDE
@@ -49,9 +49,9 @@
  * Creates an empty View. To populate it with MixDevice instances, you must implement
  * initLayout() in your derived class.
  */
-ViewBase::ViewBase(QWidget* parent, const QString &id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, const QString &guiProfileId, KActionCollection *actionColletion)
+ViewBase::ViewBase(QWidget *parent, const QString &id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, const QString &guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f),
-      _popMenu(NULL),
+      _popMenu(nullptr),
       _actions(actionColletion),
       _vflags(vflags),
       guiLevel(GuiVisibility::Simple),
@@ -63,8 +63,9 @@ ViewBase::ViewBase(QWidget* parent, const QString &id, Qt::WindowFlags f, ViewBa
    // When loading the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
    
-   if ( _actions == 0 ) {
-      // We create our own action collection, if the actionColletion was 0.
+   if (_actions==nullptr)
+   {
+      // We create our own action collection, if the actionColletion was NULL.
       // This is currently done for the ViewDockAreaPopup, but only because it has not been converted to use the app-wide
       // actionCollection(). This is a @todo.
       _actions = new KActionCollection( this );
@@ -75,10 +76,7 @@ ViewBase::ViewBase(QWidget* parent, const QString &id, Qt::WindowFlags f, ViewBa
    if ( vflags & ViewBase::HasMenuBar )
    {
       KToggleAction *m = static_cast<KToggleAction*>(  _actions->action( name(KStandardAction::ShowMenubar) ) ) ;
-      if ( m != 0 ) {
-         bool visible = ( vflags & ViewBase::MenuBarVisible );
-         m->setChecked(visible);
-      }
+      if (m!=nullptr) m->setChecked(vflags & ViewBase::MenuBarVisible );
    }
 }
 
@@ -123,11 +121,8 @@ void ViewBase::updateMediaPlaybackIcons()
 	for (int i = 0; i < _mdws.count(); ++i)
 	{
 		// Currently media controls are always attached to sliders => use MDWSlider
-		MDWSlider* mdw = qobject_cast<MDWSlider*>(_mdws[i]);
-		if (mdw != 0)
-		{
-			mdw->updateMediaButton();
-		}
+		MDWSlider *mdw = qobject_cast<MDWSlider*>(_mdws[i]);
+		if (mdw!=nullptr) mdw->updateMediaButton();
 	}
 }
 
@@ -359,7 +354,7 @@ void ViewBase::configureView()
     Q_ASSERT( !isDynamic() );
     Q_ASSERT( !pulseaudioPresent() );
     
-    DialogViewConfiguration* dvc = new DialogViewConfiguration(0, *this);
+    DialogViewConfiguration *dvc = new DialogViewConfiguration(nullptr, *this);
     dvc->show();
 }
 
@@ -398,7 +393,7 @@ void ViewBase::load(const KConfig *config)
 	{
 		const GuiVisibility guiCompl = guiVisibilities[i];
 		bool atLeastOneControlIsShown = false;
-        for (QWidget *qmdw : std::as_const(view->_mdws))
+		for (QWidget *qmdw : std::as_const(view->_mdws))
 		{
 			MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(qmdw);
 			if (mdw!=nullptr)
@@ -419,7 +414,7 @@ void ViewBase::load(const KConfig *config)
 				bool mdwEnabled = false;
 
 				// Consult GuiProfile for visibility
-				mdwEnabled = findMdw(mdw->mixDevice()->id(), guiCompl) != 0; // Match GUI complexity
+				mdwEnabled = findMdw(mdw->mixDevice()->id(), guiCompl)!=nullptr; // Match GUI complexity
 //				qCWarning(KMIX_LOG) << "---------- FIRST RUN: md=" << md->id() << ", guiVisibility=" << guiCompl.getId() << ", enabled=" << mdwEnabled;
 
 				if (mdwEnabled)

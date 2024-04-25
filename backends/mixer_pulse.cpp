@@ -71,7 +71,7 @@ struct devinfo
 
 
 static unsigned int refcount = 0;
-static pa_context *s_context = NULL;
+static pa_context *s_context = nullptr;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_outstandingRequests = 0;
 
@@ -230,7 +230,7 @@ static void sink_cb(pa_context *c, const pa_sink_info *i, int eol, void *) {
     s.stream_restore_rule = "";
 
     s.priority = 0;
-    if (i->active_port != NULL)
+    if (i->active_port != nullptr)
         s.priority = i->active_port->priority;
 
     translateMasksAndMaps(s);
@@ -583,7 +583,7 @@ static void ext_stream_restore_subscribe_cb(pa_context *c, void *)
 {
     Q_ASSERT(c == s_context);
 
-    pa_operation *op = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL);
+    pa_operation *op = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, nullptr);
     checkOpResult(op, "pa_ext_stream_restore_read");
 }
 
@@ -599,7 +599,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_PLAYBACK))
                     s_mixers[KMIXPA_PLAYBACK]->removeWidget(index);
             } else {
-                pa_operation *op = pa_context_get_sink_info_by_index(c, index, sink_cb, NULL);
+                pa_operation *op = pa_context_get_sink_info_by_index(c, index, sink_cb, nullptr);
                 checkOpResult(op, "pa_context_get_sink_info_by_index");
             }
             break;
@@ -609,7 +609,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_CAPTURE))
                     s_mixers[KMIXPA_CAPTURE]->removeWidget(index);
             } else {
-                pa_operation *op = pa_context_get_source_info_by_index(c, index, source_cb, NULL);
+                pa_operation *op = pa_context_get_source_info_by_index(c, index, source_cb, nullptr);
                 checkOpResult(op, "pa_context_get_source_info_by_index");
             }
             break;
@@ -619,7 +619,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_APP_PLAYBACK))
                     s_mixers[KMIXPA_APP_PLAYBACK]->removeWidget(index);
             } else {
-                pa_operation *op = pa_context_get_sink_input_info(c, index, sink_input_cb, NULL);
+                pa_operation *op = pa_context_get_sink_input_info(c, index, sink_input_cb, nullptr);
                 checkOpResult(op, "pa_context_get_sink_input_info");
             }
             break;
@@ -629,7 +629,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
                 if (s_mixers.contains(KMIXPA_APP_CAPTURE))
                     s_mixers[KMIXPA_APP_CAPTURE]->removeWidget(index);
             } else {
-                pa_operation *op = pa_context_get_source_output_info(c, index, source_output_cb, NULL);
+                pa_operation *op = pa_context_get_source_output_info(c, index, source_output_cb, nullptr);
                 checkOpResult(op, "pa_context_get_source_output_info");
             }
             break;
@@ -638,7 +638,7 @@ static void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t
             if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) == PA_SUBSCRIPTION_EVENT_REMOVE) {
                 clients.remove(index);
             } else {
-                pa_operation *op = pa_context_get_client_info(c, index, client_cb, NULL);
+                pa_operation *op = pa_context_get_client_info(c, index, client_cb, nullptr);
                 checkOpResult(op, "pa_context_get_client_info");
             }
             break;
@@ -655,45 +655,45 @@ static void context_state_callback(pa_context *c, void *)
 
         // 1. Register for the stream changes (except during probe)
         if (s_context == c) {
-            pa_context_set_subscribe_callback(c, subscribe_cb, NULL);
+            pa_context_set_subscribe_callback(c, subscribe_cb, nullptr);
 
             op = pa_context_subscribe(c, static_cast<pa_subscription_mask_t>(
                                             PA_SUBSCRIPTION_MASK_SINK|
                                             PA_SUBSCRIPTION_MASK_SOURCE|
                                             PA_SUBSCRIPTION_MASK_CLIENT|
                                             PA_SUBSCRIPTION_MASK_SINK_INPUT|
-                                            PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT), NULL, NULL);
+                                            PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT), nullptr, nullptr);
             if (!checkOpResult(op, "pa_context_subscribe")) return;
         }
 
-        op = pa_context_get_sink_info_list(c, sink_cb, NULL);
+        op = pa_context_get_sink_info_list(c, sink_cb, nullptr);
         if (!checkOpResult(op, "pa_context_get_sink_info_list")) return;
         s_outstandingRequests++;
 
-        op = pa_context_get_source_info_list(c, source_cb, NULL);
+        op = pa_context_get_source_info_list(c, source_cb, nullptr);
         if (!checkOpResult(op, "pa_context_get_source_info_list")) return;
         s_outstandingRequests++;
 
-        op = pa_context_get_client_info_list(c, client_cb, NULL);
+        op = pa_context_get_client_info_list(c, client_cb, nullptr);
         if (!checkOpResult(op, "pa_context_client_info_list")) return;
         s_outstandingRequests++;
 
-        op = pa_context_get_sink_input_info_list(c, sink_input_cb, NULL);
+        op = pa_context_get_sink_input_info_list(c, sink_input_cb, nullptr);
         if (!checkOpResult(op, "pa_context_get_sink_input_info_list")) return;
         s_outstandingRequests++;
 
-        op = pa_context_get_source_output_info_list(c, source_output_cb, NULL);
+        op = pa_context_get_source_output_info_list(c, source_output_cb, nullptr);
         if (!checkOpResult(op, "pa_context_get_source_output_info_list")) return;
         s_outstandingRequests++;
 
         /* These calls are not always supported */
-        op = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, NULL);
+        op = pa_ext_stream_restore_read(c, ext_stream_restore_read_cb, nullptr);
         if (checkOpResult(op, "pa_ext_stream_restore_read"))
         {
             s_outstandingRequests++;
 
-            pa_ext_stream_restore_set_subscribe_cb(c, ext_stream_restore_subscribe_cb, NULL);
-            pa_ext_stream_restore_subscribe(c, 1, NULL, NULL);
+            pa_ext_stream_restore_set_subscribe_cb(c, ext_stream_restore_subscribe_cb, nullptr);
+            pa_ext_stream_restore_subscribe(c, 1, nullptr, nullptr);
         }
     } else if (!PA_CONTEXT_IS_GOOD(state)) {
         // If this is our probe phase, exit our context immediately
@@ -701,7 +701,7 @@ static void context_state_callback(pa_context *c, void *)
             pa_context_disconnect(c);
         } else {
             pa_context_unref(s_context);
-            s_context = NULL;
+            s_context = nullptr;
 
             // Remove all GUI elements
             QMap<int,Mixer_PULSE*>::iterator it;
@@ -759,7 +759,7 @@ static devmap* get_widget_map(int type, QString id = QString())
         return &captureStreams;
 
     Q_ASSERT(0);
-    return NULL;
+    return nullptr;
 }
 
 static devmap* get_widget_map(int type, int index)
@@ -962,7 +962,7 @@ MixerBackend* PULSE_getMixer( Mixer *mixer, int devnum )
 
 bool Mixer_PULSE::connectToDaemon()
 {
-    Q_ASSERT(NULL == s_context);
+    Q_ASSERT(nullptr == s_context);
 
     qCDebug(KMIX_LOG) <<  "Attempting connection to PulseAudio sound daemon";
 
@@ -975,12 +975,12 @@ bool Mixer_PULSE::connectToDaemon()
     s_context = pa_context_new(&m_mainloop->pa_vtable, "KMix");
     Q_ASSERT(s_context);
 
-    if (pa_context_connect(s_context, NULL, PA_CONTEXT_NOFAIL, 0) < 0) {
+    if (pa_context_connect(s_context, nullptr, PA_CONTEXT_NOFAIL, nullptr) < 0) {
         pa_context_unref(s_context);
-        s_context = NULL;
+        s_context = nullptr;
         return false;
     }
-    pa_context_set_state_callback(s_context, &context_state_callback, NULL);
+    pa_context_set_state_callback(s_context, &context_state_callback, nullptr);
     return true;
 }
 
@@ -1015,7 +1015,7 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum)
 
         qCDebug(KMIX_LOG) << "Probing for PulseAudio...";
         // (cg) Convert to PA_CONTEXT_NOFLAGS when PulseAudio 0.9.19 is required
-        if (pa_context_connect(p_test_context, NULL, static_cast<pa_context_flags_t>(0), NULL) < 0)
+        if (pa_context_connect(p_test_context, nullptr, static_cast<pa_context_flags_t>(0), nullptr) < 0)
         {
             qCDebug(KMIX_LOG) << QString("PulseAudio support disabled, %1").arg(pa_strerror(pa_context_errno(p_test_context)));
             pa_context_disconnect(p_test_context);
@@ -1027,9 +1027,9 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum)
 
         // Assume we are inactive, it will be set to active if appropriate
         s_pulseActive = INACTIVE;
-        pa_context_set_state_callback(p_test_context, &context_state_callback, NULL);
+        pa_context_set_state_callback(p_test_context, &context_state_callback, nullptr);
         for (;;) {
-          pa_mainloop_iterate(p_test_mainloop, 1, NULL);
+          pa_mainloop_iterate(p_test_mainloop, 1, nullptr);
 
           if (!PA_CONTEXT_IS_GOOD(pa_context_get_state(p_test_context))) {
             qCDebug(KMIX_LOG) << "PulseAudio probe complete.";
@@ -1167,10 +1167,10 @@ case KMIXPA_PLAYBACK:
                             [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
                             {
                                 pa_cvolume volume = genVolumeForPulse(dev, md->playbackVolume());
-                                pa_operation *op = pa_context_set_sink_volume_by_index(s_context, dev.index, &volume, NULL, NULL);
+                                pa_operation *op = pa_context_set_sink_volume_by_index(s_context, dev.index, &volume, nullptr, nullptr);
                                 if (!checkOpResult(op,"pa_context_set_sink_volume_by_index")) return (Mixer::ERR_WRITE);
 
-                                op = pa_context_set_sink_mute_by_index(s_context, dev.index, (md->isMuted() ? 1 : 0), NULL, NULL);
+                                op = pa_context_set_sink_mute_by_index(s_context, dev.index, (md->isMuted() ? 1 : 0), nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_sink_mute_by_index")) return (Mixer::ERR_WRITE);
 
                                 return (Mixer::OK);
@@ -1181,10 +1181,10 @@ case KMIXPA_CAPTURE:
                             [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
                             {
                                 pa_cvolume volume = genVolumeForPulse(dev, md->captureVolume());
-                                pa_operation *op = pa_context_set_source_volume_by_index(s_context, dev.index, &volume, NULL, NULL);
+                                pa_operation *op = pa_context_set_source_volume_by_index(s_context, dev.index, &volume, nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_source_volume_by_index")) return (Mixer::ERR_WRITE);
 
-                                op = pa_context_set_source_mute_by_index(s_context, dev.index, (md->isRecSource() ? 0 : 1), NULL, NULL);
+                                op = pa_context_set_source_mute_by_index(s_context, dev.index, (md->isRecSource() ? 0 : 1), nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_source_mute_by_index")) return (Mixer::ERR_WRITE);
 
                                 return (Mixer::OK);
@@ -1197,10 +1197,10 @@ case KMIXPA_APP_PLAYBACK:
                                 [](const devinfo &dev, shared_ptr<MixDevice> md) -> int
                                 {
                                     pa_cvolume volume = genVolumeForPulse(dev, md->playbackVolume());
-                                    pa_operation *op = pa_context_set_sink_input_volume(s_context, dev.index, &volume, NULL, NULL);
+                                    pa_operation *op = pa_context_set_sink_input_volume(s_context, dev.index, &volume, nullptr, nullptr);
                                     if (!checkOpResult(op, "pa_context_set_sink_input_volume")) return (Mixer::ERR_WRITE);
 
-                                    op = pa_context_set_sink_input_mute(s_context, dev.index, (md->isMuted() ? 1 : 0), NULL, NULL);
+                                    op = pa_context_set_sink_input_mute(s_context, dev.index, (md->isMuted() ? 1 : 0), nullptr, nullptr);
                                     if (!checkOpResult(op, "pa_context_set_sink_input_mute")) return (Mixer::ERR_WRITE);
 
                                     return (Mixer::OK);
@@ -1216,10 +1216,10 @@ case KMIXPA_APP_PLAYBACK:
                                     info.name = dev.stream_restore_rule.toUtf8().constData();
                                     info.channel_map = rule.channel_map;
                                     info.volume = genVolumeForPulse(dev, md->playbackVolume());
-                                    info.device = rule.device.isEmpty() ? NULL : rule.device.toUtf8().constData();
+                                    info.device = rule.device.isEmpty() ? nullptr : rule.device.toUtf8().constData();
                                     info.mute = (md->isMuted() ? 1 : 0);
 
-                                    pa_operation *op = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL);
+                                    pa_operation *op = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, nullptr, nullptr);
                                     if (!checkOpResult(op, "pa_ext_stream_restore_write")) return (Mixer::ERR_WRITE);
 
                                     return (Mixer::OK);
@@ -1233,19 +1233,19 @@ case KMIXPA_APP_CAPTURE:
                             {
 #if HAVE_SOURCE_OUTPUT_VOLUMES
                                 pa_cvolume volume = genVolumeForPulse(dev, md->captureVolume());
-                                pa_operation *op = pa_context_set_source_output_volume(s_context, dev.index, &volume, NULL, NULL);
+                                pa_operation *op = pa_context_set_source_output_volume(s_context, dev.index, &volume, nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_source_output_volume")) return (Mixer::ERR_WRITE);
 
-                                op = pa_context_set_source_output_mute(s_context, dev.index, (md->isRecSource() ? 0 : 1), NULL, NULL);
+                                op = pa_context_set_source_output_mute(s_context, dev.index, (md->isRecSource() ? 0 : 1), nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_source_output_mute")) return (Mixer::ERR_WRITE);
 #else                
                                 // Note that this is different from APP_PLAYBACK in that
                                 // we set the volume on the source itself.
                                 pa_cvolume volume = genVolumeForPulse(dev, md->captureVolume());
-                                pa_operation *op = pa_context_set_source_volume_by_index(s_context, dev.device_index, &volume, NULL, NULL);
+                                pa_operation *op = pa_context_set_source_volume_by_index(s_context, dev.device_index, &volume, nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_source_volume_by_index")) return (Mixer::ERR_WRITE);
 
-                                op = pa_context_set_source_mute_by_index(s_context, dev.device_index, (md->isRecSource() ? 0 : 1), NULL, NULL);
+                                op = pa_context_set_source_mute_by_index(s_context, dev.device_index, (md->isRecSource() ? 0 : 1), nullptr, nullptr);
                                 if (!checkOpResult(op, "pa_context_set_source_mute_by_index")) return (Mixer::ERR_WRITE);
 #endif
                                 return (Mixer::OK);
@@ -1305,10 +1305,10 @@ bool Mixer_PULSE::moveStream(const QString &id, const QString &destId)
             info.name = stream_restore_rule.toUtf8().constData();
             info.channel_map = rule.channel_map;
             info.volume = rule.volume;
-            info.device = NULL;
+            info.device = nullptr;
             info.mute = rule.mute ? 1 : 0;
 
-            pa_operation *op = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, NULL, NULL);
+            pa_operation *op = pa_ext_stream_restore_write(s_context, PA_UPDATE_REPLACE, &info, 1, true, nullptr, nullptr);
             if (!checkOpResult(op, "pa_ext_stream_restore_write")) return (false);
         }
     }
@@ -1319,12 +1319,12 @@ bool Mixer_PULSE::moveStream(const QString &id, const QString &destId)
         const uint32_t stream_index = info->index;
         if (m_devnum==KMIXPA_APP_PLAYBACK)
         {
-            pa_operation *op = pa_context_move_sink_input_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL);
+            pa_operation *op = pa_context_move_sink_input_by_name(s_context, stream_index, destId.toUtf8().constData(), nullptr, nullptr);
             if (!checkOpResult(op, "pa_context_move_sink_input_by_name")) return (false);
         }
         else
         {
-            pa_operation *op = pa_context_move_source_output_by_name(s_context, stream_index, destId.toUtf8().constData(), NULL, NULL);
+            pa_operation *op = pa_context_move_source_output_by_name(s_context, stream_index, destId.toUtf8().constData(), nullptr, nullptr);
             if (!checkOpResult(op, "pa_context_move_source_output_by_name")) return (false);
         }
     }

@@ -127,7 +127,7 @@ private Q_SLOTS:
    void slotIncreaseVolume();
    void slotDecreaseVolume();
    void slotMute();
-   void slotSelectMasterClose(QObject*);
+   void slotSelectMasterClose();
 
    void newView();
    void saveAndCloseView(int);

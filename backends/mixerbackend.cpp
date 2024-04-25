@@ -32,8 +32,12 @@
 
 
 MixerBackend::MixerBackend(Mixer *mixer, int device) :
-m_devnum (device) , m_isOpen(false), m_recommendedMaster(), _mixer(mixer), _pollingTimer(0), _cardInstance(1), _cardRegistered(false)
-
+	m_devnum (device),
+	m_isOpen(false),
+	m_recommendedMaster(),
+	_mixer(mixer),
+	_cardInstance(1),
+	_cardRegistered(false)
 {
 	// In all cases create a QTimer. We will use it once as a singleShot(), even if something smart
 	// like ::select() is possible (as in ALSA). And force to do an update.
@@ -235,7 +239,7 @@ void MixerBackend::readSetFromHW()
 		if ( fastPollingEndsNow )
 		{
 			qCDebug(KMIX_LOG) << "End fast polling";
-			_fastPollingEndsAt = QTime(); // NULL time
+			_fastPollingEndsAt = QTime(); // null time
 			_pollingTimer->setInterval(POLL_RATE_SLOW);
 		}
 	}
