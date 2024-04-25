@@ -9,7 +9,7 @@ set(RELEASE_SERVICE_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_
 set(KMIX_VERSION ${RELEASE_SERVICE_VERSION})
 project(kmix VERSION ${KMIX_VERSION})
 # SOVERSION of the kmixcore library
-set(KMIX_VERSION_MAJOR 5)
+set(KMIX_VERSION_MAJOR ${QT_MAJOR_VERSION})
 # Version of the configuration, originally from core/version.h
 set(KMIX_CONFIG_VERSION 3)
 
@@ -18,7 +18,9 @@ set(KMIX_CONFIG_VERSION 3)
 ####################################################################################################
 
 # Plasma dataengines are apparently deprecated and will be removed in Plasma 6
-option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
+if (${QT_MAJOR_VERSION} EQUAL 5)
+  option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
+endif ()
 
 # For testing OSS4 build on Linux with 4Front OSS4 installed
 #
@@ -30,11 +32,20 @@ set(OSS4_INCLUDES "" CACHE PATH "Include path for OSS4 include files")
 ########### dependencies and tests #################################################################
 ####################################################################################################
 
-set(QT_MIN_VERSION "5.15.2")
-set(KF5_MIN_VERSION "5.101.0")
+if (${QT_MAJOR_VERSION} EQUAL 6)
+  set(QT_MIN_VERSION "6.3.0")
+  set(KF_MIN_VERSION "6.1.0")
+else ()
+  if (${QT_MAJOR_VERSION} EQUAL 5)
+    set(QT_MIN_VERSION "5.15.2")
+    set(KF_MIN_VERSION "5.101.0")
+  endif ()
+endif ()
+
 set(PA_MIN_VERSION "0.9.16")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
-find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
+
+find_package(ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} )
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -57,14 +68,16 @@ find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONEN
     Xml
 )
 
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
+find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     Config
     ConfigWidgets
     Crash
+    CoreAddons
     DBusAddons
     DocTools
     GlobalAccel
     I18n
+    StatusNotifierItem
     Notifications
     Solid
     WidgetsAddons
@@ -73,8 +86,8 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 )
 
 if (BUILD_DATAENGINE)
-  find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
-  set_package_properties(KF5Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
+  find_package(KF${QT_MAJOR_VERSION}Plasma ${KF_MIN_VERSION} REQUIRED)
+  set_package_properties(KF${QT_MAJOR_VERSION}Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
 endif ()
 
 ####################################################################################################
@@ -191,6 +204,10 @@ add_definitions(-DTRANSLATION_DOMAIN=\"kmix\")
 add_definitions(-DKMIX_VERSION=\"${KMIX_VERSION}\")
 add_definitions(-DKMIX_CONFIG_VERSION=${KMIX_CONFIG_VERSION})
 
+remove_definitions("-DQT_NO_KEYWORDS")
+remove_definitions("-DQT_NO_CAST_FROM_ASCII")
+remove_definitions("-DQT_NO_CAST_FROM_BYTEARRAY")
+
 ####################################################################################################
 ########### subdirectories #########################################################################
 ####################################################################################################
@@ -296,12 +313,12 @@ target_link_libraries(kmixcore
   PRIVATE
     Qt::Xml
     Qt::DBus
-    KF5::I18n
-    KF5::Solid
+    KF${QT_MAJOR_VERSION}::I18n
+    KF${QT_MAJOR_VERSION}::Solid
   PUBLIC
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::CoreAddons
+    KF${QT_MAJOR_VERSION}::ConfigCore
+    KF${QT_MAJOR_VERSION}::ConfigGui
+    KF${QT_MAJOR_VERSION}::CoreAddons
 )
 
 set_target_properties(kmixcore PROPERTIES VERSION ${KMIX_VERSION} SOVERSION ${KMIX_VERSION_MAJOR})
@@ -358,13 +375,14 @@ target_link_libraries(kmixgui
   kmixcore
   Qt::Core
   Qt::Widgets
-  KF5::I18n
-  KF5::ConfigCore
-  KF5::ConfigGui
-  KF5::GlobalAccel
-  KF5::Notifications
-  KF5::XmlGui
-  KF5::WindowSystem
+  KF${QT_MAJOR_VERSION}::I18n
+  KF${QT_MAJOR_VERSION}::ConfigCore
+  KF${QT_MAJOR_VERSION}::ConfigGui
+  KF${QT_MAJOR_VERSION}::GlobalAccel
+  KF${QT_MAJOR_VERSION}::StatusNotifierItem
+  KF${QT_MAJOR_VERSION}::Notifications
+  KF${QT_MAJOR_VERSION}::XmlGui
+  KF${QT_MAJOR_VERSION}::WindowSystem
 )
 
 ####################################################################################################
@@ -386,14 +404,13 @@ add_executable(kmix ${kmix_SRCS})
 target_link_libraries(kmix
   kmixcore
   kmixgui
-  KF5::Crash
-  KF5::I18n
-  KF5::CoreAddons
-  KF5::DBusAddons
-  KF5::GlobalAccel
-  KF5::XmlGui
-  KF5::Notifications
-  KF5::WindowSystem
+  KF${QT_MAJOR_VERSION}::I18n
+  KF${QT_MAJOR_VERSION}::CoreAddons
+  KF${QT_MAJOR_VERSION}::Crash
+  KF${QT_MAJOR_VERSION}::DBusAddons
+  KF${QT_MAJOR_VERSION}::GlobalAccel
+  KF${QT_MAJOR_VERSION}::XmlGui
+  KF${QT_MAJOR_VERSION}::WindowSystem
 )
 
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
@@ -408,22 +425,22 @@ install(FILES desktop/kmix.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFYRCDIR} )
 ########### target: kded_kmixd #####################################################################
 ####################################################################################################
 
-set(kmixd_SRCS
-  apps/kmixd.cpp
-  ${kmix_debug_SRCS}
-)
-
-add_library(kded_kmixd MODULE ${kmixd_SRCS})
-set_target_properties(kded_kmixd PROPERTIES OUTPUT_NAME kmixd)
-
-target_link_libraries(kded_kmixd
-  kmixcore
-  KF5::I18n
-  KF5::CoreAddons
-  KF5::DBusAddons
-)
-
-install(TARGETS kded_kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf5/kded)
+# set(kmixd_SRCS
+#   apps/kmixd.cpp
+#   ${kmix_debug_SRCS}
+# )
+#
+# add_library(kded_kmixd MODULE ${kmixd_SRCS})
+# set_target_properties(kded_kmixd PROPERTIES OUTPUT_NAME kmixd)
+#
+# target_link_libraries(kded_kmixd
+#   kmixcore
+#   KF${QT_MAJOR_VERSION}::I18n
+#   KF${QT_MAJOR_VERSION}::CoreAddons
+#   KF${QT_MAJOR_VERSION}::DBusAddons
+# )
+#
+# install(TARGETS kded_kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf${QT_MAJOR_VERSION}/kded)
 
 ####################################################################################################
 ########### target: kmixctrl #######################################################################
@@ -437,19 +454,19 @@ set(kmixctrl_SRCS
 add_executable(kmixctrl ${kmixctrl_SRCS})
 target_link_libraries(kmixctrl
   kmixcore
-  KF5::I18n
-  KF5::CoreAddons
+  KF${QT_MAJOR_VERSION}::I18n
+  KF${QT_MAJOR_VERSION}::CoreAddons
 )
 
 install(TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVICESDIR})
+#install(FILES desktop/kmixctrl_restore.desktop DESTINATION ${KDE_INSTALL_KSERVICESDIR})
 
 ####################################################################################################
 ########### tests ##################################################################################
 ####################################################################################################
 
-if(BUILD_TESTING)
+if (BUILD_TESTING)
   find_package(Qt${QT_MAJOR_VERSION}Test ${QT_MIN_VERSION} CONFIG REQUIRED)
   add_subdirectory(tests)
 endif()
