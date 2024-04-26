@@ -370,7 +370,6 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
 int Mixer_ALSA::setupAlsaPolling()
 {
 	// --- Step 1: Retrieve FD's from ALSALIB
-	int err;
 	int countNew = 0;
 	if ((countNew = snd_mixer_poll_descriptors_count(_handle)) < 0) {
 		qCDebug(KMIX_LOG) << "Mixer_ALSA::poll() , snd_mixer_poll_descriptors_count() err=" <<  countNew << "\n";
@@ -392,6 +391,8 @@ int Mixer_ALSA::setupAlsaPolling()
 	 */
 	if (true)
 	{
+		int err;
+
 		// As documentation purpose, please keep the "if (true)" and the comment above explaining it.
 		 while (!m_sns.isEmpty())
 		     delete m_sns.takeFirst();
@@ -418,13 +419,14 @@ int Mixer_ALSA::setupAlsaPolling()
 		// --- Step 2: Create QSocketNotifier's for the FD's
 		for ( int i = 0; i < countNew; ++i )
 		{
-			QSocketNotifier* qsn = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
+                        // TODO: memory leak, not parented and never deleted
+			QSocketNotifier *qsn = new QSocketNotifier(m_fds[i].fd, QSocketNotifier::Read);
 			m_sns.append(qsn);
-			connect(qsn, SIGNAL(activated(int)), SLOT(readSetFromHW()), Qt::QueuedConnection);
+			connect(qsn, &QSocketNotifier::activated, this, &Mixer_ALSA::readSetFromHW, Qt::QueuedConnection);
 		}
 	}
 
-	return 0;
+	return (Mixer::OK);
 }
 
 void Mixer_ALSA::addEnumerated(snd_mixer_elem_t *elem, QList<QString*>& enumList)

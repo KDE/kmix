@@ -43,8 +43,7 @@ MixerBackend::MixerBackend(Mixer *mixer, int device) :
 	// like ::select() is possible (as in ALSA). And force to do an update.
 	_readSetFromHWforceUpdate = true;
 	_pollingTimer = new QTimer(); // will be started on open() and stopped on close()
-	connect( _pollingTimer, SIGNAL(timeout()), this, SLOT(readSetFromHW()), Qt::QueuedConnection);
-
+	connect(_pollingTimer, &QTimer::timeout, this, &MixerBackend::readSetFromHW, Qt::QueuedConnection);
 }
 
 void MixerBackend::closeCommon()
@@ -102,7 +101,7 @@ bool MixerBackend::openIfValid()
 		else
 		{
 			// The initial state must be read manually
-			QTimer::singleShot( POLL_RATE_FAST, this, SLOT(readSetFromHW()));
+			QTimer::singleShot(POLL_RATE_FAST, this, &MixerBackend::readSetFromHW);
 		}
 		return true;				// could be opened
 	}

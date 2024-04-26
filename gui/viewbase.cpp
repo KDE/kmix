@@ -93,7 +93,7 @@ QPushButton* ViewBase::createConfigureViewButton()
 							   QString(), this);
 	configureViewButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	configureViewButton->setToolTip(i18n( "Configure this view" ));
-	connect(configureViewButton, SIGNAL(clicked(bool)), SLOT(configureView()));
+	connect(configureViewButton, &QAbstractButton::clicked, this, &ViewBase::configureView);
 	return configureViewButton;
 }
 
@@ -151,16 +151,18 @@ void ViewBase::createDeviceWidgets()
     initLayout();
     for (const shared_ptr<MixDevice> &md : std::as_const(_mixSet))
     {
-        QWidget *mdw = add(md);				// a) Let the implementation do its work
-        _mdws.append(mdw);				// b) Add it to the local list
-        connect(mdw, SIGNAL(guiVisibilityChange(MixDeviceWidget*,bool)), SLOT(guiVisibilitySlot(MixDeviceWidget*,bool)));
+        QWidget *w = add(md);				// a) Let the implementation do its work
+        _mdws.append(w);				// b) Add it to the local list
+
+	MixDeviceWidget *mdw = qobject_cast<MixDeviceWidget *>(w);
+	if (mdw!=nullptr) connect(mdw, &MixDeviceWidget::guiVisibilityChange, this, &ViewBase::guiVisibilitySlot);
     }
 
     if (!isDynamic())
     {
         QAction *action = _localActionColletion->addAction("toggle_channels");
         action->setText(i18n("Configure Channels..."));
-        connect(action, SIGNAL(triggered(bool)), SLOT(configureView()));
+	connect(action, &QAction::triggered, this, &ViewBase::configureView);
     }
 
     constructionFinished();				// allow view to "polish" itself
@@ -358,6 +360,7 @@ void ViewBase::configureView()
     dvc->show();
 }
 
+// TODO: nothing seems to call or connect to this, see also KMixerWidget
 void ViewBase::toggleMenuBarSlot() {
     //qCDebug(KMIX_LOG) << "ViewBase::toggleMenuBarSlot() start\n";
     emit toggleMenuBar();

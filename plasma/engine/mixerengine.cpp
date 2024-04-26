@@ -42,10 +42,8 @@ MixerEngine::MixerEngine(QObject *parent, const QVariantList &args)
 	watcher->addWatchedService( KMIX_DBUS_SERVICE );
 	watcher->setConnection( QDBusConnection::sessionBus() );
 	watcher->setWatchMode( QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration );
-	connect( watcher, SIGNAL(serviceRegistered(QString)),
-			this, SLOT(slotServiceRegistered(QString)) );
-	connect( watcher, SIGNAL(serviceUnregistered(QString)),
-			this, SLOT(slotServiceUnregistered(QString)) );
+	connect(watcher, &QDBusServiceWatcher::serviceRegistered, this, &MixerEngine::slotServiceRegistered);
+	connect(watcher, &QDBusServiceWatcher::serviceUnregistered, this, &MixerEngine::slotServiceUnregistered);
 	init();
 }
 
@@ -288,7 +286,7 @@ void MixerEngine::slotServiceRegistered( const QString &serviceName)
 {
 	// Let's give KMix some time to load
 	if ( serviceName == KMIX_DBUS_SERVICE )
-		QTimer::singleShot( 1000, this, SLOT(getInternalData()) );
+		QTimer::singleShot(1000, this, &MixerEngine::getInternalData);
 }
 
 void MixerEngine::slotServiceUnregistered( const QString &serviceName)
@@ -404,7 +402,7 @@ void MixerEngine::updateInternalMixersData()
 void MixerEngine::slotMixersChanged()
 {
 	// Let's give KMix some time to register this mixer on bus and so on
-	QTimer::singleShot( 1000, this, SLOT(updateInternalMixersData()) );
+	QTimer::singleShot(1000, this, &MixerEngine::updateInternalMixersData);
 }
 
 void MixerEngine::slotMasterChanged()

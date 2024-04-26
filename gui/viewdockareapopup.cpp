@@ -481,7 +481,7 @@ void ViewDockAreaPopup::constructionFinished()
 	mainWindowButton = new QPushButton(QIcon::fromTheme("show-mixer"), "" , this);
 	mainWindowButton->setObjectName(QLatin1String("MixerPanel"));
 	mainWindowButton->setToolTip(i18n("Show the full mixer window"));
-	connect(mainWindowButton, SIGNAL(clicked()), SLOT(showPanelSlot()));
+	connect(mainWindowButton, &QAbstractButton::clicked, this, &ViewDockAreaPopup::showPanelSlot);
 
 	configureViewButton = createConfigureViewButton();
 

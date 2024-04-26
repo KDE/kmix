@@ -93,24 +93,24 @@ void MDWSlider::createActions()
     // create actions (in channelActions(), see MixDeviceWidget)
 	KToggleAction *taction = channelActions()->add<KToggleAction>( "stereo" );
     taction->setText( i18n("Split Channels") );
-    connect( taction, SIGNAL(triggered(bool)), SLOT(toggleStereoLinked()) );
+    connect(taction, &QAction::triggered, this, &MDWSlider::toggleStereoLinked);
 
     if( mixDevice()->hasMuteSwitch() )
     {
         taction = channelActions()->add<KToggleAction>( "mute" );
         taction->setText( i18n("Mute") );
-        connect( taction, SIGNAL(toggled(bool)), SLOT(toggleMuted()) );
+        connect(taction, &QAction::toggled, this, &MDWSlider::toggleMuted);
     }
 
     if( mixDevice()->captureVolume().hasSwitch() ) {
         taction = channelActions()->add<KToggleAction>( "recsrc" );
         taction->setText( i18n("Capture") );
-        connect( taction, SIGNAL(toggled(bool)), SLOT(toggleRecsrc()) );
+        connect(taction, &QAction::toggled, this, &MDWSlider::toggleRecsrc);
     }
 
     if( mixDevice()->isMovable() ) {
         m_moveMenu = new QMenu( i18n("Use Device"), this);
-        connect( m_moveMenu, SIGNAL(aboutToShow()), SLOT(showMoveMenu()) );
+        connect(m_moveMenu, &QMenu::aboutToShow, this, &MDWSlider::showMoveMenu);
     }
 }
 
@@ -232,7 +232,7 @@ void MDWSlider::guiAddCaptureButton(const QString &captureTooltipText)
 {
 	m_captureButton = new ToggleToolButton("media-record", this);
 	m_captureButton->installEventFilter(this);
-	connect(m_captureButton, SIGNAL(clicked(bool)), this, SLOT(toggleRecsrc()));
+	connect(m_captureButton, &QAbstractButton::clicked, this, &MDWSlider::toggleRecsrc);
 	m_captureButton->setToolTip(captureTooltipText);
 }
 
@@ -241,7 +241,7 @@ void MDWSlider::guiAddMuteButton(const QString &muteTooltipText)
 	m_muteButton = new ToggleToolButton("audio-volume-high", this);
 	m_muteButton->setInactiveIcon("audio-volume-muted");
 	m_muteButton->installEventFilter(this);
-	connect(m_muteButton, SIGNAL(clicked(bool)), this, SLOT(toggleMuted()));
+	connect(m_muteButton, &QAbstractButton::clicked, this, &MDWSlider::toggleMuted);
 	m_muteButton->setToolTip(muteTooltipText);
 }
 
@@ -526,20 +526,20 @@ void MDWSlider::addMediaControls(QBoxLayout* volLayout)
 	if (mediaController->hasMediaPrevControl())
 	{
 		QToolButton *lbl = addMediaButton("media-skip-backward", mediaLayout, frame);
-		connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaPrev(bool)));
+		connect(lbl, &QAbstractButton::clicked, this, &MDWSlider::mediaPrev);
 	}
 	if (mediaController->hasMediaPlayControl())
 	{
 		MediaController::PlayState playState = mediaController->getPlayState();
 		QString mediaIcon = calculatePlaybackIcon(playState);
 		m_mediaPlayButton = addMediaButton(mediaIcon, mediaLayout, frame);
-		connect(m_mediaPlayButton, SIGNAL(clicked(bool)), this, SLOT(mediaPlay(bool)));
+		connect(m_mediaPlayButton, &QAbstractButton::clicked, this, &MDWSlider::mediaPlay);
 	}
 
 	if (mediaController->hasMediaNextControl())
 	{
 		QToolButton *lbl = addMediaButton("media-skip-forward", mediaLayout, frame);
-		connect(lbl, SIGNAL(clicked(bool)), this, SLOT(mediaNext(bool)));
+		connect(lbl, &QAbstractButton::clicked, this, &MDWSlider::mediaNext);
 	}
 	mediaLayout->addStretch();
 	volLayout->addLayout(mediaLayout);
@@ -953,9 +953,9 @@ void MDWSlider::update()
 	{
 		QLabel *l;
 		VerticalText *v;
-		if ((l = dynamic_cast<QLabel*>(m_controlLabel)))
+		if ((l = qobject_cast<QLabel *>(m_controlLabel)))
 			l->setText(mixDevice()->readableName());
-		else if ((v = dynamic_cast<VerticalText*>(m_controlLabel)))
+		else if ((v = qobject_cast<VerticalText *>(m_controlLabel)))
 			v->setText(mixDevice()->readableName());
 	}
 	updateAccesability();

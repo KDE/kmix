@@ -82,7 +82,7 @@ void MDWEnum::createWidgets()
    }
    // ------------ fill ComboBox end --------------
    _layout->addWidget(_enumCombo);
-   connect( _enumCombo, SIGNAL(activated(int)), this, SLOT(setEnumId(int)) );
+   connect(_enumCombo, &QComboBox::activated, this, &MDWEnum::setEnumId);
    _enumCombo->setToolTip( mixDevice()->readableName() );
 	_layout->addStretch(1);
 }

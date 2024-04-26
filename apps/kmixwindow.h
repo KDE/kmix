@@ -67,7 +67,6 @@ protected:
 
 public Q_SLOTS:
    void controlsChange(ControlManager::ChangeType changeType);
-   void quit();
    void showSettings();
    void showHelp();
    void showAbout();

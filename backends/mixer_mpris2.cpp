@@ -97,7 +97,7 @@ int Mixer_MPRIS2::mediaControl(QString applicationId, QString commandName)
 
 
 	QDBusPendingCallWatcher* watchMediaControlReply = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchMediaControlReply, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherMediaControl(QDBusPendingCallWatcher*)));
+	connect(watchMediaControlReply, &QDBusPendingCallWatcher::finished, this, &Mixer_MPRIS2::watcherMediaControl);
 
 	return (0); // Presume everything went well. Can't do more for ASYNC calls
 }
@@ -254,7 +254,7 @@ int Mixer_MPRIS2::addAllRunningPlayersAndInitHotplug()
 	}
 
 	// Start listening for new Mediaplayers
-	bool connected = dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)) );
+	bool connected = dbusConn.connect("", QString("/org/freedesktop/DBus"), "org.freedesktop.DBus", "NameOwnerChanged", this, SLOT(newMediaPlayer(QString,QString,QString)));
 	if (!connected)
 	{
 		qCWarning(KMIX_LOG) << "MPRIS2 hotplug init failure. New Media Players will not be detected.";
@@ -346,12 +346,12 @@ void Mixer_MPRIS2::addMprisControlAsync(QString busDestination)
 	QVariant v2 = QVariant(QString("Identity"));
 	QDBusPendingReply<QVariant > repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
 	QDBusPendingCallWatcher* watchIdentity = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherPlugControlId(QDBusPendingCallWatcher*)));
+	connect(watchIdentity, &QDBusPendingCallWatcher::finished, this, &Mixer_MPRIS2::watcherPlugControlId);
 
 	v2 = QVariant(QString("DesktopEntry"));
 	repl2 = mad->propertyIfc->asyncCall("Get", v1, v2);
 	watchIdentity = new QDBusPendingCallWatcher(repl2, mad);
-	connect(watchIdentity, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherDesktopFile(QDBusPendingCallWatcher*)));
+	connect(watchIdentity, &QDBusPendingCallWatcher::finished, this, &Mixer_MPRIS2::watcherDesktopFile);
 }
 
 
@@ -543,9 +543,9 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 		delete vol; // vol is only temporary. mdNew has its own volume object. => delete
 
 		QDBusConnection sessionBus = QDBusConnection::sessionBus();
-		sessionBus.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mprisCtl, SLOT(onPropertyChange(QString,QVariantMap,QStringList)) );
-		connect(mprisCtl, SIGNAL(volumeChanged(MPrisControl*,double)), this, SLOT(volumeChanged(MPrisControl*,double)) );
-		connect(mprisCtl, SIGNAL(playbackStateChanged(MPrisControl*,MediaController::PlayState)), SLOT (playbackStateChanged(MPrisControl*,MediaController::PlayState)) );
+		sessionBus.connect(busDestination, QString("/org/mpris/MediaPlayer2"), "org.freedesktop.DBus.Properties", "PropertiesChanged", mprisCtl, SLOT(onPropertyChange(QString,QVariantMap,QStringList)));
+		connect(mprisCtl, &MPrisControl::volumeChanged, this, &Mixer_MPRIS2::volumeChanged);
+		connect(mprisCtl, &MPrisControl::playbackStateChanged, this, &Mixer_MPRIS2::playbackStateChanged);
 
 		sessionBus.connect(busDestination, QString("/Player"), "org.freedesktop.MediaPlayer", "TrackChange", mprisCtl, SLOT(trackChangedIncoming(QVariantMap)) );
 
@@ -560,12 +560,12 @@ void Mixer_MPRIS2::watcherPlugControlId(QDBusPendingCallWatcher* watcher)
 		QVariant v2 = QVariant(QString("Volume"));
 		QDBusPendingReply<QVariant > repl2 = mprisCtl->propertyIfc->asyncCall("Get", v1, v2);
 		QDBusPendingCallWatcher* watcherOutgoing = new QDBusPendingCallWatcher(repl2, mprisCtl);
-		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherInitialVolume(QDBusPendingCallWatcher*)));
+		connect(watcherOutgoing, &QDBusPendingCallWatcher::finished, this, &Mixer_MPRIS2::watcherInitialVolume);
 
 		v2 = QVariant(QString("PlaybackStatus"));
 		repl2 = mprisCtl->propertyIfc->asyncCall("Get", v1, v2);
 		watcherOutgoing = new QDBusPendingCallWatcher(repl2, mprisCtl);
-		connect(watcherOutgoing, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(watcherInitialPlayState(QDBusPendingCallWatcher*)));
+		connect(watcherOutgoing, &QDBusPendingCallWatcher::finished, this, &Mixer_MPRIS2::watcherInitialPlayState);
 
 		// Push notifyToReconfigureControls to stack, so it will not be executed synchronously
 		announceControlListAsync(id);

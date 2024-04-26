@@ -26,9 +26,11 @@
 
 class VerticalText : public QWidget
 {
+    Q_OBJECT
+
    public:
       explicit VerticalText(QWidget * parent, const QString&, Qt::WindowFlags f = {});
-      ~VerticalText();
+      virtual ~VerticalText();
 
       void setText(const QString& text);
       QSize sizeHint() const override;

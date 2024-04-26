@@ -91,27 +91,28 @@ void KMixerWidget::createLayout(ViewBase::ViewFlags vflags)
 }
 
 
-
 /**
  * Add the given view, if it is valid - it must have controls or at least have the chance to gain some (dynamic views)
  * @param vbase
  * @return true, if the view was added
  */
-bool KMixerWidget::possiblyAddView(ViewBase* vbase)
+bool KMixerWidget::possiblyAddView(ViewBase *vbase)
 {
-   if ( ! vbase->isValid()  ) {
-      delete vbase;
-      return false;
+    if (!vbase->isValid())
+    {
+        delete vbase;
+        return (false);
    }
-   else {
-      m_topLayout->addWidget(vbase);
-      _views.push_back(vbase);
-      connect( vbase, SIGNAL(toggleMenuBar()), parentWidget(), SLOT(toggleMenuBar()) );
-      if (Settings::debugGui())
-    	  qCDebug(KMIX_LOG) << "CONNECT ViewBase count " << vbase->getMixers().size();
-      return true;
-   }
+
+    m_topLayout->addWidget(vbase);
+    _views.push_back(vbase);				// forward the signal
+    connect(vbase, &ViewBase::toggleMenuBar, this, &KMixerWidget::toggleMenuBar);
+
+    if (Settings::debugGui())
+        qCDebug(KMIX_LOG) << "CONNECT ViewBase count " << vbase->getMixers().size();
+    return (true);
 }
+
 
 /**
  * Returns the current View. Normally we have only one View, so we always return the first view.
@@ -119,7 +120,7 @@ bool KMixerWidget::possiblyAddView(ViewBase* vbase)
  * 99,99% of all users will be well served. Those who hack their own XML Profile to contain more than one view
   must  use the context menu for configuring the additional views.
  */
-ViewBase* KMixerWidget::currentView()
+ViewBase *KMixerWidget::currentView() const
 {
     return (_views.empty() ? nullptr : _views[0]);
 }
@@ -163,7 +164,7 @@ void KMixerWidget::saveConfig(KConfig *config)
 }
 
 
+// TODO: nothing seems to call or connect to this, see also ViewBase
 void KMixerWidget::toggleMenuBarSlot() {
     emit toggleMenuBar();
 }
-

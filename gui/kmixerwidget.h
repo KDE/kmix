@@ -54,12 +54,11 @@ class KMixerWidget : public QWidget
   public:
    explicit KMixerWidget( Mixer *mixer,
                           QWidget *parent, ViewBase::ViewFlags vflags, const QString  &guiprofId, KActionCollection* coll = nullptr );
-   ~KMixerWidget();
+   virtual ~KMixerWidget();
 
-   Mixer *mixer() { return _mixer; }
-   ViewBase* currentView();
-   GUIProfile* getGuiprof() { return GUIProfile::find(_guiprofId); }
-
+    Mixer *mixer() const			{ return (_mixer); }
+    GUIProfile *getGuiprof() const		{ return (GUIProfile::find(_guiprofId)); }
+    ViewBase *currentView() const;
    
   Q_SIGNALS:
    void toggleMenuBar();
