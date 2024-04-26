@@ -336,13 +336,11 @@ bool KMixWindow::updateDocking()
 	if (!Settings::showDockWidget() || MixerToolBox::mixers().isEmpty())
 	{
 		removeDock();
-		return false;
+		return (false);
 	}
-	if (!m_dockWidget)
-	{
-		m_dockWidget = new KMixDockWidget(this);
-	}
-	return true;
+
+	if (m_dockWidget==nullptr) m_dockWidget = new KMixDockWidget(this);
+	return (true);
 }
 void KMixWindow::saveConfig()
 {
