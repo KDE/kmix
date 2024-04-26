@@ -107,7 +107,16 @@ KMixDockWidget::~KMixDockWidget()
 
 void KMixDockWidget::createWidgets()
 {
-	if (_dockPopupWrapper==nullptr) _dockPopupWrapper = new QMenu(_kmixMainWindow);
+	if (_dockPopupWrapper==nullptr)
+	{
+		_dockPopupWrapper = new QMenu(_kmixMainWindow);
+		_dockPopupWrapper->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
+		_dockPopupWrapper->setWindowFlag(Qt::WindowStaysOnTopHint);
+		// TODO KF6: Does this work to skip the taskbar and pager?
+		// See https://stackoverflow.com/questions/4055506/qt-hide-taskbar-item
+		// which suggests using Qt::SubWindow instead.
+		_dockPopupWrapper->setWindowFlag(Qt::Popup);
+	}
 	else _dockPopupWrapper->removeAction(_dockWidgetAction);
 
 	delete _dockWidgetAction;			// also deletes '_dockView' if it exists
@@ -356,22 +365,26 @@ void KMixDockWidget::activate(const QPoint &pos)
 	_dockPopupWrapper->adjustSize();
 
 	int x = pos.x() - _dockPopupWrapper->width() / 2;
-	if (x < 0)
-		x = pos.x();
+	if (x < 0) x = pos.x();
 	int y = pos.y() - _dockPopupWrapper->height() / 2;
-	if (y < 0)
-		y = pos.y();
+	if (y < 0) y = pos.y();
 
 	// Now handle Multihead displays. And also make sure that the dialog is not
 	// moved out-of-the screen on the right (see Bug 101742).
 	const QScreen *screen = QGuiApplication::screenAt(pos);
 	if (screen==nullptr) return;
-	const QRect vScreenSize = screen->availableGeometry();
+	// Pretend that the screen has a border all around it, so that
+	// the popup is not jammed up against the screen edge and will
+	// leave at least a part of the panel uncovered.
+	const QRect vScreenSize = screen->availableGeometry().adjusted(32, 32, -32, -32);
 
-	if ((x + _dockPopupWrapper->width()) > (vScreenSize.width() + vScreenSize.x()))
+	const int myWidth = _dockPopupWrapper->width();
+	const int myHeight = _dockPopupWrapper->height();
+
+	if ((x + myWidth) > (vScreenSize.width() + vScreenSize.x()))
 	{
 		// move horizontally, so that it is completely visible
-		x = vScreenSize.width() + vScreenSize.x() - _dockPopupWrapper->width() - 1;
+		x = vScreenSize.width() + vScreenSize.x() - myWidth - 1;
 		qCDebug(KMIX_LOG) << "Multihead: (case 1) moving to" << x << "," << y;
 	}
 	else if (x < vScreenSize.x())
@@ -381,10 +394,10 @@ void KMixDockWidget::activate(const QPoint &pos)
 		qCDebug(KMIX_LOG) << "Multihead: (case 2) moving to" << x << "," << y;
 	}
 
-	if ((y + _dockPopupWrapper->height()) > (vScreenSize.height() + vScreenSize.y()))
+	if ((y + myHeight) > (vScreenSize.height() + vScreenSize.y()))
 	{
 		// move vertically, so that it is completely visible
-		y = vScreenSize.height() + vScreenSize.y() - _dockPopupWrapper->height() - 1;
+		y = vScreenSize.height() + vScreenSize.y() - myHeight - 1;
 		qCDebug(KMIX_LOG) << "Multihead: (case 3) moving to" << x << "," << y;
 	}
 	else if (y < vScreenSize.y())
@@ -393,13 +406,6 @@ void KMixDockWidget::activate(const QPoint &pos)
 		y = vScreenSize.y();
 		qCDebug(KMIX_LOG) << "Multihead: (case 4) moving to" << x << "," << y;
 	}
-
-	_dockPopupWrapper->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
-	_dockPopupWrapper->setWindowFlag(Qt::WindowStaysOnTopHint);
-	// TODO KF6: Does this work to skip the taskbar and pager?
-	// See https://stackoverflow.com/questions/4055506/qt-hide-taskbar-item
-	// which suggests using Qt::SubWindow instead.
-	_dockPopupWrapper->setWindowFlag(Qt::Popup);
 
 	_dockPopupWrapper->show();
 	_dockPopupWrapper->move(x, y);
