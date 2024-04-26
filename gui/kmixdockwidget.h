@@ -61,6 +61,7 @@ private:
     KXmlGuiWindow *_kmixMainWindow;
     int _delta;
     KToggleAction *_dockMuteAction;
+    KToggleAction *_dockRestoreAction;
 
 private:
     bool onlyHaveOneMouseButtonAction() const;

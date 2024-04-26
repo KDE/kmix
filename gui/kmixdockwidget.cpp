@@ -56,6 +56,7 @@ KMixDockWidget::KMixDockWidget(KXmlGuiWindow *parent)
     , _kmixMainWindow(parent)
     , _delta(0)
     , _dockMuteAction(nullptr)
+    , _dockRestoreAction(nullptr)
 {
     setToolTipIconByName("kmix");
     setTitle(i18n("Volume Control"));
@@ -176,6 +177,17 @@ void KMixDockWidget::createMenuActions()
         menu->addAction(_dockMuteAction);
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // "Show Main Window" action
+    //
+    // The KStatusNotifierItem does not create or manage a "Restore" action
+    // because there is no associated window, so we must do that ourselves.
+    _dockRestoreAction = new KToggleAction(i18n("Show Mixer Window"), this);
+    _dockRestoreAction->setIcon(QIcon::fromTheme("show-mixer"));
+    connect(_dockRestoreAction, &QAction::triggered, this, [this]() { activate(QPoint()); });
+    menu->addAction(_dockRestoreAction);
+#endif
+
     // "Select Master Channel" dialog
     QAction *action = _kmixMainWindow->actionCollection()->action("select_master");
     if (action!=nullptr) menu->addAction(action);
@@ -183,6 +195,7 @@ void KMixDockWidget::createMenuActions()
     // "Configure KMix" settings
     action = _kmixMainWindow->actionCollection()->action(KStandardAction::name(KStandardAction::Preferences));
     if (action!=nullptr) menu->addAction(action);
+
 }
 
 
@@ -478,6 +491,12 @@ void KMixDockWidget::contextMenuAboutToShow()
             _dockMuteAction->setEnabled(hasSwitch);
             _dockMuteAction->setChecked(isInactive);
         }
+    }
+
+    // State of "Show Main Window".
+    if (_dockRestoreAction!=nullptr)
+    {
+	_dockRestoreAction->setChecked(!_kmixMainWindow->isHidden());
     }
 
     // Enable/disable "Select Master Channel".
