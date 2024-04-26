@@ -24,9 +24,11 @@
 #include "kmixdockwidget.h"
 
 // Define this if KStatusNotifierItem::setOverlayIconByName() works.
-// As of March 2020 it appears to be not working, the base icon is
-// shown but with no overlay.
-//#define CAN_USE_ICON_OVERLAY	1
+// For KF5 as of March 2020 it appears to be not working, the base icon
+// is shown but with no overlay.  KF6 appears to be fine.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define CAN_USE_ICON_OVERLAY
+#endif
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -462,6 +464,8 @@ void KMixDockWidget::trayWheelEvent(int delta, Qt::Orientation wheelOrientation)
 
 void KMixDockWidget::dockMute()
 {
+// TODO: should go through KMixWindow::slotMute()
+// so that the OSD is shown.
     shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
     if (md.get()!=nullptr)
     {
