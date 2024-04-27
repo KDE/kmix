@@ -37,7 +37,8 @@
 #include <klocalizedstring.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
-#include <KProcess>
+#include <kprocess.h>
+#include <kcoreaddons_version.h>
 
 // KMix
 #include "kmix_debug.h"
@@ -1154,11 +1155,12 @@ void KMixWindow::toggleMenuBar()
 	menuBar()->setVisible(_actionShowMenubar->isChecked());
 }
 
+
 void KMixWindow::slotKdeAudioSetupExec()
 {
-    // TODO: major version
-    forkExec(QStringList() << "kcmshell5" << "kcm_pulseaudio");
+    forkExec(QStringList() << QString("kcmshell%1").arg(KCOREADDONS_VERSION_MAJOR) << "kcm_pulseaudio");
 }
+
 
 void KMixWindow::forkExec(const QStringList& args)
 {
