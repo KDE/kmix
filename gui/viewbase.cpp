@@ -52,7 +52,7 @@
 ViewBase::ViewBase(QWidget *parent, const QString &id, Qt::WindowFlags f, ViewBase::ViewFlags vflags, const QString &guiProfileId, KActionCollection *actionColletion)
     : QWidget(parent, f),
       _popMenu(nullptr),
-      _actions(actionColletion),
+      _applicationActions(actionColletion),
       _vflags(vflags),
       guiLevel(GuiVisibility::Simple),
       _guiProfileId(guiProfileId)
@@ -63,20 +63,13 @@ ViewBase::ViewBase(QWidget *parent, const QString &id, Qt::WindowFlags f, ViewBa
    // When loading the View from the XML profile, guiLevel can get overridden
    m_viewId = id;
    
-   if (_actions==nullptr)
+   if (_applicationActions==nullptr)
    {
       // We create our own action collection, if the actionColletion was NULL.
-      // This is currently done for the ViewDockAreaPopup, but only because it has not been converted to use the app-wide
-      // actionCollection(). This is a @todo.
-      _actions = new KActionCollection( this );
-   }
-   _localActionColletion = new KActionCollection( this );
-
-   // Plug in the "showMenubar" action, if the caller wants it. Typically this is only necessary for views in the KMix main window.
-   if ( vflags & ViewBase::HasMenuBar )
-   {
-      KToggleAction *m = static_cast<KToggleAction*>(  _actions->action( name(KStandardAction::ShowMenubar) ) ) ;
-      if (m!=nullptr) m->setChecked(vflags & ViewBase::MenuBarVisible );
+      // This is currently done for the ViewDockAreaPopup, but only because it
+      // has not been converted to use the app-wide actionCollection(). This
+      // is a TODO.
+      _applicationActions = new KActionCollection(this);
    }
 }
 
@@ -158,13 +151,6 @@ void ViewBase::createDeviceWidgets()
 	if (mdw!=nullptr) connect(mdw, &MixDeviceWidget::guiVisibilityChange, this, &ViewBase::guiVisibilitySlot);
     }
 
-    if (!isDynamic())
-    {
-        QAction *action = _localActionColletion->addAction("toggle_channels");
-        action->setText(i18n("Configure Channels..."));
-	connect(action, &QAction::triggered, this, &ViewBase::configureView);
-    }
-
     constructionFinished();				// allow view to "polish" itself
     if (wasVisible) show();				// show again if originally visible
 }
@@ -215,7 +201,7 @@ void ViewBase::adjustControlsLayout()
 
 	// An old comment in ViewSliders::configurationUpdate() said
 	// that this was necessary for KDE3.  Not sure if it is still
-	// required two generations later.
+	// required more than two generations later.
 	layout()->activate();
 }
 
@@ -261,17 +247,18 @@ QMenu* ViewBase::getPopup()
 
 void ViewBase::popupReset()
 {
-    QAction *act;
+    delete _popMenu;					// recreate the menu from scratch
+    _popMenu = new QMenu(this);
 
-    delete _popMenu;
-    _popMenu = new QMenu( this );
-    _popMenu->addSection( QIcon::fromTheme( QLatin1String(  "kmix" ) ), i18n("Device Settings" ));
+    // This action (set up in the KMixWindow's action collection) is routed
+    // to us when it is triggered, via KMixWindow::slotConfigureCurrentView().
+    // There is therefore no need for a local action here.  Hiding the action
+    // if the current mixer is dynamic is handled by KMixWindow::newMixerShown().
+    QAction *act = _applicationActions->action("toggle_channels_currentview");
+    if (act!=nullptr) _popMenu->addAction(act);
 
-    act = _localActionColletion->action( "toggle_channels" );
-    if ( act ) _popMenu->addAction(act);
-
-    act = _actions->action( "options_show_menubar" );
-    if ( act ) _popMenu->addAction(act);
+    act = _applicationActions->action("options_show_menubar");
+    if (act!=nullptr) _popMenu->addAction(act);
 }
 
 
@@ -360,12 +347,6 @@ void ViewBase::configureView()
     dvc->show();
 }
 
-// TODO: nothing seems to call or connect to this, see also KMixerWidget
-void ViewBase::toggleMenuBarSlot() {
-    //qCDebug(KMIX_LOG) << "ViewBase::toggleMenuBarSlot() start\n";
-    emit toggleMenuBar();
-    //qCDebug(KMIX_LOG) << "ViewBase::toggleMenuBarSlot() done\n";
-}
 
 /**
  * Loads the configuration of this view.

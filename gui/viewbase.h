@@ -84,8 +84,6 @@ public:
 
     ProfControl *findMdw(const QString &mdwId, GuiVisibility visibility = GuiVisibility::Default) const;
 
-    KActionCollection *actionCollection() const		{ return (_actions); }
-
     const QList<Mixer *> &getMixers() const		{ return (_mixers); }
     void clearMixers()					{ _mixers.clear(); }
     const MixSet &getMixSet() const			{ return (_mixSet); }
@@ -106,8 +104,7 @@ private:
     QList<QWidget *> _mdws;
 
     QMenu *_popMenu;
-    KActionCollection* _actions; // -<- application wide action collection
-    KActionCollection *_localActionColletion;
+    KActionCollection* _applicationActions; // -<- application wide action collection
 
     ViewFlags _vflags;
     Qt::Orientation _orientation;
@@ -161,12 +158,8 @@ public Q_SLOTS:
    virtual void refreshVolumeLevels(); // TODO remove
    virtual void configureView();
 
-Q_SIGNALS:
-   void toggleMenuBar();
-
 private Q_SLOTS:
    void guiVisibilitySlot(MixDeviceWidget* source, bool enable);
-   void toggleMenuBarSlot();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ViewBase::ViewFlags)

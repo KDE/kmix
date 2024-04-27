@@ -75,7 +75,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 	initActions(); // init actions first, so we can use them in the loadConfig() already
 	loadAndInitConfig(reset); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
 	initActionsLate(); // init actions that require a loaded config
-	// TODO: Port to KF5
+	// TODO: Port to KF5, see MixerBackend::translateKernelToWhatsthis()
 	//KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
 	initWidgets();
 	initPrefDlg();
@@ -168,6 +168,7 @@ void KMixWindow::initActions()
 
 	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
 	action->setText(i18n("Audio Setup..."));
+	action->setIcon(QIcon::fromTheme("speaker"));
 	connect(action, &QAction::triggered, this, &KMixWindow::slotKdeAudioSetupExec);
 
 	action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
@@ -177,6 +178,7 @@ void KMixWindow::initActions()
 
 	action = actionCollection()->addAction(QStringLiteral("toggle_channels_currentview"));
 	action->setText(i18n("Configure &Channels..."));
+	action->setIcon(QIcon::fromTheme("show-mixer"));
 	connect(action, &QAction::triggered, this, &KMixWindow::slotConfigureCurrentView);
 
 	action = actionCollection()->addAction(QStringLiteral("select_master"));
@@ -987,13 +989,12 @@ bool KMixWindow::addMixerWidget(const QString& mixer_ID, QString guiprofId, int 
 	// obsolete, as the backend should take care of updating itself.
 	kmw->mixer()->readSetFromHWforceUpdate();
 
-	connect(kmw, &KMixerWidget::toggleMenuBar, this, &KMixWindow::toggleMenuBar);
 	return (true);
 }
 
 void KMixWindow::updateTabsClosable()
 {
-	// Pulseaudio runs with 4 fixed tabs - don't allow to close them.
+	// PulseAudio runs with 4 fixed tabs - don't allow to close them.
 	// Also do not allow to close the last view
 	m_wsMixers->setTabsClosable(!MixerToolBox::pulseaudioPresent() && m_wsMixers->count() > 1);
 }
@@ -1224,8 +1225,8 @@ void KMixWindow::newMixerShown(int /*tabIndex*/)
 		// It would lead to unnecesary flickering of the (complete) dock area.
 
 		// We only show the "Configure Channels..." menu item if the mixer is not dynamic
-		const ViewBase* view = kmw->currentView();
-		QAction* action = actionCollection()->action("toggle_channels_currentview");
+		const ViewBase *view = kmw->currentView();
+		QAction *action = actionCollection()->action("toggle_channels_currentview");
 		if (view!=nullptr && action!=nullptr) action->setVisible(!view->isDynamic());
 	}
 }

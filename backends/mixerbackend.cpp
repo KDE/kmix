@@ -345,6 +345,9 @@ unsigned int MixerBackend::enumIdHW(const QString& ) {
 
 /* virtual */ QString MixerBackend::translateKernelToWhatsthis(const QString &kernelName) const
 {
+	// TODO: this is obviously intended to use the kmix-controls
+	// translation catalogues from the 'l10n' source subdirectory.
+
         if (kernelName == "Mic:0") return (i18n("Recording level of the microphone input."));
 	else if (kernelName == "Master:0") return (i18n("Controls the volume of the front speakers or all speakers (depending on your soundcard model). If you use a digital output, you might need to also use other controls like ADC or DAC. For headphones, soundcards often supply a Headphone control."));
 	else if (kernelName == "PCM:0") return (i18n("Most media, such as MP3s or Videos, are played back using the PCM channel. As such, the playback volume of such media is controlled by both this and the Master or Headphone channels."));

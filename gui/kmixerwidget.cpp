@@ -105,8 +105,7 @@ bool KMixerWidget::possiblyAddView(ViewBase *vbase)
    }
 
     m_topLayout->addWidget(vbase);
-    _views.push_back(vbase);				// forward the signal
-    connect(vbase, &ViewBase::toggleMenuBar, this, &KMixerWidget::toggleMenuBar);
+    _views.push_back(vbase);
 
     if (Settings::debugGui())
         qCDebug(KMIX_LOG) << "CONNECT ViewBase count " << vbase->getMixers().size();
@@ -161,10 +160,4 @@ void KMixerWidget::saveConfig(KConfig *config)
 			<< "KMixerWidget::saveConfig()" << view->id();
 		view->save(config);
 	} // for all tabs
-}
-
-
-// TODO: nothing seems to call or connect to this, see also ViewBase
-void KMixerWidget::toggleMenuBarSlot() {
-    emit toggleMenuBar();
 }

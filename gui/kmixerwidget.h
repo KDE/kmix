@@ -60,12 +60,8 @@ class KMixerWidget : public QWidget
     GUIProfile *getGuiprof() const		{ return (GUIProfile::find(_guiprofId)); }
     ViewBase *currentView() const;
    
-  Q_SIGNALS:
-   void toggleMenuBar();
-    
   public Q_SLOTS:
    void setIcons( bool on );
-   void toggleMenuBarSlot();
 
    void saveConfig( KConfig *config );
    void loadConfig( KConfig *config );
