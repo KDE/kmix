@@ -73,6 +73,7 @@ find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     ConfigWidgets
     Crash
     CoreAddons
+    Crash
     DBusAddons
     DocTools
     GlobalAccel
@@ -404,6 +405,7 @@ add_executable(kmix ${kmix_SRCS})
 target_link_libraries(kmix
   kmixcore
   kmixgui
+  KF${QT_MAJOR_VERSION}::Crash
   KF${QT_MAJOR_VERSION}::I18n
   KF${QT_MAJOR_VERSION}::CoreAddons
   KF${QT_MAJOR_VERSION}::Crash

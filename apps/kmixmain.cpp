@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
     QApplication qapp(argc, argv);
 
     KLocalizedString::setApplicationDomain("kmix");
+    KCrash::setDrKonqiEnabled(true);
 
     KCrash::initialize();
 
